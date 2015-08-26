@@ -226,6 +226,7 @@
 		<Upgrade id="3,4,58" />
 >>>>>>> 264a926 1844 completed Map and Tileset.xml
 	</Tile>
+	<Tile id="-7"/>
 	<Tile id="-10"><!-- 1 city -->
 		<Upgrade id="5,6,57"/>
 	</Tile>
@@ -233,6 +234,7 @@
 		<Upgrade id="59"/>
 	</Tile>
 	<Tile id="-838"/>
+	<Tile id="-44838"/>
 	<Tile id="-901"/>
 	<Tile id="-902"/>
 	<Tile id="-903"/>
@@ -264,6 +266,7 @@
 	</Tile>
 	<Tile id="-44201"/>
 	<Tile id="-44202"/>
+	<Tile id="-44203"/>
 	<Tile id="-44205"/>
 	<Tile id="-44206"/>
 	<Tile id="-44207"/>

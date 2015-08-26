@@ -7,23 +7,19 @@
 	</Defaults>
 	<!-- The above defaults are redundant, these settings are the system defaults anyway -->
 <!-- 	<IfOption name="Variant" value="1st Edition">
-		<Image file="1844/map_44.svg" x="1" y="1" scale="1.48"/>
+		<Image file="1844/MapImage_1st.svg" x="15" y="14" scale="0.1632"/>
 	</IfOption>
 	<IfOption name="Variant" value="2nd Edition">
 		<Image file="1844/MapImage_2nd.svg" x="15" y="14" scale="0.1632"/>
 	</IfOption>
--->
+	-->
 	<Hex name="A20" tile="-901" orientation="0" value="20,40,60,70" label="N-S+30"/>
 	<Hex name="A22" tile="-902" orientation="1" value="20,40,60,70" label="N-S+30"/>
 	<Hex name="B13" tile="-902" orientation="1" value="30,40,50,60" label="N-S+30"/>
 	<Hex name="B21" tile="-10" cost="20"/>
 	<Hex name="B23" tile="0" />
 	<Hex name="B25" tile="-1" />
-<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="C10" tile="-9121" orientation="0" value="10,30,50,70" label="E-W+50"/>
-=======
-	<Hex name="C10" tile="-9121" orientation="4" value="10,30,50,70" label="E-W+50"/>
->>>>>>> ce29729 The chosen tile for the split 2 access paths offboard map hex did already exist, renamed the tile and updated the tileset.
 	<Hex name="C12" tile="0"/>
 	<Hex name="C14" tile="-10" cost="20" impassable="D12"/>
 	<Hex name="C16" tile="-1" impassable="D12"/>
@@ -56,26 +52,13 @@
 	<Hex name="E28" tile="-44212" orientation="2" value="10,20,30,40"/>
 	<Hex name="F5" tile="-902" orientation="0" value="10,30,50,70" label="E-W+50"/>	
 	<Hex name="F7" tile="0"/>
-<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="F9" tile="-44115" cost="20" orientation="2"/>
-=======
-	<Hex name="F9" tile="-44115" cost="20" orientation="4"/>
->>>>>>> dd894c8 1844 : Starts up but the map needs tile and tiles need orientation :)
 	<Hex name="F11" tile="0" impassible="E10" cost="20"/>
-<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="F13" tile="-44015" orientation="0" label="B"/>
-=======
-	<Hex name="F13" tile="-44015" orientation="2" label="B"/>
->>>>>>> dd894c8 1844 : Starts up but the map needs tile and tiles need orientation :)
 	<Hex name="F15" tile="-1" cost="30"/>
 	<Hex name="F17" tile="0" cost="30"/>
-<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="F19" tile="-44115" orientation="2" cost="20"/>
 	<Hex name="F21" tile="-44202" orientation="5"/>
-=======
-	<Hex name="F19" tile="-44115" orientation="4" cost="20"/>
-	<Hex name="F21" tile="-44202" orientation="2"/>
->>>>>>> dd894c8 1844 : Starts up but the map needs tile and tiles need orientation :)
 	<Hex name="F23" tile="-10" cost="30"/>
 	<Hex name="F25" tile="0" cost="60"/>
 	<Hex name="F27" tile="-1" cost="20"/>
@@ -89,22 +72,10 @@
 	<Hex name="G16" tile="-44205" orientation="4"/>
 	<Hex name="G18" tile="-1"/>
 	<Hex name="G20" tile="-10"/>
-<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="G22" tile="-838" orientation="5"/>
-=======
-	<Hex name="G22" tile="-838"/>
->>>>>>> dd894c8 1844 : Starts up but the map needs tile and tiles need orientation :)
 	<Hex name="G24" tile="0" cost="90"/>
 	<Hex name="G26" tile="0" cost="60"/>	
-<<<<<<< Upstream, based on origin/rails_2_develop
-<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="G28" tile="-44115" orientation="1" cost="20"/>
-=======
-	<Hex name="G28" tile="-44011" orientation="3" cost="20"/>
->>>>>>> 264a926 1844 completed Map and Tileset.xml
-=======
-	<Hex name="G28" tile="-44115" orientation="3" cost="20"/>
->>>>>>> dd894c8 1844 : Starts up but the map needs tile and tiles need orientation :)
 	<Hex name="G30" tile="-10" cost="30"/>
 	<Hex name="G32" tile="0" cost="30"/>	
 	<Hex name="G34" tile="0" cost="30"/>	
@@ -115,15 +86,9 @@
 	<Hex name="H13" tile="0" cost="60"/>
 	<Hex name="H15" tile="-10" cost="20"/>
 	<Hex name="H17" tile="0" cost="30"/>
-<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="H19" tile="-44404" orientation="0"/>
 	<Hex name="H21" tile="-44403" orientation="0"/>
 	<Hex name="H23" tile="-44402" orientation="3"/>
-=======
-	<Hex name="H19" tile="-44404" orientation="2"/>
-	<Hex name="H21" tile="-44403" orientation="2"/>
-	<Hex name="H23" tile="-44402" orientation="0"/>
->>>>>>> 264a926 1844 completed Map and Tileset.xml
 	<Hex name="H25" tile="0" cost="60"/>
 	<Hex name="H27" tile="0" cost="30"/>
 	<Hex name="H29" tile="-44106"/>	
@@ -134,15 +99,9 @@
 	<Hex name="I8" tile="-10" cost="20"/>	
 	<Hex name="I10" tile="0" cost="30"/>
 	<Hex name="I12" tile="-1" cost="30" impassible="J13"/>
-<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="I14" tile="-44103" orientation="0"/>
 	<Hex name="I16" tile="-44203" orientation="5"/>
 	<Hex name="I18" tile="-44401" orientation="0"/>
-=======
-	<Hex name="I14" tile="-44103" orientation="2"/>
-	<Hex name="I16" tile="-44213"/>
-	<Hex name="I18" tile="-44401" orientation="3"/>
->>>>>>> 264a926 1844 completed Map and Tileset.xml
 	<Hex name="I20" tile="0" cost="90"/>
 	<Hex name="I22" tile="0" cost="90"/>
 	<Hex name="I24" tile="0" cost="60"/>
@@ -154,11 +113,7 @@
 	<Hex name="J9" tile="0" cost="30"/>
 	<Hex name="J11" tile="-44106"/>
 	<Hex name="J13" tile="-1" cost="30" impassible="I12"/>
-<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="J15" tile="-44838"/>
-=======
-	<Hex name="J15" tile="-838"/>
->>>>>>> dd894c8 1844 : Starts up but the map needs tile and tiles need orientation :)
 	<Hex name="J17" tile="0" cost="60"/>
 	<Hex name="J19" tile="-7" orientation="3"/>
 	<Hex name="J21" tile="0" cost="60"/>
@@ -184,17 +139,9 @@
 	<Hex name="L17" tile="-901" orientation="3" value="40,50,70,90" label="N-S+40"/>
 	<!-- Attention Run from L17 to N21/N23 is not valid as they are the same offboard Area -->
 	<Hex name="L23" tile="-10" cost="20" />
-<<<<<<< Upstream, based on origin/rails_2_develop
 	<Hex name="M10" tile="-902" value="0,30,50,70" orientation="4" label="N-S+40"/>
 	<Hex name="M22" tile="-44115" orientation="1"/>
 	<Hex name="M24" tile="-44213" orientation="4"/>
 	<Hex name="N21" tile="-901" orientation="4" value="40,50,70,90" label="N-S+40"/>
 	<Hex name="N23" tile="-901" orientation="3" value="40,50,70,90" label="N-S+40"/>			
-=======
-	<Hex name="M10" tile="-902" value="0,30,50,70" label="N-S+40"/>
-	<Hex name="M22" tile="-44115"/>
-	<Hex name="M24" tile="-44212" orientation="5"/>
-	<Hex name="N21" tile="-901" orientation="0" value="40,50,70,90" label="N-S+40"/>
-	<Hex name="N23" tile="-901" orientation="5" value="40,50,70,90" label="N-S+40"/>			
->>>>>>> dd894c8 1844 : Starts up but the map needs tile and tiles need orientation :)
 </Map>
