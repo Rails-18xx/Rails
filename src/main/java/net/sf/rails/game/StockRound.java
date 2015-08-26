@@ -12,6 +12,8 @@ import net.sf.rails.game.state.Currency;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+import com.google.common.collect.SortedMultiset;
 
 
 /**
@@ -349,20 +351,20 @@ public class StockRound extends Round {
      *
      * @return List of sellable certificates.
      */
+
+    // FIXME Rails 2.0: 
+    // This is rewritten taken into account that actions will not be changed for now
+    // A change of action will allow to simplify this strongly
     public void setSellableShares() {
 
         if (!mayCurrentPlayerSellAnything()) return;
 
-        int price;
-        int number;
-        int ownedShare, shareUnit, maxShareToSell;
-        int dumpThreshold = 0;
-        int extraSingleShares = 0;
-        PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
         boolean choiceOfPresidentExchangeCerts = false;
         isOverLimits = false;
         overLimitsDetail = null;
+
         StringBuilder violations = new StringBuilder();
+        PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
 
         /*
          * First check of which companies the player owns stock, and what
@@ -371,18 +373,23 @@ public class StockRound extends Round {
         for (PublicCompany company : companyManager.getAllPublicCompanies()) {
 
             // Check if shares of this company can be sold at all
-            if (!mayPlayerSellShareOfCompany(company)) continue;
+            if (!mayPlayerSellShareOfCompany(company)) {
+                continue;
+            }
 
-            ownedShare = maxShareToSell = playerPortfolio.getShare(company);
-            shareUnit = company.getShareUnit();
-            if (maxShareToSell == 0) continue;
+            int ownedShare = playerPortfolio.getShareNumber(company);
+            if (ownedShare == 0) {
+                continue;
+            }
+            
 
             /* May not sell more than the Pool can accept */
-            maxShareToSell =
-                Math.min(maxShareToSell,
-                        getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
-                        - pool.getShare(company));
-            if (maxShareToSell == 0) continue;
+            int maxShareToSell = Math.min(ownedShare, PlayerShareUtils.poolAllowsShareNumbers(company));
+            
+            // if no share can be sold
+            if (maxShareToSell == 0) {
+                continue;
+            }
 
             // Is player over the hold limit of this company?
             if (!checkAgainstHoldLimit(currentPlayer, company, 0)) {
@@ -401,53 +408,21 @@ public class StockRound extends Round {
             }
 
             /*
-             * If the current Player is president, check if he can dump the
-             * presidency onto someone else.
+             * If the current Player is president, check if he can dump the presidency onto someone else
+             * otherwise set dumpThreshold above ownedShare
              */
+            int dumpThreshold = ownedShare + 1;
+            int extraSingleShares = 0;
+            SortedSet<Integer> possibleSharesToSell = null;
             if (company.getPresident() == currentPlayer) {
-                int presidentShare =
-                    company.getCertificates().get(0).getShare();
-                if (maxShareToSell > ownedShare - presidentShare) {
-                    int playerShare;
-                    // Check in correct player sequence, because we must also check
-                    // whether we must offer a choice for the Pres.cert exchange
-                    // (as may occur in 1835).
-                    int currentPlayerIndex = getCurrentPlayerIndex();
-                    int playerIndex = currentPlayerIndex;
-                    List<Player> players = getRoot().getPlayerManager().getPlayers();
-                    Player player;
-                    int dumpedPlayerShare = 0;
-                    dumpThreshold = 0;
-
-                    for (playerIndex = (currentPlayerIndex+1)%numberOfPlayers;
-                    playerIndex != currentPlayerIndex;
-                    playerIndex = (playerIndex+1)%numberOfPlayers) {
-                        player = players.get(playerIndex);
-                        playerShare = player.getPortfolioModel().getShare(company);
-                        if (playerShare <= dumpedPlayerShare) continue;
-
-                        if (playerShare < presidentShare) continue; // Cannot dump on him
-
-                        dumpedPlayerShare = playerShare;
-                        // From what share sold are we dumping?
-                        dumpThreshold = ownedShare - playerShare + shareUnit;
-                        // Check if the potential dumpee has a choice of return certs
-                        int[] uniqueCertsCount =
-                            player.getPortfolioModel().getCertificateTypeCounts(company, false);
-                        // Let's keep it simple and only check for single
-                        // and double shares for now.
-                        choiceOfPresidentExchangeCerts =
-                            uniqueCertsCount[1] > 1 && uniqueCertsCount[2] > 0;
-                            // If a presidency dump is possible, extra (single) share(s) may be sold
-                            // that aren't even owned
-                            extraSingleShares = Math.min(
-                                    presidentShare/shareUnit,
-                                    (maxShareToSell-dumpThreshold)/shareUnit+1);
-
-                    }
-                    // What number of shares can we sell if we cannot dump?
-                    if (dumpThreshold == 0) maxShareToSell = ownedShare - presidentShare;
+                Player potential = company.findPlayerToDump();
+                if (potential != null) {
+                    dumpThreshold = ownedShare - potential.getPortfolioModel().getShareNumber(company) + 1;
+                    extraSingleShares = company.getPresidentsShare().getShares();
+                    possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
                 }
+                log.debug("company = " + company);
+                log.debug("possibleSharesToSell = " + possibleSharesToSell);
             }
 
             /*
@@ -456,18 +431,29 @@ public class StockRound extends Round {
              * 10%, or 10% and 20%. The president's share counts as a multiple
              * of the smallest ordinary share unit type.
              */
-            // Take care for max. 4 share units per share
-            int[] shareCountPerUnit = playerPortfolio.getCertificateTypeCounts(company, false);
+            
+           
             // Check the price. If a cert was sold before this turn, the original price is still valid.
-            price = getCurrentSellPrice(company);
+            int price = getCurrentSellPrice(company);
 
             /* Allow for different share units (as in 1835) */
-            for (int shareSize = 1; shareSize <= 4; shareSize++) {
-                number = shareCountPerUnit[shareSize];
+            SortedMultiset<Integer> certCount = playerPortfolio.getCertificateTypeCounts(company);
+            
+            // Make sure that single shares are always considered (due to possible dumping)
+            SortedSet<Integer> certSizeElements =Sets.newTreeSet(certCount.elementSet());
+            certSizeElements.add(1);
+            
+            for (int shareSize:certSizeElements) {
+                int number = certCount.count(shareSize);
 
                 // If you can dump a presidency, you may sell additional single shares that you don't own
-                if (dumpThreshold > 0 && shareSize == 1) number += extraSingleShares;
-                if (number == 0) continue;
+                if (dumpThreshold > 0 && shareSize == 1) {
+                    number += extraSingleShares;
+                }
+                
+                if (number == 0) {
+                    continue;
+                }
 
                 /* In some games (1856), a just bought share may not be sold */
                 // This code ignores the possibility of different share units
@@ -480,24 +466,25 @@ public class StockRound extends Round {
                          * So the rule "can't sell a just bought share" only means,
                          * that the number of shares may not be sold down to zero.
                          * Added 4jun2012 by EV */
-                        && number == ownedShare/shareUnit) {
+                        && number == ownedShare) {
                     number--;
                 }
-                if (number <= 0) continue;
+                
+                if (number <= 0) {
+                    continue;
+                }
 
                 // Check against the maximum share that can be sold
-                number = Math.min(number, maxShareToSell / (shareSize * shareUnit));
-                if (number <= 0) continue;
+                number = Math.min(number, maxShareToSell / shareSize);
+                
+                if (number <= 0) {
+                    continue;
+                }
 
                 for (int i=1; i<=number; i++) {
-                    if (dumpThreshold > 0 && i*shareSize*shareUnit >= dumpThreshold
-                            && choiceOfPresidentExchangeCerts) {
+                    // dumping requires that the total is in the possibleSharesToSell list
+                    if (i*shareSize >= dumpThreshold && possibleSharesToSell.contains(i*shareSize)) {
                         possibleActions.add(new SellShares(company, shareSize, i, price, 1));
-                        // Also offer the alternative president exchange for a double share,
-                        // unless the remaining share would be less than a double share
-                        if (ownedShare/shareUnit - i*shareSize >= 2) {
-                            possibleActions.add(new SellShares(company, shareSize, i, price, 2));
-                        }
                     } else {
                         possibleActions.add(new SellShares(company, shareSize, i, price, 0));
                     }

@@ -238,6 +238,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     /** Must payout exceed stock price to move token right? */
     protected boolean payoutMustExceedPriceToMove = false;
+    
+    /** Multiple certificates those that represent more than one nominal share unit (except president share) */
+    protected boolean hasMultipleCertificates = false;
 
     /*---- variables needed during initialisation -----*/
     protected String startSpace = null;
@@ -720,6 +723,13 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         
         // finish Configuration of portfolio
         portfolio.finishConfiguration();
+        
+        // set multipleCertificates
+        for (PublicCertificate c:certificates) {
+            if (!c.isPresidentShare() && c.getShares() != 1) {
+                hasMultipleCertificates = true;
+            }
+        }
     }
 
     /** Used in finalizing configuration */
@@ -1318,6 +1328,12 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public int getShareUnitsForSharePrice() {
         return shareUnitsForSharePrice;
     }
+    
+    /** @reeturn true if company has Multiple certificates, representing more than one nominal share unit (except president share) 
+     */
+    public boolean hasMultipleCertificates() {
+        return hasMultipleCertificates;
+    }
 
     @Override
     public String toString() {
@@ -1396,26 +1412,35 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public void checkPresidency () {
 
         // check if there is a new potential president
-        Player nextPotentialPresident = findNextPotentialPresident();
-        if (nextPotentialPresident == null) return;
+        int presidentShareNumber = getPresident().getPortfolioModel().getShareNumber(this) + 1;
+        Player nextPotentialPresident = findNextPotentialPresident(presidentShareNumber);
+       
+        // no change, return
+        if (nextPotentialPresident == null) {
+            return;
+        }
         
-        // Hand presidency to the player with the highest share
+        // otherwise Hand presidency to the player with the highest share
         getPresident().getPortfolioModel().swapPresidentCertificate(this, nextPotentialPresident.getPortfolioModel(), 2);
         ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                 nextPotentialPresident.getId(),
                 getId() ));
     }
     
-    public Player findNextPotentialPresident() {
+    public Player findPlayerToDump() {
+        return findNextPotentialPresident(getPresidentsShare().getShares());
+    }
+    
+    public Player findNextPotentialPresident(int minimumShareNumber) {
         
-        int requiredShares = getPresident().getPortfolioModel().getShare(this) + 1;
+        int requiredShareNumber = minimumShareNumber;
         Player potentialDirector = null;
         
-        for (Player player:getRoot().getPlayerManager().getNextPlayersAfter(getPresident(), false, false)) {
-            int otherPlayerShares = player.getPortfolioModel().getShare(this);
-            if (otherPlayerShares >= requiredShares) {
-                potentialDirector = player;
-                requiredShares = otherPlayerShares + 1;
+        for (Player nextPlayer:getRoot().getPlayerManager().getNextPlayersAfter(getPresident(), false, false)) {
+            int nextPlayerShareNumber =nextPlayer.getPortfolioModel().getShareNumber(this);
+            if (nextPlayerShareNumber >= requiredShareNumber) {
+                potentialDirector = nextPlayer;
+                requiredShareNumber = nextPlayerShareNumber + 1;
             }
         }
         return potentialDirector;

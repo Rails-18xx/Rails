@@ -1,7 +1,15 @@
 package net.sf.rails.game.model;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.SortedSet;
+
+import org.paukov.combinatorics.Factory;
+import org.paukov.combinatorics.Generator;
+import org.paukov.combinatorics.ICombinatoricsVector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
@@ -10,8 +18,10 @@ import net.sf.rails.game.RailsOwner;
 import net.sf.rails.game.state.PortfolioMap;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSortedMultiset;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Maps;
+import com.google.common.collect.SortedMultiset;
 
 
 /**
@@ -22,6 +32,8 @@ import com.google.common.collect.Maps;
  */
 public class CertificatesModel extends RailsModel implements Iterable<PublicCertificate> {
 
+    protected static Logger log = LoggerFactory.getLogger(CertificatesModel.class);
+    
     public final static String ID = "CertificatesModel";
     
     private final PortfolioMap<PublicCompany, PublicCertificate> certificates;
@@ -93,24 +105,14 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
         return certs.build();
     }
     
-    /** Return an array of length 5 that contains:<br>
-     * - in element [0]: 1 if there is a presidency, 0 if not (but see below);<br>
-     * - in element [1]: number of non-president certificates of size 1 (number of share units);<br>
-     * - in element [2]: number of non-president certificates of size 2;<br>
-     * - etc.
-     * @param compName Company name
-     * @param includePresident True if the president certificate must also be included in the other counts.
-     * @return integer array
-     */
-    int[] getCertificateTypeCounts(PublicCompany company, boolean includePresident) {
-        int[] uniqueCertCounts = new int[5];
+    SortedMultiset<Integer> getCertificateTypeCounts(PublicCompany company) {
+        ImmutableSortedMultiset.Builder<Integer> certCount = ImmutableSortedMultiset.naturalOrder();
         for (PublicCertificate cert : getCertificates(company)) {
-            if (!cert.isPresidentShare() || includePresident) {
-                ++uniqueCertCounts[cert.getShares()];
+            if (!cert.isPresidentShare()) {
+                certCount.add(cert.getShares());
             }
-            if (cert.isPresidentShare()) uniqueCertCounts[0] = 1;
         }
-        return uniqueCertCounts;
+        return certCount.build();
     }
     
     PortfolioMap<PublicCompany, PublicCertificate> getPortfolio() {
@@ -127,6 +129,27 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
             share += cert.getShare();
         }
         return share;
+    }
+    
+    int getShareNumber(PublicCompany company) {
+        int shareNumber = 0;
+        for (PublicCertificate cert : certificates.items(company)) {
+            shareNumber += cert.getShares();
+        }
+        return shareNumber;
+    }
+    
+    SortedSet<Integer> getshareNumberCombinations(PublicCompany company, int maxShareNumber) {
+        return shareNumberCombinations(certificates.items(company), maxShareNumber);
+    }
+    
+    boolean containsMultipleCert(PublicCompany company) {
+        for (PublicCertificate cert : certificates.items(company)) {
+            if (cert.getShares() != 1 && !cert.isPresidentShare()) {
+                return true;
+            }
+        }
+        return false;
     }
     
     String toText(PublicCompany company) {
@@ -149,5 +172,37 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
     public String toText() {
         return certificates.toString();
     }
-
+    
+    
+    /**
+     * @param certificates list of certificates 
+     * @param maxShareNumber maximum share number that is to achieved
+     * @return sorted list of share numbers that are possible from the list of certificates
+     */
+    public static SortedSet<Integer> shareNumberCombinations(Collection<PublicCertificate> certificates, int maxShareNumber) {
+        
+        // create vector for combinatorics
+        ICombinatoricsVector<PublicCertificate> certVector = Factory.createVector(certificates);
+        
+        // create generator for subsets
+        Generator<PublicCertificate> certGenerator = Factory.createSubSetGenerator(certVector);
+        
+        ImmutableSortedSet.Builder<Integer> numbers = ImmutableSortedSet.naturalOrder();
+        for (ICombinatoricsVector<PublicCertificate> certSubSet:certGenerator) {
+            log.debug("certSubSet = " + certSubSet);
+            int sum = 0;
+            for (PublicCertificate cert:certSubSet) {
+                sum += cert.getShares();
+                if (sum > maxShareNumber) {
+                    break;
+                }
+            }
+            if (sum <= maxShareNumber) {
+                numbers.add(sum);
+            }
+        }
+        
+        return numbers.build();
+    }
 }
+ 

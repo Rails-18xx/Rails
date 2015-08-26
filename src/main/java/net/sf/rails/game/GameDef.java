@@ -55,5 +55,27 @@ public class GameDef {
         DISCARD_TRAINS;
 
     }
+    
+    public static Object getGameParameter(RailsItem item, GameDef.Parm key) {
+        return item.getRoot().getGameManager().getGameParameter(key);
+    }
+
+    public static int getGameParameterAsInt(RailsItem item, GameDef.Parm key) {
+        if (key.defaultValue() instanceof Integer) {
+            return (Integer) getGameParameter(item, key);
+        } else {
+            return -1;
+        }
+    }
+
+    public static boolean getGameParameterAsBoolean(RailsItem item, GameDef.Parm key) {
+        if (key.defaultValue() instanceof Boolean) {
+            return (Boolean) getGameParameter(item, key);
+        } else {
+            return false;
+        }
+    }
+
+
 
 }

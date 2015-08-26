@@ -41,5 +41,6 @@
 	<classpathentry kind="lib" path="libs/main/designgridlayout-1.11/designgridlayout-1.11.jar"/>
 	<classpathentry kind="lib" path="libs/main/df_1.1.1/docking-frames-common.jar"/>
 	<classpathentry kind="lib" path="libs/main/df_1.1.1/docking-frames-core.jar"/>
+	<classpathentry kind="lib" path="libs/main/combinatoricslib-2.1/combinatoricslib-2.1.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
