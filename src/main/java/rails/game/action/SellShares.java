@@ -111,7 +111,7 @@ public class SellShares extends PossibleAction {
                 && Objects.equal(this.share, action.share)
                 && Objects.equal(this.price, action.price)
                 && Objects.equal(this.number, action.number)
-                && Objects.equal(this.presidentExchange, action.presidentExchange)
+        //        && Objects.equal(this.presidentExchange, action.presidentExchange)
         ;
         // no asAction attributes to be checked
     }

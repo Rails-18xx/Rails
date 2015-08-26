@@ -3,6 +3,7 @@ package net.sf.rails.game.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -33,6 +34,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
+import com.google.common.collect.SortedMultiset;
 
 
 // FIXME: Solve id, name and uniquename clashes
@@ -225,8 +227,13 @@ public class PortfolioModel extends RailsModel {
         return list.build();
     }
 
-    public int[] getCertificateTypeCounts(PublicCompany company, boolean includePresident) {
-        return certificates.getCertificateTypeCounts(company, includePresident);
+    /** 
+     * @return a sorted Multiset<Integer> of shareNumbers of the certificates
+     * Remark: excludes the presdident share
+     */
+    // FIXME: Integers could be replaced later by CerficateTypes
+    public SortedMultiset<Integer> getCertificateTypeCounts(PublicCompany company) {
+        return certificates.getCertificateTypeCounts(company);
     }
 
     public PublicCertificate getAnyCertOfType(String certTypeId) {
@@ -244,6 +251,30 @@ public class PortfolioModel extends RailsModel {
     public int getShare(PublicCompany company) {
         return certificates.getShare(company);
     }
+    
+    
+    /**
+     * @return the number of shares owned by the PorfolioModel for this company
+     */
+    public int getShareNumber(PublicCompany company) {
+        return certificates.getShareNumber(company);
+    }
+    
+    /**
+     * @param maxShareNumber maximum share number that is to achieved
+     * @return sorted list of share numbers that are possible for that company
+     */
+   public SortedSet<Integer> getShareNumberCombinations(PublicCompany company, int maxShareNumber) {
+        return certificates.getshareNumberCombinations(company, maxShareNumber);
+    }
+    
+   /** 
+    * @return true if portfolio contains a multiple (non-president) certificate
+    */
+    public boolean containsMultipleCert(PublicCompany company) {
+        return certificates.containsMultipleCert(company);
+    }
+    
 
     public int ownsCertificates(PublicCompany company, int unit,
             boolean president) {

@@ -167,7 +167,7 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
     public BankPortfolio getUnavailable() {
         return unavailable;
     }
-
+    
     public String toText() {
         return LocalText.getText("BANK");
     }
@@ -195,7 +195,7 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
         Currency currency = item.getRoot().getBank().getCurrency();
         return currency.format(amount);
     }
-
+    
     public static Bank get(RailsItem item) {
         return item.getRoot().getBank();
     }
