@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   id="svg2">
+  <metadata
+     id="metadata44">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs42" />
+  <path
+     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
+     fill="#B46301"
+     stroke="#B46301"
+     stroke-width="1"
+     stroke-linejoin="round"
+     id="path4"
+     style="fill:#aaaaaa;fill-opacity:1" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:32.0271873474;stroke-linecap:butt;stroke-linejoin:round"
+     id="path4152"
+     d="M 197.3611313155,147.876944467 195.8761569741,-1.351520623804" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:32.0204582214;stroke-linecap:butt;stroke-linejoin:round"
+     d="m 194.4821062183,339.6036917657 0.883245348,-150.2656358212"
+     id="path4154" />
+  <path
+     d="M 49,255 L 196,170"
+     fill="none"
+     stroke="#FFFFFF"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path8" />
+  <path
+     d="M 196,170 L 343,255"
+     fill="none"
+     stroke="#FFFFFF"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path12" />
+  <path
+     d="M 196,170 L 343,85"
+     fill="none"
+     stroke="#FFFFFF"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path14" />
+  <path
+     d="M 196,170 L 49,85"
+     fill="none"
+     stroke="#FFFFFF"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path18" />
+  <path
+     d="M 49,255 L 196,170"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path20" />
+  <path
+     d="M 196,170 L 343,255"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path24" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round"
+     d="m 194.3050847476,170 147,-85"
+     id="path26" />
+  <path
+     d="M 196,170 L 49,85"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path30" />
+  <ellipse
+     rx="38"
+     ry="34"
+     cx="123"
+     cy="43"
+     fill="#FFFFFF"
+     stroke="#000000"
+     stroke-width="2"
+     stroke-linejoin="round"
+     id="ellipse34" />
+  <text
+     x="123"
+     y="55"
+     dy="0"
+     font-size="51"
+     id="text36"
+     style="font-size:51px;font-family:'Bookman Old Style';text-anchor:middle;fill:#000000;stroke:#000000">20</text>
+  <path
+     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
+     fill="none"
+     stroke="black"
+     stroke-width="1"
+     stroke-linejoin="round"
+     id="path38" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:24.4666728973;stroke-linecap:butt;stroke-linejoin:round"
+     id="path4150"
+     d="M 197.4512595302,149.4254818109 196.9845148286,0.100370050853" />
+  <path
+     d="M 195.7563442769,340.103447812 195.2895995753,190.7783360519"
+     id="path4156"
+     style="fill:none;stroke:#000000;stroke-width:24.4666728973;stroke-linecap:butt;stroke-linejoin:round" />
+  <circle
+     cx="196"
+     cy="170"
+     r="21"
+     fill="#000000"
+     stroke="#FFFFFF"
+     stroke-width="4"
+     id="circle32" />
+ </svg>
