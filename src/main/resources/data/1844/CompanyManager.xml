@@ -140,7 +140,7 @@
 		fgColour="FFFFFF" bgColour="4A4A97">
 		<Home hex="G30"/>
 	</Company>
-		<Company name="Visp - Zermatt" longname="VZ" type="Regional" tokens="3"
+		<Company name="VZ" longname="Visp - Zermatt" type="Regional" tokens="3"
 		fgColour="FFFFFF" bgColour="4A4A97">
 		<Home hex="K12"/>
 	</Company>
