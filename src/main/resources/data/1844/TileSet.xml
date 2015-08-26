@@ -12,19 +12,19 @@
 		<Tile id="-20" relayBaseTokens="yes"><!-- 2 OO cities -->
 		<Upgrade id="59"/>
 	</Tile>
+	<Tile id="-838"/>
 	<Tile id="-901"/>
 	<Tile id="-902"/>
 	<Tile id="-903"/>
 	<Tile id="-9121"/>
-	<Tile id="-44001"/>
 	<Tile id="-44010"> <!--  Zurich Tile with Z -->
-		<Upgrade id="44005,44006,44057" />
+		<Upgrade id="907,908" />
 	</Tile>
-	<Tile id="-44011">
+	<Tile id="-44115">
 		<Upgrade id="5,6,57" />
 	</Tile>
-	<Tile id="-44012"> <!--  Bern Tile with B -->
-		<Upgrade id="44105,44106,44157" />
+	<Tile id="-44015"> <!--  Bern Tile with B -->
+		<Upgrade id="904" />
 	</Tile>
 	<Tile id="-44013">
 		<Upgrade id="901"/>
@@ -36,7 +36,6 @@
 	<Tile id="-44103">
 	<Upgrade id="457,458"></Upgrade>
 	</Tile>
-	<Tile id="-44104"/>
 	<Tile id="-44106">
 	<Upgrade id="457,458"></Upgrade>
 	</Tile>
@@ -82,7 +81,7 @@
 		<Upgrade id="18,26,27,28,29" />
 	</Tile>
 	<Tile id="8" quantity="13">
-		<Upgrade id="16,17,19,23,24,25,28,29" />
+		<Upgrade id="16,19,23,24,25,28,29" />
 	</Tile>
 	<Tile id="9" quantity="11">
 		<Upgrade id="18,19,20,23,24,26,27" />
@@ -190,30 +189,28 @@
 	<Tile id="915" quantity="2" />
 	<!-- Tunnel -->
 	<Tile id="457" quantity="12" >
-		<Upgrade id="FO-1-457, FO-2-457,FO-3-457,FO-4-457" />
+		<Upgrade id="FO-2-457,FO-3-457,FO-4-457" />
 	</Tile>
 	<Tile id="458" quantity="12" >
-		<Upgrade id="FO-1-458, FO-2-4581,FO-2-4582,FO-2-4583,FO-3-458,FO-4-458" />
+		<Upgrade id="FO-1-458,FO-2-458,FO-3-458,FO-4-458" />
 	</Tile>
 	<!--  Furka-Oberalp -->
 	<Tile id="FO-1" quantity="1" >
 		<Upgrade id="FO-1-458" />
 	</Tile>
 	<Tile id="FO-2" quantity="1" >
-		<Upgrade id="FO-2-4581,FO-2-4582,FO-2-4583,FO-2-457" />
+		<Upgrade id="FO-2-457,FO-2-458" />
 	</Tile>
 	<Tile id="FO-3" quantity="1" >
-		<Upgrade id="FO-3-458, FO-3-457" />
+		<Upgrade id="FO-3-458,FO-3-457" />
 	</Tile>
 	<Tile id="FO-4" quantity="1" >
 		<Upgrade id="FO-4-458,FO-4-457" />
 	</Tile>
 	<!--  Furka-Oberalp with Tunnel Overlay -->
 	<Tile id="FO-1-458" quantity="1" />
+	<Tile id="FO-2-458" quantity="1" />
 	<Tile id="FO-2-457" quantity="1" />
-	<Tile id="FO-2-4581" quantity="1" />
-	<Tile id="FO-2-4582" quantity="1" />
-	<Tile id="FO-2-4583" quantity="1" />
 	<Tile id="FO-3-458" quantity="1" />
 	<Tile id="FO-3-457" quantity="1" />
 	<Tile id="FO-4-458" quantity="1" />

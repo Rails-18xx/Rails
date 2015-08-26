@@ -40,9 +40,31 @@ public class PublicCompany_1844 extends PublicCompany {
          } else {
         extraCapital = 5 * (startSpace.getPrice());
          }
+         //Determine the number of tokens available to the historic companies by the startprice
+         if (this.getNumberOfBaseTokens()<0) {
+             switch(startSpace.getPrice()) {
+             case 100:
+                 this.setNumberOfBaseTokens(5);
+             case 90:
+                 this.setNumberOfBaseTokens(4);
+             case 80:
+                 this.setNumberOfBaseTokens(3);
+             case 70:
+                 this.setNumberOfBaseTokens(2);
+             case 60:
+                 this.setNumberOfBaseTokens(1);
+             default:
+                 this.setNumberOfBaseTokens(1);
+             }
+         }
+         
         super.start(startSpace);
     }
     
+    private void setNumberOfBaseTokens(int i) {
+        this.numberOfBaseTokens=i;
+    }
+
     /**
      * @return the fullyCapitalised
      */
@@ -89,4 +111,6 @@ public class PublicCompany_1844 extends PublicCompany {
         return false;
     }
 
+    
+    
 }
