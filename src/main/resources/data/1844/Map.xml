@@ -1,8 +1,9 @@
 <Map tileOrientation="EW" letterOrientation="vertical" even="A">
 	<Defaults>
-		<Access type="offMap" runTo="yes" runThrough="no" loop="no" score="major"/>
-		<Access type="city" runTo="yes" runThrough="yes" loop="yes" score="major"/>
-		<Access type="town" runTo="yes" runThrough="yes" loop="yes" score="minor"/>
+		<Access type="OffMapCity" runTo="yes" runThrough="no" loop="no" score="major"/>
+		<Access type="City" runTo="yes" runThrough="yes" loop="no" score="major"/>
+		<Access type="Town" runTo="yes" runThrough="yes" loop="no" score="minor"/>
+		<Access type="Cablecar" runTo="yes" runThrough="no" loop="no" score="major"/>
 	</Defaults>
 	<!-- The above defaults are redundant, these settings are the system defaults anyway -->
 <!-- 	<IfOption name="Variant" value="1st Edition">
@@ -51,12 +52,12 @@
 	<Hex name="E28" tile="-44212" orientation="2" value="10,20,30,40"/>
 	<Hex name="F5" tile="-902" orientation="3" value="10,30,50,70" label="E-W+50"/>	
 	<Hex name="F7" tile="0"/>
-	<Hex name="F9" tile="-44011" cost="20" orientation="4"/>
+	<Hex name="F9" tile="-44115" cost="20" orientation="4"/>
 	<Hex name="F11" tile="0" impassible="E10" cost="20"/>
-	<Hex name="F13" tile="-44012" orientation="2" label="B"/>
+	<Hex name="F13" tile="-44015" orientation="2" label="B"/>
 	<Hex name="F15" tile="-1" cost="30"/>
 	<Hex name="F17" tile="0" cost="30"/>
-	<Hex name="F19" tile="-44011" orientation="4" cost="20"/>
+	<Hex name="F19" tile="-44115" orientation="4" cost="20"/>
 	<Hex name="F21" tile="-44202" orientation="2"/>
 	<Hex name="F23" tile="-10" cost="30"/>
 	<Hex name="F25" tile="0" cost="60"/>
@@ -71,10 +72,10 @@
 	<Hex name="G16" tile="-44205" orientation="2"/>
 	<Hex name="G18" tile="-1"/>
 	<Hex name="G20" tile="-10"/>
-	<Hex name="G22" tile="-44202"/>
+	<Hex name="G22" tile="-838"/>
 	<Hex name="G24" tile="0" cost="90"/>
 	<Hex name="G26" tile="0" cost="60"/>	
-	<Hex name="G28" tile="-44011" orientation="3" cost="20"/>
+	<Hex name="G28" tile="-44115" orientation="3" cost="20"/>
 	<Hex name="G30" tile="-10" cost="30"/>
 	<Hex name="G32" tile="0" cost="30"/>	
 	<Hex name="G34" tile="0" cost="30"/>	
@@ -112,7 +113,7 @@
 	<Hex name="J9" tile="0" cost="30"/>
 	<Hex name="J11" tile="-44106"/>
 	<Hex name="J13" tile="-1" cost="30" impassible="I12"/>
-	<Hex name="J15" tile="-44001"/>
+	<Hex name="J15" tile="-838"/>
 	<Hex name="J17" tile="0" cost="60"/>
 	<Hex name="J19" tile="-44207"/>
 	<Hex name="J21" tile="0" cost="60"/>
@@ -139,7 +140,7 @@
 	<!-- Attention Run from L17 to N21/N23 is not valid as they are the same offboard Area -->
 	<Hex name="L23" tile="-10" cost="20" />
 	<Hex name="M10" tile="-902" value="0,30,50,70" label="N-S+40"/>
-	<Hex name="M22" tile="-44011"/>
+	<Hex name="M22" tile="-44115"/>
 	<Hex name="M24" tile="-44212" orientation="5"/>
 	<Hex name="N21" tile="-901" orientation="0" value="40,50,70,90" label="N-S+40"/>
 	<Hex name="N23" tile="-901" orientation="5" value="40,50,70,90" label="N-S+40"/>			

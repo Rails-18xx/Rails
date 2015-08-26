@@ -45,6 +45,7 @@ public class StopType {
         CITY (RunTo.YES, RunThrough.YES, Loop.YES, Score.MAJOR),
         TOWN (RunTo.YES, RunThrough.YES, Loop.YES, Score.MINOR),
         OFFMAP (RunTo.YES, RunThrough.NO, Loop.NO, Score.MAJOR),
+        CABLECAR (RunTo.YES, RunThrough.NO, Loop.NO, Score.MAJOR),
         NULL (null, null, null, null);
 
         private StopType stopType;

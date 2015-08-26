@@ -39,7 +39,8 @@ public class Station extends TrackPoint implements Comparable<Station> {
         OFFMAPCITY (StopType.Defaults.OFFMAP, "OffMap"), 
         PORT (StopType.Defaults.TOWN, "Port"), 
         PASS (StopType.Defaults.CITY, "Pass"), 
-        JUNCTION (StopType.Defaults.NULL, "Junction");
+        JUNCTION (StopType.Defaults.NULL, "Junction"),
+        CABLECAR (StopType.Defaults.CABLECAR, "Mountain Train");
         
         private final StopType stopType;
         private final String text;
