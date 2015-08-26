@@ -45,6 +45,7 @@ public class PublicCompany_1844 extends PublicCompany {
         extraCapital = 5 * (this.getIPOPrice());
          }
          //Determine the number of tokens available to the historic companies by the startprice
+<<<<<<< Upstream, based on origin/rails_2_develop
          if (this.getNumberOfBaseTokens()<=0) {
              switch(startSpace.getPrice()) {
              case 100:
@@ -62,6 +63,20 @@ public class PublicCompany_1844 extends PublicCompany {
              case 60:
                  this.setNumberOfBaseTokens(1);
                  break;
+=======
+         if (this.getNumberOfBaseTokens()<0) {
+             switch(startSpace.getPrice()) {
+             case 100:
+                 this.setNumberOfBaseTokens(5);
+             case 90:
+                 this.setNumberOfBaseTokens(4);
+             case 80:
+                 this.setNumberOfBaseTokens(3);
+             case 70:
+                 this.setNumberOfBaseTokens(2);
+             case 60:
+                 this.setNumberOfBaseTokens(1);
+>>>>>>> dd894c8 1844 : Starts up but the map needs tile and tiles need orientation :)
              default:
                  this.setNumberOfBaseTokens(1);
              }
@@ -72,12 +87,15 @@ public class PublicCompany_1844 extends PublicCompany {
     
     private void setNumberOfBaseTokens(int i) {
         this.numberOfBaseTokens=i;
+<<<<<<< Upstream, based on origin/rails_2_develop
         TreeSet<BaseToken> newTokens = Sets.newTreeSet();
         for (int j = 0; j < numberOfBaseTokens; j++) {
             BaseToken token =  BaseToken.create(this);
             newTokens.add(token);
         }
         baseTokens.initTokens(newTokens);
+=======
+>>>>>>> dd894c8 1844 : Starts up but the map needs tile and tiles need orientation :)
     }
 
     /**

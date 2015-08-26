@@ -100,6 +100,12 @@
 			</Train>
 			<NewPhase phaseName="8"/>
 		</TrainType>
+<<<<<<< Upstream, based on origin/rails_2_develop
+=======
+		<!-- The e-type trains are express trains that can ignore towns/cities on their way for a maximum payout-->
+		<TrainType name="8E" majorStops="99" cost="900" quantity="2">
+        </TrainType>
+>>>>>>> dd894c8 1844 : Starts up but the map needs tile and tiles need orientation :)
 	</Component>
 	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<Phase name="2" realName="A">
