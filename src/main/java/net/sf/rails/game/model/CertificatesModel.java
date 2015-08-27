@@ -8,8 +8,6 @@ import java.util.SortedSet;
 import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
@@ -32,8 +30,6 @@ import com.google.common.collect.SortedMultiset;
  */
 public class CertificatesModel extends RailsModel implements Iterable<PublicCertificate> {
 
-    protected static Logger log = LoggerFactory.getLogger(CertificatesModel.class);
-    
     public final static String ID = "CertificatesModel";
     
     private final PortfolioMap<PublicCompany, PublicCertificate> certificates;
@@ -189,7 +185,6 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
         
         ImmutableSortedSet.Builder<Integer> numbers = ImmutableSortedSet.naturalOrder();
         for (ICombinatoricsVector<PublicCertificate> certSubSet:certGenerator) {
-            log.debug("certSubSet = " + certSubSet);
             int sum = 0;
             for (PublicCertificate cert:certSubSet) {
                 sum += cert.getShares();
