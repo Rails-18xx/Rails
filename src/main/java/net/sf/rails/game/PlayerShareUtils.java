@@ -33,7 +33,8 @@ public class PlayerShareUtils {
     
     public static int poolAllowsShareNumbers(PublicCompany company) {
         int poolShares = Bank.getPool(company).getPortfolioModel().getShareNumber(company);
-        int poolMax = (GameDef.getGameParameterAsInt(company, GameDef.Parm.POOL_SHARE_LIMIT) - poolShares);
+        int poolMax = (GameDef.getGameParameterAsInt(company, GameDef.Parm.POOL_SHARE_LIMIT) / company.getShareUnit() 
+                - poolShares);
         return poolMax;
     }
     

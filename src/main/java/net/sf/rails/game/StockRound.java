@@ -362,6 +362,7 @@ public class StockRound extends Round {
         boolean choiceOfPresidentExchangeCerts = false;
         isOverLimits = false;
         overLimitsDetail = null;
+        
 
         StringBuilder violations = new StringBuilder();
         PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
@@ -381,10 +382,11 @@ public class StockRound extends Round {
             if (ownedShare == 0) {
                 continue;
             }
-            
 
             /* May not sell more than the Pool can accept */
-            int maxShareToSell = Math.min(ownedShare, PlayerShareUtils.poolAllowsShareNumbers(company));
+            int poolAllowsShares = PlayerShareUtils.poolAllowsShareNumbers(company);
+            log.debug("poolAllowShares = "+ poolAllowsShares);
+            int maxShareToSell = Math.min(ownedShare, poolAllowsShares );
             
             // if no share can be sold
             if (maxShareToSell == 0) {
@@ -415,14 +417,16 @@ public class StockRound extends Round {
             int extraSingleShares = 0;
             SortedSet<Integer> possibleSharesToSell = null;
             if (company.getPresident() == currentPlayer) {
+                log.debug("company = " + company);
                 Player potential = company.findPlayerToDump();
                 if (potential != null) {
+                    log.debug("potential " + potential);
                     dumpThreshold = ownedShare - potential.getPortfolioModel().getShareNumber(company) + 1;
                     extraSingleShares = company.getPresidentsShare().getShares();
                     possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
+                    log.debug("dumpThreshold = " + dumpThreshold);
+                    log.debug("possibleSharesToSell = " + possibleSharesToSell);
                 }
-                log.debug("company = " + company);
-                log.debug("possibleSharesToSell = " + possibleSharesToSell);
             }
 
             /*
@@ -449,6 +453,9 @@ public class StockRound extends Round {
                 // If you can dump a presidency, you may sell additional single shares that you don't own
                 if (dumpThreshold > 0 && shareSize == 1) {
                     number += extraSingleShares;
+                    // and limit this to the pool
+                    number = Math.min(number, poolAllowsShares);
+                    log.debug("shareSize:" + shareSize + ", number = "+ number);
                 }
                 
                 if (number == 0) {
@@ -482,10 +489,14 @@ public class StockRound extends Round {
                 }
 
                 for (int i=1; i<=number; i++) {
-                    // dumping requires that the total is in the possibleSharesToSell list
-                    if (i*shareSize >= dumpThreshold && possibleSharesToSell.contains(i*shareSize)) {
-                        possibleActions.add(new SellShares(company, shareSize, i, price, 1));
+                    // check if selling would dump the company
+                    if (i*shareSize >= dumpThreshold) {
+                        // dumping requires that the total is in the possibleSharesToSell list
+                        if (possibleSharesToSell.contains(i*shareSize)) {
+                            possibleActions.add(new SellShares(company, shareSize, i, price, 1));
+                        }
                     } else {
+                        // ... no dumping always possible
                         possibleActions.add(new SellShares(company, shareSize, i, price, 0));
                     }
                 }
