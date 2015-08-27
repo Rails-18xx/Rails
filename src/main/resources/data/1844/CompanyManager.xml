@@ -66,18 +66,6 @@
 		<StockPrice par="yes"/>
 	</CompanyType>	
 	
-<<<<<<< Upstream, based on origin/rails_2_develop
-	<Company name="T1" baseprice="50" type="Tunnel" revenue="0"></Company>
-	<Company name="T2" baseprice="50" type="Tunnel" revenue="0"></Company>
-	<Company name="T3" baseprice="50" type="Tunnel" revenue="0"></Company>
-	<Company name="T4" baseprice="50" type="Tunnel" revenue="0"></Company>
-	<Company name="T5" baseprice="50" type="Tunnel" revenue="0"></Company>
-	<Company name="B1" baseprice="150" type="Mountain" revenue="0"></Company>
-	<Company name="B2" baseprice="150" type="Mountain" revenue="0"></Company>
-	<Company name="B3" baseprice="150" type="Mountain" revenue="0"></Company>
-	<Company name="B4" baseprice="150" type="Mountain" revenue="0"></Company>
-	<Company name="B5" baseprice="150" type="Mountain" revenue="0"></Company>
-=======
 	<Company name="T1" baseprice="50" type="Tunnel"></Company>
 	<Company name="T2" baseprice="50" type="Tunnel"></Company>
 	<Company name="T3" baseprice="50" type="Tunnel"></Company>
@@ -88,7 +76,6 @@
 	<Company name="B3" baseprice="150" type="Mountain"></Company>
 	<Company name="B4" baseprice="150" type="Mountain"></Company>
 	<Company name="B5" baseprice="150" type="Mountain"></Company>
->>>>>>> dd894c8 1844 : Starts up but the map needs tile and tiles need orientation :)
 	<Company name="P1" longname="Brienzer - Rothorn - Bahn" type="Private" basePrice="20"
 		revenue="5">
 		<!--  No Special Powers will be closed on 5/5H -->
@@ -211,11 +198,7 @@
 		<Home hex="I6" city="1"/>
 		<Destination hex="F9"/>
 	</Company>
-<<<<<<< Upstream, based on origin/rails_2_develop
 	<Company name="GB" longname="Gotthardbahn" type="VOR-SBB" tokens="2"
-=======
-	<Company name="GB" longname="Goothardbahn" type="VOR-SBB" tokens="2"
->>>>>>> dd894c8 1844 : Starts up but the map needs tile and tiles need orientation :)
 		fgColour="FFFFFF" bgColour="000000">
 		<Home hex="G20"/>
 		<Destination hex="H21"/>
