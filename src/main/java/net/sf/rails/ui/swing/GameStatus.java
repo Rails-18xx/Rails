@@ -709,14 +709,9 @@ public class GameStatus extends GridPanel implements ActionListener {
                                         * sale.getPrice()) ));
                     } else {
                         options.add(LocalText.getText("SellSharesWithSwap",
-                                i,
-                                sale.getShare(),
                                 i * sale.getShare(),
                                 sale.getCompanyName(),
-                                gameUIManager.format(i * sale.getShareUnits() * sale.getPrice()),
-                                // disregard other than double pres.certs. This is for 1835 only.
-                                3 - sale.getPresidentExchange(),
-                                sale.getPresidentExchange() * sale.getShareUnit()));
+                                gameUIManager.format(i * sale.getShareUnits() * sale.getPrice())));
                     }
                     sellActions.add(sale);
                     sellAmounts.add(i);

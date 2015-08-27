@@ -385,6 +385,7 @@ public class StockRound extends Round {
 
             /* May not sell more than the Pool can accept */
             int poolAllowsShares = PlayerShareUtils.poolAllowsShareNumbers(company);
+            log.debug("company = " + company);
             log.debug("poolAllowShares = "+ poolAllowsShares);
             int maxShareToSell = Math.min(ownedShare, poolAllowsShares );
             
@@ -410,22 +411,24 @@ public class StockRound extends Round {
             }
 
             /*
-             * If the current Player is president, check if he can dump the presidency onto someone else
-             * otherwise set dumpThreshold above ownedShare
+             * If the current Player is president, check if there is a play to dump on
+             * => dumpThreshold = how many shareNumbers have to be sold for dump
+             * => possibleSharesToSell = list of shareNumbers that can be sold 
+             *    (includes check for swapping the presidency)
+             * => dumpIsPossible = true
              */
-            int dumpThreshold = ownedShare + 1;
-            int extraSingleShares = 0;
+            int dumpThreshold = 0;
             SortedSet<Integer> possibleSharesToSell = null;
+            boolean dumpIsPossible = false;
             if (company.getPresident() == currentPlayer) {
-                log.debug("company = " + company);
                 Player potential = company.findPlayerToDump();
                 if (potential != null) {
-                    log.debug("potential " + potential);
                     dumpThreshold = ownedShare - potential.getPortfolioModel().getShareNumber(company) + 1;
-                    extraSingleShares = company.getPresidentsShare().getShares();
                     possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
+                    dumpIsPossible = true;
                     log.debug("dumpThreshold = " + dumpThreshold);
                     log.debug("possibleSharesToSell = " + possibleSharesToSell);
+                    log.debug("dumpIsPossible = " + dumpIsPossible);
                 }
             }
 
@@ -450,12 +453,13 @@ public class StockRound extends Round {
             for (int shareSize:certSizeElements) {
                 int number = certCount.count(shareSize);
 
-                // If you can dump a presidency, you may sell additional single shares that you don't own
-                if (dumpThreshold > 0 && shareSize == 1) {
-                    number += extraSingleShares;
-                    // and limit this to the pool
+                // If you can dump a presidency, you add the shareNumbers of the presidency
+                // to the single shares to be sold
+                if (dumpIsPossible && shareSize == 1 && number + company.getPresidentsShare().getShares() >= dumpThreshold) {
+                    number += company.getPresidentsShare().getShares();
+                    // but limit this to the pool 
                     number = Math.min(number, poolAllowsShares);
-                    log.debug("shareSize:" + shareSize + ", number = "+ number);
+                    log.debug("Dump is possible increased single shares to " + number);
                 }
                 
                 if (number == 0) {
@@ -490,13 +494,14 @@ public class StockRound extends Round {
 
                 for (int i=1; i<=number; i++) {
                     // check if selling would dump the company
-                    if (i*shareSize >= dumpThreshold) {
-                        // dumping requires that the total is in the possibleSharesToSell list
-                        if (possibleSharesToSell.contains(i*shareSize)) {
+                    if (dumpIsPossible && i*shareSize >= dumpThreshold) {
+                        // dumping requires that the total is in the possibleSharesToSell list and that shareSize == 1
+                        // multiple shares have to be sold separately
+                        if (shareSize == 1 && possibleSharesToSell.contains(i*shareSize)) {
                             possibleActions.add(new SellShares(company, shareSize, i, price, 1));
                         }
                     } else {
-                        // ... no dumping always possible
+                        // ... no dumping: standard sell
                         possibleActions.add(new SellShares(company, shareSize, i, price, 0));
                     }
                 }
