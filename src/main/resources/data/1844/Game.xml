@@ -58,30 +58,47 @@
 			<Reach base="stops" countTowns="major"/>
 			<Score towns="yes"/>
 		</Defaults>
-		<TrainType name="2" majorStops="2" cost="100" quantity="10"/>
-		<TrainType name="2H" majorStops="2" cost="100" quantity="10"/>
-		<TrainType name="3" majorStops="3" cost="180" quantity="5">
+		<TrainType name="2/2H" quantity="13">
+				<Train name="2" majorStops="2" cost="90"/>
+				<Train name="2H" majorStops="2" cost="70">
+					<Reach base="hexes"/>
+			</Train>
+		</TrainType>
+		<TrainType name="3/3H" quantity="9">
+				<Train name="3" majorStops="3" cost="180"/>
+				<Train name="3H" majorStops="3" cost="150">
+				<Reach base="hexes"/>
+			</Train>
 			<NewPhase phaseName="3"/>
-		</TrainType>		
-		<TrainType name="3H" majorStops="3" cost="100" quantity="10"/>
-		<TrainType name="4" majorStops="4" cost="300" quantity="5">
+		</TrainType>
+		<TrainType name="4/4H" quantity="6">
+				<Train name="4" majorStops="4" cost="300"/>
+				<Train name="4H" majorStops="4" cost="260">
+				<Reach base="hexes"/>
+			</Train>
 			<NewPhase phaseName="4"/>
 		</TrainType>
-		<TrainType name="4H" majorStops="2" cost="100" quantity="10"/>
-		<TrainType name="5" majorStops="2" cost="100" quantity="10">
+				<TrainType name="5/5H" quantity="4">
+				<Train name="5" majorStops="3" cost="450"/>
+				<Train name="5H" majorStops="3" cost="400">
+				<Reach base="hexes"/>
+			</Train>
 			<NewPhase phaseName="5"/>
 		</TrainType>
-		<TrainType name="5H" majorStops="2" cost="100" quantity="10"/>
-		<TrainType name="6" majorStops="6" cost="600" quantity="5">
+				<TrainType name="6/6H" quantity="4">
+				<Train name="6" majorStops="6" cost="630"/>
+				<Train name="6H" majorStops="6" cost="550">
+				<Reach base="hexes"/>
+			</Train>
 			<NewPhase phaseName="6"/>
 		</TrainType>
- 		<TrainType name="6H" majorStops="99" cost="700" quantity="5"/>
-		<TrainType name="8" majorStops="8" cost="800" quantity="2">
+		<TrainType name="8E/8H" quantity="100">
+				<Train name="8E" majorStops="99" cost="960"/>
+				<Train name="8H" majorStops="8" cost="700">
+				<Reach base="hexes"/>
+			</Train>
 			<NewPhase phaseName="8"/>
 		</TrainType>
-		<!-- The e-type trains are express trains that can ignore towns/cities on their way for a maximum payout-->
-		<TrainType name="8E" majorStops="99" cost="900" quantity="2">
-        </TrainType>
 	</Component>
 	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<Phase name="2" realName="A">
@@ -112,7 +129,7 @@
 				</Tiles>
 			<OffBoardRevenue step="2"/>
 			<Float percentage="40"/>
-			<Trains limitStep="2" rusted="2H" converted="3"/>
+			<Trains limitStep="2" rusted="2/2H" converted="3"/>
 		</Phase>
 		<Phase name="5" realName="D">
 			<Tiles colour="yellow,green,brown">
@@ -126,7 +143,7 @@
 			<Action name="ShanghaiExchangeOpen"/>
 			<Float percentage="60"/>
 			<OffBoardRevenue step="3"/>
-			<Trains limitStep="2" rusted="3H" converted="4"/>
+			<Trains limitStep="2" rusted="3/3H" converted="4"/>
 		</Phase>
 		<Phase name="8" realName="F">
 			<Tiles colour="yellow,green,brown,grey">
@@ -136,7 +153,7 @@
 				<Lays companyType="Major" colour="grey" number="1"/>
 				</Tiles>
 			<OffBoardRevenue step="4"/>
-			<Trains limitStep="3" rusted="4H" converted="5"/>
+			<Trains limitStep="3" rusted="4/4H" converted="5"/>
 		</Phase>
 		</Component>
 		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
