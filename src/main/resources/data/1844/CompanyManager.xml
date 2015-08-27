@@ -3,6 +3,8 @@
 <CompanyManager>
 	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany" >
 		<Certificate certificateCount = "0" />
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<Tradeable toPlayer="yes"/>	
 	</CompanyType>
 	<CompanyType name="Tunnel" class="net.sf.rails.game.specific._1844.TunnelCompany">
 		<Certificate certificateCount = "0" />
@@ -19,7 +21,7 @@
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="3"/>
 		<BaseTokens>
-			<HomeBase lay="whenFloated"/>
+			<HomeBase lay="whenStarted"/>
 			<LayCost method="sequence" cost="0,40"/>
 		</BaseTokens>
 		<Payout split="no"/>
@@ -36,7 +38,7 @@
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
 		<BaseTokens>
-			<HomeBase lay="whenFloated"/>
+			<HomeBase lay="whenStarted"/>
 			<LayCost method="sequence" cost="0,40,100"/>
 			<!-- Tokenanzahl unabhängig vom Ausgabekurs immer 2 -->
 		</BaseTokens>
@@ -52,7 +54,7 @@
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="2"/>
 		<BaseTokens>
-			<HomeBase lay="whenFloated"/>
+			<HomeBase lay="whenStarted"/>
 			<LayCost method="sequence" cost="0,40"/>
 		</BaseTokens>
 		<Trains limit="2,2,2" mandatory="no"/>
@@ -119,6 +121,7 @@
 	<Company name="P6" longname="Societa anonima delle ferrovie Milano - Saronno e Milano - Erba" type="Private"
 		basePrice="160" revenue="30">
 		<Info key="ComesWithPresidency" parm="FNM,20"/>
+		<Tradeable toCompany="no"/>
 	</Company>
 	<Company name="P7" longname="Lokfabrik Oerlikon" type="Private" basePrice="100"
 		revenue="0">
@@ -131,6 +134,7 @@
 		<ClosingConditions>
 			<SpecialProperties condition="ifExercised"/>
 		</ClosingConditions>
+		<Tradeable toCompany="no"/>
 	</Company>
 	<Company name="JN" longname="Jura neuchatelois" type="Regional" tokens="3"
 		fgColour="FFFFFF" bgColour="4A4A97">
@@ -194,7 +198,7 @@
 		<Home hex="I6" city="1"/>
 		<Destination hex="F9"/>
 	</Company>
-	<Company name="GB" longname="Goothardbahn" type="VOR-SBB" tokens="2"
+	<Company name="GB" longname="Gotthardbahn" type="VOR-SBB" tokens="2"
 		fgColour="FFFFFF" bgColour="000000">
 		<Home hex="G20"/>
 		<Destination hex="H21"/>
@@ -216,15 +220,18 @@
 	
 	<StartPacket name="sellPrivates" roundClass="net.sf.rails.game.StartRound_1830">
 		<Bidding initial="0" minimum="0" increment="5"/>
-		<Item name="P1" type="Private" basePrice="20" noBidsReaction="ReduceAndRebid" />
+		<Item name="P1" type="Private" basePrice="20" reduceable="yes" />
 		<Item name="P2" type="Private" basePrice="50" />
-		<Item name="P3" type="Private" basePrice="80"/>
+		<Item name="P3" type="Private" basePrice="80">
 			<SubItem name="T1" type="Tunnel"/>
+			</Item>
 		<Item name="P4" type="Private" basePrice="110"/>
-		<Item name="P5" type="Private" basePrice="140"/>
+		<Item name="P5" type="Private" basePrice="140">
 			<SubItem name="MOB" type="Historical"/>
-		<Item name="P6" type="Private" basePrice="180"/>
+			</Item>
+		<Item name="P6" type="Private" basePrice="180">
 			<SubItem name="FNM" type="Historical" president="yes"/>
+			</Item>
 		<Item name="P7" type="Private" basePrice="100"/>
 	</StartPacket>
 	</CompanyManager>
