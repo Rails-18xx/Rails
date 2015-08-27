@@ -35,10 +35,10 @@ public class PublicCompany_1844 extends PublicCompany {
     }
     
     public void start(StockSpace startSpace) {
-         if(this.getType().getId()=="VOR-SBB") {
-          extraCapital = 2 * (startSpace.getPrice());   
+         if(this.getType().getId().equals("VOR-SBB")) {
+          extraCapital = 2 * (this.getIPOPrice());   
          } else {
-        extraCapital = 5 * (startSpace.getPrice());
+        extraCapital = 5 * (this.getIPOPrice());
          }
          //Determine the number of tokens available to the historic companies by the startprice
          if (this.getNumberOfBaseTokens()<0) {
