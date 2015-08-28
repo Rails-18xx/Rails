@@ -8,6 +8,7 @@ import net.sf.rails.game.model.CalculatedMoneyModel;
 import net.sf.rails.game.model.CertificateCountModel;
 import net.sf.rails.game.model.CountingMoneyModel;
 import net.sf.rails.game.model.MoneyModel;
+import net.sf.rails.game.model.PlayerNameModel;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.model.PortfolioOwner;
 import net.sf.rails.game.model.PurseMoneyModel;
@@ -38,6 +39,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
     private final BooleanState bankrupt = BooleanState.create(this, "isBankrupt");
     private final IntegerState worthAtORStart = IntegerState.create(this, "worthAtORStart");
     private final Map<PublicCompany, SoldThisRoundModel> soldThisRound = Maps.newHashMap();
+    private final PlayerNameModel playerNameModel = PlayerNameModel.create(this);
 
     private Player(PlayerManager parent, String id, int index) {
         super(parent, id);
@@ -105,9 +107,12 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
         }
     }
     
-    // FIXME: Rails 2.0 This has to be changed to a state variable
     public String getNameAndPriority() {
         return getId() + (getParent().getPriorityPlayer() == this ? " PD" : "");
+    }
+    
+    public PlayerNameModel getPlayerNameModel() {
+        return playerNameModel;
     }
 
     /**

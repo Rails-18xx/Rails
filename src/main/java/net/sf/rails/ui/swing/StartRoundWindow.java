@@ -71,8 +71,8 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     private Field itemStatus[]; // Remains invisible, only used for status tooltip
 
     private int playerCaptionXOffset, upperPlayerCaptionYOffset, lowerPlayerCaptionYOffset;
-    private Cell[] upperPlayerCaption;
-    private Cell[] lowerPlayerCaption;
+    private Field upperPlayerCaption[];
+    private Field lowerPlayerCaption[];
     private JComponent[][] fields;
 
     private ActionButton bidButton;
@@ -248,8 +248,8 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         bidPerPlayer = new Field[ni][np];
         info = new Field[ni];
         itemStatus = new Field[ni];
-        upperPlayerCaption = new Cell[np];
-        lowerPlayerCaption = new Cell[np];
+        upperPlayerCaption = new Field[np];
+        lowerPlayerCaption = new Field[np];
         playerBids = new Field[np];
         playerFree = new Field[np];
         
@@ -298,7 +298,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         addField(new Caption(LocalText.getText("PLAYERS")),
                 playerCaptionXOffset, 0, np, 1, 0);
         for (int i = 0; i < np; i++) {
-            f = upperPlayerCaption[i] = new Caption(players[i].getNameAndPriority());
+            f = upperPlayerCaption[i] = new Field(players[i].getPlayerNameModel());
             addField(f, playerCaptionXOffset + i, upperPlayerCaptionYOffset, 1, 1, WIDE_BOTTOM);
         }
 
@@ -376,7 +376,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         }
 
         for (int i = 0; i < np; i++) {
-            f = lowerPlayerCaption[i] = new Caption(players[i].getNameAndPriority());
+            f = lowerPlayerCaption[i] = new Field(players[i].getPlayerNameModel());
             addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset + 1,
                     1, 1, WIDE_TOP);
         }
@@ -858,8 +858,8 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             }
         }
         for (int i=0, x=playerCaptionXOffset; i<np; i++, x++) {
-            upperPlayerCaption[i] = (Cell) fields[x][upperPlayerCaptionYOffset];
-            lowerPlayerCaption[i] = (Cell) fields[x][lowerPlayerCaptionYOffset];
+            upperPlayerCaption[i] = (Field) fields[x][upperPlayerCaptionYOffset];
+            lowerPlayerCaption[i] = (Field) fields[x][lowerPlayerCaptionYOffset];
         }
 
         gameUIManager.packAndApplySizing(this);
