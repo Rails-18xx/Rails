@@ -15,7 +15,7 @@ public class PlayerNameModel extends Model {
     private PlayerNameModel(Player player, String id) {
         super(player, id);
         // add dependency on the playerOrder
-        player.getParent().getPlayerNamesModel().addModel(this);
+        player.getParent().getPlayerOrderModel().addModel(this);
     }
 
     public static PlayerNameModel create(Player player){
