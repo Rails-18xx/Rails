@@ -1275,7 +1275,7 @@ public class GameUIManager implements DialogOwner {
     
    public class PlayerOrderView implements Observer {
         PlayerOrderView () {
-            railsRoot.getPlayerManager().getPlayerNamesModel().addObserver(this);
+            railsRoot.getPlayerManager().getPlayerOrderModel().addObserver(this);
         }
 
         public void update(Observable o, Object arg) {

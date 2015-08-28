@@ -288,7 +288,7 @@ public class PlayerManager extends RailsManager implements Configurable {
         playerModel.reverse.set(reverse);
     }
 
-    public PlayerOrderModel getPlayerNamesModel() {
+    public PlayerOrderModel getPlayerOrderModel() {
        return playerModel;
     }
 
