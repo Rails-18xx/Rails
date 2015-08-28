@@ -11,6 +11,7 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.BankPortfolio;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
@@ -230,7 +231,7 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
         if (!company.isClosed()) {
 
             executeShareTransfer (company, certsToSell,
-                    dumpedPlayer, presSharesToSell, action.getPresidentExchange());
+                    dumpedPlayer, presSharesToSell);
         }
 
         cashToRaise.add(-numberSold * price);
@@ -248,9 +249,9 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
     @Override
     protected void executeShareTransfer( PublicCompany company,
             List<PublicCertificate> certsToSell, 
-            Player dumpedPlayer, int presSharesToSell, int swapShareSize) {
+            Player dumpedPlayer, int presSharesToSell) {
         
-        executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, swapShareSize, ipo );
+        executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, (BankPortfolio)ipo.getParent() );
     }
 
     

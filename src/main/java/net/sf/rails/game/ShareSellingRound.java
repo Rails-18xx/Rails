@@ -81,6 +81,8 @@ public class ShareSellingRound extends StockRound {
     /**
      * Create a list of certificates that a player may sell in an emergency
      * share selling round, taking all rules taken into account.
+     * 
+     * FIXME: Rails 2.x Adopt the new code from StockRound
      */
     protected List<SellShares> getSellableShares () {
 
@@ -375,7 +377,7 @@ public class ShareSellingRound extends StockRound {
         if (!company.isClosed()) {
 
             executeShareTransfer (company, certsToSell,
-                    dumpedPlayer, presSharesToSell, action.getPresidentExchange());
+                    dumpedPlayer, presSharesToSell);
         }
 
         cashToRaise.add(-numberSold * price);

@@ -7,6 +7,7 @@ package net.sf.rails.game.specific._1880;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.Bank;
+import net.sf.rails.game.BankPortfolio;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
@@ -484,9 +485,9 @@ public class StockRound_1880 extends StockRound {
     @Override
     protected void executeShareTransfer( PublicCompany company,
             List<PublicCertificate> certsToSell, 
-            Player dumpedPlayer, int presSharesToSell, int swapShareSize) {
+            Player dumpedPlayer, int presSharesToSell) {
         
-        executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, swapShareSize, ipo );
+        executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, (BankPortfolio) ipo.getParent() );
     }
     
 }

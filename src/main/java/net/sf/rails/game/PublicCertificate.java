@@ -1,7 +1,9 @@
 package net.sf.rails.game;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedSet;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.model.CertificatesModel;
@@ -13,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableSortedSet;
 
 
 /**
@@ -24,6 +27,42 @@ import com.google.common.collect.ComparisonChain;
 
 public class PublicCertificate extends RailsOwnableItem<PublicCertificate> implements Certificate, Cloneable, Typable<PublicCompany> {
 
+    /**
+     * Combination defines a set of certificates
+     */
+    public static class Combination implements Comparable<Combination>, Iterable<PublicCertificate> {
+        
+        private final SortedSet<PublicCertificate> certs;
+        
+        private Combination(SortedSet<PublicCertificate> certs) {
+            this.certs = certs;
+        }
+        
+        public static Combination create(Iterable<PublicCertificate> certs) {
+            return new Combination(ImmutableSortedSet.copyOf(certs));
+        }
+        
+        public SortedSet<PublicCertificate> getCertificates() {
+            return certs;
+        }
+        
+        public int size() {
+            return certs.size();
+        }
+
+        @Override
+        public int compareTo(Combination other) {
+            return ((Integer)certs.size()).compareTo(other.size());
+        }
+
+        @Override
+        public Iterator<PublicCertificate> iterator() {
+            return certs.iterator();
+        }
+        
+    }
+    
+    
     /** From which public company is this a certificate */
     protected PublicCompany company;
     /**
