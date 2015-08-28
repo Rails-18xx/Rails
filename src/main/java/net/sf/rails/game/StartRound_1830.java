@@ -348,10 +348,11 @@ public class StartRound_1830 extends StartRound {
                                         Bank.format(this, startPacket.getFirstUnsoldItem().getBasePrice()) ));
                         numPasses.set(0);
                         if (startPacket.getFirstUnsoldItem().getBasePrice() == 0) {
+                            getRoot().getPlayerManager().setCurrentToNextPlayer();
                             assignItem(playerManager.getCurrentPlayer(),
                                     startPacket.getFirstUnsoldItem(), 0, 0);
                             getRoot().getPlayerManager().setPriorityPlayerToNext();
-                            // startPacket.getFirstItem().getName());
+                            getRoot().getPlayerManager().setCurrentToNextPlayer();
                         } else {
                             //BR: If the first item's price is reduced, but not to 0, 
                             //    we still need to advance to the next player
@@ -363,9 +364,6 @@ public class StartRound_1830 extends StartRound {
                         finishRound();
     
                     }
-    //            } else if (auctionItem != null) {
-                    // TODO  Now dead code - should it be reactivated?
-    //                setNextBiddingPlayer(auctionItem);
                 } else {
                     playerManager.setCurrentToNextPlayer();
                 }
