@@ -362,7 +362,6 @@ public class StockRound extends Round {
         boolean choiceOfPresidentExchangeCerts = false;
         isOverLimits = false;
         overLimitsDetail = null;
-        
 
         StringBuilder violations = new StringBuilder();
         PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
@@ -990,15 +989,13 @@ public class StockRound extends Round {
         String companyName = action.getCompanyName();
         PublicCompany company =
             companyManager.getPublicCompany(action.getCompanyName());
-        PublicCertificate cert = null;
         PublicCertificate presCert = null;
         List<PublicCertificate> certsToSell =
             new ArrayList<PublicCertificate>();
         Player dumpedPlayer = null;
-        int presSharesToSell = 0;
+        int presidentShareNumbersToSell = 0;
         int numberToSell = action.getNumber();
         int shareUnits = action.getShareUnits();
-        int currentIndex = getCurrentPlayerIndex();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -1045,51 +1042,26 @@ public class StockRound extends Round {
             }
 
             // Find the certificates to sell
-            Iterator<PublicCertificate> it =
-                portfolio.getCertificates(company).iterator();
-            while (numberToSell > 0 && it.hasNext()) {
-                cert = it.next();
-                if (cert.isPresidentShare()) {
-                    // Remember the president's certificate in case we need it
-                    if (cert.isPresidentShare()) presCert = cert;
-                    continue;
-                } else if (shareUnits != cert.getShares()) {
-                    // Wrong number of share units
-                    continue;
-                }
-                // OK, we will sell this one
-                certsToSell.add(cert);
-                numberToSell--;
-            }
-            if (numberToSell == 0) presCert = null;
 
-            if (numberToSell > 0 && presCert != null
-                    && numberToSell <= presCert.getShares()) {
-                // More to sell and we are President: see if we can dump it.
-                // search for the player with the most shares (fix of bug 2962977)
-                int requiredShares = presCert.getShare();
-                Player potentialDirector = null;
-                Player previousPlayer = getRoot().getPlayerManager().getCurrentPlayer();
-                for (int i = currentIndex + 1; i < currentIndex
-                + numberOfPlayers; i++) {
-                    Player otherPlayer = getRoot().getPlayerManager().getNextPlayerAfter(previousPlayer);
-                    int otherPlayerShares = otherPlayer.getPortfolioModel().getShare(company);
-                    if (otherPlayerShares >= requiredShares) {
-                        // Check if he has the right kind of share
-                        if (numberToSell > 1
-                                || otherPlayer.getPortfolioModel().ownsCertificates(
-                                        company, 1, false) >= 1) {
-                            potentialDirector = otherPlayer;
-                            requiredShares = otherPlayerShares + 1;
-                        }
-                    }
-                    previousPlayer = otherPlayer;
+            // ... check if there is a dump required
+            // Player is president => dump is possible
+            if (currentPlayer == company.getPresident() && shareUnits == 1) {
+                dumpedPlayer = company.findPlayerToDump();
+                if (dumpedPlayer != null) {
+                    presidentShareNumbersToSell = PlayerShareUtils.presidentShareNumberToSell(
+                            company, currentPlayer, dumpedPlayer, numberToSell);
+                    // reduce the numberToSell by the president (partial) sold certificate
+                    numberToSell -= presidentShareNumbersToSell;
                 }
-                // The poor sod.
-                dumpedPlayer = potentialDirector;
-                presSharesToSell = numberToSell;
-                numberToSell = 0;
             }
+            
+            certsToSell = PlayerShareUtils.findCertificatesToSell(company, currentPlayer, numberToSell, shareUnits);
+            
+            // reduce numberToSell to double check
+            for (PublicCertificate c:certsToSell) {
+                numberToSell -= c.getShares();
+            }
+            
             // Check if we could sell them all
             if (numberToSell > 0) {
                 if (presCert != null) {
@@ -1147,9 +1119,9 @@ public class StockRound extends Round {
         adjustSharePrice (company, numberSold, soldBefore);
 
         if (!company.isClosed()) {
-
+ 
             executeShareTransfer (company, certsToSell,
-                    dumpedPlayer, presSharesToSell, action.getPresidentExchange());
+                    dumpedPlayer, presidentShareNumbersToSell);
         }
 
         // Remember that the player has sold this company this round.
@@ -1163,59 +1135,32 @@ public class StockRound extends Round {
         return true;
     }
 
-    
+    // FIXME: Rails 2.x This has to be rewritten to give the new presidency a choice which shares to swap (if he has multiple share certificates)
     protected final void executeShareTransferTo( PublicCompany company,
-            List<PublicCertificate> certsToSell, 
-            Player dumpedPlayer, int presSharesToSell, int swapShareSize,
-            PortfolioModel to) {
-        PortfolioModel portfolio = currentPlayer.getPortfolioModel();
+            List<PublicCertificate> certsToSell, Player dumpedPlayer, int presSharesToSell,
+            BankPortfolio bankTo) {
 
         // Check if the presidency has changed
         if (dumpedPlayer != null && presSharesToSell > 0) {
+       
+            PlayerShareUtils.executePresidentTransferAfterDump(company, dumpedPlayer, bankTo, presSharesToSell);
+
             ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                     dumpedPlayer.getId(),
                     company.getId() ));
-            // First swap the certificates
-            PortfolioModel dumpedPortfolio = dumpedPlayer.getPortfolioModel();
-            List<PublicCertificate> swapped =
-                portfolio.swapPresidentCertificate(company, dumpedPortfolio, swapShareSize);
-            for (int i = 0; i < presSharesToSell; i++) {
-                certsToSell.add(swapped.get(i));
-            }
+
         }
 
         // Transfer the sold certificates
-        Portfolio.moveAll(certsToSell, to.getParent());
-
-        // Check if we still have the presidency
-        // TODO: Is this not a duplication of the code before the transfer of the shares? (see above)
-        // After removal of the code all tests are still running
-        // => Thus the code is obsolete and can be removed soon  (Rails 2.0 beta4)
-         
-//        if (currentPlayer == company.getPresident()) {
-//            Player otherPlayer;
-//            Player previousPlayer = currentPlayer;
-//            int currentIndex = getCurrentPlayerIndex();
-//            for (int i = currentIndex + 1; i < currentIndex + numberOfPlayers; i++) {
-//                otherPlayer = getRoot().getPlayerManager().getNextPlayerAfter(previousPlayer);
-//                if (otherPlayer.getPortfolioModel().getShare(company) > portfolio.getShare(company)) {
-//                    portfolio.swapPresidentCertificate(company,
-//                            otherPlayer.getPortfolioModel(), swapShareSize);
-//                    ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
-//                            otherPlayer.getId(),
-//                            company.getId() ));
-//                    break;
-//                }
-//                previousPlayer = otherPlayer;
-//            }
-//        }
+        Portfolio.moveAll(certsToSell, bankTo);
+        
     }
     
     protected void executeShareTransfer( PublicCompany company,
             List<PublicCertificate> certsToSell, 
-            Player dumpedPlayer, int presSharesToSell, int swapShareSize) {
+            Player dumpedPlayer, int presSharesToSell) {
         
-        executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, swapShareSize, pool );
+        executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, (BankPortfolio)pool.getParent() );
     }
 
     protected int getCurrentSellPrice (PublicCompany company) {

@@ -1,9 +1,12 @@
 package net.sf.rails.game;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.SortedSet;
 
-
+import net.sf.rails.game.PublicCertificate.Combination;
 import net.sf.rails.game.model.CertificatesModel;
+import net.sf.rails.game.state.Portfolio;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
@@ -142,6 +145,70 @@ public class PlayerShareUtils {
         } else { // otherwise standard case
             return otherSellStandard(company, player);
         }
+    }
+
+    // FIXME: Rails 2.x This is a helper function as long as the sold certificates are not stored
+    public static int presidentShareNumberToSell(PublicCompany company, Player president, Player dumpedPlayer,  int nbCertsToSell) {
+        int dumpThreshold = president.getPortfolioModel().getShareNumber(company) - dumpedPlayer.getPortfolioModel().getShareNumber(company);
+        if (nbCertsToSell > dumpThreshold) {
+            // reduce the nbCertsToSell by the presidentShare (but it can be sold partially...)
+            return Math.min(company.getPresidentsShare().getShares(), nbCertsToSell);
+        } else {
+            return 0;
+        }
+    }
+    
+    // FIXME: Rails 2.x This is a helper function as long as the sold certificates are not stored
+    public static List<PublicCertificate> findCertificatesToSell(PublicCompany company, Player player, int nbCertsToSell, int shareUnits) {
+  
+        // check for <= 0 => empty list
+        if (nbCertsToSell <= 0) {
+            return ImmutableList.of();
+        }
+        
+        ImmutableList.Builder<PublicCertificate> certsToSell = ImmutableList.builder();
+        for (PublicCertificate cert:player.getPortfolioModel().getCertificates(company)) {
+            if (!cert.isPresidentShare() && cert.getShares() == shareUnits) {
+                certsToSell.add(cert);
+                nbCertsToSell--;
+                if (nbCertsToSell == 0) {
+                    break;
+                }
+            }
+        }
+        
+        return certsToSell.build();
+    }
+    
+    public static void executePresidentTransferAfterDump(PublicCompany company, Player newPresident, BankPortfolio bankTo, int presSharesToSell) {
+        
+        // 1. Move the swap certificates from new president to the pool
+        PublicCertificate presidentCert = company.getPresidentsShare();
+
+        // ... get all combinations for the presidentCert share numbers
+        SortedSet<Combination> combinations = CertificatesModel.certificateCombinations(
+                newPresident.getPortfolioModel().getCertificates(company), presidentCert.getShares());
+    
+        // ... move them to the Bank
+        // FIXME: this should be based on a selection of the new president, however it chooses the combination with most certificates
+        Combination swapToBank = combinations.last();
+        Portfolio.moveAll(swapToBank, bankTo);
+        
+        // 2. Move the replace certificates from the bank to the old president
+        
+        // What is the difference between the shares to sell and the president share number
+        int replaceShares = presidentCert.getShares() - presSharesToSell;
+        if (replaceShares > 0) {
+            combinations = CertificatesModel.certificateCombinations(
+                    bankTo.getPortfolioModel().getCertificates(company), replaceShares);
+            // FIXME: this should be based on a selection of the previous president, however it chooses the combination with least certificates
+            Combination swapFromBank = combinations.first();
+            // ... move to (old) president
+            Portfolio.moveAll(swapFromBank, company.getPresident());
+        }
+        
+        // 3. Transfer the president certificate
+        presidentCert.moveTo(newPresident);
     }
     
 }

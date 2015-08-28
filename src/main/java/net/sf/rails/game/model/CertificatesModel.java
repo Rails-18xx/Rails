@@ -199,5 +199,31 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
         
         return numbers.build();
     }
+    
+    public static SortedSet<PublicCertificate.Combination> certificateCombinations(Collection<PublicCertificate> certificates, int shareNumber) {
+  
+        // create vector for combinatorics
+        ICombinatoricsVector<PublicCertificate> certVector = Factory.createVector(certificates);
+        
+        // create generator for subsets
+        Generator<PublicCertificate> certGenerator = Factory.createSubSetGenerator(certVector);
+  
+        // add all subset that equal the share number to the set of combinations
+        ImmutableSortedSet.Builder<PublicCertificate.Combination> combinations = ImmutableSortedSet.naturalOrder();
+        
+        for (ICombinatoricsVector<PublicCertificate> certSubSet:certGenerator) {
+            int sum = 0;
+            for (PublicCertificate cert:certSubSet) {
+                sum += cert.getShares();
+                if (sum > shareNumber) {
+                    break;
+                }
+            }
+            if (sum == shareNumber) {
+                combinations.add(PublicCertificate.Combination.create(certSubSet));
+            }
+        }
+        return combinations.build();
+    }
 }
  
