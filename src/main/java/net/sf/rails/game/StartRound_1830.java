@@ -257,6 +257,7 @@ public class StartRound_1830 extends StartRound {
                 Bank.format(this, player.getFreeCash()) ));
 
         if (bidItem.getStatus() != StartItem.AUCTIONED) {
+            playerManager.setPriorityPlayerToNext();
             playerManager.setCurrentToNextPlayer();
         } else {
             setNextBiddingPlayer(item);
