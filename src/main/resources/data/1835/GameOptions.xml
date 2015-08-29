@@ -12,4 +12,5 @@
 	<GameOption name="LDIncome" values="20M,30M" default="20M"/>
 	<GameOption name="MinorsRequireFloatedBY" type="toggle" default="no"/>
 	<GameOption name="PrussianReservedIgnored" type="toggle" default="no"/>
+	<GameOption name="NF_PfB_Westermann" type="toggle" default="no"/>
 </GameOptions>
