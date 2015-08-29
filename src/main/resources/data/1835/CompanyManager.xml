@@ -34,9 +34,16 @@
 	
 	<Company name="NF"	longname="N&#252;rnberg-F&#252;rth" type="Private" basePrice="100" revenue="5">
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByPlayer" when="orTurn" class="net.sf.rails.game.special.SpecialBaseTokenLay">
-				<SpecialBaseTokenLay location="L14" extra="yes" free="yes"/>
-			</SpecialProperty>
+			<IfOption name="NF_PfB_Westermann" value ="yes">
+				<SpecialProperty condition="ifOwnedByPlayer" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+					<SpecialBaseTokenLay location="L14" extra="yes" free="yes"/>
+				</SpecialProperty>
+			</IfOption>				
+			<IfOption name="NF_PfB_Westermann" value ="no">
+				<SpecialProperty condition="ifOwnedByPlayer" when="tileAndTokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+					<SpecialBaseTokenLay location="L14" extra="yes" free="yes"/>
+				</SpecialProperty>
+			</IfOption>				
 		</SpecialProperties>
 		<ClosingConditions>
             <Phase>5</Phase>
@@ -63,9 +70,16 @@
 			<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" closesPrivate="no" class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="L6" colour="green" extra="yes" free="yes" />
 			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByPlayer" when="orTurn" class="net.sf.rails.game.special.SpecialBaseTokenLay">
-				<SpecialBaseTokenLay location="L6" extra="yes" free="yes" requiresTile="yes" />
-			</SpecialProperty>
+			<IfOption name="NF_PfB_Westermann" value ="yes">
+				<SpecialProperty condition="ifOwnedByPlayer" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+					<SpecialBaseTokenLay location="L6" extra="yes" free="yes" requiresTile="yes" />
+				</SpecialProperty>
+			</IfOption>
+			<IfOption name="NF_PfB_Westermann" value ="no">
+				<SpecialProperty condition="ifOwnedByPlayer" when="tileAndTokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+					<SpecialBaseTokenLay location="L6" extra="yes" free="yes" requiresTile="yes" />
+				</SpecialProperty>
+			</IfOption>
 		</SpecialProperties>
 		<ClosingConditions>
             <Phase>5</Phase>

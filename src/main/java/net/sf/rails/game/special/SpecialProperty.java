@@ -80,8 +80,11 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
                 || whenText.equalsIgnoreCase("srTurn"));
         setUsableDuringOR(whenText.equalsIgnoreCase("anyTurn") 
                 || whenText.equalsIgnoreCase("orTurn"));
+        
         setUsableDuringTileLayingStep(whenText.equalsIgnoreCase("tileLayingStep"));
+        setUsableDuringTileLayingStep(whenText.equalsIgnoreCase("tileAndTokenLayingStep"));
         setUsableDuringTokenLayingStep(whenText.equalsIgnoreCase("tokenLayingStep"));
+        setUsableDuringTokenLayingStep(whenText.equalsIgnoreCase("tileAndTokenLayingStep"));
 
         transferText = tag.getAttributeAsString("transfer", "");
         
