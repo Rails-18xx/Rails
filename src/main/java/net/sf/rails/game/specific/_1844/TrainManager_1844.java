@@ -1,3 +1,4 @@
+
 package net.sf.rails.game.specific._1844;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class TrainManager_1844 extends TrainManager {
         // TODO Auto-generated constructor stub
     }
 
-/*    
+    /*
      * (non-Javadoc)
      * @see net.sf.rails.game.TrainManager#rustTrainType(net.sf.rails.game.TrainCertificateType, net.sf.rails.game.state.Owner)
      * In 1844 the plain trains dont rust but are converted to H-Trains. The H-Trains rust.
@@ -37,11 +38,11 @@ public class TrainManager_1844 extends TrainManager {
      *        from the old to the new type
      *      - old train objects must be discarded
      *      - new train objects must be create
-     
+     */
     protected void rustTrainType (TrainCertificateType type, Owner lastBuyingCompany) {
         List<Train> convertedTrains;
         TrainType oldTrainType;
-        TrainCertificateType newTrainType;
+        TrainType newTrainType;
         
         oldTrainType=type.;
         for (int i=0 ; i < lTrainTypes.size(); i++) {
@@ -73,5 +74,5 @@ public class TrainManager_1844 extends TrainManager {
         } else {
             ReportBuffer.add(this, LocalText.getText("TrainsConverted",type.getId()));
         }
-    }*/
+    }
 }
