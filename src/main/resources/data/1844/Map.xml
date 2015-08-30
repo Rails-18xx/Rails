@@ -7,12 +7,12 @@
 	</Defaults>
 	<!-- The above defaults are redundant, these settings are the system defaults anyway -->
 <!-- 	<IfOption name="Variant" value="1st Edition">
-		<Image file="1844/MapImage_1st.svg" x="15" y="14" scale="0.1632"/>
+		<Image file="1844/map_44.svg" x="1" y="1" scale="1.48"/>
 	</IfOption>
 	<IfOption name="Variant" value="2nd Edition">
 		<Image file="1844/MapImage_2nd.svg" x="15" y="14" scale="0.1632"/>
 	</IfOption>
-	-->
+-->
 	<Hex name="A20" tile="-901" orientation="0" value="20,40,60,70" label="N-S+30"/>
 	<Hex name="A22" tile="-902" orientation="1" value="20,40,60,70" label="N-S+30"/>
 	<Hex name="B13" tile="-902" orientation="1" value="30,40,50,60" label="N-S+30"/>
