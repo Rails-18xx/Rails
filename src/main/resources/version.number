@@ -1,8 +1,8 @@
 #Changes are only valid in the build subdirectory of src/main/resources
 #Property file that contains version number and the develop indicator
-version=2.0.beta4
-# the following string "@DEVELOP@" is replaced by an empty string in the release version
+version=2.0.beta5
+# the following string "" is replaced by an empty string in the release version
 # this is done automatically by gradle
-develop=@DEVELOP@
+develop=
 # the following string "@ BUILDDATE @" is replaced by the build date
-buildDate=@BUILDDATE@
+buildDate=2015-08-30
