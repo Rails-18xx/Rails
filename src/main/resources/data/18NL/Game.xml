@@ -92,5 +92,6 @@
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+		<Modifier class="net.sf.rails.game.specific._18NL.F21Modifier" />
 	</Component>
 </ComponentManager>

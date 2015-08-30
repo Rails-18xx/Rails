@@ -43,7 +43,7 @@
 	<Hex name="F15" tile="-10" />
 	<Hex name="F17" tile="0" />
 	<Hex name="F19" tile="-20" />
-	<!-- Same case as Lotringen in 1835) -->
+	<!-- Same case as Elasas in 1835) -->
 	<Hex name="F21" tile="-901" orientation="2" value="0,40" city="Another East" />
 	
 	<!--  tile 3059 created for 18NL (Rails numbering), based on tile 59 -->
