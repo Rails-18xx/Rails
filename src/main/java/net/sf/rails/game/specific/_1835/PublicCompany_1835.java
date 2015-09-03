@@ -16,8 +16,8 @@ public class PublicCompany_1835 extends PublicCompany {
 
     @Override
     public boolean isSoldOut() {
-        // sold out makes only sense for buyable companies  
-        if (!isBuyable()) return false;
+        // sold out is only possible for started companies (thus M2 has to been exchanged for PR)  
+        if (!hasStarted()) return false;
 
         for (PublicCertificate cert : certificates.view()) {
             Owner owner = cert.getOwner();
