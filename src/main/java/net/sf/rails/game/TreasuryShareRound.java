@@ -141,7 +141,6 @@ public class TreasuryShareRound extends StockRound {
      * @return List of sellable certificates.
      */
     public void setSellableCerts() {
-        String compName;
         int price;
         int number;
         int maxShareToSell;
@@ -175,7 +174,6 @@ public class TreasuryShareRound extends StockRound {
              */
             // Take care for max. 4 share units per share
             int[] shareCountPerUnit = new int[5];
-            compName = company.getId();
             for (PublicCertificate c : companyPortfolio.getCertificates(company)) {
                 if (c.isPresidentShare()) {
                     shareCountPerUnit[1] += c.getShares();
@@ -190,8 +188,8 @@ public class TreasuryShareRound extends StockRound {
              * Check the price. If a cert was sold before this turn, the
              * original price is still valid
              */
-            if (sellPrices.containsKey(compName)) {
-                price = (sellPrices.get(compName)).getPrice();
+            if (sellPrices.containsKey(company)) {
+                price = (sellPrices.get(company)).getPrice();
             } else {
                 price = company.getMarketPrice();
             }
