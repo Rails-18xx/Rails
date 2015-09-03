@@ -10,6 +10,7 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.model.StockMarketModel;
 
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Lists;
@@ -30,6 +31,8 @@ public class StockMarket extends RailsManager implements Configurable {
     protected final HashMap<String, StockSpace> stockChartSpaces =
         new HashMap<String, StockSpace>();
     protected final SortedSet<StockSpace> startSpaces = new TreeSet<StockSpace>();
+    
+    protected final StockMarketModel marketModel = StockMarketModel.create(this);
     
     protected StockSpace stockChart[][];
     protected int numRows = 0;
@@ -187,6 +190,8 @@ public class StockMarket extends RailsManager implements Configurable {
 
     public void start(PublicCompany company, StockSpace price) {
         prepareMove(company, null, price);
+        // make marketModel updating on company price model
+        company.getCurrentPriceModel().addModel(marketModel);
     }
 
     public void payOut(PublicCompany company) {
@@ -359,6 +364,10 @@ public class StockMarket extends RailsManager implements Configurable {
      */
     public int getNumberOfRows() {
         return numRows;
+    }
+    
+    public StockMarketModel getMarketModel() {
+        return marketModel;
     }
 
 }
