@@ -39,8 +39,7 @@ public class StockRound extends Round {
 
     protected final IntegerState numPasses = IntegerState.create(this, "numPasses");
 
-    protected Map<PublicCompany, StockSpace> sellPrices =
-        new HashMap<PublicCompany, StockSpace>();
+    protected HashMapState<PublicCompany, StockSpace> sellPrices = HashMapState.create(this, "sellPrices");
 
     /** Records lifted share selling obligations in the current round<p>
      * Example: >60% ownership allowed after a merger in 18EU.

@@ -224,7 +224,7 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
                 companyName,
                 cashText ));
 
-        boolean soldBefore = sellPrices.containsKey(companyName);
+        boolean soldBefore = sellPrices.containsKey(company);
 
         adjustSharePrice (company, numberSold, soldBefore);
 
