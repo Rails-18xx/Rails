@@ -105,6 +105,8 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
         for (PublicCompany company:root.getCompanyManager().getAllPublicCompanies()) {
             soldThisRound.put(company, SoldThisRoundModel.create(this, company));
         }
+        // make worth aware of market model
+        root.getStockMarket().getMarketModel().addModel(worth);
     }
     
     public String getNameAndPriority() {
