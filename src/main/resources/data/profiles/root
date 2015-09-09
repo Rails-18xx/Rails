@@ -22,8 +22,8 @@ font.ui.style=bold
 map.autoscroll=yes
 map.defaultZoomFitOption=none
 map.displayCurrentRoutes=no
-map.highlightHexes=no
-map.image.display=no
+map.highlightHexes=yes
+map.image.display=yes
 map.zoomstep=10
 
 ### Panel Windows
@@ -39,7 +39,7 @@ money_format=
 or.number_format=composite
 
 ### Panel Appearance
-button.iconText=only text
+button.iconText=text and icon
 button.iconSize=small
 button.iconPosition=left
 gridPanel.tableBorder=disabled

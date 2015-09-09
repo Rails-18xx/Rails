@@ -247,7 +247,7 @@ launch4j {
     jar = "${buildDir}/libs/${project.name}-${project.version}-all.jar"
     outfile = "${project.name}-${project.version}.exe"
     icon = "../../${buildFilesDir}/${railsIcon}"
-    version = project.version.replace("alpha","98.").replace("beta","99.")
+    version = project.version.replace("alpha","98.").replace("beta","99.").replace("RC","100.")
     textVersion = "${project.version}"
     copyright = "${railsCopyright}"
     companyName = "${railsVendor}"
