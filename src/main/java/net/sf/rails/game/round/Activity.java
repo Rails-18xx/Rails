@@ -1,36 +1,22 @@
 package net.sf.rails.game.round;
 
 import rails.game.action.PossibleAction;
-import net.sf.rails.game.RailsAbstractItem;
-import net.sf.rails.game.RailsItem;
 
-public abstract class Activity extends RailsAbstractItem {
+public interface Activity {
    
-    protected Activity(RailsItem parent, String id) {
-        super(parent, id);
-    }
-
     /**
-     * @return true if activity is active
+     * create actions and add them to AvailableActions
      */
-    public abstract boolean isActive();
-
-    /**
-     * @return available actions thus checks the preconditions and creates the allowed actions 
-     */
-    public abstract Iterable<PossibleAction> getActions();
+    public void createActions(AvailableActions actions);
     
     /**
      * @return checks if the conditions of the actions are fullfilled
      */
-    public abstract boolean isActionAllowed(PossibleAction action);
+    public boolean isActionExecutable(PossibleAction action);
     
     /**
      * executes the action
      */
-    public abstract void executeAction(PossibleAction action);
+    public void executeAction(PossibleAction action);
     
 }
-    
-
-

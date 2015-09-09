@@ -20,8 +20,6 @@ public abstract class RoundNG extends RailsManager {
     
     public abstract Iterable<PossibleAction> getActions();
     
-    public abstract Player getCurrentPlayer();
-    
     public abstract boolean process(PossibleAction action);
     
     public abstract void finish();
