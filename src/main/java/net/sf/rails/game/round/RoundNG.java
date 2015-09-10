@@ -1,7 +1,6 @@
 package net.sf.rails.game.round;
 
 import rails.game.action.PossibleAction;
-import net.sf.rails.game.Player;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsManager;
 
@@ -10,7 +9,7 @@ import net.sf.rails.game.RailsManager;
  * 
  */
 
-public abstract class RoundNG extends RailsManager {
+public abstract class RoundNG extends RailsManager implements Activity {
 
     protected RoundNG(RailsItem parent, String id) {
         super(parent, id);

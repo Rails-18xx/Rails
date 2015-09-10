@@ -7,7 +7,7 @@ public interface Activity {
     /**
      * create actions and add them to AvailableActions
      */
-    public void createActions(AvailableActions actions);
+    public void createActions(Actor actor, AvailableActions actions);
     
     /**
      * @return checks if the conditions of the actions are fullfilled
