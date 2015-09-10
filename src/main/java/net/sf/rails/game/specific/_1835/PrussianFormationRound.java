@@ -55,7 +55,7 @@ public class PrussianFormationRound extends StockRound {
     public void start() {
 
         prussian = companyManager.getPublicCompany(PR_ID);
-        phase = getCurrentPhase();
+        phase = Phase.getCurrent(this);
         startPr = !prussian.hasStarted();
         forcedMerge = phase.getId().equals("5");
         forcedStart = phase.getId().equals("4+4") || forcedMerge;

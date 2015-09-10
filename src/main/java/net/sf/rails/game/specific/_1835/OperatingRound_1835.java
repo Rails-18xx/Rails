@@ -70,7 +70,7 @@ public class OperatingRound_1835 extends OperatingRound {
                 // The bank portfolios are all not cashOwners themselves!
                 if (priv.getOwner() instanceof MoneyOwner) {
                     Owner recipient = priv.getOwner();
-                    int revenue = priv.getRevenueByPhase(getCurrentPhase()); // sfy 1889: revenue by phase
+                    int revenue = priv.getRevenueByPhase(Phase.getCurrent(this)); // sfy 1889: revenue by phase
                     if (count++ == 0) ReportBuffer.add(this, "");
                     String revText = Currency.fromBank(revenue, (MoneyOwner)recipient);
                     ReportBuffer.add(this, LocalText.getText("ReceivesFor",
@@ -251,7 +251,7 @@ public class OperatingRound_1835 extends OperatingRound {
 
     @Override
     protected void newPhaseChecks() {
-        Phase phase = getCurrentPhase();
+        Phase phase = Phase.getCurrent(this);
         if (phase.getId().equals("4")
                 || phase.getId().equals("4+4")
                 && !companyManager.getPublicCompany(GameManager_1835.PR_ID).hasStarted()

@@ -97,5 +97,5 @@ public class PhaseManager extends RailsManager implements Configurable {
     public List<Phase> getPhases() {
         return phaseList;
     }
-
+    
 }

@@ -73,14 +73,6 @@ public class CGRFormationRound extends SwitchableUIRound {
         cgr = (PublicCompany_CGR) getRoot().getCompanyManager().getPublicCompany(PublicCompany_CGR.NAME);
     }
     
-    @Override
-    /** This class needs the game status window to show up
-     * rather than the operating round window.
-     */
-    public Class<? extends Round> getRoundTypeForUI () {
-        return StockRound.class;
-    }
-
     public void start (Player startingPlayer) {
 
         // store starting player

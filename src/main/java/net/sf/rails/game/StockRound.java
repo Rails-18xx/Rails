@@ -1629,7 +1629,7 @@ public class StockRound extends Round {
     // NationalFormationRound, 1835PrussianFormationRound: setPossibleActions, start
     
     // not overridden
-    @Override
+    @Deprecated
     public void setCurrentPlayer(Player player) {
         getRoot().getPlayerManager().setCurrentPlayer(player);
         currentPlayer = player;

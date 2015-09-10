@@ -71,28 +71,8 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     }
     
     @Deprecated
-    public Player getCurrentPlayer() {
-        return getRoot().getPlayerManager().getCurrentPlayer();
-    }
-
-    @Deprecated
-    public void setCurrentPlayerIndex(int newIndex) {
-        getRoot().getPlayerManager().setCurrentPlayerIndex(newIndex);
-    }
-
-    @Deprecated
-    public void setCurrentPlayer(Player player) {
-        getRoot().getPlayerManager().setCurrentPlayer(player);
-    }
-
-    @Deprecated
     protected List<Player> getPlayers() {
         return getRoot().getPlayerManager().getPlayers();
-    }
-
-    @Deprecated
-    protected int getNumberOfPlayers() {
-        return getRoot().getPlayerManager().getNumberOfPlayers();
     }
 
     @Deprecated
@@ -105,28 +85,8 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         return number;
     }
 
-    public Phase getCurrentPhase() {
-        return gameManager.getCurrentPhase();
-    }
-
-    /** Allows round instances to tell the UI what type of window to raise.
-     * Normally the type corresponds to the round type (e.g. OperatingRound
-     * needs ORWindow), but sometimes deviations occur (such as the
-     * CGRFormationRound, which isn't a StockRound type but needs StatusWindow).
-     * @return
-     */
-    public Class<? extends Round> getRoundTypeForUI () {
-        return this.getClass();
-    }
-
     // TODO: Remove as this is abstract class?
     public String getHelp() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    // TODO: Remove as this is abstract class?
-    public List<SpecialProperty> getSpecialProperties() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -135,6 +95,8 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         return true;
     }
 
+    
+    // Move to OR
     protected boolean exchangeTokens(ExchangeTokens action, boolean linkedMoveSet) {
 
         String errMsg = null;
@@ -226,10 +188,12 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     }
 
     /** Set the operating companies in their current acting order */
+    // What is the reason of that to have that here? => move to OR?
     public List<PublicCompany> setOperatingCompanies() {
         return setOperatingCompanies (null, null);
     }
 
+    // What is the reason of that to have that here => move to OR?
     public List<PublicCompany> setOperatingCompanies(List<PublicCompany> oldOperatingCompanies,
             PublicCompany lastOperatingCompany) {
 
@@ -276,6 +240,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     }
 
     /** Can a public company operate? (Default version) */
+    // What is the reason of that to have that here? => move to OR?
     protected boolean canCompanyOperateThisRound (PublicCompany company) {
         return company.hasFloated() && !company.isClosed();
     }
@@ -286,6 +251,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      *
      * @param company
      */
+    // What is the reason of that to have that here? => move to SR?
     protected void checkFlotation(PublicCompany company) {
 
         if (!company.hasStarted() || company.hasFloated()) return;
@@ -303,6 +269,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      * to process the consequences of company flotation must be handled in
      * game-specific subclasses.
      */
+    // What is the reason of that to have that here? => move to SR?
     protected void floatCompany(PublicCompany company) {
 
         // Move cash and shares where required
@@ -352,6 +319,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         }
     }
 
+    // Could be moved somewhere else (RoundUtils?)
     protected void finishRound() {
         // Report financials
         ReportBuffer.add(this, "");
@@ -373,22 +341,17 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      * Only valid if implemented in a subclass.
      *
      */
+    // make it abstract?
     public void resume() {
         log.error("Calling Round.resume() is invalid");
     }
 
+    // make it abstract?
     public boolean wasInterrupted () {
         return wasInterrupted.value();
     }
     
-    public GameManager getGameManager() {
-        return gameManager;
-    }
-
-    protected Object getGameParameter (GameDef.Parm key) {
-        return gameManager.getGameParameter(key);
-    }
-
+    // Do we need that anymore?
     public int getGameParameterAsInt (GameDef.Parm key) {
         if (key.defaultValue() instanceof Integer) {
             return (Integer) gameManager.getGameParameter(key);
@@ -397,6 +360,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         }
     }
 
+    // Do we need that anymore?
     public boolean getGameParameterAsBoolean (GameDef.Parm key) {
         if (key.defaultValue() instanceof Boolean) {
             return (Boolean) gameManager.getGameParameter(key);
@@ -405,10 +369,12 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         }
     }
 
+    // Make this abstract
     public String getRoundName() {
         return this.getClass().getSimpleName();
     }
 
+    // What is the reason of that to have that here? => move to SR?
     public boolean requestTurn (Player player) {
         if (canRequestTurn(player)) {
             if (!hasRequestedTurn.contains(player)) hasRequestedTurn.add(player);
@@ -417,10 +383,12 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         return false;
     }
 
+    // What is the reason of that to have that here? => move to SR?
     public boolean canRequestTurn (Player player) {
         return canRequestTurn.contains(player);
     }
 
+    // What is the reason of that to have that here? => move to SR?
     public void setCanRequestTurn (Player player, boolean value) {
         if (value && !canRequestTurn.contains(player)) {
             canRequestTurn.add(player);
@@ -429,6 +397,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         }
     }
 
+    // What is the reason of that to have that here? => move to SR?
     public void setAutopass (Player player, boolean value) {
         if (value && !autopasses.contains(player)) {
             autopasses.add(player);
@@ -437,10 +406,12 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         }
     }
 
+    // What is the reason of that to have that here? => move to SR?
     public boolean hasAutopassed (Player player) {
         return autopasses.contains(player);
     }
 
+    // What is the reason of that to have that here? => move to SR?
     public List<Player> getAutopasses() {
         return autopasses.view();
     }
@@ -450,6 +421,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      * @param name (required) The name of the action to be executed
      * @param value (optional) The value of the action to be executed, if applicable
      */
+    // can this be moved to GameManager?
     public void processPhaseAction (String name, String value) {
 
     }

@@ -4,7 +4,6 @@ import java.util.Set;
 
 import rails.game.action.BuyPrivate;
 import rails.game.action.SetDividend;
-
 import net.sf.rails.game.*;
 import net.sf.rails.game.state.ArrayListState;
 
@@ -31,7 +30,7 @@ public class OperatingRound_18TN extends OperatingRound {
     @Override
     protected int getPrivateMinimumPrice (PrivateCompany privComp) {
         if (gameManager.getAbsoluteORNumber() == 1
-                && !getCurrentPhase().isPrivateSellingAllowed()) {
+                && !Phase.getCurrent(this).isPrivateSellingAllowed()) {
             // 18TN special
             return privComp.getBasePrice();
         } else {
@@ -42,7 +41,7 @@ public class OperatingRound_18TN extends OperatingRound {
     @Override
     protected int getPrivateMaximumPrice (PrivateCompany privComp) {
         if (gameManager.getAbsoluteORNumber() == 1
-                && !getCurrentPhase().isPrivateSellingAllowed()) {
+                && !Phase.getCurrent(this).isPrivateSellingAllowed()) {
             // 18TN special
             return privComp.getBasePrice();
         } else {

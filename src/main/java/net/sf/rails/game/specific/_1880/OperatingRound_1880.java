@@ -20,6 +20,7 @@ import net.sf.rails.game.GameDef.OrStep;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.Phase;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCertificate;
@@ -140,7 +141,7 @@ public class OperatingRound_1880 extends OperatingRound {
          */
         // duplicate the phase colours
         Map<String, Integer> newTileColours = new HashMap<String, Integer>();
-        for (String colour : getCurrentPhase().getTileColours()) {
+        for (String colour : Phase.getCurrent(this).getTileColours()) {
             int allowedNumber =
                     operatingCompany.value().getNumberOfTileLays(colour);
             // Replace the null map value with the allowed number of lays
@@ -730,7 +731,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
             if (tile == null) break;
 
-            if (!getCurrentPhase().isTileColourAllowed(tile.getColourText())) {
+            if (!Phase.getCurrent(this).isTileColourAllowed(tile.getColourText())) {
                 errMsg =
                         LocalText.getText("TileNotYetAvailable",
                                 tile.toText());
@@ -1048,10 +1049,10 @@ public class OperatingRound_1880 extends OperatingRound {
 
             // First check if any more trains may be bought from the Bank
             // Postpone train limit checking, because an exchange might be possible
-            if (getCurrentPhase().canBuyMoreTrainsPerTurn()
+            if (Phase.getCurrent(this).canBuyMoreTrainsPerTurn()
                     || trainsBoughtThisTurn.isEmpty()) {
                 boolean mayBuyMoreOfEachType =
-                    getCurrentPhase().canBuyMoreTrainsPerTypePerTurn();
+                        Phase.getCurrent(this).canBuyMoreTrainsPerTypePerTurn();
 
                 /* New trains */
                 trains = trainMgr.getAvailableNewTrains();
@@ -1152,7 +1153,7 @@ public class OperatingRound_1880 extends OperatingRound {
             if (!canBuyTrainNow) return;
 
             /* Other company trains, sorted by president (current player first) */
-            if (getCurrentPhase().isTrainTradingAllowed()) {
+            if (Phase.getCurrent(this).isTrainTradingAllowed()) {
                 BuyTrain bt;
                 Player p;
                 PortfolioModel pfm;

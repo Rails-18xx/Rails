@@ -8,6 +8,7 @@ import java.util.Set;
 import rails.game.action.DiscardTrain;
 import rails.game.action.FoldIntoNational;
 import rails.game.action.PossibleAction;
+
 import com.google.common.collect.Iterables;
 
 import net.sf.rails.common.DisplayBuffer;
@@ -57,7 +58,7 @@ public class NationalFormationRound extends StockRound {
     public void start() {
     
         PublicCompany nationalToFound = gameManager.getNationalToFound();
-        phase = getCurrentPhase();
+        phase = Phase.getCurrent(this);
         startNational = !nationalToFound.hasStarted();
         forcedMerge = phase.getId().equals("5"); //TODO Make setable
         forcedStart = phase.getId().equals("4+4") || forcedMerge;//TODO Make setable

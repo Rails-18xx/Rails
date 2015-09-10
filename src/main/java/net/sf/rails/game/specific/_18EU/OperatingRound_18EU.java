@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import rails.game.action.BuyTrain;
-
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
@@ -123,7 +122,7 @@ public class OperatingRound_18EU extends OperatingRound {
         }
 
         /* Other company trains, sorted by president (current player first) */
-        if (getCurrentPhase().isTrainTradingAllowed()) {
+        if (Phase.getCurrent(this).isTrainTradingAllowed()) {
             Player p;
             PortfolioModel pf;
             int index;

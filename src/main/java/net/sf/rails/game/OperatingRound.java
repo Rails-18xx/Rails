@@ -52,7 +52,6 @@ public class OperatingRound extends Round implements Observer {
     // TODO: Question is this remark above still relevant?
 
     // Non-persistent lists (are recreated after each user action)
-    protected List<SpecialProperty> currentSpecialProperties = null;
 
     protected final HashMapState<String, Integer> tileLaysPerColour =
             HashMapState.create(this, "tileLaysPerColour");
@@ -154,7 +153,7 @@ public class OperatingRound extends Round implements Observer {
                 // Bank Portfolios are not MoneyOwners!
                 if (priv.getOwner() instanceof MoneyOwner) {
                     MoneyOwner recipient = (MoneyOwner) priv.getOwner();
-                    int revenue = priv.getRevenueByPhase(getCurrentPhase());
+                    int revenue = priv.getRevenueByPhase(Phase.getCurrent(this));
                     
                     if (revenue != 0) {
                         if (count++ == 0) ReportBuffer.add(this, "");
@@ -840,8 +839,6 @@ public class OperatingRound extends Round implements Observer {
             // getNormalTileLays();
         } else if (step == GameDef.OrStep.LAY_TOKEN) {
 
-        } else {
-            currentSpecialProperties = null;
         }
 
     }
@@ -1083,7 +1080,7 @@ public class OperatingRound extends Round implements Observer {
     }
 
     protected boolean isPrivateSellingAllowed() {
-        return getCurrentPhase().isPrivateSellingAllowed();
+        return Phase.getCurrent(this).isPrivateSellingAllowed();
     }
 
     protected int getPrivateMinimumPrice(PrivateCompany privComp) {
@@ -1465,7 +1462,7 @@ public class OperatingRound extends Round implements Observer {
 
             if (tile == null) break;
 
-            if (!getCurrentPhase().isTileColourAllowed(tile.getColourText())) {
+            if (!Phase.getCurrent(this).isTileColourAllowed(tile.getColourText())) {
                 errMsg =
                         LocalText.getText("TileNotYetAvailable", tile.toText());
                 break;
@@ -1692,7 +1689,7 @@ public class OperatingRound extends Round implements Observer {
 
         // duplicate the phase colours
         Map<String, Integer> newTileColours = new HashMap<String, Integer>();
-        for (String colour : getCurrentPhase().getTileColours()) {
+        for (String colour : Phase.getCurrent(this).getTileColours()) {
             int allowedNumber =
                     operatingCompany.value().getNumberOfTileLays(colour);
             // Replace the null map value with the allowed number of lays
@@ -1802,7 +1799,7 @@ public class OperatingRound extends Round implements Observer {
         Tile tile = stl.getTile();
 
         // What colours can be laid in the current phase?
-        List<String> phaseColours = getCurrentPhase().getTileColours();
+        List<String> phaseColours = Phase.getCurrent(this).getTileColours();
 
         // Which tile colour(s) are specified explicitly...
         String[] stlc = stl.getTileColours();
@@ -2878,7 +2875,7 @@ public class OperatingRound extends Round implements Observer {
 
         /* End of validation, start of execution */
 
-        Phase previousPhase = getCurrentPhase();
+        Phase previousPhase = Phase.getCurrent(this);
 
         if (presidentMustSellShares) {
             savedAction = action;
@@ -2949,7 +2946,7 @@ public class OperatingRound extends Round implements Observer {
         trainManager.checkTrainAvailability(train, oldOwner);
 
         // Check if any companies must discard trains
-        if (getCurrentPhase() != previousPhase && checkForExcessTrains()) {
+        if (Phase.getCurrent(this) != previousPhase && checkForExcessTrains()) {
             stepObject.set(GameDef.OrStep.DISCARD_TRAINS);
         }
 
@@ -3022,10 +3019,10 @@ public class OperatingRound extends Round implements Observer {
 
         // First check if any more trains may be bought from the Bank
         // Postpone train limit checking, because an exchange might be possible
-        if (getCurrentPhase().canBuyMoreTrainsPerTurn()
+        if (Phase.getCurrent(this).canBuyMoreTrainsPerTurn()
             || trainsBoughtThisTurn.isEmpty()) {
             boolean mayBuyMoreOfEachType =
-                    getCurrentPhase().canBuyMoreTrainsPerTypePerTurn();
+                    Phase.getCurrent(this).canBuyMoreTrainsPerTypePerTurn();
 
             /* New trains */
             trains = trainManager.getAvailableNewTrains();
@@ -3163,7 +3160,7 @@ public class OperatingRound extends Round implements Observer {
         if (!canBuyTrainNow) return;
 
         /* Other company trains, sorted by president (current player first) */
-        if (getCurrentPhase().isTrainTradingAllowed()) {
+        if (Phase.getCurrent(this).isTrainTradingAllowed()) {
             BuyTrain bt;
             Player p;
             int index;
@@ -3280,11 +3277,6 @@ public class OperatingRound extends Round implements Observer {
         return specialProperties;
     }
 
-    @Override
-    public List<SpecialProperty> getSpecialProperties() {
-        return currentSpecialProperties;
-    }
-
     /* TODO This is just a start of a possible approach to a Help system */
     @Override
     public String getHelp() {
@@ -3336,7 +3328,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* TODO: The below if needs be refined. */
-        if (getCurrentPhase().isPrivateSellingAllowed()
+        if (Phase.getCurrent(this).isPrivateSellingAllowed()
             && step != GameDef.OrStep.PAYOUT) {
             b.append("<br> - Buy one or more Privates");
         }
