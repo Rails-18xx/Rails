@@ -34,6 +34,8 @@ public class StockRound_1856 extends StockRound {
      *
      * @param company
      */
+    // change: checks required number of shares in the hand of the president
+    // requires: add a floatation strategy to publicCompany
     @Override
     protected void checkFlotation(PublicCompany company) {
 
@@ -59,6 +61,8 @@ public class StockRound_1856 extends StockRound {
         }
     }
 
+    // change: see adjustSharePrice
+    // requires: add an adjustSharePrice strategy (or a general implementation)
     @Override
 	protected void initPlayer() {
         super.initPlayer();
@@ -66,6 +70,8 @@ public class StockRound_1856 extends StockRound {
         squaresDownSoFar.set(0);
     }
 
+    // change: sharePrice adjustment is one row per two shares for CGR
+    // requires: add an adjustSharePrice strategy (or a general implementation)
     @Override
 	protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
 
@@ -86,6 +92,8 @@ public class StockRound_1856 extends StockRound {
         super.adjustSharePrice (company, numberOfSpaces, soldBefore);
     }
 
+    // change: money moves to different sources depending on phases 
+    // requires: add an getSharePriceRecipient strategy (or a general implementation)
     @Override
     protected MoneyOwner getSharePriceRecipient(PublicCompany company, Owner from, int price) {
 
@@ -133,6 +141,8 @@ public class StockRound_1856 extends StockRound {
     /** Check for the special condition that the CGR president
      * has just bought his second share.
      */
+    // change: update president of CGR after buying second share 
+    // requires: trigger on the portfolio of the president of CGR? or a modifier on shareSelling
     @Override
     protected void gameSpecificChecks (PortfolioModel boughtFrom,
             PublicCompany company) {
@@ -153,11 +163,15 @@ public class StockRound_1856 extends StockRound {
         }
     }
 
-       @Override
+    // change: what is the importance of this?
+    // requires: ?
+    @Override
     public void resume() {
     }
 
     /** Check if the player is president of CGR and must buy a second share */
+    // change: enforced action
+    // requires: a modifier for the StockRound
     @Override
     public boolean setPossibleActions() {
 

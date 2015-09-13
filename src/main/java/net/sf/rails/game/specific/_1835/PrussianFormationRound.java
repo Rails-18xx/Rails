@@ -44,6 +44,8 @@ public class PrussianFormationRound extends StockRound {
     /**
      * Constructed via Configure
      */
+    // change: PrussianFormationRound is a triggered MergerRound
+    // requires: make an independent round type with the merger and related activities
     public PrussianFormationRound (GameManager parent, String id) {
         super(parent, id);
 

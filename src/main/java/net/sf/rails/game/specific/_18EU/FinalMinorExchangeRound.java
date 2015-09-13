@@ -18,6 +18,9 @@ import net.sf.rails.game.*;
  * discarded. <p> Permanent memory is formed by static attributes (like who has
  * the Priority Deal).
  */
+
+// requires: Seems like a Round with only one activity MergeCompanies
+// Check rules how to best re-implement that
 public final class FinalMinorExchangeRound extends StockRound_18EU {
 
     public FinalMinorExchangeRound(GameManager parent, String id) {

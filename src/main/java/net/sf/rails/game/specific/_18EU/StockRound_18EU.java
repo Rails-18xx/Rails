@@ -32,7 +32,9 @@ public class StockRound_18EU extends StockRound {
     protected final IntegerState discardingCompanyIndex = IntegerState.create(this, "discardingCompanyIndex");
     protected final BooleanState discardingTrains = BooleanState.create(this, "discardingTrains");
 
+    // should this not be a state variable ?
     protected boolean phase5Reached = false;
+    // when is this created, should it not be a state variable?
     protected PublicCompany[] discardingCompanies;
 
     /**
@@ -45,16 +47,19 @@ public class StockRound_18EU extends StockRound {
     @Override
     public void start() {
         super.start();
+        // Is this really required? Can it set to true at the start?
         if (discardingTrains.value()) {
             discardingTrains.set(false);
         }
-
+        
+        // if it is done this way, should it not be a state variable?
         phase5Reached = getRoot().getPhaseManager().hasReachedPhase("5");
 
     }
 
     @Override
     public boolean setPossibleActions() {
+        // discardingTrains during stockRounds, when does this happen?
         if (discardingTrains.value()) {
             return setTrainDiscardActions();
         } else {
@@ -69,6 +74,8 @@ public class StockRound_18EU extends StockRound {
      * @return List of buyable certificates.
      */
     @Override
+    // changes: 18EU only allows to start a company with a merged minor (until phase 5)
+    // requires: a StartCompany18EUActivity
     public void setBuyableCerts() {
         if (!mayCurrentPlayerBuyAnything()) return;
 
@@ -222,6 +229,8 @@ public class StockRound_18EU extends StockRound {
      * An 18EU extension to StockRound.setSellableShares() that adds any
      * mergeable Minor companies.
      */
+    // changes: it allows to merge minors into accepting majors
+    // requires: a specific MergeCompanyActivity
     @Override
     protected void setGameSpecificActions() {
         if (!mayCurrentPlayerBuyAnything()) return;
@@ -249,6 +258,7 @@ public class StockRound_18EU extends StockRound {
         }
     }
 
+    // called from setPossibleActions in StockRound_18EU and FinalMinorExchangeRound
     protected boolean setTrainDiscardActions() {
 
         PublicCompany discardingCompany =
@@ -273,6 +283,8 @@ public class StockRound_18EU extends StockRound {
      * @return True if the company could be started. False indicates an error.
      */
     @Override
+    // changes: substantial changes to the usual startCompany behavior
+    // requires: an own 18EU StartCompany Activity
     public boolean startCompany(String playerName, StartCompany action) {
         PublicCompany company = action.getCompany();
         int price = action.getPrice();
@@ -492,6 +504,8 @@ public class StockRound_18EU extends StockRound {
      * @param action
      * @return
      */
+    // changes: this is a game specific action
+    // requires: an own MergeCompany Activity
     protected boolean mergeCompanies(MergeCompanies action) {
 
         PublicCompany minor = action.getMergingCompany();
@@ -619,6 +633,8 @@ public class StockRound_18EU extends StockRound {
     }
 
     @Override
+    // changes: this changes the floation behavior
+    // requires: move this to PublicCompany, potentially add a FloatCompanyStrategy
     protected void floatCompany(PublicCompany company) {
 
         company.setFloated();
@@ -640,6 +656,8 @@ public class StockRound_18EU extends StockRound {
         }
     }
 
+    // change: discardTrain action are usually outside of StockRounds
+    // requires: think about triggered activities?
     public boolean discardTrain(DiscardTrain action) {
 
         Train train = action.getDiscardedTrain();
@@ -691,6 +709,8 @@ public class StockRound_18EU extends StockRound {
     }
 
     @Override
+    // change: discardTrain action are usually outside of StockRounds
+    // requires: think about triggered activities?
     protected void finishTurn() {
 
         if (!discardingTrains.value()) {
@@ -713,6 +733,8 @@ public class StockRound_18EU extends StockRound {
     }
 
     @Override
+    // change: discardTrain action are usually outside of StockRounds
+    // requires: think about triggered activities?
     protected void finishRound() {
 
         if (discardingTrains.value()) {

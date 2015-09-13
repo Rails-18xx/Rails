@@ -50,6 +50,8 @@ public class StockRound_1880 extends StockRound {
     /**
      * Share price goes down 1 space for any number of shares sold.
      */
+    // change: this implements a blockade of the stock price move (from PublicCompany_1880)
+    // requires: move this to general code (or modifier of PublicCompany)
     @Override
     protected void adjustSharePrice(PublicCompany company, int numberSold,
             boolean soldBefore) {
@@ -58,13 +60,8 @@ public class StockRound_1880 extends StockRound {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * rails.game.StockRound#mayPlayerSellShareOfCompany(rails.game.PublicCompany
-     * )
-     */
+    // change: this implements a president cannot sell  (from PublicCompany_1880)
+    // requires: move this to general code (or modifier of PublicCompany)
     @Override
     public boolean mayPlayerSellShareOfCompany(PublicCompany company) {
         if ((company.getPresident() == playerManager.getCurrentPlayer()) && 
@@ -75,11 +72,10 @@ public class StockRound_1880 extends StockRound {
         return super.mayPlayerSellShareOfCompany(company);
     }
 
-    /* (non-Javadoc)
-     * @see rails.game.StockRound#gameSpecificChecks(rails.game.Portfolio, rails.game.PublicCompany)
-     */
+    // change: this implements a check of full floatation for 1880 companies
+    // requires: write this a trigger?
     @Override
-      protected void gameSpecificChecks(PortfolioModel boughtFrom,
+    protected void gameSpecificChecks(PortfolioModel boughtFrom,
             PublicCompany company) {
         
         ((PublicCompany_1880) company).sharePurchased();        
@@ -90,6 +86,8 @@ public class StockRound_1880 extends StockRound {
      * shares as a result of flotation. <p>Fifty Percent capitalisation is implemented
      * as in 1880. 
      */
+    // change: implements the 1880 floatation rules
+    // requires: addition of PublicCompany floatationStrategies?
     @Override
     protected void floatCompany(PublicCompany company) {
         // Move cash and shares where required
@@ -125,9 +123,8 @@ public class StockRound_1880 extends StockRound {
 
     }
 
-    /* (non-Javadoc)
-     * @see rails.game.StockRound#setBuyableCerts()
-     */
+    // change: see comments in the code below
+    // requires: a buyableCerts modifier, or a strategy for buyableCerts inside PublicCompany?
     @Override
     public void setBuyableCerts() {
         if (!mayCurrentPlayerBuyAnything()) return;
@@ -175,7 +172,8 @@ public class StockRound_1880 extends StockRound {
                         cert.getShare()) < 1 ) continue;
                 //Make sure that only 50  percent of shares are sold until all Certs are to become avail upon Phase change
                 //after the first 3 Train has been sold from IPO.
-                                      
+                            
+                // change: Line below
                 if (!((PublicCompany_1880) comp).certsAvailableForSale()) continue;
                 
                 /* Would the player exceed the total certificate limit? */
@@ -190,6 +188,7 @@ public class StockRound_1880 extends StockRound {
                                 from.getParent(), price));
                     }
                 } else if (!comp.hasStarted()) {
+                    // change: Begin
                     ParSlotManager parSlotManager = ((GameManager_1880) gameManager).getParSlotManager();
                     List<Integer> prices = parSlotManager.getAvailablePrices(playerCash/2);
                     if (prices.size() > 0) {
@@ -199,6 +198,7 @@ public class StockRound_1880 extends StockRound {
                         action.setPossibleParSlotIndices(Ints.toArray(slotIndices));
                         possibleActions.add(action);
                     }
+                    // change: End
                 }
             }
         }
@@ -229,6 +229,7 @@ public class StockRound_1880 extends StockRound {
             /* Checks if the player can buy any shares of this company */
             if (maxNumberOfSharesToBuy < 1) continue;
             if (currentPlayer.hasSoldThisRound(comp)) continue;
+            // change: Line below
             if ((comp.sharesOwnedByPlayers() ==50) && (!((PublicCompany_1880) comp).getAllCertsAvail())) continue;
             if (companyBoughtThisTurn != null) {
                 if (comp != companyBoughtThisTurn) continue;
@@ -305,9 +306,10 @@ public class StockRound_1880 extends StockRound {
         }
      }
 
-    /* (non-Javadoc)
-     * @see rails.game.StockRound#finishRound()
-     */
+    
+    
+    // change: see comments in the code below
+    // requires: a finishRound modifier
     @Override
     protected void finishRound() {
         ReportBuffer.add(this," ");
@@ -317,6 +319,7 @@ public class StockRound_1880 extends StockRound {
         if (raiseIfSoldOut) {
             /* Check if any companies are sold out. */
             for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
+                // change: Line below, the conditions for sold out are different to standard 18xx, check with rules
                 if (company.hasStarted() && (company instanceof PublicCompany_1880) && !((PublicCompany_1880) company).certsAvailableForSale() && (((PublicCompany_1880) company).canStockPriceMove())) {
                     StockSpace oldSpace = company.getCurrentSpace();
                     stockMarket.soldOut(company);
@@ -338,15 +341,20 @@ public class StockRound_1880 extends StockRound {
             }
         }
         
+        // requires: checks floation, should be replaced by a more general trigger
+        // change: begin
         for (PublicCompany_1880 c : PublicCompany_1880.getPublicCompanies(companyManager)) {
             if (c.hasStarted() && !c.hasFloated()) {
                 checkFlotation(c);
             }
         }
+        // change: end
         
         /** At the end of each Stockround the current amount of negative cash is subject to a fine of 50 percent
          * 
          */
+        // requires: finishRound modifier
+        // change: begin
         for (Player p : playerManager.getPlayers()) {
             if (p.getCash() <0 ) {
                 int fine = Math.abs(p.getCash() / 2);
@@ -355,7 +363,10 @@ public class StockRound_1880 extends StockRound {
                 Currency.wire(p,fine,bank);
             }
         }
+        // change: end
         
+        // requires: this is a copy from Round finishRound
+        // change: begin
         // Report financials
         ReportBuffer.add(this, "");
         for (PublicCompany c : companyManager.getAllPublicCompanies()) {
@@ -368,19 +379,25 @@ public class StockRound_1880 extends StockRound {
             ReportBuffer.add(this, LocalText.getText("Has", p.getId(),
                     Bank.format(this, p.getCash())));
         }
+        // change: end
+
+        // requires: this is a copy from StockRound finishRound
+        // change: begin
         // reset soldThisRound
         for (Player player:playerManager.getPlayers()) {
             player.resetSoldThisRound();
         }
+        // change: end
 
 
         // Inform GameManager
+        // requires: this is a copy from Round finishRound
+        // change: line below
         gameManager.nextRound(this);
     }
 
-    /* (non-Javadoc)
-     * @see rails.game.StockRound#sellShares(rails.game.action.SellShares)
-     */
+    // change: adds the brokerage fee of 1880
+    // requires: a sellShares Modifier (or a generic fee function)
     @Override
     public boolean sellShares(SellShares action) {
         if(super.sellShares(action)) {
@@ -396,9 +413,8 @@ public class StockRound_1880 extends StockRound {
         }
     }
 
-    /* (non-Javadoc)
-     * @see rails.game.StockRound#process(rails.game.action.PossibleAction)
-     */
+    // change: selects the different StartCompany method
+    // requires: replaced by the new mechanism of activities
     @Override
     public boolean process(PossibleAction action) {
     boolean result;
@@ -413,9 +429,8 @@ public class StockRound_1880 extends StockRound {
         }
     }
    
-    /*
-    * @see rails.game.Round#checkFlotation(rails.game.PublicCompany)
-    */
+    // change: checks required number of shares in the hand of the president
+    // requires: add a floatation strategy to publicCompany
    @Override
    protected void checkFlotation(PublicCompany company) {
        if (!company.hasStarted() || company.hasFloated()) return;
@@ -425,7 +440,8 @@ public class StockRound_1880 extends StockRound {
         }
     
     }
-
+       
+    // see checkFloatation above
     /** Determine sold percentage for floating purposes */
     protected int getOwnedPercentageByDirector (PublicCompany company) {
 
@@ -439,11 +455,14 @@ public class StockRound_1880 extends StockRound {
         return soldPercentage;
     }
 
-    private boolean certCountsAsSold(PublicCertificate cert, Player director) {
+    // see checkFloatation above
+       private boolean certCountsAsSold(PublicCertificate cert, Player director) {
         Owner holder = cert.getOwner();
         return holder.equals(director);
     }
     
+    // change: different StartCompany method
+    // requires: use separate activity
     public boolean startCompany(String playerName, StartCompany_1880 action) {
         int numShares = action.getNumberBought();
         PublicCompany startCompany = action.getCompany();
@@ -481,6 +500,9 @@ public class StockRound_1880 extends StockRound {
         return true;
     }
     
+    // change: selling of shares to ipo(or pool) only
+    // requires: a new option of PublicCompany
+
     // In 1880 all share transfers via ipo
     @Override
     protected void executeShareTransfer( PublicCompany company,

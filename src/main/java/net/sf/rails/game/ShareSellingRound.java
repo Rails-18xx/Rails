@@ -26,6 +26,8 @@ public class ShareSellingRound extends StockRound {
     /**
      * Created using Configure
      */
+    // change: ShareSellingRound is not really a (full) Round, only a single player acting
+    // requires: make an independent Round for EnforcedSelling that uses the selling shares activity
     public ShareSellingRound(GameManager parent, String id) {
         super(parent, id);
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
