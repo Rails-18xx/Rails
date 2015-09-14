@@ -254,24 +254,6 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         return wasInterrupted.value();
     }
     
-    // Do we need that anymore?
-    public int getGameParameterAsInt (GameDef.Parm key) {
-        if (key.defaultValue() instanceof Integer) {
-            return (Integer) gameManager.getGameParameter(key);
-        } else {
-            return -1;
-        }
-    }
-
-    // Do we need that anymore?
-    public boolean getGameParameterAsBoolean (GameDef.Parm key) {
-        if (key.defaultValue() instanceof Boolean) {
-            return (Boolean) gameManager.getGameParameter(key);
-        } else {
-            return false;
-        }
-    }
-
     public String getRoundName() {
         return this.getClass().getSimpleName();
     }

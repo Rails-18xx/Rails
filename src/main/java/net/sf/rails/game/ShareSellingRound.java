@@ -110,7 +110,7 @@ public class ShareSellingRound extends StockRound {
             /* May not sell more than the Pool can accept */
             maxShareToSell =
                 Math.min(maxShareToSell,
-                        getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
+                        GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)
                         - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
@@ -270,7 +270,7 @@ public class ShareSellingRound extends StockRound {
 
             // The pool may not get over its limit.
             if (pool.getShare(company) + numberToSell * company.getShareUnit()
-                    > getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)) {
+                    > GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }

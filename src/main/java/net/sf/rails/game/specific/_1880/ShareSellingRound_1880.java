@@ -123,7 +123,7 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
 
             // The pool may not get over its limit.
             if (pool.getShare(company) + numberToSell * company.getShareUnit()
-                    > getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)) {
+                    > GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }

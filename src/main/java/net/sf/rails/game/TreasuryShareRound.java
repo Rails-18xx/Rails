@@ -112,7 +112,7 @@ public class TreasuryShareRound extends StockRound {
             int ownedShare =
                     operatingCompany.getPortfolioModel().getShare(operatingCompany);
             // Max share that may be owned
-            int maxShare = getGameParameterAsInt(GameDef.Parm.TREASURY_SHARE_LIMIT);
+            int maxShare = GameDef.getGameParameterAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT);
             // Max number of shares to add
             int maxBuyable =
                 (maxShare - ownedShare) / operatingCompany.getShareUnit();
@@ -164,7 +164,7 @@ public class TreasuryShareRound extends StockRound {
             /* May not sell more than the Pool can accept */
             maxShareToSell =
                 Math.min(maxShareToSell,
-                        getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)
+                        GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)
                         - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
@@ -292,7 +292,7 @@ public class TreasuryShareRound extends StockRound {
             portfolio = operatingCompany.getPortfolioModel();
 
             // Check if company would exceed the per-company share limit
-            int treasuryShareLimit = getGameParameterAsInt(GameDef.Parm.TREASURY_SHARE_LIMIT);
+            int treasuryShareLimit = GameDef.getGameParameterAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT);
             if (portfolio.getShare(company) + share > treasuryShareLimit) {
                 errMsg =
                     LocalText.getText("TreasuryOverHoldLimit",
@@ -414,7 +414,7 @@ public class TreasuryShareRound extends StockRound {
 
             // The pool may not get over its limit.
             if (pool.getShare(company) + numberToSell * company.getShareUnit()
-                    > getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)) {
+                    > GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }

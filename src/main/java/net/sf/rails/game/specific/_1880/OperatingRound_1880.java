@@ -1190,7 +1190,7 @@ public class OperatingRound_1880 extends OperatingRound {
                             if (train.isObsolete() || !train.isTradeable()) continue;
                             bt = null;
                             if (i != currentPlayerIndex
-                                    && getGameParameterAsBoolean(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS)
+                                    && GameDef.getGameParameterAsBoolean(this, GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS)
                                     || operatingCompany.value().mustTradeTrainsAtFixedPrice()
                                     || company.mustTradeTrainsAtFixedPrice()) {
                                 // Fixed price
@@ -1201,7 +1201,7 @@ public class OperatingRound_1880 extends OperatingRound {
                                 }
                             } else if (cash > 0
                                     || emergency
-                                    && getGameParameterAsBoolean (GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY)) {
+                                    && GameDef.getGameParameterAsBoolean(this, GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY)) {
                                 bt = new BuyTrain(train, pfm.getParent(), 0);
 
                                 // In some games the president may add extra cash up to the list price

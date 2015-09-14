@@ -773,13 +773,13 @@ public class OperatingRound extends Round implements Observer {
                 int poolShare = pool.getShare(company); // Expensive, do it once
                 // Can it buy?
                 boolean canBuy =
-                        ownShare < getGameParameterAsInt(GameDef.Parm.TREASURY_SHARE_LIMIT)
+                        ownShare < GameDef.getGameParameterAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT)
                                 && company.getCash() >= company.getCurrentSpace().getPrice()
                                 && poolShare > 0;
                 // Can it sell?
                 boolean canSell =
                         company.getPortfolioModel().getShare(company) > 0
-                                && poolShare < getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT);
+                                && poolShare < GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT);
                 // Above we ignore the possible existence of double shares (as
                 // in 1835).
 
@@ -3105,9 +3105,9 @@ public class OperatingRound extends Round implements Observer {
                 // with president cash
                 // even if the company has enough cash to buy a used train.
                 // Players who think differently can ignore that extra option.
-                || getGameParameterAsBoolean(GameDef.Parm.EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN)
+                || GameDef.getGameParameterAsBoolean(this, GameDef.Parm.EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN)
                 && !newEmergencyTrains.isEmpty()) {
-                if (getGameParameterAsBoolean(GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN)) {
+                if (GameDef.getGameParameterAsBoolean(this, GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN)) {
                     // Find the cheapest one
                     // Assume there is always one available from IPO
                     int cheapestTrainCost = newEmergencyTrains.firstKey();
@@ -3188,7 +3188,7 @@ public class OperatingRound extends Round implements Observer {
                             continue;
                         bt = null;
                         if (i != currentPlayerIndex
-                            && getGameParameterAsBoolean(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS)
+                            && GameDef.getGameParameterAsBoolean(this, GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS)
                             || operatingCompany.value().mustTradeTrainsAtFixedPrice()
                             || company.mustTradeTrainsAtFixedPrice()) {
                             // Fixed price
@@ -3204,7 +3204,7 @@ public class OperatingRound extends Round implements Observer {
                             }
                         } else if (cash > 0
                                    || emergency
-                                   && getGameParameterAsBoolean(GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY)) {
+                                   && GameDef.getGameParameterAsBoolean(this, GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY)) {
                             // TODO: Check if this still works, as now the
                             // company is the from type
                             bt = new BuyTrain(train, company, 0);
@@ -3239,7 +3239,7 @@ public class OperatingRound extends Round implements Observer {
     }
 
     public void checkForeignSales() {
-        if (getGameParameterAsBoolean(GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)
+        if (GameDef.getGameParameterAsBoolean(this, GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)
             && trainManager.isAnyTrainBought()) {
             Train train =
                     Iterables.get(trainManager.getAvailableNewTrains(), 0);
