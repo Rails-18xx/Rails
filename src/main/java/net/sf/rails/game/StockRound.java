@@ -64,6 +64,12 @@ public class StockRound extends Round {
     protected boolean isOverLimits = false;
     protected String overLimitsDetail = null;
 
+    /** Autopasses */
+    private final ArrayListState<Player> autopasses = ArrayListState.create(this, "autopasses");
+    private final ArrayListState<Player> canRequestTurn = ArrayListState.create(this, "canRequestTurn");
+    private final ArrayListState<Player> hasRequestedTurn = ArrayListState.create(this, "hasRequestedTurn");
+
+    
     /**
      * Constructed via Configure
      */
@@ -1895,5 +1901,40 @@ public class StockRound extends Round {
         }
         sellObligationLifted.add(company);
     }
+	
+    public boolean requestTurn (Player player) {
+        if (canRequestTurn(player)) {
+            if (!hasRequestedTurn.contains(player)) hasRequestedTurn.add(player);
+            return true;
+        }
+        return false;
+    }
 
+    public boolean canRequestTurn (Player player) {
+        return canRequestTurn.contains(player);
+    }
+
+    public void setCanRequestTurn (Player player, boolean value) {
+        if (value && !canRequestTurn.contains(player)) {
+            canRequestTurn.add(player);
+        } else if (!value && canRequestTurn.contains(player)) {
+            canRequestTurn.remove(player);
+        }
+    }
+
+    public void setAutopass (Player player, boolean value) {
+        if (value && !autopasses.contains(player)) {
+            autopasses.add(player);
+        } else if (!value && autopasses.contains(player)) {
+            autopasses.remove(player);
+        }
+    }
+
+    public boolean hasAutopassed (Player player) {
+        return autopasses.contains(player);
+    }
+
+    public List<Player> getAutopasses() {
+        return autopasses.view();
+    }
 }

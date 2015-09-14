@@ -7,7 +7,6 @@ import java.util.TreeMap;
 
 import net.sf.rails.common.*;
 import net.sf.rails.game.model.PortfolioModel;
-import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Creatable;
 import net.sf.rails.game.state.Currency;
@@ -40,12 +39,6 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
 
     protected final BooleanState wasInterrupted = BooleanState.create(this, "wasInterrupted");
 
-
-    /** Autopasses */
-    // TODO: Should this be moved to the StockRound classes?
-    private final ArrayListState<Player> autopasses = ArrayListState.create(this, "autopasses");
-    private final ArrayListState<Player> canRequestTurn = ArrayListState.create(this, "canRequestTurn");
-    private final ArrayListState<Player> hasRequestedTurn = ArrayListState.create(this, "hasRequestedTurn");
 
     protected Round (GameManager parent, String id) {
         super(parent, id);
@@ -258,47 +251,6 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         return this.getClass().getSimpleName();
     }
 
-    // What is the reason of that to have that here? => move to SR?
-    public boolean requestTurn (Player player) {
-        if (canRequestTurn(player)) {
-            if (!hasRequestedTurn.contains(player)) hasRequestedTurn.add(player);
-            return true;
-        }
-        return false;
-    }
-
-    // What is the reason of that to have that here? => move to SR?
-    public boolean canRequestTurn (Player player) {
-        return canRequestTurn.contains(player);
-    }
-
-    // What is the reason of that to have that here? => move to SR?
-    public void setCanRequestTurn (Player player, boolean value) {
-        if (value && !canRequestTurn.contains(player)) {
-            canRequestTurn.add(player);
-        } else if (!value && canRequestTurn.contains(player)) {
-            canRequestTurn.remove(player);
-        }
-    }
-
-    // What is the reason of that to have that here? => move to SR?
-    public void setAutopass (Player player, boolean value) {
-        if (value && !autopasses.contains(player)) {
-            autopasses.add(player);
-        } else if (!value && autopasses.contains(player)) {
-            autopasses.remove(player);
-        }
-    }
-
-    // What is the reason of that to have that here? => move to SR?
-    public boolean hasAutopassed (Player player) {
-        return autopasses.contains(player);
-    }
-
-    // What is the reason of that to have that here? => move to SR?
-    public List<Player> getAutopasses() {
-        return autopasses.view();
-    }
 
     /** A stub for processing actions triggered by a phase change.
      * Must be overridden by subclasses that need to process such actions.
