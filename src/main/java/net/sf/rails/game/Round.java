@@ -63,11 +63,13 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     }
     
     // TODO: Remove as this is abstract class?
+    // called from GameManager
     public String getHelp() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    // called from GameManager
     public boolean process(PossibleAction action) {
         return true;
     }
@@ -76,18 +78,47 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      * Default version, does nothing. Subclasses should override this method
      * with a real version.
      */
+    // called from GameManager and GameLoader
     public boolean setPossibleActions() {
         return false;
     }
 
+    /** Generic stub to resume an interrupted round.
+     * Only valid if implemented in a subclass.
+     *
+     */
+    // called from GameManager
+    public void resume() {
+        log.error("Calling Round.resume() is invalid");
+    }
+
+    // called from GameManager and GameUIManager
+    public String getRoundName() {
+        return this.getClass().getSimpleName();
+    }
+
+
+    /** A stub for processing actions triggered by a phase change.
+     * Must be overridden by subclasses that need to process such actions.
+     * @param name (required) The name of the action to be executed
+     * @param value (optional) The value of the action to be executed, if applicable
+     */
+    // can this be moved to GameManager, not yet as there are internal dependencies
+    // called from GameManager
+    public void processPhaseAction (String name, String value) {
+
+    }
+
     /** Set the operating companies in their current acting order */
     // What is the reason of that to have that here? => move to OR?
+    // called only internally
     public List<PublicCompany> setOperatingCompanies() {
         return setOperatingCompanies (null, null);
     }
 
     // What is the reason of that to have that here => move to OR?
     // this is still required for 18EU StockRound as due to the merger there are companies that have to discard trains
+    // called only internally
     public List<PublicCompany> setOperatingCompanies(List<PublicCompany> oldOperatingCompanies,
             PublicCompany lastOperatingCompany) {
 
@@ -136,6 +167,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     /** Can a public company operate? (Default version) */
     // What is the reason of that to have that here? => move to OR?
     // is called by setOperatingCompanies above
+    // called only internally
     protected boolean canCompanyOperateThisRound (PublicCompany company) {
         return company.hasFloated() && !company.isClosed();
     }
@@ -148,6 +180,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      */
     // What is the reason of that to have that here? => best to move it to PublicCompany in the long-run
     // is called by StartRound as well
+    // called only internally
     protected void checkFlotation(PublicCompany company) {
 
         if (!company.hasStarted() || company.hasFloated()) return;
@@ -168,6 +201,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     // What is the reason of that to have that here? => move to SR?
     // called by checkFloatation above
     // move it to PublicCompany in the long-run
+    // called only internally
     protected void floatCompany(PublicCompany company) {
 
         // Move cash and shares where required
@@ -218,6 +252,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     }
 
     // Could be moved somewhere else (RoundUtils?)
+    // called only internally
     protected void finishRound() {
         // Report financials
         ReportBuffer.add(this, "");
@@ -235,30 +270,9 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         gameManager.nextRound(this);
     }
 
-    /** Generic stub to resume an interrupted round.
-     * Only valid if implemented in a subclass.
-     *
-     */
-    public void resume() {
-        log.error("Calling Round.resume() is invalid");
-    }
-
+    // called only from 1835 Operating Round?
     public boolean wasInterrupted () {
         return wasInterrupted.value();
     }
     
-    public String getRoundName() {
-        return this.getClass().getSimpleName();
-    }
-
-
-    /** A stub for processing actions triggered by a phase change.
-     * Must be overridden by subclasses that need to process such actions.
-     * @param name (required) The name of the action to be executed
-     * @param value (optional) The value of the action to be executed, if applicable
-     */
-    // can this be moved to GameManager?
-    public void processPhaseAction (String name, String value) {
-
-    }
 }
