@@ -83,7 +83,6 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      * Default version, does nothing. Subclasses should override this method
      * with a real version.
      */
-    // TODO: Remove as this is abstract class?
     public boolean setPossibleActions() {
         return false;
     }
@@ -95,6 +94,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     }
 
     // What is the reason of that to have that here => move to OR?
+    // this is still required for 18EU StockRound as due to the merger there are companies that have to discard trains
     public List<PublicCompany> setOperatingCompanies(List<PublicCompany> oldOperatingCompanies,
             PublicCompany lastOperatingCompany) {
 
@@ -142,6 +142,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
 
     /** Can a public company operate? (Default version) */
     // What is the reason of that to have that here? => move to OR?
+    // is called by setOperatingCompanies above
     protected boolean canCompanyOperateThisRound (PublicCompany company) {
         return company.hasFloated() && !company.isClosed();
     }
@@ -152,7 +153,8 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      *
      * @param company
      */
-    // What is the reason of that to have that here? => move to SR?
+    // What is the reason of that to have that here? => best to move it to PublicCompany in the long-run
+    // is called by StartRound as well
     protected void checkFlotation(PublicCompany company) {
 
         if (!company.hasStarted() || company.hasFloated()) return;
@@ -171,6 +173,8 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      * game-specific subclasses.
      */
     // What is the reason of that to have that here? => move to SR?
+    // called by checkFloatation above
+    // move it to PublicCompany in the long-run
     protected void floatCompany(PublicCompany company) {
 
         // Move cash and shares where required
@@ -242,12 +246,10 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      * Only valid if implemented in a subclass.
      *
      */
-    // make it abstract?
     public void resume() {
         log.error("Calling Round.resume() is invalid");
     }
 
-    // make it abstract?
     public boolean wasInterrupted () {
         return wasInterrupted.value();
     }
@@ -270,7 +272,6 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         }
     }
 
-    // Make this abstract
     public String getRoundName() {
         return this.getClass().getSimpleName();
     }
