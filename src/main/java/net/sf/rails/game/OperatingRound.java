@@ -292,13 +292,6 @@ public class OperatingRound extends Round implements Observer {
 
             result = repayLoans((RepayLoans) selectedAction);
 
-        } else if (selectedAction instanceof ExchangeTokens) {
-
-            result = exchangeTokens((ExchangeTokens) selectedAction, false); // 2nd
-                                                                             // parameter:
-                                                                             // unlinked
-                                                                             // moveset
-
         } else if (selectedAction instanceof ClosePrivate) {
 
             result = executeClosePrivate((ClosePrivate) selectedAction);

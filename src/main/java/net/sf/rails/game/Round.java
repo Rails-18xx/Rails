@@ -7,7 +7,6 @@ import java.util.TreeMap;
 
 import net.sf.rails.common.*;
 import net.sf.rails.game.model.PortfolioModel;
-import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Creatable;
@@ -79,89 +78,6 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     public boolean process(PossibleAction action) {
         return true;
     }
-
-    
-    // Move to OR ?
-    protected boolean exchangeTokens(ExchangeTokens action, boolean linkedMoveSet) {
-
-        String errMsg = null;
-
-        List<ExchangeableToken> tokens = action.getTokensToExchange();
-        int min = action.getMinNumberToExchange();
-        int max = action.getMaxNumberToExchange();
-        int exchanged = 0;
-
-        checks: {
-
-            for (ExchangeableToken token : tokens) {
-                if (token.isSelected()) exchanged++;
-            }
-            if (exchanged < min || exchanged > max) {
-                errMsg = LocalText.getText("WrongNumberOfTokensExchanged",
-                        action.getCompany(),
-                        min, max, exchanged);
-                break checks;
-            }
-        }
-
-        if (errMsg != null) {
-            DisplayBuffer.add(this, LocalText.getText("CannotExchangeTokens",
-                    action.getCompany(),
-                    action.toString(),
-                    errMsg));
-
-            return false;
-        }
-
-        
-        // FIMXE: if (linkedMoveSet) changeStack.linkToPreviousMoveSet();
-
-        if (exchanged > 0) {
-            MapHex hex;
-            Stop stop;
-            String stopName, hexName;
-            int stationNumber;
-            String[] ct;
-            PublicCompany comp = action.getCompany();
-
-            ReportBuffer.add(this, "");
-
-            for (ExchangeableToken token : tokens) {
-                stopName = token.getCityName();
-                ct = stopName.split("/");
-                hexName = ct[0];
-                try {
-                    stationNumber = Integer.parseInt(ct[1]);
-                } catch (NumberFormatException e) {
-                    stationNumber = 1;
-                }
-                hex = mapManager.getHex(hexName);
-                stop = hex.getRelatedStop(stationNumber);
-
-                if (token.isSelected()) {
-
-                    // For now we'll assume that the old token(s) have already been removed.
-                    // This is true in the 1856 CGR formation.
-                    if (hex.layBaseToken(comp, stop)) {
-                        /* TODO: the false return value must be impossible. */
-                        ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
-                                comp.getId(),
-                                token.getOldCompanyName(),
-                                stop.getSpecificId()));
-                        comp.layBaseToken(hex, 0);
-                    }
-                } else {
-                    ReportBuffer.add(this, LocalText.getText("NoBaseTokenExchange",
-                            comp.getId(),
-                            token.getOldCompanyName(),
-                            stop.getSpecificId()));
-                }
-            }
-        }
-
-        return true;
-    }
-
 
     /**
      * Default version, does nothing. Subclasses should override this method
