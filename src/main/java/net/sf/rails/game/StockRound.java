@@ -1467,7 +1467,7 @@ public class StockRound extends Round {
             }
         }
 
-        if (numPasses.value() >= getNumberOfActivePlayers()) {
+        if (numPasses.value() >= PlayerManager.getNumberOfActivePlayers(this)) {
 
             finishRound();
 

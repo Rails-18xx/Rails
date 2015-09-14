@@ -132,8 +132,19 @@ public class PlayerManager extends RailsManager implements Configurable {
         return playerNames.get(name);
     }
 
+    /**
+     * @return number of players including those which are bankrupt
+     */
     public int getNumberOfPlayers() {
         return playerModel.players.size();
+    }
+    
+    int getNumberOfActivePlayers() {
+        int number = 0;
+        for (Player player : getPlayers()) {
+            if (!player.isBankrupt()) number++;
+        }
+        return number;
     }
 
     // dynamic getter/setters
@@ -338,6 +349,13 @@ public class PlayerManager extends RailsManager implements Configurable {
             // and may be it is better to use another method instead of toText?
             return Util.joinWithDelimiter(players.view().toArray(new String[0]), ";");
         }
+    }
+    
+    /**
+     * @return number of players (non-bankrupt)
+     */
+    public static int getNumberOfActivePlayers(RailsItem item) {
+        return item.getRoot().getPlayerManager().getNumberOfActivePlayers();
     }
 
 }

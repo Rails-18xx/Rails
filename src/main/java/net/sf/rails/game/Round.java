@@ -70,21 +70,6 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
         guiHints.setCurrentRoundType(getClass());
     }
     
-    @Deprecated
-    protected List<Player> getPlayers() {
-        return getRoot().getPlayerManager().getPlayers();
-    }
-
-    @Deprecated
-    // TODO: Move to PlayerManager
-    protected int getNumberOfActivePlayers () {
-        int number = 0;
-        for (Player player : getPlayers()) {
-            if (!player.isBankrupt()) number++;
-        }
-        return number;
-    }
-
     // TODO: Remove as this is abstract class?
     public String getHelp() {
         // TODO Auto-generated method stub
@@ -96,7 +81,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     }
 
     
-    // Move to OR
+    // Move to OR ?
     protected boolean exchangeTokens(ExchangeTokens action, boolean linkedMoveSet) {
 
         String errMsg = null;
