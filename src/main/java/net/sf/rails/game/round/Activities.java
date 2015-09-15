@@ -6,7 +6,7 @@ import com.google.common.collect.MutableClassToInstanceMap;
 import net.sf.rails.game.RailsAbstractItem;
 
 /**
- * Activities allows to bundle several Activity objects
+ * Activities allows to bundle several AbstractActivity objects
  */
 public abstract class Activities extends RailsAbstractItem {
 
@@ -35,7 +35,7 @@ public abstract class Activities extends RailsAbstractItem {
     /**
      * @param activity to be stored using its class as key
      */
-    public void addActivity(Activity activity) {
+    public void addActivity(AbstractActivity activity) {
         activities.put(activity.getClass(), activity);
     }
     

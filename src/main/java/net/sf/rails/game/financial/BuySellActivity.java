@@ -1,28 +1,34 @@
 package net.sf.rails.game.financial;
 
 import rails.game.action.PossibleAction;
-import net.sf.rails.game.round.Activity;
+import rails.game.action.PossibleActions;
+import net.sf.rails.game.round.AbstractActivity;
 import net.sf.rails.game.round.Actor;
-import net.sf.rails.game.round.AvailableActions;
+import net.sf.rails.game.round.RoundNG;
 
+public class BuySellActivity extends AbstractActivity {
 
-public class BuySellActivity implements Activity {
+    protected BuySellActivity(RoundNG parent, String id) {
+        super(parent, id);
+    }
 
     @Override
-    public void createActions(Actor actor, AvailableActions actions) {
-        // TODO Auto-generated method stub
+    public void createActions(Actor actor, PossibleActions actions) {
+
     }
 
     @Override
     public boolean isActionExecutable(PossibleAction action) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public void executeAction(PossibleAction action) {
-        // TODO Auto-generated method stub
-        
     }
 
+    @Override
+    public void reportExecution(PossibleAction action) {
+
+    }
+  
 }

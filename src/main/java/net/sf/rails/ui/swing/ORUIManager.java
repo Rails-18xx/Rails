@@ -368,7 +368,7 @@ public class ORUIManager implements DialogOwner {
         String message = "<font color='red'>" + LocalText.getText(localStep.toString()) + "</font>";
         String extraMessage = "";
 
-        // Activity Messages
+        // AbstractActivity Messages
         boolean correctionActive = false;
         List<LayTile> tileLays = getPossibleActions().getType(LayTile.class);
         if (!tileLays.isEmpty()) {
