@@ -7,7 +7,7 @@ import com.google.common.base.Objects;
 
 import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.Round;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -33,7 +33,7 @@ public abstract class PossibleORAction extends PossibleAction {
 
         super();
         // TODO: The company field should be set from outside and not inside the action classes themselves
-        Round round = getRoot().getGameManager().getCurrentRound();
+        RoundFacade round = getRoot().getGameManager().getCurrentRound();
         if (round instanceof OperatingRound) {
             company = ((OperatingRound) round).getOperatingCompany();
             companyName = company.getId();

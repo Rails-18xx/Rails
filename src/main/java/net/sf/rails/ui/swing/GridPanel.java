@@ -29,7 +29,7 @@ import net.sf.rails.common.Config;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.Round;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
@@ -66,7 +66,7 @@ implements ActionListener, KeyListener {
     protected Player[] players;
     protected int nc;
     protected PublicCompany[] companies;
-    protected Round round;
+    protected RoundFacade round;
     protected PublicCompany c;
     protected JComponent f;
 

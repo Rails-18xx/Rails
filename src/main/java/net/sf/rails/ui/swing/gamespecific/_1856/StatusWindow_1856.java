@@ -3,9 +3,8 @@ package net.sf.rails.ui.swing.gamespecific._1856;
 import javax.swing.WindowConstants;
 
 import rails.game.action.*;
-
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.Round;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.specific._1856.CGRFormationRound;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.StatusWindow;
@@ -23,7 +22,7 @@ public class StatusWindow_1856 extends StatusWindow {
 
     @Override
     public void updateStatus(boolean myTurn) {
-        Round currentRound = gameUIManager.getCurrentRound();
+        RoundFacade currentRound = gameUIManager.getCurrentRound();
         if (!(currentRound instanceof CGRFormationRound)) {
             super.updateStatus(myTurn);
         } else if (possibleActions.contains(RepayLoans.class)) {

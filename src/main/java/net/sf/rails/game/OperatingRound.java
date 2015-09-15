@@ -14,6 +14,7 @@ import rails.game.action.*;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
 import net.sf.rails.common.*;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;
 import net.sf.rails.util.SequenceUtil;
@@ -3359,7 +3360,7 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /** @Overrides */
-    public boolean equals(Round round) {
+    public boolean equals(RoundFacade round) {
         return round instanceof OperatingRound
                && thisOrNumber.equals(((OperatingRound) round).thisOrNumber);
     }

@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 import net.sf.rails.common.*;
 import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Creatable;
 import net.sf.rails.game.state.Currency;
@@ -18,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import rails.game.action.*;
 
 
-public abstract class Round extends RailsAbstractItem implements Creatable {
+public abstract class Round extends RailsAbstractItem implements RoundFacade {
 
     protected static Logger log =
             LoggerFactory.getLogger(Round.class);
@@ -64,12 +65,14 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
     
     // TODO: Remove as this is abstract class?
     // called from GameManager
+    @Override
     public String getHelp() {
         // TODO Auto-generated method stub
         return null;
     }
 
     // called from GameManager
+    @Override
     public boolean process(PossibleAction action) {
         return true;
     }
@@ -79,6 +82,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      * with a real version.
      */
     // called from GameManager and GameLoader
+    @Override
     public boolean setPossibleActions() {
         return false;
     }
@@ -88,11 +92,13 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      *
      */
     // called from GameManager
+    @Override
     public void resume() {
         log.error("Calling Round.resume() is invalid");
     }
 
     // called from GameManager and GameUIManager
+    @Override
     public String getRoundName() {
         return this.getClass().getSimpleName();
     }
@@ -105,6 +111,7 @@ public abstract class Round extends RailsAbstractItem implements Creatable {
      */
     // can this be moved to GameManager, not yet as there are internal dependencies
     // called from GameManager
+    @Override
     public void processPhaseAction (String name, String value) {
 
     }

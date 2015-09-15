@@ -8,6 +8,7 @@ import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Portfolio;
@@ -35,7 +36,7 @@ public class TreasuryShareRound extends StockRound {
     }
 
     // TODO: Check if this still works, as the initialization was moved back to here
-    public void start(Round parentRound) {
+    public void start(RoundFacade parentRound) {
         log.info("Treasury share trading round started");
         operatingCompany = ((OperatingRound)parentRound).getOperatingCompany();
         sellingPlayer = operatingCompany.getPresident();

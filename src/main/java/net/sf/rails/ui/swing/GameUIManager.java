@@ -13,6 +13,7 @@ import javax.swing.plaf.FontUIResource;
 
 import net.sf.rails.common.*;
 import net.sf.rails.game.*;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.Observer;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
@@ -50,10 +51,10 @@ public class GameUIManager implements DialogOwner {
     protected ActionPerformer activeWindow = null;
     protected StartRound startRound;
 
-    protected Round currentRound;
-    protected Round previousRound;
-    protected Class<? extends Round> previousRoundType = null;
-    protected Class<? extends Round> currentRoundType = null;
+    protected RoundFacade currentRound;
+    protected RoundFacade previousRound;
+    protected Class<? extends RoundFacade> previousRoundType = null;
+    protected Class<? extends RoundFacade> currentRoundType = null;
     protected GuiHints uiHints= null;
     protected String previousRoundName;
     protected String currentRoundName;
@@ -1120,7 +1121,7 @@ public class GameUIManager implements DialogOwner {
         return orUIManager;
     }
 
-    public Round getCurrentRound() {
+    public RoundFacade getCurrentRound() {
         return railsRoot.getGameManager().getCurrentRound();
     }
 

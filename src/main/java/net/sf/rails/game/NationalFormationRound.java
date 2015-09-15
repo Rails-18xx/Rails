@@ -14,6 +14,7 @@ import com.google.common.collect.Iterables;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.Currency;
@@ -455,7 +456,7 @@ public class NationalFormationRound extends StockRound {
 
     @Override
     protected void finishRound() {
-        Round interruptedRound = gameManager.getInterruptedRound();
+        RoundFacade interruptedRound = gameManager.getInterruptedRound();
         ReportBuffer.add(this, " ");
         if (interruptedRound != null) {
             ReportBuffer.add(this, LocalText.getText("EndOfFormationRound", nationalToFound.getId(),

@@ -7,6 +7,7 @@ import java.util.List;
 import net.sf.rails.game.RailsAbstractItem;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.Round;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.GenericState;
 
 
@@ -23,7 +24,7 @@ public final class GuiHints extends RailsAbstractItem implements Serializable{
     public static final long serialVersionUID = 1L;
 
     /** What round type is currently active in the engine? */
-    private GenericState<Class<? extends Round>> currentRoundType = GenericState.create(this, "currentRoundType");
+    private GenericState<Class<? extends RoundFacade>> currentRoundType = GenericState.create(this, "currentRoundType");
 
     /** Which windows should be visible? */
     private List<VisibilityHint> visibilityHints;
@@ -39,11 +40,11 @@ public final class GuiHints extends RailsAbstractItem implements Serializable{
         return new GuiHints(parent, id);
     }
     
-    public Class<? extends Round> getCurrentRoundType() {
+    public Class<? extends RoundFacade> getCurrentRoundType() {
         return currentRoundType.value();
     }
 
-    public void setCurrentRoundType(Class<? extends Round> currentRoundType) {
+    public void setCurrentRoundType(Class<? extends RoundFacade> currentRoundType) {
         this.currentRoundType.set(currentRoundType);
     }
 

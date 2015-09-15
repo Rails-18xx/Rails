@@ -12,6 +12,7 @@ import net.sf.rails.common.Config;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.ui.swing.elements.*;
 
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ KeyListener, ActionPerformer {
 
     protected GameUIManager gameUIManager;
 
-    protected Round currentRound;
+    protected RoundFacade currentRound;
 
     protected PossibleActions possibleActions;
     protected PossibleAction immediateAction = null;
@@ -419,7 +420,7 @@ KeyListener, ActionPerformer {
         }
     }
 
-    public boolean setupFor(Round round) {
+    public boolean setupFor(RoundFacade round) {
 
         currentRound = round;
 

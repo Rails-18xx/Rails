@@ -8,6 +8,7 @@ import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import net.sf.rails.common.*;
 import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.IntegerState;
 
@@ -15,7 +16,7 @@ import net.sf.rails.game.state.IntegerState;
 // TODO: Check if un-initialized states cause undo problems
 public class ShareSellingRound extends StockRound {
 
-    protected Round parentRound;
+    protected RoundFacade parentRound;
     protected Player sellingPlayer;
     protected IntegerState cashToRaise; // intialized later
     protected PublicCompany cashNeedingCompany;
@@ -33,7 +34,7 @@ public class ShareSellingRound extends StockRound {
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }
 
-    public void start(Round parentRound, Player sellingPlayer, int cashToRaise,
+    public void start(RoundFacade parentRound, Player sellingPlayer, int cashToRaise,
             PublicCompany cashNeedingCompany, boolean dumpOtherCompaniesAllowed) {
         log.info("Share selling round started, player="
                 +sellingPlayer.getId()+" cash="+cashToRaise);

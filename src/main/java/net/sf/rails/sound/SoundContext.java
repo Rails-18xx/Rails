@@ -4,6 +4,7 @@
 package net.sf.rails.sound;
 
 import net.sf.rails.game.*;
+import net.sf.rails.game.round.RoundFacade;
 
 /**
  * Takes care of the current context from a music/sfx perspective.
@@ -22,7 +23,7 @@ public class SoundContext {
     //how much percent of the set revenue sfx is played if the revenue is epsilon;
     private final static double minimumSetRevenuePlaySoundProportion = 0.167;
     
-    private Round currentRound = null;
+    private RoundFacade currentRound = null;
     private Phase currentPhase = null;
     private String currentBackgroundMusicFileName = null;
     
@@ -106,7 +107,7 @@ public class SoundContext {
         }
     }
 
-    synchronized public void notifyOfRound(Round newRound) {
+    synchronized public void notifyOfRound(RoundFacade newRound) {
         if (newRound != null && !newRound.equals(currentRound)) {
 
             //play stock market opening bell if (non treasury / non share selling)

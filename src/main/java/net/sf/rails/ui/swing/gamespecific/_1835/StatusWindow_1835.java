@@ -6,6 +6,7 @@ import rails.game.action.DiscardTrain;
 import rails.game.specific._1835.FoldIntoPrussian;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.specific._1835.*;
 import net.sf.rails.ui.swing.GameUIManager;
@@ -33,7 +34,7 @@ public class StatusWindow_1835 extends StatusWindow {
 
     @Override
     public void updateStatus(boolean myTurn) {
-        Round currentRound = gameUIManager.getCurrentRound();
+        RoundFacade currentRound = gameUIManager.getCurrentRound();
         if (!(currentRound instanceof PrussianFormationRound)) {
             super.updateStatus(myTurn);
         } else if (possibleActions.contains(FoldIntoPrussian.class)) {

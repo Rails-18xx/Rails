@@ -17,7 +17,7 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Company;
 import net.sf.rails.game.NationalFormationRound;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.Round;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.StatusWindow;
@@ -52,7 +52,7 @@ public class StatusWindow_1837 extends StatusWindow {
 
         @Override
         public void updateStatus(boolean myTurn) {
-            Round currentRound = gameUIManager.getCurrentRound();
+            RoundFacade currentRound = gameUIManager.getCurrentRound();
             if (! (currentRound instanceof NationalFormationRound)) {
                 super.updateStatus(myTurn);
             } else if (possibleActions.contains(FoldIntoHungary.class)) {
