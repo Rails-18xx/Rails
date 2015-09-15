@@ -81,7 +81,6 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
      * Default version, does nothing. Subclasses should override this method
      * with a real version.
      */
-    // called from GameManager and GameLoader
     @Override
     public boolean setPossibleActions() {
         return false;

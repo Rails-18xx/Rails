@@ -6,17 +6,15 @@ import rails.game.action.PossibleAction;
 
 public interface RoundFacade extends Creatable, RailsItem {
 
-    // TODO: Remove as this is abstract class?
     // called from GameManager
     public abstract String getHelp();
 
     // called from GameManager
     public abstract boolean process(PossibleAction action);
 
-    /** Generic stub to resume an interrupted round.
-     * Only valid if implemented in a subclass.
-     *
-     */
+    // called from GameManager and GameLoader
+    public abstract boolean setPossibleActions();
+
     // called from GameManager
     public abstract void resume();
 
@@ -32,6 +30,5 @@ public interface RoundFacade extends Creatable, RailsItem {
     // called from GameManager
     public abstract void processPhaseAction(String name, String value);
 
-    public abstract boolean setPossibleActions();
 
 }
