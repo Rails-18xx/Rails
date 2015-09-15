@@ -1,8 +1,7 @@
 package net.sf.rails.game.round;
 
-import java.util.Map;
-
-import com.google.common.collect.Maps;
+import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.MutableClassToInstanceMap;
 
 import net.sf.rails.game.RailsAbstractItem;
 
@@ -11,17 +10,31 @@ import net.sf.rails.game.RailsAbstractItem;
  */
 public abstract class Activities extends RailsAbstractItem {
 
-    private Map<Class<? extends Activity>, Activity> activities = Maps.newHashMap();
+    private final ClassToInstanceMap<Activity> activities = MutableClassToInstanceMap.create();
     
     protected Activities(RoundNG parent, String id) {
         super(parent, id);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * @param activityClass by which the activity was stored
+     * @return the related activity
+     */
     public <T extends Activity> T getActivity(Class<T> activityClass) {
-        return (T) activities.get(activityClass);
+        return activities.getInstance(activityClass);
     }
     
+    /**
+     * @param activityClass store the activity with the class as key
+     * @param activity to be stored
+     */
+    public <T extends Activity> void addActivity(Class<T> activityClass, T activity) {
+        activities.putInstance(activityClass, activity);
+    }
+    
+    /**
+     * @param activity to be stored using its class as key
+     */
     public void addActivity(Activity activity) {
         activities.put(activity.getClass(), activity);
     }
