@@ -1,14 +1,16 @@
 package net.sf.rails.game.round;
 
+import rails.game.action.PossibleActions;
+
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.MutableClassToInstanceMap;
 
 import net.sf.rails.game.RailsAbstractItem;
 
 /**
- * Activities allows to bundle several AbstractActivity objects
+ * Activities allows to bundle several Activity objects
  */
-public abstract class Activities extends RailsAbstractItem {
+public class Activities extends RailsAbstractItem {
 
     private final ClassToInstanceMap<Activity> activities = MutableClassToInstanceMap.create();
     
@@ -35,8 +37,20 @@ public abstract class Activities extends RailsAbstractItem {
     /**
      * @param activity to be stored using its class as key
      */
-    public void addActivity(AbstractActivity activity) {
+    public void addActivity(Activity activity) {
         activities.put(activity.getClass(), activity);
     }
+
+    /**
+     * create actions and add them to the possibleActions object
+     */
+    public void createActions(Actor actor, PossibleActions actions) {
+        for (Activity activity:activities.values()) {
+            if (activity.isEnabled()) {
+                activity.createActions(actor, actions);
+            }
+        }
+    }
+    
     
 }

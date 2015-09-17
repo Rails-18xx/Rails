@@ -2,11 +2,11 @@ package net.sf.rails.game.financial;
 
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
-import net.sf.rails.game.round.AbstractActivity;
+import net.sf.rails.game.round.Activity;
 import net.sf.rails.game.round.Actor;
 import net.sf.rails.game.round.RoundNG;
 
-public class BuySellActivity extends AbstractActivity {
+public class BuySellActivity extends Activity {
 
     protected BuySellActivity(RoundNG parent, String id) {
         super(parent, id);

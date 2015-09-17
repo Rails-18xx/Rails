@@ -284,7 +284,7 @@ public class StockRound_18EU extends StockRound {
      */
     @Override
     // changes: substantial changes to the usual startCompany behavior
-    // requires: an own 18EU StartCompany AbstractActivity
+    // requires: an own 18EU StartCompany Activity
     public boolean startCompany(String playerName, StartCompany action) {
         PublicCompany company = action.getCompany();
         int price = action.getPrice();
@@ -505,7 +505,7 @@ public class StockRound_18EU extends StockRound {
      * @return
      */
     // changes: this is a game specific action
-    // requires: an own MergeCompany AbstractActivity
+    // requires: an own MergeCompany Activity
     protected boolean mergeCompanies(MergeCompanies action) {
 
         PublicCompany minor = action.getMergingCompany();

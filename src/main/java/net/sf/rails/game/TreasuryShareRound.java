@@ -19,7 +19,7 @@ import com.google.common.collect.Iterables;
 
 
 // Change: TreasuryShareRound is a workaround as StockRound
-// It is a single AbstractActivity to allow companies buying or selling shares
+// It is a single Activity to allow companies buying or selling shares
 public class TreasuryShareRound extends StockRound {
 
     protected Player sellingPlayer;
