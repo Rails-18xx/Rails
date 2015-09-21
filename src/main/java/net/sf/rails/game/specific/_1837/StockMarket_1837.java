@@ -5,8 +5,8 @@ package net.sf.rails.game.specific._1837;
 
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.StockMarket;
 import net.sf.rails.game.StockSpace;
+import net.sf.rails.game.financial.StockMarket;
 
 /**
  * @author Martin Brumm

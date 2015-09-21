@@ -1,4 +1,4 @@
-package net.sf.rails.game;
+package net.sf.rails.game.financial;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +10,11 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
-import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsManager;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.StockSpace;
+import net.sf.rails.game.StockSpaceType;
 import net.sf.rails.game.model.StockMarketModel;
 
 import com.google.common.collect.ImmutableSortedSet;

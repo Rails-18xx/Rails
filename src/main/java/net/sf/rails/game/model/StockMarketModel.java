@@ -1,6 +1,6 @@
 package net.sf.rails.game.model;
 
-import net.sf.rails.game.StockMarket;
+import net.sf.rails.game.financial.StockMarket;
 
 public class StockMarketModel extends RailsModel {
 

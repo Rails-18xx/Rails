@@ -15,6 +15,7 @@ import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.common.parser.XMLTags;
 import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.StockMarket;
 import net.sf.rails.game.state.Root;
 
 import org.slf4j.Logger;

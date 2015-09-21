@@ -3,6 +3,7 @@ package net.sf.rails.game;
 import java.awt.Color;
 
 import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.StockMarket;
 import net.sf.rails.game.model.RailsModel;
 import net.sf.rails.game.state.ArrayListState;
 
