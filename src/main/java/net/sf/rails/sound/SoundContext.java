@@ -5,6 +5,7 @@ package net.sf.rails.sound;
 
 import net.sf.rails.game.*;
 import net.sf.rails.game.financial.ShareSellingRound;
+import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.game.round.RoundFacade;
 
 /**

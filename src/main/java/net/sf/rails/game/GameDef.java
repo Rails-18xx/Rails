@@ -1,5 +1,7 @@
 package net.sf.rails.game;
 
+import net.sf.rails.game.financial.StockRound;
+
 /**
  * This class will hold parameter identifiers for use in the game engine only.
  * See rails.common.Defs for parameters used in the GUI/engine communication.

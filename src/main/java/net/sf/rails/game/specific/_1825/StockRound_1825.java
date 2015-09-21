@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.action.SellShares;
-
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.game.model.PortfolioModel;
 
 

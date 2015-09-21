@@ -1,14 +1,18 @@
-package net.sf.rails.game;
+package net.sf.rails.game.financial;
 
 import java.util.*;
 
 import rails.game.action.*;
 import net.sf.rails.common.*;
-import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.financial.BankPortfolio;
-import net.sf.rails.game.financial.Certificate;
-import net.sf.rails.game.financial.PlayerShareUtils;
-import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.GameDef;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PlayerManager;
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Round;
+import net.sf.rails.game.StockSpace;
+import net.sf.rails.game.GameDef.Parm;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;
@@ -53,9 +57,9 @@ public class StockRound extends Round {
 
 
     /* Rule constants */
-    static protected final int SELL_BUY_SELL = 0;
-    static protected final int SELL_BUY = 1;
-    static protected final int SELL_BUY_OR_BUY_SELL = 2;
+    public static final int SELL_BUY_SELL = 0;
+    public static final int SELL_BUY = 1;
+    public static final int SELL_BUY_OR_BUY_SELL = 2;
 
     /* Action constants */
     static public final int BOUGHT = 0;

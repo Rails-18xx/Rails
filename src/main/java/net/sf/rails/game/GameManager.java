@@ -15,6 +15,7 @@ import net.sf.rails.common.parser.*;
 import net.sf.rails.game.PlayerManager.PlayerOrderModel;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.ShareSellingRound;
+import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.SpecialBonusTokenLay;
@@ -206,7 +207,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             if (srTag != null) {
                 // FIXME: Rails 2.0, move this to some default .xml!
                 String srClassName =
-                    srTag.getAttributeAsString("class", "net.sf.rails.game.StockRound");
+                    srTag.getAttributeAsString("class", "net.sf.rails.game.financial.StockRound");
                 try {
                     stockRoundClass =
                         Class.forName(srClassName).asSubclass(StockRound.class);
