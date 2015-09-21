@@ -1038,8 +1038,6 @@ PASSES,Christian
 PASSES,Eyal
  
 END_SR,7
-PRICE_MOVES_LOG,PR,154,I4,170,I3
-SoldOut,PR,154,I4,170,I3
 PRICE_MOVES_LOG,BY,124,G4,136,G3
 SoldOut,BY,124,G4,136,G3
 PRICE_MOVES_LOG,SX,122,F3,134,F2
@@ -1222,9 +1220,9 @@ Payout,BA,45,3,10
 PRICE_MOVES_LOG,BA,74,B6,82,C6
  
 EndOfOperatingRound,7.1
-ORWorthIncrease,Eyal,7.1,278
-ORWorthIncrease,Marco,7.1,118
-ORWorthIncrease,Nick,7.1,319
+ORWorthIncrease,Eyal,7.1,310
+ORWorthIncrease,Marco,7.1,134
+ORWorthIncrease,Nick,7.1,335
 ORWorthIncrease,Christian,7.1,499
 Has,BY,241
 Has,SX,555
