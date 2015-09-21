@@ -10,8 +10,8 @@ import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StartItem;
 import net.sf.rails.game.StartRound_AuctionOnly;
-import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.state.Currency;
 
 /**

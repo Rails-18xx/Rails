@@ -16,6 +16,7 @@ import net.sf.rails.game.PlayerManager.PlayerOrderModel;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.SpecialBonusTokenLay;

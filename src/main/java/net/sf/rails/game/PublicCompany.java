@@ -12,6 +12,7 @@ import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.financial.RailsMoneyOwner;
+import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.model.*;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;

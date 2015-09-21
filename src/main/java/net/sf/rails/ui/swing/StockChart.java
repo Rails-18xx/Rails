@@ -6,7 +6,7 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import net.sf.rails.game.StockSpace;
+import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.ui.swing.elements.GUIStockSpace;
 
 

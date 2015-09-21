@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import net.sf.rails.common.*;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.StockMarket;
+import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.BooleanState;

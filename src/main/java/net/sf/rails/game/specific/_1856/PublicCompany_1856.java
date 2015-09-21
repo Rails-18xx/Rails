@@ -1,6 +1,7 @@
 package net.sf.rails.game.specific._1856;
 
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.state.IntegerState;
 
 import com.google.common.collect.Iterables;

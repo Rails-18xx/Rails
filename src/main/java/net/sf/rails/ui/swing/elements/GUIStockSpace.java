@@ -12,7 +12,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.StockSpace;
+import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 import net.sf.rails.ui.swing.GUIToken;

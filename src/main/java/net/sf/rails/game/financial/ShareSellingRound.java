@@ -11,7 +11,6 @@ import net.sf.rails.game.GameDef;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.GameDef.Parm;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
