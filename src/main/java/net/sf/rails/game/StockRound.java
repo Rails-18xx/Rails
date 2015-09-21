@@ -6,6 +6,7 @@ import rails.game.action.*;
 import net.sf.rails.common.*;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.BankPortfolio;
+import net.sf.rails.game.financial.Certificate;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;
