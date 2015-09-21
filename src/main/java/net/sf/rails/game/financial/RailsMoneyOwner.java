@@ -1,5 +1,7 @@
-package net.sf.rails.game;
+package net.sf.rails.game.financial;
 
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.state.MoneyOwner;
 
 /**

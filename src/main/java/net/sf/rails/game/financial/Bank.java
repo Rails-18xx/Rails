@@ -12,7 +12,6 @@ import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsManager;
-import net.sf.rails.game.RailsMoneyOwner;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.model.PurseMoneyModel;
 import net.sf.rails.game.state.BooleanState;
