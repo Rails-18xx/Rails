@@ -14,6 +14,7 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
 import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.game.financial.TreasuryShareRound;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.ui.swing.elements.*;
 

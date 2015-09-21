@@ -1,4 +1,4 @@
-package net.sf.rails.game;
+package net.sf.rails.game.financial;
 
 import java.util.*;
 
@@ -7,9 +7,12 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.financial.PublicCertificate;
-import net.sf.rails.game.financial.StockRound;
-import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.GameDef;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.GameDef.Parm;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.BooleanState;
