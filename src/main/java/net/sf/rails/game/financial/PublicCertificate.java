@@ -1,4 +1,4 @@
-package net.sf.rails.game;
+package net.sf.rails.game.financial;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -6,7 +6,10 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.financial.Certificate;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.RailsOwnableItem;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.model.CertificatesModel;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Ownable;

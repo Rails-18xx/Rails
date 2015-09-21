@@ -7,6 +7,7 @@ import net.sf.rails.common.*;
 import net.sf.rails.util.Util;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.Certificate;
+import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.IntegerState;

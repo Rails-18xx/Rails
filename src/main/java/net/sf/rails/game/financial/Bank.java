@@ -9,7 +9,6 @@ import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.PrivateCompany;
-import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsManager;

@@ -10,9 +10,9 @@ import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
 import net.sf.rails.game.Player;
-import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsOwner;
+import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.state.PortfolioMap;
 
 import com.google.common.collect.ImmutableMultimap;

@@ -1,7 +1,7 @@
 package net.sf.rails.game.model;
 
-import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.financial.PublicCertificate;
 
 import com.google.common.collect.Multimap;
 

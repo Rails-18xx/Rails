@@ -8,6 +8,7 @@ import rails.game.action.*;
 import net.sf.rails.common.*;
 import net.sf.rails.game.*;
 import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.state.ArrayListMultimapState;
 import net.sf.rails.game.state.ArrayListState;

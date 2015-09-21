@@ -8,6 +8,7 @@ import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import net.sf.rails.common.*;
 import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.Currency;

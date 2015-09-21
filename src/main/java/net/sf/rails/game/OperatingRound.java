@@ -16,6 +16,7 @@ import rails.game.correct.OperatingCost;
 import net.sf.rails.common.*;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.BankPortfolio;
+import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;

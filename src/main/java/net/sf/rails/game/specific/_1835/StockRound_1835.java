@@ -7,10 +7,10 @@ package net.sf.rails.game.specific._1835;
 import java.util.Set;
 
 import rails.game.action.BuyCertificate;
-
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.model.PortfolioModel;
 
 

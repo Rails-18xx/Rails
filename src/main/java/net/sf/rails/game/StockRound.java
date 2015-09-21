@@ -8,6 +8,7 @@ import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.Certificate;
 import net.sf.rails.game.financial.PlayerShareUtils;
+import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;

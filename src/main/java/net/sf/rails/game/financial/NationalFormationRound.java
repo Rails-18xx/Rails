@@ -21,7 +21,6 @@ import net.sf.rails.game.MapHex;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PrivateCompany;
-import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StockRound;
 import net.sf.rails.game.Stop;

@@ -8,6 +8,7 @@ import rails.game.specific._1880.StartCompany_1880;
 import com.google.common.base.Objects;
 
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.model.PortfolioOwner;
 import net.sf.rails.util.RailsObjects;

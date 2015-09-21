@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.Certificate;
+import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.model.CountingMoneyModel;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.GenericState;

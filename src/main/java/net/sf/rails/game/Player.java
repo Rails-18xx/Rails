@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.model.CalculatedMoneyModel;
 import net.sf.rails.game.model.CertificateCountModel;
 import net.sf.rails.game.model.CountingMoneyModel;

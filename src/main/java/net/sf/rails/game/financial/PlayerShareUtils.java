@@ -6,10 +6,9 @@ import java.util.SortedSet;
 
 import net.sf.rails.game.GameDef;
 import net.sf.rails.game.Player;
-import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.GameDef.Parm;
-import net.sf.rails.game.PublicCertificate.Combination;
+import net.sf.rails.game.financial.PublicCertificate.Combination;
 import net.sf.rails.game.model.CertificatesModel;
 import net.sf.rails.game.state.Portfolio;
 
