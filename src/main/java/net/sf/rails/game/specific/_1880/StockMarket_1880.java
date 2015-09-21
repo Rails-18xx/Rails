@@ -11,8 +11,8 @@ import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.financial.StockMarket;
 import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.financial.StockSpaceType;
 import net.sf.rails.game.state.IntegerState;
-import net.sf.rails.game.StockSpaceType;
 
 import com.google.common.collect.Iterables;
 

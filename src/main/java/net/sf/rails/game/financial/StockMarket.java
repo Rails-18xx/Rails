@@ -13,7 +13,6 @@ import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsManager;
 import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.StockSpaceType;
 import net.sf.rails.game.model.StockMarketModel;
 
 import com.google.common.collect.ImmutableSortedSet;
