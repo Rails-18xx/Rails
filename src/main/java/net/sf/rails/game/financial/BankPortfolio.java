@@ -1,6 +1,6 @@
-package net.sf.rails.game;
+package net.sf.rails.game.financial;
 
-import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.RailsAbstractItem;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.model.PortfolioOwner;
 

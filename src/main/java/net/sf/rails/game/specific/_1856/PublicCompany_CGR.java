@@ -6,13 +6,13 @@ import java.util.List;
 import net.sf.rails.algorithms.RevenueAdapter;
 import net.sf.rails.algorithms.RevenueStaticModifier;
 import net.sf.rails.common.parser.ConfigurationException;
-import net.sf.rails.game.BankPortfolio;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Train;
+import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.GenericState;
 

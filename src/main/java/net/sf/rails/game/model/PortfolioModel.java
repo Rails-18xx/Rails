@@ -7,7 +7,6 @@ import java.util.SortedSet;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.BankPortfolio;
 import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.Company;
 import net.sf.rails.game.Player;
@@ -19,6 +18,7 @@ import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainCertificateType;
 import net.sf.rails.game.TrainType;
 import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.game.state.Owner;

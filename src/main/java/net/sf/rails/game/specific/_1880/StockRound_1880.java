@@ -6,7 +6,6 @@ package net.sf.rails.game.specific._1880;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.BankPortfolio;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCertificate;
@@ -14,6 +13,7 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StockRound;
 import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Owner;
