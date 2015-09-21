@@ -2,7 +2,7 @@ package net.sf.rails.game.specific._1856;
 
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.ShareSellingRound;
+import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.state.IntegerState;
 
 /** Needed to copy behaviour on share selling from StockRound_1856. */

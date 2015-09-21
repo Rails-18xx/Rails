@@ -4,9 +4,9 @@ import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Round;
-import net.sf.rails.game.ShareSellingRound;
 import net.sf.rails.game.StartRound;
 import net.sf.rails.game.StockRound;
+import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.common.GuiDef;
 
 
