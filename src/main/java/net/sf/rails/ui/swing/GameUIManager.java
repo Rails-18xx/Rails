@@ -13,6 +13,7 @@ import javax.swing.plaf.FontUIResource;
 
 import net.sf.rails.common.*;
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.Observer;
 import net.sf.rails.sound.SoundManager;

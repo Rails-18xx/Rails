@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import net.sf.rails.game.Bank;
 import net.sf.rails.game.Company;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.MoneyOwner;
 
 

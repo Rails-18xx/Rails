@@ -12,11 +12,11 @@ import java.util.Set;
 import javax.swing.JLabel;
 
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.Bank;
 import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Stop;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.special.SpecialBaseTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.ui.swing.elements.TokenIcon;

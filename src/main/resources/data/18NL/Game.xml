@@ -25,7 +25,7 @@
 		<Players number="5" cash="480" certLimit="14"/>
 		<Players number="6" cash="400" certLimit="12"/>
 	</Component>
-	<Component name="Bank" class="net.sf.rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.financial.Bank">
 		<Bank amount="12000"/>
 		<Money format="@"/>
 	</Component>

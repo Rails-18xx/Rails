@@ -13,7 +13,6 @@ import net.sf.rails.algorithms.NetworkVertex;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
-import net.sf.rails.game.Bank;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapManager;
 import net.sf.rails.game.Player;
@@ -21,6 +20,7 @@ import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.util.Util;
 
 

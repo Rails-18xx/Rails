@@ -72,7 +72,7 @@
             <Players number="6" cash="400" certLimit="13"/>
         </IfOption>     
 	</Component>
-	<Component name="Bank" class="net.sf.rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.financial.Bank">
         <IfOption name="Variant" value="Basegame,Pere Marquette,Coalfields,Reading,Simple">
 			<Bank amount="12000"/>
 		</IfOption>

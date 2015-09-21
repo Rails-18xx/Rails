@@ -1,4 +1,4 @@
-package net.sf.rails.game;
+package net.sf.rails.game.financial;
 
 import java.util.List;
 
@@ -8,6 +8,14 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.BankPortfolio;
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.PublicCertificate;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.RailsManager;
+import net.sf.rails.game.RailsMoneyOwner;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.model.PurseMoneyModel;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Change;

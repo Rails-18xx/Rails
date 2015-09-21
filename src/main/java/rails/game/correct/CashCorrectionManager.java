@@ -8,7 +8,7 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.Bank;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.MoneyOwner;
 

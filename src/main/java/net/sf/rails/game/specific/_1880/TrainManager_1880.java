@@ -2,12 +2,12 @@ package net.sf.rails.game.specific._1880;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.Bank;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainCertificateType;
 import net.sf.rails.game.TrainManager;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.Owner;
 
 

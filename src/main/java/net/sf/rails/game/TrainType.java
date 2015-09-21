@@ -3,6 +3,7 @@ package net.sf.rails.game;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.BooleanState;
 
 import org.slf4j.Logger;

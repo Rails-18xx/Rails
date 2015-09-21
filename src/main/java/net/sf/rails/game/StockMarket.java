@@ -10,6 +10,7 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.model.StockMarketModel;
 
 import com.google.common.collect.ImmutableSortedSet;

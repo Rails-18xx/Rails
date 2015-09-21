@@ -33,7 +33,7 @@
 		<Players number="3" cash="600" certLimit="12"/>
 		<Players number="4" cash="450" certLimit="9"/>
 	</Component>
-	<Component name="Bank" class="net.sf.rails.game.Bank">
+	<Component name="Bank" class="net.sf.rails.game.financial.Bank">
 		<Bank amount="6000"/>
 	</Component>
 	<Component name="TileManager" class="net.sf.rails.game.TileManager"

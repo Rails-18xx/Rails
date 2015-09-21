@@ -7,6 +7,7 @@ import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Configure;
 import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.util.Util;

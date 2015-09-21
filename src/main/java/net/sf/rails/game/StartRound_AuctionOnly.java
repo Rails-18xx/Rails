@@ -5,6 +5,7 @@ import java.util.SortedSet;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.ArrayListState;
 import rails.game.action.BidStartItem;
 import rails.game.action.BuyStartItem;

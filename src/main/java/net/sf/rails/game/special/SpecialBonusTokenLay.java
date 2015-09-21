@@ -5,11 +5,11 @@ import java.util.List;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
-import net.sf.rails.game.Bank;
 import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.util.Util;
 
 public class SpecialBonusTokenLay extends SpecialProperty {

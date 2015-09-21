@@ -18,9 +18,9 @@ import javax.swing.UIManager;
 
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.Bank;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.specific._18EU.StartCompany_18EU;
 import net.sf.rails.game.state.MoneyOwner;

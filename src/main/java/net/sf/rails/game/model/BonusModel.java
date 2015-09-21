@@ -1,8 +1,8 @@
 package net.sf.rails.game.model;
 
 import net.sf.rails.game.Bonus;
-import net.sf.rails.game.Bank;
 import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.ArrayListState;
 
 public class BonusModel extends RailsModel {

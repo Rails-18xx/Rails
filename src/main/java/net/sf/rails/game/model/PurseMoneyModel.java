@@ -1,7 +1,7 @@
 package net.sf.rails.game.model;
 
-import net.sf.rails.game.Bank;
 import net.sf.rails.game.RailsMoneyOwner;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Purse;

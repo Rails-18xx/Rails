@@ -1,5 +1,6 @@
 package net.sf.rails.game;
 
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.model.PortfolioOwner;
 

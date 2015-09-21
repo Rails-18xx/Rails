@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.SortedSet;
 
 import net.sf.rails.game.PublicCertificate.Combination;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.model.CertificatesModel;
 import net.sf.rails.game.state.Portfolio;
 

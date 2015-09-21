@@ -3,6 +3,7 @@ package net.sf.rails.game;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.util.Util;
 
 /**
