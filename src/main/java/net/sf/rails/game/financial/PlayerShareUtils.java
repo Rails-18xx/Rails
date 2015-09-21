@@ -1,12 +1,15 @@
-package net.sf.rails.game;
+package net.sf.rails.game.financial;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 
+import net.sf.rails.game.GameDef;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCertificate;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.GameDef.Parm;
 import net.sf.rails.game.PublicCertificate.Combination;
-import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.model.CertificatesModel;
 import net.sf.rails.game.state.Portfolio;
 
