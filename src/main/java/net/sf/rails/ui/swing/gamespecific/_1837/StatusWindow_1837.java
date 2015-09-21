@@ -15,8 +15,8 @@ import com.google.common.collect.Iterables;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Company;
-import net.sf.rails.game.NationalFormationRound;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.financial.NationalFormationRound;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.ui.swing.GameUIManager;

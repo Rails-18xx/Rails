@@ -1,4 +1,4 @@
-package net.sf.rails.game;
+package net.sf.rails.game.financial;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,18 @@ import com.google.common.collect.Iterables;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.BaseToken;
+import net.sf.rails.game.Company;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.Phase;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.PublicCertificate;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.StockRound;
+import net.sf.rails.game.Stop;
+import net.sf.rails.game.Train;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
