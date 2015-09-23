@@ -8,6 +8,7 @@ import net.sf.rails.game.CompanyManager;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.round.Activity;
 import net.sf.rails.game.state.ChangeAction;
 import net.sf.rails.game.state.ChangeActionOwner;
 import net.sf.rails.util.GameLoader.RailsObjectInputStream;
@@ -38,6 +39,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     protected boolean acted = false;
     
     transient protected RailsRoot root;
+    transient protected Activity activity;
 
     public static final long serialVersionUID = 3L;
 
@@ -45,13 +47,14 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
             LoggerFactory.getLogger(PossibleAction.class);
 
     // TODO: Replace this by a constructor argument for the player
-    public PossibleAction() {
+    public PossibleAction(Activity activity) {
         root = RailsRoot.getInstance();
         player = getRoot().getPlayerManager().getCurrentPlayer();
         if (player != null) {
             playerName = player.getId();
             playerIndex = player.getIndex();
         }
+        this.activity = activity;
     }
 
     public String getPlayerName() {
@@ -149,6 +152,10 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
 
     protected CompanyManager getCompanyManager () {
         return root.getCompanyManager();
+    }
+    
+    public Activity getActivity() {
+        return activity;
     }
     
     /**

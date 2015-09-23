@@ -33,6 +33,7 @@ public class ExchangeForCash extends PossibleAction {
     private boolean exchangeCompany = false;
     
     private ExchangeForCash(PrivateCompany company, int value, boolean ownerHasChoice) {
+        super(null); // not defined by an activity yet
         this.owner = company.getOwner();
         this.ownerName = owner.getId();
         this.value = value;

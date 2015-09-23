@@ -25,8 +25,7 @@ public abstract class StartItemAction extends PossibleAction {
      * 
      */
     public StartItemAction(StartItem startItem) {
-
-        super();
+        super(null); // not defined by an activity yet
         this.startItem = startItem;
         this.startItemName = startItem.getId();
         this.itemIndex = startItem.getIndex();

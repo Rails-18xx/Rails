@@ -43,6 +43,7 @@ public class SellShares extends PossibleAction {
 
     public SellShares(PublicCompany company, int shareUnits, int number,
             int price, int presidentExchange) {
+        super(null); // not defined by an activity yet
         this.company = company;
         this.shareUnits = shareUnits;
         this.price = price;

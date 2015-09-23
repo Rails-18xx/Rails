@@ -48,6 +48,7 @@ public class BuyCertificate extends PossibleAction {
     public BuyCertificate(PublicCompany company, int sharePerCert,
             PortfolioOwner from,
             int price, int maximumNumber) {
+        super(null); // not defined by an activity yet
         this.company = company;
         this.sharePerCert = sharePerCert;
         this.from = from.getPortfolioModel();
@@ -66,7 +67,10 @@ public class BuyCertificate extends PossibleAction {
     }
 
     /** Required for deserialization */
-    public BuyCertificate() {}
+    public BuyCertificate() {
+        super(null); // not defined by an activity yet
+    }
+
 
     public PortfolioModel getFromPortfolio() {
         return from;

@@ -24,7 +24,7 @@ public class GameAction extends PossibleAction {
     protected int moveStackIndex = -1; // target moveStackIndex, only for FORCED_UNDO and REDO
 
     public GameAction(Mode mode) {
-        super();
+        super(null); // not defined by an activity yet
         this.mode = mode;
     }
 

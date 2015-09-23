@@ -30,6 +30,7 @@ public class FoldIntoPrussian extends PossibleAction {
     public static final long serialVersionUID = 1L;
 
     public FoldIntoPrussian(List<Company> companies) {
+        super(null); // not defined by an activity yet
         this.foldableCompanies = companies;
         foldableCompanyNames = Util.joinNamesWithDelimiter(foldableCompanies, ",");
     }

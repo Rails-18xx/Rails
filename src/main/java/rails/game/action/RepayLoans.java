@@ -27,7 +27,7 @@ public class RepayLoans extends PossibleAction {
 
     public RepayLoans(PublicCompany company, int minNumber, int maxNumber,
             int price) {
-
+        super(null); // not defined by an activity yet
         this.company = company;
         this.companyName = company.getId();
         this.minNumber = minNumber;

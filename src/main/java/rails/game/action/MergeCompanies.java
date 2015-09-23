@@ -39,6 +39,7 @@ public class MergeCompanies extends PossibleAction {
      */
     public MergeCompanies(PublicCompany mergingCompany,
             List<PublicCompany> targetCompanies, boolean forced) {
+        super(null); // not defined by an activity yet
         this.mergingCompany = mergingCompany;
         this.mergingCompanyName = mergingCompany.getId();
         this.targetCompanies = targetCompanies;
@@ -68,7 +69,9 @@ public class MergeCompanies extends PossibleAction {
     }
 
     /** Required for deserialization */
-    public MergeCompanies() {}
+    public MergeCompanies() {
+        super(null); // not defined by an activity yet
+    }
 
     public PublicCompany getMergingCompany() {
         return mergingCompany;

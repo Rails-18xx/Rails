@@ -17,6 +17,10 @@ public abstract class CorrectionAction extends PossibleAction {
     
     public static final long serialVersionUID = 3L;
 
+    public CorrectionAction() {
+        super(null); // not defined by an activity yet
+    }
+
     public CorrectionType getCorrectionType() {
         return correctionType;
     }

@@ -30,6 +30,7 @@ public class ClosePrivate extends PossibleAction {
     /* Postconditions: None */
     
     public ClosePrivate(PrivateCompany priv) {
+        super(null); // not defined by an activity yet
         privateCompany = priv;
         privateCompanyName = priv.getId();
     }

@@ -25,7 +25,7 @@ public class NullAction extends PossibleAction {
     protected int mode; 
 
     public NullAction(Mode mode) {
-        super();
+        super(null); // not defined by an activity yet
         this.mode_enum = mode;
         this.mode = mode.ordinal();
     }

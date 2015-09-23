@@ -33,6 +33,7 @@ public class FoldIntoNational extends PossibleAction {
     public static final long serialVersionUID = 1L;
 
     public FoldIntoNational(List<Company> companies) {
+        super(null); // not defined by an activity yet
         this.foldableCompanies = companies;
         foldableCompanyNames = Util.joinNamesWithDelimiter(foldableCompanies, ",");
     }

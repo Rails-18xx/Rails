@@ -30,8 +30,7 @@ public abstract class PossibleORAction extends PossibleAction {
      *
      */
     public PossibleORAction() {
-
-        super();
+        super(null); // not defined by an activity yet
         // TODO: The company field should be set from outside and not inside the action classes themselves
         RoundFacade round = getRoot().getGameManager().getCurrentRound();
         if (round instanceof OperatingRound) {
