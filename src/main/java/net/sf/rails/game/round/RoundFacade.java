@@ -7,9 +7,6 @@ import rails.game.action.PossibleAction;
 public interface RoundFacade extends Creatable, RailsItem {
 
     // called from GameManager
-    public abstract String getHelp();
-
-    // called from GameManager
     public abstract boolean process(PossibleAction action);
 
     // called from GameManager and GameLoader

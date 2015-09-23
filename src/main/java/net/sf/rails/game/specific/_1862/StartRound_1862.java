@@ -45,11 +45,6 @@ public class StartRound_1862 extends StartRound_AuctionOnly {
     }
 
     @Override
-    public String getHelp() {
-        return "1862 Start Round help text"; // TODO: Is this used?
-    }
-
-    @Override
     protected SortedSet<String> getStartSpaces(int maxCash) {
         SortedSet<String> startSpaces = new TreeSet<String>();
 

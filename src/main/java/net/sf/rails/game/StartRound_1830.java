@@ -388,9 +388,4 @@ public class StartRound_1830 extends StartRound {
         setNextBiddingPlayer(item, playerManager.getCurrentPlayer());
     }
 
-    @Override
-    public String getHelp() {
-        return "1830 Start Round help text";
-    }
-
 }

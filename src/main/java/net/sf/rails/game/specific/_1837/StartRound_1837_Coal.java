@@ -420,10 +420,4 @@ public class StartRound_1837_Coal extends StartRound {
         return result;
     }
 
-    @Override
-    public String getHelp() {
-        return "1837 Start Round help text";
-    }
-
-
 }

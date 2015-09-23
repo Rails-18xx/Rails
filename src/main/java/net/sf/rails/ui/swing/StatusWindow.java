@@ -809,12 +809,7 @@ KeyListener, ActionPerformer {
 
     public void keyReleased(KeyEvent e) {}
 
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_F1) {
-            HelpWindow.displayHelp(gameUIManager.getHelp());
-            e.consume();
-        }
-    }
+    public void keyPressed(KeyEvent e) {}
 
     public void keyTyped(KeyEvent e) {}
 

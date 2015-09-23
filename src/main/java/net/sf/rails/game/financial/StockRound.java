@@ -1870,15 +1870,6 @@ public class StockRound extends Round {
         return (Boolean) gameManager.getGameParameter(GameDef.Parm.NO_SALE_IF_NOT_OPERATED);
     }
 
-    //  called by 
-    // GameManager: getHelp
-    
-    // not overridden
-    @Override
-    public String getHelp() {
-        return LocalText.getText("SRHelpText");
-    }
-
     // called by
     // 1835PrussianFormationRound: finishRound
     // GameManager: processOnReload 

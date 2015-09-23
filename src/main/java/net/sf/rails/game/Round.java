@@ -65,14 +65,6 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
         guiHints = gameManager.getUIHints();
         guiHints.setCurrentRoundType(getClass());
     }
-    
-    // TODO: Remove as this is abstract class?
-    // called from GameManager
-    @Override
-    public String getHelp() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     // called from GameManager
     @Override

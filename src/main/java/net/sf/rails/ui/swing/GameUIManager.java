@@ -1131,10 +1131,6 @@ public class GameUIManager implements DialogOwner {
         return railsRoot.getGameManager().isGameOver();
     }
 
-    public String getHelp () {
-        return railsRoot.getGameManager().getHelp();
-    }
-
     public int getNumberOfPlayers() {
         return railsRoot.getPlayerManager().getNumberOfPlayers();
     }

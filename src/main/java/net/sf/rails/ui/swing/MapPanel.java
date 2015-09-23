@@ -249,12 +249,7 @@ public class MapPanel extends JPanel {
         fitToHeight = false;
     }
 
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_F1) {
-            HelpWindow.displayHelp(gameUIManager.getHelp());
-            e.consume();
-        }
-    }
+    public void keyPressed(KeyEvent e) {}
 
     public void keyReleased(KeyEvent e) {}
 

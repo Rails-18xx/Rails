@@ -33,11 +33,6 @@ public final class EndOfGameRound extends Round {
     }
     
     @Override
-    public String getHelp() {
-        return LocalText.getText("EndOfGameHelpText");
-    }
-
-    @Override
     public String toString() {
         return "EndOfGameRound ";
     }

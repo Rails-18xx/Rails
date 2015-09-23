@@ -121,9 +121,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected final EnumMap<GuiDef.Parm, Boolean> guiParameters =
         new EnumMap<GuiDef.Parm, Boolean>(GuiDef.Parm.class);
 
-    protected String gmName;
-    protected String gmKey;
-
     protected GenericState<StartPacket> startPacket = GenericState.create(this, "startPacket");
 
     protected PossibleActions possibleActions = PossibleActions.create();
@@ -1234,10 +1231,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public Phase getCurrentPhase() {
         return getRoot().getPhaseManager().getCurrentPhase();
-    }
-
-    public String getHelp() {
-        return getCurrentRound().getHelp();
     }
 
     public boolean canAnyCompanyHoldShares() {

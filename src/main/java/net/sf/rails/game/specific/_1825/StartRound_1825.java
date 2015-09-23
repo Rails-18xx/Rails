@@ -123,9 +123,4 @@ public class StartRound_1825 extends StartRound {
         return true;
     }
 
-    @Override
-    public String getHelp() {
-        return "1825 Start Round help text";
-    }
-
 }
