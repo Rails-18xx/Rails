@@ -5,11 +5,10 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import rails.game.action.MergeCompanies;
-
+import rails.game.specific._18EU.StartCompany_18EU;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Stop;
-import net.sf.rails.game.specific._18EU.StartCompany_18EU;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.elements.NonModalDialog;
 import net.sf.rails.ui.swing.elements.RadioButtonDialog;
