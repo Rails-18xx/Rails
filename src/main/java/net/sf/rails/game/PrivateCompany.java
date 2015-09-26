@@ -576,9 +576,6 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     }
 
     // Certificate Interface
-    public String getName() {
-        return getId();
-    }
 
     public float getCertificateCount() {
         return certificateCount;
@@ -598,7 +595,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     // Item interface
     @Override
     public String toText() {
-        return getName();
+        return getId();
     }
     
 }
