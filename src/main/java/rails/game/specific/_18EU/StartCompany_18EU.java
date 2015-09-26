@@ -1,4 +1,4 @@
-package net.sf.rails.game.specific._18EU;
+package rails.game.specific._18EU;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
