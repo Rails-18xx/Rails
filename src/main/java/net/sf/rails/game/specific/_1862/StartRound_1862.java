@@ -39,7 +39,7 @@ public class StartRound_1862 extends StartRound_AuctionOnly {
         ReportBuffer.add(
                 this,
                 LocalText.getText("BuysItemFor", player.getId(),
-                        primary.getName(), priceText));
+                        primary.toText(), priceText));
 
         item.setSold(player, price);
     }

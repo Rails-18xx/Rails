@@ -387,7 +387,7 @@ public class StartRound_1837_Coal extends StartRound {
 
                 pendingCertificate.value().moveTo(player);
                 ReportBuffer.add(this, LocalText.getText("ALSO_GETS",
-                        player.getId(), pendingCertificate.value().getName()));
+                        player.getId(), pendingCertificate.value().toText()));
 
                 PublicCompany_1837 company =
                         (PublicCompany_1837) castAction.getCompany();

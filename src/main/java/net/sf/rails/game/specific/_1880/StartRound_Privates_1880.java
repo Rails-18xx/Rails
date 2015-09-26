@@ -40,7 +40,7 @@ public class StartRound_Privates_1880 extends StartRound_Sequential {
             
             pendingCertificate.value().moveTo(player);
             ReportBuffer.add(this, LocalText.getText("ALSO_GETS", player.getId(),
-                    pendingCertificate.value().getName()));
+                    pendingCertificate.value().toText()));
             
             PublicCompany_1880 company =
                     (PublicCompany_1880) castAction.getCompany();
