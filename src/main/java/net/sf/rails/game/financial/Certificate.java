@@ -12,9 +12,6 @@ import net.sf.rails.game.state.Ownable;
  */
 public interface Certificate extends Ownable {
 
-    // returns the name of the certificate
-    public String getName();
-
     public float getCertificateCount();
 
     // FIXME: Should this really be changeable?

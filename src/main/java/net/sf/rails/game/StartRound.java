@@ -254,7 +254,7 @@ public abstract class StartRound extends Round {
         String priceText = Currency.toBank(player, price);
         ReportBuffer.add(this,LocalText.getText("BuysItemFor",
                 player.getId(),
-                primary.getName(),
+                primary.toText(),
                 priceText ));
         primary.moveTo(player);
         checksOnBuying(primary, sharePrice);
@@ -262,7 +262,7 @@ public abstract class StartRound extends Round {
             Certificate extra = item.getSecondary();
             ReportBuffer.add(this,LocalText.getText("ALSO_GETS",
                     player.getId(),
-                    extra.getName() ));
+                    extra.toText()));
             extra.moveTo(player);
             checksOnBuying(extra, sharePrice);
         }

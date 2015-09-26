@@ -270,7 +270,7 @@ public class StartRound_Sequential extends StartRound {
         item.setSold(player, price);
         ReportBuffer.add(this, LocalText.getText("BuysItemFor",
                 player.getId(),
-                primary.getName(),
+                primary.toText(),
                 Bank.format(this, price) ));
         itemAssigned(player, item, price);
     }

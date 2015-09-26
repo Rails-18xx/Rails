@@ -343,7 +343,7 @@ public class StartRound_1837_Coal extends StartRound {
             ReportBuffer.add(
                     this,
                     LocalText.getText("BuysItemFor", player.getId(),
-                            primary.getName(), Bank.format(this, price)));
+                            primary.toText(), Bank.format(this, price)));
             PublicCertificate secondary =
                     (PublicCertificate) item.getSecondary();
             playerManager.setCurrentPlayer(player);
