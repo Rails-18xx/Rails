@@ -41,8 +41,6 @@ public class TrainManager extends RailsManager implements Configurable {
     protected final Map<TrainCertificateType, List<Train>> trainsPerCertType 
             = new HashMap<TrainCertificateType, List<Train>>();
     
-    protected TrainType defaultType = null; // Only required locally and in ChoiceType
-    
     private boolean removeTrain = false;
     
     protected String discardToString = "pool";
