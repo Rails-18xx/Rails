@@ -6,7 +6,6 @@
 		<GameParameters>
 			<StockRound class="net.sf.rails.game.specific._18EU.StockRound_18EU"
 				sequence="sellBuy" skipFirst="yes">
-				<NoSaleInFirstSR/>
 				<NoSaleIfNotOperated/>
 			</StockRound>
 			<OperatingRound
