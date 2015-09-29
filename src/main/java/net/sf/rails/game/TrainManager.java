@@ -259,10 +259,10 @@ public class TrainManager extends RailsManager implements Configurable {
         return trainMap.get(id);
     }
     
-    public String getNewUniqueId (String typeName) {
-        int newIndex = lastIndexPerType.containsKey(typeName) ? lastIndexPerType.get(typeName) + 1 : 0;
-        lastIndexPerType.put (typeName, newIndex);
-        return typeName + "_"+ newIndex;
+    public int getNewUniqueId (String typeName) {
+        int newUniqueId = lastIndexPerType.containsKey(typeName) ? lastIndexPerType.get(typeName) + 1 : 0;
+        lastIndexPerType.put (typeName, newUniqueId);
+        return newUniqueId;
     }
     
 
