@@ -124,8 +124,10 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
         return newPhaseNames;
     }
 
-    public Train createTrain (RailsItem parent, String id) throws ConfigurationException {
-        return Configure.create(trainClass, parent, id);
+    public Train createTrain (RailsItem parent, String id, int sortingId) throws ConfigurationException {
+        Train train = Configure.create(trainClass, parent, id);
+        train.setSortingId(sortingId);
+        return train;
     }
 
     public List<TrainType> getPotentialTrainTypes() {
