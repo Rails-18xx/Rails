@@ -28,7 +28,6 @@ public class TrainManager_1880 extends TrainManager {
      */
     @Override
     public void checkTrainAvailability(Train train, Owner from) {
-        trainsHaveRusted.set(false);
         phaseHasChanged.set(false);;
         if (from != Bank.getIpo(this)) return;
 

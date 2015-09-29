@@ -52,13 +52,10 @@ public class TrainManager extends RailsManager implements Configurable {
     protected ObsoleteTrainForType obsoleteTrainFor = ObsoleteTrainForType.EXCEPT_TRIGGERING; // default is ALL
 
     // Dynamic attributes
-    // TODO: There are lots of dynamic attributes which are not State variables yet
     protected final IntegerState newTypeIndex = IntegerState.create(this, "newTypeIndex", 0);
     
     protected final HashMapState<String, Integer> lastIndexPerType = 
             HashMapState.create(this, "lastIndexPerType");
-
-    protected final BooleanState trainsHaveRusted = BooleanState.create(this, "trainsHaveRusted");
 
     protected final BooleanState phaseHasChanged = BooleanState.create(this, "phaseHasChanged");
 
@@ -277,7 +274,6 @@ public class TrainManager extends RailsManager implements Configurable {
      */
     public void checkTrainAvailability(Train train, Owner from) {
 
-        trainsHaveRusted.set(false);
         phaseHasChanged.set(false);
         if (from != Bank.getIpo(this)) return;
 
