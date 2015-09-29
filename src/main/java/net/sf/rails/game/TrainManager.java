@@ -63,8 +63,6 @@ public class TrainManager extends RailsManager implements Configurable {
 
     protected boolean trainAvailabilityChanged = false;
 
-    protected List<PublicCompany> companiesWithExcessTrains;
-    
     /** Required for the sell-train-to-foreigners feature of some games */
     protected final BooleanState anyTrainBought = BooleanState.create(this, "anyTrainBought");
 
@@ -269,6 +267,7 @@ public class TrainManager extends RailsManager implements Configurable {
         lastIndexPerType.put (typeName, newIndex);
         return typeName + "_"+ newIndex;
     }
+    
 
     /**
      * This method handles any consequences of new train buying (from the IPO),
