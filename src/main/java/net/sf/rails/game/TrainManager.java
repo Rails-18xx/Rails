@@ -14,6 +14,7 @@ import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.HashMapState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Owner;
 import net.sf.rails.util.Util;
@@ -54,16 +55,17 @@ public class TrainManager extends RailsManager implements Configurable {
     // TODO: There are lots of dynamic attributes which are not State variables yet
     protected final IntegerState newTypeIndex = IntegerState.create(this, "newTypeIndex", 0);
     
-    protected final Map<String, Integer> lastIndexPerType = new HashMap<String, Integer>();
+    protected final HashMapState<String, Integer> lastIndexPerType = 
+            HashMapState.create(this, "lastIndexPerType");
 
-    protected boolean trainsHaveRusted = false;
-    protected boolean phaseHasChanged = false;
+    protected final BooleanState trainsHaveRusted = BooleanState.create(this, "trainsHaveRusted");
 
-    protected boolean trainAvailabilityChanged = false;
+    protected final BooleanState phaseHasChanged = BooleanState.create(this, "phaseHasChanged");
+
+    protected final BooleanState trainAvailabilityChanged = BooleanState.create(this, "trainAvailablityChanged");
 
     /** Required for the sell-train-to-foreigners feature of some games */
     protected final BooleanState anyTrainBought = BooleanState.create(this, "anyTrainBought");
-
     
     // Triggered phase changes
     protected final Map<TrainCertificateType, Map<Integer, Phase>> newPhases
@@ -275,8 +277,8 @@ public class TrainManager extends RailsManager implements Configurable {
      */
     public void checkTrainAvailability(Train train, Owner from) {
 
-        trainsHaveRusted = false;
-        phaseHasChanged = false;
+        trainsHaveRusted.set(false);
+        phaseHasChanged.set(false);
         if (from != Bank.getIpo(this)) return;
 
         TrainCertificateType boughtType, nextType;
@@ -290,7 +292,7 @@ public class TrainManager extends RailsManager implements Configurable {
                 if (nextType != null) {
                     if (!nextType.isAvailable()) {
                         makeTrainAvailable(nextType);
-                        trainAvailabilityChanged = true;
+                        trainAvailabilityChanged.set(true);
                         ReportBuffer.add(this, "All " + boughtType.toText()
                                          + "-trains are sold out, "
                                          + nextType.toText() + "-trains now available");
@@ -311,7 +313,7 @@ public class TrainManager extends RailsManager implements Configurable {
         if (newPhases.get(boughtType) != null
                 && (newPhase = newPhases.get(boughtType).get(trainIndex)) != null) {
             getRoot().getPhaseManager().setPhase(newPhase, train.getOwner());
-            phaseHasChanged = true;
+            phaseHasChanged.set(true);
         }
     }
     
@@ -421,15 +423,15 @@ public class TrainManager extends RailsManager implements Configurable {
     }
 
     public boolean hasAvailabilityChanged() {
-        return trainAvailabilityChanged;
+        return trainAvailabilityChanged.value();
     }
 
     public void resetAvailabilityChanged() {
-        trainAvailabilityChanged = false;
+        trainAvailabilityChanged.set(false);;
     }
 
     public boolean hasPhaseChanged() {
-        return phaseHasChanged;
+        return phaseHasChanged.value();
     }
 
     public boolean isAnyTrainBought () {
