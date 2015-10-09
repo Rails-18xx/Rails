@@ -440,7 +440,7 @@ public class StockRound_18EU extends StockRound {
         } else {
             ReportBuffer.add(this, LocalText.getText("SelectedHomeBase",
                     company.getId(),
-                    selectedHomeCity.toString() ));
+                    selectedHomeCity.toText() ));
         }
 
         // Move the remaining certificates to the company treasury
