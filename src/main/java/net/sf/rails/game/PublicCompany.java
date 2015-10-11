@@ -1756,7 +1756,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return baseTokens.getNextToken();
     }
 
-    public ImmutableSet<BaseToken> getAllBaseTokens() {
+    public TreeSetState<BaseToken> getAllBaseTokens() {
         return baseTokens.getAllTokens();
     }
     
