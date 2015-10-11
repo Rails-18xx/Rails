@@ -6,6 +6,7 @@ import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.state.Portfolio;
 import net.sf.rails.game.state.PortfolioSet;
+import net.sf.rails.game.state.TreeSetState;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
@@ -21,7 +22,7 @@ public class BaseTokensModel extends RailsModel {
     // the free tokens belong to the company
     private final PortfolioSet<BaseToken> freeBaseTokens;
     // a list of all base tokens, configured later
-    private ImmutableSortedSet<BaseToken> allTokens;
+    private TreeSetState<BaseToken> allTokens;
 
     private BaseTokensModel(PublicCompany parent, String id) {
         super(parent, id);
@@ -37,7 +38,9 @@ public class BaseTokensModel extends RailsModel {
      * Initialize a set of tokens
      */
     public void initTokens(Set<BaseToken> tokens) {
-        allTokens = ImmutableSortedSet.copyOf(tokens);
+        for (BaseToken token : tokens){
+        allTokens.add(token);
+        }
         Portfolio.moveAll(allTokens, getParent());
     }
     
@@ -57,7 +60,7 @@ public class BaseTokensModel extends RailsModel {
         return Iterables.get(freeBaseTokens, 0);
     }
     
-    public ImmutableSet<BaseToken> getAllTokens() {
+    public TreeSetState<BaseToken> getAllTokens() {
         return allTokens;
     }
     
@@ -66,7 +69,7 @@ public class BaseTokensModel extends RailsModel {
     }
     
     public ImmutableSet<BaseToken> getLaidTokens() {
-        return Sets.difference(allTokens, freeBaseTokens.items()).immutableCopy();
+        return Sets.difference(allTokens.view(), freeBaseTokens.items()).immutableCopy();
     }
     
     public int nbAllTokens() {
@@ -81,14 +84,7 @@ public class BaseTokensModel extends RailsModel {
         return allTokens.size() - freeBaseTokens.size();
     }
     
-    /**
-     * @return true if token is laid
-     */
-    public boolean tokenIsLaid(BaseToken token) {
-        return allTokens.contains(token);
-    }
-    
-    @Override 
+     @Override 
     public String toText() {
         int allTokens = nbAllTokens();
         int freeTokens = nbFreeTokens();
