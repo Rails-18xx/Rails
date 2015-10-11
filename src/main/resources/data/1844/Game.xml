@@ -25,7 +25,7 @@
 			<GameStatus
 				class="net.sf.rails.ui.swing.gamespecific._1844.GameStatus_1844"/>
 			<StartRoundWindow
-				class="net.sf.rails.ui.swing.gamespecific._1844.StartRoundWindow_1844"/>
+				class="net.sf.rails.ui.swing.StartRoundWindow"/>
 			<GameUIManager
 				class="net.sf.rails.ui.swing.gamespecific._1844.GameUIManager_1844"/>
 			<ORUIManager
