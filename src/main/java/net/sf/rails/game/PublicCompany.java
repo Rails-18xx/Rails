@@ -662,12 +662,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                     && this.certsAreInitiallyAvailable);
         }
 
-        Set<BaseToken> newTokens = Sets.newHashSet();
-        for (int i = 0; i < numberOfBaseTokens; i++) {
-            BaseToken token =  BaseToken.create(this);
-            newTokens.add(token);
+        if (numberOfBaseTokens > 0) { //Late initialisation otherwise leads to a Nullpointer exception.
+            TreeSet<BaseToken> newTokens = Sets.newTreeSet();
+            for (int i = 0; i < numberOfBaseTokens; i++) {
+                BaseToken token =  BaseToken.create(this);
+                newTokens.add(token);
+            }
+             baseTokens.initTokens(newTokens);
         }
-        baseTokens.initTokens(newTokens);
         
         if (homeHexNames != null) {
             homeHexes = new ArrayList<MapHex>(2);
