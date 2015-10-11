@@ -1,6 +1,7 @@
 package net.sf.rails.game.specific._1844;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.jgrapht.graph.SimpleGraph;
 
@@ -71,7 +72,7 @@ public class PublicCompany_1844 extends PublicCompany {
     
     private void setNumberOfBaseTokens(int i) {
         this.numberOfBaseTokens=i;
-        Set<BaseToken> newTokens = Sets.newHashSet();
+        TreeSet<BaseToken> newTokens = Sets.newTreeSet();
         baseTokens.initTokens(newTokens);
     }
 
