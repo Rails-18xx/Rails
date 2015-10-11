@@ -1,7 +1,6 @@
 package net.sf.rails.game.model;
 
 import java.util.Set;
-import java.util.TreeSet;
 
 import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.PublicCompany;
@@ -24,10 +23,10 @@ public class BaseTokensModel extends RailsModel {
     private final PortfolioSet<BaseToken> freeBaseTokens;
     // a list of all base tokens, configured later
     private TreeSetState<BaseToken> allTokens;
+
     private BaseTokensModel(PublicCompany parent, String id) {
         super(parent, id);
         freeBaseTokens = PortfolioSet.create(parent, "freeBaseTokens", BaseToken.class);
-        allTokens = TreeSetState.create(parent, "allTokens");
         freeBaseTokens.addModel(this);
     }
 
@@ -38,7 +37,7 @@ public class BaseTokensModel extends RailsModel {
     /**
      * Initialize a set of tokens
      */
-    public void initTokens(TreeSet<BaseToken> tokens) {
+    public void initTokens(Set<BaseToken> tokens) {
         for (BaseToken token : tokens){
         allTokens.add(token);
         }
