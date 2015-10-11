@@ -66,16 +66,16 @@
 		<StockPrice par="yes"/>
 	</CompanyType>	
 	
-	<Company name="T1" baseprice="50" type="Tunnel"></Company>
-	<Company name="T2" baseprice="50" type="Tunnel"></Company>
-	<Company name="T3" baseprice="50" type="Tunnel"></Company>
-	<Company name="T4" baseprice="50" type="Tunnel"></Company>
-	<Company name="T5" baseprice="50" type="Tunnel"></Company>
-	<Company name="B1" baseprice="150" type="Mountain"></Company>
-	<Company name="B2" baseprice="150" type="Mountain"></Company>
-	<Company name="B3" baseprice="150" type="Mountain"></Company>
-	<Company name="B4" baseprice="150" type="Mountain"></Company>
-	<Company name="B5" baseprice="150" type="Mountain"></Company>
+	<Company name="T1" baseprice="50" type="Tunnel" revenue="0"></Company>
+	<Company name="T2" baseprice="50" type="Tunnel" revenue="0"></Company>
+	<Company name="T3" baseprice="50" type="Tunnel" revenue="0"></Company>
+	<Company name="T4" baseprice="50" type="Tunnel" revenue="0"></Company>
+	<Company name="T5" baseprice="50" type="Tunnel" revenue="0"></Company>
+	<Company name="B1" baseprice="150" type="Mountain" revenue="0"></Company>
+	<Company name="B2" baseprice="150" type="Mountain" revenue="0"></Company>
+	<Company name="B3" baseprice="150" type="Mountain" revenue="0"></Company>
+	<Company name="B4" baseprice="150" type="Mountain" revenue="0"></Company>
+	<Company name="B5" baseprice="150" type="Mountain" revenue="0"></Company>
 	<Company name="P1" longname="Brienzer - Rothorn - Bahn" type="Private" basePrice="20"
 		revenue="5">
 		<!--  No Special Powers will be closed on 5/5H -->
