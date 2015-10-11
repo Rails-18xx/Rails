@@ -73,6 +73,10 @@ public class PublicCompany_1844 extends PublicCompany {
     private void setNumberOfBaseTokens(int i) {
         this.numberOfBaseTokens=i;
         TreeSet<BaseToken> newTokens = Sets.newTreeSet();
+        for (int j = 0; j < numberOfBaseTokens; j++) {
+            BaseToken token =  BaseToken.create(this);
+            newTokens.add(token);
+        }
         baseTokens.initTokens(newTokens);
     }
 
