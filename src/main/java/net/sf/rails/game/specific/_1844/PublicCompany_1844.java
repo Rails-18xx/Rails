@@ -4,6 +4,8 @@ import java.util.Set;
 
 import org.jgrapht.graph.SimpleGraph;
 
+import com.google.common.collect.Sets;
+
 import net.sf.rails.algorithms.NetworkEdge;
 import net.sf.rails.algorithms.NetworkGraph;
 import net.sf.rails.algorithms.NetworkVertex;
@@ -15,6 +17,7 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.Stop;
+import net.sf.rails.game.model.BaseTokensModel;
 import net.sf.rails.game.specific._1880.Investor_1880;
 import net.sf.rails.game.specific._1880.PublicCompany_1880;
 import net.sf.rails.game.state.BooleanState;
@@ -41,18 +44,23 @@ public class PublicCompany_1844 extends PublicCompany {
         extraCapital = 5 * (this.getIPOPrice());
          }
          //Determine the number of tokens available to the historic companies by the startprice
-         if (this.getNumberOfBaseTokens()<0) {
+         if (this.getNumberOfBaseTokens()<=0) {
              switch(startSpace.getPrice()) {
              case 100:
                  this.setNumberOfBaseTokens(5);
+                 break;
              case 90:
                  this.setNumberOfBaseTokens(4);
+                 break;
              case 80:
                  this.setNumberOfBaseTokens(3);
+                 break;
              case 70:
                  this.setNumberOfBaseTokens(2);
+                 break;
              case 60:
                  this.setNumberOfBaseTokens(1);
+                 break;
              default:
                  this.setNumberOfBaseTokens(1);
              }
@@ -63,6 +71,8 @@ public class PublicCompany_1844 extends PublicCompany {
     
     private void setNumberOfBaseTokens(int i) {
         this.numberOfBaseTokens=i;
+        Set<BaseToken> newTokens = Sets.newHashSet();
+        baseTokens.initTokens(newTokens);
     }
 
     /**
