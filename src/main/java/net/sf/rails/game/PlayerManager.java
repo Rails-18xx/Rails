@@ -165,6 +165,10 @@ public class PlayerManager extends RailsManager implements Configurable {
         return priorityPlayer.value();
     }
     
+    public GenericState<Player> getPriorityPlayerState() {
+        return priorityPlayer;
+    }
+    
     public void setPriorityPlayer(Player player) {
         priorityPlayer.set(player);
     }
@@ -330,6 +334,10 @@ public class PlayerManager extends RailsManager implements Configurable {
         
         public boolean isReverse() {
             return reverse.value();
+        }
+        
+        public ArrayListState<Player> getPlayerOrder() {
+            return playerOrder;
         }
         
         @Override
