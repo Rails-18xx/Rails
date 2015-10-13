@@ -45,12 +45,15 @@ public class PlayerManager extends RailsManager implements Configurable {
     
     // dynamic data
     private final PlayerOrderModel playerModel = new PlayerOrderModel(this, "playerModel");
+    private final GenericState<Player> currentPlayer = GenericState.create(this, "currentPlayer");
+    private final GenericState<Player> priorityPlayer = GenericState.create(this, "priorityPlayer");
     private final IntegerState playerCertificateLimit = IntegerState.create(this, "playerCertificateLimit");
 
     /**
      * nextPlayerMessages collects all messages to be displayed to the next player
      */
     private final ArrayListState<String> nextPlayerMessages = ArrayListState.create(this, "nextPlayerMessages");
+
     
     /**
      * Used by Configure (via reflection) only
@@ -111,7 +114,7 @@ public class PlayerManager extends RailsManager implements Configurable {
     // sets initial priority player and certificate limits
     // TODO: rename method
     public void init() {
-        playerModel.priorityPlayer.set(playerModel.players.get(0));
+        priorityPlayer.set(playerModel.players.get(0));
         int startCertificates = playerCertificateLimits.get(playerModel.players.size());
         playerCertificateLimit.set(startCertificates);
     }
@@ -138,11 +141,11 @@ public class PlayerManager extends RailsManager implements Configurable {
 
     // dynamic getter/setters
     public GenericState<Player> getCurrentPlayerModel() {
-        return playerModel.currentPlayer;
+        return currentPlayer;
     }
     
     public Player getCurrentPlayer() {
-        return playerModel.currentPlayer.value();
+        return currentPlayer.value();
     }
     
     public void setCurrentPlayer(Player player) {
@@ -155,16 +158,16 @@ public class PlayerManager extends RailsManager implements Configurable {
                 DisplayBuffer.add(this, s);
             nextPlayerMessages.clear();
         }
-        playerModel.currentPlayer.set(player);
+        currentPlayer.set(player);
     }
     
     public Player getPriorityPlayer() {
-        return playerModel.priorityPlayer.value();
+        return priorityPlayer.value();
     }
     
     public void setPriorityPlayer(Player player) {
-        playerModel.priorityPlayer.set(player);
-     }
+        priorityPlayer.set(player);
+    }
 
     public int getPlayerCertificateLimit(Player player) {
         return playerCertificateLimit.value();
@@ -193,9 +196,8 @@ public class PlayerManager extends RailsManager implements Configurable {
     }
     
     public Player setCurrentToPriorityPlayer() {
-        Player priorityPlayer = playerModel.priorityPlayer.value();
-        setCurrentPlayer(priorityPlayer);
-        return priorityPlayer;
+        setCurrentPlayer(priorityPlayer.value());
+        return priorityPlayer.value();
     }
     
     public Player setCurrentToNextPlayerAfter(Player player){
@@ -205,7 +207,7 @@ public class PlayerManager extends RailsManager implements Configurable {
     }
     
     public Player getNextPlayer() {
-        return playerModel.getPlayerAfter(playerModel.currentPlayer.value());
+        return playerModel.getPlayerAfter(currentPlayer.value());
     }
     
     public Player getNextPlayerAfter(Player player) {
@@ -219,7 +221,7 @@ public class PlayerManager extends RailsManager implements Configurable {
      * (including/excluding the current player at the start)
      */
     public ImmutableList<Player> getNextPlayers(boolean include) {
-        return getNextPlayersAfter(playerModel.currentPlayer.value(), include , false);
+        return getNextPlayersAfter(currentPlayer.value(), include , false);
     }
     
     /**
@@ -295,8 +297,6 @@ public class PlayerManager extends RailsManager implements Configurable {
     public static class PlayerOrderModel extends RailsModel {
 
         private final ArrayListState<Player> players = ArrayListState.create(this, "players");
-        private final GenericState<Player> currentPlayer = GenericState.create(this, "currentPlayer");
-        private final GenericState<Player> priorityPlayer = GenericState.create(this, "priorityPlayer");
         private final BooleanState reverse = BooleanState.create(this, "reverse");
 
         private PlayerOrderModel(PlayerManager parent, String id) {
