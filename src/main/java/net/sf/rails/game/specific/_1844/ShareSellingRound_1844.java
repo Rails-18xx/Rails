@@ -222,14 +222,14 @@ public class ShareSellingRound_1844 extends ShareSellingRound {
                 companyName,
                 cashText ));
 
-        boolean soldBefore = sellPrices.containsKey(companyName);
+        boolean soldBefore = sellPrices.containsKey(company);
 
         adjustSharePrice (company, numberSold, soldBefore);
 
         if (!company.isClosed()) {
 
             executeShareTransfer (company, certsToSell,
-                    dumpedPlayer, presSharesToSell, action.getPresidentExchange());
+                    dumpedPlayer, presSharesToSell);
         }
 
         cashToRaise.add(-numberSold * price);
