@@ -1,0 +1,148 @@
+<Map tileOrientation="EW" letterOrientation="vertical" even="B">
+	<Defaults>
+		<Access type="OffMapCity" runTo="yes" runThrough="no" loop="no" score="major"/>
+		<Access type="City" runTo="yes" runThrough="yes" loop="no" score="major"/>
+		<Access type="Town" runTo="yes" runThrough="yes" loop="no" score="minor"/>
+		<Access type="Cablecar" runTo="yes" runThrough="no" loop="no" score="major"/>
+	</Defaults>
+	<!-- The above defaults are redundant, these settings are the system defaults anyway -->
+<!-- 	<IfOption name="Variant" value="1st Edition">
+		<Image file="1844/map_44.svg" x="1" y="1" scale="1.48"/>
+	</IfOption>
+	<IfOption name="Variant" value="2nd Edition">
+		<Image file="1844/MapImage_2nd.svg" x="15" y="14" scale="0.1632"/>
+	</IfOption>
+-->
+	<Hex name="A19" tile="-901" orientation="0" value="20,40,60,70" label="N-S+30"/>
+	<Hex name="A21" tile="-902" orientation="1" value="20,40,60,70" label="N-S+30"/>
+	<Hex name="B12" tile="-902" orientation="1" value="30,40,50,60" label="N-S+30"/>
+	<Hex name="B20" tile="-901" orientation="2" value="20,40,60,70" label="N-S+30"/>
+	<Hex name="B22" tile="-10" cost="20"/>
+	<Hex name="B24" tile="0" />
+	<Hex name="B26" tile="-1" />
+	<Hex name="C9" tile="-9121" orientation="0" value="10,30,50,70" label="E-W+50"/>
+	<Hex name="C11" tile="0"/>
+	<Hex name="C13" tile="-10" cost="20" impassable="D15"/>
+	<Hex name="C15" tile="-1" impassable="D15"/>
+	<Hex name="C17" tile="0" cost="20" />
+	<Hex name="C19" tile="0" />
+	<Hex name="C21" tile="-20" label="OO"/>
+	<Hex name="C23" tile="0" cost="30"/>
+	<Hex name="C25" tile="-10"/>
+	<Hex name="C27" tile="-902" orientation="2" value="10,30,50,70" label="E-W+50"/>
+	<Hex name="D8" tile="0" cost="30"/>
+	<Hex name="D10" tile="0" cost="30"/>
+	<Hex name="D12" tile="0" cost="30"/>
+	<Hex name="D14" tile="-10" cost="20"/>
+	<Hex name="D16" tile="-44020" cost="20" orientation="3"/>
+	<Hex name="D18" tile="-1"/>
+	<Hex name="D20" tile="-44010" pictureId="-10" cost="20" label="Z" impassible="E21"/>
+	<Hex name="D22" tile="-1" impassible="E21"/>
+	<Hex name="D24" tile="0" cost="30"/>
+	<Hex name="D26" tile="-10"/>
+	<Hex name="E7" tile="0" cost="30"/>
+	<Hex name="E9" tile="-1" impassible="F11"/>
+	<Hex name="E11" tile="-1" cost="20"/>
+	<Hex name="E13" tile="0" cost="20"/>
+	<Hex name="E15" tile="0"/>
+	<Hex name="E17" tile="0"/>
+	<Hex name="E19" tile="-10" cost="20"/>
+	<Hex name="E21" tile="0" />
+	<Hex name="E23" tile="0" cost="20"/>
+	<Hex name="E25" tile="0"/>	
+	<Hex name="E27" tile="-44212" orientation="2" value="10,20,30,40"/>
+	<Hex name="F4" tile="-902" orientation="0" value="10,30,50,70" label="E-W+50"/>	
+	<Hex name="F6" tile="0"/>
+	<Hex name="F8" tile="-44115" cost="20" orientation="2"/>
+	<Hex name="F10" tile="0" cost="20"/>
+	<Hex name="F12" tile="-44015" orientation="0" label="B"/>
+	<Hex name="F14" tile="-1" cost="30"/>
+	<Hex name="F16" tile="0" cost="30"/>
+	<Hex name="F18" tile="-44115" orientation="2" cost="20"/>
+	<Hex name="F20" tile="-44202" orientation="5"/>
+	<Hex name="F22" tile="-10" cost="30"/>
+	<Hex name="F24" tile="0" cost="60"/>
+	<Hex name="F26" tile="-1" cost="20"/>
+	<Hex name="F28" tile="0"/>
+	<Hex name="G5" tile="0" impassible="H7,G8"/>
+	<Hex name="G7" tile="0" impassible="G6,F7"/>	
+	<Hex name="G9" tile="-20"/>
+	<Hex name="G11" tile="0" cost="60"/>
+	<Hex name="G13" tile="0"/>
+	<Hex name="G15" tile="-44205" orientation="4"/>
+	<Hex name="G17" tile="-1"/>
+	<Hex name="G19" tile="-10"/>
+	<Hex name="G21" tile="-838" orientation="5"/>
+	<Hex name="G23" tile="0" cost="90"/>
+	<Hex name="G25" tile="0" cost="60"/>	
+	<Hex name="G27" tile="-44115" orientation="1" cost="20"/>
+	<Hex name="G29" tile="-10" cost="30"/>
+	<Hex name="G31" tile="-901" orientation="5" value="10,30,50,70" label="E-W+90"/>
+	<Hex name="G31" tile="0" cost="30"/>	
+	<Hex name="G34" tile="0" cost="30"/>	
+	<Hex name="H5" tile="-1" cost="30"/>	
+	<Hex name="H7" tile="0" cost="30"/>
+	<Hex name="H9" tile="-44206"/>
+	<Hex name="H11" tile="0" cost="60"/>
+	<Hex name="H13" tile="0" cost="60"/>
+	<Hex name="H15" tile="-10" cost="20"/>
+	<Hex name="H17" tile="0" cost="30"/>
+	<Hex name="H19" tile="-44404" orientation="0"/>
+	<Hex name="H21" tile="-44403" orientation="0"/>
+	<Hex name="H23" tile="-44402" orientation="3"/>
+	<Hex name="H25" tile="0" cost="60"/>
+	<Hex name="H27" tile="0" cost="30"/>
+	<Hex name="H29" tile="-44106"/>	
+	<Hex name="H31" tile="0" cost="60"/>	
+	<Hex name="H33" tile="0" cost="60"/>
+	<Hex name="I4" tile="0"/>
+	<Hex name="I6" tile="-44013" label="L" />
+	<Hex name="I8" tile="-10" cost="20"/>	
+	<Hex name="I10" tile="0" cost="30"/>
+	<Hex name="I12" tile="-1" cost="30" impassible="J13"/>
+	<Hex name="I14" tile="-44103" orientation="0"/>
+	<Hex name="I16" tile="-44203" orientation="5"/>
+	<Hex name="I18" tile="-44401" orientation="0"/>
+	<Hex name="I20" tile="0" cost="90"/>
+	<Hex name="I22" tile="0" cost="90"/>
+	<Hex name="I24" tile="0" cost="60"/>
+	<Hex name="I26" tile="0" cost="60"/>	
+	<Hex name="I28" tile="0" cost="60"/>
+	<Hex name="I30" tile="-10" cost="30"/>
+	<Hex name="I32" tile="0" cost="30"/>	
+	<Hex name="J3" tile="-1" cost="20"/>	
+	<Hex name="J9" tile="0" cost="30"/>
+	<Hex name="J11" tile="-44106"/>
+	<Hex name="J13" tile="-1" cost="30" impassible="I12"/>
+	<Hex name="J15" tile="-44838"/>
+	<Hex name="J17" tile="0" cost="60"/>
+	<Hex name="J19" tile="-7" orientation="3"/>
+	<Hex name="J21" tile="0" cost="60"/>
+	<Hex name="J23" tile="0" cost="60"/>
+	<Hex name="J25" tile="0" cost="60"/>
+	<Hex name="J29" tile="0" cost="60"/>	
+	<Hex name="J31" tile="0" cost="30"/>	
+	<Hex name="J33" tile="-902" orientation="3" value="10,30,50,70" label="E-W+90"/>
+	<Hex name="K2" tile="-44021"/>
+	<Hex name="K8" tile="0" cost="60"/>	
+	<Hex name="K10" tile="-1" cost="20"/>
+	<Hex name="K12" tile="-10" cost="20"/>
+	<Hex name="K14" tile="0" cost="60"/>
+	<Hex name="K16" tile="-44113" orientation="5"/>
+	<Hex name="K22" tile="-10" cost="20" />
+	<Hex name="K24" tile="-10" cost="20" />
+	<Hex name="K32" tile="-44201" orientation="5"/>
+	<Hex name="L1" tile="-901" orientation="4" value="30,50,70,90" label="E-W+90"/>
+	<Hex name="L9" tile="0" cost="60"/>
+	<Hex name="L11" tile="0" cost="60"/>
+	<Hex name="L13" tile="-1" cost="30"/>
+	<Hex name="L15" tile="-44213" orientation="4"/>
+	<Hex name="L17" tile="-901" orientation="3" value="40,50,70,90" label="N-S+40"/>
+	<!-- Attention Run from L17 to N21/N23 is not valid as they are the same offboard Area -->
+	<Hex name="L23" tile="-10" cost="20" />
+	<Hex name="M10" tile="-902" value="0,30,50,70" orientation="4" label="N-S+40"/>
+	<Hex name="M22" tile="-44115" orientation="1"/>
+	<Hex name="M24" tile="-44213" orientation="4"/>
+	<Hex name="N21" tile="-901" orientation="4" value="40,50,70,90" label="N-S+40"/>
+	<Hex name="N23" tile="-901" orientation="3" value="40,50,70,90" label="N-S+40"/>			
+</Map>

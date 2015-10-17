@@ -5,12 +5,8 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.1"
    id="svg4264"
-   inkscape:version="0.91pre3 r13670"
-   sodipodi:docname="tile44057.svg">
+   version="1.1">
   <metadata
      id="metadata4292">
     <rdf:RDF>
@@ -25,129 +21,97 @@
   </metadata>
   <defs
      id="defs4290" />
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1680"
-     inkscape:window-height="988"
-     id="namedview4288"
-     showgrid="false"
-     inkscape:zoom="2.313783"
-     inkscape:cx="196"
-     inkscape:cy="-70"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg4264" />
   <path
-     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
-     fill="#FFFF00"
-     stroke="#FFFF00"
-     stroke-width="1"
+     id="path4266"
      stroke-linejoin="round"
-     id="path4266" />
+     stroke-width="1"
+     stroke="#FFFF00"
+     fill="#FFFF00"
+     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z" />
   <text
-     x="257.10138"
-     y="324.48288"
-     dy="0"
-     font-size="31"
-     font-weight="bold"
-     id="text4268"
      style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:31px;line-height:125%;font-family:Arial;-inkscape-font-specification:'Arial, Bold';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000"
-     sodipodi:linespacing="125%">
+     id="text4268"
+     font-weight="bold"
+     font-size="31"
+     dy="0"
+     y="324.48288"
+     x="257.10138">
     <tspan
-       sodipodi:role="line"
-       id="tspan4294"
+       y="324.48288"
        x="257.10138"
-       y="324.48288">44057</tspan>
+       id="tspan4294">44057</tspan>
   </text>
   <circle
-     cx="196"
-     cy="170"
-     r="51"
-     fill="#FFFFFF"
-     stroke="#FFFFFF"
+     id="circle4270"
      stroke-width="12"
-     id="circle4270" />
-  <path
-     d="M 196,170 L 196,340"
-     fill="none"
      stroke="#FFFFFF"
-     stroke-width="34"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4272" />
-  <path
-     d="M 196,170 L 196,0"
-     fill="none"
-     stroke="#FFFFFF"
-     stroke-width="34"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4274" />
-  <path
-     d="M 196,170 L 196,340"
-     fill="none"
-     stroke="#000000"
-     stroke-width="26"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4276" />
-  <path
-     d="M 196,170 L 196,0"
-     fill="none"
-     stroke="#000000"
-     stroke-width="26"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4278" />
-  <circle
-     cx="196"
-     cy="170"
+     fill="#FFFFFF"
      r="51"
-     fill="#FFFFFF"
-     stroke="#000000"
-     stroke-width="4"
-     id="circle4280" />
-  <ellipse
-     rx="31"
-     ry="30"
-     cx="269"
-     cy="43"
-     fill="#FFFFFF"
-     stroke="#000000"
-     stroke-width="2"
-     stroke-linejoin="round"
-     id="ellipse4282" />
-  <text
-     x="268.56781"
-     y="57.262356"
-     dy="0"
-     font-size="43"
-     id="text4284"
-     style="font-size:43px;font-family:'Bookman Old Style';text-anchor:middle;fill:#000000;stroke:#000000">20</text>
+     cy="170"
+     cx="196" />
   <path
-     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
-     fill="none"
-     stroke="black"
-     stroke-width="1"
+     id="path4272"
      stroke-linejoin="round"
-     id="path4286" />
-  <flowRoot
-     xml:space="preserve"
-     id="flowRoot4296"
-     style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:Arial;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;-inkscape-font-specification:'Arial, Normal';font-stretch:normal;font-variant:normal;text-anchor:start;text-align:start;writing-mode:lr;"><flowRegion
-       id="flowRegion4298"><rect
-         id="rect4300"
-         width="40.62611"
-         height="53.591888"
-         x="31.550064"
-         y="136.30418"
-         style="-inkscape-font-specification:'Arial, Normal';font-family:Arial;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:40px;text-anchor:start;text-align:start;writing-mode:lr;line-height:125%;" /></flowRegion><flowPara
-       id="flowPara4302">Z</flowPara></flowRoot></svg>
+     stroke-linecap="butt"
+     stroke-width="34"
+     stroke="#FFFFFF"
+     fill="none"
+     d="M 196,170 L 196,340" />
+  <path
+     id="path4274"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="34"
+     stroke="#FFFFFF"
+     fill="none"
+     d="M 196,170 L 196,0" />
+  <path
+     id="path4276"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="26"
+     stroke="#000000"
+     fill="none"
+     d="M 196,170 L 196,340" />
+  <path
+     id="path4278"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="26"
+     stroke="#000000"
+     fill="none"
+     d="M 196,170 L 196,0" />
+  <circle
+     id="circle4280"
+     stroke-width="4"
+     stroke="#000000"
+     fill="#FFFFFF"
+     r="51"
+     cy="170"
+     cx="196" />
+  <ellipse
+     id="ellipse4282"
+     stroke-linejoin="round"
+     stroke-width="2"
+     stroke="#000000"
+     fill="#FFFFFF"
+     cy="43"
+     cx="269"
+     ry="30"
+     rx="31" />
+  <text
+     style="font-size:43px;font-family:'Bookman Old Style';text-anchor:middle;fill:#000000;stroke:#000000"
+     id="text4284"
+     font-size="43"
+     dy="0"
+     y="57.262356"
+     x="268.56781">20</text>
+     <text x="49" y="170" dy="0.3em" fill="#000000" stroke="#000000" text-anchor="middle" font-family="TimpaniHeavy" font-size="54">Z</text>
+  <path
+     id="path4286"
+     stroke-linejoin="round"
+     stroke-width="1"
+     stroke="black"
+     fill="none"
+     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z" />
+</svg>

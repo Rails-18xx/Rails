@@ -118,7 +118,7 @@
 				<Lays companyType="Minor" colour="yellow" number="1"/>
 				<Lays companyType="Minor" colour="green" number="1"/>
 				</Tiles>
-			<Trains tradingAllowed="yes" converted="2"/>
+			<Trains tradingAllowed="yes" converted="2/2H"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="4" realName="C">
@@ -130,7 +130,7 @@
 				</Tiles>
 			<OffBoardRevenue step="2"/>
 			<Float percentage="40"/>
-			<Trains limitStep="2" rusted="2/2H" converted="3"/>
+			<Trains limitStep="2" rusted="2/2H" converted="3/3H"/>
 		</Phase>
 		<Phase name="5" realName="D">
 			<Tiles colour="yellow,green,brown">
@@ -144,7 +144,7 @@
 			<Action name="ShanghaiExchangeOpen"/>
 			<Float percentage="60"/>
 			<OffBoardRevenue step="3"/>
-			<Trains limitStep="2" rusted="3/3H" converted="4"/>
+			<Trains limitStep="2" rusted="3/3H" converted="4/4H"/>
 		</Phase>
 		<Phase name="8" realName="F">
 			<Tiles colour="yellow,green,brown,grey">
@@ -154,7 +154,7 @@
 				<Lays companyType="Major" colour="grey" number="1"/>
 				</Tiles>
 			<OffBoardRevenue step="4"/>
-			<Trains limitStep="3" rusted="4/4H" converted="5"/>
+			<Trains limitStep="3" rusted="4/4H" converted="5/5H"/>
 		</Phase>
 		</Component>
 		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
