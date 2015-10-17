@@ -461,6 +461,21 @@
 <Track from="side3" gauge="normal" to="side0"/>
 </Tile>
 <!--  Cities  -->
+<Tile colour="yellow" id="44005" name="Z-5">
+<Station id="city1" position="0" slots="1" type="City" value="20" label="Z"/>
+<Track from="city1" gauge="normal" to="side2"/>
+<Track from="city1" gauge="normal" to="side3"/>
+</Tile>
+<Tile colour="yellow" id="44006" name="Z-6">
+<Station id="city1" position="0" slots="1" type="City" value="20" label="Z"/>
+<Track from="city1" gauge="normal" to="side0"/>
+<Track from="city1" gauge="normal" to="side2"/>
+</Tile>
+<Tile colour="yellow" id="44057" name="Z-57">
+<Station id="city1" position="0" slots="1" type="City" value="20" label="Z"/>
+<Track from="city1" gauge="normal" to="side3"/>
+<Track from="city1" gauge="normal" to="side0"/>
+</Tile>
 <Tile colour="green" id="901" name="Luzern-green" label="L"/>
 <Tile colour="brown" id="902" name="Luzern-brown" label="L"/>
 <Tile colour="gray" id="903" name="Luzern-gray" label="L"/>

@@ -21,8 +21,9 @@
 	<Tile id="-902"/>
 	<Tile id="-903"/>
 	<Tile id="-9121"/>
-	<Tile id="-44010"> <!--  Zurich Tile with Z -->
-		<Upgrade id="907,908" />
+	<!--  Zurich Tile with Z -->
+	<Tile id="-44010"> 
+		<Upgrade id="44005,44006,44057" />
 	</Tile>
 	<Tile id="-44115">
 		<Upgrade id="5,6,57" />
@@ -92,10 +93,19 @@
 		<Upgrade id="18,19,20,23,24,26,27" />
 	</Tile>
 	<Tile id="57" quantity="5">
-	<Upgrade id="14,15,619,907,908" />
+	<Upgrade id="14,15,619" />
 	</Tile>
 	<Tile id="58" quantity="4">
 	<Upgrade id="14,15,619" />
+	</Tile>
+		<Tile id="44005" quantity="1">
+	<Upgrade id="907,908" />
+	</Tile>
+		<Tile id="44006" quantity="1">
+	<Upgrade id="907,908" />
+	</Tile>
+		<Tile id="44057" quantity="1">
+	<Upgrade id="907,908" />
 	</Tile>
 	<!-- Green -->
 	<Tile id="14" quantity="4"/>
