@@ -23,6 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/**
+ * @author Martin
+ *
+ */
 public class TrainManager extends RailsManager implements Configurable {
     // Static attributes
     protected final List<TrainType> lTrainTypes = new ArrayList<TrainType>();
@@ -457,6 +461,17 @@ public class TrainManager extends RailsManager implements Configurable {
         }
         
         return trainTypes;
+    }
+
+    
+    /**
+     * Hook for specific game functions that will convert existing trains based on a phase trigger
+     * @param type
+     * @param value
+     */
+    protected void convertTrainType(TrainCertificateType type, Owner value) {
+        //needs to be handled by game specific trainmanager classes.
+        
     }  
     
 }

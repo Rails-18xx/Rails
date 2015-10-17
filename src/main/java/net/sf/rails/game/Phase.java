@@ -76,6 +76,10 @@ public class Phase extends RailsModel implements Configurable {
     /** Train types to release (make available for buying) if a phase gets activated */
     private ImmutableList<TrainCertificateType> releasedTrains;
     private String releasedTrainNames;
+    
+    /** Train types to be converted if a phase gets activated */
+    private ImmutableList<TrainCertificateType> convertedTrains;
+    private String convertedTrainNames;
 
     /** Actions for this phase.
      * When this phase is activated, the GameManager method phaseAction() will be called,
@@ -207,6 +211,7 @@ public class Phase extends RailsModel implements Configurable {
         if (trainsTag != null) {
             trainLimitStep = trainsTag.getAttributeAsInteger("limitStep", trainLimitStep);
             rustedTrainNames = trainsTag.getAttributeAsString("rusted", null);
+            convertedTrainNames = trainsTag.getAttributeAsString("converted",null);
             releasedTrainNames = trainsTag.getAttributeAsString("released", null);
             trainTradingAllowed =
                 trainsTag.getAttributeAsBoolean("tradingAllowed",
@@ -288,6 +293,19 @@ public class Phase extends RailsModel implements Configurable {
             releasedTrains = newReleasedTrains.build();
         }
 
+        if (convertedTrainNames != null) {
+            ImmutableList.Builder<TrainCertificateType> newConvertedTrains = 
+                    ImmutableList.builder();
+            for (String typeName : convertedTrainNames.split(",")) {
+                type = trainManager.getCertTypeByName(typeName);
+                if (type == null) {
+                    throw new ConfigurationException (" Unknown converted train type '"+typeName+"' for phase '"+getId()+"'");
+                }
+                newConvertedTrains.add(type);
+            }
+            convertedTrains = newConvertedTrains.build();
+        }
+
         // Push any extra tile lay turns to the appropriate company type.
         if (tileLaysPerColourTurns != null) {
             CompanyManager companyManager = getRoot().getCompanyManager();
@@ -325,6 +343,13 @@ public class Phase extends RailsModel implements Configurable {
                 trainManager.makeTrainAvailable(type);
             }
         }
+        
+        if (convertedTrains != null && !convertedTrains.isEmpty()) {
+            for (TrainCertificateType type : convertedTrains) {
+                trainManager.convertTrainType(type, lastTrainBuyer.value());
+            }
+        }
+ 
 
         if (actions != null && !actions.isEmpty()) {
             for (String actionName : actions.keySet()) {
