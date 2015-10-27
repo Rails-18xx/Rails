@@ -107,7 +107,10 @@ implements ActionListener, KeyListener {
     protected void deRegisterObservers() {
         log.debug("Deregistering observers");
         for (Observer o : observers) {
-            o.getObservable().removeObserver(o);
+            Observable observable = o.getObservable();
+            if (observable != null) {
+                observable.removeObserver(o);
+            }
         }
     }
 
