@@ -338,7 +338,7 @@ public class TreasuryShareRound extends StockRound {
                     companyName,
                     shareUnit,
                     companyName,
-                    from.getId(),
+                    from.getName(),
                     cashText ));
         } else {
             ReportBuffer.add(this, LocalText.getText("BUY_SHARES_LOG",
@@ -347,7 +347,7 @@ public class TreasuryShareRound extends StockRound {
                     shareUnit,
                     number * shareUnit,
                     companyName,
-                    from.getId(),
+                    from.getName(),
                     cashText ));
         }
 

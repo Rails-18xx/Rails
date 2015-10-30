@@ -72,6 +72,7 @@
 	<StockSpace name="F5" price="95" type="yellow" />
 	<StockSpace name="F6" price="90" type="yellow" />
 	<StockSpace name="F7" price="85" type="yellow" />
+	<StockSpace name="F8" price="80" type="yellow" />
 	<StockSpace name="G1" price="120" type="yellow" />
 	<StockSpace name="G2" price="115" type="yellow" />
 	<StockSpace name="G3" price="110" type="yellow" />

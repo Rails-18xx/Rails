@@ -1,4 +1,4 @@
-package net.sf.rails.game.specific._18EU;
+package rails.game.specific._18EU;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,6 +16,7 @@ import net.sf.rails.game.Stop;
 import net.sf.rails.util.RailsObjects;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 
 /**
@@ -118,9 +119,11 @@ public class StartCompany_18EU extends StartCompany {
 
         // check asOption attributes
         StartCompany_18EU action = (StartCompany_18EU)pa; 
-        boolean options = Objects.equal(this.minorsToMerge, action.minorsToMerge)
-                && Objects.equal(this.requestStartSpaces, action.requestStartSpaces)
-                && Objects.equal(this.availableHomeStations, action.availableHomeStations)
+        boolean options =  
+                Objects.equal(this.requestStartSpaces, action.requestStartSpaces)
+                // availableHomeStations does not work correctly, as here sometimes the station number deviate
+               // && RailsObjects.elementEquals(this.availableHomeStations, action.availableHomeStations)
+                && RailsObjects.elementEquals(this.minorsToMerge, action.minorsToMerge)
         ;
         
         // finish if asOptions check

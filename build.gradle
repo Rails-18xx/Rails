@@ -39,6 +39,13 @@ plugins {
   id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
 
+// Addition of macAppBundle
+// https://github.com/crotwell/gradle-macappbundle
+plugins {
+  id "edu.sc.seis.macAppBundle" version "2.1.0"
+}
+
+
 repositories {
   mavenCentral()
 }
@@ -59,6 +66,7 @@ def railsVendor = 'Rails project'
 def railsHomepage = 'http://rails.sf.net'
 def railsDescription = 'Rails is a moderator program for 18xx games'
 def railsIcon = 'rails.ico'
+def railsCopyright = 'GPL'
 
 // Key variables
 def keyAlias = 'rails18xx'
@@ -239,15 +247,21 @@ launch4j {
     jar = "${buildDir}/libs/${project.name}-${project.version}-all.jar"
     outfile = "${project.name}-${project.version}.exe"
     icon = "../../${buildFilesDir}/${railsIcon}"
-    version = project.version.replace("alpha","98.").replace("beta","99.")
+    version = project.version.replace("alpha","98.").replace("beta","99.").replace("RC","100.")
     textVersion = "${project.version}"
-    copyright = "GPL"
+    copyright = "${railsCopyright}"
     companyName = "${railsVendor}"
     description = "${railsDescription}"
     productName = "${project.name}"
     internalName = "${project.name}"
 }	
-        
+
+macAppBundle {
+    mainClassName = "${railsMainClass}"
+    icon = "../../${buildFilesDir}/${railsIcon}"
+    javaProperties.put("apple.laf.useScreenMenuBar", "true")
+}
+
 // exclude the signatures
 //shadow {
 //    exclude "META-INF/*.DSA"

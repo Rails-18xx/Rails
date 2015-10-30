@@ -1,5 +1,7 @@
 package net.sf.rails.util;
 
+import com.google.common.collect.Sets;
+
 import rails.game.action.PossibleAction;
 import net.sf.rails.game.RailsItem;
 
@@ -129,6 +131,14 @@ public class RailsObjects {
 
     public static StringHelperForActions stringHelper(PossibleAction action) {
         return new StringHelperForActions(action);
+    }
+    
+    public static boolean elementEquals(Iterable<?> a, Iterable<?> b) {
+        if (a == null && b == null) return true;
+        if (a == null || b == null) return false;
+        
+        return Sets.newHashSet(a).equals(Sets.newHashSet(b));
+        
     }
     
 }

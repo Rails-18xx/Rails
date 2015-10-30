@@ -28,8 +28,7 @@ public class TrainManager_1880 extends TrainManager {
      */
     @Override
     public void checkTrainAvailability(Train train, Owner from) {
-        trainsHaveRusted = false;
-        phaseHasChanged = false;
+        phaseHasChanged.set(false);;
         if (from != Bank.getIpo(this)) return;
 
         TrainCertificateType boughtType, nextType;
@@ -45,7 +44,7 @@ public class TrainManager_1880 extends TrainManager {
                     if (!nextTypeName.equals("2R")) {
                         if (!nextType.isAvailable()) {
                             makeTrainAvailable(nextType);
-                            trainAvailabilityChanged = true;
+                            trainAvailabilityChanged.set(true);
                             ReportBuffer.add(this, "All " + boughtType.getId()
                                     + "-trains are sold out, "
                                     + nextType.getId() + "-trains now available");
@@ -58,7 +57,7 @@ public class TrainManager_1880 extends TrainManager {
                             if (nextType != null) {
                                 if (!nextType.isAvailable()) {
                                     makeTrainAvailable(nextType);
-                                    trainAvailabilityChanged = true;
+                                    trainAvailabilityChanged.set(true);
                                     ReportBuffer.add(this, "All " + boughtType.getId()
                                             + "-trains are sold out, "
                                             + nextType.getId() + "-trains now available");
@@ -85,7 +84,7 @@ public class TrainManager_1880 extends TrainManager {
         if (newPhases.get(boughtType) != null
                 && (newPhase = newPhases.get(boughtType).get(trainIndex)) != null) {
             getRoot().getPhaseManager().setPhase(newPhase, from);
-            phaseHasChanged = true;
+            phaseHasChanged.set(true);
         }
     }
 

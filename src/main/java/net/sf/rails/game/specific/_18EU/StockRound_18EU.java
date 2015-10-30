@@ -3,6 +3,7 @@ package net.sf.rails.game.specific._18EU;
 import java.util.*;
 
 import rails.game.action.*;
+import rails.game.specific._18EU.StartCompany_18EU;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -455,7 +456,7 @@ public class StockRound_18EU extends StockRound {
         } else {
             ReportBuffer.add(this, LocalText.getText("SelectedHomeBase",
                     company.getId(),
-                    selectedHomeCity.toString() ));
+                    selectedHomeCity.toText() ));
         }
 
         // Move the remaining certificates to the company treasury

@@ -22,7 +22,6 @@ import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.model.PortfolioModel;
-import net.sf.rails.game.specific._18EU.StartCompany_18EU;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
@@ -42,6 +41,7 @@ import rails.game.action.PossibleActions;
 import rails.game.action.SellShares;
 import rails.game.action.StartCompany;
 import rails.game.correct.CashCorrectionAction;
+import rails.game.specific._18EU.StartCompany_18EU;
 
 
 /**

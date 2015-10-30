@@ -345,10 +345,14 @@ public class Phase extends RailsModel implements Configurable {
         return extraInfo;
     }
 
+    @Deprecated
+    // FIXME: Replace this with TileColor object
     public boolean isTileColourAllowed(String tileColour) {
         return tileColours.contains(tileColour);
     }
 
+    @Deprecated
+    // FIXME: Replace this with TileColor objects
     public List<String> getTileColours() {
         return tileColours;
     }

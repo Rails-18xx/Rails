@@ -23,6 +23,11 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
 
     protected final BooleanState obsolete = BooleanState.create(this, "obsolete");
 
+    // sorting id to correctly sort them inside a portfolio
+    // this is a workaround to have 2.0 compatible with 1.x save files
+    // it should be removed in the mid-term by selecting trains from a portfolio based only on type, not on id
+    protected int sortingId;
+    
     /**
      * Used by Configure (via reflection) only
      */
@@ -30,9 +35,10 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
         super(parent, id, Train.class);
     }
     
-    public static Train create(RailsItem parent, String id, TrainCertificateType certType, TrainType type)
+    public static Train create(RailsItem parent, int uniqueId, TrainCertificateType certType, TrainType type)
             throws ConfigurationException {
-        Train train = certType.createTrain(parent, id);
+        String id = certType.getId() + "_"+ uniqueId;
+        Train train = certType.createTrain(parent, id, uniqueId);
         train.setCertificateType(certType);
         train.setType(type);
         return train;
@@ -48,6 +54,10 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
         return (RailsRoot)super.getRoot();
     }
 
+    public void setSortingId(int sortingId) {
+        this.sortingId = sortingId;
+    }
+    
     public void setCertificateType(TrainCertificateType type) {
         this.certificateType = type;
     }
@@ -183,7 +193,7 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
             Train oTrain = (Train)other;
             return ComparisonChain.start()
                     .compare(this.getCertType(), oTrain.getCertType())
-                    .compare(this.getId(), oTrain.getId())
+                    .compare(this.sortingId, oTrain.sortingId)
                     .result();
         }
         return 0;
