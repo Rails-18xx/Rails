@@ -87,6 +87,16 @@
 			</Train>
 			<NewPhase phaseName="5"/>
 		</TrainType>
+				<TrainType name="5HO" quantity="1">
+				<Train name="5H-OErlikon" majorStops="3" cost="400">
+				<Reach base="hexes"/>
+			</Train>
+		</TrainType>
+				<TrainType name="5HE" quantity="1">
+				<Train name="5H-EVA" majorStops="3" cost="400">
+				<Reach base="hexes"/>
+			</Train>
+		</TrainType>
 				<TrainType name="6/6H" quantity="4">
 				<Train name="6" majorStops="6" cost="630"/>
 				<Train name="6H" majorStops="6" cost="550">
@@ -140,6 +150,7 @@
 				<Lays companyType="Major" colour="brown" number="1"/>
 				</Tiles>
 			<OffBoardRevenue step="3"/>
+			<Trains released="5HE,5HO"/>
 		</Phase>
 		<Phase name="6" realName="E">
 			<Action name="ShanghaiExchangeOpen"/>
