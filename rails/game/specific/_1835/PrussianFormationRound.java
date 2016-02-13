@@ -462,13 +462,47 @@ public class PrussianFormationRound extends StockRound {
     }
 
     public static boolean prussianIsComplete(GameManagerI gameManager) {
-
+        boolean resultp = true;
+        boolean resultm = true;
         for (PublicCompanyI company : gameManager.getAllPublicCompanies()) {
-            if (!company.getTypeName().equalsIgnoreCase("Minor")) continue;
-            if (!company.isClosed()) return false;
+            resultm = checkForPrussianMinors(company);
+            if (!resultm) { 
+                break;
+            }
+        }
+        for (PrivateCompanyI company : gameManager.getAllPrivateCompanies()) {
+        resultp = checkForPrussianPrivates(company);
+        if (!resultp) {
+            break;
+            }
+        }
+        if ((!resultp) || (!resultm)) {
+            return false;
+        } else {
+        return true;
+        }
+    }
+
+    private static boolean checkForPrussianMinors(PublicCompanyI company) {
+
+        if (!company.getTypeName().equalsIgnoreCase("Minor")) {
+            return true;
+            }
+        if (!company.isClosed()) {
+            return false;
         }
         return true;
     }
+
+    private static boolean checkForPrussianPrivates(PrivateCompanyI company) { 
+        if ((!company.getName().equals("HB"))&&(!company.getName().equals("BB"))) {
+            return true;
+        }
+        if (!company.isClosed()) {
+            return false;
+        }
+        return true;
+        }
 
     @Override
     public String toString() {
