@@ -222,10 +222,31 @@ public class OperatingRound_1880 extends OperatingRound {
     }
 
     public boolean specialBuyTrain(BuyTrain action) {
+        //Player CompanyOwner = null;
         // We might not be in the correct step...
         OrStep currentStep = getStep();
         setStep(GameDef.OrStep.BUY_TRAIN);
         boolean trainResults = super.buyTrain(action);
+        //Check if excessTrainCompanies is empty, if not start discarding the trains..
+        if (!excessTrainCompanies.isEmpty()) { //holds all Players and the Companies with excesstrains in a list
+              for (Player CompanyOwner : excessTrainCompanies.keySet()) {//loop over the players
+                  List<PublicCompanyI> excessTrainCompaniesList = excessTrainCompanies.get(CompanyOwner);
+                  for (PublicCompanyI excessTrainCompany : excessTrainCompaniesList) { //extract the Company from the list
+                      int numberofTrainsToDiscard = (excessTrainCompany.getNumberOfTrains()- excessTrainCompany.getCurrentTrainLimit());
+                      List<TrainI>trains = excessTrainCompany.getPortfolio().getTrainList();
+                      List<TrainI> trainsToDiscard = new ArrayList<TrainI>(4);
+                      for (TrainI train : trains) {
+                          trainsToDiscard.add(train);
+                              if (--numberofTrainsToDiscard == 0) break;
+                      }
+                      for (TrainI train : trainsToDiscard) {
+                          train.moveTo(pool);
+                          ReportBuffer.add(LocalText.getText("CompanyDiscardsTrain",
+                                  excessTrainCompany.getLongName(), train.getName()));
+                      }
+                }
+              }
+        }
         setStep(currentStep);
 
         if (trainResults == false) {
