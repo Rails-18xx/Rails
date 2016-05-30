@@ -42,7 +42,6 @@ import net.sf.rails.util.SequenceUtil;
 import com.google.common.collect.Iterables;
 
 import rails.game.action.BuyTrain;
-import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
@@ -225,7 +224,26 @@ public class OperatingRound_1880 extends OperatingRound {
         setStep(GameDef.OrStep.BUY_TRAIN);
         boolean trainResults = super.buyTrain(action);
         setStep(currentStep);
-
+      //Check if excessTrainCompanies is empty, if not start discarding the trains..
+        if (!excessTrainCompanies.isEmpty()) { //holds all Players and the Companies with excesstrains in a list
+              for (Player CompanyOwner : excessTrainCompanies.keySet()) {//loop over the players
+                  List<PublicCompany> excessTrainCompaniesList = excessTrainCompanies.get(CompanyOwner);
+                  for (PublicCompany excessTrainCompany : excessTrainCompaniesList) { //extract the Company from the list
+                      int numberofTrainsToDiscard = (excessTrainCompany.getNumberOfTrains()- excessTrainCompany.getCurrentTrainLimit());
+                      Set<Train>trains = excessTrainCompany.getPortfolioModel().getTrainList();
+                      List<Train> trainsToDiscard = new ArrayList<Train>(4);
+                      for (Train train : trains) {
+                          trainsToDiscard.add(train);
+                              if (--numberofTrainsToDiscard == 0) break;
+                      }
+                      for (Train train : trainsToDiscard) {
+                          train.discard();
+                          ReportBuffer.add(this,LocalText.getText("CompanyDiscardsTrain",
+                                  excessTrainCompany.getLongName(), train.getId()));
+                      }
+                }
+              }
+        }
         if (trainResults == false) {
             return false;
         }
