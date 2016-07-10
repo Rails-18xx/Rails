@@ -9,6 +9,7 @@ import java.util.List;
 import rails.common.LocalText;
 import rails.game.*;
 import rails.game.action.BuyCertificate;
+import rails.game.action.NullAction;
 
 public class StockRound_1835 extends StockRound {
 
@@ -206,4 +207,18 @@ public class StockRound_1835 extends StockRound {
             }
         }
     }
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.StockRound#done( java.lang.String, boolean)
+     */
+    @Override
+    public boolean done( String playerName,
+            boolean hasAutopassed) {
+        if (hasActed.booleanValue()) {
+            if (companyBoughtThisTurnWrapper.get() == null) {
+                hasActed.set(false);
+            }
+        }
+         return super.done( playerName, hasAutopassed);
+    }
+    
 }
