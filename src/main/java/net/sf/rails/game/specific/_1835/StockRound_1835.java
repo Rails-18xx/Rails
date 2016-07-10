@@ -7,6 +7,7 @@ package net.sf.rails.game.specific._1835;
 import java.util.Set;
 
 import rails.game.action.BuyCertificate;
+import rails.game.action.NullAction;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
