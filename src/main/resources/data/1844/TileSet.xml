@@ -52,9 +52,7 @@
 	<Tile id="-44206"/>
 	<Tile id="-44207"/>
 	<Tile id="-44212"/>
-	<Tile id="-44213">
-	<Upgrade id="457,458"></Upgrade>
-	</Tile>
+	<Tile id="-44213"/>
 	<!--  Furka-Oberalp Inital Mountain Tiles -->
 	<Tile id="-44401">
 		<Upgrade id="457,458,FO-1" />
