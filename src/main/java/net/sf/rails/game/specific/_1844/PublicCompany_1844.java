@@ -14,11 +14,13 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.Bank;
 import net.sf.rails.game.BaseToken;
+import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.Stop;
 import net.sf.rails.game.model.BaseTokensModel;
+import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.specific._1880.Investor_1880;
 import net.sf.rails.game.specific._1880.PublicCompany_1880;
 import net.sf.rails.game.state.BooleanState;
@@ -39,7 +41,8 @@ public class PublicCompany_1844 extends PublicCompany {
     }
     
     public void start(StockSpace startSpace) {
-         if(this.getType().getId().equals("VOR-SBB")) {
+        PortfolioModel from; 
+        if(this.getType().getId().equals("VOR-SBB")) {
           extraCapital = 2 * (this.getIPOPrice());   
          } else {
         extraCapital = 5 * (this.getIPOPrice());
@@ -66,8 +69,24 @@ public class PublicCompany_1844 extends PublicCompany {
                  this.setNumberOfBaseTokens(1);
              }
          }
-         
+
         super.start(startSpace);
+  
+        if (this.getLongName().equals("Ferrovie Nord Milano")) {
+            /* Move three shares to the pool on start */
+            from = getRoot().getBank().getIpo().getPortfolioModel();
+            PublicCertificate cert2;
+            for (int i = 0; i < 3; i++) {
+                cert2 = getRoot().getBank().getIpo().getPortfolioModel().findCertificate(this, false);
+                if (cert2 == null) {
+                    log.error("Cannot find " + this.getLongName() + " " + shareUnit
+                            + "% share in " + from.getId());
+                    }
+                cert2.moveTo(getRoot().getBank().getPool());
+                }
+            
+            Currency.fromBank(this.getParPriceModel().getPrice().getPrice(), this);
+            }
     }
     
     private void setNumberOfBaseTokens(int i) {
