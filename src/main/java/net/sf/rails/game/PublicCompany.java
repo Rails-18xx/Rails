@@ -35,7 +35,7 @@ import com.google.common.collect.Sets;
  */
 public class PublicCompany extends RailsAbstractItem implements Company, RailsMoneyOwner, PortfolioOwner, Comparable<PublicCompany> {
     
-    private static Logger log = LoggerFactory.getLogger(PublicCompany.class);
+    protected static Logger log = LoggerFactory.getLogger(PublicCompany.class);
 
     public static final int CAPITALISE_FULL = 0;
 
