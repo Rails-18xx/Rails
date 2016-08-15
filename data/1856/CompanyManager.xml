@@ -62,7 +62,7 @@
 				class="rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay class="rails.game.BonusToken" 
 						location="C14,D19,E18,F9,F17,H5,H7,H17,J5,J17,K2,M18,O18" connected="yes" extra="yes">
-					<BonusToken name="Port" value="20" removed="Phase:5"/>
+					<BonusToken name="Port" value="20" removed="Phase:6"/>
 				</SpecialTokenLay>
 			</SpecialProperty>
 		</SpecialProperties>
