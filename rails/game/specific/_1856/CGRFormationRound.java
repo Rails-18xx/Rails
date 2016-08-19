@@ -43,14 +43,6 @@ public class CGRFormationRound extends SwitchableUIRound {
     public static final int STEP_DISCARD_TRAINS = 2;
     public static final int STEP_EXCHANGE_TOKENS = 3;
 
-    private static int[][] certLimitsTable = {
-        {14, 19, 21, 26, 29, 31, 36, 40},
-        {10, 13, 15, 18, 20, 22, 25, 28},
-        {8, 10, 12, 14, 16, 18, 20, 22},
-        {7, 8, 10, 11, 13, 15, 16, 18},
-        {6, 7, 8, 10, 11, 12, 14, 15}
-    };
-
     public CGRFormationRound (GameManagerI gameManager) {
         super (gameManager);
 
@@ -305,7 +297,6 @@ public class CGRFormationRound extends SwitchableUIRound {
         int count, cgrSharesUsed, oldShares, newShares;
         PublicCertificateI cgrCert, poolCert;
         List<PublicCertificateI> certs = new ArrayList<PublicCertificateI>();
-        List<PublicCompanyI> availableCompanies;
         Player temporaryPresident = null;
         Player newPresident = null;
         Player firstCGRowner = null;
@@ -507,31 +498,6 @@ public class CGRFormationRound extends SwitchableUIRound {
         cgr.setFloated();
         ReportBuffer.add (LocalText.getText("Floats", PublicCompany_CGR.NAME));
 
-        // Determine the new certificate limit.
-        // The number of available companies is 11,
-        // or 12 minus the number of closed companies, whichever is lower.
-        // Make sure that only available Companies are counted.
-        availableCompanies = gameManager.getAllPublicCompanies();
-        int validCompanies = 12; //including the CGR
-        //Need to find out if a company is already closed if yes 
-        //decrease the validCompanies value per company by 1
-        for (PublicCompanyI c : availableCompanies) {
-            if (c.isClosed()) {
-                validCompanies --;
-            }
-        }
-        int numCompanies = Math.min(11, validCompanies-mergingCompanies.size());
-        int numPlayers = gameManager.getNumberOfPlayers();
-        // Need some checks here...
-        int newCertLimit = certLimitsTable[numPlayers-2][numCompanies-4];
-        gameManager.setPlayerCertificateLimit(newCertLimit);
-        message = LocalText.getText("CertificateLimit",
-                newCertLimit,
-                numPlayers,
-                numCompanies);
-        DisplayBuffer.add(message);
-        ReportBuffer.add(message);
-
         // Collect the old token spots, and move cash and trains
         List<BaseToken> homeTokens = new ArrayList<BaseToken>();
         nonHomeTokens = new ArrayList<BaseToken>();
@@ -687,7 +653,6 @@ public class CGRFormationRound extends SwitchableUIRound {
                         cgrName, train.getName()));
             }
         }
-
     }
 
     private void executeExchangeTokens (List<BaseToken> exchangedTokens) {
@@ -854,6 +819,15 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
 
         return true;
+    }
+
+    @Override
+    protected void finishRound() {
+
+        super.finishRound();
+        
+        // In any case we must recalculate the certificate limit
+        ((GameManager_1856)gameManager).resetCertificateLimit(true);
     }
 
     public List<PublicCompanyI> getMergingCompanies() {

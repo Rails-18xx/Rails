@@ -15,6 +15,9 @@ import rails.game.state.BooleanState;
 
 public class OperatingRound_1856 extends OperatingRound {
 
+    /** 
+     * Set after the first 6-train is bought, irrespective whether any loans are outstanding or not.
+     */
     private BooleanState finalLoanRepaymentPending
         = new BooleanState ("LoanRepaymentPending", false);
 
