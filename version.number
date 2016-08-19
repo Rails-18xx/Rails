@@ -1,5 +1,5 @@
 #Property file that contains version number and the develop indicator
-version=1.9.1
+version=1.9.2
 # the following string "@DEVELOP@ is replaced by an empty string in the release version
 # this is done automatically by ant
 develop=@DEVELOP@
