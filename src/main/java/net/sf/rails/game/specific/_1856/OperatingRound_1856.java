@@ -19,8 +19,12 @@ import com.google.common.collect.Iterables;
 
 
 public class OperatingRound_1856 extends OperatingRound {
-
+    
+    /**
+     * Set after the first 6-train is bought, irrespective whether any loans are outstanding or not. 
+     */
     private final BooleanState finalLoanRepaymentPending = BooleanState.create(this, "LoanRepaymentPending");
+    
     private Player playerToStartLoanRepayment = null;
 
     /**
