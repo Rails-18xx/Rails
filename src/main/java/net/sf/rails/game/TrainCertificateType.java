@@ -145,6 +145,10 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     public boolean isAvailable() {
         return available.value();
     }
+    
+    public boolean isDual() {
+        return potentialTrainTypes.size() == 2;
+    }
 
     /**
      * Make a train type available for buying by public companies.

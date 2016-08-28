@@ -2898,6 +2898,10 @@ public class OperatingRound extends Round implements Observer {
         }
 
         Owner oldOwner = train.getOwner();
+        
+        if (oldOwner == ipo && action.getType().isDual()) {
+            trainManager.updateTrainType(train, action.getType());
+        }
 
         if (exchangedTrain != null) {
             Train oldTrain =
@@ -2915,9 +2919,6 @@ public class OperatingRound extends Round implements Observer {
                     companyName, train.toText(), oldOwner.getId(),
                     Bank.format(this, price), stb.getOriginalCompany().getId()));
         }
-
-        train.setType(action.getType()); // Needed for dual trains bought from
-                                         // the Bank
 
         operatingCompany.value().buyTrain(train, price);
 
