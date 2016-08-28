@@ -42,6 +42,11 @@ public class TrainType implements Cloneable {
 
     /** In some cases, trains start their life in the Pool */
     protected String initialPortfolio = "IPO";
+    
+    /** A dual train whose certificate can be 'flipped' to the train on the 'reverse' side.
+     *  A flip attempt has no effect on non-dual trains.
+     */
+    protected boolean flippable = false;
 
     protected static Logger log =
         LoggerFactory.getLogger(TrainType.class);
@@ -92,6 +97,14 @@ public class TrainType implements Cloneable {
             scoreCities =
                 scoreTag.getAttributeAsString("scoreCities", scoreCities);
         }
+         
+         // Another type into which this type can be swapped 
+         // (used for 'flippable' dual trains)
+        Tag swapTag = tag.getChild("Flippable");
+         if (swapTag != null) {
+             flippable = true;
+                 }
+         
 
         // Check the reach and score values
         countHexes = reachBasis.equals("hexes");
@@ -180,6 +193,14 @@ public class TrainType implements Cloneable {
     public int getTownScoreFactor() {
         return townScoreFactor;
     }
+  
+    protected boolean isFlippable() {
+        return flippable;
+    }
+    
+    protected boolean isDual() {
+       return certificateType.isDual();
+    } 
 
     @Override
     public Object clone() {

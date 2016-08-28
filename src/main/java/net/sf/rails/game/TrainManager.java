@@ -258,6 +258,21 @@ public class TrainManager extends RailsManager implements Configurable {
         }
         trainsPerCertType.get(type).add(train);
     }
+    public void updateTrainType (Train train, TrainType newType) {
+        
+        // Only allowed for dual trains
+        if (!newType.isDual()) return;
+
+        TrainType oldType = train.getType();
+        train.setType(newType);
+        if (oldType != null) {
+            new RemoveFromList<Train> (trainsPerCertType.get(oldType), train, "TrainsPerType "+oldType.getName());
+        }
+        if (!trainsPerCertType.containsKey(newType)) {
+            trainsPerCertType.put (newType, new ArrayList<Train>());
+        }
+        new AddToList<Train> (trainsPerCertType.get(newType), train, "TrainsPerType "+newType.getName());
+    }
 
     public Train getTrainByUniqueId(String id) {
         return trainMap.get(id);
@@ -369,6 +384,31 @@ public class TrainManager extends RailsManager implements Configurable {
         } else {
             ReportBuffer.add(this, LocalText.getText("TrainsRusted",type.getId()));
         }
+    }
+    
+ public boolean flipDualTrainCertificates (TrainType oldType) {
+        
+        if (!oldType.isFlippable() || !oldType.isDual()) return false;
+        List<Train> trainsToFlip = trainsPerTrainType.get(oldType);
+        if (trainsToFlip == null || trainsToFlip.isEmpty()) {
+            log.warn("Flipping requested for train type "+oldType.getName()+" but no such trains exist");
+            return false;
+        }
+        
+        TrainCertificateType certType = oldType.getCertificateType();
+        List<TrainType> bothTypes = certType.getPotentialTrainTypes();
+        if (bothTypes.size() != 2) return false;
+        
+        int oldIndex = bothTypes.indexOf(oldType);
+        int newIndex = 1 - oldIndex;
+        TrainType newType = bothTypes.get(newIndex);
+            
+        for (Train train : trainsPerTrainType.get(oldType)) {
+            updateTrainType (train, newType);
+            train.getOwner().updateTrainsModel();
+        }
+        ReportBuffer.add(this, LocalText.getText("DualTrainsFlipped", oldType.getName(), newType.getName()));
+        return true;
     }
     
     public Set<Train> getAvailableNewTrains() {

@@ -18,6 +18,10 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
     
     /** Some specific trains cannot be traded between companies */
     protected boolean tradeable = true;
+    
+    /** Temporary variable, only used during moves. */
+    protected TrainType previousType = null;
+
 
     protected final BooleanState obsolete = BooleanState.create(this, "obsolete");
 
@@ -39,6 +43,7 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
         Train train = certType.createTrain(parent, id, uniqueId);
         train.setCertificateType(certType);
         train.setType(type);
+        train.previousType = type;
         return train;
     }
     
@@ -61,7 +66,9 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
     }
     
     public void setType (TrainType type) {
+        previousType = this.type.value();
         this.type.set(type);
+        this.previousType = type;
     }
 
     /**
