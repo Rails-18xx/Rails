@@ -11,15 +11,15 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.GameDef;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.financial.PublicCertificate;
-import net.sf.rails.game.financial.ShareSellingRound;
-import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.ShareSellingRound;
+import net.sf.rails.game.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.GameDef;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
@@ -122,7 +122,7 @@ public class ShareSellingRound_1844 extends ShareSellingRound {
 
             // The pool may not get over its limit.
             if (pool.getShare(company) + numberToSell * company.getShareUnit()
-                    > GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)) {
+                    > getGameParameterAsInt(GameDef.Parm.POOL_SHARE_LIMIT)) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }

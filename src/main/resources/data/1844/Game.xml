@@ -1,4 +1,178 @@
-
+<?xml version="1.0"?>
+<ComponentManager>
+	<Component name="GameManager" class="net.sf.rails.game.specific._1844.GameManager_1844">
+		<Game name="1844"/>
+		<GameParameters>
+			<PlayerShareLimit percentage="100"/> 
+			<!--  Players can own 100 Percent, they can however buy only 50% from the IPO rest must be out of Bank pool -->
+			<StockRound class="net.sf.rails.game.specific._1844.StockRound_1844"
+				sequence="SellBuy">
+				<NoSaleInFirstSR/>
+			</StockRound>
+			<OperatingRound
+				class="net.sf.rails.game.specific._1844.OperatingRound_1844">
+				<EmergencyTrainBuying mayBuyFromCompany="No"/>
+			</OperatingRound>
+			<ShareSellingRound class="net.sf.rails.game.specific._1844.ShareSellingRound_1844">
+			</ShareSellingRound>
+					<EndOfGame>
+			<Bankruptcy/>
+			<BankBreaks limit="0" finish="setOfORs"/>
+			<!-- "Runs out"; when "broken", -1 is the limit -->
+		</EndOfGame>
+		</GameParameters>
+		<GuiClasses>
+			<GameStatus
+				class="net.sf.rails.ui.swing.gamespecific._1844.GameStatus_1844"/>
+			<StartRoundWindow
+				class="net.sf.rails.ui.swing.StartRoundWindow"/>
+			<GameUIManager
+				class="net.sf.rails.ui.swing.gamespecific._1844.GameUIManager_1844"/>
+			<ORUIManager
+				class="net.sf.rails.ui.swing.ORUIManager"/>
+			<StatusWindow class="net.sf.rails.ui.swing.gamespecific._1844.StatusWindow_1844"/>
+		</GuiClasses>
+		<EndOfGame/>
+	</Component>
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
+		<Players number="3" cash="800" certLimit="24"/>
+		<Players number="4" cash="620" certLimit="18"/>
+		<Players number="5" cash="510" certLimit="15"/>
+		<Players number="6" cash="440" certLimit="13"/>
+		<Players number="7" cash="400" certLimit="11"/>
+	</Component>
+	<Component name="Bank" class="net.sf.rails.game.Bank">
+		<Bank amount="12000"/>
+	</Component>
+	<Component name="TileManager" class="net.sf.rails.game.TileManager"
+		file="TileSet.xml"/>
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
+		file="CompanyManager.xml"/>
+	<Component name="StockMarket"
+		class="net.sf.rails.game.StockMarket"
+		file="StockMarket.xml"/>
+	<Component name="TrainManager" class="net.sf.rails.game.specific._1844.TrainManager_1844">
+		<DiscardTrain to="scrapheap"/>
+		<RemoveTrainBeforeSR/>
+		<Defaults>
+			<Reach base="stops" countTowns="major"/>
+			<Score towns="yes"/>
+		</Defaults>
+		<TrainType name="2/2H" quantity="13">
+				<Train name="2" majorStops="2" cost="90"/>
+				<Train name="2H" majorStops="2" cost="70">
+					<Reach base="hexes"/>
+			</Train>
+		</TrainType>
+		<TrainType name="3/3H" quantity="9">
+				<Train name="3" majorStops="3" cost="180"/>
+				<Train name="3H" majorStops="3" cost="150">
+				<Reach base="hexes"/>
+			</Train>
+			<NewPhase phaseName="3"/>
+		</TrainType>
+		<TrainType name="4/4H" quantity="6">
+				<Train name="4" majorStops="4" cost="300"/>
+				<Train name="4H" majorStops="4" cost="260">
+				<Reach base="hexes"/>
+			</Train>
+			<NewPhase phaseName="4"/>
+		</TrainType>
+				<TrainType name="5/5H" quantity="4">
+				<Train name="5" majorStops="3" cost="450"/>
+				<Train name="5H" majorStops="3" cost="400">
+				<Reach base="hexes"/>
+			</Train>
+			<NewPhase phaseName="5"/>
+		</TrainType>
+				<TrainType name="5HO" quantity="1">
+				<Train name="5H-OErlikon" majorStops="3" cost="400">
+				<Reach base="hexes"/>
+			</Train>
+		</TrainType>
+				<TrainType name="5HE" quantity="1">
+				<Train name="5H-EVA" majorStops="3" cost="400">
+				<Reach base="hexes"/>
+			</Train>
+		</TrainType>
+				<TrainType name="6/6H" quantity="4">
+				<Train name="6" majorStops="6" cost="630"/>
+				<Train name="6H" majorStops="6" cost="550">
+				<Reach base="hexes"/>
+			</Train>
+			<NewPhase phaseName="6"/>
+		</TrainType>
+		<TrainType name="8E/8H" quantity="100">
+				<Train name="8E" majorStops="99" cost="960"/>
+				<Train name="8H" majorStops="8" cost="700">
+				<Reach base="hexes"/>
+			</Train>
+			<NewPhase phaseName="8"/>
+		</TrainType>
+	</Component>
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
+		<Phase name="2" realName="A">
+			<Tiles colour="yellow">
+				<Lays companyType="Major" colour="yellow" number="1"/>
+			</Tiles>
+			<OperatingRounds number="-1"/>
+			<Float percentage="50"/>
+			<Trains tradingAllowed="no"/>
+			<Stocks avail="10"/>
+		</Phase>
+		<Phase name="3" realName="B">
+			<Tiles colour="yellow,green">
+				<Lays companyType="Major" colour="yellow" number="1"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Minor" colour="yellow" number="1"/>
+				<Lays companyType="Minor" colour="green" number="1"/>
+				</Tiles>
+			<Trains tradingAllowed="yes" converted="2/2H"/>
+			<OffBoardRevenue step="2"/>
+		</Phase>
+		<Phase name="4" realName="C">
+			<Tiles colour="yellow,green">
+				<Lays companyType="Major" colour="yellow" number="1"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Minor" colour="yellow" number="1"/>
+				<Lays companyType="Minor" colour="green" number="1"/>			
+				</Tiles>
+			<OffBoardRevenue step="2"/>
+			<Float percentage="40"/>
+			<Trains limitStep="2" rusted="2/2H" converted="3/3H"/>
+		</Phase>
+		<Phase name="5" realName="D">
+			<Tiles colour="yellow,green,brown">
+				<Lays companyType="Major" colour="yellow" number="1"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Major" colour="brown" number="1"/>
+				</Tiles>
+			<OffBoardRevenue step="3"/>
+			<Trains released="5HE,5HO"/>
+		</Phase>
+		<Phase name="6" realName="E">
+			<Action name="ShanghaiExchangeOpen"/>
+			<Float percentage="60"/>
+			<OffBoardRevenue step="3"/>
+			<Trains limitStep="2" rusted="3/3H" converted="4/4H"/>
+		</Phase>
+		<Phase name="8" realName="F">
+			<Tiles colour="yellow,green,brown,grey">
+				<Lays companyType="Major" colour="yellow" number="1"/>
+				<Lays companyType="Major" colour="green" number="1"/>
+				<Lays companyType="Major" colour="brown" number="1"/>
+				<Lays companyType="Major" colour="grey" number="1"/>
+				</Tiles>
+			<OffBoardRevenue step="4"/>
+			<Trains limitStep="3" rusted="4/4H" converted="5/5H"/>
+		</Phase>
+		</Component>
+		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+			<Modifier class="net.sf.rails.game.specific._1844.Red2RedModifier"/>
+			<Modifier class="net.sf.rails.game.specific._1844.ExpressTrainModifier"/>
+		</Component>
+</ComponentManager>
 <?xml version="1.0"?>
 <ComponentManager>
 	<Component name="GameManager" class="net.sf.rails.game.specific._1844.GameManager_1844">
