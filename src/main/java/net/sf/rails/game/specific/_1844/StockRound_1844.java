@@ -4,26 +4,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import rails.game.action.BuyCertificate;
-import rails.game.action.StartCompany;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 
-
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.Bank;
-
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
-import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.StockRound;
-import net.sf.rails.game.StockSpace;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
-
 import net.sf.rails.game.state.Currency;
+import rails.game.action.BuyCertificate;
+import rails.game.action.StartCompany;
 
 public class StockRound_1844 extends StockRound {
 

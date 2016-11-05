@@ -13,20 +13,15 @@ import net.sf.rails.algorithms.NetworkGraph;
 import net.sf.rails.algorithms.NetworkVertex;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.Bank;
 import net.sf.rails.game.BaseToken;
-import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
-import net.sf.rails.game.StockSpace;
-import net.sf.rails.game.Stop;
-import net.sf.rails.game.model.BaseTokensModel;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
-import net.sf.rails.game.specific._1880.Investor_1880;
-import net.sf.rails.game.specific._1880.PublicCompany_1880;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
-import net.sf.rails.game.state.Owner;
 
 public class PublicCompany_1844 extends PublicCompany {
 
