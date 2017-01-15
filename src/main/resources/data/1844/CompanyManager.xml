@@ -1,237 +1,326 @@
 <?xml version="1.0"?>
 <!-- 1844 CompanyManager.xml -->
 <CompanyManager>
-	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany" >
-		<Certificate certificateCount = "0" />
-		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
-		<Tradeable toPlayer="yes"/>	
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
+		<Certificate certificateCount="0" />
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5"
+			upperPriceFactor="2.0" />
+		<Tradeable toPlayer="yes" />
 	</CompanyType>
-	<CompanyType name="Tunnel" class="net.sf.rails.game.specific._1844.TunnelCompany">
-		<Certificate certificateCount = "0" />
+	<CompanyType name="Tunnel" class="net.sf.rails.game.PrivateCompany">
+		<Tradeable toPlayer="yes" />
+		<Certificate certificateCount="0" />
+		<CanUseSpecialProperties />
 	</CompanyType>
-	<CompanyType name="Mountain" class="net.sf.rails.game.specific._1844.MountainRailRoad">
-		<Certificate certificateCount ="0" />
+	<CompanyType name="Mountain" class="net.sf.rails.game.PrivateCompany">
+		<Tradeable toPlayer="yes" />
+		<Certificate certificateCount="0" />
+		<CanUseSpecialProperties />
 	</CompanyType>
-	<CompanyType name="Regional" class="net.sf.rails.game.specific._1844.PublicCompany_1844">
-		<CanBuyPrivates/>
-		<PoolPaysOut/>
-		<Float percentage="60"/>
-		<StockPrice par="yes"/>
-		<ShareUnit percentage="20"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="3"/>
+	<CompanyType name="Regional"
+		class="net.sf.rails.game.specific._1844.PublicCompany_1844">
+		<CanBuyPrivates />
+		<PoolPaysOut />
+		<Float percentage="60" />
+		<StockPrice par="yes" />
+		<ShareUnit percentage="20" />
+		<Certificate type="President" shares="2" />
+		<Certificate shares="1" number="3" />
 		<BaseTokens>
-			<HomeBase lay="whenStarted"/>
-			<LayCost method="sequence" cost="0,40"/>
+			<HomeBase lay="whenStarted" />
+			<LayCost method="sequence" cost="0,40" />
 		</BaseTokens>
-		<Payout split="no"/>
-		<Trains limit="2,2,2" mandatory="yes"/>
-		<CanBuyPrivates/>
-		<CanUseSpecialProperties/>
+		<Payout split="no" />
+		<Trains limit="2,2,2" mandatory="yes" />
+		<CanBuyPrivates />
+		<CanUseSpecialProperties />
 	</CompanyType>
-	<CompanyType name="Historical" class="net.sf.rails.game.specific._1844.PublicCompany_1844">
-		<PoolPaysOut/>
-		<Float percentage="50"/>
-		<CanBuyPrivates/>
-		<StockPrice par="yes"/>
-		<ShareUnit percentage="10"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="8"/>
+	<CompanyType name="Historical"
+		class="net.sf.rails.game.specific._1844.PublicCompany_1844">
+		<PoolPaysOut />
+		<Float percentage="50" />
+		<CanBuyPrivates />
+		<StockPrice par="yes" />
+		<ShareUnit percentage="10" />
+		<Certificate type="President" shares="2" />
+		<Certificate shares="1" number="8" />
 		<BaseTokens>
-			<HomeBase lay="whenStarted"/>
-			<LayCost method="sequence" cost="0,40,100"/>
-			<!-- Tokenanzahl unabhängig vom Ausgabekurs immer 2 -->
+			<HomeBase lay="whenStarted" />
+			<LayCost method="sequence" cost="0,40,100" />
+			<!-- Tokenanzahl unabhÃ¤ngig vom Ausgabekurs immer 2 -->
 		</BaseTokens>
-		<Trains limit="4,3,2" mandatory="yes"/>
-		<Payout split="no"/>
-		<CanUseSpecialProperties/>
+		<Trains limit="4,3,2" mandatory="yes" />
+		<Payout split="no" />
+		<CanUseSpecialProperties />
 	</CompanyType>
-		<CompanyType name="VOR-SBB" class="net.sf.rails.game.specific._1844.PublicCompany_1844">
-		<PoolPaysOut/>
-		<Float percentage="50"/>
-		<StockPrice par="yes"/>
-		<ShareUnit percentage="25"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="2"/>
+	<CompanyType name="VOR-SBB"
+		class="net.sf.rails.game.specific._1844.PublicCompany_1844">
+		<PoolPaysOut />
+		<Float percentage="50" />
+		<StockPrice par="yes" />
+		<ShareUnit percentage="25" />
+		<Certificate type="President" shares="2" />
+		<Certificate shares="1" number="2" />
 		<BaseTokens>
-			<HomeBase lay="whenStarted"/>
-			<LayCost method="sequence" cost="0,40"/>
+			<HomeBase lay="whenStarted" />
+			<LayCost method="sequence" cost="0,40" />
 		</BaseTokens>
-		<Trains limit="2,2,2" mandatory="no"/>
-		<Payout split="no"/>
+		<Trains limit="2,2,2" mandatory="no" />
+		<Payout split="no" />
 		<!-- Kein Lokzwang -->
 	</CompanyType>
-	<CompanyType name="Major" class="net.sf.rails.game.specific._1844.PublicCompany_1844">
-		<PoolPaysOut/>
-		<StockPrice par="yes"/>
-	</CompanyType>	
-	
-	<Company name="T1" baseprice="50" type="Tunnel" revenue="0"></Company>
-	<Company name="T2" baseprice="50" type="Tunnel" revenue="0"></Company>
-	<Company name="T3" baseprice="50" type="Tunnel" revenue="0"></Company>
-	<Company name="T4" baseprice="50" type="Tunnel" revenue="0"></Company>
-	<Company name="T5" baseprice="50" type="Tunnel" revenue="0"></Company>
-	<Company name="B1" baseprice="150" type="Mountain" revenue="0"></Company>
-	<Company name="B2" baseprice="150" type="Mountain" revenue="0"></Company>
-	<Company name="B3" baseprice="150" type="Mountain" revenue="0"></Company>
-	<Company name="B4" baseprice="150" type="Mountain" revenue="0"></Company>
-	<Company name="B5" baseprice="150" type="Mountain" revenue="0"></Company>
-	<Company name="P1" longname="Brienzer - Rothorn - Bahn" type="Private" basePrice="20"
-		revenue="5">
-		<!--  No Special Powers will be closed on 5/5H -->
+	<CompanyType name="Major"
+		class="net.sf.rails.game.specific._1844.PublicCompany_1844">
+		<PoolPaysOut />
+		<StockPrice par="yes" />
+	</CompanyType>
+
+	<Company name="T1" baseprice="50" type="Tunnel" revenue="0">
+		<SpecialProperties>
+					<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
+				class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay colour="yellow" location="H29,H23,H21,H19,I18,I14,J11,K16" extra="yes"
+					free="no" />
+			</SpecialProperty>
+		</SpecialProperties>
 	</Company>
-	<Company name="P2" longname="Bödelibahn" type="Private" basePrice="50"
-		revenue="10">
-		<!--  Free Tile Lay Yellow once additional wil be closed on 5/5H -->
+	<Company name="T2" baseprice="50" type="Tunnel" revenue="0">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
+				class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay colour="yellow" location="H29,H25,H23,H21,I18,I14,J11,K16" extra="yes"
+					free="no" />
+			</SpecialProperty>
+		</SpecialProperties>
 	</Company>
-	<Company name="P3" longname="Gotthard - Postkutsche" type="Private" basePrice="80"
-		revenue="15">
-		<!--  Tunnel Company Share, can be used by Major Company to place a Tunnel Tile on the map 
-		if either owned by Major Company or owned by Director of Major Company, will be closed if exercised-->
-		<Info key="ComesWithCompany" parm="T1"/>
-<!-- 	<SpecialProperties>
-		<SpecialProperty condition="ifOwnedByPlayer" when="orTurn"  
-					class="net.sf.rails.game.special.TunnelLay" closedIfExercised="yes">
-					<SpecialTunnelLay />
-		  </SpecialProperty>
-		</SpecialProperties> -->
+	<Company name="T3" baseprice="50" type="Tunnel" revenue="0">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
+				class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay colour="yellow" location="H29,H25,H23,H21,I18,I14,J11,K16" extra="yes"
+					free="no" />
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="T4" baseprice="50" type="Tunnel" revenue="0">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
+				class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay colour="yellow" location="H29,H25,H23,H21,I18,I14,J11,K16" extra="yes"
+					free="no" />
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="T5" baseprice="50" type="Tunnel" revenue="0">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
+				class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay colour="yellow" location="H29,H25,H23,H21,I18,I14,J11,K16" extra="yes"
+					free="no" />
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="B1" baseprice="150" type="Mountain" revenue="0">
+	<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
+				class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay colour="yellow" location="L15,K32,I16,H9,G16,F21" extra="yes"
+					free="no" />
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="B2" baseprice="150" type="Mountain" revenue="0">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
+				class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay colour="yellow" location="L15,K32,I16,H9,G16,F21" extra="yes"
+					free="no" />
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="B3" baseprice="150" type="Mountain" revenue="0">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
+				class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay colour="yellow" location="L15,K32,I16,H9,G16,F21" extra="yes"
+					free="no" />
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="B4" baseprice="150" type="Mountain" revenue="0">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
+				class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay colour="yellow" location="L15,K32,I16,H9,G16,F21" extra="yes"
+					free="no" />
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="B5" baseprice="150" type="Mountain" revenue="0">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
+				class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay colour="yellow" location="L15,K32,I16,H9,G16,F21" extra="yes"
+					free="no" />
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="P1" longname="Brienzer - Rothorn - Bahn" type="Private"
+		basePrice="20" revenue="5">
+		<!-- No Special Powers will be closed on 5/5H -->
+	</Company>
+	<Company name="P2" longname="BÃ¶delibahn" type="Private"
+		basePrice="50" revenue="10">
+		<!-- Free Tile Lay Yellow once additional wil be closed on 5/5H -->
+	</Company>
+	<Company name="P3" longname="Gotthard - Postkutsche" type="Private"
+		basePrice="80" revenue="15">
+		<!-- Tunnel Company Share, can be used by Major Company to place a Tunnel 
+			Tile on the map if either owned by Major Company or owned by Director of 
+			Major Company, will be closed if exercised -->
+		<Info key="ComesWithCompany" parm="T1" />
+		<!-- <SpecialProperties> <SpecialProperty condition="ifOwnedByPlayer" when="orTurn" 
+			class="net.sf.rails.game.special.TunnelLay" closedIfExercised="yes"> <SpecialTunnelLay 
+			/> </SpecialProperty> </SpecialProperties> -->
 		<ClosingConditions>
-			<SpecialProperties condition="ifExercised"/>
+			<SpecialProperties condition="ifExercised" />
 		</ClosingConditions>
 	</Company>
-	<Company name="P4" longname="Furka - Oberalpbahn" type="Private" basePrice="110"
-		revenue="20">
-		<!-- Special Tile Lay FO1-FO4 any time even during SR after first 3/3H has been bought
-		Owner receives 80 Fr. will be closed if right is exercised-->
+	<Company name="P4" longname="Furka - Oberalpbahn" type="Private"
+		basePrice="110" revenue="20">
+		<!-- Special Tile Lay FO1-FO4 any time even during SR after first 3/3H 
+			has been bought Owner receives 80 Fr. will be closed if right is exercised -->
 		<SpecialProperties>
-		<SpecialProperty condition="ifOwnedByPlayer" when="orTurn"  
-					class="net.sf.rails.game.special.SpecialTileLay" closedIfExercised="yes">
-					<SpecialTileLay  location="I18,H19,H21,H23"/>
-		</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByPlayer" when="orTurn"
+				class="net.sf.rails.game.special.SpecialTileLay" closedIfExercised="yes">
+				<SpecialTileLay location="I18,H19,H21,H23" />
+			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>
-			<SpecialProperties condition="ifExercised"/>
+			<SpecialProperties condition="ifExercised" />
 		</ClosingConditions>
 	</Company>
-	<Company name="P5" longname="Compagnie Montreux - Montbovon" type="Private" basePrice="140"
-		revenue="25">
-		<Info key="ComesWithShare" parm="MOB,10"/>
-		<!--  Will be closed on 5/5H -->
+	<Company name="P5" longname="Compagnie Montreux - Montbovon"
+		type="Private" basePrice="140" revenue="25">
+		<Info key="ComesWithShare" parm="MOB,10" />
+		<!-- Will be closed on 5/5H -->
 	</Company>
-	<Company name="P6" longname="Societa anonima delle ferrovie Milano - Saronno e Milano - Erba" type="Private"
-		basePrice="160" revenue="30">
-		<Info key="ComesWithPresidency" parm="FNM,20"/>
-		<Tradeable toCompany="no"/>
+	<Company name="P6"
+		longname="Societa anonima delle ferrovie Milano - Saronno e Milano - Erba"
+		type="Private" basePrice="160" revenue="30">
+		<Info key="ComesWithPresidency" parm="FNM,20" />
+		<Tradeable toCompany="no" />
 	</Company>
-	<Company name="P7" longname="Lokfabrik Oerlikon" type="Private" basePrice="100"
-		revenue="0">
+	<Company name="P7" longname="Lokfabrik Oerlikon" type="Private"
+		basePrice="100" revenue="0">
 		<SpecialProperties>
-		<SpecialProperty condition="ifOwnedByPlayer" when="orTurn"  
-					class="net.sf.rails.game.special.SpecialTrainBuy" closedIfExercised="yes">
-					<SpecialTrainBuy traintype="5H" deduction="100%" />
-		</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByPlayer" when="orTurn"
+				class="net.sf.rails.game.special.SpecialTrainBuy" closedIfExercised="yes">
+				<SpecialTrainBuy traintype="5H" deduction="100%" />
+			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>
-			<SpecialProperties condition="ifExercised"/>
+			<SpecialProperties condition="ifExercised" />
 		</ClosingConditions>
-		<Tradeable toCompany="no"/>
+		<Tradeable toCompany="no" />
 	</Company>
-	<Company name="JN" longname="Jura neuchatelois" type="Regional" tokens="3"
-		fgColour="FFFFFF" bgColour="4A4A97">
-		<Home hex="F9"/>
+	<Company name="JN" longname="Jura neuchatelois" type="Regional"
+		tokens="3" fgColour="FFFFFF" bgColour="4A4A97">
+		<Home hex="F9" />
 	</Company>
-	<Company name="ChA" longname="Chur - Arosa" type="Regional" tokens="3"
-		fgColour="FFFFFF" bgColour="4A4A97">
-		<Home hex="G30"/>
+	<Company name="ChA" longname="Chur - Arosa" type="Regional"
+		tokens="3" fgColour="FFFFFF" bgColour="4A4A97">
+		<Home hex="G30" />
 	</Company>
-		<Company name="VZ" longname="Visp - Zermatt" type="Regional" tokens="3"
-		fgColour="FFFFFF" bgColour="4A4A97">
-		<Home hex="K12"/>
+	<Company name="VZ" longname="Visp - Zermatt" type="Regional"
+		tokens="3" fgColour="FFFFFF" bgColour="4A4A97">
+		<Home hex="K12" />
 	</Company>
-	<Company name="FNM" longname="Ferrovie Nord Milano" type="Historical" tokens="-1"
-		fgColour="000000" bgColour="E78B01">
-		<Home hex="M22"/>
-		<Destination hex="G22"/>
+	<Company name="FNM" longname="Ferrovie Nord Milano" type="Historical"
+		tokens="-1" fgColour="000000" bgColour="E78B01">
+		<Home hex="M22" />
+		<Destination hex="G22" />
 	</Company>
-	<Company name="RhB" longname="Rhätische Bahn" type="Historical" tokens="-1"
-		fgColour="000000" bgColour="E78B01">
-		<Home hex="G28"/>
-		<Destination hex="J15"/>
+	<Company name="RhB" longname="RhÃ¤tische Bahn" type="Historical"
+		tokens="-1" fgColour="000000" bgColour="E78B01">
+		<Home hex="G28" />
+		<Destination hex="J15" />
 	</Company>
-	<Company name="BLS" longname="Bern - Lötschberg - Simplon" type="Historical" tokens="-1"
-		fgColour="000000" bgColour="E78B01">
+	<Company name="BLS" longname="Bern - LÃ¶tschberg - Simplon"
+		type="Historical" tokens="-1" fgColour="000000" bgColour="E78B01">
 		<Home hex="F13" />
-		<Destination hex="J15"/>
+		<Destination hex="J15" />
 	</Company>
-	<Company name="STB" longname="Sensetalbahn" type="Historical" tokens="-1"
-		fgColour="000000" bgColour="E78B01">
-		<Home hex="D17" city="1"/>
-		<Destination hex="H15"/>
+	<Company name="STB" longname="Sensetalbahn" type="Historical"
+		tokens="-1" fgColour="000000" bgColour="E78B01">
+		<Home hex="D17" city="1" />
+		<Destination hex="H15" />
 	</Company>
-	<Company name="AB" longname="Appenzeller Bahn" type="Historical" tokens="-1"
-		fgColour="000000" bgColour="E78B01">
-		<Home hex="D27"/>
-		<Destination hex="C22"/>
+	<Company name="AB" longname="Appenzeller Bahn" type="Historical"
+		tokens="-1" fgColour="000000" bgColour="E78B01">
+		<Home hex="D27" />
+		<Destination hex="C22" />
 	</Company>
-	<Company name="MOB" longname="Montreux - Oberland bernois" type="Historical" tokens="-1"
-		fgColour="000000" bgColour="E78B01">
-		<Home hex="I8"/>
-		<Destination hex="H15"/>
+	<Company name="MOB" longname="Montreux - Oberland bernois"
+		type="Historical" tokens="-1" fgColour="000000" bgColour="E78B01">
+		<Home hex="I8" />
+		<Destination hex="H15" />
 	</Company>
-	<Company name="NOB" longname="Schweizerische Nordostbahn" type="VOR-SBB" tokens="2"
-		fgColour="FFFFFF" bgColour="000000">
-		<Home hex="D21"/>
-		<Destination hex="D17"/>
+	<Company name="NOB" longname="Schweizerische Nordostbahn" type="VOR-SBB"
+		tokens="2" fgColour="FFFFFF" bgColour="000000">
+		<Home hex="D21" />
+		<Destination hex="D17" />
 	</Company>
-	<Company name="SCB" longname="Schweizerische Centralbahn" type="VOR-SBB" tokens="2"
-		fgColour="FFFFFF" bgColour="000000">
-		<Home hex="C14"/>
-		<Destination hex="F19"/>
+	<Company name="SCB" longname="Schweizerische Centralbahn" type="VOR-SBB"
+		tokens="2" fgColour="FFFFFF" bgColour="000000">
+		<Home hex="C14" />
+		<Destination hex="F19" />
 	</Company>
-	<Company name="VSB" longname="Vereinigte Schweizer Bahnen" type="VOR-SBB" tokens="2"
-		fgColour="FFFFFF" bgColour="000000">
-		<Home hex="C26"/>
-		<Destination hex="F27"/>
+	<Company name="VSB" longname="Vereinigte Schweizer Bahnen"
+		type="VOR-SBB" tokens="2" fgColour="FFFFFF" bgColour="000000">
+		<Home hex="C26" />
+		<Destination hex="F27" />
 	</Company>
-	<Company name="JS" longname="Jura - Simplon" type="VOR-SBB" tokens="2"
-		fgColour="FFFFFF" bgColour="000000">
-		<Home hex="I6" city="1"/>
-		<Destination hex="F9"/>
+	<Company name="JS" longname="Jura - Simplon" type="VOR-SBB"
+		tokens="2" fgColour="FFFFFF" bgColour="000000">
+		<Home hex="I6" city="1" />
+		<Destination hex="F9" />
 	</Company>
-	<Company name="GB" longname="Gotthardbahn" type="VOR-SBB" tokens="2"
-		fgColour="FFFFFF" bgColour="000000">
-		<Home hex="G20"/>
-		<Destination hex="H21"/>
+	<Company name="GB" longname="Gotthardbahn" type="VOR-SBB"
+		tokens="2" fgColour="FFFFFF" bgColour="000000">
+		<Home hex="G20" />
+		<Destination hex="H21" />
 	</Company>
-	<Company name="SBB" longname="Schweizerische Bundesbahnen" type="Major" available="no" tokens="10" startspace="I6"
-		fgColour="FFFFFF" bgColour="92278A" >
-		<InitialTrain type="5H" cost="0" tradeable="no"/>
-		<ShareUnit percentage="5" sharePriceUnits="2"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="2" number="4" status="reserved"/>
-		<Certificate shares="1" number="10" status="reserved"/>
+	<Company name="SBB" longname="Schweizerische Bundesbahnen"
+		type="Major" available="no" tokens="10" startspace="I6" fgColour="FFFFFF"
+		bgColour="92278A">
+		<InitialTrain type="5H" cost="0" tradeable="no" />
+		<ShareUnit percentage="5" sharePriceUnits="2" />
+		<Certificate type="President" shares="2" />
+		<Certificate shares="2" number="4" status="reserved" />
+		<Certificate shares="1" number="10" status="reserved" />
 		<BaseTokens>
-			<HomeBase lay="whenFloated"/>
-			<LayCost method="sequence" cost="0,40,100"/>
+			<HomeBase lay="whenFloated" />
+			<LayCost method="sequence" cost="0,40,100" />
 		</BaseTokens>
-		<Trains limit="4,4,4" mandatory="yes"/>
-		<Payout split="no"/>
+		<Trains limit="4,4,4" mandatory="yes" />
+		<Payout split="no" />
 	</Company>
-	
+
 	<StartPacket name="sellPrivates" roundClass="net.sf.rails.game.StartRound_1830">
-		<Bidding initial="0" minimum="0" increment="5"/>
+		<Bidding initial="0" minimum="0" increment="5" />
 		<Item name="P1" type="Private" basePrice="20" reduceable="yes" />
 		<Item name="P2" type="Private" basePrice="50" />
 		<Item name="P3" type="Private" basePrice="80">
-			<SubItem name="T1" type="Tunnel"/>
-			</Item>
-		<Item name="P4" type="Private" basePrice="110"/>
+			<SubItem name="T1" type="Tunnel" />
+		</Item>
+		<Item name="P4" type="Private" basePrice="110" />
 		<Item name="P5" type="Private" basePrice="140">
-			<SubItem name="MOB" type="Historical"/>
-			</Item>
+			<SubItem name="MOB" type="Historical" />
+		</Item>
 		<Item name="P6" type="Private" basePrice="180">
-			<SubItem name="FNM" type="Historical" president="yes"/>
-			</Item>
-		<Item name="P7" type="Private" basePrice="100"/>
+			<SubItem name="FNM" type="Historical" president="yes" />
+		</Item>
+		<Item name="P7" type="Private" basePrice="100" />
 	</StartPacket>
-	</CompanyManager>
+</CompanyManager>

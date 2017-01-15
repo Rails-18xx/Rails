@@ -509,43 +509,10 @@ KeyListener, ActionPerformer {
             gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());
         }
 
-        // New special action handling
-        List<ActionMenuItem> specialActionItems =
-            new ArrayList<ActionMenuItem>();
-
-        // Special properties
-        List<UseSpecialProperty> sps =
-            possibleActions.getType(UseSpecialProperty.class);
-        for (ActionMenuItem item : specialActionItems) {
-            item.removeActionListener(this);
-        }
-        specialMenu.removeAll();
-        specialActionItems.clear();
-        for (UseSpecialProperty sp : sps) {
-            ActionMenuItem item = new ActionMenuItem(sp.toMenu());
-            item.addActionListener(this);
-            item.setEnabled(false);
-            item.addPossibleAction(sp);
-            item.setEnabled(true);
-            specialActionItems.add(item);
-            specialMenu.add(item);
-        }
-
-        // Request turn
-        if (possibleActions.contains(RequestTurn.class)) {
-            for (RequestTurn action : possibleActions.getType(RequestTurn.class)) {
-                ActionMenuItem item = new ActionMenuItem(action.toMenu());
-                item.addActionListener(this);
-                item.setEnabled(false);
-                item.addPossibleAction(action);
-                item.setEnabled(true);
-                specialActionItems.add(item);
-                specialMenu.add(item);
-            }
-        }
+        
 
         // Must Special menu be enabled?
-        boolean enabled = specialActionItems.size() > 0;
+        boolean enabled = updateSpecialActionMenu();
         specialMenu.setOpaque(enabled);
         specialMenu.setEnabled(enabled);
         specialMenu.repaint();
@@ -589,6 +556,55 @@ KeyListener, ActionPerformer {
 
         toFront();
     }
+    
+    /**
+     * @return 
+     * 
+     */
+    protected boolean updateSpecialActionMenu() {
+        // New special action handling
+        List<ActionMenuItem> specialActionItems =
+            new ArrayList<ActionMenuItem>();
+
+        // Special properties
+        List<UseSpecialProperty> sps =
+            possibleActions.getType(UseSpecialProperty.class);
+        for (ActionMenuItem item : specialActionItems) {
+            item.removeActionListener(this);
+        }
+        specialMenu.removeAll();
+        specialActionItems.clear();
+        for (UseSpecialProperty sp : sps) {
+            ActionMenuItem item = new ActionMenuItem(sp.toMenu());
+            item.addActionListener(this);
+            item.setEnabled(false);
+            item.addPossibleAction(sp);
+            item.setEnabled(true);
+            specialActionItems.add(item);
+            specialMenu.add(item);
+        }
+
+        // Request turn
+        if (possibleActions.contains(RequestTurn.class)) {
+            for (RequestTurn action : possibleActions.getType(RequestTurn.class)) {
+                ActionMenuItem item = new ActionMenuItem(action.toMenu());
+                item.addActionListener(this);
+                item.setEnabled(false);
+                item.addPossibleAction(action);
+                item.setEnabled(true);
+                specialActionItems.add(item);
+                specialMenu.add(item);
+            }
+        }
+
+        if (specialActionItems.size() > 0) { 
+            return true;
+            } 
+        else {
+            return false;
+            }
+    }
+
 
     public void disableButtons () {
         passButton.setEnabled(false);
