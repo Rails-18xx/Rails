@@ -1,4 +1,4 @@
-<?eclipse.ant.import ?>
+<?eclipse.ant.import?>
 	<!-- Extensions to the automatic ant file created by eclipse -->
 <project basedir="." default="build" name="Rails">
 	
@@ -9,7 +9,7 @@
 		<!-- Password is asked for -->
 		
 		<!-- Define a property for the version number -->
-		<property file="version.number"/>
+		<property file="src/main/resources/version.number"/>
 		
 		<!-- Define a filter to substitute version number -->
 		<filterset id="versionFilter">
@@ -59,12 +59,13 @@
 		<copy todir="jar">
 			<filterset refid="versionFilter"/>
 			<fileset dir=".">
-				<include name="version.number" />
+				<include name="src/main/resources/version.number" />
 			</fileset>
 		</copy>
 		<mkdir dir="rails-${version}"/>
-		<copy includeemptydirs="false" todir="rails-${version}/lib">
-			<fileset dir="./lib">
+			<mkdir dir="rails-${version}/libs"/>
+		<copy includeemptydirs="false" todir="rails-${version}/libs">
+			<fileset dir="./libs/main">
 		        <include name="log4j-1.2/log4j-1.2.14.jar" />
 		        <include name="jgrapht-0.7.3/jgrapht-jdk1.5.jar" />
 		        <include name="jgraph5/jgraph.jar" />
@@ -88,14 +89,21 @@
 		        <include name="batik-1.7/lib/xerces_2_5_0.jar" />
 		        <include name="batik-1.7/lib/xml-apis-ext.jar" />
 		        <include name="batik-1.7/lib/batik-anim.jar" />
-		    	<include name="df_1.1.0/dockingFramesCommon.jar"/>
-		    	<include name="df_1.1.0/dockingFramesCore.jar"/>
+		    	<include name="df_1.1.1/docking-frames-common.jar"/>
+		    	<include name="df_1.1.1/docking-frames-core.jar"/>
 				<include name="commons-io-2.1/commons-io-2.1.jar"/>
+				<include name="combinatoricslib-2.1/combinatoricslib-2.1.jar"/>
+				<include name="JLayer1.0.1/jl1.0.1.jar"/>
+			    <include name="logback-1.1.1/logback-classic-1.1.1.jar"/>
+				<include name="logback-1.1.1/logback-core-1.1.1.jar"/>
+				<include name="guava-r17/guava-17.0.jar"/>
+				<include name="sl4j-1.6.5/slf4j-api-1.6.5.jar"/>
+				<include name="designgridlayout-1.11/designgridlayout-1.11.jar"/>
 			</fileset>
 		</copy>
 		<copy includeemptydirs="false" todir="rails-${version}">
 			<filterset refid="versionFilter"/>
-			<fileset dir=".">
+			<fileset dir="src/main/resources">
 				<include name="LICENSE"/>
 				<include name="README"/>
 				<include name="AUTHORS"/>
@@ -109,37 +117,43 @@
 		
 		<jar destfile="rails-${version}/rails-${version}.jar" basedir="jar" duplicate="preserve">		
 			<manifest>
-				<attribute name="Main-Class" value="rails.util.RunGame" />
+				<attribute name="Main-Class" value="net.sf.rails.util.RunGame" />
 				<attribute name="Class-Path" value=" 
-					./LocalisedText.properties 
-					./log4j.properties
-			        ./lib/log4j-1.2/log4j-1.2.14.jar
-			        ./lib/jgrapht-0.7.3/jgrapht-jdk1.5.jar
-			        ./lib/jgraph5/jgraph.jar
-			        ./lib/junit-4.8.2/junit.jar
-			        ./lib/JLayer1.0.1/jl1.0.1.jar
-			        ./lib/batik-1.7/lib/batik-transcoder.jar
-			        ./lib/batik-1.7/lib/batik-dom.jar
-			        ./lib/batik-1.7/lib/batik-swing.jar
-			        ./lib/batik-1.7/lib/batik-bridge.jar
-			        ./lib/batik-1.7/lib/xml-apis.jar
-			        ./lib/batik-1.7/lib/batik-ext.jar
-			        ./lib/batik-1.7/lib/batik-gui-util.jar
-			        ./lib/batik-1.7/lib/batik-util.jar
-			        ./lib/batik-1.7/lib/batik-awt-util.jar
-			        ./lib/batik-1.7/lib/batik-css.jar
-			        ./lib/batik-1.7/lib/batik-gvt.jar
-			        ./lib/batik-1.7/lib/batik-parser.jar
-			        ./lib/batik-1.7/lib/batik-script.jar
-			        ./lib/batik-1.7/lib/batik-svg-dom.jar
-			        ./lib/batik-1.7/lib/batik-xml.jar
-			        ./lib/batik-1.7/lib/js.jar
-			        ./lib/batik-1.7/lib/xerces_2_5_0.jar
-			        ./lib/batik-1.7/lib/xml-apis-ext.jar
-			        ./lib/batik-1.7/lib/batik-anim.jar
-			    	./lib/df_1.1.0/dockingFramesCommon.jar
-			    	./lib/df_1.1.0/dockingFramesCore.jar
-				    ./lib/commons-io-2.1/commons-io-2.1.jar"/>
+					./src/main/resources/LocalisedText.properties 
+					./src/main/resources/log4j.properties
+			        ./libs/jgrapht-0.7.3/jgrapht-jdk1.5.jar
+			        ./libs/jgraph5/jgraph.jar
+			        ./libs/JLayer1.0.1/jl1.0.1.jar
+			        ./libs/batik-1.7/lib/batik-transcoder.jar
+			        ./libs/batik-1.7/lib/batik-dom.jar
+			        ./libs/batik-1.7/lib/batik-swing.jar
+			        ./libs/batik-1.7/lib/batik-bridge.jar
+			        ./libs/batik-1.7/lib/xml-apis.jar
+			        ./libs/batik-1.7/lib/batik-ext.jar
+			        ./libs/batik-1.7/lib/batik-gui-util.jar
+			        ./libs/batik-1.7/lib/batik-util.jar
+			        ./libs/batik-1.7/lib/batik-awt-util.jar
+			        ./libs/batik-1.7/lib/batik-css.jar
+			        ./libs/batik-1.7/lib/batik-gvt.jar
+			        ./libs/batik-1.7/lib/batik-parser.jar
+			        ./libs/batik-1.7/lib/batik-script.jar
+			        ./libs/batik-1.7/lib/batik-svg-dom.jar
+			        ./libs/batik-1.7/lib/batik-xml.jar
+			        ./libs/batik-1.7/lib/js.jar
+			        ./libs/batik-1.7/lib/xerces_2_5_0.jar
+			        ./libs/batik-1.7/lib/xml-apis-ext.jar
+			        ./libs/batik-1.7/lib/batik-anim.jar
+			    	./libs/df_1.1.1/docking-frames-common.jar
+			    	./libs/df_1.1.1/docking-frames-core.jar
+				    ./libs/commons-io-2.1/commons-io-2.1.jar
+					./libs/sl4j-1.6.5/slf4j-api-1.6.5.jar
+					./libs/commons-io-2.1/commons-io-2.1.jar
+					./libs/combinatoricslib-2.1/combinatoricslib-2.1.jar
+					./libs/JLayer1.0.1/jl1.0.1.jar
+				    ./libs/logback-1.1.1/logback-classic-1.1.1.jar
+					./libs/logback-1.1.1/logback-core-1.1.1.jar
+					./libs/guava-r17/guava-17.0.jar
+					./libs/designgridlayout-1.11/designgridlayout-1.11.jar"/>
 			</manifest>
 			</jar>
 			<delete dir="jar"/>
