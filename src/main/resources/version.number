@@ -5,4 +5,4 @@ version=2.0.RC2
 # this is done automatically by gradle
 develop=
 # the following string "@ BUILDDATE @" is replaced by the build date
-buildDate=2015-09-09
+buildDate=2017-01-27
