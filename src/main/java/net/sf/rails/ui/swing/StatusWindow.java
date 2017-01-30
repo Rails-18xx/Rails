@@ -86,8 +86,11 @@ KeyListener, ActionPerformer {
 
     private JMenuBar menuBar;
 
-    private static JMenu fileMenu, optMenu, moveMenu, moderatorMenu,
-    specialMenu, correctionMenu;
+    private static JMenu fileMenu, optMenu, moveMenu, moderatorMenu;
+
+    protected static JMenu specialMenu;
+
+    private static JMenu correctionMenu;
 
     private JMenuItem menuItem;
 
