@@ -1154,6 +1154,10 @@ public class GameUIManager implements DialogOwner {
     public List<PublicCompany> getAllPublicCompanies(){
         return railsRoot.getCompanyManager().getAllPublicCompanies();
     }
+    
+    public List<PrivateCompany> getAllPrivateCompanies(){
+          return railsRoot.getCompanyManager().getAllPrivateCompanies();
+    }
 
     public String getClassName (GuiDef.ClassName key) {
         return railsRoot.getGameManager().getClassName(key);
