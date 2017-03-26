@@ -481,6 +481,14 @@ public class OperatingRound_1880 extends OperatingRound {
         if (getStep() == GameDef.OrStep.INITIAL) {
            if (operatingCompany.value() instanceof PublicCompany_1880)  {
             initTurn();
+            
+            //Somehow an investor was still allowed to place a tile in Phase 4 ?
+            if (operatingCompany.value() instanceof Investor_1880){
+                if (gameManager.getCurrentPhase().getId().equals("4")) {
+                    setStep(GameDef.OrStep.BUY_TRAIN);
+                } 
+            }
+
             if ((noMapMode)
                 || (!((PublicCompany_1880) operatingCompany.value()).hasBuildingRightForPhase(gameManager.getCurrentPhase()))) {
                 nextStep(GameDef.OrStep.LAY_TRACK);
