@@ -966,7 +966,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         GameLoader gameLoader = new GameLoader();
         String filepath = reloadAction.getFilepath();
 
-        /* followed by actions and comments */
+        
+        if (!gameLoader.reloadGameFromFile(new File(filepath))) {
+            return false;
+        }
+        
+       /*  followed by actions and comments 
         try{
             gameLoader.loadGameData(new File(filepath));
             gameLoader.convertGameData();
@@ -974,7 +979,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             log.error("Load failed", e);
             DisplayBuffer.add(this, LocalText.getText("LOAD_FAILED_MESSAGE", e.getMessage()));
         }
-
+*/
         log.debug("Starting to compare loaded actions");
 
         /* gameLoader actions get compared to the executed actions of the current game */
