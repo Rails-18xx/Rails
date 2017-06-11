@@ -536,18 +536,20 @@ public class OperatingRound_1880 extends OperatingRound {
             newTrainBuy.setPricePaid(trainCost);
             buyTrain (newTrainBuy);
             
-            // The player has to pay a 50% penalty for any additional debt he took on.
-            int additionalDebt = -player.getCash();
-            if (initialPlayerCash < 0) {
+            if (!(initialPlayerCash >amountOwed)){
+                // The player has to pay a 50% penalty for any additional debt he took on.
+                int additionalDebt = -player.getCash();
+                if (initialPlayerCash < 0) {
                 additionalDebt = additionalDebt - (-initialPlayerCash);                
-            }
-            
-            int penalty = (additionalDebt / 2);
+                }
+                            
+                int penalty = (additionalDebt / 2);
 
-            ReportBuffer.add(this, LocalText.getText("DebtPenalty", player.getId(),
-                   Bank.format(this, penalty)));
-            Currency.wire(player, penalty, getRoot().getBank());
-            }
+                ReportBuffer.add(this, LocalText.getText("DebtPenalty", player.getId(),
+                        Bank.format(this, penalty)));
+                Currency.wire(player, penalty, getRoot().getBank());
+                }
+        }
         wasInterrupted.set(true);
     }
 
