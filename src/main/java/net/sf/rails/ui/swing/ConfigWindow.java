@@ -220,11 +220,8 @@ class ConfigWindow extends JFrame {
             final JSpinner spinner = new JSpinner(new SpinnerNumberModel
                    (spinnerValue, Integer.MIN_VALUE, Integer.MAX_VALUE, spinnerStepSize));
             ((JSpinner.DefaultEditor)spinner.getEditor()).getTextField().
-                addFocusListener(new FocusListener() {
-                public void focusGained(FocusEvent arg0) {
-                    // do nothing
-                }
-                public void focusLost(FocusEvent arg0) {
+            addPropertyChangeListener(new PropertyChangeListener() {
+                public void propertyChange(PropertyChangeEvent arg0) {
                     Integer value = (Integer)spinner.getValue();
                     if (item.type == ConfigItem.ConfigType.PERCENT) {
                         Double adjValue = (double)value / spinnerMultiple;
