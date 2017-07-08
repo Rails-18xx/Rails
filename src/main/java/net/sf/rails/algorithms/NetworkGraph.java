@@ -58,7 +58,7 @@ public class NetworkGraph {
     private final SimpleGraph<NetworkVertex, NetworkEdge> graph;
 
     private final Map<String, NetworkVertex> vertices;
-    
+
     private NetworkIterator iterator;
 
     private NetworkGraph() {
@@ -141,8 +141,8 @@ public class NetworkGraph {
         // first create builders for all HexSides
         Map<MapHex, HexSidesSet.Builder> hexSides = Maps.newHashMap();
         for(NetworkVertex vertex:graph.vertexSet()) {
-            if (vertex.isSide()
-                    ) {
+            if (vertex.isSide() && iterator.getSeenData().get(vertex) 
+                    != NetworkIterator.greedyState.greedy) {
                 MapHex hex = vertex.getHex();
                 if (!hexSides.containsKey(hex)) {
                     hexSides.put(hex, HexSidesSet.builder());
@@ -408,12 +408,8 @@ public class NetworkGraph {
             graph.addVertex(vertex);
             graph.addEdge(vertex, hqVertex, new NetworkEdge(vertex, hqVertex, false));
             iterator = new NetworkIterator(mapGraph.getGraph(), vertex, company);
-            for (;iterator.hasNext();) {
-                NetworkVertex seenVertex = iterator.next();
-                if (iterator.getSeenData().get(seenVertex) != NetworkIterator.greedyState.greedy) {
-                    vertexes.add(seenVertex);
-                }
-            }
+            for (;iterator.hasNext();)
+                vertexes.add(iterator.next());
             // restore sink property
             vertex.setSink(storeSink);
         }
