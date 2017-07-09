@@ -21,4 +21,4 @@
 
 # IntelliJ specific files
 .idea/
-.namerails.iml
+rails.iml
