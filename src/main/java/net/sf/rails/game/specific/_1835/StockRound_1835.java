@@ -221,4 +221,19 @@ public class StockRound_1835 extends StockRound {
             }
         }
     }
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.StockRound#done(rails.game.action.NullAction, java.lang.String, boolean)
+     */
+    @Override
+    public boolean done(NullAction action, String playerName,
+            boolean hasAutopassed) {
+        if (hasActed.value()) {
+            if (companyBoughtThisTurnWrapper.value() == null) {
+                hasActed.set(false);
+            }
+        }
+         return super.done(action, playerName, hasAutopassed);
+    }
+    
 }

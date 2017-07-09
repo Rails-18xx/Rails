@@ -49,7 +49,6 @@ public class ORUIManager_18AL extends ORUIManager {
     protected void addLocatedTokenLays(LayToken action) {
   //TODO: Rework for general setup as special property 
         
-        
         if (action instanceof LayBonusToken) { //Special Action from Private Company in 18AL
             PublicCompany company = action.getCompany();
             NetworkGraph graph = networkAdapter.getRouteGraph(company, true);
@@ -70,5 +69,4 @@ public class ORUIManager_18AL extends ORUIManager {
         super.addLocatedTokenLays(action);
         }
     }
-
 }

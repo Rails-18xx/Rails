@@ -26,6 +26,7 @@
 		<filter token="BUILDDATE" value=""/> 
 	</filterset> 
 
+    <import file="buildRails.xml"/>
     <path id="Rails.classpath">
         <pathelement location="classes"/>
         <pathelement location="libs/main/commons-io-2.1/commons-io-2.1.jar"/>
@@ -134,6 +135,7 @@
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
             <test name="test.TestGame" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
             <classpath refid="Rails.classpath"/>
         </junit>
     </target>
