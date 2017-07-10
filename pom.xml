@@ -8,6 +8,13 @@
     <packaging>jar</packaging>
     <version>2.0-RC4</version>
 
+    <name>rails</name>
+    <description>A Java playing aid for playing 18xx based games via email or in Hotseat mode.</description>
+
+    <organization>
+        <name>net.sf.rails</name>
+    </organization>
+
     <scm>
         <connection>scm:git:https://github.com/Rails-18xx/Rails</connection>
     </scm>
@@ -269,9 +276,4 @@
             </plugin>
         </plugins>
     </build>
-    <organization>
-    	<name>net.sf.rails</name>
-    </organization>
-    <name>Rails</name>
-    <description>A Java playing aid for playing 18xx based games via email or in Hotseat mode.</description>
 </project>
