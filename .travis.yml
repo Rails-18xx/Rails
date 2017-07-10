@@ -16,4 +16,4 @@ branches:
 
 before_script:
   - sudo apt-get update
-  - sudo apt-get install lib32z1 lib32ncurses5
+  - sudo apt-get install -qq lib32z1 lib32ncurses5 lib32bz2-1.0 zlib1g:i386
