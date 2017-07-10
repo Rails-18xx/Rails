@@ -14,6 +14,6 @@ branches:
   only:
   - rails_2_develop
 
-before_script:
+before_install:
   - sudo apt-get update
   - sudo apt-get install -qq lib32z1 lib32ncurses5 lib32bz2-1.0 zlib1g:i386
