@@ -183,4 +183,9 @@
             </plugin>
         </plugins>
     </build>
+    <organization>
+    	<name>net.sf.rails</name>
+    </organization>
+    <name>Rails</name>
+    <description>A Java playing aid for playing 18xx based games via email or in Hotseat mode.</description>
 </project>
