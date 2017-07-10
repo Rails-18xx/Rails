@@ -191,6 +191,7 @@
                 </executions>
             </plugin>
 
+            <!-- Create a windows exe file -->
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
@@ -231,6 +232,26 @@
                                 <originalFilename>original.exe</originalFilename>
                             </versionInfo>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Create a Mac OSX dmg installer -->
+            <plugin>
+                <groupId>sh.tak.appbundler</groupId>
+                <artifactId>appbundle-maven-plugin</artifactId>
+                <version>1.2.0</version>
+                <configuration>
+                    <mainClass>net.sf.rails.util.RunGame</mainClass>
+                    <iconFile>build/rails.ico</iconFile>
+                    <generateDiskImageFile>true</generateDiskImageFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
