@@ -10,14 +10,12 @@ import net.sf.rails.common.Config;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.GameLoader;
 
-import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 import junit.framework.TestCase;
 
-@Ignore
 public class TestGame extends TestCase {
 
     private String gamePath;
