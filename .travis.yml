@@ -1,4 +1,4 @@
-sudo: true
+sudo: required
 dist: trusty
 language: java
 
@@ -13,3 +13,7 @@ jdk:
 branches:
   only:
   - rails_2_develop
+
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install lib32z1 lib32ncurses5
