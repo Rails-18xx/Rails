@@ -190,6 +190,50 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.7.18</version>
+                <executions>
+                    <execution>
+                        <id>l4j-gui</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <jar>target/${project.name}-${project.version}-jar-with-dependencies.jar</jar>
+                            <outfile>target/${project.name}-${project.version}.exe</outfile>
+                            <errTitle>Rails</errTitle>
+                            <icon>target/classes/build/rails.ico</icon>
+
+                            <classPath>
+                                <mainClass>net.sf.rails.util.RunGame</mainClass>
+                                <addDependencies>false</addDependencies>
+                                <preCp>anything</preCp>
+                            </classPath>
+
+                            <jre>
+                                <minVersion>${java.version}</minVersion>
+                            </jre>
+
+                            <versionInfo>
+                                <fileVersion>2.0.0.0</fileVersion>
+                                <productVersion>2.0.0.0</productVersion>
+                                <txtFileVersion>${project.version}</txtFileVersion>
+                                <txtProductVersion>${project.version}</txtProductVersion>
+                                <fileDescription>${project.name}</fileDescription>
+                                <copyright>GPL</copyright>
+                                <productName>${project.name}</productName>
+                                <internalName>${project.name}</internalName>
+                                <originalFilename>original.exe</originalFilename>
+                            </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
