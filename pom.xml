@@ -217,7 +217,7 @@
                             </classPath>
 
                             <jre>
-                                <minVersion>${java.version}</minVersion>
+                                <minVersion>1.6.0</minVersion>
                             </jre>
 
                             <versionInfo>
