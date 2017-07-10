@@ -1,1 +1,15 @@
+sudo: true
+dist: trusty
 language: java
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+
+jdk:
+  - oraclejdk8
+
+branches:
+  only:
+  - rails_2_develop
