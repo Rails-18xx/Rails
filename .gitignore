@@ -1,6 +1,7 @@
 # Gradle build
 /build/
 .gradle/
+/target/
 
 # Eclipse build
 /classes/
@@ -17,3 +18,7 @@
 # failed Rails test files
 **/*.failed
 /bin/
+
+# IntelliJ specific files
+.idea/
+rails.iml
