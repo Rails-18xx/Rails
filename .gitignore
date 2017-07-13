@@ -58,3 +58,6 @@
 /1880_20150718_2037_Martin.rails
 /18xx.log
 /hs_err_pid474.log
+
+# Maven Files
+/target/
