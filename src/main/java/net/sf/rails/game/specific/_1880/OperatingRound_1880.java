@@ -482,6 +482,14 @@ public class OperatingRound_1880 extends OperatingRound {
         if (getStep() == GameDef.OrStep.INITIAL) {
            if (operatingCompany.value() instanceof PublicCompany_1880)  {
             initTurn();
+            
+            //Somehow an investor was still allowed to place a tile in Phase 4 ?
+            if (operatingCompany.value() instanceof Investor_1880){
+                if (gameManager.getCurrentPhase().getId().equals("4")) {
+                    setStep(GameDef.OrStep.BUY_TRAIN);
+                } 
+            }
+
             if ((noMapMode)
                 || (!((PublicCompany_1880) operatingCompany.value()).hasBuildingRightForPhase(gameManager.getCurrentPhase()))) {
                 nextStep(GameDef.OrStep.LAY_TRACK);
@@ -529,18 +537,20 @@ public class OperatingRound_1880 extends OperatingRound {
             newTrainBuy.setPricePaid(trainCost);
             buyTrain (newTrainBuy);
             
-            // The player has to pay a 50% penalty for any additional debt he took on.
-            int additionalDebt = -player.getCash();
-            if (initialPlayerCash < 0) {
+            if (!(initialPlayerCash >amountOwed)){
+                // The player has to pay a 50% penalty for any additional debt he took on.
+                int additionalDebt = -player.getCash();
+                if (initialPlayerCash < 0) {
                 additionalDebt = additionalDebt - (-initialPlayerCash);                
-            }
-            
-            int penalty = (additionalDebt / 2);
+                }
+                            
+                int penalty = (additionalDebt / 2);
 
-            ReportBuffer.add(this, LocalText.getText("DebtPenalty", player.getId(),
-                   Bank.format(this, penalty)));
-            Currency.wire(player, penalty, getRoot().getBank());
-            }
+                ReportBuffer.add(this, LocalText.getText("DebtPenalty", player.getId(),
+                        Bank.format(this, penalty)));
+                Currency.wire(player, penalty, getRoot().getBank());
+                }
+        }
         wasInterrupted.set(true);
     }
 

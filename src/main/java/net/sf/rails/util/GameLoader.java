@@ -369,4 +369,24 @@ public class GameLoader {
 //            }
 //        }
     }
+
+    public boolean reloadGameFromFile(File file) {
+
+        try {
+            // 1st: loadGameData
+            loadGameData(file);
+            
+            railsRoot = RailsRoot.getInstance();
+           // 2nd: convert game data (retrieve actions)
+            convertGameData();        
+            
+            
+        } catch (Exception e) {
+            log.debug("Exception during createFromFile in gameLoader ", e);
+            exception = e;
+            return false;
+        }
+        return true;
+        
+    }
 }
