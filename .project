@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Rails</name>
+	<name>rails</name>
 	<comment>@key 32303037303533312D31303030205261696C732F6672657973746566 </comment>
 	<projects>
 	</projects>
@@ -11,20 +11,18 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>com.soyatec.additional.Builder</name>
+			<name>org.eclipse.buildship.core.gradleprojectbuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.eclipse.jem.beaninfo.BeanInfoNature</nature>
-		<nature>com.soyatec.additional.Nature</nature>
+		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1408789356399</id>
+			<id>0</id>
 			<name></name>
 			<type>26</type>
 			<matcher>

@@ -436,39 +436,41 @@ public class NetworkGraph {
 
     public void visualize(String title) {
         // show network mapGraph
-        JGraphModelAdapter<NetworkVertex, NetworkEdge> jGAdapter =
-            new JGraphModelAdapter<NetworkVertex, NetworkEdge>(graph);
-        
-        JGraph jgraph = new JGraph(jGAdapter);
-        
-        List<NetworkVertex> vertexes= new ArrayList<NetworkVertex>(graph.vertexSet());
-         
-        Object[] rootCell = new Object[1];
-        rootCell[0] =  jGAdapter.getVertexCell(vertexes.get(0));
-        
-        JGraphFacade facade = new JGraphFacade(jgraph, rootCell);
-        JGraphLayout layout = new JGraphFastOrganicLayout();
-        layout.run(facade);
-        
-        // calculate size of network graph
-        double ratio = Math.sqrt(graph.vertexSet().size() / 50.0);
-        int width = (int) Math.floor(2400 * ratio);
-        int height = (int) Math.floor(1800 * ratio);
-        log.info("ratio=" + ratio + "width= " + width + "height" + height);
-        facade.scale(new Rectangle(width, height));
-        @SuppressWarnings("rawtypes")
-        Map nested = facade.createNestedMap(true,true);
-        jgraph.getGraphLayoutCache().edit(nested);
+        if (graph.vertexSet().size() > 0) {
+            JGraphModelAdapter<NetworkVertex, NetworkEdge> jGAdapter =
+                new JGraphModelAdapter<NetworkVertex, NetworkEdge>(graph);
 
-        jgraph.setScale(0.75);
-        
-        JFrame frame = new JFrame();
-        frame.setTitle(title + "(V=" + graph.vertexSet().size() + 
-                ",E=" + graph.edgeSet().size() + ")");
-        frame.setSize(new Dimension(800,600));
-        frame.getContentPane().add(new JScrollPane(jgraph));
-        frame.pack();
-        frame.setVisible(true);
+            JGraph jgraph = new JGraph(jGAdapter);
+
+            List<NetworkVertex> vertexes= new ArrayList<NetworkVertex>(graph.vertexSet());
+
+            Object[] rootCell = new Object[1];
+            rootCell[0] =  jGAdapter.getVertexCell(vertexes.get(0));
+
+            JGraphFacade facade = new JGraphFacade(jgraph, rootCell);
+            JGraphLayout layout = new JGraphFastOrganicLayout();
+            layout.run(facade);
+
+            // calculate size of network graph
+            double ratio = Math.sqrt(graph.vertexSet().size() / 50.0);
+            int width = (int) Math.floor(2400 * ratio);
+            int height = (int) Math.floor(1800 * ratio);
+            log.info("ratio=" + ratio + "width= " + width + "height" + height);
+            facade.scale(new Rectangle(width, height));
+            @SuppressWarnings("rawtypes")
+            Map nested = facade.createNestedMap(true,true);
+            jgraph.getGraphLayoutCache().edit(nested);
+
+            jgraph.setScale(0.75);
+
+            JFrame frame = new JFrame();
+            frame.setTitle(title + "(V=" + graph.vertexSet().size() +
+                    ",E=" + graph.edgeSet().size() + ")");
+            frame.setSize(new Dimension(800,600));
+            frame.getContentPane().add(new JScrollPane(jgraph));
+            frame.pack();
+            frame.setVisible(true);
+        }
     }
     
 }

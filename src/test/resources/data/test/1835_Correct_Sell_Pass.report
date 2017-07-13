@@ -1060,15 +1060,10 @@ Has,Stefan,404
 Has,Ronnie,540
 Has,Helmut,282
 StartFormationRound,PR
-MERGE_MINOR_LOG,Lonny,M5,PR,181,0
-GetShareForMinor,Lonny,5,PR,IPO,M5
-MERGE_MINOR_LOG,Stefan,M6,PR,210,1
-GetShareForMinor,Stefan,5,PR,IPO,M6
-ExchangesBaseToken,PR,M6,C11/1
  
 EndOfFormationRoundNoInterrupt,PR
 START_OR,5.1
 ReceivesFor,Stefan,5,NF
 ReceivesFor,Helmut,15,PfB
  
-CompanyOperates,PR,Stefan
+CompanyOperates,M5,Lonny

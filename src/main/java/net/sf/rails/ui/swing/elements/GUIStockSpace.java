@@ -15,6 +15,7 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
+import net.sf.rails.ui.swing.GUIGlobals;
 import net.sf.rails.ui.swing.GUIToken;
 import net.sf.rails.util.Util;
 
@@ -49,12 +50,14 @@ public class GUIStockSpace extends JLayeredPane implements Observer {
         this.model = model;
 
         priceLabel = new JLabel();
+        int fontScale = (int)GUIGlobals.getFontsScale();
 
-        priceLabel.setBounds(1, 1, size.width, size.height);
+
+        priceLabel.setBounds(1, 1, size.width * fontScale, size.height * fontScale);
         priceLabel.setOpaque(true);
 
         moveToBack(priceLabel);
-        setPreferredSize(new Dimension(40, 40));
+        setPreferredSize(new Dimension(40 * fontScale, 40 * fontScale));
 
         if (model != null) {
 
@@ -100,11 +103,13 @@ public class GUIStockSpace extends JLayeredPane implements Observer {
 
     private void placeToken(List<PublicCompany> tokenList) {
 
-        int xCenter = TOKEN_ORIGIN_X;
-        int yCenter = TOKEN_ORIGIN_Y;
-        int diameter = TOKEN_DIAMETER;
+        int fontScale = (int)GUIGlobals.getFontsScale();
+        int xCenter = TOKEN_ORIGIN_X * fontScale;
+        int yCenter = TOKEN_ORIGIN_Y * fontScale;
+        int diameter = TOKEN_DIAMETER * fontScale;
+ 
         Point origin = new Point(16, 0);
-        Dimension size = new Dimension(40, 40);
+        Dimension size = new Dimension(40*fontScale, 40*fontScale);
         Color bgColour;
         Color fgColour;
         PublicCompany co;
@@ -119,7 +124,7 @@ public class GUIStockSpace extends JLayeredPane implements Observer {
             token.setBounds(origin.x, origin.y, size.width, size.height);
 
             add(token, new Integer(0), 0);
-            yCenter += TOKEN_INCREMENT_Y;
+            yCenter += TOKEN_INCREMENT_Y * fontScale;
         }
     }
 

@@ -107,7 +107,7 @@ public class ORUIManager implements DialogOwner {
 
     private boolean privatesCanBeBoughtNow;
 
-    private final GUIHexUpgrades hexUpgrades = GUIHexUpgrades.create();
+    protected final GUIHexUpgrades hexUpgrades = GUIHexUpgrades.create();
 
     /* Local substeps */
     public static enum LocalSteps {
@@ -330,7 +330,7 @@ public class ORUIManager implements DialogOwner {
         }
     }
     
-    private void addLocatedTokenLays(LayToken action) {
+    protected void addLocatedTokenLays(LayToken action) {
         for (MapHex hex:action.getLocations()) {
             GUIHex guiHex = map.getHex(hex);
             TokenHexUpgrade upgrade = TokenHexUpgrade.create(
@@ -1648,6 +1648,13 @@ public class ORUIManager implements DialogOwner {
     public void setCurrentDialog (JDialog dialog, PossibleAction action) {
         gameUIManager.setCurrentDialog(dialog, action);
         if (!(dialog instanceof MessageDialog)) orPanel.disableButtons();
+    }
+
+    /**
+     * @return the hexUpgrades
+     */
+    protected GUIHexUpgrades getHexUpgrades() {
+        return hexUpgrades;
     }
 
 }

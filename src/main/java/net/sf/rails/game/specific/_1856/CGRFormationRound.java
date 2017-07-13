@@ -22,15 +22,7 @@ import net.sf.rails.game.state.Portfolio;
 
 public class CGRFormationRound extends SwitchableUIRound {
 
-    private static final int[][] certLimitsTable = {
-        {14, 19, 21, 26, 29, 31, 36, 40},
-        {10, 13, 15, 18, 20, 22, 25, 28},
-        {8, 10, 12, 14, 16, 18, 20, 22},
-        {7, 8, 10, 11, 13, 15, 16, 18},
-        {6, 7, 8, 10, 11, 12, 14, 15}
-    };
-
-    // static variables
+     // static variables
     private final PublicCompany_CGR cgr;
 
     // initialized in start() method only
@@ -474,30 +466,6 @@ public class CGRFormationRound extends SwitchableUIRound {
         cgr.setFloated();
         ReportBuffer.add(this, LocalText.getText("Floats", PublicCompany_CGR.NAME));
 
-        // Determine the new certificate limit.
-        // The number of available companies is 11,
-        // or 12 minus the number of closed companies, whichever is lower.
-        //Make sure that only available companies are counted
-        int validCompanies= 12; //including the CGR
-        //Need to find out if a company is already closed, if yes
-        //decrease the validCompany value by 1
-        for(PublicCompany c : getRoot().getGameManager().getAllPublicCompanies()) {
-            if (c.isClosed()) {
-                validCompanies--;
-            }
-        }
-        int numCompanies = Math.min(11, validCompanies-mergingCompanies.size());
-        int numPlayers = playerManager.getNumberOfPlayers();
-        // Need some checks here...
-        int newCertLimit = certLimitsTable[numPlayers-2][numCompanies-4];
-        getRoot().getPlayerManager().setPlayerCertificateLimit(newCertLimit);
-        message = LocalText.getText("CertificateLimit",
-                newCertLimit,
-                numPlayers,
-                numCompanies);
-        DisplayBuffer.add(this, message);
-        ReportBuffer.add(this, message);
-
         // Collect the old token spots, and move cash and trains
         List<BaseToken> homeTokens = new ArrayList<BaseToken>();
         nonHomeTokens = new ArrayList<BaseToken>();
@@ -896,6 +864,15 @@ public class CGRFormationRound extends SwitchableUIRound {
     @Override
     public String toString() {
         return "1856 CGRFormationRound";
+    }
+
+    @Override
+    protected void finishRound() {
+        
+        super.finishRound();
+        
+        //In any case we must recalculate the certificate limit
+        ((GameManager_1856)gameManager).resetCertificateLimit(true);
     }
 
     // Step Objects to control progress

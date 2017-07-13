@@ -72,4 +72,13 @@ public final class PublicCompany_1856 extends PublicCompany {
         return Math.max(0, getMarketPrice() - 10 * getCurrentNumberOfLoans());
     }
 
+    @Override
+    public void setClosed() {
+
+        super.setClosed();
+        ((GameManager_1856) getRoot().getGameManager()).resetCertificateLimit(false);
+        //Note: The Phase Check is done inside resetCertificateLimit();
+        
+    }
+
 }
