@@ -76,6 +76,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     /** President's certificate? */
     protected boolean president;
     // FIXME: If this is changable, it should be a state variable, otherwise UNDO problems
+    // So far theres no Game known that changes the CertificateCount for a Public Company 
     /** Count against certificate limits */
     protected float certificateCount = 1.0f;
     
@@ -109,17 +110,6 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
         this.certificateCount = certificateCount;
         this.indexInCompany = index;
     }
-
-// TODO: Can be removed, as
-//    most likely this does not work, as it duplicates ids
-//    public PublicCertificate(PublicCertificate oldCert) {
-//        super(oldCert.getParent(), oldCert.getId(), PublicCertificate.class);
-//        this.shares = oldCert.getShares();
-//        this.president = oldCert.isPresidentShare();
-//        this.initiallyAvailable = oldCert.isInitiallyAvailable();
-//        this.certificateCount = oldCert.getCertificateCount();
-//        this.indexInCompany = oldCert.getIndexInCompany();
-//    }
 
     @Override
     public RailsItem getParent(){

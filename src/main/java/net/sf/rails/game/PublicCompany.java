@@ -496,7 +496,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
 
 
-        // TODO: Check if this still works correctly
         // The certificate init was moved to the finishConfig phase
         // as PublicCompany is configured twice
         List<Tag> certTags = tag.getChildren("Certificate");

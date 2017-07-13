@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.special.SpecialRight;
+import net.sf.rails.game.specific._1844.HoldingCompany;
 import net.sf.rails.game.state.HashSetState;
 
 /**
@@ -19,6 +20,10 @@ public class RightsModel extends RailsModel {
         super(parent, id);
     }
     
+    public RightsModel(HoldingCompany parent, String id) {
+        super(parent, id);
+    }
+
     public static RightsModel create(PublicCompany parent, String id) {
         return new RightsModel(parent, id);
     }
@@ -42,6 +47,10 @@ public class RightsModel extends RailsModel {
             rightsText.add(right.getName());
         }
         return Joiner.on(",").join(rightsText.build()).toString();
+    }
+
+    public static RightsModel create(HoldingCompany parent, String id) {
+        return new RightsModel(parent, id);
     }
     
 }
