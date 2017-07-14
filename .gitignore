@@ -1,12 +1,17 @@
-# Gradle build
-/build/
-.gradle/
+# maven build directory
 /target/
 
-# Eclipse build
-/classes/
+# eclipse specific files
+/.settings/
 
-# Log files
+.project
+.classpath
+
+# IntelliJ specific files
+.idea/
+rails.iml
+
+# rails log files
 **/18xx.log
 
 # backup files
@@ -19,6 +24,4 @@
 **/*.failed
 /bin/
 
-# IntelliJ specific files
-.idea/
-rails.iml
+
