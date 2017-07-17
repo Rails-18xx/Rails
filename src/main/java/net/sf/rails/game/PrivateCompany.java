@@ -89,8 +89,8 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     private String longName;
     private String alias;
     private CompanyType type;
-    private String infoText;
-    private String parentInfoText;
+    private String infoText = "";
+    private String parentInfoText ="";
     private final BooleanState closed = BooleanState.create(this, "closed", false);
     
     // used for Certificate interface
