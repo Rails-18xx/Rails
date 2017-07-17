@@ -297,8 +297,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     private String longName;
     private String alias;
     private CompanyType type;
-    private String infoText;
-    private String parentInfoText;
+    private String infoText ="";
+    private String parentInfoText ="";
     private final BooleanState closed = BooleanState.create(this, "closed", false);
     
     /**
