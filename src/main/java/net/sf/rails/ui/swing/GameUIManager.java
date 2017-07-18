@@ -600,6 +600,7 @@ public class GameUIManager implements DialogOwner {
 
         PublicCompany c = dt.getCompany();
         String playerName = dt.getPlayerName();
+        String companyDirector = dt.getCompany().getPresident().getId();
         Set<Train> trains = dt.getOwnedTrains();
         int size = trains.size() + (dt.isForced() ? 0 : 1);
         List<String> trainOptions =
@@ -622,10 +623,27 @@ public class GameUIManager implements DialogOwner {
                             Iterables.get(trains, i).toText())
             );
         }
-        if (prompt == null) prompt = LocalText.getText(
+        //Martin Brumm: 18.7.2017
+        //Need to Check that the player informed here is the director
+        //Underlying problem is that the director might not be the operating player in the
+        //moment and theres no quick way to change that behaviour..
+        //Only Chance would be to introduce a new Discard Train Round with complete separate
+        //Mechanics
+        
+        if (prompt == null) { 
+            if (playerName.equals(companyDirector)) {
+                prompt = LocalText.getText(
                 "HAS_TOO_MANY_TRAINS",
                 playerName,
-                c.getId() );
+                c.getId() ); 
+            } else {
+                prompt = LocalText.getText(
+                        "HAS_TOO_MANY_TRAINS",
+                        playerName,
+                        c.getId() ); 
+                prompt += "\n Please contact the director of the "+c.getId()+ " : "+companyDirector+" for guidance.";
+            }
+        }
 
         String discardedTrainName =
             (String) JOptionPane.showInputDialog(orWindow,
