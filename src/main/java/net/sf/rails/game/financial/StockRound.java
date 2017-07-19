@@ -263,7 +263,7 @@ public class StockRound extends Round {
 
                 if (!cert.isPresidentShare()) {
                     price = comp.getIPOPrice() / unitsForPrice;
-                    if (price <= playerCash) {
+                    if ((price*shares) <= playerCash) {
                         possibleActions.add(new BuyCertificate(comp, cert.getShare(),
                                 from.getParent(), price));
                     }
