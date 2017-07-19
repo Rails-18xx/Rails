@@ -477,29 +477,9 @@ KeyListener, ActionPerformer {
 
             int cash =
                 ((ShareSellingRound) currentRound).getRemainingCashToRaise();
-            if (!possibleActions.contains(SellShares.class)) {
-                // should not occur anymore
-                //                JOptionPane.showMessageDialog(this, LocalText.getText(
-//                        "YouMustRaiseCashButCannot", Currency.format(this, cash)), "",
-                //                        JOptionPane.OK_OPTION);
-                /*
-                 * For now assume that this ends the game (not true in all
-                 * games)
-                 * sfy: changed now
-                 */
-                //                JOptionPane.showMessageDialog(this,
-                //                        gameUIManager.getGameManager().getGameReport(), "", JOptionPane.OK_OPTION);
-                /*
-                 * All other wrapping up has already been done when calling
-                 * getSellableCertificates, so we can just finish now.
-                 */
-                //                finish();
-                //                return;
-            } else {
                 JOptionPane.showMessageDialog(this, LocalText.getText(
                         "YouMustRaiseCash", gameUIManager.format(cash)), "",
                         JOptionPane.OK_OPTION);
-            }
         } else if (currentRound instanceof StockRound && !updateGameSpecificSettings()) {
 
             setTitle(LocalText.getText(
@@ -750,6 +730,11 @@ KeyListener, ActionPerformer {
 
     public void finishRound() {
         setTitle(LocalText.getText("GAME_STATUS_TITLE"));
+        //Fixes the behaviour that closed Minors didnt 
+        //vanish from the display after the end of a forced
+        //Formationround in 1835
+        //Martin 19.7.2017
+        gameStatus.recreate();
         gameStatus.initTurn(-1, true);
         passButton.setEnabled(false);
     }
