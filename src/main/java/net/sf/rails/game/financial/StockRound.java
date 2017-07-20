@@ -230,7 +230,6 @@ public class StockRound extends Round {
             from = ipo;
             ImmutableSetMultimap<PublicCompany, PublicCertificate> map =
                 from.getCertsPerCompanyMap();
-            int shares;
 
             for (PublicCompany comp : map.keySet()) {
                 certs = map.get(comp);
@@ -259,11 +258,9 @@ public class StockRound extends Round {
                 if ((stockSpace == null || !stockSpace.isNoCertLimit()) && !mayPlayerBuyCertificate(
                         currentPlayer, comp, cert.getCertificateCount())) continue;
 
-                shares = cert.getShares();
-
                 if (!cert.isPresidentShare()) {
                     price = comp.getIPOPrice() / unitsForPrice;
-                    if ((price*shares) <= playerCash) {
+                    if ((price*cert.getShares()) <= playerCash) {
                         possibleActions.add(new BuyCertificate(comp, cert.getShare(),
                                 from.getParent(), price));
                     }
@@ -276,7 +273,7 @@ public class StockRound extends Round {
                     } else {
                         List<Integer> startPrices = new ArrayList<Integer>();
                         for (int startPrice : stockMarket.getStartPrices()) {
-                            if (startPrice * shares <= playerCash) {
+                            if (startPrice * cert.getShares()<= playerCash) {
                                 startPrices.add(startPrice);
                             }
                         }
