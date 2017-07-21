@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
     <version>2.0-RC4</version>
 
-    <name>rails</name>
+    <name>Rails</name>
     <description>A Java playing aid for playing 18xx based games via email or in Hotseat mode.</description>
 
     <organization>
@@ -21,7 +21,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <licence>GPL</licence>
         <jdk.version>1.6</jdk.version>
+        <jarName.all>${project.build.finalName}-all</jarName.all>
+        <launch4j.version>2.0.0.0</launch4j.version>
     </properties>
 
     <dependencies>
@@ -167,7 +170,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.6.1</version>
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
@@ -193,6 +196,8 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <finalName>${jarName.all}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
                             <mainClass>net.sf.rails.util.RunGame</mainClass>
@@ -224,10 +229,11 @@
                         </goals>
                         <configuration>
                             <headerType>gui</headerType>
-                            <jar>target/${project.name}-${project.version}-jar-with-dependencies.jar</jar>
-                            <outfile>target/${project.name}-${project.version}.exe</outfile>
-                            <errTitle>Rails</errTitle>
-                            <icon>target/classes/build/rails.ico</icon>
+                            <jar>${project.build.directory}/${jarName.all}.jar</jar>
+                            <outfile>${project.build.directory}/${project.build.finalName}.exe</outfile>
+
+                            <errTitle>${project.name}</errTitle>
+                            <icon>${project.build.outputDirectory}/build/rails.ico</icon>
 
                             <classPath>
                                 <mainClass>net.sf.rails.util.RunGame</mainClass>
@@ -236,16 +242,16 @@
                             </classPath>
 
                             <jre>
-                                <minVersion>1.6.0</minVersion>
+                                <minVersion>${jdk.version}.0</minVersion>
                             </jre>
 
                             <versionInfo>
-                                <fileVersion>2.0.0.0</fileVersion>
-                                <productVersion>2.0.0.0</productVersion>
+                                <fileVersion>${launch4j.version}</fileVersion>
+                                <productVersion>${launch4j.version}</productVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <fileDescription>${project.name}</fileDescription>
-                                <copyright>GPL</copyright>
+                                <copyright>${licence}</copyright>
                                 <productName>${project.name}</productName>
                                 <internalName>${project.name}</internalName>
                                 <originalFilename>original.exe</originalFilename>
