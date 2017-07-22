@@ -24,4 +24,7 @@ rails.iml
 **/*.failed
 /bin/
 
+# logback test configuration
+**/logback-test.xml
+
 

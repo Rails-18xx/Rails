@@ -8,15 +8,26 @@
 <!--    http://www.qos.ch/shop/products/professionalSupport         -->
 <!--                                                                -->
 <configuration>
-  <appender name="F" class="ch.qos.logback.core.FileAppender">
-    <File>18xx.log</File>
-    <append>false</append>
-    <encoder>
-      <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</pattern>
-    </encoder>
-  </appender>
-  <logger name="net.sf.rails.algorithms" level="WARN"/>
-  <root level="DEBUG">
-    <appender-ref ref="F"/>
-  </root>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <File>18xx.log</File>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="net.sf.rails.algorithms" level="WARN"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
 </configuration>
