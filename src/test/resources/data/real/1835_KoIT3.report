@@ -391,7 +391,7 @@ Payout,Stefan,30,1,100
 CompanyOperates,BY,Helmut
 LaysTileAt,BY,6,N12,SW
 LaysTileAtFor,BY,9,M13,SW,50
-LAYS_TOKEN_ON,BY,N12,40Hex N12 (Augsburg)
+LAYS_TOKEN_ON,BY,N12,40 Hex N12 (Augsburg)
 CompanyRevenue,BY,100
 CompanyPaysOutFull,BY,100
 Payout,Helmut,30,3,10
@@ -404,7 +404,7 @@ StartOfPhase,3
  
 CompanyOperates,SX,Lonny
 LaysTileAt,SX,9,H18,W
-LAYS_TOKEN_ON,SX,H20,40Hex H20 (Dresden)
+LAYS_TOKEN_ON,SX,H20,40 Hex H20 (Dresden)
 CompanyRevenue,SX,150
 CompanyPaysOutFull,SX,150
 Payout,Stefan,30,2,10
@@ -549,7 +549,7 @@ Payout,Stefan,35,1,100
  
 CompanyOperates,SX,Lonny
 LaysTileAt,SX,12,H16,SE
-LAYS_TOKEN_ON,SX,E19,60Hex E19 (Berlin)
+LAYS_TOKEN_ON,SX,E19,60 Hex E19 (Berlin)
 CompanyRevenue,SX,200
 CompanyPaysOutFull,SX,200
 Payout,Helmut,80,4,10
@@ -569,7 +569,7 @@ BuysTrain,BA,2,M6,230
 CompanyOperates,BY,Ronnie
 LaysTileAt,BY,4,M15,NW
 LaysTileAt,BY,206,N12,W
-LAYS_TOKEN_ON,BY,L14,60Hex L14 (Nürnberg/Fürth SW,SE)
+LAYS_TOKEN_ON,BY,L14,60 Hex L14 (Nürnberg/Fürth SW,SE)
 CompanyRevenue,BY,160
 CompanyPaysOutFull,BY,160
 Payout,Helmut,16,1,10
@@ -869,7 +869,7 @@ BuysTrain,HE,2+2,M1,1
  
 CompanyOperates,BA,Helmut
 LaysTileAt,BA,9,I5,NW
-LAYS_TOKEN_ON,BA,H2,80Hex H2 (Düsseldorf)
+LAYS_TOKEN_ON,BA,H2,80 Hex H2 (Düsseldorf)
 CompanyDoesNotPayDividend,BA
 PRICE_MOVES_LOG,BA,74,B6,64,A6
 BuysTrain,BA,4,IPO,360
@@ -1166,7 +1166,7 @@ CompanyOperates,PR,Stefan
 LaysTileAt,PR,8,K13,NE
 LAYS_FREE_TOKEN_ON,PR,L14
 PrivateCloses,NF
-LAYS_TOKEN_ON,PR,H20,60Hex H20 (Dresden)
+LAYS_TOKEN_ON,PR,H20,60 Hex H20 (Dresden)
 CompanyRevenue,PR,120
 CompanyPaysOutFull,PR,120
 Payout,Stefan,60,10,5
@@ -1206,7 +1206,7 @@ PRICE_MOVES_LOG,BY,96,E5,104,F5
  
 CompanyOperates,HE,Lonny
 LaysTileAt,HE,63,H16,SW
-LAYS_TOKEN_ON,HE,H16,100Hex H16 (Leipzig)
+LAYS_TOKEN_ON,HE,H16,100 Hex H16 (Leipzig)
 CompanyRevenue,HE,180
 CompanyPaysOutFull,HE,180
 Payout,Lonny,180,10,10
@@ -1216,7 +1216,7 @@ All 5-trains are sold out, 5+5-trains now available
  
 CompanyOperates,WT,Helmut
 LaysTileAtFor,WT,216,J8,W,50
-LAYS_TOKEN_ON,WT,J8,60Hex J8 (Frankfurt)
+LAYS_TOKEN_ON,WT,J8,60 Hex J8 (Frankfurt)
 CompanyRevenue,WT,150
 CompanyWithholds,WT,150
 PRICE_MOVES_LOG,WT,80,B5,72,A5
@@ -1226,14 +1226,14 @@ FirstTrainBought,5+5
  
 CompanyOperates,MS,Helmut
 LaysTileAtFor,MS,221,C11,SW,50
-LAYS_TOKEN_ON,MS,E19,80Hex E19 (Berlin)
+LAYS_TOKEN_ON,MS,E19,80 Hex E19 (Berlin)
 CompanyDoesNotPayDividend,MS
 PRICE_MOVES_LOG,MS,80,B5,72,A5
 BuysTrain,MS,3+3,WT,428
  
 CompanyOperates,OL,Ronnie
 LaysTileAt,OL,8,E5,SW
-LAYS_TOKEN_ON,OL,G5,60Hex G5 (Dortmund)
+LAYS_TOKEN_ON,OL,G5,60 Hex G5 (Dortmund)
 CompanyDoesNotPayDividend,OL
 PRICE_MOVES_LOG,OL,80,B5,72,A5
 PresidentAddsCash,OL,Ronnie,180
@@ -1616,7 +1616,7 @@ PRICE_MOVES_LOG,SX,154,I4,172,J4
  
 CompanyOperates,BY,Ronnie
 LaysTileAt,BY,42,J10,W
-LAYS_TOKEN_ON,BY,L6,120Hex L6 (Ludwigshafen/Mannheim)
+LAYS_TOKEN_ON,BY,L6,120 Hex L6 (Ludwigshafen/Mannheim)
 CompanyRevenue,BY,220
 CompanyPaysOutFull,BY,220
 Payout,Lonny,22,1,10

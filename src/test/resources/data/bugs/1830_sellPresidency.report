@@ -112,7 +112,7 @@ ReceivesFor,Giancarlo,30,B&O
  
 CompanyOperates,B&O,Giancarlo
 LaysTileAtFor,B&O,57,J14,SW,80
-LAYS_TOKEN_ON,B&O,J14,40Hex J14 (Washington)
+LAYS_TOKEN_ON,B&O,J14,40 Hex J14 (Washington)
 CompanyDoesNotPayDividend,B&O
 PRICE_MOVES_LOG,B&O,100,G1,90,F1
 BuysTrain,B&O,2,IPO,80
@@ -290,7 +290,7 @@ PRICE_MOVES_LOG,C&O,71,G5,76,H5
  
 CompanyOperates,NYNH,Glauco
 LaysTileAt,NYNH,14,E19,NW
-LAYS_TOKEN_ON,NYNH,E19,40Hex E19 ()
+LAYS_TOKEN_ON,NYNH,E19,40 Hex E19 ()
 CompanyRevenue,NYNH,90
 CompanyPaysOutFull,NYNH,90
 Payout,Palmiro,9,1,10

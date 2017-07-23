@@ -503,7 +503,7 @@ PRICE_MOVES_LOG,C&O,82,F2,90,G2
  
 CompanyOperates,N&W,Chris
 LaysTileAt,N&W,14,J14,NW
-LAYS_TOKEN_ON,N&W,J14,40Hex J14 (Washington)
+LAYS_TOKEN_ON,N&W,J14,40 Hex J14 (Washington)
 CompanyRevenue,N&W,210
 CompanyPaysOutFull,N&W,210
 Payout,Phil,21,1,10
@@ -513,7 +513,7 @@ PRICE_MOVES_LOG,N&W,76,H5,82,I5
  
 CompanyOperates,NYNH,Marcus
 LaysTileAtFor,NYNH,57,F22,W,80
-LAYS_TOKEN_ON,NYNH,F16,40Hex F16 ()
+LAYS_TOKEN_ON,NYNH,F16,40 Hex F16 ()
 CompanyRevenue,NYNH,270
 CompanyPaysOutFull,NYNH,270
 Payout,Chris,81,3,10
@@ -620,7 +620,7 @@ BuysPrivateFromFor,Erie,SVNRR,Marcus,40
  
 CompanyOperates,C&O,Phil
 LaysTileAt,C&O,15,K13,SW
-LAYS_TOKEN_ON,C&O,J14,40Hex J14 (Washington)
+LAYS_TOKEN_ON,C&O,J14,40 Hex J14 (Washington)
 CompanyRevenue,C&O,250
 CompanyPaysOutFull,C&O,250
 Payout,Phil,150,6,10
@@ -702,7 +702,7 @@ PRICE_MOVES_LOG,C&O,100,H2,112,I2
  
 CompanyOperates,RDG,Ed
 LaysTileAt,RDG,BA,I15,NE
-LAYS_TOKEN_ON,RDG,I15,40Hex I15 (Baltimore)
+LAYS_TOKEN_ON,RDG,I15,40 Hex I15 (Baltimore)
 CompanyRevenue,RDG,120
 CompanyPaysOutFull,RDG,120
 Payout,Ed,72,6,10
@@ -725,7 +725,7 @@ PRICE_MOVES_LOG,NYNH,75,I6,71,H6
  
 CompanyOperates,PRR,Chris
 LaysTileAt,PRR,G17,G17,W
-LAYS_TOKEN_ON,PRR,G19,40Hex G19 (New York)
+LAYS_TOKEN_ON,PRR,G19,40 Hex G19 (New York)
 CompanyRevenue,PRR,340
 CompanyPaysOutFull,PRR,340
 Payout,Phil,34,1,10
@@ -743,7 +743,7 @@ PRICE_MOVES_LOG,N&W,69,H7,70,I7
  
 CompanyOperates,NYC,Si
 LaysTileAt,NYC,64,H18,SE
-LAYS_TOKEN_ON,NYC,G19,100Hex G19 (New York)
+LAYS_TOKEN_ON,NYC,G19,100 Hex G19 (New York)
 CompanyRevenue,NYC,200
 CompanyPaysOutFull,NYC,200
 Payout,Phil,20,1,10
@@ -886,7 +886,7 @@ PRICE_MOVES_LOG,RDG,100,I3,111,J3
  
 CompanyOperates,B&O,Phil
 LaysTileAt,B&O,40,F18,W
-LAYS_TOKEN_ON,B&O,G19,40Hex G19 (New York)
+LAYS_TOKEN_ON,B&O,G19,40 Hex G19 (New York)
 CompanyDoesNotPayDividend,B&O
 PRICE_MOVES_LOG,B&O,90,G2,82,F2
 BuysTrain,B&O,5,IPO,450
@@ -902,14 +902,14 @@ TrainsObsolete.ALL,3
  
 CompanyOperates,N&W,Chris
 LaysTileAt,N&W,7,G9,SE
-LAYS_TOKEN_ON,N&W,I15,100Hex I15 (Baltimore)
+LAYS_TOKEN_ON,N&W,I15,100 Hex I15 (Baltimore)
 CompanyRevenue,N&W,450
 CompanyWithholds,N&W,450
 PRICE_MOVES_LOG,N&W,75,I6,71,H6
  
 CompanyOperates,B&M,Chris
 LaysTileAt,B&M,15,F22,W
-LAYS_TOKEN_ON,B&M,E19,40Hex E19 ()
+LAYS_TOKEN_ON,B&M,E19,40 Hex E19 ()
 CompanyDoesNotPayDividend,B&M
 PRICE_MOVES_LOG,B&M,71,G5,67,F5
 BuysTrain,B&M,6,IPO,630
@@ -1323,7 +1323,7 @@ PRICE_MOVES_LOG,B&M,69,H7,70,I7
  
 CompanyOperates,Erie,Marcus
 LaysTileAt,Erie,7,D8,E
-LAYS_TOKEN_ON,Erie,D10,40Hex D10 ( E,W)
+LAYS_TOKEN_ON,Erie,D10,40 Hex D10 ( E,W)
 CompanyRevenue,Erie,160
 CompanyPaysOutFull,Erie,160
 Payout,Marcus,80,5,10
@@ -1563,7 +1563,7 @@ Payout,Si,360,6,10
 PRICE_MOVES_LOG,NYC,71,H6,75,I6
  
 CompanyOperates,Erie,Marcus
-LAYS_TOKEN_ON,Erie,H16,100Hex H16 ()
+LAYS_TOKEN_ON,Erie,H16,100 Hex H16 ()
 CompanyRevenue,Erie,330
 CompanyPaysOutFull,Erie,330
 Payout,Marcus,165,5,10

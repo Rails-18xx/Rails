@@ -141,7 +141,7 @@ ReceivesFor,Steve,20,NDY
  
 CompanyOperates,AB&C,Peter
 LaysTileAtFor,AB&C,441,G4,SE,60
-LAYS_TOKEN_ON,AB&C,G4,40Hex G4 (Birmingham)
+LAYS_TOKEN_ON,AB&C,G4,40 Hex G4 (Birmingham)
 DestinationReachedByToken,AB&C,100,G4
 CompanyRevenue,AB&C,50
 CompanyPaysOutFull,AB&C,50
@@ -251,7 +251,7 @@ BuysTrain,ATN,3,IPO,180
  
 CompanyOperates,L&N,Steve
 LaysTileAt,L&N,442,G4,N
-LAYS_TOKEN_ON,L&N,G4,40Hex G4 (Birmingham)
+LAYS_TOKEN_ON,L&N,G4,40 Hex G4 (Birmingham)
 DestinationReachedByToken,L&N,100,G4
 CompanyRevenue,L&N,60
 CompanyPaysOutFull,L&N,60
@@ -432,7 +432,7 @@ PRICE_MOVES_LOG,ATN,65,E4,70,F4
  
 CompanyOperates,L&N,Steve
 LaysTileAtFor,L&N,9,D5,NW,60
-LAYS_TOKEN_ON,L&N,L5,100Hex L5 (Montgomery)
+LAYS_TOKEN_ON,L&N,L5,100 Hex L5 (Montgomery)
 CompanyDoesNotPayDividend,L&N
 PRICE_MOVES_LOG,L&N,65,E4,60,D4
 BuysTrainUsingSP,L&N,4,IPO,150,NDY
@@ -541,7 +541,7 @@ PRICE_MOVES_LOG,AB&C,80,H4,75,G4
  
 CompanyOperates,WRA,Justin
 LaysTileAt,WRA,57,J7,SW
-LAYS_TOKEN_ON,WRA,J7,40Hex J7 (West Point)
+LAYS_TOKEN_ON,WRA,J7,40 Hex J7 (West Point)
 DestinationReachedByToken,WRA,100,J7
 CompanyRevenue,WRA,150
 CompanyPaysOutFull,WRA,150
@@ -552,7 +552,7 @@ PRICE_MOVES_LOG,WRA,65,F5,70,G5
  
 CompanyOperates,ATN,Jim
 LaysTileAt,ATN,8,I2,NE
-LAYS_TOKEN_ON,ATN,L1,40Hex L1 (Meridian)
+LAYS_TOKEN_ON,ATN,L1,40 Hex L1 (Meridian)
 DestinationReachedByToken,ATN,100,L1
 CompanyRevenue,ATN,130
 CompanyPaysOutFull,ATN,130
@@ -633,7 +633,7 @@ PRICE_MOVES_LOG,WRA,70,G5,75,H5
  
 CompanyOperates,ATN,Jim
 LaysTileAt,ATN,144,C2,SW
-LAYS_TOKEN_ON,ATN,H3,100Hex H3 (Tuscaloosa)
+LAYS_TOKEN_ON,ATN,H3,100 Hex H3 (Tuscaloosa)
 CompanyRevenue,ATN,290
 CompanyPaysOutFull,ATN,290
 Payout,Justin,29,1,10

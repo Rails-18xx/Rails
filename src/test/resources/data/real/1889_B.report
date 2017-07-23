@@ -77,7 +77,7 @@ BuysTrain,IR,2,IPO,80
  
 CompanyOperates,UR,bernd
 LaysTileAt,UR,9,B5,S
-LAYS_TOKEN_ON,UR,C4,40Hex C4 (大洲 - Ohzu)
+LAYS_TOKEN_ON,UR,C4,40 Hex C4 (大洲 - Ohzu)
 CompanyDoesNotPayDividend,UR
 PRICE_MOVES_LOG,UR,65,D6,60,C6
 BuysTrain,UR,2,IPO,80
@@ -119,7 +119,7 @@ ReceivesFor,stefan,30,G
  
 CompanyOperates,IR,klaus
 LaysTileAt,IR,5,F3,NE
-LAYS_TOKEN_ON,IR,F3,40Hex F3 (西條 - Saijou)
+LAYS_TOKEN_ON,IR,F3,40 Hex F3 (西條 - Saijou)
 CompanyRevenue,IR,140
 CompanyPaysOutFull,IR,140
 Payout,stefan,28,2,10
@@ -368,7 +368,7 @@ CompanyOperates,TR,Josha
 CorrectionModeActivate,Josha,CORRECT_MAP
 CorrectMapLaysTileAt,9,F5,S
 CorrectionModeDeactivate,Josha,CORRECT_MAP
-LAYS_TOKEN_ON,TR,F3,40Hex F3 (西條 - Saijou)
+LAYS_TOKEN_ON,TR,F3,40 Hex F3 (西條 - Saijou)
 CompanyRevenue,TR,180
 CompanyPaysOutFull,TR,180
 Payout,klaus,18,1,10
@@ -612,7 +612,7 @@ PRICE_MOVES_LOG,KO,65,E7,70,F7
  
 CompanyOperates,AR,Josha
 LaysTileAt,AR,8,I8,NW
-LAYS_TOKEN_ON,AR,F9,40Hex F9 (高知 - Kouchi)
+LAYS_TOKEN_ON,AR,F9,40 Hex F9 (高知 - Kouchi)
 CompanyRevenue,AR,170
 CompanyPaysOutFull,AR,170
 Payout,Josha,51,3,10
@@ -786,7 +786,7 @@ PRICE_MOVES_LOG,UR,90,G5,100,H5
  
 CompanyOperates,TR,Josha
 LaysTileAt,TR,448,E2,SW
-LAYS_TOKEN_ON,TR,E2,40Hex E2 (松山 - Matsuyama)
+LAYS_TOKEN_ON,TR,E2,40 Hex E2 (松山 - Matsuyama)
 CompanyRevenue,TR,190
 CompanyPaysOutFull,TR,190
 Payout,bernd,19,1,10
@@ -813,7 +813,7 @@ PRICE_MOVES_LOG,KO,80,G6,90,G5
  
 CompanyOperates,SR,stefan
 LaysTileAt,SR,448,G4,NW
-LAYS_TOKEN_ON,SR,G4,40Hex G4 (新居浜 - Niihama)
+LAYS_TOKEN_ON,SR,G4,40 Hex G4 (新居浜 - Niihama)
 CompanyRevenue,SR,240
 CompanyPaysOutFull,SR,240
 Payout,bernd,24,1,10
@@ -848,7 +848,7 @@ ReceivesFor,stefan,50,G
  
 CompanyOperates,UR,bernd
 LaysTileAt,UR,23,G8,SW
-LAYS_TOKEN_ON,UR,H7,40Hex H7 (池田 - Ikeda)
+LAYS_TOKEN_ON,UR,H7,40 Hex H7 (池田 - Ikeda)
 CompanyRevenue,UR,280
 CompanyPaysOutFull,UR,280
 Payout,bernd,140,5,10
@@ -874,7 +874,7 @@ Payout,KU,14,1,10
 PRICE_MOVES_LOG,KU,90,G5,100,H5
  
 CompanyOperates,KO,stefan
-LAYS_TOKEN_ON,KO,G4,40Hex G4 (新居浜 - Niihama)
+LAYS_TOKEN_ON,KO,G4,40 Hex G4 (新居浜 - Niihama)
 CompanyRevenue,KO,370
 CompanyPaysOutFull,KO,370
 Payout,bernd,37,1,10
