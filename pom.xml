@@ -22,7 +22,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <licence>GPL</licence>
-        <jdk.version>1.6</jdk.version>
+        <jdk.version>1.8</jdk.version>
         <jarName.all>${project.build.finalName}-all</jarName.all>
         <launch4j.version>2.0.0.0</launch4j.version>
     </properties>
