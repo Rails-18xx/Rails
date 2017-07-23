@@ -536,7 +536,7 @@ All 2+2-trains are sold out, 3-trains now available
 CompanyOperates,BY,m4
 LaysTileAt,BY,7,N16,SW
 LaysTileAtFor,BY,9,K7,SW,50
-LAYS_TOKEN_ON,BY,H20,160
+LAYS_TOKEN_ON,BY,H20,160Hex H20 (Dresden)
 CompanyRevenue,BY,190
 CompanyPaysOutFull,BY,190
 Payout,m1,57,3,10
@@ -683,7 +683,7 @@ PRICE_MOVES_LOG,SX,98,C2,108,D2
  
 CompanyOperates,BA,m3
 LaysTileAt,BA,210,L6,E
-LAYS_TOKEN_ON,BA,I3,60
+LAYS_TOKEN_ON,BA,I3,60Hex I3 (Köln)
 CompanyDoesNotPayDividend,BA
 PRICE_MOVES_LOG,BA,84,B4,78,A4
 BuysTrain,BA,3,IPO,180
@@ -930,7 +930,7 @@ BuysTrain,BA,3+3,IPO,270
  
 CompanyOperates,WT,m2
 LaysTileAt,WT,5,M9,SE
-LAYS_TOKEN_ON,WT,G3,120
+LAYS_TOKEN_ON,WT,G3,120Hex G3 (Essen/Duisburg W,NE)
 CompanyDoesNotPayDividend,WT
 PRICE_MOVES_LOG,WT,84,B4,78,A4
 BuysTrain,WT,3+3,IPO,270
@@ -1155,7 +1155,7 @@ PRICE_MOVES_LOG,BY,148,F1,166,G1
  
 CompanyOperates,SX,m2
 LaysTileAt,SX,8,N18,SW
-LAYS_TOKEN_ON,SX,E19,60
+LAYS_TOKEN_ON,SX,E19,60Hex E19 (Berlin)
 CompanyRevenue,SX,260
 CompanyWithholds,SX,260
 PRICE_MOVES_LOG,SX,132,E1,120,E2
@@ -1421,7 +1421,7 @@ PRICE_MOVES_LOG,HE,82,A3,86,B3
  
 CompanyOperates,MS,m3
 LaysTileAt,MS,63,F14,SW
-LAYS_TOKEN_ON,MS,C11,20
+LAYS_TOKEN_ON,MS,C11,20Hex C11 (Hamburg)
 CompanyDoesNotPayDividend,MS
 PRICE_MOVES_LOG,MS,80,B5,72,A5
 BuysTrain,MS,6,IPO,600

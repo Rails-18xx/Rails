@@ -254,7 +254,7 @@ CompanyWithholds,7,50
 CompanyOperates,BCR,Helmut
 LaysTileAtFor,BCR,8852,M5,W,30
 LaysTileAtFor,BCR,57,M7,W,20
-LAYS_TOKEN_ON,BCR,M7,40
+LAYS_TOKEN_ON,BCR,M7,40Hex M7 (Chongqing)
 CompanyRevenue,BCR,90
 CompanyPaysOutFull,BCR,90
 Payout,Helmut,27,3,10
@@ -291,7 +291,7 @@ PRICE_MOVES_LOG,QSR,75,C6,80,D6
  
 CompanyOperates,JHA,Stefan
 LaysTileAt,JHA,9,D10,SW
-LAYS_TOKEN_ON,JHA,E9,40
+LAYS_TOKEN_ON,JHA,E9,40Hex E9 (Chengde)
 CompanyRevenue,JHA,80
 CompanyPaysOutFull,JHA,80
 Payout,Stefan,16,2,10
@@ -482,14 +482,14 @@ PRICE_MOVES_LOG,HKR,105,E2,110,F2
  
 CompanyOperates,NJR,Ronnie
 LaysTileAt,NJR,8854,H12,SW
-LAYS_TOKEN_ON,NJR,H14,40
+LAYS_TOKEN_ON,NJR,H14,40Hex H14 (Qingdao)
 CompanyRevenue,NJR,110
 CompanyPaysOutFull,NJR,110
 Payout,Ronnie,33,3,10
 PRICE_MOVES_LOG,NJR,105,E2,110,F2
  
 CompanyOperates,JHU,Stefan
-LAYS_TOKEN_ON,JHU,I9,40
+LAYS_TOKEN_ON,JHU,I9,40Hex I9 (Kaifeng, Zhengzhou NW)
 CompanyRevenue,JHU,130
 CompanyPaysOutFull,JHU,130
 Payout,Stefan,26,2,10
@@ -710,7 +710,7 @@ PRICE_MOVES_LOG,JHU,90,F6,95,G6
  
 CompanyOperates,QSR,Stefan
 LaysTileAt,QSR,8865,D12,E
-LAYS_TOKEN_ON,QSR,E9,40
+LAYS_TOKEN_ON,QSR,E9,40Hex E9 (Chengde)
 CompanyRevenue,QSR,190
 CompanyPaysOutFull,QSR,190
 Payout,Stefan,38,2,10
@@ -795,7 +795,7 @@ PRICE_MOVES_LOG,BCR,120,G1,125,H1
 CompanyOperates,HKR,Lonny
 LaysTileAtFor,HKR,8856,L12,SW,20
 LaysTileAt,HKR,8,M11,NE
-LAYS_TOKEN_ON,HKR,N12,40
+LAYS_TOKEN_ON,HKR,N12,40Hex N12 (Changsha, Nanchang NW,SE)
 CompanyRevenue,HKR,340
 CompanyPaysOutFull,HKR,340
 Payout,Helmut,34,1,10
@@ -855,7 +855,7 @@ START_OR,4.3
  
 CompanyOperates,SCR,Lonny
 LaysTileAt,SCR,9,M13,SW
-LAYS_TOKEN_ON,SCR,L14,40
+LAYS_TOKEN_ON,SCR,L14,40Hex L14 (Hangzhou)
 CompanyRevenue,SCR,330
 CompanyPaysOutFull,SCR,330
 Payout,Lonny,99,3,10
@@ -1020,7 +1020,7 @@ PRICE_MOVES_LOG,BCR,125,H1,130,I1
  
 CompanyOperates,HKR,Lonny
 LaysTileAt,HKR,8878,K15,SW
-LAYS_TOKEN_ON,HKR,H14,100
+LAYS_TOKEN_ON,HKR,H14,100Hex H14 (Qingdao)
 CompanyRevenue,HKR,360
 CompanyPaysOutFull,HKR,360
 Payout,Helmut,36,1,10
@@ -1037,7 +1037,7 @@ PRICE_MOVES_LOG,NJR,125,H1,130,I1
 CompanyOperates,JGG,Helmut
 LaysTileAt,JGG,9,G7,SW
 LaysTileAt,JGG,7,E15,W
-LAYS_TOKEN_ON,JGG,H6,40
+LAYS_TOKEN_ON,JGG,H6,40Hex H6 (Taiyuan)
 CompanyDoesNotPayDividend,JGG
 PRICE_MOVES_LOG,JGG,100,D2,95,C2
 BuysTrain,JGG,4,IPO,300
@@ -1048,7 +1048,7 @@ TrainsRusted,2
 CompanyOperates,CKR,Ronnie
 LaysTileAt,CKR,57,O5,W
 LaysTileAt,CKR,8854,O3,SE
-LAYS_TOKEN_ON,CKR,M3,40
+LAYS_TOKEN_ON,CKR,M3,40Hex M3 (Chengdu)
 CompanyDoesNotPayDividend,CKR
 BuysTrain,CKR,4,IPO,300
  
@@ -1164,7 +1164,7 @@ CompanyWithholds,NJR,260
  
 CompanyOperates,JGG,Helmut
 LaysTileAt,JGG,8872,I9,NE
-LAYS_TOKEN_ON,JGG,I9,100
+LAYS_TOKEN_ON,JGG,I9,100Hex I9 (Kaifeng, Zhengzhou)
 CompanyRevenue,JGG,140
 CompanyPaysOutFull,JGG,140
 Payout,Helmut,70,5,10
@@ -1244,7 +1244,7 @@ CompanyOperates,JGG,Helmut
  
 CompanyOperates,CKR,Ronnie
 LaysTileAt,CKR,63,M7,SW
-LAYS_TOKEN_ON,CKR,M7,100
+LAYS_TOKEN_ON,CKR,M7,100Hex M7 (Chongqing)
 CompanyRevenue,CKR,140
 CompanyWithholds,CKR,140
 BuysTrain,CKR,6,IPO,600
@@ -1253,7 +1253,7 @@ StartOfPhase,6
 TrainsRusted,3
  
 CompanyOperates,JLR,Lonny
-LAYS_TOKEN_ON,JLR,F10,40
+LAYS_TOKEN_ON,JLR,F10,40Hex F10 (Tianjin)
 CompanyDoesNotPayDividend,JLR
 PRICE_MOVES_LOG,JLR,90,D4,85,C4
 BuysTrain,JLR,6,IPO,600
@@ -1276,14 +1276,14 @@ BuysTrain,QSR,6,IPO,600
  
 CompanyOperates,JHA,Helmut
 LaysTileAt,JHA,63,H6,SW
-LAYS_TOKEN_ON,JHA,D12,100
+LAYS_TOKEN_ON,JHA,D12,100Hex D12 (Shenyang, Fushun)
 CompanyDoesNotPayDividend,JHA
 PRICE_MOVES_LOG,JHA,100,H6,95,G6
 BuysTrain,JHA,4+4,BCR,398
  
 CompanyOperates,SCR,Lonny
 LaysTileAt,SCR,63,L14,SW
-LAYS_TOKEN_ON,SCR,K15,100
+LAYS_TOKEN_ON,SCR,K15,100Hex K15 (Shanghai)
 CompanyRevenue,SCR,450
 CompanyWithholds,SCR,450
 PRICE_MOVES_LOG,SCR,90,G7,85,F7
@@ -1669,7 +1669,7 @@ CompanyOperates,JLR,Lonny
 CompanyOperates,BZU,Helmut
 LaysTileAt,BZU,5,B8,SW
 LaysTileAt,BZU,8,B10,SE
-LAYS_TOKEN_ON,BZU,C11,40
+LAYS_TOKEN_ON,BZU,C11,40Hex C11 (Jilin City)
 CompanyDoesNotPayDividend,BZU
 PRICE_MOVES_LOG,BZU,80,D6,75,C6
 BuysTrain,BZU,8,IPO,800
@@ -2008,7 +2008,7 @@ PRICE_MOVES_LOG,JLR,85,D5,90,E5
  
 CompanyOperates,BZU,Helmut
 LaysTileAt,BZU,8888,F8,SW
-LAYS_TOKEN_ON,BZU,E9,200
+LAYS_TOKEN_ON,BZU,E9,200Hex E9 (Chengde)
 CompanyRevenue,BZU,400
 CompanyPaysOutFull,BZU,400
 Payout,Helmut,200,5,10

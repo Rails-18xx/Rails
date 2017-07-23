@@ -141,7 +141,7 @@ BuysTrain,KO,2,IPO,80
  
 CompanyOperates,IR,Mark
 LaysTileAt,IR,5,F3,NE
-LAYS_TOKEN_ON,IR,F3,40
+LAYS_TOKEN_ON,IR,F3,40Hex F3 (西條 - Saijou)
 CompanyRevenue,IR,140
 CompanyPaysOutFull,IR,140
 Payout,Breno,14,1,10
@@ -353,7 +353,7 @@ ReceivesFor,Breno,30,G
  
 CompanyOperates,TR,Breno
 LaysTileAt,TR,15,G12,N
-LAYS_TOKEN_ON,TR,G12,40
+LAYS_TOKEN_ON,TR,G12,40Hex G12 (奈半利 - Nahari)
 CompanyRevenue,TR,170
 CompanyPaysOutFull,TR,170
 Payout,Breno,85,5,10
@@ -361,7 +361,7 @@ PRICE_MOVES_LOG,TR,75,C3,80,D3
  
 CompanyOperates,KO,Peter
 LaysTileAtFor,KO,438,I4,NE,80
-LAYS_TOKEN_ON,KO,I4,40
+LAYS_TOKEN_ON,KO,I4,40Hex I4 (琴平 - Kotohira)
 CompanyRevenue,KO,150
 CompanyPaysOutFull,KO,150
 Payout,Peter,75,5,10
@@ -379,7 +379,7 @@ PRICE_MOVES_LOG,IR,55,D8,50,C8
  
 CompanyOperates,UR,Chris
 LaysTileAt,UR,15,C10,SW
-LAYS_TOKEN_ON,UR,C4,40
+LAYS_TOKEN_ON,UR,C4,40Hex C4 (大洲 - Ohzu)
 CompanyRevenue,UR,100
 CompanyPaysOutFull,UR,100
 Payout,Mark,10,1,10
@@ -483,7 +483,7 @@ PRICE_MOVES_LOG,TR,70,D5,75,E5
  
 CompanyOperates,UR,Chris
 LaysTileAt,UR,9,D9,SW
-LAYS_TOKEN_ON,UR,F9,40
+LAYS_TOKEN_ON,UR,F9,40Hex F9 (高知 - Kouchi)
 CompanyRevenue,UR,100
 CompanyWithholds,UR,100
 PRICE_MOVES_LOG,UR,55,B6,50,A6
@@ -522,7 +522,7 @@ ReceivesFor,Breno,30,G
  
 CompanyOperates,AR,Peter
 LaysTileAtFor,AR,9,K6,S,80
-LAYS_TOKEN_ON,AR,K4,40
+LAYS_TOKEN_ON,AR,K4,40Hex K4 (高松 - Takamatsu)
 CompanyRevenue,AR,110
 CompanyPaysOutFull,AR,110
 Payout,Peter,55,5,10
@@ -545,7 +545,7 @@ PRICE_MOVES_LOG,KO,75,F6,70,E6
  
 CompanyOperates,TR,Breno
 LaysTileAt,TR,611,C4,SE
-LAYS_TOKEN_ON,TR,C4,40
+LAYS_TOKEN_ON,TR,C4,40Hex C4 (大洲 - Ohzu)
 CompanyRevenue,TR,230
 CompanyPaysOutFull,TR,230
 Payout,Breno,69,3,10
@@ -1026,7 +1026,7 @@ PRICE_MOVES_LOG,AR,100,H5,110,H4
  
 CompanyOperates,SR,Breno
 LaysTileAt,SR,41,H3,NE
-LAYS_TOKEN_ON,SR,G4,40
+LAYS_TOKEN_ON,SR,G4,40Hex G4 (新居浜 - Niihama)
 CompanyRevenue,SR,270
 CompanyPaysOutFull,SR,270
 Payout,Breno,162,6,10

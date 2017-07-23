@@ -226,7 +226,7 @@ CompanyOperates,BY,T3
 LaysTileAt,BY,8,N16,SW
 LaysTileAt,BY,4,M15,NW
 LaysTileAt,BY,6,N12,NW
-LAYS_TOKEN_ON,BY,L14,60
+LAYS_TOKEN_ON,BY,L14,60Hex L14 (Nürnberg/Fürth SW,SE)
 CompanyRevenue,BY,130
 CompanyPaysOutFull,BY,130
 Payout,T1,13,1,10
@@ -461,7 +461,7 @@ PRICE_MOVES_LOG,BY,90,D5,96,E5
 CompanyOperates,SX,T1
 LaysTileAt,SX,7,H18,SE
 LaysTileAt,SX,3,I15,NE
-LAYS_TOKEN_ON,SX,H20,40
+LAYS_TOKEN_ON,SX,H20,40Hex H20 (Dresden)
 CompanyRevenue,SX,130
 CompanyPaysOutFull,SX,130
 Payout,T1,78,6,10
@@ -737,7 +737,7 @@ BuysTrain,WT,2,M4,1
  
 CompanyOperates,BA,T2
 LaysTileAt,BA,212,L6,SW
-LAYS_TOKEN_ON,BA,H2,80
+LAYS_TOKEN_ON,BA,H2,80Hex H2 (Düsseldorf)
 CompanyRevenue,BA,170
 CompanyPaysOutFull,BA,170
 Payout,T2,119,7,10
@@ -812,7 +812,7 @@ Payout,T1,40,1,100
  
 CompanyOperates,BY,T3
 LaysTileAt,BY,8,J10,SE
-LAYS_TOKEN_ON,BY,J8,120
+LAYS_TOKEN_ON,BY,J8,120Hex J8 (Frankfurt)
 CompanyRevenue,BY,160
 CompanyPaysOutFull,BY,160
 Payout,T1,16,1,10
@@ -823,7 +823,7 @@ BuysTrain,BY,2,M5,1
  
 CompanyOperates,SX,T1
 LaysTileAt,SX,206,H16,SW
-LAYS_TOKEN_ON,SX,E19,60
+LAYS_TOKEN_ON,SX,E19,60Hex E19 (Berlin)
 CompanyRevenue,SX,320
 CompanyPaysOutFull,SX,320
 Payout,T1,224,7,10
