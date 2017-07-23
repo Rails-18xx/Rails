@@ -2006,7 +2006,7 @@ public class OperatingRound extends Round implements Observer {
                         Currency.toBank(company, cost);
                 text.append(LocalText.getText("LAYS_TOKEN_ON", companyName,
                                 hex.getId(), costText));
-                text.append(stop.toText());
+                text.append(" "+stop.toText());
             } else {
                 text.append(LocalText.getText("LAYS_FREE_TOKEN_ON",
                         companyName, hex.getId()));
