@@ -233,7 +233,7 @@ PRICE_MOVES_LOG,C&O,82,G3,90,H3
  
 CompanyOperates,B&M,Scott
 LaysTileAt,B&M,57,F20,W
-LAYS_TOKEN_ON,B&M,F20,40
+LAYS_TOKEN_ON,B&M,F20,40Hex F20 ()
 CompanyRevenue,B&M,130
 CompanyPaysOutFull,B&M,130
 Payout,Bill,26,2,10
@@ -339,7 +339,7 @@ BuysTrain,B&O,3,IPO,180
  
 CompanyOperates,PRR,Chris
 LaysTileAt,PRR,53,I15,SW
-LAYS_TOKEN_ON,PRR,I15,40
+LAYS_TOKEN_ON,PRR,I15,40Hex I15 (Baltimore)
 CompanyDoesNotPayDividend,PRR
 PRICE_MOVES_LOG,PRR,82,G3,76,F3
 BuysTrain,PRR,3,IPO,180
@@ -360,7 +360,7 @@ BuysPrivateFromFor,B&M,C&StL,Scott,80
  
 CompanyOperates,C&O,Arne
 LaysTileAt,C&O,15,J14,SW
-LAYS_TOKEN_ON,C&O,J14,40
+LAYS_TOKEN_ON,C&O,J14,40Hex J14 (Washington)
 CompanyRevenue,C&O,140
 CompanyPaysOutFull,C&O,140
 Payout,Scott,14,1,10
