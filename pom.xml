@@ -295,16 +295,16 @@
                             <deb>${project.build.directory}/${project.build.finalName}.deb</deb>
                             <dataSet>
                                 <data>
-                                    <src>src/deb/scripts/rails-18xx</src>
+                                    <src>src/scripts/rails-18xx</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/usr/local/bin</prefix>
+                                        <prefix>/usr/bin</prefix>
                                         <filemode>775</filemode>
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>src/deb/scripts/rails-18xx.desktop</src>
+                                    <src>src/scripts/rails-18xx.desktop</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -316,7 +316,7 @@
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/usr/local/lib/rails</prefix>
+                                        <prefix>/usr/lib/rails-18xx</prefix>
                                     </mapper>
                                 </data>
 
