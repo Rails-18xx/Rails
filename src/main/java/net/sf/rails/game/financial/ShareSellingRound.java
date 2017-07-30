@@ -54,7 +54,15 @@ public class ShareSellingRound extends StockRound {
         this.dumpOtherCompaniesAllowed = dumpOtherCompaniesAllowed;
         log.debug("Forced selling, dumpOtherCompaniesAllowed = " + dumpOtherCompaniesAllowed);
         getRoot().getPlayerManager().setCurrentPlayer(sellingPlayer);
-        getSellableShares();
+        //getSellableShares();
+        if (getSellableShares().isEmpty()) {
+            ReportBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
+                    Bank.format(this, this.cashToRaise.value())));
+            DisplayBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
+                    Bank.format(this, this.cashToRaise.value())));
+            currentPlayer.setBankrupt();
+            gameManager.registerBankruptcy();
+        }
     }
 
     @Override
