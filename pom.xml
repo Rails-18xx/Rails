@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
     <version>2.0-RC4</version>
 
-    <name>Rails</name>
+    <name>Rails (18xx)</name>
     <description>A Java playing aid for playing 18xx based games via email or in Hotseat mode.</description>
 
     <organization>
