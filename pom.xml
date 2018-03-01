@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
     <version>2.0-RC4</version>
 
-    <name>Rails</name>
+    <name>Rails (18xx)</name>
     <description>A Java playing aid for playing 18xx based games via email or in Hotseat mode.</description>
 
     <organization>
@@ -340,6 +340,67 @@
                                     </mapper>
                                 </data>
                             </dataSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>de.dentrassi.maven</groupId>
+                <artifactId>rpm</artifactId>
+                <version>0.9.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>rpm</goal>
+                        </goals>
+
+                        <configuration>
+                            <attach>false</attach>
+                            <group>Amusements/Games</group>
+                            <skipSigning>true</skipSigning>
+
+                            <rulesets>
+                                <ruleset>
+                                    <id>my-default</id>
+
+                                    <rules>
+                                        <rule>
+                                            <user>root</user>
+                                            <group>root</group>
+                                        </rule>
+                                        <rule>
+                                            <when>
+                                                <type>file</type>
+                                            </when>
+                                            <mode>0750</mode>
+                                        </rule>
+                                    </rules>
+                                </ruleset>
+                            </rulesets>
+
+                            <entries>
+                                <entry>
+                                    <name>/usr/bin</name>
+                                    <file>src/scripts/rails-18xx</file>
+                                </entry>
+
+                                <entry>
+                                    <name>/usr/share/applications</name>
+                                    <file>src/scripts/rails-18xx.desktop</file>
+                                </entry>
+
+                                <entry>
+                                    <name>/usr/lib/rails-18xx</name>
+                                    <file>${project.build.directory}/${jarName.all}.jar</file>
+                                </entry>
+
+                                <entry>
+                                    <name>/usr/share/pixmaps</name>
+                                    <file>${project.build.outputDirectory}/build/rails.png</file>
+                                </entry>
+                            </entries>
                         </configuration>
                     </execution>
                 </executions>
