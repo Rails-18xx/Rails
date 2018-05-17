@@ -1,0 +1,152 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>GameLib</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1705;3005;0612</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="data\1825\**" />
+    <Compile Remove="data\1826\**" />
+    <Compile Remove="data\1835\**" />
+    <Compile Remove="data\1837\**" />
+    <Compile Remove="data\1851\**" />
+    <Compile Remove="data\1856\**" />
+    <Compile Remove="data\1862\**" />
+    <Compile Remove="data\1870\**" />
+    <Compile Remove="data\1880\**" />
+    <Compile Remove="data\1889\**" />
+    <Compile Remove="data\18AL\**" />
+    <Compile Remove="data\18EU\**" />
+    <Compile Remove="data\18GA\**" />
+    <Compile Remove="data\18Kaas\**" />
+    <Compile Remove="data\18Lummer\**" />
+    <Compile Remove="data\18NL\**" />
+    <Compile Remove="data\18Scan\**" />
+    <Compile Remove="data\18TN\**" />
+    <Compile Remove="data\18VA\**" />
+    <EmbeddedResource Remove="data\1825\**" />
+    <EmbeddedResource Remove="data\1826\**" />
+    <EmbeddedResource Remove="data\1835\**" />
+    <EmbeddedResource Remove="data\1837\**" />
+    <EmbeddedResource Remove="data\1851\**" />
+    <EmbeddedResource Remove="data\1856\**" />
+    <EmbeddedResource Remove="data\1862\**" />
+    <EmbeddedResource Remove="data\1870\**" />
+    <EmbeddedResource Remove="data\1880\**" />
+    <EmbeddedResource Remove="data\1889\**" />
+    <EmbeddedResource Remove="data\18AL\**" />
+    <EmbeddedResource Remove="data\18EU\**" />
+    <EmbeddedResource Remove="data\18GA\**" />
+    <EmbeddedResource Remove="data\18Kaas\**" />
+    <EmbeddedResource Remove="data\18Lummer\**" />
+    <EmbeddedResource Remove="data\18NL\**" />
+    <EmbeddedResource Remove="data\18Scan\**" />
+    <EmbeddedResource Remove="data\18TN\**" />
+    <EmbeddedResource Remove="data\18VA\**" />
+    <None Remove="data\1825\**" />
+    <None Remove="data\1826\**" />
+    <None Remove="data\1835\**" />
+    <None Remove="data\1837\**" />
+    <None Remove="data\1851\**" />
+    <None Remove="data\1856\**" />
+    <None Remove="data\1862\**" />
+    <None Remove="data\1870\**" />
+    <None Remove="data\1880\**" />
+    <None Remove="data\1889\**" />
+    <None Remove="data\18AL\**" />
+    <None Remove="data\18EU\**" />
+    <None Remove="data\18GA\**" />
+    <None Remove="data\18Kaas\**" />
+    <None Remove="data\18Lummer\**" />
+    <None Remove="data\18NL\**" />
+    <None Remove="data\18Scan\**" />
+    <None Remove="data\18TN\**" />
+    <None Remove="data\18VA\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="data\1830\CompanyManager.xml" />
+    <None Remove="data\1830\Game.xml" />
+    <None Remove="data\1830\GameOptions.xml" />
+    <None Remove="data\1830\Map.xml" />
+    <None Remove="data\1830\MapImage_Basegame.svg" />
+    <None Remove="data\1830\MapImage_Coalfields.svg" />
+    <None Remove="data\1830\StockMarket.xml" />
+    <None Remove="data\1830\Tiles.xml" />
+    <None Remove="data\1830\TileSet.xml" />
+    <None Remove="data\GamesList.xml" />
+    <None Remove="data\profiles\hotseat.predefined" />
+    <None Remove="data\profiles\LIST_OF_PROFILES" />
+    <None Remove="data\profiles\ORDocking.predefined" />
+    <None Remove="data\profiles\pbem.predefined" />
+    <None Remove="data\profiles\prettyUI.predefined" />
+    <None Remove="data\profiles\root" />
+    <None Remove="data\profiles\test" />
+    <None Remove="data\Properties.xml" />
+    <None Remove="version.number" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="data\1830\CompanyManager.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\1830\Game.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\1830\GameOptions.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\1830\Map.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\1830\StockMarket.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\1830\Tiles.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\1830\TileSet.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\GamesList.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\profiles\hotseat.predefined">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\profiles\LIST_OF_PROFILES">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\profiles\ORDocking.predefined">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\profiles\pbem.predefined">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\profiles\prettyUI.predefined">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\profiles\root">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\profiles\test">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\Properties.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="version.number">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+</Project>
