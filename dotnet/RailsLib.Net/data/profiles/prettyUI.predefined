@@ -1,0 +1,8 @@
+### prettyUI profile
+### activates the new UI options of Frederick
+gridPanel.tableBorders=enabled
+map.displayCurrentRoutes=yes
+### parent
+profile.parent=pbem
+### cannot be derived
+profile.final=yes

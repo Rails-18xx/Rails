@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Private" class="GameLib.Net.Game.PrivateCompany">
+		<ClosingConditions>
+            <Phase>5</Phase>
+		</ClosingConditions>
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<Tradeable toPlayer="yes"/>	
+	</CompanyType>
+	<CompanyType name="Public" class="GameLib.Net.Game.PublicCompany">
+		<CanBuyPrivates/>
+		<PoolPaysOut/>
+		<Float percentage="60"/>
+		<ShareUnit percentage="10"/>
+		<BaseTokens>
+			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
+			<HomeBase lay="firstOR"/>
+			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Trains limit="4,3,2"/>
+        <CanUseSpecialProperties/>
+        <IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
+			<CanUseSpecialProperties/>
+			<SpecialProperties>
+				<SpecialProperty condition="ifOwnedByCompany" when="orTurn" class="GameLib.Net.Game.Special.SpecialRight">
+					<SpecialRight name="Coalfields" cost="140" location="L10"/>
+				</SpecialProperty>
+			</SpecialProperties>
+        </IfOption>
+	</CompanyType>
+	<Company name="SVNRR" type="Private" basePrice="20" revenue="5"
+			longname="Schuylkill Valley Navigation &amp; Railroad Company">
+		<Blocking hex="G15"/>
+	</Company>
+	<Company name="C&amp;StL" type="Private" basePrice="40" revenue="10"
+			longname="Champlain &amp; St.Lawrence">
+		<Blocking hex="B20"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="GameLib.Net.Game.Special.SpecialTileLay">
+				<SpecialTileLay color="yellow" location="B20" extra="yes" free="yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="D&amp;H" type="Private" basePrice="70" revenue="15"
+		longname="Delaware &amp; Hudson">
+		<Blocking hex="F16"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="GameLib.Net.Game.Special.SpecialTileLay">
+				<SpecialTileLay location="F16" extra="no" free="no" tile="57" />
+			</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="GameLib.Net.Game.Special.SpecialBaseTokenLay">
+				<SpecialBaseTokenLay location="F16" extra="no" free="yes" requiresTile = "yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="M&amp;H" type="Private" basePrice="110" revenue="20"
+		longname="Mohawk &amp; Hudson">
+		<Blocking hex="D18"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPlayer" when="anyTurn" class="GameLib.Net.Game.Special.ExchangeForShare">
+				<ExchangeForShare company="NYC" share="10"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="C&amp;A" type="Private" basePrice="160" revenue="25"
+		longname="Camden &amp; Amboy">
+		<Info key="ComesWithCertificate" parm="PRR,10"/>
+		<Blocking hex="H18"/>
+	</Company>
+	<Company name="B&amp;O" type="Private" basePrice="220" revenue="30"
+		longname="Baltimore &amp; Ohio">
+		<Info key="ComesWithPresidency" parm="B&amp;O,20"/>
+		<Blocking hex="I13,I15"/>
+		<Tradeable toCompany="no"/>
+	</Company>
+	
+	<!-- Note two supported color specification formats:
+	     RGB decimal with commas and RGB hexadecimal without commas -->
+	<Company name="B&amp;M" type="Public" tokens="2" fgColor="000000" bgColor="60E060"
+			longname="Boston &amp; Maine">
+		<Home hex="E23"/>
+	</Company>	     
+	<Company name="B&amp;O" type="Public" tokens="3" fgColor="255,255,255" bgColor="0,0,255"
+			longname="Baltimore &amp; Ohio">
+		<FirstTrainCloses type="Private" name="B&amp;O"/>
+		<Home hex="I15"/>
+	</Company>
+	<Company name="C&amp;O" type="Public" tokens="3" fgColor="000000" bgColor="A0E0FF"
+			longname="Chesapeake &amp; Ohio">
+		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Simple,Wabash">
+			<Home hex="F6"/>
+		</IfOption>
+		<IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
+			<Home hex="K13"/>
+		</IfOption>
+	</Company>
+	<Company name="CPR" type="Public" tokens="4" fgColor="FFFFFF" bgColor="FF0000"
+			longname="Canadian Pacific Railroad">
+		<Home hex="A19"/>
+	</Company>
+	<Company name="Erie" type="Public" tokens="3" fgColor="000000" bgColor="FFFF00"
+			longname="Erie Railroad">
+	<!--	city = 0 implies that this is not yet decided (OO-tiles), blocks means that 
+			in each city one slot has to be available -->
+		<Home hex="E11" city="0"/>
+	</Company>
+    <IfOption name="Variant" value="Simple">
+        <Company name="L&amp;N" type="Public" tokens="3" fgColor="FFE600" bgColor="FF0000"
+                longname="Louisville &amp; Nashville">
+            <Home hex="H4"/>
+        </Company>
+    </IfOption>
+    <IfOption name="Variant" value="Simple">
+        <Company name="MILW" type="Public" tokens="3" fgColor="FFFFFF" bgColor="FF8000"
+                longname="Milwaukee Road">
+            <Home hex="D2"/>
+        </Company>
+    </IfOption>
+    <IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
+        <Company name="N&amp;W" type="Public" tokens="3" fgColor="FFFF00" bgColor="000080"
+                longname="Norfolk &amp; Western">
+            <Home hex="L16"/>
+        </Company>
+    </IfOption>
+	<Company name="NYC" type="Public" tokens="4" fgColor="FFFFFF" bgColor="000000"
+			longname="New York Central">
+		<Home hex="E19"/>
+	</Company>
+	<Company name="NYNH" type="Public" tokens="2" fgColor="000000" bgColor="FF8000"
+			longname="New York, New Haven &amp; Hartford">
+		<Home hex="G19" city="2"/>
+	</Company>
+	<IfOption name="Variant" value="Pere Marquette">
+		<Company name="PM" type="Public" tokens="3" fgColor="FFFF00" bgColor="000080"
+				longname="Pere Marquette">
+			<Home hex="E5" city="0"/>
+		</Company>
+	</IfOption>
+	<Company name="PRR" type="Public" tokens="4" fgColor="FFFFFF" bgColor="008000"
+			longname="Pennsylvania Railroad">
+		<Home hex="H12"/>
+	</Company>
+    <IfOption name="Variant" value="Reading,Coalfields&amp;Reading">
+        <Company name="RDG" type="Public" tokens="2" fgColor="000000" bgColor="C8F526"
+                longname="Reading Railroad">
+            <Home hex="H14"/>
+			<Certificate type="President" shares="3"/>
+			<Certificate shares="1" number="7"/>
+        </Company>
+    </IfOption>
+    <IfOption name="Variant" value="Wabash">
+        <Company name="WAB" type="Public" tokens="2" fgColor="000000" bgColor="FFFFFF"
+                longname="Wabash Railroad">
+            <Home hex="H2"/>
+            <Certificate type="President" shares="2"/>
+            <Certificate shares="1" number="8"/>
+        </Company>
+    </IfOption>
+	
+	<StartPacket roundClass="GameLib.Net.Game.StartRound_1830">
+		<Bidding initial="5" minimum="5" increment="1"/>
+		<Item name="SVNRR" type="Private" basePrice="20"/>
+		<Item name="C&amp;StL" type="Private" basePrice="40"/>
+		<Item name="D&amp;H" type="Private" basePrice="70"/>
+		<Item name="M&amp;H" type="Private" basePrice="110"/>
+		<Item name="C&amp;A" type="Private" basePrice="160">
+    <IfOption name="C&amp;ACertificate(ReadingOnly)" value="PRR">
+			<SubItem name="PRR" type="Public" />
+	</IfOption>
+    <IfOption name="C&amp;ACertificate(ReadingOnly)" value="RDG">
+    		<SubItem name="RDG" type="Public" />
+    </IfOption>
+		</Item>
+		<Item name="B&amp;O" type="Private" basePrice="220">
+			<SubItem name="B&amp;O" type="Public" president="yes"/>
+		</Item>
+	</StartPacket>
+</CompanyManager>
