@@ -16,6 +16,7 @@ import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.game.financial.TreasuryShareRound;
 import net.sf.rails.game.round.RoundFacade;
+import net.sf.rails.javafx.windows.FXStockChartWindow;
 import net.sf.rails.ui.swing.elements.*;
 
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ KeyListener, ActionPerformer {
 
     protected static final String REDO_CMD = "Redo";
 
-    protected static final String MARKET_CMD = "Market";
+    public static final String MARKET_CMD = "Market";
 
     protected static final String MAP_CMD = "Map";
 
@@ -637,7 +638,7 @@ KeyListener, ActionPerformer {
             gameUIManager.reportWindow.scrollDown();
             return;
         } else if (command.equals(MARKET_CMD)) {
-            gameUIManager.stockChart.setVisible(((JMenuItem) actor.getSource()).isSelected());
+            FXStockChartWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
         } else if (command.equals(MAP_CMD)) {
             gameUIManager.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
         } else if (command.equals(CONFIG_CMD)) {

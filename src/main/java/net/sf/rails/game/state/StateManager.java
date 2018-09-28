@@ -85,7 +85,7 @@ public final class StateManager extends Manager{
      * Usually this is one via addObserver of the observable
      * @throws an IllegalArgumentException - if observer is already assigned to an observable
      */
-    void addObserver(Observer observer, Observable observable) {
+    synchronized void addObserver(Observer observer, Observable observable) {
         checkArgument(!observers.containsValue(observer), "Observer can only be assigned to one Observable");
         observers.put(observable, observer);
     }
