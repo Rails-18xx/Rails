@@ -2,15 +2,6 @@ sudo: required
 dist: trusty
 language: java
 
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
-
-jdk:
-  - oraclejdk8
-  - openjdk8
-
 branches:
   only:
   - rails_2_develop
@@ -19,3 +10,19 @@ branches:
 before_install:
   - sudo apt-get update
   - sudo apt-get install -qq lib32z1 lib32ncurses5 lib32bz2-1.0 zlib1g:i386 genisoimage
+
+jobs:
+  include:
+  - stage: Build + test
+    name: Linux OpenJDK 8
+    os: linux
+    jdk: openjdk8
+    install:
+    - apt install -y openjfx
+  - stage: Build + test
+    name: Linux Oracle JDK 8
+    os: linux
+    jdk: oraclejdk8
+    addons:
+      apt:
+        packages: oracle-java8-installer
