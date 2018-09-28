@@ -18,7 +18,7 @@ jobs:
     os: linux
     jdk: openjdk8
     install:
-    - apt install -y openjfx
+    - sudo apt-get install -y openjfx
   - stage: Build + test
     name: Linux Oracle JDK 8
     os: linux
