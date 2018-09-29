@@ -186,7 +186,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.8.0</version>
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
@@ -196,7 +196,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20</version>
+                <version>2.22.0</version>
                 <configuration>
                     <excludes>
                         <!-- The class TestGame isn't a runnable class itself -->
@@ -207,7 +207,7 @@
 
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -235,7 +235,7 @@
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
-                <version>1.7.18</version>
+                <version>1.7.23</version>
                 <executions>
                     <execution>
                         <id>l4j-gui</id>
@@ -299,9 +299,9 @@
 
             <!-- Create a Debian deb installer -->
             <plugin>
-                <artifactId>jdeb</artifactId>
                 <groupId>org.vafer</groupId>
-                <version>1.5</version>
+                <artifactId>jdeb</artifactId>
+                <version>1.6</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -354,7 +354,7 @@
             <plugin>
                 <groupId>de.dentrassi.maven</groupId>
                 <artifactId>rpm</artifactId>
-                <version>0.9.2</version>
+                <version>1.1.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
