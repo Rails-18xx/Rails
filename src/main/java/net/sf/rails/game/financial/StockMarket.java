@@ -1,10 +1,7 @@
 package net.sf.rails.game.financial;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Lists;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.Configurable;
@@ -15,28 +12,27 @@ import net.sf.rails.game.RailsManager;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.model.StockMarketModel;
 
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Lists;
+import java.util.HashMap;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 
 public class StockMarket extends RailsManager implements Configurable {
-
     /**
-    *  This is the name by which the CompanyManager should be registered with
-    * the ComponentManager.
-    */
-   public static final String COMPONENT_NAME = "StockMarket";
+     * This is the name by which the CompanyManager should be registered with
+     * the ComponentManager.
+     */
+    public static final String COMPONENT_NAME = "StockMarket";
 
-   public static final String DEFAULT = "default";
-    
-    protected final HashMap<String, StockSpaceType> stockSpaceTypes =
-        new HashMap<String, StockSpaceType>();
-    protected final HashMap<String, StockSpace> stockChartSpaces =
-        new HashMap<String, StockSpace>();
-    protected final SortedSet<StockSpace> startSpaces = new TreeSet<StockSpace>();
-    
+    public static final String DEFAULT = "default";
+
+    protected final HashMap<String, StockSpaceType> stockSpaceTypes = new HashMap<>();
+    protected final HashMap<String, StockSpace> stockChartSpaces = new HashMap<>();
+    protected final SortedSet<StockSpace> startSpaces = new TreeSet<>();
+
     protected final StockMarketModel marketModel = StockMarketModel.create(this);
-    
+
     protected StockSpace stockChart[][];
     protected int numRows = 0;
     protected int numCols = 0;
@@ -47,21 +43,21 @@ public class StockMarket extends RailsManager implements Configurable {
     /* Sold out and at top: go down or right (1870) */
 
     // TODO: There used to be a BooleanState gameOver, did this have a function?
+
     /**
      * Used by Configure (via reflection) only
      */
     public StockMarket(RailsRoot parent, String id) {
         super(parent, id);
     }
-    
+
     /**
-     * @see net.sf.rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
+     * @see net.sf.rails.common.parser.Configurable#configureFromXML(Tag)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        
         // Define a default stockspace type with colour white
         defaultType = new StockSpaceType(DEFAULT, StockSpaceType.WHITE);
-        stockSpaceTypes.put (DEFAULT, defaultType);
+        stockSpaceTypes.put(DEFAULT, defaultType);
 
         /* Read and configure the stock market space types */
         List<Tag> typeTags = tag.getChildren(StockSpaceType.ELEMENT_ID);
@@ -70,13 +66,13 @@ public class StockMarket extends RailsManager implements Configurable {
             for (Tag typeTag : typeTags) {
                 /* Extract the attributes of the Stock space type */
                 String name =
-                    typeTag.getAttributeAsString(StockSpaceType.NAME_TAG);
+                        typeTag.getAttributeAsString(StockSpaceType.NAME_TAG);
                 if (name == null) {
                     throw new ConfigurationException(
                             LocalText.getText("UnnamedStockSpaceType"));
                 }
                 String colour =
-                    typeTag.getAttributeAsString(StockSpaceType.COLOUR_TAG);
+                        typeTag.getAttributeAsString(StockSpaceType.COLOUR_TAG);
 
                 /* Check for duplicates */
                 if (stockSpaceTypes.get(name) != null) {
@@ -114,7 +110,7 @@ public class StockMarket extends RailsManager implements Configurable {
                         "StockSpaceHasNoPrice", name));
             }
             String typeName =
-                spaceTag.getAttributeAsString(StockSpace.TYPE_TAG);
+                    spaceTag.getAttributeAsString(StockSpace.TYPE_TAG);
             if (typeName != null
                     && (type = stockSpaceTypes.get(typeName)) == null) {
                 throw new ConfigurationException(LocalText.getText(
@@ -160,21 +156,13 @@ public class StockMarket extends RailsManager implements Configurable {
      * Final initialisations, to be called after all XML processing is complete.
      * The purpose is to register fixed company start prices.
      */
-    public void finishConfiguration (RailsRoot root) {
-        
+    public void finishConfiguration(RailsRoot root) {
         for (PublicCompany comp : root.getCompanyManager().getAllPublicCompanies()) {
             if (!comp.hasStarted() && comp.getStartSpace() != null) {
                 comp.getStartSpace().addFixedStartPrice(comp);
             }
         }
 
-    }
-
-    /**
-     * @return
-     */
-    public StockSpace[][] getStockChart() {
-        return stockChart;
     }
 
     public StockSpace getStockSpace(int row, int col) {
@@ -186,7 +174,7 @@ public class StockMarket extends RailsManager implements Configurable {
     }
 
     public StockSpace getStockSpace(String name) {
-        return (StockSpace) stockChartSpaces.get(name);
+        return stockChartSpaces.get(name);
     }
 
     /*--- Actions ---*/
@@ -226,7 +214,7 @@ public class StockMarket extends RailsManager implements Configurable {
         if (newsquare != null) prepareMove(company, oldsquare, newsquare);
     }
 
-    public void close (PublicCompany company) {
+    public void close(PublicCompany company) {
         prepareMove(company, company.getCurrentSpace(), null);
     }
 
@@ -269,9 +257,10 @@ public class StockMarket extends RailsManager implements Configurable {
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
         if (col < numCols - 1 && !oldsquare.isLeftOfLedge()
-                && (newsquare = getStockSpace(row, col + 1)) != null) {}
-        else if (row > 0
-                && (newsquare = getStockSpace(row - 1, col)) != null) {}
+                && (newsquare = getStockSpace(row, col + 1)) != null) {
+        } else if (row > 0
+                && (newsquare = getStockSpace(row - 1, col)) != null) {
+        }
         prepareMove(company, oldsquare, newsquare);
     }
 
@@ -280,23 +269,23 @@ public class StockMarket extends RailsManager implements Configurable {
         StockSpace newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
-        if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null) {}
-        else if (row < numRows - 1 &&
-                (newsquare = getStockSpace(row + 1, col)) != null) {}
-        else {
+        if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null) {
+        } else if (row < numRows - 1 &&
+                (newsquare = getStockSpace(row + 1, col)) != null) {
+        } else {
             newsquare = oldsquare;
         }
         prepareMove(company, oldsquare, newsquare);
     }
 
     protected void prepareMove(PublicCompany company, StockSpace from,
-            StockSpace to) {
+                               StockSpace to) {
         // To be written to a log file in the future.
         if (from != null && from == to) {
             ReportBuffer.add(this, LocalText.getText("PRICE_STAYS_LOG",
                     company.getId(),
                     Bank.format(this, from.getPrice()),
-                    from.getId() ));
+                    from.getId()));
             return;
         } else if (from == null && to != null) {
             ;
@@ -306,7 +295,7 @@ public class StockMarket extends RailsManager implements Configurable {
                     Bank.format(this, from.getPrice()),
                     from.getId(),
                     Bank.format(this, to.getPrice()),
-                    to.getId() ));
+                    to.getId()));
 
             /* Check for rails.game closure */
             if (to.endsGame()) {
@@ -316,7 +305,7 @@ public class StockMarket extends RailsManager implements Configurable {
 
         }
         company.setCurrentSpace(to);
-        
+
         if (to != null) {
             to.addToken(company);
         }
@@ -324,22 +313,22 @@ public class StockMarket extends RailsManager implements Configurable {
             from.removeToken(company);
         }
     }
-    
+
     // FIXME: The StockSpace changes have to update the players worth
     // thus link the state of company space to the players worth
-    
-    /** 
+
+    /**
      * Return start prices as list of prices
      */
     @Deprecated
     public List<Integer> getStartPrices() {
         List<Integer> prices = Lists.newArrayList();
-        for (StockSpace space:startSpaces) {
+        for (StockSpace space : startSpaces) {
             prices.add(space.getPrice());
         }
         return prices;
     }
-    
+
     /**
      * Return start prices as an sorted set of stockspaces
      */
@@ -349,8 +338,8 @@ public class StockMarket extends RailsManager implements Configurable {
 
     @Deprecated
     public StockSpace getStartSpace(int price) {
-        for (StockSpace space:startSpaces) {
-            if (space.getPrice() == price) return space; 
+        for (StockSpace space : startSpaces) {
+            if (space.getPrice() == price) return space;
         }
         return null;
     }
@@ -368,7 +357,7 @@ public class StockMarket extends RailsManager implements Configurable {
     public int getNumberOfRows() {
         return numRows;
     }
-    
+
     public StockMarketModel getMarketModel() {
         return marketModel;
     }

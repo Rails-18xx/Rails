@@ -4,6 +4,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import net.sf.rails.game.financial.StockMarket;
 import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.ui.swing.GameUIManager;
 
@@ -14,7 +15,7 @@ public class FXStockChart extends GridPane {
     /**
      * The stock fields of the model
      */
-    private final StockSpace[][] market;
+    private final StockMarket market;
 
     /**
      * Constructor
@@ -24,7 +25,7 @@ public class FXStockChart extends GridPane {
     public FXStockChart(GameUIManager gameUIManager) {
         super();
 
-        this.market = gameUIManager.getRoot().getStockMarket().getStockChart();
+        this.market = gameUIManager.getRoot().getStockMarket();
 
         initialize();
         populateStockPanel();
@@ -56,7 +57,7 @@ public class FXStockChart extends GridPane {
         add(corner, 0, 0);
 
         // initialize the header column
-        for (int row = 0; row < market.length; row++) {
+        for (int row = 0; row < market.getNumberOfRows(); row++) {
             FXStockChartLabel l = new FXStockChartLabel(Integer.toString(row + 1));
 
             GridPane.setHgrow(l, Priority.ALWAYS);
@@ -67,7 +68,7 @@ public class FXStockChart extends GridPane {
         }
 
         // initialize the header row
-        for (int column = 0; column < market[0].length; column++) {
+        for (int column = 0; column < market.getNumberOfColumns(); column++) {
             FXStockChartLabel l = new FXStockChartLabel(Character.toString((char) ('A' + column)));
 
             GridPane.setHgrow(l, Priority.ALWAYS);
@@ -78,24 +79,26 @@ public class FXStockChart extends GridPane {
         }
 
         // initialize the stock field grid
-        for (int row = 0; row < market.length; row++) {
-            for (int column = 0; column < market[0].length; column++) {
-                if (market[row][column] != null) {
+        for (int row = 0; row < market.getNumberOfRows(); row++) {
+            for (int column = 0; column < market.getNumberOfColumns(); column++) {
+                StockSpace stockSpace = market.getStockSpace(row, column);
+
+                if (stockSpace != null) {
                     // the market field exists
-                    FXStockField stockSpace = new FXStockField(market[row][column]);
+                    FXStockField stockField = new FXStockField(stockSpace);
 
-                    GridPane.setHgrow(stockSpace, Priority.ALWAYS);
-                    GridPane.setVgrow(stockSpace, Priority.ALWAYS);
+                    GridPane.setHgrow(stockField, Priority.ALWAYS);
+                    GridPane.setVgrow(stockField, Priority.ALWAYS);
 
-                    add(stockSpace, column + 1, row + 1);
+                    add(stockField, column + 1, row + 1);
                 } else {
                     // the market field is null and therefore unused in the game
-                    FXEmptyStockField stockSpace = new FXEmptyStockField();
+                    FXEmptyStockField stockField = new FXEmptyStockField();
 
-                    GridPane.setHgrow(stockSpace, Priority.ALWAYS);
-                    GridPane.setVgrow(stockSpace, Priority.ALWAYS);
+                    GridPane.setHgrow(stockField, Priority.ALWAYS);
+                    GridPane.setVgrow(stockField, Priority.ALWAYS);
 
-                    add(stockSpace, column + 1, row + 1);
+                    add(stockField, column + 1, row + 1);
                 }
             }
         }
@@ -112,7 +115,7 @@ public class FXStockChart extends GridPane {
     private ColumnConstraints createColumn(int factor) {
         ColumnConstraints constraints = new ColumnConstraints();
 
-        constraints.setPercentWidth(100d / ((market[0].length * 2) + 1) * factor);
+        constraints.setPercentWidth(100d / ((market.getNumberOfColumns() * 2) + 1) * factor);
 
         return constraints;
     }
@@ -128,7 +131,7 @@ public class FXStockChart extends GridPane {
     private RowConstraints createRow(int factor) {
         RowConstraints constraints = new RowConstraints();
 
-        constraints.setPercentHeight(100d / ((market.length * 2) + 1) * factor);
+        constraints.setPercentHeight(100d / ((market.getNumberOfRows() * 2) + 1) * factor);
 
         return constraints;
     }
