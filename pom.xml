@@ -30,6 +30,13 @@
         <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -66,21 +73,21 @@
         </dependency>
 
         <dependency>
-            <groupId>jgraph</groupId>
-            <artifactId>jgraph</artifactId>
-            <version>5.13.0.0</version>
+            <groupId>com.github.jgraph</groupId>
+            <artifactId>jgraphx</artifactId>
+            <version>v3.9.9</version>
         </dependency>
 
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
-            <version>1.0.1</version>
+            <version>1.2.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-ext</artifactId>
-            <version>1.0.1</version>
+            <version>1.2.0</version>
         </dependency>
 
         <dependency>

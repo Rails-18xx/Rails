@@ -1,52 +1,26 @@
 package net.sf.rails.algorithms;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-
-import net.sf.rails.game.BaseToken;
-import net.sf.rails.game.HexSide;
-import net.sf.rails.game.HexSidesSet;
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.MapManager;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.Station;
-import net.sf.rails.game.Stop;
-import net.sf.rails.game.Tile;
-import net.sf.rails.game.Track;
-import net.sf.rails.game.TrackPoint;
+import com.google.common.collect.*;
+import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.swing.mxGraphComponent;
+import net.sf.rails.game.*;
 import net.sf.rails.game.state.Owner;
-
-import org.jgraph.JGraph;
 import org.jgrapht.Graphs;
-import org.jgrapht.ext.JGraphModelAdapter;
+import org.jgrapht.ext.JGraphXAdapter;
+import org.jgrapht.graph.AsSubgraph;
 import org.jgrapht.graph.SimpleGraph;
-import org.jgrapht.graph.Subgraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.jgraph.layout.JGraphFacade;
-import com.jgraph.layout.JGraphLayout;
-import com.jgraph.layout.organic.JGraphFastOrganicLayout;
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 /**
  * NetworkGraph mirrors the structure of a 18xx track
- *
+ * <p>
  * TODO: Rewrite this by separating the creation code from the data code
  * TODO: Rails 2.0 add a NetworkManager
  */
@@ -65,7 +39,7 @@ public class NetworkGraph {
         graph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
         vertices = Maps.newHashMap();
     }
-    
+
     private NetworkGraph(NetworkGraph inGraph) {
         graph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
         Graphs.addGraph(graph, inGraph.graph);
@@ -77,71 +51,71 @@ public class NetworkGraph {
         graph.generateMapGraph(root);
         return graph;
     }
-    
+
     public static NetworkGraph createRouteGraph(NetworkGraph mapGraph, PublicCompany company, boolean addHQ) {
-        NetworkGraph newGraph = new NetworkGraph() ; 
+        NetworkGraph newGraph = new NetworkGraph();
         newGraph.initRouteGraph(mapGraph, company, addHQ);
         newGraph.rebuildVertices();
         return newGraph;
     }
 
     public static NetworkGraph createOptimizedGraph(NetworkGraph inGraph,
-            Collection<NetworkVertex> protectedVertices) {
+                                                    Collection<NetworkVertex> protectedVertices) {
         NetworkGraph newGraph = new NetworkGraph(inGraph);
         newGraph.optimizeGraph(protectedVertices);
         newGraph.rebuildVertices();
         return newGraph;
     }
-    
+
     public NetworkGraph cloneGraph() {
         return new NetworkGraph(this);
     }
-    
+
     public SimpleGraph<NetworkVertex, NetworkEdge> getGraph() {
         return graph;
     }
-    
+
     public void setIteratorStart(MapHex hex, Station station) {
         iterator = new NetworkIterator(graph, getVertex(hex, station));
     }
-    
+
     public Iterator<NetworkVertex> iterator() {
-        return iterator; 
+        return iterator;
     }
-    
+
     public NetworkVertex getVertexByIdentifier(String identVertex) {
         return vertices.get(identVertex);
     }
-    
+
     public NetworkVertex getVertex(BaseToken token) {
         Owner owner = token.getOwner();
         // TODO: Check if this still works
         if (!(owner instanceof Stop)) return null;
-        Stop city = (Stop)owner;
+        Stop city = (Stop) owner;
         MapHex hex = city.getParent();
         Station station = city.getRelatedStation();
         return getVertex(hex, station);
     }
-    
+
     public NetworkVertex getVertex(MapHex hex, TrackPoint point) {
         return vertices.get(hex.getId() + "." + point.getTrackPointNumber());
     }
-    
+
     public NetworkVertex getVertex(MapHex hex, int trackPointNr) {
         return vertices.get(hex.getId() + "." + trackPointNr);
     }
-    
+
     public NetworkVertex getVertexRotated(MapHex hex, TrackPoint point) {
         if (point.getTrackPointType() == TrackPoint.Type.SIDE)
             point = point.rotate(hex.getCurrentTileRotation());
         return vertices.get(hex.getId() + "." + point.getTrackPointNumber());
     }
-    
+
     public ImmutableMap<MapHex, HexSidesSet> getReachableSides() {
         // first create builders for all HexSides
         Map<MapHex, HexSidesSet.Builder> hexSides = Maps.newHashMap();
-        for(NetworkVertex vertex:graph.vertexSet()) {
-            if (vertex.isSide() && iterator.getSeenData().get(vertex) 
+        for (NetworkVertex vertex : graph.vertexSet()) {
+            if (vertex.isSide() && iterator.getSeenData().get(vertex)
                     != NetworkIterator.greedyState.greedy) {
                 MapHex hex = vertex.getHex();
                 if (!hexSides.containsKey(hex)) {
@@ -152,7 +126,7 @@ public class NetworkGraph {
         }
         // second build the map of mapHex to HexSides
         ImmutableMap.Builder<MapHex, HexSidesSet> hexBuilder = ImmutableMap.builder();
-        for (MapHex hex:hexSides.keySet()) {
+        for (MapHex hex : hexSides.keySet()) {
             hexBuilder.put(hex, hexSides.get(hex).build());
         }
         return hexBuilder.build();
@@ -162,11 +136,11 @@ public class NetworkGraph {
      * @return a map of all hexes and stations that can be run through
      */
     public Multimap<MapHex, Station> getPassableStations() {
-        
-        ImmutableMultimap.Builder<MapHex, Station> hexStations = 
+
+        ImmutableMultimap.Builder<MapHex, Station> hexStations =
                 ImmutableMultimap.builder();
 
-        for(NetworkVertex vertex:graph.vertexSet()) {
+        for (NetworkVertex vertex : graph.vertexSet()) {
             if (vertex.isStation() && !vertex.isSink()) {
                 hexStations.put(vertex.getHex(), vertex.getStation());
             }
@@ -178,15 +152,15 @@ public class NetworkGraph {
     /**
      * @return a list of all stops that are tokenable for the argument company
      */
-    public Multimap<MapHex,Stop> getTokenableStops(PublicCompany company){
-        
-        ImmutableMultimap.Builder<MapHex, Stop> hexStops = 
+    public Multimap<MapHex, Stop> getTokenableStops(PublicCompany company) {
+
+        ImmutableMultimap.Builder<MapHex, Stop> hexStops =
                 ImmutableMultimap.builder();
 
-        for(NetworkVertex vertex:graph.vertexSet()) {
+        for (NetworkVertex vertex : graph.vertexSet()) {
             Stop stop = vertex.getStop();
             if (stop != null && stop.isTokenableFor(company)) {
-                hexStops.put(vertex.getHex(),stop);
+                hexStops.put(vertex.getHex(), stop);
             }
         }
         return hexStops.build();
@@ -195,7 +169,7 @@ public class NetworkGraph {
     private void rebuildVertices() {
         // rebuild mapVertices
         vertices.clear();
-        for (NetworkVertex v:graph.vertexSet()) {
+        for (NetworkVertex v : graph.vertexSet()) {
             vertices.put(v.getIdentifier(), v);
         }
     }
@@ -203,43 +177,43 @@ public class NetworkGraph {
     private void generateMapGraph(RailsRoot root) {
         MapManager mapManager = root.getMapManager();
         RevenueManager revenueManager = root.getRevenueManager();
-        for (MapHex hex:mapManager.getHexes()) {
+        for (MapHex hex : mapManager.getHexes()) {
             // get Tile
             Tile tile = hex.getCurrentTile();
-            
+
             // then get stations
-            Collection<Station> stations = tile.getStations(); 
+            Collection<Station> stations = tile.getStations();
             // and add those to the mapGraph
-            for (Station station: stations) {
+            for (Station station : stations) {
                 NetworkVertex stationVertex = new NetworkVertex(hex, station);
                 graph.addVertex(stationVertex);
                 vertices.put(stationVertex.getIdentifier(), stationVertex);
                 log.info("Added " + stationVertex);
             }
-            
+
             // get tracks per side to add that vertex
-            for (HexSide side:HexSide.all()) 
+            for (HexSide side : HexSide.all())
                 if (tile.hasTracks(side)) {
                     HexSide rotated = side.rotate(hex.getCurrentTileRotation());
-                    NetworkVertex sideVertex = new NetworkVertex(hex, rotated); 
+                    NetworkVertex sideVertex = new NetworkVertex(hex, rotated);
                     graph.addVertex(sideVertex);
                     vertices.put(sideVertex.getIdentifier(), sideVertex);
                     log.info("Added " + sideVertex);
                 }
         }
-        
+
         // loop over all hex and add tracks
-        for (MapHex hex:mapManager.getHexes()) {
+        for (MapHex hex : mapManager.getHexes()) {
             // get Tile
             Tile tile = hex.getCurrentTile();
             // get Tracks
             Set<Track> tracks = tile.getTracks();
 
-            for (Track track:tracks) {
+            for (Track track : tracks) {
                 NetworkVertex startVertex = getVertexRotated(hex, track.getStart());
                 NetworkVertex endVertex = getVertexRotated(hex, track.getEnd());
                 log.info("Track: " + track);
-                NetworkEdge edge =  new NetworkEdge(startVertex, endVertex, false);
+                NetworkEdge edge = new NetworkEdge(startVertex, endVertex, false);
                 if (startVertex == endVertex) {
                     log.error("Track " + track + " on hex " + hex + "has identical start/end");
                 } else {
@@ -250,7 +224,7 @@ public class NetworkGraph {
 
             // TODO: Rewrite this by employing the features of Trackpoint
             // and connect to neighbouring hexes (for sides 0-2)
-            for (HexSide side:HexSide.head()) {
+            for (HexSide side : HexSide.head()) {
                 MapHex neighborHex = mapManager.getNeighbour(hex, side);
                 if (neighborHex == null) {
                     log.info("No connection for Hex " + hex.getId() + " at "
@@ -260,14 +234,13 @@ public class NetworkGraph {
                 NetworkVertex vertex = getVertex(hex, side);
                 HexSide rotated = side.opposite();
                 NetworkVertex otherVertex = getVertex(neighborHex, rotated);
-                if (vertex == null && otherVertex == null){
+                if (vertex == null && otherVertex == null) {
                     log.info("Hex " + hex.getId() + " has no track at "
                             + hex.getOrientationName(side));
                     log.info("And Hex " + neighborHex.getId() + " has no track at "
                             + neighborHex.getOrientationName(rotated));
                     continue;
-                }
-                else if (vertex == null && otherVertex != null) { 
+                } else if (vertex == null && otherVertex != null) {
                     log.info("Deadend connection for Hex " + neighborHex.getId() + " at "
                             + neighborHex.getOrientationName(rotated) + ", NeighborHex "
                             + hex.getId() + " has no track at side " +
@@ -276,8 +249,7 @@ public class NetworkGraph {
                     graph.addVertex(vertex);
                     vertices.put(vertex.getIdentifier(), vertex);
                     log.info("Added deadend vertex " + vertex);
-                }
-                else if (otherVertex == null)  {
+                } else if (otherVertex == null) {
                     log.info("Deadend connection for Hex " + hex.getId() + " at "
                             + hex.getOrientationName(side) + ", NeighborHex "
                             + neighborHex.getId() + " has no track at side " +
@@ -287,13 +259,13 @@ public class NetworkGraph {
                     vertices.put(otherVertex.getIdentifier(), otherVertex);
                     log.info("Added deadend vertex " + otherVertex);
                 }
-                NetworkEdge edge =  new NetworkEdge(vertex, otherVertex, true);
-                graph.addEdge(vertex, otherVertex, 
+                NetworkEdge edge = new NetworkEdge(vertex, otherVertex, true);
+                graph.addEdge(vertex, otherVertex,
                         edge);
                 log.info("Added greedy edge " + edge.getConnection());
             }
         }
-        
+
         // add graph modifiers
         if (revenueManager != null) {
             revenueManager.activateMapGraphModifiers(this);
@@ -304,14 +276,14 @@ public class NetworkGraph {
     public void optimizeGraph() {
         optimizeGraph(new ArrayList<NetworkVertex>(0));
     }
-    
+
     private void optimizeGraph(Collection<NetworkVertex> protectedVertices) {
-       
+
         // remove vertices until convergence
         boolean notDone = true;
         while (notDone) {
             increaseGreedness();
-            notDone = removeVertexes(protectedVertices); 
+            notDone = removeVertexes(protectedVertices);
             // removedVertices can change Greedness, but not vice-versa
         }
     }
@@ -320,7 +292,7 @@ public class NetworkGraph {
     // connects stations and/or sides with only one track in/out
     // can be set to greedy (as one has to follow the exit anyway)
     private void increaseGreedness() {
-        for (NetworkEdge edge:graph.edgeSet()) {
+        for (NetworkEdge edge : graph.edgeSet()) {
             if (edge.isGreedy()) continue;
             NetworkVertex source = edge.getSource();
             NetworkVertex target = edge.getTarget();
@@ -331,13 +303,15 @@ public class NetworkGraph {
             }
         }
     }
-    
-    /** remove deadend and vertex with only two edges */ 
-    private boolean removeVertexes(Collection<NetworkVertex> protectedVertices){
+
+    /**
+     * remove deadend and vertex with only two edges
+     */
+    private boolean removeVertexes(Collection<NetworkVertex> protectedVertices) {
 
         boolean removed = false;
 
-        for (NetworkVertex vertex:ImmutableSet.copyOf(graph.vertexSet())) {
+        for (NetworkVertex vertex : ImmutableSet.copyOf(graph.vertexSet())) {
             Set<NetworkEdge> vertexEdges = graph.edgesOf(vertex);
 
             // always keep protected vertices
@@ -347,7 +321,7 @@ public class NetworkGraph {
 
             // remove hermit
             if (vertexEdges.size() == 0) {
-                log.info("Remove hermit (no connection) = "  + vertex);
+                log.info("Remove hermit (no connection) = " + vertex);
                 graph.removeVertex(vertex);
                 removed = true;
             }
@@ -355,15 +329,15 @@ public class NetworkGraph {
             // the following only for side vertexes
             if (!vertex.isSide()) continue;
 
-            if (vertexEdges.size() == 1) { 
-                log.info("Remove deadend side (single connection) = "  + vertex);
+            if (vertexEdges.size() == 1) {
+                log.info("Remove deadend side (single connection) = " + vertex);
                 graph.removeVertex(vertex);
                 removed = true;
             } else if (vertexEdges.size() == 2) { // not necessary vertices 
                 NetworkEdge[] edges = vertexEdges.toArray(new NetworkEdge[2]);
                 if (edges[0].isGreedy() == edges[1].isGreedy()) {
                     if (!edges[0].isGreedy()) {
-                        log.info("Remove deadend side (no greedy connection) = "  + vertex);
+                        log.info("Remove deadend side (no greedy connection) = " + vertex);
                         // two non greedy edges indicate a deadend
                         graph.removeVertex(vertex);
                         removed = true;
@@ -375,13 +349,13 @@ public class NetworkGraph {
                         }
                     }
                 }
-            }     
+            }
         }
         return removed;
     }
 
     private void initRouteGraph(NetworkGraph mapGraph, PublicCompany company, boolean addHQ) {
-        
+
         // add graph modifiers
         RevenueManager revenueManager = company.getRoot().getRevenueManager();
         if (revenueManager != null) {
@@ -390,43 +364,42 @@ public class NetworkGraph {
 
         // set sinks on mapgraph
         NetworkVertex.initAllRailsVertices(mapGraph, company, null);
-        
+
         // add Company HQ
-        NetworkVertex hqVertex = new NetworkVertex(company); 
+        NetworkVertex hqVertex = new NetworkVertex(company);
         graph.addVertex(hqVertex);
-        
+
         // create vertex set for subgraph
         List<NetworkVertex> tokenVertexes = mapGraph.getCompanyBaseTokenVertexes(company);
         Set<NetworkVertex> vertexes = new HashSet<NetworkVertex>();
-        
-        for (NetworkVertex vertex:tokenVertexes){
+
+        for (NetworkVertex vertex : tokenVertexes) {
             // allow to leave tokenVertices even if those are sinks
             // Examples are tokens in offBoard hexes
-            boolean storeSink = vertex.isSink(); vertex.setSink(false);
+            boolean storeSink = vertex.isSink();
+            vertex.setSink(false);
             vertexes.add(vertex);
             // add connection to graph
             graph.addVertex(vertex);
             graph.addEdge(vertex, hqVertex, new NetworkEdge(vertex, hqVertex, false));
             iterator = new NetworkIterator(mapGraph.getGraph(), vertex, company);
-            for (;iterator.hasNext();)
+            for (; iterator.hasNext(); )
                 vertexes.add(iterator.next());
             // restore sink property
             vertex.setSink(storeSink);
         }
 
-        Subgraph<NetworkVertex, NetworkEdge, SimpleGraph<NetworkVertex, NetworkEdge>> subGraph = 
-            new Subgraph<NetworkVertex, NetworkEdge, SimpleGraph<NetworkVertex, NetworkEdge>>
-            (mapGraph.getGraph(), vertexes);
+        AsSubgraph<NetworkVertex, NetworkEdge> subGraph = new AsSubgraph<>(mapGraph.getGraph(), vertexes);
         // now add all vertexes and edges to the graph
         Graphs.addGraph(graph, subGraph);
 
         // if addHQ is not set remove HQ vertex
         if (!addHQ) graph.removeVertex(hqVertex);
     }
-    
+
     public List<NetworkVertex> getCompanyBaseTokenVertexes(PublicCompany company) {
         List<NetworkVertex> vertexes = new ArrayList<NetworkVertex>();
-        for (BaseToken token:company.getLaidBaseTokens()){
+        for (BaseToken token : company.getLaidBaseTokens()) {
             NetworkVertex vertex = getVertex(token);
             if (vertex == null) continue;
             vertexes.add(vertex);
@@ -437,40 +410,24 @@ public class NetworkGraph {
     public void visualize(String title) {
         // show network mapGraph
         if (graph.vertexSet().size() > 0) {
-            JGraphModelAdapter<NetworkVertex, NetworkEdge> jGAdapter =
-                new JGraphModelAdapter<NetworkVertex, NetworkEdge>(graph);
+            JGraphXAdapter<NetworkVertex, NetworkEdge> jGraphXAdapter = new JGraphXAdapter<>(graph);
 
-            JGraph jgraph = new JGraph(jGAdapter);
+            jGraphXAdapter.getModel().beginUpdate();
 
-            List<NetworkVertex> vertexes= new ArrayList<NetworkVertex>(graph.vertexSet());
+            mxIGraphLayout layout = new mxFastOrganicLayout(jGraphXAdapter);
+            layout.execute(jGraphXAdapter.getDefaultParent());
 
-            Object[] rootCell = new Object[1];
-            rootCell[0] =  jGAdapter.getVertexCell(vertexes.get(0));
+            jGraphXAdapter.getModel().endUpdate();
 
-            JGraphFacade facade = new JGraphFacade(jgraph, rootCell);
-            JGraphLayout layout = new JGraphFastOrganicLayout();
-            layout.run(facade);
-
-            // calculate size of network graph
-            double ratio = Math.sqrt(graph.vertexSet().size() / 50.0);
-            int width = (int) Math.floor(2400 * ratio);
-            int height = (int) Math.floor(1800 * ratio);
-            log.info("ratio=" + ratio + "width= " + width + "height" + height);
-            facade.scale(new Rectangle(width, height));
-            @SuppressWarnings("rawtypes")
-            Map nested = facade.createNestedMap(true,true);
-            jgraph.getGraphLayoutCache().edit(nested);
-
-            jgraph.setScale(0.75);
+            mxGraphComponent graphComponent = new mxGraphComponent(jGraphXAdapter);
 
             JFrame frame = new JFrame();
-            frame.setTitle(title + "(V=" + graph.vertexSet().size() +
-                    ",E=" + graph.edgeSet().size() + ")");
-            frame.setSize(new Dimension(800,600));
-            frame.getContentPane().add(new JScrollPane(jgraph));
+            frame.setTitle(String.format("%s(V=%d,E=%d)", title, graph.vertexSet().size(), graph.edgeSet().size()));
+            frame.setSize(new Dimension(800, 600));
+            frame.getContentPane().add(new JScrollPane(graphComponent));
             frame.pack();
             frame.setVisible(true);
         }
     }
-    
+
 }
