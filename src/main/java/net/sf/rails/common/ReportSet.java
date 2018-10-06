@@ -1,10 +1,9 @@
 package net.sf.rails.common;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import net.sf.rails.game.state.ChangeSet;
 import net.sf.rails.util.Util;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
 
 
 /**
@@ -13,7 +12,8 @@ import com.google.common.collect.ImmutableList;
 
 class ReportSet {
 
-    /** Newline string
+    /**
+     * Newline string
      * &#10; is the linefeed character to induce line feed on copy & paste
      */
     private static final String NEWLINE_STRING = "<br>&#10;";
@@ -22,14 +22,14 @@ class ReportSet {
     private final ImmutableList<String> messages;
     private final String htmlText;
     private final String htmlTextActive;
-    
-    ReportSet(ChangeSet changeSet, ImmutableList<String> messages){
+
+    ReportSet(ChangeSet changeSet, ImmutableList<String> messages) {
         this.changeSet = changeSet;
         this.messages = messages;
         this.htmlText = toHtml(false);
         this.htmlTextActive = toHtml(true);
     }
-    
+
     String getAsHtml(ChangeSet currentChangeSet) {
         if (currentChangeSet == changeSet) {
             return htmlTextActive;
@@ -37,13 +37,14 @@ class ReportSet {
             return htmlText;
         }
     }
-  
+
     ImmutableList<String> getAsList() {
         return messages;
     }
-    
+
     /**
      * converts messages to html string
+     *
      * @param activeMessage if true, adds indicator and highlighting for active message
      */
     private String toHtml(boolean activeMessage) {
@@ -51,22 +52,22 @@ class ReportSet {
             if (activeMessage) {
                 return ("<span bgcolor=Yellow>" + ReportBuffer.ACTIVE_MESSAGE_INDICATOR + "</span>"
                         + NEWLINE_STRING);
-            } else { 
+            } else {
                 return null;
             }
         }
 
         StringBuffer s = new StringBuffer();
         boolean init = true;
-        for (String message:messages) {
+        for (String message : messages) {
             message = Util.convertToHtml(message);
             if (init) {
                 if (activeMessage) {
-                    s.append("<span bgcolor=Yellow>" + ReportBuffer.ACTIVE_MESSAGE_INDICATOR) ;
+                    s.append("<span bgcolor=Yellow>" + ReportBuffer.ACTIVE_MESSAGE_INDICATOR);
                 }
-                s.append("<a href=http://rails:"  + changeSet.getIndex() + ">");
+                s.append("<a href=http://rails:" + changeSet.getIndex() + ">");
                 s.append(message);
-                s.append("</a>"); 
+                s.append("</a>");
                 if (activeMessage) {
                     s.append("</span>");
                 }
@@ -78,30 +79,33 @@ class ReportSet {
         }
         return s.toString();
     }
-    
+
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).addValue(changeSet).toString();
+        return MoreObjects.toStringHelper(this)
+                .addValue(changeSet)
+                .toString();
     }
-    
+
     static Builder builder() {
         return new Builder();
     }
-    
+
     static class Builder {
-        
+
         private final ImmutableList.Builder<String> messageBuilder = ImmutableList.builder();
-        
-        private Builder() {}
-        
+
+        private Builder() {
+        }
+
         void addMessage(String message) {
             messageBuilder.add(message);
         }
-        
+
         ReportSet build(ChangeSet changeSet) {
             return new ReportSet(changeSet, messageBuilder.build());
         }
-        
+
     }
 
 }

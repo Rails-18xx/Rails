@@ -1,19 +1,13 @@
 package net.sf.rails.ui.swing.elements;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
-
+import com.google.common.base.MoreObjects;
 import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 
-import com.google.common.base.Objects;
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 
 
 // TODO: Make the color and font options work again
@@ -71,12 +65,13 @@ public class Field extends JLabel implements Observer {
         setHorizontalAlignment(position);
     }
 
-    public void setToolTipModel(Observable toolTipModel){
-        final Observable storeModel = toolTipModel; 
+    public void setToolTipModel(Observable toolTipModel) {
+        final Observable storeModel = toolTipModel;
         toolTipObserver = new Observer() {
             public void update(String text) {
-               setToolTipText(text);
+                setToolTipText(text);
             }
+
             public Observable getObservable() {
                 return storeModel;
             }
@@ -85,7 +80,7 @@ public class Field extends JLabel implements Observer {
         // initialize toolTip
         setToolTipText(toolTipModel.toText());
     }
-    
+
     public void setColorModel(ColorModel colorModel) {
         final ColorModel storeModel = colorModel;
         colorObserver = new Observer() {
@@ -99,6 +94,7 @@ public class Field extends JLabel implements Observer {
                     setForeground(storeModel.getForeground());
                 }
             }
+
             public Observable getObservable() {
                 return storeModel;
             }
@@ -111,7 +107,9 @@ public class Field extends JLabel implements Observer {
         setBackground(highlight ? HIGHLIGHT_BG_COLOUR : normalBgColour);
     }
 
-    /** This method is mainly needed when NOT using the Observer pattern. */
+    /**
+     * This method is mainly needed when NOT using the Observer pattern.
+     */
     @Override
     public void paintComponent(Graphics g) {
         if (observable != null && pull) {
@@ -132,7 +130,7 @@ public class Field extends JLabel implements Observer {
     public void setHtml() {
         html = true;
     }
-    
+
     // FIXME: ViewUpdate has to be rewritten in the new structure
 /*    protected void updateDetails (ViewUpdate vu) {
     @Override
@@ -184,7 +182,9 @@ public class Field extends JLabel implements Observer {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("observable", observable.getId()).toString();
+        return MoreObjects.toStringHelper(this)
+                .add("observable", observable.getId())
+                .toString();
     }
 
 }

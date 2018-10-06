@@ -1,8 +1,9 @@
 package net.sf.rails.game.state;
 
-import static com.google.common.base.Preconditions.*;
+import com.google.common.base.MoreObjects;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * An AbstractItem is a default implementation of Item
@@ -13,17 +14,17 @@ public abstract class AbstractItem implements Item {
     private final Item parent;
     private final Context context;
 
-    protected AbstractItem(Item parent, String id){
+    protected AbstractItem(Item parent, String id) {
         checkNotNull(parent, "Parent cannot be null");
         checkArgument(id != Root.ID, "Id cannot equal " + Root.ID);
 
         // defined standard fields
         this.parent = parent;
         this.id = id;
-        
+
         if (parent instanceof Context) {
-            context = (Context)parent;
-        } else { 
+            context = (Context) parent;
+        } else {
             // recursive definition
             context = parent.getContext();
         }
@@ -31,7 +32,7 @@ public abstract class AbstractItem implements Item {
         // add item to context
         context.addItem(this);
     }
-    
+
     public String getId() {
         return id;
     }
@@ -43,7 +44,7 @@ public abstract class AbstractItem implements Item {
     public Context getContext() {
         return context;
     }
-    
+
     public Root getRoot() {
         // forward it to the context
         return context.getRoot();
@@ -57,7 +58,7 @@ public abstract class AbstractItem implements Item {
             return parent.getURI() + Item.SEP + id;
         }
     }
-    
+
     public String getFullURI() {
         // recursive definition
         return parent.getFullURI() + Item.SEP + id;
@@ -66,10 +67,12 @@ public abstract class AbstractItem implements Item {
     public String toText() {
         return id;
     }
-    
+
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("URI", getFullURI()).toString();
+        return MoreObjects.toStringHelper(this)
+                .add("URI", getFullURI())
+                .toString();
     }
-    
+
 }
