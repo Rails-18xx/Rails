@@ -17,3 +17,4 @@
 # failed Rails test files
 **/*.failed
 /bin/
+/target/
