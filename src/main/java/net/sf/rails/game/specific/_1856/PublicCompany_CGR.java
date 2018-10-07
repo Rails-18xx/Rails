@@ -28,12 +28,12 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
     private final GenericState<Player> temporaryPresident = GenericState.create(this, "temporaryPresident");
 
     public PublicCompany_CGR(RailsItem parent, String id) {
-        super(parent, id);    
+        super(parent, id);
         // Share price is initially fixed
         // TODO: Is this the correct location or should that moved to some stage later?
-        canSharePriceVary.set(false);
+        this.canSharePriceVary.set(false);
     }
-    
+
     @Override
     public void finishConfiguration(RailsRoot root) throws ConfigurationException {
         super.finishConfiguration(root);
@@ -41,14 +41,14 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
         // add revenue modifier for the case that there is no train
         getRoot().getRevenueManager().addStaticModifier(this);
     }
-    
+
     public boolean hadPermanentTrain() {
-        return hadPermanentTrain.value();
+        return this.hadPermanentTrain.value();
     }
 
     public void setHadPermanentTrain(boolean hadPermanentTrain) {
         this.hadPermanentTrain.set(hadPermanentTrain);
-        canSharePriceVary.set(true);
+        this.canSharePriceVary.set(true);
     }
 
     public boolean hasTemporaryPresident () {
@@ -56,13 +56,14 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
     }
 
     public Player getTemporaryPresident() {
-        if (temporaryPresident != null) {
-            return (Player) temporaryPresident.value();
+        if (this.temporaryPresident != null) {
+            return (Player) this.temporaryPresident.value();
         } else {
             return null;
         }
     }
-    
+
+    @Override
     public boolean mayBuyTrainType (Train train) {
         return !"4".equals(train.toText());
     }
@@ -101,7 +102,7 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
      */
     @Override
     public void withhold(int amount) {
-        if (hasStockPrice && canSharePriceVary.value()) {
+        if (this.hasStockPrice && this.canSharePriceVary.value()) {
             getRoot().getStockMarket().withhold(this);
         }
     }
@@ -109,27 +110,30 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
     @Override
     public void buyTrain(Train train, int price) {
         super.buyTrain (train, price);
-        if (train.isPermanent()) setHadPermanentTrain(true);
+        if (train.isPermanent()) {
+            setHadPermanentTrain(true);
+        }
     }
 
+    @SuppressWarnings("deprecation")
     public void setShareUnit (int percentage) {
         // Only allowed for CGR, the value must be 10
-        if (shareUnit.value() == 5
+        if (this.shareUnit.value() == 5
                 && percentage == 10) {
-            shareUnit.set(percentage);
+            this.shareUnit.set(percentage);
             // Drop the last 10 shares
-            List<PublicCertificate>certs = new ArrayList<PublicCertificate>(certificates.view());
-            int share = 0;
+            //2018-10-07-MBr: With the remodeled base classes this approach isnt valid anymore as shares
+            //with the id-10 are assigned before shares with the id-2
+            List<PublicCertificate>certs = new ArrayList<PublicCertificate>(this.certificates.view());
             BankPortfolio scrapHeap = getRoot().getBank().getScrapHeap();
-            for (PublicCertificate cert : certs) {
-                if (share >= 100) {
-                    cert.moveTo(scrapHeap);
-                    certificates.remove(cert);
-                } else {
-                    cert.setCertificateCount(1.0f);
-                    share += cert.getShare();
+                for (PublicCertificate cert : certs) {
+                    if (cert.getOwner().getId()== "Unavailable" ) {
+                            cert.moveTo(scrapHeap);
+                            this.certificates.remove(cert);
+                        } else {
+                        cert.setCertificateCount(1.0f);
+                    }
                 }
-            }
 
             // Update all owner ShareModels (once)
             // to have the UI get the correct percentage
@@ -162,10 +166,13 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
         return (hasTemporaryPresident() ? "T" : "");
     }
 
+    @Override
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // check if the running company is the cgr
-        if (revenueAdapter.getCompany() != this) return false;
-         
+        if (revenueAdapter.getCompany() != this) {
+            return false;
+        }
+
         // add the diesel train
         if (runsWithBorrowedTrain()) {
             revenueAdapter.addTrainByString("D");
@@ -174,8 +181,9 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
         return false;
     }
 
+    @Override
     public String prettyPrint(RevenueAdapter revenueAdapter) {
-        
+
         return null;
     }
 }
