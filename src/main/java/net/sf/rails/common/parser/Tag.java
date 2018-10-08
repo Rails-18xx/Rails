@@ -1,23 +1,22 @@
 package net.sf.rails.common.parser;
 
-import java.io.IOException;
-import java.util.*;
-
-import javax.xml.parsers.*;
-
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.GameOptionsSet;
 import net.sf.rails.common.ResourceLoader;
 import net.sf.rails.util.Util;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.util.*;
 
 
 /**
@@ -27,7 +26,6 @@ import com.google.common.collect.ImmutableList;
  * XmlUtils.
  *
  * @author Erik Vos
- *
  */
 public class Tag {
     private static final Logger log =
@@ -45,7 +43,7 @@ public class Tag {
     private boolean parsing = false;
 
 
-    public Tag (Element element, GameOptionsSet gameOptions) {
+    public Tag(Element element, GameOptionsSet gameOptions) {
         this.element = element;
         this.gameOptions = gameOptions;
     }
@@ -92,7 +90,7 @@ public class Tag {
         }
     }
 
-    public boolean hasChild (String tagName) throws ConfigurationException {
+    public boolean hasChild(String tagName) throws ConfigurationException {
 
         //br: this was hardcoded  to "AllowsMultipleBasesOfOneCompany" -- looks like a bug.
         return getChildren(tagName) != null;
@@ -152,7 +150,7 @@ public class Tag {
     }
 
     public float getAttributeAsFloat(String name, float defaultValue)
-    throws ConfigurationException {
+            throws ConfigurationException {
 
         if (!parsed) parse(element);
 
@@ -167,7 +165,7 @@ public class Tag {
     }
 
     public int getAttributeAsInteger(String name) throws ConfigurationException {
-    
+
         return getAttributeAsInteger(name, 0);
     }
 
@@ -179,7 +177,7 @@ public class Tag {
 
         ImmutableList.Builder<Integer> result = ImmutableList.builder();
         try {
-            for (String value:valueString.split(",")) {
+            for (String value : valueString.split(",")) {
                 result.add(Integer.parseInt(value));
             }
         } catch (NumberFormatException e) {
@@ -205,24 +203,25 @@ public class Tag {
 
         return getAttributeAsBoolean(name, false);
     }
-    
+
     // br: needed to test if a Tradeable tag has a toCompany or toPlayer attribute
     public boolean hasAttribute(String name)
-        throws ConfigurationException {
+            throws ConfigurationException {
 
         return getAttributeAsString(name) != null;
     }
+
     /**
      * Extract all attributes of an Element into a HashMap. This includes
      * conditional values, embedded in (possibly nested) &lt;IfOption&gt;
      * subnodes. <p> The generic XML construct being parsed here must look like:<p>
      * <code>
      * &lt;AnyElement attr1="value1" attr2="value2" ...&gt;
-     *   &lt;IfOption name="optname1" value="optvalue1"&gt;
-     *     &lt;IfOption name="optname2" value="optvalue2"&gt;
-     *       &lt;Attributes attr3="value3" attr4="value4"/&gt;
-     *     &lt;/IfOption&gt;
-     *   &lt;/IfOption&gt;
+     * &lt;IfOption name="optname1" value="optvalue1"&gt;
+     * &lt;IfOption name="optname2" value="optvalue2"&gt;
+     * &lt;Attributes attr3="value3" attr4="value4"/&gt;
+     * &lt;/IfOption&gt;
+     * &lt;/IfOption&gt;
      * &lt;/AnyElement&gt;
      * </code>
      * <p> For variant names, the fixed option name "variant" is used.
@@ -286,11 +285,11 @@ public class Tag {
 
                     Node parmAttr = nnp.getNamedItem("parm");
                     if (parmAttr != null) {
-                    	value = parmAttr.getNodeValue();
-                    	Iterable<String> parameters = Splitter.on(XMLTags.VALUES_DELIM).split(value);
-                    	name = GameOption.constructParameterisedName(name, ImmutableList.copyOf(parameters));
+                        value = parmAttr.getNodeValue();
+                        Iterable<String> parameters = Splitter.on(XMLTags.VALUES_DELIM).split(value);
+                        name = GameOption.constructParameterisedName(name, ImmutableList.copyOf(parameters));
                     }
-                    
+
                     Node valueAttr = nnp.getNamedItem("value");
                     if (valueAttr == null)
                         throw new ConfigurationException(
@@ -301,20 +300,20 @@ public class Tag {
                     // Check if the option has been chosen; if not, skip the
                     // rest
                     if (gameOptions == null) {
-                        throw new ConfigurationException (
-                                "No GameOptions available in tag "+element.getNodeName());
+                        throw new ConfigurationException(
+                                "No GameOptions available in tag " + element.getNodeName());
                     }
 
                     String optionValue = gameOptions.get(name);
 
-                	// For backwards compatibility: search for an extended name
+                    // For backwards compatibility: search for an extended name
                     /* This applies to parametrized options, such as "UnlimitedTopTrains".
                      * It parametrized with a parameter "D" to allow display as "Unlimited D-trains"
                      * and still remaining generic.
                      * Parametrization means that the actual name is UnlimitedTopTrains_D,
                      * for instance in saved files, and so the name must be shortened to find a match.
                      */
-                    
+
                     // FIXME: Rails 2.0 removed that handling, only logging errors now
                     if (optionValue == null) {
                         log.error("GameOption " + name + "=" + value
@@ -365,14 +364,14 @@ public class Tag {
      * element with the supplied name.
      *
      * @param fileName the name of the file to open
-     * @param tagName the name of the top-level tag to find
+     * @param tagName  the name of the top-level tag to find
      * @return the named element in the named file
      * @throws ConfigurationException if there is any problem opening and
-     * parsing the file, or if the file does not contain a top level element
-     * with the given name.
+     *                                parsing the file, or if the file does not contain a top level element
+     *                                with the given name.
      */
     public static Tag findTopTagInFile(String filename, String directory,
-            String tagName, GameOptionsSet gameOptions) throws ConfigurationException {
+                                       String tagName, GameOptionsSet gameOptions) throws ConfigurationException {
         Document doc = null;
         try {
             // Step 1: create a DocumentBuilderFactory and setNamespaceAware
@@ -387,13 +386,13 @@ public class Tag {
                             directory));
         } catch (ParserConfigurationException e) {
             throw new ConfigurationException("Could not read/parse " + filename
-                                             + " to find element " + tagName, e);
+                    + " to find element " + tagName, e);
         } catch (SAXException e) {
             throw new ConfigurationException("Could not read/parse " + filename
-                                             + " to find element " + tagName, e);
+                    + " to find element " + tagName, e);
         } catch (IOException e) {
             throw new ConfigurationException("Could not read/parse " + filename
-                                             + " to find element " + tagName, e);
+                    + " to find element " + tagName, e);
         }
 
         if (doc == null) {
@@ -405,26 +404,24 @@ public class Tag {
         for (int iNode = 0; (iNode < nodeList.getLength()); iNode++) {
             Node childNode = nodeList.item(iNode);
             if ((childNode != null)
-                && (childNode.getNodeName().equals(tagName))
-                && (childNode.getNodeType() == Node.ELEMENT_NODE)) {
+                    && (childNode.getNodeName().equals(tagName))
+                    && (childNode.getNodeType() == Node.ELEMENT_NODE)) {
                 return new Tag((Element) childNode, gameOptions);
             }
         }
-        throw new ConfigurationException("Could not find " + tagName + " in "
-                                         + filename);
+        throw new ConfigurationException("Could not find " + tagName + " in " + filename);
     }
 
     public Element getElement() {
         return element;
     }
-    
+
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("attributes", attributes)
                 .add("children", children)
-                .toString()
-        ;
+                .toString();
     }
-    
+
 }

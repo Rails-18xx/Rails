@@ -51,7 +51,7 @@ public class NetworkIterator extends
      */
     public NetworkIterator(Graph<NetworkVertex, NetworkEdge> graph, NetworkVertex startVertex,
             PublicCompany company) {
-        super();
+        super(graph);
         
         if (graph == null)
             throw new IllegalArgumentException("graph must not be null");

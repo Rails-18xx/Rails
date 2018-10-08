@@ -1,16 +1,9 @@
 package net.sf.rails.ui.swing.hexmap;
 
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.NavigableSet;
-import java.util.Set;
-
-import javax.swing.JLabel;
-
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.BonusToken;
 import net.sf.rails.game.MapHex;
@@ -20,15 +13,14 @@ import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.special.SpecialBaseTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.ui.swing.elements.TokenIcon;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayBonusToken;
 import rails.game.action.LayToken;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.*;
 
 public class TokenHexUpgrade extends HexUpgrade {
 
@@ -39,7 +31,7 @@ public class TokenHexUpgrade extends HexUpgrade {
         public String toString() {
             return LocalText.getText("TOKEN_UPGRADE_INVALID_" + this.name());
         }
-        
+
     }
 
     // static fields
@@ -52,25 +44,25 @@ public class TokenHexUpgrade extends HexUpgrade {
 
     // ui fields
     private Stop selectedStop;
-    
+
     private TokenHexUpgrade(GUIHex hex, Collection<Stop> stops, LayToken action) {
         super(hex);
         this.action = action;
         this.stops = ImmutableSet.copyOf(stops);
     }
-    
+
     public static TokenHexUpgrade create(GUIHex hex, Collection<Stop> stops, LayToken action) {
         return new TokenHexUpgrade(hex, stops, action);
     }
-    
+
     public LayToken getAction() {
         return action;
     }
-    
+
     public Set<Stop> getStops() {
         return stops;
     }
-    
+
     public Stop getSelectedStop() {
         return selectedStop;
     }
@@ -80,7 +72,7 @@ public class TokenHexUpgrade extends HexUpgrade {
         allowed.addAll(stops);
 
         // LayBonusToken always and layHome is always allowed
-        if (!(action instanceof LayBonusToken || ((LayBaseToken)action).getType() == LayBaseToken.HOME_CITY)) {
+        if (!(action instanceof LayBonusToken || ((LayBaseToken) action).getType() == LayBaseToken.HOME_CITY)) {
             if (hexBlocked()) {
                 invalids.add(Invalids.HEX_BLOCKED);
             }
@@ -109,32 +101,32 @@ public class TokenHexUpgrade extends HexUpgrade {
             return true;
         }
     }
-    
+
     public boolean hexBlocked() {
         return hex.getHex().getBlockedForTokenLays() == MapHex.BlockedToken.ALWAYS;
     }
-    
+
     public boolean hexReserved() {
-        for (Stop stop:stops) {
+        for (Stop stop : stops) {
             if (hex.getHex().isBlockedForReservedHomes(stop)) {
                 allowed.remove(stop);
             }
         }
         return allowed.isEmpty();
     }
-    
+
     public boolean notEnoughCash() {
-        return action.getCompany().getCash() < this.getCost(); 
+        return action.getCompany().getCash() < this.getCost();
     }
-    
+
     public boolean containsToken() {
         return hex.getHex().hasTokenOfCompany(action.getCompany());
     }
-    
+
     public boolean requiresTile() {
         SpecialProperty property = action.getSpecialProperty();
         if (property instanceof SpecialBaseTokenLay) {
-            if (((SpecialBaseTokenLay)property).requiresTile()) {
+            if (((SpecialBaseTokenLay) property).requiresTile()) {
                 return hex.getHex().isPreprintedTileCurrent();
             }
         }
@@ -144,7 +136,7 @@ public class TokenHexUpgrade extends HexUpgrade {
     public boolean requiresNoTile() {
         SpecialProperty property = action.getSpecialProperty();
         if (property instanceof SpecialBaseTokenLay) {
-            if (((SpecialBaseTokenLay)property).requiresNoTile()) {
+            if (((SpecialBaseTokenLay) property).requiresNoTile()) {
                 return !hex.getHex().isPreprintedTileCurrent();
             }
         }
@@ -152,7 +144,7 @@ public class TokenHexUpgrade extends HexUpgrade {
     }
 
     // HexUpgrade abstract methods
-    
+
     @Override
     public boolean hasSingleSelection() {
         return allowed.size() == 1;
@@ -162,12 +154,12 @@ public class TokenHexUpgrade extends HexUpgrade {
     public void firstSelection() {
         selectedStop = allowed.first();
     }
-    
+
     @Override
     public void nextSelection() {
         Stop next = allowed.higher(selectedStop);
         if (next == null) {
-            selectedStop =  allowed.first();
+            selectedStop = allowed.first();
         } else {
             selectedStop = next;
         }
@@ -177,17 +169,17 @@ public class TokenHexUpgrade extends HexUpgrade {
     public Set<HexUpgrade.Invalids> getInvalids() {
         return ImmutableSet.<HexUpgrade.Invalids>copyOf(invalids);
     }
-    
+
     @Override
     public boolean isValid() {
         return invalids.isEmpty();
     }
-    
+
     @Override
     public int getCost() {
         return action.getPotentialCost(hex.getHex());
     }
-    
+
     @Override
     public Image getUpgradeImage(int zoomStep) {
         Color fgColour = null;
@@ -201,18 +193,18 @@ public class TokenHexUpgrade extends HexUpgrade {
         } else if (action instanceof LayBonusToken) {
             fgColour = Color.BLACK;
             bgColour = Color.WHITE;
-            BonusToken token = ((LayBonusToken)action).getSpecialProperty().getToken();
+            BonusToken token = ((LayBonusToken) action).getSpecialProperty().getToken();
             label = "+" + token.getValue();
         }
-        
+
         TokenIcon icon = new TokenIcon(40, fgColour, bgColour, label);
         BufferedImage tokenImage = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         icon.paintIcon(new JLabel(), tokenImage.getGraphics(), 0, 0);
-        
+
         return tokenImage;
 
     }
-    
+
     @Override
     public String getUpgradeText() {
         String text = null;
@@ -237,12 +229,12 @@ public class TokenHexUpgrade extends HexUpgrade {
             }
             text += "</html>";
         } else if (action instanceof LayBonusToken) {
-            BonusToken token = ((LayBonusToken)action).getSpecialProperty().getToken();
+            BonusToken token = ((LayBonusToken) action).getSpecialProperty().getToken();
             text = token.getId();
         }
         return text;
     }
-    
+
     @Override
     public String getUpgradeToolTip() {
         StringBuilder tt = new StringBuilder("<html>");
@@ -262,7 +254,7 @@ public class TokenHexUpgrade extends HexUpgrade {
         StringBuilder tt = new StringBuilder();
 
         tt.append("<b><u>");
-        tt.append(LocalText.getText("TOKEN_UPGRADE_TT_INVALID")); 
+        tt.append(LocalText.getText("TOKEN_UPGRADE_TT_INVALID"));
         tt.append("</u></b><br>");
 
         tt.append("<b>");
@@ -275,20 +267,19 @@ public class TokenHexUpgrade extends HexUpgrade {
     }
 
 
-
     @Override
     public int getCompareId() {
         return 1;
     }
-    
+
     /**
      * Sorting is based on the following: First special Tokens, then type id of action (see there),
      * followed by valuable stations, with less token slots left
      */
     @Override
-    public Comparator<HexUpgrade> getComparator () {
+    public Comparator<HexUpgrade> getComparator() {
         return new Comparator<HexUpgrade>() {
-            
+
             @Override
             public int compare(HexUpgrade u1, HexUpgrade u2) {
                 if (u1 instanceof TokenHexUpgrade && u2 instanceof TokenHexUpgrade) {
@@ -300,15 +291,15 @@ public class TokenHexUpgrade extends HexUpgrade {
 
                     int type1 = 0, type2 = 0;
                     if (base1) {
-                        type1 = ((LayBaseToken)ts1.action).getType();
+                        type1 = ((LayBaseToken) ts1.action).getType();
                     }
                     if (base2) {
-                        type2 = ((LayBaseToken)ts2.action).getType();
+                        type2 = ((LayBaseToken) ts2.action).getType();
                     }
-                    
+
                     PublicCompany company1 = ts1.action.getCompany();
                     PublicCompany company2 = ts2.action.getCompany();
-                    
+
                     return ComparisonChain.start()
                             .compare(base1, base2)
                             .compare(type2, type1)
@@ -319,10 +310,10 @@ public class TokenHexUpgrade extends HexUpgrade {
             }
         };
     }
-    
+
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("stops", stops)
                 .add("action", action)
                 .toString();

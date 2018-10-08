@@ -1,27 +1,30 @@
 package net.sf.rails.ui.swing.hexmap;
 
-import java.awt.Image;
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ComparisonChain;
+
+import java.awt.*;
 import java.util.Comparator;
 import java.util.Set;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.ComparisonChain;
-
-/** 
+/**
  * HexUpgrade is an abstract class used for objects that represent possible upgrades to hexes.
  */
 public abstract class HexUpgrade implements Comparable<HexUpgrade> {
-    
-    public static interface Invalids {};
-    
+
+    public static interface Invalids {
+    }
+
+    ;
+
     protected final GUIHex hex;
 
     private boolean visible = true;
-    
+
     protected HexUpgrade(GUIHex hex) {
         this.hex = hex;
     }
-    
+
     public GUIHex getHex() {
         return hex;
     }
@@ -29,35 +32,35 @@ public abstract class HexUpgrade implements Comparable<HexUpgrade> {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
-    
+
     public boolean isVisible() {
         return visible;
     }
 
     public abstract boolean hasSingleSelection();
-    
+
     public abstract void firstSelection();
-    
+
     public abstract void nextSelection();
-    
+
     public abstract Set<Invalids> getInvalids();
 
     public abstract boolean isValid();
-    
+
     public abstract int getCost();
 
     public abstract Image getUpgradeImage(int zoomStep);
-    
+
     public abstract String getUpgradeText();
-    
+
     public abstract String getUpgradeToolTip();
-    
-    
+
+
     /**
      * @return integer used for sorting (lows first)
      */
     public abstract int getCompareId();
-    
+
     public abstract Comparator<HexUpgrade> getComparator();
 
     @Override
@@ -68,14 +71,13 @@ public abstract class HexUpgrade implements Comparable<HexUpgrade> {
                 .compare(this, other, this.getComparator())
                 .result();
     }
-    
+
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("visible", visible)
                 .add("isValid", isValid())
-                .toString()
-        ;
+                .toString();
     }
-    
+
 }
