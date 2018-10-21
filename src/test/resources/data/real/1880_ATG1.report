@@ -1330,6 +1330,7 @@ PASSES,Helmut
 PASSES,Lonny
 Autopasses,Ronnie
 SELL_SHARE_LOG,Stefan,10,SCR,85
+PRICE_MOVES_LOG,SCR,85,F7,80,F8
 1880BrokerageFee,Stefan,5,1
 BUY_SHARE_LOG,Stefan,10,HKR,IPO,110
 PASSES,Helmut
@@ -1433,7 +1434,7 @@ CompanyRevenue,SCR,510
 CompanyPaysOutFull,SCR,510
 Payout,Helmut,51,1,10
 Payout,Lonny,255,5,10
-PRICE_MOVES_LOG,SCR,85,F7,90,G7
+PRICE_MOVES_LOG,SCR,80,F8,85,F7
  
 EndOfOperatingRound,8.1
 ORWorthIncrease,Helmut,8.1,358
@@ -1543,7 +1544,7 @@ PRICE_MOVES_LOG,HKR,125,J4,120,J5
 1880BrokerageFee,Helmut,5,1
 BUY_SHARE_LOG,Helmut,10,BCR,IPO,130
 BUY_SHARE_LOG,Lonny,10,HKR,IPO,120
-BUY_SHARE_LOG,Ronnie,10,SCR,IPO,90
+BUY_SHARE_LOG,Ronnie,10,SCR,IPO,85
 SELL_SHARE_LOG,Stefan,10,CKR,100
 PRICE_MOVES_LOG,CKR,100,F4,95,F5
 1880BrokerageFee,Stefan,5,1
@@ -1558,14 +1559,15 @@ SELL_SHARES_LOG,Stefan,2,10,20,BCR,260
 PRICE_MOVES_LOG,BCR,130,I1,120,I3
 1880BrokerageFee,Stefan,10,2
 BUY_SHARE_LOG,Stefan,10,JGG,IPO,105
-SELL_SHARE_LOG,Helmut,10,SCR,90
+SELL_SHARE_LOG,Helmut,10,SCR,85
+PRICE_MOVES_LOG,SCR,85,F7,80,F8
 1880BrokerageFee,Helmut,5,1
 BUY_SHARE_LOG,Helmut,10,BCR,IPO,120
 SELL_SHARE_LOG,Lonny,10,CKR,90
 PRICE_MOVES_LOG,CKR,90,F6,85,F7
 1880BrokerageFee,Lonny,5,1
 BUY_SHARE_LOG,Lonny,10,BCR,IPO,120
-SELL_SHARE_LOG,Ronnie,10,SCR,90
+SELL_SHARE_LOG,Ronnie,10,SCR,80
 1880BrokerageFee,Ronnie,5,1
 BUY_SHARE_LOG,Ronnie,10,CKR,IPO,85
 BUY_SHARE_LOG,Stefan,10,JGG,IPO,105
@@ -1584,6 +1586,7 @@ BUY_SHARE_LOG,Lonny,10,JGG,IPO,95
 PASSES,Ronnie
 BUY_SHARE_LOG,Stefan,10,JHA,IPO,85
 SELL_SHARES_LOG,Helmut,3,10,30,JHA,255
+PRICE_MOVES_LOG,JHA,85,F7,80,F8
 IS_NOW_PRES_OF,Stefan,JHA
 1880BrokerageFee,Helmut,15,3
 BUY_SHARE_LOG,Helmut,10,BZU,IPO,90
@@ -1591,7 +1594,7 @@ FloatsWithCash,Binzhou     Railway,900
 SELL_SHARE_LOG,Lonny,10,JGG,95
 PRICE_MOVES_LOG,JGG,95,E4,90,E5
 1880BrokerageFee,Lonny,5,1
-BUY_SHARE_LOG,Lonny,10,SCR,IPO,90
+BUY_SHARE_LOG,Lonny,10,SCR,IPO,80
 PASSES,Ronnie
 BUY_SHARE_LOG,Stefan,10,JLR,IPO,85
 BUY_SHARE_LOG,Helmut,10,JGG,IPO,90
@@ -1629,7 +1632,7 @@ PRICE_MOVES_LOG,BZU,85,D5,80,D6
 BUY_SHARE_LOG,Helmut,10,BCR,IPO,115
 PASSES,Lonny
 Autopasses,Ronnie
-PASSES,Stefan
+Autopasses,Stefan
 PASSES,Helmut
  
 END_SR,9
@@ -1655,9 +1658,9 @@ Has,Hukun Railway,0
 Has,Najiang Railway,230
 Has,Qinshen     Railway,0
 Has,Wunan Railway,900
-Has,Helmut,317
-Has,Lonny,95
-Has,Ronnie,203
+Has,Helmut,312
+Has,Lonny,105
+Has,Ronnie,198
 Has,Stefan,123
 START_OR,9.1
  
@@ -1688,8 +1691,8 @@ BuysTrain,JHU,4+4,JHA,388
 CompanyOperates,QSR,Stefan
 CompanyRevenue,QSR,370
 CompanyPaysOutFull,QSR,370
-Payout,Lonny,37,1,10
 Payout,Stefan,333,9,10
+Payout,Lonny,37,1,10
 PRICE_MOVES_LOG,QSR,115,I4,125,J4
 BuysTrain,QSR,8,IPO,800
 All 8-trains are sold out, 8E-trains now available
@@ -1711,9 +1714,9 @@ Has,HKR,0
 Has,NJR,230
 Has,QSR,78
 Has,WNR,2
-Has,Helmut,317
-Has,Lonny,132
-Has,Ronnie,203
+Has,Helmut,312
+Has,Lonny,142
+Has,Ronnie,198
 Has,Stefan,456
 StartStockRound,10
 HasPriority,Lonny
@@ -1768,6 +1771,9 @@ Autopasses,Ronnie
 SELL_SHARE_LOG,Stefan,10,LHR,70
 PRICE_MOVES_LOG,LHR,70,D8,65,D9
 1880BrokerageFee,Stefan,5,1
+Autopasses,Helmut
+PASSES,Lonny
+Autopasses,Ronnie
 BUY_SHARE_LOG,Stefan,10,BCR,IPO,115
 Autopasses,Helmut
 PASSES,Lonny
@@ -1775,7 +1781,7 @@ Autopasses,Ronnie
 SELL_SHARE_LOG,Stefan,10,BCR,115
 PRICE_MOVES_LOG,BCR,115,I4,110,I5
 1880BrokerageFee,Stefan,5,1
-BUY_SHARE_LOG,Stefan,10,SCR,IPO,90
+BUY_SHARE_LOG,Stefan,10,SCR,IPO,80
 SELL_SHARE_LOG,Helmut,10,JGG,80
 PRICE_MOVES_LOG,JGG,80,E7,75,E8
 1880BrokerageFee,Helmut,5,1
@@ -1809,17 +1815,17 @@ Has,Hukun Railway,0
 Has,Najiang Railway,230
 Has,Qinshen     Railway,78
 Has,Wunan Railway,2
-Has,Helmut,282
-Has,Lonny,127
-Has,Ronnie,203
-Has,Stefan,266
+Has,Helmut,277
+Has,Lonny,137
+Has,Ronnie,198
+Has,Stefan,276
 START_OR,10.1
  
 CompanyOperates,QSR,Stefan
  
 CompanyOperates,JHA,Stefan
 CompanyDoesNotPayDividend,JHA
-PRICE_MOVES_LOG,JHA,85,F7,80,E7
+PRICE_MOVES_LOG,JHA,80,F8,75,E8
 BuysTrain,JHA,2R,IPO,250
 FirstTrainBought,2R
 BuysTrain,JHA,4+4,JHU,469
@@ -1830,7 +1836,7 @@ CompanyRevenue,SCR,560
 CompanyPaysOutFull,SCR,560
 Payout,Stefan,56,1,10
 Payout,Lonny,336,6,10
-PRICE_MOVES_LOG,SCR,90,G7,95,G6
+PRICE_MOVES_LOG,SCR,80,F8,85,F7
  
 CompanyOperates,LHR,Stefan
 LaysTileAtFor,LHR,6,J2,W,50
@@ -1865,7 +1871,7 @@ CompanyOperates,JGG,Helmut
 CompanyRevenue,JGG,270
 CompanyPaysOutFull,JGG,270
 Payout,Helmut,162,6,10
-PRICE_MOVES_LOG,JGG,75,E8,80,E7
+PRICE_MOVES_LOG,JGG,75,E8,80,F8
  
 CompanyOperates,CKR,Ronnie
 LaysTileAt,CKR,8874,N4,NW
@@ -1875,14 +1881,14 @@ Payout,Ronnie,290,10,10
 PRICE_MOVES_LOG,CKR,95,F5,100,G5
  
 CompanyOperates,JLR,Lonny
-LaysTileAt,JLR,63,H10,SW
+LaysTileAt,JLR,63,H10,W
 CompanyRevenue,JLR,270
 CompanyPaysOutFull,JLR,270
 Payout,Lonny,135,5,10
 PRICE_MOVES_LOG,JLR,80,C5,85,D5
  
 CompanyOperates,BZU,Helmut
-LaysTileAt,BZU,455,E9,SW
+LaysTileAt,BZU,455,E9,W
 CompanyRevenue,BZU,350
 CompanyWithholds,BZU,350
 PRICE_MOVES_LOG,BZU,65,C8,55,B8
@@ -1899,7 +1905,7 @@ BuysTrain,WNR,2R,JHA,1
 CompanyOperates,JHU,Stefan
 CompanyDoesNotPayDividend,JHU
 PRICE_MOVES_LOG,JHU,80,E7,75,D7
-BuysTrain,JHU,4+4,LHR,470
+BuysTrain,JHU,4+4,LHR,1
  
 EndOfOperatingRound,10.1
 ORWorthIncrease,Helmut,10.1,572
@@ -1908,21 +1914,21 @@ ORWorthIncrease,Ronnie,10.1,740
 ORWorthIncrease,Stefan,10.1,227
 Has,BCR,168
 Has,JHA,3
-Has,JHU,1
+Has,JHU,470
 Has,JGG,110
 Has,JLR,0
 Has,BZU,160
-Has,LHR,839
+Has,LHR,370
 Has,SCR,10
 Has,CKR,0
 Has,HKR,0
 Has,NJR,230
 Has,QSR,78
 Has,WNR,1
-Has,Helmut,774
-Has,Lonny,1205
-Has,Ronnie,813
-Has,Stefan,493
+Has,Helmut,769
+Has,Lonny,1215
+Has,Ronnie,808
+Has,Stefan,503
 START_OR,10.2
  
 CompanyOperates,QSR,Stefan
@@ -1938,16 +1944,16 @@ TrainsRusted,4+4
  
 CompanyOperates,JHA,Stefan
 CompanyDoesNotPayDividend,JHA
-PRICE_MOVES_LOG,JHA,80,E7,75,D7
+PRICE_MOVES_LOG,JHA,75,E8,70,D8
 BuysTrain,JHA,6,QSR,1
  
 CompanyOperates,SCR,Lonny
-LaysTileAt,SCR,63,K13,SW
+LaysTileAt,SCR,63,K13,W
 CompanyRevenue,SCR,350
 CompanyPaysOutFull,SCR,350
 Payout,Lonny,210,6,10
 Payout,Stefan,35,1,10
-PRICE_MOVES_LOG,SCR,95,G6,100,H6
+PRICE_MOVES_LOG,SCR,85,F7,90,G7
  
 CompanyOperates,LHR,Stefan
 LaysTileAt,LHR,15,J2,NE
@@ -1955,7 +1961,7 @@ CompanyRevenue,LHR,110
 CompanyPaysOutFull,LHR,110
 Payout,Stefan,55,5,10
 PRICE_MOVES_LOG,LHR,60,C9,65,D9
-PresidentAddsCash,LHR,Stefan,161
+PresidentAddsCash,LHR,Stefan,630
 BuysTrain,LHR,10,IPO,1000
 FirstTrainBought,10
 StartOfPhase,10
@@ -1965,8 +1971,6 @@ CompanyRevenue,BCR,340
 CompanyPaysOutFull,BCR,340
 Payout,Helmut,340,10,10
 PRICE_MOVES_LOG,BCR,125,J4,135,K4
-AddedRights,BCR,D
-BuysTrain,BCR,2R,BZU,167
  
 CompanyOperates,HKR,Lonny
 CompanyRevenue,HKR,450
@@ -1985,12 +1989,12 @@ PRICE_MOVES_LOG,NJR,140,J1,150,K1
  
 CompanyOperates,JGG,Helmut
 CompanyDoesNotPayDividend,JGG
-PRICE_MOVES_LOG,JGG,80,E7,75,D7
+PRICE_MOVES_LOG,JGG,80,F8,75,E8
 PresidentAddsCash,JGG,Helmut,890
 BuysTrain,JGG,10,IPO,1000
  
 CompanyOperates,CKR,Ronnie
-LaysTileAt,CKR,15,O5,W
+LaysTileAt,CKR,14,O5,W
 CompanyRevenue,CKR,300
 CompanyPaysOutFull,CKR,300
 Payout,Ronnie,300,10,10
@@ -2006,10 +2010,9 @@ PRICE_MOVES_LOG,JLR,85,D5,90,E5
  
 CompanyOperates,BZU,Helmut
 LaysTileAt,BZU,8888,F8,SW
-LAYS_TOKEN_ON,BZU,E9,200
-CompanyRevenue,BZU,400
-CompanyPaysOutFull,BZU,400
-Payout,Helmut,200,5,10
+CompanyRevenue,BZU,450
+CompanyPaysOutFull,BZU,450
+Payout,Helmut,225,5,10
 PRICE_MOVES_LOG,BZU,55,B8,65,C8
  
 CompanyOperates,WNR,Stefan
@@ -2026,16 +2029,16 @@ PRICE_MOVES_LOG,JHU,75,D7,70,C7
 BuysTrain,JHU,6,WNR,1
  
 EndOfOperatingRound,10.2
-ORWorthIncrease,Helmut,10.2,-230
+ORWorthIncrease,Helmut,10.2,-205
 ORWorthIncrease,Lonny,10.2,1050
 ORWorthIncrease,Ronnie,10.2,758
-ORWorthIncrease,Stefan,10.2,849
-Has,BCR,1
+ORWorthIncrease,Stefan,10.2,380
+Has,BCR,168
 Has,JHA,3
-Has,JHU,0
+Has,JHU,469
 Has,JGG,0
 Has,JLR,0
-Has,BZU,127
+Has,BZU,160
 Has,LHR,0
 Has,SCR,10
 Has,CKR,0
@@ -2043,10 +2046,10 @@ Has,HKR,0
 Has,NJR,230
 Has,QSR,79
 Has,WNR,1
-Has,Helmut,424
-Has,Lonny,2090
-Has,Ronnie,1441
-Has,Stefan,1202
+Has,Helmut,444
+Has,Lonny,2100
+Has,Ronnie,1436
+Has,Stefan,743
 START_OR,10.3
  
 CompanyOperates,QSR,Stefan
@@ -2059,7 +2062,7 @@ BuysTrain,QSR,10,LHR,78
  
 CompanyOperates,JHA,Stefan
 CompanyDoesNotPayDividend,JHA
-PRICE_MOVES_LOG,JHA,75,D7,70,C7
+PRICE_MOVES_LOG,JHA,70,D8,65,C8
 BuysTrain,JHA,6,JHU,1
  
 CompanyOperates,SCR,Lonny
@@ -2068,7 +2071,7 @@ CompanyRevenue,SCR,360
 CompanyPaysOutFull,SCR,360
 Payout,Lonny,216,6,10
 Payout,Stefan,36,1,10
-PRICE_MOVES_LOG,SCR,100,H6,105,H5
+PRICE_MOVES_LOG,SCR,90,G7,95,G6
  
 CompanyOperates,LHR,Stefan
 LaysTileAtFor,LHR,8,I3,E,30
@@ -2080,7 +2083,6 @@ PRICE_MOVES_LOG,LHR,65,D9,70,E9
 BuysTrain,LHR,6,JHA,1
  
 CompanyOperates,BCR,Helmut
-LaysTileAt,BCR,895,M3,SW
 CompanyRevenue,BCR,490
 CompanyPaysOutFull,BCR,490
 Payout,Helmut,490,10,10
@@ -2094,21 +2096,20 @@ Payout,Stefan,46,1,10
 PRICE_MOVES_LOG,HKR,145,L4,150,L3
  
 CompanyOperates,NJR,Ronnie
-CompanyRevenue,NJR,480
-CompanyPaysOutFull,NJR,480
-Payout,Lonny,48,1,10
-Payout,Stefan,48,1,10
-Payout,Ronnie,384,8,10
+CompanyRevenue,NJR,490
+CompanyPaysOutFull,NJR,490
+Payout,Lonny,49,1,10
+Payout,Stefan,49,1,10
+Payout,Ronnie,392,8,10
 PRICE_MOVES_LOG,NJR,150,K1,160,L1
  
 CompanyOperates,JGG,Helmut
 CompanyRevenue,JGG,480
 CompanyPaysOutFull,JGG,480
 Payout,Helmut,288,6,10
-PRICE_MOVES_LOG,JGG,75,D7,80,E7
+PRICE_MOVES_LOG,JGG,75,E8,80,F8
  
 CompanyOperates,CKR,Ronnie
-LaysTileAt,CKR,63,O5,SW
 CompanyRevenue,CKR,320
 CompanyPaysOutFull,CKR,320
 Payout,Ronnie,320,10,10
@@ -2116,16 +2117,16 @@ PRICE_MOVES_LOG,CKR,105,H5,110,I5
  
 CompanyOperates,JLR,Lonny
 LaysTileAt,JLR,455,H6,SW
-CompanyRevenue,JLR,370
-CompanyPaysOutFull,JLR,370
-Payout,Lonny,185,5,10
+CompanyRevenue,JLR,380
+CompanyPaysOutFull,JLR,380
+Payout,Lonny,190,5,10
 PRICE_MOVES_LOG,JLR,90,E5,95,F5
  
 CompanyOperates,BZU,Helmut
 LaysTileAt,BZU,895,F10,SW
-CompanyRevenue,BZU,430
-CompanyPaysOutFull,BZU,430
-Payout,Helmut,215,5,10
+CompanyRevenue,BZU,490
+CompanyPaysOutFull,BZU,490
+Payout,Helmut,245,5,10
 PRICE_MOVES_LOG,BZU,65,C8,70,D8
  
 CompanyOperates,WNR,Stefan
@@ -2142,16 +2143,16 @@ PRICE_MOVES_LOG,JHU,70,C7,60,B7
 BuysTrain,JHU,6,WNR,1
  
 EndOfOperatingRound,10.3
-ORWorthIncrease,Helmut,10.3,1148
-ORWorthIncrease,Lonny,10.3,1038
-ORWorthIncrease,Ronnie,10.3,834
-ORWorthIncrease,Stefan,10.3,833
-Has,BCR,1
+ORWorthIncrease,Helmut,10.3,1178
+ORWorthIncrease,Lonny,10.3,1044
+ORWorthIncrease,Ronnie,10.3,842
+ORWorthIncrease,Stefan,10.3,834
+Has,BCR,168
 Has,JHA,3
-Has,JHU,0
+Has,JHU,469
 Has,JGG,0
 Has,JLR,0
-Has,BZU,127
+Has,BZU,160
 Has,LHR,28
 Has,SCR,10
 Has,CKR,0
@@ -2159,10 +2160,10 @@ Has,HKR,0
 Has,NJR,230
 Has,QSR,1
 Has,WNR,1
-Has,Helmut,1417
-Has,Lonny,3008
-Has,Ronnie,2145
-Has,Stefan,1910
+Has,Helmut,1467
+Has,Lonny,3024
+Has,Ronnie,2148
+Has,Stefan,1452
 START_OR,10.4
  
 CompanyOperates,QSR,Stefan
@@ -2177,12 +2178,12 @@ ORWorthIncrease,Helmut,10.4,0
 ORWorthIncrease,Lonny,10.4,122
 ORWorthIncrease,Ronnie,10.4,0
 ORWorthIncrease,Stefan,10.4,1098
-Has,BCR,1
+Has,BCR,168
 Has,JHA,3
-Has,JHU,0
+Has,JHU,469
 Has,JGG,0
 Has,JLR,0
-Has,BZU,127
+Has,BZU,160
 Has,LHR,28
 Has,SCR,10
 Has,CKR,0
@@ -2190,14 +2191,14 @@ Has,HKR,0
 Has,NJR,230
 Has,QSR,1
 Has,WNR,1
-Has,Helmut,1417
-Has,Lonny,3115
-Has,Ronnie,2145
-Has,Stefan,2873
+Has,Helmut,1467
+Has,Lonny,3131
+Has,Ronnie,2148
+Has,Stefan,2415
 GameOver
 EoGWinnerLonny!
 EoGFinalRanking :
-1. 5895 Lonny
-2. 5743 Stefan
-3. 4525 Ronnie
-4. 3697 Helmut
+1. 5851 Lonny
+2. 5265 Stefan
+3. 4528 Ronnie
+4. 3747 Helmut
