@@ -1,5 +1,5 @@
 GameIs,1835
-PlayerIs,1,Klaus-JÃ¼rgen
+PlayerIs,1,Klaus-Jürgen
 PlayerIs,2,Jupp
 PlayerIs,3,Sven K.
 PlayerIs,4,Volker S.
@@ -15,9 +15,9 @@ BuysItemFor,Sven K.,M2,170
 FloatsWithCash,M2,170
 BuysItemFor,Jupp,M5,80
 FloatsWithCash,M5,80
-BuysItemFor,Klaus-JÃ¼rgen,M1,80
+BuysItemFor,Klaus-Jürgen,M1,80
 FloatsWithCash,M1,80
-BuysItemFor,Klaus-JÃ¼rgen,M6,80
+BuysItemFor,Klaus-Jürgen,M6,80
 FloatsWithCash,M6,80
 BuysItemFor,Jupp,LD,190
 ALSO_GETS,Jupp,PRES_CERT_NAME,SX,20
@@ -25,12 +25,12 @@ BuysItemFor,Sven K.,M4,160
 FloatsWithCash,M4,160
 BuysItemFor,Volker S.,NF,100
 ALSO_GETS,Volker S.,CERT_NAME,BY,10
-BuysItemFor,Klaus-JÃ¼rgen,BB,130
+BuysItemFor,Klaus-Jürgen,BB,130
 BuysItemFor,Jupp,HB,160
 PASSES,Sven K.
 BuysItemFor,Volker S.,OBB,120
 ALSO_GETS,Volker S.,CERT_NAME,BY,10
-BuysItemFor,Klaus-JÃ¼rgen,PRES_CERT_NAME,BY,20,184
+BuysItemFor,Klaus-Jürgen,PRES_CERT_NAME,BY,20,184
 CannotBuyAnything,Jupp
 CannotBuyAnything,Sven K.
 BuysItemFor,Volker S.,PfB,150
@@ -44,11 +44,11 @@ Has,M4,160
 Has,M5,80
 Has,M6,80
 Has,BY,460
-Has,Klaus-JÃ¼rgen,1
+Has,Klaus-Jürgen,1
 Has,Jupp,45
 Has,Sven K.,145
 Has,Volker S.,25
 StartStockRound,1
-HasPriority,Klaus-JÃ¼rgen
-PASSES,Klaus-JÃ¼rgen
+HasPriority,Klaus-Jürgen
+PASSES,Klaus-Jürgen
 PASSES,Jupp
