@@ -1155,7 +1155,6 @@ HasMergedShares,POOL,13,5,CGR
 CompanyHasShares,CGR,20,5
 IS_NOW_PRES_OF,Ed,CGR
 Floats,CGR
-CertificateLimit,10,5,6
 ExchangesBaseToken,CGR,CA,D17/1
 ExchangesBaseToken,CGR,TGB,K8/1
 ExchangesBaseToken,CGR,GT,P9/1
@@ -1192,6 +1191,7 @@ Has,Ed,280
 Has,Stefan,554
 Has,Joakim,101
 START_OR,5.3
+CertificateLimit,10,5,6
  
 CompanyOperates,GW,Stefan
 LaysTileAt,GW,125,F17,S
