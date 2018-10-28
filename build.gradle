@@ -95,6 +95,14 @@ dependencies {
   testCompile fileTree(dir: 'libs/test', include: "**/*.jar")
 }
 
+test {
+    // the expected test files have UTF-8 encoding
+    systemProperty 'file.encoding', 'UTF-8'
+    
+    // TestGame is not intended as a standalone test class
+    exclude 'net/sf/rails/test/TestGame.class'
+}
+
 jar {
 	def manifestClasspath = configurations.runtime.collect{ './' + it.getName() }.join(' ')
     manifest {
