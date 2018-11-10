@@ -462,4 +462,20 @@ public class NetworkGraph {
         return hexStations.build();
     }
     
+    /**
+     * @return a map of all hexes and stations that cannot be run through
+     */
+    public Multimap<MapHex, Station> getNonPassableStations() {
+        
+        ImmutableMultimap.Builder<MapHex, Station> hexStations = 
+                ImmutableMultimap.builder();
+
+        for(NetworkVertex vertex:graph.vertexSet()) {
+            if (vertex.isStation() && vertex.isSink()) {
+                hexStations.put(vertex.getHex(), vertex.getStation());
+            }
+        }
+        return hexStations.build();
+    }
+    
 }
