@@ -108,7 +108,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
     @Override
     protected void prepareRevenueAndDividendAction() {
-        int[] allowedRevenueActions = new int[] {};
+        int[] allowedRevenueActions;
         // There is only revenue if there are any trains
         if (operatingCompany.value().canRunTrains()) {
             if (operatingCompany.value() instanceof PublicCompany_1880) {
@@ -244,12 +244,12 @@ public class OperatingRound_1880 extends OperatingRound {
                 }
               }
         }
-        if (trainResults == false) {
+        if (!trainResults) {
             return false;
         }
 
         if ((ipo.getTrainsPerType(action.getType()).length == 0)
-                && (trainTypeCanAffectOR(action.getType()) == true)) {
+                && (trainTypeCanAffectOR(action.getType()))) {
             orControl.orExitToStockRound(operatingCompany.value(), currentStep);
             setActionForPrivateExchange(action.getType());
             if (manditoryNextAction == null) {
@@ -294,7 +294,7 @@ public class OperatingRound_1880 extends OperatingRound {
             // If there are no more trains of this type, and this type causes an
             // OR end, end it.
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
-                && (trainTypeCanAffectOR(action.getType()) == true)) {
+                && (trainTypeCanAffectOR(action.getType()))) {
                 if (action.getType().getName().equals("8")) {
                     orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.value()));
                     orControl.setFinalOperatingRoundSequence(true);
@@ -696,15 +696,12 @@ public class OperatingRound_1880 extends OperatingRound {
         firstCompanyBeforePrivates = companyList.get(0);
 
         // Skip ahead if we have to
-        //if (!orControl.isFinalOperatingRoundSequence()) {
             PublicCompany firstCompany = orControl.getFirstCompanyToRun();
             if (firstCompany != null) {
                 while (companyList.get(0) != firstCompany) {
                     Collections.rotate(companyList, 1);
                 }
             }
-        //}
-
         return new ArrayList<PublicCompany>(companyList);
     }
 
@@ -718,8 +715,7 @@ public class OperatingRound_1880 extends OperatingRound {
     public List<PublicCompany> setOperatingCompanies(
             List<PublicCompany> oldOperatingCompanies,
             PublicCompany lastOperatingCompany) {
-        // TODO Auto-generated method stub
-        return setOperatingCompanies();
+         return setOperatingCompanies();
     }
 
     /*
@@ -851,10 +847,8 @@ public class OperatingRound_1880 extends OperatingRound {
             // Was a special property used?
             if (stl != null) {
                 stl.setExercised();
-                // currentSpecialTileLays.remove(action);
                 log.debug("This was a special tile lay, "
                           + (extra ? "" : " not") + " extra");
-
             }
             if (!extra) {
                 log.debug("This was a normal tile lay");
@@ -1196,7 +1190,6 @@ public class OperatingRound_1880 extends OperatingRound {
                     companiesPerPlayer.add(new ArrayList<PublicCompany>(4));
                 List<PublicCompany> companies;
                 // Sort out which players preside over which companies.
-                //for (PublicCompanyI c : getOperatingCompanies()) {
                 for (PublicCompany c : companyManager.getAllPublicCompanies()) {
                     if (!c.hasFloated()) continue;
                     if (c.isClosed() || c == operatingCompany.value()) continue;
