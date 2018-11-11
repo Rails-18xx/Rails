@@ -49,7 +49,6 @@ public class StockRound_1837 extends StockRound {
      */
     public StockRound_1837(GameManager parent, String id) {
         super(parent, id);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
