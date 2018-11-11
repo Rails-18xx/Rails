@@ -12,17 +12,21 @@ import net.sf.rails.algorithms.RevenueStaticModifier;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.CompanyManager;
+import net.sf.rails.game.HexSidesSet;
+import net.sf.rails.game.MapHex;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.Station;
 import net.sf.rails.game.Stop;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainManager;
 import net.sf.rails.game.state.Owner;
-import net.sf.rails.game.state.State;
-
 import org.jgrapht.graph.SimpleGraph;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Multimap;
 
 
 
@@ -116,6 +120,8 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
     }
 
     public boolean isConnectedToLinkedCompany() {
+        Multimap<MapHex,Station> lStations;
+        Multimap<MapHex,Station> iStations;
         NetworkGraph nwGraph = NetworkGraph.createMapGraph(getRoot());
         NetworkGraph companyGraph =
                 NetworkGraph.createRouteGraph(nwGraph, this, true);
@@ -123,9 +129,20 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
                 companyGraph.getGraph();
         Set<NetworkVertex> verticies = graph.vertexSet();
 
+        
+        
         PublicCompany_1880 linkedCompany =
                 (PublicCompany_1880) ((Investor_1880) this).getLinkedCompany();
+            
         if (linkedCompany != null) {
+            NetworkGraph linkedCompanyGraph=NetworkGraph.createRouteGraph(nwGraph, linkedCompany, true);
+            // Creating a list of stations blocked by tokens.
+            // The connection between investor and Linked Company is NOT blocked by any token of any company.
+            // A token that is counted as blocked can be reached by the company for which it blocks the route.
+            // Based on that logic a blocking token is reachable by both actors.
+            lStations = linkedCompanyGraph.getNonPassableStations();
+            iStations = companyGraph.getNonPassableStations();
+            //Case A) the token in Question from a linked Company is actually on the route of the Investor
             for (BaseToken token : linkedCompany.getLaidBaseTokens()) {
                 Owner holder = token.getOwner();
                 if (!(holder instanceof Stop)) continue;
@@ -139,6 +156,18 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
                     }
                 }
             }
+            // Case B) the Blocking Token is not from the linked Company
+            // so we need to check if the MapHex of a blocking station is showing up in the
+            // List of non Passable Stations
+             for (MapHex blockedHex:lStations.keys()) {
+                 if (iStations.containsKey(blockedHex)) {
+                     //Make sure its not an Offboard Map Hex
+                     if (blockedHex.getCurrentTile().getColour().toString() == "RED" ) continue;
+                     if (blockedHex.getStopName().equals("Beijing")) continue;
+                     return true;
+                    }
+             }
+            
         }
         return false;
     }
