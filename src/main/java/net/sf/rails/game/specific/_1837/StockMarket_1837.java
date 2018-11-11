@@ -20,7 +20,6 @@ public class StockMarket_1837 extends StockMarket {
      */
     public StockMarket_1837(RailsRoot parent, String id) {
         super(parent, id);
-        // TODO Auto-generated constructor stub
     }
     
     public void payOut(PublicCompany company, boolean split) {

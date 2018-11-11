@@ -3,6 +3,8 @@
  */
 package net.sf.rails.game.specific._1837;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,6 +21,7 @@ import net.sf.rails.game.Phase;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.BooleanState;
@@ -423,38 +426,34 @@ public class OperatingRound_1837 extends OperatingRound {
     @Override
     protected boolean gameSpecificTileLayAllowed(PublicCompany company,
             MapHex hex, int orientation) {
-        boolean result = true;
-        // FIXME: Removed hex.isBlockedForTileLays removed in Rails 2.0 beta preparation, needs fix
-//        // Check if the Hex is blocked ?
-//        for (PrivateCompany privComp : gameManager.getAllPrivateCompanies()) {
-//            boolean isBlocked = hex.isBlockedForTileLays(privComp);
-//            if (isBlocked) {
-//                result = true;
-//                break;
-//            }
-//        }
-//
-//        if (result == true) {
-//            // Check if the Owner of the PublicCompany is owner of the Private Company that blocks
-//            // the hex (1837)
-//
-//            ImmutableSet<PrivateCompany> compPrivatesOwned =
-//                    company.getPresident().getPortfolioModel().getPrivateCompanies();
-//
-//            for (PrivateCompany privComp : compPrivatesOwned) {
-//                // Check if the Hex is blocked by any of the privates owned by
-//                // this PublicCompany
-//                if (hex.isBlockedForTileLays(privComp)) {
-//                    result = false;
-//                }
-//            }
-//
-//        }
+        RailsRoot root = RailsRoot.getInstance();
+        List<MapHex> italyMapHexes = new ArrayList<MapHex> ();
+        // 1. check Phase
 
-        return result;
+        int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex(); 
+        if (phaseIndex < 3) {
+            // Check if the Hex is blocked by a private ?
+            if (hex.isBlockedByPrivateCompany()) {
+                if (company.getPresident().getPortfolioModel().getPrivateCompanies().contains(hex.getBlockingPrivateCompany())) {
+               // Check if the Owner of the PublicCompany is owner of the Private Company that blocks
+               // the hex (1837)
+                    return true;
+                }
+                return false;
+            }
+        }
+        if (phaseIndex >= 4 ) {
+            log.debug("Italy inactive, index of phase = " + phaseIndex);
+                 
+            // 2. retrieve Italy vertices ...
+            String [] italyHexes = {"K2","K4","K8","K10","L3","L5","L7","L9","M4","M6","M8"};
+            for (String italyHex:italyHexes){
+             italyMapHexes.add(root.getMapManager().getHex(italyHex));
+            }
+            if (italyMapHexes.contains(hex)) {
+                return false;
+            }
+         }
+        return true;
     }
-
-
-
-    
 }
