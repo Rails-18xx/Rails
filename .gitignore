@@ -27,4 +27,7 @@ rails.iml
 # logback test configuration
 **/logback-test.xml
 
+#classes
+/classes/
 
+/.gradle/
