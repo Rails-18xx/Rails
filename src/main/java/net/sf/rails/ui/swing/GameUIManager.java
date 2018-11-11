@@ -17,6 +17,7 @@ import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.Observer;
+import net.sf.rails.javafx.windows.FXStockChartWindow;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
 import net.sf.rails.util.Util;
@@ -35,7 +36,6 @@ import com.google.common.collect.Iterables;
 public class GameUIManager implements DialogOwner {
     public static GameUIManager instance = null;
 
-    public StockChart stockChart;
     public StatusWindow statusWindow;
     public ReportWindow reportWindow;
     public ConfigWindow configWindow;
@@ -230,7 +230,7 @@ public class GameUIManager implements DialogOwner {
         imageLoader = new ImageLoader();
 
         splashWindow.notifyOfStep(SplashWindow.STEP_STOCK_CHART);
-        stockChart = new StockChart(this);
+        FXStockChartWindow.launch(this);
 
         splashWindow.notifyOfStep(SplashWindow.STEP_REPORT_WINDOW);
         if (Config.get("report.window.type").equalsIgnoreCase("static")) {
@@ -503,10 +503,9 @@ public class GameUIManager implements DialogOwner {
                 boolean stockChartVisibilityHint = hint.getVisibility()
                 || configuredStockChartVisibility;
                 if (stockChartVisibilityHint != previousStockChartVisibilityHint) {
-                    setMeVisible(stockChart,stockChartVisibilityHint);
+                    FXStockChartWindow.setVisible(stockChartVisibilityHint);
                     previousStockChartVisibilityHint = stockChartVisibilityHint;
                 }
-                if (hint.getVisibility()) setMeToFront(stockChart);
                 break;
             case STATUS:
                 boolean statusWindowVisibilityHint = hint.getVisibility();
@@ -548,7 +547,7 @@ public class GameUIManager implements DialogOwner {
 
             log.debug("Entering Stock Round UI type");
             activeWindow = statusWindow;
-            stockChart.setVisible(true);
+            FXStockChartWindow.setVisible(true);
             setMeVisible(statusWindow,true);
             setMeToFront(statusWindow);
 
@@ -1195,7 +1194,7 @@ public class GameUIManager implements DialogOwner {
      * deactivate all game windows, except the argument one
      */
     public void setEnabledAllWindows(boolean enabled, JFrame exceptionWindow) {
-        setEnabledWindow(enabled, stockChart, exceptionWindow);
+        // setEnabledWindow(enabled, stockChart, exceptionWindow);
         setEnabledWindow(enabled, reportWindow, exceptionWindow);
         setEnabledWindow(enabled, configWindow, exceptionWindow);
         setEnabledWindow(enabled, orWindow, exceptionWindow);
@@ -1213,8 +1212,6 @@ public class GameUIManager implements DialogOwner {
         reportWindow.pack();
         SwingUtilities.updateComponentTreeUI(configWindow);
         configWindow.pack();
-        SwingUtilities.updateComponentTreeUI(stockChart);
-        stockChart.pack();
     }
     
     // Forwards the format() method to the server

@@ -29,14 +29,8 @@ import org.slf4j.LoggerFactory;
 
 public class ConfigManager implements Configurable {
 
-    private static Logger log;
-    
     // STATIC CONSTANTS
-    
-    // Log4j command line option, compare log4j documentation
-    private static final String LOG4J_CLI_OPTION = "log4j.configuration";
-    // Default Log4j configuration-file
-    private static final String LOG4J_CONFIG_FILE = "log4j.properties";
+    private static Logger log = LoggerFactory.getLogger(ConfigManager.class);
     
     //  XML setup
     private static final String CONFIG_XML_DIR = "data";
@@ -66,33 +60,9 @@ public class ConfigManager implements Configurable {
     
     // profile storage
     private ConfigProfile activeProfile;
-    
-    
-    /**
-     * Initial configuration immediately after startup:
-     * Setting of log4j and start logger
-     * @param test if true configurations are setup for integration tests, false for productive use
-     */
-    private static void startlog4j() {
-        
-        // log4j settings
-        String log4jSelection = System.getProperty(LOG4J_CLI_OPTION); 
-        if (!Util.hasValue(log4jSelection)) {
-            log4jSelection = LOG4J_CONFIG_FILE;
-        }
-        // Sets those settings
-        System.setProperty("log4j.configuration", log4jSelection);
-        System.out.println("log4j.configuration =  " + log4jSelection);
-   
-        // Activate logger
-        log = LoggerFactory.getLogger(ConfigManager.class);
-        log.debug("Activate log4j logging using configuration file = " + log4jSelection);
-        
-    }
+
 
     public static void initConfiguration(boolean test) {
-        startlog4j();
-        
         try {
             // Find the config tag inside the the config xml file
             // the last arguments refers to the fact that no GameOptions are required

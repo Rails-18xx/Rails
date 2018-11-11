@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
     <version>2.0-RC4</version>
 
-    <name>rails</name>
+    <name>Rails (18xx)</name>
     <description>A Java playing aid for playing 18xx based games via email or in Hotseat mode.</description>
 
     <organization>
@@ -21,8 +21,21 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jdk.version>1.6</jdk.version>
+        <licence>GPL</licence>
+        <jdk.version>1.8</jdk.version>
+        <jarName.all>${project.build.finalName}-all</jarName.all>
+        <launch4j.version>2.0.0.0</launch4j.version>
+
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -56,25 +69,25 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.1</version>
+            <version>2.6</version>
         </dependency>
 
         <dependency>
-            <groupId>jgraph</groupId>
-            <artifactId>jgraph</artifactId>
-            <version>5.13.0.0</version>
+            <groupId>com.github.jgraph</groupId>
+            <artifactId>jgraphx</artifactId>
+            <version>v3.9.9</version>
         </dependency>
 
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
-            <version>1.0.1</version>
+            <version>1.2.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-ext</artifactId>
-            <version>1.0.1</version>
+            <version>1.2.0</version>
         </dependency>
 
         <dependency>
@@ -86,33 +99,34 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-bridge</artifactId>
-            <version>1.9</version>
+            <version>1.10</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-transcoder</artifactId>
-            <version>1.9</version>
+            <version>1.10</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-svggen</artifactId>
-            <version>1.9</version>
+            <version>1.10</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-ext</artifactId>
-            <version>1.9</version>
+            <version>1.10</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-swing</artifactId>
-            <version>1.9</version>
+            <version>1.10</version>
         </dependency>
 
+        <!-- should be removed long term -->
         <dependency>
             <groupId>javazoom</groupId>
             <artifactId>jlayer</artifactId>
@@ -128,15 +142,17 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>19.0</version>
+            <version>26.0-jre</version>
         </dependency>
 
+        <!-- should be removed long term -->
         <dependency>
             <groupId>net.java.dev.designgridlayout</groupId>
             <artifactId>designgridlayout</artifactId>
             <version>1.11</version>
         </dependency>
 
+        <!-- should be removed long term -->
         <dependency>
             <groupId>org.dockingframes</groupId>
             <artifactId>docking-frames-common</artifactId>
@@ -146,11 +162,24 @@
         <dependency>
             <groupId>com.googlecode.combinatoricslib</groupId>
             <artifactId>combinatoricslib</artifactId>
-            <version>2.1</version>
+            <version>2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>11</version>
         </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
         <plugins>
             <!-- download source code in Eclipse, best practice -->
             <plugin>
@@ -167,7 +196,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.8.0</version>
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
@@ -177,7 +206,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20</version>
+                <version>2.22.0</version>
                 <configuration>
                     <excludes>
                         <!-- The class TestGame isn't a runnable class itself -->
@@ -188,11 +217,13 @@
 
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <finalName>${jarName.all}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
                             <mainClass>net.sf.rails.util.RunGame</mainClass>
@@ -214,7 +245,7 @@
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
-                <version>1.7.18</version>
+                <version>1.7.23</version>
                 <executions>
                     <execution>
                         <id>l4j-gui</id>
@@ -224,10 +255,11 @@
                         </goals>
                         <configuration>
                             <headerType>gui</headerType>
-                            <jar>target/${project.name}-${project.version}-jar-with-dependencies.jar</jar>
-                            <outfile>target/${project.name}-${project.version}.exe</outfile>
-                            <errTitle>Rails</errTitle>
-                            <icon>target/classes/build/rails.ico</icon>
+                            <jar>${project.build.directory}/${jarName.all}.jar</jar>
+                            <outfile>${project.build.directory}/${project.build.finalName}.exe</outfile>
+
+                            <errTitle>${project.name}</errTitle>
+                            <icon>${project.build.outputDirectory}/build/rails.ico</icon>
 
                             <classPath>
                                 <mainClass>net.sf.rails.util.RunGame</mainClass>
@@ -236,16 +268,16 @@
                             </classPath>
 
                             <jre>
-                                <minVersion>1.6.0</minVersion>
+                                <minVersion>${jdk.version}.0</minVersion>
                             </jre>
 
                             <versionInfo>
-                                <fileVersion>2.0.0.0</fileVersion>
-                                <productVersion>2.0.0.0</productVersion>
+                                <fileVersion>${launch4j.version}</fileVersion>
+                                <productVersion>${launch4j.version}</productVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <fileDescription>${project.name}</fileDescription>
-                                <copyright>GPL</copyright>
+                                <copyright>${licence}</copyright>
                                 <productName>${project.name}</productName>
                                 <internalName>${project.name}</internalName>
                                 <originalFilename>original.exe</originalFilename>
@@ -255,22 +287,117 @@
                 </executions>
             </plugin>
 
-            <!-- Create a Mac OSX dmg installer -->
+            <!-- Create a Debian deb installer -->
             <plugin>
-                <groupId>sh.tak.appbundler</groupId>
-                <artifactId>appbundle-maven-plugin</artifactId>
-                <version>1.2.0</version>
-                <configuration>
-                    <mainClass>net.sf.rails.util.RunGame</mainClass>
-                    <iconFile>build/rails.ico</iconFile>
-                    <generateDiskImageFile>true</generateDiskImageFile>
-                </configuration>
+                <groupId>org.vafer</groupId>
+                <artifactId>jdeb</artifactId>
+                <version>1.6</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>bundle</goal>
+                            <goal>jdeb</goal>
                         </goals>
+                        <configuration>
+                            <deb>${project.build.directory}/${project.build.finalName}.deb</deb>
+                            <dataSet>
+                                <data>
+                                    <src>src/scripts/rails-18xx</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/bin</prefix>
+                                        <filemode>775</filemode>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>src/scripts/rails-18xx.desktop</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/share/applications</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.build.directory}/${jarName.all}.jar</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/lib/rails-18xx</prefix>
+                                    </mapper>
+                                </data>
+
+                                <data>
+                                    <src>${project.build.outputDirectory}/build/rails.png</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/share/pixmaps</prefix>
+                                    </mapper>
+                                </data>
+                            </dataSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>de.dentrassi.maven</groupId>
+                <artifactId>rpm</artifactId>
+                <version>1.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>rpm</goal>
+                        </goals>
+
+                        <configuration>
+                            <attach>false</attach>
+                            <group>Amusements/Games</group>
+                            <skipSigning>true</skipSigning>
+
+                            <rulesets>
+                                <ruleset>
+                                    <id>my-default</id>
+
+                                    <rules>
+                                        <rule>
+                                            <user>root</user>
+                                            <group>root</group>
+                                        </rule>
+                                        <rule>
+                                            <when>
+                                                <type>file</type>
+                                            </when>
+                                            <mode>0750</mode>
+                                        </rule>
+                                    </rules>
+                                </ruleset>
+                            </rulesets>
+
+                            <entries>
+                                <entry>
+                                    <name>/usr/bin</name>
+                                    <file>src/scripts/rails-18xx</file>
+                                </entry>
+
+                                <entry>
+                                    <name>/usr/share/applications</name>
+                                    <file>src/scripts/rails-18xx.desktop</file>
+                                </entry>
+
+                                <entry>
+                                    <name>/usr/lib/rails-18xx</name>
+                                    <file>${project.build.directory}/${jarName.all}.jar</file>
+                                </entry>
+
+                                <entry>
+                                    <name>/usr/share/pixmaps</name>
+                                    <file>${project.build.outputDirectory}/build/rails.png</file>
+                                </entry>
+                            </entries>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

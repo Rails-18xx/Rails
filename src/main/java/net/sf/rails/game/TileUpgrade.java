@@ -1,31 +1,20 @@
 package net.sf.rails.game;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Predicate;
+import com.google.common.collect.*;
+import com.google.common.collect.Sets.SetView;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
+import java.util.*;
 
 public class TileUpgrade implements Upgrade {
 
-    private static final Logger log = 
+    private static final Logger log =
             LoggerFactory.getLogger(TileUpgrade.class);
 
     /**
@@ -38,37 +27,37 @@ public class TileUpgrade implements Upgrade {
         private final Map<Station, Station> stationMapping;
         private final Set<Station> stationsWithNewTrack;
         private final boolean symmetric;
-        
-        private Rotation(Set<Track> connectedTracks, Set<Track> newTracks, HexSide rotation, 
-                Map<Station, Station> mapping, boolean symmetric) {
-            
+
+        private Rotation(Set<Track> connectedTracks, Set<Track> newTracks, HexSide rotation,
+                         Map<Station, Station> mapping, boolean symmetric) {
+
             this.rotation = rotation;
             this.stationMapping = mapping;
             this.symmetric = symmetric;
 
             HexSidesSet.Builder sidesBuilder = HexSidesSet.builder();
-            for (Track t:connectedTracks) {
+            for (Track t : connectedTracks) {
                 if (t.getStart().getTrackPointType() == TrackPoint.Type.SIDE) {
-                    sidesBuilder.set((HexSide)t.getStart());
+                    sidesBuilder.set((HexSide) t.getStart());
                 }
                 if (t.getEnd().getTrackPointType() == TrackPoint.Type.SIDE) {
-                    sidesBuilder.set((HexSide)t.getEnd());
+                    sidesBuilder.set((HexSide) t.getEnd());
                 }
             }
             connectedSides = sidesBuilder.build();
 
             sidesBuilder = HexSidesSet.builder();
             ImmutableSet.Builder<Station> stationBuilder = ImmutableSet.builder();
-            for (Track t:newTracks) {
+            for (Track t : newTracks) {
                 if (t.getStart().getTrackPointType() == TrackPoint.Type.SIDE) {
-                    sidesBuilder.set((HexSide)t.getStart());
+                    sidesBuilder.set((HexSide) t.getStart());
                 } else {
-                    stationBuilder.add((Station)t.getStart());
+                    stationBuilder.add((Station) t.getStart());
                 }
                 if (t.getEnd().getTrackPointType() == TrackPoint.Type.SIDE) {
-                    sidesBuilder.set((HexSide)t.getEnd());
+                    sidesBuilder.set((HexSide) t.getEnd());
                 } else {
-                    stationBuilder.add((Station)t.getEnd());
+                    stationBuilder.add((Station) t.getEnd());
                 }
             }
             stationsWithNewTrack = stationBuilder.build();
@@ -78,13 +67,13 @@ public class TileUpgrade implements Upgrade {
             // then all sides connecting to the station of the base tile are considered as
             // sides with new track as well
             if (stationMapping != null && !stationsWithNewTrack.isEmpty()) {
-                for (Track t:connectedTracks) {
-                    if (t.getStart().getTrackPointType() == TrackPoint.Type.STATION 
+                for (Track t : connectedTracks) {
+                    if (t.getStart().getTrackPointType() == TrackPoint.Type.STATION
                             && t.getEnd().getTrackPointType() == TrackPoint.Type.SIDE) {
                         Station start = (Station) t.getStart();
                         if (stationsWithNewTrack.contains(start)
-                                && stationMapping.containsKey(start) 
-                                && start.getBaseSlots() 
+                                && stationMapping.containsKey(start)
+                                && start.getBaseSlots()
                                 < stationMapping.get(start).getBaseSlots()) {
                             sidesBuilder.set((HexSide) t.getEnd());
                         }
@@ -93,39 +82,43 @@ public class TileUpgrade implements Upgrade {
             }
             sidesWithNewTrack = sidesBuilder.build();
         }
-        
-        public HexSidesSet getConnectedSides()  {
+
+        public HexSidesSet getConnectedSides() {
             return connectedSides;
         }
-        
-        public HexSidesSet getSidesWithNewTrack()  {
+
+        public HexSidesSet getSidesWithNewTrack() {
             return sidesWithNewTrack;
         }
-        
+
         public Map<Station, Station> getStationMapping() {
             return stationMapping;
         }
-        
+
         public Set<Station> getStationsWithNewTrack() {
             return stationsWithNewTrack;
         }
-        
+
         public boolean isSymmetric() {
             return symmetric;
         }
-        
+
         @Override
         public String toString() {
-            return "rotation = " + String.valueOf(rotation) + ", connectedSides = " 
-                    + connectedSides.toString() + ", sidesWithNewTrack = " + sidesWithNewTrack.toString() 
+            return "rotation = " + String.valueOf(rotation) + ", connectedSides = "
+                    + connectedSides.toString() + ", sidesWithNewTrack = " + sidesWithNewTrack.toString()
                     + ", stationMapping = " + stationMapping + ", stationsWithNewTrack = " + stationsWithNewTrack;
         }
     }
-    
-    /** Tile to upgrade */
+
+    /**
+     * Tile to upgrade
+     */
     private final Tile baseTile;
 
-    /** The upgrade tile number */
+    /**
+     * The upgrade tile number
+     */
     private final String targetTileId;
 
     /**
@@ -135,14 +128,20 @@ public class TileUpgrade implements Upgrade {
     private final String hexes;
     private final String phases;
 
-    /** The upgrade tile */
+    /**
+     * The upgrade tile
+     */
     private Tile targetTile;
-    
-    /** Possible rotations given the trackConfiguration */
+
+    /**
+     * Possible rotations given the trackConfiguration
+     */
     private Map<HexSide, Rotation> rotations;
     private HexSidesSet rotationSides;
 
-    /** Hexes where the upgrade can be executed */
+    /**
+     * Hexes where the upgrade can be executed
+     */
     private List<MapHex> allowedHexes = null;
 
     /**
@@ -150,7 +149,7 @@ public class TileUpgrade implements Upgrade {
      * and disallowedHexes should be used
      */
     private List<MapHex> disallowedHexes = null;
-    
+
     /**
      * Phases in which the upgrade can be executed.
      */
@@ -163,9 +162,9 @@ public class TileUpgrade implements Upgrade {
         this.hexes = hexes;
         this.phases = phases;
     }
-    
+
     public static List<TileUpgrade> createFromTags(Tile tile, List<Tag> upgradeTags)
-        throws ConfigurationException {
+            throws ConfigurationException {
 
         ImmutableList.Builder<TileUpgrade> allUpgrades = ImmutableList.builder();
         for (Tag upgradeTag : upgradeTags) {
@@ -175,7 +174,7 @@ public class TileUpgrade implements Upgrade {
             String hexes = upgradeTag.getAttributeAsString("hex");
             String phases = upgradeTag.getAttributeAsString("phase");
 
-            for (String sid:ids.split(",")) {
+            for (String sid : ids.split(",")) {
                 try {
                     TileUpgrade upgrade = new TileUpgrade(tile, sid, hexes, phases);
                     allUpgrades.add(upgrade);
@@ -194,7 +193,7 @@ public class TileUpgrade implements Upgrade {
         try {
             upgrade.finishConfiguration(current.getRoot());
         } catch (ConfigurationException e) {
-            log.error(LocalText.getText("InvalidUpgrade", 
+            log.error(LocalText.getText("InvalidUpgrade",
                     current.toText(), specific.toText()), e);
         }
         return upgrade;
@@ -203,14 +202,14 @@ public class TileUpgrade implements Upgrade {
     public void finishConfiguration(RailsRoot root) throws ConfigurationException {
         targetTile = root.getTileManager().getTile(targetTileId);
         if (targetTile == null) {
-            throw new ConfigurationException(LocalText.getText("InvalidUpgrade", 
+            throw new ConfigurationException(LocalText.getText("InvalidUpgrade",
                     baseTile.toText(), targetTileId));
         }
         initRotations();
         parsePhases(root);
         parseHexes(root);
     }
-    
+
     public Tile getTargetTile() {
         return targetTile;
     }
@@ -241,7 +240,7 @@ public class TileUpgrade implements Upgrade {
     private void initRotations() {
         HexSidesSet.Builder sideBuilder = HexSidesSet.builder();
         ImmutableMap.Builder<HexSide, Rotation> rotationBuilder = ImmutableMap.builder();
-        for (HexSide side:HexSide.all()) {
+        for (HexSide side : HexSide.all()) {
             Rotation rotation = processRotations(side);
             if (rotation != null) {
                 sideBuilder.set(side);
@@ -251,33 +250,33 @@ public class TileUpgrade implements Upgrade {
         rotationSides = sideBuilder.build();
         rotations = rotationBuilder.build();
     }
-    
+
     private void parsePhases(RailsRoot root) throws ConfigurationException {
         if (phases == null) return;
 
         ImmutableList.Builder<Phase> phaseBuilder = ImmutableList.builder();
-        for (String phaseName:phases.split(",")) {
+        for (String phaseName : phases.split(",")) {
             Phase phase = root.getPhaseManager().getPhaseByName(phaseName);
             if (phase == null) {
                 throw new ConfigurationException(LocalText.getText(
                         "IllegalPhaseDefinition",
                         this.toString()
-                        ));
+                ));
             } else {
                 phaseBuilder.add(phase);
             }
         }
         allowedPhases = phaseBuilder.build();
     }
-    
+
     private List<MapHex> parseHexString(RailsRoot root, String sHexes)
-        throws ConfigurationException {
+            throws ConfigurationException {
         ImmutableList.Builder<MapHex> hexBuilder = ImmutableList.builder();
-        
-        for (String sHex:sHexes.split(",")) {
+
+        for (String sHex : sHexes.split(",")) {
             MapHex hex = root.getMapManager().getHex(sHex);
             if (hex == null) {
-                throw new ConfigurationException(LocalText.getText("InvalidUpgrade", 
+                throw new ConfigurationException(LocalText.getText("InvalidUpgrade",
                         baseTile.toText(), sHexes));
             } else {
                 hexBuilder.add(hex);
@@ -285,7 +284,7 @@ public class TileUpgrade implements Upgrade {
         }
         return hexBuilder.build();
     }
-    
+
     private void parseHexes(RailsRoot root) throws ConfigurationException {
         if (hexes == null) return;
 
@@ -296,14 +295,14 @@ public class TileUpgrade implements Upgrade {
             disallowedHexes = parseHexString(root, hexes.substring(1));
         }
     }
-    
-    
+
+
     private boolean checkInvalidSides(Rotation rotation, HexSidesSet impassable) {
         log.debug("Check rotation " + rotation + " against  impassable" + impassable);
         if (impassable == null) return false; // null implies that no station exists
         return (rotation.getConnectedSides().intersects(impassable));
     }
-    
+
     private boolean checkSideConnectivity(Rotation rotation, HexSidesSet connected, boolean restrictive) {
         log.debug("Check rotation " + rotation + " against " + connected);
         if (connected == null) return true; // null implies no connectivity required
@@ -313,11 +312,11 @@ public class TileUpgrade implements Upgrade {
             return (rotation.getConnectedSides().intersects(connected));
         }
     }
-    
+
     private boolean checkStationConnectivity(Rotation rotation, Collection<Station> stations) {
         if (rotation.getStationMapping() == null) return false;
-        log.debug("Check Stations "  + stations + ", rotation = " + rotation);
-        for (Station station:stations) {
+        log.debug("Check Stations " + stations + ", rotation = " + rotation);
+        for (Station station : stations) {
             Station targetStation = rotation.getStationMapping().get(station);
             if (targetStation != null && rotation.getStationsWithNewTrack().contains(targetStation)) {
                 return true;
@@ -329,19 +328,19 @@ public class TileUpgrade implements Upgrade {
     public HexSidesSet getRotationSet() {
         return rotationSides;
     }
-    
+
     public Rotation getRotation(HexSide rotation) {
         return rotations.get(rotation);
     }
-    
-    public HexSidesSet getAllowedRotations(HexSidesSet connected, HexSidesSet impassable, HexSide baseRotation, 
-            Collection<Station> stations, boolean restrictive) {
-        
+
+    public HexSidesSet getAllowedRotations(HexSidesSet connected, HexSidesSet impassable, HexSide baseRotation,
+                                           Collection<Station> stations, boolean restrictive) {
+
         HexSidesSet.Builder builder = HexSidesSet.builder();
-        for (HexSide side:rotationSides) {
+        for (HexSide side : rotationSides) {
             Rotation rotation = rotations.get(side);
             if (checkInvalidSides(rotation, impassable)) continue;
-            if (checkSideConnectivity(rotation, connected, restrictive) || 
+            if (checkSideConnectivity(rotation, connected, restrictive) ||
                     checkStationConnectivity(rotation, stations)) {
                 builder.set(side.rotate(baseRotation));
             }
@@ -350,9 +349,9 @@ public class TileUpgrade implements Upgrade {
         log.debug("allowed = " + allowed + "hexSides = " + connected + "impassable =" + impassable + " rotationSides = " + rotationSides);
         return allowed;
     }
-    
+
     private Rotation processRotations(HexSide side) {
-        
+
         TrackConfig base = baseTile.getTrackConfig();
         TrackConfig target = targetTile.getTrackConfig();
         // create rotation of target, unless default (= 0) rotation
@@ -360,31 +359,31 @@ public class TileUpgrade implements Upgrade {
             target = TrackConfig.createByRotation(target, side);
         }
         // check if there are stations to map
-        Map<Station, Station> stationMapping = assignStations(base, target);                 
+        Map<Station, Station> stationMapping = assignStations(base, target);
         if (stationMapping != null && !stationMapping.isEmpty()) {
             if (stationMapping.containsValue(null)) {
                 base = TrackConfig.createByDowngrade(base, base.getTile().getStation(1));
             }
             base = TrackConfig.createByStationMapping(base, stationMapping);
         }
-        
+
         // and finally check if all tracks are maintained
         Set<Track> baseTracks = base.getTracks();
         Set<Track> targetTracks = target.getTracks();
         SetView<Track> diffTrack = Sets.difference(baseTracks, targetTracks);
         if (diffTrack.isEmpty()) {
             SetView<Track> newTracks = Sets.difference(targetTracks, baseTracks);
-            boolean allowed =(targetTile.getPossibleRotations().get(side));
+            boolean allowed = (targetTile.getPossibleRotations().get(side));
             Rotation rotObject = new Rotation(targetTracks, newTracks, side, stationMapping, allowed);
             log.debug("New Rotation for " + baseTile + " => " + targetTile + ": \n" + rotObject);
             return rotObject;
         } else {
-            log.debug("No Rotation found " + baseTile + " => " + targetTile + ", rotation =" + side + 
+            log.debug("No Rotation found " + baseTile + " => " + targetTile + ", rotation =" + side +
                     ", remaining Tracks = " + diffTrack);
             return null;
         }
     }
-    
+
     private Map<Station, Station> assignStations(TrackConfig base, TrackConfig target) {
         int baseNb = base.getTile().getNumStations();
         if (baseNb == 0) return null;
@@ -402,10 +401,10 @@ public class TileUpgrade implements Upgrade {
             } else if (targetNb == 0) {
                 // special case: downgrade in 1856 and there is only one station to consider
                 Set<TrackPoint> baseTrack = base.getStationTracks(baseStation);
-                for (TrackPoint side:baseTrack) {
+                for (TrackPoint side : baseTrack) {
                     Set<TrackPoint> targetTrack = target.getSideTracks((HexSide) side);
                     targetTrack.add(side); // connectivity with all other sides
-                    SetView<TrackPoint> diffTrack = Sets.difference(baseTrack, targetTrack); 
+                    SetView<TrackPoint> diffTrack = Sets.difference(baseTrack, targetTrack);
                     if (!diffTrack.isEmpty()) return null;
                 }
                 stationMap.put(baseStation, null);
@@ -413,12 +412,12 @@ public class TileUpgrade implements Upgrade {
         } else { // more than one base station, assign by side connectivity
             List<Station> noTrackBaseStations = Lists.newArrayList();
             TreeSet<Station> targetStations = Sets.newTreeSet(target.getTile().getStations());
-            for (Station b:base.getTile().getStations()) {
+            for (Station b : base.getTile().getStations()) {
                 Set<TrackPoint> baseTrack = base.getStationTracks(b);
                 if (baseTrack.isEmpty()) { // if track is empty, keep track to add target later
                     noTrackBaseStations.add(b);
                 } else {
-                    for (Station t:target.getTile().getStations()) {
+                    for (Station t : target.getTile().getStations()) {
                         Set<TrackPoint> targetTrack = target.getStationTracks(t);
                         if (checkTrackConnectivity(baseTrack, targetTrack)) {
                             stationMap.put(b, t);
@@ -429,7 +428,7 @@ public class TileUpgrade implements Upgrade {
                 }
             }
             // any base Stations remaining
-            for (Station b:noTrackBaseStations) {
+            for (Station b : noTrackBaseStations) {
                 Station t = targetStations.pollFirst();
                 if (t != null) {
                     stationMap.put(b, t);
@@ -438,13 +437,13 @@ public class TileUpgrade implements Upgrade {
             // check if all base and target stations are assigned
             if (stationMap.keySet().size() != baseNb ||
                     Sets.newHashSet(stationMap.values()).size() != targetNb) {
-               stationMap = null;
-               log.debug("Mapping: Not all stations assigned, set stationMap to null");
+                stationMap = null;
+                log.debug("Mapping: Not all stations assigned, set stationMap to null");
             }
         }
         return stationMap;
     }
-    
+
     private boolean checkTrackConnectivity(Set<TrackPoint> baseTrack, Set<TrackPoint> targetTrack) {
         SetView<TrackPoint> diffTrack = Sets.difference(baseTrack, targetTrack);
         if (diffTrack.isEmpty()) {
@@ -464,11 +463,13 @@ public class TileUpgrade implements Upgrade {
         }
         return false;
     }
-    
+
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("base", baseTile).add("targetTile", targetTile).toString();
-        
+        return MoreObjects.toStringHelper(this)
+                .add("base", baseTile)
+                .add("targetTile", targetTile)
+                .toString();
     }
 }
