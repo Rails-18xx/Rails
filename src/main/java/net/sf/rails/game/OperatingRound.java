@@ -16,6 +16,7 @@ import rails.game.correct.OperatingCost;
 import net.sf.rails.common.*;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.BankPortfolio;
+import net.sf.rails.game.financial.Certificate;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.round.RoundFacade;
@@ -404,8 +405,8 @@ public class OperatingRound extends Round implements Observer {
         
 
         Certificate cert =
-            ipoHasShare ? ipo.findCertificate(publicCompany,
-                    false) : pool.findCertificate(publicCompany,
+            ipoHasShare ? (PublicCertificate) ipo.findCertificate(publicCompany,
+                    false) : (PublicCertificate) pool.findCertificate(publicCompany,
                             false);
             cert.moveTo(player);
             ReportBuffer.add(this, LocalText.getText("SwapsPrivateForCertificate",
