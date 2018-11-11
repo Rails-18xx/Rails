@@ -20,8 +20,11 @@ import net.sf.rails.game.Player;
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
+<<<<<<< rails_2_develop
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.NationalFormationRound;
+=======
+>>>>>>> c8f2041 Replacing obsolete Code in 1837 Implementing the mapHex block for private companies and the phase 4 tile blocks for upper italy.
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.BooleanState;
