@@ -417,6 +417,15 @@ public class StartRound_1837_Coal extends StartRound {
                         LocalText.getText("UnexpectedAction", action.toString()));
             }
         }
+        if ((startPacket.areAllSold())
+                && (pendingAction.value() == null)) {
+                /*
+                 * If the complete start packet has been sold, start a Stock
+                 * round,
+                 */
+                possibleActions.clear();
+                finishRound();
+            }
         return result;
     }
 
