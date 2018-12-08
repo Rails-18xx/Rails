@@ -24,7 +24,6 @@ public class GameStatus_1837 extends GameStatus {
      * 
      */
     public GameStatus_1837() {
-        // TODO Auto-generated constructor stub
     }
     private static final long serialVersionUID = 1L;
 

@@ -185,9 +185,25 @@ public class ORUIManager implements DialogOwner {
         
         // build and finalize hexUpgrades
         hexUpgrades.build();
-
+        
         // show selectable hexes if highlight is active
         if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
+        checkHexVisibilityOnUI(actions);
+        }
+
+        LocalSteps nextSubStep;
+        if (tileActions.isEmpty() && tokenActions.isEmpty()) {
+            nextSubStep = LocalSteps.Inactive;
+        } else {
+            nextSubStep = LocalSteps.SelectHex;
+        }
+        setLocalStep(nextSubStep);
+    }
+
+    protected void checkHexVisibilityOnUI(PossibleActions actions) {
+           
+       // SpecialTileLay sp = (SpecialTileLay)layTile.getSpecialProperty();
+        
             for (GUIHex hex:hexUpgrades.getHexes()) {
                 boolean invalids = false;
                 for (HexUpgrade upgrade:hexUpgrades.getUpgrades(hex)) {
@@ -207,18 +223,10 @@ public class ORUIManager implements DialogOwner {
                 }
             }
         }
-
-        LocalSteps nextSubStep;
-        if (tileActions.isEmpty() && tokenActions.isEmpty()) {
-            nextSubStep = LocalSteps.Inactive;
-        } else {
-            nextSubStep = LocalSteps.SelectHex;
-        }
-        setLocalStep(nextSubStep);
-    }
-    
+      
     private void defineTileUpgrades(List<LayTile> actions) {
         for (LayTile layTile:actions) {
+           
             switch (layTile.getType()) {
             case (LayTile.GENERIC):
                 addConnectedTileLays(layTile);
@@ -242,13 +250,14 @@ public class ORUIManager implements DialogOwner {
 
     }
 
+
     private void addConnectedTileLays(LayTile layTile) {
         NetworkGraph graph = networkAdapter.getRouteGraph(layTile.getCompany(), true);
         Map<MapHex, HexSidesSet> mapHexSides = graph.getReachableSides();
         Multimap<MapHex, Station> mapHexStations = graph.getPassableStations();
         
         boolean allLocations = (layTile.getLocations() == null || layTile.getLocations().isEmpty());
-        
+                
         for (MapHex hex:Sets.union(mapHexSides.keySet(), mapHexStations.keySet())) {
             if (allLocations || layTile.getLocations().contains(hex)) {
                 GUIHex guiHex = map.getHex(hex);
