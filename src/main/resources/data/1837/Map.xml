@@ -71,10 +71,10 @@
         <Hex name="G9" tile="-7"/>
         <Hex name="G11" tile="-1"/>
         <Hex name="G13" tile="-20" city="Linz/Wels" label="OO"/>
-        <IfOption Variant="Basegame">
+        <IfOption name="Variant" value="Basegame">
         <Hex name="G15" tile="0" cost="50"/>
         </IfOption>
-        <IfOption Variant="Romoth">
+        <IfOption name="Variant" value="Romoth">
         <Hex name="G15" tile="0" cost="30"/>
         </IfOption>
         <Hex name="G17" tile="-37012" city="Wien"/>

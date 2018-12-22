@@ -12,6 +12,7 @@ import rails.game.action.DiscardTrain;
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
 import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.GameDef;
@@ -290,13 +291,16 @@ public class StockRound_1837 extends StockRound {
 
         // Check if a soldout Company has still Coal companies running
         // independently
-        // if thats the case the Coal companies need to be merged.
-        for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
-            if ((company.hasStockPrice()) && (company.isSoldOut())) {
-                forcedMergeCompanyRoutine(company);
+        // if thats the case the Coal companies need to be merged in the basegame.
+        // If the Romoth Variant is played this rule will be ignored
+        if (GameOption.getValue(this,GameOption.VARIANT).equalsIgnoreCase("basegame")) {
+            for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
+                if ((company.hasStockPrice()) && (company.isSoldOut())) {
+                    forcedMergeCompanyRoutine(company);
+                }
             }
         }
-
+        //TODO: Check correct order of next statements...
         if (discardingTrains.value()) {
 
             super.finishRound();
