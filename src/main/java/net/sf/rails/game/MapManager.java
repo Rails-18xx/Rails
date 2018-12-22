@@ -317,5 +317,5 @@ public class MapManager extends RailsManager implements Configurable {
     public boolean isMapImageUsed() {
         return mapImageUsed;
     }
-    
+
 }
