@@ -44,7 +44,6 @@ public class StartRound_1837_Minors_KuK extends StartRound {
                 possibleActions.clear();
                 return true;
             }
-//TODO: Check in a game if this works as intended...        
         if (!fillPossibleActions(buyableItems)) {
             /* we dont have a valid player action */
             possibleActions.add(new NullAction(NullAction.Mode.PASS));

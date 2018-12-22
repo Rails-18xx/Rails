@@ -39,7 +39,7 @@ public class ItalyTileModifier implements NetworkGraphModifier {
         }
         
         // 2. retrieve Italy vertices ...
-        String [] italyHexes = {"K2","K4","K8","K10","L3","L5","L7","L9","M4","M6","M8"};
+        String [] italyHexes = {"K1","K3","K7","K9","L2","L4","L6","L8","M3","M5","M7"};
          for (String italyHex:italyHexes){
              italyMapHexes.add(root.getMapManager().getHex(italyHex));
          }

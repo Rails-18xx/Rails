@@ -8,4 +8,5 @@
     <GameOption name="NoMapMode" type="toggle" default="no"/>
     <GameOption name="UnlimitedTopTrains" values="No,Yes" default="No"/>
 	<GameOption name="FirstRoundSellRestriction" values="First Round,First Stock Round" default="First Round" />
+	<GameOption name="Variant" values="Basegame,Romoth" default="Basegame"/>
 </GameOptions>

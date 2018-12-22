@@ -138,14 +138,14 @@
                         <!-- TBD: Private companies no longer block tile-laying
                                   in their hex by other players. -->
                         <!-- Open Bosnia-Herzegovina for building: -->
-                        <LayTile hex="L17" tile="0"/>
-                        <LayTile hex="L19" tile="-1"/>
-                        <LayTile hex="L21" tile="0"/>
-                        <LayTile hex="M18" tile="0" cost="70"/>
-                        <LayTile hex="M20" tile="0" cost="70"/>
-                        <LayTile hex="M22" tile="0" cost="70"/>
-                        <LayTile hex="N19" tile="0" cost="70"/>
-                        <LayTile hex="N21" tile="-10" city="Sarajevo"/>
+                        <LayTile hex="L16" tile="0"/>
+                        <LayTile hex="L18" tile="-1"/>
+                        <LayTile hex="L20" tile="0"/>
+                        <LayTile hex="M17" tile="0" cost="70"/>
+                        <LayTile hex="M19" tile="0" cost="70"/>
+                        <LayTile hex="M21" tile="0" cost="70"/>
+                        <LayTile hex="N18" tile="0" cost="70"/>
+                        <LayTile hex="N20" tile="-10" city="Sarajevo"/>
                         <OperatingRounds number="2"/>
                 </Phase>
                 <Phase name="3+1" realName="2">
