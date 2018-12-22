@@ -255,14 +255,26 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
+        <IfOption name="Variant" value="Basegame">
         <Company name="K2" longname="Kaiserin Elisabeth-Bahn" type="Minor1" price="140" tokens="1" fgColour="FFFFFF" bgColour="C98A5C">
-                <Home hex="G18" city="3"/>
+        <Home hex="G18" city="3"/>
                 <SpecialProperties>
                         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
                                 <ExchangeForShare company="KK" share="10"/>
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
+        </IfOption>
+        <IfOption name="Variant" value="Romoth">
+        <Company name="K2" longname="Kaiserin Elisabeth-Bahn" type="Minor1" price="120" tokens="1" fgColour="FFFFFF" bgColour="C98A5C">
+        <Home hex="G18" city="3"/>
+                <SpecialProperties>
+                        <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
+                                <ExchangeForShare company="KK" share="10"/>
+                        </SpecialProperty>
+                </SpecialProperties>
+        </Company>
+        </IfOption>
         <Company name="K3" longname="Kaiser Franz Joseph-Bahn" type="Minor1" price="90" tokens="1" fgColour="FFFFFF" bgColour="C98A5C">
                 <Home hex="G18" city="2"/>
                 <SpecialProperties>
@@ -348,6 +360,7 @@
                 <Certificate shares="1" number="6"/>
                 <Certificate shares="1" number="2" available="false"/>
         </Company>
+        <IfOption Variant="BaseGame">
         <Company name="Sd" longname="Südbahn" type="National" tokens="5" fgColour="FFFFFF" bgColour="FF5400" startspace="K4" foundingCompany="S1">
                 <Home hex="G18" city="4" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
@@ -355,19 +368,38 @@
                 <Certificate shares="1" number="5" available="false"/>
                 <Trains limit="4,4,4,3"/>
         </Company>
+        </IfOption>
+                <IfOption Variant="Romoth">
+        <Company name="Sd" longname="Südbahn" type="National" tokens="5" fgColour="FFFFFF" bgColour="FF5400" startspace="I4" foundingCompany="S1">
+                <Home hex="G18" city="4" mapDisplay="no"/>
+                <Certificate type="President" shares="1" status="reserved"/>
+                <Certificate shares="1" number="4"/>
+                <Certificate shares="1" number="5" available="false"/>
+                <Trains limit="4,4,4,3"/>
+        </Company>
+        </IfOption>
         <Company name="KK" longname="k.k. Staatsbahn" type="National" tokens="3" fgColour="FFFFFF" bgColour="C98A5C" startspace="I4" foundingCompany="K1">
                 <Home hex="G18" city="1" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
                 <Certificate shares="1" number="6"/>
                 <Certificate shares="1" number="3" available="false"/>
         </Company>
+        <IfOption Variant="BaseGame">
         <Company name="Ug" longname="Ungarische Staatsbahn" type="National" tokens="3" fgColour="FFFFFF" bgColour="FF55AA" startspace="M4" foundingCompany="U1">
                 <Home hex="H23" city="1" mapDisplay="no"/>
                 <Certificate type="President" shares="1" status="reserved"/>
                 <Certificate shares="1" number="4"/>
                 <Certificate shares="1" number="5" available="false"/>
         </Company>
-        
+        </IfOption>
+                <IfOption Variant="Romoth">
+        <Company name="Ug" longname="Ungarische Staatsbahn" type="National" tokens="3" fgColour="FFFFFF" bgColour="FF55AA" startspace="K4" foundingCompany="U1">
+                <Home hex="H23" city="1" mapDisplay="no"/>
+                <Certificate type="President" shares="1" status="reserved"/>
+                <Certificate shares="1" number="4"/>
+                <Certificate shares="1" number="5" available="false"/>
+        </Company>
+        </IfOption>
         <StartPacket name="Coal Mines" roundClass="net.sf.rails.game.specific._1837.StartRound_1837_Coal">
                 <Item name="EKT" type="Coal" basePrice="100" column="1" row="1"/>
                 <Item name="EPP" type="Coal" basePrice="100" column="2" row="1"/>
