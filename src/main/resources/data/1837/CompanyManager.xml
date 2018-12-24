@@ -27,7 +27,7 @@
                 <Trains limit="2,2,1" mandatory="no"/>
                 <CanUseSpecialProperties/>
         </CompanyType>
-        <CompanyType name="Minor2" class="net.sf.rails.game.specific._1837.PublicCompany_1837">
+        <CompanyType name="Minor2" class="net.sf.rails.game.specific._1837.PublicCompany_1837" capitalisation="full">
                 <ShareUnit percentage="50"/>
                 <Certificate type="President" shares="1"/>
                 <Certificate shares="1" number="1"/>
@@ -283,10 +283,12 @@
                         </SpecialProperty>
                 </SpecialProperties>
         </Company>
-         <Company name="U1W" longname="Bahnhof Pest" type="Private" basePrice="90" revenue="0"/>
-        <Company name="U1" longname="Eisenbahn Pest-Waitzen" type="Minor2" price="90" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
+         <Company name="U1W" longname="Bahnhof Pest" type="Private" basePrice="90" revenue="0">
+         		<Certificate certificateCount = "0" />
+                <ClosingConditions><Closemanually/></ClosingConditions>
+         </Company>
+        <Company name="U1" longname="Eisenbahn Pest-Waitzen" type="Minor2" price="180" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
                 <Home hex="H22" city="1"/>
-                <FirstTrainCloses type="Private" name="U1W"/>
                 <SpecialProperties>
                         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
                                 <ExchangeForShare company="Ug" share="10"/>
@@ -302,10 +304,12 @@
                 </SpecialProperties>
                 <Trains limit="2,2,2"/>
         </Company>
-           <Company name="U3C" longname="Bahnhof Czegled" type="Private" basePrice="90" revenue="0"/>      
-        <Company name="U3" longname="Eisenbahn Pest-Czegléd" type="Minor2" price="90" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
+           <Company name="U3C" longname="Bahnhof Czegled" type="Private" basePrice="90" revenue="0">
+           		<Certificate certificateCount = "0" />
+         <ClosingConditions><Closemanually/></ClosingConditions>
+         </Company>      
+        <Company name="U3" longname="Eisenbahn Pest-Czegléd" type="Minor2" price="180" tokens="1" fgColour="FFFFFF" bgColour="FF55AA">
                 <Home hex="H22" city="2"/>
-                <FirstTrainCloses type="Private" name="U3C"/>
                 <SpecialProperties>
                         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
                                 <ExchangeForShare company="Ug" share="10"/>
@@ -441,9 +445,9 @@
         </StartPacket>
         <StartPacket name="Hungary Privates" roundClass="net.sf.rails.game.specific._1837.StartRound_1837_Minors_Hungary">
         <Item name="U1" president="yes" basePrice="90" type="Minor2"/>
-        <Item name="U1W" type="Private" basePrice="90">
+		<Item name="U1W" type="Private" basePrice="90">
             <SubItem name="U1" type="Minor2" />
-            </Item>
+            </Item> 
         <Item name="U2" type="Minor1" basePrice="90"/>
         <Item name="U3" type="Minor2" basePrice="90" president="yes"/>
         <Item name="U3C" type="Private" basePrice="90">
