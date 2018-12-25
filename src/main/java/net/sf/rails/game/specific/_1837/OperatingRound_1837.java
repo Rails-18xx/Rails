@@ -357,7 +357,18 @@ public class OperatingRound_1837 extends OperatingRound {
                     shares,
                     operatingCompany.value().getShareUnit()));
         }
+        /**
+         *  payout the direct Income from the Coal Mine if any
+         */
+        String partText = Currency.fromBank( operatingCompany.value().getDirectIncomeRevenue(), operatingCompany.value());
+        ReportBuffer.add(this, LocalText.getText("Payout",
+                operatingCompany.getId(),
+                partText, 
+                " companies treasury."
+                ));
 
+
+        
         // Move the token
         ((PublicCompany_1837) operatingCompany.value()).payout(amount, b);
 
@@ -373,9 +384,12 @@ public class OperatingRound_1837 extends OperatingRound {
 
         int amount = action.getActualRevenue();
         int revenueAllocation = action.getRevenueAllocation();
+        int directIncome = action.getActualCompanyTreasuryRevenue();
 
         operatingCompany.value().setLastRevenue(amount);
         operatingCompany.value().setLastRevenueAllocation(revenueAllocation);
+        operatingCompany.value().setLastDirectIncome(directIncome);
+        operatingCompany.value().setDirectIncomeRevenue(directIncome);
 
         // Pay any debts from treasury, revenue and/or president's cash
         // The remaining dividend may be less that the original income

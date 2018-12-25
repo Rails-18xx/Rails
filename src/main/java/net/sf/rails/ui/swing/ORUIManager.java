@@ -81,7 +81,7 @@ import com.google.common.collect.Sets;
 // Rails 2.0, Even better add a new mechanism that allows to use the standard mechanism for corrections
 public class ORUIManager implements DialogOwner {
 
-    private static Logger log =
+    protected static Logger log =
             LoggerFactory.getLogger(ORUIManager.class);
 
     protected GameUIManager gameUIManager;
@@ -529,7 +529,7 @@ public class ORUIManager implements DialogOwner {
 
     }
 
-    private void setDividend(String command, SetDividend action) {
+    protected void setDividend(String command, SetDividend action) {
 
         int amount;
 

@@ -43,14 +43,14 @@ public class SetDividend extends PossibleORAction implements Cloneable {
      * future, it will only be true if the user has some influence on it (e.g.,
      * in 1844, the user may opt for less that maximum revenue is some cases).
      */
-    protected boolean mayUserSetRevenue;
+    private boolean mayUserSetRevenue;
 
     /**
      * The revenue allocations that the user may select from. If only one value
      * is provided, the user has no option (e.g. minor companies always split in
      * most games).
      */
-    protected int[] allowedRevenueAllocations;
+    private int[] allowedRevenueAllocations;
 
     /** Cash that should be minimally raised as revenue
      * (for instance, to pay loan interest as in 1856).
@@ -66,23 +66,36 @@ public class SetDividend extends PossibleORAction implements Cloneable {
 
     /** The revenue destination selected by the user (if he has a choice at all). */
     protected int revenueAllocation;
+    
+    /**The 
+     * The direct revenue for the company treasury (not as dividend) as proposed by the back-end. Currently this is always the
+     * previous revenue. In the future, this could be the calculated revenue.
+     */
+    private int presetCompanyTreasuryRevenue;
+    private int actualCompanyTreasuryRevenue;
 
     public static final long serialVersionUID = 1L;
 
     public SetDividend(int presetRevenue, boolean mayUserSetRevenue,
             int[] allowedAllocations) {
-        this (presetRevenue, mayUserSetRevenue, allowedAllocations, 0);
+        this (presetRevenue, 0, mayUserSetRevenue, allowedAllocations, 0);
     }
 
     public SetDividend(int presetRevenue, boolean mayUserSetRevenue,
                 int[] allowedAllocations, int requiredCash) {
+        this (presetRevenue, 0, mayUserSetRevenue, allowedAllocations, requiredCash);
+    }
+    
+    public SetDividend(int presetRevenue, int presetCompanyTreasuryRevenue, boolean mayUserSetRevenue,
+            int[] allowedAllocations, int requiredCash) {
         super();
         this.presetRevenue = presetRevenue;
-        this.mayUserSetRevenue = mayUserSetRevenue;
-        this.allowedRevenueAllocations = allowedAllocations.clone();
+        this.presetCompanyTreasuryRevenue = presetCompanyTreasuryRevenue;
+        this.setMayUserSetRevenue(mayUserSetRevenue);
+        this.setAllowedRevenueAllocations(allowedAllocations.clone());
         this.requiredCash = requiredCash;
-        if (allowedRevenueAllocations.length == 1) {
-            revenueAllocation = allowedRevenueAllocations[0];
+        if (getAllowedRevenueAllocations().length == 1) {
+            revenueAllocation = getAllowedRevenueAllocations()[0];
         } else {
             revenueAllocation = UNKNOWN;
         }
@@ -90,8 +103,8 @@ public class SetDividend extends PossibleORAction implements Cloneable {
 
     /** Clone an instance (used by clone) */
     protected SetDividend(SetDividend action) {
-        this(action.presetRevenue, action.mayUserSetRevenue,
-                action.allowedRevenueAllocations,
+        this(action.presetRevenue, action.getMayUserSetRevenue(),
+                action.getAllowedRevenueAllocations(),
                 action.requiredCash);
     }
 
@@ -107,12 +120,25 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         return actualRevenue;
     }
 
+    public void setActualCompanyTreasuryRevenue(
+            int actualCompanyTreasuryRevenue2) {
+        this.actualCompanyTreasuryRevenue = actualCompanyTreasuryRevenue2;        
+    }
+
+    public int getActualCompanyTreasuryRevenue() {
+                    return actualCompanyTreasuryRevenue;        
+    }
+    
+    public int getPresetCompanyTreasuryRevenue() {
+        return presetCompanyTreasuryRevenue;
+    }
+    
     public int[] getAllowedAllocations() {
-        return allowedRevenueAllocations;
+        return getAllowedRevenueAllocations();
     }
 
     public boolean isAllocationAllowed(int allocationType) {
-        for (int at : allowedRevenueAllocations) {
+        for (int at : getAllowedRevenueAllocations()) {
             if (at == allocationType) return true;
         }
         return false;
@@ -143,6 +169,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
 
         SetDividend result = new SetDividend(this);
         result.setActualRevenue(actualRevenue);
+        result.setActualCompanyTreasuryRevenue(actualCompanyTreasuryRevenue);
         result.setRevenueAllocation(revenueAllocation);
         return result;
     }
@@ -158,8 +185,9 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         SetDividend action = (SetDividend)pa; 
         boolean options = 
                 Objects.equal(this.presetRevenue, action.presetRevenue)
-                && Objects.equal(this.mayUserSetRevenue, action.mayUserSetRevenue)
-                && Arrays.equals(this.allowedRevenueAllocations, action.allowedRevenueAllocations)
+                && Objects.equal(this.presetCompanyTreasuryRevenue, action.presetCompanyTreasuryRevenue)
+                && Objects.equal(this.getMayUserSetRevenue(), action.getMayUserSetRevenue())
+                && Arrays.equals(this.getAllowedRevenueAllocations(), action.getAllowedRevenueAllocations())
                 && Objects.equal(this.requiredCash, action.requiredCash)
         ;
         
@@ -169,6 +197,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         // check asAction attributes
         return options
                 && Objects.equal(this.actualRevenue, action.actualRevenue)
+                && Objects.equal(this.actualCompanyTreasuryRevenue, action.actualCompanyTreasuryRevenue)
                 && Objects.equal(this.revenueAllocation, action.revenueAllocation)
         ;
     }
@@ -178,10 +207,12 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         return super.toString() + 
                 RailsObjects.stringHelper(this)
                     .addToString("presetRevenue", presetRevenue)
-                    .addToString("mayUserSetRevenue", mayUserSetRevenue)
-                    .addToString("allowedRevenueAllocations", allowedRevenueAllocations)
+                    .addToString("PresetTreasuryBonusRevenue",presetCompanyTreasuryRevenue)
+                    .addToString("mayUserSetRevenue", getMayUserSetRevenue())
+                    .addToString("allowedRevenueAllocations", getAllowedRevenueAllocations())
                     .addToString("requiredCash", requiredCash)
                     .addToStringOnlyActed("actualRevenue", actualRevenue)
+                    .addToStringOnlyActed("actualCompanyTreasuryRevenue", actualCompanyTreasuryRevenue)
                     .addToStringOnlyActed("revenueAllocation", revenueAllocation)
                     .toString()
         ;
@@ -194,15 +225,34 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         // Custom deserialization for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();
         presetRevenue = fields.get("presetRevenue", presetRevenue);
-        mayUserSetRevenue = fields.get("mayUserSetRevenue", mayUserSetRevenue);
-        allowedRevenueAllocations = (int[]) fields.get("allowedRevenueAllocations", allowedRevenueAllocations);
+        presetCompanyTreasuryRevenue = fields.get("PresetTreasuryBonusRevenue",presetCompanyTreasuryRevenue);
+        setMayUserSetRevenue(fields.get("mayUserSetRevenue", getMayUserSetRevenue()));
+        setAllowedRevenueAllocations((int[]) fields.get("allowedRevenueAllocations", getAllowedRevenueAllocations()));
         requiredCash = fields.get("requiredCash", 0);
         actualRevenue = fields.get("actualRevenue", actualRevenue);
+        actualCompanyTreasuryRevenue = fields.get("actualCompanyTreasuryRevenue", actualCompanyTreasuryRevenue);
         revenueAllocation = fields.get("revenueAllocation", revenueAllocation);
 
         if (Util.hasValue(companyName)) {
             company = getCompanyManager().getPublicCompany(companyName);
         }
+    }
+
+    public boolean getMayUserSetRevenue() {
+        return mayUserSetRevenue;
+    }
+
+    public void setMayUserSetRevenue(boolean mayUserSetRevenue) {
+        this.mayUserSetRevenue = mayUserSetRevenue;
+    }
+
+    public int[] getAllowedRevenueAllocations() {
+        return allowedRevenueAllocations;
+    }
+
+    public void setAllowedRevenueAllocations(
+            int[] allowedRevenueAllocations) {
+        this.allowedRevenueAllocations = allowedRevenueAllocations;
     }
 
 }

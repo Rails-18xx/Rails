@@ -132,6 +132,11 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /** Most recent revenue earned. */
     protected final CountingMoneyModel lastRevenue = CountingMoneyModel.create(this, "lastRevenue", false);
 
+    public final CountingMoneyModel  directIncomeRevenue = CountingMoneyModel.create(this, "directIncome", false);
+    
+    /** Most recent Direct Company Treasury income earned. */
+    protected final CountingMoneyModel lastDirectIncome = CountingMoneyModel.create(this, "lastDirectIncome", false);
+
     /** Most recent payout decision. */
     protected final StringState lastRevenueAllocation = StringState.create(this, "lastRevenueAllocation");
 
@@ -302,6 +307,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     private String relatedPublicCompany = null;
 
     private String foundingStartCompany = null;
+
 
     /**
      * Used by Configure (via reflection) only
@@ -2038,6 +2044,36 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public void setStartingMinor(String foundingCompany) {
         this.foundingStartCompany = foundingCompany;
     }
+
+
+    public Model getLastDirectIncomeModel() {
+        return lastDirectIncome;
+    }
     
+    /**
+     * Store the last direct Income earned by this company.
+     *
+     * @param i The last revenue amount.
+     */
+    public void setLastDirectIncome(int i) {
+        lastDirectIncome.set(i);
+    }
+
+    /**
+     * Get the last directIncome earned by this company.
+     *
+     * @return The last revenue amount.
+     */
+    public int getLastDirectIncome() {
+        return lastDirectIncome.value();
+    }
+
+    public void setDirectIncomeRevenue(int directIncome) {
+        this.directIncomeRevenue.set(directIncome);
+    }
     
+    public int getDirectIncomeRevenue() {
+        return directIncomeRevenue.value();
+    }
+
 }
