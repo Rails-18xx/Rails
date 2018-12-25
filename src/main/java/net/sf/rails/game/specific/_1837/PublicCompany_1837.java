@@ -1,15 +1,26 @@
 package net.sf.rails.game.specific._1837;
 
+<<<<<<< rails_2_develop
+=======
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.BankPortfolio;
+import net.sf.rails.game.PublicCertificate;
+>>>>>>> d60f21a Preparation and implementation of Actions for introducing the Special Company Treasury Incomes.
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.Train;
+<<<<<<< rails_2_develop
 import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.PublicCertificate;
+=======
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.IntegerState;
+>>>>>>> d60f21a Preparation and implementation of Actions for introducing the Special Company Treasury Incomes.
 import net.sf.rails.game.state.Owner;
 
 public class PublicCompany_1837 extends PublicCompany {
-
-    
+   
     public PublicCompany_1837(RailsItem parent, String id) {
         super(parent, id);
     }
@@ -59,4 +70,10 @@ public class PublicCompany_1837 extends PublicCompany {
             }
             return true;
     }
+
+    /**
+     * @param coalMineTreasuryBonus the coalMineTreasuryBonus to set
+     */
+    
+    
 }

@@ -360,7 +360,18 @@ public class OperatingRound_1837 extends OperatingRound {
                     shares,
                     operatingCompany.value().getShareUnit()));
         }
+        /**
+         *  payout the direct Income from the Coal Mine if any
+         */
+        String partText = Currency.fromBank( operatingCompany.value().getDirectIncomeRevenue(), operatingCompany.value());
+        ReportBuffer.add(this, LocalText.getText("Payout",
+                operatingCompany.getId(),
+                partText, 
+                " companies treasury."
+                ));
 
+
+        
         // Move the token
         ((PublicCompany_1837) operatingCompany.value()).payout(amount, b);
 
@@ -376,9 +387,12 @@ public class OperatingRound_1837 extends OperatingRound {
 
         int amount = action.getActualRevenue();
         int revenueAllocation = action.getRevenueAllocation();
+        int directIncome = action.getActualCompanyTreasuryRevenue();
 
         operatingCompany.value().setLastRevenue(amount);
         operatingCompany.value().setLastRevenueAllocation(revenueAllocation);
+        operatingCompany.value().setLastDirectIncome(directIncome);
+        operatingCompany.value().setDirectIncomeRevenue(directIncome);
 
         // Pay any debts from treasury, revenue and/or president's cash
         // The remaining dividend may be less that the original income
@@ -458,5 +472,26 @@ public class OperatingRound_1837 extends OperatingRound {
             }
          }
         return true;
+    }
+    
+    
+    protected void prepareRevenueAndDividendAction() {
+
+        // There is only revenue if there are any trains
+        if (operatingCompany.value().canRunTrains()) {
+            int[] allowedRevenueActions =
+                    operatingCompany.value().isSplitAlways()
+                            ? new int[] { SetDividend.SPLIT }
+                            : operatingCompany.value().isSplitAllowed()
+                                    ? new int[] { SetDividend.PAYOUT,
+                                            SetDividend.SPLIT,
+                                            SetDividend.WITHHOLD } : new int[] {
+                                            SetDividend.PAYOUT,
+                                            SetDividend.WITHHOLD };
+
+            possibleActions.add(new SetDividend(
+                    operatingCompany.value().getLastRevenue(), operatingCompany.value().getLastDirectIncome(), true,
+                    allowedRevenueActions,0));
+        }
     }
 }

@@ -2567,7 +2567,7 @@ public class OperatingRound extends Round implements Observer {
                     recipient.getId(), partText, shares,
                     operatingCompany.value().getShareUnit()));
         }
-
+        
         // Move the token
         operatingCompany.value().payout(amount);
 

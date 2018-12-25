@@ -16,6 +16,7 @@
                         </OperatingRound>
                 </GameParameters>
                 <GuiClasses>
+                	<GameStatus	class="net.sf.rails.ui.swing.gamespecific._1837.GameStatus_1837"/>
                     <StartRoundWindow class="net.sf.rails.ui.swing.gamespecific._1837.StartRoundWindow_1837"/>
                     <StatusWindow class="net.sf.rails.ui.swing.gamespecific._1837.StatusWindow_1837"/>
                     <GameUIManager class="net.sf.rails.ui.swing.gamespecific._1837.GameUIManager_1837"/>
@@ -207,7 +208,7 @@
                                   haven't already. -->
                         <!-- TBD: All coal companies must convert even if their
                                   major companies haven't formed. -->
-                        <OffBoardRevenue step="2"/>
+                        <OffBoardRevenue step="2"/> <!--  Where do we read that..  -->
                         <OperatingRounds number="3"/>
                 </Phase>
                 <Phase name="4G" realName="3">
@@ -220,5 +221,8 @@
         		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
 				<Modifier class="net.sf.rails.game.specific._1837.ItalyTileModifier" />
 				<Modifier class="net.sf.rails.game.specific._1837.BzHTileModifier" />
+				<!-- <Modifier class="net.sf.rails.game.specific._1837.CoalMineModifier"/>
+				//<Modifier class="net.sf.rails.game.specific._1837.CoalTrainModifier"/>
+				//<Modifier class="net.sf.rails.game.specific._1837.StartAtCoalMineModifier"/> -->
         </Component>
 </ComponentManager>

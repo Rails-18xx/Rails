@@ -3,6 +3,8 @@
  */
 package net.sf.rails.game.specific._1837;
 
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.GuiDef.Parm;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.RailsRoot;
@@ -19,6 +21,7 @@ import net.sf.rails.game.specific._1837.OperatingRound_1837;
  *
  */
 public class GameManager_1837 extends GameManager {
+
 
     private Round previousRound = null;
     
@@ -125,6 +128,17 @@ public class GameManager_1837 extends GameManager {
         }
         this.setNationalToFound("KK");
         createRound(NationalFormationRound.class, roundName).start();
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.GameManager#setGuiParameter(net.sf.rails.common.GuiDef.Parm, boolean)
+     */
+    @Override
+    public void setGuiParameters() {
+        super.setGuiParameters();
+        //Flags the Game that a special Company income is needed...
+        guiParameters.put(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME, true);
+
     }
 
 }

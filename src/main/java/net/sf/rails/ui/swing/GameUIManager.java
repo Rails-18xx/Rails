@@ -1298,19 +1298,14 @@ public class GameUIManager implements DialogOwner {
         }
 
         public void deRegister() {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public void update(String text) {
-            // TODO Auto-generated method stub
-            
         }
 
         @Override
         public net.sf.rails.game.state.Observable getObservable() {
-            // TODO Auto-generated method stub
             return null;
         }
    }
