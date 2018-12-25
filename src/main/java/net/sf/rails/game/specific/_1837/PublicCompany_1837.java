@@ -1,15 +1,18 @@
 package net.sf.rails.game.specific._1837;
 
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.BankPortfolio;
 import net.sf.rails.game.PublicCertificate;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.Train;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Owner;
 
 public class PublicCompany_1837 extends PublicCompany {
-
-    
+   
     public PublicCompany_1837(RailsItem parent, String id) {
         super(parent, id);
     }
@@ -59,4 +62,10 @@ public class PublicCompany_1837 extends PublicCompany {
             }
             return true;
     }
+
+    /**
+     * @param coalMineTreasuryBonus the coalMineTreasuryBonus to set
+     */
+    
+    
 }
