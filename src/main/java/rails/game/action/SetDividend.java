@@ -76,7 +76,16 @@ public class SetDividend extends PossibleORAction implements Cloneable {
 
     public static final long serialVersionUID = 1L;
 
-    
+    public SetDividend(int presetRevenue, boolean mayUserSetRevenue,
+            int[] allowedAllocations) {
+        this (presetRevenue, 0, mayUserSetRevenue, allowedAllocations, 0);
+    }
+
+    public SetDividend(int presetRevenue, boolean mayUserSetRevenue,
+                int[] allowedAllocations, int requiredCash) {
+        this (presetRevenue, 0, mayUserSetRevenue, allowedAllocations, requiredCash);
+    }
+   
     public SetDividend(int presetRevenue, int presetCompanyTreasuryRevenue, boolean mayUserSetRevenue,
             int[] allowedAllocations, int requiredCash) {
         super();
@@ -92,18 +101,10 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         }
     }
 
-    public SetDividend(int presetRevenue, boolean mayUserSetRevenue,
-            int[] allowedAllocations) {
-        this (presetRevenue, 0, mayUserSetRevenue, allowedAllocations, 0);
-    }
-
-    public SetDividend(int presetRevenue, boolean mayUserSetRevenue,
-                int[] allowedAllocations, int requiredCash) {
-        this (presetRevenue, 0, mayUserSetRevenue, allowedAllocations, requiredCash);
-    }
-
+  
     /** Clone an instance (used by clone) */
     protected SetDividend(SetDividend action) {
+
         this(action.presetRevenue, 
                 action.presetCompanyTreasuryRevenue, 
                 action.getMayUserSetRevenue(),
@@ -210,7 +211,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         return super.toString() + 
                 RailsObjects.stringHelper(this)
                     .addToString("presetRevenue", presetRevenue)
-                    .addToString("PresetCompanyTreasuryRevenue",presetCompanyTreasuryRevenue)
+                    .addToString("PresetTreasuryBonusRevenue",presetCompanyTreasuryRevenue)
                     .addToString("mayUserSetRevenue", getMayUserSetRevenue())
                     .addToString("allowedRevenueAllocations", getAllowedRevenueAllocations())
                     .addToString("requiredCash", requiredCash)
@@ -229,6 +230,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         ObjectInputStream.GetField fields = in.readFields();
         presetRevenue = fields.get("presetRevenue", presetRevenue);
         presetCompanyTreasuryRevenue = fields.get("presetCompanyTreasuryRevenue", presetCompanyTreasuryRevenue);
+        presetCompanyTreasuryRevenue = fields.get("PresetTreasuryBonusRevenue",presetCompanyTreasuryRevenue);
         setMayUserSetRevenue(fields.get("mayUserSetRevenue", getMayUserSetRevenue()));
         setAllowedRevenueAllocations((int[]) fields.get("allowedRevenueAllocations", getAllowedRevenueAllocations()));
         requiredCash = fields.get("requiredCash", 0);
