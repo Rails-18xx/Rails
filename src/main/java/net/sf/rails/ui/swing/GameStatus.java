@@ -112,6 +112,14 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected Field futureTrains;
     protected int futureTrainsXOffset, futureTrainsYOffset, futureTrainsWidth;
     protected int rightCompCaptionXOffset;
+    
+    /**
+     * Next Field is needed for the direct payment of Income and display of sum
+     * during an OR for a Company, that is not linked to a share.
+     */
+    private Field compDirectRevenue[];
+    private int compDirectRevXOffset, compDirectRevYOffset;
+
 
     protected Caption[] upperPlayerCaption;
     protected Caption[] lowerPlayerCaption;
@@ -130,6 +138,8 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected boolean compCanHoldForeignShares = false; // NOT YET USED
     protected boolean hasCompanyLoans = false;
     protected boolean hasRights;
+    private boolean hasDirectCompanyIncomeInOr = false;
+
 
     // Current actor.
     // Players: 0, 1, 2, ...
@@ -179,6 +189,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         compCanHoldOwnShares = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
         hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);
+        hasDirectCompanyIncomeInOr= gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
 
         // TODO: Can this be done using ipo and pool directly?
         ipo = bank.getIpo().getPortfolioModel();
@@ -204,7 +215,8 @@ public class GameStatus extends GridPanel implements ActionListener {
         compPrivates = new Field[nc];
         compLoans = new Field[nc];
         if (hasRights) rights = new Field[nc];
-
+        if (hasDirectCompanyIncomeInOr) compDirectRevenue= new Field[nc];
+        
         playerCash = new Field[np];
         playerCashButton = new ClickField[np];
         playerPrivates = new Field[np];
@@ -236,6 +248,10 @@ public class GameStatus extends GridPanel implements ActionListener {
         compCashYOffset = lastY;
         compRevenueXOffset = ++lastX;
         compRevenueYOffset = lastY;
+        if (hasDirectCompanyIncomeInOr) {
+            compDirectRevXOffset = ++lastX;
+            compDirectRevYOffset = lastY;
+        }
         compTrainsXOffset = ++lastX;
         compTrainsYOffset = lastY;
         compTokensXOffset = ++lastX;
@@ -332,6 +348,10 @@ public class GameStatus extends GridPanel implements ActionListener {
                 1, WIDE_BOTTOM, true);
         addField(new Caption(LocalText.getText("REVENUE")), compRevenueXOffset,
                 1, 1, 1, WIDE_BOTTOM, true);
+        if (this.hasDirectCompanyIncomeInOr) {
+            addField(new Caption(LocalText.getText("DIRECT_INCOME")), 
+                    compDirectRevXOffset, 1, 1, 1, WIDE_BOTTOM, true);
+        }
         addField(new Caption(LocalText.getText("TRAINS")), compTrainsXOffset,
                 1, 1, 1, WIDE_BOTTOM, true);
         addField(new Caption(LocalText.getText("TOKENS")), compTokensXOffset,
@@ -465,6 +485,11 @@ public class GameStatus extends GridPanel implements ActionListener {
 
             f = compRevenue[i] = new Field(c.getLastRevenueModel());
             addField(f, compRevenueXOffset, compRevenueYOffset + i, 1, 1, 0, visible);
+            
+            if (hasDirectCompanyIncomeInOr) {
+                f = compDirectRevenue[i] = new Field(c.getLastDirectIncomeModel());
+                addField(f, compDirectRevXOffset, compDirectRevYOffset + i, 1, 1, 0, visible);
+            }
 
             f = compTrains[i] = new Field(c.getPortfolioModel().getTrainsModel());
             addField(f, compTrainsXOffset, compTrainsYOffset + i, 1, 1, 0, visible);

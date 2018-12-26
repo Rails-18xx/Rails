@@ -40,7 +40,12 @@
         <Hex name="D34" tile="0"/>
         <Hex name="D36" tile="-3007" city="Tarnopol"/>
         <Hex name="D38" tile="-7" orientation="2"/>
-        <Hex name="E11" tile="-37001" value="30,50" orientation="5" city="EPP"/>
+        <IfOption name="Variant" value="Basegame">
+          <Hex name="E11" tile="-37001" value="30,50" orientation="5" city="EPP"/>
+        </IfOption>
+		<IfOption name="Variant" value="Romoth">
+    	     <Hex name="E11" tile="-37001" value="20,40" orientation="5" city="EPP"/>
+        </IfOption>
         <Hex name="E13" tile="-1"/>
         <Hex name="E15" tile="-1"/>
         <Hex name="E17" tile="-37008" city="Brünn"/>
@@ -153,7 +158,12 @@
         <Hex name="K25" tile="0" cost="50"/>
         <Hex name="K27" tile="0"/>
         <Hex name="K29" tile="-1"/>
-        <Hex name="K31" tile="-37001" value="20,50" orientation="5" city="SPB"/>
+        <IfOption name="Variant" value="Basegame">
+          <Hex name="K31" tile="-37001" value="20,50" orientation="5" city="SPB"/>
+        </IfOption>
+        <IfOption name="Variant" value="Romoth">
+        <Hex name="K31" tile="-37001" value="30,50" orientation="5" city="SPB"/>
+        </IfOption>
         <Hex name="L2" tile="-3007" city="Mailand"/>
         <Hex name="L4" tile="0"/>
         <Hex name="L6" tile="-2"/>

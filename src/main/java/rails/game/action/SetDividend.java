@@ -211,7 +211,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         return super.toString() + 
                 RailsObjects.stringHelper(this)
                     .addToString("presetRevenue", presetRevenue)
-                    .addToString("PresetTreasuryBonusRevenue",presetCompanyTreasuryRevenue)
+                    .addToString("presetTreasuryBonusRevenue",presetCompanyTreasuryRevenue)
                     .addToString("mayUserSetRevenue", getMayUserSetRevenue())
                     .addToString("allowedRevenueAllocations", getAllowedRevenueAllocations())
                     .addToString("requiredCash", requiredCash)
@@ -230,7 +230,6 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         ObjectInputStream.GetField fields = in.readFields();
         presetRevenue = fields.get("presetRevenue", presetRevenue);
         presetCompanyTreasuryRevenue = fields.get("presetCompanyTreasuryRevenue", presetCompanyTreasuryRevenue);
-        presetCompanyTreasuryRevenue = fields.get("PresetTreasuryBonusRevenue",presetCompanyTreasuryRevenue);
         setMayUserSetRevenue(fields.get("mayUserSetRevenue", getMayUserSetRevenue()));
         setAllowedRevenueAllocations((int[]) fields.get("allowedRevenueAllocations", getAllowedRevenueAllocations()));
         requiredCash = fields.get("requiredCash", 0);
