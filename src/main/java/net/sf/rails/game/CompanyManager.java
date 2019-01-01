@@ -213,7 +213,6 @@ public class CompanyManager extends RailsManager implements Configurable {
     
     public void initStartPackets(GameManager gameManager) {
         // initialize startPackets
-        // TODO: Check if this still works in 2.0
         for (StartPacket packet: startPackets) {
             packet.init(gameManager);
         }
