@@ -127,7 +127,7 @@
         <StockSpace name="F9" price="69"/>
         <StockSpace name="G9" price="72"/>
         </IfOption>
-        <IfOPtion name="Variant" value="1827-2ndEd.">
+        <IfOption name="Variant" value="1837-2ndEd.">
         	<StockSpace name="A1" price="88"/>
         	<StockSpace name="B1" price="91"/>
 	        <StockSpace name="C1" price="95"/>
@@ -202,8 +202,8 @@
 	        <StockSpace name="M4" price="142"/>
 	        <StockSpace name="N4" price="157"/>
 	        <StockSpace name="O4" price="175"/>
-	        <StockSpace name="A2" price="68"/>
-        	<StockSpace name="B2" price="71"/>
+	        <StockSpace name="A5" price="68"/>
+        	<StockSpace name="B5" price="71"/>
 	        <StockSpace name="C5" price="74"/>
 	        <StockSpace name="D5" price="77"/>
 	        <StockSpace name="E5" price="80" >
@@ -269,5 +269,5 @@
 	        <StockSpace name="F10" price="58"/>
 	        <StockSpace name="G10" price="61"/>
 	        <StockSpace name="H10" price="64"/>
-        </IfOPtion>
+        </IfOption>
 </StockMarket>

@@ -21,7 +21,7 @@
                     <StartRoundWindow class="net.sf.rails.ui.swing.gamespecific._1837.StartRoundWindow_1837"/>
                     </IfOption>
                     <IfOption name="Variant" value="1837-2ndEd.">
-                    <StartRoundWindow class="net.sf.rails.ui.swing.gamespecific._1837.StartRoundWindow_1837-2nd"/>
+                    <StartRoundWindow class="net.sf.rails.ui.swing.gamespecific._1837.StartRoundWindow_1837"/>
                     </IfOption>
                     <StatusWindow class="net.sf.rails.ui.swing.gamespecific._1837.StatusWindow_1837"/>
                     <GameUIManager class="net.sf.rails.ui.swing.gamespecific._1837.GameUIManager_1837"/>
