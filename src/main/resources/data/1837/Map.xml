@@ -43,7 +43,7 @@
         <IfOption name="Variant" value="Basegame">
           <Hex name="E11" tile="-37001" value="30,50" orientation="5" city="EPP"/>
         </IfOption>
-		<IfOption name="Variant" value="Romoth, 1837-2ndEd.">
+		<IfOption name="Variant" value="Romoth,1837-2ndEd.">
     	     <Hex name="E11" tile="-37001" value="20,40" orientation="5" city="EPP"/>
         </IfOption>
         <Hex name="E13" tile="-1"/>
@@ -76,7 +76,7 @@
         <Hex name="G9" tile="-7"/>
         <Hex name="G11" tile="-1"/>
         <Hex name="G13" tile="-20" city="Linz/Wels" label="OO"/>
-        <IfOption name="Variant" value="Basegame, 1837-2ndEd.">
+        <IfOption name="Variant" value="Basegame,1837-2ndEd.">
         <Hex name="G15" tile="0" cost="50"/>
         </IfOption>
         <IfOption name="Variant" value="Romoth">
@@ -161,7 +161,7 @@
         <IfOption name="Variant" value="Basegame">
           <Hex name="K31" tile="-37001" value="20,50" orientation="5" city="SPB"/>
         </IfOption>
-        <IfOption name="Variant" value="Romoth, 1837-2ndEd.">
+        <IfOption name="Variant" value="Romoth,1837-2ndEd.">
         <Hex name="K31" tile="-37001" value="30,50" orientation="5" city="SPB"/>
         </IfOption>
         <Hex name="L2" tile="-3007" city="Mailand"/>
