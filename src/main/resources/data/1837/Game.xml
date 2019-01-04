@@ -17,12 +17,12 @@
                 </GameParameters>
                 <GuiClasses>
                 	<GameStatus	class="net.sf.rails.ui.swing.gamespecific._1837.GameStatus_1837"/>
-                    <IfOption name="Variant" value="Basegame,Romoth">
+    <!--                <IfOption name="Variant" value="Basegame,Romoth"> --> 
                     <StartRoundWindow class="net.sf.rails.ui.swing.gamespecific._1837.StartRoundWindow_1837"/>
-                    </IfOption>
-                    <IfOption name="Variant" value="1837-2ndEd.">
-                    <StartRoundWindow class="net.sf.rails.ui.swing.gamespecific._1837.StartRoundWindow_1837-2nd"/>
-                    </IfOption>
+                    <!-- </IfOption> -->  
+    <!--                 <IfOption name="Variant" value="1837-2ndEd."> -->
+                    <StartRoundWindow class="net.sf.rails.ui.swing.gamespecific._1837.StartRoundWindow_1837_2ndED"/>
+                    <!-- </IfOption> -->
                     <StatusWindow class="net.sf.rails.ui.swing.gamespecific._1837.StatusWindow_1837"/>
                     <GameUIManager class="net.sf.rails.ui.swing.gamespecific._1837.GameUIManager_1837"/>
                     <ORUIManager class="net.sf.rails.ui.swing.gamespecific._1837.ORUIManager_1837"/>

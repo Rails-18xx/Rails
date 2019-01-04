@@ -59,7 +59,7 @@
                 <StockPrice par="yes"/>
                 <ShareUnit percentage="10"/>
                 <Certificate type="President" shares="2"/>
-                <Float percentage="10"/>
+                <Float percentage="60"/>
                 <Trains limit="4,4,4,3"/>
 				<BaseTokens>
                         <LayCost method="distance" cost="20" number="1"/>
