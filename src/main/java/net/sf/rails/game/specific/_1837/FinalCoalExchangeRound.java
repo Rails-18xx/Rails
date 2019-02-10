@@ -27,14 +27,14 @@ public class FinalCoalExchangeRound extends StockRound_1837 {
         return new FinalCoalExchangeRound(parent, id);
     }
 
-    public void start(Player playerToStartFMCRound) {
+    public void start(Player playerToStartFCERound) {
         ReportBuffer.add(this, "");
-        ReportBuffer.add(this, LocalText.getText("StartFinalMinorExchangeRound"));
+        ReportBuffer.add(this, LocalText.getText("StartFinalCoalExchangeRound"));
 
-        playerManager.setCurrentPlayer(playerToStartFMCRound);
+        playerManager.setCurrentPlayer(playerToStartFCERound);
         initPlayer();
         ReportBuffer.add(this, LocalText.getText("HasFirstTurn",
-                playerToStartFMCRound.getId() ));
+                playerToStartFCERound.getId() ));
     }
 
     /*----- General methods -----*/

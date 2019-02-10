@@ -24,10 +24,12 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.specific._18EU.GameManager_18EU;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.SequenceUtil;
+import rails.game.action.BuyTrain;
 import rails.game.action.SetDividend;
 
 import com.google.common.collect.HashBasedTable;
@@ -491,4 +493,25 @@ public class OperatingRound_1837 extends OperatingRound {
                     allowedRevenueActions,0));
         }
     }
+
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.OperatingRound#buyTrain(rails.game.action.BuyTrain)
+     */
+    @Override
+    public boolean buyTrain(BuyTrain action) {
+      boolean result = super.buyTrain(action);
+            // Check if we have just started Phase 5 and
+            // if we still have at least one Minor operating.
+            // If so, record the current player as the first
+            // one to act in the Final Minor Exchange Round.
+            if ((result) && getRoot().getPhaseManager().hasReachedPhase("5")
+                && operatingCompanies.get(0).getType().getId().equalsIgnoreCase("Minor")
+                && ((GameManager_1837)gameManager).getPlayerToStartFCERound() == null) {
+                ((GameManager_1837)gameManager).setPlayerToStartFCERound(operatingCompany.value().getPresident());
+            }
+        return result;    
+    }
+    
+    
 }

@@ -21,7 +21,6 @@ public class NationalFormationRound extends StockRound {
 
     public NationalFormationRound(GameManager parent, String id) {
         super(parent, id);
-        // TODO Auto-generated constructor stub
     }
 
 
@@ -473,7 +472,7 @@ public class NationalFormationRound extends StockRound {
 
     @Override
     public String toString() {
-        return "1837 KuKFormationRound";
+        return "1837 NationalFormationRound";
     }
 
 }
