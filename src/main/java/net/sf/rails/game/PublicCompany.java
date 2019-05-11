@@ -308,6 +308,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     private String foundingStartCompany = null;
 
+    private List<MapHex> reservedHexes = null;
+
 
     /**
      * Used by Configure (via reflection) only
@@ -1981,8 +1983,20 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         // close company on the stock market
         getRoot().getStockMarket().close(this);
+        
+        //make sure all reservations on the map are removed (18EU Hex Brussels for example
+        freeReservedHexes();
 
     }
+
+    private void freeReservedHexes() {
+        if (reservedHexes != null) {
+            for (MapHex hex : reservedHexes) {
+                hex.setReservedForCompany(null);
+            }
+        }
+    }
+
 
     public String getLongName() {
         return longName;
@@ -2074,6 +2088,12 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     
     public int getDirectIncomeRevenue() {
         return directIncomeRevenue.value();
+    }
+
+
+    public void addReservedHex(MapHex mapHex) {
+        this.reservedHexes.add(mapHex);
+        
     }
 
 }

@@ -301,8 +301,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         currentTile.set(root.getTileManager().getTile(preprintedTileId));
         currentTileRotation.set(preprintedTileRotation);
 
-        reservedForCompany = getRoot().getCompanyManager().getPublicCompany(
-                reservedForCompanyName);
+        setReservedForCompany(getRoot().getCompanyManager().getPublicCompany(
+                reservedForCompanyName));
 
         // We need completely new objects, not just references to the Tile's
         // stations.
@@ -938,6 +938,16 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     public PublicCompany getReservedForCompany() {
         return reservedForCompany;
+    }
+
+    /**
+     * @param reservedForCompany the reservedForCompany to set
+     */
+    public void setReservedForCompany(PublicCompany reservedForCompany) {
+        this.reservedForCompany = reservedForCompany;
+        if (reservedForCompany != null) {
+            reservedForCompany.addReservedHex(this);
+        }
     }
 
     public boolean isReservedForCompany() {
