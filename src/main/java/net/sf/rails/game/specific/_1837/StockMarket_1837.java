@@ -3,6 +3,7 @@
  */
 package net.sf.rails.game.specific._1837;
 
+import net.sf.rails.common.GameOption;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.StockMarket;
@@ -20,7 +21,6 @@ public class StockMarket_1837 extends StockMarket {
      */
     public StockMarket_1837(RailsRoot parent, String id) {
         super(parent, id);
-        // TODO Auto-generated constructor stub
     }
     
     public void payOut(PublicCompany company, boolean split) {
@@ -62,8 +62,11 @@ public class StockMarket_1837 extends StockMarket {
 
     @Override
     public void soldOut(PublicCompany company) {
-        if (company.getPresident().getPortfolioModel().getCertificates(company).size()>=4) { //President has 4 shares (50% or more)
+        
+        if (GameOption.getValue(this,GameOption.VARIANT).equalsIgnoreCase("Basegame")){
+                if (company.getPresident().getPortfolioModel().getCertificates(company).size()>=4) { //President has 4 shares (50% or more)
           moveLeftAndUp(company);  
+                }
         } else {
         moveUp(company);
         }

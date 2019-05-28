@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import rails.game.action.DiscardTrain;
 import rails.game.action.MergeCompanies;
 import rails.game.specific._1837.FoldIntoHungary;
 import rails.game.specific._1837.FoldIntoKuK;
@@ -30,14 +31,13 @@ public class GameUIManager_1837 extends GameUIManager {
 
 
     public GameUIManager_1837() {
-        // TODO Auto-generated constructor stub
     }
+
     /* (non-Javadoc)
      * @see net.sf.rails.ui.swing.GameUIManager#updateUI()
      */
     @Override
     public void updateUI() {
-        // TODO Auto-generated method stub
         super.updateUI();
     }
 
@@ -143,5 +143,15 @@ public class GameUIManager_1837 extends GameUIManager {
         // Dialog action found and processed, let the superclass initiate processing.
         super.dialogActionPerformed(true);
     }
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.ui.swing.GameUIManager#discardTrains(rails.game.action.DiscardTrain)
+     */
+    @Override
+    public void discardTrains(DiscardTrain dt) {
+        // TODO Auto-generated method stub
+        super.discardTrains(dt);
+    }
+    
 }
 

@@ -26,7 +26,6 @@ public class BzHTileModifier implements NetworkGraphModifier {
     @Override
     public void modifyMapGraph(NetworkGraph mapGraph) {
         
-        // TODO (Rails 2.0): Add root reference to modifiers
         SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
         RailsRoot root = RailsRoot.getInstance();
         
@@ -40,7 +39,7 @@ public class BzHTileModifier implements NetworkGraphModifier {
         }
         
         // 2. retrieve BzH vertices ...
-        String[] bzhHexes = {"L17","L19","L21","L23","M18","M20","M22","N19","N21"};
+        String[] bzhHexes = {"L16","L18","L20","L22","M17","M19","M21","N18","N20"};
         for(String bzhHex:bzhHexes){
             bzhMapHexes.add(root.getMapManager().getHex(bzhHex));
         }

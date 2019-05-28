@@ -3,7 +3,6 @@ package net.sf.rails.common;
 public class GuiDef {
 
     /** Identifiers and default names for configurable UI classes */
-    // FIXME: Rails 2.0 move this to xml files
     public enum ClassName {
 
         GAME_UI_MANAGER ("net.sf.rails.ui.swing.GameUIManager"),
@@ -42,7 +41,8 @@ public class GuiDef {
         HAS_ANY_RIGHTS,
         NO_MAP_MODE,
         REVENUE_SUGGEST,
-        ROUTE_HIGHLIGHT, PLAYER_ORDER_VARIES
+        ROUTE_HIGHLIGHT, 
+        PLAYER_ORDER_VARIES, HAS_SPECIAL_COMPANY_INCOME
     }
 
     /**

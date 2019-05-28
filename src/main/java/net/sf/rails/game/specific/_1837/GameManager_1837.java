@@ -3,14 +3,20 @@
  */
 package net.sf.rails.game.specific._1837;
 
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.GuiDef.Parm;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.NationalFormationRound;
 import net.sf.rails.game.Phase;
+import net.sf.rails.game.Player;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Round;
 import net.sf.rails.game.StartPacket;
 import net.sf.rails.game.StartRound;
 import net.sf.rails.game.specific._1837.OperatingRound_1837;
+import net.sf.rails.game.specific._18EU.FinalMinorExchangeRound;
+import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.IntegerState;
 
 
 
@@ -20,8 +26,15 @@ import net.sf.rails.game.specific._1837.OperatingRound_1837;
  */
 public class GameManager_1837 extends GameManager {
 
+    protected final IntegerState cerNumber = IntegerState.create(this, "cerNumber");
+
+
     private Round previousRound = null;
-    
+    protected final GenericState<Player> playerToStartFCERound =
+            GenericState.create(this, "playerToStartFCERound");
+
+    protected final GenericState<Player> playerToStartCERound =
+            GenericState.create(this, "playerToStartCERound");
   
     public GameManager_1837(RailsRoot parent, String id) {
         super(parent, id);
@@ -36,6 +49,17 @@ public class GameManager_1837 extends GameManager {
                 beginStartRound();
             } else {
                 startOperatingRound(runIfStartPacketIsNotCompletelySold());
+            }
+        }
+        else if ((round instanceof StockRound_1837) ||(round instanceof OperatingRound_1837)) {
+            //Check if a Major is started and if so ask the Owner of the Coal Company to fold
+            if (playerToStartCERound.value() != null) {
+                cerNumber.add(1);
+                createRound (CoalExchangeRound.class, "CoalExchangeRound").start
+                        ((Player)playerToStartCERound.value());
+                playerToStartCERound.set(null); 
+            } else {
+            super.nextRound(round);
             }
         }
         else if (round instanceof NationalFormationRound)
@@ -66,7 +90,7 @@ public class GameManager_1837 extends GameManager {
             } else {
                 super.nextRound(round);
             }
-        }
+      }
 
     }
 
@@ -125,6 +149,40 @@ public class GameManager_1837 extends GameManager {
         }
         this.setNationalToFound("KK");
         createRound(NationalFormationRound.class, roundName).start();
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.GameManager#setGuiParameter(net.sf.rails.common.GuiDef.Parm, boolean)
+     */
+    @Override
+    public void setGuiParameters() {
+        super.setGuiParameters();
+        //Flags the Game that a special Company income is needed...
+        guiParameters.put(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME, true);
+
+    }
+
+
+    public Player getPlayerToStartFCERound() {
+        return (Player) playerToStartFCERound.value();
+    }
+
+
+    public void setPlayerToStartFCERound(Player president) {
+        this.playerToStartFCERound.set(president);
+    }
+
+    public Player getPlayerToStartCERound() {
+        return (Player) playerToStartCERound.value();
+    }
+
+
+    public void setPlayerToStartCERound(Player president) {
+        this.playerToStartCERound.set(president);
+    }
+    
+    public int getCERNumber () {
+        return cerNumber.value();
     }
 
 }

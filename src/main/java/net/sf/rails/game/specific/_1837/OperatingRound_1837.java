@@ -3,6 +3,8 @@
  */
 package net.sf.rails.game.specific._1837;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,12 +21,15 @@ import net.sf.rails.game.Phase;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.specific._18EU.GameManager_18EU;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.SequenceUtil;
+import rails.game.action.BuyTrain;
 import rails.game.action.SetDividend;
 
 import com.google.common.collect.HashBasedTable;
@@ -354,7 +359,18 @@ public class OperatingRound_1837 extends OperatingRound {
                     shares,
                     operatingCompany.value().getShareUnit()));
         }
+        /**
+         *  payout the direct Income from the Coal Mine if any
+         */
+        String partText = Currency.fromBank( operatingCompany.value().getDirectIncomeRevenue(), operatingCompany.value());
+        ReportBuffer.add(this, LocalText.getText("Payout",
+                operatingCompany.getId(),
+                partText, 
+                " companies treasury."
+                ));
 
+
+        
         // Move the token
         ((PublicCompany_1837) operatingCompany.value()).payout(amount, b);
 
@@ -370,9 +386,12 @@ public class OperatingRound_1837 extends OperatingRound {
 
         int amount = action.getActualRevenue();
         int revenueAllocation = action.getRevenueAllocation();
+        int directIncome = action.getActualCompanyTreasuryRevenue();
 
         operatingCompany.value().setLastRevenue(amount);
         operatingCompany.value().setLastRevenueAllocation(revenueAllocation);
+        operatingCompany.value().setLastDirectIncome(directIncome);
+        operatingCompany.value().setDirectIncomeRevenue(directIncome);
 
         // Pay any debts from treasury, revenue and/or president's cash
         // The remaining dividend may be less that the original income
@@ -423,38 +442,76 @@ public class OperatingRound_1837 extends OperatingRound {
     @Override
     protected boolean gameSpecificTileLayAllowed(PublicCompany company,
             MapHex hex, int orientation) {
-        boolean result = true;
-        // FIXME: Removed hex.isBlockedForTileLays removed in Rails 2.0 beta preparation, needs fix
-//        // Check if the Hex is blocked ?
-//        for (PrivateCompany privComp : gameManager.getAllPrivateCompanies()) {
-//            boolean isBlocked = hex.isBlockedForTileLays(privComp);
-//            if (isBlocked) {
-//                result = true;
-//                break;
-//            }
-//        }
-//
-//        if (result == true) {
-//            // Check if the Owner of the PublicCompany is owner of the Private Company that blocks
-//            // the hex (1837)
-//
-//            ImmutableSet<PrivateCompany> compPrivatesOwned =
-//                    company.getPresident().getPortfolioModel().getPrivateCompanies();
-//
-//            for (PrivateCompany privComp : compPrivatesOwned) {
-//                // Check if the Hex is blocked by any of the privates owned by
-//                // this PublicCompany
-//                if (hex.isBlockedForTileLays(privComp)) {
-//                    result = false;
-//                }
-//            }
-//
-//        }
+        RailsRoot root = RailsRoot.getInstance();
+        List<MapHex> italyMapHexes = new ArrayList<MapHex> ();
+        // 1. check Phase
 
-        return result;
+        int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex(); 
+        if (phaseIndex < 3) {
+            // Check if the Hex is blocked by a private ?
+            if (hex.isBlockedByPrivateCompany()) {
+                if (company.getPresident().getPortfolioModel().getPrivateCompanies().contains(hex.getBlockingPrivateCompany())) {
+               // Check if the Owner of the PublicCompany is owner of the Private Company that blocks
+               // the hex (1837)
+                    return true;
+                }
+                return false;
+            }
+        }
+        if (phaseIndex >= 4 ) {
+            log.debug("Italy inactive, index of phase = " + phaseIndex);
+                 
+            // 2. retrieve Italy vertices ...
+            String [] italyHexes = {"K1","K3","K7","K9","L2","L4","L6","L8","M3","M5","M7"};
+            for (String italyHex:italyHexes){
+             italyMapHexes.add(root.getMapManager().getHex(italyHex));
+            }
+            if (italyMapHexes.contains(hex)) {
+                return false;
+            }
+         }
+        return true;
+    }
+    
+    
+    protected void prepareRevenueAndDividendAction() {
+
+        // There is only revenue if there are any trains
+        if (operatingCompany.value().canRunTrains()) {
+            int[] allowedRevenueActions =
+                    operatingCompany.value().isSplitAlways()
+                            ? new int[] { SetDividend.SPLIT }
+                            : operatingCompany.value().isSplitAllowed()
+                                    ? new int[] { SetDividend.PAYOUT,
+                                            SetDividend.SPLIT,
+                                            SetDividend.WITHHOLD } : new int[] {
+                                            SetDividend.PAYOUT,
+                                            SetDividend.WITHHOLD };
+
+            possibleActions.add(new SetDividend(
+                    operatingCompany.value().getLastRevenue(), operatingCompany.value().getLastDirectIncome(), true,
+                    allowedRevenueActions,0));
+        }
     }
 
 
-
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.OperatingRound#buyTrain(rails.game.action.BuyTrain)
+     */
+    @Override
+    public boolean buyTrain(BuyTrain action) {
+      boolean result = super.buyTrain(action);
+            // Check if we have just started Phase 5 and
+            // if we still have at least one Minor operating.
+            // If so, record the current player as the first
+            // one to act in the Final Minor Exchange Round.
+            if ((result) && getRoot().getPhaseManager().hasReachedPhase("5")
+                && operatingCompanies.get(0).getType().getId().equalsIgnoreCase("Minor")
+                && ((GameManager_1837)gameManager).getPlayerToStartFCERound() == null) {
+                ((GameManager_1837)gameManager).setPlayerToStartFCERound(operatingCompany.value().getPresident());
+            }
+        return result;    
+    }
+    
     
 }

@@ -24,7 +24,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     }
     public static enum StationType {
         MAJOR,
-        MINOR
+        MINOR,
+        COALMINE
     }
 
     // vertex types and flag for virtual (thus not related to a rails object)
@@ -135,6 +136,10 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public boolean isMinor(){
         return (stationType != null && stationType == StationType.MINOR);
     }
+    
+    public boolean isMine( ) {
+        return (stationType != null && stationType == StationType.COALMINE);
+    }
 
     public StationType getStationType() {
         return stationType;
@@ -159,6 +164,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             } else {
                 valueByTrain = value * train.getMultiplyMinors();
             }
+        } else if (isMine()) { //Sofar Coal mines count nothing for the dividend income, the revenue from a mine is counted differently.
+            valueByTrain = 0;
         } else {
             valueByTrain = value;
         }

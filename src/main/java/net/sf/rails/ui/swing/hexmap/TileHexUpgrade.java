@@ -17,6 +17,7 @@ import net.sf.rails.game.Station;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileColour;
 import net.sf.rails.game.TileUpgrade;
+import net.sf.rails.game.special.SpecialTileLay;
 import rails.game.action.LayTile;
 
 import com.google.common.base.Objects;
@@ -146,19 +147,51 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     
     private boolean validate(Phase phase) {
         invalids.clear();
-
-        if (hexIsBlocked()) {
-            invalids.add(Invalids.HEX_BLOCKED);
-        }
-        if (hexIsReserved()) {
-            invalids.add(Invalids.HEX_RESERVED);
+        
+        /*MBR 25.11.2018
+        Check if the action causes this Validation is a Special Tile Lay
+        If that is the case the current support special action modifications need to be 
+        excluded from the validation:
+        As of the time of this writing, the following actions are supported.
+        A private blocking hex might be unblocked by laying a tile
+        The tilelay might be free of cost, or carry a discount
+        Future Powers consist of Tile lays in a different Colour than the current Phase (1822)
+        */
+        if (action.getType()== action.SPECIAL_PROPERTY) {
+            
+            SpecialTileLay sp = (SpecialTileLay)action.getSpecialProperty();
+            if (!sp.isFree()) {
+                if (notEnoughCash(0)) {
+                    invalids.add(Invalids.NOT_ENOUGH_CASH);
+                }
+            }
+            if (!(action.getSpecialProperty().getLocations().contains(hex.getHex()))) {
+                if (hexIsBlocked()) {
+                    invalids.add(Invalids.HEX_BLOCKED);
+                }
+                if (hexIsReserved()) {
+                    invalids.add(Invalids.HEX_RESERVED);
+                }    
+            }
+        } else {
+            if (hexIsBlocked()) {
+                invalids.add(Invalids.HEX_BLOCKED);
+            }
+            if (hexIsReserved()) {
+                invalids.add(Invalids.HEX_RESERVED);
+            }
+            if (notEnoughCash(0)) {
+                invalids.add(Invalids.NOT_ENOUGH_CASH);
+            }
         }
         if (noTileAvailable()) {
             invalids.add(Invalids.NO_TILES_LEFT);
-        } 
+        }
+      //TODO: Add 1822 Private Powers to remove a small station with a private power
         if (notAllowedForHex()) {
             invalids.add(Invalids.NOT_ALLOWED_FOR_HEX);
         }
+        //TODO: Add 1822 Private Powers to upgrade a Tile one phase ahead
         if (notAllowedForPhase(phase)) {
             invalids.add(Invalids.NOT_ALLOWED_FOR_PHASE);
         }
@@ -173,9 +206,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         } else if (noValidRotation()) {
             invalids.add(Invalids.NO_VALID_ORIENTATION);
         }
-        if (notEnoughCash()) {
-            invalids.add(Invalids.NOT_ENOUGH_CASH);
-        }
+ 
         return invalids.isEmpty();
     }
     
@@ -188,7 +219,14 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     }
     
     public boolean hexIsReserved() {
-        return hex.getHex().isReservedForCompany() && hex.getHex().getReservedForCompany() != action.getCompany();
+        if ( hex.getHex().isReservedForCompany() && hex.getHex().getReservedForCompany() != action.getCompany()) {
+            //check that the hex has not been upgraded already...
+            if (hex.getHex().isPreprintedTileCurrent()) {
+            return true;
+            }
+        }
+        return false;
+        
     }
 
     public boolean noTileAvailable() {
@@ -219,12 +257,12 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         return noValidRotation() && permissiveRoutePossible;
     }
     
-    public boolean notEnoughCash() {
+    public boolean notEnoughCash(int discount) {
         // correction action does not require cash 
         if (action.getType() == LayTile.CORRECTION) {
             return false;
         }
-        return action.getCompany().getCash() < this.getCost(); 
+        return action.getCompany().getCash() < (this.getCost()-discount); 
     }
 
     public boolean requiresConnection() {

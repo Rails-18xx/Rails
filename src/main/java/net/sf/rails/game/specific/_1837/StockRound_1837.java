@@ -12,6 +12,7 @@ import rails.game.action.DiscardTrain;
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
 import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.Bank;
@@ -40,6 +41,8 @@ public class StockRound_1837 extends StockRound {
             this, "discardingCompanyIndex");
     protected final BooleanState discardingTrains = BooleanState.create(this,
             "discardingTrains");
+    protected final BooleanState exchangedCoalCompanies = BooleanState.create(this,
+            "exchangdCoalCompanies");
 
     protected PublicCompany[] discardingCompanies;
 
@@ -49,7 +52,6 @@ public class StockRound_1837 extends StockRound {
      */
     public StockRound_1837(GameManager parent, String id) {
         super(parent, id);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -57,6 +59,9 @@ public class StockRound_1837 extends StockRound {
         super.start();
         if (discardingTrains.value()) {
             discardingTrains.set(false);
+        }
+        if (((GameManager_1837) gameManager).getPlayerToStartCERound()!= null) {
+            ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
         }
     }
 
@@ -291,13 +296,29 @@ public class StockRound_1837 extends StockRound {
 
         // Check if a soldout Company has still Coal companies running
         // independently
-        // if thats the case the Coal companies need to be merged.
-        for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
-            if ((company.hasStockPrice()) && (company.isSoldOut())) {
-                forcedMergeCompanyRoutine(company);
+        // if thats the case the Coal companies need to be merged in the basegame.
+        // If the Romoth Variant is played this rule will be ignored
+        if (GameOption.getValue(this,GameOption.VARIANT).equalsIgnoreCase("basegame")) {
+            for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
+                if ((company.hasStockPrice()) && (company.isSoldOut())) {
+                    forcedMergeCompanyRoutine(company);
+                }
             }
+            
+        }
+        else if (!exchangedCoalCompanies.value()){
+            for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
+                if ((company.hasStockPrice()) && (company.hasFloated())){
+                    if (findStartingPlayerForCoalExchange(company)) exchangedCoalCompanies.set(true);
+                }
+            }
+         }
+        else {
+            ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
         }
 
+        
+        //TODO: Check correct order of next statements...
         if (discardingTrains.value()) {
 
             super.finishRound();
@@ -349,5 +370,36 @@ public class StockRound_1837 extends StockRound {
         for (PublicCompany minor : minors) {
             mergeCompanies(minor, targetCompany);
         }
+    }
+    
+    private boolean findStartingPlayerForCoalExchange(PublicCompany company) {
+        List<PublicCompany> comps = companyManager.getAllPublicCompanies();
+        List<PublicCompany> minors = new ArrayList<PublicCompany>();
+        String type;
+
+        for (PublicCompany comp : comps) {
+            type = comp.getType().getId();
+            if (type.equals("Coal")) {
+                if (comp.isClosed()) continue;
+                if (comp.getRelatedNationalCompany().equals(company.getId())) {
+                    minors.add(comp);
+                    //The president of a Major Company is the first one to get the chance to exchange a share.
+                    if (((GameManager_1837) gameManager).getPlayerToStartCERound()== null) {
+                        ((GameManager_1837) gameManager).setPlayerToStartCERound(company.getPresident());
+                        return true;
+                        //We found a victim lets move on.
+                    }
+                } // Coal Company & Major Found
+            } //Coal Company Found
+            
+        } //Check if we have a minor that has a started Major 
+              while (!minors.isEmpty()) {
+                  //The first minors president will start the CoalExchangeRound
+                  if (((GameManager_1837) gameManager).getPlayerToStartCERound()== null) {
+                      ((GameManager_1837) gameManager).setPlayerToStartCERound(minors.get(0).getPresident());
+                      return true;
+                  }
+              }
+    return false;
     }
 }
