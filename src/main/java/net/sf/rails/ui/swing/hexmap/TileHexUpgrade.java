@@ -175,7 +175,14 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     }
 
     public boolean hexIsReserved() {
-        return hex.getHex().isReservedForCompany() && hex.getHex().getReservedForCompany() != action.getCompany();
+        if ( hex.getHex().isReservedForCompany() && hex.getHex().getReservedForCompany() != action.getCompany()) {
+            //check that the hex has not been upgraded already...
+            if (hex.getHex().isPreprintedTileCurrent()) {
+            return true;
+            }
+        }
+        return false;
+        
     }
 
     public boolean noTileAvailable() {
