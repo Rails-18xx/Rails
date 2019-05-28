@@ -10,6 +10,7 @@ import net.sf.rails.common.GameOption;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.Bank;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
@@ -184,8 +185,20 @@ public class CoalExchangeRound extends StockRound_1837 {
 
             } else {
 
-                return;
-
+                // Report financials
+                ReportBuffer.add(this, "");
+                for (PublicCompany c : companyManager.getAllPublicCompanies()) {
+                    if (c.hasFloated() && !c.isClosed()) {
+                        ReportBuffer.add(this, LocalText.getText("Has", c.getId(),
+                                Bank.format(this, c.getCash())));
+                    }
+                }
+                for (Player p : playerManager.getPlayers()) {
+                    ReportBuffer.add(this, LocalText.getText("Has", p.getId(),
+                            Bank.format(this, p.getCashValue())));
+                }
+                // Inform GameManager
+                gameManager.nextRound(this);
             }
         }
 
