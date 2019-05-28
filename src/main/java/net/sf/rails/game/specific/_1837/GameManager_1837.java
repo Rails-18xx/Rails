@@ -55,7 +55,8 @@ public class GameManager_1837 extends GameManager {
             //Check if a Major is started and if so ask the Owner of the Coal Company to fold
             if (playerToStartCERound.value() != null) {
                 cerNumber.add(1);
-                createRound (CoalExchangeRound.class, "CoalExchangeRound").start
+//                startMergingRound(false);
+                createRound (CoalExchangeRound.class, "CoalExchangeRound" + cerNumber.value()).start
                         ((Player)playerToStartCERound.value());
                 playerToStartCERound.set(null); 
             } else {
@@ -96,6 +97,12 @@ public class GameManager_1837 extends GameManager {
 
 
     
+    private void startMergingRound(boolean b) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
     /* (non-Javadoc)
      * @see net.sf.rails.game.GameManager#runIfStartPacketIsNotCompletelySold()
      */
