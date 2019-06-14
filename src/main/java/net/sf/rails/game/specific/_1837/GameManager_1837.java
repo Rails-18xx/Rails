@@ -51,11 +51,14 @@ public class GameManager_1837 extends GameManager {
                 startOperatingRound(runIfStartPacketIsNotCompletelySold());
             }
         }
+        else if (round instanceof CoalExchangeRound) {
+            super.nextRound(round);
+            getCurrentRound().setPossibleActions();
+        }
         else if ((round instanceof StockRound_1837) ||(round instanceof OperatingRound_1837)) {
             //Check if a Major is started and if so ask the Owner of the Coal Company to fold
             if (playerToStartCERound.value() != null) {
                 cerNumber.add(1);
-//                startMergingRound(false);
                 createRound (CoalExchangeRound.class, "CoalExchangeRound" + cerNumber.value()).start
                         ((Player)playerToStartCERound.value());
                 playerToStartCERound.set(null); 
@@ -93,13 +96,6 @@ public class GameManager_1837 extends GameManager {
             }
       }
 
-    }
-
-
-    
-    private void startMergingRound(boolean b) {
-        // TODO Auto-generated method stub
-        
     }
 
 

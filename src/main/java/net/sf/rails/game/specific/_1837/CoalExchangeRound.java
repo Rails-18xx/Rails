@@ -90,9 +90,13 @@ public class CoalExchangeRound extends StockRound_1837 {
                         minors.add(comp);
                         targetCompany = companyManager.getPublicCompany(comp.getRelatedNationalCompany());
                         possibleActions.add(new MergeCompanies(comp, targetCompany, true));
-                        possibleActions.add(new NullAction(NullAction.Mode.DONE));
+                        
                     }
                 }
+            }
+            if (!minors.isEmpty()) {
+                possibleActions.add(new NullAction(NullAction.Mode.DONE));
+                return true;
             }
 
 /**
@@ -107,20 +111,25 @@ public class CoalExchangeRound extends StockRound_1837 {
                         if (comp.getPresident() == currentPlayer) {
                             targetCompany = companyManager.getPublicCompany(comp.getRelatedNationalCompany());
                             possibleActions.add(new MergeCompanies(comp, targetCompany, true));
-                            possibleActions.add(new NullAction(NullAction.Mode.DONE));
+                            
                             minors.add(comp);
                         }
                     }
-                } //Inner loop
+                }
+                if (!minors.isEmpty()) {
+                    possibleActions.add(new NullAction(NullAction.Mode.DONE));
+                    return true;
+                }
+                //Inner loop
                 if (currentPlayer == playerStartingCERound) {
                     finishRound();
-                    return true;
+                    return false;
                 }
             } //While Loop
 /**
  * we need to make sure that everyone is asked who has a share of a minor that is corresponding to the floated Major..
  */
-            return true;
+            return false;
         }
 
         
@@ -130,7 +139,8 @@ public class CoalExchangeRound extends StockRound_1837 {
         public boolean done(NullAction action, String playerName, boolean hasAutopassed) {
 
             for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
-                if ((comp.getType().getId().equals("Coal")) && (!comp.isClosed())) {
+                if ((comp.getType().getId().equals("Coal")) && (!comp.isClosed()) && (companyManager.getPublicCompany(comp.getRelatedNationalCompany()).hasFloated())) {
+                    
                         finishTurn();
                         return true;
                 }
