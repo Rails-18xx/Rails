@@ -17,7 +17,6 @@ public class FinalCoalExchangeRound extends StockRound_1837 {
 
     public FinalCoalExchangeRound(GameManager parent, String id) {
         super(parent, id);
-        // TODO Auto-generated constructor stub
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
 
@@ -104,11 +103,9 @@ public class FinalCoalExchangeRound extends StockRound_1837 {
         
 
         for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
-            if (comp.getType().getId().equals("Coal")) {
-                if (!comp.isClosed()) {
+            if ((comp.getType().getId().equals("Coal")) && (!comp.isClosed())) {
                     finishTurn();
                     return true;
-                }
             }
         }
 

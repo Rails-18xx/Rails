@@ -26,7 +26,6 @@ public class BzHTileModifier implements NetworkGraphModifier {
     @Override
     public void modifyMapGraph(NetworkGraph mapGraph) {
         
-        // TODO (Rails 2.0): Add root reference to modifiers
         SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
         RailsRoot root = RailsRoot.getInstance();
         
