@@ -242,12 +242,12 @@ class ConfigWindow extends JFrame {
                 configValue = ((Font)UIManager.getDefaults().get("Label.font")).getFamily();
             }
         case LIST:
-            String[] allowedValues; 
+            String[] allowedValues = new String[1];
             if (item.type == ConfigItem.ConfigType.FONT) {
                 allowedValues = GraphicsEnvironment.getLocalGraphicsEnvironment().
                 getAvailableFontFamilyNames(); 
             } else {
-                allowedValues = (String[])item.allowedValues.toArray();
+                allowedValues = (String[])item.allowedValues.toArray(allowedValues);
             }
             final JComboBox<String> comboBox = new JComboBox<String>(allowedValues);
             comboBox.setSelectedItem(configValue);
