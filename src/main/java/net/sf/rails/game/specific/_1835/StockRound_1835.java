@@ -5,6 +5,10 @@
 package net.sf.rails.game.specific._1835;
 
 import java.util.Set;
+import java.util.SortedSet;
+
+import com.google.common.collect.Sets;
+import com.google.common.collect.SortedMultiset;
 
 import rails.game.action.BuyCertificate;
 import rails.game.action.NullAction;
@@ -219,5 +223,39 @@ public class StockRound_1835 extends StockRound {
         }
          return super.done(action, playerName, hasAutopassed);
     }
+
+  /*  (non-Javadoc)
+     * @see net.sf.rails.game.StockRound#mayPlayerSellShareOfCompany(net.sf.rails.game.PublicCompany)
+    */ 
+    @Override
+    public boolean mayPlayerSellShareOfCompany(PublicCompany company) {
+        PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
+        if (!super.mayPlayerSellShareOfCompany(company) ) 
+            { 
+            return false;
+            }
+        else {
+          /*
+           * Player is President and not allowed to sell his director share if thats the only share he got
+           * But if he has sold a share in this round he is allowed to sell dump the presidency...
+           *
+           * */
+            if (company.getPresident() == currentPlayer) { 
+                SortedMultiset<Integer> certCount = playerPortfolio.getCertificateTypeCounts(company);
+                // Make sure that single shares are always considered (due to possible dumping)
+                SortedSet<Integer> certSizeElements =Sets.newTreeSet(certCount.elementSet());
+                certSizeElements.add(1);
+                for (int shareSize:certSizeElements) {
+                    int number = certCount.count(shareSize);
+                    if ((number == 0) && (shareSize == 1)) {
+                        return false; //We found no normal share so the president cant sell the director
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    
+ 
     
 }

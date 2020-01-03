@@ -124,7 +124,7 @@ public class PlayerShareUtils {
                     // d is the amount sold in addition to standard shares, returned has the remaining part of the president share
                     int remaining = presidentCert.getShares() - d;
                     if (returnShareNumbers.contains(remaining)) {
-                        sharesToSell.add(s);
+                        sharesToSell.add(s+d);
                     }
                 } else {
                     break; // pool is full

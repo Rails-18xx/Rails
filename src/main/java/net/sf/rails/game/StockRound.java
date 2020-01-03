@@ -422,7 +422,9 @@ public class StockRound extends Round {
                 Player potential = company.findPlayerToDump();
                 if (potential != null) {
                     dumpThreshold = ownedShare - potential.getPortfolioModel().getShareNumber(company) + 1;
-                    possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
+                  possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
+                    
+                    
                     dumpIsPossible = true;
                     log.debug("dumpThreshold = " + dumpThreshold);
                     log.debug("possibleSharesToSell = " + possibleSharesToSell);
