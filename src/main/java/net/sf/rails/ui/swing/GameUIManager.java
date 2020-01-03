@@ -528,8 +528,10 @@ public class GameUIManager implements DialogOwner {
             }
         }
 
-        boolean correctionOverride = statusWindow.setupFor(currentRound);
-        correctionOverride = false;
+        //This was always false before ? Bug oversight ?
+        boolean correctionOverride = false;
+                
+        correctionOverride = statusWindow.setupFor(currentRound); 
 
         if (correctionOverride) {
             log.debug("Correction overrides active window: status window active");
