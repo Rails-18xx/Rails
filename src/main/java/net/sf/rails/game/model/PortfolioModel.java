@@ -229,7 +229,7 @@ public class PortfolioModel extends RailsModel {
 
     /** 
      * @return a sorted Multiset<Integer> of shareNumbers of the certificates
-     * Remark: excludes the presdident share if not of a different size as the standard share...
+     * Remark: excludes the presdident share
      */
     // FIXME: Integers could be replaced later by CerficateTypes
     public SortedMultiset<Integer> getCertificateTypeCounts(PublicCompany company) {

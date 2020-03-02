@@ -16,7 +16,7 @@ import com.google.common.collect.ImmutableSortedSet;
  */
 public class PlayerShareUtils {
     
-	public static SortedSet<Integer> sharesToSell (PublicCompany company, Player player) {
+    public static SortedSet<Integer> sharesToSell (PublicCompany company, Player player) {
         
         if (company.hasMultipleCertificates()) {
             if (player == company.getPresident()) {
@@ -88,18 +88,13 @@ public class PlayerShareUtils {
         Player potential = company.findPlayerToDump();
         int potentialShareNumber = potential.getPortfolioModel().getShare(company);
         int shareNumberDumpDifference = presidentShareNumber - potentialShareNumber;
-        boolean presidentShareOnly = false;
         
-        if (presidentCert.getShare() == presidentShareNumber)  { // Only President Share to be sold...
-            presidentShareOnly = true;
+        // ... if this is less than what the pool allows => goes back to non-president selling
+        int poolAllows = poolAllowsShareNumbers(company);
+        if (shareNumberDumpDifference <= poolAllows) {
+            return otherSellMultiple(company, president);
         }
         
-        // ... if this is less than what the pool allows => goes back to non-president selling only if non president share... (1835 or other multipe director shares...)
-        int poolAllows = poolAllowsShareNumbers(company);
-        if ((shareNumberDumpDifference <= poolAllows) && (!presidentShareOnly)) {
-            return otherSellMultiple(company, president);
-        } 
-                
         // second: separate the portfolio into other shares and president certificate
         ImmutableList.Builder<PublicCertificate> otherCerts = ImmutableList.builder();
         for (PublicCertificate c:president.getPortfolioModel().getCertificates(company)) {
@@ -180,15 +175,8 @@ public class PlayerShareUtils {
                     break;
                 }
             }
-                else if (cert.isPresidentShare() && cert.getShares()== shareUnits) {
-                    certsToSell.add(cert);
-                    nbCertsToSell--;
-                    if (nbCertsToSell == 0) {
-                        break;
-                }
-            }
         }
-
+        
         return certsToSell.build();
     }
     
