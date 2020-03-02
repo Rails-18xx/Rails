@@ -104,7 +104,10 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
     SortedMultiset<Integer> getCertificateTypeCounts(PublicCompany company) {
         ImmutableSortedMultiset.Builder<Integer> certCount = ImmutableSortedMultiset.naturalOrder();
         for (PublicCertificate cert : getCertificates(company)) {
-            if (!cert.isPresidentShare()) {
+            if (!cert.isPresidentShare()) { // Acounting for director shares of different sizes
+                certCount.add(cert.getShares());
+            }
+            else if ((cert.isPresidentShare()) && (cert.getShares() ==2)) {
                 certCount.add(cert.getShares());
             }
         }

@@ -4,9 +4,11 @@
  */
 package net.sf.rails.game.specific._1835;
 
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 import com.google.common.collect.SortedMultiset;
 
@@ -16,6 +18,7 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
 import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.state.Portfolio;
 
 
 public class StockRound_1835 extends StockRound {
@@ -236,7 +239,7 @@ public class StockRound_1835 extends StockRound {
             }
         else {
           /*
-           * Player is President and not allowed to sell his director share if thats the only share he got
+           * Player is President and ia allowed to sell his director share if there is enough space in the pool in 1835
            * But if he has sold a share in this round he is allowed to sell dump the presidency...
            *
            * */
@@ -244,18 +247,35 @@ public class StockRound_1835 extends StockRound {
                 SortedMultiset<Integer> certCount = playerPortfolio.getCertificateTypeCounts(company);
                 // Make sure that single shares are always considered (due to possible dumping)
                 SortedSet<Integer> certSizeElements =Sets.newTreeSet(certCount.elementSet());
-                certSizeElements.add(1);
-                for (int shareSize:certSizeElements) {
-                    int number = certCount.count(shareSize);
-                    if ((number == 0) && (shareSize == 1)) {
-                        return false; //We found no normal share so the president cant sell the director
-                    }
+                if (certSizeElements.first()==2) { //President Share only, check if there is room in pool, President Share is 2 normal shares so space to sell must be 2
+                    if (PlayerShareUtils.poolAllowsShareNumbers(company) >1) return true;
                 }
-            }
+               if (certSizeElements.isEmpty()) return false;
+                 
+                }
         }
         return true;
     }
     
- 
     
+
+    @Override protected SortedSet<Integer> checkForPossibleSharesToSell(PublicCompany company, Player currentPlayer) { 
+          PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
+          if (currentPlayer == company.getPresident()) {
+              ImmutableSortedSet.Builder<Integer> presidentShareSet = ImmutableSortedSet.naturalOrder();
+                SortedMultiset<Integer> certCount = playerPortfolio.getCertificateTypeCounts(company);
+                // Make sure that single shares are always considered (due to possible dumping)
+                SortedSet<Integer> certSizeElements =Sets.newTreeSet(certCount.elementSet());
+                if (certSizeElements.first()==2) { //President Share only, check if there is room in pool, President Share is 2 normal shares so space to sell must be 2
+                    presidentShareSet.add(2);
+                    return presidentShareSet.build();
+                } else {
+                   return PlayerShareUtils.sharesToSell(company, currentPlayer);
+                }
+          
+          }
+          return PlayerShareUtils.sharesToSell(company, currentPlayer); 
+          
+      }
+     
 }
