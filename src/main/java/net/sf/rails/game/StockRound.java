@@ -1007,6 +1007,7 @@ public class StockRound extends Round {
         int presidentShareNumbersToSell = 0;
         int numberToSell = action.getNumber();
         int shareUnits = action.getShareUnits();
+        int presidentExchange = action.getPresidentExchange();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -1056,13 +1057,18 @@ public class StockRound extends Round {
 
             // ... check if there is a dump required
             // Player is president => dump is possible
-            if (currentPlayer == company.getPresident() && ((shareUnits == 1) || (shareUnits == 2)) ) {
+            if (presidentExchange >0) { // we have found in the Original Routine that a President will change...
                 dumpedPlayer = company.findPlayerToDump();
                 if (dumpedPlayer != null) {
                     presidentShareNumbersToSell = PlayerShareUtils.presidentShareNumberToSell(
                             company, currentPlayer, dumpedPlayer, numberToSell);
-                    
-                    numberToSell -= presidentShareNumbersToSell;
+                
+                    numberToSell -= presidentShareNumbersToSell; // Besides the President Share which normal counts at least 2 shareunits.
+                 
+                } 
+                else {
+                    errMsg = "President Exchange but no suitable target found!";
+                    break;
                 }
             }
             if ((currentPlayer == company.getPresident()) && (currentPlayer.getPortfolioModel().getShareNumber(company)==2)) { 
@@ -1090,7 +1096,7 @@ public class StockRound extends Round {
             break;
         }
 
-        int numberSold = action.getNumber();
+        int numberSold = action.getNumber(); //Beware that the number sold is the number of shareunits, not the certs.
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("CantSell",
                     playerName,
@@ -1136,7 +1142,7 @@ public class StockRound extends Round {
         if (!company.isClosed()) {
  
             executeShareTransfer (company, certsToSell,
-                    dumpedPlayer, presidentShareNumbersToSell * shareUnits);
+                    dumpedPlayer, presidentShareNumbersToSell);
         }
 
         // Remember that the player has sold this company this round.
@@ -1167,11 +1173,9 @@ public class StockRound extends Round {
         }
 
         // Transfer the sold certificates (but not the presidents Certificate...
-        if (certsToSell.get(0).isPresidentShare()) { //do nothing 
-            return;
-        } else {
+
         Portfolio.moveAll(certsToSell, bankTo);
-        }
+        
     }
     
     protected void executeShareTransfer( PublicCompany company,
