@@ -263,10 +263,11 @@ public class StockRound_1835 extends StockRound {
                 SortedMultiset<Integer> certCount = playerPortfolio.getCertificateTypeCounts(company);
                 // Make sure that single shares are always considered (due to possible dumping)
                 SortedSet<Integer> certSizeElements =Sets.newTreeSet(certCount.elementSet());
+                if (certSizeElements.isEmpty()) return false;
                 if (certSizeElements.first()==2) { //President Share only, check if there is room in pool, President Share is 2 normal shares so space to sell must be 2
                     if (PlayerShareUtils.poolAllowsShareNumbers(company) >1) return true;
                 }
-               if (certSizeElements.isEmpty()) return false;
+               
                  
                 }
         }
@@ -293,5 +294,10 @@ public class StockRound_1835 extends StockRound {
           return PlayerShareUtils.sharesToSell(company, currentPlayer); 
           
       }
+    
+    private boolean checkIfPresidentCertifcateSplitSaleAllowed() {
+        // in 1835 its not allowed to Split the President Certificate on sale
+        return false;
+    }
      
 }

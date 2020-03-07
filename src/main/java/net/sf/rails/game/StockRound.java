@@ -448,7 +448,7 @@ public class StockRound extends Round {
             
             // Make sure that single shares are always considered (due to possible dumping)
             SortedSet<Integer> certSizeElements =Sets.newTreeSet(certCount.elementSet());
-           // certSizeElements.add(1);
+           certSizeElements.add(1);
             
             for (int shareSize:certSizeElements) {
                 int number = certCount.count(shareSize);
@@ -1071,8 +1071,14 @@ public class StockRound extends Round {
                     break;
                 }
             }
-            if ((currentPlayer == company.getPresident()) && (currentPlayer.getPortfolioModel().getShareNumber(company)==2)) { 
-            certsToSell = PlayerShareUtils.findCertificatesToSell(company, currentPlayer, 1, shareUnits);
+            if (presidentExchange >0) { 
+                //is it allowed to split a presidency Certificate on sale ?
+                if (checkIfPresidentCertifcateSplitSaleAllowed()) {
+                    certsToSell =  PlayerShareUtils.findCertificatesToSell(company, currentPlayer, numberToSell, shareUnits);
+                }
+                else { 
+                    certsToSell = PlayerShareUtils.findCertificatesToSell(company, currentPlayer, 1, shareUnits);
+                } 
             }
             else { 
                 certsToSell = PlayerShareUtils.findCertificatesToSell(company, currentPlayer, numberToSell, shareUnits);
@@ -1155,6 +1161,8 @@ public class StockRound extends Round {
 
         return true;
     }
+
+ 
 
     // FIXME: Rails 2.x This has to be rewritten to give the new presidency a choice which shares to swap (if he has multiple share certificates)
     protected void executeShareTransferTo( PublicCompany company,
@@ -1648,5 +1656,10 @@ public class StockRound extends Round {
         }
         sellObligationLifted.add(company);
     }
+	
+	   private boolean checkIfPresidentCertifcateSplitSaleAllowed() {
+	        // Standard Games its true
+	        return true;
+	    }
 
 }
