@@ -232,7 +232,6 @@ public class StockRound_1835 extends StockRound {
     */ 
     @Override
     public boolean mayPlayerSellShareOfCompany(PublicCompany company) {
-        PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
         if (!super.mayPlayerSellShareOfCompany(company) ) 
             { 
             return false;
@@ -244,42 +243,14 @@ public class StockRound_1835 extends StockRound {
            *
            * */
             if (company.getPresident() == currentPlayer) { 
-                SortedMultiset<Integer> certCount = playerPortfolio.getCertificateTypeCounts(company);
-                // Make sure that single shares are always considered (due to possible dumping)
-                SortedSet<Integer> certSizeElements =Sets.newTreeSet(certCount.elementSet());
-                if (certSizeElements.isEmpty()) return false;
-                if (certSizeElements.first()==2) { //President Share only, check if there is room in pool, President Share is 2 normal shares so space to sell must be 2
-                    if (PlayerShareUtils.poolAllowsShareNumbers(company) >1) return true;
-                }
-               
-                 
+                if (PlayerShareUtils.poolAllowsShareNumbers(company) >1) return true;
                 }
         }
         return true;
     }
     
-    
-
-    @Override protected SortedSet<Integer> checkForPossibleSharesToSell(PublicCompany company, Player currentPlayer) { 
-          PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
-          if (currentPlayer == company.getPresident()) {
-              ImmutableSortedSet.Builder<Integer> presidentShareSet = ImmutableSortedSet.naturalOrder();
-                SortedMultiset<Integer> certCount = playerPortfolio.getCertificateTypeCounts(company);
-                // Make sure that single shares are always considered (due to possible dumping)
-                SortedSet<Integer> certSizeElements =Sets.newTreeSet(certCount.elementSet());
-                if (certSizeElements.first()==2) { //President Share only, check if there is room in pool, President Share is 2 normal shares so space to sell must be 2
-                    presidentShareSet.add(2);
-                    return presidentShareSet.build();
-                } else {
-                   return PlayerShareUtils.sharesToSell(company, currentPlayer);
-                }
-          
-          }
-          return PlayerShareUtils.sharesToSell(company, currentPlayer); 
-          
-      }
-    
-    private boolean checkIfPresidentCertifcateSplitSaleAllowed() {
+    @Override
+    protected boolean checkIfSplitSaleOfPresidentAllowed() {
         // in 1835 its not allowed to Split the President Certificate on sale
         return false;
     }

@@ -422,8 +422,8 @@ public class StockRound extends Round {
                 Player potential = company.findPlayerToDump();
                 if (potential != null) {
                     dumpThreshold = ownedShare - potential.getPortfolioModel().getShareNumber(company) + 1;
+                  possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
                     
-                  possibleSharesToSell = checkForPossibleSharesToSell(company,currentPlayer);                
                     
                     dumpIsPossible = true;
                     log.debug("dumpThreshold = " + dumpThreshold);
@@ -447,22 +447,21 @@ public class StockRound extends Round {
             SortedMultiset<Integer> certCount = playerPortfolio.getCertificateTypeCounts(company);
             
             // Make sure that single shares are always considered (due to possible dumping)
-            SortedSet<Integer> certSizeElements =Sets.newTreeSet(certCount.elementSet());
-           certSizeElements.add(1);
+            SortedSet<Integer> certSizeElements = Sets.newTreeSet(certCount.elementSet());
+            certSizeElements.add(1); 
             
             for (int shareSize:certSizeElements) {
                 int number = certCount.count(shareSize);
 
+                // If you can dump a presidency, you add the shareNumbers of the presidency
+                // to the single shares to be sold
+                if (dumpIsPossible && shareSize == 1 && number + company.getPresidentsShare().getShares() >= dumpThreshold) {
+                    number += company.getPresidentsShare().getShares();
+                    // but limit this to the pool 
+                    number = Math.min(number, poolAllowsShares);
+                    log.debug("Dump is possible increased single shares to " + number);
+                }
                 
-                  // If you can dump a presidency, you add the shareNumbers of the presidency 
-                // to the single shares to be sold 
-                if (dumpIsPossible && shareSize == 1 && number + 
-                        company.getPresidentsShare().getShares() >= dumpThreshold) {
-                  number += company.getPresidentsShare().getShares(); // but limit this to the pool 
-                  number = Math.min(number, poolAllowsShares);
-                  log.debug("Dump is possible increased single shares to " + number); 
-                  }
-                                                  
                 if (number == 0) {
                     continue;
                 }
@@ -492,25 +491,39 @@ public class StockRound extends Round {
                 if (number <= 0) {
                     continue;
                 }
+                
 
-                for (int i=1; i<=number; i++) {
-                    // check if selling would dump the company
-                    if (dumpIsPossible && i*shareSize >= dumpThreshold) {
-                        // dumping requires that the total is in the possibleSharesToSell list and that shareSize == 1 Comment: MBr-2020-03-02 why ? not true anymore from now on...
-                        // multiple shares have to be sold separately Addition: Mbrumm 2020-03-01 (no not in all cases..... 1835 for example)
-                        if (shareSize == 1 && possibleSharesToSell.contains(i*shareSize)) {
-                            possibleActions.add(new SellShares(company, shareSize, i, price, 1));
-                        } else if ( shareSize >= 2 && possibleSharesToSell.contains(i*shareSize)) {
-                            possibleActions.add(new SellShares(company, shareSize, i, price, 1));
+                for (int i=1; i<=number; i++) { //For a president certificate only the number is 2.. but it may also be 2 if the player has more than just the president certificate..
+                    if(checkIfSplitSaleOfPresidentAllowed()) {
+                        // check if selling would dump the company
+                        if (dumpIsPossible && i*shareSize >= dumpThreshold) {
+                            // dumping requires that the total is in the possibleSharesToSell list 
+                            if (shareSize == 1 && possibleSharesToSell.contains(i*shareSize)) {
+                                possibleActions.add(new SellShares(company, shareSize, i, price, 1));
+                            }
+                        } else {
+                            // ... no dumping: standard sell
+                            possibleActions.add(new SellShares(company, shareSize, i, price, 0));
                         }
-                    } else {
-                        // ... no dumping: standard sell
-                        possibleActions.add(new SellShares(company, shareSize, i, price, 0));
+                    }
+                    else {
+                         if (dumpIsPossible && i*shareSize >= dumpThreshold) { 
+                             if ( certCount.isEmpty() && number == 2) {
+                         
+                             possibleActions.add(new SellShares(company, 2, 1, price, 1));  
+                             }
+                             else {
+                                 if (((!certCount.isEmpty()) && (number ==1) ) || number >2) {
+                                     possibleActions.add(new SellShares(company, shareSize, i, price, 1));
+                                 }
+                             }
+                         }
+                         else {
+                             possibleActions.add(new SellShares(company, shareSize, i, price, 0));
+                         }
                     }
                 }
             }
-            // if we have multiple Sharesizes the combination of Sharesizes is also a viable sell option... 
-            // but not possible in a single sell action due to the sharesize parameter handed over to sellShares...
         }
 
         // Is player over the total certificate hold limit?
@@ -531,9 +544,9 @@ public class StockRound extends Round {
         }
     }
 
-    protected SortedSet<Integer> checkForPossibleSharesToSell(
-            PublicCompany company, Player currentPlayer) {
-            return PlayerShareUtils.sharesToSell(company, currentPlayer);
+    protected boolean checkIfSplitSaleOfPresidentAllowed() {
+        // To be overwritten in Stockround Classes for games where that is not allowed e.g. 1835
+        return true;
     }
 
     protected void setSpecialActions() {
@@ -1007,7 +1020,6 @@ public class StockRound extends Round {
         int presidentShareNumbersToSell = 0;
         int numberToSell = action.getNumber();
         int shareUnits = action.getShareUnits();
-        int presidentExchange = action.getPresidentExchange();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -1057,32 +1069,28 @@ public class StockRound extends Round {
 
             // ... check if there is a dump required
             // Player is president => dump is possible
-            if (presidentExchange >0) { // we have found in the Original Routine that a President will change...
+            if (currentPlayer == company.getPresident() && shareUnits == 1) {
                 dumpedPlayer = company.findPlayerToDump();
                 if (dumpedPlayer != null) {
                     presidentShareNumbersToSell = PlayerShareUtils.presidentShareNumberToSell(
                             company, currentPlayer, dumpedPlayer, numberToSell);
-                
-                    numberToSell -= presidentShareNumbersToSell; // Besides the President Share which normal counts at least 2 shareunits.
-                 
-                } 
-                else {
-                    errMsg = "President Exchange but no suitable target found!";
-                    break;
+                    // reduce the numberToSell by the president (partial) sold certificate
+                    numberToSell -= presidentShareNumbersToSell;
                 }
             }
-            if (presidentExchange >0) { 
-                //is it allowed to split a presidency Certificate on sale ?
-                if (checkIfPresidentCertifcateSplitSaleAllowed()) {
-                    certsToSell =  PlayerShareUtils.findCertificatesToSell(company, currentPlayer, numberToSell, shareUnits);
-                }
-                else { 
-                    certsToSell = PlayerShareUtils.findCertificatesToSell(company, currentPlayer, 1, shareUnits);
-                } 
+            else {
+               if (currentPlayer == company.getPresident() && shareUnits == 2) {
+                   dumpedPlayer = company.findPlayerToDump();
+                   if (dumpedPlayer != null) {
+                       presidentShareNumbersToSell = PlayerShareUtils.presidentShareNumberToSell(
+                               company, currentPlayer, dumpedPlayer, numberToSell+1);
+                       // reduce the numberToSell by the president (partial) sold certificate
+                       numberToSell -= presidentShareNumbersToSell;
+                   }
+               }
             }
-            else { 
-                certsToSell = PlayerShareUtils.findCertificatesToSell(company, currentPlayer, numberToSell, shareUnits);
-                }
+            
+            certsToSell = PlayerShareUtils.findCertificatesToSell(company, currentPlayer, numberToSell, shareUnits);
             
             // reduce numberToSell to double check
             for (PublicCertificate c:certsToSell) {
@@ -1102,7 +1110,7 @@ public class StockRound extends Round {
             break;
         }
 
-        int numberSold = action.getNumber(); //Beware that the number sold is the number of shareunits, not the certs.
+        int numberSold = action.getNumber();
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("CantSell",
                     playerName,
@@ -1162,10 +1170,8 @@ public class StockRound extends Round {
         return true;
     }
 
- 
-
     // FIXME: Rails 2.x This has to be rewritten to give the new presidency a choice which shares to swap (if he has multiple share certificates)
-    protected void executeShareTransferTo( PublicCompany company,
+    protected final void executeShareTransferTo( PublicCompany company,
             List<PublicCertificate> certsToSell, Player dumpedPlayer, int presSharesToSell,
             BankPortfolio bankTo) {
 
@@ -1180,8 +1186,7 @@ public class StockRound extends Round {
 
         }
 
-        // Transfer the sold certificates (but not the presidents Certificate...
-
+        // Transfer the sold certificates
         Portfolio.moveAll(certsToSell, bankTo);
         
     }
@@ -1437,7 +1442,7 @@ public class StockRound extends Round {
                 setAutopass (currentPlayer, false);
             } else {
                 // Process a pass for a player that has set Autopass
-        		done (null, currentPlayer.getId(), true);
+                done (null, currentPlayer.getId(), true);
             }
         }
     }
@@ -1645,21 +1650,16 @@ public class StockRound extends Round {
         return "StockRound " + getStockRoundNumber();
     }
 
-	public boolean isSellObligationLifted(PublicCompany company) {
+    public boolean isSellObligationLifted(PublicCompany company) {
         return sellObligationLifted != null
         && sellObligationLifted.contains(company);
     }
 
-	public void setSellObligationLifted (PublicCompany company) {
+    public void setSellObligationLifted (PublicCompany company) {
         if (sellObligationLifted == null) {
-			sellObligationLifted = HashSetState.create(this, "sellObligationLifted");
+            sellObligationLifted = HashSetState.create(this, "sellObligationLifted");
         }
         sellObligationLifted.add(company);
     }
-	
-	   private boolean checkIfPresidentCertifcateSplitSaleAllowed() {
-	        // Standard Games its true
-	        return true;
-	    }
 
 }
