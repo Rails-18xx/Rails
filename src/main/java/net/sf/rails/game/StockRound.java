@@ -422,7 +422,9 @@ public class StockRound extends Round {
                 Player potential = company.findPlayerToDump();
                 if (potential != null) {
                     dumpThreshold = ownedShare - potential.getPortfolioModel().getShareNumber(company) + 1;
-                    possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
+                  possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
+                    
+                    
                     dumpIsPossible = true;
                     log.debug("dumpThreshold = " + dumpThreshold);
                     log.debug("possibleSharesToSell = " + possibleSharesToSell);
@@ -445,8 +447,8 @@ public class StockRound extends Round {
             SortedMultiset<Integer> certCount = playerPortfolio.getCertificateTypeCounts(company);
             
             // Make sure that single shares are always considered (due to possible dumping)
-            SortedSet<Integer> certSizeElements =Sets.newTreeSet(certCount.elementSet());
-            certSizeElements.add(1);
+            SortedSet<Integer> certSizeElements = Sets.newTreeSet(certCount.elementSet());
+            certSizeElements.add(1); 
             
             for (int shareSize:certSizeElements) {
                 int number = certCount.count(shareSize);
@@ -489,18 +491,36 @@ public class StockRound extends Round {
                 if (number <= 0) {
                     continue;
                 }
+                
 
-                for (int i=1; i<=number; i++) {
-                    // check if selling would dump the company
-                    if (dumpIsPossible && i*shareSize >= dumpThreshold) {
-                        // dumping requires that the total is in the possibleSharesToSell list and that shareSize == 1
-                        // multiple shares have to be sold separately
-                        if (shareSize == 1 && possibleSharesToSell.contains(i*shareSize)) {
-                            possibleActions.add(new SellShares(company, shareSize, i, price, 1));
+                for (int i=1; i<=number; i++) { //For a president certificate only the number is 2.. but it may also be 2 if the player has more than just the president certificate..
+                    if(checkIfSplitSaleOfPresidentAllowed()) {
+                        // check if selling would dump the company
+                        if (dumpIsPossible && i*shareSize >= dumpThreshold) {
+                            // dumping requires that the total is in the possibleSharesToSell list 
+                            if (shareSize == 1 && possibleSharesToSell.contains(i*shareSize)) {
+                                possibleActions.add(new SellShares(company, shareSize, i, price, 1));
+                            }
+                        } else {
+                            // ... no dumping: standard sell
+                            possibleActions.add(new SellShares(company, shareSize, i, price, 0));
                         }
-                    } else {
-                        // ... no dumping: standard sell
-                        possibleActions.add(new SellShares(company, shareSize, i, price, 0));
+                    }
+                    else {
+                         if (dumpIsPossible && i*shareSize >= dumpThreshold) { 
+                             if ( certCount.isEmpty() && number == 2) {
+                         
+                             possibleActions.add(new SellShares(company, 2, 1, price, 1));  
+                             }
+                             else {
+                                 if (((!certCount.isEmpty()) && (number ==1) ) || number >2) {
+                                     possibleActions.add(new SellShares(company, shareSize, i, price, 1));
+                                 }
+                             }
+                         }
+                         else {
+                             possibleActions.add(new SellShares(company, shareSize, i, price, 0));
+                         }
                     }
                 }
             }
@@ -522,6 +542,11 @@ public class StockRound extends Round {
                     , violations.toString()
             ));
         }
+    }
+
+    protected boolean checkIfSplitSaleOfPresidentAllowed() {
+        // To be overwritten in Stockround Classes for games where that is not allowed e.g. 1835
+        return true;
     }
 
     protected void setSpecialActions() {
@@ -1053,6 +1078,17 @@ public class StockRound extends Round {
                     numberToSell -= presidentShareNumbersToSell;
                 }
             }
+            else {
+               if (currentPlayer == company.getPresident() && shareUnits == 2) {
+                   dumpedPlayer = company.findPlayerToDump();
+                   if (dumpedPlayer != null) {
+                       presidentShareNumbersToSell = PlayerShareUtils.presidentShareNumberToSell(
+                               company, currentPlayer, dumpedPlayer, numberToSell+1);
+                       // reduce the numberToSell by the president (partial) sold certificate
+                       numberToSell -= presidentShareNumbersToSell;
+                   }
+               }
+            }
             
             certsToSell = PlayerShareUtils.findCertificatesToSell(company, currentPlayer, numberToSell, shareUnits);
             
@@ -1406,7 +1442,7 @@ public class StockRound extends Round {
                 setAutopass (currentPlayer, false);
             } else {
                 // Process a pass for a player that has set Autopass
-        		done (null, currentPlayer.getId(), true);
+                done (null, currentPlayer.getId(), true);
             }
         }
     }
@@ -1614,14 +1650,14 @@ public class StockRound extends Round {
         return "StockRound " + getStockRoundNumber();
     }
 
-	public boolean isSellObligationLifted(PublicCompany company) {
+    public boolean isSellObligationLifted(PublicCompany company) {
         return sellObligationLifted != null
         && sellObligationLifted.contains(company);
     }
 
-	public void setSellObligationLifted (PublicCompany company) {
+    public void setSellObligationLifted (PublicCompany company) {
         if (sellObligationLifted == null) {
-			sellObligationLifted = HashSetState.create(this, "sellObligationLifted");
+            sellObligationLifted = HashSetState.create(this, "sellObligationLifted");
         }
         sellObligationLifted.add(company);
     }

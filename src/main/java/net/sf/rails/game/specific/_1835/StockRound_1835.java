@@ -4,7 +4,13 @@
  */
 package net.sf.rails.game.specific._1835;
 
+import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Sets;
+import com.google.common.collect.SortedMultiset;
 
 import rails.game.action.BuyCertificate;
 import rails.game.action.NullAction;
@@ -12,6 +18,7 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
 import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.state.Portfolio;
 
 
 public class StockRound_1835 extends StockRound {
@@ -219,5 +226,33 @@ public class StockRound_1835 extends StockRound {
         }
          return super.done(action, playerName, hasAutopassed);
     }
+
+  /*  (non-Javadoc)
+     * @see net.sf.rails.game.StockRound#mayPlayerSellShareOfCompany(net.sf.rails.game.PublicCompany)
+    */ 
+    @Override
+    public boolean mayPlayerSellShareOfCompany(PublicCompany company) {
+        if (!super.mayPlayerSellShareOfCompany(company) ) 
+            { 
+            return false;
+            }
+        else {
+          /*
+           * Player is President and ia allowed to sell his director share if there is enough space in the pool in 1835
+           * But if he has sold a share in this round he is allowed to sell dump the presidency...
+           *
+           * */
+            if (company.getPresident() == currentPlayer) { 
+                if (PlayerShareUtils.poolAllowsShareNumbers(company) >1) return true;
+                }
+        }
+        return true;
+    }
     
+    @Override
+    protected boolean checkIfSplitSaleOfPresidentAllowed() {
+        // in 1835 its not allowed to Split the President Certificate on sale
+        return false;
+    }
+     
 }

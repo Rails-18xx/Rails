@@ -1051,7 +1051,7 @@ PresidentAddsCash,IR,klaus,322
 BuysTrain,IR,D,IPO,1100
  
 CompanyOperates,SR,stefan
-LaysTileAt,SR,42,I8,NW
+LaysTileAt,SR,58,J9,NW
 CompanyRevenue,SR,450
 CompanyPaysOutFull,SR,450
 Payout,stefan,225,5,10
@@ -1061,7 +1061,7 @@ Payout,SR,45,1,10
 PRICE_MOVES_LOG,SR,80,G6,90,G5
  
 CompanyOperates,AR,Josha
-LaysTileAt,AR,58,J9,NW
+LaysTileAt,AR,42,I8,NW
 CompanyRevenue,AR,440
 CompanyPaysOutFull,AR,440
 Payout,stefan,132,3,10

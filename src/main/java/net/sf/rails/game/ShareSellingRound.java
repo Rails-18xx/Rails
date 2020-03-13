@@ -237,7 +237,7 @@ public class ShareSellingRound extends StockRound {
         int presSharesToSell = 0;
         int numberToSell = action.getNumber();
         int shareUnits = action.getShareUnits();
-
+        int presidentExchange = action.getPresidentExchange();
 
         // Dummy loop to allow a quick jump out
         while (true) {
