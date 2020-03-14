@@ -6,7 +6,7 @@
     <groupId>net.sf</groupId>
     <artifactId>rails</artifactId>
     <packaging>jar</packaging>
-    <version>2.0-RC4</version>
+    <version>2.1beta2</version>
 
     <name>rails</name>
     <description>A Java playing aid for playing 18xx based games via email or in Hotseat mode.</description>

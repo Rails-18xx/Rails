@@ -524,17 +524,14 @@ public class OperatingRound_1837 extends OperatingRound {
 
         for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
             if ((company.hasStockPrice()) && (company.hasFloated())){
-                if (findStartingPlayerForCoalExchange(company)) exchangedCoalCompanies.set(true);
-            }
+                
         }
         else {
             ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
         }
 
-
-    } else {
-
-        super.finishRound();
+        }
+       super.finishRound();
 
     }
 
