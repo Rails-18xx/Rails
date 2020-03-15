@@ -21,11 +21,8 @@ import net.sf.rails.game.Player;
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
-<<<<<<< rails_2_develop
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.NationalFormationRound;
-=======
->>>>>>> c8f2041 Replacing obsolete Code in 1837 Implementing the mapHex block for private companies and the phase 4 tile blocks for upper italy.
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.specific._18EU.GameManager_18EU;
@@ -527,16 +524,16 @@ public class OperatingRound_1837 extends OperatingRound {
 
         for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
             if ((company.hasStockPrice()) && (company.hasFloated())){
-                if (findStartingPlayerForCoalExchange(company)) exchangedCoalCompanies.set(true);
-            }
+//                if (findStartingPlayerForCoalExchange(company)) exchangedCoalCompanies.set(true);
+//                {}
+                
         }
         else {
             ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
         }
 
 
-    } else {
-
+    } 
         super.finishRound();
 
     }

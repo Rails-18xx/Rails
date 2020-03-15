@@ -1971,7 +1971,6 @@ CompanyRevenue,BCR,340
 CompanyPaysOutFull,BCR,340
 Payout,Helmut,340,10,10
 PRICE_MOVES_LOG,BCR,125,J4,135,K4
-BuysTrain,BCR,2R,BZU,167
  
 CompanyOperates,HKR,Lonny
 CompanyRevenue,HKR,450
@@ -2011,10 +2010,9 @@ PRICE_MOVES_LOG,JLR,85,D5,90,E5
  
 CompanyOperates,BZU,Helmut
 LaysTileAt,BZU,8888,F8,SW
-LAYS_TOKEN_ON,BZU,E9,200 Hex E9 (Chengde)
-CompanyRevenue,BZU,400
-CompanyPaysOutFull,BZU,400
-Payout,Helmut,200,5,10
+CompanyRevenue,BZU,450
+CompanyPaysOutFull,BZU,450
+Payout,Helmut,225,5,10
 PRICE_MOVES_LOG,BZU,55,B8,65,C8
  
 CompanyOperates,WNR,Stefan
@@ -2048,10 +2046,10 @@ Has,HKR,0
 Has,NJR,230
 Has,QSR,79
 Has,WNR,1
-Has,Helmut,419
+Has,Helmut,444
 Has,Lonny,2100
 Has,Ronnie,1436
-Has,Stefan,1212
+Has,Stefan,743
 START_OR,10.3
  
 CompanyOperates,QSR,Stefan
@@ -2085,9 +2083,9 @@ PRICE_MOVES_LOG,LHR,65,D9,70,E9
 BuysTrain,LHR,6,JHA,1
  
 CompanyOperates,BCR,Helmut
-CompanyRevenue,BCR,480
-CompanyPaysOutFull,BCR,480
-Payout,Helmut,480,10,10
+CompanyRevenue,BCR,490
+CompanyPaysOutFull,BCR,490
+Payout,Helmut,490,10,10
 PRICE_MOVES_LOG,BCR,135,K4,145,L4
  
 CompanyOperates,HKR,Lonny
@@ -2118,7 +2116,7 @@ Payout,Ronnie,320,10,10
 PRICE_MOVES_LOG,CKR,105,H5,110,I5
  
 CompanyOperates,JLR,Lonny
-LaysTileAt,JLR,455,H6,W
+LaysTileAt,JLR,455,H6,SW
 CompanyRevenue,JLR,380
 CompanyPaysOutFull,JLR,380
 Payout,Lonny,190,5,10
@@ -2132,7 +2130,7 @@ Payout,Helmut,245,5,10
 PRICE_MOVES_LOG,BZU,65,C8,70,D8
  
 CompanyOperates,WNR,Stefan
-LaysTileAt,WNR,8875,D12,W
+LaysTileAt,WNR,8875,D12,SW
 CompanyRevenue,WNR,70
 CompanyPaysOutFull,WNR,70
 Payout,Stefan,28,4,10

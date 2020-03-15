@@ -391,7 +391,7 @@ Payout,Stefan,30,1,100
 CompanyOperates,BY,Helmut
 LaysTileAt,BY,6,N12,SW
 LaysTileAtFor,BY,9,M13,SW,50
-LAYS_TOKEN_ON,BY,N12,40
+LAYS_TOKEN_ON,BY,N12,40 Hex N12 (Augsburg)
 CompanyRevenue,BY,100
 CompanyPaysOutFull,BY,100
 Payout,Helmut,30,3,10
@@ -1038,7 +1038,7 @@ StartStockRound,5
 HasPriority,Lonny
 PASSES,Lonny
 PASSES,Stefan
-SELL_SHARES_LOG,Ronnie,2,5,10,PR,154
+SELL_SHARE_LOG,Ronnie,10,PR,154
 PRICE_MOVES_LOG,PR,154,I4,140,I5
 IS_NOW_PRES_OF,Stefan,PR
 PASSES,Ronnie
@@ -1060,15 +1060,10 @@ Has,Stefan,404
 Has,Ronnie,540
 Has,Helmut,282
 StartFormationRound,PR
-MERGE_MINOR_LOG,Lonny,M5,PR,181,0
-GetShareForMinor,Lonny,5,PR,IPO,M5
-MERGE_MINOR_LOG,Stefan,M6,PR,210,1
-GetShareForMinor,Stefan,5,PR,IPO,M6
-ExchangesBaseToken,PR,M6,C11/1
  
 EndOfFormationRoundNoInterrupt,PR
 START_OR,5.1
 ReceivesFor,Stefan,5,NF
 ReceivesFor,Helmut,15,PfB
  
-CompanyOperates,PR,Stefan
+CompanyOperates,M5,Lonny
