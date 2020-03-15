@@ -5,6 +5,7 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.*;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 
@@ -337,11 +338,6 @@ public class StartRound_1837_2ndEd extends StartRound {
 
     private void setNextSelectingPlayer() {
         playerManager.setCurrentToNextPlayerAfter(selectingPlayer.value());
-    }
-
-    @Override
-    public String getHelp() {
-        return "1837 Start Round help text";
     }
 
 }

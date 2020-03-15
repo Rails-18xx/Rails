@@ -10,11 +10,11 @@ import net.sf.rails.common.GameOption;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.Bank;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.StockRound;
+import net.sf.rails.game.financial.StockRound;
 import rails.game.action.MergeCompanies;
 import rails.game.action.NullAction;
 

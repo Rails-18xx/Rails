@@ -20,6 +20,7 @@ import net.sf.rails.game.*;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.financial.PlayerShareUtils;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.Portfolio;
 
