@@ -16,9 +16,16 @@
                         </OperatingRound>
                 </GameParameters>
                 <GuiClasses>
+                	<GameStatus	class="net.sf.rails.ui.swing.gamespecific._1837.GameStatus_1837"/>
+		         <IfOption name="Variant" value="Basegame,Romoth"> --> 
                     <StartRoundWindow class="net.sf.rails.ui.swing.gamespecific._1837.StartRoundWindow_1837"/>
+				</IfOption>  
+                 <IfOption name="Variant" value="1837-2ndEd."> -->
+                    <StartRoundWindow class="net.sf.rails.ui.swing.gamespecific._1837.StartRoundWindow_1837_2ndED"/>
+					 </IfOption> 
                     <StatusWindow class="net.sf.rails.ui.swing.gamespecific._1837.StatusWindow_1837"/>
                     <GameUIManager class="net.sf.rails.ui.swing.gamespecific._1837.GameUIManager_1837"/>
+                    <ORUIManager class="net.sf.rails.ui.swing.gamespecific._1837.ORUIManager_1837"/>
                 </GuiClasses>
                 <EndOfGame>
                         <BankBreaks limit="0" finish="currentOR"/>
@@ -137,14 +144,14 @@
                         <!-- TBD: Private companies no longer block tile-laying
                                   in their hex by other players. -->
                         <!-- Open Bosnia-Herzegovina for building: -->
-                        <LayTile hex="L17" tile="0"/>
-                        <LayTile hex="L19" tile="-1"/>
-                        <LayTile hex="L21" tile="0"/>
-                        <LayTile hex="M18" tile="0" cost="70"/>
-                        <LayTile hex="M20" tile="0" cost="70"/>
-                        <LayTile hex="M22" tile="0" cost="70"/>
-                        <LayTile hex="N19" tile="0" cost="70"/>
-                        <LayTile hex="N21" tile="-10" city="Sarajevo"/>
+                        <LayTile hex="L16" tile="0"/>
+                        <LayTile hex="L18" tile="-1"/>
+                        <LayTile hex="L20" tile="0"/>
+                        <LayTile hex="M17" tile="0" cost="70"/>
+                        <LayTile hex="M19" tile="0" cost="70"/>
+                        <LayTile hex="M21" tile="0" cost="70"/>
+                        <LayTile hex="N18" tile="0" cost="70"/>
+                        <LayTile hex="N20" tile="-10" city="Sarajevo"/>
                         <OperatingRounds number="2"/>
                 </Phase>
                 <Phase name="3+1" realName="2">
@@ -206,7 +213,7 @@
                                   haven't already. -->
                         <!-- TBD: All coal companies must convert even if their
                                   major companies haven't formed. -->
-                        <OffBoardRevenue step="2"/>
+                        <OffBoardRevenue step="2"/> <!--  Where do we read that..  -->
                         <OperatingRounds number="3"/>
                 </Phase>
                 <Phase name="4G" realName="3">
@@ -219,5 +226,8 @@
         		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
 				<Modifier class="net.sf.rails.game.specific._1837.ItalyTileModifier" />
 				<Modifier class="net.sf.rails.game.specific._1837.BzHTileModifier" />
+				<!-- <Modifier class="net.sf.rails.game.specific._1837.CoalMineModifier"/>
+				//<Modifier class="net.sf.rails.game.specific._1837.CoalTrainModifier"/>
+				//<Modifier class="net.sf.rails.game.specific._1837.StartAtCoalMineModifier"/> -->
         </Component>
 </ComponentManager>

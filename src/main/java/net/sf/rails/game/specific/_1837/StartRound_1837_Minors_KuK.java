@@ -44,12 +44,18 @@ public class StartRound_1837_Minors_KuK extends StartRound {
                 possibleActions.clear();
                 return true;
             }
+        if (!fillPossibleActions(buyableItems)) {
+            /* we dont have a valid player action */
+            possibleActions.add(new NullAction(NullAction.Mode.PASS));
+        } else {          
         
+        /* Pass is always allowed, we have a valid player action */
+        possibleActions.add(new NullAction(NullAction.Mode.PASS));
+        }
+        return true;
+    }
 
-        /*
-         * Repeat until we have found a player with enough money to buy some
-         * item
-         */
+    private boolean fillPossibleActions(List<StartItem> buyableItems) {
         while (possibleActions.isEmpty()) {
 
             Player currentPlayer = playerManager.getCurrentPlayer();
@@ -63,13 +69,12 @@ public class StartRound_1837_Minors_KuK extends StartRound {
                     possibleActions.add(new BuyStartItem(item,
                             item.getBasePrice(), false));
                   }
-    }  /* Pass is always allowed */
-    possibleActions.add(new NullAction(NullAction.Mode.PASS));
-                
-}
-        /* Pass is always allowed */
-        possibleActions.add(new NullAction(NullAction.Mode.PASS));
-
+                }
+            break;
+        }
+        if (possibleActions.isEmpty()) { 
+            return false; 
+        }       
         return true;
     }
     

@@ -13,7 +13,7 @@ public class StartRoundWindow_1837 extends StartRoundWindow {
     
     /* Keys of dialogues owned by this class */
     public static final String COMPANY_START_HEX_DIALOG = "CompanyStartHex";
-    private static final String[] hexes = {"L3", "L9"};
+    private static final String[] hexes = {"L2", "L8"};
     
     protected JDialog currentDialog = null;
     protected PossibleAction currentDialogAction = null;
@@ -42,6 +42,8 @@ public class StartRoundWindow_1837 extends StartRoundWindow {
 
     //-- Start Hex for S5
     private boolean requestHomeHex(SetHomeHexLocation action) {
+      
+
         RadioButtonDialog dialog = new RadioButtonDialog(
                 COMPANY_START_HEX_DIALOG, this, this,
                 LocalText.getText("PleaseSelect"),       

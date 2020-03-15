@@ -205,7 +205,7 @@ public class StartPacket extends RailsAbstractItem {
     }
 
     /**
-     * Check if all items have bene sold.
+     * Check if all items have been sold.
      *
      * @return True if all items have been sold.
      */

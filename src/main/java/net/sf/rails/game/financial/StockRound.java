@@ -544,6 +544,7 @@ public class StockRound extends Round {
                 }
 
                 for (int i=1; i<=number; i++) {
+                	if(checkIfSplitSaleOfPresidentAllowed()) {
                     // check if selling would dump the company
                     if (dumpIsPossible && i*shareSize >= dumpThreshold) {
                         // dumping requires that the total is in the possibleSharesToSell list and that shareSize == 1
@@ -558,6 +559,26 @@ public class StockRound extends Round {
                 }
             }
         }
+            else {
+                if (dumpIsPossible && i*shareSize >= dumpThreshold) { 
+                    if ( certCount.isEmpty() && number == 2) {
+                
+                    possibleActions.add(new SellShares(company, 2, 1, price, 1));  
+                    }
+                    else {
+                        if (((!certCount.isEmpty()) && (number ==1) ) || number >2) {
+                            possibleActions.add(new SellShares(company, shareSize, i, price, 1));
+                        }
+                    }
+                }
+                else {
+                    possibleActions.add(new SellShares(company, shareSize, i, price, 0));
+                }
+           }
+       }
+   }
+}
+
 
         // Is player over the total certificate hold limit?
         float certificateCount = playerPortfolio.getCertificateCount();
@@ -575,6 +596,11 @@ public class StockRound extends Round {
                     , violations.toString()
             ));
         }
+    }
+
+    protected boolean checkIfSplitSaleOfPresidentAllowed() {
+        // To be overwritten in Stockround Classes for games where that is not allowed e.g. 1835
+        return true;
     }
 
     // called by:
@@ -1164,6 +1190,17 @@ public class StockRound extends Round {
                     // reduce the numberToSell by the president (partial) sold certificate
                     numberToSell -= presidentShareNumbersToSell;
                 }
+            }
+            else {
+               if (currentPlayer == company.getPresident() && shareUnits == 2) {
+                   dumpedPlayer = company.findPlayerToDump();
+                   if (dumpedPlayer != null) {
+                       presidentShareNumbersToSell = PlayerShareUtils.presidentShareNumberToSell(
+                               company, currentPlayer, dumpedPlayer, numberToSell+1);
+                       // reduce the numberToSell by the president (partial) sold certificate
+                       numberToSell -= presidentShareNumbersToSell;
+                   }
+               }
             }
             
             certsToSell = PlayerShareUtils.findCertificatesToSell(company, currentPlayer, numberToSell, shareUnits);

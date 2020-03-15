@@ -16,6 +16,7 @@ import rails.game.correct.OperatingCost;
 import net.sf.rails.common.*;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.BankPortfolio;
+import net.sf.rails.game.financial.Certificate;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.round.RoundFacade;
@@ -297,6 +298,13 @@ public class OperatingRound extends Round implements Observer {
 
             result = repayLoans((RepayLoans) selectedAction);
 
+        } else if (selectedAction instanceof ExchangeTokens) {
+
+            result = exchangeTokens((ExchangeTokens) selectedAction, false); // 2nd
+                                                                             // parameter:
+                                                                             // unlinked
+                                                                             // moveset
+
         } else if (selectedAction instanceof ClosePrivate) {
 
             result = executeClosePrivate((ClosePrivate) selectedAction);
@@ -305,6 +313,12 @@ public class OperatingRound extends Round implements Observer {
                    && ((UseSpecialProperty) selectedAction).getSpecialProperty() instanceof SpecialRight) {
 
             result = buyRight((UseSpecialProperty) selectedAction);
+            
+        } else if (selectedAction instanceof UseSpecialProperty 
+                && ((UseSpecialProperty) selectedAction).getSpecialProperty() instanceof ExchangeForShare) {
+            
+            useSpecialProperty((UseSpecialProperty)selectedAction);
+            
 
         } else if (selectedAction instanceof NullAction) {
 
@@ -337,6 +351,82 @@ public class OperatingRound extends Round implements Observer {
 
         return result;
     }
+    
+    public boolean useSpecialProperty(UseSpecialProperty action) {
+
+        SpecialProperty sp = action.getSpecialProperty();
+
+        if (sp instanceof ExchangeForShare) {
+
+            return executeExchangeForShare(action, (ExchangeForShare) sp);
+            
+        } else {
+            return false;
+        }
+    }
+    
+    public boolean executeExchangeForShare (UseSpecialProperty action, ExchangeForShare sp) {
+
+        PublicCompany publicCompany =
+            companyManager.getPublicCompany(sp.getPublicCompanyName());
+        PrivateCompany privateCompany = (PrivateCompany)sp.getOriginalCompany();
+        Owner owner= privateCompany.getOwner();
+        Player player = null;
+        String errMsg = null;
+        boolean ipoHasShare = ipo.getShare(publicCompany) >= sp.getShare();
+        boolean poolHasShare = pool.getShare(publicCompany) >= sp.getShare();
+
+        while (true) {
+
+            /* Check if the private is owned by a player */
+            if (!(owner instanceof Player)) {
+                errMsg =
+                    LocalText.getText("PrivateIsNotOwnedByAPlayer",
+                            privateCompany.getId());
+                break;
+            }
+
+            player = (Player) owner;
+
+            /* Check if a share is available */
+            if (!ipoHasShare && !poolHasShare) {
+                errMsg =
+                    LocalText.getText("NoSharesAvailable",
+                            publicCompany.getId());
+                break;
+            }
+
+            break;
+        }
+        if (errMsg != null) {
+            DisplayBuffer.add(this, LocalText.getText(
+                    "CannotSwapPrivateForCertificate",
+                    player.getId(),
+                    privateCompany.getId(),
+                    sp.getShare(),
+                    publicCompany.getId(),
+                    errMsg ));
+            return false;
+        }
+
+        
+
+        Certificate cert =
+            ipoHasShare ? (PublicCertificate) ipo.findCertificate(publicCompany,
+                    false) : (PublicCertificate) pool.findCertificate(publicCompany,
+                            false);
+            cert.moveTo(player);
+            ReportBuffer.add(this, LocalText.getText("SwapsPrivateForCertificate",
+                    player.getId(),
+                    privateCompany.getId(),
+                    sp.getShare(),
+                    publicCompany.getId()));
+            sp.setExercised();
+            privateCompany.setClosed();
+
+            return true;
+    }
+
 
     /** Stub, to be overridden in game-specific subclasses. */
     public boolean processGameSpecificAction(PossibleAction action) {
@@ -2477,7 +2567,7 @@ public class OperatingRound extends Round implements Observer {
                     recipient.getId(), partText, shares,
                     operatingCompany.value().getShareUnit()));
         }
-
+        
         // Move the token
         operatingCompany.value().payout(amount);
 
