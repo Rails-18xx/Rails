@@ -1,26 +1,25 @@
 sudo: required
-os: linux
-dist: trusty
 language: java
 
 branches:
   only:
-  - rails_2_develop
-  - rails_2_maintenance
-
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install -qq lib32z1 lib32ncurses5 lib32bz2-1.0 zlib1g:i386 genisoimage
+    - rails_2_develop
+    - rails_2_maintenance
 
 jobs:
   include:
-  - name: Linux Oracle JDK 8
-    jdk: oraclejdk8
-  - name: Linux Oracle JDK 9
-    jdk: oraclejdk9
-  - name: Linux Oracle JDK 10
-    jdk: oraclejdk10
-  - name: Linux Oracle JDK 11
-    jdk: oraclejdk11
-  - name: Linux OpenJDK 11
-    jdk: openjdk11
+    - name: Linux OpenJDK 11
+      os: linux
+      dist: trusty
+      jdk: openjdk11
+    - name: Linux OpenJDK 13
+      os: linux
+      dist: trusty
+      jdk: openjdk13
+    - name: MacOS OpenJDK 11
+      os: osx
+      osx_image: xcode10.1
+    - name: MacOS OpenJDK 13
+      os: osx
+      osx_image: xcode11.3
+      script: mvn clean test
