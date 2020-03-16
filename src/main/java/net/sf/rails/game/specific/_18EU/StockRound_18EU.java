@@ -476,7 +476,7 @@ public class StockRound_18EU extends StockRound {
 
         companyBoughtThisTurnWrapper.set(company);
         hasActed.set(true);
-        setPriority();
+        setPriority("Startcompany");
 
         return true;
     }
@@ -631,7 +631,7 @@ public class StockRound_18EU extends StockRound {
             	setSellObligationLifted (major);
             }
 
-            setPriority();
+            setPriority("Merge");
         }
 
         return true;
