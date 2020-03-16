@@ -42,7 +42,7 @@ plugins {
 // Addition of macAppBundle
 // https://github.com/crotwell/gradle-macappbundle
 plugins {
-  id "edu.sc.seis.macAppBundle" version "2.1.6"
+  id "edu.sc.seis.macAppBundle" version "2.3.0"
 }
 
 
