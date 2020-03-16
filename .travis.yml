@@ -14,23 +14,23 @@ jobs:
       dist: trusty
       jdk: openjdk11
       install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-      script: mvn test
+      script: mvn test -B
     - stage: Test
       name: Linux OpenJDK 13
       os: linux
       dist: trusty
       jdk: openjdk13
       install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-      script: mvn test
+      script: mvn test -B
     - stage: Test
       name: MacOS OpenJDK 11
       os: osx
       osx_image: xcode10.1
       install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-      script: mvn test
+      script: mvn test -B
     - stage: Test
       name: MacOS OpenJDK 13
       os: osx
       osx_image: xcode11.3
       install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-      script: mvn test
+      script: mvn test -B
