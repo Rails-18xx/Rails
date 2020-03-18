@@ -208,7 +208,7 @@ public class StockRound_1837 extends StockRound {
                 setSellObligationLifted(major);
             }
 
-            setPriority();
+            setPriority("MergeCompany");
         }
 
         return true;

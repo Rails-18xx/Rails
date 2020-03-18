@@ -81,5 +81,11 @@ public class StockRound_1825 extends StockRound {
 
     }
 
+	@Override
+	protected void setPriority(String string) {
+		if (string.equals("BuyCert")) {
+			super.setPriority(string);
+		}
+	}
 
 }

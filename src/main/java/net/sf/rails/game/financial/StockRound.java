@@ -13,6 +13,7 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Round;
 import net.sf.rails.game.GameDef.Parm;
 import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.round.Activity;
 import net.sf.rails.game.special.*;
 import net.sf.rails.game.state.*;
 import net.sf.rails.game.state.Currency;
@@ -834,7 +835,7 @@ public class StockRound extends Round {
 
 		companyBoughtThisTurnWrapper.set(company);
 		hasActed.set(true);
-		setPriority();
+		setPriority("StartCompany");
 
 		// Check for any game-specific consequences
 		// (such as making another company available in the IPO)
@@ -1027,7 +1028,7 @@ public class StockRound extends Round {
 
 		companyBoughtThisTurnWrapper.set(company);
 		hasActed.set(true);
-		setPriority();
+		setPriority("BuyCert");
 
 		// Check if presidency has changed
 		company.checkPresidencyOnBuy(currentPlayer);
@@ -1277,7 +1278,7 @@ public class StockRound extends Round {
 		if (companyBoughtThisTurnWrapper.value() == null)
 			hasSoldThisTurnBeforeBuying.set(true);
 		hasActed.set(true);
-		setPriority();
+		setPriority("SellCert");
 
 		return true;
 	}
@@ -1660,14 +1661,19 @@ public class StockRound extends Round {
 	/**
 	 * Remember the player that has the Priority Deal. <b>Must be called BEFORE
 	 * setNextPlayer()!</b>
+	 * @param string 
 	 */
 	// called by
 	// StockRound: buyShares, sellShares, startCompany
 	// StockRound 18EU: mergeCompanies, startCompany
 	// StockRound 1837: mergeCompanies
 
-	// not overridden
-	protected void setPriority() {
+	// To be overridden in 1825, 1829,1835 (done), 1847, 1881, 18Africa
+	protected void setPriority(String string) {
+		//Standard: All actions change Priority but not in 
+		//1825, 1829, 1835, 1847, 1881, 18Africa Each player 
+		//consecutively not making a purchase. The priority then 
+		//goes to the player after the one who last made a purchase.
 		getRoot().getPlayerManager().setPriorityPlayerToNext();
 	}
 

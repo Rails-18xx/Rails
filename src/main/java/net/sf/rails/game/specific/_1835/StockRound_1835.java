@@ -271,5 +271,12 @@ public class StockRound_1835 extends StockRound {
         // in 1835 its not allowed to Split the President Certificate on sale
         return false;
     }
+
+	@Override
+	protected void setPriority(String string) {
+		if (string.equals("BuyCert")) {
+			super.setPriority(string);
+		}
+	}
      
 }
