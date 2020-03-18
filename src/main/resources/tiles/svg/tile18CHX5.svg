@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="svg5915"
+   sodipodi:docname="tile18CHX5.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <metadata
+     id="metadata5921">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs5919" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview5917"
+     showgrid="false"
+     inkscape:zoom="1"
+     inkscape:cx="50"
+     inkscape:cy="50"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5915" />
+  <path
+     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
+     fill="#38AC00"
+     stroke="#38AC00"
+     stroke-width="1"
+     stroke-linejoin="round"
+     id="path5875" />
+  <text
+     x="245"
+     y="318"
+     dy="0.3em"
+     fill="#000000"
+     stroke="#000000"
+     text-anchor="middle"
+     font-family="Arial"
+     font-size="34"
+     id="text5877"
+     style="-inkscape-font-specification:'Arial, Normal';font-family:Arial;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:34px;text-anchor:middle;text-align:center;writing-mode:lr;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;">
+    <tspan
+       sodipodi:role="line"
+       id="tspan5923">X5</tspan>
+  </text>
+  <circle
+     cx="186"
+     cy="264"
+     r="51"
+     fill="#FFFFFF"
+     stroke="#FFFFFF"
+     stroke-width="12"
+     id="circle5879" />
+  <circle
+     cx="190"
+     cy="76"
+     r="51"
+     id="circle5881"
+     style="fill:#ffffff;stroke:#ffffff;stroke-width:12" />
+  <path
+     d="M 196,340 A 294,294 0 0,0 186,264"
+     fill="none"
+     stroke="#FFFFFF"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5883" />
+  <path
+     d="M 186,264 A 294,294 0 0,0 49,85"
+     fill="none"
+     stroke="#FFFFFF"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5885" />
+  <path
+     d="M 180.13727,76.410407 A 294,294 0 0 0 187.72001,0.1313012"
+     id="path5887"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke:#ffffff;stroke-width:34;stroke-linecap:butt;stroke-linejoin:round" />
+  <path
+     d="M 52.851229,256.7978 A 305.81893,293.32279 0 0 0 194.134,77.317191"
+     id="path5889"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke:#ffffff;stroke-width:34.63671112;stroke-linecap:butt;stroke-linejoin:round" />
+  <path
+     d="M 196,340 A 294,294 0 0,0 186,264"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5891" />
+  <path
+     d="M 186,264 A 294,294 0 0,0 49,85"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5893" />
+  <path
+     d="M 177.8179,76.144115 A 294,294 0 0 0 187.72001,0.1313012"
+     id="path5895"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round" />
+  <path
+     d="M 51.228439,257.3287 A 316.75161,323.90617 88.077622 0 0 199.60033,62.363626"
+     id="path5897"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke:#000000;stroke-width:28.32663918;stroke-linecap:butt;stroke-linejoin:round" />
+  <circle
+     cx="186"
+     cy="264"
+     r="51"
+     fill="#FFFFFF"
+     stroke="#000000"
+     stroke-width="4"
+     id="circle5899" />
+  <ellipse
+     rx="38"
+     ry="34"
+     cx="305"
+     cy="97"
+     id="ellipse5901"
+     style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-linejoin:round" />
+  <text
+     x="305"
+     y="97"
+     dy="15.3"
+     font-size="51"
+     id="text5903"
+     style="font-size:51px;font-family:'Bookman Old Style';text-anchor:middle;fill:#000000;stroke:#000000">40</text>
+  <circle
+     cx="190"
+     cy="76"
+     r="51"
+     id="circle5905"
+     style="fill:#ffffff;stroke:#000000;stroke-width:4" />
+  <ellipse
+     rx="38"
+     ry="34"
+     cx="311"
+     cy="227"
+     id="ellipse5907"
+     style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-linejoin:round" />
+  <text
+     x="311"
+     y="227"
+     dy="15.3"
+     font-size="51"
+     id="text5909"
+     style="font-size:51px;font-family:'Bookman Old Style';text-anchor:middle;fill:#000000;stroke:#000000">40</text>
+  <text
+     x="49"
+     y="170"
+     dy="0.3em"
+     fill="#000000"
+     stroke="#000000"
+     text-anchor="middle"
+     font-family="TimpaniHeavy"
+     font-size="51"
+     id="text5911">OO</text>
+  <path
+     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
+     fill="none"
+     stroke="black"
+     stroke-width="1"
+     stroke-linejoin="round"
+     id="path5913" />
+</svg>
