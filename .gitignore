@@ -4,7 +4,6 @@
 # eclipse specific files
 /.settings/
 
-.project
 .classpath
 
 # IntelliJ specific files
