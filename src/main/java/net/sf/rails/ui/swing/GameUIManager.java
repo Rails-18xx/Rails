@@ -1037,25 +1037,13 @@ public class GameUIManager implements DialogOwner {
         autoSaveLoadStatus = dialog.getStatus();
         autoSaveLoadPollingInterval = dialog.getInterval();
 
-        if (autoLoadPoller == null && autoSaveLoadStatus > 0) {
-
-            autoLoadPoller = new AutoLoadPoller (this, saveDirectory, savePrefix,
-                    localPlayerName, autoSaveLoadStatus, autoSaveLoadPollingInterval);
-            autoLoadPoller.start();
-        } else if (autoLoadPoller != null) {
-            autoLoadPoller.setStatus(autoSaveLoadStatus);
-            autoLoadPoller.setPollingInterval(autoSaveLoadPollingInterval);
-        }
-        log.debug("AutoSaveLoad parameters: status="+autoSaveLoadStatus
-                +" interval="+autoSaveLoadPollingInterval);
-
         if (gameWasLoaded) {
             autoSaveLoadInitialized = true;
             lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
             saveAutoSavedFilename (lastSavedFilename);
         }
 
-        if (autoLoadPoller != null && autoSaveLoadStatus != AutoLoadPoller.OFF
+        if (autoSaveLoadStatus != AutoLoadPoller.OFF
                 && !autoSaveLoadInitialized && !gameWasLoaded) {
 
             /* The first time (only) we use the normal save process,
@@ -1083,19 +1071,24 @@ public class GameUIManager implements DialogOwner {
             }
         }
 
-        myTurn = getCurrentPlayer().getId().equals(localPlayerName);
+        if (autoLoadPoller == null && autoSaveLoadStatus > 0) {
+            autoLoadPoller = new AutoLoadPoller (this, saveDirectory, savePrefix,
+                    localPlayerName, autoSaveLoadStatus, autoSaveLoadPollingInterval);
+            autoLoadPoller.start();
+        } else if (autoLoadPoller != null) {
+            autoLoadPoller.setStatus(autoSaveLoadStatus);
+            autoLoadPoller.setPollingInterval(autoSaveLoadPollingInterval);
+        }
+        log.debug("AutoSaveLoad parameters: status="+autoSaveLoadStatus
+                +" interval="+autoSaveLoadPollingInterval);
 
+        myTurn = getCurrentPlayer().getId().equals(localPlayerName);
         if (!myTurn) {
             // Start autoload polling
-            autoLoadPoller.setActive(autoSaveLoadStatus == AutoLoadPoller.ON && !myTurn);
-            log.debug("MyTurn="+myTurn+" poller status="+autoLoadPoller.getStatus()
-                    +" active="+autoLoadPoller.isActive());
-
-        } else {
-            myTurn = true;
-            log.debug("MyTurn="+myTurn);
+            autoLoadPoller.setActive(autoSaveLoadStatus == AutoLoadPoller.ON);
         }
-
+        log.debug("MyTurn="+myTurn+" poller status="+autoLoadPoller.getStatus()
+                +" active="+autoLoadPoller.isActive());
     }
 
     public void saveGameStatus() {
