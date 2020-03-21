@@ -2,16 +2,18 @@
 package net.sf.rails.ui.swing;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.ui.swing.elements.DialogOwner;
 import net.sf.rails.ui.swing.elements.Spinner;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -31,7 +33,7 @@ public class AutoSaveLoadDialog extends JDialog implements ActionListener {
 
     int status;
     int interval;
-    
+
     private static final int NUM_OPTIONS = 3;
 
     protected static Logger log =
@@ -78,7 +80,7 @@ public class AutoSaveLoadDialog extends JDialog implements ActionListener {
 
         optionsPane.setLayout(new GridBagLayout());
         // optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
-        optionsPane.add(new JLabel(LocalText.getText("AutoSaveLoadOptions")), 
+        optionsPane.add(new JLabel(LocalText.getText("AutoSaveLoadOptions")),
                 constraints(0, 0, 10, 10, 10, 10));
 
         choiceButtons = new JRadioButton[NUM_OPTIONS];
@@ -96,7 +98,7 @@ public class AutoSaveLoadDialog extends JDialog implements ActionListener {
             choiceButtons[i].setPreferredSize(size);
             group.add(choiceButtons[i]);
         }
-        
+
         optionsPane.add (new JLabel("Polling interval:"), constraints (0,5,0,0,0,0));
         intervalSpinner.setVisible(true);
         optionsPane.add (intervalSpinner, constraints (1, 5, 0,0,0,0));
@@ -129,7 +131,7 @@ public class AutoSaveLoadDialog extends JDialog implements ActionListener {
                     break;
                 }
             }
-            interval = ((Integer) intervalSpinner.getValue()).intValue();
+            interval = (Integer) intervalSpinner.getValue();
         } else if (arg0.getSource().equals(cancelButton)) {
             //status = -1;
             // Better change nothing?
@@ -142,7 +144,7 @@ public class AutoSaveLoadDialog extends JDialog implements ActionListener {
     public synchronized int getStatus() {
         return status;
     }
-    
+
     public synchronized int getInterval() {
         return interval;
     }

@@ -1,6 +1,8 @@
 package net.sf.rails.game;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -10,8 +12,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import net.sf.rails.common.*;
-import net.sf.rails.common.parser.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.common.Config;
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GameOption;
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.GuiHints;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.common.parser.Configurable;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Configure;
+import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.PlayerManager.PlayerOrderModel;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.ShareSellingRound;
@@ -22,16 +36,25 @@ import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.SpecialBonusTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
-import net.sf.rails.game.state.*;
+import net.sf.rails.game.state.ArrayListState;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.ChangeStack;
+import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.Owner;
+import net.sf.rails.game.state.Portfolio;
+import net.sf.rails.game.state.PortfolioSet;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
 import net.sf.rails.util.Util;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import rails.game.action.*;
-import rails.game.correct.*;
+import rails.game.action.GameAction;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.PossibleActions;
+import rails.game.action.RepayLoans;
+import rails.game.correct.CorrectionAction;
+import rails.game.correct.CorrectionManager;
+import rails.game.correct.CorrectionType;
 
 
 /**
@@ -102,8 +125,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected final IntegerState numOfORs = IntegerState.create(this, "numOfORs");
 
     protected final BooleanState firstAllPlayersPassed = BooleanState.create(this, "firstAllPlayersPassed");
-    
-    
+
+
     /** GameOver pending, a last OR or set of ORs must still be completed */
     protected final BooleanState gameOverPending = BooleanState.create(this, "gameOverPending");
     /** GameOver is executed, no more moves */
@@ -111,9 +134,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Boolean gameOverReportedUI = false;
     protected final BooleanState endedByBankruptcy = BooleanState.create(this, "endedByBankruptcy");
 
-    
-
-    
     /** UI display hints */
     protected GuiHints guiHints;
 
@@ -131,7 +151,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      * than just the owner (such as buyable bonus tokens as in 1856).
      */
     protected Portfolio<SpecialProperty> commonSpecialProperties = null;
-    
+
     /** indicates that the recoverySave already issued a warning, avoids displaying several warnings */
     protected boolean recoverySaveWarning = true;
 
@@ -152,18 +172,18 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     // TODO: Move that to a better place
     protected Map<String, Object> objectStorage = new HashMap<String, Object>();
     protected Map<String, Integer> storageIds = new HashMap<String, Integer>();
-    
+
     private static int revenueSpinnerIncrement = 10;
     //Used for Storing the PublicCompany to be Founded by a formationround
     private PublicCompany nationalToFound;
-    
+
 //    private Player NationalFormStartingPlayer = null;
-    
+
     private Map< PublicCompany, Player> NationalFormStartingPlayer = new HashMap<PublicCompany, Player>();
-    
+
     protected PlayerOrderModel playerNamesModel;
-     
-    
+
+
     /**
      * @return the revenueSpinnerIncrement
      */
@@ -171,14 +191,13 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return revenueSpinnerIncrement;
     }
 
-    protected static Logger log =
-        LoggerFactory.getLogger(GameManager.class);
+    protected static Logger log = LoggerFactory.getLogger(GameManager.class);
 
     public GameManager(RailsRoot parent, String id) {
-        super(parent, id);  
+        super(parent, id);
         guiHints = GuiHints.create(this, "guiHints");
     }
-    
+
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /* Get the rails.game name as configured */
         Tag gameTag = tag.getChild("Game");
@@ -466,7 +485,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             gameParameters.put(parm, parm.defaultValue());
         }
     }
-    
+
     public PossibleActions getPossibleActions() {
         return possibleActions;
     }
@@ -536,7 +555,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     protected void beginStartRound() {
         StartPacket startPacket = getRoot().getCompanyManager().getNextUnfinishedStartPacket();
-        
+
         // check if there are still unfinished startPackets
         if (startPacket != null) {
             // set this to the current startPacket
@@ -544,14 +563,14 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             // start a new StartRound
             createStartRound(startPacket);
         } else {
-            // otherwise 
+            // otherwise
             startStockRound();
         }
     }
-    
+
     protected void createStartRound(StartPacket startPacket) {
         String startRoundClassName = startPacket.getRoundClassName();
-        StartRound startRound = createRound (StartRound.class, startRoundClassName,    
+        StartRound startRound = createRound (StartRound.class, startRoundClassName,
                 "startRound_" + startRoundNumber.value());
         startRoundNumber.add(1);
         startRound.start();
@@ -597,12 +616,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         setRound (round);
         return round;
     }
-    
+
     // FIXME: We need an ID!
     protected <T extends RoundFacade> T createRound(Class<T> roundClass, String id) {
         T round = null;
         try {
-            round = Configure.create(roundClass, GameManager.class, this, id); 
+            round = Configure.create(roundClass, GameManager.class, this, id);
         } catch (Exception e) {
             log.error("Cannot instantiate class "
                     + roundClass.getName(), e);
@@ -615,12 +634,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public void newPhaseChecks (RoundFacade round) {
 
     }
-    
+
     public void reportAllPlayersPassed() {
         ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
         firstAllPlayersPassed.set(true);
     }
-    
+
     public boolean getFirstAllPlayersPassed() {
         return firstAllPlayersPassed.value();
     }
@@ -685,7 +704,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         guiHints.clearVisibilityHints();
         ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
         boolean startGameAction = false;
-        
+
         if (action instanceof NullAction && ((NullAction)action).getMode() == NullAction.Mode.START_GAME) {
             // Skip processing at game start after Load.
             // We're only here to create PossibleActions.
@@ -714,14 +733,14 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 return false;
             }
 
-            
+
             if (action instanceof GameAction) {
                 // Process undo/redo centrally
                 GameAction gameAction = (GameAction) action;
                 result = processGameActions(gameAction);
             } else {
                 // All other actions: process per round
-                
+
                 result = processCorrectionActions(action) ||  getCurrentRound().process(action);
                 if (result && action.hasActed()) {
                     executedActions.add(action);
@@ -735,19 +754,19 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         // Note: round may have changed!
         getCurrentRound().setPossibleActions();
-        
+
         // TODO: SetPossibleAction can contain state changes (like initTurn)
         // Remove that and move closing the ChangeStack after the processing of the action
         if (result && !(action instanceof GameAction) && !(startGameAction)) {
             changeStack.close(action);
         }
-        
+
         // only pass available => execute automatically
         if (!isGameOver() && possibleActions.containsOnlyPass()) {
             result = process(possibleActions.getList().get(0));
         }
 
-        // TODO: Check if this still works as it moved above the close of the ChangeStack 
+        // TODO: Check if this still works as it moved above the close of the ChangeStack
         // to have a ChangeSet open to initialize the CorrectionManagers
         if (!isGameOver()) setCorrectionActions();
 
@@ -868,12 +887,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             if (!isGameOver()) setCorrectionActions();
         }
 
-        log.debug("Action ("+action.getPlayerName()+"): " + action);
+        log.debug("Action ({}): {}", action.getPlayerName(), action);
 
         // Log possible actions (normally this is outcommented)
         String playerName = getCurrentPlayer().getId();
         for (PossibleAction a : possibleActions.getList()) {
-            log.debug(playerName+" may: "+a.toString());
+            log.debug("{} may: {}", playerName, a.toString());
         }
 
         // New in Rails2.0: Check if the action is allowed
@@ -914,7 +933,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         changeStack.close(action);
 
         if (!isGameOver()) setCorrectionActions();
-        
+
         log.debug("Turn: "+getCurrentPlayer().getId());
         return true;
     }
@@ -966,12 +985,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         GameLoader gameLoader = new GameLoader();
         String filepath = reloadAction.getFilepath();
 
-        
+
         if (!gameLoader.reloadGameFromFile(new File(filepath))) {
             return false;
         }
-        
-       /*  followed by actions and comments 
+
+       /*  followed by actions and comments
         try{
             gameLoader.loadGameData(new File(filepath));
             gameLoader.convertGameData();
@@ -1138,7 +1157,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         String message = LocalText.getText("GameOver");
         ReportBuffer.add(this, message);
-        
+
         // FIXME: Rails 2.0 this is not allowed as this causes troubles with Undo
         // DisplayBuffer.add(this, message);
 
@@ -1242,8 +1261,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return (Boolean) getGuiParameter(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
     }
 
-    public String getClassName (GuiDef.ClassName key) {
-
+    public  String getClassName (GuiDef.ClassName key) {
         switch (key) {
 
         case GAME_UI_MANAGER:
@@ -1267,11 +1285,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public Object getGuiParameter (GuiDef.Parm key) {
-        if (guiParameters.containsKey(key)) {
-            return guiParameters.get(key);
-        } else {
-            return false;
-        }
+        return guiParameters.getOrDefault(key, false);
     }
 
     public void setGuiParameter (GuiDef.Parm key, boolean value) {
@@ -1283,11 +1297,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public Object getGameParameter (GameDef.Parm key) {
-        if (gameParameters.containsKey(key)) {
-            return gameParameters.get(key);
-        } else {
-            return false;
-        }
+        return gameParameters.getOrDefault(key, false);
     }
 
     public RoundFacade getInterruptedRound() {
@@ -1296,16 +1306,15 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     // TODO: Was the int position argument required?
     public boolean addSpecialProperty(SpecialProperty property) {
-        
         if (commonSpecialProperties == null) {
-            commonSpecialProperties = PortfolioSet.create(this, 
+            commonSpecialProperties = PortfolioSet.create(this,
                     "CommonSpecialProperties", SpecialProperty.class);
         }
         return commonSpecialProperties.add(property);
     }
 
     // TODO: Write new SpecialPropertiesModel
-    
+
     /* (non-Javadoc)
      * @see rails.game.GameManager#getCommonSpecialProperties()
      */
@@ -1321,7 +1330,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public List<SpecialProperty> getCommonSpecialProperties () {
         return getSpecialProperties (null, false);
     }
-    
+
     public Portfolio<SpecialProperty> getCommonSpecialPropertiesPortfolio() {
         return commonSpecialProperties;
     }
@@ -1403,7 +1412,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         objectStorage = new HashMap<String, Object>();
         storageIds = new HashMap<String, Integer>();
     }
-    
+
     public int getStorageId(String typeName) {
         Integer id = storageIds.get(typeName);
         if (id == null) id = 0;
@@ -1426,7 +1435,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public void processPhaseAction(String name, String value) {
         getCurrentRound().processPhaseAction(name, value);
     }
-    
+
     // FIXME (Rails2.0): does nothing now, replace this with a rewrite
     public void addToNextPlayerMessages(String s, boolean undoable) {
 
@@ -1442,18 +1451,18 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Player getCurrentPlayer() {
         return getRoot().getPlayerManager().getCurrentPlayer();
     }
-    
+
     public void setNationalToFound(String national){
-        
+
         for (PublicCompany company : this.getAllPublicCompanies()){
             if (company.getId().equals("national")) {
-                this.nationalToFound = company;  
+                this.nationalToFound = company;
             }
         }
-        
-        
+
+
     }
-    
+
     public PublicCompany getNationalToFound() {
         // TODO Auto-generated method stub
         return nationalToFound;
@@ -1461,9 +1470,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public void setNationalFormationStartingPlayer( PublicCompany nationalToFound2, Player currentPlayer) {
         this.NationalFormStartingPlayer.put(nationalToFound2, currentPlayer);
-        
+
     }
-    
+
     public Player getNationalFormationStartingPlayer(PublicCompany comp) {
         return this.NationalFormStartingPlayer.get(comp);
     }

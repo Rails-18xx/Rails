@@ -10,21 +10,53 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import rails.game.action.*;
-import rails.game.correct.ClosePrivate;
-import rails.game.correct.OperatingCost;
-import net.sf.rails.common.*;
+import com.google.common.collect.Iterables;
+
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GameOption;
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.Certificate;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.round.RoundFacade;
-import net.sf.rails.game.special.*;
-import net.sf.rails.game.state.*;
+import net.sf.rails.game.special.ExchangeForShare;
+import net.sf.rails.game.special.SellBonusToken;
+import net.sf.rails.game.special.SpecialBaseTokenLay;
+import net.sf.rails.game.special.SpecialBonusTokenLay;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.special.SpecialRight;
+import net.sf.rails.game.special.SpecialTileLay;
+import net.sf.rails.game.special.SpecialTrainBuy;
+import net.sf.rails.game.state.ArrayListState;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.HashMapState;
+import net.sf.rails.game.state.MoneyOwner;
+import net.sf.rails.game.state.Observable;
+import net.sf.rails.game.state.Observer;
+import net.sf.rails.game.state.Owner;
 import net.sf.rails.util.SequenceUtil;
-
-import com.google.common.collect.Iterables;
+import rails.game.action.BuyBonusToken;
+import rails.game.action.BuyPrivate;
+import rails.game.action.BuyTrain;
+import rails.game.action.DiscardTrain;
+import rails.game.action.LayBaseToken;
+import rails.game.action.LayBonusToken;
+import rails.game.action.LayTile;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.PossibleORAction;
+import rails.game.action.ReachDestinations;
+import rails.game.action.RepayLoans;
+import rails.game.action.SetDividend;
+import rails.game.action.TakeLoans;
+import rails.game.action.UseSpecialProperty;
+import rails.game.correct.ClosePrivate;
+import rails.game.correct.OperatingCost;
 
 /**
  * Implements a basic Operating Round. <p> A new instance must be created for
@@ -159,7 +191,7 @@ public class OperatingRound extends Round implements Observer {
                 if (priv.getOwner() instanceof MoneyOwner) {
                     MoneyOwner recipient = (MoneyOwner) priv.getOwner();
                     int revenue = priv.getRevenueByPhase(Phase.getCurrent(this));
-                    
+
                     if (revenue != 0) {
                         if (count++ == 0) ReportBuffer.add(this, "");
                         String revText = Currency.fromBank(revenue, recipient);
@@ -243,9 +275,9 @@ public class OperatingRound extends Round implements Observer {
         selectedAction = action;
 
         if (selectedAction instanceof LayTile) {
-            
+
             LayTile layTileAction = (LayTile)selectedAction;
-            
+
             switch (layTileAction.getType()) {
             case (LayTile.CORRECTION):
                 result = layTileCorrection(layTileAction);
@@ -300,7 +332,7 @@ public class OperatingRound extends Round implements Observer {
 
 			/*
 			 * } else if (selectedAction instanceof ExchangeTokens) {
-			 * 
+			 *
 			 * result = exchangeTokens((ExchangeTokens) selectedAction, false); // 2nd //
 			 * parameter: // unlinked // moveset
 			 */
@@ -312,12 +344,12 @@ public class OperatingRound extends Round implements Observer {
                    && ((UseSpecialProperty) selectedAction).getSpecialProperty() instanceof SpecialRight) {
 
             result = buyRight((UseSpecialProperty) selectedAction);
-            
-        } else if (selectedAction instanceof UseSpecialProperty 
+
+        } else if (selectedAction instanceof UseSpecialProperty
                 && ((UseSpecialProperty) selectedAction).getSpecialProperty() instanceof ExchangeForShare) {
-            
+
             useSpecialProperty((UseSpecialProperty)selectedAction);
-            
+
 
         } else if (selectedAction instanceof NullAction) {
 
@@ -350,7 +382,7 @@ public class OperatingRound extends Round implements Observer {
 
         return result;
     }
-    
+
     public boolean useSpecialProperty(UseSpecialProperty action) {
 
         SpecialProperty sp = action.getSpecialProperty();
@@ -358,12 +390,12 @@ public class OperatingRound extends Round implements Observer {
         if (sp instanceof ExchangeForShare) {
 
             return executeExchangeForShare(action, (ExchangeForShare) sp);
-            
+
         } else {
             return false;
         }
     }
-    
+
     public boolean executeExchangeForShare (UseSpecialProperty action, ExchangeForShare sp) {
 
         PublicCompany publicCompany =
@@ -408,7 +440,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        
+
 
         Certificate cert =
             ipoHasShare ? (PublicCertificate) ipo.findCertificate(publicCompany,
@@ -942,7 +974,7 @@ public class OperatingRound extends Round implements Observer {
 
     /**
      * The current Company is done operating.
-     * 
+     *
      * @param action TODO
      * @param company Name of the company that finished operating.
      *
@@ -1027,7 +1059,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         train.discard();
-       
+
         // Check if any more companies must discard trains,
         // otherwise continue train buying
         if (!checkForExcessTrains()) {
@@ -1218,7 +1250,7 @@ public class OperatingRound extends Round implements Observer {
     /**
      * Stub for applying any follow-up actions when a company reaches it
      * destinations. Default version: no actions.
-     * 
+     *
      * @param company
      */
     protected void reachDestination(PublicCompany company) {
@@ -1657,8 +1689,7 @@ public class OperatingRound extends Round implements Observer {
             if (stl != null) {
                 stl.setExercised();
                 // currentSpecialTileLays.remove(action);
-                log.debug("This was a special tile lay, "
-                          + (extra ? "" : " not") + " extra");
+                log.debug("This was a special tile lay, {} extra", extra ? "" : " not");
 
             }
             if (!extra) {
@@ -1673,7 +1704,7 @@ public class OperatingRound extends Round implements Observer {
 
         return true;
     }
-    
+
     public boolean layTileCorrection(LayTile action) {
 
         Tile tile = action.getLaidTile();
@@ -1728,7 +1759,7 @@ public class OperatingRound extends Round implements Observer {
 
         if (oldAllowedNumberObject == null) return false;
 
-        int oldAllowedNumber = oldAllowedNumberObject.intValue();
+        int oldAllowedNumber = oldAllowedNumberObject;
         if (oldAllowedNumber <= 0) return false;
 
         if (update) updateAllowedTileColours(colour, oldAllowedNumber);
@@ -1761,8 +1792,7 @@ public class OperatingRound extends Round implements Observer {
             for (String key : coloursToRemove) {
                 tileLaysPerColour.remove(key);
             }
-            log.debug((oldAllowedNumber - 1) + " additional " + colour
-                      + " tile lays allowed; no other colours");
+            log.debug("{} additional {} tile lays allowed; no other colours", oldAllowedNumber - 1, colour);
         }
     }
 
@@ -1862,7 +1892,7 @@ public class OperatingRound extends Round implements Observer {
      * it is conceivable that this method can be extended to cover
      * postvalidation as well. Postvalidation is really a different process,
      * which in this context has not yet been considered in detail.
-     * 
+     *
      * @param layTile A LayTile object embedding a SpecialTileLay property. Any
      * other LayTile objects are rejected. The object may be changed by this
      * method.
@@ -1962,7 +1992,7 @@ public class OperatingRound extends Round implements Observer {
      * are included. This method can be extended to perform other generic
      * checks, such as if a route exists, and possibly in subclasses for
      * game-specific checks.
-     * 
+     *
      * @param company The company laying a tile.
      * @param hex The hex on which a tile is laid.
      * @param orientation The orientation in which the tile is laid (-1 is any).
@@ -1977,7 +2007,7 @@ public class OperatingRound extends Round implements Observer {
 
     protected boolean gameSpecificTileLayAllowed(PublicCompany company,
             MapHex hex, int orientation) {
-        return hex.isBlockedByPrivateCompany();  
+        return hex.isBlockedByPrivateCompany();
     }
 
     /*
@@ -1994,7 +2024,7 @@ public class OperatingRound extends Round implements Observer {
 
         MapHex hex = action.getChosenHex();
         Stop stop = action.getChosenStop();
-        
+
         PublicCompany company = action.getCompany();
         String companyName = company.getId();
 
@@ -2112,7 +2142,7 @@ public class OperatingRound extends Round implements Observer {
             }
 
             // Jump out if we aren't in the token laying step or it is a correction lay
-            if (getStep() != GameDef.OrStep.LAY_TOKEN || action.isCorrection()) { 
+            if (getStep() != GameDef.OrStep.LAY_TOKEN || action.isCorrection()) {
                 return true;
             }
 
@@ -2566,7 +2596,7 @@ public class OperatingRound extends Round implements Observer {
                     recipient.getId(), partText, shares,
                     operatingCompany.value().getShareUnit()));
         }
-        
+
         // Move the token
         operatingCompany.value().payout(amount);
 
@@ -3046,7 +3076,7 @@ public class OperatingRound extends Round implements Observer {
      * Can the operating company buy a train now? Normally only calls
      * isBelowTrainLimit() to get the result. May be overridden if other
      * considerations apply (such as having a Pullmann in 18EU).
-     * 
+     *
      * @return
      */
     protected boolean canBuyTrainNow() {

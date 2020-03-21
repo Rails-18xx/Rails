@@ -39,8 +39,7 @@ import rails.game.action.PossibleAction;
  */
 public class GameLoader {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(GameLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(GameLoader.class);
 
     // game data
     private final GameIOData gameIOData = new GameIOData();
@@ -82,7 +81,6 @@ public class GameLoader {
         gameUIManager.startLoadedGame();
         gameUIManager.notifyOfSplashFinalization();
         splashWindow.finalizeGameInit();
-        splashWindow = null;
     }
 
     public static GameUIManager startGameUIManager(RailsRoot game, boolean wasLoaded, SplashWindow splashWindow) {
@@ -96,7 +94,7 @@ public class GameLoader {
             gameUIManager = gameUIManagerClass.newInstance();
             gameUIManager.init(game, wasLoaded, splashWindow);
         } catch (Exception e) {
-            log.error("Cannot instantiate class " + gameUIManagerClassName, e);
+            log.error("Cannot instantiate class {}", gameUIManagerClassName, e);
             System.exit(1);
         }
         return gameUIManager;
@@ -105,7 +103,7 @@ public class GameLoader {
     // FIXME: Rails 2.0 add undefined attribute to allow
     // deviations from undefined to default values
     private GameOptionsSet.Builder loadDefaultGameOptions(String gameName) {
-        log.debug("Load default Game Options of " + gameName);
+        log.debug("Load default Game Options of {}", gameName);
         GameOptionsSet.Builder loadGameOptions = null;
         try {
             loadGameOptions = GameOptionsParser.load(gameName);
@@ -123,7 +121,7 @@ public class GameLoader {
 
     @SuppressWarnings("unchecked")
     public void loadGameData(File gameFile) throws Exception {
-        log.info("Loading game from file " + gameFile.getCanonicalPath());
+        log.info("Loading game from file {}", gameFile.getCanonicalPath());
         // FIXME: Removed the filename replacement expression
         // check if this still works
         // String filename = filePath.replaceAll(".*[/\\\\]", "");
@@ -140,18 +138,18 @@ public class GameLoader {
             version = "pre-1.0.7";
         }
         gameIOData.setVersion(version);
-        log.info("Reading Rails " + version  +" saved file " + gameFile.getName());
+        log.info("Reading Rails {} saved file {}", version, gameFile.getName());
 
         if (object instanceof String) {
             String date = (String)object;
             gameIOData.setDate(date);
-            log.info("File was saved at " + date);
+            log.info("File was saved at {}", date);
             object = ois.readObject();
         }
 
         // read versionID for serialization compatibility
         long fileVersionID = (Long) object;
-        log.debug("Saved versionID="+ fileVersionID+" (object="+object+")");
+        log.debug("Saved versionID={} (object={})", fileVersionID, object);
         gameIOData.setFileVersionID(fileVersionID);
         long saveFileVersionID = GameSaver.saveFileVersionID;
 
@@ -163,12 +161,12 @@ public class GameLoader {
 
         // read name of saved game
         String gameName = (String) ois.readObject();
-        log.debug("Saved game="+ gameName);
+        log.debug("Saved game={}", gameName);
 
         // read default and saved game options
         GameOptionsSet.Builder gameOptions = loadDefaultGameOptions(gameName);
         Map<String, String> savedOptions = (Map<String, String>) ois.readObject();
-        log.debug("Saved game options = " + savedOptions);
+        log.debug("Saved game options = {}", savedOptions);
         for (GameOption option:gameOptions.getOptions()) {
             String name = option.getName();
             if (savedOptions.containsKey(name)) {
@@ -275,7 +273,7 @@ public class GameLoader {
         gameManager.setReloading(true);
 
         int count = -1;
-        if (gameIOData != null && gameIOData.getActions() != null) {
+        if ( gameIOData.getActions() != null ) {
             // set possible actions for first action
             gameManager.getCurrentRound().setPossibleActions();
             for (PossibleAction action : gameIOData.getActions()) {
@@ -321,7 +319,6 @@ public class GameLoader {
      * @return false if exception occurred
      */
     public boolean createFromFile(File gameFile)  {
-
         try {
             // 1st: loadGameData
             loadGameData(gameFile);
@@ -334,7 +331,6 @@ public class GameLoader {
 
             // 4tgh: start game
             railsRoot.start();
-
 
         } catch (Exception e) {
             log.debug("Exception during createFromFile in gameLoader ", e);

@@ -1,8 +1,6 @@
 package net.sf.rails.ui.swing;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
@@ -10,11 +8,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
@@ -24,16 +24,12 @@ import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.sound.SoundManager;
-import net.sf.rails.ui.swing.elements.*;
+import net.sf.rails.ui.swing.elements.Caption;
+import net.sf.rails.ui.swing.elements.ClickField;
+import net.sf.rails.ui.swing.elements.Field;
+import net.sf.rails.ui.swing.elements.RadioButtonDialog;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
 import net.sf.rails.util.Util;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import rails.game.action.BuyCertificate;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
@@ -112,7 +108,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected Field futureTrains;
     protected int futureTrainsXOffset, futureTrainsYOffset, futureTrainsWidth;
     protected int rightCompCaptionXOffset;
-    
+
     /**
      * Next Field is needed for the direct payment of Income and display of sum
      * during an OR for a Company, that is not linked to a share.
@@ -216,7 +212,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         compLoans = new Field[nc];
         if (hasRights) rights = new Field[nc];
         if (hasDirectCompanyIncomeInOr) compDirectRevenue= new Field[nc];
-        
+
         playerCash = new Field[np];
         playerCashButton = new ClickField[np];
         playerPrivates = new Field[np];
@@ -296,15 +292,15 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         fields = new JComponent[1+lastX][2+lastY];
         rowVisibilityObservers = new RowVisibility[nc];
-        
+
         initFields();
-        
+
     }
-    
+
     protected void initFields() {
 
         MouseListener companyCaptionMouseClickListener = gameUIManager.getORUIManager().getORPanel().getCompanyCaptionMouseClickListener();
-        
+
         addField(new Caption(LocalText.getText("COMPANY")), 0, 0, 1, 2,
                 WIDE_BOTTOM, true);
         addField(new Caption(LocalText.getText("PLAYERS")),
@@ -312,7 +308,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         for (int i = 0; i < np; i++) {
             playerIndex.put(players[i], new Integer(i));
             f = upperPlayerCaption[i] = new Caption(players[i].getNameAndPriority());
-            int wideGapPosition = WIDE_BOTTOM + 
+            int wideGapPosition = WIDE_BOTTOM +
                     ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, certPerPlayerXOffset + i, 1, 1, 1, wideGapPosition, true);
         }
@@ -349,7 +345,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("REVENUE")), compRevenueXOffset,
                 1, 1, 1, WIDE_BOTTOM, true);
         if (this.hasDirectCompanyIncomeInOr) {
-            addField(new Caption(LocalText.getText("DIRECT_INCOME")), 
+            addField(new Caption(LocalText.getText("DIRECT_INCOME")),
                     compDirectRevXOffset, 1, 1, 1, WIDE_BOTTOM, true);
         }
         addField(new Caption(LocalText.getText("TRAINS")), compTrainsXOffset,
@@ -420,7 +416,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                             LocalText.getText("ClickToSelectForBuying"),
                             this, buySellGroup);
             addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, 0, false);
-            
+
             //no size alignment as button size could also be smaller than the field's one
             //certInIPO[i].setPreferredSize(certInIPOButton[i].getPreferredSize());
 
@@ -485,7 +481,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
             f = compRevenue[i] = new Field(c.getLastRevenueModel());
             addField(f, compRevenueXOffset, compRevenueYOffset + i, 1, 1, 0, visible);
-            
+
             if (hasDirectCompanyIncomeInOr) {
                 f = compDirectRevenue[i] = new Field(c.getLastDirectIncomeModel());
                 addField(f, compDirectRevXOffset, compDirectRevYOffset + i, 1, 1, 0, visible);
@@ -538,7 +534,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 1, 1, WIDE_TOP , true);
         for (int i = 0; i < np; i++) {
             f = playerCash[i] = new Field(players[i].getWallet());
-            int wideGapPosition = WIDE_TOP + 
+            int wideGapPosition = WIDE_TOP +
                     ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerCashXOffset + i, playerCashYOffset, 1, 1,
                     wideGapPosition, true);
@@ -590,15 +586,15 @@ public class GameStatus extends GridPanel implements ActionListener {
             f =
                 playerCertCount[i] =
                     new Field(players[i].getCertCountModel(), false, true);
-            int wideGapPosition = WIDE_TOP + 
+            int wideGapPosition = WIDE_TOP +
                     ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerCertCountXOffset + i, playerCertCountYOffset, 1,
                     1, wideGapPosition, true);
         }
-        
+
         for (int i = 0; i < np; i++) {
             f = lowerPlayerCaption[i] = new Caption(players[i].getId());
-            int wideGapPosition = WIDE_TOP + 
+            int wideGapPosition = WIDE_TOP +
                     ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, i + 1, playerCertCountYOffset + 1, 1, 1, wideGapPosition, true);
         }
@@ -661,7 +657,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         dummyButton = new ClickField("", "", "", this, buySellGroup);
     }
-    
+
 
     public void recreate() {
         log.debug("GameStatus.recreate() called");
@@ -688,7 +684,7 @@ public class GameStatus extends GridPanel implements ActionListener {
          */
         recreate();
         gameUIManager.packAndApplySizing(parent);
-    } 
+    }
 
     public void actionPerformed(ActionEvent actor) {
         JComponent source = (JComponent) actor.getSource();
@@ -702,19 +698,14 @@ public class GameStatus extends GridPanel implements ActionListener {
             //notify sound manager that click field has been selected
             SoundManager.notifyOfClickFieldSelection(actions.get(0));
 
-            //notify sound manager that click field has been selected
-            SoundManager.notifyOfClickFieldSelection(actions.get(0));
-
             // Assume that we will have either sell or buy actions
             // under one ClickField, not both. This seems guaranteed.
-            log.debug("Action is " + actions.get(0).toString());
+            log.debug("Action is {}", actions.get(0).toString());
 
-            if (actions == null || actions.size() == 0) {
-
+            if ( actions.size() == 0 ) {
                 log.warn("No ClickField action found");
 
             } else if (actions.get(0) instanceof SellShares) {
-
                 List<String> options = Lists.newArrayList();
                 List<SellShares> sellActions = Lists.newArrayList();
                 List<Integer> sellAmounts = Lists.newArrayList();
@@ -788,7 +779,6 @@ public class GameStatus extends GridPanel implements ActionListener {
                     sharesPerCert = sharePerCert / shareUnit;
 
                     if (buy instanceof StartCompany) {
-
                         startCompany = true;
                         int[] startPrices;
                         if (((StartCompany) buy).mustSelectAPrice()) {
@@ -823,7 +813,6 @@ public class GameStatus extends GridPanel implements ActionListener {
                         }
 
                     } else {
-
                         options.add(LocalText.getText("BuyCertificate",
                                 sharePerCert,
                                 companyName,
@@ -907,13 +896,11 @@ public class GameStatus extends GridPanel implements ActionListener {
                 cca.setAmount(amount);
                 chosenAction = cca;
             } else {
-
                 chosenAction =
                     processGameSpecificActions(actor, actions.get(0));
-
             }
         } else {
-            log.warn("Action from unknown source: " + source.toString());
+            log.warn("Action from unknown source: {}", source.toString());
         }
 
         chosenAction = processGameSpecificFollowUpActions(actor, chosenAction);
@@ -922,7 +909,6 @@ public class GameStatus extends GridPanel implements ActionListener {
             (parent).process(chosenAction);
 
         repaint();
-
     }
 
     /** Stub allowing game-specific extensions */
@@ -955,9 +941,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         // Set new highlights
         if ((j = this.actorIndex) >= -1) {
-
             if (myTurn) {
-
                 PublicCompany company;
                 int index;
                 PortfolioModel portfolio;

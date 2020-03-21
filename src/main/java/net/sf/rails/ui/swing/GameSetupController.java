@@ -12,15 +12,17 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.InputVerifier;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import net.sf.rails.common.Config;
 import net.sf.rails.common.GameData;
@@ -38,35 +40,25 @@ import net.sf.rails.util.GameSaver;
 import net.sf.rails.util.SystemOS;
 import net.sf.rails.util.Util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 
 /** Controller of the GameSetupWindow */
 public class GameSetupController {
 
     private static final Logger log =
             LoggerFactory.getLogger(GameSetupController.class);
-    
+
     private final SortedSet<GameInfo> gameList;
-    
+
     private final String credits;
-    
+
     private final Map<GameInfo, GameOptionsSet.Builder> gameOptions =
             Maps.newHashMap();
-            
+
     // UI references
     private final GameSetupWindow window;
     private ConfigWindow configWindow;
     private GameUIManager gameUIManager;
-    
+
     // Actions
     final ActionListener newAction = new NewAction();
     final ActionListener loadAction = new LoadAction();
@@ -80,7 +72,7 @@ public class GameSetupController {
     final ActionListener configureAction = new ConfigureAction();
     final ActionListener randomizeAction = new RandomizeAction();
     final InputVerifier playerNameVerifier = new PlayerNameVerifier();
-      
+
     private GameSetupController(SortedSet<GameInfo> gameList, String credits) {
         this.gameList = gameList;
         this.credits = credits;
@@ -101,23 +93,23 @@ public class GameSetupController {
         if (defaultGame == null) {
             defaultGame = gameList.first();
         }
-        return defaultGame;  
+        return defaultGame;
     }
-    
+
     GameOptionsSet.Builder getAvailableOptions(GameInfo game) {
         if (!gameOptions.containsKey(game)) {
             return loadOptions(game);
         }
         return gameOptions.get(game);
     }
-    
-    
+
+
     Action getOptionChangeAction(GameOption option) {
         return new OptionChangeAction(option);
     }
-    
+
     private GameOptionsSet.Builder loadOptions(GameInfo game) {
-        log.debug("Load Game Options of " + game.getName());
+        log.debug("Load Game Options of {}", game.getName());
         GameOptionsSet.Builder loadGameOptions = null;
         try {
             loadGameOptions = GameOptionsParser.load(game.getName());
@@ -136,12 +128,12 @@ public class GameSetupController {
             configWindow = null;
         }
     }
-    
+
     private void loadAndStartGame(File gameFile) {
         prepareGameUIInit();
         GameLoader.loadAndStartGame(gameFile);
     }
-    
+
     // Action inner classes
     private class NewAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
@@ -155,9 +147,8 @@ public class GameSetupController {
                 }
             }.start();
         }
-        
+
         private void startNewGame() {
-            
             GameInfo selectedGame = window.getSelectedGame();
             List<String> players = window.getPlayers();
             GameOptionsSet.Builder selectedOptions = getAvailableOptions(selectedGame);
@@ -172,7 +163,7 @@ public class GameSetupController {
             }
 
             SplashWindow splashWindow = new SplashWindow(false, selectedGame.getName());
-            
+
             RailsRoot railsRoot = null;
             try {
                 GameData gameData = GameData.create(selectedGame, selectedOptions, players);
@@ -198,7 +189,7 @@ public class GameSetupController {
             splashWindow = null;
         }
     }
-    
+
     private class LoadAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
@@ -220,9 +211,9 @@ public class GameSetupController {
                 return;
             }
         }
-        
+
     }
-    
+
     private class RecentAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
@@ -238,7 +229,7 @@ public class GameSetupController {
                             .result();
                 }
             });
-            
+
             // define saved file extension
             String savedFileExtension = Config.get("save.filename.extension");
             if (!Util.hasValue(savedFileExtension)) {
@@ -250,7 +241,7 @@ public class GameSetupController {
             getRecentFiles(recentFiles, saveDirectory, savedFileExtension);
             if (recentFiles == null || recentFiles.size() == 0) return;
             File[] files = recentFiles.toArray(new File[]{});
-            
+
             int numOptions = 20;
             numOptions = Math.min(numOptions, recentFiles.size());
             String[] options = new String[numOptions];
@@ -275,7 +266,7 @@ public class GameSetupController {
             } else { // cancel pressed
                 return;
             }
-            
+
         }
 
         private void getRecentFiles (SortedSet<File> recentFiles, File dir, String savedFileExtension) {
@@ -289,7 +280,7 @@ public class GameSetupController {
             }
         }
     }
-    
+
     private class RecoveryAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
@@ -297,14 +288,14 @@ public class GameSetupController {
             new Thread() {
                 @Override
                 public void run() {
-                    String filePath = SystemOS.get().getConfigurationFolder(GameSaver.autosaveFolder, true).getAbsolutePath() 
+                    String filePath = SystemOS.get().getConfigurationFolder(GameSaver.autosaveFolder, true).getAbsolutePath()
                             + File.separator + GameSaver.autosaveFile;
                     loadAndStartGame(new File(filePath));
                 }
             }.start();
         }
     }
-    
+
     private class QuitAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
@@ -329,9 +320,9 @@ public class GameSetupController {
 
     private class OptionChangeAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
-       
+
         private final GameOption option;
-        
+
         private OptionChangeAction(GameOption option) {
             this.option = option;
         }
@@ -376,7 +367,7 @@ public class GameSetupController {
                     JOptionPane.INFORMATION_MESSAGE);
         }
     }
-    
+
     private class GameAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
@@ -413,7 +404,7 @@ public class GameSetupController {
             window.setPlayers(players);
         }
     }
-    
+
     private class PlayerNameVerifier extends InputVerifier {
 
         public boolean verify(JComponent arg0) {
@@ -423,38 +414,38 @@ public class GameSetupController {
 
             // check if the next player has to be enabled
             int nextPlayerNr = players.size();
-            
+
             if (nextPlayerNr < window.getSelectedGame().getMaxPlayers()) {
                 if (!window.isPlayerEnabled(nextPlayerNr)) {
                     window.enablePlayer(nextPlayerNr);
                     window.setFocus(nextPlayerNr);
                 }
             }
-            
+
             while (++nextPlayerNr < window.getSelectedGame().getMaxPlayers()) {
                 window.disablePlayer(nextPlayerNr);
             }
-            
+
             return true;
         }
-        
+
     }
 
     public static Builder builder() {
         return new Builder();
     }
-    
+
     public static class Builder {
         private SortedSet<GameInfo> gameList = Sets.newTreeSet();
         private String credits = "Credits";
-        
+
         private Builder() {}
-        
+
         public void start() {
             initialize();
             new GameSetupController(gameList, credits);
         }
-        
+
         public void initialize() {
             GameInfoParser gip = new GameInfoParser();
             Set<GameInfo> gameInfoList = ImmutableSet.of();

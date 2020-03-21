@@ -34,9 +34,9 @@ import rails.game.action.GameAction;
 /**
  * ReportWindow displays the game history
  */
-public class ReportWindow extends JFrame implements 
+public class ReportWindow extends JFrame implements
     ActionListener, HyperlinkListener, ReportBuffer.Observer {
-   
+
     private static final long serialVersionUID = 1L;
 
     private static Logger log =
@@ -59,7 +59,7 @@ public class ReportWindow extends JFrame implements
     // private JButton commentButton;
 
     private boolean timeWarpMode;
-    
+
 
     public ReportWindow(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
@@ -68,9 +68,9 @@ public class ReportWindow extends JFrame implements
         reportBuffer = gameUIManager.getRoot().getReportManager().getReportBuffer();
         reportBuffer.addObserver(this);
         changeStack = gameUIManager.getRoot().getStateManager().getChangeStack();
-        
+
         init();
-        
+
         // set initial text
         editorPane.setText(reportBuffer.getCurrentText());
     }
@@ -137,7 +137,7 @@ public class ReportWindow extends JFrame implements
         forwardButton.addActionListener(this);
         buttonPanel.add(forwardButton);
 
-        // TODO: Add new command button functionality 
+        // TODO: Add new command button functionality
 //        commentButton = new JButton(LocalText.getText("REPORT_COMMENT"));
 //        commentButton.addActionListener(
 //                new ActionListener() {
@@ -162,7 +162,7 @@ public class ReportWindow extends JFrame implements
 //        buttonPanel.add(commentButton);
 
         // remaining code from AbstractReportWindow
-        
+
         setSize(400, 400);
         setLocation(600, 400);
         setTitle(LocalText.getText("GameReportTitle"));
@@ -198,7 +198,6 @@ public class ReportWindow extends JFrame implements
 
     // FIXME (Rails2.0): Replace this by toTe
     public void setActions() {
-
         forwardButton.setEnabled(false);
         backwardButton.setEnabled(false);
 
@@ -309,15 +308,15 @@ public class ReportWindow extends JFrame implements
         timeWarpMode = false;
         SoundManager.notifyOfTimeWarp(timeWarpMode);
     }
-    
+
     // ReportBuffer.Observer methods
-    
-    // FIXME: Rails 2.0 Not used so far 
+
+    // FIXME: Rails 2.0 Not used so far
     public void append(String text) {
         // do nothing
     }
 
-    public void update(String text) { 
+    public void update(String text) {
         log.debug("Update dynamic report window");
         // set the content of the pane to the current
         editorPane.setText(text);

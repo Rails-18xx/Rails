@@ -1,15 +1,19 @@
 package net.sf.rails.util;
 
-import java.awt.Color;
-import java.io.*;
+import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.ConfigProfile;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.game.state.Item;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public final class Util {
@@ -25,7 +29,7 @@ public final class Util {
     public static boolean hasValue(String s) {
         return s != null && !s.equals("");
     }
-    
+
     public static String valueWithDefault(String s, String defaultValue) {
         if (hasValue(s)) {
             return s;
@@ -51,7 +55,7 @@ public final class Util {
         }
         return b.toString();
     }
-    
+
     public static String joinNamesWithDelimiter (Iterable<? extends Item> items, String delimiter) {
         StringBuilder b = new StringBuilder("");
         if (items != null) {
@@ -185,7 +189,7 @@ public final class Util {
     /**
      * Open an input stream from a file, which may exist as a physical file or
      * in a JAR file. The name must be valid for both options.
-     * 
+     *
      * @author Erik Vos
      */
     public static InputStream getStreamForFile(String fileName)
@@ -211,16 +215,15 @@ public final class Util {
         }
         return true;
     }
-    
+
     public static boolean loadPropertiesFromResource(Properties properties, String resourcePath) {
         try {
-            log.info("Loading properties from resource " + resourcePath);
+            log.info("Loading properties from resource {}", resourcePath);
             InputStream inFile;
-                inFile = ConfigProfile.class.getClassLoader().getResourceAsStream(resourcePath);  
+                inFile = ConfigProfile.class.getClassLoader().getResourceAsStream(resourcePath);
             properties.load(inFile);
         } catch (Exception e) {
-            log.error(e + " whilst loading properties file from resource at "
-                               + resourcePath, e);
+            log.error("Error while loading properties file from resource at {}", resourcePath, e);
             return false;
         }
         return true;
@@ -228,12 +231,11 @@ public final class Util {
 
     public static boolean storeProperties(Properties properties, File file) {
         boolean result = true;
-        try { 
+        try {
             properties.store(new FileOutputStream(file), "Automatically generated, do not edit");
-            log.info("Storing properties to file " + file.getAbsolutePath());
+            log.info("Storing properties to file {}", file.getAbsolutePath());
         } catch (IOException e) {
-            log.error(e + " whilst storing properties file "
-                    + file.getAbsolutePath());
+            log.error("Error while storing properties file {}", file.getAbsolutePath(), e);
             result = false;
         }
         return result;

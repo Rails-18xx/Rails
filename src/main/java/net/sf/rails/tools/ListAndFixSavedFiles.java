@@ -1,9 +1,6 @@
 package net.sf.rails.tools;
 
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,25 +10,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.Config;
 import net.sf.rails.common.ConfigManager;
@@ -44,11 +26,9 @@ import net.sf.rails.ui.swing.elements.ActionMenuItem;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
 import net.sf.rails.util.Util;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import rails.game.action.*;
+import rails.game.action.BuyTrain;
+import rails.game.action.LayTile;
+import rails.game.action.PossibleAction;
 
 
 public class ListAndFixSavedFiles extends JFrame
@@ -84,7 +64,6 @@ implements ActionListener, KeyListener {
      * @param args
      */
     public static void main(String[] args) {
-
         // intialize configuration
         ConfigManager.initConfiguration(false);
 
@@ -92,14 +71,12 @@ implements ActionListener, KeyListener {
         log = LoggerFactory.getLogger(ListAndFixSavedFiles.class);
 
         saveDirectory = Config.get("save.directory");
-        System.out.println("Save directory = " + saveDirectory);
+        log.warn("Save directory = {}", saveDirectory);
 
         new ListAndFixSavedFiles ();
-
     }
 
     public ListAndFixSavedFiles () {
-
         super();
 
         messageWindow = this;
@@ -187,7 +164,6 @@ implements ActionListener, KeyListener {
 
         addKeyListener(this);
 
-
         setVisible(true);
 
         saveDirectory = Config.get("save.directory");
@@ -197,12 +173,10 @@ implements ActionListener, KeyListener {
     }
 
     private void load() {
-
         JFileChooser jfc = new JFileChooser();
         jfc.setCurrentDirectory(new File(saveDirectory));
 
         if (jfc.showOpenDialog(getContentPane()) == JFileChooser.APPROVE_OPTION) {
-
             File selectedFile = jfc.getSelectedFile();
             filepath = selectedFile.getPath();
             saveDirectory = selectedFile.getParent();
@@ -218,11 +192,10 @@ implements ActionListener, KeyListener {
                 //gameLoader.getRoot().start();
                 setReportText(true);
             } catch (Exception e)  {
-                log.error("" + e);
+                log.error("exception", e);
             }
             root = gameLoader.getRoot();
         }
-
     }
 
     public void add (String text) {
@@ -260,8 +233,6 @@ implements ActionListener, KeyListener {
             }
         });
     }
-
-
 
     public void actionPerformed(ActionEvent actor) {
         String command = actor.getActionCommand();
@@ -324,7 +295,6 @@ implements ActionListener, KeyListener {
                 log.error(message);
             }
         }
-
     }
 
     private void correct (int index) {
@@ -363,7 +333,6 @@ implements ActionListener, KeyListener {
         }
 
         void finish() {
-
             addField (this, okButton = new JButton("OK"), ++length, 0);
             okButton.addActionListener(this);
             addField (this, cancelButton = new JButton("Cancel"), length, 1);
@@ -382,7 +351,6 @@ implements ActionListener, KeyListener {
         }
 
         public void actionPerformed(ActionEvent arg0) {
-
             if (arg0.getSource().equals(okButton)) {
                 PossibleAction newAction = processInput();
                 if (newAction != null) messageWindow.processCorrections(newAction);
@@ -398,7 +366,6 @@ implements ActionListener, KeyListener {
     }
 
     private class BuyTrainDialog extends EditDialog {
-
         private static final long serialVersionUID = 1L;
         BuyTrain action;
 
@@ -408,24 +375,23 @@ implements ActionListener, KeyListener {
             addLabel (this, "Train UID", null, action.getTrain().getId());  // 0
             addLabel (this, "From Portfolio", null, action.getFromOwner().getId());  // 1
             addTextField (this, "Price paid",
-                    new Integer(action.getPricePaid()),
+                    action.getPricePaid(),
                     String.valueOf(action.getPricePaid()));  // 2
             addTextField (this, "Added cash",
-                    new Integer(action.getAddedCash()),
+                    action.getAddedCash(),
                     String.valueOf(action.getAddedCash()));  // 3
             addTextField (this, "Exchange train UID",
                     action.getExchangedTrain(),
                     action.getExchangedTrain() != null ? action.getExchangedTrain().getId() : "");  // 4
             addTextField (this, "Fixed Price",
-                    new Integer(action.getFixedCost()),
+                    action.getFixedCost(),
                     String.valueOf(action.getFixedCost()));  // 5
             finish();
         }
 
         @Override
         PossibleAction processInput() {
-
-            log.debug("Action was "+action);
+            log.debug("Action was {}", action);
             try {
                 int pricePaid = Integer.parseInt(((JTextField)inputElements.get(2)).getText());
                 action.setPricePaid(pricePaid);
@@ -445,14 +411,13 @@ implements ActionListener, KeyListener {
             } catch (NumberFormatException e) {
             }
 
-            log.debug("Action is  "+action);
+            log.debug("Action is  {}", action);
             return action;
 
         }
     }
 
     private class LayTileDialog extends EditDialog {
-
         private static final long serialVersionUID = 1L;
         LayTile action;
 
@@ -466,15 +431,14 @@ implements ActionListener, KeyListener {
                     action.getChosenHex(),
                     action.getChosenHex().getId());  // 1
             addTextField (this, "Orientation",
-                    new Integer(action.getOrientation()),
+                    action.getOrientation(),
                     String.valueOf(action.getOrientation()));  // 2
             finish();
         }
 
         @Override
         PossibleAction processInput() {
-
-            log.debug("Action was "+action);
+            log.debug("Action was {}", action);
             try {
                 String tileID = ((JTextField)inputElements.get(0)).getText();
                 Tile tile = root.getTileManager().getTile(tileID);
@@ -490,14 +454,13 @@ implements ActionListener, KeyListener {
             } catch (NumberFormatException e) {
             }
 
-            log.debug("Action is  "+action);
+            log.debug("Action is {}", action);
             return action;
 
         }
     }
 
     protected void addLabel (EditDialog owner, String caption, Object initialObject, String initialValue) {
-
         JComponent element = new JLabel (initialValue);
         int index = owner.length++;
         addField (owner, new JLabel (caption), index, 0);
@@ -507,7 +470,6 @@ implements ActionListener, KeyListener {
     }
 
     protected void addTextField (EditDialog owner, String caption, Object initialObject, String initialValue) {
-
         JComponent element = new JTextField (initialValue);
         int index = owner.length++;
         addField (owner, new JLabel (caption), index, 0);
@@ -517,7 +479,6 @@ implements ActionListener, KeyListener {
     }
 
     protected void addField(EditDialog owner, JComponent comp, int y, int x) {
-
         GridBagConstraints gbc = owner.gc;
         gbc.gridx = x;
         gbc.gridy = y;
@@ -531,8 +492,7 @@ implements ActionListener, KeyListener {
         comp.setVisible(true);
     }
 
-    public void keyPressed(KeyEvent e) {
-    }
+    public void keyPressed(KeyEvent e) { }
 
     public void keyReleased(KeyEvent e) {}
 

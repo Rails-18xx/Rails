@@ -4,6 +4,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
+
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -19,31 +27,20 @@ import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.util.Util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-
 
 public class PlayerManager extends RailsManager implements Configurable {
 
-    private static Logger log =
-            LoggerFactory.getLogger(PlayerManager.class);
+    private static Logger log = LoggerFactory.getLogger(PlayerManager.class);
 
     // static data
     private Map<String, Player> playerNames; // static, but set later in setPlayers()
-    
+
     // configure data
     private int maxPlayers;
     private int minPlayers;
-    private final Map<Integer, Integer> playerStartCash = 
-            Maps.newHashMap();
-    private final Map<Integer, Integer> playerCertificateLimits = 
-            Maps.newHashMap();
-    
+    private final Map<Integer, Integer> playerStartCash = Maps.newHashMap();
+    private final Map<Integer, Integer> playerCertificateLimits = Maps.newHashMap();
+
     // dynamic data
     private final PlayerOrderModel playerModel = new PlayerOrderModel(this, "playerModel");
     private final GenericState<Player> currentPlayer = GenericState.create(this, "currentPlayer");
@@ -55,7 +52,7 @@ public class PlayerManager extends RailsManager implements Configurable {
      */
     private final ArrayListState<String> nextPlayerMessages = ArrayListState.create(this, "nextPlayerMessages");
 
-    
+
     /**
      * Used by Configure (via reflection) only
      */
@@ -86,10 +83,10 @@ public class PlayerManager extends RailsManager implements Configurable {
     public void setPlayers (List<String> playerNames, Bank bank) {
 
         int startCash = playerStartCash.get(playerNames.size());
-        
+
         int playerIndex = 0;
         String cashText = null;
-        ImmutableMap.Builder<String, Player> playerNamesBuilder = 
+        ImmutableMap.Builder<String, Player> playerNamesBuilder =
                 ImmutableMap.builder();
         for (String playerName : playerNames) {
             Player player = Player.create(this, playerName, playerIndex++);
@@ -101,17 +98,17 @@ public class PlayerManager extends RailsManager implements Configurable {
                     player.getId() ));
         }
         this.playerNames = playerNamesBuilder.build();
-        
+
         ReportBuffer.add(this, LocalText.getText("PlayerCash", cashText));
         ReportBuffer.add(this, LocalText.getText("BankHas", Bank.format(this, bank.getCash())));
     }
-    
+
     public void finishConfiguration (RailsRoot root) {
         for (Player player:playerModel.playerOrder) {
             player.finishConfiguration(root);
         }
     }
-    
+
     // sets initial priority player and certificate limits
     // TODO: rename method
     public void init() {
@@ -119,11 +116,11 @@ public class PlayerManager extends RailsManager implements Configurable {
         int startCertificates = playerCertificateLimits.get(playerModel.playerOrder.size());
         playerCertificateLimit.set(startCertificates);
     }
-    
+
     public int getMinPlayers() {
         return minPlayers;
     }
-    
+
     public int getMaxPlayers() {
         return maxPlayers;
     }
@@ -142,7 +139,7 @@ public class PlayerManager extends RailsManager implements Configurable {
     public int getNumberOfPlayers() {
         return playerModel.playerOrder.size();
     }
-    
+
     int getNumberOfActivePlayers() {
         int number = 0;
         for (Player player : getPlayers()) {
@@ -155,16 +152,16 @@ public class PlayerManager extends RailsManager implements Configurable {
     public GenericState<Player> getCurrentPlayerModel() {
         return currentPlayer;
     }
-    
+
     public Player getCurrentPlayer() {
         return currentPlayer.value();
     }
-    
+
     public void setCurrentPlayer(Player player) {
         // transfer messages for the next player to the display buffer
         // TODO: refactor nextPlayerMessages inside DisplayBuffer
         if (getCurrentPlayer() != player && !nextPlayerMessages.isEmpty()) {
-            DisplayBuffer.add(this, 
+            DisplayBuffer.add(this,
                     LocalText.getText("NextPlayerMessage", getCurrentPlayer().getId()));
             for (String s:nextPlayerMessages.view())
                 DisplayBuffer.add(this, s);
@@ -172,15 +169,15 @@ public class PlayerManager extends RailsManager implements Configurable {
         }
         currentPlayer.set(player);
     }
-    
+
     public Player getPriorityPlayer() {
         return priorityPlayer.value();
     }
-    
+
     public GenericState<Player> getPriorityPlayerState() {
         return priorityPlayer;
     }
-    
+
     public void setPriorityPlayer(Player player) {
         priorityPlayer.set(player);
     }
@@ -196,40 +193,40 @@ public class PlayerManager extends RailsManager implements Configurable {
     public IntegerState getPlayerCertificateLimitModel () {
         return playerCertificateLimit;
     }
-    
+
     /**
      * Use setCurrentPlayer instead
      */
-    @Deprecated 
+    @Deprecated
     public void setCurrentPlayerIndex(int currentPlayerIndex) {
         // DO NOTHING
     }
-    
+
     public Player setCurrentToNextPlayer() {
         Player nextPlayer = getNextPlayer();
         setCurrentPlayer(nextPlayer);
         return nextPlayer;
     }
-    
+
     public Player setCurrentToPriorityPlayer() {
         setCurrentPlayer(priorityPlayer.value());
         return priorityPlayer.value();
     }
-    
+
     public Player setCurrentToNextPlayerAfter(Player player){
         Player nextPlayer = getNextPlayerAfter(player);
         setCurrentPlayer(nextPlayer);
         return nextPlayer;
     }
-    
+
     public Player getNextPlayer() {
         return playerModel.getPlayerAfter(currentPlayer.value());
     }
-    
+
     public Player getNextPlayerAfter(Player player) {
         return playerModel.getPlayerAfter(player);
     }
-    
+
 
     /**
      * @boolean include the current player at the start
@@ -239,7 +236,7 @@ public class PlayerManager extends RailsManager implements Configurable {
     public ImmutableList<Player> getNextPlayers(boolean include) {
         return getNextPlayersAfter(currentPlayer.value(), include , false);
     }
-    
+
     /**
      * @param boolean include the argument player at the start
      * @param boolean include the argument player at the end
@@ -261,7 +258,7 @@ public class PlayerManager extends RailsManager implements Configurable {
         }
         return playersAfter.build();
     }
-    
+
     // TODO: Check if this change is valid to set only non-bankrupt playerOrder
     // to be priority playerOrder
     public Player setPriorityPlayerToNext() {
@@ -269,12 +266,12 @@ public class PlayerManager extends RailsManager implements Configurable {
         setPriorityPlayer(priorityPlayer);
         return priorityPlayer;
     }
-    
+
     @Deprecated
     public Player getPlayerByIndex(int index) {
         return playerModel.playerOrder.get(index % getNumberOfPlayers());
     }
-    
+
     /**
     *
     *@param ascending Boolean to determine if the playerlist will be sorted in ascending or descending order based on their cash
@@ -283,7 +280,7 @@ public class PlayerManager extends RailsManager implements Configurable {
     public Player reorderPlayersByCash (boolean ascending) {
 
        final boolean ascending_f = ascending;
-        
+
        Comparator<Player> cashComparator =  new Comparator<Player>() {
            public int compare (Player p1, Player p2) {
                return ascending_f ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
@@ -291,7 +288,7 @@ public class PlayerManager extends RailsManager implements Configurable {
        };
 
        playerModel.reorder(cashComparator);
-       
+
        // only provide some logging
        int p = 0;
        for (Player player:playerModel.playerOrder) {
@@ -301,7 +298,7 @@ public class PlayerManager extends RailsManager implements Configurable {
 
        return playerModel.playerOrder.get(0);
     }
-    
+
     public void reversePlayerOrder(boolean reverse) {
         playerModel.reverse.set(reverse);
     }
@@ -319,7 +316,7 @@ public class PlayerManager extends RailsManager implements Configurable {
             super(parent, id);
             reverse.set(false);
         }
-    
+
         private Player getPlayerAfter(Player player) {
             int nextIndex = playerOrder.indexOf(player);
             do {
@@ -331,7 +328,7 @@ public class PlayerManager extends RailsManager implements Configurable {
             } while (playerOrder.get(nextIndex).isBankrupt());
             return playerOrder.get(nextIndex);
         }
-        
+
         // this creates a new order based on the comparator provided
         // last tie-breaker is the old order of playerOrder
         private void reorder(Comparator<Player> comparator) {
@@ -343,15 +340,15 @@ public class PlayerManager extends RailsManager implements Configurable {
                 player.setIndex(i);
             }
         }
-        
+
         public boolean isReverse() {
             return reverse.value();
         }
-        
+
         public ArrayListState<Player> getPlayerOrder() {
             return playerOrder;
         }
-        
+
         @Override
         public String toText() {
             // FIXME: This has to be checked if this returns the correct structure
@@ -359,7 +356,7 @@ public class PlayerManager extends RailsManager implements Configurable {
             return Util.joinWithDelimiter(playerOrder.view().toArray(new String[0]), ";");
         }
     }
-    
+
     /**
      * @return number of players (non-bankrupt)
      */
