@@ -26,6 +26,7 @@ import net.sf.rails.game.EndOfGameRound;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.Player;
+import net.sf.rails.game.Round;
 import net.sf.rails.game.StartRound;
 import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.financial.StockRound;
@@ -299,10 +300,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         }
     }
 
-    public StatusWindow() {
-
-    }
-
     public void init(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
         this.possibleActions = gameUIManager.getGameManager().getPossibleActions();
@@ -464,11 +461,14 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
     }
 
     public void updateStatus(boolean myTurn) {
+        passButton.setEnabled(false);
+        autopassButton.setEnabled(false);
 
-        if (!(currentRound instanceof StockRound || currentRound instanceof EndOfGameRound))
+        if (!(currentRound instanceof StockRound || currentRound instanceof EndOfGameRound)) {
+            log.debug("early return: {}", currentRound);
             return;
+        }
 
-        log.debug ("MyTurn="+myTurn);
         if (!myTurn) {
             gameStatus.initTurn(getCurrentPlayer().getIndex(), false);
             return;
@@ -479,7 +479,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
             return;
         }
-
 
         if (currentRound instanceof TreasuryShareRound) {
             setTitle(LocalText.getText(
@@ -548,9 +547,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         specialMenu.setOpaque(enabled);
         specialMenu.setEnabled(enabled);
         specialMenu.repaint();
-
-        passButton.setEnabled(false);
-        autopassButton.setEnabled(false);
 
         List<NullAction> inactiveItems =
             possibleActions.getType(NullAction.class);

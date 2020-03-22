@@ -346,14 +346,15 @@ public class GameUIManager implements DialogOwner {
             // Process any autosaving and turn relinquishing, resp. autoloading and turn pickup
             if (autoSaveLoadInitialized && autoSaveLoadStatus != AutoLoadPoller.OFF) {
                 Player newPlayer = getCurrentPlayer();
-                boolean isMyTurn = newPlayer.getId().equals(localPlayerName);
+                myTurn = newPlayer.getId().equals(localPlayerName);
+                log.debug("players o:{}/c:{} myTurn:{}", oldPlayer.getId(), newPlayer.getId(), myTurn);
                 if (newPlayer != oldPlayer) {
-                    if (wasMyTurn && !isMyTurn) {
+                    if (wasMyTurn && !myTurn) {
                         autoSave (newPlayer.getId());
                         autoLoadPoller.setLastSavedFilename(lastSavedFilename);
                         autoLoadPoller.setActive(true);
                         log.info("Relinquishing turn to {}", newPlayer.getId());
-                    } else if (!wasMyTurn && isMyTurn) {
+                    } else if (!wasMyTurn && myTurn) {
                         autoLoadPoller.setActive(false);
                         setCurrentDialog(new MessageDialog(null, this,
                                 (JFrame) activeWindow,
@@ -364,9 +365,9 @@ public class GameUIManager implements DialogOwner {
                     } else {
                         log.info("{} now has the turn", newPlayer.getId());
                     }
-                    myTurn = isMyTurn;
                 } else {
-                    log.info(oldPlayer.getId()+" keeps the turn");
+                    // first time through after a game load needs to set myTurn
+                    log.info("{} keeps the turn", oldPlayer.getId());
                 }
             }
         }
@@ -512,8 +513,7 @@ public class GameUIManager implements DialogOwner {
         for (GuiHints.VisibilityHint hint : uiHints.getVisibilityHints()) {
             switch (hint.getType()) {
             case STOCK_MARKET:
-                boolean stockChartVisibilityHint = hint.getVisibility()
-                || configuredStockChartVisibility;
+                boolean stockChartVisibilityHint = hint.getVisibility() || configuredStockChartVisibility;
                 if (stockChartVisibilityHint != previousStockChartVisibilityHint) {
                     FXStockChartWindow.setVisible(stockChartVisibilityHint);
                     previousStockChartVisibilityHint = stockChartVisibilityHint;
@@ -546,6 +546,7 @@ public class GameUIManager implements DialogOwner {
             log.debug("Correction overrides active window: status window active");
         }
 
+
         // Active window settings are handled last.
         // Side effects: the active window is made visible and put on top.
         if (uiHints.getActivePanel() == GuiDef.Panel.START_ROUND) {
@@ -562,26 +563,31 @@ public class GameUIManager implements DialogOwner {
             setMeToFront(statusWindow);
 
         } else if (uiHints.getActivePanel() == GuiDef.Panel.MAP  && !correctionOverride) {
-            log.debug("Entering Operating Round UI type ");
+            log.debug("Entering Operating Round UI type");
             activeWindow = orWindow;
             setMeVisible(orWindow,true);
             setMeToFront(orWindow);
         }
 
+        if ( startRoundWindow != null ) {
+            log.debug("Updating Start round window ({})", myTurn);
+            startRoundWindow.updateStatus(myTurn);
+        }
+        if ( statusWindow != null ) {
+            log.debug("Updating Stock (status) round window ({})", myTurn);
+            statusWindow.updateStatus(myTurn);
+        }
+        if ( orUIManager != null ) {
+            log.debug("Updating Operating round window ({})", myTurn);
+            orUIManager.updateStatus(myTurn);
+        }
+
         // Update the currently visible round window
         // "Switchable" rounds will be handled from subclasses of this class.
         if (StartRoundWindow.class.isAssignableFrom(activeWindow.getClass())) {
-            log.debug("Updating Start round window ({})", myTurn);
-            startRoundWindow.updateStatus(myTurn);
             startRoundWindow.setSRPlayerTurn(getRoot().getPlayerManager().getCurrentPlayer().getIndex());
-
         } else if (StatusWindow.class.isAssignableFrom(activeWindow.getClass())) {
-            log.debug("Updating Stock (status) round window ({})", myTurn);
-            statusWindow.updateStatus(myTurn);
-
         } else if (ORWindow.class.isAssignableFrom(activeWindow.getClass())) {
-            log.debug("Updating Operating round window ({})", myTurn);
-            orUIManager.updateStatus(myTurn);
         }
 
         updateStatus(activeWindow);

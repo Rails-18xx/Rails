@@ -31,6 +31,7 @@ import net.sf.rails.game.Tile;
 import net.sf.rails.game.TrackConfig;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.financial.ShareSellingRound;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialTileLay;
 import net.sf.rails.game.special.SpecialBaseTokenLay;
@@ -530,7 +531,6 @@ public class ORUIManager implements DialogOwner {
     }
 
     protected void setDividend(String command, SetDividend action) {
-
         int amount;
 
         if (command.equals(ORPanel.SET_REVENUE_CMD)) {
@@ -1281,22 +1281,23 @@ public class ORUIManager implements DialogOwner {
     /** Used to process some < properties from the 'Special' menu */
     /* In fact currently not used */
     protected void useSpecialProperty (UseSpecialProperty action) {
-
         gameUIManager.processAction(action);
-
     }
 
     public void updateStatus(boolean myTurn) {
-
         updateStatus(null, myTurn);
-
     }
 
     public void updateStatus(PossibleAction actionToComplete, boolean myTurn) {
-
         orPanel.resetActions();
 
         messagePanel.setMessage(null);
+
+        RoundFacade currentRound = gameUIManager.getCurrentRound();
+        if (!(currentRound instanceof OperatingRound)) {
+            log.debug("early return: {}", currentRound);
+            return;
+        }
 
         if (actionToComplete != null) {
             log.debug("ExecutedAction: {}", actionToComplete);
@@ -1304,7 +1305,7 @@ public class ORUIManager implements DialogOwner {
         // End of possible action debug listing
 
         PublicCompany orComp = oRound.getOperatingCompany();
-        log.debug("Or company = {} in round {}", orComp.getId(), oRound.getRoundName());
+        log.debug("OR company = {} in round {}", orComp.getId(), oRound.getRoundName());
 
         GameDef.OrStep orStep = oRound.getStep();
         log.debug("OR step={}", orStep);
@@ -1319,6 +1320,8 @@ public class ORUIManager implements DialogOwner {
         }
 
         orPanel.initORCompanyTurn(orComp, orCompIndex);
+
+        //orPanel.initPrivateBuying(false);
 
 
         if (!myTurn) return;
