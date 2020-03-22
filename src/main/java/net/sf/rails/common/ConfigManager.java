@@ -151,9 +151,9 @@ public class ConfigManager implements Configurable {
         // TODO: Check if this is the right place for this
         /* Load version number and develop flag */
         Properties versionNumber = new Properties();
-        Util.loadPropertiesFromResource(versionNumber, "version.number");
+        Util.loadPropertiesFromResource(versionNumber, "git.properties");
 
-        String sVersion = versionNumber.getProperty("version");
+        String sVersion = versionNumber.getProperty("git.build.version");
         if (Util.hasValue(sVersion)) {
            this.version = sVersion;
         }
