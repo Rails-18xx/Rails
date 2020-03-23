@@ -16,7 +16,9 @@
 		<Property name="save.filename.suffix" type="STRING" />
 		<Property name="save.filename.extension" type="STRING" />
 		<Property name="save.recovery.active" type="BOOLEAN" />
-	</Section>
+        <Property name="save.auto.enabled" type="BOOLEAN" />
+        <Property name="save.auto.interval" type="INTEGER" />
+    </Section>
     <Section name="Notifications">
         <Property name="notify.discord.webhook" type="STRING" isGameRelated="true" />
         <Property name="notify.discord.user_mapping" type="STRING" isGameRelated="true" />
