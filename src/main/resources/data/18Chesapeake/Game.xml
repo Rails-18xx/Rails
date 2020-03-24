@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ComponentManager>
 	<Component name="GameManager" class="net.sf.rails.game.GameManager">
-		<Game name="1830"/>
+		<Game name="18Chesapeake"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
 			</PlayerShareLimit>			
@@ -39,10 +39,6 @@
 	<Component name="StockMarket" class="net.sf.rails.game.financial.StockMarket" 
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
-		<IfOption name="Variant"
-				value="Coalfields,Reading,Coalfields&amp;Reading">
-			<Attributes ObsoleteTrainFor="ALL" />
-		</IfOption>
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
 			<!-- Alternative values: 

@@ -243,6 +243,32 @@ Known Issues:
     <Players minimum="2" maximum="8" />
   </Game>
    	
+   	<Game name="18Chesapeake">
+    <Note>Prototype - Not Playable</Note>
+    <Description>18Chesapeake 
+    (c) 2020 Scott Petersen 
+    18Chesapeake is a member of the 18xx series of games. 
+    The series is based on 1829, by Francis Tresham. 18Chesapeake is set in the Chesapeake 
+    region of the United States and west to Ohio and the West Virginia Coalfields.
+	Two to six players represent investors in railroad companies, 
+	spending their initial capital to buy wholly owned private companies 
+	and minor companies and later shares in public companies.
+	The public companies are each controlled by the largest shareholder (its president). 
+	Public companies build track and run trains in order to earn revenues. 
+	Public company revenues can be paid out as dividends to shareholders 
+	or retained to fund further track and rolling stock.
+	A feature of 18Chesapeake, as with all the other games in the series, 
+	is that the interests of a public company’s president and the interests 
+	of its shareholders are not identical, so minority shareholders need to be careful in their investments.
+	18CC is a moderate length game. Experienced, brisk players can expect 
+	to take about 2-1/2 hours to complete a game. 
+	Novices or more deliberate players might add an hour to that time.</Description>
+    <Players minimum="2" maximum="6" />
+  </Game>
+   	
+   	
+   	
+   	
 	<Credits>&lt;html&gt;Rails is a computer implementation of a number of board games.&lt;br&gt; 
 	These games all have a railroad theme. They are collectively known as "18xx" &lt;br&gt;
 	games due to the naming scheme used by many games in the genre. &lt;br&gt;

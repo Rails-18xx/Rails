@@ -38,7 +38,7 @@
 	</Company>
 	<Company name="BSR" type="Private" basePrice="50" revenue="10"
 		longname="Baltimore and Susquehanna Railroad">
-		<Blocking hex="F4, G5"/>
+		<Blocking hex="F4,G5"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
 				<SpecialTileLay location="F4,G5" extra="yes" free="yes" tile="8,9" />
@@ -102,13 +102,13 @@
 		<Home hex="F2"/>
 	</Company>
 	
-	<StartPacket roundClass="net.sf.rails.game.specific._18Chesa.StartRound_18Chesa">
+	<StartPacket roundClass="net.sf.rails.game.specific._18Chesapeake.StartRound_18Chesapeake">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="DRC" type="Private" basePrice="20"/>
 		<Item name="CPR" type="Private" basePrice="40"/>
 		<Item name="BSR" type="Private" basePrice="50"/>
 		<Item name="C&amp;OC" type="Private" basePrice="80"/>
-		<Item name="C&amp;A" type="Private" basePrice="100">
+		<Item name="C&amp;A" type="Private" basePrice="100"/>
 		<Item name="CV" type="Private" basePrice="200">
 			<SubItem name="random" type="Public" president="yes"/>
 		</Item>

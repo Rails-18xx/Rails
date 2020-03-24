@@ -23,6 +23,8 @@ rails.iml
 # failed Rails test files
 **/*.failed
 /bin/
+/libs/
+/gradle/
 
 # logback test configuration
 **/logback-test.xml

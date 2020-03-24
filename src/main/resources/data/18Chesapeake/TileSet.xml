@@ -18,37 +18,12 @@
 	<Tile id="-10"><!-- 1 city -->
 		<Upgrade id="57"/>
 	</Tile>
-	<Tile id="-11"><!-- B yellow -->
-        <IfOption name="Variant" value="Basegame,Pere Marquette,Simple,Wabash">
-			<Upgrade id="53"/>
-        </IfOption>
-        <IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
-            <Upgrade id="2053"/>
-        </IfOption>
-	</Tile>
-	<Tile id="-20" relayBaseTokens="yes"><!-- 2 OO cities -->
-		<Upgrade id="59"/>
-	</Tile>
-	<Tile id="-21"><!-- New York -->
-		<Upgrade id="54"/>
-	</Tile>
 	<Tile id="-58"/>
-	<Tile id="-101"/><!-- Altoona -->
-	<Tile id="-102"/><!-- Rochester -->
-	<Tile id="-103"/><!-- Montreal -->
-	<Tile id="-104"/><!-- Norfolk -->
-	<Tile id="-105"/><!-- Cleveland -->
 	<Tile id="-901"/>
 	<Tile id="-902"/>
 	<Tile id="-903"/>
-    <Tile id="-908"/><!-- Coalfields: K1 -->
-	<Tile id="-25007"/><!-- Wabash: D20-->
-    <Tile id="-30001"/><!-- Coalfields: N of Boston -->
-    <Tile id="-30003" pic="-30002"/><!-- Coalfields: Altoona -->
-    <Tile id="-30004"/><!-- Coalfields: Coalfields -->
-    <Tile id="-30005"/><!-- Coalfields: Norfolk -->
-	<Tile id="-30007" pic="-30006"/><!-- Reading: Reading-->
-	
+    <Tile id="-911"/><!-- Coalfields: K1 -->
+		
 	<!-- Yellow tiles -->
 	<Tile id="1" quantity="1">
 	</Tile>
@@ -63,7 +38,7 @@
 		<Upgrade id="16,19,23,24,25,28,29" />
 	</Tile>
 	<Tile id="9" quantity="-1">
-		<Upgrade id="18,19,20,23,24,26,27" />
+		<Upgrade id="19,20,23,24,26,27" />
 	</Tile>
 	<Tile id="55" quantity="1">
     </Tile>
@@ -75,16 +50,16 @@
 	</Tile>
 	<Tile id="58" quantity="2" />
 	<Tile id="69" quantity="1" />
-    <Tile id="18CX1" quantity="1">
+    <Tile id="18CHX1" quantity="1">
     <Upgrade id="18CHX2"/>
     </Tile>
 	<!-- Green tiles -->
 	<Tile id="14">
      <Attributes quantity="5"/>
-       <Upgrade id="63" />
+       <Upgrade id="611" />
 	</Tile>
-	<Tile id="15" quantity="6"/>
-       <Upgrade id="63" />
+	<Tile id="15" quantity="5"/>
+       <Upgrade id="611" />
 	<Tile id="16" quantity="1">
 		<Upgrade id="43,70" />
 	</Tile>
@@ -138,7 +113,7 @@
 	<Tile id="46" quantity="1" />
 	<Tile id="47" quantity="1" />
 	<Tile id="70" quantity="1" />
-	<Tile id="611" quantity="1" />
+	<Tile id="611" quantity="5" />
 	<Tile id="18CHX6" quantity="1">
 	<Upgrade id="18CHX8"></Upgrade>
 	</Tile>
@@ -146,7 +121,13 @@
 	<Upgrade id="18CHX9"></Upgrade>
 	</Tile>
 	<!-- Grey tiles -->
-	<Tile id="915" quantity="1">
+	<Tile id="915" quantity="1"/>
 	<Tile id="18CHX8" quantity="1"/>
 	<Tile id="18CHX9" quantity="1"/>
+	<Tile id="-18CH01"/>
+	<Tile id="-18CH02"/>
+	<Tile id="-18CH03"/>
+	<Tile id="-18CHOO" relayBaseTokens="yes">
+	<Upgrade id="18CHX3,18CHX4,18CHX5"></Upgrade>
+	</Tile>>
 </TileManager>
