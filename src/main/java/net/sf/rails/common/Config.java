@@ -15,14 +15,14 @@ public class Config {
     public static String getVersion() {
         return ConfigManager.getInstance().getVersion();
     }
-    
+
     /**
      * @return true if development version
      */
     public static boolean getDevelop() {
         return ConfigManager.getInstance().getDevelop();
     }
-    
+
     public static String getBuildDate() {
         return ConfigManager.getInstance().getBuildDate();
     }
@@ -41,6 +41,10 @@ public class Config {
         return ConfigManager.getInstance().getValue(key, defaultValue);
     }
 
+    public static void set(String key, String value) {
+        ConfigManager.getInstance().setValue(key, value);
+    }
+
     /**
      * Configuration option: First tries to return {key}.{appendix}, if undefined returns {key}
      */
@@ -54,7 +58,7 @@ public class Config {
     }
 
     /**
-     * Configuration option: First tries to return {key}.{gameName}, if undefined returns {key} 
+     * Configuration option: First tries to return {key}.{gameName}, if undefined returns {key}
      */
     public static String getGameSpecific(String key) {
         return getSpecific(key, RailsRoot.getInstance().getGameName());
@@ -63,11 +67,11 @@ public class Config {
     public static String getRecent(String key) {
         return ConfigManager.getInstance().getRecent(key);
     }
-    
+
     public static boolean storeRecent(String key, String value) {
         return ConfigManager.getInstance().storeRecent(key, value);
     }
-    
+
 }
 
 
