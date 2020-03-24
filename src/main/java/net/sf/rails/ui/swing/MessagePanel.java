@@ -12,46 +12,46 @@ import javax.swing.border.EmptyBorder;
 
 public class MessagePanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    
+
     //the height of this panel (fixed because scroll bar is used)
-    public static final int defaultHeight = 45;
+    public static final int DEFAULT_HEIGHT = 45;
 
     //the height of this panel if details are open
-    public static final int fullHeight = 90;
-    public static final int minWidth = 100;
-    public static final int scrollUnit = 8;
-    public static final int minMarginForFullHeight = 8;
+    public static final int FULL_HEIGHT = 90;
+    public static final int MIN_WIDTH = 100;
+    public static final int SCROLL_UNIT = 8;
+    public static final int MIN_MARGIN_FOR_FULL_HEIGHT = 8;
 
     private JLabel message;
     private JScrollPane parentSlider;
-    
+
     private String currentMessage;
     private StringBuffer currentInformation;
     private String currentDetails;
     private boolean showDetails;
 
-    Color background = new Color(225, 225, 225);
+    private Color background = new Color(225, 225, 225);
 
     public MessagePanel() {
         super();
 
         setBackground(background);
         setBorder(new EmptyBorder(0,0,0,0));
-        
+
         //add layout manager
         //necessary for auto word-wrap when diminishing width
         setLayout(new GridLayout(1,1));
-        
+
         message = new JLabel("");
         message.setBackground(background);
         message.setVerticalAlignment(SwingConstants.CENTER);
         message.setHorizontalAlignment(SwingConstants.CENTER);
         message.setOpaque(true);
-        
+
         add(message);
         message.setVisible(true);
         setVisible(true);
-        
+
         this.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent arg0) {
                 toggleDetailsEnablement();
@@ -62,7 +62,7 @@ public class MessagePanel extends JPanel {
             public void mousePressed(MouseEvent arg0) {}
             public void mouseReleased(MouseEvent arg0) {}
         });
-        
+
     }
 
     /**
@@ -71,26 +71,26 @@ public class MessagePanel extends JPanel {
     public void setParentSlider(JScrollPane parentSlider) {
         this.parentSlider = parentSlider;
         parentSlider.setBorder(BorderFactory.createLoweredBevelBorder());
-        parentSlider.getVerticalScrollBar().setUnitIncrement(scrollUnit);
-        parentSlider.setPreferredSize(new Dimension(minWidth,defaultHeight));
+        parentSlider.getVerticalScrollBar().setUnitIncrement(SCROLL_UNIT);
+        parentSlider.setPreferredSize(new Dimension(MIN_WIDTH, DEFAULT_HEIGHT));
     }
-    
+
     private void disableDetails() {
         if (showDetails) {
             showDetails = false;
-            parentSlider.setPreferredSize(new Dimension(minWidth,defaultHeight));
+            parentSlider.setPreferredSize(new Dimension(MIN_WIDTH, DEFAULT_HEIGHT));
             ((JComponent)parentSlider.getParent()).revalidate();
         }
     }
-    
+
     private void enableDetails() {
         if (!showDetails && currentDetails != null) {
             showDetails = true;
-            parentSlider.setPreferredSize(new Dimension(minWidth,fullHeight));
+            parentSlider.setPreferredSize(new Dimension(MIN_WIDTH, FULL_HEIGHT));
             ((JComponent)parentSlider.getParent()).revalidate();
         }
     }
-    
+
     private void toggleDetailsEnablement() {
         if (showDetails) {
             disableDetails();
@@ -99,9 +99,9 @@ public class MessagePanel extends JPanel {
         }
         updateMessageText();
     }
-    
+
     private void updateMessageText() {
-        StringBuffer messageText = new StringBuffer() ;
+        StringBuilder messageText = new StringBuilder() ;
         if (currentMessage != null) {
             messageText.append(currentMessage);
         }
@@ -122,9 +122,9 @@ public class MessagePanel extends JPanel {
         // display
         String text = messageText.toString();
         message.setText("<html><center>" + text + "</center></html>");
-        
+
     }
-    
+
     public void setMessage(String messageText) {
         currentMessage = messageText;
         currentInformation = null;
@@ -132,18 +132,18 @@ public class MessagePanel extends JPanel {
         disableDetails();
         updateMessageText();
     }
-    
+
     public void setInformation(String infoText) {
         currentInformation = new StringBuffer();
         currentInformation.append("<BR>" + infoText);
         updateMessageText();
     }
-    
+
     public void setDetail(String detailText) {
         currentDetails = "<BR>" + detailText;
         updateMessageText();
     }
-    
+
     @Override
     public Dimension getPreferredSize() {
         Dimension nativeSize = super.getPreferredSize();

@@ -51,8 +51,7 @@ import rails.game.correct.CorrectionModeAction;
  * This is the Window used for displaying nearly all of the rails.game status.
  * This is also from where the ORWindow and StartRoundWindow are triggered.
  */
-public class StatusWindow extends JFrame implements ActionListener,
-KeyListener, ActionPerformer {
+public class StatusWindow extends JFrame implements ActionListener, KeyListener, ActionPerformer {
     private static final long serialVersionUID = 1L;
 
     protected static final String QUIT_CMD = "Quit";

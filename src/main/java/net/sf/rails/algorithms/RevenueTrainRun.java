@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Links the results from the revenue calculator to the rails program Each
  * object defines the run of one train
- * 
+ *
  */
 public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
 
@@ -40,8 +40,8 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
     RevenueTrainRun(RevenueAdapter revenueAdapter, NetworkTrain train) {
         this.revenueAdapter = revenueAdapter;
         this.train = train;
-        vertices = new ArrayList<NetworkVertex>();
-        edges = new ArrayList<NetworkEdge>();
+        vertices = new ArrayList<>();
+        edges = new ArrayList<>();
     }
 
     public List<NetworkVertex> getRunVertices() {
@@ -115,7 +115,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
         }
         return value;
     }
-    
+
     public int getRunValue() {
         return getRunValueForVertices(vertices);
     }
@@ -156,7 +156,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
         NetworkEdge previousEdge = null;
         NetworkVertex startVertex = null;
         for (NetworkEdge edge : edges) {
-            log.debug("Processing edge " + edge.toFullInfoString());
+            log.debug("Processing edge {}", edge.toFullInfoString());
             // process startEdge
             if (previousEdge == null) {
                 previousEdge = edge;
@@ -194,7 +194,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
         }
         // add the last vertex of the route
         vertices.add(previousEdge.getOtherVertex(vertices.get(vertices.size() - 1)));
-        log.debug("Converted edges to vertices " + vertices);
+        log.debug("Converted edges to vertices {}", vertices);
     }
 
     /** defines the edges from the list of vertices */
@@ -239,7 +239,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
         }
     }
 
-    private int prettyPrintNewLine(StringBuffer runPrettyPrint, int multiple,
+    private int prettyPrintNewLine(StringBuilder runPrettyPrint, int multiple,
             int initLength) {
         int length = runPrettyPrint.length() - initLength;
         if (length / PRETTY_PRINT_LENGTH != multiple) {
@@ -251,10 +251,10 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
         return multiple;
     }
 
-    String prettyPrint(boolean includeDetails) {
-        StringBuffer runPrettyPrint = new StringBuffer();
+    public String prettyPrint(boolean includeDetails) {
+        StringBuilder runPrettyPrint = new StringBuilder();
         runPrettyPrint.append(LocalText.getText("N_Train", train.toString()));
-        runPrettyPrint.append(" = " + getRunValue());
+        runPrettyPrint.append(" = ").append(getRunValue());
         if (includeDetails) {
             // details of the run
             Set<NetworkVertex> uniqueVertices = getUniqueVertices();
@@ -279,14 +279,14 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
                 if (startVertex == null) {
                     currentHexName = prettyPrintHexName(vertex);
                     startVertex = vertex;
-                    runPrettyPrint.append(prettyPrintHexName(vertex) + "(");
+                    runPrettyPrint.append(prettyPrintHexName(vertex)).append("(");
                 } else if (startVertex == vertex) {
                     currentHexName = prettyPrintHexName(vertex);
                     runPrettyPrint.append(") / ");
                     multiple =
                             prettyPrintNewLine(runPrettyPrint, multiple,
                                     initLength);
-                    runPrettyPrint.append(prettyPrintHexName(vertex) + "(0");
+                    runPrettyPrint.append(prettyPrintHexName(vertex)).append("(0");
                     continue;
                 } else if (!currentHexName.equals(prettyPrintHexName(vertex))) {
                     currentHexName = prettyPrintHexName(vertex);
@@ -294,7 +294,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
                     multiple =
                             prettyPrintNewLine(runPrettyPrint, multiple,
                                     initLength);
-                    runPrettyPrint.append(prettyPrintHexName(vertex) + "(");
+                    runPrettyPrint.append(prettyPrintHexName(vertex)).append("(");
                 } else {
                     runPrettyPrint.append(",");
                 }
@@ -326,8 +326,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
                     RevenueBonus.combineBonuses(activeBonuses);
             for (String bonusName : printBonuses.keySet()) {
                 runPrettyPrint.append(" + ");
-                runPrettyPrint.append(bonusName + "("
-                                      + printBonuses.get(bonusName) + ")");
+                runPrettyPrint.append(bonusName).append("(").append(printBonuses.get(bonusName)).append(")");
                 multiple =
                         prettyPrintNewLine(runPrettyPrint, multiple, initLength);
             }

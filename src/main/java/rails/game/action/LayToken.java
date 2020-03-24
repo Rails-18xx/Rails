@@ -54,7 +54,7 @@ public abstract class LayToken extends PossibleORAction {
         this.specialProperty = specialProperty;
         this.specialPropertyId = specialProperty.getUniqueId();
     }
-    
+
     public LayToken(SpecialBonusTokenLay specialProperty) {
         this.locations = specialProperty.getLocations();
         if (locations != null) buildLocationNameString();
@@ -67,7 +67,7 @@ public abstract class LayToken extends PossibleORAction {
     	locations.add(hex);
         buildLocationNameString();
     }
-    
+
     public LayToken() {
         this.locations = null;
     }
@@ -109,30 +109,30 @@ public abstract class LayToken extends PossibleORAction {
     }
 
     private void buildLocationNameString() {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         for (MapHex hex : locations) {
             if (b.length() > 0) b.append(",");
             b.append(hex.getId());
         }
         locationNames = b.toString();
     }
-    
+
     public abstract int getPotentialCost(MapHex hex);
- 
+
     @Override
     protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        LayToken action = (LayToken)pa; 
+        LayToken action = (LayToken)pa;
         boolean options = (Objects.equal(this.locations, action.locations) || this.locations == null && action.locations.isEmpty())
                 && Objects.equal(this.specialProperty, action.specialProperty)
         ;
 
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
             && Objects.equal(this.chosenHex, action.chosenHex)
@@ -141,7 +141,7 @@ public abstract class LayToken extends PossibleORAction {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("locations", locations)
                     .addToString("specialProperty", specialProperty)

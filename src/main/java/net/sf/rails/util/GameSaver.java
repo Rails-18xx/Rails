@@ -1,9 +1,9 @@
 package net.sf.rails.util;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,16 +29,16 @@ public class GameSaver {
     private static final Logger log = LoggerFactory.getLogger(GameSaver.class);
 
     /** Version ID of the Save file header, as written in save() */
-    private static final long saveFileHeaderVersionID = 3L;
+    private static final long SAVE_FILE_HEADER_VERSION_ID = 3L;
     /**
      * Overall save file version ID, taking into account the version ID of the
      * action package.
      */
-    public static final long saveFileVersionID = saveFileHeaderVersionID * PossibleAction.serialVersionUID;
+    public static final long saveFileVersionID = SAVE_FILE_HEADER_VERSION_ID * PossibleAction.serialVersionUID;
 
     // static data for autosave
-    public static final String autosaveFolder = "autosave";
-    public static final String autosaveFile = "18xx_autosave.rails";
+    public static final String AUTOSAVE_FOLDER = "autosave";
+    public static final String AUTOSAVE_FILE = "18xx_autosave.rails";
 
     // game data
     private final GameIOData gameIOData = new GameIOData();
@@ -71,34 +71,34 @@ public class GameSaver {
     public void saveGame(File file) throws IOException {
         log.info("Trying to save file to {}", file.getAbsoluteFile());
 
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
-        oos.writeObject(gameIOData.getVersion());
-        oos.writeObject(gameIOData.getDate());
-        oos.writeObject(gameIOData.getFileVersionID());
-        oos.writeObject(gameIOData.getGameData().getGameName());
-        oos.writeObject(gameIOData.getGameData().getGameOptions().getOptions());
-        // save game play related options
-        Map<String, String> gameOptions = new HashMap<>();
-        for ( Map.Entry<String, List<ConfigItem>> entry : ConfigManager.getInstance().getConfigSections().entrySet() ) {
-            for ( ConfigItem config : entry.getValue() ) {
-                if ( config.isGameRelated ) {
-                    String value = Config.get(config.name);
-                    if ( value != null ) {
-                        gameOptions.put(config.name, Config.get(config.name));
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file.toPath()))) {
+            oos.writeObject(gameIOData.getVersion());
+            oos.writeObject(gameIOData.getDate());
+            oos.writeObject(gameIOData.getFileVersionID());
+            oos.writeObject(gameIOData.getGameData().getGameName());
+            oos.writeObject(gameIOData.getGameData().getGameOptions().getOptions());
+            // save game play related options
+            Map<String, String> gameOptions = new HashMap<>();
+            for ( Map.Entry<String, List<ConfigItem>> entry : ConfigManager.getInstance().getConfigSections().entrySet() ) {
+                for ( ConfigItem config : entry.getValue() ) {
+                    if ( config.isGameRelated ) {
+                        String value = Config.get(config.name);
+                        if ( value != null ) {
+                            gameOptions.put(config.name, Config.get(config.name));
+                        }
                     }
                 }
             }
-        }
-        if ( ! gameOptions.isEmpty() ) {
-            oos.writeObject(gameOptions);
-        }
+            if ( !gameOptions.isEmpty() ) {
+                oos.writeObject(gameOptions);
+            }
 
-        oos.writeObject(gameIOData.getGameData().getPlayers());
-        for (PossibleAction action : gameIOData.getActions()) {
-            oos.writeObject(action);
+            oos.writeObject(gameIOData.getGameData().getPlayers());
+            for ( PossibleAction action : gameIOData.getActions() ) {
+                oos.writeObject(action);
+            }
+            log.info("File save successful");
         }
-        oos.close();
-        log.info("File save successful");
     }
 
     /**
@@ -106,8 +106,8 @@ public class GameSaver {
      * @throws IOException
      */
     public void autoSave() throws IOException  {
-        File directory = SystemOS.get().getConfigurationFolder(autosaveFolder, true);
-        String fileName = autosaveFile;
+        File directory = SystemOS.get().getConfigurationFolder(AUTOSAVE_FOLDER, true);
+        String fileName = AUTOSAVE_FILE;
 
         // create temporary new save file
         File tempFile = new File(directory, fileName + ".tmp");
@@ -123,10 +123,17 @@ public class GameSaver {
             log.debug("Recovery file exists");
             File backupFile = new File(directory, fileName + ".bak");
             //delete backup file if existing
-            if (backupFile.exists()) backupFile.delete();
+            if (backupFile.exists()) {
+                if ( ! backupFile.delete() ) {
+                    log.warn("Unable to delete file {}", backupFile);
+                }
+            }
             //old recovery file becomes new backup file
-            recoveryFile.renameTo(backupFile);
-            log.debug("Recovery file renamed to {}", backupFile.getPath());
+            if ( ! recoveryFile.renameTo(backupFile) ) {
+                log.warn("Unable to rename recovery file {}", recoveryFile);
+            } else {
+                log.debug("Recovery file renamed to {}", backupFile.getPath());
+            }
             //temp file becomes new recoveryFile
             renameResult = tempFile.renameTo(recoveryFile);
         } else {

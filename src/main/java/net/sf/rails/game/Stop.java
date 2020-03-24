@@ -29,15 +29,15 @@ import com.google.common.collect.ImmutableSet;
  * as much as possible.
  */
 public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<Stop> {
-    private final PortfolioSet<BaseToken> tokens = 
+    private final PortfolioSet<BaseToken> tokens =
             PortfolioSet.create(this, "tokens", BaseToken.class);
-    private final GenericState<Station> relatedStation = 
+    private final GenericState<Station> relatedStation =
             GenericState.create(this, "station");
     // FIXME: Only used for Rails1.x compatibility
-    private final IntegerState legacyNumber = 
+    private final IntegerState legacyNumber =
             IntegerState.create(this, "legacyNumber", 0);
     // FIXME: Only used for Rails1.x compatibility
-    private final HashSetState<Integer> previousNumbers = 
+    private final HashSetState<Integer> previousNumbers =
             HashSetState.create(this, "previousNumbers");
 
     private Stop(MapHex hex, String id, Station station) {
@@ -56,7 +56,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
             return new Stop(hex, String.valueOf(station.getNumber()), station);
         }
     }
-    
+
     @Override
     public MapHex getParent() {
         return (MapHex)super.getParent();
@@ -72,12 +72,12 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     public Station getRelatedStation() {
         return relatedStation.value();
     }
-    
+
     public void setRelatedStation(Station station) {
         relatedStation.set(station);
     }
-    
-    // FIMXE: Due to Rails1.x compatibility use the legacy number 
+
+    // FIMXE: Due to Rails1.x compatibility use the legacy number
     public int getRelatedNumber() {
         // return relatedStation.value().getNumber();
         return getLegacyNumber();
@@ -94,13 +94,13 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     public boolean checkPreviousNumbers(int number) {
         return previousNumbers.contains(number);
     }
-    
+
     // FIMXE: Due to Rails1.x compatibility
     @Deprecated
     public void addPreviousNumbers(int number) {
         previousNumbers.add(number);
     }
-    
+
     public ImmutableSet<BaseToken> getBaseTokens() {
         return tokens.items();
     }
@@ -136,7 +136,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         }
         return false;
     }
-    
+
     /**
      * @return true if stop is tokenable, thus it has open token slots and no company token yet
      */
@@ -220,7 +220,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
 
     @Override
     public String toText() {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         b.append("Hex ").append(getParent().getId());
         String cityName = getParent().getStopName();
         b.append(" (");

@@ -40,7 +40,7 @@ public class PrussianFormationRound extends StockRound {
         DISCARD_TRAINS
     };
 
-    Step step;
+    private Step step;
 
     private static String PR_ID = GameManager_1835.PR_ID;
     private static String M2_ID = GameManager_1835.M2_ID;
@@ -56,7 +56,7 @@ public class PrussianFormationRound extends StockRound {
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
     }
-    
+
     @Override
     public void start() {
 
@@ -252,7 +252,7 @@ public class PrussianFormationRound extends StockRound {
         }
 
         // all actions linked during formation round to avoid serious undo problems
-        
+
         // FIXME: changeStack.linkToPreviousMoveSet();
 
         if (folding) executeStartPrussian(false);
@@ -302,19 +302,19 @@ public class PrussianFormationRound extends StockRound {
             break;
         }
 
-        // TODO: This is now dead code, but won't be when some sensible validations exist 
+        // TODO: This is now dead code, but won't be when some sensible validations exist
         /*
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("CannotMerge",
                     action.getFoldedCompanyNames(),
                     PR_ID,
                     errMsg));
-            return false; 
+            return false;
         }
         */
 
         // all actions linked during formation round to avoid serious undo problems
-        
+
         // FIMXE: changeStack.linkToPreviousMoveSet();
 
         // Execute
@@ -443,9 +443,9 @@ public class PrussianFormationRound extends StockRound {
         }
 
         /* End of validation, start of execution */
-        
+
         train.discard();
-        
+
         // We still might have another excess train
         // TODO: would be better to have DiscardTrain discard multiple trains
         if (prussian.getNumberOfTrains() > prussian.getCurrentTrainLimit()) {
@@ -478,10 +478,10 @@ public class PrussianFormationRound extends StockRound {
     public static boolean prussianIsComplete(GameManager gameManager) {
         boolean resultP = true;
         boolean resultM = true;
-        for (PublicCompany company : gameManager.getAllPublicCompanies()) {    
+        for (PublicCompany company : gameManager.getAllPublicCompanies()) {
             resultM = checkForPrussianMinorExchange(company);
             if (!resultM) {
-                return false; 
+                return false;
                 }
         }
         for (PrivateCompany company : gameManager.getAllPrivateCompanies()) {
@@ -492,10 +492,10 @@ public class PrussianFormationRound extends StockRound {
         }
         return true;
     }
-            
+
     static boolean checkForPrussianMinorExchange(PublicCompany company) {
-        
-        if (!company.getType().getId().equalsIgnoreCase("Minor")) { 
+
+        if (!company.getType().getId().equalsIgnoreCase("Minor")) {
             return true;
         }
         if (!company.isClosed()) {
@@ -503,9 +503,9 @@ public class PrussianFormationRound extends StockRound {
         }
         return true;
     }
-    
+
     private static boolean checkForPrussianPrivateExchange(PrivateCompany company) {
-        
+
             if ((!company.getId().equals("HB")) && (!company.getId().equals("BB"))) {
                 return true;
             }

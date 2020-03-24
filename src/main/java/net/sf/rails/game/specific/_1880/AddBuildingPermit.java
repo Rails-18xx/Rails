@@ -9,14 +9,14 @@ import net.sf.rails.game.special.SpecialProperty;
 /**
  * Special private ability involving deductions in train buying. The deduction
  * can be absolute (an amount) or relative (a percentage)
- * 
+ *
  * @author Michael Alexander
- * 
+ *
  */
 public class AddBuildingPermit extends SpecialProperty {
-    String name = "AddBuildingPhasePermit";
-    String addedPermitName = "D"; // Default: Phase D
-    
+    protected String name = "AddBuildingPhasePermit";
+    protected String addedPermitName = "D"; // Default: Phase D
+
     public AddBuildingPermit(RailsItem parent, String id) {
         super(parent, id);
         // TODO Auto-generated constructor stub
@@ -25,7 +25,7 @@ public class AddBuildingPermit extends SpecialProperty {
 
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        
+
         super.configureFromXML(tag);
 
         Tag addedPermitTag = tag.getChild("AddedPermit");
@@ -51,9 +51,9 @@ public class AddBuildingPermit extends SpecialProperty {
     public String toString() {
         return "Add \"" + addedPermitName + "\"building rightsModel to company";
     }
-    
+
     @Override
     public String toMenu() {
-        return LocalText.getText("AddRights", addedPermitName); 
+        return LocalText.getText("AddRights", addedPermitName);
     }
 }

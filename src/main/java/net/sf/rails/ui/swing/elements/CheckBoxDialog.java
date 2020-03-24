@@ -13,16 +13,11 @@ public class CheckBoxDialog extends NonModalDialog {
 
     private static final long serialVersionUID = 1L;
 
-    JCheckBox[] checkBoxes;
-    Dimension size, optSize;
-    ButtonGroup group;
+    private JCheckBox[] checkBoxes;
 
-    String message;
-    int numOptions;
-    String[] options;
-    boolean selectedOptions[];
-    int chosenOption = -1;
-    boolean hasCancelButton = false;
+    private int numOptions;
+    private String[] options;
+    private boolean[] selectedOptions;
 
     public CheckBoxDialog(String key, DialogOwner owner, JFrame window, String title, String message,
             String[] options) {
@@ -48,7 +43,6 @@ public class CheckBoxDialog extends NonModalDialog {
 
     @Override
     protected void initializeInput() {
-
         checkBoxes = new JCheckBox[numOptions];
 
         for (int i = 0; i < numOptions; i++) {
@@ -68,7 +62,6 @@ public class CheckBoxDialog extends NonModalDialog {
 
     @Override
     protected void processCancel (ActionEvent actionEvent) {
-
     }
 
     public String[] getOptions () {

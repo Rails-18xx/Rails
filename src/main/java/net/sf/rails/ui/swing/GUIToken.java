@@ -20,23 +20,22 @@ import org.slf4j.LoggerFactory;
  */
 
 public class GUIToken extends JPanel {
-    private static final Logger log = 
-            LoggerFactory.getLogger(GUIToken.class);
-    
+    private static final Logger log = LoggerFactory.getLogger(GUIToken.class);
+
     private static final long serialVersionUID = 1L;
-    
+
     private final Color fgColor, bgColor;
     private final Ellipse2D.Double circle;
     private final String name;
     private final double diameter;
 
 //    private static final Font tokenFontTemplate = new Font("DroidSans", Font.BOLD, 10);
-    private static final Font tokenFontTemplate = new Font("Helvetica", Font.BOLD, 10);
+    private static final Font TOKEN_FONT_TEMPLATE = new Font("Helvetica", Font.BOLD, 10);
     /**
-     * defined by the ratio of margin to diameter 
-     * (eg., 0.2 means that 20% of the diameter is used as margin) 
+     * defined by the ratio of margin to diameter
+     * (eg., 0.2 means that 20% of the diameter is used as margin)
      */
-    private static final double tokenTextMargin = 0.15;
+    private static final double TOKEN_TEXT_MARGIN = 0.15;
 
     public GUIToken(Color fc, Color bc, String name, HexPoint center,
             double diameter) {
@@ -59,10 +58,10 @@ public class GUIToken extends JPanel {
         this.setForeground(fgColor);
         this.setOpaque(false);
         this.setVisible(true);
-        this.setBounds((int)Math.round(x), (int)Math.round(y), 
+        this.setBounds((int)Math.round(x), (int)Math.round(y),
                 (int)Math.round(diameter), (int)Math.round(diameter));
         this.name = name;
-        log.debug("GUIToken with circle " + circle.getBounds2D());
+        log.trace("GUIToken with circle {}", circle.getBounds2D());
     }
 
     @Override
@@ -81,8 +80,8 @@ public class GUIToken extends JPanel {
         g2d.fill(circle);
         g2d.setColor(oldColor);
 
-        HexPoint tokenCenter = new HexPoint(circle.x + diameter/2,circle.y + diameter/2); 
-        drawTokenText(name, g2d, fgColor, tokenCenter, diameter); 
+        HexPoint tokenCenter = new HexPoint(circle.x + diameter/2,circle.y + diameter/2);
+        drawTokenText(name, g2d, fgColor, tokenCenter, diameter);
     }
 
     public Color getBgColor() {
@@ -107,28 +106,28 @@ public class GUIToken extends JPanel {
         //recursion if text contains more than 3 characters
         //not perfect (heuristic!) but good enough for this exceptional case
         if (text.length() > 3) {
-            double newTokenDiameter = tokenDiameter / 2 / (1 - tokenTextMargin) * 1.2; 
+            double newTokenDiameter = tokenDiameter / 2 / (1 - TOKEN_TEXT_MARGIN) * 1.2;
             HexPoint newTokenCenterA = tokenCenter.translate(0, - tokenDiameter / 4 / 1.3);
             HexPoint newTokenCenterB = tokenCenter.translate(0, tokenDiameter / 4 * 1.1);
-            drawTokenText( text.substring(0, text.length() / 2), g, c, 
-                    newTokenCenterA, newTokenDiameter); 
-            drawTokenText( text.substring(text.length() / 2, text.length()), g, c, 
-                    newTokenCenterB, newTokenDiameter); 
+            drawTokenText( text.substring(0, text.length() / 2), g, c,
+                    newTokenCenterA, newTokenDiameter);
+            drawTokenText( text.substring(text.length() / 2, text.length()), g, c,
+                    newTokenCenterB, newTokenDiameter);
             return;
         }
-        
+
         //create condensed font if more than 2 chars in a line
         Font fontTemplate;
         if (text.length() > 2) {
             Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
             attributes.put(TextAttribute.WIDTH, TextAttribute.WIDTH_CONDENSED);
-            fontTemplate = tokenFontTemplate.deriveFont(attributes);
+            fontTemplate = TOKEN_FONT_TEMPLATE.deriveFont(attributes);
         } else {
-            fontTemplate = tokenFontTemplate;
+            fontTemplate = TOKEN_FONT_TEMPLATE;
         }
-        
+
         //first calculate font size
-        double allowedTextDiameter = tokenDiameter * (1 - tokenTextMargin);
+        double allowedTextDiameter = tokenDiameter * (1 - TOKEN_TEXT_MARGIN);
         Rectangle2D textBoundsInTemplate = g.getFontMetrics(fontTemplate).getStringBounds(text, g);
         double fontScalingX = allowedTextDiameter / textBoundsInTemplate.getWidth();
         double fontScalingY = allowedTextDiameter / textBoundsInTemplate.getHeight();

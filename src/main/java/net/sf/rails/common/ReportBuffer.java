@@ -27,17 +27,17 @@ import com.google.common.collect.Lists;
 public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
 
     private static final Logger log = LoggerFactory.getLogger(ReportBuffer.class);
-    
+
     /** Indicator string to find the active message position in the parsed html document */
     public static final String ACTIVE_MESSAGE_INDICATOR = "(**)";
 
     // static data
     private final Deque<ReportSet> pastReports = Lists.newLinkedList();
     private final Deque<ReportSet> futureReports = Lists.newLinkedList();
-  
+
     // TODO: Remove waitQueue, see functions below
     private final Queue<String> waitQueue = Lists.newLinkedList();
-  
+
     private ChangeStack changeStack; // initialized via init()
 
     // dynamic data
@@ -49,20 +49,20 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
         super(parent, id);
         currentReportBuilder = ReportSet.builder();
     }
-    
+
     public static ReportBuffer create(ReportManager parent, String id) {
         ReportBuffer buffer = new ReportBuffer(parent, id);
         return buffer;
     }
-    
+
     public void addObserver(ReportBuffer.Observer observer) {
         this.observer = observer;
     }
-    
+
     public void removeObserver() {
         this.observer = null;
     }
-    
+
     /**
      * Returns a list of all messages (of the past)
      * @return list of messages
@@ -74,9 +74,9 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
         }
         return list.build();
     }
-    
+
     private String getAsHtml(ChangeSet currentChangeSet) {
-        
+
         // FIXME (Rails2.0): Add commments back
         //     s.append("<span style='color:green;font-size:80%;font-style:italic;'>");
 
@@ -86,14 +86,14 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
             String text = rs.getAsHtml(currentChangeSet);
             if (text == null) continue;
             s.append("<p>");
-            if (text != null) s.append(text);
+            s.append(text);
             s.append("</p>");
         }
         s.append("</html>");
-        
+
         return s.toString();
     }
-    
+
     /**
      * Returns all messages for the recent active player
      * @return full text
@@ -102,7 +102,7 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     public String getRecentPlayer() {
         return null;
     }
-    
+
     public String getCurrentText() {
         return getAsHtml(changeStack.getClosedChangeSet());
     }
@@ -110,9 +110,9 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     private void addMessage(String message) {
         if (!Util.hasValue(message)) return;
         currentReportBuilder.addMessage(message);
-        log.debug("ReportBuffer: " + message);
+        log.debug("ReportBuffer: {}", message);
     }
-    
+
     private void updateObserver() {
         if (observer != null) {
             observer.update(getCurrentText());
@@ -124,17 +124,17 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     public void init(ChangeStack changeStack) {
         this.changeStack = changeStack;
     }
-    
+
     @Override
     public void updateOnClose() {
         ChangeSet current = changeStack.getClosedChangeSet();
         ReportSet currentSet = currentReportBuilder.build(current);
         pastReports.addLast(currentSet);
         futureReports.clear();
-        
+
         // a new builder
         currentReportBuilder = ReportSet.builder();
- 
+
         // update observer (ReportWindow)
         updateObserver();
     }
@@ -144,18 +144,18 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
         ReportSet undoSet = pastReports.pollLast();
         futureReports.addFirst(undoSet);
     }
-    
+
     @Override
     public void informOnRedo() {
         ReportSet redoSet = futureReports.pollFirst();
         pastReports.addLast(redoSet);
     }
-    
+
     @Override
     public void updateAfterUndoRedo() {
         updateObserver();
     }
- 
+
     /**
      * Shortcut to add a message to DisplayBuffer
      */
@@ -177,13 +177,13 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
         }
         reportBuffer.waitQueue.clear();
     }
-    
+
     public static interface Observer {
-        
+
         void append(String text);
-        
+
         void update(String newText);
-        
+
     }
 
 }

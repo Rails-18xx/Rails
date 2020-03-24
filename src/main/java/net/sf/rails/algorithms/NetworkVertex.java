@@ -55,9 +55,9 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.trackPoint = station;
         this.stop = hex.getRelatedStop(station);
         if (stop != null) {
-            log.info("Found stop " + stop);
+            log.debug("Found stop {}", stop);
         } else {
-            log.info("No stop found");
+            log.debug("No stop found");
         }
 
         this.virtual = false;
@@ -136,7 +136,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public boolean isMinor(){
         return (stationType != null && stationType == StationType.MINOR);
     }
-    
+
     public boolean isMine( ) {
         return (stationType != null && stationType == StationType.COALMINE);
     }
@@ -215,11 +215,11 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             return null;
         }
     }
-    
+
     public Stop getStop() {
         return stop;
     }
-    
+
     public boolean isOfType(VertexType vertexType, StationType stationType) {
         return (type == vertexType && (!isStation() || getStationType() == stationType));
     }
@@ -234,8 +234,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
 
         // Only station remains
         Station station = (Station) trackPoint;
-        
-        log.info("Init of vertex " + this);
+
+        log.debug("Init of vertex {}", this);
 
         // check if it has to be removed because it is run-to only
         // if company == null, then no vertex gets removed
@@ -287,13 +287,13 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
 
     @Override
     public String toString(){
-        StringBuffer message = new StringBuffer();
+        StringBuilder message = new StringBuilder();
         if (isVirtual())
             message.append(virtualId);
         else if (isStation())
-            message.append(hex.getId() + "." + ((Station)trackPoint).getNumber());
+            message.append(hex.getId()).append(".").append(((Station) trackPoint).getNumber());
         else if (isSide())
-            message.append(hex.getId() + "." + hex.getOrientationName((HexSide)trackPoint));
+            message.append(hex.getId()).append(".").append(hex.getOrientationName((HexSide) trackPoint));
         else
             message.append("HQ");
         if (isSink())
@@ -316,7 +316,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     }
 
     /**
-     * 
+     *
      * @param graph network graph
      * @param company the company (with regard to values, sinks and removals)
      * @param phase the current phase (with regard to values)
@@ -350,7 +350,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return maximum;
     }
 
-    
+
     /**
      * Return the sum of vertex values
      */
@@ -504,9 +504,9 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
                 }
             }
         }
-        log.info("Vertex Map Coverage minX=" + minX + ", minY=" + minY + ", maxX=" + maxX + ", maxY=" + maxY );
+        log.debug("Vertex Map Coverage minX={}, minY={}, maxX={}, maxY={}", minX, minY, maxX, maxY);
         //        Rectangle rectangle = new Rectangle((int)minX, (int)minY, (int)maxX, (int)maxY);
-        log.info("Created rectangle=" + rectangle);
+        log.debug("Created rectangle={}", rectangle);
         return (rectangle);
     }
 }

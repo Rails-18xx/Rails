@@ -36,7 +36,7 @@ public class StartItem extends RailsAbstractItem {
     protected int row = 0;
     protected int column = 0;
     protected int index;
-    
+
     // Bids
     protected final GenericState<Player> lastBidder = GenericState.create(this, "lastBidder");
     protected final Map<Player, CountingMoneyModel> bids = Maps.newHashMap();
@@ -61,13 +61,13 @@ public class StartItem extends RailsAbstractItem {
     // cleanup
     public static final int SOLD = 6;
 
-    public static final String[] statusName =
+    protected static final String[] statusName =
             new String[] { "Unavailable", "Biddable", "Buyable", "Selectable",
                     "Auctioned", "NeedingSharePrice", "Sold" };
 
     // For initialisation purposes only
-    protected String type = null;
-    protected boolean president = false;
+    protected String type;
+    protected boolean president;
     protected String name2 = null;
     protected String type2 = null;
     protected boolean president2 = false;
@@ -97,13 +97,13 @@ public class StartItem extends RailsAbstractItem {
 
     }
 
-    /** 
+    /**
      * @param name The Company name of the primary certificate. This name will
      * also become the name of the start item itself.
      * @param type The CompanyType name of the primary certificate.
      * @param president True if the primary certificate is the president's
      * share.
-     * @return a fully intialized StartItem 
+     * @return a fully intialized StartItem
      */
     public static StartItem create(RailsItem parent, String name, String type, int price, boolean reduceable, int index, boolean president){
         StartItem item = new StartItem(parent, name, type, index, president);
@@ -111,15 +111,15 @@ public class StartItem extends RailsAbstractItem {
         item.setReducePrice(reduceable);
         return item;
     }
-    
+
     protected void initBasePrice(int basePrice) {
         this.basePrice.set(basePrice);
     }
-    
+
     protected void setReducePrice(boolean reduceable) {
         this.reduceable = reduceable;
     }
-    
+
     /**
      * Add a secondary certificate, that "comes with" the primary certificate.
      *
@@ -143,7 +143,7 @@ public class StartItem extends RailsAbstractItem {
     public void setSecondary(Certificate secondary) {
         this.secondary = secondary;
     }
-    
+
     /**
      * Initialisation, to be called after all XML parsing has completed, and
      * after IPO initialisation.
@@ -280,7 +280,7 @@ public class StartItem extends RailsAbstractItem {
     public int getBasePrice() {
         return basePrice.value();
     }
-    
+
     public boolean getReduceable() {
         return reduceable;
     }
@@ -305,7 +305,7 @@ public class StartItem extends RailsAbstractItem {
         lastBidder.set(bidder);
         minimumBid.set(amount + 5);
     }
-    
+
     /**
      * Get the currently highest bid amount.
      *
@@ -360,7 +360,7 @@ public class StartItem extends RailsAbstractItem {
         bid.set(0);
         bid.setSuppressZero(true);
     }
-    
+
     /**
      * Get the minimum allowed next bid. TODO 5 should be configurable.
      *
@@ -383,10 +383,10 @@ public class StartItem extends RailsAbstractItem {
     public boolean isActive(Player player) {
         return active.get(player).value();
     }
-    
-    
+
+
     /**
-     * Set all players to active on this start item.  Used when 
+     * Set all players to active on this start item.  Used when
      * players who did not place a bid are still allowed to
      * participate in an auction (e.g. 1862)
      */
@@ -413,7 +413,7 @@ public class StartItem extends RailsAbstractItem {
     public void setSold(Player player, int buyPrice) {
         status.set(SOLD);
 
-        
+
         lastBidder.set(player);
 
         // For display purposes, set all lower bids to zero
@@ -515,7 +515,7 @@ public class StartItem extends RailsAbstractItem {
     public void setNoBidsReaction(NoBidsReaction action) {
         this.noBidsReaction = action;
     }
-    
+
     public NoBidsReaction getNoBidsReaction() {
         return noBidsReaction;
     }

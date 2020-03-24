@@ -14,10 +14,6 @@ import net.sf.rails.util.RailsObjects;
 public class TakeLoans extends PossibleORAction {
 
     // Initial attributes
-    // TODO: This is a duplication of the field in PossibleORAction
-    // Is there a reason for that? (potentially that it could be used outside of ORs)
-    transient private PublicCompany company;
-    private String companyName;
     private int maxNumber;
     private int price;
 
@@ -70,19 +66,19 @@ public class TakeLoans extends PossibleORAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        TakeLoans action = (TakeLoans)pa; 
-        boolean options = 
+        TakeLoans action = (TakeLoans)pa;
+        boolean options =
                 Objects.equal(this.company, action.company)
                 && Objects.equal(this.maxNumber, action.maxNumber)
                 && Objects.equal(this.price, action.price)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.numberTaken, action.numberTaken)
@@ -91,7 +87,7 @@ public class TakeLoans extends PossibleORAction {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("company", company)
                     .addToString("maxNumber", maxNumber)
@@ -107,8 +103,7 @@ public class TakeLoans extends PossibleORAction {
 
         in.defaultReadObject();
 
-        company =
-                getCompanyManager().getPublicCompany(companyName);
+        company = getCompanyManager().getPublicCompany(companyName);
     }
 
 }

@@ -320,11 +320,11 @@ implements ActionListener, KeyListener {
     private abstract class EditDialog extends JDialog implements ActionListener {
 
         private static final long serialVersionUID = 1L;
-        List<Object> originalValues = new ArrayList<Object>();
-        List<JComponent> inputElements = new ArrayList<JComponent>();
-        GridBagConstraints gc = new GridBagConstraints();
-        int length = 0;
-        JButton okButton, cancelButton;
+        private List<Object> originalValues = new ArrayList<Object>();
+        protected List<JComponent> inputElements = new ArrayList<JComponent>();
+        private GridBagConstraints gc = new GridBagConstraints();
+        private int length = 0;
+        private JButton okButton, cancelButton;
 
         EditDialog (String title) {
             super((Frame) null, title, false); // Non-modal
@@ -367,7 +367,7 @@ implements ActionListener, KeyListener {
 
     private class BuyTrainDialog extends EditDialog {
         private static final long serialVersionUID = 1L;
-        BuyTrain action;
+        private BuyTrain action;
 
         BuyTrainDialog (BuyTrain action) {
             super ("Edit BuyTrain");
@@ -419,7 +419,7 @@ implements ActionListener, KeyListener {
 
     private class LayTileDialog extends EditDialog {
         private static final long serialVersionUID = 1L;
-        LayTile action;
+        private LayTile action;
 
         LayTileDialog (LayTile action) {
             super ("Edit LayTile");

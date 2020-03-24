@@ -27,7 +27,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
     public static final int NUM_OPTIONS = 4;
 
     /** Allocation name keys in the resource bundle */
-    public static final String[] allocationNameKeys =
+    protected static final String[] allocationNameKeys =
             new String[] { "WITHHOLD", "SPLIT", "PAYOUT", "NO_TRAIN" };
 
     /*--- Server-side settings ---*/
@@ -66,8 +66,8 @@ public class SetDividend extends PossibleORAction implements Cloneable {
 
     /** The revenue destination selected by the user (if he has a choice at all). */
     protected int revenueAllocation;
-    
-    /**The 
+
+    /**The
      * The direct revenue for the company treasury (not as dividend) as proposed by the back-end. Currently this is always the
      * previous revenue. In the future, this could be the calculated revenue.
      */
@@ -85,7 +85,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
                 int[] allowedAllocations, int requiredCash) {
         this (presetRevenue, 0, mayUserSetRevenue, allowedAllocations, requiredCash);
     }
-   
+
     public SetDividend(int presetRevenue, int presetCompanyTreasuryRevenue, boolean mayUserSetRevenue,
             int[] allowedAllocations, int requiredCash) {
         super();
@@ -101,12 +101,12 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         }
     }
 
-  
+
     /** Clone an instance (used by clone) */
     protected SetDividend(SetDividend action) {
 
-        this(action.presetRevenue, 
-                action.presetCompanyTreasuryRevenue, 
+        this(action.presetRevenue,
+                action.presetCompanyTreasuryRevenue,
                 action.getMayUserSetRevenue(),
                 action.getAllowedRevenueAllocations(),
                 action.requiredCash);
@@ -126,17 +126,17 @@ public class SetDividend extends PossibleORAction implements Cloneable {
 
     public void setActualCompanyTreasuryRevenue(
             int actualCompanyTreasuryRevenue) {
-        this.actualCompanyTreasuryRevenue = actualCompanyTreasuryRevenue;        
+        this.actualCompanyTreasuryRevenue = actualCompanyTreasuryRevenue;
     }
 
     public int getActualCompanyTreasuryRevenue() {
-                    return actualCompanyTreasuryRevenue;        
+                    return actualCompanyTreasuryRevenue;
     }
-    
+
     public int getPresetCompanyTreasuryRevenue() {
         return presetCompanyTreasuryRevenue;
     }
-    
+
     public int[] getAllowedAllocations() {
         return getAllowedRevenueAllocations();
     }
@@ -183,21 +183,21 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        SetDividend action = (SetDividend)pa; 
-        boolean options = 
+        SetDividend action = (SetDividend)pa;
+        boolean options =
                 Objects.equal(this.presetRevenue, action.presetRevenue)
                 && Objects.equal(this.presetCompanyTreasuryRevenue, action.presetCompanyTreasuryRevenue)
                 && Objects.equal(this.getMayUserSetRevenue(), action.getMayUserSetRevenue())
                 && Arrays.equals(this.getAllowedRevenueAllocations(), action.getAllowedRevenueAllocations())
                 && Objects.equal(this.requiredCash, action.requiredCash)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.actualRevenue, action.actualRevenue)
@@ -208,7 +208,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("presetRevenue", presetRevenue)
                     .addToString("presetTreasuryBonusRevenue",presetCompanyTreasuryRevenue)

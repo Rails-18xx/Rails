@@ -70,19 +70,19 @@ import rails.game.action.StartCompany;
  * This class is called by main() and loads all of the UI components
  */
 public class GameUIManager implements DialogOwner {
-    public static GameUIManager instance = null;
+    protected static GameUIManager instance = null;
 
-    public StatusWindow statusWindow;
-    public ReportWindow reportWindow;
-    public ConfigWindow configWindow;
-    public ORUIManager orUIManager;
-    public ORWindow orWindow; // TEMPORARY
+    protected StatusWindow statusWindow;
+    protected ReportWindow reportWindow;
+    protected ConfigWindow configWindow;
+    protected ORUIManager orUIManager;
+    protected ORWindow orWindow; // TEMPORARY
     private StartRoundWindow startRoundWindow;
 
     protected JDialog currentDialog = null;
     protected PossibleAction currentDialogAction = null;
 
-    public static ImageLoader imageLoader;
+    protected static ImageLoader imageLoader;
 
     protected RailsRoot railsRoot;
     protected PossibleAction lastAction;
@@ -445,7 +445,6 @@ public class GameUIManager implements DialogOwner {
 
             /* Finish previous round UI processing */
             if (previousRoundType != null) {
-
                 /* close current dialog */
                 setCurrentDialog(null, null);
 
@@ -468,7 +467,6 @@ public class GameUIManager implements DialogOwner {
         }
 
         if (currentRound != previousRound) {
-
             // Start the new round UI processing
             if (StartRound.class.isAssignableFrom(currentRoundType)) {
                 log.debug("UI entering Start Round {}", currentRoundName);
@@ -543,10 +541,7 @@ public class GameUIManager implements DialogOwner {
         }
 
         //This was always false before ? Bug oversight ?
-        boolean correctionOverride = false;
-
-        correctionOverride = statusWindow.setupFor(currentRound);
-
+        boolean correctionOverride = statusWindow.setupFor(currentRound);
         if (correctionOverride) {
             log.debug("Correction overrides active window: status window active");
         }
@@ -560,7 +555,6 @@ public class GameUIManager implements DialogOwner {
             setMeToFront(startRoundWindow);
 
         } else if (uiHints.getActivePanel() == GuiDef.Panel.STATUS || correctionOverride) {
-
             log.debug("Entering Stock Round UI type");
             activeWindow = statusWindow;
             FXStockChartWindow.setVisible(true);
@@ -577,16 +571,16 @@ public class GameUIManager implements DialogOwner {
         // Update the currently visible round window
         // "Switchable" rounds will be handled from subclasses of this class.
         if (StartRoundWindow.class.isAssignableFrom(activeWindow.getClass())) {
-            log.debug("Updating Start round window");
+            log.debug("Updating Start round window ({})", myTurn);
             startRoundWindow.updateStatus(myTurn);
             startRoundWindow.setSRPlayerTurn(getRoot().getPlayerManager().getCurrentPlayer().getIndex());
 
         } else if (StatusWindow.class.isAssignableFrom(activeWindow.getClass())) {
-            log.debug("Updating Stock (status) round window");
+            log.debug("Updating Stock (status) round window ({})", myTurn);
             statusWindow.updateStatus(myTurn);
 
         } else if (ORWindow.class.isAssignableFrom(activeWindow.getClass())) {
-            log.debug("Updating Operating round window");
+            log.debug("Updating Operating round window ({})", myTurn);
             orUIManager.updateStatus(myTurn);
         }
 
@@ -600,9 +594,7 @@ public class GameUIManager implements DialogOwner {
         }
 
     /** Stub, to be overridden in subclasses for special round types */
-    protected void updateStatus(ActionPerformer activeWindow) {
-
-    }
+    protected void updateStatus(ActionPerformer activeWindow) { }
 
     public void discardTrains (DiscardTrain dt) {
         PublicCompany c = dt.getCompany();
@@ -620,8 +612,7 @@ public class GameUIManager implements DialogOwner {
             trainOptions.add(
                     options[j++] = LocalText.getText("None")
             );
-            prompt = LocalText.getText("MayDiscardTrain",
-                    c.getId());
+            prompt = LocalText.getText("MayDiscardTrain", c.getId());
         }
         int offset = j;
         for (int i = 0; i < trains.size(); i++) {

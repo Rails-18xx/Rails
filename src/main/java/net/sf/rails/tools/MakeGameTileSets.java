@@ -15,6 +15,8 @@ import javax.xml.transform.stream.StreamResult;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 
 
@@ -23,15 +25,16 @@ import org.w3c.dom.*;
  * an XML file for use in Rails 18xx.
  */
 public class MakeGameTileSets {
+    private static final Logger log = LoggerFactory.getLogger(MakeGameTileSets.class);
 
     private static final String TILES_DIRECTORY = "tiles";
     private static final String TILES_FILENAME = "Tiles.xml";
     private static final String HANDMADE_TILES_FILENAME = "HandmadeTiles.xml";
-    
+
     private static final String GAMES_DATA_DIRECTORY = "data";
     private static final String GAMES_OUTPUT_DIRECTORY = "src/main/resources/data";
     private static final String GAMES_TILES_FILENAME = "Tiles.xml";
- 
+
     public static void main(String[] args) {
 
         try {
@@ -63,13 +66,13 @@ public class MakeGameTileSets {
             }
 
         } catch (ConfigurationException e) {
-            e.printStackTrace();
+            log.warn("caught exception", e);
         }
 
     }
 
     private void addToTileMap(Map<String, Element> tileMap, String fileName) throws ConfigurationException  {
-        
+
         // the last arguments refers to the fact that no GameOptions are required
         Element inputTopElement =
                 Tag.findTopTagInFile(fileName, TILES_DIRECTORY, "Tiles", null).getElement();
@@ -81,7 +84,7 @@ public class MakeGameTileSets {
             tileMap.put(tileName, tileSpec);
         }
     }
-    
+
     private MakeGameTileSets(String[] games) throws ConfigurationException {
 
         Map<String, Element> tileMap = new HashMap<String, Element>();
@@ -176,7 +179,7 @@ public class MakeGameTileSets {
             }
 
             System.out.println("XML output to " + tilesPath);
-            
+
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             transformerFactory.setAttribute("indent-number", 5);
             Transformer transformer = transformerFactory.newTransformer();

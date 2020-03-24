@@ -99,7 +99,7 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
     SortedMultiset<Integer> getCertificateTypeCounts(PublicCompany company) {
         ImmutableSortedMultiset.Builder<Integer> certCount = ImmutableSortedMultiset.naturalOrder();
         for (PublicCertificate cert : getCertificates(company)) {
-            if (!cert.isPresidentShare()) { 
+            if (!cert.isPresidentShare()) {
                 certCount.add(cert.getShares());
             }
         }
@@ -147,7 +147,7 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
         int share = this.getShare(company);
 
         if (share == 0) return "";
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         b.append(share).append("%");
 
         if (getParent() instanceof Player
@@ -221,4 +221,3 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
         return combinations.build();
     }
 }
- 

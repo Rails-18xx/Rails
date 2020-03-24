@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Configure provides static methods that come along with the Configurable and Creatable Interfaces
- * 
+ *
  * Remark: Collects code from various mathods in ComponentManager, GameManager and other places in Rails1.x
  */
 public class Configure {
-    final static Logger log = LoggerFactory.getLogger(Configure.class);
-    
+    private final static Logger log = LoggerFactory.getLogger(Configure.class);
+
     /** Check if a classname can be instantiated.
      * Throws a ConfiguratioNException if not.
      * @param className
@@ -31,7 +31,7 @@ public class Configure {
                     + className, e);
         }
     }
-    
+
     public static <T extends Creatable> Class<? extends T> getClassForName(Class<T> clazz, String className)
             throws ConfigurationException {
         Class<? extends T> subClazz;
@@ -43,24 +43,24 @@ public class Configure {
         }
         return subClazz;
     }
-    
+
     public static <T extends Creatable> T create(Class<T> clazz, String className, RailsItem parent, String id)
         throws ConfigurationException {
         Class<? extends T> subClazz = getClassForName(clazz, className);
         return create(subClazz, RailsItem.class, parent, id);
     }
-    
+
     public static <T extends Creatable, P extends RailsItem> T create(Class<T> clazz, String className, Class<P> parentClazz, P parent, String id)
         throws ConfigurationException {
         Class<? extends T> subClazz = getClassForName(clazz, className);
         return create(subClazz, parentClazz, parent, id );
     }
-    
+
     public static <T extends Creatable> T create(Class<T> clazz, RailsItem parent, String id)
             throws ConfigurationException {
         return create(clazz, RailsItem.class, parent, id);
     }
-    
+
     public static <T extends Creatable, P extends RailsItem> T create(
         Class<T> clazz, Class<P> parentClazz, P parent, String id)
         throws ConfigurationException {
@@ -74,5 +74,5 @@ public class Configure {
         }
         return component;
     }
-    
+
 }

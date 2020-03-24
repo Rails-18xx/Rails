@@ -35,11 +35,11 @@ public final class GuiHints extends RailsAbstractItem implements Serializable{
     private GuiHints(RailsItem parent, String id) {
         super(parent, id);
     }
-    
+
     public static GuiHints create(RailsItem parent, String id){
         return new GuiHints(parent, id);
     }
-    
+
     public Class<? extends RoundFacade> getCurrentRoundType() {
         return currentRoundType.value();
     }
@@ -75,10 +75,10 @@ public final class GuiHints extends RailsAbstractItem implements Serializable{
         this.activePanel.set(activePanel);
     }
 
-    public class VisibilityHint {
+    public static class VisibilityHint {
 
-        GuiDef.Panel type;
-        boolean visibility;
+        protected GuiDef.Panel type;
+        protected boolean visibility;
 
         VisibilityHint (GuiDef.Panel type, boolean visibility) {
             this.type = type;

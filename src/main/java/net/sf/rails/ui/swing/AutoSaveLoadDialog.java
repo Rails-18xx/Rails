@@ -23,22 +23,21 @@ import net.sf.rails.ui.swing.elements.Spinner;
 public class AutoSaveLoadDialog extends JDialog implements ActionListener {
 
     private static final long serialVersionUID = 1L;
-    GridBagConstraints gc;
-    JPanel optionsPane, buttonPane;
-    JButton okButton, cancelButton;
-    JRadioButton[] choiceButtons;
-    Spinner intervalSpinner;
-    Dimension size, optSize;
-    ButtonGroup group;
-    DialogOwner owner;
+    private GridBagConstraints gc;
+    private JPanel optionsPane, buttonPane;
+    private JButton okButton, cancelButton;
+    private JRadioButton[] choiceButtons;
+    private Spinner intervalSpinner;
+    private Dimension size;
+    private ButtonGroup group;
+    private DialogOwner owner;
 
-    int status;
-    int interval;
+    private int status;
+    private int interval;
 
     private static final int NUM_OPTIONS = 3;
 
-    protected static Logger log =
-            LoggerFactory.getLogger(AutoSaveLoadDialog.class);
+    protected static Logger log = LoggerFactory.getLogger(AutoSaveLoadDialog.class);
 
     public AutoSaveLoadDialog(DialogOwner owner, int oldStatus, int oldInterval) {
         super((Frame) null, "AutoSaveLoad settings", false); // Non-modal

@@ -6,9 +6,9 @@ import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.ArrayListState;
 
 public class BonusModel extends RailsModel {
-    
+
     private ArrayListState<Bonus> bonuses;
-    
+
     protected BonusModel(RailsItem parent, String id) {
         super(parent, id);
     }
@@ -16,7 +16,7 @@ public class BonusModel extends RailsModel {
     public static BonusModel create(RailsItem parent, String id){
         return new BonusModel(parent, id);
     }
-    
+
     @Override
     public RailsItem getParent() {
         return (RailsItem)super.getParent();
@@ -31,7 +31,7 @@ public class BonusModel extends RailsModel {
     public String toText() {
         if (bonuses == null || bonuses.isEmpty()) return "";
 
-        StringBuffer b = new StringBuffer("<html><center>");
+        StringBuilder b = new StringBuilder("<html><center>");
 
         for (Bonus bonus : bonuses.view()) {
             if (b.length() > 14) {

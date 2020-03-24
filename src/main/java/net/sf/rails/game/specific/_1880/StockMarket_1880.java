@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.rails.game.specific._1880;
 
@@ -18,33 +18,31 @@ import com.google.common.collect.Iterables;
 
 /**
  * @author Martin
- * 
+ *
  */
 
 // FIXME: This seems to be a non-finalized version, fix it for Rails 2.0
 public class StockMarket_1880 extends StockMarket {
 
-   
+    protected IntegerState parPlace_100;
 
-    public IntegerState parPlace_100;
+    protected IntegerState parPlace_90;
 
-    public IntegerState parPlace_90;
+    protected IntegerState parPlace_80;
 
-    public IntegerState parPlace_80;
+    protected IntegerState parPlace_70;
 
-    public IntegerState parPlace_70;
-    
-  
+
 
     /**
-     * 
+     *
      */
-   
+
     public StockMarket_1880(RailsRoot parent, String id) {
         super(parent, id);
         // TODO Auto-generated constructor stub
     }
-    
+
     public void configureFromXML(Tag tag) throws ConfigurationException {
         // Define a default stockspace type with colour white
         defaultType = new StockSpaceType(DEFAULT, StockSpaceType.WHITE);
@@ -165,7 +163,7 @@ public class StockMarket_1880 extends StockMarket {
 
     @Override
     public void finishConfiguration(RailsRoot root) {
-                
+
         for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(getRoot().getCompanyManager())) {
             if (!company.hasStarted() && company.getStartSpace() != null) {
                 company.getStartSpace().addFixedStartPrice(company);

@@ -17,7 +17,7 @@ import net.sf.rails.game.MapHex;
 public class ScoreTileOnlyOnceModifier implements RevenueStaticModifier {
 
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
-        
+
         // 1. define for each hex a list of stations
         HashMap<MapHex, List<NetworkVertex>> hexStations = new HashMap<MapHex, List<NetworkVertex>>();
         for (NetworkVertex v:revenueAdapter.getVertices()) {
@@ -29,11 +29,11 @@ public class ScoreTileOnlyOnceModifier implements RevenueStaticModifier {
                 hexStations.get(v.getHex()).add(v);
             }
         }
-        
+
         // 2. convert those with more than one station to a vertex visit set
         for (MapHex hex:hexStations.keySet()) {
             if (hexStations.get(hex).size() >= 2) {
-                revenueAdapter.addVertexVisitSet(revenueAdapter.new VertexVisit(hexStations.get(hex)));
+                revenueAdapter.addVertexVisitSet(new RevenueAdapter.VertexVisit(hexStations.get(hex)));
             }
         }
         // nothing to print
@@ -44,5 +44,5 @@ public class ScoreTileOnlyOnceModifier implements RevenueStaticModifier {
         // nothing to print
         return null;
     }
-    
+
 }

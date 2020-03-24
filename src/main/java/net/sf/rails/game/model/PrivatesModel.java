@@ -9,9 +9,9 @@ import net.sf.rails.game.state.PortfolioSet;
 public final class PrivatesModel extends RailsModel {
 
     public static final String ID = "PrivatesModel";
-    
+
     private final Portfolio<PrivateCompany> privates;
-    
+
     private boolean addLineBreak = false;
 
     private PrivatesModel(RailsOwner parent, String id) {
@@ -20,7 +20,7 @@ public final class PrivatesModel extends RailsModel {
         // PrivatesModel is an indirect owner of privates, so add it to the state
         privates.addModel(this);
     }
-    
+
     /**
      * Creates an initialized PrivatesModel
      */
@@ -32,11 +32,11 @@ public final class PrivatesModel extends RailsModel {
     public RailsOwner getParent() {
         return (RailsOwner)super.getParent();
     }
-    
+
     public Portfolio<PrivateCompany> getPortfolio() {
         return privates;
     }
-    
+
     public float getCertificateCount() {
         float count = 0;
         for (PrivateCompany p:privates) {
@@ -44,12 +44,12 @@ public final class PrivatesModel extends RailsModel {
         }
         return count;
     }
-    
+
     public void moveInto(PrivateCompany p){
         privates.add(p);
     }
-    
-    
+
+
     public void setLineBreak(boolean lineBreak) {
         this.addLineBreak = lineBreak;
     }
@@ -57,7 +57,7 @@ public final class PrivatesModel extends RailsModel {
     @Override
     public String toText() {
 
-        StringBuffer buf = new StringBuffer("<html>");
+        StringBuilder buf = new StringBuilder("<html>");
         for (Company priv : privates) {
             if (buf.length() > 6)
                 buf.append(addLineBreak ? "<br>" : "&nbsp;");

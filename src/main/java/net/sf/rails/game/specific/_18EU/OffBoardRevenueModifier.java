@@ -20,10 +20,10 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
 
     protected static Logger log =
         LoggerFactory.getLogger(OffBoardRevenueModifier.class);
-    
+
 
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
-        
+
         // 1. define value
         Phase phase = revenueAdapter.getPhase();
         int bonusValue;
@@ -38,7 +38,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
         }
 
         log.info("OffBoardRevenueModifier: bonusValue = " + bonusValue);
-        
+
         // 2. get all off-board type stations and Hamburg
         Set<NetworkVertex> offBoard = new HashSet<NetworkVertex>();
         for (NetworkVertex vertex:revenueAdapter.getVertices()) {
@@ -56,20 +56,20 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
             offBoard.add(hamburgTerminal);
             // following statement was missing, it removes bug reported by James Romano (2012/01/05)
             offBoard.remove(hamburgCity);
-            
+
             // vertexVisitSet for the two Hamburgs
-            VertexVisit hamburgSet = revenueAdapter.new VertexVisit();
+            VertexVisit hamburgSet = new VertexVisit();
             hamburgSet.set.add(hamburgCity);
             hamburgSet.set.add(hamburgTerminal);
             revenueAdapter.addVertexVisitSet(hamburgSet);
         }
 
         log.info("OffBoardRevenueModifier: offBoard = " + offBoard);
-        
+
         // 4. get all base tokens (=> start vertices)
         Set<NetworkVertex> bases = revenueAdapter.getStartVertices();
-        
-        
+
+
         // 5. combine those to revenueBonuses
         // always two offboard areas and one base
         Set<NetworkVertex> destOffBoard = new HashSet<NetworkVertex>(offBoard);

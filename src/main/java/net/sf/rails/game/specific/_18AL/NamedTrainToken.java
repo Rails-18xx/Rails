@@ -15,15 +15,13 @@ import org.slf4j.LoggerFactory;
 
 public class NamedTrainToken extends Token<NamedTrainToken> implements Configurable {
 
-    protected static Logger log =
-        LoggerFactory.getLogger(NamedTrainToken.class);
+    protected static Logger log = LoggerFactory.getLogger(NamedTrainToken.class);
 
     private String name;
     private String longName;
     private int value;
     private String hexesString;
     private List<MapHex> hexes;
-    private String description;
 
     /**
      * Used via Configure (reflection)
@@ -31,7 +29,7 @@ public class NamedTrainToken extends Token<NamedTrainToken> implements Configura
     public NamedTrainToken(RailsItem parent, String id) {
         super(parent, id, NamedTrainToken.class);
     }
-    
+
     public void configureFromXML(Tag tag) throws ConfigurationException {
         value = tag.getAttributeAsInteger("value");
         if (value <= 0) {
@@ -63,7 +61,7 @@ public class NamedTrainToken extends Token<NamedTrainToken> implements Configura
         if (hexesString != null) {
             hexes = root.getMapManager().parseLocations(hexesString);
         }
-        
+
     }
 
     public String getId() {

@@ -19,15 +19,15 @@ public class WindowSettings {
     private String defaultpath;
     private boolean defaultUsed = false;
 
-    private static final String settingsfilename = "settings_xxxx.rails_ini";
-    private static final String settingsFolder = "windowSettings";
+    private static final String SETTINGS_FILENAME = "settings_xxxx.rails_ini";
+    private static final String SETTINGS_FOLDER = "windowSettings";
 
     protected static Logger log =
         LoggerFactory.getLogger(WindowSettings.class);
 
     public WindowSettings (String gameName) {
-        File directory = SystemOS.get().getConfigurationFolder(settingsFolder, true);
-        defaultpath = directory + File.separator + settingsfilename;
+        File directory = SystemOS.get().getConfigurationFolder(SETTINGS_FOLDER, true);
+        defaultpath = directory + File.separator + SETTINGS_FILENAME;
         filepath = defaultpath.replace("xxxx", gameName);
     }
 
@@ -51,7 +51,6 @@ public class WindowSettings {
     }
 
     public void load () {
-
         FileReader file;
         try {
             file = new FileReader (filepath);
@@ -63,9 +62,7 @@ public class WindowSettings {
             }
             defaultUsed = true;
         }
-        BufferedReader in;
-        try {
-            in = new BufferedReader (file);
+        try (BufferedReader in = new BufferedReader (file)) {
             String line;
             String[] fields;
             int v;
@@ -82,17 +79,13 @@ public class WindowSettings {
                 case 'H': r.height = v; break;
                 }
             }
-            in.close();
         } catch (Exception e) {
-            log.error ("Error while loading "+filepath, e);
+            log.error("Error while loading {}", filepath, e);
         }
-
     }
 
     public void set(JFrame window) {
-
         if (window != null) {
-
             // Save one window's settings
             String name = window.getClass().getSimpleName();
             Rectangle r = rectangle (name);
@@ -101,15 +94,13 @@ public class WindowSettings {
             r.width = window.getWidth();
             r.height = window.getHeight();
         }
-        return;
     }
 
     public void save () {
 
         // Save all settings to file
         log.debug("Saving all window settings");
-        try {
-            PrintWriter out = new PrintWriter (new FileWriter (new File (filepath)));
+        try(PrintWriter out = new PrintWriter (new FileWriter (new File (filepath)))) {
             Rectangle r;
             Set<String> keys = new TreeSet<String> (settings.keySet());
             for (String name : keys) {
@@ -119,11 +110,9 @@ public class WindowSettings {
                 out.println(name+".W="+r.width);
                 out.println(name+".H="+r.height);
             }
-            out.close();
         } catch (Exception e) {
             log.error ("Exception while saving window settings", e);
         }
-
     }
 
 

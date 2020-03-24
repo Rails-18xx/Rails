@@ -362,7 +362,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
     }
 
     private void buildLocationNameString() {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         for (MapHex hex : locations) {
             if (b.length() > 0) b.append(",");
             b.append(hex.getId());

@@ -3,6 +3,7 @@ package net.sf.rails.common.parser;
 import java.io.*;
 import java.util.*;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.*;
 
 import net.sf.rails.common.ResourceLoader;
@@ -25,7 +26,7 @@ public class XMLParser {
 
 	/**
 	 * Opens and parses an xml file.
-	 * 
+	 *
 	 * @param fileName
 	 *            the name of the file to open
 	 * @return Document
@@ -38,26 +39,19 @@ public class XMLParser {
 		if (documentCache.containsKey(filename)) {
 			return documentCache.get(filename);
 		} else {
-			Document doc = null;
+			Document doc;
 
 			try {
-				DocumentBuilderFactory dbf = DocumentBuilderFactory
-						.newInstance();
+				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 				dbf.setNamespaceAware(true);
-				doc = dbf.newDocumentBuilder().parse(
-						ResourceLoader.getInputStream(filename, directory));
-			} catch (ParserConfigurationException e) {
-				throw new ConfigurationException("Could not read/parse "
-						+ filename, e);
-			} catch (SAXException e) {
-				throw new ConfigurationException("Could not read/parse "
-						+ filename, e);
-			} catch (IOException e) {
-				throw new ConfigurationException("Could not read/parse "
-						+ filename, e);
-			} catch (Exception e) {
-				throw new ConfigurationException(
-						"Cannot find file " + filename, e);
+                dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+                doc = dbf.newDocumentBuilder().parse(ResourceLoader.getInputStream(filename, directory));
+			} catch (ParserConfigurationException | SAXException | IOException e) {
+				throw new ConfigurationException("Could not read/parse " + filename, e);
+			}
+            catch (Exception e) {
+				throw new ConfigurationException("Cannot find file " + filename, e);
 			}
 			return doc;
 		}
@@ -66,7 +60,7 @@ public class XMLParser {
 
 	/**
 	 * Returns the first (and hopefully root) element within a document.
-	 * 
+	 *
 	 * @param doc
 	 * @return First (root) element in the document.
 	 */
@@ -92,7 +86,7 @@ public class XMLParser {
 	/**
 	 * Recursive method to retrieve all elements and sub-elements containing a
 	 * specific tag.
-	 * 
+	 *
 	 * @param tagName
 	 * @param nodeList
 	 * @return All elements with tagName
@@ -113,7 +107,7 @@ public class XMLParser {
 				// Recurse through the document, searching for our tag.
 				elements.addAll(getElementList(tagName, childNode
 						.getChildNodes()));
-			} 
+			}
 		}
 
 		return elements;
@@ -122,7 +116,7 @@ public class XMLParser {
 	/**
 	 * Recursive method to retrieve all elements and sub-elements in the
 	 * NodeList.
-	 * 
+	 *
 	 * @param nodeList
 	 * @return All elements in the NodeList
 	 */
@@ -145,7 +139,7 @@ public class XMLParser {
 
 	/**
 	 * Retrieves the given attribute from the given element as a String.
-	 * 
+	 *
 	 * @param String
 	 *            attributeName
 	 * @param Element
@@ -165,7 +159,7 @@ public class XMLParser {
 
 	/**
 	 * Retrieves the given attribute from the given element as an Integer.
-	 * 
+	 *
 	 * @param String
 	 *            attributeName
 	 * @param Element
@@ -182,10 +176,10 @@ public class XMLParser {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Retrieves all attributes for an Element
-	 * 
+	 *
 	 * @param Element
 	 *            el
 	 * @return HashMap<String,String> of all Attributes
@@ -203,7 +197,7 @@ public class XMLParser {
 	}
 
 	protected String getElementText(NodeList nodeList) {
-		
+
 		for (int i=0; i < nodeList.getLength(); i++) {
             if (nodeList.item(i).getNodeType() == Node.TEXT_NODE) {
             	return (String) nodeList.item(i).getNodeValue();

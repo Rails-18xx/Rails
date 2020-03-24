@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 
 public class WalletManager extends Manager {
 
-    class WMKey<T extends Countable> {
+    protected static class WMKey<T extends Countable> {
         private final Class<T> type;
         private final Owner owner;
 
@@ -98,7 +98,7 @@ public class WalletManager extends Manager {
 
     // backdoor for testing
     <T extends Countable> WMKey<T> createWMKey(Class<T> type, Owner owner) {
-        return this.new WMKey<T>(type, owner);
+        return new WMKey<T>(type, owner);
     }
 
 }

@@ -13,31 +13,31 @@ import net.sf.rails.game.MapOrientation;
 public class NSHexMap extends HexMap {
 
     public NSHexMap() {
-        // tile x-reference in NS is 1/3 of the baseline 
+        // tile x-reference in NS is 1/3 of the baseline
         tileXOffset = -0.333;
         // tile y-reference in NS is baseline
         tileYOffset = -0.5;
-        
+
         // coordinate margins
-        coordinateXMargin = coordinatePeakMargin;
-        coordinateYMargin = coordinateFlatMargin;
+        coordinateXMargin = COORDINATE_PEAK_MARGIN;
+        coordinateYMargin = COORDINATE_FLAT_MARGIN;
     }
 
     protected double calcXCoordinates(int col, double offset) {
-        double colAdj = col - minimum.getCol() + peakMargin + offset;
+        double colAdj = col - minimum.getCol() + PEAK_MARGIN + offset;
 //        log.debug("x-Coordinate for col= " + col + " -> colAdj = " + colAdj);
         return Math.round(scale * 3 * colAdj);
     }
-    
+
     protected double calcYCoordinates(int row, double offset) {
-       double rowAdj = (row - minimum.getCol())/2.0 + flatMargin + offset; 
+       double rowAdj = (row - minimum.getCol())/2.0 + FLAT_MARGIN + offset;
 //       log.debug("y-Coordinate for row= " + row + " -> rowAdj = " + rowAdj);
        return Math.round(scale * 2 * MapOrientation.SQRT3 * rowAdj);
     }
 
     protected void setOriginalSize() {
-        originalSize = new Dimension( (int) calcXCoordinates(maximum.getCol(), peakMargin), 
-                (int) calcYCoordinates(maximum.getRow(), flatMargin));
+        originalSize = new Dimension( (int) calcXCoordinates(maximum.getCol(), PEAK_MARGIN),
+                (int) calcYCoordinates(maximum.getRow(), FLAT_MARGIN));
     }
 
 }

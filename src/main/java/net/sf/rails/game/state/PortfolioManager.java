@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 public class PortfolioManager extends Manager {
 
-    class PMKey<T extends Ownable> {
+    protected static class PMKey<T extends Ownable> {
         private final Class<T> type;
         private final Owner owner;
 
@@ -98,7 +98,7 @@ public class PortfolioManager extends Manager {
 
     // backdoor for testing
     <T extends Ownable> PMKey<T> createPMKey(Class<T> type, Owner owner) {
-        return this.new PMKey<T>(type, owner);
+        return new PMKey<T>(type, owner);
     }
 
 }

@@ -9,10 +9,10 @@ import net.sf.rails.util.*;
 public final class ExchangeForShare extends SpecialProperty {
 
     /** The public company of which a share can be obtained. */
-    String publicCompanyName;
+    protected String publicCompanyName;
 
     /** The share size */
-    int share;
+    protected int share;
 
 
     /**
@@ -72,7 +72,7 @@ public final class ExchangeForShare extends SpecialProperty {
                 share,
                 publicCompanyName );
     }
-    
+
     public String getInfo() {
         return toMenu();
     }

@@ -64,10 +64,8 @@ import rails.game.correct.CorrectionType;
 public class GameManager extends RailsManager implements Configurable, Owner {
 
     protected Class<? extends StockRound> stockRoundClass = StockRound.class;
-    protected Class<? extends OperatingRound> operatingRoundClass =
-        OperatingRound.class;
-    protected Class<? extends ShareSellingRound> shareSellingRoundClass
-    = ShareSellingRound.class;
+    protected Class<? extends OperatingRound> operatingRoundClass = OperatingRound.class;
+    protected Class<? extends ShareSellingRound> shareSellingRoundClass = ShareSellingRound.class;
 
     // Variable UI Class names
     protected String gameUIManagerClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.GAME_UI_MANAGER);
@@ -78,16 +76,13 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected String startRoundWindowClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.START_ROUND_WINDOW);
 
     // map of correctionManagers
-    protected final Map<CorrectionType, CorrectionManager> correctionManagers =
-        new HashMap<CorrectionType, CorrectionManager>();
+    protected final Map<CorrectionType, CorrectionManager> correctionManagers = new HashMap<>();
 
     /** Map relating portfolio names and objects, to enable deserialization.
      * OBSOLETE since Rails 1.3.1, but still required to enable reading old saved files */
-    protected final Map<String, PortfolioModel> portfolioMap =
-        new HashMap<String, PortfolioModel> ();
+    protected final Map<String, PortfolioModel> portfolioMap = new HashMap<>();
     /** Map relating portfolio unique names and objects, to enable deserialization */
-    protected final Map<String, PortfolioModel> portfolioUniqueNameMap =
-        new HashMap<String, PortfolioModel> ();
+    protected final Map<String, PortfolioModel> portfolioUniqueNameMap = new HashMap<>();
 
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
@@ -104,7 +99,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected boolean reloading = false;
 
     protected final EnumMap<GameDef.Parm, Object> gameParameters
-    = new EnumMap<GameDef.Parm, Object>(GameDef.Parm.class);
+    = new EnumMap<>(GameDef.Parm.class);
 
     /**
      * Current round should not be set here but from within the Round classes.
@@ -139,7 +134,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     /** Flags to be passed to the UI, aiding the layout definition */
     protected final EnumMap<GuiDef.Parm, Boolean> guiParameters =
-        new EnumMap<GuiDef.Parm, Boolean>(GuiDef.Parm.class);
+            new EnumMap<>(GuiDef.Parm.class);
 
     protected GenericState<StartPacket> startPacket = GenericState.create(this, "startPacket");
 
@@ -170,8 +165,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     // storage to replace static class variables
     // TODO: Move that to a better place
-    protected Map<String, Object> objectStorage = new HashMap<String, Object>();
-    protected Map<String, Integer> storageIds = new HashMap<String, Integer>();
+    protected Map<String, Object> objectStorage = new HashMap<>();
+    protected Map<String, Integer> storageIds = new HashMap<>();
 
     private static int revenueSpinnerIncrement = 10;
     //Used for Storing the PublicCompany to be Founded by a formationround
@@ -179,7 +174,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
 //    private Player NationalFormStartingPlayer = null;
 
-    private Map< PublicCompany, Player> NationalFormStartingPlayer = new HashMap<PublicCompany, Player>();
+    private final Map< PublicCompany, Player> NationalFormStartingPlayer = new HashMap<>();
 
     protected PlayerOrderModel playerNamesModel;
 
@@ -509,7 +504,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                      if (currentPhase.getNumberOfOperatingRounds() != numOfORs.value()) {
                          numOfORs.set(currentPhase.getNumberOfOperatingRounds());
                      }
-                     log.info("Phase=" + currentPhase.toText() + " ORs=" + numOfORs);
+                     log.info("Phase={} ORs={}", currentPhase.toText(), numOfORs);
 
                      // Create a new OperatingRound (never more than one Stock Round)
                      // OperatingRound.resetRelativeORNumber();
@@ -529,7 +524,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             Phase currentPhase = getRoot().getPhaseManager().getCurrentPhase();
             if (currentPhase == null) log.error ("Current Phase is null??", new Exception (""));
             numOfORs.set(currentPhase.getNumberOfOperatingRounds());
-            log.info("Phase=" + currentPhase.toText() + " ORs=" + numOfORs);
+            log.info("Phase={} ORs={}", currentPhase.toText(), numOfORs);
 
             // Create a new OperatingRound (never more than one Stock Round)
             // OperatingRound.resetRelativeORNumber();
@@ -574,7 +569,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     protected void createStartRound(StartPacket startPacket) {
         String startRoundClassName = startPacket.getRoundClassName();
-        StartRound startRound = createRound (StartRound.class, startRoundClassName,
+        StartRound startRound = createRound (startRoundClassName,
                 "startRound_" + startRoundNumber.value());
         startRoundNumber.add(1);
         startRound.start();
@@ -595,7 +590,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     protected void startOperatingRound(boolean operate) {
-        log.debug("Operating round started with operate-flag=" + operate);
+        log.debug("Operating round started with operate-flag={}", operate);
         String orId;
         if (operate) {
              orId = "OR_" + absoluteORNumber.value();
@@ -608,13 +603,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     // FIXME: We need an ID!
-    protected <T extends RoundFacade> T createRound (Class<T> roundClass, String roundClassName, String id) {
+    protected <T extends RoundFacade> T createRound(String roundClassName, String id) {
         T round = null;
         try {
-            round = Configure.create(roundClass, roundClassName, GameManager.class, this, id);
+            round = Configure.create((Class<T>) StartRound.class, roundClassName, GameManager.class, this, id);
         } catch (Exception e) {
-            log.error("Cannot instantiate class "
-                    + roundClass.getName(), e);
+            log.error("Cannot instantiate class {}", StartRound.class.getName(), e);
             System.exit(1);
         }
         setRound (round);
@@ -627,8 +621,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         try {
             round = Configure.create(roundClass, GameManager.class, this, id);
         } catch (Exception e) {
-            log.error("Cannot instantiate class "
-                    + roundClass.getName(), e);
+            log.error("Cannot instantiate class {}", roundClass.getName(), e);
             System.exit(1);
         }
         setRound (round);
@@ -787,8 +780,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         // logging of game actions activated
         for (PossibleAction pa : possibleActions.getList()) {
-            log.debug(getCurrentPlayer().getId() + " may: "
-                    + pa.toString());
+            log.debug("{} may: {}", getCurrentPlayer().getId(), pa.toString());
         }
 
         return result;
@@ -896,7 +888,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         // Log possible actions (normally this is outcommented)
         String playerName = getCurrentPlayer().getId();
         for (PossibleAction a : possibleActions.getList()) {
-            log.debug("{} may: {}", playerName, a.toString());
+            log.debug("{} may: {}", playerName, a);
         }
 
         // New in Rails2.0: Check if the action is allowed
@@ -923,7 +915,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
 
         if (doProcess && !processCorrectionActions(action) && !getCurrentRound().process(action)) {
-            String msg = "Player "+action.getPlayerName()+"\'s action \""
+            String msg = "Player "+action.getPlayerName()+ "'s action \""
             +action.toString()+"\"\n  in "+getCurrentRound().getRoundName()
             +" is considered invalid by the game engine";
             log.error(msg);
@@ -938,7 +930,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         if (!isGameOver()) setCorrectionActions();
 
-        log.debug("Turn: "+getCurrentPlayer().getId());
+        log.debug("Turn: {}", getCurrentPlayer().getId());
         return true;
     }
 
@@ -1201,7 +1193,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public List<String> getGameReport() {
 
-        List<String> b = new ArrayList<String>();
+        List<String> b = new ArrayList<>();
 
         /* Sort players by total worth */
         List<Player> rankedPlayers = new ArrayList<>();
@@ -1341,7 +1333,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public <T extends SpecialProperty> List<T> getSpecialProperties(
             Class<T> clazz, boolean includeExercised) {
 
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
 
         if (commonSpecialProperties != null) {
             for (SpecialProperty sp : commonSpecialProperties) {
@@ -1365,7 +1357,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         if (cm == null) {
             cm=ct.newCorrectionManager(this);
             correctionManagers.put(ct, cm);
-            log.debug("Added CorrectionManager for " + ct);
+            log.debug("Added CorrectionManager for {}", ct);
         }
         return cm;
     }
@@ -1373,7 +1365,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public List<PublicCompany> getCompaniesInRunningOrder () {
 
         Map<Integer, PublicCompany> operatingCompanies =
-            new TreeMap<Integer, PublicCompany>();
+                new TreeMap<>();
         StockSpace space;
         int key;
         int minorNo = 0;
@@ -1391,10 +1383,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             } else {
                 key = ++minorNo;
             }
-            operatingCompanies.put(new Integer(key), company);
+            operatingCompanies.put(key, company);
         }
 
-        return new ArrayList<PublicCompany>(operatingCompanies.values());
+        return new ArrayList<>(operatingCompanies.values());
     }
 
     public boolean isReloading() {
@@ -1411,8 +1403,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public void resetStorage() {
-        objectStorage = new HashMap<String, Object>();
-        storageIds = new HashMap<String, Integer>();
+        objectStorage = new HashMap<>();
+        storageIds = new HashMap<>();
     }
 
     public int getStorageId(String typeName) {

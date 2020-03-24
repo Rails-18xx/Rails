@@ -20,7 +20,7 @@ public class TileUpgrade implements Upgrade {
     /**
      * Rotation defines the following details for a tile upgrade
      */
-    public class Rotation {
+    public static class Rotation {
         private final HexSidesSet connectedSides;
         private final HexSidesSet sidesWithNewTrack;
         private final HexSide rotation;
@@ -105,9 +105,9 @@ public class TileUpgrade implements Upgrade {
 
         @Override
         public String toString() {
-            return "rotation = " + String.valueOf(rotation) + ", connectedSides = "
-                    + connectedSides.toString() + ", sidesWithNewTrack = " + sidesWithNewTrack.toString()
-                    + ", stationMapping = " + stationMapping + ", stationsWithNewTrack = " + stationsWithNewTrack;
+            return new StringBuilder().append("rotation = ").append(rotation).append(", connectedSides = ").
+                    append(connectedSides.toString()).append(", sidesWithNewTrack = ").append(sidesWithNewTrack.toString()).
+                    append(", stationMapping = ").append(stationMapping).append(", stationsWithNewTrack = ").append(stationsWithNewTrack).toString();
         }
     }
 
@@ -179,7 +179,7 @@ public class TileUpgrade implements Upgrade {
                     TileUpgrade upgrade = new TileUpgrade(tile, sid, hexes, phases);
                     allUpgrades.add(upgrade);
                 } catch (NumberFormatException e) {
-                    log.error("Catched Exception : " + e);
+                    log.error("Catched Exception", e);
                     throw new ConfigurationException(LocalText.getText(
                             "InvalidUpgrade", tile.toText(), sid));
                 }
@@ -298,13 +298,13 @@ public class TileUpgrade implements Upgrade {
 
 
     private boolean checkInvalidSides(Rotation rotation, HexSidesSet impassable) {
-        log.debug("Check rotation " + rotation + " against  impassable" + impassable);
+        log.trace("Check rotation {} against  impassable{}", rotation, impassable);
         if (impassable == null) return false; // null implies that no station exists
         return (rotation.getConnectedSides().intersects(impassable));
     }
 
     private boolean checkSideConnectivity(Rotation rotation, HexSidesSet connected, boolean restrictive) {
-        log.debug("Check rotation " + rotation + " against " + connected);
+        log.trace("Check rotation {} against {}", rotation, connected);
         if (connected == null) return true; // null implies no connectivity required
         if (restrictive && !rotation.getSidesWithNewTrack().isEmpty()) {
             return rotation.getSidesWithNewTrack().intersects(connected);
@@ -315,7 +315,7 @@ public class TileUpgrade implements Upgrade {
 
     private boolean checkStationConnectivity(Rotation rotation, Collection<Station> stations) {
         if (rotation.getStationMapping() == null) return false;
-        log.debug("Check Stations " + stations + ", rotation = " + rotation);
+        log.trace("Check Stations {}, rotation = {}", stations, rotation);
         for (Station station : stations) {
             Station targetStation = rotation.getStationMapping().get(station);
             if (targetStation != null && rotation.getStationsWithNewTrack().contains(targetStation)) {
@@ -346,7 +346,7 @@ public class TileUpgrade implements Upgrade {
             }
         }
         HexSidesSet allowed = builder.build();
-        log.debug("allowed = " + allowed + "hexSides = " + connected + "impassable =" + impassable + " rotationSides = " + rotationSides);
+        log.trace("allowed = {}hexSides = {}impassable ={} rotationSides = {}", allowed, connected, impassable, rotationSides);
         return allowed;
     }
 
@@ -375,11 +375,10 @@ public class TileUpgrade implements Upgrade {
             SetView<Track> newTracks = Sets.difference(targetTracks, baseTracks);
             boolean allowed = (targetTile.getPossibleRotations().get(side));
             Rotation rotObject = new Rotation(targetTracks, newTracks, side, stationMapping, allowed);
-            log.debug("New Rotation for " + baseTile + " => " + targetTile + ": \n" + rotObject);
+            log.trace("New Rotation for {} => {}: \n{}", baseTile, targetTile, rotObject);
             return rotObject;
         } else {
-            log.debug("No Rotation found " + baseTile + " => " + targetTile + ", rotation =" + side +
-                    ", remaining Tracks = " + diffTrack);
+            log.trace("No Rotation found {} => {}, rotation ={}, remaining Tracks = {}", baseTile, targetTile, side, diffTrack);
             return null;
         }
     }
@@ -450,13 +449,13 @@ public class TileUpgrade implements Upgrade {
             // target maintains connectivity
             return true;
         } else {
-            // if not all connections are maintained, 
+            // if not all connections are maintained,
             Predicate<TrackPoint> checkForStation = new Predicate<TrackPoint>() {
                 public boolean apply(TrackPoint p) {
                     return (p.getTrackPointType() == TrackPoint.Type.SIDE);
                 }
             };
-            // check if remaining tracks only lead to other stations 
+            // check if remaining tracks only lead to other stations
             if (Sets.filter(diffTrack, checkForStation).isEmpty()) {
                 return true;
             }

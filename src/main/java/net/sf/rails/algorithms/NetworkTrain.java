@@ -10,8 +10,7 @@ import org.slf4j.LoggerFactory;
 
 public final class NetworkTrain implements Comparable<NetworkTrain>{
 
-    protected static Logger log =
-        LoggerFactory.getLogger(NetworkTrain.class);
+    protected static Logger log = LoggerFactory.getLogger(NetworkTrain.class);
 
     private int majors;
     private int minors;
@@ -22,8 +21,8 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
     private final boolean isETrain;
     private String trainName;
     private final Train railsTrain;
-    
-    
+
+
     private NetworkTrain(int majors, int minors, boolean ignoreMinors,
             int multiplyMajors, int multiplyMinors, boolean isHTrain, boolean isETrain, String trainName, Train train) {
         this.majors = majors;
@@ -35,7 +34,7 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         this.isETrain = isETrain;
         this.trainName = trainName;
         this.railsTrain = train;
-        log.info("Created NetworkTrain " + this.toString() + " / " + this.attributes());
+        log.debug("Created NetworkTrain {} / {}", this.toString(), this.attributes());
     }
 
     static NetworkTrain createFromRailsTrain(Train railsTrain){
@@ -55,9 +54,9 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         String trainName = railsTrain.toText();
 
         return new NetworkTrain(majors, minors, ignoreMinors, multiplyMajors, multiplyMinors,
-                isHTrain, isETrain, trainName, railsTrain); 
+                isHTrain, isETrain, trainName, railsTrain);
     }
-    
+
     public static NetworkTrain createFromString(String trainString) {
         String t = trainString.trim();
         int cities = 0; int towns = 0;
@@ -65,45 +64,45 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         boolean isHTrain = false;
         boolean isETrain = false;
         if (t.equals("D")) {
-            log.info("RA: found Diesel train");
+            log.debug("RA: found Diesel train");
             cities = 99;
         } else if (t.equals("TGV")) {
-            log.info("RA: found TGV  train");
+            log.debug("RA: found TGV  train");
             cities = 3;
             ignoreTowns = true;
             multiplyCities = 2;
             multiplyTowns = 0;
         } else if (t.contains("+")) {
-            log.info("RA: found Plus train");
+            log.debug("RA: found Plus train");
             cities = Integer.parseInt(t.split("\\+")[0]); // + train
             towns = Integer.parseInt(t.split("\\+")[1]);
         } else if (t.contains("E")) {
-            log.info("RA: found Express train");
+            log.debug("RA: found Express train");
             //cities = Integer.parseInt(t.replace("E", ""));
             ignoreTowns = true;
             isETrain = true;
             multiplyTowns = 0;
             cities = 99; //for now in 1880, specific implementation in ExpressTrainModifier
         } else if (t.contains("D")) {
-            log.info("RA: found Double Express train");
+            log.debug("RA: found Double Express train");
             cities = Integer.parseInt(t.replace("D",  ""));
             ignoreTowns = true;
             isETrain = true;
             multiplyCities = 2;
             multiplyTowns = 0;
         } else if (t.contains("H")) {
-            log.info("RA: found Hex train");
+            log.debug("RA: found Hex train");
             cities = Integer.parseInt(t.replace("H",  ""));
             isHTrain = true;
-        } else { 
-            log.info("RA: found Default train");
+        } else {
+            log.debug("RA: found Default train");
             cities = Integer.parseInt(t);
         }
-        NetworkTrain train = new NetworkTrain(cities, towns, ignoreTowns, multiplyCities, 
-                multiplyTowns, isHTrain, isETrain, t, null); 
+        NetworkTrain train = new NetworkTrain(cities, towns, ignoreTowns, multiplyCities,
+                multiplyTowns, isHTrain, isETrain, t, null);
         return train;
     }
-    
+
     void addToRevenueCalculator(RevenueCalculator rc, int trainId) {
         rc.setTrain(trainId, majors, minors, ignoreMinors, isHTrain, isETrain);
     }
@@ -111,89 +110,89 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
     int getMajors(){
         return majors;
     }
-    
+
     void setMajors(int majors){
         this.majors = majors;
     }
-    
+
     int getMinors() {
         return minors;
     }
-    
+
     void setMinors(int minors){
         this.minors = minors;
     }
-    
+
     int getMultiplyMajors() {
         return multiplyMajors;
     }
-    
+
     int getMultiplyMinors() {
         return multiplyMinors;
     }
-    
+
     boolean ignoresMinors() {
         return ignoreMinors;
     }
-    
+
     boolean isHTrain() {
         return isHTrain;
     }
-    
+
     public boolean isETrain() {
         return isETrain;
     }
-    
+
     public void setTrainName(String name) {
         trainName = name;
     }
-    
+
     public String getTrainName() {
         return trainName;
     }
-    
+
     public Train getRailsTrain() {
         return railsTrain;
     }
-    
+
     public TrainType getRailsTrainType() {
         if (railsTrain == null) return null;
-        
+
         return railsTrain.getType();
     }
-    
+
 
     public String attributes() {
-       StringBuffer attributes = new StringBuffer();
-       attributes.append("majors = " + majors);
-       attributes.append(", minors = " + minors);
-       attributes.append(", ignoreMinors = " + ignoreMinors);
-       attributes.append(", mulitplyMajors = " + multiplyMajors);
-       attributes.append(", mulitplyMinors = " + multiplyMinors);
-       attributes.append(", isHTrain = " + isHTrain);
-       return attributes.toString(); 
+       StringBuilder attributes = new StringBuilder();
+       attributes.append("majors = ").append(majors);
+       attributes.append(", minors = ").append(minors);
+       attributes.append(", ignoreMinors = ").append(ignoreMinors);
+       attributes.append(", mulitplyMajors = ").append(multiplyMajors);
+       attributes.append(", mulitplyMinors = ").append(multiplyMinors);
+       attributes.append(", isHTrain = ").append(isHTrain);
+       return attributes.toString();
     }
-    
+
     public String toString() {
         return trainName;
     }
-    
-    
+
+
     /**
      * Comperator on trains as defined by train domination
-     * 
+     *
      * A train dominates:
      * it has to be longer in either majors and minors
      * and at least equally long in both
-     * 
+     *
      * Furthermore the dominating train has at least the same multiples as the shorter
      */
 
     public int compareTo(NetworkTrain other) {
 
         // Check if A is the longer train first
-        boolean longerA = this.majors > other.majors && this.minors >= other.minors || this.majors == other.majors && this.minors > other.minors;        
-        
+        boolean longerA = this.majors > other.majors && this.minors >= other.minors || this.majors == other.majors && this.minors > other.minors;
+
         if (longerA) {
             // then check the multiples
             if (this.multiplyMajors >= other.multiplyMajors && this.multiplyMinors >= other.multiplyMinors) {

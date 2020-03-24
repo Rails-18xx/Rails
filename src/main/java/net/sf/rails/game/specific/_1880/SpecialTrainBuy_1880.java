@@ -16,8 +16,8 @@ import net.sf.rails.util.Util;
  * can be absolute (an amount) or relative (a percentage)
  *
  * @author Erik Voss
- * @author Martin Brumm 
- * 
+ * @author Martin Brumm
+ *
  */
 public class SpecialTrainBuy_1880 extends SpecialProperty {
 
@@ -26,17 +26,17 @@ public class SpecialTrainBuy_1880 extends SpecialProperty {
         // TODO Auto-generated constructor stub
     }
 
-    String name = "SpecialTrainBuy_1880";
-    String trainTypeName = ""; // Default: all train types
-    List<TrainType> trainTypes =null;
-    boolean extra = false;
-    String deductionString;
-    boolean relativeDeduction = false;
-    boolean absoluteDeduction = false;
-    int deductionAmount; // Money or percentage
+    protected String name = "SpecialTrainBuy_1880";
+    protected String trainTypeName = ""; // Default: all train types
+    protected List<TrainType> trainTypes =null;
+    protected boolean extra = false;
+    protected String deductionString;
+    protected boolean relativeDeduction = false;
+    protected boolean absoluteDeduction = false;
+    protected int deductionAmount; // Money or percentage
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        
+
         super.configureFromXML(tag);
 
         Tag trainBuyTag = tag.getChild("SpecialTrainBuy_1880");
@@ -70,11 +70,11 @@ public class SpecialTrainBuy_1880 extends SpecialProperty {
     }
 
     @Override
-    public void finishConfiguration (RailsRoot root) 
+    public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
         trainTypes=getRoot().getTrainManager().parseTrainTypes(trainTypeName);
     }
-    
+
     public int getPrice(int standardPrice) {
 
         if (absoluteDeduction) {
@@ -131,16 +131,16 @@ public class SpecialTrainBuy_1880 extends SpecialProperty {
         return "SpecialTrainBuy comp=" + originalCompany.getLongName() + " extra="
                + extra + " deduction=" + deductionString;
     }
-    
+
     @Override
     public String toMenu() {
-    
+
             return LocalText.getText("SpecialTrainBuy_1880",
                     trainTypeName,
                     deductionString,
-                    originalCompany.getLongName());        
+                    originalCompany.getLongName());
     }
-    
+
     public String getInfo() {
         return toMenu();
     }

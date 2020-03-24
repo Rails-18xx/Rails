@@ -9,20 +9,20 @@ import net.sf.rails.game.StartPacket;
 
 public class CompanyManager_1862 extends CompanyManager {
 
-    static int startNumber = 1;
+    private static int startNumber = 1;
 
     public CompanyManager_1862(RailsRoot parent, String id) {
         super(parent, id);
-    } 
+    }
 
     public StartPacket getNextUnfinishedStartPacket() {
         StartPacket originalPacket = startPackets.get(0);
-        
-        StartPacket newPacket = StartPacket.create(originalPacket.getParent(), originalPacket.getId() + (startNumber++), 
+
+        StartPacket newPacket = StartPacket.create(originalPacket.getParent(), originalPacket.getId() + (startNumber++),
                 originalPacket.getRoundClassName());
-        
+
         List<StartItem> items = originalPacket.getItems();
-        
+
         for (StartItem item : items) {
             item.setMinimumBid(0);
             PublicCompany_1862 company = (PublicCompany_1862) getPublicCompany(item.getId());
@@ -31,7 +31,7 @@ public class CompanyManager_1862 extends CompanyManager {
                 newPacket.addItem(item);
             }
         }
-        
+
         return newPacket;
     }
 }

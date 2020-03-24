@@ -26,12 +26,12 @@ import com.google.common.collect.Maps;
 
 public class Phase extends RailsModel implements Configurable {
 
-    private static Logger log =
+    private static final Logger log =
             LoggerFactory.getLogger(Phase.class);
 
     // static data
     private final int index;
-    
+
     private String name;
     private ImmutableList <String> tileColours;
     private Map<String, Integer> tileLaysPerColour;
@@ -64,7 +64,7 @@ public class Phase extends RailsModel implements Configurable {
     private boolean loanTakingAllowed = false;
 
     /** Previous phase, defining the current one's defaults */
-    private Phase defaults = null;
+    private Phase defaults;
 
     /** Items to close if a phase gets activated */
     private List<Closeable> closedObjects;
@@ -81,7 +81,7 @@ public class Phase extends RailsModel implements Configurable {
      * When this phase is activated, the GameManager method phaseAction() will be called,
      * which in turn will call the current Round, which is responsible to handle the action.
      * <p>
-     * Set actions have a name and may have a value. 
+     * Set actions have a name and may have a value.
      * TODO: Replace this by triggers
      * */
     private Map<String, String> actions;
@@ -227,7 +227,7 @@ public class Phase extends RailsModel implements Configurable {
 
         Tag parameterTag = tag.getChild("Parameters");
         if (parameterTag != null) {
-            if (parameters == null) parameters = new HashMap<String, String>();
+            if (parameters == null) parameters = new HashMap<>();
             Map<String,String> attributes = parameterTag.getAttributes();
             for (String key : attributes.keySet()) {
                 parameters.put (key, attributes.get(key));
@@ -236,7 +236,7 @@ public class Phase extends RailsModel implements Configurable {
 
         Tag setTag = tag.getChild("Action");
         if (setTag != null) {
-            if (actions == null) actions = new HashMap<String, String>();
+            if (actions == null) actions = new HashMap<>();
             String key = setTag.getAttributeAsString("name");
             if (!Util.hasValue(key)) {
                 throw new ConfigurationException ("Phase "+name+": <Set> without action name");
@@ -262,7 +262,7 @@ public class Phase extends RailsModel implements Configurable {
         TrainCertificateType type;
 
         if (rustedTrainNames != null) {
-            ImmutableList.Builder<TrainCertificateType> newRustedTrains = 
+            ImmutableList.Builder<TrainCertificateType> newRustedTrains =
                     ImmutableList.builder();
             for (String typeName : rustedTrainNames.split(",")) {
                 type = trainManager.getCertTypeByName(typeName);
@@ -276,7 +276,7 @@ public class Phase extends RailsModel implements Configurable {
         }
 
         if (releasedTrainNames != null) {
-            ImmutableList.Builder<TrainCertificateType> newReleasedTrains = 
+            ImmutableList.Builder<TrainCertificateType> newReleasedTrains =
                     ImmutableList.builder();
             for (String typeName : releasedTrainNames.split(",")) {
                 type = trainManager.getCertTypeByName(typeName);
@@ -299,7 +299,7 @@ public class Phase extends RailsModel implements Configurable {
     /** Called when a phase gets activated */
     public void activate() {
         ReportBuffer.add(this, LocalText.getText("StartOfPhase", getId()));
-        
+
         // Report any extra info
         if (Util.hasValue(extraInfo)) {
             ReportBuffer.add(this, extraInfo.replaceFirst("^<[Bb][Rr]>", "").replaceAll("<[Bb][Rr]>", "\n"));
@@ -307,7 +307,7 @@ public class Phase extends RailsModel implements Configurable {
 
         if (closedObjects != null && !closedObjects.isEmpty()) {
             for (Closeable object : closedObjects) {
-                log.debug("Closing object " + object.toString());
+                log.debug("Closing object {}", object.toString());
                 object.close();
             }
         }
@@ -331,7 +331,7 @@ public class Phase extends RailsModel implements Configurable {
                 getRoot().getGameManager().processPhaseAction (actionName, actions.get(actionName));
             }
         }
-        
+
         if (doPrivatesClose()) {
             getRoot().getCompanyManager().closeAllPrivates();
         }
@@ -371,11 +371,7 @@ public class Phase extends RailsModel implements Configurable {
         if (tileLaysPerColour == null) return 1;
 
         String key = companyTypeName + "~" + colourName;
-        if (tileLaysPerColour.containsKey(key)) {
-            return tileLaysPerColour.get(key);
-        } else {
-            return 1;
-        }
+        return tileLaysPerColour.getOrDefault(key, 1);
     }
 
     public int getTrainLimitStep() {
@@ -448,7 +444,7 @@ public class Phase extends RailsModel implements Configurable {
 
     public void addObjectToClose(Closeable object) {
         if (closedObjects == null) {
-            closedObjects = new ArrayList<Closeable>(4);
+            closedObjects = new ArrayList<>(4);
         }
         if (!closedObjects.contains(object)) closedObjects.add(object);
     }
@@ -469,7 +465,7 @@ public class Phase extends RailsModel implements Configurable {
         try {
             return Integer.parseInt(stringValue);
         } catch (Exception e) {
-            log.error ("Error while parsing parameter "+key+" in phase "+ getId(), e);
+            log.error("Error while parsing parameter {} in phase {}", key, getId(), e);
             return 0;
         }
 
@@ -478,14 +474,14 @@ public class Phase extends RailsModel implements Configurable {
     public List<Closeable> getClosedObjects() {
         return closedObjects;
     }
-    
+
     @Override
     public String toText() {
         return getRealName();
     }
-    
+
     public static Phase getCurrent(RailsItem item) {
         return item.getRoot().getPhaseManager().getCurrentPhase();
     }
-    
+
 }

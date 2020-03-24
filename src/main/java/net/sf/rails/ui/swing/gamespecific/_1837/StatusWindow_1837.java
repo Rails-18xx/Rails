@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.rails.ui.swing.gamespecific._1837;
 
@@ -32,9 +32,9 @@ import net.sf.rails.ui.swing.elements.NonModalDialog;
  */
 public class StatusWindow_1837 extends StatusWindow {
 
-        PublicCompany suedbahn;
-        PublicCompany kuk;
-        PublicCompany hungary;
+        private PublicCompany suedbahn;
+        private PublicCompany kuk;
+        private PublicCompany hungary;
 
         private static final long serialVersionUID = 1L;
 
@@ -60,7 +60,7 @@ public class StatusWindow_1837 extends StatusWindow {
             } else if (possibleActions.contains(FoldIntoKuK.class)) {
                 immediateAction = possibleActions.getType(FoldIntoKuK.class).get(0);
             } else if (possibleActions.contains(FoldIntoSuedbahn.class)) {
-                immediateAction = possibleActions.getType(FoldIntoSuedbahn.class).get(0);     
+                immediateAction = possibleActions.getType(FoldIntoSuedbahn.class).get(0);
             } else if (possibleActions.contains(DiscardTrain.class)) {
                 immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
             }

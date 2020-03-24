@@ -11,13 +11,13 @@ import com.google.common.collect.Sets;
 /** Track configuration defines a set of tracks (e.g. on a Tile) */
 
 public class TrackConfig{
-    
+
     private final Set<Track> tracks;
     private final HashMultimap<Station, TrackPoint> stationTracks = HashMultimap.create();
     private final HashMultimap<HexSide, TrackPoint> sideTracks = HashMultimap.create();
-    
+
     private final Tile tile;
-    
+
     private TrackConfig(Tile tile, Set<Track> tracks, int rotation) {
         this.tile = tile;
         this.tracks = ImmutableSet.copyOf(tracks);
@@ -25,11 +25,11 @@ public class TrackConfig{
             classifyTrack(t);
         }
     }
-    
+
     public TrackConfig(Tile tile, Set<Track> tracks) {
         this(tile, tracks, 0);
     }
-    
+
     @Deprecated
     public static TrackConfig createByRotation(TrackConfig baseConfig, int rotation) {
         return createByRotation(baseConfig, HexSide.get(rotation));
@@ -43,7 +43,7 @@ public class TrackConfig{
         return new TrackConfig(baseConfig.getTile(), tracks);
     }
 
-    
+
     public static TrackConfig createByStationMapping(TrackConfig baseConfig, Map<Station, Station> mapping) {
         Set<Track> tracks = Sets.newHashSet();
         for (Track t:baseConfig.getTracks()) {
@@ -53,7 +53,7 @@ public class TrackConfig{
         }
         return new TrackConfig(baseConfig.getTile(), tracks);
     }
-    
+
     // special case in 1856: downgrade of village tiles possible
     public static TrackConfig createByDowngrade(TrackConfig baseConfig, Station station) {
         Set<Track> newTracks = Sets.newHashSet();
@@ -82,46 +82,46 @@ public class TrackConfig{
             sideTracks.put((HexSide)end, start);
         }
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(tracks);
     }
-    
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof TrackConfig)) return false;
         return (this.tracks.equals(((TrackConfig)other).tracks));
     }
-    
+
     public Tile getTile() {
         return tile;
     }
-    
+
     public Set<Track> getTracks(){
         return tracks;
     }
-    
+
     public int size() {
         return tracks.size();
     }
-    
+
     public boolean hasNoStationTracks() {
         return stationTracks.isEmpty();
     }
-    
+
     public Set<TrackPoint> getStationTracks(Station station) {
         return stationTracks.get(station);
     }
-    
+
     public Set<TrackPoint> getSideTracks(HexSide side) {
         return sideTracks.get(side);
     }
-    
+
     public boolean hasSideTracks(HexSide side) {
         return sideTracks.containsKey(side);
     }
-    
+
     @Override
     public String toString() {
         return "Track on tile " + tile.toString() + ": " + tracks.toString();
@@ -143,7 +143,7 @@ public class TrackConfig{
      */
     public static String getConnectionString(MapHex hex, Tile tile, HexSide rotation,
             Station station) {
-        StringBuffer b = new StringBuffer("");
+        StringBuilder b = new StringBuilder("");
         for (TrackPoint endPoint : tile.getTracksPerStation(station)) {
             if (endPoint.getTrackPointType() == TrackPoint.Type.STATION) continue;
             HexSide direction = (HexSide)endPoint.rotate(rotation);

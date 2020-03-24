@@ -27,10 +27,11 @@ public class GameManager_18EU extends GameManager {
 
     protected final GenericState<Player> playerToStartFMERound =
        GenericState.create(this, "playerToStartFMERound");
-    
+
     public GameManager_18EU(RailsRoot parent, String id) {
         super(parent, id);
     }
+
     @Override
     public void nextRound(Round round) {
         if (round instanceof OperatingRound_18EU) {
@@ -91,7 +92,7 @@ public class GameManager_18EU extends GameManager {
                 ReportBuffer.add(this, LocalText.getText("CompanyCloses", company.getId()));
             }
         }
-        
+
         // Dump all shares to pool
         Portfolio.moveAll(PublicCertificate.class, bankrupter, getRoot().getBank());
         bankrupter.setBankrupt();

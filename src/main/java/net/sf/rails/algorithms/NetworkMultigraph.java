@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-/** 
+/**
  * the phase 2 graph is a multigraph due to the multiple routes between vertices
  */
 public class NetworkMultigraph {
@@ -36,11 +36,11 @@ public class NetworkMultigraph {
             HashMultimap.create();
     private final Multimap<NetworkEdge, NetworkEdge> route2partial =
             HashMultimap.create();
-    
+
     private NetworkMultigraph(NetworkGraph inGraph) {
         this.inGraph = inGraph;
     }
-    
+
     public static NetworkMultigraph create(NetworkGraph inGraph, Collection<NetworkVertex> protectedVertices) {
         NetworkMultigraph newGraph = new NetworkMultigraph(inGraph);
         newGraph.initMultigraph(protectedVertices);
@@ -50,9 +50,9 @@ public class NetworkMultigraph {
     public Multigraph<NetworkVertex, NetworkEdge> getGraph() {
         return graph2;
     }
-    
+
     private void initMultigraph(Collection<NetworkVertex> protectedVertices) {
-        log.info("Ingraph" + inGraph.getGraph());
+        log.debug("Ingraph" + inGraph.getGraph());
         // clone the inGraph
         SimpleGraph<NetworkVertex, NetworkEdge> graph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
         Graphs.addGraph(graph, inGraph.getGraph());
@@ -97,13 +97,13 @@ public class NetworkMultigraph {
             startVertex.setSink(false); // deactivate sink for that vertex
             // define iterator to find all routes from here
             NetworkIterator iterator = new NetworkIterator(graph, startVertex).setRouteIterator(true);
-            log.info("Phase 2 Graph: Start routes from " + startVertex);
-            for (;iterator.hasNext();) {
+            log.info("Phase 2 Graph: Start routes from {}", startVertex);
+            while ( iterator.hasNext() ) {
                 // found new route
                 NetworkVertex nextVertex = iterator.next();
                 if (nextVertex.isSink() && nextVertex != startVertex) {
                     List<NetworkVertex> route = iterator.getCurrentRoute();
-                    log.info("Phase 2 Graph: Route found to " + nextVertex + " with route = " + route);
+                    log.info("Phase 2 Graph: Route found to {} with route = {}", nextVertex, route);
                     // define routeEdge
                     NetworkEdge routeEdge = null;
                     Set<NetworkEdge> partialEdges = new HashSet<NetworkEdge>();
@@ -112,7 +112,7 @@ public class NetworkMultigraph {
                     // define new edge by going through the route edges
                     for (NetworkVertex routeVertex:route) {
                         if (currentVertex != null) {
-                            NetworkEdge partialEdge = graph.getEdge(currentVertex, routeVertex); 
+                            NetworkEdge partialEdge = graph.getEdge(currentVertex, routeVertex);
                             if (routeEdge == null) {
                                 routeEdge = partialEdge;
                             } else {
@@ -127,7 +127,7 @@ public class NetworkMultigraph {
                         partial2route.put(partialEdge, routeEdge);
                     }
                     // store route2partial
-                    route2partial.putAll(routeEdge, partialEdges);     
+                    route2partial.putAll(routeEdge, partialEdges);
                     graph2.addEdge(startVertex, currentVertex, routeEdge);
                 }
             }
@@ -140,24 +140,24 @@ public class NetworkMultigraph {
             vertex.setSink(true);
         }
 
-        log.info("Defined graph phase 2 = " + graph2);
+        log.debug("Defined graph phase 2 = {}", graph2);
 
         // TODO: Check if this has no effect as it only logs?
         List<NetworkEdge> edges = new ArrayList<NetworkEdge>(graph2.edgeSet());
         Collections.sort(edges);
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         for (NetworkEdge e:edges) {
-            s.append("\n" + e.getOrderedConnection());
+            s.append("\n").append(e.getOrderedConnection());
         }
-        log.info("Edges = " + s.toString());
+        log.debug("Edges = {}", s.toString());
     }
-    
+
     public Map<NetworkEdge, EdgeTravel> getPhaseTwoEdgeSets(RevenueAdapter adapter) {
 
         Map<NetworkEdge, EdgeTravel> edgeSets = new HashMap<NetworkEdge, EdgeTravel>();
         // convert route2partial and partial2route into edgesets
         for (NetworkEdge route:route2partial.keySet()){
-            EdgeTravel edgeTrav = adapter.new EdgeTravel(); 
+            EdgeTravel edgeTrav = new EdgeTravel();
             for (NetworkEdge partial:route2partial.get(route)) {
                 if (partial2route.get(partial).size() >= 2) { // only keep true sets
                     edgeTrav.set.addAll(partial2route.get(partial));
@@ -177,5 +177,5 @@ public class NetworkMultigraph {
         return edgeSets;
 
     }
-    
+
 }

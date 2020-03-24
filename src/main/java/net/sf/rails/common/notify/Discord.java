@@ -34,13 +34,13 @@ public class Discord {
     private String webhook = null;
     private Map<String, String> playerNameMappings = new HashMap<>();
     private String body = null;
-    private static final String messageTemplate = "Your turn @@";
-    private static final String bodyTemplate = "{\"content\":\"@@\", \"username\":\"Rails\"}";
+    private static final String MESSAGE_TEMPLATE = "Your turn @@";
+    private static final String BODY_TEMPLATE = "{\"content\":\"@@\", \"username\":\"Rails\"}";
 
     public void setConfig() {
         webhook = StringUtils.trimToNull(Config.get("notify.discord.webhook"));
-        String message = StringUtils.defaultIfBlank(Config.get("notify.message"), messageTemplate);
-        body = StringUtils.replace(bodyTemplate, "@@", message);
+        String message = StringUtils.defaultIfBlank(Config.get("notify.message"), MESSAGE_TEMPLATE);
+        body = StringUtils.replace(BODY_TEMPLATE, "@@", message);
 
         parseUserMappings(Config.get("notify.discord.user_mapping"));
     }
@@ -115,7 +115,7 @@ public class Discord {
             httpPost.setHeader(HttpHeaders.USER_AGENT, "18xx Rails");
             CloseableHttpResponse response = httpClient.execute(httpPost);
             if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_NO_CONTENT ) {
-                log.debug("Unexpected Discord  response: {}", response.toString());
+                log.debug("Unexpected Discord  response: {}", response);
             }
             response.close();
         }

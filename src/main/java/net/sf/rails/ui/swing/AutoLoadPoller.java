@@ -64,8 +64,7 @@ public class AutoLoadPoller extends Thread {
             }
 
             if (pollingActive && pollingStatus == ON) {
-                try {
-                    BufferedReader in = new BufferedReader (new FileReader (lastSavedFilenameFilepath));
+                try (BufferedReader in = new BufferedReader (new FileReader (lastSavedFilenameFilepath))){
                     String currentFilename = in.readLine();
                     String fileSize = in.readLine();
                     in.close();

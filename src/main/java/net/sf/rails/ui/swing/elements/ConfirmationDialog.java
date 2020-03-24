@@ -12,7 +12,7 @@ public class ConfirmationDialog extends NonModalDialog {
 
     private static final long serialVersionUID = 1L;
 
-    boolean answer = false;
+    private boolean answer = false;
 
     public ConfirmationDialog(String key, DialogOwner owner, JFrame window, String title, String message,
             String okTextKey, String cancelTextKey) {

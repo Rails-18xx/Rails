@@ -24,7 +24,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
     private boolean dynamic;
     private List<RevenueBonus> bonuses;
     private int bonusMaximum;
-    
+
     public void configureFromXML(Tag tag) throws ConfigurationException {
         // do nothing
     }
@@ -34,11 +34,11 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         // TODO (Rails 2.0): Move GameOption to root
         dynamic = GameOption.getAsBoolean(root, "18ALOptimizeNamedTrains");
     }
-    
+
     private RevenueBonus defineBonus(RevenueAdapter revenueAdapter, NamedTrainToken token, boolean useLongname) {
         RevenueBonus bonus;
         if (useLongname) {
-            bonus = new RevenueBonus(token.getValue(), token.getLongName()); 
+            bonus = new RevenueBonus(token.getValue(), token.getLongName());
         } else {
             bonus = new RevenueBonus(token.getValue(), token.getId());
         }
@@ -58,12 +58,12 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         }
         return bonus;
     }
-    
-    
+
+
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // static modifier
         if (dynamic) return false;
-        
+
         // 1. check all Trains for name Tokens
         for (NetworkTrain networkTrain:revenueAdapter.getTrains()) {
             Train train = networkTrain.getRailsTrain();
@@ -83,11 +83,11 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
         // dynamic modifier
         if (!dynamic) return false;
-        
+
         // 1. check if name trains special properties is available
         List<NameTrains> sp = revenueAdapter.getCompany().getPortfolioModel().getSpecialProperties(NameTrains.class, false);
         if (sp.isEmpty()) return false;
-        
+
         // 2. prepare by defining the vertices
         bonuses = new ArrayList<RevenueBonus>();
         bonusMaximum = 0;
@@ -132,12 +132,12 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         // zero does no change
         return 0;
     }
-    
+
     public String prettyPrint(RevenueAdapter revenueAdapter) {
 
         List<RevenueTrainRun> runs = revenueAdapter.getOptimalRun();
-        StringBuffer prettyPrint = new StringBuffer();
-        
+        StringBuilder prettyPrint = new StringBuilder();
+
         boolean first = true;
         for (RevenueBonus bonus:bonuses) {
             for (RevenueTrainRun run:runs) {
@@ -147,7 +147,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
                     } else {
                         first = false;
                     }
-                    prettyPrint.append(bonus.getName() + " = " + bonus.getValue());
+                    prettyPrint.append(bonus.getName()).append(" = ").append(bonus.getValue());
                     continue; // each bonus can only be scored once
                 }
             }
