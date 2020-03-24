@@ -71,7 +71,7 @@ public class AutoSaveLoadDialog extends JDialog implements ActionListener {
         buttonPane.add(cancelButton);
 
         choiceButtons = new JRadioButton[3];
-        intervalSpinner = new Spinner (interval, 10, 0, 10);
+        intervalSpinner = new Spinner (interval, 3, 0, 1);
 
         getContentPane().setLayout(new GridBagLayout());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
