@@ -101,8 +101,8 @@ public class StartRound_1830 extends StartRound {
                             playerManager.setCurrentPlayer(item.getBidder());
                             item.setStatus(StartItem.NEEDS_SHARE_PRICE);
                             BuyStartItem newItem =
-                                    new BuyStartItem(item, item.getBasePrice(),
-                                            true, true);
+                                    new BuyStartItem(item, item.getBid(),
+                                            false, true);
                             possibleActions.add(newItem);
                             break; // No more actions possible!
                         } else {
