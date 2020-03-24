@@ -3,12 +3,12 @@ package net.sf.rails.common;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.util.Util;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -24,26 +24,27 @@ public final class ConfigItem {
     /**
      * Defines possible types (Java classes used as types in ConfigItem below
      */
-    public static enum ConfigType {
+    public enum ConfigType {
         BOOLEAN, INTEGER, PERCENT, STRING, LIST, FONT, DIRECTORY, FILE, COLOR;
     }
-    
+
     // static attributes
     public final String name;
     public final ConfigType type;
     public final List<String> allowedValues;
     public final String formatMask;
-    
+    public final boolean isGameRelated;
+
     // method call attributes
     private final String initClass;
     private final String initMethod;
     private final boolean alwaysCallInit;
     private final boolean initParameter;
-    
+
     // dynamic attributes
     private String newValue;
     private String currentValue;
-    
+
     ConfigItem(Tag tag) throws ConfigurationException {
         // check name and type (required)
         String name = tag.getAttributeAsString("name");
@@ -73,27 +74,30 @@ public final class ConfigItem {
                 throw new ConfigurationException("No values defined for LIST config item");
             }
         }
-        
+
         // optional: formatMask
         formatMask = tag.getAttributeAsString("formatMask");
-    
+
+        // optional: isGameRelated
+        isGameRelated = tag.getAttributeAsBoolean("isGameRelated", false);
+
         // optional: init method attributes
         initClass = tag.getAttributeAsString("initClass");
         initMethod = tag.getAttributeAsString("initMethod");
         alwaysCallInit = tag.getAttributeAsBoolean("alwaysCallInit",false);
         initParameter = tag.getAttributeAsBoolean("initParameter", false);
-        
+
         // intialize values
         currentValue = null;
         newValue = null;
     }
-    
-    
+
+
     public boolean hasChanged() {
         if (newValue == null) return false;
         return !getCurrentValue().equals(newValue);
     }
-    
+
     public String getValue() {
         if (hasChanged()) {
             return getNewValue();
@@ -101,43 +105,38 @@ public final class ConfigItem {
             return getCurrentValue();
         }
     }
-    
+
     public String getCurrentValue() {
         if (currentValue == null) return "";
         return currentValue;
     }
-    
+
     public void setCurrentValue(String value) {
         currentValue = value;
         newValue = null;
     }
-    
-    @Deprecated
-    public boolean hasNewValue() {
-        return (newValue != null);
-    }
-    
+
     public String getNewValue() {
         if (newValue == null) return "";
         return newValue;
     }
-    
+
     public void setNewValue(String value) {
         if (value == null || value.equals("") || value.equals(currentValue)) {
             newValue = null;
         } else {
             newValue = value;
         }
-        log.debug("ConfigItem " + name + " set to new value " + newValue);
+        log.debug("ConfigItem {} set to new value {}", name, newValue);
     }
-    
+
     public void resetValue() {
         if (hasChanged()) {
             currentValue = newValue;
             newValue = null;
         }
     }
-    
+
     /**
      * @param applyInitMethod Specifies whether init should be called. Can be overruled
      * by an additional tag alwaysCallInit
@@ -145,38 +144,36 @@ public final class ConfigItem {
     void callInitMethod(boolean applyInitMethod) {
         if (!applyInitMethod && !alwaysCallInit) return;
         if (initClass == null || initMethod == null) return;
-        
+
         // call without parameter
         try {
             Class<?> clazz = Class.forName(initClass);
-            
+
             if (initParameter) {
                 clazz.getMethod(initMethod, String.class).invoke(null, newValue);
-               
+
             } else {
                 clazz.getMethod(initMethod).invoke(null);
             }
         } catch (Exception e) {
-            log.error("Config profile: cannot call initMethod, Exception = " + e.toString());
+            log.error("Config profile: cannot call initMethod, Exception = {}", e.toString());
         }
     }
-    
-    
+
+
     public String toString() {
-        StringBuffer s = new StringBuffer();
-        s.append("Configuration Item: name = " + name + ", type = " + type);
-        s.append(", current value = " + getCurrentValue()) ;
-        s.append(", new value = " + getNewValue());
+        StringBuilder s = new StringBuilder();
+        s.append("Configuration Item: name = ").append(name).append(", type = ").append(type);
+        s.append(", current value = ").append(getCurrentValue());
+        s.append(", new value = ").append(getNewValue());
         if (allowedValues != null) {
-            s.append(", allowedValues = " + allowedValues);
+            s.append(", allowedValues = ").append(allowedValues);
         }
         if (formatMask != null) {
-            s.append(", formatMask = " + formatMask);
+            s.append(", formatMask = ").append(formatMask);
         }
-        
+
         return s.toString();
     }
-    
-    
-    
+
 }
