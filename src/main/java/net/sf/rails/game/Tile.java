@@ -318,6 +318,10 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         return upgrades;
     }
 
+    public HashSetState<MapHex> getTilesLaid() {
+        return tilesLaid;
+    }
+
     /**
      * Get all possible upgrades for a specific tile on a certain hex
      */
