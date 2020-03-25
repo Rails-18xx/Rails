@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Ordering;
+
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapManager;
 import net.sf.rails.game.Tile;
@@ -15,10 +19,6 @@ import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialTileLay;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Ordering;
 
 /**
  * Rails 2.0: Updated equals and toString methods (however see TODO below)
@@ -82,7 +82,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
     public LayTile(int type) {
         this.type = type;
     }
-    
+
     public LayTile(Map<String, Integer> tileColours) {
         type = GENERIC;
         setTileColours (tileColours);
@@ -103,7 +103,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
             }
         }
     }
-    
+
     /**
      * @return Returns the chosenHex.
      */
@@ -235,11 +235,11 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
     public Map<String, Integer> getRelaidBaseTokens() {
         return relaidBaseTokens;
     }
-    
+
     public int getPotentialCost(MapHex hex) {
         if (specialProperty != null) {
             if (specialProperty.isFree()) {
-                return 0; 
+                return 0;
             } else {
                 return Math.max(0, hex.getTileCost() - specialProperty.getDiscount());
             }
@@ -254,19 +254,19 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        LayTile action = (LayTile)pa; 
+        LayTile action = (LayTile)pa;
         boolean options = (this.locations == null || this.locations.isEmpty() || this.locations.contains(action.chosenHex))
                 && (this.tiles == null || this.tiles.isEmpty() || Objects.equal(this.tiles, action.tiles) || this.tiles.contains(action.getLaidTile()) )
-//              && Objects.equal(this.type, action.type) // type is not always stored 
+//              && Objects.equal(this.type, action.type) // type is not always stored
                 && Objects.equal(this.specialProperty, action.specialProperty)
         ;
 
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
             && Objects.equal(this.laidTile, action.laidTile)
@@ -280,7 +280,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
     // TODO: Check for and add the missing attributes
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("locations", locations)
                     .addToString("tiles", tiles)
@@ -296,24 +296,23 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
 
     /** Deserialize */
     @SuppressWarnings("unchecked")
-    private void readObject(ObjectInputStream in) throws IOException,
-    ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 
 //        in.defaultReadObject();
         // Custom reading for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();
-        
+
         locationNames = (String) fields.get("locationNames", locationNames);
         tileColours = (Map<String, Integer>) fields.get("tileColours", tileColours);
         // FIXME: Rewrite this with Rails1.x version flag
         tileIds = (int[]) fields.get("tileIds", tileIds);
         sTileIds = (String[]) fields.get("tileIds", sTileIds);
-        
+
         specialPropertyId = fields.get("specialPropertyId", specialPropertyId);
         // FIXME: Rewrite this with Rails1.x version flag
         laidTileId = fields.get("laidTileId", laidTileId);
         sLaidTileId = (String)fields.get("sLaidTileId", sLaidTileId);
-        
+
         chosenHexName = (String) fields.get("chosenHexName", chosenHexName);
         orientation = fields.get("orientation", orientation);
         relayBaseTokens = fields.get("relayBaseTokens", relayBaseTokens);
@@ -336,14 +335,14 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
                 tiles.add(tmgr.getTile(String.valueOf(tileNb)));
             }
         }
-        
+
         if (sTileIds != null && sTileIds.length > 0) {
             tiles = new ArrayList<Tile>();
             for (String tileId:sTileIds) {
                 tiles.add(tmgr.getTile(tileId));
             }
         }
-        
+
         if (specialPropertyId > 0) {
             specialProperty =
                 (SpecialTileLay) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
@@ -370,7 +369,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         }
         locationNames = b.toString();
     }
-    
+
     @Override
     public boolean isCorrection() {
         return (type == LayTile.CORRECTION);

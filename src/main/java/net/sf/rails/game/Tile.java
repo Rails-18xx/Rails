@@ -1,14 +1,10 @@
 package net.sf.rails.game;
 
 import java.text.NumberFormat;
-import java.util.*;
-
-import net.sf.rails.algorithms.RevenueBonusTemplate;
-import net.sf.rails.common.LocalText;
-import net.sf.rails.common.parser.ConfigurationException;
-import net.sf.rails.common.parser.Tag;
-import net.sf.rails.game.model.RailsModel;
-import net.sf.rails.game.state.HashSetState;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +14,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 
+import net.sf.rails.algorithms.RevenueBonusTemplate;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.model.RailsModel;
+import net.sf.rails.game.state.HashSetState;
+
 
 /**
  * Represents a certain tile <i>type</i>, identified by its id (tile number).
@@ -25,9 +28,9 @@ import com.google.common.collect.ImmutableSortedMap;
  * <b>tilesLaid</b> records in which hexes a certain tile number has been laid.
  */
 public class Tile extends RailsModel implements Comparable<Tile> {
-    
+
     public static enum Quantity { LIMITED, UNLIMITED, FIXED; }
-    
+
     private static final Logger log = LoggerFactory.getLogger(Tile.class);
 
     /**
@@ -35,7 +38,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
      * internal id, but different in case of duplicates.
      */
     private String externalId;
-    
+
     /**
      * The 'picture id', identifying the picture number to be loaded. Usually
      * equal to the internal id, but different in case of graphical variants
@@ -47,10 +50,10 @@ public class Tile extends RailsModel implements Comparable<Tile> {
      * The 'sorting id' which defines the ordering
      */
     private String sortingId;
-    
+
     // if tile is painted on the map (for UI reasons)
     private boolean prepainted;
-    
+
     private TileColour colour;
     private ImmutableSortedMap<Integer, Station> stations;
 
@@ -78,12 +81,11 @@ public class Tile extends RailsModel implements Comparable<Tile> {
      * Records in which hexes a certain tile number has been laid. The size of
      * the collection indicates the number of tiles laid on the map board.
      */
-    private final HashSetState<MapHex> tilesLaid = 
-            HashSetState.create(this, "tilesLaid");
+    private final HashSetState<MapHex> tilesLaid = HashSetState.create(this, "tilesLaid");
 
     /** Storage of revenueBonus that are bound to the tile */
     private List<RevenueBonusTemplate> revenueBonuses = null;
-    
+
     /** CountModel to display the number of available tiles */
     private final CountModel countModel = new CountModel();
 
@@ -169,8 +171,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
             rotationsBuilder.set(rotation);
         }
         possibleRotations = rotationsBuilder.build();
-        log.debug("Allowed rotations for " + getId() + " are "
-                  + possibleRotations);
+        log.debug("Allowed rotations for {} are {}", getId(), possibleRotations);
 
         /* External (printed) id */
         externalId = setTag.getAttributeAsString("extId", getId());
@@ -191,7 +192,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
             prepainted = false;
         }
 
-        
+
         /* Quantity */
         count = setTag.getAttributeAsInteger("quantity", 0);
         /* Value '99' and '-1' mean 'unlimited' */
@@ -201,7 +202,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
          */
         String unlimitedTiles = getRoot().getGameOptions().get("UnlimitedTiles");
         if (count == 99 || count == -1
-                 || "yes".equalsIgnoreCase(unlimitedTiles) 
+                 || "yes".equalsIgnoreCase(unlimitedTiles)
                  || ("yellow plain".equalsIgnoreCase(unlimitedTiles))
                      && trackConfig.size() == 1 && stations.isEmpty()) {
             quantity = Quantity.UNLIMITED;
@@ -263,9 +264,9 @@ public class Tile extends RailsModel implements Comparable<Tile> {
             nf.setMinimumIntegerDigits(sortingDigits);
             sortingId = nf.format(externalNb);
         } catch (NumberFormatException e) {
-           sortingId = externalId; 
+           sortingId = externalId;
         }
-        
+
         for (TileUpgrade upgrade : upgrades) {
             upgrade.finishConfiguration(root);
         }
@@ -286,7 +287,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
     public String getPictureId() {
         return pictureId;
     }
-    
+
     public boolean isPrepainted() {
         return prepainted;
     }
@@ -392,7 +393,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
     public int getNumStations() {
         return stations.size();
     }
-    
+
     private int getNumSlots() {
         int slots = 0;
         for (Station station:stations.values()) {
@@ -419,19 +420,19 @@ public class Tile extends RailsModel implements Comparable<Tile> {
     public boolean remove(MapHex hex) {
         return tilesLaid.remove(hex);
     }
-    
+
     public int getInitialCount() {
         return count;
     }
-    
+
     public boolean isUnlimited() {
         return quantity == Quantity.UNLIMITED;
     }
-    
+
     public boolean isFixed() {
         return quantity == Quantity.FIXED;
     }
-    
+
     /** Return the number of free tiles */
     public int getFreeCount() {
         switch (quantity) {
@@ -444,7 +445,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         }
         return 0; // cannot happen but still
     }
-    
+
     public CountModel getCountModel() {
         return countModel;
     }
@@ -456,17 +457,17 @@ public class Tile extends RailsModel implements Comparable<Tile> {
     public List<RevenueBonusTemplate> getRevenueBonuses() {
         return revenueBonuses;
     }
-    
-    
+
+
     @Override
     public String toText() {
         return externalId;
     }
 
     /** ordering of tiles based first on colour, then on external id.
-     * Here the external id is 
+     * Here the external id is
      *  */
-    
+
     public int compareTo(Tile other) {
         return ComparisonChain.start()
                 .compare(this.colour, other.colour)
@@ -482,7 +483,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         private CountModel() {
             super(Tile.this, "CountModel");
         }
-        
+
         @Override
         public String toText() {
             String count = null;

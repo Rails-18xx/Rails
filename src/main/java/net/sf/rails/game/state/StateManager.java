@@ -17,25 +17,25 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public final class StateManager extends Manager{
-    
+
     protected static Logger log =
         LoggerFactory.getLogger(StateManager.class);
-    
+
     private final ChangeStack changeStack;
-    
-    private final HashSetState<State> allStates = 
+
+    private final HashSetState<State> allStates =
             HashSetState.create(this, "allStates");
-    private final HashMultimapState<Observable, Model> models = 
+    private final HashMultimapState<Observable, Model> models =
             HashMultimapState.create(this, "models");
-    private final HashMultimapState<Observable, Triggerable> triggers = 
+    private final HashMultimapState<Observable, Triggerable> triggers =
             HashMultimapState.create(this, "triggers");
-    
+
 
     // observers is not a state variable (as the have to register and de-register themselves)
     // gui eleemnts do not have a state of their own (with respect to the game engine)
-    private final HashMultimap<Observable, Observer> observers = 
+    private final HashMultimap<Observable, Observer> observers =
             HashMultimap.create();
-    
+
     // initialized later in init()
     private PortfolioManager portfolioManager;
     private WalletManager walletManager;
@@ -48,7 +48,7 @@ public final class StateManager extends Manager{
     static StateManager create(Root parent, String id){
         return new StateManager(parent, id);
     }
-    
+
     void init() {
         // manually register embedded states
         registerState(allStates);
@@ -57,14 +57,14 @@ public final class StateManager extends Manager{
         portfolioManager = PortfolioManager.create(this, "Portfolios");
         walletManager = WalletManager.create(this, "walletManager");
     }
-    
+
     /**
      * Register states (usually called automatically at state creation)
      */
     void registerState(State state) {
         allStates.add(state);
     }
-    
+
 //    /**
 //     * De-Register states
 //     */
@@ -72,7 +72,7 @@ public final class StateManager extends Manager{
 //    boolean deRegisterState(State state) {
 //        return allStates.remove(state);
 //    }
-    
+
     /**
      * set of all states stored in the StateManager
      */
@@ -89,21 +89,21 @@ public final class StateManager extends Manager{
         checkArgument(!observers.containsValue(observer), "Observer can only be assigned to one Observable");
         observers.put(observable, observer);
     }
-    
-    /** 
-     * Remove combination of observer to observable 
+
+    /**
+     * Remove combination of observer to observable
      */
     boolean removeObserver(Observer observer, Observable observable) {
         return observers.remove(observable, observer);
     }
-    
+
     /**
      * Set of all observers that observe the observable
      */
     ImmutableSet<Observer> getObservers(Observable observable) {
         return ImmutableSet.copyOf(observers.get(observable));
     }
-    
+
     /**
      * Adds the combination of model to observable
      * @param Model the model that is updated by the observable
@@ -116,7 +116,7 @@ public final class StateManager extends Manager{
     boolean removeModel(Model model, Observable observable) {
         return models.remove(observable, model);
     }
-    
+
     ImmutableSet<Model> getModels(Observable observable) {
         return models.get(observable);
     }
@@ -129,23 +129,23 @@ public final class StateManager extends Manager{
     void addTrigger(Triggerable trigger, Observable observable) {
         triggers.put(observable, trigger);
     }
-    
+
     boolean removeTrigger(Triggerable trigger, Observable observable) {
         return triggers.remove(observable, trigger);
     }
-    
+
     ImmutableSet<Triggerable> getTriggers(Observable observable) {
         return triggers.get(observable);
     }
-    
+
     void informTriggers(State state, Change change) {
-        
+
         // Inform direct triggers
         for (Triggerable t:getTriggers(state)) {
             t.triggered(state, change);
-            log.debug("State " + state + " sends change to Trigger " + t);
+            log.debug("State {} sends change to Trigger {}", state, t);
         }
-        
+
         // check if there are models
         ImmutableSet<Model> initModels = getModels(state);
         if (initModels.isEmpty()) return;
@@ -155,17 +155,17 @@ public final class StateManager extends Manager{
         for (Model m:allModels) {
             for (Triggerable t:getTriggers(m)) {
                 t.triggered(m, change);
-                log.debug("Model " + m + " sends change to Trigger " + t);
+                log.debug("Model {} sends change to Trigger {}", m, t);
             }
         }
     }
-    
+
     /**
      * A set of observables is given as input
      * and then calculates all observer to update in the correct sequence
-     * 
+     *
      * It uses a topological sort based on DFS
-     * 
+     *
      * @param observables that have been updated
      * @return sorted list of all models to be updated
      */
@@ -174,14 +174,14 @@ public final class StateManager extends Manager{
         // Initialize (we do not use WHITE explicitly, but implicit)
         final Map<Observable, Color> colors = Maps.newHashMap();
         final LinkedList<Model> topoList = Lists.newLinkedList();
-        
+
         // For all states
         for (Observable s: observables) {
             topoSort(s, colors, topoList);
         }
         return ImmutableList.copyOf(topoList);
     }
-    
+
     private static enum Color {WHITE, GREY, BLACK};
     private void topoSort(final Observable v, final Map<Observable, Color> colors, final LinkedList<Model> topoList) {
         colors.put(v, Color.GREY);
@@ -195,8 +195,8 @@ public final class StateManager extends Manager{
         colors.put(v, Color.BLACK);
         if (v instanceof Model) topoList.addFirst((Model)v);
     }
-    
-    
+
+
     void updateObservers(Set<State> states) {
         // all direct observers
         for (State s:states){
@@ -206,10 +206,10 @@ public final class StateManager extends Manager{
             String stateText = s.toText();
             for (Observer o:observers) {
                 o.update(stateText);
-                log.debug("State " + s + " updates observer " + o);
+                log.debug("State {} updates observer {}", s, o);
             }
         }
-        
+
         // all indirect observers
         for (Model m:getModelsToUpdate(states)) {
             Set<Observer> observers = getObservers(m);
@@ -218,24 +218,24 @@ public final class StateManager extends Manager{
             String modelText = m.toText();
             for (Observer o:observers) {
                 o.update(modelText);
-                log.debug("Model " + m + " updates observer " + o);
+                log.debug("Model {} updates observer {}", m, o);
             }
         }
     }
-    
+
     // StateManager getters for sub-components
     //////////////////////////////////////////
-    
+
     public ChangeStack getChangeStack() {
         return changeStack;
     }
-    
+
     PortfolioManager getPortfolioManager() {
         return portfolioManager;
     }
-    
+
     public WalletManager getWalletManager() {
         return walletManager;
     }
-    
+
 }

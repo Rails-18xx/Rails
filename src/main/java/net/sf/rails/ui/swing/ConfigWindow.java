@@ -1,23 +1,32 @@
 package net.sf.rails.ui.swing;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.border.Border;
 
+import net.sf.rails.common.Config;
 import net.sf.rails.common.ConfigItem;
 import net.sf.rails.common.ConfigManager;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.ui.swing.elements.RailsIcon;
 import net.sf.rails.util.Util;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.util.Map;
-import java.util.List;
 
 
 class ConfigWindow extends JFrame {
@@ -26,38 +35,38 @@ class ConfigWindow extends JFrame {
     //restrict field width as there may be extremely long texts
     //(e.g. specifying file names >2000px)
     private static final int MAX_FIELD_WIDTH = 200;
-    
+
     private Window parent;
 
     private JPanel profilePanel;
     private JTabbedPane configPane;
     private JPanel buttonPanel;
-    
+
     private ConfigManager cm;
-    
+
     ConfigWindow(Window parent) {
         cm = ConfigManager.getInstance();
-        
+
         // store for various handling issues
         this.parent = parent;
 
         // JFrame properties
         setTitle(LocalText.getText("CONFIG_WINDOW_TITLE"));
-        
+
         // add profile panel
         profilePanel = new JPanel();
         add(profilePanel, "North");
-        
+
         // configSetup pane
         configPane = new JTabbedPane();
         add(configPane, "Center");
- 
+
         // buttons
         buttonPanel = new JPanel();
         add(buttonPanel, "South");
 
-        
-        // hide on close and inform  
+
+        // hide on close and inform
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -68,12 +77,12 @@ class ConfigWindow extends JFrame {
             }
         });
     }
-    
+
     public void init(final boolean startUp) {
         setupProfilePanel();
         setupConfigPane();
         setupButtonPanel();
-        
+
         SwingUtilities.invokeLater(new Thread() {
             public void run() {
                 ConfigWindow.this.repaint();
@@ -94,11 +103,11 @@ class ConfigWindow extends JFrame {
         } else {
             profileText =  LocalText.getText("CONFIG_PREDEFINED_PROFILE", activeProfile);
         }
-        
+
         Border etched = BorderFactory.createEtchedBorder();
         Border titled = BorderFactory.createTitledBorder(etched, profileText);
         profilePanel.setBorder(titled);
-        
+
         JLabel userLabel = new JLabel(LocalText.getText("CONFIG_SELECT_PROFILE"));
         profilePanel.add(userLabel);
        String[] profiles = cm.getProfiles().toArray(new String[cm.getProfiles().size()]);
@@ -113,19 +122,19 @@ class ConfigWindow extends JFrame {
         );
         profilePanel.add(comboBoxProfile);
     }
-    
-    
-    
+
+
+
     private void setupConfigPane() {
         configPane.removeAll();
-        
+
         Border etched = BorderFactory.createEtchedBorder();
         Border titled = BorderFactory.createTitledBorder(etched, LocalText.getText("CONFIG_SETTINGS"));
         configPane.setBorder(titled);
-        
+
         Map<String, List<ConfigItem>> configSections = cm.getConfigSections();
         int maxElements = cm.getMaxElementsInPanels();
-       
+
         for (String sectionName:configSections.keySet()) {
             JPanel newPanel = new JPanel();
             newPanel.setLayout(new GridBagLayout());
@@ -151,34 +160,34 @@ class ConfigWindow extends JFrame {
             configPane.addTab(LocalText.getText("Config.section." + sectionName), slider);
         }
     }
-    
-    
+
+
     private void addToGridBag(JComponent container, JComponent element, GridBagConstraints gbc) {
         container.add(element, gbc);
         gbc.gridx ++;
     }
-    
+
     private void addEmptyLabel(JComponent container, GridBagConstraints gbc) {
         JLabel label = new JLabel("");
         addToGridBag(container, label, gbc );
     }
-    
+
     private void defineElement(JPanel panel, final ConfigItem item, GridBagConstraints gbc) {
-        
+
         // current value (based on current changes and properties)
-        String configValue = item.getCurrentValue();
+        String configValue = Config.get(item.name);
 
         // item label, toolTip and infoText
         final String itemLabel = LocalText.getText("Config.label." + item.name);
         final String toolTip = LocalText.getTextWithDefault("Config.toolTip." + item.name, null);
         final String infoText = LocalText.getTextWithDefault("Config.infoText." + item.name, null);
-  
-        // define label        
+
+        // define label
         JLabel label = new JLabel(itemLabel);
         label.setToolTipText(toolTip);
         gbc.fill = GridBagConstraints.NONE;
         addToGridBag(panel, label, gbc);
-        
+
         switch (item.type) {
         case BOOLEAN:
             final JCheckBox checkBox = new JCheckBox();
@@ -224,12 +233,12 @@ class ConfigWindow extends JFrame {
                 public void propertyChange(PropertyChangeEvent arg0) {
                     Integer value = (Integer)spinner.getValue();
                     if (item.type == ConfigItem.ConfigType.PERCENT) {
-                        Double adjValue = (double)value / spinnerMultiple;
-                        item.setNewValue(adjValue.toString());
+                        double adjValue = (double)value / spinnerMultiple;
+                        item.setNewValue(Double.toString(adjValue));
                     } else {
                         item.setNewValue(value.toString());
                     }
-                    
+
                 }
             }
             );
@@ -245,7 +254,7 @@ class ConfigWindow extends JFrame {
             String[] allowedValues = new String[1];
             if (item.type == ConfigItem.ConfigType.FONT) {
                 allowedValues = GraphicsEnvironment.getLocalGraphicsEnvironment().
-                getAvailableFontFamilyNames(); 
+                getAvailableFontFamilyNames();
             } else {
                 allowedValues = (String[])item.allowedValues.toArray(allowedValues);
             }
@@ -280,7 +289,7 @@ class ConfigWindow extends JFrame {
                     new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             JFileChooser fc = new JFileChooser();
-                            if (item.type == ConfigItem.ConfigType.DIRECTORY) { 
+                            if (item.type == ConfigItem.ConfigType.DIRECTORY) {
                                 fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                             } else {
                                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -323,7 +332,7 @@ class ConfigWindow extends JFrame {
                         public void actionPerformed(ActionEvent e) {
                             Color selectedColor=JColorChooser.showDialog(ConfigWindow.this, "", colorLabel.getBackground());
                             if (selectedColor == null) return;
-                            String newValue = Integer.toHexString(selectedColor.getRGB()).substring(2); 
+                            String newValue = Integer.toHexString(selectedColor.getRGB()).substring(2);
                             colorLabel.setText(newValue);
                             item.setNewValue(newValue);
                             colorLabel.setBackground(selectedColor);
@@ -359,7 +368,7 @@ class ConfigWindow extends JFrame {
             addEmptyLabel(panel, gbc);
             break;
         }
-        // add info icon for infoText 
+        // add info icon for infoText
         if (infoText != null) {
             JLabel infoIcon = new JLabel(RailsIcon.INFO.smallIcon);
             infoIcon.addMouseListener(new MouseListener() {
@@ -400,7 +409,7 @@ class ConfigWindow extends JFrame {
 
     private void setupButtonPanel() {
         buttonPanel.removeAll();
-        
+
         // save button for user profiles
         if (cm.IsActiveUserProfile()) {
             JButton saveButton = new JButton(LocalText.getText("SAVE"));
@@ -435,10 +444,10 @@ class ConfigWindow extends JFrame {
                 }
         );
         buttonPanel.add(resetButton);
-        
+
         if (cm.IsActiveUserProfile()) {
             JButton deleteButton = new JButton(LocalText.getText("DELETE"));
-            deleteButton.addActionListener( 
+            deleteButton.addActionListener(
                     new ActionListener() {
                         public void actionPerformed(ActionEvent arg0) {
                             // store active Profile for deletion (see below)
@@ -455,9 +464,9 @@ class ConfigWindow extends JFrame {
                     );
             buttonPanel.add(deleteButton);
         }
-        
+
     }
-    
+
     private void changeProfile(String profileName) {
         cm.changeProfile(profileName);
         if (parent instanceof GameSetupWindow) {
@@ -465,7 +474,7 @@ class ConfigWindow extends JFrame {
         }
         repaintLater();
     }
-    
+
     private void repaintLater() {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -474,7 +483,7 @@ class ConfigWindow extends JFrame {
             }
         });
     }
-    
+
     private boolean saveProfile(String newProfile) {
 
         // check for parent if initMethods have to be called
@@ -484,7 +493,7 @@ class ConfigWindow extends JFrame {
         } else {
             initMethods = false;
         }
-        
+
         // save depending (either as newProfile or as existing)
         boolean result;
         if (newProfile == null) {
@@ -492,7 +501,7 @@ class ConfigWindow extends JFrame {
         } else {
             result = cm.saveNewProfile(newProfile, initMethods);
         }
-        
+
         if (result) {
             JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_CONFIRM_MESSAGE", cm.getActiveProfile()),
                     LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.INFORMATION_MESSAGE);
@@ -500,10 +509,10 @@ class ConfigWindow extends JFrame {
             JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_ERROR_MESSAGE", cm.getActiveProfile()),
                     LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.ERROR_MESSAGE);
         }
-        
+
         return result;
     }
-    
+
     private boolean saveConfig() {
         return saveProfile(null);
     }
@@ -511,14 +520,14 @@ class ConfigWindow extends JFrame {
     private boolean saveAsConfig() {
         // get all profile Names
         List<String> allProfileNames = cm.getProfiles();
-        
+
         // select profile name
         String newProfile = null;
         do {
             newProfile = JOptionPane.showInputDialog(ConfigWindow.this, LocalText.getText("CONFIG_NEW_MESSAGE"),
                 LocalText.getText("CONFIG_NEW_TITLE"), JOptionPane.QUESTION_MESSAGE);
         } while (newProfile != null && allProfileNames.contains(newProfile));
-        
+
         boolean result;
         if (newProfile == null || newProfile.equals("")) {
             result = false;
@@ -535,17 +544,17 @@ class ConfigWindow extends JFrame {
         }
         return result;
     }
-    
+
     private void closeConfig(boolean cancel) {
         if (cancel) {
             cm.changeProfile(cm.getActiveProfile());
             init(false);
         }
         this.setVisible(false);
-        
+
         if (parent instanceof StatusWindow) {
             StatusWindow.uncheckMenuItemBox(StatusWindow.CONFIG_CMD);
-        } 
+        }
     }
 
 }

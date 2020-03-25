@@ -1,5 +1,16 @@
 package net.sf.rails.game;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -8,6 +19,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
+
 import net.sf.rails.algorithms.RevenueBonusTemplate;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -21,13 +33,7 @@ import net.sf.rails.game.state.HashBiMapState;
 import net.sf.rails.game.state.HashMapState;
 import net.sf.rails.game.state.PortfolioSet;
 import net.sf.rails.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import rails.game.action.LayTile;
-
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 // TODO: Rewrite the mechanisms as model
 
@@ -473,12 +479,11 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
          */
 
         if (rotation != null) {
-            log.debug("Valid rotation found " + rotation);
+            log.debug("Valid rotation found {}", rotation);
             stationMapping = rotation.getStationMapping();
         } else {
             stationMapping = null;
-            log.error("No valid rotation was found: newRotation= " + newRotation
-                    + "currentRotation" + currentTileRotation.value());
+            log.error("No valid rotation was found: newRotation= {}currentRotation{}", newRotation, currentTileRotation.value());
         }
 
         BiMap<Stop, Station> stopsToNewStations = HashBiMap.create();
@@ -496,9 +501,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                         Station newStation =
                                 newTile.getStation(relaidTokens.get(compName));
                         stopsToNewStations.put(stop, newStation);
-                        log.debug("Mapped by relaid tokens: station "
-                                + stop.getRelatedStation() + " to "
-                                + newStation);
+                        log.debug("Mapped by relaid tokens: station {} to {}", stop.getRelatedStation(), newStation);
                         break;
                     }
                 }
@@ -540,8 +543,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 }
                 if (newStation == null) { // no mapping => log error
                     droppedStops.add(stop);
-                    log.debug(debugText + ": station " + oldStation
-                            + " is dropped");
+                    log.debug("{}: station {} is dropped", debugText, oldStation);
                 } else {
                     if (stopsToNewStations.containsValue(newStation)) {
                         // new station already assigned a stop, use that
@@ -556,8 +558,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                         // otherwise use the existing stop
                         stopsToNewStations.put(stop, newStation);
                     }
-                    log.debug(debugText + ": station " + oldStation + " to "
-                            + newStation);
+                    log.debug("{}: station {} to {}", debugText, oldStation, newStation);
                 }
             }
         }
@@ -573,7 +574,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         unassignedStops = Sets.difference(stops.viewValues(),
                 Sets.union(stopsToNewStations.keySet(), droppedStops));
         if (!unassignedStops.isEmpty()) {
-            log.error("Unassigned Stops :" + unassignedStops);
+            log.error("Unassigned Stops :{}", unassignedStops);
         }
 
         // Check for unassigned Stations
@@ -581,7 +582,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 ImmutableSet.copyOf(stopsToNewStations.values()),
                 newTile.getStations());
         if (!unassignedStations.isEmpty()) {
-            log.error("Unassigned Stations :" + unassignedStations);
+            log.error("Unassigned Stations :{}", unassignedStations);
         }
         executeTileLay(newTile, newRotation, stopsToNewStations);
 
@@ -624,9 +625,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
             currentTile.value().remove(this);
         }
 
-        log.debug("On hex " + getId() + " replacing tile "
-                + currentTile.value().getId() + "/" + currentTileRotation
-                + " by " + newTile.getId() + "/" + newOrientation);
+        log.debug("On hex {} replacing tile {}/{} by {}/{}", getId(), currentTile.value().getId(), currentTileRotation, newTile.getId(), newOrientation);
 
         newTile.add(this);
         currentTile.set(newTile);
@@ -638,24 +637,20 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 Station station = newStops.get(stop);
                 stops.put(station, stop);
                 stop.setRelatedStation(station);
-                log.debug("Tile #" + newTile.getId() + " station "
-                        + station.getNumber() + " has tracks to "
-                        + getConnectionString(station));
+                log.debug("Tile #{} station {} has tracks to {}", newTile.getId(), station.getNumber(), getConnectionString(station));
             }
         }
     }
 
     public boolean layBaseToken(PublicCompany company, Stop stop) {
         if (stops.isEmpty()) {
-            log.error("Tile " + getId()
-                    + " has no station for home token of company "
-                    + company.getId());
+            log.error("Tile {} has no station for home token of company {}", getId(), company.getId());
             return false;
         }
 
         BaseToken token = company.getNextBaseToken();
         if (token == null) {
-            log.error("Company " + company.getId() + " has no free token");
+            log.error("Company {} has no free token", company.getId());
             return false;
         } else {
             // transfer token

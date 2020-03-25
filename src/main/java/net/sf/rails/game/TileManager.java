@@ -1,10 +1,8 @@
 package net.sf.rails.game;
 
-import java.util.*;
-
-import net.sf.rails.common.LocalText;
-import net.sf.rails.common.ResourceLoader;
-import net.sf.rails.common.parser.*;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,22 +11,26 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Maps;
 
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ResourceLoader;
+import net.sf.rails.common.parser.Configurable;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+
 
 public class TileManager extends RailsManager implements Configurable {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(TileManager.class);
+    private static final Logger log = LoggerFactory.getLogger(TileManager.class);
 
     // Map of all Tiles (for quick retrieval)
     private ImmutableMap<String, Tile> tileMap;
     // SortedSet of all Tiles (for a pre-sorted list
     private ImmutableSortedSet<Tile> tileSet;
-    
+
     private int sortingDigits;
 
     // Stop property defaults per stop type
     private ImmutableMap<String, StopType> defaultStopTypes;
-
 
     /**
      * Used by Configure (via reflection) only
@@ -71,8 +73,7 @@ public class TileManager extends RailsManager implements Configurable {
          */
 
         // Creates maps to the tile definitions in both files.
-        Map<String, Tag> tileSetMap = 
-                Maps.newHashMapWithExpectedSize(tileSetList.size());
+        Map<String, Tag> tileSetMap = Maps.newHashMapWithExpectedSize(tileSetList.size());
 
         for (Tag tileSetTag : tileSetList) {
             String tileId = tileSetTag.getAttributeAsString("id");
@@ -81,14 +82,12 @@ public class TileManager extends RailsManager implements Configurable {
              * returns 0, and we always have a tile numbered 0!
              */
             if (tileSetMap.containsKey(tileId)) {
-                throw new ConfigurationException(LocalText.getText(
-                        "DuplicateTilesetID", String.valueOf(tileId)));
+                throw new ConfigurationException(LocalText.getText("DuplicateTilesetID", String.valueOf(tileId)));
             }
             tileSetMap.put(tileId, tileSetTag);
         }
 
-        Map<String, Tag> tileDefMap = 
-                Maps.newHashMapWithExpectedSize(tileDefList.size());
+        Map<String, Tag> tileDefMap = Maps.newHashMapWithExpectedSize(tileDefList.size());
 
         for (Tag tileDefTag : tileDefList) {
             String tileId = tileDefTag.getAttributeAsString("id");
@@ -97,17 +96,15 @@ public class TileManager extends RailsManager implements Configurable {
              * returns 0, and we always have a tile numbered 0!
              */
             if (tileDefMap.containsKey(tileId)) {
-                throw new ConfigurationException(LocalText.getText(
-                        "DuplicateTileD", String.valueOf(tileId)));
+                throw new ConfigurationException(LocalText.getText("DuplicateTileD", String.valueOf(tileId)));
             } else if (!tileSetMap.containsKey(tileId)) {
-                log.warn ("Tile #"+tileId+" exists in Tiles.xml but not in TileSet.xml (this can be OK if the tile only exists in some variants");
+                log.warn("Tile #{} exists in Tiles.xml but not in TileSet.xml (this can be OK if the tile only exists in some variants", tileId);
             }
             tileDefMap.put(tileId, tileDefTag);
         }
 
         // Create the Tile objects (must be done before further parsing)
-        ImmutableMap.Builder<String, Tile> tileMapBuilder = 
-                ImmutableMap.builder();
+        ImmutableMap.Builder<String, Tile> tileMapBuilder = ImmutableMap.builder();
         for (String id : tileSetMap.keySet()) {
             Tile tile = Tile.create(this, id);
             tileMapBuilder.put(id, tile);
@@ -131,11 +128,10 @@ public class TileManager extends RailsManager implements Configurable {
         }
     }
 
-    public void finishConfiguration (RailsRoot root) 
+    public void finishConfiguration (RailsRoot root)
             throws ConfigurationException {
-        
-        ImmutableSortedSet.Builder<Tile> tileSetBuilder = 
-                ImmutableSortedSet.naturalOrder();
+
+        ImmutableSortedSet.Builder<Tile> tileSetBuilder = ImmutableSortedSet.naturalOrder();
         for (Tile tile : tileMap.values()) {
             tile.finishConfiguration(root, sortingDigits);
             tileSetBuilder.add(tile);

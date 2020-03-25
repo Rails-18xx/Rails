@@ -34,8 +34,7 @@ public class GameSaver {
      * Overall save file version ID, taking into account the version ID of the
      * action package.
      */
-    public static final long saveFileVersionID =
-        saveFileHeaderVersionID * PossibleAction.serialVersionUID;
+    public static final long saveFileVersionID = saveFileHeaderVersionID * PossibleAction.serialVersionUID;
 
     // static data for autosave
     public static final String autosaveFolder = "autosave";
@@ -72,8 +71,7 @@ public class GameSaver {
     public void saveGame(File file) throws IOException {
         log.info("Trying to save file to {}", file.getAbsoluteFile());
 
-        ObjectOutputStream oos =
-            new ObjectOutputStream(new FileOutputStream(file));
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
         oos.writeObject(gameIOData.getVersion());
         oos.writeObject(gameIOData.getDate());
         oos.writeObject(gameIOData.getFileVersionID());
@@ -114,11 +112,11 @@ public class GameSaver {
         // create temporary new save file
         File tempFile = new File(directory, fileName + ".tmp");
         saveGame(tempFile);
-        log.debug("Created temporary recovery file, path = "  + tempFile.getPath());
+        log.debug("Created temporary recovery file, path = {}", tempFile.getPath());
 
         // rename the temp file to the recover file
         File recoveryFile = new File(directory, fileName);
-        log.debug("Potential recovery at "  + recoveryFile.getPath());
+        log.debug("Potential recovery at {}", recoveryFile.getPath());
         // check if previous save file exists
         boolean renameResult;
         if (recoveryFile.exists()) {
@@ -128,7 +126,7 @@ public class GameSaver {
             if (backupFile.exists()) backupFile.delete();
             //old recovery file becomes new backup file
             recoveryFile.renameTo(backupFile);
-            log.debug("Recovery file renamed to " + backupFile.getPath());
+            log.debug("Recovery file renamed to {}", backupFile.getPath());
             //temp file becomes new recoveryFile
             renameResult = tempFile.renameTo(recoveryFile);
         } else {
@@ -140,6 +138,6 @@ public class GameSaver {
             String message = LocalText.getText("RecoveryRenameFailed");
             throw new IOException(message);
         }
-        log.debug("Renamed to recovery file, path = "  + recoveryFile.getPath());
+        log.debug("Renamed to recovery file, path = {}", recoveryFile.getPath());
     }
 }

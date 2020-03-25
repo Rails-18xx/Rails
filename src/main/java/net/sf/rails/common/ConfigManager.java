@@ -158,10 +158,7 @@ public class ConfigManager implements Configurable {
            this.version = sVersion;
         }
 
-        String sDevelop = versionNumber.getProperty("develop");
-        if (Util.hasValue(sDevelop)) {
-            this.develop = !sDevelop.equals("");
-        }
+        this.develop = StringUtils.isNotBlank(versionNumber.getProperty("develop"));
 
         String sBuildDate = versionNumber.getProperty("buildDate");
         if (Util.hasValue(sBuildDate)) {

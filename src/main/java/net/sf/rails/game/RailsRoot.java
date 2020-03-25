@@ -1,5 +1,10 @@
 package net.sf.rails.game;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+
 import net.sf.rails.algorithms.RevenueManager;
 import net.sf.rails.common.Config;
 import net.sf.rails.common.DisplayBuffer;
@@ -18,30 +23,24 @@ import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.StockMarket;
 import net.sf.rails.game.state.Root;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
-
 public class RailsRoot extends Root implements RailsItem {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(RailsRoot.class);
-    
+    private static final Logger log = LoggerFactory.getLogger(RailsRoot.class);
+
     // currently we assume that there is only one instance running
     // thus it is possible to retrieve that version
     // TODO: Replace this by a full support of concurrent usage
     private static RailsRoot instance;
-    
+
     public static RailsRoot getInstance() {
         return instance;
     }
 
     // Base XML file
     private static final String GAME_XML_FILE = "Game.xml";
-    
+
     // Instance fields
-    
+
     // Game data fields
     private final GameData gameData;
 
@@ -56,26 +55,25 @@ public class RailsRoot extends Root implements RailsItem {
     private TileManager tileManager;
     private RevenueManager revenueManager;
     private Bank bank;
-    
+
     // Other Managers
     private ReportManager reportManager;
 
     private RailsRoot(GameData gameData) {
         super();
-        
+
         for (String playerName : gameData.getPlayers()) {
-            log.debug("Player: " + playerName);
+            log.debug("Player: {}", playerName);
         }
         for (String optionName : gameData.getGameOptions().getOptions().keySet()) {
-            log.debug("Option: " + optionName + "="
-                    + gameData.getGameOptions().get(optionName));
+            log.debug("Option: {}={}", optionName, gameData.getGameOptions().get(optionName));
         }
 
         this.gameData = gameData;
     }
-    
+
     public static RailsRoot create(GameData gameData) throws ConfigurationException {
-        Preconditions.checkState(instance == null, 
+        Preconditions.checkState(instance == null,
                 "Currently only a single instance of RailsRoot is allowed");
         instance = new RailsRoot(gameData);
         log.debug("RailsRoot: instance created");
@@ -85,11 +83,11 @@ public class RailsRoot extends Root implements RailsItem {
         log.debug("RailsRoot: game configuration initialized");
         instance.finishConfiguration();
         log.debug("RailsRoot: game configuration finished");
-        
+
         return instance;
     }
 
-    
+
     // feedback from ComponentManager
     public void setComponent(Configurable component) {
         if (component instanceof PlayerManager) {
@@ -114,13 +112,13 @@ public class RailsRoot extends Root implements RailsItem {
             revenueManager = (RevenueManager) component;
         }
     }
-    
+
     public void initGameFromXML() throws ConfigurationException {
         String directory = "data" + ResourceLoader.SEPARATOR + gameData.getGameName();
-        
+
         Tag componentManagerTag = Tag.findTopTagInFile(
                 GAME_XML_FILE, directory, XMLTags.COMPONENT_MANAGER_ELEMENT_ID, gameData.getGameOptions() );
-        
+
         ComponentManager componentManager = new ComponentManager();
         componentManager.start(this,  componentManagerTag);
         // The componentManager automatically returns results
@@ -128,14 +126,14 @@ public class RailsRoot extends Root implements RailsItem {
         // creation of Report facilities
         reportManager = ReportManager.create(this, "reportManager");
     }
-    
+
     public boolean finishConfiguration() {
         /*
          * Initializations that involve relations between components can
          * only be done after all XML has been processed.
          */
-        log.info("========== Start of rails.game " + gameData.getGameName() + " ==========");
-        log.info("Rails version "+ Config.getVersion());
+        log.info("========== Start of rails.game {} ==========", gameData.getGameName());
+        log.info("Rails version {}", Config.getVersion());
         ReportBuffer.add(this, LocalText.getText("GameIs", gameData.getGameName()));
 
         playerManager.setPlayers(gameData.getPlayers(), bank);
@@ -164,7 +162,7 @@ public class RailsRoot extends Root implements RailsItem {
         }
         return true;
     }
-    
+
     public String start() {
         // FIXME (Rails2.0): Should this not be part of the initial Setup configuration?
         int nbPlayers = gameData.getPlayers().size();
@@ -173,7 +171,7 @@ public class RailsRoot extends Root implements RailsItem {
             return gameData.getGameName() +" is not configured to be played with "+ nbPlayers +" players\n"
                     + "Please enter a valid number of players, or add a <Players> entry to data/"+ gameData.getGameName() +"/Game.xml";
         }
-        
+
         gameManager.startGame();
         return null;
     }
@@ -183,7 +181,7 @@ public class RailsRoot extends Root implements RailsItem {
     public GameManager getGameManager() {
         return gameManager;
     }
-    
+
     public CompanyManager getCompanyManager() {
         return companyManager;
     }
@@ -219,43 +217,43 @@ public class RailsRoot extends Root implements RailsItem {
     public Bank getBank() {
         return bank;
     }
-    
+
     public ReportManager getReportManager() {
         return reportManager;
     }
-    
-    
+
+
     /**
      * @return the gameName
      */
     public String getGameName() {
         return gameData.getGameName();
     }
-    
+
     /**
      * @return the gameOptions
      */
     public GameOptionsSet getGameOptions() {
         return gameData.getGameOptions();
     }
-    
+
     /**
      * @return the gameData
      */
     public GameData getGameData() {
         return gameData;
     }
-    
+
     @Override
     public RailsRoot getParent() {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public RailsRoot getRoot() {
         return this;
     }
-    
+
     public static void clearInstance() {
         instance = null;
     }

@@ -1,10 +1,10 @@
 package net.sf.rails.ui.swing;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Image;
-import java.awt.event.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,15 +12,15 @@ import java.util.Set;
 
 import javax.swing.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileManager;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 import net.sf.rails.ui.swing.elements.Field;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -71,13 +71,12 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     }
 
     private void init(GameUIManager gameUIManager) {
-
         TileManager tmgr = gameUIManager.getRoot().getTileManager();
 
         // Build the grid with tiles in the sequence as
         // these have been defined in Tiles.xml
         Set<Tile> tiles = tmgr.getTiles();
-        log.debug("There are " + tiles.size() + " tiles known in this game");
+        log.debug("There are {} tiles known in this game", tiles.size());
 
         for (Tile tile:tiles) {
             if (tile.isFixed()) continue;

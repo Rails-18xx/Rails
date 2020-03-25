@@ -1,28 +1,49 @@
 /* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.46 2010/06/15 20:16:54 evos Exp $*/
 package net.sf.rails.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.Config;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.*;
+import net.sf.rails.game.EndOfGameRound;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.StartRound;
 import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.game.financial.TreasuryShareRound;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.javafx.windows.FXStockChartWindow;
-import net.sf.rails.ui.swing.elements.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import rails.game.action.*;
+import net.sf.rails.ui.swing.elements.ActionButton;
+import net.sf.rails.ui.swing.elements.ActionCheckBoxMenuItem;
+import net.sf.rails.ui.swing.elements.ActionMenuItem;
+import net.sf.rails.ui.swing.elements.RailsIcon;
+import rails.game.action.ActionTaker;
+import rails.game.action.DiscardTrain;
+import rails.game.action.GameAction;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.PossibleActions;
+import rails.game.action.RequestTurn;
+import rails.game.action.UseSpecialProperty;
 import rails.game.correct.CorrectionModeAction;
 
 
@@ -362,7 +383,6 @@ KeyListener, ActionPerformer {
     }
 
     public void initGameActions() {
-
         // Check the local Undo/Redo menu items,
         // which must always be up-to-date.
         undoItem.setEnabled(false);
@@ -463,7 +483,6 @@ KeyListener, ActionPerformer {
 
 
         if (currentRound instanceof TreasuryShareRound) {
-
             setTitle(LocalText.getText(
                     "TRADE_TREASURY_SHARES_TITLE",
                     ((TreasuryShareRound) currentRound).getOperatingCompany().getId()));
@@ -537,7 +556,6 @@ KeyListener, ActionPerformer {
         List<NullAction> inactiveItems =
             possibleActions.getType(NullAction.class);
         if (inactiveItems != null) {
-
             for (NullAction na : inactiveItems) {
                 switch (na.getMode()) {
                 case PASS:
@@ -671,7 +689,6 @@ KeyListener, ActionPerformer {
     }
 
     public boolean process(PossibleAction executedAction) {
-
         if (executedAction == null) {
             JOptionPane.showMessageDialog(this, "ERROR: no action found!");
             return false;
@@ -731,7 +748,7 @@ KeyListener, ActionPerformer {
 
     public void finishRound() {
         setTitle(LocalText.getText("GAME_STATUS_TITLE"));
-        //Fixes the behaviour that closed Minors didnt 
+        //Fixes the behaviour that closed Minors didnt
         //vanish from the display after the end of a forced
         //Formationround in 1835
         //Martin 19.7.2017

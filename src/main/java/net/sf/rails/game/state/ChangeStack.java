@@ -22,7 +22,7 @@ public class ChangeStack {
 
     private final Deque<ChangeSet> undoStack = Lists.newLinkedList();
     private final Deque<ChangeSet> redoStack = Lists.newLinkedList();
-    
+
     private ChangeReporter reporter; // assigned once
 
     // dynamic fields
@@ -33,7 +33,7 @@ public class ChangeStack {
         reporter = null;
         changeBuilder = ImmutableList.builder();
     }
-    
+
     /**
      * Creates a new ChangeStack
      * It is initialized automatically, as there is an open ChangeBuilder
@@ -42,7 +42,7 @@ public class ChangeStack {
         ChangeStack changeStack = new ChangeStack(stateManager);
         return changeStack;
     }
-    
+
     /**
      * Add ChangeReporter
      */
@@ -58,18 +58,18 @@ public class ChangeStack {
     public ChangeSet getClosedChangeSet() {
         return undoStack.peekLast();
     }
-    
+
     /**
      * Add change to current changeSet
      */
     void addChange(Change change) {
-        log.debug("ChangeSet: Add " + change);
+        log.debug("ChangeSet: Add {}", change);
         changeBuilder.add(change);
         // immediate execution and information of models
         change.execute();
         change.getState().informTriggers(change);
     }
-    
+
     private boolean checkRequirementsForClose(ChangeAction action) {
         if (changeBuilder.build().isEmpty() || action == null) {
             return false;
@@ -77,20 +77,20 @@ public class ChangeStack {
             return true;
         }
     }
-    
+
     public void close(ChangeAction action) {
         if (checkRequirementsForClose(action)) {
             // this has to be done before the changeBuilder closes
             int index = undoStack.size() + 1;
             ChangeSet closeSet = new ChangeSet(changeBuilder.build(), action, index);
-            log.debug("<<< Closed changeSet " + closeSet);
+            log.debug("<<< Closed changeSet {}", closeSet);
             undoStack.addLast(closeSet);
             redoStack.clear();
 
             if (reporter != null) {
                 reporter.updateOnClose();
             }
-            
+
             // restart builders
             restart();
             // inform direct and indirect observers
@@ -101,24 +101,24 @@ public class ChangeStack {
     private void restart() {
         changeBuilder = ImmutableList.builder();
     }
-    
-    
+
+
     public void updateObservers(Set<State> states) {
         // update the observers of states and models
         log.debug("ChangeStack: update Observers");
         stateManager.updateObservers(states);
     }
-    
-    // is undo possible (protect first index) 
+
+    // is undo possible (protect first index)
     public boolean isUndoPossible() {
         return (!undoStack.isEmpty() && undoStack.size() != 1);
     }
 
     public boolean isUndoPossible(ChangeActionOwner owner) {
-        return (isUndoPossible() && 
+        return (isUndoPossible() &&
                 undoStack.peekLast().getOwner() == owner);
     }
-    
+
     /**
      * Undo command
      */
@@ -132,12 +132,12 @@ public class ChangeStack {
             reporter.updateAfterUndoRedo();
         }
     }
-    
+
     /**
      * Example: Undo-Stack has 4 elements (1,2,3,4), size = 4
      * Undo to index 2, requires removing the latest element, such that size = 3
      */
-    
+
     public void undo(int index) {
         checkState(isUndoPossible() && index < undoStack.size() , "Undo not possible");
         ImmutableSet.Builder<State> states = ImmutableSet.builder();
@@ -156,31 +156,31 @@ public class ChangeStack {
         log.debug("UndoSet = " + undoSet);
         undoSet.unexecute();
         redoStack.addFirst(undoSet);
-        
+
         if (reporter != null) {
             reporter.informOnUndo();
         }
-        
+
         return undoSet;
     }
-    
-    
+
+
     public boolean isRedoPossible() {
         return (!redoStack.isEmpty());
     }
 
     public boolean isRedoPossible(ChangeActionOwner owner) {
-        return (isRedoPossible() && 
+        return (isRedoPossible() &&
                 redoStack.peekFirst().getOwner() == owner);
     }
-    
+
     /**
      * Redo command
      * @throws IllegalStateException if redo stack is empty or there is an open ChangeSet
      */
     public void redo() {
         checkState(isRedoPossible(), "Redo not possible");
-        
+
         ChangeSet redoSet = executeRedo();
         restart();
         updateObservers(redoSet.getStates());
@@ -190,7 +190,7 @@ public class ChangeStack {
     }
 
     public void redo(int index) {
-        checkState(index > undoStack.size() && index <= undoStack.size() + redoStack.size(), 
+        checkState(index > undoStack.size() && index <= undoStack.size() + redoStack.size(),
                 "Redo not possible");
 
         ImmutableSet.Builder<State> states = ImmutableSet.builder();
@@ -203,17 +203,17 @@ public class ChangeStack {
             reporter.updateAfterUndoRedo();
         }
     }
-    
+
     private ChangeSet executeRedo() {
         ChangeSet redoSet = redoStack.pollFirst();
         log.debug("RedoSet = " + redoSet);
         redoSet.reexecute();
         undoStack.addLast(redoSet);
-        
+
         if (reporter != null) {
             reporter.informOnRedo();
         }
-        
+
         return redoSet;
     }
 
@@ -223,7 +223,7 @@ public class ChangeStack {
     public int getCurrentIndex() {
         return undoStack.size();
     }
-    
+
     /**
      * @return size of undoStack plus RedoStack
      */
