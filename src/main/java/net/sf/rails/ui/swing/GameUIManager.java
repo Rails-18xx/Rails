@@ -13,7 +13,18 @@ import javax.swing.plaf.FontUIResource;
 
 import net.sf.rails.common.*;
 import net.sf.rails.common.notify.Discord;
-import net.sf.rails.game.*;
+import net.sf.rails.common.notify.Slack;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.Phase;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.StartRound;
+import net.sf.rails.game.Station;
+import net.sf.rails.game.SwitchableUIRound;
+import net.sf.rails.game.Train;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.game.round.RoundFacade;
@@ -280,6 +291,7 @@ public class GameUIManager implements DialogOwner {
         SoundManager.notifyOfGameInit(railsRoot);
 
         Discord.notifyOfGameInit(railsRoot);
+        Slack.notifyOfGameInit(railsRoot);
     }
 
     public void startLoadedGame() {

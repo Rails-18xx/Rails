@@ -20,6 +20,8 @@
     <Section name="Notifications">
         <Property name="notify.discord.webhook" type="STRING" isGameRelated="true" />
         <Property name="notify.discord.user_mapping" type="STRING" isGameRelated="true" />
+        <Property name="notify.slack.webhook" type="STRING" isGameRelated="true" />
+        <Property name="notify.slack.user_mapping" type="STRING" isGameRelated="true" />
         <Property name="notify.message" type="STRING" isGameRelated="true" />
     </Section>
 	<Section name="Font">
