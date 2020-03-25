@@ -354,11 +354,21 @@ S	<Tile colour="yellow" id="18CHX1" name="DC">
 	<Track from="side3" gauge="normal" to="side2"/>
 	<Track from="side3" gauge="normal" to="side1"/>
 	</Tile>
-	<Tile colur="yellow" id="-18CHOO" name="Baltimore">
+	<Tile colur="yellow" id="-18CHOO">
+	<Station id="city1" value="30" type="City" position="552" slots="1"/>
+	<Station id="city2" value="30" type="City" position="222" slots="1"/>
+	<Track to="side5" from="city1" gauge="normal"/>
+	<Track to="side2" from="city2" gauge="normal"/>
 	</Tile>
 	<Tile colour="fixed" id="-18CH02">
+	<Station id="city1" value="30" type="Town" position="252"></Station>
+	<Track to="side2" gauge="normal" from="city1"></Track>
+	<Track to="side1" gauge="normal" from="city1"></Track>
 	</Tile>
-		<Tile colour="fixed" id="-18CH03">
+	<Tile colour="fixed" id="-18CH03">
+	<Station id="city1" value="30" type="Town" position="401"></Station>
+	<Track to="side3" gauge="normal" from="city1"></Track>
+	<Track to="side0" gauge="normal" from="city1"></Track>
 	</Tile>
 </Tiles>
 
