@@ -13,91 +13,102 @@ import rails.game.action.GameAction;
 
 
 public class AutoLoadPoller extends Thread {
-    
-    private GameUIManager guiMgr;
+
+    private final GameUIManager guiMgr;
     private String saveDirectory;
     private String savePrefix;
     private String ownPostfix;
     private int pollingInterval;
     private int pollingStatus;
-    
+
     private boolean pollingActive = false;
-    
-    private String lastSavedFilenameFilepath;
+
+    private final String lastSavedFilenameFilepath;
     private String lastSavedFilename = "";
-    
+
     public static final int OFF = 0;
     public static final int ON = 1;
     public static final int SUSPENDED = 2;
 
-    protected static Logger log =
-        LoggerFactory.getLogger(AutoLoadPoller.class);
+    protected static Logger log = LoggerFactory.getLogger(AutoLoadPoller.class);
 
     public AutoLoadPoller (GameUIManager guiMgr, String saveDirectory, String savePrefix, String ownPostfix,
             int status, int pollingInterval) {
- 
         this.guiMgr = guiMgr;
         this.saveDirectory = saveDirectory;
         this.savePrefix = savePrefix;
         this.ownPostfix = ownPostfix;
         this.pollingStatus = status;
         this.pollingInterval = pollingInterval;
-        
+
         lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
-        
-        log.debug("Poller own postfix: "+ownPostfix);
-        log.debug("Poller last-filename path: "+lastSavedFilenameFilepath);
-        
+
+        log.debug("Poller own postfix: {}", ownPostfix);
+        log.debug("Poller last-filename path: {}", lastSavedFilenameFilepath);
     }
 
     @Override
     public void run () {
-
         log.info ("AutoLoadPoller started");
 
+        int currentPollInterval = 1;
         int secs, sleepTime;
-        String currentFilename;
 
         for (;;) {
+            secs = Calendar.getInstance().get(Calendar.SECOND);
+            try {
+                sleepTime = 1000 * (currentPollInterval - secs%currentPollInterval);
+                Thread.sleep(sleepTime);
+            } catch (InterruptedException e) {
+                continue;
+            }
 
-            log.debug ("Polling cycle, status="+pollingStatus+" active="+pollingActive);
-            // Process
             if (pollingActive && pollingStatus == ON) {
-                log.debug("Polling...");
                 try {
                     BufferedReader in = new BufferedReader (new FileReader (lastSavedFilenameFilepath));
-                    currentFilename = in.readLine();
+                    String currentFilename = in.readLine();
+                    String fileSize = in.readLine();
                     in.close();
-                    log.debug("Read filename "+currentFilename+"; last saved filename "+lastSavedFilename);
-                    
+                    log.debug("Read filename {}; last saved filename {}", currentFilename, lastSavedFilename);
+
+                    File currFile = new File(saveDirectory+"/"+currentFilename);
+                    if ( ! currFile.exists() ) {
+                        log.debug("Saved file {} missing, waiting", currFile);
+                        currentPollInterval = 1;
+                        continue;
+                    }
+
                     if (!lastSavedFilename.equals(currentFilename)) {
+                        if ( fileSize != null ) {
+                            long fileSizeNum = Long.parseLong(fileSize);
+                            if ( currFile.getTotalSpace() != fileSizeNum ) {
+                                // file size doesn't match, could be it the process of being written
+                                // or due to network errors, might be zero length so lets ignore it
+                                log.debug("file goes not match expected size {} (expected {})", currFile.getTotalSpace(), fileSizeNum);
+                                currentPollInterval = 1;
+                                continue;
+                            }
+                        }
+                        lastSavedFilename = currentFilename;
+
                         final GameAction reload = new GameAction(GameAction.Mode.RELOAD);
                         reload.setFilepath(saveDirectory+"/"+currentFilename);
-                        lastSavedFilename = currentFilename;
-                        
+
                         // The GUI must be accessed on the event dispatch thread only.
                         SwingUtilities.invokeLater (new Runnable() {
                             public void run() {
                                 guiMgr.processAction(reload);
                             }
                         });
-
                     }
-                    
                 } catch (IOException e) {
-                    log.error("Exception whilst polling "+lastSavedFilenameFilepath, e);
+                    log.error("Exception whilst polling {}", lastSavedFilenameFilepath, e);
                 }
+
+            } else {
+                log.debug("Polling status={} active={}", pollingStatus, pollingActive);
             }
-            
-            
-            
-            secs = Calendar.getInstance().get(Calendar.SECOND);
-            try {
-                sleepTime = 1000 * (pollingInterval - secs%pollingInterval);
-                sleep (sleepTime);
-            } catch (InterruptedException e) {
-                continue;
-            }
+            currentPollInterval = pollingInterval;
         }
         // This thread never exits
     }
@@ -148,7 +159,7 @@ public class AutoLoadPoller extends Thread {
 
     public void setActive(boolean pollingActive) {
         this.pollingActive = pollingActive;
-        log.debug("AutoLoad polling set to "+pollingActive);
+        log.debug("AutoLoad polling set to {}", pollingActive);
     }
 
     public String getLastSavedFilename() {
@@ -159,5 +170,5 @@ public class AutoLoadPoller extends Thread {
         this.lastSavedFilename = lastSavedFilename;
     }
 
-    
+
 }
