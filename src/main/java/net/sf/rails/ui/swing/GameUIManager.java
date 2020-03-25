@@ -829,7 +829,7 @@ public class GameUIManager implements DialogOwner {
         saveAutoSavedFilename (lastSavedFilename);
     }
 
-    protected void saveAutoSavedFilename (String lastSavedFilename) {
+    protected boolean saveAutoSavedFilename (String lastSavedFilename) {
 
         try {
             File f = new File (lastSavedFilenameFilepath);
