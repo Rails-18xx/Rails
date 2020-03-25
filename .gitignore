@@ -30,3 +30,5 @@ rails.iml
 /classes/
 
 /.gradle/
+*.jar
+.project
