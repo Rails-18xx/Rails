@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Supported properties Defines rails configuration options, but do not 
+<!-- Supported properties Defines rails configuration options, but do not
 	stores the actual values -->
 <Properties>
 	<Section name="General">
@@ -9,7 +9,6 @@
 		<Property name="default_game" type="STRING" />
 		<Property name="default_players" type="STRING" />
 		<Property name="local.player.name" type="STRING" />
-
 	</Section>
 	<Section name="Save">
 		<Property name="save.directory" type="DIRECTORY" />
@@ -18,12 +17,19 @@
 		<Property name="save.filename.extension" type="STRING" />
 		<Property name="save.recovery.active" type="BOOLEAN" />
 	</Section>
+    <Section name="Notifications">
+        <Property name="notify.discord.webhook" type="STRING" isGameRelated="true" />
+        <Property name="notify.discord.user_mapping" type="STRING" isGameRelated="true" />
+        <Property name="notify.slack.webhook" type="STRING" isGameRelated="true" />
+        <Property name="notify.slack.user_mapping" type="STRING" isGameRelated="true" />
+        <Property name="notify.message" type="STRING" isGameRelated="true" />
+    </Section>
 	<Section name="Font">
-		<Property name="font.ui.scale" type="PERCENT" 
+		<Property name="font.ui.scale" type="PERCENT"
 			initclass="net.sf.rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
 		<Property name="font.ui.name" type="FONT"
 			initclass="net.sf.rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
-		<Property name="font.ui.style" type="LIST" values="plain,bold" 
+		<Property name="font.ui.style" type="LIST" values="plain,bold"
 			initclass="net.sf.rails.ui.swing.GameUIManager" initMethod="updateUILookAndFeel" initParameter="no" />
 	</Section>
 	<Section name="Map">
@@ -54,13 +60,13 @@
 		initclass="net.sf.rails.ui.swing.elements.RailsIconButton" initMethod="resetRailsIcons" initParameter="no" />
 		<Property name="button.iconPosition" type="LIST" values="left,above"
 		initclass="net.sf.rails.ui.swing.elements.RailsIconButton" initMethod="resetRailsIcons" initParameter="no" />
-		<Property name="route.colour.1" type="COLOR" 
+		<Property name="route.colour.1" type="COLOR"
 		initclass="net.sf.rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
-		<Property name="route.colour.2" type="COLOR" 
+		<Property name="route.colour.2" type="COLOR"
 		initclass="net.sf.rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
-		<Property name="route.colour.3" type="COLOR" 
+		<Property name="route.colour.3" type="COLOR"
 		initclass="net.sf.rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
-		<Property name="route.colour.4" type="COLOR" 
+		<Property name="route.colour.4" type="COLOR"
 		initclass="net.sf.rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
 	</Section>
 	<Section name="Log">

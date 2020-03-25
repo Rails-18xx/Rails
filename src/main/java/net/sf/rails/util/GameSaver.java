@@ -6,15 +6,18 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-
-import net.sf.rails.common.Config;
-import net.sf.rails.common.GameData;
-import net.sf.rails.common.LocalText;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.rails.common.Config;
+import net.sf.rails.common.ConfigItem;
+import net.sf.rails.common.ConfigManager;
+import net.sf.rails.common.GameData;
+import net.sf.rails.common.LocalText;
 import rails.game.action.PossibleAction;
 
 
@@ -22,9 +25,8 @@ import rails.game.action.PossibleAction;
  * GameLoader is responsible to load a saved Rails game
  */
 public class GameSaver {
-    
-    private static final Logger log =
-            LoggerFactory.getLogger(GameSaver.class);
+
+    private static final Logger log = LoggerFactory.getLogger(GameSaver.class);
 
     /** Version ID of the Save file header, as written in save() */
     private static final long saveFileHeaderVersionID = 3L;
@@ -41,7 +43,7 @@ public class GameSaver {
 
     // game data
     private final GameIOData gameIOData = new GameIOData();
-    
+
     /**
      * Creates a new game saver
      * @param gameData of the game to save
@@ -54,9 +56,9 @@ public class GameSaver {
         gameIOData.setActions(actions);
         gameIOData.setFileVersionID(saveFileVersionID);
     }
-    
+
     /**
-     * Creates a new game saver based on a gameLoader 
+     * Creates a new game saver based on a gameLoader
      * @param gameLoader to use
      */
     public GameSaver(GameLoader gameLoader) {
@@ -68,7 +70,7 @@ public class GameSaver {
      * @param file to save game to
      */
     public void saveGame(File file) throws IOException {
-        log.info("Trying to save file to " + file.getAbsoluteFile());
+        log.info("Trying to save file to {}", file.getAbsoluteFile());
 
         ObjectOutputStream oos =
             new ObjectOutputStream(new FileOutputStream(file));
@@ -77,14 +79,30 @@ public class GameSaver {
         oos.writeObject(gameIOData.getFileVersionID());
         oos.writeObject(gameIOData.getGameData().getGameName());
         oos.writeObject(gameIOData.getGameData().getGameOptions().getOptions());
+        // save game play related options
+        Map<String, String> gameOptions = new HashMap<>();
+        for ( Map.Entry<String, List<ConfigItem>> entry : ConfigManager.getInstance().getConfigSections().entrySet() ) {
+            for ( ConfigItem config : entry.getValue() ) {
+                if ( config.isGameRelated ) {
+                    String value = Config.get(config.name);
+                    if ( value != null ) {
+                        gameOptions.put(config.name, Config.get(config.name));
+                    }
+                }
+            }
+        }
+        if ( ! gameOptions.isEmpty() ) {
+            oos.writeObject(gameOptions);
+        }
+
         oos.writeObject(gameIOData.getGameData().getPlayers());
         for (PossibleAction action : gameIOData.getActions()) {
             oos.writeObject(action);
         }
         oos.close();
-        log.info("File save successfull");
+        log.info("File save successful");
     }
-    
+
     /**
      * stores game to autosave file
      * @throws IOException
@@ -92,7 +110,7 @@ public class GameSaver {
     public void autoSave() throws IOException  {
         File directory = SystemOS.get().getConfigurationFolder(autosaveFolder, true);
         String fileName = autosaveFile;
-        
+
         // create temporary new save file
         File tempFile = new File(directory, fileName + ".tmp");
         saveGame(tempFile);

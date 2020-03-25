@@ -1,33 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!-- For assistance related to logback-translator or configuration  -->
-<!-- files in general, please contact the logback user mailing list -->
-<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
-<!--                                                                -->
-<!-- For professional support please see                            -->
-<!--    http://www.qos.ch/shop/products/professionalSupport         -->
-<!--                                                                -->
 <configuration>
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <File>18xx.log</File>
-        <append>false</append>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %msg %n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- encoders are assigned the type
-             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <appender name="file" class="ch.qos.logback.core.FileAppender">
+        <file>18xx.log</file>
+        <append>false</append>
+
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %msg %n</pattern>
+            <pattern>%d{MM-dd-yyyy:HH:mm:ss.SSS} [%thread] %-5level %logger{10}->%method\(\):%line - %msg%n</pattern>
         </encoder>
     </appender>
 
     <logger name="net.sf.rails.algorithms" level="WARN"/>
 
-    <root level="INFO">
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
+    <root level="DEBUG">
+        <appender-ref ref="stdout" />
+        <appender-ref ref="file" />
     </root>
 </configuration>

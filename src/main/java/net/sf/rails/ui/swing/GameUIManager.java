@@ -12,7 +12,19 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 
 import net.sf.rails.common.*;
-import net.sf.rails.game.*;
+import net.sf.rails.common.notify.Discord;
+import net.sf.rails.common.notify.Slack;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.Phase;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.StartRound;
+import net.sf.rails.game.Station;
+import net.sf.rails.game.SwitchableUIRound;
+import net.sf.rails.game.Train;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.game.round.RoundFacade;
@@ -97,7 +109,7 @@ public class GameUIManager implements DialogOwner {
     protected boolean previousORWindowVisibilityHint;
 
     protected boolean previousResult;
-    
+
     // Player order
 //    protected PlayerOrderView playerOrderView;
     /** Player names set at time of initialisation or after reordering.
@@ -112,8 +124,8 @@ public class GameUIManager implements DialogOwner {
     public static final String SELECT_COMPANY_DIALOG = "SelectCompany";
     public static final String REPAY_LOANS_DIALOG = "RepayLoans";
     public static final String EXCHANGE_TOKENS_DIALOG = "ExchangeTokens";
-    
-    
+
+
 
     protected static Logger log =
             LoggerFactory.getLogger(GameUIManager.class);
@@ -141,7 +153,7 @@ public class GameUIManager implements DialogOwner {
         initFontSettings();
 
         configuredStockChartVisibility = "yes".equalsIgnoreCase(Config.get("stockchart.window.open"));
-        
+
 //        playerOrderView = new PlayerOrderView();
         currentGuiPlayerNames = new ArrayList<String>();
         for (Player player : getPlayers()) {
@@ -277,6 +289,9 @@ public class GameUIManager implements DialogOwner {
         // notify sound manager of game initialization
         splashWindow.notifyOfStep(SplashWindow.STEP_INIT_SOUND);
         SoundManager.notifyOfGameInit(railsRoot);
+
+        Discord.notifyOfGameInit(railsRoot);
+        Slack.notifyOfGameInit(railsRoot);
     }
 
     public void startLoadedGame() {
@@ -530,8 +545,8 @@ public class GameUIManager implements DialogOwner {
 
         //This was always false before ? Bug oversight ?
         boolean correctionOverride = false;
-                
-        correctionOverride = statusWindow.setupFor(currentRound); 
+
+        correctionOverride = statusWindow.setupFor(currentRound);
 
         if (correctionOverride) {
             log.debug("Correction overrides active window: status window active");
@@ -585,13 +600,13 @@ public class GameUIManager implements DialogOwner {
         updateStatus(activeWindow);
 
     }
-    
+
     protected void updatePlayerOrder (List<String> newPlayerOrder) {
             if (startRoundWindow != null) startRoundWindow.updatePlayerOrder (newPlayerOrder);
             if (statusWindow != null) statusWindow.updatePlayerOrder (newPlayerOrder);
             currentGuiPlayerNames = newPlayerOrder;
         }
-    
+
     /** Stub, to be overridden in subclasses for special round types */
     protected void updateStatus(ActionPerformer activeWindow) {
 
@@ -630,18 +645,18 @@ public class GameUIManager implements DialogOwner {
         //moment and theres no quick way to change that behaviour..
         //Only Chance would be to introduce a new Discard Train Round with complete separate
         //Mechanics
-        
-        if (prompt == null) { 
+
+        if (prompt == null) {
             if (playerName.equals(companyDirector)) {
                 prompt = LocalText.getText(
                 "HAS_TOO_MANY_TRAINS",
                 playerName,
-                c.getId() ); 
+                c.getId() );
             } else {
                 prompt = LocalText.getText(
                         "HAS_TOO_MANY_TRAINS",
                         playerName,
-                        c.getId() ); 
+                        c.getId() );
                 prompt += "\n Please contact the director of the "+c.getId()+ " : "+companyDirector+" for guidance.";
             }
         }
@@ -1125,15 +1140,15 @@ public class GameUIManager implements DialogOwner {
     public RailsRoot getRoot() {
         return railsRoot;
     }
-    
+
     public GameManager getGameManager() {
         return railsRoot.getGameManager();
     }
-    
+
     public DisplayBuffer getDisplayBuffer() {
         return railsRoot.getReportManager().getDisplayBuffer();
     }
-    
+
     public void setORUIManager(ORUIManager orUIManager) {
         this.orUIManager = orUIManager;
     }
@@ -1157,7 +1172,7 @@ public class GameUIManager implements DialogOwner {
     public List<Player> getPlayers() {
         return railsRoot.getPlayerManager().getPlayers();
     }
-    
+
     public Player getCurrentPlayer() {
         return railsRoot.getPlayerManager().getCurrentPlayer();
     }
@@ -1215,7 +1230,7 @@ public class GameUIManager implements DialogOwner {
         SwingUtilities.updateComponentTreeUI(configWindow);
         configWindow.pack();
     }
-    
+
     // Forwards the format() method to the server
     public String format(int amount) {
         return Bank.format(railsRoot, amount);
@@ -1284,11 +1299,11 @@ public class GameUIManager implements DialogOwner {
             }
         });
     }
-    
+
     public List<String> getCurrentGuiPlayerNames() {
         return currentGuiPlayerNames;
     }
-    
+
    public class PlayerOrderView implements Observer {
         PlayerOrderView () {
             railsRoot.getPlayerManager().getPlayerOrderModel().addObserver(this);
