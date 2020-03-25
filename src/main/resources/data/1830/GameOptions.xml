@@ -18,7 +18,7 @@
 	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 	<GameOption name="BeginnerGame" type="toggle" default="no" />
 	<GameOption name="WithOptional6Train" type="toggle" default="no"/>
-	<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
+	<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
 	<GameOption name="FirstRoundSellRestriction" values="First Round,First Stock Round" default="First Round" />
 	<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
 	<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>

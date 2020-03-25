@@ -8,10 +8,17 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+
+import net.sf.rails.common.Config;
 import net.sf.rails.common.GameData;
 import net.sf.rails.common.GameInfo;
 import net.sf.rails.common.GameOption;
@@ -24,20 +31,14 @@ import net.sf.rails.game.GameManager;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.SplashWindow;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import rails.game.action.PossibleAction;
-
-import com.google.common.collect.Lists;
 
 
 /**
  * GameLoader is responsible to load a saved Rails game
  */
 public class GameLoader {
-    
+
     private static final Logger log =
             LoggerFactory.getLogger(GameLoader.class);
 
@@ -50,7 +51,7 @@ public class GameLoader {
     private Exception exception = null;
 
     public GameLoader() {};
-    
+
     public static void loadAndStartGame(File gameFile) {
         SplashWindow splashWindow = new SplashWindow(true, gameFile.getAbsolutePath());
         splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
@@ -72,12 +73,12 @@ public class GameLoader {
                 return;
             }
         }
-        
+
         GameUIManager gameUIManager = startGameUIManager(gameLoader.getRoot(), true, splashWindow);
-        
+
         // TODO: Check if this is correct
         gameUIManager.setSaveDirectory(gameFile.getParent());
-        
+
         gameUIManager.startLoadedGame();
         gameUIManager.notifyOfSplashFinalization();
         splashWindow.finalizeGameInit();
@@ -100,7 +101,7 @@ public class GameLoader {
         }
         return gameUIManager;
     }
-    
+
     // FIXME: Rails 2.0 add undefined attribute to allow
     // deviations from undefined to default values
     private GameOptionsSet.Builder loadDefaultGameOptions(String gameName) {
@@ -114,12 +115,12 @@ public class GameLoader {
         }
         return loadGameOptions;
     }
-    
+
     /**
      * Load the gameData from file
      * @param filePath
      */
-    
+
     @SuppressWarnings("unchecked")
     public void loadGameData(File gameFile) throws Exception {
         log.info("Loading game from file " + gameFile.getCanonicalPath());
@@ -164,7 +165,6 @@ public class GameLoader {
         String gameName = (String) ois.readObject();
         log.debug("Saved game="+ gameName);
 
-        
         // read default and saved game options
         GameOptionsSet.Builder gameOptions = loadDefaultGameOptions(gameName);
         Map<String, String> savedOptions = (Map<String, String>) ois.readObject();
@@ -173,24 +173,39 @@ public class GameLoader {
             String name = option.getName();
             if (savedOptions.containsKey(name)) {
                 option.setSelectedValue(savedOptions.get(name));
-                log.debug("Assigned option from file " + name);
+                log.debug("Assigned option from game file {}", name);
             } else {
                 // FIXME: Rails 2.0 add unassigned value as other default possibility
-                log.debug("Missing option in save file " + name + " using default value instead");
+                log.debug("Missing option in save file {} using default value instead", name);
             }
         }
 
+        object = ois.readObject();
+        if ( object instanceof Map ) {
+            // used to store game file specific configuration options that aren't related to the game itself
+            Map<String, String> configOptions = (Map<String, String>) object;
+            log.debug("Saved file configuration = {}", configOptions);
+
+            // iterate over configOptions injecting into ConfigManager as needed
+            for ( Entry<String, String> config : configOptions.entrySet() ) {
+                Config.set(config.getKey(), config.getValue());
+            }
+
+            // read the next object which would be the list of player names
+            object = ois.readObject();
+        }
+
         // read playerNames
-        List<String> playerNames = (List<String>) ois.readObject();
-        log.debug("Player names = " + playerNames);
+        List<String> playerNames = (List<String>) object;
+        log.debug("Player names = {}", playerNames);
         GameInfo game = GameInfo.createLegacy(gameName);
-        
+
         gameIOData.setGameData(GameData.create(game, gameOptions, playerNames));
     }
-    
+
     /**
      * Convert the gameData
-     * Requires successfull load of gameData
+     * Requires successful load of gameData
      */
     @SuppressWarnings("unchecked")
     public void convertGameData() throws Exception  {
@@ -275,7 +290,7 @@ public class GameLoader {
         }
 
         gameManager.setReloading(false);
-        
+
         // FIXME (Rails2.0): CommentItems have to be replaced
         // ReportBuffer.setCommentItems(gameData.userComments);
 
@@ -284,19 +299,19 @@ public class GameLoader {
         // return true if no exception occurred
         return (exception == null);
     }
-    
+
     public RailsRoot getRoot() {
         return railsRoot;
     }
-    
+
     public Exception getException() {
         return exception;
     }
-    
+
     public List<PossibleAction> getActions() {
         return gameIOData.getActions();
     }
-    
+
     public String getGameDataAsText() {
         return gameIOData.metaDataAsText() + gameIOData.gameOptionsAsText() + gameIOData.playerNamesAsText();
     }
@@ -310,17 +325,17 @@ public class GameLoader {
         try {
             // 1st: loadGameData
             loadGameData(gameFile);
-            
+
             // 2nd: create game
             railsRoot = RailsRoot.create(gameIOData.getGameData());
 
             // 3rd: convert game data (retrieve actions)
-            convertGameData();        
+            convertGameData();
 
             // 4tgh: start game
             railsRoot.start();
 
-            
+
         } catch (Exception e) {
             log.debug("Exception during createFromFile in gameLoader ", e);
             exception = e;
@@ -329,13 +344,13 @@ public class GameLoader {
         // 5th: replay game
         return replayGame();
     }
-    
+
     /**
      * A subclass of ObjectInputStream for Rails
-     *  
-     * 1. Allows to add context information (here the railsRoot) 
+     *
+     * 1. Allows to add context information (here the railsRoot)
      * Took the idea from http://www.cordinc.com/blog/2011/05/injecting-context-in-java-seri.html
-     * 
+     *
      * 2. Should allow to use new package names and still load old game files
      * See: http://stackoverflow.com/questions/5305473
      * However this approach did not work. I did not investigate it further so far.
@@ -344,18 +359,18 @@ public class GameLoader {
     public static class RailsObjectInputStream extends ObjectInputStream {
 
         private final GameLoader loader;
-        
+
         public RailsObjectInputStream(GameLoader loader, InputStream in) throws IOException {
             super(in);
             this.loader = loader;
         }
-        
+
         public RailsRoot getRoot() {
             return loader.getRoot();
         }
-        
+
 //        @Override
-//        protected java.io.ObjectStreamClass readClassDescriptor() 
+//        protected java.io.ObjectStreamClass readClassDescriptor()
 //                throws IOException, ClassNotFoundException {
 //            ObjectStreamClass desc = super.readClassDescriptor();
 //            String className = desc.getName();
@@ -375,18 +390,18 @@ public class GameLoader {
         try {
             // 1st: loadGameData
             loadGameData(file);
-            
+
             railsRoot = RailsRoot.getInstance();
            // 2nd: convert game data (retrieve actions)
-            convertGameData();        
-            
-            
+            convertGameData();
+
+
         } catch (Exception e) {
             log.debug("Exception during createFromFile in gameLoader ", e);
             exception = e;
             return false;
         }
         return true;
-        
+
     }
 }
