@@ -15,6 +15,7 @@
 	<Tile id="-3"/>
 	<Tile id="-5"/>
 	<Tile id="-7"/>
+	<Tile id="-8"/>
 	<Tile id="-10"><!-- 1 city -->
 		<Upgrade id="57"/>
 	</Tile>
@@ -32,7 +33,7 @@
 	<Tile id="3" quantity="2" />
 	<Tile id="4" quantity="2" />
 	<Tile id="7" quantity="-1">
-		<Upgrade id="18,26,27,28,29" />
+		<Upgrade id="26,27,28,29" />
 	</Tile>
 	<Tile id="8" quantity="-1">
 		<Upgrade id="16,19,23,24,25,28,29" />

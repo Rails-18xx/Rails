@@ -58,8 +58,8 @@
 		longname="Baltimore and Ohio Railroad">
 		<Info key="ComesWithCertificate" parm="B&amp;O,10"/>
 	</Company>
-	<Company name="Cornelius Vanderbuilt" type="Private" basePrice="200" revenue="30"
-		longname="Baltimore &amp; Ohio">
+	<Company name="CV" type="Private" basePrice="200" revenue="30"
+		longname="Cornelius Vanderbuil">
 		<Info key="ComesWithPresidency" parm="random,20"/>
 		<Tradeable toCompany="no"/>
 	</Company>
@@ -95,7 +95,7 @@
 	</Company>
 	<Company name="SRR" type="Public" tokens="2" fgColour="000000" bgColour="FF8000"
 			longname="Strasburg Rail Road">
-		<Home hex="H4" city="2"/>
+		<Home hex="H4"/>
 	</Company>
 	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000"
 			longname="Pennsylvania Railroad">
@@ -104,11 +104,11 @@
 	
 	<StartPacket roundClass="net.sf.rails.game.specific._18Chesapeake.StartRound_18Chesapeake">
 		<Bidding initial="5" minimum="5" increment="1"/>
-		<Item name="DRC" type="Private" basePrice="20"/>
+		<Item name="D&amp;RC" type="Private" basePrice="20"/>
 		<Item name="CPR" type="Private" basePrice="40"/>
 		<Item name="BSR" type="Private" basePrice="50"/>
 		<Item name="C&amp;OC" type="Private" basePrice="80"/>
-		<Item name="C&amp;A" type="Private" basePrice="100"/>
+		<Item name="B&amp;OR" type="Private" basePrice="100"/>
 		<Item name="CV" type="Private" basePrice="200">
 			<SubItem name="random" type="Public" president="yes"/>
 		</Item>
