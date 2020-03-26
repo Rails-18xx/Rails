@@ -273,15 +273,13 @@ public class StartRound_1837_2ndEd extends StartRound {
     public boolean pass(NullAction action, String playerName) {
         // All validations have already been done
 
-        ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
-
-        
-
-        StartItem auctionedItem = (StartItem) currentAuctionItem.value();
+        StartItem auctionedItem = currentAuctionItem.value();
 
         switch (currentStep.value()) {
         case OPEN_STEP:
         case BUY_STEP:
+            ReportBuffer.add(this, LocalText.getText("DeclinedToBid", playerName));
+
             Player currentPlayer = playerManager.setCurrentToNextPlayer();
             if (currentPlayer == selectingPlayer.value()) {
                 // All have passed, now lower the buy price
@@ -305,7 +303,8 @@ public class StartRound_1837_2ndEd extends StartRound {
             break;
 
         case BID_STEP:
-            
+            ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
+
             auctionedItem.setPass(playerManager.getCurrentPlayer());
 
             // We are done if the next still bidding player
