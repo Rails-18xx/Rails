@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +84,7 @@ public class GameSaver {
                 for ( ConfigItem config : entry.getValue() ) {
                     if ( config.isGameRelated ) {
                         String value = Config.get(config.name);
-                        if ( value != null ) {
+                        if ( StringUtils.isNotBlank(value) ) {
                             gameOptions.put(config.name, Config.get(config.name));
                         }
                     }
