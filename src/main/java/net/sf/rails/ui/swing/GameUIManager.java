@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.stream.IntStream;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -775,12 +776,7 @@ public class GameUIManager implements DialogOwner {
                 boolean[] exchanged = dialog.getSelectedOptions();
                 String[] options = dialog.getOptions();
 
-                int numberSelected = 0;
-                for (int index=0; index < options.length; index++) {
-                    if (exchanged[index]) {
-                        numberSelected++;
-                    }
-                }
+                int numberSelected = (int) IntStream.range(0, options.length).filter(index -> exchanged[index]).count();
 
                 int minNumber = action.getMinNumberToExchange();
                 int maxNumber = action.getMaxNumberToExchange();

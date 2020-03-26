@@ -2,13 +2,13 @@ package net.sf.rails.game;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.sf.rails.algorithms.NetworkVertex;
 import net.sf.rails.algorithms.RevenueAdapter;
 import net.sf.rails.algorithms.RevenueBonus;
 import net.sf.rails.algorithms.RevenueStaticModifier;
-
-
+import net.sf.rails.game.state.Observable;
 
 /**
  * An object of class Bonus represent extra income for the owning company,

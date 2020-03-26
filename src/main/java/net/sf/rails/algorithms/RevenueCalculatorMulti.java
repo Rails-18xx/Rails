@@ -112,9 +112,9 @@ class RevenueCalculatorMulti extends RevenueCalculator {
         }
 
         // finished all tries
-        for (int i=0; i < startVertexes.length; i++) {
+        for ( int startVertex : startVertexes ) {
             // remove all of them from the visited vertex list
-            trainVisited[trainId][startVertexes[i]] = false;
+            trainVisited[trainId][startVertex] = false;
         }
 
         // allow that the train does not run at all
