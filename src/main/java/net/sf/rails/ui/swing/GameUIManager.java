@@ -966,9 +966,9 @@ public class GameUIManager implements DialogOwner {
                 // Check the new name. If only the prefix has changed, only remember that part.
                 String[] proposedParts = proposedFile.getName().split("_", 2);
                 String[] selectedParts = selectedFile.getName().split("_", 2);
-                // TODO: fails if a user does something like test.rails
-                if (!proposedParts[0].equals(selectedParts[0])
-                        && proposedParts[1].equals(selectedParts[1])) {
+                if (proposedParts.length >= 2 && selectedParts.length >= 2 &&
+                        !proposedParts[0].equals(selectedParts[0]) &&
+                        proposedParts[1].equals(selectedParts[1])) {
                     savePrefix = selectedParts[0];
                 } else {
                     // Otherwise, remember and keep using the whole filename.
