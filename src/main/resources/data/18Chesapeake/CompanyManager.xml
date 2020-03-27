@@ -85,7 +85,7 @@
 			longname="Lehigh Valley Railroad">
 		<Home hex="J2"/>
 	</Company>
-	<Company name="P&amp;LE" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00"
+	<Company name="PLE" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00"
 			longname="Pittsburgh and Lake Erie Railroad">
 		<Home hex="A3"/>
 	</Company>

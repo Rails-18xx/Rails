@@ -34,7 +34,7 @@
 	<Component name="TileManager" class="net.sf.rails.game.TileManager" 
 		file="TileSet.xml"/>
 	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
-	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager" 
+	<Component name="CompanyManager" class="net.sf.rails.game.specific._18Chesapeake.CompanyManager_18Chesapeake" 
 		file="CompanyManager.xml"/>
 	<Component name="StockMarket" class="net.sf.rails.game.financial.StockMarket" 
 		file="StockMarket.xml"/>

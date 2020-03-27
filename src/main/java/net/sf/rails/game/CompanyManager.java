@@ -49,7 +49,7 @@ public class CompanyManager extends RailsManager implements Configurable {
     /** A list of all start packets (usually one) */
     protected List<StartPacket> startPackets = new ArrayList<StartPacket>();
     /** A map of all start packets, keyed by name. Default name is "Initial" */
-    private Map<String, StartPacket> startPacketMap
+    protected Map<String, StartPacket> startPacketMap
         = new HashMap<String, StartPacket>();
 
     /** A map to enable translating aliases to names */
@@ -188,15 +188,19 @@ public class CompanyManager extends RailsManager implements Configurable {
                             "StartPacketHasNoClass", name));
                 }
 
-                StartPacket sp = StartPacket.create(this, name, roundClass);
-                startPackets.add(sp);
-                startPacketMap.put(name, sp);
-
-                sp.configureFromXML(packetTag);
+                configureStartPacket(packetTag, name, roundClass);
             }
         }
 
     }
+
+	protected void configureStartPacket(Tag packetTag, String name, String roundClass) throws ConfigurationException {
+		StartPacket sp = StartPacket.create(this, name, roundClass);
+		startPackets.add(sp);
+		startPacketMap.put(name, sp);
+
+		sp.configureFromXML(packetTag);
+	}
 
     // Post XML parsing initialisations
     public void finishConfiguration (RailsRoot root)
