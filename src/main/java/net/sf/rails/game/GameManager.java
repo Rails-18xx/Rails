@@ -253,12 +253,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                             skipFirstStockRound);
 
                 for (String ruleTagName : srTag.getChildren().keySet()) {
-                    if (ruleTagName.equals("NoSaleInFirstSR")) {
-                        setGameParameter(GameDef.Parm.NO_SALE_IN_FIRST_SR, true);
-                    } else if (ruleTagName.equals("NoSaleIfNotOperated")) {
-                        setGameParameter(GameDef.Parm.NO_SALE_IF_NOT_OPERATED, true);
-                    } else if (ruleTagName.equals("NoSaleOfJustBoughtShare")) {
-                        setGameParameter(GameDef.Parm.NO_SALE_OF_JUST_BOUGHT_CERT, true);
+                    switch ( ruleTagName ) {
+                        case "NoSaleInFirstSR":
+                            setGameParameter(GameDef.Parm.NO_SALE_IN_FIRST_SR, true);
+                            break;
+                        case "NoSaleIfNotOperated":
+                            setGameParameter(GameDef.Parm.NO_SALE_IF_NOT_OPERATED, true);
+                            break;
+                        case "NoSaleOfJustBoughtShare":
+                            setGameParameter(GameDef.Parm.NO_SALE_OF_JUST_BOUGHT_CERT, true);
+                            break;
                     }
 
                 }
@@ -1200,10 +1204,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         List<String> b = new ArrayList<String>();
 
         /* Sort players by total worth */
-        List<Player> rankedPlayers = new ArrayList<Player>();
-        for (Player player : getRoot().getPlayerManager().getPlayers()) {
-            rankedPlayers.add(player);
-        }
+        List<Player> rankedPlayers = new ArrayList<>();
+        rankedPlayers.addAll(getRoot().getPlayerManager().getPlayers());
         Collections.sort(rankedPlayers);
 
         /* Report winner */

@@ -281,11 +281,7 @@ public class PlayerManager extends RailsManager implements Configurable {
 
        final boolean ascending_f = ascending;
 
-       Comparator<Player> cashComparator =  new Comparator<Player>() {
-           public int compare (Player p1, Player p2) {
-               return ascending_f ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
-           }
-       };
+       Comparator<Player> cashComparator = (p1, p2) -> ascending_f ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
 
        playerModel.reorder(cashComparator);
 

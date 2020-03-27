@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.stream.IntStream;
 
 import javax.swing.*;
 
@@ -125,12 +126,7 @@ public class AutoSaveLoadDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(ActionEvent arg0) {
         if (arg0.getSource().equals(okButton)) {
-            for (int i = 0; i < NUM_OPTIONS; i++) {
-                if (choiceButtons[i].isSelected()) {
-                    status = i;
-                    break;
-                }
-            }
+            status = IntStream.range(0, NUM_OPTIONS).filter(i -> choiceButtons[i].isSelected()).findFirst().orElse(status);
             interval = (Integer) intervalSpinner.getValue();
         } else if (arg0.getSource().equals(cancelButton)) {
             //status = -1;

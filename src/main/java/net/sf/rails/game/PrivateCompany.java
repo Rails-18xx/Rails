@@ -139,12 +139,10 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
                 
                 // add triggerable to unblock
                 this.triggeredOnOwnerChange(
-                        new Triggerable() {
-                            public void triggered(Observable observable, Change change) {
-                                // if newOwner is a (public) company then unblock
-                                if (getOwner() instanceof Company) {
-                                    PrivateCompany.this.unblockHexes();
-                                }
+                        (observable, change) -> {
+                            // if newOwner is a (public) company then unblock
+                            if (getOwner() instanceof Company) {
+                                PrivateCompany.this.unblockHexes();
                             }
                         }
                 );
