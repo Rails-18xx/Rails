@@ -246,6 +246,14 @@ public class RailsRoot extends Root implements RailsItem {
         return gameData;
     }
     
+
+    /**
+     * @return the Randomization seed
+     */
+    public int getSeed() {
+    	return gameData.getSeed();
+    }
+    
     @Override
     public RailsRoot getParent() {
         throw new UnsupportedOperationException();

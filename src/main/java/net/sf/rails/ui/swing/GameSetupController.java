@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -170,12 +171,14 @@ public class GameSetupController {
                     return;
                 }
             }
-
+            //TODO: make this configurable
+            Random randomNo = new Random();
+            int seed =randomNo.nextInt();
             SplashWindow splashWindow = new SplashWindow(false, selectedGame.getName());
             
             RailsRoot railsRoot = null;
             try {
-                GameData gameData = GameData.create(selectedGame, selectedOptions, players);
+                GameData gameData = GameData.create(selectedGame, selectedOptions, players, seed);
                 railsRoot = RailsRoot.create(gameData);
             } catch (ConfigurationException e) {
                 // TODO: Fix this behavior, give more information?

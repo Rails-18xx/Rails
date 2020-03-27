@@ -27,7 +27,7 @@ public class GameSaver {
             LoggerFactory.getLogger(GameSaver.class);
 
     /** Version ID of the Save file header, as written in save() */
-    private static final long saveFileHeaderVersionID = 3L;
+    private static final long saveFileHeaderVersionID = 4L;
     /**
      * Overall save file version ID, taking into account the version ID of the
      * action package.
@@ -78,6 +78,7 @@ public class GameSaver {
         oos.writeObject(gameIOData.getGameData().getGameName());
         oos.writeObject(gameIOData.getGameData().getGameOptions().getOptions());
         oos.writeObject(gameIOData.getGameData().getPlayers());
+        oos.writeObject(gameIOData.getGameData().getSeed());
         for (PossibleAction action : gameIOData.getActions()) {
             oos.writeObject(action);
         }

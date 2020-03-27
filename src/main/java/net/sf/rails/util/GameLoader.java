@@ -154,7 +154,7 @@ public class GameLoader {
         gameIOData.setFileVersionID(fileVersionID);
         long saveFileVersionID = GameSaver.saveFileVersionID;
 
-        if (fileVersionID != saveFileVersionID) {
+        if ((fileVersionID != saveFileVersionID) && (!(saveFileVersionID == 9))) {
             throw new Exception("Save version " + fileVersionID
                     + " is incompatible with current version "
                     + saveFileVersionID);
@@ -185,7 +185,14 @@ public class GameLoader {
         log.debug("Player names = " + playerNames);
         GameInfo game = GameInfo.createLegacy(gameName);
         
-        gameIOData.setGameData(GameData.create(game, gameOptions, playerNames));
+        if (fileVersionID >=12) { //introducing a seed for randomizations throughout the game start and replayability
+        int seed = (int) ois.readObject();
+        
+        gameIOData.setGameData(GameData.create(game, gameOptions, playerNames, seed));
+        }
+        else {
+        	gameIOData.setGameData(GameData.create(game, gameOptions, playerNames, 0));
+        }
     }
     
     /**
