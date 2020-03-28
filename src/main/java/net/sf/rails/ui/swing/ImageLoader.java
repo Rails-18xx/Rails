@@ -3,6 +3,7 @@ package net.sf.rails.ui.swing;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,25 +27,23 @@ import com.google.common.collect.Maps;
  * associated with the Hex.
  */
 public class ImageLoader {
+    private static final Logger log = LoggerFactory.getLogger(ImageLoader.class);
 
-    private static final Logger log =
-            LoggerFactory.getLogger(ImageLoader.class);
-
-    private final DocumentBuilder svgDocBuilder; 
+    private final DocumentBuilder svgDocBuilder;
 
     private final Map<String, Document> svgMap = Maps.newHashMap();
-    private final HashBasedTable<String, Integer, BufferedImage> tileImages = 
+    private final HashBasedTable<String, Integer, BufferedImage> tileImages =
             HashBasedTable.create();
 
     private double[] zoomFactors = new double[21];
 
-    //defines adjustment of zoom factor (should be close to 1) 
+    //defines adjustment of zoom factor (should be close to 1)
     //(used for perfect-fit sizing that requires arbitrary zoom)
     private double zoomAdjustmentFactor = 1;
 
     private double svgWidth = 75;
     private double svgHeight = svgWidth * 0.5 * Math.sqrt(3.0);
-    
+
     private String svgTileDir = "tiles/svg";
     private String tileRootDir = Config.get("tile.root_directory");
     private String directory;
@@ -62,6 +61,7 @@ public class ImageLoader {
         // Step 2: create a DocumentBuilder
         DocumentBuilder db = null;
         try{
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             db = dbf.newDocumentBuilder(); }
         catch (ParserConfigurationException e) {
             // do nothing
@@ -72,31 +72,28 @@ public class ImageLoader {
     private BufferedImage getSVGTile(String tileID, double zoomFactor) {
         String fn = "tile" + tileID + ".svg";
 
-        BufferedImage image = null;
+        BufferedImage image;
 
         try {
             if (!svgMap.containsKey(tileID)) {
                  Document doc = null;
 
                 // Step 3: parse the input file to get a Document object
-                doc = 
-                        svgDocBuilder.parse(ResourceLoader.getInputStream(fn,
-                                directory));
+                doc = svgDocBuilder.parse(ResourceLoader.getInputStream(fn, directory));
                 // Cache the doc
                 svgMap.put(tileID, doc);
-                log.debug("SVG document for tile id " + tileID + " succeeded ");
+                log.trace("SVG document for tile id {} succeeded ", tileID);
             }
             BufferedImageTranscoder t = new BufferedImageTranscoder();
-            t.addTranscodingHint(ImageTranscoder.KEY_MAX_WIDTH, new Float(svgWidth * zoomFactor));
-            t.addTranscodingHint(ImageTranscoder.KEY_MAX_HEIGHT, new Float(svgHeight * zoomFactor));
+            t.addTranscodingHint(ImageTranscoder.KEY_MAX_WIDTH, (float) (svgWidth * zoomFactor));
+            t.addTranscodingHint(ImageTranscoder.KEY_MAX_HEIGHT, (float) (svgHeight * zoomFactor));
             TranscoderInput input = new TranscoderInput(svgMap.get(tileID));
             t.transcode(input, null);
             image = t.getImage();
-            log.debug("SVG transcoding for tile id " + tileID + " and zoomFactor " + zoomFactor + " succeeded ");
+            log.trace("SVG transcoding for tile id {} and zoomFactor {} succeeded", tileID, zoomFactor);
 
         } catch (Exception e) {
-            log.error("SVG transcoding for tile id " + tileID + " failed with "
-                      + e);
+            log.error("SVG transcoding for tile id {} failed", tileID, e);
             return null;
         }
 
@@ -122,23 +119,21 @@ public class ImageLoader {
         return zoomFactors[zoomStep]* GUIGlobals.getMapScale();
 
     }
-    
+
     /**
      * @param zoomAdjustmentFactor Additional factor applied to zoom factor. Used
-     * for precisely adjusting zoom-step based zoom factors for perfect fit requirements.  
+     * for precisely adjusting zoom-step based zoom factors for perfect fit requirements.
      */
     public void setZoomAdjustmentFactor (double zoomAdjustmentFactor) {
         this.zoomAdjustmentFactor = zoomAdjustmentFactor;
-        
+
         //invalidate buffered zoom step zoom factors
-        for (int i = 0 ; i < zoomFactors.length ; i++) {
-            zoomFactors[i] = 0;
-        }
-        
+        Arrays.fill(zoomFactors, 0);
+
         //invalidate buffered tile scalings
         tileImages.clear();
     }
-    
+
     public void resetAdjustmentFactor() {
         setZoomAdjustmentFactor(1);
     }

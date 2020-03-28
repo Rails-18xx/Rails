@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 public class LocalText extends ResourceBundle {
 
     private static final String TEST_LOCALE = "te_ST";
-    
+
     protected static String language = "en";
 
     protected static String country = "";
@@ -42,17 +42,17 @@ public class LocalText extends ResourceBundle {
         /* If the text is not found, return the key in brackets */
         return getTextExecute(key, "[" + key + "]", true, parameters);
     }
-        
+
     public static String getTextWithDefault(String key, String defaultText) {
         return getTextExecute(key, defaultText, false, (Object[]) null);
     }
-    
+
     // actual procedure to retrieve the local text
     private static String getTextExecute(String key, String defaultText, boolean errorOnMissing, Object... parameters) {
         String result = "";
 
         if (key == null || key.length() == 0) return "";
-        
+
         /* Load the texts */
         if (localisedText == null) {
             /*
@@ -74,8 +74,7 @@ public class LocalText extends ResourceBundle {
                 if (localeCode.length() >= 5)
                     country = localeCode.substring(3, 5);
             }
-            log.debug("Language=" + language + ", country=" + country
-                      + ", locale=" + localeCode);
+            log.debug("Language={}, country={}, locale={}", language, country, localeCode);
 
             /* Create the locale and get the resource bundle. */
             locale = new Locale(language, country);
@@ -84,37 +83,34 @@ public class LocalText extends ResourceBundle {
                 localisedText =
                         ResourceBundle.getBundle("LocalisedText", locale);
             } catch (MissingResourceException e) {
-                System.err.println("Unable to locate LocalisedText resource: "
-                                   + e);
+                log.warn("Unable to locate LocalisedText resource: ", e);
             }
         }
 
         /* If the key contains a space, something is wrong, check who did that! */
-        if (key.indexOf(" ") > -1) {
+        if ( key.contains(" ") ) {
             try {
                 throw new Exception("Invalid resource key '" + key + "'");
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warn("caught exception", e);
             }
         }
-      
+
         // special treatment for test locale
         if (localeCode.equals(TEST_LOCALE)) {
-            StringBuffer s = new StringBuffer(key);
+            StringBuilder s = new StringBuilder(key);
             if (parameters != null)
                 for (Object o:parameters)
-                    s.append("," + o.toString());
+                    s.append(",").append(o.toString());
             return s.toString();
         }
-        
+
         /* Find the text */
         try {
             result = localisedText.getString(key);
         } catch (Exception e) {
             if (errorOnMissing) {
-                System.out.println("Missing text for key " + key + " in locale "
-                               + locale.getDisplayName() + " (" + localeCode
-                               + ")");
+                log.warn("Missing text for key {} in locale {} ({})", key, locale.getDisplayName(), localeCode);
             }
             return defaultText;
         }
@@ -133,7 +129,7 @@ public class LocalText extends ResourceBundle {
         String[] codes = localeCode.split("_");
         if (codes.length > 0) language = codes[0];
         if (codes.length > 1) country = codes[1];
-        
+
         // reset localised text
         localisedText = null;
     }

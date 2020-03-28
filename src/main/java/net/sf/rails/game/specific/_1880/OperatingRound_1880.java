@@ -59,8 +59,8 @@ public class OperatingRound_1880 extends OperatingRound {
     private final ArrayListState<Investor_1880> investorsToClose = ArrayListState.create(this, "investorsToClose");
     private final BooleanState trainPurchasedThisTurn = BooleanState.create(this, "trainPurchaseThisTurn");
     private PublicCompany firstCompanyBeforePrivates;
-    PossibleAction manditoryNextAction = null;
-    
+    private PossibleAction manditoryNextAction = null;
+
     /**
      * @param gameManager
      */
@@ -79,20 +79,20 @@ public class OperatingRound_1880 extends OperatingRound {
                 company.setFullFundingAvail();
                 if (!company.hasFloated()) {
                     company.setFloatPercentage(30);
-                } 
+                }
             }
         }
-        if (name.equalsIgnoreCase("CommunistTakeOver")) {            
+        if (name.equalsIgnoreCase("CommunistTakeOver")) {
             for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
                 company.stockPriceCannotMove();
                 company.presidentCannotSellShare();
                 if (!company.hasFloated()) {
                     company.setFloatPercentage(40);
-                } 
+                }
             }
             checkForForcedRocketExchange();
         }
-        
+
         if (name.equalsIgnoreCase("ShanghaiExchangeOpen")) {
             for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
                 company.stockPriceCanMove();
@@ -128,7 +128,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.OperatingRound#initNormalTileLays()
      */
     @Override
@@ -152,13 +152,13 @@ public class OperatingRound_1880 extends OperatingRound {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.OperatingRound#start()
      */
     @Override
     public void start() {
         thisOrNumber = gameManager.getORId();
-        
+
 
         ReportBuffer.add(this, LocalText.getText("START_OR", thisOrNumber));
 
@@ -255,17 +255,17 @@ public class OperatingRound_1880 extends OperatingRound {
             if (manditoryNextAction == null) {
                 finishOR();
             }
-        } 
+        }
 
         return true;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.OperatingRound#buyTrain(rails.game.action.BuyTrain)
      */
-    
+
     @Override
     public boolean buyTrain(BuyTrain action) {
         if (super.buyTrain(action) != true) {
@@ -285,7 +285,7 @@ public class OperatingRound_1880 extends OperatingRound {
                     ((GameManager_1880) getRoot().getGameManager()).getParSlotManager().trainPurchased((PublicCompany_1880) operatingCompany.value());
                     }
                 }
-            } 
+            }
             //If the train bought was a 8e Train no more trains will be discarded.
             if (action.getType().getName().equals("8E")) {
                 orControl.setNoTrainsToDiscard(true);
@@ -307,7 +307,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 if (manditoryNextAction == null) {
                     finishOR();
                 }
-            } 
+            }
         }
 
         return true;
@@ -315,7 +315,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.OperatingRound#newPhaseChecks()
      */
     @Override
@@ -324,11 +324,11 @@ public class OperatingRound_1880 extends OperatingRound {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.OperatingRound#process(rails.game.action.PossibleAction)
      */
     @Override
-    public boolean process(PossibleAction action) {        
+    public boolean process(PossibleAction action) {
         boolean result = false;
 
         selectedAction = action;
@@ -343,7 +343,7 @@ public class OperatingRound_1880 extends OperatingRound {
                     result = done(nullAction);
                     break;
                 }
-                
+
                 if (operatingCompany.value() == orControl.lastCompanyToBuyTrain()) {
                     if ((orControl.isFinalOperatingRoundSequence()) && (!orControl.wasStartedFromStockRound())){
                         orControl.addFinalOperatingRoundSequenceNumber(1);
@@ -352,17 +352,17 @@ public class OperatingRound_1880 extends OperatingRound {
                     if ((orControl.getFinalOperatingRoundSequenceNumber() > 3) ) {
                     finishOR();
                     }
-                     
+
                     if ((trainPurchasedThisTurn.value() == false) && (!orControl.noTrainsToDiscard())) {
                         // The current Company is the Company that has bought
                         // the last train and that purchase was not in this OR..
                         // we now discard the remaining active trains of that
                         // Subphase and start a stockround...
                         Set<Train> trains =
-                                trainManager.getAvailableNewTrains(); 
+                                trainManager.getAvailableNewTrains();
                         TrainType activeTrainTypeToDiscard = null;
                         for (Train train : trains) {
-                            if ((!train.getType().getName().equals("2R")) 
+                            if ((!train.getType().getName().equals("2R"))
                                     && (!train.getType().getName().equals("10"))){
                                 activeTrainTypeToDiscard =
                                         train.getType();
@@ -374,17 +374,17 @@ public class OperatingRound_1880 extends OperatingRound {
                                 orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.value()));
                                 orControl.setFinalOperatingRoundSequence(true);
                             }
-                           
+
                             Train[] trainsToDiscard =
                                     bank.getIpo().getPortfolioModel().getTrainsPerType(
                                             activeTrainTypeToDiscard);
                             // If we need to do a rocket exchange, then leave one 4-train
                             int firstTrainToDiscard = 0;
-                            if ((activeTrainTypeToDiscard.getName().equals("4")) && 
+                            if ((activeTrainTypeToDiscard.getName().equals("4")) &&
                                     (checkForForcedRocketExchange() == true)) {
-                                firstTrainToDiscard = 1;                            
+                                firstTrainToDiscard = 1;
                             }
-                            
+
                             for (int i = firstTrainToDiscard; i < trainsToDiscard.length; i++) {
                                 scrapHeap.addTrain(trainsToDiscard[i]);
                             }
@@ -464,7 +464,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.OperatingRound#setPossibleActions()
      */
     @Override
@@ -482,12 +482,12 @@ public class OperatingRound_1880 extends OperatingRound {
         if (getStep() == GameDef.OrStep.INITIAL) {
            if (operatingCompany.value() instanceof PublicCompany_1880)  {
             initTurn();
-            
+
             //Somehow an investor was still allowed to place a tile in Phase 4 ?
             if (operatingCompany.value() instanceof Investor_1880){
                 if (gameManager.getCurrentPhase().getId().equals("4")) {
                     setStep(GameDef.OrStep.BUY_TRAIN);
-                } 
+                }
             }
 
             if ((noMapMode)
@@ -513,37 +513,37 @@ public class OperatingRound_1880 extends OperatingRound {
         return super.setPossibleActions();
     }
 
-    
+
     @Override
     public void resume() {
         guiHints.setActivePanel(GuiDef.Panel.MAP);
         guiHints.setCurrentRoundType(getClass());
         if (savedAction instanceof BuyTrain) {
             BuyTrain action = (BuyTrain) savedAction;
-            
-            // We are here because this player couldn't pay for a train.  
+
+            // We are here because this player couldn't pay for a train.
             Player player = playerManager.getPlayerByName(action.getPlayerName());
             PublicCompany company = action.getCompany();
             int initialPlayerCash = player.getCash();
             int trainCost = action.getFixedCost();
-                                
-            // Give the company enough money to buy the train, then deduct 
+
+            // Give the company enough money to buy the train, then deduct
             // that amount from the player.
-            int amountOwed = (trainCost - company.getCash());  
-            Currency.wire(player, amountOwed, company);      
+            int amountOwed = (trainCost - company.getCash());
+            Currency.wire(player, amountOwed, company);
 
             // Perform the buy action
             BuyTrain newTrainBuy = new BuyTrain(action.getTrain(), action.getFromOwner(), trainCost);
             newTrainBuy.setPricePaid(trainCost);
             buyTrain (newTrainBuy);
-            
+
             if (!(initialPlayerCash >amountOwed)){
                 // The player has to pay a 50% penalty for any additional debt he took on.
                 int additionalDebt = -player.getCash();
                 if (initialPlayerCash < 0) {
-                additionalDebt = additionalDebt - (-initialPlayerCash);                
+                additionalDebt = additionalDebt - (-initialPlayerCash);
                 }
-                            
+
                 int penalty = (additionalDebt / 2);
 
                 ReportBuffer.add(this, LocalText.getText("DebtPenalty", player.getId(),
@@ -556,7 +556,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.OperatingRound#payout(int)
      */
     @Override
@@ -579,7 +579,7 @@ public class OperatingRound_1880 extends OperatingRound {
             shares = (sharesPerRecipient.get(recipient));
             if (shares == 0) continue;
             part = (int) Math.ceil(amount * shares * operatingCompany.value().getShareUnit() / 100.0);
-            
+
             String partText = Currency.fromBank(part, recipient);
             ReportBuffer.add(this,LocalText.getText("Payout",
                     recipient.getId(),
@@ -602,7 +602,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 (PublicCompany_1880) investor.getLinkedCompany();
         ReportBuffer.add(this, LocalText.getText("FIConnected", investor.getId(),
                 linkedCompany.getId()));
-        
+
         // The owner gets $50
         ReportBuffer.add(this, LocalText.getText("FIConnectedPayout",
                 investorOwner.getId()));
@@ -626,7 +626,7 @@ public class OperatingRound_1880 extends OperatingRound {
         Stop city = (Stop) token.getOwner();
         MapHex hex = city.getParent();
         token.moveTo(investor);
-        
+
         // Pick if the token gets replaced
         if (closeInvestorAction.getReplaceToken() == true) {
             if (hex.layBaseToken(linkedCompany, city)) {
@@ -660,7 +660,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.Round#setOperatingCompanies()
      */
     @Override
@@ -707,7 +707,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.Round#setOperatingCompanies(java.util.List,
      * rails.game.PublicCompanyI)
      */
@@ -863,14 +863,14 @@ public class OperatingRound_1880 extends OperatingRound {
         return true;
     }
 
-    
+
     // TODO: Make generic
     private int getTileCost(MapHex hex) {
         // Lucky us.  Tiles that cost 20, 50, and 60 happen to be rivers.  Tiles that cost
         // anything else are not.
         int baseCost = hex.getTileCost();
         if ((baseCost == 20) || (baseCost == 50) || (baseCost == 60)) {
-            PrivateCompany riverFerry = companyManager.getPrivateCompany("CC");            
+            PrivateCompany riverFerry = companyManager.getPrivateCompany("CC");
             if (riverFerry.getOwner() == playerManager.getCurrentPlayer()) { //TODO: Check if Correct !!
                 baseCost = baseCost - 20;
             }
@@ -880,7 +880,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * rails.game.OperatingRound#processGameSpecificAction(rails.game.action
      * .PossibleAction)
@@ -892,7 +892,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.OperatingRound#setGameSpecificPossibleActions()
      */
     @Override
@@ -959,14 +959,14 @@ public class OperatingRound_1880 extends OperatingRound {
         finishOR();
         return true;
     }
-    
+
     private boolean checkForForcedRocketExchange() {
         PrivateCompany rocket = companyManager.getPrivateCompany("RC");
 
         if (rocket.isClosed() == true) {
             return false;
         }
-        
+
         Player rocketOwner = (Player) rocket.getOwner(); //TODO : Check if correct !!
         List<PublicCompany_1880> ownedCompaniesWithSpace =
                 new ArrayList<PublicCompany_1880>();
@@ -999,14 +999,14 @@ public class OperatingRound_1880 extends OperatingRound {
             rocket.close();
         }
         manditoryNextAction = action;
-        return (action != null);        
+        return (action != null);
     }
-    
+
     private boolean forcedRocketExchange(ForcedRocketExchange action) {
         Train train = Iterables.get(trainManager.getAvailableNewTrains(),0);
         PublicCompany company = companyManager.getPublicCompany(action.getCompanyToReceiveTrain());
         String trainNameToReplace = action.getTrainToReplace();
-        
+
         Train replacementTrain = null;
         for (Train companyTrain : company.getPortfolioModel().getTrainList()) {
             if (companyTrain.getId().equals(trainNameToReplace)) {
@@ -1019,13 +1019,13 @@ public class OperatingRound_1880 extends OperatingRound {
             ReportBuffer.add(this, LocalText.getText("RocketPlacedScrappingTrain", company.getId(), trainNameToReplace));
             replacementTrain.moveTo(scrapHeap);
         } else {
-            ReportBuffer.add(this, LocalText.getText("RocketPlaced", company.getId()));            
+            ReportBuffer.add(this, LocalText.getText("RocketPlaced", company.getId()));
         }
-        
+
         company.buyTrain(train, 0);
         companyManager.getPrivateCompany("RC").close();
         train.getCertType().addToBoughtFromIPO();
-        trainManager.checkTrainAvailability(train, ipo.getParent()); 
+        trainManager.checkTrainAvailability(train, ipo.getParent());
         // If there are no available trains now, time for a stock round.
         Set<Train> trains =
                 trainManager.getAvailableNewTrains();
@@ -1040,10 +1040,10 @@ public class OperatingRound_1880 extends OperatingRound {
         AddBuildingPermit addPermit = (AddBuildingPermit) ((UseSpecialProperty) action).getSpecialProperty();
         ((PublicCompany_1880) operatingCompany.value()).addBuildingPermit(addPermit.getPermitName());
         addPermit.setExercised();
-        ReportBuffer.add(this, LocalText.getText("AddedRights", operatingCompany.value().getId(), addPermit.getPermitName()));            
+        ReportBuffer.add(this, LocalText.getText("AddedRights", operatingCompany.value().getId(), addPermit.getPermitName()));
         return true;
     }
-    
+
     /* (non-Javadoc)
      * @see rails.game.OperatingRound#setBuyableTrains()
      */
@@ -1056,7 +1056,7 @@ public class OperatingRound_1880 extends OperatingRound {
         int cost = 0;
         Set<Train> trains;
 
-       
+
 
             // Cannot buy a train without any cash, unless you have to
             if (cash == 0 && hasValidTrains()) return;
@@ -1143,17 +1143,17 @@ public class OperatingRound_1880 extends OperatingRound {
                         BuyTrain trainAction = ((BuyTrain) pAction);
                         if (trainAction.getType().getName().equals("2R") ){
                             emergency = mustBuyTrain;
-                        } 
+                        }
                         else {
-                            emergency = mustBuyTrain && possibleActions.getType(BuyTrain.class).isEmpty();  
+                            emergency = mustBuyTrain && possibleActions.getType(BuyTrain.class).isEmpty();
                         }
                     }
-                } 
+                }
                 else {
                     emergency = mustBuyTrain;
                 }
-                
-                
+
+
 
                 // If we must buy a train and haven't found one yet, the president must add cash.
                 if (emergency && !newEmergencyTrains.isEmpty()) {
@@ -1171,7 +1171,7 @@ public class OperatingRound_1880 extends OperatingRound {
                             possibleActions.add(bt);                        }
                     }
                 }
-            
+
             if (!canBuyTrainNow) return;
 
             /* Other company trains, sorted by president (current player first) */
@@ -1247,20 +1247,20 @@ public class OperatingRound_1880 extends OperatingRound {
         Set<Train> trains = operatingCompany.value().getPortfolioModel().getTrainList();
         int rTypeFound = 0;
         int numberOfTrainsFound = 0;
-        
+
         numberOfTrainsFound = operatingCompany.value().getPortfolioModel().getNumberOfTrains();
-        
+
         if (numberOfTrainsFound >0) {
             for (Train train : trains) {
                 if (train.getType().getName().equals("2R")) rTypeFound++;
             }
             if (numberOfTrainsFound == rTypeFound) return false;
             return true;
-        } 
-        else { 
+        }
+        else {
             return false;
         }
     }
-    
- 
+
+
 }

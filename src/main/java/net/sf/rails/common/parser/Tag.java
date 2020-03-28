@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,8 +29,7 @@ import java.util.*;
  * @author Erik Vos
  */
 public class Tag {
-    private static final Logger log =
-            LoggerFactory.getLogger(Tag.class);
+    private static final Logger log = LoggerFactory.getLogger(Tag.class);
 
     // static data
     private final Element element;
@@ -261,7 +261,7 @@ public class Tag {
         Node attribute;
         String name, value;
         List<String> valueList;
-        StringBuffer textBuffer = new StringBuffer();
+        StringBuilder textBuffer = new StringBuilder();
 
         for (int i = 0; i < childNodes.getLength(); i++) {
             childNode = childNodes.item(i);
@@ -316,8 +316,7 @@ public class Tag {
 
                     // FIXME: Rails 2.0 removed that handling, only logging errors now
                     if (optionValue == null) {
-                        log.error("GameOption " + name + "=" + value
-                                + " has no assigned value");
+                        log.error("GameOption {}={} has no assigned value", name, value);
                     }
 
 //                    if (optionValue == null) {
@@ -330,7 +329,7 @@ public class Tag {
 //                    		}
 //                    	}
 //                    }
-//                    
+//
 //                    // If not assigned in the previous step, take the default value
 //                    if (optionValue == null) {
 //                        GameOption go = GameOption.getByName(name);
@@ -377,20 +376,13 @@ public class Tag {
             // Step 1: create a DocumentBuilderFactory and setNamespaceAware
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             // Step 2: create a DocumentBuilder
             DocumentBuilder db = dbf.newDocumentBuilder();
 
             // Step 3: parse the input file to get a Document object
-            doc =
-                    db.parse(ResourceLoader.getInputStream(filename,
-                            directory));
-        } catch (ParserConfigurationException e) {
-            throw new ConfigurationException("Could not read/parse " + filename
-                    + " to find element " + tagName, e);
-        } catch (SAXException e) {
-            throw new ConfigurationException("Could not read/parse " + filename
-                    + " to find element " + tagName, e);
-        } catch (IOException e) {
+            doc = db.parse(ResourceLoader.getInputStream(filename, directory));
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new ConfigurationException("Could not read/parse " + filename
                     + " to find element " + tagName, e);
         }

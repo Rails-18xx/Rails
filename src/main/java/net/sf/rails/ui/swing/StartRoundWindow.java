@@ -31,8 +31,7 @@ import com.google.common.collect.Iterables;
 /**
  * This displays the Auction Window
  */
-public class StartRoundWindow extends JFrame
-implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
+public class StartRoundWindow extends JFrame implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
     private static final long serialVersionUID = 1L;
 
@@ -105,7 +104,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     private JComponent f;
 
     /** @see StartItem.statusName */
-    public static final String[] itemStatusTextKeys =
+    protected static final String[] itemStatusTextKeys =
         new String[] { "Status_Unavailable", "Status_Biddable", "Status_Buyable",
         "Status_Selectable", "Status_Auctioned",
         "Status_NeedingSharePrice", "Status_Sold" };
@@ -126,8 +125,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     /* Keys of dialogs owned by this class */
     public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
 
-    protected static Logger log =
-            LoggerFactory.getLogger(StartRoundWindow.class);
+    protected static Logger log = LoggerFactory.getLogger(StartRoundWindow.class);
 
     public void init(StartRound round, GameUIManager parent) {
         //super();
@@ -137,7 +135,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         showBasePrices = round.hasBasePrices();
         gameUIManager = parent;
         possibleActions = gameUIManager.getGameManager().getPossibleActions();
-                
+
         setTitle(LocalText.getText("START_ROUND_TITLE"));
         getContentPane().setLayout(new BorderLayout());
 
@@ -165,8 +163,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             buttonPanel.add(bidButton);
 
             spinnerModel =
-                new SpinnerNumberModel(new Integer(999), new Integer(0),
-                        null, new Integer(1));
+                new SpinnerNumberModel(999, 0, null, 1);
             bidAmount = new JSpinner(spinnerModel);
             bidAmount.setPreferredSize(new Dimension(50, 28));
             bidAmount.setEnabled(false);
@@ -255,7 +252,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         lowerPlayerCaption = new Field[np];
         playerBids = new Field[np];
         playerFree = new Field[np];
-        
+
         upperPlayerCaptionYOffset = ++lastY;
 
         itemNameXOffset = ++lastX;
@@ -282,9 +279,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         }
         playerFreeCashXOffset = bidPerPlayerXOffset;
         playerFreeCashYOffset = ++lastY;
-        
+
         lowerPlayerCaptionYOffset = ++lastY;
-        
+
         fields = new JComponent[1+infoXOffset] [2+lastY];
 
         addField(new Caption(LocalText.getText("ITEM")), 0, 0, 1, 2,
@@ -308,17 +305,17 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         for (int i = 0; i < ni; i++) {
             si = items[i];
             f = itemName[i] = new Caption(si.getId());
-            HexHighlightMouseListener.addMouseListener(f, 
+            HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
-                    si); 
+                    si);
             addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
             f =
                 itemNameButton[i] =
                     new ClickField(si.getId(), "", "", this,
                             itemGroup);
-            HexHighlightMouseListener.addMouseListener(f, 
+            HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
-                    si); 
+                    si);
             addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
             // Prevent row height resizing after every buy action
             itemName[i].setPreferredSize(itemNameButton[i].getPreferredSize());
@@ -341,9 +338,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
             f = info[i] = new Field (infoIcon);
             f.setToolTipText(getStartItemDescription(si));
-            HexHighlightMouseListener.addMouseListener(f, 
+            HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
-                    si); 
+                    si);
             addField (f, infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
 
             // Invisible field, only used to hold current item status.
@@ -425,22 +422,19 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         // For debugging
         for (PossibleAction action : possibleActions.getList()) {
-            log.debug(action.getPlayerName() + " may: " + action);
+            log.debug("{} may: {}", action.getPlayerName(), action);
         }
 
-        List<StartItemAction> actions =
-            possibleActions.getType(StartItemAction.class);
+        List<StartItemAction> actions = possibleActions.getType(StartItemAction.class);
 
         if (actions == null || actions.isEmpty()) {
             close();
             return;
         }
 
-        int nextPlayerIndex =
-            ((PossibleAction) actions.get(0)).getPlayerIndex();
+        int nextPlayerIndex = ((PossibleAction) actions.get(0)).getPlayerIndex();
         setSRPlayerTurn(nextPlayerIndex);
 
-        boolean passAllowed = false;
         boolean buyAllowed = false;
         boolean bidAllowed = false;
 
@@ -455,10 +449,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             item = action.getStartItem();
 
             if (action instanceof BuyStartItem) {
-
                 buyAction = (BuyStartItem) action;
-                if (!buyAction.setSharePriceOnly()) {
 
+                if (!buyAction.setSharePriceOnly()) {
                     selected = buyAction.isSelected();
                     if (selected) {
                         buyButton.setPossibleAction(action);
@@ -495,7 +488,6 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                 }
 
             } else if (action instanceof BidStartItem) {
-
                 BidStartItem bidAction = (BidStartItem) action;
                 selected = bidAction.isSelected();
                 if (selected) {
@@ -516,10 +508,9 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
             }
         }
 
-        passAllowed = false;
+        boolean passAllowed = false;
 
-        List<NullAction> inactiveItems =
-            possibleActions.getType(NullAction.class);
+        List<NullAction> inactiveItems = possibleActions.getType(NullAction.class);
         if (inactiveItems != null && !inactiveItems.isEmpty()) {
             // only one NullAction is allowed
             NullAction na = inactiveItems.get(0);
@@ -533,7 +524,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
         if (includeBuying) {
             buyButton.setEnabled(buyAllowed);
         }
-        
+
         if (includeBidding) {
             bidButton.setEnabled(bidAllowed);
             bidAmount.setEnabled(bidAllowed);
@@ -545,8 +536,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     }
 
     public boolean processImmediateAction() {
-
-        log.debug("ImmediateAction=" + immediateAction);
+        log.debug("ImmediateAction={}", immediateAction);
         if (immediateAction != null) {
             // Make a local copy and discard the original,
             // so that it's not going to loop.
@@ -573,13 +563,11 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         if (source instanceof ClickField) {
             gbc = gb.getConstraints(source);
-            StartItemAction currentActiveItem =
-                (StartItemAction) ((ClickField) source).getPossibleActions().get(
-                        0);
-            
+            StartItemAction currentActiveItem = (StartItemAction) ((ClickField) source).getPossibleActions().get(0);
+
             //notify sound manager that click field has been selected
             SoundManager.notifyOfClickFieldSelection(currentActiveItem);
-            
+
             //notify sound manager that click field has been selected
             SoundManager.notifyOfClickFieldSelection(currentActiveItem);
 
@@ -630,21 +618,18 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
                     process(activeItem);
                 }
             } else if (source == bidButton) {
-
                 ((BidStartItem) activeItem).setActualBid(((Integer) spinnerModel.getValue()));
                 process(activeItem);
 
             } else if (source == passButton) {
-
-                if (activeItem != null && activeItem instanceof BidStartItem
-                        && ((BidStartItem) activeItem).isSelectForAuction()) {
+                if ( activeItem instanceof BidStartItem
+                        && ((BidStartItem) activeItem).isSelectForAuction() ) {
                     ((BidStartItem) activeItem).setActualBid(-1);
                 }
                 process(activeItem);
 
             }
         }
-
     }
 
     protected boolean requestStartPrice(BuyStartItem activeItem) {
@@ -655,13 +640,13 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
             // Get a sorted prices List
             // TODO: should be included in BuyStartItem
-            
+
             if (activeItem.containsStartSpaces()) {
                 startSpaces = new TreeSet<StockSpace>();
                 for (String s : activeItem.startSpaces()) {
                     startSpaces.add(stockMarket.getStockSpace(s));
                 }
-            } else {            
+            } else {
                 startSpaces = stockMarket.getStartSpaces();
             }
             String[] options = new String[startSpaces.size()];
@@ -779,7 +764,7 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
     }
 
     private String getStartItemDescription (StartItem item) {
-        StringBuffer b = new StringBuffer("<html>");
+        StringBuilder b = new StringBuilder("<html>");
         b.append(item.getPrimary().toText());
         if (item.getPrimary() instanceof PrivateCompany) {
             PrivateCompany priv = (PrivateCompany) item.getPrimary();
@@ -837,8 +822,8 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
        for (int i=0; i<np; i++) {
             xref[i] = oldPlayerNames.indexOf(newPlayerNames.get(i));
         }
-       log.debug("SRW: old player list: "+Util.joinWithDelimiter(oldPlayerNames.toArray(new String[0]), ","));
-       log.debug("SRW: new player list: "+Util.joinWithDelimiter(newPlayerNames.toArray(new String[0]), ","));
+        log.debug("SRW: old player list: {}", Util.joinWithDelimiter(oldPlayerNames.toArray(new String[0]), ","));
+        log.debug("SRW: new player list: {}", Util.joinWithDelimiter(newPlayerNames.toArray(new String[0]), ","));
 
 
         JComponent[] cells = new Cell[np];
@@ -862,5 +847,5 @@ implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
         gameUIManager.packAndApplySizing(this);
     }
-        
+
 }

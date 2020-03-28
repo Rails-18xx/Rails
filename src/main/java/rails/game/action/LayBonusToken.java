@@ -21,8 +21,8 @@ import net.sf.rails.util.Util;
  */
 public class LayBonusToken extends LayToken {
 
-    transient BonusToken token = null;
-    String tokenId = null;
+    transient private BonusToken token = null;
+    private String tokenId = null;
 
     /*--- Preconditions ---*/
 
@@ -44,12 +44,12 @@ public class LayBonusToken extends LayToken {
     public BonusToken getToken() {
         return token;
     }
-    
+
     @Override
     public SpecialBonusTokenLay getSpecialProperty() {
         return (SpecialBonusTokenLay)specialProperty;
     }
-    
+
     @Override
     public int getPotentialCost(MapHex hex) {
         return 0;
@@ -60,17 +60,17 @@ public class LayBonusToken extends LayToken {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        LayBonusToken action = (LayBonusToken)pa; 
+        LayBonusToken action = (LayBonusToken)pa;
         return Objects.equal(this.token, action.token);
         // no asAction attributes to be checked
     }
 
     @Override
     public String toString() {
-        StringBuffer b = new StringBuffer("LayBonusToken ");
+        StringBuilder b = new StringBuilder("LayBonusToken ");
         if (chosenHex == null) {
             b.append(" location=").append(locationNames).append(" spec.prop=").append(
                     specialProperty);

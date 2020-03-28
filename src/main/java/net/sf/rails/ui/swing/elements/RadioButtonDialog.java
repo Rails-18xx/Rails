@@ -13,14 +13,14 @@ public class RadioButtonDialog extends NonModalDialog {
 
     private static final long serialVersionUID = 1L;
 
-    JRadioButton[] choiceButtons;
-    Dimension size, optSize;
-    ButtonGroup group;
+    protected JRadioButton[] choiceButtons;
+    protected Dimension size;
+    protected ButtonGroup group;
 
-    int numOptions;
-    String[] options;
-    int selectedOption;
-    int chosenOption = -1;
+    protected int numOptions;
+    protected String[] options;
+    protected int selectedOption;
+    protected int chosenOption = -1;
 
     public RadioButtonDialog(String key, DialogOwner owner, JFrame window, String title, String message,
             String[] options, int selectedOption) {

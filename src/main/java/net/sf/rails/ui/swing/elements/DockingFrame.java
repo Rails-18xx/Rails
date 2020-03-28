@@ -54,24 +54,24 @@ import bibliothek.gui.dock.support.menu.SeparatingMenuPiece;
 /**
  * Superclass for all application frames that want to use the docking
  * framework for managing its panels.
- * 
+ *
  * All references to the docking framework are private by purpose. This
  * enforces that any sub-class must not deal with any framework related
  * issues (this superclass acts as a facade to the framework).
- * 
+ *
  * @author Frederick Weld
  *
  */
 public abstract class DockingFrame extends JFrame {
-    public static enum DockableProperty { standard, closeable, initially_hidden };
+    public enum DockableProperty {STANDARD, CLOSEABLE, INITIALLY_HIDDEN};
     private static final long serialVersionUID = 1L;
-    private static final String layoutDirectoryName = "DockableLayout";
-    private static final String layoutFileSuffix = "_layout.rails_ini";
-    private static final String layoutName_initial = "InitialLayout";
-    private static final String layoutName_current = "CurrentLayout";
-    private static final String defaultTheme = ThemeMap.KEY_BASIC_THEME;
+    private static final String LAYOUT_DIRECTORY_NAME = "DockableLayout";
+    private static final String LAYOUT_FILE_SUFFIX = "_layout.rails_ini";
+    private static final String LAYOUT_NAME_INITIAL = "InitialLayout";
+    private static final String LAYOUT_NAME_CURRENT = "CurrentLayout";
+    private static final String DEFAULT_THEME = ThemeMap.KEY_BASIC_THEME;
 
-    private static Logger log = LoggerFactory.getLogger(DockingFrame.class);
+    private static final Logger log = LoggerFactory.getLogger(DockingFrame.class);
 
     private boolean isDockingFrameworkEnabled;
     private CControl control = null;
@@ -80,8 +80,8 @@ public abstract class DockingFrame extends JFrame {
     /**
      * All dockables under the control (currently only single dockables)
      */
-    List<DefaultSingleCDockable> dockables = new ArrayList<DefaultSingleCDockable>();
-    List<DefaultSingleCDockable> dockables_initiallyHidden = new ArrayList<DefaultSingleCDockable>();
+    private List<DefaultSingleCDockable> dockables = new ArrayList<DefaultSingleCDockable>();
+    private List<DefaultSingleCDockable> dockables_initiallyHidden = new ArrayList<DefaultSingleCDockable>();
 
     /**
      * Decision whether docking framework should be activated for a frame
@@ -93,55 +93,55 @@ public abstract class DockingFrame extends JFrame {
         if (!isDockingFrameworkEnabled) return;
 
         splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_DOCKING_FRAME);
-        
+
         //init the ccontrol
         control = new CControl( this );
-        control.setTheme(defaultTheme);
+        control.setTheme(DEFAULT_THEME);
         add( control.getContentArea() );
         if ("en_us".equalsIgnoreCase(Config.get("locale"))) {
             //hard setting to default in case of US as this is DockingFrames default language
             //don't use Locale constant as it is en_US (case sensitive)
             control.setLanguage(new Locale(""));
         }
-        
+
         //init the grid layout
         gridLayout = new CGrid( control );
 
         //ensure that externalized dockables get a split station as parent
         //necessary, otherwise externalized dockables cannot be docked together
         alwaysAddStationsToExternalizedDockables(control);
-        
+
 
     }
-    
+
     public boolean isDockingFrameworkEnabled() {
         return isDockingFrameworkEnabled;
     }
-    
+
     /**
      * Registers a component that is to become a dockable.
      * The dockable is only deployed to the frame if deployDockables is called.
      */
-    protected void addDockable(JComponent c, 
-            String dockableConfigKey, 
-            int x, int y, int width, int height, 
+    protected void addDockable(JComponent c,
+            String dockableConfigKey,
+            int x, int y, int width, int height,
             DockableProperty dockableProperty) {
         String dockableTitle = LocalText.getText(dockableConfigKey);
-        DefaultSingleCDockable d = new DefaultSingleCDockable( 
+        DefaultSingleCDockable d = new DefaultSingleCDockable(
                 dockableTitle, dockableTitle );
         d.add( c, BorderLayout.CENTER );
         d.setTitleIcon(RailsIcon.getByConfigKey(dockableConfigKey).smallIcon);
-        d.setCloseable( 
-                (  dockableProperty == DockableProperty.closeable
-                || dockableProperty == DockableProperty.initially_hidden )
+        d.setCloseable(
+                (  dockableProperty == DockableProperty.CLOSEABLE
+                || dockableProperty == DockableProperty.INITIALLY_HIDDEN)
         );
         gridLayout.add( x, y, width, height, d );
         dockables.add(d);
-        if (dockableProperty == DockableProperty.initially_hidden) {
+        if (dockableProperty == DockableProperty.INITIALLY_HIDDEN ) {
             dockables_initiallyHidden.add(d);
         }
     }
-    
+
     /**
      * Deploys to the frame all dockables that have been added before.
      * Dockables are initially set to invisible if this is as specified
@@ -158,16 +158,16 @@ public abstract class DockingFrame extends JFrame {
      */
     protected void addDockingFrameMenu(JMenuBar menuBar) {
         RootMenuPiece layoutMenu = new RootMenuPiece(
-                LocalText.getText("DockingFrame.menu.layout"), 
+                LocalText.getText("DockingFrame.menu.layout"),
                 false);
-        
-        layoutMenu.add( new SubmenuPiece( 
-                LocalText.getText("DockingFrame.menu.layout.theme"), 
-                false, 
+
+        layoutMenu.add( new SubmenuPiece(
+                LocalText.getText("DockingFrame.menu.layout.theme"),
+                false,
                 new CThemeMenuPiece( control )
         ));
-        
-        SingleCDockableListMenuPiece closeableDockableMenuPiece = 
+
+        SingleCDockableListMenuPiece closeableDockableMenuPiece =
                 new SingleCDockableListMenuPiece(control) {
             @Override
             protected void show(Dockable dockable) {
@@ -179,13 +179,13 @@ public abstract class DockingFrame extends JFrame {
             }
         };
         layoutMenu.add(new SeparatingMenuPiece(closeableDockableMenuPiece,true,true,true));
-        
+
         JMenuItem resetMenuItem = new JMenuItem (
                 LocalText.getText("DockingFrame.menu.layout.reset"));
         resetMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                control.load(layoutName_initial);
-                control.setTheme(defaultTheme);
+                control.load(LAYOUT_NAME_INITIAL);
+                control.setTheme(DEFAULT_THEME);
             }
         });
         layoutMenu.getMenu().add(resetMenuItem);
@@ -201,14 +201,14 @@ public abstract class DockingFrame extends JFrame {
         //deploy menu
         menuBar.add( layoutMenu.getMenu() );
     }
-    
+
     /**
      * May only be called once the docking frame's layout has been constructed.
      * Remembers that layout as the initial one.
-     * Loads a former layout if that was persisted in a prior session. 
+     * Loads a former layout if that was persisted in a prior session.
      */
     protected void initLayout() {
-        control.save(layoutName_initial);
+        control.save(LAYOUT_NAME_INITIAL);
         loadLayout(getLayoutFile(),true);
     }
 
@@ -217,17 +217,17 @@ public abstract class DockingFrame extends JFrame {
      * and restoring prior layout when entering a session.
      */
     abstract protected String getLayoutFileName();
-    
+
     /**
      * get layout directory (and ensure that it is available)
      */
     private File getLayoutDirectory() {
-        return SystemOS.get().getConfigurationFolder(layoutDirectoryName, true);
+        return SystemOS.get().getConfigurationFolder(LAYOUT_DIRECTORY_NAME, true);
     }
 
     private File getLayoutFile() {
-        File layoutFile = new File(getLayoutDirectory(), 
-               getLayoutFileName() + layoutFileSuffix );
+        File layoutFile = new File(getLayoutDirectory(),
+               getLayoutFileName() + LAYOUT_FILE_SUFFIX);
         return layoutFile;
     }
 
@@ -236,7 +236,7 @@ public abstract class DockingFrame extends JFrame {
 
         File layoutFile = getLayoutFile();
         try {
-            control.save(layoutName_current);
+            control.save(LAYOUT_NAME_CURRENT);
             control.writeXML(layoutFile);
             log.info("Layout saved to " + layoutFile.getName());
         } catch (Exception e) {
@@ -244,17 +244,17 @@ public abstract class DockingFrame extends JFrame {
             return;
         }
     }
-    
+
     /**
      * @param isTentative If true, then method only tries to load specified layout
      * but would not produce any error popup.
      */
     private void loadLayout(File layoutFile, boolean isTentative) {
         if (!isDockingFrameworkEnabled) return;
-        
+
         try {
             control.readXML(layoutFile);
-            control.load(layoutName_current);
+            control.load(LAYOUT_NAME_CURRENT);
             log.info("Layout loaded from " + layoutFile.getName());
         } catch (Exception e) {
             if (!isTentative) {
@@ -264,12 +264,12 @@ public abstract class DockingFrame extends JFrame {
             log.error("Layout could not be loaded from " + layoutFile.getName());
             return;
         }
-        
+
         adjustExternalizedActions();
     }
 
     /**
-     * Ensures for all dockables that, if they are externalized, they do not have 
+     * Ensures for all dockables that, if they are externalized, they do not have
      * the default maximize button
      * (as it won't work for the adjusted externalization setup).
      */
@@ -278,7 +278,7 @@ public abstract class DockingFrame extends JFrame {
             adjustExternalizedActions(d);
         }
     }
-    
+
     /**
      * Ensure that externalized dockable does not have default maximize button
      * (as it won't work for the adjusted externalization setup).
@@ -316,14 +316,14 @@ public abstract class DockingFrame extends JFrame {
      * If a dockable is detached / externalized, it would normally put directly
      * under the ScreenDockStation - thus inhibiting any docking to/from this
      * dockable. This is changed such that a split station (that would allow for
-     * that) is put in between the ScreenDockStation and the Dockable. 
+     * that) is put in between the ScreenDockStation and the Dockable.
      */
     private void alwaysAddStationsToExternalizedDockables(CControl cc) {
 
         // access the DockStation which shows our detached (externalized) items
-        CStation<?> screen = (CStation<?>) 
+        CStation<?> screen = (CStation<?>)
                 cc.getStation( CControl.EXTERNALIZED_STATION_ID );
-        
+
         // remove the standard maximize action when externalizing
         // and adds it back when unexternalizing
         // (as maximize won't work for the adjusted externalization setup)
@@ -331,7 +331,7 @@ public abstract class DockingFrame extends JFrame {
             public void visibilityChanged( CDockable cd ){
                 // ignore
             }
-     
+
             public void extendedModeChanged( CDockable cd, ExtendedMode mode ){
                 if( cd instanceof DefaultCDockable ) {
                     DefaultCDockable dockable = (DefaultCDockable) cd;
@@ -344,20 +344,20 @@ public abstract class DockingFrame extends JFrame {
                 }
             }
         });
-        
+
         // if a Dockable is added to that station...
         screen.getStation().addDockStationListener( new ScreenDockStationListener());
- 
-        // make sure a SplitDockStation with one child and a parent 
+
+        // make sure a SplitDockStation with one child and a parent
         // that is a ScreenDockStation does not get removed
-        cc.intern().getController().setSingleParentRemover( 
+        cc.intern().getController().setSingleParentRemover(
                 new CSingleParentRemover( cc ){
             @Override
             protected boolean shouldTest( DockStation station ){
                 if( station instanceof SplitDockStation ) {
                     SplitDockStation split = (SplitDockStation) station;
                     if( split.getDockParent() instanceof ScreenDockStation ) {
-                        // but we want to remove the station if it does 
+                        // but we want to remove the station if it does
                         // not have any children at all
                         return split.getDockableCount() == 0;
                     }
@@ -366,7 +366,7 @@ public abstract class DockingFrame extends JFrame {
             }
         } );
     }
-    
+
     @LayoutLocked(locked = false)
     private class ScreenDockStationListener extends DockStationAdapter {
         public void dockableAdded( DockStation station, final Dockable dockable ){
@@ -385,15 +385,15 @@ public abstract class DockingFrame extends JFrame {
                 // cancel
                 return;
             }
-     
+
             // .. then we just insert a SplitDockStation
             SplitDockStation split = new SplitDockStation();
             DockController controller = station.getController();
-     
+
             try {
                 // disable events while rearranging our layout
                 controller.freezeLayout();
-     
+
                 station.replace( dockable, split );
                 split.drop( dockable );
             }
@@ -401,7 +401,7 @@ public abstract class DockingFrame extends JFrame {
                 // and enable events after we finished
                 controller.meltLayout();
             }
-            
+
             //ensure the correct availability of the maximize button
             adjustExternalizedActions(dockable);
         }

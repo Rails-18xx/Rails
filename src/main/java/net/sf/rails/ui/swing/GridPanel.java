@@ -46,7 +46,7 @@ implements ActionListener, KeyListener {
 
     // TODO: Check if adding the field is compatible
     private static final long serialVersionUID = 1L;
-    
+
     protected static final int NARROW_GAP = 1;
     protected static final int WIDE_GAP = 3;
     protected static final int WIDE_LEFT = 1;
@@ -79,14 +79,13 @@ implements ActionListener, KeyListener {
 
     protected List<JMenuItem> menuItemsToReset = new ArrayList<JMenuItem>();
 
-    protected static Logger log =
-        LoggerFactory.getLogger(GridPanel.class);
+    protected static final Logger log = LoggerFactory.getLogger(GridPanel.class);
 
     private List<JComponent> highlightedComps = new ArrayList<JComponent>();
     protected Color tableBorderColor;
     protected Color cellOutlineColor;
     protected Color highlightedBorderColor;
-    
+
     public GridPanel() {
         //initialize border colors according to the configuration
         if ("enabled".equals(Config.get("gridPanel.tableBorders"))) {
@@ -147,7 +146,7 @@ implements ActionListener, KeyListener {
         //- inner border: the field's native border
         //- outline border: the field's outline (in narrow_gap thickness)
         //- outer border: grid table lines (in wide_gap - narrow_gap thickness)
-        
+
         comp.setBorder(new FieldBorder(comp.getBorder(),
                 new DynamicBorder(cellOutlineColor,NARROW_GAP),
                 new DynamicBorder(tableBorderColor,padTop,padLeft,padBottom,padRight)));
@@ -161,7 +160,7 @@ implements ActionListener, KeyListener {
         if (fields != null && fields[x][y] == null) fields[x][y] = comp;
         comp.setVisible(visible);
     }
-    
+
     /**
      * highlights given component by altering its border's attributes
      */
@@ -169,7 +168,7 @@ implements ActionListener, KeyListener {
         //quit if nothing is to be done
         if (isToBeHighlighted && highlightedComps.contains(comp)) return;
         if (!isToBeHighlighted && !highlightedComps.contains(comp)) return;
-        
+
         if (comp.getBorder() instanceof FieldBorder) {
             FieldBorder fb = (FieldBorder)comp.getBorder();
             fb.setHighlight(isToBeHighlighted);
@@ -181,7 +180,7 @@ implements ActionListener, KeyListener {
             }
         }
     }
-    
+
     protected void removeAllHighlights() {
         for (JComponent c : highlightedComps) {
             if (c.getBorder() instanceof FieldBorder) {
@@ -223,7 +222,7 @@ implements ActionListener, KeyListener {
 
         return result;
     }
-    
+
     public void keyPressed(KeyEvent e) {}
 
     public void keyReleased(KeyEvent e) {}
@@ -231,7 +230,7 @@ implements ActionListener, KeyListener {
     public void keyTyped(KeyEvent e) {}
 
     public void setRowVisibility (int rowIndex, boolean value) {
-        
+
         for (int j=0; j < fields.length; j++) {
             if (fields[j][rowIndex] != null) {
                 fields[j][rowIndex].setVisible(value);
@@ -239,14 +238,14 @@ implements ActionListener, KeyListener {
         }
     }
 
-    
+
     /**
-     * An observer object that receives the updates 
+     * An observer object that receives the updates
      * if the Company is closed
-     * 
+     *
      * TODO: It is unclear to me what the reverseValue really does?
      */
-    public class RowVisibility implements Observer {
+    public static class RowVisibility implements Observer {
 
         private final GridPanel parent;
         private final int rowIndex;
@@ -258,7 +257,7 @@ implements ActionListener, KeyListener {
             this.observable = observable;
             // TODO: This was the previous setup
 //            lastValue = ((BooleanState)observable).value() != reverseValue;
-            
+
         }
 
         public boolean lastValue () {
@@ -268,7 +267,7 @@ implements ActionListener, KeyListener {
         public void update(String text) {
             parent.setRowVisibility(rowIndex, lastValue());
         }
-        
+
         public Observable getObservable() {
             return observable;
         }
@@ -276,19 +275,19 @@ implements ActionListener, KeyListener {
     }
 
     /**
-     * Wrapper for three level compound borders and directly accessing border constituents 
+     * Wrapper for three level compound borders and directly accessing border constituents
      * @author Frederick Weld
      *
      */
     private class FieldBorder extends CompoundBorder {
         private static final long serialVersionUID = 1L;
-        Border nativeInnerBorder;
+        private Border nativeInnerBorder;
         /**
          * remains null if nativeInnerBorder is null or broken
          */
-        DynamicBorder highlightedInnerBorder = null;
-        DynamicBorder outlineBorder;
-        DynamicBorder outerBorder;
+        private DynamicBorder highlightedInnerBorder = null;
+        private DynamicBorder outlineBorder;
+        private DynamicBorder outerBorder;
         public FieldBorder(Border innerBorder,DynamicBorder outlineBorder,DynamicBorder outerBorder) {
             super(new CompoundBorder(outerBorder,outlineBorder),innerBorder);
             nativeInnerBorder = innerBorder;
@@ -310,13 +309,13 @@ implements ActionListener, KeyListener {
         }
         public void setHighlight(boolean isToBeHighlighted) {
             outlineBorder.setHighlight(isToBeHighlighted);
-            this.insideBorder = isToBeHighlighted ? 
+            this.insideBorder = isToBeHighlighted ?
                     highlightedInnerBorder : nativeInnerBorder;
         }
     }
 
     /**
-     * A potentially asymmetric line border providing methods for changing the look 
+     * A potentially asymmetric line border providing methods for changing the look
      * @author Frederick Weld
      *
      */
@@ -333,7 +332,7 @@ implements ActionListener, KeyListener {
             this.padRight = symmetricPad;
             this.borderColor = borderColor;
         }
-        
+
         public DynamicBorder (Color borderColor,int padTop, int padLeft, int padBottom, int padRight) {
             this.padTop = padTop;
             this.padLeft = padLeft;
@@ -341,7 +340,7 @@ implements ActionListener, KeyListener {
             this.padRight = padRight;
             this.borderColor = borderColor;
         }
-        
+
         public void setHighlight(boolean isToBeHighlighted) {
             if (isHighlighted != isToBeHighlighted) {
                 isHighlighted = isToBeHighlighted;
@@ -379,8 +378,8 @@ implements ActionListener, KeyListener {
             return new Insets(padTop,padLeft,padBottom,padRight);
         }
 
-        public boolean isBorderOpaque() { 
-            return true; 
+        public boolean isBorderOpaque() {
+            return true;
         }
     }
 }

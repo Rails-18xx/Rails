@@ -60,18 +60,18 @@ public class GameSetupController {
     private GameUIManager gameUIManager;
 
     // Actions
-    final ActionListener newAction = new NewAction();
-    final ActionListener loadAction = new LoadAction();
-    final ActionListener recentAction = new RecentAction();
-    final ActionListener recoveryAction = new RecoveryAction();
-    final ActionListener quitAction = new QuitAction();
-    final ActionListener optionPanelAction = new OptionPanelAction();
-    final ActionListener infoAction = new InfoAction();
-    final ActionListener creditsAction = new CreditsAction();
-    final ActionListener gameAction = new GameAction();
-    final ActionListener configureAction = new ConfigureAction();
-    final ActionListener randomizeAction = new RandomizeAction();
-    final InputVerifier playerNameVerifier = new PlayerNameVerifier();
+    private final ActionListener newAction = new NewAction();
+    private final ActionListener loadAction = new LoadAction();
+    private final ActionListener recentAction = new RecentAction();
+    private final ActionListener recoveryAction = new RecoveryAction();
+    private final ActionListener quitAction = new QuitAction();
+    private final ActionListener optionPanelAction = new OptionPanelAction();
+    private final ActionListener infoAction = new InfoAction();
+    private final ActionListener creditsAction = new CreditsAction();
+    private final ActionListener gameAction = new GameAction();
+    private final ActionListener configureAction = new ConfigureAction();
+    private final ActionListener randomizeAction = new RandomizeAction();
+    private final InputVerifier playerNameVerifier = new PlayerNameVerifier();
 
     private GameSetupController(SortedSet<GameInfo> gameList, String credits) {
         this.gameList = gameList;
@@ -288,15 +288,15 @@ public class GameSetupController {
             new Thread() {
                 @Override
                 public void run() {
-                    String filePath = SystemOS.get().getConfigurationFolder(GameSaver.autosaveFolder, true).getAbsolutePath()
-                            + File.separator + GameSaver.autosaveFile;
+                    String filePath = SystemOS.get().getConfigurationFolder(GameSaver.AUTOSAVE_FOLDER, true).getAbsolutePath()
+                            + File.separator + GameSaver.AUTOSAVE_FILE;
                     loadAndStartGame(new File(filePath));
                 }
             }.start();
         }
     }
 
-    private class QuitAction extends AbstractAction {
+    private static class QuitAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
         public void actionPerformed(ActionEvent arg0) {
@@ -462,4 +462,51 @@ public class GameSetupController {
         }
     }
 
+    public ActionListener getNewAction() {
+        return newAction;
+    }
+
+    public ActionListener getLoadAction() {
+        return loadAction;
+    }
+
+    public ActionListener getRecentAction() {
+        return recentAction;
+    }
+
+    public ActionListener getRecoveryAction() {
+        return recoveryAction;
+    }
+
+    public ActionListener getQuitAction() {
+        return quitAction;
+    }
+
+    public ActionListener getOptionPanelAction() {
+        return optionPanelAction;
+    }
+
+    public ActionListener getInfoAction() {
+        return infoAction;
+    }
+
+    public ActionListener getCreditsAction() {
+        return creditsAction;
+    }
+
+    public ActionListener getConfigureAction() {
+        return configureAction;
+    }
+
+    public ActionListener getRandomizeAction() {
+        return randomizeAction;
+    }
+
+    public ActionListener getGameAction() {
+        return gameAction;
+    }
+
+    public InputVerifier getPlayerNameVerifier() {
+        return playerNameVerifier;
+    }
 }

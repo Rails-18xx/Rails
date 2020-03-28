@@ -47,7 +47,7 @@ import com.google.common.collect.ImmutableMap;
  * orientations. The hex map manages several layers. Content is seperated in
  * layers in order to ensure good performance in case of only some aspects of
  * the map need to be redrawn.
- * 
+ *
  * In order to avert race conditions during layer drawing, the critical code is
  * synchronized on the hex map instance as monitor object.
  */
@@ -89,7 +89,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
          * from the area defined by the set of rectangles. This might lead to
          * splitting the set's rectangles if only parts of their areas become
          * removed.
-         * 
+         *
          * @return The intersection between the given rectangle and the set of
          * rectangles. Returns null if the intersection is empty.
          */
@@ -182,8 +182,8 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
             super();
             this.hexMap = hexMap;
         }
-        
-        
+
+
         final public void repaint() {
             bufferDirtyRegions.add(new Rectangle(0, 0, getWidth(), getHeight()));
             super.repaint();
@@ -326,9 +326,9 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                 if (colour4 == null) colour4 = Color.GRAY;
             }
         }
-        private static final int strokeWidth = 5;
-        private static final int strokeCap = BasicStroke.CAP_ROUND;
-        private static final int strokeJoin = BasicStroke.JOIN_BEVEL;
+        private static final int STROKE_WIDTH = 5;
+        private static final int STROKE_CAP = BasicStroke.CAP_ROUND;
+        private static final int STROKE_JOIN = BasicStroke.JOIN_BEVEL;
 
         private RoutesLayer(HexMap hexMap) {
             super(hexMap);
@@ -336,7 +336,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
 
         private Rectangle getRoutesBounds(List<GeneralPath> p1,
                 List<GeneralPath> p2) {
-            int margin = (int) Math.ceil(strokeWidth * hexMap.getZoomFactor());
+            int margin = (int) Math.ceil(STROKE_WIDTH * hexMap.getZoomFactor());
 
             List<Rectangle> pathRects = new ArrayList<Rectangle>();
             if (p1 != null) {
@@ -378,8 +378,8 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                     Stroke oldStroke = g.getStroke();
                     Color oldColor = g.getColor();
                     Stroke trainStroke =
-                            new BasicStroke((int) (strokeWidth * hexMap.getZoomFactor()),
-                                    strokeCap, strokeJoin);
+                            new BasicStroke((int) (STROKE_WIDTH * hexMap.getZoomFactor()),
+                                    STROKE_CAP, STROKE_JOIN);
                     g.setStroke(trainStroke);
 
                     Color[] trainColors =
@@ -485,7 +485,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
 
                 // Paint station tokens and texts
                 for (GUIHex hex : hexMap.getHexes()) {
-                    log.debug("hex =" + hex);
+                    log.trace("hex ={}", hex);
                     Rectangle hexrect = hex.getBounds();
 
                     if (g.hitClip(hexrect.x, hexrect.y, hexrect.width,
@@ -528,7 +528,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     /**
      * The only "real" (=swing managed) layer that is used for tool tips
      */
-    private class ToolTipsLayer extends JComponent {
+    private static class ToolTipsLayer extends JComponent {
         private static final long serialVersionUID = 1L;
     }
 
@@ -547,7 +547,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     protected Map<MapHex, GUIHex> hex2gui;
 
     // dynamic variables
-    
+
 
     protected double scale;
     private int zoomStep = 10; // can be overwritten in config
@@ -567,17 +567,17 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     private List<GeneralPath> trainPaths;
 
     // Definitions used by subclasses
-    protected static final double peakMargin = 1.0;
-    protected static final double flatMargin = 0.80;
-    protected static final double coordinatePeakMargin = 0.80;
-    protected static final double coordinateFlatMargin = 0.60;
+    protected static final double PEAK_MARGIN = 1.0;
+    protected static final double FLAT_MARGIN = 0.80;
+    protected static final double COORDINATE_PEAK_MARGIN = 0.80;
+    protected static final double COORDINATE_FLAT_MARGIN = 0.60;
 
     // ("Abstract") Variables to be initialized by map type subclasses
     protected double tileXOffset;
     protected double tileYOffset;
     protected double coordinateXMargin;
     protected double coordinateYMargin;
-    
+
     protected MapHex.Coordinates minimum;
     protected MapHex.Coordinates maximum;
 
@@ -597,11 +597,11 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         this.mapManager = mapManager;
 
         displayMapImage = mapManager.isMapImageUsed();
-        
+
         minimum = mapManager.getMinimum();
         maximum = mapManager.getMaximum();
 
-        log.debug("HexMap init: minimum = " + minimum + ", maximum = " + maximum);
+        log.trace("HexMap init: minimum = {}, maximum = {}", minimum, maximum);
 
         // the following order of instantiation and list-adding defines the
         // layering
@@ -623,7 +623,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         setScale();
         setupHexes();
         setOriginalSize();
-        
+
         currentSize = (Dimension) originalSize.clone();
         setPreferredSize(originalSize);
         // always call zoom to adjust scaling
@@ -657,9 +657,9 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     }
 
     protected void setupHexesGUI() {
-        ImmutableMap.Builder<MapHex, GUIHex> hexMapBuilder = 
+        ImmutableMap.Builder<MapHex, GUIHex> hexMapBuilder =
                 ImmutableMap.builder();
-        
+
         for (MapHex hex:mapManager.getHexes()) {
             GUIHex guiHex = new GUIHex(this, hex, scale);
             hexMapBuilder.put(hex, guiHex);
@@ -711,7 +711,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     public GUIHex getHex(MapHex hex) {
         return hex2gui.get(hex);
     }
-    
+
     public Collection<GUIHex>  getHexes() {
         return hex2gui.values();
     }
@@ -740,15 +740,15 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     public int getZoomStep() {
         return zoomStep;
     }
-    
+
     public double getZoomFactor() {
         return zoomFactor;
     }
 
     private void zoom() {
         zoomFactor = GameUIManager.getImageLoader().getZoomFactor(zoomStep);
-        log.debug("HexMap: zoomStep = " + zoomStep);
-        log.debug("HexMap: zoomFactor = " + zoomFactor);
+        log.trace("HexMap: zoomStep = " + zoomStep);
+        log.trace("HexMap: zoomFactor = " + zoomFactor);
         setScale();
         scaleHexesGUI();
         currentSize.width = (int) (originalSize.width * zoomFactor);
@@ -801,7 +801,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     }
 
     public List<GUIHex> getHexesByCurrentTileId(Tile tile) {
-        ImmutableList.Builder<GUIHex> hexBuilder = 
+        ImmutableList.Builder<GUIHex> hexBuilder =
                 ImmutableList.builder();
         for (MapHex hex : hex2gui.keySet()) {
             if (hex.getCurrentTile() == tile) {
@@ -811,7 +811,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         return hexBuilder.build();
     }
 
-    
+
     // FIXME: Remove the code here, only used for reference during rewrite of token code
 //    @SuppressWarnings("unchecked")
 //    public <T extends LayToken> void setAllowedTokenLays(
@@ -894,7 +894,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     public List<GeneralPath> getTrainPaths() {
         return trainPaths;
     }
-    
+
     public void setTrainPaths(List<GeneralPath> trainPaths) {
         Rectangle dirtyRect =
                 routesLayer.getRoutesBounds(this.trainPaths, trainPaths);
@@ -906,7 +906,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
 
     /**
      * Off-board tiles must be able to retrieve the current phase.
-     * 
+     *
      * @return The current Phase object.
      */
     public Phase getPhase() {

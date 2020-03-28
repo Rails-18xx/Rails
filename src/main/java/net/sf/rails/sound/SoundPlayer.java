@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.rails.sound;
 
@@ -7,6 +7,9 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,36 +19,34 @@ import javazoom.jl.player.advanced.AdvancedPlayer;
 
 /**
  * Handles play requests for music and sfx.
- * 
+ *
  * Some specific requirements:
  * - At most one SFX should be played at the same time (necessiting queuing sfx play requests)
- * 
+ *
  * @author Frederick Weld
  *
  */
 public class SoundPlayer {
 
-    private class SoundFileBuffer {
-        private Map<String,byte[]> fileBuffer = new HashMap<String,byte[]>(); 
+    private static class SoundFileBuffer {
+        private Map<String,byte[]> fileBuffer = new HashMap<>();
         synchronized public BufferedInputStream getFileInputStream(String fileName) {
             if (!fileBuffer.containsKey(fileName)) {
-                try {
-                long length = new File(fileName).length();
-                FileInputStream fis = new FileInputStream(fileName);
-                byte[] fileContent = new byte[(int)length];
-                fis.read(fileContent);
-                fileBuffer.put(fileName, fileContent);
+                try (InputStream fis = Files.newInputStream(Paths.get(fileName))) {
+                    long length = new File(fileName).length();
+                    byte[] fileContent = new byte[(int)length];
+                    fis.read(fileContent);
+                    fileBuffer.put(fileName, fileContent);
                 } catch (Exception e) {return null;}
             }
-            return new BufferedInputStream(
-                    new ByteArrayInputStream(fileBuffer.get(fileName)));
+            return new BufferedInputStream(new ByteArrayInputStream(fileBuffer.get(fileName)));
         }
     }
-    
+
     private class PlayerThread extends Thread {
-        String fileName;
-        PlayerThread priorThread;
-        boolean playingDone;
+        protected String fileName;
+        private PlayerThread priorThread;
+        private boolean playingDone;
         public PlayerThread(String fileName) {
             this.fileName = fileName;
             priorThread = null;
@@ -68,7 +69,7 @@ public class SoundPlayer {
             priorThread = null; //release handle
 
             play();
-            
+
             //wake the subsequent thread if there is one waiting
             synchronized (this) {
                 notifyAll();
@@ -81,7 +82,7 @@ public class SoundPlayer {
                 player.play();
                 player.close();
             }
-            catch (Exception e) { 
+            catch (Exception e) {
                 //if anything goes wrong, don't play anything
             }
         }
@@ -106,13 +107,13 @@ public class SoundPlayer {
                 player.play(startPos, endPos);
                 player.close();
             }
-            catch (Exception e) { 
+            catch (Exception e) {
                 //if anything goes wrong, don't play anything
             }
         }
     }
-    private class PortionPlayer extends AdvancedPlayer {
-        BufferedInputStream bis;
+    private static class PortionPlayer extends AdvancedPlayer {
+        private BufferedInputStream bis;
         public PortionPlayer(BufferedInputStream bis) throws JavaLayerException {
             super(bis);
             this.bis = bis;
@@ -135,15 +136,15 @@ public class SoundPlayer {
                     bis.reset();
                     play(startFrame, endFrame);
                 }
-            } catch (Exception e) { 
+            } catch (Exception e) {
                 //if anything goes wrong, don't play anything
             }
         }
     }
     private class LoopPlayerThread extends PlayerThread {
-        boolean isStopped = false;
-        Player player = null;
-        LoopPlayerThread previousLoopPlayerThread = null;
+        private boolean isStopped = false;
+        private Player player = null;
+        private LoopPlayerThread previousLoopPlayerThread = null;
         public LoopPlayerThread(String fileName) {
             super(fileName);
         }
@@ -160,7 +161,7 @@ public class SoundPlayer {
                     player.close();
                 }
             }
-            catch (Exception e) { 
+            catch (Exception e) {
                 //if anything goes wrong, don't play anything
             }
         }
@@ -174,16 +175,16 @@ public class SoundPlayer {
             this.previousLoopPlayerThread = previousLoopPlayerThread;
         }
     }
-    
+
     private PlayerThread lastSFXThread = null;
-    
+
     private LoopPlayerThread lastBGMThread = null;
-    
+
     private SoundFileBuffer soundFileBuffer = new SoundFileBuffer();
-    
+
     /**
      * atomic switching of the pointer to the last thread which played an sfx.
-     * @param newThread Player thread for the new sfx 
+     * @param newThread Player thread for the new sfx
      * @return Player thread which was the last to play a sfx
      */
     synchronized private PlayerThread adjustLastSFXThread(PlayerThread newThread) {
@@ -191,7 +192,7 @@ public class SoundPlayer {
         lastSFXThread = newThread;
         return pt;
     }
-    
+
     /**
      * atomic switching of the pointer to the last thread which played music.
      * @param newThread Player thread for the new music
@@ -202,7 +203,7 @@ public class SoundPlayer {
         lastBGMThread = newThread;
         return pt;
     }
-    
+
     private void playSFX(PlayerThread newPlayerThread,boolean playImmediately) {
         PlayerThread oldPlayerThread = adjustLastSFXThread(newPlayerThread);
         if (!playImmediately) {
@@ -210,7 +211,7 @@ public class SoundPlayer {
         }
         newPlayerThread.start();
     }
-    
+
     private void playSFX(String fileName, boolean playImmediately) {
         playSFX(new PlayerThread (fileName),playImmediately);
     }
@@ -221,7 +222,7 @@ public class SoundPlayer {
     }
 
     /**
-     * SFX played after prior SFX playing has been completed  
+     * SFX played after prior SFX playing has been completed
      */
     public void playSFXByConfigKey(String configKey) {
         playSFX(SoundConfig.get(configKey),
@@ -240,24 +241,24 @@ public class SoundPlayer {
         playSFX(SoundConfig.get(configKey), playSoundProportion,
                 SoundConfig.KEYS_SFX_IMMEDIATE_PLAYING.contains(configKey));
     }
-    
+
     /**
-     * Plays new background music and stops old BGM only after all currently playing 
+     * Plays new background music and stops old BGM only after all currently playing
      * sfx are finished.
      */
     public void playBGM(String backgroundMusicFileName) {
         LoopPlayerThread newPlayerThread = new LoopPlayerThread(backgroundMusicFileName);
         LoopPlayerThread oldPlayerThread = adjustLastBGMThread(newPlayerThread);
-        
+
         //interrupt old bgm when starting the new bgm
         newPlayerThread.setPreviousLoopPlayer(oldPlayerThread);
-        
+
         //wait for playing new bgm until all sfx have finished playing
         newPlayerThread.setPriorThread(lastSFXThread);
-        
+
         newPlayerThread.start();
     }
-    
+
     public void playBGMByConfigKey(String configKey) {
         playBGM(SoundConfig.get(configKey));
     }

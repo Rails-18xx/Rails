@@ -154,9 +154,7 @@ public class RailsRoot extends Root implements RailsItem {
             if (revenueManager != null)
                 revenueManager.finishConfiguration(this);
         } catch (ConfigurationException e) {
-            log.error(e.getMessage());
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             DisplayBuffer.add(this, e.getMessage());
             return false;
         }

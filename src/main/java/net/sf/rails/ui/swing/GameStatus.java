@@ -372,7 +372,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             c = companies[i];
             companyIndex.put(c, new Integer(i));
             rowVisibilityObservers[i]
-                                   = new RowVisibility (this, certPerPlayerYOffset + i, c.getInGameModel(), false);
+                                   = new RowVisibility(this, certPerPlayerYOffset + i, c.getInGameModel(), false);
             boolean visible = rowVisibilityObservers[i].lastValue();
 
             f = new Caption(c.getId());
@@ -700,7 +700,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
             // Assume that we will have either sell or buy actions
             // under one ClickField, not both. This seems guaranteed.
-            log.debug("Action is {}", actions.get(0).toString());
+            log.debug("Action is {}", actions.get(0));
 
             if ( actions.size() == 0 ) {
                 log.warn("No ClickField action found");
@@ -900,7 +900,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                     processGameSpecificActions(actor, actions.get(0));
             }
         } else {
-            log.warn("Action from unknown source: {}", source.toString());
+            log.warn("Action from unknown source: {}", source);
         }
 
         chosenAction = processGameSpecificFollowUpActions(actor, chosenAction);

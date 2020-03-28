@@ -26,23 +26,21 @@ import java.util.List;
 public class NameTrainsDialog extends JDialog implements ActionListener {
 
     private static final long serialVersionUID = 1L;
-    GridBagConstraints gc;
-    ORWindow orWindow;
-    AssignNamedTrains action;
-    List<NamedTrainToken> tokens;
-    List<NameableTrain> trains;
-    int numberOfTrains;
+    private GridBagConstraints gc;
+    private ORWindow orWindow;
+    private AssignNamedTrains action;
+    private List<NamedTrainToken> tokens;
+    private List<NameableTrain> trains;
+    private int numberOfTrains;
 
-    List<NameableTrain> trainPerToken;
-    boolean changed = false;
+    private List<NameableTrain> trainPerToken;
+    private boolean changed = false;
 
-    JPanel pane, selectionPane, buttonPane;
-    JButton doneButton, cancelButton;
-    Map<NamedTrainToken, List<JRadioButton>> buttonsPerToken =
-            new HashMap<NamedTrainToken, List<JRadioButton>>();
+    private JPanel pane, selectionPane, buttonPane;
+    private JButton doneButton, cancelButton;
+    private Map<NamedTrainToken, List<JRadioButton>> buttonsPerToken = new HashMap<NamedTrainToken, List<JRadioButton>>();
 
-    protected static Logger log =
-            LoggerFactory.getLogger(NameTrainsDialog.class);
+    protected static final Logger log = LoggerFactory.getLogger(NameTrainsDialog.class);
 
     public NameTrainsDialog(ORWindow orWindow, AssignNamedTrains action) {
 

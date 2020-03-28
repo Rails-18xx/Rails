@@ -45,8 +45,8 @@ implements ActionListener, KeyListener, RevenueListener {
     public static final String TAKE_LOANS_CMD = "TakeLoans";
     public static final String REPAY_LOANS_CMD = "RepayLoans";
 
-    ORWindow orWindow;
-    ORUIManager orUIManager;
+    private ORWindow orWindow;
+    private ORUIManager orUIManager;
 
     private JPanel statusPanel;
     private JPanel buttonPanel;
@@ -103,7 +103,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private Spinner directIncomeSelect[];
     private Field directIncomeRevenue[];
     private int bonusRevXOffset, bonusRevYOffset;
-    
+
     private boolean privatesCanBeBought = false;
     private boolean bonusTokensExist = false;
     private boolean hasCompanyLoans = false;
@@ -130,8 +130,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private RevenueAdapter revenueAdapter = null;
     private Thread revenueThread = null;
 
-    protected static Logger log =
-            LoggerFactory.getLogger(ORPanel.class);
+    protected static final Logger log = LoggerFactory.getLogger(ORPanel.class);
 
     public ORPanel(ORWindow parent, ORUIManager orUIManager) {
         super();
@@ -171,7 +170,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         setLayout(new BorderLayout());
         add(statusPanel, BorderLayout.CENTER);
-        
+
         //only add button panel directly for conventional layout
         if (!parent.isDockingFrameworkEnabled()) {
             add(buttonPanel, BorderLayout.SOUTH);
@@ -293,7 +292,7 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     private void initButtonPanel() {
-        
+
         // sfy: operatingcosts button
         buttonOC = new ActionButton(RailsIcon.OPERATING_COST);
         buttonOC.setActionCommand(OPERATING_COST_CMD);
@@ -333,7 +332,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         //choose button panel layout depending on whether panel becomes a dockable
         if (orWindow.isDockingFrameworkEnabled()) {
-            
+
             //customized panel for dockable layout
             //the minimal size is defined by the size of one button
             //(aim here: user can choose whether buttons are laid out
@@ -360,7 +359,7 @@ implements ActionListener, KeyListener, RevenueListener {
                     return getMinimumSize();
                 }
             };
-            
+
         } else {
             //plain panel for conventional layout
             buttonPanel = new JPanel();
@@ -376,13 +375,13 @@ implements ActionListener, KeyListener, RevenueListener {
         //for dockable button panel, ensure that all buttons have the same size
         //(necessary, otherwise vertical/box layout will look ugly)
         if (orWindow.isDockingFrameworkEnabled()) {
-            
+
             //get maximum size
             Dimension maxSize = new Dimension();
             for (Component c : Arrays.asList( buttonPanel.getComponents() )) {
-                if (c.getPreferredSize().width > maxSize.width) 
+                if (c.getPreferredSize().width > maxSize.width)
                     maxSize.width = c.getPreferredSize().width;
-                if (c.getPreferredSize().height > maxSize.height) 
+                if (c.getPreferredSize().height > maxSize.height)
                     maxSize.height = c.getPreferredSize().height;
             }
             //apply maximum size to all buttons
@@ -391,9 +390,9 @@ implements ActionListener, KeyListener, RevenueListener {
             }
 
         }
-        
+
         buttonPanel.setOpaque(true);
-        
+
     }
 
     public MouseListener getCompanyCaptionMouseClickListener() {
@@ -517,7 +516,7 @@ implements ActionListener, KeyListener, RevenueListener {
         addField(new Caption("earned"), revXOffset, 1, 1, 1, WIDE_BOTTOM);
         addField(new Caption("payout"), revXOffset + 1, 1, 1, 1, WIDE_BOTTOM
                 + WIDE_RIGHT);
-        
+
         if (hasDirectCompanyIncomeInOr) {
             bonusRevXOffset = currentXOffset += lastXWidth;
             bonusRevYOffset =leftCompNameYOffset;
@@ -545,7 +544,7 @@ implements ActionListener, KeyListener, RevenueListener {
         for (int i = 0; i < nc; i++) {
             c = companies[i];
             rowVisibilityObservers[i]
-                                   = new RowVisibility (this, leftCompNameYOffset + i, c.getInGameModel(), true);
+                                   = new RowVisibility(this, leftCompNameYOffset + i, c.getInGameModel(), true);
             observers.add(rowVisibilityObservers[i]);
 
             boolean visible = !c.isClosed();
@@ -630,9 +629,9 @@ implements ActionListener, KeyListener, RevenueListener {
 
             f = revenue[i] = new Field(c.getLastRevenueModel());
             addField(f, revXOffset, revYOffset + i, 1, 1, 0, visible);
-          
+
             f = revenueSelect[i] = new Spinner(0, 0, 0, GameManager.getRevenueSpinnerIncrement());
-            //align spinner size with field size 
+            //align spinner size with field size
             //(so that changes to visibility don't affect panel sizing)
             f.setPreferredSize(revenue[i].getPreferredSize());
             addField(f, revXOffset, revYOffset + i, 1, 1, 0,  false);
@@ -645,7 +644,7 @@ implements ActionListener, KeyListener, RevenueListener {
             if(hasDirectCompanyIncomeInOr) {
                 f = directIncomeRevenue[i] = new Field(c.getLastDirectIncomeModel());
                 addField(f, bonusRevXOffset, bonusRevYOffset + i, 1, 1, 0, visible);
-                
+
                 f = directIncomeSelect[i] = new Spinner(0, 0, 0, GameManager.getRevenueSpinnerIncrement());
 
                 f.setPreferredSize(directIncomeRevenue[i].getPreferredSize());
@@ -733,7 +732,8 @@ implements ActionListener, KeyListener, RevenueListener {
         PhaseManager pm = orWindow.getGameUIManager().getRoot().getPhaseManager();
         List<Phase> phases = pm.getPhases();
         JMenu item;
-        StringBuffer b = new StringBuffer("<html>");
+        StringBuffer b;
+        b = new StringBuffer("<html>");
 
         phasesInfoMenu = new JMenu(LocalText.getText("Phases"));
         phasesInfoMenu.setEnabled(true);
@@ -835,7 +835,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 int revenueValue = ra.calculateRevenue();
                 log.debug("Revenue Value:" + revenueValue);
                 log.debug("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
-                //try-catch clause temporary workaround as revenue adapter's 
+                //try-catch clause temporary workaround as revenue adapter's
                 //convertRcRun might erroneously raise exceptions
                 try {ra.drawOptimalRunAsPath(orUIManager.getMap());}
                 catch (Exception e) {}
@@ -847,8 +847,8 @@ implements ActionListener, KeyListener, RevenueListener {
                  * 1822CA: Mail Contract
                  * 1854 old/new : Mail Contract ?
                  */
-                
-                
+
+
                 if (!Config.getDevelop()) {
                     //parent component is ORPanel so that dialog won't hide the routes painted on the map
                     JOptionPane.showMessageDialog(this,
@@ -878,7 +878,7 @@ implements ActionListener, KeyListener, RevenueListener {
             orUIManager.getMap().setTrainPaths(null);
             //but retain paths already existing before
             if (revenueAdapter != null) {
-                //try-catch clause temporary workaround as revenue adapter's 
+                //try-catch clause temporary workaround as revenue adapter's
                 //convertRcRun might erroneously raise exceptions
                 try {revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());}
                 catch (Exception e) {}
@@ -902,7 +902,7 @@ implements ActionListener, KeyListener, RevenueListener {
         redoButton.setEnabled(false);
 
         disableRoutesDisplay();
-        
+
         //clear all highlighting (president column and beyond)
         resetActions();
 
@@ -910,7 +910,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public void redrawRoutes() {
         if (revenueAdapter != null && isDisplayRoutes()) {
-            //try-catch clause temporary workaround as revenue adapter's 
+            //try-catch clause temporary workaround as revenue adapter's
             //convertRcRun might erroneously raise exceptions
             try {revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());}
             catch (Exception e) {}
@@ -939,7 +939,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 // Hide the spinner here, because we might not return
                 // via InitPayoutStep, where this would otherwise be done.
                 if(hasDirectCompanyIncomeInOr) {
-                    setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], 
+                    setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
                             directIncomeSelect[orCompIndex], directIncomeRevenue[orCompIndex], false);
                 } else {
                 setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
@@ -1006,7 +1006,7 @@ implements ActionListener, KeyListener, RevenueListener {
         }
     }
 
-   
+
 
     public int getRevenue(int orCompIndex) {
         return ((Integer) revenueSelect[orCompIndex].getValue()).intValue();
@@ -1060,7 +1060,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public void resetCurrentRevenueDisplay() {
         if (hasDirectCompanyIncomeInOr) {
-            setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], 
+            setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
                     directIncomeSelect[orCompIndex], directIncomeRevenue[orCompIndex], false);
         } else {
         setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
@@ -1068,7 +1068,7 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     /**
-     * 
+     *
      * @return True if route should be displayed (at least for the set revenue step)
      */
     private boolean isDisplayRoutes() {
@@ -1080,7 +1080,7 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     /**
-     * 
+     *
      * @return True if the routes of the currently active company should be displayed.
      * As a prerequisite of this feature, route highlighting has to be enabled/supported.
      */
@@ -1140,9 +1140,9 @@ implements ActionListener, KeyListener, RevenueListener {
         this.orComp = orComp;
         this.orCompIndex = orCompIndex;
         president[orCompIndex].setHighlight(true);
-        
+
         removeAllHighlights();
-        
+
         buttonOC.clearPossibleActions();
         button1.clearPossibleActions();
         button2.clearPossibleActions();
@@ -1155,7 +1155,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         updateCurrentRoutes(false);
     }
-    
+
     public void initTileLayingStep() {
 
         tileCaption.setHighlight(true);
@@ -1217,13 +1217,13 @@ implements ActionListener, KeyListener, RevenueListener {
         }
         if (finalResult) {
             orUIManager.getMap().setTrainPaths(null);
-            //try-catch clause temporary workaround as revenue adapter's 
+            //try-catch clause temporary workaround as revenue adapter's
             //convertRcRun might erroneously raise exceptions
             //leaving on exception is admissible as exception only occur
             //if revenue would be 0.
             try {
                 revenueAdapter.drawOptimalRunAsPath(orUIManager.getMap());
-            
+
                 if (isRevenueValueToBeSet) {
                     orUIManager.getMessagePanel().setInformation("Best Run Value = " + bestRevenue +
                             " with " + Util.convertToHtml(revenueAdapter.getOptimalRunPrettyPrint(false)));
@@ -1247,7 +1247,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         SetDividend clonedAction;
         if(hasDirectCompanyIncomeInOr) {
-            setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], 
+            setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
                     directIncomeSelect[orCompIndex], directIncomeRevenue[orCompIndex], false);
         } else {
         setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
@@ -1401,14 +1401,11 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     public void finishORCompanyTurn(int orCompIndex) {
-
         //clear all highlighting (president column and beyond)
         resetActions();
 
         button1.setEnabled(false);
 
-        orCompIndex = -1;
-        
         orUIManager.getMap().setTrainPaths(null);
     }
 
@@ -1428,20 +1425,20 @@ implements ActionListener, KeyListener, RevenueListener {
         f.setVisible(!active);
         s.setVisible(active);
     }
-    
+
     private void setSelect(JComponent f, JComponent s, JComponent s2,
             JComponent f2, boolean active) {
         f.setVisible(!active);
         s.setVisible(active);
         f2.setVisible(!active);
         s2.setVisible(active);
-        
+
     }
 
     public PublicCompany[] getOperatingCompanies() {
         return companies;
     }
-    
+
     public JPanel getButtonPanel() {
         return buttonPanel;
     }
@@ -1483,7 +1480,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public void setTreasuryBonusRevenue(int orCompIndex2, int bonusAmount) {
         directIncomeRevenue[orCompIndex2].setText(orUIManager.getGameUIManager().format(bonusAmount));
-        
+
     }
 
 }

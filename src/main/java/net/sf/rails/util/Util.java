@@ -40,7 +40,7 @@ public final class Util {
 
     public static String appendWithDelimiter(String s1, String s2,
             String delimiter) {
-        StringBuffer b = new StringBuffer(s1 != null ? s1 : "");
+        StringBuilder b = new StringBuilder(s1 != null ? s1 : "");
         if (b.length() > 0) b.append(delimiter);
         b.append(s2);
         return b.toString();

@@ -42,7 +42,7 @@ public class StartRound_1837_2ndEd extends StartRound {
     public boolean setPossibleActions() {
 
         possibleActions.clear();
-        
+
         Player currentPlayer = playerManager.getCurrentPlayer();
 
         switch (currentStep.value()) {
@@ -97,12 +97,12 @@ public class StartRound_1837_2ndEd extends StartRound {
 
     @Override
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
-        StartItem item = boughtItem.getStartItem();                                                                                                                                     
+        StartItem item = boughtItem.getStartItem();
         int status = boughtItem.getStatus();
         String errMsg = null;
         Player player = playerManager.getCurrentPlayer();
         int price = 0;
-                                
+
         while (true) {
 
             // Is the item buyable?
@@ -129,15 +129,12 @@ public class StartRound_1837_2ndEd extends StartRound {
             return false;
         }
 
-        
-
         assignItem(player, item, price, 0);
         ((PublicCertificate) item.getPrimary()).getCompany().start();
         setNextSelectingPlayer();
         currentStep.set(SELECT_STEP);
 
         return true;
-
     }
 
     /**
@@ -151,7 +148,7 @@ public class StartRound_1837_2ndEd extends StartRound {
     protected boolean bid(String playerName, BidStartItem bidItem) {
 
         StartItem item = bidItem.getStartItem();
-        StartItem auctionedItem = (StartItem) currentAuctionItem.value();
+        StartItem auctionedItem = currentAuctionItem.value();
         String errMsg = null;
         Player player = playerManager.getCurrentPlayer();
         int bidAmount = bidItem.getActualBid();
@@ -213,8 +210,6 @@ public class StartRound_1837_2ndEd extends StartRound {
             return false;
         }
 
-        
-
         if (currentStep.value() == SELECT_STEP) {
 
             currentAuctionItem.set(item);
@@ -229,7 +224,7 @@ public class StartRound_1837_2ndEd extends StartRound {
             if (bidAmount == -1) {
                 currentStep.set(OPEN_STEP);
             }
- 
+
             ReportBuffer.add(this, " ");
             ReportBuffer.add(this, LocalText.getText("SelectForAuctioning",
                     playerName,
@@ -329,11 +324,10 @@ public class StartRound_1837_2ndEd extends StartRound {
     }
 
     private void setNextBiddingPlayer() {
-        
         Player currentPlayer;
         do {
             currentPlayer = playerManager.setCurrentToNextPlayer();
-        } while (((StartItem) currentAuctionItem.value()).isActive(currentPlayer) == false);
+        } while ( !currentAuctionItem.value().isActive(currentPlayer) );
     }
 
     private void setNextSelectingPlayer() {

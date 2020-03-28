@@ -4,15 +4,15 @@ import net.sf.rails.game.*;
 import net.sf.rails.game.state.IntegerState;
 
 public final class PublicCompany_1862 extends PublicCompany {
-    
+
     protected final IntegerState status = IntegerState.create(this, "status");
 
     public static final int UNAVAILABLE = 0;
     public static final int BIDDABLE = 1;
-    
+
     private boolean startable = false;
 
-    public static final String[] statusName =
+    protected static final String[] statusName =
             new String[] { "Unavailable", "Biddable" };
 
 
@@ -28,11 +28,9 @@ public final class PublicCompany_1862 extends PublicCompany {
     public IntegerState getStatusModel() {
         return status;
     }
-    
+
     public void setStartable(boolean startable) {
         this.startable = startable;
     }
-    
-
 
 }

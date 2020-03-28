@@ -1,5 +1,6 @@
 package net.sf.rails.game.specific._1880;
 
+import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
@@ -10,18 +11,16 @@ import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.common.GuiDef;
 
 
-public class GameManager_1880 extends net.sf.rails.game.GameManager {
+public class GameManager_1880 extends GameManager {
 
-    protected Class<? extends ShareSellingRound> shareSellingRoundClass
-    = ShareSellingRound_1880.class;
-
-    private final ParSlotManager parSlotManager;    
+    private final ParSlotManager parSlotManager;
     private final OperatingRoundControl_1880 orControl;
-    
+
     public GameManager_1880(RailsRoot parent, String id) {
         super(parent, id);
         orControl = new OperatingRoundControl_1880(parent, "OrControl");
         parSlotManager = new ParSlotManager(this, "ParSlotControl");
+        shareSellingRoundClass = ShareSellingRound_1880.class;
     }
 
     @Override
@@ -36,9 +35,9 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
      */
     @Override
     public void nextRound(Round round) {
-        if (round instanceof StartRound) { 
+        if (round instanceof StartRound) {
             if (((StartRound) round).getStartPacket().areAllSold()) { // This start round was "completed"
-                // check if there are other StartPackets, otherwise stockRounds start 
+                // check if there are other StartPackets, otherwise stockRounds start
                 beginStartRound();
             } else {
                 startOperatingRound(runIfStartPacketIsNotCompletelySold());
@@ -53,14 +52,14 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
                 finishGame();
             } else if (getRoot().getCompanyManager().getNextUnfinishedStartPacket() != null) {
                 beginStartRound();
-            } else if (orControl.isExitingToStockRound() == true) {
+            } else if ( orControl.isExitingToStockRound() ) {
                 startStockRound();
             } else {
                 orControl.startedFromOperatingRound();
                 relativeORNumber.add(1);
                 startOperatingRound(true);
             }
-            
+
         }
     }// End of nextRound
 
@@ -75,8 +74,8 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
     @Override
     public void startShareSellingRound(Player player, int cashToRaise,
             PublicCompany cashNeedingCompany, boolean problemDumpOtherCompanies) {
-        
-    
+
+
         interruptedRound = getCurrentRound();
 
      // An id basd on interruptedRound and company id
@@ -95,11 +94,11 @@ public class GameManager_1880 extends net.sf.rails.game.GameManager {
     @Override
     public void finishShareSellingRound() {
 
-        possibleActions.clear(); //Do we need this here ? 
-        
+        possibleActions.clear(); //Do we need this here ?
+
         super.finishShareSellingRound();
     }
-    
+
     public ParSlotManager getParSlotManager() {
         return parSlotManager;
     }

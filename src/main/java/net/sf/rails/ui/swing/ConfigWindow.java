@@ -245,18 +245,19 @@ class ConfigWindow extends JFrame {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             addToGridBag(panel, spinner, gbc);
             addEmptyLabel(panel, gbc);
-        break;
+            break;
         case FONT: // fonts are a special list
             if (!Util.hasValue(configValue)) {
                 configValue = ((Font)UIManager.getDefaults().get("Label.font")).getFamily();
             }
+            // fall through
         case LIST:
             String[] allowedValues = new String[1];
             if (item.type == ConfigItem.ConfigType.FONT) {
                 allowedValues = GraphicsEnvironment.getLocalGraphicsEnvironment().
                 getAvailableFontFamilyNames();
             } else {
-                allowedValues = (String[])item.allowedValues.toArray(allowedValues);
+                allowedValues = item.allowedValues.toArray(allowedValues);
             }
             final JComboBox<String> comboBox = new JComboBox<String>(allowedValues);
             comboBox.setSelectedItem(configValue);

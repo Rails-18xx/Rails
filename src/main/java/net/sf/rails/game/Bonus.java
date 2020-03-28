@@ -32,14 +32,14 @@ public class Bonus implements Closeable, RevenueStaticModifier {
 /*    private String removingObjectDesc = null;
     private Object removingObject = null;
 */
-    
+
     public Bonus (PublicCompany owner,
             String name, int value, List<MapHex> locations) {
         this.owner = owner;
         this.name = name;
         this.value = value;
         this.locations = locations;
-    
+
         // add them to the call list of the RevenueManager
         RailsRoot.getInstance().getRevenueManager().addStaticModifier(this);
 
@@ -62,7 +62,7 @@ public class Bonus implements Closeable, RevenueStaticModifier {
             return name.substring(0, 2);
         }
 
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         for (MapHex location : locations) {
             if (b.length() > 0) b.append(",");
             b.append(location.getId());
@@ -87,7 +87,7 @@ public class Bonus implements Closeable, RevenueStaticModifier {
         RailsRoot.getInstance().getRevenueManager().removeStaticModifier(this);
     }
 
-    
+
     public boolean equals (Bonus b) {
         return (b.name.equals(name))
                && b.value == value;
@@ -109,7 +109,7 @@ public class Bonus implements Closeable, RevenueStaticModifier {
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // 1. check operating company
         if (owner != revenueAdapter.getCompany()) return false;
-        
+
         // 2. find vertices to hex
         boolean found = false;
         Set<NetworkVertex> bonusVertices = NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), locations);
@@ -127,5 +127,5 @@ public class Bonus implements Closeable, RevenueStaticModifier {
         if (name == null) return null;
         return "Bonus active = " + name;
     }
-    
+
 }

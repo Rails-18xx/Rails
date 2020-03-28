@@ -57,7 +57,7 @@ class ReportSet {
             }
         }
 
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         boolean init = true;
         for (String message : messages) {
             message = Util.convertToHtml(message);
@@ -65,7 +65,7 @@ class ReportSet {
                 if (activeMessage) {
                     s.append("<span bgcolor=Yellow>" + ReportBuffer.ACTIVE_MESSAGE_INDICATOR);
                 }
-                s.append("<a href=http://rails:" + changeSet.getIndex() + ">");
+                s.append("<a href=http://rails:").append(changeSet.getIndex()).append(">");
                 s.append(message);
                 s.append("</a>");
                 if (activeMessage) {
@@ -74,7 +74,7 @@ class ReportSet {
                 s.append(NEWLINE_STRING);
                 init = false;
             } else {
-                s.append(message + NEWLINE_STRING); // see above
+                s.append(message).append(NEWLINE_STRING); // see above
             }
         }
         return s.toString();

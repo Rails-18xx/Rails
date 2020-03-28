@@ -36,11 +36,11 @@ import com.google.common.collect.Sets;
  * holding certificates. Some minor company types may have only one certificate,
  * but this will still be the form in which ownership is expressed. <p> Company
  * shares may or may not have a price on the stock market.
- * 
+ *
  */
 public class PublicCompany extends RailsAbstractItem implements Company, RailsMoneyOwner, PortfolioOwner, Comparable<PublicCompany> {
-    
-    private static Logger log = LoggerFactory.getLogger(PublicCompany.class);
+
+    private static final Logger log = LoggerFactory.getLogger(PublicCompany.class);
 
     public static final int CAPITALISE_FULL = 0;
 
@@ -66,7 +66,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     protected int homeBaseTokensLayTime = START_OF_FIRST_OR;
 
-    
+
     /**
      * Foreground (i.e. text) colour of the company tokens (if pictures are not
      * used)
@@ -108,8 +108,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     protected final BaseTokensModel baseTokens = BaseTokensModel.create(this, "baseTokens"); // Create after cloning ?
     protected final PortfolioModel portfolio = PortfolioModel.create(this);
-    
-    
+
+
     /**
      * Initial (par) share price, represented by a stock market location object
      */
@@ -119,7 +119,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected PriceModel currentPrice;
 
     /** Company treasury, holding cash */
-    protected final PurseMoneyModel treasury = 
+    protected final PurseMoneyModel treasury =
             PurseMoneyModel.create(this, "treasury", false);
 
     /** PresidentModel */
@@ -138,7 +138,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected final CountingMoneyModel lastRevenue = CountingMoneyModel.create(this, "lastRevenue", false);
 
     public final CountingMoneyModel  directIncomeRevenue = CountingMoneyModel.create(this, "directIncome", false);
-    
+
     /** Most recent Direct Company Treasury income earned. */
     protected final CountingMoneyModel lastDirectIncome = CountingMoneyModel.create(this, "lastDirectIncome", false);
 
@@ -161,9 +161,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected final BooleanState inGameState = BooleanState.create(this, "inGameState", true);
 
     // TODO: the extra turn model has to be rewritten (it is not fully undo proof)
-    
+
     /** Stores the number of turns with extraLays */
-    protected Map<String, IntegerState> turnsWithExtraTileLays = null; 
+    protected Map<String, IntegerState> turnsWithExtraTileLays = null;
 
     /** This receives the current value of turnsWithExtraTileLays  */
     protected GenericState<IntegerState> extraTiles = GenericState.create(this, "extraTiles");
@@ -173,7 +173,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     protected final StringState tilesLaidThisTurn = StringState.create(this, "tilesLaidThisTurn");
 
-    protected final CountingMoneyModel tilesCostThisTurn = CountingMoneyModel.create(this, "tilesCostThisTurn", false); 
+    protected final CountingMoneyModel tilesCostThisTurn = CountingMoneyModel.create(this, "tilesCostThisTurn", false);
 
     protected final StringState tokensLaidThisTurn = StringState.create(this, "tokenLaidThisTurn");
 
@@ -215,15 +215,15 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected boolean mustHaveOperatedToTradeShares = false;
 
     protected List<Tag> certificateTags = null;
-    
+
     /** The certificates of this company (minimum 1) */
     protected final ArrayListState<PublicCertificate> certificates = ArrayListState.create(this, "ownCertificates");
     /** Are the certificates available from the first SR? */
-    boolean certsAreInitiallyAvailable = true;
+    protected boolean certsAreInitiallyAvailable = true;
 
     /** What percentage of ownership constitutes "one share" */
     protected IntegerState shareUnit = IntegerState.create(this, "shareUnit", DEFAULT_SHARE_UNIT);
-    
+
     /** What number of share units relates to the share price
      * (normally 1, but 2 for 1835 Prussian)
      */
@@ -248,7 +248,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     /** Must payout exceed stock price to move token right? */
     protected boolean payoutMustExceedPriceToMove = false;
-    
+
     /** Multiple certificates those that represent more than one nominal share unit (except president share) */
     protected boolean hasMultipleCertificates = false;
 
@@ -305,19 +305,22 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     private String infoText ="";
     private String parentInfoText ="";
     private final BooleanState closed = BooleanState.create(this, "closed", false);
-    
+
     /**
-     *  Relation to a later to be founded National/Regional Major Company 
+     *  Relation to a later to be founded National/Regional Major Company
      *  */
     private String relatedPublicCompany = null;
 
     private String foundingStartCompany = null;
 
-
     /**
      * Used by Configure (via reflection) only
      */
     public PublicCompany(RailsItem parent, String id) {
+        this(parent, id, true);
+    }
+
+    public PublicCompany(RailsItem parent, String id, boolean hasStockPrice) {
         super(parent, id);
         lastRevenue.setSuppressInitialZero(true);
 
@@ -327,18 +330,19 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         tokensCostThisTurn.setSuppressZero(true);
         trainsCostThisTurn.setSuppressZero(true);
         trainsCostThisTurn.setDisplayNegative(true);
-            
+
         // Bonuses
         bonusValue.setBonuses(bonuses);
 
+        this.hasStockPrice = hasStockPrice;
         if (hasStockPrice) {
             parPrice = PriceModel.create(this, "ParPrice", false);
             currentPrice = PriceModel.create(this, "currentPrice", true);
             canSharePriceVary = BooleanState.create(this, "canSharePriceVary", true);
         }
     }
-    
-    
+
+
     /**
      * To configure all public companies from the &lt;PublicCompany&gt; XML
      * element
@@ -358,9 +362,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         bgColour = Util.parseColour(bgHexColour);
 
         floatPerc = tag.getAttributeAsInteger("floatPerc", floatPerc);
-        
+
         relatedPublicCompany = tag.getAttributeAsString ("relatedCompany", relatedPublicCompany);
-        
+
         foundingStartCompany =  tag.getAttributeAsString("foundingCompany", foundingStartCompany);
 
         startSpace = tag.getAttributeAsString("startspace");
@@ -583,7 +587,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
 
     }
-    
+
 
     public void setIndex (int index) {
         publicNumber = index;
@@ -620,7 +624,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             // Throw away
             // the per-type
             // specification
-            
+
             // TODO: Move this to PublicCertificate class, as it belongs there
             for (Tag certificateTag : certificateTags) {
                 int shares = certificateTag.getAttributeAsInteger("shares", 1);
@@ -656,7 +660,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                 throw new ConfigurationException("Company type " + getId()
                         + " total shares is not 100%");
         }
-        
+
         nameCertificates();
 
         // Give each certificate an unique Id
@@ -674,7 +678,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             newTokens.add(token);
         }
         baseTokens.initTokens(newTokens);
-        
+
         if (homeHexNames != null) {
             homeHexes = new ArrayList<MapHex>(2);
             MapHex homeHex;
@@ -731,10 +735,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                 }
             }
         }
-        
+
         // finish Configuration of portfolio
         portfolio.finishConfiguration();
-        
+
         // set multipleCertificates
         for (PublicCertificate c:certificates) {
             if (!c.isPresidentShare() && c.getShares() != 1) {
@@ -1197,7 +1201,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         Owner owner = cert.getOwner();
         return owner instanceof Player || owner == getRoot().getBank().getPool();
     }
-    
+
     /**
      * Get the company President.
      *
@@ -1339,8 +1343,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public int getShareUnitsForSharePrice() {
         return shareUnitsForSharePrice;
     }
-    
-    /** @reeturn true if company has Multiple certificates, representing more than one nominal share unit (except president share) 
+
+    /** @reeturn true if company has Multiple certificates, representing more than one nominal share unit (except president share)
      */
     public boolean hasMultipleCertificates() {
         return hasMultipleCertificates;
@@ -1425,28 +1429,28 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         // check if there is a new potential president
         int presidentShareNumber = getPresident().getPortfolioModel().getShareNumber(this) + 1;
         Player nextPotentialPresident = findNextPotentialPresident(presidentShareNumber);
-       
+
         // no change, return
         if (nextPotentialPresident == null) {
             return;
         }
-        
+
         // otherwise Hand presidency to the player with the highest share
         getPresident().getPortfolioModel().swapPresidentCertificate(this, nextPotentialPresident.getPortfolioModel(), 2);
         ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                 nextPotentialPresident.getId(),
                 getId() ));
     }
-    
+
     public Player findPlayerToDump() {
         return findNextPotentialPresident(getPresidentsShare().getShares());
     }
-    
+
     public Player findNextPotentialPresident(int minimumShareNumber) {
-        
+
         int requiredShareNumber = minimumShareNumber;
         Player potentialDirector = null;
-        
+
         for (Player nextPlayer:getRoot().getPlayerManager().getNextPlayersAfter(getPresident(), false, false)) {
             int nextPlayerShareNumber =nextPlayer.getPortfolioModel().getShareNumber(this);
             if (nextPlayerShareNumber >= requiredShareNumber) {
@@ -1501,7 +1505,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * Must be called in stead of Portfolio.buyTrain if side-effects can occur.
      */
     public void buyTrain(Train train, int price) {
-        
+
         // check first if it is bought from another company
         if (train.getOwner() instanceof PublicCompany) {
             PublicCompany previousOwner = (PublicCompany)train.getOwner();
@@ -1596,7 +1600,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         tilesLaidThisTurn.append(tileLaid, ", ");
 
         if (cost > 0) tilesCostThisTurn.change(cost);
-        
+
     }
 
     public void layTilenNoMapMode(int cost) {
@@ -1770,7 +1774,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public ImmutableSet<BaseToken> getAllBaseTokens() {
         return baseTokens.getAllTokens();
     }
-    
+
     public ImmutableSet<BaseToken> getLaidBaseTokens() {
         return baseTokens.getLaidTokens();
     }
@@ -1800,7 +1804,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         // standard cases: 0 and 1, return
         if (tileLays <= 1) return tileLays;
-        
+
         // More than one tile lay allowed.
         // Check if there is a limitation on the number of turns that this is valid.
         if (turnsWithExtraTileLays != null) {
@@ -1901,7 +1905,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
          */
 
         // FIXME: In the following the cloning has to be moved to the portfolio
-        
+
 /*        if (certificates != null) {
             ((PublicCompany) clone).setCertificates(certificates.view());
         }
@@ -1930,7 +1934,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public PortfolioModel getPortfolioModel() {
         return portfolio;
     }
-    
+
     // Company methods
     public void initType(CompanyType type) {
         this.type = type;
@@ -1946,7 +1950,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     public void setClosed() {
         closed.set(true);
-        
+
         PortfolioOwner shareDestination;
         // If applicable, prepare for a restart
         if (canBeRestarted) {
@@ -2009,7 +2013,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public Purse getPurse() {
         return treasury.getPurse();
     }
-    
+
     public int getCash() {
         return getPurse().value();
     }
@@ -2039,7 +2043,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * @return the foundingStartCompany
      */
     public String getFoundingStartCompany() {
-        
+
         return foundingStartCompany;
     }
 
@@ -2054,7 +2058,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public Model getLastDirectIncomeModel() {
         return lastDirectIncome;
     }
-    
+
     /**
      * Store the last direct Income earned by this company.
      *
@@ -2076,7 +2080,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public void setDirectIncomeRevenue(int directIncome) {
         this.directIncomeRevenue.set(directIncome);
     }
-    
+
     public int getDirectIncomeRevenue() {
         return directIncomeRevenue.value();
     }

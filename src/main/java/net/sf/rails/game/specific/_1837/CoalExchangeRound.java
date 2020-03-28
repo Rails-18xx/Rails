@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.rails.game.specific._1837;
 
@@ -24,7 +24,7 @@ import rails.game.action.NullAction;
  */
 public class CoalExchangeRound extends StockRound_1837 {
 
-    Player playerStartingCERound;
+    private Player playerStartingCERound;
     /**
      * @param parent
      * @param id
@@ -36,7 +36,7 @@ public class CoalExchangeRound extends StockRound_1837 {
 
            raiseIfSoldOut = false;
         }
-        
+
         public static CoalExchangeRound create(GameManager parent, String id){
             return new CoalExchangeRound(parent, id);
         }
@@ -81,16 +81,16 @@ public class CoalExchangeRound extends StockRound_1837 {
  */
             for (PublicCompany comp : comps) {
                 type = comp.getType().getId();
-                
-                
-                
+
+
+
                  if ((type.equals("Coal")) && (companyManager.getPublicCompany(comp.getRelatedNationalCompany()).hasFloated())) {
                     if (comp.isClosed()) continue;
                     if (comp.getPresident() == currentPlayer) {
                         minors.add(comp);
                         targetCompany = companyManager.getPublicCompany(comp.getRelatedNationalCompany());
                         possibleActions.add(new MergeCompanies(comp, targetCompany, true));
-                        
+
                     }
                 }
             }
@@ -100,7 +100,7 @@ public class CoalExchangeRound extends StockRound_1837 {
             }
 
 /**
- * The current Player wasnt the director we are looking for the next one            
+ * The current Player wasnt the director we are looking for the next one
  */
            while (minors.isEmpty()) {
                 setNextPlayer();
@@ -111,7 +111,7 @@ public class CoalExchangeRound extends StockRound_1837 {
                         if (comp.getPresident() == currentPlayer) {
                             targetCompany = companyManager.getPublicCompany(comp.getRelatedNationalCompany());
                             possibleActions.add(new MergeCompanies(comp, targetCompany, true));
-                            
+
                             minors.add(comp);
                         }
                     }
@@ -132,15 +132,15 @@ public class CoalExchangeRound extends StockRound_1837 {
             return false;
         }
 
-        
-        
+
+
         @Override
         // Autopassing does not apply here
         public boolean done(NullAction action, String playerName, boolean hasAutopassed) {
 
             for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
                 if ((comp.getType().getId().equals("Coal")) && (!comp.isClosed()) && (companyManager.getPublicCompany(comp.getRelatedNationalCompany()).hasFloated())) {
-                    
+
                         finishTurn();
                         return true;
                 }
@@ -167,11 +167,11 @@ public class CoalExchangeRound extends StockRound_1837 {
                     this,
                     LocalText.getText("END_CoalExchangeRound",
                             String.valueOf(getCoalExchangeRoundNumber())));
-      
+
             if (discardingTrains.value()) {
 
                return;
-            
+
             } else if (!compWithExcessTrains.isEmpty()) {
 
                 discardingTrains.set(true);
@@ -212,7 +212,7 @@ public class CoalExchangeRound extends StockRound_1837 {
             }
         }
 
-        
+
         private int getCoalExchangeRoundNumber() {
            return ((GameManager_1837) gameManager).getCERNumber();
            }

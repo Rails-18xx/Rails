@@ -30,7 +30,7 @@ import net.sf.rails.util.Util;
 
 public class PlayerManager extends RailsManager implements Configurable {
 
-    private static Logger log = LoggerFactory.getLogger(PlayerManager.class);
+    private static final Logger log = LoggerFactory.getLogger(PlayerManager.class);
 
     // static data
     private Map<String, Player> playerNames; // static, but set later in setPlayers()
@@ -288,8 +288,7 @@ public class PlayerManager extends RailsManager implements Configurable {
        // only provide some logging
        int p = 0;
        for (Player player:playerModel.playerOrder) {
-           log.debug("New player "+ String.valueOf(++p) +" is "+player.getId() +
-                   " (cash="+Bank.format(this, player.getCash())+")");
+           log.debug("New player {} is {} (cash={})", ++p, player.getId(), Bank.format(this, player.getCash()));
        }
 
        return playerModel.playerOrder.get(0);

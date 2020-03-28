@@ -13,11 +13,11 @@ import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
 
 /**
  * Converts processed actions and model updates to triggers for playing sounds.
- * 
+ *
  * Some model observers get their own inner classes since their constructors are parameterized
  * (needed to initialize member variables among others - especially important if game is
  * loaded since game status will not be initial upon initialization of the sound framework).
- *  
+ *
  * @author Frederick Weld
  *
  */
@@ -38,7 +38,7 @@ public class SoundEventInterpreter {
                 formerCurrentPlayer = pm.getCurrentPlayer();
                 if (SoundConfig.isSFXEnabled()) {
                     player.playSFXByConfigKey (
-                            SoundConfig.KEY_SFX_GEN_NewCurrentPlayer,
+                            SoundConfig.KEY_SFX_GEN_NEW_CURRENT_PLAYER,
                             pm.getCurrentPlayer().getId());
                 }
             }
@@ -51,7 +51,7 @@ public class SoundEventInterpreter {
     private class PresidentModelObserver implements Observer {
         private final PresidentModel model;
         private String formerPresident = null;
-        
+
         private PresidentModelObserver(PublicCompany pc) {
             model = pc.getPresidentModel();
             formerPresident = model.toText();
@@ -60,7 +60,7 @@ public class SoundEventInterpreter {
             if (formerPresident != text) {
                 formerPresident = text;
                 if (SoundConfig.isSFXEnabled()) {
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_NewPresident);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_NEW_PRESIDENT);
                 }
             }
         }
@@ -73,7 +73,7 @@ public class SoundEventInterpreter {
     private class CompanyFloatedObserver implements Observer {
         private final BooleanState model;
         private Boolean hasFloated = false;
-        
+
         private CompanyFloatedObserver(PublicCompany pc) {
             model = pc.getFloatedModel();
             hasFloated = pc.getFloatedModel().value();
@@ -83,7 +83,7 @@ public class SoundEventInterpreter {
             if (model.value() != hasFloated) {
                 hasFloated = model.value();
                 if (SoundConfig.isSFXEnabled()) {
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_CompanyFloats);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_COMPANY_FLOATS);
                 }
             }
         }
@@ -95,71 +95,71 @@ public class SoundEventInterpreter {
 
     private SoundContext context;
     private SoundPlayer player;
-    
-    
+
+
     public SoundEventInterpreter (SoundContext context,SoundPlayer player) {
         this.context = context;
         this.player = player;
     }
     public void notifyOfActionProcessing(RailsRoot root,PossibleAction action) {
-        
+
         /**
-         * Interpretation of events for which are only sfx is relevant 
+         * Interpretation of events for which are only sfx is relevant
          */
-        
+
         if (SoundConfig.isSFXEnabled()) {
-            
+
             //General actions
-            
+
             if (action instanceof NullAction) {
                 if (EnumSet.of(NullAction.Mode.PASS, NullAction.Mode.AUTOPASS).contains(
                         ((NullAction)action).getMode() )) {
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_GEN_Pass);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_GEN_PASS);
                 }
-                
+
             }
-            
+
             //OR actions
-            
+
             else if (action instanceof LayTile) {
                 LayTile lt = (LayTile)action;
                 if (lt.getLaidTile().getNumStations() == 0) {
                     //track upgrade
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_Track);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LAY_TILE_TRACK);
                 } else {
                     //city upgrade
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_City);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LAY_TILE_CITY);
                 }
                 if (!lt.getLaidTile().isUnlimited() && lt.getLaidTile().getFreeCount() == 1) {
                     //last available tile is about to be laid
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayTile_LastTileLaid);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LAY_TILE_LAST_TILE_LAID);
                 }
-                
+
             } else if (action instanceof LayToken) {
-                player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LayToken);
-                
+                player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LAY_TOKEN);
+
             } else if (action instanceof SetDividend) {
                 //set revenue not treated here
                 SetDividend sd = (SetDividend)action;
                 if (sd.getRevenueAllocation() == SetDividend.PAYOUT) {
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_Decision_Payout);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_DECISION_PAYOUT);
                 } else if (sd.getRevenueAllocation() == SetDividend.SPLIT) {
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_Decision_Split);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_DECISION_SPLIT);
                 } else if (sd.getRevenueAllocation() == SetDividend.WITHHOLD) {
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_Decision_Withhold);
-                }  
-                
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_DECISION_WITHHOLD);
+                }
+
             } else if (action instanceof BuyTrain) {
                 String trainName = ((BuyTrain)action).getType().getName();
-                player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_BuyTrain, trainName);
-                
+                player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_BUY_TRAIN, trainName);
+
             } else if (action instanceof BuyPrivate) {
-                player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_BuyPrivate);
-                
-            } 
-            
+                player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_BUY_PRIVATE);
+
+            }
+
             //SR actions
-            
+
             else if (action instanceof BuyCertificate) {
                 BuyCertificate bc = (BuyCertificate)action;
                 String presidentName = "";
@@ -167,9 +167,9 @@ public class SoundEventInterpreter {
                     presidentName = bc.getCompany().getPresident().getId();
                 }
                 if (presidentName.equals(bc.getPlayerName())) {
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_BuyShare_President);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_BUY_SHARE_PRESIDENT);
                 } else {
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_BuyShare_NonPresident);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_BUY_SHARE_NON_PRESIDENT);
                 }
 
             } else if (action instanceof SellShares) {
@@ -179,23 +179,23 @@ public class SoundEventInterpreter {
                     presidentName = ss.getCompany().getPresident().getId();
                 }
                 if (presidentName.equals(ss.getPlayerName())) {
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_SellShare_President);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_SELL_SHARE_PRESIDENT);
                 } else {
-                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_SellShare_NonPresident);
+                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_SELL_SHARE_NON_PRESIDENT);
                 }
 
             }
 
             //Start Round actions
-            
+
             else if (action instanceof rails.game.action.BidStartItem) {
-                player.playSFXByConfigKey (SoundConfig.KEY_SFX_STR_BidStartItem);
+                player.playSFXByConfigKey (SoundConfig.KEY_SFX_STR_BID_START_ITEM);
 
             } else if (action instanceof rails.game.action.BuyStartItem) {
-                player.playSFXByConfigKey (SoundConfig.KEY_SFX_STR_BuyStartItem);
-            
+                player.playSFXByConfigKey (SoundConfig.KEY_SFX_STR_BUY_START_ITEM);
+
             }
-            
+
         }
     }
     public void notifyOfGameInit(final RailsRoot root) {
@@ -221,7 +221,7 @@ public class SoundEventInterpreter {
         }
 
         //subscribe to changes to game over pending
-        final BooleanState gameOverModel = gameManager.getGameOverPendingModel(); 
+        final BooleanState gameOverModel = gameManager.getGameOverPendingModel();
         if (gameOverModel != null) {
             gameOverModel.addObserver(
                     new Observer() {
@@ -230,7 +230,7 @@ public class SoundEventInterpreter {
                             if (!gameOverPending && gameOverModel.value()) {
                                 if (SoundConfig.isSFXEnabled()) {
                                     player.playSFXByConfigKey (
-                                            SoundConfig.KEY_SFX_GEN_GameOverPending);
+                                            SoundConfig.KEY_SFX_GEN_GAME_OVER_PENDING);
                                 }
                             }
                             gameOverPending = gameOverModel.value();
@@ -280,12 +280,12 @@ public class SoundEventInterpreter {
 //            if (currentStep == LocalSteps.ConfirmUpgrade) {
 //                player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile);
 //            }
-            
+
             //play hex selection sound if the follow-up step (select tile/token) is active
             //(don't consider whether prior step was "select hex..." because hexes
             // can also be selected during selectTile/Token)
-            if ( currentStep == LocalSteps.SelectUpgrade) {
-                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select);
+            if ( currentStep == LocalSteps.SELECT_UPGRADE ) {
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_SELECT);
             }
         }
     }
@@ -299,17 +299,17 @@ public class SoundEventInterpreter {
                     || clickFieldAction instanceof BuyStartItem
                     || clickFieldAction instanceof BuyCertificate
                     || clickFieldAction instanceof SellShares) {
-                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_Select);
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_SELECT);
             }
         }
     }
-    
+
     public void notifyOfSelectUpgrade(HexUpgrade upgrade) {
         if (SoundConfig.isSFXEnabled()) {
             if (upgrade instanceof TileHexUpgrade) {
-                player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile);
+                player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_ROTATE_TILE);
             }
         }
     }
-    
+
 }

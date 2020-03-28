@@ -14,16 +14,16 @@ import org.jgrapht.*;
 import org.jgrapht.traverse.*;
 
 
-public class NetworkIterator extends 
-    AbstractGraphIterator<NetworkVertex, NetworkEdge> {
+public class NetworkIterator extends AbstractGraphIterator<NetworkVertex, NetworkEdge> {
+    protected static Logger log = LoggerFactory.getLogger(NetworkIterator.class);
 
     public static enum greedyState {
-        seen,
-        nonGreedy,
-        greedy,
-        done
+        SEEN,
+        NON_GREEDY,
+        GREEDY,
+        DONE
     }
-    
+
     // settings
     private NetworkVertex startVertex;
     private boolean startVertexVisited;
@@ -33,14 +33,10 @@ public class NetworkIterator extends
     private List<NetworkVertex> stack = new ArrayList<NetworkVertex>();
     private List<Boolean> greedyStack = new ArrayList<Boolean>();
     private Map<NetworkVertex, greedyState> seen = new HashMap<NetworkVertex, greedyState>();
-    
+
 
     private final Graph<NetworkVertex, NetworkEdge> graph;
 
-    protected static Logger log =
-        LoggerFactory.getLogger(NetworkIterator.class);
-
-    
     public NetworkIterator(Graph<NetworkVertex, NetworkEdge> graph,
             NetworkVertex startVertex) {
         this(graph, startVertex, null);
@@ -52,10 +48,10 @@ public class NetworkIterator extends
     public NetworkIterator(Graph<NetworkVertex, NetworkEdge> graph, NetworkVertex startVertex,
             PublicCompany company) {
         super(graph);
-        
+
         if (graph == null)
             throw new IllegalArgumentException("graph must not be null");
-        
+
         if (!graph.containsVertex(startVertex))
             throw new IllegalArgumentException("graph must contain the start vertex");
 
@@ -64,19 +60,19 @@ public class NetworkIterator extends
         this.startVertexVisited = false;
         this.routeIterator = false;
     }
-    
+
     NetworkIterator setRouteIterator(boolean routeIterator) {
         this.routeIterator = routeIterator;
         return this;
     }
-    
+
     /**
      * @return the graph being traversed
      */
     public Graph<NetworkVertex, NetworkEdge> getGraph() {
         return graph;
     }
-    
+
     public Map<NetworkVertex, greedyState> getSeenData() {
         return seen;
     }
@@ -93,7 +89,7 @@ public class NetworkIterator extends
         }
         return route;
     }
-    
+
     /**
      * @see java.util.Iterator#hasNext()
      */
@@ -101,15 +97,15 @@ public class NetworkIterator extends
         if (!startVertexVisited) {
             encounterStartVertex();
         }
-        
+
         int i = stack.size() - 1;
         while (i >= 0) {
-            if (stack.get(i) != null) 
+            if (stack.get(i) != null)
                 break;
             else
                 i = i - 2;
         }
-        return i >=0; 
+        return i >=0;
     }
 
     /**
@@ -130,13 +126,13 @@ public class NetworkIterator extends
                 stack.remove(stack.size() - 1);
             }
 
-            log.debug("Iterator: provides next vertex" + nextVertex);
+            log.debug("Iterator: provides next vertex{}", nextVertex);
             boolean nextGreedy = greedyStack.remove(greedyStack.size() - 1);
 
             putSeenData(nextVertex, nextGreedy);
             stack.add(nextVertex);
             stack.add(null); // add sentinel that we know when we are ready
-            
+
             addUnseenChildrenOf(nextVertex, nextGreedy);
 
             return nextVertex;
@@ -145,46 +141,46 @@ public class NetworkIterator extends
         }
     }
 
-    
+
     private void putSeenData(NetworkVertex vertex, boolean greedy) {
         if (!vertex.isSide()) {
-            seen.put(vertex, greedyState.seen);
-            log.debug("Iterator:  Vertex " + vertex + " seen with greedyState = seen");
+            seen.put(vertex, greedyState.SEEN);
+            log.debug("Iterator:  Vertex {} seen with greedyState = seen", vertex);
             return;
         }
         // side
         if (seen.containsKey(vertex)){
-            seen.put(vertex, greedyState.done);
-            log.debug("Iterator:  Vertex " + vertex + " seen with greedyState = done");
+            seen.put(vertex, greedyState.DONE);
+            log.debug("Iterator:  Vertex {} seen with greedyState = done", vertex);
         } else if (greedy) {
-            seen.put(vertex, greedyState.greedy);
-            log.debug("Iterator:  Vertex " + vertex + " seen with greedyState = greedy");
+            seen.put(vertex, greedyState.GREEDY);
+            log.debug("Iterator:  Vertex {} seen with greedyState = greedy", vertex);
         } else {
-            seen.put(vertex, greedyState.nonGreedy);
-            log.debug("Iterator:  Vertex " + vertex + " seen with greedyState = nonGreedy");
+            seen.put(vertex, greedyState.NON_GREEDY);
+            log.debug("Iterator:  Vertex {} seen with greedyState = nonGreedy", vertex);
         }
     }
-    
+
     private void addUnseenChildrenOf(NetworkVertex vertex, boolean greedy) {
 
         if (vertex.isSink()) return;
-        log.debug("Iterator: Add unseen children of " + vertex);
+        log.debug("Iterator: Add unseen children of {}", vertex);
 
         for (NetworkEdge edge : graph.edgesOf(vertex)) {
-            log.debug("Iterator: Check edge for neighbor in edge " + edge.toFullInfoString());
+            log.debug("Iterator: Check edge for neighbor in edge {}", edge.toFullInfoString());
             if (!greedy || edge.isGreedy()) {
                 NetworkVertex oppositeV = Graphs.getOppositeVertex(graph, edge, vertex);
-                log.debug("Iterator: Neighbor is " + oppositeV);
+                log.debug("Iterator: Neighbor is {}", oppositeV);
                 encounterVertex(oppositeV, edge);
             }
         }
     }
-    
+
     private void encounterStartVertex() {
         putSeenData(startVertex, false);
         stack.add(startVertex);
         greedyStack.add(false);
-        log.debug("Iterator: Added to stack " + startVertex +  " with greedy set to false");
+        log.debug("Iterator: Added to stack {} with greedy set to false", startVertex);
         startVertexVisited = true;
     }
 
@@ -196,8 +192,8 @@ public class NetworkIterator extends
             // check the stack
             if (getCurrentRoute().contains(v))
                 return;
-            // check the seen components 
-//            if (seen.containsKey(v) && (seen.get(v) == greedyState.seen && !v.isSink() 
+            // check the seen components
+//            if (seen.containsKey(v) && (seen.get(v) == greedyState.seen && !v.isSink()
 //                    || seen.get(v) == greedyState.done || (e.isGreedy() && seen.get(v) == greedyState.nonGreedy)
 //                    || (!e.isGreedy() && seen.get(v) == greedyState.greedy) )) {
 //                log.debug("Do not add vertex " + v  + " to stack");
@@ -205,15 +201,15 @@ public class NetworkIterator extends
 //            }
         } else {
             if (stack.contains(v)) return;
-            if (v.isSide() && seen.containsKey(v) && (seen.get(v) == greedyState.done || (e.isGreedy() && seen.get(v) == greedyState.nonGreedy)
-                    || (!e.isGreedy() && seen.get(v) == greedyState.greedy) )) {
-                log.debug("Leave vertex " + v + " due to greedState rules");
+            if (v.isSide() && seen.containsKey(v) && (seen.get(v) == greedyState.DONE || (e.isGreedy() && seen.get(v) == greedyState.NON_GREEDY)
+                    || (!e.isGreedy() && seen.get(v) == greedyState.GREEDY) )) {
+                log.debug("Leave vertex {} due to greedState rules", v);
                 return;
             }
         }
         stack.add(v);
         greedyStack.add(v.isSide() && !e.isGreedy());
-        log.debug("Iterator: Added to stack " + v +  " with greedy set to " + (v.isSide() && !e.isGreedy()));
+        log.debug("Iterator: Added to stack {} with greedy set to {}", v, v.isSide() && !e.isGreedy());
     }
 
 }

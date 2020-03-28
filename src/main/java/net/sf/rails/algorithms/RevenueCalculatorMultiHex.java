@@ -2,10 +2,10 @@ package net.sf.rails.algorithms;
 
 class RevenueCalculatorMultiHex extends RevenueCalculatorMulti {
 
-    public RevenueCalculatorMultiHex (RevenueAdapter revenueAdapter, int nbVertexes, int nbEdges, 
+    public RevenueCalculatorMultiHex (RevenueAdapter revenueAdapter, int nbVertexes, int nbEdges,
             int maxNeighbors, int maxVertexSets, int maxEdgeSets, int nbTrains, int nbBonuses) {
 
-        super(revenueAdapter, nbVertexes, nbEdges, 
+        super(revenueAdapter, nbVertexes, nbEdges,
                 maxNeighbors, maxVertexSets, maxEdgeSets, nbTrains, nbBonuses);
 
     }
@@ -39,13 +39,12 @@ class RevenueCalculatorMultiHex extends RevenueCalculatorMulti {
             // H-train can always travel a zero distance to a next node
             // thus always check until negative distance
             if (trainDistance[trainId] < 0){
-                log.debug ("RC: H-Train " + trainId + " has terminated: " +
-                        "distance = " + trainDistance[trainId]);
-                return Terminated.WithoutEvaluation;
+                log.debug("RC: H-Train {} has terminated: distance = {}", trainId, trainDistance[trainId]);
+                return Terminated.WITHOUT_EVALUATION;
             } else {
-                return Terminated.NotYet;
+                return Terminated.NOT_YET;
             }
         }
     }
-  
+
 }

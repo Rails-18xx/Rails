@@ -23,34 +23,34 @@ public class CompanyManager extends RailsManager implements Configurable {
     public static final String COMPONENT_NAME = "CompanyManager";
 
     /** A List with all private companies */
-    private List<PrivateCompany> lPrivateCompanies =
-            new ArrayList<PrivateCompany>();
+    private final List<PrivateCompany> lPrivateCompanies =
+            new ArrayList<>();
 
     /** A List with all public companies */
-    private List<PublicCompany> lPublicCompanies =
-            new ArrayList<PublicCompany>();
+    private final List<PublicCompany> lPublicCompanies =
+            new ArrayList<>();
 
     /** A map with all private companies by name */
-    private Map<String, PrivateCompany> mPrivateCompanies =
-            new HashMap<String, PrivateCompany>();
+    private final Map<String, PrivateCompany> mPrivateCompanies =
+            new HashMap<>();
 
     /** A map with all public (i.e. non-private) companies by name */
-    private Map<String, PublicCompany> mPublicCompanies =
-            new HashMap<String, PublicCompany>();
+    private final Map<String, PublicCompany> mPublicCompanies =
+            new HashMap<>();
 
     /** A map of all type names to maps of companies of that type by name */
     // TODO Redundant, current usage can be replaced.
-    private Map<String, Map<String, Company>> mCompaniesByTypeAndName =
-            new HashMap<String, Map<String, Company>>();
+    private final Map<String, Map<String, Company>> mCompaniesByTypeAndName =
+            new HashMap<>();
 
     /** A list of all company types */
-    private List<CompanyType> lCompanyTypes = new ArrayList<CompanyType>();
+    private final List<CompanyType> lCompanyTypes = new ArrayList<>();
 
     /** A list of all start packets (usually one) */
-    protected List<StartPacket> startPackets = new ArrayList<StartPacket>();
+    protected List<StartPacket> startPackets = new ArrayList<>();
     /** A map of all start packets, keyed by name. Default name is "Initial" */
-    private Map<String, StartPacket> startPacketMap
-        = new HashMap<String, StartPacket>();
+    private final Map<String, StartPacket> startPacketMap
+        = new HashMap<>();
 
     /** A map to enable translating aliases to names */
     protected Map<String, String> aliases = null;
@@ -77,7 +77,6 @@ public class CompanyManager extends RailsManager implements Configurable {
      */
 
     /**
-     * @see net.sf.rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
@@ -86,8 +85,8 @@ public class CompanyManager extends RailsManager implements Configurable {
         /** A map with all company types, by type name */
         // Localised here as it has no permanent use
         Map<String, CompanyType> mCompanyTypes
-              = new HashMap<String, CompanyType>();
-        
+              = new HashMap<>();
+
         //NEW//
         Map<String, Tag> typeTags = new HashMap<String, Tag>();
 
@@ -208,9 +207,9 @@ public class CompanyManager extends RailsManager implements Configurable {
         for (PrivateCompany comp : lPrivateCompanies) {
             comp.finishConfiguration(root);
         }
-        
+
     }
-    
+
     public void initStartPackets(GameManager gameManager) {
         // initialize startPackets
         for (StartPacket packet: startPackets) {
@@ -243,7 +242,6 @@ public class CompanyManager extends RailsManager implements Configurable {
         }
     }
     /**
-     * @see net.sf.rails.game.CompanyManager#getCompany(java.lang.String)
      *
      */
     public PrivateCompany getPrivateCompany(String name) {
@@ -301,7 +299,7 @@ public class CompanyManager extends RailsManager implements Configurable {
     public StartPacket getStartPacket (String name) {
         return startPacketMap.get(name);
     }
-    
+
     /** Pass number of turns for which a certain company type can lay extra tiles of a certain colour. */
     // NOTE: Called by phase.finishConfiguration().
     // This implies, that the CompanyManager configuration must finished be BEFORE PhaseManager.
@@ -321,14 +319,14 @@ public class CompanyManager extends RailsManager implements Configurable {
 
     public StartPacket getNextUnfinishedStartPacket() {
       for (StartPacket packet: startPackets) {
-          if (packet.areAllSold() == false) {
+          if ( !packet.areAllSold() ) {
               return packet;
-              
+
               }
           }
       return null;
     }
-    
+
     /**
      * @param id of the startItem
      * @return the startItem with that id
@@ -343,5 +341,5 @@ public class CompanyManager extends RailsManager implements Configurable {
         }
         return null;
     }
-    
+
 }

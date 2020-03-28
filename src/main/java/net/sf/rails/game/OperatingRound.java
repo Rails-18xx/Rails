@@ -168,7 +168,7 @@ public class OperatingRound extends Round implements Observer {
                 msg.append(",").append(company.getId());
             }
             if (msg.length() > 0) msg.deleteCharAt(0);
-            log.info("Initial operating sequence is " + msg.toString());
+            log.info("Initial operating sequence is {}", msg.toString());
 
             if (setNextOperatingCompany(true)) {
                 setStep(GameDef.OrStep.INITIAL);
@@ -520,8 +520,8 @@ public class OperatingRound extends Round implements Observer {
         } else if (step == GameDef.OrStep.LAY_TOKEN) {
             setNormalTokenLays();
             setSpecialTokenLays();
-            log.debug("Normal token lays: " + currentNormalTokenLays.size());
-            log.debug("Special token lays: " + currentSpecialTokenLays.size());
+            log.debug("Normal token lays: {}", currentNormalTokenLays.size());
+            log.debug("Special token lays: {}", currentSpecialTokenLays.size());
 
             possibleActions.addAll(currentNormalTokenLays);
             possibleActions.addAll(currentSpecialTokenLays);
@@ -672,10 +672,9 @@ public class OperatingRound extends Round implements Observer {
 
         for (PossibleAction pa : possibleActions.getList()) {
             try {
-                log.debug(operatingCompany.value().getId() + " may: "
-                          + pa.toString());
+                log.debug("{} may: {}", operatingCompany.value().getId(), pa.toString());
             } catch (Exception e) {
-                log.error("Error in toString() of " + pa.getClass(), e);
+                log.error("Error in toString() of {}", pa.getClass(), e);
             }
         }
 
@@ -693,7 +692,7 @@ public class OperatingRound extends Round implements Observer {
      */
 
     protected void initTurn() {
-        log.debug("Starting turn of " + operatingCompany.value().getId());
+        log.debug("Starting turn of {}", operatingCompany.value().getId());
         ReportBuffer.add(this, " ");
         ReportBuffer.add(this, LocalText.getText("CompanyOperates",
                 operatingCompany.value().getId(),
@@ -704,11 +703,9 @@ public class OperatingRound extends Round implements Observer {
             // Lay base token in noMapMode
             BaseToken token = operatingCompany.value().getNextBaseToken();
             if (token == null) {
-                log.error("Company " + operatingCompany.value().getId()
-                          + " has no free token to lay base token");
+                log.error("Company {} has no free token to lay base token", operatingCompany.value().getId());
             } else {
-                log.debug("Company " + operatingCompany.value().getId()
-                          + " lays base token in nomap mode");
+                log.debug("Company {} lays base token in nomap mode", operatingCompany.value().getId());
                 // FIXME: This has to be rewritten
                 // Where are the nomap base tokens to be stored?
                 // bank.getUnavailable().addBonusToken(token);
@@ -768,9 +765,7 @@ public class OperatingRound extends Round implements Observer {
                 for (int i = 0; i < newOperatingCompanies.size(); i++) {
                     company = newOperatingCompanies.get(i);
                     if (company != operatingCompanies.get(i)) {
-                        log.debug("Company " + company.getId() + " replaces "
-                                  + operatingCompanies.get(i).getId()
-                                  + " in operating sequence");
+                        log.debug("Company {} replaces {} in operating sequence", company.getId(), operatingCompanies.get(i).getId());
                         operatingCompanies.move(company, i);
                     }
                 }
@@ -856,11 +851,11 @@ public class OperatingRound extends Round implements Observer {
         }
         while (++stepIndex < steps.length) {
             step = steps[stepIndex];
-            log.debug("OR considers step " + step);
+            log.debug("OR considers step {}", step);
 
             if (step == GameDef.OrStep.LAY_TOKEN
                 && company.getNumberOfFreeBaseTokens() == 0) {
-                log.debug("OR skips " + step + ": No freeBaseTokens");
+                log.debug("OR skips {}: No freeBaseTokens", step);
                 continue;
             }
 
@@ -868,7 +863,7 @@ public class OperatingRound extends Round implements Observer {
 
                 if (!company.canRunTrains()) {
                     // No trains, then the revenue is zero.
-                    log.debug("OR skips " + step + ": Cannot run trains");
+                    log.debug("OR skips {}: Cannot run trains", step);
                     executeSetRevenueAndDividend(new SetDividend(0, false,
                             new int[] { SetDividend.NO_TRAIN }));
                     // TODO: This probably does not handle share selling
@@ -879,7 +874,7 @@ public class OperatingRound extends Round implements Observer {
 
             if (step == GameDef.OrStep.PAYOUT) {
                 // This step is now obsolete
-                log.debug("OR skips " + step + ": Always skipped");
+                log.debug("OR skips {}: Always skipped", step);
                 continue;
             }
 
@@ -925,7 +920,7 @@ public class OperatingRound extends Round implements Observer {
             }
 
             if (!gameSpecificNextStep(step)) {
-                log.debug("OR skips " + step + ": Not game specific");
+                log.debug("OR skips {}: Not game specific", step);
                 continue;
             }
 
@@ -967,7 +962,7 @@ public class OperatingRound extends Round implements Observer {
      */
 
     public void skip(NullAction action) {
-        log.debug("Skip step " + stepObject.value());
+        log.debug("Skip step {}", stepObject.value());
 
         nextStep();
     }
@@ -1225,7 +1220,7 @@ public class OperatingRound extends Round implements Observer {
 
         PrivateCompany priv = action.getPrivateCompany();
 
-        log.debug("Executed close private action for private " + priv.getId());
+        log.debug("Executed close private action for private {}", priv.getId());
 
         String errMsg = null;
 
@@ -1372,8 +1367,7 @@ public class OperatingRound extends Round implements Observer {
                 oldLoansThisRound =
                         loansThisRound.get(operatingCompany.value());
             }
-            loansThisRound.put(operatingCompany.value(), new Integer(
-                    oldLoansThisRound + number));
+            loansThisRound.put(operatingCompany.value(), oldLoansThisRound + number);
         }
     }
 
@@ -1400,10 +1394,8 @@ public class OperatingRound extends Round implements Observer {
             if (remainder > presCash) {
                 // Start a share selling round
                 int cashToBeRaisedByPresident = remainder - presCash;
-                log.info("A share selling round must be started as the president cannot pay $"
-                         + remainder + " loan repayment");
-                log.info("President has $" + presCash + ", so $"
-                         + cashToBeRaisedByPresident + " must be added");
+                log.info("A share selling round must be started as the president cannot pay ${} loan repayment", remainder);
+                log.info("President has ${}, so ${} must be added", presCash, cashToBeRaisedByPresident);
                 savedAction = action;
 
                 gameManager.startShareSellingRound(
@@ -1809,7 +1801,7 @@ public class OperatingRound extends Round implements Observer {
             int allowedNumber =
                     operatingCompany.value().getNumberOfTileLays(colour);
             // Replace the null map value with the allowed number of lays
-            newTileColours.put(colour, new Integer(allowedNumber));
+            newTileColours.put(colour, allowedNumber);
         }
         // store to state
         tileLaysPerColour.initFromMap(newTileColours);
@@ -1844,7 +1836,7 @@ public class OperatingRound extends Round implements Observer {
                 log.debug("No normal tile lays");
             } else {
                 for (LayTile tileLay : currentNormalTileLays) {
-                    log.debug("Normal tile lay: " + tileLay.toString());
+                    log.debug("Normal tile lay: {}", tileLay.toString());
                 }
             }
         }
@@ -1876,7 +1868,7 @@ public class OperatingRound extends Round implements Observer {
                 log.debug("No special tile lays");
             } else {
                 for (LayTile tileLay : currentSpecialTileLays) {
-                    log.debug("Special tile lay: " + tileLay.toString());
+                    log.debug("Special tile lay: {}", tileLay.toString());
                 }
             }
         }
@@ -2125,7 +2117,7 @@ public class OperatingRound extends Round implements Observer {
                         Currency.toBank(company, cost);
                 text.append(LocalText.getText("LAYS_TOKEN_ON", companyName,
                                 hex.getId(), costText));
-                text.append(" "+stop.toText());
+                text.append(" ").append(stop.toText());
             } else {
                 text.append(LocalText.getText("LAYS_FREE_TOKEN_ON",
                         companyName, hex.getId()));
@@ -2136,8 +2128,7 @@ public class OperatingRound extends Round implements Observer {
             if (stl != null) {
                 stl.setExercised();
                 currentSpecialTokenLays.remove(action);
-                log.debug("This was a special token lay, "
-                          + (extra ? "" : " not") + " extra");
+                log.debug("This was a special token lay, {} extra", extra ? "" : " not");
 
             }
 
@@ -2160,8 +2151,7 @@ public class OperatingRound extends Round implements Observer {
                 log.debug("A normal token lay is still allowed");
             }
             setSpecialTokenLays();
-            log.debug("There are now " + currentSpecialTokenLays.size()
-                      + " special token lay objects");
+            log.debug("There are now {} special token lay objects", currentSpecialTokenLays.size());
             if (currentNormalTokenLays.isEmpty()
                 && currentSpecialTokenLays.isEmpty()) {
                 nextStep();
@@ -2822,7 +2812,7 @@ public class OperatingRound extends Round implements Observer {
             // SpecialBaseTokenLay Actions - workaround for a better handling of
             // those later
             for (SpecialBaseTokenLay stl : getSpecialProperties(SpecialBaseTokenLay.class)) {
-                log.debug("Special tokenlay property: " + stl);
+                log.debug("Special tokenlay property: {}", stl);
                 if (stl.isFree()) {
                     costsSet.add(0);
                 }

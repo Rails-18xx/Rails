@@ -349,7 +349,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
 
     /** Get a delimited list of all possible upgrades, regardless current phase */
     public String getUpgradesString(MapHex hex) {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         Tile tile;
         for (TileUpgrade upgrade : upgrades) {
             tile = upgrade.getTargetTile();

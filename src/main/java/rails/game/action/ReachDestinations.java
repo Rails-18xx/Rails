@@ -32,7 +32,7 @@ public class ReachDestinations extends PossibleORAction {
 
     public ReachDestinations (List<PublicCompany> companies) {
         possibleCompanies = companies;
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         for (PublicCompany company : companies) {
             if (b.length() > 0) b.append(",");
             b.append (company.getId());
@@ -70,26 +70,26 @@ public class ReachDestinations extends PossibleORAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        ReachDestinations action = (ReachDestinations)pa; 
-        boolean options = 
+        ReachDestinations action = (ReachDestinations)pa;
+        boolean options =
                 Objects.equal(this.possibleCompanies, action.possibleCompanies)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.reachedCompanies, action.reachedCompanies)
         ;
     }
-        
+
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("possibleCompanies", possibleCompanies)
                     .addToStringOnlyActed("reachedCompanies", reachedCompanies)

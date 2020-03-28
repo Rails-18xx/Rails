@@ -8,7 +8,7 @@ import java.awt.event.*;
 /**
  * This is the UI for the LogWindow. It displays logged messages to the user
  * during the rails.game.
- * 
+ *
  * My head is a wheel.
  */
 public class HelpWindow extends JFrame implements WindowListener {
@@ -20,7 +20,6 @@ public class HelpWindow extends JFrame implements WindowListener {
     private static HelpWindow helpWindow;
 
     public static void displayHelp(String text) {
-
         if (helpWindow == null) helpWindow = new HelpWindow();
         helpWindow.display(text);
     }
@@ -46,7 +45,7 @@ public class HelpWindow extends JFrame implements WindowListener {
         setContentPane(messagePanel);
 
         setSize(400, 400);
-        setLocation(600, 000);
+        setLocation(600, 0);
 
         messagePanel.setBorder(BorderFactory.createEtchedBorder());
 

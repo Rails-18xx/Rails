@@ -30,9 +30,8 @@ import rails.game.action.*;
  */
 public class ORWindow extends DockingFrame implements ActionPerformer {
     private static final long serialVersionUID = 1L;
-   
-    private static Logger log =
-            LoggerFactory.getLogger(ORWindow.class);
+
+    private static final Logger log = LoggerFactory.getLogger(ORWindow.class);
 
     protected final GameUIManager gameUIManager;
     protected ORUIManager orUIManager;
@@ -48,7 +47,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         this.gameUIManager = gameUIManager;
 
         splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_PANELS);
-        
+
         String orUIManagerClassName = gameUIManager.getClassName(GuiDef.ClassName.OR_UI_MANAGER);
         try {
             Class<? extends ORUIManager> orUIManagerClass =
@@ -80,48 +79,48 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
             //set up the button panel (which is separated from its OR panel parent)
             //adding upgrade panel buttons on top
             orPanel.addToButtonPanel(upgradePanel.getButtons(),0);
-            
+
             //initialize remaining tile panel as it is no optional part in the docking layout
             splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_TILES);
-            JScrollPane remainingTilesPanelSlider = 
+            JScrollPane remainingTilesPanelSlider =
                     new RemainingTilesWindow(this).getScrollPane();
-            
+
             //generate layout
             splashWindow.notifyOfStep(SplashWindow.STEP_OR_APPLY_DOCKING_FRAME);
-            addDockable ( messagePanelSlider, 
+            addDockable ( messagePanelSlider,
                     "Dockable.orWindow.messagePanel",
-                    0, 0, 100, 10, DockableProperty.closeable);
-            addDockable ( upgradePanel, 
+                    0, 0, 100, 10, DockableProperty.CLOSEABLE);
+            addDockable ( upgradePanel,
                     "Dockable.orWindow.upgradePanel",
-                    0, 10, 20, 70, DockableProperty.standard);
-            addDockable ( mapPanel, 
+                    0, 10, 20, 70, DockableProperty.STANDARD);
+            addDockable ( mapPanel,
                     "Dockable.orWindow.mapPanel",
-                    20, 10, 80, 70, DockableProperty.standard);
-            addDockable ( remainingTilesPanelSlider, 
+                    20, 10, 80, 70, DockableProperty.STANDARD);
+            addDockable ( remainingTilesPanelSlider,
                     "Dockable.orWindow.remainingTilesPanel",
-                    100, 0, 120, 100, DockableProperty.initially_hidden);
-            addDockable ( orPanel, 
+                    100, 0, 120, 100, DockableProperty.INITIALLY_HIDDEN);
+            addDockable ( orPanel,
                     "Dockable.orWindow.orPanel",
-                    0, 80, 100, 15, DockableProperty.standard);
-            addDockable ( orPanel.getButtonPanel(), 
+                    0, 80, 100, 15, DockableProperty.STANDARD);
+            addDockable ( orPanel.getButtonPanel(),
                     "Dockable.orWindow.buttonPanel",
-                    0, 95, 100, 5, DockableProperty.standard);
+                    0, 95, 100, 5, DockableProperty.STANDARD);
             deployDockables();
 
             //take over or panel's menu bar as the frame menu bar
             JMenuBar menuBar = orPanel.getMenuBar();
             addDockingFrameMenu(menuBar);
             setJMenuBar( menuBar );
-            
+
         } else {
             // CONVENTIONAL LAYOUT
-            
+
             getContentPane().setLayout(new BorderLayout());
             getContentPane().add(messagePanelSlider, BorderLayout.NORTH);
             getContentPane().add(mapPanel, BorderLayout.CENTER);
             getContentPane().add(upgradePanel, BorderLayout.WEST);
             getContentPane().add(orPanel, BorderLayout.SOUTH);
-            
+
         }
 
         orUIManager.init(this);
@@ -187,7 +186,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
                 if (isDockingFrameworkEnabled()) {
                     initLayout();
                 }
-            }            
+            }
         });
 
     }
@@ -255,7 +254,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
                 gameManager.getORId(),
                 String.valueOf(gameManager.getRelativeORNumber()),
                 numORs ));
-        
+
         //rearrange layout only if no docking framework active
         if (!isDockingFrameworkEnabled()) {
             pack();
@@ -265,7 +264,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
                 setBounds (lastBounds);
             }
         }
-        
+
         setVisible(true);
         requestFocus();
     }
@@ -292,7 +291,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
     }
 
     protected String getLayoutFileName() {
-        return getClass().getSimpleName() + "_" 
+        return getClass().getSimpleName() + "_"
                 + gameUIManager.getRoot().getGameName() ;
     }
 

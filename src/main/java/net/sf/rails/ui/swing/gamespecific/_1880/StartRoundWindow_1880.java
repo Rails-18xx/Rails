@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.rails.ui.swing.gamespecific._1880;
 
@@ -23,19 +23,15 @@ import rails.game.specific._1880.SetupNewPublicDetails_1880;
  */
 public class StartRoundWindow_1880 extends StartRoundWindow {
 
-
     /* Keys of dialogues owned by this class */
     public static final String COMPANY_BUILDING_RIGHT_DIALOG = "CompanyBuildingRight";
     public static final String COMPANY_PAR_SLOT_DIALOG = "CompanyParSlotRight";
 
-    protected JDialog currentDialog = null;
-    protected PossibleAction currentDialogAction = null;
-    protected int[] startPrices = null;
-    protected int[] operationOrder = null;
     private static final String[] bRights = {"A+B+C", "B+C+D"};
     private static final String[] parSlots = {"1", "2", "3", "4"};
 
     private static final long serialVersionUID = 1L;
+
     /**
      * @param round
      * @param parent
@@ -43,11 +39,9 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
     public StartRoundWindow_1880() {
     }
 
-
     @Override
     public boolean processImmediateAction() {
-
-        log.debug("ImmediateAction=" + immediateAction);
+        log.debug("ImmediateAction={}", immediateAction);
         if (immediateAction != null) {
             // Make a local copy and discard the original,
             // so that it's not going to loop.
@@ -105,7 +99,7 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
     private boolean requestStartSlot(SetupNewPublicDetails_1880 action) {
         RadioButtonDialog dialog = new RadioButtonDialog(
                 COMPANY_PAR_SLOT_DIALOG, this, this,
-                LocalText.getText("PleaseSelect"),       
+                LocalText.getText("PleaseSelect"),
                 LocalText.getText("PickParSlot", action.getPlayerName(), action.getPrice(), action.getCompanyName()),
                 parSlots, 0);
         setCurrentDialog (dialog, action);
@@ -121,7 +115,7 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
         if (index >= 0) {
             action.setParSlotIndex(index);  // Fortunately this lines up...
             requestBuildingRights(action);
-        } 
+        }
     }
 
 
@@ -129,12 +123,12 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
     private boolean requestBuildingRights(SetupNewPublicDetails_1880 action) {
         RadioButtonDialog dialog = new RadioButtonDialog(
                 COMPANY_BUILDING_RIGHT_DIALOG, this, this,
-                LocalText.getText("PleaseSelect"),       
+                LocalText.getText("PleaseSelect"),
                 LocalText.getText("WhichBuildingRight", action.getPlayerName(), action.getCompanyName()),
                 bRights, 0);
         setCurrentDialog (dialog, action);
         return true;
-    }   
+    }
 
 
     private void handleBuildingRights() {
@@ -147,7 +141,7 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
             String buildingRight = bRights[index];
             action.setBuildRightsString(buildingRight);
             process(action);
-        } 
+        }
     }
 
 }

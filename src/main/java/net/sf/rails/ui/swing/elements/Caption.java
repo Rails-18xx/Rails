@@ -9,8 +9,6 @@ import javax.swing.border.Border;
 public class Caption extends Cell {
     private static final long serialVersionUID = 1L;
 
-    private Border labelBorder = BorderFactory.createEmptyBorder(1, 2, 1, 2);
-
     private static final Color NORMAL_BG_COLOUR = new Color(240, 240, 240);
 
     private static final Color HIGHLIGHT_BG_COLOUR = new Color(255, 255, 80);

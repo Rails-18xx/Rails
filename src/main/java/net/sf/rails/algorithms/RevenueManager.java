@@ -30,13 +30,13 @@ public final class RevenueManager extends RailsManager implements Configurable {
 
     // Modifiers that are configurable
     private final HashSet<Configurable> configurableModifiers = new HashSet<Configurable>();
-    
+
     // Variables to store modifiers (permanent)
-    private final ArrayListState<NetworkGraphModifier> graphModifiers = ArrayListState.create(this, "graphModifiers"); 
+    private final ArrayListState<NetworkGraphModifier> graphModifiers = ArrayListState.create(this, "graphModifiers");
     private final ArrayListState<RevenueStaticModifier> staticModifiers = ArrayListState.create(this, "staticModifiers");
     private final ArrayListState<RevenueDynamicModifier> dynamicModifiers = ArrayListState.create(this, "dynamicModifiers");
     private RevenueCalculatorModifier calculatorModifier;
-    
+
     // Variables that store the active modifier (per RevenueAdapter)
     private final ArrayList<RevenueStaticModifier> activeStaticModifiers = new ArrayList<RevenueStaticModifier>();
     private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers = new ArrayList<RevenueDynamicModifier>();
@@ -49,44 +49,42 @@ public final class RevenueManager extends RailsManager implements Configurable {
     public RevenueManager(RailsRoot parent, String id) {
         super(parent, id);
     }
-    
+
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        
+
         // define modifiers
         List<Tag> modifierTags = tag.getChildren("Modifier");
-        
+
         if (modifierTags != null) {
             for (Tag modifierTag:modifierTags) {
                 // get classname
                 String className = modifierTag.getAttributeAsString("class");
                 if (className == null) {
-                    throw new ConfigurationException(LocalText.getText(
-                            "ComponentHasNoClass", "Modifier"));
+                    throw new ConfigurationException(LocalText.getText("ComponentHasNoClass", "Modifier"));
                 }
                 // create modifier
                 Object modifier;
                 try {
                     modifier = Class.forName(className).newInstance();
                 } catch (Exception e) {
-                    throw new ConfigurationException(LocalText.getText(
-                            "ClassCannotBeInstantiated", className), e);
+                    throw new ConfigurationException(LocalText.getText("ClassCannotBeInstantiated", className), e);
                 }
                 boolean isModifier = false;
                 // add them to the revenueManager
                 if (modifier instanceof NetworkGraphModifier) {
                     graphModifiers.add((NetworkGraphModifier)modifier);
                     isModifier = true;
-                    log.info("Added as graph modifier = " + className);
+                    log.debug("Added as graph modifier = {}", className);
                 }
                 if (modifier instanceof RevenueStaticModifier) {
                     staticModifiers.add((RevenueStaticModifier)modifier);
                     isModifier = true;
-                    log.info("Added as static modifier = " + className);
+                    log.debug("Added as static modifier = {}", className);
                 }
                 if (modifier instanceof RevenueDynamicModifier) {
                     dynamicModifiers.add((RevenueDynamicModifier)modifier);
                     isModifier = true;
-                    log.info("Added as dynamic modifier = " + className);
+                    log.debug("Added as dynamic modifier = {}", className);
                 }
                 if (modifier instanceof RevenueCalculatorModifier) {
                     if (calculatorModifier != null) {
@@ -95,7 +93,7 @@ public final class RevenueManager extends RailsManager implements Configurable {
                     }
                     calculatorModifier = (RevenueCalculatorModifier)modifier;
                     isModifier = true;
-                    log.info("Added as calculator modifier = " + className);
+                    log.debug("Added as calculator modifier = {}", className);
                 }
                 if (!isModifier) {
                     throw new ConfigurationException(LocalText.getText(
@@ -115,48 +113,48 @@ public final class RevenueManager extends RailsManager implements Configurable {
                 modifier.finishConfiguration(parent);
         }
     }
-    
+
     public void addStaticModifier(RevenueStaticModifier modifier) {
         staticModifiers.add(modifier);
-        log.info("Revenue Manager: Added static modifier " + modifier);
+        log.debug("Revenue Manager: Added static modifier {}", modifier);
     }
-    
+
     public boolean removeStaticModifier(RevenueStaticModifier modifier) {
         boolean result = staticModifiers.remove(modifier);
         if (result) {
-            log.info("RevenueManager: Removed static modifier " + modifier);
+            log.debug("RevenueManager: Removed static modifier {}", modifier);
         } else {
-            log.info("RevenueManager: Cannot remove" + modifier);
+            log.debug("RevenueManager: Cannot remove{}", modifier);
         }
         return result;
     }
 
     public void addGraphModifier(NetworkGraphModifier modifier) {
         graphModifiers.add(modifier);
-        log.info("Revenue Manager: Added graph modifier " + modifier);
+        log.debug("Revenue Manager: Added graph modifier {}", modifier);
     }
-    
+
     public boolean removeGraphModifier(NetworkGraphModifier modifier) {
         boolean result = graphModifiers.remove(modifier);
         if (result) {
-            log.info("RevenueManager: Removed graph modifier " + modifier);
+            log.debug("RevenueManager: Removed graph modifier {}", modifier);
         } else {
-            log.info("RevenueManager: Cannot remove" + modifier);
+            log.debug("RevenueManager: Cannot remove{}", modifier);
         }
         return result;
     }
 
     public void addDynamicModifier(RevenueDynamicModifier modifier) {
         dynamicModifiers.add(modifier);
-        log.info("Revenue Manager: Added dynamic modifier " + modifier);
+        log.debug("Revenue Manager: Added dynamic modifier {}", modifier);
     }
-    
+
     public boolean removeDynamicModifier(RevenueDynamicModifier modifier) {
         boolean result = dynamicModifiers.remove(modifier);
         if (result) {
-            log.info("RevenueManager: Removed dynamic modifier " + modifier);
+            log.debug("RevenueManager: Removed dynamic modifier {}", modifier);
         } else {
-            log.info("RevenueManager: Cannot remove" + modifier);
+            log.debug("RevenueManager: Cannot remove{}", modifier);
         }
         return result;
     }
@@ -166,14 +164,14 @@ public final class RevenueManager extends RailsManager implements Configurable {
             modifier.modifyMapGraph(graph);
         }
     }
-    
+
     void activateRouteGraphModifiers(NetworkGraph graph, PublicCompany company) {
         for (NetworkGraphModifier modifier:graphModifiers.view()) {
             modifier.modifyRouteGraph(graph, company);
         }
     }
-    
-    
+
+
     void initStaticModifiers(RevenueAdapter revenueAdapter) {
         activeStaticModifiers.clear();
         for (RevenueStaticModifier modifier:staticModifiers.view()) {
@@ -195,7 +193,7 @@ public final class RevenueManager extends RailsManager implements Configurable {
         }
         return !activeDynamicModifiers.isEmpty();
     }
-    
+
     /**
      * @param revenueAdapter
      * @return revenue from active calculator
@@ -203,11 +201,11 @@ public final class RevenueManager extends RailsManager implements Configurable {
     // FIXME: This does not fully cover all cases that needs the revenue from the calculator
     int revenueFromDynamicCalculator(RevenueAdapter revenueAdapter) {
         return calculatorModifier.calculateRevenue(revenueAdapter);
-        
+
     }
 
     /**
-     * Allows dynamic modifiers to adjust the optimal run 
+     * Allows dynamic modifiers to adjust the optimal run
      * @param optimalRun
      */
     void adjustOptimalRun(List<RevenueTrainRun> optimalRun) {
@@ -243,31 +241,31 @@ public final class RevenueManager extends RailsManager implements Configurable {
          }
          return value;
      }
-    
+
     /**
-     * 
+     *
      * @param revenueAdapter
      * @return pretty print output from all modifiers (both static and dynamic)
      */
     String prettyPrint(RevenueAdapter revenueAdapter) {
-        StringBuffer prettyPrint = new StringBuffer();
-        
+        StringBuilder prettyPrint = new StringBuilder();
+
         for (RevenueStaticModifier modifier:activeStaticModifiers) {
             String modifierText = modifier.prettyPrint(revenueAdapter);
             if (modifierText != null) {
-                prettyPrint.append(modifierText + "\n");
+                prettyPrint.append(modifierText).append("\n");
             }
         }
 
         for (RevenueDynamicModifier modifier:activeDynamicModifiers) {
             String modifierText = modifier.prettyPrint(revenueAdapter);
             if (modifierText != null) {
-                prettyPrint.append(modifierText + "\n");
+                prettyPrint.append(modifierText).append("\n");
             }
         }
-        
+
         return prettyPrint.toString();
     }
-    
-    
+
+
 }

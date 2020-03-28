@@ -24,8 +24,8 @@ public class AssignNamedTrains extends UseSpecialProperty {
 
     transient private List<NameableTrain> nameableTrains;
     private String[] trainIds;
-    int numberOfTrains;
-    int numberOfTokens;
+    private int numberOfTrains;
+    private int numberOfTokens;
 
     transient private List<NameableTrain> preTrainPerToken;
     private String[] preTrainds;
@@ -73,7 +73,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
             }
         }
     }
-    
+
     @Override
     public String toMenu() {
         return ((NameTrains) specialProperty).toMenu();
@@ -114,18 +114,18 @@ public class AssignNamedTrains extends UseSpecialProperty {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        AssignNamedTrains action = (AssignNamedTrains)pa; 
-        boolean options = 
+        AssignNamedTrains action = (AssignNamedTrains)pa;
+        boolean options =
                 Objects.equal(this.nameableTrains, action.nameableTrains)
                 && Objects.equal(this.preTrainPerToken, action.preTrainPerToken)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.postTrainPerToken, action.postTrainPerToken)
@@ -133,7 +133,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
     }
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("nameableTrains", nameableTrains)
                     .addToString("preTrainPerToken", preTrainPerToken)

@@ -1,12 +1,11 @@
 /**
- * 
+ *
  */
 package net.sf.rails.ui.swing.gamespecific._1837;
 
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.ORPanel;
 import net.sf.rails.ui.swing.ORUIManager;
-import net.sf.rails.ui.swing.ORWindow;
 import rails.game.action.SetDividend;
 
 /**
@@ -16,7 +15,7 @@ import rails.game.action.SetDividend;
 public class ORUIManager_1837 extends ORUIManager {
 
     /**
-     * 
+     *
      */
     public ORUIManager_1837() {
         super();
@@ -48,7 +47,7 @@ public class ORUIManager_1837 extends ORUIManager {
                 orWindow.process(action);
             } else {
                 log.debug("Allocation is unknown, asking for it");
-                setLocalStep(LocalSteps.SelectPayout);
+                setLocalStep(LocalSteps.SELECT_PAYOUT);
                 updateStatus(action, true);
 
                 // Locally update revenue if we don't inform the server yet.

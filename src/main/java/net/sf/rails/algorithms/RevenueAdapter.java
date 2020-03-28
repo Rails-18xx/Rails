@@ -31,22 +31,20 @@ import org.jgrapht.graph.SimpleGraph;
  * RevenueAdapter links the revenue algorithm to Rails.
  */
 public final class RevenueAdapter implements Runnable {
+    protected static final Logger log = LoggerFactory.getLogger(RevenueAdapter.class);
 
-    protected static Logger log =
-        LoggerFactory.getLogger(RevenueAdapter.class);
-    
     // define VertexVisitSet
-    public class VertexVisit {
+    public static class VertexVisit {
         public Set<NetworkVertex> set;
         public VertexVisit() {set = new HashSet<NetworkVertex>();}
         public VertexVisit(Collection<NetworkVertex> coll) {set = new HashSet<NetworkVertex>(coll);}
         public String toString() {
             return "VertexVisit Set:" + set;
         }
-    }    
-    
+    }
+
     // define EdgeTravelSet
-    public class EdgeTravel {
+    public static class EdgeTravel {
         public Set<NetworkEdge> set;
         public EdgeTravel() {set = new HashSet<NetworkEdge>();}
         public EdgeTravel(Collection<NetworkEdge> coll) {set = new HashSet<NetworkEdge>(coll);}
@@ -54,7 +52,7 @@ public final class RevenueAdapter implements Runnable {
             return "EdgeTravel Set:" + set;
         }
     }
-    
+
     // basic links, to be defined at creation
     private final RailsRoot root;
     private final RevenueManager revenueManager;
@@ -70,68 +68,68 @@ public final class RevenueAdapter implements Runnable {
     private List<RevenueBonus> revenueBonuses;
     private Set<NetworkVertex> protectedVertices;
     private Map<NetworkEdge, EdgeTravel> edgeTravelSets;
-    
+
     // components related to the revenue calculator
     private RevenueCalculator rc;
     private boolean useMultiGraph;
-    Graph<NetworkVertex,NetworkEdge> rcGraph;
+    private Graph<NetworkVertex,NetworkEdge> rcGraph;
     private List<NetworkVertex> rcVertices;
     private List<NetworkEdge> rcEdges;
     private List<RevenueTrainRun> optimalRun;
     private boolean hasDynamicModifiers;
-    
+
     // revenue listener to communicate results
     private RevenueListener revenueListener;
-    
-    public RevenueAdapter(RailsRoot root, NetworkAdapter networkAdapter, 
+
+    public RevenueAdapter(RailsRoot root, NetworkAdapter networkAdapter,
             PublicCompany company, Phase phase){
         this.root = root;
         this.revenueManager = root.getRevenueManager();
         this.networkAdapter = networkAdapter;
         this.company = company;
         this.phase = phase;
-        
+
         this.graph = null;
-        this.trains = new ArrayList<NetworkTrain>();
-        this.startVertices = new HashSet<NetworkVertex>();
-        this.vertexVisitSets = new ArrayList<VertexVisit>();
-        this.edgeTravelSets = new HashMap<NetworkEdge, EdgeTravel>();
-        this.revenueBonuses = new ArrayList<RevenueBonus>();
-        this.protectedVertices = new HashSet<NetworkVertex>();
+        this.trains = new ArrayList<>();
+        this.startVertices = new HashSet<>();
+        this.vertexVisitSets = new ArrayList<>();
+        this.edgeTravelSets = new HashMap<>();
+        this.revenueBonuses = new ArrayList<>();
+        this.protectedVertices = new HashSet<>();
     }
-    
+
     public static RevenueAdapter createRevenueAdapter(RailsRoot root, PublicCompany company, Phase phase) {
         NetworkAdapter networkAdapter = NetworkAdapter.create(root);
         RevenueAdapter ra = new RevenueAdapter(root, networkAdapter, company, phase);
         ra.populateFromRails();
         return ra;
     }
-    
-    
+
+
     public PublicCompany getCompany() {
         return company;
     }
-    
+
     public Phase getPhase() {
         return phase;
     }
-    
+
     public SimpleGraph<NetworkVertex,NetworkEdge> getGraph() {
         return graph.getGraph();
     }
-    
+
     public Set<NetworkVertex> getVertices() {
         return graph.getGraph().vertexSet();
     }
-   
+
     public Set<NetworkEdge> getEdges() {
         return graph.getGraph().edgeSet();
     }
-    
+
     public Graph<NetworkVertex,NetworkEdge> getRCGraph() {
         return rcGraph;
     }
-    
+
     public int getRCVertexId(NetworkVertex vertex) {
         return rcVertices.indexOf(vertex);
     }
@@ -139,21 +137,21 @@ public final class RevenueAdapter implements Runnable {
     public int getRCEdgeId(NetworkEdge edge) {
         return rcEdges.indexOf(edge);
     }
-        
+
     public Set<NetworkVertex> getStartVertices() {
         return startVertices;
     }
-    
+
     public boolean addStartVertices(Collection<NetworkVertex> startVertices) {
         this.startVertices.addAll(startVertices);
         protectedVertices.addAll(startVertices);
         return true;
     }
-    
+
     public List<NetworkTrain> getTrains() {
         return trains;
     }
-    
+
     public boolean addTrain(Train railsTrain){
         NetworkTrain train = NetworkTrain.createFromRailsTrain(railsTrain);
         if (train == null) {
@@ -163,11 +161,11 @@ public final class RevenueAdapter implements Runnable {
             return true;
         }
     }
-    
+
     public void addTrain(NetworkTrain train) {
         trains.add(train);
     }
-    
+
     public void removeTrain(NetworkTrain train) {
         trains.remove(train);
     }
@@ -182,42 +180,42 @@ public final class RevenueAdapter implements Runnable {
     public List<VertexVisit> getVertexVisitSets() {
         return vertexVisitSets;
     }
-    
+
     public void addVertexVisitSet(VertexVisit visit) {
         vertexVisitSets.add(visit);
         protectedVertices.addAll(visit.set);
     }
-    
+
     public List<RevenueBonus> getRevenueBonuses() {
         return revenueBonuses;
     }
-    
+
     public void addRevenueBonus(RevenueBonus bonus)  {
         revenueBonuses.add(bonus);
         protectedVertices.addAll(bonus.getVertices());
     }
-    
+
     public void removeRevenueBonus(RevenueBonus bonus) {
         revenueBonuses.remove(bonus);
         // TODO: Change protectedVertices to multiSet then you can unprotect vertices
     }
-    
+
     public void populateFromRails() {
         // define graph, without HQ
         graph = networkAdapter.getRouteGraphCached(company, false);
-        
+
         // initialize vertices
         NetworkVertex.initAllRailsVertices(graph, company, phase);
 
         // define startVertexes
         addStartVertices(graph.getCompanyBaseTokenVertexes(company));
-        
+
         // define visit sets
         defineVertexVisitSets();
-        
+
         // define revenueBonuses
         defineRevenueBonuses();
-        
+
         // define Trains
         for (Train train:company.getPortfolioModel().getTrainList()) {
             addTrain(train);
@@ -231,7 +229,7 @@ public final class RevenueAdapter implements Runnable {
     }
 
     private void defineVertexVisitSets() {
-        // define map of all locationNames 
+        // define map of all locationNames
         Map<String, VertexVisit> locations = new HashMap<String, VertexVisit>();
         for (NetworkVertex vertex:getVertices()) {
             String ln = vertex.getStopName();
@@ -244,7 +242,7 @@ public final class RevenueAdapter implements Runnable {
                 locations.put(ln, v);
             }
         }
-        log.info("Locations = " + locations);
+        log.debug("Locations = {}", locations);
         // convert the location map to the vertex sets
         for (VertexVisit location:locations.values()) {
             if (location.set.size() >= 2) {
@@ -260,7 +258,7 @@ public final class RevenueAdapter implements Runnable {
             MapHex hex = vertex.getHex();
             if (hex != null) hexes.add(hex);
         }
-        
+
         // check each vertex hex for a potential revenue bonus
         for (MapHex hex:hexes) {
             List<RevenueBonusTemplate> bonuses = new ArrayList<RevenueBonusTemplate>();
@@ -276,7 +274,7 @@ public final class RevenueAdapter implements Runnable {
                 }
             }
         }
-        log.info("RA: RevenueBonuses = " + revenueBonuses);
+        log.info("RA: RevenueBonuses = {}", revenueBonuses);
     }
 
     /**
@@ -292,21 +290,21 @@ public final class RevenueAdapter implements Runnable {
         }
         return useHTrains;
     }
-    
+
     public void initRevenueCalculator(boolean useMultiGraph){
-        
+
         this.useMultiGraph = useMultiGraph;
 
         // check for dynamic modifiers (including an own calculator
         if (revenueManager != null) {
             hasDynamicModifiers = revenueManager.initDynamicModifiers(this);
         }
-        
+
         // define optimized graph
-        
+
         if (useMultiGraph) {
             // generate phase 2 graph
-            NetworkMultigraph multiGraph = networkAdapter.getMultigraph(company, protectedVertices); 
+            NetworkMultigraph multiGraph = networkAdapter.getMultigraph(company, protectedVertices);
             rcGraph = multiGraph.getGraph();
             // retrieve edge sets
             edgeTravelSets.putAll(multiGraph.getPhaseTwoEdgeSets(this));
@@ -314,13 +312,13 @@ public final class RevenueAdapter implements Runnable {
             // generate standard graph
             rcGraph = networkAdapter.getRevenueGraph(company, protectedVertices).getGraph();
         }
-   
+
         // define the vertices and edges lists
         rcVertices = new ArrayList<NetworkVertex>(rcGraph.vertexSet());
         // define ordering on vertexes by value
-        Collections.sort(rcVertices, new NetworkVertex.ValueOrder());
+        rcVertices.sort(new NetworkVertex.ValueOrder());
         rcEdges = new ArrayList<NetworkEdge>(rcGraph.edgeSet());
-        Collections.sort(rcEdges, new NetworkEdge.CostOrder());
+        rcEdges.sort(new NetworkEdge.CostOrder());
 
         // prepare train length
         prepareTrainLengths(rcVertices);
@@ -330,20 +328,20 @@ public final class RevenueAdapter implements Runnable {
         int maxBonusVertices = maxRevenueBonusVertices();
         int maxNeighbors = maxVertexNeighbors(rcVertices);
         int maxTravelEdges = maxTravelEdges();
-         
+
         if (useMultiGraph) {
             if (useHTrains()) {
-                rc = new RevenueCalculatorMultiHex(this, rcVertices.size(), rcEdges.size(), 
+                rc = new RevenueCalculatorMultiHex(this, rcVertices.size(), rcEdges.size(),
                         maxNeighbors, maxVisitVertices, maxTravelEdges, trains.size(), maxBonusVertices);
             } else {
-                rc = new RevenueCalculatorMulti(this, rcVertices.size(), rcEdges.size(), 
+                rc = new RevenueCalculatorMulti(this, rcVertices.size(), rcEdges.size(),
                         maxNeighbors, maxVisitVertices, maxTravelEdges, trains.size(), maxBonusVertices);
             }
         } else {
-            rc = new RevenueCalculatorSimple(this, rcVertices.size(), rcEdges.size(), 
-                    maxNeighbors, maxVisitVertices, trains.size(), maxBonusVertices); 
+            rc = new RevenueCalculatorSimple(this, rcVertices.size(), rcEdges.size(),
+                    maxNeighbors, maxVisitVertices, trains.size(), maxBonusVertices);
         }
-        
+
         populateRevenueCalculator();
     }
 
@@ -352,7 +350,7 @@ public final class RevenueAdapter implements Runnable {
         for (VertexVisit vertexVisit:vertexVisitSets) {
             maxNbVertices = Math.max(maxNbVertices, vertexVisit.set.size());
         }
-        log.info("RA: Block of " + vertexVisitSets + ", maximum vertices in a set = "+ maxNbVertices);
+        log.debug("RA: Block of {}, maximum vertices in a set = {}", vertexVisitSets, maxNbVertices);
         return maxNbVertices;
     }
 
@@ -361,14 +359,14 @@ public final class RevenueAdapter implements Runnable {
         for (NetworkVertex vertex:vertices) {
             maxNeighbors = Math.max(maxNeighbors, rcGraph.edgesOf(vertex).size());
         }
-        log.info("RA: Maximum neighbors in graph = "+ maxNeighbors);
+        log.debug("RA: Maximum neighbors in graph = {}", maxNeighbors);
         return maxNeighbors;
     }
 
     private int maxRevenueBonusVertices() {
         // get the number of non-simple bonuses
         int nbBonuses = RevenueBonus.getNumberNonSimpleBonuses(revenueBonuses);
-        log.info("Number of non simple bonuses = " + nbBonuses);
+        log.debug("Number of non simple bonuses = {}", nbBonuses);
         return nbBonuses;
     }
 
@@ -377,22 +375,25 @@ public final class RevenueAdapter implements Runnable {
         for (EdgeTravel edgeTravel:edgeTravelSets.values()) {
             maxNbEdges = Math.max(maxNbEdges, edgeTravel.set.size());
         }
-        for (NetworkEdge edge:edgeTravelSets.keySet()) {
+        for ( NetworkEdge edge : edgeTravelSets.keySet() ) {
             EdgeTravel edgeTravel = edgeTravelSets.get(edge);
-            StringBuilder edgeString = new StringBuilder("RA: EdgeSet for " + edge.toFullInfoString() + 
-                   " size = " + edgeTravel.set.size() + "\n");
-            for (NetworkEdge edgeInSet:edgeTravel.set) {
-                edgeString.append(edgeInSet.toFullInfoString() + "\n");
+            StringBuilder edgeString = new StringBuilder("RA: EdgeSet for ").
+                    append(edge.toFullInfoString()).
+                    append(" size = ").
+                    append(edgeTravel.set.size()).
+                    append("\n");
+            for ( NetworkEdge edgeInSet : edgeTravel.set ) {
+                edgeString.append(edgeInSet.toFullInfoString()).append("\n");
             }
             log.info(edgeString.toString());
         }
-        log.info("RA: maximum edges in a set = "+ maxNbEdges);
+        log.debug("RA: maximum edges in a set = {}", maxNbEdges);
         return maxNbEdges;
     }
 
-    
+
     private void prepareTrainLengths(Collection<NetworkVertex> vertices) {
-        
+
         // separate vertexes
         List<NetworkVertex> cities = new ArrayList<NetworkVertex>();
         List<NetworkVertex> towns = new ArrayList<NetworkVertex>();
@@ -400,10 +401,10 @@ public final class RevenueAdapter implements Runnable {
             if (vertex.isMajor()) cities.add(vertex);
             if (vertex.isMinor()) towns.add(vertex);
         }
-        
+
         int maxCities = cities.size();
         int maxTowns = towns.size();
-        
+
         // check train lengths
         int maxCityLength = 0, maxTownLength = 0;
         for (NetworkTrain train: trains) {
@@ -417,12 +418,12 @@ public final class RevenueAdapter implements Runnable {
             maxCityLength = Math.max(maxCityLength, train.getMajors());
             maxTownLength = Math.max(maxTownLength, train.getMinors());
         }
-        
+
     }
-    
+
     private void populateRevenueCalculator(){
-        
-        for (int id=0; id < rcVertices.size(); id++){ 
+
+        for (int id=0; id < rcVertices.size(); id++){
             NetworkVertex v = rcVertices.get(id);
             // add to revenue calculator
             v.addToRevenueCalculator(rc, id);
@@ -430,7 +431,7 @@ public final class RevenueAdapter implements Runnable {
                 NetworkTrain train = trains.get(trainId);
                 rc.setVertexValue(id, trainId, getVertexValue(v, train, phase));
             }
-            
+
             // set neighbors, now regardless of sink property
             // this is covered by the vertex attribute
             // and required for startvertices that are sinks themselves
@@ -450,8 +451,9 @@ public final class RevenueAdapter implements Runnable {
                 }
                 rc.setVertexNeighbors(id, neighborsArray, edgesArray);
             } else {
-                List<NetworkVertex> neighbors = Graphs.neighborListOf(rcGraph, v); 
-                int j=0, neighborsArray[] = new int[neighbors.size()];
+                List<NetworkVertex> neighbors = Graphs.neighborListOf(rcGraph, v);
+                int j=0;
+                int[] neighborsArray = new int[neighbors.size()];
                 for (NetworkVertex n:neighbors){
                     neighborsArray[j++] = rcVertices.indexOf(n);
                 }
@@ -468,13 +470,14 @@ public final class RevenueAdapter implements Runnable {
         }
 
         // set startVertexes
-        int startVertexId =0, sv[] = new int[startVertices.size()];
+        int startVertexId =0;
+        int[] sv = new int[startVertices.size()];
         for (NetworkVertex startVertex:startVertices) {
             sv[startVertexId++] = rcVertices.indexOf(startVertex);
         }
-        Arrays.sort(sv); // sort by value order 
+        Arrays.sort(sv); // sort by value order
         rc.setStartVertexes(sv);
-        
+
         // set edges
         for (int id=0; id < rcEdges.size(); id++) {
             // prepare values
@@ -483,37 +486,39 @@ public final class RevenueAdapter implements Runnable {
             int distance = e.getDistance();
             rc.setEdge(id, greedy, distance);
         }
-        
+
         // set trains, check for H-trains
         for (int id=0; id < trains.size(); id++) {
             NetworkTrain train = trains.get(id);
             train.addToRevenueCalculator(rc, id);
         }
-        
+
         // set vertex sets
         for (VertexVisit visit:vertexVisitSets) {
-            int j=0, setArray[] = new int[visit.set.size()];
+            int j=0;
+            int[] setArray = new int[visit.set.size()];
             for (NetworkVertex n:visit.set){
                 setArray[j++] = rcVertices.indexOf(n);
             }
             rc.setVisitSet(setArray);
         }
-        log.info("RA: rcVertices:" + rcVertices);
-        log.info("RA: rcEdges:" + rcEdges);
+        log.debug("RA: rcVertices:{}", rcVertices);
+        log.debug("RA: rcEdges:{}", rcEdges);
 
         // set revenue bonuses
         int id = 0;
         for (RevenueBonus bonus:revenueBonuses) {
             if (bonus.addToRevenueCalculator(rc, id, rcVertices, trains, phase)) id ++;
         }
-        
-        log.info("RA: edgeTravelSets:" + edgeTravelSets);
-        
+
+        log.info("RA: edgeTravelSets:{}", edgeTravelSets);
+
         // set edge sets
         if (useMultiGraph) {
             for (NetworkEdge edge:edgeTravelSets.keySet()) {
                 EdgeTravel edgeTravel = edgeTravelSets.get(edge);
-                int j=0, setArray[] = new int[edgeTravel.set.size()];
+                int j=0;
+                int[] setArray = new int[edgeTravel.set.size()];
                 for (NetworkEdge n:edgeTravel.set){
                     setArray[j++] = rcEdges.indexOf(n);
                 }
@@ -521,51 +526,51 @@ public final class RevenueAdapter implements Runnable {
             }
         }
 
-        
+
         // activate dynamic modifiers
         rc.setDynamicModifiers(hasDynamicModifiers);
     }
 
     public int getVertexValue(NetworkVertex vertex, NetworkTrain train, Phase phase) {
-        
+
         // base value
         int value = vertex.getValueByTrain(train);
-        
+
         // add potential revenueBonuses
         for (RevenueBonus bonus:revenueBonuses) {
             if (bonus.checkSimpleBonus(vertex, train.getRailsTrain(), phase)) {
                 value += bonus.getValue();
             }
         }
-        
+
         return value;
     }
-    
+
     public String getVertexValueAsString(NetworkVertex vertex, NetworkTrain train, Phase phase) {
-        StringBuffer s = new StringBuffer();
-        
+        StringBuilder s = new StringBuilder();
+
         // base value
         s.append(vertex.getValueByTrain(train));
-        
+
         // add potential revenueBonuses
         for (RevenueBonus bonus:revenueBonuses) {
             if (bonus.checkSimpleBonus(vertex, train.getRailsTrain(), phase)) {
-                s.append("+" + bonus.getValue());
+                s.append("+").append(bonus.getValue());
             }
         }
         return s.toString();
     }
-    
-    
+
+
     private List<RevenueTrainRun> convertRcRun(int[][] rcRun) {
-        
+
         List<RevenueTrainRun> convertRun = new ArrayList<RevenueTrainRun>();
-                
+
         for (int j=0; j < rcRun.length; j++) {
             RevenueTrainRun trainRun = new RevenueTrainRun(this, trains.get(j));
             convertRun.add(trainRun);
 
-            if (rcEdges.size() == 0) continue; 
+            if (rcEdges.size() == 0) continue;
             for (int v=0; v < rcRun[j].length; v++) {
                 int id= rcRun[j][v];
                 if (id == -1) break;
@@ -583,17 +588,17 @@ public final class RevenueAdapter implements Runnable {
         }
         return convertRun;
     }
-    
+
     public int calculateRevenue() {
         // allows (one) dynamic modifiers to have their own revenue calculation method
-        // TODO: Still to be added 
+        // TODO: Still to be added
 //        if (hasDynamicCalculator) {
 //            return revenueManager.revenueFromDynamicCalculator(this);
 //        } else { // otherwise standard calculation
             return calculateRevenue(0, trains.size() - 1);
 //        }
     }
-    
+
     public int calculateRevenue(int startTrain, int finalTrain) {
         if (startTrain < 0 || finalTrain >= trains.size() || startTrain > finalTrain) {
             return 0;
@@ -605,21 +610,21 @@ public final class RevenueAdapter implements Runnable {
         int value = rc.calculateRevenue(startTrain, finalTrain);
         return value;
     }
-    
+
     public  List<RevenueTrainRun> getOptimalRun() {
         if (optimalRun == null) {
             optimalRun = convertRcRun(rc.getOptimalRun());
-            if (hasDynamicModifiers) { 
+            if (hasDynamicModifiers) {
                 revenueManager.adjustOptimalRun(optimalRun);
             }
         }
         return optimalRun;
     }
-    
+
     public List<RevenueTrainRun> getCurrentRun() {
         return convertRcRun(rc.getCurrentRun());
     }
-    
+
     /**
      * is called by rc for dynamic evaluations
      */
@@ -630,7 +635,7 @@ public final class RevenueAdapter implements Runnable {
         }
         return value;
     }
-    
+
     /**
      * is called by rc for dynamic predictions
      */
@@ -648,7 +653,7 @@ public final class RevenueAdapter implements Runnable {
 
     void notifyRevenueListener(final int revenue, final boolean finalResult) {
         if (revenueListener == null) return;
-        
+
         EventQueue.invokeLater(
                 new Runnable() {
                     public void run() {
@@ -657,22 +662,22 @@ public final class RevenueAdapter implements Runnable {
                     }
                 });
     }
-    
+
     public void run() {
         calculateRevenue(0, trains.size() -1);
     }
-    
+
     public void removeRevenueListener() {
         // only removes revenueListener
         revenueListener = null;
     }
-    
+
 
     public String getOptimalRunPrettyPrint(boolean includeDetails) {
         List<RevenueTrainRun> listRuns = getOptimalRun();
         if (listRuns== null) return LocalText.getText("RevenueNoRun");
 
-        StringBuffer runPrettyPrint = new StringBuffer();
+        StringBuilder runPrettyPrint = new StringBuilder();
         for (RevenueTrainRun run:listRuns) {
             runPrettyPrint.append(run.prettyPrint(includeDetails));
             if (!includeDetails && run != listRuns.get(listRuns.size()-1)) {
@@ -689,16 +694,15 @@ public final class RevenueAdapter implements Runnable {
                 dynamicBonuses = revenueManager.evaluationValue(this.getOptimalRun(), true);
             }
             if (dynamicBonuses != 0) {
-                runPrettyPrint.append("; " + 
-                        LocalText.getText("RevenueBonus", dynamicBonuses));
+                runPrettyPrint.append("; ").append(LocalText.getText("RevenueBonus", dynamicBonuses));
             }
         }
         return runPrettyPrint.toString();
     }
-    
+
     public void drawOptimalRunAsPath(HexMap map) {
         List<RevenueTrainRun> listRuns = getOptimalRun();
-        
+
         List<GeneralPath> pathList = new ArrayList<GeneralPath>();
         if (listRuns != null) {
             for (RevenueTrainRun run:listRuns) {
@@ -707,15 +711,15 @@ public final class RevenueAdapter implements Runnable {
         }
         map.setTrainPaths(pathList);
     }
-    
+
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("RevenueCalculator:\n" + rc + "\n");
-        buffer.append("rcVertices:\n" + rcVertices + "\n");
-        buffer.append("rcEdges:\n" + rcEdges + "\n");
-        buffer.append("startVertices:" + startVertices);
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("RevenueCalculator:\n").append(rc).append("\n");
+        buffer.append("rcVertices:\n").append(rcVertices).append("\n");
+        buffer.append("rcEdges:\n").append(rcEdges).append("\n");
+        buffer.append("startVertices:").append(startVertices);
         return buffer.toString();
     }
-    
+
 }

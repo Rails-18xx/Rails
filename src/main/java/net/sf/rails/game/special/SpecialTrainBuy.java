@@ -12,13 +12,13 @@ import net.sf.rails.util.Util;
  */
 public class SpecialTrainBuy extends SpecialProperty {
 
-    String name = "SpecialTrainBuy";
-    String trainTypeName = ""; // Default: all train types
-    boolean extra = false;
-    String deductionString;
-    boolean relativeDeduction = false;
-    boolean absoluteDeduction = false;
-    int deductionAmount; // Money or percentage
+    protected String name = "SpecialTrainBuy";
+    protected String trainTypeName = ""; // Default: all train types
+    protected boolean extra = false;
+    protected String deductionString;
+    protected boolean relativeDeduction = false;
+    protected boolean absoluteDeduction = false;
+    protected int deductionAmount; // Money or percentage
 
     /**
      * Used by Configure (via reflection) only
@@ -28,7 +28,7 @@ public class SpecialTrainBuy extends SpecialProperty {
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        
+
         super.configureFromXML(tag);
 
         Tag trainBuyTag = tag.getChild("SpecialTrainBuy");
@@ -117,7 +117,7 @@ public class SpecialTrainBuy extends SpecialProperty {
         return "SpecialTrainBuy comp=" + originalCompany.getId() + " extra="
                + extra + " deduction=" + deductionString;
     }
-    
+
     @Override
     public String toMenu() {
         if (trainTypeName.equals("")) {
@@ -130,9 +130,9 @@ public class SpecialTrainBuy extends SpecialProperty {
                     trainTypeName,
                     deductionString,
                     originalCompany.getId());
-        }        
+        }
     }
-    
+
     public String getInfo() {
         return toMenu();
     }

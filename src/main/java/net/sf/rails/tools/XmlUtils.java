@@ -3,14 +3,19 @@ package net.sf.rails.tools;
 
 import java.io.IOException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.sf.rails.common.parser.ConfigurationException;
-
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import net.sf.rails.common.parser.ConfigurationException;
 
 
 /**
@@ -29,12 +34,13 @@ public final class XmlUtils {
      * Returns null if no such attribute can be found. See
      * extractStringAttribute(NamedNodeMap nnp, String attrName, String
      * defaultValue)
-     * 
+     *
      * @param nnp the NodeNameMap to search for the Attribute
      * @param attrName the name of the attribute who's value is desired
      * @return the named attribute's value or null if absent.
      */
     /** @deprecated */
+    @Deprecated
     public static String extractStringAttribute(NamedNodeMap nnp,
             String attrName) {
         return extractStringAttribute(nnp, attrName, null);
@@ -43,13 +49,14 @@ public final class XmlUtils {
     /**
      * Extracts the String value of a given attribute from a NodeNameMap.
      * Returns a default value if no such attribute can be found.
-     * 
+     *
      * @param nnp the NodeNameMap to search for the Attribute
      * @param attrName the name of the attribute who's value is desired
      * @param defaultValue the value to be returned if the attribute is absent.
      * @return the named attribute's value, or the default value if absent.
      */
     /** @deprecated */
+    @Deprecated
     public static String extractStringAttribute(NamedNodeMap nnp,
             String attrName, String defaultValue) {
 
@@ -62,13 +69,14 @@ public final class XmlUtils {
     /**
      * Extracts the integer value of a given attribute from a NodeNameMap.
      * Returns zero if no such attribute can be found.
-     * 
+     *
      * @see
      * @param nnp the NodeNameMap to search for the Attribute
      * @param attrName the name of the attribute who's value is desired
      * @return the named attribute's value, or zero if absent.
      */
     /** @deprecated */
+    @Deprecated
     public static int extractIntegerAttribute(NamedNodeMap nnp, String attrName)
             throws ConfigurationException {
         return extractIntegerAttribute(nnp, attrName, 0);
@@ -77,7 +85,7 @@ public final class XmlUtils {
     /**
      * Extracts the integer value of a given attribute from a NodeNameMap.
      * Returns a default value if no such attribute can be found.
-     * 
+     *
      * @see
      * @param nnp the NodeNameMap to search for the Attribute
      * @param attrName the name of the attribute who's value is desired.
@@ -85,6 +93,7 @@ public final class XmlUtils {
      * @return the named attribute's value or the dedault value.
      */
     /** @deprecated */
+    @Deprecated
     public static int extractIntegerAttribute(NamedNodeMap nnp,
             String attrName, int defaultValue) throws ConfigurationException {
 
@@ -106,12 +115,13 @@ public final class XmlUtils {
      * Extracts the boolean value of a given attribute from a NodeNameMap. Any
      * string that starts with T or t (for "true") or Y or y (for "yes") is
      * considered to represent true, all other values will produce false.
-     * 
+     *
      * @param nnp The NodeNameMap to search for the Attribute
      * @param attrName The name of the attribute who's value is desired
      * @return The named attribute's value, or false if absent.
      */
     /** @deprecated */
+    @Deprecated
     public static boolean extractBooleanAttribute(NamedNodeMap nnp,
             String attrName) throws ConfigurationException {
         return extractBooleanAttribute(nnp, attrName, false);
@@ -122,13 +132,14 @@ public final class XmlUtils {
      * Returns a default value if no such attribute can be found. Any string
      * that starts with T or t (for "true") or Y or y (for "yes") is considered
      * to represent true, all other values will produce false.
-     * 
+     *
      * @param nnp The NodeNameMap to search for the Attribute
      * @param attrName The name of the attribute who's value is desired
      * @param defaultValue The value returned if the attribute is absent.
      * @return The named attribute's value or the default value.
      */
     /** @deprecated */
+    @Deprecated
     public static boolean extractBooleanAttribute(NamedNodeMap nnp,
             String attrName, boolean defaultValue)
             throws ConfigurationException {
@@ -143,6 +154,7 @@ public final class XmlUtils {
     }
 
     /** @deprecated */
+    @Deprecated
     public static int[] extractIntegerArrayAttribute(NamedNodeMap nnp,
             String attrName) throws ConfigurationException {
 
@@ -168,7 +180,7 @@ public final class XmlUtils {
     /**
      * Opens and parses an xml file. Searches the root level of the file for an
      * element with the supplied name.
-     * 
+     *
      * @param fileName the name of the file to open
      * @param elementName the name of the element to find
      * @return the named element in the named file
@@ -183,21 +195,15 @@ public final class XmlUtils {
             // Step 1: create a DocumentBuilderFactory and setNamespaceAware
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
             // Step 2: create a DocumentBuilder
             DocumentBuilder db = dbf.newDocumentBuilder();
 
             // Step 3: parse the input file to get a Document object
             doc = db.parse(net.sf.rails.util.Util.getStreamForFile(fileName));
 
-        } catch (ParserConfigurationException e) {
-            throw new ConfigurationException("Could not read/parse " + fileName
-                                             + " to find element "
-                                             + elementName, e);
-        } catch (SAXException e) {
-            throw new ConfigurationException("Could not read/parse " + fileName
-                                             + " to find element "
-                                             + elementName, e);
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new ConfigurationException("Could not read/parse " + fileName
                                              + " to find element "
                                              + elementName, e);

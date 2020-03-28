@@ -768,17 +768,15 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     public void addHome(PublicCompany company, Stop home) {
         if (stops.isEmpty()) {
-            log.error("No cities for home station on hex " + getId());
+            log.error("No cities for home station on hex {}", getId());
         } else {
             // not yet decided => create a null stop
             if (home == null) {
                 homes.put(company, Stop.create(this, null));
-                log.debug("Added home of " + company + " in hex "
-                        + this.toString() + " city not yet decided");
+                log.debug("Added home of {} in hex {} city not yet decided", company, this.toString());
             } else {
                 homes.put(company, home);
-                log.debug("Added home of " + company + " set to " + home
-                        + " id= " + home.getSpecificId());
+                log.debug("Added home of {} set to {} id= {}", company, home, home.getSpecificId());
             }
         }
     }

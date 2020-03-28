@@ -13,16 +13,16 @@ public abstract class NonModalDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = 1L;
 
     protected String key;
-    protected DialogOwner owner = null;
-    protected JFrame window = null;
+    protected DialogOwner owner;
+    protected JFrame window;
     protected String message;
     protected boolean hasCancelButton = true;
 
-    GridBagConstraints gc;
-    JPanel optionsPane, buttonPane;
-    RailsIconButton okButton, cancelButton;
-    String okTextKey = "OK";
-    String cancelTextKey = "Cancel";
+    protected GridBagConstraints gc;
+    protected JPanel optionsPane, buttonPane;
+    protected RailsIconButton okButton, cancelButton;
+    protected String okTextKey = "OK";
+    protected String cancelTextKey = "Cancel";
 
     public NonModalDialog(String key,
             DialogOwner owner, JFrame window, String title, String message) {

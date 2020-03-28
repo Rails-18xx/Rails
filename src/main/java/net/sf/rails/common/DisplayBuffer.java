@@ -14,25 +14,24 @@ import org.slf4j.LoggerFactory;
  * DisplayBuffer stores messages of the current action.
  */
 public class DisplayBuffer extends RailsModel {
-    
-    private static final Logger log =
-            LoggerFactory.getLogger(DisplayBuffer.class);
+
+    private static final Logger log = LoggerFactory.getLogger(DisplayBuffer.class);
 
     private final ArrayListState<String> buffer = ArrayListState.create(this, "buffer");
-    
+
     private final BooleanState autoDisplay = BooleanState.create(this, "autoDisplay");
 
     private DisplayBuffer(ReportManager parent, String id) {
         super(parent, id);
     }
-    
+
     public static DisplayBuffer create(ReportManager parent, String id) {
         return new DisplayBuffer(parent, id);
     }
-    
+
     @Override
     public ReportManager getParent() {
-        return (ReportManager)getParent();
+        return (ReportManager) super.getParent();
     }
 
     /**
@@ -41,7 +40,7 @@ public class DisplayBuffer extends RailsModel {
     public void add(String message) {
         add(message, true);
     }
-    
+
     /**
      * Add a message to DisplayBuffer
      */
@@ -50,7 +49,7 @@ public class DisplayBuffer extends RailsModel {
         this.autoDisplay.set(autoDisplay);
         if (Util.hasValue(message)) {
             buffer.add(message);
-            log.debug("To display: " + message);
+            log.debug("To display: {}", message);
         }
     }
 
@@ -77,14 +76,14 @@ public class DisplayBuffer extends RailsModel {
     public void clear() {
         buffer.clear();
     }
-    
+
     /**
      * Shortcut to add a message to DisplayBuffer
      */
     public static void add(RailsItem item, String message) {
         item.getRoot().getReportManager().getDisplayBuffer().add(message, true);
     }
-    
+
     /**
      * Shortcut to add a message to DisplayBuffer
      */

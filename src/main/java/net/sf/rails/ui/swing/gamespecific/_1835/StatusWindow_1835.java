@@ -18,7 +18,7 @@ import com.google.common.collect.Iterables;
 
 public class StatusWindow_1835 extends StatusWindow {
 
-    PublicCompany prussian;
+    private PublicCompany prussian;
 
     private static final long serialVersionUID = 1L;
 

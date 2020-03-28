@@ -15,7 +15,7 @@ import net.sf.rails.util.RailsObjects;
 import rails.game.action.PossibleAction;
 
 /**
- * 
+ *
  * Rails 2.0: Updated equals and toString methods
  */
 public class MergeCompanies extends PossibleAction {
@@ -43,7 +43,7 @@ public class MergeCompanies extends PossibleAction {
         this.mergingCompany = mergingCompany;
         this.mergingCompanyName = mergingCompany.getId();
         this.targetCompanies = targetCompanies;
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         canReplaceToken = new ArrayList<Boolean>(targetCompanies.size());
         for (PublicCompany target : targetCompanies) {
             if (b.length() > 0) b.append(",");
@@ -62,10 +62,10 @@ public class MergeCompanies extends PossibleAction {
         }
         targetCompanyNames = b.toString();
     }
-    
+
     public MergeCompanies(PublicCompany mergingCompany,
             PublicCompany targetCompany, boolean forced) {
-        this (mergingCompany, Arrays.asList(new PublicCompany[] {targetCompany}), forced);
+        this (mergingCompany, Arrays.asList(targetCompany), forced);
     }
 
     /** Required for deserialization */
@@ -108,28 +108,28 @@ public class MergeCompanies extends PossibleAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        MergeCompanies action = (MergeCompanies)pa; 
+        MergeCompanies action = (MergeCompanies)pa;
         boolean options = Objects.equal(this.mergingCompany, action.mergingCompany)
                 && Objects.equal(this.targetCompanies, action.targetCompanies)
                 && Objects.equal(this.canReplaceToken, action.canReplaceToken)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.selectedTargetCompany, action.selectedTargetCompany)
                 && Objects.equal(this.replaceToken, action.replaceToken)
         ;
     }
-    
+
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("mergingCompany", mergingCompany)
                     .addToString("targetCompanies", targetCompanies)

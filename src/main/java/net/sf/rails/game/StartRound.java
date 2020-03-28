@@ -17,15 +17,15 @@ import net.sf.rails.game.state.Model;
 public abstract class StartRound extends Round {
 
     // FIXME: StartRounds do not set Priority Player
-    
+
     // static at creation
     protected final StartPacket startPacket;
     protected final String variant;
-    
+
     // static at start
     protected Player startPlayer;
 
-    
+
     // The following have to be initialized by the sub-classes
     /**
      * Should the UI present bidding into and facilities? This value MUST be set
@@ -38,13 +38,13 @@ public abstract class StartRound extends Round {
      * in 1841 and 18EU.
      */
     protected final boolean hasBasePrices;
-    
+
     /**
      * Is buying allowed in the start round?  Not in the first start round of
      * 1880, for example, where everything is auctioned.
      */
     protected final boolean hasBuying;
-    
+
     private String StartRoundName="Start of Initial StartRound";
 
     // dynamic variables
@@ -56,18 +56,18 @@ public abstract class StartRound extends Round {
         this.hasBidding = hasBidding;
         this.hasBasePrices = hasBasePrices;
         this.hasBuying = hasBuying;
-        
+
         this.startPacket = parent.getStartPacket();
 
         String variant =  GameOption.getValue(this, GameOption.VARIANT);
         this.variant = Util.valueWithDefault(variant, "");
-        
+
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.START_ROUND);
     }
-    
+
     protected StartRound(GameManager parent, String id) {
         // default case, set bidding, basePrices and buying all to true
         this(parent, id, true, true, true);
@@ -82,7 +82,7 @@ public abstract class StartRound extends Round {
             }
         }
         numPasses.set(0);
-        
+
         // init current with priority player
         startPlayer = playerManager.setCurrentToPriorityPlayer();
 
@@ -95,9 +95,9 @@ public abstract class StartRound extends Round {
 
         boolean result = false;
 
-        log.debug("Processing action " + action);
+        log.debug("Processing action {}", action);
 
-        if (action instanceof NullAction && 
+        if (action instanceof NullAction &&
                 ((NullAction)action).getMode() == NullAction.Mode.PASS) {
             String playerName = action.getPlayerName();
             NullAction nullAction = (NullAction) action;
@@ -108,7 +108,7 @@ public abstract class StartRound extends Round {
             StartItemAction startItemAction = (StartItemAction) action;
             String playerName = action.getPlayerName();
 
-            log.debug("Item details: " + startItemAction.toString());
+            log.debug("Item details: {}", startItemAction.toString());
 
             if (startItemAction instanceof BuyStartItem) {
 
@@ -335,7 +335,7 @@ public abstract class StartRound extends Round {
     public boolean hasBidding() {
         return hasBidding;
     }
-    
+
     public boolean hasBuying() {
         return hasBuying;
     }

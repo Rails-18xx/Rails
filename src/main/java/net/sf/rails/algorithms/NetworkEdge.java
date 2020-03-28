@@ -17,23 +17,22 @@ import org.jgrapht.Graph;
 
 public final class NetworkEdge implements Comparable<NetworkEdge> {
 
-    protected static Logger log =
-        LoggerFactory.getLogger(NetworkEdge.class);
-    
+    protected static Logger log = LoggerFactory.getLogger(NetworkEdge.class);
+
     private final NetworkVertex source;
 
     private final NetworkVertex target;
-    
+
     private boolean greedy;
-    
+
     private final int distance;
-    
+
     private final List<NetworkVertex> hiddenVertices;
     // list of vertexes that were merged into the edge
-    
+
     private int routeCosts;
     // for the multigraph approach defines the number of routes excluded
-    
+
     public NetworkEdge(NetworkVertex source, NetworkVertex target, boolean greedy) {
         this.source = source;
         this.target = target;
@@ -44,8 +43,8 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
             this.distance = 0;
         hiddenVertices = new ArrayList<NetworkVertex>();
     }
-    
-    public NetworkEdge(NetworkVertex source, NetworkVertex target, boolean greedy, 
+
+    public NetworkEdge(NetworkVertex source, NetworkVertex target, boolean greedy,
                 int distance, List<NetworkVertex> hiddenVertexes) {
         this.source = source;
         this.target = target;
@@ -53,15 +52,15 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
         this.distance = distance;
         this.hiddenVertices = hiddenVertexes;
     }
-    
+
     public NetworkVertex getSource() {
         return source;
     }
-    
+
     public NetworkVertex getTarget() {
         return target;
     }
-    
+
     private NetworkVertex getLowVertex() {
         if (source.compareTo(target) <= 0) {
             return source;
@@ -77,7 +76,7 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
             return source;
         }
     }
-    
+
     /** returns the other vertex, if given vertex is not source/target of vertex, returns null */
     NetworkVertex getOtherVertex(NetworkVertex vertex) {
         if (this.source == vertex) {
@@ -87,7 +86,7 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
         }
         return null;
     }
-    
+
     /** gets common vertex, if both source and target are common, returns source of this edge */
     NetworkVertex getCommonVertex(NetworkEdge otherEdge) {
        if (this.source == otherEdge.source || this.source == otherEdge.target) {
@@ -101,27 +100,27 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
     public boolean isGreedy() {
         return greedy;
     }
-  
+
     public void setGreedy(boolean greedy) {
        this.greedy = greedy;
     }
-    
+
     public int getDistance() {
         return distance;
     }
-    
+
     int getRouteCosts() {
         return routeCosts;
     }
-    
+
     void setRouteCosts(int routeCosts) {
         this.routeCosts = routeCosts;
     }
-    
+
     public List<NetworkVertex> getHiddenVertices() {
         return hiddenVertices;
     }
-   
+
     /**
      * all vertices from source to target, including hidden vertices
      */
@@ -132,20 +131,20 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
         vertexPath.add(target);
         return vertexPath;
     }
-    
+
     public String toFullInfoString() {
-        StringBuffer info = new StringBuffer();
-        info.append("Edge " + getConnection());
-        info.append(", greedy = " + greedy);
-        info.append(", distance = " + distance);
-        info.append(", hidden vertexes = " + hiddenVertices);
+        StringBuilder info = new StringBuilder();
+        info.append("Edge ").append(getConnection());
+        info.append(", greedy = ").append(greedy);
+        info.append(", distance = ").append(distance);
+        info.append(", hidden vertexes = ").append(hiddenVertices);
         return info.toString();
     }
-    
+
     public String getOrderedConnection() {
         return getLowVertex() + " -> " + getHighVertex();
     }
-    
+
     public String getConnection() {
       return source + " -> " + target;
     }
@@ -160,7 +159,7 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
 //          return "" + distance;
     }
 
-    /** 
+    /**
      * Natural order based on the ordering of the connected vertices
      */
     public int compareTo(NetworkEdge otherEdge) {
@@ -170,40 +169,40 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
         }
         return result;
     }
-    
+
     /**
      * Ordering based on routecosts
      */
     public static final class CostOrder implements Comparator<NetworkEdge> {
-        
+
         public int compare(NetworkEdge edgeA, NetworkEdge edgeB) {
-            int result = ((Integer)edgeA.getRouteCosts()).compareTo(edgeB.getRouteCosts()); 
+            int result = Integer.compare(edgeA.getRouteCosts(), edgeB.getRouteCosts());
             if (result == 0)
                 result = edgeA.compareTo(edgeB); // otherwise use natural ordering
             return result;
         }
     }
 
- 
+
     static class MergeResult {
-        NetworkEdge newEdge;
-        NetworkVertex removedVertex;
+        protected NetworkEdge newEdge;
+        protected NetworkVertex removedVertex;
         MergeResult(NetworkEdge newEdge, NetworkVertex removedVertex) {
             this.newEdge = newEdge;
             this.removedVertex = removedVertex;
         }
     }
-    
+
     public static MergeResult mergeEdges(NetworkEdge edgeA, NetworkEdge edgeB) {
-        log.info("Merge of edge " + edgeA.toFullInfoString() + " and edge " + edgeB.toFullInfoString());
+        log.info("Merge of edge {} and edge {}", edgeA.toFullInfoString(), edgeB.toFullInfoString());
 
         NetworkVertex sourceA = edgeA.getSource();
         NetworkVertex targetA = edgeA.getTarget();
         NetworkVertex sourceB = edgeB.getSource();
         NetworkVertex targetB = edgeB.getTarget();
-        
+
         NetworkVertex newSource, newTarget, vertex = null;
-        
+
         boolean reverseA = false, reverseB = false;
         if (sourceA == sourceB) {
             newSource = targetA;
@@ -229,8 +228,8 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
             return null;
         }
 
-        log.info("Merge newSource = " + newSource + " newTarget = " + newTarget + " remove vertex = " + vertex);
-        
+        log.info("Merge newSource = {} newTarget = {} remove vertex = {}", newSource, newTarget, vertex);
+
         // define new edge
         int distance = edgeA.getDistance() + edgeB.getDistance();
 
@@ -249,14 +248,14 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
         hiddenVertexes.addAll(hiddenA);
         hiddenVertexes.add(vertex);
         hiddenVertexes.addAll(hiddenB);
-        NetworkEdge newEdge = 
+        NetworkEdge newEdge =
             new NetworkEdge(newSource, newTarget, true, distance, hiddenVertexes);
-        log.info("New edge = " + newEdge.toFullInfoString());
-        
+        log.info("New edge = {}", newEdge.toFullInfoString());
+
         // returns newEdge
         return new MergeResult(newEdge, vertex);
     }
-    
+
     public static boolean mergeEdgesInGraph(Graph<NetworkVertex, NetworkEdge> graph,
             NetworkEdge edgeA, NetworkEdge edgeB) {
 
@@ -266,13 +265,13 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
         NetworkVertex removedVertex = mergeResult.removedVertex;
 
         if (newEdge == null) return false;
-        
+
         // check if graph contains the edge already
         if (graph.containsEdge(newEdge.getSource(), newEdge.getTarget())) return false;
-        
+
         graph.addEdge(newEdge.getSource(), newEdge.getTarget(), newEdge);
 
-        log.info("New edge =  " + newEdge.toFullInfoString());
+        log.info("New edge = {}", newEdge.toFullInfoString());
 
         // remove vertex
         graph.removeVertex(removedVertex);
@@ -308,5 +307,5 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
         }
         return edgeShape;
     }
-    
+
 }

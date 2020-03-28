@@ -15,8 +15,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.Util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 
 
@@ -25,6 +28,7 @@ import org.w3c.dom.*;
  * an XML file for use in Rails 18xx. <p> The default names are:
  */
 public class ConvertTilesXML {
+    private static final Logger log = LoggerFactory.getLogger(ConvertTilesXML.class);
 
     private static String inputFilePath = "src/main/resources/tiles/TileDictionary.xml";
 
@@ -41,13 +45,13 @@ public class ConvertTilesXML {
 
     private static Pattern namePattern = Pattern.compile("^(\\d+)(/.*)?");
 
-    Document outputDoc;
-    Element outputJunction;
-    String tileNo;
-    String colour;
+    private Document outputDoc;
+    private Element outputJunction;
+    private String tileNo;
+    private String colour;
 
     static {
-        colourMap = new HashMap<String, String>();
+        colourMap = new HashMap<>();
         colourMap.put("tlYellow", "yellow");
         colourMap.put("tlGreen", "green");
         colourMap.put("tlBrown", "brown");
@@ -151,7 +155,6 @@ public class ConvertTilesXML {
     }
 
     public static void main(String[] args) {
-
         if (args != null) {
             if (args.length > 0) inputFilePath = args[0];
             if (args.length > 1) outputFilePath = args[1];
@@ -160,15 +163,15 @@ public class ConvertTilesXML {
         try {
             new ConvertTilesXML();
         } catch (ConfigurationException e) {
-            e.printStackTrace();
+            log.warn("caught exception", e);
         }
 
     }
 
     private ConvertTilesXML() throws ConfigurationException {
 
-        System.out.println("Input file path: "+(new File(inputFilePath).getAbsolutePath()));
-        System.out.println("Output file path: "+(new File(outputFilePath).getAbsolutePath()));
+        log.warn("Input file path: {}", new File(inputFilePath).getAbsolutePath());
+        log.warn("Output file path: {}", new File(outputFilePath).getAbsolutePath());
         Element inputTopElement =
             XmlUtils.findElementInFile(inputFilePath, "tiles");
 
@@ -180,7 +183,7 @@ public class ConvertTilesXML {
             outputDoc = impl.createDocument(null, "Tiles", null);
 
             convertXML(inputTopElement, outputDoc);
-            
+
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             transformerFactory.setAttribute("indent-number", 5);
             Transformer transformer = transformerFactory.newTransformer();
@@ -212,7 +215,7 @@ public class ConvertTilesXML {
 
         String id =
             inputTile.getElementsByTagName("ID").item(0).getFirstChild().getNodeValue();
-        System.out.println(id);
+        log.debug("id: {}", id);
         tileNo = id;
         outputTile.setAttribute("id", id);
         // int intId;
@@ -262,8 +265,8 @@ public class ConvertTilesXML {
             convertJunction(i, inputJunction, outputJunction);
         }
 
-        unresolvedTrack = new HashMap<String, List<Element>>();
-        resolvedTrack = new HashMap<Element, String>();
+        unresolvedTrack = new HashMap<>();
+        resolvedTrack = new HashMap<>();
 
         Element connections =
             (Element) inputTile.getElementsByTagName("connections").item(0);
@@ -282,7 +285,7 @@ public class ConvertTilesXML {
             Element[] ends = list.toArray(new Element[0]);
             if (ends.length <= 1) {
                 throw new ConfigurationException("Loose end " + ends[0]
-                                                                     + " in tile " + tileNo);
+                        + " in tile " + tileNo);
             }
             for (int i = 1; i < ends.length; i++) {
                 end1 = resolvedTrack.get(ends[i]);

@@ -52,7 +52,7 @@ public class StartCompany_18EU extends StartCompany {
         minorsToMerge = minors;
 
         if (minorsToMerge != null) {
-            StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
             for (PublicCompany minor : minorsToMerge) {
                 if (b.length() > 0) b.append(",");
                 b.append(minor.getId());
@@ -65,7 +65,7 @@ public class StartCompany_18EU extends StartCompany {
         availableHomeStations = stations;
 
         if (availableHomeStations != null) {
-            StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
             for (Stop station : availableHomeStations) {
                 if (b.length() > 0) b.append(",");
                 b.append(station.getSpecificId());
@@ -115,20 +115,20 @@ public class StartCompany_18EU extends StartCompany {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        StartCompany_18EU action = (StartCompany_18EU)pa; 
-        boolean options =  
+        StartCompany_18EU action = (StartCompany_18EU)pa;
+        boolean options =
                 Objects.equal(this.requestStartSpaces, action.requestStartSpaces)
                 // availableHomeStations does not work correctly, as here sometimes the station number deviate
                // && RailsObjects.elementEquals(this.availableHomeStations, action.availableHomeStations)
                 && RailsObjects.elementEquals(this.minorsToMerge, action.minorsToMerge)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.chosenMinor, action.chosenMinor)
@@ -138,7 +138,7 @@ public class StartCompany_18EU extends StartCompany {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("minorsToMerge", minorsToMerge)
                     .addToString("requestStartSpaces", requestStartSpaces)

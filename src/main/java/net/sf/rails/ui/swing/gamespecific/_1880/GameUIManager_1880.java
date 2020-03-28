@@ -34,31 +34,31 @@ public class GameUIManager_1880 extends GameUIManager {
     public static final String FORCED_ROCKET_EXCHANGE = "ForcedRocketExchange";
 
     public static final String NEW_COMPANY_SELECT_BUILDING_RIGHT = "NewSelectBuildingRight";
-    
+
 
     @Override
     public void dialogActionPerformed () {
         String key = "";
-        String[] presidentShareSizes; 
+        String[] presidentShareSizes;
         if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog) currentDialog).getKey();
-        
+
         // Check for the dialogs that are postprocessed in this class.
 /*
- * The mechanismn for starting a company and getting the necessary decisions by a player 
+ * The mechanismn for starting a company and getting the necessary decisions by a player
  * is implemented with the following steps
  *                              Player chooses Startprice
  *                                        |
  *           Player chooses President share percentage (20, 30 or 40 percent share)
  *                                        |
  *           Player chooses Building Right based on percentage of president share
- *           
+ *
  *           - 20 percent share will allow to choose from all Building Rights (A+B+C, B+C+D and 2 Phase and single Phase rightsModel)
  *           - 30 percent share will allow to choose from 2 Phase Building Rights (A+B, B+C, C+D and all single Phase rightsModel)
- *           - 40 percent share will limit the player to a building right for one Phase (A, B, C, D) 
+ *           - 40 percent share will limit the player to a building right for one Phase (A, B, C, D)
  */
-        
+
         if (COMPANY_SELECT_PRESIDENT_SHARE_SIZE.equals(key)) {
-        
+
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
             StartCompany_1880 action = (StartCompany_1880) currentDialogAction;
             String[] possibleBuildingRights;
@@ -68,9 +68,9 @@ public class GameUIManager_1880 extends GameUIManager {
                 currentDialogAction = null;
                 return;
             }
-            
+
             int shares = 0;
-           
+
             if (index > 1) { // 40 Percent Share has been chosen
                 shares = 4;
             } else if ( index == 1) {
@@ -78,10 +78,10 @@ public class GameUIManager_1880 extends GameUIManager {
             } else {  // 20 Percent Share chosen
                 shares = 2;
             }
-            
+
             action.setNumberBought(shares);
-            possibleBuildingRights = 
-                    BuildingRights_1880.getRightsForPresidentShareSize(shares).toArray(new String[0]);                
+            possibleBuildingRights =
+                    BuildingRights_1880.getRightsForPresidentShareSize(shares).toArray(new String[0]);
 
             dialog = new RadioButtonDialog (COMPANY_SELECT_BUILDING_RIGHT,
                     this,
@@ -94,22 +94,22 @@ public class GameUIManager_1880 extends GameUIManager {
                 setCurrentDialog(dialog, action);
                 statusWindow.disableButtons();
                 return;
-            
+
         } else if (COMPANY_SELECT_BUILDING_RIGHT.equals(key)) {
 
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
             StartCompany_1880 action = (StartCompany_1880) currentDialogAction;
 
-            String[] possibleBuildingRights = 
-                    BuildingRights_1880.getRightsForPresidentShareSize(action.getNumberBought()).toArray(new String[0]);                
- 
+            String[] possibleBuildingRights =
+                    BuildingRights_1880.getRightsForPresidentShareSize(action.getNumberBought()).toArray(new String[0]);
+
             int index = dialog.getSelectedOption();
             if (index < 0) {
                 currentDialogAction = null;
                 return;
             }
             action.setBuildingRights(possibleBuildingRights[index]);
-            
+
         } else if (COMPANY_START_PRICE_DIALOG.equals(key)
                 && currentDialogAction instanceof StartCompany_1880) {
 
@@ -122,13 +122,13 @@ public class GameUIManager_1880 extends GameUIManager {
                 currentDialogAction = null;
                 return;
             }
-            
+
             int[] startPrices = action.getStartPrices();
             Arrays.sort(startPrices);
 
             int selectedPrice = startPrices[index];
             action.setStartPrice(selectedPrice);
-            
+
             ParSlotManager parSlotManager = ((GameManager_1880) getGameManager()).getParSlotManager();
             List<ParSlot> parSlots = parSlotManager.filterByPrice(action.getPossibleParSlotIndices(), selectedPrice);
             List<String> parSlotStrings = Lists.newArrayList();
@@ -136,10 +136,10 @@ public class GameUIManager_1880 extends GameUIManager {
                 parSlotStrings.add(String.valueOf(slot.getIndex() + 1));
             }
             dialog = new RadioButtonDialog(
-                    COMPANY_SELECT_PAR_SLOT_INDEX, 
+                    COMPANY_SELECT_PAR_SLOT_INDEX,
                         this, statusWindow,
-                        LocalText.getText("PleaseSelect"),       
-                            LocalText.getText("PickParSlot", action.getPlayerName(), selectedPrice, 
+                        LocalText.getText("PleaseSelect"),
+                            LocalText.getText("PickParSlot", action.getPlayerName(), selectedPrice,
                                     action.getCompanyName()), parSlotStrings.toArray(new String[0]), 0);
             setCurrentDialog(dialog, action);
             statusWindow.disableButtons();
@@ -149,25 +149,25 @@ public class GameUIManager_1880 extends GameUIManager {
 
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
             StartCompany_1880 action = (StartCompany_1880) currentDialogAction;
-            
+
             int index = dialog.getSelectedOption();
             if (index < 0) {
                 currentDialogAction = null;
                 return;
             }
-            
+
             int price = action.getPrice();
-       
+
             ParSlotManager parSlotManager = ((GameManager_1880) getGameManager()).getParSlotManager();
             List<ParSlot> parSlots = parSlotManager.filterByPrice(action.getPossibleParSlotIndices(), price);
             action.setParSlotIndex(parSlots.get(index).getIndex());
 
           int freePlayerCash = getRoot().getPlayerManager().getCurrentPlayer().getFreeCash();
-          if (freePlayerCash >= (price*4)) { //enough Cash for 40 Percent 
+          if (freePlayerCash >= (price*4)) { //enough Cash for 40 Percent
               presidentShareSizes = new String[] {"20 Percent", "30 Percent", "40 Percent"};
-          } else if (freePlayerCash >= (price*3)) { //enough Cash for 30 Percent 
+          } else if (freePlayerCash >= (price*3)) { //enough Cash for 30 Percent
               presidentShareSizes = new String[] {"20 Percent", "30 Percent"};
-          } else  { //enough Cash only for 20 Percent 
+          } else  { //enough Cash only for 20 Percent
               presidentShareSizes = new String[] {"20 Percent"};
           }
           dialog = new RadioButtonDialog (COMPANY_SELECT_PRESIDENT_SHARE_SIZE,
@@ -182,7 +182,7 @@ public class GameUIManager_1880 extends GameUIManager {
               setCurrentDialog(dialog, action);
               statusWindow.disableButtons();
               return;
-        
+
         } else if (EXCHANGE_PRIVATE_FOR_CASH.equals(key)
                 && currentDialogAction instanceof ExchangeForCash) {
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
@@ -193,13 +193,13 @@ public class GameUIManager_1880 extends GameUIManager {
                 currentDialogAction = null;
                 return;
             }
-            
+
             if (index == 0) {
                 action.setExchangeCompany(true);
             } else {
                 action.setExchangeCompany(false);
             }
-            
+
         } else if (FORCED_ROCKET_EXCHANGE.equals(key)
                 && currentDialogAction instanceof ForcedRocketExchange) {
             if (handleForcedRocketExchange() == false) {
@@ -213,14 +213,14 @@ public class GameUIManager_1880 extends GameUIManager {
 
         // Dialog action found and processed, let the superclass initiate processing.
         super.dialogActionPerformed(true);
-    
+
     }
-    
+
     public void closeInvestor(CloseInvestor_1880 action) {
         String[] cashOptions = new String[2];
         cashOptions[0] = LocalText.getText("GiveToCompany", action.getInvestor().getCash(), action.getInvestor().getLinkedCompany().getId());
         cashOptions[1] = LocalText.getText("GiveToPresident", (action.getInvestor().getCash()/5), action.getInvestor().getPresident().getId());
-        
+
         String cashChoice =
                 (String) JOptionPane.showInputDialog(orWindow,
                         LocalText.getText("FIClosingAskAboutTreasury", action.getInvestor().getId()),
@@ -274,11 +274,11 @@ public class GameUIManager_1880 extends GameUIManager {
         statusWindow.disableButtons();
         return;
     }
-    
+
     public void forcedRocketExchange(ForcedRocketExchange forcedRocketExchange) {
         RadioButtonDialog dialog;
         String[] exchangeOptions;
-        
+
         List<RocketDestination> destinations = getRocketDestinations(forcedRocketExchange);
         exchangeOptions = new String[destinations.size()];
         for (int i = 0; i < destinations.size(); i++) {
@@ -293,12 +293,12 @@ public class GameUIManager_1880 extends GameUIManager {
 
         dialog =
                 new RadioButtonDialog(FORCED_ROCKET_EXCHANGE, this,
-                        statusWindow, LocalText.getText("PleaseSelect"), 
+                        statusWindow, LocalText.getText("PleaseSelect"),
                         LocalText.getText("SelectRocketCompany"), exchangeOptions, 0);
         setCurrentDialog(dialog, forcedRocketExchange);
-        statusWindow.disableButtons();        
+        statusWindow.disableButtons();
     }
-    
+
     private boolean handleForcedRocketExchange() {
         RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
         ForcedRocketExchange action = (ForcedRocketExchange) currentDialogAction;
@@ -308,17 +308,17 @@ public class GameUIManager_1880 extends GameUIManager {
             currentDialogAction = null;
             return false;
         }
-    
+
         List<RocketDestination> destinations = getRocketDestinations(action);
         action.setCompanyToReceiveTrain(destinations.get(index).getCompany());
         action.setTrainToReplace(destinations.get(index).getReplacementTrain());
-        
+
         return true;
     }
-    
+
     private List<RocketDestination> getRocketDestinations(ForcedRocketExchange forcedRocketExchange) {
         List<RocketDestination> destinations = new ArrayList<RocketDestination>();
-        
+
         if (forcedRocketExchange.hasCompaniesWithSpace() == true) {
             List<String> companies = forcedRocketExchange.getCompaniesWithSpace();
             for (String company : companies) {
@@ -332,31 +332,31 @@ public class GameUIManager_1880 extends GameUIManager {
                 }
             }
         }
-        
+
         return destinations;
     }
-    
-    class RocketDestination {
+
+    private static class RocketDestination {
         private String company;
         private String replacementTrain;
-        
+
         public RocketDestination(String company, String replacementTrain) {
             this.company = company;
             this.replacementTrain = replacementTrain;
         }
-        
+
         public String getCompany() {
             return company;
         }
-        
+
         public boolean hasReplacementTrain() {
             return (replacementTrain != null);
         }
-        
+
         public String getReplacementTrain() {
             return replacementTrain;
         }
     }
-        
+
 }
 

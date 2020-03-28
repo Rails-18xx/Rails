@@ -41,9 +41,8 @@ public class StartRound_18EU extends StartRound {
 
     @Override
     public boolean setPossibleActions() {
-
         possibleActions.clear();
-        
+
         Player currentPlayer = playerManager.getCurrentPlayer();
 
         switch (currentStep.value()) {
@@ -77,7 +76,7 @@ public class StartRound_18EU extends StartRound {
             break;
         case OPEN_STEP:
         case BID_STEP:
-            StartItem item = (StartItem) currentAuctionItem.value();
+            StartItem item = currentAuctionItem.value();
             // only offer if enough money
             if (item.getMinimumBid() <= currentPlayer.getFreeCash()) {
                 BidStartItem possibleAction =
@@ -98,12 +97,12 @@ public class StartRound_18EU extends StartRound {
 
     @Override
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
-        StartItem item = boughtItem.getStartItem();                                                                                                                                     
+        StartItem item = boughtItem.getStartItem();
         int status = boughtItem.getStatus();
         String errMsg = null;
         Player player = playerManager.getCurrentPlayer();
         int price = 0;
-                                
+
         while (true) {
 
             // Is the item buyable?
@@ -130,8 +129,6 @@ public class StartRound_18EU extends StartRound {
             return false;
         }
 
-        
-
         assignItem(player, item, price, 0);
         ((PublicCertificate) item.getPrimary()).getCompany().start();
         setNextSelectingPlayer();
@@ -150,9 +147,8 @@ public class StartRound_18EU extends StartRound {
      */
     @Override
     protected boolean bid(String playerName, BidStartItem bidItem) {
-
         StartItem item = bidItem.getStartItem();
-        StartItem auctionedItem = (StartItem) currentAuctionItem.value();
+        StartItem auctionedItem = currentAuctionItem.value();
         String errMsg = null;
         Player player = playerManager.getCurrentPlayer();
         int bidAmount = bidItem.getActualBid();
@@ -166,7 +162,6 @@ public class StartRound_18EU extends StartRound {
                     break;
                 }
             } else {
-
                 // If auctioning, must be the right item
                 if ((currentStep.value() == OPEN_STEP || currentStep.value() == BID_STEP)
                     && !item.equals(auctionedItem)) {
@@ -214,10 +209,7 @@ public class StartRound_18EU extends StartRound {
             return false;
         }
 
-        
-
         if (currentStep.value() == SELECT_STEP) {
-
             currentAuctionItem.set(item);
             item.setStatus(StartItem.AUCTIONED);
             item.setAllActive();
@@ -230,7 +222,7 @@ public class StartRound_18EU extends StartRound {
             if (bidAmount == -1) {
                 currentStep.set(OPEN_STEP);
             }
- 
+
             ReportBuffer.add(this, " ");
             ReportBuffer.add(this, LocalText.getText("SelectForAuctioning",
                     playerName,
@@ -330,11 +322,10 @@ public class StartRound_18EU extends StartRound {
     }
 
     private void setNextBiddingPlayer() {
-        
         Player currentPlayer;
         do {
             currentPlayer = playerManager.setCurrentToNextPlayer();
-        } while (((StartItem) currentAuctionItem.value()).isActive(currentPlayer) == false);
+        } while ( !currentAuctionItem.value().isActive(currentPlayer) );
     }
 
     private void setNextSelectingPlayer() {

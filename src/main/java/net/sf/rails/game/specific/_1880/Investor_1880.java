@@ -32,17 +32,12 @@ import com.google.common.collect.Multimap;
 
 public class Investor_1880 extends PublicCompany implements RevenueStaticModifier {
     /*
-     * Investors in 1880 get chosen at start after the initial starting package is sold out. They get one share from a new company 
-     * 
-
+     * Investors in 1880 get chosen at start after the initial starting package is sold out. They get one share from a new company
+     *
      */
     protected boolean canOwnShare=true;
 
     protected int maxPercofShares=1;
-
-    protected boolean hasStockPrice=false;
-
-    protected boolean hasParPrice=false;
 
     protected PublicCompany linkedCompany;  // An Investor is always linked to a (exactly one) Public Major Company..
 
@@ -50,14 +45,15 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
      */
     protected boolean canBorrowTrain=true;
 
-    private BuildingRights_1880 buildingRights = new BuildingRights_1880(this,"buildingRights"); 
+    private BuildingRights_1880 buildingRights = new BuildingRights_1880(this,"buildingRights");
 
     /*
-     * 
+     *
      */
 
     public Investor_1880(RailsItem parent, String id) {
-        super(parent, id);    
+        super(parent, id, false);
+        hasParPrice = false;
     }
 
     public boolean canOwnShare(){
@@ -82,7 +78,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
                 this.linkedCompany=linkedCompany;
                 return true;}
         }
-        return false; 
+        return false;
     }
 
     public PublicCompany getLinkedCompany(){
@@ -112,7 +108,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
 
     public boolean canRunTrains() {
         // By the time communism hits, this company can't run anyway.
-        return true;       
+        return true;
     }
 
     public int getCurrentTrainLimit() {
@@ -129,11 +125,11 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
                 companyGraph.getGraph();
         Set<NetworkVertex> verticies = graph.vertexSet();
 
-        
-        
+
+
         PublicCompany_1880 linkedCompany =
                 (PublicCompany_1880) ((Investor_1880) this).getLinkedCompany();
-            
+
         if (linkedCompany != null) {
             NetworkGraph linkedCompanyGraph=NetworkGraph.createRouteGraph(nwGraph, linkedCompany, true);
             // Creating a list of stations blocked by tokens.
@@ -167,7 +163,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
                      return true;
                     }
              }
-            
+
         }
         return false;
     }
@@ -206,5 +202,5 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         return baseTokens.nbLaidTokens() > 0;
     }
 
- 
+
 }

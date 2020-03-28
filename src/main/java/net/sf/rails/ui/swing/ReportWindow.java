@@ -39,8 +39,7 @@ public class ReportWindow extends JFrame implements
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log =
-            LoggerFactory.getLogger(ReportWindow.class);
+    private static Logger log = LoggerFactory.getLogger(ReportWindow.class);
 
     private final GameUIManager gameUIManager;
     private final ReportBuffer reportBuffer;

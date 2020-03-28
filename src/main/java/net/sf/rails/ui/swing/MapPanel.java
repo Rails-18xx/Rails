@@ -21,7 +21,7 @@ public class MapPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
     //defines how many pixels should be left as safety margin when calculating fit zooms
-    private static final int zoomFitSafetyMargin = 4;
+    private static final int ZOOM_FIT_SAFETY_MARGIN = 4;
 
     private MapManager mmgr;
     private HexMap map;
@@ -38,12 +38,11 @@ public class MapPanel extends JPanel {
     private boolean fitToWidth = false;
     private boolean fitToHeight = false;
 
-    protected static Logger log =
-            LoggerFactory.getLogger(MapPanel.class);
+    protected static Logger log = LoggerFactory.getLogger(MapPanel.class);
 
     public MapPanel(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
-        
+
 
         setLayout(new BorderLayout());
 
@@ -54,7 +53,6 @@ public class MapPanel extends JPanel {
             originalMapSize = map.getOriginalSize();
         } catch (Exception e) {
             log.error("Map class instantiation error:", e);
-            e.printStackTrace();
             return;
         }
 
@@ -160,8 +158,8 @@ public class MapPanel extends JPanel {
 
         //determine the available size to fit to
         //(double needed for subsequent calculations)
-        double width = getSize().width - zoomFitSafetyMargin;
-        double height = getSize().height - zoomFitSafetyMargin;
+        double width = getSize().width - ZOOM_FIT_SAFETY_MARGIN;
+        double height = getSize().height - ZOOM_FIT_SAFETY_MARGIN;
 
         double idealFactorWidth = width / originalMapSize.width;
         double idealFactorHeight = height / originalMapSize.height;
@@ -256,7 +254,7 @@ public class MapPanel extends JPanel {
     public HexMap getMap() {
         return map;
     }
-    
+
     public GUIHex getSelectedHex() {
         return map.getSelectedHex();
     }

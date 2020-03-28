@@ -18,8 +18,7 @@ import net.sf.rails.util.Util;
 
 public final class ConfigItem {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(ConfigItem.class);
+    private static final Logger log = LoggerFactory.getLogger(ConfigItem.class);
 
     /**
      * Defines possible types (Java classes used as types in ConfigItem below
@@ -156,7 +155,7 @@ public final class ConfigItem {
                 clazz.getMethod(initMethod).invoke(null);
             }
         } catch (Exception e) {
-            log.error("Config profile: cannot call initMethod, Exception = {}", e.toString());
+            log.error("Config profile: cannot call initMethod", e);
         }
     }
 

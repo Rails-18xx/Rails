@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.rails.game.specific._1837;
 
@@ -37,34 +37,34 @@ public class GameManager_1837 extends GameManager {
 
     protected final GenericState<Player> playerToStartCERound =
             GenericState.create(this, "playerToStartCERound");
-    
-    protected final BooleanState  CoalRoundFollowedByOR = 
+
+    protected final BooleanState  CoalRoundFollowedByOR =
             BooleanState.create(this,  "CoalRoundFollowedByOr");
-  
+
     public GameManager_1837(RailsRoot parent, String id) {
         super(parent, id);
- 
+
     }
 
-    
+
     public void nextRound(Round round) {
-        if (round instanceof StartRound) { 
+        if (round instanceof StartRound) {
             if (((StartRound) round).getStartPacket().areAllSold()) { // This start round was "completed"
-                // check if there are other StartPackets, otherwise stockRounds start 
+                // check if there are other StartPackets, otherwise stockRounds start
                 beginStartRound();
             } else {
                 startOperatingRound(runIfStartPacketIsNotCompletelySold());
             }
         }
         else if (round instanceof CoalExchangeRound) {
-            //Since the CoalExchangeRound can happen after both types of rounds we need to move the 
+            //Since the CoalExchangeRound can happen after both types of rounds we need to move the
             //round decision down to this class and cant call the superclass :(
 
             if (this.CoalRoundFollowedByOR.value()) {
             Phase currentPhase = getRoot().getPhaseManager().getCurrentPhase();
                 if (currentPhase == null) log.error ("Current Phase is null??", new Exception (""));
                 numOfORs.set(currentPhase.getNumberOfOperatingRounds());
-                log.info("Phase=" + currentPhase.toText() + " ORs=" + numOfORs);
+                log.info("Phase={} ORs={}", currentPhase.toText(), numOfORs);
 
             // Create a new OperatingRound (never more than one Stock Round)
             // OperatingRound.resetRelativeORNumber();
@@ -79,13 +79,14 @@ public class GameManager_1837 extends GameManager {
                     if (gameOverPending.value() && gameEndsAfterSetOfORs) {
                         finishGame();
                     } else {
+                        // TODO: This isn't a valid cast...
                         ((OperatingRound)round).checkForeignSales();
                         startStockRound();
                     }
                 }
 
             }
-            
+
             //super.nextRound(round);
             getCurrentRound().setPossibleActions();
         }
@@ -95,7 +96,7 @@ public class GameManager_1837 extends GameManager {
                 cerNumber.add(1);
                 createRound (CoalExchangeRound.class, "CoalExchangeRound" + cerNumber.value()).start
                         ((Player)playerToStartCERound.value());
-                playerToStartCERound.set(null); 
+                playerToStartCERound.set(null);
             } else {
             super.nextRound(round);
             }
@@ -124,7 +125,7 @@ public class GameManager_1837 extends GameManager {
                     (phase.getId().equals("4+1")))
                     && (!NationalFormationRound.nationalIsComplete(((GameManager) this),"KK"))) {
                 previousRound = round;
-                startKuKFormationRound (null);                
+                startKuKFormationRound (null);
             } else {
                 super.nextRound(round);
             }
@@ -217,14 +218,14 @@ public class GameManager_1837 extends GameManager {
     public void setPlayerToStartCERound(Player president) {
         this.playerToStartCERound.set(president);
     }
-    
+
     public int getCERNumber () {
         return cerNumber.value();
     }
 
     public void setCoalRoundFollowedByOR(boolean b) {
         this.CoalRoundFollowedByOR.set(b);
-        
+
     }
 
 }
