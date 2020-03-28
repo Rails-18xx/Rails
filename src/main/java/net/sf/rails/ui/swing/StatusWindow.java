@@ -109,13 +109,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
     private JMenuBar menuBar;
 
     private static JMenu fileMenu, optMenu, moveMenu, moderatorMenu,
-    specialMenu, correctionMenu;
+    specialMenu, correctionMenu, developerMenu;
 
     private JMenuItem menuItem;
 
     private ActionMenuItem actionMenuItem;
 
-    private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2;
+    private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2, saveLogsItem;
 
     private static final Logger log =
             LoggerFactory.getLogger(StatusWindow.class);
@@ -292,6 +292,18 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         // because menu is not
         // opaque
         menuBar.add(specialMenu);
+
+        if ( Config.getDevelop() ) {
+            developerMenu = new JMenu("Developer");
+            developerMenu.setName("Developer");
+            menuBar.add(developerMenu);
+
+            saveLogsItem = new ActionMenuItem("Save Logs");
+            saveLogsItem.setName("Save Logs");
+            saveLogsItem.setActionCommand("Save Logs");
+            saveLogsItem.addActionListener(this);
+            developerMenu.add(saveLogsItem);
+        }
 
         setJMenuBar(menuBar);
 
@@ -660,6 +672,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             gameUIManager.autoSaveLoadGame();
         } else if (command.equals(SAVESTATUS_CMD)) {
             gameUIManager.saveGameStatus();
+        } else if ( command.equals("Save Logs")) {
+            gameUIManager.saveLogs();
         } else if (executedAction == null) {
             ;
         } else if (executedAction instanceof GameAction) {
