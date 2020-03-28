@@ -68,7 +68,7 @@ public class AutoLoadPoller extends Thread {
                     String currentFilename = in.readLine();
                     String fileSize = in.readLine();
                     in.close();
-                    log.debug("Read filename {}; last saved filename {}", currentFilename, lastSavedFilename);
+                    log.trace("Read filename {}; last saved filename {}", currentFilename, lastSavedFilename);
 
                     File currFile = new File(saveDirectory+"/"+currentFilename);
                     if ( ! currFile.exists() ) {
@@ -105,7 +105,7 @@ public class AutoLoadPoller extends Thread {
                 }
 
             } else {
-                log.debug("Polling status={} active={}", pollingStatus, pollingActive);
+                log.trace("Polling status={} active={}", pollingStatus, pollingActive);
             }
             currentPollInterval = pollingInterval;
         }
