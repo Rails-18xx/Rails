@@ -49,3 +49,4 @@ jobs:
           mvn -B package --file pom.xml
           jpackage --name rails-packaged --input target --main-jar rails-2.2-alpha-all.jar
           ls target
+          ls .
