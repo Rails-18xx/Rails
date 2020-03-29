@@ -1051,6 +1051,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         // Check size
         if (savedActions.size() < executedActions.size()) {
+            log.warn("found {} actions in new file but have executed {}", savedActions.size(), executedActions.size());
+            log.debug("last executed action: {}", executedActions.get(executedActions.size() - 1));
+            for ( int i = executedActions.size() - 1, j = 5; i >= 0 && j >= 0; i--, j-- ) {
+                log.debug("executed {}: {}", i, executedActions.get(i));
+            }
+            log.debug("last loaded action: {}", savedActions.get(savedActions.size() - 1));
+            for ( int i = savedActions.size() -  1, j = 5; i >= 0 && j >= 0; i--, j-- ) {
+                log.debug("loaded {}: {}", i, savedActions.get(i));
+            }
+
             DisplayBuffer.add(this, LocalText.getText("LOAD_FAILED_MESSAGE",
                     "loaded file has less actions than current game"));
             return false;
@@ -1066,6 +1076,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 if (index < executedActionsCount) {
                     executedAction = executedActions.get(index);
                     if (!savedAction.equalsAsAction(executedAction)) {
+                        log.warn("loaded action {} is not the same as expected game action {}", savedAction, executedAction);
                         DisplayBuffer.add(this, LocalText.getText("LoadFailed",
                                 "loaded action \"" + savedAction.toString()
                                         + "\"<br>   is not same as game action \"" + executedAction.toString()
