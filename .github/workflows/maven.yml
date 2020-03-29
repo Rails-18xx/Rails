@@ -45,4 +45,7 @@ jobs:
           java-version: 14
           java-package: jdk
       - name: Build Executable
-        run: jpackage --name rails-packaged --input target --main-jar rails-2.2-alpha-all.jar
+        run: |
+          mvn -B package --file pom.xml
+          jpackage --name rails-packaged --input target --main-jar rails-2.2-alpha-all.jar
+          ls target
