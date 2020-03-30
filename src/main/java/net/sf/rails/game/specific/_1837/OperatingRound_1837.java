@@ -50,8 +50,6 @@ public class OperatingRound_1837 extends OperatingRound {
     private final BooleanState needHungaryFormationCall = new BooleanState(this, "NeedHungaryFormationCall");
     private final BooleanState needKuKFormationCall = new BooleanState(this, "NeedKuKFormationCall");
 
-
-
     /**
      * Registry of percentage of nationals revenue to be denied per player
      * because of having produced revenue in the same OR.
@@ -372,11 +370,8 @@ public class OperatingRound_1837 extends OperatingRound {
                 " companies treasury."
                 ));
 
-
-
         // Move the token
         ((PublicCompany_1837) operatingCompany.value()).payout(amount, b);
-
     }
 
 
@@ -445,7 +440,7 @@ public class OperatingRound_1837 extends OperatingRound {
     @Override
     protected boolean gameSpecificTileLayAllowed(PublicCompany company,
             MapHex hex, int orientation) {
-        RailsRoot root = RailsRoot.getInstance();
+        RailsRoot root = gameManager.getRoot();
         List<MapHex> italyMapHexes = new ArrayList<MapHex> ();
         // 1. check Phase
 
@@ -491,7 +486,7 @@ public class OperatingRound_1837 extends OperatingRound {
                             SetDividend.PAYOUT,
                             SetDividend.WITHHOLD };
 
-            possibleActions.add(new SetDividend(
+            possibleActions.add(new SetDividend(getRoot(),
                     operatingCompany.value().getLastRevenue(), operatingCompany.value().getLastDirectIncome(), true,
                     allowedRevenueActions,0));
         }

@@ -20,8 +20,8 @@ public class StartRound_1837_Minors_Hungary extends StartRound {
         super(gameManager, id, false, true, true);
         this.setStartRoundName("Minor Hungary StartRound");
     }
- 
-    
+
+
     /* (non-Javadoc)
      * @see net.sf.rails.game.specific._1837.StartRound_1837_Coal#start()
      */
@@ -36,7 +36,7 @@ public class StartRound_1837_Minors_Hungary extends StartRound {
             }
         }
         numPasses.set(0);
-        
+
         // init current with priority player
         startPlayer = playerManager.setCurrentToPriorityPlayer();
 
@@ -55,8 +55,8 @@ public class StartRound_1837_Minors_Hungary extends StartRound {
         }
 
         }
-   
-    
+
+
     /* (non-Javadoc)
      * @see net.sf.rails.game.specific._1837.StartRound_1837_Coal#setPossibleActions()
      */
@@ -81,7 +81,7 @@ public class StartRound_1837_Minors_Hungary extends StartRound {
                 possibleActions.clear();
                 return true;
             }
-        
+
 
         /*
          * Repeat until we have found a player with enough money to buy some
@@ -99,18 +99,18 @@ public class StartRound_1837_Minors_Hungary extends StartRound {
                     /* Player does have the cash */
                     possibleActions.add(new BuyStartItem(item,
                             item.getBasePrice(), false));
-    
+
                 }
             }  /* Pass is always allowed */
-            possibleActions.add(new NullAction(NullAction.Mode.PASS));
-                        
+            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
+
         }
 
         return true;
     }
 
- 
-    
+
+
     /**
      * Process a player's pass.
      *
@@ -162,4 +162,4 @@ public class StartRound_1837_Minors_Hungary extends StartRound {
         return false;
     }
 }
-        
+

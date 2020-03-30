@@ -72,7 +72,7 @@ public class StartRound_1837_2ndEd extends StartRound {
                         (StartItem) currentAuctionItem.value(),
                         currentBuyPrice.value(), true));
             }
-            possibleActions.add(new NullAction(NullAction.Mode.PASS));
+            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
             break;
         case OPEN_STEP:
         case BID_STEP:
@@ -85,9 +85,9 @@ public class StartRound_1837_2ndEd extends StartRound {
                 possibleActions.add(possibleAction);
             }
             if (currentStep.value() == OPEN_STEP) {
-                possibleActions.add(new NullAction(NullAction.Mode.PASS).setLabel("DeclineToBid"));
+                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS).setLabel("DeclineToBid"));
             } else {
-                possibleActions.add(new NullAction(NullAction.Mode.PASS));
+                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
             }
             break;
         }

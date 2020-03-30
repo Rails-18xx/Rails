@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.util.Arrays;
 
 import com.google.common.base.Objects;
+
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -76,19 +78,19 @@ public class SetDividend extends PossibleORAction implements Cloneable {
 
     public static final long serialVersionUID = 1L;
 
-    public SetDividend(int presetRevenue, boolean mayUserSetRevenue,
+    public SetDividend(RailsRoot root, int presetRevenue, boolean mayUserSetRevenue,
             int[] allowedAllocations) {
-        this (presetRevenue, 0, mayUserSetRevenue, allowedAllocations, 0);
+        this (root, presetRevenue, 0, mayUserSetRevenue, allowedAllocations, 0);
     }
 
-    public SetDividend(int presetRevenue, boolean mayUserSetRevenue,
+    public SetDividend(RailsRoot root, int presetRevenue, boolean mayUserSetRevenue,
                 int[] allowedAllocations, int requiredCash) {
-        this (presetRevenue, 0, mayUserSetRevenue, allowedAllocations, requiredCash);
+        this (root, presetRevenue, 0, mayUserSetRevenue, allowedAllocations, requiredCash);
     }
 
-    public SetDividend(int presetRevenue, int presetCompanyTreasuryRevenue, boolean mayUserSetRevenue,
+    public SetDividend(RailsRoot root, int presetRevenue, int presetCompanyTreasuryRevenue, boolean mayUserSetRevenue,
             int[] allowedAllocations, int requiredCash) {
-        super();
+        super(root);
         this.presetRevenue = presetRevenue;
         this.presetCompanyTreasuryRevenue = presetCompanyTreasuryRevenue;
         this.setMayUserSetRevenue(mayUserSetRevenue);
@@ -104,8 +106,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
 
     /** Clone an instance (used by clone) */
     protected SetDividend(SetDividend action) {
-
-        this(action.presetRevenue,
+        this(action.getRoot(), action.presetRevenue,
                 action.presetCompanyTreasuryRevenue,
                 action.getMayUserSetRevenue(),
                 action.getAllowedRevenueAllocations(),
@@ -170,7 +171,6 @@ public class SetDividend extends PossibleORAction implements Cloneable {
 
     @Override
     public Object clone() {
-
         SetDividend result = new SetDividend(this);
         result.setActualRevenue(actualRevenue);
         result.setActualCompanyTreasuryRevenue(actualCompanyTreasuryRevenue);

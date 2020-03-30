@@ -30,8 +30,8 @@ public class LayBonusToken extends LayToken {
 
     public static final long serialVersionUID = 1L;
 
-    public LayBonusToken(SpecialBonusTokenLay specialProperty, BonusToken token) {
-        super(specialProperty);
+    public LayBonusToken(RailsRoot root, SpecialBonusTokenLay specialProperty, BonusToken token) {
+        super(root, specialProperty);
         this.token = token;
         this.tokenId = token.getUniqueId();
     }

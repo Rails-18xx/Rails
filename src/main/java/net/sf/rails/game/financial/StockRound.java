@@ -177,10 +177,10 @@ public class StockRound extends Round {
 
         if (passAllowed) {
             if (hasActed.value()) {
-                possibleActions.add(new NullAction(NullAction.Mode.DONE));
+                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
             } else {
-                possibleActions.add(new NullAction(NullAction.Mode.PASS));
-                possibleActions.add(new NullAction(NullAction.Mode.AUTOPASS));
+                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
+                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.AUTOPASS));
             }
         }
 

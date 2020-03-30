@@ -14,23 +14,23 @@ import net.sf.rails.game.state.MoneyOwner;
 
 
 public class CashCorrectionManager extends CorrectionManager {
-    
+
     private CashCorrectionManager(GameManager parent) {
         super(parent, CorrectionType.CORRECT_CASH);
     }
-    
+
     public static CashCorrectionManager create(GameManager parent) {
         return new CashCorrectionManager(parent);
     }
-    
+
     @Override
     public List<CorrectionAction> createCorrections() {
         List<CorrectionAction> actions = super.createCorrections();
-        
+
         if (isActive()) {
             List<Player> players = getRoot().getPlayerManager().getPlayers();
             for(Player pl:players){
-                actions.add(new CashCorrectionAction(pl));
+                actions.add(new CashCorrectionAction(getRoot(), pl));
             }
 
             List<PublicCompany> publicCompanies = getParent().getAllPublicCompanies();
@@ -42,7 +42,7 @@ public class CashCorrectionManager extends CorrectionManager {
 
         return actions;
     }
-    
+
     @Override
     public boolean executeCorrection(CorrectionAction action){
         if (action instanceof CashCorrectionAction)
@@ -68,14 +68,14 @@ public class CashCorrectionManager extends CorrectionManager {
             }
             if ((amount + ch.getCash()) < 0) {
                 errMsg =
-                    LocalText.getText("NotEnoughMoney", 
+                    LocalText.getText("NotEnoughMoney",
                             ch.getId(),
                             Bank.format(this, ch.getCash()),
-                            Bank.format(this, -amount) 
+                            Bank.format(this, -amount)
                     );
                 break;
             }
-            break;   
+            break;
         }
 
         if (errMsg != null) {
@@ -84,9 +84,9 @@ public class CashCorrectionManager extends CorrectionManager {
                     errMsg));
             result = true;
         } else {
-            // no error occured 
-            
-            
+            // no error occured
+
+
 
             String msg;
             if (amount < 0) {
@@ -107,7 +107,7 @@ public class CashCorrectionManager extends CorrectionManager {
             getParent().addToNextPlayerMessages(msg, true);
             result = true;
         }
-    
+
        return result;
     }
 

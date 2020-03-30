@@ -51,7 +51,7 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
 
         setSellableShares();
 
-        possibleActions.add(new NullAction(NullAction.Mode.DONE));
+        possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
 
         for (PossibleAction pa : possibleActions.getList()) {
             log.debug(currentPlayer.getId() + " may: " + pa.toString());

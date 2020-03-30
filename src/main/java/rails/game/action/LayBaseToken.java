@@ -9,6 +9,7 @@ import com.google.common.base.Objects;
 
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapManager;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Stop;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialBaseTokenLay;
@@ -39,16 +40,16 @@ public class LayBaseToken extends LayToken {
 
     public static final long serialVersionUID = 1L;
 
-    public LayBaseToken(int type) {
-        super();
+    public LayBaseToken(RailsRoot root, int type) {
+        super(root);
         this.type = type;
     }
-    
+
     /**
      * Lay a base token on one of a given list of locations.
      * <p>This constructor is only intended to be used for normal lays of non-home tokens
      * in the operating company LAY_TOKEN OR step.
-     * 
+     *
      * @param locations A list of valid locations (hexes) where the acting company can lay a base token.<br>
      * <i>Note:</i> Currently, the game engine cannot yet provide such a list, as all knowledge about routes
      * is contained in the user interface code. As a consequence, this constructor is only called
@@ -56,41 +57,39 @@ public class LayBaseToken extends LayToken {
      * In fact, the UI will now apply the restriction to valid locations only.
      * Over time, applying this restriction should be moved to the game engine.
      */
-    public LayBaseToken(List<MapHex> locations) {
-        super(locations);
+    public LayBaseToken(RailsRoot root, List<MapHex> locations) {
+        super(root, locations);
         type = LOCATION_SPECIFIC;
     }
 
     /** Lay a base token as allowed via a Special Property.
      * <p>The valid locations (hexes) of such a token should be defined inside the special property.
      * Typically, such locations do not need to be connected to the existing network of a company.
-     * 
+     *
      * @param specialProperty The special property that allows laying an extra or unconnected base token.
      */
-    public LayBaseToken(SpecialBaseTokenLay specialProperty) {
-        super(specialProperty);
+    public LayBaseToken(RailsRoot root, SpecialBaseTokenLay specialProperty) {
+        super(root, specialProperty);
         type = SPECIAL_PROPERTY;
     }
 
     /** Lay a base token on a given location.
      * <p> This constructor is specifically intended to allow the player to select a city for its <b>home</b> token
      * on a multi-city hex or tile (e.g. an OO tile, such as the Erie in 1830 or the THB in 1856).
-     * 
+     *
      * @param hex The hex on which a city must be selected to lay a home token on.
      */
-    public LayBaseToken (MapHex hex) {
-        super (hex);
+    public LayBaseToken (RailsRoot root, MapHex hex) {
+        super (root, hex);
         setChosenHex (hex);
         type = HOME_CITY;
     }
-    
-    
 
     @Deprecated
     public int getChosenStation() {
         return chosenStation;
     }
-    
+
     public Stop getChosenStop() {
         return chosenHex.getRelatedStop(chosenStation);
     }
@@ -102,13 +101,13 @@ public class LayBaseToken extends LayToken {
     public int getType() {
         return type;
     }
-    
-    
+
+
     @Override
     public SpecialBaseTokenLay getSpecialProperty() {
         return (SpecialBaseTokenLay)specialProperty;
     }
-    
+
     @Override
     public int getPotentialCost(MapHex hex) {
         if (hex == null) {
@@ -120,7 +119,7 @@ public class LayBaseToken extends LayToken {
                 return company.getBaseTokenLayCost(hex);
             }
         }
-              
+
     }
 
     @Override
@@ -133,15 +132,15 @@ public class LayBaseToken extends LayToken {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        LayBaseToken action = (LayBaseToken)pa; 
+        LayBaseToken action = (LayBaseToken)pa;
         boolean options = Objects.equal(this.type, action.type);
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.chosenStation, action.chosenStation)
@@ -152,10 +151,10 @@ public class LayBaseToken extends LayToken {
     public boolean isCorrection() {
         return (type == LayBaseToken.CORRECTION);
     }
-    
+
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("type", type)
                     .addToStringOnlyActed("chosenStation", chosenStation)

@@ -19,9 +19,7 @@ public class StartCompany extends BuyCertificate {
 
     public StartCompany(PublicCompany company, int[] prices,
             int maximumNumber) {
-        super(company, company.getPresidentsShare().getShare(),
-                RailsRoot.getInstance().getBank().getIpo(),
-                0, maximumNumber);
+        super(company, company.getPresidentsShare().getShare(), null, 0, maximumNumber);
         this.startPrices = prices.clone();
     }
 
@@ -31,9 +29,7 @@ public class StartCompany extends BuyCertificate {
 
     public StartCompany(PublicCompany company, int price,
             int maximumNumber) {
-        super(company, company.getPresidentsShare().getShare(),
-                RailsRoot.getInstance().getBank().getIpo(),
-                0, maximumNumber);
+        super(company, company.getPresidentsShare().getShare(), null, 0, maximumNumber);
         this.price = price;
     }
 
@@ -60,27 +56,27 @@ public class StartCompany extends BuyCertificate {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        StartCompany action = (StartCompany)pa; 
-        boolean options = 
+        StartCompany action = (StartCompany)pa;
+        boolean options =
                 Arrays.equals(this.startPrices, action.startPrices)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.price, action.price)
         // TODO: price has to be checked here, as this cannot be done in BuyCertificate
         ;
     }
-    
+
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("startPrices", Arrays.toString(startPrices))
                     .toString()

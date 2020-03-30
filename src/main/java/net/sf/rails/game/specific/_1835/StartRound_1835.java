@@ -154,7 +154,7 @@ public class StartRound_1835 extends StartRound {
         }
 
         /* Pass is always allowed */
-        possibleActions.add(new NullAction(NullAction.Mode.PASS));
+        possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
 
         return true;
     }

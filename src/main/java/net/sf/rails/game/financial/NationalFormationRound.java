@@ -164,7 +164,7 @@ public class NationalFormationRound extends StockRound {
 
         } else if (step == Step.MERGE) {
 
-            possibleActions.add(new FoldIntoNational(foldablePreNationals));
+            possibleActions.add(new FoldIntoNational(getRoot(), foldablePreNationals));
 
         } else if (step == Step.DISCARD_TRAINS) {
 

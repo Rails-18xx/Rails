@@ -1,5 +1,6 @@
 package rails.game.action;
 
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.RailsObjects;
 
 import com.google.common.base.Objects;
@@ -11,7 +12,7 @@ import com.google.common.base.Objects;
  * Rails 2.0: Updated equals and toString methods
  */
 public class GameAction extends PossibleAction {
-    
+
     private static final long serialVersionUID = 1L;
 
     public static enum Mode { SAVE, LOAD, UNDO, FORCED_UNDO, REDO, EXPORT, RELOAD }
@@ -23,8 +24,8 @@ public class GameAction extends PossibleAction {
     protected String filePath = null; // Only applies to SAVE, LOAD and RELOAD
     protected int moveStackIndex = -1; // target moveStackIndex, only for FORCED_UNDO and REDO
 
-    public GameAction(Mode mode) {
-        super(null); // not defined by an activity yet
+    public GameAction(RailsRoot root, Mode mode) {
+        super(root); // not defined by an activity yet
         this.mode = mode;
     }
 
@@ -43,7 +44,7 @@ public class GameAction extends PossibleAction {
     public int getmoveStackIndex() {
         return moveStackIndex;
     }
-    
+
     public Mode getMode() {
         return mode;
     }
@@ -53,15 +54,15 @@ public class GameAction extends PossibleAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        GameAction action = (GameAction)pa; 
+        GameAction action = (GameAction)pa;
         boolean options = Objects.equal(this.mode, action.mode);
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.filePath, action.filePath)
@@ -70,7 +71,7 @@ public class GameAction extends PossibleAction {
     }
 
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("mode", mode)
                     .addToStringOnlyActed("filePath", filePath)

@@ -6,6 +6,7 @@ import java.util.*;
 
 import com.google.common.base.Objects;
 
+import net.sf.rails.game.RailsRoot;
 import rails.game.action.PossibleAction;
 import rails.game.correct.MapCorrectionManager.*;
 import net.sf.rails.game.BaseToken;
@@ -19,7 +20,7 @@ import net.sf.rails.util.Util;
 
 /**
  * Correction action for tile and token lays
- * 
+ *
  * Rails 2.0: updated equals and toString methods
  *
  * Deprecated since version 2.0
@@ -37,22 +38,22 @@ public class MapCorrectionAction extends CorrectionAction {
 
     transient private ActionStep nextStep = null;
     private String nextStepName;
-    
+
     /* Conditions */
-    
+
     /** Location: where to lay the tile */
     transient private MapHex location = null;
     private String locationCoordinates;
-    
+
     /** Tiles: which tile(s) to lay */
     transient private List<Tile> tiles = null;
     private String[] sTileIds;
     // FIXME: Rewrite this with Rails1.x version flag
     private int[] tileIds;
-    
+
     /** Orientation: how to lay the tile */
     private int orientation;
-    
+
     /** RelayBaseTokens: how to relay the base tokens */
     transient private List<BaseToken> tokensToRelay;
     //private String[]tokensToRelayOwner;
@@ -60,48 +61,49 @@ public class MapCorrectionAction extends CorrectionAction {
     //private int[] stationForRelayId;
     transient private Collection<Station> possibleStations;
     //private int[] possibleStationsId;
-                
+
     /**
      * Instantiates a new map tile correction action.
      * start with select hex
      */
-    public MapCorrectionAction() {
+    public MapCorrectionAction(RailsRoot root) {
+        super(root);
         setStep(ActionStep.SELECT_HEX);
         setNextStep(null);
         setCorrectionType(CorrectionType.CORRECT_MAP);
     }
-    
+
     public MapHex getLocation() {
         return location;
     }
-    
+
     private void setLocation(MapHex location) {
         this.location = location;
-        locationCoordinates = location.getId(); 
+        locationCoordinates = location.getId();
     }
-    
+
     public List<Tile> getTiles() {
         return tiles;
     }
-    
+
     public Tile getChosenTile() {
         if (nextStep.ordinal() > ActionStep.SELECT_TILE.ordinal())
             return tiles.get(0);
         else
             return null;
     }
-    
+
     void setTiles(List<Tile> tiles) {
         this.tiles = tiles;
         this.sTileIds = new String[tiles.size()];
         for (int i = 0; i < tiles.size(); i++)
             sTileIds[i] = tiles.get(i).getId();
     }
-    
+
     public List<Station> getStationsForRelay() {
         return stationsForRelay;
     }
-    
+
     private void setStationsForRelay(List<Station> stations) {
         this.stationsForRelay = stations;
     }
@@ -109,23 +111,23 @@ public class MapCorrectionAction extends CorrectionAction {
     public List<BaseToken> getTokensToRelay() {
         return tokensToRelay;
     }
-    
+
     void setTokensToRelay(List<BaseToken> tokens) {
         this.tokensToRelay = tokens;
     }
-    
+
     public Collection<Station> getPossibleStations() {
         return possibleStations;
     }
-    
+
     void setPossibleStations(Collection<Station> possibleStations) {
         this.possibleStations = possibleStations;
     }
-    
+
     public int getOrientation(){
         return orientation;
     }
-    
+
     private void setOrientation(int orientation) {
         this.orientation = orientation;
     }
@@ -133,7 +135,7 @@ public class MapCorrectionAction extends CorrectionAction {
     public ActionStep getNextStep() {
         return nextStep;
     }
-    
+
     void setNextStep(ActionStep step) {
         this.nextStep = step;
         if (step == null)
@@ -141,21 +143,21 @@ public class MapCorrectionAction extends CorrectionAction {
         else
             nextStepName = step.name();
     }
-    
+
     public ActionStep getStep() {
         return step;
     }
-    
+
     private void setStep(ActionStep step) {
         this.step = step;
         stepName = step.name();
     }
-    
+
     public void selectHex(MapHex chosenHex) {
         setLocation(chosenHex);
         setNextStep(ActionStep.SELECT_TILE);
     }
-    
+
     public void selectTile(Tile chosenTile) {
         List<Tile> tiles = new ArrayList<Tile>();
         tiles.add(chosenTile);
@@ -166,21 +168,21 @@ public class MapCorrectionAction extends CorrectionAction {
     public void selectConfirmed() {
         setNextStep(ActionStep.RELAY_BASETOKENS);
     }
-    
+
     public void selectOrientation(int orientation) {
         setOrientation(orientation);
         setNextStep(ActionStep.RELAY_BASETOKENS);
     }
-    
+
     public void selectRelayBaseTokens(List<Station> chosenStations) {
         setStationsForRelay(chosenStations);
         setNextStep(ActionStep.FINISHED);
     }
-    
+
     public void selectCancel() {
         setNextStep(ActionStep.CANCELLED);
     }
-    
+
     public ActionStep moveToNextStep() {
         setStep(nextStep);
         setNextStep(null);
@@ -188,19 +190,19 @@ public class MapCorrectionAction extends CorrectionAction {
             this.acted = false;
         return step;
     }
-    
+
     @Override
     protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // finish if asOptions check, no asOption attributes
         if (asOption) return true;
 
         // check asAction attributes
-        MapCorrectionAction action = (MapCorrectionAction)pa; 
+        MapCorrectionAction action = (MapCorrectionAction)pa;
         return Objects.equal(this.location, action.location)
                 && Objects.equal(this.tiles, action.tiles)
                 && Objects.equal(this.orientation, action.orientation)
@@ -209,19 +211,19 @@ public class MapCorrectionAction extends CorrectionAction {
 
     @Override
     public String toString(){
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                 .addToStringOnlyActed("location", location)
                 .addToStringOnlyActed("tiles", tiles)
                 .addToStringOnlyActed("orientation", orientation)
         ;
     }
-    
+
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         in.defaultReadObject();
-        
+
         if (Util.hasValue(correctionName))
             correctionType = CorrectionType.valueOf(correctionName);
 
@@ -230,7 +232,7 @@ public class MapCorrectionAction extends CorrectionAction {
 
         if (Util.hasValue(nextStepName))
             nextStep = ActionStep.valueOf(nextStepName);
-            
+
         MapManager mmgr = getRoot().getMapManager();
         if (Util.hasValue(locationCoordinates))
             location = mmgr.getHex(locationCoordinates);

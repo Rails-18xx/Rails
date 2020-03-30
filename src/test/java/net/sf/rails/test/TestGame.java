@@ -127,7 +127,6 @@ public class TestGame extends TestCase {
             super.tearDown();
             testReport = null;
             expectedReport = null;
-            RailsRoot.clearInstance();
         }
     }
 

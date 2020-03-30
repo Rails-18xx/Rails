@@ -22,13 +22,16 @@ import org.slf4j.LoggerFactory;
 
 public class ElsasModifier implements NetworkGraphModifier {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(ElsasModifier.class);
+    private static final Logger log = LoggerFactory.getLogger(ElsasModifier.class);
+
+    private RailsRoot root;
+
+    public void setRoot(RailsRoot root) {
+        this.root = root;
+    }
 
     @Override
     public void modifyMapGraph(NetworkGraph mapGraph) {
-        
-        RailsRoot root = RailsRoot.getInstance();
         SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
 
         // Check if (one of the  elsasHex has zero value ...
@@ -43,7 +46,7 @@ public class ElsasModifier implements NetworkGraphModifier {
             log.debug("Elsas is inactive");
         }
     }
-    
+
     @Override
     public void modifyRouteGraph(NetworkGraph mapGraph, PublicCompany company) {
         // do nothing

@@ -24,9 +24,8 @@ public class BuyPrivate extends PossibleORAction {
 
     public static final long serialVersionUID = 1L;
 
-    public BuyPrivate(PrivateCompany privateCompany, int minimumPrice,
-            int maximumPrice) {
-
+    public BuyPrivate(PrivateCompany privateCompany, int minimumPrice, int maximumPrice) {
+        super(privateCompany.getRoot());
         this.privateCompany = privateCompany;
         this.privateCompanyName = privateCompany.getId();
         this.minimumPrice = minimumPrice;
@@ -67,18 +66,18 @@ public class BuyPrivate extends PossibleORAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        BuyPrivate action = (BuyPrivate)pa; 
+        BuyPrivate action = (BuyPrivate)pa;
         boolean options =  Objects.equal(this.privateCompany, action.privateCompany)
                 && Objects.equal(this.minimumPrice, action.minimumPrice)
                 && Objects.equal(this.maximumPrice, action.maximumPrice)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.price, action.price)
@@ -87,7 +86,7 @@ public class BuyPrivate extends PossibleORAction {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("privateCompany", privateCompany)
                     .addToString("minimumPrice", minimumPrice)

@@ -9,6 +9,7 @@ import com.google.common.base.Objects;
 
 import net.sf.rails.game.CompanyManager;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -30,7 +31,8 @@ public class ReachDestinations extends PossibleORAction {
 
     public static final long serialVersionUID = 1L;
 
-    public ReachDestinations (List<PublicCompany> companies) {
+    public ReachDestinations (RailsRoot root, List<PublicCompany> companies) {
+        super(root);
         possibleCompanies = companies;
         StringBuilder b = new StringBuilder();
         for (PublicCompany company : companies) {
@@ -39,9 +41,6 @@ public class ReachDestinations extends PossibleORAction {
         }
         possibleCompanyNames = b.toString();
     }
-
-    /** Required for deserialization */
-    public ReachDestinations() {}
 
     public List<PublicCompany> getPossibleCompanies() {
         return possibleCompanies;

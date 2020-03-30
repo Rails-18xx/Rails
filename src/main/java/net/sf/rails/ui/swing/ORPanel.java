@@ -622,7 +622,8 @@ implements ActionListener, KeyListener, RevenueListener {
             f = revenue[i] = new Field(c.getLastRevenueModel());
             addField(f, revXOffset, revYOffset + i, 1, 1, 0, visible);
 
-            f = revenueSelect[i] = new Spinner(0, 0, 0, GameManager.getRevenueSpinnerIncrement());
+            f = revenueSelect[i] = new Spinner(0, 0, 0,
+                    orUIManager.getGameUIManager().getGameManager().getRevenueSpinnerIncrement());
             //align spinner size with field size
             //(so that changes to visibility don't affect panel sizing)
             f.setPreferredSize(revenue[i].getPreferredSize());
@@ -637,7 +638,8 @@ implements ActionListener, KeyListener, RevenueListener {
                 f = directIncomeRevenue[i] = new Field(c.getLastDirectIncomeModel());
                 addField(f, bonusRevXOffset, bonusRevYOffset + i, 1, 1, 0, visible);
 
-                f = directIncomeSelect[i] = new Spinner(0, 0, 0, GameManager.getRevenueSpinnerIncrement());
+                f = directIncomeSelect[i] = new Spinner(0, 0, 0,
+                        orUIManager.getGameUIManager().getGameManager().getRevenueSpinnerIncrement());
 
                 f.setPreferredSize(directIncomeRevenue[i].getPreferredSize());
                 addField(f, bonusRevXOffset, bonusRevYOffset + i, 1, 1, 0,  false);

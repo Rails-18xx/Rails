@@ -155,13 +155,20 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Map<String, Object> objectStorage = new HashMap<>();
     protected Map<String, Integer> storageIds = new HashMap<>();
 
-    private static int revenueSpinnerIncrement = 10;
+    private int revenueSpinnerIncrement = 10;
     //Used for Storing the PublicCompany to be Founded by a formationround
     private PublicCompany nationalToFound;
 
     private final Map<PublicCompany, Player> NationalFormStartingPlayer = new HashMap<>();
 
     protected PlayerOrderModel playerNamesModel;
+
+    /**
+     * @return the revenueSpinnerIncrement
+     */
+    public int getRevenueSpinnerIncrement() {
+        return revenueSpinnerIncrement;
+    }
 
     public GameManager(RailsRoot parent, String id) {
         super(parent, id);
@@ -425,10 +432,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public PossibleActions getPossibleActions() {
         return possibleActions;
-    }
-
-    public static int getRevenueSpinnerIncrement() {
-        return revenueSpinnerIncrement;
     }
 
     protected void setGuiParameters() {
@@ -749,13 +752,13 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         // Add the Undo/Redo possibleActions here.
         if (changeStack.isUndoPossible(getCurrentPlayer())) {
-            possibleActions.add(new GameAction(GameAction.Mode.UNDO));
+            possibleActions.add(new GameAction(getRoot(), GameAction.Mode.UNDO));
         }
         if (changeStack.isUndoPossible()) {
-            possibleActions.add(new GameAction(GameAction.Mode.FORCED_UNDO));
+            possibleActions.add(new GameAction(getRoot(), GameAction.Mode.FORCED_UNDO));
         }
         if (changeStack.isRedoPossible()) {
-            possibleActions.add(new GameAction(GameAction.Mode.REDO));
+            possibleActions.add(new GameAction(getRoot(), GameAction.Mode.REDO));
         }
 
         // logging of game actions activated
@@ -844,7 +847,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public boolean processOnReload(PossibleAction action) {
-
         getRoot().getReportManager().getDisplayBuffer().clear();
 
         // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
@@ -856,7 +858,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 && ((NullAction) action).getMode() != NullAction.Mode.DONE))) {
             // Insert "Done"
             log.debug("Action DONE inserted");
-            getCurrentRound().process(new NullAction(NullAction.Mode.DONE));
+            getCurrentRound().process(new NullAction(getRoot(), NullAction.Mode.DONE));
             possibleActions.clear();
             getCurrentRound().setPossibleActions();
             if (!isGameOver()) setCorrectionActions();
@@ -962,7 +964,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         GameLoader gameLoader = new GameLoader();
         String filepath = reloadAction.getFilepath();
 
-        if (!gameLoader.reloadGameFromFile(new File(filepath))) {
+        if (!gameLoader.reloadGameFromFile(getRoot(), new File(filepath))) {
             return false;
         }
 

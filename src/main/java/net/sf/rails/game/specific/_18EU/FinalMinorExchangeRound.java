@@ -31,7 +31,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
 
         raiseIfSoldOut = false;
     }
-    
+
     public static FinalMinorExchangeRound create(GameManager parent, String id){
         return new FinalMinorExchangeRound(parent, id);
     }
@@ -62,7 +62,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
     private boolean setMinorMergeActions() {
 
         if (hasActed.value()) {
-            possibleActions.add(new NullAction(NullAction.Mode.DONE));
+            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
             return true;
         }
 
@@ -111,7 +111,7 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
     public boolean done(NullAction action, String playerName, boolean hasAutopassed) {
 
         // TODO: Here no action is stored
-        
+
 
         for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
             if (comp.getType().getId().equals("Minor")) {

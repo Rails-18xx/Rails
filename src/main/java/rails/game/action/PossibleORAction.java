@@ -7,6 +7,7 @@ import com.google.common.base.Objects;
 
 import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
@@ -15,8 +16,8 @@ import net.sf.rails.util.Util;
  * PossibleAction is the superclass of all classes that describe an allowed user
  * action (such as laying a tile or dropping a token on a specific hex, buying a
  * train etc.).
- * 
- * Rails 2.0: Added updated equals and toString methods 
+ *
+ * Rails 2.0: Added updated equals and toString methods
  */
 public abstract class PossibleORAction extends PossibleAction {
 
@@ -29,8 +30,8 @@ public abstract class PossibleORAction extends PossibleAction {
     /**
      *
      */
-    public PossibleORAction() {
-        super(null); // not defined by an activity yet
+    public PossibleORAction(RailsRoot root) {
+        super(root); // not defined by an activity yet
         // TODO: The company field should be set from outside and not inside the action classes themselves
         RoundFacade round = getRoot().getGameManager().getCurrentRound();
         if (round instanceof OperatingRound) {
@@ -46,7 +47,7 @@ public abstract class PossibleORAction extends PossibleAction {
     public String getCompanyName() {
         return company.getId();
     }
-    
+
     /**
      * @return costs of executing the action, default for an ORAction is zero
      */
@@ -59,22 +60,22 @@ public abstract class PossibleORAction extends PossibleAction {
         this.company = company;
         this.companyName = company.getId();
     }
-    
-    
+
+
     @Override
     protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        PossibleORAction action = (PossibleORAction)pa; 
+        PossibleORAction action = (PossibleORAction)pa;
         return Objects.equal(this.company, action.company);
         // no asAction attributes to be checked
     }
-    
+
     @Override
     public String toString () {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                 .addToString("company", company)
                 .toString()

@@ -11,24 +11,21 @@ import rails.game.action.PossibleORAction;
  * Rails 2.0: Updated equals and toString methods
  */
 public class CloseInvestor_1880 extends PossibleORAction {
-    
+
     private static final long serialVersionUID = 1L;
     private boolean treasuryToLinkedCompany = false;
     private boolean replaceToken = false;
-    
+
     public CloseInvestor_1880(Investor_1880 investor) {
+        super(investor.getRoot());
         this.company = investor;
         this.companyName = investor.getId();
-    }
-    
-    public CloseInvestor_1880() {
-        
     }
 
     public Investor_1880 getInvestor() {
         return (Investor_1880) company;
     }
-    
+
     public boolean getTreasuryToLinkedCompany() {
         return treasuryToLinkedCompany;
     }
@@ -45,19 +42,19 @@ public class CloseInvestor_1880 extends PossibleORAction {
         this.replaceToken = replaceToken;
     }
 
-    
+
     @Override
     protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
-        
+        if (!super.equalsAs(pa, asOption)) return false;
+
         // no asOption attributes
         if (asOption) return true;
 
         // check asAction attributes
-        CloseInvestor_1880 action = (CloseInvestor_1880)pa; 
+        CloseInvestor_1880 action = (CloseInvestor_1880)pa;
         return Objects.equal(this.treasuryToLinkedCompany, action.treasuryToLinkedCompany)
                 && Objects.equal(this.replaceToken, action.replaceToken)
         ;

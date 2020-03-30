@@ -634,9 +634,8 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
      * defines settings from the config files
      */
     private void initializeSettings() {
-
         // define zoomStep from config
-        String zoomStepSetting = Config.getGameSpecific("map.zoomstep");
+        String zoomStepSetting = Config.getGameSpecific(mapManager.getRoot().getGameName(), "map.zoomstep");
         if (Util.hasValue(zoomStepSetting)) {
             try {
                 int newZoomStep = Integer.parseInt(zoomStepSetting);

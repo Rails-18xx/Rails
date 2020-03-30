@@ -17,7 +17,7 @@ import net.sf.rails.game.StartRound;
 public class StartRound_1837_Minors_KuK extends StartRound {
 
     public StartRound_1837_Minors_KuK(GameManager gameManager, String id) {
-      
+
         super(gameManager, id, false, true, true);
         this.setStartRoundName("Minor KuK StartRound");
     }
@@ -46,11 +46,11 @@ public class StartRound_1837_Minors_KuK extends StartRound {
             }
         if (!fillPossibleActions(buyableItems)) {
             /* we dont have a valid player action */
-            possibleActions.add(new NullAction(NullAction.Mode.PASS));
-        } else {          
-        
+            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
+        } else {
+
         /* Pass is always allowed, we have a valid player action */
-        possibleActions.add(new NullAction(NullAction.Mode.PASS));
+        possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
         }
         return true;
     }
@@ -72,15 +72,15 @@ public class StartRound_1837_Minors_KuK extends StartRound {
                 }
             break;
         }
-        if (possibleActions.isEmpty()) { 
-            return false; 
-        }       
+        if (possibleActions.isEmpty()) {
+            return false;
+        }
         return true;
     }
-    
+
     @Override
     public void start() {
-        
+
 
         for (StartItem item : startPacket.getItems()) {
             // New: we only include items that have not yet been sold
@@ -90,7 +90,7 @@ public class StartRound_1837_Minors_KuK extends StartRound {
             }
         }
         numPasses.set(0);
-        
+
         // init current with priority player
         startPlayer = playerManager.setCurrentToPriorityPlayer();
 
@@ -110,7 +110,7 @@ public class StartRound_1837_Minors_KuK extends StartRound {
 
     }
 
-    
+
     /**
      * Process a player's pass.
      *
@@ -161,4 +161,4 @@ public class StartRound_1837_Minors_KuK extends StartRound {
         return false;
     }
 }
-        
+

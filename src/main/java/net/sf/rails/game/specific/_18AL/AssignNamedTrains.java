@@ -11,6 +11,7 @@ import com.google.common.base.Objects;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainManager;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 import rails.game.action.PossibleAction;
 import rails.game.action.UseSpecialProperty;
@@ -148,16 +149,18 @@ public class AssignNamedTrains extends UseSpecialProperty {
 
         in.defaultReadObject();
 
-        TrainManager trainManager = RailsRoot.getInstance().getTrainManager();
+        RailsRoot root = ((GameLoader.RailsObjectInputStream) in).getRoot();
 
-        nameableTrains = new ArrayList<NameableTrain>();
+        TrainManager trainManager = root.getTrainManager();
+
+        nameableTrains = new ArrayList<>();
         if (trainIds != null) {
             for (String trainId : trainIds) {
                 nameableTrains.add((NameableTrain) trainManager.getTrainByUniqueId(trainId));
             }
         }
 
-        preTrainPerToken = new ArrayList<NameableTrain>(numberOfTrains);
+        preTrainPerToken = new ArrayList<>(numberOfTrains);
         if (preTrainds != null) {
             for (String trainId : preTrainds) {
                 if (trainId != null && trainId.length() > 0) {
@@ -169,7 +172,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
             }
         }
 
-        postTrainPerToken = new ArrayList<NameableTrain>(numberOfTrains);
+        postTrainPerToken = new ArrayList<>(numberOfTrains);
         if (postTrainds != null) {
             for (String trainId : postTrainds) {
                 if (trainId != null && trainId.length() > 0) {

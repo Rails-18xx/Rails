@@ -13,6 +13,7 @@ import net.sf.rails.game.TrainType;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialTrainBuy;
 import net.sf.rails.game.state.Owner;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -44,9 +45,9 @@ public class BuyTrain extends PossibleORAction {
     private int specialPropertyId = 0;
 
     private String extraMessage = null;
-    
+
     // Added jun2011 by EV to cover dual trains.
-    // NOTE: Train objects from now on represent train *certificates* 
+    // NOTE: Train objects from now on represent train *certificates*
     transient private TrainType type;
     private String typeName;
 
@@ -59,11 +60,11 @@ public class BuyTrain extends PossibleORAction {
     public static final long serialVersionUID = 2L;
 
     public BuyTrain(Train train, Owner from, int fixedCost) {
-
         this (train, train.getType(), from, fixedCost);
     }
 
     public BuyTrain(Train train, TrainType type, Owner from, int fixedCost) {
+        super(train.getRoot());
         this.train = train;
         this.trainUniqueId = train.getId();
         this.from = from;
@@ -138,7 +139,7 @@ public class BuyTrain extends PossibleORAction {
      */
     public Train getTrain() {
         if (train == null) {
-            train = RailsRoot.getInstance().getTrainManager().getTrainByUniqueId(trainUniqueId);
+            train = root.getTrainManager().getTrainByUniqueId(trainUniqueId);
         }
         return train;
     }
@@ -154,7 +155,7 @@ public class BuyTrain extends PossibleORAction {
     public int getFixedCost() {
         return fixedCost;
     }
-    
+
     // for correction
     public void setFixedCost(int fixedCost) {
         this.fixedCost = fixedCost;
@@ -214,28 +215,28 @@ public class BuyTrain extends PossibleORAction {
             this.exchangedTrainUniqueId = exchangedTrain.getId();
     }
 
-    
-    
+
+
     // TODO: Check for and add the missing attributes
     @Override
     protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        BuyTrain action = (BuyTrain)pa; 
-        boolean options =  Objects.equal(this.getTrain().getType(), action.getTrain().getType()) 
+        BuyTrain action = (BuyTrain)pa;
+        boolean options =  Objects.equal(this.getTrain().getType(), action.getTrain().getType())
                 // only types have to be equal, and the getTrain() avoids train == null
                 && Objects.equal(this.from, action.from)
                 && (action.fixedCost == 0 || Objects.equal(this.fixedCost, action.pricePaid))
                 && Objects.equal(this.trainsForExchange, action.trainsForExchange)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.train, action.train)
@@ -249,7 +250,7 @@ public class BuyTrain extends PossibleORAction {
     @Override
     public String toString() {
 
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("train", train)
                     .addToString("from", from)
@@ -285,7 +286,8 @@ public class BuyTrain extends PossibleORAction {
         exchangedTrainUniqueId = (String) fields.get("exchangedTrainUniqueId", exchangedTrainUniqueId);
         extraMessage = (String) fields.get("extraMessage", extraMessage);
 
-        RailsRoot root = RailsRoot.getInstance();
+        root = ((GameLoader.RailsObjectInputStream) in).getRoot();
+
         TrainManager trainManager = root.getTrainManager();
         CompanyManager companyManager = root.getCompanyManager();
 
@@ -308,9 +310,9 @@ public class BuyTrain extends PossibleORAction {
         }
 
         // TODO: This has to be replaced by a new mechanism for owners at some time
-        from = getGameManager().getPortfolioByName(fromName).getParent();
+        from = root.getGameManager().getPortfolioByName(fromName).getParent();
         if (trainsForExchangeUniqueIds != null
-            && trainsForExchangeUniqueIds.length > 0) {
+                && trainsForExchangeUniqueIds.length > 0) {
             trainsForExchange = new HashSet<Train>();
             for (int i = 0; i < trainsForExchangeUniqueIds.length; i++) {
                 trainsForExchange.add(trainManager.getTrainByUniqueId(trainsForExchangeUniqueIds[i]));
@@ -319,7 +321,7 @@ public class BuyTrain extends PossibleORAction {
 
         if (specialPropertyId > 0) {
             specialProperty =
-                    (SpecialTrainBuy) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
+                    (SpecialTrainBuy) SpecialProperty.getByUniqueId(root, specialPropertyId);
         }
 
         if (Util.hasValue(exchangedTrainUniqueId)) {

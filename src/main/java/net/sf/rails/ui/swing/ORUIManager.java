@@ -81,8 +81,7 @@ import com.google.common.collect.Sets;
 // Rails 2.0, Even better add a new mechanism that allows to use the standard mechanism for corrections
 public class ORUIManager implements DialogOwner {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(ORUIManager.class);
+    private static final Logger log = LoggerFactory.getLogger(ORUIManager.class);
 
     protected GameUIManager gameUIManager;
     protected NetworkAdapter networkAdapter;
@@ -271,7 +270,7 @@ public class ORUIManager implements DialogOwner {
         }
 
         // scroll map to center over companies network
-        String autoScroll = Config.getGameSpecific("map.autoscroll");
+        String autoScroll = Config.getGameSpecific(gameUIManager.getRoot().getGameName(), "map.autoscroll");
         if (Util.hasValue(autoScroll) &&  autoScroll.equalsIgnoreCase("no")) {
             // do nothing
         } else {
@@ -671,7 +670,7 @@ public class ORUIManager implements DialogOwner {
             map.selectHex(null);
             setLocalStep(LocalSteps.SELECT_HEX);
         } else {
-            orWindow.process(new NullAction(NullAction.Mode.SKIP));
+            orWindow.process(new NullAction(gameUIManager.getRoot(), NullAction.Mode.SKIP));
         }
     }
 

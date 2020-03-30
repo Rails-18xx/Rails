@@ -87,8 +87,8 @@ public final class Config {
     /**
      * Configuration option: First tries to return {key}.{gameName}, if undefined returns {key}
      */
-    public static String getGameSpecific(String key) {
-        return getSpecific(key, RailsRoot.getInstance().getGameName());
+    public static String getGameSpecific(String gameName, String key) {
+        return getSpecific(key, gameName);
     }
 
     public static String getRecent(String key) {

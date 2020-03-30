@@ -17,15 +17,19 @@ import org.jgrapht.graph.SimpleGraph;
 
 public class BirminghamTileModifier implements NetworkGraphModifier {
 
-    private static final Logger log =
-        LoggerFactory.getLogger(BirminghamTileModifier.class);
+    private static final Logger log = LoggerFactory.getLogger(BirminghamTileModifier.class);
+
+    private RailsRoot root;
+
+    public void setRoot(RailsRoot root) {
+        this.root = root;
+    }
 
     @Override
     public void modifyMapGraph(NetworkGraph mapGraph) {
 
         // TODO (Rails 2.0): Add root reference to modifiers
         SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
-        RailsRoot root = RailsRoot.getInstance();
 
         // 1. check Phase
         // this is a violation of the assumption that the track network only dependents on the map configuration
@@ -43,7 +47,6 @@ public class BirminghamTileModifier implements NetworkGraphModifier {
         // 3 ... and remove them from the graph
         graph.removeAllVertices(birmingVertices);
         log.debug("Birmingham inactive, index of phase = " + phaseIndex);
-
     }
 
     @Override

@@ -253,11 +253,11 @@ public class GameUIManager implements DialogOwner {
 
     private void initFontSettings() {
         // font settings, can be game specific
-        String fontType = Config.getGameSpecific("font.ui.name");
+        String fontType = Config.getGameSpecific(railsRoot.getGameName(), "font.ui.name");
         Font font = null;
         if (Util.hasValue(fontType)) {
             boolean boldStyle = true;
-            String fontStyle = Config.getGameSpecific("font.ui.style");
+            String fontStyle = Config.getGameSpecific(railsRoot.getGameName(), "font.ui.style");
             if (Util.hasValue(fontStyle)) {
                 if (fontStyle.equalsIgnoreCase("plain")) {
                     boldStyle = false;
@@ -336,7 +336,7 @@ public class GameUIManager implements DialogOwner {
         gameUIInit(false); // false indicates reload
 
         splashWindow.notifyOfStep(SplashWindow.STEP_INIT_LOADED_GAME);
-        processAction(new NullAction(NullAction.Mode.START_GAME));
+        processAction(new NullAction(getRoot(), NullAction.Mode.START_GAME));
         statusWindow.setGameActions();
     }
 
@@ -838,7 +838,7 @@ public class GameUIManager implements DialogOwner {
 
     protected void autoSave(String newPlayer) {
         lastSavedFilename = savePrefix + "_" + saveDateTimeFormat.format(new Date()) + "_" + newPlayer + "." + saveExtension;
-        GameAction saveAction = new GameAction(GameAction.Mode.SAVE);
+        GameAction saveAction = new GameAction(getRoot(), GameAction.Mode.SAVE);
         saveAction.setFilepath(saveDirectory + "/" + lastSavedFilename);
         log.debug("Autosaving to {}", lastSavedFilename);
         processOnServer(saveAction);
@@ -1041,7 +1041,7 @@ public class GameUIManager implements DialogOwner {
                  * so the player can select a directory, and change
                  * the prefix if so desired.
                  */
-                GameAction saveAction = new GameAction(GameAction.Mode.SAVE);
+                GameAction saveAction = new GameAction(getRoot(), GameAction.Mode.SAVE);
                 saveSuffix = localPlayerName;
                 saveGame(saveAction);
                 lastSavedFilename = saveAction.getFilepath();

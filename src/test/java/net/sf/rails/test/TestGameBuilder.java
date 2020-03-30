@@ -32,8 +32,8 @@ public final class TestGameBuilder extends TestCase {
     private static int maxRecursionLevel = 5;
 
     // true = optimal for ant html reports, false = optimal for test runner
-    private static boolean extendedTestNames = true; 
-    
+    private static boolean extendedTestNames = true;
+
     static void saveGameReport(List<String> report, String reportFilename, boolean failed) {
         PrintWriter reportFile = null;
         try{
@@ -42,7 +42,7 @@ public final class TestGameBuilder extends TestCase {
             {
             System.err.print("Error: cannot open file " + reportFilename + " for report writing");
             }
-        if (reportFile != null) { 
+        if (reportFile != null) {
             for (String msg:report){
                 reportFile.println(msg);
             }
@@ -54,28 +54,28 @@ public final class TestGameBuilder extends TestCase {
             }
         }
     }
-    
-    
+
+
     private static void prepareGameReport(File gameFile, String reportFilename) {
-        
+
         RailsRoot root = null;
-        if (gameFile.exists()) { 
+        if (gameFile.exists()) {
             System.out.println("Found game at " + gameFile.getAbsolutePath());
             GameLoader gameLoader = new GameLoader();
             if (gameLoader.createFromFile(gameFile)) {
                 root = gameLoader.getRoot();
             }
         }
-        if (root != null) {  
+        if (root != null) {
             List<String> report = root.getReportManager().getReportBuffer().getAsList();
             saveGameReport(report, reportFilename, false);
         }
     }
 
-    
+
     // returns gameName if prepararion was successfull
     private static String prepareTestGame(File gameFile, boolean overrideReport){
-     
+
         // check preconditions
         if (!gameFile.exists() || !gameFile.isFile()) return null;
 
@@ -88,29 +88,28 @@ public final class TestGameBuilder extends TestCase {
                 Config.get("save.filename.extension"))) {
             gameName = fileName.substring(0,dot);
             String gamePath = gameFile.getParent();
-        
+
             // check if there is a reportfile
-            String reportFilename = gamePath + File.separator + gameName 
-                    + "." + Config.get("report.filename.extension"); 
+            String reportFilename = gamePath + File.separator + gameName
+                    + "." + Config.get("report.filename.extension");
             File reportFile = new File(reportFilename);
-            
+
             if (!reportFile.exists() || overrideReport) {
                 prepareGameReport(gameFile, reportFilename);
-                RailsRoot.clearInstance();
             }
         }
-        
+
         return gameName;
     }
-    
+
     private static TestSuite recursiveTestSuite(String rootPath, String dirPath, int level, boolean overrideReport){
 
         // completeDirPath
         String combinedDirPath = rootPath + File.separator + dirPath;
-        
+
         // assign directory
         File directory = new File(combinedDirPath);
-        
+
         // check if directory exists otherwise return null
         if (!directory.exists() || !directory.isDirectory()) return null;
 
@@ -121,11 +120,11 @@ public final class TestGameBuilder extends TestCase {
             suite = new TestSuite("Rails Tests");
         else
             suite = new TestSuite(directory.getName());
-        
-        // use filelist to sort 
+
+        // use filelist to sort
         List<String> filenameList = Arrays.asList(directory.list());
         Collections.sort(filenameList);
-        
+
         // add deeper directories
         for (String fn:filenameList) {
             File f = new File(combinedDirPath + File.separator + fn);
@@ -146,7 +145,7 @@ public final class TestGameBuilder extends TestCase {
             String gameName = prepareTestGame(f, overrideReport);
             if (gameName != null) {
                 String extendedGameName;
-                if (extendedTestNames) 
+                if (extendedTestNames)
                     extendedGameName = dirPath + File.separator + gameName;
                 else
                     extendedGameName = gameName;
@@ -154,46 +153,46 @@ public final class TestGameBuilder extends TestCase {
                 System.out.println("Added TestGame "+ extendedGameName);
             }
         }
-        
+
         return suite;
     }
-    
+
     /**
      * Builds test suite of all test games below the main test directory
      * @return created test suite for junit
      */
-    
+
     public static Test suite() {
-        
+
         ConfigManager.initConfiguration(true);
-        
-        // Main test directory 
+
+        // Main test directory
         File testDir = new File(Config.get("save.directory"));
-        
+
         // Create tests
         TestSuite suite = null;
         if (testDir.exists() && testDir.isDirectory()) {
             System.out.println("Test directory = " + testDir.getAbsolutePath());
             suite = recursiveTestSuite(testDir.getAbsolutePath(), "",  0, false);
         }
-        
+
         return suite;
     }
-    
-    
+
+
     /**
      * Run main to rebuild the report files.
      * Only use this if you know what you are doing
-     * 
-     * @param args a list of directories below the main test directory 
+     *
+     * @param args a list of directories below the main test directory
      */
     public static void main(String[] args) {
 
         ConfigManager.initConfiguration(true);
-    
-        // Main test directory 
+
+        // Main test directory
         String rootPath = Config.get("save.directory");
-        
+
         if (args != null && args.length > 0) {
             // commandline argument: only directories are possible
             System.out.println("Number of args: "+ args.length);
@@ -202,7 +201,7 @@ public final class TestGameBuilder extends TestCase {
                 recursiveTestSuite(rootPath, arg, 0, true);
         } else {
             // ask for directories to ovrerride
-            JPanel panel = new JPanel(); 
+            JPanel panel = new JPanel();
             JFileChooser chooser = new JFileChooser();
             chooser.setDialogTitle("Select directories and/or files to reset game reports");
             chooser.setCurrentDirectory(new File(rootPath));
@@ -212,7 +211,7 @@ public final class TestGameBuilder extends TestCase {
             chooser.setFileFilter(new FileFilter() {
                 public boolean accept(File f) {
                     return f.isDirectory() || f.getName().endsWith("." + Config.get("save.filename.extension"));
-                  } 
+                  }
                 public String getDescription()  {
                     return "Rails save files (*."+ Config.get("save.filename.extension") + ")" ;
                 }

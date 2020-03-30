@@ -19,10 +19,14 @@ import org.jgrapht.graph.SimpleGraph;
 
 public class F21Modifier implements NetworkGraphModifier {
 
+    private RailsRoot root;
+
+    public void setRoot(RailsRoot root) {
+        this.root = root;
+    }
+
     @Override
     public void modifyMapGraph(NetworkGraph mapGraph) {
-        
-        RailsRoot root = RailsRoot.getInstance();
         SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
 
         // Check if F21 has zero value
@@ -33,7 +37,7 @@ public class F21Modifier implements NetworkGraphModifier {
             graph.removeAllVertices(vertices);
         }
     }
-    
+
     @Override
     public void modifyRouteGraph(NetworkGraph mapGraph, PublicCompany company) {
         // do nothing

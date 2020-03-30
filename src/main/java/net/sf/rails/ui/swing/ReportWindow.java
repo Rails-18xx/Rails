@@ -263,11 +263,11 @@ public class ReportWindow extends JFrame implements
     private void gotoIndex(int index) {
         int currentIndex = changeStack.getCurrentIndex();
         if (index > currentIndex) { // move forward
-            GameAction action = new GameAction(GameAction.Mode.REDO);
+            GameAction action = new GameAction(gameUIManager.getRoot(), GameAction.Mode.REDO);
             action.setmoveStackIndex(index);
             gameUIManager.processAction(action);
         } else if (index < currentIndex) { // move backward
-            GameAction action = new GameAction(GameAction.Mode.FORCED_UNDO);
+            GameAction action = new GameAction(gameUIManager.getRoot(), GameAction.Mode.FORCED_UNDO);
             action.setmoveStackIndex(index);
             gameUIManager.processAction(action);
         }

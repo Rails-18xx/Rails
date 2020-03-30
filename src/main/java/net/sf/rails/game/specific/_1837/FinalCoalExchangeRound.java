@@ -22,7 +22,7 @@ public class FinalCoalExchangeRound extends StockRound_1837 {
 
         raiseIfSoldOut = false;
     }
-    
+
     public static FinalCoalExchangeRound create(GameManager parent, String id){
         return new FinalCoalExchangeRound(parent, id);
     }
@@ -53,7 +53,7 @@ public class FinalCoalExchangeRound extends StockRound_1837 {
     private boolean setMinorMergeActions() {
 
         if (hasActed.value()) {
-            possibleActions.add(new NullAction(NullAction.Mode.DONE));
+            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
             return true;
         }
 
@@ -100,7 +100,7 @@ public class FinalCoalExchangeRound extends StockRound_1837 {
     public boolean done(NullAction action, String playerName, boolean hasAutopassed) {
 
         // TODO: Here no action is stored
-        
+
 
         for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
             if ((comp.getType().getId().equals("Coal")) && (!comp.isClosed())) {

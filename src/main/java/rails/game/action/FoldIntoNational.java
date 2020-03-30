@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package rails.game.action;
 
@@ -11,6 +11,7 @@ import java.util.List;
 
 import net.sf.rails.game.Company;
 import net.sf.rails.game.CompanyManager;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -32,14 +33,14 @@ public class FoldIntoNational extends PossibleAction {
 
     public static final long serialVersionUID = 1L;
 
-    public FoldIntoNational(List<Company> companies) {
-        super(null); // not defined by an activity yet
+    public FoldIntoNational(RailsRoot root, List<Company> companies) {
+        super(root); // not defined by an activity yet
         this.foldableCompanies = companies;
         foldableCompanyNames = Util.joinNamesWithDelimiter(foldableCompanies, ",");
     }
 
     public FoldIntoNational(Company company) {
-        this (Arrays.asList(new Company[] {company}));
+        this (company.getRoot(), Arrays.asList(company));
     }
 
     public List<Company> getFoldedCompanies() {
@@ -72,21 +73,21 @@ public class FoldIntoNational extends PossibleAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        FoldIntoNational action = (FoldIntoNational)pa; 
-        boolean options = 
+        FoldIntoNational action = (FoldIntoNational)pa;
+        boolean options =
                 Objects.equal(this.foldableCompanies, action.foldableCompanies) ||
                     // additional conditions required as there is no sorting defined in old save files
                     this.foldableCompanies != null && action.foldableCompanies != null
                     && this.foldableCompanies.containsAll(action.foldableCompanies)
                     && action.foldableCompanies.containsAll(this.foldableCompanies)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.foldedCompanies, action.foldedCompanies) ||
@@ -99,18 +100,18 @@ public class FoldIntoNational extends PossibleAction {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("foldableCompanies", foldableCompanies)
                     .addToStringOnlyActed("foldedCompanies", foldedCompanies)
                     .toString()
         ;
     }
-    
+
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
-        
+
         Company company;
 
         in.defaultReadObject();

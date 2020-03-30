@@ -27,7 +27,7 @@ public class TakeLoans extends PossibleORAction {
      */
     public TakeLoans(PublicCompany company, int maxNumber,
             int price) {
-
+        super(company.getRoot());
         this.company = company;
         this.companyName = company.getId();
         this.maxNumber = maxNumber;

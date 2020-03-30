@@ -54,7 +54,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
                                 startPacket.getModulus(), true);
                 possibleActions.add(possibleAction);
             }
-            possibleActions.add(new NullAction(NullAction.Mode.PASS));
+            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
         } else if (currentSharePriceItem() != null) {
             // Item sold, but needs share price
             StartItem currentItem = currentSharePriceItem();
@@ -82,7 +82,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
                 }
             }
             if (atLeastOneBiddable == true) {
-                possibleActions.add(new NullAction(NullAction.Mode.PASS));
+                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
             }
         }
 

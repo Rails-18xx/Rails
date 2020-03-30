@@ -27,15 +27,6 @@ public class RailsRoot extends Root implements RailsItem {
 
     private static final Logger log = LoggerFactory.getLogger(RailsRoot.class);
 
-    // currently we assume that there is only one instance running
-    // thus it is possible to retrieve that version
-    // TODO: Replace this by a full support of concurrent usage
-    private static RailsRoot instance;
-
-    public static RailsRoot getInstance() {
-        return instance;
-    }
-
     // Base XML file
     private static final String GAME_XML_FILE = "Game.xml";
 
@@ -73,17 +64,16 @@ public class RailsRoot extends Root implements RailsItem {
     }
 
     public static RailsRoot create(GameData gameData) throws ConfigurationException {
-        Preconditions.checkState(instance == null, "Currently only a single instance of RailsRoot is allowed");
-        instance = new RailsRoot(gameData);
+        RailsRoot root = new RailsRoot(gameData);
         log.debug("RailsRoot: instance created");
-        instance.init();
+        root.init();
         log.debug("RailsRoot: instance initialized");
-        instance.initGameFromXML();
+        root.initGameFromXML();
         log.debug("RailsRoot: game configuration initialized");
-        instance.finishConfiguration();
+        root.finishConfiguration();
         log.debug("RailsRoot: game configuration finished");
 
-        return instance;
+        return root;
     }
 
 
@@ -251,7 +241,4 @@ public class RailsRoot extends Root implements RailsItem {
         return this;
     }
 
-    public static void clearInstance() {
-        instance = null;
-    }
 }
