@@ -1038,7 +1038,7 @@ public class GameUIManager implements DialogOwner {
         }
 
         if (autoLoadPoller == null && autoSaveLoadStatus > 0) {
-            autoLoadPoller = new AutoLoadPoller (this, saveDirectory, savePrefix,
+            autoLoadPoller = new AutoLoadPoller (this, saveDirectory, savePrefix, lastSavedFilename,
                     localPlayerName, autoSaveLoadStatus, autoSaveLoadPollingInterval);
             autoLoadPoller.start();
         } else if (autoLoadPoller != null) {
