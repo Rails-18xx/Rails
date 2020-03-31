@@ -99,12 +99,12 @@ public class MapPanel extends JPanel {
         if (rectangle == null) return;
 
         JViewport viewport = scrollPane.getViewport();
-        log.debug("ScrollPane viewPort =" + viewport);
+        log.debug("ScrollPane viewPort ={}", viewport);
 
         // check dimensions
-        log.debug("Map size =" + map.getSize());
-        log.debug("ScrollPane visibleRect =" + scrollPane.getVisibleRect());
-        log.debug("viewport size =" + viewport.getSize());
+        log.debug("Map size ={}", map.getSize());
+        log.debug("ScrollPane visibleRect ={}", scrollPane.getVisibleRect());
+        log.debug("viewport size ={}", viewport.getSize());
 
         double setX, setY;
         setX = Math.max(0, (rectangle.getCenterX() - viewport.getWidth() / 2));
@@ -114,7 +114,7 @@ public class MapPanel extends JPanel {
         setY = Math.min(setY, Math.max(0, map.getSize().getHeight() - viewport.getHeight()));
 
         final Point viewPosition = new Point((int)setX, (int)setY);
-        log.debug("ViewPosition for ScrollPane = " + viewPosition);
+        log.debug("ViewPosition for ScrollPane = {}", viewPosition);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 scrollPane.getViewport().setViewPosition(viewPosition);
@@ -124,7 +124,7 @@ public class MapPanel extends JPanel {
 
     private void adjustToNewMapZoom () {
         currentMapSize = map.getCurrentSize();
-        log.debug("Map.size = " +currentMapSize);
+        log.debug("Map.size = {}", currentMapSize);
         layeredPane.setPreferredSize(currentMapSize);
         map.setBounds(0, 0, currentMapSize.width, currentMapSize.height);
         if (mapImage != null) {

@@ -165,6 +165,7 @@ implements ActionListener, KeyListener, RevenueListener {
             companies = ((OperatingRound) round).getOperatingCompanies().toArray(new PublicCompany[0]);
             nc = companies.length;
         }
+        log.debug("companies found: {} in {}", nc, round);
 
         initFields();
 
@@ -184,8 +185,7 @@ implements ActionListener, KeyListener, RevenueListener {
         //only add remaining tiles display option for conventional layout
         //as this is always included as a dockable panel in the docking frame layout
         if (!parent.isDockingFrameworkEnabled()) {
-            remainingTilesMenuItem =
-                new JMenuItem(LocalText.getText("RemainingTiles"));
+            remainingTilesMenuItem = new JMenuItem(LocalText.getText("RemainingTiles"));
             remainingTilesMenuItem.addActionListener(this);
             remainingTilesMenuItem.setActionCommand(REM_TILES_CMD);
             infoMenu.add(remainingTilesMenuItem);
@@ -378,14 +378,14 @@ implements ActionListener, KeyListener, RevenueListener {
 
             //get maximum size
             Dimension maxSize = new Dimension();
-            for (Component c : Arrays.asList( buttonPanel.getComponents() )) {
+            for (Component c : buttonPanel.getComponents() ) {
                 if (c.getPreferredSize().width > maxSize.width)
                     maxSize.width = c.getPreferredSize().width;
                 if (c.getPreferredSize().height > maxSize.height)
                     maxSize.height = c.getPreferredSize().height;
             }
             //apply maximum size to all buttons
-            for (Component c : Arrays.asList( buttonPanel.getComponents() )) {
+            for (Component c : buttonPanel.getComponents() ) {
                 c.setPreferredSize(maxSize);
             }
 
@@ -511,40 +511,33 @@ implements ActionListener, KeyListener, RevenueListener {
 
         revXOffset = currentXOffset += lastXWidth;
         revYOffset = leftCompNameYOffset;
-        addField(revenueCaption = new Caption("Revenue"), revXOffset, 0,
-                lastXWidth = 2, 1, WIDE_RIGHT);
+        addField(revenueCaption = new Caption("Revenue"), revXOffset, 0, lastXWidth = 2, 1, WIDE_RIGHT);
         addField(new Caption("earned"), revXOffset, 1, 1, 1, WIDE_BOTTOM);
-        addField(new Caption("payout"), revXOffset + 1, 1, 1, 1, WIDE_BOTTOM
-                + WIDE_RIGHT);
+        addField(new Caption("payout"), revXOffset + 1, 1, 1, 1, WIDE_BOTTOM + WIDE_RIGHT);
 
         if (hasDirectCompanyIncomeInOr) {
             bonusRevXOffset = currentXOffset += lastXWidth;
             bonusRevYOffset =leftCompNameYOffset;
-            addField(directIncomeCaption = new Caption("CompanyIncome"), bonusRevXOffset, 0,
-                    lastXWidth = 3, 1, WIDE_RIGHT);
+            addField(directIncomeCaption = new Caption("CompanyIncome"), bonusRevXOffset, 0, lastXWidth = 3, 1, WIDE_RIGHT);
             addField(new Caption("income"), revXOffset, 1, 1, 1, WIDE_BOTTOM + WIDE_RIGHT);
         }
 
         trainsXOffset = currentXOffset += lastXWidth;
         trainsYOffset = leftCompNameYOffset;
-        addField(trainCaption = new Caption("Trains"), trainsXOffset, 0,
-                lastXWidth = 2, 1, WIDE_RIGHT);
+        addField(trainCaption = new Caption("Trains"), trainsXOffset, 0, lastXWidth = 2, 1, WIDE_RIGHT);
         addField(new Caption("owned"), trainsXOffset, 1, 1, 1, WIDE_BOTTOM);
-        addField(new Caption("cost"), trainsXOffset + 1, 1, 1, 1, WIDE_BOTTOM
-                + WIDE_RIGHT);
+        addField(new Caption("cost"), trainsXOffset + 1, 1, 1, 1, WIDE_BOTTOM + WIDE_RIGHT);
 
         rightCompNameXOffset = currentXOffset += lastXWidth;
         rightCompNameYOffset = leftCompNameYOffset;
-        addField(new Caption("Company"), rightCompNameXOffset, 0, 1, 2,
-                WIDE_BOTTOM);
+        addField(new Caption("Company"), rightCompNameXOffset, 0, 1, 2, WIDE_BOTTOM);
 
         fields = new JComponent[1+currentXOffset][2+nc];
         rowVisibilityObservers = new RowVisibility[nc];
 
         for (int i = 0; i < nc; i++) {
             c = companies[i];
-            rowVisibilityObservers[i]
-                                   = new RowVisibility(this, leftCompNameYOffset + i, c.getInGameModel(), true);
+            rowVisibilityObservers[i] = new RowVisibility(this, leftCompNameYOffset + i, c.getInGameModel(), true);
             observers.add(rowVisibilityObservers[i]);
 
             boolean visible = !c.isClosed();
@@ -559,8 +552,7 @@ implements ActionListener, KeyListener, RevenueListener {
             addField(f, leftCompNameXOffset, leftCompNameYOffset + i, 1, 1,
                     WIDE_RIGHT, visible);
 
-            f =
-                president[i] =
+            f = president[i] =
                     //                            new Field(c.hasStarted() && !c.isClosed()
                     //                                    ? c.getPresident().getNameAndPriority() : "");
                     new Field(c.getPresidentModel());
@@ -660,12 +652,10 @@ implements ActionListener, KeyListener, RevenueListener {
             f = rightCompName[i] = new Caption(c.getId());
             f.setBackground(companies[i].getBgColour());
             f.setForeground(companies[i].getFgColour());
-            HexHighlightMouseListener.addMouseListener(f,
-                    orUIManager,c,false);
+            HexHighlightMouseListener.addMouseListener(f, orUIManager,c,false);
             f.addMouseListener(companyCaptionMouseClickListener);
             f.setToolTipText(LocalText.getText("NetworkInfoDialogTitle",c.getId()));
             addField(f, rightCompNameXOffset, rightCompNameYOffset + i, 1, 1, 0,  visible);
-
         }
 
     }
@@ -1472,7 +1462,7 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     public int getCompanyTreasuryBonusRevenue(int orCompIndex) {
-        return ((Integer) directIncomeSelect[orCompIndex].getValue()).intValue();
+        return (Integer) directIncomeSelect[orCompIndex].getValue();
     }
 
     public void setTreasuryBonusRevenue(int orCompIndex2, int bonusAmount) {

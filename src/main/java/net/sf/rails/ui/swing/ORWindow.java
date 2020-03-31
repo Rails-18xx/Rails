@@ -52,10 +52,10 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         try {
             Class<? extends ORUIManager> orUIManagerClass =
                 Class.forName(orUIManagerClassName).asSubclass(ORUIManager.class);
-            log.debug("Class is "+orUIManagerClass.getName());
+            log.debug("Class is {}", orUIManagerClass.getName());
             orUIManager = orUIManagerClass.newInstance();
         } catch (Exception e) {
-            log.error("Cannot instantiate class " + orUIManagerClassName, e);
+            log.error("Cannot instantiate class {}", orUIManagerClassName, e);
             System.exit(1);
         }
         gameUIManager.setORUIManager(orUIManager);
@@ -137,8 +137,8 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         } else
             setSize(800, 600);
 
-        log.debug("OrWindow: MapPanel size = " + mapPanel.getSize());
-        log.debug("OrWindow size = " + this.getSize());
+        log.debug("OrWindow: MapPanel size = {}", mapPanel.getSize());
+        log.debug("OrWindow size = {}", this.getSize());
 
         final JFrame frame = this;
         final GameUIManager guiMgr = gameUIManager;
@@ -168,26 +168,24 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         //call pack and size init within the swing EDT
         //(as this frame is not inited within the EDT)
         //no standard call to gameUIManager's packAndApplySizing possible (due to docking switch)
-        SwingUtilities.invokeLater(new Thread() {
-            public void run() {
-                //rearrange layout only if no docking framework active
-                if (!isDockingFrameworkEnabled()) {
-                    pack();
-                } else {
-                    setSize(new Dimension(600,500));
-                }
-
-                WindowSettings ws = getGameUIManager().getWindowSettings();
-                Rectangle bounds = ws.getBounds(ORWindow.this);
-                if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
-                if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
-                ws.set(frame);
-
-                if (isDockingFrameworkEnabled()) {
-                    initLayout();
-                }
+        SwingUtilities.invokeLater(new Thread(() -> {
+            //rearrange layout only if no docking framework active
+            if (!isDockingFrameworkEnabled()) {
+                pack();
+            } else {
+                setSize(new Dimension(600,500));
             }
-        });
+
+            WindowSettings ws = getGameUIManager().getWindowSettings();
+            Rectangle bounds = ws.getBounds(ORWindow.this);
+            if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
+            if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
+            ws.set(frame);
+
+            if (isDockingFrameworkEnabled()) {
+                initLayout();
+            }
+        }));
 
     }
 
@@ -246,7 +244,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
     }
 
     public void activate(OperatingRound or) {
-        GameManager gameManager = (GameManager) gameUIManager.getGameManager();
+        GameManager gameManager = gameUIManager.getGameManager();
         String numORs = gameManager.getNumOfORs ();
 
         orPanel.recreate(or);
