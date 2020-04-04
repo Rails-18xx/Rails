@@ -126,7 +126,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./rails-packaged-1.0.exe
+          asset_path: ./exe/rails-packaged-1.0.exe
           asset_name: rails-packaged-1.0.exe
           asset_content_type: application/octet-stream
       - name: Upload deb
@@ -135,7 +135,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./rails-packaged_1.0-1_amd64.deb
+          asset_path: ./deb/rails-packaged_1.0-1_amd64.deb
           asset_name: rails-packaged_1.0-1_amd64.deb
           asset_content_type: application/octet-stream
       - name: Upload dmg
@@ -144,6 +144,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./rails-packaged-1.0.dmg
+          asset_path: ./dmg/rails-packaged-1.0.dmg
           asset_name: rails-packaged-1.0.dmg
           asset_content_type: application/octet-stream
