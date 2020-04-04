@@ -40,7 +40,6 @@ jobs:
         run: >
           jpackage \
             --name rails-packaged \
-            --icon ./src/main/resources/build/rails.png \
             --input target \
             --main-jar rails-2.2-alpha-all.jar
       - name: Upload Installer
@@ -70,7 +69,6 @@ jobs:
         run: >
           jpackage \
             --name rails-packaged \
-            --icon ./src/main/resources/build/rails.png \
             --input target \
             --main-jar rails-2.2-alpha-all.jar \
             --linux-package-name rails-18xx \
@@ -103,7 +101,6 @@ jobs:
         run: >
           jpackage \
             --name rails-packaged \
-            --icon ./src/main/resources/build/rails.png \
             --input target \
             --main-jar rails-2.2-alpha-all.jar
       - name: Upload Installer
