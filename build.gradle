@@ -1,114 +1,147 @@
 /// Gradle Build script for 18xx Rails program (rails.sf.net)
 
-import org.apache.tools.ant.filters.*
 import java.text.SimpleDateFormat
 
-
-
-// Addition of JavaProfile plugin to read Java property files
-// reference: https://github.com/unsaved/gradle-javaPropFile-plugin
-
-buildscript {
-    repositories { jcenter() }  // Before plugin v. 1.0.0 use mavenCentral()
-    dependencies {
-        classpath 'com.admc:gradle-javaPropFile-plugin:1.0.0'
-        // For strictly repeatable builds, replace 'latest.integration'
-        // with the latest literal GA version label.
-    }
-}
-
-
-// Addition of launch4j gradle plugin
-// refer to https://github.com/TheBoegl/gradle-launch4j
-
-buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
-  }
-  dependencies {
-    classpath "gradle.plugin.edu.sc.seis.gradle:launch4j:2.3.0"
-  }
-}
-
-// Addition of shadow plugin to create one jars
-// reference: https://github.com/johnrengelman/shadow
 plugins {
-  id 'java' // or 'groovy' Must be explicitly applied
-  id 'com.github.johnrengelman.shadow' version '5.0.0'
-}
-
-// Addition of macAppBundle
-// https://github.com/crotwell/gradle-macappbundle
-plugins {
+  id 'java'
+  id 'maven-publish'
+  // https://github.com/johnrengelman/shadow
+  id 'com.github.johnrengelman.shadow' version '5.2.0'
+  // plugin to check for dependency updates via task dependencyUpdates
+  // https://github.com/ben-manes/gradle-versions-plugin
+  id 'com.github.ben-manes.versions' version '0.28.0'
+  // https://github.com/n0mer/gradle-git-properties
+  id 'com.gorylenko.gradle-git-properties' version '2.2.2'
+  // https://github.com/TheBoegl/gradle-launch4j
+  id 'edu.sc.seis.launch4j' version '2.4.6'
+  // https://github.com/crotwell/gradle-macappbundle
   id "edu.sc.seis.macAppBundle" version "2.3.0"
+  // https://github.com/nebula-plugins/gradle-ospackage-plugin
+  //id "nebula.rpm" version "8.2.0"
+  //id "nebula.deb" version "8.2.0"
+  id "nebula.ospackage" version "8.2.0"
+  // https://openjfx.io/openjfx-docs/#gradle
+  id 'org.openjfx.javafxplugin' version '0.0.8'
+  id "jacoco"
+  id "org.sonarqube" version "2.8"
 }
-
 
 repositories {
-  mavenCentral()
+    mavenLocal()
+    mavenCentral()
+//    maven {
+//        url = 'https://jitpack.io'
+//    }
 }
 
-apply plugin: 'java'
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
 
-apply plugin: "edu.sc.seis.launch4j"
-
-apply plugin: 'com.admc.javaPropFile'
-
-        
 // Rails variables
-def railsCodebase = 'rails.sourceforge.net'
+//group = 'net.sf'
+version = '2.2-alpha'
+description = 'Rails (18xx)'
+
+//def railsCodebase = 'rails.sourceforge.net'
 def railsMainClass = 'net.sf.rails.util.RunGame'
 def railsVendor = 'Rails project'
-def railsHomepage = 'http://rails.sf.net'
+//def railsHomepage = 'http://rails.sf.net'
 def railsDescription = 'Rails is a moderator program for 18xx games'
 def railsIcon = 'rails.ico'
 def railsCopyright = 'GPL'
 
 // Key variables
-def keyAlias = 'rails18xx'
+//def keyAlias = 'rails18xx'
 // def keyAlias = 'stefanfrey'
 
 // Build directories
-def webstartBuildDir = "${buildDir}/webstart/build"
-def webstartDestDir = "${buildDir}/webstart/signed"
-def keystoreFile = '../../keystore/rails.keys'
+//def webstartBuildDir = "${buildDir}/webstart/build"
+//def webstartDestDir = "${buildDir}/webstart/signed"
+//def keystoreFile = '../../keystore/rails.keys'
 def buildFilesDir = 'src/main/resources/build'
-def resourceFilesDir = 'src/main/resources'
-def versionFile = "version.number"
+//def resourceFilesDir = 'src/main/resources'
+//def versionFile = "version.number"
 
 // Sourceforge variables
-def sourceforgeJnlpPath = "http://${railsCodebase}/webstart"
-def sourceforgeUploadPath = 'web.sourceforge.net/home/project-web/rails/htdocs/webstart'
-def sourceforgeJnlpFileName = 'rails.jnlp'
-def sourceforgeUserName = 'stefanfrey'
-
-// use version number from property file
-propFileLoader.load(file("${buildFilesDir}/${versionFile}"))
-
+//def sourceforgeJnlpPath = "http://${railsCodebase}/webstart"
+//def sourceforgeUploadPath = 'web.sourceforge.net/home/project-web/rails/htdocs/webstart'
+//def sourceforgeJnlpFileName = 'rails.jnlp'
+//def sourceforgeUserName = 'stefanfrey'
 
 dependencies {
-  compile fileTree(dir: 'libs/main', include: "**/*.jar")
-  testCompile fileTree(dir: 'libs/test', include: "**/*.jar")
+    implementation 'commons-io:commons-io:2.6'
+    implementation 'com.github.vlsi.mxgraph:jgraphx:4.1.0'
+    implementation 'org.jgrapht:jgrapht-core:1.4.0'
+    implementation 'org.jgrapht:jgrapht-ext:1.4.0'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'org.apache.xmlgraphics:batik-bridge:1.12'
+    implementation 'org.apache.xmlgraphics:batik-transcoder:1.12'
+    implementation 'org.apache.xmlgraphics:batik-svggen:1.12'
+    implementation 'org.apache.xmlgraphics:batik-ext:1.12'
+    implementation 'org.apache.xmlgraphics:batik-swing:1.12'
+    implementation 'javazoom:jlayer:1.0.1'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    implementation 'com.google.guava:guava:23.0'
+    implementation 'net.java.dev.designgridlayout:designgridlayout:1.11'
+    implementation 'org.dockingframes:docking-frames-common:1.1.1'
+    implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.2'
+    //implementation 'org.openjfx:javafx-controls:14'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.12'
+    implementation 'org.apache.commons:commons-lang3:3.9'
+
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.easytesting:fest-assert-core:2.0M10'
+    testImplementation 'org.easytesting:fest-util:1.2.5'
+    testImplementation 'org.mockito:mockito-core:3.3.3'
+}
+
+javafx {
+    version = "14"
+    modules = [ 'javafx.controls' ]
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+assemble.dependsOn(shadowJar)
+jar {
+    manifest {
+        attributes(
+                'Main-Class': "${railsMainClass}"
+        )
+    }
 }
 
 test {
     // the expected test files have UTF-8 encoding
     systemProperty 'file.encoding', 'UTF-8'
-    
+
     // TestGame is not intended as a standalone test class
     exclude 'net/sf/rails/test/TestGame.class'
 }
 
-jar {
-	def manifestClasspath = configurations.runtime.collect{ './' + it.getName() }.join(' ')
-    manifest {
-        attributes 'Class-Path': manifestClasspath, 'Main-Class': "${railsMainClass}"
+//sonarqube {
+//  properties {
+//    property 'sonar.projectKey', 'Rails'
+//    property 'sonar.organization', 'rails-18xx202003271035'
+//    property 'sonar.host.url', 'https://sonarcloud.io'
+//    property 'sonar.login', ''
+//  }
+//}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
     }
-} 
+}
+plugins.withType(JacocoPlugin) {
+  tasks["test"].finalizedBy 'jacocoTestReport'
+}
 
 // BuildDate function adapted from http://stackoverflow.com/questions/19172565/how-append-date-build-to-versionnamesuffix-on-gradle
 def buildDate() {
@@ -117,44 +150,70 @@ def buildDate() {
        return df.format(new Date())
 }
 
-// Update tokens in version.number file
-task makeBuildVersion(type: Copy) {
-	from "${buildFilesDir}/${versionFile}"
-	into resourceFilesDir
-	
-	filter(ReplaceTokens, tokens: [DEVELOP:'', BUILDDATE:buildDate()]) 
+gitProperties {
+    customProperty 'buildDate', "${buildDate()}"
+    customProperty 'develop', 'true'
 }
-
-// Update tokens in version.number file
-task makeDevelopVersion(type: Copy) {
-	from "${buildFilesDir}/${versionFile}"
-	into resourceFilesDir
-}
-
-
 
 launch4j {
     mainClassName = "${railsMainClass}"
     jar = "${buildDir}/libs/${project.name}-${project.version}-all.jar"
     outfile = "${project.name}-${project.version}.exe"
     icon = "../../${buildFilesDir}/${railsIcon}"
-    version = project.version.replace("alpha","98.").replace("beta","99.").replace("RC","100.")
-    textVersion = "${project.version}"
+    textVersion = {  project.version.replace("alpha","98.").replace("beta","99.").replace("RC","100.") }
     copyright = "${railsCopyright}"
     companyName = "${railsVendor}"
     description = "${railsDescription}"
     productName = "${project.name}"
     internalName = "${project.name}"
-}	
+}
 
 macAppBundle {
     mainClassName = "${railsMainClass}"
     icon = "../../${buildFilesDir}/${railsIcon}"
     javaProperties.put("apple.laf.useScreenMenuBar", "true")
+    //runtimeConfigurationName = 'shadow'
+    //jarTask = 'shadowJar'
 }
 
-// exclude the signatures
-//shadow {
-//    exclude "META-INF/*.DSA"
-//    exclude "META-INF/*.RSA"
-//}
+ospackage {
+    release = '1'
+    os = LINUX
+    packageGroup = 'Amusements/Games'
+    packageDescription = ''
+    requires('jdk', '1.8', GREATER | EQUAL)
+
+    from('src/scripts/rails-18xx') {
+        into '/usr/bin/'
+        fileMode 0555
+    }
+    from(jar.outputs.files) {
+        // TODO: needs to be the shadow jar
+        into '/usr/lib/rails-18xx/'
+    }
+    from('src/scripts/rails-18xx.desktop') {
+        into '/usr/share/applications/'
+    }
+    from('./src/main/resources/build/rails.png') {
+        into '/usr/share/pixmaps/'
+    }
+}
+
+//buildRpm.dependsOn shadowJar
+
+
+def isNonStable = { String version ->
+  def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
+  def regex = /^[0-9,.v-]+(-r)?$/
+  return !stableKeyword && !(version ==~ regex)
+//    def rejected = ['alpha', 'beta', 'rc', 'cr', 'm'].any { qualifier -> version ==~ /(?i).*[.-]${qualifier}[.\d-]*/ }
+//    return rejected
+}
+
+dependencyUpdates {
+  gradleReleaseChannel = 'current'
+  rejectVersionIf {
+    isNonStable(it.candidate.version)
+  }
+}
+
