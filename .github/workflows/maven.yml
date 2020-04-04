@@ -37,12 +37,12 @@ jobs:
       - name: Build jar
         run: mvn -B clean package --file pom.xml
       - name: Create Installer
-        run: jpackage --verbose --name rails-18xx --icon ./src/main/resources/build/rails.ico --app-version 2.1-alpha --input target --main-jar rails-2.2-alpha-all.jar --win-menu --win-shortcut
+        run: jpackage --verbose --name rails-18xx --icon ./src/main/resources/build/rails.ico --app-version 2.1.0.0 --input target --main-jar rails-2.2-alpha-all.jar --win-menu --win-shortcut
       - name: Upload Installer
         uses: actions/upload-artifact@v1
         with:
           name: exe
-          path: rails-packaged-1.0.exe
+          path: rails-18xx-2.1.0.0.exe
 
   ubuntu:
     name: Build - Ubuntu
@@ -67,7 +67,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: deb
-          path: rails-packaged_1.0-1_amd64.deb
+          path: rails-18xx_2.1-alpha-1_amd64.deb
 
   macos:
     name: Build - MacOS
@@ -90,7 +90,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: dmg
-          path: rails-packaged-1.0.dmg
+          path: rails-18xx-2.1-alpha.dmg
 
   publish:
     name: Publish Installers
@@ -109,8 +109,6 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: dmg
-      - name: Debug Print
-        run: find .
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -127,8 +125,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./exe/rails-packaged-1.0.exe
-          asset_name: rails-packaged-1.0.exe
+          asset_path: ./exe/rails-18xx-2.1.0.0.exe
+          asset_name: rails-18xx-2.1-alpha.exe
           asset_content_type: application/octet-stream
       - name: Upload deb
         uses: actions/upload-release-asset@v1
@@ -136,8 +134,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./deb/rails-packaged_1.0-1_amd64.deb
-          asset_name: rails-packaged_1.0-1_amd64.deb
+          asset_path: ./deb/rails-18xx_2.1-alpha-1_amd64.deb
+          asset_name: rails-18xx-2.1-alpha.deb
           asset_content_type: application/octet-stream
       - name: Upload dmg
         uses: actions/upload-release-asset@v1
@@ -145,6 +143,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dmg/rails-packaged-1.0.dmg
-          asset_name: rails-packaged-1.0.dmg
+          asset_path: ./dmg/rails-18xx-2.1-alpha.dmg
+          asset_name: rails-18xx-2.1-alpha.dmg
           asset_content_type: application/octet-stream
