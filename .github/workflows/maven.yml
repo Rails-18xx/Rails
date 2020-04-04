@@ -110,6 +110,8 @@ jobs:
         with:
           name: dmg
           path: rails-packaged-1.0.dmg
+      - name: Debug Print
+        run: ls -lh
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
