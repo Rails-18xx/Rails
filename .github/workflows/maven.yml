@@ -37,12 +37,12 @@ jobs:
       - name: Build jar
         run: mvn -B clean package --file pom.xml
       - name: Create Installer
-        run: jpackage --verbose --name rails-18xx --icon ./src/main/resources/build/rails.ico --app-version 2.1.0.0 --input target --main-jar rails-2.2-alpha-all.jar --win-menu --win-shortcut
+        run: jpackage --verbose --name rails-18xx --icon ./src/main/resources/build/rails.ico --app-version 2.1.0 --input target --main-jar rails-2.2-alpha-all.jar --win-menu --win-shortcut
       - name: Upload Installer
         uses: actions/upload-artifact@v1
         with:
           name: exe
-          path: rails-18xx-2.1.0.0.exe
+          path: rails-18xx-2.1.0.exe
 
   ubuntu:
     name: Build - Ubuntu
@@ -125,7 +125,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./exe/rails-18xx-2.1.0.0.exe
+          asset_path: ./exe/rails-18xx-2.1.0.exe
           asset_name: rails-18xx-2.1-alpha.exe
           asset_content_type: application/octet-stream
       - name: Upload deb
