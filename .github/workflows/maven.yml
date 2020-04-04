@@ -46,7 +46,7 @@ jobs:
 
   ubuntu:
     name: Build - Ubuntu
-    runs-on: ubunut-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -93,7 +93,7 @@ jobs:
   publish:
     name: Publish Installers
     needs: [windows, ubuntu, macos]
-    runs-on: ubunut-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Download exe
         uses: actions/download-artifact@v1
