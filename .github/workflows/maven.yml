@@ -37,7 +37,12 @@ jobs:
       - name: Build jar
         run: mvn -B clean package --file pom.xml
       - name: Create Installer
-        run: jpackage --name rails-packaged --input target --main-jar rails-2.2-alpha-all.jar
+        run: >
+          jpackage \
+            --name rails-packaged \
+            --icon src/main/resources/build/rails.png \
+            --input target \
+            --main-jar rails-2.2-alpha-all.jar
       - name: Upload Installer
         uses: actions/upload-artifact@v1
         with:
@@ -60,7 +65,17 @@ jobs:
       - name: Build jar
         run: mvn -B clean package --file pom.xml
       - name: Create Installer
-        run: jpackage --name rails-packaged --input target --main-jar rails-2.2-alpha-all.jar
+        run: >
+          jpackage \
+            --name rails-packaged \
+            --icon src/main/resources/build/rails.png \
+            --input target \
+            --main-jar rails-2.2-alpha-all.jar \
+            --linux-package-name rails-18xx \
+            --linux-menu-group Game \
+            --linux-app-release 2.1-alpha \
+            --linux-app-category games \
+            --linux-shortcut
       - name: Upload Installer
         uses: actions/upload-artifact@v1
         with:
@@ -83,7 +98,12 @@ jobs:
       - name: Build jar
         run: mvn -B clean package --file pom.xml
       - name: Create Installer
-        run: jpackage --name rails-packaged --input target --main-jar rails-2.2-alpha-all.jar
+        run: >
+          jpackage \
+            --name rails-packaged \
+            --icon src/main/resources/build/rails.png \
+            --input target \
+            --main-jar rails-2.2-alpha-all.jar
       - name: Upload Installer
         uses: actions/upload-artifact@v1
         with:
