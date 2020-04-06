@@ -77,7 +77,7 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
 
     private String getAsHtml(ChangeSet currentChangeSet) {
 
-        // FIXME (Rails2.0): Add commments back
+        // FIXME (Rails2.0): Add comments back
         //     s.append("<span style='color:green;font-size:80%;font-style:italic;'>");
 
         StringBuilder s = new StringBuilder();

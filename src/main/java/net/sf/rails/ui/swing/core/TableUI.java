@@ -13,24 +13,24 @@ import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 
 public class TableUI {
-    
+
     private final TableAxis rows;
     private final TableAxis cols;
     private final Table<TableCoordinate,TableCoordinate,TableField> fields;
-    
-    private static Logger log = LoggerFactory.getLogger(TableUI.class);
-    
+
+    private static final Logger log = LoggerFactory.getLogger(TableUI.class);
+
     private TableUI(TableAxis rows, TableAxis cols, Table<TableCoordinate,TableCoordinate,TableField> fields) {
         this.rows = rows;
         this.cols = cols;
         this.fields = fields;
     }
-    
+
     public JPanel convertToPanel() {
-        
+
         JPanel panel = new JPanel();
         DesignGridLayout layout = new DesignGridLayout(panel);
-        
+
         for (TableCoordinate tableRow:rows) {
             IRow layoutRow =layout.row().grid();
             for (TableCoordinate tableCol:cols) {
@@ -39,15 +39,15 @@ public class TableUI {
         }
         return panel;
     }
-    
+
     public static TableUI from(GridTable gridTable) {
-        
+
         TableAxis rows = TableAxis.from(gridTable.getRows());
         TableAxis cols = TableAxis.from(gridTable.getCols());
-        
+
         ImmutableTable.Builder<TableCoordinate,TableCoordinate,TableField> tableFields =
                 ImmutableTable.builder();
-        
+
         for (TableCoordinate row:rows) {
             for (TableCoordinate col:cols) {
                 log.debug("Try to add field at {},{} ", row, col);
@@ -58,7 +58,7 @@ public class TableUI {
             }
         }
         TableUI table = new TableUI(rows, cols, tableFields.build());
-               
+
         return table;
     }
 

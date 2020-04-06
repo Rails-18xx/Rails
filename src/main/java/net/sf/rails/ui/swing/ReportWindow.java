@@ -39,7 +39,7 @@ public class ReportWindow extends JFrame implements
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(ReportWindow.class);
+    private static final Logger log = LoggerFactory.getLogger(ReportWindow.class);
 
     private final GameUIManager gameUIManager;
     private final ReportBuffer reportBuffer;
@@ -87,23 +87,11 @@ public class ReportWindow extends JFrame implements
 
         JPanel timeWarpButtons = new JPanel();
         returnButton = new JButton(LocalText.getText("REPORT_LEAVE_TIMEWARP"));
-        returnButton.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent arg0) {
-                        gotoLastIndex();
-                    }
-                }
-        );
+        returnButton.addActionListener(arg0 -> gotoLastIndex());
         timeWarpButtons.add(returnButton);
 
         playFromHereButton = new JButton(LocalText.getText("REPORT_PLAY_FROM_HERE"));
-        playFromHereButton.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent arg0) {
-                        deactivateTimeWarp();
-                    }
-                }
-        );
+        playFromHereButton.addActionListener(arg0 -> deactivateTimeWarp());
         timeWarpButtons.add(playFromHereButton);
         messagePanel.add(timeWarpButtons, "South");
         add(messagePanel, "North");
@@ -190,8 +178,7 @@ public class ReportWindow extends JFrame implements
 
         gameUIManager.packAndApplySizing(this);
 
-        gameUIManager.setMeVisible(this,
-                "yes".equalsIgnoreCase(Config.get("report.window.open")));
+        gameUIManager.setMeVisible(this, "yes".equalsIgnoreCase(Config.get("report.window.open")));
 
     }
 
@@ -233,19 +220,17 @@ public class ReportWindow extends JFrame implements
 
         // find the active message in the parsed html code (not identical to the position in the html string)
         // thus the message indicator is used
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                int caretPosition;
-                try{
-                    String docText = editorPane.getDocument().getText(0, editorPane.getDocument().getLength());
-                    caretPosition = docText.indexOf(ReportBuffer.ACTIVE_MESSAGE_INDICATOR);
-                } catch (BadLocationException e){
-                    caretPosition = -1;
-                };
-                final int caretPositionStore = caretPosition;
-                if (caretPosition != -1) {
-                    editorPane.setCaretPosition(caretPositionStore);
-                }
+        SwingUtilities.invokeLater(() -> {
+            int caretPosition;
+            try{
+                String docText = editorPane.getDocument().getText(0, editorPane.getDocument().getLength());
+                caretPosition = docText.indexOf(ReportBuffer.ACTIVE_MESSAGE_INDICATOR);
+            } catch (BadLocationException e){
+                caretPosition = -1;
+            };
+            final int caretPositionStore = caretPosition;
+            if (caretPosition != -1) {
+                editorPane.setCaretPosition(caretPositionStore);
             }
         });
     }
@@ -253,7 +238,7 @@ public class ReportWindow extends JFrame implements
     public void actionPerformed(ActionEvent e) {
         ActionButton button = (ActionButton)e.getSource();
         GameAction action = (GameAction)button.getPossibleActions().get(0);
-        if (action instanceof GameAction && (action.getMode() == GameAction.Mode.FORCED_UNDO)) {
+        if ( action != null && (action.getMode() == GameAction.Mode.FORCED_UNDO)) {
             activateTimeWarp();
         }
 

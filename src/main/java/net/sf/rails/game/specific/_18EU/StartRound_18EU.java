@@ -58,9 +58,7 @@ public class StartRound_18EU extends StartRound {
                 if (!item.isSold()) {
                     item.setStatus(StartItem.SELECTABLE);
                     item.setMinimumBid(item.getBasePrice());
-                    BidStartItem possibleAction =
-                            new BidStartItem(item, item.getBasePrice(),
-                                    startPacket.getModulus(), false, true);
+                    BidStartItem possibleAction = new BidStartItem(item, item.getBasePrice(), startPacket.getModulus(), false, true);
                     possibleActions.add(possibleAction);
                 }
             }
@@ -68,9 +66,7 @@ public class StartRound_18EU extends StartRound {
         case BUY_STEP:
             // only offer buy if enough money
             if (currentBuyPrice.value() <= currentPlayer.getFreeCash()) {
-                possibleActions.add(new BuyStartItem(
-                        (StartItem) currentAuctionItem.value(),
-                        currentBuyPrice.value(), true));
+                possibleActions.add(new BuyStartItem(currentAuctionItem.value(), currentBuyPrice.value(), true));
             }
             possibleActions.add(new NullAction(NullAction.Mode.PASS));
             break;
@@ -79,9 +75,7 @@ public class StartRound_18EU extends StartRound {
             StartItem item = currentAuctionItem.value();
             // only offer if enough money
             if (item.getMinimumBid() <= currentPlayer.getFreeCash()) {
-                BidStartItem possibleAction =
-                    new BidStartItem(item, item.getMinimumBid(),
-                            startPacket.getModulus(), true);
+                BidStartItem possibleAction = new BidStartItem(item, item.getMinimumBid(), startPacket.getModulus(), true);
                 possibleActions.add(possibleAction);
             }
             if (currentStep.value() == OPEN_STEP) {
@@ -135,7 +129,6 @@ public class StartRound_18EU extends StartRound {
         currentStep.set(SELECT_STEP);
 
         return true;
-
     }
 
     /**
@@ -165,35 +158,25 @@ public class StartRound_18EU extends StartRound {
                 // If auctioning, must be the right item
                 if ((currentStep.value() == OPEN_STEP || currentStep.value() == BID_STEP)
                     && !item.equals(auctionedItem)) {
-                    errMsg =
-                            LocalText.getText("WrongStartItem",
-                                    item.getId(),
-                                    auctionedItem.getId() );
+                    errMsg = LocalText.getText("WrongStartItem", item.getId(), auctionedItem.getId() );
                     break;
                 }
 
                 // Bid must be at least the minimum bid
                 if (bidAmount < item.getMinimumBid()) {
-                    errMsg =
-                            LocalText.getText("BidTooLow",
-                                    Bank.format(this, item.getMinimumBid()));
+                    errMsg = LocalText.getText("BidTooLow", Bank.format(this, item.getMinimumBid()));
                     break;
                 }
 
                 // Bid must be a multiple of the modulus
                 if (bidAmount % startPacket.getModulus() != 0) {
-                    errMsg = LocalText.getText(
-                                    "BidMustBeMultipleOf",
-                                    bidAmount,
-                                    startPacket.getMinimumIncrement() );
+                    errMsg = LocalText.getText("BidMustBeMultipleOf", bidAmount, startPacket.getMinimumIncrement() );
                     break;
                 }
 
                 // Player must have enough cash
                 if (bidAmount > player.getCash()) {
-                    errMsg =
-                            LocalText.getText("BidTooHigh",
-                                    Bank.format(this, bidAmount));
+                    errMsg = LocalText.getText("BidTooHigh", Bank.format(this, bidAmount));
                     break;
                 }
             }
@@ -202,10 +185,7 @@ public class StartRound_18EU extends StartRound {
         }
 
         if (errMsg != null) {
-            DisplayBuffer.add(this, LocalText.getText("InvalidBid",
-                    playerName,
-                    item.getId(),
-                    errMsg ));
+            DisplayBuffer.add(this, LocalText.getText("InvalidBid", playerName, item.getId(), errMsg ));
             return false;
         }
 
@@ -224,9 +204,7 @@ public class StartRound_18EU extends StartRound {
             }
 
             ReportBuffer.add(this, " ");
-            ReportBuffer.add(this, LocalText.getText("SelectForAuctioning",
-                    playerName,
-                    item.getId() ));
+            ReportBuffer.add(this, LocalText.getText("SelectForAuctioning", playerName, item.getId() ));
         }
 
         if (bidAmount > 0) {
@@ -234,10 +212,7 @@ public class StartRound_18EU extends StartRound {
             item.setMinimumBid(bidAmount + 5);
             currentStep.set(BID_STEP);
 
-            ReportBuffer.add(this, LocalText.getText("BID_ITEM",
-                    playerName,
-                    Bank.format(this, bidAmount),
-                    item.getId() ));
+            ReportBuffer.add(this, LocalText.getText("BID_ITEM", playerName, Bank.format(this, bidAmount), item.getId() ));
         }
 
         switch (currentStep.value()) {
@@ -260,7 +235,6 @@ public class StartRound_18EU extends StartRound {
         }
 
         return true;
-
     }
 
     /**

@@ -18,7 +18,7 @@ import net.sf.rails.game.state.Item;
 
 public final class Util {
 
-    private static Logger log = LoggerFactory.getLogger(Util.class);;
+    private static final Logger log = LoggerFactory.getLogger(Util.class);
 
     /**
      * No-args private constructor, to prevent (meaningless) construction of one
@@ -177,9 +177,7 @@ public final class Util {
     }
 
     public static Logger getLogger () {
-        if (log == null) log = LoggerFactory.getLogger(Util.class);
         return log;
-
     }
 
     public static String lowerCaseFirst (String text) {

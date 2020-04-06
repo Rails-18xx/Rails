@@ -572,7 +572,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             // First collect old names per city
             Map<String, String> oldTokens = new HashMap<String, String>();
             String cityName;
-            for (BaseToken token : nonHomeTokens ) {
+            for (BaseToken token : nonHomeTokens) {
                 if (token.getOwner() instanceof Stop) {
                     cityName = ((Stop)token.getOwner()).getSpecificId();
                     if (oldTokens.containsKey(cityName)) {

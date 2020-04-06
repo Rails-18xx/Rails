@@ -98,8 +98,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     /** Will only be set during game reload */
     protected boolean reloading = false;
 
-    protected final EnumMap<GameDef.Parm, Object> gameParameters
-    = new EnumMap<>(GameDef.Parm.class);
+    protected final EnumMap<GameDef.Parm, Object> gameParameters = new EnumMap<>(GameDef.Parm.class);
 
     /**
      * Current round should not be set here but from within the Round classes.
@@ -708,28 +707,23 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             result = true;
             startGameAction = true;
         } else if (action != null) {
-
             // Should never be null.
 
             action.setActed();
-            result = false;
 
             // Check player
             String actionPlayerName = action.getPlayerName();
             String currentPlayerName = getCurrentPlayer().getId();
             if (!actionPlayerName.equals(currentPlayerName)) {
-                DisplayBuffer.add(this, LocalText.getText("WrongPlayer",
-                        actionPlayerName, currentPlayerName ));
+                DisplayBuffer.add(this, LocalText.getText("WrongPlayer", actionPlayerName, currentPlayerName ));
                 return false;
             }
 
             // Check if the action is allowed
             if (!possibleActions.validate(action)) {
-                DisplayBuffer.add(this, LocalText.getText("ActionNotAllowed",
-                        action.toString()));
+                DisplayBuffer.add(this, LocalText.getText("ActionNotAllowed", action.toString()));
                 return false;
             }
-
 
             if (action instanceof GameAction) {
                 // Process undo/redo centrally
@@ -737,7 +731,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 result = processGameActions(gameAction);
             } else {
                 // All other actions: process per round
-
                 result = processCorrectionActions(action) ||  getCurrentRound().process(action);
                 if (result && action.hasActed()) {
                     executedActions.add(action);
@@ -745,7 +738,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             }
 
         }
-
 
         possibleActions.clear();
 
@@ -760,6 +752,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         // only pass available => execute automatically
         if (!isGameOver() && possibleActions.containsOnlyPass()) {
+            log.debug("{} may only pass", getCurrentPlayer().getId());
             result = process(possibleActions.getList().get(0));
         }
 
@@ -784,7 +777,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
 
         return result;
-
     }
 
     /**

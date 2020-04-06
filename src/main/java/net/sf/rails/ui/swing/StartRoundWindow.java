@@ -548,8 +548,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     }
 
     public boolean processImmediateAction() {
-        log.debug("ImmediateAction={}", immediateAction);
         if (immediateAction != null) {
+            log.debug("ImmediateAction = {}", immediateAction);
             // Make a local copy and discard the original,
             // so that it's not going to loop.
             PossibleAction nextAction = immediateAction;

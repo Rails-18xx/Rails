@@ -96,7 +96,6 @@ public abstract class StartRound extends Round {
     }
     @Override
     public boolean process(PossibleAction action) {
-
         boolean result = false;
 
         log.debug("Processing action {}", action);

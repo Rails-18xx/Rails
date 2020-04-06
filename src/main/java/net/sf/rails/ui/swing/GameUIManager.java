@@ -5,7 +5,6 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,7 +31,6 @@ import com.google.common.collect.Iterables;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.spi.LoggingEvent;
-import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.read.CyclicBufferAppender;
 import net.sf.rails.common.Config;
 import net.sf.rails.common.DisplayBuffer;
@@ -78,8 +76,6 @@ import rails.game.action.StartCompany;
  * This class is called by main() and loads all of the UI components
  */
 public class GameUIManager implements DialogOwner {
-    protected static GameUIManager instance = null;
-
     protected StatusWindow statusWindow;
     protected ReportWindow reportWindow;
     protected ConfigWindow configWindow;
@@ -164,7 +160,7 @@ public class GameUIManager implements DialogOwner {
         this.splashWindow = splashWindow;
         splashWindow.notifyOfStep(SplashWindow.STEP_INIT_UI);
 
-        instance = this;
+//        instance = this;
         this.railsRoot = root;
         uiHints = railsRoot.getGameManager().getUIHints();
         savePrefix = railsRoot.getGameName();
@@ -624,8 +620,7 @@ public class GameUIManager implements DialogOwner {
         String companyDirector = dt.getCompany().getPresident().getId();
         Set<Train> trains = dt.getOwnedTrains();
         int size = trains.size() + (dt.isForced() ? 0 : 1);
-        List<String> trainOptions =
-            new ArrayList<String>(size);
+        List<String> trainOptions = new ArrayList<>(size);
         String[] options = new String[size];
         String prompt = null;
 
@@ -819,7 +814,7 @@ public class GameUIManager implements DialogOwner {
                 action.setNumberTaken(action.getMinNumber() + selected);
 
             } else {
-                log.warn("Unknown NonModal dialog action: dialog=["+currentDialog+"] action=["+currentDialogAction+"]");
+                log.warn("Unknown NonModal dialog action: dialog=[{}] action=[{}]", currentDialog, currentDialogAction);
                 currentDialogAction = null;
             }
         }
@@ -887,7 +882,7 @@ public class GameUIManager implements DialogOwner {
         while(keys.hasMoreElements()) {
             Object key = keys.nextElement();
             Object value = defaults.get(key);
-            if(value != null && value instanceof Font) {
+            if( value instanceof Font ) {
                 UIManager.put(key, null);
                 Font font;
                 if (replaceFont != null) {
@@ -1210,11 +1205,11 @@ public class GameUIManager implements DialogOwner {
     /** update fonts settings
      * (after configuration changes)
      */
-    public static void updateUILookAndFeel() {
-        GUIGlobals.initFontsScale();
-        instance.initFontSettings();
-        instance.updateWindowsLookAndFeel();
-    }
+//    public static void updateUILookAndFeel() {
+//        GUIGlobals.initFontsScale();
+//        instance.initFontSettings();
+//        instance.updateWindowsLookAndFeel();
+//    }
 
     /**
      * Only set frame directly to visible if the splash phase is already over.
@@ -1257,18 +1252,15 @@ public class GameUIManager implements DialogOwner {
      */
     public void packAndApplySizing(JFrame frame) {
         final JFrame finalFrame = frame;
-        SwingUtilities.invokeLater(new Thread() {
-            @Override
-            public void run() {
-                finalFrame.pack();
+        SwingUtilities.invokeLater(new Thread(() -> {
+            finalFrame.pack();
 
-                WindowSettings ws = getWindowSettings();
-                Rectangle bounds = ws.getBounds(finalFrame);
-                if (bounds.x != -1 && bounds.y != -1) finalFrame.setLocation(bounds.getLocation());
-                if (bounds.width != -1 && bounds.height != -1) finalFrame.setSize(bounds.getSize());
-                ws.set(finalFrame);
-            }
-        });
+            WindowSettings ws = getWindowSettings();
+            Rectangle bounds = ws.getBounds(finalFrame);
+            if (bounds.x != -1 && bounds.y != -1) finalFrame.setLocation(bounds.getLocation());
+            if (bounds.width != -1 && bounds.height != -1) finalFrame.setSize(bounds.getSize());
+            ws.set(finalFrame);
+        }));
     }
 
     public List<String> getCurrentGuiPlayerNames() {

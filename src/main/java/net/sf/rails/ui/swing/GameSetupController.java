@@ -44,15 +44,13 @@ import net.sf.rails.util.Util;
 /** Controller of the GameSetupWindow */
 public class GameSetupController {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(GameSetupController.class);
+    private static final Logger log = LoggerFactory.getLogger(GameSetupController.class);
 
     private final SortedSet<GameInfo> gameList;
 
     private final String credits;
 
-    private final Map<GameInfo, GameOptionsSet.Builder> gameOptions =
-            Maps.newHashMap();
+    private final Map<GameInfo, GameOptionsSet.Builder> gameOptions = Maps.newHashMap();
 
     // UI references
     private final GameSetupWindow window;
@@ -169,6 +167,7 @@ public class GameSetupController {
                 GameData gameData = GameData.create(selectedGame, selectedOptions, players);
                 railsRoot = RailsRoot.create(gameData);
             } catch (ConfigurationException e) {
+                log.error("unable to continue", e);
                 // TODO: Fix this behavior, give more information?
                 // Simply exit
                 System.exit(-1);
@@ -186,7 +185,6 @@ public class GameSetupController {
 
             gameUIManager.notifyOfSplashFinalization();
             splashWindow.finalizeGameInit();
-            splashWindow = null;
         }
     }
 
@@ -456,9 +454,7 @@ public class GameSetupController {
                 log.error(e.getMessage());
             }
             // convert list to map
-            for (GameInfo game:gameInfoList) {
-                gameList.add(game);
-            }
+            gameList.addAll(gameInfoList);
         }
     }
 

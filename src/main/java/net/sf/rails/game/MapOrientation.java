@@ -130,14 +130,10 @@ public enum MapOrientation {
     }
 
     // information to define neighbours
-    private static final int[] rowDeltaNS =
-            new int[] { +2, +1, -1, -2, -1, +1 };
-    private static final int[] colDeltaNS =
-            new int[] {  0, -1, -1,  0, +1, +1 };
-    private static final int[] rowDeltaEW =
-            new int[] { +1,  0, -1, -1,  0, +1 };
-    private static final int[] colDeltaEW =
-            new int[] { -1, -2, -1, +1, +2, +1 };
+    private static final int[] rowDeltaNS = new int[] { +2, +1, -1, -2, -1, +1 };
+    private static final int[] colDeltaNS = new int[] {  0, -1, -1,  0, +1, +1 };
+    private static final int[] rowDeltaEW = new int[] { +1,  0, -1, -1,  0, +1 };
+    private static final int[] colDeltaEW = new int[] { -1, -2, -1, +1, +2, +1 };
 
     public MapHex.Coordinates getAdjacentCoordinates(MapHex.Coordinates origin, HexSide orientation) {
         int p = orientation.getTrackPointNumber();

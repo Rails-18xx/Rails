@@ -73,8 +73,7 @@ public class RailsRoot extends Root implements RailsItem {
     }
 
     public static RailsRoot create(GameData gameData) throws ConfigurationException {
-        Preconditions.checkState(instance == null,
-                "Currently only a single instance of RailsRoot is allowed");
+        Preconditions.checkState(instance == null, "Currently only a single instance of RailsRoot is allowed");
         instance = new RailsRoot(gameData);
         log.debug("RailsRoot: instance created");
         instance.init();

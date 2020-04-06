@@ -88,8 +88,7 @@ public class GameLoader {
         String gameUIManagerClassName = gameManager.getClassName(GuiDef.ClassName.GAME_UI_MANAGER);
         GameUIManager gameUIManager = null;
         try {
-            Class<? extends GameUIManager> gameUIManagerClass =
-                Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
+            Class<? extends GameUIManager> gameUIManagerClass = Class.forName(gameUIManagerClassName).asSubclass(GameUIManager.class);
             gameUIManager = gameUIManagerClass.newInstance();
             gameUIManager.init(game, wasLoaded, splashWindow);
         } catch (Exception e) {
