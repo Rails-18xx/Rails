@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 import javax.swing.SwingUtilities;
 
-
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ public class AutoLoadPoller extends Thread {
     private boolean pollingActive = false;
 
     private final String lastSavedFilenameFilepath;
-    private String lastSavedFilename = "";
+    private String lastSavedFilename;
 
     public static final int OFF = 0;
     public static final int ON = 1;
@@ -32,11 +32,12 @@ public class AutoLoadPoller extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(AutoLoadPoller.class);
 
-    public AutoLoadPoller (GameUIManager guiMgr, String saveDirectory, String savePrefix, String ownPostfix,
-            int status, int pollingInterval) {
+    public AutoLoadPoller (GameUIManager guiMgr, String saveDirectory, String savePrefix, String lastSavedFilename,
+            String ownPostfix, int status, int pollingInterval) {
         this.guiMgr = guiMgr;
         this.saveDirectory = saveDirectory;
         this.savePrefix = savePrefix;
+        this.lastSavedFilename = StringUtils.defaultString(lastSavedFilename, "");
         this.ownPostfix = ownPostfix;
         this.pollingStatus = status;
         this.pollingInterval = pollingInterval;
@@ -54,7 +55,7 @@ public class AutoLoadPoller extends Thread {
         int currentPollInterval = 1;
         int secs, sleepTime;
 
-        for (;;) {
+        while ( true ) {
             secs = Calendar.getInstance().get(Calendar.SECOND);
             try {
                 sleepTime = 1000 * (currentPollInterval - secs%currentPollInterval);
@@ -68,16 +69,17 @@ public class AutoLoadPoller extends Thread {
                     String currentFilename = in.readLine();
                     String fileSize = in.readLine();
                     in.close();
-                    log.trace("Read filename {}; last saved filename {}", currentFilename, lastSavedFilename);
+                    log.trace("Read filename {}; last seen filename {}", currentFilename, lastSavedFilename);
 
-                    File currFile = new File(saveDirectory+"/"+currentFilename);
-                    if ( ! currFile.exists() ) {
-                        log.debug("Saved file {} missing, waiting", currFile);
-                        currentPollInterval = 1;
-                        continue;
-                    }
 
                     if (!lastSavedFilename.equals(currentFilename)) {
+                        File currFile = new File(saveDirectory+"/"+currentFilename);
+                        if ( ! currFile.exists() ) {
+                            log.debug("Saved file {} missing, waiting", currFile);
+                            currentPollInterval = 1;
+                            continue;
+                        }
+
                         if ( fileSize != null ) {
                             long fileSizeNum = Long.parseLong(fileSize);
                             if ( currFile.getTotalSpace() != fileSizeNum ) {
@@ -94,11 +96,7 @@ public class AutoLoadPoller extends Thread {
                         reload.setFilepath(saveDirectory+"/"+currentFilename);
 
                         // The GUI must be accessed on the event dispatch thread only.
-                        SwingUtilities.invokeLater (new Runnable() {
-                            public void run() {
-                                guiMgr.processAction(reload);
-                            }
-                        });
+                        SwingUtilities.invokeLater (() -> guiMgr.processAction(reload));
                     }
                 } catch (IOException e) {
                     log.error("Exception whilst polling {}", lastSavedFilenameFilepath, e);

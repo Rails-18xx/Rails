@@ -75,7 +75,6 @@ public class GameLoader {
 
         GameUIManager gameUIManager = startGameUIManager(gameLoader.getRoot(), true, splashWindow);
 
-        // TODO: Check if this is correct
         gameUIManager.setGameFile(gameFile);
 
         gameUIManager.startLoadedGame();
