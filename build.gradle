@@ -15,15 +15,15 @@ plugins {
   // https://github.com/TheBoegl/gradle-launch4j
   id 'edu.sc.seis.launch4j' version '2.4.6'
   // https://github.com/crotwell/gradle-macappbundle
-  id "edu.sc.seis.macAppBundle" version "2.3.0"
+  id 'edu.sc.seis.macAppBundle' version '2.3.0'
   // https://github.com/nebula-plugins/gradle-ospackage-plugin
   //id "nebula.rpm" version "8.2.0"
   //id "nebula.deb" version "8.2.0"
-  id "nebula.ospackage" version "8.2.0"
+  id 'nebula.ospackage' version '8.2.0'
   // https://openjfx.io/openjfx-docs/#gradle
   id 'org.openjfx.javafxplugin' version '0.0.8'
-  id "jacoco"
-  id "org.sonarqube" version "2.8"
+  id 'jacoco'
+  id 'org.sonarqube' version '2.8'
 }
 
 repositories {
@@ -32,14 +32,6 @@ repositories {
 //    maven {
 //        url = 'https://jitpack.io'
 //    }
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from(components.java)
-        }
-    }
 }
 
 // Rails variables
@@ -101,12 +93,12 @@ dependencies {
 }
 
 javafx {
-    version = "14"
+    version = '14'
     modules = [ 'javafx.controls' ]
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_13
+targetCompatibility = JavaVersion.VERSION_13
 
 assemble.dependsOn(shadowJar)
 jar {
@@ -140,13 +132,17 @@ jacocoTestReport {
     }
 }
 plugins.withType(JacocoPlugin) {
-  tasks["test"].finalizedBy 'jacocoTestReport'
+  tasks['test'].finalizedBy 'jacocoTestReport'
+}
+
+wrapper {
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 // BuildDate function adapted from http://stackoverflow.com/questions/19172565/how-append-date-build-to-versionnamesuffix-on-gradle
 def buildDate() {
-       def df = new SimpleDateFormat("yyyy-MM-dd")
-       df.setTimeZone(TimeZone.getTimeZone("UTC"))
+       def df = new SimpleDateFormat('yyyy-MM-dd')
+       df.setTimeZone(TimeZone.getTimeZone('UTC'))
        return df.format(new Date())
 }
 
@@ -160,7 +156,7 @@ launch4j {
     jar = "${buildDir}/libs/${project.name}-${project.version}-all.jar"
     outfile = "${project.name}-${project.version}.exe"
     icon = "../../${buildFilesDir}/${railsIcon}"
-    textVersion = {  project.version.replace("alpha","98.").replace("beta","99.").replace("RC","100.") }
+    textVersion = {  project.version.replace('alpha','98.').replace('beta','99.').replace('RC','100.') }
     copyright = "${railsCopyright}"
     companyName = "${railsVendor}"
     description = "${railsDescription}"
@@ -178,7 +174,7 @@ macAppBundle {
 
 ospackage {
     release = '1'
-    os = LINUX
+    os = 'LINUX'
     packageGroup = 'Amusements/Games'
     packageDescription = ''
     requires('jdk', '1.8', GREATER | EQUAL)
