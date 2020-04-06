@@ -50,8 +50,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         private final int row;
         private final int col;
 
-        private static final Pattern namePattern =
-                Pattern.compile("(\\D+?)(-?\\d+)");
+        private static final Pattern namePattern = Pattern.compile("(\\D+?)(-?\\d+)");
 
         private Coordinates(int row, int col) {
             this.row = row;

@@ -3,9 +3,13 @@
  */
 package net.sf.rails.ui.swing.gamespecific._1837;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.ORPanel;
 import net.sf.rails.ui.swing.ORUIManager;
+import net.sf.rails.ui.swing.gamespecific._1880.StartRoundWindow_1880;
 import rails.game.action.SetDividend;
 
 /**
@@ -13,6 +17,7 @@ import rails.game.action.SetDividend;
  *
  */
 public class ORUIManager_1837 extends ORUIManager {
+    private static final Logger log = LoggerFactory.getLogger(ORUIManager_1837.class);
 
     /**
      *

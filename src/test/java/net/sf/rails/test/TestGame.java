@@ -20,27 +20,27 @@ public class TestGame extends TestCase {
 
     private String gamePath;
     private String gameName;
-    
+
     private List<String> testReport = null;
     private List<String> expectedReport = null;
-    
+
     private boolean passed = false;
-    
-    protected static Logger log =
+
+    private static final Logger log =
         LoggerFactory.getLogger(TestGame.class);
 
     public TestGame(String gameName, String gamePath) {
         super(gameName);
         this.gameName = gameName;
         this.gamePath = gamePath;
-        log.debug("Creates TestGame gameName = " + gameName 
+        log.debug("Creates TestGame gameName = " + gameName
                 + ", gamePath = " + gamePath);
     }
-    
+
     protected void runTest() throws Throwable {
         gameReportTest();
     }
-    
+
     /**
      * a method that test that the game report is identical to the one created before
      */
@@ -49,7 +49,7 @@ public class TestGame extends TestCase {
         int line = 0;
         while (true) {
             // test for size of reports
-            if (line >= expectedReport.size()) { 
+            if (line >= expectedReport.size()) {
                 if (line >= testReport.size()) {
                     break; // test successful
                 } else {
@@ -65,7 +65,7 @@ public class TestGame extends TestCase {
             log.debug("Comparing line " + (line+1));
             log.debug("Expected = " + expectedReport.get(line));
             log.debug("Actual = " + testReport.get(line));
-            assertEquals("Reports differ in line " + (line+1), 
+            assertEquals("Reports differ in line " + (line+1),
                     expectedReport.get(line), testReport.get(line));
             line = line + 1;
         }
@@ -75,11 +75,11 @@ public class TestGame extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        // tries to load the game report 
-        String reportFilename = gamePath + File.separator + gameName + "." + Config.get("report.filename.extension"); 
-        
+        // tries to load the game report
+        String reportFilename = gamePath + File.separator + gameName + "." + Config.get("report.filename.extension");
+
         File reportFile = new File(reportFilename);
-        
+
         if (reportFile.exists()) {
             log.debug("Found reportfile at " + reportFilename);
                 Scanner reportScanner = new Scanner(new FileReader(reportFilename));
@@ -90,12 +90,12 @@ public class TestGame extends TestCase {
         } else {
             log.debug("Did not find reportfile at " + reportFilename);
         }
-        
+
         // tries to load the game and run
-        String gameFilename = gamePath + File.separator + gameName + "." + Config.get("save.filename.extension"); 
-        
+        String gameFilename = gamePath + File.separator + gameName + "." + Config.get("save.filename.extension");
+
         File gameFile = new File(gameFilename);
-        
+
         if (gameFile.exists()) {
             log.debug("Found gamefile at " + gameFilename);
             GameLoader gameLoader = new GameLoader();
@@ -112,10 +112,10 @@ public class TestGame extends TestCase {
     protected void tearDown() throws Exception {
         try {
         // test has failed, so save the test Report
-        String reportFilename = gamePath + File.separator + gameName + "." + Config.get("failed.filename.extension"); 
+        String reportFilename = gamePath + File.separator + gameName + "." + Config.get("failed.filename.extension");
         if (!passed) {
             TestGameBuilder.saveGameReport(testReport, reportFilename, true);
-        } else { // otherwise check if the test Report exists and delete it 
+        } else { // otherwise check if the test Report exists and delete it
             File f = new File(reportFilename);
             if (f.exists()) {
                 if (f.delete()) {

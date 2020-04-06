@@ -79,7 +79,7 @@ public class StartItem extends RailsAbstractItem {
 
     protected NoBidsReaction noBidsReaction = NoBidsReaction.RUN_OPERATING_ROUND;
 
-    protected static Logger log =
+    private static final Logger log =
             LoggerFactory.getLogger(StartItem.class);
 
     /**

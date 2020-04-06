@@ -25,7 +25,7 @@ public final class HexMapImage extends JSVGCanvas  {
     // TODO: Is this still compatible
     private static final long serialVersionUID = 1L;
 
-    protected static Logger log =
+    private static final Logger log =
             LoggerFactory.getLogger(HexMapImage.class);
 
     private MapManager mapManager;
@@ -40,7 +40,7 @@ public final class HexMapImage extends JSVGCanvas  {
 
        this.mapManager = mapManager;
        this.hexMap = hexMap;
-       
+
        this.setRecenterOnResize(false);
 
        initializeSettings();
@@ -65,9 +65,9 @@ public final class HexMapImage extends JSVGCanvas  {
             }
         }
     }
-    
+
     private void loadMap() {
-        
+
         try {
 //             File imageFile = new File (mapManager.getMapImageFilepath());
 //             setURI(imageFile.toURI().toString());
@@ -76,7 +76,7 @@ public final class HexMapImage extends JSVGCanvas  {
         } catch (Exception e) {
             log.error ("Cannot load map image file " + mapManager.getMapImageFilepath(), e);
         }
-        
+
         addGVTTreeRendererListener (new GVTTreeRendererAdapter() {
             //prepare: map scaling has to occur before displaying it for the first time
             public void gvtRenderingPrepare(GVTTreeRendererEvent e) {
@@ -84,22 +84,22 @@ public final class HexMapImage extends JSVGCanvas  {
                     // store the rendering Transform
                     initialTransform = getRenderingTransform();
                     initialized = true;
-                    
+
                     //catch up on setting the bounds (if bounds setting were called before rendering prepare)
                     setBoundsAndResize(hexMap.getCurrentSize(),hexMap.getZoomStep());
                 }
                 addGVTTreeRendererListener(null);
             }
         });
-        
+
     }
-    
+
     private void scaleMap () {
         AffineTransform at = new AffineTransform();
 
         log.debug("MapImage zoomFactor" + zoomFactor);
         at.scale (zoomFactor, zoomFactor);
-        
+
         log.debug("MapImage XOffset = " + mapManager.getMapXOffset() + ", YOffset = " + mapManager.getMapYOffset());
         at.translate(mapManager.getMapXOffset(), mapManager.getMapYOffset());
 
@@ -125,12 +125,12 @@ public final class HexMapImage extends JSVGCanvas  {
         if (in) zoomStep++; else zoomStep--;
         zoom();
     }
-    
+
     public void zoom (int zoomStep) {
         this.zoomStep = zoomStep;
         zoom();
     }
-    
+
     private void zoom() {
         zoomFactor = GameUIManager.getImageLoader().getZoomFactor(zoomStep);
         log.debug("ImageMap zoomStep = " + zoomStep);
@@ -141,7 +141,7 @@ public final class HexMapImage extends JSVGCanvas  {
     public int getZoomStep () {
         return zoomStep;
     }
-    
+
     /**
      * paint component synchronized with hex map in order to ensure that
      * - painting background image is not affected by concurrent changes in the hexmap
@@ -153,5 +153,5 @@ public final class HexMapImage extends JSVGCanvas  {
             super.paintComponent(g);
         }
     }
-    
+
 }

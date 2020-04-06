@@ -1,6 +1,11 @@
 package net.sf.rails.algorithms;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 final class RevenueCalculatorSimple extends RevenueCalculator {
+
+    private static final Logger log = LoggerFactory.getLogger(RevenueCalculatorSimple.class);
 
     // dynamic edge data
     private final boolean[] edgeUsed;

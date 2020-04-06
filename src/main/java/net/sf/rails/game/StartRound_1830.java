@@ -1,5 +1,8 @@
 package net.sf.rails.game;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.*;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GameOption;
@@ -12,9 +15,11 @@ import net.sf.rails.game.state.GenericState;
  * Implements an 1830-style initial auction.
  */
 public class StartRound_1830 extends StartRound {
+    private static final Logger log = LoggerFactory.getLogger(StartRound_1830.class);
+
     protected final int bidIncrement;
-    
-    private final GenericState<StartItem> auctionItemState = 
+
+    private final GenericState<StartItem> auctionItemState =
             GenericState.create(this, "auctionItemState");
 
     /**
@@ -24,7 +29,7 @@ public class StartRound_1830 extends StartRound {
         super(parent, id);
         bidIncrement = startPacket.getModulus();
     }
-    
+
     @Override
     public void start() {
         super.start();
@@ -246,7 +251,7 @@ public class StartRound_1830 extends StartRound {
             return false;
         }
 
-        
+
 
         item.setBid(bidAmount, player);
         if (previousBid > 0) player.unblockCash(previousBid);
@@ -268,28 +273,28 @@ public class StartRound_1830 extends StartRound {
         return true;
 
     }
-    
+
     @Override
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
         boolean result = super.buy(playerName, boughtItem);
         auctionItemState.set(null);
         return result;
     }
-    
-    
+
+
         /**
          * Process a player's pass.
          * @param playerName The name of the current player (for checking purposes).
          */
         @Override
         protected boolean pass(NullAction action, String playerName) {
-    
+
             String errMsg = null;
             Player player = playerManager.getCurrentPlayer();
             StartItem auctionItem = auctionItemState.value();
-    
+
             while (true) {
-    
+
                 // Check player
                 if (!playerName.equals(player.getId())) {
                     errMsg = LocalText.getText("WrongPlayer", playerName, player.getId());
@@ -297,23 +302,23 @@ public class StartRound_1830 extends StartRound {
                 }
                 break;
             }
-    
+
             if (errMsg != null) {
                 DisplayBuffer.add(this, LocalText.getText("InvalidPass",
                         playerName,
                         errMsg ));
                 return false;
             }
-    
+
             ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
-    
+
             numPasses.add(1);
             if (auctionItem != null) {
-    
+
                 if (numPasses.value() >= auctionItem.getBidders() - 1) {
                     // All but the highest bidder have passed.
                     int price = auctionItem.getBid();
-    
+
                     log.debug("Highest bidder is "
                               + auctionItem.getBidder().getId());
                     if (auctionItem.needsPriceSetting() != null) {
@@ -327,7 +332,7 @@ public class StartRound_1830 extends StartRound {
                     playerManager.setCurrentToPriorityPlayer(); // EV - Added to fix bug 2989440
                 } else {
                     // More than one left: find next bidder
-    
+
                     if (GameOption.getAsBoolean(this, "LeaveAuctionOnPass")) {
                         // Game option: player to leave auction after a pass (default no).
                         player.unblockCash(auctionItem.getBid(player));
@@ -335,9 +340,9 @@ public class StartRound_1830 extends StartRound {
                     }
                     setNextBiddingPlayer(auctionItem);
                 }
-    
+
             } else {
-    
+
                 if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
                     // All players have passed.
                     gameManager.reportAllPlayersPassed();
@@ -356,7 +361,7 @@ public class StartRound_1830 extends StartRound {
                             getRoot().getPlayerManager().setPriorityPlayerToNext();
                             getRoot().getPlayerManager().setCurrentToNextPlayer();
                         } else {
-                            //BR: If the first item's price is reduced, but not to 0, 
+                            //BR: If the first item's price is reduced, but not to 0,
                             //    we still need to advance to the next player
                             playerManager.setCurrentToNextPlayer();
                         }
@@ -364,17 +369,17 @@ public class StartRound_1830 extends StartRound {
                         numPasses.set(0);
                         //gameManager.nextRound(this);
                         finishRound();
-    
+
                     }
                 } else {
                     playerManager.setCurrentToNextPlayer();
                 }
             }
-    
+
             return true;
         }
 
-    
+
     private void setNextBiddingPlayer(StartItem item, Player biddingPlayer) {
         for (Player player:playerManager.getNextPlayersAfter(biddingPlayer, false, false)) {
             if (item.isActive(player)) {
@@ -383,7 +388,7 @@ public class StartRound_1830 extends StartRound {
             }
         }
     }
-    
+
     private void setNextBiddingPlayer(StartItem item) {
         setNextBiddingPlayer(item, playerManager.getCurrentPlayer());
     }

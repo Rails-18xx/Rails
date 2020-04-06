@@ -19,11 +19,11 @@ import org.slf4j.LoggerFactory;
 
 public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable {
 
-    protected static Logger log =
+    private static final Logger log =
         LoggerFactory.getLogger(RuhrRevenueModifier.class);
 
     private boolean doublesOnlyMajors;
-    
+
     public void configureFromXML(Tag tag) throws ConfigurationException {
         // does nothing
     }
@@ -36,15 +36,15 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable 
 
     // creates revenueBonuses that double the value of each station/value vertex
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
-         
+
         Set<NetworkVertex> ruhrGebied = new HashSet<NetworkVertex>();
         for (NetworkVertex vertex:revenueAdapter.getVertices()) {
             // 1. get all vertices that point to Ruhrgebied
             if (vertex.getStopName() != null && vertex.getStopName().equals("Ruhrgebied")){
                 ruhrGebied.add(vertex);
-            } 
+            }
         }
-        
+
         // 2. add revenue bonuses for stations
         for (NetworkVertex vertex:revenueAdapter.getVertices()) {
             if (!ruhrGebied.contains(vertex) && vertex.isStation() && (vertex.isMajor() || !doublesOnlyMajors)) {
@@ -56,7 +56,7 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable 
                 }
             }
         }
-        
+
         // nothing to print
         return false;
     }

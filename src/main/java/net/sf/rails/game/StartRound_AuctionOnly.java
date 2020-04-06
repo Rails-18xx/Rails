@@ -2,6 +2,9 @@ package net.sf.rails.game;
 
 import java.util.SortedSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -18,7 +21,9 @@ import rails.game.action.StartItemAction;
  */
 
 public abstract class StartRound_AuctionOnly extends StartRound {
-    private final ArrayListState<Player> auctionWinners = 
+    private static final Logger log = LoggerFactory.getLogger(StartRound_AuctionOnly.class);
+
+    private final ArrayListState<Player> auctionWinners =
             ArrayListState.create(this, "auctionWinners");
 
     protected StartRound_AuctionOnly(GameManager parent, String id) {
@@ -58,7 +63,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
             BuyStartItem bsi =
                     new BuyStartItem(currentItem, currentItem.getBid(), false,
                             true);
-            
+
             bsi.setStartSpaces(getStartSpaces(currentItem.getBidder().getFreeCash()));
             possibleActions.add(bsi);
         } else {
@@ -83,7 +88,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
         }
 
         if (possibleActions.isEmpty()) {
-            numPasses.add(1); 
+            numPasses.add(1);
             setNextBiddingPlayer();
         }
         return true;
@@ -260,7 +265,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
                 auctionItem.setPass(player);
                 setNextBiddingPlayer(auctionItem);
             }
-        } else { 
+        } else {
             // Nothing is up for bid
             if ((numPasses.value() + auctionWinners.size()) == playerManager.getNumberOfPlayers()) {
                 finishRound();
@@ -295,7 +300,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
 
         return true;
     }
-    
+
 
     @Override
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
@@ -327,7 +332,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
     private void setNextBiddingPlayer(StartItem item) {
         setNextBiddingPlayer(item, playerManager.getCurrentPlayer());
     }
-    
+
     private void setNextBiddingPlayer() {
         playerManager.setCurrentToNextPlayer();
         while (auctionWinners.contains(playerManager.getCurrentPlayer())) {

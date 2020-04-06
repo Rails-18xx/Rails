@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 public final class NetworkTrain implements Comparable<NetworkTrain>{
 
-    protected static Logger log = LoggerFactory.getLogger(NetworkTrain.class);
+    private static final Logger log = LoggerFactory.getLogger(NetworkTrain.class);
 
     private int majors;
     private int minors;

@@ -30,7 +30,7 @@ public class AutoLoadPoller extends Thread {
     public static final int ON = 1;
     public static final int SUSPENDED = 2;
 
-    protected static Logger log = LoggerFactory.getLogger(AutoLoadPoller.class);
+    private static final Logger log = LoggerFactory.getLogger(AutoLoadPoller.class);
 
     public AutoLoadPoller (GameUIManager guiMgr, String saveDirectory, String savePrefix, String ownPostfix,
             int status, int pollingInterval) {

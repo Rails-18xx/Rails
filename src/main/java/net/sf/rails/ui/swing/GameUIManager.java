@@ -146,7 +146,7 @@ public class GameUIManager implements DialogOwner {
     public static final String REPAY_LOANS_DIALOG = "RepayLoans";
     public static final String EXCHANGE_TOKENS_DIALOG = "ExchangeTokens";
 
-    protected static Logger log = LoggerFactory.getLogger(GameUIManager.class);
+    private static final Logger log = LoggerFactory.getLogger(GameUIManager.class);
 
     private SplashWindow splashWindow = null;
 

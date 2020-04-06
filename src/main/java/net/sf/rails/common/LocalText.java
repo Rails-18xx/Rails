@@ -27,7 +27,7 @@ public class LocalText extends ResourceBundle {
 
     protected static ResourceBundle localisedText;
 
-    protected static Logger log =
+    private static final Logger log =
             LoggerFactory.getLogger(LocalText.class);
 
     public static String getText(String key) {

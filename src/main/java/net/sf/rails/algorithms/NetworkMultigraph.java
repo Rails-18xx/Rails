@@ -26,7 +26,7 @@ import com.google.common.collect.Multimap;
  */
 public class NetworkMultigraph {
 
-    protected static Logger log =
+    private static final Logger log =
             LoggerFactory.getLogger(NetworkMultigraph.class);
 
     private final NetworkGraph inGraph;

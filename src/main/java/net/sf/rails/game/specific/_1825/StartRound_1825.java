@@ -2,6 +2,9 @@ package net.sf.rails.game.specific._1825;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.*;
 
 import net.sf.rails.common.DisplayBuffer;
@@ -11,6 +14,8 @@ import net.sf.rails.game.*;
 
 
 public class StartRound_1825 extends StartRound {
+
+    private static final Logger log = LoggerFactory.getLogger(StartRound_1825.class);
 
     /**
      * Constructed via Configure
@@ -50,14 +55,14 @@ public class StartRound_1825 extends StartRound {
         boolean itemAvailable = false;
         int soldShares = 0;
         possibleActions.clear();
-        
+
         for (StartItem item : startItems) {
             //Do we already have an item available for sale?
             if (itemAvailable == false){
                 //If not, check whether this has already been sold
                 if (!item.isSold()){
                     item.setStatus(StartItem.BUYABLE);
-                    possibleActions.add(action =   
+                    possibleActions.add(action =
                         new BuyStartItem(item, item.getBasePrice(), false));
                     log.debug(playerManager.getCurrentPlayer().getId() + " may: "
                             + action.toString());

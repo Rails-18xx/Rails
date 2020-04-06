@@ -26,21 +26,21 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
 
     // Static definitions
     private int index; // for sorting
-    
+
     private int quantity = 0;
     private boolean infiniteQuantity = false;
 
     private List<TrainType> potentialTrainTypes = new ArrayList<TrainType>(2);
-    
+
     private Map<Integer, String> newPhaseNames;
-    
+
     private boolean permanent = true;
     private boolean obsoleting = false;
 
     private boolean canBeExchanged = false;
     private int cost;
     private int exchangeCost;
-    
+
     // store the trainClassName to allow dual configuration
     private String trainClassName = DEFAULT_TRAIN_CLASS;
     private Class<? extends Train> trainClass;
@@ -53,23 +53,23 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     private final BooleanState available = BooleanState.create(this, "available");
     private final BooleanState rusted = BooleanState.create(this, "rusted");
 
-    protected static Logger log =
+    private static final Logger log =
         LoggerFactory.getLogger(TrainCertificateType.class);
-    
+
     private TrainCertificateType (TrainManager parent, String id, int index) {
         super(parent, id);
         this.index = index;
     }
-    
+
     public static TrainCertificateType create(TrainManager parent, String id, int index) {
         return new TrainCertificateType(parent, id, index);
     }
-    
+
     @Override
     public TrainManager getParent() {
         return (TrainManager)super.getParent();
     }
-    
+
     public void configureFromXML(Tag tag) throws ConfigurationException {
         trainClassName = tag.getAttributeAsString("class", trainClassName);
         trainClass = Configure.getClassForName(Train.class, trainClassName);
@@ -82,7 +82,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
         initialPortfolio =
             tag.getAttributeAsString("initialPortfolio",
                     initialPortfolio);
-        
+
         // New style phase changes (to replace 'startPhase' attribute and <Sub> tag)
         List<Tag> newPhaseTags = tag.getChildren("NewPhase");
         if (newPhaseTags != null) {
@@ -98,7 +98,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
                 newPhaseNames.put(index, phaseName);
             }
         }
- 
+
         // Exchangeable
         Tag swapTag = tag.getChild("Exchange");
         if (swapTag != null) {
@@ -111,7 +111,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
 
     }
 
-    public void finishConfiguration (RailsRoot root) 
+    public void finishConfiguration (RailsRoot root)
             throws ConfigurationException {
 
         if (quantity == -1) {
@@ -138,7 +138,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     protected void addPotentialTrainType (TrainType type) {
         potentialTrainTypes.add(type);
     }
-    
+
     /**
      * @return Returns the available.
      */
@@ -221,5 +221,5 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     public int compareTo(TrainCertificateType o) {
         return ((Integer)index).compareTo(o.getIndex());
     }
-    
+
 }

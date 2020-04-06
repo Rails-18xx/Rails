@@ -1,5 +1,8 @@
 package net.sf.rails.game.specific._1856;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.BuyCertificate;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
@@ -17,6 +20,7 @@ import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.game.state.Owner;
 
 public class StockRound_1856 extends StockRound {
+    private static final Logger log = LoggerFactory.getLogger(StockRound_1856.class);
 
     /* Cope with multiple 5% share sales in one turn */
     private final IntegerState sharesSoldSoFar = IntegerState.create(this, "sharesSoldSoFar");
@@ -92,7 +96,7 @@ public class StockRound_1856 extends StockRound {
         super.adjustSharePrice (company, numberOfSpaces, soldBefore);
     }
 
-    // change: money moves to different sources depending on phases 
+    // change: money moves to different sources depending on phases
     // requires: add an getSharePriceRecipient strategy (or a general implementation)
     @Override
     protected MoneyOwner getSharePriceRecipient(PublicCompany company, Owner from, int price) {
@@ -141,7 +145,7 @@ public class StockRound_1856 extends StockRound {
     /** Check for the special condition that the CGR president
      * has just bought his second share.
      */
-    // change: update president of CGR after buying second share 
+    // change: update president of CGR after buying second share
     // requires: trigger on the portfolio of the president of CGR? or a modifier on shareSelling
     @Override
     protected void gameSpecificChecks (PortfolioModel boughtFrom,

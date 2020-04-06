@@ -31,10 +31,9 @@ import rails.game.action.LayTile;
 import rails.game.action.PossibleAction;
 
 
-public class ListAndFixSavedFiles extends JFrame
-implements ActionListener, KeyListener {
-
+public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyListener {
     private static final long serialVersionUID = 1L;
+
     private JTextArea reportText;
     private JScrollPane messageScroller;
     private JScrollBar vbar;
@@ -58,7 +57,7 @@ implements ActionListener, KeyListener {
     private String filepath;
     private RailsRoot root;
 
-    protected static Logger log;
+    private static Logger log;
 
     /**
      * @param args
@@ -168,8 +167,7 @@ implements ActionListener, KeyListener {
 
         saveDirectory = Config.get("save.directory");
 
-        load();
-
+//        load();
     }
 
     private void load() {
@@ -215,7 +213,7 @@ implements ActionListener, KeyListener {
         // append actionText
         int i=0;
         for (PossibleAction action : gameLoader.getActions()) {
-            reportText.append("Action "+i+" "+action.getPlayerName()+": "+action.toString());
+            reportText.append("Action "+i+" "+action.getPlayerName()+"(" + action.getPlayerIndex() + "): "+action.toString());
             reportText.append("\n");
             i++;
         }
@@ -257,7 +255,7 @@ implements ActionListener, KeyListener {
                     gameLoader.getActions().remove(index);
                     setReportText(false);
                 } catch (NumberFormatException e) {
-                    log.error("Number format exception for '"+result+"'", e);
+                    log.error("Number format exception for '{}'", result, e);
                 }
             }
         } else if ("CORRECT".equalsIgnoreCase(command)) {
@@ -267,7 +265,7 @@ implements ActionListener, KeyListener {
                     int index = Integer.parseInt(result);
                     correct (index);
                 } catch (NumberFormatException e) {
-                    log.error("Number format exception for '"+result+"'", e);
+                    log.error("Number format exception for '{}'", result, e);
                 }
             }
         } else if ("SAVE".equalsIgnoreCase(command)) {

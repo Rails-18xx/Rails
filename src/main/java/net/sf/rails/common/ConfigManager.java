@@ -30,7 +30,7 @@ import net.sf.rails.util.Util;
 public class ConfigManager implements Configurable {
 
     // STATIC CONSTANTS
-    private static Logger log = LoggerFactory.getLogger(ConfigManager.class);
+    private static final Logger log = LoggerFactory.getLogger(ConfigManager.class);
 
     //  XML setup
     private static final String CONFIG_XML_DIR = "data";

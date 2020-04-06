@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -52,6 +55,7 @@ import rails.game.specific._1880.ExchangeForCash;
 import rails.game.specific._1880.ForcedRocketExchange;
 
 public class OperatingRound_1880 extends OperatingRound {
+    private static final Logger log = LoggerFactory.getLogger(OperatingRound_1880.class);
 
     private OperatingRoundControl_1880 orControl;
     private ParSlotManager parSlotManager;

@@ -2,6 +2,9 @@ package net.sf.rails.game.specific._1856;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Lists;
 
 import rails.game.action.*;
@@ -22,7 +25,9 @@ import net.sf.rails.game.state.Portfolio;
 
 public class CGRFormationRound extends SwitchableUIRound {
 
-     // static variables
+    private static final Logger log = LoggerFactory.getLogger(CGRFormationRound.class);
+
+    // static variables
     private final PublicCompany_CGR cgr;
 
     // initialized in start() method only
@@ -36,24 +41,17 @@ public class CGRFormationRound extends SwitchableUIRound {
     private Set<Train> trainsToDiscardFrom = null;
     private boolean forcedTrainDiscard = true;
     private List<ExchangeableToken> tokensToExchangeFrom = null;
-    private List<BaseToken> nonHomeTokens = null;
 
-    
     // dynamic variables
-    private final GenericState<Steps> step = 
-            GenericState.create(this, "step");
+    private final GenericState<Steps> step = GenericState.create(this, "step");
 
-    private final ArrayListMultimapState<Player, PublicCompany> companiesToRepayLoans = 
-            ArrayListMultimapState.create(this, "companiesToRepayLoans");
+    private final ArrayListMultimapState<Player, PublicCompany> companiesToRepayLoans = ArrayListMultimapState.create(this, "companiesToRepayLoans");
 
-    private final GenericState<PublicCompany> currentCompany =
-            GenericState.create(this, "currentCompany");
+    private final GenericState<PublicCompany> currentCompany = GenericState.create(this, "currentCompany");
 
-    private ArrayListState<PublicCompany> mergingCompanies = 
-            ArrayListState.create(this, "mergingCompanies");
+    private final ArrayListState<PublicCompany> mergingCompanies = ArrayListState.create(this, "mergingCompanies");
 
-    private final BooleanState cgrHasDiscardedTrains = 
-            BooleanState.create(this, "cgrHasDiscardedTrains");
+    private final BooleanState cgrHasDiscardedTrains = BooleanState.create(this, "cgrHasDiscardedTrains");
 
 
     /**
@@ -61,21 +59,21 @@ public class CGRFormationRound extends SwitchableUIRound {
      */
     public CGRFormationRound(GameManager parent, String id) {
         super(parent, id);
-        
+
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
-        
+
         cgr = (PublicCompany_CGR) getRoot().getCompanyManager().getPublicCompany(PublicCompany_CGR.NAME);
     }
-    
+
     public void start (Player startingPlayer) {
 
         // store starting player
         this.startingPlayer = startingPlayer;
-        
+
         ReportBuffer.add(this, LocalText.getText("StartFormationRound",
                 PublicCompany_CGR.NAME));
-        ReportBuffer.add(this, LocalText.getText("StartingPlayer", 
+        ReportBuffer.add(this, LocalText.getText("StartingPlayer",
                 startingPlayer.getId()));
 
         guiHints.setCurrentRoundType(getClass());
@@ -113,7 +111,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             Player player = playerManager.getCurrentPlayer();
             PublicCompany company = companiesToRepayLoans.get(player).get(0);
             companiesToRepayLoans.remove(player, company);
-            // set current company for further actions 
+            // set current company for further actions
             currentCompany.set(company);
 
             int numberOfLoans = company.getCurrentNumberOfLoans();
@@ -145,7 +143,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 message = LocalText.getText("CompanyRepaysLoans",
                         currentCompany.value().getId(),
                         paymentText,
-                        Bank.format(this, numberOfLoans * valuePerLoan), 
+                        Bank.format(this, numberOfLoans * valuePerLoan),
                         numberToRepay,
                         Bank.format(this, valuePerLoan));
                 ReportBuffer.add(this, message);
@@ -250,9 +248,9 @@ public class CGRFormationRound extends SwitchableUIRound {
                 ReportBuffer.add(this, LocalText.getText("CompanyRepaysLoansWithPresCash",
                         company.getId(),
                         repayPresidentText,
-                        Bank.format(this, repayment), 
+                        Bank.format(this, repayment),
                         numberRepaid,
-                        Bank.format(this, company.getValuePerLoan()), 
+                        Bank.format(this, company.getValuePerLoan()),
                         president.getId()));
             }
         }
@@ -313,7 +311,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                     newShares += 2;
                     temporaryPresident = player;
                 }
-                
+
                 // now convert the remaining shares
                 while (count >= 2 && cgrSharesUsed <= 19) {
                     PublicCertificate cgrCert = unavailable.findCertificate(cgr, false);
@@ -468,7 +466,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         // Collect the old token spots, and move cash and trains
         List<BaseToken> homeTokens = new ArrayList<BaseToken>();
-        nonHomeTokens = new ArrayList<BaseToken>();
+        List<BaseToken> nonHomeTokens = new ArrayList<BaseToken>();
         BaseToken bt;
         MapHex hex;
         Stop stop;
@@ -526,8 +524,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                             }
                         }
                     }
-                    cgr.addBonus(new Bonus(cgr, bonus.getName(), bonus.getValue(),
-                            bonus.getLocations()));
+                    cgr.addBonus(new Bonus(cgr, bonus.getName(), bonus.getValue(), bonus.getLocations()));
                 }
             }
         }
@@ -575,7 +572,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             // First collect old names per city
             Map<String, String> oldTokens = new HashMap<String, String>();
             String cityName;
-            for (BaseToken token : nonHomeTokens) {
+            for (BaseToken token : nonHomeTokens ) {
                 if (token.getOwner() instanceof Stop) {
                     cityName = ((Stop)token.getOwner()).getSpecificId();
                     if (oldTokens.containsKey(cityName)) {
@@ -766,7 +763,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
         /* End of validation, start of execution */
         // new: link always, see below commented
-        
+
         if (train != null) {
             train.discard();
         } else {
@@ -807,7 +804,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             return false;
         }
 
-        
+
         // FIMXE: if (linkedMoveSet) changeStack.linkToPreviousMoveSet();
 
         if (exchanged > 0) {
@@ -856,7 +853,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         return true;
     }
 
-    
+
     public List<PublicCompany> getMergingCompanies() {
         return mergingCompanies.view();
     }
@@ -868,14 +865,14 @@ public class CGRFormationRound extends SwitchableUIRound {
 
     @Override
     protected void finishRound() {
-        
+
         super.finishRound();
-        
+
         //In any case we must recalculate the certificate limit
         ((GameManager_1856)gameManager).resetCertificateLimit(true);
     }
 
     // Step Objects to control progress
-    private static enum Steps {STEP_REPAY_LOANS, STEP_DISCARD_TRAINS, STEP_EXCHANGE_TOKENS };  
-    
+    private enum Steps {STEP_REPAY_LOANS, STEP_DISCARD_TRAINS, STEP_EXCHANGE_TOKENS };
+
 }

@@ -186,7 +186,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return revenueSpinnerIncrement;
     }
 
-    protected static Logger log = LoggerFactory.getLogger(GameManager.class);
+    private static final Logger log = LoggerFactory.getLogger(GameManager.class);
 
     public GameManager(RailsRoot parent, String id) {
         super(parent, id);

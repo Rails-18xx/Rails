@@ -3,6 +3,9 @@ package net.sf.rails.game.specific._1835;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.*;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
@@ -17,6 +20,7 @@ import net.sf.rails.game.state.IntegerState;
 
 // FIXME: Check if this still works, as this is now done via reverse
 public class StartRound_1835 extends StartRound {
+    private static final Logger log = LoggerFactory.getLogger(StartRound_1835.class);
 
     /* To control the player sequence in the Clemens and Snake variants */
     private IntegerState turn = IntegerState.create(this, "TurnNumber", 0);
@@ -163,14 +167,14 @@ public class StartRound_1835 extends StartRound {
         }
         return result;
     }
-    
+
     @Override
     public boolean bid(String playerName, BidStartItem item) {
         // is not allowed in 1835
         return false;
     }
-    
-        
+
+
     @Override
     public boolean process(PossibleAction action) {
         // nothing else to do in 1835, just a reminder
@@ -224,7 +228,7 @@ public class StartRound_1835 extends StartRound {
         return true;
     }
 
-    // for some variants the player has to be changed in-between 
+    // for some variants the player has to be changed in-between
     private void checkPlayerOrder() {
         if (gameManager.getStartRoundNumber() == 1) {
             /*

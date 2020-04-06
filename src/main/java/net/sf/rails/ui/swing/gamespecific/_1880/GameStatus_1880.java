@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.rails.ui.swing.gamespecific._1880;
 
@@ -10,6 +10,9 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.PublicCompany;
@@ -31,14 +34,17 @@ import rails.game.specific._1880.StartCompany_1880;
  */
 public class GameStatus_1880 extends GameStatus {
        private static final long serialVersionUID = 1L;
-    
+
+    private static final Logger log = LoggerFactory.getLogger(GameStatus_1880.class);
+
+
     /**
-     * 
+     *
      */
     public GameStatus_1880() {
-       super();  
+       super();
     }
-    
+
 @Override
     public void actionPerformed(ActionEvent actor) {
         JComponent source = (JComponent) actor.getSource();
@@ -146,13 +152,13 @@ public class GameStatus_1880 extends GameStatus {
                         int[] startPrices;
                         if (((StartCompany_1880) buy).mustSelectAPrice()) {
                             startPrices =
-                                ((StartCompany_1880) buy).getStartPrices(); 
+                                ((StartCompany_1880) buy).getStartPrices();
                             Arrays.sort(startPrices);
                             for (int i = 0; i < startPrices.length; i++) {
                                 options.add("$" + startPrices[i]);
                             }
-                        } 
-                    } else { 
+                        }
+                    } else {
 
                         options.add(LocalText.getText("BuyCertificate",
                                 sharePerCert,

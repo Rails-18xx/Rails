@@ -117,7 +117,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
 
     private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2;
 
-    protected static Logger log =
+    private static final Logger log =
             LoggerFactory.getLogger(StatusWindow.class);
 
     //    GraphicsConfiguration graphicsConfiguration;

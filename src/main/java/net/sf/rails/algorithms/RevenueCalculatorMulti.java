@@ -1,6 +1,13 @@
 package net.sf.rails.algorithms;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.game.specific._1856.OperatingRound_1856;
+
 class RevenueCalculatorMulti extends RevenueCalculator {
+    private static final Logger log = LoggerFactory.getLogger(RevenueCalculatorMulti.class);
+
 
     protected final int[] edgeNbTravelSets;
     protected final int[][] edgeTravelSets; // edge belongs to a travel set, dimension: nbEdges x nbTravelSets

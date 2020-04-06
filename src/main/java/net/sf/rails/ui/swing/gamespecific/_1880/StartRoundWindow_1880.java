@@ -7,6 +7,9 @@ package net.sf.rails.ui.swing.gamespecific._1880;
 
 import javax.swing.JDialog;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.rails.common.LocalText;
 import net.sf.rails.ui.swing.StartRoundWindow;
 import net.sf.rails.ui.swing.elements.NonModalDialog;
@@ -22,6 +25,7 @@ import rails.game.specific._1880.SetupNewPublicDetails_1880;
  * @date 07.05.2011
  */
 public class StartRoundWindow_1880 extends StartRoundWindow {
+    private static final Logger log = LoggerFactory.getLogger(StartRoundWindow_1880.class);
 
     /* Keys of dialogues owned by this class */
     public static final String COMPANY_BUILDING_RIGHT_DIALOG = "CompanyBuildingRight";

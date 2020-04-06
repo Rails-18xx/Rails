@@ -19,25 +19,25 @@ import org.jgrapht.graph.SimpleGraph;
 
 public class ItalyTileModifier implements NetworkGraphModifier {
 
-    protected static Logger log =
+    private static final Logger log =
         LoggerFactory.getLogger(ItalyTileModifier.class);
 
 
     @Override
     public void modifyMapGraph(NetworkGraph mapGraph) {
-        
+
         SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
         RailsRoot root = RailsRoot.getInstance();
         List<MapHex> italyMapHexes = new ArrayList<MapHex> ();
         // 1. check Phase
         // this is a violation of the assumption that the track network only dependents on the map configuration
         // but not on other things (like phases)
-        int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex(); 
+        int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex();
         if (phaseIndex < 4 ) {
             log.debug("Italy active, index of phase = " + phaseIndex);
             return;
         }
-        
+
         // 2. retrieve Italy vertices ...
         String [] italyHexes = {"K1","K3","K7","K9","L2","L4","L6","L8","M3","M5","M7"};
          for (String italyHex:italyHexes){
@@ -48,9 +48,9 @@ public class ItalyTileModifier implements NetworkGraphModifier {
         // 3 ... and remove them from the graph
         graph.removeAllVertices(italyVertices);
         log.debug("Italy inactive, index of phase = " + phaseIndex);
-        
+
     }
-    
+
     @Override
     public void modifyRouteGraph(NetworkGraph mapGraph, PublicCompany company) {
         // do nothing

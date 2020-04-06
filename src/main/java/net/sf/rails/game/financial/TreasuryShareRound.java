@@ -2,6 +2,9 @@ package net.sf.rails.game.financial;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.*;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
@@ -12,7 +15,6 @@ import net.sf.rails.game.GameManager;
 import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.GameDef.Parm;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.BooleanState;
@@ -27,6 +29,7 @@ import com.google.common.collect.Iterables;
 // Change: TreasuryShareRound is a workaround as StockRound
 // It is a single Activity to allow companies buying or selling shares
 public class TreasuryShareRound extends StockRound {
+    private static final Logger log = LoggerFactory.getLogger(TreasuryShareRound.class);
 
     protected Player sellingPlayer;
     protected PublicCompany operatingCompany;
@@ -107,7 +110,7 @@ public class TreasuryShareRound extends StockRound {
 
         for (PublicCompany comp: map.keySet()) {
             certs = map.get(comp);
-            // if (certs.isEmpty()) continue; // TODO: Check if removal is correct 
+            // if (certs.isEmpty()) continue; // TODO: Check if removal is correct
 
             cert = Iterables.get(certs, 0);
 
@@ -243,7 +246,7 @@ public class TreasuryShareRound extends StockRound {
         int price = 0;
         // TODO: Might not be needed anymore, replaced by company
         PortfolioModel portfolio = null;
-        
+
         currentPlayer = playerManager.getCurrentPlayer();
 
         // Dummy loop to allow a quick jump out
@@ -329,7 +332,7 @@ public class TreasuryShareRound extends StockRound {
         }
 
         // All seems OK, now buy the shares.
-        
+
 
         int cashAmount = shares * price;
         String cashText = Currency.toBank(company, cashAmount);
@@ -472,7 +475,7 @@ public class TreasuryShareRound extends StockRound {
             sellPrices.put(company, sellPrice);
         }
 
-        
+
 
         int cashAmount = numberSold * price;
         String cashText = Currency.fromBank(cashAmount, company);
@@ -517,7 +520,7 @@ public class TreasuryShareRound extends StockRound {
             return false;
         }
 
-        
+
 
         // Inform GameManager
         gameManager.finishTreasuryShareRound();

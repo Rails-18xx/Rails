@@ -126,7 +126,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     /* Keys of dialogs owned by this class */
     public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
 
-    protected static Logger log = LoggerFactory.getLogger(StartRoundWindow.class);
+    private static final Logger log = LoggerFactory.getLogger(StartRoundWindow.class);
 
     public void init(StartRound round, GameUIManager parent) {
         //super();

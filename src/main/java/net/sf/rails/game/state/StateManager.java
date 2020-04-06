@@ -18,7 +18,7 @@ import com.google.common.collect.Maps;
 
 public final class StateManager extends Manager{
 
-    protected static Logger log =
+    private static final Logger log =
         LoggerFactory.getLogger(StateManager.class);
 
     private final ChangeStack changeStack;

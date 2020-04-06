@@ -15,7 +15,7 @@ import org.jgrapht.traverse.*;
 
 
 public class NetworkIterator extends AbstractGraphIterator<NetworkVertex, NetworkEdge> {
-    protected static Logger log = LoggerFactory.getLogger(NetworkIterator.class);
+    private static final Logger log = LoggerFactory.getLogger(NetworkIterator.class);
 
     public static enum greedyState {
         SEEN,

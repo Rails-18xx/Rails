@@ -39,35 +39,35 @@ package net.sf.rails.algorithms;
 //
 //public class NetworkBuilder implements Iterable<NetworkVertex> {
 //
-//    protected static Logger log =
+//    private static final Logger log =
 //        LoggerFactory.getLogger(NetworkBuilder.class);
-//    
+//
 //    private final SimpleGraph<NetworkVertex, NetworkEdge> mapGraph;
-//    
+//
 //    private final Map<String, NetworkVertex> mapVertexes;
-//    
+//
 //    private NetworkIterator iterator;
-//    
+//
 //    private NetworkBuilder() {
 //        mapGraph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
 //        mapVertexes = new HashMap<String, NetworkVertex> ();
 //    }
-//    
+//
 //    public static NetworkBuilder create(GameManager gameManager) {
 //        NetworkBuilder graphBuilder = new NetworkBuilder();
 //        graphBuilder.generateGraph(gameManager.getMapManager(), gameManager.getRevenueManager());
 //        return graphBuilder;
 //    }
-//    
+//
 //
 //    public void generateGraph(MapManager mapManager, RevenueManager revenueManager) {
-//        
+//
 //        for (MapHex hex:mapManager.getHexesAsList()) {
 //            // get Tile
 //            Tile tile = hex.getCurrentTile();
-//            
+//
 //            // then get stations
-//            Collection<Station> stations = tile.getStations(); 
+//            Collection<Station> stations = tile.getStations();
 //            // and add those to the mapGraph
 //            for (Station station: stations) {
 //                NetworkVertex stationVertex = new NetworkVertex(hex, station);
@@ -75,9 +75,9 @@ package net.sf.rails.algorithms;
 //                mapVertexes.put(stationVertex.getIdentifier(), stationVertex);
 //                log.info("Added " + stationVertex);
 //            }
-//            
+//
 //            // get tracks per side to add that vertex
-//            for (int side=0; side<6; side++) 
+//            for (int side=0; side<6; side++)
 //                if (tile.getTracksPerSide(side).size() != 0) {
 //                    NetworkVertex sideVertex = new NetworkVertex(hex, side + hex.getCurrentTileRotation());
 //                    mapGraph.addVertex(sideVertex);
@@ -85,7 +85,7 @@ package net.sf.rails.algorithms;
 //                    log.info("Added " + sideVertex);
 //                }
 //        }
-//        
+//
 //        // loop over all hex and add tracks
 //        for (MapHex hex:mapManager.getHexesAsList()) {
 //            // get Tile
@@ -123,7 +123,7 @@ package net.sf.rails.algorithms;
 //                            + neighborHex.getOrientationName(side + 3));
 //                    continue;
 //                }
-//                else if (vertex == null && otherVertex != null) { 
+//                else if (vertex == null && otherVertex != null) {
 //                    log.info("Deadend connection for Hex " + neighborHex.getId() + " at "
 //                            + neighborHex.getOrientationName(side + 3) + ", NeighborHex "
 //                            + hex.getId() + " has no track at side " +
@@ -144,36 +144,36 @@ package net.sf.rails.algorithms;
 //                    log.info("Added deadend vertex " + otherVertex);
 //                }
 //                NetworkEdge edge =  new NetworkEdge(vertex, otherVertex, true);
-//                mapGraph.addEdge(vertex, otherVertex, 
+//                mapGraph.addEdge(vertex, otherVertex,
 //                        edge);
 //                log.info("Added greedy edge " + edge.getConnection());
 //            }
 //        }
-//        
+//
 //        // add graph modifiers
 //        if (revenueManager != null) {
 //            revenueManager.initGraphModifiers(this);
 //        }
-//    }        
+//    }
 //
-//    
+//
 //    public SimpleGraph<NetworkVertex, NetworkEdge> getMapGraph() {
 //        return mapGraph;
 //    }
 //
-//    
+//
 //    public void setIteratorStart(MapHex hex, Station station) {
 //        iterator = new NetworkIterator(mapGraph, getVertex(hex, station));
 //    }
-//    
+//
 //    public Iterator<NetworkVertex> iterator() {
-//        return iterator; 
+//        return iterator;
 //    }
-//    
+//
 //    public NetworkVertex getVertexByIdentifier(String identVertex) {
 //        return mapVertexes.get(identVertex);
 //    }
-//    
+//
 //    public NetworkVertex getVertex(BaseToken token) {
 //        Owner owner = token.getOwner();
 //        // TODO: Check if this still works
@@ -183,17 +183,17 @@ package net.sf.rails.algorithms;
 //        Station station = city.getRelatedStation();
 //        return getVertex(hex, station);
 //    }
-//    
+//
 //    private NetworkVertex getVertex(MapHex hex, Station station) {
 //        return mapVertexes.get(hex.getId() + "." + -station.getNumber());
 //    }
-//    
+//
 //    public NetworkVertex getVertex(MapHex hex, int side) {
 //        if (side >= 0)
 //            side = side % 6;
 //        return mapVertexes.get(hex.getId() + "." + side);
 //    }
-//    
+//
 //    private NetworkVertex getVertexRotated(MapHex hex, int side) {
 //        if (side >= 0)
 //            side = (side + hex.getCurrentTileRotation()) % 6;
@@ -204,14 +204,14 @@ package net.sf.rails.algorithms;
 //            SimpleGraph<NetworkVertex, NetworkEdge> inGraph) {
 //        return optimizeGraph(inGraph, new ArrayList<NetworkVertex>());
 //    }
-//    
+//
 //    public static SimpleGraph<NetworkVertex, NetworkEdge> optimizeGraph(
 //            SimpleGraph<NetworkVertex, NetworkEdge> inGraph, Collection<NetworkVertex> protectedVertices) {
-//        
+//
 //        // clone graph
 //       SimpleGraph<NetworkVertex, NetworkEdge> graph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
 //       Graphs.addGraph(graph, inGraph);
-// 
+//
 //       // increase greedness
 //        for (NetworkEdge edge:graph.edgeSet()) {
 //            NetworkVertex source = edge.getSource();
@@ -222,25 +222,25 @@ package net.sf.rails.algorithms;
 //                log.info("Increased greedness for " + edge.getConnection());
 //            }
 //        }
-//      
+//
 //        while (removeVertexes(graph, protectedVertices));
-//        
+//
 //        return graph;
 //    }
-//    
-//    /** remove deadend and vertex with only two edges */ 
+//
+//    /** remove deadend and vertex with only two edges */
 //    private static boolean removeVertexes(SimpleGraph<NetworkVertex, NetworkEdge> graph,
 //            Collection<NetworkVertex> protectedVertices){
-//        
+//
 //        boolean removed = false;
 //        for (NetworkVertex vertex:graph.vertexSet()) {
 //            Set<NetworkEdge> vertexEdges = graph.edgesOf(vertex);
-//            
+//
 //            // always keep protected vertices
 //            if (protectedVertices.contains(vertex)) {
 //                continue;
 //            }
-//            
+//
 //            // remove hermit
 //            if (vertexEdges.size() == 0) {
 //                log.info("Remove hermit (no connection) = "  + vertex);
@@ -248,17 +248,17 @@ package net.sf.rails.algorithms;
 //                removed = true;
 //                break;
 //            }
-//            
+//
 //            // the following only for side vertexes
 //            if (!vertex.isSide()) continue;
 //
-//            if (vertexEdges.size() == 1) { 
+//            if (vertexEdges.size() == 1) {
 //                log.info("Remove deadend side (single connection) = "  + vertex);
 //                graph.removeVertex(vertex);
 //                removed = true;
 //                break;
 //            } // vertex is not necessary and not on the protected list
-//                else if (vertexEdges.size() == 2) { 
+//                else if (vertexEdges.size() == 2) {
 //                NetworkEdge[] edges = vertexEdges.toArray(new NetworkEdge[2]);
 //                if (edges[0].isGreedy() == edges[1].isGreedy()) {
 //                    if (!edges[0].isGreedy()) {
@@ -267,7 +267,7 @@ package net.sf.rails.algorithms;
 //                        graph.removeVertex(vertex);
 //                        removed = true;
 //                        break;
-//                    } 
+//                    }
 //                    // greedy case:
 //                    // merge greedy edges if the vertexes are not already connected
 //                    if (edges[0].isGreedy()) {
@@ -276,35 +276,35 @@ package net.sf.rails.algorithms;
 //                    }
 //                }
 //            }
-//        }     
+//        }
 //        return removed;
 //    }
-//    
+//
 //    public static void visualize(Graph<NetworkVertex, NetworkEdge> graph, String title) {
 //        // show network graph
 //        JGraphModelAdapter<NetworkVertex, NetworkEdge> jGAdapter =
 //            new JGraphModelAdapter<NetworkVertex, NetworkEdge>(graph);
-//        
+//
 //        JGraph jgraph = new JGraph(jGAdapter);
-//        
+//
 //        List<NetworkVertex> vertexes= new ArrayList<NetworkVertex>(graph.vertexSet());
-//         
+//
 //        Object[] rootCell = new Object[1];
 //        rootCell[0] =  jGAdapter.getVertexCell(vertexes.get(0));
-//        
+//
 //        JGraphFacade facade = new JGraphFacade(jgraph, rootCell);
 //        JGraphLayout layout = new JGraphFastOrganicLayout();
 //        layout.run(facade);
-//        
+//
 //        facade.scale(new Rectangle(1600,1200));
 //        @SuppressWarnings("rawtypes")
 //        Map nested = facade.createNestedMap(true,true);
 //        jgraph.getGraphLayoutCache().edit(nested);
 //
 //        jgraph.setScale(0.8);
-//        
+//
 //        JFrame frame = new JFrame();
-//        frame.setTitle(title + "(V=" + graph.vertexSet().size() + 
+//        frame.setTitle(title + "(V=" + graph.vertexSet().size() +
 //        		",E=" + graph.edgeSet().size() + ")");
 //        frame.setSize(new Dimension(800,600));
 //        frame.getContentPane().add(new JScrollPane(jgraph));

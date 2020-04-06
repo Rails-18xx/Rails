@@ -2,6 +2,9 @@ package net.sf.rails.game.specific._18EU;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.*;
 import rails.game.specific._18EU.StartCompany_18EU;
 import net.sf.rails.common.DisplayBuffer;
@@ -32,6 +35,10 @@ import com.google.common.collect.Iterables;
  * the Priority Deal).
  */
 public class StockRound_18EU extends StockRound {
+
+    private static final Logger log = LoggerFactory.getLogger(StockRound_18EU.class);
+
+
     protected final ArrayListState<PublicCompany> compWithExcessTrains =
             ArrayListState.create(this, "compWithExcessTrains");
     protected final IntegerState discardingCompanyIndex = IntegerState.create(this, "discardingCompanyIndex");
@@ -56,7 +63,7 @@ public class StockRound_18EU extends StockRound {
         if (discardingTrains.value()) {
             discardingTrains.set(false);
         }
-        
+
         // if it is done this way, should it not be a state variable?
         phase5Reached = getRoot().getPhaseManager().hasReachedPhase("5");
 
@@ -400,7 +407,7 @@ public class StockRound_18EU extends StockRound {
             return false;
         }
 
-        
+
 
         // All is OK, now start the company
         MapHex homeHex = null;
@@ -521,7 +528,7 @@ public class StockRound_18EU extends StockRound {
 
         // TODO Validation to be added?
 
-        
+
 
         if (major != null) {
             cert = major.getPortfolioModel().findCertificate(major, false);
@@ -567,7 +574,7 @@ public class StockRound_18EU extends StockRound {
         if (major != null && action.getReplaceToken()) {
             if (homeHex.layBaseToken(major, homeStop)) {
                 major.layBaseToken(homeHex, 0);
-            }   
+            }
         }
 
         if (major != null) {

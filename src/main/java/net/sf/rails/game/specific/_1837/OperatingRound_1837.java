@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.rails.game.specific._1837;
 
@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.rails.common.DisplayBuffer;
-import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.GameDef;
@@ -25,7 +27,6 @@ import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.NationalFormationRound;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
-import net.sf.rails.game.specific._18EU.GameManager_18EU;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.MoneyOwner;
@@ -43,6 +44,7 @@ import com.google.common.collect.Table;
  *
  */
 public class OperatingRound_1837 extends OperatingRound {
+    private static final Logger log = LoggerFactory.getLogger(OperatingRound_1837.class);
 
     private final BooleanState needSuedBahnFormationCall = BooleanState.create(this, "NeedSuedBahnFormationCall");
     private final BooleanState needHungaryFormationCall = BooleanState.create(this, "NeedHungaryFormationCall");
@@ -71,7 +73,7 @@ public class OperatingRound_1837 extends OperatingRound {
             for(PrivateCompany comp:gameManager.getAllPrivateCompanies())  {
                 comp.unblockHexes();
             }
-        } 
+        }
         if (phase.getId().equals("4")
                 && !companyManager.getPublicCompany("Sd").hasStarted()
                 && !NationalFormationRound.nationalIsComplete(gameManager, "Sd")) {
@@ -303,16 +305,16 @@ public class OperatingRound_1837 extends OperatingRound {
 
     public void splitRevenue(int amount, boolean roundUp) {
         int withheld = 0;
-        if (amount > 0) { 
+        if (amount > 0) {
             int numberOfShares = operatingCompany.value().getNumberOfShares();
             if (roundUp) {
-                // Withhold half of it          
+                // Withhold half of it
                 withheld =
                         (amount / (2 * numberOfShares)) * numberOfShares;
 
             } else {
                 //withhold half of it and make sure the bank gets any remaining rounding victims
-                withheld = 
+                withheld =
                         (int) Math.ceil(amount * 0.5);
             }
             String withheldText = Currency.fromBank(withheld, operatingCompany.value());
@@ -326,7 +328,7 @@ public class OperatingRound_1837 extends OperatingRound {
     }
 
 
-    /* 
+    /*
      * Rounds up or down the individual payments based on the boolean value
      */
     public void payout(int amount, boolean roundUp, boolean b) {
@@ -350,7 +352,7 @@ public class OperatingRound_1837 extends OperatingRound {
                 part = (int) Math.ceil(amount * shares * operatingCompany.value().getShareUnit() / 100.0);
             }
             else {
-                part = (int) Math.floor(amount * shares * operatingCompany.value().getShareUnit() / 100.0); 
+                part = (int) Math.floor(amount * shares * operatingCompany.value().getShareUnit() / 100.0);
             }
 
             String partText = Currency.fromBank(part, recipient);
@@ -366,7 +368,7 @@ public class OperatingRound_1837 extends OperatingRound {
         String partText = Currency.fromBank( operatingCompany.value().getDirectIncomeRevenue(), operatingCompany.value());
         ReportBuffer.add(this, LocalText.getText("Payout",
                 operatingCompany.getId(),
-                partText, 
+                partText,
                 " companies treasury."
                 ));
 
@@ -447,7 +449,7 @@ public class OperatingRound_1837 extends OperatingRound {
         List<MapHex> italyMapHexes = new ArrayList<MapHex> ();
         // 1. check Phase
 
-        int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex(); 
+        int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex();
         if (phaseIndex < 3) {
             // Check if the Hex is blocked by a private ?
             if (hex.isBlockedByPrivateCompany()) {
@@ -511,7 +513,7 @@ public class OperatingRound_1837 extends OperatingRound {
                 && ((GameManager_1837)gameManager).getPlayerToStartFCERound() == null) {
             ((GameManager_1837)gameManager).setPlayerToStartFCERound(operatingCompany.value().getPresident());
         }
-        return result;    
+        return result;
     }
 
     @Override
@@ -526,14 +528,14 @@ public class OperatingRound_1837 extends OperatingRound {
             if ((company.hasStockPrice()) && (company.hasFloated())){
 //                if (findStartingPlayerForCoalExchange(company)) exchangedCoalCompanies.set(true);
 //                {}
-                
+
         }
         else {
             ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
         }
 
 
-    } 
+    }
         super.finishRound();
 
     }
@@ -558,7 +560,7 @@ public class OperatingRound_1837 extends OperatingRound {
                 } // Coal Company & Major Found
             } //Coal Company Found
 
-        } //Check if we have a minor that has a started Major 
+        } //Check if we have a minor that has a started Major
         while (!minors.isEmpty()) {
             //The first minors president will start the CoalExchangeRound
             if (((GameManager_1837) gameManager).getPlayerToStartCERound()== null) {

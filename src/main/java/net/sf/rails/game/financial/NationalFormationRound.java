@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.DiscardTrain;
 import rails.game.action.FoldIntoNational;
 import rails.game.action.PossibleAction;
@@ -30,6 +33,7 @@ import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.Currency;
 
 public class NationalFormationRound extends StockRound {
+    private static final Logger log = LoggerFactory.getLogger(NationalFormationRound.class);
 
     public NationalFormationRound(GameManager parent, String id) {
         super(parent, id);

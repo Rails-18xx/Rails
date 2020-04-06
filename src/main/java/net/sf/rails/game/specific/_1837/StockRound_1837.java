@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.rails.game.specific._1837;
 
@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.action.DiscardTrain;
 import rails.game.action.MergeCompanies;
@@ -22,7 +25,6 @@ import net.sf.rails.game.Train;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.financial.StockRound;
-import net.sf.rails.game.specific._1837.FinalCoalExchangeRound;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
@@ -34,6 +36,7 @@ import net.sf.rails.game.state.MoneyOwner;
  *
  */
 public class StockRound_1837 extends StockRound {
+    private static final Logger log = LoggerFactory.getLogger(StockRound_1837.class);
 
     protected final ArrayListState<PublicCompany> compWithExcessTrains =
             ArrayListState.create(this, "compWithExcessTrains");
@@ -258,7 +261,7 @@ public class StockRound_1837 extends StockRound {
         /* End of validation, start of execution */
 
         train.discard();
-        
+
         finishTurn();
 
         return true;
@@ -304,7 +307,7 @@ public class StockRound_1837 extends StockRound {
                     forcedMergeCompanyRoutine(company);
                 }
             }
-            
+
         }
         else if (!exchangedCoalCompanies.value()){
             for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
@@ -317,7 +320,7 @@ public class StockRound_1837 extends StockRound {
             ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
         }
 
-        
+
         //TODO: Check correct order of next statements...
         if (discardingTrains.value()) {
 
@@ -371,7 +374,7 @@ public class StockRound_1837 extends StockRound {
             mergeCompanies(minor, targetCompany);
         }
     }
-    
+
     private boolean findStartingPlayerForCoalExchange(PublicCompany company) {
         List<PublicCompany> comps = companyManager.getAllPublicCompanies();
         List<PublicCompany> minors = new ArrayList<PublicCompany>();
@@ -391,8 +394,8 @@ public class StockRound_1837 extends StockRound {
                     }
                 } // Coal Company & Major Found
             } //Coal Company Found
-            
-        } //Check if we have a minor that has a started Major 
+
+        } //Check if we have a minor that has a started Major
               while (!minors.isEmpty()) {
                   //The first minors president will start the CoalExchangeRound
                   if (((GameManager_1837) gameManager).getPlayerToStartCERound()== null) {

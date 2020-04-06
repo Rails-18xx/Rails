@@ -12,12 +12,12 @@ import net.sf.rails.ui.swing.hexmap.GUIHex.HexPoint;
 
 /**
  * Tile orientation enumeration.
- * 
+ *
  * Map orientation refers to "flat edges" parallel with coordinates system
  * axis. Thus there are two orientations: North-South
  * ({@link MapOrientation#NS NS}) and East-West
  * ({@link MapOrientation#EW EW}).
- * 
+ *
  * Although it seems neither is dominating in 18xx games North-South is used by
  * default for management and classification. So North-South orientation is
  * treated here as the natural one.
@@ -46,7 +46,7 @@ import net.sf.rails.ui.swing.hexmap.GUIHex.HexPoint;
 public enum MapOrientation {
     /**
      * North-South tile orientation.
-     * 
+     *
      * <p>This is default orientation for internal uses (which includes SVG
      * images).</p>
      */
@@ -60,7 +60,7 @@ public enum MapOrientation {
 
     private boolean lettersGoHorizontal;
     private boolean letterAHasEvenNumbers;
-    
+
     public static MapOrientation create(Tag tag) throws ConfigurationException {
         MapOrientation mapOrientation;
         String orientation = tag.getAttributeAsString("tileOrientation");
@@ -87,10 +87,10 @@ public enum MapOrientation {
         mapOrientation.letterAHasEvenNumbers = ((even.toUpperCase().charAt(0) - 'A')) % 2 == 0;
         return mapOrientation;
     }
-    
-    private static String[] nsOrNames = {"S", "SW", "NW", "N", "NE", "SE"}; 
-    private static String[] ewOrNames = {"SW", "W", "NW", "NE", "E", "SE"};
-    
+
+    private static final String[] nsOrNames = {"S", "SW", "NW", "N", "NE", "SE"};
+    private static final String[] ewOrNames = {"SW", "W", "NW", "NE", "E", "SE"};
+
     public String getORNames(HexSide orientation) {
         switch (this) {
         case NS:
@@ -126,15 +126,15 @@ public enum MapOrientation {
         default:
             throw new AssertionError(this);
         }
-        
+
     }
 
     // information to define neighbours
     private static final int[] rowDeltaNS =
             new int[] { +2, +1, -1, -2, -1, +1 };
-    private static final int[] colDeltaNS = 
+    private static final int[] colDeltaNS =
             new int[] {  0, -1, -1,  0, +1, +1 };
-    private static final int[] rowDeltaEW = 
+    private static final int[] rowDeltaEW =
             new int[] { +1,  0, -1, -1,  0, +1 };
     private static final int[] colDeltaEW =
             new int[] { -1, -2, -1, +1, +2, +1 };
@@ -150,13 +150,13 @@ public enum MapOrientation {
             throw new AssertionError(this);
         }
     }
-    
+
     public static final double SQRT3 = Math.sqrt(3.0);
-    
+
     public Map<HexSide, HexPoint> setGUIVertices( double cx, double cy, double scale) {
-        
+
         ImmutableMap.Builder<HexSide, HexPoint> coordinates = ImmutableMap.builder();
-        
+
         switch(this) {
         case NS:
             /* The numbering is the following:
@@ -195,7 +195,7 @@ public enum MapOrientation {
         }
         return coordinates.build();
     }
-    
+
     public static final double DEG30 = Math.PI / 6.0;
 
     private double rotationInRadians(HexSide rotation) {
@@ -208,31 +208,31 @@ public enum MapOrientation {
             throw new AssertionError(this);
         }
     }
-    
+
     /**
      * Returns rotation to be applied to {@link MapOrientation#NS}-oriented
      * tile to achieve this orientation.
-     * 
+     *
      * <p>The rotation has to be done around center point of the tile.</p>
-     * 
+     *
      * <p>This function returns {@literal 0} for {@link MapOrientation#NS}
      * since {@code NS}-oriented tile does not need any rotation to be
      * transformed into {@code NS}-oriented tile.</p>
-     * 
+     *
      * @return Rotation to be applied to {@link MapOrientation#NS}-oriented
      *         tile to achieve this orientation.
      */
-    
+
     public static double rotationInRadians(RailsItem item, HexSide rotation) {
         return item.getRoot().getMapManager().getMapOrientation().rotationInRadians(rotation);
     }
-    
+
     /**
      * @return orientation of the map (NS or EW)
      */
     public static MapOrientation get(RailsItem item) {
         return item.getRoot().getMapManager().getMapOrientation();
     }
-    
-    
+
+
 }

@@ -2,6 +2,10 @@ package net.sf.rails.game.financial;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.game.StartRound;
 import rails.game.action.*;
 import net.sf.rails.common.*;
 import net.sf.rails.game.GameDef;
@@ -32,16 +36,17 @@ import com.google.common.collect.SortedMultiset;
  * the Priority Deal).
  */
 public class StockRound extends Round {
+    private static final Logger log = LoggerFactory.getLogger(StockRound.class);
 
 	/* Transient memory (per round only) */
 	protected int numberOfPlayers;
 	protected Player currentPlayer;
 	protected Player startingPlayer;
 
-	protected final GenericState<PublicCompany> companyBoughtThisTurnWrapper = 
+	protected final GenericState<PublicCompany> companyBoughtThisTurnWrapper =
 			GenericState.create(this, "companyBoughtThisTurnWrapper");
 
-	protected final BooleanState hasSoldThisTurnBeforeBuying = 
+	protected final BooleanState hasSoldThisTurnBeforeBuying =
 			BooleanState.create(this, "hasSoldThisTurnBeforeBuying");
 
 	protected final BooleanState hasActed = BooleanState.create(this, "hasActed");
@@ -399,7 +404,7 @@ public class StockRound extends Round {
 	 * @return List of sellable certificates.
 	 */
 
-	// FIXME Rails 2.0: 
+	// FIXME Rails 2.0:
 	// This is rewritten taken into account that actions will not be changed for now
 	// A change of action will allow to simplify this strongly
 
@@ -465,7 +470,7 @@ public class StockRound extends Round {
 			/*
 			 * If the current Player is president, check if there is a play to dump on
 			 * => dumpThreshold = how many shareNumbers have to be sold for dump
-			 * => possibleSharesToSell = list of shareNumbers that can be sold 
+			 * => possibleSharesToSell = list of shareNumbers that can be sold
 			 *    (includes check for swapping the presidency)
 			 * => dumpIsPossible = true
 			 */
@@ -509,7 +514,7 @@ public class StockRound extends Round {
 				// to the single shares to be sold
 				if (dumpIsPossible && shareSize == 1 && number + company.getPresidentsShare().getShares() >= dumpThreshold) {
 					number += company.getPresidentsShare().getShares();
-					// but limit this to the pool 
+					// but limit this to the pool
 					number = Math.min(number, poolAllowsShares);
 					log.debug("Dump is possible increased single shares to " + number);
 				}
@@ -557,12 +562,12 @@ public class StockRound extends Round {
 							// ... no dumping: standard sell
 							possibleActions.add(new SellShares(company, shareSize, i, price, 0));
 						}
-					}       
+					}
 					else {
-						if (dumpIsPossible && i*shareSize >= dumpThreshold) { 
+						if (dumpIsPossible && i*shareSize >= dumpThreshold) {
 							if ( certCount.isEmpty() && number == 2) {
 
-								possibleActions.add(new SellShares(company, 2, 1, price, 1));  
+								possibleActions.add(new SellShares(company, 2, 1, price, 1));
 							}
 							else {
 								if (((!certCount.isEmpty()) && (number ==1) ) || number >2) {
@@ -1318,7 +1323,7 @@ public class StockRound extends Round {
 	// StockRound 1880
 	// ShareSellingRound 1880
 	protected void executeShareTransfer( PublicCompany company,
-			List<PublicCertificate> certsToSell, 
+			List<PublicCertificate> certsToSell,
 			Player dumpedPlayer, int presSharesToSell) {
 
 		executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, (BankPortfolio)pool.getParent() );
@@ -1661,7 +1666,7 @@ public class StockRound extends Round {
 	/**
 	 * Remember the player that has the Priority Deal. <b>Must be called BEFORE
 	 * setNextPlayer()!</b>
-	 * @param string 
+	 * @param string
 	 */
 	// called by
 	// StockRound: buyShares, sellShares, startCompany
@@ -1670,9 +1675,9 @@ public class StockRound extends Round {
 
 	// To be overridden in 1825, 1829,1835 (done), 1847, 1881, 18Africa
 	protected void setPriority(String string) {
-		//Standard: All actions change Priority but not in 
-		//1825, 1829, 1835, 1847, 1881, 18Africa Each player 
-		//consecutively not making a purchase. The priority then 
+		//Standard: All actions change Priority but not in
+		//1825, 1829, 1835, 1847, 1881, 18Africa Each player
+		//consecutively not making a purchase. The priority then
 		//goes to the player after the one who last made a purchase.
 		getRoot().getPlayerManager().setPriorityPlayerToNext();
 	}
@@ -1710,7 +1715,7 @@ public class StockRound extends Round {
 	// not overridden
 	private boolean checkFirstRoundSellRestriction() {
 		if (noSaleInFirstSR() && getStockRoundNumber() == 1) {
-			// depending on GameOption restriction is either valid during the first (true) Stock Round or the first Round 
+			// depending on GameOption restriction is either valid during the first (true) Stock Round or the first Round
 			if (GameOption.getValue(this, "FirstRoundSellRestriction").equals("First Stock Round")) {
 				return true;
 			} else if (GameOption.getValue(this, "FirstRoundSellRestriction").equals("First Round")) {
@@ -1747,7 +1752,7 @@ public class StockRound extends Round {
 	}
 
 
-	// called by 
+	// called by
 	// StockRound: sellShares, setSellableShares
 	// StockRound 1880: (mayPlayerSellShareOfCompany), sellShares
 	// ShareSellingRound: getSellableShares
@@ -1773,7 +1778,7 @@ public class StockRound extends Round {
 	 *
 	 * @return True if any buying is allowed.
 	 */
-	// called by 
+	// called by
 	// StockRound: setBuyableCerts
 	// StockRound 1880, 18EU: setBuyableCerts
 	// StockRound 1837, 18EU: setGameSpecificActions
@@ -1815,7 +1820,7 @@ public class StockRound extends Round {
 	 * so).
 	 * @return True if it is allowed.
 	 */
-	// called by 
+	// called by
 	// StockRound: buyShares, setBuyableCerts, startCompany
 	// StockRound 1835, 1880, 18EU: setBuyableCerts
 	// StockRound 18EU: startCompany
@@ -1839,7 +1844,7 @@ public class StockRound extends Round {
 	 * @param number The number of shares (usually 1 but not always so)
 	 * @return True if it is allowed.
 	 */
-	// called by 
+	// called by
 	// StockRound: buyShares, executeExchangeForShare, isPlayerOverLimits, setBuyableCerts, setSellableShares
 	// StockRound 18EU, 1880: setBuyableCerts
 
@@ -1868,7 +1873,7 @@ public class StockRound extends Round {
 	 * @return The maximum number of such shares that would not let the player
 	 * overrun the per-company share hold limit.
 	 */
-	// called by 
+	// called by
 	// StockRound setBuyableCerts
 	// StockRound 1880, 18EU: setBuyableCerts
 
@@ -1892,7 +1897,7 @@ public class StockRound extends Round {
 	}
 
 
-	// called by 
+	// called by
 	// StockRound: checkFirstRoundSellRestriction
 
 	// not overridden
@@ -1901,7 +1906,7 @@ public class StockRound extends Round {
 	}
 
 
-	// called by 
+	// called by
 	// StockRound: mayPlayerSellShareOfCompany
 
 	// not overridden
@@ -1911,8 +1916,8 @@ public class StockRound extends Round {
 
 	// called by
 	// 1835PrussianFormationRound: finishRound
-	// GameManager: processOnReload 
-	// GameUIManager: initSaveSettings, saveGame 
+	// GameManager: processOnReload
+	// GameUIManager: initSaveSettings, saveGame
 
 	// not overridden
 	@Override
@@ -1920,7 +1925,7 @@ public class StockRound extends Round {
 		return "StockRound " + getStockRoundNumber();
 	}
 
-	// Called by 
+	// Called by
 	// StockRound: checkAgainstHoldLimit
 
 	// not overridden
@@ -1929,7 +1934,7 @@ public class StockRound extends Round {
 				&& sellObligationLifted.contains(company);
 	}
 
-	// Called by 
+	// Called by
 	// 18EU, 1837 StockRound: mergeCompanies
 
 	// not overridden

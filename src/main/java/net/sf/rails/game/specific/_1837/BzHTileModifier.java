@@ -19,25 +19,25 @@ import org.jgrapht.graph.SimpleGraph;
 
 public class BzHTileModifier implements NetworkGraphModifier {
 
-    protected static Logger log =
+    private static final Logger log =
         LoggerFactory.getLogger(BzHTileModifier.class);
     private List<MapHex> bzhMapHexes = new ArrayList<MapHex> ();
 
     @Override
     public void modifyMapGraph(NetworkGraph mapGraph) {
-        
+
         SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
         RailsRoot root = RailsRoot.getInstance();
-        
+
         // 1. check Phase
         // this is a violation of the assumption that the track network only dependents on the map configuration
         // but not on other things (like phases)
-        int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex(); 
+        int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex();
         if (phaseIndex >= 3 ) {
             log.debug("Boznia-Herzegovina active, index of phase = " + phaseIndex);
             return;
         }
-        
+
         // 2. retrieve BzH vertices ...
         String[] bzhHexes = {"L16","L18","L20","L22","M17","M19","M21","N18","N20"};
         for(String bzhHex:bzhHexes){
@@ -48,7 +48,7 @@ public class BzHTileModifier implements NetworkGraphModifier {
         // 3 ... and remove them from the graph
         graph.removeAllVertices(bzhVertices);
         log.debug("Bosnia Herzegovina inactive, index of phase = " + phaseIndex);
-        
+
     }
 
     @Override

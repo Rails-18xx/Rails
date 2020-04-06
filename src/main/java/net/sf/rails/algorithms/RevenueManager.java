@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class RevenueManager extends RailsManager implements Configurable {
 
-    protected static Logger log =
+    private static final Logger log =
         LoggerFactory.getLogger(RevenueManager.class);
 
     // Modifiers that are configurable

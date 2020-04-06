@@ -3,6 +3,9 @@ package net.sf.rails.game.specific._1837;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -27,6 +30,8 @@ import rails.game.specific._1837.SetHomeHexLocation;
  * Implements an 1837-style startpacket sale.
  */
 public class StartRound_1837_Coal extends StartRound {
+    private static final Logger log = LoggerFactory.getLogger(StartRound_1837_Coal.class);
+
     protected final int bidIncrement;
 
     private final GenericState<SetHomeHexLocation> pendingAction =
@@ -38,7 +43,7 @@ public class StartRound_1837_Coal extends StartRound {
 
     protected IntegerState numRoundsPassed = IntegerState.create(this,
             "StartRoundRoundsPassed");
-    
+
 
     /**
      * Constructor, only to be used in dynamic instantiation.
@@ -51,7 +56,7 @@ public class StartRound_1837_Coal extends StartRound {
 
     @Override
     public void start() {
-        
+
 
         for (StartItem item : startPacket.getItems()) {
             // New: we only include items that have not yet been sold
@@ -61,7 +66,7 @@ public class StartRound_1837_Coal extends StartRound {
             }
         }
         numPasses.set(0);
-        
+
         // init current with priority player
         startPlayer = playerManager.setCurrentToPriorityPlayer();
 
@@ -192,7 +197,7 @@ public class StartRound_1837_Coal extends StartRound {
 
     /**
      * Process a player's pass.
-     * 
+     *
      * @param playerName The name of the current player (for checking purposes).
      */
     @Override
@@ -256,7 +261,7 @@ public class StartRound_1837_Coal extends StartRound {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see rails.game.StartRound#buy(java.lang.String,
      * rails.game.action.BuyStartItem)
      */
@@ -327,7 +332,7 @@ public class StartRound_1837_Coal extends StartRound {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.rails.game.StartRound#assignItem(net.sf.rails.game.Player,
      * net.sf.rails.game.StartItem, int, int)
      */

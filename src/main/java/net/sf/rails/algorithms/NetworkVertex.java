@@ -14,7 +14,7 @@ import org.jgrapht.graph.SimpleGraph;
 
 public final class NetworkVertex implements Comparable<NetworkVertex> {
 
-    protected static Logger log =
+    private static final Logger log =
         LoggerFactory.getLogger(NetworkVertex.class);
 
     public static enum VertexType {

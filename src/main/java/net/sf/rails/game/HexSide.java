@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class HexSide extends TrackPoint {
 
-    private static ImmutableList<HexSide> sides;
+    private static final ImmutableList<HexSide> sides;
 
     static {
         ImmutableList.Builder<HexSide> sideBuilder =

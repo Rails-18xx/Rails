@@ -22,7 +22,7 @@ public class WindowSettings {
     private static final String SETTINGS_FILENAME = "settings_xxxx.rails_ini";
     private static final String SETTINGS_FOLDER = "windowSettings";
 
-    protected static Logger log =
+    private static final Logger log =
         LoggerFactory.getLogger(WindowSettings.class);
 
     public WindowSettings (String gameName) {
