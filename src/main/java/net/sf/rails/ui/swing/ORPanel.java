@@ -1009,8 +1009,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
 
     public int getRevenue(int orCompIndex) {
-        return ((Integer) revenueSelect[orCompIndex].getValue()).intValue();
-
+        return (Integer) revenueSelect[orCompIndex].getValue();
     }
 
     public void setRevenue(int orCompIndex, int amount) {
@@ -1027,8 +1026,8 @@ implements ActionListener, KeyListener, RevenueListener {
         }
         trainCaption.setHighlight(false);
         if (privatesCanBeBought) privatesCaption.setHighlight(false);
-        for (int i = 0; i < president.length; i++) {
-            president[i].setHighlight(false);
+        for ( Field field : president ) {
+            field.setHighlight(false);
         }
 
         if (hasCompanyLoans) {
@@ -1044,11 +1043,9 @@ implements ActionListener, KeyListener, RevenueListener {
         undoButton.setEnabled(false);
 
         removeAllHighlights();
-
     }
 
     public void resetORCompanyTurn(int orCompIndex) {
-
         for (int i = 0; i < nc; i++) {
             if (hasDirectCompanyIncomeInOr) {
                 setSelect(revenue[i], revenueSelect[i], directIncomeSelect[i], directIncomeRevenue[i], false);
