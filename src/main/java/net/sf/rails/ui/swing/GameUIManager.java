@@ -111,15 +111,13 @@ public class GameUIManager implements DialogOwner {
     protected String saveSuffix = "";
     protected String providedName = null;
     protected SimpleDateFormat saveDateTimeFormat;
-    protected File lastFile, lastDirectory;
 
     protected boolean autoSaveLoadInitialized = false;
     protected int autoSaveLoadStatus = 0;
     protected int autoSaveLoadPollingInterval = 30;
     protected AutoLoadPoller autoLoadPoller = null;
     protected boolean myTurn = true;
-    protected String lastSavedFilenameFilepath;
-    protected String lastSavedFilename = "";
+    protected String lastSavedFilename = null;
     protected String localPlayerName = "";
 
     protected boolean gameWasLoaded = false;
@@ -223,11 +221,17 @@ public class GameUIManager implements DialogOwner {
         } else { // otherwise use specified suffix
             saveSuffix = saveSuffixSpec;
         }
-        log.debug("Initial save suffix: "+saveSuffix);
+        log.debug("Initial save suffix: {}", saveSuffix);
+
+        String str = Config.get("save.auto.enabled");
+        autoSaveLoadStatus = "yes".equals(str) ? AutoLoadPoller.ON : AutoLoadPoller.OFF;
+        str = Config.get("save.auto.interval");
+        if ( Util.hasValue(str) ) {
+            autoSaveLoadPollingInterval = Integer.parseInt(str);
+        }
     }
 
     private void initFontSettings() {
-
         // font settings, can be game specific
         String fontType = Config.getGameSpecific("font.ui.name");
         Font font = null;
@@ -307,6 +311,10 @@ public class GameUIManager implements DialogOwner {
         // TODO: switch to injecting Discord to loosely couple
         Discord.notifyOfGameInit(railsRoot);
         Slack.notifyOfGameInit(railsRoot);
+
+        if ( gameWasLoaded && autoSaveLoadStatus > 0 ) {
+            startAutoSaveLoadPoller();
+        }
     }
 
     public void startLoadedGame() {
@@ -737,7 +745,7 @@ public class GameUIManager implements DialogOwner {
 
             if (currentDialog instanceof AutoSaveLoadDialog) {
                 // Not yet a NonModalDialog subclass
-                autoSaveLoadGame2 ((AutoSaveLoadDialog)currentDialog);
+                startAutoSaveLoadPoller((AutoSaveLoadDialog)currentDialog);
 
             } else if (!(currentDialog instanceof NonModalDialog)) {
                 log.warn("Unknown dialog action: dialog=[{}] action=[{}]", currentDialog, currentDialogAction);
@@ -823,7 +831,7 @@ public class GameUIManager implements DialogOwner {
     }
 
     protected boolean saveAutoSavedFilename (String lastSavedFilename) {
-
+        String lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
         try {
             File f = new File (lastSavedFilenameFilepath);
             PrintWriter out = new PrintWriter (new FileWriter (f));
@@ -958,6 +966,7 @@ public class GameUIManager implements DialogOwner {
                 // Check the new name. If only the prefix has changed, only remember that part.
                 String[] proposedParts = proposedFile.getName().split("_", 2);
                 String[] selectedParts = selectedFile.getName().split("_", 2);
+                // TODO: fails if a user does something like test.rails
                 if (!proposedParts[0].equals(selectedParts[0])
                         && proposedParts[1].equals(selectedParts[1])) {
                     savePrefix = selectedParts[0];
@@ -983,11 +992,22 @@ public class GameUIManager implements DialogOwner {
         } else { // cancel pressed
             return;
         }
-
     }
 
     public void autoSaveLoadGame () {
+        AutoSaveLoadDialog dialog = new AutoSaveLoadDialog (this,
+                autoSaveLoadStatus,
+                autoSaveLoadPollingInterval);
+        setCurrentDialog(dialog, null);
+    }
 
+    public void startAutoSaveLoadPoller(AutoSaveLoadDialog dialog) {
+        autoSaveLoadStatus = dialog.getStatus();
+        autoSaveLoadPollingInterval = dialog.getInterval();
+        startAutoSaveLoadPoller();
+    }
+
+    public void startAutoSaveLoadPoller() {
         localPlayerName = System.getProperty("local.player.name");
         if (!Util.hasValue(localPlayerName)) {
             localPlayerName = Config.get("local.player.name");
@@ -997,49 +1017,23 @@ public class GameUIManager implements DialogOwner {
             // DisplayBuffer.add(this, "You cannot activate AutoSave/Load without setting local.player.name");
             return;
         }
-        log.debug("Polling local player name: "+localPlayerName);
+        log.debug("Polling local player name: {}", localPlayerName);
+        log.debug("AutoSaveLoad parameters: status={} interval={}", autoSaveLoadStatus, autoSaveLoadPollingInterval);
 
-        AutoSaveLoadDialog dialog = new AutoSaveLoadDialog (this,
-                autoSaveLoadStatus,
-                autoSaveLoadPollingInterval);
-        setCurrentDialog(dialog, null);
-    }
-
-    public void autoSaveLoadGame2 (AutoSaveLoadDialog dialog) {
-
-        autoSaveLoadStatus = dialog.getStatus();
-        autoSaveLoadPollingInterval = dialog.getInterval();
-
-        if (gameWasLoaded) {
-            autoSaveLoadInitialized = true;
-            lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
-            saveAutoSavedFilename (lastSavedFilename);
-        }
-
-        if (autoSaveLoadStatus != AutoLoadPoller.OFF
-                && !autoSaveLoadInitialized && !gameWasLoaded) {
-
-            /* The first time (only) we use the normal save process,
-             * so the player can select a directory, and change
-             * the prefix if so desired.
-             */
-            GameAction saveAction = new GameAction(GameAction.Mode.SAVE);
-            saveSuffix = localPlayerName;
-            saveGame (saveAction);
-            File lastSavedFile = new File (saveAction.getFilepath());
-            saveDirectory = lastSavedFile.getParentFile().getPath();
-
-            /* Now also save the "last saved file" file */
-            String lastSavedFilename = lastSavedFile.getName();
-            lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
-            try {
-                File f = new File (lastSavedFilenameFilepath);
-                PrintWriter out = new PrintWriter (new FileWriter (f));
-                out.println (lastSavedFilename);
-                out.close();
-                autoSaveLoadInitialized = true;
-            } catch (IOException e) {
-                log.error("Exception whilst creating .last_rails file '{}'", lastSavedFilenameFilepath, e);
+        if ( autoSaveLoadStatus != AutoLoadPoller.OFF ) {
+            if ( ! gameWasLoaded ) {
+                /* The first time (only) we use the normal save process,
+                 * so the player can select a directory, and change
+                 * the prefix if so desired.
+                 */
+                GameAction saveAction = new GameAction(GameAction.Mode.SAVE);
+                saveSuffix = localPlayerName;
+                saveGame (saveAction);
+                lastSavedFilename = saveAction.getFilepath();
+            }
+            if ( lastSavedFilename != null ) {
+                /* Now also save the "last saved file" file */
+                autoSaveLoadInitialized = saveAutoSavedFilename(lastSavedFilename);
             }
         }
 
@@ -1051,16 +1045,16 @@ public class GameUIManager implements DialogOwner {
             autoLoadPoller.setStatus(autoSaveLoadStatus);
             autoLoadPoller.setPollingInterval(autoSaveLoadPollingInterval);
         }
-        log.debug("AutoSaveLoad parameters: status="+autoSaveLoadStatus
-                +" interval="+autoSaveLoadPollingInterval);
 
-        myTurn = getCurrentPlayer().getId().equals(localPlayerName);
-        if (!myTurn) {
-            // Start autoload polling
-            autoLoadPoller.setActive(autoSaveLoadStatus == AutoLoadPoller.ON);
+        if ( autoLoadPoller != null ) {
+            myTurn = getCurrentPlayer().getId().equals(localPlayerName);
+            if ( !myTurn ) {
+                // Start autoload polling
+                autoLoadPoller.setActive(autoSaveLoadStatus == AutoLoadPoller.ON);
+            }
+            // TODO: depending on polling state we should enable/disable buttons
+            log.debug("MyTurn={} poller status={} active={}", myTurn, autoLoadPoller.getStatus(), autoLoadPoller.isActive());
         }
-        log.debug("MyTurn="+myTurn+" poller status="+autoLoadPoller.getStatus()
-                +" active="+autoLoadPoller.isActive());
     }
 
     public void saveGameStatus() {
@@ -1087,6 +1081,11 @@ public class GameUIManager implements DialogOwner {
                 getDisplayBuffer().add(LocalText.getText("SaveFailed", e.getMessage()));
             }
         }
+    }
+
+    public void setGameFile(File gameFile) {
+        saveDirectory = gameFile.getParent();
+        lastSavedFilename = gameFile.getName();
     }
 
     public void setSaveDirectory(String saveDirectory) {
