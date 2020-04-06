@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,11 +23,17 @@ import java.util.stream.IntStream;
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.PatternLayout;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import ch.qos.logback.core.Layout;
+import ch.qos.logback.core.read.CyclicBufferAppender;
 import net.sf.rails.common.Config;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
@@ -1267,7 +1275,37 @@ public class GameUIManager implements DialogOwner {
         return currentGuiPlayerNames;
     }
 
-   public class PlayerOrderView implements Observer {
+    public void saveLogs() {
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        CyclicBufferAppender<?> buffer = (CyclicBufferAppender<?>) lc.getLogger(Logger.ROOT_LOGGER_NAME).getAppender("buffer");
+        if ( buffer == null ) {
+            log.warn("Unable to find cyclic buffer appender");
+            return;
+        }
+
+        PatternLayout layout = new PatternLayout();
+        layout.setContext(lc);
+        layout.setPattern("%d{MM-dd-yyyy:HH:mm:ss.SSS} [%thread] %-5level %logger{10}->%method\\(\\):%line - %msg%n");
+        layout.start();
+
+        try {
+            PrintWriter writer = new PrintWriter(saveDirectory + "/" +
+                    StringUtils.replace(lastSavedFilename, ".rails", "_" + localPlayerName + ".log"));
+            int count = buffer.getLength();
+            LoggingEvent le;
+            for ( int i = 0; i < count; i++ ) {
+                le = (LoggingEvent) buffer.get(i);
+                writer.print(layout.doLayout(le));
+            }
+            writer.close();
+        }
+        catch (FileNotFoundException e) {
+            log.warn("unable to open log output file", e);
+        }
+    }
+
+    public class PlayerOrderView implements Observer {
         PlayerOrderView () {
             railsRoot.getPlayerManager().getPlayerOrderModel().addObserver(this);
         }
