@@ -14,6 +14,7 @@ import net.sf.rails.game.*;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.StockMarket;
 import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
@@ -417,6 +418,17 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         }
         // Unselect the selected private
         dummyButton.setSelected(true);
+
+        buyButton.setEnabled(false);
+        bidButton.setEnabled(false);
+        bidAmount.setEnabled(false);
+        passButton.setEnabled(false);
+
+        RoundFacade currentRound = gameUIManager.getCurrentRound();
+        if (!(currentRound instanceof StartRound)) {
+            log.debug("early return: {}", currentRound);
+            return;
+        }
 
         if (!myTurn) return;
 
