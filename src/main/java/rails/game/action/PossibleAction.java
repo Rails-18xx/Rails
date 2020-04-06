@@ -24,8 +24,8 @@ import com.google.common.base.Objects;
  * PossibleAction is the superclass of all classes that describe an allowed user
  * action (such as laying a tile or dropping a token on a specific hex, buying a
  * train etc.).
- * 
- * Rails 2.0: Added updated equals and toString methods 
+ *
+ * Rails 2.0: Added updated equals and toString methods
  */
 
 // TODO (Rails2.0): Replace this with a new XML version
@@ -37,14 +37,13 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     transient protected Player player;
 
     protected boolean acted = false;
-    
+
     transient protected RailsRoot root;
     transient protected Activity activity;
 
     public static final long serialVersionUID = 3L;
 
-    protected static Logger log =
-            LoggerFactory.getLogger(PossibleAction.class);
+    private static final Logger log = LoggerFactory.getLogger(PossibleAction.class);
 
     // TODO: Replace this by a constructor argument for the player
     public PossibleAction(Activity activity) {
@@ -64,11 +63,11 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     public int getPlayerIndex() {
         return playerIndex;
     }
-    
+
     public Player getPlayer() {
         return player;
     }
-    
+
 
     /**
      * Set the name of the player who <b>executed</b> the action (as opposed to
@@ -95,29 +94,29 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
         if (pa == null) return false;
         // not identical class, always false
         if (!(this.getClass().equals(pa.getClass()))) return false;
-        
+
         // check asOption attributes
         boolean options = Objects.equal(this.player, pa.player)
-                        || pa instanceof NullAction // TODO: Old save files are sometimes wrong to assign Null Actions 
-        ;      
-        
+                        || pa instanceof NullAction // TODO: Old save files are sometimes wrong to assign Null Actions
+        ;
+
         // finish if asOptions check
         if (asOption) return options;
-        
-        return options 
+
+        return options
                 && Objects.equal(this.acted, pa.acted)
         ;
     }
-    
-    
-    /** 
+
+
+    /**
      * Compare the choice options of two action objects, without regard to whatever choice has been made, if any.
      * In other words: only the server-set (prior) attributes must be compared.
-     * <p>This method is used by the server (engine) to validate 
+     * <p>This method is used by the server (engine) to validate
      * the incoming action that has actually been chosen in the client (GUI),
      * but only for the purpose to check if the chosen option was really on offer,
-     * not to check if the chosen action is actually valid. 
-     * These perspectives could give different results in cases where 
+     * not to check if the chosen action is actually valid.
+     * These perspectives could give different results in cases where
      * the PossibleAction does not fully restrict choices to valid values only
      * (such as the blanket LayTile that does no restrict the hex to lay a tile on,
      * or the SetDividend that will accept any revenue value).
@@ -128,11 +127,11 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
         return equalsAs(pa, true);
     }
 
-    /** 
+    /**
      * Compare the chosen actions of two action objects.
      * In other words: the client-set (posterior) attributes must be compared,
      * in addition to those server-set (prior) attributes that sufficiently identify the action.
-     * <p>This method is used by the server (engine) to check if two action 
+     * <p>This method is used by the server (engine) to check if two action
      * objects represent the same actual action, as is done when reloading a saved file
      * (i.e. loading a later stage of the same game).
      * @param pa Another PossibleAction to compare with.
@@ -145,7 +144,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     protected RailsRoot getRoot() {
         return root;
     }
-    
+
     protected GameManager getGameManager() {
         return root.getGameManager();
     }
@@ -153,11 +152,11 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     protected CompanyManager getCompanyManager () {
         return root.getCompanyManager();
     }
-    
+
     public Activity getActivity() {
         return activity;
     }
-    
+
     /**
      * @return true if it is an action to correct the game state
      */
@@ -174,7 +173,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     public ChangeActionOwner getActionOwner() {
         return player;
     }
-    
+
     @Override
     public String toString() {
         return RailsObjects.stringHelper(this).addBaseText().toString();
@@ -183,16 +182,16 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     // TODO: Rails 2.0 check if the combination above works correctly
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        
+
         if (in instanceof RailsObjectInputStream) {
             root = ((RailsObjectInputStream) in).getRoot();
         }
-        
+
         if (playerName != null) {
             player = getRoot().getPlayerManager().getPlayerByName(playerName);
         } else {
             player = getRoot().getPlayerManager().getPlayerByIndex(playerIndex);
         }
     }
-    
+
 }

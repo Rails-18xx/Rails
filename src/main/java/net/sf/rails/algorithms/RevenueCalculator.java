@@ -98,7 +98,7 @@ abstract class RevenueCalculator {
         NOT_YET
     }
 
-    protected static Logger log = LoggerFactory.getLogger(RevenueCalculator.class);
+    private static final Logger log = LoggerFactory.getLogger(RevenueCalculator.class);
 
 
     public RevenueCalculator (RevenueAdapter revenueAdapter, int nbVertexes, int nbEdges,

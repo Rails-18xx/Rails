@@ -7,6 +7,9 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 
@@ -24,6 +27,7 @@ import com.google.common.collect.Iterables;
  * This is also from where the ORWindow and StartRoundWindow are triggered.
  */
 public class StatusWindow_18EU extends StatusWindow {
+    private static final Logger log = LoggerFactory.getLogger(StatusWindow_18EU.class);
 
     private static final long serialVersionUID = 1L;
 

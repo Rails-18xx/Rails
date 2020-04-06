@@ -24,7 +24,7 @@ import rails.game.action.*;
 
 public abstract class Round extends RailsAbstractItem implements RoundFacade {
 
-    protected static Logger log =
+    private static final Logger log =
             LoggerFactory.getLogger(Round.class);
 
     protected final PossibleActions possibleActions;
@@ -275,5 +275,5 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
     public boolean wasInterrupted () {
         return wasInterrupted.value();
     }
-    
+
 }

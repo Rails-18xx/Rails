@@ -12,9 +12,7 @@ public final class PublicCompany_1862 extends PublicCompany {
 
     private boolean startable = false;
 
-    protected static final String[] statusName =
-            new String[] { "Unavailable", "Biddable" };
-
+    protected static final String[] statusName = new String[] { "Unavailable", "Biddable" };
 
     public PublicCompany_1862(RailsItem parent, String id) {
         super(parent, id);

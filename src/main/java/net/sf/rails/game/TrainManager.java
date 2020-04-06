@@ -73,7 +73,7 @@ public class TrainManager extends RailsManager implements Configurable {
     // For initialisation only
     protected boolean trainPriceAtFaceValueIfDifferentPresidents = false;
 
-    private static Logger log = LoggerFactory.getLogger(TrainManager.class);
+    private static final Logger log = LoggerFactory.getLogger(TrainManager.class);
 
     /**
      * Used by Configure (via reflection) only

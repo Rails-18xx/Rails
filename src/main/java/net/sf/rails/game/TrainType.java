@@ -44,7 +44,7 @@ public class TrainType implements Cloneable {
     /** In some cases, trains start their life in the Pool */
     protected String initialPortfolio = "IPO";
 
-    protected static Logger log =
+    private static final Logger log =
         LoggerFactory.getLogger(TrainType.class);
 
     /**
@@ -105,12 +105,12 @@ public class TrainType implements Cloneable {
 
     }
 
-    public void finishConfiguration (RailsRoot root, TrainCertificateType trainCertificateType) 
+    public void finishConfiguration (RailsRoot root, TrainCertificateType trainCertificateType)
     throws ConfigurationException {
 
         trainManager = root.getTrainManager();
         this.certificateType = trainCertificateType;
-        
+
         if (name == null) {
             throw new ConfigurationException("No name specified for Train");
         }

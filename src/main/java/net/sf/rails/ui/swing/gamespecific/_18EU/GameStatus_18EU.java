@@ -3,6 +3,9 @@ package net.sf.rails.ui.swing.gamespecific._18EU;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
 
@@ -17,8 +20,10 @@ import net.sf.rails.ui.swing.elements.RadioButtonDialog;
  * rails.game status information.
  */
 public class GameStatus_18EU extends GameStatus {
-
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(GameStatus_18EU.class);
+
 
     @Override
     protected void initGameSpecificActions() {

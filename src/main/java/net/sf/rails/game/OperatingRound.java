@@ -10,6 +10,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Iterables;
 
 import net.sf.rails.common.DisplayBuffer;
@@ -64,6 +67,7 @@ import rails.game.correct.OperatingCost;
  * be discarded.
  */
 public class OperatingRound extends Round implements Observer {
+    private static final Logger log = LoggerFactory.getLogger(OperatingRound.class);
 
     /* Transient memory (per round only) */
     protected final GenericState<GameDef.OrStep> stepObject =

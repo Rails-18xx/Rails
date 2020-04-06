@@ -14,11 +14,10 @@ import org.slf4j.LoggerFactory;
  */
 public class NetworkAdapter {
 
-    protected static Logger log =
-            LoggerFactory.getLogger(NetworkAdapter.class);
+    private static final Logger log = LoggerFactory.getLogger(NetworkAdapter.class);
 
     private final RailsRoot root;
-    
+
     private NetworkGraph mapGraph;
     private NetworkGraph routeGraph;
     private NetworkGraph revenueGraph;
@@ -26,7 +25,7 @@ public class NetworkAdapter {
 
     private PublicCompany company;
     private boolean addHQ;
-    
+
     private NetworkAdapter(RailsRoot root) {
         this.root = root;
     }
@@ -34,13 +33,13 @@ public class NetworkAdapter {
     public static NetworkAdapter create(RailsRoot root) {
         return new NetworkAdapter(root);
     }
-    
+
     public NetworkGraph getMapGraph() {
         mapGraph = NetworkGraph.createMapGraph(root);
         log.info("MapGraph created");
         return mapGraph;
     }
-        
+
     public NetworkGraph getRouteGraph(PublicCompany company, boolean addHQ) {
         routeGraph = NetworkGraph.createRouteGraph(getMapGraph(), company, addHQ);
         this.company = company;
@@ -48,7 +47,7 @@ public class NetworkAdapter {
         log.info("RouteGraph created");
         return routeGraph;
     }
-    
+
     public NetworkGraph getRouteGraphCached(PublicCompany company, boolean addHQ) {
         if (routeGraph == null || company != this.company || addHQ != this.addHQ) {
             if (mapGraph != null) {
@@ -59,7 +58,7 @@ public class NetworkAdapter {
         }
         return routeGraph;
     }
-    
+
     public NetworkGraph getRevenueGraph(PublicCompany company,
             Collection<NetworkVertex> protectedVertices) {
         if (revenueGraph == null) {
@@ -67,10 +66,10 @@ public class NetworkAdapter {
                     protectedVertices);
             log.info("RevenueGraph created");
         }
-        
+
         return revenueGraph;
     }
-    
+
     public NetworkMultigraph getMultigraph(PublicCompany company,
             Collection<NetworkVertex> protectedVertices) {
         if (multiGraph == null) {
@@ -80,5 +79,5 @@ public class NetworkAdapter {
         }
         return multiGraph;
     }
-    
+
 }

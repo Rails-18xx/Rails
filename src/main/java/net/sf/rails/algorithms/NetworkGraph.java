@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class NetworkGraph {
 
-    protected static Logger log = LoggerFactory.getLogger(NetworkGraph.class);
+    private static final Logger log = LoggerFactory.getLogger(NetworkGraph.class);
 
     private final SimpleGraph<NetworkVertex, NetworkEdge> graph;
 

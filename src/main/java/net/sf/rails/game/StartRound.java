@@ -2,6 +2,9 @@ package net.sf.rails.game;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.*;
 import net.sf.rails.common.*;
 import net.sf.rails.util.Util;
@@ -15,6 +18,7 @@ import net.sf.rails.game.state.Model;
 
 
 public abstract class StartRound extends Round {
+    private static final Logger log = LoggerFactory.getLogger(StartRound.class);
 
     // FIXME: StartRounds do not set Priority Player
 

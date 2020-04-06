@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class NamedTrainToken extends Token<NamedTrainToken> implements Configurable {
 
-    protected static Logger log = LoggerFactory.getLogger(NamedTrainToken.class);
+    private static final Logger log = LoggerFactory.getLogger(NamedTrainToken.class);
 
     private String name;
     private String longName;

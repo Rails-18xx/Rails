@@ -23,13 +23,13 @@ import com.google.common.base.Preconditions;
 
 public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> implements Configurable {
 
-    protected static Logger log = LoggerFactory.getLogger(SpecialProperty.class);
+    private static final Logger log = LoggerFactory.getLogger(SpecialProperty.class);
 
     protected static final String STORAGE_NAME = "SpecialProperty";
 
     protected final BooleanState exercised = BooleanState.create(this, "exercised");
     protected Company originalCompany;
-    
+
     /* Usability conditions. Not all of these are already being used. */
     protected boolean usableIfOwnedByPlayer = false;
     protected boolean usableIfOwnedByCompany = false;
@@ -45,11 +45,11 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     // if exercising contributes to closing, if private has the closing conditions set, thus default is true
     // allows to exclude special properties that do not close privates that are closeable
     protected boolean closesPrivate = true;
-    
-    
+
+
     protected boolean isORProperty = false;
     protected boolean isSRProperty = false;
-    
+
     /** Optional descriptive text, for display in menus and info text.
      * Subclasses may put real text in it.
      */
@@ -76,24 +76,24 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
         if (!Util.hasValue(whenText))
             throw new ConfigurationException(
                     "Missing condition in private special property");
-        setUsableDuringSR(whenText.equalsIgnoreCase("anyTurn") 
+        setUsableDuringSR(whenText.equalsIgnoreCase("anyTurn")
                 || whenText.equalsIgnoreCase("srTurn"));
-        setUsableDuringOR(whenText.equalsIgnoreCase("anyTurn") 
+        setUsableDuringOR(whenText.equalsIgnoreCase("anyTurn")
                 || whenText.equalsIgnoreCase("orTurn"));
-        
+
         setUsableDuringTileLayingStep(whenText.equalsIgnoreCase("tileLayingStep"));
         setUsableDuringTileLayingStep(whenText.equalsIgnoreCase("tileAndTokenLayingStep"));
         setUsableDuringTokenLayingStep(whenText.equalsIgnoreCase("tokenLayingStep"));
         setUsableDuringTokenLayingStep(whenText.equalsIgnoreCase("tileAndTokenLayingStep"));
 
         transferText = tag.getAttributeAsString("transfer", "");
-        
-        permanent = tag.getAttributeAsBoolean("permanent", permanent); 
-        
+
+        permanent = tag.getAttributeAsBoolean("permanent", permanent);
+
         closesPrivate = tag.getAttributeAsBoolean("closesPrivate", closesPrivate);
-        
+
     }
-    
+
     public void finishConfiguration (RailsRoot root) throws ConfigurationException {
         // do nothing specific
     }
@@ -139,12 +139,12 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     public void setUsableIfOwnedByPlayer(boolean usableIfOwnedByPlayer) {
         this.usableIfOwnedByPlayer = usableIfOwnedByPlayer;
     }
-    
+
 
     public boolean isUsableDuringOR(GameDef.OrStep step) {
-        
+
         if (usableDuringOR) return true;
-        
+
         switch (step) {
         case LAY_TRACK:
             return usableDuringTileLayingStep;
@@ -188,7 +188,7 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     }
 
     public void setExercised (boolean value) {
-        if (permanent) return; // sfy 1889 
+        if (permanent) return; // sfy 1889
         exercised.set(value);
         if (value && closesPrivate && originalCompany instanceof PrivateCompany) {
             ((PrivateCompany)originalCompany).checkClosingIfExercised(false);
@@ -198,9 +198,9 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     public boolean isExercised() {
         return exercised.value();
     }
-    
-    public abstract boolean isExecutionable(); 
-    
+
+    public abstract boolean isExecutionable();
+
 
     public boolean isSRProperty() {
         return isSRProperty;
@@ -232,15 +232,15 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
         return LocalText.getText ("YouCan", Util.lowerCaseFirst(toMenu()));
 
     }
-    
- 
+
+
     // TODO: Rails 2.0: Move this to a new SpecialPropertyManager
-    
-    // convert to the full id used 
+
+    // convert to the full id used
     private static String convertId(String id) {
         return STORAGE_NAME + "_" + id;
     }
-    
+
     // return new storage id
     private static String createUniqueId(RailsItem item) {
         return String.valueOf(item.getRoot().getGameManager().getStorageId(STORAGE_NAME) + 1);
@@ -265,7 +265,7 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     public static String configure(Company company, Tag tag) throws ConfigurationException {
 
       StringBuilder text = new StringBuilder();
-        
+
       // Special properties
       Tag spsTag = tag.getChild("SpecialProperties");
       if (spsTag != null) {
@@ -288,5 +288,5 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
       return text.toString();
   }
 
-    
+
 }

@@ -1,11 +1,14 @@
 /**
- * 
+ *
  */
 package net.sf.rails.game.specific._1880;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GameOption;
@@ -30,6 +33,7 @@ import rails.game.action.SellShares;
  *
  */
 public class ShareSellingRound_1880 extends ShareSellingRound {
+    private static final Logger log = LoggerFactory.getLogger(ShareSellingRound_1880.class);
 
     /**
      * @param gameManager
@@ -39,16 +43,16 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
         super(parent, id);
     }
 
-    
+
     @Override
     public boolean setPossibleActions() {
-       
+
         possibleActions.clear();
 
         setSellableShares();
-                   
+
         possibleActions.add(new NullAction(NullAction.Mode.DONE));
-        
+
         for (PossibleAction pa : possibleActions.getList()) {
             log.debug(currentPlayer.getId() + " may: " + pa.toString());
         }
@@ -63,7 +67,7 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
     @Override
     public boolean process(PossibleAction action) {
         currentPlayer = playerManager.getCurrentPlayer();
-        
+
         if (action instanceof NullAction) {
              gameManager.finishShareSellingRound();
              return true;
@@ -93,7 +97,7 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
         int numberToSell = action.getNumber();
         int shareUnits = action.getShareUnits();
         int currentIndex = getCurrentPlayerIndex();
-        
+
         // Dummy loop to allow a quick jump out
         while (true) {
 
@@ -235,24 +239,24 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
         }
 
         cashToRaise.add(-numberSold * price);
-        
+
         if (cashToRaise.value() <= 0) {
             gameManager.finishShareSellingRound();
         } else if (getSellableShares().isEmpty()) {
             gameManager.finishShareSellingRound();
         }
 
-        return true;        
+        return true;
     }
-    
+
     // In 1880 all share transfers via ipo
     @Override
     protected void executeShareTransfer( PublicCompany company,
-            List<PublicCertificate> certsToSell, 
+            List<PublicCertificate> certsToSell,
             Player dumpedPlayer, int presSharesToSell) {
-        
+
         executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, (BankPortfolio)ipo.getParent() );
     }
 
-    
+
 }

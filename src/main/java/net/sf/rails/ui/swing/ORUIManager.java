@@ -80,7 +80,7 @@ import com.google.common.collect.Sets;
 // Rails 2.0, Even better add a new mechanism that allows to use the standard mechanism for corrections
 public class ORUIManager implements DialogOwner {
 
-    protected static Logger log =
+    private static final Logger log =
             LoggerFactory.getLogger(ORUIManager.class);
 
     protected GameUIManager gameUIManager;

@@ -35,21 +35,21 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
      * Combination defines a set of certificates
      */
     public static class Combination implements Comparable<Combination>, Iterable<PublicCertificate> {
-        
+
         private final SortedSet<PublicCertificate> certs;
-        
+
         private Combination(SortedSet<PublicCertificate> certs) {
             this.certs = certs;
         }
-        
+
         public static Combination create(Iterable<PublicCertificate> certs) {
             return new Combination(ImmutableSortedSet.copyOf(certs));
         }
-        
+
         public SortedSet<PublicCertificate> getCertificates() {
             return certs;
         }
-        
+
         public int size() {
             return certs.size();
         }
@@ -63,10 +63,10 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
         public Iterator<PublicCertificate> iterator() {
             return certs.iterator();
         }
-        
+
     }
-    
-    
+
+
     /** From which public company is this a certificate */
     protected PublicCompany company;
     /**
@@ -78,14 +78,14 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     // FIXME: If this is changable, it should be a state variable, otherwise UNDO problems
     /** Count against certificate limits */
     protected float certificateCount = 1.0f;
-    
+
     /** Availability at the start of the game */
     protected boolean initiallyAvailable;
 
     /** A key identifying the certificate's unique ID */
     protected String certId;
-    
-    // FIMXE: 
+
+    // FIMXE:
     /** Index within company (to be maintained in the IPO) */
     protected int indexInCompany;
 
@@ -94,13 +94,13 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     protected static Map<String, PublicCertificate> certMap =
             new HashMap<String, PublicCertificate>();
 
-    
-    protected static Logger log =
+
+    private static final Logger log =
             LoggerFactory.getLogger(PublicCertificate.class);
 
     // TODO: Rewrite constructors
     // TODO: Should every certificate have its own id and be registered with the parent?
-    public PublicCertificate(RailsItem parent, String id, int shares, boolean president, 
+    public PublicCertificate(RailsItem parent, String id, int shares, boolean president,
             boolean available, float certificateCount, int index) {
         super(parent, id, PublicCertificate.class);
         this.shares.set(shares);
@@ -125,12 +125,12 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     public RailsItem getParent(){
         return (RailsItem)super.getParent();
     }
-    
+
     @Override
     public RailsRoot getRoot() {
         return (RailsRoot)super.getRoot();
     }
-    
+
     /** Set the certificate's unique ID, for use in deserializing */
     public void setUniqueId(String name, int index) {
         certId = name + "-" + index;
@@ -141,7 +141,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     public String getUniqueId() {
         return certId;
     }
-    
+
     public int getIndexInCompany() {
         return indexInCompany;
     }
@@ -150,7 +150,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
         return certMap.get(certId);
     }
 
-    
+
     // FIXME: There is no guarantee that the parent of a certificate portfolio is a portfolioModel
     // Replace that by something that works
     public CertificatesModel getHolder() {
@@ -192,7 +192,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     public boolean isInitiallyAvailable() {
         return initiallyAvailable;
     }
-    
+
     public void setPresident(boolean b) {
         president = b;
     }
@@ -216,7 +216,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     public PublicCompany getType() {
         return company;
     }
-    
+
     @Override
     protected Object clone() {
         try {
@@ -230,15 +230,15 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     public PublicCertificate copy() {
         return (PublicCertificate) this.clone();
     }
-    
+
     /**
-     * Compare is based on 
+     * Compare is based on
      * A) Presidency (presidency comes first in natural ordering)
      * B) Number of Shares (more shares means come first)
      * C) Id of CertificateType
      * D) Id of Certificate
      */
-    // FIXME: The default comparator can only contain final attributes, otherwise 
+    // FIXME: The default comparator can only contain final attributes, otherwise
     // otherwise Portfolios (TreeMaps) might get confused
     // Implement another comparator for display that does not define a standard sorting
     @Override
@@ -260,14 +260,14 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
 
     public void setShares(int numShares) {
        this.shares.set(numShares);
-        
+
     }
 
     // Certificate Interface
     public float getCertificateCount() {
         return certificateCount;
     }
-    
+
     @Deprecated
     public void setCertificateCount(float certificateCount) {
         this.certificateCount = certificateCount;
@@ -296,5 +296,5 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
                     getShare());
         }
     }
-    
+
 }

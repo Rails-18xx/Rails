@@ -15,18 +15,18 @@ import org.slf4j.LoggerFactory;
 
 
 public abstract class CorrectionManager extends RailsAbstractItem {
-    
+
     private final CorrectionType correctionType;
     private final BooleanState active = BooleanState.create(this, "active");
-    
-    protected static Logger log =
+
+    private static final Logger log =
         LoggerFactory.getLogger(CorrectionManager.class);
 
     protected CorrectionManager(GameManager parent, CorrectionType ct) {
         super(parent, ct.name());
-        correctionType = ct; 
+        correctionType = ct;
     }
-    
+
     @Override
     public GameManager getParent() {
         return (GameManager)super.getParent();
@@ -39,7 +39,7 @@ public abstract class CorrectionManager extends RailsAbstractItem {
     public boolean isActive(){
         return active.value();
     }
-    
+
     public List<CorrectionAction> createCorrections() {
 
         List<CorrectionAction> actions = new ArrayList<CorrectionAction>();
@@ -47,20 +47,20 @@ public abstract class CorrectionManager extends RailsAbstractItem {
 
         return actions;
     }
-   
+
     /** calls all executeAction */
     public boolean executeCorrection(CorrectionAction action){
-        if (action instanceof CorrectionModeAction)  
+        if (action instanceof CorrectionModeAction)
             return execute((CorrectionModeAction) action);
         else {
             log.debug("This correction action is not registered.");
             return false;
         }
     }
-    
+
     private boolean execute(CorrectionModeAction action) {
-        
-        
+
+
         if (!isActive()) {
             String text = LocalText.getText("CorrectionModeActivate",
                     getRoot().getPlayerManager().getCurrentPlayer().getId(),
@@ -76,7 +76,7 @@ public abstract class CorrectionManager extends RailsAbstractItem {
             ));
         }
         active.set(!active.value());
-     
+
         return true;
     }
 
@@ -85,10 +85,10 @@ public abstract class CorrectionManager extends RailsAbstractItem {
         log.debug("The chosen action is not implemented in the registered manager");
         return false;
     }
-    
+
 
     public boolean equals(CorrectionManager cm) {
-        return (this.getParent() == cm.getParent() 
+        return (this.getParent() == cm.getParent()
                 && this.correctionType == cm.correctionType);
     }
 }

@@ -18,7 +18,7 @@ public class GameManager_1856 extends GameManager {
 
     private Player playerToStartCGRFRound = null;
 
-    private static int[][] certLimitsTable = {
+    private static final int[][] certLimitsTable = {
             {14, 19, 21, 26, 29, 31, 36, 40},
             {10, 13, 15, 18, 20, 22, 25, 28},
             {8, 10, 12, 14, 16, 18, 20, 22},
@@ -26,7 +26,7 @@ public class GameManager_1856 extends GameManager {
             {6, 7, 8, 10, 11, 12, 14, 15}
     };
     private final BooleanState cgrFormationPassed = BooleanState.create(this, "CgrFormationPassed");
-   
+
     public GameManager_1856(RailsRoot parent, String id) {
         super(parent, id);
     }
@@ -59,12 +59,12 @@ public class GameManager_1856 extends GameManager {
 
     /* Must be called each time AFTER companies have closed from train phase 6 */
     public void resetCertificateLimit(boolean atEndOfCGRFormation) {
-        
+
         List<PublicCompany> availableCompanies;
 
         if (atEndOfCGRFormation) cgrFormationPassed.set(true);
         if (!cgrFormationPassed.value()) return;
-        
+
         // Determine the new certificate limit.
         // Make sure that only available Companies are counted.
         availableCompanies = getAllPublicCompanies();
@@ -82,7 +82,7 @@ public class GameManager_1856 extends GameManager {
         // Some checks to be sure
         int numCompanies = Math.min(11, Math.max(4, validCompanies));
         int numPlayers = getRoot().getPlayerManager().getNumberOfPlayers();
-        
+
         int newCertLimit = certLimitsTable[numPlayers-2][numCompanies-4];
         getRoot().getPlayerManager().setPlayerCertificateLimit(newCertLimit);
         String message = LocalText.getText("CertificateLimit",
@@ -91,7 +91,7 @@ public class GameManager_1856 extends GameManager {
                 numCompanies);
         DisplayBuffer.add(this, message);
         ReportBuffer.add(this, message);
-        
+
     }
 
 }

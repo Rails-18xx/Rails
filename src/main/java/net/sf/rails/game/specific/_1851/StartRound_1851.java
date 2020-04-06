@@ -2,6 +2,9 @@ package net.sf.rails.game.specific._1851;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.*;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
@@ -9,6 +12,7 @@ import net.sf.rails.game.*;
 
 
 public class StartRound_1851 extends StartRound {
+    private static final Logger log = LoggerFactory.getLogger(StartRound_1851.class);
 
     /**
      * Constructed via Configure

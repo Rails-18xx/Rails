@@ -37,7 +37,7 @@ public class AutoSaveLoadDialog extends JDialog implements ActionListener {
 
     private static final int NUM_OPTIONS = 3;
 
-    protected static Logger log = LoggerFactory.getLogger(AutoSaveLoadDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(AutoSaveLoadDialog.class);
 
     public AutoSaveLoadDialog(DialogOwner owner, int oldStatus, int oldInterval) {
         super((Frame) null, "AutoSaveLoad settings", false); // Non-modal

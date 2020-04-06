@@ -34,8 +34,11 @@ public class ConvertTilesXML {
 
     private static String outputFilePath = "src/main/resources/tiles/Tiles.xml";
 
-    private static Map<String, String> colourMap, gaugeMap, sidesMap, cityMap;
-    private static Map<String, String[]> stationMap;
+    private static final Map<String, String> colourMap;
+    private static final Map<String, String> gaugeMap;
+    private static final Map<String, String> sidesMap;
+    private static final Map<String, String> cityMap;
+    private static final Map<String, String[]> stationMap;
     private static Map<String, String> junctionPosition;
 
     /** Maps non-edge non-station junctions to tracks ending there. */
@@ -43,11 +46,10 @@ public class ConvertTilesXML {
     /** Maps tracks to edge/station junctions */
     private static Map<Element, String> resolvedTrack;
 
-    private static Pattern namePattern = Pattern.compile("^(\\d+)(/.*)?");
+    private static final Pattern namePattern = Pattern.compile("^(\\d+)(/.*)?");
 
-    private Document outputDoc;
+    private final Document outputDoc;
     private Element outputJunction;
-    private String tileNo;
     private String colour;
 
     static {
@@ -151,7 +153,6 @@ public class ConvertTilesXML {
         cityMap.put("tpCurve2RightF", "507");
         cityMap.put("tpCurve2LeftF", "508");
         cityMap.put("tpCurve1LeftF", "509");
-
     }
 
     public static void main(String[] args) {
@@ -165,7 +166,6 @@ public class ConvertTilesXML {
         } catch (ConfigurationException e) {
             log.warn("caught exception", e);
         }
-
     }
 
     private ConvertTilesXML() throws ConfigurationException {
@@ -216,7 +216,6 @@ public class ConvertTilesXML {
         String id =
             inputTile.getElementsByTagName("ID").item(0).getFirstChild().getNodeValue();
         log.debug("id: {}", id);
-        tileNo = id;
         outputTile.setAttribute("id", id);
         // int intId;
         try {
@@ -285,19 +284,19 @@ public class ConvertTilesXML {
             Element[] ends = list.toArray(new Element[0]);
             if (ends.length <= 1) {
                 throw new ConfigurationException("Loose end " + ends[0]
-                        + " in tile " + tileNo);
+                        + " in tile " + id);
             }
             for (int i = 1; i < ends.length; i++) {
                 end1 = resolvedTrack.get(ends[i]);
                 if (end1 == null) {
                     throw new ConfigurationException("Loose end " + ends[i]
-                                                                         + " in tile " + tileNo);
+                                                                         + " in tile " + id);
                 }
                 for (int j = 0; j < i; j++) {
                     end2 = resolvedTrack.get(ends[j]);
                     if (end2 == null) {
                         throw new ConfigurationException("Loose end " + ends[j]
-                                                                             + " in tile " + tileNo);
+                                                                             + " in tile " + id);
                     }
                     Element outputConnection = outputDoc.createElement("Track");
                     outputConnection.setAttribute("gauge",

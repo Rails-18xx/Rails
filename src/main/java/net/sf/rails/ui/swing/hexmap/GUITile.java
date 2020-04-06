@@ -18,13 +18,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class provides code to paint tiles
- * 
+ *
  * In Rails 1.x this used to be a class with object instances, one object per visible Tile
  */
 public class GUITile {
-    private static final Logger log =
-            LoggerFactory.getLogger(GUITile.class);
-    
+    private static final Logger log = LoggerFactory.getLogger(GUITile.class);
+
     public static final double SVG_X_CENTER_LOC = 0.489;
     public static final double SVG_Y_CENTER_LOC = 0.426;
 
@@ -34,7 +33,7 @@ public class GUITile {
         // Preprinted tiles can have a different picture ID, defined per hex or per tile.
         // MapHex refers back to Tile if necessary
         String picId = hex.getHex().getPictureId(tile);
-        
+
         ImageLoader imageLoader = GameUIManager.getImageLoader();
         BufferedImage tileImage = imageLoader.getTile(picId, zoomStep);
 
@@ -53,13 +52,13 @@ public class GUITile {
             AffineTransformOp aop = new AffineTransformOp(af,
                     GUIGlobals.getRenderingHints());
             // FIXME: Change this to a sub-pixel approach
-            // compare with 
+            // compare with
             // http://stackoverflow.com/questions/8676909/drawing-an-image-using-sub-pixel-level-accuracy-using-graphics2d
             //g2.drawImage(tileImage, aop, (int) difference.getX(), (int) difference.getY());
             // already a first approach, integrated into the affine transform, however it does not
             // increase the quality of the map
             g2.drawImage(tileImage, aop, 0, 0);
-            
+
         } else {
             log.error("No image for tile "+ tile +" on hex "+hex.toText());
         }

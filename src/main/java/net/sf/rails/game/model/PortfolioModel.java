@@ -45,7 +45,7 @@ import com.google.common.collect.SortedMultiset;
 public class PortfolioModel extends RailsModel {
     public static final String ID = "PortfolioModel";
 
-    protected static Logger log = LoggerFactory.getLogger(PortfolioModel.class);
+    private static final Logger log = LoggerFactory.getLogger(PortfolioModel.class);
 
     /** Owned certificates */
     private final CertificatesModel certificates;
@@ -188,7 +188,7 @@ public class PortfolioModel extends RailsModel {
 
     /**
      * Find a certificate for a given company.
-     * 
+     *
      * @param company The public company for which a certificate is found.
      * @param president Whether we look for a president or non-president
      * certificate. If there is only one certificate, this parameter has no
@@ -202,7 +202,7 @@ public class PortfolioModel extends RailsModel {
 
     /**
      * Find a specified certificate
-     * 
+     *
      * @return (first) certificate found, null if not found
      */
     public PublicCertificate findCertificate(PublicCompany company, int shares,
@@ -227,7 +227,7 @@ public class PortfolioModel extends RailsModel {
         return list.build();
     }
 
-    /** 
+    /**
      * @return a sorted Multiset<Integer> of shareNumbers of the certificates
      * Remark: excludes the presdident share if not of a different size as the standard share...
      */
@@ -251,15 +251,15 @@ public class PortfolioModel extends RailsModel {
     public int getShare(PublicCompany company) {
         return certificates.getShare(company);
     }
-    
-    
+
+
     /**
      * @return the number of shares owned by the PorfolioModel for this company
      */
     public int getShareNumber(PublicCompany company) {
         return certificates.getShareNumber(company);
     }
-    
+
     /**
      * @param maxShareNumber maximum share number that is to achieved
      * @return sorted list of share numbers that are possible for that company
@@ -267,14 +267,14 @@ public class PortfolioModel extends RailsModel {
    public SortedSet<Integer> getShareNumberCombinations(PublicCompany company, int maxShareNumber) {
         return certificates.getshareNumberCombinations(company, maxShareNumber);
     }
-    
-   /** 
+
+   /**
     * @return true if portfolio contains a multiple (non-president) certificate
     */
     public boolean containsMultipleCert(PublicCompany company) {
         return certificates.containsMultipleCert(company);
     }
-    
+
 
     public int ownsCertificates(PublicCompany company, int unit,
             boolean president) {
@@ -344,7 +344,7 @@ public class PortfolioModel extends RailsModel {
 
         return swapped;
     }
-    
+
     public int getNumberOfTrains() {
         return trains.getPortfolio().size();
     }
@@ -394,7 +394,7 @@ public class PortfolioModel extends RailsModel {
 
     /**
      * Add an object. Low-level method, only to be called by Move objects.
-     * 
+     *
      * @param object The object to add.
      * @return True if successful.
      */
@@ -417,7 +417,7 @@ public class PortfolioModel extends RailsModel {
 
     /**
      * Remove an object. Low-level method, only to be called by Move objects.
-     * 
+     *
      * @param object The object to remove.
      * @return True if successful.
      */
@@ -474,7 +474,7 @@ public class PortfolioModel extends RailsModel {
 
     /**
      * Do we have any special properties?
-     * 
+     *
      * @return Boolean
      */
     public boolean hasSpecialProperties() {

@@ -3,6 +3,9 @@ package net.sf.rails.game.specific._1856;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.*;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
@@ -19,12 +22,14 @@ import com.google.common.collect.Iterables;
 
 
 public class OperatingRound_1856 extends OperatingRound {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(OperatingRound_1856.class);
+
     /**
-     * Set after the first 6-train is bought, irrespective whether any loans are outstanding or not. 
+     * Set after the first 6-train is bought, irrespective whether any loans are outstanding or not.
      */
     private final BooleanState finalLoanRepaymentPending = BooleanState.create(this, "LoanRepaymentPending");
-    
+
     private Player playerToStartLoanRepayment = null;
 
     /**
@@ -119,7 +124,7 @@ public class OperatingRound_1856 extends OperatingRound {
                             operatingCompany.value().getLastRevenue(), true,
                             new int[] {SetDividend.WITHHOLD }));
             } else {
-                
+
                 int[] allowedRevenueActions =
                         operatingCompany.value().isSplitAlways()
                                 ? new int[] { SetDividend.SPLIT }

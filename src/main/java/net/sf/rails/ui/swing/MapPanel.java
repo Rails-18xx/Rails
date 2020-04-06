@@ -38,7 +38,7 @@ public class MapPanel extends JPanel {
     private boolean fitToWidth = false;
     private boolean fitToHeight = false;
 
-    protected static Logger log = LoggerFactory.getLogger(MapPanel.class);
+    private static final Logger log = LoggerFactory.getLogger(MapPanel.class);
 
     public MapPanel(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;

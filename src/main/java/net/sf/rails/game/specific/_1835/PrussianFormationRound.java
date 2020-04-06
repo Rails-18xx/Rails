@@ -2,6 +2,9 @@ package net.sf.rails.game.specific._1835;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.DiscardTrain;
 import rails.game.action.PossibleAction;
 import rails.game.specific._1835.FoldIntoPrussian;
@@ -22,6 +25,8 @@ import com.google.common.collect.Iterables;
 
 
 public class PrussianFormationRound extends StockRound {
+    private static final Logger log = LoggerFactory.getLogger(PrussianFormationRound.class);
+
 
     private PublicCompany prussian;
     private PublicCompany m2;

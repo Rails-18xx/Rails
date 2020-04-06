@@ -1,5 +1,8 @@
 package net.sf.rails.game.specific._1889;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.BuyPrivate;
 import rails.game.action.LayTile;
 import rails.game.action.NullAction;
@@ -24,13 +27,14 @@ import com.google.common.collect.Iterables;
  * Adds specific code for 1889 to allow the special timing of the special tile laying private companies
  */
 public class OperatingRound_1889 extends OperatingRound {
+    private static final Logger log = LoggerFactory.getLogger(OperatingRound_1889.class);
 
     private final PrivateCompany privB;
     private final BooleanState activeSpPrivB = BooleanState.create(this, "ActiveSpPrivB");
-    
+
     private final PrivateCompany privC;
     private final BooleanState activeSpPrivC = BooleanState.create(this, "ActiveSpPrivC");
-    
+
     private final boolean beginnerGame;
 
     private GameDef.OrStep storeActiveStep;
@@ -55,7 +59,7 @@ public class OperatingRound_1889 extends OperatingRound {
         // private B: lay track at other company tile laying steps
         if (getStep() == GameDef.OrStep.LAY_TRACK) {
             if (!privB.isClosed() &&
-                    privB.getOwner() instanceof Player && 
+                    privB.getOwner() instanceof Player &&
                     privB.getOwner() != operatingCompany.value().getPresident()) {
                 SpecialProperty spPrivB = Iterables.get(privB.getSpecialProperties(), 0);
                 LayTile layTile = new LayTile((SpecialTileLay)spPrivB);
@@ -97,7 +101,7 @@ public class OperatingRound_1889 extends OperatingRound {
         if (action instanceof UseSpecialProperty) {
             UseSpecialProperty spAction=(UseSpecialProperty)action;
             if (spAction.getSpecialProperty() == Iterables.get(privB.getSpecialProperties(), 0)) {
-                
+
                 activeSpPrivB.set(true);
                 log.debug("1889 specific: Allows tile lay for B with player request");
                 return true;
@@ -145,7 +149,7 @@ public class OperatingRound_1889 extends OperatingRound {
         if (activeSpPrivC.value()) {
             log.debug("1889 specific: Tile lay for C skipped, return to previous step");
             // TODO: This is a GameAction which should not be used here
-            
+
             activeSpPrivC.set(false);
             stepObject.set(storeActiveStep);
         } else {

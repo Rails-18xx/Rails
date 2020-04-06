@@ -2,6 +2,9 @@ package net.sf.rails.game.specific._1835;
 
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import net.sf.rails.common.DisplayBuffer;
@@ -28,6 +31,7 @@ import com.google.common.collect.Iterables;
 
 
 public class OperatingRound_1835 extends OperatingRound {
+    private static final Logger log = LoggerFactory.getLogger(OperatingRound_1835.class);
 
     private final BooleanState needPrussianFormationCall = BooleanState.create(this, "NeedPrussianFormationCall");
     private final BooleanState hasLaidExtraOBBTile = BooleanState.create(this, "HasLaidExtraOBBTile");
@@ -193,7 +197,7 @@ public class OperatingRound_1835 extends OperatingRound {
             log.debug("M2 has operated: PR cannot operate");
 
         }
-        
+
         // Check if the operating company still exists
         if (operatingCompany.value().isClosed()) finishTurn();
 

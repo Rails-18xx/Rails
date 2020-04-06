@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public final class RevenueBonus {
 
-    protected static Logger log =
+    private static final Logger log =
         LoggerFactory.getLogger(RevenueBonus.class);
 
     // bonus values

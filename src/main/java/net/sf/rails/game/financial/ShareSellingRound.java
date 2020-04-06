@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import rails.game.action.PossibleAction;
 import rails.game.action.SellShares;
 import net.sf.rails.common.*;
@@ -11,7 +14,6 @@ import net.sf.rails.game.GameDef;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.GameDef.Parm;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.Currency;
@@ -20,6 +22,7 @@ import net.sf.rails.game.state.IntegerState;
 
 // TODO: Check if un-initialized states cause undo problems
 public class ShareSellingRound extends StockRound {
+    private static final Logger log = LoggerFactory.getLogger(ShareSellingRound.class);
 
     protected RoundFacade parentRound;
     protected Player sellingPlayer;
@@ -50,7 +53,7 @@ public class ShareSellingRound extends StockRound {
         currentPlayer = this.sellingPlayer = sellingPlayer;
         this.cashNeedingCompany = cashNeedingCompany;
         this.cashToRaise = IntegerState.create(this, "CashToRaise", cashToRaise);
-        
+
         this.dumpOtherCompaniesAllowed = dumpOtherCompaniesAllowed;
         log.debug("Forced selling, dumpOtherCompaniesAllowed = " + dumpOtherCompaniesAllowed);
         getRoot().getPlayerManager().setCurrentPlayer(sellingPlayer);
@@ -97,7 +100,7 @@ public class ShareSellingRound extends StockRound {
     /**
      * Create a list of certificates that a player may sell in an emergency
      * share selling round, taking all rules taken into account.
-     * 
+     *
      * FIXME: Rails 2.x Adopt the new code from StockRound
      */
     protected List<SellShares> getSellableShares () {
@@ -375,7 +378,7 @@ public class ShareSellingRound extends StockRound {
         }
         int cashAmount = numberSold * price * shareUnits;
 
-        
+
         // FIXME: changeStack.linkToPreviousMoveSet();
 
         String cashText = Currency.fromBank(cashAmount, currentPlayer);

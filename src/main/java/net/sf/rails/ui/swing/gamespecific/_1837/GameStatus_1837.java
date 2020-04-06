@@ -1,10 +1,13 @@
 /**
- * 
+ *
  */
 package net.sf.rails.ui.swing.gamespecific._1837;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
@@ -19,9 +22,10 @@ import net.sf.rails.ui.swing.gamespecific._1837.GameUIManager_1837;
  *
  */
 public class GameStatus_1837 extends GameStatus {
+    private static final Logger log = LoggerFactory.getLogger(GameStatus_1837.class);
 
     /**
-     * 
+     *
      */
     public GameStatus_1837() {
     }
