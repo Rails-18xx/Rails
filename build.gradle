@@ -84,7 +84,8 @@ dependencies {
     implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.2'
     //implementation 'org.openjfx:javafx-controls:14'
     implementation 'org.apache.httpcomponents:httpclient:4.5.12'
-    implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'org.apache.commons:commons-lang3:3.10'
+    implementation 'org.apache.commons:commons-text:1.8'
 
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
@@ -97,8 +98,8 @@ javafx {
     modules = [ 'javafx.controls' ]
 }
 
-sourceCompatibility = JavaVersion.VERSION_13
-targetCompatibility = JavaVersion.VERSION_13
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 assemble.dependsOn(shadowJar)
 jar {
