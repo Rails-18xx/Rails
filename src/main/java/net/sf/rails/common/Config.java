@@ -1,5 +1,7 @@
 package net.sf.rails.common;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.Util;
 
@@ -41,8 +43,33 @@ public final class Config {
         return ConfigManager.getInstance().getValue(key, defaultValue);
     }
 
+    /**
+     * Returns a boolean based on the config value (ie "yes", "no"). If the config value doesn't exist or is empty null is returned
+     * @param key
+     * @return
+     */
+    public static Boolean getBoolean(String key) {
+        String boolStr = get(key);
+        if ( StringUtils.isBlank(boolStr) ) {
+            return null;
+        }
+        return Util.parseBoolean(boolStr);
+    }
+
+    /**
+     * Returns a boolean based on the config value (ie "yes", "no"). If the config value doesn't exist or is empty then the default value is returned
+     */
+    public static boolean getBoolean(String key, boolean defaultValue) {
+        Boolean bool = getBoolean(key);
+        return bool != null ? bool : defaultValue;
+    }
+
     public static void set(String key, String value) {
         ConfigManager.getInstance().setValue(key, value);
+    }
+
+    public static void setBoolean(String key, boolean value) {
+        set(key, value ? "yes" : "no");
     }
 
     /**
