@@ -12,31 +12,33 @@ import net.sf.rails.game.state.StringState;
  * was coded inside the toString() method
  */
 public abstract class MoneyModel extends RailsModel {
-    
+
     public static final int CASH_DEFAULT = 0;
-    
+
     // Data
     private final StringState fixedText = StringState.create(this, "fixedText");
     private final Currency currency;
-    
+
     // Format Options (with defaults)
-    private final BooleanState suppressZero = BooleanState.create(this, "suppressZero");
+    private final BooleanState suppressZero = new BooleanState(this, "suppressZero");
+
     private boolean suppressInitialZero = false;
     private boolean addPlus = false;
     private boolean displayNegative = false;
- 
+
     protected MoneyModel(RailsItem parent, String id, Currency currency) {
         super(parent, id);
+
         this.currency = currency;
     }
 
     public Currency getCurrency() {
         return currency;
     }
-    
+
     /**
      * @param suppressZero true: displays an empty string instead of a zero value
-     * This is a state variable, thus can be changed after initialization
+     *                     This is a state variable, thus can be changed after initialization
      */
     public void setSuppressZero(boolean suppressZero) {
         this.suppressZero.set(suppressZero);
@@ -44,7 +46,7 @@ public abstract class MoneyModel extends RailsModel {
 
     /**
      * @param suppressInitialZero true: displays an empty string for the initial zero value
-     * This is not a state variable, so do not change after the MoneyModel is used
+     *                            This is not a state variable, so do not change after the MoneyModel is used
      */
     public void setSuppressInitialZero(boolean suppressInitialZero) {
         this.suppressInitialZero = suppressInitialZero;
@@ -52,42 +54,42 @@ public abstract class MoneyModel extends RailsModel {
 
     /**
      * @param addPlus true: adds a plus sign for positive values
-     * This is not a state variable, so do not change after the MoneyModel is used
+     *                This is not a state variable, so do not change after the MoneyModel is used
      */
     public void setAddPlus(boolean addPlus) {
         this.addPlus = addPlus;
     }
-    
+
     /**
      * @param displayNegative true: does not display negative values
-     * This is not a state variable, so do not change after the MoneyModel is used
+     *                        This is not a state variable, so do not change after the MoneyModel is used
      */
-    public void setDisplayNegative(boolean displayNegative){
+    public void setDisplayNegative(boolean displayNegative) {
         this.displayNegative = displayNegative;
     }
 
-    /** 
+    /**
      * @param text fixed text to be displayed instead of money value
-     * using null removes text and displays value again
-     * Remark: Setting the text triggers an update of the model
+     *             using null removes text and displays value again
+     *             Remark: Setting the text triggers an update of the model
      */
-    public void setText (String text) {
+    public void setText(String text) {
         fixedText.set(text); // this triggers the update of the model
     }
-    
+
     /**
      * @return current value of the MoneyModel
      */
     public abstract int value();
-    
-    
+
+
     /**
      * @return formatted value of the MoneyModel
      */
     public String formattedValue() {
         return currency.format(value());
     }
-    
+
     /**
      * @return true if MoneyValue has a value set already
      */
@@ -100,9 +102,9 @@ public abstract class MoneyModel extends RailsModel {
         }
         int amount = this.value();
         if (amount == 0
-            && (suppressZero.value() 
-                    || suppressInitialZero
-                        && !initialised())) {
+                && (suppressZero.value()
+                || suppressInitialZero
+                && !initialised())) {
             return "";
         } else if (amount < 0 && !displayNegative) {
             return "";

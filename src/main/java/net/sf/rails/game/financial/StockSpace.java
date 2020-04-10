@@ -20,7 +20,9 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
 
     /*--- Class attributes ---*/
     /*--- Constants ---*/
-    /** The getId() of the XML tag used to configure a stock space. */
+    /**
+     * The getId() of the XML tag used to configure a stock space.
+     */
     public static final String ELEMENT_ID = "StockSpace";
 
     /**
@@ -29,10 +31,14 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
      */
     public static final String NAME_TAG = "name";
 
-    /** The getId() of the XML attribute for the stock price. */
+    /**
+     * The getId() of the XML attribute for the stock price.
+     */
     public static final String PRICE_TAG = "price";
 
-    /** The getId() of the XML attribute for the stock price type (optional). */
+    /**
+     * The getId() of the XML attribute for the stock price type (optional).
+     */
     public static final String TYPE_TAG = "type";
 
     /**
@@ -41,16 +47,24 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
      */
     public static final String START_SPACE_TAG = "StartSpace";
 
-    /** The getId() of the XML tag for the "below ledge" property. */
+    /**
+     * The getId() of the XML tag for the "below ledge" property.
+     */
     public static final String BELOW_LEDGE_TAG = "BelowLedge";
 
-    /** The getId() of the XML tag for the "left of ledge" property. */
+    /**
+     * The getId() of the XML tag for the "left of ledge" property.
+     */
     public static final String LEFT_OF_LEDGE_TAG = "LeftOfLedge";
 
-    /** The getId() of the XML tag for the "closes company" property. */
+    /**
+     * The getId() of the XML tag for the "closes company" property.
+     */
     public static final String CLOSES_COMPANY_TAG = "ClosesCompany";
 
-    /** The getId() of the XML tag for the "gamn over" property. */
+    /**
+     * The getId() of the XML tag for the "gamn over" property.
+     */
     public static final String GAME_OVER_TAG = "GameOver";
 
     /*--- Instance attributes ---*/
@@ -63,11 +77,11 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
     private boolean closesCompany = false;// For 1856 and other games
     private boolean endsGame = false; // For 1841 and other games
     private boolean start = false; // Company may start here
-    
-    
+
+
     /*--- State fields */
-    private final ArrayListState<PublicCompany> tokens = ArrayListState.create(this, "tokens");
-    private final ArrayListState<PublicCompany> fixedStartPrices = ArrayListState.create(this, "fixedStartPrices");
+    private final ArrayListState<PublicCompany> tokens = new ArrayListState<>(this, "tokens");
+    private final ArrayListState<PublicCompany> fixedStartPrices = new ArrayListState<>(this, "fixedStartPrices");
 
     private static final Logger log =
             LoggerFactory.getLogger(StockSpace.class);
@@ -75,6 +89,7 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
     /*--- Constructors ---*/
     private StockSpace(StockMarket parent, String id, int price, StockSpaceType type) {
         super(parent, id);
+
         this.price = price;
         this.type = type;
 
@@ -91,15 +106,16 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
 
     @Override
     public StockMarket getParent() {
-        return (StockMarket)super.getParent();
+        return (StockMarket) super.getParent();
     }
-    
+
     // No constructors for the booleans. Use the setters.
 
     /*--- Token handling methods ---*/
+
     /**
      * Add a token at the end of the array (i.e. at the bottom of the pile)
-     *
+     * <p>
      * Always returns true;
      *
      * @param company The company object to add.
@@ -111,7 +127,7 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
     }
 
     public boolean addTokenAtStackPosition(PublicCompany company, int stackPosition) {
-        log.debug(company.getId() + " price token added to " + getId() + "  at stack position "+stackPosition);
+        log.debug(company.getId() + " price token added to " + getId() + "  at stack position " + stackPosition);
         tokens.add(stackPosition, company);
         return true;
     }
@@ -151,6 +167,7 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
     }
 
     /*--- Getters ---*/
+
     /**
      * @return TRUE is the square is just above a ledge.
      */
@@ -247,6 +264,7 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
     }
 
     /*--- Setters ---*/
+
     /**
      * @param b See isAboveLedge.
      */

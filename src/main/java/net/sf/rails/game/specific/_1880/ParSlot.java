@@ -16,7 +16,7 @@ public class ParSlot extends RailsAbstractItem {
 
     private final int price;
     private final int index;
-    private final GenericState<PublicCompany> company = GenericState.create(this, "company");
+    private final GenericState<PublicCompany> company = new GenericState<>(this, "company");
     private final StringState lastTrain = StringState.create(this, "lastTrain");
     private final ColorModel companyColors;
     

@@ -12,16 +12,16 @@ import net.sf.rails.game.state.Item;
  * Used to indicate if an player sold a share this round
  */
 public class SoldThisRoundModel extends ColorModel {
-    
-    public static final Color SOLD_COLOR = Color.RED; 
+
+    public static final Color SOLD_COLOR = Color.RED;
     public static final int SOLD_ALPHA = 64;
-    
-    private final BooleanState state =  BooleanState.create(this, "state");
+
+    private final BooleanState state = new BooleanState(this, "state");
 
     private SoldThisRoundModel(Item parent, String id) {
         super(parent, id);
     }
-    
+
     public static SoldThisRoundModel create(Player parent, PublicCompany company) {
         return new SoldThisRoundModel(parent, "SoldThisRoundModel_" + company.getId());
     }
@@ -29,7 +29,7 @@ public class SoldThisRoundModel extends ColorModel {
     public boolean value() {
         return state.value();
     }
-    
+
     public void set(boolean value) {
         state.set(value);
     }
@@ -47,5 +47,5 @@ public class SoldThisRoundModel extends ColorModel {
     public Color getForeground() {
         return null;
     }
-    
+
 }

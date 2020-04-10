@@ -35,11 +35,11 @@ public class StartRound_1837_Coal extends StartRound {
     protected final int bidIncrement;
 
     private final GenericState<SetHomeHexLocation> pendingAction =
-            GenericState.create(this, "pendingAction");
-    private final GenericState<Player> pendingPlayer = GenericState.create(
+            new GenericState<>(this, "pendingAction");
+    private final GenericState<Player> pendingPlayer = new GenericState<>(
             this, "pendingPlayer");
     private final GenericState<PublicCertificate> pendingCertificate =
-            GenericState.create(this, "pendingCertificate");
+            new GenericState<>(this, "pendingCertificate");
 
     protected IntegerState numRoundsPassed = IntegerState.create(this,
             "StartRoundRoundsPassed");

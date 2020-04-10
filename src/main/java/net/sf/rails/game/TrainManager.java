@@ -27,22 +27,17 @@ import org.slf4j.LoggerFactory;
 
 public class TrainManager extends RailsManager implements Configurable {
     // Static attributes
-    protected final List<TrainType> lTrainTypes = new ArrayList<TrainType>();
+    protected final List<TrainType> lTrainTypes = new ArrayList<>();
 
-    protected final Map<String, TrainType> mTrainTypes
-            = new HashMap<String, TrainType>();
+    protected final Map<String, TrainType> mTrainTypes = new HashMap<>();
 
-    protected final List<TrainCertificateType> trainCertTypes
-            = new ArrayList<TrainCertificateType>();
+    protected final List<TrainCertificateType> trainCertTypes = new ArrayList<>();
 
-    protected final Map<String, TrainCertificateType> trainCertTypeMap
-            = new HashMap<String, TrainCertificateType>();
+    protected final Map<String, TrainCertificateType> trainCertTypeMap = new HashMap<>();
 
-    protected final Map<String, Train> trainMap
-            = new HashMap<String, Train>();
+    protected final Map<String, Train> trainMap = new HashMap<>();
 
-    protected final Map<TrainCertificateType, List<Train>> trainsPerCertType
-            = new HashMap<TrainCertificateType, List<Train>>();
+    protected final Map<TrainCertificateType, List<Train>> trainsPerCertType = new HashMap<>();
 
     private boolean removeTrain = false;
 
@@ -51,6 +46,7 @@ public class TrainManager extends RailsManager implements Configurable {
 
     // defines obsolescence
     public enum ObsoleteTrainForType {ALL, EXCEPT_TRIGGERING}
+
     protected ObsoleteTrainForType obsoleteTrainFor = ObsoleteTrainForType.EXCEPT_TRIGGERING; // default is ALL
 
     // Dynamic attributes
@@ -59,16 +55,17 @@ public class TrainManager extends RailsManager implements Configurable {
     protected final HashMapState<String, Integer> lastIndexPerType =
             HashMapState.create(this, "lastIndexPerType");
 
-    protected final BooleanState phaseHasChanged = BooleanState.create(this, "phaseHasChanged");
+    protected final BooleanState phaseHasChanged = new BooleanState(this, "phaseHasChanged");
 
-    protected final BooleanState trainAvailabilityChanged = BooleanState.create(this, "trainAvailablityChanged");
+    protected final BooleanState trainAvailabilityChanged = new BooleanState(this, "trainAvailablityChanged");
 
-    /** Required for the sell-train-to-foreigners feature of some games */
-    protected final BooleanState anyTrainBought = BooleanState.create(this, "anyTrainBought");
+    /**
+     * Required for the sell-train-to-foreigners feature of some games
+     */
+    protected final BooleanState anyTrainBought = new BooleanState(this, "anyTrainBought");
 
     // Triggered phase changes
-    protected final Map<TrainCertificateType, Map<Integer, Phase>> newPhases
-            = new HashMap<TrainCertificateType, Map<Integer, Phase>>();
+    protected final Map<TrainCertificateType, Map<Integer, Phase>> newPhases = new HashMap<>();
 
     // For initialisation only
     protected boolean trainPriceAtFaceValueIfDifferentPresidents = false;
@@ -82,11 +79,7 @@ public class TrainManager extends RailsManager implements Configurable {
         super(parent, id);
     }
 
-    /**
-     * @see net.sf.rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
-     */
     public void configureFromXML(Tag tag) throws ConfigurationException {
-
         TrainType newType;
 
         Tag defaultsTag = tag.getChild("Defaults");
@@ -138,7 +131,7 @@ public class TrainManager extends RailsManager implements Configurable {
         String obsoleteAttribute = tag.getAttributeAsString("ObsoleteTrainFor");
         if (Util.hasValue(obsoleteAttribute)) {
             try {
-                obsoleteTrainFor= ObsoleteTrainForType.valueOf(obsoleteAttribute);
+                obsoleteTrainFor = ObsoleteTrainForType.valueOf(obsoleteAttribute);
             } catch (Exception e) {
                 throw new ConfigurationException(e);
             }
@@ -159,8 +152,8 @@ public class TrainManager extends RailsManager implements Configurable {
 
     }
 
-    public void finishConfiguration (RailsRoot root)
-    throws ConfigurationException {
+    public void finishConfiguration(RailsRoot root)
+            throws ConfigurationException {
 
         Map<Integer, String> newPhaseNames;
         Phase phase;
@@ -194,9 +187,9 @@ public class TrainManager extends RailsManager implements Configurable {
             if (newPhaseNames != null && !newPhaseNames.isEmpty()) {
                 for (int index : newPhaseNames.keySet()) {
                     phaseName = newPhaseNames.get(index);
-                    phase = (Phase)phaseManager.getPhaseByName(phaseName);
+                    phase = (Phase) phaseManager.getPhaseByName(phaseName);
                     if (phase == null) {
-                        throw new ConfigurationException ("New phase '"+phaseName+"' does not exist");
+                        throw new ConfigurationException("New phase '" + phaseName + "' does not exist");
                     }
                     if (newPhases.get(certType) == null) newPhases.put(certType, new HashMap<Integer, Phase>());
                     newPhases.get(certType).put(index, phase);
@@ -215,7 +208,7 @@ public class TrainManager extends RailsManager implements Configurable {
         } else if (discardToString.equalsIgnoreCase("scrapheap")) {
             discardTo = root.getBank().getScrapHeap();
         } else {
-            throw new ConfigurationException ("Discard to only allow to pool or scrapheap");
+            throw new ConfigurationException("Discard to only allow to pool or scrapheap");
         }
 
         // Trains "bought by foreigners" (1844, 1824)
@@ -228,12 +221,13 @@ public class TrainManager extends RailsManager implements Configurable {
                 trainPriceAtFaceValueIfDifferentPresidents);
     }
 
-    /** Create train without throwing exceptions.
+    /**
+     * Create train without throwing exceptions.
      * To be used <b>after</b> completing initialization,
      * i.e. in cloning infinitely available trains.
      */
 
-    public Train cloneTrain (TrainCertificateType certType) {
+    public Train cloneTrain(TrainCertificateType certType) {
         Train train = null;
         List<TrainType> types = certType.getPotentialTrainTypes();
         TrainType initialType = types.size() == 1 ? types.get(0) : null;
@@ -246,12 +240,12 @@ public class TrainManager extends RailsManager implements Configurable {
         return train;
     }
 
-    public void addTrain (Train train) {
+    public void addTrain(Train train) {
         trainMap.put(train.getId(), train);
 
         TrainCertificateType type = train.getCertType();
         if (!trainsPerCertType.containsKey(type)) {
-            trainsPerCertType.put (type, new ArrayList<Train>());
+            trainsPerCertType.put(type, new ArrayList<Train>());
         }
         trainsPerCertType.get(type).add(train);
     }
@@ -260,9 +254,9 @@ public class TrainManager extends RailsManager implements Configurable {
         return trainMap.get(id);
     }
 
-    public int getNewUniqueId (String typeName) {
+    public int getNewUniqueId(String typeName) {
         int newUniqueId = lastIndexPerType.containsKey(typeName) ? lastIndexPerType.get(typeName) + 1 : 0;
-        lastIndexPerType.put (typeName, newUniqueId);
+        lastIndexPerType.put(typeName, newUniqueId);
         return newUniqueId;
     }
 
@@ -271,7 +265,6 @@ public class TrainManager extends RailsManager implements Configurable {
      * This method handles any consequences of new train buying (from the IPO),
      * such as rusting and phase changes. It must be called <b>after</b> the
      * train has been transferred.
-     *
      */
     public void checkTrainAvailability(Train train, Owner from) {
 
@@ -281,7 +274,7 @@ public class TrainManager extends RailsManager implements Configurable {
         TrainCertificateType boughtType, nextType;
         boughtType = train.getCertType();
         if (boughtType == (trainCertTypes.get(newTypeIndex.value()))
-            && Bank.getIpo(this).getPortfolioModel().getTrainOfType(boughtType) == null) {
+                && Bank.getIpo(this).getPortfolioModel().getTrainOfType(boughtType) == null) {
             // Last train bought, make a new type available.
             newTypeIndex.add(1);
             if (newTypeIndex.value() < lTrainTypes.size()) {
@@ -291,8 +284,8 @@ public class TrainManager extends RailsManager implements Configurable {
                         makeTrainAvailable(nextType);
                         trainAvailabilityChanged.set(true);
                         ReportBuffer.add(this, "All " + boughtType.toText()
-                                         + "-trains are sold out, "
-                                         + nextType.toText() + "-trains now available");
+                                + "-trains are sold out, "
+                                + nextType.toText() + "-trains now available");
                     }
                 }
             }
@@ -314,13 +307,13 @@ public class TrainManager extends RailsManager implements Configurable {
         }
     }
 
-    protected void makeTrainAvailable (TrainCertificateType type) {
+    protected void makeTrainAvailable(TrainCertificateType type) {
 
         type.setAvailable();
 
         BankPortfolio to =
-            (type.getInitialPortfolio().equalsIgnoreCase("Pool") ? Bank.getPool(this)
-                    : Bank.getIpo(this));
+                (type.getInitialPortfolio().equalsIgnoreCase("Pool") ? Bank.getPool(this)
+                        : Bank.getIpo(this));
 
         for (Train train : trainsPerCertType.get(type)) {
             to.getPortfolioModel().addTrain(train);
@@ -337,13 +330,13 @@ public class TrainManager extends RailsManager implements Configurable {
         // then check if obsolete type
         if (obsoleteTrainFor == ObsoleteTrainForType.ALL) {
             return true;
-        } else  { // otherwise it is AllExceptTriggering
+        } else { // otherwise it is AllExceptTriggering
             Owner owner = train.getOwner();
             return (owner instanceof PublicCompany && owner != lastBuyingCompany);
         }
     }
 
-    protected void rustTrainType (TrainCertificateType type, Owner lastBuyingCompany) {
+    protected void rustTrainType(TrainCertificateType type, Owner lastBuyingCompany) {
         type.setRusted();
         for (Train train : trainsPerCertType.get(type)) {
             Owner owner = train.getOwner();
@@ -364,7 +357,7 @@ public class TrainManager extends RailsManager implements Configurable {
         if (type.isObsoleting()) {
             ReportBuffer.add(this, LocalText.getText("TrainsObsolete." + obsoleteTrainFor, type.getId()));
         } else {
-            ReportBuffer.add(this, LocalText.getText("TrainsRusted",type.getId()));
+            ReportBuffer.add(this, LocalText.getText("TrainsRusted", type.getId()));
         }
     }
 
@@ -415,7 +408,7 @@ public class TrainManager extends RailsManager implements Configurable {
         return trainCertTypes;
     }
 
-    public TrainCertificateType getCertTypeByName (String name) {
+    public TrainCertificateType getCertTypeByName(String name) {
         return trainCertTypeMap.get(name);
     }
 
@@ -424,18 +417,19 @@ public class TrainManager extends RailsManager implements Configurable {
     }
 
     public void resetAvailabilityChanged() {
-        trainAvailabilityChanged.set(false);;
+        trainAvailabilityChanged.set(false);
+        ;
     }
 
     public boolean hasPhaseChanged() {
         return phaseHasChanged.value();
     }
 
-    public boolean isAnyTrainBought () {
+    public boolean isAnyTrainBought() {
         return anyTrainBought.value();
     }
 
-    public void setAnyTrainBought (boolean newValue) {
+    public void setAnyTrainBought(boolean newValue) {
         if (isAnyTrainBought() != newValue) {
             anyTrainBought.set(newValue);
         }
@@ -446,11 +440,11 @@ public class TrainManager extends RailsManager implements Configurable {
     }
 
     public List<TrainType> parseTrainTypes(String trainTypeName) {
-        List <TrainType> trainTypes = new ArrayList<TrainType>();
+        List<TrainType> trainTypes = new ArrayList<TrainType>();
         TrainType trainType;
         for (String trainTypeSingle : trainTypeName.split(",")) {
             trainType = getTypeByName(trainTypeSingle);
-            if (trainType!= null) {
+            if (trainType != null) {
                 trainTypes.add(trainType);
             } else {
                 continue;

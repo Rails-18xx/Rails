@@ -24,8 +24,7 @@ import rails.game.action.*;
 
 public abstract class Round extends RailsAbstractItem implements RoundFacade {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(Round.class);
+    private static final Logger log = LoggerFactory.getLogger(Round.class);
 
     protected final PossibleActions possibleActions;
     protected final GuiHints guiHints;
@@ -41,10 +40,10 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
     protected final StockMarket stockMarket;
     protected final MapManager mapManager;
 
-    protected final BooleanState wasInterrupted = BooleanState.create(this, "wasInterrupted");
+    protected final BooleanState wasInterrupted = new BooleanState(this, "wasInterrupted");
 
 
-    protected Round (GameManager parent, String id) {
+    protected Round(GameManager parent, String id) {
         super(parent, id);
 
         this.gameManager = parent;
@@ -81,9 +80,9 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
         return false;
     }
 
-    /** Generic stub to resume an interrupted round.
+    /**
+     * Generic stub to resume an interrupted round.
      * Only valid if implemented in a subclass.
-     *
      */
     // called from GameManager
     @Override
@@ -98,39 +97,43 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
     }
 
 
-    /** A stub for processing actions triggered by a phase change.
+    /**
+     * A stub for processing actions triggered by a phase change.
      * Must be overridden by subclasses that need to process such actions.
-     * @param name (required) The name of the action to be executed
+     *
+     * @param name  (required) The name of the action to be executed
      * @param value (optional) The value of the action to be executed, if applicable
      */
     // can this be moved to GameManager, not yet as there are internal dependencies
     // called from GameManager
     @Override
-    public void processPhaseAction (String name, String value) {
+    public void processPhaseAction(String name, String value) {
 
     }
 
-    /** Set the operating companies in their current acting order */
+    /**
+     * Set the operating companies in their current acting order
+     */
     // What is the reason of that to have that here? => move to OR?
     // called only internally
     public List<PublicCompany> setOperatingCompanies() {
-        return setOperatingCompanies (null, null);
+        return setOperatingCompanies(null, null);
     }
 
     // What is the reason of that to have that here => move to OR?
     // this is still required for 18EU StockRound as due to the merger there are companies that have to discard trains
     // called only internally
     public List<PublicCompany> setOperatingCompanies(List<PublicCompany> oldOperatingCompanies,
-            PublicCompany lastOperatingCompany) {
+                                                     PublicCompany lastOperatingCompany) {
 
         Map<Integer, PublicCompany> operatingCompanies =
-            new TreeMap<Integer, PublicCompany>();
+                new TreeMap<Integer, PublicCompany>();
         List<PublicCompany> newOperatingCompanies;
         StockSpace space;
         int key;
         int minorNo = 0;
         boolean reorder = gameManager.isDynamicOperatingOrder()
-        && oldOperatingCompanies != null && lastOperatingCompany != null;
+                && oldOperatingCompanies != null && lastOperatingCompany != null;
 
         int lastOperatingCompanyndex;
         if (reorder) {
@@ -153,9 +156,9 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
                 // is ascending.
                 space = company.getCurrentSpace();
                 key = 1000000 * (999 - space.getPrice())
-                + 10000 * (99 - space.getColumn())
-                + 100 * (space.getRow()+1)
-                + space.getStackPosition(company);
+                        + 10000 * (99 - space.getColumn())
+                        + 100 * (space.getRow() + 1)
+                        + space.getStackPosition(company);
             } else {
                 key = 50 + ++minorNo;
             }
@@ -165,11 +168,13 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
         return new ArrayList<PublicCompany>(operatingCompanies.values());
     }
 
-    /** Can a public company operate? (Default version) */
+    /**
+     * Can a public company operate? (Default version)
+     */
     // What is the reason of that to have that here? => move to OR?
     // is called by setOperatingCompanies above
     // called only internally
-    protected boolean canCompanyOperateThisRound (PublicCompany company) {
+    protected boolean canCompanyOperateThisRound(PublicCompany company) {
         return company.hasFloated() && !company.isClosed();
     }
 
@@ -238,7 +243,7 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
             String cashText = Currency.fromBank(cash, company);
             ReportBuffer.add(this, LocalText.getText("FloatsWithCash",
                     company.getId(),
-                    cashText ));
+                    cashText));
         } else {
             ReportBuffer.add(this, LocalText.getText("Floats",
                     company.getId()));
@@ -272,7 +277,7 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
     }
 
     // called only from 1835 Operating Round?
-    public boolean wasInterrupted () {
+    public boolean wasInterrupted() {
         return wasInterrupted.value();
     }
 

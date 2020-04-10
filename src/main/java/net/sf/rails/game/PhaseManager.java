@@ -13,14 +13,13 @@ import net.sf.rails.game.state.State;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-
 public class PhaseManager extends RailsManager implements Configurable {
     // static data
     private final List<Phase> phaseList = Lists.newArrayList();
     private final Map<String, Phase> phaseMap = Maps.newHashMap();
-    
+
     // dynamic data
-    private final GenericState<Phase> currentPhase = GenericState.create(this, "currentPhase");
+    private final GenericState<Phase> currentPhase = new GenericState<>(this, "currentPhase");
 
     /**
      * Used by Configure (via reflection) only
@@ -28,7 +27,7 @@ public class PhaseManager extends RailsManager implements Configurable {
     public PhaseManager(RailsRoot parent, String id) {
         super(parent, id);
     }
-    
+
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /*
          * Phase class name is now fixed but can be made configurable, if
@@ -49,14 +48,14 @@ public class PhaseManager extends RailsManager implements Configurable {
             previousPhase = phase;
         }
     }
-    
-    public void finishConfiguration (RailsRoot root) 
-    throws ConfigurationException {
-        
+
+    public void finishConfiguration(RailsRoot root)
+            throws ConfigurationException {
+
         for (Phase phase : phaseList) {
             phase.finishConfiguration(root);
         }
-        
+
         Phase initialPhase = phaseList.get(0);
         setPhase(initialPhase, null);
     }
@@ -64,7 +63,7 @@ public class PhaseManager extends RailsManager implements Configurable {
     public Phase getCurrentPhase() {
         return currentPhase.value();
     }
-    
+
     public State getCurrentPhaseModel() {
         return currentPhase;
     }
@@ -79,7 +78,7 @@ public class PhaseManager extends RailsManager implements Configurable {
 
     public void setPhase(Phase phase, Owner lastTrainBuyer) {
         if (phase != null) {
-            phase.setLastTrainBuyer (lastTrainBuyer);
+            phase.setLastTrainBuyer(lastTrainBuyer);
             currentPhase.set(phase);
             phase.activate();
         }
@@ -97,5 +96,5 @@ public class PhaseManager extends RailsManager implements Configurable {
     public List<Phase> getPhases() {
         return phaseList;
     }
-    
+
 }

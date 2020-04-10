@@ -20,11 +20,11 @@ import rails.game.specific._1880.SetupNewPublicDetails_1880;
 public class StartRound_Privates_1880 extends StartRound_Sequential {
 
     private final GenericState<SetupNewPublicDetails_1880> pendingAction = 
-            GenericState.create(this, "pendingAction");
+            new GenericState<>(this, "pendingAction");
     private final GenericState<Player> pendingPlayer = 
-            GenericState.create(this, "pendingPlayer");
+            new GenericState<>(this, "pendingPlayer");
     private final GenericState<PublicCertificate> pendingCertificate = 
-            GenericState.create(this, "pendingCertificate");
+            new GenericState<>(this, "pendingCertificate");
 
     public StartRound_Privates_1880(GameManager parent, String Id) {
         super(parent, Id);

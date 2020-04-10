@@ -43,14 +43,14 @@ public class PlayerManager extends RailsManager implements Configurable {
 
     // dynamic data
     private final PlayerOrderModel playerModel = new PlayerOrderModel(this, "playerModel");
-    private final GenericState<Player> currentPlayer = GenericState.create(this, "currentPlayer");
-    private final GenericState<Player> priorityPlayer = GenericState.create(this, "priorityPlayer");
+    private final GenericState<Player> currentPlayer = new GenericState<>(this, "currentPlayer");
+    private final GenericState<Player> priorityPlayer = new GenericState<>(this, "priorityPlayer");
     private final IntegerState playerCertificateLimit = IntegerState.create(this, "playerCertificateLimit");
 
     /**
      * nextPlayerMessages collects all messages to be displayed to the next player
      */
-    private final ArrayListState<String> nextPlayerMessages = ArrayListState.create(this, "nextPlayerMessages");
+    private final ArrayListState<String> nextPlayerMessages = new ArrayListState<>(this, "nextPlayerMessages");
 
 
     /**
@@ -61,7 +61,6 @@ public class PlayerManager extends RailsManager implements Configurable {
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
-
         int number, startCash, certLimit;
 
         List<Tag> playerTags = tag.getChildren("Players");
@@ -80,7 +79,7 @@ public class PlayerManager extends RailsManager implements Configurable {
     }
 
     // TODO: rename to initPlayers
-    public void setPlayers (List<String> playerNames, Bank bank) {
+    public void setPlayers(List<String> playerNames, Bank bank) {
 
         int startCash = playerStartCash.get(playerNames.size());
 
@@ -95,7 +94,7 @@ public class PlayerManager extends RailsManager implements Configurable {
             cashText = Currency.fromBank(startCash, player);
             ReportBuffer.add(this, LocalText.getText("PlayerIs",
                     playerIndex,
-                    player.getId() ));
+                    player.getId()));
         }
         this.playerNames = playerNamesBuilder.build();
 
@@ -103,8 +102,8 @@ public class PlayerManager extends RailsManager implements Configurable {
         ReportBuffer.add(this, LocalText.getText("BankHas", Bank.format(this, bank.getCash())));
     }
 
-    public void finishConfiguration (RailsRoot root) {
-        for (Player player:playerModel.playerOrder) {
+    public void finishConfiguration(RailsRoot root) {
+        for (Player player : playerModel.playerOrder) {
             player.finishConfiguration(root);
         }
     }
@@ -163,7 +162,7 @@ public class PlayerManager extends RailsManager implements Configurable {
         if (getCurrentPlayer() != player && !nextPlayerMessages.isEmpty()) {
             DisplayBuffer.add(this,
                     LocalText.getText("NextPlayerMessage", getCurrentPlayer().getId()));
-            for (String s:nextPlayerMessages.view())
+            for (String s : nextPlayerMessages.view())
                 DisplayBuffer.add(this, s);
             nextPlayerMessages.clear();
         }
@@ -187,10 +186,10 @@ public class PlayerManager extends RailsManager implements Configurable {
     }
 
     public void setPlayerCertificateLimit(int newLimit) {
-        playerCertificateLimit.set (newLimit);
+        playerCertificateLimit.set(newLimit);
     }
 
-    public IntegerState getPlayerCertificateLimitModel () {
+    public IntegerState getPlayerCertificateLimitModel() {
         return playerCertificateLimit;
     }
 
@@ -213,7 +212,7 @@ public class PlayerManager extends RailsManager implements Configurable {
         return priorityPlayer.value();
     }
 
-    public Player setCurrentToNextPlayerAfter(Player player){
+    public Player setCurrentToNextPlayerAfter(Player player) {
         Player nextPlayer = getNextPlayerAfter(player);
         setCurrentPlayer(nextPlayer);
         return nextPlayer;
@@ -229,17 +228,18 @@ public class PlayerManager extends RailsManager implements Configurable {
 
 
     /**
-     * @boolean include the current player at the start
      * @return a list of the next (active) playerOrder after the current player
      * (including/excluding the current player at the start)
+     * @boolean include the current player at the start
      */
     public ImmutableList<Player> getNextPlayers(boolean include) {
-        return getNextPlayersAfter(currentPlayer.value(), include , false);
+        return getNextPlayersAfter(currentPlayer.value(), include, false);
     }
 
     /**
-     * @param boolean include the argument player at the start
-     * @param boolean include the argument player at the end
+     * @param player         The player
+     * @param includeAtStart boolean include the argument player at the start
+     * @param includeAtEnd   boolean include the argument player at the end
      * @return a list of the next (active) playerOrder after the argument player
      * (including / excluding the argument player)
      */
@@ -273,25 +273,24 @@ public class PlayerManager extends RailsManager implements Configurable {
     }
 
     /**
-    *
-    *@param ascending Boolean to determine if the playerlist will be sorted in ascending or descending order based on their cash
-    *@return Returns the player at index position 0 that is either the player with the most or least cash depending on sort order.
-    */
-    public Player reorderPlayersByCash (boolean ascending) {
+     * @param ascending Boolean to determine if the playerlist will be sorted in ascending or descending order based on their cash
+     * @return Returns the player at index position 0 that is either the player with the most or least cash depending on sort order.
+     */
+    public Player reorderPlayersByCash(boolean ascending) {
 
-       final boolean ascending_f = ascending;
+        final boolean ascending_f = ascending;
 
-       Comparator<Player> cashComparator = (p1, p2) -> ascending_f ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
+        Comparator<Player> cashComparator = (p1, p2) -> ascending_f ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
 
-       playerModel.reorder(cashComparator);
+        playerModel.reorder(cashComparator);
 
-       // only provide some logging
-       int p = 0;
-       for (Player player:playerModel.playerOrder) {
-           log.debug("New player {} is {} (cash={})", ++p, player.getId(), Bank.format(this, player.getCash()));
-       }
+        // only provide some logging
+        int p = 0;
+        for (Player player : playerModel.playerOrder) {
+            log.debug("New player {} is {} (cash={})", ++p, player.getId(), Bank.format(this, player.getCash()));
+        }
 
-       return playerModel.playerOrder.get(0);
+        return playerModel.playerOrder.get(0);
     }
 
     public void reversePlayerOrder(boolean reverse) {
@@ -299,16 +298,17 @@ public class PlayerManager extends RailsManager implements Configurable {
     }
 
     public PlayerOrderModel getPlayerOrderModel() {
-       return playerModel;
+        return playerModel;
     }
 
     public static class PlayerOrderModel extends RailsModel {
 
-        private final ArrayListState<Player> playerOrder = ArrayListState.create(this, "playerOrder");
-        private final BooleanState reverse = BooleanState.create(this, "reverse");
+        private final ArrayListState<Player> playerOrder = new ArrayListState<>(this, "playerOrder");
+        private final BooleanState reverse = new BooleanState(this, "reverse");
 
         private PlayerOrderModel(PlayerManager parent, String id) {
             super(parent, id);
+
             reverse.set(false);
         }
 
@@ -330,7 +330,7 @@ public class PlayerManager extends RailsManager implements Configurable {
             Ordering<Player> ordering = Ordering.from(comparator);
             List<Player> newOrder = ordering.sortedCopy(playerOrder.view());
             playerOrder.setTo(newOrder);
-            for (int i=0; i<newOrder.size(); i++) {
+            for (int i = 0; i < newOrder.size(); i++) {
                 Player player = newOrder.get(i);
                 player.setIndex(i);
             }

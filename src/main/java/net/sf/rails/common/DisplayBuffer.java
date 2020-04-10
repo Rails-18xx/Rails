@@ -5,7 +5,6 @@ import net.sf.rails.game.model.RailsModel;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.util.Util;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,16 +16,12 @@ public class DisplayBuffer extends RailsModel {
 
     private static final Logger log = LoggerFactory.getLogger(DisplayBuffer.class);
 
-    private final ArrayListState<String> buffer = ArrayListState.create(this, "buffer");
+    private final ArrayListState<String> buffer = new ArrayListState(this, "buffer");
 
-    private final BooleanState autoDisplay = BooleanState.create(this, "autoDisplay");
+    private final BooleanState autoDisplay = new BooleanState(this, "autoDisplay");
 
-    private DisplayBuffer(ReportManager parent, String id) {
+    public DisplayBuffer(ReportManager parent, String id) {
         super(parent, id);
-    }
-
-    public static DisplayBuffer create(ReportManager parent, String id) {
-        return new DisplayBuffer(parent, id);
     }
 
     @Override
@@ -36,7 +31,7 @@ public class DisplayBuffer extends RailsModel {
 
     /**
      * Add a message to DisplayBuffer
-    */
+     */
     public void add(String message) {
         add(message, true);
     }
@@ -53,7 +48,9 @@ public class DisplayBuffer extends RailsModel {
         }
     }
 
-    /** Get the current message buffer, and clear it */
+    /**
+     * Get the current message buffer, and clear it
+     */
     // TODO: (Rails2.0): Refactor this a little bit (use Model facilities)
     public String[] get() {
         if (buffer.size() > 0) {
@@ -69,7 +66,7 @@ public class DisplayBuffer extends RailsModel {
         return buffer.size();
     }
 
-    public boolean getAutoDisplay () {
+    public boolean getAutoDisplay() {
         return autoDisplay.value();
     }
 

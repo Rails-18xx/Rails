@@ -1,6 +1,7 @@
 package net.sf.rails.common;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Streams;
 import com.google.common.primitives.Ints;
 
 /**
@@ -12,27 +13,26 @@ import com.google.common.primitives.Ints;
 public class GameInfo implements Comparable<GameInfo> {
 
     private final int minPlayers;
+
     private final int maxPlayers;
 
     private final String name;
+
     private final String note;
+
     private final String description;
-    
+
     private final int ordering;
-    
-    private GameInfo(int minPlayers, int maxPlayers, String name, String note,
-            String description, int ordering) {
+
+    private GameInfo(int minPlayers, int maxPlayers, String name, String note, String description, int ordering) {
+        super();
+
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
         this.name = name;
         this.note = note;
         this.description = description;
         this.ordering = ordering;
-    }
-    
-    @Deprecated
-    public static GameInfo createLegacy(String name) {
-        return new GameInfo(0, 0, name, null, null, 0);
     }
 
     public int getMinPlayers() {
@@ -54,11 +54,11 @@ public class GameInfo implements Comparable<GameInfo> {
     public String getDescription() {
         return description;
     }
-    
+
     public int getOrdering() {
         return ordering;
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(name);
@@ -71,7 +71,7 @@ public class GameInfo implements Comparable<GameInfo> {
         final GameInfo other = (GameInfo) obj;
         return Objects.equal(this.name, other.name);
     }
-    
+
     @Override
     public String toString() {
         return name;
@@ -80,48 +80,68 @@ public class GameInfo implements Comparable<GameInfo> {
     public int compareTo(GameInfo other) {
         return Ints.compare(this.ordering, other.ordering);
     }
-    
+
     public static GameInfo findGame(Iterable<GameInfo> gameList, String gameName) {
-        for (GameInfo game:gameList) { 
-            if (Objects.equal(game.name,gameName)) {
-                return game;
-            }
-        }
-        return null;
+        return Streams.stream(gameList)
+                .filter(game -> Objects.equal(game.name, gameName))
+                .findFirst()
+                .orElse(null);
     }
 
     public static Builder builder() {
         return new GameInfo.Builder();
     }
-    
+
     public static class Builder {
         private int minPlayers;
         private int maxPlayers;
         private String name;
         private String note;
         private String description;
+        private int ordering;
 
-        private Builder() {};
-        
-        public GameInfo build(int ordering) {
+        private Builder() {
+            // do nothing
+        }
+
+        public Builder withOrdering(int ordering) {
+            this.ordering = ordering;
+
+            return this;
+        }
+
+        public Builder withMinPlayers(int minPlayers) {
+            this.minPlayers = minPlayers;
+
+            return this;
+        }
+
+        public Builder withMaxPlayers(int maxPlayers) {
+            this.maxPlayers = maxPlayers;
+
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+
+            return this;
+        }
+
+        public Builder withNote(String note) {
+            this.note = note;
+
+            return this;
+        }
+
+        public Builder withDescription(String description) {
+            this.description = description;
+
+            return this;
+        }
+
+        public GameInfo build() {
             return new GameInfo(minPlayers, maxPlayers, name, note, description, ordering);
         }
-        
-        public void setMinPlayers(int minPlayers) {
-            this.minPlayers = minPlayers;
-        }
-        public void setMaxPlayers(int maxPlayers) {
-            this.maxPlayers = maxPlayers;
-        }
-        public void setName(String name) {
-            this.name = name;
-        }
-        public void setNote(String note) {
-            this.note = note;
-        }
-        public void setDescription(String description) {
-            this.description = description;
-        }
     }
-
 }

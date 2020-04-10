@@ -22,8 +22,8 @@ public class BooleanStateTest {
     @Before
     public void setUp() {
         root = StateTestUtils.setUpRoot();
-        stateDefault = BooleanState.create(root,  DEFAULT_ID);
-        stateInit = BooleanState.create(root, INIT_ID, true);
+        stateDefault = new BooleanState(root,  DEFAULT_ID);
+        stateInit = new BooleanState(root, INIT_ID, true);
         
     }
 

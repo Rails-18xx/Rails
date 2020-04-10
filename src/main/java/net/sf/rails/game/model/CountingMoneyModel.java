@@ -12,20 +12,21 @@ public class CountingMoneyModel extends MoneyModel {
 
     private CountingMoneyModel(RailsItem parent, String id, int amount, boolean init, Currency currency) {
         super(parent, id, currency);
+
         value = IntegerState.create(this, "counting", amount);
-        initialised = BooleanState.create(this, "initialised", init);
+        initialised = new BooleanState(this, "initialised", init);
     }
-    
-    public static CountingMoneyModel create(RailsItem parent, String id, boolean init){
+
+    public static CountingMoneyModel create(RailsItem parent, String id, boolean init) {
         Currency currency = parent.getRoot().getBank().getCurrency();
         return new CountingMoneyModel(parent, id, 0, init, currency);
     }
-    
-    public static CountingMoneyModel create(RailsItem parent, String id, int amount){
+
+    public static CountingMoneyModel create(RailsItem parent, String id, int amount) {
         Currency currency = parent.getRoot().getBank().getCurrency();
         return new CountingMoneyModel(parent, id, amount, true, currency);
     }
-    
+
     /**
      * @param amount the new cash amount
      */
@@ -33,7 +34,7 @@ public class CountingMoneyModel extends MoneyModel {
         if (!initialised.value()) {
             initialised.set(true);
         }
-        value.set(amount); 
+        value.set(amount);
     }
 
     // Countable interface
@@ -55,7 +56,6 @@ public class CountingMoneyModel extends MoneyModel {
     public boolean initialised() {
         return initialised.value();
     }
-
 
 
 }

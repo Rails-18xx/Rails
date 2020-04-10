@@ -12,20 +12,22 @@ import net.sf.rails.game.state.Purse;
 public class PurseMoneyModel extends MoneyModel {
 
     private final Purse purse;
-    
+
     private final BooleanState initialised;
 
     private PurseMoneyModel(RailsMoneyOwner parent, String id, Boolean init, Currency currency) {
         super(parent, id, currency);
-        purse = Purse.create(parent, "purse", currency);
-        purse.addModel(this);
-        initialised = BooleanState.create(this, "initialised", init);
+
+        this.purse = Purse.create(parent, "purse", currency);
+        this.purse.addModel(this);
+
+        this.initialised = new BooleanState(this, "initialised", init);
     }
-    
+
     public static PurseMoneyModel create(Bank parent, String id, Boolean init, Currency currency) {
         return new PurseMoneyModel(parent, id, init, currency);
     }
-    
+
     public static PurseMoneyModel create(RailsMoneyOwner parent, String id, Boolean init) {
         Currency currency = parent.getRoot().getBank().getCurrency();
         return new PurseMoneyModel(parent, id, init, currency);
@@ -33,13 +35,13 @@ public class PurseMoneyModel extends MoneyModel {
 
     @Override
     public RailsMoneyOwner getParent() {
-        return (RailsMoneyOwner)super.getParent();
+        return (RailsMoneyOwner) super.getParent();
     }
-    
+
     public Purse getPurse() {
         return purse;
     }
-    
+
     // MoneyModel abstracts
     @Override
     public int value() {

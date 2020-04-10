@@ -52,7 +52,7 @@ public interface Company extends RailsOwner, Configurable, Cloneable {
 //    protected int certLimitCount = 2;
 //
 //    /** Closed state */
-//    protected final BooleanState closedObject = BooleanState.create(this, "closed", false);
+//    protected final BooleanState closedObject = new BooleanState(this, "closed", false);
 //
     /** Only to be called from subclasses */
 //    public void configureFromXML(Tag tag) throws ConfigurationException {
