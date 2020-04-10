@@ -21,13 +21,9 @@ repositories {
 
 // Rails variables
 version = '2.2-beta'
-
-//def railsCodebase = 'rails.sourceforge.net'
-def railsMainClass = 'net.sf.rails.util.RunGame'
+description = 'Rails is a moderator program for 18xx games'
 
 def railsVendor = 'Rails project'
-//def railsHomepage = 'http://rails.sf.net'
-def railsDescription = 'Rails is a moderator program for 18xx games'
 def railsIcon = 'rails.ico'
 def railsCopyright = 'GPL'
 
@@ -124,18 +120,10 @@ task buildLinuxPackage(type: Exec) {
             '--description', '"Rails is a moderator program for 18xx games"',
             // '--icon', './native/rails.png',
             // '--file-associations', './native/rails-linux-association.properties',
-            '--app-version', '2.1.0',
-            '--input', 'target',
+            '--app-version', '2.2.0',
+            '--input', 'build/libs',
             '--main-jar', 'rails-2.2-beta-all.jar',
             '--linux-package-name', 'rails-18xx',
             '--linux-app-category', 'games',
             '--linux-shortcut'
-
-    //store the output instead of printing to the console:
-    standardOutput = new ByteArrayOutputStream()
-
-    //extension method stopTomcat.output() can be used to obtain the output:
-    ext.output = {
-        return standardOutput.toString()
-    }
 }
