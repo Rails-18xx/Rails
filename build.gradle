@@ -107,7 +107,7 @@ gitProperties {
 }
 
 def stringify(string) {
-    return '"' + string + '"';
+    return '"' + string + '"'
 }
 
 def appVersion() {
@@ -128,7 +128,7 @@ task buildDebPackage(type: Exec) {
             '--license-file', licenceFile,
             '--icon', './native/rails.png',
             '--file-associations', './native/rails-linux-association.properties',
-            '--app-version', appVersion,
+            '--app-version', appVersion(),
             '--input', 'build/libs',
             '--main-jar', "rails-${version}-all.jar",
             '--linux-package-name', 'rails-18xx',
