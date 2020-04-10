@@ -35,10 +35,10 @@ jobs:
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
-        run: ./gradle clean build
+        run: ./gradlew clean build
       - name: Debug before
         run: ll build
       - name: Create Installer
-        run: ./gradle buildLinuxPackage
+        run: ./gradlew buildLinuxPackage
       - name: Debug After
         run: ll
