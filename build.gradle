@@ -23,9 +23,9 @@ repositories {
 version = '2.2-beta'
 description = 'Rails is a moderator program for 18xx games'
 
-def appName = 'Rails (18xx)'
+def appName = 'rails-18xx'
 def vendor = 'The Rails project team'
-def licenceFile = "./LICENCE"
+def licenceFile = "./LICENSE"
 
 dependencies {
     implementation 'commons-io:commons-io:2.6'
