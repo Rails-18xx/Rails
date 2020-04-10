@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 
@@ -23,7 +25,7 @@ public class DiscardTrain extends PossibleORAction {
 
     // Server settings
     transient private Set<Train> ownedTrains;
-    private String[] ownedTrainsUniqueIds;
+    private final String[] ownedTrainsUniqueIds;
 
     /**
      * True if discarding trains is mandatory
@@ -36,12 +38,12 @@ public class DiscardTrain extends PossibleORAction {
 
     public static final long serialVersionUID = 1L;
 
-    public DiscardTrain(PublicCompany company, Set<Train> trains) {
+    public DiscardTrain(PublicCompany company, @NotNull Set<Train> ownedTrains) {
         super(company.getRoot());
-        this.ownedTrains = trains;
-        this.ownedTrainsUniqueIds = new String[trains.size()];
+        this.ownedTrains = ownedTrains;
+        this.ownedTrainsUniqueIds = new String[ownedTrains.size()];
         int i = 0;
-        for ( Train train : trains ) {
+        for ( Train train : ownedTrains ) {
             ownedTrainsUniqueIds[i++] = train.getId();
         }
         this.company = company;
@@ -123,8 +125,8 @@ public class DiscardTrain extends PossibleORAction {
             discardedTrain = trainManager.getTrainByUniqueId(discardedTrainUniqueId);
         }
 
+        ownedTrains = new HashSet<>();
         if ( ownedTrainsUniqueIds != null && ownedTrainsUniqueIds.length > 0 ) {
-            ownedTrains = new HashSet<>();
             for ( String ownedTrainsUniqueId : ownedTrainsUniqueIds ) {
                 ownedTrains.add(trainManager.getTrainByUniqueId(ownedTrainsUniqueId));
             }

@@ -238,7 +238,7 @@ public class MapCorrectionAction extends CorrectionAction {
 
         TileManager tmgr = getRoot().getTileManager();
         if (sTileIds != null && sTileIds.length > 0) {
-            tiles = new ArrayList<Tile>();
+            tiles = new ArrayList<>();
             for ( String sTileId : sTileIds ) {
                 tiles.add(tmgr.getTile(sTileId));
             }
@@ -246,7 +246,7 @@ public class MapCorrectionAction extends CorrectionAction {
 
         // FIXME: Rewrite this with Rails1.x version flag
         if (tileIds != null && tileIds.length > 0) {
-            tiles = new ArrayList<Tile>();
+            tiles = new ArrayList<>();
             for ( int tileId : tileIds ) {
                 tiles.add(tmgr.getTile(String.valueOf(tileId)));
             }

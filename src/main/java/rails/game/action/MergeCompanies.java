@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.Objects;
 
@@ -38,14 +41,13 @@ public class MergeCompanies extends PossibleAction {
     /**
      * Common constructor.
      */
-    public MergeCompanies(PublicCompany mergingCompany,
-            List<PublicCompany> targetCompanies, boolean forced) {
+    public MergeCompanies(PublicCompany mergingCompany, @NotNull List<PublicCompany> targetCompanies, boolean forced) {
         super(mergingCompany.getRoot()); // not defined by an activity yet
         this.mergingCompany = mergingCompany;
         this.mergingCompanyName = mergingCompany.getId();
         this.targetCompanies = targetCompanies;
         StringBuilder b = new StringBuilder();
-        canReplaceToken = new ArrayList<Boolean>(targetCompanies.size());
+        canReplaceToken = new ArrayList<>(targetCompanies.size());
         for (PublicCompany target : targetCompanies) {
             if (b.length() > 0) b.append(",");
             if (target == null) {
@@ -66,7 +68,7 @@ public class MergeCompanies extends PossibleAction {
 
     public MergeCompanies(PublicCompany mergingCompany,
             PublicCompany targetCompany, boolean forced) {
-        this (mergingCompany, Arrays.asList(targetCompany), forced);
+        this (mergingCompany, Collections.singletonList(targetCompany), forced);
     }
 
     /** Required for deserialization */
@@ -115,8 +117,7 @@ public class MergeCompanies extends PossibleAction {
         MergeCompanies action = (MergeCompanies)pa;
         boolean options = Objects.equal(this.mergingCompany, action.mergingCompany)
                 && Objects.equal(this.targetCompanies, action.targetCompanies)
-                && Objects.equal(this.canReplaceToken, action.canReplaceToken)
-        ;
+                && Objects.equal(this.canReplaceToken, action.canReplaceToken);
 
         // finish if asOptions check
         if (asOption) return options;
@@ -124,8 +125,7 @@ public class MergeCompanies extends PossibleAction {
         // check asAction attributes
         return options
                 && Objects.equal(this.selectedTargetCompany, action.selectedTargetCompany)
-                && Objects.equal(this.replaceToken, action.replaceToken)
-        ;
+                && Objects.equal(this.replaceToken, action.replaceToken);
     }
 
     @Override
@@ -154,7 +154,6 @@ public class MergeCompanies extends PossibleAction {
         CompanyManager cmgr = getCompanyManager();
         mergingCompany = cmgr.getPublicCompany(mergingCompanyName);
 
-        // TODO: verify we should create this array (see issue found with LayBaseToken)
         targetCompanies = new ArrayList<>();
         for (String name : targetCompanyNames.split(",")) {
             if (name.equals("null")) {

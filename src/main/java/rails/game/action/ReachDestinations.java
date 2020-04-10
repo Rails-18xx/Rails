@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.google.common.base.Objects;
 
 import net.sf.rails.game.CompanyManager;
@@ -23,7 +25,7 @@ public class ReachDestinations extends PossibleORAction {
 
     // Server-side settings
     transient protected List<PublicCompany> possibleCompanies;
-    protected String possibleCompanyNames = "";
+    protected String possibleCompanyNames;
 
     // Client-side settings
     transient protected List<PublicCompany> reachedCompanies;
@@ -31,11 +33,11 @@ public class ReachDestinations extends PossibleORAction {
 
     public static final long serialVersionUID = 1L;
 
-    public ReachDestinations (RailsRoot root, List<PublicCompany> companies) {
+    public ReachDestinations (RailsRoot root, @NotNull List<PublicCompany> possibleCompanies) {
         super(root);
-        possibleCompanies = companies;
+        this.possibleCompanies = possibleCompanies;
         StringBuilder b = new StringBuilder();
-        for (PublicCompany company : companies) {
+        for (PublicCompany company : possibleCompanies) {
             if (b.length() > 0) b.append(",");
             b.append (company.getId());
         }
@@ -51,8 +53,6 @@ public class ReachDestinations extends PossibleORAction {
     }
 
     public void addReachedCompany (PublicCompany company) {
-        if (reachedCompanies == null)
-            reachedCompanies = new ArrayList<PublicCompany>();
         reachedCompanies.add (company);
         if (reachedCompanyNames.length() > 0) {
             reachedCompanyNames += ",";
@@ -88,18 +88,15 @@ public class ReachDestinations extends PossibleORAction {
                 RailsObjects.stringHelper(this)
                     .addToString("possibleCompanies", possibleCompanies)
                     .addToStringOnlyActed("reachedCompanies", reachedCompanies)
-                    .toString()
-        ;
+                    .toString();
     }
 
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
         CompanyManager cmgr = getCompanyManager();
 
-        possibleCompanies = new ArrayList<PublicCompany>();
+        possibleCompanies = new ArrayList<>();
         if (Util.hasValue(possibleCompanyNames)) {
             for (String cname : possibleCompanyNames.split(",")) {
                 if (!"".equals(cname)) {
@@ -107,8 +104,9 @@ public class ReachDestinations extends PossibleORAction {
                 }
             }
         }
-        reachedCompanies = new ArrayList<PublicCompany>();
+
         if (Util.hasValue(reachedCompanyNames)) {
+            reachedCompanies = new ArrayList<>();
             for (String cname : reachedCompanyNames.split(",")) {
                 if (!"".equals(cname)) {
                     reachedCompanies.add(cmgr.getPublicCompany(cname));

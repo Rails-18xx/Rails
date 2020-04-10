@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.sf.rails.game.RailsRoot;
 import rails.game.action.PossibleAction;
 import net.sf.rails.game.Company;
@@ -30,9 +32,9 @@ public class FoldIntoPrussian extends PossibleAction {
 
     public static final long serialVersionUID = 1L;
 
-    public FoldIntoPrussian(RailsRoot root, List<Company> companies) {
+    public FoldIntoPrussian(RailsRoot root, @NotNull List<Company> foldableCompanies) {
         super(root); // not defined by an activity yet
-        this.foldableCompanies = companies;
+        this.foldableCompanies = foldableCompanies;
         foldableCompanyNames = Util.joinNamesWithDelimiter(foldableCompanies, ",");
     }
 
@@ -45,11 +47,10 @@ public class FoldIntoPrussian extends PossibleAction {
     }
 
 
-    public void setFoldedCompanies(List<Company> foldedCompanies) {
+    public void setFoldedCompanies(@NotNull List<Company> foldedCompanies) {
         this.foldedCompanies = foldedCompanies;
         foldedCompanyNames = Util.joinNamesWithDelimiter (foldedCompanies, ",");
     }
-
 
     public List<Company> getFoldableCompanies() {
         return foldableCompanies;
@@ -111,8 +112,9 @@ public class FoldIntoPrussian extends PossibleAction {
 
         Company company;
         CompanyManager cmgr = getCompanyManager();
+
+        foldableCompanies = new ArrayList<>();
         if (foldableCompanyNames != null) {
-            foldableCompanies = new ArrayList<>();
             for (String name : foldableCompanyNames.split(",")) {
                 company = cmgr.getPublicCompany(name);
                 if (company == null) company = cmgr.getPrivateCompany(name);

@@ -49,7 +49,6 @@ public class StartCompany_18EU extends StartCompany {
     }
 
     public void setMinorsToMerge(List<PublicCompany> minors) {
-
         minorsToMerge = minors;
 
         if ( minorsToMerge != null ) {
@@ -59,6 +58,8 @@ public class StartCompany_18EU extends StartCompany {
                 b.append(minor.getId());
             }
             minorsToMergeNames = b.toString();
+        } else {
+            minorsToMergeNames = null;
         }
     }
 
@@ -72,6 +73,8 @@ public class StartCompany_18EU extends StartCompany {
                 b.append(station.getSpecificId());
             }
             availableHomeStationNames = b.toString();
+        } else {
+            availableHomeStationNames = null;
         }
     }
 

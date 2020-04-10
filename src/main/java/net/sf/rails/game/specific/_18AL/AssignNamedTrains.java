@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.google.common.base.Objects;
 
 import net.sf.rails.game.RailsRoot;
@@ -23,61 +25,52 @@ import rails.game.action.UseSpecialProperty;
 // TODO: Rails 2.0 This seems a pretty complicated action. Is this really required for the task?
 public class AssignNamedTrains extends UseSpecialProperty {
 
-    transient private List<NameableTrain> nameableTrains;
-    private String[] trainIds;
-    private int numberOfTrains;
-    private int numberOfTokens;
+    final transient private List<NameableTrain> nameableTrains = new ArrayList<>();
+    private final String[] trainIds;
 
-    transient private List<NameableTrain> preTrainPerToken;
-    private String[] preTrainds;
+    final transient private List<NameableTrain> preTrainPerToken = new ArrayList<>();
+    private final String[] preTrainds;
 
-    transient private List<NameableTrain> postTrainPerToken;
-    private String[] postTrainds;
+    transient private List<NameableTrain> postTrainPerToken = new ArrayList<>();
+    private final String[] postTrainds;
 
     public static final long serialVersionUID = 1L;
 
-    public AssignNamedTrains(NameTrains namedTrainsSpecialProperty,
-            Set<Train> trains) {
+    public AssignNamedTrains(NameTrains namedTrainsSpecialProperty, @NotNull Set<Train> trains) {
         super(namedTrainsSpecialProperty);
 
-        numberOfTrains = trains.size();
+        int numberOfTrains = trains.size();
         List<NamedTrainToken> tokens = namedTrainsSpecialProperty.getTokens();
-        numberOfTokens = tokens.size();
+        int numberOfTokens = tokens.size();
 
-        nameableTrains = new ArrayList<NameableTrain>(numberOfTrains);
         for (Train train : trains) {
             nameableTrains.add((NameableTrain) train);
         }
-        preTrainPerToken = new ArrayList<NameableTrain>(numberOfTokens);
-        postTrainPerToken = new ArrayList<NameableTrain>(numberOfTokens);
-
         trainIds = new String[numberOfTrains];
         preTrainds = new String[numberOfTokens];
         postTrainds = new String[numberOfTokens];
 
-        for (int i = 0; i < numberOfTokens; i++) {
+        for ( int i = 0; i < numberOfTokens; i++) {
             preTrainPerToken.add(null);
         }
 
-        if (trains != null) {
-            int trainIndex = 0;
-            int tokenIndex;
-            for (NameableTrain train : nameableTrains) {
-                trainIds[trainIndex] = train.getId();
-                NamedTrainToken token = train.getNameToken();
-                if (token != null) {
-                    preTrainPerToken.set(tokens.indexOf(token), train);
-                    tokenIndex = tokens.indexOf(token);
-                    preTrainds[tokenIndex] = train.getId();
-                }
-                trainIndex++;
+        int trainIndex = 0;
+        int tokenIndex;
+        for (NameableTrain train : nameableTrains) {
+            trainIds[trainIndex] = train.getId();
+            NamedTrainToken token = train.getNameToken();
+            if (token != null) {
+                preTrainPerToken.set(tokens.indexOf(token), train);
+                tokenIndex = tokens.indexOf(token);
+                preTrainds[tokenIndex] = train.getId();
             }
+            trainIndex++;
         }
     }
 
     @Override
     public String toMenu() {
-        return ((NameTrains) specialProperty).toMenu();
+        return specialProperty.toMenu();
     }
 
     public List<NamedTrainToken> getTokens() {
@@ -149,16 +142,12 @@ public class AssignNamedTrains extends UseSpecialProperty {
 
         TrainManager trainManager = root.getTrainManager();
 
-        // TODO: verify we should create this array (see issue found with LayBaseToken)
-        nameableTrains = new ArrayList<>();
         if (trainIds != null) {
             for (String trainId : trainIds) {
                 nameableTrains.add((NameableTrain) trainManager.getTrainByUniqueId(trainId));
             }
         }
 
-        // TODO: verify we should create this array (see issue found with LayBaseToken)
-        preTrainPerToken = new ArrayList<>(numberOfTrains);
         if (preTrainds != null) {
             for (String trainId : preTrainds) {
                 if (trainId != null && trainId.length() > 0) {
@@ -170,8 +159,6 @@ public class AssignNamedTrains extends UseSpecialProperty {
             }
         }
 
-        // TODO: verify we should create this array (see issue found with LayBaseToken)
-        postTrainPerToken = new ArrayList<>(numberOfTrains);
         if (postTrainds != null) {
             for (String trainId : postTrainds) {
                 if (trainId != null && trainId.length() > 0) {
