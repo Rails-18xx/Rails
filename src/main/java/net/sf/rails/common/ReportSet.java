@@ -1,12 +1,14 @@
 package net.sf.rails.common;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.Lists;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
 import net.sf.rails.game.state.ChangeSet;
 import net.sf.rails.util.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,8 +31,7 @@ public class ReportSet {
     private final String htmlText;
     private final String htmlTextActive;
 
-    @Builder(setterPrefix = "with")
-    public ReportSet(ChangeSet changeSet, @Singular List<String> messages) {
+    public ReportSet(ChangeSet changeSet, List<String> messages) {
         super();
 
         this.changeSet = changeSet;
@@ -91,5 +92,35 @@ public class ReportSet {
         return MoreObjects.toStringHelper(this)
                 .addValue(changeSet)
                 .toString();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private ChangeSet changeSet;
+
+        private final List<String> messages = Lists.newArrayList();
+
+        private Builder() {
+            // do nothing
+        }
+
+        public Builder withChangeSet(ChangeSet changeSet) {
+            this.changeSet = changeSet;
+
+            return this;
+        }
+
+        public Builder withMessage(String message) {
+            this.messages.add(message);
+
+            return this;
+        }
+
+        public ReportSet build() {
+            return new ReportSet(changeSet, messages);
+        }
     }
 }
