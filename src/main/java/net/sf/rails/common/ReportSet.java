@@ -2,13 +2,10 @@ package net.sf.rails.common;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Singular;
 import net.sf.rails.game.state.ChangeSet;
 import net.sf.rails.util.Util;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

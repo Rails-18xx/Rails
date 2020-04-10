@@ -1,7 +1,6 @@
 package net.sf.rails.util;
 
 import com.google.common.collect.Lists;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.rails.common.*;
 import net.sf.rails.common.parser.ConfigurationException;
@@ -24,7 +23,6 @@ import java.util.SortedMap;
  * GameLoader is responsible to load a saved Rails game
  */
 @Slf4j
-@NoArgsConstructor
 public class GameLoader {
 
     // game data
@@ -34,6 +32,10 @@ public class GameLoader {
     private ObjectInputStream ois = null;
     private RailsRoot railsRoot = null;
     private Exception exception = null;
+
+    public GameLoader() {
+        // do nothing
+    }
 
     public static void loadAndStartGame(File gameFile) {
         SplashWindow splashWindow = new SplashWindow(true, gameFile.getAbsolutePath());

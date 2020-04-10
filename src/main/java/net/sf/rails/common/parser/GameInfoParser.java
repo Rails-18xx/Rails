@@ -2,7 +2,6 @@ package net.sf.rails.common.parser;
 
 import com.google.common.collect.Sets;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import net.sf.rails.common.GameInfo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -12,7 +11,6 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@NoArgsConstructor
 public class GameInfoParser {
 
     public final static String DIRECTORY = "data";
@@ -22,6 +20,10 @@ public class GameInfoParser {
 
     @Getter
     private String credits;
+
+    public GameInfoParser() {
+        // do nothing
+    }
 
     public SortedSet<GameInfo> processGameList() throws ConfigurationException {
         final Document doc = parser.getDocument(FILENAME, DIRECTORY);

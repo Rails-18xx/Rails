@@ -3,7 +3,7 @@ package net.sf.rails.common;
 import com.google.common.base.Objects;
 import com.google.common.collect.Streams;
 import com.google.common.primitives.Ints;
-import lombok.*;
+import lombok.Getter;
 
 /**
  * GameInfo holds basic information about the game, such as:

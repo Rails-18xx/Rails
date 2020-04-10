@@ -38,12 +38,13 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     private ChangeStack changeStack; // initialized via init()
 
     // dynamic data
-    private ReportSet.ReportSetBuilder currentReportBuilder;
+    private ReportSet.Builder currentReportBuilder;
     private ReportBuffer.Observer observer;
 
 
     private ReportBuffer(ReportManager parent, String id) {
         super(parent, id);
+
         currentReportBuilder = ReportSet.builder();
     }
 

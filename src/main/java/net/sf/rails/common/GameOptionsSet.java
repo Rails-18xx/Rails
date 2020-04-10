@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,11 +13,16 @@ import java.util.SortedSet;
 /**
  * A class to store several GameOptions, including values
  */
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GameOptionsSet {
 
     @Getter
     private final Map<String, String> options;
+
+    private GameOptionsSet(Map<String, String> options) {
+        super();
+
+        this.options = options;
+    }
 
     public String get(String option) {
         return options.get(option);
@@ -28,11 +32,14 @@ public class GameOptionsSet {
         return new Builder();
     }
 
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Builder {
         private final SortedSet<GameOption> options = Sets.newTreeSet();
 
         private int numberOfPlayers;
+
+        private Builder() {
+            // do nothing
+        }
 
         public Builder withNumberOfPlayers(int numberOfPlayers) {
             this.numberOfPlayers = numberOfPlayers;
