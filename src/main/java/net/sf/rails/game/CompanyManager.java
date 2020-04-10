@@ -23,25 +23,20 @@ public class CompanyManager extends RailsManager implements Configurable {
     public static final String COMPONENT_NAME = "CompanyManager";
 
     /** A List with all private companies */
-    private final List<PrivateCompany> lPrivateCompanies =
-            new ArrayList<>();
+    private final List<PrivateCompany> lPrivateCompanies = new ArrayList<>();
 
     /** A List with all public companies */
-    private final List<PublicCompany> lPublicCompanies =
-            new ArrayList<>();
+    private final List<PublicCompany> lPublicCompanies = new ArrayList<>();
 
     /** A map with all private companies by name */
-    private final Map<String, PrivateCompany> mPrivateCompanies =
-            new HashMap<>();
+    private final Map<String, PrivateCompany> mPrivateCompanies = new HashMap<>();
 
     /** A map with all public (i.e. non-private) companies by name */
-    private final Map<String, PublicCompany> mPublicCompanies =
-            new HashMap<>();
+    private final Map<String, PublicCompany> mPublicCompanies = new HashMap<>();
 
     /** A map of all type names to maps of companies of that type by name */
     // TODO Redundant, current usage can be replaced.
-    private final Map<String, Map<String, Company>> mCompaniesByTypeAndName =
-            new HashMap<>();
+    private final Map<String, Map<String, Company>> mCompaniesByTypeAndName = new HashMap<>();
 
     /** A list of all company types */
     private final List<CompanyType> lCompanyTypes = new ArrayList<>();
@@ -49,16 +44,14 @@ public class CompanyManager extends RailsManager implements Configurable {
     /** A list of all start packets (usually one) */
     protected List<StartPacket> startPackets = new ArrayList<>();
     /** A map of all start packets, keyed by name. Default name is "Initial" */
-    private final Map<String, StartPacket> startPacketMap
-        = new HashMap<>();
+    private final Map<String, StartPacket> startPacketMap = new HashMap<>();
 
     /** A map to enable translating aliases to names */
     protected Map<String, String> aliases = null;
 
     private int numberOfPublicCompanies = 0;
 
-    private static final Logger log =
-            LoggerFactory.getLogger(CompanyManager.class);
+    private static final Logger log = LoggerFactory.getLogger(CompanyManager.class);
 
     protected GameManager gameManager;
 

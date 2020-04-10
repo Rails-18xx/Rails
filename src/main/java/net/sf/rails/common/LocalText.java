@@ -27,8 +27,7 @@ public class LocalText extends ResourceBundle {
 
     protected static ResourceBundle localisedText;
 
-    private static final Logger log =
-            LoggerFactory.getLogger(LocalText.class);
+    private static final Logger log = LoggerFactory.getLogger(LocalText.class);
 
     public static String getText(String key) {
         return getText(key, (Object[]) null);
@@ -80,8 +79,7 @@ public class LocalText extends ResourceBundle {
             locale = new Locale(language, country);
 
             try {
-                localisedText =
-                        ResourceBundle.getBundle("LocalisedText", locale);
+                localisedText = ResourceBundle.getBundle("LocalisedText", locale);
             } catch (MissingResourceException e) {
                 log.warn("Unable to locate LocalisedText resource: ", e);
             }

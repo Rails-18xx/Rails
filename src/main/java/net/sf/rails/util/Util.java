@@ -143,7 +143,7 @@ public final class Util {
             try {
                 c = new Color (Integer.parseInt(s, 16));
             } catch (NumberFormatException e) {
-                log.error ("Invalid hex RGB colour: "+s, e);
+                log.error("Invalid hex RGB colour: {}", s, e);
                 throw new ConfigurationException (e);
             }
         } else {
@@ -154,7 +154,7 @@ public final class Util {
                         Integer.parseInt(parts[1]),
                         Integer.parseInt(parts[2]));
             } catch (NumberFormatException e) {
-                log.error ("Invalid nummeric RGB colour: "+s, e);
+                log.error("Invalid nummeric RGB colour: {}", s, e);
                 throw new ConfigurationException (e);
             }
         }
@@ -203,12 +203,11 @@ public final class Util {
 
     public static boolean loadProperties(Properties properties, File file) {
         try {
-            log.info("Loading properties from file " + file);
+            log.info("Loading properties from file {}", file);
             InputStream inFile = new FileInputStream(file);
             properties.load(inFile);
         } catch (Exception e) {
-            log.error(e + " whilst loading properties file "
-                               + file, e);
+            log.error("{} whilst loading properties file {}", e, file, e);
             return false;
         }
         return true;

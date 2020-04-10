@@ -56,8 +56,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public static final String BASE_COST_SEQUENCE = "sequence";
     public static final String BASE_COST_DISTANCE = "distance";
 
-    protected static final String[] tokenLayTimeNames =
-            new String[]{"whenStarted", "whenFloated", "firstOR"};
+    protected static final String[] tokenLayTimeNames = new String[]{"whenStarted", "whenFloated", "firstOR"};
 
     protected int homeBaseTokensLayTime = START_OF_FIRST_OR;
 
@@ -742,8 +741,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         for (int i = 0; i < certificates.size(); i++) {
             cert = certificates.get(i);
             cert.setUniqueId(getId(), i);
-            cert.setInitiallyAvailable(cert.isInitiallyAvailable()
-                    && this.certsAreInitiallyAvailable);
+            cert.setInitiallyAvailable(cert.isInitiallyAvailable() && this.certsAreInitiallyAvailable);
         }
 
         Set<BaseToken> newTokens = Sets.newHashSet();

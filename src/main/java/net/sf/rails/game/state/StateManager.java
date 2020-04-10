@@ -18,17 +18,13 @@ import com.google.common.collect.Maps;
 
 public final class StateManager extends Manager{
 
-    private static final Logger log =
-        LoggerFactory.getLogger(StateManager.class);
+    private static final Logger log = LoggerFactory.getLogger(StateManager.class);
 
     private final ChangeStack changeStack;
 
-    private final HashSetState<State> allStates =
-            HashSetState.create(this, "allStates");
-    private final HashMultimapState<Observable, Model> models =
-            HashMultimapState.create(this, "models");
-    private final HashMultimapState<Observable, Triggerable> triggers =
-            HashMultimapState.create(this, "triggers");
+    private final HashSetState<State> allStates = HashSetState.create(this, "allStates");
+    private final HashMultimapState<Observable, Model> models = HashMultimapState.create(this, "models");
+    private final HashMultimapState<Observable, Triggerable> triggers = HashMultimapState.create(this, "triggers");
 
 
     // observers is not a state variable (as the have to register and de-register themselves)

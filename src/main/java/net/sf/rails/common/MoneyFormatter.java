@@ -7,6 +7,7 @@ public class MoneyFormatter {
 
     private static final String DEFAULT_MONEY_FORMAT = "$@";
     private static String moneyFormat = null;
+
     static {
         String configFormat = Config.get("money_format");
         if (Util.hasValue(configFormat) && configFormat.matches(".*@.*")) {

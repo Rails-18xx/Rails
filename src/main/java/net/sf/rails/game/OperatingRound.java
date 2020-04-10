@@ -113,13 +113,12 @@ public class OperatingRound extends Round implements Observer {
         privatesPayOut();
 
         if (operatingCompanies.size() > 0) {
-
             StringBuilder msg = new StringBuilder();
             for (PublicCompany company : operatingCompanies.view()) {
                 msg.append(",").append(company.getId());
             }
             if (msg.length() > 0) msg.deleteCharAt(0);
-            log.info("Initial operating sequence is {}", msg.toString());
+            log.debug("Initial operating sequence is {}", msg.toString());
 
             if (setNextOperatingCompany(true)) {
                 setStep(GameDef.OrStep.INITIAL);
@@ -624,7 +623,7 @@ public class OperatingRound extends Round implements Observer {
 
         for (PossibleAction pa : possibleActions.getList()) {
             try {
-                log.debug("{} may: {}", operatingCompany.value().getId(), pa.toString());
+                log.debug("{}: {}", operatingCompany.value().getId(), pa.toString());
             } catch (Exception e) {
                 log.error("Error in toString() of {}", pa.getClass(), e);
             }

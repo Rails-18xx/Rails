@@ -98,7 +98,7 @@ public class TileManager extends RailsManager implements Configurable {
             if (tileDefMap.containsKey(tileId)) {
                 throw new ConfigurationException(LocalText.getText("DuplicateTileD", String.valueOf(tileId)));
             } else if (!tileSetMap.containsKey(tileId)) {
-                log.warn("Tile #{} exists in Tiles.xml but not in TileSet.xml (this can be OK if the tile only exists in some variants", tileId);
+                log.debug("Tile #{} exists in Tiles.xml but not in TileSet.xml (this can be OK if the tile only exists in some variants)", tileId);
             }
             tileDefMap.put(tileId, tileDefTag);
         }

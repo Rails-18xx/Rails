@@ -307,19 +307,16 @@ public class SplashWindow {
         //only after EDT is ready (as window built-up could still be pending)
         //block any frame disposal to the point in time when this is through
         try {
-            SwingUtilities.invokeAndWait(new Thread() {
-                @Override
-                public void run() {
-                    //visibility
-                    for (JFrame frame : framesRegisteredAsVisible) {
-                        frame.setVisible(true);
-                    }
-                    //to front
-                    for (JFrame frame : framesRegisteredToFront) {
-                        frame.toFront();
-                    }
+            SwingUtilities.invokeAndWait(new Thread(() -> {
+                //visibility
+                for (JFrame frame : framesRegisteredAsVisible) {
+                    frame.setVisible(true);
                 }
-            });
+                //to front
+                for (JFrame frame : framesRegisteredToFront) {
+                    frame.toFront();
+                }
+            }));
         } catch (Exception e) {}
 
         //clean up visualization only if it was requested

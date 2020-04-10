@@ -26,8 +26,7 @@ import com.google.common.collect.Multimap;
  */
 public class NetworkMultigraph {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(NetworkMultigraph.class);
+    private static final Logger log = LoggerFactory.getLogger(NetworkMultigraph.class);
 
     private final NetworkGraph inGraph;
     private final Multigraph<NetworkVertex, NetworkEdge> graph2 =

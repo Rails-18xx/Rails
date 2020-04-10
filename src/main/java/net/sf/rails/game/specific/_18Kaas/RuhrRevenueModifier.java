@@ -19,8 +19,7 @@ import org.slf4j.LoggerFactory;
 
 public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable {
 
-    private static final Logger log =
-        LoggerFactory.getLogger(RuhrRevenueModifier.class);
+    private static final Logger log = LoggerFactory.getLogger(RuhrRevenueModifier.class);
 
     private boolean doublesOnlyMajors;
 

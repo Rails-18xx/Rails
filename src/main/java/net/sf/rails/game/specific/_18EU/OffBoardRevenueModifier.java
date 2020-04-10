@@ -18,8 +18,7 @@ import org.slf4j.LoggerFactory;
 
 public class OffBoardRevenueModifier implements RevenueStaticModifier {
 
-    private static final Logger log =
-        LoggerFactory.getLogger(OffBoardRevenueModifier.class);
+    private static final Logger log = LoggerFactory.getLogger(OffBoardRevenueModifier.class);
 
 
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {

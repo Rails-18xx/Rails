@@ -56,7 +56,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
 
         @Override
         public int compareTo(Combination other) {
-            return ((Integer)certs.size()).compareTo(other.size());
+            return Integer.compare(certs.size(), other.size());
         }
 
         @Override
@@ -91,12 +91,9 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
 
     /** A map allowing to find certificates by unique id */
     // FIXME: Remove static map, replace by other location mechanisms
-    protected static Map<String, PublicCertificate> certMap =
-            new HashMap<String, PublicCertificate>();
+    protected static Map<String, PublicCertificate> certMap = new HashMap<>();
 
-
-    private static final Logger log =
-            LoggerFactory.getLogger(PublicCertificate.class);
+    private static final Logger log = LoggerFactory.getLogger(PublicCertificate.class);
 
     // TODO: Rewrite constructors
     // TODO: Should every certificate have its own id and be registered with the parent?
@@ -123,12 +120,12 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
 
     @Override
     public RailsItem getParent(){
-        return (RailsItem)super.getParent();
+        return super.getParent();
     }
 
     @Override
     public RailsRoot getRoot() {
-        return (RailsRoot)super.getRoot();
+        return super.getRoot();
     }
 
     /** Set the certificate's unique ID, for use in deserializing */
@@ -181,7 +178,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
      * @return The share percentage.
      */
     public int getShare() {
-        return ((Integer) shares.value()) * company.getShareUnit();
+        return shares.value() * company.getShareUnit();
     }
 
 

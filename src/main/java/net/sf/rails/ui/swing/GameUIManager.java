@@ -200,6 +200,8 @@ public class GameUIManager implements DialogOwner {
 
     public void terminate() {
         getWindowSettings().save();
+        // TODO: save relocation and resizing information of the FKStockChartWindow
+
         if (orWindow != null) orWindow.saveLayout();
         System.exit(0);
     }
