@@ -42,12 +42,10 @@ jobs:
         with:
           gradle-version: 6.3
           arguments: clean build
-      - name: Debug before
-        run: ls build
       - name: Create Installer
         uses: eskatos/gradle-command-action@v1
         with:
           gradle-version: 6.3
           arguments: buildLinuxPackage
       - name: Debug After
-        run: ll
+        run: ls -lh

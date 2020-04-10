@@ -116,10 +116,10 @@ gitProperties {
 task buildLinuxPackage(type: Exec) {
     commandLine 'jpackage',
             '--verbose',
-            '--name', 'rails-18xx',
+            '--name', 'Rails (18xx)',
             '--description', '"Rails is a moderator program for 18xx games"',
-            // '--icon', './native/rails.png',
-            // '--file-associations', './native/rails-linux-association.properties',
+            '--icon', './native/rails.png',
+            '--file-associations', './native/rails-linux-association.properties',
             '--app-version', '2.2.0',
             '--input', 'build/libs',
             '--main-jar', 'rails-2.2-beta-all.jar',
