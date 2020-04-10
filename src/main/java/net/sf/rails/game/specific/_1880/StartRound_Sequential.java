@@ -27,11 +27,11 @@ import rails.game.action.*;
 public class StartRound_Sequential extends StartRound {
 
     private final GenericState<Player> startingPlayer =
-            GenericState.create(this, "startingPlayer");
+            new GenericState<>(this, "startingPlayer");
     private final GenericState<StartItem> currentItem =
-            GenericState.create(this, "currentItem");
+            new GenericState<>(this, "currentItem");
     private final ArrayListState<Player> passedPlayers = 
-            ArrayListState.create(this, "passedPlayers");
+            new ArrayListState<>(this, "passedPlayers");
 
     public StartRound_Sequential(GameManager parent, String id) {
         super(parent, id, true, false, false);

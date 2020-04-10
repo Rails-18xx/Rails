@@ -1,21 +1,17 @@
 package net.sf.rails.common;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Defines an item used for the configuration of rails
- * T represents the value type
  */
-
 public final class ConfigItem {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigItem.class);
@@ -24,7 +20,7 @@ public final class ConfigItem {
      * Defines possible types (Java classes used as types in ConfigItem below
      */
     public enum ConfigType {
-        BOOLEAN, INTEGER, PERCENT, STRING, LIST, FONT, DIRECTORY, FILE, COLOR;
+        BOOLEAN, INTEGER, PERCENT, STRING, LIST, FONT, DIRECTORY, FILE, COLOR
     }
 
     // static attributes
@@ -44,7 +40,7 @@ public final class ConfigItem {
     private String newValue;
     private String currentValue;
 
-    ConfigItem(Tag tag) throws ConfigurationException {
+    public ConfigItem(Tag tag) throws ConfigurationException {
         // check name and type (required)
         String name = tag.getAttributeAsString("name");
         if (Util.hasValue(name)) {
@@ -83,7 +79,7 @@ public final class ConfigItem {
         // optional: init method attributes
         initClass = tag.getAttributeAsString("initClass");
         initMethod = tag.getAttributeAsString("initMethod");
-        alwaysCallInit = tag.getAttributeAsBoolean("alwaysCallInit",false);
+        alwaysCallInit = tag.getAttributeAsBoolean("alwaysCallInit", false);
         initParameter = tag.getAttributeAsBoolean("initParameter", false);
 
         // intialize values
@@ -138,9 +134,9 @@ public final class ConfigItem {
 
     /**
      * @param applyInitMethod Specifies whether init should be called. Can be overruled
-     * by an additional tag alwaysCallInit
+     *                        by an additional tag alwaysCallInit
      */
-    void callInitMethod(boolean applyInitMethod) {
+    public void callInitMethod(boolean applyInitMethod) {
         if (!applyInitMethod && !alwaysCallInit) return;
         if (initClass == null || initMethod == null) return;
 

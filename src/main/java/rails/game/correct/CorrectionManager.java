@@ -16,27 +16,28 @@ import org.slf4j.LoggerFactory;
 
 public abstract class CorrectionManager extends RailsAbstractItem {
 
-    private final CorrectionType correctionType;
-    private final BooleanState active = BooleanState.create(this, "active");
+    private static final Logger log = LoggerFactory.getLogger(CorrectionManager.class);
 
-    private static final Logger log =
-        LoggerFactory.getLogger(CorrectionManager.class);
+    private final BooleanState active = new BooleanState(this, "active");
+
+    private final CorrectionType correctionType;
 
     protected CorrectionManager(GameManager parent, CorrectionType ct) {
         super(parent, ct.name());
-        correctionType = ct;
+
+        this.correctionType = ct;
     }
 
     @Override
     public GameManager getParent() {
-        return (GameManager)super.getParent();
+        return (GameManager) super.getParent();
     }
 
     public CorrectionType getCorrectionType() {
         return correctionType;
     }
 
-    public boolean isActive(){
+    public boolean isActive() {
         return active.value();
     }
 
@@ -48,8 +49,10 @@ public abstract class CorrectionManager extends RailsAbstractItem {
         return actions;
     }
 
-    /** calls all executeAction */
-    public boolean executeCorrection(CorrectionAction action){
+    /**
+     * calls all executeAction
+     */
+    public boolean executeCorrection(CorrectionAction action) {
         if (action instanceof CorrectionModeAction)
             return execute((CorrectionModeAction) action);
         else {
@@ -59,22 +62,23 @@ public abstract class CorrectionManager extends RailsAbstractItem {
     }
 
     private boolean execute(CorrectionModeAction action) {
-
-
         if (!isActive()) {
             String text = LocalText.getText("CorrectionModeActivate",
                     getRoot().getPlayerManager().getCurrentPlayer().getId(),
                     LocalText.getText(getCorrectionType().name())
             );
+
             ReportBuffer.add(this, text);
             DisplayBuffer.add(this, text);
-        }
-        else {
-            ReportBuffer.add(this, LocalText.getText("CorrectionModeDeactivate",
+        } else {
+            String text = LocalText.getText("CorrectionModeDeactivate",
                     getRoot().getPlayerManager().getCurrentPlayer().getId(),
                     LocalText.getText(getCorrectionType().name())
-            ));
+            );
+
+            ReportBuffer.add(this, text);
         }
+
         active.set(!active.value());
 
         return true;
@@ -83,12 +87,12 @@ public abstract class CorrectionManager extends RailsAbstractItem {
     /* dummy to capture the non-supported actions */
     protected boolean execute(CorrectionAction action) {
         log.debug("The chosen action is not implemented in the registered manager");
+
         return false;
     }
 
 
     public boolean equals(CorrectionManager cm) {
-        return (this.getParent() == cm.getParent()
-                && this.correctionType == cm.correctionType);
+        return this.getParent() == cm.getParent() && this.correctionType == cm.correctionType;
     }
 }

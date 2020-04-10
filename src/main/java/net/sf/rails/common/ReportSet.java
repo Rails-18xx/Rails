@@ -1,16 +1,16 @@
 package net.sf.rails.common;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.sf.rails.game.state.ChangeSet;
 import net.sf.rails.util.Util;
 
+import java.util.List;
 
 /**
  * ReportSet contains all messages that reference one ChangeSet
  */
-
-class ReportSet {
+public class ReportSet {
 
     /**
      * Newline string
@@ -19,27 +19,33 @@ class ReportSet {
     private static final String NEWLINE_STRING = "<br>&#10;";
 
     private final ChangeSet changeSet;
-    private final ImmutableList<String> messages;
+
+
+    private final List<String> messages;
+
     private final String htmlText;
     private final String htmlTextActive;
 
-    ReportSet(ChangeSet changeSet, ImmutableList<String> messages) {
+    public ReportSet(ChangeSet changeSet, List<String> messages) {
+        super();
+
         this.changeSet = changeSet;
         this.messages = messages;
+
         this.htmlText = toHtml(false);
         this.htmlTextActive = toHtml(true);
     }
 
-    String getAsHtml(ChangeSet currentChangeSet) {
+    public List<String> getMessages() {
+        return messages;
+    }
+
+    public String getAsHtml(ChangeSet currentChangeSet) {
         if (currentChangeSet == changeSet) {
             return htmlTextActive;
         } else {
             return htmlText;
         }
-    }
-
-    ImmutableList<String> getAsList() {
-        return messages;
     }
 
     /**
@@ -87,25 +93,33 @@ class ReportSet {
                 .toString();
     }
 
-    static Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
-    static class Builder {
+    public static class Builder {
+        private ChangeSet changeSet;
 
-        private final ImmutableList.Builder<String> messageBuilder = ImmutableList.builder();
+        private final List<String> messages = Lists.newArrayList();
 
         private Builder() {
+            // do nothing
         }
 
-        void addMessage(String message) {
-            messageBuilder.add(message);
+        public Builder withChangeSet(ChangeSet changeSet) {
+            this.changeSet = changeSet;
+
+            return this;
         }
 
-        ReportSet build(ChangeSet changeSet) {
-            return new ReportSet(changeSet, messageBuilder.build());
+        public Builder withMessage(String message) {
+            this.messages.add(message);
+
+            return this;
         }
 
+        public ReportSet build() {
+            return new ReportSet(changeSet, messages);
+        }
     }
-
 }

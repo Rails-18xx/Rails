@@ -26,27 +26,29 @@ import com.google.common.collect.Maps;
 
 public class Phase extends RailsModel implements Configurable {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(Phase.class);
+    private static final Logger log = LoggerFactory.getLogger(Phase.class);
 
     // static data
     private final int index;
 
     private String name;
-    private ImmutableList <String> tileColours;
+    private ImmutableList<String> tileColours;
     private Map<String, Integer> tileLaysPerColour;
 
-    /** For how many turns can extra tiles be laid (per company type and colour)?
+    /**
+     * For how many turns can extra tiles be laid (per company type and colour)?
      * Default: infinite.
      * <p>This attribute is only used during configuration. It is finally passed to CompanyType.
-     * NOT CLONED from previous phase.*/
+     * NOT CLONED from previous phase.
+     */
     private Map<String, Integer> tileLaysPerColourTurns;
     private boolean privateSellingAllowed = false;
     private boolean privatesClose = false;
     private int numberOfOperatingRounds = 1;
     private int offBoardRevenueStep = 1;
 
-    /** New style train limit configuration.
+    /**
+     * New style train limit configuration.
      */
     private int trainLimitStep = 1;
 
@@ -54,51 +56,68 @@ public class Phase extends RailsModel implements Configurable {
 
     private boolean trainTradingAllowed = false;
 
-    /** May company buy more than one Train from the Bank per turn? */
+    /**
+     * May company buy more than one Train from the Bank per turn?
+     */
     private boolean oneTrainPerTurn = false;
 
-    /** May company buy more than one Train of each type from the Bank per turn? */
+    /**
+     * May company buy more than one Train of each type from the Bank per turn?
+     */
     private boolean oneTrainPerTypePerTurn = false;
 
-    /** Is loan taking allowed */
+    /**
+     * Is loan taking allowed
+     */
     private boolean loanTakingAllowed = false;
 
-    /** Previous phase, defining the current one's defaults */
+    /**
+     * Previous phase, defining the current one's defaults
+     */
     private Phase defaults;
 
-    /** Items to close if a phase gets activated */
+    /**
+     * Items to close if a phase gets activated
+     */
     private List<Closeable> closedObjects;
 
-    /** Train types to rust or obsolete if a phase gets activated */
+    /**
+     * Train types to rust or obsolete if a phase gets activated
+     */
     private ImmutableList<TrainCertificateType> rustedTrains;
     private String rustedTrainNames;
 
-    /** Train types to release (make available for buying) if a phase gets activated */
+    /**
+     * Train types to release (make available for buying) if a phase gets activated
+     */
     private ImmutableList<TrainCertificateType> releasedTrains;
     private String releasedTrainNames;
 
-    /** Actions for this phase.
+    /**
+     * Actions for this phase.
      * When this phase is activated, the GameManager method phaseAction() will be called,
      * which in turn will call the current Round, which is responsible to handle the action.
      * <p>
      * Set actions have a name and may have a value.
      * TODO: Replace this by triggers
-     * */
+     */
     private Map<String, String> actions;
 
     private String extraInfo = "";
 
-    /** A HashMap to contain phase-dependent parameters
+    /**
+     * A HashMap to contain phase-dependent parameters
      * by name and value.
      */
     private Map<String, String> parameters = null;
 
     // dynamic information
     // is this really dynamic, is it used over time?
-    private final GenericState<Owner> lastTrainBuyer = GenericState.create(this, "lastTrainBuyer");
+    private final GenericState<Owner> lastTrainBuyer = new GenericState<>(this, "lastTrainBuyer");
 
     public Phase(PhaseManager parent, String id, int index, Phase previousPhase) {
         super(parent, id);
+
         this.index = index;
         this.defaults = previousPhase;
     }
@@ -135,9 +154,9 @@ public class Phase extends RailsModel implements Configurable {
             List<Tag> laysTag = tilesTag.getChildren("Lays");
             if (laysTag != null && !laysTag.isEmpty()) {
                 // First create a copy of the previous map, if it exists, otherwise create the map.
-                Map <String, Integer> newTileLaysPerColour;
+                Map<String, Integer> newTileLaysPerColour;
                 if (tileLaysPerColour == null || tileLaysPerColour.isEmpty()) {
-                     newTileLaysPerColour = Maps.newHashMap();
+                    newTileLaysPerColour = Maps.newHashMap();
                 } else {
                     newTileLaysPerColour = Maps.newHashMap(tileLaysPerColour);
                 }
@@ -147,14 +166,14 @@ public class Phase extends RailsModel implements Configurable {
                     String colourString = layTag.getAttributeAsString("colour");
                     if (!Util.hasValue(colourString))
                         throw new ConfigurationException(
-                        "No colour entry for number of tile lays");
+                                "No colour entry for number of tile lays");
                     String typeString = layTag.getAttributeAsString("companyType");
                     if (!Util.hasValue(typeString))
                         throw new ConfigurationException(
-                        "No company type entry for number of tile lays");
+                                "No company type entry for number of tile lays");
                     int number = layTag.getAttributeAsInteger("number", 1);
                     int validForTurns =
-                        layTag.getAttributeAsInteger("occurrences", 0);
+                            layTag.getAttributeAsInteger("occurrences", 0);
 
                     String key = typeString + "~" + colourString;
                     if (number == 1) {
@@ -181,8 +200,8 @@ public class Phase extends RailsModel implements Configurable {
         Tag privatesTag = tag.getChild("Privates");
         if (privatesTag != null) {
             privateSellingAllowed =
-                privatesTag.getAttributeAsBoolean("sellingAllowed",
-                        privateSellingAllowed);
+                    privatesTag.getAttributeAsBoolean("sellingAllowed",
+                            privateSellingAllowed);
             privatesClose = privatesTag.getAttributeAsBoolean("close", false);
             privatesRevenueStep = privatesTag.getAttributeAsInteger("revenueStep", privatesRevenueStep); // sfy 1889
         }
@@ -191,16 +210,16 @@ public class Phase extends RailsModel implements Configurable {
         Tag orTag = tag.getChild("OperatingRounds");
         if (orTag != null) {
             numberOfOperatingRounds =
-                orTag.getAttributeAsInteger("number",
-                        numberOfOperatingRounds);
+                    orTag.getAttributeAsInteger("number",
+                            numberOfOperatingRounds);
         }
 
         // Off-board revenue steps (starts at 1)
         Tag offBoardTag = tag.getChild("OffBoardRevenue");
         if (offBoardTag != null) {
             offBoardRevenueStep =
-                offBoardTag.getAttributeAsInteger("step",
-                        offBoardRevenueStep);
+                    offBoardTag.getAttributeAsInteger("step",
+                            offBoardRevenueStep);
         }
 
         Tag trainsTag = tag.getChild("Trains");
@@ -209,14 +228,14 @@ public class Phase extends RailsModel implements Configurable {
             rustedTrainNames = trainsTag.getAttributeAsString("rusted", null);
             releasedTrainNames = trainsTag.getAttributeAsString("released", null);
             trainTradingAllowed =
-                trainsTag.getAttributeAsBoolean("tradingAllowed",
-                        trainTradingAllowed);
+                    trainsTag.getAttributeAsBoolean("tradingAllowed",
+                            trainTradingAllowed);
             oneTrainPerTurn =
-                trainsTag.getAttributeAsBoolean("onePerTurn",
-                        oneTrainPerTurn);
+                    trainsTag.getAttributeAsBoolean("onePerTurn",
+                            oneTrainPerTurn);
             oneTrainPerTypePerTurn =
-                trainsTag.getAttributeAsBoolean("onePerTypePerTurn",
-                        oneTrainPerTypePerTurn);
+                    trainsTag.getAttributeAsBoolean("onePerTypePerTurn",
+                            oneTrainPerTypePerTurn);
         }
 
         Tag loansTag = tag.getChild("Loans");
@@ -228,9 +247,9 @@ public class Phase extends RailsModel implements Configurable {
         Tag parameterTag = tag.getChild("Parameters");
         if (parameterTag != null) {
             if (parameters == null) parameters = new HashMap<>();
-            Map<String,String> attributes = parameterTag.getAttributes();
+            Map<String, String> attributes = parameterTag.getAttributes();
             for (String key : attributes.keySet()) {
-                parameters.put (key, attributes.get(key));
+                parameters.put(key, attributes.get(key));
             }
         }
 
@@ -239,10 +258,10 @@ public class Phase extends RailsModel implements Configurable {
             if (actions == null) actions = new HashMap<>();
             String key = setTag.getAttributeAsString("name");
             if (!Util.hasValue(key)) {
-                throw new ConfigurationException ("Phase "+name+": <Set> without action name");
+                throw new ConfigurationException("Phase " + name + ": <Set> without action name");
             }
             String value = setTag.getAttributeAsString("value", null);
-            actions.put (key, value);
+            actions.put(key, value);
         }
 
         // Extra info text(usually related to extra-share special properties)
@@ -250,13 +269,13 @@ public class Phase extends RailsModel implements Configurable {
         if (infoTag != null) {
             String infoKey = infoTag.getAttributeAsString("key");
             String[] infoParms = infoTag.getAttributeAsString("parm", "").split(",");
-            extraInfo += "<br>"+LocalText.getText(infoKey, (Object[])infoParms);
+            extraInfo += "<br>" + LocalText.getText(infoKey, (Object[]) infoParms);
         }
 
     }
 
-    public void finishConfiguration (RailsRoot root)
-    throws ConfigurationException {
+    public void finishConfiguration(RailsRoot root)
+            throws ConfigurationException {
 
         TrainManager trainManager = getRoot().getTrainManager();
         TrainCertificateType type;
@@ -267,7 +286,7 @@ public class Phase extends RailsModel implements Configurable {
             for (String typeName : rustedTrainNames.split(",")) {
                 type = trainManager.getCertTypeByName(typeName);
                 if (type == null) {
-                    throw new ConfigurationException (" Unknown rusted train type '"+typeName+"' for phase '"+ getId()+"'");
+                    throw new ConfigurationException(" Unknown rusted train type '" + typeName + "' for phase '" + getId() + "'");
                 }
                 newRustedTrains.add(type);
                 type.setPermanent(false);
@@ -281,7 +300,7 @@ public class Phase extends RailsModel implements Configurable {
             for (String typeName : releasedTrainNames.split(",")) {
                 type = trainManager.getCertTypeByName(typeName);
                 if (type == null) {
-                    throw new ConfigurationException (" Unknown released train type '"+typeName+"' for phase '"+getId()+"'");
+                    throw new ConfigurationException(" Unknown released train type '" + typeName + "' for phase '" + getId() + "'");
                 }
                 newReleasedTrains.add(type);
             }
@@ -291,12 +310,14 @@ public class Phase extends RailsModel implements Configurable {
         // Push any extra tile lay turns to the appropriate company type.
         if (tileLaysPerColourTurns != null) {
             CompanyManager companyManager = getRoot().getCompanyManager();
-            companyManager.addExtraTileLayTurnsInfo (tileLaysPerColourTurns);
+            companyManager.addExtraTileLayTurnsInfo(tileLaysPerColourTurns);
         }
         tileLaysPerColourTurns = null;  // We no longer need it.
     }
 
-    /** Called when a phase gets activated */
+    /**
+     * Called when a phase gets activated
+     */
     public void activate() {
         ReportBuffer.add(this, LocalText.getText("StartOfPhase", getId()));
 
@@ -328,7 +349,7 @@ public class Phase extends RailsModel implements Configurable {
 
         if (actions != null && !actions.isEmpty()) {
             for (String actionName : actions.keySet()) {
-                getRoot().getGameManager().processPhaseAction (actionName, actions.get(actionName));
+                getRoot().getGameManager().processPhaseAction(actionName, actions.get(actionName));
             }
         }
 
@@ -361,12 +382,12 @@ public class Phase extends RailsModel implements Configurable {
         StringBuilder b = new StringBuilder();
         for (String colour : tileColours) {
             if (b.length() > 0) b.append(",");
-            b.append (colour);
+            b.append(colour);
         }
         return b.toString();
     }
 
-    public int getTileLaysPerColour (String companyTypeName, String colourName) {
+    public int getTileLaysPerColour(String companyTypeName, String colourName) {
 
         if (tileLaysPerColour == null) return 1;
 
@@ -403,10 +424,12 @@ public class Phase extends RailsModel implements Configurable {
     public boolean isPrivateSellingAllowed() {
         return privateSellingAllowed;
     }
+
     // sfy 1889
     public int getPrivatesRevenueStep() {
         return privatesRevenueStep;
     }
+
     public boolean isTrainTradingAllowed() {
         return trainTradingAllowed;
     }
@@ -449,7 +472,7 @@ public class Phase extends RailsModel implements Configurable {
         if (!closedObjects.contains(object)) closedObjects.add(object);
     }
 
-    public String getParameterAsString (String key) {
+    public String getParameterAsString(String key) {
         if (parameters != null) {
             return parameters.get(key);
         } else {
@@ -457,7 +480,7 @@ public class Phase extends RailsModel implements Configurable {
         }
     }
 
-    public int getParameterAsInteger (String key) {
+    public int getParameterAsInteger(String key) {
         String stringValue = getParameterAsString(key);
         if (stringValue == null) {
             return 0;

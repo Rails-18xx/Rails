@@ -24,21 +24,21 @@ import net.sf.rails.game.state.Purse;
 public class Player extends RailsAbstractItem implements RailsMoneyOwner, PortfolioOwner, ChangeActionOwner, Comparable<Player> {
 
     // FIXME: Rails 2.0 Do we need the index number?
-    
-    
+
+
     // dynamic data (states and models)
     private final IntegerState index = IntegerState.create(this, "index");
     private final PortfolioModel portfolio = PortfolioModel.create(this);
     private final CertificateCountModel certCount = CertificateCountModel.create(portfolio);
 
-    private final PurseMoneyModel cash = 
+    private final PurseMoneyModel cash =
             PurseMoneyModel.create(this, "cash", false);
     private final CalculatedMoneyModel freeCash;
     private final CountingMoneyModel blockedCash = CountingMoneyModel.create(this, "blockedCash", false);
     private final CalculatedMoneyModel worth;
     private final CountingMoneyModel lastORWorthIncrease = CountingMoneyModel.create(this, "lastORIncome", false);
 
-    private final BooleanState bankrupt = BooleanState.create(this, "isBankrupt");
+    private final BooleanState bankrupt = new BooleanState(this, "isBankrupt");
     private final IntegerState worthAtORStart = IntegerState.create(this, "worthAtORStart");
     private final Map<PublicCompany, SoldThisRoundModel> soldThisRound = Maps.newHashMap();
     private final PlayerNameModel playerNameModel = PlayerNameModel.create(this);
@@ -49,12 +49,13 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
 
         blockedCash.setSuppressZero(true);
         lastORWorthIncrease.setDisplayNegative(true);
-        
+
         // definitions of freeCash
-        CalculationMethod freeCashMethod = new CalculationMethod(){ 
+        CalculationMethod freeCashMethod = new CalculationMethod() {
             public int calculate() {
                 return cash.value() - blockedCash.value();
             }
+
             public boolean initialised() {
                 return cash.initialised() && blockedCash.initialised();
             }
@@ -62,9 +63,9 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
         freeCash = CalculatedMoneyModel.create(this, "freeCash", freeCashMethod);
         cash.addModel(freeCash);
         blockedCash.addModel(freeCash);
-        
+
         // define definitions of worth
-        CalculationMethod worthMethod = new CalculationMethod(){
+        CalculationMethod worthMethod = new CalculationMethod() {
             public int calculate() {
                 // if player is bankrupt cash is not counted
                 // as this was generated during forced selling
@@ -83,6 +84,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
                 }
                 return worth;
             }
+
             public boolean initialised() {
                 return cash.initialised();
             }
@@ -91,30 +93,30 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
         portfolio.addModel(worth);
         cash.addModel(worth);
     }
-    
+
     public static Player create(PlayerManager parent, String id, int index) {
         return new Player(parent, id, index);
     }
-    
+
     public PlayerManager getParent() {
-        return (PlayerManager)super.getParent();
+        return (PlayerManager) super.getParent();
     }
-    
+
     public void finishConfiguration(RailsRoot root) {
         portfolio.finishConfiguration();
-        
+
         // create soldThisRound states
-        for (PublicCompany company:root.getCompanyManager().getAllPublicCompanies()) {
+        for (PublicCompany company : root.getCompanyManager().getAllPublicCompanies()) {
             soldThisRound.put(company, SoldThisRoundModel.create(this, company));
         }
         // make worth aware of market model
         root.getStockMarket().getMarketModel().addModel(worth);
     }
-    
+
     public String getNameAndPriority() {
         return getId() + (getParent().getPriorityPlayer() == this ? " PD" : "");
     }
-    
+
     public PlayerNameModel getPlayerNameModel() {
         return playerNameModel;
     }
@@ -132,23 +134,23 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
         return worth;
     }
 
-    public MoneyModel getLastORWorthIncrease () {
+    public MoneyModel getLastORWorthIncrease() {
         return lastORWorthIncrease;
     }
 
-    public void setWorthAtORStart () {
+    public void setWorthAtORStart() {
         worthAtORStart.set(getWorth());
     }
 
-    public void setLastORWorthIncrease () {
+    public void setLastORWorthIncrease() {
         lastORWorthIncrease.set(getWorth() - worthAtORStart.value());
     }
 
     public int getCashValue() {
         return cash.value();
     }
-    
-    public void updateWorth () {
+
+    public void updateWorth() {
         // FIXME: Is this method still required
         // worth.update();
     }
@@ -218,28 +220,28 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
         this.index.set(index);
     }
 
-    public void setBankrupt () {
-    	bankrupt.set(true);
+    public void setBankrupt() {
+        bankrupt.set(true);
     }
 
-    public boolean isBankrupt () {
-    	return bankrupt.value();
+    public boolean isBankrupt() {
+        return bankrupt.value();
     }
-    
+
     public void resetSoldThisRound() {
-        for (SoldThisRoundModel state:soldThisRound.values()) {
+        for (SoldThisRoundModel state : soldThisRound.values()) {
             state.set(false);
         }
     }
-    
+
     public boolean hasSoldThisRound(PublicCompany company) {
         return soldThisRound.get(company).value();
     }
-    
+
     public void setSoldThisRound(PublicCompany company) {
         soldThisRound.get(company).set(true);
     }
-    
+
     public SoldThisRoundModel getSoldThisRoundModel(PublicCompany company) {
         return soldThisRound.get(company);
     }
@@ -248,7 +250,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
     public Purse getPurse() {
         return cash.getPurse();
     }
-    
+
     public int getCash() {
         return cash.getPurse().value();
     }
@@ -257,7 +259,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
     public PortfolioModel getPortfolioModel() {
         return portfolio;
     }
-    
+
     /**
      * Compare Players by their total worth, in descending order. This method
      * implements the Comparable interface.

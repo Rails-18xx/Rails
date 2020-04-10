@@ -32,8 +32,8 @@ public class GenericStateTest {
         item = new AbstractItemImpl(root, ITEM_ID);
         another_item = new AbstractItemImpl(root, ANOTHER_ID);
         
-        stateDefault = GenericState.create(root, DEFAULT_ID);
-        stateInit = GenericState.create(root, INIT_ID, item);
+        stateDefault = new GenericState<>(root, DEFAULT_ID);
+        stateInit = new GenericState<>(root, INIT_ID, item);
     }
     
     @Test

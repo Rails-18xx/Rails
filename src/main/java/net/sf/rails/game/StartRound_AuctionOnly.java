@@ -23,8 +23,7 @@ import rails.game.action.StartItemAction;
 public abstract class StartRound_AuctionOnly extends StartRound {
     private static final Logger log = LoggerFactory.getLogger(StartRound_AuctionOnly.class);
 
-    private final ArrayListState<Player> auctionWinners =
-            ArrayListState.create(this, "auctionWinners");
+    private final ArrayListState<Player> auctionWinners = new ArrayListState<>(this, "auctionWinners");
 
     protected StartRound_AuctionOnly(GameManager parent, String id) {
         super(parent, id);
@@ -193,7 +192,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
 
             // Is the item buyable?
             if (bidItem.getStatus() != StartItem.BIDDABLE
-                && bidItem.getStatus() != StartItem.AUCTIONED) {
+                    && bidItem.getStatus() != StartItem.AUCTIONED) {
                 errMsg = LocalText.getText("NotForSale");
                 break;
             }
@@ -252,7 +251,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
                 // Only one bidder is left after this pass
                 int price = auctionItem.getBid();
                 log.debug("Highest bidder is "
-                          + auctionItem.getBidder().getId());
+                        + auctionItem.getBidder().getId());
                 if (auctionItem.needsPriceSetting() != null) {
                     auctionItem.setStatus(StartItem.NEEDS_SHARE_PRICE);
                 } else {

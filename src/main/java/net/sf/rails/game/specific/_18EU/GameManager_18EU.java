@@ -25,8 +25,7 @@ import net.sf.rails.game.state.Portfolio;
  */
 public class GameManager_18EU extends GameManager {
 
-    protected final GenericState<Player> playerToStartFMERound =
-       GenericState.create(this, "playerToStartFMERound");
+    protected final GenericState<Player> playerToStartFMERound = new GenericState<>(this, "playerToStartFMERound");
 
     public GameManager_18EU(RailsRoot parent, String id) {
         super(parent, id);
@@ -38,8 +37,8 @@ public class GameManager_18EU extends GameManager {
             if (playerToStartFMERound.value() != null
                     && relativeORNumber.value() == numOfORs.value()) {
                 // TODO: Fix the ID issue
-                createRound (FinalMinorExchangeRound.class, "FinalMinorExchangeRound").start
-                        ((Player)playerToStartFMERound.value());
+                createRound(FinalMinorExchangeRound.class, "FinalMinorExchangeRound").start
+                        ((Player) playerToStartFMERound.value());
                 playerToStartFMERound.set(null);
             } else {
                 super.nextRound(round);
@@ -61,7 +60,7 @@ public class GameManager_18EU extends GameManager {
     }
 
     @Override
-    protected void processBankruptcy () {
+    protected void processBankruptcy() {
 
         // Assume default case as in 18EU: all assets to Bank/Pool
         Player bankrupter = getCurrentPlayer();
@@ -76,7 +75,7 @@ public class GameManager_18EU extends GameManager {
             Player newPresident = null;
             int maxShare = 0;
             PlayerManager pm = getRoot().getPlayerManager();
-            for (Player player:pm.getNextPlayers(false)) {
+            for (Player player : pm.getNextPlayers(false)) {
                 int share = player.getPortfolioModel().getShare(company);
                 if (share >= company.getPresidentsShare().getShare()
                         && (share > maxShare)) {

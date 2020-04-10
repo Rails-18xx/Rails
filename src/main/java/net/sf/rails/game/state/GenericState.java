@@ -1,33 +1,37 @@
 package net.sf.rails.game.state;
+
 /**
  * Generic State wrapper
- * @author freystef
  *
  * @param <E> class to wrap
+ * @author freystef
  */
 
 public final class GenericState<E> extends State {
 
     private E object;
 
-    private GenericState(Item parent, String id, E object) {
+    /**
+     * Creates a prefilled GenericState
+     *
+     * @param parent The parent
+     * @param id     The id
+     * @param object The content
+     */
+    public GenericState(Item parent, String id, E object) {
         super(parent, id);
+
         this.object = object;
     }
 
-    /** 
-     * {@inheritDoc}
-     * Creates an empty GenericState
-     */
-    public static <E> GenericState<E> create(Item parent, String id){
-        return new GenericState<E>(parent, id, null);
-    }
-    
     /**
-     * @param object initial object contained
+     * Creates an empty GenericState
+     *
+     * @param parent The parent
+     * @param id     The id
      */
-    public static <E> GenericState<E> create(Item parent, String id, E object){
-        return new GenericState<E>(parent, id, object);
+    public GenericState(Item parent, String id) {
+        this(parent, id, null);
     }
 
     public void set(E object) {
@@ -53,14 +57,14 @@ public final class GenericState<E> extends State {
         if (object == null) {
             return "";
         } else if (object instanceof Observable) {
-            return ((Observable)object).toText();
+            return ((Observable) object).toText();
         } else {
             return object.toString();
         }
     }
-    
+
     void change(E object) {
-        this.object = object; 
+        this.object = object;
     }
 
 }

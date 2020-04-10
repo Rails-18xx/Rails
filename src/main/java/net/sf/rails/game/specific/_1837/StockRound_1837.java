@@ -39,12 +39,12 @@ public class StockRound_1837 extends StockRound {
     private static final Logger log = LoggerFactory.getLogger(StockRound_1837.class);
 
     protected final ArrayListState<PublicCompany> compWithExcessTrains =
-            ArrayListState.create(this, "compWithExcessTrains");
+            new ArrayListState<>(this, "compWithExcessTrains");
     protected final IntegerState discardingCompanyIndex = IntegerState.create(
             this, "discardingCompanyIndex");
-    protected final BooleanState discardingTrains = BooleanState.create(this,
+    protected final BooleanState discardingTrains = new BooleanState(this,
             "discardingTrains");
-    protected final BooleanState exchangedCoalCompanies = BooleanState.create(this,
+    protected final BooleanState exchangedCoalCompanies = new BooleanState(this,
             "exchangdCoalCompanies");
 
     protected PublicCompany[] discardingCompanies;

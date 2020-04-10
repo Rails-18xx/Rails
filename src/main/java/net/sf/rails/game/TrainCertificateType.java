@@ -45,18 +45,20 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     private String trainClassName = DEFAULT_TRAIN_CLASS;
     private Class<? extends Train> trainClass;
 
-    /** In some cases, trains start their life in the Pool, default is IPO */
+    /**
+     * In some cases, trains start their life in the Pool, default is IPO
+     */
     private String initialPortfolio = "IPO";
 
     // Dynamic state variables
     private final IntegerState numberBoughtFromIPO = IntegerState.create(this, "numberBoughtFromIPO");
-    private final BooleanState available = BooleanState.create(this, "available");
-    private final BooleanState rusted = BooleanState.create(this, "rusted");
+    private final BooleanState available = new BooleanState(this, "available");
+    private final BooleanState rusted = new BooleanState(this, "rusted");
 
     private static final Logger log =
-        LoggerFactory.getLogger(TrainCertificateType.class);
+            LoggerFactory.getLogger(TrainCertificateType.class);
 
-    private TrainCertificateType (TrainManager parent, String id, int index) {
+    private TrainCertificateType(TrainManager parent, String id, int index) {
         super(parent, id);
         this.index = index;
     }
@@ -67,7 +69,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
 
     @Override
     public TrainManager getParent() {
-        return (TrainManager)super.getParent();
+        return (TrainManager) super.getParent();
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -80,8 +82,8 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
 
         // From where is this type initially available
         initialPortfolio =
-            tag.getAttributeAsString("initialPortfolio",
-                    initialPortfolio);
+                tag.getAttributeAsString("initialPortfolio",
+                        initialPortfolio);
 
         // New style phase changes (to replace 'startPhase' attribute and <Sub> tag)
         List<Tag> newPhaseTags = tag.getChildren("NewPhase");
@@ -92,7 +94,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
             for (Tag newPhaseTag : newPhaseTags) {
                 phaseName = newPhaseTag.getAttributeAsString("phaseName");
                 if (!Util.hasValue(phaseName)) {
-                    throw new ConfigurationException ("TrainType "+ getId() +" has NewPhase without phase name");
+                    throw new ConfigurationException("TrainType " + getId() + " has NewPhase without phase name");
                 }
                 index = newPhaseTag.getAttributeAsInteger("trainIndex", 1);
                 newPhaseNames.put(index, phaseName);
@@ -111,13 +113,13 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
 
     }
 
-    public void finishConfiguration (RailsRoot root)
+    public void finishConfiguration(RailsRoot root)
             throws ConfigurationException {
 
         if (quantity == -1) {
             infiniteQuantity = true;
         } else if (quantity <= 0) {
-            throw new ConfigurationException("Invalid quantity "+quantity+" for train cert type "+ this);
+            throw new ConfigurationException("Invalid quantity " + quantity + " for train cert type " + this);
         }
     }
 
@@ -125,7 +127,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
         return newPhaseNames;
     }
 
-    public Train createTrain (RailsItem parent, String id, int sortingId) throws ConfigurationException {
+    public Train createTrain(RailsItem parent, String id, int sortingId) throws ConfigurationException {
         Train train = Configure.create(trainClass, parent, id);
         train.setSortingId(sortingId);
         return train;
@@ -135,7 +137,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
         return potentialTrainTypes;
     }
 
-    protected void addPotentialTrainType (TrainType type) {
+    protected void addPotentialTrainType(TrainType type) {
         potentialTrainTypes.add(type);
     }
 
@@ -206,7 +208,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     }
 
     public String getInfo() {
-        StringBuilder b = new StringBuilder ("<html>");
+        StringBuilder b = new StringBuilder("<html>");
         b.append(LocalText.getText("TrainInfo", getId(), Bank.format(this, cost), quantity));
         if (b.length() == 6) b.append(LocalText.getText("None"));
 
@@ -219,7 +221,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
 
     // Comparable interface
     public int compareTo(TrainCertificateType o) {
-        return ((Integer)index).compareTo(o.getIndex());
+        return ((Integer) index).compareTo(o.getIndex());
     }
 
 }

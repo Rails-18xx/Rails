@@ -21,7 +21,6 @@ public class GameOptionsParser {
     public GameOptionsParser() {}
 
     public GameOptionsSet.Builder processOptions(String directory) throws ConfigurationException {
-
         GameOptionsSet.Builder options = GameOptionsSet.builder();
         
         Document doc = parser.getDocument(FILENAME, directory);
@@ -61,16 +60,20 @@ public class GameOptionsParser {
                     String values = optionMap.get(XMLTags.VALUES_ATTR);
                     option.setAllowedValues(Splitter.on(XMLTags.VALUES_DELIM).split(values));
                 }
-                options.add(option.build());
+
+                options.withOption(option.build());
             }
         }
+
         return options;
     }
 
     public static GameOptionsSet.Builder load(String gameName) throws ConfigurationException {
         GameOptionsParser gop = new GameOptionsParser();
+
         // use the Separator provided by Resource-Loader!
         String directory =  GameInfoParser.DIRECTORY + ResourceLoader.SEPARATOR  + gameName;
+
         return gop.processOptions(directory);
     }
 

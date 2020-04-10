@@ -25,7 +25,7 @@ public class ObserverTest {
     @Before
     public void setUp() {
         root = StateTestUtils.setUpRoot();
-        state = BooleanState.create(root, STATE_ID, false);
+        state = new BooleanState(root, STATE_ID, false);
         state.addObserver(observer);
     }
     

@@ -33,21 +33,24 @@ public class TreasuryShareRound extends StockRound {
 
     protected Player sellingPlayer;
     protected PublicCompany operatingCompany;
-    private final BooleanState hasBought = BooleanState.create(this, "hasBought") ;
-    private final BooleanState hasSold = BooleanState.create(this, "hasSold");
+
+    private final BooleanState hasBought = new BooleanState(this, "hasBought");
+    private final BooleanState hasSold = new BooleanState(this, "hasSold");
 
     /**
      * Created via Configure
      */
     public TreasuryShareRound(GameManager parent, String id) {
         super(parent, id);
+
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
     }
 
     // TODO: Check if this still works, as the initialization was moved back to here
     public void start(RoundFacade parentRound) {
         log.info("Treasury share trading round started");
-        operatingCompany = ((OperatingRound)parentRound).getOperatingCompany();
+
+        operatingCompany = ((OperatingRound) parentRound).getOperatingCompany();
         sellingPlayer = operatingCompany.getPresident();
         getRoot().getPlayerManager().setCurrentPlayer(sellingPlayer);
         currentPlayer = sellingPlayer;
@@ -65,7 +68,6 @@ public class TreasuryShareRound extends StockRound {
 
     @Override
     public boolean setPossibleActions() {
-
         possibleActions.clear();
 
         if (operatingCompany.mustHaveOperatedToTradeShares()
@@ -106,9 +108,9 @@ public class TreasuryShareRound extends StockRound {
         /* Get the unique Pool certificates and check which ones can be bought */
         from = pool;
         ImmutableSetMultimap<PublicCompany, PublicCertificate> map =
-            from.getCertsPerCompanyMap();
+                from.getCertsPerCompanyMap();
 
-        for (PublicCompany comp: map.keySet()) {
+        for (PublicCompany comp : map.keySet()) {
             certs = map.get(comp);
             // if (certs.isEmpty()) continue; // TODO: Check if removal is correct
 
@@ -125,7 +127,7 @@ public class TreasuryShareRound extends StockRound {
             int maxShare = GameDef.getGameParameterAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT);
             // Max number of shares to add
             int maxBuyable =
-                (maxShare - ownedShare) / operatingCompany.getShareUnit();
+                    (maxShare - ownedShare) / operatingCompany.getShareUnit();
             // Max number of shares to buy
             number = Math.min(certs.size(), maxBuyable);
             if (number == 0) continue;
@@ -173,9 +175,9 @@ public class TreasuryShareRound extends StockRound {
 
             /* May not sell more than the Pool can accept */
             maxShareToSell =
-                Math.min(maxShareToSell,
-                        GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)
-                        - pool.getShare(company));
+                    Math.min(maxShareToSell,
+                            GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)
+                                    - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
             /*
@@ -210,11 +212,11 @@ public class TreasuryShareRound extends StockRound {
                 number = shareCountPerUnit[shareSize];
                 if (number == 0) continue;
                 number =
-                    Math.min(number, maxShareToSell
-                            / (shareSize * company.getShareUnit()));
+                        Math.min(number, maxShareToSell
+                                / (shareSize * company.getShareUnit()));
                 if (number == 0) continue;
 
-                for (int i=1; i<=number; i++) {
+                for (int i = 1; i <= number; i++) {
                     possibleActions.add(new SellShares(company, shareSize, i, price));
                 }
             }
@@ -240,7 +242,7 @@ public class TreasuryShareRound extends StockRound {
         int shareUnit = company.getShareUnit();
         int sharePerCert = action.getSharePerCertificate();
         int share = number * sharePerCert;
-        int shares = share/shareUnit;
+        int shares = share / shareUnit;
 
         String errMsg = null;
         int price = 0;
@@ -267,9 +269,9 @@ public class TreasuryShareRound extends StockRound {
             }
             if (company != operatingCompany) {
                 errMsg =
-                    LocalText.getText("WrongCompany",
-                            companyName,
-                                operatingCompany.getId() );
+                        LocalText.getText("WrongCompany",
+                                companyName,
+                                operatingCompany.getId());
 
             }
 
@@ -293,9 +295,9 @@ public class TreasuryShareRound extends StockRound {
             // Check if that many shares are available
             if (share > from.getShare(company)) {
                 errMsg =
-                    LocalText.getText("NotAvailable",
-                            companyName,
-                                from.getId() );
+                        LocalText.getText("NotAvailable",
+                                companyName,
+                                from.getId());
                 break;
             }
 
@@ -305,8 +307,8 @@ public class TreasuryShareRound extends StockRound {
             int treasuryShareLimit = GameDef.getGameParameterAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT);
             if (portfolio.getShare(company) + share > treasuryShareLimit) {
                 errMsg =
-                    LocalText.getText("TreasuryOverHoldLimit",
-                            String.valueOf(treasuryShareLimit));
+                        LocalText.getText("TreasuryOverHoldLimit",
+                                String.valueOf(treasuryShareLimit));
                 break;
             }
 
@@ -327,7 +329,7 @@ public class TreasuryShareRound extends StockRound {
                     shares,
                     companyName,
                     from.getId(),
-                    errMsg ));
+                    errMsg));
             return false;
         }
 
@@ -342,7 +344,7 @@ public class TreasuryShareRound extends StockRound {
                     shareUnit,
                     companyName,
                     from.getName(),
-                    cashText ));
+                    cashText));
         } else {
             ReportBuffer.add(this, LocalText.getText("BUY_SHARES_LOG",
                     companyName,
@@ -351,12 +353,12 @@ public class TreasuryShareRound extends StockRound {
                     number * shareUnit,
                     companyName,
                     from.getName(),
-                    cashText ));
+                    cashText));
         }
 
         PublicCertificate cert2;
         for (int i = 0; i < number; i++) {
-            cert2 = from.findCertificate(company, sharePerCert/shareUnit, false);
+            cert2 = from.findCertificate(company, sharePerCert / shareUnit, false);
             cert2.moveTo(company);
         }
 
@@ -393,9 +395,9 @@ public class TreasuryShareRound extends StockRound {
             }
             if (company != operatingCompany) {
                 errMsg =
-                    LocalText.getText("WrongCompany",
-                            companyName,
-                                operatingCompany.getId() );
+                        LocalText.getText("WrongCompany",
+                                companyName,
+                                operatingCompany.getId());
                 break;
             }
 
@@ -458,7 +460,7 @@ public class TreasuryShareRound extends StockRound {
                     companyName,
                     numberSold,
                     companyName,
-                    errMsg ));
+                    errMsg));
             return false;
         }
 
@@ -476,7 +478,6 @@ public class TreasuryShareRound extends StockRound {
         }
 
 
-
         int cashAmount = numberSold * price;
         String cashText = Currency.fromBank(cashAmount, company);
         ReportBuffer.add(this, LocalText.getText("SELL_SHARES_LOG",
@@ -485,7 +486,7 @@ public class TreasuryShareRound extends StockRound {
                 company.getShareUnit(),
                 (numberSold * company.getShareUnit()),
                 companyName,
-                cashText ));
+                cashText));
 
         // Transfer the sold certificates
         Portfolio.moveAll(certsToSell, pool.getParent());
@@ -505,8 +506,8 @@ public class TreasuryShareRound extends StockRound {
 
     /**
      * The current Player passes or is done.
-     * @param player Name of the passing player.
      *
+     * @param player Name of the passing player.
      * @return False if an error is found.
      */
     @Override
@@ -519,7 +520,6 @@ public class TreasuryShareRound extends StockRound {
             DisplayBuffer.add(this, LocalText.getText("WrongPlayer", playerName, currentPlayer.getId()));
             return false;
         }
-
 
 
         // Inform GameManager

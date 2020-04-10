@@ -6,7 +6,7 @@ public abstract class OwnableItem<T extends Ownable> extends AbstractItem implem
     
     private final Class<T> type;
     private final PortfolioManager pm;
-    private final GenericState<Owner> owner = GenericState.create(this, "owner");
+    private final GenericState<Owner> owner = new GenericState<>(this, "owner");
     
     /**
      * Initializes OwnableItem

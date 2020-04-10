@@ -30,10 +30,10 @@ public class OperatingRound_1889 extends OperatingRound {
     private static final Logger log = LoggerFactory.getLogger(OperatingRound_1889.class);
 
     private final PrivateCompany privB;
-    private final BooleanState activeSpPrivB = BooleanState.create(this, "ActiveSpPrivB");
+    private final BooleanState activeSpPrivB = new BooleanState(this, "ActiveSpPrivB");
 
     private final PrivateCompany privC;
-    private final BooleanState activeSpPrivC = BooleanState.create(this, "ActiveSpPrivC");
+    private final BooleanState activeSpPrivC = new BooleanState(this, "ActiveSpPrivC");
 
     private final boolean beginnerGame;
 

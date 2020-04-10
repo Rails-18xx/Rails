@@ -7,7 +7,7 @@ import net.sf.rails.util.Util;
  * Proxy class to the ConfigManager
  */
 
-public class Config {
+public final class Config {
 
     /**
     * @return version id (including a "+" attached if development)
@@ -19,8 +19,8 @@ public class Config {
     /**
      * @return true if development version
      */
-    public static boolean getDevelop() {
-        return ConfigManager.getInstance().getDevelop();
+    public static boolean isDevelop() {
+        return ConfigManager.getInstance().isDevelop();
     }
 
     public static String getBuildDate() {

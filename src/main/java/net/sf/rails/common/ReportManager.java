@@ -4,31 +4,28 @@ import net.sf.rails.game.RailsManager;
 import net.sf.rails.game.RailsRoot;
 
 /**
- * ReportManager controls the (non-action) communication with the client. 
- * 
+ * ReportManager controls the (non-action) communication with the client.
+ * <p>
  * Specific task:
  * Handling of the ReportBuffer and the DisplayBuffer
  */
 public class ReportManager extends RailsManager {
 
-    private final DisplayBuffer displayBuffer = DisplayBuffer.create(this, "displayBuffer");
-    private final ReportBuffer reportBuffer = ReportBuffer.create(this, "reportBuffer");
-    
-    private ReportManager(RailsRoot parent, String id) {
+    private final DisplayBuffer displayBuffer = new DisplayBuffer(this, "displayBuffer");
+
+    private final ReportBuffer reportBuffer = new ReportBuffer(this, "reportBuffer");
+
+    public ReportManager(RailsRoot parent, String id) {
         super(parent, id);
+
         parent.getStateManager().getChangeStack().addChangeReporter(reportBuffer);
     }
 
-    public static ReportManager create(RailsRoot parent, String id) {
-        return new ReportManager(parent, id);
-    }
-    
     public DisplayBuffer getDisplayBuffer() {
         return displayBuffer;
     }
-    
+
     public ReportBuffer getReportBuffer() {
         return reportBuffer;
     }
-    
 }

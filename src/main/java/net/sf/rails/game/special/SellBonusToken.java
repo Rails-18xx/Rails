@@ -17,7 +17,7 @@ public class SellBonusToken extends SpecialProperty {
 
     private String locationCodes = null;
     private List<MapHex> locations = null;
-    private final GenericState<Owner> seller = GenericState.create(this, "seller");
+    private final GenericState<Owner> seller = new GenericState<>(this, "seller");
     private String name;
     private int price;
     private int value;
@@ -48,37 +48,35 @@ public class SellBonusToken extends SpecialProperty {
 
         value = sellBonusTokenTag.getAttributeAsInteger("value", 0);
         if (value <= 0)
-            throw new ConfigurationException("Value invalid ["+value+"] or missing");
+            throw new ConfigurationException("Value invalid [" + value + "] or missing");
 
         price = sellBonusTokenTag.getAttributeAsInteger("price", 0);
         if (price <= 0)
-            throw new ConfigurationException("Price invalid ["+price+"] or missing");
+            throw new ConfigurationException("Price invalid [" + price + "] or missing");
 
         maxNumberToSell = sellBonusTokenTag.getAttributeAsInteger("amount", 1);
 
     }
-    
+
     @Override
-    public void finishConfiguration (RailsRoot root) 
-    throws ConfigurationException {
-        
+    public void finishConfiguration(RailsRoot root) throws ConfigurationException {
         locations = root.getMapManager().parseLocations(locationCodes);
     }
 
     @Override
-    public void setExercised () {
+    public void setExercised() {
         numberSold.add(1);
     }
-     
-    public void makeResellable () {
+
+    public void makeResellable() {
         numberSold.add(-1);
     }
-    
+
     @Override
-    public boolean isExercised () {
+    public boolean isExercised() {
         return maxNumberToSell >= 0 && numberSold.value() >= maxNumberToSell;
     }
-    
+
     public boolean isExecutionable() {
         return true;
     }
@@ -114,8 +112,8 @@ public class SellBonusToken extends SpecialProperty {
     @Override
     public String toText() {
         return "SellBonusToken comp=" + originalCompany.getId() + " hex="
-               + locationCodes + " value=" + value + " price=" + price
-               + " max="+maxNumberToSell+" sold="+numberSold.value();
+                + locationCodes + " value=" + value + " price=" + price
+                + " max=" + maxNumberToSell + " sold=" + numberSold.value();
     }
 
 }

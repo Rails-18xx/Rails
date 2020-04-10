@@ -87,8 +87,8 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     private String alias;
     private CompanyType type;
     private String infoText = "";
-    private String parentInfoText ="";
-    private final BooleanState closed = BooleanState.create(this, "closed", false);
+    private String parentInfoText = "";
+    private final BooleanState closed = new BooleanState(this, "closed", false);
 
     // used for Certificate interface
     private float certificateCount = 1.0f;
@@ -101,15 +101,12 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
         this.privateNumber = numberOfPrivateCompanies++;
     }
 
-    /**
-     * @see net.sf.rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
-     */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /* Configure private company features */
         try {
 
-            longName= tag.getAttributeAsString("longname", getId());
-            infoText = "<html>"+longName;
+            longName = tag.getAttributeAsString("longname", getId());
+            infoText = "<html>" + longName;
             basePrice = tag.getAttributeAsInteger("basePrice", 0);
 
             // sfy 1889 changed to IntegerArray
@@ -117,9 +114,11 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
 
             // pld: adding revenue to info text
             infoText += "<br>Revenue: ";
-            for (int i = 0; i < revenue.size();i++) {
+            for (int i = 0; i < revenue.size(); i++) {
                 infoText += (Bank.format(this, revenue.get(i)));
-                if (i < revenue.size()-1) {infoText += ", ";}
+                if (i < revenue.size() - 1) {
+                    infoText += ", ";
+                }
             }
 
             Tag certificateTag = tag.getChild("Certificate");
@@ -131,8 +130,8 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
             Tag blockedTag = tag.getChild("Blocking");
             if (blockedTag != null) {
                 blockedHexesString =
-                    blockedTag.getAttributeAsString("hex");
-                infoText += "<br>Blocking: "+blockedHexesString;
+                        blockedTag.getAttributeAsString("hex");
+                infoText += "<br>Blocking: " + blockedHexesString;
 
                 // add triggerable to unblock
                 this.triggeredOnOwnerChange(
@@ -150,7 +149,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
             if (infoTag != null) {
                 String infoKey = infoTag.getAttributeAsString("key");
                 String[] infoParms = infoTag.getAttributeAsString("parm", "").split(",");
-                infoText += "<br>"+LocalText.getText(infoKey, (Object[])infoParms);
+                infoText += "<br>" + LocalText.getText(infoKey, (Object[]) infoParms);
             }
 
 
@@ -172,7 +171,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
                     String ifAttribute = spTag.getAttributeAsString("condition");
                     if (ifAttribute != null) {
                         closeIfAllExercised = ifAttribute.equalsIgnoreCase("ifExercised")
-                        || ifAttribute.equalsIgnoreCase("ifAllExercised");
+                                || ifAttribute.equalsIgnoreCase("ifAllExercised");
                         closeIfAnyExercised = ifAttribute.equalsIgnoreCase("ifAnyExercised");
                     }
                     String whenAttribute = spTag.getAttributeAsString("when");
@@ -184,7 +183,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
                 /* conditions that prevent closing */
                 List<Tag> preventTags = closureTag.getChildren("PreventClosing");
                 if (preventTags != null) {
-                    for (Tag preventTag: preventTags) {
+                    for (Tag preventTag : preventTags) {
                         String conditionText = preventTag.getAttributeAsString("condition");
                         if (conditionText != null) {
                             preventClosingConditions.add(conditionText);
@@ -216,13 +215,13 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
 
                         if (tradeableToCompany) {
                             upperPrice =
-                                tradeableTag.getAttributeAsInteger("upperPrice", upperPrice);
+                                    tradeableTag.getAttributeAsInteger("upperPrice", upperPrice);
                             lowerPrice =
-                                tradeableTag.getAttributeAsInteger("lowerPrice", lowerPrice);
+                                    tradeableTag.getAttributeAsInteger("lowerPrice", lowerPrice);
                             lowerPriceFactor =
-                                tradeableTag.getAttributeAsFloat("lowerPriceFactor", lowerPriceFactor);
+                                    tradeableTag.getAttributeAsFloat("lowerPriceFactor", lowerPriceFactor);
                             upperPriceFactor =
-                                tradeableTag.getAttributeAsFloat("upperPriceFactor", upperPriceFactor);
+                                    tradeableTag.getAttributeAsFloat("upperPriceFactor", upperPriceFactor);
                         }
                     }
 
@@ -231,13 +230,13 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
 
                         if (tradeableToPlayer) {
                             upperPlayerPrice =
-                                tradeableTag.getAttributeAsInteger("upperPrice", upperPlayerPrice);
+                                    tradeableTag.getAttributeAsInteger("upperPrice", upperPlayerPrice);
                             lowerPlayerPrice =
-                                tradeableTag.getAttributeAsInteger("lowerPrice", lowerPlayerPrice);
+                                    tradeableTag.getAttributeAsInteger("lowerPrice", lowerPlayerPrice);
                             lowerPlayerPriceFactor =
-                                tradeableTag.getAttributeAsFloat("lowerPriceFactor", lowerPlayerPriceFactor);
+                                    tradeableTag.getAttributeAsFloat("lowerPriceFactor", lowerPlayerPriceFactor);
                             upperPlayerPriceFactor =
-                                tradeableTag.getAttributeAsFloat("upperPriceFactor", upperPlayerPriceFactor);
+                                    tradeableTag.getAttributeAsFloat("upperPriceFactor", upperPlayerPriceFactor);
                         }
                     }
                 }
@@ -251,8 +250,8 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
 
     }
 
-    public void finishConfiguration (RailsRoot root)
-    throws ConfigurationException {
+    public void finishConfiguration(RailsRoot root)
+            throws ConfigurationException {
 
         for (SpecialProperty sp : specialProperties) {
             sp.finishConfiguration(root);
@@ -282,21 +281,21 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
         //if {upper,lower}PriceFactor is set but {upper,lower}Price is not, calculate the right value
         if (upperPrice == NO_PRICE_LIMIT && upperPriceFactor != NO_PRICE_LIMIT) {
 
-            if (basePrice==0) {
+            if (basePrice == 0) {
                 throw new ConfigurationException("Configuration error for Private "
                         + getId() + ": upperPriceFactor needs basePrice to be set");
             }
 
-            upperPrice = (int)(basePrice * upperPriceFactor + 0.5f);
+            upperPrice = (int) (basePrice * upperPriceFactor + 0.5f);
         }
         if (lowerPrice == NO_PRICE_LIMIT && lowerPriceFactor != NO_PRICE_LIMIT) {
 
-            if (basePrice==0) {
+            if (basePrice == 0) {
                 throw new ConfigurationException("Configuration error for Private "
                         + getId() + ": lowerPriceFactor needs basePrice to be set");
             }
 
-            lowerPrice = (int)(basePrice * lowerPriceFactor + 0.5f);
+            lowerPrice = (int) (basePrice * lowerPriceFactor + 0.5f);
         }
         // end: br
     }
@@ -324,7 +323,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     }
 
     //  start: sfy 1889: new method
-    public int getRevenueByPhase(Phase phase){
+    public int getRevenueByPhase(Phase phase) {
         if (phase != null) {
             return revenue.get(Math.min(
                     revenue.size(),
@@ -362,7 +361,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
         List<SellBonusToken> moveToGM = new ArrayList<>(4);
         for (SpecialProperty sp : specialProperties) {
             if (sp instanceof SellBonusToken) {
-                moveToGM.add((SellBonusToken)sp);
+                moveToGM.add((SellBonusToken) sp);
             }
         }
         for (SellBonusToken sbt : moveToGM) {
@@ -445,7 +444,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
         return closeManually;
     }
 
-    public void checkClosingIfExercised (boolean endOfTurn) {
+    public void checkClosingIfExercised(boolean endOfTurn) {
 
         if (isClosed() || endOfTurn != closeAtEndOfTurn) return;
 

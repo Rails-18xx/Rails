@@ -1,82 +1,80 @@
 package net.sf.rails.common.parser;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.SortedSet;
-
+import com.google.common.collect.Sets;
 import net.sf.rails.common.GameInfo;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.google.common.collect.Sets;
-
+import java.util.List;
+import java.util.SortedSet;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class GameInfoParser {
-    
+
     public final static String DIRECTORY = "data";
     private final static String FILENAME = "GamesList.xml";
-    
-	private final XMLParser parser = new XMLParser();
+
+    private final XMLParser parser = new XMLParser();
+
     private String credits;
 
-	public GameInfoParser() {}
+    public GameInfoParser() {
+        // do nothing
+    }
 
-	public String getCredits() {
-		return credits;
-	}
+    public SortedSet<GameInfo> processGameList() throws ConfigurationException {
+        final Document doc = parser.getDocument(FILENAME, DIRECTORY);
+        final Element root = parser.getTopElement(doc);
 
-	public SortedSet<GameInfo> processGameList() throws ConfigurationException {
+        // <CREDITS>
+        final List<Element> creditsElement = parser.getElementList(XMLTags.CREDITS_TAG, root.getChildNodes());
 
-		SortedSet<GameInfo> gameList = Sets.newTreeSet();
+        this.credits = parser.getElementText(creditsElement.get(0).getChildNodes());
 
-		Document doc = parser.getDocument(FILENAME, DIRECTORY);
-		Element root = parser.getTopElement(doc);
+        // <GAME>
+        final List<Element> gameElements = parser.getElementList(XMLTags.GAME_TAG, root.getChildNodes());
 
-		// <CREDITS>
-		List<Element> creditsElement = parser.getElementList(XMLTags.CREDITS_TAG, root.getChildNodes());
-		this.credits = parser.getElementText(creditsElement.get(0).getChildNodes());
-		
-		ArrayList<Element> gameElements = parser.getElementList(XMLTags.GAME_TAG, root
-				.getChildNodes());
+        return IntStream
+                .range(0, gameElements.size())
+                .mapToObj(index -> {
+                    final Element gameElement = gameElements.get(index);
 
-		// <GAME>
-		Iterator<Element> it = gameElements.iterator();
-		int count = 0;
-		while (it.hasNext()) {
-			Element el = it.next();
-			
-			GameInfo.Builder gameInfo = GameInfo.builder();
-			
-//			ArrayList<GameOption> optionsList = new ArrayList<GameOption>();
+                    return convertElement(index, gameElement);
+                })
+                .collect(Collectors.toCollection(Sets::newTreeSet));
+    }
 
-			//TODO: push validation into getAttributeAs* methods
-			gameInfo.setName(parser.getAttributeAsString(XMLTags.NAME_ATTR, el));
+    private GameInfo convertElement(int ordering, Element gameElement) {
+        GameInfo.Builder gameInfo = GameInfo.builder();
 
-			ArrayList<Element> childElements = parser.getElementList(el.getChildNodes());
-			
-			// <PLAYER> , <OPTION>, <DESCRIPTION>
-			Iterator<Element> childIt = childElements.iterator();
-			while (childIt.hasNext()) {
-				Element child = childIt.next();
-				
-				if (child.getNodeName().equals(XMLTags.DESCR_TAG)) {
-					gameInfo.setDescription(parser.getElementText(child.getChildNodes()));
-				}
-				
-				if (child.getNodeName().equals(XMLTags.NOTE_TAG)) {
-				    gameInfo.setNote(parser.getElementText(child.getChildNodes()));
-				}
+        //TODO: push validation into getAttributeAs* methods
+        gameInfo.withName(parser.getAttributeAsString(XMLTags.NAME_ATTR, gameElement));
 
-				if (child.getNodeName().equals(XMLTags.PLAYERS_TAG)) {
-					gameInfo.setMinPlayers(parser.getAttributeAsInteger(XMLTags.MIN_ATTR, child));
-					gameInfo.setMaxPlayers(parser.getAttributeAsInteger(XMLTags.MAX_ATTR, child));
-				}
+        List<Element> childElements = parser.getElementList(gameElement.getChildNodes());
 
-			}
-			gameList.add(gameInfo.build(count++));
-		}
-		return gameList;
-	}
+        // <PLAYER> , <OPTION>, <DESCRIPTION>
+        for (Element child : childElements) {
+            if (child.getNodeName().equals(XMLTags.DESCR_TAG)) {
+                gameInfo.withDescription(parser.getElementText(child.getChildNodes()));
+            }
+
+            if (child.getNodeName().equals(XMLTags.NOTE_TAG)) {
+                gameInfo.withNote(parser.getElementText(child.getChildNodes()));
+            }
+
+            if (child.getNodeName().equals(XMLTags.PLAYERS_TAG)) {
+                gameInfo.withMinPlayers(parser.getAttributeAsInteger(XMLTags.MIN_ATTR, child));
+                gameInfo.withMaxPlayers(parser.getAttributeAsInteger(XMLTags.MAX_ATTR, child));
+            }
+        }
+
+        gameInfo.withOrdering(ordering);
+
+        return gameInfo.build();
+    }
+
+    public String getCredits() {
+        return credits;
+    }
 }

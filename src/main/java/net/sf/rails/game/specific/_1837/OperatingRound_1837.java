@@ -46,9 +46,9 @@ import com.google.common.collect.Table;
 public class OperatingRound_1837 extends OperatingRound {
     private static final Logger log = LoggerFactory.getLogger(OperatingRound_1837.class);
 
-    private final BooleanState needSuedBahnFormationCall = BooleanState.create(this, "NeedSuedBahnFormationCall");
-    private final BooleanState needHungaryFormationCall = BooleanState.create(this, "NeedHungaryFormationCall");
-    private final BooleanState needKuKFormationCall = BooleanState.create(this, "NeedKuKFormationCall");
+    private final BooleanState needSuedBahnFormationCall = new BooleanState(this, "NeedSuedBahnFormationCall");
+    private final BooleanState needHungaryFormationCall = new BooleanState(this, "NeedHungaryFormationCall");
+    private final BooleanState needKuKFormationCall = new BooleanState(this, "NeedKuKFormationCall");
 
 
 

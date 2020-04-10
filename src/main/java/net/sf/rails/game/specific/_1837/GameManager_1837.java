@@ -35,13 +35,13 @@ public class GameManager_1837 extends GameManager {
 
     private Round previousRound = null;
     protected final GenericState<Player> playerToStartFCERound =
-            GenericState.create(this, "playerToStartFCERound");
+            new GenericState<>(this, "playerToStartFCERound");
 
     protected final GenericState<Player> playerToStartCERound =
-            GenericState.create(this, "playerToStartCERound");
+            new GenericState<>(this, "playerToStartCERound");
 
     protected final BooleanState  CoalRoundFollowedByOR =
-            BooleanState.create(this,  "CoalRoundFollowedByOr");
+            new BooleanState(this,  "CoalRoundFollowedByOr");
 
     public GameManager_1837(RailsRoot parent, String id) {
         super(parent, id);

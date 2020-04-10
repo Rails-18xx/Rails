@@ -1,35 +1,27 @@
 package net.sf.rails.common;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.SystemOS;
 import net.sf.rails.util.Util;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.*;
 
 
 /**
  * ConfigManager is a utility class that collects all functions
  * used to define and control configuration options
- *
+ * <p>
  * It is a rewrite of the previously used static class Config
  */
-
 public class ConfigManager implements Configurable {
 
-    // STATIC CONSTANTS
     private static final Logger log = LoggerFactory.getLogger(ConfigManager.class);
 
     //  XML setup
@@ -49,7 +41,9 @@ public class ConfigManager implements Configurable {
 
     // version string and development flag
     private String version = "unknown";
+
     private boolean develop = false;
+
     private String buildDate = "unknown";
 
     // configuration items: replace with Multimap in Rails 2.0
@@ -62,6 +56,9 @@ public class ConfigManager implements Configurable {
     private ConfigProfile activeProfile;
     private Map<String, String> transientConfig = new HashMap<>();
 
+    private ConfigManager() {
+        // do nothing
+    }
 
     public static void initConfiguration(boolean test) {
         try {
@@ -90,32 +87,29 @@ public class ConfigManager implements Configurable {
         return instance;
     }
 
-    // private constructor to allow only creation of a singleton
-    private ConfigManager() {}
-
     /**
      * Reads the config.xml file that defines all config items
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
-            // find sections
-            List<Tag> sectionTags = tag.getChildren(SECTION_TAG);
-            if (sectionTags != null) {
-                for (Tag sectionTag:sectionTags) {
-                    // find name attribute
-                    String sectionName = sectionTag.getAttributeAsString("name");
-                    if (!Util.hasValue(sectionName)) continue;
+        // find sections
+        List<Tag> sectionTags = tag.getChildren(SECTION_TAG);
+        if (sectionTags != null) {
+            for (Tag sectionTag : sectionTags) {
+                // find name attribute
+                String sectionName = sectionTag.getAttributeAsString("name");
+                if (!Util.hasValue(sectionName)) continue;
 
-                    // find items
-                    List<Tag> itemTags = sectionTag.getChildren(ITEM_TAG);
-                    if (itemTags == null || itemTags.size() == 0) continue;
-                    List<ConfigItem> sectionItems = new ArrayList<ConfigItem>();
-                    for (Tag itemTag:itemTags) {
-                        ConfigItem configItem = new ConfigItem(itemTag);
-                        sectionItems.add(configItem);
-                    }
-                    configSections.put(sectionName, sectionItems);
+                // find items
+                List<Tag> itemTags = sectionTag.getChildren(ITEM_TAG);
+                if (itemTags == null || itemTags.size() == 0) continue;
+                List<ConfigItem> sectionItems = new ArrayList<ConfigItem>();
+                for (Tag itemTag : itemTags) {
+                    ConfigItem configItem = new ConfigItem(itemTag);
+                    sectionItems.add(configItem);
                 }
+                configSections.put(sectionName, sectionItems);
             }
+        }
     }
 
     public void finishConfiguration(RailsRoot parent)
@@ -155,7 +149,7 @@ public class ConfigManager implements Configurable {
 
         String sVersion = versionNumber.getProperty("git.build.version");
         if (Util.hasValue(sVersion)) {
-           this.version = sVersion;
+            this.version = sVersion;
         }
 
         this.develop = StringUtils.isNotBlank(versionNumber.getProperty("develop"));
@@ -166,10 +160,22 @@ public class ConfigManager implements Configurable {
         }
     }
 
+    public boolean isDevelop() {
+        return develop;
+    }
+
+    public String getBuildDate() {
+        return buildDate;
+    }
+
+    public Map<String, List<ConfigItem>> getConfigSections() {
+        return configSections;
+    }
+
     /**
-    * @return version id (including a "+" attached if development)
-    */
-    String getVersion() {
+     * @return version id (including a "+" attached if development)
+     */
+    public String getVersion() {
         if (develop) {
             return version + "+";
         } else {
@@ -177,24 +183,11 @@ public class ConfigManager implements Configurable {
         }
     }
 
-    /**
-     * @return true if development version
-     */
-    boolean getDevelop() {
-        return develop;
-    }
-
-    /**
-     * @return the buildDate
-     */
-    String getBuildDate() {
-        return buildDate;
-    }
-
-    String getValue(String key, String defaultValue) {
-        if ( transientConfig.containsKey(key) ) {
+    public String getValue(String key, String defaultValue) {
+        if (transientConfig.containsKey(key)) {
             return transientConfig.get(key);
         }
+
         // get value from active profile (this escalates)
         String value = activeProfile.getProperty(key);
         if (Util.hasValue(value)) {
@@ -204,7 +197,7 @@ public class ConfigManager implements Configurable {
         }
     }
 
-    void setValue(String key, String value) {
+    public void setValue(String key, String value) {
         transientConfig.put(key, value);
     }
 
@@ -225,19 +218,15 @@ public class ConfigManager implements Configurable {
         List<ConfigProfile> profiles = new ArrayList<>(ConfigProfile.getProfiles());
         Collections.sort(profiles);
         List<String> profileNames = new ArrayList<>();
-        for (ConfigProfile profile:profiles){
+        for (ConfigProfile profile : profiles) {
             profileNames.add(profile.getName());
         }
         return profileNames;
     }
 
-    public Map<String, List<ConfigItem>> getConfigSections() {
-        return configSections;
-    }
-
     public int getMaxElementsInPanels() {
         int maxElements = 0;
-        for (List<ConfigItem> panel:configSections.values()) {
+        for (List<ConfigItem> panel : configSections.values()) {
             maxElements = Math.max(maxElements, panel.size());
         }
         log.debug("Configuration sections with maximum elements of {}", maxElements);
@@ -249,8 +238,8 @@ public class ConfigManager implements Configurable {
         activeProfile.makeActive();
 
         // define configItems
-        for (List<ConfigItem> items:configSections.values()) {
-            for (ConfigItem item:items) {
+        for (List<ConfigItem> items : configSections.values()) {
+            for (ConfigItem item : items) {
                 // TODO: should we ignore isGameRelated?
                 item.setCurrentValue(getValue(item.name, null));
             }
@@ -266,10 +255,10 @@ public class ConfigManager implements Configurable {
      */
     public boolean saveProfile(boolean applyInitMethods) {
         log.debug("saving profile now");
-        for (List<ConfigItem> items:configSections.values()) {
-            for (ConfigItem item:items) {
-                if ( item.isGameRelated ) {
-                    if ( StringUtils.isNotBlank(item.getNewValue()) ) {
+        for (List<ConfigItem> items : configSections.values()) {
+            for (ConfigItem item : items) {
+                if (item.isGameRelated) {
+                    if (StringUtils.isNotBlank(item.getNewValue())) {
                         transientConfig.put(item.name, item.getNewValue());
                     } else {
                         transientConfig.remove(item.name);
@@ -302,7 +291,7 @@ public class ConfigManager implements Configurable {
         }
     }
 
-    String getRecent(String key) {
+    public String getRecent(String key) {
         // get value from active profile (this escalates)
         String value = recentData.getProperty(key);
         if (Util.hasValue(value)) {
@@ -312,10 +301,10 @@ public class ConfigManager implements Configurable {
         }
     }
 
-    boolean storeRecent(String key, String value) {
+    public boolean storeRecent(String key, String value) {
         // check conditions
         if (key == null) return false;
-        if (getRecent(key) == null || !getRecent(key).equals(value) ) {
+        if (getRecent(key) == null || !getRecent(key).equals(value)) {
             if (value == null) {
                 recentData.remove(key);
             } else {

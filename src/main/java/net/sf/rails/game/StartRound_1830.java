@@ -20,7 +20,7 @@ public class StartRound_1830 extends StartRound {
     protected final int bidIncrement;
 
     private final GenericState<StartItem> auctionItemState =
-            GenericState.create(this, "auctionItemState");
+            new GenericState<>(this, "auctionItemState");
 
     /**
      * Constructed via Configure

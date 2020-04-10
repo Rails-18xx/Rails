@@ -60,8 +60,8 @@ public class OperatingRound_1880 extends OperatingRound {
     private OperatingRoundControl_1880 orControl;
     private ParSlotManager parSlotManager;
 
-    private final ArrayListState<Investor_1880> investorsToClose = ArrayListState.create(this, "investorsToClose");
-    private final BooleanState trainPurchasedThisTurn = BooleanState.create(this, "trainPurchaseThisTurn");
+    private final ArrayListState<Investor_1880> investorsToClose = new ArrayListState<>(this, "investorsToClose");
+    private final BooleanState trainPurchasedThisTurn = new BooleanState(this, "trainPurchaseThisTurn");
     private PublicCompany firstCompanyBeforePrivates;
     private PossibleAction manditoryNextAction = null;
 

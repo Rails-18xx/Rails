@@ -15,54 +15,56 @@ import com.google.common.collect.ComparisonChain;
 public class Train extends RailsOwnableItem<Train> implements Creatable {
 
     protected TrainCertificateType certificateType;
-    
-    protected final GenericState<TrainType> type = GenericState.create(this, "type");
-    
-    /** Some specific trains cannot be traded between companies */
+
+    protected final GenericState<TrainType> type = new GenericState<>(this, "type");
+
+    /**
+     * Some specific trains cannot be traded between companies
+     */
     protected boolean tradeable = true;
 
-    protected final BooleanState obsolete = BooleanState.create(this, "obsolete");
+    protected final BooleanState obsolete = new BooleanState(this, "obsolete");
 
     // sorting id to correctly sort them inside a portfolio
     // this is a workaround to have 2.0 compatible with 1.x save files
     // it should be removed in the mid-term by selecting trains from a portfolio based only on type, not on id
     protected int sortingId;
-    
+
     /**
      * Used by Configure (via reflection) only
      */
     public Train(RailsItem parent, String id) {
         super(parent, id, Train.class);
     }
-    
+
     public static Train create(RailsItem parent, int uniqueId, TrainCertificateType certType, TrainType type)
             throws ConfigurationException {
-        String id = certType.getId() + "_"+ uniqueId;
+        String id = certType.getId() + "_" + uniqueId;
         Train train = certType.createTrain(parent, id, uniqueId);
         train.setCertificateType(certType);
         train.setType(type);
         return train;
     }
-    
+
     @Override
     public RailsItem getParent() {
-        return (RailsItem)super.getParent();
+        return (RailsItem) super.getParent();
     }
 
     @Override
     public RailsRoot getRoot() {
-        return (RailsRoot)super.getRoot();
+        return (RailsRoot) super.getRoot();
     }
 
     public void setSortingId(int sortingId) {
         this.sortingId = sortingId;
     }
-    
+
     public void setCertificateType(TrainCertificateType type) {
         this.certificateType = type;
     }
-    
-    public void setType (TrainType type) {
+
+    public void setType(TrainType type) {
         this.type.set(type);
     }
 
@@ -72,13 +74,14 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
     public TrainCertificateType getCertType() {
         return certificateType;
     }
-    
+
     public TrainType getType() {
         return isAssigned() ? type.value() : null;
     }
 
-    /**import rails.game.state.AbstractItem;
-
+    /**
+     * import rails.game.state.AbstractItem;
+     *
      * @return Returns the cityScoreFactor.
      */
     public int getCityScoreFactor() {
@@ -138,11 +141,11 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
     public boolean isAssigned() {
         return type.value() != null;
     }
-    
+
     public boolean isPermanent() {
         return certificateType.isPermanent();
     }
-    
+
     public boolean isObsolete() {
         return obsolete.value();
     }
@@ -161,7 +164,7 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
     public boolean canBeExchanged() {
         return certificateType.nextCanBeExchanged();
     }
-    
+
     public void discard() {
         BankPortfolio discardTo;
         if (isObsolete()) {
@@ -169,7 +172,7 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
         } else {
             discardTo = getRoot().getTrainManager().discardTo();
         }
-        String discardText =  LocalText.getText("CompanyDiscardsTrain", getOwner().getId(), this.toText(), discardTo.getId());
+        String discardText = LocalText.getText("CompanyDiscardsTrain", getOwner().getId(), this.toText(), discardTo.getId());
         ReportBuffer.add(this, discardText);
         this.moveTo(discardTo);
     }
@@ -190,7 +193,7 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
     @Override
     public int compareTo(Ownable other) {
         if (other instanceof Train) {
-            Train oTrain = (Train)other;
+            Train oTrain = (Train) other;
             return ComparisonChain.start()
                     .compare(this.getCertType(), oTrain.getCertType())
                     .compare(this.sortingId, oTrain.sortingId)
@@ -198,5 +201,5 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
         }
         return 0;
     }
-    
+
 }
