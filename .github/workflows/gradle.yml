@@ -53,11 +53,11 @@ jobs:
           java-version: 14
           java-package: jdk
       - name: Execute Tests
-        run: gradlew.bat clean test
+        run: ./gradlew.bat clean test
       - name: Build jar
-        run: gradlew.bat clean build
+        run: ./gradlew.bat clean build
       - name: Create Installer
-        run: gradlew.bat buildExePackage
+        run: ./gradlew.bat buildExePackage
       - name: Debug
         run: ls
 
@@ -77,6 +77,6 @@ jobs:
       - name: Build jar
         run: ./gradlew clean build
       - name: Create Installer
-        run: ./gradlew buildDebPackage
+        run: ./gradlew buildDmgPackage
       - name: Debug
         run: ls -lh
