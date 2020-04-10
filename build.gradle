@@ -93,7 +93,7 @@ wrapper {
 }
 
 // BuildDate function adapted from http://stackoverflow.com/questions/19172565/how-append-date-build-to-versionnamesuffix-on-gradle
-def buildDate = {
+def buildDate() {
     def df = new SimpleDateFormat('yyyy-MM-dd')
 
     df.setTimeZone(TimeZone.getTimeZone('UTC'))
@@ -102,7 +102,7 @@ def buildDate = {
 }
 
 gitProperties {
-    customProperty 'buildDate', buildDate
+    customProperty 'buildDate', buildDate()
     customProperty 'develop', 'true'
 }
 
@@ -110,7 +110,7 @@ def stringify(string) {
     return '"' + string + '"';
 }
 
-def appVersion = {
+def appVersion() {
     return version
             .replaceAll("\\-", ".")
             .replaceAll("alpha", "0")
@@ -122,7 +122,7 @@ task buildDebPackage(type: Exec) {
     commandLine 'jpackage',
             '--verbose',
             '--type', 'deb',
-            '--name', stringify(appName),
+            '--name', appName,
             '--description', stringify(description),
             '--vendor', stringify(vendor),
             '--license-file', licenceFile,
@@ -140,13 +140,13 @@ task buildExePackage(type: Exec) {
     commandLine 'jpackage',
             '--verbose',
             '--type', 'exe',
-            '--name', stringify(appName),
+            '--name', appName,
             '--description', stringify(description),
             '--vendor', stringify(vendor),
             '--license-file', licenceFile,
             '--icon', './native/rails.ico',
             '--file-associations', './native/rails-windows-association.properties',
-            '--app-version', appVersion,
+            '--app-version', appVersion(),
             '--input', 'build/libs',
             '--main-jar', "rails-${version}-all.jar",
             '--win-dir-chooser',
@@ -159,13 +159,13 @@ task buildDmgPackage(type: Exec) {
     commandLine 'jpackage',
             '--verbose',
             '--type', 'dmg',
-            '--name', stringify(appName),
+            '--name', appName,
             '--description', stringify(description),
             '--vendor', stringify(vendor),
             '--license-file', licenceFile,
             '--icon', './native/rails.ico',
             '--file-associations', './native/rails-osx-association.properties',
-            '--app-version', appVersion,
+            '--app-version', appVersion(),
             '--input', 'build/libs',
             '--main-jar', "rails-${version}-all.jar",
             '--mac-package-name', 'rails-18xx'
