@@ -990,7 +990,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         if (savedActions.size() < executedActions.size()) {
             DisplayBuffer.add(this, LocalText.getText("LOAD_FAILED_MESSAGE",
                     "loaded file has less actions than current game"));
-            return true;
+            return false;
         }
 
         // Check action identity
@@ -1005,7 +1005,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                                 "loaded action \"" + savedAction.toString()
                                         + "\"<br>   is not same as game action \"" + executedAction.toString()
                                         + "\""));
-                        return true;
+                        return false;
                     }
                 } else {
                     if (index == executedActions.size()) {
