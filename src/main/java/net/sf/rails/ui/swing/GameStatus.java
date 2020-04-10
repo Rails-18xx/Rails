@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import net.sf.rails.common.Config;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Player;
@@ -564,20 +565,22 @@ public class GameStatus extends GridPanel implements ActionListener {
                     wideGapPosition, true);
         }
 
-        addField(new Caption(LocalText.getText("WORTH")), 0,
-                playerWorthYOffset, 1, 1, 0, true);
-        for (int i = 0; i < np; i++) {
-            f = playerWorth[i] = new Field(players[i].getWorthModel());
-            int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
-            addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, wideGapPosition, true);
-        }
+        if (Config.get("networth_visibility").equals("yes")) {
+            addField(new Caption(LocalText.getText("WORTH")), 0,
+                    playerWorthYOffset, 1, 1, 0, true);
+            for (int i = 0; i < np; i++) {
+                f = playerWorth[i] = new Field(players[i].getWorthModel());
+                int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
+                addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, wideGapPosition, true);
+            }
 
-        addField(new Caption(LocalText.getText("ORWORTHINCR")), 0,
-                playerORWorthIncreaseYOffset, 1, 1, 0, true);
-        for (int i = 0; i < np; i++) {
-            f = playerORWorthIncrease[i] = new Field(players[i].getLastORWorthIncrease());
-            int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
-            addField(f, playerORWorthIncreaseXOffset + i, playerORWorthIncreaseYOffset, 1, 1, wideGapPosition, true);
+            addField(new Caption(LocalText.getText("ORWORTHINCR")), 0,
+                    playerORWorthIncreaseYOffset, 1, 1, 0, true);
+            for (int i = 0; i < np; i++) {
+                f = playerORWorthIncrease[i] = new Field(players[i].getLastORWorthIncrease());
+                int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
+                addField(f, playerORWorthIncreaseXOffset + i, playerORWorthIncreaseYOffset, 1, 1, wideGapPosition, true);
+            }
         }
 
         addField(new Caption("Certs"), 0, playerCertCountYOffset, 1, 1,
