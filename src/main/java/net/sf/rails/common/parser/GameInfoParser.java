@@ -46,7 +46,7 @@ public class GameInfoParser {
     }
 
     private GameInfo convertElement(int ordering, Element gameElement) {
-        GameInfo.GameInfoBuilder gameInfo = GameInfo.builder();
+        GameInfo.Builder gameInfo = GameInfo.builder();
 
         //TODO: push validation into getAttributeAs* methods
         gameInfo.withName(parser.getAttributeAsString(XMLTags.NAME_ATTR, gameElement));
