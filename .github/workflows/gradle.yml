@@ -33,12 +33,12 @@ jobs:
           java-version: 14
           java-package: jdk
       - name: Execute Tests
-        run: gradle clean test
+        run: ./gradlew clean test
       - name: Build jar
-        run: gradle clean build
+        run: ./gradle clean build
       - name: Debug before
         run: ll build
       - name: Create Installer
-        run: gradle buildLinuxPackage
+        run: ./gradle buildLinuxPackage
       - name: Debug After
         run: ll
