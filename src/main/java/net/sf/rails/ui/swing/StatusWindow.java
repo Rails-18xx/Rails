@@ -26,7 +26,6 @@ import net.sf.rails.game.EndOfGameRound;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.Player;
-import net.sf.rails.game.Round;
 import net.sf.rails.game.StartRound;
 import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.financial.StockRound;
@@ -293,7 +292,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         // opaque
         menuBar.add(specialMenu);
 
-        if ( Config.getDevelop() ) {
+        if ( Config.isDevelop() ) {
             developerMenu = new JMenu("Developer");
             developerMenu.setName("Developer");
             menuBar.add(developerMenu);
@@ -803,7 +802,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         );
 
 
-        if (!Config.getDevelop()) {
+        if (!Config.isDevelop()) {
             // show game report line by line
             List<String> gameReport = gm.getGameReport();
             Collections.reverse(gameReport);

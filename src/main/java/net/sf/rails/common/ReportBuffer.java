@@ -1,11 +1,9 @@
 package net.sf.rails.common;
 
-import java.util.Deque;
-import java.util.Queue;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.rails.game.RailsAbstractItem;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.state.ChangeReporter;
@@ -13,22 +11,21 @@ import net.sf.rails.game.state.ChangeSet;
 import net.sf.rails.game.state.ChangeStack;
 import net.sf.rails.util.Util;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import java.util.Deque;
+import java.util.Queue;
 
 
 /**
  * ReportBuffer stores messages of the game progress.
- *
+ * <p>
  * Also used for regression testing comparing the output of the report buffer.
  */
-
+@Slf4j
 public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
 
-    private static final Logger log = LoggerFactory.getLogger(ReportBuffer.class);
-
-    /** Indicator string to find the active message position in the parsed html document */
+    /**
+     * Indicator string to find the active message position in the parsed html document
+     */
     public static final String ACTIVE_MESSAGE_INDICATOR = "(**)";
 
     // static data
@@ -41,7 +38,7 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     private ChangeStack changeStack; // initialized via init()
 
     // dynamic data
-    private ReportSet.Builder currentReportBuilder;
+    private ReportSet.ReportSetBuilder currentReportBuilder;
     private ReportBuffer.Observer observer;
 
 
@@ -65,12 +62,13 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
 
     /**
      * Returns a list of all messages (of the past)
+     *
      * @return list of messages
      */
     public ImmutableList<String> getAsList() {
         ImmutableList.Builder<String> list = ImmutableList.builder();
-        for (ReportSet rs:pastReports) {
-            list.addAll(rs.getAsList());
+        for (ReportSet rs : pastReports) {
+            list.addAll(rs.getMessages());
         }
         return list.build();
     }
@@ -82,7 +80,7 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
 
         StringBuilder s = new StringBuilder();
         s.append("<html>");
-        for (ReportSet rs:Iterables.concat(pastReports, futureReports)) {
+        for (ReportSet rs : Iterables.concat(pastReports, futureReports)) {
             String text = rs.getAsHtml(currentChangeSet);
             if (text == null) continue;
             s.append("<p>");
@@ -96,6 +94,7 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
 
     /**
      * Returns all messages for the recent active player
+     *
      * @return full text
      */
     // FIXME (Rails2.0): Add implementation for this
@@ -109,7 +108,9 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
 
     private void addMessage(String message) {
         if (!Util.hasValue(message)) return;
-        currentReportBuilder.addMessage(message);
+
+        currentReportBuilder.withMessage(message);
+
         log.debug("ReportBuffer: {}", message);
     }
 
@@ -128,7 +129,8 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     @Override
     public void updateOnClose() {
         ChangeSet current = changeStack.getClosedChangeSet();
-        ReportSet currentSet = currentReportBuilder.build(current);
+        ReportSet currentSet = currentReportBuilder.withChangeSet(current).build();
+
         pastReports.addLast(currentSet);
         futureReports.clear();
 
@@ -165,25 +167,24 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
 
     // FIXME: Rails 2.0 Is it possible to remove the only usecase for 1856 escrow money?
     @Deprecated
-    public static void addWaiting (RailsItem item, String message) {
+    public static void addWaiting(RailsItem item, String message) {
         item.getRoot().getReportManager().getReportBuffer().waitQueue.add(message);
     }
 
     @Deprecated
-    public static void getAllWaiting (RailsItem item) {
+    public static void getAllWaiting(RailsItem item) {
         ReportBuffer reportBuffer = item.getRoot().getReportManager().getReportBuffer();
+
         for (String message : reportBuffer.waitQueue) {
             reportBuffer.addMessage(message);
         }
+
         reportBuffer.waitQueue.clear();
     }
 
-    public static interface Observer {
-
+    public interface Observer {
         void append(String text);
 
         void update(String newText);
-
     }
-
 }

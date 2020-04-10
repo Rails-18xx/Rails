@@ -1,5 +1,6 @@
 package net.sf.rails.common;
 
+import lombok.Getter;
 import net.sf.rails.game.RailsManager;
 import net.sf.rails.game.RailsRoot;
 
@@ -11,24 +12,15 @@ import net.sf.rails.game.RailsRoot;
  */
 public class ReportManager extends RailsManager {
 
+    @Getter
     private final DisplayBuffer displayBuffer = DisplayBuffer.create(this, "displayBuffer");
+
+    @Getter
     private final ReportBuffer reportBuffer = ReportBuffer.create(this, "reportBuffer");
     
-    private ReportManager(RailsRoot parent, String id) {
+    public ReportManager(RailsRoot parent, String id) {
         super(parent, id);
+
         parent.getStateManager().getChangeStack().addChangeReporter(reportBuffer);
     }
-
-    public static ReportManager create(RailsRoot parent, String id) {
-        return new ReportManager(parent, id);
-    }
-    
-    public DisplayBuffer getDisplayBuffer() {
-        return displayBuffer;
-    }
-    
-    public ReportBuffer getReportBuffer() {
-        return reportBuffer;
-    }
-    
 }

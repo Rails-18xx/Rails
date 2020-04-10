@@ -1,23 +1,19 @@
 package net.sf.rails.common;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.SystemOS;
 import net.sf.rails.util.Util;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+import java.util.*;
 
 
 /**
@@ -26,11 +22,9 @@ import net.sf.rails.util.Util;
  *
  * It is a rewrite of the previously used static class Config
  */
-
+@Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConfigManager implements Configurable {
-
-    // STATIC CONSTANTS
-    private static final Logger log = LoggerFactory.getLogger(ConfigManager.class);
 
     //  XML setup
     private static final String CONFIG_XML_DIR = "data";
@@ -49,10 +43,15 @@ public class ConfigManager implements Configurable {
 
     // version string and development flag
     private String version = "unknown";
+
+    @Getter
     private boolean develop = false;
+
+    @Getter
     private String buildDate = "unknown";
 
     // configuration items: replace with Multimap in Rails 2.0
+    @Getter
     private final Map<String, List<ConfigItem>> configSections = new HashMap<>();
 
     // recent data
@@ -89,9 +88,6 @@ public class ConfigManager implements Configurable {
     public static ConfigManager getInstance() {
         return instance;
     }
-
-    // private constructor to allow only creation of a singleton
-    private ConfigManager() {}
 
     /**
      * Reads the config.xml file that defines all config items
@@ -177,20 +173,6 @@ public class ConfigManager implements Configurable {
         }
     }
 
-    /**
-     * @return true if development version
-     */
-    boolean getDevelop() {
-        return develop;
-    }
-
-    /**
-     * @return the buildDate
-     */
-    String getBuildDate() {
-        return buildDate;
-    }
-
     String getValue(String key, String defaultValue) {
         if ( transientConfig.containsKey(key) ) {
             return transientConfig.get(key);
@@ -229,10 +211,6 @@ public class ConfigManager implements Configurable {
             profileNames.add(profile.getName());
         }
         return profileNames;
-    }
-
-    public Map<String, List<ConfigItem>> getConfigSections() {
-        return configSections;
     }
 
     public int getMaxElementsInPanels() {

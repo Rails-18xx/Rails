@@ -1,5 +1,6 @@
 package net.sf.rails.common;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.model.RailsModel;
 import net.sf.rails.game.state.ArrayListState;
@@ -13,9 +14,8 @@ import org.slf4j.LoggerFactory;
 /**
  * DisplayBuffer stores messages of the current action.
  */
+@Slf4j
 public class DisplayBuffer extends RailsModel {
-
-    private static final Logger log = LoggerFactory.getLogger(DisplayBuffer.class);
 
     private final ArrayListState<String> buffer = ArrayListState.create(this, "buffer");
 
@@ -36,7 +36,7 @@ public class DisplayBuffer extends RailsModel {
 
     /**
      * Add a message to DisplayBuffer
-    */
+     */
     public void add(String message) {
         add(message, true);
     }
@@ -53,7 +53,9 @@ public class DisplayBuffer extends RailsModel {
         }
     }
 
-    /** Get the current message buffer, and clear it */
+    /**
+     * Get the current message buffer, and clear it
+     */
     // TODO: (Rails2.0): Refactor this a little bit (use Model facilities)
     public String[] get() {
         if (buffer.size() > 0) {
@@ -69,7 +71,7 @@ public class DisplayBuffer extends RailsModel {
         return buffer.size();
     }
 
-    public boolean getAutoDisplay () {
+    public boolean getAutoDisplay() {
         return autoDisplay.value();
     }
 

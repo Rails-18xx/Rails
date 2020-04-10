@@ -1,30 +1,9 @@
 package net.sf.rails.util;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-
-import javax.swing.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.Lists;
-
-import net.sf.rails.common.Config;
-import net.sf.rails.common.GameData;
-import net.sf.rails.common.GameInfo;
-import net.sf.rails.common.GameOption;
-import net.sf.rails.common.GameOptionsSet;
-import net.sf.rails.common.GuiDef;
-import net.sf.rails.common.LocalText;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import net.sf.rails.common.*;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.GameOptionsParser;
 import net.sf.rails.game.GameManager;
@@ -33,13 +12,20 @@ import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.SplashWindow;
 import rails.game.action.PossibleAction;
 
+import javax.swing.*;
+import java.io.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+
 
 /**
  * GameLoader is responsible to load a saved Rails game
  */
+@Slf4j
+@NoArgsConstructor
 public class GameLoader {
-
-    private static final Logger log = LoggerFactory.getLogger(GameLoader.class);
 
     // game data
     private final GameIOData gameIOData = new GameIOData();
@@ -48,8 +34,6 @@ public class GameLoader {
     private ObjectInputStream ois = null;
     private RailsRoot railsRoot = null;
     private Exception exception = null;
-
-    public GameLoader() {};
 
     public static void loadAndStartGame(File gameFile) {
         SplashWindow splashWindow = new SplashWindow(true, gameFile.getAbsolutePath());
@@ -114,9 +98,9 @@ public class GameLoader {
 
     /**
      * Load the gameData from file
-     * @param filePath
+     *
+     * @param gameFile
      */
-
     @SuppressWarnings("unchecked")
     public void loadGameData(File gameFile) throws Exception {
         log.info("Loading game from file {}", gameFile.getCanonicalPath());
@@ -129,7 +113,7 @@ public class GameLoader {
         String version;
         if (object instanceof String) {
             // New in 1.0.7: Rails version & save date/time.
-            version = (String)object;
+            version = (String) object;
             object = ois.readObject();
         } else {
             // Allow for older saved file versions.
@@ -139,7 +123,7 @@ public class GameLoader {
         log.info("Reading Rails {} saved file {}", version, gameFile.getName());
 
         if (object instanceof String) {
-            String date = (String)object;
+            String date = (String) object;
             gameIOData.setDate(date);
             log.info("File was saved at {}", date);
             object = ois.readObject();
@@ -165,7 +149,8 @@ public class GameLoader {
         GameOptionsSet.Builder gameOptions = loadDefaultGameOptions(gameName);
         Map<String, String> savedOptions = (Map<String, String>) ois.readObject();
         log.debug("Saved game options = {}", savedOptions);
-        for (GameOption option:gameOptions.getOptions()) {
+
+        for (GameOption option : gameOptions.getOptions()) {
             String name = option.getName();
             if (savedOptions.containsKey(name)) {
                 option.setSelectedValue(savedOptions.get(name));
@@ -177,13 +162,13 @@ public class GameLoader {
         }
 
         object = ois.readObject();
-        if ( object instanceof Map ) {
+        if (object instanceof Map) {
             // used to store game file specific configuration options that aren't related to the game itself
             Map<String, String> configOptions = (Map<String, String>) object;
             log.debug("Saved file configuration = {}", configOptions);
 
             // iterate over configOptions injecting into ConfigManager as needed
-            for ( Entry<String, String> config : configOptions.entrySet() ) {
+            for (Entry<String, String> config : configOptions.entrySet()) {
                 Config.set(config.getKey(), config.getValue());
             }
 
@@ -194,7 +179,7 @@ public class GameLoader {
         // read playerNames
         List<String> playerNames = (List<String>) object;
         log.debug("Player names = {}", playerNames);
-        GameInfo game = GameInfo.createLegacy(gameName);
+        GameInfo game = GameInfo.builder().withName(gameName).build();
 
         gameIOData.setGameData(GameData.create(game, gameOptions, playerNames));
     }
@@ -204,9 +189,9 @@ public class GameLoader {
      * Requires successful load of gameData
      */
     @SuppressWarnings("unchecked")
-    public void convertGameData() throws Exception  {
+    public void convertGameData() throws Exception {
         // Read game actions into gameData.listOfActions
-            // read next object in stream
+        // read next object in stream
         Object actionObject = null;
         while (true) { // Single-pass loop.
             try {
@@ -223,7 +208,7 @@ public class GameLoader {
                 List<PossibleAction> actions = Lists.newArrayList();
                 // Since Rails 1.3.1: separate PossibleActionsObjects
                 while (actionObject instanceof PossibleAction) {
-                    actions.add((PossibleAction)actionObject);
+                    actions.add((PossibleAction) actionObject);
                     try {
                         actionObject = ois.readObject();
                     } catch (EOFException e) {
@@ -235,7 +220,7 @@ public class GameLoader {
             break;
         }
         /**
-      todo: the code below is far from perfect, but robust
+         todo: the code below is far from perfect, but robust
          */
 
         // at the end of file user comments are added as SortedMap
@@ -271,7 +256,7 @@ public class GameLoader {
         gameManager.setReloading(true);
 
         int count = -1;
-        if ( gameIOData.getActions() != null ) {
+        if (gameIOData.getActions() != null) {
             // set possible actions for first action
             gameManager.getCurrentRound().setPossibleActions();
             for (PossibleAction action : gameIOData.getActions()) {
@@ -316,7 +301,7 @@ public class GameLoader {
      * @param gameFile
      * @return false if exception occurred
      */
-    public boolean createFromFile(File gameFile)  {
+    public boolean createFromFile(File gameFile) {
         try {
             // 1st: loadGameData
             loadGameData(gameFile);
@@ -341,10 +326,10 @@ public class GameLoader {
 
     /**
      * A subclass of ObjectInputStream for Rails
-     *
+     * <p>
      * 1. Allows to add context information (here the railsRoot)
      * Took the idea from http://www.cordinc.com/blog/2011/05/injecting-context-in-java-seri.html
-     *
+     * <p>
      * 2. Should allow to use new package names and still load old game files
      * See: http://stackoverflow.com/questions/5305473
      * However this approach did not work. I did not investigate it further so far.
@@ -386,7 +371,7 @@ public class GameLoader {
             loadGameData(file);
 
             railsRoot = RailsRoot.getInstance();
-           // 2nd: convert game data (retrieve actions)
+            // 2nd: convert game data (retrieve actions)
             convertGameData();
 
 

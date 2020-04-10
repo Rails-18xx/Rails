@@ -1,16 +1,19 @@
 package net.sf.rails.common;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Singular;
 import net.sf.rails.game.state.ChangeSet;
 import net.sf.rails.util.Util;
+
+import java.util.List;
 
 
 /**
  * ReportSet contains all messages that reference one ChangeSet
  */
-
-class ReportSet {
+public class ReportSet {
 
     /**
      * Newline string
@@ -19,27 +22,30 @@ class ReportSet {
     private static final String NEWLINE_STRING = "<br>&#10;";
 
     private final ChangeSet changeSet;
-    private final ImmutableList<String> messages;
+
+    @Getter
+    private final List<String> messages;
+
     private final String htmlText;
     private final String htmlTextActive;
 
-    ReportSet(ChangeSet changeSet, ImmutableList<String> messages) {
+    @Builder(setterPrefix = "with")
+    public ReportSet(ChangeSet changeSet, @Singular List<String> messages) {
+        super();
+
         this.changeSet = changeSet;
         this.messages = messages;
+
         this.htmlText = toHtml(false);
         this.htmlTextActive = toHtml(true);
     }
 
-    String getAsHtml(ChangeSet currentChangeSet) {
+    public String getAsHtml(ChangeSet currentChangeSet) {
         if (currentChangeSet == changeSet) {
             return htmlTextActive;
         } else {
             return htmlText;
         }
-    }
-
-    ImmutableList<String> getAsList() {
-        return messages;
     }
 
     /**
@@ -86,26 +92,4 @@ class ReportSet {
                 .addValue(changeSet)
                 .toString();
     }
-
-    static Builder builder() {
-        return new Builder();
-    }
-
-    static class Builder {
-
-        private final ImmutableList.Builder<String> messageBuilder = ImmutableList.builder();
-
-        private Builder() {
-        }
-
-        void addMessage(String message) {
-            messageBuilder.add(message);
-        }
-
-        ReportSet build(ChangeSet changeSet) {
-            return new ReportSet(changeSet, messageBuilder.build());
-        }
-
-    }
-
 }

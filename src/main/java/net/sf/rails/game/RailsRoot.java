@@ -123,7 +123,7 @@ public class RailsRoot extends Root implements RailsItem {
         // The componentManager automatically returns results
 
         // creation of Report facilities
-        reportManager = ReportManager.create(this, "reportManager");
+        reportManager = new ReportManager(this, "reportManager");
     }
 
     public boolean finishConfiguration() {

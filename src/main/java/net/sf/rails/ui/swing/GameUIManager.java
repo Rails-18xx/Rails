@@ -97,7 +97,7 @@ public class GameUIManager implements DialogOwner {
     protected RoundFacade previousRound;
     protected Class<? extends RoundFacade> previousRoundType = null;
     protected Class<? extends RoundFacade> currentRoundType = null;
-    protected GuiHints uiHints= null;
+    protected GuiHints uiHints = null;
     protected String previousRoundName;
     protected String currentRoundName;
 
@@ -138,10 +138,12 @@ public class GameUIManager implements DialogOwner {
 
     // Player order
 //    protected PlayerOrderView playerOrderView;
-    /** Player names set at time of initialisation or after reordering.
-     *<p> To be used as a reference to the current player order as shown in the UI.
+    /**
+     * Player names set at time of initialisation or after reordering.
+     * <p> To be used as a reference to the current player order as shown in the UI.
      * Note, that getPlayers() currently calls the game engine directly, and
-     * therefore updates before the UI gets notice via the playerOrderView.*/
+     * therefore updates before the UI gets notice via the playerOrderView.
+     */
     protected List<String> currentGuiPlayerNames;
 
     /* Keys of dialogs owned by this class */
@@ -154,9 +156,10 @@ public class GameUIManager implements DialogOwner {
 
     private SplashWindow splashWindow = null;
 
-    public GameUIManager() { }
+    public GameUIManager() {
+    }
 
-    public void init (RailsRoot root, boolean wasLoaded, SplashWindow splashWindow) {
+    public void init(RailsRoot root, boolean wasLoaded, SplashWindow splashWindow) {
         this.splashWindow = splashWindow;
         splashWindow.notifyOfStep(SplashWindow.STEP_INIT_UI);
 
@@ -175,22 +178,22 @@ public class GameUIManager implements DialogOwner {
 //        playerOrderView = new PlayerOrderView();
         currentGuiPlayerNames = new ArrayList<>();
         for (Player player : getPlayers()) {
-            currentGuiPlayerNames.add (player.getId());
-       }
+            currentGuiPlayerNames.add(player.getId());
+        }
     }
 
-    private void initWindowSettings () {
-        windowSettings = new WindowSettings (railsRoot.getGameName());
+    private void initWindowSettings() {
+        windowSettings = new WindowSettings(railsRoot.getGameName());
         windowSettings.load();
     }
 
-    public void terminate () {
-        getWindowSettings ().save();
+    public void terminate() {
+        getWindowSettings().save();
         if (orWindow != null) orWindow.saveLayout();
         System.exit(0);
     }
 
-    public WindowSettings getWindowSettings () {
+    public WindowSettings getWindowSettings() {
         return windowSettings;
     }
 
@@ -216,7 +219,7 @@ public class GameUIManager implements DialogOwner {
         saveSuffixSpec = Config.get("save.filename.suffix");
         if (!Util.hasValue(saveSuffixSpec) || saveSuffixSpec.equals(NEXT_PLAYER_SUFFIX)) {
             saveSuffix = getPlayers().get(0).getId();
-        } else if (saveSuffixSpec.equals(CURRENT_ROUND_SUFFIX))  {
+        } else if (saveSuffixSpec.equals(CURRENT_ROUND_SUFFIX)) {
             if (currentRound != null) {
                 saveSuffix = currentRound.getRoundName();
             } else {
@@ -230,7 +233,7 @@ public class GameUIManager implements DialogOwner {
         String str = Config.get("save.auto.enabled");
         autoSaveLoadStatus = "yes".equals(str) ? AutoLoadPoller.ON : AutoLoadPoller.OFF;
         str = Config.get("save.auto.interval");
-        if ( Util.hasValue(str) ) {
+        if (Util.hasValue(str)) {
             autoSaveLoadPollingInterval = Integer.parseInt(str);
         }
     }
@@ -280,7 +283,7 @@ public class GameUIManager implements DialogOwner {
         String statusWindowClassName = getClassName(GuiDef.ClassName.STATUS_WINDOW);
         try {
             Class<? extends StatusWindow> statusWindowClass =
-                Class.forName(statusWindowClassName).asSubclass(StatusWindow.class);
+                    Class.forName(statusWindowClassName).asSubclass(StatusWindow.class);
             statusWindow = statusWindowClass.newInstance();
 
             //            GraphicsEnvironment ge = GraphicsEnvironment.
@@ -316,7 +319,7 @@ public class GameUIManager implements DialogOwner {
         Discord.notifyOfGameInit(railsRoot);
         Slack.notifyOfGameInit(railsRoot);
 
-        if ( gameWasLoaded && autoSaveLoadStatus > 0 ) {
+        if (gameWasLoaded && autoSaveLoadStatus > 0) {
             startAutoSaveLoadPoller();
         }
     }
@@ -353,7 +356,7 @@ public class GameUIManager implements DialogOwner {
             SoundManager.notifyOfActionProcessing(railsRoot, action);
 
             // Process the action on the server
-            result = previousResult = processOnServer (action);
+            result = previousResult = processOnServer(action);
 
             // Process any autosaving and turn relinquishing, resp. autoloading and turn pickup
             if (autoSaveLoadInitialized && autoSaveLoadStatus != AutoLoadPoller.OFF) {
@@ -362,16 +365,16 @@ public class GameUIManager implements DialogOwner {
                 log.debug("players o:{}/c:{} myTurn:{}", oldPlayer.getId(), newPlayer.getId(), myTurn);
                 if (newPlayer != oldPlayer) {
                     if (wasMyTurn && !myTurn) {
-                        autoSave (newPlayer.getId());
+                        autoSave(newPlayer.getId());
                         autoLoadPoller.setLastSavedFilename(lastSavedFilename);
                         autoLoadPoller.setActive(true);
                         log.info("Relinquishing turn to {}", newPlayer.getId());
                     } else if (!wasMyTurn && myTurn) {
                         autoLoadPoller.setActive(false);
                         setCurrentDialog(new MessageDialog(null, this,
-                                (JFrame) activeWindow,
-                                LocalText.getText("Message"),
-                                LocalText.getText("YourTurn", localPlayerName)),
+                                        (JFrame) activeWindow,
+                                        LocalText.getText("Message"),
+                                        LocalText.getText("YourTurn", localPlayerName)),
                                 null);
                         log.info("Resuming turn as {}", localPlayerName);
                     } else {
@@ -411,7 +414,7 @@ public class GameUIManager implements DialogOwner {
         return activeWindow.processImmediateAction();
     }
 
-    protected boolean processOnServer (PossibleAction action) {
+    protected boolean processOnServer(PossibleAction action) {
         boolean result;
 
         action.setActed();
@@ -432,9 +435,9 @@ public class GameUIManager implements DialogOwner {
         String[] message = getDisplayBuffer().get();
         if (message != null) {
             setCurrentDialog(new MessageDialog(null, this,
-                    (JFrame) activeWindow,
-                    LocalText.getText("Message"),
-                    "<html>" + Util.joinWithDelimiter(message, "<br>")),
+                            (JFrame) activeWindow,
+                            LocalText.getText("Message"),
+                            "<html>" + Util.joinWithDelimiter(message, "<br>")),
                     null);
             return true;
         }
@@ -473,7 +476,7 @@ public class GameUIManager implements DialogOwner {
                 } else if (OperatingRound.class.isAssignableFrom(previousRoundType)) {
                     log.debug("UI leaving Operating Round {}", previousRoundName);
                     orUIManager.finish();
-                } else if (SwitchableUIRound.class.isAssignableFrom(previousRoundType) ) {
+                } else if (SwitchableUIRound.class.isAssignableFrom(previousRoundType)) {
                     log.debug("UI leaving switchable round type {}", previousRoundName);
                 }
             }
@@ -489,7 +492,7 @@ public class GameUIManager implements DialogOwner {
                     String startRoundWindowClassName = getClassName(GuiDef.ClassName.START_ROUND_WINDOW);
                     try {
                         Class<? extends StartRoundWindow> startRoundWindowClass =
-                            Class.forName(startRoundWindowClassName).asSubclass(StartRoundWindow.class);
+                                Class.forName(startRoundWindowClassName).asSubclass(StartRoundWindow.class);
                         startRoundWindow = startRoundWindowClass.newInstance();
                         startRoundWindow.init(startRound, this);
                     } catch (Exception e) {
@@ -505,7 +508,7 @@ public class GameUIManager implements DialogOwner {
                 log.debug("UI entering Operating Round {}", currentRoundName);
                 orUIManager.initOR((OperatingRound) currentRound);
 
-            } else if (SwitchableUIRound.class.isAssignableFrom(currentRoundType) ) {
+            } else if (SwitchableUIRound.class.isAssignableFrom(currentRoundType)) {
                 log.debug("UI entering switchable round type {}", currentRoundName);
                 statusWindow.pack();
             }
@@ -524,31 +527,31 @@ public class GameUIManager implements DialogOwner {
         // before each sequence of settings (usually at the start of a round).
         for (GuiHints.VisibilityHint hint : uiHints.getVisibilityHints()) {
             switch (hint.getType()) {
-            case STOCK_MARKET:
-                boolean stockChartVisibilityHint = hint.getVisibility() || configuredStockChartVisibility;
-                if (stockChartVisibilityHint != previousStockChartVisibilityHint) {
-                    FXStockChartWindow.setVisible(stockChartVisibilityHint);
-                    previousStockChartVisibilityHint = stockChartVisibilityHint;
-                }
-                break;
-            case STATUS:
-                boolean statusWindowVisibilityHint = hint.getVisibility();
-                if (statusWindowVisibilityHint != previousStatusWindowVisibilityHint) {
-                    setMeVisible(statusWindow,statusWindowVisibilityHint);
-                    previousStatusWindowVisibilityHint = statusWindowVisibilityHint;
-                }
-                if (statusWindowVisibilityHint) setMeToFront(statusWindow);
-                break;
-            case MAP:
-                boolean orWindowVisibilityHint = hint.getVisibility();
-                if (orWindowVisibilityHint != previousORWindowVisibilityHint) {
-                    setMeVisible(orWindow,orWindowVisibilityHint);
-                    previousORWindowVisibilityHint = orWindowVisibilityHint;
-                }
-                if (orWindowVisibilityHint) setMeToFront(orWindow);
-                break;
-            case START_ROUND:
-                // Handled elsewhere
+                case STOCK_MARKET:
+                    boolean stockChartVisibilityHint = hint.isVisible() || configuredStockChartVisibility;
+                    if (stockChartVisibilityHint != previousStockChartVisibilityHint) {
+                        FXStockChartWindow.setVisible(stockChartVisibilityHint);
+                        previousStockChartVisibilityHint = stockChartVisibilityHint;
+                    }
+                    break;
+                case STATUS:
+                    boolean statusWindowVisibilityHint = hint.isVisible();
+                    if (statusWindowVisibilityHint != previousStatusWindowVisibilityHint) {
+                        setMeVisible(statusWindow, statusWindowVisibilityHint);
+                        previousStatusWindowVisibilityHint = statusWindowVisibilityHint;
+                    }
+                    if (statusWindowVisibilityHint) setMeToFront(statusWindow);
+                    break;
+                case MAP:
+                    boolean orWindowVisibilityHint = hint.isVisible();
+                    if (orWindowVisibilityHint != previousORWindowVisibilityHint) {
+                        setMeVisible(orWindow, orWindowVisibilityHint);
+                        previousORWindowVisibilityHint = orWindowVisibilityHint;
+                    }
+                    if (orWindowVisibilityHint) setMeToFront(orWindow);
+                    break;
+                case START_ROUND:
+                    // Handled elsewhere
             }
         }
 
@@ -564,32 +567,32 @@ public class GameUIManager implements DialogOwner {
         if (uiHints.getActivePanel() == GuiDef.Panel.START_ROUND) {
             log.debug("Entering Start Round UI type");
             activeWindow = startRoundWindow;
-            setMeVisible(startRoundWindow,true);
+            setMeVisible(startRoundWindow, true);
             setMeToFront(startRoundWindow);
 
         } else if (uiHints.getActivePanel() == GuiDef.Panel.STATUS || correctionOverride) {
             log.debug("Entering Stock Round UI type");
             activeWindow = statusWindow;
             FXStockChartWindow.setVisible(true);
-            setMeVisible(statusWindow,true);
+            setMeVisible(statusWindow, true);
             setMeToFront(statusWindow);
 
-        } else if (uiHints.getActivePanel() == GuiDef.Panel.MAP  && !correctionOverride) {
+        } else if (uiHints.getActivePanel() == GuiDef.Panel.MAP && !correctionOverride) {
             log.debug("Entering Operating Round UI type");
             activeWindow = orWindow;
-            setMeVisible(orWindow,true);
+            setMeVisible(orWindow, true);
             setMeToFront(orWindow);
         }
 
-        if ( startRoundWindow != null ) {
+        if (startRoundWindow != null) {
             log.debug("Updating Start round window ({})", myTurn);
             startRoundWindow.updateStatus(myTurn);
         }
-        if ( statusWindow != null ) {
+        if (statusWindow != null) {
             log.debug("Updating Stock (status) round window ({})", myTurn);
             statusWindow.updateStatus(myTurn);
         }
-        if ( orUIManager != null ) {
+        if (orUIManager != null) {
             log.debug("Updating Operating round window ({})", myTurn);
             orUIManager.updateStatus(myTurn);
         }
@@ -605,16 +608,19 @@ public class GameUIManager implements DialogOwner {
         updateStatus(activeWindow);
     }
 
-    protected void updatePlayerOrder (List<String> newPlayerOrder) {
-            if (startRoundWindow != null) startRoundWindow.updatePlayerOrder (newPlayerOrder);
-            if (statusWindow != null) statusWindow.updatePlayerOrder (newPlayerOrder);
-            currentGuiPlayerNames = newPlayerOrder;
-        }
+    protected void updatePlayerOrder(List<String> newPlayerOrder) {
+        if (startRoundWindow != null) startRoundWindow.updatePlayerOrder(newPlayerOrder);
+        if (statusWindow != null) statusWindow.updatePlayerOrder(newPlayerOrder);
+        currentGuiPlayerNames = newPlayerOrder;
+    }
 
-    /** Stub, to be overridden in subclasses for special round types */
-    protected void updateStatus(ActionPerformer activeWindow) { }
+    /**
+     * Stub, to be overridden in subclasses for special round types
+     */
+    protected void updateStatus(ActionPerformer activeWindow) {
+    }
 
-    public void discardTrains (DiscardTrain dt) {
+    public void discardTrains(DiscardTrain dt) {
         PublicCompany c = dt.getCompany();
         String playerName = dt.getPlayerName();
         String companyDirector = dt.getCompany().getPresident().getId();
@@ -648,30 +654,30 @@ public class GameUIManager implements DialogOwner {
         if (prompt == null) {
             if (playerName.equals(companyDirector)) {
                 prompt = LocalText.getText(
-                "HAS_TOO_MANY_TRAINS",
-                playerName,
-                c.getId() );
+                        "HAS_TOO_MANY_TRAINS",
+                        playerName,
+                        c.getId());
             } else {
                 prompt = LocalText.getText(
                         "HAS_TOO_MANY_TRAINS",
                         playerName,
-                        c.getId() );
-                prompt += "\n Please contact the director of the "+c.getId()+ " : "+companyDirector+" for guidance.";
+                        c.getId());
+                prompt += "\n Please contact the director of the " + c.getId() + " : " + companyDirector + " for guidance.";
             }
         }
 
         String discardedTrainName =
-            (String) JOptionPane.showInputDialog(orWindow,
-                    prompt,
-                    LocalText.getText("WhichTrainToDiscard"),
-                    JOptionPane.QUESTION_MESSAGE, null,
-                    options, options[0]);
+                (String) JOptionPane.showInputDialog(orWindow,
+                        prompt,
+                        LocalText.getText("WhichTrainToDiscard"),
+                        JOptionPane.QUESTION_MESSAGE, null,
+                        options, options[0]);
         if (discardedTrainName != null) {
             int index = trainOptions.indexOf(discardedTrainName);
             // FIXME: Does this work with the new Set defined?
             if (index >= offset) {
                 Train discardedTrain =
-                        Iterables.get(trains, trainOptions.indexOf(discardedTrainName)-offset);
+                        Iterables.get(trains, trainOptions.indexOf(discardedTrainName) - offset);
                 dt.setDiscardedTrain(discardedTrain);
             }
 
@@ -679,7 +685,7 @@ public class GameUIManager implements DialogOwner {
         }
     }
 
-    public void exchangeTokens (ExchangeTokens action) {
+    public void exchangeTokens(ExchangeTokens action) {
 
         int cityNumber;
         String prompt, cityName, hexName, oldCompName;
@@ -731,24 +737,24 @@ public class GameUIManager implements DialogOwner {
                     LocalText.getText("ExchangeTokens"),
                     prompt,
                     options.toArray(new String[0]));
-            setCurrentDialog (dialog, action);
+            setCurrentDialog(dialog, action);
 
         }
     }
 
-    public void dialogActionPerformed () {
+    public void dialogActionPerformed() {
         dialogActionPerformed(false);
     }
 
-    public void dialogActionPerformed (boolean ready) {
+    public void dialogActionPerformed(boolean ready) {
         if (!ready) {
 
             String key = "";
-            if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog)currentDialog).getKey();
+            if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog) currentDialog).getKey();
 
             if (currentDialog instanceof AutoSaveLoadDialog) {
                 // Not yet a NonModalDialog subclass
-                startAutoSaveLoadPoller((AutoSaveLoadDialog)currentDialog);
+                startAutoSaveLoadPoller((AutoSaveLoadDialog) currentDialog);
 
             } else if (!(currentDialog instanceof NonModalDialog)) {
                 log.warn("Unknown dialog action: dialog=[{}] action=[{}]", currentDialog, currentDialogAction);
@@ -797,11 +803,11 @@ public class GameUIManager implements DialogOwner {
                         JOptionPane.showMessageDialog(null,
                                 LocalText.getText("YouMustSelect2", minNumber, maxNumber));
                     }
-                    exchangeTokens (action);
+                    exchangeTokens(action);
                     return;
 
                 }
-                for (int index=0; index < options.length; index++) {
+                for (int index = 0; index < options.length; index++) {
                     if (exchanged[index]) {
                         action.getTokensToExchange().get(index).setSelected(true);
                     }
@@ -823,22 +829,22 @@ public class GameUIManager implements DialogOwner {
 
     }
 
-    protected void autoSave (String newPlayer) {
+    protected void autoSave(String newPlayer) {
         lastSavedFilename = savePrefix + "_" + saveDateTimeFormat.format(new Date()) + "_" + newPlayer + "." + saveExtension;
         GameAction saveAction = new GameAction(GameAction.Mode.SAVE);
         saveAction.setFilepath(saveDirectory + "/" + lastSavedFilename);
         log.debug("Autosaving to {}", lastSavedFilename);
-        processOnServer (saveAction);
+        processOnServer(saveAction);
 
-        saveAutoSavedFilename (lastSavedFilename);
+        saveAutoSavedFilename(lastSavedFilename);
     }
 
-    protected boolean saveAutoSavedFilename (String lastSavedFilename) {
+    protected boolean saveAutoSavedFilename(String lastSavedFilename) {
         String lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
         try {
-            File f = new File (lastSavedFilenameFilepath);
-            PrintWriter out = new PrintWriter (new FileWriter (f));
-            out.println (lastSavedFilename);
+            File f = new File(lastSavedFilenameFilepath);
+            PrintWriter out = new PrintWriter(new FileWriter(f));
+            out.println(lastSavedFilename);
             out.close();
             return true;
         } catch (IOException e) {
@@ -847,11 +853,13 @@ public class GameUIManager implements DialogOwner {
         }
     }
 
-    protected boolean pollingIsOn () {
+    protected boolean pollingIsOn() {
         return autoLoadPoller != null && autoLoadPoller.getStatus() == AutoLoadPoller.ON;
     }
 
-    /** Stub, can be overridden by subclasses */
+    /**
+     * Stub, can be overridden by subclasses
+     */
     protected boolean checkGameSpecificDialogAction() {
         return false;
     }
@@ -860,11 +868,11 @@ public class GameUIManager implements DialogOwner {
         return currentDialog;
     }
 
-    public PossibleAction getCurrentDialogAction () {
+    public PossibleAction getCurrentDialogAction() {
         return currentDialogAction;
     }
 
-    public void setCurrentDialog (JDialog dialog, PossibleAction action) {
+    public void setCurrentDialog(JDialog dialog, PossibleAction action) {
         if (currentDialog != null) {
             currentDialog.dispose();
         }
@@ -874,15 +882,16 @@ public class GameUIManager implements DialogOwner {
 
     /**
      * Change global font size
+     *
      * @param scale
      */
     public void changeGlobalFont(Font replaceFont, double scale) {
         UIDefaults defaults = UIManager.getDefaults();
         Enumeration<Object> keys = defaults.keys();
-        while(keys.hasMoreElements()) {
+        while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
             Object value = defaults.get(key);
-            if( value instanceof Font ) {
+            if (value instanceof Font) {
                 UIManager.put(key, null);
                 Font font;
                 if (replaceFont != null) {
@@ -890,8 +899,8 @@ public class GameUIManager implements DialogOwner {
                 } else {
                     font = UIManager.getFont(key);
                 }
-                if(font != null) {
-                    float newSize = font.getSize2D() * (float)scale;
+                if (font != null) {
+                    float newSize = font.getSize2D() * (float) scale;
                     UIManager.put(key, new FontUIResource(font.deriveFont(newSize)));
                 }
             }
@@ -906,8 +915,8 @@ public class GameUIManager implements DialogOwner {
             filename = providedName;
         } else {
             filename = saveDirectory + "/" + savePrefix + "_"
-            + saveDateTimeFormat.format(new Date())+ "_"
-            + saveSuffix + ".txt";
+                    + saveDateTimeFormat.format(new Date()) + "_"
+                    + saveSuffix + ".txt";
         }
 
         File proposedFile = new File(filename);
@@ -997,8 +1006,8 @@ public class GameUIManager implements DialogOwner {
         }
     }
 
-    public void autoSaveLoadGame () {
-        AutoSaveLoadDialog dialog = new AutoSaveLoadDialog (this,
+    public void autoSaveLoadGame() {
+        AutoSaveLoadDialog dialog = new AutoSaveLoadDialog(this,
                 autoSaveLoadStatus,
                 autoSaveLoadPollingInterval);
         setCurrentDialog(dialog, null);
@@ -1023,25 +1032,25 @@ public class GameUIManager implements DialogOwner {
         log.debug("Polling local player name: {}", localPlayerName);
         log.debug("AutoSaveLoad parameters: status={} interval={}", autoSaveLoadStatus, autoSaveLoadPollingInterval);
 
-        if ( autoSaveLoadStatus != AutoLoadPoller.OFF ) {
-            if ( ! gameWasLoaded ) {
+        if (autoSaveLoadStatus != AutoLoadPoller.OFF) {
+            if (!gameWasLoaded) {
                 /* The first time (only) we use the normal save process,
                  * so the player can select a directory, and change
                  * the prefix if so desired.
                  */
                 GameAction saveAction = new GameAction(GameAction.Mode.SAVE);
                 saveSuffix = localPlayerName;
-                saveGame (saveAction);
+                saveGame(saveAction);
                 lastSavedFilename = saveAction.getFilepath();
             }
-            if ( lastSavedFilename != null ) {
+            if (lastSavedFilename != null) {
                 /* Now also save the "last saved file" file */
                 autoSaveLoadInitialized = saveAutoSavedFilename(lastSavedFilename);
             }
         }
 
         if (autoLoadPoller == null && autoSaveLoadStatus > 0) {
-            autoLoadPoller = new AutoLoadPoller (this, saveDirectory, savePrefix, lastSavedFilename,
+            autoLoadPoller = new AutoLoadPoller(this, saveDirectory, savePrefix, lastSavedFilename,
                     localPlayerName, autoSaveLoadStatus, autoSaveLoadPollingInterval);
             autoLoadPoller.start();
         } else if (autoLoadPoller != null) {
@@ -1049,9 +1058,9 @@ public class GameUIManager implements DialogOwner {
             autoLoadPoller.setPollingInterval(autoSaveLoadPollingInterval);
         }
 
-        if ( autoLoadPoller != null ) {
+        if (autoLoadPoller != null) {
             myTurn = getCurrentPlayer().getId().equals(localPlayerName);
-            if ( !myTurn ) {
+            if (!myTurn) {
                 // Start autoload polling
                 autoLoadPoller.setActive(autoSaveLoadStatus == AutoLoadPoller.ON);
             }
@@ -1065,7 +1074,7 @@ public class GameUIManager implements DialogOwner {
 
         JFileChooser jfc = new JFileChooser();
         String filename = saveDirectory + "/" + savePrefix + "_"
-        + saveDateTimeFormat.format(new Date())+ ".status";
+                + saveDateTimeFormat.format(new Date()) + ".status";
 
         File proposedFile = new File(filename);
         jfc.setSelectedFile(proposedFile);
@@ -1075,7 +1084,7 @@ public class GameUIManager implements DialogOwner {
             try {
                 PrintWriter pw = new PrintWriter(selectedFile);
 
-                for (String line : status) pw.println(line) ;
+                for (String line : status) pw.println(line);
 
                 pw.close();
 
@@ -1143,7 +1152,7 @@ public class GameUIManager implements DialogOwner {
         return railsRoot.getPlayerManager().getCurrentPlayer();
     }
 
-    public Player getPriorityPlayer () {
+    public Player getPriorityPlayer() {
         return railsRoot.getPlayerManager().getPriorityPlayer();
     }
 
@@ -1151,19 +1160,19 @@ public class GameUIManager implements DialogOwner {
         return railsRoot.getPhaseManager().getCurrentPhase();
     }
 
-    public List<PublicCompany> getAllPublicCompanies(){
+    public List<PublicCompany> getAllPublicCompanies() {
         return railsRoot.getCompanyManager().getAllPublicCompanies();
     }
 
-    public String getClassName (GuiDef.ClassName key) {
+    public String getClassName(GuiDef.ClassName key) {
         return railsRoot.getGameManager().getClassName(key);
     }
 
-    public Object getGameParameter (GuiDef.Parm key) {
+    public Object getGameParameter(GuiDef.Parm key) {
         return railsRoot.getGameManager().getGuiParameter(key);
     }
 
-    public boolean getGameParameterAsBoolean (GuiDef.Parm key) {
+    public boolean getGameParameterAsBoolean(GuiDef.Parm key) {
         return (Boolean) getGameParameter(key);
     }
 
@@ -1173,6 +1182,7 @@ public class GameUIManager implements DialogOwner {
             window.setEnabled(enabled);
         }
     }
+
     /**
      * deactivate all game windows, except the argument one
      */
@@ -1220,7 +1230,7 @@ public class GameUIManager implements DialogOwner {
         if (splashWindow == null) {
             frame.setVisible(setToVisible);
         } else {
-            splashWindow.registerFrameForDeferredVisibility(frame,setToVisible);
+            splashWindow.registerFrameForDeferredVisibility(frame, setToVisible);
         }
     }
 
@@ -1271,7 +1281,7 @@ public class GameUIManager implements DialogOwner {
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 
         CyclicBufferAppender<?> buffer = (CyclicBufferAppender<?>) lc.getLogger(Logger.ROOT_LOGGER_NAME).getAppender("buffer");
-        if ( buffer == null ) {
+        if (buffer == null) {
             log.warn("Unable to find cyclic buffer appender");
             return;
         }
@@ -1286,25 +1296,24 @@ public class GameUIManager implements DialogOwner {
                     StringUtils.replace(lastSavedFilename, ".rails", "_" + localPlayerName + ".log"));
             int count = buffer.getLength();
             LoggingEvent le;
-            for ( int i = 0; i < count; i++ ) {
+            for (int i = 0; i < count; i++) {
                 le = (LoggingEvent) buffer.get(i);
                 writer.print(layout.doLayout(le));
             }
             writer.close();
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             log.warn("unable to open log output file", e);
         }
     }
 
     public class PlayerOrderView implements Observer {
-        PlayerOrderView () {
+        PlayerOrderView() {
             railsRoot.getPlayerManager().getPlayerOrderModel().addObserver(this);
         }
 
         public void update(Observable o, Object arg) {
-               List<String> newPlayerNames = Arrays.asList(((String)arg).split(";"));
-                updatePlayerOrder (newPlayerNames);
+            List<String> newPlayerNames = Arrays.asList(((String) arg).split(";"));
+            updatePlayerOrder(newPlayerNames);
         }
 
         public void deRegister() {
@@ -1318,6 +1327,6 @@ public class GameUIManager implements DialogOwner {
         public net.sf.rails.game.state.Observable getObservable() {
             return null;
         }
-   }
+    }
 
 }

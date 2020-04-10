@@ -244,7 +244,7 @@ implements ActionListener, KeyListener, RevenueListener {
         zoomMenu.add(fitToHeight);
         calibrateMap = new JMenuItem("CalibrateMap");
         calibrateMap.addActionListener(this);
-        calibrateMap.setEnabled(Config.getDevelop());
+        calibrateMap.setEnabled(Config.isDevelop());
         zoomMenu.add(calibrateMap);
         menuBar.add(zoomMenu);
 
@@ -783,7 +783,7 @@ implements ActionListener, KeyListener, RevenueListener {
         JMenu networkMenu = new JMenu(LocalText.getText("NetworkInfo"));
 
         //network graphs only for developers
-        if (route_highlight && Config.getDevelop()) {
+        if (route_highlight && Config.isDevelop()) {
             JMenuItem item = new JMenuItem("Network");
             item.addActionListener(this);
             item.setActionCommand(NETWORK_INFO_CMD);
@@ -849,7 +849,7 @@ implements ActionListener, KeyListener, RevenueListener {
                  */
 
 
-                if (!Config.getDevelop()) {
+                if (!Config.isDevelop()) {
                     //parent component is ORPanel so that dialog won't hide the routes painted on the map
                     JOptionPane.showMessageDialog(this,
                             LocalText.getText("NetworkInfoDialogMessage",company.getId(),
