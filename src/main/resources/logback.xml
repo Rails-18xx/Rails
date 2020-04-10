@@ -20,9 +20,6 @@
             <level>DEBUG</level>
         </filter>
         <MaxSize>1024</MaxSize>
-        <encoder>
-            <pattern>%d{MM-dd-yyyy:HH:mm:ss.SSS} [%thread] %-5level %logger{10}->%method\(\):%line - %msg%n</pattern>
-        </encoder>
     </appender>
 
     <logger name="net.sf.rails.algorithms" level="WARN"/>
