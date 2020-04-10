@@ -1024,7 +1024,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         } catch (Exception e) {
             log.error("Reload failed", e);
             DisplayBuffer.add(this, LocalText.getText("LoadFailed", e.getMessage()));
-            return true;
+            return false;
         }
 
 
