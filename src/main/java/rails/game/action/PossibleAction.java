@@ -120,9 +120,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
         // finish if asOptions check
         if (asOption) return options;
 
-        return options
-                && Objects.equal(this.acted, pa.acted)
-        ;
+        return options && Objects.equal(this.acted, pa.acted);
     }
 
 
@@ -200,6 +198,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
+        // inject RailsRoot for use by all subclasses during their own deserializing
         root = ((RailsObjectInputStream) in).getRoot();
 
         if (playerName != null) {
@@ -208,6 +207,5 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
             player = root.getPlayerManager().getPlayerByIndex(playerIndex);
         }
     }
-
 
 }

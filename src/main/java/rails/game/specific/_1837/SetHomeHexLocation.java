@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package rails.game.specific._1837;
 
@@ -31,8 +31,8 @@ public class SetHomeHexLocation extends StartItemAction {
     protected String companyName;
     /**
      * @param startItem
-     * @param price 
-     * @param player 
+     * @param price
+     * @param player
      */
     public SetHomeHexLocation(StartItem startItem,
             PublicCompany company, Player player, int price) {
@@ -70,10 +70,8 @@ public class SetHomeHexLocation extends StartItemAction {
             return name.split("/");
         }
     }
-    
-    private void readObject(ObjectInputStream in) throws IOException,
-    ClassNotFoundException {
 
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
         if (Util.hasValue(companyName))
@@ -83,28 +81,28 @@ public class SetHomeHexLocation extends StartItemAction {
     public PublicCompany getCompany() {
         return company;
     }
-    
+
     @Override
     protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        SetHomeHexLocation action = (SetHomeHexLocation)pa; 
+        SetHomeHexLocation action = (SetHomeHexLocation)pa;
         boolean options = Objects.equal(this.company, action.company);
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.selectedHomeHex, action.selectedHomeHex);
     }
-    
+
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                 .addToString("company", company)
                 .addToStringOnlyActed("selectedHomeHex", selectedHomeHex)

@@ -122,8 +122,7 @@ public class CashCorrectionAction extends CorrectionAction {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
         if (Util.hasValue(correctionName))

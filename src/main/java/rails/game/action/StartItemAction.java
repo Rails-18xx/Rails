@@ -69,10 +69,9 @@ public abstract class StartItemAction extends PossibleAction {
         ;
     }
 
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+
         startItem = root.getCompanyManager().getStartItemById(startItemName);
     }
 }

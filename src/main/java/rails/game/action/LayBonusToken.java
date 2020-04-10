@@ -81,13 +81,12 @@ public class LayBonusToken extends LayToken {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
         MapManager mmgr = getRoot().getMapManager();
-        locations = new ArrayList<MapHex>();
+        // TODO: verify we should create this array (see issue found with LayBaseToken)
+        locations = new ArrayList<>();
         if (Util.hasValue(locationNames)) {
             for (String hexName : locationNames.split(",")) {
                 locations.add(mmgr.getHex(hexName));
@@ -98,8 +97,7 @@ public class LayBonusToken extends LayToken {
             token = Token.getByUniqueId(getRoot(), BonusToken.class, tokenId);
         }
         if (specialPropertyId > 0) {
-            specialProperty =
-                    (SpecialBonusTokenLay) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
+            specialProperty = SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
         }
         if (chosenHexName != null && chosenHexName.length() > 0) {
             chosenHex = mmgr.getHex(chosenHexName);

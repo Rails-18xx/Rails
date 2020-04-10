@@ -567,7 +567,7 @@ public class ORUIManager implements DialogOwner {
 
     protected void reachDestinations (ReachDestinations action) {
 
-        List<String> options = new ArrayList<String>();
+        List<String> options = new ArrayList<>();
         List<PublicCompany> companies = action.getPossibleCompanies();
 
         for (PublicCompany company : companies) {

@@ -144,15 +144,12 @@ public class AssignNamedTrains extends UseSpecialProperty {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-
-        RailsRoot root = ((GameLoader.RailsObjectInputStream) in).getRoot();
 
         TrainManager trainManager = root.getTrainManager();
 
+        // TODO: verify we should create this array (see issue found with LayBaseToken)
         nameableTrains = new ArrayList<>();
         if (trainIds != null) {
             for (String trainId : trainIds) {
@@ -160,6 +157,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
             }
         }
 
+        // TODO: verify we should create this array (see issue found with LayBaseToken)
         preTrainPerToken = new ArrayList<>(numberOfTrains);
         if (preTrainds != null) {
             for (String trainId : preTrainds) {
@@ -172,6 +170,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
             }
         }
 
+        // TODO: verify we should create this array (see issue found with LayBaseToken)
         postTrainPerToken = new ArrayList<>(numberOfTrains);
         if (postTrainds != null) {
             for (String trainId : postTrainds) {

@@ -83,9 +83,7 @@ public abstract class PossibleORAction extends PossibleAction {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
         if (Util.hasValue(companyName))

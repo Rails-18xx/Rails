@@ -301,8 +301,6 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
     /** Deserialize */
     @SuppressWarnings("unchecked")
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-
-//        in.defaultReadObject();
         // Custom reading for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();
 
@@ -325,7 +323,9 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
 
         MapManager mmgr = getRoot().getMapManager();
         TileManager tmgr = getRoot().getTileManager();
-        locations = new ArrayList<MapHex>();
+
+        // TODO: verify we should create this array (see issue found with LayBaseToken)
+        locations = new ArrayList<>();
         if (Util.hasValue(locationNames)) {
             for (String hexName : locationNames.split(",")) {
                 locations.add(mmgr.getHex(hexName));
@@ -334,22 +334,21 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
 
         // FIXME: Rewrite this with Rails1.x version flag
         if (tileIds != null && tileIds.length > 0) {
-            tiles = new ArrayList<Tile>();
+            tiles = new ArrayList<>();
             for (int tileNb:tileIds) {
                 tiles.add(tmgr.getTile(String.valueOf(tileNb)));
             }
         }
 
         if (sTileIds != null && sTileIds.length > 0) {
-            tiles = new ArrayList<Tile>();
+            tiles = new ArrayList<>();
             for (String tileId:sTileIds) {
                 tiles.add(tmgr.getTile(tileId));
             }
         }
 
         if (specialPropertyId > 0) {
-            specialProperty =
-                (SpecialTileLay) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
+            specialProperty = (SpecialTileLay) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
         }
         // FIXME: Rewrite this with Rails1.x version flag
         if (laidTileId != 0) {

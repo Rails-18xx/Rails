@@ -220,8 +220,7 @@ public class MapCorrectionAction extends CorrectionAction {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
         if (Util.hasValue(correctionName))
@@ -240,15 +239,16 @@ public class MapCorrectionAction extends CorrectionAction {
         TileManager tmgr = getRoot().getTileManager();
         if (sTileIds != null && sTileIds.length > 0) {
             tiles = new ArrayList<Tile>();
-            for (int i = 0; i < sTileIds.length; i++) {
-                tiles.add(tmgr.getTile(sTileIds[i]));
+            for ( String sTileId : sTileIds ) {
+                tiles.add(tmgr.getTile(sTileId));
             }
         }
+
         // FIXME: Rewrite this with Rails1.x version flag
         if (tileIds != null && tileIds.length > 0) {
             tiles = new ArrayList<Tile>();
-            for (int i = 0; i < tileIds.length; i++) {
-                tiles.add(tmgr.getTile(String.valueOf(tileIds[i])));
+            for ( int tileId : tileIds ) {
+                tiles.add(tmgr.getTile(String.valueOf(tileId)));
             }
         }
     }
