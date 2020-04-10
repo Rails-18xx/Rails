@@ -33,12 +33,21 @@ jobs:
           java-version: 14
           java-package: jdk
       - name: Execute Tests
-        run: ./gradlew clean test
+        uses: eskatos/gradle-command-action@v1
+        with:
+          gradle-version: 6.3
+          arguments: clean test
       - name: Build jar
-        run: ./gradlew clean build
+        uses: eskatos/gradle-command-action@v1
+        with:
+          gradle-version: 6.3
+          arguments: clean build
       - name: Debug before
-        run: ll build
+        run: ls build
       - name: Create Installer
-        run: ./gradlew buildLinuxPackage
+        uses: eskatos/gradle-command-action@v1
+        with:
+          gradle-version: 6.3
+          arguments: buildLinuxPackage
       - name: Debug After
         run: ll
