@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RevenueCalculator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.algorithms</a> &gt; <span class="el_source">RevenueCalculator.java</span></div><h1>RevenueCalculator.java</h1><pre class="source lang-java linenums">package net.sf.rails.algorithms;
+
+import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+abstract class RevenueCalculator {
+
+    protected final int nbVertexes;
+    protected final int nbTrains;
+    protected final int nbEdges;
+    protected final int nbBonuses;
+
+    // static vertex data
+    protected final int[][] vertexValueByTrain; // dimensions: vertexId, trainId
+    protected final boolean[] vertexMajor;
+    protected final boolean[] vertexMinor;
+    protected final boolean[] vertexSink;
+    protected final int[] vertexNbNeighbors;
+    protected final int[] vertexNbVisitSets;
+    protected final int[] vertexNbBonusSets;
+
+    protected final int[][] vertexNeighbors;
+    protected final int[][] vertexEdges;
+    protected final int[][] vertexVisitSets; // vertex belongs to a visit set, dimension: nbVertex x maxVertexSets
+    protected final int[][] vertexBonusSets; // vertex belongs to a bonus set, dimension: nbVertex x nbBonuses
+
+    // start vertexes
+    protected int[] startVertexes;
+
+    // static edge data
+    protected final boolean[] edgeGreedy;
+    protected final int[] edgeDistance;
+
+    // static train data
+    protected final int[] trainMaxMajors;
+    protected final int[] trainMaxMinors;
+    protected final int[] trainMaxBonuses;
+    protected final boolean[] trainIgnoreMinors;
+    protected final boolean[] trainIsH; // true =&gt; train is H-train
+    protected final boolean[] trainIsE; // true =&gt; train is Express-train
+
+    // dynamic train data
+    protected final int[] trainCurrentValue;
+    protected final int[] trainMajors;
+    protected final int[] trainMinors;
+    protected final int[] trainBonuses; // counts the number of bonuses received
+    protected final boolean[][] trainVisited;
+    protected final int[][] trainStack; // store either vertices or edges
+    protected final int[] trainStackPos;
+    protected final boolean [] trainBottomActive;
+    protected final int [] trainStartEdge;
+    protected final int[] trainDistance; // keeps track of distance travelled (for H-trains)
+
+    // static bonus data
+    protected final int [] bonusValue;
+    protected final boolean [][] bonusActiveForTrain; // dimensions: bonus x train
+    protected final int [] bonusRequiresVertices;
+
+    // dynamic bonus data
+    protected final int [][] bonusTrainVertices;
+
+    // run settings
+    protected int startTrainSet;
+    protected int finalTrainSet;
+    protected int startTrain;
+    protected int finalTrain;
+    protected boolean useRevenuePrediction;
+
+    // current best run results
+    protected int currentBestValue;
+    protected final int [][] currentBestRun;
+
+    // prediction data
+    protected int[] maxCumulatedTrainRevenues;
+    protected int[][] maxMajorRevenues; // dimensions trainId x nb vertex;
+    protected int[][] maxMinorRevenues; // dimensions trainId x nb vertex;
+    protected int[][] maxBonusRevenues; // dimensions trainId x nb bonuses
+
+    // statistic data
+    protected int countVisits;
+    protected int countEdges;
+    protected int nbEdgesTravelled;
+    protected int nbEvaluations;
+    protected int nbPredictions;
+
+    // revenue Adapter
+    protected RevenueAdapter revenueAdapter;
+
+    // activate dynamic revenue modifiers
+    protected boolean callDynamicModifiers;
+
+    // termination results
+<span class="nc" id="L95">    protected static enum Terminated {</span>
+<span class="nc" id="L96">        WITH_EVALUATION,</span>
+<span class="nc" id="L97">        WITHOUT_EVALUATION,</span>
+<span class="nc" id="L98">        NOT_YET</span>
+    }
+
+<span class="nc" id="L101">    private static final Logger log = LoggerFactory.getLogger(RevenueCalculator.class);</span>
+
+
+    public RevenueCalculator (RevenueAdapter revenueAdapter, int nbVertexes, int nbEdges,
+<span class="nc" id="L105">            int maxNeighbors, int maxVertexSets, int maxEdgeSets, int nbTrains, int nbBonuses) {</span>
+
+<span class="nc" id="L107">        log.debug(&quot;RC defined: nbVertexes = {}, nbEdges = {}, maxNeighbors = {}, maxVertexSets = {}, maxEdgeSets = {}, nbTrains = {}, nbBonuses = {}&quot;, nbVertexes, nbEdges, maxNeighbors, maxVertexSets, maxEdgeSets, nbTrains, nbBonuses);</span>
+
+<span class="nc" id="L109">        this.revenueAdapter = revenueAdapter;</span>
+<span class="nc" id="L110">        this.nbVertexes = nbVertexes;</span>
+<span class="nc" id="L111">        this.nbEdges = nbEdges;</span>
+<span class="nc" id="L112">        this.nbTrains = nbTrains;</span>
+<span class="nc" id="L113">        this.nbBonuses = nbBonuses;</span>
+
+        // initialize all required variables
+<span class="nc" id="L116">        vertexValueByTrain = new int[nbVertexes][nbTrains];</span>
+<span class="nc" id="L117">        vertexMajor = new boolean[nbVertexes];</span>
+<span class="nc" id="L118">        vertexMinor = new boolean[nbVertexes];</span>
+<span class="nc" id="L119">        vertexSink = new boolean[nbVertexes];</span>
+<span class="nc" id="L120">        vertexNbNeighbors = new int[nbVertexes];</span>
+<span class="nc" id="L121">        vertexNbVisitSets = new int[nbVertexes];</span>
+<span class="nc" id="L122">        vertexNbBonusSets = new int[nbVertexes];</span>
+<span class="nc" id="L123">        vertexNeighbors = new int[nbVertexes][maxNeighbors];</span>
+<span class="nc" id="L124">        vertexEdges = new int[nbVertexes][maxNeighbors];</span>
+<span class="nc" id="L125">        vertexVisitSets = new int[nbVertexes][maxVertexSets];</span>
+<span class="nc" id="L126">        vertexBonusSets = new int[nbVertexes][nbBonuses];</span>
+
+<span class="nc" id="L128">        edgeGreedy = new boolean[nbEdges];</span>
+<span class="nc" id="L129">        edgeDistance = new int[nbEdges];</span>
+
+<span class="nc" id="L131">        trainMaxMajors = new int[nbTrains];</span>
+<span class="nc" id="L132">        trainMaxMinors = new int[nbTrains];</span>
+<span class="nc" id="L133">        trainMaxBonuses = new int[nbTrains]; // only required for revenue prediction</span>
+<span class="nc" id="L134">        trainIgnoreMinors = new boolean[nbTrains];</span>
+<span class="nc" id="L135">        trainIsH = new boolean[nbTrains];</span>
+<span class="nc" id="L136">        trainIsE = new boolean[nbTrains];</span>
+
+<span class="nc" id="L138">        trainCurrentValue = new int[nbTrains];</span>
+<span class="nc" id="L139">        trainMajors = new int[nbTrains];</span>
+<span class="nc" id="L140">        trainMinors = new int[nbTrains];</span>
+<span class="nc" id="L141">        trainBonuses = new int[nbTrains];</span>
+<span class="nc" id="L142">        trainVisited = new boolean[nbTrains][nbVertexes];</span>
+        // increase necessary due to buttom train
+<span class="nc" id="L144">        trainStack = new int[nbTrains][nbVertexes + 1];</span>
+<span class="nc" id="L145">        trainStackPos = new int[nbTrains];</span>
+<span class="nc" id="L146">        trainBottomActive = new boolean[nbTrains];</span>
+<span class="nc" id="L147">        trainStartEdge = new int[nbTrains];</span>
+<span class="nc" id="L148">        trainDistance = new int[nbTrains];</span>
+<span class="nc" id="L149">        maxCumulatedTrainRevenues = new int[nbTrains];</span>
+
+<span class="nc" id="L151">        bonusValue = new int[nbBonuses];</span>
+<span class="nc" id="L152">        bonusRequiresVertices = new int[nbBonuses];</span>
+<span class="nc" id="L153">        bonusActiveForTrain = new boolean[nbBonuses][nbTrains];</span>
+<span class="nc" id="L154">        bonusTrainVertices = new int[nbBonuses][nbTrains];</span>
+
+<span class="nc" id="L156">        currentBestRun = new int[nbTrains][nbVertexes + 1];</span>
+
+<span class="nc" id="L158">        useRevenuePrediction = false;</span>
+
+<span class="nc" id="L160">        callDynamicModifiers = false;</span>
+<span class="nc" id="L161">    }</span>
+
+    final void setVertex(int id, boolean major, boolean minor, boolean sink) {
+<span class="nc" id="L164">        vertexMajor[id] = major;</span>
+<span class="nc" id="L165">        vertexMinor[id] = minor;</span>
+<span class="nc" id="L166">        vertexSink[id] = sink;</span>
+        // default neighbors &amp;&amp; visit and bonus sets
+<span class="nc" id="L168">        vertexNbNeighbors[id] = 0;</span>
+<span class="nc" id="L169">        vertexNbVisitSets[id] = 0;</span>
+<span class="nc" id="L170">        vertexNbBonusSets[id] = 0;</span>
+<span class="nc" id="L171">    }</span>
+
+    final void setVertexValue(int vertexId, int trainId, int value) {
+<span class="nc" id="L174">        vertexValueByTrain[vertexId][trainId] = value;</span>
+<span class="nc" id="L175">    }</span>
+
+    final void setVertexNeighbors(int id, int[] neighbors, int[] edges) {
+        // copy neighbors
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        for (int j=0; j &lt; neighbors.length; j++) {</span>
+<span class="nc" id="L180">                vertexNeighbors[id][j] = neighbors[j];</span>
+<span class="nc" id="L181">                vertexEdges[id][j] = edges[j];</span>
+        }
+<span class="nc" id="L183">        vertexNbNeighbors[id] = neighbors.length;</span>
+
+<span class="nc" id="L185">    }</span>
+
+    final void setStartVertexes(int[] startVertexes) {
+<span class="nc" id="L188">        this.startVertexes = startVertexes;</span>
+<span class="nc" id="L189">    }</span>
+
+
+    void setEdge(int edgeId, boolean greedy, int distance) {
+<span class="nc" id="L193">        edgeGreedy[edgeId] = greedy;</span>
+<span class="nc" id="L194">        edgeDistance[edgeId] = distance;</span>
+        // default travel sets
+//        edgeNbTravelSets[edgeId] = 0;
+<span class="nc" id="L197">    }</span>
+
+    final void setTrain(int id, int majors, int minors, boolean ignoreMinors, boolean isHTrain, boolean isETrain) {
+<span class="nc" id="L200">        trainMaxMajors[id] = majors;</span>
+<span class="nc" id="L201">        trainMaxMinors[id] = minors;</span>
+<span class="nc" id="L202">        trainMaxBonuses[id] = 0;</span>
+<span class="nc" id="L203">        trainIgnoreMinors[id] = ignoreMinors;</span>
+<span class="nc" id="L204">        trainIsH[id] = isHTrain;</span>
+<span class="nc" id="L205">        trainIsE[id] = isETrain;</span>
+<span class="nc" id="L206">    }</span>
+
+    final void setVisitSet(int[] vertices) {
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        for (int j=0; j &lt; vertices.length; j++) {</span>
+<span class="nc" id="L210">            int vertexId = vertices[j];</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">            for (int k=0; k &lt; vertices.length; k++) {</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">                if (k == j) continue;</span>
+<span class="nc" id="L213">                vertexVisitSets[vertexId][vertexNbVisitSets[vertexId]++] = vertices[k];</span>
+            }
+        }
+<span class="nc" id="L216">    }</span>
+
+
+    final void setBonus(int id, int value, int[] vertices, boolean[] bonusForTrain) {
+<span class="nc" id="L220">        log.debug(&quot;RC: define bonus value = {}, vertices = {}, bonusForTrain = {}&quot;, value, Arrays.toString(vertices), Arrays.toString(bonusForTrain));</span>
+
+<span class="nc" id="L222">        bonusValue[id] = value;</span>
+<span class="nc" id="L223">        bonusRequiresVertices[id] = vertices.length;</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">        for ( int vertexId : vertices ) {</span>
+<span class="nc" id="L225">            vertexBonusSets[vertexId][vertexNbBonusSets[vertexId]++] = id;</span>
+        }
+<span class="nc" id="L227">        bonusActiveForTrain[id] = bonusForTrain;</span>
+<span class="nc" id="L228">    }</span>
+
+    final void setDynamicModifiers(boolean activate) {
+<span class="nc" id="L231">        callDynamicModifiers = activate;</span>
+<span class="nc" id="L232">    }</span>
+
+    final int[][] getOptimalRun() {
+<span class="nc" id="L235">        log.debug(&quot;RC: currentBestRun = {}&quot;, Arrays.deepToString(currentBestRun));</span>
+<span class="nc" id="L236">        return currentBestRun;</span>
+    }
+
+    final int[][] getCurrentRun() {
+<span class="nc" id="L240">        int[][] currentRun = new int[nbTrains][nbVertexes+1];</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        for (int j = startTrainSet; j &lt;= finalTrainSet; j++) {</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">            for (int v = 0; v &lt; nbVertexes + 1; v++) {</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">                if (v &lt; trainStackPos[j]) {</span>
+<span class="nc" id="L244">                    currentRun[j][v] = trainStack[j][v];</span>
+                } else {
+<span class="nc" id="L246">                    currentRun[j][v] = -1; // terminator</span>
+<span class="nc" id="L247">                    break;</span>
+                }
+            }
+        }
+<span class="nc" id="L251">        return currentRun;</span>
+    }
+
+    final int getNumberOfEvaluations() {
+<span class="nc" id="L255">        return nbEvaluations;</span>
+    }
+
+    final String getStatistics() {
+<span class="nc" id="L259">        StringBuilder statistics = new StringBuilder();</span>
+<span class="nc" id="L260">        statistics.append(nbEvaluations).append(&quot; evaluations&quot;);</span>
+<span class="nc bnc" id="L261" title="All 2 branches missed.">        if (useRevenuePrediction)</span>
+<span class="nc" id="L262">            statistics.append(&quot;, &quot;).append(nbPredictions).append(&quot; predictions&quot;);</span>
+<span class="nc" id="L263">        statistics.append(&quot; and &quot;).append(nbEdgesTravelled).append(&quot; edges travelled.&quot;);</span>
+<span class="nc" id="L264">        return statistics.toString();</span>
+    }
+
+    private void notifyRevenueAdapter(final int revenue, final boolean finalResult) {
+        String modifier;
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        if (finalResult)</span>
+<span class="nc" id="L270">            modifier = &quot;final&quot;;</span>
+        else
+<span class="nc" id="L272">            modifier = &quot;new best&quot;;</span>
+<span class="nc" id="L273">        log.debug(&quot;Report {} result of {} after {}&quot;, modifier, revenue, getStatistics());</span>
+<span class="nc" id="L274">        revenueAdapter.notifyRevenueListener(revenue, finalResult);</span>
+<span class="nc" id="L275">    }</span>
+
+    private int[] bestRevenues(final int[] values, final int length) {
+<span class="nc" id="L278">        int[] bestRevenues = new int[length + 1];</span>
+<span class="nc" id="L279">        Arrays.sort(values);</span>
+<span class="nc" id="L280">        int cumulatedRevenues = 0;</span>
+<span class="nc bnc" id="L281" title="All 2 branches missed.">        for (int j=1; j &lt;= length ; j++) {</span>
+<span class="nc" id="L282">            cumulatedRevenues += values[values.length - j];</span>
+<span class="nc" id="L283">            bestRevenues[j] = cumulatedRevenues;</span>
+        }
+<span class="nc" id="L285">        log.debug(&quot;Best Revenues = {}&quot;, Arrays.toString(bestRevenues));</span>
+<span class="nc" id="L286">        return bestRevenues;</span>
+    }
+
+    private void initRevenueValues(final int startTrain, final int finalTrain){
+
+      // intialize values
+<span class="nc" id="L292">        maxMajorRevenues = new int[nbTrains][nbVertexes];</span>
+<span class="nc" id="L293">        maxMinorRevenues = new int[nbTrains][nbVertexes];</span>
+<span class="nc" id="L294">        maxBonusRevenues = new int[nbTrains][nbVertexes + nbBonuses];</span>
+<span class="nc bnc" id="L295" title="All 2 branches missed.">        for (int t=startTrain; t &lt;= finalTrain; t++) {</span>
+<span class="nc" id="L296">            int[] majorValues = new int[nbVertexes];</span>
+<span class="nc" id="L297">            int[] minorValues = new int[nbVertexes];</span>
+<span class="nc" id="L298">            int[] bonusValues = new int[nbVertexes + nbBonuses];</span>
+<span class="nc" id="L299">            int major = 0, minor = 0, bonus = 0;</span>
+            // scan vertices for values
+<span class="nc bnc" id="L301" title="All 2 branches missed.">            for (int v=0; v &lt; nbVertexes; v++) {</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">                if (vertexValueByTrain[v][t] == 0) continue;</span>
+<span class="nc bnc" id="L303" title="All 2 branches missed.">                if (vertexMajor[v]) {</span>
+<span class="nc" id="L304">                    majorValues[major++] = vertexValueByTrain[v][t];</span>
+<span class="nc bnc" id="L305" title="All 2 branches missed.">                } else if (vertexMinor[v]) {</span>
+<span class="nc" id="L306">                    minorValues[minor++] = vertexValueByTrain[v][t];</span>
+                } else { // define it as bonus
+<span class="nc" id="L308">                    bonusValues[bonus++] = vertexValueByTrain[v][t];</span>
+                }
+            }
+            // add the (complex) bonuses
+<span class="nc bnc" id="L312" title="All 2 branches missed.">            for (int b=0; b &lt; nbBonuses; b++) {</span>
+<span class="nc bnc" id="L313" title="All 4 branches missed.">                if (bonusValue[b] &lt;= 0 || !bonusActiveForTrain[b][t]) continue;</span>
+<span class="nc" id="L314">                bonusValues[bonus++] = bonusValue[b];</span>
+            }
+<span class="nc" id="L316">            trainMaxBonuses[t] = bonus;</span>
+
+<span class="nc" id="L318">            maxMajorRevenues[t] = bestRevenues(majorValues, trainMaxMajors[t]);</span>
+<span class="nc" id="L319">            maxMinorRevenues[t] = bestRevenues(minorValues, trainMaxMinors[t]);</span>
+<span class="nc" id="L320">            maxBonusRevenues[t] = bestRevenues(bonusValues, trainMaxBonuses[t]);</span>
+            // initially the cumulated train revenues are the individual run revenues
+<span class="nc" id="L322">            int trainRevenues = maxMajorRevenues[t][trainMaxMajors[t]] + maxMinorRevenues[t][trainMaxMinors[t]]</span>
+                     + maxBonusRevenues[t][trainMaxBonuses[t]];
+<span class="nc" id="L324">            maxCumulatedTrainRevenues[t] = trainRevenues;</span>
+        }
+<span class="nc" id="L326">        log.debug(&quot;maxMajorRevenues = {}&quot;, Arrays.deepToString(maxMajorRevenues));</span>
+<span class="nc" id="L327">        log.debug(&quot;maxMinorRevenues = {}&quot;, Arrays.deepToString(maxMinorRevenues));</span>
+<span class="nc" id="L328">        log.debug(&quot;maxBonusRevenues = {}&quot;, Arrays.deepToString(maxBonusRevenues));</span>
+<span class="nc" id="L329">        log.debug(&quot;maxCumulatedTrainRevenues = {}&quot;, Arrays.toString(maxCumulatedTrainRevenues));</span>
+<span class="nc" id="L330">    }</span>
+
+    final void initRuns(final int startTrain, final int finalTrain) {
+<span class="nc" id="L333">        log.debug(&quot;RC: init runs from {} to {}&quot;, startTrain, finalTrain);</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">        if (startTrain &gt; finalTrain) return;</span>
+
+<span class="nc" id="L336">        this.startTrainSet = startTrain;</span>
+<span class="nc" id="L337">        this.finalTrainSet = finalTrain;</span>
+
+        // initialize all trains and currentValues
+<span class="nc bnc" id="L340" title="All 2 branches missed.">        for (int i = startTrain; i &lt; finalTrain; i++) {</span>
+<span class="nc" id="L341">            currentBestRun[i][0] = -1;</span>
+        }
+<span class="nc" id="L343">        currentBestValue = 0;</span>
+
+<span class="nc" id="L345">    }</span>
+    final void executePredictions(final int startTrain, final int finalTrain) {
+
+<span class="nc" id="L348">        useRevenuePrediction = true;</span>
+
+<span class="nc bnc" id="L350" title="All 2 branches missed.">        if (startTrain &gt; finalTrain) return;</span>
+
+<span class="nc" id="L352">        initRevenueValues(startTrain, finalTrain);</span>
+
+<span class="nc bnc" id="L354" title="All 2 branches missed.">        if (startTrain == finalTrain) {</span>
+<span class="nc" id="L355">            return;</span>
+        }
+
+        // start prediction runs
+<span class="nc" id="L359">        nbEvaluations = 0; nbPredictions = 0; nbEdgesTravelled = 0;</span>
+
+<span class="nc" id="L361">        log.info(&quot;RC: start individual prediction Runs&quot;);</span>
+<span class="nc" id="L362">        int[] maxSingleTrainRevenues = new int[nbTrains];</span>
+<span class="nc bnc" id="L363" title="All 2 branches missed.">        for (int j = startTrain; j &lt;= finalTrain; j++) {</span>
+<span class="nc" id="L364">            this.startTrain = j;</span>
+<span class="nc" id="L365">            this.finalTrain = j;</span>
+<span class="nc" id="L366">            currentBestValue = 0;</span>
+<span class="nc" id="L367">            runTrain(j);</span>
+<span class="nc" id="L368">            log.debug(&quot;RC: Best prediction run of train number {} value = {} after {}&quot;, j, currentBestValue, getStatistics());</span>
+<span class="nc" id="L369">            maxSingleTrainRevenues[j] = currentBestValue;</span>
+        }
+<span class="nc" id="L371">        int cumulatedRevenues = 0;</span>
+<span class="nc bnc" id="L372" title="All 2 branches missed.">        for (int j = finalTrain; j &gt;= startTrain; j--) {</span>
+<span class="nc" id="L373">            cumulatedRevenues +=  maxSingleTrainRevenues[j];</span>
+<span class="nc" id="L374">            maxCumulatedTrainRevenues[j] = cumulatedRevenues;</span>
+        }
+<span class="nc" id="L376">        log.debug(&quot;maxCumulatedTrainRevenues = {}&quot;, Arrays.toString(maxCumulatedTrainRevenues));</span>
+
+<span class="nc bnc" id="L378" title="All 2 branches missed.">        if (startTrain == finalTrain - 1) return;</span>
+
+<span class="nc" id="L380">        log.info(&quot;RC: start combined prediction runs&quot;);</span>
+<span class="nc" id="L381">        this.finalTrain = finalTrain;</span>
+<span class="nc bnc" id="L382" title="All 2 branches missed.">        for (int j=finalTrain - 1; j &gt; startTrain; j--) {</span>
+<span class="nc" id="L383">            this.startTrain = j;</span>
+//            currentBestValue = 0;
+<span class="nc" id="L385">            runTrain(j);</span>
+<span class="nc" id="L386">            log.debug(&quot;RC: Best prediction run until train nb. {} value = {} after {}&quot;, j, currentBestValue, getStatistics());</span>
+<span class="nc" id="L387">            maxCumulatedTrainRevenues[j] = currentBestValue;</span>
+<span class="nc" id="L388">            maxCumulatedTrainRevenues[j-1] = currentBestValue  + maxSingleTrainRevenues[j-1];</span>
+<span class="nc" id="L389">            log.debug(&quot;maxCumulatedTrainRevenues = {}&quot;, Arrays.toString(maxCumulatedTrainRevenues));</span>
+        }
+<span class="nc" id="L391">    }</span>
+
+    final int calculateRevenue(final int startTrain, final int finalTrain) {
+<span class="nc" id="L394">        log.debug(&quot;RC: calculateRevenue trains from {} to {}&quot;, startTrain, finalTrain);</span>
+
+<span class="nc" id="L396">        this.startTrain = startTrain;</span>
+<span class="nc" id="L397">        this.finalTrain = finalTrain;</span>
+
+<span class="nc" id="L399">        runTrain(startTrain);</span>
+
+        // inform revenue listener via adapter
+<span class="nc" id="L402">        notifyRevenueAdapter(currentBestValue, true);</span>
+
+<span class="nc" id="L404">        return currentBestValue;</span>
+    }
+
+    abstract protected void runTrain(final int trainId);
+
+    abstract protected void runBottom(final int trainId);
+
+
+    // next vertex is either:
+    // protected void nextVertex(int trainId, int vertexId, boolean previousGreedy);
+    // protected void nextVertex(int trainId, int vertexId);
+
+    protected final boolean encounterVertex(final int trainId, final int vertexId, final boolean arrive) {
+
+<span class="nc" id="L418">        log.debug(&quot;RC: EncounterVertex, trainId = {} vertexId = {} arrive = {}&quot;, trainId, vertexId, arrive);</span>
+
+        // set visit to true if arriving, otherwise you leave
+<span class="nc" id="L421">        trainVisited[trainId][vertexId] = arrive;</span>
+
+<span class="nc" id="L423">        boolean stationVertex = false;</span>
+<span class="nc bnc" id="L424" title="All 2 branches missed.">        if (arrive) {</span>
+<span class="nc" id="L425">            trainCurrentValue[trainId] += vertexValueByTrain[vertexId][trainId];</span>
+<span class="nc bnc" id="L426" title="All 2 branches missed.">            if (vertexMajor[vertexId]) {</span>
+<span class="nc" id="L427">                trainMajors[trainId]--;</span>
+<span class="nc" id="L428">                stationVertex = true;</span>
+<span class="nc bnc" id="L429" title="All 2 branches missed.">            } else if (vertexMinor[vertexId]) {</span>
+<span class="nc" id="L430">                trainMinors[trainId]--;</span>
+<span class="nc bnc" id="L431" title="All 2 branches missed.">                stationVertex = !trainIgnoreMinors[trainId];</span>
+            }
+<span class="nc" id="L433">            countVisits++;</span>
+        } else {
+<span class="nc" id="L435">            trainCurrentValue[trainId] -= vertexValueByTrain[vertexId][trainId];</span>
+<span class="nc bnc" id="L436" title="All 2 branches missed.">            if (vertexMajor[vertexId]) {</span>
+<span class="nc" id="L437">                trainMajors[trainId]++;</span>
+<span class="nc" id="L438">                stationVertex = true;</span>
+<span class="nc bnc" id="L439" title="All 2 branches missed.">            } else if (vertexMinor[vertexId]) {</span>
+<span class="nc" id="L440">                trainMinors[trainId]++;</span>
+<span class="nc bnc" id="L441" title="All 2 branches missed.">                stationVertex = !trainIgnoreMinors[trainId];</span>
+            }
+<span class="nc" id="L443">            countVisits--;</span>
+        }
+
+        // check vertex sets
+<span class="nc bnc" id="L447" title="All 2 branches missed.">        for (int j=0; j &lt; vertexNbVisitSets[vertexId]; j++) {</span>
+<span class="nc" id="L448">            trainVisited[trainId][vertexVisitSets[vertexId][j]] = arrive;</span>
+<span class="nc" id="L449">            log.debug(&quot;RC: visited = {} for vertex {} due to block rule&quot;, arrive, vertexVisitSets[vertexId][j]);</span>
+        }
+
+        // check bonus sets
+<span class="nc bnc" id="L453" title="All 2 branches missed.">        for (int j=0; j &lt; vertexNbBonusSets[vertexId]; j++) {</span>
+<span class="nc" id="L454">            int bonusId = vertexBonusSets[vertexId][j];</span>
+<span class="nc bnc" id="L455" title="All 2 branches missed.">            if (!bonusActiveForTrain[bonusId][trainId]) continue;</span>
+<span class="nc bnc" id="L456" title="All 2 branches missed.">            if (arrive) {</span>
+<span class="nc" id="L457">                bonusTrainVertices[bonusId][trainId]--;</span>
+<span class="nc" id="L458">                log.debug(&quot;RC: Decreased bonus {} to {}&quot;, bonusId, bonusTrainVertices[bonusId][trainId]);</span>
+<span class="nc bnc" id="L459" title="All 2 branches missed.">                if (bonusTrainVertices[bonusId][trainId] == 0) {</span>
+<span class="nc" id="L460">                   trainCurrentValue[trainId] += bonusValue[bonusId];</span>
+<span class="nc bnc" id="L461" title="All 2 branches missed.">                   if (bonusValue[bonusId] &gt; 0) trainBonuses[trainId]--;</span>
+<span class="nc" id="L462">                    log.debug(&quot;RC: Added bonus {} with value {}&quot;, bonusId, bonusValue[bonusId]);</span>
+                }
+            } else {
+<span class="nc bnc" id="L465" title="All 2 branches missed.">                if (bonusTrainVertices[bonusId][trainId] == 0) {</span>
+<span class="nc" id="L466">                    trainCurrentValue[trainId] -= bonusValue[bonusId];</span>
+<span class="nc bnc" id="L467" title="All 2 branches missed.">                    if (bonusValue[bonusId] &gt; 0) trainBonuses[trainId]++;</span>
+<span class="nc" id="L468">                    log.debug(&quot;RC: Removed bonus {} with value {}&quot;, bonusId, bonusValue[bonusId]);</span>
+                 }
+<span class="nc" id="L470">                bonusTrainVertices[bonusId][trainId]++;</span>
+<span class="nc" id="L471">                log.debug(&quot;RC: Increases bonus {} to {}&quot;, bonusId, bonusTrainVertices[bonusId][trainId]);</span>
+            }
+        }
+
+<span class="nc" id="L475">        log.debug(&quot;RC: stationVertex = {}&quot;, stationVertex);</span>
+<span class="nc" id="L476">        log.debug(&quot;RC: Count Visits = {}&quot;, countVisits);</span>
+<span class="nc" id="L477">        return stationVertex;</span>
+    }
+
+    // travel edge is either:
+//      protected boolean travelEdge(int trainId, int edgeId, boolean previousGreedy);
+//      protected boolean travelEdge(int trainId, int edgeId);
+
+    abstract protected void returnEdge(final int trainId, final int edgeId);
+
+    protected Terminated trainTerminated(final int trainId) {
+<span class="nc" id="L487">        Terminated terminated = Terminated.NOT_YET;</span>
+<span class="nc bnc" id="L488" title="All 2 branches missed.">        if (trainIgnoreMinors[trainId]) {</span>
+            // express trains
+<span class="nc bnc" id="L490" title="All 2 branches missed.">            if (trainMajors[trainId] == 0)</span>
+<span class="nc" id="L491">                terminated = Terminated.WITH_EVALUATION;</span>
+        } else { // default and plus trains
+<span class="nc bnc" id="L493" title="All 2 branches missed.">            if (trainMajors[trainId] &lt; 0){</span>
+<span class="nc" id="L494">                terminated = Terminated.WITHOUT_EVALUATION;</span>
+<span class="nc bnc" id="L495" title="All 2 branches missed.">            } else if (trainMajors[trainId] + trainMinors[trainId] == 0)</span>
+<span class="nc" id="L496">                terminated = Terminated.WITH_EVALUATION;</span>
+        }
+<span class="nc bnc" id="L498" title="All 2 branches missed.">        if (terminated != Terminated.NOT_YET ) {</span>
+<span class="nc" id="L499">            log.debug(&quot;RC: Train {} has terminated: majors = {} minors = {}&quot;, trainId, trainMajors[trainId], trainMinors[trainId]);</span>
+        }
+<span class="nc" id="L501">        return terminated;</span>
+    }
+
+    protected final void finalizeVertex(final int trainId, final int vertexId) {
+<span class="nc" id="L505">        log.debug(&quot;RC: Finalize Vertex id {} for train {}&quot;, vertexId, trainId);</span>
+
+<span class="nc bnc" id="L507" title="All 2 branches missed.">        if (trainId == finalTrain) {</span>
+<span class="nc" id="L508">            evaluateResults();</span>
+        } else {
+<span class="nc" id="L510">            runTrain(trainId + 1);</span>
+        }
+<span class="nc" id="L512">    }</span>
+
+    protected final void evaluateResults() {
+        // sum to total value
+<span class="nc" id="L516">        int totalValue = 0;</span>
+<span class="nc bnc" id="L517" title="All 2 branches missed.">        for (int j = startTrain; j &lt;= finalTrain; j++) {</span>
+<span class="nc" id="L518">          totalValue += trainCurrentValue[j];</span>
+//            check for two stations requirement not necessary if stationVertex approach works
+//            if (trainIgnoreMinors[j]) {
+//                if (trainMaxMajors[j] - trainMajors[j] &gt;= 2)
+//                    totalValue += trainCurrentValue[j];
+//            } else {
+//                if (trainMaxMajors[j] + trainMaxMinors[j] - trainMajors[j] - trainMinors[j] &gt;= 2)
+//                    totalValue += trainCurrentValue[j];
+//            }
+        }
+
+<span class="nc bnc" id="L529" title="All 2 branches missed.">        if (callDynamicModifiers) totalValue += revenueAdapter.dynamicEvaluation();</span>
+
+<span class="nc" id="L531">        nbEvaluations++;</span>
+<span class="nc" id="L532">        log.debug(&quot;RC: current total value {}&quot;, totalValue);</span>
+
+        // compare to current best result
+<span class="nc bnc" id="L535" title="All 2 branches missed.">        if (totalValue &gt; currentBestValue) {</span>
+<span class="nc" id="L536">            currentBestValue = totalValue;</span>
+            // exceed thus deep copy of vertex stack
+<span class="nc bnc" id="L538" title="All 2 branches missed.">            for (int j = startTrainSet; j &lt;= finalTrainSet; j++) {</span>
+<span class="nc bnc" id="L539" title="All 2 branches missed.">                for (int v = 0; v &lt; nbVertexes + 1; v++) {</span>
+<span class="nc bnc" id="L540" title="All 2 branches missed.">                    if (v &lt; trainStackPos[j]) {</span>
+<span class="nc" id="L541">                        currentBestRun[j][v] = trainStack[j][v];</span>
+                    } else {
+<span class="nc" id="L543">                        currentBestRun[j][v] = -1; // terminator</span>
+<span class="nc" id="L544">                        break;</span>
+                    }
+                }
+            }
+<span class="nc" id="L548">            log.debug(&quot;RC: Found better run with {}&quot;, totalValue);</span>
+            // inform revenue listener via adapter
+<span class="nc" id="L550">            notifyRevenueAdapter(currentBestValue, false);</span>
+        }
+<span class="nc" id="L552">    }</span>
+
+    // predict revenues and returns true if best value can still be exceeded
+    protected final boolean predictRevenues(final int trainId){
+        // the potential revenues of the future trains
+<span class="nc" id="L557">        int totalValue = 0;</span>
+<span class="nc bnc" id="L558" title="All 2 branches missed.">        if (trainId &lt; finalTrain)</span>
+<span class="nc" id="L559">             totalValue = maxCumulatedTrainRevenues[trainId + 1];</span>
+
+        // predict the current train
+<span class="nc" id="L562">        int trainValue = trainCurrentValue[trainId];</span>
+<span class="nc bnc" id="L563" title="All 2 branches missed.">        if (trainIgnoreMinors[trainId]) {</span>
+            // express train
+<span class="nc" id="L565">            trainValue += maxMajorRevenues[trainId][trainMajors[trainId]];</span>
+        } else {
+<span class="nc bnc" id="L567" title="All 2 branches missed.">            if (trainMinors[trainId] &gt; 0){</span>
+<span class="nc" id="L568">                trainValue += maxMajorRevenues[trainId][trainMajors[trainId]];</span>
+<span class="nc" id="L569">                trainValue += maxMinorRevenues[trainId][trainMinors[trainId]];</span>
+            } else { // &lt;= 0
+<span class="nc" id="L571">                int trainStations = trainMajors[trainId] + trainMinors[trainId];</span>
+                // trainStations can be zero or negative (for H trains)
+<span class="nc bnc" id="L573" title="All 2 branches missed.">                if (trainStations &gt; 0) {</span>
+<span class="nc" id="L574">                    trainValue += maxMajorRevenues[trainId][trainStations];</span>
+                }
+            }
+        }
+        // add potential bonuses
+<span class="nc bnc" id="L579" title="All 2 branches missed.">        if (trainBonuses[trainId] != 0) {</span>
+<span class="nc" id="L580">            trainValue += maxBonusRevenues[trainId][trainBonuses[trainId]];</span>
+        }
+<span class="nc" id="L582">        log.debug(&quot;RC: Current train has predicted  value of {}&quot;, trainValue);</span>
+
+        // maximum value for the trainId including future trains
+<span class="nc" id="L585">        totalValue = Math.min(totalValue + trainValue, maxCumulatedTrainRevenues[trainId]);</span>
+
+        // and add the past trains: current realized values
+<span class="nc bnc" id="L588" title="All 2 branches missed.">        for (int j = startTrain; j &lt; trainId; j++) {</span>
+<span class="nc" id="L589">          totalValue += trainCurrentValue[j];</span>
+//        check for two stations requirement not necessary if stationVertex approach works
+//            if (trainIgnoreMinors[j]) {
+//                if (trainMaxMajors[j] - trainMajors[j] &gt;= 2)
+//                    totalValue += trainCurrentValue[j];
+//            } else {
+//                if (trainMaxMajors[j] + trainMaxMinors[j] - trainMajors[j] - trainMinors[j] &gt;= 2)
+//                    totalValue += trainCurrentValue[j];
+//            }
+        }
+
+<span class="nc bnc" id="L600" title="All 2 branches missed.">        if (callDynamicModifiers) totalValue += revenueAdapter.dynamicPrediction();</span>
+
+<span class="nc" id="L602">        nbPredictions++;</span>
+
+<span class="nc bnc" id="L604" title="All 2 branches missed.">        boolean terminate = (totalValue &lt;= currentBestValue);</span>
+<span class="nc bnc" id="L605" title="All 2 branches missed.">        if (terminate) log.debug(&quot;Run terminated due to predicted value of {}&quot;, totalValue);</span>
+
+<span class="nc" id="L607">        return terminate;</span>
+    }
+
+
+    @Override
+    public String toString() {
+<span class="nc" id="L613">        StringBuilder buffer = new StringBuilder();</span>
+
+<span class="nc" id="L615">        buffer.append(&quot;vertexValuesByTrain:&quot;).append(Arrays.deepToString(vertexValueByTrain)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L616">        buffer.append(&quot;vertexMajor:&quot;).append(Arrays.toString(vertexMajor)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L617">        buffer.append(&quot;vertexMinor:&quot;).append(Arrays.toString(vertexMinor)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L618">        buffer.append(&quot;vertexNeighbors:&quot;).append(Arrays.deepToString(vertexNeighbors)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L619">        buffer.append(&quot;vertexEdges:&quot;).append(Arrays.deepToString(vertexEdges)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L620">        buffer.append(&quot;vertexVisitSets:&quot;).append(Arrays.deepToString(vertexVisitSets)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L621">        buffer.append(&quot;vertexBonusSets:&quot;).append(Arrays.deepToString(vertexBonusSets)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L622">        buffer.append(&quot;vertexNbVisitSets:&quot;).append(Arrays.toString(vertexNbVisitSets)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L623">        buffer.append(&quot;vertexNbBonusSets:&quot;).append(Arrays.toString(vertexNbBonusSets)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L624">        buffer.append(&quot;edgeGreedy:&quot;).append(Arrays.toString(edgeGreedy)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L625">        buffer.append(&quot;edgeDistance:&quot;).append(Arrays.toString(edgeDistance)).append(&quot;\n&quot;);</span>
+//        buffer.append(&quot;edgeTravelSets:&quot; + Arrays.deepToString(edgeTravelSets) + &quot;\n&quot;);
+//        buffer.append(&quot;egdeNbTravelSets:&quot; + Arrays.toString(edgeNbTravelSets) + &quot;\n&quot;);
+<span class="nc" id="L628">        buffer.append(&quot;startVertexes:&quot;).append(Arrays.toString(startVertexes)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L629">        buffer.append(&quot;trainMaxMajors:&quot;).append(Arrays.toString(trainMaxMajors)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L630">        buffer.append(&quot;trainMaxMinors:&quot;).append(Arrays.toString(trainMaxMinors)).append(&quot;\n&quot;);</span>
+<span class="nc" id="L631">        buffer.append(&quot;trainIgnoreMinors:&quot;).append(Arrays.toString(trainIgnoreMinors)).append(&quot;\n&quot;);</span>
+
+<span class="nc" id="L633">        return buffer.toString();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

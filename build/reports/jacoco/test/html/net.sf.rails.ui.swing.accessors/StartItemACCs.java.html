@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StartItemACCs.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.accessors</a> &gt; <span class="el_source">StartItemACCs.java</span></div><h1>StartItemACCs.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.accessors;
+
+import net.sf.rails.game.Player;
+import net.sf.rails.game.StartItem;
+import net.sf.rails.game.state.Observable;
+import net.sf.rails.ui.swing.core.Accessor1D;
+import net.sf.rails.ui.swing.core.Accessor2D;
+
+<span class="nc" id="L9">public class StartItemACCs {</span>
+    
+<span class="nc" id="L11">    public static final Accessor1D.AText&lt;StartItem&gt; NAME =</span>
+<span class="nc" id="L12">            new Accessor1D.AText&lt;StartItem&gt;(StartItem.class) {</span>
+        @Override
+        protected String access(StartItem item) {
+<span class="nc" id="L15">            return item.getId();</span>
+        }
+    };
+
+<span class="nc" id="L19">    public static final Accessor1D.AObservable&lt;StartItem&gt; BASE_PRICE =</span>
+<span class="nc" id="L20">            new Accessor1D.AObservable&lt;StartItem&gt;(StartItem.class) {</span>
+        @Override
+        protected Observable access(StartItem item) {
+<span class="nc" id="L23">            return item.getBasePriceModel();</span>
+        }
+    };
+    
+<span class="nc" id="L27">    public static final Accessor1D.AObservable&lt;StartItem&gt; MIN_BID =</span>
+<span class="nc" id="L28">            new Accessor1D.AObservable&lt;StartItem&gt;(StartItem.class) {</span>
+        @Override
+        protected Observable access(StartItem item) {
+<span class="nc" id="L31">            return item.getMinimumBidModel();</span>
+        }
+    };
+    
+<span class="nc" id="L35">    public static final Accessor2D.AObservable&lt;StartItem,Player&gt; CUR_BID =</span>
+<span class="nc" id="L36">            new Accessor2D.AObservable&lt;StartItem,Player&gt;(StartItem.class, Player.class) {</span>
+        @Override
+        protected Observable access(StartItem item, Player player) {
+<span class="nc" id="L39">            return item.getBidForPlayerModel(player);</span>
+        }
+    };
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

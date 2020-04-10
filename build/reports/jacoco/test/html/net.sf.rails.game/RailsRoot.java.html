@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RailsRoot.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">RailsRoot.java</span></div><h1>RailsRoot.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+
+import net.sf.rails.algorithms.RevenueManager;
+import net.sf.rails.common.Config;
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GameData;
+import net.sf.rails.common.GameOptionsSet;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.common.ReportManager;
+import net.sf.rails.common.ResourceLoader;
+import net.sf.rails.common.parser.ComponentManager;
+import net.sf.rails.common.parser.Configurable;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.common.parser.XMLTags;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.StockMarket;
+import net.sf.rails.game.state.Root;
+
+public class RailsRoot extends Root implements RailsItem {
+
+<span class="fc" id="L28">    private static final Logger log = LoggerFactory.getLogger(RailsRoot.class);</span>
+
+    // currently we assume that there is only one instance running
+    // thus it is possible to retrieve that version
+    // TODO: Replace this by a full support of concurrent usage
+    private static RailsRoot instance;
+
+    public static RailsRoot getInstance() {
+<span class="fc" id="L36">        return instance;</span>
+    }
+
+    // Base XML file
+    private static final String GAME_XML_FILE = &quot;Game.xml&quot;;
+
+    // Instance fields
+
+    // Game data fields
+    private final GameData gameData;
+
+    // Component Managers
+    private GameManager gameManager;
+    private CompanyManager companyManager;
+    private PlayerManager playerManager;
+    private PhaseManager phaseManager;
+    private TrainManager trainManager;
+    private StockMarket stockMarket;
+    private MapManager mapManager;
+    private TileManager tileManager;
+    private RevenueManager revenueManager;
+    private Bank bank;
+
+    // Other Managers
+    private ReportManager reportManager;
+
+    private RailsRoot(GameData gameData) {
+<span class="fc" id="L63">        super();</span>
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for (String playerName : gameData.getPlayers()) {</span>
+<span class="fc" id="L66">            log.debug(&quot;Player: {}&quot;, playerName);</span>
+<span class="fc" id="L67">        }</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (String optionName : gameData.getGameOptions().getOptions().keySet()) {</span>
+<span class="fc" id="L69">            log.debug(&quot;Option: {}={}&quot;, optionName, gameData.getGameOptions().get(optionName));</span>
+<span class="fc" id="L70">        }</span>
+
+<span class="fc" id="L72">        this.gameData = gameData;</span>
+<span class="fc" id="L73">    }</span>
+
+    public static RailsRoot create(GameData gameData) throws ConfigurationException {
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        Preconditions.checkState(instance == null, &quot;Currently only a single instance of RailsRoot is allowed&quot;);</span>
+<span class="fc" id="L77">        instance = new RailsRoot(gameData);</span>
+<span class="fc" id="L78">        log.debug(&quot;RailsRoot: instance created&quot;);</span>
+<span class="fc" id="L79">        instance.init();</span>
+<span class="fc" id="L80">        log.debug(&quot;RailsRoot: instance initialized&quot;);</span>
+<span class="fc" id="L81">        instance.initGameFromXML();</span>
+<span class="fc" id="L82">        log.debug(&quot;RailsRoot: game configuration initialized&quot;);</span>
+<span class="fc" id="L83">        instance.finishConfiguration();</span>
+<span class="fc" id="L84">        log.debug(&quot;RailsRoot: game configuration finished&quot;);</span>
+
+<span class="fc" id="L86">        return instance;</span>
+    }
+
+
+    // feedback from ComponentManager
+    public void setComponent(Configurable component) {
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (component instanceof PlayerManager) {</span>
+<span class="fc" id="L93">            playerManager = (PlayerManager) component;</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        } else if (component instanceof Bank) {</span>
+<span class="fc" id="L95">            bank = (Bank) component;</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        } else if (component instanceof CompanyManager) {</span>
+<span class="fc" id="L97">            companyManager = (CompanyManager) component;</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        } else if (component instanceof StockMarket) {</span>
+<span class="fc" id="L99">            stockMarket = (StockMarket) component;</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        } else if (component instanceof GameManager) {</span>
+<span class="fc" id="L101">            gameManager = (GameManager) component;</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        } else if (component instanceof PhaseManager) {</span>
+<span class="fc" id="L103">            phaseManager = (PhaseManager) component;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        } else if (component instanceof TrainManager) {</span>
+<span class="fc" id="L105">            trainManager = (TrainManager) component;</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        } else if (component instanceof MapManager) {</span>
+<span class="fc" id="L107">            mapManager = (MapManager) component;</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        } else if (component instanceof TileManager) {</span>
+<span class="fc" id="L109">            tileManager = (TileManager) component;</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        } else if (component instanceof RevenueManager) {</span>
+<span class="fc" id="L111">            revenueManager = (RevenueManager) component;</span>
+        }
+<span class="fc" id="L113">    }</span>
+
+    public void initGameFromXML() throws ConfigurationException {
+<span class="fc" id="L116">        String directory = &quot;data&quot; + ResourceLoader.SEPARATOR + gameData.getGameName();</span>
+
+<span class="fc" id="L118">        Tag componentManagerTag = Tag.findTopTagInFile(</span>
+<span class="fc" id="L119">                GAME_XML_FILE, directory, XMLTags.COMPONENT_MANAGER_ELEMENT_ID, gameData.getGameOptions() );</span>
+
+<span class="fc" id="L121">        ComponentManager componentManager = new ComponentManager();</span>
+<span class="fc" id="L122">        componentManager.start(this,  componentManagerTag);</span>
+        // The componentManager automatically returns results
+
+        // creation of Report facilities
+<span class="fc" id="L126">        reportManager = ReportManager.create(this, &quot;reportManager&quot;);</span>
+<span class="fc" id="L127">    }</span>
+
+    public boolean finishConfiguration() {
+        /*
+         * Initializations that involve relations between components can
+         * only be done after all XML has been processed.
+         */
+<span class="fc" id="L134">        log.info(&quot;========== Start of rails.game {} ==========&quot;, gameData.getGameName());</span>
+<span class="fc" id="L135">        log.info(&quot;Rails version {}&quot;, Config.getVersion());</span>
+<span class="fc" id="L136">        ReportBuffer.add(this, LocalText.getText(&quot;GameIs&quot;, gameData.getGameName()));</span>
+
+<span class="fc" id="L138">        playerManager.setPlayers(gameData.getPlayers(), bank);</span>
+<span class="fc" id="L139">        gameManager.init();</span>
+        // TODO: Can this be merged above?
+<span class="fc" id="L141">        playerManager.init();</span>
+
+        try {
+<span class="fc" id="L144">            playerManager.finishConfiguration(this);</span>
+<span class="fc" id="L145">            companyManager.finishConfiguration(this);</span>
+<span class="fc" id="L146">            trainManager.finishConfiguration(this);</span>
+<span class="fc" id="L147">            phaseManager.finishConfiguration(this);</span>
+<span class="fc" id="L148">            tileManager.finishConfiguration(this);</span>
+<span class="fc" id="L149">            mapManager.finishConfiguration(this);</span>
+<span class="fc" id="L150">            bank.finishConfiguration(this);</span>
+<span class="fc" id="L151">            stockMarket.finishConfiguration(this);</span>
+
+<span class="fc bfc" id="L153" title="All 2 branches covered.">            if (revenueManager != null)</span>
+<span class="fc" id="L154">                revenueManager.finishConfiguration(this);</span>
+<span class="nc" id="L155">        } catch (ConfigurationException e) {</span>
+<span class="nc" id="L156">            log.error(e.getMessage(), e);</span>
+<span class="nc" id="L157">            DisplayBuffer.add(this, e.getMessage());</span>
+<span class="nc" id="L158">            return false;</span>
+<span class="fc" id="L159">        }</span>
+<span class="fc" id="L160">        return true;</span>
+    }
+
+    public String start() {
+        // FIXME (Rails2.0): Should this not be part of the initial Setup configuration?
+<span class="fc" id="L165">        int nbPlayers = gameData.getPlayers().size();</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">        if (nbPlayers &lt; playerManager.getMinPlayers()</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">                || nbPlayers &gt; playerManager.getMaxPlayers()) {</span>
+<span class="nc" id="L168">            return gameData.getGameName() +&quot; is not configured to be played with &quot;+ nbPlayers +&quot; players\n&quot;</span>
+<span class="nc" id="L169">                    + &quot;Please enter a valid number of players, or add a &lt;Players&gt; entry to data/&quot;+ gameData.getGameName() +&quot;/Game.xml&quot;;</span>
+        }
+
+<span class="fc" id="L172">        gameManager.startGame();</span>
+<span class="fc" id="L173">        return null;</span>
+    }
+
+    /*----- Getters -----*/
+
+    public GameManager getGameManager() {
+<span class="fc" id="L179">        return gameManager;</span>
+    }
+
+    public CompanyManager getCompanyManager() {
+<span class="fc" id="L183">        return companyManager;</span>
+    }
+
+    public PlayerManager getPlayerManager() {
+<span class="fc" id="L187">        return playerManager;</span>
+    }
+
+    public PhaseManager getPhaseManager() {
+<span class="fc" id="L191">        return phaseManager;</span>
+    }
+
+    public TrainManager getTrainManager() {
+<span class="fc" id="L195">        return trainManager;</span>
+    }
+
+    public StockMarket getStockMarket() {
+<span class="fc" id="L199">        return stockMarket;</span>
+    }
+
+    public MapManager getMapManager() {
+<span class="fc" id="L203">        return mapManager;</span>
+    }
+
+    public TileManager getTileManager() {
+<span class="fc" id="L207">        return tileManager;</span>
+    }
+
+    public RevenueManager getRevenueManager() {
+<span class="fc" id="L211">        return revenueManager;</span>
+    }
+
+    public Bank getBank() {
+<span class="fc" id="L215">        return bank;</span>
+    }
+
+    public ReportManager getReportManager() {
+<span class="fc" id="L219">        return reportManager;</span>
+    }
+
+
+    /**
+     * @return the gameName
+     */
+    public String getGameName() {
+<span class="fc" id="L227">        return gameData.getGameName();</span>
+    }
+
+    /**
+     * @return the gameOptions
+     */
+    public GameOptionsSet getGameOptions() {
+<span class="fc" id="L234">        return gameData.getGameOptions();</span>
+    }
+
+    /**
+     * @return the gameData
+     */
+    public GameData getGameData() {
+<span class="nc" id="L241">        return gameData;</span>
+    }
+
+    @Override
+    public RailsRoot getParent() {
+<span class="nc" id="L246">        throw new UnsupportedOperationException();</span>
+    }
+
+    @Override
+    public RailsRoot getRoot() {
+<span class="fc" id="L251">        return this;</span>
+    }
+
+    public static void clearInstance() {
+<span class="fc" id="L255">        instance = null;</span>
+<span class="fc" id="L256">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

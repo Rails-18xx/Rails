@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChangeSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.state</a> &gt; <span class="el_source">ChangeSet.java</span></div><h1>ChangeSet.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.state;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+import static com.google.common.base.Preconditions.checkState;
+
+/**
+ * A ChangeSet object represents the collection of all changes
+ * that belong to the same activity.
+ * &lt;p&gt;
+ * ChangeSet objects are stored in the ChangeStack.
+ */
+
+public class ChangeSet {
+
+<span class="fc" id="L22">    private static final Logger log = LoggerFactory.getLogger(ChangeSet.class);</span>
+
+    // static fields
+    private final List&lt;Change&gt; changes;
+    private final ChangeAction action;
+    private final int index;
+
+<span class="fc" id="L29">    ChangeSet(List&lt;Change&gt; changes, ChangeAction action, int index) {</span>
+<span class="fc" id="L30">        this.changes = changes;</span>
+<span class="fc" id="L31">        this.action = action;</span>
+<span class="fc" id="L32">        this.index = index;</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * retrieves all states that are changed by Changes in the ChangeSet
+     *
+     * @return set of all states affected by Changes
+     */
+    ImmutableSet&lt;State&gt; getStates() {
+<span class="fc" id="L41">        ImmutableSet.Builder&lt;State&gt; builder = new ImmutableSet.Builder&lt;State&gt;();</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        for (Change change : changes) {</span>
+<span class="fc" id="L43">            builder.add(change.getState());</span>
+<span class="fc" id="L44">        }</span>
+<span class="fc" id="L45">        return builder.build();</span>
+    }
+
+    /**
+     * re-execute all Changes in the ChangeSet (redo)
+     *
+     * @ŧhrows IllegalStateException if ChangeSet is still open
+     */
+    void reexecute() {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        for (Change change : changes) {</span>
+<span class="fc" id="L55">            change.execute();</span>
+<span class="fc" id="L56">            log.debug(&quot;Redo: &quot; + change);</span>
+<span class="fc" id="L57">        }</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * un-executed all Changes in the ChangeSet (undo)
+     *
+     * @throws IllegalStateException if ChangeSet is still open or ChangeSet is initial
+     */
+    void unexecute() {
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        checkState(index != -1, &quot;ChangeSet is initial - cannot be undone&quot;);</span>
+
+        // iterate reverse
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        for (Change change : Lists.reverse(changes)) {</span>
+<span class="fc" id="L70">            log.debug(&quot;About to undo: &quot; + change);</span>
+<span class="fc" id="L71">            change.undo();</span>
+<span class="fc" id="L72">            log.debug(&quot;Undone: &quot; + change);</span>
+<span class="fc" id="L73">        }</span>
+<span class="fc" id="L74">    }</span>
+
+    /**
+     * returns the ChangeAction associated with the ChangeSet
+     *
+     * @return the associated ChangeAction
+     */
+    ChangeAction getAction() {
+<span class="nc" id="L82">        return action;</span>
+    }
+
+    /**
+     * returns the Owner associated with the ChangeSet
+     */
+    public ChangeActionOwner getOwner() {
+<span class="fc" id="L89">        return action.getActionOwner();</span>
+    }
+
+    public int getIndex() {
+<span class="fc" id="L93">        return index;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L98">        return MoreObjects.toStringHelper(this)</span>
+<span class="fc" id="L99">                .add(&quot;action&quot;, action)</span>
+<span class="fc" id="L100">                .add(&quot;Owner&quot;, getOwner())</span>
+<span class="fc" id="L101">                .add(&quot;Index&quot;, index)</span>
+<span class="fc" id="L102">                .toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

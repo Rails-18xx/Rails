@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GuiHints.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.common</a> &gt; <span class="el_source">GuiHints.java</span></div><h1>GuiHints.java</h1><pre class="source lang-java linenums">package net.sf.rails.common;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.rails.game.RailsAbstractItem;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.Round;
+import net.sf.rails.game.round.RoundFacade;
+import net.sf.rails.game.state.GenericState;
+
+
+/**
+ * This class contains hints from the server (game engine) to the client (GUI)
+ * about the preferred visibility of the various window types.
+ * It is up to the GUI (and its user) to decide what to do with these hints,
+ * but the current implementation should exactly follow these hints.
+ * @author VosE
+ *
+ */
+public final class GuiHints extends RailsAbstractItem implements Serializable{
+
+    public static final long serialVersionUID = 1L;
+
+    /** What round type is currently active in the engine? */
+<span class="fc" id="L27">    private GenericState&lt;Class&lt;? extends RoundFacade&gt;&gt; currentRoundType = GenericState.create(this, &quot;currentRoundType&quot;);</span>
+
+    /** Which windows should be visible? */
+    private List&lt;VisibilityHint&gt; visibilityHints;
+
+    /** Which window type is active and should be on top? */
+<span class="fc" id="L33">    private GenericState&lt;GuiDef.Panel&gt; activePanel = GenericState.create(this, &quot;activePanel&quot;);</span>
+
+    private GuiHints(RailsItem parent, String id) {
+<span class="fc" id="L36">        super(parent, id);</span>
+<span class="fc" id="L37">    }</span>
+
+    public static GuiHints create(RailsItem parent, String id){
+<span class="fc" id="L40">        return new GuiHints(parent, id);</span>
+    }
+
+    public Class&lt;? extends RoundFacade&gt; getCurrentRoundType() {
+<span class="nc" id="L44">        return currentRoundType.value();</span>
+    }
+
+    public void setCurrentRoundType(Class&lt;? extends RoundFacade&gt; currentRoundType) {
+<span class="fc" id="L48">        this.currentRoundType.set(currentRoundType);</span>
+<span class="fc" id="L49">    }</span>
+
+    public List&lt;VisibilityHint&gt; getVisibilityHints() {
+<span class="nc" id="L52">        return visibilityHints;</span>
+    }
+
+    public void setVisibilityHint(GuiDef.Panel type, boolean visibility) {
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (visibilityHints == null) {</span>
+<span class="fc" id="L57">            visibilityHints = new ArrayList&lt;VisibilityHint&gt;(4);</span>
+        }
+<span class="fc" id="L59">        visibilityHints.add (new VisibilityHint(type, visibility));</span>
+<span class="fc" id="L60">    }</span>
+
+    public void clearVisibilityHints () {
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (visibilityHints == null) {</span>
+<span class="nc" id="L64">            visibilityHints = new ArrayList&lt;VisibilityHint&gt;(4);</span>
+        } else {
+<span class="fc" id="L66">            visibilityHints.clear();</span>
+        }
+<span class="fc" id="L68">    }</span>
+
+    public GuiDef.Panel getActivePanel() {
+<span class="nc" id="L71">        return (GuiDef.Panel)activePanel.value();</span>
+    }
+
+    public void setActivePanel(GuiDef.Panel activePanel) {
+<span class="fc" id="L75">        this.activePanel.set(activePanel);</span>
+<span class="fc" id="L76">    }</span>
+
+    public static class VisibilityHint {
+
+        protected GuiDef.Panel type;
+        protected boolean visibility;
+
+<span class="fc" id="L83">        VisibilityHint (GuiDef.Panel type, boolean visibility) {</span>
+<span class="fc" id="L84">            this.type = type;</span>
+<span class="fc" id="L85">            this.visibility = visibility;</span>
+<span class="fc" id="L86">        }</span>
+
+        public GuiDef.Panel getType() {
+<span class="nc" id="L89">            return type;</span>
+        }
+
+        public boolean getVisibility() {
+<span class="nc" id="L93">            return visibility;</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

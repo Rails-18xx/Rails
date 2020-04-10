@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TrackConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">TrackConfig.java</span></div><h1>TrackConfig.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
+/** Track configuration defines a set of tracks (e.g. on a Tile) */
+
+public class TrackConfig{
+
+    private final Set&lt;Track&gt; tracks;
+<span class="fc" id="L16">    private final HashMultimap&lt;Station, TrackPoint&gt; stationTracks = HashMultimap.create();</span>
+<span class="fc" id="L17">    private final HashMultimap&lt;HexSide, TrackPoint&gt; sideTracks = HashMultimap.create();</span>
+
+    private final Tile tile;
+
+<span class="fc" id="L21">    private TrackConfig(Tile tile, Set&lt;Track&gt; tracks, int rotation) {</span>
+<span class="fc" id="L22">        this.tile = tile;</span>
+<span class="fc" id="L23">        this.tracks = ImmutableSet.copyOf(tracks);</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        for (Track t:tracks) {</span>
+<span class="fc" id="L25">            classifyTrack(t);</span>
+<span class="fc" id="L26">        }</span>
+<span class="fc" id="L27">    }</span>
+
+    public TrackConfig(Tile tile, Set&lt;Track&gt; tracks) {
+<span class="fc" id="L30">        this(tile, tracks, 0);</span>
+<span class="fc" id="L31">    }</span>
+
+    @Deprecated
+    public static TrackConfig createByRotation(TrackConfig baseConfig, int rotation) {
+<span class="nc" id="L35">        return createByRotation(baseConfig, HexSide.get(rotation));</span>
+    }
+
+    public static TrackConfig createByRotation(TrackConfig baseConfig, HexSide rotation) {
+<span class="fc" id="L39">        Set&lt;Track&gt; tracks = Sets.newHashSet();</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        for (Track t:baseConfig.getTracks()) {</span>
+<span class="fc" id="L41">            tracks.add(t.createByRotation(rotation));</span>
+<span class="fc" id="L42">        }</span>
+<span class="fc" id="L43">        return new TrackConfig(baseConfig.getTile(), tracks);</span>
+    }
+
+
+    public static TrackConfig createByStationMapping(TrackConfig baseConfig, Map&lt;Station, Station&gt; mapping) {
+<span class="fc" id="L48">        Set&lt;Track&gt; tracks = Sets.newHashSet();</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        for (Track t:baseConfig.getTracks()) {</span>
+<span class="fc" id="L50">            Track n = t.createByStationMapping(mapping);</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">            if (n.getStart() == n.getEnd()) continue; // due to merged stations</span>
+<span class="fc" id="L52">            tracks.add(n);</span>
+<span class="fc" id="L53">        }</span>
+<span class="fc" id="L54">        return new TrackConfig(baseConfig.getTile(), tracks);</span>
+    }
+
+    // special case in 1856: downgrade of village tiles possible
+    public static TrackConfig createByDowngrade(TrackConfig baseConfig, Station station) {
+<span class="fc" id="L59">        Set&lt;Track&gt; newTracks = Sets.newHashSet();</span>
+<span class="fc" id="L60">        Set&lt;TrackPoint&gt; stationConnects = baseConfig.getStationTracks(station);</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        for (TrackPoint start:stationConnects) {</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">            for (TrackPoint end:stationConnects) {</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">                if (start == end) continue;</span>
+                // connect all sides that are reachable
+<span class="fc" id="L65">                newTracks.add(new Track(start, end));</span>
+<span class="fc" id="L66">            }</span>
+<span class="fc" id="L67">        }</span>
+<span class="fc" id="L68">        return new TrackConfig(baseConfig.getTile(), newTracks);</span>
+    }
+
+    private void classifyTrack(Track track) {
+<span class="fc" id="L72">        TrackPoint start = track.getStart();</span>
+<span class="fc" id="L73">        TrackPoint end = track.getEnd();</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (start.getTrackPointType() == TrackPoint.Type.STATION) {</span>
+<span class="fc" id="L75">            stationTracks.put((Station)start, end);</span>
+        } else {
+<span class="fc" id="L77">            sideTracks.put((HexSide)start, end);</span>
+        }
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (end.getTrackPointType() == TrackPoint.Type.STATION) {</span>
+<span class="fc" id="L80">            stationTracks.put((Station)end, start);</span>
+        } else {
+<span class="fc" id="L82">            sideTracks.put((HexSide)end, start);</span>
+        }
+<span class="fc" id="L84">    }</span>
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L88">        return Objects.hashCode(tracks);</span>
+    }
+
+    @Override
+    public boolean equals(Object other) {
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if (!(other instanceof TrackConfig)) return false;</span>
+<span class="fc" id="L94">        return (this.tracks.equals(((TrackConfig)other).tracks));</span>
+    }
+
+    public Tile getTile() {
+<span class="fc" id="L98">        return tile;</span>
+    }
+
+    public Set&lt;Track&gt; getTracks(){
+<span class="fc" id="L102">        return tracks;</span>
+    }
+
+    public int size() {
+<span class="nc" id="L106">        return tracks.size();</span>
+    }
+
+    public boolean hasNoStationTracks() {
+<span class="fc" id="L110">        return stationTracks.isEmpty();</span>
+    }
+
+    public Set&lt;TrackPoint&gt; getStationTracks(Station station) {
+<span class="fc" id="L114">        return stationTracks.get(station);</span>
+    }
+
+    public Set&lt;TrackPoint&gt; getSideTracks(HexSide side) {
+<span class="fc" id="L118">        return sideTracks.get(side);</span>
+    }
+
+    public boolean hasSideTracks(HexSide side) {
+<span class="fc" id="L122">        return sideTracks.containsKey(side);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L127">        return &quot;Track on tile &quot; + tile.toString() + &quot;: &quot; + tracks.toString();</span>
+    }
+
+    /**
+     * For a combination of MapHex, Tile, rotation and station provide
+     * a description of the connections
+     * @deprecated Use {@link #getConnectionString(MapHex,Tile,HexSide,Station)} instead
+     */
+    public static String getConnectionString(MapHex hex, Tile tile, int rotation,
+            Station station) {
+<span class="nc" id="L137">                return getConnectionString(hex, tile, HexSide.get(rotation), station);</span>
+            }
+
+    /**
+     * For a combination of MapHex, Tile, rotation and station provide
+     * a description of the connections
+     */
+    public static String getConnectionString(MapHex hex, Tile tile, HexSide rotation,
+            Station station) {
+<span class="fc" id="L146">        StringBuilder b = new StringBuilder(&quot;&quot;);</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        for (TrackPoint endPoint : tile.getTracksPerStation(station)) {</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">            if (endPoint.getTrackPointType() == TrackPoint.Type.STATION) continue;</span>
+<span class="fc" id="L149">            HexSide direction = (HexSide)endPoint.rotate(rotation);</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            if (b.length() &gt; 0) b.append(&quot;,&quot;);</span>
+<span class="fc" id="L151">            b.append(hex.getOrientationName(direction));</span>
+<span class="fc" id="L152">        }</span>
+<span class="fc" id="L153">        return b.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

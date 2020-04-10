@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrivateCompany.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">PrivateCompany.java</span></div><h1>PrivateCompany.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.Certificate;
+import net.sf.rails.game.special.SellBonusToken;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.PortfolioSet;
+import net.sf.rails.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableSet;
+
+
+// FIXME: Move static field numberOfPrivateCompanies to CompanyManager
+
+public class PrivateCompany extends RailsOwnableItem&lt;PrivateCompany&gt; implements Company, Certificate, Closeable {
+
+<span class="fc" id="L28">    private static final Logger log = LoggerFactory.getLogger(PrivateCompany.class);</span>
+
+    public static final String TYPE_TAG = &quot;Private&quot;;
+    public static final String REVENUE = &quot;revenue&quot;;
+    //used by getUpperPrice and getLowerPrice to signal no limit
+    public static final int NO_PRICE_LIMIT = -1;
+
+
+    // FIXME: See above, this has to be fixed
+<span class="fc" id="L37">    protected static int numberOfPrivateCompanies = 0;</span>
+    protected int privateNumber; // For internal use
+
+<span class="fc" id="L40">    protected int basePrice = 0;</span>
+    // list of revenue sfy 1889
+    protected List&lt;Integer&gt; revenue;
+    protected String auctionType;
+
+    // Closing conditions
+    protected int closingPhase;
+    // Closing when special properties are used
+<span class="fc" id="L48">    protected boolean closeIfAllExercised = false; // all exercised =&gt; closing</span>
+<span class="fc" id="L49">    protected boolean closeIfAnyExercised = false; // any exercised =&gt; closing</span>
+<span class="fc" id="L50">    protected boolean closeAtEndOfTurn = false; // closing at end of OR turn, E.g. 1856 W&amp;SR</span>
+
+    // Prevent closing conditions sfy 1889
+<span class="fc" id="L53">    protected List&lt;String&gt; preventClosingConditions = new ArrayList&lt;&gt;();</span>
+    // Close at start of phase
+<span class="fc" id="L55">    protected String closeAtPhaseName = null;</span>
+    // Manual close possible
+<span class="fc" id="L57">    protected boolean closeManually = false;</span>
+
+<span class="fc" id="L59">    protected String blockedHexesString = null;</span>
+<span class="fc" id="L60">    protected List&lt;MapHex&gt; blockedHexes = null;</span>
+
+    // Maximum and minimum prices the private can be sold in for.
+<span class="fc" id="L63">    protected int upperPrice = NO_PRICE_LIMIT;</span>
+<span class="fc" id="L64">    protected int lowerPrice = NO_PRICE_LIMIT;</span>
+
+    // Maximum and minimum price factor (used to set upperPrice and lowerPrice)
+<span class="fc" id="L67">    protected float lowerPriceFactor = NO_PRICE_LIMIT;</span>
+<span class="fc" id="L68">    protected float upperPriceFactor = NO_PRICE_LIMIT;</span>
+
+    // Maximum and minimum prices the private can be sold to a player for.
+<span class="fc" id="L71">    protected int upperPlayerPrice = NO_PRICE_LIMIT;</span>
+<span class="fc" id="L72">    protected int lowerPlayerPrice = NO_PRICE_LIMIT;</span>
+
+    // Maximum and minimum price factor when selling to another player
+<span class="fc" id="L75">    protected float lowerPlayerPriceFactor = NO_PRICE_LIMIT;</span>
+<span class="fc" id="L76">    protected float upperPlayerPriceFactor = NO_PRICE_LIMIT;</span>
+
+    // Can the private be bought by companies / players (when held by a player)
+<span class="fc" id="L79">    protected boolean tradeableToCompany = true;</span>
+<span class="fc" id="L80">    protected boolean tradeableToPlayer = false;</span>
+
+<span class="fc" id="L82">    private final PortfolioSet&lt;SpecialProperty&gt; specialProperties =</span>
+<span class="fc" id="L83">            PortfolioSet.create(this, &quot;specialProperties&quot;, SpecialProperty.class);</span>
+
+    // used for Company interface
+    private String longName;
+    private String alias;
+    private CompanyType type;
+<span class="fc" id="L89">    private String infoText = &quot;&quot;;</span>
+<span class="fc" id="L90">    private String parentInfoText =&quot;&quot;;</span>
+<span class="fc" id="L91">    private final BooleanState closed = BooleanState.create(this, &quot;closed&quot;, false);</span>
+
+    // used for Certificate interface
+<span class="fc" id="L94">    private float certificateCount = 1.0f;</span>
+
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public PrivateCompany(RailsItem parent, String id) {
+<span class="fc" id="L100">        super(parent, id, PrivateCompany.class);</span>
+<span class="fc" id="L101">        this.privateNumber = numberOfPrivateCompanies++;</span>
+<span class="fc" id="L102">    }</span>
+
+    /**
+     * @see net.sf.rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
+     */
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+        /* Configure private company features */
+        try {
+
+<span class="fc" id="L111">            longName= tag.getAttributeAsString(&quot;longname&quot;, getId());</span>
+<span class="fc" id="L112">            infoText = &quot;&lt;html&gt;&quot;+longName;</span>
+<span class="fc" id="L113">            basePrice = tag.getAttributeAsInteger(&quot;basePrice&quot;, 0);</span>
+
+            // sfy 1889 changed to IntegerArray
+<span class="fc" id="L116">            revenue = tag.getAttributeAsIntegerList(&quot;revenue&quot;);</span>
+
+            // pld: adding revenue to info text
+<span class="fc" id="L119">            infoText += &quot;&lt;br&gt;Revenue: &quot;;</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            for (int i = 0; i &lt; revenue.size();i++) {</span>
+<span class="fc" id="L121">                infoText += (Bank.format(this, revenue.get(i)));</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">                if (i &lt; revenue.size()-1) {infoText += &quot;, &quot;;}</span>
+            }
+
+<span class="fc" id="L125">            Tag certificateTag = tag.getChild(&quot;Certificate&quot;);</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            if (certificateTag != null) {</span>
+<span class="fc" id="L127">                certificateCount = certificateTag.getAttributeAsFloat(&quot;certificateCount&quot;, 1.0f);</span>
+            }
+
+            // Blocked hexes (until bought by a company)
+<span class="fc" id="L131">            Tag blockedTag = tag.getChild(&quot;Blocking&quot;);</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">            if (blockedTag != null) {</span>
+<span class="fc" id="L133">                blockedHexesString =</span>
+<span class="fc" id="L134">                    blockedTag.getAttributeAsString(&quot;hex&quot;);</span>
+<span class="fc" id="L135">                infoText += &quot;&lt;br&gt;Blocking: &quot;+blockedHexesString;</span>
+
+                // add triggerable to unblock
+<span class="fc" id="L138">                this.triggeredOnOwnerChange(</span>
+                        (observable, change) -&gt; {
+                            // if newOwner is a (public) company then unblock
+<span class="fc bfc" id="L141" title="All 2 branches covered.">                            if (getOwner() instanceof Company) {</span>
+<span class="fc" id="L142">                                PrivateCompany.this.unblockHexes();</span>
+                            }
+<span class="fc" id="L144">                        }</span>
+                );
+            }
+
+            // Extra info text(usually related to extra-share special properties)
+<span class="fc" id="L149">            Tag infoTag = tag.getChild(&quot;Info&quot;);</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            if (infoTag != null) {</span>
+<span class="fc" id="L151">                String infoKey = infoTag.getAttributeAsString(&quot;key&quot;);</span>
+<span class="fc" id="L152">                String[] infoParms = infoTag.getAttributeAsString(&quot;parm&quot;, &quot;&quot;).split(&quot;,&quot;);</span>
+<span class="fc" id="L153">                infoText += &quot;&lt;br&gt;&quot;+LocalText.getText(infoKey, (Object[])infoParms);</span>
+            }
+
+
+            // SpecialProperties
+<span class="fc" id="L158">            parentInfoText += SpecialProperty.configure(this, tag);</span>
+
+            // Closing conditions
+            // Currently only used to handle closure following laying
+            // tiles and/or tokens because of special properties.
+            // Other cases are currently handled elsewhere.
+<span class="fc" id="L164">            Tag closureTag = tag.getChild(&quot;ClosingConditions&quot;);</span>
+
+<span class="fc bfc" id="L166" title="All 2 branches covered.">            if (closureTag != null) {</span>
+
+<span class="fc" id="L168">                Tag spTag = closureTag.getChild(&quot;SpecialProperties&quot;);</span>
+
+<span class="fc bfc" id="L170" title="All 2 branches covered.">                if (spTag != null) {</span>
+
+<span class="fc" id="L172">                    String ifAttribute = spTag.getAttributeAsString(&quot;condition&quot;);</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">                    if (ifAttribute != null) {</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">                        closeIfAllExercised = ifAttribute.equalsIgnoreCase(&quot;ifExercised&quot;)</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">                        || ifAttribute.equalsIgnoreCase(&quot;ifAllExercised&quot;);</span>
+<span class="fc" id="L176">                        closeIfAnyExercised = ifAttribute.equalsIgnoreCase(&quot;ifAnyExercised&quot;);</span>
+                    }
+<span class="fc" id="L178">                    String whenAttribute = spTag.getAttributeAsString(&quot;when&quot;);</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">                    if (whenAttribute != null) {</span>
+<span class="fc" id="L180">                        closeAtEndOfTurn = whenAttribute.equalsIgnoreCase(&quot;endOfORTurn&quot;);</span>
+                    }
+                }
+
+                /* conditions that prevent closing */
+<span class="fc" id="L185">                List&lt;Tag&gt; preventTags = closureTag.getChildren(&quot;PreventClosing&quot;);</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">                if (preventTags != null) {</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">                    for (Tag preventTag: preventTags) {</span>
+<span class="fc" id="L188">                        String conditionText = preventTag.getAttributeAsString(&quot;condition&quot;);</span>
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">                        if (conditionText != null) {</span>
+<span class="fc" id="L190">                            preventClosingConditions.add(conditionText);</span>
+                        }
+<span class="fc" id="L192">                    }</span>
+                }
+
+                /* allow manual closure */
+<span class="fc" id="L196">                Tag manualTag = closureTag.getChild(&quot;CloseManually&quot;);</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">                if (manualTag != null) {</span>
+<span class="fc" id="L198">                    closeManually = true;</span>
+                }
+
+                // Close at start of phase
+<span class="fc" id="L202">                Tag closeTag = closureTag.getChild(&quot;Phase&quot;);</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">                if (closeTag != null) {</span>
+<span class="fc" id="L204">                    closeAtPhaseName = closeTag.getText();</span>
+                }
+            }
+
+            // start: br
+            // Reads the Tradeable tags
+<span class="fc" id="L210">            List&lt;Tag&gt; tradeableTags = tag.getChildren(&quot;Tradeable&quot;);</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">            if (tradeableTags != null) {</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">                for (Tag tradeableTag : tradeableTags) {</span>
+
+<span class="fc bfc" id="L214" title="All 2 branches covered.">                    if (tradeableTag.hasAttribute(&quot;toCompany&quot;)) {</span>
+<span class="fc" id="L215">                        tradeableToCompany = tradeableTag.getAttributeAsBoolean(&quot;toCompany&quot;);</span>
+
+<span class="fc bfc" id="L217" title="All 2 branches covered.">                        if (tradeableToCompany) {</span>
+<span class="fc" id="L218">                            upperPrice =</span>
+<span class="fc" id="L219">                                tradeableTag.getAttributeAsInteger(&quot;upperPrice&quot;, upperPrice);</span>
+<span class="fc" id="L220">                            lowerPrice =</span>
+<span class="fc" id="L221">                                tradeableTag.getAttributeAsInteger(&quot;lowerPrice&quot;, lowerPrice);</span>
+<span class="fc" id="L222">                            lowerPriceFactor =</span>
+<span class="fc" id="L223">                                tradeableTag.getAttributeAsFloat(&quot;lowerPriceFactor&quot;, lowerPriceFactor);</span>
+<span class="fc" id="L224">                            upperPriceFactor =</span>
+<span class="fc" id="L225">                                tradeableTag.getAttributeAsFloat(&quot;upperPriceFactor&quot;, upperPriceFactor);</span>
+                        }
+                    }
+
+<span class="fc bfc" id="L229" title="All 2 branches covered.">                    if (tradeableTag.hasAttribute(&quot;toPlayer&quot;)) {</span>
+<span class="fc" id="L230">                        tradeableToPlayer = tradeableTag.getAttributeAsBoolean(&quot;toPlayer&quot;);</span>
+
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">                        if (tradeableToPlayer) {</span>
+<span class="fc" id="L233">                            upperPlayerPrice =</span>
+<span class="fc" id="L234">                                tradeableTag.getAttributeAsInteger(&quot;upperPrice&quot;, upperPlayerPrice);</span>
+<span class="fc" id="L235">                            lowerPlayerPrice =</span>
+<span class="fc" id="L236">                                tradeableTag.getAttributeAsInteger(&quot;lowerPrice&quot;, lowerPlayerPrice);</span>
+<span class="fc" id="L237">                            lowerPlayerPriceFactor =</span>
+<span class="fc" id="L238">                                tradeableTag.getAttributeAsFloat(&quot;lowerPriceFactor&quot;, lowerPlayerPriceFactor);</span>
+<span class="fc" id="L239">                            upperPlayerPriceFactor =</span>
+<span class="fc" id="L240">                                tradeableTag.getAttributeAsFloat(&quot;upperPriceFactor&quot;, upperPlayerPriceFactor);</span>
+                        }
+                    }
+<span class="fc" id="L243">                }</span>
+            }
+            //end: br
+
+<span class="nc" id="L247">        } catch (Exception e) {</span>
+<span class="nc" id="L248">            throw new ConfigurationException(&quot;Configuration error for Private &quot;</span>
+<span class="nc" id="L249">                    + getId(), e);</span>
+<span class="fc" id="L250">        }</span>
+
+<span class="fc" id="L252">    }</span>
+
+    public void finishConfiguration (RailsRoot root)
+    throws ConfigurationException {
+
+<span class="fc bfc" id="L257" title="All 2 branches covered.">        for (SpecialProperty sp : specialProperties) {</span>
+<span class="fc" id="L258">            sp.finishConfiguration(root);</span>
+<span class="fc" id="L259">        }</span>
+
+<span class="fc bfc" id="L261" title="All 2 branches covered.">        if (Util.hasValue(blockedHexesString)) {</span>
+<span class="fc" id="L262">            MapManager mapManager = root.getMapManager();</span>
+<span class="fc" id="L263">            blockedHexes = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L264" title="All 2 branches covered.">            for (String hexName : blockedHexesString.split(&quot;,&quot;)) {</span>
+<span class="fc" id="L265">                MapHex hex = mapManager.getHex(hexName);</span>
+<span class="fc" id="L266">                blockedHexes.add(hex);</span>
+<span class="fc" id="L267">                hex.setBlockingPrivateCompany(this);</span>
+            }
+        }
+
+<span class="fc" id="L271">        infoText += parentInfoText;</span>
+<span class="fc" id="L272">        parentInfoText = &quot;&quot;;</span>
+
+<span class="fc bfc" id="L274" title="All 2 branches covered.">        if (Util.hasValue(closeAtPhaseName)) {</span>
+<span class="fc" id="L275">            Phase closingPhase = root.getPhaseManager().getPhaseByName(closeAtPhaseName);</span>
+<span class="pc bpc" id="L276" title="1 of 2 branches missed.">            if (closingPhase != null) {</span>
+<span class="fc" id="L277">                closingPhase.addObjectToClose(this);</span>
+            }
+        }
+
+        // start: br
+        //if {upper,lower}PriceFactor is set but {upper,lower}Price is not, calculate the right value
+<span class="pc bpc" id="L283" title="1 of 4 branches missed.">        if (upperPrice == NO_PRICE_LIMIT &amp;&amp; upperPriceFactor != NO_PRICE_LIMIT) {</span>
+
+<span class="pc bpc" id="L285" title="1 of 2 branches missed.">            if (basePrice==0) {</span>
+<span class="nc" id="L286">                throw new ConfigurationException(&quot;Configuration error for Private &quot;</span>
+<span class="nc" id="L287">                        + getId() + &quot;: upperPriceFactor needs basePrice to be set&quot;);</span>
+            }
+
+<span class="fc" id="L290">            upperPrice = (int)(basePrice * upperPriceFactor + 0.5f);</span>
+        }
+<span class="pc bpc" id="L292" title="1 of 4 branches missed.">        if (lowerPrice == NO_PRICE_LIMIT &amp;&amp; lowerPriceFactor != NO_PRICE_LIMIT) {</span>
+
+<span class="pc bpc" id="L294" title="1 of 2 branches missed.">            if (basePrice==0) {</span>
+<span class="nc" id="L295">                throw new ConfigurationException(&quot;Configuration error for Private &quot;</span>
+<span class="nc" id="L296">                        + getId() + &quot;: lowerPriceFactor needs basePrice to be set&quot;);</span>
+            }
+
+<span class="fc" id="L299">            lowerPrice = (int)(basePrice * lowerPriceFactor + 0.5f);</span>
+        }
+        // end: br
+<span class="fc" id="L302">    }</span>
+
+
+    /**
+     * @return Private Company Number
+     */
+    public int getPrivateNumber() {
+<span class="nc" id="L309">        return privateNumber;</span>
+    }
+
+    /**
+     * @return Base Price
+     */
+    public int getBasePrice() {
+<span class="fc" id="L316">        return basePrice;</span>
+    }
+
+    /**
+     * @return Revenue
+     */
+    public List&lt;Integer&gt; getRevenue() {
+<span class="nc" id="L323">        return revenue;</span>
+    }
+
+    //  start: sfy 1889: new method
+    public int getRevenueByPhase(Phase phase){
+<span class="pc bpc" id="L328" title="1 of 2 branches missed.">        if (phase != null) {</span>
+<span class="fc" id="L329">            return revenue.get(Math.min(</span>
+<span class="fc" id="L330">                    revenue.size(),</span>
+<span class="fc" id="L331">                    phase.getPrivatesRevenueStep()) - 1);</span>
+        } else {
+<span class="nc" id="L333">            return 0;</span>
+        }
+    }
+    // end: sfy 1889
+
+    /**
+     * @return Phase this Private closes
+     */
+    public int getClosingPhase() {
+<span class="nc" id="L342">        return closingPhase;</span>
+    }
+
+    public void setClosed() {
+
+<span class="fc bfc" id="L347" title="All 2 branches covered.">        if (isClosed()) return;</span>
+        //        if (!isCloseable()) return;  /* moved hat to call in closeAllPrivates, to allow other closing actions */
+
+<span class="fc" id="L350">        closed.set(true);</span>
+
+<span class="fc" id="L352">        unblockHexes();</span>
+
+<span class="fc" id="L354">        moveTo(getRoot().getBank().getScrapHeap());</span>
+
+<span class="fc" id="L356">        ReportBuffer.add(this, LocalText.getText(&quot;PrivateCloses&quot;, getId()));</span>
+
+        // For 1856: buyable tokens still owned by the private will now
+        // become commonly buyable, i.e. owned by GameManager.
+        // (Note: all such tokens will be made buyable from the Bank too,
+        // this is done in OperatingRound_1856).
+<span class="fc" id="L362">        List&lt;SellBonusToken&gt; moveToGM = new ArrayList&lt;&gt;(4);</span>
+<span class="fc bfc" id="L363" title="All 2 branches covered.">        for (SpecialProperty sp : specialProperties) {</span>
+<span class="fc bfc" id="L364" title="All 2 branches covered.">            if (sp instanceof SellBonusToken) {</span>
+<span class="fc" id="L365">                moveToGM.add((SellBonusToken)sp);</span>
+            }
+<span class="fc" id="L367">        }</span>
+<span class="fc bfc" id="L368" title="All 2 branches covered.">        for (SellBonusToken sbt : moveToGM) {</span>
+<span class="fc" id="L369">            getRoot().getGameManager().getCommonSpecialPropertiesPortfolio().add(sbt);</span>
+<span class="fc" id="L370">            log.debug(&quot;SP {} is now a common property&quot;, sbt.getId());</span>
+<span class="fc" id="L371">        }</span>
+<span class="fc" id="L372">    }</span>
+
+    /* start sfy 1889 */
+    public boolean isCloseable() {
+
+<span class="pc bpc" id="L377" title="1 of 4 branches missed.">        if ((preventClosingConditions == null) || preventClosingConditions.isEmpty()) return true;</span>
+
+<span class="pc bpc" id="L379" title="1 of 2 branches missed.">        if (preventClosingConditions.contains(&quot;doesNotClose&quot;)) {</span>
+<span class="nc" id="L380">            log.debug(&quot;Private Company {} does not close (unconditional).&quot;, getId());</span>
+<span class="nc" id="L381">            return false;</span>
+        }
+<span class="pc bpc" id="L383" title="1 of 2 branches missed.">        if (preventClosingConditions.contains(&quot;ifOwnedByPlayer&quot;)</span>
+<span class="fc bfc" id="L384" title="All 2 branches covered.">                &amp;&amp; getOwner() instanceof Player) {</span>
+<span class="fc" id="L385">            log.debug(&quot;Private Company {} does not close, as it is owned by a player.&quot;, getId());</span>
+<span class="fc" id="L386">            return false;</span>
+        }
+<span class="fc" id="L388">        return true;</span>
+    }
+
+    public List&lt;String&gt; getPreventClosingConditions() {
+<span class="nc" id="L392">        return preventClosingConditions;</span>
+    }
+    /* end sfy 1889 */
+
+    /**
+     * @param i
+     */
+    public void setClosingPhase(int i) {
+<span class="nc" id="L400">        closingPhase = i;</span>
+<span class="nc" id="L401">    }</span>
+
+    public void unblockHexes() {
+<span class="fc bfc" id="L404" title="All 2 branches covered.">        if (blockedHexes != null) {</span>
+<span class="fc bfc" id="L405" title="All 2 branches covered.">            for (MapHex hex : blockedHexes) {</span>
+<span class="fc" id="L406">                hex.setBlockingPrivateCompany(null);</span>
+<span class="fc" id="L407">            }</span>
+        }
+<span class="fc" id="L409">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L413">        return &quot;Private: &quot; + getId();</span>
+    }
+
+    @Override
+    public Object clone() {
+        Object clone;
+        try {
+<span class="nc" id="L420">            clone = super.clone();</span>
+<span class="nc" id="L421">        } catch (CloneNotSupportedException e) {</span>
+<span class="nc" id="L422">            log.error(&quot;Cannot clone company {}&quot;, getId());</span>
+<span class="nc" id="L423">            return null;</span>
+<span class="nc" id="L424">        }</span>
+<span class="nc" id="L425">        return clone;</span>
+    }
+
+    public List&lt;MapHex&gt; getBlockedHexes() {
+<span class="nc" id="L429">        return blockedHexes;</span>
+    }
+
+    public boolean closesIfAllExercised() {
+<span class="nc" id="L433">        return closeIfAllExercised;</span>
+    }
+
+    public boolean closesIfAnyExercised() {
+<span class="nc" id="L437">        return closeIfAnyExercised;</span>
+    }
+
+    public boolean closesAtEndOfTurn() {
+<span class="nc" id="L441">        return closeAtEndOfTurn;</span>
+    }
+
+    public boolean closesManually() {
+<span class="fc" id="L445">        return closeManually;</span>
+    }
+
+    public void checkClosingIfExercised (boolean endOfTurn) {
+
+<span class="pc bpc" id="L450" title="1 of 4 branches missed.">        if (isClosed() || endOfTurn != closeAtEndOfTurn) return;</span>
+
+<span class="fc bfc" id="L452" title="All 2 branches covered.">        if (closeIfAllExercised) {</span>
+<span class="fc bfc" id="L453" title="All 2 branches covered.">            for (SpecialProperty sp : specialProperties) {</span>
+<span class="fc bfc" id="L454" title="All 2 branches covered.">                if (!sp.isExercised()) return;</span>
+<span class="fc" id="L455">            }</span>
+<span class="fc" id="L456">            log.debug(&quot;CloseIfAll: closing {}&quot;, getId());</span>
+<span class="fc" id="L457">            setClosed();</span>
+
+<span class="fc bfc" id="L459" title="All 2 branches covered.">        } else if (closeIfAnyExercised) {</span>
+<span class="fc bfc" id="L460" title="All 2 branches covered.">            for (SpecialProperty sp : specialProperties) {</span>
+<span class="fc bfc" id="L461" title="All 2 branches covered.">                if (sp.isExercised()) {</span>
+<span class="fc" id="L462">                    log.debug(&quot;CloseIfAny: closing {}&quot;, getId());</span>
+<span class="fc" id="L463">                    setClosed();</span>
+<span class="fc" id="L464">                    return;</span>
+                }
+<span class="fc" id="L466">            }</span>
+        }
+<span class="fc" id="L468">    }</span>
+
+    public String getClosingInfo() {
+<span class="nc" id="L471">        return null;</span>
+    }
+
+    public void close() {
+<span class="fc" id="L475">        setClosed();</span>
+<span class="fc" id="L476">    }</span>
+
+    /**
+     * @return Returns the upperPrice that the company can be sold in for.
+     */
+    public int getUpperPrice() {
+<span class="fc" id="L482">        return getUpperPrice(false);</span>
+    }
+
+    public int getUpperPrice(boolean saleToPlayer) {
+<span class="pc bpc" id="L486" title="1 of 2 branches missed.">        if (saleToPlayer) {</span>
+<span class="nc" id="L487">            return upperPlayerPrice;</span>
+        }
+
+<span class="fc" id="L490">        return upperPrice;</span>
+    }
+
+    /**
+     * @return Returns the lowerPrice that the company can be sold in for.
+     */
+    public int getLowerPrice() {
+<span class="fc" id="L497">        return getLowerPrice(false);</span>
+    }
+
+    public int getLowerPrice(boolean saleToPlayer) {
+<span class="pc bpc" id="L501" title="1 of 2 branches missed.">        if (saleToPlayer) {</span>
+<span class="nc" id="L502">            return lowerPlayerPrice;</span>
+        }
+
+<span class="fc" id="L505">        return lowerPrice;</span>
+    }
+
+    /**
+     * @return Returns whether or not the company can be bought by a company
+     */
+    public boolean tradeableToCompany() {
+<span class="fc" id="L512">        return tradeableToCompany;</span>
+    }
+
+    /**
+     * @return Returns whether or not the company can be bought by a player (from another player)
+     */
+    public boolean tradeableToPlayer() {
+<span class="nc" id="L519">        return tradeableToPlayer;</span>
+    }
+
+    /**
+     * Do we have any special properties?
+     *
+     * @return Boolean
+     */
+    public boolean hasSpecialProperties() {
+<span class="fc bfc" id="L528" title="All 2 branches covered.">        return !specialProperties.isEmpty();</span>
+    }
+
+    // Company methods
+    public void initType(CompanyType type) {
+<span class="fc" id="L533">        this.type = type;</span>
+<span class="fc" id="L534">    }</span>
+
+    public CompanyType getType() {
+<span class="nc" id="L537">        return type;</span>
+    }
+
+    public boolean isClosed() {
+<span class="fc" id="L541">        return closed.value();</span>
+    }
+
+    public String getLongName() {
+<span class="nc" id="L545">        return longName;</span>
+    }
+
+    public String getAlias() {
+<span class="fc" id="L549">        return alias;</span>
+    }
+
+    public String getInfoText() {
+<span class="nc" id="L553">        return infoText;</span>
+    }
+
+    public ImmutableSet&lt;SpecialProperty&gt; getSpecialProperties() {
+<span class="fc" id="L557">        return specialProperties.items();</span>
+    }
+
+    // RailsItem methods
+    @Override
+    public RailsItem getParent() {
+<span class="nc" id="L563">        return super.getParent();</span>
+    }
+
+    @Override
+    public RailsRoot getRoot() {
+<span class="fc" id="L568">        return super.getRoot();</span>
+    }
+
+    // Certificate Interface
+
+    public float getCertificateCount() {
+<span class="fc" id="L574">        return certificateCount;</span>
+    }
+
+    public void setCertificateCount(float certificateCount) {
+<span class="nc" id="L578">        this.certificateCount = certificateCount;</span>
+<span class="nc" id="L579">    }</span>
+
+    public boolean blockedForTileLays(MapHex mapHex) {
+<span class="nc" id="L582">        return blockedHexes.contains(mapHex);</span>
+    }
+
+    // Item interface
+    @Override
+    public String toText() {
+<span class="fc" id="L588">        return getId();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

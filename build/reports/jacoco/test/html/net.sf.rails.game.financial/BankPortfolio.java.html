@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BankPortfolio.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.financial</a> &gt; <span class="el_source">BankPortfolio.java</span></div><h1>BankPortfolio.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.financial;
+
+import net.sf.rails.game.RailsAbstractItem;
+import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.model.PortfolioOwner;
+
+/**
+ * BankPortfolios act as Owner of their owns
+ * Used for implementation of the separate Bank identities (IPO, POOL, SCRAPHEAP)
+ */
+public final class BankPortfolio extends RailsAbstractItem implements PortfolioOwner {
+    
+<span class="fc" id="L13">    private final PortfolioModel portfolio = PortfolioModel.create(this);</span>
+    
+    protected BankPortfolio(Bank parent, String id) {
+<span class="fc" id="L16">        super (parent, id);</span>
+<span class="fc" id="L17">    }</span>
+    
+    /**
+     * @param parent restricted to bank
+     */
+    public static BankPortfolio create(Bank parent, String id) {
+<span class="fc" id="L23">        return new BankPortfolio(parent, id);</span>
+    }
+    
+    public void finishConfiguration() {
+<span class="fc" id="L27">        portfolio.finishConfiguration();</span>
+<span class="fc" id="L28">    }</span>
+
+    @Override
+    public Bank getParent() {
+<span class="fc" id="L32">        return (Bank)super.getParent();</span>
+    }
+    
+    // Owner methods
+    public PortfolioModel getPortfolioModel() {
+<span class="fc" id="L37">        return portfolio;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

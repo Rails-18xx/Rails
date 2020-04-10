@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameSetupController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing</a> &gt; <span class="el_source">GameSetupController.java</span></div><h1>GameSetupController.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
+import net.sf.rails.common.Config;
+import net.sf.rails.common.GameData;
+import net.sf.rails.common.GameInfo;
+import net.sf.rails.common.GameOption;
+import net.sf.rails.common.GameOptionsSet;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.GameInfoParser;
+import net.sf.rails.common.parser.GameOptionsParser;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.sound.SoundManager;
+import net.sf.rails.util.GameLoader;
+import net.sf.rails.util.GameSaver;
+import net.sf.rails.util.SystemOS;
+import net.sf.rails.util.Util;
+
+
+/** Controller of the GameSetupWindow */
+public class GameSetupController {
+
+<span class="nc" id="L47">    private static final Logger log = LoggerFactory.getLogger(GameSetupController.class);</span>
+
+    private final SortedSet&lt;GameInfo&gt; gameList;
+
+    private final String credits;
+
+<span class="nc" id="L53">    private final Map&lt;GameInfo, GameOptionsSet.Builder&gt; gameOptions = Maps.newHashMap();</span>
+
+    // UI references
+    private final GameSetupWindow window;
+    private ConfigWindow configWindow;
+    private GameUIManager gameUIManager;
+
+    // Actions
+<span class="nc" id="L61">    private final ActionListener newAction = new NewAction();</span>
+<span class="nc" id="L62">    private final ActionListener loadAction = new LoadAction();</span>
+<span class="nc" id="L63">    private final ActionListener recentAction = new RecentAction();</span>
+<span class="nc" id="L64">    private final ActionListener recoveryAction = new RecoveryAction();</span>
+<span class="nc" id="L65">    private final ActionListener quitAction = new QuitAction();</span>
+<span class="nc" id="L66">    private final ActionListener optionPanelAction = new OptionPanelAction();</span>
+<span class="nc" id="L67">    private final ActionListener infoAction = new InfoAction();</span>
+<span class="nc" id="L68">    private final ActionListener creditsAction = new CreditsAction();</span>
+<span class="nc" id="L69">    private final ActionListener gameAction = new GameAction();</span>
+<span class="nc" id="L70">    private final ActionListener configureAction = new ConfigureAction();</span>
+<span class="nc" id="L71">    private final ActionListener randomizeAction = new RandomizeAction();</span>
+<span class="nc" id="L72">    private final InputVerifier playerNameVerifier = new PlayerNameVerifier();</span>
+
+<span class="nc" id="L74">    private GameSetupController(SortedSet&lt;GameInfo&gt; gameList, String credits) {</span>
+<span class="nc" id="L75">        this.gameList = gameList;</span>
+<span class="nc" id="L76">        this.credits = credits;</span>
+
+<span class="nc" id="L78">        window = new GameSetupWindow(this);</span>
+
+        // Notify the sound manager about having started the setup menu
+<span class="nc" id="L81">        SoundManager.notifyOfGameSetup();</span>
+<span class="nc" id="L82">    }</span>
+
+    ImmutableList&lt;GameInfo&gt; getGameList() {
+<span class="nc" id="L85">        return ImmutableList.copyOf(gameList);</span>
+    }
+
+    // Return default game, if none is set, returns the first
+    GameInfo getDefaultGame() {
+<span class="nc" id="L90">        GameInfo defaultGame = GameInfo.findGame(gameList, Config.get(&quot;default_game&quot;));</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (defaultGame == null) {</span>
+<span class="nc" id="L92">            defaultGame = gameList.first();</span>
+        }
+<span class="nc" id="L94">        return defaultGame;</span>
+    }
+
+    GameOptionsSet.Builder getAvailableOptions(GameInfo game) {
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (!gameOptions.containsKey(game)) {</span>
+<span class="nc" id="L99">            return loadOptions(game);</span>
+        }
+<span class="nc" id="L101">        return gameOptions.get(game);</span>
+    }
+
+
+    Action getOptionChangeAction(GameOption option) {
+<span class="nc" id="L106">        return new OptionChangeAction(option);</span>
+    }
+
+    private GameOptionsSet.Builder loadOptions(GameInfo game) {
+<span class="nc" id="L110">        log.debug(&quot;Load Game Options of {}&quot;, game.getName());</span>
+<span class="nc" id="L111">        GameOptionsSet.Builder loadGameOptions = null;</span>
+        try {
+<span class="nc" id="L113">            loadGameOptions = GameOptionsParser.load(game.getName());</span>
+<span class="nc" id="L114">        } catch (ConfigurationException e) {</span>
+<span class="nc" id="L115">            log.error(e.getMessage());</span>
+<span class="nc" id="L116">            loadGameOptions = GameOptionsSet.builder();</span>
+<span class="nc" id="L117">        }</span>
+<span class="nc" id="L118">        gameOptions.put(game, loadGameOptions);</span>
+<span class="nc" id="L119">        return loadGameOptions;</span>
+    }
+
+    private void prepareGameUIInit() {
+<span class="nc" id="L123">        window.setVisible(false);</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (configWindow != null) {</span>
+<span class="nc" id="L125">            configWindow.dispose();</span>
+<span class="nc" id="L126">            configWindow = null;</span>
+        }
+<span class="nc" id="L128">    }</span>
+
+    private void loadAndStartGame(File gameFile) {
+<span class="nc" id="L131">        prepareGameUIInit();</span>
+<span class="nc" id="L132">        GameLoader.loadAndStartGame(gameFile);</span>
+<span class="nc" id="L133">    }</span>
+
+    // Action inner classes
+<span class="nc" id="L136">    private class NewAction extends AbstractAction {</span>
+        private static final long serialVersionUID = 0L;
+
+        public void actionPerformed(ActionEvent e) {
+            //start in new thread so that swing thread is not used for game setup
+<span class="nc" id="L141">            new Thread() {</span>
+                @Override
+                public void run() {
+<span class="nc" id="L144">                    startNewGame();</span>
+<span class="nc" id="L145">                }</span>
+<span class="nc" id="L146">            }.start();</span>
+<span class="nc" id="L147">        }</span>
+
+        private void startNewGame() {
+<span class="nc" id="L150">            GameInfo selectedGame = window.getSelectedGame();</span>
+<span class="nc" id="L151">            List&lt;String&gt; players = window.getPlayers();</span>
+<span class="nc" id="L152">            GameOptionsSet.Builder selectedOptions = getAvailableOptions(selectedGame);</span>
+
+            // check against number of available players
+<span class="nc bnc" id="L155" title="All 2 branches missed.">            if (players.size() &lt; selectedGame.getMinPlayers()) {</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">                if (JOptionPane.showConfirmDialog(window,</span>
+                        &quot;Not enough players. Continue Anyway?&quot;,
+                        &quot;Are you sure?&quot;, JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+<span class="nc" id="L159">                    return;</span>
+                }
+            }
+
+<span class="nc" id="L163">            SplashWindow splashWindow = new SplashWindow(false, selectedGame.getName());</span>
+
+<span class="nc" id="L165">            RailsRoot railsRoot = null;</span>
+            try {
+<span class="nc" id="L167">                GameData gameData = GameData.create(selectedGame, selectedOptions, players);</span>
+<span class="nc" id="L168">                railsRoot = RailsRoot.create(gameData);</span>
+<span class="nc" id="L169">            } catch (ConfigurationException e) {</span>
+<span class="nc" id="L170">                log.error(&quot;unable to continue&quot;, e);</span>
+                // TODO: Fix this behavior, give more information?
+                // Simply exit
+<span class="nc" id="L173">                System.exit(-1);</span>
+<span class="nc" id="L174">            }</span>
+
+<span class="nc" id="L176">            String startError = railsRoot.start();</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            if (startError != null) {</span>
+<span class="nc" id="L178">                JOptionPane.showMessageDialog(window, startError, &quot;&quot;,</span>
+                        JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L180">                System.exit(-1);</span>
+            }
+<span class="nc" id="L182">            prepareGameUIInit();</span>
+<span class="nc" id="L183">            gameUIManager = GameLoader.startGameUIManager (railsRoot, false, splashWindow);</span>
+<span class="nc" id="L184">            gameUIManager.gameUIInit(true); // true indicates new game</span>
+
+<span class="nc" id="L186">            gameUIManager.notifyOfSplashFinalization();</span>
+<span class="nc" id="L187">            splashWindow.finalizeGameInit();</span>
+<span class="nc" id="L188">        }</span>
+    }
+
+<span class="nc" id="L191">    private class LoadAction extends AbstractAction {</span>
+        private static final long serialVersionUID = 0L;
+
+        public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L195">            String saveDirectory = Config.get(&quot;save.directory&quot;);</span>
+<span class="nc" id="L196">            JFileChooser jfc = new JFileChooser();</span>
+<span class="nc" id="L197">            jfc.setCurrentDirectory(new File(saveDirectory));</span>
+
+<span class="nc bnc" id="L199" title="All 2 branches missed.">            if (jfc.showOpenDialog(window.getContentPane()) == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L200">                final File selectedFile = jfc.getSelectedFile();</span>
+                //start in new thread so that swing thread is not used for game setup
+<span class="nc" id="L202">                new Thread() {</span>
+                    @Override
+                    public void run() {
+<span class="nc" id="L205">                        loadAndStartGame(selectedFile);</span>
+<span class="nc" id="L206">                    }</span>
+<span class="nc" id="L207">                }.start();</span>
+<span class="nc" id="L208">            } else { // cancel pressed</span>
+<span class="nc" id="L209">                return;</span>
+            }
+<span class="nc" id="L211">        }</span>
+
+    }
+
+<span class="nc" id="L215">    private class RecentAction extends AbstractAction {</span>
+        private static final long serialVersionUID = 0L;
+
+        public void actionPerformed(ActionEvent arg0) {
+<span class="nc" id="L219">            File saveDirectory = new File(Config.get(&quot;save.directory&quot;));</span>
+
+            // define recent files
+<span class="nc" id="L222">            SortedSet&lt;File&gt; recentFiles = new TreeSet&lt;File&gt;(new Comparator&lt;File&gt; (){</span>
+                public int compare (File a, File b) {
+<span class="nc" id="L224">                    return ComparisonChain.start()</span>
+<span class="nc" id="L225">                            .compare(b.lastModified(), a.lastModified())</span>
+<span class="nc" id="L226">                            .compare(a.getName(), b.getName())</span>
+<span class="nc" id="L227">                            .result();</span>
+                }
+            });
+
+            // define saved file extension
+<span class="nc" id="L232">            String savedFileExtension = Config.get(&quot;save.filename.extension&quot;);</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">            if (!Util.hasValue(savedFileExtension)) {</span>
+<span class="nc" id="L234">                savedFileExtension = GameUIManager.DEFAULT_SAVE_EXTENSION;</span>
+            }
+<span class="nc" id="L236">            savedFileExtension = &quot;.&quot; + savedFileExtension;</span>
+
+            // get recent files
+<span class="nc" id="L239">            getRecentFiles(recentFiles, saveDirectory, savedFileExtension);</span>
+<span class="nc bnc" id="L240" title="All 4 branches missed.">            if (recentFiles == null || recentFiles.size() == 0) return;</span>
+<span class="nc" id="L241">            File[] files = recentFiles.toArray(new File[]{});</span>
+
+<span class="nc" id="L243">            int numOptions = 20;</span>
+<span class="nc" id="L244">            numOptions = Math.min(numOptions, recentFiles.size());</span>
+<span class="nc" id="L245">            String[] options = new String[numOptions];</span>
+<span class="nc" id="L246">            int dirPathLength = saveDirectory.getPath().length();</span>
+<span class="nc bnc" id="L247" title="All 2 branches missed.">            for (int i=0; i&lt;numOptions;i++) {</span>
+                // Get path relative to saveDirectory
+<span class="nc" id="L249">                options[i] = files[i].getPath().substring(dirPathLength+1);</span>
+            }
+<span class="nc" id="L251">            String text = LocalText.getText(&quot;Select&quot;);</span>
+<span class="nc" id="L252">            String result = (String) JOptionPane.showInputDialog(window, text, text,</span>
+                    JOptionPane.OK_CANCEL_OPTION,
+                    null, options, options[0]);
+<span class="nc bnc" id="L255" title="All 2 branches missed.">            if (result == null) return;</span>
+<span class="nc" id="L256">            final File selectedFile = files[Arrays.asList(options).indexOf(result)];</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">            if (selectedFile != null) {</span>
+<span class="nc" id="L258">                new Thread() {</span>
+                    @Override
+                    public void run() {
+<span class="nc" id="L261">                        loadAndStartGame(selectedFile);</span>
+<span class="nc" id="L262">                    }</span>
+<span class="nc" id="L263">                }.start();</span>
+            } else { // cancel pressed
+<span class="nc" id="L265">                return;</span>
+            }
+
+<span class="nc" id="L268">        }</span>
+
+        private void getRecentFiles (SortedSet&lt;File&gt; recentFiles, File dir, String savedFileExtension) {
+<span class="nc bnc" id="L271" title="All 4 branches missed.">            if (!dir.exists() || !dir.isDirectory()) return;</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">            for (File entry : dir.listFiles()) {</span>
+<span class="nc bnc" id="L273" title="All 4 branches missed.">                if (entry.isFile() &amp;&amp; entry.getName().endsWith(savedFileExtension)) {</span>
+<span class="nc" id="L274">                    recentFiles.add(entry);</span>
+<span class="nc bnc" id="L275" title="All 2 branches missed.">                } else if (entry.isDirectory()){</span>
+<span class="nc" id="L276">                    getRecentFiles(recentFiles, entry, savedFileExtension);</span>
+                }
+            }
+<span class="nc" id="L279">        }</span>
+    }
+
+<span class="nc" id="L282">    private class RecoveryAction extends AbstractAction {</span>
+        private static final long serialVersionUID = 0L;
+
+        public void actionPerformed(ActionEvent arg0) {
+<span class="nc" id="L286">            new Thread() {</span>
+                @Override
+                public void run() {
+<span class="nc" id="L289">                    String filePath = SystemOS.get().getConfigurationFolder(GameSaver.AUTOSAVE_FOLDER, true).getAbsolutePath()</span>
+                            + File.separator + GameSaver.AUTOSAVE_FILE;
+<span class="nc" id="L291">                    loadAndStartGame(new File(filePath));</span>
+<span class="nc" id="L292">                }</span>
+<span class="nc" id="L293">            }.start();</span>
+<span class="nc" id="L294">        }</span>
+    }
+
+    private static class QuitAction extends AbstractAction {
+        private static final long serialVersionUID = 0L;
+
+        public void actionPerformed(ActionEvent arg0) {
+<span class="nc" id="L301">            System.exit(0);</span>
+<span class="nc" id="L302">        }</span>
+    }
+
+<span class="nc" id="L305">    private class OptionPanelAction extends AbstractAction {</span>
+        private static final long serialVersionUID = 0L;
+
+        public void actionPerformed(ActionEvent arg0) {
+<span class="nc bnc" id="L309" title="All 2 branches missed.">            if (window.areOptionsVisible()) {</span>
+<span class="nc" id="L310">                window.hideOptions();</span>
+<span class="nc" id="L311">                window.pack();</span>
+            } else {
+<span class="nc" id="L313">                window.initOptions(window.getSelectedGame());</span>
+<span class="nc" id="L314">                window.pack();</span>
+            }
+<span class="nc" id="L316">        }</span>
+    }
+
+    private class OptionChangeAction extends AbstractAction {
+        private static final long serialVersionUID = 0L;
+
+        private final GameOption option;
+
+<span class="nc" id="L324">        private OptionChangeAction(GameOption option) {</span>
+<span class="nc" id="L325">            this.option = option;</span>
+<span class="nc" id="L326">        }</span>
+
+        public void actionPerformed(ActionEvent arg0) {
+<span class="nc" id="L329">            Object source = arg0.getSource();</span>
+<span class="nc" id="L330">            String value = null;</span>
+<span class="nc bnc" id="L331" title="All 2 branches missed.">            if (source instanceof JCheckBox) {</span>
+<span class="nc bnc" id="L332" title="All 2 branches missed.">                if (((JCheckBox) source).isSelected()) {</span>
+<span class="nc" id="L333">                    value = GameOption.OPTION_VALUE_YES;</span>
+                } else {
+<span class="nc" id="L335">                    value = GameOption.OPTION_VALUE_NO;</span>
+                }
+<span class="nc bnc" id="L337" title="All 2 branches missed.">            } else if (source instanceof JComboBox) {</span>
+<span class="nc" id="L338">                value =  String.valueOf(((JComboBox)source).getSelectedItem());</span>
+            }
+<span class="nc" id="L340">            GameInfo game  = window.getSelectedGame();</span>
+<span class="nc" id="L341">            option.setSelectedValue(value);</span>
+<span class="nc" id="L342">            log.debug(&quot;GameOption &quot; + option + &quot; set to &quot; + value +  &quot; for game &quot; + game);</span>
+<span class="nc" id="L343">        }</span>
+    }
+
+<span class="nc" id="L346">    private class InfoAction extends AbstractAction {</span>
+        private static final long serialVersionUID = 0L;
+
+        public void actionPerformed(ActionEvent arg0) {
+<span class="nc" id="L350">            GameInfo game = window.getSelectedGame();</span>
+<span class="nc" id="L351">            JOptionPane.showMessageDialog(window,</span>
+<span class="nc" id="L352">                    game.getDescription(),</span>
+<span class="nc" id="L353">                    &quot;Information about &quot; + game.getName(),</span>
+                    JOptionPane.INFORMATION_MESSAGE);
+<span class="nc" id="L355">        }</span>
+    }
+
+<span class="nc" id="L358">    private class CreditsAction extends AbstractAction {</span>
+        private static final long serialVersionUID = 0L;
+
+        public void actionPerformed(ActionEvent arg0) {
+<span class="nc" id="L362">            JOptionPane.showMessageDialog(window,</span>
+                    new JLabel(credits), //enable html rendering
+<span class="nc" id="L364">                    LocalText.getText(&quot;CREDITS&quot;),</span>
+                    JOptionPane.INFORMATION_MESSAGE);
+<span class="nc" id="L366">        }</span>
+    }
+
+<span class="nc" id="L369">    private class GameAction extends AbstractAction {</span>
+        private static final long serialVersionUID = 0L;
+
+        public void actionPerformed(ActionEvent arg0) {
+<span class="nc" id="L373">            window.initPlayersPane(window.getSelectedGame());</span>
+<span class="nc bnc" id="L374" title="All 2 branches missed.">            if (window.areOptionsVisible()) {</span>
+<span class="nc" id="L375">                window.initOptions(window.getSelectedGame());</span>
+            }
+<span class="nc" id="L377">            window.pack();</span>
+<span class="nc" id="L378">        }</span>
+    }
+
+<span class="nc" id="L381">    private class ConfigureAction extends AbstractAction {</span>
+        private static final long serialVersionUID = 0L;
+
+        public void actionPerformed(ActionEvent arg0) {
+            // start configureWindow
+<span class="nc bnc" id="L386" title="All 2 branches missed.">            if (configWindow == null) {</span>
+<span class="nc" id="L387">                configWindow = new ConfigWindow(window);</span>
+<span class="nc" id="L388">                configWindow.init(true);</span>
+<span class="nc" id="L389">                configWindow.setVisible(true);</span>
+            } else {
+<span class="nc" id="L391">                configWindow.setVisible(true);</span>
+            }
+<span class="nc" id="L393">        }</span>
+    }
+
+<span class="nc" id="L396">    private class RandomizeAction extends AbstractAction {</span>
+        private static final long serialVersionUID = 0L;
+
+        public void actionPerformed(ActionEvent arg0) {
+<span class="nc" id="L400">            List&lt;String&gt; players = Lists.newArrayList(window.getPlayers());</span>
+<span class="nc" id="L401">            Collections.shuffle(players);</span>
+<span class="nc" id="L402">            window.setPlayers(players);</span>
+<span class="nc" id="L403">        }</span>
+    }
+
+<span class="nc" id="L406">    private class PlayerNameVerifier extends InputVerifier {</span>
+
+        public boolean verify(JComponent arg0) {
+            // normalize players
+<span class="nc" id="L410">            List&lt;String&gt; players = window.getPlayers();</span>
+<span class="nc" id="L411">            window.setPlayers(players);</span>
+
+            // check if the next player has to be enabled
+<span class="nc" id="L414">            int nextPlayerNr = players.size();</span>
+
+<span class="nc bnc" id="L416" title="All 2 branches missed.">            if (nextPlayerNr &lt; window.getSelectedGame().getMaxPlayers()) {</span>
+<span class="nc bnc" id="L417" title="All 2 branches missed.">                if (!window.isPlayerEnabled(nextPlayerNr)) {</span>
+<span class="nc" id="L418">                    window.enablePlayer(nextPlayerNr);</span>
+<span class="nc" id="L419">                    window.setFocus(nextPlayerNr);</span>
+                }
+            }
+
+<span class="nc bnc" id="L423" title="All 2 branches missed.">            while (++nextPlayerNr &lt; window.getSelectedGame().getMaxPlayers()) {</span>
+<span class="nc" id="L424">                window.disablePlayer(nextPlayerNr);</span>
+            }
+
+<span class="nc" id="L427">            return true;</span>
+        }
+
+    }
+
+    public static Builder builder() {
+<span class="nc" id="L433">        return new Builder();</span>
+    }
+
+    public static class Builder {
+<span class="nc" id="L437">        private SortedSet&lt;GameInfo&gt; gameList = Sets.newTreeSet();</span>
+<span class="nc" id="L438">        private String credits = &quot;Credits&quot;;</span>
+
+<span class="nc" id="L440">        private Builder() {}</span>
+
+        public void start() {
+<span class="nc" id="L443">            initialize();</span>
+<span class="nc" id="L444">            new GameSetupController(gameList, credits);</span>
+<span class="nc" id="L445">        }</span>
+
+        public void initialize() {
+<span class="nc" id="L448">            GameInfoParser gip = new GameInfoParser();</span>
+<span class="nc" id="L449">            Set&lt;GameInfo&gt; gameInfoList = ImmutableSet.of();</span>
+            try {
+<span class="nc" id="L451">                gameInfoList = gip.processGameList();</span>
+<span class="nc" id="L452">                credits = gip.getCredits();</span>
+<span class="nc" id="L453">            } catch (ConfigurationException e) {</span>
+<span class="nc" id="L454">                log.error(e.getMessage());</span>
+<span class="nc" id="L455">            }</span>
+            // convert list to map
+<span class="nc" id="L457">            gameList.addAll(gameInfoList);</span>
+<span class="nc" id="L458">        }</span>
+    }
+
+    public ActionListener getNewAction() {
+<span class="nc" id="L462">        return newAction;</span>
+    }
+
+    public ActionListener getLoadAction() {
+<span class="nc" id="L466">        return loadAction;</span>
+    }
+
+    public ActionListener getRecentAction() {
+<span class="nc" id="L470">        return recentAction;</span>
+    }
+
+    public ActionListener getRecoveryAction() {
+<span class="nc" id="L474">        return recoveryAction;</span>
+    }
+
+    public ActionListener getQuitAction() {
+<span class="nc" id="L478">        return quitAction;</span>
+    }
+
+    public ActionListener getOptionPanelAction() {
+<span class="nc" id="L482">        return optionPanelAction;</span>
+    }
+
+    public ActionListener getInfoAction() {
+<span class="nc" id="L486">        return infoAction;</span>
+    }
+
+    public ActionListener getCreditsAction() {
+<span class="nc" id="L490">        return creditsAction;</span>
+    }
+
+    public ActionListener getConfigureAction() {
+<span class="nc" id="L494">        return configureAction;</span>
+    }
+
+    public ActionListener getRandomizeAction() {
+<span class="nc" id="L498">        return randomizeAction;</span>
+    }
+
+    public ActionListener getGameAction() {
+<span class="nc" id="L502">        return gameAction;</span>
+    }
+
+    public InputVerifier getPlayerNameVerifier() {
+<span class="nc" id="L506">        return playerNameVerifier;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

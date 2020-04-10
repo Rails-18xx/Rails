@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.sf.rails.test.TestGameBuilder" tests="0" skipped="0" failures="0" errors="0" timestamp="1970-01-01T00:00:00" hostname="marc-desktop" time="0.0">
+  <properties/>
+  <system-out><![CDATA[Test directory = /home/marc/git/Rails/src/test/resources/data
+Added TestGame bugs/1830CF_obsoleteTrains
+Added TestGame bugs/1835_changePresidentAtStart
+Added TestGame bugs/1856_tokens
+Added TestGame bugs/1889_presidentContribution
+Added TestGame real/1830_B
+Added TestGame real/1835_KoIT3
+Added TestGame real/1835_Stoll_12
+Added TestGame real/1856_A
+Added TestGame real/1856_CGR-10Shares-Test
+Added TestGame real/1880_ATG1
+Added TestGame real/1889_A
+Added TestGame real/1889_B
+Added TestGame real/1889_C
+Added TestGame real/18AL_A
+Added TestGame real/18EU_A
+Added TestGame real/18EU_B
+Added TestGame test/1830_5forDtrainExchange
+Added TestGame test/1830_Auction_Test
+Added TestGame test/1830_SellFullPresCert
+Added TestGame test/1830_SellHalfPresCert
+Added TestGame test/1830_ShareSelling_Test
+Added TestGame test/1835_Correct_Sell_Pass
+Added TestGame test/1835_NatDoubleShare
+Added TestGame test/1835_SellDoubleShare
+Added TestGame test/1835_ShareSelling_Test
+Added TestGame test/1851_Late
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

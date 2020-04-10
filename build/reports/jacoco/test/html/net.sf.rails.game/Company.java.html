@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Company.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">Company.java</span></div><h1>Company.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import java.util.Comparator;
+
+import net.sf.rails.common.parser.Configurable;
+import net.sf.rails.game.special.SpecialProperty;
+
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableSet;
+
+
+public interface Company extends RailsOwner, Configurable, Cloneable {
+
+    /** The name of the XML tag used to configure a company. */
+    public static final String COMPANY_ELEMENT_ID = &quot;Company&quot;;
+
+    /** The name of the XML attribute for the company's name. */
+    public static final String COMPANY_NAME_TAG = &quot;name&quot;;
+
+    /** The name of the XML attribute for the company's type. */
+    public static final String COMPANY_TYPE_TAG = &quot;type&quot;;
+
+    /**
+     * A Comparator for Companies
+     */
+<span class="fc" id="L26">    public static final Comparator&lt;Company&gt; COMPANY_COMPARATOR = new Comparator&lt;Company&gt;() {</span>
+        public int compare(Company c0, Company c1) {
+<span class="nc" id="L28">            return ComparisonChain.start()</span>
+<span class="nc" id="L29">                    .compare(c0.getType().getId(), c1.getType().getId())</span>
+<span class="nc" id="L30">                    .compare(c0.getId(), c1.getId())</span>
+<span class="nc" id="L31">                    .result();</span>
+        }
+    };
+
+//    protected String longName;
+//    protected String alias = null; // To allow reloading files with old names after name changes
+//    protected CompanyType type;
+//    protected int companyNumber; // For internal use
+//
+//    protected String infoText = &quot;&quot;;
+//    protected String parentInfoText = &quot;&quot;;
+//
+//    /**
+//     * The value per certificate at the end of the rails.game. Default 0 (for
+//     * privates).
+//     */
+//    protected int value = 0;
+//    /**
+//     * Twice the amount each certificate counts against the limit (this way we
+//     * take care for certs that count for 0.5)
+//     */
+//    protected int certLimitCount = 2;
+//
+//    /** Closed state */
+//    protected final BooleanState closedObject = BooleanState.create(this, &quot;closed&quot;, false);
+//
+    /** Only to be called from subclasses */
+//    public void configureFromXML(Tag tag) throws ConfigurationException {
+//
+//        // Special properties
+//        Tag spsTag = tag.getChild(&quot;SpecialProperties&quot;);
+//        if (spsTag != null) {
+//
+//            List&lt;Tag&gt; spTags = spsTag.getChildren(&quot;SpecialProperty&quot;);
+//            String className;
+//            for (Tag spTag : spTags) {
+//                className = spTag.getAttributeAsString(&quot;class&quot;);
+//                if (!Util.hasValue(className))
+//                    throw new ConfigurationException(
+//                    &quot;Missing class in private special property&quot;);
+//                String uniqueId = SpecialProperty.createUniqueId();
+//                SpecialProperty sp = Configure.create(SpecialProperty.class, className, this, uniqueId);
+//                sp.setOriginalCompany(this);
+//                sp.configureFromXML(spTag);
+//                sp.moveTo(this);
+//                parentInfoText += &quot;&lt;br&gt;&quot; + sp.getInfo();
+//            }
+//        }
+//    }
+
+    public void initType(CompanyType type);
+
+    /**
+     * @return Type of company (Public/Private)
+     */
+    public CompanyType getType();
+
+    /**
+     * @return whether this company is closed
+     */
+    public boolean isClosed();
+
+    /**
+     * Close this company.
+     */
+    public void setClosed();
+
+    public String getLongName();
+
+    public String getAlias();
+
+    public String getInfoText();
+
+    // Since 1835 required for both private and public companies
+    /**
+     * @return Set of all special properties we have.
+     */
+    public abstract ImmutableSet&lt;SpecialProperty&gt; getSpecialProperties();
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

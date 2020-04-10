@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Train.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">Train.java</span></div><h1>Train.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.BankPortfolio;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Creatable;
+import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.Ownable;
+
+import com.google.common.collect.ComparisonChain;
+
+public class Train extends RailsOwnableItem&lt;Train&gt; implements Creatable {
+
+    protected TrainCertificateType certificateType;
+    
+<span class="fc" id="L19">    protected final GenericState&lt;TrainType&gt; type = GenericState.create(this, &quot;type&quot;);</span>
+    
+    /** Some specific trains cannot be traded between companies */
+<span class="fc" id="L22">    protected boolean tradeable = true;</span>
+
+<span class="fc" id="L24">    protected final BooleanState obsolete = BooleanState.create(this, &quot;obsolete&quot;);</span>
+
+    // sorting id to correctly sort them inside a portfolio
+    // this is a workaround to have 2.0 compatible with 1.x save files
+    // it should be removed in the mid-term by selecting trains from a portfolio based only on type, not on id
+    protected int sortingId;
+    
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public Train(RailsItem parent, String id) {
+<span class="fc" id="L35">        super(parent, id, Train.class);</span>
+<span class="fc" id="L36">    }</span>
+    
+    public static Train create(RailsItem parent, int uniqueId, TrainCertificateType certType, TrainType type)
+            throws ConfigurationException {
+<span class="fc" id="L40">        String id = certType.getId() + &quot;_&quot;+ uniqueId;</span>
+<span class="fc" id="L41">        Train train = certType.createTrain(parent, id, uniqueId);</span>
+<span class="fc" id="L42">        train.setCertificateType(certType);</span>
+<span class="fc" id="L43">        train.setType(type);</span>
+<span class="fc" id="L44">        return train;</span>
+    }
+    
+    @Override
+    public RailsItem getParent() {
+<span class="nc" id="L49">        return (RailsItem)super.getParent();</span>
+    }
+
+    @Override
+    public RailsRoot getRoot() {
+<span class="fc" id="L54">        return (RailsRoot)super.getRoot();</span>
+    }
+
+    public void setSortingId(int sortingId) {
+<span class="fc" id="L58">        this.sortingId = sortingId;</span>
+<span class="fc" id="L59">    }</span>
+    
+    public void setCertificateType(TrainCertificateType type) {
+<span class="fc" id="L62">        this.certificateType = type;</span>
+<span class="fc" id="L63">    }</span>
+    
+    public void setType (TrainType type) {
+<span class="fc" id="L66">        this.type.set(type);</span>
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * @return Returns the type.
+     */
+    public TrainCertificateType getCertType() {
+<span class="fc" id="L73">        return certificateType;</span>
+    }
+    
+    public TrainType getType() {
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        return isAssigned() ? type.value() : null;</span>
+    }
+
+    /**import rails.game.state.AbstractItem;
+
+     * @return Returns the cityScoreFactor.
+     */
+    public int getCityScoreFactor() {
+<span class="nc" id="L85">        return getType().getCityScoreFactor();</span>
+    }
+
+    /**
+     * @return Returns the cost.
+     */
+    public int getCost() {
+<span class="fc" id="L92">        return getType().getCost();</span>
+    }
+
+    /**
+     * @return Returns the majorStops.
+     */
+    public int getMajorStops() {
+<span class="nc" id="L99">        return getType().getMajorStops();</span>
+    }
+
+    /**
+     * @return Returns the minorStops.
+     */
+    public int getMinorStops() {
+<span class="nc" id="L106">        return getType().getMinorStops();</span>
+    }
+
+    /**
+     * @return Returns the townCountIndicator.
+     */
+    public int getTownCountIndicator() {
+<span class="nc" id="L113">        return getType().getTownCountIndicator();</span>
+    }
+
+    /**
+     * @return Returns the townScoreFactor.
+     */
+    public int getTownScoreFactor() {
+<span class="nc" id="L120">        return getType().getTownScoreFactor();</span>
+    }
+
+    /**
+     * @return true =&gt; hex train (examples 1826, 1844), false =&gt; standard 1830 type train
+     */
+    public boolean isHTrain() {
+        // TODO Auto-generated method stub
+<span class="nc" id="L128">        return false;</span>
+    }
+
+    /**
+     * @return true =&gt; train is express train; false =&gt;
+     */
+    public boolean isETrain() {
+<span class="nc" id="L135">        return false;</span>
+    }
+
+    public boolean isAssigned() {
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        return type.value() != null;</span>
+    }
+    
+    public boolean isPermanent() {
+<span class="fc" id="L143">        return certificateType.isPermanent();</span>
+    }
+    
+    public boolean isObsolete() {
+<span class="fc" id="L147">        return obsolete.value();</span>
+    }
+
+    public void setRusted() {
+        // if not on scrapheap already
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        if (this.getOwner() != Bank.getScrapHeap(this)) {</span>
+<span class="fc" id="L153">            this.moveTo(Bank.getScrapHeap(this));</span>
+        }
+<span class="fc" id="L155">    }</span>
+
+    public void setObsolete() {
+<span class="fc" id="L158">        obsolete.set(true);</span>
+<span class="fc" id="L159">    }</span>
+
+    public boolean canBeExchanged() {
+<span class="fc" id="L162">        return certificateType.nextCanBeExchanged();</span>
+    }
+    
+    public void discard() {
+        BankPortfolio discardTo;
+<span class="fc bfc" id="L167" title="All 2 branches covered.">        if (isObsolete()) {</span>
+<span class="fc" id="L168">            discardTo = Bank.getScrapHeap(this);</span>
+        } else {
+<span class="fc" id="L170">            discardTo = getRoot().getTrainManager().discardTo();</span>
+        }
+<span class="fc" id="L172">        String discardText =  LocalText.getText(&quot;CompanyDiscardsTrain&quot;, getOwner().getId(), this.toText(), discardTo.getId());</span>
+<span class="fc" id="L173">        ReportBuffer.add(this, discardText);</span>
+<span class="fc" id="L174">        this.moveTo(discardTo);</span>
+<span class="fc" id="L175">    }</span>
+
+    @Override
+    public String toText() {
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        return isAssigned() ? type.value().getName() : certificateType.toText();</span>
+    }
+
+    public boolean isTradeable() {
+<span class="fc" id="L183">        return tradeable;</span>
+    }
+
+    public void setTradeable(boolean tradeable) {
+<span class="fc" id="L187">        this.tradeable = tradeable;</span>
+<span class="fc" id="L188">    }</span>
+
+    @Override
+    public int compareTo(Ownable other) {
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">        if (other instanceof Train) {</span>
+<span class="fc" id="L193">            Train oTrain = (Train)other;</span>
+<span class="fc" id="L194">            return ComparisonChain.start()</span>
+<span class="fc" id="L195">                    .compare(this.getCertType(), oTrain.getCertType())</span>
+<span class="fc" id="L196">                    .compare(this.sortingId, oTrain.sortingId)</span>
+<span class="fc" id="L197">                    .result();</span>
+        }
+<span class="nc" id="L199">        return 0;</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

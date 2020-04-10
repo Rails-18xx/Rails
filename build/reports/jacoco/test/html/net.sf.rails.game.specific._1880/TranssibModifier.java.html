@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TranssibModifier.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1880</a> &gt; <span class="el_source">TranssibModifier.java</span></div><h1>TranssibModifier.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package net.sf.rails.game.specific._1880;
+
+import net.sf.rails.algorithms.NetworkVertex;
+import net.sf.rails.algorithms.RevenueAdapter;
+import net.sf.rails.algorithms.RevenueBonus;
+import net.sf.rails.algorithms.RevenueStaticModifier;
+
+/**
+ * Transsib modifier for 1880: If Russia and Wladivostok offboard hexes
+ * are connected a 50 value is added for that run
+ */
+<span class="fc" id="L15">public class TranssibModifier implements RevenueStaticModifier {</span>
+        
+    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
+<span class="nc" id="L18">        RevenueBonus bonus = new RevenueBonus(50, &quot;Transsib&quot;);</span>
+<span class="nc" id="L19">        NetworkVertex russia = NetworkVertex.getVertexByIdentifier(revenueAdapter.getVertices(), &quot;A3.-1&quot;);</span>
+<span class="nc" id="L20">        NetworkVertex vladivostok = NetworkVertex.getVertexByIdentifier(revenueAdapter.getVertices(), &quot;A15.-1&quot;);</span>
+<span class="nc" id="L21">        bonus.addVertex(russia);</span>
+<span class="nc" id="L22">        bonus.addVertex(vladivostok);</span>
+        
+<span class="nc" id="L24">        revenueAdapter.addRevenueBonus(bonus);</span>
+        
+<span class="nc" id="L26">        return false; // no pretty print</span>
+    }
+
+    public String prettyPrint(RevenueAdapter revenueAdapter) {
+<span class="nc" id="L30">        return null;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

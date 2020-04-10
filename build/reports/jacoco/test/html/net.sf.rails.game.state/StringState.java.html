@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StringState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.state</a> &gt; <span class="el_source">StringState.java</span></div><h1>StringState.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.state;
+
+/**
+ * A stateful version of a String variable
+ */
+public final class StringState extends State {
+    
+    private String value;
+
+    private StringState(Item parent, String id, String value) {
+<span class="fc" id="L11">        super(parent, id);</span>
+<span class="fc" id="L12">        this.value = value;</span>
+<span class="fc" id="L13">    }</span>
+
+    /** 
+     * Creates a StringState with default value of null
+     */
+    public static StringState create(Item parent, String id){
+<span class="fc" id="L19">        return new StringState(parent, id, null);</span>
+    }
+    
+    /**
+     * @param text initial String
+     */
+    public static StringState create(Item parent, String id, String text){
+<span class="fc" id="L26">        return new StringState(parent, id, text);</span>
+    }
+    
+    public void set(String value) {
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if (value == null) {</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">            if (this.value != null) {</span>
+<span class="fc" id="L32">                new StringChange(this, value);</span>
+            } // otherwise both are null
+        } else {
+<span class="fc bfc" id="L35" title="All 4 branches covered.">            if (this.value == null || !value.equals(this.value)) {</span>
+<span class="fc" id="L36">                new StringChange(this, value);</span>
+            } // otherwise the non-null current value is unequal to the new value  
+        }
+<span class="fc" id="L39">    }</span>
+    
+    /**
+     * Append string to string state
+     * No change is created if value to append is null or empty (&quot;&quot;)
+     * 
+     * @param value string to append
+     * @param delimiter to use before appending (only for non-empty value)
+     */
+    public void append(String value, String delimiter) {
+<span class="pc bpc" id="L49" title="2 of 4 branches missed.">        if (value == null || value.equals(&quot;&quot;) ) return;</span>
+        
+        String newValue;
+<span class="fc bfc" id="L52" title="All 4 branches covered.">        if (this.value == null || this.value.equals(&quot;&quot;)) {</span>
+<span class="fc" id="L53">            newValue = value;</span>
+        } else {
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            if (delimiter == null) {</span>
+<span class="fc" id="L56">                newValue = this.value + value;</span>
+            } else {
+<span class="fc" id="L58">                newValue = this.value + delimiter + value;</span>
+            }
+        }
+<span class="fc" id="L61">        set(newValue);</span>
+<span class="fc" id="L62">    }</span>
+    
+    /**
+     * @return current value of string state
+     */
+    public String value() {
+<span class="fc" id="L68">        return value;</span>
+    }
+
+    @Override 
+    public String toText() {
+<span class="nc" id="L73">        return value;</span>
+    }
+
+    void change(String value) {
+<span class="fc" id="L77">        this.value = value;</span>
+<span class="fc" id="L78">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

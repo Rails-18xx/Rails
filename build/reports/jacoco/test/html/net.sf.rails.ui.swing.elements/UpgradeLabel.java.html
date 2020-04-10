@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UpgradeLabel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.elements</a> &gt; <span class="el_source">UpgradeLabel.java</span></div><h1>UpgradeLabel.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.elements;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+
+import net.sf.rails.ui.swing.hexmap.HexUpgrade;
+
+/** JLabel extension to allow attaching the internal hex ID */
+public class UpgradeLabel extends JLabel {
+    private static final long serialVersionUID = 1L;
+
+<span class="nc" id="L19">    private static final Border BORDER = new EtchedBorder();</span>
+<span class="nc" id="L20">    private static final Color DEFAULT_LABEL_BG_COLOUR = new JLabel(&quot;&quot;).getBackground();</span>
+<span class="nc" id="L21">    private static final Color SELECTED_LABEL_BG_COLOUR = new Color(255, 220, 150);</span>
+
+    private final HexUpgrade upgrade;
+    private final int zoomStep;
+
+    public UpgradeLabel(HexUpgrade upgrade, int zoomStep) {
+<span class="nc" id="L27">        super();</span>
+<span class="nc" id="L28">        this.upgrade = upgrade;</span>
+<span class="nc" id="L29">        this.zoomStep = zoomStep;</span>
+        
+<span class="nc" id="L31">        update();</span>
+        
+<span class="nc" id="L33">        this.setOpaque(true);</span>
+<span class="nc" id="L34">        this.setVisible(true);</span>
+<span class="nc" id="L35">        this.setBorder(BORDER);</span>
+<span class="nc" id="L36">        this.setBackground(DEFAULT_LABEL_BG_COLOUR);</span>
+
+<span class="nc" id="L38">        this.setMaximumSize(new Dimension(</span>
+<span class="nc" id="L39">                Short.MAX_VALUE, (int)this.getPreferredSize().getHeight()));</span>
+<span class="nc" id="L40">        this.setAlignmentX(Component.CENTER_ALIGNMENT);</span>
+        
+<span class="nc" id="L42">        this.setEnabled(upgrade.isValid());</span>
+<span class="nc" id="L43">    }</span>
+    
+    public void setSelected(boolean selected) {
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (selected) {</span>
+<span class="nc" id="L47">            this.setBackground(SELECTED_LABEL_BG_COLOUR);</span>
+        } else {
+<span class="nc" id="L49">            this.setBackground(DEFAULT_LABEL_BG_COLOUR);</span>
+        }
+<span class="nc" id="L51">    }</span>
+    
+    public void update() {
+<span class="nc" id="L54">        ImageIcon hexIcon = new ImageIcon(upgrade.getUpgradeImage(zoomStep));</span>
+<span class="nc" id="L55">        hexIcon.setImage(hexIcon.getImage().getScaledInstance(</span>
+<span class="nc" id="L56">                (int) (hexIcon.getIconWidth() * 0.8),</span>
+<span class="nc" id="L57">                (int) (hexIcon.getIconHeight() * 0.8),</span>
+                Image.SCALE_SMOOTH));
+ 
+<span class="nc" id="L60">        this.setIcon(hexIcon);</span>
+<span class="nc" id="L61">        this.setText(upgrade.getUpgradeText());</span>
+<span class="nc" id="L62">        this.setToolTipText(upgrade.getUpgradeToolTip());</span>
+<span class="nc" id="L63">    }</span>
+
+    public HexUpgrade getUpgrade() {
+<span class="nc" id="L66">        return upgrade;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

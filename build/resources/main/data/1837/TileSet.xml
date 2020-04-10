@@ -1,0 +1,243 @@
+<TileManager tiles="Tiles.xml">
+        <!-- Preprinted tiles -->
+        <Tile id="0"><!-- Empty space -->
+                <Upgrade id="7,8,9"/>
+        </Tile>
+        <Tile id="-1"><!-- 1 town -->
+                <Upgrade id="3,4,58"/>
+        </Tile>
+        <Tile id="-2"><!-- 2 towns -->
+                <Upgrade id="1,2,55,56,69"/>
+        </Tile>
+        <Tile id="-3"/>
+        <Tile id="-7"/>
+        <Tile id="-8"/>
+        <Tile id="-10"><!-- 1 city -->
+                <Upgrade id="5,57"/>
+        </Tile>
+        <Tile id="-20" relayBaseTokens="yes"><!-- 2 cities -->
+                <Upgrade id="404"/>
+        </Tile>
+        <Tile id="-42"/>
+        <Tile id="-58"/>
+        <Tile id="-800"/><!-- gray dead-end dit -->
+        <Tile id="-3007"><!-- unbuilt "Y" city -->
+                <Upgrade id="201,202"/>
+        </Tile>
+        <Tile id="-37001"/><!-- Coal mine; similar to offboard -->
+        <Tile id="-37002"/><!-- "ZKB" coal mine + sharp-curve dit -->
+        <Tile id="-37003"/><!-- "EHS" coal mine + sharp curve -->
+        <Tile id="-37007"><!-- unbuilt "T" city -->
+                <Upgrade id="401"/>
+        </Tile>
+        <Tile id="-37008"><!-- unbuilt "X" city -->
+                <Upgrade id="402"/>
+        </Tile>
+        <Tile id="-37009"><!-- green Bregenz -->
+                <Upgrade id="434"/>
+        </Tile>
+        <Tile id="-37010"><!-- yellow Buda/Pest -->
+                <Upgrade id="425" relayBaseTokens="yes"/>
+        </Tile>
+        <Tile id="-37011"><!-- yellow Marburg -->
+                <Upgrade id="5,57"/>
+        </Tile>
+        <Tile id="-37012"><!-- yellow Wien -->
+                <Upgrade id="427" relayBaseTokens="yes"/>
+        </Tile>
+        <Tile id="-37103"><!-- Preprinted yellow tile 3 -->
+                <Upgrade id="416,417,422,423"/>
+        </Tile>
+        <Tile id="-37109"><!-- Preprinted yellow tile 9 -->
+                <Upgrade id="18,19,20,23,24,26,27"/>
+        </Tile>
+        <Tile id="-37123"><!-- Preprinted green tile 23 -->
+                <Upgrade id="41,43,45,47"/>
+        </Tile>
+        <Tile id="-37156"><!-- Preprinted yellow tile 56 -->
+                <Upgrade id="87"/>
+        </Tile>
+        <Tile id="-37158"><!-- Preprinted yellow tile 58 -->
+                <Upgrade id="412,413,418,419,420,421,424"/>
+        </Tile>
+        <Tile id="-37206"><!-- Preprinted green tile 206 (Fuenfkirchen) -->
+                <Upgrade id="63"/>
+        </Tile>
+        <Tile id="-37402"><!-- Preprinted yellow tile 402 (Prag) -->
+                <Upgrade id="406,429"/>
+        </Tile>
+
+        <!-- yellow tiles -->
+        <Tile id="1" quantity="2">
+                <Upgrade id="88"/>
+        </Tile>
+        <Tile id="2" quantity="3">
+                <Upgrade id="87"/>
+        </Tile>
+        <Tile id="3" quantity="6">
+                <Upgrade id="416,417,422,423"/>
+        </Tile>
+        <Tile id="4" quantity="12">
+                <Upgrade id="410,411,414,415"/>
+        </Tile>
+        <Tile id="5" quantity="2">
+                <Upgrade id="12,205,206" />
+        </Tile>
+        <Tile id="7" quantity="12">
+                <Upgrade id="18,26,27,28,29,30,31"/>
+        </Tile>
+        <Tile id="8" quantity="28">
+                <Upgrade id="16,17,19,23,24,25,28,29,30,31"/>
+        </Tile>
+        <Tile id="9" quantity="22">
+                <Upgrade id="18,19,20,23,24,26,27"/>
+        </Tile>
+        <Tile id="55" quantity="1">
+                <Upgrade id="88"/>
+        </Tile>
+        <Tile id="56" quantity="1">
+                <Upgrade id="87"/>
+        </Tile>
+        <Tile id="57" quantity="3">
+                <Upgrade id="205,206"/>
+        </Tile>
+        <Tile id="58" quantity="12">
+                <Upgrade id="412,413,418,419,420,421,424"/>
+        </Tile>
+        <Tile id="69" quantity="2">
+                <Upgrade id="204"/>
+        </Tile>
+        <Tile id="201" quantity="3">
+                <Upgrade id="207,208"/>
+        </Tile>
+        <Tile id="202" quantity="3">
+                <Upgrade id="207,208"/>
+        </Tile>
+        <Tile id="401" quantity="4">
+                <Upgrade id="405"/>
+        </Tile>
+        <Tile id="402" quantity="3">
+                <Upgrade id="406,429"/>
+        </Tile>
+        <Tile id="404" quantity="4">
+                <Upgrade id="408" relayBaseTokens="yes"/>
+        </Tile>
+
+        <!-- green tiles -->
+        <Tile id="12" quantity="2">
+                <Upgrade id="63"/>
+        </Tile>
+        <Tile id="16" quantity="3">
+                <Upgrade id="43,70"/>
+        </Tile>
+        <Tile id="17" quantity="1">
+                <Upgrade id="47"/>
+        </Tile>
+        <Tile id="18" quantity="1">
+                <Upgrade id="43"/>
+        </Tile>
+        <Tile id="19" quantity="3">
+                <Upgrade id="45,46"/>
+        </Tile>
+        <Tile id="20" quantity="3">
+                <Upgrade id="44,47"/>
+        </Tile>
+        <Tile id="23" quantity="12">
+                <Upgrade id="41,43,45,47"/>
+        </Tile>
+        <Tile id="24" quantity="12">
+                <Upgrade id="42,43,46,47"/>
+        </Tile>
+        <Tile id="25" quantity="5">
+                <Upgrade id="40,45,46"/>
+        </Tile>
+        <Tile id="26" quantity="4">
+                <Upgrade id="42,44,45"/>
+        </Tile>
+        <Tile id="27" quantity="4">
+                <Upgrade id="41,44,46"/>
+        </Tile>
+        <Tile id="28" quantity="3">
+                <Upgrade id="39,43,46,70"/>
+        </Tile>
+        <Tile id="29" quantity="3">
+                <Upgrade id="39,43,45,70"/>
+        </Tile>
+        <Tile id="30" quantity="1">
+                <Upgrade id="42,70"/>
+        </Tile>
+        <Tile id="31" quantity="1">
+                <Upgrade id="41,70"/>
+        </Tile>
+        <Tile id="87" quantity="2"/>
+        <Tile id="88" quantity="2"/>
+        <Tile id="204" quantity="2"/>
+        <Tile id="205" quantity="2">
+                <Upgrade id="63"/>
+        </Tile>
+        <Tile id="206" quantity="2">
+                <Upgrade id="63"/>
+        </Tile>
+        <Tile id="207" quantity="4">
+                <Upgrade id="216"/>
+        </Tile>
+        <Tile id="208" quantity="2">
+                <Upgrade id="216"/>
+        </Tile>
+        <Tile id="405" quantity="4">
+                <Upgrade id="431"/>
+        </Tile>
+        <Tile id="406" quantity="3">
+                <Upgrade id="430"/>
+        </Tile>
+        <Tile id="408" quantity="4">
+                <Upgrade id="432" relayBaseTokens="yes"/>
+        </Tile>
+        <Tile id="410" quantity="2"/>
+        <Tile id="411" quantity="2"/>
+        <Tile id="412" quantity="2"/>
+        <Tile id="413" quantity="2"/>
+        <Tile id="414" quantity="1"/>
+        <Tile id="415" quantity="1"/>
+        <Tile id="416" quantity="1"/>
+        <Tile id="417" quantity="1"/>
+        <Tile id="418" quantity="2"/>
+        <Tile id="419" quantity="2"/>
+        <Tile id="420" quantity="2"/>
+        <Tile id="421" quantity="2"/>
+        <Tile id="422" quantity="2"/>
+        <Tile id="423" quantity="2"/>
+        <Tile id="424" quantity="2"/>
+        <Tile id="425" quantity="1">
+                <Upgrade id="435"/>
+        </Tile>
+        <Tile id="426" quantity="1">
+                <Upgrade id="434"/>
+        </Tile>
+        <Tile id="427" quantity="1">
+                <Upgrade id="436" relayBaseTokens="yes"/>
+        </Tile>
+        <Tile id="429" quantity="2">
+                <Upgrade id="430"/>
+        </Tile>
+
+        <!-- Brown tiles -->
+        <Tile id="39" quantity="2"/>
+        <Tile id="40" quantity="3"/>
+        <Tile id="41" quantity="4"/>
+        <Tile id="42" quantity="5"/>
+        <Tile id="43" quantity="2"/>
+        <Tile id="44" quantity="3"/>
+        <Tile id="45" quantity="3"/>
+        <Tile id="46" quantity="3"/>
+        <Tile id="47" quantity="3"/>
+        <Tile id="63" quantity="4"/>
+        <Tile id="70" quantity="2"/>
+        <Tile id="216" quantity="5"/>
+        <Tile id="430" quantity="5"/>
+        <Tile id="431" quantity="4"/>
+        <Tile id="432" quantity="4"/>
+        <Tile id="434" quantity="2"/>
+        <Tile id="435" quantity="1"/>
+        <Tile id="436" quantity="1" orientation="5"/>
+</TileManager>

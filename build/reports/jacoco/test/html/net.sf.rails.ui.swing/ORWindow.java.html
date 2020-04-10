@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ORWindow.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing</a> &gt; <span class="el_source">ORWindow.java</span></div><h1>ORWindow.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.*;
+
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+
+import net.sf.rails.common.Config;
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.OperatingRound;
+import net.sf.rails.ui.swing.elements.DockingFrame;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rails.game.action.*;
+
+
+/**
+ * This Window displays the available operations that may be performed during an
+ * Operating Round. This window also contains the Game Map.
+ */
+public class ORWindow extends DockingFrame implements ActionPerformer {
+    private static final long serialVersionUID = 1L;
+
+<span class="nc" id="L34">    private static final Logger log = LoggerFactory.getLogger(ORWindow.class);</span>
+
+    protected final GameUIManager gameUIManager;
+    protected ORUIManager orUIManager;
+    protected final MapPanel mapPanel;
+    protected final ORPanel orPanel;
+    protected final UpgradesPanel upgradePanel;
+    protected final MessagePanel messagePanel;
+
+    protected Rectangle lastBounds;
+
+    public ORWindow(GameUIManager gameUIManager,SplashWindow splashWindow) {
+<span class="nc" id="L46">        super( &quot;yes&quot;.equals(Config.get(&quot;or.window.dockablePanels&quot;)) , splashWindow );</span>
+<span class="nc" id="L47">        this.gameUIManager = gameUIManager;</span>
+
+<span class="nc" id="L49">        splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_PANELS);</span>
+
+<span class="nc" id="L51">        String orUIManagerClassName = gameUIManager.getClassName(GuiDef.ClassName.OR_UI_MANAGER);</span>
+        try {
+<span class="nc" id="L53">            Class&lt;? extends ORUIManager&gt; orUIManagerClass =</span>
+<span class="nc" id="L54">                Class.forName(orUIManagerClassName).asSubclass(ORUIManager.class);</span>
+<span class="nc" id="L55">            log.debug(&quot;Class is &quot;+orUIManagerClass.getName());</span>
+<span class="nc" id="L56">            orUIManager = orUIManagerClass.newInstance();</span>
+<span class="nc" id="L57">        } catch (Exception e) {</span>
+<span class="nc" id="L58">            log.error(&quot;Cannot instantiate class &quot; + orUIManagerClassName, e);</span>
+<span class="nc" id="L59">            System.exit(1);</span>
+<span class="nc" id="L60">        }</span>
+<span class="nc" id="L61">        gameUIManager.setORUIManager(orUIManager);</span>
+<span class="nc" id="L62">        orUIManager.setGameUIManager(gameUIManager);</span>
+
+<span class="nc" id="L64">        messagePanel = new MessagePanel();</span>
+<span class="nc" id="L65">        JScrollPane messagePanelSlider = new JScrollPane(messagePanel);</span>
+<span class="nc" id="L66">        messagePanel.setParentSlider(messagePanelSlider);</span>
+
+<span class="nc" id="L68">        upgradePanel = new UpgradesPanel(orUIManager,isDockingFrameworkEnabled());</span>
+        // FIXME: Is this still required
+        // addMouseListener(upgradePanel);
+
+<span class="nc" id="L72">        mapPanel = new MapPanel(gameUIManager);</span>
+
+<span class="nc" id="L74">        orPanel = new ORPanel(this, orUIManager);</span>
+
+        //create docking / conventional layout
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if (isDockingFrameworkEnabled()) {</span>
+
+            //set up the button panel (which is separated from its OR panel parent)
+            //adding upgrade panel buttons on top
+<span class="nc" id="L81">            orPanel.addToButtonPanel(upgradePanel.getButtons(),0);</span>
+
+            //initialize remaining tile panel as it is no optional part in the docking layout
+<span class="nc" id="L84">            splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_TILES);</span>
+<span class="nc" id="L85">            JScrollPane remainingTilesPanelSlider =</span>
+<span class="nc" id="L86">                    new RemainingTilesWindow(this).getScrollPane();</span>
+
+            //generate layout
+<span class="nc" id="L89">            splashWindow.notifyOfStep(SplashWindow.STEP_OR_APPLY_DOCKING_FRAME);</span>
+<span class="nc" id="L90">            addDockable ( messagePanelSlider,</span>
+                    &quot;Dockable.orWindow.messagePanel&quot;,
+                    0, 0, 100, 10, DockableProperty.CLOSEABLE);
+<span class="nc" id="L93">            addDockable ( upgradePanel,</span>
+                    &quot;Dockable.orWindow.upgradePanel&quot;,
+                    0, 10, 20, 70, DockableProperty.STANDARD);
+<span class="nc" id="L96">            addDockable ( mapPanel,</span>
+                    &quot;Dockable.orWindow.mapPanel&quot;,
+                    20, 10, 80, 70, DockableProperty.STANDARD);
+<span class="nc" id="L99">            addDockable ( remainingTilesPanelSlider,</span>
+                    &quot;Dockable.orWindow.remainingTilesPanel&quot;,
+                    100, 0, 120, 100, DockableProperty.INITIALLY_HIDDEN);
+<span class="nc" id="L102">            addDockable ( orPanel,</span>
+                    &quot;Dockable.orWindow.orPanel&quot;,
+                    0, 80, 100, 15, DockableProperty.STANDARD);
+<span class="nc" id="L105">            addDockable ( orPanel.getButtonPanel(),</span>
+                    &quot;Dockable.orWindow.buttonPanel&quot;,
+                    0, 95, 100, 5, DockableProperty.STANDARD);
+<span class="nc" id="L108">            deployDockables();</span>
+
+            //take over or panel's menu bar as the frame menu bar
+<span class="nc" id="L111">            JMenuBar menuBar = orPanel.getMenuBar();</span>
+<span class="nc" id="L112">            addDockingFrameMenu(menuBar);</span>
+<span class="nc" id="L113">            setJMenuBar( menuBar );</span>
+
+<span class="nc" id="L115">        } else {</span>
+            // CONVENTIONAL LAYOUT
+
+<span class="nc" id="L118">            getContentPane().setLayout(new BorderLayout());</span>
+<span class="nc" id="L119">            getContentPane().add(messagePanelSlider, BorderLayout.NORTH);</span>
+<span class="nc" id="L120">            getContentPane().add(mapPanel, BorderLayout.CENTER);</span>
+<span class="nc" id="L121">            getContentPane().add(upgradePanel, BorderLayout.WEST);</span>
+<span class="nc" id="L122">            getContentPane().add(orPanel, BorderLayout.SOUTH);</span>
+
+        }
+
+<span class="nc" id="L126">        orUIManager.init(this);</span>
+
+<span class="nc" id="L128">        setTitle(LocalText.getText(&quot;MapWindowTitle&quot;));</span>
+<span class="nc" id="L129">        setLocation(10, 10);</span>
+<span class="nc" id="L130">        setVisible(false);</span>
+
+        // make map and upgrade panels invisible for noMapMode
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.NO_MAP_MODE)) {</span>
+<span class="nc" id="L134">            mapPanel.setVisible(false);</span>
+<span class="nc" id="L135">            upgradePanel.setVisible(false);</span>
+<span class="nc" id="L136">            setSize(800, 500);</span>
+        } else
+<span class="nc" id="L138">            setSize(800, 600);</span>
+
+<span class="nc" id="L140">        log.debug(&quot;OrWindow: MapPanel size = &quot; + mapPanel.getSize());</span>
+<span class="nc" id="L141">        log.debug(&quot;OrWindow size = &quot; + this.getSize());</span>
+
+<span class="nc" id="L143">        final JFrame frame = this;</span>
+<span class="nc" id="L144">        final GameUIManager guiMgr = gameUIManager;</span>
+<span class="nc" id="L145">        addWindowListener(new WindowAdapter() {</span>
+            @Override
+            public void windowClosing(WindowEvent e) {
+<span class="nc" id="L148">                saveLayout();</span>
+<span class="nc" id="L149">                StatusWindow.uncheckMenuItemBox(StatusWindow.MAP_CMD);</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                if (!isDockingFrameworkEnabled()) {</span>
+<span class="nc" id="L151">                    frame.dispose();</span>
+                } else {
+<span class="nc" id="L153">                    setVisible(false);</span>
+                }
+<span class="nc" id="L155">            }</span>
+        });
+<span class="nc" id="L157">        addComponentListener(new ComponentAdapter() {</span>
+            @Override
+            public void componentMoved(ComponentEvent e) {
+<span class="nc" id="L160">                guiMgr.getWindowSettings().set(frame);</span>
+<span class="nc" id="L161">            }</span>
+            @Override
+            public void componentResized(ComponentEvent e) {
+<span class="nc" id="L164">                guiMgr.getWindowSettings().set(frame);</span>
+<span class="nc" id="L165">            }</span>
+        });
+
+        //call pack and size init within the swing EDT
+        //(as this frame is not inited within the EDT)
+        //no standard call to gameUIManager's packAndApplySizing possible (due to docking switch)
+<span class="nc" id="L171">        SwingUtilities.invokeLater(new Thread() {</span>
+            public void run() {
+                //rearrange layout only if no docking framework active
+<span class="nc bnc" id="L174" title="All 2 branches missed.">                if (!isDockingFrameworkEnabled()) {</span>
+<span class="nc" id="L175">                    pack();</span>
+                } else {
+<span class="nc" id="L177">                    setSize(new Dimension(600,500));</span>
+                }
+
+<span class="nc" id="L180">                WindowSettings ws = getGameUIManager().getWindowSettings();</span>
+<span class="nc" id="L181">                Rectangle bounds = ws.getBounds(ORWindow.this);</span>
+<span class="nc bnc" id="L182" title="All 4 branches missed.">                if (bounds.x != -1 &amp;&amp; bounds.y != -1) setLocation(bounds.getLocation());</span>
+<span class="nc bnc" id="L183" title="All 4 branches missed.">                if (bounds.width != -1 &amp;&amp; bounds.height != -1) setSize(bounds.getSize());</span>
+<span class="nc" id="L184">                ws.set(frame);</span>
+
+<span class="nc bnc" id="L186" title="All 2 branches missed.">                if (isDockingFrameworkEnabled()) {</span>
+<span class="nc" id="L187">                    initLayout();</span>
+                }
+<span class="nc" id="L189">            }</span>
+        });
+
+<span class="nc" id="L192">    }</span>
+
+    public ORUIManager getORUIManager() {
+<span class="nc" id="L195">        return orUIManager;</span>
+    }
+
+    public GameUIManager getGameUIManager() {
+<span class="nc" id="L199">        return gameUIManager;</span>
+    }
+
+    public MapPanel getMapPanel() {
+<span class="nc" id="L203">        return mapPanel;</span>
+    }
+
+    public ORPanel getORPanel() {
+<span class="nc" id="L207">        return orPanel;</span>
+    }
+
+    public UpgradesPanel getUpgradePanel() {
+<span class="nc" id="L211">        return upgradePanel;</span>
+    }
+
+    public MessagePanel getMessagePanel() {
+<span class="nc" id="L215">        return messagePanel;</span>
+    }
+
+    public boolean process(PossibleAction action) {
+
+        // Add the actor for safety checking in the server
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (action != null) action.setPlayerName(orPanel.getORPlayer());</span>
+        // Process the action
+<span class="nc" id="L223">        boolean result = gameUIManager.processAction(action);</span>
+        // Display any error message
+        //displayServerMessage();
+
+<span class="nc" id="L227">        return result;</span>
+    }
+
+    // Not yet used
+    public boolean processImmediateAction() {
+<span class="nc" id="L232">        return true;</span>
+    }
+
+    public void displayORUIMessage(String message) {
+<span class="nc bnc" id="L236" title="All 2 branches missed.">        if (message != null) {</span>
+<span class="nc" id="L237">            JOptionPane.showMessageDialog(this, message);</span>
+        }
+<span class="nc" id="L239">    }</span>
+
+    public void repaintORPanel() {
+        //rearrange layout only if no docking framework active
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        if (!isDockingFrameworkEnabled()) {</span>
+<span class="nc" id="L244">            orPanel.revalidate();</span>
+        }
+<span class="nc" id="L246">    }</span>
+
+    public void activate(OperatingRound or) {
+<span class="nc" id="L249">        GameManager gameManager = (GameManager) gameUIManager.getGameManager();</span>
+<span class="nc" id="L250">        String numORs = gameManager.getNumOfORs ();</span>
+
+<span class="nc" id="L252">        orPanel.recreate(or);</span>
+<span class="nc" id="L253">        setTitle(LocalText.getText(&quot;MapWindowORTitle&quot;,</span>
+<span class="nc" id="L254">                gameManager.getORId(),</span>
+<span class="nc" id="L255">                String.valueOf(gameManager.getRelativeORNumber()),</span>
+                numORs ));
+
+        //rearrange layout only if no docking framework active
+<span class="nc bnc" id="L259" title="All 2 branches missed.">        if (!isDockingFrameworkEnabled()) {</span>
+<span class="nc" id="L260">            pack();</span>
+<span class="nc bnc" id="L261" title="All 2 branches missed.">            if (lastBounds != null) {</span>
+<span class="nc" id="L262">                Rectangle newBounds = getBounds();</span>
+<span class="nc" id="L263">                lastBounds.width = newBounds.width;</span>
+<span class="nc" id="L264">                setBounds (lastBounds);</span>
+            }
+        }
+
+<span class="nc" id="L268">        setVisible(true);</span>
+<span class="nc" id="L269">        requestFocus();</span>
+<span class="nc" id="L270">    }</span>
+
+// Remark: one of the methods to implement the ActionPerformer Interface
+    public void updateStatus(boolean myTurn) {
+        // Safety check. Do nothing if this method is called outside Operating Rounds,
+        // for instance when a token is exchanged during a Stock Round.
+<span class="nc bnc" id="L276" title="All 2 branches missed.">        if (!(gameUIManager.getCurrentRound() instanceof OperatingRound)) return;</span>
+
+<span class="nc" id="L278">        orUIManager.updateStatus(myTurn);</span>
+<span class="nc" id="L279">        requestFocus();</span>
+<span class="nc" id="L280">    }</span>
+
+    /**
+     * Round-end settings
+     *
+     */
+    public void finish() {
+<span class="nc" id="L287">        lastBounds = getBounds();</span>
+<span class="nc" id="L288">        orPanel.finish();</span>
+<span class="nc" id="L289">        messagePanel.setMessage(&quot;&quot;);</span>
+<span class="nc" id="L290">        setTitle(LocalText.getText(&quot;MapWindowTitle&quot;));</span>
+<span class="nc" id="L291">    }</span>
+
+    protected String getLayoutFileName() {
+<span class="nc" id="L294">        return getClass().getSimpleName() + &quot;_&quot;</span>
+<span class="nc" id="L295">                + gameUIManager.getRoot().getGameName() ;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

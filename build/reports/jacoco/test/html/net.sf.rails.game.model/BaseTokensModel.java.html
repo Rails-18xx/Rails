@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseTokensModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.model</a> &gt; <span class="el_source">BaseTokensModel.java</span></div><h1>BaseTokensModel.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.model;
+
+import java.util.Set;
+
+import net.sf.rails.game.BaseToken;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.state.Portfolio;
+import net.sf.rails.game.state.PortfolioSet;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+
+
+/**
+ * A model presenting the number of tokens
+ */
+public class BaseTokensModel extends RailsModel {
+
+    // the free tokens belong to the company
+    private final PortfolioSet&lt;BaseToken&gt; freeBaseTokens;
+    // a list of all base tokens, configured later
+    private ImmutableSortedSet&lt;BaseToken&gt; allTokens;
+
+    private BaseTokensModel(PublicCompany parent, String id) {
+<span class="fc" id="L27">        super(parent, id);</span>
+<span class="fc" id="L28">        freeBaseTokens = PortfolioSet.create(parent, &quot;freeBaseTokens&quot;, BaseToken.class);</span>
+<span class="fc" id="L29">        freeBaseTokens.addModel(this);</span>
+<span class="fc" id="L30">    }</span>
+
+    public static BaseTokensModel create(PublicCompany parent, String id){
+<span class="fc" id="L33">        return new BaseTokensModel(parent, id);</span>
+    }
+
+    /**
+     * Initialize a set of tokens
+     */
+    public void initTokens(Set&lt;BaseToken&gt; tokens) {
+<span class="fc" id="L40">        allTokens = ImmutableSortedSet.copyOf(tokens);</span>
+<span class="fc" id="L41">        Portfolio.moveAll(allTokens, getParent());</span>
+<span class="fc" id="L42">    }</span>
+    
+    /**
+     * @return parent the public company
+     */
+    @Override
+    public PublicCompany getParent() {
+<span class="fc" id="L49">        return (PublicCompany)super.getParent();</span>
+    }
+    
+    /**
+     * @return the next (free) token to lay, null if none is available
+     */
+    public BaseToken getNextToken() {
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        if (freeBaseTokens.size() == 0) return null;</span>
+<span class="fc" id="L57">        return Iterables.get(freeBaseTokens, 0);</span>
+    }
+    
+    public ImmutableSet&lt;BaseToken&gt; getAllTokens() {
+<span class="fc" id="L61">        return allTokens;</span>
+    }
+    
+    public ImmutableSet&lt;BaseToken&gt; getFreeTokens() {
+<span class="nc" id="L65">        return freeBaseTokens.items();</span>
+    }
+    
+    public ImmutableSet&lt;BaseToken&gt; getLaidTokens() {
+<span class="fc" id="L69">        return Sets.difference(allTokens, freeBaseTokens.items()).immutableCopy();</span>
+    }
+    
+    public int nbAllTokens() {
+<span class="fc" id="L73">        return allTokens.size();</span>
+    }
+    
+    public int nbFreeTokens() {
+<span class="fc" id="L77">        return freeBaseTokens.size();</span>
+    }
+    
+    public int nbLaidTokens() {
+<span class="fc" id="L81">        return allTokens.size() - freeBaseTokens.size();</span>
+    }
+    
+    /**
+     * @return true if token is laid
+     */
+    public boolean tokenIsLaid(BaseToken token) {
+<span class="nc" id="L88">        return allTokens.contains(token);</span>
+    }
+    
+    @Override 
+    public String toText() {
+<span class="nc" id="L93">        int allTokens = nbAllTokens();</span>
+<span class="nc" id="L94">        int freeTokens = nbFreeTokens();</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (allTokens == 0) {</span>
+<span class="nc" id="L96">            return &quot;&quot;;</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        } else if (freeTokens == 0) {</span>
+<span class="nc" id="L98">            return &quot;-/&quot; + allTokens;</span>
+        } else {
+<span class="nc" id="L100">            return freeTokens + &quot;/&quot; + allTokens;</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

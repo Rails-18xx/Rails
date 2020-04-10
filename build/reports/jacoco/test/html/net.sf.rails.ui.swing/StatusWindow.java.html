@@ -1,0 +1,834 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StatusWindow.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing</a> &gt; <span class="el_source">StatusWindow.java</span></div><h1>StatusWindow.java</h1><pre class="source lang-java linenums">/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.46 2010/06/15 20:16:54 evos Exp $*/
+package net.sf.rails.ui.swing;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.common.Config;
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.game.EndOfGameRound;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.Round;
+import net.sf.rails.game.StartRound;
+import net.sf.rails.game.financial.ShareSellingRound;
+import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.game.financial.TreasuryShareRound;
+import net.sf.rails.game.round.RoundFacade;
+import net.sf.rails.javafx.windows.FXStockChartWindow;
+import net.sf.rails.ui.swing.elements.ActionButton;
+import net.sf.rails.ui.swing.elements.ActionCheckBoxMenuItem;
+import net.sf.rails.ui.swing.elements.ActionMenuItem;
+import net.sf.rails.ui.swing.elements.RailsIcon;
+import rails.game.action.ActionTaker;
+import rails.game.action.DiscardTrain;
+import rails.game.action.GameAction;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.PossibleActions;
+import rails.game.action.RequestTurn;
+import rails.game.action.UseSpecialProperty;
+import rails.game.correct.CorrectionModeAction;
+
+
+/**
+ * This is the Window used for displaying nearly all of the rails.game status.
+ * This is also from where the ORWindow and StartRoundWindow are triggered.
+ */
+<span class="nc" id="L55">public class StatusWindow extends JFrame implements ActionListener, KeyListener, ActionPerformer {</span>
+    private static final long serialVersionUID = 1L;
+
+    protected static final String QUIT_CMD = &quot;Quit&quot;;
+
+    protected static final String SAVE_CMD = &quot;Save&quot;;
+
+    protected static final String RELOAD_CMD = &quot;Reload&quot;;
+
+    protected static final String AUTOSAVELOAD_CMD = &quot;AutoSaveLoad&quot;;
+
+    protected static final String SAVESTATUS_CMD = &quot;SaveGameStatus&quot;;
+
+    protected static final String EXPORT_CMD = &quot;Export&quot;;
+
+    protected static final String UNDO_CMD = &quot;Undo&quot;;
+
+    protected static final String FORCED_UNDO_CMD = &quot;Undo!&quot;;
+
+    protected static final String REDO_CMD = &quot;Redo&quot;;
+
+    public static final String MARKET_CMD = &quot;Market&quot;;
+
+    protected static final String MAP_CMD = &quot;Map&quot;;
+
+    protected static final String REPORT_CMD = &quot;Report&quot;;
+
+    protected static final String CONFIG_CMD = &quot;Config&quot;;
+
+    protected static final String BUY_CMD = &quot;Buy&quot;;
+
+    protected static final String SELL_CMD = &quot;Sell&quot;;
+
+    protected static final String DONE_CMD = &quot;Done&quot;;
+
+    protected static final String PASS_CMD = &quot;Pass&quot;;
+    protected static final String AUTOPASS_CMD = &quot;Autopass&quot;;
+
+    protected JPanel buttonPanel;
+
+    protected GameStatus gameStatus;
+
+    protected ActionButton passButton;
+    protected ActionButton autopassButton;
+
+    protected GameUIManager gameUIManager;
+
+    protected RoundFacade currentRound;
+
+    protected PossibleActions possibleActions;
+<span class="nc" id="L105">    protected PossibleAction immediateAction = null;</span>
+
+<span class="nc" id="L107">    protected JPanel pane = new JPanel(new BorderLayout());</span>
+
+    private JMenuBar menuBar;
+
+    private static JMenu fileMenu, optMenu, moveMenu, moderatorMenu,
+    specialMenu, correctionMenu, developerMenu;
+
+    private JMenuItem menuItem;
+
+    private ActionMenuItem actionMenuItem;
+
+    private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2, saveLogsItem;
+
+<span class="fc" id="L120">    private static final Logger log =</span>
+<span class="fc" id="L121">            LoggerFactory.getLogger(StatusWindow.class);</span>
+
+    //    GraphicsConfiguration graphicsConfiguration;
+
+    //    public StatusWindow(GraphicsConfiguration gc) {
+    //        super(gc);
+    //        this.graphicsConfiguration = gc;
+    //    }
+
+    public void initMenu() {
+<span class="nc" id="L131">        menuBar = new JMenuBar();</span>
+<span class="nc" id="L132">        fileMenu = new JMenu(LocalText.getText(&quot;FILE&quot;));</span>
+<span class="nc" id="L133">        optMenu = new JMenu(LocalText.getText(&quot;OPTIONS&quot;));</span>
+<span class="nc" id="L134">        moveMenu = new JMenu(LocalText.getText(&quot;MOVE&quot;));</span>
+<span class="nc" id="L135">        moderatorMenu = new JMenu(LocalText.getText(&quot;MODERATOR&quot;));</span>
+<span class="nc" id="L136">        specialMenu = new JMenu(LocalText.getText(&quot;SPECIAL&quot;));</span>
+
+<span class="nc" id="L138">        fileMenu.setMnemonic(KeyEvent.VK_F);</span>
+<span class="nc" id="L139">        optMenu.setMnemonic(KeyEvent.VK_O);</span>
+<span class="nc" id="L140">        moveMenu.setMnemonic(KeyEvent.VK_V);</span>
+<span class="nc" id="L141">        moderatorMenu.setMnemonic(KeyEvent.VK_M);</span>
+<span class="nc" id="L142">        specialMenu.setMnemonic(KeyEvent.VK_S);</span>
+
+<span class="nc" id="L144">        actionMenuItem = new ActionMenuItem(LocalText.getText(&quot;SAVE&quot;));</span>
+<span class="nc" id="L145">        actionMenuItem.setActionCommand(SAVE_CMD);</span>
+<span class="nc" id="L146">        actionMenuItem.setMnemonic(KeyEvent.VK_S);</span>
+<span class="nc" id="L147">        actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,</span>
+                ActionEvent.ALT_MASK));
+<span class="nc" id="L149">        actionMenuItem.addActionListener(this);</span>
+<span class="nc" id="L150">        actionMenuItem.setEnabled(true);</span>
+<span class="nc" id="L151">        actionMenuItem.setPossibleAction(new GameAction(GameAction.Mode.SAVE));</span>
+<span class="nc" id="L152">        fileMenu.add(actionMenuItem);</span>
+
+<span class="nc" id="L154">        actionMenuItem = new ActionMenuItem(LocalText.getText(&quot;Reload&quot;));</span>
+<span class="nc" id="L155">        actionMenuItem.setActionCommand(RELOAD_CMD);</span>
+<span class="nc" id="L156">        actionMenuItem.setMnemonic(KeyEvent.VK_R);</span>
+<span class="nc" id="L157">        actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,</span>
+                ActionEvent.ALT_MASK));
+<span class="nc" id="L159">        actionMenuItem.addActionListener(this);</span>
+<span class="nc" id="L160">        actionMenuItem.setEnabled(true);</span>
+<span class="nc" id="L161">        actionMenuItem.setPossibleAction(new GameAction(GameAction.Mode.RELOAD));</span>
+<span class="nc" id="L162">        fileMenu.add(actionMenuItem);</span>
+
+<span class="nc" id="L164">        menuItem = new JMenuItem(LocalText.getText(&quot;AutoSaveLoad&quot;));</span>
+<span class="nc" id="L165">        menuItem.setActionCommand(AUTOSAVELOAD_CMD);</span>
+<span class="nc" id="L166">        menuItem.setMnemonic(KeyEvent.VK_A);</span>
+<span class="nc" id="L167">        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,</span>
+                ActionEvent.ALT_MASK));
+<span class="nc" id="L169">        menuItem.addActionListener(this);</span>
+<span class="nc" id="L170">        menuItem.setEnabled(true);</span>
+<span class="nc" id="L171">        fileMenu.add(menuItem);</span>
+
+<span class="nc" id="L173">        menuItem = new JMenuItem(LocalText.getText(&quot;SaveGameStatus&quot;));</span>
+<span class="nc" id="L174">        menuItem.setActionCommand(SAVESTATUS_CMD);</span>
+<span class="nc" id="L175">        menuItem.setMnemonic(KeyEvent.VK_G);</span>
+<span class="nc" id="L176">        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,</span>
+                ActionEvent.ALT_MASK));
+<span class="nc" id="L178">        menuItem.addActionListener(this);</span>
+<span class="nc" id="L179">        menuItem.setEnabled(true);</span>
+<span class="nc" id="L180">        fileMenu.add(menuItem);</span>
+
+        // export menu item
+        //        exportItem = new ActionMenuItem(LocalText.getText(&quot;EXPORT&quot;));
+        //        exportItem.setActionCommand(EXPORT_CMD);
+        //        exportItem.addActionListener(this);
+        //        exportItem.setEnabled(true);
+        //        exportItem.setPossibleAction(new GameAction(GameAction.EXPORT));
+        //        fileMenu.add(exportItem);
+        //        fileMenu.addSeparator();
+
+
+<span class="nc" id="L192">        menuItem = new JMenuItem(LocalText.getText(&quot;QUIT&quot;));</span>
+<span class="nc" id="L193">        menuItem.setActionCommand(QUIT_CMD);</span>
+<span class="nc" id="L194">        menuItem.setMnemonic(KeyEvent.VK_Q);</span>
+<span class="nc" id="L195">        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,</span>
+                ActionEvent.ALT_MASK));
+<span class="nc" id="L197">        menuItem.addActionListener(this);</span>
+<span class="nc" id="L198">        fileMenu.add(menuItem);</span>
+
+<span class="nc" id="L200">        menuBar.add(fileMenu);</span>
+
+<span class="nc" id="L202">        menuItem = new JMenuItem(LocalText.getText(&quot;SET_SCALE&quot;));</span>
+<span class="nc" id="L203">        menuItem.setMnemonic(KeyEvent.VK_S);</span>
+<span class="nc" id="L204">        menuItem.addActionListener(this);</span>
+<span class="nc" id="L205">        menuItem.setEnabled(false); // XXX: Setting to disabled until we</span>
+        // implement this
+<span class="nc" id="L207">        optMenu.add(menuItem);</span>
+
+<span class="nc" id="L209">        optMenu.addSeparator();</span>
+
+<span class="nc" id="L211">        menuItem = new JCheckBoxMenuItem(LocalText.getText(&quot;MARKET&quot;));</span>
+<span class="nc" id="L212">        menuItem.setName(MARKET_CMD);</span>
+<span class="nc" id="L213">        menuItem.setActionCommand(MARKET_CMD);</span>
+<span class="nc" id="L214">        menuItem.setMnemonic(KeyEvent.VK_K);</span>
+<span class="nc" id="L215">        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K,</span>
+                ActionEvent.CTRL_MASK));
+<span class="nc" id="L217">        menuItem.addActionListener(this);</span>
+<span class="nc" id="L218">        optMenu.add(menuItem);</span>
+
+<span class="nc" id="L220">        menuItem = new JCheckBoxMenuItem(LocalText.getText(&quot;MAP&quot;));</span>
+<span class="nc" id="L221">        menuItem.setName(MAP_CMD);</span>
+<span class="nc" id="L222">        menuItem.setActionCommand(MAP_CMD);</span>
+<span class="nc" id="L223">        menuItem.setMnemonic(KeyEvent.VK_M);</span>
+<span class="nc" id="L224">        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,</span>
+                ActionEvent.CTRL_MASK));
+<span class="nc" id="L226">        menuItem.addActionListener(this);</span>
+<span class="nc" id="L227">        optMenu.add(menuItem);</span>
+
+<span class="nc" id="L229">        menuItem = new JCheckBoxMenuItem(LocalText.getText(&quot;REPORT&quot;));</span>
+<span class="nc" id="L230">        menuItem.setName(REPORT_CMD);</span>
+<span class="nc" id="L231">        menuItem.setActionCommand(REPORT_CMD);</span>
+<span class="nc" id="L232">        menuItem.setMnemonic(KeyEvent.VK_R);</span>
+<span class="nc" id="L233">        menuItem.addActionListener(this);</span>
+<span class="nc" id="L234">        optMenu.add(menuItem);</span>
+
+<span class="nc" id="L236">        menuItem = new JCheckBoxMenuItem(LocalText.getText(&quot;CONFIG&quot;));</span>
+<span class="nc" id="L237">        menuItem.setName(CONFIG_CMD);</span>
+<span class="nc" id="L238">        menuItem.setActionCommand(CONFIG_CMD);</span>
+<span class="nc" id="L239">        menuItem.setMnemonic(KeyEvent.VK_C);</span>
+<span class="nc" id="L240">        menuItem.addActionListener(this);</span>
+<span class="nc" id="L241">        optMenu.add(menuItem);</span>
+
+<span class="nc" id="L243">        menuBar.add(optMenu);</span>
+
+<span class="nc" id="L245">        undoItem = new ActionMenuItem(LocalText.getText(&quot;UNDO&quot;));</span>
+<span class="nc" id="L246">        undoItem.setName(LocalText.getText(&quot;UNDO&quot;));</span>
+<span class="nc" id="L247">        undoItem.setActionCommand(UNDO_CMD);</span>
+<span class="nc" id="L248">        undoItem.setMnemonic(KeyEvent.VK_U);</span>
+<span class="nc" id="L249">        undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,</span>
+                ActionEvent.CTRL_MASK));
+<span class="nc" id="L251">        undoItem.addActionListener(this);</span>
+<span class="nc" id="L252">        undoItem.setEnabled(false);</span>
+<span class="nc" id="L253">        moveMenu.add(undoItem);</span>
+
+<span class="nc" id="L255">        redoItem = new ActionMenuItem(LocalText.getText(&quot;REDO&quot;));</span>
+<span class="nc" id="L256">        redoItem.setName(LocalText.getText(&quot;REDO&quot;));</span>
+<span class="nc" id="L257">        redoItem.setActionCommand(REDO_CMD);</span>
+<span class="nc" id="L258">        redoItem.setMnemonic(KeyEvent.VK_R);</span>
+<span class="nc" id="L259">        redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,</span>
+                ActionEvent.CTRL_MASK));
+<span class="nc" id="L261">        redoItem.addActionListener(this);</span>
+<span class="nc" id="L262">        redoItem.setEnabled(false);</span>
+<span class="nc" id="L263">        moveMenu.add(redoItem);</span>
+
+<span class="nc" id="L265">        menuBar.add(moveMenu);</span>
+
+<span class="nc" id="L267">        forcedUndoItem = new ActionMenuItem(LocalText.getText(&quot;FORCED_UNDO&quot;));</span>
+<span class="nc" id="L268">        forcedUndoItem.setName(LocalText.getText(&quot;FORCED_UNDO&quot;));</span>
+<span class="nc" id="L269">        forcedUndoItem.setActionCommand(FORCED_UNDO_CMD);</span>
+<span class="nc" id="L270">        forcedUndoItem.setMnemonic(KeyEvent.VK_F);</span>
+<span class="nc" id="L271">        forcedUndoItem.addActionListener(this);</span>
+<span class="nc" id="L272">        forcedUndoItem.setEnabled(false);</span>
+<span class="nc" id="L273">        moderatorMenu.add(forcedUndoItem);</span>
+
+<span class="nc" id="L275">        redoItem2 = new ActionMenuItem(LocalText.getText(&quot;REDO&quot;));</span>
+<span class="nc" id="L276">        redoItem2.setName(LocalText.getText(&quot;REDO&quot;));</span>
+<span class="nc" id="L277">        redoItem2.setActionCommand(REDO_CMD);</span>
+<span class="nc" id="L278">        redoItem2.setMnemonic(KeyEvent.VK_R);</span>
+<span class="nc" id="L279">        redoItem2.addActionListener(this);</span>
+<span class="nc" id="L280">        redoItem2.setEnabled(false);</span>
+<span class="nc" id="L281">        moderatorMenu.add(redoItem2);</span>
+
+<span class="nc" id="L283">        correctionMenu = new JMenu(LocalText.getText(&quot;CorrectionMainMenu&quot;));</span>
+<span class="nc" id="L284">        correctionMenu.setName(LocalText.getText(&quot;CorrectionMainMenu&quot;));</span>
+<span class="nc" id="L285">        correctionMenu.setMnemonic(KeyEvent.VK_C);</span>
+<span class="nc" id="L286">        correctionMenu.setEnabled(false);</span>
+<span class="nc" id="L287">        moderatorMenu.add(correctionMenu);</span>
+
+<span class="nc" id="L289">        menuBar.add(moderatorMenu);</span>
+
+<span class="nc" id="L291">        specialMenu.setBackground(Color.YELLOW); // Normally not seen</span>
+        // because menu is not
+        // opaque
+<span class="nc" id="L294">        menuBar.add(specialMenu);</span>
+
+<span class="nc bnc" id="L296" title="All 2 branches missed.">        if ( Config.getDevelop() ) {</span>
+<span class="nc" id="L297">            developerMenu = new JMenu(&quot;Developer&quot;);</span>
+<span class="nc" id="L298">            developerMenu.setName(&quot;Developer&quot;);</span>
+<span class="nc" id="L299">            menuBar.add(developerMenu);</span>
+
+<span class="nc" id="L301">            saveLogsItem = new ActionMenuItem(&quot;Save Logs&quot;);</span>
+<span class="nc" id="L302">            saveLogsItem.setName(&quot;Save Logs&quot;);</span>
+<span class="nc" id="L303">            saveLogsItem.setActionCommand(&quot;Save Logs&quot;);</span>
+<span class="nc" id="L304">            saveLogsItem.addActionListener(this);</span>
+<span class="nc" id="L305">            developerMenu.add(saveLogsItem);</span>
+        }
+
+<span class="nc" id="L308">        setJMenuBar(menuBar);</span>
+
+<span class="nc bnc" id="L310" title="All 2 branches missed.">        if (&quot;yes&quot;.equalsIgnoreCase(Config.get(&quot;report.window.open&quot;))) {</span>
+<span class="nc" id="L311">            enableCheckBoxMenuItem(REPORT_CMD);</span>
+        }
+<span class="nc" id="L313">    }</span>
+
+    public void init(GameUIManager gameUIManager) {
+<span class="nc" id="L316">        this.gameUIManager = gameUIManager;</span>
+<span class="nc" id="L317">        this.possibleActions = gameUIManager.getGameManager().getPossibleActions();</span>
+
+<span class="nc" id="L319">        String gameStatusClassName = gameUIManager.getClassName(GuiDef.ClassName.GAME_STATUS);</span>
+        try {
+<span class="nc" id="L321">            Class&lt;? extends GameStatus&gt; gameStatusClass =</span>
+<span class="nc" id="L322">                Class.forName(gameStatusClassName).asSubclass(GameStatus.class);</span>
+<span class="nc" id="L323">            gameStatus = gameStatusClass.newInstance();</span>
+<span class="nc" id="L324">        } catch (Exception e) {</span>
+<span class="nc" id="L325">            log.error(&quot;Cannot instantiate class &quot; + gameStatusClassName, e);</span>
+<span class="nc" id="L326">            System.exit(1);</span>
+<span class="nc" id="L327">        }</span>
+
+<span class="nc" id="L329">        gameStatus.init(this, gameUIManager);</span>
+        // put gameStatus into a JScrollPane
+<span class="nc" id="L331">        JScrollPane gameStatusPane = new JScrollPane(gameStatus);</span>
+
+<span class="nc" id="L333">        buttonPanel = new JPanel();</span>
+
+<span class="nc" id="L335">        passButton = new ActionButton(RailsIcon.PASS);</span>
+<span class="nc" id="L336">        passButton.setMnemonic(KeyEvent.VK_P);</span>
+<span class="nc" id="L337">        buttonPanel.add(passButton);</span>
+<span class="nc" id="L338">        passButton.setActionCommand(DONE_CMD);</span>
+<span class="nc" id="L339">        passButton.addActionListener(this);</span>
+
+<span class="nc" id="L341">        autopassButton = new ActionButton(RailsIcon.AUTOPASS);</span>
+<span class="nc" id="L342">        autopassButton.setMnemonic(KeyEvent.VK_A);</span>
+<span class="nc" id="L343">        buttonPanel.add(autopassButton);</span>
+<span class="nc" id="L344">        autopassButton.setActionCommand(AUTOPASS_CMD);</span>
+<span class="nc" id="L345">        autopassButton.addActionListener(this);</span>
+
+<span class="nc" id="L347">        setSize(800, 300);</span>
+
+<span class="nc" id="L349">        buttonPanel.setBorder(BorderFactory.createEtchedBorder());</span>
+<span class="nc" id="L350">        buttonPanel.setOpaque(false);</span>
+
+<span class="nc" id="L352">        setTitle(LocalText.getText(&quot;GAME_STATUS_TITLE&quot;));</span>
+<span class="nc" id="L353">        pane.setLayout(new BorderLayout());</span>
+<span class="nc" id="L354">        initMenu();</span>
+<span class="nc" id="L355">        pane.add(gameStatusPane, BorderLayout.CENTER);</span>
+<span class="nc" id="L356">        pane.add(buttonPanel, BorderLayout.SOUTH);</span>
+<span class="nc" id="L357">        pane.setOpaque(true);</span>
+<span class="nc" id="L358">        setContentPane(pane);</span>
+<span class="nc" id="L359">        gameUIManager.setMeVisible(this, true);</span>
+<span class="nc" id="L360">        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+
+<span class="nc" id="L362">        gameStatus.addKeyListener(this);</span>
+<span class="nc" id="L363">        buttonPanel.addKeyListener(this);</span>
+<span class="nc" id="L364">        addKeyListener(this);</span>
+
+<span class="nc" id="L366">        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE );</span>
+<span class="nc" id="L367">        final JFrame frame = this;</span>
+<span class="nc" id="L368">        final GameUIManager guiMgr = gameUIManager;</span>
+<span class="nc" id="L369">        addWindowListener(new WindowAdapter () {</span>
+            @Override
+            public void windowClosing(WindowEvent e) {
+<span class="nc bnc" id="L372" title="All 2 branches missed.">                if (JOptionPane.showConfirmDialog(frame, LocalText.getText(&quot;CLOSE_WINDOW&quot;), LocalText.getText(&quot;Select&quot;), JOptionPane.OK_CANCEL_OPTION)</span>
+                        == JOptionPane.OK_OPTION) {
+<span class="nc" id="L374">                    frame.dispose();</span>
+<span class="nc" id="L375">                    guiMgr.terminate();</span>
+                }
+<span class="nc" id="L377">            }</span>
+        });
+<span class="nc" id="L379">        addComponentListener(new ComponentAdapter() {</span>
+            @Override
+            public void componentMoved(ComponentEvent e) {
+<span class="nc" id="L382">                guiMgr.getWindowSettings().set(frame);</span>
+<span class="nc" id="L383">            }</span>
+            @Override
+            public void componentResized(ComponentEvent e) {
+<span class="nc" id="L386">                guiMgr.getWindowSettings().set(frame);</span>
+<span class="nc" id="L387">            }</span>
+        });
+
+<span class="nc" id="L390">        gameUIManager.packAndApplySizing(this);</span>
+<span class="nc" id="L391">    }</span>
+
+    public void initGameActions() {
+        // Check the local Undo/Redo menu items,
+        // which must always be up-to-date.
+<span class="nc" id="L396">        undoItem.setEnabled(false);</span>
+<span class="nc" id="L397">        forcedUndoItem.setEnabled(false);</span>
+<span class="nc" id="L398">        redoItem.setEnabled(false);</span>
+<span class="nc" id="L399">        redoItem2.setEnabled(false);</span>
+        // SAVE, RELOAD, AUTOSAVELOAD are always enabled
+<span class="nc" id="L401">    }</span>
+
+    public void setGameActions() {
+<span class="nc" id="L404">        List&lt;GameAction&gt; gameActions =</span>
+<span class="nc" id="L405">            possibleActions.getType(GameAction.class);</span>
+<span class="nc bnc" id="L406" title="All 2 branches missed.">        if (gameActions != null) {</span>
+<span class="nc bnc" id="L407" title="All 2 branches missed.">            for (GameAction na : gameActions) {</span>
+<span class="nc bnc" id="L408" title="All 4 branches missed.">                switch (na.getMode()) {</span>
+                case UNDO:
+<span class="nc" id="L410">                    undoItem.setEnabled(true);</span>
+<span class="nc" id="L411">                    undoItem.setPossibleAction(na);</span>
+<span class="nc" id="L412">                    break;</span>
+                case FORCED_UNDO:
+<span class="nc" id="L414">                    forcedUndoItem.setEnabled(true);</span>
+<span class="nc" id="L415">                    forcedUndoItem.setPossibleAction(na);</span>
+<span class="nc" id="L416">                    break;</span>
+                case REDO:
+<span class="nc" id="L418">                    redoItem.setEnabled(true);</span>
+<span class="nc" id="L419">                    redoItem.setPossibleAction(na);</span>
+<span class="nc" id="L420">                    redoItem2.setEnabled(true);</span>
+<span class="nc" id="L421">                    redoItem2.setPossibleAction(na);</span>
+<span class="nc" id="L422">                    break;</span>
+                default:
+                    break;
+                }
+<span class="nc" id="L426">            }</span>
+        }
+<span class="nc" id="L428">    }</span>
+
+    public void setCorrectionMenu() {
+
+        // Update the correction  menu
+<span class="nc" id="L433">        correctionMenu.removeAll();</span>
+<span class="nc" id="L434">        correctionMenu.setEnabled(false);</span>
+
+        // currently only shows CorrectionModeActions
+<span class="nc" id="L437">        List&lt;CorrectionModeAction&gt; corrections =</span>
+<span class="nc" id="L438">            possibleActions.getType(CorrectionModeAction.class);</span>
+
+
+<span class="nc bnc" id="L441" title="All 4 branches missed.">        if (corrections != null &amp;&amp; !corrections.isEmpty()) {</span>
+<span class="nc bnc" id="L442" title="All 2 branches missed.">            for (CorrectionModeAction a : corrections) {</span>
+<span class="nc" id="L443">                ActionCheckBoxMenuItem item = new ActionCheckBoxMenuItem (</span>
+<span class="nc" id="L444">                        LocalText.getText(a.getCorrectionName()));</span>
+<span class="nc" id="L445">                item.addActionListener(this);</span>
+<span class="nc" id="L446">                item.addPossibleAction(a);</span>
+<span class="nc" id="L447">                item.setEnabled(true);</span>
+<span class="nc" id="L448">                item.setSelected(a.isActive());</span>
+<span class="nc" id="L449">                correctionMenu.add(item);</span>
+<span class="nc" id="L450">            }</span>
+<span class="nc" id="L451">            correctionMenu.setEnabled(true);</span>
+        }
+<span class="nc" id="L453">    }</span>
+
+    public boolean setupFor(RoundFacade round) {
+
+<span class="nc" id="L457">        currentRound = round;</span>
+
+<span class="nc bnc" id="L459" title="All 2 branches missed.">        if (round instanceof StartRound) {</span>
+<span class="nc" id="L460">            disableCheckBoxMenuItem(MAP_CMD);</span>
+<span class="nc" id="L461">            disableCheckBoxMenuItem(MARKET_CMD);</span>
+<span class="nc bnc" id="L462" title="All 2 branches missed.">        } else if (round instanceof StockRound) {</span>
+<span class="nc" id="L463">            enableCheckBoxMenuItem(MARKET_CMD);</span>
+<span class="nc" id="L464">            disableCheckBoxMenuItem(MAP_CMD);</span>
+<span class="nc bnc" id="L465" title="All 2 branches missed.">        } else if (round instanceof OperatingRound) {</span>
+<span class="nc" id="L466">            enableCheckBoxMenuItem(MAP_CMD);</span>
+<span class="nc" id="L467">            disableCheckBoxMenuItem(MARKET_CMD);</span>
+        }
+
+        // correction actions always possible
+<span class="nc" id="L471">        return gameStatus.initCashCorrectionActions();</span>
+
+    }
+
+    public void updateStatus(boolean myTurn) {
+<span class="nc" id="L476">        passButton.setEnabled(false);</span>
+<span class="nc" id="L477">        autopassButton.setEnabled(false);</span>
+
+<span class="nc bnc" id="L479" title="All 4 branches missed.">        if (!(currentRound instanceof StockRound || currentRound instanceof EndOfGameRound)) {</span>
+<span class="nc" id="L480">            log.debug(&quot;early return: {}&quot;, currentRound);</span>
+<span class="nc" id="L481">            return;</span>
+        }
+
+<span class="nc bnc" id="L484" title="All 2 branches missed.">        if (!myTurn) {</span>
+<span class="nc" id="L485">            gameStatus.initTurn(getCurrentPlayer().getIndex(), false);</span>
+<span class="nc" id="L486">            return;</span>
+        }
+
+        // Moved here from StatusWindow_1856. It's getting generic...
+<span class="nc bnc" id="L490" title="All 2 branches missed.">        if (possibleActions.contains(DiscardTrain.class)) {</span>
+<span class="nc" id="L491">            immediateAction = possibleActions.getType(DiscardTrain.class).get(0);</span>
+<span class="nc" id="L492">            return;</span>
+        }
+
+<span class="nc bnc" id="L495" title="All 2 branches missed.">        if (currentRound instanceof TreasuryShareRound) {</span>
+<span class="nc" id="L496">            setTitle(LocalText.getText(</span>
+                    &quot;TRADE_TREASURY_SHARES_TITLE&quot;,
+<span class="nc" id="L498">                    ((TreasuryShareRound) currentRound).getOperatingCompany().getId()));</span>
+<span class="nc" id="L499">            gameStatus.initTurn(-1, true);</span>
+
+<span class="nc bnc" id="L501" title="All 2 branches missed.">        } else if ((currentRound instanceof ShareSellingRound)) {</span>
+<span class="nc" id="L502">            setTitle(LocalText.getText(</span>
+                    &quot;EMERGENCY_SHARE_SELLING_TITLE&quot;,
+<span class="nc" id="L504">                    (((ShareSellingRound) currentRound).getCompanyNeedingCash().getId())));</span>
+<span class="nc" id="L505">            gameStatus.initTurn(getCurrentPlayer().getIndex(), true);</span>
+<span class="nc" id="L506">            gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());</span>
+
+<span class="nc" id="L508">            int cash =</span>
+<span class="nc" id="L509">                ((ShareSellingRound) currentRound).getRemainingCashToRaise();</span>
+<span class="nc" id="L510">                JOptionPane.showMessageDialog(this, LocalText.getText(</span>
+<span class="nc" id="L511">                        &quot;YouMustRaiseCash&quot;, gameUIManager.format(cash)), &quot;&quot;,</span>
+                        JOptionPane.OK_OPTION);
+<span class="nc bnc" id="L513" title="All 4 branches missed.">        } else if (currentRound instanceof StockRound &amp;&amp; !updateGameSpecificSettings()) {</span>
+
+<span class="nc" id="L515">            setTitle(LocalText.getText(</span>
+                    &quot;STOCK_ROUND_TITLE&quot;,
+<span class="nc" id="L517">                    String.valueOf(((StockRound) currentRound).getStockRoundNumber())));</span>
+<span class="nc" id="L518">            gameStatus.initTurn(getCurrentPlayer().getIndex(), true);</span>
+<span class="nc" id="L519">            gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());</span>
+        }
+
+        // New special action handling
+<span class="nc" id="L523">        List&lt;ActionMenuItem&gt; specialActionItems =</span>
+            new ArrayList&lt;ActionMenuItem&gt;();
+
+        // Special properties
+<span class="nc" id="L527">        List&lt;UseSpecialProperty&gt; sps =</span>
+<span class="nc" id="L528">            possibleActions.getType(UseSpecialProperty.class);</span>
+<span class="nc bnc" id="L529" title="All 2 branches missed.">        for (ActionMenuItem item : specialActionItems) {</span>
+<span class="nc" id="L530">            item.removeActionListener(this);</span>
+<span class="nc" id="L531">        }</span>
+<span class="nc" id="L532">        specialMenu.removeAll();</span>
+<span class="nc" id="L533">        specialActionItems.clear();</span>
+<span class="nc bnc" id="L534" title="All 2 branches missed.">        for (UseSpecialProperty sp : sps) {</span>
+<span class="nc" id="L535">            ActionMenuItem item = new ActionMenuItem(sp.toMenu());</span>
+<span class="nc" id="L536">            item.addActionListener(this);</span>
+<span class="nc" id="L537">            item.setEnabled(false);</span>
+<span class="nc" id="L538">            item.addPossibleAction(sp);</span>
+<span class="nc" id="L539">            item.setEnabled(true);</span>
+<span class="nc" id="L540">            specialActionItems.add(item);</span>
+<span class="nc" id="L541">            specialMenu.add(item);</span>
+<span class="nc" id="L542">        }</span>
+
+        // Request turn
+<span class="nc bnc" id="L545" title="All 2 branches missed.">        if (possibleActions.contains(RequestTurn.class)) {</span>
+<span class="nc bnc" id="L546" title="All 2 branches missed.">            for (RequestTurn action : possibleActions.getType(RequestTurn.class)) {</span>
+<span class="nc" id="L547">                ActionMenuItem item = new ActionMenuItem(action.toMenu());</span>
+<span class="nc" id="L548">                item.addActionListener(this);</span>
+<span class="nc" id="L549">                item.setEnabled(false);</span>
+<span class="nc" id="L550">                item.addPossibleAction(action);</span>
+<span class="nc" id="L551">                item.setEnabled(true);</span>
+<span class="nc" id="L552">                specialActionItems.add(item);</span>
+<span class="nc" id="L553">                specialMenu.add(item);</span>
+<span class="nc" id="L554">            }</span>
+        }
+
+        // Must Special menu be enabled?
+<span class="nc bnc" id="L558" title="All 2 branches missed.">        boolean enabled = specialActionItems.size() &gt; 0;</span>
+<span class="nc" id="L559">        specialMenu.setOpaque(enabled);</span>
+<span class="nc" id="L560">        specialMenu.setEnabled(enabled);</span>
+<span class="nc" id="L561">        specialMenu.repaint();</span>
+
+<span class="nc" id="L563">        List&lt;NullAction&gt; inactiveItems =</span>
+<span class="nc" id="L564">            possibleActions.getType(NullAction.class);</span>
+<span class="nc bnc" id="L565" title="All 2 branches missed.">        if (inactiveItems != null) {</span>
+<span class="nc bnc" id="L566" title="All 2 branches missed.">            for (NullAction na : inactiveItems) {</span>
+<span class="nc bnc" id="L567" title="All 4 branches missed.">                switch (na.getMode()) {</span>
+                case PASS:
+<span class="nc" id="L569">                    passButton.setRailsIcon(RailsIcon.PASS);</span>
+<span class="nc" id="L570">                    passButton.setEnabled(true);</span>
+<span class="nc" id="L571">                    passButton.setActionCommand(PASS_CMD);</span>
+<span class="nc" id="L572">                    passButton.setMnemonic(KeyEvent.VK_P);</span>
+<span class="nc" id="L573">                    passButton.setPossibleAction(na);</span>
+<span class="nc" id="L574">                    break;</span>
+                case DONE:
+<span class="nc" id="L576">                    passButton.setRailsIcon(RailsIcon.DONE);</span>
+<span class="nc" id="L577">                    passButton.setEnabled(true);</span>
+<span class="nc" id="L578">                    passButton.setActionCommand(DONE_CMD);</span>
+<span class="nc" id="L579">                    passButton.setMnemonic(KeyEvent.VK_D);</span>
+<span class="nc" id="L580">                    passButton.setPossibleAction(na);</span>
+<span class="nc" id="L581">                    break;</span>
+                case AUTOPASS:
+<span class="nc" id="L583">                    autopassButton.setEnabled(true);</span>
+<span class="nc" id="L584">                    autopassButton.setPossibleAction(na);</span>
+<span class="nc" id="L585">                    break;</span>
+                default:
+                    break;
+                }
+<span class="nc" id="L589">            }</span>
+        }
+
+<span class="nc bnc" id="L592" title="All 2 branches missed.">        if (currentRound instanceof EndOfGameRound) endOfGame();</span>
+
+<span class="nc" id="L594">        pack();</span>
+
+<span class="nc" id="L596">        toFront();</span>
+<span class="nc" id="L597">    }</span>
+
+    public void disableButtons () {
+<span class="nc" id="L600">        passButton.setEnabled(false);</span>
+<span class="nc" id="L601">        autopassButton.setEnabled(false);</span>
+<span class="nc" id="L602">    }</span>
+
+    /** Stub, may be overridden in game-specific subclasses */
+    protected boolean updateGameSpecificSettings() {
+<span class="nc" id="L606">        return false;</span>
+    }
+
+    private void enableCheckBoxMenuItem(String name) {
+<span class="nc bnc" id="L610" title="All 2 branches missed.">        for (int x = 0; x &lt; optMenu.getMenuComponentCount(); x++) {</span>
+            try {
+<span class="nc bnc" id="L612" title="All 2 branches missed.">                if (optMenu.getMenuComponent(x).getName().equals(name)) {</span>
+<span class="nc" id="L613">                    ((JCheckBoxMenuItem) optMenu.getMenuComponent(x)).setSelected(true);</span>
+                }
+<span class="nc" id="L615">            } catch (NullPointerException e) {</span>
+                // The separator has null name. Har Har Har.
+<span class="nc" id="L617">            }</span>
+        }
+<span class="nc" id="L619">    }</span>
+
+    private void disableCheckBoxMenuItem(String name) {
+<span class="nc bnc" id="L622" title="All 2 branches missed.">        for (int x = 0; x &lt; optMenu.getMenuComponentCount(); x++) {</span>
+            try {
+<span class="nc bnc" id="L624" title="All 2 branches missed.">                if (optMenu.getMenuComponent(x).getName().equals(name)) {</span>
+<span class="nc" id="L625">                    ((JCheckBoxMenuItem) optMenu.getMenuComponent(x)).setSelected(false);</span>
+                }
+<span class="nc" id="L627">            } catch (NullPointerException e) {</span>
+                // The separator has null name. Har Har Har.
+<span class="nc" id="L629">            }</span>
+        }
+<span class="nc" id="L631">    }</span>
+
+    public void actionPerformed(ActionEvent actor) {
+<span class="nc" id="L634">        String command = actor.getActionCommand();</span>
+<span class="nc" id="L635">        List&lt;PossibleAction&gt; actions = null;</span>
+<span class="nc bnc" id="L636" title="All 2 branches missed.">        if (actor.getSource() instanceof ActionTaker) {</span>
+<span class="nc" id="L637">            actions = ((ActionTaker) actor.getSource()).getPossibleActions();</span>
+        }
+<span class="nc" id="L639">        PossibleAction executedAction = null;</span>
+<span class="nc bnc" id="L640" title="All 4 branches missed.">        if (actions != null &amp;&amp; actions.size() &gt; 0) {</span>
+<span class="nc" id="L641">            executedAction = actions.get(0);</span>
+        }
+
+<span class="nc bnc" id="L644" title="All 2 branches missed.">        if (command.equals(BUY_CMD)) {</span>
+<span class="nc" id="L645">            process(executedAction);</span>
+<span class="nc bnc" id="L646" title="All 2 branches missed.">        } else if (command.equals(SELL_CMD)) {</span>
+<span class="nc" id="L647">            process(executedAction);</span>
+<span class="nc bnc" id="L648" title="All 4 branches missed.">        } else if (command.equals(DONE_CMD) || command.equals(PASS_CMD)</span>
+<span class="nc bnc" id="L649" title="All 2 branches missed.">                || command.equals(AUTOPASS_CMD)) {</span>
+<span class="nc bnc" id="L650" title="All 2 branches missed.">            if (gameUIManager.isGameOver()) {</span>
+<span class="nc" id="L651">                System.exit(0);</span>
+            }
+<span class="nc" id="L653">            process(executedAction);</span>
+
+<span class="nc bnc" id="L655" title="All 4 branches missed.">        } else if (executedAction instanceof UseSpecialProperty</span>
+                || executedAction instanceof RequestTurn) {
+<span class="nc" id="L657">            process(executedAction);</span>
+
+<span class="nc bnc" id="L659" title="All 2 branches missed.">        } else if (command.equals(QUIT_CMD)) {</span>
+<span class="nc" id="L660">            gameUIManager.terminate();</span>
+<span class="nc bnc" id="L661" title="All 2 branches missed.">        } else if (command.equals(REPORT_CMD)) {</span>
+<span class="nc" id="L662">            gameUIManager.reportWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());</span>
+<span class="nc" id="L663">            gameUIManager.reportWindow.scrollDown();</span>
+<span class="nc" id="L664">            return;</span>
+<span class="nc bnc" id="L665" title="All 2 branches missed.">        } else if (command.equals(MARKET_CMD)) {</span>
+<span class="nc" id="L666">            FXStockChartWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());</span>
+<span class="nc bnc" id="L667" title="All 2 branches missed.">        } else if (command.equals(MAP_CMD)) {</span>
+<span class="nc" id="L668">            gameUIManager.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());</span>
+<span class="nc bnc" id="L669" title="All 2 branches missed.">        } else if (command.equals(CONFIG_CMD)) {</span>
+<span class="nc" id="L670">            gameUIManager.configWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());</span>
+<span class="nc bnc" id="L671" title="All 2 branches missed.">        } else if (command.equals(AUTOSAVELOAD_CMD)) {</span>
+<span class="nc" id="L672">            gameUIManager.autoSaveLoadGame();</span>
+<span class="nc bnc" id="L673" title="All 2 branches missed.">        } else if (command.equals(SAVESTATUS_CMD)) {</span>
+<span class="nc" id="L674">            gameUIManager.saveGameStatus();</span>
+<span class="nc bnc" id="L675" title="All 2 branches missed.">        } else if ( command.equals(&quot;Save Logs&quot;)) {</span>
+<span class="nc" id="L676">            gameUIManager.saveLogs();</span>
+<span class="nc bnc" id="L677" title="All 2 branches missed.">        } else if (executedAction == null) {</span>
+            ;
+<span class="nc bnc" id="L679" title="All 2 branches missed.">        } else if (executedAction instanceof GameAction) {</span>
+<span class="nc bnc" id="L680" title="All 4 branches missed.">            switch (((GameAction) executedAction).getMode()) {</span>
+            case SAVE:
+<span class="nc" id="L682">                gameUIManager.saveGame((GameAction) executedAction);</span>
+<span class="nc" id="L683">                break;</span>
+            case RELOAD:
+<span class="nc" id="L685">                gameUIManager.reloadGame((GameAction) executedAction);</span>
+<span class="nc" id="L686">                break;</span>
+            case EXPORT:
+<span class="nc" id="L688">                gameUIManager.exportGame((GameAction) executedAction);</span>
+<span class="nc" id="L689">                break;</span>
+            default:
+<span class="nc" id="L691">                process(executedAction);</span>
+<span class="nc" id="L692">                break;</span>
+            }
+        } else {
+            // Unknown action, let UIManager catch it
+<span class="nc" id="L696">            process (executedAction);</span>
+        }
+<span class="nc" id="L698">    }</span>
+
+    public boolean process(PossibleAction executedAction) {
+<span class="nc bnc" id="L701" title="All 2 branches missed.">        if (executedAction == null) {</span>
+<span class="nc" id="L702">            JOptionPane.showMessageDialog(this, &quot;ERROR: no action found!&quot;);</span>
+<span class="nc" id="L703">            return false;</span>
+        }
+
+<span class="nc" id="L706">        return gameUIManager.processAction(executedAction);</span>
+    }
+
+    public boolean processImmediateAction() {
+<span class="nc bnc" id="L710" title="All 2 branches missed.">        if (immediateAction instanceof DiscardTrain) {</span>
+            // Make a local copy and discard the original,
+            // so that it's not going to loop.
+<span class="nc" id="L713">            DiscardTrain nextAction = (DiscardTrain) immediateAction;</span>
+<span class="nc" id="L714">            immediateAction = null;</span>
+<span class="nc" id="L715">            gameUIManager.discardTrains (nextAction);</span>
+        }
+<span class="nc" id="L717">        return true;</span>
+    }
+
+    public void setPassButton(NullAction action) {
+<span class="nc bnc" id="L721" title="All 2 branches missed.">        if (action != null) {</span>
+<span class="nc" id="L722">            NullAction.Mode mode = action.getMode();</span>
+<span class="nc bnc" id="L723" title="All 2 branches missed.">            if (mode == NullAction.Mode.PASS) {</span>
+<span class="nc" id="L724">                passButton.setRailsIcon(RailsIcon.PASS);</span>
+<span class="nc bnc" id="L725" title="All 2 branches missed.">            } else if (mode == NullAction.Mode.DONE) {</span>
+<span class="nc" id="L726">                passButton.setRailsIcon(RailsIcon.DONE);</span>
+            }
+<span class="nc" id="L728">            passButton.setEnabled(true);</span>
+<span class="nc" id="L729">            passButton.setVisible(true);</span>
+<span class="nc" id="L730">            passButton.addPossibleAction(action);</span>
+<span class="nc" id="L731">        } else {</span>
+<span class="nc" id="L732">            passButton.setEnabled(false);</span>
+<span class="nc" id="L733">            passButton.setVisible(false);</span>
+<span class="nc" id="L734">            passButton.clearPossibleActions();</span>
+        }
+<span class="nc" id="L736">    }</span>
+
+    public GameStatus getGameStatus() {
+<span class="nc" id="L739">        return gameStatus;</span>
+    }
+
+    public static void uncheckMenuItemBox(String itemName) {
+<span class="nc" id="L743">        int count = optMenu.getMenuComponentCount();</span>
+
+<span class="nc bnc" id="L745" title="All 2 branches missed.">        for (int i = 0; i &lt; count; i++) {</span>
+            try {
+<span class="nc bnc" id="L747" title="All 2 branches missed.">                if (optMenu.getMenuComponent(i).getName().equalsIgnoreCase(</span>
+                        itemName)) {
+<span class="nc" id="L749">                    ((JCheckBoxMenuItem) optMenu.getMenuComponent(i)).setSelected(false);</span>
+<span class="nc" id="L750">                    optMenu.invalidate();</span>
+                }
+<span class="nc" id="L752">            } catch (NullPointerException e) {</span>
+                // Seperators are null
+<span class="nc" id="L754">            }</span>
+        }
+<span class="nc" id="L756">    }</span>
+
+    public void finishRound() {
+<span class="nc" id="L759">        setTitle(LocalText.getText(&quot;GAME_STATUS_TITLE&quot;));</span>
+        //Fixes the behaviour that closed Minors didnt
+        //vanish from the display after the end of a forced
+        //Formationround in 1835
+        //Martin 19.7.2017
+<span class="nc" id="L764">        gameStatus.recreate();</span>
+<span class="nc" id="L765">        gameStatus.initTurn(-1, true);</span>
+<span class="nc" id="L766">        passButton.setEnabled(false);</span>
+<span class="nc" id="L767">    }</span>
+
+    /**
+     * End of Game processing
+     */
+    public void endOfGame() {
+        //        setVisible(true);
+        //        gameUIManager.reportWindow.setVisible(true);
+        //        gameUIManager.stockChart.setVisible(true);
+
+<span class="nc" id="L777">        setTitle(LocalText.getText(&quot;EoGTitle&quot;));</span>
+
+        // Enable Passbutton
+<span class="nc" id="L780">        passButton.setEnabled(true);</span>
+<span class="nc" id="L781">        passButton.setRailsIcon(RailsIcon.END_OF_GAME_CLOSE_ALL_WINDOWS);</span>
+
+<span class="nc" id="L783">        gameUIManager.orWindow.finish();</span>
+<span class="nc" id="L784">    }</span>
+
+    public Player getCurrentPlayer () {
+<span class="nc" id="L787">        return gameUIManager.getCurrentPlayer();</span>
+    }
+
+    public void endOfGameReport() {
+
+<span class="nc" id="L792">        GameManager gm = gameUIManager.getGameManager();</span>
+
+<span class="nc bnc" id="L794" title="All 2 branches missed.">        if (gm.getGameOverReportedUI())</span>
+<span class="nc" id="L795">            return;</span>
+        else
+<span class="nc" id="L797">            gm.setGameOverReportedUI(true);</span>
+
+<span class="nc" id="L799">        JOptionPane.showMessageDialog(this,</span>
+<span class="nc" id="L800">                LocalText.getText(&quot;EoGPressButton&quot;),</span>
+<span class="nc" id="L801">                LocalText.getText(&quot;EoGFinalRanking&quot;),</span>
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+
+<span class="nc bnc" id="L806" title="All 2 branches missed.">        if (!Config.getDevelop()) {</span>
+            // show game report line by line
+<span class="nc" id="L808">            List&lt;String&gt; gameReport = gm.getGameReport();</span>
+<span class="nc" id="L809">            Collections.reverse(gameReport);</span>
+<span class="nc" id="L810">            StringBuilder report = new StringBuilder();</span>
+<span class="nc bnc" id="L811" title="All 2 branches missed.">            for (String s:gameReport) {</span>
+<span class="nc" id="L812">                report.insert(0, s + &quot;\n&quot;);</span>
+<span class="nc" id="L813">                JOptionPane.showMessageDialog(this,</span>
+                        report,
+<span class="nc" id="L815">                        LocalText.getText(&quot;EoGFinalRanking&quot;),</span>
+                        JOptionPane.PLAIN_MESSAGE
+                );
+<span class="nc" id="L818">            }</span>
+        }
+<span class="nc" id="L820">    }</span>
+
+<span class="nc" id="L822">    public void keyReleased(KeyEvent e) {}</span>
+
+<span class="nc" id="L824">    public void keyPressed(KeyEvent e) {}</span>
+
+<span class="nc" id="L826">    public void keyTyped(KeyEvent e) {}</span>
+
+    public void updatePlayerOrder(List&lt;String&gt; newPlayerNames) {
+<span class="nc" id="L829">       gameStatus.updatePlayerOrder(newPlayerNames);</span>
+<span class="nc" id="L830">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

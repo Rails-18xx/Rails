@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BuyCertificate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">rails.game.action</a> &gt; <span class="el_source">BuyCertificate.java</span></div><h1>BuyCertificate.java</h1><pre class="source lang-java linenums">package rails.game.action;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
+import rails.game.specific._1880.StartCompany_1880;
+
+import com.google.common.base.Objects;
+
+import net.sf.rails.game.*;
+import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.model.PortfolioOwner;
+import net.sf.rails.util.RailsObjects;
+
+/**
+ * 
+ * Rails 2.0: Updated equals and toString methods
+ */
+public class BuyCertificate extends PossibleAction {
+
+    // Server-side settings
+
+    /* Some obsolete properties, which are only retained for backwards compatibility
+     * (i.e. to remain able to load older saved files).
+     * The certificate was in fact only used to find the below replacement
+     * attributes. It was NOT actually used to select the bought certificate!
+     */
+<span class="pc" id="L29">    transient protected PublicCertificate certificate = null;</span>
+<span class="pc" id="L30">    protected String certUniqueId = null;</span>
+
+    /* Replacement for the above.*/
+    transient protected PublicCompany company;
+    protected String companyName;
+    protected int sharePerCert; // Share % per buyable certificate.
+
+    // FIXME: We have to recreate the portfolio name
+    transient protected PortfolioModel from;
+    protected String fromName; // Old: portfolio name. New: portfolio unique name.
+    protected int price;
+    protected int maximumNumber;
+
+    // Client-side settings
+<span class="pc" id="L44">    protected int numberBought = 0;</span>
+
+    public static final long serialVersionUID = 1L;
+
+    public BuyCertificate(PublicCompany company, int sharePerCert,
+            PortfolioOwner from,
+            int price, int maximumNumber) {
+<span class="fc" id="L51">        super(null); // not defined by an activity yet</span>
+<span class="fc" id="L52">        this.company = company;</span>
+<span class="fc" id="L53">        this.sharePerCert = sharePerCert;</span>
+<span class="fc" id="L54">        this.from = from.getPortfolioModel();</span>
+<span class="fc" id="L55">        this.fromName = this.from.getUniqueName();</span>
+<span class="fc" id="L56">        this.price = price;</span>
+<span class="fc" id="L57">        this.maximumNumber = maximumNumber;</span>
+
+<span class="fc" id="L59">        companyName = company.getId();</span>
+<span class="fc" id="L60">    }</span>
+
+    /** Buy a certificate from some owner at a given price */
+    public BuyCertificate(PublicCompany company, int sharePerCert,
+            PortfolioOwner from,
+            int price) {
+<span class="fc" id="L66">        this(company, sharePerCert, from, price, 1);</span>
+<span class="fc" id="L67">    }</span>
+
+    /** Required for deserialization */
+    public BuyCertificate() {
+<span class="nc" id="L71">        super(null); // not defined by an activity yet</span>
+<span class="nc" id="L72">    }</span>
+
+
+    public PortfolioModel getFromPortfolio() {
+<span class="fc" id="L76">        return from;</span>
+    }
+
+    /**
+     * @return Returns the maximumNumber.
+     */
+    public int getMaximumNumber() {
+<span class="nc" id="L83">        return maximumNumber;</span>
+    }
+
+    /**
+     * @return Returns the price.
+     */
+    public int getPrice() {
+<span class="fc" id="L90">        return price;</span>
+    }
+
+    public PublicCompany getCompany() {
+<span class="fc" id="L94">        return company;</span>
+    }
+
+    public String getCompanyName() {
+<span class="nc" id="L98">        return companyName;</span>
+    }
+
+    public int getSharePerCertificate() {
+<span class="fc" id="L102">        return sharePerCert;</span>
+    }
+
+    public int getSharesPerCertificate() {
+<span class="nc" id="L106">        return sharePerCert / company.getShareUnit();</span>
+    }
+
+    public int getNumberBought() {
+<span class="fc" id="L110">        return numberBought;</span>
+    }
+
+    public void setNumberBought(int numberBought) {
+<span class="nc" id="L114">        this.numberBought = numberBought;</span>
+<span class="nc" id="L115">    }</span>
+
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (pa == this) return true;</span>
+        //  super checks both class identity and super class attributes
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (!super.equalsAs(pa, asOption)) return false; </span>
+
+        // check asOption attributes
+<span class="fc" id="L125">        BuyCertificate action = (BuyCertificate)pa; </span>
+<span class="fc" id="L126">        boolean options = </span>
+                // TODO: This is commented out as the certificate is not required anymore
+                // Objects.equal(this.certificate, action.certificate)
+<span class="fc bfc" id="L129" title="All 2 branches covered.">                Objects.equal(this.company, action.company) </span>
+                // In StartCompany_1880 the sharePerCert can differ
+<span class="pc bpc" id="L131" title="1 of 4 branches missed.">                &amp;&amp; (Objects.equal(this.sharePerCert, action.sharePerCert) || this instanceof StartCompany_1880)</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">                &amp;&amp; Objects.equal(this.from, action.from)</span>
+                // In StartCompany the price can differ
+<span class="pc bpc" id="L134" title="1 of 4 branches missed.">                &amp;&amp; (Objects.equal(this.price, action.price) || this instanceof StartCompany)</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">                &amp;&amp; Objects.equal(this.maximumNumber, action.maximumNumber)</span>
+        ;
+        
+        // finish if asOptions check
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if (asOption) return options;</span>
+        
+        // check asAction attributes
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        return options</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.numberBought, action.numberBought)</span>
+        ;
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L149">        return super.toString() + </span>
+<span class="fc" id="L150">                RailsObjects.stringHelper(this)</span>
+<span class="fc" id="L151">                    .addToString(&quot;certificate&quot;, certificate)</span>
+<span class="fc" id="L152">                    .addToString(&quot;company&quot;, company)</span>
+<span class="fc" id="L153">                    .addToString(&quot;sharePerCert&quot;, sharePerCert)</span>
+<span class="fc" id="L154">                    .addToString(&quot;fromName&quot;, fromName)</span>
+<span class="fc" id="L155">                    .addToString(&quot;from&quot;, from)</span>
+<span class="fc" id="L156">                    .addToString(&quot;price&quot;, price)</span>
+<span class="fc" id="L157">                    .addToString(&quot;maximumNumber&quot;, maximumNumber)</span>
+<span class="fc" id="L158">                    .addToStringOnlyActed(&quot;numberBought&quot;, numberBought)</span>
+<span class="fc" id="L159">                    .toString()</span>
+        ;
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+        //in.defaultReadObject();
+        // Custom reading for backwards compatibility
+<span class="fc" id="L167">        ObjectInputStream.GetField fields = in.readFields();</span>
+
+<span class="fc" id="L169">        certUniqueId = (String) fields.get(&quot;certUniqueId&quot;, null);</span>
+<span class="fc" id="L170">        companyName = (String) fields.get(&quot;companyName&quot;, null);</span>
+<span class="fc" id="L171">        fromName = (String) fields.get(&quot;fromName&quot;, fromName);</span>
+<span class="fc" id="L172">        price = fields.get(&quot;price&quot;, price);</span>
+<span class="fc" id="L173">        maximumNumber = fields.get(&quot;maximumNumber&quot;, maximumNumber);</span>
+<span class="fc" id="L174">        sharePerCert = fields.get(&quot;sharePerCert&quot;, -1);</span>
+
+<span class="fc" id="L176">        numberBought = fields.get(&quot;numberBought&quot;, numberBought);</span>
+
+<span class="fc" id="L178">        RailsRoot root = RailsRoot.getInstance();</span>
+
+        /* Check for aliases (old company names) */
+<span class="fc" id="L181">        CompanyManager companyManager = root.getCompanyManager();</span>
+<span class="fc" id="L182">        companyName = companyManager.checkAlias (companyName);</span>
+
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        if (certUniqueId != null) {</span>
+            // Old style
+<span class="fc" id="L186">            certUniqueId = companyManager.checkAliasInCertId(certUniqueId);</span>
+<span class="fc" id="L187">            certificate = PublicCertificate.getByUniqueId(certUniqueId);</span>
+            // TODO: This function needs a compatible replacement 
+<span class="fc" id="L189">            from = getGameManager().getPortfolioByName(fromName);</span>
+<span class="fc" id="L190">            company = certificate.getCompany();</span>
+<span class="fc" id="L191">            companyName = company.getId();</span>
+<span class="fc" id="L192">            sharePerCert = certificate.getShare();</span>
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">        } else if (companyName != null) {</span>
+            // New style (since Rails.1.3.1)
+<span class="fc" id="L195">            company = root.getCompanyManager().getPublicCompany(companyName);</span>
+            // TODO: This function needs a compatible replacement 
+<span class="fc" id="L197">            from = getGameManager().getPortfolioByUniqueName(fromName);</span>
+            // We don't need the certificate anymore.
+        }
+
+
+<span class="fc" id="L202">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

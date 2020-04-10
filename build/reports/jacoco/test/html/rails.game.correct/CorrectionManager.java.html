@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CorrectionManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">rails.game.correct</a> &gt; <span class="el_source">CorrectionManager.java</span></div><h1>CorrectionManager.java</h1><pre class="source lang-java linenums">package rails.game.correct;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.RailsAbstractItem;
+import net.sf.rails.game.state.BooleanState;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+public abstract class CorrectionManager extends RailsAbstractItem {
+
+    private final CorrectionType correctionType;
+<span class="fc" id="L20">    private final BooleanState active = BooleanState.create(this, &quot;active&quot;);</span>
+
+<span class="fc" id="L22">    private static final Logger log =</span>
+<span class="fc" id="L23">        LoggerFactory.getLogger(CorrectionManager.class);</span>
+
+    protected CorrectionManager(GameManager parent, CorrectionType ct) {
+<span class="fc" id="L26">        super(parent, ct.name());</span>
+<span class="fc" id="L27">        correctionType = ct;</span>
+<span class="fc" id="L28">    }</span>
+
+    @Override
+    public GameManager getParent() {
+<span class="fc" id="L32">        return (GameManager)super.getParent();</span>
+    }
+
+    public CorrectionType getCorrectionType() {
+<span class="fc" id="L36">        return correctionType;</span>
+    }
+
+    public boolean isActive(){
+<span class="fc" id="L40">        return active.value();</span>
+    }
+
+    public List&lt;CorrectionAction&gt; createCorrections() {
+
+<span class="fc" id="L45">        List&lt;CorrectionAction&gt; actions = new ArrayList&lt;CorrectionAction&gt;();</span>
+<span class="fc" id="L46">        actions.add(new CorrectionModeAction(getCorrectionType(), isActive()));</span>
+
+<span class="fc" id="L48">        return actions;</span>
+    }
+
+    /** calls all executeAction */
+    public boolean executeCorrection(CorrectionAction action){
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        if (action instanceof CorrectionModeAction)</span>
+<span class="fc" id="L54">            return execute((CorrectionModeAction) action);</span>
+        else {
+<span class="nc" id="L56">            log.debug(&quot;This correction action is not registered.&quot;);</span>
+<span class="nc" id="L57">            return false;</span>
+        }
+    }
+
+    private boolean execute(CorrectionModeAction action) {
+
+
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (!isActive()) {</span>
+<span class="fc" id="L65">            String text = LocalText.getText(&quot;CorrectionModeActivate&quot;,</span>
+<span class="fc" id="L66">                    getRoot().getPlayerManager().getCurrentPlayer().getId(),</span>
+<span class="fc" id="L67">                    LocalText.getText(getCorrectionType().name())</span>
+            );
+<span class="fc" id="L69">            ReportBuffer.add(this, text);</span>
+<span class="fc" id="L70">            DisplayBuffer.add(this, text);</span>
+<span class="fc" id="L71">        }</span>
+        else {
+<span class="fc" id="L73">            ReportBuffer.add(this, LocalText.getText(&quot;CorrectionModeDeactivate&quot;,</span>
+<span class="fc" id="L74">                    getRoot().getPlayerManager().getCurrentPlayer().getId(),</span>
+<span class="fc" id="L75">                    LocalText.getText(getCorrectionType().name())</span>
+            ));
+        }
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        active.set(!active.value());</span>
+
+<span class="fc" id="L80">        return true;</span>
+    }
+
+    /* dummy to capture the non-supported actions */
+    protected boolean execute(CorrectionAction action) {
+<span class="nc" id="L85">        log.debug(&quot;The chosen action is not implemented in the registered manager&quot;);</span>
+<span class="nc" id="L86">        return false;</span>
+    }
+
+
+    public boolean equals(CorrectionManager cm) {
+<span class="nc bnc" id="L91" title="All 4 branches missed.">        return (this.getParent() == cm.getParent()</span>
+                &amp;&amp; this.correctionType == cm.correctionType);
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

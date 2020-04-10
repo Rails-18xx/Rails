@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameUIManager_18EU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.gamespecific._18EU</a> &gt; <span class="el_source">GameUIManager_18EU.java</span></div><h1>GameUIManager_18EU.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.gamespecific._18EU;
+
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
+import rails.game.action.MergeCompanies;
+import rails.game.specific._18EU.StartCompany_18EU;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Stop;
+import net.sf.rails.ui.swing.GameUIManager;
+import net.sf.rails.ui.swing.elements.NonModalDialog;
+import net.sf.rails.ui.swing.elements.RadioButtonDialog;
+
+
+<span class="nc" id="L17">public class GameUIManager_18EU extends GameUIManager {</span>
+
+    // Keys of dialogs owned by this class.
+    public static final String SELECT_CONVERTING_MINOR = &quot;SelectConvertingMinor&quot;;
+    public static final String SELECT_MERGING_MAJOR = &quot;SelectMergingMajor&quot;;
+    public static final String SELECT_HOME_STATION_DIALOG = &quot;SelectHomeStation&quot;;
+
+    @Override
+    public void dialogActionPerformed () {
+
+<span class="nc" id="L27">        String key = &quot;&quot;;</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog)currentDialog).getKey();</span>
+
+        // Check for the dialogs that are postprocessed in this class.
+<span class="nc bnc" id="L31" title="All 2 branches missed.">        if (SELECT_MERGING_MAJOR.equals(key)) {</span>
+
+            // A major company has been selected (or not) to merge a minor into.
+<span class="nc" id="L34">            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;</span>
+<span class="nc" id="L35">            MergeCompanies action = (MergeCompanies) currentDialogAction;</span>
+<span class="nc" id="L36">            PublicCompany minor = action.getMergingCompany();</span>
+
+<span class="nc" id="L38">            int choice = dialog.getSelectedOption();</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">            if (choice &lt; 0) return;</span>
+
+<span class="nc" id="L41">            PublicCompany major = action.getTargetCompanies().get(choice);</span>
+<span class="nc" id="L42">            action.setSelectedTargetCompany(major);</span>
+
+<span class="nc bnc" id="L44" title="All 4 branches missed.">            if (major != null &amp;&amp; action.canReplaceToken(choice)) {</span>
+
+<span class="nc" id="L46">                boolean replaceToken =</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">                    JOptionPane.showConfirmDialog(statusWindow, LocalText.getText(</span>
+                            &quot;WantToReplaceToken&quot;,
+<span class="nc" id="L49">                                minor.getId(),</span>
+<span class="nc" id="L50">                                major.getId() ),</span>
+<span class="nc" id="L51">                            LocalText.getText(&quot;PleaseSelect&quot;),</span>
+                            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+<span class="nc" id="L53">                action.setReplaceToken(replaceToken);</span>
+            }
+
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        } else if (SELECT_CONVERTING_MINOR.equals(key)) {</span>
+
+            // A minor has been selected (or not) to merge into a starting company before phase 6.
+<span class="nc" id="L59">            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;</span>
+<span class="nc" id="L60">            StartCompany_18EU action = (StartCompany_18EU) currentDialogAction;</span>
+<span class="nc" id="L61">            int choice = dialog.getSelectedOption();</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">            if (choice &lt; 0) {</span>
+<span class="nc" id="L63">                currentDialogAction = null;</span>
+            } else {
+<span class="nc" id="L65">                PublicCompany minor = action.getMinorsToMerge().get(choice);</span>
+<span class="nc" id="L66">                action.setChosenMinor(minor);</span>
+            }
+
+<span class="nc bnc" id="L69" title="All 4 branches missed.">        } else if (COMPANY_START_PRICE_DIALOG.equals(key)</span>
+                &amp;&amp; currentDialogAction instanceof StartCompany_18EU) {
+
+            // A start price has been selected (or not) for a stating major company.
+<span class="nc" id="L73">            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;</span>
+<span class="nc" id="L74">            StartCompany_18EU action = (StartCompany_18EU) currentDialogAction;</span>
+
+<span class="nc" id="L76">            int index = dialog.getSelectedOption();</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            if (index &lt; 0) {</span>
+<span class="nc" id="L78">                currentDialogAction = null;</span>
+<span class="nc" id="L79">                return;</span>
+            }
+<span class="nc" id="L81">            action.setStartPrice(action.getStartPrices()[index]);</span>
+
+            // Set up another dialog for the next step
+<span class="nc" id="L84">            List&lt;PublicCompany&gt; minors = action.getMinorsToMerge();</span>
+
+<span class="nc bnc" id="L86" title="All 4 branches missed.">            if (minors != null &amp;&amp; !minors.isEmpty()) {</span>
+                // Up to phase 6, a minor must be exchanged
+<span class="nc" id="L88">                String[] options = new String[minors.size()];</span>
+<span class="nc" id="L89">                int i = 0;</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">                    for (PublicCompany minor : minors) {</span>
+<span class="nc" id="L91">                    options[i++] =</span>
+<span class="nc" id="L92">                        &quot;Minor &quot; + minor.getId() + &quot; &quot;</span>
+<span class="nc" id="L93">                        + minor.getLongName();</span>
+<span class="nc" id="L94">                }</span>
+<span class="nc" id="L95">                dialog = new RadioButtonDialog (SELECT_CONVERTING_MINOR,</span>
+                        this,
+                        statusWindow,
+<span class="nc" id="L98">                        LocalText.getText(&quot;PleaseSelect&quot;),</span>
+<span class="nc" id="L99">                        LocalText.getText(</span>
+                                &quot;SelectMinorToMerge&quot;,
+<span class="nc" id="L101">                                action.getCompanyName()),</span>
+                                options, -1);
+<span class="nc" id="L103">                setCurrentDialog(dialog, action);</span>
+<span class="nc" id="L104">                statusWindow.disableButtons();</span>
+<span class="nc" id="L105">                return;</span>
+            } else {
+
+                // From phase 6, no minors are involved, but a home station must be chosen
+<span class="nc" id="L109">                List&lt;Stop&gt; cities = action.getAvailableHomeStations();</span>
+<span class="nc bnc" id="L110" title="All 4 branches missed.">                if (cities != null &amp;&amp; !cities.isEmpty()) {</span>
+<span class="nc" id="L111">                    String[] options = new String[cities.size()];</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                    for (int i = 0; i &lt; options.length; i++) {</span>
+<span class="nc" id="L113">                        options[i] = cities.get(i).toString();</span>
+                    }
+<span class="nc" id="L115">                    dialog = new RadioButtonDialog (SELECT_HOME_STATION_DIALOG,</span>
+                            this,
+                            statusWindow,
+<span class="nc" id="L118">                            LocalText.getText(&quot;PleaseSelect&quot;),</span>
+<span class="nc" id="L119">                            LocalText.getText(</span>
+                                    &quot;SelectHomeStation&quot;,
+<span class="nc" id="L121">                                    action.getCompanyName()),</span>
+                                    options, -1);
+<span class="nc" id="L123">                    setCurrentDialog(dialog, action);</span>
+<span class="nc" id="L124">                    statusWindow.disableButtons();</span>
+<span class="nc" id="L125">                    return;</span>
+                }
+            }
+
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        } else if (SELECT_HOME_STATION_DIALOG.equals(key)) {</span>
+
+<span class="nc" id="L131">            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;</span>
+<span class="nc" id="L132">            StartCompany_18EU action = (StartCompany_18EU) currentDialogAction;</span>
+
+<span class="nc bnc" id="L134" title="All 2 branches missed.">            if (action.getAvailableHomeStations() != null) {</span>
+                // From phase 6: a home station has been selected (or not)
+
+<span class="nc" id="L137">                int index = dialog.getSelectedOption();</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                if (index &lt; 0) {</span>
+<span class="nc" id="L139">                    currentDialogAction = null;</span>
+<span class="nc" id="L140">                    return;</span>
+                }
+<span class="nc" id="L142">                action.setHomeStation(action.getAvailableHomeStations().get(index));</span>
+            }
+<span class="nc" id="L144">        } else {</span>
+            // Current dialog not found yet, try the superclass.
+<span class="nc" id="L146">            super.dialogActionPerformed(false);</span>
+<span class="nc" id="L147">            return;</span>
+        }
+
+        // Dialog action found and processed, let the superclass initiate processing.
+<span class="nc" id="L151">        super.dialogActionPerformed(true);</span>
+<span class="nc" id="L152">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,87 @@
+<TileManager tiles="Tiles.xml">
+	<!-- Preprinted Tiles-->
+	<Tile id="0">
+		<Upgrade id="8,9"/>
+	</Tile>
+	<Tile id="-1">
+		<Upgrade id="58"/>
+	</Tile>
+	<Tile id="-10">
+		<Upgrade id="5" hex="-F3"/>
+		<Upgrade id="403" hex="F3"/>
+	</Tile>
+	<Tile id="-911"/>
+	<Tile id="-912"/>
+	<Tile id="-3007">
+		<Upgrade id="5"/>
+	</Tile>
+	<Tile id="-4002"/>
+	<Tile id="-4007"/>
+	<Tile id="-10004">
+		<Upgrade id="622"/>
+	</Tile>
+	
+	<!-- Yellow Tiles -->
+	<Tile id="5" quantity="12">
+		<Upgrade id="15" hex="-D7,G14"/>
+        <Upgrade id="622" hex="D7,G14"/>
+	</Tile>
+	<Tile id="8" quantity="8">
+		<Upgrade id="80,81,82,83"/>
+	</Tile>
+	<Tile id="9" quantity="8">
+		<Upgrade id="82,83"/>
+	</Tile>
+	<Tile id="58" quantity="7">
+		<Upgrade id="141,142,143,144"/>
+	</Tile>
+	<Tile id="403" quantity="1">
+		<Upgrade id="1121"/>
+	</Tile>
+
+	<!-- Green Tiles -->
+	<Tile id="15" quantity="6"/>
+	<Tile id="80" pic="3080" quantity="3">
+		<Upgrade id="545,546"/>
+	</Tile>
+	<Tile id="81" pic="3081" quantity="3">
+		<Upgrade id="546"/>
+	</Tile>
+	<Tile id="82" pic="3082" quantity="3">
+		<Upgrade id="544,545,546"/>
+	</Tile>
+	<Tile id="83" pic="3083" quantity="3">
+		<Upgrade id="544,545,546"/>
+	</Tile>
+	<Tile id="1121" extId="121" quantity="1">
+		<Upgrade id="1584"/>
+	</Tile>
+	<Tile id="141" quantity="3">
+		<Upgrade id="145,146,147"/>
+	</Tile>
+	<Tile id="142" quantity="3">
+		<Upgrade id="145,146,147"/>
+	</Tile>	
+	<Tile id="143" quantity="3">
+		<Upgrade id="146,147"/>
+	</Tile>
+	<Tile id="144" quantity="3">
+		<Upgrade id="147"/>
+	</Tile>
+	<Tile id="622" quantity="3">
+		<Upgrade id="623" hex="D7"/>
+        <Upgrade id="582" hex="F11,H14"/>
+	</Tile>
+
+	<!-- Brown Tiles -->
+	<Tile id="145" quantity="3"/>
+	<Tile id="146" quantity="3"/>
+	<Tile id="147" quantity="4"/>
+	<Tile id="544" pic="3544" quantity="3"/>
+	<Tile id="545" pic="3545" quantity="3"/>
+	<Tile id="546" pic="3546" quantity="4"/>
+	<Tile id="582" quantity="2"/>
+	<Tile id="1584" extId="584" quantity="1"/>	
+	<Tile id="623" quantity="1"/>
+
+</TileManager>

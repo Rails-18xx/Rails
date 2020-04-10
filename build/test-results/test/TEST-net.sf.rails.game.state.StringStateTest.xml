@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.sf.rails.game.state.StringStateTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2020-04-10T19:48:54" hostname="marc-desktop" time="0.003">
+  <properties/>
+  <testcase name="testSetSameIgnored" classname="net.sf.rails.game.state.StringStateTest" time="0.001"/>
+  <testcase name="testSet" classname="net.sf.rails.game.state.StringStateTest" time="0.0"/>
+  <testcase name="testValue" classname="net.sf.rails.game.state.StringStateTest" time="0.0"/>
+  <testcase name="testUndoRedo" classname="net.sf.rails.game.state.StringStateTest" time="0.001"/>
+  <testcase name="testAppend" classname="net.sf.rails.game.state.StringStateTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

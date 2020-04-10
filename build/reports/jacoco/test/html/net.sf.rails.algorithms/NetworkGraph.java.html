@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NetworkGraph.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.algorithms</a> &gt; <span class="el_source">NetworkGraph.java</span></div><h1>NetworkGraph.java</h1><pre class="source lang-java linenums">package net.sf.rails.algorithms;
+
+import com.google.common.collect.*;
+import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.swing.mxGraphComponent;
+import net.sf.rails.game.*;
+import net.sf.rails.game.state.Owner;
+import org.jgrapht.Graphs;
+import org.jgrapht.ext.JGraphXAdapter;
+import org.jgrapht.graph.AsSubgraph;
+import org.jgrapht.graph.SimpleGraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+
+/**
+ * NetworkGraph mirrors the structure of a 18xx track
+ * &lt;p&gt;
+ * TODO: Rewrite this by separating the creation code from the data code
+ * TODO: Rails 2.0 add a NetworkManager
+ */
+public class NetworkGraph {
+
+<span class="fc" id="L29">    private static final Logger log = LoggerFactory.getLogger(NetworkGraph.class);</span>
+
+    private final SimpleGraph&lt;NetworkVertex, NetworkEdge&gt; graph;
+
+    private final Map&lt;String, NetworkVertex&gt; vertices;
+
+    private NetworkIterator iterator;
+
+<span class="fc" id="L37">    private NetworkGraph() {</span>
+<span class="fc" id="L38">        graph = new SimpleGraph&lt;NetworkVertex, NetworkEdge&gt;(NetworkEdge.class);</span>
+<span class="fc" id="L39">        vertices = Maps.newHashMap();</span>
+<span class="fc" id="L40">    }</span>
+
+<span class="nc" id="L42">    private NetworkGraph(NetworkGraph inGraph) {</span>
+<span class="nc" id="L43">        graph = new SimpleGraph&lt;NetworkVertex, NetworkEdge&gt;(NetworkEdge.class);</span>
+<span class="nc" id="L44">        Graphs.addGraph(graph, inGraph.graph);</span>
+<span class="nc" id="L45">        vertices = Maps.newHashMap(inGraph.vertices);</span>
+<span class="nc" id="L46">    }</span>
+
+    public static NetworkGraph createMapGraph(RailsRoot root) {
+<span class="fc" id="L49">        NetworkGraph graph = new NetworkGraph();</span>
+<span class="fc" id="L50">        graph.generateMapGraph(root);</span>
+<span class="fc" id="L51">        return graph;</span>
+    }
+
+    public static NetworkGraph createRouteGraph(NetworkGraph mapGraph, PublicCompany company, boolean addHQ) {
+<span class="fc" id="L55">        NetworkGraph newGraph = new NetworkGraph();</span>
+<span class="fc" id="L56">        newGraph.initRouteGraph(mapGraph, company, addHQ);</span>
+<span class="fc" id="L57">        newGraph.rebuildVertices();</span>
+<span class="fc" id="L58">        return newGraph;</span>
+    }
+
+    public static NetworkGraph createOptimizedGraph(NetworkGraph inGraph,
+                                                    Collection&lt;NetworkVertex&gt; protectedVertices) {
+<span class="nc" id="L63">        NetworkGraph newGraph = new NetworkGraph(inGraph);</span>
+<span class="nc" id="L64">        newGraph.optimizeGraph(protectedVertices);</span>
+<span class="nc" id="L65">        newGraph.rebuildVertices();</span>
+<span class="nc" id="L66">        return newGraph;</span>
+    }
+
+    public NetworkGraph cloneGraph() {
+<span class="nc" id="L70">        return new NetworkGraph(this);</span>
+    }
+
+    public SimpleGraph&lt;NetworkVertex, NetworkEdge&gt; getGraph() {
+<span class="fc" id="L74">        return graph;</span>
+    }
+
+    public void setIteratorStart(MapHex hex, Station station) {
+<span class="nc" id="L78">        iterator = new NetworkIterator(graph, getVertex(hex, station));</span>
+<span class="nc" id="L79">    }</span>
+
+    public Iterator&lt;NetworkVertex&gt; iterator() {
+<span class="nc" id="L82">        return iterator;</span>
+    }
+
+    public NetworkVertex getVertexByIdentifier(String identVertex) {
+<span class="nc" id="L86">        return vertices.get(identVertex);</span>
+    }
+
+    public NetworkVertex getVertex(BaseToken token) {
+<span class="fc" id="L90">        Owner owner = token.getOwner();</span>
+        // TODO: Check if this still works
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if (!(owner instanceof Stop)) return null;</span>
+<span class="fc" id="L93">        Stop city = (Stop) owner;</span>
+<span class="fc" id="L94">        MapHex hex = city.getParent();</span>
+<span class="fc" id="L95">        Station station = city.getRelatedStation();</span>
+<span class="fc" id="L96">        return getVertex(hex, station);</span>
+    }
+
+    public NetworkVertex getVertex(MapHex hex, TrackPoint point) {
+<span class="fc" id="L100">        return vertices.get(hex.getId() + &quot;.&quot; + point.getTrackPointNumber());</span>
+    }
+
+    public NetworkVertex getVertex(MapHex hex, int trackPointNr) {
+<span class="nc" id="L104">        return vertices.get(hex.getId() + &quot;.&quot; + trackPointNr);</span>
+    }
+
+    public NetworkVertex getVertexRotated(MapHex hex, TrackPoint point) {
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        if (point.getTrackPointType() == TrackPoint.Type.SIDE)</span>
+<span class="fc" id="L109">            point = point.rotate(hex.getCurrentTileRotation());</span>
+<span class="fc" id="L110">        return vertices.get(hex.getId() + &quot;.&quot; + point.getTrackPointNumber());</span>
+    }
+
+    public ImmutableMap&lt;MapHex, HexSidesSet&gt; getReachableSides() {
+        // first create builders for all HexSides
+<span class="nc" id="L115">        Map&lt;MapHex, HexSidesSet.Builder&gt; hexSides = Maps.newHashMap();</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        for (NetworkVertex vertex : graph.vertexSet()) {</span>
+<span class="nc bnc" id="L117" title="All 4 branches missed.">            if (vertex.isSide() &amp;&amp; iterator.getSeenData().get(vertex)</span>
+                    != NetworkIterator.greedyState.GREEDY ) {
+<span class="nc" id="L119">                MapHex hex = vertex.getHex();</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">                if (!hexSides.containsKey(hex)) {</span>
+<span class="nc" id="L121">                    hexSides.put(hex, HexSidesSet.builder());</span>
+                }
+<span class="nc" id="L123">                hexSides.get(hex).set(vertex.getSide());</span>
+            }
+<span class="nc" id="L125">        }</span>
+        // second build the map of mapHex to HexSides
+<span class="nc" id="L127">        ImmutableMap.Builder&lt;MapHex, HexSidesSet&gt; hexBuilder = ImmutableMap.builder();</span>
+<span class="nc" id="L128">        hexSides.keySet().forEach(hex -&gt; hexBuilder.put(hex, hexSides.get(hex).build()));</span>
+<span class="nc" id="L129">        return hexBuilder.build();</span>
+    }
+
+    /**
+     * @return a map of all hexes and stations that can be run through
+     */
+    public Multimap&lt;MapHex, Station&gt; getPassableStations() {
+
+        ImmutableMultimap.Builder&lt;MapHex, Station&gt; hexStations =
+<span class="nc" id="L138">                ImmutableMultimap.builder();</span>
+
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        for (NetworkVertex vertex : graph.vertexSet()) {</span>
+<span class="nc bnc" id="L141" title="All 4 branches missed.">            if (vertex.isStation() &amp;&amp; !vertex.isSink()) {</span>
+<span class="nc" id="L142">                hexStations.put(vertex.getHex(), vertex.getStation());</span>
+            }
+<span class="nc" id="L144">        }</span>
+
+<span class="nc" id="L146">        return hexStations.build();</span>
+    }
+
+    /**
+     * @return a list of all stops that are tokenable for the argument company
+     */
+    public Multimap&lt;MapHex, Stop&gt; getTokenableStops(PublicCompany company) {
+
+        ImmutableMultimap.Builder&lt;MapHex, Stop&gt; hexStops =
+<span class="nc" id="L155">                ImmutableMultimap.builder();</span>
+
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        for (NetworkVertex vertex : graph.vertexSet()) {</span>
+<span class="nc" id="L158">            Stop stop = vertex.getStop();</span>
+<span class="nc bnc" id="L159" title="All 4 branches missed.">            if (stop != null &amp;&amp; stop.isTokenableFor(company)) {</span>
+<span class="nc" id="L160">                hexStops.put(vertex.getHex(), stop);</span>
+            }
+<span class="nc" id="L162">        }</span>
+<span class="nc" id="L163">        return hexStops.build();</span>
+    }
+
+    private void rebuildVertices() {
+        // rebuild mapVertices
+<span class="fc" id="L168">        vertices.clear();</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        for (NetworkVertex v : graph.vertexSet()) {</span>
+<span class="fc" id="L170">            vertices.put(v.getIdentifier(), v);</span>
+<span class="fc" id="L171">        }</span>
+<span class="fc" id="L172">    }</span>
+
+    private void generateMapGraph(RailsRoot root) {
+<span class="fc" id="L175">        MapManager mapManager = root.getMapManager();</span>
+<span class="fc" id="L176">        RevenueManager revenueManager = root.getRevenueManager();</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        for (MapHex hex : mapManager.getHexes()) {</span>
+            // get Tile
+<span class="fc" id="L179">            Tile tile = hex.getCurrentTile();</span>
+
+            // then get stations
+<span class="fc" id="L182">            Collection&lt;Station&gt; stations = tile.getStations();</span>
+            // and add those to the mapGraph
+<span class="fc bfc" id="L184" title="All 2 branches covered.">            for (Station station : stations) {</span>
+<span class="fc" id="L185">                NetworkVertex stationVertex = new NetworkVertex(hex, station);</span>
+<span class="fc" id="L186">                graph.addVertex(stationVertex);</span>
+<span class="fc" id="L187">                vertices.put(stationVertex.getIdentifier(), stationVertex);</span>
+<span class="fc" id="L188">                log.info(&quot;Added {}&quot;, stationVertex);</span>
+<span class="fc" id="L189">            }</span>
+
+            // get tracks per side to add that vertex
+<span class="fc bfc" id="L192" title="All 2 branches covered.">            for (HexSide side : HexSide.all())</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">                if (tile.hasTracks(side)) {</span>
+<span class="fc" id="L194">                    HexSide rotated = side.rotate(hex.getCurrentTileRotation());</span>
+<span class="fc" id="L195">                    NetworkVertex sideVertex = new NetworkVertex(hex, rotated);</span>
+<span class="fc" id="L196">                    graph.addVertex(sideVertex);</span>
+<span class="fc" id="L197">                    vertices.put(sideVertex.getIdentifier(), sideVertex);</span>
+<span class="fc" id="L198">                    log.info(&quot;Added {}&quot;, sideVertex);</span>
+                }
+<span class="fc" id="L200">        }</span>
+
+        // loop over all hex and add tracks
+<span class="fc bfc" id="L203" title="All 2 branches covered.">        for (MapHex hex : mapManager.getHexes()) {</span>
+            // get Tile
+<span class="fc" id="L205">            Tile tile = hex.getCurrentTile();</span>
+            // get Tracks
+<span class="fc" id="L207">            Set&lt;Track&gt; tracks = tile.getTracks();</span>
+
+<span class="fc bfc" id="L209" title="All 2 branches covered.">            for (Track track : tracks) {</span>
+<span class="fc" id="L210">                NetworkVertex startVertex = getVertexRotated(hex, track.getStart());</span>
+<span class="fc" id="L211">                NetworkVertex endVertex = getVertexRotated(hex, track.getEnd());</span>
+<span class="fc" id="L212">                log.info(&quot;Track: {}&quot;, track);</span>
+<span class="fc" id="L213">                NetworkEdge edge = new NetworkEdge(startVertex, endVertex, false);</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">                if (startVertex == endVertex) {</span>
+<span class="nc" id="L215">                    log.error(&quot;Track {} on hex {}has identical start/end&quot;, track, hex);</span>
+                } else {
+<span class="fc" id="L217">                    graph.addEdge(startVertex, endVertex, edge);</span>
+<span class="fc" id="L218">                    log.info(&quot;Added non-greedy edge {}&quot;, edge.getConnection());</span>
+                }
+<span class="fc" id="L220">            }</span>
+
+            // TODO: Rewrite this by employing the features of Trackpoint
+            // and connect to neighbouring hexes (for sides 0-2)
+<span class="fc bfc" id="L224" title="All 2 branches covered.">            for (HexSide side : HexSide.head()) {</span>
+<span class="fc" id="L225">                MapHex neighborHex = mapManager.getNeighbour(hex, side);</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">                if (neighborHex == null) {</span>
+<span class="fc" id="L227">                    log.info(&quot;No connection for Hex {} at {}, No Neighbor&quot;, hex.getId(), hex.getOrientationName(side));</span>
+<span class="fc" id="L228">                    continue;</span>
+                }
+<span class="fc" id="L230">                NetworkVertex vertex = getVertex(hex, side);</span>
+<span class="fc" id="L231">                HexSide rotated = side.opposite();</span>
+<span class="fc" id="L232">                NetworkVertex otherVertex = getVertex(neighborHex, rotated);</span>
+<span class="fc bfc" id="L233" title="All 4 branches covered.">                if (vertex == null &amp;&amp; otherVertex == null) {</span>
+<span class="fc" id="L234">                    log.info(&quot;Hex {} has no track at {}&quot;, hex.getId(), hex.getOrientationName(side));</span>
+<span class="fc" id="L235">                    log.info(&quot;And Hex {} has no track at {}&quot;, neighborHex.getId(), neighborHex.getOrientationName(rotated));</span>
+<span class="fc" id="L236">                    continue;</span>
+<span class="pc bpc" id="L237" title="1 of 4 branches missed.">                } else if (vertex == null &amp;&amp; otherVertex != null) {</span>
+<span class="fc" id="L238">                    log.info(&quot;Deadend connection for Hex {} at {}, NeighborHex {} has no track at side {}&quot;, neighborHex.getId(), neighborHex.getOrientationName(rotated), hex.getId(), hex.getOrientationName(side));</span>
+<span class="fc" id="L239">                    vertex = new NetworkVertex(hex, side);</span>
+<span class="fc" id="L240">                    graph.addVertex(vertex);</span>
+<span class="fc" id="L241">                    vertices.put(vertex.getIdentifier(), vertex);</span>
+<span class="fc" id="L242">                    log.info(&quot;Added deadend vertex {}&quot;, vertex);</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">                } else if (otherVertex == null) {</span>
+<span class="fc" id="L244">                    log.info(&quot;Deadend connection for Hex {} at {}, NeighborHex {} has no track at side {}&quot;, hex.getId(), hex.getOrientationName(side), neighborHex.getId(), neighborHex.getOrientationName(rotated));</span>
+<span class="fc" id="L245">                    otherVertex = new NetworkVertex(neighborHex, rotated);</span>
+<span class="fc" id="L246">                    graph.addVertex(otherVertex);</span>
+<span class="fc" id="L247">                    vertices.put(otherVertex.getIdentifier(), otherVertex);</span>
+<span class="fc" id="L248">                    log.info(&quot;Added deadend vertex {}&quot;, otherVertex);</span>
+                }
+<span class="fc" id="L250">                NetworkEdge edge = new NetworkEdge(vertex, otherVertex, true);</span>
+<span class="fc" id="L251">                graph.addEdge(vertex, otherVertex,</span>
+                        edge);
+<span class="fc" id="L253">                log.info(&quot;Added greedy edge {}&quot;, edge.getConnection());</span>
+<span class="fc" id="L254">            }</span>
+<span class="fc" id="L255">        }</span>
+
+        // add graph modifiers
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">        if (revenueManager != null) {</span>
+<span class="fc" id="L259">            revenueManager.activateMapGraphModifiers(this);</span>
+        }
+
+<span class="fc" id="L262">    }</span>
+
+    public void optimizeGraph() {
+<span class="nc" id="L265">        optimizeGraph(new ArrayList&lt;NetworkVertex&gt;(0));</span>
+<span class="nc" id="L266">    }</span>
+
+    private void optimizeGraph(Collection&lt;NetworkVertex&gt; protectedVertices) {
+
+        // remove vertices until convergence
+<span class="nc" id="L271">        boolean notDone = true;</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">        while (notDone) {</span>
+<span class="nc" id="L273">            increaseGreedness();</span>
+<span class="nc" id="L274">            notDone = removeVertexes(protectedVertices);</span>
+            // removedVertices can change Greedness, but not vice-versa
+        }
+<span class="nc" id="L277">    }</span>
+
+    // Increase Greedness implies that an edge that
+    // connects stations and/or sides with only one track in/out
+    // can be set to greedy (as one has to follow the exit anyway)
+    private void increaseGreedness() {
+<span class="nc bnc" id="L283" title="All 2 branches missed.">        for (NetworkEdge edge : graph.edgeSet()) {</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">            if (edge.isGreedy()) continue;</span>
+<span class="nc" id="L285">            NetworkVertex source = edge.getSource();</span>
+<span class="nc" id="L286">            NetworkVertex target = edge.getTarget();</span>
+<span class="nc bnc" id="L287" title="All 6 branches missed.">            if ((source.isSide() &amp;&amp; graph.edgesOf(source).size() == 2 || source.isStation()) &amp;&amp;</span>
+<span class="nc bnc" id="L288" title="All 6 branches missed.">                    (target.isSide() &amp;&amp; graph.edgesOf(target).size() == 2 || target.isStation())) {</span>
+<span class="nc" id="L289">                edge.setGreedy(true);</span>
+<span class="nc" id="L290">                log.info(&quot;Increased greedness for {}&quot;, edge.getConnection());</span>
+            }
+<span class="nc" id="L292">        }</span>
+<span class="nc" id="L293">    }</span>
+
+    /**
+     * remove deadend and vertex with only two edges
+     */
+    private boolean removeVertexes(Collection&lt;NetworkVertex&gt; protectedVertices) {
+
+<span class="nc" id="L300">        boolean removed = false;</span>
+
+<span class="nc bnc" id="L302" title="All 2 branches missed.">        for (NetworkVertex vertex : ImmutableSet.copyOf(graph.vertexSet())) {</span>
+<span class="nc" id="L303">            Set&lt;NetworkEdge&gt; vertexEdges = graph.edgesOf(vertex);</span>
+
+            // always keep protected vertices
+<span class="nc bnc" id="L306" title="All 2 branches missed.">            if (protectedVertices.contains(vertex)) {</span>
+<span class="nc" id="L307">                continue;</span>
+            }
+
+            // remove hermit
+<span class="nc bnc" id="L311" title="All 2 branches missed.">            if (vertexEdges.size() == 0) {</span>
+<span class="nc" id="L312">                log.info(&quot;Remove hermit (no connection) = {}&quot;, vertex);</span>
+<span class="nc" id="L313">                graph.removeVertex(vertex);</span>
+<span class="nc" id="L314">                removed = true;</span>
+            }
+
+            // the following only for side vertexes
+<span class="nc bnc" id="L318" title="All 2 branches missed.">            if (!vertex.isSide()) continue;</span>
+
+<span class="nc bnc" id="L320" title="All 2 branches missed.">            if (vertexEdges.size() == 1) {</span>
+<span class="nc" id="L321">                log.info(&quot;Remove deadend side (single connection) = {}&quot;, vertex);</span>
+<span class="nc" id="L322">                graph.removeVertex(vertex);</span>
+<span class="nc" id="L323">                removed = true;</span>
+<span class="nc bnc" id="L324" title="All 2 branches missed.">            } else if (vertexEdges.size() == 2) { // not necessary vertices</span>
+<span class="nc" id="L325">                NetworkEdge[] edges = vertexEdges.toArray(new NetworkEdge[2]);</span>
+<span class="nc bnc" id="L326" title="All 2 branches missed.">                if (edges[0].isGreedy() == edges[1].isGreedy()) {</span>
+<span class="nc bnc" id="L327" title="All 2 branches missed.">                    if (!edges[0].isGreedy()) {</span>
+<span class="nc" id="L328">                        log.info(&quot;Remove deadend side (no greedy connection) = {}&quot;, vertex);</span>
+                        // two non greedy edges indicate a deadend
+<span class="nc" id="L330">                        graph.removeVertex(vertex);</span>
+<span class="nc" id="L331">                        removed = true;</span>
+                    } else {
+                        // greedy case:
+                        // merge greedy edges if the vertexes are not already connected
+<span class="nc bnc" id="L335" title="All 2 branches missed.">                        if (NetworkEdge.mergeEdgesInGraph(graph, edges[0], edges[1])) {</span>
+<span class="nc" id="L336">                            removed = true;</span>
+                        }
+                    }
+                }
+            }
+<span class="nc" id="L341">        }</span>
+<span class="nc" id="L342">        return removed;</span>
+    }
+
+    private void initRouteGraph(NetworkGraph mapGraph, PublicCompany company, boolean addHQ) {
+
+        // add graph modifiers
+<span class="fc" id="L348">        RevenueManager revenueManager = company.getRoot().getRevenueManager();</span>
+<span class="pc bpc" id="L349" title="1 of 2 branches missed.">        if (revenueManager != null) {</span>
+<span class="fc" id="L350">            revenueManager.activateRouteGraphModifiers(mapGraph, company);</span>
+        }
+
+        // set sinks on mapgraph
+<span class="fc" id="L354">        NetworkVertex.initAllRailsVertices(mapGraph, company, null);</span>
+
+        // add Company HQ
+<span class="fc" id="L357">        NetworkVertex hqVertex = new NetworkVertex(company);</span>
+<span class="fc" id="L358">        graph.addVertex(hqVertex);</span>
+
+        // create vertex set for subgraph
+<span class="fc" id="L361">        List&lt;NetworkVertex&gt; tokenVertexes = mapGraph.getCompanyBaseTokenVertexes(company);</span>
+<span class="fc" id="L362">        Set&lt;NetworkVertex&gt; vertexes = new HashSet&lt;NetworkVertex&gt;();</span>
+
+<span class="fc bfc" id="L364" title="All 2 branches covered.">        for (NetworkVertex vertex : tokenVertexes) {</span>
+            // allow to leave tokenVertices even if those are sinks
+            // Examples are tokens in offBoard hexes
+<span class="fc" id="L367">            boolean storeSink = vertex.isSink();</span>
+<span class="fc" id="L368">            vertex.setSink(false);</span>
+<span class="fc" id="L369">            vertexes.add(vertex);</span>
+            // add connection to graph
+<span class="fc" id="L371">            graph.addVertex(vertex);</span>
+<span class="fc" id="L372">            graph.addEdge(vertex, hqVertex, new NetworkEdge(vertex, hqVertex, false));</span>
+<span class="fc" id="L373">            iterator = new NetworkIterator(mapGraph.getGraph(), vertex, company);</span>
+<span class="fc bfc" id="L374" title="All 2 branches covered.">            for (; iterator.hasNext(); )</span>
+<span class="fc" id="L375">                vertexes.add(iterator.next());</span>
+            // restore sink property
+<span class="fc" id="L377">            vertex.setSink(storeSink);</span>
+<span class="fc" id="L378">        }</span>
+
+<span class="fc" id="L380">        AsSubgraph&lt;NetworkVertex, NetworkEdge&gt; subGraph = new AsSubgraph&lt;&gt;(mapGraph.getGraph(), vertexes);</span>
+        // now add all vertexes and edges to the graph
+<span class="fc" id="L382">        Graphs.addGraph(graph, subGraph);</span>
+
+        // if addHQ is not set remove HQ vertex
+<span class="pc bpc" id="L385" title="1 of 2 branches missed.">        if (!addHQ) graph.removeVertex(hqVertex);</span>
+<span class="fc" id="L386">    }</span>
+
+    public List&lt;NetworkVertex&gt; getCompanyBaseTokenVertexes(PublicCompany company) {
+<span class="fc" id="L389">        List&lt;NetworkVertex&gt; vertexes = new ArrayList&lt;NetworkVertex&gt;();</span>
+<span class="fc bfc" id="L390" title="All 2 branches covered.">        for (BaseToken token : company.getLaidBaseTokens()) {</span>
+<span class="fc" id="L391">            NetworkVertex vertex = getVertex(token);</span>
+<span class="pc bpc" id="L392" title="1 of 2 branches missed.">            if (vertex == null) continue;</span>
+<span class="fc" id="L393">            vertexes.add(vertex);</span>
+<span class="fc" id="L394">        }</span>
+<span class="fc" id="L395">        return vertexes;</span>
+    }
+
+    public void visualize(String title) {
+        // show network mapGraph
+<span class="nc bnc" id="L400" title="All 2 branches missed.">        if (graph.vertexSet().size() &gt; 0) {</span>
+<span class="nc" id="L401">            JGraphXAdapter&lt;NetworkVertex, NetworkEdge&gt; jGraphXAdapter = new JGraphXAdapter&lt;&gt;(graph);</span>
+
+<span class="nc" id="L403">            jGraphXAdapter.getModel().beginUpdate();</span>
+
+<span class="nc" id="L405">            mxIGraphLayout layout = new mxFastOrganicLayout(jGraphXAdapter);</span>
+<span class="nc" id="L406">            layout.execute(jGraphXAdapter.getDefaultParent());</span>
+
+<span class="nc" id="L408">            jGraphXAdapter.getModel().endUpdate();</span>
+
+<span class="nc" id="L410">            mxGraphComponent graphComponent = new mxGraphComponent(jGraphXAdapter);</span>
+
+<span class="nc" id="L412">            JFrame frame = new JFrame();</span>
+<span class="nc" id="L413">            frame.setTitle(String.format(&quot;%s(V=%d,E=%d)&quot;, title, graph.vertexSet().size(), graph.edgeSet().size()));</span>
+<span class="nc" id="L414">            frame.setSize(new Dimension(800, 600));</span>
+<span class="nc" id="L415">            frame.getContentPane().add(new JScrollPane(graphComponent));</span>
+<span class="nc" id="L416">            frame.pack();</span>
+<span class="nc" id="L417">            frame.setVisible(true);</span>
+        }
+<span class="nc" id="L419">    }</span>
+
+    /**
+     * @return a map of all hexes and stations that cannot be run through
+     */
+    public Multimap&lt;MapHex, Station&gt; getNonPassableStations() {
+
+        ImmutableMultimap.Builder&lt;MapHex, Station&gt; hexStations =
+<span class="fc" id="L427">                ImmutableMultimap.builder();</span>
+
+<span class="fc bfc" id="L429" title="All 2 branches covered.">        for(NetworkVertex vertex:graph.vertexSet()) {</span>
+<span class="fc bfc" id="L430" title="All 4 branches covered.">            if (vertex.isStation() &amp;&amp; vertex.isSink()) {</span>
+<span class="fc" id="L431">                hexStations.put(vertex.getHex(), vertex.getStation());</span>
+            }
+<span class="fc" id="L433">        }</span>
+<span class="fc" id="L434">        return hexStations.build();</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FXStockChart.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.javafx.stockchart</a> &gt; <span class="el_source">FXStockChart.java</span></div><h1>FXStockChart.java</h1><pre class="source lang-java linenums">package net.sf.rails.javafx.stockchart;
+
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
+import net.sf.rails.game.financial.StockMarket;
+import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.ui.swing.GameUIManager;
+
+/**
+ * The stock-chart component, containing a grid with all stock fields composing the stock-chart
+ */
+public class FXStockChart extends GridPane {
+    /**
+     * The stock fields of the model
+     */
+    private final StockMarket market;
+
+    /**
+     * Constructor
+     *
+     * @param gameUIManager The ui manager
+     */
+    public FXStockChart(GameUIManager gameUIManager) {
+<span class="nc" id="L26">        super();</span>
+
+<span class="nc" id="L28">        this.market = gameUIManager.getRoot().getStockMarket();</span>
+
+<span class="nc" id="L30">        initialize();</span>
+<span class="nc" id="L31">        populateStockPanel();</span>
+<span class="nc" id="L32">    }</span>
+
+    /**
+     * Initializes the component
+     */
+    private void initialize() {
+<span class="nc" id="L38">        setHgap(1);</span>
+<span class="nc" id="L39">        setVgap(1);</span>
+
+<span class="nc" id="L41">        setStyle(&quot;-fx-background-color: black;&quot;);</span>
+<span class="nc" id="L42">    }</span>
+
+    /**
+     * Populates the stock field grid
+     */
+    private void populateStockPanel() {
+        // initialize the top left corner
+<span class="nc" id="L49">        FXStockChartLabel corner = new FXStockChartLabel(&quot;&quot;);</span>
+
+<span class="nc" id="L51">        GridPane.setHgrow(corner, Priority.ALWAYS);</span>
+<span class="nc" id="L52">        GridPane.setVgrow(corner, Priority.ALWAYS);</span>
+
+<span class="nc" id="L54">        getColumnConstraints().add(createColumn(1));</span>
+<span class="nc" id="L55">        getRowConstraints().add(createRow(1));</span>
+
+<span class="nc" id="L57">        add(corner, 0, 0);</span>
+
+        // initialize the header column
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        for (int row = 0; row &lt; market.getNumberOfRows(); row++) {</span>
+<span class="nc" id="L61">            FXStockChartLabel l = new FXStockChartLabel(Integer.toString(row + 1));</span>
+
+<span class="nc" id="L63">            GridPane.setHgrow(l, Priority.ALWAYS);</span>
+<span class="nc" id="L64">            GridPane.setVgrow(l, Priority.ALWAYS);</span>
+
+<span class="nc" id="L66">            add(l, 0, row + 1);</span>
+<span class="nc" id="L67">            getRowConstraints().add(createRow(2));</span>
+        }
+
+        // initialize the header row
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        for (int column = 0; column &lt; market.getNumberOfColumns(); column++) {</span>
+<span class="nc" id="L72">            FXStockChartLabel l = new FXStockChartLabel(Character.toString((char) ('A' + column)));</span>
+
+<span class="nc" id="L74">            GridPane.setHgrow(l, Priority.ALWAYS);</span>
+<span class="nc" id="L75">            GridPane.setVgrow(l, Priority.ALWAYS);</span>
+
+<span class="nc" id="L77">            add(l, column + 1, 0);</span>
+<span class="nc" id="L78">            getColumnConstraints().add(createColumn(2));</span>
+        }
+
+        // initialize the stock field grid
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        for (int row = 0; row &lt; market.getNumberOfRows(); row++) {</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            for (int column = 0; column &lt; market.getNumberOfColumns(); column++) {</span>
+<span class="nc" id="L84">                StockSpace stockSpace = market.getStockSpace(row, column);</span>
+
+<span class="nc bnc" id="L86" title="All 2 branches missed.">                if (stockSpace != null) {</span>
+                    // the market field exists
+<span class="nc" id="L88">                    FXStockField stockField = new FXStockField(stockSpace);</span>
+
+<span class="nc" id="L90">                    GridPane.setHgrow(stockField, Priority.ALWAYS);</span>
+<span class="nc" id="L91">                    GridPane.setVgrow(stockField, Priority.ALWAYS);</span>
+
+<span class="nc" id="L93">                    add(stockField, column + 1, row + 1);</span>
+<span class="nc" id="L94">                } else {</span>
+                    // the market field is null and therefore unused in the game
+<span class="nc" id="L96">                    FXEmptyStockField stockField = new FXEmptyStockField();</span>
+
+<span class="nc" id="L98">                    GridPane.setHgrow(stockField, Priority.ALWAYS);</span>
+<span class="nc" id="L99">                    GridPane.setVgrow(stockField, Priority.ALWAYS);</span>
+
+<span class="nc" id="L101">                    add(stockField, column + 1, row + 1);</span>
+                }
+            }
+        }
+<span class="nc" id="L105">    }</span>
+
+    /**
+     * Creates a {@link ColumnConstraints} object with the given width factor.
+     * The width factor defines, how much wider the column is compared to other columns.
+     * A factor of 2 means, that the column is twice as wide as a column with the factor 1
+     *
+     * @param factor The width factor
+     * @return The created constraint
+     */
+    private ColumnConstraints createColumn(int factor) {
+<span class="nc" id="L116">        ColumnConstraints constraints = new ColumnConstraints();</span>
+
+<span class="nc" id="L118">        constraints.setPercentWidth(100d / ((market.getNumberOfColumns() * 2) + 1) * factor);</span>
+
+<span class="nc" id="L120">        return constraints;</span>
+    }
+
+    /**
+     * Creates a {@link RowConstraints} object with the given height factor.
+     * The height factor defines, how much higher the row is compared to other columns.
+     * A factor of 2 means, that the row is twice as high as a row with the factor 1
+     *
+     * @param factor The height factor
+     * @return The created constraint
+     */
+    private RowConstraints createRow(int factor) {
+<span class="nc" id="L132">        RowConstraints constraints = new RowConstraints();</span>
+
+<span class="nc" id="L134">        constraints.setPercentHeight(100d / ((market.getNumberOfRows() * 2) + 1) * factor);</span>
+
+<span class="nc" id="L136">        return constraints;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

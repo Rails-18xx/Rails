@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.sf.rails.game.state.ArrayListStateTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2020-04-10T19:48:53" hostname="marc-desktop" time="0.017">
+  <properties/>
+  <testcase name="testAdd" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.002"/>
+  <testcase name="testGet" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.001"/>
+  <testcase name="testClear" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.001"/>
+  <testcase name="testSetTo" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.003"/>
+  <testcase name="testMove" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.002"/>
+  <testcase name="testSize" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.001"/>
+  <testcase name="testView" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.001"/>
+  <testcase name="testAddIndex" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.001"/>
+  <testcase name="testAddIndexFail" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.001"/>
+  <testcase name="testContains" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.0"/>
+  <testcase name="testIndexOf" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.001"/>
+  <testcase name="testIsEmpty" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.0"/>
+  <testcase name="testRemove" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.001"/>
+  <testcase name="testIterator" classname="net.sf.rails.game.state.ArrayListStateTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpecialRight.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.special</a> &gt; <span class="el_source">SpecialRight.java</span></div><h1>SpecialRight.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.special;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.jgrapht.graph.SimpleGraph;
+
+import net.sf.rails.algorithms.NetworkEdge;
+import net.sf.rails.algorithms.NetworkGraph;
+import net.sf.rails.algorithms.NetworkGraphModifier;
+import net.sf.rails.algorithms.NetworkVertex;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.MapManager;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.util.Util;
+
+
+public class SpecialRight extends SpecialProperty implements NetworkGraphModifier {
+
+    /** The public company of which a share can be obtained. */
+    private String rightName;
+    private String rightDefaultValue;
+    private String rightValue;
+<span class="fc" id="L33">    private int cost = 0;</span>
+    private String locationNames;
+    private List&lt;MapHex&gt; locations;
+
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public SpecialRight(RailsItem parent, String id) {
+<span class="fc" id="L41">        super(parent, id);</span>
+<span class="fc" id="L42">    }</span>
+
+    @Override
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+
+<span class="fc" id="L47">        super.configureFromXML(tag);</span>
+
+<span class="fc" id="L49">        Tag rightTag = tag.getChild(&quot;SpecialRight&quot;);</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if (rightTag == null) {</span>
+<span class="nc" id="L51">            throw new ConfigurationException(&quot;&lt;SpecialRight&gt; tag missing&quot;);</span>
+        }
+
+<span class="fc" id="L54">        rightName = rightTag.getAttributeAsString(&quot;name&quot;);</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        if (!Util.hasValue(rightName))</span>
+<span class="nc" id="L56">            throw new ConfigurationException(</span>
+                    &quot;SpecialRight: no Right name specified&quot;);
+        
+<span class="fc" id="L59">        rightDefaultValue = rightValue = rightTag.getAttributeAsString(&quot;defaultValue&quot;, null);</span>
+
+<span class="fc" id="L61">        cost = rightTag.getAttributeAsInteger(&quot;cost&quot;, 0);</span>
+        
+<span class="fc" id="L63">        locationNames = rightTag.getAttributeAsString(&quot;location&quot;, null);</span>
+<span class="fc" id="L64">    }</span>
+
+    @Override
+    public void finishConfiguration (RailsRoot root) throws ConfigurationException {
+<span class="fc" id="L68">        super.finishConfiguration(root);</span>
+        
+        // add them to the call list of the RevenueManager
+<span class="fc" id="L71">        root.getRevenueManager().addGraphModifier(this);</span>
+        
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        if (locationNames != null) {</span>
+<span class="fc" id="L74">            locations = new ArrayList&lt;MapHex&gt;();</span>
+<span class="fc" id="L75">            MapManager mmgr = root.getMapManager();</span>
+            MapHex hex;
+<span class="fc bfc" id="L77" title="All 2 branches covered.">            for (String hexName : locationNames.split(&quot;,&quot;)) {</span>
+<span class="fc" id="L78">                hex = mmgr.getHex(hexName);</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                if (hex == null) {</span>
+<span class="nc" id="L80">                    throw new ConfigurationException (&quot;Unknown hex '&quot;+hexName+&quot;' for Special Right&quot;);</span>
+                }
+<span class="fc" id="L82">                locations.add (hex);</span>
+            }
+        }
+<span class="fc" id="L85">    }</span>
+    
+    public boolean isExecutionable() {
+        // FIXME: Check if this works correctly
+        // IT is better to rewrite this check
+        // see ExchangeForShare
+<span class="nc" id="L91">        return ((PrivateCompany)originalCompany).getOwner() instanceof Player;</span>
+    }
+ 
+    public String getName() {
+<span class="fc" id="L95">        return rightName;</span>
+    }
+    
+    public String getDefaultValue() {
+<span class="nc" id="L99">        return rightDefaultValue;</span>
+    }
+
+    public String getValue() {
+<span class="fc" id="L103">        return rightValue;</span>
+    }
+
+    public void setValue(String rightValue) {
+<span class="nc" id="L107">        this.rightValue = rightValue;</span>
+<span class="nc" id="L108">    }</span>
+
+    public int getCost() {
+<span class="fc" id="L111">        return cost;</span>
+    }
+
+    public String getLocationNames() {
+<span class="nc" id="L115">        return locationNames;</span>
+    }
+
+    public List&lt;MapHex&gt; getLocations() {
+<span class="nc" id="L119">        return locations;</span>
+    }
+
+    @Override
+    public String toText() {
+<span class="nc" id="L124">        StringBuilder b = new StringBuilder();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        b.append(cost &gt; 0 ? &quot;Buy '&quot; : &quot;Get '&quot;).append(rightName).append(&quot;'&quot;);</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (locationNames != null) b.append(&quot; at &quot;).append(locationNames);</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (cost &gt; 0) b.append(&quot; for &quot;).append(Bank.format(this, cost));</span>
+<span class="nc" id="L128">        return b.toString();</span>
+    }
+    
+    @Override
+    public String toMenu() {
+<span class="fc" id="L133">        return LocalText.getText(&quot;BuyRight&quot;,</span>
+                rightName,
+<span class="fc" id="L135">                Bank.format(this, cost));</span>
+    }
+    
+    public String getInfo() {
+<span class="fc" id="L139">        return toMenu();</span>
+    }
+
+    @Override
+    public void modifyMapGraph(NetworkGraph mapGraph) {
+        // Do nothing
+<span class="nc" id="L145">    }</span>
+
+    @Override
+    public void modifyRouteGraph(NetworkGraph routeGraph, PublicCompany company) {
+        // 1. check operating company if it has the right then it is excluded from the removal
+        // TODO: Only use one right for all companies instead of one per company
+<span class="nc bnc" id="L151" title="All 4 branches missed.">        if (this.getOriginalCompany() != company || company.hasRight(this)) return;</span>
+        
+<span class="nc" id="L153">        SimpleGraph&lt;NetworkVertex, NetworkEdge&gt; graph = routeGraph.getGraph();</span>
+        
+        // 2. find vertices to hex and remove the station
+<span class="nc" id="L156">        Set&lt;NetworkVertex&gt; verticesToRemove = NetworkVertex.getVerticesByHexes(graph.vertexSet(), locations);</span>
+        // 3 ... and remove them from the graph
+<span class="nc" id="L158">        graph.removeAllVertices(verticesToRemove);</span>
+<span class="nc" id="L159">    }</span>
+
+ 
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

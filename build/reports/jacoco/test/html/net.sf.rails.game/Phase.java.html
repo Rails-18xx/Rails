@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Phase.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">Phase.java</span></div><h1>Phase.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.common.parser.Configurable;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.model.RailsModel;
+import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.Owner;
+import net.sf.rails.util.Util;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
+
+public class Phase extends RailsModel implements Configurable {
+
+<span class="fc" id="L29">    private static final Logger log =</span>
+<span class="fc" id="L30">            LoggerFactory.getLogger(Phase.class);</span>
+
+    // static data
+    private final int index;
+
+    private String name;
+    private ImmutableList &lt;String&gt; tileColours;
+    private Map&lt;String, Integer&gt; tileLaysPerColour;
+
+    /** For how many turns can extra tiles be laid (per company type and colour)?
+     * Default: infinite.
+     * &lt;p&gt;This attribute is only used during configuration. It is finally passed to CompanyType.
+     * NOT CLONED from previous phase.*/
+    private Map&lt;String, Integer&gt; tileLaysPerColourTurns;
+<span class="fc" id="L44">    private boolean privateSellingAllowed = false;</span>
+<span class="fc" id="L45">    private boolean privatesClose = false;</span>
+<span class="fc" id="L46">    private int numberOfOperatingRounds = 1;</span>
+<span class="fc" id="L47">    private int offBoardRevenueStep = 1;</span>
+
+    /** New style train limit configuration.
+     */
+<span class="fc" id="L51">    private int trainLimitStep = 1;</span>
+
+<span class="fc" id="L53">    private int privatesRevenueStep = 1; // sfy 1889</span>
+
+<span class="fc" id="L55">    private boolean trainTradingAllowed = false;</span>
+
+    /** May company buy more than one Train from the Bank per turn? */
+<span class="fc" id="L58">    private boolean oneTrainPerTurn = false;</span>
+
+    /** May company buy more than one Train of each type from the Bank per turn? */
+<span class="fc" id="L61">    private boolean oneTrainPerTypePerTurn = false;</span>
+
+    /** Is loan taking allowed */
+<span class="fc" id="L64">    private boolean loanTakingAllowed = false;</span>
+
+    /** Previous phase, defining the current one's defaults */
+    private Phase defaults;
+
+    /** Items to close if a phase gets activated */
+    private List&lt;Closeable&gt; closedObjects;
+
+    /** Train types to rust or obsolete if a phase gets activated */
+    private ImmutableList&lt;TrainCertificateType&gt; rustedTrains;
+    private String rustedTrainNames;
+
+    /** Train types to release (make available for buying) if a phase gets activated */
+    private ImmutableList&lt;TrainCertificateType&gt; releasedTrains;
+    private String releasedTrainNames;
+
+    /** Actions for this phase.
+     * When this phase is activated, the GameManager method phaseAction() will be called,
+     * which in turn will call the current Round, which is responsible to handle the action.
+     * &lt;p&gt;
+     * Set actions have a name and may have a value.
+     * TODO: Replace this by triggers
+     * */
+    private Map&lt;String, String&gt; actions;
+
+<span class="fc" id="L89">    private String extraInfo = &quot;&quot;;</span>
+
+    /** A HashMap to contain phase-dependent parameters
+     * by name and value.
+     */
+<span class="fc" id="L94">    private Map&lt;String, String&gt; parameters = null;</span>
+
+    // dynamic information
+    // is this really dynamic, is it used over time?
+<span class="fc" id="L98">    private final GenericState&lt;Owner&gt; lastTrainBuyer = GenericState.create(this, &quot;lastTrainBuyer&quot;);</span>
+
+    public Phase(PhaseManager parent, String id, int index, Phase previousPhase) {
+<span class="fc" id="L101">        super(parent, id);</span>
+<span class="fc" id="L102">        this.index = index;</span>
+<span class="fc" id="L103">        this.defaults = previousPhase;</span>
+<span class="fc" id="L104">    }</span>
+
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (defaults != null) {</span>
+<span class="fc" id="L108">            tileColours = defaults.tileColours;</span>
+<span class="fc" id="L109">            tileLaysPerColour = defaults.tileLaysPerColour;</span>
+<span class="fc" id="L110">            privateSellingAllowed = defaults.privateSellingAllowed;</span>
+<span class="fc" id="L111">            numberOfOperatingRounds = defaults.numberOfOperatingRounds;</span>
+<span class="fc" id="L112">            offBoardRevenueStep = defaults.offBoardRevenueStep;</span>
+<span class="fc" id="L113">            trainLimitStep = defaults.trainLimitStep;</span>
+<span class="fc" id="L114">            privatesRevenueStep = defaults.privatesRevenueStep;</span>
+<span class="fc" id="L115">            trainTradingAllowed = defaults.trainTradingAllowed;</span>
+<span class="fc" id="L116">            oneTrainPerTurn = defaults.oneTrainPerTurn;</span>
+<span class="fc" id="L117">            oneTrainPerTypePerTurn = defaults.oneTrainPerTypePerTurn;</span>
+<span class="fc" id="L118">            loanTakingAllowed = defaults.loanTakingAllowed;</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">            if (defaults.parameters != null) {</span>
+<span class="nc" id="L120">                parameters = ImmutableMap.copyOf(defaults.parameters);</span>
+            }
+        }
+
+        // Real name (as in the printed game)
+<span class="fc" id="L125">        name = tag.getAttributeAsString(&quot;realName&quot;, null);</span>
+
+        // Allowed tile colours
+<span class="fc" id="L128">        Tag tilesTag = tag.getChild(&quot;Tiles&quot;);</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        if (tilesTag != null) {</span>
+<span class="fc" id="L130">            String colourList = tilesTag.getAttributeAsString(&quot;colour&quot;, null);</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">            if (Util.hasValue(colourList)) {</span>
+<span class="fc" id="L132">                tileColours = ImmutableList.copyOf(Splitter.on(&quot;,&quot;).split(colourList));</span>
+            }
+
+<span class="fc" id="L135">            List&lt;Tag&gt; laysTag = tilesTag.getChildren(&quot;Lays&quot;);</span>
+<span class="pc bpc" id="L136" title="1 of 4 branches missed.">            if (laysTag != null &amp;&amp; !laysTag.isEmpty()) {</span>
+                // First create a copy of the previous map, if it exists, otherwise create the map.
+                Map &lt;String, Integer&gt; newTileLaysPerColour;
+<span class="fc bfc" id="L139" title="All 4 branches covered.">                if (tileLaysPerColour == null || tileLaysPerColour.isEmpty()) {</span>
+<span class="fc" id="L140">                     newTileLaysPerColour = Maps.newHashMap();</span>
+                } else {
+<span class="fc" id="L142">                    newTileLaysPerColour = Maps.newHashMap(tileLaysPerColour);</span>
+                }
+
+<span class="fc" id="L145">                ImmutableMap.Builder&lt;String, Integer&gt; newTileLaysPerColourTurns = null;</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">                for (Tag layTag : laysTag) {</span>
+<span class="fc" id="L147">                    String colourString = layTag.getAttributeAsString(&quot;colour&quot;);</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">                    if (!Util.hasValue(colourString))</span>
+<span class="nc" id="L149">                        throw new ConfigurationException(</span>
+                        &quot;No colour entry for number of tile lays&quot;);
+<span class="fc" id="L151">                    String typeString = layTag.getAttributeAsString(&quot;companyType&quot;);</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">                    if (!Util.hasValue(typeString))</span>
+<span class="nc" id="L153">                        throw new ConfigurationException(</span>
+                        &quot;No company type entry for number of tile lays&quot;);
+<span class="fc" id="L155">                    int number = layTag.getAttributeAsInteger(&quot;number&quot;, 1);</span>
+<span class="fc" id="L156">                    int validForTurns =</span>
+<span class="fc" id="L157">                        layTag.getAttributeAsInteger(&quot;occurrences&quot;, 0);</span>
+
+<span class="fc" id="L159">                    String key = typeString + &quot;~&quot; + colourString;</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">                    if (number == 1) {</span>
+<span class="fc" id="L161">                        newTileLaysPerColour.remove(key);</span>
+                    } else {
+<span class="fc" id="L163">                        newTileLaysPerColour.put(key, number);</span>
+                    }
+
+<span class="fc bfc" id="L166" title="All 2 branches covered.">                    if (validForTurns != 0) {</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">                        if (newTileLaysPerColourTurns == null) {</span>
+<span class="fc" id="L168">                            newTileLaysPerColourTurns = ImmutableMap.builder();</span>
+                        }
+<span class="fc" id="L170">                        newTileLaysPerColourTurns.put(key, validForTurns);</span>
+                    }
+<span class="fc" id="L172">                }</span>
+<span class="fc" id="L173">                tileLaysPerColour = ImmutableMap.copyOf(newTileLaysPerColour);</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">                if (newTileLaysPerColourTurns != null) {</span>
+<span class="fc" id="L175">                    tileLaysPerColourTurns = newTileLaysPerColourTurns.build();</span>
+                }
+            }
+        }
+
+        // Private-related properties
+<span class="fc" id="L181">        Tag privatesTag = tag.getChild(&quot;Privates&quot;);</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        if (privatesTag != null) {</span>
+<span class="fc" id="L183">            privateSellingAllowed =</span>
+<span class="fc" id="L184">                privatesTag.getAttributeAsBoolean(&quot;sellingAllowed&quot;,</span>
+                        privateSellingAllowed);
+<span class="fc" id="L186">            privatesClose = privatesTag.getAttributeAsBoolean(&quot;close&quot;, false);</span>
+<span class="fc" id="L187">            privatesRevenueStep = privatesTag.getAttributeAsInteger(&quot;revenueStep&quot;, privatesRevenueStep); // sfy 1889</span>
+        }
+
+        // Operating rounds
+<span class="fc" id="L191">        Tag orTag = tag.getChild(&quot;OperatingRounds&quot;);</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">        if (orTag != null) {</span>
+<span class="fc" id="L193">            numberOfOperatingRounds =</span>
+<span class="fc" id="L194">                orTag.getAttributeAsInteger(&quot;number&quot;,</span>
+                        numberOfOperatingRounds);
+        }
+
+        // Off-board revenue steps (starts at 1)
+<span class="fc" id="L199">        Tag offBoardTag = tag.getChild(&quot;OffBoardRevenue&quot;);</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        if (offBoardTag != null) {</span>
+<span class="fc" id="L201">            offBoardRevenueStep =</span>
+<span class="fc" id="L202">                offBoardTag.getAttributeAsInteger(&quot;step&quot;,</span>
+                        offBoardRevenueStep);
+        }
+
+<span class="fc" id="L206">        Tag trainsTag = tag.getChild(&quot;Trains&quot;);</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        if (trainsTag != null) {</span>
+<span class="fc" id="L208">            trainLimitStep = trainsTag.getAttributeAsInteger(&quot;limitStep&quot;, trainLimitStep);</span>
+<span class="fc" id="L209">            rustedTrainNames = trainsTag.getAttributeAsString(&quot;rusted&quot;, null);</span>
+<span class="fc" id="L210">            releasedTrainNames = trainsTag.getAttributeAsString(&quot;released&quot;, null);</span>
+<span class="fc" id="L211">            trainTradingAllowed =</span>
+<span class="fc" id="L212">                trainsTag.getAttributeAsBoolean(&quot;tradingAllowed&quot;,</span>
+                        trainTradingAllowed);
+<span class="fc" id="L214">            oneTrainPerTurn =</span>
+<span class="fc" id="L215">                trainsTag.getAttributeAsBoolean(&quot;onePerTurn&quot;,</span>
+                        oneTrainPerTurn);
+<span class="fc" id="L217">            oneTrainPerTypePerTurn =</span>
+<span class="fc" id="L218">                trainsTag.getAttributeAsBoolean(&quot;onePerTypePerTurn&quot;,</span>
+                        oneTrainPerTypePerTurn);
+        }
+
+<span class="fc" id="L222">        Tag loansTag = tag.getChild(&quot;Loans&quot;);</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">        if (loansTag != null) {</span>
+<span class="fc" id="L224">            loanTakingAllowed = loansTag.getAttributeAsBoolean(&quot;allowed&quot;,</span>
+                    loanTakingAllowed);
+        }
+
+<span class="fc" id="L228">        Tag parameterTag = tag.getChild(&quot;Parameters&quot;);</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">        if (parameterTag != null) {</span>
+<span class="nc bnc" id="L230" title="All 2 branches missed.">            if (parameters == null) parameters = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L231">            Map&lt;String,String&gt; attributes = parameterTag.getAttributes();</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">            for (String key : attributes.keySet()) {</span>
+<span class="nc" id="L233">                parameters.put (key, attributes.get(key));</span>
+<span class="nc" id="L234">            }</span>
+        }
+
+<span class="fc" id="L237">        Tag setTag = tag.getChild(&quot;Action&quot;);</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">        if (setTag != null) {</span>
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">            if (actions == null) actions = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L240">            String key = setTag.getAttributeAsString(&quot;name&quot;);</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">            if (!Util.hasValue(key)) {</span>
+<span class="nc" id="L242">                throw new ConfigurationException (&quot;Phase &quot;+name+&quot;: &lt;Set&gt; without action name&quot;);</span>
+            }
+<span class="fc" id="L244">            String value = setTag.getAttributeAsString(&quot;value&quot;, null);</span>
+<span class="fc" id="L245">            actions.put (key, value);</span>
+        }
+
+        // Extra info text(usually related to extra-share special properties)
+<span class="fc" id="L249">        Tag infoTag = tag.getChild(&quot;Info&quot;);</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">        if (infoTag != null) {</span>
+<span class="fc" id="L251">            String infoKey = infoTag.getAttributeAsString(&quot;key&quot;);</span>
+<span class="fc" id="L252">            String[] infoParms = infoTag.getAttributeAsString(&quot;parm&quot;, &quot;&quot;).split(&quot;,&quot;);</span>
+<span class="fc" id="L253">            extraInfo += &quot;&lt;br&gt;&quot;+LocalText.getText(infoKey, (Object[])infoParms);</span>
+        }
+
+<span class="fc" id="L256">    }</span>
+
+    public void finishConfiguration (RailsRoot root)
+    throws ConfigurationException {
+
+<span class="fc" id="L261">        TrainManager trainManager = getRoot().getTrainManager();</span>
+        TrainCertificateType type;
+
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        if (rustedTrainNames != null) {</span>
+            ImmutableList.Builder&lt;TrainCertificateType&gt; newRustedTrains =
+<span class="fc" id="L266">                    ImmutableList.builder();</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">            for (String typeName : rustedTrainNames.split(&quot;,&quot;)) {</span>
+<span class="fc" id="L268">                type = trainManager.getCertTypeByName(typeName);</span>
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">                if (type == null) {</span>
+<span class="nc" id="L270">                    throw new ConfigurationException (&quot; Unknown rusted train type '&quot;+typeName+&quot;' for phase '&quot;+ getId()+&quot;'&quot;);</span>
+                }
+<span class="fc" id="L272">                newRustedTrains.add(type);</span>
+<span class="fc" id="L273">                type.setPermanent(false);</span>
+            }
+<span class="fc" id="L275">            rustedTrains = newRustedTrains.build();</span>
+        }
+
+<span class="fc bfc" id="L278" title="All 2 branches covered.">        if (releasedTrainNames != null) {</span>
+            ImmutableList.Builder&lt;TrainCertificateType&gt; newReleasedTrains =
+<span class="fc" id="L280">                    ImmutableList.builder();</span>
+<span class="fc bfc" id="L281" title="All 2 branches covered.">            for (String typeName : releasedTrainNames.split(&quot;,&quot;)) {</span>
+<span class="fc" id="L282">                type = trainManager.getCertTypeByName(typeName);</span>
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">                if (type == null) {</span>
+<span class="nc" id="L284">                    throw new ConfigurationException (&quot; Unknown released train type '&quot;+typeName+&quot;' for phase '&quot;+getId()+&quot;'&quot;);</span>
+                }
+<span class="fc" id="L286">                newReleasedTrains.add(type);</span>
+            }
+<span class="fc" id="L288">            releasedTrains = newReleasedTrains.build();</span>
+        }
+
+        // Push any extra tile lay turns to the appropriate company type.
+<span class="fc bfc" id="L292" title="All 2 branches covered.">        if (tileLaysPerColourTurns != null) {</span>
+<span class="fc" id="L293">            CompanyManager companyManager = getRoot().getCompanyManager();</span>
+<span class="fc" id="L294">            companyManager.addExtraTileLayTurnsInfo (tileLaysPerColourTurns);</span>
+        }
+<span class="fc" id="L296">        tileLaysPerColourTurns = null;  // We no longer need it.</span>
+<span class="fc" id="L297">    }</span>
+
+    /** Called when a phase gets activated */
+    public void activate() {
+<span class="fc" id="L301">        ReportBuffer.add(this, LocalText.getText(&quot;StartOfPhase&quot;, getId()));</span>
+
+        // Report any extra info
+<span class="fc bfc" id="L304" title="All 2 branches covered.">        if (Util.hasValue(extraInfo)) {</span>
+<span class="fc" id="L305">            ReportBuffer.add(this, extraInfo.replaceFirst(&quot;^&lt;[Bb][Rr]&gt;&quot;, &quot;&quot;).replaceAll(&quot;&lt;[Bb][Rr]&gt;&quot;, &quot;\n&quot;));</span>
+        }
+
+<span class="pc bpc" id="L308" title="1 of 4 branches missed.">        if (closedObjects != null &amp;&amp; !closedObjects.isEmpty()) {</span>
+<span class="fc bfc" id="L309" title="All 2 branches covered.">            for (Closeable object : closedObjects) {</span>
+<span class="fc" id="L310">                log.debug(&quot;Closing object {}&quot;, object.toString());</span>
+<span class="fc" id="L311">                object.close();</span>
+<span class="fc" id="L312">            }</span>
+        }
+
+<span class="fc" id="L315">        TrainManager trainManager = getRoot().getTrainManager();</span>
+
+<span class="pc bpc" id="L317" title="1 of 4 branches missed.">        if (rustedTrains != null &amp;&amp; !rustedTrains.isEmpty()) {</span>
+<span class="fc bfc" id="L318" title="All 2 branches covered.">            for (TrainCertificateType type : rustedTrains) {</span>
+<span class="fc" id="L319">                trainManager.rustTrainType(type, lastTrainBuyer.value());</span>
+<span class="fc" id="L320">            }</span>
+        }
+
+<span class="pc bpc" id="L323" title="1 of 4 branches missed.">        if (releasedTrains != null &amp;&amp; !releasedTrains.isEmpty()) {</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">            for (TrainCertificateType type : releasedTrains) {</span>
+<span class="fc" id="L325">                trainManager.makeTrainAvailable(type);</span>
+<span class="fc" id="L326">            }</span>
+        }
+
+<span class="pc bpc" id="L329" title="1 of 4 branches missed.">        if (actions != null &amp;&amp; !actions.isEmpty()) {</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">            for (String actionName : actions.keySet()) {</span>
+<span class="fc" id="L331">                getRoot().getGameManager().processPhaseAction (actionName, actions.get(actionName));</span>
+<span class="fc" id="L332">            }</span>
+        }
+
+<span class="fc bfc" id="L335" title="All 2 branches covered.">        if (doPrivatesClose()) {</span>
+<span class="fc" id="L336">            getRoot().getCompanyManager().closeAllPrivates();</span>
+        }
+<span class="fc" id="L338">    }</span>
+
+    public void setLastTrainBuyer(Owner lastTrainBuyer) {
+<span class="fc" id="L341">        this.lastTrainBuyer.set(lastTrainBuyer);</span>
+<span class="fc" id="L342">    }</span>
+
+    public String getInfo() {
+<span class="nc" id="L345">        return extraInfo;</span>
+    }
+
+    @Deprecated
+    // FIXME: Replace this with TileColor object
+    public boolean isTileColourAllowed(String tileColour) {
+<span class="fc" id="L351">        return tileColours.contains(tileColour);</span>
+    }
+
+    @Deprecated
+    // FIXME: Replace this with TileColor objects
+    public List&lt;String&gt; getTileColours() {
+<span class="fc" id="L357">        return tileColours;</span>
+    }
+
+    public String getTileColoursString() {
+<span class="nc" id="L361">        StringBuilder b = new StringBuilder();</span>
+<span class="nc bnc" id="L362" title="All 2 branches missed.">        for (String colour : tileColours) {</span>
+<span class="nc bnc" id="L363" title="All 2 branches missed.">            if (b.length() &gt; 0) b.append(&quot;,&quot;);</span>
+<span class="nc" id="L364">            b.append (colour);</span>
+<span class="nc" id="L365">        }</span>
+<span class="nc" id="L366">        return b.toString();</span>
+    }
+
+    public int getTileLaysPerColour (String companyTypeName, String colourName) {
+
+<span class="fc bfc" id="L371" title="All 2 branches covered.">        if (tileLaysPerColour == null) return 1;</span>
+
+<span class="fc" id="L373">        String key = companyTypeName + &quot;~&quot; + colourName;</span>
+<span class="fc" id="L374">        return tileLaysPerColour.getOrDefault(key, 1);</span>
+    }
+
+    public int getTrainLimitStep() {
+<span class="nc" id="L378">        return trainLimitStep;</span>
+    }
+
+    public int getTrainLimitIndex() {
+<span class="fc" id="L382">        return trainLimitStep - 1;</span>
+    }
+
+    public int getIndex() {
+<span class="fc" id="L386">        return index;</span>
+    }
+
+    public String getRealName() {
+<span class="fc bfc" id="L390" title="All 2 branches covered.">        return (name != null) ? name : getId();</span>
+    }
+
+    /**
+     * @return Returns the privatesClose.
+     */
+    public boolean doPrivatesClose() {
+<span class="fc" id="L397">        return privatesClose;</span>
+    }
+
+    /**
+     * @return Returns the privateSellingAllowed.
+     */
+    public boolean isPrivateSellingAllowed() {
+<span class="fc" id="L404">        return privateSellingAllowed;</span>
+    }
+    // sfy 1889
+    public int getPrivatesRevenueStep() {
+<span class="fc" id="L408">        return privatesRevenueStep;</span>
+    }
+    public boolean isTrainTradingAllowed() {
+<span class="fc" id="L411">        return trainTradingAllowed;</span>
+    }
+
+    public boolean canBuyMoreTrainsPerTurn() {
+<span class="fc bfc" id="L415" title="All 2 branches covered.">        return !oneTrainPerTurn;</span>
+    }
+
+    public boolean canBuyMoreTrainsPerTypePerTurn() {
+<span class="pc bpc" id="L419" title="1 of 2 branches missed.">        return !oneTrainPerTypePerTurn;</span>
+    }
+
+    public boolean isLoanTakingAllowed() {
+<span class="fc" id="L423">        return loanTakingAllowed;</span>
+    }
+
+    public int getNumberOfOperatingRounds() {
+<span class="fc" id="L427">        return numberOfOperatingRounds;</span>
+    }
+
+    public List&lt;TrainCertificateType&gt; getRustedTrains() {
+<span class="nc" id="L431">        return rustedTrains;</span>
+    }
+
+    public List&lt;TrainCertificateType&gt; getReleasedTrains() {
+<span class="nc" id="L435">        return releasedTrains;</span>
+    }
+
+    /**
+     * @return Returns the offBoardRevenueStep.
+     */
+    public int getOffBoardRevenueStep() {
+<span class="nc" id="L442">        return offBoardRevenueStep;</span>
+    }
+
+    public void addObjectToClose(Closeable object) {
+<span class="fc bfc" id="L446" title="All 2 branches covered.">        if (closedObjects == null) {</span>
+<span class="fc" id="L447">            closedObjects = new ArrayList&lt;&gt;(4);</span>
+        }
+<span class="fc bfc" id="L449" title="All 2 branches covered.">        if (!closedObjects.contains(object)) closedObjects.add(object);</span>
+<span class="fc" id="L450">    }</span>
+
+    public String getParameterAsString (String key) {
+<span class="nc bnc" id="L453" title="All 2 branches missed.">        if (parameters != null) {</span>
+<span class="nc" id="L454">            return parameters.get(key);</span>
+        } else {
+<span class="nc" id="L456">            return null;</span>
+        }
+    }
+
+    public int getParameterAsInteger (String key) {
+<span class="nc" id="L461">        String stringValue = getParameterAsString(key);</span>
+<span class="nc bnc" id="L462" title="All 2 branches missed.">        if (stringValue == null) {</span>
+<span class="nc" id="L463">            return 0;</span>
+        }
+        try {
+<span class="nc" id="L466">            return Integer.parseInt(stringValue);</span>
+<span class="nc" id="L467">        } catch (Exception e) {</span>
+<span class="nc" id="L468">            log.error(&quot;Error while parsing parameter {} in phase {}&quot;, key, getId(), e);</span>
+<span class="nc" id="L469">            return 0;</span>
+        }
+
+    }
+
+    public List&lt;Closeable&gt; getClosedObjects() {
+<span class="nc" id="L475">        return closedObjects;</span>
+    }
+
+    @Override
+    public String toText() {
+<span class="fc" id="L480">        return getRealName();</span>
+    }
+
+    public static Phase getCurrent(RailsItem item) {
+<span class="fc" id="L484">        return item.getRoot().getPhaseManager().getCurrentPhase();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

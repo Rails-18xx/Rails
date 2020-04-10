@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.model</a> &gt; <span class="el_source">MoneyModel.java</span></div><h1>MoneyModel.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.model;
+
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.StringState;
+
+/**
+ * The base model for money
+ * FIXME: Removed &quot;&quot; equivalence for null in setText
+ * FIXME: PublicCompany money is shown as &quot;&quot; as long as it has not started, this
+ * was coded inside the toString() method
+ */
+public abstract class MoneyModel extends RailsModel {
+    
+    public static final int CASH_DEFAULT = 0;
+    
+    // Data
+<span class="fc" id="L19">    private final StringState fixedText = StringState.create(this, &quot;fixedText&quot;);</span>
+    private final Currency currency;
+    
+    // Format Options (with defaults)
+<span class="fc" id="L23">    private final BooleanState suppressZero = BooleanState.create(this, &quot;suppressZero&quot;);</span>
+<span class="fc" id="L24">    private boolean suppressInitialZero = false;</span>
+<span class="fc" id="L25">    private boolean addPlus = false;</span>
+<span class="fc" id="L26">    private boolean displayNegative = false;</span>
+ 
+    protected MoneyModel(RailsItem parent, String id, Currency currency) {
+<span class="fc" id="L29">        super(parent, id);</span>
+<span class="fc" id="L30">        this.currency = currency;</span>
+<span class="fc" id="L31">    }</span>
+
+    public Currency getCurrency() {
+<span class="nc" id="L34">        return currency;</span>
+    }
+    
+    /**
+     * @param suppressZero true: displays an empty string instead of a zero value
+     * This is a state variable, thus can be changed after initialization
+     */
+    public void setSuppressZero(boolean suppressZero) {
+<span class="fc" id="L42">        this.suppressZero.set(suppressZero);</span>
+<span class="fc" id="L43">    }</span>
+
+    /**
+     * @param suppressInitialZero true: displays an empty string for the initial zero value
+     * This is not a state variable, so do not change after the MoneyModel is used
+     */
+    public void setSuppressInitialZero(boolean suppressInitialZero) {
+<span class="fc" id="L50">        this.suppressInitialZero = suppressInitialZero;</span>
+<span class="fc" id="L51">    }</span>
+
+    /**
+     * @param addPlus true: adds a plus sign for positive values
+     * This is not a state variable, so do not change after the MoneyModel is used
+     */
+    public void setAddPlus(boolean addPlus) {
+<span class="nc" id="L58">        this.addPlus = addPlus;</span>
+<span class="nc" id="L59">    }</span>
+    
+    /**
+     * @param displayNegative true: does not display negative values
+     * This is not a state variable, so do not change after the MoneyModel is used
+     */
+    public void setDisplayNegative(boolean displayNegative){
+<span class="fc" id="L66">        this.displayNegative = displayNegative;</span>
+<span class="fc" id="L67">    }</span>
+
+    /** 
+     * @param text fixed text to be displayed instead of money value
+     * using null removes text and displays value again
+     * Remark: Setting the text triggers an update of the model
+     */
+    public void setText (String text) {
+<span class="fc" id="L75">        fixedText.set(text); // this triggers the update of the model</span>
+<span class="fc" id="L76">    }</span>
+    
+    /**
+     * @return current value of the MoneyModel
+     */
+    public abstract int value();
+    
+    
+    /**
+     * @return formatted value of the MoneyModel
+     */
+    public String formattedValue() {
+<span class="nc" id="L88">        return currency.format(value());</span>
+    }
+    
+    /**
+     * @return true if MoneyValue has a value set already
+     */
+    public abstract boolean initialised();
+
+    @Override
+    public String toText() {
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (fixedText.value() != null) {</span>
+<span class="nc" id="L99">            return fixedText.value();</span>
+        }
+<span class="nc" id="L101">        int amount = this.value();</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (amount == 0</span>
+<span class="nc bnc" id="L103" title="All 4 branches missed.">            &amp;&amp; (suppressZero.value() </span>
+                    || suppressInitialZero
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                        &amp;&amp; !initialised())) {</span>
+<span class="nc" id="L106">            return &quot;&quot;;</span>
+<span class="nc bnc" id="L107" title="All 4 branches missed.">        } else if (amount &lt; 0 &amp;&amp; !displayNegative) {</span>
+<span class="nc" id="L108">            return &quot;&quot;;</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        } else if (addPlus) {</span>
+<span class="nc" id="L110">            return &quot;+&quot; + currency.format(amount);</span>
+        } else {
+<span class="nc" id="L112">            return currency.format(amount);</span>
+        }
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

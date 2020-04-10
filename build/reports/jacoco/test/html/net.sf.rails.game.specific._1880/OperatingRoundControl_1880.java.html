@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperatingRoundControl_1880.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1880</a> &gt; <span class="el_source">OperatingRoundControl_1880.java</span></div><h1>OperatingRoundControl_1880.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1880;
+
+import net.sf.rails.game.GameDef;
+import net.sf.rails.game.GameDef.OrStep;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsAbstractItem;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.IntegerState;
+
+public class OperatingRoundControl_1880 extends RailsAbstractItem {
+    
+<span class="fc" id="L14">    private final GenericState&lt;PublicCompany&gt; lastCompanyToBuyTrain = GenericState.create(this, &quot;lastCompanyToBuyTrain&quot;);</span>
+<span class="fc" id="L15">    private final GenericState&lt;PublicCompany&gt; firstCompanyToRun = GenericState.create(this, &quot;firstCompanyToRun&quot;);</span>
+<span class="fc" id="L16">    private final GenericState&lt;PublicCompany&gt; lastCompanyToOperate = GenericState.create(this, &quot;lastCompanyToOperate&quot;);</span>
+    private final GenericState&lt;GameDef.OrStep&gt; nextStep;
+<span class="fc" id="L18">    private final BooleanState exitingToStockRound = BooleanState.create(this, &quot;ExitedToStockRound&quot;, false);</span>
+<span class="fc" id="L19">    private final BooleanState startedFromStockRound = BooleanState.create (this,&quot;StartingFromStockRound&quot;,false);</span>
+<span class="fc" id="L20">    private final BooleanState finalOperatingRoundSequence = BooleanState.create (this,&quot;FinalOperatingRoundSequence&quot;,false);</span>
+<span class="fc" id="L21">    private final BooleanState noTrainsToDiscard = BooleanState.create(this,&quot;NoMoreTrainsToDiscard&quot;, false);</span>
+<span class="fc" id="L22">    private final IntegerState finalOperatingRoundSequenceNumber = IntegerState.create(this,&quot;FinalOperatingRoundNumber&quot;,0);</span>
+
+    
+    public OperatingRoundControl_1880(RailsRoot parent, String string) {
+<span class="fc" id="L26">        super(parent,string);</span>
+<span class="fc" id="L27">        nextStep = GenericState.create(this, &quot;ORStep&quot;,</span>
+                        GameDef.OrStep.INITIAL);
+<span class="fc" id="L29">    }</span>
+
+    public void orExitToStockRound(PublicCompany company, OrStep step) {
+<span class="fc" id="L32">        firstCompanyToRun.set(company);</span>
+<span class="fc" id="L33">        nextStep.set(step);</span>
+<span class="fc" id="L34">        exitingToStockRound.set(true);</span>
+<span class="fc" id="L35">    }</span>
+    
+    public PublicCompany lastCompanyToBuyTrain() {
+<span class="fc" id="L38">        return lastCompanyToBuyTrain.value();</span>
+    }
+
+    public void trainPurchased(PublicCompany company) {
+<span class="fc" id="L42">        lastCompanyToBuyTrain.set(company);</span>
+<span class="fc" id="L43">    }</span>
+    
+    public boolean isExitingToStockRound() {
+<span class="fc" id="L46">        return exitingToStockRound.value();</span>
+    }
+    
+    public void startingStockRound() {
+<span class="nc" id="L50">        exitingToStockRound.set(false);</span>
+<span class="nc" id="L51">    }</span>
+    
+    public PublicCompany getFirstCompanyToRun() {
+<span class="fc" id="L54">        return firstCompanyToRun.value();</span>
+    }
+    
+    public OrStep getNextStep() {
+<span class="fc" id="L58">        return nextStep.value();</span>
+    }
+
+    public void startNewOR() {
+<span class="fc" id="L62">        exitingToStockRound.set(false);</span>
+<span class="fc" id="L63">        nextStep.set(OrStep.INITIAL);        </span>
+<span class="fc" id="L64">    }</span>
+
+    public boolean wasStartedFromStockRound() {
+<span class="fc" id="L67">        return startedFromStockRound.value();</span>
+    }
+
+    public void startedFromStockRound() {
+<span class="fc" id="L71">        startedFromStockRound.set(true);        </span>
+<span class="fc" id="L72">    }</span>
+
+    public void startedFromOperatingRound() {
+<span class="fc" id="L75">        startedFromStockRound.set(false);        </span>
+<span class="fc" id="L76">    }</span>
+
+    public boolean isFinalOperatingRoundSequence() {
+<span class="fc" id="L79">        return finalOperatingRoundSequence.value();</span>
+    }
+    
+    public void setFinalOperatingRoundSequence(boolean maybe) {
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (maybe == true) {</span>
+<span class="fc" id="L84">        finalOperatingRoundSequence.set(true);</span>
+<span class="fc" id="L85">        finalOperatingRoundSequenceNumber.set(1); </span>
+        }
+<span class="fc" id="L87">    }</span>
+    
+    public PublicCompany lastCompanyToOperate() {
+<span class="nc" id="L90">        return lastCompanyToOperate.value();</span>
+    }
+    
+    public void setLastCompanyToOperate(PublicCompany company) {
+<span class="fc" id="L94">        lastCompanyToOperate.set(company);</span>
+<span class="fc" id="L95">    }</span>
+
+    public boolean noTrainsToDiscard() {
+<span class="fc" id="L98">        return noTrainsToDiscard.value();</span>
+    }
+
+    public void setNoTrainsToDiscard(boolean maybe) {
+<span class="fc" id="L102">        noTrainsToDiscard.set(maybe);</span>
+<span class="fc" id="L103">    }</span>
+
+    public int getFinalOperatingRoundSequenceNumber() {
+<span class="fc" id="L106">        return finalOperatingRoundSequenceNumber.value();</span>
+    }
+
+    public void setFinalOperatingRoundSequenceNumber(
+            IntegerState finalOperatingRoundSequenceNumber) {
+<span class="nc" id="L111">        this.finalOperatingRoundSequenceNumber.set(finalOperatingRoundSequenceNumber.value());</span>
+<span class="nc" id="L112">    }</span>
+    
+    public void addFinalOperatingRoundSequenceNumber(int value) {
+<span class="fc" id="L115">        this.finalOperatingRoundSequenceNumber.add(value);</span>
+<span class="fc" id="L116">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

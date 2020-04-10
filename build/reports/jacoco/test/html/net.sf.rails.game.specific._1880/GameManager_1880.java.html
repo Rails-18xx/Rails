@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameManager_1880.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1880</a> &gt; <span class="el_source">GameManager_1880.java</span></div><h1>GameManager_1880.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1880;
+
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.Round;
+import net.sf.rails.game.StartRound;
+import net.sf.rails.game.financial.ShareSellingRound;
+import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.common.GuiDef;
+
+
+public class GameManager_1880 extends GameManager {
+
+    private final ParSlotManager parSlotManager;
+    private final OperatingRoundControl_1880 orControl;
+
+    public GameManager_1880(RailsRoot parent, String id) {
+<span class="fc" id="L20">        super(parent, id);</span>
+<span class="fc" id="L21">        orControl = new OperatingRoundControl_1880(parent, &quot;OrControl&quot;);</span>
+<span class="fc" id="L22">        parSlotManager = new ParSlotManager(this, &quot;ParSlotControl&quot;);</span>
+<span class="fc" id="L23">        shareSellingRoundClass = ShareSellingRound_1880.class;</span>
+<span class="fc" id="L24">    }</span>
+
+    @Override
+    protected void setGuiParameters () {
+<span class="fc" id="L28">        super.setGuiParameters();</span>
+<span class="fc" id="L29">        guiParameters.put(GuiDef.Parm.PLAYER_ORDER_VARIES, true);</span>
+<span class="fc" id="L30">        guiParameters.put(GuiDef.Parm.HAS_ANY_PAR_PRICE, false);</span>
+<span class="fc" id="L31">    }</span>
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManager#nextRound(rails.game.RoundI)
+     */
+    @Override
+    public void nextRound(Round round) {
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if (round instanceof StartRound) {</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">            if (((StartRound) round).getStartPacket().areAllSold()) { // This start round was &quot;completed&quot;</span>
+                // check if there are other StartPackets, otherwise stockRounds start
+<span class="fc" id="L41">                beginStartRound();</span>
+            } else {
+<span class="nc" id="L43">                startOperatingRound(runIfStartPacketIsNotCompletelySold());</span>
+            }
+<span class="fc" id="L45">            numOfORs.set(10);</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        } else if (round instanceof StockRound) {</span>
+<span class="fc" id="L47">            relativeORNumber.set(1);</span>
+<span class="fc" id="L48">            orControl.startedFromStockRound();</span>
+<span class="fc" id="L49">            startOperatingRound(true);</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        } else if (round instanceof OperatingRound_1880) {</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">            if (orControl.getFinalOperatingRoundSequenceNumber()&gt; 3) {</span>
+<span class="fc" id="L52">                finishGame();</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">            } else if (getRoot().getCompanyManager().getNextUnfinishedStartPacket() != null) {</span>
+<span class="nc" id="L54">                beginStartRound();</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            } else if ( orControl.isExitingToStockRound() ) {</span>
+<span class="fc" id="L56">                startStockRound();</span>
+            } else {
+<span class="fc" id="L58">                orControl.startedFromOperatingRound();</span>
+<span class="fc" id="L59">                relativeORNumber.add(1);</span>
+<span class="fc" id="L60">                startOperatingRound(true);</span>
+            }
+
+        }
+<span class="fc" id="L64">    }// End of nextRound</span>
+
+    protected void startStockRound_1880(OperatingRound_1880 or) {
+<span class="nc" id="L67">        interruptedRound = or;</span>
+<span class="nc" id="L68">        super.startStockRound();</span>
+<span class="nc" id="L69">    }</span>
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManager#startShareSellingRound(rails.game.Player, int, rails.game.PublicCompanyI, boolean)
+     */
+    @Override
+    public void startShareSellingRound(Player player, int cashToRaise,
+            PublicCompany cashNeedingCompany, boolean problemDumpOtherCompanies) {
+
+
+<span class="nc" id="L79">        interruptedRound = getCurrentRound();</span>
+
+     // An id basd on interruptedRound and company id
+<span class="nc" id="L82">        String id = &quot;SSR_&quot; + interruptedRound.getId() + &quot;_&quot; + cashNeedingCompany.getId();</span>
+        // check if other companies can be dumped
+<span class="nc bnc" id="L84" title="All 4 branches missed.">        createRound(shareSellingRoundClass, id).start(interruptedRound, player, cashToRaise, cashNeedingCompany,</span>
+                !problemDumpOtherCompanies || forcedSellingCompanyDump);
+        // the last parameter indicates if the dump of other companies is allowed, either this is explicit or
+        // the action does not require that check
+
+<span class="nc" id="L89">    }</span>
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManager#finishShareSellingRound()
+     */
+    @Override
+    public void finishShareSellingRound() {
+
+<span class="nc" id="L97">        possibleActions.clear(); //Do we need this here ?</span>
+
+<span class="nc" id="L99">        super.finishShareSellingRound();</span>
+<span class="nc" id="L100">    }</span>
+
+    public ParSlotManager getParSlotManager() {
+<span class="fc" id="L103">        return parSlotManager;</span>
+    }
+
+    public OperatingRoundControl_1880 getORControl() {
+<span class="fc" id="L107">        return orControl;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

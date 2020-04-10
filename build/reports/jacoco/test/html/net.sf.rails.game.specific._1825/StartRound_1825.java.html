@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StartRound_1825.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1825</a> &gt; <span class="el_source">StartRound_1825.java</span></div><h1>StartRound_1825.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1825;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rails.game.action.*;
+
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.*;
+
+
+public class StartRound_1825 extends StartRound {
+
+<span class="nc" id="L18">    private static final Logger log = LoggerFactory.getLogger(StartRound_1825.class);</span>
+
+    /**
+     * Constructed via Configure
+     */
+    public StartRound_1825(GameManager parent, String id) {
+<span class="nc" id="L24">        super(parent, id, false, true, true);</span>
+        // bidding is set to false
+<span class="nc" id="L26">    }</span>
+
+    @Override
+    public void start() {
+<span class="nc" id="L30">        super.start();</span>
+
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        if (!setPossibleActions()) {</span>
+            /*
+             * If nobody can do anything, keep executing Operating and Start
+             * rounds until someone has got enough money to buy one of the
+             * remaining items. The game mechanism ensures that this will
+             * ultimately be possible.
+             */
+<span class="nc" id="L39">            finishRound();</span>
+        }
+
+<span class="nc" id="L42">    }</span>
+
+    /**
+     * Get a list
+     *
+     * @return An array of start items that can be bought.
+     */
+
+    @Override
+    public boolean setPossibleActions() {
+
+        StartItemAction action;
+<span class="nc" id="L54">        List&lt;StartItem&gt; startItems = startPacket.getItems();</span>
+<span class="nc" id="L55">        boolean itemAvailable = false;</span>
+<span class="nc" id="L56">        int soldShares = 0;</span>
+<span class="nc" id="L57">        possibleActions.clear();</span>
+
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        for (StartItem item : startItems) {</span>
+            //Do we already have an item available for sale?
+<span class="nc bnc" id="L61" title="All 2 branches missed.">            if (itemAvailable == false){</span>
+                //If not, check whether this has already been sold
+<span class="nc bnc" id="L63" title="All 2 branches missed.">                if (!item.isSold()){</span>
+<span class="nc" id="L64">                    item.setStatus(StartItem.BUYABLE);</span>
+<span class="nc" id="L65">                    possibleActions.add(action =</span>
+<span class="nc" id="L66">                        new BuyStartItem(item, item.getBasePrice(), false));</span>
+<span class="nc" id="L67">                    log.debug(playerManager.getCurrentPlayer().getId() + &quot; may: &quot;</span>
+<span class="nc" id="L68">                            + action.toString());</span>
+                    //Found one, no need to find any others
+<span class="nc" id="L70">                    itemAvailable = true;</span>
+                }
+            }
+<span class="nc" id="L73">        }</span>
+        //Does everyone have at least one private?
+        //If so, then we're officially into the first share round so passing is allowed
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        for (StartItem item : startItems) {</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            if (item.isSold()){</span>
+<span class="nc" id="L78">                soldShares++;</span>
+            }
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (soldShares == playerManager.getPlayers().size()){</span>
+                //Enable passing
+<span class="nc" id="L82">                possibleActions.add(new NullAction(NullAction.Mode.PASS));</span>
+            }
+<span class="nc" id="L84">        }</span>
+<span class="nc" id="L85">        return true;</span>
+    }
+
+    @Override
+    public List&lt;StartItem&gt; getStartItems() {
+<span class="nc" id="L90">        Player currentPlayer = playerManager.getCurrentPlayer();</span>
+<span class="nc" id="L91">        int cashToSpend = currentPlayer.getCash();</span>
+<span class="nc" id="L92">        List&lt;StartItem&gt; startItems = startPacket.getItems();</span>
+
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        for (StartItem item : startItems) {</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">            if (item.isSold()) {</span>
+<span class="nc" id="L96">                item.setStatus(StartItem.SOLD);</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            } else if (item.getBasePrice() &gt; cashToSpend) {</span>
+<span class="nc" id="L98">                item.setStatus(StartItem.UNAVAILABLE);</span>
+            } else {
+<span class="nc" id="L100">                item.setStatus(StartItem.BUYABLE);</span>
+            }
+<span class="nc" id="L102">        }</span>
+<span class="nc" id="L103">        return startItems;</span>
+    }
+
+    @Override
+    public boolean bid(String playerName, BidStartItem item) {
+
+<span class="nc" id="L109">        DisplayBuffer.add(this, LocalText.getText(&quot;InvalidAction&quot;));</span>
+<span class="nc" id="L110">        return false;</span>
+    }
+
+    /**
+     * Process a player's pass.
+     * @param playerName The name of the current player (for checking purposes).
+     */
+    @Override
+    public boolean pass(NullAction action, String playerName) {
+<span class="nc" id="L119">        ReportBuffer.add(this, LocalText.getText(&quot;PASSES&quot;, playerName));</span>
+<span class="nc" id="L120">        numPasses.add(1);</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (numPasses.value() &gt;= playerManager.getNumberOfPlayers()) {</span>
+            //Everyone has passed
+<span class="nc" id="L123">            gameManager.reportAllPlayersPassed();</span>
+<span class="nc" id="L124">            numPasses.set(0);</span>
+<span class="nc" id="L125">            finishRound();</span>
+        }
+<span class="nc" id="L127">        playerManager.setCurrentToNextPlayer();</span>
+<span class="nc" id="L128">        return true;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

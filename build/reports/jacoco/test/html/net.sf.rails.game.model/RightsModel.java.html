@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RightsModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.model</a> &gt; <span class="el_source">RightsModel.java</span></div><h1>RightsModel.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.model;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
+
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.special.SpecialRight;
+import net.sf.rails.game.state.HashSetState;
+
+/**
+ * RightsModel stores purchased SpecialRight(s)
+ *
+ */
+public class RightsModel extends RailsModel {
+
+<span class="fc" id="L16">    private HashSetState&lt;SpecialRight&gt; rights = HashSetState.create(this, &quot;rightsModel&quot;);</span>
+    
+    private RightsModel(PublicCompany parent, String id) {
+<span class="fc" id="L19">        super(parent, id);</span>
+<span class="fc" id="L20">    }</span>
+    
+    public static RightsModel create(PublicCompany parent, String id) {
+<span class="fc" id="L23">        return new RightsModel(parent, id);</span>
+    }
+    
+    @Override
+    public PublicCompany getParent() {
+<span class="nc" id="L28">        return (PublicCompany)getParent();</span>
+    }
+    
+    public void add(SpecialRight right) {
+<span class="fc" id="L32">        rights.add(right);</span>
+<span class="fc" id="L33">    }</span>
+    
+    public boolean contains(SpecialRight right) {
+<span class="nc" id="L36">        return rights.contains(right);</span>
+    }
+    
+    public String toText() {
+<span class="nc" id="L40">        ImmutableList.Builder&lt;String&gt; rightsText = ImmutableList.builder();</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        for (SpecialRight right:rights) {</span>
+<span class="nc" id="L42">            rightsText.add(right.getName());</span>
+<span class="nc" id="L43">        }</span>
+<span class="nc" id="L44">        return Joiner.on(&quot;,&quot;).join(rightsText.build()).toString();</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

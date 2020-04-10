@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Portfolio.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.state</a> &gt; <span class="el_source">Portfolio.java</span></div><h1>Portfolio.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.state;
+
+import com.google.common.collect.ImmutableSortedSet;
+
+public abstract class Portfolio&lt;T extends Ownable&gt; extends Model implements Iterable&lt;T&gt; {
+
+    private final Class&lt;T&gt; type;
+
+    /**
+     * Creation of a portfolio
+     * @param parent owner of the portfolio
+     * @param id identifier of the portfolio
+     * @param type type of items stored in the portfolio
+     */
+    protected Portfolio(Owner parent, String id, Class&lt;T&gt; type) {
+<span class="fc" id="L16">        super(parent, id);</span>
+<span class="fc" id="L17">        this.type = type;</span>
+<span class="fc" id="L18">        getPortfolioManager().addPortfolio(this);</span>
+<span class="fc" id="L19">    }</span>
+    /**
+     * @return the owner of the portfolio
+     */
+    @Override
+    public Owner getParent() {
+<span class="fc" id="L25">        return (Owner)super.getParent();</span>
+    }
+
+    protected Class&lt;T&gt; getType() {
+<span class="fc" id="L29">        return type;</span>
+    }
+
+    // delayed due to initialization issues
+    // TODO: Check is this still true?
+    protected PortfolioManager getPortfolioManager() {
+<span class="fc" id="L35">        return getStateManager().getPortfolioManager();</span>
+    }
+    
+    /**
+     * Add a new item to the portfolio and removes the item 
+     * from the previous containing portfolio
+     * 
+     * @param item to add to the portfolio
+     * @return false if the portfolio already contains the item, otherwise true
+     */
+    public abstract boolean add(T item);
+    
+    /**
+     * @param item that is checked if it is in the portfolio
+     * @return true if contained, false otherwise
+     */
+    public abstract boolean containsItem(T item);
+
+    /**
+     * @return all items contained in the portfolio
+     */
+    public abstract ImmutableSortedSet&lt;T&gt; items();
+
+    /**
+     * @return size of portfolio
+     */
+    public abstract int size();
+
+    /**
+     * @return true if portfolio is empty
+     */
+    public abstract boolean isEmpty();
+    
+    abstract void include(T item);
+
+    abstract void exclude(T item);
+    
+    /**
+     * Moves all items of the portfolio to the new owner
+     * @param newOwner
+     */
+    public void moveAll(Owner newOwner) {
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        for (T item : items()) {</span>
+<span class="fc" id="L78">            item.moveTo(newOwner);</span>
+<span class="fc" id="L79">        }</span>
+<span class="fc" id="L80">    }</span>
+
+    /**
+     * Moves all items of an iterable object to a new owner
+     * @param newOwner
+     */
+    public static &lt;T extends Ownable&gt; void moveAll(Iterable&lt;T&gt; items,
+            Owner newOwner) {
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        for (T item : items) {</span>
+<span class="fc" id="L89">            item.moveTo(newOwner);</span>
+<span class="fc" id="L90">        }</span>
+<span class="fc" id="L91">    }</span>
+    
+    /**
+     * Moves all items of a specific type from one owner to the other
+     */
+    public static &lt;T extends Ownable&gt; void moveAll(Class&lt;T&gt; type, Owner owner, Owner newOwner) {
+        // get the portfolio
+<span class="nc" id="L98">        Portfolio&lt;T&gt; pf = owner.getRoot().getStateManager().getPortfolioManager().getPortfolio(type, newOwner);</span>
+        // and move items
+<span class="nc" id="L100">        pf.moveAll(newOwner);</span>
+<span class="nc" id="L101">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

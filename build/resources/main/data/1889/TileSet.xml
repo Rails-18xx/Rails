@@ -1,0 +1,223 @@
+<TileManager tiles="Tiles.xml">
+	<!--	Map: Upgradeable to yellow -->
+	<Tile id="0"><!-- Empty space -->
+		<Upgrade id="7,8,9"/>
+	</Tile>
+	<Tile id="-1"><!-- 1 town -->
+		<Upgrade id="3,58"/>
+	</Tile>
+	<Tile id="-10"><!-- 1 city -->
+		<Upgrade id="5,6,57"/>
+	</Tile>
+	<Tile id="-89010"><!-- NEW CITY: I4 -->
+		<Upgrade id="438"/>
+	</Tile>
+	
+	<!--	Map: Fixed -->
+	<Tile id="-8"/> <!--shallow curve-->
+	<Tile id="-89030"/> <!--NEW TILE B3-->
+	<Tile id="-89031"/> <!--NEW TILE G14-->
+	<Tile id="-89511"/> <!--NEW TILE B7-->
+	<Tile id="-902"/> <!--red off-board destinations-->
+	
+	<!-- 	Map: Upgradeable to green -->
+	<Tile id="-89115"> <!--NEW TILE C4-->
+		<Upgrade id="12,13,14,15,205,206"/>
+	</Tile>
+	<Tile id="-89012"> <!--NEW TILE K4-->
+		<Upgrade id="440"/>
+	</Tile>
+	
+	<!-- 	Map: Upgradeable to brown -->
+	<Tile id="-89015"> <!--NEW TILE F9-->
+		<Upgrade id="465"/>
+	</Tile>
+	
+	<!--	Yellow Tiles -->
+	<Tile id="3">
+		<Attributes quantity="2"/>
+	</Tile>
+	<Tile id="5">
+		<Attributes quantity="2"/>
+		<Upgrade id="12,14,15,205,206"/>
+	</Tile>
+	<Tile id="6">
+		<IfOption name="BeginnerGame" value="yes">
+			<Attributes quantity="4"/>
+		</IfOption>
+		<IfOption name="BeginnerGame" value="no">
+			<Attributes quantity="2"/>
+		</IfOption>
+		<Upgrade id="12,13,14,15,205,206"/>
+	</Tile>
+	<Tile id="7">
+		<IfOption name="BeginnerGame" value="yes">
+			<Attributes quantity="3"/>
+		</IfOption>
+		<IfOption name="BeginnerGame" value="no">
+			<Attributes quantity="2"/>
+		</IfOption>
+		<Upgrade id="26,27,28,29"/>
+	</Tile>
+	<Tile id="8">
+		<IfOption name="BeginnerGame" value="yes">
+			<Attributes quantity="6"/>
+		</IfOption>
+		<IfOption name="BeginnerGame" value="no">
+			<Attributes quantity="5"/>
+		</IfOption>
+		<Upgrade id="16,19,23,24,25,28,29"/>
+	</Tile>
+	<Tile id="9">
+		<IfOption name="BeginnerGame" value="yes">
+			<Attributes quantity="6"/>
+		</IfOption>
+		<IfOption name="BeginnerGame" value="no">
+			<Attributes quantity="5"/>
+		</IfOption>
+		<Upgrade id="19,20,23,24,26,27"/>
+	</Tile>
+	<Tile id="57">
+		<IfOption name="BeginnerGame" value="yes">
+			<Attributes quantity="3"/>
+		</IfOption>
+		<IfOption name="BeginnerGame" value="no">
+			<Attributes quantity="2"/>
+		</IfOption>
+		<Upgrade id="14,15,205,206"/>
+	</Tile>
+	<Tile id="58">
+		<Attributes quantity="3"/>
+	</Tile>
+	<Tile id="437"> <!--NEW TILE: Port-->
+		<Attributes quantity="1"/>
+	</Tile>
+	<Tile id="438"> <!--NEW TILE: I4 -->
+		<Attributes quantity="1"/>
+		<Upgrade id="439"/>
+	</Tile>
+	
+	<!-- Green Tiles	 -->
+	<Tile id="12">
+		<Attributes quantity="1"/>
+		<Upgrade id="448,611"/>
+	</Tile>
+	<Tile id="13">
+		<Attributes quantity="1"/>
+		<Upgrade id="611"/>
+	</Tile>
+	<Tile id="14">
+		<Attributes quantity="1"/>
+		<Upgrade id="611"/>
+	</Tile>
+	<Tile id="15">
+		<Attributes quantity="3"/>
+		<Upgrade id="448,611"/>
+	</Tile>
+	<Tile id="16">
+		<Attributes quantity="1"/>
+	</Tile>
+	<Tile id="19">
+		<Attributes quantity="1"/>
+		<Upgrade id="45,46"/>
+	</Tile>
+	<Tile id="20">
+		<Attributes quantity="1"/>
+		<Upgrade id="47"/>
+	</Tile>
+	<Tile id="23">
+		<IfOption name="BeginnerGame" value="yes">
+			<Attributes quantity="3"/>
+		</IfOption>
+		<IfOption name="BeginnerGame" value="no">
+			<Attributes quantity="2"/>
+		</IfOption>
+		<Upgrade id="41,45,47"/>
+	</Tile>
+	<Tile id="24">
+		<IfOption name="BeginnerGame" value="yes">
+			<Attributes quantity="3"/>
+		</IfOption>
+		<IfOption name="BeginnerGame" value="no">
+			<Attributes quantity="2"/>
+		</IfOption>
+		<Upgrade id="42,46,47"/>
+	</Tile>
+	<Tile id="25">
+		<Attributes quantity="1"/>
+		<Upgrade id="40,45,46"/>
+	</Tile>
+	<Tile id="26">
+		<Attributes quantity="1"/>
+		<Upgrade id="42,45"/>
+	</Tile>
+	<Tile id="27">
+		<Attributes quantity="1"/>
+		<Upgrade id="41,46"/>
+	</Tile>
+	<Tile id="28">
+		<Attributes quantity="1"/>
+		<Upgrade id="39,46"/>
+	</Tile>
+	<Tile id="29">
+		<Attributes quantity="1"/>
+		<Upgrade id="39,45"/>
+	</Tile>
+	<Tile id="205">
+		<Attributes quantity="1"/>
+		<Upgrade id="448,611"/>
+	</Tile>
+	<Tile id="206">
+		<Attributes quantity="1"/>
+		<Upgrade id="448,611"/>
+	</Tile>
+	<Tile id="439"> <!--NEW TILE: I4 -->
+		<Attributes quantity="1"/>
+		<Upgrade id="492"/>
+	</Tile>
+	<Tile id="440"><!--NEW TILE:K4-->
+		<Attributes quantity="1"/>
+		<Upgrade id="466"/>
+	</Tile>
+	
+	<!-- Brown Tiles	 -->
+	<Tile id="39">
+		<Attributes quantity="1"/>
+	</Tile>
+	<Tile id="40">
+		<Attributes quantity="1"/>
+	</Tile>
+	<Tile id="41">
+		<Attributes quantity="1"/>
+	</Tile>
+	<Tile id="42">
+		<Attributes quantity="1"/>
+	</Tile>
+	<Tile id="45">
+		<Attributes quantity="1"/>
+	</Tile>
+	<Tile id="46">
+		<Attributes quantity="1"/>
+	</Tile>
+	<Tile id="47">
+		<Attributes quantity="1"/>
+	</Tile>
+	<Tile id="448"> <!--NEW TILE-->
+		<Attributes quantity="4"/>
+	</Tile>
+	<Tile id="465"> <!--NEW TILE-->
+		<Attributes quantity="1"/>
+	</Tile>
+	<Tile id="466"> <!--NEW TILE-->
+		<Attributes quantity="1"/>
+	</Tile>
+	<Tile id="492"> <!--NEW TILE-->
+		<Attributes quantity="1"/>
+	</Tile>
+	<Tile id="611">
+		<Attributes quantity="2"/>
+	</Tile>
+
+	
+	
+</TileManager>

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Bank.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.financial</a> &gt; <span class="el_source">Bank.java</span></div><h1>Bank.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.financial;
+
+import java.util.List;
+
+import net.sf.rails.common.Config;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.common.parser.Configurable;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.RailsManager;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.model.PurseMoneyModel;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Change;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.CurrencyOwner;
+import net.sf.rails.game.state.Observable;
+import net.sf.rails.game.state.Purse;
+import net.sf.rails.game.state.Triggerable;
+import net.sf.rails.game.state.UnknownOwner;
+import net.sf.rails.util.Util;
+
+public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner, Configurable {
+
+    public static final String ID = &quot;BANK&quot;;
+    
+    /** Specific portfolio names */
+    public static final String IPO_NAME = &quot;IPO&quot;;
+    public static final String POOL_NAME = &quot;Pool&quot;;
+    public static final String SCRAPHEAP_NAME = &quot;ScrapHeap&quot;;
+    public static final String UNAVAILABLE_NAME = &quot;Unavailable&quot;;
+    
+    /** Default limit of shares in the bank pool */
+    private static final int DEFAULT_BANK_AMOUNT = 12000;
+    private static final String DEFAULT_MONEY_FORMAT = &quot;$@&quot;;
+
+    /** The Bank currency */
+<span class="fc" id="L42">    private final Currency currency = Currency.create(this, &quot;currency&quot;);</span>
+
+    /** The Bank's amount of cash */
+<span class="fc" id="L45">    private final PurseMoneyModel cash = PurseMoneyModel.create(this, &quot;cash&quot;, false, currency);</span>
+   
+    /** The IPO */
+<span class="fc" id="L48">    private final BankPortfolio ipo = BankPortfolio.create(this, IPO_NAME);</span>
+    /** The Bank Pool */
+<span class="fc" id="L50">    private final BankPortfolio pool = BankPortfolio.create(this, POOL_NAME);</span>
+    /** Collection of items that will (may) become available in the future */
+<span class="fc" id="L52">    private final BankPortfolio unavailable = BankPortfolio.create(this, UNAVAILABLE_NAME);</span>
+    /** Collection of items that have been discarded (but are kept to allow Undo) */
+<span class="fc" id="L54">    private final BankPortfolio scrapHeap = BankPortfolio.create(this, SCRAPHEAP_NAME);</span>
+
+    /** Is the bank broken */
+<span class="fc" id="L57">    private final BooleanState broken = BooleanState.create(this, &quot;broken&quot;);</span>
+    
+    // Instance initializer to create a BankBroken model
+    {
+<span class="fc" id="L61">        new Triggerable() {</span>
+            {// instance initializer
+<span class="fc" id="L63">                cash.addTrigger(this);</span>
+<span class="fc" id="L64">            }</span>
+            public void triggered(Observable obs, Change change) {
+<span class="fc bfc" id="L66" title="All 4 branches covered.">                if (cash.value() &lt;= 0 &amp;&amp; !broken.value()) {</span>
+<span class="fc" id="L67">                    broken.set(true);</span>
+<span class="fc" id="L68">                    cash.setText(LocalText.getText(&quot;BROKEN&quot;));</span>
+<span class="fc" id="L69">                    getRoot().getGameManager().registerBrokenBank();</span>
+                }
+<span class="fc" id="L71">            }</span>
+        };
+    }
+    
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public Bank(RailsRoot parent, String id) {
+        // FIXME: This is a workaround to keep id to large caps
+<span class="fc" id="L80">        super(parent, ID);</span>
+<span class="fc" id="L81">    }</span>
+    
+    /**
+     * @see net.sf.rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
+     */
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+
+        // Parse the Bank element
+
+        /* First set the money format */
+<span class="fc" id="L91">        String moneyFormat = null;</span>
+<span class="fc" id="L92">        String configFormat = Config.get(&quot;money_format&quot;);</span>
+<span class="pc bpc" id="L93" title="2 of 4 branches missed.">        if (Util.hasValue(configFormat) &amp;&amp; configFormat.matches(&quot;.*@.*&quot;)) {</span>
+<span class="fc" id="L94">            moneyFormat = configFormat;</span>
+        } else { 
+            /*
+             * Only use the rails.game-specific format if it has not been
+             * overridden in the configuration file (see if statement above)
+             */
+<span class="nc" id="L100">            Tag moneyTag = tag.getChild(&quot;Money&quot;);</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">            if (moneyTag != null) {</span>
+<span class="nc" id="L102">                moneyFormat = moneyTag.getAttributeAsString(&quot;format&quot;);</span>
+            }
+        }
+        /* Make sure that we have a format */
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        if (!Util.hasValue(moneyFormat)) moneyFormat = DEFAULT_MONEY_FORMAT;</span>
+<span class="fc" id="L107">        currency.setFormat(moneyFormat);</span>
+
+<span class="fc" id="L109">        Tag bankTag = tag.getChild(&quot;Bank&quot;);</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if (bankTag != null) {</span>
+            // initialize bank from unknown owner
+<span class="fc" id="L112">            UnknownOwner unknown = getRoot().getStateManager().getWalletManager().getUnkownOwner();</span>
+<span class="fc" id="L113">            int amount = bankTag.getAttributeAsInteger(&quot;amount&quot;, DEFAULT_BANK_AMOUNT);</span>
+<span class="fc" id="L114">            currency.move(unknown, amount, this);</span>
+        }
+
+<span class="fc" id="L117">    }</span>
+
+    public void finishConfiguration (RailsRoot root) {
+
+<span class="fc" id="L121">        ReportBuffer.add(this, LocalText.getText(&quot;BankSizeIs&quot;, </span>
+<span class="fc" id="L122">                currency.format(cash.value())));</span>
+
+        // finish configuration of BankPortfolios
+<span class="fc" id="L125">        ipo.finishConfiguration();</span>
+<span class="fc" id="L126">        pool.finishConfiguration();</span>
+<span class="fc" id="L127">        unavailable.finishConfiguration();</span>
+<span class="fc" id="L128">        scrapHeap.finishConfiguration();</span>
+        
+        // Add privates
+<span class="fc" id="L131">        List&lt;PrivateCompany&gt; privates =</span>
+<span class="fc" id="L132">            root.getCompanyManager().getAllPrivateCompanies();</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        for (PrivateCompany priv : privates) {</span>
+<span class="fc" id="L134">            ipo.getPortfolioModel().addPrivateCompany(priv);</span>
+<span class="fc" id="L135">        }</span>
+
+        // Add public companies
+<span class="fc" id="L138">        List&lt;PublicCompany&gt; companies =</span>
+<span class="fc" id="L139">            root.getCompanyManager().getAllPublicCompanies();</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        for (PublicCompany comp : companies) {</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">            for (PublicCertificate cert : comp.getCertificates()) {</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">                if (cert.isInitiallyAvailable()) {</span>
+<span class="fc" id="L143">                    cert.moveTo(ipo);</span>
+                } else {
+<span class="fc" id="L145">                    cert.moveTo(unavailable);</span>
+                }
+<span class="fc" id="L147">            }</span>
+<span class="fc" id="L148">        }</span>
+<span class="fc" id="L149">    }</span>
+
+    /**
+     * @return IPO Portfolio
+     */
+    public BankPortfolio getIpo() {
+<span class="fc" id="L155">        return ipo;</span>
+    }
+
+    public BankPortfolio getScrapHeap() {
+<span class="fc" id="L159">        return scrapHeap;</span>
+    }
+
+    /**
+     * @return Portfolio of stock in Bank Pool
+     */
+    public BankPortfolio getPool() {
+<span class="fc" id="L166">        return pool;</span>
+    }
+
+    /**
+     * @return Portfolio of unavailable shares
+     */
+    public BankPortfolio getUnavailable() {
+<span class="fc" id="L173">        return unavailable;</span>
+    }
+    
+    public String toText() {
+<span class="nc" id="L177">        return LocalText.getText(&quot;BANK&quot;);</span>
+    }
+    
+    // CurrencyOwner interface
+    public Currency getCurrency() {
+<span class="fc" id="L182">        return currency;</span>
+    }
+
+    // MoneyOwner interface
+    public Purse getPurse() {
+<span class="fc" id="L187">        return cash.getPurse();</span>
+    }
+    
+    public int getCash() {
+<span class="fc" id="L191">        return cash.getPurse().value();</span>
+    }
+    
+    public static String format(RailsItem item, Iterable&lt;Integer&gt; amount) {
+<span class="nc" id="L195">        Currency currency = item.getRoot().getBank().getCurrency();</span>
+<span class="nc" id="L196">        return currency.format(amount);</span>
+    }
+
+    public static String format(RailsItem item, int amount) {
+<span class="fc" id="L200">        Currency currency = item.getRoot().getBank().getCurrency();</span>
+<span class="fc" id="L201">        return currency.format(amount);</span>
+    }
+    
+    public static Bank get(RailsItem item) {
+<span class="fc" id="L205">        return item.getRoot().getBank();</span>
+    }
+    
+    public static BankPortfolio getIpo(RailsItem item) {
+<span class="fc" id="L209">        return get(item).ipo;</span>
+    }
+    
+    public static BankPortfolio getPool(RailsItem item) {
+<span class="fc" id="L213">        return get(item).pool;</span>
+    }
+    
+    public static BankPortfolio getScrapHeap(RailsItem item) {
+<span class="fc" id="L217">        return get(item).scrapHeap;</span>
+    }
+    
+    public static BankPortfolio getUnavailable(RailsItem item) {
+<span class="fc" id="L221">        return get(item).unavailable;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

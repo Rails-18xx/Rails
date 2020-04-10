@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NonModalDialog.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.elements</a> &gt; <span class="el_source">NonModalDialog.java</span></div><h1>NonModalDialog.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.elements;
+
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+
+import net.sf.rails.util.Util;
+
+
+public abstract class NonModalDialog extends JDialog implements ActionListener {
+
+    private static final long serialVersionUID = 1L;
+
+    protected String key;
+    protected DialogOwner owner;
+    protected JFrame window;
+    protected String message;
+<span class="nc" id="L19">    protected boolean hasCancelButton = true;</span>
+
+    protected GridBagConstraints gc;
+    protected JPanel optionsPane, buttonPane;
+    protected RailsIconButton okButton, cancelButton;
+<span class="nc" id="L24">    protected String okTextKey = &quot;OK&quot;;</span>
+<span class="nc" id="L25">    protected String cancelTextKey = &quot;Cancel&quot;;</span>
+
+    public NonModalDialog(String key,
+            DialogOwner owner, JFrame window, String title, String message) {
+
+<span class="nc" id="L30">        super((Frame) null, title, false); // Non-modal</span>
+<span class="nc" id="L31">        this.key = key;</span>
+<span class="nc" id="L32">        this.owner = owner;</span>
+<span class="nc" id="L33">        this.window = window;</span>
+<span class="nc" id="L34">        this.message = message;</span>
+<span class="nc" id="L35">    }</span>
+
+    protected final void initialize (String okTextKey, String cancelTextKey) {
+<span class="nc" id="L38">        this.okTextKey = okTextKey;</span>
+<span class="nc" id="L39">        this.cancelTextKey = cancelTextKey;</span>
+<span class="nc" id="L40">        this.hasCancelButton = Util.hasValue(cancelTextKey);</span>
+<span class="nc" id="L41">        initialize();</span>
+<span class="nc" id="L42">    }</span>
+
+    protected final void initialize (boolean hasCancelButton) {
+<span class="nc" id="L45">        this.hasCancelButton = hasCancelButton;</span>
+<span class="nc" id="L46">        initialize();</span>
+<span class="nc" id="L47">    }</span>
+
+    protected final void initialize() {
+
+<span class="nc" id="L51">        gc = new GridBagConstraints();</span>
+
+<span class="nc" id="L53">        optionsPane = new JPanel();</span>
+<span class="nc" id="L54">        buttonPane = new JPanel();</span>
+
+<span class="nc" id="L56">        okButton = new RailsIconButton(RailsIcon.getByConfigKey(okTextKey));</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        okButton.setMnemonic(okTextKey.startsWith(&quot;Y&quot;) ? KeyEvent.VK_Y : KeyEvent.VK_O);</span>
+<span class="nc" id="L58">        okButton.addActionListener(this);</span>
+<span class="nc" id="L59">        buttonPane.add(okButton);</span>
+
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (hasCancelButton) {</span>
+<span class="nc" id="L62">            cancelButton = new RailsIconButton(RailsIcon.getByConfigKey(cancelTextKey));</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">            cancelButton.setMnemonic(cancelTextKey.startsWith(&quot;N&quot;) ? KeyEvent.VK_N : KeyEvent.VK_C);</span>
+<span class="nc" id="L64">            cancelButton.addActionListener(this);</span>
+<span class="nc" id="L65">            buttonPane.add(cancelButton);</span>
+        }
+
+<span class="nc" id="L68">        getContentPane().setLayout(new GridBagLayout());</span>
+<span class="nc" id="L69">        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);</span>
+
+<span class="nc" id="L71">        optionsPane.setLayout(new GridBagLayout());</span>
+<span class="nc" id="L72">        optionsPane.add(new JLabel(message), constraints(0, 0, 10, 10, 10, 10));</span>
+
+<span class="nc" id="L74">        initializeInput();</span>
+
+<span class="nc" id="L76">        getContentPane().add(optionsPane, constraints(0, 0, 0, 0, 0, 0));</span>
+<span class="nc" id="L77">        getContentPane().add(buttonPane, constraints(0, 1, 0, 0, 0, 0));</span>
+
+<span class="nc" id="L79">        pack();</span>
+
+        // Center on owner
+<span class="nc" id="L82">        window.setVisible(true);  // Window must be visible to find its location!</span>
+<span class="nc" id="L83">        int x = (int) window.getLocationOnScreen().getX()</span>
+<span class="nc" id="L84">        + (window.getWidth() - getWidth()) / 2;</span>
+<span class="nc" id="L85">        int y = (int) window.getLocationOnScreen().getY()</span>
+<span class="nc" id="L86">        + (window.getHeight() - getHeight()) / 2;</span>
+<span class="nc" id="L87">        setLocation(x, y);</span>
+
+<span class="nc" id="L89">        setVisible(true);</span>
+<span class="nc" id="L90">        setAlwaysOnTop(true);</span>
+<span class="nc" id="L91">    }</span>
+
+<span class="nc" id="L93">    protected void initializeInput() {}</span>
+
+    protected GridBagConstraints constraints(int gridx, int gridy, int leftinset,
+            int topinset, int rightinset, int bottominset) {
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (gridx &gt;= 0) gc.gridx = gridx;</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (gridy &gt;= 0) gc.gridy = gridy;</span>
+<span class="nc" id="L99">        gc.fill = GridBagConstraints.BOTH;</span>
+<span class="nc" id="L100">        gc.weightx = 0.5;</span>
+<span class="nc" id="L101">        gc.weighty = 0.5;</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (leftinset &gt;= 0) gc.insets.left = leftinset;</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (topinset &gt;= 0) gc.insets.top = topinset;</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (rightinset &gt;= 0) gc.insets.right = rightinset;</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (bottominset &gt;= 0) gc.insets.bottom = bottominset;</span>
+
+<span class="nc" id="L107">        return gc;</span>
+    }
+
+    public void actionPerformed(ActionEvent actionEvent) {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if (actionEvent.getSource().equals(okButton)) {</span>
+<span class="nc" id="L112">            processOK(actionEvent);</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        } else if (actionEvent.getSource().equals(cancelButton)) {</span>
+<span class="nc" id="L114">            processCancel (actionEvent);</span>
+        }
+<span class="nc" id="L116">        setVisible(false);</span>
+<span class="nc" id="L117">        dispose();</span>
+<span class="nc" id="L118">        owner.dialogActionPerformed ();</span>
+<span class="nc" id="L119">    }</span>
+
+<span class="nc" id="L121">    protected void processOK (ActionEvent actionEvent) {}</span>
+
+<span class="nc" id="L123">    protected void processCancel (ActionEvent actionEvent) {}</span>
+
+    public String getKey() {
+<span class="nc" id="L126">        return key;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L131">        return &quot;Dialog type=&quot;+getClass().getSimpleName()+&quot; key=&quot;+key;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

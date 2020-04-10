@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TGVModifier.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1826</a> &gt; <span class="el_source">TGVModifier.java</span></div><h1>TGVModifier.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1826;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.rails.algorithms.NetworkTrain;
+import net.sf.rails.algorithms.RevenueAdapter;
+import net.sf.rails.algorithms.RevenueDynamicModifier;
+import net.sf.rails.algorithms.RevenueTrainRun;
+import net.sf.rails.common.LocalText;
+
+
+/**
+ * TGV is a train that runs on independent track (defined in Game 1826)
+ * implementation allows several tgv trains
+ * @author freystef
+ */
+<span class="nc" id="L18">public class TGVModifier implements RevenueDynamicModifier {</span>
+
+<span class="nc" id="L20">    final private String TGV_NAME = &quot;TGV&quot;;</span>
+    
+<span class="nc" id="L22">    private int nbTGV = 0; // store the number of tgv</span>
+    
+    public boolean prepareModifier(RevenueAdapter revenueAdapter) {
+        
+        // separate trains into tgv and others
+<span class="nc" id="L27">        List&lt;NetworkTrain&gt; allTrains = revenueAdapter.getTrains();</span>
+<span class="nc" id="L28">        List&lt;NetworkTrain&gt; tgvTrains = new ArrayList&lt;NetworkTrain&gt;();</span>
+<span class="nc" id="L29">        List&lt;NetworkTrain&gt; otherTrains = new ArrayList&lt;NetworkTrain&gt;();</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        for (NetworkTrain train:allTrains) {</span>
+            // checks name of train
+<span class="nc bnc" id="L32" title="All 2 branches missed.">            if (train.getTrainName().equals(TGV_NAME)) {</span>
+<span class="nc" id="L33">                tgvTrains.add(train);</span>
+            } else {
+<span class="nc" id="L35">                otherTrains.add(train);</span>
+            }
+<span class="nc" id="L37">        }</span>
+
+        // change list that tgv trains are the first ones, if there are tgvs ...
+<span class="nc" id="L40">        nbTGV = tgvTrains.size();</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if (nbTGV != 0) {</span>
+<span class="nc" id="L42">            allTrains.clear();</span>
+<span class="nc" id="L43">            allTrains.addAll(tgvTrains);</span>
+<span class="nc" id="L44">            allTrains.addAll(otherTrains);</span>
+<span class="nc" id="L45">            return true;</span>
+        } else { // ... otherwise deactivate modifier
+<span class="nc" id="L47">            return false;</span>
+        }
+    }
+
+    public int predictionValue(List&lt;RevenueTrainRun&gt; runs) {
+        // nothing to do here
+<span class="nc" id="L53">        return 0;</span>
+    }
+
+    public int evaluationValue(List&lt;RevenueTrainRun&gt; runs, boolean optimalRuns) {
+        // nothing to do here
+<span class="nc" id="L58">        return 0;</span>
+    }
+
+    public void adjustOptimalRun(List&lt;RevenueTrainRun&gt; optimalRuns) {
+        // nothing to do 
+<span class="nc" id="L63">    }</span>
+
+    public boolean providesOwnCalculateRevenue() {
+<span class="nc" id="L66">        return true;</span>
+    }
+
+    public int calculateRevenue(RevenueAdapter revenueAdapter) {
+        // tgv run separately (see prepare modifier above)
+<span class="nc" id="L71">        int value = 0;</span>
+<span class="nc" id="L72">        value = revenueAdapter.calculateRevenue(0, nbTGV-1);</span>
+        // add the other trains
+<span class="nc" id="L74">        value += revenueAdapter.calculateRevenue(nbTGV, revenueAdapter.getTrains().size()-1);</span>
+<span class="nc" id="L75">        return value;</span>
+    }
+
+    public String prettyPrint(RevenueAdapter adapter) {
+<span class="nc" id="L79">        return LocalText.getText(&quot;TGVModifier&quot;);</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

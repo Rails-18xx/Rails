@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ORUIManager_18AL.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.gamespecific._18AL</a> &gt; <span class="el_source">ORUIManager_18AL.java</span></div><h1>ORUIManager_18AL.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.gamespecific._18AL;
+
+import java.util.List;
+
+import com.google.common.collect.Multimap;
+
+import rails.game.action.LayBonusToken;
+import rails.game.action.LayToken;
+import rails.game.action.PossibleAction;
+import net.sf.rails.algorithms.NetworkGraph;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Stop;
+import net.sf.rails.game.specific._18AL.AssignNamedTrains;
+import net.sf.rails.ui.swing.ORUIManager;
+import net.sf.rails.ui.swing.hexmap.GUIHex;
+import net.sf.rails.ui.swing.hexmap.HexMap;
+import net.sf.rails.ui.swing.hexmap.TokenHexUpgrade;
+
+
+<span class="nc" id="L21">public class ORUIManager_18AL extends ORUIManager {</span>
+
+    
+    
+    protected boolean processGameSpecificActions(List&lt;PossibleAction&gt; actions) {
+
+<span class="nc" id="L27">        Class&lt;? extends PossibleAction&gt; actionType = actions.get(0).getClass();</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        if (actionType == AssignNamedTrains.class) {</span>
+
+<span class="nc" id="L30">            AssignNamedTrains action = (AssignNamedTrains) actions.get(0);</span>
+<span class="nc" id="L31">            NameTrainsDialog dialog =</span>
+<span class="nc" id="L32">                    new NameTrainsDialog(getORWindow(), action);</span>
+<span class="nc" id="L33">            dialog.setVisible(true);</span>
+
+<span class="nc" id="L35">            boolean changed = dialog.hasChanged();</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">            if (changed) action = dialog.getUpdatedAction();</span>
+<span class="nc" id="L37">            dialog.dispose();</span>
+
+<span class="nc bnc" id="L39" title="All 2 branches missed.">            if (changed) orWindow.process(action);</span>
+        }
+
+<span class="nc" id="L42">        return false;</span>
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.ui.swing.ORUIManager#addLocatedTokenLays(rails.game.action.LayToken)
+     */
+   @Override
+    protected void addLocatedTokenLays(LayToken action) {
+  //TODO: Rework for general setup as special property 
+        
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        if (action instanceof LayBonusToken) { //Special Action from Private Company in 18AL</span>
+<span class="nc" id="L53">            PublicCompany company = action.getCompany();</span>
+<span class="nc" id="L54">            NetworkGraph graph = networkAdapter.getRouteGraph(company, true);</span>
+            
+<span class="nc bnc" id="L56" title="All 2 branches missed.">            for (MapHex hex:action.getLocations()) {</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">                if (graph.getPassableStations().containsKey(hex) )</span>
+                {
+<span class="nc" id="L59">                    GUIHex guiHex = orWindow.getMapPanel().getMap().getHex(hex);</span>
+<span class="nc" id="L60">                    TokenHexUpgrade upgrade = TokenHexUpgrade.create(</span>
+<span class="nc" id="L61">                            guiHex, hex.getTokenableStops(action.getCompany()), action);</span>
+<span class="nc" id="L62">                    TokenHexUpgrade.validates(upgrade);</span>
+<span class="nc" id="L63">                    hexUpgrades.put(guiHex, upgrade);</span>
+<span class="nc" id="L64">                    continue;</span>
+                }
+<span class="nc" id="L66">            }</span>
+<span class="nc" id="L67">        }</span>
+        else {
+<span class="nc" id="L69">        super.addLocatedTokenLays(action);</span>
+        }
+<span class="nc" id="L71">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

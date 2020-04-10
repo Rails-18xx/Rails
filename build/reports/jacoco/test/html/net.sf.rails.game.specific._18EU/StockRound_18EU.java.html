@@ -1,0 +1,785 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StockRound_18EU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._18EU</a> &gt; <span class="el_source">StockRound_18EU.java</span></div><h1>StockRound_18EU.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._18EU;
+
+import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rails.game.action.*;
+import rails.game.specific._18EU.StartCompany_18EU;
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.*;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.state.ArrayListState;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.MoneyOwner;
+import net.sf.rails.game.state.Portfolio;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Iterables;
+
+
+/**
+ * Implements a basic Stock Round. &lt;p&gt; A new instance must be created for each
+ * new Stock Round. At the end of a round, the current instance should be
+ * discarded. &lt;p&gt; Permanent memory is formed by static attributes (like who has
+ * the Priority Deal).
+ */
+public class StockRound_18EU extends StockRound {
+
+<span class="fc" id="L39">    private static final Logger log = LoggerFactory.getLogger(StockRound_18EU.class);</span>
+
+<span class="fc" id="L41">    protected final ArrayListState&lt;PublicCompany&gt; compWithExcessTrains = ArrayListState.create(this, &quot;compWithExcessTrains&quot;);</span>
+<span class="fc" id="L42">    protected final IntegerState discardingCompanyIndex = IntegerState.create(this, &quot;discardingCompanyIndex&quot;);</span>
+<span class="fc" id="L43">    protected final BooleanState discardingTrains = BooleanState.create(this, &quot;discardingTrains&quot;);</span>
+
+    // should this not be a state variable ?
+<span class="fc" id="L46">    protected boolean phase5Reached = false;</span>
+    // when is this created, should it not be a state variable?
+    protected PublicCompany[] discardingCompanies;
+
+    /**
+     * Constructed via Configure
+     */
+    public StockRound_18EU (GameManager parent, String id) {
+<span class="fc" id="L54">        super(parent, id);</span>
+<span class="fc" id="L55">    }</span>
+
+    @Override
+    public void start() {
+<span class="fc" id="L59">        super.start();</span>
+        // Is this really required? Can it set to true at the start?
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (discardingTrains.value()) {</span>
+<span class="nc" id="L62">            discardingTrains.set(false);</span>
+        }
+
+        // if it is done this way, should it not be a state variable?
+<span class="fc" id="L66">        phase5Reached = getRoot().getPhaseManager().hasReachedPhase(&quot;5&quot;);</span>
+
+<span class="fc" id="L68">    }</span>
+
+    @Override
+    public boolean setPossibleActions() {
+        // discardingTrains during stockRounds, when does this happen?
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        if (discardingTrains.value()) {</span>
+<span class="nc" id="L74">            return setTrainDiscardActions();</span>
+        } else {
+<span class="fc" id="L76">            return super.setPossibleActions();</span>
+        }
+    }
+
+    /**
+     * Create a list of certificates that a player may buy in a Stock Round,
+     * taking all rules into account.
+     *
+     * @return List of buyable certificates.
+     */
+    @Override
+    // changes: 18EU only allows to start a company with a merged minor (until phase 5)
+    // requires: a StartCompany18EUActivity
+    public void setBuyableCerts() {
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (!mayCurrentPlayerBuyAnything()) return;</span>
+
+        ImmutableSet&lt;PublicCertificate&gt; certs;
+        PublicCertificate cert;
+        StockSpace stockSpace;
+        PortfolioModel from;
+        int price;
+
+        // 18EU special: until phase 5, we can only
+        // start a company by trading in a Minor
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        boolean mustMergeMinor = !phase5Reached;</span>
+<span class="fc" id="L101">        List&lt;PublicCompany&gt; minors = null;</span>
+<span class="fc" id="L102">        List&lt;Stop&gt; freeStops = null;</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (mustMergeMinor) {</span>
+<span class="fc" id="L104">            minors = new ArrayList&lt;PublicCompany&gt;();</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            for (PublicCertificate c : playerManager.getCurrentPlayer().getPortfolioModel().getCertificates()) {</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">                if (c.getCompany().getType().getId().equalsIgnoreCase(&quot;Minor&quot;)) {</span>
+<span class="fc" id="L107">                    minors.add(c.getCompany());</span>
+                }
+<span class="fc" id="L109">            }</span>
+        } else {
+<span class="fc" id="L111">            freeStops = new ArrayList&lt;Stop&gt;();</span>
+<span class="fc" id="L112">            MapManager map = getRoot().getMapManager();</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">            for (Stop stop : map.getCurrentStops()) {</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">                if (stop.hasTokenSlotsLeft()) {</span>
+<span class="fc" id="L115">                    freeStops.add(stop);</span>
+                }
+<span class="fc" id="L117">            }</span>
+        }
+
+<span class="fc" id="L120">        int playerCash = currentPlayer.getCashValue();</span>
+
+        /* Get the next available IPO certificates */
+        // Never buy more than one from the IPO
+<span class="fc" id="L124">        PublicCompany companyBoughtThisTurn =</span>
+<span class="fc" id="L125">                (PublicCompany) companyBoughtThisTurnWrapper.value();</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if (companyBoughtThisTurn == null) {</span>
+<span class="fc" id="L127">            from = ipo;</span>
+<span class="fc" id="L128">            ImmutableSetMultimap&lt;PublicCompany, PublicCertificate&gt; map =</span>
+<span class="fc" id="L129">                    from.getCertsPerCompanyMap();</span>
+            int shares;
+
+<span class="fc bfc" id="L132" title="All 2 branches covered.">            for (PublicCompany comp : map.keySet()) {</span>
+<span class="fc" id="L133">                certs = map.get(comp);</span>
+                // if (certs.isEmpty()) continue; // TODO: Check if this removal is correct
+
+                /* Only the top certificate is buyable from the IPO */
+<span class="fc" id="L137">                int lowestIndex = 99;</span>
+<span class="fc" id="L138">                cert = null;</span>
+                int index;
+<span class="fc bfc" id="L140" title="All 2 branches covered.">                for (PublicCertificate c : certs) {</span>
+<span class="fc" id="L141">                    index = c.getIndexInCompany();</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">                    if (index &lt; lowestIndex) {</span>
+<span class="fc" id="L143">                        lowestIndex = index;</span>
+<span class="fc" id="L144">                        cert = c;</span>
+                    }
+<span class="fc" id="L146">                }</span>
+
+<span class="fc" id="L148">                comp = cert.getCompany();</span>
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">                if (currentPlayer.hasSoldThisRound(comp)) continue;</span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">                if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,</span>
+<span class="pc" id="L151">                        cert.getShare()) &lt; 1) continue;</span>
+<span class="fc" id="L152">                shares = cert.getShares();</span>
+
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">                if (!comp.hasStarted()) {</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">                    if (mustMergeMinor) {</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">                        if (minors.isEmpty()) continue;</span>
+                    } else {
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">                        if (freeStops.isEmpty()) continue;</span>
+                    }
+
+<span class="fc" id="L161">                    List&lt;Integer&gt; startPrices = new ArrayList&lt;Integer&gt;();</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">                    for (int startPrice : stockMarket.getStartPrices()) {</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">                        if (startPrice * shares &lt;= playerCash) {</span>
+<span class="fc" id="L164">                            startPrices.add(startPrice);</span>
+                        }
+<span class="fc" id="L166">                    }</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">                    if (startPrices.size() &gt; 0) {</span>
+<span class="fc" id="L168">                        int[] prices = new int[startPrices.size()];</span>
+<span class="fc" id="L169">                        Arrays.sort(prices);</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">                        for (int i = 0; i &lt; prices.length; i++) {</span>
+<span class="fc" id="L171">                            prices[i] = startPrices.get(i);</span>
+                        }
+<span class="fc" id="L173">                        StartCompany_18EU action =</span>
+                                new StartCompany_18EU(comp, prices);
+<span class="fc bfc" id="L175" title="All 2 branches covered.">                        if (mustMergeMinor) {</span>
+<span class="fc" id="L176">                            action.setMinorsToMerge(minors);</span>
+                        } else {
+<span class="fc" id="L178">                            action.setAvailableHomeStations(freeStops);</span>
+                        }
+<span class="fc" id="L180">                        possibleActions.add(action);</span>
+                    }
+<span class="pc bnc" id="L182" title="All 2 branches missed.">                } else if (comp.getMarketPrice() &lt;= playerCash) {</span>
+<span class="nc" id="L183">                    possibleActions.add(new BuyCertificate(comp, cert.getShare(),</span>
+<span class="nc" id="L184">                            from.getParent(),</span>
+<span class="nc" id="L185">                            comp.getMarketPrice()));</span>
+                }
+
+<span class="fc" id="L188">            }</span>
+        }
+
+        /* Get the unique Pool certificates and check which ones can be bought */
+<span class="fc" id="L192">        from = pool;</span>
+<span class="fc" id="L193">        ImmutableSetMultimap&lt;PublicCompany, PublicCertificate&gt; map =</span>
+<span class="fc" id="L194">                from.getCertsPerCompanyMap();</span>
+
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        for (PublicCompany comp : map.keySet()) {</span>
+<span class="fc" id="L197">            certs = map.get(comp);</span>
+            // if (certs.isEmpty()) continue; // TODO: Check if this removal is correct
+<span class="fc" id="L199">            cert = Iterables.get(certs, 0);</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">            if (currentPlayer.hasSoldThisRound(comp)) continue;</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">            if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,</span>
+<span class="fc" id="L202">                    cert.getShare()) &lt; 1) continue;</span>
+<span class="fc" id="L203">            price = comp.getMarketPrice();</span>
+
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">            if (companyBoughtThisTurn != null) {</span>
+<span class="nc" id="L206">                continue;</span>
+            }
+
+            // Does the player have enough cash?
+<span class="fc bfc" id="L210" title="All 2 branches covered.">            if (playerCash &lt; price) continue;</span>
+
+<span class="fc" id="L212">            possibleActions.add(new BuyCertificate(comp, cert.getShare(), from.getParent(), price, 1));</span>
+<span class="fc" id="L213">        }</span>
+
+        // Get any shares in company treasuries that can be bought
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">        if (gameManager.canAnyCompanyHoldShares()) {</span>
+
+<span class="fc bfc" id="L218" title="All 2 branches covered.">            for (PublicCompany company : companyManager.getAllPublicCompanies()) {</span>
+<span class="fc" id="L219">                certs = company.getPortfolioModel().getCertificates(company);</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">                if (certs.isEmpty()) continue;</span>
+<span class="fc" id="L221">                cert = Iterables.get(certs, 0);</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">                if (currentPlayer.hasSoldThisRound(company)) continue;</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">                if (!checkAgainstHoldLimit(currentPlayer, company, 1)) continue;</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">                if (maxAllowedNumberOfSharesToBuy(currentPlayer, company,</span>
+<span class="pc" id="L225">                        cert.getShare()) &lt; 1) continue;</span>
+<span class="fc" id="L226">                stockSpace = company.getCurrentSpace();</span>
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">                if (!stockSpace.isNoCertLimit()</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">                    &amp;&amp; !mayPlayerBuyCertificate(currentPlayer, company, 1)) continue;</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">                if (company.getMarketPrice() &lt;= playerCash) {</span>
+<span class="fc" id="L230">                    possibleActions.add(new BuyCertificate(company, cert.getShare(),</span>
+                            company,
+<span class="fc" id="L232">                            company.getMarketPrice()));</span>
+                }
+<span class="fc" id="L234">            }</span>
+        }
+<span class="fc" id="L236">    }</span>
+
+    /**
+     * An 18EU extension to StockRound.setSellableShares() that adds any
+     * mergeable Minor companies.
+     */
+    // changes: it allows to merge minors into accepting majors
+    // requires: a specific MergeCompanyActivity
+    @Override
+    protected void setGameSpecificActions() {
+<span class="fc bfc" id="L246" title="All 2 branches covered.">        if (!mayCurrentPlayerBuyAnything()) return;</span>
+
+<span class="fc" id="L248">        List&lt;PublicCompany&gt; comps =</span>
+<span class="fc" id="L249">                companyManager.getAllPublicCompanies();</span>
+<span class="fc" id="L250">        List&lt;PublicCompany&gt; minors = new ArrayList&lt;PublicCompany&gt;();</span>
+<span class="fc" id="L251">        List&lt;PublicCompany&gt; targetCompanies = new ArrayList&lt;PublicCompany&gt;();</span>
+        String type;
+
+<span class="fc bfc" id="L254" title="All 2 branches covered.">        for (PublicCompany comp : comps) {</span>
+<span class="fc" id="L255">            type = comp.getType().getId();</span>
+<span class="fc bfc" id="L256" title="All 4 branches covered.">            if (type.equals(&quot;Major&quot;) &amp;&amp; comp.hasStarted()</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">                &amp;&amp; !comp.hasOperated()) {</span>
+<span class="fc" id="L258">                targetCompanies.add(comp);</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">            } else if (type.equals(&quot;Minor&quot;)</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">                       &amp;&amp; comp.getPresident() == currentPlayer) {</span>
+<span class="fc" id="L261">                minors.add(comp);</span>
+            }
+<span class="fc" id="L263">        }</span>
+<span class="fc bfc" id="L264" title="All 4 branches covered.">        if (minors.isEmpty() || targetCompanies.isEmpty()) return;</span>
+
+<span class="fc bfc" id="L266" title="All 2 branches covered.">        for (PublicCompany minor : minors) {</span>
+<span class="fc" id="L267">            possibleActions.add(new MergeCompanies(minor, targetCompanies, false));</span>
+<span class="fc" id="L268">        }</span>
+<span class="fc" id="L269">    }</span>
+
+    // called from setPossibleActions in StockRound_18EU and FinalMinorExchangeRound
+    protected boolean setTrainDiscardActions() {
+
+<span class="fc" id="L274">        PublicCompany discardingCompany =</span>
+<span class="fc" id="L275">                discardingCompanies[discardingCompanyIndex.value()];</span>
+<span class="fc" id="L276">        log.debug(&quot;Company &quot; + discardingCompany.getId()</span>
+                  + &quot; to discard a train&quot;);
+<span class="fc" id="L278">        possibleActions.add(new DiscardTrain(discardingCompany,</span>
+<span class="fc" id="L279">                discardingCompany.getPortfolioModel().getUniqueTrains()));</span>
+        // We handle one train at at time.
+        // We come back here until all excess trains have been discarded.
+<span class="fc" id="L282">        return true;</span>
+    }
+
+    /**
+     * Start a company by buying one or more shares (more applies to e.g. 1841)
+     *
+     * @param player The player that wants to start a company.
+     * @param company The company to start.
+     * @param price The start (par) price (ignored if the price is fixed).
+     * @param shares The number of shares to buy (can be more than 1 in e.g.
+     * 1841).
+     * @return True if the company could be started. False indicates an error.
+     */
+    @Override
+    // changes: substantial changes to the usual startCompany behavior
+    // requires: an own 18EU StartCompany Activity
+    public boolean startCompany(String playerName, StartCompany action) {
+<span class="fc" id="L299">        PublicCompany company = action.getCompany();</span>
+<span class="fc" id="L300">        int price = action.getPrice();</span>
+<span class="fc" id="L301">        int shares = action.getNumberBought();</span>
+
+<span class="fc" id="L303">        String errMsg = null;</span>
+<span class="fc" id="L304">        StockSpace startSpace = null;</span>
+<span class="fc" id="L305">        int numberOfCertsToBuy = 0;</span>
+<span class="fc" id="L306">        PublicCertificate cert = null;</span>
+<span class="fc" id="L307">        String companyName = company.getId();</span>
+<span class="fc" id="L308">        PublicCompany minor = null;</span>
+<span class="fc" id="L309">        StartCompany_18EU startAction = null;</span>
+<span class="fc" id="L310">        Stop selectedHomeCity = null;</span>
+
+<span class="fc" id="L312">        currentPlayer = playerManager.getCurrentPlayer();</span>
+
+        // Dummy loop to allow a quick jump out
+        while (true) {
+<span class="pc bpc" id="L316" title="1 of 2 branches missed.">            if (!(action instanceof StartCompany_18EU)) {</span>
+<span class="nc" id="L317">                errMsg = LocalText.getText(&quot;InvalidAction&quot;);</span>
+<span class="nc" id="L318">                break;</span>
+            }
+<span class="fc" id="L320">            startAction = (StartCompany_18EU) action;</span>
+
+            // The player may not have bought this turn.
+<span class="pc bpc" id="L323" title="1 of 2 branches missed.">            if (companyBoughtThisTurnWrapper.value() != null) {</span>
+<span class="nc" id="L324">                errMsg = LocalText.getText(&quot;AlreadyBought&quot;, playerName);</span>
+<span class="nc" id="L325">                break;</span>
+            }
+
+            // Check company
+<span class="fc" id="L329">            company = companyManager.getPublicCompany(companyName);</span>
+<span class="pc bpc" id="L330" title="1 of 2 branches missed.">            if (company == null) {</span>
+<span class="nc" id="L331">                errMsg = LocalText.getText(&quot;CompanyDoesNotExist&quot;, companyName);</span>
+<span class="nc" id="L332">                break;</span>
+            }
+            // The company may not have started yet.
+<span class="pc bpc" id="L335" title="1 of 2 branches missed.">            if (company.hasStarted()) {</span>
+<span class="nc" id="L336">                errMsg =</span>
+<span class="nc" id="L337">                        LocalText.getText(&quot;CompanyAlreadyStarted&quot;, companyName);</span>
+<span class="nc" id="L338">                break;</span>
+            }
+
+            // Find the President's certificate
+<span class="fc" id="L342">            cert = ipo.findCertificate(company, true);</span>
+            // Make sure that we buy at least one!
+<span class="pc bpc" id="L344" title="1 of 2 branches missed.">            if (shares &lt; cert.getShares()) shares = cert.getShares();</span>
+
+            // Determine the number of Certificates to buy
+            // (shortcut: assume that any additional certs are one share each)
+<span class="fc" id="L348">            numberOfCertsToBuy = shares - (cert.getShares() - 1);</span>
+            // Check if the player may buy that many certificates.
+<span class="pc bpc" id="L350" title="1 of 2 branches missed.">            if (!mayPlayerBuyCertificate(currentPlayer, company, numberOfCertsToBuy)) {</span>
+<span class="nc" id="L351">                errMsg = LocalText.getText(&quot;CantBuyMoreCerts&quot;);</span>
+<span class="nc" id="L352">                break;</span>
+            }
+
+            // The given price must be a valid start price
+<span class="pc bpc" id="L356" title="1 of 2 branches missed.">            if ((startSpace = stockMarket.getStartSpace(price)) == null) {</span>
+<span class="nc" id="L357">                errMsg =</span>
+<span class="nc" id="L358">                        LocalText.getText(&quot;InvalidStartPrice&quot;,</span>
+<span class="nc" id="L359">                                Bank.format(this, price),</span>
+<span class="nc" id="L360">                                company.getId() );</span>
+<span class="nc" id="L361">                break;</span>
+            }
+
+            // Check if the Player has the money.
+<span class="pc bpc" id="L365" title="1 of 2 branches missed.">            if (currentPlayer.getCashValue() &lt; shares * price) {</span>
+<span class="nc" id="L366">                errMsg = LocalText.getText(&quot;NoMoney&quot;);</span>
+<span class="nc" id="L367">                break;</span>
+            }
+
+<span class="fc bfc" id="L370" title="All 2 branches covered.">            if (!phase5Reached) {</span>
+                // Check if the player owns the merged minor
+<span class="fc" id="L372">                minor = startAction.getChosenMinor();</span>
+<span class="pc bpc" id="L373" title="1 of 2 branches missed.">                if (minor != null</span>
+<span class="pc bpc" id="L374" title="1 of 2 branches missed.">                    &amp;&amp; currentPlayer.getPortfolioModel().getCertificates(</span>
+                            minor) == null) {
+<span class="nc" id="L376">                    errMsg =</span>
+<span class="nc" id="L377">                            LocalText.getText(&quot;PlayerDoesNotOwn&quot;,</span>
+<span class="nc" id="L378">                                    currentPlayer.getId(),</span>
+<span class="nc" id="L379">                                    minor.getId() );</span>
+<span class="nc" id="L380">                    break;</span>
+                }
+            } else {
+                // Check if a valid home base has been selected
+<span class="fc" id="L384">                selectedHomeCity = startAction.getSelectedHomeStation();</span>
+<span class="pc bpc" id="L385" title="1 of 2 branches missed.">                if (selectedHomeCity.getSlots() &lt;= selectedHomeCity.getBaseTokens().size()) {</span>
+<span class="nc" id="L386">                    errMsg =</span>
+<span class="nc" id="L387">                            LocalText.getText(&quot;InvalidHomeBase&quot;,</span>
+<span class="nc" id="L388">                                    selectedHomeCity.toString(),</span>
+<span class="nc" id="L389">                                    company.getId() );</span>
+<span class="nc" id="L390">                    break;</span>
+                }
+
+            }
+<span class="fc" id="L394">            numberOfCertsToBuy++;</span>
+
+            break;
+        }
+
+<span class="pc bpc" id="L399" title="1 of 2 branches missed.">        if (errMsg != null) {</span>
+<span class="nc" id="L400">            DisplayBuffer.add(this, LocalText.getText(&quot;CantStart&quot;,</span>
+                    playerName,
+                    companyName,
+<span class="nc" id="L403">                    Bank.format(this, price),</span>
+                    errMsg ));
+<span class="nc" id="L405">            return false;</span>
+        }
+
+
+
+        // All is OK, now start the company
+<span class="fc" id="L411">        MapHex homeHex = null;</span>
+<span class="fc" id="L412">        int homeCityNumber = 1;</span>
+<span class="fc bfc" id="L413" title="All 2 branches covered.">        if (minor != null) {</span>
+<span class="fc" id="L414">            homeHex = minor.getHomeHexes().get(0);</span>
+<span class="fc" id="L415">            homeCityNumber = homeHex.getStopOfBaseToken(minor).getRelatedNumber();</span>
+<span class="pc bpc" id="L416" title="1 of 2 branches missed.">        } else if (selectedHomeCity != null) {</span>
+<span class="fc" id="L417">            homeHex = selectedHomeCity.getParent();</span>
+<span class="fc" id="L418">            homeCityNumber = selectedHomeCity.getRelatedNumber();</span>
+            //Bugfix for Error reported by John Galt- Mar 31 2012 ; Martin Brumm
+            //The maphex needs to have the homes map set with the company value.
+<span class="fc" id="L421">            homeHex.addHome(company, selectedHomeCity);</span>
+        }
+<span class="fc" id="L423">        company.setHomeHex(homeHex);</span>
+<span class="fc" id="L424">        company.setHomeCityNumber(homeCityNumber);</span>
+
+<span class="fc" id="L426">        company.start(startSpace);</span>
+<span class="fc" id="L427">        ReportBuffer.add(this, LocalText.getText(&quot;START_COMPANY_LOG&quot;,</span>
+                playerName,
+                companyName,
+<span class="fc" id="L430">                Bank.format(this, price),</span>
+<span class="fc" id="L431">                Bank.format(this, shares * price),</span>
+<span class="fc" id="L432">                shares,</span>
+<span class="fc" id="L433">                cert.getShare(),</span>
+<span class="fc" id="L434">                company.getId() ));</span>
+
+        // Transfer the President's certificate
+<span class="fc" id="L437">        cert.moveTo(currentPlayer);</span>
+<span class="fc" id="L438">        Currency.wire(currentPlayer, shares * price, company);</span>
+
+<span class="fc bfc" id="L440" title="All 2 branches covered.">        if (minor != null) {</span>
+            // Get the extra certificate for the minor, for free
+<span class="fc" id="L442">            PublicCertificate cert2 = ipo.findCertificate(company, false);</span>
+<span class="fc" id="L443">            cert2.moveTo(currentPlayer);</span>
+            // Transfer the minor assets into the started company
+<span class="fc" id="L445">            int minorCash = minor.getCash();</span>
+<span class="fc" id="L446">            int minorTrains = minor.getPortfolioModel().getTrainList().size();</span>
+<span class="fc" id="L447">            company.transferAssetsFrom(minor);</span>
+<span class="fc" id="L448">            minor.setClosed();</span>
+<span class="fc" id="L449">            ReportBuffer.add(this, LocalText.getText(&quot;MERGE_MINOR_LOG&quot;,</span>
+<span class="fc" id="L450">                    currentPlayer.getId(),</span>
+<span class="fc" id="L451">                    minor.getId(),</span>
+<span class="fc" id="L452">                    company.getId(),</span>
+<span class="fc" id="L453">                    Bank.format(this, minorCash),</span>
+<span class="fc" id="L454">                    minorTrains ));</span>
+<span class="fc" id="L455">            ReportBuffer.add(this, LocalText.getText(&quot;GetShareForMinor&quot;,</span>
+<span class="fc" id="L456">                    currentPlayer.getId(),</span>
+<span class="fc" id="L457">                    cert2.getShare(),</span>
+<span class="fc" id="L458">                    company.getId(),</span>
+<span class="fc" id="L459">                    ipo.getParent().getId(),</span>
+<span class="fc" id="L460">                    minor.getId() ));</span>
+<span class="fc" id="L461">        } else {</span>
+<span class="fc" id="L462">            ReportBuffer.add(this, LocalText.getText(&quot;SelectedHomeBase&quot;,</span>
+<span class="fc" id="L463">                    company.getId(),</span>
+<span class="fc" id="L464">                    selectedHomeCity.toText() ));</span>
+        }
+
+        // Move the remaining certificates to the company treasury
+<span class="fc" id="L468">        Portfolio.moveAll(ipo.getCertificates(company), company);</span>
+
+<span class="fc" id="L470">        ReportBuffer.add(this, LocalText.getText(&quot;SharesPutInTreasury&quot;,</span>
+<span class="fc" id="L471">                company.getPortfolioModel().getShare(company),</span>
+<span class="fc" id="L472">                company.getId() ));</span>
+
+        // TODO must get this amount from XML
+<span class="fc" id="L475">        int tokensCost = 100;</span>
+<span class="fc" id="L476">        String costText = Currency.toBank(company, tokensCost);</span>
+<span class="fc" id="L477">        ReportBuffer.add(this, LocalText.getText(&quot;PaysForTokens&quot;,</span>
+<span class="fc" id="L478">                company.getId(),</span>
+                costText,
+<span class="fc" id="L480">                company.getNumberOfBaseTokens() ));</span>
+
+<span class="fc" id="L482">        companyBoughtThisTurnWrapper.set(company);</span>
+<span class="fc" id="L483">        hasActed.set(true);</span>
+<span class="fc" id="L484">        setPriority(&quot;StartCompany&quot;);</span>
+
+<span class="fc" id="L486">        return true;</span>
+    }
+
+    @Override
+    protected boolean processGameSpecificAction(PossibleAction action) {
+
+<span class="fc" id="L492">        log.debug(&quot;GameSpecificAction: &quot; + action.toString());</span>
+
+<span class="fc" id="L494">        boolean result = false;</span>
+
+<span class="fc bfc" id="L496" title="All 2 branches covered.">        if (action instanceof MergeCompanies) {</span>
+
+<span class="fc" id="L498">            result = mergeCompanies((MergeCompanies) action);</span>
+
+<span class="pc bpc" id="L500" title="1 of 2 branches missed.">        } else if (action instanceof DiscardTrain) {</span>
+
+<span class="fc" id="L502">            result = discardTrain((DiscardTrain) action);</span>
+        }
+
+<span class="fc" id="L505">        return result;</span>
+    }
+
+    /**
+     * Merge a minor into an already started company. &lt;p&gt;Also covers the
+     * actions of the Final Minor Exchange Round, in which minors can also be
+     * closed (in that case, the MergeCompanies.major attribute is null, which
+     * never occurs in normal stock rounds).
+     *
+     * @param action
+     * @return
+     */
+    // changes: this is a game specific action
+    // requires: an own MergeCompany Activity
+    protected boolean mergeCompanies(MergeCompanies action) {
+
+<span class="fc" id="L521">        PublicCompany minor = action.getMergingCompany();</span>
+<span class="fc" id="L522">        PublicCompany major = action.getSelectedTargetCompany();</span>
+<span class="fc" id="L523">        PublicCertificate cert = null;</span>
+<span class="fc" id="L524">        MoneyOwner cashDestination = null; // Bank</span>
+<span class="fc" id="L525">        Train pullmannToDiscard = null;</span>
+
+        // TODO Validation to be added?
+
+
+
+<span class="pc bpc" id="L531" title="1 of 2 branches missed.">        if (major != null) {</span>
+<span class="fc" id="L532">            cert = major.getPortfolioModel().findCertificate(major, false);</span>
+<span class="pc bpc" id="L533" title="1 of 2 branches missed.">            if (cert != null) {</span>
+                // Assets go to the major company.
+<span class="fc" id="L535">                cashDestination = major;</span>
+            } else {
+<span class="nc" id="L537">                cert = pool.findCertificate(major, false);</span>
+                // If null, player gets nothing in return
+            }
+        }
+
+        // Transfer the minor assets
+<span class="fc" id="L543">        int minorCash = minor.getCash();</span>
+<span class="fc" id="L544">        int minorTrains = minor.getPortfolioModel().getTrainList().size();</span>
+<span class="pc bpc" id="L545" title="1 of 2 branches missed.">        if (cashDestination == null) {</span>
+            // Assets go to the bank
+<span class="nc bnc" id="L547" title="All 2 branches missed.">            if (minorCash &gt; 0) {</span>
+<span class="nc" id="L548">                Currency.toBankAll(minor);</span>
+            }
+<span class="nc" id="L550">            pool.transferAssetsFrom(minor.getPortfolioModel());</span>
+        } else {
+            // Assets go to the major company
+<span class="fc" id="L553">            major.transferAssetsFrom(minor);</span>
+
+            // Check for multiple Pullmanns
+<span class="fc" id="L556">            boolean hasPullmann = false;</span>
+<span class="fc bfc" id="L557" title="All 2 branches covered.">            for (Train train : major.getPortfolioModel().getTrainList()) {</span>
+<span class="pc bpc" id="L558" title="1 of 2 branches missed.">                if (train.toText().equalsIgnoreCase(&quot;P&quot;)) {</span>
+<span class="nc bnc" id="L559" title="All 2 branches missed.">                    if (!hasPullmann) {</span>
+<span class="nc" id="L560">                        hasPullmann = true;</span>
+                    } else {
+<span class="nc" id="L562">                        pullmannToDiscard = train; // Can only have two Pullmanns.</span>
+                    }
+                }
+<span class="fc" id="L565">            }</span>
+        }
+
+<span class="fc" id="L568">        MapHex homeHex = minor.getHomeHexes().get(0);</span>
+<span class="fc" id="L569">        Stop homeStop  = homeHex.getStopOfBaseToken(minor);</span>
+<span class="fc" id="L570">        minor.setClosed();</span>
+
+<span class="pc bpc" id="L572" title="1 of 4 branches missed.">        if (major != null &amp;&amp; action.getReplaceToken()) {</span>
+<span class="pc bpc" id="L573" title="1 of 2 branches missed.">            if (homeHex.layBaseToken(major, homeStop)) {</span>
+<span class="fc" id="L574">                major.layBaseToken(homeHex, 0);</span>
+            }
+        }
+
+<span class="pc bpc" id="L578" title="1 of 2 branches missed.">        if (major != null) {</span>
+<span class="fc bfc" id="L579" title="All 2 branches covered.">            if (major.getNumberOfTrains() &gt; major.getCurrentTrainLimit()</span>
+<span class="pc bpc" id="L580" title="1 of 2 branches missed.">                &amp;&amp; !compWithExcessTrains.contains(major)) {</span>
+<span class="fc" id="L581">                compWithExcessTrains.add(major);</span>
+            }
+        }
+
+<span class="pc bpc" id="L585" title="1 of 2 branches missed.">        if (cert != null) {</span>
+<span class="fc" id="L586">            ReportBuffer.add(this, &quot;&quot;);</span>
+<span class="fc" id="L587">            ReportBuffer.add(this, LocalText.getText(&quot;MERGE_MINOR_LOG&quot;,</span>
+<span class="fc" id="L588">                    currentPlayer.getId(),</span>
+<span class="fc" id="L589">                    minor.getId(),</span>
+<span class="fc" id="L590">                    major.getId(),</span>
+<span class="fc" id="L591">                    Bank.format(this, minorCash),</span>
+<span class="fc" id="L592">                    minorTrains ));</span>
+            // FIXME: CHeck if this still works correctly
+<span class="fc" id="L594">            ReportBuffer.add(this, LocalText.getText(&quot;GetShareForMinor&quot;,</span>
+<span class="fc" id="L595">                    currentPlayer.getId(),</span>
+<span class="fc" id="L596">                    cert.getShare(),</span>
+<span class="fc" id="L597">                    major.getId(),</span>
+<span class="fc" id="L598">                    cert.getOwner().getId(),</span>
+<span class="fc" id="L599">                    minor.getId() ));</span>
+<span class="pc bpc" id="L600" title="1 of 2 branches missed.">            if (major != null) {</span>
+<span class="fc bfc" id="L601" title="All 2 branches covered.">                if (action.getReplaceToken()) {</span>
+<span class="fc" id="L602">                    ReportBuffer.add(this, LocalText.getText(&quot;ExchangesBaseToken&quot;,</span>
+<span class="fc" id="L603">                            major.getId(),</span>
+<span class="fc" id="L604">                            minor.getId(),</span>
+<span class="fc" id="L605">                            homeHex.getId()));</span>
+                } else {
+<span class="fc" id="L607">                    ReportBuffer.add(this, LocalText.getText(&quot;NoBaseTokenExchange&quot;,</span>
+<span class="fc" id="L608">                            major.getId(),</span>
+<span class="fc" id="L609">                            minor.getId(),</span>
+<span class="fc" id="L610">                            homeHex.getId()));</span>
+                }
+            }
+<span class="fc" id="L613">            cert.moveTo(currentPlayer);</span>
+<span class="fc" id="L614">            ReportBuffer.add(this, LocalText.getText(&quot;MinorCloses&quot;, minor.getId()));</span>
+<span class="fc" id="L615">            checkFlotation(major);</span>
+
+<span class="pc bpc" id="L617" title="1 of 2 branches missed.">            if (pullmannToDiscard != null) {</span>
+<span class="nc" id="L618">                pullmannToDiscard.discard();</span>
+            }
+        } else {
+<span class="nc" id="L621">            ReportBuffer.add(this, &quot;&quot;);</span>
+<span class="nc" id="L622">            ReportBuffer.add(this, LocalText.getText(&quot;CLOSE_MINOR_LOG&quot;,</span>
+<span class="nc" id="L623">                    currentPlayer.getId(),</span>
+<span class="nc" id="L624">                    minor.getId(),</span>
+<span class="nc" id="L625">                    Bank.format(this, minorCash),</span>
+<span class="nc" id="L626">                    minorTrains ));</span>
+        }
+<span class="fc" id="L628">        hasActed.set(true);</span>
+
+<span class="fc bfc" id="L630" title="All 2 branches covered.">        if (!(this instanceof FinalMinorExchangeRound)) {</span>
+<span class="fc" id="L631">            companyBoughtThisTurnWrapper.set(major);</span>
+
+            // If &gt;60% shares owned, lift sell obligation this round.
+<span class="fc" id="L634">            if (currentPlayer.getPortfolioModel().getShare(major)</span>
+<span class="pc bpc" id="L635" title="1 of 2 branches missed.">            		&gt; GameDef.getGameParameterAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)) {</span>
+<span class="nc" id="L636">            	setSellObligationLifted (major);</span>
+            }
+
+<span class="fc" id="L639">            setPriority(&quot;Merge&quot;);</span>
+        }
+
+<span class="fc" id="L642">        return true;</span>
+    }
+
+    @Override
+    // changes: this changes the floation behavior
+    // requires: move this to PublicCompany, potentially add a FloatCompanyStrategy
+    protected void floatCompany(PublicCompany company) {
+
+<span class="fc" id="L650">        company.setFloated();</span>
+<span class="fc" id="L651">        ReportBuffer.add(this, LocalText.getText(&quot;Floats&quot;, company.getId()));</span>
+
+        // Before phase 5, no other actions are required.
+
+<span class="fc bfc" id="L655" title="All 2 branches covered.">        if (phase5Reached) {</span>
+            // Put the remaining 5 shares in the pool,
+            // getting cash in return
+            // Move the remaining certificates to the company treasury
+<span class="fc" id="L659">            company.getPortfolioModel().moveAllCertificates(pool.getParent());</span>
+<span class="fc" id="L660">            int cash = 5 * company.getMarketPrice();</span>
+<span class="fc" id="L661">            String cashText = Currency.fromBank(cash, company);</span>
+<span class="fc" id="L662">            ReportBuffer.add(this, LocalText.getText(&quot;MonetiseTreasuryShares&quot;,</span>
+<span class="fc" id="L663">                    company.getId(),</span>
+                    cashText ));
+
+        }
+<span class="fc" id="L667">    }</span>
+
+    // change: discardTrain action are usually outside of StockRounds
+    // requires: think about triggered activities?
+    public boolean discardTrain(DiscardTrain action) {
+
+<span class="fc" id="L673">        Train train = action.getDiscardedTrain();</span>
+<span class="fc" id="L674">        PublicCompany company = action.getCompany();</span>
+<span class="fc" id="L675">        String companyName = company.getId();</span>
+
+<span class="fc" id="L677">        String errMsg = null;</span>
+
+        // Dummy loop to enable a quick jump out.
+        while (true) {
+            // Checks
+            // Must be correct step
+<span class="pc bpc" id="L683" title="1 of 2 branches missed.">            if (!discardingTrains.value()) {</span>
+<span class="nc" id="L684">                errMsg = LocalText.getText(&quot;WrongActionNoDiscardTrain&quot;);</span>
+<span class="nc" id="L685">                break;</span>
+            }
+
+<span class="pc bpc" id="L688" title="1 of 2 branches missed.">            if (train == null) {</span>
+<span class="nc" id="L689">                errMsg = LocalText.getText(&quot;NoTrainSpecified&quot;);</span>
+<span class="nc" id="L690">                break;</span>
+            }
+
+            // Does the company own such a train?
+
+<span class="pc bpc" id="L695" title="1 of 2 branches missed.">            if (!company.getPortfolioModel().getTrainList().contains(train)) {</span>
+<span class="nc" id="L696">                errMsg =</span>
+<span class="nc" id="L697">                        LocalText.getText(&quot;CompanyDoesNotOwnTrain&quot;,</span>
+<span class="nc" id="L698">                                company.getId(),</span>
+<span class="nc" id="L699">                                train.toText() );</span>
+                break;
+            }
+
+            break;
+        }
+<span class="pc bpc" id="L705" title="1 of 2 branches missed.">        if (errMsg != null) {</span>
+<span class="nc" id="L706">            DisplayBuffer.add(this, LocalText.getText(&quot;CannotDiscardTrain&quot;,</span>
+                    companyName,
+<span class="nc" id="L708">                    train.toText(),</span>
+                    errMsg ));
+<span class="nc" id="L710">            return false;</span>
+        }
+
+        /* End of validation, start of execution */
+<span class="fc" id="L714">        train.discard();</span>
+
+<span class="fc" id="L716">        finishTurn();</span>
+
+<span class="fc" id="L718">        return true;</span>
+    }
+
+    @Override
+    // change: discardTrain action are usually outside of StockRounds
+    // requires: think about triggered activities?
+    protected void finishTurn() {
+
+<span class="fc bfc" id="L726" title="All 2 branches covered.">        if (!discardingTrains.value()) {</span>
+<span class="fc" id="L727">            super.finishTurn();</span>
+        } else {
+<span class="fc" id="L729">            PublicCompany comp =</span>
+<span class="fc" id="L730">                    discardingCompanies[discardingCompanyIndex.value()];</span>
+<span class="pc bpc" id="L731" title="1 of 2 branches missed.">            if (comp.getNumberOfTrains() &lt;= comp.getCurrentTrainLimit()) {</span>
+<span class="fc" id="L732">                discardingCompanyIndex.add(1);</span>
+<span class="pc bpc" id="L733" title="1 of 2 branches missed.">                if (discardingCompanyIndex.value() &gt;= discardingCompanies.length) {</span>
+                    // All excess trains have been discarded
+<span class="fc" id="L735">                    finishRound();</span>
+<span class="fc" id="L736">                    return;</span>
+                }
+            }
+<span class="nc" id="L739">            PublicCompany discardingCompany =</span>
+<span class="nc" id="L740">                    discardingCompanies[discardingCompanyIndex.value()];</span>
+<span class="nc" id="L741">            setCurrentPlayer(discardingCompany.getPresident());</span>
+        }
+<span class="fc" id="L743">    }</span>
+
+    @Override
+    // change: discardTrain action are usually outside of StockRounds
+    // requires: think about triggered activities?
+    protected void finishRound() {
+
+<span class="fc bfc" id="L750" title="All 2 branches covered.">        if (discardingTrains.value()) {</span>
+
+<span class="fc" id="L752">            super.finishRound();</span>
+
+<span class="fc bfc" id="L754" title="All 2 branches covered.">        } else if (!compWithExcessTrains.isEmpty()) {</span>
+
+<span class="fc" id="L756">            discardingTrains.set(true);</span>
+
+            // Make up a list of train discarding companies in operating sequence.
+<span class="fc" id="L759">            PublicCompany[] operatingCompanies = setOperatingCompanies().toArray(new PublicCompany[0]);</span>
+<span class="fc" id="L760">            discardingCompanies =</span>
+<span class="fc" id="L761">                    new PublicCompany[compWithExcessTrains.size()];</span>
+<span class="fc bfc" id="L762" title="All 2 branches covered.">            for (int i = 0, j = 0; i &lt; operatingCompanies.length; i++) {</span>
+<span class="fc bfc" id="L763" title="All 2 branches covered.">                if (compWithExcessTrains.contains(operatingCompanies[i])) {</span>
+<span class="fc" id="L764">                    discardingCompanies[j++] = operatingCompanies[i];</span>
+                }
+            }
+
+<span class="fc" id="L768">            discardingCompanyIndex.set(0);</span>
+<span class="fc" id="L769">            PublicCompany discardingCompany =</span>
+<span class="fc" id="L770">                    discardingCompanies[discardingCompanyIndex.value()];</span>
+<span class="fc" id="L771">            setCurrentPlayer(discardingCompany.getPresident());</span>
+
+<span class="fc" id="L773">        } else {</span>
+
+<span class="fc" id="L775">            super.finishRound();</span>
+        }
+<span class="fc" id="L777">    }</span>
+
+    // TODO: Is this required somwhere?
+//    @Override
+//    public String toString() {
+//        return &quot;StockRound_18EU &quot; + getStockRoundNumber();
+//    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

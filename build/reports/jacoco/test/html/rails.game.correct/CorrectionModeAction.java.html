@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CorrectionModeAction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">rails.game.correct</a> &gt; <span class="el_source">CorrectionModeAction.java</span></div><h1>CorrectionModeAction.java</h1><pre class="source lang-java linenums">package rails.game.correct;
+
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
+import com.google.common.base.Objects;
+
+import rails.game.action.PossibleAction;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.util.*;
+
+
+/**
+ * Action class to request specific correction actions
+ *
+ * Rails 2.0: updated equals and toString methods
+ */
+
+public class CorrectionModeAction extends CorrectionAction {
+    
+    public static final long serialVersionUID = 1L;
+
+    // pre-conditions:  state
+    protected boolean active;
+    
+    // post-conditions: none (except isActed!)
+    
+    /** 
+     * Initializes with all possible correction types
+     */
+<span class="fc" id="L32">    public CorrectionModeAction(CorrectionType correction, boolean active) {</span>
+<span class="fc" id="L33">        this.correctionType = correction;</span>
+<span class="fc" id="L34">        correctionName = correction.name();</span>
+<span class="fc" id="L35">        this.active = active;</span>
+<span class="fc" id="L36">    }</span>
+    
+    public boolean isActive() {
+<span class="nc" id="L39">        return active;</span>
+    }
+    
+    public String getInfo(){
+<span class="nc" id="L43">        return (LocalText.getText(correctionName));</span>
+    }
+    
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // FIXME: Always allow the actions of the according type as Option
+<span class="pc bpc" id="L49" title="2 of 6 branches missed.">        if (asOption &amp;&amp; pa instanceof CorrectionAction &amp;&amp; ((CorrectionAction)pa).getCorrectionType() ==</span>
+                this.correctionType) {
+<span class="fc" id="L51">            return true;</span>
+        }
+        
+        // identity always true
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        if (pa == this) return true;</span>
+        //  super checks both class identity and super class attributes
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if (!super.equalsAs(pa, asOption)) return false; </span>
+
+        // check asOption attributes
+<span class="nc" id="L60">        CorrectionModeAction action = (CorrectionModeAction)pa;</span>
+        
+<span class="nc" id="L62">        return Objects.equal(this.active, action.active);</span>
+        // no action attributes to be checked
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L68">        return super.toString() + </span>
+<span class="fc" id="L69">                RailsObjects.stringHelper(this)</span>
+<span class="fc" id="L70">                    .addToString(&quot;active&quot;, active)</span>
+<span class="fc" id="L71">                .toString()</span>
+        ;
+    }
+
+    /** Deserialize */
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+<span class="fc" id="L78">        in.defaultReadObject();</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if (Util.hasValue(correctionName))</span>
+<span class="fc" id="L80">                correctionType = CorrectionType.valueOf(correctionName);</span>
+<span class="fc" id="L81">    }</span>
+
+    
+//   a version with enumsets:
+//    // pre-conditions
+//    transient protected EnumSet&lt;CorrectionType&gt; possibleCorrections;
+//    
+//    // post-conditions
+//    transient protected CorrectionType selectedCorrection;
+//    
+//    /** 
+//     * Initializes with all possible correction types
+//     */
+//    public RequestCorrectionAction() {
+//        possibleCorrections = EnumSet.allOf(CorrectionType.class);
+//    }
+//
+//    /** 
+//     * Initializes with a specific set of correction types
+//     */
+//    public RequestCorrectionAction(EnumSet&lt;CorrectionType&gt; possibleCorrections) {
+//        this.possibleCorrections = possibleCorrections;
+//    }
+//
+//    public EnumSet&lt;CorrectionType&gt; getPossibleCorrections() {
+//        return possibleCorrections;
+//    }
+//    
+//    public CorrectionType getSelectedCorrection() {
+//        return selectedCorrection;
+//    }
+//    
+//    public void setSelectedCorrection(CorrectionType selectedCorrection) {
+//        this.selectedCorrection = selectedCorrection;
+//    }
+    
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

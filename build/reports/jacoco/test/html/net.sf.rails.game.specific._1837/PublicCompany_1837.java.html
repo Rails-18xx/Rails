@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PublicCompany_1837.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1837</a> &gt; <span class="el_source">PublicCompany_1837.java</span></div><h1>PublicCompany_1837.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1837;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.financial.BankPortfolio;
+import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.Train;
+import net.sf.rails.game.financial.BankPortfolio;
+import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.Owner;
+
+public class PublicCompany_1837 extends PublicCompany {
+   
+    public PublicCompany_1837(RailsItem parent, String id) {
+<span class="nc" id="L19">        super(parent, id);</span>
+<span class="nc" id="L20">    }</span>
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.PublicCompany#mayBuyTrainType(net.sf.rails.game.Train)
+     */
+    @Override
+    public boolean mayBuyTrainType(Train train) { // Coal trains in 1837 are only allowed to buy/operate G-Trains
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if (this.getType().getId().equals(&quot;Coal&quot;)){</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">            if (train.getType().getInfo().contains(&quot;G&quot;)){</span>
+<span class="nc" id="L29">                return true;</span>
+            }
+            else {
+<span class="nc" id="L32">                return false;</span>
+            }
+        }
+<span class="nc" id="L35">        return super.mayBuyTrainType(train);</span>
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.PublicCompany#payout(int)
+     */
+    public void payout(int amount, boolean b) {
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (amount == 0) return;</span>
+
+        // Move the token
+<span class="nc bnc" id="L45" title="All 4 branches missed.">        if (hasStockPrice</span>
+                &amp;&amp; (!payoutMustExceedPriceToMove
+<span class="nc bnc" id="L47" title="All 2 branches missed.">                        || amount &gt;= currentPrice.getPrice().getPrice())) {</span>
+<span class="nc" id="L48">           ((StockMarket_1837) getRoot().getStockMarket()).payOut(this, b);</span>
+        }
+
+<span class="nc" id="L51">    }</span>
+    /* (non-Javadoc)
+     * @see rails.game.PublicCompany#isSoldOut()
+     */
+    @Override
+    public boolean isSoldOut() {
+        Owner owner;
+
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        for (PublicCertificate cert : certificates.view()) {</span>
+<span class="nc" id="L60">                owner = cert.getOwner();</span>
+<span class="nc bnc" id="L61" title="All 6 branches missed.">                if ((owner instanceof BankPortfolio || owner == cert.getCompany()) &amp;&amp; (!owner.getId().equalsIgnoreCase(&quot;unavailable&quot;))) {</span>
+<span class="nc" id="L62">                    return false;</span>
+                }
+<span class="nc" id="L64">            }</span>
+<span class="nc" id="L65">            return true;</span>
+    }
+
+    /**
+     * @param coalMineTreasuryBonus the coalMineTreasuryBonus to set
+     */
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

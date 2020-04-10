@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameUIManager_1835.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.gamespecific._1835</a> &gt; <span class="el_source">GameUIManager_1835.java</span></div><h1>GameUIManager_1835.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.gamespecific._1835;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import rails.game.specific._1835.FoldIntoPrussian;
+import net.sf.rails.game.Company;
+import net.sf.rails.ui.swing.GameUIManager;
+import net.sf.rails.ui.swing.elements.*;
+
+
+<span class="nc" id="L12">public class GameUIManager_1835 extends GameUIManager {</span>
+
+    // Keys of dialogs owned by this class.
+    public static final String START_PRUSSIAN_DIALOG = &quot;StartPrussian&quot;;
+    public static final String MERGE_INTO_PRUSSIAN_DIALOG = &quot;MergeIntoPrussian&quot;;
+
+    @Override
+    public void dialogActionPerformed() {
+
+<span class="nc" id="L21">        String key = &quot;&quot;;</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog)currentDialog).getKey();</span>
+
+        // Check for the dialogs that are postprocessed in this class.
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        if (START_PRUSSIAN_DIALOG.equals(key)) {</span>
+
+<span class="nc" id="L27">            ConfirmationDialog dialog = (ConfirmationDialog) currentDialog;</span>
+<span class="nc" id="L28">            FoldIntoPrussian action = (FoldIntoPrussian) currentDialogAction;</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">            if (dialog.getAnswer()) {</span>
+<span class="nc" id="L30">                action.setFoldedCompanies(action.getFoldableCompanies());</span>
+            }
+
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        } else if (MERGE_INTO_PRUSSIAN_DIALOG.equals(key)) {</span>
+
+<span class="nc" id="L35">            CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;</span>
+<span class="nc" id="L36">            FoldIntoPrussian action = (FoldIntoPrussian) currentDialogAction;</span>
+<span class="nc" id="L37">            boolean[] exchanged = dialog.getSelectedOptions();</span>
+<span class="nc" id="L38">            String[] options = dialog.getOptions();</span>
+
+<span class="nc" id="L40">            List&lt;Company&gt; foldedCompanies = new ArrayList&lt;Company&gt;();</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">            for (int index=0; index &lt; options.length; index++) {</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">                if (exchanged[index]) {</span>
+<span class="nc" id="L43">                    foldedCompanies.add(action.getFoldableCompanies().get(index));</span>
+                }
+            }
+<span class="nc" id="L46">            action.setFoldedCompanies(foldedCompanies);</span>
+
+<span class="nc" id="L48">        } else {</span>
+            // Current dialog not found yet, try the superclass.
+<span class="nc" id="L50">            super.dialogActionPerformed(false);</span>
+<span class="nc" id="L51">            return;</span>
+        }
+
+        // Dialog action found and processed, let the superclass initiate processing.
+<span class="nc" id="L55">        super.dialogActionPerformed(true);</span>
+<span class="nc" id="L56">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SoundManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.sound</a> &gt; <span class="el_source">SoundManager.java</span></div><h1>SoundManager.java</h1><pre class="source lang-java linenums">package net.sf.rails.sound;
+
+import rails.game.action.PossibleAction;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.ui.swing.ORUIManager;
+import net.sf.rails.ui.swing.hexmap.HexUpgrade;
+
+/**
+ * This is a singleton class as there should never be two
+ * background musics playing at the same time.
+ * 
+ * This class is notified of:
+ * - processed actions (lay tile,...)
+ * - model updates (phase change, presidency change,...)
+ * 
+ * Based on this information, the appropriate background music or
+ * sound effect is played in the background (only mp3 supported). 
+ * 
+ * @author Frederick Weld
+ *
+ */
+public class SoundManager {
+    private SoundPlayer player;
+    private SoundContext context;
+    private SoundEventInterpreter eventInterpreter;
+    private static SoundManager manager;
+    
+<span class="nc" id="L28">    private SoundManager() {</span>
+<span class="nc" id="L29">        player = new SoundPlayer();</span>
+<span class="nc" id="L30">        context = new SoundContext(player);</span>
+<span class="nc" id="L31">        eventInterpreter = new SoundEventInterpreter(context,player);</span>
+<span class="nc" id="L32">    }</span>
+    public static SoundManager getInstance() {
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (manager == null) manager = new SoundManager();</span>
+<span class="nc" id="L35">        return manager;</span>
+    }
+    public static void init() {
+<span class="nc" id="L38">        getInstance().context.notifyOfMusicEnablement(SoundConfig.isBGMEnabled());</span>
+<span class="nc" id="L39">    }</span>
+    public static void notifyOfActionProcessing(RailsRoot root,PossibleAction action) {
+<span class="nc" id="L41">        getInstance().eventInterpreter.notifyOfActionProcessing(root, action);</span>
+<span class="nc" id="L42">    }</span>
+    public static void notifyOfSetRevenue(int actualRevenue) {
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (SoundConfig.isSFXEnabled()) {</span>
+<span class="nc" id="L45">            getInstance().context.notifyOfSetRevenue(actualRevenue);</span>
+        }
+<span class="nc" id="L47">    }</span>
+    /**
+     * Called when game engine has been instantiated for a specific game
+     */
+    public static void notifyOfGameInit(RailsRoot root) {
+<span class="nc" id="L52">        getInstance().eventInterpreter.notifyOfGameInit(root);</span>
+<span class="nc" id="L53">    }</span>
+    /**
+     * Called when game setup window initially opens
+     */
+    public static void notifyOfGameSetup() {
+<span class="nc" id="L58">        getInstance().context.notifyOfGameSetup();</span>
+<span class="nc" id="L59">    }</span>
+    public static void notifyOfTimeWarp(boolean timeWarpMode) {
+<span class="nc" id="L61">        getInstance().eventInterpreter.notifyOfTimeWarp(timeWarpMode);</span>
+<span class="nc" id="L62">    }</span>
+    public static void notifyOfORLocalStep(ORUIManager.LocalSteps currentStep) {
+<span class="nc" id="L64">        getInstance().eventInterpreter.notifyOfORLocalStep(currentStep);</span>
+<span class="nc" id="L65">    }</span>
+    public static void notifyOfClickFieldSelection(PossibleAction clickFieldAction) {
+<span class="nc" id="L67">        getInstance().eventInterpreter.notifyOfClickFieldSelection(clickFieldAction);</span>
+<span class="nc" id="L68">    }</span>
+    
+    public static void notifyOfSelectUpgrade(HexUpgrade upgrade) {
+<span class="nc" id="L71">        getInstance().eventInterpreter.notifyOfSelectUpgrade(upgrade);</span>
+<span class="nc" id="L72">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

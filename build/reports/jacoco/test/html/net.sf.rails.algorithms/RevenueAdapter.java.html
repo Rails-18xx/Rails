@@ -1,0 +1,726 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RevenueAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.algorithms</a> &gt; <span class="el_source">RevenueAdapter.java</span></div><h1>RevenueAdapter.java</h1><pre class="source lang-java linenums">package net.sf.rails.algorithms;
+
+import java.awt.EventQueue;
+import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.Phase;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.Train;
+import net.sf.rails.ui.swing.hexmap.HexMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.jgrapht.Graph;
+import org.jgrapht.Graphs;
+import org.jgrapht.graph.SimpleGraph;
+
+
+/**
+ * RevenueAdapter links the revenue algorithm to Rails.
+ */
+public final class RevenueAdapter implements Runnable {
+<span class="nc" id="L34">    protected static final Logger log = LoggerFactory.getLogger(RevenueAdapter.class);</span>
+
+    // define VertexVisitSet
+    public static class VertexVisit {
+        public Set&lt;NetworkVertex&gt; set;
+<span class="nc" id="L39">        public VertexVisit() {set = new HashSet&lt;NetworkVertex&gt;();}</span>
+<span class="nc" id="L40">        public VertexVisit(Collection&lt;NetworkVertex&gt; coll) {set = new HashSet&lt;NetworkVertex&gt;(coll);}</span>
+        public String toString() {
+<span class="nc" id="L42">            return &quot;VertexVisit Set:&quot; + set;</span>
+        }
+    }
+
+    // define EdgeTravelSet
+    public static class EdgeTravel {
+        public Set&lt;NetworkEdge&gt; set;
+<span class="nc" id="L49">        public EdgeTravel() {set = new HashSet&lt;NetworkEdge&gt;();}</span>
+<span class="nc" id="L50">        public EdgeTravel(Collection&lt;NetworkEdge&gt; coll) {set = new HashSet&lt;NetworkEdge&gt;(coll);}</span>
+        public String toString() {
+<span class="nc" id="L52">            return &quot;EdgeTravel Set:&quot; + set;</span>
+        }
+    }
+
+    // basic links, to be defined at creation
+    private final RailsRoot root;
+    private final RevenueManager revenueManager;
+    private final NetworkAdapter networkAdapter;
+    private final PublicCompany company;
+    private final Phase phase;
+
+    // basic components, defined empty at creation
+    private NetworkGraph graph;
+    private Set&lt;NetworkVertex&gt; startVertices;
+    private List&lt;NetworkTrain&gt; trains;
+    private List&lt;VertexVisit&gt; vertexVisitSets;
+    private List&lt;RevenueBonus&gt; revenueBonuses;
+    private Set&lt;NetworkVertex&gt; protectedVertices;
+    private Map&lt;NetworkEdge, EdgeTravel&gt; edgeTravelSets;
+
+    // components related to the revenue calculator
+    private RevenueCalculator rc;
+    private boolean useMultiGraph;
+    private Graph&lt;NetworkVertex,NetworkEdge&gt; rcGraph;
+    private List&lt;NetworkVertex&gt; rcVertices;
+    private List&lt;NetworkEdge&gt; rcEdges;
+    private List&lt;RevenueTrainRun&gt; optimalRun;
+    private boolean hasDynamicModifiers;
+
+    // revenue listener to communicate results
+    private RevenueListener revenueListener;
+
+    public RevenueAdapter(RailsRoot root, NetworkAdapter networkAdapter,
+<span class="nc" id="L85">            PublicCompany company, Phase phase){</span>
+<span class="nc" id="L86">        this.root = root;</span>
+<span class="nc" id="L87">        this.revenueManager = root.getRevenueManager();</span>
+<span class="nc" id="L88">        this.networkAdapter = networkAdapter;</span>
+<span class="nc" id="L89">        this.company = company;</span>
+<span class="nc" id="L90">        this.phase = phase;</span>
+
+<span class="nc" id="L92">        this.graph = null;</span>
+<span class="nc" id="L93">        this.trains = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L94">        this.startVertices = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L95">        this.vertexVisitSets = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L96">        this.edgeTravelSets = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L97">        this.revenueBonuses = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L98">        this.protectedVertices = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L99">    }</span>
+
+    public static RevenueAdapter createRevenueAdapter(RailsRoot root, PublicCompany company, Phase phase) {
+<span class="nc" id="L102">        NetworkAdapter networkAdapter = NetworkAdapter.create(root);</span>
+<span class="nc" id="L103">        RevenueAdapter ra = new RevenueAdapter(root, networkAdapter, company, phase);</span>
+<span class="nc" id="L104">        ra.populateFromRails();</span>
+<span class="nc" id="L105">        return ra;</span>
+    }
+
+
+    public PublicCompany getCompany() {
+<span class="nc" id="L110">        return company;</span>
+    }
+
+    public Phase getPhase() {
+<span class="nc" id="L114">        return phase;</span>
+    }
+
+    public SimpleGraph&lt;NetworkVertex,NetworkEdge&gt; getGraph() {
+<span class="nc" id="L118">        return graph.getGraph();</span>
+    }
+
+    public Set&lt;NetworkVertex&gt; getVertices() {
+<span class="nc" id="L122">        return graph.getGraph().vertexSet();</span>
+    }
+
+    public Set&lt;NetworkEdge&gt; getEdges() {
+<span class="nc" id="L126">        return graph.getGraph().edgeSet();</span>
+    }
+
+    public Graph&lt;NetworkVertex,NetworkEdge&gt; getRCGraph() {
+<span class="nc" id="L130">        return rcGraph;</span>
+    }
+
+    public int getRCVertexId(NetworkVertex vertex) {
+<span class="nc" id="L134">        return rcVertices.indexOf(vertex);</span>
+    }
+
+    public int getRCEdgeId(NetworkEdge edge) {
+<span class="nc" id="L138">        return rcEdges.indexOf(edge);</span>
+    }
+
+    public Set&lt;NetworkVertex&gt; getStartVertices() {
+<span class="nc" id="L142">        return startVertices;</span>
+    }
+
+    public boolean addStartVertices(Collection&lt;NetworkVertex&gt; startVertices) {
+<span class="nc" id="L146">        this.startVertices.addAll(startVertices);</span>
+<span class="nc" id="L147">        protectedVertices.addAll(startVertices);</span>
+<span class="nc" id="L148">        return true;</span>
+    }
+
+    public List&lt;NetworkTrain&gt; getTrains() {
+<span class="nc" id="L152">        return trains;</span>
+    }
+
+    public boolean addTrain(Train railsTrain){
+<span class="nc" id="L156">        NetworkTrain train = NetworkTrain.createFromRailsTrain(railsTrain);</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (train == null) {</span>
+<span class="nc" id="L158">            return false;</span>
+        } else {
+<span class="nc" id="L160">            trains.add(train);</span>
+<span class="nc" id="L161">            return true;</span>
+        }
+    }
+
+    public void addTrain(NetworkTrain train) {
+<span class="nc" id="L166">        trains.add(train);</span>
+<span class="nc" id="L167">    }</span>
+
+    public void removeTrain(NetworkTrain train) {
+<span class="nc" id="L170">        trains.remove(train);</span>
+<span class="nc" id="L171">    }</span>
+
+    public boolean addTrainByString(String trainString) {
+<span class="nc" id="L174">        NetworkTrain train = NetworkTrain.createFromString(trainString);</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if (train == null) return false;</span>
+<span class="nc" id="L176">        trains.add(train);</span>
+<span class="nc" id="L177">        return true;</span>
+    }
+
+    public List&lt;VertexVisit&gt; getVertexVisitSets() {
+<span class="nc" id="L181">        return vertexVisitSets;</span>
+    }
+
+    public void addVertexVisitSet(VertexVisit visit) {
+<span class="nc" id="L185">        vertexVisitSets.add(visit);</span>
+<span class="nc" id="L186">        protectedVertices.addAll(visit.set);</span>
+<span class="nc" id="L187">    }</span>
+
+    public List&lt;RevenueBonus&gt; getRevenueBonuses() {
+<span class="nc" id="L190">        return revenueBonuses;</span>
+    }
+
+    public void addRevenueBonus(RevenueBonus bonus)  {
+<span class="nc" id="L194">        revenueBonuses.add(bonus);</span>
+<span class="nc" id="L195">        protectedVertices.addAll(bonus.getVertices());</span>
+<span class="nc" id="L196">    }</span>
+
+    public void removeRevenueBonus(RevenueBonus bonus) {
+<span class="nc" id="L199">        revenueBonuses.remove(bonus);</span>
+        // TODO: Change protectedVertices to multiSet then you can unprotect vertices
+<span class="nc" id="L201">    }</span>
+
+    public void populateFromRails() {
+        // define graph, without HQ
+<span class="nc" id="L205">        graph = networkAdapter.getRouteGraphCached(company, false);</span>
+
+        // initialize vertices
+<span class="nc" id="L208">        NetworkVertex.initAllRailsVertices(graph, company, phase);</span>
+
+        // define startVertexes
+<span class="nc" id="L211">        addStartVertices(graph.getCompanyBaseTokenVertexes(company));</span>
+
+        // define visit sets
+<span class="nc" id="L214">        defineVertexVisitSets();</span>
+
+        // define revenueBonuses
+<span class="nc" id="L217">        defineRevenueBonuses();</span>
+
+        // define Trains
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        for (Train train:company.getPortfolioModel().getTrainList()) {</span>
+<span class="nc" id="L221">            addTrain(train);</span>
+<span class="nc" id="L222">        }</span>
+
+        // add all static modifiers
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        if (revenueManager != null) {</span>
+<span class="nc" id="L226">            revenueManager.initStaticModifiers(this);</span>
+        }
+
+<span class="nc" id="L229">    }</span>
+
+    private void defineVertexVisitSets() {
+        // define map of all locationNames
+<span class="nc" id="L233">        Map&lt;String, VertexVisit&gt; locations = new HashMap&lt;String, VertexVisit&gt;();</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">        for (NetworkVertex vertex:getVertices()) {</span>
+<span class="nc" id="L235">            String ln = vertex.getStopName();</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">            if (ln == null) continue;</span>
+<span class="nc bnc" id="L237" title="All 2 branches missed.">            if (locations.containsKey(ln)) {</span>
+<span class="nc" id="L238">                locations.get(ln).set.add(vertex);</span>
+            } else {
+<span class="nc" id="L240">                VertexVisit v = new VertexVisit();</span>
+<span class="nc" id="L241">                v.set.add(vertex);</span>
+<span class="nc" id="L242">                locations.put(ln, v);</span>
+            }
+<span class="nc" id="L244">        }</span>
+<span class="nc" id="L245">        log.debug(&quot;Locations = {}&quot;, locations);</span>
+        // convert the location map to the vertex sets
+<span class="nc bnc" id="L247" title="All 2 branches missed.">        for (VertexVisit location:locations.values()) {</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">            if (location.set.size() &gt;= 2) {</span>
+<span class="nc" id="L249">                addVertexVisitSet(location);</span>
+            }
+<span class="nc" id="L251">        }</span>
+<span class="nc" id="L252">    }</span>
+
+    private void defineRevenueBonuses() {
+        // create set of all hexes
+<span class="nc" id="L256">        Set&lt;MapHex&gt; hexes = new HashSet&lt;MapHex&gt;();</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        for (NetworkVertex vertex:getVertices()) {</span>
+<span class="nc" id="L258">            MapHex hex = vertex.getHex();</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">            if (hex != null) hexes.add(hex);</span>
+<span class="nc" id="L260">        }</span>
+
+        // check each vertex hex for a potential revenue bonus
+<span class="nc bnc" id="L263" title="All 2 branches missed.">        for (MapHex hex:hexes) {</span>
+<span class="nc" id="L264">            List&lt;RevenueBonusTemplate&gt; bonuses = new ArrayList&lt;RevenueBonusTemplate&gt;();</span>
+<span class="nc" id="L265">            List&lt;RevenueBonusTemplate&gt; hexBonuses = hex.getRevenueBonuses();</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">            if (hexBonuses != null) bonuses.addAll(hexBonuses);</span>
+<span class="nc" id="L267">            List&lt;RevenueBonusTemplate&gt; tileBonuses = hex.getCurrentTile().getRevenueBonuses();</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">            if (tileBonuses != null) bonuses.addAll(tileBonuses);</span>
+
+<span class="nc bnc" id="L270" title="All 2 branches missed.">            for (RevenueBonusTemplate bonus:bonuses) {</span>
+<span class="nc" id="L271">                RevenueBonus bonusConverted = bonus.toRevenueBonus(hex, root, graph);</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">                if (bonusConverted != null) {</span>
+<span class="nc" id="L273">                    addRevenueBonus(bonusConverted);</span>
+                }
+<span class="nc" id="L275">            }</span>
+<span class="nc" id="L276">        }</span>
+<span class="nc" id="L277">        log.info(&quot;RA: RevenueBonuses = {}&quot;, revenueBonuses);</span>
+<span class="nc" id="L278">    }</span>
+
+    /**
+     * checks the set of trains for H-trains
+     * @return true if H-trains are used
+     */
+    private boolean useHTrains() {
+<span class="nc" id="L285">        boolean useHTrains = false;</span>
+<span class="nc bnc" id="L286" title="All 2 branches missed.">        for (NetworkTrain train:trains) {</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">            if (train.isHTrain()) {</span>
+<span class="nc" id="L288">                useHTrains = true;</span>
+            }
+<span class="nc" id="L290">        }</span>
+<span class="nc" id="L291">        return useHTrains;</span>
+    }
+
+    public void initRevenueCalculator(boolean useMultiGraph){
+
+<span class="nc" id="L296">        this.useMultiGraph = useMultiGraph;</span>
+
+        // check for dynamic modifiers (including an own calculator
+<span class="nc bnc" id="L299" title="All 2 branches missed.">        if (revenueManager != null) {</span>
+<span class="nc" id="L300">            hasDynamicModifiers = revenueManager.initDynamicModifiers(this);</span>
+        }
+
+        // define optimized graph
+
+<span class="nc bnc" id="L305" title="All 2 branches missed.">        if (useMultiGraph) {</span>
+            // generate phase 2 graph
+<span class="nc" id="L307">            NetworkMultigraph multiGraph = networkAdapter.getMultigraph(company, protectedVertices);</span>
+<span class="nc" id="L308">            rcGraph = multiGraph.getGraph();</span>
+            // retrieve edge sets
+<span class="nc" id="L310">            edgeTravelSets.putAll(multiGraph.getPhaseTwoEdgeSets(this));</span>
+<span class="nc" id="L311">        } else {</span>
+            // generate standard graph
+<span class="nc" id="L313">            rcGraph = networkAdapter.getRevenueGraph(company, protectedVertices).getGraph();</span>
+        }
+
+        // define the vertices and edges lists
+<span class="nc" id="L317">        rcVertices = new ArrayList&lt;NetworkVertex&gt;(rcGraph.vertexSet());</span>
+        // define ordering on vertexes by value
+<span class="nc" id="L319">        rcVertices.sort(new NetworkVertex.ValueOrder());</span>
+<span class="nc" id="L320">        rcEdges = new ArrayList&lt;NetworkEdge&gt;(rcGraph.edgeSet());</span>
+<span class="nc" id="L321">        rcEdges.sort(new NetworkEdge.CostOrder());</span>
+
+        // prepare train length
+<span class="nc" id="L324">        prepareTrainLengths(rcVertices);</span>
+
+        // check dimensions
+<span class="nc" id="L327">        int maxVisitVertices = maxVisitVertices();</span>
+<span class="nc" id="L328">        int maxBonusVertices = maxRevenueBonusVertices();</span>
+<span class="nc" id="L329">        int maxNeighbors = maxVertexNeighbors(rcVertices);</span>
+<span class="nc" id="L330">        int maxTravelEdges = maxTravelEdges();</span>
+
+<span class="nc bnc" id="L332" title="All 2 branches missed.">        if (useMultiGraph) {</span>
+<span class="nc bnc" id="L333" title="All 2 branches missed.">            if (useHTrains()) {</span>
+<span class="nc" id="L334">                rc = new RevenueCalculatorMultiHex(this, rcVertices.size(), rcEdges.size(),</span>
+<span class="nc" id="L335">                        maxNeighbors, maxVisitVertices, maxTravelEdges, trains.size(), maxBonusVertices);</span>
+            } else {
+<span class="nc" id="L337">                rc = new RevenueCalculatorMulti(this, rcVertices.size(), rcEdges.size(),</span>
+<span class="nc" id="L338">                        maxNeighbors, maxVisitVertices, maxTravelEdges, trains.size(), maxBonusVertices);</span>
+            }
+        } else {
+<span class="nc" id="L341">            rc = new RevenueCalculatorSimple(this, rcVertices.size(), rcEdges.size(),</span>
+<span class="nc" id="L342">                    maxNeighbors, maxVisitVertices, trains.size(), maxBonusVertices);</span>
+        }
+
+<span class="nc" id="L345">        populateRevenueCalculator();</span>
+<span class="nc" id="L346">    }</span>
+
+    private int maxVisitVertices() {
+<span class="nc" id="L349">        int maxNbVertices = 0;</span>
+<span class="nc bnc" id="L350" title="All 2 branches missed.">        for (VertexVisit vertexVisit:vertexVisitSets) {</span>
+<span class="nc" id="L351">            maxNbVertices = Math.max(maxNbVertices, vertexVisit.set.size());</span>
+<span class="nc" id="L352">        }</span>
+<span class="nc" id="L353">        log.debug(&quot;RA: Block of {}, maximum vertices in a set = {}&quot;, vertexVisitSets, maxNbVertices);</span>
+<span class="nc" id="L354">        return maxNbVertices;</span>
+    }
+
+    private int maxVertexNeighbors(Collection&lt;NetworkVertex&gt; vertices) {
+<span class="nc" id="L358">        int maxNeighbors = 0;</span>
+<span class="nc bnc" id="L359" title="All 2 branches missed.">        for (NetworkVertex vertex:vertices) {</span>
+<span class="nc" id="L360">            maxNeighbors = Math.max(maxNeighbors, rcGraph.edgesOf(vertex).size());</span>
+<span class="nc" id="L361">        }</span>
+<span class="nc" id="L362">        log.debug(&quot;RA: Maximum neighbors in graph = {}&quot;, maxNeighbors);</span>
+<span class="nc" id="L363">        return maxNeighbors;</span>
+    }
+
+    private int maxRevenueBonusVertices() {
+        // get the number of non-simple bonuses
+<span class="nc" id="L368">        int nbBonuses = RevenueBonus.getNumberNonSimpleBonuses(revenueBonuses);</span>
+<span class="nc" id="L369">        log.debug(&quot;Number of non simple bonuses = {}&quot;, nbBonuses);</span>
+<span class="nc" id="L370">        return nbBonuses;</span>
+    }
+
+    private int maxTravelEdges() {
+<span class="nc" id="L374">        int maxNbEdges = 0;</span>
+<span class="nc bnc" id="L375" title="All 2 branches missed.">        for (EdgeTravel edgeTravel:edgeTravelSets.values()) {</span>
+<span class="nc" id="L376">            maxNbEdges = Math.max(maxNbEdges, edgeTravel.set.size());</span>
+<span class="nc" id="L377">        }</span>
+<span class="nc bnc" id="L378" title="All 2 branches missed.">        for ( NetworkEdge edge : edgeTravelSets.keySet() ) {</span>
+<span class="nc" id="L379">            EdgeTravel edgeTravel = edgeTravelSets.get(edge);</span>
+<span class="nc" id="L380">            StringBuilder edgeString = new StringBuilder(&quot;RA: EdgeSet for &quot;).</span>
+<span class="nc" id="L381">                    append(edge.toFullInfoString()).</span>
+<span class="nc" id="L382">                    append(&quot; size = &quot;).</span>
+<span class="nc" id="L383">                    append(edgeTravel.set.size()).</span>
+<span class="nc" id="L384">                    append(&quot;\n&quot;);</span>
+<span class="nc bnc" id="L385" title="All 2 branches missed.">            for ( NetworkEdge edgeInSet : edgeTravel.set ) {</span>
+<span class="nc" id="L386">                edgeString.append(edgeInSet.toFullInfoString()).append(&quot;\n&quot;);</span>
+<span class="nc" id="L387">            }</span>
+<span class="nc" id="L388">            log.info(edgeString.toString());</span>
+<span class="nc" id="L389">        }</span>
+<span class="nc" id="L390">        log.debug(&quot;RA: maximum edges in a set = {}&quot;, maxNbEdges);</span>
+<span class="nc" id="L391">        return maxNbEdges;</span>
+    }
+
+
+    private void prepareTrainLengths(Collection&lt;NetworkVertex&gt; vertices) {
+
+        // separate vertexes
+<span class="nc" id="L398">        List&lt;NetworkVertex&gt; cities = new ArrayList&lt;NetworkVertex&gt;();</span>
+<span class="nc" id="L399">        List&lt;NetworkVertex&gt; towns = new ArrayList&lt;NetworkVertex&gt;();</span>
+<span class="nc bnc" id="L400" title="All 2 branches missed.">        for (NetworkVertex vertex: vertices) {</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">            if (vertex.isMajor()) cities.add(vertex);</span>
+<span class="nc bnc" id="L402" title="All 2 branches missed.">            if (vertex.isMinor()) towns.add(vertex);</span>
+<span class="nc" id="L403">        }</span>
+
+<span class="nc" id="L405">        int maxCities = cities.size();</span>
+<span class="nc" id="L406">        int maxTowns = towns.size();</span>
+
+        // check train lengths
+<span class="nc" id="L409">        int maxCityLength = 0, maxTownLength = 0;</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">        for (NetworkTrain train: trains) {</span>
+<span class="nc" id="L411">            int trainTowns = train.getMinors();</span>
+<span class="nc bnc" id="L412" title="All 2 branches missed.">            if (train.getMajors() &gt; maxCities) {</span>
+<span class="nc" id="L413">                trainTowns = trainTowns+ train.getMajors() - maxCities;</span>
+<span class="nc" id="L414">                train.setMajors(maxCities);</span>
+            }
+<span class="nc" id="L416">            train.setMinors(Math.min(trainTowns, maxTowns));</span>
+
+<span class="nc" id="L418">            maxCityLength = Math.max(maxCityLength, train.getMajors());</span>
+<span class="nc" id="L419">            maxTownLength = Math.max(maxTownLength, train.getMinors());</span>
+<span class="nc" id="L420">        }</span>
+
+<span class="nc" id="L422">    }</span>
+
+    private void populateRevenueCalculator(){
+
+<span class="nc bnc" id="L426" title="All 2 branches missed.">        for (int id=0; id &lt; rcVertices.size(); id++){</span>
+<span class="nc" id="L427">            NetworkVertex v = rcVertices.get(id);</span>
+            // add to revenue calculator
+<span class="nc" id="L429">            v.addToRevenueCalculator(rc, id);</span>
+<span class="nc bnc" id="L430" title="All 2 branches missed.">            for (int trainId=0; trainId &lt; trains.size(); trainId++) {</span>
+<span class="nc" id="L431">                NetworkTrain train = trains.get(trainId);</span>
+<span class="nc" id="L432">                rc.setVertexValue(id, trainId, getVertexValue(v, train, phase));</span>
+            }
+
+            // set neighbors, now regardless of sink property
+            // this is covered by the vertex attribute
+            // and required for startvertices that are sinks themselves
+<span class="nc bnc" id="L438" title="All 2 branches missed.">            if (useMultiGraph) {</span>
+<span class="nc" id="L439">                Set&lt;NetworkEdge&gt; edges = rcGraph.edgesOf(v);</span>
+<span class="nc" id="L440">                int e=0; int[] edgesArray = new int[edges.size()];</span>
+<span class="nc bnc" id="L441" title="All 2 branches missed.">                for (NetworkEdge edge:edges) {</span>
+<span class="nc" id="L442">                    edgesArray[e++] = rcEdges.indexOf(edge);</span>
+<span class="nc" id="L443">                }</span>
+                // sort by order on edges
+<span class="nc" id="L445">                Arrays.sort(edgesArray, 0, e);</span>
+                // define according vertices
+<span class="nc" id="L447">                int[] neighborsArray = new int[e];</span>
+<span class="nc bnc" id="L448" title="All 2 branches missed.">                for (int j=0; j &lt; e; j++) {</span>
+<span class="nc" id="L449">                    NetworkVertex toVertex = Graphs.getOppositeVertex(rcGraph, rcEdges.get(edgesArray[j]), v);</span>
+<span class="nc" id="L450">                    neighborsArray[j] = rcVertices.indexOf(toVertex);</span>
+                }
+<span class="nc" id="L452">                rc.setVertexNeighbors(id, neighborsArray, edgesArray);</span>
+<span class="nc" id="L453">            } else {</span>
+<span class="nc" id="L454">                List&lt;NetworkVertex&gt; neighbors = Graphs.neighborListOf(rcGraph, v);</span>
+<span class="nc" id="L455">                int j=0;</span>
+<span class="nc" id="L456">                int[] neighborsArray = new int[neighbors.size()];</span>
+<span class="nc bnc" id="L457" title="All 2 branches missed.">                for (NetworkVertex n:neighbors){</span>
+<span class="nc" id="L458">                    neighborsArray[j++] = rcVertices.indexOf(n);</span>
+<span class="nc" id="L459">                }</span>
+                // sort by value orderboolean activatePrediction
+<span class="nc" id="L461">                Arrays.sort(neighborsArray, 0, j);</span>
+                // define according edges
+<span class="nc" id="L463">                int[] edgesArray = new int[j];</span>
+<span class="nc bnc" id="L464" title="All 2 branches missed.">                for (int e=0; e &lt; j; e++) {</span>
+<span class="nc" id="L465">                    NetworkVertex toVertex = rcVertices.get(neighborsArray[e]);</span>
+<span class="nc" id="L466">                    edgesArray[e] = rcEdges.indexOf(rcGraph.getEdge(v, toVertex));</span>
+                }
+<span class="nc" id="L468">                rc.setVertexNeighbors(id, neighborsArray, edgesArray);</span>
+            }
+        }
+
+        // set startVertexes
+<span class="nc" id="L473">        int startVertexId =0;</span>
+<span class="nc" id="L474">        int[] sv = new int[startVertices.size()];</span>
+<span class="nc bnc" id="L475" title="All 2 branches missed.">        for (NetworkVertex startVertex:startVertices) {</span>
+<span class="nc" id="L476">            sv[startVertexId++] = rcVertices.indexOf(startVertex);</span>
+<span class="nc" id="L477">        }</span>
+<span class="nc" id="L478">        Arrays.sort(sv); // sort by value order</span>
+<span class="nc" id="L479">        rc.setStartVertexes(sv);</span>
+
+        // set edges
+<span class="nc bnc" id="L482" title="All 2 branches missed.">        for (int id=0; id &lt; rcEdges.size(); id++) {</span>
+            // prepare values
+<span class="nc" id="L484">            NetworkEdge e = rcEdges.get(id);</span>
+<span class="nc" id="L485">            boolean greedy = e.isGreedy();</span>
+<span class="nc" id="L486">            int distance = e.getDistance();</span>
+<span class="nc" id="L487">            rc.setEdge(id, greedy, distance);</span>
+        }
+
+        // set trains, check for H-trains
+<span class="nc bnc" id="L491" title="All 2 branches missed.">        for (int id=0; id &lt; trains.size(); id++) {</span>
+<span class="nc" id="L492">            NetworkTrain train = trains.get(id);</span>
+<span class="nc" id="L493">            train.addToRevenueCalculator(rc, id);</span>
+        }
+
+        // set vertex sets
+<span class="nc bnc" id="L497" title="All 2 branches missed.">        for (VertexVisit visit:vertexVisitSets) {</span>
+<span class="nc" id="L498">            int j=0;</span>
+<span class="nc" id="L499">            int[] setArray = new int[visit.set.size()];</span>
+<span class="nc bnc" id="L500" title="All 2 branches missed.">            for (NetworkVertex n:visit.set){</span>
+<span class="nc" id="L501">                setArray[j++] = rcVertices.indexOf(n);</span>
+<span class="nc" id="L502">            }</span>
+<span class="nc" id="L503">            rc.setVisitSet(setArray);</span>
+<span class="nc" id="L504">        }</span>
+<span class="nc" id="L505">        log.debug(&quot;RA: rcVertices:{}&quot;, rcVertices);</span>
+<span class="nc" id="L506">        log.debug(&quot;RA: rcEdges:{}&quot;, rcEdges);</span>
+
+        // set revenue bonuses
+<span class="nc" id="L509">        int id = 0;</span>
+<span class="nc bnc" id="L510" title="All 2 branches missed.">        for (RevenueBonus bonus:revenueBonuses) {</span>
+<span class="nc bnc" id="L511" title="All 2 branches missed.">            if (bonus.addToRevenueCalculator(rc, id, rcVertices, trains, phase)) id ++;</span>
+<span class="nc" id="L512">        }</span>
+
+<span class="nc" id="L514">        log.info(&quot;RA: edgeTravelSets:{}&quot;, edgeTravelSets);</span>
+
+        // set edge sets
+<span class="nc bnc" id="L517" title="All 2 branches missed.">        if (useMultiGraph) {</span>
+<span class="nc bnc" id="L518" title="All 2 branches missed.">            for (NetworkEdge edge:edgeTravelSets.keySet()) {</span>
+<span class="nc" id="L519">                EdgeTravel edgeTravel = edgeTravelSets.get(edge);</span>
+<span class="nc" id="L520">                int j=0;</span>
+<span class="nc" id="L521">                int[] setArray = new int[edgeTravel.set.size()];</span>
+<span class="nc bnc" id="L522" title="All 2 branches missed.">                for (NetworkEdge n:edgeTravel.set){</span>
+<span class="nc" id="L523">                    setArray[j++] = rcEdges.indexOf(n);</span>
+<span class="nc" id="L524">                }</span>
+<span class="nc" id="L525">                ((RevenueCalculatorMulti)rc).setTravelSet(rcEdges.indexOf(edge), setArray);</span>
+<span class="nc" id="L526">            }</span>
+        }
+
+
+        // activate dynamic modifiers
+<span class="nc" id="L531">        rc.setDynamicModifiers(hasDynamicModifiers);</span>
+<span class="nc" id="L532">    }</span>
+
+    public int getVertexValue(NetworkVertex vertex, NetworkTrain train, Phase phase) {
+
+        // base value
+<span class="nc" id="L537">        int value = vertex.getValueByTrain(train);</span>
+
+        // add potential revenueBonuses
+<span class="nc bnc" id="L540" title="All 2 branches missed.">        for (RevenueBonus bonus:revenueBonuses) {</span>
+<span class="nc bnc" id="L541" title="All 2 branches missed.">            if (bonus.checkSimpleBonus(vertex, train.getRailsTrain(), phase)) {</span>
+<span class="nc" id="L542">                value += bonus.getValue();</span>
+            }
+<span class="nc" id="L544">        }</span>
+
+<span class="nc" id="L546">        return value;</span>
+    }
+
+    public String getVertexValueAsString(NetworkVertex vertex, NetworkTrain train, Phase phase) {
+<span class="nc" id="L550">        StringBuilder s = new StringBuilder();</span>
+
+        // base value
+<span class="nc" id="L553">        s.append(vertex.getValueByTrain(train));</span>
+
+        // add potential revenueBonuses
+<span class="nc bnc" id="L556" title="All 2 branches missed.">        for (RevenueBonus bonus:revenueBonuses) {</span>
+<span class="nc bnc" id="L557" title="All 2 branches missed.">            if (bonus.checkSimpleBonus(vertex, train.getRailsTrain(), phase)) {</span>
+<span class="nc" id="L558">                s.append(&quot;+&quot;).append(bonus.getValue());</span>
+            }
+<span class="nc" id="L560">        }</span>
+<span class="nc" id="L561">        return s.toString();</span>
+    }
+
+
+    private List&lt;RevenueTrainRun&gt; convertRcRun(int[][] rcRun) {
+
+<span class="nc" id="L567">        List&lt;RevenueTrainRun&gt; convertRun = new ArrayList&lt;RevenueTrainRun&gt;();</span>
+
+<span class="nc bnc" id="L569" title="All 2 branches missed.">        for (int j=0; j &lt; rcRun.length; j++) {</span>
+<span class="nc" id="L570">            RevenueTrainRun trainRun = new RevenueTrainRun(this, trains.get(j));</span>
+<span class="nc" id="L571">            convertRun.add(trainRun);</span>
+
+<span class="nc bnc" id="L573" title="All 2 branches missed.">            if (rcEdges.size() == 0) continue;</span>
+<span class="nc bnc" id="L574" title="All 2 branches missed.">            for (int v=0; v &lt; rcRun[j].length; v++) {</span>
+<span class="nc" id="L575">                int id= rcRun[j][v];</span>
+<span class="nc bnc" id="L576" title="All 2 branches missed.">                if (id == -1) break;</span>
+<span class="nc bnc" id="L577" title="All 2 branches missed.">                if (useMultiGraph) {</span>
+<span class="nc" id="L578">                    trainRun.addEdge(rcEdges.get(id));</span>
+                } else {
+<span class="nc" id="L580">                    trainRun.addVertex(rcVertices.get(id));</span>
+                }
+            }
+<span class="nc bnc" id="L583" title="All 2 branches missed.">            if (useMultiGraph) {</span>
+<span class="nc" id="L584">                trainRun.convertEdgesToVertices();</span>
+            } else {
+<span class="nc" id="L586">                trainRun.convertVerticesToEdges();</span>
+            }
+        }
+<span class="nc" id="L589">        return convertRun;</span>
+    }
+
+    public int calculateRevenue() {
+        // allows (one) dynamic modifiers to have their own revenue calculation method
+        // TODO: Still to be added
+//        if (hasDynamicCalculator) {
+//            return revenueManager.revenueFromDynamicCalculator(this);
+//        } else { // otherwise standard calculation
+<span class="nc" id="L598">            return calculateRevenue(0, trains.size() - 1);</span>
+//        }
+    }
+
+    public int calculateRevenue(int startTrain, int finalTrain) {
+<span class="nc bnc" id="L603" title="All 6 branches missed.">        if (startTrain &lt; 0 || finalTrain &gt;= trains.size() || startTrain &gt; finalTrain) {</span>
+<span class="nc" id="L604">            return 0;</span>
+        }
+        // the optimal run might change
+<span class="nc" id="L607">        optimalRun = null;</span>
+<span class="nc" id="L608">        rc.initRuns(startTrain, finalTrain);</span>
+<span class="nc" id="L609">        rc.executePredictions(startTrain, finalTrain);</span>
+<span class="nc" id="L610">        int value = rc.calculateRevenue(startTrain, finalTrain);</span>
+<span class="nc" id="L611">        return value;</span>
+    }
+
+    public  List&lt;RevenueTrainRun&gt; getOptimalRun() {
+<span class="nc bnc" id="L615" title="All 2 branches missed.">        if (optimalRun == null) {</span>
+<span class="nc" id="L616">            optimalRun = convertRcRun(rc.getOptimalRun());</span>
+<span class="nc bnc" id="L617" title="All 2 branches missed.">            if (hasDynamicModifiers) {</span>
+<span class="nc" id="L618">                revenueManager.adjustOptimalRun(optimalRun);</span>
+            }
+        }
+<span class="nc" id="L621">        return optimalRun;</span>
+    }
+
+    public List&lt;RevenueTrainRun&gt; getCurrentRun() {
+<span class="nc" id="L625">        return convertRcRun(rc.getCurrentRun());</span>
+    }
+
+    /**
+     * is called by rc for dynamic evaluations
+     */
+    int dynamicEvaluation() {
+<span class="nc" id="L632">        int value = 0;</span>
+<span class="nc bnc" id="L633" title="All 2 branches missed.">        if (hasDynamicModifiers) {</span>
+<span class="nc" id="L634">            value = revenueManager.evaluationValue(this.getCurrentRun(), false);</span>
+        }
+<span class="nc" id="L636">        return value;</span>
+    }
+
+    /**
+     * is called by rc for dynamic predictions
+     */
+    int dynamicPrediction() {
+<span class="nc" id="L643">        int value = 0;</span>
+<span class="nc bnc" id="L644" title="All 2 branches missed.">        if (hasDynamicModifiers) {</span>
+<span class="nc" id="L645">            value = revenueManager.predictionValue(this.getCurrentRun());</span>
+        }
+<span class="nc" id="L647">        return value;</span>
+    }
+
+    public void addRevenueListener(RevenueListener listener) {
+<span class="nc" id="L651">        this.revenueListener = listener;</span>
+<span class="nc" id="L652">    }</span>
+
+    void notifyRevenueListener(final int revenue, final boolean finalResult) {
+<span class="nc bnc" id="L655" title="All 2 branches missed.">        if (revenueListener == null) return;</span>
+
+<span class="nc" id="L657">        EventQueue.invokeLater(</span>
+<span class="nc" id="L658">                new Runnable() {</span>
+                    public void run() {
+                        //listener could have deregistered himself in the meantime
+<span class="nc bnc" id="L661" title="All 2 branches missed.">                        if (revenueListener != null) revenueListener.revenueUpdate(revenue, finalResult);</span>
+<span class="nc" id="L662">                    }</span>
+                });
+<span class="nc" id="L664">    }</span>
+
+    public void run() {
+<span class="nc" id="L667">        calculateRevenue(0, trains.size() -1);</span>
+<span class="nc" id="L668">    }</span>
+
+    public void removeRevenueListener() {
+        // only removes revenueListener
+<span class="nc" id="L672">        revenueListener = null;</span>
+<span class="nc" id="L673">    }</span>
+
+
+    public String getOptimalRunPrettyPrint(boolean includeDetails) {
+<span class="nc" id="L677">        List&lt;RevenueTrainRun&gt; listRuns = getOptimalRun();</span>
+<span class="nc bnc" id="L678" title="All 2 branches missed.">        if (listRuns== null) return LocalText.getText(&quot;RevenueNoRun&quot;);</span>
+
+<span class="nc" id="L680">        StringBuilder runPrettyPrint = new StringBuilder();</span>
+<span class="nc bnc" id="L681" title="All 2 branches missed.">        for (RevenueTrainRun run:listRuns) {</span>
+<span class="nc" id="L682">            runPrettyPrint.append(run.prettyPrint(includeDetails));</span>
+<span class="nc bnc" id="L683" title="All 4 branches missed.">            if (!includeDetails &amp;&amp; run != listRuns.get(listRuns.size()-1)) {</span>
+<span class="nc" id="L684">                    runPrettyPrint.append(&quot;; &quot;);</span>
+            }
+<span class="nc" id="L686">        }</span>
+<span class="nc bnc" id="L687" title="All 2 branches missed.">        if (includeDetails) {</span>
+<span class="nc bnc" id="L688" title="All 2 branches missed.">            if (revenueManager != null) {</span>
+<span class="nc" id="L689">                runPrettyPrint.append(revenueManager.prettyPrint(this));</span>
+            }
+        } else {
+<span class="nc" id="L692">            int dynamicBonuses = 0;</span>
+<span class="nc bnc" id="L693" title="All 2 branches missed.">            if (hasDynamicModifiers) {</span>
+<span class="nc" id="L694">                dynamicBonuses = revenueManager.evaluationValue(this.getOptimalRun(), true);</span>
+            }
+<span class="nc bnc" id="L696" title="All 2 branches missed.">            if (dynamicBonuses != 0) {</span>
+<span class="nc" id="L697">                runPrettyPrint.append(&quot;; &quot;).append(LocalText.getText(&quot;RevenueBonus&quot;, dynamicBonuses));</span>
+            }
+        }
+<span class="nc" id="L700">        return runPrettyPrint.toString();</span>
+    }
+
+    public void drawOptimalRunAsPath(HexMap map) {
+<span class="nc" id="L704">        List&lt;RevenueTrainRun&gt; listRuns = getOptimalRun();</span>
+
+<span class="nc" id="L706">        List&lt;GeneralPath&gt; pathList = new ArrayList&lt;GeneralPath&gt;();</span>
+<span class="nc bnc" id="L707" title="All 2 branches missed.">        if (listRuns != null) {</span>
+<span class="nc bnc" id="L708" title="All 2 branches missed.">            for (RevenueTrainRun run:listRuns) {</span>
+<span class="nc" id="L709">                pathList.add(run.getAsPath(map));</span>
+<span class="nc" id="L710">            }</span>
+        }
+<span class="nc" id="L712">        map.setTrainPaths(pathList);</span>
+<span class="nc" id="L713">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L717">        StringBuilder buffer = new StringBuilder();</span>
+<span class="nc" id="L718">        buffer.append(&quot;RevenueCalculator:\n&quot;).append(rc).append(&quot;\n&quot;);</span>
+<span class="nc" id="L719">        buffer.append(&quot;rcVertices:\n&quot;).append(rcVertices).append(&quot;\n&quot;);</span>
+<span class="nc" id="L720">        buffer.append(&quot;rcEdges:\n&quot;).append(rcEdges).append(&quot;\n&quot;);</span>
+<span class="nc" id="L721">        buffer.append(&quot;startVertices:&quot;).append(startVertices);</span>
+<span class="nc" id="L722">        return buffer.toString();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

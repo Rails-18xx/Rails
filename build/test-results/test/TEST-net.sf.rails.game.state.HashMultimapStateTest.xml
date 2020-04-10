@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.sf.rails.game.state.HashMultimapStateTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2020-04-10T19:48:53" hostname="marc-desktop" time="0.011">
+  <properties/>
+  <testcase name="testGet" classname="net.sf.rails.game.state.HashMultimapStateTest" time="0.001"/>
+  <testcase name="testPut" classname="net.sf.rails.game.state.HashMultimapStateTest" time="0.001"/>
+  <testcase name="testSize" classname="net.sf.rails.game.state.HashMultimapStateTest" time="0.0"/>
+  <testcase name="testContainsKey" classname="net.sf.rails.game.state.HashMultimapStateTest" time="0.0"/>
+  <testcase name="testContainsEntry" classname="net.sf.rails.game.state.HashMultimapStateTest" time="0.0"/>
+  <testcase name="testContainsValue" classname="net.sf.rails.game.state.HashMultimapStateTest" time="0.001"/>
+  <testcase name="testKeySet" classname="net.sf.rails.game.state.HashMultimapStateTest" time="0.002"/>
+  <testcase name="testIsEmpty" classname="net.sf.rails.game.state.HashMultimapStateTest" time="0.001"/>
+  <testcase name="testRemove" classname="net.sf.rails.game.state.HashMultimapStateTest" time="0.001"/>
+  <testcase name="testValues" classname="net.sf.rails.game.state.HashMultimapStateTest" time="0.001"/>
+  <testcase name="testIterator" classname="net.sf.rails.game.state.HashMultimapStateTest" time="0.001"/>
+  <testcase name="testRemoveAll" classname="net.sf.rails.game.state.HashMultimapStateTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

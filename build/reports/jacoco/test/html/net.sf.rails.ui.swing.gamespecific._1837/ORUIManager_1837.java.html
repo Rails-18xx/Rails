@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ORUIManager_1837.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.gamespecific._1837</a> &gt; <span class="el_source">ORUIManager_1837.java</span></div><h1>ORUIManager_1837.java</h1><pre class="source lang-java linenums">/**
+ *
+ */
+package net.sf.rails.ui.swing.gamespecific._1837;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.sound.SoundManager;
+import net.sf.rails.ui.swing.ORPanel;
+import net.sf.rails.ui.swing.ORUIManager;
+import net.sf.rails.ui.swing.gamespecific._1880.StartRoundWindow_1880;
+import rails.game.action.SetDividend;
+
+/**
+ * @author Martin
+ *
+ */
+public class ORUIManager_1837 extends ORUIManager {
+<span class="nc" id="L20">    private static final Logger log = LoggerFactory.getLogger(ORUIManager_1837.class);</span>
+
+    /**
+     *
+     */
+    public ORUIManager_1837() {
+<span class="nc" id="L26">        super();</span>
+<span class="nc" id="L27">    }</span>
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.ui.swing.ORUIManager#setDividend(java.lang.String, rails.game.action.SetDividend)
+     */
+    protected void setDividend(String command, SetDividend action) {
+        int amount, bonusAmount;
+
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        if (command.equals(ORPanel.SET_REVENUE_CMD)) {</span>
+<span class="nc" id="L36">            amount = orPanel.getRevenue(orCompIndex);</span>
+<span class="nc" id="L37">            bonusAmount = orPanel.getCompanyTreasuryBonusRevenue(orCompIndex);</span>
+<span class="nc" id="L38">            orPanel.stopRevenueUpdate();</span>
+<span class="nc" id="L39">            log.debug(&quot;Set revenue amount is &quot; + amount);</span>
+<span class="nc" id="L40">            log.debug(&quot;The Bonus for the company treasury is &quot; + bonusAmount);</span>
+<span class="nc" id="L41">            action.setActualRevenue(amount);</span>
+<span class="nc" id="L42">            action.setActualCompanyTreasuryRevenue(bonusAmount);</span>
+
+            // notify sound manager of set revenue amount as soon as
+            // set revenue is pressed (not waiting for the completion
+            // of the set dividend action)
+<span class="nc" id="L47">            SoundManager.notifyOfSetRevenue(amount);</span>
+
+<span class="nc bnc" id="L49" title="All 4 branches missed.">            if (amount == 0 || action.getRevenueAllocation() != SetDividend.UNKNOWN) {</span>
+<span class="nc" id="L50">                log.debug(&quot;Allocation is known: &quot;</span>
+<span class="nc" id="L51">                        + action.getRevenueAllocation());</span>
+<span class="nc" id="L52">                orWindow.process(action);</span>
+            } else {
+<span class="nc" id="L54">                log.debug(&quot;Allocation is unknown, asking for it&quot;);</span>
+<span class="nc" id="L55">                setLocalStep(LocalSteps.SELECT_PAYOUT);</span>
+<span class="nc" id="L56">                updateStatus(action, true);</span>
+
+                // Locally update revenue if we don't inform the server yet.
+<span class="nc" id="L59">                orPanel.setRevenue(orCompIndex, amount);</span>
+<span class="nc" id="L60">                orPanel.setTreasuryBonusRevenue(orCompIndex, bonusAmount);</span>
+            }
+        } else {
+            // The revenue allocation has been selected
+<span class="nc" id="L64">            orWindow.process(action);</span>
+        }
+<span class="nc" id="L66">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

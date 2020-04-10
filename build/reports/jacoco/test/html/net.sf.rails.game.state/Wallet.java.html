@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Wallet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.state</a> &gt; <span class="el_source">Wallet.java</span></div><h1>Wallet.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.state;
+
+public abstract class Wallet&lt;T extends Countable&gt; extends State {
+
+    private final Class&lt;T&gt; type;
+    
+    /**
+     * Creation of a wallet
+     * @param parent owner of the wallet
+     * @param id identifier of the wallet
+     * @param type type of items stored in the wallet
+     */
+    protected Wallet(Owner parent, String id, Class&lt;T&gt; type) {
+<span class="fc" id="L14">        super(parent, id);</span>
+<span class="fc" id="L15">        this.type = type;</span>
+<span class="fc" id="L16">        getWalletManager().addWallet(this);</span>
+<span class="fc" id="L17">    }</span>
+
+    protected WalletManager getWalletManager() {
+<span class="fc" id="L20">        return getStateManager().getWalletManager();</span>
+    }
+
+    /**
+     * @return the owner of the wallet
+     */
+    @Override
+    public Owner getParent() {
+<span class="fc" id="L28">        return (Owner)super.getParent();</span>
+    }
+    
+    /**
+     * @param item for which the value is retrieved
+     * @return the current amount of the item inside the wallet
+     */
+    public abstract int value(T item);
+
+    /**
+     * @return total value of all items
+     */
+    public abstract int value();
+    
+    
+    protected Class&lt;T&gt; getType() {
+<span class="fc" id="L44">        return type;</span>
+    }
+
+    abstract void change(T item, int value);
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

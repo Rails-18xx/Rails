@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StartItemAction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">rails.game.action</a> &gt; <span class="el_source">StartItemAction.java</span></div><h1>StartItemAction.java</h1><pre class="source lang-java linenums">package rails.game.action;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
+import com.google.common.base.Objects;
+
+import net.sf.rails.game.StartItem;
+import net.sf.rails.util.RailsObjects;
+
+
+/**
+ * Rails 2.0: updated equals methods, updated toString method
+ */
+public abstract class StartItemAction extends PossibleAction {
+
+    /* Server-provided fields */
+    transient protected StartItem startItem;
+    protected String startItemName;
+    protected int itemIndex;
+
+    public static final long serialVersionUID = 1L;
+
+    /**
+     * 
+     */
+    public StartItemAction(StartItem startItem) {
+<span class="fc" id="L28">        super(null); // not defined by an activity yet</span>
+<span class="fc" id="L29">        this.startItem = startItem;</span>
+<span class="fc" id="L30">        this.startItemName = startItem.getId();</span>
+<span class="fc" id="L31">        this.itemIndex = startItem.getIndex();</span>
+<span class="fc" id="L32">    }</span>
+
+    /**
+     * @return Returns the startItem.
+     */
+    public StartItem getStartItem() {
+<span class="fc" id="L38">        return startItem;</span>
+    }
+
+    public int getItemIndex() {
+<span class="nc" id="L42">        return itemIndex;</span>
+    }
+
+    public int getStatus() {
+<span class="fc" id="L46">        return startItem.getStatus();</span>
+    }
+    
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        //  super checks both class identity and super class attributes
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (!super.equalsAs(pa, asOption)) return false; </span>
+
+        // check asOption attributes
+<span class="fc" id="L55">        StartItemAction action = (StartItemAction)pa; </span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        return Objects.equal(this.startItem, action.startItem)</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">                &amp;&amp; Objects.equal(this.itemIndex, action.itemIndex)</span>
+        ;
+        // no asAction attributes to be checked
+    }
+    
+    @Override
+    public String toString() {
+<span class="fc" id="L64">        return super.toString() + </span>
+<span class="fc" id="L65">                RailsObjects.stringHelper(this)</span>
+<span class="fc" id="L66">                .addToString(&quot;startItem&quot;, startItem)</span>
+<span class="fc" id="L67">                .addToString(&quot;itemIndex&quot;, itemIndex)</span>
+<span class="fc" id="L68">                .toString()</span>
+        ;
+    }
+    
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+
+<span class="fc" id="L75">        in.defaultReadObject();</span>
+<span class="fc" id="L76">        startItem = root.getCompanyManager().getStartItemById(startItemName);</span>
+<span class="fc" id="L77">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpecialTileLay.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.special</a> &gt; <span class="el_source">SpecialTileLay.java</span></div><h1>SpecialTileLay.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.special;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.*;
+import net.sf.rails.util.Util;
+
+
+public class SpecialTileLay extends SpecialProperty {
+
+<span class="fc" id="L16">    private String locationCodes = null;</span>
+<span class="fc" id="L17">    private List&lt;MapHex&gt; locations = null;</span>
+<span class="fc" id="L18">    private String tileId = null;</span>
+<span class="fc" id="L19">    private Tile tile = null;</span>
+<span class="fc" id="L20">    private String name = null;</span>
+<span class="fc" id="L21">    private boolean extra = false;</span>
+<span class="fc" id="L22">    private boolean free = false;</span>
+<span class="fc" id="L23">    private int discount = 0;</span>
+<span class="fc" id="L24">    private boolean connected = false;</span>
+    
+    /** Tile colours that can be laid with this special property.
+     * Default is same colours as is allowed in a a normal tile lay.
+     * Don't use if specific tiles are specified! */
+<span class="fc" id="L29">    protected String[] tileColours = null;</span>
+
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public SpecialTileLay(RailsItem parent, String id) {
+<span class="fc" id="L35">        super(parent, id);</span>
+<span class="fc" id="L36">    }</span>
+
+    @Override
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+<span class="fc" id="L40">        super.configureFromXML(tag);</span>
+
+<span class="fc" id="L42">        Tag tileLayTag = tag.getChild(&quot;SpecialTileLay&quot;);</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">        if (tileLayTag == null) {</span>
+<span class="nc" id="L44">            throw new ConfigurationException(&quot;&lt;SpecialTileLay&gt; tag missing&quot;);</span>
+        }
+
+<span class="fc" id="L47">        locationCodes = tileLayTag.getAttributeAsString(&quot;location&quot;);</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">        if (!Util.hasValue(locationCodes))</span>
+<span class="nc" id="L49">            throw new ConfigurationException(&quot;SpecialTileLay: location missing&quot;);</span>
+
+<span class="fc" id="L51">        tileId = tileLayTag.getAttributeAsString(&quot;tile&quot;, null);</span>
+
+<span class="fc" id="L53">        String coloursString = tileLayTag.getAttributeAsString(&quot;colour&quot;);</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (Util.hasValue(coloursString)) {</span>
+<span class="fc" id="L55">            tileColours = coloursString.split(&quot;,&quot;);</span>
+        }
+
+<span class="fc" id="L58">        name = tileLayTag.getAttributeAsString(&quot;name&quot;);</span>
+
+<span class="fc" id="L60">        extra = tileLayTag.getAttributeAsBoolean(&quot;extra&quot;, extra);</span>
+<span class="fc" id="L61">        free = tileLayTag.getAttributeAsBoolean(&quot;free&quot;, free);</span>
+<span class="fc" id="L62">        connected = tileLayTag.getAttributeAsBoolean(&quot;connected&quot;, connected);</span>
+<span class="fc" id="L63">        discount = tileLayTag.getAttributeAsInteger(&quot;discount&quot;, discount);</span>
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (tileId != null) {</span>
+<span class="fc" id="L66">            description = LocalText.getText(&quot;LayNamedTileInfo&quot;,</span>
+                    tileId,
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                    name != null ? name : &quot;&quot;,</span>
+                            locationCodes,
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                            (extra ? LocalText.getText(&quot;extra&quot;):LocalText.getText(&quot;notExtra&quot;)),</span>
+<span class="pc bpc" id="L71" title="1 of 4 branches missed.">                            (free ? LocalText.getText(&quot;noCost&quot;) : discount != 0 ? LocalText.getText(&quot;discount&quot;, discount) : </span>
+<span class="fc" id="L72">                                LocalText.getText(&quot;normalCost&quot;)),</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">                            (connected ? LocalText.getText(&quot;connected&quot;) : LocalText.getText(&quot;unconnected&quot;))</span>
+            );
+        } else {
+<span class="fc" id="L76">            description = LocalText.getText(&quot;LayTileInfo&quot;,</span>
+                    locationCodes,
+<span class="fc bfc" id="L78" title="All 2 branches covered.">                    (tileColours != null ? Arrays.toString(tileColours).replaceAll(&quot;[\\[\\]]&quot;, &quot;&quot;): &quot;&quot;),</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                    (extra ? LocalText.getText(&quot;extra&quot;):LocalText.getText(&quot;notExtra&quot;)),</span>
+<span class="pc bpc" id="L80" title="1 of 4 branches missed.">                    (free ? LocalText.getText(&quot;noCost&quot;) : discount != 0 ? LocalText.getText(&quot;discount&quot;, discount) : </span>
+<span class="fc" id="L81">                        LocalText.getText(&quot;normalCost&quot;)),</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">                    (connected ? LocalText.getText(&quot;connected&quot;) : LocalText.getText(&quot;unconnected&quot;))</span>
+            );
+        }
+
+<span class="fc" id="L86">    }</span>
+
+    @Override
+	public void finishConfiguration (RailsRoot root)
+    throws ConfigurationException {
+
+<span class="fc" id="L92">        TileManager tmgr = root.getTileManager();</span>
+<span class="fc" id="L93">        MapManager mmgr = root.getMapManager();</span>
+        MapHex hex;
+
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (tileId != null) {</span>
+<span class="fc" id="L97">            tile = tmgr.getTile(tileId);</span>
+        }
+
+<span class="fc" id="L100">        locations = new ArrayList&lt;MapHex&gt;();</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        for (String hexName : locationCodes.split(&quot;,&quot;)) {</span>
+<span class="fc" id="L102">            hex = mmgr.getHex(hexName);</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">            if (hex == null)</span>
+<span class="nc" id="L104">                throw new ConfigurationException(&quot;Location &quot; + hexName</span>
+                        + &quot; does not exist&quot;);
+<span class="fc" id="L106">            locations.add(hex);</span>
+        }
+
+<span class="fc" id="L109">    }</span>
+
+    public boolean isExecutionable() {
+<span class="fc" id="L112">        return true;</span>
+    }
+
+    public boolean isExtra() {
+<span class="fc" id="L116">        return extra;</span>
+    }
+
+    public boolean isFree() {
+<span class="fc" id="L120">        return free;</span>
+    }
+    
+    public int getDiscount() {
+<span class="fc" id="L124">        return discount;</span>
+    }
+
+    public boolean requiresConnection() {
+<span class="nc" id="L128">        return connected;</span>
+    }
+
+    public List&lt;MapHex&gt; getLocations() {
+<span class="fc" id="L132">        return locations;</span>
+    }
+
+    public String getLocationNameString() {
+<span class="fc" id="L136">        return locationCodes;</span>
+    }
+
+    public String getTileId() {
+<span class="nc" id="L140">        return tileId;</span>
+    }
+
+    public Tile getTile() {
+<span class="fc" id="L144">        return tile;</span>
+    }
+
+    public String[] getTileColours() {
+<span class="fc" id="L148">        return tileColours;</span>
+    }
+
+    @Override
+	public String toText() {
+<span class="nc" id="L153">        return &quot;SpecialTileLay comp=&quot; + originalCompany.getId()</span>
+        + &quot; hex=&quot; + locationCodes
+<span class="nc" id="L155">        + &quot; colour=&quot;+Util.joinWithDelimiter(tileColours, &quot;,&quot;)</span>
+        + &quot; extra=&quot; + extra + &quot; cost=&quot; + free + &quot; connected=&quot; + connected;
+    }
+
+    @Override
+    public String toMenu() {
+<span class="nc" id="L161">        return description;</span>
+    }
+
+    @Override
+    public String getInfo() {
+<span class="fc" id="L166">        return description;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

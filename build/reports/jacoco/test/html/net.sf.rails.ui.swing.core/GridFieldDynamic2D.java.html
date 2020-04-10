@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GridFieldDynamic2D.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.core</a> &gt; <span class="el_source">GridFieldDynamic2D.java</span></div><h1>GridFieldDynamic2D.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.core;
+
+import com.google.common.base.Preconditions;
+
+import net.sf.rails.game.state.ColorModel;
+import net.sf.rails.game.state.Item;
+import net.sf.rails.game.state.Observable;
+
+public class GridFieldDynamic2D extends GridField {
+    
+    private final Accessor2D&lt;? extends Item,? extends Item&gt; textAccessor;
+    private final Class&lt;? extends Item&gt; itemTClass;
+    private final Class&lt;? extends Item&gt; itemSClass;
+    private Accessor2D&lt;? extends Item,? extends Item&gt; tooltipAccessor;
+    private Accessor2D&lt;? extends Item,? extends Item&gt; colorAccessor;
+
+<span class="nc" id="L17">    GridFieldDynamic2D(Accessor2D&lt;? extends Item,? extends Item&gt; text) {</span>
+<span class="nc" id="L18">        this.textAccessor = text;</span>
+<span class="nc" id="L19">        this.itemTClass = text.getItemTClass();</span>
+<span class="nc" id="L20">        this.itemSClass = text.getItemSClass();</span>
+<span class="nc" id="L21">    }</span>
+    
+    GridFieldDynamic2D setTooltip(Accessor2D&lt;? extends Item,? extends Item&gt; tooltip) {
+<span class="nc bnc" id="L24" title="All 4 branches missed.">        Preconditions.checkArgument(tooltip.getItemTClass() == itemTClass  &amp;&amp; tooltip.getItemTClass() == itemSClass,</span>
+                &quot;Tooltip accessor not compatible with Text accesors&quot;);
+<span class="nc" id="L26">        this.tooltipAccessor = tooltip;</span>
+<span class="nc" id="L27">        return this;</span>
+    }
+
+    GridFieldDynamic2D setColor(Accessor2D&lt;? extends Item,? extends Item&gt; color) {
+<span class="nc bnc" id="L31" title="All 4 branches missed.">        Preconditions.checkArgument(color.getItemTClass() == itemTClass  &amp;&amp; color.getItemTClass() == itemSClass,</span>
+                &quot;Color accessor not compatible with Text accesors&quot;);
+<span class="nc" id="L33">        this.colorAccessor = color;</span>
+<span class="nc" id="L34">        return this;</span>
+    }
+
+    @Override
+    TableField toTableField(Item rowItem, Item colItem) {
+<span class="nc bnc" id="L39" title="All 4 branches missed.">        Preconditions.checkArgument(rowItem != null &amp;&amp; colItem != null, &quot;Neither rowItem or colItem can be null&quot;);</span>
+        
+<span class="nc" id="L41">        Class&lt;? extends Item&gt; rowClass = rowItem.getClass();</span>
+<span class="nc" id="L42">        Class&lt;? extends Item&gt; colClass = colItem.getClass();</span>
+        
+<span class="nc bnc" id="L44" title="All 4 branches missed.">        Preconditions.checkArgument(rowClass == itemTClass || colClass == itemTClass, &quot;Either rowClass or colClass have to be of %s&quot;, itemTClass );</span>
+<span class="nc bnc" id="L45" title="All 4 branches missed.">        Preconditions.checkArgument(rowClass == itemSClass || colClass == itemSClass, &quot;Either rowClass or colClass have to be of %s&quot;, itemSClass );</span>
+        
+        // preconditions check that both itemT and itemS classes are available, thus only ordering has still to be checked
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (rowClass == itemTClass) {</span>
+<span class="nc" id="L49">            return buildTableField(rowItem, colItem);</span>
+        } else {
+<span class="nc" id="L51">            return buildTableField(colItem, rowItem);</span>
+        }
+    }
+    
+    private TableField buildTableField(Item itemT, Item itemS) {
+<span class="nc" id="L56">        TableField.Builder builder = buildDefaults();</span>
+                
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (textAccessor instanceof Accessor2D.AText) {</span>
+<span class="nc" id="L59">            String text = ((Accessor2D.AText&lt;?,?&gt;)textAccessor).get(itemT, itemS);</span>
+<span class="nc" id="L60">            builder.setText(text);</span>
+        }
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        if (textAccessor instanceof Accessor2D.AObservable) {</span>
+<span class="nc" id="L63">            Observable text = ((Accessor2D.AObservable&lt;?,?&gt;)textAccessor).get(itemT, itemS);</span>
+<span class="nc" id="L64">            builder.setText(text);</span>
+        }
+        
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (tooltipAccessor instanceof Accessor2D.AText) {</span>
+<span class="nc" id="L68">            String tooltip = ((Accessor2D.AText&lt;?,?&gt;)tooltipAccessor).get(itemT, itemS);</span>
+<span class="nc" id="L69">            builder.setTooltip(tooltip);</span>
+        }
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (tooltipAccessor instanceof Accessor2D.AObservable) {</span>
+<span class="nc" id="L72">            Observable tooltip = ((Accessor2D.AObservable&lt;?,?&gt;)tooltipAccessor).get(itemT, itemS);</span>
+<span class="nc" id="L73">            builder.setTooltip(tooltip);</span>
+        }
+
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (colorAccessor instanceof Accessor2D.AColors) {</span>
+<span class="nc" id="L77">            GridColors colors = ((Accessor2D.AColors&lt;?,?&gt;)colorAccessor).get(itemT, itemS);</span>
+<span class="nc" id="L78">            builder.setColors(colors);</span>
+        }
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        if (colorAccessor instanceof Accessor2D.AColorModel) {</span>
+<span class="nc" id="L81">            ColorModel colorModel = ((Accessor2D.AColorModel&lt;?,?&gt;)colorAccessor).get(itemT, itemS);</span>
+<span class="nc" id="L82">            builder.setColors(colorModel);</span>
+        }
+
+<span class="nc" id="L85">        return builder.build();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

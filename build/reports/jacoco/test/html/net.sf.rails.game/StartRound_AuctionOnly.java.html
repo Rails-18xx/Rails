@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StartRound_AuctionOnly.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">StartRound_AuctionOnly.java</span></div><h1>StartRound_AuctionOnly.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import java.util.SortedSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.state.ArrayListState;
+import rails.game.action.BidStartItem;
+import rails.game.action.BuyStartItem;
+import rails.game.action.NullAction;
+import rails.game.action.StartItemAction;
+
+/**
+ * Implements a start round where there are only auctions (no buying), e.g. the
+ * parliament round in 1862.
+ */
+
+public abstract class StartRound_AuctionOnly extends StartRound {
+<span class="nc" id="L24">    private static final Logger log = LoggerFactory.getLogger(StartRound_AuctionOnly.class);</span>
+
+<span class="nc" id="L26">    private final ArrayListState&lt;Player&gt; auctionWinners =</span>
+<span class="nc" id="L27">            ArrayListState.create(this, &quot;auctionWinners&quot;);</span>
+
+    protected StartRound_AuctionOnly(GameManager parent, String id) {
+<span class="nc" id="L30">        super(parent, id);</span>
+<span class="nc" id="L31">    }</span>
+
+    @Override
+    public void start() {
+<span class="nc" id="L35">        super.start();</span>
+<span class="nc" id="L36">        auctionWinners.clear();</span>
+<span class="nc" id="L37">        setPossibleActions();</span>
+<span class="nc" id="L38">    }</span>
+
+    @Override
+    public boolean setPossibleActions() {
+<span class="nc" id="L42">        Player currentPlayer = playerManager.getCurrentPlayer();</span>
+
+<span class="nc" id="L44">        possibleActions.clear();</span>
+
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (currentPlayer == startPlayer) ReportBuffer.add(this, &quot;&quot;);</span>
+
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (currentAuctionItem() != null) {</span>
+            // This item is currently up for bid
+<span class="nc" id="L50">            StartItem currentItem = currentAuctionItem();</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">            if (playerCanBid(currentPlayer, currentItem)) {</span>
+<span class="nc" id="L52">                BidStartItem possibleAction =</span>
+                        new BidStartItem(currentItem,
+<span class="nc" id="L54">                                currentItem.getMinimumBid(),</span>
+<span class="nc" id="L55">                                startPacket.getModulus(), true);</span>
+<span class="nc" id="L56">                possibleActions.add(possibleAction);</span>
+            }
+<span class="nc" id="L58">            possibleActions.add(new NullAction(NullAction.Mode.PASS));</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        } else if (currentSharePriceItem() != null) {</span>
+            // Item sold, but needs share price
+<span class="nc" id="L61">            StartItem currentItem = currentSharePriceItem();</span>
+<span class="nc" id="L62">            playerManager.setCurrentPlayer(currentItem.getBidder());</span>
+<span class="nc" id="L63">            BuyStartItem bsi =</span>
+<span class="nc" id="L64">                    new BuyStartItem(currentItem, currentItem.getBid(), false,</span>
+                            true);
+
+<span class="nc" id="L67">            bsi.setStartSpaces(getStartSpaces(currentItem.getBidder().getFreeCash()));</span>
+<span class="nc" id="L68">            possibleActions.add(bsi);</span>
+<span class="nc" id="L69">        } else {</span>
+            // Nothing is currently up for auction
+<span class="nc" id="L71">            boolean atLeastOneBiddable = false;</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">            for (StartItem item : itemsToSell.view()) {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">                if (item.isSold() == false) {</span>
+<span class="nc" id="L74">                    item.setAllActive();</span>
+<span class="nc" id="L75">                    item.setStatus(StartItem.BIDDABLE);</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                    if (playerCanBid(currentPlayer, item)) {</span>
+<span class="nc" id="L77">                        atLeastOneBiddable = true;</span>
+<span class="nc" id="L78">                        BidStartItem possibleAction =</span>
+<span class="nc" id="L79">                                new BidStartItem(item, item.getMinimumBid(),</span>
+<span class="nc" id="L80">                                        startPacket.getModulus(), false);</span>
+<span class="nc" id="L81">                        possibleActions.add(possibleAction);</span>
+                    }
+                }
+<span class="nc" id="L84">            }</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">            if (atLeastOneBiddable == true) {</span>
+<span class="nc" id="L86">                possibleActions.add(new NullAction(NullAction.Mode.PASS));</span>
+            }
+        }
+
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (possibleActions.isEmpty()) {</span>
+<span class="nc" id="L91">            numPasses.add(1);</span>
+<span class="nc" id="L92">            setNextBiddingPlayer();</span>
+        }
+<span class="nc" id="L94">        return true;</span>
+
+    }
+
+    private StartItem currentAuctionItem() {
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        for (StartItem item : itemsToSell.view()) {</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">            if (item.getStatus() == StartItem.AUCTIONED) {</span>
+<span class="nc" id="L101">                return item;</span>
+            }
+<span class="nc" id="L103">        }</span>
+<span class="nc" id="L104">        return null;</span>
+    }
+
+    private StartItem currentSharePriceItem() {
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        for (StartItem item : itemsToSell.view()) {</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">            if (item.getStatus() == StartItem.NEEDS_SHARE_PRICE) {</span>
+<span class="nc" id="L110">                return item;</span>
+            }
+<span class="nc" id="L112">        }</span>
+<span class="nc" id="L113">        return null;</span>
+    }
+
+    protected boolean playerCanBid(Player currentPlayer, StartItem item) {
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        if (currentPlayer.getFreeCash() + item.getBid(currentPlayer) &gt;= item.getMinimumBid()) {</span>
+<span class="nc" id="L118">            return true;</span>
+        }
+<span class="nc" id="L120">        return false;</span>
+    }
+
+    /*
+     * The possible start spaces allowed for a company.
+     */
+    protected abstract SortedSet&lt;String&gt; getStartSpaces(int i);
+
+
+    @Override
+    protected boolean bid(String playerName, BidStartItem startItem) {
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        if (validateBid(playerName, startItem) == false) {</span>
+<span class="nc" id="L132">            return false;</span>
+        }
+
+<span class="nc" id="L135">        StartItem item = startItem.getStartItem();</span>
+<span class="nc" id="L136">        Player player = playerManager.getCurrentPlayer();</span>
+<span class="nc" id="L137">        int bidAmount = startItem.getActualBid();</span>
+<span class="nc" id="L138">        int previousBid = item.getBid(player);</span>
+
+<span class="nc" id="L140">        item.setBid(bidAmount, player);</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        if (item.getStatus() != StartItem.AUCTIONED) {</span>
+<span class="nc" id="L142">            item.setStatus(StartItem.AUCTIONED);</span>
+        }
+
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (previousBid &gt; 0) {</span>
+<span class="nc" id="L146">            player.unblockCash(previousBid);</span>
+        }
+
+<span class="nc" id="L149">        player.blockCash(bidAmount);</span>
+
+<span class="nc" id="L151">        ReportBuffer.add(</span>
+                this,
+<span class="nc" id="L153">                LocalText.getText(&quot;BID_ITEM_LOG&quot;, playerName,</span>
+<span class="nc" id="L154">                        Bank.format(this, bidAmount), item.getId(),</span>
+<span class="nc" id="L155">                        Bank.format(this, player.getFreeCash())));</span>
+
+<span class="nc" id="L157">        setNextBiddingPlayer(item);</span>
+<span class="nc" id="L158">        numPasses.set(0);</span>
+
+<span class="nc" id="L160">        return true;</span>
+    }
+
+    private boolean validateBid(String playerName, BidStartItem bidItem) {
+<span class="nc" id="L164">        StartItem item = bidItem.getStartItem();</span>
+<span class="nc" id="L165">        String errMsg = null;</span>
+<span class="nc" id="L166">        Player player = playerManager.getCurrentPlayer();</span>
+<span class="nc" id="L167">        int previousBid = 0;</span>
+<span class="nc" id="L168">        int bidAmount = bidItem.getActualBid();</span>
+
+        while (true) {
+            // Check player
+<span class="nc bnc" id="L172" title="All 2 branches missed.">            if (!playerName.equals(player.getId())) {</span>
+<span class="nc" id="L173">                errMsg =</span>
+<span class="nc" id="L174">                        LocalText.getText(&quot;WrongPlayer&quot;, playerName,</span>
+<span class="nc" id="L175">                                player.getId());</span>
+<span class="nc" id="L176">                break;</span>
+            }
+            // Check item
+<span class="nc" id="L179">            boolean validItem = false;</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">            for (StartItemAction activeItem : possibleActions.getType(StartItemAction.class)) {</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                if (bidItem.equalsAsOption(activeItem)) {</span>
+<span class="nc" id="L182">                    validItem = true;</span>
+<span class="nc" id="L183">                    break;</span>
+                }
+
+<span class="nc" id="L186">            }</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">            if (!validItem) {</span>
+<span class="nc" id="L188">                errMsg =</span>
+<span class="nc" id="L189">                        LocalText.getText(&quot;ActionNotAllowed&quot;,</span>
+<span class="nc" id="L190">                                bidItem.toString());</span>
+<span class="nc" id="L191">                break;</span>
+            }
+
+            // Is the item buyable?
+<span class="nc bnc" id="L195" title="All 2 branches missed.">            if (bidItem.getStatus() != StartItem.BIDDABLE</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">                &amp;&amp; bidItem.getStatus() != StartItem.AUCTIONED) {</span>
+<span class="nc" id="L197">                errMsg = LocalText.getText(&quot;NotForSale&quot;);</span>
+<span class="nc" id="L198">                break;</span>
+            }
+
+            // Bid must be at least 5 above last bid
+<span class="nc bnc" id="L202" title="All 2 branches missed.">            if (bidAmount &lt; item.getMinimumBid()) {</span>
+<span class="nc" id="L203">                errMsg =</span>
+<span class="nc" id="L204">                        LocalText.getText(&quot;BidTooLow&quot;,</span>
+<span class="nc" id="L205">                                &quot;&quot; + item.getMinimumBid());</span>
+<span class="nc" id="L206">                break;</span>
+            }
+
+            // Bid must be a multiple of the modulus
+<span class="nc bnc" id="L210" title="All 2 branches missed.">            if (bidAmount % startPacket.getModulus() != 0) {</span>
+<span class="nc" id="L211">                errMsg =</span>
+<span class="nc" id="L212">                        LocalText.getText(&quot;BidMustBeMultipleOf&quot;, bidAmount,</span>
+<span class="nc" id="L213">                                startPacket.getMinimumIncrement());</span>
+<span class="nc" id="L214">                break;</span>
+            }
+
+            // Has the buyer enough cash?
+<span class="nc" id="L218">            previousBid = item.getBid(player);</span>
+<span class="nc" id="L219">            int available = player.getFreeCash() + previousBid;</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">            if (bidAmount &gt; available) {</span>
+<span class="nc" id="L221">                errMsg =</span>
+<span class="nc" id="L222">                        LocalText.getText(&quot;BidTooHigh&quot;,</span>
+<span class="nc" id="L223">                                Bank.format(this, available));</span>
+<span class="nc" id="L224">                break;</span>
+            }
+
+            break;
+        }
+
+<span class="nc bnc" id="L230" title="All 2 branches missed.">        if (errMsg != null) {</span>
+<span class="nc" id="L231">            DisplayBuffer.add(this, LocalText.getText(&quot;InvalidBid&quot;, playerName,</span>
+<span class="nc" id="L232">                    item.getId(), errMsg));</span>
+<span class="nc" id="L233">            return false;</span>
+        }
+<span class="nc" id="L235">        return true;</span>
+    }
+
+    @Override
+    protected boolean pass(NullAction action, String playerName) {
+<span class="nc bnc" id="L240" title="All 2 branches missed.">        if (validatePass(action, playerName) == false) {</span>
+<span class="nc" id="L241">            return false;</span>
+        }
+
+<span class="nc" id="L244">        Player player = playerManager.getCurrentPlayer();</span>
+<span class="nc" id="L245">        numPasses.add(1);</span>
+
+<span class="nc" id="L247">        ReportBuffer.add(this, LocalText.getText(&quot;PASSES&quot;, playerName));</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">        if (currentAuctionItem() != null) {</span>
+            // An item is currently up for bid
+<span class="nc" id="L250">            StartItem auctionItem = currentAuctionItem();</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">            if (auctionItem.getBidders() == 2) {</span>
+                // Only one bidder is left after this pass
+<span class="nc" id="L253">                int price = auctionItem.getBid();</span>
+<span class="nc" id="L254">                log.debug(&quot;Highest bidder is &quot;</span>
+<span class="nc" id="L255">                          + auctionItem.getBidder().getId());</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">                if (auctionItem.needsPriceSetting() != null) {</span>
+<span class="nc" id="L257">                    auctionItem.setStatus(StartItem.NEEDS_SHARE_PRICE);</span>
+                } else {
+<span class="nc" id="L259">                    assignItem(auctionItem.getBidder(), auctionItem, price, 0);</span>
+                }
+<span class="nc" id="L261">                numPasses.set(0);</span>
+//                playerManager.setCurrentToPriorityPlayer(); // TODO: I think this can be removed.
+<span class="nc" id="L263">            } else {</span>
+<span class="nc" id="L264">                player.unblockCash(auctionItem.getBid(player));</span>
+<span class="nc" id="L265">                auctionItem.setPass(player);</span>
+<span class="nc" id="L266">                setNextBiddingPlayer(auctionItem);</span>
+            }
+<span class="nc" id="L268">        } else {</span>
+            // Nothing is up for bid
+<span class="nc bnc" id="L270" title="All 2 branches missed.">            if ((numPasses.value() + auctionWinners.size()) == playerManager.getNumberOfPlayers()) {</span>
+<span class="nc" id="L271">                finishRound();</span>
+            } else {
+<span class="nc" id="L273">                setNextBiddingPlayer();</span>
+            }
+        }
+<span class="nc" id="L276">        return true;</span>
+    }
+
+    private boolean validatePass(NullAction action, String playerName) {
+<span class="nc" id="L280">        String errMsg = null;</span>
+<span class="nc" id="L281">        Player player = playerManager.getCurrentPlayer();</span>
+
+        while (true) {
+
+            // Check player
+<span class="nc bnc" id="L286" title="All 2 branches missed.">            if (!playerName.equals(player.getId())) {</span>
+<span class="nc" id="L287">                errMsg =</span>
+<span class="nc" id="L288">                        LocalText.getText(&quot;WrongPlayer&quot;, playerName,</span>
+<span class="nc" id="L289">                                player.getId());</span>
+                break;
+            }
+            break;
+        }
+
+<span class="nc bnc" id="L295" title="All 2 branches missed.">        if (errMsg != null) {</span>
+<span class="nc" id="L296">            DisplayBuffer.add(this,</span>
+<span class="nc" id="L297">                    LocalText.getText(&quot;InvalidPass&quot;, playerName, errMsg));</span>
+<span class="nc" id="L298">            return false;</span>
+        }
+
+<span class="nc" id="L301">        return true;</span>
+    }
+
+
+    @Override
+    protected boolean buy(String playerName, BuyStartItem boughtItem) {
+<span class="nc" id="L307">        boolean result = super.buy(playerName, boughtItem);</span>
+<span class="nc bnc" id="L308" title="All 2 branches missed.">        if (result == true) {</span>
+<span class="nc" id="L309">            Player player = playerManager.getPlayerByName(playerName);</span>
+<span class="nc" id="L310">            auctionWinners.add(player);</span>
+<span class="nc bnc" id="L311" title="All 2 branches missed.">            if (auctionWinners.size() == playerManager.getNumberOfPlayers()) {</span>
+<span class="nc" id="L312">                finishRound();</span>
+            }
+<span class="nc" id="L314">            playerManager.setCurrentPlayer(player);</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">            while (auctionWinners.contains(playerManager.getCurrentPlayer())) {</span>
+<span class="nc" id="L316">                playerManager.setCurrentToNextPlayer();</span>
+            }
+        }
+<span class="nc" id="L319">        return result;</span>
+    }
+
+    private void setNextBiddingPlayer(StartItem item, Player biddingPlayer) {
+<span class="nc bnc" id="L323" title="All 2 branches missed.">        for (Player player : playerManager.getNextPlayersAfter(biddingPlayer,</span>
+                false, false)) {
+<span class="nc bnc" id="L325" title="All 2 branches missed.">            if (item.isActive(player)) {</span>
+<span class="nc" id="L326">                playerManager.setCurrentPlayer(player);</span>
+<span class="nc" id="L327">                break;</span>
+            }
+<span class="nc" id="L329">        }</span>
+<span class="nc" id="L330">    }</span>
+
+    private void setNextBiddingPlayer(StartItem item) {
+<span class="nc" id="L333">        setNextBiddingPlayer(item, playerManager.getCurrentPlayer());</span>
+<span class="nc" id="L334">    }</span>
+
+    private void setNextBiddingPlayer() {
+<span class="nc" id="L337">        playerManager.setCurrentToNextPlayer();</span>
+<span class="nc bnc" id="L338" title="All 2 branches missed.">        while (auctionWinners.contains(playerManager.getCurrentPlayer())) {</span>
+<span class="nc" id="L339">            playerManager.setCurrentToNextPlayer();</span>
+        }
+<span class="nc" id="L341">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

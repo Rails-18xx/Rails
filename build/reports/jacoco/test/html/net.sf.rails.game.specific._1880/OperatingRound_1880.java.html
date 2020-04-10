@@ -1,0 +1,1271 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperatingRound_1880.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1880</a> &gt; <span class="el_source">OperatingRound_1880.java</span></div><h1>OperatingRound_1880.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1880;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.game.BaseToken;
+import net.sf.rails.game.GameDef;
+import net.sf.rails.game.GameDef.OrStep;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.Phase;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Stop;
+import net.sf.rails.game.Tile;
+import net.sf.rails.game.Train;
+import net.sf.rails.game.TrainManager;
+import net.sf.rails.game.TrainType;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.special.SpecialTileLay;
+import net.sf.rails.game.special.SpecialTrainBuy;
+import net.sf.rails.game.state.ArrayListState;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.MoneyOwner;
+import net.sf.rails.util.SequenceUtil;
+
+import com.google.common.collect.Iterables;
+
+import rails.game.action.BuyTrain;
+import rails.game.action.LayTile;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.SetDividend;
+import rails.game.action.UseSpecialProperty;
+import rails.game.specific._1880.CloseInvestor_1880;
+import rails.game.specific._1880.ExchangeForCash;
+import rails.game.specific._1880.ForcedRocketExchange;
+
+public class OperatingRound_1880 extends OperatingRound {
+<span class="fc" id="L58">    private static final Logger log = LoggerFactory.getLogger(OperatingRound_1880.class);</span>
+
+    private OperatingRoundControl_1880 orControl;
+    private ParSlotManager parSlotManager;
+
+<span class="fc" id="L63">    private final ArrayListState&lt;Investor_1880&gt; investorsToClose = ArrayListState.create(this, &quot;investorsToClose&quot;);</span>
+<span class="fc" id="L64">    private final BooleanState trainPurchasedThisTurn = BooleanState.create(this, &quot;trainPurchaseThisTurn&quot;);</span>
+    private PublicCompany firstCompanyBeforePrivates;
+<span class="fc" id="L66">    private PossibleAction manditoryNextAction = null;</span>
+
+    /**
+     * @param gameManager
+     */
+    public OperatingRound_1880(GameManager gameManager_1880, String id) {
+<span class="fc" id="L72">        super(gameManager_1880, id);</span>
+<span class="fc" id="L73">        orControl = ((GameManager_1880) gameManager_1880).getORControl();</span>
+<span class="fc" id="L74">        parSlotManager =</span>
+<span class="fc" id="L75">                ((GameManager_1880) gameManager_1880).getParSlotManager();</span>
+<span class="fc" id="L76">    }</span>
+
+    @Override
+    public void processPhaseAction(String name, String value) {
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (name.equalsIgnoreCase(&quot;RaisingCertAvailability&quot;)) {</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {</span>
+<span class="fc" id="L82">                company.setAllCertsAvail(true);</span>
+<span class="fc" id="L83">                company.setFullFundingAvail();</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                if (!company.hasFloated()) {</span>
+<span class="fc" id="L85">                    company.setFloatPercentage(30);</span>
+                }
+<span class="fc" id="L87">            }</span>
+        }
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (name.equalsIgnoreCase(&quot;CommunistTakeOver&quot;)) {</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">            for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {</span>
+<span class="fc" id="L91">                company.stockPriceCannotMove();</span>
+<span class="fc" id="L92">                company.presidentCannotSellShare();</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                if (!company.hasFloated()) {</span>
+<span class="fc" id="L94">                    company.setFloatPercentage(40);</span>
+                }
+<span class="fc" id="L96">            }</span>
+<span class="fc" id="L97">            checkForForcedRocketExchange();</span>
+        }
+
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (name.equalsIgnoreCase(&quot;ShanghaiExchangeOpen&quot;)) {</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {</span>
+<span class="fc" id="L102">                company.stockPriceCanMove();</span>
+<span class="fc" id="L103">                company.presidentCanSellShare();</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">                if (!company.hasFloated()) {</span>
+<span class="fc" id="L105">                    company.setFloatPercentage(60);</span>
+                }
+<span class="fc" id="L107">            }</span>
+        }
+<span class="fc" id="L109">    }</span>
+
+
+
+    @Override
+    protected void prepareRevenueAndDividendAction() {
+        int[] allowedRevenueActions;
+        // There is only revenue if there are any trains
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if (operatingCompany.value().canRunTrains()) {</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            if (operatingCompany.value() instanceof PublicCompany_1880) {</span>
+<span class="fc" id="L119">                allowedRevenueActions =</span>
+                        new int[] { SetDividend.PAYOUT, SetDividend.WITHHOLD };
+            } else { // Investors in 1880 are not allowed to hand out Cash
+                     // except
+                     // in Closing
+<span class="fc" id="L124">                allowedRevenueActions = new int[] { SetDividend.WITHHOLD };</span>
+            }
+
+<span class="fc" id="L127">            possibleActions.add(new SetDividend(</span>
+<span class="fc" id="L128">                    operatingCompany.value().getLastRevenue(), true,</span>
+                    allowedRevenueActions));
+        }
+<span class="fc" id="L131">    }</span>
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see rails.game.OperatingRound#initNormalTileLays()
+     */
+    @Override
+    protected void initNormalTileLays() {
+        /**
+         * Create a List of allowed normal tile lays (see LayTile class). This
+         * method should be called only once per company turn in an OR: at the
+         * start of the tile laying step.
+         */
+        // duplicate the phase colours
+<span class="fc" id="L146">        Map&lt;String, Integer&gt; newTileColours = new HashMap&lt;String, Integer&gt;();</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        for (String colour : Phase.getCurrent(this).getTileColours()) {</span>
+<span class="fc" id="L148">            int allowedNumber =</span>
+<span class="fc" id="L149">                    operatingCompany.value().getNumberOfTileLays(colour);</span>
+            // Replace the null map value with the allowed number of lays
+<span class="fc" id="L151">            newTileColours.put(colour, new Integer(allowedNumber));</span>
+<span class="fc" id="L152">        }</span>
+        // store to state
+<span class="fc" id="L154">        tileLaysPerColour.initFromMap(newTileColours);</span>
+<span class="fc" id="L155">    }</span>
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see rails.game.OperatingRound#start()
+     */
+    @Override
+    public void start() {
+<span class="fc" id="L164">        thisOrNumber = gameManager.getORId();</span>
+
+
+<span class="fc" id="L167">        ReportBuffer.add(this, LocalText.getText(&quot;START_OR&quot;, thisOrNumber));</span>
+
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        for (Player player : getRoot().getPlayerManager().getPlayers()) {</span>
+<span class="fc" id="L170">            player.setWorthAtORStart();</span>
+<span class="fc" id="L171">        }</span>
+
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if ((operatingCompanies.size() &gt; 0)</span>
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">            &amp;&amp; (gameManager.getAbsoluteORNumber() &gt;= 1)) {</span>
+            // even if the BCR is sold she doesn't operate until all privates
+            // have been sold
+            // the absolute OR value is not incremented if not the startpacket
+            // has been sold completely
+
+<span class="fc" id="L180">            StringBuilder msg = new StringBuilder();</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">            for (PublicCompany company : operatingCompanies.view()) {</span>
+<span class="fc" id="L182">                msg.append(&quot;,&quot;).append(company.getId());</span>
+<span class="fc" id="L183">            }</span>
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">            if (msg.length() &gt; 0) msg.deleteCharAt(0);</span>
+<span class="fc" id="L185">            log.info(&quot;Initial operating sequence is &quot; + msg.toString());</span>
+
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">            if (stepObject == null) {</span>
+<span class="nc" id="L188">                 setStep (GameDef.OrStep.INITIAL);</span>
+<span class="nc" id="L189">                  stepObject.addObserver(this);</span>
+            }
+
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">            if (setNextOperatingCompany(true)) {</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">                if (orControl.getNextStep() != GameDef.OrStep.INITIAL) {</span>
+<span class="fc" id="L194">                    initTurn();</span>
+<span class="fc" id="L195">                    initNormalTileLays();</span>
+                }
+<span class="fc" id="L197">                setStep(orControl.getNextStep());</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">                if (orControl.wasStartedFromStockRound() == true) {</span>
+<span class="fc" id="L199">                    trainPurchasedThisTurn.set(true);</span>
+                }
+            } else {
+<span class="nc" id="L202">                orControl.startNewOR();</span>
+<span class="nc" id="L203">                finishOR();</span>
+            }
+
+<span class="fc" id="L206">            return;</span>
+        }
+
+        // No operating companies yet: close the round.
+<span class="nc" id="L210">        String text = LocalText.getText(&quot;ShortORExecuted&quot;);</span>
+<span class="nc" id="L211">        ReportBuffer.add(this, text);</span>
+<span class="nc" id="L212">        DisplayBuffer.add(this, text);</span>
+<span class="nc" id="L213">        finishRound();</span>
+<span class="nc" id="L214">    }</span>
+
+    private boolean trainTypeCanAffectOR(TrainType type) {
+
+<span class="fc bfc" id="L218" title="All 4 branches covered.">        if ((type.getName().equals(&quot;2R&quot;) == false) &amp;&amp; (type.getName().equals(&quot;10&quot;) == false)</span>
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">                &amp;&amp; (type.getName().equals(&quot;8E&quot;) == false)) {</span>
+<span class="fc" id="L220">            return true;</span>
+                }
+<span class="fc" id="L222">        return false;</span>
+    }
+
+    public boolean specialBuyTrain(BuyTrain action) {
+        // We might not be in the correct step...
+<span class="fc" id="L227">        OrStep currentStep = getStep();</span>
+<span class="fc" id="L228">        setStep(GameDef.OrStep.BUY_TRAIN);</span>
+<span class="fc" id="L229">        boolean trainResults = super.buyTrain(action);</span>
+<span class="fc" id="L230">        setStep(currentStep);</span>
+      //Check if excessTrainCompanies is empty, if not start discarding the trains..
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        if (!excessTrainCompanies.isEmpty()) { //holds all Players and the Companies with excesstrains in a list</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">              for (Player CompanyOwner : excessTrainCompanies.keySet()) {//loop over the players</span>
+<span class="nc" id="L234">                  List&lt;PublicCompany&gt; excessTrainCompaniesList = excessTrainCompanies.get(CompanyOwner);</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">                  for (PublicCompany excessTrainCompany : excessTrainCompaniesList) { //extract the Company from the list</span>
+<span class="nc" id="L236">                      int numberofTrainsToDiscard = (excessTrainCompany.getNumberOfTrains()- excessTrainCompany.getCurrentTrainLimit());</span>
+<span class="nc" id="L237">                      Set&lt;Train&gt;trains = excessTrainCompany.getPortfolioModel().getTrainList();</span>
+<span class="nc" id="L238">                      List&lt;Train&gt; trainsToDiscard = new ArrayList&lt;Train&gt;(4);</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">                      for (Train train : trains) {</span>
+<span class="nc" id="L240">                          trainsToDiscard.add(train);</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">                              if (--numberofTrainsToDiscard == 0) break;</span>
+<span class="nc" id="L242">                      }</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">                      for (Train train : trainsToDiscard) {</span>
+<span class="nc" id="L244">                          train.discard();</span>
+<span class="nc" id="L245">                          ReportBuffer.add(this,LocalText.getText(&quot;CompanyDiscardsTrain&quot;,</span>
+<span class="nc" id="L246">                                  excessTrainCompany.getLongName(), train.getId()));</span>
+<span class="nc" id="L247">                      }</span>
+<span class="nc" id="L248">                }</span>
+<span class="nc" id="L249">              }</span>
+        }
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">        if (!trainResults) {</span>
+<span class="nc" id="L252">            return false;</span>
+        }
+
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">        if ((ipo.getTrainsPerType(action.getType()).length == 0)</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">                &amp;&amp; (trainTypeCanAffectOR(action.getType()))) {</span>
+<span class="nc" id="L257">            orControl.orExitToStockRound(operatingCompany.value(), currentStep);</span>
+<span class="nc" id="L258">            setActionForPrivateExchange(action.getType());</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">            if (manditoryNextAction == null) {</span>
+<span class="nc" id="L260">                finishOR();</span>
+            }
+        }
+
+<span class="fc" id="L264">        return true;</span>
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see rails.game.OperatingRound#buyTrain(rails.game.action.BuyTrain)
+     */
+
+    @Override
+    public boolean buyTrain(BuyTrain action) {
+<span class="pc bpc" id="L275" title="1 of 2 branches missed.">        if (super.buyTrain(action) != true) {</span>
+<span class="nc" id="L276">            return false;</span>
+        }
+
+        // If this train was not from the ipo, nothing else to do.
+<span class="fc bfc" id="L280" title="All 2 branches covered.">        if (action.getFromOwner() == Bank.getIpo(this)) {</span>
+<span class="fc" id="L281">            SpecialTrainBuy stb = action.getSpecialProperty();</span>
+<span class="pc bpc" id="L282" title="3 of 4 branches missed.">            if ((stb == null) || (stb.isExercised() == false)) {</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">                if (trainTypeCanAffectOR(action.getType()) == true) {</span>
+<span class="fc" id="L284">                    trainPurchasedThisTurn.set(true);</span>
+<span class="fc" id="L285">                    orControl.trainPurchased((PublicCompany_1880) operatingCompany.value());</span>
+                    //Only Change that trainpurchase indicator if we are not in the last two phases...
+<span class="pc bpc" id="L287" title="1 of 2 branches missed.">                    if ((!getRoot().getPhaseManager().getCurrentPhase().getRealName().equals(&quot;D2&quot;))&amp;&amp;</span>
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">                            (!getRoot().getPhaseManager().getCurrentPhase().getRealName().equals(&quot;D3&quot;))) {</span>
+<span class="fc" id="L289">                    ((GameManager_1880) getRoot().getGameManager()).getParSlotManager().trainPurchased((PublicCompany_1880) operatingCompany.value());</span>
+                    }
+                }
+            }
+            //If the train bought was a 8e Train no more trains will be discarded.
+<span class="pc bpc" id="L294" title="1 of 2 branches missed.">            if (action.getType().getName().equals(&quot;8E&quot;)) {</span>
+<span class="nc" id="L295">                orControl.setNoTrainsToDiscard(true);</span>
+            }
+
+            // If there are no more trains of this type, and this type causes an
+            // OR end, end it.
+<span class="fc bfc" id="L300" title="All 2 branches covered.">            if ((ipo.getTrainsPerType(action.getType()).length == 0)</span>
+<span class="pc bpc" id="L301" title="1 of 2 branches missed.">                &amp;&amp; (trainTypeCanAffectOR(action.getType()))) {</span>
+<span class="fc bfc" id="L302" title="All 2 branches covered.">                if (action.getType().getName().equals(&quot;8&quot;)) {</span>
+<span class="fc" id="L303">                    orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.value()));</span>
+<span class="fc" id="L304">                    orControl.setFinalOperatingRoundSequence(true);</span>
+                }
+<span class="pc bpc" id="L306" title="1 of 2 branches missed.">                if (orControl.getFinalOperatingRoundSequenceNumber()&lt;2){</span>
+<span class="fc" id="L307">                orControl.orExitToStockRound(operatingCompany.value(),</span>
+                        GameDef.OrStep.BUY_TRAIN);
+                }
+<span class="fc" id="L310">                setActionForPrivateExchange(action.getType());</span>
+<span class="fc bfc" id="L311" title="All 2 branches covered.">                if (manditoryNextAction == null) {</span>
+<span class="fc" id="L312">                    finishOR();</span>
+                }
+            }
+        }
+
+<span class="fc" id="L317">        return true;</span>
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see rails.game.OperatingRound#newPhaseChecks()
+     */
+    @Override
+    protected void newPhaseChecks() {
+<span class="fc" id="L327">    }</span>
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see rails.game.OperatingRound#process(rails.game.action.PossibleAction)
+     */
+    @Override
+    public boolean process(PossibleAction action) {
+<span class="fc" id="L336">        boolean result = false;</span>
+
+<span class="fc" id="L338">        selectedAction = action;</span>
+<span class="fc" id="L339">        manditoryNextAction = null;</span>
+
+<span class="fc bfc" id="L341" title="All 2 branches covered.">        if (selectedAction instanceof NullAction) {</span>
+<span class="fc" id="L342">            NullAction nullAction = (NullAction) action;</span>
+<span class="pc bpc" id="L343" title="2 of 4 branches missed.">            switch (nullAction.getMode()) {</span>
+            case DONE: // Making Sure that the NullAction.DONE is in
+                                  // the Buy_Train Step..
+<span class="pc bpc" id="L346" title="1 of 2 branches missed.">                if (getStep() != GameDef.OrStep.BUY_TRAIN) {</span>
+<span class="nc" id="L347">                    result = done(nullAction);</span>
+<span class="nc" id="L348">                    break;</span>
+                }
+
+<span class="fc bfc" id="L351" title="All 2 branches covered.">                if (operatingCompany.value() == orControl.lastCompanyToBuyTrain()) {</span>
+<span class="fc bfc" id="L352" title="All 4 branches covered.">                    if ((orControl.isFinalOperatingRoundSequence()) &amp;&amp; (!orControl.wasStartedFromStockRound())){</span>
+<span class="fc" id="L353">                        orControl.addFinalOperatingRoundSequenceNumber(1);</span>
+                    }
+                    // Need to create the final Jumpoff Point there to end the game !
+<span class="fc bfc" id="L356" title="All 2 branches covered.">                    if ((orControl.getFinalOperatingRoundSequenceNumber() &gt; 3) ) {</span>
+<span class="fc" id="L357">                    finishOR();</span>
+                    }
+
+<span class="fc bfc" id="L360" title="All 4 branches covered.">                    if ((trainPurchasedThisTurn.value() == false) &amp;&amp; (!orControl.noTrainsToDiscard())) {</span>
+                        // The current Company is the Company that has bought
+                        // the last train and that purchase was not in this OR..
+                        // we now discard the remaining active trains of that
+                        // Subphase and start a stockround...
+<span class="fc" id="L365">                        Set&lt;Train&gt; trains =</span>
+<span class="fc" id="L366">                                trainManager.getAvailableNewTrains();</span>
+<span class="fc" id="L367">                        TrainType activeTrainTypeToDiscard = null;</span>
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">                        for (Train train : trains) {</span>
+<span class="fc bfc" id="L369" title="All 2 branches covered.">                            if ((!train.getType().getName().equals(&quot;2R&quot;))</span>
+<span class="pc bpc" id="L370" title="1 of 2 branches missed.">                                    &amp;&amp; (!train.getType().getName().equals(&quot;10&quot;))){</span>
+<span class="fc" id="L371">                                activeTrainTypeToDiscard =</span>
+<span class="fc" id="L372">                                        train.getType();</span>
+<span class="fc" id="L373">                                break;</span>
+                            }
+<span class="fc" id="L375">                        }</span>
+<span class="pc bpc" id="L376" title="1 of 2 branches missed.">                        if (activeTrainTypeToDiscard != null) {</span>
+<span class="pc bpc" id="L377" title="1 of 2 branches missed.">                            if (activeTrainTypeToDiscard.getName().equals(&quot;8&quot;)) {</span>
+<span class="nc" id="L378">                                orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.value()));</span>
+<span class="nc" id="L379">                                orControl.setFinalOperatingRoundSequence(true);</span>
+                            }
+
+<span class="fc" id="L382">                            Train[] trainsToDiscard =</span>
+<span class="fc" id="L383">                                    bank.getIpo().getPortfolioModel().getTrainsPerType(</span>
+                                            activeTrainTypeToDiscard);
+                            // If we need to do a rocket exchange, then leave one 4-train
+<span class="fc" id="L386">                            int firstTrainToDiscard = 0;</span>
+<span class="pc bpc" id="L387" title="1 of 2 branches missed.">                            if ((activeTrainTypeToDiscard.getName().equals(&quot;4&quot;)) &amp;&amp;</span>
+<span class="nc bnc" id="L388" title="All 2 branches missed.">                                    (checkForForcedRocketExchange() == true)) {</span>
+<span class="nc" id="L389">                                firstTrainToDiscard = 1;</span>
+                            }
+
+<span class="fc bfc" id="L392" title="All 2 branches covered.">                            for (int i = firstTrainToDiscard; i &lt; trainsToDiscard.length; i++) {</span>
+<span class="fc" id="L393">                                scrapHeap.addTrain(trainsToDiscard[i]);</span>
+                            }
+                            // Need to make next train available !
+<span class="fc" id="L396">                            trainManager.checkTrainAvailability(trainsToDiscard[0],</span>
+<span class="fc" id="L397">                                    ipo.getParent());</span>
+<span class="fc bfc" id="L398" title="All 2 branches covered.">                            if (activeTrainTypeToDiscard.getName().equals(&quot;8E&quot;)) {</span>
+<span class="fc" id="L399">                                orControl.setNoTrainsToDiscard(true);</span>
+<span class="fc" id="L400">                                result = done(nullAction);</span>
+<span class="fc" id="L401">                                return result;</span>
+                            }
+<span class="pc bpc" id="L403" title="1 of 2 branches missed.">                            if (orControl.getFinalOperatingRoundSequenceNumber()&lt;2) { // The last switch to a stock round happens on the purchase/retirement of the 8-trains.</span>
+<span class="fc" id="L404">                                orControl.orExitToStockRound(operatingCompany.value(),</span>
+                                        OrStep.BUY_TRAIN);
+                                } else {
+<span class="nc" id="L407">                                    orControl.startedFromOperatingRound();</span>
+                                }
+<span class="pc bpc" id="L409" title="1 of 2 branches missed.">                                if (!orControl.isFinalOperatingRoundSequence()) {</span>
+<span class="fc" id="L410">                                setActionForPrivateExchange(activeTrainTypeToDiscard);</span>
+                                }
+<span class="fc bfc" id="L412" title="All 2 branches covered.">                                if (manditoryNextAction == null) {</span>
+<span class="fc" id="L413">                                    finishOR();</span>
+                                }
+                            }
+<span class="fc" id="L416">                            return true;</span>
+                    }
+                }
+<span class="fc" id="L419">                result = done(nullAction);</span>
+<span class="fc" id="L420">                break;</span>
+            case PASS:
+<span class="nc" id="L422">                result = done(nullAction);</span>
+<span class="nc" id="L423">                break;</span>
+            case SKIP:
+<span class="fc" id="L425">                skip(nullAction);</span>
+<span class="fc" id="L426">                result = true;</span>
+<span class="fc" id="L427">                break;</span>
+            default:
+                break;
+            }
+<span class="fc" id="L431">            return result;</span>
+<span class="fc bfc" id="L432" title="All 2 branches covered.">        } else if (action instanceof CloseInvestor_1880) {</span>
+<span class="fc" id="L433">            closeInvestor(action);</span>
+<span class="fc" id="L434">            result = done(null);</span>
+<span class="fc" id="L435">            return result;</span>
+<span class="fc bfc" id="L436" title="All 2 branches covered.">        } else if ((action instanceof UseSpecialProperty)</span>
+<span class="pc bpc" id="L437" title="1 of 2 branches missed.">                   &amp;&amp; (((UseSpecialProperty) action).getSpecialProperty() instanceof SpecialTrainBuy)) {</span>
+<span class="fc" id="L438">            Set&lt;Train&gt; trains =</span>
+<span class="fc" id="L439">                    trainManager.getAvailableNewTrains();</span>
+<span class="fc" id="L440">            BuyTrain buyTrain =</span>
+<span class="fc" id="L441">                    new BuyTrain(Iterables.get(trains,0),</span>
+<span class="fc" id="L442">                            ipo.getParent(), 0); // TODO get from special action</span>
+<span class="fc" id="L443">            buyTrain.setSpecialProperty((SpecialTrainBuy) ((UseSpecialProperty) action).getSpecialProperty()); // TODO</span>
+                                                                                                               // Fix.
+<span class="fc" id="L445">            result = specialBuyTrain(buyTrain);</span>
+<span class="fc" id="L446">            return result;</span>
+<span class="pc bpc" id="L447" title="1 of 2 branches missed.">        } else if ((action instanceof UseSpecialProperty)</span>
+<span class="nc bnc" id="L448" title="All 2 branches missed.">                &amp;&amp; (((UseSpecialProperty) action).getSpecialProperty() instanceof AddBuildingPermit)) {</span>
+<span class="nc" id="L449">            result = addBuildingPermit(action);</span>
+<span class="nc" id="L450">            return result;</span>
+<span class="fc bfc" id="L451" title="All 2 branches covered.">        } else if (action instanceof ExchangeForCash) {</span>
+<span class="fc" id="L452">            result = exchangeForCash((ExchangeForCash) action);</span>
+<span class="fc" id="L453">            return result;</span>
+<span class="pc bpc" id="L454" title="1 of 2 branches missed.">        } else if (action instanceof ForcedRocketExchange) {</span>
+<span class="nc" id="L455">            result = forcedRocketExchange((ForcedRocketExchange) action);</span>
+<span class="nc" id="L456">            return result;</span>
+        } else {
+<span class="fc" id="L458">            result= super.process(action);</span>
+<span class="fc bfc" id="L459" title="All 2 branches covered.">            if (operatingCompany.value() instanceof Investor_1880) {</span>
+<span class="fc" id="L460">                Investor_1880 investor = (Investor_1880)  (operatingCompany.value());</span>
+<span class="fc bfc" id="L461" title="All 4 branches covered.">                if ((action instanceof SetDividend) &amp;&amp; (investor.isConnectedToLinkedCompany() == false)) {</span>
+<span class="fc" id="L462">                    result = done(null);</span>
+                }
+            }
+<span class="fc" id="L465">            return result;</span>
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see rails.game.OperatingRound#setPossibleActions()
+     */
+    @Override
+    public boolean setPossibleActions() {
+<span class="fc bfc" id="L476" title="All 2 branches covered.">        if (manditoryNextAction != null) {</span>
+<span class="fc" id="L477">            possibleActions.add(manditoryNextAction);</span>
+<span class="fc" id="L478">            return true;</span>
+        }
+
+        /*
+         * Filter out the Tile Lay Step if the operating Company is not allowed
+         * to build anymore because it doesnt possess the necessary building
+         * right for this phase. Only Majors need to be prechecked.
+         */
+<span class="fc bfc" id="L486" title="All 2 branches covered.">        if (getStep() == GameDef.OrStep.INITIAL) {</span>
+<span class="fc bfc" id="L487" title="All 2 branches covered.">           if (operatingCompany.value() instanceof PublicCompany_1880)  {</span>
+<span class="fc" id="L488">            initTurn();</span>
+
+            //Somehow an investor was still allowed to place a tile in Phase 4 ?
+<span class="pc bpc" id="L491" title="1 of 2 branches missed.">            if (operatingCompany.value() instanceof Investor_1880){</span>
+<span class="nc bnc" id="L492" title="All 2 branches missed.">                if (gameManager.getCurrentPhase().getId().equals(&quot;4&quot;)) {</span>
+<span class="nc" id="L493">                    setStep(GameDef.OrStep.BUY_TRAIN);</span>
+                }
+            }
+
+<span class="pc bpc" id="L497" title="1 of 2 branches missed.">            if ((noMapMode)</span>
+<span class="fc bfc" id="L498" title="All 2 branches covered.">                || (!((PublicCompany_1880) operatingCompany.value()).hasBuildingRightForPhase(gameManager.getCurrentPhase()))) {</span>
+<span class="fc" id="L499">                nextStep(GameDef.OrStep.LAY_TRACK);</span>
+            } else {
+<span class="fc" id="L501">                initNormalTileLays(); // new: only called once per turn ?</span>
+<span class="fc" id="L502">                setStep(GameDef.OrStep.LAY_TRACK);</span>
+            }
+          }
+        }
+
+<span class="fc bfc" id="L507" title="All 2 branches covered.">        if ((getStep() == GameDef.OrStep.BUY_TRAIN)</span>
+<span class="fc bfc" id="L508" title="All 2 branches covered.">            &amp;&amp; (operatingCompany.value() instanceof Investor_1880)) {</span>
+            //Only way to get here is if this is a connected Investor...
+<span class="fc" id="L510">            Investor_1880 investor = (Investor_1880) (operatingCompany.value());</span>
+<span class="pc bpc" id="L511" title="1 of 2 branches missed.">            if (investor.isConnectedToLinkedCompany() ) {</span>
+<span class="fc" id="L512">            possibleActions.add(new CloseInvestor_1880((Investor_1880) operatingCompany.value()));</span>
+<span class="fc" id="L513">            return true;</span>
+            }
+        }
+
+<span class="fc" id="L517">        return super.setPossibleActions();</span>
+    }
+
+
+    @Override
+    public void resume() {
+<span class="nc" id="L523">        guiHints.setActivePanel(GuiDef.Panel.MAP);</span>
+<span class="nc" id="L524">        guiHints.setCurrentRoundType(getClass());</span>
+<span class="nc bnc" id="L525" title="All 2 branches missed.">        if (savedAction instanceof BuyTrain) {</span>
+<span class="nc" id="L526">            BuyTrain action = (BuyTrain) savedAction;</span>
+
+            // We are here because this player couldn't pay for a train.
+<span class="nc" id="L529">            Player player = playerManager.getPlayerByName(action.getPlayerName());</span>
+<span class="nc" id="L530">            PublicCompany company = action.getCompany();</span>
+<span class="nc" id="L531">            int initialPlayerCash = player.getCash();</span>
+<span class="nc" id="L532">            int trainCost = action.getFixedCost();</span>
+
+            // Give the company enough money to buy the train, then deduct
+            // that amount from the player.
+<span class="nc" id="L536">            int amountOwed = (trainCost - company.getCash());</span>
+<span class="nc" id="L537">            Currency.wire(player, amountOwed, company);</span>
+
+            // Perform the buy action
+<span class="nc" id="L540">            BuyTrain newTrainBuy = new BuyTrain(action.getTrain(), action.getFromOwner(), trainCost);</span>
+<span class="nc" id="L541">            newTrainBuy.setPricePaid(trainCost);</span>
+<span class="nc" id="L542">            buyTrain (newTrainBuy);</span>
+
+<span class="nc bnc" id="L544" title="All 2 branches missed.">            if (!(initialPlayerCash &gt;amountOwed)){</span>
+                // The player has to pay a 50% penalty for any additional debt he took on.
+<span class="nc" id="L546">                int additionalDebt = -player.getCash();</span>
+<span class="nc bnc" id="L547" title="All 2 branches missed.">                if (initialPlayerCash &lt; 0) {</span>
+<span class="nc" id="L548">                additionalDebt = additionalDebt - (-initialPlayerCash);</span>
+                }
+
+<span class="nc" id="L551">                int penalty = (additionalDebt / 2);</span>
+
+<span class="nc" id="L553">                ReportBuffer.add(this, LocalText.getText(&quot;DebtPenalty&quot;, player.getId(),</span>
+<span class="nc" id="L554">                        Bank.format(this, penalty)));</span>
+<span class="nc" id="L555">                Currency.wire(player, penalty, getRoot().getBank());</span>
+                }
+        }
+<span class="nc" id="L558">        wasInterrupted.set(true);</span>
+<span class="nc" id="L559">    }</span>
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see rails.game.OperatingRound#payout(int)
+     */
+    @Override
+    public void payout(int amount) {
+
+<span class="pc bpc" id="L569" title="1 of 2 branches missed.">        if (amount == 0) return;</span>
+
+        int part;
+        int shares;
+
+<span class="fc" id="L574">        Map&lt;MoneyOwner, Integer&gt; sharesPerRecipient = countSharesPerRecipient();</span>
+
+        // Calculate, round up, report and add the cash
+
+        // Define a precise sequence for the reporting
+<span class="fc" id="L579">        Set&lt;MoneyOwner&gt; recipientSet = sharesPerRecipient.keySet();</span>
+<span class="fc bfc" id="L580" title="All 2 branches covered.">        for (MoneyOwner recipient : SequenceUtil.sortCashHolders(recipientSet)) {</span>
+<span class="fc bfc" id="L581" title="All 2 branches covered.">            if (recipient instanceof Bank) continue;</span>
+<span class="fc bfc" id="L582" title="All 2 branches covered.">            if (recipient instanceof Investor_1880) continue;</span>
+<span class="fc" id="L583">            shares = (sharesPerRecipient.get(recipient));</span>
+<span class="pc bpc" id="L584" title="1 of 2 branches missed.">            if (shares == 0) continue;</span>
+<span class="fc" id="L585">            part = (int) Math.ceil(amount * shares * operatingCompany.value().getShareUnit() / 100.0);</span>
+
+<span class="fc" id="L587">            String partText = Currency.fromBank(part, recipient);</span>
+<span class="fc" id="L588">            ReportBuffer.add(this,LocalText.getText(&quot;Payout&quot;,</span>
+<span class="fc" id="L589">                    recipient.getId(),</span>
+                    partText,
+<span class="fc" id="L591">                    shares,</span>
+<span class="fc" id="L592">                    operatingCompany.value().getShareUnit()));</span>
+<span class="fc" id="L593">        }</span>
+
+        // Move the token
+<span class="fc" id="L596">        operatingCompany.value().payout(amount);</span>
+
+<span class="fc" id="L598">    }</span>
+
+
+    private void closeInvestor(PossibleAction action) {
+<span class="fc" id="L602">        CloseInvestor_1880 closeInvestorAction = (CloseInvestor_1880) action;</span>
+<span class="fc" id="L603">        Investor_1880 investor = closeInvestorAction.getInvestor();</span>
+<span class="fc" id="L604">        Player investorOwner = investor.getPresident();</span>
+<span class="fc" id="L605">        PublicCompany_1880 linkedCompany =</span>
+<span class="fc" id="L606">                (PublicCompany_1880) investor.getLinkedCompany();</span>
+<span class="fc" id="L607">        ReportBuffer.add(this, LocalText.getText(&quot;FIConnected&quot;, investor.getId(),</span>
+<span class="fc" id="L608">                linkedCompany.getId()));</span>
+
+        // The owner gets $50
+<span class="fc" id="L611">        ReportBuffer.add(this, LocalText.getText(&quot;FIConnectedPayout&quot;,</span>
+<span class="fc" id="L612">                investorOwner.getId()));</span>
+<span class="fc" id="L613">        Currency.wire(bank, 50, investorOwner);</span>
+
+        // Pick where the treasury goes
+<span class="fc bfc" id="L616" title="All 2 branches covered.">        if (closeInvestorAction.getTreasuryToLinkedCompany() == true) {</span>
+<span class="fc" id="L617">            ReportBuffer.add(this, LocalText.getText(&quot;FIConnectedTreasuryToCompany&quot;,</span>
+<span class="fc" id="L618">                    linkedCompany.getId(), investor.getId(),</span>
+<span class="fc" id="L619">                    investor.getCash()));</span>
+<span class="fc" id="L620">            Currency.wireAll(investor,linkedCompany);</span>
+        } else {
+<span class="fc" id="L622">            ReportBuffer.add(this, LocalText.getText(&quot;FIConnectedTreasuryToOwner&quot;,</span>
+<span class="fc" id="L623">                    investorOwner.getId(), investor.getId(),</span>
+<span class="fc" id="L624">                    (investor.getCash() / 5)));</span>
+<span class="fc" id="L625">            Currency.wire(investor, (investor.getCash() / 5), investorOwner);</span>
+<span class="fc" id="L626">            Currency.toBankAll(investor);</span>
+        }
+
+<span class="fc" id="L629">        BaseToken token = Iterables.get(investor.getAllBaseTokens(),0);</span>
+<span class="fc" id="L630">        Stop city = (Stop) token.getOwner();</span>
+<span class="fc" id="L631">        MapHex hex = city.getParent();</span>
+<span class="fc" id="L632">        token.moveTo(investor);</span>
+
+        // Pick if the token gets replaced
+<span class="fc bfc" id="L635" title="All 2 branches covered.">        if (closeInvestorAction.getReplaceToken() == true) {</span>
+<span class="pc bpc" id="L636" title="1 of 2 branches missed.">            if (hex.layBaseToken(linkedCompany, city)) {</span>
+<span class="fc" id="L637">                ReportBuffer.add(this, LocalText.getText(&quot;FIConnectedReplaceToken&quot;,</span>
+<span class="fc" id="L638">                        linkedCompany.getId(), investor.getId()));</span>
+<span class="fc" id="L639">                linkedCompany.layBaseToken(hex, 0); // (should this be</span>
+                                                    // city.getNumber as well?)
+            }
+        } else {
+<span class="fc" id="L643">            ReportBuffer.add(this, LocalText.getText(&quot;FIConnectedDontReplaceToken&quot;,</span>
+<span class="fc" id="L644">                    linkedCompany.getId(), investor.getId()));</span>
+        }
+        // Move the certificate
+<span class="fc" id="L647">        ReportBuffer.add(this, LocalText.getText(&quot;FIConnectedMoveCert&quot;,</span>
+<span class="fc" id="L648">                investorOwner.getId(), linkedCompany.getId(),</span>
+<span class="fc" id="L649">                investor.getId()));</span>
+<span class="fc" id="L650">        PortfolioModel investorPortfolio = investor.getPortfolioModel();</span>
+<span class="fc" id="L651">        Set&lt;PublicCertificate&gt; investorCerts =</span>
+<span class="fc" id="L652">                investorPortfolio.getCertificates();</span>
+<span class="fc" id="L653">        Iterables.get(investorCerts,0).moveTo(investorOwner.getPortfolioModel()); // should</span>
+                                                                   // only be
+                                                                   // one
+        // Set the company to close at the end of the operating round. It's just
+        // too
+        // hard to do it immediately - the checks to see if the operating order
+        // changed
+        // conflict with the check to see if something closed.
+
+<span class="fc" id="L662">        investorsToClose.add(investor);</span>
+<span class="fc" id="L663">    }</span>
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see rails.game.Round#setOperatingCompanies()
+     */
+    @Override
+    public List&lt;PublicCompany&gt; setOperatingCompanies() {
+        // These are Initialized here - there's no opportunity to do this in the
+        // constructor
+        // for OperatingRound, and this function gets called from that
+        // constructor. Yuck.
+<span class="fc" id="L676">        orControl = ((GameManager_1880) gameManager).getORControl();</span>
+<span class="fc" id="L677">        parSlotManager = ((GameManager_1880) gameManager).getParSlotManager();</span>
+
+<span class="fc" id="L679">        List&lt;PublicCompany&gt; companyList = new ArrayList&lt;PublicCompany&gt;();</span>
+
+        // Put in Foreign Investors first
+<span class="fc bfc" id="L682" title="All 2 branches covered.">        for (Investor_1880 investor : Investor_1880.getInvestors(companyManager)) {</span>
+<span class="fc bfc" id="L683" title="All 2 branches covered.">            if (investor.isClosed() == false) {</span>
+<span class="fc" id="L684">                companyList.add(investor);</span>
+            }
+<span class="fc" id="L686">        }</span>
+
+        // Now the share companies in par slot order
+<span class="fc" id="L689">        List&lt;PublicCompany&gt; companies =</span>
+<span class="fc" id="L690">                parSlotManager.getCompaniesInParSlotOrder();</span>
+<span class="fc bfc" id="L691" title="All 2 branches covered.">        for (PublicCompany company : companies) {</span>
+<span class="pc bpc" id="L692" title="1 of 2 branches missed.">            if (!canCompanyOperateThisRound(company)) continue;</span>
+<span class="pc bpc" id="L693" title="1 of 2 branches missed.">            if (!company.hasFloated()) continue;</span>
+<span class="fc" id="L694">            companyList.add(company);</span>
+<span class="fc" id="L695">        }</span>
+
+        // Save the first company in the order. It is before this company that
+        // privates
+        // pay out.
+<span class="fc" id="L700">        firstCompanyBeforePrivates = companyList.get(0);</span>
+
+        // Skip ahead if we have to
+<span class="fc" id="L703">            PublicCompany firstCompany = orControl.getFirstCompanyToRun();</span>
+<span class="fc bfc" id="L704" title="All 2 branches covered.">            if (firstCompany != null) {</span>
+<span class="fc bfc" id="L705" title="All 2 branches covered.">                while (companyList.get(0) != firstCompany) {</span>
+<span class="fc" id="L706">                    Collections.rotate(companyList, 1);</span>
+                }
+            }
+<span class="fc" id="L709">        return new ArrayList&lt;PublicCompany&gt;(companyList);</span>
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see rails.game.Round#setOperatingCompanies(java.util.List,
+     * rails.game.PublicCompanyI)
+     */
+    @Override
+    public List&lt;PublicCompany&gt; setOperatingCompanies(
+            List&lt;PublicCompany&gt; oldOperatingCompanies,
+            PublicCompany lastOperatingCompany) {
+<span class="fc" id="L722">         return setOperatingCompanies();</span>
+    }
+
+    /*
+     * ======================================= 4. LAYING TILES
+     * =======================================
+     */
+
+    @Override
+    public boolean layTile(LayTile action) {
+
+<span class="fc" id="L733">        String errMsg = null;</span>
+<span class="fc" id="L734">        int cost = 0;</span>
+<span class="fc" id="L735">        SpecialTileLay stl = null;</span>
+<span class="fc" id="L736">        boolean extra = false;</span>
+
+<span class="fc" id="L738">        PublicCompany company = action.getCompany();</span>
+<span class="fc" id="L739">        String companyName = company.getId();</span>
+<span class="fc" id="L740">        Tile tile = action.getLaidTile();</span>
+<span class="fc" id="L741">        MapHex hex = action.getChosenHex();</span>
+<span class="fc" id="L742">        int orientation = action.getOrientation();</span>
+
+        // Dummy loop to enable a quick jump out.
+        while (true) {
+            // Checks
+            // Must be correct company.
+<span class="pc bpc" id="L748" title="1 of 2 branches missed.">            if (!companyName.equals(operatingCompany.value().getId())) {</span>
+<span class="nc" id="L749">                errMsg =</span>
+<span class="nc" id="L750">                        LocalText.getText(&quot;WrongCompany&quot;, companyName,</span>
+<span class="nc" id="L751">                                operatingCompany.value().getId());</span>
+<span class="nc" id="L752">                break;</span>
+            }
+            // Must be correct step
+<span class="pc bpc" id="L755" title="1 of 2 branches missed.">            if (getStep() != GameDef.OrStep.LAY_TRACK) {</span>
+<span class="nc" id="L756">                errMsg = LocalText.getText(&quot;WrongActionNoTileLay&quot;);</span>
+<span class="nc" id="L757">                break;</span>
+            }
+
+<span class="pc bpc" id="L760" title="1 of 2 branches missed.">            if (tile == null) break;</span>
+
+<span class="pc bpc" id="L762" title="1 of 2 branches missed.">            if (!Phase.getCurrent(this).isTileColourAllowed(tile.getColourText())) {</span>
+<span class="nc" id="L763">                errMsg =</span>
+<span class="nc" id="L764">                        LocalText.getText(&quot;TileNotYetAvailable&quot;,</span>
+<span class="nc" id="L765">                                tile.toText());</span>
+<span class="nc" id="L766">                break;</span>
+            }
+<span class="pc bpc" id="L768" title="1 of 2 branches missed.">            if (tile.getFreeCount() == 0) {</span>
+<span class="nc" id="L769">                errMsg =</span>
+<span class="nc" id="L770">                        LocalText.getText(&quot;TileNotAvailable&quot;,</span>
+<span class="nc" id="L771">                                tile.toText());</span>
+<span class="nc" id="L772">                break;</span>
+            }
+
+            /*
+             * Check if the current tile is allowed via the LayTile allowance.
+             * (currently the set if tiles is always null, which means that this
+             * check is redundant. This may change in the future.
+             */
+<span class="pc bpc" id="L780" title="1 of 2 branches missed.">            if (action != null) {</span>
+<span class="fc" id="L781">                List&lt;Tile&gt; tiles = action.getTiles();</span>
+<span class="pc bpc" id="L782" title="5 of 6 branches missed.">                if (tiles != null &amp;&amp; !tiles.isEmpty() &amp;&amp; !tiles.contains(tile)) {</span>
+<span class="nc" id="L783">                    errMsg =</span>
+<span class="nc" id="L784">                            LocalText.getText(&quot;TileMayNotBeLaidInHex&quot;,</span>
+<span class="nc" id="L785">                                    tile.toText(), hex.getId());</span>
+<span class="nc" id="L786">                    break;</span>
+                }
+<span class="fc" id="L788">                stl = action.getSpecialProperty();</span>
+<span class="pc bpc" id="L789" title="1 of 2 branches missed.">                if (stl != null) extra = stl.isExtra();</span>
+            }
+
+            /*
+             * If this counts as a normal tile lay, check if the allowed number
+             * of normal tile lays is not exceeded.
+             */
+<span class="pc bpc" id="L796" title="2 of 4 branches missed.">            if (!extra &amp;&amp; !validateNormalTileLay(tile)) {</span>
+<span class="nc" id="L797">                errMsg =</span>
+<span class="nc" id="L798">                        LocalText.getText(&quot;NumberOfNormalTileLaysExceeded&quot;,</span>
+<span class="nc" id="L799">                                tile.getColourText());</span>
+<span class="nc" id="L800">                break;</span>
+            }
+
+<span class="fc" id="L803">            cost = getTileCost(hex);</span>
+
+            // Amount must be non-negative multiple of 10
+<span class="pc bpc" id="L806" title="1 of 2 branches missed.">            if (cost &lt; 0) {</span>
+<span class="nc" id="L807">                errMsg =</span>
+<span class="nc" id="L808">                        LocalText.getText(&quot;NegativeAmountNotAllowed&quot;,</span>
+<span class="nc" id="L809">                                Bank.format(this, cost));</span>
+<span class="nc" id="L810">                break;</span>
+            }
+<span class="pc bpc" id="L812" title="1 of 2 branches missed.">            if (cost % 10 != 0) {</span>
+<span class="nc" id="L813">                errMsg =</span>
+<span class="nc" id="L814">                        LocalText.getText(&quot;AmountMustBeMultipleOf10&quot;,</span>
+<span class="nc" id="L815">                                Bank.format(this, cost));</span>
+<span class="nc" id="L816">                break;</span>
+            }
+            // Does the company have the money?
+<span class="pc bpc" id="L819" title="1 of 2 branches missed.">            if (cost &gt; operatingCompany.value().getCash()) {</span>
+<span class="nc" id="L820">                errMsg =</span>
+<span class="nc" id="L821">                        LocalText.getText(&quot;NotEnoughMoney&quot;, companyName,</span>
+<span class="nc" id="L822">                                Bank.format(this, operatingCompany.value().getCash()),</span>
+<span class="nc" id="L823">                                Bank.format(this, cost));</span>
+                break;
+            }
+            break;
+        }
+<span class="pc bpc" id="L828" title="1 of 2 branches missed.">        if (errMsg != null) {</span>
+<span class="nc" id="L829">            DisplayBuffer.add(this, LocalText.getText(&quot;CannotLayTileOn&quot;, companyName,</span>
+<span class="nc" id="L830">                    tile.toText(), hex.getId(), Bank.format(this, cost),</span>
+                    errMsg));
+<span class="nc" id="L832">            return false;</span>
+        }
+
+        /* End of validation, start of execution */
+<span class="pc bpc" id="L836" title="1 of 2 branches missed.">        if (tile != null) {</span>
+<span class="fc bfc" id="L837" title="All 2 branches covered.">            if (cost &gt; 0) Currency.toBank(operatingCompany.value(),cost);</span>
+<span class="fc" id="L838">            operatingCompany.value().layTile(hex, tile, orientation, cost);</span>
+
+<span class="fc bfc" id="L840" title="All 2 branches covered.">            if (cost == 0) {</span>
+<span class="fc" id="L841">                ReportBuffer.add(this, LocalText.getText(&quot;LaysTileAt&quot;, companyName,</span>
+<span class="fc" id="L842">                        tile.toText(), hex.getId(),</span>
+<span class="fc" id="L843">                        hex.getOrientationName(orientation)));</span>
+            } else {
+<span class="fc" id="L845">                ReportBuffer.add(this, LocalText.getText(&quot;LaysTileAtFor&quot;,</span>
+<span class="fc" id="L846">                        companyName, tile.toText(), hex.getId(),</span>
+<span class="fc" id="L847">                        hex.getOrientationName(orientation), Bank.format(this, cost)));</span>
+            }
+<span class="fc" id="L849">            hex.upgrade(action);</span>
+
+            // Was a special property used?
+<span class="pc bpc" id="L852" title="1 of 2 branches missed.">            if (stl != null) {</span>
+<span class="nc" id="L853">                stl.setExercised();</span>
+<span class="nc" id="L854">                log.debug(&quot;This was a special tile lay, &quot;</span>
+<span class="nc bnc" id="L855" title="All 2 branches missed.">                          + (extra ? &quot;&quot; : &quot; not&quot;) + &quot; extra&quot;);</span>
+            }
+<span class="pc bpc" id="L857" title="1 of 2 branches missed.">            if (!extra) {</span>
+<span class="fc" id="L858">                log.debug(&quot;This was a normal tile lay&quot;);</span>
+<span class="fc" id="L859">                registerNormalTileLay(tile);</span>
+            }
+        }
+
+<span class="pc bpc" id="L863" title="1 of 4 branches missed.">        if (tile == null || !areTileLaysPossible()) {</span>
+<span class="fc" id="L864">            nextStep();</span>
+        }
+
+<span class="fc" id="L867">        return true;</span>
+    }
+
+
+    // TODO: Make generic
+    private int getTileCost(MapHex hex) {
+        // Lucky us.  Tiles that cost 20, 50, and 60 happen to be rivers.  Tiles that cost
+        // anything else are not.
+<span class="fc" id="L875">        int baseCost = hex.getTileCost();</span>
+<span class="pc bpc" id="L876" title="1 of 6 branches missed.">        if ((baseCost == 20) || (baseCost == 50) || (baseCost == 60)) {</span>
+<span class="fc" id="L877">            PrivateCompany riverFerry = companyManager.getPrivateCompany(&quot;CC&quot;);</span>
+<span class="fc bfc" id="L878" title="All 2 branches covered.">            if (riverFerry.getOwner() == playerManager.getCurrentPlayer()) { //TODO: Check if Correct !!</span>
+<span class="fc" id="L879">                baseCost = baseCost - 20;</span>
+            }
+        }
+<span class="fc" id="L882">        return baseCost;</span>
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * rails.game.OperatingRound#processGameSpecificAction(rails.game.action
+     * .PossibleAction)
+     */
+    @Override
+    public boolean processGameSpecificAction(PossibleAction action) {
+<span class="nc" id="L894">        return super.processGameSpecificAction(action);</span>
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see rails.game.OperatingRound#setGameSpecificPossibleActions()
+     */
+    @Override
+    protected void setGameSpecificPossibleActions() {
+<span class="fc" id="L904">        super.setGameSpecificPossibleActions();</span>
+<span class="fc" id="L905">    }</span>
+
+    protected void finishOR() {
+<span class="fc bfc" id="L908" title="All 2 branches covered.">        for (Investor_1880 investor : investorsToClose) {</span>
+<span class="fc" id="L909">            investor.setClosed();</span>
+<span class="fc" id="L910">        }</span>
+<span class="fc" id="L911">        super.finishOR();</span>
+<span class="fc" id="L912">    }</span>
+
+    protected void finishTurn() {
+<span class="pc bpc" id="L915" title="1 of 2 branches missed.">        if (!operatingCompany.value().isClosed()) {</span>
+<span class="fc" id="L916">            operatingCompany.value().setOperated();</span>
+<span class="fc" id="L917">            companiesOperatedThisRound.add(operatingCompany.value());</span>
+
+<span class="pc bpc" id="L919" title="1 of 2 branches missed.">            for (PrivateCompany priv : new ArrayList&lt;PrivateCompany&gt;(</span>
+<span class="fc" id="L920">                    operatingCompany.value().getPortfolioModel().getPrivateCompanies())) {</span>
+<span class="nc" id="L921">                priv.checkClosingIfExercised(true);</span>
+<span class="nc" id="L922">            }</span>
+        }
+
+<span class="fc bfc" id="L925" title="All 2 branches covered.">        if (setNextOperatingCompany(false)) {</span>
+<span class="fc" id="L926">            setStep(GameDef.OrStep.INITIAL);</span>
+        } else {
+<span class="fc" id="L928">            orControl.startNewOR();</span>
+<span class="fc" id="L929">            finishOR();</span>
+        }
+<span class="fc" id="L931">    }</span>
+
+    @Override
+    protected void privatesPayOut() {
+        // Do nothing - this is now handled elsewhere because of the OR timing
+<span class="nc" id="L936">    }</span>
+
+    protected void setOperatingCompany(PublicCompany company) {
+<span class="fc bfc" id="L939" title="All 2 branches covered.">        if (company == firstCompanyBeforePrivates) {</span>
+<span class="fc" id="L940">            super.privatesPayOut();</span>
+        }
+<span class="fc" id="L942">        trainPurchasedThisTurn.set(false);</span>
+<span class="fc" id="L943">        super.setOperatingCompany(company);</span>
+<span class="fc" id="L944">    }</span>
+
+
+    private void setActionForPrivateExchange(TrainType soldOutTrainType) {
+<span class="fc" id="L948">        PrivateCompany company = companyManager.getPrivateCompany(&quot;WR&quot;);</span>
+<span class="fc bfc" id="L949" title="All 2 branches covered.">        if (company.isClosed() == false) {</span>
+<span class="fc" id="L950">            manditoryNextAction = ExchangeForCash.getAction(company, soldOutTrainType);</span>
+        }
+<span class="fc" id="L952">    }</span>
+
+    private boolean exchangeForCash(ExchangeForCash action) {
+<span class="fc bfc" id="L955" title="All 2 branches covered.">        if (action.getExchangeCompany() == true) {</span>
+<span class="fc" id="L956">            ReportBuffer.add(this, LocalText.getText(&quot;WrExchanged&quot;,</span>
+<span class="fc" id="L957">                    action.getOwnerName(), action.getCashValue()));</span>
+<span class="fc" id="L958">            Player player =</span>
+<span class="fc" id="L959">                    playerManager.getPlayerByName(action.getOwnerName());</span>
+<span class="fc" id="L960">            Currency.wire (bank, action.getCashValue(), player);</span>
+<span class="fc" id="L961">            companyManager.getPrivateCompany(&quot;WR&quot;).close();</span>
+        }
+<span class="fc" id="L963">        finishOR();</span>
+<span class="fc" id="L964">        return true;</span>
+    }
+
+    private boolean checkForForcedRocketExchange() {
+<span class="fc" id="L968">        PrivateCompany rocket = companyManager.getPrivateCompany(&quot;RC&quot;);</span>
+
+<span class="pc bpc" id="L970" title="1 of 2 branches missed.">        if (rocket.isClosed() == true) {</span>
+<span class="fc" id="L971">            return false;</span>
+        }
+
+<span class="nc" id="L974">        Player rocketOwner = (Player) rocket.getOwner(); //TODO : Check if correct !!</span>
+<span class="nc" id="L975">        List&lt;PublicCompany_1880&gt; ownedCompaniesWithSpace =</span>
+                new ArrayList&lt;PublicCompany_1880&gt;();
+<span class="nc" id="L977">        List&lt;PublicCompany_1880&gt; ownedCompaniesFull =</span>
+                new ArrayList&lt;PublicCompany_1880&gt;();
+
+<span class="nc bnc" id="L980" title="All 2 branches missed.">        for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {</span>
+<span class="nc bnc" id="L981" title="All 2 branches missed.">            if (company.getPresident() == rocketOwner) {</span>
+<span class="nc bnc" id="L982" title="All 2 branches missed.">                if (company.getNumberOfTrains() &lt; company.getCurrentTrainLimit()) {</span>
+<span class="nc" id="L983">                    ownedCompaniesWithSpace.add(company);</span>
+                } else {
+<span class="nc" id="L985">                    ownedCompaniesFull.add(company);</span>
+                }
+            }
+<span class="nc" id="L988">        }</span>
+
+<span class="nc" id="L990">        ForcedRocketExchange action = null;</span>
+<span class="nc bnc" id="L991" title="All 2 branches missed.">        if (ownedCompaniesWithSpace.isEmpty() == false) {</span>
+<span class="nc" id="L992">            action = new ForcedRocketExchange();</span>
+<span class="nc bnc" id="L993" title="All 2 branches missed.">            for (PublicCompany_1880 company : ownedCompaniesWithSpace) {</span>
+<span class="nc" id="L994">                action.addCompanyWithSpace(company);</span>
+<span class="nc" id="L995">            }</span>
+<span class="nc bnc" id="L996" title="All 2 branches missed.">        } else if (ownedCompaniesFull.isEmpty() == false) {</span>
+<span class="nc" id="L997">            action = new ForcedRocketExchange();</span>
+<span class="nc bnc" id="L998" title="All 2 branches missed.">            for (PublicCompany_1880 company : ownedCompaniesFull) {</span>
+<span class="nc" id="L999">                action.addCompanyWithNoSpace(company);</span>
+<span class="nc" id="L1000">            }</span>
+        } else {
+<span class="nc" id="L1002">            ReportBuffer.add(this, LocalText.getText(&quot;RocketLost&quot;, rocketOwner));</span>
+<span class="nc" id="L1003">            rocket.close();</span>
+        }
+<span class="nc" id="L1005">        manditoryNextAction = action;</span>
+<span class="nc bnc" id="L1006" title="All 2 branches missed.">        return (action != null);</span>
+    }
+
+    private boolean forcedRocketExchange(ForcedRocketExchange action) {
+<span class="nc" id="L1010">        Train train = Iterables.get(trainManager.getAvailableNewTrains(),0);</span>
+<span class="nc" id="L1011">        PublicCompany company = companyManager.getPublicCompany(action.getCompanyToReceiveTrain());</span>
+<span class="nc" id="L1012">        String trainNameToReplace = action.getTrainToReplace();</span>
+
+<span class="nc" id="L1014">        Train replacementTrain = null;</span>
+<span class="nc bnc" id="L1015" title="All 2 branches missed.">        for (Train companyTrain : company.getPortfolioModel().getTrainList()) {</span>
+<span class="nc bnc" id="L1016" title="All 2 branches missed.">            if (companyTrain.getId().equals(trainNameToReplace)) {</span>
+<span class="nc" id="L1017">                replacementTrain = companyTrain;</span>
+<span class="nc" id="L1018">                break;</span>
+            }
+<span class="nc" id="L1020">        }</span>
+
+<span class="nc bnc" id="L1022" title="All 2 branches missed.">        if (replacementTrain != null) {</span>
+<span class="nc" id="L1023">            ReportBuffer.add(this, LocalText.getText(&quot;RocketPlacedScrappingTrain&quot;, company.getId(), trainNameToReplace));</span>
+<span class="nc" id="L1024">            replacementTrain.moveTo(scrapHeap);</span>
+        } else {
+<span class="nc" id="L1026">            ReportBuffer.add(this, LocalText.getText(&quot;RocketPlaced&quot;, company.getId()));</span>
+        }
+
+<span class="nc" id="L1029">        company.buyTrain(train, 0);</span>
+<span class="nc" id="L1030">        companyManager.getPrivateCompany(&quot;RC&quot;).close();</span>
+<span class="nc" id="L1031">        train.getCertType().addToBoughtFromIPO();</span>
+<span class="nc" id="L1032">        trainManager.checkTrainAvailability(train, ipo.getParent());</span>
+        // If there are no available trains now, time for a stock round.
+<span class="nc" id="L1034">        Set&lt;Train&gt; trains =</span>
+<span class="nc" id="L1035">                trainManager.getAvailableNewTrains();</span>
+<span class="nc bnc" id="L1036" title="All 2 branches missed.">        if (train.getType() != Iterables.get(trains, 0).getType()) {</span>
+<span class="nc" id="L1037">            finishOR();</span>
+        }
+<span class="nc" id="L1039">        return true;</span>
+    }
+
+
+    private boolean addBuildingPermit(PossibleAction action) {
+<span class="nc" id="L1044">        AddBuildingPermit addPermit = (AddBuildingPermit) ((UseSpecialProperty) action).getSpecialProperty();</span>
+<span class="nc" id="L1045">        ((PublicCompany_1880) operatingCompany.value()).addBuildingPermit(addPermit.getPermitName());</span>
+<span class="nc" id="L1046">        addPermit.setExercised();</span>
+<span class="nc" id="L1047">        ReportBuffer.add(this, LocalText.getText(&quot;AddedRights&quot;, operatingCompany.value().getId(), addPermit.getPermitName()));</span>
+<span class="nc" id="L1048">        return true;</span>
+    }
+
+    /* (non-Javadoc)
+     * @see rails.game.OperatingRound#setBuyableTrains()
+     */
+    @Override
+    public void setBuyableTrains() {
+<span class="pc bpc" id="L1056" title="1 of 2 branches missed.">        if (operatingCompany.getId() == null) return;</span>
+
+<span class="fc" id="L1058">        int cash = operatingCompany.value().getCash();</span>
+
+<span class="fc" id="L1060">        int cost = 0;</span>
+        Set&lt;Train&gt; trains;
+
+
+
+            // Cannot buy a train without any cash, unless you have to
+<span class="pc bpc" id="L1066" title="1 of 4 branches missed.">            if (cash == 0 &amp;&amp; hasValidTrains()) return;</span>
+
+<span class="fc" id="L1068">            boolean canBuyTrainNow = canBuyTrainNow();</span>
+<span class="pc bpc" id="L1069" title="1 of 4 branches missed.">            boolean mustBuyTrain = !hasValidTrains() &amp;&amp; operatingCompany.value().mustOwnATrain();</span>
+<span class="fc" id="L1070">            boolean emergency = false;</span>
+
+<span class="fc" id="L1072">            SortedMap&lt;Integer, Train&gt; newEmergencyTrains = new TreeMap&lt;Integer, Train&gt;();</span>
+<span class="fc" id="L1073">            SortedMap&lt;Integer, Train&gt; usedEmergencyTrains = new TreeMap&lt;Integer, Train&gt;();</span>
+<span class="fc" id="L1074">            TrainManager trainMgr = getRoot().getTrainManager();</span>
+
+            // First check if any more trains may be bought from the Bank
+            // Postpone train limit checking, because an exchange might be possible
+<span class="pc bpc" id="L1078" title="1 of 2 branches missed.">            if (Phase.getCurrent(this).canBuyMoreTrainsPerTurn()</span>
+<span class="nc bnc" id="L1079" title="All 2 branches missed.">                    || trainsBoughtThisTurn.isEmpty()) {</span>
+<span class="fc" id="L1080">                boolean mayBuyMoreOfEachType =</span>
+<span class="fc" id="L1081">                        Phase.getCurrent(this).canBuyMoreTrainsPerTypePerTurn();</span>
+
+                /* New trains */
+<span class="fc" id="L1084">                trains = trainMgr.getAvailableNewTrains();</span>
+<span class="fc bfc" id="L1085" title="All 2 branches covered.">                for (Train train : trains) {</span>
+<span class="pc bpc" id="L1086" title="1 of 2 branches missed.">                    if (!operatingCompany.value().mayBuyTrainType(train)) continue;</span>
+<span class="pc bpc" id="L1087" title="1 of 2 branches missed.">                    if (!mayBuyMoreOfEachType</span>
+<span class="nc bnc" id="L1088" title="All 2 branches missed.">                            &amp;&amp; trainsBoughtThisTurn.contains(train.getCertType())) {</span>
+<span class="nc" id="L1089">                        continue;</span>
+                    }
+
+                    // Allow dual trains (since jun 2011)
+<span class="fc" id="L1093">                    List&lt;TrainType&gt; types = train.getCertType().getPotentialTrainTypes();</span>
+<span class="fc bfc" id="L1094" title="All 2 branches covered.">                    for (TrainType type : types) {</span>
+<span class="fc" id="L1095">                        cost = type.getCost();</span>
+<span class="fc bfc" id="L1096" title="All 2 branches covered.">                        if (cost &lt;= cash) {</span>
+<span class="fc bfc" id="L1097" title="All 2 branches covered.">                            if (canBuyTrainNow) {</span>
+<span class="fc" id="L1098">                                BuyTrain action = new BuyTrain(train, type, getRoot().getBank().getIpo(), cost);</span>
+<span class="fc" id="L1099">                                action.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY</span>
+<span class="fc" id="L1100">                                possibleActions.add(action);</span>
+<span class="fc" id="L1101">                            }</span>
+<span class="fc bfc" id="L1102" title="All 2 branches covered.">                        } else if (mustBuyTrain) {</span>
+                            //TODO : Can't Finance a 2R Train
+<span class="fc bfc" id="L1104" title="All 2 branches covered.">                            if (!train.getType().getName().equals(&quot;2R&quot;)) {</span>
+<span class="fc" id="L1105">                            newEmergencyTrains.put(cost, train);</span>
+                            }
+                        }
+<span class="fc" id="L1108">                    }</span>
+
+<span class="fc bfc" id="L1110" title="All 2 branches covered.">                    if (!canBuyTrainNow) continue;</span>
+
+                    // Can a special property be used?
+                    // N.B. Assume that this never occurs in combination with
+                    // dual trains or train exchanges,
+                    // otherwise the below code must be duplicated above.
+<span class="fc bfc" id="L1116" title="All 2 branches covered.">                    for (SpecialTrainBuy stb : getSpecialProperties(SpecialTrainBuy.class)) {</span>
+<span class="fc" id="L1117">                        int reducedPrice = stb.getPrice(cost);</span>
+<span class="pc bpc" id="L1118" title="1 of 2 branches missed.">                        if (reducedPrice &gt; cash) continue;</span>
+<span class="fc" id="L1119">                        BuyTrain bt = new BuyTrain(train, getRoot().getBank().getIpo(), reducedPrice);</span>
+<span class="fc" id="L1120">                        bt.setSpecialProperty(stb);</span>
+<span class="fc" id="L1121">                        bt.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY</span>
+<span class="fc" id="L1122">                        possibleActions.add(bt);</span>
+<span class="fc" id="L1123">                    }</span>
+
+<span class="fc" id="L1125">                }</span>
+<span class="fc bfc" id="L1126" title="All 2 branches covered.">                if (!canBuyTrainNow) return;</span>
+
+                /* Used trains */
+<span class="fc" id="L1129">                trains = getRoot().getBank().getPool().getPortfolioModel().getUniqueTrains();</span>
+<span class="pc bpc" id="L1130" title="1 of 2 branches missed.">                for (Train train : trains) {</span>
+<span class="nc bnc" id="L1131" title="All 2 branches missed.">                    if (!mayBuyMoreOfEachType</span>
+<span class="nc bnc" id="L1132" title="All 2 branches missed.">                            &amp;&amp; trainsBoughtThisTurn.contains(train.getCertType())) {</span>
+<span class="nc" id="L1133">                        continue;</span>
+                    }
+<span class="nc" id="L1135">                    cost = train.getCost();</span>
+<span class="nc bnc" id="L1136" title="All 2 branches missed.">                    if (cost &lt;= cash) {</span>
+<span class="nc" id="L1137">                        BuyTrain bt = new BuyTrain(train, getRoot().getBank().getPool(), cost);</span>
+<span class="nc" id="L1138">                        bt.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY</span>
+<span class="nc" id="L1139">                        possibleActions.add(bt);</span>
+<span class="nc bnc" id="L1140" title="All 2 branches missed.">                    } else if (mustBuyTrain) {</span>
+<span class="nc" id="L1141">                        usedEmergencyTrains.put(cost, train);</span>
+                    }
+<span class="nc" id="L1143">                }</span>
+<span class="fc bfc" id="L1144" title="All 2 branches covered.">                if (!possibleActions.getType(BuyTrain.class).isEmpty()) { //Check if the train bought is a 2R as that doesn't fulfill the emergency conditions</span>
+<span class="fc" id="L1145">                    List&lt;PossibleAction&gt; pActions=possibleActions.getList();</span>
+<span class="fc bfc" id="L1146" title="All 2 branches covered.">                    for (PossibleAction pAction : pActions) {</span>
+<span class="fc" id="L1147">                        BuyTrain trainAction = ((BuyTrain) pAction);</span>
+<span class="fc bfc" id="L1148" title="All 2 branches covered.">                        if (trainAction.getType().getName().equals(&quot;2R&quot;) ){</span>
+<span class="fc" id="L1149">                            emergency = mustBuyTrain;</span>
+                        }
+                        else {
+<span class="pc bpc" id="L1152" title="1 of 4 branches missed.">                            emergency = mustBuyTrain &amp;&amp; possibleActions.getType(BuyTrain.class).isEmpty();</span>
+                        }
+<span class="fc" id="L1154">                    }</span>
+<span class="fc" id="L1155">                }</span>
+                else {
+<span class="fc" id="L1157">                    emergency = mustBuyTrain;</span>
+                }
+
+
+
+                // If we must buy a train and haven't found one yet, the president must add cash.
+<span class="fc bfc" id="L1163" title="All 4 branches covered.">                if (emergency &amp;&amp; !newEmergencyTrains.isEmpty()) {</span>
+                        // All possible bank trains are buyable
+<span class="fc bfc" id="L1165" title="All 2 branches covered.">                        for (Train train : newEmergencyTrains.values()) {</span>
+<span class="fc" id="L1166">                            BuyTrain bt = new BuyTrain(train, getRoot().getBank().getIpo(), train.getCost());</span>
+<span class="fc" id="L1167">                            bt.setPresidentMustAddCash(train.getCost() - cash);</span>
+<span class="fc" id="L1168">                            bt.setForcedBuyIfNoRoute(mustBuyTrain); // TODO TEMPORARY</span>
+<span class="fc" id="L1169">                            possibleActions.add(bt);</span>
+<span class="fc" id="L1170">                        }</span>
+<span class="pc bpc" id="L1171" title="1 of 2 branches missed.">                        for (Train train : usedEmergencyTrains.values()) {</span>
+<span class="nc" id="L1172">                            BuyTrain bt = new BuyTrain(train, getRoot().getBank().getPool(), train.getCost());</span>
+<span class="nc" id="L1173">                            bt.setPresidentMustAddCash(train.getCost() - cash);</span>
+<span class="nc" id="L1174">                            bt.setForcedBuyIfNoRoute(mustBuyTrain); // TODO TEMPORARY</span>
+<span class="nc" id="L1175">                            possibleActions.add(bt);                        }</span>
+                    }
+                }
+
+<span class="pc bpc" id="L1179" title="1 of 2 branches missed.">            if (!canBuyTrainNow) return;</span>
+
+            /* Other company trains, sorted by president (current player first) */
+<span class="fc bfc" id="L1182" title="All 2 branches covered.">            if (Phase.getCurrent(this).isTrainTradingAllowed()) {</span>
+                BuyTrain bt;
+                Player p;
+                PortfolioModel pfm;
+                int index;
+<span class="fc" id="L1187">                int numberOfPlayers = playerManager.getNumberOfPlayers();</span>
+<span class="fc" id="L1188">                int presidentCash = operatingCompany.value().getPresident().getCash();</span>
+
+                // Set up a list per player of presided companies
+<span class="fc" id="L1191">                List&lt;List&lt;PublicCompany&gt;&gt; companiesPerPlayer =</span>
+                    new ArrayList&lt;List&lt;PublicCompany&gt;&gt;(numberOfPlayers);
+<span class="fc bfc" id="L1193" title="All 2 branches covered.">                for (int i = 0; i &lt; numberOfPlayers; i++)</span>
+<span class="fc" id="L1194">                    companiesPerPlayer.add(new ArrayList&lt;PublicCompany&gt;(4));</span>
+                List&lt;PublicCompany&gt; companies;
+                // Sort out which players preside over which companies.
+<span class="fc bfc" id="L1197" title="All 2 branches covered.">                for (PublicCompany c : companyManager.getAllPublicCompanies()) {</span>
+<span class="fc bfc" id="L1198" title="All 2 branches covered.">                    if (!c.hasFloated()) continue;</span>
+<span class="fc bfc" id="L1199" title="All 4 branches covered.">                    if (c.isClosed() || c == operatingCompany.value()) continue;</span>
+<span class="fc" id="L1200">                    p = c.getPresident();</span>
+<span class="fc" id="L1201">                    index = p.getIndex();</span>
+<span class="fc" id="L1202">                    companiesPerPlayer.get(index).add(c);</span>
+<span class="fc" id="L1203">                }</span>
+                // Scan trains per company per player, operating company president
+                // first
+<span class="fc" id="L1206">                int currentPlayerIndex = playerManager.getCurrentPlayer().getIndex();</span>
+<span class="fc bfc" id="L1207" title="All 2 branches covered.">                for (int i = currentPlayerIndex; i &lt; currentPlayerIndex</span>
+<span class="fc" id="L1208">                + numberOfPlayers; i++) {</span>
+<span class="fc" id="L1209">                    companies = companiesPerPlayer.get(i % numberOfPlayers);</span>
+<span class="fc bfc" id="L1210" title="All 2 branches covered.">                    for (PublicCompany company : companies) {</span>
+<span class="fc" id="L1211">                        pfm = company.getPortfolioModel();</span>
+<span class="fc" id="L1212">                        trains = pfm.getUniqueTrains();</span>
+
+<span class="fc bfc" id="L1214" title="All 2 branches covered.">                        for (Train train : trains) {</span>
+<span class="pc bpc" id="L1215" title="2 of 4 branches missed.">                            if (train.isObsolete() || !train.isTradeable()) continue;</span>
+<span class="fc" id="L1216">                            bt = null;</span>
+<span class="fc bfc" id="L1217" title="All 2 branches covered.">                            if (i != currentPlayerIndex</span>
+<span class="pc bpc" id="L1218" title="1 of 2 branches missed.">                                    &amp;&amp; GameDef.getGameParameterAsBoolean(this, GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS)</span>
+<span class="pc bpc" id="L1219" title="1 of 2 branches missed.">                                    || operatingCompany.value().mustTradeTrainsAtFixedPrice()</span>
+<span class="pc bpc" id="L1220" title="1 of 2 branches missed.">                                    || company.mustTradeTrainsAtFixedPrice()) {</span>
+                                // Fixed price
+<span class="nc bnc" id="L1222" title="All 4 branches missed.">                                if ((cash &gt;= train.getCost()) &amp;&amp; (operatingCompany.value().mayBuyTrainType(train))) {</span>
+<span class="nc" id="L1223">                                    bt = new BuyTrain(train, pfm.getParent(), train.getCost());</span>
+                                } else {
+                                    continue;
+                                }
+<span class="pc bpc" id="L1227" title="3 of 4 branches missed.">                            } else if (cash &gt; 0</span>
+                                    || emergency
+<span class="nc bnc" id="L1229" title="All 2 branches missed.">                                    &amp;&amp; GameDef.getGameParameterAsBoolean(this, GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY)) {</span>
+<span class="fc" id="L1230">                                bt = new BuyTrain(train, pfm.getParent(), 0);</span>
+
+                                // In some games the president may add extra cash up to the list price
+<span class="fc bfc" id="L1233" title="All 4 branches covered.">                                if (emergency &amp;&amp; cash &lt; train.getCost()) {</span>
+<span class="fc" id="L1234">                                    bt.setPresidentMayAddCash(Math.min(train.getCost() - cash,</span>
+                                            presidentCash));
+                                }
+                            }
+<span class="pc bpc" id="L1238" title="1 of 2 branches missed.">                            if (bt != null) possibleActions.add(bt);</span>
+<span class="fc" id="L1239">                        }</span>
+<span class="fc" id="L1240">                    }</span>
+                }
+            }
+
+<span class="pc bpc" id="L1244" title="1 of 2 branches missed.">            if (!operatingCompany.value().mustOwnATrain()</span>
+<span class="fc bfc" id="L1245" title="All 2 branches covered.">                    || hasValidTrains()) {</span>
+<span class="fc" id="L1246">                doneAllowed = true;</span>
+            }
+<span class="fc" id="L1248">    }</span>
+
+    private boolean hasValidTrains() {
+<span class="fc" id="L1251">        Set&lt;Train&gt; trains = operatingCompany.value().getPortfolioModel().getTrainList();</span>
+<span class="fc" id="L1252">        int rTypeFound = 0;</span>
+<span class="fc" id="L1253">        int numberOfTrainsFound = 0;</span>
+
+<span class="fc" id="L1255">        numberOfTrainsFound = operatingCompany.value().getPortfolioModel().getNumberOfTrains();</span>
+
+<span class="fc bfc" id="L1257" title="All 2 branches covered.">        if (numberOfTrainsFound &gt;0) {</span>
+<span class="fc bfc" id="L1258" title="All 2 branches covered.">            for (Train train : trains) {</span>
+<span class="fc bfc" id="L1259" title="All 2 branches covered.">                if (train.getType().getName().equals(&quot;2R&quot;)) rTypeFound++;</span>
+<span class="fc" id="L1260">            }</span>
+<span class="fc bfc" id="L1261" title="All 2 branches covered.">            if (numberOfTrainsFound == rTypeFound) return false;</span>
+<span class="fc" id="L1262">            return true;</span>
+        }
+        else {
+<span class="fc" id="L1265">            return false;</span>
+        }
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

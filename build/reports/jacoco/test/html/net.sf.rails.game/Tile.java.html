@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">Tile.java</span></div><h1>Tile.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
+
+import net.sf.rails.algorithms.RevenueBonusTemplate;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.model.RailsModel;
+import net.sf.rails.game.state.HashSetState;
+
+
+/**
+ * Represents a certain tile &lt;i&gt;type&lt;/i&gt;, identified by its id (tile number).
+ * &lt;p&gt; For each tile number, only one tile object is created. The list
+ * &lt;b&gt;tilesLaid&lt;/b&gt; records in which hexes a certain tile number has been laid.
+ */
+public class Tile extends RailsModel implements Comparable&lt;Tile&gt; {
+
+<span class="fc" id="L32">    public static enum Quantity { LIMITED, UNLIMITED, FIXED; }</span>
+
+<span class="fc" id="L34">    private static final Logger log = LoggerFactory.getLogger(Tile.class);</span>
+
+    /**
+     * The 'external id', which is shown in the UI. Usually equal to the
+     * internal id, but different in case of duplicates.
+     */
+    private String externalId;
+
+    /**
+     * The 'picture id', identifying the picture number to be loaded. Usually
+     * equal to the internal id, but different in case of graphical variants
+     * (such as the 18EU tiles 80-83).
+     */
+    private String pictureId;
+
+    /**
+     * The 'sorting id' which defines the ordering
+     */
+    private String sortingId;
+
+    // if tile is painted on the map (for UI reasons)
+    private boolean prepainted;
+
+    private TileColour colour;
+    private ImmutableSortedMap&lt;Integer, Station&gt; stations;
+
+    private TrackConfig trackConfig;
+    private HexSidesSet possibleRotations;
+    private List&lt;TileUpgrade&gt; upgrades;
+
+    private Quantity quantity;
+    private int count;
+<span class="fc" id="L66">    private boolean allowsMultipleBasesOfOneCompany = false;</span>
+
+    /** Fixed orientation; null if free to rotate */
+<span class="fc" id="L69">    private HexSide fixedOrientation = null;</span>
+
+    // Stop properties
+<span class="fc" id="L72">    private StopType stopType = null;</span>
+
+    /**
+     * Flag indicating that player must reposition any basetokens during the
+     * upgrade.
+     */
+<span class="fc" id="L78">    private boolean relayBaseTokensOnUpgrade = false;</span>
+
+    /**
+     * Records in which hexes a certain tile number has been laid. The size of
+     * the collection indicates the number of tiles laid on the map board.
+     */
+<span class="fc" id="L84">    private final HashSetState&lt;MapHex&gt; tilesLaid = HashSetState.create(this, &quot;tilesLaid&quot;);</span>
+
+    /** Storage of revenueBonus that are bound to the tile */
+<span class="fc" id="L87">    private List&lt;RevenueBonusTemplate&gt; revenueBonuses = null;</span>
+
+    /** CountModel to display the number of available tiles */
+<span class="fc" id="L90">    private final CountModel countModel = new CountModel();</span>
+
+    private Tile(RailsItem owner, String id) {
+<span class="fc" id="L93">        super(owner, id);</span>
+<span class="fc" id="L94">    }</span>
+
+    public static Tile create(TileManager parent, String id) {
+<span class="fc" id="L97">        return new Tile(parent, id);</span>
+    }
+
+    @Override
+    public TileManager getParent() {
+<span class="fc" id="L102">        return (TileManager) super.getParent();</span>
+    }
+
+    /**
+     * @param se &amp;lt;Tile&amp;gt; element from TileSet.xml
+     * @param te &amp;lt;Tile&amp;gt; element from Tiles.xml
+     */
+    public void configureFromXML(Tag setTag, Tag defTag)
+            throws ConfigurationException {
+
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        if (defTag == null) {</span>
+<span class="nc" id="L113">            throw new ConfigurationException(LocalText.getText(&quot;TileMissing&quot;,</span>
+<span class="nc" id="L114">                    getId()));</span>
+        }
+
+<span class="fc" id="L117">        String colourName = defTag.getAttributeAsString(&quot;colour&quot;);</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if (colourName == null)</span>
+<span class="nc" id="L119">            throw new ConfigurationException(LocalText.getText(</span>
+<span class="nc" id="L120">                    &quot;TileColorMissing&quot;, getId()));</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        if (colourName.equalsIgnoreCase(&quot;gray&quot;)) colourName = &quot;grey&quot;;</span>
+        try {
+<span class="fc" id="L123">            colour = TileColour.valueOfIgnoreCase(colourName);</span>
+<span class="nc" id="L124">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L125">            throw new ConfigurationException(LocalText.getText(</span>
+<span class="nc" id="L126">                    &quot;InvalidTileColourName&quot;, getId(), colourName), e);</span>
+<span class="fc" id="L127">        }</span>
+
+        /* Stations */
+<span class="fc" id="L130">        List&lt;Tag&gt; stationTags = defTag.getChildren(&quot;Station&quot;);</span>
+        ImmutableSortedMap.Builder&lt;Integer, Station&gt; stationBuilder =
+<span class="fc" id="L132">                ImmutableSortedMap.naturalOrder();</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if (stationTags != null) {</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">            for (Tag stationTag : stationTags) {</span>
+<span class="fc" id="L135">                Station station = Station.create(this, stationTag);</span>
+<span class="fc" id="L136">                stationBuilder.put(station.getNumber(), station);</span>
+<span class="fc" id="L137">            }</span>
+        }
+<span class="fc" id="L139">        stations = stationBuilder.build();</span>
+
+        /* Tracks (only number per side, no cities yet) */
+<span class="fc" id="L142">        List&lt;Tag&gt; trackTags = defTag.getChildren(&quot;Track&quot;);</span>
+<span class="fc" id="L143">        ImmutableSet.Builder&lt;Track&gt; trackBuilder = ImmutableSet.builder();</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        if (trackTags != null) {</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">            for (Tag trackTag : trackTags) {</span>
+<span class="fc" id="L146">                String fromStr = trackTag.getAttributeAsString(&quot;from&quot;);</span>
+<span class="fc" id="L147">                String toStr = trackTag.getAttributeAsString(&quot;to&quot;);</span>
+<span class="pc bpc" id="L148" title="2 of 4 branches missed.">                if (fromStr == null || toStr == null) {</span>
+<span class="nc" id="L149">                    throw new ConfigurationException(LocalText.getText(</span>
+<span class="nc" id="L150">                            &quot;FromOrToMissing&quot;, getId()));</span>
+                }
+<span class="fc" id="L152">                TrackPoint from = TrackPoint.create(this, fromStr);</span>
+<span class="fc" id="L153">                TrackPoint to = TrackPoint.create(this, toStr);</span>
+<span class="fc" id="L154">                Track track = new Track(from, to);</span>
+<span class="fc" id="L155">                trackBuilder.add(track);</span>
+<span class="fc" id="L156">            }</span>
+        }
+<span class="fc" id="L158">        trackConfig = new TrackConfig(this, trackBuilder.build());</span>
+
+        // define possibleRotations
+<span class="fc" id="L161">        Set&lt;TrackConfig&gt; trackConfigsBuilder = new HashSet&lt;TrackConfig&gt;(6);</span>
+<span class="fc" id="L162">        HexSidesSet.Builder rotationsBuilder = HexSidesSet.builder();</span>
+
+<span class="fc" id="L164">        trackConfigsBuilder.add(trackConfig);</span>
+<span class="fc" id="L165">        rotationsBuilder.set(HexSide.defaultRotation());</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        for (HexSide rotation:HexSide.allExceptDefault()) {</span>
+<span class="fc" id="L167">            TrackConfig nextConfig =</span>
+<span class="fc" id="L168">                    TrackConfig.createByRotation(trackConfig, rotation);</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">            if (trackConfigsBuilder.contains(nextConfig)) continue;</span>
+<span class="fc" id="L170">            trackConfigsBuilder.add(nextConfig);</span>
+<span class="fc" id="L171">            rotationsBuilder.set(rotation);</span>
+<span class="fc" id="L172">        }</span>
+<span class="fc" id="L173">        possibleRotations = rotationsBuilder.build();</span>
+<span class="fc" id="L174">        log.debug(&quot;Allowed rotations for {} are {}&quot;, getId(), possibleRotations);</span>
+
+        /* External (printed) id */
+<span class="fc" id="L177">        externalId = setTag.getAttributeAsString(&quot;extId&quot;, getId());</span>
+
+        /* Picture id */
+<span class="fc" id="L180">        pictureId = setTag.getAttributeAsString(&quot;pic&quot;, getId());</span>
+
+        /* prepainted */
+        try {
+<span class="fc" id="L184">            int intNb = Integer.parseInt(getId());</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">            if (intNb &lt;= 0) {</span>
+<span class="fc" id="L186">               prepainted = true;</span>
+           } else {
+<span class="fc" id="L188">               prepainted = false;</span>
+           }
+<span class="nc" id="L190">        } catch (NumberFormatException e) {</span>
+            // assume that it is not pre-painted to be save if id is non-numerical
+<span class="nc" id="L192">            prepainted = false;</span>
+<span class="fc" id="L193">        }</span>
+
+
+        /* Quantity */
+<span class="fc" id="L197">        count = setTag.getAttributeAsInteger(&quot;quantity&quot;, 0);</span>
+        /* Value '99' and '-1' mean 'unlimited' */
+        /*
+         * BR: added option for unlimited plain tiles: tiles with one track and
+         * no stations
+         */
+<span class="fc" id="L203">        String unlimitedTiles = getRoot().getGameOptions().get(&quot;UnlimitedTiles&quot;);</span>
+<span class="pc bpc" id="L204" title="2 of 4 branches missed.">        if (count == 99 || count == -1</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">                 || &quot;yes&quot;.equalsIgnoreCase(unlimitedTiles)</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">                 || (&quot;yellow plain&quot;.equalsIgnoreCase(unlimitedTiles))</span>
+<span class="nc bnc" id="L207" title="All 4 branches missed.">                     &amp;&amp; trackConfig.size() == 1 &amp;&amp; stations.isEmpty()) {</span>
+<span class="fc" id="L208">            quantity = Quantity.UNLIMITED;</span>
+<span class="fc" id="L209">            count = 0;</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">        } else if (count == 0) {</span>
+<span class="fc" id="L211">            quantity = Quantity.FIXED;</span>
+        } else {
+<span class="fc" id="L213">            quantity = Quantity.LIMITED;</span>
+<span class="fc" id="L214">            count += setTag.getAttributeAsInteger(&quot;quantityIncrement&quot;, 0);</span>
+        }
+
+        /* Multiple base tokens of one company allowed */
+<span class="fc" id="L218">        allowsMultipleBasesOfOneCompany =</span>
+<span class="fc" id="L219">                setTag.hasChild(&quot;AllowsMultipleBasesOfOneCompany&quot;);</span>
+
+<span class="fc" id="L221">        int orientation = setTag.getAttributeAsInteger(&quot;orientation&quot;, -1);</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        if (orientation != -1) {</span>
+<span class="fc" id="L223">            fixedOrientation = HexSide.get(orientation);</span>
+        }
+
+        /* Upgrades */
+<span class="fc" id="L227">        List&lt;Tag&gt; upgradeTags = setTag.getChildren(&quot;Upgrade&quot;);</span>
+
+<span class="fc bfc" id="L229" title="All 2 branches covered.">        if (upgradeTags != null) {</span>
+<span class="fc" id="L230">            upgrades = TileUpgrade.createFromTags(this, upgradeTags);</span>
+        } else {
+<span class="fc" id="L232">            upgrades = ImmutableList.of();</span>
+        }
+
+        // Set reposition base tokens flag
+<span class="fc" id="L236">        relayBaseTokensOnUpgrade =</span>
+<span class="fc" id="L237">                setTag.getAttributeAsBoolean(&quot;relayBaseTokens&quot;,</span>
+                        relayBaseTokensOnUpgrade);
+
+        // revenue bonus
+<span class="fc" id="L241">        List&lt;Tag&gt; bonusTags = setTag.getChildren(&quot;RevenueBonus&quot;);</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">        if (bonusTags != null) {</span>
+<span class="fc" id="L243">            revenueBonuses = new ArrayList&lt;RevenueBonusTemplate&gt;();</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">            for (Tag bonusTag : bonusTags) {</span>
+<span class="fc" id="L245">                RevenueBonusTemplate bonus = new RevenueBonusTemplate();</span>
+<span class="fc" id="L246">                bonus.configureFromXML(bonusTag);</span>
+<span class="fc" id="L247">                revenueBonuses.add(bonus);</span>
+<span class="fc" id="L248">            }</span>
+        }
+
+        // Stop properties
+<span class="fc" id="L252">        Tag accessTag = setTag.getChild(&quot;Access&quot;);</span>
+<span class="fc" id="L253">        stopType =</span>
+<span class="fc" id="L254">                StopType.parseStop(this, accessTag,</span>
+<span class="fc" id="L255">                        getParent().getDefaultStopTypes());</span>
+<span class="fc" id="L256">    }</span>
+
+    public void finishConfiguration(RailsRoot root, int sortingDigits)
+            throws ConfigurationException {
+
+        try {
+<span class="fc" id="L262">            int externalNb = Integer.parseInt(externalId);</span>
+<span class="fc" id="L263">            NumberFormat nf = NumberFormat.getInstance();</span>
+<span class="fc" id="L264">            nf.setMinimumIntegerDigits(sortingDigits);</span>
+<span class="fc" id="L265">            sortingId = nf.format(externalNb);</span>
+<span class="fc" id="L266">        } catch (NumberFormatException e) {</span>
+<span class="fc" id="L267">           sortingId = externalId;</span>
+<span class="fc" id="L268">        }</span>
+
+<span class="fc bfc" id="L270" title="All 2 branches covered.">        for (TileUpgrade upgrade : upgrades) {</span>
+<span class="fc" id="L271">            upgrade.finishConfiguration(root);</span>
+<span class="fc" id="L272">        }</span>
+<span class="fc" id="L273">    }</span>
+
+    public TileColour getColour() {
+<span class="fc" id="L276">        return colour;</span>
+    }
+
+    public String getColourText() {
+<span class="fc" id="L280">        return colour.toText();</span>
+    }
+
+    public int getColourNumber() {
+<span class="fc" id="L284">        return colour.getNumber();</span>
+    }
+
+    public String getPictureId() {
+<span class="nc" id="L288">        return pictureId;</span>
+    }
+
+    public boolean isPrepainted() {
+<span class="nc" id="L292">        return prepainted;</span>
+    }
+
+    public boolean hasTracks(HexSide side) {
+<span class="fc" id="L296">        return trackConfig.hasSideTracks(side);</span>
+    }
+
+    public Set&lt;TrackPoint&gt; getTracks(HexSide side) {
+<span class="nc" id="L300">        return trackConfig.getSideTracks(side);</span>
+    }
+
+    public TrackConfig getTrackConfig() {
+<span class="fc" id="L304">        return trackConfig;</span>
+    }
+
+    /**
+     * Is a tile upgradeable at any time (regardless of the phase)?
+     */
+    public boolean isUpgradeable() {
+<span class="fc" id="L311">        return colour.isUpgradeable();</span>
+    }
+
+    public boolean allowsMultipleBasesOfOneCompany() {
+<span class="fc" id="L315">        return allowsMultipleBasesOfOneCompany;</span>
+    }
+
+    public List&lt;TileUpgrade&gt; getTileUpgrades() {
+<span class="nc" id="L319">        return upgrades;</span>
+    }
+
+    public HashSetState&lt;MapHex&gt; getTilesLaid() {
+<span class="nc" id="L323">        return tilesLaid;</span>
+    }
+
+    /**
+     * Get all possible upgrades for a specific tile on a certain hex
+     */
+
+    public List&lt;Tile&gt; getAllUpgrades(MapHex hex) {
+<span class="nc" id="L331">        List&lt;Tile&gt; upgr = new ArrayList&lt;Tile&gt;();</span>
+<span class="nc bnc" id="L332" title="All 2 branches missed.">        for (TileUpgrade upgrade : upgrades) {</span>
+<span class="nc" id="L333">            Tile tile = upgrade.getTargetTile();</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">            if (upgrade.isAllowedForHex(hex)) {</span>
+<span class="nc" id="L335">                upgr.add(tile);</span>
+            }
+<span class="nc" id="L337">        }</span>
+<span class="nc" id="L338">        return upgr;</span>
+    }
+
+    public TileUpgrade getSpecificUpgrade(Tile targetTile) {
+<span class="fc bfc" id="L342" title="All 2 branches covered.">        for (TileUpgrade upgrade : upgrades) {</span>
+<span class="fc bfc" id="L343" title="All 2 branches covered.">            if (upgrade.getTargetTile() == targetTile) {</span>
+<span class="fc" id="L344">                return upgrade;</span>
+            }
+<span class="fc" id="L346">        }</span>
+<span class="fc" id="L347">        return TileUpgrade.createSpecific(this, targetTile);</span>
+    }
+
+    /** Get a delimited list of all possible upgrades, regardless current phase */
+    public String getUpgradesString(MapHex hex) {
+<span class="nc" id="L352">        StringBuilder b = new StringBuilder();</span>
+        Tile tile;
+<span class="nc bnc" id="L354" title="All 2 branches missed.">        for (TileUpgrade upgrade : upgrades) {</span>
+<span class="nc" id="L355">            tile = upgrade.getTargetTile();</span>
+<span class="nc bnc" id="L356" title="All 2 branches missed.">            if (upgrade.isAllowedForHex(hex)) {</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">                if (b.length() &gt; 0) b.append(&quot;,&quot;);</span>
+<span class="nc" id="L358">                b.append(tile.toText());</span>
+            }
+<span class="nc" id="L360">        }</span>
+
+<span class="nc" id="L362">        return b.toString();</span>
+    }
+
+    public boolean hasStations() {
+<span class="nc bnc" id="L366" title="All 2 branches missed.">        return stations.size() &gt; 0;</span>
+    }
+
+    public Station getStation(int id) {
+<span class="fc" id="L370">        return stations.get(id);</span>
+    }
+
+    public ImmutableSet&lt;Station&gt; getStations() {
+<span class="fc" id="L374">        return ImmutableSet.copyOf(stations.values());</span>
+    }
+
+    public Set&lt;Track&gt; getTracks() {
+<span class="fc" id="L378">        return trackConfig.getTracks();</span>
+    }
+
+    public boolean hasNoStationTracks() {
+<span class="fc" id="L382">        return trackConfig.hasNoStationTracks();</span>
+    }
+
+    public Set&lt;TrackPoint&gt; getTracksPerStation(Station station) {
+<span class="fc" id="L386">        return trackConfig.getStationTracks(station);</span>
+    }
+
+    public HexSidesSet getPossibleRotations() {
+<span class="fc" id="L390">        return possibleRotations;</span>
+    }
+
+    public int getNumStations() {
+<span class="fc" id="L394">        return stations.size();</span>
+    }
+
+    private int getNumSlots() {
+<span class="fc" id="L398">        int slots = 0;</span>
+<span class="fc bfc" id="L399" title="All 2 branches covered.">        for (Station station:stations.values()) {</span>
+<span class="fc" id="L400">            slots += station.getBaseSlots();</span>
+<span class="fc" id="L401">        }</span>
+<span class="fc" id="L402">        return slots;</span>
+    }
+
+    public boolean relayBaseTokensOnUpgrade() {
+<span class="nc" id="L406">        return relayBaseTokensOnUpgrade;</span>
+    }
+
+    public StopType getStopType() {
+<span class="fc" id="L410">        return stopType;</span>
+    }
+
+    /** Register a tile of this type being laid on the map. */
+    public boolean add(MapHex hex) {
+<span class="fc" id="L415">        tilesLaid.add(hex);</span>
+<span class="fc" id="L416">        return true;</span>
+    }
+
+    /** Register a tile of this type being removed from the map. */
+    public boolean remove(MapHex hex) {
+<span class="fc" id="L421">        return tilesLaid.remove(hex);</span>
+    }
+
+    public int getInitialCount() {
+<span class="nc" id="L425">        return count;</span>
+    }
+
+    public boolean isUnlimited() {
+<span class="nc bnc" id="L429" title="All 2 branches missed.">        return quantity == Quantity.UNLIMITED;</span>
+    }
+
+    public boolean isFixed() {
+<span class="nc bnc" id="L433" title="All 2 branches missed.">        return quantity == Quantity.FIXED;</span>
+    }
+
+    /** Return the number of free tiles */
+    public int getFreeCount() {
+<span class="pc bpc" id="L438" title="2 of 4 branches missed.">        switch (quantity) {</span>
+            case LIMITED:
+<span class="fc" id="L440">                return count - tilesLaid.size();</span>
+            case UNLIMITED:
+<span class="fc" id="L442">                return 1;</span>
+            case FIXED:
+<span class="nc" id="L444">                return 0;</span>
+        }
+<span class="nc" id="L446">        return 0; // cannot happen but still</span>
+    }
+
+    public CountModel getCountModel() {
+<span class="nc" id="L450">        return countModel;</span>
+    }
+
+    public HexSide getFixedOrientation() {
+<span class="nc" id="L454">        return fixedOrientation;</span>
+    }
+
+    public List&lt;RevenueBonusTemplate&gt; getRevenueBonuses() {
+<span class="nc" id="L458">        return revenueBonuses;</span>
+    }
+
+
+    @Override
+    public String toText() {
+<span class="fc" id="L464">        return externalId;</span>
+    }
+
+    /** ordering of tiles based first on colour, then on external id.
+     * Here the external id is
+     *  */
+
+    public int compareTo(Tile other) {
+<span class="fc" id="L472">        return ComparisonChain.start()</span>
+<span class="fc" id="L473">                .compare(this.colour, other.colour)</span>
+<span class="fc" id="L474">                .compare(other.getNumSlots(), this.getNumSlots())</span>
+<span class="fc" id="L475">                .compare(other.getNumStations(), this.getNumStations())</span>
+<span class="fc" id="L476">                .compare(this.getTracks().size(), other.getTracks().size())</span>
+<span class="fc" id="L477">                .compare(this.sortingId, other.sortingId)</span>
+<span class="fc" id="L478">                .result();</span>
+    }
+
+    public class CountModel extends RailsModel {
+
+<span class="fc" id="L483">        private CountModel() {</span>
+<span class="fc" id="L484">            super(Tile.this, &quot;CountModel&quot;);</span>
+<span class="fc" id="L485">        }</span>
+
+        @Override
+        public String toText() {
+<span class="nc" id="L489">            String count = null;</span>
+<span class="nc bnc" id="L490" title="All 4 branches missed.">            switch (quantity) {</span>
+                case LIMITED:
+<span class="nc" id="L492">                    count = &quot; (&quot; + String.valueOf(getFreeCount()) + &quot;)&quot;;</span>
+<span class="nc" id="L493">                    break;</span>
+                case UNLIMITED:
+<span class="nc" id="L495">                    count = &quot; (+)&quot;;</span>
+<span class="nc" id="L496">                    break;</span>
+                case FIXED:
+<span class="nc" id="L498">                    count = &quot;&quot;;</span>
+            }
+<span class="nc" id="L500">            return &quot;#&quot; + externalId + count;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

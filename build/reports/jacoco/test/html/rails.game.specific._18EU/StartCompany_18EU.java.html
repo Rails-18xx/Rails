@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StartCompany_18EU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">rails.game.specific._18EU</a> &gt; <span class="el_source">StartCompany_18EU.java</span></div><h1>StartCompany_18EU.java</h1><pre class="source lang-java linenums">package rails.game.specific._18EU;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import rails.game.action.PossibleAction;
+import rails.game.action.StartCompany;
+import net.sf.rails.game.CompanyManager;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.MapManager;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.Stop;
+import net.sf.rails.util.RailsObjects;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
+
+
+/**
+ * Rails 2.0: Updated equals and toString methods
+ */
+public class StartCompany_18EU extends StartCompany {
+
+    // Server settings
+    // Before phase 5: select a minor to merge
+<span class="fc" id="L29">    protected transient List&lt;PublicCompany&gt; minorsToMerge = null;</span>
+<span class="fc" id="L30">    protected String minorsToMergeNames = null;</span>
+    // From phase 5: select a Home station
+<span class="fc" id="L32">    protected boolean requestStartSpaces = false;</span>
+<span class="fc" id="L33">    protected transient List&lt;Stop&gt; availableHomeStations = null;</span>
+<span class="fc" id="L34">    protected String availableHomeStationNames = null;</span>
+
+    // Client settings
+    // Before phase 5: selected minor to merge
+<span class="fc" id="L38">    protected transient PublicCompany chosenMinor = null;</span>
+<span class="fc" id="L39">    protected String chosenMinorName = null;</span>
+    // From phase 5: selected Home station
+<span class="fc" id="L41">    protected transient Stop selectedHomeStation = null;</span>
+<span class="fc" id="L42">    protected String selectedHomeStationName = null;</span>
+
+    public static final long serialVersionUID = 1L;
+
+    public StartCompany_18EU(PublicCompany company, int[] prices) {
+<span class="fc" id="L47">        super(company, prices, 1);</span>
+<span class="fc" id="L48">    }</span>
+
+    public void setMinorsToMerge(List&lt;PublicCompany&gt; minors) {
+
+<span class="fc" id="L52">        minorsToMerge = minors;</span>
+
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if (minorsToMerge != null) {</span>
+<span class="fc" id="L55">            StringBuilder b = new StringBuilder();</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            for (PublicCompany minor : minorsToMerge) {</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">                if (b.length() &gt; 0) b.append(&quot;,&quot;);</span>
+<span class="fc" id="L58">                b.append(minor.getId());</span>
+<span class="fc" id="L59">            }</span>
+<span class="fc" id="L60">            minorsToMergeNames = b.toString();</span>
+        }
+<span class="fc" id="L62">    }</span>
+
+    public void setAvailableHomeStations(List&lt;Stop&gt; stations) {
+<span class="fc" id="L65">        availableHomeStations = stations;</span>
+
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        if (availableHomeStations != null) {</span>
+<span class="fc" id="L68">            StringBuilder b = new StringBuilder();</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            for (Stop station : availableHomeStations) {</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                if (b.length() &gt; 0) b.append(&quot;,&quot;);</span>
+<span class="fc" id="L71">                b.append(station.getSpecificId());</span>
+<span class="fc" id="L72">            }</span>
+<span class="fc" id="L73">            availableHomeStationNames = b.toString();</span>
+        }
+<span class="fc" id="L75">    }</span>
+
+    public List&lt;Stop&gt; getAvailableHomeStations() {
+<span class="nc" id="L78">        return availableHomeStations;</span>
+    }
+
+    public List&lt;PublicCompany&gt; getMinorsToMerge() {
+<span class="nc" id="L82">        return minorsToMerge;</span>
+    }
+
+    public PublicCompany getChosenMinor() {
+<span class="fc" id="L86">        return chosenMinor;</span>
+    }
+
+    public void setChosenMinor(PublicCompany chosenMinor) {
+<span class="nc" id="L90">        this.chosenMinor = chosenMinor;</span>
+<span class="nc" id="L91">        this.chosenMinorName = chosenMinor.getId();</span>
+<span class="nc" id="L92">    }</span>
+
+    public Stop getSelectedHomeStation() {
+        // use delayed selectedHomeStation initialization
+        // as not all cities are defined immediately
+<span class="pc bpc" id="L97" title="2 of 4 branches missed.">        if (selectedHomeStation == null &amp;&amp; selectedHomeStationName != null) {</span>
+<span class="fc" id="L98">            MapManager mapManager = getRoot().getMapManager();</span>
+<span class="fc" id="L99">            String[] parts = parseStationName (selectedHomeStationName);</span>
+<span class="fc" id="L100">            MapHex hex = mapManager.getHex(parts[0]);</span>
+<span class="fc" id="L101">            int stationId = Integer.parseInt(parts[1]);</span>
+<span class="fc" id="L102">            selectedHomeStation = hex.getRelatedStop(stationId);</span>
+        }
+
+<span class="fc" id="L105">        return selectedHomeStation;</span>
+    }
+
+    public void setHomeStation(Stop homeStation) {
+<span class="nc" id="L109">        selectedHomeStation = homeStation;</span>
+<span class="nc" id="L110">        selectedHomeStationName = homeStation.getSpecificId();</span>
+<span class="nc" id="L111">    }</span>
+
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if (pa == this) return true;</span>
+        //  super checks both class identity and super class attributes
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (!super.equalsAs(pa, asOption)) return false;</span>
+
+        // check asOption attributes
+<span class="fc" id="L121">        StartCompany_18EU action = (StartCompany_18EU)pa;</span>
+<span class="fc" id="L122">        boolean options =</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">                Objects.equal(this.requestStartSpaces, action.requestStartSpaces)</span>
+                // availableHomeStations does not work correctly, as here sometimes the station number deviate
+               // &amp;&amp; RailsObjects.elementEquals(this.availableHomeStations, action.availableHomeStations)
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">                &amp;&amp; RailsObjects.elementEquals(this.minorsToMerge, action.minorsToMerge)</span>
+        ;
+
+        // finish if asOptions check
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (asOption) return options;</span>
+
+        // check asAction attributes
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        return options</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.chosenMinor, action.chosenMinor)</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.selectedHomeStation, action.selectedHomeStation)</span>
+        ;
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L141">        return super.toString() +</span>
+<span class="fc" id="L142">                RailsObjects.stringHelper(this)</span>
+<span class="fc" id="L143">                    .addToString(&quot;minorsToMerge&quot;, minorsToMerge)</span>
+<span class="fc" id="L144">                    .addToString(&quot;requestStartSpaces&quot;, requestStartSpaces)</span>
+<span class="fc" id="L145">                    .addToString(&quot;availableHomeStations&quot;, availableHomeStations)</span>
+<span class="fc" id="L146">                    .addToStringOnlyActed(&quot;chosenMinor&quot;, chosenMinor)</span>
+<span class="fc" id="L147">                    .addToStringOnlyActed(&quot;selectedHomeStation&quot;, selectedHomeStation)</span>
+<span class="fc" id="L148">                    .toString()</span>
+        ;
+
+    }
+
+    /** Deserialize */
+    private void readObject(ObjectInputStream in) throws IOException,
+    ClassNotFoundException {
+
+<span class="fc" id="L157">        in.defaultReadObject();</span>
+
+<span class="fc" id="L159">        CompanyManager cmgr = getCompanyManager();</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        if (minorsToMergeNames != null) {</span>
+<span class="fc" id="L161">            minorsToMerge = new ArrayList&lt;PublicCompany&gt;();</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">            for (String name : minorsToMergeNames.split(&quot;,&quot;)) {</span>
+<span class="fc" id="L163">                minorsToMerge.add(cmgr.getPublicCompany(name));</span>
+            }
+        }
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if (chosenMinorName != null) {</span>
+<span class="fc" id="L167">            chosenMinor = cmgr.getPublicCompany(chosenMinorName);</span>
+        }
+
+<span class="fc" id="L170">        MapManager mapManager = RailsRoot.getInstance().getMapManager();</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        if (availableHomeStationNames != null) {</span>
+<span class="fc" id="L172">            availableHomeStations = new ArrayList&lt;Stop&gt;();</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">            for (String cityName : availableHomeStationNames.split(&quot;,&quot;)) {</span>
+<span class="fc" id="L174">                String[] parts = parseStationName (cityName);</span>
+<span class="fc" id="L175">                MapHex hex = mapManager.getHex(parts[0]);</span>
+<span class="fc" id="L176">                int stationId = Integer.parseInt(parts[1]);</span>
+<span class="fc" id="L177">                availableHomeStations.add (hex.getRelatedStop(stationId));</span>
+            }
+        }
+        // selectedHomeStation is delayed
+<span class="fc" id="L181">    }</span>
+
+    private String[] parseStationName (String name) {
+
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        if (name.contains(&quot; on &quot;)) {</span>
+            // Old style
+<span class="nc" id="L187">            String[] parts = name.split(&quot; &quot;);</span>
+<span class="nc" id="L188">            return new String[] {parts[4], parts[1]};</span>
+        } else {
+            // New style
+<span class="fc" id="L191">            return name.split(&quot;/&quot;);</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

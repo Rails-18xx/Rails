@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SystemOS.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.util</a> &gt; <span class="el_source">SystemOS.java</span></div><h1>SystemOS.java</h1><pre class="source lang-java linenums">package net.sf.rails.util;
+
+import java.io.File;
+
+/**
+ * Utility functions that provide support for different OS
+ * specific needs
+ */
+
+<span class="nc" id="L10">public enum SystemOS {</span>
+<span class="nc" id="L11">    WINDOWS, MAC, UNIX;</span>
+    
+    public static SystemOS get() {
+<span class="nc bnc" id="L14" title="All 2 branches missed.">        if (System.getProperty(&quot;os.name&quot;).toUpperCase().startsWith(WINDOWS.name())) {</span>
+<span class="nc" id="L15">            return WINDOWS;</span>
+<span class="nc bnc" id="L16" title="All 2 branches missed.">        } else if (System.getProperty(&quot;os.name&quot;).toUpperCase().startsWith(MAC.name())) {</span>
+<span class="nc" id="L17">            return MAC;</span>
+        } else {
+<span class="nc" id="L19">            return UNIX;</span>
+        }
+    }
+
+    /**
+     * @return system specific folder that stores application data folders
+     */
+    public File getAppDataDir() {
+        String pathName;
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        if (this == WINDOWS) {</span>
+            // first tries to locate the application data folder
+<span class="nc" id="L30">            pathName = System.getenv(&quot;APPDATA&quot;);</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">            if (pathName == null) {</span>
+<span class="nc" id="L32">                pathName = System.getenv(&quot;USERPROFILE&quot;);</span>
+            }
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        } else if (this == MAC) {</span>
+<span class="nc" id="L35">            pathName = System.getProperty(&quot;user.home&quot;) + &quot;/Library/Preferences&quot;;</span>
+        } else {
+<span class="nc" id="L37">            pathName = System.getProperty(&quot;user.home&quot;);</span>
+        }
+<span class="nc" id="L39">        File folder = new File(pathName);</span>
+<span class="nc" id="L40">        return folder;</span>
+    }
+    
+    /**
+     * Returns the folder that contains all rails specific user data
+     * Returns null if the operations fails 
+     * @param create set to true creates the folder if it does not exist 
+     * @return rails specific configuration folder     */
+    public File getConfigurationFolder(boolean create) {
+        
+        // check for existing application folder
+<span class="nc" id="L51">        File folder = getAppDataDir();</span>
+<span class="nc bnc" id="L52" title="All 4 branches missed.">        if (!folder.exists() || !folder.isDirectory()) {</span>
+            // fall back to working directory
+<span class="nc" id="L54">            folder = new File(System.getProperty(&quot;user.dir&quot;));</span>
+        }
+
+        String appName;
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (this == WINDOWS) {</span>
+            // first tries to locate the application data folder
+<span class="nc" id="L60">            appName = &quot;rails&quot;;</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        } else if (this == MAC) {</span>
+<span class="nc" id="L62">            appName = &quot;net.sourceforge.rails&quot;;</span>
+        } else {
+<span class="nc" id="L64">            appName = &quot;.rails&quot;;</span>
+        }
+        
+        // locate railsFolder
+<span class="nc" id="L68">        return locateFolder(folder, appName, create);</span>
+    }
+    
+    /**
+     * Returns a sub-folder inside the Rails configuration folder
+     * Returns null if the operations fails 
+     * @param subFolder the folder inside
+     * @param create set to true creates the subFolder and/or
+     * configFolder if it does not exist 
+     * @return rails specific configuration folder 
+     */
+    public File getConfigurationFolder(String subFolder, boolean create) {
+<span class="nc" id="L80">        File railsFolder = getConfigurationFolder(create);</span>
+        
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (railsFolder == null) return null;</span>
+        
+        // locate subFolder
+<span class="nc" id="L85">        return locateFolder(railsFolder, subFolder, create);</span>
+    }
+
+    private File locateFolder(File folder, String sub, boolean create) {
+<span class="nc" id="L89">        File subFolder = new File(folder, sub);</span>
+        
+<span class="nc bnc" id="L91" title="All 4 branches missed.">        if (!subFolder.exists() &amp;&amp; create) {</span>
+<span class="nc" id="L92">            createFolder(subFolder);</span>
+        }
+        
+<span class="nc bnc" id="L95" title="All 4 branches missed.">        if (subFolder.exists() &amp;&amp; subFolder.isDirectory()) {</span>
+<span class="nc" id="L96">            return subFolder;</span>
+        } else {
+<span class="nc" id="L98">            return null;</span>
+        }
+    }
+    
+    private boolean createFolder(File folder) {
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (folder.exists()) {</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            if (folder.isDirectory()) {</span>
+<span class="nc" id="L105">                return true;</span>
+            } else {
+<span class="nc" id="L107">                return false;</span>
+            }
+        } else {
+            try {
+<span class="nc" id="L111">                return folder.mkdir();</span>
+<span class="nc" id="L112">            } catch (Exception e) {</span>
+<span class="nc" id="L113">                return false;</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

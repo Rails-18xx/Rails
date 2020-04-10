@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.sf.rails.game.state.HashSetStateTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2020-04-10T19:48:54" hostname="marc-desktop" time="0.007">
+  <properties/>
+  <testcase name="testAdd" classname="net.sf.rails.game.state.HashSetStateTest" time="0.002"/>
+  <testcase name="testClear" classname="net.sf.rails.game.state.HashSetStateTest" time="0.001"/>
+  <testcase name="testSize" classname="net.sf.rails.game.state.HashSetStateTest" time="0.0"/>
+  <testcase name="testView" classname="net.sf.rails.game.state.HashSetStateTest" time="0.0"/>
+  <testcase name="testContains" classname="net.sf.rails.game.state.HashSetStateTest" time="0.0"/>
+  <testcase name="testIsEmpty" classname="net.sf.rails.game.state.HashSetStateTest" time="0.0"/>
+  <testcase name="testRemove" classname="net.sf.rails.game.state.HashSetStateTest" time="0.001"/>
+  <testcase name="testIterator" classname="net.sf.rails.game.state.HashSetStateTest" time="0.001"/>
+  <testcase name="testCreationWithList" classname="net.sf.rails.game.state.HashSetStateTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

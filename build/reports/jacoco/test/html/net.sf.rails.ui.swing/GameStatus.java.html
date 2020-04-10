@@ -1,0 +1,1205 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameStatus.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing</a> &gt; <span class="el_source">GameStatus.java</span></div><h1>GameStatus.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.state.MoneyOwner;
+import net.sf.rails.sound.SoundManager;
+import net.sf.rails.ui.swing.elements.Caption;
+import net.sf.rails.ui.swing.elements.ClickField;
+import net.sf.rails.ui.swing.elements.Field;
+import net.sf.rails.ui.swing.elements.RadioButtonDialog;
+import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
+import net.sf.rails.util.Util;
+import rails.game.action.BuyCertificate;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.PossibleActions;
+import rails.game.action.SellShares;
+import rails.game.action.StartCompany;
+import rails.game.correct.CashCorrectionAction;
+import rails.game.specific._18EU.StartCompany_18EU;
+
+
+/**
+ * This class is incorporated into StatusWindow and displays the bulk of
+ * rails.game status information.
+ */
+public class GameStatus extends GridPanel implements ActionListener {
+    private static final long serialVersionUID = 1L;
+
+    protected static final String BUY_FROM_IPO_CMD = &quot;BuyFromIPO&quot;;
+    protected static final String BUY_FROM_POOL_CMD = &quot;BuyFromPool&quot;;
+    protected static final String SELL_CMD = &quot;Sell&quot;;
+    protected static final String CASH_CORRECT_CMD = &quot;CorrectCash&quot;;
+
+    protected StatusWindow parent;
+
+    // Grid elements per function
+    protected Field certPerPlayer[][];
+    protected ClickField certPerPlayerButton[][];
+    protected int certPerPlayerXOffset, certPerPlayerYOffset;
+    protected Field certInIPO[];
+    protected ClickField certInIPOButton[];
+    protected int certInIPOXOffset, certInIPOYOffset;
+    protected Field certInPool[];
+    protected ClickField certInPoolButton[];
+    protected int certInPoolXOffset, certInPoolYOffset;
+    protected Field certInTreasury[];
+    protected ClickField certInTreasuryButton[];
+    protected int certInTreasuryXOffset, certInTreasuryYOffset;
+    protected Field parPrice[];
+    protected int parPriceXOffset, parPriceYOffset;
+    protected Field currPrice[];
+    protected int currPriceXOffset, currPriceYOffset;
+    protected Field compCash[];
+    protected ClickField compCashButton[];
+    protected int compCashXOffset, compCashYOffset;
+    protected Field compRevenue[];
+    protected int compRevenueXOffset, compRevenueYOffset;
+    protected Field compTrains[];
+    protected int compTrainsXOffset, compTrainsYOffset;
+    protected Field compTokens[];
+    protected int compTokensXOffset, compTokensYOffset;
+    protected Field compPrivates[];
+    protected int compPrivatesXOffset, compPrivatesYOffset;
+    protected Field compLoans[];
+    protected int compLoansXOffset, compLoansYOffset;
+    protected int rightsXOffset, rightsYOffset;
+    protected Field rights[];
+    protected Field playerCash[];
+    protected ClickField playerCashButton[];
+    protected int playerCashXOffset, playerCashYOffset;
+    protected Field playerPrivates[];
+    protected int playerPrivatesXOffset, playerPrivatesYOffset;
+    protected Field playerWorth[];
+    protected int playerWorthXOffset, playerWorthYOffset;
+    protected Field playerORWorthIncrease[];
+    protected int playerORWorthIncreaseXOffset, playerORWorthIncreaseYOffset;
+    protected Field playerCertCount[];
+    protected int playerCertCountXOffset, playerCertCountYOffset;
+    protected int certLimitXOffset, certLimitYOffset;
+    protected int phaseXOffset, phaseYOffset;
+    protected Field bankCash;
+    protected int bankCashXOffset, bankCashYOffset;
+    protected Field poolTrains;
+    protected int poolTrainsXOffset, poolTrainsYOffset;
+    protected Field newTrains;
+    protected int newTrainsXOffset, newTrainsYOffset;
+    protected Field futureTrains;
+    protected int futureTrainsXOffset, futureTrainsYOffset, futureTrainsWidth;
+    protected int rightCompCaptionXOffset;
+
+    /**
+     * Next Field is needed for the direct payment of Income and display of sum
+     * during an OR for a Company, that is not linked to a share.
+     */
+    private Field compDirectRevenue[];
+    private int compDirectRevXOffset, compDirectRevYOffset;
+
+
+    protected Caption[] upperPlayerCaption;
+    protected Caption[] lowerPlayerCaption;
+    protected Caption treasurySharesCaption;
+
+    protected PortfolioModel ipo, pool;
+
+    protected GameUIManager gameUIManager;
+    protected Bank bank;
+
+    protected PossibleActions possibleActions;
+
+<span class="nc" id="L131">    protected boolean hasParPrices = false;</span>
+<span class="nc" id="L132">    protected boolean compCanBuyPrivates = false;</span>
+<span class="nc" id="L133">    protected boolean compCanHoldOwnShares = false;</span>
+<span class="nc" id="L134">    protected boolean compCanHoldForeignShares = false; // NOT YET USED</span>
+<span class="nc" id="L135">    protected boolean hasCompanyLoans = false;</span>
+    protected boolean hasRights;
+<span class="nc" id="L137">    private boolean hasDirectCompanyIncomeInOr = false;</span>
+
+
+    // Current actor.
+    // Players: 0, 1, 2, ...
+    // Company (from treasury): -1.
+<span class="nc" id="L143">    protected int actorIndex = -2;</span>
+
+<span class="nc" id="L145">    protected final ButtonGroup buySellGroup = new ButtonGroup();</span>
+    protected ClickField dummyButton; // To be selected if none else is.
+
+<span class="nc" id="L148">    protected final Map&lt;PublicCompany, Integer&gt; companyIndex = Maps.newHashMap();</span>
+<span class="nc" id="L149">    protected final Map&lt;Player, Integer&gt; playerIndex = Maps.newHashMap();</span>
+
+<span class="fc" id="L151">    private static final Logger log =</span>
+<span class="fc" id="L152">        LoggerFactory.getLogger(GameStatus.class);</span>
+
+    public GameStatus() {
+<span class="nc" id="L155">        super();</span>
+<span class="nc" id="L156">    }</span>
+
+    public void init(StatusWindow parent, GameUIManager gameUIManager) {
+
+<span class="nc" id="L160">        this.parent = parent;</span>
+<span class="nc" id="L161">        this.gameUIManager = gameUIManager;</span>
+<span class="nc" id="L162">        bank = gameUIManager.getRoot().getBank();</span>
+<span class="nc" id="L163">        possibleActions = gameUIManager.getGameManager().getPossibleActions();</span>
+
+<span class="nc" id="L165">        gridPanel = this;</span>
+<span class="nc" id="L166">        parentFrame = parent;</span>
+
+<span class="nc" id="L168">        gb = new GridBagLayout();</span>
+<span class="nc" id="L169">        this.setLayout(gb);</span>
+<span class="nc" id="L170">        UIManager.put(&quot;ToggleButton.select&quot;, buttonHighlight);</span>
+
+<span class="nc" id="L172">        gbc = new GridBagConstraints();</span>
+<span class="nc" id="L173">        setSize(800, 300);</span>
+<span class="nc" id="L174">        setLocation(0, 450);</span>
+<span class="nc" id="L175">        setBorder(BorderFactory.createEtchedBorder());</span>
+<span class="nc" id="L176">        setOpaque(false);</span>
+
+<span class="nc" id="L178">        players = gameUIManager.getPlayers().toArray(new Player[0]);</span>
+<span class="nc" id="L179">        np = gameUIManager.getNumberOfPlayers();</span>
+<span class="nc" id="L180">        companies = gameUIManager.getAllPublicCompanies().toArray(new PublicCompany[0]);</span>
+<span class="nc" id="L181">        nc = companies.length;</span>
+
+<span class="nc" id="L183">        hasParPrices = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_PAR_PRICE);</span>
+<span class="nc" id="L184">        compCanBuyPrivates = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);</span>
+<span class="nc" id="L185">        compCanHoldOwnShares = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);</span>
+<span class="nc" id="L186">        hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);</span>
+<span class="nc" id="L187">        hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);</span>
+<span class="nc" id="L188">        hasDirectCompanyIncomeInOr= gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);</span>
+
+        // TODO: Can this be done using ipo and pool directly?
+<span class="nc" id="L191">        ipo = bank.getIpo().getPortfolioModel();</span>
+<span class="nc" id="L192">        pool = bank.getPool().getPortfolioModel();</span>
+
+<span class="nc" id="L194">        certPerPlayer = new Field[nc][np];</span>
+<span class="nc" id="L195">        certPerPlayerButton = new ClickField[nc][np];</span>
+<span class="nc" id="L196">        certInIPO = new Field[nc];</span>
+<span class="nc" id="L197">        certInIPOButton = new ClickField[nc];</span>
+<span class="nc" id="L198">        certInPool = new Field[nc];</span>
+<span class="nc" id="L199">        certInPoolButton = new ClickField[nc];</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        if (compCanHoldOwnShares) {</span>
+<span class="nc" id="L201">            certInTreasury = new Field[nc];</span>
+<span class="nc" id="L202">            certInTreasuryButton = new ClickField[nc];</span>
+        }
+<span class="nc" id="L204">        parPrice = new Field[nc];</span>
+<span class="nc" id="L205">        currPrice = new Field[nc];</span>
+<span class="nc" id="L206">        compCash = new Field[nc];</span>
+<span class="nc" id="L207">        compCashButton = new ClickField[nc];</span>
+<span class="nc" id="L208">        compRevenue = new Field[nc];</span>
+<span class="nc" id="L209">        compTrains = new Field[nc];</span>
+<span class="nc" id="L210">        compTokens = new Field[nc];</span>
+<span class="nc" id="L211">        compPrivates = new Field[nc];</span>
+<span class="nc" id="L212">        compLoans = new Field[nc];</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        if (hasRights) rights = new Field[nc];</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (hasDirectCompanyIncomeInOr) compDirectRevenue= new Field[nc];</span>
+
+<span class="nc" id="L216">        playerCash = new Field[np];</span>
+<span class="nc" id="L217">        playerCashButton = new ClickField[np];</span>
+<span class="nc" id="L218">        playerPrivates = new Field[np];</span>
+<span class="nc" id="L219">        playerWorth = new Field[np];</span>
+<span class="nc" id="L220">        playerORWorthIncrease = new Field[np];</span>
+<span class="nc" id="L221">        playerCertCount = new Field[np];</span>
+<span class="nc" id="L222">        upperPlayerCaption = new Caption[np];</span>
+<span class="nc" id="L223">        lowerPlayerCaption = new Caption[np];</span>
+
+<span class="nc" id="L225">        int lastX = 0;</span>
+<span class="nc" id="L226">        int lastY = 1;</span>
+<span class="nc" id="L227">        certPerPlayerXOffset = ++lastX;</span>
+<span class="nc" id="L228">        certPerPlayerYOffset = ++lastY;</span>
+<span class="nc" id="L229">        certInIPOXOffset = (lastX += np);</span>
+<span class="nc" id="L230">        certInIPOYOffset = lastY;</span>
+<span class="nc" id="L231">        certInPoolXOffset = ++lastX;</span>
+<span class="nc" id="L232">        certInPoolYOffset = lastY;</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        if (compCanHoldOwnShares) {</span>
+<span class="nc" id="L234">            certInTreasuryXOffset = ++lastX;</span>
+<span class="nc" id="L235">            certInTreasuryYOffset = lastY;</span>
+        }
+<span class="nc bnc" id="L237" title="All 2 branches missed.">        if (hasParPrices) {</span>
+<span class="nc" id="L238">            parPriceXOffset = ++lastX;</span>
+<span class="nc" id="L239">            parPriceYOffset = lastY;</span>
+        }
+<span class="nc" id="L241">        currPriceXOffset = ++lastX;</span>
+<span class="nc" id="L242">        currPriceYOffset = lastY;</span>
+<span class="nc" id="L243">        compCashXOffset = ++lastX;</span>
+<span class="nc" id="L244">        compCashYOffset = lastY;</span>
+<span class="nc" id="L245">        compRevenueXOffset = ++lastX;</span>
+<span class="nc" id="L246">        compRevenueYOffset = lastY;</span>
+<span class="nc bnc" id="L247" title="All 2 branches missed.">        if (hasDirectCompanyIncomeInOr) {</span>
+<span class="nc" id="L248">            compDirectRevXOffset = ++lastX;</span>
+<span class="nc" id="L249">            compDirectRevYOffset = lastY;</span>
+        }
+<span class="nc" id="L251">        compTrainsXOffset = ++lastX;</span>
+<span class="nc" id="L252">        compTrainsYOffset = lastY;</span>
+<span class="nc" id="L253">        compTokensXOffset = ++lastX;</span>
+<span class="nc" id="L254">        compTokensYOffset = lastY;</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">        if (compCanBuyPrivates) {</span>
+<span class="nc" id="L256">            compPrivatesXOffset = ++lastX;</span>
+<span class="nc" id="L257">            compPrivatesYOffset = lastY;</span>
+        }
+<span class="nc bnc" id="L259" title="All 2 branches missed.">        if (hasCompanyLoans) {</span>
+<span class="nc" id="L260">            compLoansXOffset = ++lastX;</span>
+<span class="nc" id="L261">            compLoansYOffset = lastY;</span>
+        }
+<span class="nc bnc" id="L263" title="All 2 branches missed.">        if (hasRights) {</span>
+<span class="nc" id="L264">            rightsXOffset = ++lastX;</span>
+<span class="nc" id="L265">            rightsYOffset = lastY;</span>
+        }
+<span class="nc" id="L267">        rightCompCaptionXOffset = ++lastX;</span>
+
+<span class="nc" id="L269">        playerCashXOffset = certPerPlayerXOffset;</span>
+<span class="nc" id="L270">        playerCashYOffset = (lastY += nc);</span>
+<span class="nc" id="L271">        playerPrivatesXOffset = certPerPlayerXOffset;</span>
+<span class="nc" id="L272">        playerPrivatesYOffset = ++lastY;</span>
+<span class="nc" id="L273">        playerWorthXOffset = certPerPlayerXOffset;</span>
+<span class="nc" id="L274">        playerWorthYOffset = ++lastY;</span>
+<span class="nc" id="L275">        playerORWorthIncreaseXOffset = certPerPlayerXOffset;</span>
+<span class="nc" id="L276">        playerORWorthIncreaseYOffset = ++lastY;</span>
+<span class="nc" id="L277">        playerCertCountXOffset = certPerPlayerXOffset;</span>
+<span class="nc" id="L278">        playerCertCountYOffset = ++lastY;</span>
+<span class="nc" id="L279">        certLimitXOffset = certInPoolXOffset;</span>
+<span class="nc" id="L280">        certLimitYOffset = playerCertCountYOffset;</span>
+<span class="nc" id="L281">        phaseXOffset = certInPoolXOffset + 2;</span>
+<span class="nc" id="L282">        phaseYOffset = playerCertCountYOffset;</span>
+<span class="nc" id="L283">        bankCashXOffset = certInPoolXOffset;</span>
+<span class="nc" id="L284">        bankCashYOffset = playerPrivatesYOffset;</span>
+<span class="nc" id="L285">        poolTrainsXOffset = bankCashXOffset + 2;</span>
+<span class="nc" id="L286">        poolTrainsYOffset = playerPrivatesYOffset;</span>
+<span class="nc" id="L287">        newTrainsXOffset = poolTrainsXOffset + 1;</span>
+<span class="nc" id="L288">        newTrainsYOffset = playerPrivatesYOffset;</span>
+<span class="nc" id="L289">        futureTrainsXOffset = newTrainsXOffset + 1;</span>
+<span class="nc" id="L290">        futureTrainsYOffset = playerPrivatesYOffset;</span>
+<span class="nc" id="L291">        futureTrainsWidth = rightCompCaptionXOffset - futureTrainsXOffset;</span>
+
+<span class="nc" id="L293">        fields = new JComponent[1+lastX][2+lastY];</span>
+<span class="nc" id="L294">        rowVisibilityObservers = new RowVisibility[nc];</span>
+
+<span class="nc" id="L296">        initFields();</span>
+
+<span class="nc" id="L298">    }</span>
+
+    protected void initFields() {
+
+<span class="nc" id="L302">        MouseListener companyCaptionMouseClickListener = gameUIManager.getORUIManager().getORPanel().getCompanyCaptionMouseClickListener();</span>
+
+<span class="nc" id="L304">        addField(new Caption(LocalText.getText(&quot;COMPANY&quot;)), 0, 0, 1, 2,</span>
+                WIDE_BOTTOM, true);
+<span class="nc" id="L306">        addField(new Caption(LocalText.getText(&quot;PLAYERS&quot;)),</span>
+                certPerPlayerXOffset, 0, np, 1, WIDE_LEFT + WIDE_RIGHT, true);
+<span class="nc bnc" id="L308" title="All 2 branches missed.">        for (int i = 0; i &lt; np; i++) {</span>
+<span class="nc" id="L309">            playerIndex.put(players[i], new Integer(i));</span>
+<span class="nc" id="L310">            f = upperPlayerCaption[i] = new Caption(players[i].getNameAndPriority());</span>
+<span class="nc" id="L311">            int wideGapPosition = WIDE_BOTTOM +</span>
+<span class="nc bnc" id="L312" title="All 4 branches missed.">                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);</span>
+<span class="nc" id="L313">            addField(f, certPerPlayerXOffset + i, 1, 1, 1, wideGapPosition, true);</span>
+        }
+<span class="nc" id="L315">        addField(new Caption(LocalText.getText(&quot;BANK_SHARES&quot;)),</span>
+                certInIPOXOffset, 0, 2, 1, WIDE_RIGHT, true);
+<span class="nc" id="L317">        addField(new Caption(LocalText.getText(&quot;IPO&quot;)), certInIPOXOffset, 1, 1,</span>
+                1, WIDE_BOTTOM, true);
+<span class="nc" id="L319">        addField(new Caption(LocalText.getText(&quot;POOL&quot;)), certInPoolXOffset, 1,</span>
+                1, 1, WIDE_RIGHT + WIDE_BOTTOM, true);
+
+<span class="nc bnc" id="L322" title="All 2 branches missed.">        if (compCanHoldOwnShares) {</span>
+<span class="nc" id="L323">            addField(treasurySharesCaption =</span>
+<span class="nc" id="L324">                new Caption(LocalText.getText(&quot;TREASURY_SHARES&quot;)),</span>
+                certInTreasuryXOffset, 0, 1, 2, WIDE_RIGHT + WIDE_BOTTOM, true);
+        }
+
+<span class="nc bnc" id="L328" title="All 2 branches missed.">        if (this.hasParPrices) {</span>
+<span class="nc" id="L329">            addField(new Caption(LocalText.getText(&quot;PRICES&quot;)), parPriceXOffset,</span>
+                    0, 2, 1, WIDE_RIGHT, true);
+<span class="nc" id="L331">            addField(new Caption(LocalText.getText(&quot;PAR&quot;)), parPriceXOffset, 1,</span>
+                    1, 1, WIDE_BOTTOM, true);
+<span class="nc" id="L333">            addField(new Caption(LocalText.getText(&quot;CURRENT&quot;)),</span>
+                    currPriceXOffset, 1, 1, 1, WIDE_RIGHT + WIDE_BOTTOM, true);
+        } else {
+<span class="nc" id="L336">            addField(new Caption(LocalText.getText(&quot;CURRENT_PRICE&quot;)),</span>
+                    currPriceXOffset, 0, 1, 2, WIDE_RIGHT + WIDE_BOTTOM, true);
+
+        }
+<span class="nc" id="L340">        addField(new Caption(LocalText.getText(&quot;COMPANY_DETAILS&quot;)),</span>
+<span class="nc bnc" id="L341" title="All 2 branches missed.">                compCashXOffset, 0, 4 + (compCanBuyPrivates ? 1 : 0)</span>
+<span class="nc bnc" id="L342" title="All 2 branches missed.">                + (hasCompanyLoans ? 1 : 0), 1, 0, true);</span>
+<span class="nc" id="L343">        addField(new Caption(LocalText.getText(&quot;CASH&quot;)), compCashXOffset, 1, 1,</span>
+                1, WIDE_BOTTOM, true);
+<span class="nc" id="L345">        addField(new Caption(LocalText.getText(&quot;REVENUE&quot;)), compRevenueXOffset,</span>
+                1, 1, 1, WIDE_BOTTOM, true);
+<span class="nc bnc" id="L347" title="All 2 branches missed.">        if (this.hasDirectCompanyIncomeInOr) {</span>
+<span class="nc" id="L348">            addField(new Caption(LocalText.getText(&quot;DIRECT_INCOME&quot;)),</span>
+                    compDirectRevXOffset, 1, 1, 1, WIDE_BOTTOM, true);
+        }
+<span class="nc" id="L351">        addField(new Caption(LocalText.getText(&quot;TRAINS&quot;)), compTrainsXOffset,</span>
+                1, 1, 1, WIDE_BOTTOM, true);
+<span class="nc" id="L353">        addField(new Caption(LocalText.getText(&quot;TOKENS&quot;)), compTokensXOffset,</span>
+                1, 1, 1, WIDE_BOTTOM, true);
+<span class="nc bnc" id="L355" title="All 2 branches missed.">        if (compCanBuyPrivates) {</span>
+<span class="nc" id="L356">            addField(new Caption(LocalText.getText(&quot;PRIVATES&quot;)),</span>
+                    compPrivatesXOffset, 1, 1, 1, WIDE_BOTTOM, true);
+        }
+<span class="nc bnc" id="L359" title="All 2 branches missed.">        if (hasCompanyLoans) {</span>
+<span class="nc" id="L360">            addField (new Caption (LocalText.getText(&quot;LOANS&quot;)),</span>
+                    compLoansXOffset, 1, 1, 1, WIDE_BOTTOM, true);
+        }
+<span class="nc bnc" id="L363" title="All 2 branches missed.">        if (hasRights) {</span>
+<span class="nc" id="L364">            addField (new Caption(LocalText.getText(&quot;RIGHTS&quot;)),</span>
+                    rightsXOffset, 1, 1, 1, WIDE_BOTTOM, true);
+        }
+
+<span class="nc" id="L368">        addField(new Caption(LocalText.getText(&quot;COMPANY&quot;)),</span>
+                rightCompCaptionXOffset, 0, 1, 2, WIDE_LEFT + WIDE_BOTTOM, true);
+
+<span class="nc bnc" id="L371" title="All 2 branches missed.">        for (int i = 0; i &lt; nc; i++) {</span>
+<span class="nc" id="L372">            c = companies[i];</span>
+<span class="nc" id="L373">            companyIndex.put(c, new Integer(i));</span>
+<span class="nc" id="L374">            rowVisibilityObservers[i]</span>
+<span class="nc" id="L375">                                   = new RowVisibility(this, certPerPlayerYOffset + i, c.getInGameModel(), false);</span>
+<span class="nc" id="L376">            boolean visible = rowVisibilityObservers[i].lastValue();</span>
+
+<span class="nc" id="L378">            f = new Caption(c.getId());</span>
+<span class="nc" id="L379">            f.setForeground(c.getFgColour());</span>
+<span class="nc" id="L380">            f.setBackground(c.getBgColour());</span>
+<span class="nc" id="L381">            HexHighlightMouseListener.addMouseListener(f,</span>
+<span class="nc" id="L382">                    gameUIManager.getORUIManager(),c,false);</span>
+<span class="nc" id="L383">            f.addMouseListener(companyCaptionMouseClickListener);</span>
+<span class="nc" id="L384">            f.setToolTipText(LocalText.getText(&quot;NetworkInfoDialogTitle&quot;,c.getId()));</span>
+<span class="nc" id="L385">            addField(f, 0, certPerPlayerYOffset + i, 1, 1, 0, visible);</span>
+
+<span class="nc bnc" id="L387" title="All 2 branches missed.">            for (int j = 0; j &lt; np; j++) {</span>
+<span class="nc" id="L388">                f =</span>
+                    certPerPlayer[i][j] =
+                        new Field(
+<span class="nc" id="L391">                                players[j].getPortfolioModel().getShareModel(</span>
+                                        c));
+<span class="nc" id="L393">                ((Field)f).setColorModel(players[j].getSoldThisRoundModel(c));</span>
+<span class="nc bnc" id="L394" title="All 4 branches missed.">                int wideGapPosition = ((j==0)? WIDE_LEFT : 0) + ((j==np-1)? WIDE_RIGHT : 0);</span>
+<span class="nc" id="L395">                addField(f, certPerPlayerXOffset + j, certPerPlayerYOffset + i,</span>
+                        1, 1, wideGapPosition, visible);
+                // TODO: Simplify the assignment (using f as correct local variable)
+<span class="nc" id="L398">                certPerPlayer[i][j].setToolTipModel(players[j].getPortfolioModel().getShareDetailsModel(c));</span>
+<span class="nc" id="L399">                f =</span>
+                    certPerPlayerButton[i][j] =
+                        new ClickField(&quot;&quot;, SELL_CMD,
+<span class="nc" id="L402">                                LocalText.getText(&quot;ClickForSell&quot;),</span>
+                                this, buySellGroup);
+<span class="nc" id="L404">                addField(f, certPerPlayerXOffset + j, certPerPlayerYOffset + i,</span>
+                        1, 1, wideGapPosition, false);
+            }
+<span class="nc" id="L407">            f = certInIPO[i] = new Field(ipo.getShareModel(c));</span>
+<span class="nc" id="L408">            addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, 0, visible);</span>
+            // TODO: Simplify the assignment (using f as correct local variable)
+<span class="nc" id="L410">            certInIPO[i].setToolTipModel(ipo.getShareDetailsModel(c));</span>
+<span class="nc" id="L411">            f =</span>
+                certInIPOButton[i] =
+                    new ClickField(
+<span class="nc" id="L414">                            certInIPO[i].getText(),</span>
+                            BUY_FROM_IPO_CMD,
+<span class="nc" id="L416">                            LocalText.getText(&quot;ClickToSelectForBuying&quot;),</span>
+                            this, buySellGroup);
+<span class="nc" id="L418">            addField(f, certInIPOXOffset, certInIPOYOffset + i, 1, 1, 0, false);</span>
+
+            //no size alignment as button size could also be smaller than the field's one
+            //certInIPO[i].setPreferredSize(certInIPOButton[i].getPreferredSize());
+
+<span class="nc" id="L423">            f = certInPool[i] = new Field(pool.getShareModel(c));</span>
+            // TODO: Simplify the assignment (using f as correct local variable)
+<span class="nc" id="L425">            certInPool[i].setToolTipModel(pool.getShareDetailsModel(c));</span>
+<span class="nc" id="L426">            addField(f, certInPoolXOffset, certInPoolYOffset + i, 1, 1,</span>
+                    WIDE_RIGHT, visible);
+<span class="nc" id="L428">            f =</span>
+                certInPoolButton[i] =
+                    new ClickField(
+<span class="nc" id="L431">                            certInPool[i].getText(),</span>
+                            BUY_FROM_POOL_CMD,
+<span class="nc" id="L433">                            LocalText.getText(&quot;ClickToSelectForBuying&quot;),</span>
+                            this, buySellGroup);
+<span class="nc" id="L435">            addField(f, certInPoolXOffset, certInPoolYOffset + i, 1, 1,</span>
+                    WIDE_RIGHT, false);
+            //no size alignment as button size could also be smaller than the field's one
+            //certInPool[i].setPreferredSize(certInIPOButton[i].getPreferredSize());/* sic */
+
+<span class="nc bnc" id="L440" title="All 2 branches missed.">            if (compCanHoldOwnShares) {</span>
+<span class="nc" id="L441">                f =</span>
+                    certInTreasury[i] =
+<span class="nc" id="L443">                        new Field(c.getPortfolioModel().getShareModel(c));</span>
+                // TODO: Simplify the assignment (using f as correct local variable)
+<span class="nc" id="L445">                certInTreasury[i].setToolTipModel(c.getPortfolioModel().getShareDetailsModel(c));</span>
+<span class="nc" id="L446">                addField(f, certInTreasuryXOffset, certInTreasuryYOffset + i,</span>
+                        1, 1, WIDE_RIGHT, visible);
+<span class="nc" id="L448">                f =</span>
+                    certInTreasuryButton[i] =
+                        new ClickField(
+<span class="nc" id="L451">                                certInTreasury[i].getText(),</span>
+                                BUY_FROM_POOL_CMD,
+<span class="nc" id="L453">                                LocalText.getText(&quot;ClickForSell&quot;),</span>
+                                this, buySellGroup);
+<span class="nc" id="L455">                addField(f, certInTreasuryXOffset, certInTreasuryYOffset + i,</span>
+                        1, 1, WIDE_RIGHT, false);
+<span class="nc" id="L457">                certInTreasury[i].setPreferredSize(certInTreasuryButton[i].getPreferredSize());/* sic */</span>
+            }
+
+<span class="nc bnc" id="L460" title="All 2 branches missed.">            if (this.hasParPrices) {</span>
+<span class="nc" id="L461">                f = parPrice[i] = new Field(c.getParPriceModel());</span>
+<span class="nc" id="L462">                addField(f, parPriceXOffset, parPriceYOffset + i, 1, 1, 0, visible);</span>
+            }
+
+<span class="nc" id="L465">            f = currPrice[i] = new Field(c.getCurrentPriceModel());</span>
+<span class="nc" id="L466">            ((Field) f).setColorModel(c.getCurrentPriceModel());</span>
+<span class="nc" id="L467">            addField(f, currPriceXOffset, currPriceYOffset + i, 1, 1,</span>
+                    WIDE_RIGHT, visible);
+
+<span class="nc" id="L470">            f = compCash[i] = new Field(c.getPurseMoneyModel());</span>
+<span class="nc" id="L471">            addField(f, compCashXOffset, compCashYOffset + i, 1, 1, 0, visible);</span>
+<span class="nc" id="L472">            f =</span>
+                compCashButton[i] =
+                    new ClickField(
+<span class="nc" id="L475">                            compCash[i].getText(),</span>
+                            CASH_CORRECT_CMD,
+<span class="nc" id="L477">                            LocalText.getText(&quot;CorrectCashToolTip&quot;),</span>
+                            this, buySellGroup);
+<span class="nc" id="L479">            addField(f, compCashXOffset, compCashYOffset + i, 1, 1,</span>
+                    WIDE_RIGHT, false);
+
+<span class="nc" id="L482">            f = compRevenue[i] = new Field(c.getLastRevenueModel());</span>
+<span class="nc" id="L483">            addField(f, compRevenueXOffset, compRevenueYOffset + i, 1, 1, 0, visible);</span>
+
+<span class="nc bnc" id="L485" title="All 2 branches missed.">            if (hasDirectCompanyIncomeInOr) {</span>
+<span class="nc" id="L486">                f = compDirectRevenue[i] = new Field(c.getLastDirectIncomeModel());</span>
+<span class="nc" id="L487">                addField(f, compDirectRevXOffset, compDirectRevYOffset + i, 1, 1, 0, visible);</span>
+            }
+
+<span class="nc" id="L490">            f = compTrains[i] = new Field(c.getPortfolioModel().getTrainsModel());</span>
+<span class="nc" id="L491">            addField(f, compTrainsXOffset, compTrainsYOffset + i, 1, 1, 0, visible);</span>
+
+<span class="nc" id="L493">            f = compTokens[i] = new Field(c.getBaseTokensModel());</span>
+<span class="nc" id="L494">            addField(f, compTokensXOffset, compTokensYOffset + i, 1, 1, 0, visible);</span>
+
+<span class="nc bnc" id="L496" title="All 2 branches missed.">            if (this.compCanBuyPrivates) {</span>
+<span class="nc" id="L497">                f =</span>
+                    compPrivates[i] =
+                        new Field(
+<span class="nc" id="L500">                                c.getPortfolioModel().getPrivatesOwnedModel());</span>
+<span class="nc" id="L501">                HexHighlightMouseListener.addMouseListener(f,</span>
+<span class="nc" id="L502">                        gameUIManager.getORUIManager(),</span>
+<span class="nc" id="L503">                        c.getPortfolioModel());</span>
+<span class="nc" id="L504">                addField(f, compPrivatesXOffset, compPrivatesYOffset + i, 1, 1,</span>
+                        0, visible);
+            }
+<span class="nc bnc" id="L507" title="All 2 branches missed.">            if (hasCompanyLoans) {</span>
+<span class="nc bnc" id="L508" title="All 2 branches missed.">                if (c.getLoanValueModel() != null) {</span>
+<span class="nc" id="L509">                    f = compLoans[i] = new Field (c.getLoanValueModel());</span>
+                } else {
+<span class="nc" id="L511">                    f = compLoans[i] = new Field (&quot;&quot;);</span>
+                }
+<span class="nc" id="L513">                addField (f, compLoansXOffset, compLoansYOffset+i, 1, 1, 0, visible);</span>
+            }
+
+<span class="nc bnc" id="L516" title="All 2 branches missed.">            if (hasRights) {</span>
+<span class="nc" id="L517">                f = rights[i] = new Field (c.getRightsModel());</span>
+<span class="nc" id="L518">                addField (f, rightsXOffset, rightsYOffset + i, 1, 1, 0, visible);</span>
+            }
+
+<span class="nc" id="L521">            f = new Caption(c.getId());</span>
+<span class="nc" id="L522">            f.setForeground(c.getFgColour());</span>
+<span class="nc" id="L523">            f.setBackground(c.getBgColour());</span>
+<span class="nc" id="L524">            HexHighlightMouseListener.addMouseListener(f,</span>
+<span class="nc" id="L525">                    gameUIManager.getORUIManager(),c,false);</span>
+<span class="nc" id="L526">            f.addMouseListener(companyCaptionMouseClickListener);</span>
+<span class="nc" id="L527">            f.setToolTipText(LocalText.getText(&quot;NetworkInfoDialogTitle&quot;,c.getId()));</span>
+<span class="nc" id="L528">            addField(f, rightCompCaptionXOffset, certPerPlayerYOffset + i, 1,</span>
+                    1, WIDE_LEFT, visible);
+        }
+
+        // Player possessions
+<span class="nc" id="L533">        addField(new Caption(LocalText.getText(&quot;CASH&quot;)), 0, playerCashYOffset,</span>
+                1, 1, WIDE_TOP , true);
+<span class="nc bnc" id="L535" title="All 2 branches missed.">        for (int i = 0; i &lt; np; i++) {</span>
+<span class="nc" id="L536">            f = playerCash[i] = new Field(players[i].getWallet());</span>
+<span class="nc" id="L537">            int wideGapPosition = WIDE_TOP +</span>
+<span class="nc bnc" id="L538" title="All 4 branches missed.">                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);</span>
+<span class="nc" id="L539">            addField(f, playerCashXOffset + i, playerCashYOffset, 1, 1,</span>
+                    wideGapPosition, true);
+<span class="nc" id="L541">            f =</span>
+                playerCashButton[i] =
+                    new ClickField(
+<span class="nc" id="L544">                            playerCash[i].getText(),</span>
+                            CASH_CORRECT_CMD,
+<span class="nc" id="L546">                            LocalText.getText(&quot;CorrectCashToolTip&quot;),</span>
+                            this, buySellGroup);
+<span class="nc" id="L548">            addField(f, playerCashXOffset + i, playerCashYOffset, 1, 1,</span>
+                    wideGapPosition, false);
+        }
+
+<span class="nc" id="L552">        addField(new Caption(LocalText.getText(&quot;PRIVATES&quot;)), 0, playerPrivatesYOffset, 1, 1,</span>
+                0, true);
+<span class="nc bnc" id="L554" title="All 2 branches missed.">        for (int i = 0; i &lt; np; i++) {</span>
+<span class="nc" id="L555">            f =</span>
+                playerPrivates[i] =
+                    new Field(
+<span class="nc" id="L558">                            players[i].getPortfolioModel().getPrivatesOwnedModel());</span>
+<span class="nc" id="L559">            HexHighlightMouseListener.addMouseListener(f,</span>
+<span class="nc" id="L560">                    gameUIManager.getORUIManager(),</span>
+<span class="nc" id="L561">                    players[i].getPortfolioModel());</span>
+<span class="nc bnc" id="L562" title="All 4 branches missed.">            int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);</span>
+<span class="nc" id="L563">            addField(f, playerPrivatesXOffset + i, playerPrivatesYOffset, 1, 1,</span>
+                    wideGapPosition, true);
+        }
+
+<span class="nc" id="L567">        addField(new Caption(LocalText.getText(&quot;WORTH&quot;)), 0,</span>
+                playerWorthYOffset, 1, 1, 0, true);
+<span class="nc bnc" id="L569" title="All 2 branches missed.">        for (int i = 0; i &lt; np; i++) {</span>
+<span class="nc" id="L570">            f = playerWorth[i] = new Field(players[i].getWorthModel());</span>
+<span class="nc bnc" id="L571" title="All 4 branches missed.">            int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);</span>
+<span class="nc" id="L572">            addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, wideGapPosition, true);</span>
+        }
+
+<span class="nc" id="L575">        addField(new Caption(LocalText.getText(&quot;ORWORTHINCR&quot;)), 0,</span>
+                playerORWorthIncreaseYOffset, 1, 1, 0, true);
+<span class="nc bnc" id="L577" title="All 2 branches missed.">        for (int i = 0; i &lt; np; i++) {</span>
+<span class="nc" id="L578">            f = playerORWorthIncrease[i] = new Field(players[i].getLastORWorthIncrease());</span>
+<span class="nc bnc" id="L579" title="All 4 branches missed.">            int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);</span>
+<span class="nc" id="L580">            addField(f, playerORWorthIncreaseXOffset + i, playerORWorthIncreaseYOffset, 1, 1, wideGapPosition, true);</span>
+        }
+
+<span class="nc" id="L583">        addField(new Caption(&quot;Certs&quot;), 0, playerCertCountYOffset, 1, 1,</span>
+                WIDE_TOP, true);
+<span class="nc bnc" id="L585" title="All 2 branches missed.">        for (int i = 0; i &lt; np; i++) {</span>
+<span class="nc" id="L586">            f =</span>
+                playerCertCount[i] =
+<span class="nc" id="L588">                    new Field(players[i].getCertCountModel(), false, true);</span>
+<span class="nc" id="L589">            int wideGapPosition = WIDE_TOP +</span>
+<span class="nc bnc" id="L590" title="All 4 branches missed.">                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);</span>
+<span class="nc" id="L591">            addField(f, playerCertCountXOffset + i, playerCertCountYOffset, 1,</span>
+                    1, wideGapPosition, true);
+        }
+
+<span class="nc bnc" id="L595" title="All 2 branches missed.">        for (int i = 0; i &lt; np; i++) {</span>
+<span class="nc" id="L596">            f = lowerPlayerCaption[i] = new Caption(players[i].getId());</span>
+<span class="nc" id="L597">            int wideGapPosition = WIDE_TOP +</span>
+<span class="nc bnc" id="L598" title="All 4 branches missed.">                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);</span>
+<span class="nc" id="L599">            addField(f, i + 1, playerCertCountYOffset + 1, 1, 1, wideGapPosition, true);</span>
+        }
+
+        // Certificate Limit
+<span class="nc" id="L603">        addField(new Caption(LocalText.getText(&quot;LIMIT&quot;)), certLimitXOffset - 1,</span>
+                certLimitYOffset, 1, 1, WIDE_TOP, true);
+<span class="nc" id="L605">        addField(new Field(gameUIManager.getRoot().getPlayerManager().getPlayerCertificateLimitModel()),</span>
+                certLimitXOffset,
+                certLimitYOffset, 1, 1, WIDE_TOP + WIDE_RIGHT, true);
+
+        // Phase
+<span class="nc" id="L610">        addField(new Caption(LocalText.getText(&quot;PHASE&quot;)), phaseXOffset - 1,</span>
+                phaseYOffset, 1, 1, WIDE_TOP, true);
+<span class="nc" id="L612">        addField(new Field(gameUIManager.getRoot().getPhaseManager().getCurrentPhaseModel()),</span>
+                phaseXOffset,
+                phaseYOffset, 1, 1, WIDE_TOP, true);
+
+        // Bank
+<span class="nc" id="L617">        addField(new Caption(LocalText.getText(&quot;BANK&quot;)), bankCashXOffset - 1,</span>
+                bankCashYOffset - 1, 1, 2, WIDE_TOP, true);
+<span class="nc" id="L619">        addField(new Caption(LocalText.getText(&quot;CASH&quot;)), bankCashXOffset,</span>
+                bankCashYOffset - 1, 1, 1, WIDE_TOP + WIDE_RIGHT, true);
+<span class="nc" id="L621">        bankCash = new Field(bank.getPurse());</span>
+<span class="nc" id="L622">        addField(bankCash, bankCashXOffset, bankCashYOffset, 1, 1, WIDE_RIGHT, true);</span>
+
+        // Trains
+<span class="nc" id="L625">        addField(new Caption(LocalText.getText(&quot;TRAINS&quot;)),</span>
+                poolTrainsXOffset - 1, poolTrainsYOffset - 1, 1, 2, WIDE_TOP, true);
+<span class="nc" id="L627">        addField(new Caption(LocalText.getText(&quot;USED&quot;)), poolTrainsXOffset,</span>
+                poolTrainsYOffset - 1, 1, 1, WIDE_TOP, true);
+<span class="nc" id="L629">        poolTrains = new Field(pool.getTrainsModel());</span>
+<span class="nc" id="L630">        addField(poolTrains, poolTrainsXOffset, poolTrainsYOffset, 1, 1, 0, true);</span>
+
+        // New trains
+<span class="nc" id="L633">        addField(new Caption(LocalText.getText(&quot;NEW&quot;)), newTrainsXOffset,</span>
+                newTrainsYOffset - 1, 1, 1, WIDE_TOP, true);
+<span class="nc" id="L635">        newTrains = new Field(ipo.getTrainsModel());</span>
+<span class="nc" id="L636">        addField(newTrains, newTrainsXOffset, newTrainsYOffset, 1, 1, 0, true);</span>
+
+<span class="nc" id="L638">        dummyButton = new ClickField(&quot;&quot;, &quot;&quot;, &quot;&quot;, this, buySellGroup);</span>
+
+        // Future trains
+<span class="nc" id="L641">        addField(new Caption(LocalText.getText(&quot;Future&quot;)), futureTrainsXOffset,</span>
+                futureTrainsYOffset - 1, futureTrainsWidth, 1, WIDE_TOP, true);
+<span class="nc" id="L643">        futureTrains = new Field(bank.getUnavailable().getPortfolioModel().getTrainsModel(), true, false);</span>
+<span class="nc" id="L644">        futureTrains.setPreferredSize(new Dimension (1,1)); // To enable auto word wrap</span>
+<span class="nc" id="L645">        addField(futureTrains, futureTrainsXOffset, futureTrainsYOffset,</span>
+                futureTrainsWidth, 1, 0, true);
+
+        // dummy field for nice rendering of table borders
+<span class="nc" id="L649">        addField (new Caption(&quot;&quot;), certInIPOXOffset, newTrainsYOffset + 1,</span>
+                poolTrainsXOffset - certInIPOXOffset, 2, 0, true);
+
+        // Train cost overview
+<span class="nc" id="L653">        String text = gameUIManager.getRoot().getTrainManager().getTrainCostOverview();</span>
+<span class="nc" id="L654">        addField (f = new Caption(&quot;&lt;html&gt;&quot; + text + &quot;&lt;/html&gt;&quot;), poolTrainsXOffset, newTrainsYOffset + 1,</span>
+                futureTrainsWidth + 2, 2, 0, true);
+<span class="nc" id="L656">        f.setPreferredSize(new Dimension (1,1));// To enable auto word wrap</span>
+
+<span class="nc" id="L658">        dummyButton = new ClickField(&quot;&quot;, &quot;&quot;, &quot;&quot;, this, buySellGroup);</span>
+<span class="nc" id="L659">    }</span>
+
+
+    public void recreate() {
+<span class="nc" id="L663">        log.debug(&quot;GameStatus.recreate() called&quot;);</span>
+        // Remove old fields. Don't forget to deregister the Observers
+<span class="nc" id="L665">        deRegisterObservers();</span>
+<span class="nc" id="L666">        removeAll();</span>
+        // Create new fields
+<span class="nc" id="L668">        initFields();</span>
+        //repaint();
+<span class="nc" id="L670">    }</span>
+    public void updatePlayerOrder (List&lt;String&gt; newPlayerNames) {
+<span class="nc" id="L672">        List&lt;String&gt; oldPlayerNames = gameUIManager.getCurrentGuiPlayerNames();</span>
+<span class="nc" id="L673">        log.debug(&quot;GS: old player list: &quot;+Util.joinWithDelimiter(oldPlayerNames.toArray(new String[0]), &quot;,&quot;));</span>
+<span class="nc" id="L674">        log.debug(&quot;GS: new player list: &quot;+Util.joinWithDelimiter(newPlayerNames.toArray(new String[0]), &quot;,&quot;));</span>
+        /* Currently, the passed new player order is ignored.
+         * A call to this method only serves as a signal to rebuild the player columns in the proper order
+         * (in fact, the shortcut is taken to rebuild the whole GameStatus panel).
+         * For simplicity reasons, the existing reference to the (updated)
+         * players list in GameManager is used.
+         *
+         * In the future (e.g. when implementing a client/server split),
+         * newPlayerNames may actually become to be used to reorder the
+         * (then internal) UI player list.
+         */
+<span class="nc" id="L685">        recreate();</span>
+<span class="nc" id="L686">        gameUIManager.packAndApplySizing(parent);</span>
+<span class="nc" id="L687">    }</span>
+
+    public void actionPerformed(ActionEvent actor) {
+<span class="nc" id="L690">        JComponent source = (JComponent) actor.getSource();</span>
+        List&lt;PossibleAction&gt; actions;
+<span class="nc" id="L692">        PossibleAction chosenAction = null;</span>
+
+<span class="nc bnc" id="L694" title="All 2 branches missed.">        if (source instanceof ClickField) {</span>
+<span class="nc" id="L695">            gbc = gb.getConstraints(source);</span>
+<span class="nc" id="L696">            actions = ((ClickField) source).getPossibleActions();</span>
+
+            //notify sound manager that click field has been selected
+<span class="nc" id="L699">            SoundManager.notifyOfClickFieldSelection(actions.get(0));</span>
+
+            // Assume that we will have either sell or buy actions
+            // under one ClickField, not both. This seems guaranteed.
+<span class="nc" id="L703">            log.debug(&quot;Action is {}&quot;, actions.get(0));</span>
+
+<span class="nc bnc" id="L705" title="All 2 branches missed.">            if ( actions.size() == 0 ) {</span>
+<span class="nc" id="L706">                log.warn(&quot;No ClickField action found&quot;);</span>
+
+<span class="nc bnc" id="L708" title="All 2 branches missed.">            } else if (actions.get(0) instanceof SellShares) {</span>
+<span class="nc" id="L709">                List&lt;String&gt; options = Lists.newArrayList();</span>
+<span class="nc" id="L710">                List&lt;SellShares&gt; sellActions = Lists.newArrayList();</span>
+<span class="nc" id="L711">                List&lt;Integer&gt; sellAmounts = Lists.newArrayList();</span>
+                SellShares sale;
+<span class="nc bnc" id="L713" title="All 2 branches missed.">                for (PossibleAction action : actions) {</span>
+<span class="nc" id="L714">                    sale = (SellShares) action;</span>
+
+                    //for (int i = 1; i &lt;= sale.getMaximumNumber(); i++) {
+<span class="nc" id="L717">                    int i = sale.getNumber();</span>
+<span class="nc bnc" id="L718" title="All 2 branches missed.">                    if (sale.getPresidentExchange() == 0) {</span>
+<span class="nc" id="L719">                        options.add(LocalText.getText(&quot;SellShares&quot;,</span>
+<span class="nc" id="L720">                                i,</span>
+<span class="nc" id="L721">                                sale.getShare(),</span>
+<span class="nc" id="L722">                                i * sale.getShare(),</span>
+<span class="nc" id="L723">                                sale.getCompanyName(),</span>
+<span class="nc" id="L724">                                gameUIManager.format( i * sale.getShareUnits()</span>
+<span class="nc" id="L725">                                        * sale.getPrice()) ));</span>
+                    } else {
+<span class="nc" id="L727">                        options.add(LocalText.getText(&quot;SellSharesWithSwap&quot;,</span>
+<span class="nc" id="L728">                                i * sale.getShare(),</span>
+<span class="nc" id="L729">                                sale.getCompanyName(),</span>
+<span class="nc" id="L730">                                gameUIManager.format(i * sale.getShareUnits() * sale.getPrice())));</span>
+                    }
+<span class="nc" id="L732">                    sellActions.add(sale);</span>
+<span class="nc" id="L733">                    sellAmounts.add(i);</span>
+<span class="nc" id="L734">                }</span>
+<span class="nc" id="L735">                int index = 0;</span>
+<span class="nc bnc" id="L736" title="All 2 branches missed.">                if (options.size() &gt; 1) {</span>
+<span class="nc" id="L737">                    String message = LocalText.getText(&quot;PleaseSelect&quot;);</span>
+<span class="nc" id="L738">                    String sp =</span>
+<span class="nc" id="L739">                        (String) JOptionPane.showInputDialog(this, message,</span>
+                                message, JOptionPane.QUESTION_MESSAGE,
+<span class="nc" id="L741">                                null, options.toArray(new String[0]),</span>
+<span class="nc" id="L742">                                options.get(0));</span>
+<span class="nc" id="L743">                    index = options.indexOf(sp);</span>
+<span class="nc bnc" id="L744" title="All 2 branches missed.">                } else if (options.size() == 1) {</span>
+<span class="nc" id="L745">                    String message = LocalText.getText(&quot;PleaseConfirm&quot;);</span>
+<span class="nc" id="L746">                    int result =</span>
+<span class="nc" id="L747">                        JOptionPane.showConfirmDialog(this, options.get(0),</span>
+                                message, JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+<span class="nc bnc" id="L750" title="All 2 branches missed.">                    index = (result == JOptionPane.OK_OPTION ? 0 : -1);</span>
+                }
+<span class="nc bnc" id="L752" title="All 2 branches missed.">                if (index &lt; 0) {</span>
+                    // cancelled
+                } else {
+<span class="nc" id="L755">                    chosenAction = sellActions.get(index);</span>
+                    //((SellShares) chosenAction).setNumberSold(sellAmounts.get(index));
+                }
+<span class="nc bnc" id="L758" title="All 2 branches missed.">            } else if (actions.get(0) instanceof BuyCertificate) {</span>
+<span class="nc" id="L759">                boolean startCompany = false;</span>
+
+<span class="nc" id="L761">                List&lt;String&gt; options = Lists.newArrayList();</span>
+<span class="nc" id="L762">                List&lt;BuyCertificate&gt; buyActions = Lists.newArrayList();</span>
+<span class="nc" id="L763">                List&lt;Integer&gt; buyAmounts = Lists.newArrayList();</span>
+                BuyCertificate buy;
+<span class="nc" id="L765">                String companyName = &quot;&quot;;</span>
+<span class="nc" id="L766">                String playerName = &quot;&quot;;</span>
+                int sharePerCert;
+                int sharesPerCert;
+                int shareUnit;
+
+<span class="nc bnc" id="L771" title="All 2 branches missed.">                for (PossibleAction action : actions) {</span>
+<span class="nc" id="L772">                    buy = (BuyCertificate) action;</span>
+                    //cert = buy.getCertificate();
+<span class="nc" id="L774">                    playerName = buy.getPlayerName ();</span>
+<span class="nc" id="L775">                    PublicCompany company = buy.getCompany();</span>
+<span class="nc" id="L776">                    companyName = company.getId();</span>
+<span class="nc" id="L777">                    sharePerCert = buy.getSharePerCertificate();</span>
+<span class="nc" id="L778">                    shareUnit = company.getShareUnit();</span>
+<span class="nc" id="L779">                    sharesPerCert = sharePerCert / shareUnit;</span>
+
+<span class="nc bnc" id="L781" title="All 2 branches missed.">                    if (buy instanceof StartCompany) {</span>
+<span class="nc" id="L782">                        startCompany = true;</span>
+                        int[] startPrices;
+<span class="nc bnc" id="L784" title="All 2 branches missed.">                        if (((StartCompany) buy).mustSelectAPrice()) {</span>
+<span class="nc" id="L785">                            startPrices =</span>
+<span class="nc" id="L786">                                ((StartCompany) buy).getStartPrices();</span>
+<span class="nc" id="L787">                            Arrays.sort(startPrices);</span>
+<span class="nc bnc" id="L788" title="All 2 branches missed.">                            if (startPrices.length &gt; 1) {</span>
+<span class="nc bnc" id="L789" title="All 2 branches missed.">                                for (int i = 0; i &lt; startPrices.length; i++) {</span>
+<span class="nc" id="L790">                                    options.add(LocalText.getText(&quot;StartCompany&quot;,</span>
+<span class="nc" id="L791">                                            gameUIManager.format(startPrices[i]),</span>
+<span class="nc" id="L792">                                            sharePerCert,</span>
+<span class="nc" id="L793">                                            gameUIManager.format(sharesPerCert * startPrices[i]) ));</span>
+<span class="nc" id="L794">                                    buyActions.add(buy);</span>
+<span class="nc" id="L795">                                    buyAmounts.add(startPrices[i]);</span>
+                                }
+                            } else {
+<span class="nc" id="L798">                                options.add (LocalText.getText(&quot;StartACompany&quot;,</span>
+                                        companyName,
+<span class="nc" id="L800">                                        company.getPresidentsShare().getShare(),</span>
+<span class="nc" id="L801">                                        gameUIManager.format(company.getPresidentsShare().getShares() * startPrices[0])));</span>
+<span class="nc" id="L802">                                buyActions.add(buy);</span>
+<span class="nc" id="L803">                                buyAmounts.add(startPrices[0]);</span>
+                            }
+                        } else {
+<span class="nc" id="L806">                            startPrices = new int[] {((StartCompany) buy).getPrice()};</span>
+<span class="nc" id="L807">                            options.add(LocalText.getText(&quot;StartCompanyFixed&quot;,</span>
+                                    companyName,
+<span class="nc" id="L809">                                    sharePerCert,</span>
+<span class="nc" id="L810">                                    gameUIManager.format(startPrices[0]) ));</span>
+<span class="nc" id="L811">                            buyActions.add(buy);</span>
+<span class="nc" id="L812">                            buyAmounts.add(startPrices[0]);</span>
+                        }
+
+<span class="nc" id="L815">                    } else {</span>
+<span class="nc" id="L816">                        options.add(LocalText.getText(&quot;BuyCertificate&quot;,</span>
+<span class="nc" id="L817">                                sharePerCert,</span>
+                                companyName,
+<span class="nc" id="L819">                                buy.getFromPortfolio().getParent().getId(),</span>
+<span class="nc" id="L820">                                gameUIManager.format(sharesPerCert * buy.getPrice()) ));</span>
+<span class="nc" id="L821">                        buyActions.add(buy);</span>
+<span class="nc" id="L822">                        buyAmounts.add(1);</span>
+<span class="nc bnc" id="L823" title="All 2 branches missed.">                        for (int i = 2; i &lt;= buy.getMaximumNumber(); i++) {</span>
+<span class="nc" id="L824">                            options.add(LocalText.getText(&quot;BuyCertificates&quot;,</span>
+<span class="nc" id="L825">                                    i,</span>
+<span class="nc" id="L826">                                    sharePerCert,</span>
+                                    companyName,
+<span class="nc" id="L828">                                    buy.getFromPortfolio().getParent().getId(),</span>
+<span class="nc" id="L829">                                    gameUIManager.format(i * sharesPerCert</span>
+<span class="nc" id="L830">                                            * buy.getPrice()) ));</span>
+<span class="nc" id="L831">                            buyActions.add(buy);</span>
+<span class="nc" id="L832">                            buyAmounts.add(i);</span>
+                        }
+                    }
+<span class="nc" id="L835">                }</span>
+<span class="nc" id="L836">                int index = 0;</span>
+                // check for instanceof StartCompany_18EU allows to continue with selecting the minor
+<span class="nc bnc" id="L838" title="All 4 branches missed.">                if (options.size() &gt; 1 || actions.get(0) instanceof StartCompany_18EU) {</span>
+<span class="nc bnc" id="L839" title="All 2 branches missed.">                    if (startCompany) {</span>
+<span class="nc" id="L840">                        RadioButtonDialog dialog = new RadioButtonDialog (</span>
+                                GameUIManager.COMPANY_START_PRICE_DIALOG,
+                                gameUIManager,
+                                parent,
+<span class="nc" id="L844">                                LocalText.getText(&quot;PleaseSelect&quot;),</span>
+<span class="nc" id="L845">                                LocalText.getText(&quot;WHICH_START_PRICE&quot;,</span>
+                                        playerName,
+                                        companyName),
+<span class="nc" id="L848">                                        options.toArray(new String[0]), -1);</span>
+<span class="nc" id="L849">                        gameUIManager.setCurrentDialog(dialog, actions.get(0));</span>
+<span class="nc" id="L850">                        parent.disableButtons();</span>
+<span class="nc" id="L851">                        return;</span>
+                    } else {
+<span class="nc" id="L853">                        String sp =</span>
+<span class="nc" id="L854">                            (String) JOptionPane.showInputDialog(this,</span>
+<span class="nc bnc" id="L855" title="All 2 branches missed.">                                    LocalText.getText(startCompany</span>
+<span class="nc" id="L856">                                            ? &quot;WHICH_PRICE&quot;</span>
+<span class="nc" id="L857">                                                    : &quot;HOW_MANY_SHARES&quot;),</span>
+<span class="nc" id="L858">                                                    LocalText.getText(&quot;PleaseSelect&quot;),</span>
+                                                    JOptionPane.QUESTION_MESSAGE, null,
+<span class="nc" id="L860">                                                    options.toArray(new String[0]),</span>
+<span class="nc" id="L861">                                                    options.get(0));</span>
+<span class="nc" id="L862">                        index = options.indexOf(sp);</span>
+<span class="nc" id="L863">                    }</span>
+<span class="nc bnc" id="L864" title="All 2 branches missed.">                } else if (options.size() == 1) {</span>
+<span class="nc" id="L865">                    int result =</span>
+<span class="nc" id="L866">                        JOptionPane.showConfirmDialog(this, options.get(0),</span>
+<span class="nc" id="L867">                                LocalText.getText(&quot;PleaseConfirm&quot;),</span>
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+<span class="nc bnc" id="L870" title="All 2 branches missed.">                    index = (result == JOptionPane.OK_OPTION ? 0 : -1);</span>
+                }
+<span class="nc bnc" id="L872" title="All 2 branches missed.">                if (index &lt; 0) {</span>
+                    // cancelled
+<span class="nc bnc" id="L874" title="All 2 branches missed.">                } else if (startCompany) {</span>
+<span class="nc" id="L875">                    chosenAction = buyActions.get(index);</span>
+<span class="nc" id="L876">                    ((StartCompany) chosenAction).setStartPrice(buyAmounts.get(index));</span>
+<span class="nc" id="L877">                    ((StartCompany) chosenAction).setNumberBought(((StartCompany) chosenAction).getSharesPerCertificate());</span>
+                } else {
+<span class="nc" id="L879">                    chosenAction = buyActions.get(index);</span>
+<span class="nc" id="L880">                    ((BuyCertificate) chosenAction).setNumberBought(buyAmounts.get(index));</span>
+                }
+<span class="nc bnc" id="L882" title="All 2 branches missed.">            } else if (actions.get(0) instanceof CashCorrectionAction) {</span>
+<span class="nc" id="L883">                CashCorrectionAction cca = (CashCorrectionAction)actions.get(0);</span>
+<span class="nc" id="L884">                String amountString = (String) JOptionPane.showInputDialog(this,</span>
+<span class="nc" id="L885">                        LocalText.getText(&quot;CorrectCashDialogMessage&quot;, cca.getCashHolderName()),</span>
+<span class="nc" id="L886">                        LocalText.getText(&quot;CorrectCashDialogTitle&quot;),</span>
+<span class="nc" id="L887">                        JOptionPane.QUESTION_MESSAGE, null, null, 0);</span>
+<span class="nc bnc" id="L888" title="All 2 branches missed.">                if (amountString.substring(0,1).equals(&quot;+&quot;))</span>
+<span class="nc" id="L889">                    amountString = amountString.substring(1);</span>
+                int amount;
+                try {
+<span class="nc" id="L892">                    amount = Integer.parseInt(amountString);</span>
+<span class="nc" id="L893">                } catch (NumberFormatException e) {</span>
+<span class="nc" id="L894">                    amount = 0;</span>
+<span class="nc" id="L895">                }</span>
+<span class="nc" id="L896">                cca.setAmount(amount);</span>
+<span class="nc" id="L897">                chosenAction = cca;</span>
+<span class="nc" id="L898">            } else {</span>
+<span class="nc" id="L899">                chosenAction =</span>
+<span class="nc" id="L900">                    processGameSpecificActions(actor, actions.get(0));</span>
+            }
+        } else {
+<span class="nc" id="L903">            log.warn(&quot;Action from unknown source: {}&quot;, source);</span>
+        }
+
+<span class="nc" id="L906">        chosenAction = processGameSpecificFollowUpActions(actor, chosenAction);</span>
+
+<span class="nc bnc" id="L908" title="All 2 branches missed.">        if (chosenAction != null)</span>
+<span class="nc" id="L909">            (parent).process(chosenAction);</span>
+
+<span class="nc" id="L911">        repaint();</span>
+<span class="nc" id="L912">    }</span>
+
+    /** Stub allowing game-specific extensions */
+    protected PossibleAction processGameSpecificActions(ActionEvent actor,
+            PossibleAction chosenAction) {
+<span class="nc" id="L917">        return chosenAction;</span>
+    }
+
+    protected PossibleAction processGameSpecificFollowUpActions(
+            ActionEvent actor, PossibleAction chosenAction) {
+<span class="nc" id="L922">        return chosenAction;</span>
+    }
+
+    public void initTurn(int actorIndex, boolean myTurn) {
+        int i, j;
+
+<span class="nc" id="L928">        dummyButton.setSelected(true);</span>
+
+<span class="nc bnc" id="L930" title="All 2 branches missed.">        for (i = 0; i &lt; nc; i++) {</span>
+<span class="nc" id="L931">            setIPOCertButton(i, false);</span>
+<span class="nc" id="L932">            setPoolCertButton(i, false);</span>
+<span class="nc bnc" id="L933" title="All 2 branches missed.">            for (j=0; j &lt; np; j++) setPlayerCertButton (i, j, false);</span>
+<span class="nc bnc" id="L934" title="All 2 branches missed.">            if (compCanHoldOwnShares) setTreasuryCertButton(i, false);</span>
+        }
+
+<span class="nc" id="L937">        this.actorIndex = actorIndex;</span>
+
+<span class="nc" id="L939">        highlightCurrentPlayer(this.actorIndex);</span>
+<span class="nc bnc" id="L940" title="All 4 branches missed.">        if (treasurySharesCaption != null) treasurySharesCaption.setHighlight(actorIndex == -1);</span>
+
+        // Set new highlights
+<span class="nc bnc" id="L943" title="All 2 branches missed.">        if ((j = this.actorIndex) &gt;= -1) {</span>
+<span class="nc bnc" id="L944" title="All 2 branches missed.">            if (myTurn) {</span>
+                PublicCompany company;
+                int index;
+                PortfolioModel portfolio;
+
+<span class="nc" id="L949">                List&lt;BuyCertificate&gt; buyableCerts =</span>
+<span class="nc" id="L950">                    possibleActions.getType(BuyCertificate.class);</span>
+<span class="nc bnc" id="L951" title="All 2 branches missed.">                if (buyableCerts != null) {</span>
+<span class="nc bnc" id="L952" title="All 2 branches missed.">                    for (BuyCertificate bCert : buyableCerts) {</span>
+<span class="nc" id="L953">                        company = bCert.getCompany();</span>
+<span class="nc" id="L954">                        index = company.getPublicNumber();</span>
+<span class="nc" id="L955">                        portfolio = bCert.getFromPortfolio();</span>
+<span class="nc bnc" id="L956" title="All 2 branches missed.">                        if (portfolio == ipo) {</span>
+<span class="nc" id="L957">                            setIPOCertButton(index, true, bCert);</span>
+<span class="nc bnc" id="L958" title="All 2 branches missed.">                        } else if (portfolio == pool) {</span>
+<span class="nc" id="L959">                            setPoolCertButton(index, true, bCert);</span>
+<span class="nc bnc" id="L960" title="All 2 branches missed.">                        } else if ((portfolio.getParent()) instanceof Player) {</span>
+<span class="nc" id="L961">                            setPlayerCertButton(index, ((Player)portfolio.getParent()).getIndex(), true, bCert);</span>
+<span class="nc bnc" id="L962" title="All 4 branches missed.">                        } else if (portfolio.getParent() instanceof PublicCompany &amp;&amp; compCanHoldOwnShares) {</span>
+<span class="nc" id="L963">                            setTreasuryCertButton(index, true, bCert);</span>
+                        }
+<span class="nc" id="L965">                    }</span>
+                }
+
+<span class="nc" id="L968">                List&lt;SellShares&gt; sellableShares =</span>
+<span class="nc" id="L969">                    possibleActions.getType(SellShares.class);</span>
+<span class="nc bnc" id="L970" title="All 2 branches missed.">                if (sellableShares != null) {</span>
+<span class="nc bnc" id="L971" title="All 2 branches missed.">                    for (SellShares share : sellableShares) {</span>
+<span class="nc" id="L972">                        company = share.getCompany();</span>
+<span class="nc" id="L973">                        index = company.getPublicNumber();</span>
+<span class="nc bnc" id="L974" title="All 2 branches missed.">                        if (j &gt;= 0) {</span>
+<span class="nc" id="L975">                            setPlayerCertButton(index, j, true, share);</span>
+<span class="nc bnc" id="L976" title="All 4 branches missed.">                        } else if (j == -1 &amp;&amp; compCanHoldOwnShares) {</span>
+<span class="nc" id="L977">                            setTreasuryCertButton(index, true, share);</span>
+                        }
+<span class="nc" id="L979">                    }</span>
+                }
+
+<span class="nc" id="L982">                initGameSpecificActions();</span>
+
+<span class="nc" id="L984">                List&lt;NullAction&gt; nullActions =</span>
+<span class="nc" id="L985">                    possibleActions.getType(NullAction.class);</span>
+<span class="nc bnc" id="L986" title="All 2 branches missed.">                if (nullActions != null) {</span>
+<span class="nc bnc" id="L987" title="All 2 branches missed.">                    for (NullAction na : nullActions) {</span>
+<span class="nc" id="L988">                        (parent).setPassButton(na);</span>
+<span class="nc" id="L989">                    }</span>
+                }
+            }
+        }
+
+<span class="nc" id="L994">        repaint();</span>
+<span class="nc" id="L995">    }</span>
+
+    /** Stub, can be overridden by game-specific subclasses */
+    protected void initGameSpecificActions() {
+
+<span class="nc" id="L1000">    }</span>
+
+    /**
+     * Initializes the CashCorrectionActions
+     */
+    public boolean initCashCorrectionActions() {
+
+        // Clear all buttons
+<span class="nc bnc" id="L1008" title="All 2 branches missed.">        for (int i = 0; i &lt; nc; i++) {</span>
+<span class="nc" id="L1009">            setCompanyCashButton(i, false, null);</span>
+        }
+<span class="nc bnc" id="L1011" title="All 2 branches missed.">        for (int j = 0; j &lt; np; j++) {</span>
+<span class="nc" id="L1012">            setPlayerCashButton(j, false, null);</span>
+        }
+
+<span class="nc" id="L1015">        List&lt;CashCorrectionAction&gt; actions =</span>
+<span class="nc" id="L1016">            possibleActions.getType(CashCorrectionAction.class);</span>
+
+<span class="nc bnc" id="L1018" title="All 2 branches missed.">        if (actions != null) {</span>
+<span class="nc bnc" id="L1019" title="All 2 branches missed.">            for (CashCorrectionAction a : actions) {</span>
+<span class="nc" id="L1020">                MoneyOwner ch = a.getCashHolder();</span>
+<span class="nc bnc" id="L1021" title="All 2 branches missed.">                if (ch instanceof PublicCompany) {</span>
+<span class="nc" id="L1022">                    PublicCompany pc = (PublicCompany)ch;</span>
+<span class="nc" id="L1023">                    int i = pc.getPublicNumber();</span>
+<span class="nc" id="L1024">                    setCompanyCashButton(i, true, a);</span>
+                }
+<span class="nc bnc" id="L1026" title="All 2 branches missed.">                if (ch instanceof Player) {</span>
+<span class="nc" id="L1027">                    Player p = (Player)ch;</span>
+<span class="nc" id="L1028">                    int i = playerIndex.get(p);</span>
+<span class="nc" id="L1029">                    setPlayerCashButton(i, true, a);</span>
+                }
+<span class="nc" id="L1031">            }</span>
+        }
+
+<span class="nc bnc" id="L1034" title="All 4 branches missed.">        return (actions != null &amp;&amp; !actions.isEmpty());</span>
+
+    }
+
+    public void setPriorityPlayer(int index) {
+
+<span class="nc bnc" id="L1040" title="All 2 branches missed.">        for (int j = 0; j &lt; np; j++) {</span>
+<span class="nc bnc" id="L1041" title="All 2 branches missed.">            String playerNameAndPriority = players[j].getId() + (j == index ? &quot; PD&quot; : &quot;&quot;);</span>
+<span class="nc" id="L1042">            upperPlayerCaption[j].setText(playerNameAndPriority);</span>
+<span class="nc" id="L1043">            lowerPlayerCaption[j].setText(playerNameAndPriority);</span>
+        }
+<span class="nc" id="L1045">    }</span>
+
+    public void highlightCurrentPlayer (int index) {
+<span class="nc bnc" id="L1048" title="All 2 branches missed.">        for (int j = 0; j &lt; np; j++) {</span>
+<span class="nc bnc" id="L1049" title="All 2 branches missed.">            upperPlayerCaption[j].setHighlight(j == index);</span>
+<span class="nc bnc" id="L1050" title="All 2 branches missed.">            lowerPlayerCaption[j].setHighlight(j == index);</span>
+        }
+<span class="nc" id="L1052">    }</span>
+
+    public void highlightLocalPlayer (int index) {
+<span class="nc bnc" id="L1055" title="All 2 branches missed.">        for (int j = 0; j &lt; np; j++) {</span>
+<span class="nc bnc" id="L1056" title="All 2 branches missed.">            upperPlayerCaption[j].setLocalPlayer(j == index);</span>
+<span class="nc bnc" id="L1057" title="All 2 branches missed.">            lowerPlayerCaption[j].setLocalPlayer(j == index);</span>
+        }
+<span class="nc" id="L1059">    }</span>
+
+    public String getSRPlayer() {
+<span class="nc bnc" id="L1062" title="All 2 branches missed.">        if (actorIndex &gt;= 0)</span>
+<span class="nc" id="L1063">            return players[actorIndex].getId();</span>
+        else
+<span class="nc" id="L1065">            return &quot;&quot;;</span>
+    }
+
+    protected void setPlayerCertButton(int i, int j, boolean clickable, Object o) {
+
+<span class="nc bnc" id="L1070" title="All 2 branches missed.">        if (j &lt; 0) return;</span>
+<span class="nc" id="L1071">        setPlayerCertButton(i, j, clickable);</span>
+<span class="nc bnc" id="L1072" title="All 2 branches missed.">        if (clickable) syncToolTipText (certPerPlayer[i][j], certPerPlayerButton[i][j]);</span>
+<span class="nc bnc" id="L1073" title="All 4 branches missed.">        if (clickable &amp;&amp; o != null) {</span>
+<span class="nc bnc" id="L1074" title="All 2 branches missed.">            if (o instanceof PossibleAction) {</span>
+<span class="nc" id="L1075">                certPerPlayerButton[i][j].addPossibleAction((PossibleAction) o);</span>
+<span class="nc bnc" id="L1076" title="All 2 branches missed.">                if (o instanceof SellShares) {</span>
+<span class="nc" id="L1077">                    addToolTipText (certPerPlayerButton[i][j], LocalText.getText(&quot;ClickForSell&quot;));</span>
+<span class="nc bnc" id="L1078" title="All 2 branches missed.">                } else if (o instanceof BuyCertificate) {</span>
+<span class="nc" id="L1079">                    addToolTipText (certPerPlayerButton[i][j], LocalText.getText(&quot;ClickToSelectForBuying&quot;));</span>
+                }
+            }
+        }
+<span class="nc" id="L1083">    }</span>
+
+    protected void setPlayerCertButton(int i, int j, boolean clickable) {
+<span class="nc bnc" id="L1086" title="All 2 branches missed.">        if (j &lt; 0) return;</span>
+<span class="nc" id="L1087">        boolean visible = rowVisibilityObservers[i].lastValue();</span>
+
+<span class="nc bnc" id="L1089" title="All 2 branches missed.">        if (clickable) {</span>
+<span class="nc" id="L1090">            certPerPlayerButton[i][j].setText(certPerPlayer[i][j].getText());</span>
+<span class="nc" id="L1091">            syncToolTipText (certPerPlayer[i][j], certPerPlayerButton[i][j]);</span>
+        } else {
+<span class="nc" id="L1093">            certPerPlayerButton[i][j].clearPossibleActions();</span>
+        }
+<span class="nc bnc" id="L1095" title="All 4 branches missed.">        certPerPlayer[i][j].setVisible(visible &amp;&amp; !clickable);</span>
+<span class="nc bnc" id="L1096" title="All 4 branches missed.">        certPerPlayerButton[i][j].setVisible(visible &amp;&amp; clickable);</span>
+<span class="nc" id="L1097">    }</span>
+
+    protected void setIPOCertButton(int i, boolean clickable, Object o) {
+
+<span class="nc" id="L1101">        setIPOCertButton(i, clickable);</span>
+<span class="nc bnc" id="L1102" title="All 2 branches missed.">        if (clickable) syncToolTipText (certInIPO[i], certInIPOButton[i]);</span>
+<span class="nc bnc" id="L1103" title="All 4 branches missed.">        if (clickable &amp;&amp; o != null) {</span>
+<span class="nc bnc" id="L1104" title="All 2 branches missed.">            if (o instanceof PossibleAction)</span>
+<span class="nc" id="L1105">                certInIPOButton[i].addPossibleAction((PossibleAction) o);</span>
+        }
+<span class="nc" id="L1107">    }</span>
+
+    protected void setIPOCertButton(int i, boolean clickable) {
+<span class="nc" id="L1110">        boolean visible = rowVisibilityObservers[i].lastValue();</span>
+<span class="nc bnc" id="L1111" title="All 2 branches missed.">        if (clickable) {</span>
+<span class="nc" id="L1112">            certInIPOButton[i].setText(certInIPO[i].getText());</span>
+<span class="nc" id="L1113">            syncToolTipText (certInIPO[i], certInIPOButton[i]);</span>
+        } else {
+<span class="nc" id="L1115">            certInIPOButton[i].clearPossibleActions();</span>
+        }
+<span class="nc bnc" id="L1117" title="All 4 branches missed.">        certInIPO[i].setVisible(visible &amp;&amp; !clickable);</span>
+<span class="nc bnc" id="L1118" title="All 4 branches missed.">        certInIPOButton[i].setVisible(visible &amp;&amp; clickable);</span>
+<span class="nc" id="L1119">    }</span>
+
+    protected void setPoolCertButton(int i, boolean clickable, Object o) {
+
+<span class="nc" id="L1123">        setPoolCertButton(i, clickable);</span>
+<span class="nc bnc" id="L1124" title="All 2 branches missed.">        if (clickable) syncToolTipText (certInPool[i], certInPoolButton[i]);</span>
+<span class="nc bnc" id="L1125" title="All 4 branches missed.">        if (clickable &amp;&amp; o != null) {</span>
+<span class="nc bnc" id="L1126" title="All 2 branches missed.">            if (o instanceof PossibleAction)</span>
+<span class="nc" id="L1127">                certInPoolButton[i].addPossibleAction((PossibleAction) o);</span>
+        }
+<span class="nc" id="L1129">    }</span>
+
+    protected void setPoolCertButton(int i, boolean clickable) {
+<span class="nc" id="L1132">        boolean visible = rowVisibilityObservers[i].lastValue();</span>
+<span class="nc bnc" id="L1133" title="All 2 branches missed.">        if (clickable) {</span>
+<span class="nc" id="L1134">            certInPoolButton[i].setText(certInPool[i].getText());</span>
+<span class="nc" id="L1135">            syncToolTipText (certInIPO[i], certInIPOButton[i]);</span>
+        } else {
+<span class="nc" id="L1137">            certInPoolButton[i].clearPossibleActions();</span>
+        }
+<span class="nc bnc" id="L1139" title="All 4 branches missed.">        certInPool[i].setVisible(visible &amp;&amp; !clickable);</span>
+<span class="nc bnc" id="L1140" title="All 4 branches missed.">        certInPoolButton[i].setVisible(visible &amp;&amp; clickable);</span>
+<span class="nc" id="L1141">    }</span>
+
+    protected void setTreasuryCertButton(int i, boolean clickable, Object o) {
+
+<span class="nc" id="L1145">        setTreasuryCertButton(i, clickable);</span>
+<span class="nc bnc" id="L1146" title="All 4 branches missed.">        if (clickable &amp;&amp; o != null) {</span>
+<span class="nc bnc" id="L1147" title="All 2 branches missed.">            if (clickable) syncToolTipText (certInTreasury[i], certInTreasuryButton[i]);</span>
+<span class="nc bnc" id="L1148" title="All 2 branches missed.">            if (o instanceof PossibleAction)</span>
+<span class="nc" id="L1149">                certInTreasuryButton[i].addPossibleAction((PossibleAction) o);</span>
+        }
+<span class="nc" id="L1151">    }</span>
+
+    protected void setTreasuryCertButton(int i, boolean clickable) {
+<span class="nc" id="L1154">        boolean visible = rowVisibilityObservers[i].lastValue();</span>
+<span class="nc bnc" id="L1155" title="All 2 branches missed.">        if (clickable) {</span>
+<span class="nc" id="L1156">            certInTreasuryButton[i].setText(certInTreasury[i].getText());</span>
+<span class="nc" id="L1157">            syncToolTipText (certInTreasury[i], certInTreasuryButton[i]);</span>
+        } else {
+<span class="nc" id="L1159">            certInTreasuryButton[i].clearPossibleActions();</span>
+        }
+<span class="nc bnc" id="L1161" title="All 4 branches missed.">        certInTreasury[i].setVisible(visible &amp;&amp; !clickable);</span>
+<span class="nc" id="L1162">        certInTreasuryButton[i].setVisible(clickable);</span>
+<span class="nc" id="L1163">    }</span>
+
+    protected void setCompanyCashButton(int i, boolean clickable, PossibleAction action){
+<span class="nc" id="L1166">        boolean visible = rowVisibilityObservers[i].lastValue();</span>
+
+<span class="nc bnc" id="L1168" title="All 2 branches missed.">        if (clickable) {</span>
+<span class="nc" id="L1169">            compCashButton[i].setText(compCash[i].getText());</span>
+        } else {
+<span class="nc" id="L1171">            compCashButton[i].clearPossibleActions();</span>
+        }
+<span class="nc bnc" id="L1173" title="All 4 branches missed.">        compCash[i].setVisible(visible &amp;&amp; !clickable);</span>
+<span class="nc bnc" id="L1174" title="All 4 branches missed.">        compCashButton[i].setVisible(visible &amp;&amp; clickable);</span>
+<span class="nc bnc" id="L1175" title="All 2 branches missed.">        if (action != null)</span>
+<span class="nc" id="L1176">            compCashButton[i].addPossibleAction(action);</span>
+<span class="nc" id="L1177">    }</span>
+
+    protected void setPlayerCashButton(int i, boolean clickable, PossibleAction action){
+
+<span class="nc bnc" id="L1181" title="All 2 branches missed.">        if (clickable) {</span>
+<span class="nc" id="L1182">            playerCashButton[i].setText(playerCash[i].getText());</span>
+        } else {
+<span class="nc" id="L1184">            playerCashButton[i].clearPossibleActions();</span>
+        }
+<span class="nc bnc" id="L1186" title="All 2 branches missed.">        playerCash[i].setVisible(!clickable);</span>
+<span class="nc" id="L1187">        playerCashButton[i].setVisible(clickable);</span>
+
+<span class="nc bnc" id="L1189" title="All 2 branches missed.">        if (action != null)</span>
+<span class="nc" id="L1190">            playerCashButton[i].addPossibleAction(action);</span>
+<span class="nc" id="L1191">    }</span>
+
+    protected void syncToolTipText (Field field, ClickField clickField) {
+<span class="nc" id="L1194">        String baseText = field.getToolTipText();</span>
+<span class="nc bnc" id="L1195" title="All 2 branches missed.">        clickField.setToolTipText(Util.hasValue(baseText) ? baseText : null);</span>
+<span class="nc" id="L1196">    }</span>
+
+    protected void addToolTipText (ClickField clickField, String addText) {
+<span class="nc bnc" id="L1199" title="All 2 branches missed.">        if (!Util.hasValue(addText)) return;</span>
+<span class="nc" id="L1200">        String baseText = clickField.getToolTipText();</span>
+<span class="nc bnc" id="L1201" title="All 2 branches missed.">        clickField.setToolTipText(Util.hasValue(baseText) ? baseText+&quot;&lt;br&gt;&quot;+addText : addText);</span>
+<span class="nc" id="L1202">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GridTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.core</a> &gt; <span class="el_source">GridTable.java</span></div><h1>GridTable.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.core;
+
+import java.awt.Color;
+import java.util.Iterator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.game.state.Item;
+import net.sf.rails.game.state.Observable;
+
+import com.google.common.collect.ImmutableTable;
+
+/**
+ * GridTable generates a table for UI displays
+ * based on Accessors
+ */
+
+public class GridTable {
+
+<span class="nc" id="L21">    public static enum TYPE {HEADER, INNER}</span>
+
+    private final ImmutableTable&lt;GridCoordinate, GridCoordinate, GridField&gt; fields;
+    private final GridAxis rows;
+    private final GridAxis cols;
+
+<span class="nc" id="L27">    private static final Logger log = LoggerFactory.getLogger(GridTable.class);</span>
+
+<span class="nc" id="L29">    private GridTable(Builder builder) {</span>
+<span class="nc" id="L30">        this.fields = builder.fields.build();</span>
+<span class="nc" id="L31">        this.rows = builder.rows;</span>
+<span class="nc" id="L32">        this.cols = builder.cols;</span>
+<span class="nc" id="L33">    }</span>
+
+    ImmutableTable&lt;GridCoordinate, GridCoordinate, GridField&gt; getFields() {
+<span class="nc" id="L36">        return fields;</span>
+    }
+
+    GridAxis getRows() {
+<span class="nc" id="L40">        return rows;</span>
+    }
+
+    GridAxis getCols() {
+<span class="nc" id="L44">        return cols;</span>
+    }
+
+    public static Builder builder(GridAxis rows, GridAxis cols) {
+<span class="nc" id="L48">        return new Builder(rows, cols);</span>
+    }
+
+    public static class Builder {
+
+<span class="nc" id="L53">        private final ImmutableTable.Builder&lt;GridCoordinate, GridCoordinate, GridField&gt; fields =</span>
+<span class="nc" id="L54">                ImmutableTable.builder();</span>
+
+        private final GridAxis rows;
+        private final GridAxis cols;
+
+<span class="nc" id="L59">        private GridFieldFormat headerFormat = GridFieldFormat.builder().build();</span>
+<span class="nc" id="L60">        private GridFieldFormat innerFormat = GridFieldFormat.builder().setBackground(Color.WHITE).build();</span>
+
+        private final Iterator&lt;GridCoordinate&gt; rowIterator;
+        private Iterator&lt;GridCoordinate&gt; colIterator;
+        private GridCoordinate currentRow;
+        private GridField currentField;
+
+<span class="nc" id="L67">        private Builder(GridAxis rows, GridAxis cols) {</span>
+<span class="nc" id="L68">            this.rows = rows;</span>
+<span class="nc" id="L69">            this.cols = cols;</span>
+<span class="nc" id="L70">            rowIterator = rows.iterator();</span>
+<span class="nc" id="L71">        }</span>
+
+        public Builder setHeaderFormat(GridFieldFormat format) {
+<span class="nc" id="L74">            this.headerFormat = format;</span>
+<span class="nc" id="L75">            return this;</span>
+        }
+
+        public Builder setInnerFormat(GridFieldFormat format) {
+<span class="nc" id="L79">            this.innerFormat = format;</span>
+<span class="nc" id="L80">            return this;</span>
+        }
+
+        public Builder row() {
+<span class="nc" id="L84">            currentRow = rowIterator.next();</span>
+<span class="nc" id="L85">            colIterator = cols.iterator();</span>
+<span class="nc" id="L86">            return this;</span>
+        }
+
+        private Builder addField(GridField field, GridFieldFormat format) {
+<span class="nc" id="L90">            field.setFormat(format);</span>
+<span class="nc" id="L91">            currentField = field;</span>
+<span class="nc" id="L92">            GridCoordinate currentCol = colIterator.next();</span>
+<span class="nc" id="L93">            fields.put(currentRow, currentCol, currentField);</span>
+<span class="nc" id="L94">            log.debug(&quot;Add field at {},{} &quot;, currentRow, currentCol);</span>
+<span class="nc" id="L95">            return this;</span>
+        }
+
+        public Builder add(String text) {
+<span class="nc" id="L99">            return addField(GridField.createFrom(text), headerFormat);</span>
+        }
+
+        public Builder add(Observable observable) {
+<span class="nc" id="L103">            return addField(GridField.createFrom(observable), headerFormat);</span>
+        }
+
+        public Builder add(Accessor1D&lt;? extends Item&gt; accessor) {
+<span class="nc" id="L107">            return addField(GridField.createFrom(accessor), innerFormat);</span>
+        }
+
+        public Builder add(Accessor2D&lt;? extends Item,? extends Item&gt; accessor) {
+<span class="nc" id="L111">            return addField(GridField.createFrom(accessor), innerFormat);</span>
+        }
+
+        public Builder innerFormat() {
+<span class="nc" id="L115">            currentField.setFormat(innerFormat);</span>
+<span class="nc" id="L116">            return this;</span>
+        }
+
+        public Builder headerFormat() {
+<span class="nc" id="L120">            currentField.setFormat(headerFormat);</span>
+<span class="nc" id="L121">            return this;</span>
+        }
+
+        public Builder color(Accessor1D.AColorModel&lt;? extends Item&gt; color) {
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            if (currentField instanceof GridFieldDynamic1D) {</span>
+<span class="nc" id="L126">                ((GridFieldDynamic1D)currentField).setColor(color);</span>
+            }
+<span class="nc" id="L128">            return this;</span>
+        }
+
+
+        public GridTable build() {
+<span class="nc" id="L133">            return new GridTable(this);</span>
+        }
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StateManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.state</a> &gt; <span class="el_source">StateManager.java</span></div><h1>StateManager.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.state;
+
+import static com.google.common.base.Preconditions.checkArgument;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+public final class StateManager extends Manager{
+
+<span class="fc" id="L21">    private static final Logger log =</span>
+<span class="fc" id="L22">        LoggerFactory.getLogger(StateManager.class);</span>
+
+    private final ChangeStack changeStack;
+
+<span class="fc" id="L26">    private final HashSetState&lt;State&gt; allStates =</span>
+<span class="fc" id="L27">            HashSetState.create(this, &quot;allStates&quot;);</span>
+<span class="fc" id="L28">    private final HashMultimapState&lt;Observable, Model&gt; models =</span>
+<span class="fc" id="L29">            HashMultimapState.create(this, &quot;models&quot;);</span>
+<span class="fc" id="L30">    private final HashMultimapState&lt;Observable, Triggerable&gt; triggers =</span>
+<span class="fc" id="L31">            HashMultimapState.create(this, &quot;triggers&quot;);</span>
+
+
+    // observers is not a state variable (as the have to register and de-register themselves)
+    // gui eleemnts do not have a state of their own (with respect to the game engine)
+<span class="fc" id="L36">    private final HashMultimap&lt;Observable, Observer&gt; observers =</span>
+<span class="fc" id="L37">            HashMultimap.create();</span>
+
+    // initialized later in init()
+    private PortfolioManager portfolioManager;
+    private WalletManager walletManager;
+
+    private StateManager(Root parent, String id) {
+<span class="fc" id="L44">        super(parent, id);</span>
+<span class="fc" id="L45">        this.changeStack = ChangeStack.create(this);</span>
+<span class="fc" id="L46">    }</span>
+
+    static StateManager create(Root parent, String id){
+<span class="fc" id="L49">        return new StateManager(parent, id);</span>
+    }
+
+    void init() {
+        // manually register embedded states
+<span class="fc" id="L54">        registerState(allStates);</span>
+<span class="fc" id="L55">        registerState(models);</span>
+        // create managers
+<span class="fc" id="L57">        portfolioManager = PortfolioManager.create(this, &quot;Portfolios&quot;);</span>
+<span class="fc" id="L58">        walletManager = WalletManager.create(this, &quot;walletManager&quot;);</span>
+<span class="fc" id="L59">    }</span>
+
+    /**
+     * Register states (usually called automatically at state creation)
+     */
+    void registerState(State state) {
+<span class="fc" id="L65">        allStates.add(state);</span>
+<span class="fc" id="L66">    }</span>
+
+//    /**
+//     * De-Register states
+//     */
+//    TODO: Add this
+//    boolean deRegisterState(State state) {
+//        return allStates.remove(state);
+//    }
+
+    /**
+     * set of all states stored in the StateManager
+     */
+    ImmutableSet&lt;State&gt; getAllStates() {
+<span class="fc" id="L80">        return allStates.view();</span>
+    }
+
+    /**
+     * Adds the combination of observer to observable
+     * Usually this is one via addObserver of the observable
+     * @throws an IllegalArgumentException - if observer is already assigned to an observable
+     */
+    synchronized void addObserver(Observer observer, Observable observable) {
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        checkArgument(!observers.containsValue(observer), &quot;Observer can only be assigned to one Observable&quot;);</span>
+<span class="fc" id="L90">        observers.put(observable, observer);</span>
+<span class="fc" id="L91">    }</span>
+
+    /**
+     * Remove combination of observer to observable
+     */
+    boolean removeObserver(Observer observer, Observable observable) {
+<span class="fc" id="L97">        return observers.remove(observable, observer);</span>
+    }
+
+    /**
+     * Set of all observers that observe the observable
+     */
+    ImmutableSet&lt;Observer&gt; getObservers(Observable observable) {
+<span class="fc" id="L104">        return ImmutableSet.copyOf(observers.get(observable));</span>
+    }
+
+    /**
+     * Adds the combination of model to observable
+     * @param Model the model that is updated by the observable
+     * @param Observable the observable to monitor
+     */
+    void addModel(Model model, Observable observable) {
+<span class="fc" id="L113">        models.put(observable, model);</span>
+<span class="fc" id="L114">    }</span>
+
+    boolean removeModel(Model model, Observable observable) {
+<span class="fc" id="L117">        return models.remove(observable, model);</span>
+    }
+
+    ImmutableSet&lt;Model&gt; getModels(Observable observable) {
+<span class="fc" id="L121">        return models.get(observable);</span>
+    }
+
+    /**
+     * Adds the combination of trigger to observable
+     * @param Triggerable the trigger that tracks the observable
+     * @param Observable the observable to monitor
+     */
+    void addTrigger(Triggerable trigger, Observable observable) {
+<span class="fc" id="L130">        triggers.put(observable, trigger);</span>
+<span class="fc" id="L131">    }</span>
+
+    boolean removeTrigger(Triggerable trigger, Observable observable) {
+<span class="nc" id="L134">        return triggers.remove(observable, trigger);</span>
+    }
+
+    ImmutableSet&lt;Triggerable&gt; getTriggers(Observable observable) {
+<span class="fc" id="L138">        return triggers.get(observable);</span>
+    }
+
+    void informTriggers(State state, Change change) {
+
+        // Inform direct triggers
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        for (Triggerable t:getTriggers(state)) {</span>
+<span class="fc" id="L145">            t.triggered(state, change);</span>
+<span class="fc" id="L146">            log.debug(&quot;State {} sends change to Trigger {}&quot;, state, t);</span>
+<span class="fc" id="L147">        }</span>
+
+        // check if there are models
+<span class="fc" id="L150">        ImmutableSet&lt;Model&gt; initModels = getModels(state);</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        if (initModels.isEmpty()) return;</span>
+<span class="fc" id="L152">        ImmutableList&lt;Model&gt; allModels = getModelsToUpdate(initModels);</span>
+
+        // Inform indirect triggers
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        for (Model m:allModels) {</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">            for (Triggerable t:getTriggers(m)) {</span>
+<span class="fc" id="L157">                t.triggered(m, change);</span>
+<span class="fc" id="L158">                log.debug(&quot;Model {} sends change to Trigger {}&quot;, m, t);</span>
+<span class="fc" id="L159">            }</span>
+<span class="fc" id="L160">        }</span>
+<span class="fc" id="L161">    }</span>
+
+    /**
+     * A set of observables is given as input
+     * and then calculates all observer to update in the correct sequence
+     *
+     * It uses a topological sort based on DFS
+     *
+     * @param observables that have been updated
+     * @return sorted list of all models to be updated
+     */
+    ImmutableList&lt;Model&gt; getModelsToUpdate(Collection&lt;? extends Observable&gt; observables) {
+        // Topological sort
+        // Initialize (we do not use WHITE explicitly, but implicit)
+<span class="fc" id="L175">        final Map&lt;Observable, Color&gt; colors = Maps.newHashMap();</span>
+<span class="fc" id="L176">        final LinkedList&lt;Model&gt; topoList = Lists.newLinkedList();</span>
+
+        // For all states
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        for (Observable s: observables) {</span>
+<span class="fc" id="L180">            topoSort(s, colors, topoList);</span>
+<span class="fc" id="L181">        }</span>
+<span class="fc" id="L182">        return ImmutableList.copyOf(topoList);</span>
+    }
+
+<span class="fc" id="L185">    private static enum Color {WHITE, GREY, BLACK};</span>
+    private void topoSort(final Observable v, final Map&lt;Observable, Color&gt; colors, final LinkedList&lt;Model&gt; topoList) {
+<span class="fc" id="L187">        colors.put(v, Color.GREY);</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        for (Model m:getModels(v)) {</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">            if (!colors.containsKey(m)) {</span>
+<span class="fc" id="L190">                topoSort(m, colors, topoList);</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">            } else if (colors.get(m) == Color.GREY) {</span>
+<span class="fc" id="L192">                throw new IllegalStateException(&quot;Graph of Observables contains Cycle&quot;);</span>
+            }
+<span class="fc" id="L194">        }</span>
+<span class="fc" id="L195">        colors.put(v, Color.BLACK);</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (v instanceof Model) topoList.addFirst((Model)v);</span>
+<span class="fc" id="L197">    }</span>
+
+
+    void updateObservers(Set&lt;State&gt; states) {
+        // all direct observers
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        for (State s:states){</span>
+<span class="fc" id="L203">            Set&lt;Observer&gt; observers = getObservers(s);</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">            if (observers.isEmpty()) continue;</span>
+            // cache StateText
+<span class="fc" id="L206">            String stateText = s.toText();</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">            for (Observer o:observers) {</span>
+<span class="fc" id="L208">                o.update(stateText);</span>
+<span class="fc" id="L209">                log.debug(&quot;State {} updates observer {}&quot;, s, o);</span>
+<span class="fc" id="L210">            }</span>
+<span class="fc" id="L211">        }</span>
+
+        // all indirect observers
+<span class="fc bfc" id="L214" title="All 2 branches covered.">        for (Model m:getModelsToUpdate(states)) {</span>
+<span class="fc" id="L215">            Set&lt;Observer&gt; observers = getObservers(m);</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">            if (observers.isEmpty()) continue;</span>
+            // cache ModelText
+<span class="fc" id="L218">            String modelText = m.toText();</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">            for (Observer o:observers) {</span>
+<span class="fc" id="L220">                o.update(modelText);</span>
+<span class="fc" id="L221">                log.debug(&quot;Model {} updates observer {}&quot;, m, o);</span>
+<span class="fc" id="L222">            }</span>
+<span class="fc" id="L223">        }</span>
+<span class="fc" id="L224">    }</span>
+
+    // StateManager getters for sub-components
+    //////////////////////////////////////////
+
+    public ChangeStack getChangeStack() {
+<span class="fc" id="L230">        return changeStack;</span>
+    }
+
+    PortfolioManager getPortfolioManager() {
+<span class="fc" id="L234">        return portfolioManager;</span>
+    }
+
+    public WalletManager getWalletManager() {
+<span class="fc" id="L238">        return walletManager;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

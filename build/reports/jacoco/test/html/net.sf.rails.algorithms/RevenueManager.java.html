@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RevenueManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.algorithms</a> &gt; <span class="el_source">RevenueManager.java</span></div><h1>RevenueManager.java</h1><pre class="source lang-java linenums">package net.sf.rails.algorithms;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.parser.Configurable;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsManager;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.state.ArrayListState;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+/**
+ * Coordinates and stores all elements related to revenue calulcation,
+ * which are permanent.
+ * The conversion of Rails elements is in the responsibility of the RevenueAdapter.
+ * For each GameManager instance only one RevenueManager is created.
+ */
+public final class RevenueManager extends RailsManager implements Configurable {
+
+<span class="fc" id="L28">    private static final Logger log =</span>
+<span class="fc" id="L29">        LoggerFactory.getLogger(RevenueManager.class);</span>
+
+    // Modifiers that are configurable
+<span class="fc" id="L32">    private final HashSet&lt;Configurable&gt; configurableModifiers = new HashSet&lt;Configurable&gt;();</span>
+
+    // Variables to store modifiers (permanent)
+<span class="fc" id="L35">    private final ArrayListState&lt;NetworkGraphModifier&gt; graphModifiers = ArrayListState.create(this, &quot;graphModifiers&quot;);</span>
+<span class="fc" id="L36">    private final ArrayListState&lt;RevenueStaticModifier&gt; staticModifiers = ArrayListState.create(this, &quot;staticModifiers&quot;);</span>
+<span class="fc" id="L37">    private final ArrayListState&lt;RevenueDynamicModifier&gt; dynamicModifiers = ArrayListState.create(this, &quot;dynamicModifiers&quot;);</span>
+    private RevenueCalculatorModifier calculatorModifier;
+
+    // Variables that store the active modifier (per RevenueAdapter)
+<span class="fc" id="L41">    private final ArrayList&lt;RevenueStaticModifier&gt; activeStaticModifiers = new ArrayList&lt;RevenueStaticModifier&gt;();</span>
+<span class="fc" id="L42">    private final ArrayList&lt;RevenueDynamicModifier&gt; activeDynamicModifiers = new ArrayList&lt;RevenueDynamicModifier&gt;();</span>
+    // TODO: Still add that flag if the calculator is active
+//    private boolean activeCalculator;
+
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public RevenueManager(RailsRoot parent, String id) {
+<span class="fc" id="L50">        super(parent, id);</span>
+<span class="fc" id="L51">    }</span>
+
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+
+        // define modifiers
+<span class="fc" id="L56">        List&lt;Tag&gt; modifierTags = tag.getChildren(&quot;Modifier&quot;);</span>
+
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (modifierTags != null) {</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">            for (Tag modifierTag:modifierTags) {</span>
+                // get classname
+<span class="fc" id="L61">                String className = modifierTag.getAttributeAsString(&quot;class&quot;);</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">                if (className == null) {</span>
+<span class="nc" id="L63">                    throw new ConfigurationException(LocalText.getText(&quot;ComponentHasNoClass&quot;, &quot;Modifier&quot;));</span>
+                }
+                // create modifier
+                Object modifier;
+                try {
+<span class="fc" id="L68">                    modifier = Class.forName(className).newInstance();</span>
+<span class="nc" id="L69">                } catch (Exception e) {</span>
+<span class="nc" id="L70">                    throw new ConfigurationException(LocalText.getText(&quot;ClassCannotBeInstantiated&quot;, className), e);</span>
+<span class="fc" id="L71">                }</span>
+<span class="fc" id="L72">                boolean isModifier = false;</span>
+                // add them to the revenueManager
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                if (modifier instanceof NetworkGraphModifier) {</span>
+<span class="fc" id="L75">                    graphModifiers.add((NetworkGraphModifier)modifier);</span>
+<span class="fc" id="L76">                    isModifier = true;</span>
+<span class="fc" id="L77">                    log.debug(&quot;Added as graph modifier = {}&quot;, className);</span>
+                }
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                if (modifier instanceof RevenueStaticModifier) {</span>
+<span class="fc" id="L80">                    staticModifiers.add((RevenueStaticModifier)modifier);</span>
+<span class="fc" id="L81">                    isModifier = true;</span>
+<span class="fc" id="L82">                    log.debug(&quot;Added as static modifier = {}&quot;, className);</span>
+                }
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                if (modifier instanceof RevenueDynamicModifier) {</span>
+<span class="fc" id="L85">                    dynamicModifiers.add((RevenueDynamicModifier)modifier);</span>
+<span class="fc" id="L86">                    isModifier = true;</span>
+<span class="fc" id="L87">                    log.debug(&quot;Added as dynamic modifier = {}&quot;, className);</span>
+                }
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">                if (modifier instanceof RevenueCalculatorModifier) {</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">                    if (calculatorModifier != null) {</span>
+<span class="nc" id="L91">                        throw new ConfigurationException(LocalText.getText(</span>
+                                &quot;MoreThanOneCalculatorModifier&quot;, className));
+                    }
+<span class="nc" id="L94">                    calculatorModifier = (RevenueCalculatorModifier)modifier;</span>
+<span class="nc" id="L95">                    isModifier = true;</span>
+<span class="nc" id="L96">                    log.debug(&quot;Added as calculator modifier = {}&quot;, className);</span>
+                }
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">                if (!isModifier) {</span>
+<span class="nc" id="L99">                    throw new ConfigurationException(LocalText.getText(</span>
+                            &quot;ClassIsNotAModifier&quot;, className));
+                }
+<span class="pc bpc" id="L102" title="1 of 4 branches missed.">                if (isModifier &amp;&amp; modifier instanceof Configurable) {</span>
+<span class="fc" id="L103">                    configurableModifiers.add((Configurable)modifier);</span>
+                }
+<span class="fc" id="L105">            }</span>
+        }
+
+<span class="fc" id="L108">    }</span>
+
+    public void finishConfiguration(RailsRoot parent)
+            throws ConfigurationException {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        for (Configurable modifier:configurableModifiers) {</span>
+<span class="fc" id="L113">                modifier.finishConfiguration(parent);</span>
+<span class="fc" id="L114">        }</span>
+<span class="fc" id="L115">    }</span>
+
+    public void addStaticModifier(RevenueStaticModifier modifier) {
+<span class="fc" id="L118">        staticModifiers.add(modifier);</span>
+<span class="fc" id="L119">        log.debug(&quot;Revenue Manager: Added static modifier {}&quot;, modifier);</span>
+<span class="fc" id="L120">    }</span>
+
+    public boolean removeStaticModifier(RevenueStaticModifier modifier) {
+<span class="fc" id="L123">        boolean result = staticModifiers.remove(modifier);</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        if (result) {</span>
+<span class="fc" id="L125">            log.debug(&quot;RevenueManager: Removed static modifier {}&quot;, modifier);</span>
+        } else {
+<span class="nc" id="L127">            log.debug(&quot;RevenueManager: Cannot remove{}&quot;, modifier);</span>
+        }
+<span class="fc" id="L129">        return result;</span>
+    }
+
+    public void addGraphModifier(NetworkGraphModifier modifier) {
+<span class="fc" id="L133">        graphModifiers.add(modifier);</span>
+<span class="fc" id="L134">        log.debug(&quot;Revenue Manager: Added graph modifier {}&quot;, modifier);</span>
+<span class="fc" id="L135">    }</span>
+
+    public boolean removeGraphModifier(NetworkGraphModifier modifier) {
+<span class="nc" id="L138">        boolean result = graphModifiers.remove(modifier);</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (result) {</span>
+<span class="nc" id="L140">            log.debug(&quot;RevenueManager: Removed graph modifier {}&quot;, modifier);</span>
+        } else {
+<span class="nc" id="L142">            log.debug(&quot;RevenueManager: Cannot remove{}&quot;, modifier);</span>
+        }
+<span class="nc" id="L144">        return result;</span>
+    }
+
+    public void addDynamicModifier(RevenueDynamicModifier modifier) {
+<span class="nc" id="L148">        dynamicModifiers.add(modifier);</span>
+<span class="nc" id="L149">        log.debug(&quot;Revenue Manager: Added dynamic modifier {}&quot;, modifier);</span>
+<span class="nc" id="L150">    }</span>
+
+    public boolean removeDynamicModifier(RevenueDynamicModifier modifier) {
+<span class="nc" id="L153">        boolean result = dynamicModifiers.remove(modifier);</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        if (result) {</span>
+<span class="nc" id="L155">            log.debug(&quot;RevenueManager: Removed dynamic modifier {}&quot;, modifier);</span>
+        } else {
+<span class="nc" id="L157">            log.debug(&quot;RevenueManager: Cannot remove{}&quot;, modifier);</span>
+        }
+<span class="nc" id="L159">        return result;</span>
+    }
+
+    void activateMapGraphModifiers(NetworkGraph graph) {
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">        for (NetworkGraphModifier modifier:graphModifiers.view()) {</span>
+<span class="nc" id="L164">            modifier.modifyMapGraph(graph);</span>
+<span class="nc" id="L165">        }</span>
+<span class="fc" id="L166">    }</span>
+
+    void activateRouteGraphModifiers(NetworkGraph graph, PublicCompany company) {
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        for (NetworkGraphModifier modifier:graphModifiers.view()) {</span>
+<span class="nc" id="L170">            modifier.modifyRouteGraph(graph, company);</span>
+<span class="nc" id="L171">        }</span>
+<span class="fc" id="L172">    }</span>
+
+
+    void initStaticModifiers(RevenueAdapter revenueAdapter) {
+<span class="nc" id="L176">        activeStaticModifiers.clear();</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        for (RevenueStaticModifier modifier:staticModifiers.view()) {</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">            if (modifier.modifyCalculator(revenueAdapter)) {</span>
+<span class="nc" id="L179">                activeStaticModifiers.add(modifier);</span>
+            }
+<span class="nc" id="L181">        }</span>
+<span class="nc" id="L182">    }</span>
+
+    /**
+     * @param revenueAdapter
+     * @return true if there are active dynamic modifiers
+     */
+    boolean initDynamicModifiers(RevenueAdapter revenueAdapter) {
+<span class="nc" id="L189">        activeDynamicModifiers.clear();</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">        for (RevenueDynamicModifier modifier:dynamicModifiers.view()) {</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">            if (modifier.prepareModifier(revenueAdapter))</span>
+<span class="nc" id="L192">                activeDynamicModifiers.add(modifier);</span>
+<span class="nc" id="L193">        }</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        return !activeDynamicModifiers.isEmpty();</span>
+    }
+
+    /**
+     * @param revenueAdapter
+     * @return revenue from active calculator
+     */
+    // FIXME: This does not fully cover all cases that needs the revenue from the calculator
+    int revenueFromDynamicCalculator(RevenueAdapter revenueAdapter) {
+<span class="nc" id="L203">        return calculatorModifier.calculateRevenue(revenueAdapter);</span>
+
+    }
+
+    /**
+     * Allows dynamic modifiers to adjust the optimal run
+     * @param optimalRun
+     */
+    void adjustOptimalRun(List&lt;RevenueTrainRun&gt; optimalRun) {
+        // allow dynamic modifiers to change the optimal run
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        for (RevenueDynamicModifier modifier:activeDynamicModifiers) {</span>
+<span class="nc" id="L214">            modifier.adjustOptimalRun(optimalRun);</span>
+<span class="nc" id="L215">        }</span>
+<span class="nc" id="L216">    }</span>
+
+    /**
+     * @param run the current run
+     * @param optimal flag if this is the found optimal run
+     * @return total value of dynamic modifiers
+     */
+    int evaluationValue(List&lt;RevenueTrainRun&gt; run, boolean optimal) {
+        // this allows dynamic modifiers to change the optimal run
+        // however this is forbidden outside the optimal run!
+<span class="nc" id="L226">         int value = 0;</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">         for (RevenueDynamicModifier modifier:activeDynamicModifiers) {</span>
+<span class="nc" id="L228">             value += modifier.evaluationValue(run, optimal);</span>
+<span class="nc" id="L229">         }</span>
+<span class="nc" id="L230">         return value;</span>
+     }
+
+    /**
+     * @return total prediction value of dynamic modifiers
+     */
+    int predictionValue(List&lt;RevenueTrainRun&gt; run) {
+        // do not change the optimal run!
+<span class="nc" id="L238">         int value = 0;</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">         for (RevenueDynamicModifier modifier:activeDynamicModifiers) {</span>
+<span class="nc" id="L240">             value += modifier.predictionValue(run);</span>
+<span class="nc" id="L241">         }</span>
+<span class="nc" id="L242">         return value;</span>
+     }
+
+    /**
+     *
+     * @param revenueAdapter
+     * @return pretty print output from all modifiers (both static and dynamic)
+     */
+    String prettyPrint(RevenueAdapter revenueAdapter) {
+<span class="nc" id="L251">        StringBuilder prettyPrint = new StringBuilder();</span>
+
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        for (RevenueStaticModifier modifier:activeStaticModifiers) {</span>
+<span class="nc" id="L254">            String modifierText = modifier.prettyPrint(revenueAdapter);</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">            if (modifierText != null) {</span>
+<span class="nc" id="L256">                prettyPrint.append(modifierText).append(&quot;\n&quot;);</span>
+            }
+<span class="nc" id="L258">        }</span>
+
+<span class="nc bnc" id="L260" title="All 2 branches missed.">        for (RevenueDynamicModifier modifier:activeDynamicModifiers) {</span>
+<span class="nc" id="L261">            String modifierText = modifier.prettyPrint(revenueAdapter);</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">            if (modifierText != null) {</span>
+<span class="nc" id="L263">                prettyPrint.append(modifierText).append(&quot;\n&quot;);</span>
+            }
+<span class="nc" id="L265">        }</span>
+
+<span class="nc" id="L267">        return prettyPrint.toString();</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

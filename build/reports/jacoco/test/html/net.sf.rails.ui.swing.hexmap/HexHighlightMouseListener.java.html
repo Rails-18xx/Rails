@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HexHighlightMouseListener.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.hexmap</a> &gt; <span class="el_source">HexHighlightMouseListener.java</span></div><h1>HexHighlightMouseListener.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.hexmap;
+
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.JComponent;
+
+import net.sf.rails.common.Config;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.StartItem;
+import net.sf.rails.game.Tile;
+import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.special.LocatedBonus;
+import net.sf.rails.game.special.SellBonusToken;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.special.SpecialRight;
+import net.sf.rails.game.special.SpecialTileLay;
+import net.sf.rails.game.special.SpecialBaseTokenLay;
+import net.sf.rails.ui.swing.ORUIManager;
+
+
+/**
+ * Takes care of highlighting certain hexes in case of mouseover events.
+ */
+// FIXME: This seems very confusing, as it mixes all types of MouseListeners
+public class HexHighlightMouseListener implements MouseListener {
+
+    private List&lt;MapHex&gt; hexList;
+    private List&lt;GUIHex&gt; guiHexList;
+    private HexMap hexMap;
+    private ORUIManager orUIManager;
+    private PortfolioModel portfolio;
+    private Tile tile;
+    
+    /**
+     * @param orUIManager The OR UI manager containing the map where the highlighting 
+     * should occur
+     */
+<span class="nc" id="L45">    private HexHighlightMouseListener(ORUIManager orUIManager){</span>
+<span class="nc" id="L46">        this.orUIManager = orUIManager;</span>
+<span class="nc" id="L47">        hexList = new ArrayList&lt;MapHex&gt;();</span>
+<span class="nc" id="L48">        guiHexList = new ArrayList&lt;GUIHex&gt;();</span>
+<span class="nc" id="L49">        portfolio = null;</span>
+<span class="nc" id="L50">    }</span>
+    
+    /**
+     * @param pf Portfolio which is dynamically evaluated at mouse-even-time for
+     * any contained private companies
+     */
+    public static void addMouseListener(JComponent c,ORUIManager orUIManager,PortfolioModel pf) {
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if (isEnabled(false)) {</span>
+<span class="nc" id="L58">            HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);</span>
+<span class="nc" id="L59">            l.portfolio = pf;</span>
+<span class="nc" id="L60">            c.addMouseListener(l);</span>
+        }
+<span class="nc" id="L62">    }</span>
+    
+    /**
+     * @param tileId ID of the tile the occurrences of which should be highlighted on
+     * the map
+     * @param enableIrrespectiveOfHighlightConfig If true, the mouse listener is
+     * enabled irrespective of the base configuration. Needed since some highlighting
+     * should not be disabled by configuration. 
+     */
+    public static void addMouseListener(JComponent c,ORUIManager orUIManager, Tile tile,boolean enableIrrespectiveOfHighlightConfig) {
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (isEnabled(enableIrrespectiveOfHighlightConfig)) {</span>
+<span class="nc" id="L73">            HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);</span>
+<span class="nc" id="L74">            l.tile = tile;</span>
+<span class="nc" id="L75">            c.addMouseListener(l);</span>
+        }
+<span class="nc" id="L77">    }</span>
+    
+    /**
+     * @param p Private company the hexes associated to which are
+     * to be highlighted (in case of events)
+     * @param enableIrrespectiveOfHighlightConfig If true, the mouse listener is
+     * enabled irrespective of the base configuration. Needed since some highlighting
+     * should not be disabled by configuration. 
+     */
+    public static void addMouseListener(JComponent c,ORUIManager orUIManager,PrivateCompany p,boolean enableIrrespectiveOfHighlightConfig) {
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (isEnabled(enableIrrespectiveOfHighlightConfig)) {</span>
+<span class="nc" id="L88">            HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);</span>
+<span class="nc" id="L89">            Set&lt;PrivateCompany&gt; privList = new HashSet&lt;PrivateCompany&gt;();</span>
+<span class="nc" id="L90">            privList.add(p);</span>
+<span class="nc" id="L91">            l.initPrivateCompanies(privList);</span>
+<span class="nc" id="L92">            c.addMouseListener(l);</span>
+        }
+<span class="nc" id="L94">    }</span>
+    
+    /**
+     * @param p Public company the hexes associated to it (home, destination, ...) are
+     * to be highlighted (in case of events)
+     * @param enableIrrespectiveOfHighlightConfig If true, the mouse listener is
+     * enabled irrespective of the base configuration. Needed since some highlighting
+     * should not be disabled by configuration. 
+     */
+    public static void addMouseListener(JComponent c,ORUIManager orUIManager,PublicCompany p,boolean enableIrrespectiveOfHighlightConfig) {
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (isEnabled(enableIrrespectiveOfHighlightConfig)) {</span>
+<span class="nc" id="L105">            HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);</span>
+<span class="nc" id="L106">            l.addToHexListDistinct(p.getHomeHexes());</span>
+<span class="nc" id="L107">            l.addToHexListDistinct(p.getDestinationHex());</span>
+<span class="nc" id="L108">            c.addMouseListener(l);</span>
+        }
+<span class="nc" id="L110">    }</span>
+    
+    /**
+     * @param si Start Item which is evaluated for any contained private companies
+     */
+    public static void addMouseListener(JComponent c,ORUIManager orUIManager,StartItem si) {
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (isEnabled(false)) {</span>
+<span class="nc" id="L117">            HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);</span>
+<span class="nc" id="L118">            Set&lt;PrivateCompany&gt; privList = new HashSet&lt;PrivateCompany&gt;();</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">            if (si.getPrimary() instanceof PrivateCompany) {</span>
+<span class="nc" id="L120">                privList.add((PrivateCompany)si.getPrimary());</span>
+            }
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            if (si.getSecondary() instanceof PrivateCompany) {</span>
+<span class="nc" id="L123">                privList.add((PrivateCompany)si.getSecondary());</span>
+            }
+<span class="nc" id="L125">            l.initPrivateCompanies(privList);</span>
+<span class="nc" id="L126">            c.addMouseListener(l);</span>
+        }
+<span class="nc" id="L128">    }</span>
+
+    /**
+     * lazy creation of the gui hex list for these reasons:
+     * - save effort in case the mouse over never happens
+     * - hexmap is now more likely to be available than during construction
+     * - portfolio is to be evaluated only at mouse over time
+     */
+    private void initGuiHexList() {
+        //only create list if gui hexes are not yet available
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (!guiHexList.isEmpty()) return;</span>
+        
+        //initially get hex map if not yet available
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        if (hexMap == null) hexMap = orUIManager.getMap();</span>
+        
+        //create gui hex list based on hex list
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (hexMap != null) {</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">            for (MapHex h : hexList) {</span>
+<span class="nc" id="L146">                guiHexList.add(hexMap.getHex(h));</span>
+<span class="nc" id="L147">            }</span>
+        }
+<span class="nc" id="L149">    }</span>
+    
+    /**
+     * inefficient but probably ok due to very small size of lists
+     */
+    private void addToHexListDistinct(List&lt;MapHex&gt; hl) {
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        if (hl == null) return;</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        for (MapHex h : hl) {</span>
+<span class="nc" id="L157">            addToHexListDistinct(h);</span>
+<span class="nc" id="L158">        }</span>
+<span class="nc" id="L159">    }</span>
+    private void addToHexListDistinct(MapHex h) {
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (h == null) return;</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        if (!hexList.contains(h)) hexList.add(h);</span>
+<span class="nc" id="L163">    }</span>
+    
+    private void initPrivateCompanies(Set&lt;PrivateCompany&gt; privList) {
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        for (PrivateCompany p : privList) {</span>
+<span class="nc" id="L167">            addToHexListDistinct(p.getBlockedHexes());</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">            for (SpecialProperty sp : p.getSpecialProperties()) {</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">                if (sp instanceof SpecialTileLay) {</span>
+<span class="nc" id="L170">                    addToHexListDistinct(((SpecialTileLay)sp).getLocations());</span>
+                }
+<span class="nc bnc" id="L172" title="All 2 branches missed.">                if (sp instanceof SpecialBaseTokenLay) {</span>
+<span class="nc" id="L173">                    addToHexListDistinct(((SpecialBaseTokenLay)sp).getLocations());</span>
+                }
+<span class="nc bnc" id="L175" title="All 2 branches missed.">                if (sp instanceof SpecialRight) {</span>
+<span class="nc" id="L176">                    addToHexListDistinct(((SpecialRight)sp).getLocations());</span>
+                }
+<span class="nc bnc" id="L178" title="All 2 branches missed.">                if (sp instanceof LocatedBonus) {</span>
+<span class="nc" id="L179">                    addToHexListDistinct(((LocatedBonus)sp).getLocations());</span>
+                }
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                if (sp instanceof SellBonusToken) {</span>
+<span class="nc" id="L182">                    addToHexListDistinct(((SellBonusToken)sp).getLocations());</span>
+                }
+<span class="nc" id="L184">            }</span>
+<span class="nc" id="L185">        }</span>
+<span class="nc" id="L186">    }</span>
+    
+    private void clearHexList () {
+        //remove hexes from the list 
+        //(as list will be built from the scratch during next mouse entered event)
+<span class="nc" id="L191">        hexList.clear();</span>
+<span class="nc" id="L192">        guiHexList.clear();</span>
+<span class="nc" id="L193">    }</span>
+
+    private void initPortfolioHexList () {
+        //build the hex list for the contained private companies
+<span class="nc" id="L197">        initPrivateCompanies(portfolio.getPrivateCompanies());</span>
+<span class="nc" id="L198">    }</span>
+    
+    private void initTileIdHexList () {
+        //initially get hex map if not yet available
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (hexMap == null) hexMap = orUIManager.getMap();</span>
+
+        //build the list of hexes the current tiles of which have the given tile ID
+<span class="nc bnc" id="L205" title="All 2 branches missed.">        if (hexMap != null) {</span>
+<span class="nc" id="L206">            guiHexList.addAll(hexMap.getHexesByCurrentTileId(tile));</span>
+        }
+<span class="nc" id="L208">    }</span>
+    
+    public void mouseEntered(MouseEvent e) {
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (portfolio != null) initPortfolioHexList();</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        if (tile != null) initTileIdHexList();</span>
+<span class="nc" id="L213">        initGuiHexList();</span>
+<span class="nc bnc" id="L214" title="All 4 branches missed.">        if (hexMap != null &amp;&amp; guiHexList.size() &gt; 0) {</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">            for (GUIHex guiHex : guiHexList) {</span>
+<span class="nc" id="L216">                guiHex.addHighlightRequest();</span>
+<span class="nc" id="L217">            }</span>
+        }
+<span class="nc" id="L219">    }</span>
+
+    public void mouseExited(MouseEvent e) {
+<span class="nc bnc" id="L222" title="All 4 branches missed.">        if (hexMap != null &amp;&amp; guiHexList.size() &gt; 0) {</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">            for (GUIHex guiHex : guiHexList) {</span>
+<span class="nc" id="L224">                guiHex.removeHighlightRequest();</span>
+<span class="nc" id="L225">            }</span>
+        }
+<span class="nc bnc" id="L227" title="All 4 branches missed.">        if (portfolio != null || tile != null) clearHexList();</span>
+<span class="nc" id="L228">    }</span>
+
+    public void mouseClicked(MouseEvent e) {
+<span class="nc" id="L231">    }</span>
+
+    public void mousePressed(MouseEvent e) {
+<span class="nc" id="L234">    }</span>
+
+    public void mouseReleased(MouseEvent e) {
+<span class="nc" id="L237">    }</span>
+    
+
+    private static boolean isEnabled (boolean enableIrrespectiveOfHighlightConfig) {
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        return (enableIrrespectiveOfHighlightConfig </span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">                || &quot;yes&quot;.equals(Config.get(&quot;map.highlightHexes&quot;)));</span>
+    }
+    
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

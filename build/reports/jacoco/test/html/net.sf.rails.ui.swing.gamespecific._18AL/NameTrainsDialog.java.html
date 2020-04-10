@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NameTrainsDialog.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.gamespecific._18AL</a> &gt; <span class="el_source">NameTrainsDialog.java</span></div><h1>NameTrainsDialog.java</h1><pre class="source lang-java linenums">/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/gamespecific/_18AL/NameTrainsDialog.java,v 1.4 2009/10/31 17:08:27 evos Exp $*/
+package net.sf.rails.ui.swing.gamespecific._18AL;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.game.*;
+import net.sf.rails.game.specific._18AL.AssignNamedTrains;
+import net.sf.rails.game.specific._18AL.NameableTrain;
+import net.sf.rails.game.specific._18AL.NamedTrainToken;
+import net.sf.rails.ui.swing.ORWindow;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+import java.util.*;
+import java.util.List;
+
+/**
+ * The Game Setup Window displays the first window presented to the user. This
+ * window contains all of the options available for starting a new rails.game.
+ */
+public class NameTrainsDialog extends JDialog implements ActionListener {
+
+    private static final long serialVersionUID = 1L;
+    private GridBagConstraints gc;
+    private ORWindow orWindow;
+    private AssignNamedTrains action;
+    private List&lt;NamedTrainToken&gt; tokens;
+    private List&lt;NameableTrain&gt; trains;
+    private int numberOfTrains;
+
+    private List&lt;NameableTrain&gt; trainPerToken;
+<span class="nc" id="L37">    private boolean changed = false;</span>
+
+    private JPanel pane, selectionPane, buttonPane;
+    private JButton doneButton, cancelButton;
+<span class="nc" id="L41">    private Map&lt;NamedTrainToken, List&lt;JRadioButton&gt;&gt; buttonsPerToken = new HashMap&lt;NamedTrainToken, List&lt;JRadioButton&gt;&gt;();</span>
+
+<span class="nc" id="L43">    protected static final Logger log = LoggerFactory.getLogger(NameTrainsDialog.class);</span>
+
+    public NameTrainsDialog(ORWindow orWindow, AssignNamedTrains action) {
+
+<span class="nc" id="L47">        super(orWindow, true);</span>
+
+<span class="nc" id="L49">        this.orWindow = orWindow;</span>
+<span class="nc" id="L50">        this.action = action;</span>
+<span class="nc" id="L51">        this.tokens = action.getTokens();</span>
+<span class="nc" id="L52">        this.trains = action.getNameableTrains();</span>
+<span class="nc" id="L53">        numberOfTrains = trains.size();</span>
+<span class="nc" id="L54">        trainPerToken = new ArrayList&lt;NameableTrain&gt;(tokens.size());</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        for (int i = 0; i &lt; tokens.size(); i++) {</span>
+<span class="nc" id="L56">            trainPerToken.add(null);</span>
+        }
+
+<span class="nc" id="L59">        initialize();</span>
+
+<span class="nc" id="L61">        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);</span>
+<span class="nc" id="L62">        this.setLocationRelativeTo(orWindow);</span>
+<span class="nc" id="L63">        this.pack();</span>
+<span class="nc" id="L64">    }</span>
+
+    private void initialize() {
+
+        ButtonGroup group;
+        JRadioButton radioButton;
+
+<span class="nc" id="L71">        pane = new JPanel(new BorderLayout());</span>
+
+<span class="nc" id="L73">        selectionPane = new JPanel();</span>
+<span class="nc" id="L74">        buttonPane = new JPanel();</span>
+
+<span class="nc" id="L76">        selectionPane.setLayout(new GridBagLayout());</span>
+<span class="nc" id="L77">        this.setTitle(&quot;Assign Named Trains&quot;);</span>
+<span class="nc" id="L78">        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);</span>
+
+<span class="nc" id="L80">        gc = new GridBagConstraints();</span>
+<span class="nc" id="L81">        gc.gridx = 0;</span>
+<span class="nc" id="L82">        gc.gridy = 0;</span>
+<span class="nc" id="L83">        gc.weightx = 0;</span>
+<span class="nc" id="L84">        gc.weighty = 0;</span>
+<span class="nc" id="L85">        gc.gridwidth = 1;</span>
+<span class="nc" id="L86">        gc.gridheight = 1;</span>
+<span class="nc" id="L87">        gc.ipadx = 0;</span>
+<span class="nc" id="L88">        gc.ipady = 0;</span>
+<span class="nc" id="L89">        gc.anchor = GridBagConstraints.CENTER;</span>
+<span class="nc" id="L90">        gc.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="nc" id="L91">        gc.insets = new Insets(1, 1, 1, 1);</span>
+
+<span class="nc" id="L93">        int x = 2;</span>
+<span class="nc" id="L94">        int y = 0;</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        for (Train train : trains) {</span>
+<span class="nc" id="L96">            addItem(new JLabel(train.toText(), SwingConstants.CENTER), x++, y);</span>
+<span class="nc" id="L97">        }</span>
+<span class="nc" id="L98">        addItem(new JLabel(&quot;None&quot;, SwingConstants.CENTER), x, y);</span>
+
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        for (NamedTrainToken token : tokens) {</span>
+<span class="nc" id="L101">            x = 0;</span>
+<span class="nc" id="L102">            NameableTrain preAssignedTrain =</span>
+<span class="nc" id="L103">                    action.getPreTrainPerToken().get(tokens.indexOf(token));</span>
+<span class="nc" id="L104">            trainPerToken.set(tokens.indexOf(token), preAssignedTrain);</span>
+
+<span class="nc" id="L106">            addItem(new JLabel(token.getId()), x, ++y);</span>
+<span class="nc" id="L107">            addItem(new JLabel(&quot;+&quot; + orWindow.getGameUIManager().format(token.getValue())), ++x, y);</span>
+<span class="nc" id="L108">            group = new ButtonGroup();</span>
+<span class="nc" id="L109">            List&lt;JRadioButton&gt; buttons = new ArrayList&lt;JRadioButton&gt;();</span>
+<span class="nc" id="L110">            buttonsPerToken.put(token, buttons);</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">            for (NameableTrain train : trains) {</span>
+<span class="nc" id="L112">                radioButton = new JRadioButton();</span>
+<span class="nc" id="L113">                radioButton.setSelected(train.equals(preAssignedTrain));</span>
+<span class="nc" id="L114">                addItem(radioButton, ++x, y);</span>
+<span class="nc" id="L115">                group.add(radioButton);</span>
+<span class="nc" id="L116">                buttons.add(radioButton);</span>
+<span class="nc" id="L117">                radioButton.addActionListener(this);</span>
+<span class="nc" id="L118">            }</span>
+<span class="nc" id="L119">            radioButton = new JRadioButton();</span>
+<span class="nc" id="L120">            addItem(radioButton, ++x, y);</span>
+<span class="nc" id="L121">            group.add(radioButton);</span>
+<span class="nc" id="L122">            buttons.add(radioButton);</span>
+<span class="nc" id="L123">            radioButton.addActionListener(this);</span>
+<span class="nc" id="L124">        }</span>
+
+<span class="nc" id="L126">        doneButton = new JButton(LocalText.getText(&quot;Done&quot;));</span>
+<span class="nc" id="L127">        cancelButton = new JButton(LocalText.getText(&quot;Cancel&quot;));</span>
+
+<span class="nc" id="L129">        doneButton.setMnemonic(KeyEvent.VK_D);</span>
+<span class="nc" id="L130">        cancelButton.setMnemonic(KeyEvent.VK_C);</span>
+
+<span class="nc" id="L132">        doneButton.addActionListener(this);</span>
+<span class="nc" id="L133">        cancelButton.addActionListener(this);</span>
+
+<span class="nc" id="L135">        buttonPane.add(doneButton);</span>
+<span class="nc" id="L136">        buttonPane.add(cancelButton);</span>
+
+<span class="nc" id="L138">        pane.add(selectionPane, BorderLayout.NORTH);</span>
+<span class="nc" id="L139">        pane.add(buttonPane, BorderLayout.SOUTH);</span>
+
+<span class="nc" id="L141">        getContentPane().add(pane);</span>
+
+<span class="nc" id="L143">    }</span>
+
+    private void addItem(JComponent item, int x, int y) {
+<span class="nc" id="L146">        gc.gridx = x;</span>
+<span class="nc" id="L147">        gc.gridy = y;</span>
+        // item.setBorder(border); // Does not work for radio buttons
+<span class="nc" id="L149">        selectionPane.add(item, gc);</span>
+<span class="nc" id="L150">    }</span>
+
+    public boolean hasChanged() {
+<span class="nc" id="L153">        return changed;</span>
+    }
+
+    public AssignNamedTrains getUpdatedAction() {
+<span class="nc" id="L157">        return action;</span>
+    }
+
+    public void actionPerformed(ActionEvent arg0) {
+
+<span class="nc" id="L162">        Object source = arg0.getSource();</span>
+
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (source.equals(doneButton)) {</span>
+<span class="nc" id="L165">            action.setPostTrainPerToken(trainPerToken);</span>
+<span class="nc" id="L166">            setVisible(false);</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        } else if (source.equals(cancelButton)) {</span>
+<span class="nc" id="L168">            changed = false;</span>
+<span class="nc" id="L169">            setVisible(false);</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        } else if (source instanceof JRadioButton) {</span>
+
+<span class="nc" id="L172">            JRadioButton radioButton = (JRadioButton) source;</span>
+<span class="nc" id="L173">            int x = -1;</span>
+<span class="nc" id="L174">            int y = -1;</span>
+
+            // Find the coordinates of the selected button
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            for (NamedTrainToken token : tokens) {</span>
+<span class="nc" id="L178">                List&lt;JRadioButton&gt; buttons = buttonsPerToken.get(token);</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">                for (JRadioButton button : buttons) {</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">                    if (button == radioButton) {</span>
+<span class="nc" id="L181">                        x = buttons.indexOf(button);</span>
+<span class="nc" id="L182">                        y = tokens.indexOf(token);</span>
+<span class="nc" id="L183">                        break;</span>
+                    }
+<span class="nc" id="L185">                }</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">                if (x == -1) continue;</span>
+
+<span class="nc" id="L188">                log.debug(&quot;RadioButton: x=&quot; + x + &quot; y=&quot; + y);</span>
+<span class="nc" id="L189">                changed = true;</span>
+
+<span class="nc bnc" id="L191" title="All 2 branches missed.">                if (x &lt; trains.size()) {</span>
+<span class="nc" id="L192">                    trainPerToken.set(y, trains.get(x));</span>
+                } else {
+<span class="nc" id="L194">                    trainPerToken.set(y, null);</span>
+                }
+
+                // Deselect any other tokens with the same train
+<span class="nc bnc" id="L198" title="All 4 branches missed.">                if (x &gt;= 0 &amp;&amp; tokens.size() &gt; 1) {</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">                    for (NamedTrainToken otherToken : tokens) {</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">                        if (otherToken != token) {</span>
+<span class="nc" id="L201">                            List&lt;JRadioButton&gt; otherButtons =</span>
+<span class="nc" id="L202">                                    buttonsPerToken.get(otherToken);</span>
+<span class="nc" id="L203">                            JRadioButton otherButton = otherButtons.get(x);</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">                            if (otherButton.isSelected()) {</span>
+<span class="nc" id="L205">                                otherButtons.get(trains.size()).setSelected(</span>
+                                        true);
+<span class="nc" id="L207">                                trainPerToken.set(tokens.indexOf(otherToken),</span>
+                                        null);
+                            }
+                        }
+<span class="nc" id="L211">                    }</span>
+<span class="nc" id="L212">                    break;</span>
+                }
+<span class="nc" id="L214">            }</span>
+        }
+<span class="nc" id="L216">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.sf.rails.game.state.ArrayListMultimapStateTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2020-04-10T19:48:53" hostname="marc-desktop" time="0.031">
+  <properties/>
+  <testcase name="testGet" classname="net.sf.rails.game.state.ArrayListMultimapStateTest" time="0.025"/>
+  <testcase name="testPut" classname="net.sf.rails.game.state.ArrayListMultimapStateTest" time="0.002"/>
+  <testcase name="testContainsEntry" classname="net.sf.rails.game.state.ArrayListMultimapStateTest" time="0.0"/>
+  <testcase name="testRemove" classname="net.sf.rails.game.state.ArrayListMultimapStateTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

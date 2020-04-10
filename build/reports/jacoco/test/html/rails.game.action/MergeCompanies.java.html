@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MergeCompanies.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">rails.game.action</a> &gt; <span class="el_source">MergeCompanies.java</span></div><h1>MergeCompanies.java</h1><pre class="source lang-java linenums">package rails.game.action;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.common.base.Objects;
+
+import net.sf.rails.game.CompanyManager;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.util.RailsObjects;
+import rails.game.action.PossibleAction;
+
+/**
+ *
+ * Rails 2.0: Updated equals and toString methods
+ */
+public class MergeCompanies extends PossibleAction {
+
+    // Server-side settings
+    transient protected PublicCompany mergingCompany;
+    protected String mergingCompanyName;
+    transient protected List&lt;PublicCompany&gt; targetCompanies;
+    protected String targetCompanyNames;
+    protected List&lt;Boolean&gt; canReplaceToken;
+
+    // Client-side settings
+<span class="pc" id="L31">    transient protected PublicCompany selectedTargetCompany = null;</span>
+<span class="pc" id="L32">    protected String selectedTargetCompanyName = null;</span>
+<span class="pc" id="L33">    protected boolean replaceToken = false;</span>
+
+    public static final long serialVersionUID = 1L;
+
+    /**
+     * Common constructor.
+     */
+    public MergeCompanies(PublicCompany mergingCompany,
+            List&lt;PublicCompany&gt; targetCompanies, boolean forced) {
+<span class="fc" id="L42">        super(null); // not defined by an activity yet</span>
+<span class="fc" id="L43">        this.mergingCompany = mergingCompany;</span>
+<span class="fc" id="L44">        this.mergingCompanyName = mergingCompany.getId();</span>
+<span class="fc" id="L45">        this.targetCompanies = targetCompanies;</span>
+<span class="fc" id="L46">        StringBuilder b = new StringBuilder();</span>
+<span class="fc" id="L47">        canReplaceToken = new ArrayList&lt;Boolean&gt;(targetCompanies.size());</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        for (PublicCompany target : targetCompanies) {</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            if (b.length() &gt; 0) b.append(&quot;,&quot;);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">            if (target == null) {</span>
+<span class="fc" id="L51">                b.append(&quot;null&quot;);</span>
+<span class="fc" id="L52">                canReplaceToken.add(false);</span>
+            } else {
+<span class="fc" id="L54">                b.append(target.getId());</span>
+<span class="fc" id="L55">                MapHex hex = mergingCompany.getHomeHexes().get(0);</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">                canReplaceToken.add(target.getNumberOfFreeBaseTokens() &gt; 0</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">                    &amp;&amp; (!hex.hasTokenOfCompany(target)</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">                        || hex.getCurrentTile().allowsMultipleBasesOfOneCompany()</span>
+<span class="fc" id="L59">                            &amp;&amp; hex.getStopOfBaseToken(mergingCompany)</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">                                != hex.getStopOfBaseToken(target)));</span>
+            }
+<span class="fc" id="L62">        }</span>
+<span class="fc" id="L63">        targetCompanyNames = b.toString();</span>
+<span class="fc" id="L64">    }</span>
+
+    public MergeCompanies(PublicCompany mergingCompany,
+            PublicCompany targetCompany, boolean forced) {
+<span class="nc" id="L68">        this (mergingCompany, Arrays.asList(targetCompany), forced);</span>
+<span class="nc" id="L69">    }</span>
+
+    /** Required for deserialization */
+    public MergeCompanies() {
+<span class="nc" id="L73">        super(null); // not defined by an activity yet</span>
+<span class="nc" id="L74">    }</span>
+
+    public PublicCompany getMergingCompany() {
+<span class="fc" id="L77">        return mergingCompany;</span>
+    }
+
+    public List&lt;PublicCompany&gt; getTargetCompanies() {
+<span class="nc" id="L81">        return targetCompanies;</span>
+    }
+
+    public boolean canReplaceToken(int index) {
+<span class="nc" id="L85">        return canReplaceToken.get(index);</span>
+    }
+
+    public PublicCompany getSelectedTargetCompany() {
+<span class="fc" id="L89">        return selectedTargetCompany;</span>
+    }
+
+    public void setSelectedTargetCompany(PublicCompany selectedTargetCompany) {
+<span class="nc" id="L93">        this.selectedTargetCompany = selectedTargetCompany;</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (selectedTargetCompany != null)</span>
+<span class="nc" id="L95">            selectedTargetCompanyName = selectedTargetCompany.getId();</span>
+<span class="nc" id="L96">    }</span>
+
+    public void setReplaceToken(boolean value) {
+<span class="nc" id="L99">        replaceToken = value;</span>
+<span class="nc" id="L100">    }</span>
+
+    public boolean getReplaceToken() {
+<span class="fc" id="L103">        return replaceToken;</span>
+    }
+
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        if (pa == this) return true;</span>
+        //  super checks both class identity and super class attributes
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (!super.equalsAs(pa, asOption)) return false;</span>
+
+        // check asOption attributes
+<span class="fc" id="L114">        MergeCompanies action = (MergeCompanies)pa;</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        boolean options = Objects.equal(this.mergingCompany, action.mergingCompany)</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">                &amp;&amp; Objects.equal(this.targetCompanies, action.targetCompanies)</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">                &amp;&amp; Objects.equal(this.canReplaceToken, action.canReplaceToken)</span>
+        ;
+
+        // finish if asOptions check
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if (asOption) return options;</span>
+
+        // check asAction attributes
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        return options</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.selectedTargetCompany, action.selectedTargetCompany)</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.replaceToken, action.replaceToken)</span>
+        ;
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L132">        return super.toString() +</span>
+<span class="fc" id="L133">                RailsObjects.stringHelper(this)</span>
+<span class="fc" id="L134">                    .addToString(&quot;mergingCompany&quot;, mergingCompany)</span>
+<span class="fc" id="L135">                    .addToString(&quot;targetCompanies&quot;, targetCompanies)</span>
+<span class="fc" id="L136">                    .addToString(&quot;canReplaceToken&quot;, canReplaceToken)</span>
+<span class="fc" id="L137">                    .addToStringOnlyActed(&quot;selectedTargetCompany&quot;, selectedTargetCompany)</span>
+<span class="fc" id="L138">                    .addToStringOnlyActed(&quot;replaceToken&quot;, replaceToken)</span>
+<span class="fc" id="L139">                    .toString()</span>
+        ;
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+
+        //in.defaultReadObject();
+        // Custom reading for backwards compatibility
+<span class="fc" id="L149">        ObjectInputStream.GetField fields = in.readFields();</span>
+<span class="fc" id="L150">        mergingCompanyName = (String) fields.get(&quot;mergingCompanyName&quot;, mergingCompanyName);</span>
+<span class="fc" id="L151">        targetCompanyNames = (String) fields.get(&quot;targetCompanyNames&quot;, targetCompanyNames);</span>
+<span class="fc" id="L152">        canReplaceToken = (List&lt;Boolean&gt;) fields.get(&quot;canReplaceToken&quot;, canReplaceToken);</span>
+<span class="fc" id="L153">        selectedTargetCompanyName = (String) fields.get(&quot;selectedTargetCompanyName&quot;, selectedTargetCompanyName);</span>
+<span class="fc" id="L154">        replaceToken = fields.get(&quot;replaceToken&quot;, replaceToken);</span>
+
+<span class="fc" id="L156">        CompanyManager cmgr = getCompanyManager();</span>
+
+<span class="fc" id="L158">        mergingCompany = cmgr.getPublicCompany(mergingCompanyName);</span>
+
+<span class="fc" id="L160">        targetCompanies = new ArrayList&lt;PublicCompany&gt;();</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        for (String name : targetCompanyNames.split(&quot;,&quot;)) {</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">            if (name.equals(&quot;null&quot;)) {</span>
+<span class="fc" id="L163">                targetCompanies.add(null);</span>
+            } else {
+<span class="fc" id="L165">                targetCompanies.add(cmgr.getPublicCompany(name));</span>
+            }
+        }
+
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if (selectedTargetCompanyName != null</span>
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">            &amp;&amp; !selectedTargetCompanyName.equals(&quot;null&quot;)) {</span>
+<span class="fc" id="L171">            selectedTargetCompany =</span>
+<span class="fc" id="L172">                    cmgr.getPublicCompany(selectedTargetCompanyName);</span>
+        }
+<span class="fc" id="L174">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LayTile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">rails.game.action</a> &gt; <span class="el_source">LayTile.java</span></div><h1>LayTile.java</h1><pre class="source lang-java linenums">package rails.game.action;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Ordering;
+
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.MapManager;
+import net.sf.rails.game.Tile;
+import net.sf.rails.game.TileManager;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.special.SpecialTileLay;
+import net.sf.rails.util.RailsObjects;
+import net.sf.rails.util.Util;
+
+/**
+ * Rails 2.0: Updated equals and toString methods (however see TODO below)
+*/
+public class LayTile extends PossibleORAction implements Comparable&lt;LayTile&gt; {
+
+    /* LayTile types */
+    public final static int GENERIC = 0; // Stop-gap only
+    public final static int LOCATION_SPECIFIC = 1; // Valid hex and allowed tiles
+    public final static int SPECIAL_PROPERTY = 2; // Directed by a special property
+    public final static int CORRECTION = 99; // Correction tile lays
+
+<span class="fc" id="L34">    protected int type = 0;</span>
+
+    /*--- Preconditions ---*/
+
+    /** Where to lay a tile (null means anywhere) */
+<span class="fc" id="L39">    transient private List&lt;MapHex&gt; locations = null;</span>
+    private String locationNames;
+
+    /** Highest tile colour (empty means unspecified) */
+<span class="fc" id="L43">    private Map&lt;String, Integer&gt; tileColours = null;</span>
+
+    /** Allowed tiles on a specific location (empty means unspecified) */
+<span class="fc" id="L46">    transient private List&lt;Tile&gt; tiles = null;</span>
+    private int[] tileIds;
+    private String[] sTileIds;
+
+    /**
+     * Special property that will be fulfilled by this tile lay. If null, this
+     * is a normal tile lay.
+     */
+<span class="fc" id="L54">    transient private SpecialTileLay specialProperty = null;</span>
+    private int specialPropertyId;
+
+    /**
+     * Need base tokens be relaid?
+     */
+<span class="fc" id="L60">    private boolean relayBaseTokens = false;</span>
+
+    /*--- Postconditions ---*/
+
+    /** The tile actually laid */
+<span class="fc" id="L65">    transient private Tile laidTile = null;</span>
+    private int laidTileId;
+    private String sLaidTileId;
+
+    /** The map hex on which the tile is laid */
+<span class="fc" id="L70">    transient private MapHex chosenHex = null;</span>
+    private String chosenHexName;
+
+    /** The tile orientation */
+    private int orientation;
+
+    /** Any manually assigned base token positions */
+<span class="fc" id="L77">    private Map&lt;String, Integer&gt; relaidBaseTokens = null;</span>
+<span class="fc" id="L78">    private String relaidBaseTokensString = null;</span>
+
+    public static final long serialVersionUID = 1L;
+
+<span class="fc" id="L82">    public LayTile(int type) {</span>
+<span class="fc" id="L83">        this.type = type;</span>
+<span class="fc" id="L84">    }</span>
+
+<span class="fc" id="L86">    public LayTile(Map&lt;String, Integer&gt; tileColours) {</span>
+<span class="fc" id="L87">        type = GENERIC;</span>
+<span class="fc" id="L88">        setTileColours (tileColours);</span>
+        // NOTE: tileColours is currently only used for Help purposes.
+<span class="fc" id="L90">    }</span>
+
+<span class="fc" id="L92">    public LayTile(SpecialTileLay specialProperty) {</span>
+<span class="fc" id="L93">        type = SPECIAL_PROPERTY;</span>
+<span class="fc" id="L94">        this.locations = specialProperty.getLocations();</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if (locations != null) buildLocationNameString();</span>
+<span class="fc" id="L96">        this.specialProperty = specialProperty;</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        if (specialProperty != null) {</span>
+<span class="fc" id="L98">            this.specialPropertyId = specialProperty.getUniqueId();</span>
+<span class="fc" id="L99">            Tile tile = specialProperty.getTile();</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (tile != null) {</span>
+<span class="fc" id="L101">                tiles = new ArrayList&lt;Tile&gt;();</span>
+<span class="fc" id="L102">                tiles.add(tile);</span>
+            }
+        }
+<span class="fc" id="L105">    }</span>
+
+    /**
+     * @return Returns the chosenHex.
+     */
+    public MapHex getChosenHex() {
+<span class="fc" id="L111">        return chosenHex;</span>
+    }
+
+    /**
+     * @param chosenHex The chosenHex to set.
+     */
+    public void setChosenHex(MapHex chosenHex) {
+<span class="nc" id="L118">        this.chosenHex = chosenHex;</span>
+<span class="nc" id="L119">        this.chosenHexName = chosenHex.getId();</span>
+<span class="nc" id="L120">    }</span>
+
+    public int getOrientation() {
+<span class="fc" id="L123">        return orientation;</span>
+    }
+
+    public void setOrientation(int orientation) {
+<span class="nc" id="L127">        this.orientation = orientation;</span>
+<span class="nc" id="L128">    }</span>
+
+    /**
+     * @return Returns the laidTile.
+     */
+    public Tile getLaidTile() {
+<span class="fc" id="L134">        return laidTile;</span>
+    }
+
+    /**
+     * @param laidTile The laidTile to set.
+     */
+    public void setLaidTile(Tile laidTile) {
+<span class="nc" id="L141">        this.laidTile = laidTile;</span>
+<span class="nc" id="L142">        this.sLaidTileId = laidTile.getId();</span>
+<span class="nc" id="L143">    }</span>
+
+    /**
+     * @return Returns the specialProperty.
+     */
+    public SpecialTileLay getSpecialProperty() {
+<span class="fc" id="L149">        return specialProperty;</span>
+    }
+
+    /**
+     * @param specialProperty The specialProperty to set.
+     */
+    public void setSpecialProperty(SpecialTileLay specialProperty) {
+<span class="nc" id="L156">        this.specialProperty = specialProperty;</span>
+        // TODO this.specialPropertyName = specialProperty.getUniqueId();
+<span class="nc" id="L158">    }</span>
+
+    /**
+     * @return Returns the tiles.
+     */
+    public List&lt;Tile&gt; getTiles() {
+<span class="fc" id="L164">        return tiles;</span>
+    }
+
+    /**
+     * @param tiles The tiles to set.
+     */
+    public void setTiles(List&lt;Tile&gt; tiles) {
+<span class="nc" id="L171">        this.tiles = tiles;</span>
+<span class="nc" id="L172">        this.sTileIds = new String[tiles.size()];</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">        for (int i = 0; i &lt; tiles.size(); i++) {</span>
+<span class="nc" id="L174">            sTileIds[i] = tiles.get(i).getId();</span>
+        }
+<span class="nc" id="L176">    }</span>
+
+    public List&lt;MapHex&gt; getLocations() {
+<span class="nc" id="L179">        return locations;</span>
+    }
+
+    public void setLocations(List&lt;MapHex&gt; locations) {
+<span class="fc" id="L183">        this.locations = locations;</span>
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">        if (locations != null) buildLocationNameString();</span>
+<span class="fc" id="L185">    }</span>
+
+    public int getType() {
+<span class="fc" id="L188">        return type;</span>
+    }
+
+    /**
+     * @return Returns the tileColours.
+     */
+    public Map&lt;String, Integer&gt; getTileColours() {
+<span class="nc" id="L195">        return tileColours;</span>
+    }
+
+    public boolean isTileColourAllowed(String tileColour) {
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        return tileColours != null</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        &amp;&amp; tileColours.containsKey(tileColour)</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        &amp;&amp; tileColours.get(tileColour) &gt; 0;</span>
+    }
+
+    public void setTileColours(Map&lt;String, Integer&gt; map) {
+<span class="fc" id="L205">        tileColours = new HashMap&lt;String, Integer&gt;();</span>
+        // Check the map. Sometimes 0 values creep in, and these can't easily
+        // be intercepted in the UI code (see comment at previous method).
+        // TODO This is a dirty fix, but the quickest one too.
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        if (map != null) {</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">            for (String colourName : map.keySet()) {</span>
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">                if (map.get(colourName) &gt; 0) tileColours.put(colourName, map.get(colourName));</span>
+<span class="fc" id="L212">            }</span>
+        }
+<span class="fc" id="L214">    }</span>
+
+
+    public boolean isRelayBaseTokens() {
+<span class="nc" id="L218">        return relayBaseTokens;</span>
+    }
+
+    public void setRelayBaseTokens(boolean relayBaseTokens) {
+<span class="nc" id="L222">        this.relayBaseTokens = relayBaseTokens;</span>
+<span class="nc" id="L223">    }</span>
+
+    public void addRelayBaseToken (String companyName, Integer cityNumber) {
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        if (relaidBaseTokens == null) {</span>
+<span class="nc" id="L227">            relaidBaseTokens = new HashMap&lt;String, Integer&gt;();</span>
+        }
+<span class="nc" id="L229">        relaidBaseTokens.put(companyName, cityNumber);</span>
+<span class="nc" id="L230">        relaidBaseTokensString = Util.appendWithDelimiter(relaidBaseTokensString,</span>
+<span class="nc" id="L231">                Util.appendWithDelimiter(companyName, String.valueOf(cityNumber), &quot;:&quot;),</span>
+        &quot;,&quot;);
+<span class="nc" id="L233">    }</span>
+
+    public Map&lt;String, Integer&gt; getRelaidBaseTokens() {
+<span class="fc" id="L236">        return relaidBaseTokens;</span>
+    }
+
+    public int getPotentialCost(MapHex hex) {
+<span class="nc bnc" id="L240" title="All 2 branches missed.">        if (specialProperty != null) {</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">            if (specialProperty.isFree()) {</span>
+<span class="nc" id="L242">                return 0;</span>
+            } else {
+<span class="nc" id="L244">                return Math.max(0, hex.getTileCost() - specialProperty.getDiscount());</span>
+            }
+        }
+<span class="nc" id="L247">        return hex.getTileCost();</span>
+    }
+
+
+    // TODO: Check for and add the missing attributes
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">        if (pa == this) return true;</span>
+        //  super checks both class identity and super class attributes
+<span class="fc bfc" id="L257" title="All 2 branches covered.">        if (!super.equalsAs(pa, asOption)) return false;</span>
+
+        // check asOption attributes
+<span class="fc" id="L260">        LayTile action = (LayTile)pa;</span>
+<span class="pc bpc" id="L261" title="2 of 8 branches missed.">        boolean options = (this.locations == null || this.locations.isEmpty() || this.locations.contains(action.chosenHex))</span>
+<span class="pc bpc" id="L262" title="3 of 6 branches missed.">                &amp;&amp; (this.tiles == null || this.tiles.isEmpty() || Objects.equal(this.tiles, action.tiles) || this.tiles.contains(action.getLaidTile()) )</span>
+//              &amp;&amp; Objects.equal(this.type, action.type) // type is not always stored
+<span class="fc bfc" id="L264" title="All 2 branches covered.">                &amp;&amp; Objects.equal(this.specialProperty, action.specialProperty)</span>
+        ;
+
+        // finish if asOptions check
+<span class="pc bpc" id="L268" title="1 of 2 branches missed.">        if (asOption) return options;</span>
+
+        // check asAction attributes
+<span class="nc bnc" id="L271" title="All 2 branches missed.">        return options</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">            &amp;&amp; Objects.equal(this.laidTile, action.laidTile)</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">            &amp;&amp; Objects.equal(this.chosenHex, action.chosenHex)</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">            &amp;&amp; Objects.equal(this.orientation, action.orientation)</span>
+<span class="nc bnc" id="L275" title="All 2 branches missed.">            &amp;&amp; Objects.equal(this.relaidBaseTokens, action.relaidBaseTokens)</span>
+        ;
+
+    }
+
+    // TODO: Check for and add the missing attributes
+    @Override
+    public String toString() {
+<span class="fc" id="L283">        return super.toString() +</span>
+<span class="fc" id="L284">                RailsObjects.stringHelper(this)</span>
+<span class="fc" id="L285">                    .addToString(&quot;locations&quot;, locations)</span>
+<span class="fc" id="L286">                    .addToString(&quot;tiles&quot;, tiles)</span>
+<span class="fc" id="L287">                    .addToString(&quot;type&quot;, type)</span>
+<span class="fc" id="L288">                    .addToString(&quot;specialProperty&quot;, specialProperty)</span>
+<span class="fc" id="L289">                    .addToStringOnlyActed(&quot;laidTile&quot;, laidTile)</span>
+<span class="fc" id="L290">                    .addToStringOnlyActed(&quot;chosenHex&quot;, chosenHex)</span>
+<span class="fc" id="L291">                    .addToStringOnlyActed(&quot;orientation&quot;, orientation)</span>
+<span class="fc" id="L292">                    .addToStringOnlyActed(&quot;relaidBaseTokens&quot;, relaidBaseTokens)</span>
+<span class="fc" id="L293">                .toString()</span>
+        ;
+    }
+
+    /** Deserialize */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+
+//        in.defaultReadObject();
+        // Custom reading for backwards compatibility
+<span class="fc" id="L303">        ObjectInputStream.GetField fields = in.readFields();</span>
+
+<span class="fc" id="L305">        locationNames = (String) fields.get(&quot;locationNames&quot;, locationNames);</span>
+<span class="fc" id="L306">        tileColours = (Map&lt;String, Integer&gt;) fields.get(&quot;tileColours&quot;, tileColours);</span>
+        // FIXME: Rewrite this with Rails1.x version flag
+<span class="fc" id="L308">        tileIds = (int[]) fields.get(&quot;tileIds&quot;, tileIds);</span>
+<span class="fc" id="L309">        sTileIds = (String[]) fields.get(&quot;tileIds&quot;, sTileIds);</span>
+
+<span class="fc" id="L311">        specialPropertyId = fields.get(&quot;specialPropertyId&quot;, specialPropertyId);</span>
+        // FIXME: Rewrite this with Rails1.x version flag
+<span class="fc" id="L313">        laidTileId = fields.get(&quot;laidTileId&quot;, laidTileId);</span>
+<span class="fc" id="L314">        sLaidTileId = (String)fields.get(&quot;sLaidTileId&quot;, sLaidTileId);</span>
+
+<span class="fc" id="L316">        chosenHexName = (String) fields.get(&quot;chosenHexName&quot;, chosenHexName);</span>
+<span class="fc" id="L317">        orientation = fields.get(&quot;orientation&quot;, orientation);</span>
+<span class="fc" id="L318">        relayBaseTokens = fields.get(&quot;relayBaseTokens&quot;, relayBaseTokens);</span>
+<span class="fc" id="L319">        relaidBaseTokens = (Map&lt;String,Integer&gt;)fields.get(&quot;relaidBaseTokens&quot;, relaidBaseTokens);</span>
+<span class="fc" id="L320">        relaidBaseTokensString = (String) fields.get(&quot;relaidBaseTokensString&quot;, relaidBaseTokensString);</span>
+
+<span class="fc" id="L322">        MapManager mmgr = getRoot().getMapManager();</span>
+<span class="fc" id="L323">        TileManager tmgr = getRoot().getTileManager();</span>
+<span class="fc" id="L324">        locations = new ArrayList&lt;MapHex&gt;();</span>
+<span class="fc bfc" id="L325" title="All 2 branches covered.">        if (Util.hasValue(locationNames)) {</span>
+<span class="fc bfc" id="L326" title="All 2 branches covered.">            for (String hexName : locationNames.split(&quot;,&quot;)) {</span>
+<span class="fc" id="L327">                locations.add(mmgr.getHex(hexName));</span>
+            }
+        }
+
+        // FIXME: Rewrite this with Rails1.x version flag
+<span class="pc bpc" id="L332" title="3 of 4 branches missed.">        if (tileIds != null &amp;&amp; tileIds.length &gt; 0) {</span>
+<span class="nc" id="L333">            tiles = new ArrayList&lt;Tile&gt;();</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">            for (int tileNb:tileIds) {</span>
+<span class="nc" id="L335">                tiles.add(tmgr.getTile(String.valueOf(tileNb)));</span>
+            }
+        }
+
+<span class="pc bpc" id="L339" title="3 of 4 branches missed.">        if (sTileIds != null &amp;&amp; sTileIds.length &gt; 0) {</span>
+<span class="nc" id="L340">            tiles = new ArrayList&lt;Tile&gt;();</span>
+<span class="nc bnc" id="L341" title="All 2 branches missed.">            for (String tileId:sTileIds) {</span>
+<span class="nc" id="L342">                tiles.add(tmgr.getTile(tileId));</span>
+            }
+        }
+
+<span class="fc bfc" id="L346" title="All 2 branches covered.">        if (specialPropertyId &gt; 0) {</span>
+<span class="fc" id="L347">            specialProperty =</span>
+<span class="fc" id="L348">                (SpecialTileLay) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);</span>
+        }
+        // FIXME: Rewrite this with Rails1.x version flag
+<span class="fc bfc" id="L351" title="All 2 branches covered.">        if (laidTileId != 0) {</span>
+<span class="fc" id="L352">            sLaidTileId = String.valueOf(laidTileId);</span>
+        }
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">        if (sLaidTileId != null) {</span>
+<span class="fc" id="L355">            laidTile = tmgr.getTile(sLaidTileId);</span>
+        }
+
+<span class="pc bpc" id="L358" title="2 of 4 branches missed.">        if (chosenHexName != null &amp;&amp; chosenHexName.length() &gt; 0) {</span>
+<span class="fc" id="L359">            chosenHex = mmgr.getHex(chosenHexName);</span>
+        }
+
+<span class="fc" id="L362">    }</span>
+
+    private void buildLocationNameString() {
+<span class="fc" id="L365">        StringBuilder b = new StringBuilder();</span>
+<span class="fc bfc" id="L366" title="All 2 branches covered.">        for (MapHex hex : locations) {</span>
+<span class="fc bfc" id="L367" title="All 2 branches covered.">            if (b.length() &gt; 0) b.append(&quot;,&quot;);</span>
+<span class="fc" id="L368">            b.append(hex.getId());</span>
+<span class="fc" id="L369">        }</span>
+<span class="fc" id="L370">        locationNames = b.toString();</span>
+<span class="fc" id="L371">    }</span>
+
+    @Override
+    public boolean isCorrection() {
+<span class="pc bpc" id="L375" title="1 of 2 branches missed.">        return (type == LayTile.CORRECTION);</span>
+    }
+
+    @Override
+    public int compareTo(LayTile o) {
+<span class="nc" id="L380">        return ComparisonChain.start()</span>
+<span class="nc" id="L381">                .compare(this.type, o.type)</span>
+<span class="nc" id="L382">                .compare(this.specialProperty, o.specialProperty, Ordering.natural().nullsLast())</span>
+<span class="nc" id="L383">                .result()</span>
+        ;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

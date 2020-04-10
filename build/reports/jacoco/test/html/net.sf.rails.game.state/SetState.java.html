@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SetState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.state</a> &gt; <span class="el_source">SetState.java</span></div><h1>SetState.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.state;
+
+import java.util.Iterator;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+
+public abstract class SetState&lt;E&gt; extends State implements Iterable&lt;E&gt;  {
+    
+    protected SetState(Item parent, String id) {
+<span class="fc" id="L11">        super(parent, id);</span>
+<span class="fc" id="L12">    }</span>
+    
+    protected abstract Set&lt;E&gt; getSet();
+    
+    /**
+     * add element
+     * @param element
+     */
+    public void add(E element) {
+<span class="fc" id="L21">        new SetChange&lt;E&gt;(this, element, true);</span>
+<span class="fc" id="L22">    }</span>
+
+    /**
+     * remove element
+     * @param element to remove
+     * @return true = was part of the HashSetState
+     */
+    public boolean remove(E element) {
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if (getSet().contains(element)) {</span>
+<span class="fc" id="L31">            new SetChange&lt;E&gt;(this, element, false);</span>
+<span class="fc" id="L32">            return true;</span>
+        } else {
+<span class="fc" id="L34">            return false;</span>
+        }
+    }
+    
+    /**
+     * @param element
+     * @return true = element exists in HashSetState
+     */
+    
+    public boolean contains (E element) {
+<span class="fc" id="L44">        return getSet().contains(element);</span>
+    }
+
+    /**
+     * removes all elements
+     */
+    public void clear() {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (E element:ImmutableSet.copyOf(getSet())) {</span>
+<span class="fc" id="L52">            remove(element);</span>
+<span class="fc" id="L53">        }</span>
+<span class="fc" id="L54">    }</span>
+
+    /**
+     * @return immutable view of getSet()
+     */
+    public ImmutableSet&lt;E&gt; view() {
+<span class="fc" id="L60">        return ImmutableSet.copyOf(getSet());</span>
+    }
+
+    /**
+     * @return number of elements in HashSetState
+     */
+    public int size() {
+<span class="fc" id="L67">        return getSet().size();</span>
+    }
+    
+    /**
+     * @return true if HashSetState is empty
+     */
+    public boolean isEmpty() {
+<span class="fc" id="L74">        return getSet().isEmpty();</span>
+    }
+    
+    public Iterator&lt;E&gt; iterator() {
+<span class="fc" id="L78">        return getSet().iterator();</span>
+    }
+    
+    @Override
+    public String toText() {
+<span class="nc" id="L83">        return getSet().toString();</span>
+    }
+    
+    void change(E element, boolean addToSet) {
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (addToSet) {</span>
+<span class="fc" id="L88">            getSet().add(element);</span>
+        } else {
+<span class="fc" id="L90">            getSet().remove(element);</span>
+        }
+<span class="fc" id="L92">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

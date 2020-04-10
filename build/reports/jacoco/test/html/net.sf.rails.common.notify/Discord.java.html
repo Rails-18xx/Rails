@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Discord.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.common.notify</a> &gt; <span class="el_source">Discord.java</span></div><h1>Discord.java</h1><pre class="source lang-java linenums">package net.sf.rails.common.notify;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.common.Config;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PlayerManager;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.state.Observable;
+import net.sf.rails.game.state.Observer;
+
+<span class="nc" id="L27">public class Discord {</span>
+<span class="nc" id="L28">    private static final Logger log = LoggerFactory.getLogger(Discord.class);</span>
+
+<span class="nc" id="L30">    private static final Discord instance = new Discord();</span>
+
+<span class="nc" id="L32">    private CloseableHttpClient httpClient = null;</span>
+
+<span class="nc" id="L34">    private String webhook = null;</span>
+<span class="nc" id="L35">    private Map&lt;String, String&gt; playerNameMappings = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L36">    private String body = null;</span>
+    private static final String MESSAGE_TEMPLATE = &quot;Your turn @@&quot;;
+    private static final String BODY_TEMPLATE = &quot;{\&quot;content\&quot;:\&quot;@@\&quot;, \&quot;username\&quot;:\&quot;Rails\&quot;}&quot;;
+
+    public void setConfig() {
+<span class="nc" id="L41">        webhook = StringUtils.trimToNull(Config.get(&quot;notify.discord.webhook&quot;));</span>
+<span class="nc" id="L42">        String message = StringUtils.defaultIfBlank(Config.get(&quot;notify.message&quot;), MESSAGE_TEMPLATE);</span>
+<span class="nc" id="L43">        body = StringUtils.replace(BODY_TEMPLATE, &quot;@@&quot;, message);</span>
+
+<span class="nc" id="L45">        parseUserMappings(Config.get(&quot;notify.discord.user_mapping&quot;));</span>
+<span class="nc" id="L46">    }</span>
+
+    public void parseUserMappings(String mappings) {
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        if ( StringUtils.isBlank(mappings) ) {</span>
+<span class="nc" id="L50">            return;</span>
+        }
+<span class="nc" id="L52">        playerNameMappings = Arrays.stream(mappings.split(&quot;,&quot;))</span>
+<span class="nc" id="L53">                .map(s -&gt; s.split(&quot;:&quot;))</span>
+<span class="nc" id="L54">                .collect(Collectors.toMap(e -&gt; e[0], e -&gt; &quot;&lt;@&quot; + e[1] + &quot;&gt;&quot;));</span>
+<span class="nc" id="L55">    }</span>
+
+    private class CurrentPlayerModelObserver implements Observer {
+<span class="nc" id="L58">        private Player formerCurrentPlayer = null;</span>
+        private final PlayerManager pm;
+
+<span class="nc" id="L61">        public CurrentPlayerModelObserver(PlayerManager pm) {</span>
+<span class="nc" id="L62">            this.pm = pm;</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">            if ( pm != null ) {</span>
+                // this is often incorrect during a file load
+<span class="nc" id="L65">                formerCurrentPlayer = pm.getCurrentPlayer();</span>
+            }
+<span class="nc" id="L67">        }</span>
+
+        public void update(String text) {
+<span class="nc" id="L70">            String localPlayer = Config.get(&quot;local.player.name&quot;);</span>
+<span class="nc" id="L71">            log.debug(&quot;Discord called with f:{}/c:{}/l:{}&quot;, formerCurrentPlayer.getId(), pm.getCurrentPlayer().getId(), localPlayer);</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">            if ( formerCurrentPlayer != pm.getCurrentPlayer() ) {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">                if ( formerCurrentPlayer.getId().equals(localPlayer ) ) {</span>
+                    // only alert if we are transitioning from the former player
+<span class="nc bnc" id="L75" title="All 2 branches missed.">                    if ( !localPlayer.equals(pm.getCurrentPlayer().getId()) ) {</span>
+                        // only send a notification if we are switching to a different user, ie not ourselves
+<span class="nc" id="L77">                        sendMessage(pm.getCurrentPlayer().getId());</span>
+                    }
+                }
+<span class="nc" id="L80">                formerCurrentPlayer = pm.getCurrentPlayer();</span>
+            }
+<span class="nc" id="L82">        }</span>
+
+        public Observable getObservable() {
+<span class="nc" id="L85">            return pm.getCurrentPlayerModel();</span>
+        }
+    }
+
+    public static void notifyOfGameInit(final RailsRoot root) {
+<span class="nc" id="L90">        instance.init(root);</span>
+<span class="nc" id="L91">    }</span>
+
+    private void init(final RailsRoot root) {
+<span class="nc" id="L94">        httpClient = HttpClients.createDefault();</span>
+
+<span class="nc" id="L96">        final PlayerManager pm = root.getPlayerManager();</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if ( pm.getCurrentPlayerModel() != null ) {</span>
+<span class="nc" id="L98">            pm.getCurrentPlayerModel().addObserver(new CurrentPlayerModelObserver(pm));</span>
+        }
+<span class="nc" id="L100">    }</span>
+
+    public void sendMessage(String player) {
+<span class="nc" id="L103">        setConfig();</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if ( webhook == null ) {</span>
+<span class="nc" id="L105">            return;</span>
+        }
+<span class="nc" id="L107">        String mapped = StringUtils.defaultIfBlank(playerNameMappings.get(player), player);</span>
+<span class="nc" id="L108">        String formatted = StringUtils.replace(body, &quot;@@&quot;, mapped);</span>
+<span class="nc" id="L109">        log.debug(&quot;Sending message '{}' to Discord for user {}&quot;, formatted, player);</span>
+
+<span class="nc" id="L111">        HttpPost httpPost = new HttpPost(webhook);</span>
+        try {
+<span class="nc" id="L113">            httpPost.setEntity(new StringEntity(formatted));</span>
+<span class="nc" id="L114">            httpPost.setHeader(HttpHeaders.CONTENT_TYPE, &quot;application/json&quot;);</span>
+<span class="nc" id="L115">            httpPost.setHeader(HttpHeaders.USER_AGENT, &quot;18xx Rails&quot;);</span>
+<span class="nc" id="L116">            CloseableHttpResponse response = httpClient.execute(httpPost);</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">            if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_NO_CONTENT ) {</span>
+<span class="nc" id="L118">                log.debug(&quot;Unexpected Discord  response: {}&quot;, response);</span>
+            }
+<span class="nc" id="L120">            response.close();</span>
+        }
+<span class="nc" id="L122">        catch (IOException e) {</span>
+<span class="nc" id="L123">            log.error(&quot;Error sending message to Discord&quot;, e);</span>
+<span class="nc" id="L124">        }</span>
+<span class="nc" id="L125">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

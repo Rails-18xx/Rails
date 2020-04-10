@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BuyTrain.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">rails.game.action</a> &gt; <span class="el_source">BuyTrain.java</span></div><h1>BuyTrain.java</h1><pre class="source lang-java linenums">package rails.game.action;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.HashSet;
+import java.util.Set;
+
+import net.sf.rails.game.CompanyManager;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.Train;
+import net.sf.rails.game.TrainManager;
+import net.sf.rails.game.TrainType;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.special.SpecialTrainBuy;
+import net.sf.rails.game.state.Owner;
+import net.sf.rails.util.RailsObjects;
+import net.sf.rails.util.Util;
+
+import com.google.common.base.Objects;
+
+/**
+ * Rails 2.0: Updated equals and toString methods (however see TODO below)
+*/
+public class BuyTrain extends PossibleORAction {
+
+    // Initial settings
+    transient private Train train;
+    private String trainUniqueId;
+    transient private Owner from;
+    private String fromName;
+<span class="fc" id="L31">    private int fixedCost = 0;</span>
+<span class="fc" id="L32">    private boolean forcedBuyIfNoRoute = false; // TODO Can be disabled once route checking exists</span>
+<span class="fc" id="L33">    transient private Set&lt;Train&gt; trainsForExchange = null;</span>
+    private String[] trainsForExchangeUniqueIds;
+
+    /** Obsolete, but left in for backwards compatibility of saved files */
+<span class="fc" id="L37">    private boolean forcedExchange = false;</span>
+
+<span class="fc" id="L39">    private boolean presidentMustAddCash = false; // If buying from the bank</span>
+<span class="fc" id="L40">    private boolean presidentMayAddCash = false;  // If buying from a company</span>
+<span class="fc" id="L41">    private int presidentCashToAdd = 0;</span>
+
+<span class="fc" id="L43">    transient private SpecialTrainBuy specialProperty = null;</span>
+<span class="fc" id="L44">    private int specialPropertyId = 0;</span>
+
+<span class="fc" id="L46">    private String extraMessage = null;</span>
+    
+    // Added jun2011 by EV to cover dual trains.
+    // NOTE: Train objects from now on represent train *certificates* 
+    transient private TrainType type;
+    private String typeName;
+
+    // User settings
+<span class="fc" id="L54">    private int pricePaid = 0;</span>
+<span class="fc" id="L55">    private int addedCash = 0;</span>
+<span class="fc" id="L56">    transient private Train exchangedTrain = null;</span>
+    private String exchangedTrainUniqueId;
+
+    public static final long serialVersionUID = 2L;
+
+    public BuyTrain(Train train, Owner from, int fixedCost) {
+
+<span class="fc" id="L63">        this (train, train.getType(), from, fixedCost);</span>
+<span class="fc" id="L64">    }</span>
+
+<span class="fc" id="L66">    public BuyTrain(Train train, TrainType type, Owner from, int fixedCost) {</span>
+<span class="fc" id="L67">        this.train = train;</span>
+<span class="fc" id="L68">        this.trainUniqueId = train.getId();</span>
+<span class="fc" id="L69">        this.from = from;</span>
+<span class="fc" id="L70">        this.fromName = from.getId();</span>
+<span class="fc" id="L71">        this.fixedCost = fixedCost;</span>
+<span class="fc" id="L72">        this.type = type;</span>
+<span class="fc" id="L73">        this.typeName = type.getName();</span>
+<span class="fc" id="L74">    }</span>
+
+    public BuyTrain setTrainsForExchange(Set&lt;Train&gt; trains) {
+<span class="fc" id="L77">        trainsForExchange = trains;</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        if (trains != null) {</span>
+<span class="fc" id="L79">            trainsForExchangeUniqueIds = new String[trains.size()];</span>
+<span class="fc" id="L80">            int i = 0;</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            for (Train train:trains) {</span>
+<span class="fc" id="L82">                trainsForExchangeUniqueIds[i++] = train.getId();</span>
+<span class="fc" id="L83">            }</span>
+        }
+<span class="fc" id="L85">        return this;</span>
+    }
+
+    public BuyTrain setPresidentMustAddCash(int amount) {
+<span class="fc" id="L89">        presidentMustAddCash = true;</span>
+<span class="fc" id="L90">        presidentCashToAdd = amount;</span>
+<span class="fc" id="L91">        return this;</span>
+    }
+
+    public BuyTrain setPresidentMayAddCash(int amount) {
+<span class="fc" id="L95">        presidentMayAddCash = true;</span>
+<span class="fc" id="L96">        presidentCashToAdd = amount;</span>
+<span class="fc" id="L97">        return this;</span>
+    }
+
+    public void setForcedBuyIfNoRoute(boolean hasNoTrains) {
+<span class="fc" id="L101">        this.forcedBuyIfNoRoute = hasNoTrains;</span>
+<span class="fc" id="L102">    }</span>
+
+    public void setExtraMessage (String message) {
+<span class="fc" id="L105">        extraMessage = message;</span>
+<span class="fc" id="L106">    }</span>
+
+    public String getExtraMessage() {
+<span class="nc" id="L109">        return extraMessage;</span>
+    }
+
+    /**
+     * @return Returns the specialProperty.
+     */
+    public SpecialTrainBuy getSpecialProperty() {
+<span class="fc" id="L116">        return specialProperty;</span>
+    }
+
+    /**
+     * @param specialProperty The specialProperty to set.
+     */
+    public void setSpecialProperty(SpecialTrainBuy specialProperty) {
+<span class="fc" id="L123">        this.specialProperty = specialProperty;</span>
+<span class="fc" id="L124">        this.specialPropertyId = specialProperty.getUniqueId();</span>
+<span class="fc" id="L125">    }</span>
+
+    public boolean hasSpecialProperty() {
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        return specialProperty != null;</span>
+    }
+
+    /**
+     * To be used for all usage of train, also within this class.
+     * After reloading the 2nd copy etc. of a train with unlimited quantity,
+     * the train attribute will be null (because readObject() is called and the
+     * train is initiated before the actions have been executed - the second
+     * train is in this case only created after buying the first one).
+     * @return
+     */
+    public Train getTrain() {
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if (train == null) {</span>
+<span class="fc" id="L141">            train = RailsRoot.getInstance().getTrainManager().getTrainByUniqueId(trainUniqueId);</span>
+        }
+<span class="fc" id="L143">        return train;</span>
+    }
+
+    public TrainType getType() {
+<span class="fc" id="L147">        return type;</span>
+    }
+
+    public Owner getFromOwner() {
+<span class="fc" id="L151">        return from;</span>
+    }
+
+    public int getFixedCost() {
+<span class="fc" id="L155">        return fixedCost;</span>
+    }
+    
+    // for correction
+    public void setFixedCost(int fixedCost) {
+<span class="nc" id="L160">        this.fixedCost = fixedCost;</span>
+<span class="nc" id="L161">    }</span>
+
+    public boolean isForExchange() {
+<span class="pc bpc" id="L164" title="1 of 4 branches missed.">        return trainsForExchange != null &amp;&amp; !trainsForExchange.isEmpty();</span>
+    }
+
+    public Set&lt;Train&gt; getTrainsForExchange() {
+<span class="nc" id="L168">        return trainsForExchange;</span>
+    }
+
+    public boolean mustPresidentAddCash() {
+<span class="fc" id="L172">        return presidentMustAddCash;</span>
+    }
+
+    public boolean mayPresidentAddCash() {
+<span class="fc" id="L176">        return presidentMayAddCash;</span>
+    }
+
+    public int getPresidentCashToAdd() {
+<span class="fc" id="L180">        return presidentCashToAdd;</span>
+    }
+
+    public boolean isForcedBuyIfNoRoute() {
+<span class="nc" id="L184">        return forcedBuyIfNoRoute;</span>
+    }
+
+    public Owner getOwner() {
+<span class="nc" id="L188">        return getTrain().getOwner();</span>
+    }
+
+    public int getAddedCash() {
+<span class="nc" id="L192">        return addedCash;</span>
+    }
+
+    public void setAddedCash(int addedCash) {
+<span class="nc" id="L196">        this.addedCash = addedCash;</span>
+<span class="nc" id="L197">    }</span>
+
+    public int getPricePaid() {
+<span class="fc" id="L200">        return pricePaid;</span>
+    }
+
+    public void setPricePaid(int pricePaid) {
+<span class="nc" id="L204">        this.pricePaid = pricePaid;</span>
+<span class="nc" id="L205">    }</span>
+
+    public Train getExchangedTrain() {
+<span class="fc" id="L208">        return exchangedTrain;</span>
+    }
+
+    public void setExchangedTrain(Train exchangedTrain) {
+<span class="nc" id="L212">        this.exchangedTrain = exchangedTrain;</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        if (exchangedTrain != null)</span>
+<span class="nc" id="L214">            this.exchangedTrainUniqueId = exchangedTrain.getId();</span>
+<span class="nc" id="L215">    }</span>
+
+    
+    
+    // TODO: Check for and add the missing attributes
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">        if (pa == this) return true;</span>
+        //  super checks both class identity and super class attributes
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        if (!super.equalsAs(pa, asOption)) return false; </span>
+
+        // check asOption attributes
+<span class="fc" id="L228">        BuyTrain action = (BuyTrain)pa; </span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">        boolean options =  Objects.equal(this.getTrain().getType(), action.getTrain().getType()) </span>
+                // only types have to be equal, and the getTrain() avoids train == null
+<span class="fc bfc" id="L231" title="All 4 branches covered.">                &amp;&amp; Objects.equal(this.from, action.from)</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">                &amp;&amp; (action.fixedCost == 0 || Objects.equal(this.fixedCost, action.pricePaid))</span>
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">                &amp;&amp; Objects.equal(this.trainsForExchange, action.trainsForExchange)</span>
+        ;
+        
+        // finish if asOptions check
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">        if (asOption) return options;</span>
+        
+        // check asAction attributes
+<span class="nc bnc" id="L240" title="All 2 branches missed.">        return options</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.train, action.train)</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.pricePaid, action.pricePaid)</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.addedCash, action.addedCash)</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.exchangedTrainUniqueId, action.exchangedTrainUniqueId)</span>
+        ;
+    }
+
+    // TODO: Check for and add the missing attributes
+    @Override
+    public String toString() {
+
+<span class="fc" id="L252">        return super.toString() + </span>
+<span class="fc" id="L253">                RailsObjects.stringHelper(this)</span>
+<span class="fc" id="L254">                    .addToString(&quot;train&quot;, train)</span>
+<span class="fc" id="L255">                    .addToString(&quot;from&quot;, from)</span>
+<span class="fc" id="L256">                    .addToString(&quot;fixedCost&quot;, fixedCost)</span>
+<span class="fc" id="L257">                    .addToString(&quot;trainsForExchange&quot;, trainsForExchange)</span>
+<span class="fc" id="L258">                    .addToStringOnlyActed(&quot;pricePaid&quot;, pricePaid)</span>
+<span class="fc" id="L259">                    .addToStringOnlyActed(&quot;addedCash&quot;, addedCash)</span>
+<span class="fc" id="L260">                    .addToStringOnlyActed(&quot;exchangedTrainUniqueId&quot;, exchangedTrainUniqueId)</span>
+<span class="fc" id="L261">                .toString()</span>
+        ;
+    }
+
+    /** Deserialize */
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+
+//        in.defaultReadObject();
+        // TEMPORARY Custom reading for backwards compatibility
+<span class="fc" id="L271">        ObjectInputStream.GetField fields = in.readFields();</span>
+<span class="fc" id="L272">        trainUniqueId = (String) fields.get(&quot;trainUniqueId&quot;, trainUniqueId);</span>
+<span class="fc" id="L273">        typeName = (String) fields.get(&quot;typeName&quot;, null);</span>
+<span class="fc" id="L274">        fromName = (String) fields.get(&quot;fromName&quot;, fromName);</span>
+<span class="fc" id="L275">        fixedCost = fields.get(&quot;fixedCost&quot;, fixedCost);</span>
+<span class="fc" id="L276">        forcedBuyIfNoRoute = fields.get(&quot;forcedBuyIfNoRoute&quot;, forcedBuyIfNoRoute);//TEMPORARY</span>
+<span class="fc" id="L277">        trainsForExchangeUniqueIds = (String[]) fields.get(&quot;trainsForExchangeUniqueIds&quot;, trainsForExchangeUniqueIds);</span>
+<span class="fc" id="L278">        forcedExchange = fields.get(&quot;forcedExchange&quot;, forcedExchange);</span>
+<span class="fc" id="L279">        presidentMustAddCash = fields.get(&quot;presidentMustAddCash&quot;, presidentMustAddCash);</span>
+<span class="fc" id="L280">        presidentMayAddCash = fields.get(&quot;presidentMayAddCash&quot;, presidentMayAddCash);</span>
+<span class="fc" id="L281">        presidentCashToAdd = fields.get(&quot;presidentCashToAdd&quot;, presidentCashToAdd);</span>
+<span class="fc" id="L282">        specialPropertyId = fields.get(&quot;specialPropertyId&quot;, specialPropertyId);</span>
+<span class="fc" id="L283">        pricePaid = fields.get(&quot;pricePaid&quot;, pricePaid);</span>
+<span class="fc" id="L284">        addedCash = fields.get(&quot;addedCash&quot;, addedCash);</span>
+<span class="fc" id="L285">        exchangedTrainUniqueId = (String) fields.get(&quot;exchangedTrainUniqueId&quot;, exchangedTrainUniqueId);</span>
+<span class="fc" id="L286">        extraMessage = (String) fields.get(&quot;extraMessage&quot;, extraMessage);</span>
+
+<span class="fc" id="L288">        RailsRoot root = RailsRoot.getInstance();</span>
+<span class="fc" id="L289">        TrainManager trainManager = root.getTrainManager();</span>
+<span class="fc" id="L290">        CompanyManager companyManager = root.getCompanyManager();</span>
+
+<span class="fc" id="L292">        fromName = companyManager.checkAlias (fromName);</span>
+
+<span class="fc" id="L294">        train = trainManager.getTrainByUniqueId(trainUniqueId);</span>
+        // Note: the 2nd etc. copy of an unlimited quantity train will become null this way.
+        // Set getTrain() for how this is fixed.
+<span class="fc bfc" id="L297" title="All 2 branches covered.">        if (typeName == null) {</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">            if (train == null) {</span>
+                // Kludge to cover not yet cloned unlimited trains
+<span class="fc" id="L300">                typeName = trainUniqueId.split(&quot;_&quot;)[0];</span>
+<span class="fc" id="L301">                type = trainManager.getTypeByName(typeName);</span>
+            } else {
+<span class="fc" id="L303">                type = train.getType();</span>
+<span class="fc" id="L304">                typeName = type.getName();</span>
+            }
+        } else {
+<span class="fc" id="L307">            type = trainManager.getTypeByName(typeName);</span>
+        }
+
+        // TODO: This has to be replaced by a new mechanism for owners at some time
+<span class="fc" id="L311">        from = getGameManager().getPortfolioByName(fromName).getParent();</span>
+<span class="pc bpc" id="L312" title="1 of 4 branches missed.">        if (trainsForExchangeUniqueIds != null</span>
+            &amp;&amp; trainsForExchangeUniqueIds.length &gt; 0) {
+<span class="fc" id="L314">            trainsForExchange = new HashSet&lt;Train&gt;();</span>
+<span class="fc bfc" id="L315" title="All 2 branches covered.">            for (int i = 0; i &lt; trainsForExchangeUniqueIds.length; i++) {</span>
+<span class="fc" id="L316">                trainsForExchange.add(trainManager.getTrainByUniqueId(trainsForExchangeUniqueIds[i]));</span>
+            }
+        }
+
+<span class="fc bfc" id="L320" title="All 2 branches covered.">        if (specialPropertyId &gt; 0) {</span>
+<span class="fc" id="L321">            specialProperty =</span>
+<span class="fc" id="L322">                    (SpecialTrainBuy) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);</span>
+        }
+
+<span class="fc bfc" id="L325" title="All 2 branches covered.">        if (Util.hasValue(exchangedTrainUniqueId)) {</span>
+<span class="fc" id="L326">            exchangedTrain = trainManager.getTrainByUniqueId(exchangedTrainUniqueId);</span>
+        }
+<span class="fc" id="L328">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

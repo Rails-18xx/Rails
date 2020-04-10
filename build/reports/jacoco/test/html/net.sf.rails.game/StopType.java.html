@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StopType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">StopType.java</span></div><h1>StopType.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import java.util.List;
+import java.util.Map;
+
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.util.Util;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
+
+
+public class StopType {
+
+    /**
+     * StopType defines the characteristics of access to a stop
+     */
+
+<span class="fc" id="L21">    public static enum RunThrough {</span>
+<span class="fc" id="L22">        YES,</span>
+<span class="fc" id="L23">        NO,</span>
+<span class="fc" id="L24">        TOKENONLY</span>
+    }
+
+<span class="fc" id="L27">    public static enum RunTo {</span>
+<span class="fc" id="L28">        YES,</span>
+<span class="fc" id="L29">        NO,</span>
+<span class="fc" id="L30">        TOKENONLY</span>
+    }
+
+<span class="fc" id="L33">    public static enum Loop {</span>
+<span class="fc" id="L34">        YES,</span>
+<span class="fc" id="L35">        NO</span>
+    }
+
+<span class="fc" id="L38">    public static enum Score {</span>
+<span class="fc" id="L39">        MAJOR,</span>
+<span class="fc" id="L40">        MINOR</span>
+    }
+
+<span class="fc" id="L43">    public static enum Defaults {</span>
+
+<span class="fc" id="L45">        CITY (RunTo.YES, RunThrough.YES, Loop.YES, Score.MAJOR),</span>
+<span class="fc" id="L46">        TOWN (RunTo.YES, RunThrough.YES, Loop.YES, Score.MINOR),</span>
+<span class="fc" id="L47">        OFFMAP (RunTo.YES, RunThrough.NO, Loop.NO, Score.MAJOR),</span>
+<span class="fc" id="L48">        NULL (null, null, null, null);</span>
+
+        private StopType stopType;
+        
+        private Defaults (RunTo runTo,
+                RunThrough runThrough,
+                Loop loop,
+<span class="fc" id="L55">                Score scoreType) {</span>
+<span class="fc" id="L56">            this.stopType = new StopType(this.name(), runTo, runThrough, loop, scoreType);</span>
+<span class="fc" id="L57">        }</span>
+
+        public StopType getStopType() {
+<span class="fc" id="L60">            return stopType;</span>
+        }
+    }
+
+    private final String id;
+    private final RunTo runToAllowed;
+    private final RunThrough runThroughAllowed;
+    private final Loop loopAllowed;
+    private final Score scoreType;
+    
+<span class="fc" id="L70">    private StopType(String id, RunTo runToAllowed, RunThrough runThroughAllowed, Loop loopAllowed, Score scoreType) {</span>
+<span class="fc" id="L71">        this.id = id;</span>
+<span class="fc" id="L72">        this.runToAllowed = runToAllowed;</span>
+<span class="fc" id="L73">        this.runThroughAllowed = runThroughAllowed;</span>
+<span class="fc" id="L74">        this.loopAllowed = loopAllowed;</span>
+<span class="fc" id="L75">        this.scoreType = scoreType;</span>
+<span class="fc" id="L76">    }</span>
+
+<span class="fc" id="L78">    private StopType(String id, RunTo runToAllowed, RunThrough runThroughAllowed, Loop loopAllowed, Score scoreType, StopType defaultType) {</span>
+<span class="fc" id="L79">        this.id = id;</span>
+        
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        if (defaultType == null) { // CITY is the ultimate default</span>
+<span class="nc" id="L82">            defaultType = Defaults.CITY.getStopType();</span>
+        }
+        
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        this.runToAllowed = (runToAllowed == null) ? defaultType.getRunToAllowed() : runToAllowed;</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        this.runThroughAllowed = (runThroughAllowed == null) ? defaultType.getRunThroughAllowed() : runThroughAllowed;</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        this.loopAllowed = (loopAllowed == null) ? defaultType.getLoopAllowed() : loopAllowed;</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        this.scoreType = (scoreType == null) ? defaultType.getScoreType() : scoreType;</span>
+<span class="fc" id="L89">    }</span>
+
+    public String getId() {
+<span class="fc" id="L92">        return id;</span>
+    }
+    
+    /** Run-through status of any stops on the hex (whether visible or not).
+     * Indicates whether or not a single train can run through such stops, i.e. both enter and leave it.
+     * Has no meaning if no stops exist on this hex.
+     * &lt;p&gt;Values (see RunThrough below for definitions):
+     * &lt;br&gt;- &quot;yes&quot; (default for all except off-map hexes) means that trains of all companies
+     * may run through this station, unless it is completely filled with foreign base tokens.
+     * &lt;br&gt;- &quot;tokenOnly&quot; means that trains may only run through the station if it contains a base token
+     * of the operating company (applies to the 1830 PRR base).
+     * &lt;br&gt;- &quot;no&quot; (default for off-map hexes) means that no train may run through this hex.
+     */
+    public RunTo getRunToAllowed() {
+<span class="fc" id="L106">        return runToAllowed;</span>
+    }
+
+    /** Run-to status of any stops on the hex (whether visible or not).
+     * Indicates whether or not a single train can run from or to such stops, i.e. either enter or leave it.
+     * Has no meaning if no stops exist on this hex.
+     * &lt;p&gt;Values (see RunTo below for definitions):
+     * &lt;br&gt;- &quot;yes&quot; (default) means that trains of all companies may run to/from this station.
+     * &lt;br&gt;- &quot;tokenOnly&quot; means that trains may only access the station if it contains a base token
+     * of the operating company. Applies to the 18Scan off-map hexes.
+     * &lt;br&gt;- &quot;no&quot; would mean that the hex is inaccessible (like 1851 Birmingham in the early game),
+     * but this option is not yet useful as there is no provision yet to change this setting
+     * in an undoable way (no state variable).
+     */
+    public RunThrough getRunThroughAllowed() {
+<span class="fc" id="L121">        return runThroughAllowed;</span>
+    }
+
+    /** 
+     * Loop: may one train touch this hex twice or more? 
+     * 
+     * */
+    public Loop getLoopAllowed() {
+<span class="fc" id="L129">        return loopAllowed;</span>
+    }
+
+    /**
+     * Score type: do stops on this hex count as major or minor stops with respect to n+m trains?
+     */
+    public Score getScoreType() {
+<span class="fc" id="L136">        return scoreType;</span>
+    }
+    
+    @Override
+    public int hashCode() {
+<span class="nc" id="L141">        return id.hashCode();</span>
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        if (!(other instanceof StopType)) return false;</span>
+<span class="nc" id="L147">        return id.equals(((StopType) other).id);</span>
+    }
+
+    private static StopType parseAccessTag(RailsItem owner, String id, Tag accessTag, StopType defaultType) 
+            throws ConfigurationException {
+
+<span class="fc" id="L153">        String runThroughString = accessTag.getAttributeAsString(&quot;runThrough&quot;);</span>
+<span class="fc" id="L154">        RunThrough runThrough = null;</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        if (Util.hasValue(runThroughString)) {</span>
+            try {
+<span class="fc" id="L157">                runThrough = RunThrough.valueOf(runThroughString.toUpperCase());</span>
+<span class="nc" id="L158">            } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L159">                throw new ConfigurationException (&quot;Illegal value for &quot;</span>
+                        + owner +&quot; runThrough property: &quot;+runThroughString, e);
+<span class="fc" id="L161">            }</span>
+        }
+
+<span class="fc" id="L164">        String runToString = accessTag.getAttributeAsString(&quot;runTo&quot;);</span>
+<span class="fc" id="L165">        RunTo runTo = null;</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if (Util.hasValue(runToString)) {</span>
+            try {
+<span class="fc" id="L168">                runTo = RunTo.valueOf(runToString.toUpperCase());</span>
+<span class="nc" id="L169">            } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L170">                throw new ConfigurationException (&quot;Illegal value for &quot;</span>
+                        + owner +&quot; runTo property: &quot;+runToString, e);
+<span class="fc" id="L172">            }</span>
+        }
+
+<span class="fc" id="L175">        String loopString = accessTag.getAttributeAsString(&quot;loop&quot;);</span>
+<span class="fc" id="L176">        Loop loop = null;</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        if (Util.hasValue(loopString)) {</span>
+            try {
+<span class="fc" id="L179">                loop = Loop.valueOf(loopString.toUpperCase());</span>
+<span class="nc" id="L180">            } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L181">                throw new ConfigurationException (&quot;Illegal value for &quot;</span>
+                        + owner +&quot; loop property: &quot;+loopString, e);
+<span class="fc" id="L183">            }</span>
+        }
+
+<span class="fc" id="L186">        String scoreTypeString = accessTag.getAttributeAsString(&quot;score&quot;);</span>
+<span class="fc" id="L187">        Score score = null;</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        if (Util.hasValue(scoreTypeString)) {</span>
+            try {
+<span class="fc" id="L190">                score = Score.valueOf(scoreTypeString.toUpperCase());</span>
+<span class="nc" id="L191">            } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L192">                throw new ConfigurationException (&quot;Illegal value for &quot;</span>
+                        + owner +&quot; score type property: &quot;+scoreTypeString, e);
+<span class="fc" id="L194">            }</span>
+        }
+
+<span class="fc" id="L197">        return new StopType(id, runTo, runThrough, loop, score, defaultType);</span>
+    }
+
+    private static StopType parseDefault(RailsItem owner, Tag accessTag, StopType defaultType) 
+        throws ConfigurationException {
+        
+<span class="fc" id="L203">        String typeString = accessTag.getAttributeAsString(&quot;type&quot;);</span>
+<span class="fc" id="L204">        String type = null; // If type is not defined the &quot;default default&quot; is defined</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        if (Util.hasValue(typeString)) {</span>
+            try {
+<span class="fc" id="L207">                type = typeString.toUpperCase();</span>
+<span class="nc" id="L208">            } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L209">                throw new ConfigurationException (&quot;Illegal value for &quot;</span>
+                        + owner +&quot; stop type property: &quot;+typeString, e);
+<span class="fc" id="L211">            }</span>
+        }
+<span class="fc" id="L213">        return parseAccessTag(owner, type, accessTag, defaultType);</span>
+    }
+    
+    public static ImmutableMap&lt;String, StopType&gt; parseDefaults(RailsItem owner, List&lt;Tag&gt; accessTags)
+        throws ConfigurationException {
+
+        // Parse default stop types, cannot use builder here as defaults might get overwritten
+<span class="fc" id="L220">        Map&lt;String, StopType&gt; stopTypeBuilder = Maps.newHashMap();</span>
+        // Initialize with system defaults
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        for (StopType.Defaults defType: StopType.Defaults.values()) {</span>
+<span class="fc" id="L223">            stopTypeBuilder.put(defType.name(), defType.getStopType());</span>
+        }
+
+<span class="fc" id="L226">        StopType defaultDefault = StopType.Defaults.NULL.getStopType();</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        for (Tag accessTag : accessTags)  {</span>
+<span class="fc" id="L228">            StopType newDefault = StopType.parseDefault(owner, accessTag, defaultDefault);</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">            if (newDefault == null) continue;</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">            if (newDefault.getId() == null) {</span>
+                // id set to null is the default default
+<span class="nc" id="L232">                defaultDefault = newDefault;</span>
+            } else {
+<span class="fc" id="L234">                stopTypeBuilder.put(newDefault.getId(), newDefault);</span>
+            }
+<span class="fc" id="L236">        }</span>
+<span class="fc" id="L237">        return ImmutableMap.copyOf(stopTypeBuilder);</span>
+    }
+    
+    public static StopType parseStop(RailsItem owner, Tag accessTag, Map&lt;String, StopType&gt; defaultTypes)
+        throws ConfigurationException {
+        
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        if (accessTag == null) { </span>
+<span class="fc" id="L244">            return StopType.Defaults.NULL.getStopType();</span>
+        }
+        
+<span class="fc" id="L247">        String typeString = accessTag.getAttributeAsString(&quot;type&quot;);</span>
+
+<span class="fc" id="L249">        StopType type = null;</span>
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">        if (Util.hasValue(typeString)) {</span>
+            try {
+<span class="nc" id="L252">                type = defaultTypes.get(typeString.toUpperCase());</span>
+<span class="nc" id="L253">            } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L254">                throw new ConfigurationException (&quot;Illegal value for &quot;</span>
+                        + owner +&quot; stop type property: &quot;+typeString, e);
+<span class="nc" id="L256">            }</span>
+        }
+        
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">        if (type == null) type = StopType.Defaults.NULL.getStopType();</span>
+<span class="fc" id="L260">        return parseAccessTag(owner, owner.getId(), accessTag, type);</span>
+    }
+}
+        
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

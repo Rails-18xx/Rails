@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Stop.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">Stop.java</span></div><h1>Stop.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import net.sf.rails.game.StopType.Loop;
+import net.sf.rails.game.StopType.RunThrough;
+import net.sf.rails.game.StopType.RunTo;
+import net.sf.rails.game.StopType.Score;
+import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.HashSetState;
+import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.PortfolioSet;
+import net.sf.rails.util.Util;
+
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableSet;
+
+
+/**
+ * A Stop object represents any junction on the map that is relevant for
+ * establishing train run length and revenue calculation. A Stop object is bound
+ * to (1) a MapHex, (2) to a Station object on the current Tile laid on that
+ * MapHex, and (3) any tokens laid on that tile and station. &lt;p&gt; Each Stop has a
+ * unique ID, that is derived from the MapHex name and the Stop number. The
+ * initial Stop numbers are derived from the Station numbers of the preprinted
+ * tile of that hex. &lt;p&gt; Please note, that during upgrades the Stop numbers
+ * related to a city on a multiple-city hex may change: city 1 on one tile may
+ * be numbered 2 on its upgrade, depending on the rotation of the upgrading
+ * tile. However, the Stop numbers will not change, unless cities are merged
+ * during upgrades; but even then it is attempted to retain the old Stop numbers
+ * as much as possible.
+ */
+public class Stop extends RailsAbstractItem implements RailsOwner, Comparable&lt;Stop&gt; {
+<span class="fc" id="L32">    private final PortfolioSet&lt;BaseToken&gt; tokens =</span>
+<span class="fc" id="L33">            PortfolioSet.create(this, &quot;tokens&quot;, BaseToken.class);</span>
+<span class="fc" id="L34">    private final GenericState&lt;Station&gt; relatedStation =</span>
+<span class="fc" id="L35">            GenericState.create(this, &quot;station&quot;);</span>
+    // FIXME: Only used for Rails1.x compatibility
+<span class="fc" id="L37">    private final IntegerState legacyNumber =</span>
+<span class="fc" id="L38">            IntegerState.create(this, &quot;legacyNumber&quot;, 0);</span>
+    // FIXME: Only used for Rails1.x compatibility
+<span class="fc" id="L40">    private final HashSetState&lt;Integer&gt; previousNumbers =</span>
+<span class="fc" id="L41">            HashSetState.create(this, &quot;previousNumbers&quot;);</span>
+
+    private Stop(MapHex hex, String id, Station station) {
+<span class="fc" id="L44">        super(hex, id);</span>
+<span class="fc" id="L45">        relatedStation.set(station);</span>
+<span class="fc" id="L46">        tokens.addModel(hex);</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (station != null) {</span>
+<span class="fc" id="L48">            legacyNumber.set(station.getNumber());</span>
+        }
+<span class="fc" id="L50">    }</span>
+
+    public static Stop create(MapHex hex, Station station){
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (station == null) {</span>
+<span class="fc" id="L54">            return new Stop(hex, &quot;0&quot;, null);</span>
+        } else {
+<span class="fc" id="L56">            return new Stop(hex, String.valueOf(station.getNumber()), station);</span>
+        }
+    }
+
+    @Override
+    public MapHex getParent() {
+<span class="fc" id="L62">        return (MapHex)super.getParent();</span>
+    }
+
+    // This should not be used for identification reasons
+    // It is better to use the getRelatedNumber()
+    @Deprecated
+    public String getSpecificId() {
+<span class="fc" id="L69">        return getParent().getId() + &quot;/&quot; + this.getRelatedNumber();</span>
+    }
+
+    public Station getRelatedStation() {
+<span class="fc" id="L73">        return relatedStation.value();</span>
+    }
+
+    public void setRelatedStation(Station station) {
+<span class="fc" id="L77">        relatedStation.set(station);</span>
+<span class="fc" id="L78">    }</span>
+
+    // FIMXE: Due to Rails1.x compatibility use the legacy number
+    public int getRelatedNumber() {
+        // return relatedStation.value().getNumber();
+<span class="fc" id="L83">        return getLegacyNumber();</span>
+    }
+
+    // FIMXE: Due to Rails1.x compatibility
+    @Deprecated
+    public int getLegacyNumber() {
+<span class="fc" id="L89">        return legacyNumber.value();</span>
+    }
+
+    // FIMXE: Due to Rails1.x compatibility
+    @Deprecated
+    public boolean checkPreviousNumbers(int number) {
+<span class="fc" id="L95">        return previousNumbers.contains(number);</span>
+    }
+
+    // FIMXE: Due to Rails1.x compatibility
+    @Deprecated
+    public void addPreviousNumbers(int number) {
+<span class="fc" id="L101">        previousNumbers.add(number);</span>
+<span class="fc" id="L102">    }</span>
+
+    public ImmutableSet&lt;BaseToken&gt; getBaseTokens() {
+<span class="fc" id="L105">        return tokens.items();</span>
+    }
+
+    public boolean hasTokens() {
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        return tokens.size() &gt; 0;</span>
+    }
+
+    public int getSlots() {
+<span class="fc" id="L113">        return relatedStation.value().getBaseSlots();</span>
+    }
+
+    public boolean hasTokenSlotsLeft() {
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        return tokens.size() &lt; getSlots();</span>
+    }
+
+    public int getTokenSlotsLeft () {
+<span class="fc" id="L121">        return getSlots() - tokens.size();</span>
+    }
+
+    /**
+     * @param company
+     * @return true if this Stop already contains an instance of the specified
+     * company's token. Do this by calling the hasTokenOf with Company Name.
+     * Using a tokens.contains(company) fails since the tokens are a ArrayList
+     * of Token not a ArrayList of PublicCompany.
+     */
+    public boolean hasTokenOf(PublicCompany company) {
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        for (BaseToken token : tokens) {</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">            if (token.getParent() == company) {</span>
+<span class="fc" id="L134">                return true;</span>
+            }
+<span class="fc" id="L136">        }</span>
+<span class="fc" id="L137">        return false;</span>
+    }
+
+    /**
+     * @return true if stop is tokenable, thus it has open token slots and no company token yet
+     */
+    public boolean isTokenableFor(PublicCompany company) {
+<span class="nc bnc" id="L144" title="All 4 branches missed.">        return hasTokenSlotsLeft() &amp;&amp; !hasTokenOf(company);</span>
+    }
+
+    public RunTo getRunToAllowed() {
+<span class="fc" id="L148">        RunTo runTo = getParent().getStopType().getRunToAllowed();</span>
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">        if (runTo == null) runTo = getParent().getCurrentTile().getStopType().getRunToAllowed();</span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">        if (runTo == null) runTo = getRelatedStation().getStopType().getRunToAllowed();</span>
+<span class="fc" id="L151">        return runTo;</span>
+    }
+
+    public RunThrough getRunThroughAllowed() {
+<span class="fc" id="L155">        RunThrough runThrough = getParent().getStopType().getRunThroughAllowed();</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">        if (runThrough == null) runThrough = getParent().getCurrentTile().getStopType().getRunThroughAllowed();</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if (runThrough == null) runThrough = getRelatedStation().getStopType().getRunThroughAllowed();</span>
+<span class="fc" id="L158">        return runThrough;</span>
+    }
+
+    public Loop getLoopAllowed() {
+<span class="nc" id="L162">        Loop loopAllowed = getParent().getStopType().getLoopAllowed();</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (loopAllowed == null) loopAllowed = getParent().getCurrentTile().getStopType().getLoopAllowed();</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (loopAllowed == null) loopAllowed = getRelatedStation().getStopType().getLoopAllowed();</span>
+<span class="nc" id="L165">        return loopAllowed;</span>
+    }
+
+    public Score getScoreType () {
+<span class="fc" id="L169">        Score scoreType = getParent().getStopType().getScoreType();</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        if (scoreType == null) scoreType = getParent().getCurrentTile().getStopType().getScoreType();</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        if (scoreType == null) scoreType = getRelatedStation().getStopType().getScoreType();</span>
+<span class="fc" id="L172">        return scoreType;</span>
+    }
+
+    public boolean isRunToAllowedFor (PublicCompany company) {
+<span class="pc bpc" id="L176" title="3 of 4 branches missed.">        switch (getRunToAllowed()) {</span>
+        case YES:
+<span class="fc" id="L178">            return true;</span>
+        case NO:
+<span class="nc" id="L180">            return false;</span>
+        case TOKENONLY:
+<span class="nc" id="L182">            return hasTokenOf (company);</span>
+        default:
+            // Dead code, only to satisfy the compiler
+<span class="nc" id="L185">            return true;</span>
+        }
+    }
+
+    public boolean isRunThroughAllowedFor (PublicCompany company) {
+<span class="pc bpc" id="L190" title="2 of 4 branches missed.">        switch (getRunThroughAllowed()) {</span>
+        case YES: // either it has no tokens at all, or it has a company tokens or empty token slots
+<span class="fc bfc" id="L192" title="All 6 branches covered.">            return !hasTokens() || hasTokenOf (company) || hasTokenSlotsLeft() ;</span>
+        case NO:
+<span class="fc" id="L194">            return false;</span>
+        case TOKENONLY:
+<span class="nc" id="L196">            return hasTokenOf (company);</span>
+        default:
+            // Dead code, only to satisfy the compiler
+<span class="nc" id="L199">            return true;</span>
+        }
+    }
+
+    public int getValueForPhase (Phase phase) {
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        if (getParent().hasValuesPerPhase()) {</span>
+<span class="nc" id="L205">            return getParent().getCurrentValueForPhase(phase);</span>
+        } else {
+<span class="nc" id="L207">            return relatedStation.value().getValue();</span>
+        }
+    }
+
+    @Override
+    public int compareTo(Stop o) {
+<span class="nc" id="L213">        return ComparisonChain.start()</span>
+<span class="nc" id="L214">                .compare(o.getRelatedStation().getValue(), this.getRelatedStation().getValue())</span>
+<span class="nc" id="L215">                .compare(o.getTokenSlotsLeft(), this.getTokenSlotsLeft())</span>
+<span class="nc" id="L216">                .compare(this.getId(), o.getId())</span>
+<span class="nc" id="L217">                .result()</span>
+        ;
+    }
+
+    @Override
+    public String toText() {
+<span class="fc" id="L223">        StringBuilder b = new StringBuilder();</span>
+<span class="fc" id="L224">        b.append(&quot;Hex &quot;).append(getParent().getId());</span>
+<span class="fc" id="L225">        String cityName = getParent().getStopName();</span>
+<span class="fc" id="L226">        b.append(&quot; (&quot;);</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        if (Util.hasValue(cityName)) {</span>
+<span class="fc" id="L228">            b.append(cityName);</span>
+        }
+<span class="fc bfc" id="L230" title="All 2 branches covered.">        if (getParent().getStops().size() &gt; 1) {</span>
+<span class="fc" id="L231">            b.append(&quot; &quot;).append(getParent().getConnectionString(relatedStation.value()));</span>
+        }
+<span class="fc" id="L233">        b.append(&quot;)&quot;);</span>
+<span class="fc" id="L234">        return b.toString();</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

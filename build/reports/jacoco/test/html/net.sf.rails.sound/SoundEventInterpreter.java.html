@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SoundEventInterpreter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.sound</a> &gt; <span class="el_source">SoundEventInterpreter.java</span></div><h1>SoundEventInterpreter.java</h1><pre class="source lang-java linenums">package net.sf.rails.sound;
+
+import java.util.EnumSet;
+
+import rails.game.action.*;
+import net.sf.rails.game.*;
+import net.sf.rails.game.model.PresidentModel;
+import net.sf.rails.game.state.*;
+import net.sf.rails.ui.swing.ORUIManager;
+import net.sf.rails.ui.swing.ORUIManager.LocalSteps;
+import net.sf.rails.ui.swing.hexmap.HexUpgrade;
+import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
+
+/**
+ * Converts processed actions and model updates to triggers for playing sounds.
+ *
+ * Some model observers get their own inner classes since their constructors are parameterized
+ * (needed to initialize member variables among others - especially important if game is
+ * loaded since game status will not be initial upon initialization of the sound framework).
+ *
+ * @author Frederick Weld
+ *
+ */
+
+// FIXME: The observer approach has been changed to be compatible with Rails 2.0
+// However it is untested so far, and relays on the issue of toText() methods
+public class SoundEventInterpreter {
+
+    private class CurrentPlayerModelObserver implements Observer {
+<span class="nc" id="L30">        private Player formerCurrentPlayer = null;</span>
+        private PlayerManager pm;
+<span class="nc" id="L32">        public CurrentPlayerModelObserver(PlayerManager pm) {</span>
+<span class="nc" id="L33">            this.pm = pm;</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">            if (pm != null) formerCurrentPlayer = pm.getCurrentPlayer();</span>
+<span class="nc" id="L35">        }</span>
+        public void update(String text) {
+<span class="nc bnc" id="L37" title="All 2 branches missed.">            if (formerCurrentPlayer != pm.getCurrentPlayer()) {</span>
+<span class="nc" id="L38">                formerCurrentPlayer = pm.getCurrentPlayer();</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">                if (SoundConfig.isSFXEnabled()) {</span>
+<span class="nc" id="L40">                    player.playSFXByConfigKey (</span>
+                            SoundConfig.KEY_SFX_GEN_NEW_CURRENT_PLAYER,
+<span class="nc" id="L42">                            pm.getCurrentPlayer().getId());</span>
+                }
+            }
+<span class="nc" id="L45">        }</span>
+        public Observable getObservable() {
+<span class="nc" id="L47">            return pm.getCurrentPlayerModel();</span>
+        }
+    }
+
+    private class PresidentModelObserver implements Observer {
+        private final PresidentModel model;
+<span class="nc" id="L53">        private String formerPresident = null;</span>
+
+<span class="nc" id="L55">        private PresidentModelObserver(PublicCompany pc) {</span>
+<span class="nc" id="L56">            model = pc.getPresidentModel();</span>
+<span class="nc" id="L57">            formerPresident = model.toText();</span>
+<span class="nc" id="L58">        }</span>
+        public void update(String text) {
+<span class="nc bnc" id="L60" title="All 2 branches missed.">            if (formerPresident != text) {</span>
+<span class="nc" id="L61">                formerPresident = text;</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">                if (SoundConfig.isSFXEnabled()) {</span>
+<span class="nc" id="L63">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_NEW_PRESIDENT);</span>
+                }
+            }
+<span class="nc" id="L66">        }</span>
+
+        public Observable getObservable() {
+<span class="nc" id="L69">            return model;</span>
+        }
+    }
+
+    private class CompanyFloatedObserver implements Observer {
+        private final BooleanState model;
+<span class="nc" id="L75">        private Boolean hasFloated = false;</span>
+
+<span class="nc" id="L77">        private CompanyFloatedObserver(PublicCompany pc) {</span>
+<span class="nc" id="L78">            model = pc.getFloatedModel();</span>
+<span class="nc" id="L79">            hasFloated = pc.getFloatedModel().value();</span>
+<span class="nc" id="L80">        }</span>
+
+        public void update(String text) {
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            if (model.value() != hasFloated) {</span>
+<span class="nc" id="L84">                hasFloated = model.value();</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                if (SoundConfig.isSFXEnabled()) {</span>
+<span class="nc" id="L86">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_COMPANY_FLOATS);</span>
+                }
+            }
+<span class="nc" id="L89">        }</span>
+
+        public Observable getObservable() {
+<span class="nc" id="L92">            return model;</span>
+        }
+    }
+
+    private SoundContext context;
+    private SoundPlayer player;
+
+
+<span class="nc" id="L100">    public SoundEventInterpreter (SoundContext context,SoundPlayer player) {</span>
+<span class="nc" id="L101">        this.context = context;</span>
+<span class="nc" id="L102">        this.player = player;</span>
+<span class="nc" id="L103">    }</span>
+    public void notifyOfActionProcessing(RailsRoot root,PossibleAction action) {
+
+        /**
+         * Interpretation of events for which are only sfx is relevant
+         */
+
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        if (SoundConfig.isSFXEnabled()) {</span>
+
+            //General actions
+
+<span class="nc bnc" id="L114" title="All 2 branches missed.">            if (action instanceof NullAction) {</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                if (EnumSet.of(NullAction.Mode.PASS, NullAction.Mode.AUTOPASS).contains(</span>
+<span class="nc" id="L116">                        ((NullAction)action).getMode() )) {</span>
+<span class="nc" id="L117">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_GEN_PASS);</span>
+                }
+
+            }
+
+            //OR actions
+
+<span class="nc bnc" id="L124" title="All 2 branches missed.">            else if (action instanceof LayTile) {</span>
+<span class="nc" id="L125">                LayTile lt = (LayTile)action;</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                if (lt.getLaidTile().getNumStations() == 0) {</span>
+                    //track upgrade
+<span class="nc" id="L128">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LAY_TILE_TRACK);</span>
+                } else {
+                    //city upgrade
+<span class="nc" id="L131">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LAY_TILE_CITY);</span>
+                }
+<span class="nc bnc" id="L133" title="All 4 branches missed.">                if (!lt.getLaidTile().isUnlimited() &amp;&amp; lt.getLaidTile().getFreeCount() == 1) {</span>
+                    //last available tile is about to be laid
+<span class="nc" id="L135">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LAY_TILE_LAST_TILE_LAID);</span>
+                }
+
+<span class="nc bnc" id="L138" title="All 2 branches missed.">            } else if (action instanceof LayToken) {</span>
+<span class="nc" id="L139">                player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_LAY_TOKEN);</span>
+
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            } else if (action instanceof SetDividend) {</span>
+                //set revenue not treated here
+<span class="nc" id="L143">                SetDividend sd = (SetDividend)action;</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">                if (sd.getRevenueAllocation() == SetDividend.PAYOUT) {</span>
+<span class="nc" id="L145">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_DECISION_PAYOUT);</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">                } else if (sd.getRevenueAllocation() == SetDividend.SPLIT) {</span>
+<span class="nc" id="L147">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_DECISION_SPLIT);</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">                } else if (sd.getRevenueAllocation() == SetDividend.WITHHOLD) {</span>
+<span class="nc" id="L149">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_DECISION_WITHHOLD);</span>
+                }
+
+<span class="nc bnc" id="L152" title="All 2 branches missed.">            } else if (action instanceof BuyTrain) {</span>
+<span class="nc" id="L153">                String trainName = ((BuyTrain)action).getType().getName();</span>
+<span class="nc" id="L154">                player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_BUY_TRAIN, trainName);</span>
+
+<span class="nc bnc" id="L156" title="All 2 branches missed.">            } else if (action instanceof BuyPrivate) {</span>
+<span class="nc" id="L157">                player.playSFXByConfigKey (SoundConfig.KEY_SFX_OR_BUY_PRIVATE);</span>
+
+            }
+
+            //SR actions
+
+<span class="nc bnc" id="L163" title="All 2 branches missed.">            else if (action instanceof BuyCertificate) {</span>
+<span class="nc" id="L164">                BuyCertificate bc = (BuyCertificate)action;</span>
+<span class="nc" id="L165">                String presidentName = &quot;&quot;;</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">                if (bc.getCompany().getPresident() != null) {</span>
+<span class="nc" id="L167">                    presidentName = bc.getCompany().getPresident().getId();</span>
+                }
+<span class="nc bnc" id="L169" title="All 2 branches missed.">                if (presidentName.equals(bc.getPlayerName())) {</span>
+<span class="nc" id="L170">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_BUY_SHARE_PRESIDENT);</span>
+                } else {
+<span class="nc" id="L172">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_BUY_SHARE_NON_PRESIDENT);</span>
+                }
+
+<span class="nc bnc" id="L175" title="All 2 branches missed.">            } else if (action instanceof SellShares) {</span>
+<span class="nc" id="L176">                SellShares ss = (SellShares)action;</span>
+<span class="nc" id="L177">                String presidentName = &quot;&quot;;</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">                if (ss.getCompany().getPresident() != null) {</span>
+<span class="nc" id="L179">                    presidentName = ss.getCompany().getPresident().getId();</span>
+                }
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                if (presidentName.equals(ss.getPlayerName())) {</span>
+<span class="nc" id="L182">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_SELL_SHARE_PRESIDENT);</span>
+                } else {
+<span class="nc" id="L184">                    player.playSFXByConfigKey (SoundConfig.KEY_SFX_SR_SELL_SHARE_NON_PRESIDENT);</span>
+                }
+
+<span class="nc" id="L187">            }</span>
+
+            //Start Round actions
+
+<span class="nc bnc" id="L191" title="All 2 branches missed.">            else if (action instanceof rails.game.action.BidStartItem) {</span>
+<span class="nc" id="L192">                player.playSFXByConfigKey (SoundConfig.KEY_SFX_STR_BID_START_ITEM);</span>
+
+<span class="nc bnc" id="L194" title="All 2 branches missed.">            } else if (action instanceof rails.game.action.BuyStartItem) {</span>
+<span class="nc" id="L195">                player.playSFXByConfigKey (SoundConfig.KEY_SFX_STR_BUY_START_ITEM);</span>
+
+            }
+
+        }
+<span class="nc" id="L200">    }</span>
+    public void notifyOfGameInit(final RailsRoot root) {
+<span class="nc" id="L202">        final PlayerManager pm = root.getPlayerManager();</span>
+        //subscribe to current player changes
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        if (pm.getCurrentPlayerModel() != null) {</span>
+<span class="nc" id="L205">            pm.getCurrentPlayerModel().addObserver(</span>
+                    new CurrentPlayerModelObserver(pm));
+        }
+
+        //subscribe to round changes
+<span class="nc" id="L210">        final GameManager gameManager = root.getGameManager();</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (gameManager.getCurrentRoundModel() != null) {</span>
+<span class="nc" id="L212">            gameManager.getCurrentRoundModel().addObserver(</span>
+<span class="nc" id="L213">                    new Observer() {</span>
+                       public void update(String text) {
+<span class="nc" id="L215">                                context.notifyOfRound(gameManager.getCurrentRound());</span>
+<span class="nc" id="L216">                        }</span>
+                       public Observable getObservable() {
+<span class="nc" id="L218">                           return gameManager.getCurrentRoundModel();</span>
+                       }
+                    });
+        }
+
+        //subscribe to changes to game over pending
+<span class="nc" id="L224">        final BooleanState gameOverModel = gameManager.getGameOverPendingModel();</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        if (gameOverModel != null) {</span>
+<span class="nc" id="L226">            gameOverModel.addObserver(</span>
+<span class="nc" id="L227">                    new Observer() {</span>
+<span class="nc" id="L228">                        private boolean gameOverPending = false;</span>
+                        public void update(String text) {
+<span class="nc bnc" id="L230" title="All 4 branches missed.">                            if (!gameOverPending &amp;&amp; gameOverModel.value()) {</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">                                if (SoundConfig.isSFXEnabled()) {</span>
+<span class="nc" id="L232">                                    player.playSFXByConfigKey (</span>
+                                            SoundConfig.KEY_SFX_GEN_GAME_OVER_PENDING);
+                                }
+                            }
+<span class="nc" id="L236">                            gameOverPending = gameOverModel.value();</span>
+<span class="nc" id="L237">                        }</span>
+                        public Observable getObservable() {
+<span class="nc" id="L239">                            return gameOverModel;</span>
+                        }
+                    });
+        }
+
+        //subscribe to phase changes
+<span class="nc bnc" id="L245" title="All 2 branches missed.">        if (root.getPhaseManager() != null) {</span>
+<span class="nc" id="L246">            root.getPhaseManager().getCurrentPhaseModel().addObserver(</span>
+<span class="nc" id="L247">                    new Observer() {</span>
+                        public void update(String text) {
+<span class="nc" id="L249">                                 context.notifyOfPhase(gameManager.getCurrentPhase());</span>
+<span class="nc" id="L250">                         }</span>
+                        public Observable getObservable() {
+<span class="nc" id="L252">                            return root.getPhaseManager().getCurrentPhaseModel();</span>
+                        }
+                    });
+        }
+
+        //subscribe to company events
+<span class="nc bnc" id="L258" title="All 2 branches missed.">        if (root.getCompanyManager() != null) {</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">            for (PublicCompany c : root.getCompanyManager().getAllPublicCompanies() ) {</span>
+                //presidency changes
+<span class="nc" id="L261">                c.getPresidentModel().addObserver(new PresidentModelObserver(c));</span>
+                //company floats
+<span class="nc" id="L263">                c.getFloatedModel().addObserver(new CompanyFloatedObserver(c));</span>
+<span class="nc" id="L264">            }</span>
+        }
+<span class="nc" id="L266">    }</span>
+    public void notifyOfTimeWarp(boolean timeWarpMode) {
+<span class="nc" id="L268">        SoundConfig.setSFXDisabled(timeWarpMode);</span>
+<span class="nc" id="L269">    }</span>
+    /**
+     * Interprets changes/status of OR local steps in order to trigger sfx that
+     * are related to neither model changes nor game engine actions.
+     * Is triggered whenever some step changes (but priorStep is allowed to be
+     * equal to currentStep)
+     * @param currentStep Step as defined as constant in ORUIManager
+     */
+    public void notifyOfORLocalStep(ORUIManager.LocalSteps currentStep) {
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        if (SoundConfig.isSFXEnabled()) {</span>
+            //play rotate sound if tile has been rotated or is now ready for rotations
+//            if (currentStep == LocalSteps.ConfirmUpgrade) {
+//                player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_RotateTile);
+//            }
+
+            //play hex selection sound if the follow-up step (select tile/token) is active
+            //(don't consider whether prior step was &quot;select hex...&quot; because hexes
+            // can also be selected during selectTile/Token)
+<span class="nc bnc" id="L287" title="All 2 branches missed.">            if ( currentStep == LocalSteps.SELECT_UPGRADE ) {</span>
+<span class="nc" id="L288">                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_SELECT);</span>
+            }
+        }
+<span class="nc" id="L291">    }</span>
+    /**
+     * Interprets selections of ClickFields
+     * @param clickFieldAction The action associated with the click field
+     */
+    public void notifyOfClickFieldSelection(PossibleAction clickFieldAction) {
+<span class="nc bnc" id="L297" title="All 2 branches missed.">        if (SoundConfig.isSFXEnabled()) {</span>
+<span class="nc bnc" id="L298" title="All 8 branches missed.">            if (clickFieldAction instanceof BidStartItem</span>
+                    || clickFieldAction instanceof BuyStartItem
+                    || clickFieldAction instanceof BuyCertificate
+                    || clickFieldAction instanceof SellShares) {
+<span class="nc" id="L302">                player.playSFXByConfigKey(SoundConfig.KEY_SFX_GEN_SELECT);</span>
+            }
+        }
+<span class="nc" id="L305">    }</span>
+
+    public void notifyOfSelectUpgrade(HexUpgrade upgrade) {
+<span class="nc bnc" id="L308" title="All 2 branches missed.">        if (SoundConfig.isSFXEnabled()) {</span>
+<span class="nc bnc" id="L309" title="All 2 branches missed.">            if (upgrade instanceof TileHexUpgrade) {</span>
+<span class="nc" id="L310">                player.playSFXByConfigKey(SoundConfig.KEY_SFX_OR_ROTATE_TILE);</span>
+            }
+        }
+<span class="nc" id="L313">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

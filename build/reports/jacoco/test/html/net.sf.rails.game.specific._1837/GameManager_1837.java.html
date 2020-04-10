@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameManager_1837.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1837</a> &gt; <span class="el_source">GameManager_1837.java</span></div><h1>GameManager_1837.java</h1><pre class="source lang-java linenums">/**
+ *
+ */
+package net.sf.rails.game.specific._1837;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.Phase;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.Round;
+import net.sf.rails.game.StartPacket;
+import net.sf.rails.game.StartRound;
+import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.financial.NationalFormationRound;
+import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.BooleanState;
+
+
+
+/**
+ * @author martin
+ *
+ */
+public class GameManager_1837 extends GameManager {
+
+<span class="nc" id="L31">    private static final Logger log = LoggerFactory.getLogger(GameManager_1837.class);</span>
+
+<span class="nc" id="L33">    protected final IntegerState cerNumber = IntegerState.create(this, &quot;cerNumber&quot;);</span>
+
+
+<span class="nc" id="L36">    private Round previousRound = null;</span>
+<span class="nc" id="L37">    protected final GenericState&lt;Player&gt; playerToStartFCERound =</span>
+<span class="nc" id="L38">            GenericState.create(this, &quot;playerToStartFCERound&quot;);</span>
+
+<span class="nc" id="L40">    protected final GenericState&lt;Player&gt; playerToStartCERound =</span>
+<span class="nc" id="L41">            GenericState.create(this, &quot;playerToStartCERound&quot;);</span>
+
+<span class="nc" id="L43">    protected final BooleanState  CoalRoundFollowedByOR =</span>
+<span class="nc" id="L44">            BooleanState.create(this,  &quot;CoalRoundFollowedByOr&quot;);</span>
+
+    public GameManager_1837(RailsRoot parent, String id) {
+<span class="nc" id="L47">        super(parent, id);</span>
+
+<span class="nc" id="L49">    }</span>
+
+
+    public void nextRound(Round round) {
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (round instanceof StartRound) {</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            if (((StartRound) round).getStartPacket().areAllSold()) { // This start round was &quot;completed&quot;</span>
+                // check if there are other StartPackets, otherwise stockRounds start
+<span class="nc" id="L56">                beginStartRound();</span>
+            } else {
+<span class="nc" id="L58">                startOperatingRound(runIfStartPacketIsNotCompletelySold());</span>
+            }
+        }
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        else if (round instanceof CoalExchangeRound) {</span>
+            //Since the CoalExchangeRound can happen after both types of rounds we need to move the
+            //round decision down to this class and cant call the superclass :(
+
+<span class="nc bnc" id="L65" title="All 2 branches missed.">            if (this.CoalRoundFollowedByOR.value()) {</span>
+<span class="nc" id="L66">            Phase currentPhase = getRoot().getPhaseManager().getCurrentPhase();</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">                if (currentPhase == null) log.error (&quot;Current Phase is null??&quot;, new Exception (&quot;&quot;));</span>
+<span class="nc" id="L68">                numOfORs.set(currentPhase.getNumberOfOperatingRounds());</span>
+<span class="nc" id="L69">                log.info(&quot;Phase={} ORs={}&quot;, currentPhase.toText(), numOfORs);</span>
+
+            // Create a new OperatingRound (never more than one Stock Round)
+            // OperatingRound.resetRelativeORNumber();
+<span class="nc" id="L73">                relativeORNumber.set(1);</span>
+<span class="nc" id="L74">                startOperatingRound(true);</span>
+<span class="nc" id="L75">            }</span>
+            else {
+<span class="nc bnc" id="L77" title="All 2 branches missed.">                if (relativeORNumber.add(1) &lt;= numOfORs.value()) {</span>
+                    // There will be another OR
+<span class="nc" id="L79">                    startOperatingRound(true);</span>
+                } else {
+<span class="nc bnc" id="L81" title="All 4 branches missed.">                    if (gameOverPending.value() &amp;&amp; gameEndsAfterSetOfORs) {</span>
+<span class="nc" id="L82">                        finishGame();</span>
+                    } else {
+                        // TODO: This isn't a valid cast...
+<span class="nc" id="L85">                        ((OperatingRound)round).checkForeignSales();</span>
+<span class="nc" id="L86">                        startStockRound();</span>
+                    }
+                }
+
+            }
+
+            //super.nextRound(round);
+<span class="nc" id="L93">            getCurrentRound().setPossibleActions();</span>
+        }
+<span class="nc bnc" id="L95" title="All 4 branches missed.">        else if ((round instanceof StockRound_1837) ||(round instanceof OperatingRound_1837)) {</span>
+            //Check if a Major is started and if so ask the Owner of the Coal Company to fold
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            if (playerToStartCERound.value() != null) {</span>
+<span class="nc" id="L98">                cerNumber.add(1);</span>
+<span class="nc" id="L99">                createRound (CoalExchangeRound.class, &quot;CoalExchangeRound&quot; + cerNumber.value()).start</span>
+<span class="nc" id="L100">                        ((Player)playerToStartCERound.value());</span>
+<span class="nc" id="L101">                playerToStartCERound.set(null);</span>
+            } else {
+<span class="nc" id="L103">            super.nextRound(round);</span>
+            }
+        }
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        else if (round instanceof NationalFormationRound)</span>
+        {
+<span class="nc bnc" id="L108" title="All 2 branches missed.">            if (interruptedRound != null) {</span>
+<span class="nc" id="L109">                setRound(interruptedRound);</span>
+<span class="nc" id="L110">                interruptedRound.resume();</span>
+<span class="nc" id="L111">                interruptedRound = null;</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">            } else if (previousRound != null) {</span>
+<span class="nc" id="L113">                super.nextRound(previousRound);</span>
+<span class="nc" id="L114">                previousRound = null;</span>
+            }
+        } else {
+<span class="nc" id="L117">            Phase phase = getCurrentPhase();</span>
+<span class="nc bnc" id="L118" title="All 4 branches missed.">            if ((phase.getId().equals(&quot;4E&quot;) || phase.getId().equals(&quot;5&quot;))</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                    &amp;&amp; (!NationalFormationRound.nationalIsComplete(((GameManager)this),&quot;Ug&quot;))) {</span>
+<span class="nc" id="L120">                previousRound = round;</span>
+<span class="nc" id="L121">                startHungaryFormationRound (null);</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            } else if ((phase.getId().equals(&quot;4&quot;))</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                    &amp;&amp; (!NationalFormationRound.nationalIsComplete(((GameManager)this),&quot;Sd&quot;))) {</span>
+<span class="nc" id="L124">                previousRound = round;</span>
+<span class="nc" id="L125">                startSuedBahnFormationRound (null);</span>
+<span class="nc bnc" id="L126" title="All 4 branches missed.">            } else if (((phase.getId().equals(&quot;4&quot;)) || ( phase.getId().equals(&quot;4E&quot;)) ||</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                    (phase.getId().equals(&quot;4+1&quot;)))</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">                    &amp;&amp; (!NationalFormationRound.nationalIsComplete(((GameManager) this),&quot;KK&quot;))) {</span>
+<span class="nc" id="L129">                previousRound = round;</span>
+<span class="nc" id="L130">                startKuKFormationRound (null);</span>
+            } else {
+<span class="nc" id="L132">                super.nextRound(round);</span>
+            }
+      }
+
+<span class="nc" id="L136">    }</span>
+
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.GameManager#runIfStartPacketIsNotCompletelySold()
+     */
+    @Override
+    protected boolean runIfStartPacketIsNotCompletelySold() {
+        //After the first Startpacket sold out there will be Operation Rounds
+<span class="nc" id="L145">        StartPacket nextStartPacket = getRoot().getCompanyManager().getNextUnfinishedStartPacket();</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        if (nextStartPacket.getId() == &quot;Coal Mines&quot;) {</span>
+<span class="nc" id="L147">            return false;</span>
+        }
+        else {
+<span class="nc" id="L150">            return true;</span>
+        }
+    }
+
+
+    public void startHungaryFormationRound(OperatingRound_1837 or) {
+<span class="nc" id="L156">        interruptedRound = or;</span>
+        String roundName;
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        if (interruptedRound == null) {</span>
+            // after a round
+<span class="nc" id="L160">            roundName = &quot;HungaryFormationRound_after_&quot; + previousRound.getId();</span>
+        } else {
+<span class="nc" id="L162">            roundName = &quot;HungaryFormationRound_in_&quot; + or.getId();</span>
+        }
+<span class="nc" id="L164">        this.setNationalToFound(&quot;Ug&quot;);</span>
+<span class="nc" id="L165">        createRound(NationalFormationRound.class, roundName).start();</span>
+<span class="nc" id="L166">    }</span>
+
+    public void startSuedBahnFormationRound(OperatingRound_1837 or) {
+<span class="nc" id="L169">        interruptedRound = or;</span>
+        String roundName;
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (interruptedRound == null) {</span>
+            // after a round
+<span class="nc" id="L173">            roundName = &quot;SuedBahnFormationRound_after_&quot; + previousRound.getId();</span>
+        } else {
+<span class="nc" id="L175">            roundName = &quot;SuedBahnFormationRound_in_&quot; + or.getId();</span>
+        }
+<span class="nc" id="L177">        this.setNationalToFound(&quot;Sd&quot;);</span>
+<span class="nc" id="L178">        createRound(NationalFormationRound.class, roundName).start();</span>
+<span class="nc" id="L179">    }</span>
+
+    public void startKuKFormationRound(OperatingRound_1837 or) {
+<span class="nc" id="L182">        interruptedRound = or;</span>
+        String roundName;
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        if (interruptedRound == null) {</span>
+            // after a round
+<span class="nc" id="L186">            roundName = &quot;KuKFormationRound_after_&quot; + previousRound.getId();</span>
+        } else {
+<span class="nc" id="L188">            roundName = &quot;KuKFormationRound_in_&quot; + or.getId();</span>
+        }
+<span class="nc" id="L190">        this.setNationalToFound(&quot;KK&quot;);</span>
+<span class="nc" id="L191">        createRound(NationalFormationRound.class, roundName).start();</span>
+<span class="nc" id="L192">    }</span>
+
+    /* (non-Javadoc)
+     * @see net.sf.rails.game.GameManager#setGuiParameter(net.sf.rails.common.GuiDef.Parm, boolean)
+     */
+    @Override
+    public void setGuiParameters() {
+<span class="nc" id="L199">        super.setGuiParameters();</span>
+        //Flags the Game that a special Company income is needed...
+<span class="nc" id="L201">        guiParameters.put(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME, true);</span>
+
+<span class="nc" id="L203">    }</span>
+
+
+    public Player getPlayerToStartFCERound() {
+<span class="nc" id="L207">        return (Player) playerToStartFCERound.value();</span>
+    }
+
+
+    public void setPlayerToStartFCERound(Player president) {
+<span class="nc" id="L212">        this.playerToStartFCERound.set(president);</span>
+<span class="nc" id="L213">    }</span>
+
+    public Player getPlayerToStartCERound() {
+<span class="nc" id="L216">        return (Player) playerToStartCERound.value();</span>
+    }
+
+
+    public void setPlayerToStartCERound(Player president) {
+<span class="nc" id="L221">        this.playerToStartCERound.set(president);</span>
+<span class="nc" id="L222">    }</span>
+
+    public int getCERNumber () {
+<span class="nc" id="L225">        return cerNumber.value();</span>
+    }
+
+    public void setCoalRoundFollowedByOR(boolean b) {
+<span class="nc" id="L229">        this.CoalRoundFollowedByOR.set(b);</span>
+
+<span class="nc" id="L231">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

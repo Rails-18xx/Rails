@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<ComponentManager>
+	<Component name="GameManager"
+		class="net.sf.rails.game.specific._18EU.GameManager_18EU">
+		<Game name="18EU"/>
+		<GameParameters>
+			<StockRound class="net.sf.rails.game.specific._18EU.StockRound_18EU"
+				sequence="sellBuy" skipFirst="yes">
+				<NoSaleIfNotOperated/>
+			</StockRound>
+			<OperatingRound
+				class="net.sf.rails.game.specific._18EU.OperatingRound_18EU">
+				<EmergencyTrainBuying mustBuyCheapestTrain="no"
+					mayBuyFromCompany="yes"/>
+			</OperatingRound>
+			<PlayerShareLimit percentage="60"/>
+			<BankPoolLimit percentage="50"/>
+			<TreasuryShareLimit percentage="80"/>
+		</GameParameters>
+		<GuiClasses>
+			<GameStatus
+				class="net.sf.rails.ui.swing.gamespecific._18EU.GameStatus_18EU"/>
+			<StatusWindow
+				class="net.sf.rails.ui.swing.gamespecific._18EU.StatusWindow_18EU"/>
+			<GameUIManager
+				class="net.sf.rails.ui.swing.gamespecific._18EU.GameUIManager_18EU"/>
+		</GuiClasses>
+		<EndOfGame>
+			<BankBreaks limit="0" finish="setOfORs"/>
+			<!-- "Runs out"; when "broken", -1 is the limit -->
+			
+			<!-- Also when the share value reaches $300; this is configured in teh stock market XML -->
+		</EndOfGame>
+	</Component>
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
+		<Players number="2" cash="750" certLimit="28"/>
+		<Players number="3" cash="450" certLimit="20"/>
+		<Players number="4" cash="350" certLimit="16"/>
+		<Players number="5" cash="300" certLimit="13"/>
+		<Players number="6" cash="250" certLimit="11"/>
+	</Component>
+	<Component name="Bank" class="net.sf.rails.game.financial.Bank">
+		<Bank amount="12000"/>
+	</Component>
+	<Component name="TileManager" class="net.sf.rails.game.TileManager"
+		file="TileSet.xml"/>
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
+		file="CompanyManager.xml"/>
+	<Component name="StockMarket" class="net.sf.rails.game.financial.StockMarket"
+		file="StockMarket.xml"/>
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
+		<Defaults>
+			<Reach base="stops" countTowns="no"/>
+			<Score towns="yes"/>
+		</Defaults>
+		<TrainType name="2" majorStops="2" cost="100" quantity="15"/>
+		<TrainType name="3" majorStops="3" cost="200">
+			<NewPhase phaseName="3"/>
+			<IfOption name="Extra3Trains" value="0">
+				<Attributes quantity="5"/>
+			</IfOption>
+			<IfOption name="Extra3Trains" value="1">
+				<Attributes quantity="6"/>
+			</IfOption>
+			<IfOption name="Extra3Trains" value="2">
+				<Attributes quantity="7"/>
+			</IfOption>
+		</TrainType>
+		<TrainType name="4" majorStops="4" cost="300">
+			<NewPhase phaseName="4"/>
+			<IfOption name="Extra4Trains" value="0">
+				<Attributes quantity="4"/>
+			</IfOption>
+			<IfOption name="Extra4Trains" value="1">
+				<Attributes quantity="5"/>
+			</IfOption>
+		</TrainType>
+		<TrainType name="5" majorStops="5" cost="500" quantity="3">
+			<NewPhase phaseName="5"/>
+		</TrainType>
+		<TrainType name="6" majorStops="6" cost="600" quantity="2">
+			<NewPhase phaseName="6"/>
+		</TrainType>
+		<TrainType name="8" majorStops="8" cost="800" quantity="-1">
+			<NewPhase phaseName="8"/>
+		</TrainType>
+		<!-- majorStops="-1" indicates that this not a normally running train-->
+		<TrainType name="P" initialPortfolio="Pool" majorStops="-1" cost="100"
+			quantity="5"/>
+	</Component>
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
+		<Phase name="2">
+			<Tiles colour="yellow">
+                <Lays companyType="Minor" colour="yellow" number="2" occurrences="1"/>
+                <Lays companyType="Minor" colour="green" number="0"/>
+                <Lays companyType="Minor" colour="brown" number="0"/>
+                <Lays companyType="Minor" colour="grey" number="0"/>
+			</Tiles>
+			<OperatingRounds number="2"/>
+			<Trains tradingAllowed="yes"/>
+		</Phase>
+		<Phase name="3">
+			<Tiles colour="yellow,green"/>
+			<Trains released="P"/>
+		</Phase>
+		<Phase name="4">
+			<Trains rusted="2" limitStep="2"/>
+		</Phase>
+		<Phase name="5">
+			<Tiles colour="yellow,green,brown"/>
+			<Trains limitStep="3"/>
+			<OffBoardRevenue step="2"/>
+		</Phase>
+		<Phase name="6">
+			<Trains rusted="3"/>
+		</Phase>
+		<Phase name="8">
+			<Tiles colour="yellow,green,brown,grey"/>
+			<Trains rusted="4"/>
+		</Phase>
+	</Component>
+	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+		<Modifier class="net.sf.rails.game.specific._18EU.OffBoardRevenueModifier"/>
+		<Modifier class="net.sf.rails.game.specific._18EU.PullmanRevenueModifier"/>
+	</Component>
+</ComponentManager>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameOptions>
+	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
+	<GameOption name="RouteAlgorithm" values="Permissive,Semi-Restrictive,Restrictive" default="Semi-Restrictive" />
+	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
+	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
+	<GameOption name="NoMapMode" type="toggle" default="no" />
+	<GameOption name="BeginnerGame" type="toggle" default="no" />
+	<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="yes"/>
+	<GameOption name="FirstRoundSellRestriction" values="First Round,First Stock Round" default="First Stock Round" />
+	<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
+	<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
+</GameOptions>

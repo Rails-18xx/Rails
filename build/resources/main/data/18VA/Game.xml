@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<ComponentManager>
+	<Component name="GameManager" class="net.sf.rails.game.GameManager">
+		<Game name="18VA"/>
+		<GameParameters>
+			<PlayerShareLimit percentage="60">
+				<!-- Option "NumberOfPlayers" is automatically set 
+				by the game engine -->
+				<IfOption name="NumberOfPlayers" value="2">
+					<IfOption name="TwoPlayersCertLimit70Percent" value="yes">
+						<Attributes percentage="70"/>
+					</IfOption>
+				</IfOption>
+			</PlayerShareLimit>
+			<BankPoolLimit percentage="50"/>
+			<StockRound>
+				<NoSaleInFirstSR/>
+			</StockRound>
+			<OperatingRound>
+				<EmergencyTrainBuying mustBuyCheapestTrain="no"
+					mayBuyFromCompany="yes"/>
+			</OperatingRound>
+		</GameParameters>
+		<EndOfGame>
+			<Bankruptcy/>
+			<BankBreaks limit="0" finish="setOfORs"/>
+			<!-- "Runs out"; when "broken", -1 is the limit -->
+		</EndOfGame>
+	</Component>
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
+		<IfOption name="Variant" value="Basegame">
+			<Players number="2" cash="600" certLimit="27"/>
+			<Players number="3" cash="400" certLimit="18"/>
+			<Players number="4" cash="300" certLimit="13"/>
+			<Players number="5" cash="240" certLimit="10"/>
+		</IfOption>
+	</Component>
+	<Component name="Bank" class="net.sf.rails.game.financial.Bank">
+		<Bank amount="8000"/>
+		<Money format="$@"/>
+	</Component>
+	<Component name="TileManager" class="net.sf.rails.game.TileManager"
+		file="TileSet.xml"/>
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
+		file="CompanyManager.xml"/>
+	<Component name="StockMarket" class="net.sf.rails.game.financial.StockMarket"
+		file="StockMarket.xml"/>
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
+		<Defaults>
+			<Reach base="stops" countTowns="no"/>
+			<Score towns="yes"/>
+		</Defaults>
+		<TrainType name="2" majorStops="2" cost="100" quantity="6"/>
+		<TrainType name="3" majorStops="3" cost="200" quantity="5">
+			<NewPhase phaseName="3"/>
+		</TrainType>
+		<TrainType name="4" majorStops="4" cost="300" quantity="4">
+			<NewPhase phaseName="4"/>
+		</TrainType>
+		<TrainType name="5" majorStops="5" cost="500" quantity="3">
+			<NewPhase phaseName="5"/>
+		</TrainType>
+		<TrainType name="6" majorStops="6" cost="600" quantity="2">
+			<NewPhase phaseName="6"/>
+		</TrainType>
+		<TrainType name="4D" majorStops="99" cost="800" quantity="10">
+			<NewPhase phaseName="4D"/>
+		</TrainType>
+	</Component>
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
+		<!-- Each Phase's defaults are the previous one's values -->
+		<Phase name="2">
+			<Tiles colour="yellow"/>
+			<Privates sellingAllowed="no"/>
+			<OperatingRounds number="1"/>
+			<Trains tradingAllowed="yes"/>
+		</Phase>
+		<Phase name="3">
+			<Tiles colour="yellow,green"/>
+			<Privates sellingAllowed="yes"/>
+			<OperatingRounds number="2"/>
+		</Phase>
+		<Phase name="4">
+			<Trains rusted="2/1+1" limitStep="2"/>
+		</Phase>
+		<Phase name="5">
+			<Tiles colour="yellow,green,brown"/>
+			<Trains rusted="3/2+2" limitStep="3"/>
+			<!--Privates close="yes"/-->
+			<OperatingRounds number="3"/>
+			<OffBoardRevenue step="2"/>
+		</Phase>
+		<Phase name="6">
+			<Trains released="4D"/>
+		</Phase>
+		<Phase name="4D">
+			<Trains rusted="4/3+3"/>
+		</Phase>
+	</Component>
+</ComponentManager>

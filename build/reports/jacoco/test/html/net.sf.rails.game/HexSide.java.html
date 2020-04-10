@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HexSide.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">HexSide.java</span></div><h1>HexSide.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
+
+/**
+ * HexSide represents the sides of a Hex
+ */
+public class HexSide extends TrackPoint {
+
+    private static final ImmutableList&lt;HexSide&gt; sides;
+
+    static {
+        ImmutableList.Builder&lt;HexSide&gt; sideBuilder =
+<span class="fc" id="L17">                ImmutableList.builder();</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        for (int s = 0; s &lt; 6; s++) {</span>
+<span class="fc" id="L19">            sideBuilder.add(new HexSide(s));</span>
+        }
+<span class="fc" id="L21">        sides = sideBuilder.build();</span>
+<span class="fc" id="L22">    }</span>
+
+    public static HexSide get(int orientation) {
+<span class="fc" id="L25">        return sides.get((orientation + 6) % 6);</span>
+    }
+
+    public static List&lt;HexSide&gt; all() {
+<span class="fc" id="L29">        return sides;</span>
+    }
+
+    public static List&lt;HexSide&gt; allRotated(HexSide rotation) {
+        ImmutableList.Builder&lt;HexSide&gt; sideBuilder =
+<span class="nc" id="L34">                ImmutableList.builder();</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        for (HexSide side : sides) {</span>
+<span class="nc" id="L36">            sideBuilder.add(HexSide.get(rotation.number + side.number));</span>
+<span class="nc" id="L37">        }</span>
+<span class="nc" id="L38">        return sideBuilder.build();</span>
+    }
+
+    public static List&lt;HexSide&gt; allExceptDefault() {
+<span class="fc" id="L42">        return sides.subList(1, 6);</span>
+    }
+
+    public static List&lt;HexSide&gt; head() {
+<span class="fc" id="L46">        return sides.subList(0, 3);</span>
+    }
+
+    public static HexSide defaultRotation() {
+<span class="fc" id="L50">        return sides.get(0);</span>
+    }
+
+    private int number;
+
+<span class="fc" id="L55">    private HexSide(int number) {</span>
+<span class="fc" id="L56">        this.number = number;</span>
+<span class="fc" id="L57">    }</span>
+
+    public HexSide opposite() {
+<span class="fc" id="L60">        return get(this.number + 3);</span>
+    }
+
+    public HexSide negative() {
+<span class="fc" id="L64">        return get(-this.number);</span>
+    }
+
+    public HexSide next() {
+<span class="nc" id="L68">        return get(this.number + 1);</span>
+    }
+
+    @Override
+    public HexSide rotate(HexSide rotation) {
+<span class="fc" id="L73">        return get(this.number + rotation.number);</span>
+    }
+
+    @Override
+    public int getTrackPointNumber() {
+<span class="fc" id="L78">        return number;</span>
+    }
+
+    @Override
+    public Type getTrackPointType() {
+<span class="fc" id="L83">        return TrackPoint.Type.SIDE;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L88">        return MoreObjects.toStringHelper(this)</span>
+<span class="fc" id="L89">                .add(&quot;number&quot;, number)</span>
+<span class="fc" id="L90">                .toString();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

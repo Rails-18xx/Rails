@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TokenHexUpgrade.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.hexmap</a> &gt; <span class="el_source">TokenHexUpgrade.java</span></div><h1>TokenHexUpgrade.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.hexmap;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.game.BonusToken;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Stop;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.special.SpecialBaseTokenLay;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.ui.swing.elements.TokenIcon;
+import rails.game.action.LayBaseToken;
+import rails.game.action.LayBonusToken;
+import rails.game.action.LayToken;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.*;
+
+public class TokenHexUpgrade extends HexUpgrade {
+
+<span class="nc" id="L27">    public enum Invalids implements HexUpgrade.Invalids {</span>
+<span class="nc" id="L28">        HEX_BLOCKED, HEX_RESERVED, NOT_ENOUGH_CASH, CONTAINS_TOKEN, REQUIRES_TILE, REQUIRES_NO_TILE;</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L32">            return LocalText.getText(&quot;TOKEN_UPGRADE_INVALID_&quot; + this.name());</span>
+        }
+
+    }
+
+    // static fields
+    private final LayToken action;
+    private final ImmutableSet&lt;Stop&gt; stops;
+
+    // validation fields
+<span class="nc" id="L42">    private final NavigableSet&lt;Stop&gt; allowed = Sets.newTreeSet();</span>
+<span class="nc" id="L43">    private final EnumSet&lt;Invalids&gt; invalids = EnumSet.noneOf(Invalids.class);</span>
+
+    // ui fields
+    private Stop selectedStop;
+
+    private TokenHexUpgrade(GUIHex hex, Collection&lt;Stop&gt; stops, LayToken action) {
+<span class="nc" id="L49">        super(hex);</span>
+<span class="nc" id="L50">        this.action = action;</span>
+<span class="nc" id="L51">        this.stops = ImmutableSet.copyOf(stops);</span>
+<span class="nc" id="L52">    }</span>
+
+    public static TokenHexUpgrade create(GUIHex hex, Collection&lt;Stop&gt; stops, LayToken action) {
+<span class="nc" id="L55">        return new TokenHexUpgrade(hex, stops, action);</span>
+    }
+
+    public LayToken getAction() {
+<span class="nc" id="L59">        return action;</span>
+    }
+
+    public Set&lt;Stop&gt; getStops() {
+<span class="nc" id="L63">        return stops;</span>
+    }
+
+    public Stop getSelectedStop() {
+<span class="nc" id="L67">        return selectedStop;</span>
+    }
+
+    private boolean validate() {
+<span class="nc" id="L71">        invalids.clear();</span>
+<span class="nc" id="L72">        allowed.addAll(stops);</span>
+
+        // LayBonusToken always and layHome is always allowed
+<span class="nc bnc" id="L75" title="All 4 branches missed.">        if (!(action instanceof LayBonusToken || ((LayBaseToken) action).getType() == LayBaseToken.HOME_CITY)) {</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            if (hexBlocked()) {</span>
+<span class="nc" id="L77">                invalids.add(Invalids.HEX_BLOCKED);</span>
+            }
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            if (hexReserved()) {</span>
+<span class="nc" id="L80">                invalids.add(Invalids.HEX_RESERVED);</span>
+            }
+<span class="nc bnc" id="L82" title="All 2 branches missed.">            if (notEnoughCash()) {</span>
+<span class="nc" id="L83">                invalids.add(Invalids.NOT_ENOUGH_CASH);</span>
+            }
+<span class="nc bnc" id="L85" title="All 2 branches missed.">            if (containsToken()) {</span>
+<span class="nc" id="L86">                invalids.add(Invalids.CONTAINS_TOKEN);</span>
+            }
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            if (requiresTile()) {</span>
+<span class="nc" id="L89">                invalids.add(Invalids.REQUIRES_TILE);</span>
+            }
+<span class="nc bnc" id="L91" title="All 2 branches missed.">            if (requiresNoTile()) {</span>
+<span class="nc" id="L92">                invalids.add(Invalids.REQUIRES_NO_TILE);</span>
+            }
+        }
+
+<span class="nc bnc" id="L96" title="All 4 branches missed.">        if (allowed.isEmpty() || !invalids.isEmpty()) {</span>
+<span class="nc" id="L97">            selectedStop = null;</span>
+<span class="nc" id="L98">            return false;</span>
+        } else {
+<span class="nc" id="L100">            selectedStop = allowed.first();</span>
+<span class="nc" id="L101">            return true;</span>
+        }
+    }
+
+    public boolean hexBlocked() {
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        return hex.getHex().getBlockedForTokenLays() == MapHex.BlockedToken.ALWAYS;</span>
+    }
+
+    public boolean hexReserved() {
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        for (Stop stop : stops) {</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">            if (hex.getHex().isBlockedForReservedHomes(stop)) {</span>
+<span class="nc" id="L112">                allowed.remove(stop);</span>
+            }
+<span class="nc" id="L114">        }</span>
+<span class="nc" id="L115">        return allowed.isEmpty();</span>
+    }
+
+    public boolean notEnoughCash() {
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        return action.getCompany().getCash() &lt; this.getCost();</span>
+    }
+
+    public boolean containsToken() {
+<span class="nc" id="L123">        return hex.getHex().hasTokenOfCompany(action.getCompany());</span>
+    }
+
+    public boolean requiresTile() {
+<span class="nc" id="L127">        SpecialProperty property = action.getSpecialProperty();</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (property instanceof SpecialBaseTokenLay) {</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">            if (((SpecialBaseTokenLay) property).requiresTile()) {</span>
+<span class="nc" id="L130">                return hex.getHex().isPreprintedTileCurrent();</span>
+            }
+        }
+<span class="nc" id="L133">        return false;</span>
+    }
+
+    public boolean requiresNoTile() {
+<span class="nc" id="L137">        SpecialProperty property = action.getSpecialProperty();</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (property instanceof SpecialBaseTokenLay) {</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">            if (((SpecialBaseTokenLay) property).requiresNoTile()) {</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">                return !hex.getHex().isPreprintedTileCurrent();</span>
+            }
+        }
+<span class="nc" id="L143">        return false;</span>
+    }
+
+    // HexUpgrade abstract methods
+
+    @Override
+    public boolean hasSingleSelection() {
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        return allowed.size() == 1;</span>
+    }
+
+    @Override
+    public void firstSelection() {
+<span class="nc" id="L155">        selectedStop = allowed.first();</span>
+<span class="nc" id="L156">    }</span>
+
+    @Override
+    public void nextSelection() {
+<span class="nc" id="L160">        Stop next = allowed.higher(selectedStop);</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (next == null) {</span>
+<span class="nc" id="L162">            selectedStop = allowed.first();</span>
+        } else {
+<span class="nc" id="L164">            selectedStop = next;</span>
+        }
+<span class="nc" id="L166">    }</span>
+
+    @Override
+    public Set&lt;HexUpgrade.Invalids&gt; getInvalids() {
+<span class="nc" id="L170">        return ImmutableSet.&lt;HexUpgrade.Invalids&gt;copyOf(invalids);</span>
+    }
+
+    @Override
+    public boolean isValid() {
+<span class="nc" id="L175">        return invalids.isEmpty();</span>
+    }
+
+    @Override
+    public int getCost() {
+<span class="nc" id="L180">        return action.getPotentialCost(hex.getHex());</span>
+    }
+
+    @Override
+    public Image getUpgradeImage(int zoomStep) {
+<span class="nc" id="L185">        Color fgColour = null;</span>
+<span class="nc" id="L186">        Color bgColour = null;</span>
+<span class="nc" id="L187">        String label = null;</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        if (action instanceof LayBaseToken) {</span>
+<span class="nc" id="L189">            PublicCompany comp = ((LayBaseToken) action).getCompany();</span>
+<span class="nc" id="L190">            fgColour = comp.getFgColour();</span>
+<span class="nc" id="L191">            bgColour = comp.getBgColour();</span>
+<span class="nc" id="L192">            label = comp.getId();</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        } else if (action instanceof LayBonusToken) {</span>
+<span class="nc" id="L194">            fgColour = Color.BLACK;</span>
+<span class="nc" id="L195">            bgColour = Color.WHITE;</span>
+<span class="nc" id="L196">            BonusToken token = ((LayBonusToken) action).getSpecialProperty().getToken();</span>
+<span class="nc" id="L197">            label = &quot;+&quot; + token.getValue();</span>
+        }
+
+<span class="nc" id="L200">        TokenIcon icon = new TokenIcon(40, fgColour, bgColour, label);</span>
+<span class="nc" id="L201">        BufferedImage tokenImage = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);</span>
+<span class="nc" id="L202">        icon.paintIcon(new JLabel(), tokenImage.getGraphics(), 0, 0);</span>
+
+<span class="nc" id="L204">        return tokenImage;</span>
+
+    }
+
+    @Override
+    public String getUpgradeText() {
+<span class="nc" id="L210">        String text = null;</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (action instanceof LayBaseToken) {</span>
+<span class="nc" id="L212">            text = &quot;&lt;html&gt;&quot;;</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">            if (action.getPotentialCost(hex.getHex()) != 0) {</span>
+<span class="nc" id="L214">                String cost = Bank.format(action.getCompany(), action.getPotentialCost(hex.getHex()));</span>
+<span class="nc" id="L215">                text += LocalText.getText(&quot;TOKEN_UPGRADE_COST&quot;, cost);</span>
+<span class="nc" id="L216">            } else {</span>
+<span class="nc" id="L217">                text += LocalText.getText(&quot;TOKEN_UPGRADE_FOR_FREE&quot;);</span>
+            }
+<span class="nc bnc" id="L219" title="All 2 branches missed.">            if (action.getSpecialProperty() != null) {</span>
+<span class="nc" id="L220">                text +=</span>
+                        &quot;&lt;br&gt; &lt;font color=red&gt; [&quot;
+<span class="nc" id="L222">                                + action.getSpecialProperty().getOriginalCompany().getId()</span>
+                                + &quot;] &lt;/font&gt;&quot;;
+            }
+<span class="nc bnc" id="L225" title="All 4 branches missed.">            if (isValid() &amp;&amp; !hasSingleSelection()) {</span>
+<span class="nc" id="L226">                text += &quot;&lt;br&gt; &lt;font size=-2&gt;&quot;;</span>
+<span class="nc" id="L227">                text += hex.getHex().getConnectionString(selectedStop.getRelatedStation());</span>
+<span class="nc" id="L228">                text += &quot;&lt;/font&gt;&quot;;</span>
+            }
+<span class="nc" id="L230">            text += &quot;&lt;/html&gt;&quot;;</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">        } else if (action instanceof LayBonusToken) {</span>
+<span class="nc" id="L232">            BonusToken token = ((LayBonusToken) action).getSpecialProperty().getToken();</span>
+<span class="nc" id="L233">            text = token.getId();</span>
+        }
+<span class="nc" id="L235">        return text;</span>
+    }
+
+    @Override
+    public String getUpgradeToolTip() {
+<span class="nc" id="L240">        StringBuilder tt = new StringBuilder(&quot;&lt;html&gt;&quot;);</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        if (!isValid()) {</span>
+<span class="nc" id="L242">            tt.append(invalidToolTip());</span>
+        } else {
+<span class="nc bnc" id="L244" title="All 2 branches missed.">            if (action instanceof LayBaseToken) {</span>
+<span class="nc" id="L245">                tt.append(LocalText.getText(&quot;TOKEN_UPGRADE_TT_VALID&quot;, action.getCompany()));</span>
+            }
+        }
+<span class="nc" id="L248">        tt.append(&quot;&lt;/html&gt;&quot;);</span>
+<span class="nc" id="L249">        return tt.toString();</span>
+    }
+
+    // FIXME: Move that to an Invalids class (indentical code in TileHexUpgrade)
+    private String invalidToolTip() {
+<span class="nc" id="L254">        StringBuilder tt = new StringBuilder();</span>
+
+<span class="nc" id="L256">        tt.append(&quot;&lt;b&gt;&lt;u&gt;&quot;);</span>
+<span class="nc" id="L257">        tt.append(LocalText.getText(&quot;TOKEN_UPGRADE_TT_INVALID&quot;));</span>
+<span class="nc" id="L258">        tt.append(&quot;&lt;/u&gt;&lt;/b&gt;&lt;br&gt;&quot;);</span>
+
+<span class="nc" id="L260">        tt.append(&quot;&lt;b&gt;&quot;);</span>
+<span class="nc bnc" id="L261" title="All 2 branches missed.">        for (Invalids invalid : invalids) {</span>
+<span class="nc" id="L262">            tt.append(invalid.toString() + &quot;&lt;br&gt;&quot;);</span>
+<span class="nc" id="L263">        }</span>
+<span class="nc" id="L264">        tt.append(&quot;&lt;/b&gt;&quot;);</span>
+
+<span class="nc" id="L266">        return tt.toString();</span>
+    }
+
+
+    @Override
+    public int getCompareId() {
+<span class="nc" id="L272">        return 1;</span>
+    }
+
+    /**
+     * Sorting is based on the following: First special Tokens, then type id of action (see there),
+     * followed by valuable stations, with less token slots left
+     */
+    @Override
+    public Comparator&lt;HexUpgrade&gt; getComparator() {
+<span class="nc" id="L281">        return new Comparator&lt;HexUpgrade&gt;() {</span>
+
+            @Override
+            public int compare(HexUpgrade u1, HexUpgrade u2) {
+<span class="nc bnc" id="L285" title="All 4 branches missed.">                if (u1 instanceof TokenHexUpgrade &amp;&amp; u2 instanceof TokenHexUpgrade) {</span>
+<span class="nc" id="L286">                    TokenHexUpgrade ts1 = (TokenHexUpgrade) u1;</span>
+<span class="nc" id="L287">                    TokenHexUpgrade ts2 = (TokenHexUpgrade) u2;</span>
+
+<span class="nc" id="L289">                    boolean base1 = ts1.action instanceof LayBaseToken;</span>
+<span class="nc" id="L290">                    boolean base2 = ts2.action instanceof LayBaseToken;</span>
+
+<span class="nc" id="L292">                    int type1 = 0, type2 = 0;</span>
+<span class="nc bnc" id="L293" title="All 2 branches missed.">                    if (base1) {</span>
+<span class="nc" id="L294">                        type1 = ((LayBaseToken) ts1.action).getType();</span>
+                    }
+<span class="nc bnc" id="L296" title="All 2 branches missed.">                    if (base2) {</span>
+<span class="nc" id="L297">                        type2 = ((LayBaseToken) ts2.action).getType();</span>
+                    }
+
+<span class="nc" id="L300">                    PublicCompany company1 = ts1.action.getCompany();</span>
+<span class="nc" id="L301">                    PublicCompany company2 = ts2.action.getCompany();</span>
+
+<span class="nc" id="L303">                    return ComparisonChain.start()</span>
+<span class="nc" id="L304">                            .compare(base1, base2)</span>
+<span class="nc" id="L305">                            .compare(type2, type1)</span>
+<span class="nc" id="L306">                            .compare(company1, company2)</span>
+<span class="nc" id="L307">                            .result();</span>
+                }
+<span class="nc" id="L309">                return 0;</span>
+            }
+        };
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L316">        return MoreObjects.toStringHelper(this)</span>
+<span class="nc" id="L317">                .add(&quot;stops&quot;, stops)</span>
+<span class="nc" id="L318">                .add(&quot;action&quot;, action)</span>
+<span class="nc" id="L319">                .toString();</span>
+    }
+
+    /**
+     * sets both validation and visibility for upgrades
+     */
+    public static void validates(TokenHexUpgrade upgrade) {
+<span class="nc bnc" id="L326" title="All 2 branches missed.">        if (upgrade.validate()) {</span>
+<span class="nc" id="L327">            upgrade.setVisible(true);</span>
+        }
+<span class="nc" id="L329">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TokenIcon.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.elements</a> &gt; <span class="el_source">TokenIcon.java</span></div><h1>TokenIcon.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.elements;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
+
+import javax.swing.Icon;
+
+import net.sf.rails.ui.swing.GUIToken;
+import net.sf.rails.ui.swing.hexmap.GUIHex.HexPoint;
+
+
+/** Class TokenIcon is used to draw a token on the Upgrade chart. */
+public class TokenIcon implements Icon {
+
+    public static final int DEFAULT_DIAMETER = 21;
+
+    private int diameter;
+    private Color fgColour;
+    private Color bgColour;
+    private String text;
+
+<span class="nc" id="L25">    public TokenIcon(int diameter, Color fgColour, Color bgColour, String text) {</span>
+
+<span class="nc" id="L27">        this.diameter = diameter;</span>
+<span class="nc" id="L28">        this.fgColour = fgColour;</span>
+<span class="nc" id="L29">        this.bgColour = bgColour;</span>
+<span class="nc" id="L30">        this.text = text;</span>
+<span class="nc" id="L31">    }</span>
+
+    public void paintIcon(Component c, Graphics g, int x, int y) {
+
+<span class="nc" id="L35">        Ellipse2D.Double circle =</span>
+                new Ellipse2D.Double(x, y, diameter, diameter);
+<span class="nc" id="L37">        Graphics2D g2d = (Graphics2D) g;</span>
+<span class="nc" id="L38">        Color oldColour = g2d.getColor();</span>
+
+<span class="nc" id="L40">        g2d.setColor(bgColour);</span>
+<span class="nc" id="L41">        g2d.fill(circle);</span>
+<span class="nc" id="L42">        g2d.setColor(Color.BLACK);</span>
+<span class="nc" id="L43">        g2d.draw(circle);</span>
+
+<span class="nc" id="L45">        g2d.setColor(oldColour);</span>
+<span class="nc" id="L46">        HexPoint center = new HexPoint(x + diameter / 2.0, y + diameter / 2.0);</span>
+<span class="nc" id="L47">        GUIToken.drawTokenText(text, g2d, fgColour, center, diameter);</span>
+<span class="nc" id="L48">    }</span>
+
+    public int getIconWidth() {
+<span class="nc" id="L51">        return diameter;</span>
+    }
+
+    public int getIconHeight() {
+<span class="nc" id="L55">        return diameter;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

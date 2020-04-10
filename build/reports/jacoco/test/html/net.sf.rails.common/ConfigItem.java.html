@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConfigItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.common</a> &gt; <span class="el_source">ConfigItem.java</span></div><h1>ConfigItem.java</h1><pre class="source lang-java linenums">package net.sf.rails.common;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.util.Util;
+
+
+/**
+ * Defines an item used for the configuration of rails
+ * T represents the value type
+ */
+
+public final class ConfigItem {
+
+<span class="fc" id="L21">    private static final Logger log = LoggerFactory.getLogger(ConfigItem.class);</span>
+
+    /**
+     * Defines possible types (Java classes used as types in ConfigItem below
+     */
+<span class="fc" id="L26">    public enum ConfigType {</span>
+<span class="fc" id="L27">        BOOLEAN, INTEGER, PERCENT, STRING, LIST, FONT, DIRECTORY, FILE, COLOR;</span>
+    }
+
+    // static attributes
+    public final String name;
+    public final ConfigType type;
+    public final List&lt;String&gt; allowedValues;
+    public final String formatMask;
+    public final boolean isGameRelated;
+
+    // method call attributes
+    private final String initClass;
+    private final String initMethod;
+    private final boolean alwaysCallInit;
+    private final boolean initParameter;
+
+    // dynamic attributes
+    private String newValue;
+    private String currentValue;
+
+<span class="fc" id="L47">    ConfigItem(Tag tag) throws ConfigurationException {</span>
+        // check name and type (required)
+<span class="fc" id="L49">        String name = tag.getAttributeAsString(&quot;name&quot;);</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if (Util.hasValue(name)) {</span>
+<span class="fc" id="L51">            this.name = name;</span>
+        } else {
+<span class="nc" id="L53">            throw new ConfigurationException(&quot;Missing name for configuration item&quot;);</span>
+        }
+        // optional: list of allowed values
+<span class="fc" id="L56">        String valueString = tag.getAttributeAsString(&quot;values&quot;);</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if (Util.hasValue(valueString)) {</span>
+<span class="fc" id="L58">            allowedValues = Arrays.asList(valueString.split(&quot;,&quot;));</span>
+<span class="fc" id="L59">            this.type = ConfigType.LIST;</span>
+        } else {
+<span class="fc" id="L61">            allowedValues = null;</span>
+<span class="fc" id="L62">            String type = tag.getAttributeAsString(&quot;type&quot;);</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">            if (Util.hasValue(type)) {</span>
+                try {
+<span class="fc" id="L65">                    this.type = ConfigType.valueOf(type.toUpperCase());</span>
+<span class="nc" id="L66">                } catch (Exception e) {</span>
+<span class="nc" id="L67">                    throw new ConfigurationException(&quot;Missing or invalid type for configuration item, exception = &quot; + e);</span>
+<span class="fc" id="L68">                }</span>
+            } else {
+<span class="nc" id="L70">                throw new ConfigurationException(&quot;Missing or invalid type for configuration item&quot;);</span>
+            }
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            if (this.type == ConfigType.LIST) {</span>
+<span class="nc" id="L73">                throw new ConfigurationException(&quot;No values defined for LIST config item&quot;);</span>
+            }
+        }
+
+        // optional: formatMask
+<span class="fc" id="L78">        formatMask = tag.getAttributeAsString(&quot;formatMask&quot;);</span>
+
+        // optional: isGameRelated
+<span class="fc" id="L81">        isGameRelated = tag.getAttributeAsBoolean(&quot;isGameRelated&quot;, false);</span>
+
+        // optional: init method attributes
+<span class="fc" id="L84">        initClass = tag.getAttributeAsString(&quot;initClass&quot;);</span>
+<span class="fc" id="L85">        initMethod = tag.getAttributeAsString(&quot;initMethod&quot;);</span>
+<span class="fc" id="L86">        alwaysCallInit = tag.getAttributeAsBoolean(&quot;alwaysCallInit&quot;,false);</span>
+<span class="fc" id="L87">        initParameter = tag.getAttributeAsBoolean(&quot;initParameter&quot;, false);</span>
+
+        // intialize values
+<span class="fc" id="L90">        currentValue = null;</span>
+<span class="fc" id="L91">        newValue = null;</span>
+<span class="fc" id="L92">    }</span>
+
+
+    public boolean hasChanged() {
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (newValue == null) return false;</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        return !getCurrentValue().equals(newValue);</span>
+    }
+
+    public String getValue() {
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (hasChanged()) {</span>
+<span class="nc" id="L102">            return getNewValue();</span>
+        } else {
+<span class="nc" id="L104">            return getCurrentValue();</span>
+        }
+    }
+
+    public String getCurrentValue() {
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (currentValue == null) return &quot;&quot;;</span>
+<span class="nc" id="L110">        return currentValue;</span>
+    }
+
+    public void setCurrentValue(String value) {
+<span class="nc" id="L114">        currentValue = value;</span>
+<span class="nc" id="L115">        newValue = null;</span>
+<span class="nc" id="L116">    }</span>
+
+    public String getNewValue() {
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (newValue == null) return &quot;&quot;;</span>
+<span class="nc" id="L120">        return newValue;</span>
+    }
+
+    public void setNewValue(String value) {
+<span class="nc bnc" id="L124" title="All 6 branches missed.">        if (value == null || value.equals(&quot;&quot;) || value.equals(currentValue)) {</span>
+<span class="nc" id="L125">            newValue = null;</span>
+        } else {
+<span class="nc" id="L127">            newValue = value;</span>
+        }
+<span class="nc" id="L129">        log.debug(&quot;ConfigItem {} set to new value {}&quot;, name, newValue);</span>
+<span class="nc" id="L130">    }</span>
+
+    public void resetValue() {
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (hasChanged()) {</span>
+<span class="nc" id="L134">            currentValue = newValue;</span>
+<span class="nc" id="L135">            newValue = null;</span>
+        }
+<span class="nc" id="L137">    }</span>
+
+    /**
+     * @param applyInitMethod Specifies whether init should be called. Can be overruled
+     * by an additional tag alwaysCallInit
+     */
+    void callInitMethod(boolean applyInitMethod) {
+<span class="nc bnc" id="L144" title="All 4 branches missed.">        if (!applyInitMethod &amp;&amp; !alwaysCallInit) return;</span>
+<span class="nc bnc" id="L145" title="All 4 branches missed.">        if (initClass == null || initMethod == null) return;</span>
+
+        // call without parameter
+        try {
+<span class="nc" id="L149">            Class&lt;?&gt; clazz = Class.forName(initClass);</span>
+
+<span class="nc bnc" id="L151" title="All 2 branches missed.">            if (initParameter) {</span>
+<span class="nc" id="L152">                clazz.getMethod(initMethod, String.class).invoke(null, newValue);</span>
+
+            } else {
+<span class="nc" id="L155">                clazz.getMethod(initMethod).invoke(null);</span>
+            }
+<span class="nc" id="L157">        } catch (Exception e) {</span>
+<span class="nc" id="L158">            log.error(&quot;Config profile: cannot call initMethod&quot;, e);</span>
+<span class="nc" id="L159">        }</span>
+<span class="nc" id="L160">    }</span>
+
+
+    public String toString() {
+<span class="nc" id="L164">        StringBuilder s = new StringBuilder();</span>
+<span class="nc" id="L165">        s.append(&quot;Configuration Item: name = &quot;).append(name).append(&quot;, type = &quot;).append(type);</span>
+<span class="nc" id="L166">        s.append(&quot;, current value = &quot;).append(getCurrentValue());</span>
+<span class="nc" id="L167">        s.append(&quot;, new value = &quot;).append(getNewValue());</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (allowedValues != null) {</span>
+<span class="nc" id="L169">            s.append(&quot;, allowedValues = &quot;).append(allowedValues);</span>
+        }
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (formatMask != null) {</span>
+<span class="nc" id="L172">            s.append(&quot;, formatMask = &quot;).append(formatMask);</span>
+        }
+
+<span class="nc" id="L175">        return s.toString();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

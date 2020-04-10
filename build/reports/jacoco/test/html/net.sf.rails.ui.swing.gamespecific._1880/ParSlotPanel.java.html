@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ParSlotPanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.gamespecific._1880</a> &gt; <span class="el_source">ParSlotPanel.java</span></div><h1>ParSlotPanel.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.gamespecific._1880;
+
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+
+import net.sf.rails.game.specific._1880.ParSlot;
+import net.sf.rails.game.specific._1880.ParSlotManager;
+import net.sf.rails.ui.swing.core.GridAxis;
+import net.sf.rails.ui.swing.core.GridTable;
+import net.sf.rails.ui.swing.core.TableUI;
+
+public class ParSlotPanel {
+        
+<span class="nc" id="L16">    private static enum Rows {HEADER}</span>
+<span class="nc" id="L17">    private enum Cols {PRICE,COMPANY,LAST_TRAIN}</span>
+
+    private final JPanel panel;
+
+<span class="nc" id="L21">    public ParSlotPanel(ParSlotManager parSlotManager) {</span>
+        
+<span class="nc" id="L23">        List&lt;ParSlot&gt; slots = parSlotManager.getParSlots();</span>
+
+<span class="nc" id="L25">        GridAxis rows = GridAxis.builder()</span>
+<span class="nc" id="L26">                .add(Rows.HEADER).add(slots, ParSlot.class)</span>
+<span class="nc" id="L27">                .build();</span>
+
+<span class="nc" id="L29">        GridAxis cols = GridAxis.builder()</span>
+<span class="nc" id="L30">                .add(Cols.PRICE).add(Cols.COMPANY).add(Cols.LAST_TRAIN)</span>
+<span class="nc" id="L31">                .build();</span>
+
+<span class="nc" id="L33">        GridTable gridTable = GridTable.builder(rows, cols)</span>
+<span class="nc" id="L34">                .row().add(&quot;Price&quot;).add(&quot;Slot&quot;).add(&quot;&lt;html&gt;Last&lt;br&gt;Train&lt;/html&gt;&quot;)</span>
+<span class="nc" id="L35">                .row().add(ParSlotACCs.PRICE).headerFormat().add(ParSlotACCs.COMPANY).color(ParSlotACCs.COMPANY_COLORS).add(ParSlotACCs.LAST_TRAIN)</span>
+<span class="nc" id="L36">                .build();</span>
+
+<span class="nc" id="L38">        TableUI table = TableUI.from(gridTable);</span>
+
+<span class="nc" id="L40">        panel = table.convertToPanel();</span>
+<span class="nc" id="L41">        panel.setBorder(BorderFactory.createEtchedBorder());</span>
+
+<span class="nc" id="L43">    }</span>
+
+    public JPanel getPanel() {
+<span class="nc" id="L46">        return panel;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

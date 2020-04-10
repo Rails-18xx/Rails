@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CompanyType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">CompanyType.java</span></div><h1>CompanyType.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Configure;
+import net.sf.rails.common.parser.Tag;
+
+
+/**
+ * Objects of this class represent a particular type of company, of which
+ * typically multiple instances exist in a rails.game. Examples: &quot;Private&quot;,
+ * &quot;Minor&quot;, &quot;Major&quot;, &quot;Mountain&quot; etc. &lt;p&gt; This class contains common properties
+ * of the companies of one type, and aids in configuring the companies by
+ * reducing the need to repeatedly specify common properties with different
+ * companies.
+ */
+public class CompanyType extends RailsAbstractItem {
+    
+    /*--- Class attributes ---*/
+
+    /*--- Constants ---*/
+    /** The name of the XML tag used to configure a company type. */
+    public static final String ELEMENT_ID = &quot;CompanyType&quot;;
+
+    /** The name of the XML attribute for the company type's name. */
+    public static final String NAME_TAG = &quot;name&quot;;
+
+    /** The name of the XML attribute for the company type's class name. */
+    public static final String CLASS_TAG = &quot;class&quot;;
+
+    /** The name of the XML tag for the &quot;NoCertLimit&quot; property. */
+    public static final String AUCTION_TAG = &quot;Auction&quot;;
+
+    /** The name of the XML tag for the &quot;AllClose&quot; tag. */
+    public static final String ALL_CLOSE_TAG = &quot;AllClose&quot;;
+
+    /*--- Instance attributes ---*/
+    protected String className;
+<span class="fc" id="L42">    protected int capitalisation = PublicCompany.CAPITALISE_FULL;</span>
+
+<span class="fc" id="L44">    protected List&lt;Company&gt; companies = new ArrayList&lt;Company&gt;();</span>
+
+    protected CompanyType(RailsItem parent, String id, String className) {
+<span class="fc" id="L47">        super(parent, id);</span>
+<span class="fc" id="L48">        this.className = className;</span>
+<span class="fc" id="L49">    }</span>
+
+    /**
+    * @param id Company type name (&quot;Private&quot;, &quot;Public&quot;, &quot;Minor&quot; etc.).
+    * @param className Name of the class that will instantiate this type of
+    * company.
+    */
+    public static CompanyType create(CompanyManager parent, String id, String className) {
+<span class="fc" id="L57">        return new CompanyType(parent, id, className);</span>
+    }
+
+    /**
+     * @see net.sf.rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
+     */
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+        //No longer needed.
+<span class="fc" id="L65">    }</span>
+
+    public void finishConfiguration (GameManager gameManager) {
+
+<span class="nc" id="L69">    }</span>
+
+    public Company createCompany(String id, Tag typeTag, Tag tag)
+    throws ConfigurationException {
+<span class="fc" id="L73">        Company newCompany = null;</span>
+        try {
+<span class="fc" id="L75">            newCompany = Configure.create(Company.class, className, this, id);</span>
+<span class="nc" id="L76">        } catch (Exception e) {</span>
+<span class="nc" id="L77">            throw new ConfigurationException(LocalText.getText(</span>
+                    &quot;ClassCannotBeInstantiated&quot;, className), e);
+<span class="fc" id="L79">        }</span>
+<span class="fc" id="L80">        newCompany.initType(this);</span>
+<span class="fc" id="L81">        newCompany.configureFromXML(typeTag);</span>
+<span class="fc" id="L82">        newCompany.configureFromXML(tag);</span>
+<span class="fc" id="L83">        companies.add(newCompany);</span>
+<span class="fc" id="L84">        return newCompany;</span>
+    }
+
+    /*--- Getters and setters ---*/
+    /**
+     * Get the name of the class that will implement this type of company.
+     *
+     * @return The full class name.
+     */
+    public String getClassName() {
+<span class="nc" id="L94">        return className;</span>
+    }
+
+    public List&lt;Company&gt; getCompanies() {
+<span class="nc" id="L98">		return companies;</span>
+	}
+
+	public void setCapitalisation(int mode) {
+<span class="nc" id="L102">        this.capitalisation = mode;</span>
+<span class="nc" id="L103">    }</span>
+
+    public void setCapitalisation(String mode) {
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (mode.equalsIgnoreCase(&quot;full&quot;)) {</span>
+<span class="nc" id="L107">            this.capitalisation = PublicCompany.CAPITALISE_FULL;</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        } else if (mode.equalsIgnoreCase(&quot;incremental&quot;)) {</span>
+<span class="nc" id="L109">            this.capitalisation = PublicCompany.CAPITALISE_INCREMENTAL;</span>
+        }
+<span class="nc" id="L111">    }</span>
+
+    public int getCapitalisation() {
+<span class="nc" id="L114">        return capitalisation;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.sf.rails.game.state.StateTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2020-04-10T19:48:53" hostname="marc-desktop" time="0.001">
+  <properties/>
+  <testcase name="testState" classname="net.sf.rails.game.state.StateTest" time="0.001"/>
+  <testcase name="testObserverText" classname="net.sf.rails.game.state.StateTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

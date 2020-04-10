@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HexMapImage.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.hexmap</a> &gt; <span class="el_source">HexMapImage.java</span></div><h1>HexMapImage.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.hexmap;
+
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.geom.AffineTransform;
+
+import net.sf.rails.common.Config;
+import net.sf.rails.game.MapManager;
+import net.sf.rails.ui.swing.GameUIManager;
+import net.sf.rails.util.Util;
+
+import org.apache.batik.swing.JSVGCanvas;
+import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
+import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+/**
+ * Class to display a full map image. This class has been split off from HexMap to allow
+ * it to be displayed in a lower layer of a LayeredPane.
+ */
+<span class="nc" id="L23">public final class HexMapImage extends JSVGCanvas  {</span>
+
+    // TODO: Is this still compatible
+    private static final long serialVersionUID = 1L;
+
+<span class="nc" id="L28">    private static final Logger log =</span>
+<span class="nc" id="L29">            LoggerFactory.getLogger(HexMapImage.class);</span>
+
+    private MapManager mapManager;
+    private HexMap hexMap;
+<span class="nc" id="L33">    private double zoomFactor = 1;  // defined dynamically if zoomStep changed</span>
+<span class="nc" id="L34">    private int zoomStep = 10; // default value, can be overwritten in config</span>
+<span class="nc" id="L35">    private boolean initialized = false;</span>
+<span class="nc" id="L36">    private Dimension initialMapSize = null;</span>
+<span class="nc" id="L37">    private int initialZoomStep = 0;</span>
+
+    public void init(MapManager mapManager,HexMap hexMap) {
+
+<span class="nc" id="L41">       this.mapManager = mapManager;</span>
+<span class="nc" id="L42">       this.hexMap = hexMap;</span>
+
+<span class="nc" id="L44">       this.setRecenterOnResize(false);</span>
+
+<span class="nc" id="L46">       initializeSettings();</span>
+<span class="nc" id="L47">       loadMap();</span>
+<span class="nc" id="L48">    }</span>
+
+    /**
+     * defines settings from the config files
+     */
+    private void initializeSettings() {
+        // define zoomStep from config
+<span class="nc" id="L55">        String zoomStepSetting = Config.getGameSpecific(&quot;map.zoomstep&quot;);</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        if (Util.hasValue(zoomStepSetting)) {</span>
+            try {
+<span class="nc" id="L58">                int newZoomStep = Integer.parseInt(zoomStepSetting);</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">                if (zoomStep != newZoomStep) {</span>
+<span class="nc" id="L60">                    zoomStep = newZoomStep;</span>
+<span class="nc" id="L61">                    zoom();</span>
+                }
+<span class="nc" id="L63">            } catch (NumberFormatException e) {</span>
+                // otherwise keep default defined above
+<span class="nc" id="L65">            }</span>
+        }
+<span class="nc" id="L67">    }</span>
+
+    private void loadMap() {
+
+        try {
+//             File imageFile = new File (mapManager.getMapImageFilepath());
+//             setURI(imageFile.toURI().toString());
+//             log.debug(&quot;ImageFile=&quot;+ imageFile.getName());
+<span class="nc" id="L75">            setURI(getClass().getResource(mapManager.getMapImageFilepath()).toString());</span>
+<span class="nc" id="L76">        } catch (Exception e) {</span>
+<span class="nc" id="L77">            log.error (&quot;Cannot load map image file &quot; + mapManager.getMapImageFilepath(), e);</span>
+<span class="nc" id="L78">        }</span>
+
+<span class="nc" id="L80">        addGVTTreeRendererListener (new GVTTreeRendererAdapter() {</span>
+            //prepare: map scaling has to occur before displaying it for the first time
+            public void gvtRenderingPrepare(GVTTreeRendererEvent e) {
+<span class="nc bnc" id="L83" title="All 2 branches missed.">                if (!initialized) {</span>
+                    // store the rendering Transform
+<span class="nc" id="L85">                    initialTransform = getRenderingTransform();</span>
+<span class="nc" id="L86">                    initialized = true;</span>
+
+                    //catch up on setting the bounds (if bounds setting were called before rendering prepare)
+<span class="nc" id="L89">                    setBoundsAndResize(hexMap.getCurrentSize(),hexMap.getZoomStep());</span>
+                }
+<span class="nc" id="L91">                addGVTTreeRendererListener(null);</span>
+<span class="nc" id="L92">            }</span>
+        });
+
+<span class="nc" id="L95">    }</span>
+
+    private void scaleMap () {
+<span class="nc" id="L98">        AffineTransform at = new AffineTransform();</span>
+
+<span class="nc" id="L100">        log.debug(&quot;MapImage zoomFactor&quot; + zoomFactor);</span>
+<span class="nc" id="L101">        at.scale (zoomFactor, zoomFactor);</span>
+
+<span class="nc" id="L103">        log.debug(&quot;MapImage XOffset = &quot; + mapManager.getMapXOffset() + &quot;, YOffset = &quot; + mapManager.getMapYOffset());</span>
+<span class="nc" id="L104">        at.translate(mapManager.getMapXOffset(), mapManager.getMapYOffset());</span>
+
+<span class="nc" id="L106">        double mapScale = mapManager.getMapScale();</span>
+<span class="nc" id="L107">        log.debug(&quot;MapImage MapScale = &quot; + mapManager.getMapScale());</span>
+<span class="nc" id="L108">        at.scale(mapScale, mapScale);</span>
+
+<span class="nc" id="L110">        log.debug(&quot;MapImage Affine Transform &quot; + at);</span>
+<span class="nc" id="L111">        setRenderingTransform (at, true);</span>
+<span class="nc" id="L112">    }</span>
+
+    public void setBoundsAndResize (Dimension currentMapSize,int zoomStep) {
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        if (initialized) {</span>
+<span class="nc" id="L116">            setBounds(0, 0, currentMapSize.width, currentMapSize.height);</span>
+<span class="nc" id="L117">            setPreferredSize(currentMapSize);</span>
+<span class="nc" id="L118">            zoom(zoomStep);</span>
+        } else {
+<span class="nc" id="L120">            initialMapSize = currentMapSize;</span>
+<span class="nc" id="L121">            initialZoomStep = zoomStep;</span>
+        }
+<span class="nc" id="L123">    }</span>
+    public void zoom (boolean in) {
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (in) zoomStep++; else zoomStep--;</span>
+<span class="nc" id="L126">        zoom();</span>
+<span class="nc" id="L127">    }</span>
+
+    public void zoom (int zoomStep) {
+<span class="nc" id="L130">        this.zoomStep = zoomStep;</span>
+<span class="nc" id="L131">        zoom();</span>
+<span class="nc" id="L132">    }</span>
+
+    private void zoom() {
+<span class="nc" id="L135">        zoomFactor = GameUIManager.getImageLoader().getZoomFactor(zoomStep);</span>
+<span class="nc" id="L136">        log.debug(&quot;ImageMap zoomStep = &quot; + zoomStep);</span>
+<span class="nc" id="L137">        log.debug(&quot;ImageMap zoomFactor = &quot; + zoomFactor);</span>
+<span class="nc" id="L138">        scaleMap();</span>
+<span class="nc" id="L139">    }</span>
+
+    public int getZoomStep () {
+<span class="nc" id="L142">        return zoomStep;</span>
+    }
+
+    /**
+     * paint component synchronized with hex map in order to ensure that
+     * - painting background image is not affected by concurrent changes in the hexmap
+     *   (such glitches were observed in the past)
+     */
+    @Override
+    public void paintComponent(Graphics g) {
+<span class="nc" id="L152">        synchronized (hexMap) {</span>
+<span class="nc" id="L153">            super.paintComponent(g);</span>
+<span class="nc" id="L154">        }</span>
+<span class="nc" id="L155">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

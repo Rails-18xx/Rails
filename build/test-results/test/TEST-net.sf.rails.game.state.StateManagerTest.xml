@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.sf.rails.game.state.StateManagerTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2020-04-10T19:48:53" hostname="marc-desktop" time="0.126">
+  <properties/>
+  <testcase name="testGetPortfolioManager" classname="net.sf.rails.game.state.StateManagerTest" time="0.085"/>
+  <testcase name="testAddObserver" classname="net.sf.rails.game.state.StateManagerTest" time="0.003"/>
+  <testcase name="testUpdateObservers" classname="net.sf.rails.game.state.StateManagerTest" time="0.021"/>
+  <testcase name="testAddModel" classname="net.sf.rails.game.state.StateManagerTest" time="0.004"/>
+  <testcase name="testObservablesToUpdate" classname="net.sf.rails.game.state.StateManagerTest" time="0.007"/>
+  <testcase name="testRegisterState" classname="net.sf.rails.game.state.StateManagerTest" time="0.003"/>
+  <testcase name="testGetChangeStack" classname="net.sf.rails.game.state.StateManagerTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

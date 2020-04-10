@@ -1,0 +1,1469 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">GameManager.java</span></div><h1>GameManager.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.common.Config;
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GameOption;
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.GuiHints;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.common.parser.Configurable;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Configure;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.PlayerManager.PlayerOrderModel;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.ShareSellingRound;
+import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.financial.TreasuryShareRound;
+import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.round.RoundFacade;
+import net.sf.rails.game.special.SpecialBonusTokenLay;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.state.ArrayListState;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.ChangeStack;
+import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.Owner;
+import net.sf.rails.game.state.Portfolio;
+import net.sf.rails.game.state.PortfolioSet;
+import net.sf.rails.util.GameLoader;
+import net.sf.rails.util.GameSaver;
+import net.sf.rails.util.Util;
+import rails.game.action.GameAction;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.PossibleActions;
+import rails.game.action.RepayLoans;
+import rails.game.correct.CorrectionAction;
+import rails.game.correct.CorrectionManager;
+import rails.game.correct.CorrectionType;
+
+
+/**
+ * This class manages the playing rounds by supervising all implementations of
+ * Round. Currently everything is hardcoded &amp;agrave; la 1830.
+ */
+public class GameManager extends RailsManager implements Configurable, Owner {
+
+<span class="fc" id="L66">    protected Class&lt;? extends StockRound&gt; stockRoundClass = StockRound.class;</span>
+<span class="fc" id="L67">    protected Class&lt;? extends OperatingRound&gt; operatingRoundClass = OperatingRound.class;</span>
+<span class="fc" id="L68">    protected Class&lt;? extends ShareSellingRound&gt; shareSellingRoundClass = ShareSellingRound.class;</span>
+
+    // Variable UI Class names
+<span class="fc" id="L71">    protected String gameUIManagerClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.GAME_UI_MANAGER);</span>
+<span class="fc" id="L72">    protected String orUIManagerClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.OR_UI_MANAGER);</span>
+<span class="fc" id="L73">    protected String gameStatusClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.GAME_STATUS);</span>
+<span class="fc" id="L74">    protected String statusWindowClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.STATUS_WINDOW);</span>
+<span class="fc" id="L75">    protected String orWindowClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.OR_WINDOW);</span>
+<span class="fc" id="L76">    protected String startRoundWindowClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.START_ROUND_WINDOW);</span>
+
+    // map of correctionManagers
+<span class="fc" id="L79">    protected final Map&lt;CorrectionType, CorrectionManager&gt; correctionManagers = new HashMap&lt;&gt;();</span>
+
+    /** Map relating portfolio names and objects, to enable deserialization.
+     * OBSOLETE since Rails 1.3.1, but still required to enable reading old saved files */
+<span class="fc" id="L83">    protected final Map&lt;String, PortfolioModel&gt; portfolioMap = new HashMap&lt;&gt;();</span>
+    /** Map relating portfolio unique names and objects, to enable deserialization */
+<span class="fc" id="L85">    protected final Map&lt;String, PortfolioModel&gt; portfolioUniqueNameMap = new HashMap&lt;&gt;();</span>
+
+<span class="fc" id="L87">    protected int currentNumberOfOperatingRounds = 1;</span>
+<span class="fc" id="L88">    protected boolean skipFirstStockRound = false;</span>
+<span class="fc" id="L89">    protected boolean showCompositeORNumber = true;</span>
+
+<span class="fc" id="L91">    protected boolean forcedSellingCompanyDump = true;</span>
+<span class="fc" id="L92">    protected boolean gameEndsWithBankruptcy = false;</span>
+<span class="fc" id="L93">    protected int gameEndsWhenBankHasLessOrEqual = 0;</span>
+<span class="fc" id="L94">    protected boolean gameEndsAfterSetOfORs = true;</span>
+
+<span class="fc" id="L96">    protected boolean dynamicOperatingOrder = true;</span>
+
+    /** Will only be set during game reload */
+<span class="fc" id="L99">    protected boolean reloading = false;</span>
+
+<span class="fc" id="L101">    protected final EnumMap&lt;GameDef.Parm, Object&gt; gameParameters = new EnumMap&lt;&gt;(GameDef.Parm.class);</span>
+
+    /**
+     * Current round should not be set here but from within the Round classes.
+     * This is because in some cases the round has already changed to another
+     * one when the constructor terminates. Example: if the privates have not
+     * been sold, it finishes by starting an Operating Round, which handles the
+     * privates payout and then immediately starts a new Start Round.
+     */
+<span class="fc" id="L110">    protected final GenericState&lt;RoundFacade&gt; currentRound = GenericState.create(this, &quot;currentRound&quot;);</span>
+<span class="fc" id="L111">    protected RoundFacade interruptedRound = null;</span>
+
+<span class="fc" id="L113">    protected final IntegerState startRoundNumber = IntegerState.create(this, &quot;startRoundNumber&quot;);</span>
+<span class="fc" id="L114">    protected final IntegerState srNumber = IntegerState.create(this, &quot;srNumber&quot;);</span>
+
+
+<span class="fc" id="L117">    protected final IntegerState absoluteORNumber = IntegerState.create(this, &quot;absoluteORNUmber&quot;);</span>
+<span class="fc" id="L118">    protected final IntegerState relativeORNumber = IntegerState.create(this, &quot;relativeORNumber&quot;);</span>
+<span class="fc" id="L119">    protected final IntegerState numOfORs = IntegerState.create(this, &quot;numOfORs&quot;);</span>
+
+<span class="fc" id="L121">    protected final BooleanState firstAllPlayersPassed = BooleanState.create(this, &quot;firstAllPlayersPassed&quot;);</span>
+
+
+    /** GameOver pending, a last OR or set of ORs must still be completed */
+<span class="fc" id="L125">    protected final BooleanState gameOverPending = BooleanState.create(this, &quot;gameOverPending&quot;);</span>
+    /** GameOver is executed, no more moves */
+<span class="fc" id="L127">    protected final BooleanState gameOver = BooleanState.create(this, &quot;gameOver&quot;);</span>
+<span class="fc" id="L128">    protected Boolean gameOverReportedUI = false;</span>
+<span class="fc" id="L129">    protected final BooleanState endedByBankruptcy = BooleanState.create(this, &quot;endedByBankruptcy&quot;);</span>
+
+    /** UI display hints */
+    protected GuiHints guiHints;
+
+    /** Flags to be passed to the UI, aiding the layout definition */
+<span class="fc" id="L135">    protected final EnumMap&lt;GuiDef.Parm, Boolean&gt; guiParameters =</span>
+            new EnumMap&lt;&gt;(GuiDef.Parm.class);
+
+<span class="fc" id="L138">    protected GenericState&lt;StartPacket&gt; startPacket = GenericState.create(this, &quot;startPacket&quot;);</span>
+
+<span class="fc" id="L140">    protected PossibleActions possibleActions = PossibleActions.create();</span>
+
+<span class="fc" id="L142">    protected final ArrayListState&lt;PossibleAction&gt; executedActions = ArrayListState.create(this, &quot;executedActions&quot;);</span>
+
+    /** Special properties that can be used by other players or companies
+     * than just the owner (such as buyable bonus tokens as in 1856).
+     */
+<span class="fc" id="L147">    protected Portfolio&lt;SpecialProperty&gt; commonSpecialProperties = null;</span>
+
+    /** indicates that the recoverySave already issued a warning, avoids displaying several warnings */
+<span class="fc" id="L150">    protected boolean recoverySaveWarning = true;</span>
+
+    /** Flag to skip a subsequent Done action (if present) during reloading.
+     * &lt;br&gt;This is a fix to maintain backwards compatibility when redundant
+     * actions are skipped in new code versions (such as the bypassing of
+     * a treasury trading step if it cannot be executed).
+     * &lt;br&gt;This flag must be reset after processing &lt;i&gt;any&lt;/i&gt; action (not just Done).
+     */
+<span class="fc" id="L158">    protected boolean skipNextDone = false;</span>
+    /** Step that must be in effect to do an actual Done skip during reloading.
+     * &lt;br&gt; This is to ensure that Done actions in different OR steps are
+     * considered separately.
+     */
+<span class="fc" id="L163">    protected GameDef.OrStep skippedStep = null;</span>
+
+    // storage to replace static class variables
+    // TODO: Move that to a better place
+<span class="fc" id="L167">    protected Map&lt;String, Object&gt; objectStorage = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L168">    protected Map&lt;String, Integer&gt; storageIds = new HashMap&lt;&gt;();</span>
+
+<span class="fc" id="L170">    private static int revenueSpinnerIncrement = 10;</span>
+    //Used for Storing the PublicCompany to be Founded by a formationround
+    private PublicCompany nationalToFound;
+
+//    private Player NationalFormStartingPlayer = null;
+
+<span class="fc" id="L176">    private final Map&lt; PublicCompany, Player&gt; NationalFormStartingPlayer = new HashMap&lt;&gt;();</span>
+
+    protected PlayerOrderModel playerNamesModel;
+
+
+    /**
+     * @return the revenueSpinnerIncrement
+     */
+    public static int getRevenueSpinnerIncrement() {
+<span class="nc" id="L185">        return revenueSpinnerIncrement;</span>
+    }
+
+<span class="fc" id="L188">    private static final Logger log = LoggerFactory.getLogger(GameManager.class);</span>
+
+    public GameManager(RailsRoot parent, String id) {
+<span class="fc" id="L191">        super(parent, id);</span>
+<span class="fc" id="L192">        guiHints = GuiHints.create(this, &quot;guiHints&quot;);</span>
+<span class="fc" id="L193">    }</span>
+
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+        /* Get the rails.game name as configured */
+<span class="fc" id="L197">        Tag gameTag = tag.getChild(&quot;Game&quot;);</span>
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">        if (gameTag == null)</span>
+<span class="nc" id="L199">            throw new ConfigurationException(</span>
+            &quot;No Game tag specified in GameManager tag&quot;);
+
+<span class="fc" id="L202">        String gameName = gameTag.getAttributeAsString(&quot;name&quot;);</span>
+        // TODO (Rails 2.0): Check if this still works and is still needed
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        if (gameName == null) {</span>
+<span class="nc" id="L205">            throw new ConfigurationException(&quot;No gameName specified in Game tag&quot;);</span>
+        }
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">        if (!gameName.equals(getRoot().getGameName())) {</span>
+<span class="nc" id="L208">            throw new ConfigurationException(&quot;Deviating gameName specified in Game tag&quot;);</span>
+        }
+
+<span class="fc" id="L211">        initGameParameters();</span>
+
+<span class="fc" id="L213">        Tag gameParmTag = tag.getChild(&quot;GameParameters&quot;);</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">        if (gameParmTag != null) {</span>
+
+
+            // StockRound class and other properties
+<span class="fc" id="L218">            Tag srTag = gameParmTag.getChild(&quot;StockRound&quot;);</span>
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">            if (srTag != null) {</span>
+                // FIXME: Rails 2.0, move this to some default .xml!
+<span class="fc" id="L221">                String srClassName =</span>
+<span class="fc" id="L222">                    srTag.getAttributeAsString(&quot;class&quot;, &quot;net.sf.rails.game.financial.StockRound&quot;);</span>
+                try {
+<span class="fc" id="L224">                    stockRoundClass =</span>
+<span class="fc" id="L225">                        Class.forName(srClassName).asSubclass(StockRound.class);</span>
+<span class="nc" id="L226">                } catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L227">                    throw new ConfigurationException(&quot;Cannot find class &quot;</span>
+                            + srClassName, e);
+<span class="fc" id="L229">                }</span>
+<span class="fc" id="L230">                String stockRoundSequenceRuleString =</span>
+<span class="fc" id="L231">                    srTag.getAttributeAsString(&quot;sequence&quot;);</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">                if (Util.hasValue(stockRoundSequenceRuleString)) {</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">                    if (stockRoundSequenceRuleString.equalsIgnoreCase(&quot;SellBuySell&quot;)) {</span>
+<span class="fc" id="L234">                        setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,</span>
+<span class="fc" id="L235">                                StockRound.SELL_BUY_SELL);</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">                    } else if (stockRoundSequenceRuleString.equalsIgnoreCase(&quot;SellBuy&quot;)) {</span>
+<span class="fc" id="L237">                        setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,</span>
+<span class="fc" id="L238">                                StockRound.SELL_BUY);</span>
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">                    } else if (stockRoundSequenceRuleString.equalsIgnoreCase(&quot;SellBuyOrBuySell&quot;)) {</span>
+<span class="fc" id="L240">                        setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,</span>
+<span class="fc" id="L241">                                StockRound.SELL_BUY_OR_BUY_SELL);</span>
+                    }
+                }
+
+<span class="fc" id="L245">                skipFirstStockRound =</span>
+<span class="fc" id="L246">                    srTag.getAttributeAsBoolean(&quot;skipFirst&quot;,</span>
+                            skipFirstStockRound);
+
+<span class="fc bfc" id="L249" title="All 2 branches covered.">                for (String ruleTagName : srTag.getChildren().keySet()) {</span>
+<span class="pc bpc" id="L250" title="1 of 4 branches missed.">                    switch ( ruleTagName ) {</span>
+                        case &quot;NoSaleInFirstSR&quot;:
+<span class="fc" id="L252">                            setGameParameter(GameDef.Parm.NO_SALE_IN_FIRST_SR, true);</span>
+<span class="fc" id="L253">                            break;</span>
+                        case &quot;NoSaleIfNotOperated&quot;:
+<span class="fc" id="L255">                            setGameParameter(GameDef.Parm.NO_SALE_IF_NOT_OPERATED, true);</span>
+<span class="fc" id="L256">                            break;</span>
+                        case &quot;NoSaleOfJustBoughtShare&quot;:
+<span class="fc" id="L258">                            setGameParameter(GameDef.Parm.NO_SALE_OF_JUST_BOUGHT_CERT, true);</span>
+                            break;
+                    }
+
+<span class="fc" id="L262">                }</span>
+            }
+
+            // OperatingRound class
+<span class="fc" id="L266">            Tag orTag = gameParmTag.getChild(&quot;OperatingRound&quot;);</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">            if (orTag != null) {</span>
+                // FIXME: Rails 2.0, move this to some default .xml!
+<span class="fc" id="L269">                String orClassName =</span>
+<span class="fc" id="L270">                    orTag.getAttributeAsString(&quot;class&quot;, &quot;net.sf.rails.game.OperatingRound&quot;);</span>
+                try {
+<span class="fc" id="L272">                    operatingRoundClass =</span>
+<span class="fc" id="L273">                        Class.forName(orClassName).asSubclass(</span>
+                                OperatingRound.class);
+<span class="nc" id="L275">                } catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L276">                    throw new ConfigurationException(&quot;Cannot find class &quot;</span>
+                            + orClassName, e);
+<span class="fc" id="L278">                }</span>
+
+<span class="fc" id="L280">                Tag orderTag = orTag.getChild(&quot;OperatingOrder&quot;);</span>
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">                if (orderTag != null) {</span>
+<span class="nc" id="L282">                    dynamicOperatingOrder = orderTag.getAttributeAsBoolean(&quot;dynamic&quot;,</span>
+                            dynamicOperatingOrder);
+                }
+
+<span class="fc" id="L286">                Tag emergencyTag = orTag.getChild(&quot;EmergencyTrainBuying&quot;);</span>
+<span class="fc bfc" id="L287" title="All 2 branches covered.">                if (emergencyTag != null) {</span>
+<span class="fc" id="L288">                    setGameParameter (GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN,</span>
+<span class="fc" id="L289">                            emergencyTag.getAttributeAsBoolean(&quot;mustBuyCheapestTrain&quot;,</span>
+<span class="fc" id="L290">                                    GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN.defaultValueAsBoolean()));</span>
+<span class="fc" id="L291">                    setGameParameter (GameDef.Parm.EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN,</span>
+<span class="fc" id="L292">                            emergencyTag.getAttributeAsBoolean(&quot;mayAlwaysBuyNewTrain&quot;,</span>
+<span class="fc" id="L293">                                    GameDef.Parm.EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN.defaultValueAsBoolean()));</span>
+<span class="fc" id="L294">                    setGameParameter (GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY,</span>
+<span class="fc" id="L295">                            emergencyTag.getAttributeAsBoolean(&quot;mayBuyFromCompany&quot;,</span>
+<span class="fc" id="L296">                                    GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY.defaultValueAsBoolean()));</span>
+                }
+<span class="fc" id="L298">                Tag revenueIncrementTag = orTag.getChild(&quot;RevenueIncrement&quot;);</span>
+<span class="pc bpc" id="L299" title="1 of 2 branches missed.">                if (revenueIncrementTag != null) {</span>
+<span class="nc" id="L300">                    revenueSpinnerIncrement = revenueIncrementTag.getAttributeAsInteger(&quot;amount&quot;, 10);</span>
+                }
+            }
+
+            // ShareSellingRound class
+<span class="fc" id="L305">            Tag ssrTag = gameParmTag.getChild(&quot;ShareSellingRound&quot;);</span>
+<span class="fc bfc" id="L306" title="All 2 branches covered.">            if (ssrTag != null) {</span>
+                // FIXME: Rails 2.0, move this to some default .xml!
+<span class="fc" id="L308">                String ssrClassName =</span>
+<span class="fc" id="L309">                    ssrTag.getAttributeAsString(&quot;class&quot;, &quot;net.sf.rails.game.ShareSellingRound&quot;);</span>
+                try {
+<span class="fc" id="L311">                    shareSellingRoundClass =</span>
+<span class="fc" id="L312">                        Class.forName(ssrClassName).asSubclass(ShareSellingRound.class);</span>
+<span class="nc" id="L313">                } catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L314">                    throw new ConfigurationException(&quot;Cannot find class &quot;</span>
+                            + ssrClassName, e);
+<span class="fc" id="L316">                }</span>
+            }
+
+            /* Max. % of shares of one company that a player may hold */
+<span class="fc" id="L320">            Tag shareLimitTag = gameParmTag.getChild(&quot;PlayerShareLimit&quot;);</span>
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">            if (shareLimitTag != null) {</span>
+<span class="fc" id="L322">                setGameParameter (GameDef.Parm.PLAYER_SHARE_LIMIT,</span>
+<span class="fc" id="L323">                        shareLimitTag.getAttributeAsInteger(&quot;percentage&quot;,</span>
+<span class="fc" id="L324">                                GameDef.Parm.PLAYER_SHARE_LIMIT.defaultValueAsInt()));</span>
+            }
+
+            /* Max. % of shares of one company that the bank pool may hold */
+<span class="fc" id="L328">            Tag poolLimitTag = gameParmTag.getChild(&quot;BankPoolShareLimit&quot;);</span>
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">            if (poolLimitTag != null) {</span>
+<span class="nc" id="L330">                setGameParameter (GameDef.Parm.POOL_SHARE_LIMIT,</span>
+<span class="nc" id="L331">                        shareLimitTag.getAttributeAsInteger(&quot;percentage&quot;,</span>
+<span class="nc" id="L332">                                GameDef.Parm.POOL_SHARE_LIMIT.defaultValueAsInt()));</span>
+            }
+
+            /* Max. % of own shares that a company treasury may hold */
+<span class="fc" id="L336">            Tag treasuryLimitTag = gameParmTag.getChild(&quot;TreasuryShareLimit&quot;);</span>
+<span class="fc bfc" id="L337" title="All 2 branches covered.">            if (treasuryLimitTag != null) {</span>
+<span class="fc" id="L338">                setGameParameter (GameDef.Parm.TREASURY_SHARE_LIMIT,</span>
+<span class="fc" id="L339">                        shareLimitTag.getAttributeAsInteger(&quot;percentage&quot;,</span>
+<span class="fc" id="L340">                                GameDef.Parm.TREASURY_SHARE_LIMIT.defaultValueAsInt()));</span>
+            }
+        }
+
+
+        /* End of rails.game criteria */
+<span class="fc" id="L346">        Tag endOfGameTag = tag.getChild(&quot;EndOfGame&quot;);</span>
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">        if (endOfGameTag != null) {</span>
+<span class="fc" id="L348">            Tag forcedSellingTag = endOfGameTag.getChild(&quot;ForcedSelling&quot;);</span>
+<span class="fc bfc" id="L349" title="All 2 branches covered.">            if (forcedSellingTag != null) {</span>
+<span class="fc" id="L350">                forcedSellingCompanyDump =</span>
+<span class="fc" id="L351">                    forcedSellingTag.getAttributeAsBoolean(&quot;CompanyDump&quot;, true);</span>
+            }
+<span class="fc bfc" id="L353" title="All 2 branches covered.">            if (endOfGameTag.getChild(&quot;Bankruptcy&quot;) != null) {</span>
+<span class="fc" id="L354">                gameEndsWithBankruptcy = true;</span>
+            }
+<span class="fc" id="L356">            Tag bankBreaksTag = endOfGameTag.getChild(&quot;BankBreaks&quot;);</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">            if (bankBreaksTag != null) {</span>
+<span class="fc" id="L358">                gameEndsWhenBankHasLessOrEqual =</span>
+<span class="fc" id="L359">                    bankBreaksTag.getAttributeAsInteger(&quot;limit&quot;,</span>
+                            gameEndsWhenBankHasLessOrEqual);
+<span class="fc" id="L361">                String attr = bankBreaksTag.getAttributeAsString(&quot;finish&quot;);</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">                if (attr.equalsIgnoreCase(&quot;setOfORs&quot;)) {</span>
+<span class="fc" id="L363">                    gameEndsAfterSetOfORs = true;</span>
+<span class="pc bpc" id="L364" title="1 of 2 branches missed.">                } else if (attr.equalsIgnoreCase(&quot;currentOR&quot;)) {</span>
+<span class="fc" id="L365">                    gameEndsAfterSetOfORs = false;</span>
+                }
+            }
+        }
+
+<span class="fc" id="L370">        Tag guiClassesTag = tag.getChild(&quot;GuiClasses&quot;);</span>
+<span class="fc bfc" id="L371" title="All 2 branches covered.">        if (guiClassesTag != null) {</span>
+
+            // GameUIManager class
+<span class="fc" id="L374">            Tag gameUIMgrTag = guiClassesTag.getChild(&quot;GameUIManager&quot;);</span>
+<span class="fc bfc" id="L375" title="All 2 branches covered.">            if (gameUIMgrTag != null) {</span>
+<span class="fc" id="L376">                gameUIManagerClassName =</span>
+<span class="fc" id="L377">                    gameUIMgrTag.getAttributeAsString(&quot;class&quot;, gameUIManagerClassName);</span>
+                // Check instantiatability (not sure if this belongs here)
+<span class="fc" id="L379">                Configure.canClassBeInstantiated (gameUIManagerClassName);</span>
+            }
+
+            // ORUIManager class
+<span class="fc" id="L383">            Tag orMgrTag = guiClassesTag.getChild(&quot;ORUIManager&quot;);</span>
+<span class="fc bfc" id="L384" title="All 2 branches covered.">            if (orMgrTag != null) {</span>
+<span class="fc" id="L385">                orUIManagerClassName =</span>
+<span class="fc" id="L386">                    orMgrTag.getAttributeAsString(&quot;class&quot;, orUIManagerClassName);</span>
+                // Check instantiatability (not sure if this belongs here)
+<span class="fc" id="L388">                Configure.canClassBeInstantiated (orUIManagerClassName);</span>
+            }
+
+            // GameStatus class
+<span class="fc" id="L392">            Tag gameStatusTag = guiClassesTag.getChild(&quot;GameStatus&quot;);</span>
+<span class="fc bfc" id="L393" title="All 2 branches covered.">            if (gameStatusTag != null) {</span>
+<span class="fc" id="L394">                gameStatusClassName =</span>
+<span class="fc" id="L395">                    gameStatusTag.getAttributeAsString(&quot;class&quot;, gameStatusClassName);</span>
+                // Check instantiatability (not sure if this belongs here)
+<span class="fc" id="L397">                Configure.canClassBeInstantiated (gameStatusClassName);</span>
+            }
+
+            // StatusWindow class
+<span class="fc" id="L401">            Tag statusWindowTag = guiClassesTag.getChild(&quot;StatusWindow&quot;);</span>
+<span class="fc bfc" id="L402" title="All 2 branches covered.">            if (statusWindowTag != null) {</span>
+<span class="fc" id="L403">                statusWindowClassName =</span>
+<span class="fc" id="L404">                    statusWindowTag.getAttributeAsString(&quot;class&quot;,</span>
+                            statusWindowClassName);
+                // Check instantiatability (not sure if this belongs here)
+<span class="fc" id="L407">                Configure.canClassBeInstantiated (statusWindowClassName);</span>
+            }
+
+            // ORWindow class
+<span class="fc" id="L411">            Tag orWindowTag = guiClassesTag.getChild(&quot;ORWindow&quot;);</span>
+<span class="pc bpc" id="L412" title="1 of 2 branches missed.">            if (orWindowTag != null) {</span>
+<span class="nc" id="L413">                orWindowClassName =</span>
+<span class="nc" id="L414">                    orWindowTag.getAttributeAsString(&quot;class&quot;,</span>
+                            orWindowClassName);
+                // Check instantiatability (not sure if this belongs here)
+<span class="nc" id="L417">                Configure.canClassBeInstantiated (orWindowClassName);</span>
+            }
+
+            // StartRoundWindow class
+<span class="fc" id="L421">            Tag startRoundWindowTag = guiClassesTag.getChild(&quot;StartRoundWindow&quot;);</span>
+<span class="fc bfc" id="L422" title="All 2 branches covered.">            if (startRoundWindowTag != null) {</span>
+<span class="fc" id="L423">                startRoundWindowClassName =</span>
+<span class="fc" id="L424">                    startRoundWindowTag.getAttributeAsString(&quot;class&quot;,</span>
+                            startRoundWindowClassName);
+                // Check instantiatability (not sure if this belongs here)
+<span class="fc" id="L427">                Configure.canClassBeInstantiated (startRoundWindowClassName);</span>
+            }
+        }
+<span class="fc" id="L430">    }</span>
+
+<span class="nc" id="L432">    public void finishConfiguration (RailsRoot root) {}</span>
+
+    public void init() {
+<span class="pc bpc" id="L435" title="1 of 2 branches missed.">        showCompositeORNumber =  !&quot;simple&quot;.equalsIgnoreCase(Config.get(&quot;or.number_format&quot;));</span>
+<span class="fc" id="L436">    }</span>
+
+    public void startGame() {
+<span class="fc" id="L439">        setGuiParameters();</span>
+<span class="fc" id="L440">        getRoot().getCompanyManager().initStartPackets(this);</span>
+<span class="fc" id="L441">        beginStartRound();</span>
+<span class="fc" id="L442">    }</span>
+
+    protected void setGuiParameters () {
+<span class="fc" id="L445">        CompanyManager cm = getRoot().getCompanyManager();</span>
+
+<span class="fc bfc" id="L447" title="All 2 branches covered.">        for (PublicCompany company : cm.getAllPublicCompanies()) {</span>
+<span class="fc bfc" id="L448" title="All 2 branches covered.">            if (company.hasParPrice()) guiParameters.put(GuiDef.Parm.HAS_ANY_PAR_PRICE, true);</span>
+<span class="fc bfc" id="L449" title="All 2 branches covered.">            if (company.canBuyPrivates()) guiParameters.put(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES, true);</span>
+<span class="fc bfc" id="L450" title="All 2 branches covered.">            if (company.canHoldOwnShares()) guiParameters.put(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES, true);</span>
+<span class="fc bfc" id="L451" title="All 2 branches covered.">            if (company.getMaxNumberOfLoans() != 0) guiParameters.put(GuiDef.Parm.HAS_ANY_COMPANY_LOANS, true);</span>
+<span class="fc" id="L452">        }</span>
+
+<span class="fc bfc" id="L454" title="All 2 branches covered.">        loop:   for (PrivateCompany company : cm.getAllPrivateCompanies()) {</span>
+<span class="fc bfc" id="L455" title="All 2 branches covered.">            for (SpecialProperty sp : company.getSpecialProperties()) {</span>
+<span class="fc bfc" id="L456" title="All 2 branches covered.">                if (sp instanceof SpecialBonusTokenLay) {</span>
+<span class="fc" id="L457">                    guiParameters.put(GuiDef.Parm.DO_BONUS_TOKENS_EXIST, true);</span>
+<span class="fc" id="L458">                    break loop;</span>
+                }
+<span class="fc" id="L460">            }</span>
+
+<span class="fc" id="L462">        }</span>
+
+        // define guiParameters from gameOptions
+<span class="pc bpc" id="L465" title="1 of 2 branches missed.">        if (GameOption.getAsBoolean(this, &quot;NoMapMode&quot;)) {</span>
+<span class="nc" id="L466">            guiParameters.put(GuiDef.Parm.NO_MAP_MODE, true);</span>
+<span class="nc" id="L467">            guiParameters.put(GuiDef.Parm.ROUTE_HIGHLIGHT, false);</span>
+<span class="nc" id="L468">            guiParameters.put(GuiDef.Parm.REVENUE_SUGGEST, false);</span>
+        } else {
+<span class="fc bfc" id="L470" title="All 2 branches covered.">            if (&quot;Highlight&quot;.equalsIgnoreCase(GameOption.getValue(this, &quot;RouteAwareness&quot;))) {</span>
+<span class="fc" id="L471">                guiParameters.put(GuiDef.Parm.ROUTE_HIGHLIGHT, true);</span>
+            }
+<span class="fc bfc" id="L473" title="All 2 branches covered.">            if (&quot;Suggest&quot;.equalsIgnoreCase(GameOption.getValue(this, &quot;RevenueCalculation&quot;))) {</span>
+<span class="fc" id="L474">                guiParameters.put(GuiDef.Parm.REVENUE_SUGGEST, true);</span>
+            }
+        }
+
+<span class="fc" id="L478">    }</span>
+
+    private void initGameParameters() {
+
+<span class="fc bfc" id="L482" title="All 2 branches covered.">        for (GameDef.Parm parm : GameDef.Parm.values()) {</span>
+<span class="fc" id="L483">            gameParameters.put(parm, parm.defaultValue());</span>
+        }
+<span class="fc" id="L485">    }</span>
+
+    public PossibleActions getPossibleActions() {
+<span class="fc" id="L488">        return possibleActions;</span>
+    }
+
+    protected void setRound(RoundFacade round) {
+<span class="fc" id="L492">        currentRound.set(round);</span>
+<span class="fc" id="L493">    }</span>
+
+    public void nextRound(Round round) {
+<span class="fc bfc" id="L496" title="All 2 branches covered.">        if (round instanceof StartRound) {</span>
+<span class="fc bfc" id="L497" title="All 2 branches covered.">            if (((StartRound) round).getStartPacket().areAllSold()) { //This start Round was completed</span>
+<span class="fc" id="L498">                StartPacket nextStartPacket = getRoot().getCompanyManager().getNextUnfinishedStartPacket();</span>
+<span class="pc bpc" id="L499" title="1 of 2 branches missed.">             if (nextStartPacket == null) {</span>
+<span class="fc bfc" id="L500" title="All 2 branches covered.">                 if (skipFirstStockRound) {</span>
+<span class="fc" id="L501">                     Phase currentPhase =</span>
+<span class="fc" id="L502">                             getRoot().getPhaseManager().getCurrentPhase();</span>
+<span class="pc bpc" id="L503" title="1 of 2 branches missed.">                     if (currentPhase.getNumberOfOperatingRounds() != numOfORs.value()) {</span>
+<span class="fc" id="L504">                         numOfORs.set(currentPhase.getNumberOfOperatingRounds());</span>
+                     }
+<span class="fc" id="L506">                     log.info(&quot;Phase={} ORs={}&quot;, currentPhase.toText(), numOfORs);</span>
+
+                     // Create a new OperatingRound (never more than one Stock Round)
+                     // OperatingRound.resetRelativeORNumber();
+
+<span class="fc" id="L511">                     relativeORNumber.set(1);</span>
+<span class="fc" id="L512">                     startOperatingRound(true);</span>
+<span class="fc" id="L513">                 } else {</span>
+<span class="fc" id="L514">                     startStockRound();</span>
+                 }
+             } else {
+<span class="nc" id="L517">                 beginStartRound();</span>
+             }
+<span class="fc" id="L519">            }else {</span>
+<span class="fc" id="L520">                 startOperatingRound(runIfStartPacketIsNotCompletelySold());</span>
+             }
+<span class="fc bfc" id="L522" title="All 2 branches covered.">        } else if (round instanceof StockRound) {</span>
+<span class="fc" id="L523">            Phase currentPhase = getRoot().getPhaseManager().getCurrentPhase();</span>
+<span class="pc bpc" id="L524" title="1 of 2 branches missed.">            if (currentPhase == null) log.error (&quot;Current Phase is null??&quot;, new Exception (&quot;&quot;));</span>
+<span class="fc" id="L525">            numOfORs.set(currentPhase.getNumberOfOperatingRounds());</span>
+<span class="fc" id="L526">            log.info(&quot;Phase={} ORs={}&quot;, currentPhase.toText(), numOfORs);</span>
+
+            // Create a new OperatingRound (never more than one Stock Round)
+            // OperatingRound.resetRelativeORNumber();
+<span class="fc" id="L530">            relativeORNumber.set(1);</span>
+<span class="fc" id="L531">            startOperatingRound(true);</span>
+
+<span class="pc bpc" id="L533" title="1 of 2 branches missed.">        } else if (round instanceof OperatingRound) {</span>
+<span class="fc bfc" id="L534" title="All 4 branches covered.">            if (gameOverPending.value() &amp;&amp; !gameEndsAfterSetOfORs) {</span>
+
+<span class="fc" id="L536">                finishGame();</span>
+
+<span class="fc bfc" id="L538" title="All 2 branches covered.">            } else if (relativeORNumber.add(1) &lt;= numOfORs.value()) {</span>
+                // There will be another OR
+<span class="fc" id="L540">                startOperatingRound(true);</span>
+<span class="fc bfc" id="L541" title="All 2 branches covered.">            } else if (getRoot().getCompanyManager().getNextUnfinishedStartPacket() !=null) {</span>
+<span class="fc" id="L542">               beginStartRound();</span>
+            } else {
+<span class="pc bpc" id="L544" title="1 of 4 branches missed.">                if (gameOverPending.value() &amp;&amp; gameEndsAfterSetOfORs) {</span>
+<span class="fc" id="L545">                    finishGame();</span>
+                } else {
+<span class="fc" id="L547">                    ((OperatingRound)round).checkForeignSales();</span>
+<span class="fc" id="L548">                    startStockRound();</span>
+                }
+            }
+        }
+<span class="fc" id="L552">    }</span>
+
+    protected void beginStartRound() {
+<span class="fc" id="L555">        StartPacket startPacket = getRoot().getCompanyManager().getNextUnfinishedStartPacket();</span>
+
+        // check if there are still unfinished startPackets
+<span class="fc bfc" id="L558" title="All 2 branches covered.">        if (startPacket != null) {</span>
+            // set this to the current startPacket
+<span class="fc" id="L560">            this.startPacket.set(startPacket);</span>
+            // start a new StartRound
+<span class="fc" id="L562">            createStartRound(startPacket);</span>
+        } else {
+            // otherwise
+<span class="fc" id="L565">            startStockRound();</span>
+        }
+<span class="fc" id="L567">    }</span>
+
+    protected void createStartRound(StartPacket startPacket) {
+<span class="fc" id="L570">        String startRoundClassName = startPacket.getRoundClassName();</span>
+<span class="fc" id="L571">        StartRound startRound = createRound (startRoundClassName,</span>
+<span class="fc" id="L572">                &quot;startRound_&quot; + startRoundNumber.value());</span>
+<span class="fc" id="L573">        startRoundNumber.add(1);</span>
+<span class="fc" id="L574">        startRound.start();</span>
+<span class="fc" id="L575">    }</span>
+
+    /** Stub, to be overridden if companies can run before the Start Packet has been completely sold
+     * (as in 1835).
+     * @return true if companies can run regardless. Default false.
+     */
+    protected boolean runIfStartPacketIsNotCompletelySold() {
+<span class="fc" id="L582">        return false;</span>
+    }
+
+    protected void startStockRound() {
+<span class="fc" id="L586">        StockRound sr = createRound(stockRoundClass, &quot;SR_&quot; + srNumber.value());</span>
+<span class="fc" id="L587">        srNumber.add(1);</span>
+<span class="fc" id="L588">        sr.start();</span>
+<span class="fc" id="L589">    }</span>
+
+    protected void startOperatingRound(boolean operate) {
+<span class="fc" id="L592">        log.debug(&quot;Operating round started with operate-flag={}&quot;, operate);</span>
+        String orId;
+<span class="fc bfc" id="L594" title="All 2 branches covered.">        if (operate) {</span>
+<span class="fc" id="L595">             orId = &quot;OR_&quot; + absoluteORNumber.value();</span>
+        } else {
+<span class="fc" id="L597">            orId = &quot;OR_Start_&quot; + startRoundNumber.value();</span>
+        }
+<span class="fc" id="L599">        OperatingRound or = createRound(operatingRoundClass, orId);</span>
+<span class="fc bfc" id="L600" title="All 2 branches covered.">        if (operate) absoluteORNumber.add(1);</span>
+<span class="fc" id="L601">        or.start();</span>
+<span class="fc" id="L602">    }</span>
+
+    // FIXME: We need an ID!
+    protected &lt;T extends RoundFacade&gt; T createRound(String roundClassName, String id) {
+<span class="fc" id="L606">        T round = null;</span>
+        try {
+<span class="fc" id="L608">            round = Configure.create((Class&lt;T&gt;) StartRound.class, roundClassName, GameManager.class, this, id);</span>
+<span class="nc" id="L609">        } catch (Exception e) {</span>
+<span class="nc" id="L610">            log.error(&quot;Cannot instantiate class {}&quot;, StartRound.class.getName(), e);</span>
+<span class="nc" id="L611">            System.exit(1);</span>
+<span class="fc" id="L612">        }</span>
+<span class="fc" id="L613">        setRound (round);</span>
+<span class="fc" id="L614">        return round;</span>
+    }
+
+    // FIXME: We need an ID!
+    protected &lt;T extends RoundFacade&gt; T createRound(Class&lt;T&gt; roundClass, String id) {
+<span class="fc" id="L619">        T round = null;</span>
+        try {
+<span class="fc" id="L621">            round = Configure.create(roundClass, GameManager.class, this, id);</span>
+<span class="nc" id="L622">        } catch (Exception e) {</span>
+<span class="nc" id="L623">            log.error(&quot;Cannot instantiate class {}&quot;, roundClass.getName(), e);</span>
+<span class="nc" id="L624">            System.exit(1);</span>
+<span class="fc" id="L625">        }</span>
+<span class="fc" id="L626">        setRound (round);</span>
+<span class="fc" id="L627">        return round;</span>
+    }
+
+    public void newPhaseChecks (RoundFacade round) {
+
+<span class="nc" id="L632">    }</span>
+
+    public void reportAllPlayersPassed() {
+<span class="fc" id="L635">        ReportBuffer.add(this, LocalText.getText(&quot;ALL_PASSED&quot;));</span>
+<span class="fc" id="L636">        firstAllPlayersPassed.set(true);</span>
+<span class="fc" id="L637">    }</span>
+
+    public boolean getFirstAllPlayersPassed() {
+<span class="fc" id="L640">        return firstAllPlayersPassed.value();</span>
+    }
+
+    public String getORId () {
+<span class="pc bpc" id="L644" title="1 of 2 branches missed.">        if (showCompositeORNumber) {</span>
+<span class="fc" id="L645">            return getCompositeORNumber();</span>
+        } else {
+<span class="nc" id="L647">            return String.valueOf(absoluteORNumber.value());</span>
+        }
+    }
+
+    public int getAbsoluteORNumber () {
+<span class="fc" id="L652">        return absoluteORNumber.value();</span>
+    }
+
+    public String getCompositeORNumber() {
+<span class="fc" id="L656">        return srNumber.value() + &quot;.&quot; + relativeORNumber.value();</span>
+    }
+
+    public int getRelativeORNumber() {
+<span class="nc" id="L660">        return relativeORNumber.value();</span>
+    }
+
+    public String getNumOfORs () {
+<span class="nc" id="L664">        return numOfORs.toText();</span>
+    }
+
+    public int getStartRoundNumber () {
+<span class="fc" id="L668">        return startRoundNumber.value();</span>
+    }
+
+    public int getSRNumber () {
+<span class="fc" id="L672">        return srNumber.value();</span>
+    }
+
+    public void startShareSellingRound(Player player, int cashToRaise,
+            PublicCompany cashNeedingCompany, boolean problemDumpOtherCompanies) {
+
+<span class="fc" id="L678">        interruptedRound = getCurrentRound();</span>
+
+        // An id basd on interruptedRound and company id
+<span class="fc" id="L681">        String id = &quot;SSR_&quot; + interruptedRound.getId() + &quot;_&quot; + cashNeedingCompany.getId();</span>
+        // check if other companies can be dumped
+<span class="pc bpc" id="L683" title="1 of 4 branches missed.">        createRound(shareSellingRoundClass, id).start(</span>
+                interruptedRound, player, cashToRaise, cashNeedingCompany,
+                !problemDumpOtherCompanies || forcedSellingCompanyDump);
+        // the last parameter indicates if the dump of other companies is allowed, either this is explicit or
+        // the action does not require that check
+<span class="fc" id="L688">    }</span>
+
+    public void startTreasuryShareTradingRound(PublicCompany company) {
+<span class="fc" id="L691">        interruptedRound = getCurrentRound();</span>
+<span class="fc" id="L692">        String id =  &quot;TreasuryShareRound_&quot;  + interruptedRound.getId() + &quot;_&quot; + company.getId();</span>
+<span class="fc" id="L693">        createRound (TreasuryShareRound.class, id).start(interruptedRound);</span>
+<span class="fc" id="L694">    }</span>
+
+    public boolean process(PossibleAction action) {
+<span class="nc" id="L697">        boolean result = true;</span>
+
+<span class="nc" id="L699">        getRoot().getReportManager().getDisplayBuffer().clear();</span>
+<span class="nc" id="L700">        guiHints.clearVisibilityHints();</span>
+<span class="nc" id="L701">        ChangeStack changeStack = getRoot().getStateManager().getChangeStack();</span>
+<span class="nc" id="L702">        boolean startGameAction = false;</span>
+
+<span class="nc bnc" id="L704" title="All 4 branches missed.">        if (action instanceof NullAction &amp;&amp; ((NullAction)action).getMode() == NullAction.Mode.START_GAME) {</span>
+            // Skip processing at game start after Load.
+            // We're only here to create PossibleActions.
+<span class="nc" id="L707">            result = true;</span>
+<span class="nc" id="L708">            startGameAction = true;</span>
+<span class="nc bnc" id="L709" title="All 2 branches missed.">        } else if (action != null) {</span>
+            // Should never be null.
+
+<span class="nc" id="L712">            action.setActed();</span>
+
+            // Check player
+<span class="nc" id="L715">            String actionPlayerName = action.getPlayerName();</span>
+<span class="nc" id="L716">            String currentPlayerName = getCurrentPlayer().getId();</span>
+<span class="nc bnc" id="L717" title="All 2 branches missed.">            if (!actionPlayerName.equals(currentPlayerName)) {</span>
+<span class="nc" id="L718">                DisplayBuffer.add(this, LocalText.getText(&quot;WrongPlayer&quot;, actionPlayerName, currentPlayerName ));</span>
+<span class="nc" id="L719">                return false;</span>
+            }
+
+            // Check if the action is allowed
+<span class="nc bnc" id="L723" title="All 2 branches missed.">            if (!possibleActions.validate(action)) {</span>
+<span class="nc" id="L724">                DisplayBuffer.add(this, LocalText.getText(&quot;ActionNotAllowed&quot;, action.toString()));</span>
+<span class="nc" id="L725">                return false;</span>
+            }
+
+<span class="nc bnc" id="L728" title="All 2 branches missed.">            if (action instanceof GameAction) {</span>
+                // Process undo/redo centrally
+<span class="nc" id="L730">                GameAction gameAction = (GameAction) action;</span>
+<span class="nc" id="L731">                result = processGameActions(gameAction);</span>
+<span class="nc" id="L732">            } else {</span>
+                // All other actions: process per round
+<span class="nc bnc" id="L734" title="All 4 branches missed.">                result = processCorrectionActions(action) ||  getCurrentRound().process(action);</span>
+<span class="nc bnc" id="L735" title="All 4 branches missed.">                if (result &amp;&amp; action.hasActed()) {</span>
+<span class="nc" id="L736">                    executedActions.add(action);</span>
+                }
+            }
+
+        }
+
+<span class="nc" id="L742">        possibleActions.clear();</span>
+
+        // Note: round may have changed!
+<span class="nc" id="L745">        getCurrentRound().setPossibleActions();</span>
+
+        // TODO: SetPossibleAction can contain state changes (like initTurn)
+        // Remove that and move closing the ChangeStack after the processing of the action
+<span class="nc bnc" id="L749" title="All 6 branches missed.">        if (result &amp;&amp; !(action instanceof GameAction) &amp;&amp; !(startGameAction)) {</span>
+<span class="nc" id="L750">            changeStack.close(action);</span>
+        }
+
+        // only pass available =&gt; execute automatically
+<span class="nc bnc" id="L754" title="All 4 branches missed.">        if (!isGameOver() &amp;&amp; possibleActions.containsOnlyPass()) {</span>
+<span class="nc" id="L755">            log.debug(&quot;{} may only pass&quot;, getCurrentPlayer().getId());</span>
+<span class="nc" id="L756">            result = process(possibleActions.getList().get(0));</span>
+        }
+
+        // TODO: Check if this still works as it moved above the close of the ChangeStack
+        // to have a ChangeSet open to initialize the CorrectionManagers
+<span class="nc bnc" id="L761" title="All 2 branches missed.">        if (!isGameOver()) setCorrectionActions();</span>
+
+        // Add the Undo/Redo possibleActions here.
+<span class="nc bnc" id="L764" title="All 2 branches missed.">        if (changeStack.isUndoPossible(getCurrentPlayer())) {</span>
+<span class="nc" id="L765">            possibleActions.add(new GameAction(GameAction.Mode.UNDO));</span>
+        }
+<span class="nc bnc" id="L767" title="All 2 branches missed.">        if (changeStack.isUndoPossible()) {</span>
+<span class="nc" id="L768">            possibleActions.add(new GameAction(GameAction.Mode.FORCED_UNDO));</span>
+        }
+<span class="nc bnc" id="L770" title="All 2 branches missed.">        if (changeStack.isRedoPossible()) {</span>
+<span class="nc" id="L771">            possibleActions.add(new GameAction(GameAction.Mode.REDO));</span>
+        }
+
+        // logging of game actions activated
+<span class="nc bnc" id="L775" title="All 2 branches missed.">        for (PossibleAction pa : possibleActions.getList()) {</span>
+<span class="nc" id="L776">            log.debug(&quot;{} may: {}&quot;, getCurrentPlayer().getId(), pa.toString());</span>
+<span class="nc" id="L777">        }</span>
+
+<span class="nc" id="L779">        return result;</span>
+    }
+
+    /**
+     * Adds all Game actions
+     * Examples are: undo/redo/corrections
+     */
+    private void setCorrectionActions(){
+
+        // If any Correction is active
+<span class="fc bfc" id="L789" title="All 2 branches covered.">        for (CorrectionType ct:EnumSet.allOf(CorrectionType.class)) {</span>
+<span class="fc" id="L790">            CorrectionManager cm = getCorrectionManager(ct);</span>
+<span class="fc bfc" id="L791" title="All 2 branches covered.">            if (cm.isActive()) {</span>
+<span class="fc" id="L792">                possibleActions.clear();</span>
+            }
+
+<span class="fc" id="L795">        }</span>
+
+        // Correction Actions
+<span class="fc bfc" id="L798" title="All 2 branches covered.">        for (CorrectionType ct:EnumSet.allOf(CorrectionType.class)) {</span>
+<span class="fc" id="L799">            CorrectionManager cm = getCorrectionManager(ct);</span>
+<span class="fc" id="L800">            possibleActions.addAll(cm.createCorrections());</span>
+<span class="fc" id="L801">        }</span>
+<span class="fc" id="L802">    }</span>
+
+    private boolean processCorrectionActions(PossibleAction a){
+
+<span class="fc" id="L806">        boolean result = false;</span>
+
+<span class="fc bfc" id="L808" title="All 2 branches covered.">        if (a instanceof CorrectionAction) {</span>
+<span class="fc" id="L809">            CorrectionAction ca= (CorrectionAction)a;</span>
+<span class="fc" id="L810">            CorrectionType ct = ca.getCorrectionType();</span>
+<span class="fc" id="L811">            CorrectionManager cm = getCorrectionManager(ct);</span>
+<span class="fc" id="L812">            result = cm.executeCorrection(ca);</span>
+        }
+
+<span class="fc" id="L815">        return result;</span>
+    }
+
+    private boolean processGameActions(GameAction gameAction) {
+        // Process undo/redo centrally
+<span class="nc" id="L820">        boolean result = false;</span>
+
+<span class="nc" id="L822">        ChangeStack changeStack = getRoot().getStateManager().getChangeStack();</span>
+<span class="nc" id="L823">        int index = gameAction.getmoveStackIndex();</span>
+<span class="nc bnc" id="L824" title="All 7 branches missed.">        switch (gameAction.getMode()) {</span>
+        case SAVE:
+<span class="nc" id="L826">            result = save(gameAction);</span>
+<span class="nc" id="L827">            break;</span>
+        case RELOAD:
+<span class="nc" id="L829">            result = reload(gameAction);</span>
+<span class="nc" id="L830">            break;</span>
+        case UNDO:
+<span class="nc" id="L832">            changeStack.undo();</span>
+<span class="nc" id="L833">            result = true;</span>
+<span class="nc" id="L834">            break;</span>
+        case FORCED_UNDO:
+<span class="nc bnc" id="L836" title="All 2 branches missed.">            if (index == -1) {</span>
+<span class="nc" id="L837">                changeStack.undo();</span>
+            } else {
+<span class="nc" id="L839">                changeStack.undo(index);</span>
+            }
+<span class="nc" id="L841">            result = true;</span>
+<span class="nc" id="L842">            break;</span>
+        case REDO:
+<span class="nc bnc" id="L844" title="All 2 branches missed.">            if (index == -1) {</span>
+<span class="nc" id="L845">                changeStack.redo();</span>
+            } else {
+<span class="nc" id="L847">                changeStack.redo(index);</span>
+            }
+<span class="nc" id="L849">            result = true;</span>
+<span class="nc" id="L850">            break;</span>
+        case EXPORT:
+<span class="nc" id="L852">            result = export(gameAction);</span>
+            break;
+        }
+
+<span class="nc" id="L856">        return result;</span>
+    }
+
+    public boolean processOnReload(PossibleAction action) {
+
+<span class="fc" id="L861">        getRoot().getReportManager().getDisplayBuffer().clear();</span>
+
+        // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
+<span class="fc bfc" id="L864" title="All 2 branches covered.">        if (getRoot().getGameName().equals(&quot;1856&quot;)</span>
+                //&amp;&amp; currentRound.get().getClass() != CGRFormationRound.class
+<span class="fc bfc" id="L866" title="All 2 branches covered.">                &amp;&amp; possibleActions.contains(RepayLoans.class)</span>
+<span class="pc bpc" id="L867" title="1 of 2 branches missed.">                &amp;&amp; (!possibleActions.contains(action.getClass())</span>
+<span class="fc bfc" id="L868" title="All 2 branches covered.">                        || (action.getClass() == NullAction.class</span>
+<span class="pc bpc" id="L869" title="1 of 2 branches missed.">                                &amp;&amp; ((NullAction)action).getMode() != NullAction.Mode.DONE))) {</span>
+            // Insert &quot;Done&quot;
+<span class="nc" id="L871">            log.debug(&quot;Action DONE inserted&quot;);</span>
+<span class="nc" id="L872">            getCurrentRound().process(new NullAction (NullAction.Mode.DONE));</span>
+<span class="nc" id="L873">            possibleActions.clear();</span>
+<span class="nc" id="L874">            getCurrentRound().setPossibleActions();</span>
+<span class="nc bnc" id="L875" title="All 2 branches missed.">            if (!isGameOver()) setCorrectionActions();</span>
+        }
+
+<span class="fc" id="L878">        log.debug(&quot;Action ({}): {}&quot;, action.getPlayerName(), action);</span>
+
+        // Log possible actions (normally this is outcommented)
+<span class="fc" id="L881">        String playerName = getCurrentPlayer().getId();</span>
+<span class="fc bfc" id="L882" title="All 2 branches covered.">        for (PossibleAction a : possibleActions.getList()) {</span>
+<span class="fc" id="L883">            log.debug(&quot;{} may: {}&quot;, playerName, a);</span>
+<span class="fc" id="L884">        }</span>
+
+        // New in Rails2.0: Check if the action is allowed
+<span class="pc bpc" id="L887" title="1 of 2 branches missed.">        if (!possibleActions.validate(action)) {</span>
+<span class="nc" id="L888">            DisplayBuffer.add(this, LocalText.getText(&quot;ActionNotAllowed&quot;,</span>
+<span class="nc" id="L889">                    action.toString()));</span>
+<span class="nc" id="L890">            return false;</span>
+        }
+
+        // FOR BACKWARDS COMPATIBILITY
+<span class="fc" id="L894">        boolean doProcess = true;</span>
+<span class="fc bfc" id="L895" title="All 2 branches covered.">        if (skipNextDone) {</span>
+<span class="fc bfc" id="L896" title="All 2 branches covered.">            if (action instanceof NullAction</span>
+<span class="pc bpc" id="L897" title="1 of 2 branches missed.">                    &amp;&amp; ((NullAction)action).getMode() == NullAction.Mode.DONE) {</span>
+<span class="nc bnc" id="L898" title="All 2 branches missed.">                if (currentRound.value() instanceof OperatingRound</span>
+<span class="nc bnc" id="L899" title="All 2 branches missed.">                        &amp;&amp; ((OperatingRound)currentRound.value()).getStep() == skippedStep) {</span>
+<span class="nc" id="L900">                    doProcess = false;</span>
+                }
+            }
+        }
+<span class="fc" id="L904">        skipNextDone = false;</span>
+<span class="fc" id="L905">        skippedStep = null;</span>
+
+<span class="fc" id="L907">        ChangeStack changeStack = getRoot().getStateManager().getChangeStack();</span>
+
+<span class="pc bpc" id="L909" title="2 of 6 branches missed.">        if (doProcess &amp;&amp; !processCorrectionActions(action) &amp;&amp; !getCurrentRound().process(action)) {</span>
+<span class="nc" id="L910">            String msg = &quot;Player &quot;+action.getPlayerName()+ &quot;'s action \&quot;&quot;</span>
+<span class="nc" id="L911">            +action.toString()+&quot;\&quot;\n  in &quot;+getCurrentRound().getRoundName()</span>
+            +&quot; is considered invalid by the game engine&quot;;
+<span class="nc" id="L913">            log.error(msg);</span>
+<span class="nc" id="L914">            DisplayBuffer.add(this, msg);</span>
+<span class="nc" id="L915">            return false;</span>
+        }
+<span class="fc" id="L917">        executedActions.add(action);</span>
+
+<span class="fc" id="L919">        possibleActions.clear();</span>
+<span class="fc" id="L920">        getCurrentRound().setPossibleActions();</span>
+<span class="fc" id="L921">        changeStack.close(action);</span>
+
+<span class="fc bfc" id="L923" title="All 2 branches covered.">        if (!isGameOver()) setCorrectionActions();</span>
+
+<span class="fc" id="L925">        log.debug(&quot;Turn: {}&quot;, getCurrentPlayer().getId());</span>
+<span class="fc" id="L926">        return true;</span>
+    }
+
+    public void finishLoading () {
+<span class="fc" id="L930">        guiHints.clearVisibilityHints();</span>
+<span class="fc" id="L931">    }</span>
+
+    /** recoverySave method
+     * Uses filePath defined in save.recovery.filepath
+     *  */
+    protected void recoverySave() {
+<span class="nc bnc" id="L937" title="All 2 branches missed.">        if (Config.get(&quot;save.recovery.active&quot;, &quot;yes&quot;).equalsIgnoreCase(&quot;no&quot;)) return;</span>
+
+<span class="nc" id="L939">        GameSaver gameSaver = new GameSaver(getRoot().getGameData(), executedActions.view());</span>
+        try {
+<span class="nc" id="L941">            gameSaver.autoSave();</span>
+<span class="nc" id="L942">            recoverySaveWarning = false;</span>
+<span class="nc" id="L943">        } catch (IOException e) {</span>
+            // suppress warning after first occurrence
+<span class="nc bnc" id="L945" title="All 2 branches missed.">            if (!recoverySaveWarning) {</span>
+<span class="nc" id="L946">                DisplayBuffer.add(this, LocalText.getText(&quot;RecoverySaveFailed&quot;, e.getMessage()));</span>
+<span class="nc" id="L947">                recoverySaveWarning = true;</span>
+            }
+<span class="nc" id="L949">            log.error(&quot;autosave failed&quot;, e);</span>
+<span class="nc" id="L950">        }</span>
+<span class="nc" id="L951">    }</span>
+
+    protected boolean save(GameAction saveAction) {
+<span class="nc" id="L954">        GameSaver gameSaver = new GameSaver(getRoot().getGameData(), executedActions.view());</span>
+<span class="nc" id="L955">        File file = new File(saveAction.getFilepath());</span>
+        try {
+<span class="nc" id="L957">            gameSaver.saveGame(file);</span>
+<span class="nc" id="L958">            return true;</span>
+<span class="nc" id="L959">        } catch (IOException e) {</span>
+<span class="nc" id="L960">            DisplayBuffer.add(this, LocalText.getText(&quot;SaveFailed&quot;, e.getMessage()));</span>
+<span class="nc" id="L961">            log.error(&quot;save failed&quot;, e);</span>
+<span class="nc" id="L962">            return false;</span>
+        }
+    }
+    /**
+     * tries to reload the current game
+     * executes the additional action(s)
+     */
+    protected boolean reload(GameAction reloadAction) {
+<span class="nc" id="L970">        log.info(&quot;Reloading started&quot;);</span>
+
+        /* Use gameLoader to load the game data */
+<span class="nc" id="L973">        GameLoader gameLoader = new GameLoader();</span>
+<span class="nc" id="L974">        String filepath = reloadAction.getFilepath();</span>
+
+
+<span class="nc bnc" id="L977" title="All 2 branches missed.">        if (!gameLoader.reloadGameFromFile(new File(filepath))) {</span>
+<span class="nc" id="L978">            return false;</span>
+        }
+
+       /*  followed by actions and comments
+        try{
+            gameLoader.loadGameData(new File(filepath));
+            gameLoader.convertGameData();
+        } catch (Exception e)  {
+            log.error(&quot;Load failed&quot;, e);
+            DisplayBuffer.add(this, LocalText.getText(&quot;LOAD_FAILED_MESSAGE&quot;, e.getMessage()));
+        }
+*/
+<span class="nc" id="L990">        log.debug(&quot;Starting to compare loaded actions&quot;);</span>
+
+        /* gameLoader actions get compared to the executed actions of the current game */
+<span class="nc" id="L993">        List&lt;PossibleAction&gt; savedActions = gameLoader.getActions();</span>
+
+<span class="nc" id="L995">        setReloading(true);</span>
+
+        // Check size
+<span class="nc bnc" id="L998" title="All 2 branches missed.">        if (savedActions.size() &lt; executedActions.size()) {</span>
+<span class="nc" id="L999">            DisplayBuffer.add(this, LocalText.getText(&quot;LOAD_FAILED_MESSAGE&quot;,</span>
+            &quot;loaded file has less actions than current game&quot;));
+<span class="nc" id="L1001">            return true;</span>
+        }
+
+        // Check action identity
+<span class="nc" id="L1005">        int index = 0;</span>
+        PossibleAction executedAction;
+        try {
+<span class="nc bnc" id="L1008" title="All 2 branches missed.">            for (PossibleAction savedAction : savedActions) {</span>
+<span class="nc bnc" id="L1009" title="All 2 branches missed.">                if (index &lt; executedActions.size()) {</span>
+<span class="nc" id="L1010">                    executedAction = executedActions.get(index);</span>
+<span class="nc bnc" id="L1011" title="All 2 branches missed.">                    if (!savedAction.equalsAsAction(executedAction)) {</span>
+<span class="nc" id="L1012">                        DisplayBuffer.add(this, LocalText.getText(&quot;LoadFailed&quot;,</span>
+<span class="nc" id="L1013">                                &quot;loaded action \&quot;&quot;+savedAction.toString()</span>
+<span class="nc" id="L1014">                                +&quot;\&quot;&lt;br&gt;   is not same as game action \&quot;&quot;+executedAction.toString()</span>
+                                +&quot;\&quot;&quot;));
+<span class="nc" id="L1016">                        return true;</span>
+                    }
+                } else {
+<span class="nc bnc" id="L1019" title="All 2 branches missed.">                    if (index == executedActions.size()) {</span>
+<span class="nc" id="L1020">                        log.info(&quot;Finished comparing old actions, starting to process new actions&quot;);</span>
+                    }
+                    // Found a new action: execute it
+<span class="nc bnc" id="L1023" title="All 2 branches missed.">                    if (!processOnReload(savedAction)) {</span>
+<span class="nc" id="L1024">                        log.error (&quot;Reload interrupted&quot;);</span>
+<span class="nc" id="L1025">                        DisplayBuffer.add(this, LocalText.getText(&quot;LoadFailed&quot;,</span>
+<span class="nc" id="L1026">                                &quot; loaded action \&quot;&quot;+savedAction.toString()+&quot;\&quot; is invalid&quot;));</span>
+<span class="nc" id="L1027">                        break;</span>
+                    }
+                }
+<span class="nc" id="L1030">                index++;</span>
+<span class="nc" id="L1031">            }</span>
+<span class="nc" id="L1032">        } catch (Exception e) {</span>
+<span class="nc" id="L1033">            log.error(&quot;Reload failed&quot;, e);</span>
+<span class="nc" id="L1034">            DisplayBuffer.add(this, LocalText.getText(&quot;LoadFailed&quot;, e.getMessage()));</span>
+<span class="nc" id="L1035">            return true;</span>
+<span class="nc" id="L1036">        }</span>
+
+
+<span class="nc" id="L1039">        setReloading(false);</span>
+<span class="nc" id="L1040">        finishLoading();</span>
+
+        // use new comments (without checks)
+        // FIXME (Rails2.0): CommentItems have to be replaced
+        // ReportBuffer.setCommentItems(gameLoader.getComments());
+
+<span class="nc" id="L1046">        log.info(&quot;Reloading finished&quot;);</span>
+<span class="nc" id="L1047">        return true;</span>
+    }
+
+
+    protected boolean export(GameAction exportAction) {
+
+<span class="nc" id="L1053">        String filename = exportAction.getFilepath();</span>
+<span class="nc" id="L1054">        boolean result = false;</span>
+
+        try {
+<span class="nc" id="L1057">            PrintWriter pw = new PrintWriter(filename);</span>
+
+            // write map information
+<span class="nc bnc" id="L1060" title="All 2 branches missed.">            for (MapHex hex:getRoot().getMapManager().getHexes()) {</span>
+<span class="nc" id="L1061">                        pw.println(hex.getId() + &quot;,&quot; + hex.getCurrentTile().toText() + &quot;,&quot;</span>
+<span class="nc" id="L1062">                                + hex.getCurrentTileRotation() + &quot;,&quot;</span>
+<span class="nc" id="L1063">                                + hex.getOrientationName(hex.getCurrentTileRotation())</span>
+                        ) ;
+<span class="nc" id="L1065">            }</span>
+<span class="nc" id="L1066">            pw.close();</span>
+<span class="nc" id="L1067">            result = true;</span>
+
+
+<span class="nc" id="L1070">        } catch (IOException e) {</span>
+<span class="nc" id="L1071">            log.error(&quot;Save failed&quot;, e);</span>
+<span class="nc" id="L1072">            DisplayBuffer.add(this, LocalText.getText(&quot;SaveFailed&quot;, e.getMessage()));</span>
+<span class="nc" id="L1073">        }</span>
+
+<span class="nc" id="L1075">        return result;</span>
+    }
+
+    public void finishShareSellingRound() {
+<span class="fc" id="L1079">        setRound(interruptedRound);</span>
+<span class="fc" id="L1080">        guiHints.setCurrentRoundType(interruptedRound.getClass());</span>
+<span class="fc" id="L1081">        guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);</span>
+<span class="fc" id="L1082">        guiHints.setActivePanel(GuiDef.Panel.MAP);</span>
+<span class="fc" id="L1083">        getCurrentRound().resume();</span>
+<span class="fc" id="L1084">    }</span>
+
+    public void finishTreasuryShareRound() {
+<span class="fc" id="L1087">        setRound(interruptedRound);</span>
+<span class="fc" id="L1088">        guiHints.setCurrentRoundType(interruptedRound.getClass());</span>
+<span class="fc" id="L1089">        guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);</span>
+<span class="fc" id="L1090">        guiHints.setActivePanel(GuiDef.Panel.MAP);</span>
+<span class="fc" id="L1091">        ((OperatingRound) getCurrentRound()).nextStep();</span>
+<span class="fc" id="L1092">    }</span>
+
+    public void registerBankruptcy() {
+<span class="nc" id="L1095">        endedByBankruptcy.set(true);</span>
+<span class="nc" id="L1096">        String message =</span>
+<span class="nc" id="L1097">            LocalText.getText(&quot;PlayerIsBankrupt&quot;,</span>
+<span class="nc" id="L1098">                    getCurrentPlayer().getId());</span>
+<span class="nc" id="L1099">        ReportBuffer.add(this, message);</span>
+<span class="nc" id="L1100">        DisplayBuffer.add(this, message);</span>
+<span class="nc bnc" id="L1101" title="All 2 branches missed.">        if (gameEndsWithBankruptcy) {</span>
+<span class="nc" id="L1102">            finishGame();</span>
+        } else {
+<span class="nc" id="L1104">            processBankruptcy ();</span>
+        }
+<span class="nc" id="L1106">    }</span>
+
+    protected void processBankruptcy () {
+        // Currently a stub, don't know if there is any generic handling (EV)
+<span class="nc" id="L1110">    }</span>
+
+    public void registerBrokenBank(){
+<span class="fc" id="L1113">        gameOverPending.set(true);</span>
+<span class="fc" id="L1114">        ReportBuffer.add(this, LocalText.getText(&quot;BankIsBrokenReportText&quot;));</span>
+        String msgContinue;
+<span class="fc bfc" id="L1116" title="All 2 branches covered.">        if (gameEndsAfterSetOfORs)</span>
+<span class="fc" id="L1117">            msgContinue = LocalText.getText(&quot;gameOverPlaySetOfORs&quot;);</span>
+        else
+<span class="fc" id="L1119">            msgContinue = LocalText.getText(&quot;gameOverPlayOnlyOR&quot;);</span>
+<span class="fc" id="L1120">        String msg = LocalText.getText(&quot;BankIsBrokenDisplayText&quot;, msgContinue);</span>
+<span class="fc" id="L1121">        DisplayBuffer.add(this, msg);</span>
+<span class="fc" id="L1122">        addToNextPlayerMessages(msg, true);</span>
+<span class="fc" id="L1123">    }</span>
+
+    public void registerMaxedSharePrice(PublicCompany company, StockSpace space){
+<span class="nc" id="L1126">        gameOverPending.set(true);</span>
+<span class="nc" id="L1127">        ReportBuffer.add(this, LocalText.getText(&quot;MaxedSharePriceReportText&quot;,</span>
+<span class="nc" id="L1128">                company.getId(),</span>
+<span class="nc" id="L1129">                Bank.format(this, space.getPrice())));</span>
+        String msgContinue;
+<span class="nc bnc" id="L1131" title="All 2 branches missed.">        if (gameEndsAfterSetOfORs)</span>
+<span class="nc" id="L1132">            msgContinue = LocalText.getText(&quot;gameOverPlaySetOfORs&quot;);</span>
+        else
+<span class="nc" id="L1134">            msgContinue = LocalText.getText(&quot;gameOverPlayOnlyOR&quot;);</span>
+<span class="nc" id="L1135">        String msg = LocalText.getText(&quot;MaxedSharePriceDisplayText&quot;,</span>
+<span class="nc" id="L1136">                company.getId(),</span>
+<span class="nc" id="L1137">                Bank.format(this, space.getPrice()),</span>
+                msgContinue);
+<span class="nc" id="L1139">        DisplayBuffer.add(this, msg);</span>
+<span class="nc" id="L1140">        addToNextPlayerMessages(msg, true);</span>
+<span class="nc" id="L1141">    }</span>
+
+    protected void finishGame() {
+<span class="fc" id="L1144">        gameOver.set(true);</span>
+
+<span class="fc" id="L1146">        String message = LocalText.getText(&quot;GameOver&quot;);</span>
+<span class="fc" id="L1147">        ReportBuffer.add(this, message);</span>
+
+        // FIXME: Rails 2.0 this is not allowed as this causes troubles with Undo
+        // DisplayBuffer.add(this, message);
+
+<span class="fc" id="L1152">        ReportBuffer.add(this, &quot;&quot;);</span>
+
+<span class="fc" id="L1154">        List&lt;String&gt; gameReport = getGameReport();</span>
+<span class="fc bfc" id="L1155" title="All 2 branches covered.">        for (String s:gameReport)</span>
+<span class="fc" id="L1156">            ReportBuffer.add(this, s);</span>
+
+        // activate gameReport for UI
+<span class="fc" id="L1159">        setGameOverReportedUI(false);</span>
+
+        // FIXME: This will not work, as it will create duplicated IDs
+<span class="fc" id="L1162">        createRound(EndOfGameRound.class, &quot;EndOfGameRound&quot;);</span>
+<span class="fc" id="L1163">    }</span>
+
+
+    public boolean isDynamicOperatingOrder() {
+<span class="fc" id="L1167">        return dynamicOperatingOrder;</span>
+    }
+
+    public boolean isGameOver() {
+<span class="fc" id="L1171">        return gameOver.value();</span>
+    }
+
+    public BooleanState getGameOverPendingModel() {
+<span class="nc" id="L1175">        return gameOverPending;</span>
+    }
+
+    public void setGameOverReportedUI(boolean b){
+<span class="fc" id="L1179">        gameOverReportedUI = b;</span>
+<span class="fc" id="L1180">    }</span>
+
+    public boolean getGameOverReportedUI(){
+<span class="nc" id="L1183">        return(gameOverReportedUI);</span>
+    }
+
+    public List&lt;String&gt; getGameReport() {
+
+<span class="fc" id="L1188">        List&lt;String&gt; b = new ArrayList&lt;&gt;();</span>
+
+        /* Sort players by total worth */
+<span class="fc" id="L1191">        List&lt;Player&gt; rankedPlayers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L1192">        rankedPlayers.addAll(getRoot().getPlayerManager().getPlayers());</span>
+<span class="fc" id="L1193">        Collections.sort(rankedPlayers);</span>
+
+        /* Report winner */
+<span class="fc" id="L1196">        Player winner = rankedPlayers.get(0);</span>
+<span class="fc" id="L1197">        b.add(LocalText.getText(&quot;EoGWinner&quot;) + winner.getId()+ &quot;!&quot;);</span>
+<span class="fc" id="L1198">        b.add(LocalText.getText(&quot;EoGFinalRanking&quot;) + &quot; :&quot;);</span>
+
+        /* Report final ranking */
+<span class="fc" id="L1201">        int i = 0;</span>
+<span class="fc bfc" id="L1202" title="All 2 branches covered.">        for (Player p : rankedPlayers) {</span>
+<span class="fc" id="L1203">            b.add((++i) + &quot;. &quot; + Bank.format(this, p.getWorth()) + &quot; &quot;</span>
+<span class="fc" id="L1204">                    + p.getId());</span>
+<span class="fc" id="L1205">        }</span>
+
+<span class="fc" id="L1207">        return b;</span>
+    }
+
+    public RoundFacade getCurrentRound() {
+<span class="fc" id="L1211">        return currentRound.value();</span>
+    }
+
+    public GenericState&lt;RoundFacade&gt; getCurrentRoundModel() {
+<span class="nc" id="L1215">        return currentRound;</span>
+    }
+    public List&lt;PublicCompany&gt; getAllPublicCompanies() {
+<span class="fc" id="L1218">        return getRoot().getCompanyManager().getAllPublicCompanies();</span>
+    }
+
+    public List&lt;PrivateCompany&gt; getAllPrivateCompanies() {
+<span class="fc" id="L1222">        return getRoot().getCompanyManager().getAllPrivateCompanies();</span>
+    }
+
+    public void addPortfolio (PortfolioModel portfolio) {
+<span class="fc" id="L1226">        portfolioMap.put(portfolio.getName(), portfolio);</span>
+<span class="fc" id="L1227">        portfolioUniqueNameMap.put(portfolio.getUniqueName(), portfolio);</span>
+<span class="fc" id="L1228">    }</span>
+
+    public PortfolioModel getPortfolioByName (String name) {
+<span class="fc" id="L1231">        return portfolioMap.get(name);</span>
+    }
+
+    public PortfolioModel getPortfolioByUniqueName (String name) {
+<span class="fc" id="L1235">        return portfolioUniqueNameMap.get(name);</span>
+    }
+
+    public StartPacket getStartPacket() {
+<span class="fc" id="L1239">        return startPacket.value();</span>
+    }
+
+    public Phase getCurrentPhase() {
+<span class="fc" id="L1243">        return getRoot().getPhaseManager().getCurrentPhase();</span>
+    }
+
+    public boolean canAnyCompanyHoldShares() {
+<span class="fc" id="L1247">        return (Boolean) getGuiParameter(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);</span>
+    }
+
+    public  String getClassName (GuiDef.ClassName key) {
+<span class="nc bnc" id="L1251" title="All 6 branches missed.">        switch (key) {</span>
+
+        case GAME_UI_MANAGER:
+<span class="nc" id="L1254">            return gameUIManagerClassName;</span>
+
+        case OR_UI_MANAGER:
+<span class="nc" id="L1257">            return orUIManagerClassName;</span>
+
+        case STATUS_WINDOW:
+<span class="nc" id="L1260">            return statusWindowClassName;</span>
+
+        case START_ROUND_WINDOW:
+<span class="nc" id="L1263">            return startRoundWindowClassName;</span>
+
+        case GAME_STATUS:
+<span class="nc" id="L1266">            return gameStatusClassName;</span>
+
+        default:
+<span class="nc" id="L1269">            return &quot;&quot;;</span>
+        }
+    }
+
+    public Object getGuiParameter (GuiDef.Parm key) {
+<span class="fc" id="L1274">        return guiParameters.getOrDefault(key, false);</span>
+    }
+
+    public void setGuiParameter (GuiDef.Parm key, boolean value) {
+<span class="fc" id="L1278">        guiParameters.put (key, value);</span>
+<span class="fc" id="L1279">    }</span>
+
+    public void setGameParameter (GameDef.Parm key, Object value) {
+<span class="fc" id="L1282">        gameParameters.put(key, value);</span>
+<span class="fc" id="L1283">    }</span>
+
+    public Object getGameParameter (GameDef.Parm key) {
+<span class="fc" id="L1286">        return gameParameters.getOrDefault(key, false);</span>
+    }
+
+    public RoundFacade getInterruptedRound() {
+<span class="fc" id="L1290">        return interruptedRound;</span>
+    }
+
+    // TODO: Was the int position argument required?
+    public boolean addSpecialProperty(SpecialProperty property) {
+<span class="fc bfc" id="L1295" title="All 2 branches covered.">        if (commonSpecialProperties == null) {</span>
+<span class="fc" id="L1296">            commonSpecialProperties = PortfolioSet.create(this,</span>
+                    &quot;CommonSpecialProperties&quot;, SpecialProperty.class);
+        }
+<span class="fc" id="L1299">        return commonSpecialProperties.add(property);</span>
+    }
+
+    // TODO: Write new SpecialPropertiesModel
+
+    /* (non-Javadoc)
+     * @see rails.game.GameManager#getCommonSpecialProperties()
+     */
+/*    public boolean removeSpecialProperty(SpecialProperty property) {
+
+        if (commonSpecialProperties != null) {
+            return commonSpecialProperties.removeObject(property);
+        }
+
+        return false;
+    } */
+
+    public List&lt;SpecialProperty&gt; getCommonSpecialProperties () {
+<span class="fc" id="L1317">        return getSpecialProperties (null, false);</span>
+    }
+
+    public Portfolio&lt;SpecialProperty&gt; getCommonSpecialPropertiesPortfolio() {
+<span class="fc" id="L1321">        return commonSpecialProperties;</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;T extends SpecialProperty&gt; List&lt;T&gt; getSpecialProperties(
+            Class&lt;T&gt; clazz, boolean includeExercised) {
+
+<span class="fc" id="L1328">        List&lt;T&gt; result = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L1330" title="All 2 branches covered.">        if (commonSpecialProperties != null) {</span>
+<span class="fc bfc" id="L1331" title="All 2 branches covered.">            for (SpecialProperty sp : commonSpecialProperties) {</span>
+<span class="pc bpc" id="L1332" title="1 of 4 branches missed.">                if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))</span>
+<span class="pc bpc" id="L1333" title="1 of 2 branches missed.">                        &amp;&amp; sp.isExecutionable()</span>
+<span class="fc bfc" id="L1334" title="All 4 branches covered.">                        &amp;&amp; (!sp.isExercised() || includeExercised)) {</span>
+<span class="fc" id="L1335">                    result.add((T) sp);</span>
+                }
+<span class="fc" id="L1337">            }</span>
+        }
+
+<span class="fc" id="L1340">        return result;</span>
+    }
+
+    public GuiHints getUIHints() {
+<span class="fc" id="L1344">        return guiHints;</span>
+    }
+
+    public CorrectionManager getCorrectionManager(CorrectionType ct) {
+<span class="fc" id="L1348">        CorrectionManager cm = correctionManagers.get(ct);</span>
+<span class="fc bfc" id="L1349" title="All 2 branches covered.">        if (cm == null) {</span>
+<span class="fc" id="L1350">            cm=ct.newCorrectionManager(this);</span>
+<span class="fc" id="L1351">            correctionManagers.put(ct, cm);</span>
+<span class="fc" id="L1352">            log.debug(&quot;Added CorrectionManager for {}&quot;, ct);</span>
+        }
+<span class="fc" id="L1354">        return cm;</span>
+    }
+
+    public List&lt;PublicCompany&gt; getCompaniesInRunningOrder () {
+
+<span class="fc" id="L1359">        Map&lt;Integer, PublicCompany&gt; operatingCompanies =</span>
+                new TreeMap&lt;&gt;();
+        StockSpace space;
+        int key;
+<span class="fc" id="L1363">        int minorNo = 0;</span>
+<span class="fc bfc" id="L1364" title="All 2 branches covered.">        for (PublicCompany company : getRoot().getCompanyManager().getAllPublicCompanies()) {</span>
+
+            // Key must put companies in reverse operating order, because sort
+            // is ascending.
+<span class="fc bfc" id="L1368" title="All 4 branches covered.">            if (company.hasStockPrice() &amp;&amp; company.hasStarted()) {</span>
+<span class="fc" id="L1369">                space = company.getCurrentSpace();</span>
+<span class="fc" id="L1370">                key =</span>
+<span class="fc" id="L1371">                    1000000 * (999 - space.getPrice()) + 10000</span>
+<span class="fc" id="L1372">                    * (99 - space.getColumn()) + 100</span>
+<span class="fc" id="L1373">                    * space.getRow()</span>
+<span class="fc" id="L1374">                    + space.getStackPosition(company);</span>
+            } else {
+<span class="fc" id="L1376">                key = ++minorNo;</span>
+            }
+<span class="fc" id="L1378">            operatingCompanies.put(key, company);</span>
+<span class="fc" id="L1379">        }</span>
+
+<span class="fc" id="L1381">        return new ArrayList&lt;&gt;(operatingCompanies.values());</span>
+    }
+
+    public boolean isReloading() {
+<span class="fc" id="L1385">        return reloading;</span>
+    }
+
+    public void setReloading(boolean reloading) {
+<span class="fc" id="L1389">        this.reloading = reloading;</span>
+<span class="fc" id="L1390">    }</span>
+
+    public void setSkipDone (GameDef.OrStep step) {
+<span class="fc" id="L1393">        skipNextDone = true;</span>
+<span class="fc" id="L1394">        skippedStep = step;</span>
+<span class="fc" id="L1395">    }</span>
+
+    public void resetStorage() {
+<span class="nc" id="L1398">        objectStorage = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L1399">        storageIds = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L1400">    }</span>
+
+    public int getStorageId(String typeName) {
+<span class="fc" id="L1403">        Integer id = storageIds.get(typeName);</span>
+<span class="fc bfc" id="L1404" title="All 2 branches covered.">        if (id == null) id = 0;</span>
+<span class="fc" id="L1405">        return id;</span>
+    }
+
+    public int storeObject(String typeName, Object object) {
+<span class="fc" id="L1409">        Integer id = storageIds.get(typeName);</span>
+<span class="fc bfc" id="L1410" title="All 2 branches covered.">        if (id == null) id = 0;</span>
+<span class="fc" id="L1411">        objectStorage.put(typeName + id, object);</span>
+<span class="fc" id="L1412">        storageIds.put(typeName, id + 1); // store next id</span>
+<span class="fc" id="L1413">        return id;</span>
+    }
+
+    public Object retrieveObject(String typeName, int id) {
+<span class="fc" id="L1417">        return objectStorage.get(typeName + id);</span>
+    }
+
+    // TODO (Rails2.0): rewrite this, use PhaseAction interface stored at PhaseManager
+    public void processPhaseAction(String name, String value) {
+<span class="fc" id="L1422">        getCurrentRound().processPhaseAction(name, value);</span>
+<span class="fc" id="L1423">    }</span>
+
+    // FIXME (Rails2.0): does nothing now, replace this with a rewrite
+    public void addToNextPlayerMessages(String s, boolean undoable) {
+
+<span class="fc" id="L1428">    }</span>
+
+    // shortcut to PlayerManager
+    public int getPlayerCertificateLimit(Player player) {
+<span class="fc" id="L1432">        int limit = getRoot().getPlayerManager().getPlayerCertificateLimit(player);</span>
+<span class="fc" id="L1433">        return limit;</span>
+    }
+
+    // shortcut to PlayerManager
+    protected Player getCurrentPlayer() {
+<span class="fc" id="L1438">        return getRoot().getPlayerManager().getCurrentPlayer();</span>
+    }
+
+    public void setNationalToFound(String national){
+
+<span class="nc bnc" id="L1443" title="All 2 branches missed.">        for (PublicCompany company : this.getAllPublicCompanies()){</span>
+<span class="nc bnc" id="L1444" title="All 2 branches missed.">            if (company.getId().equals(&quot;national&quot;)) {</span>
+<span class="nc" id="L1445">                this.nationalToFound = company;</span>
+            }
+<span class="nc" id="L1447">        }</span>
+
+
+<span class="nc" id="L1450">    }</span>
+
+    public PublicCompany getNationalToFound() {
+        // TODO Auto-generated method stub
+<span class="nc" id="L1454">        return nationalToFound;</span>
+    }
+
+    public void setNationalFormationStartingPlayer( PublicCompany nationalToFound2, Player currentPlayer) {
+<span class="nc" id="L1458">        this.NationalFormStartingPlayer.put(nationalToFound2, currentPlayer);</span>
+
+<span class="nc" id="L1460">    }</span>
+
+    public Player getNationalFormationStartingPlayer(PublicCompany comp) {
+<span class="nc" id="L1463">        return this.NationalFormStartingPlayer.get(comp);</span>
+    }
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

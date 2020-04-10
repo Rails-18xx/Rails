@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CountableItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.state</a> &gt; <span class="el_source">CountableItem.java</span></div><h1>CountableItem.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.state;
+
+import com.google.common.base.Preconditions;
+
+public abstract class CountableItem&lt;T extends Countable&gt; extends AbstractItem implements Countable {
+    
+    private final Class&lt;T&gt; type;
+    private final WalletManager wm;
+    
+    /**
+     * Initializes CountableItem
+     * @param parent parent is usually a factory that creates the CountableItem(s)  
+     * @param id identifier of the item
+     * @param type indicates the class used for the Wallets to store this type of CountableItems
+     */
+    protected CountableItem(Item parent, String id, Class&lt;T&gt; type) {
+<span class="fc" id="L17">        super(parent, id);</span>
+<span class="fc" id="L18">        this.type = type;</span>
+<span class="fc" id="L19">        this.wm = getRoot().getStateManager().getWalletManager();</span>
+<span class="fc" id="L20">    }</span>
+
+    public void move(Owner from, int amount, Owner to) {
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        Preconditions.checkArgument(from != to, </span>
+                &quot;New Owner identical to the existing owner&quot; + to);
+        // TODO: Currently we still allow zero amounts
+        // as e.g. during withhold the zero amount is paid
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        Preconditions.checkArgument(amount &gt;= 0, </span>
+                &quot;Amount to move restricted to positive numbers&quot;);
+        
+        // add to new wallet
+<span class="fc" id="L31">        Wallet&lt;T&gt; newWallet = wm.getWallet(type, to);</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        Preconditions.checkArgument(newWallet != null, &quot;No Wallet available for owner &quot; + to);</span>
+<span class="fc" id="L33">        new WalletChange&lt;T&gt;(newWallet, type.cast(this), amount);</span>
+        
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (from != wm.getUnkownOwner()) {</span>
+<span class="fc" id="L36">            Wallet&lt;T&gt; oldWallet = wm.getWallet(type, from);</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">            Preconditions.checkArgument(oldWallet != null, &quot;No Wallet available for owner&quot; + from);</span>
+<span class="fc" id="L38">            new WalletChange&lt;T&gt;(oldWallet, type.cast(this), -amount);</span>
+        }
+<span class="fc" id="L40">    }</span>
+    
+    public int compareTo(Countable other) {
+<span class="nc" id="L43">        return this.getId().compareTo(other.getId());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

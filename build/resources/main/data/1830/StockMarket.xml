@@ -1,0 +1,149 @@
+<StockMarket type="rectangular">
+	<!-- Note two supported colour specification formats:
+		RGB decimal with commas and RGB hexadecimal without commas -->
+	<StockSpaceType name="yellow" colour="255,255,0">
+		<NoCertLimit/>
+	</StockSpaceType>
+	<StockSpaceType name="orange" colour="FF8000">
+		<NoCertLimit/>
+		<NoHoldLimit/>
+	</StockSpaceType>
+	<StockSpaceType name="brown" colour="884000">
+		<NoCertLimit/>
+		<NoHoldLimit/>
+		<NoBuyLimit/>
+	</StockSpaceType>
+	
+	<StockSpace name="A1" price="60" type="yellow"/>
+	<StockSpace name="A2" price="53" type="yellow"/>
+	<StockSpace name="A3" price="46" type="yellow"/>
+	<StockSpace name="A4" price="39" type="orange"/>
+	<StockSpace name="A5" price="32" type="orange"/>
+	<StockSpace name="A6" price="25" type="brown"/>
+	<StockSpace name="A7" price="18" type="brown"/>
+	<StockSpace name="A8" price="10" type="brown"/>
+	<StockSpace name="B1" price="67" />
+	<StockSpace name="B2" price="60" type="yellow"/>
+	<StockSpace name="B3" price="55" type="yellow"/>
+	<StockSpace name="B4" price="48" type="yellow"/>
+	<StockSpace name="B5" price="41" type="orange"/>
+	<StockSpace name="B6" price="34" type="orange"/>
+	<StockSpace name="B7" price="27" type="brown"/>
+	<StockSpace name="B8" price="20" type="brown"/>
+	<StockSpace name="B9" price="10" type="brown"/>
+	<StockSpace name="C1" price="71" />
+	<StockSpace name="C2" price="66" />
+	<StockSpace name="C3" price="60" type="yellow"/>
+	<StockSpace name="C4" price="54" type="yellow"/>
+	<StockSpace name="C5" price="48" type="yellow"/>
+	<StockSpace name="C6" price="42" type="orange"/>
+	<StockSpace name="C7" price="36" type="orange"/>
+	<StockSpace name="C8" price="30" type="brown"/>
+	<StockSpace name="C9" price="20" type="brown"/>
+	<StockSpace name="C10" price="10" type="brown"/>
+	<StockSpace name="D1" price="76" />
+	<StockSpace name="D2" price="70" />
+	<StockSpace name="D3" price="65" />
+	<StockSpace name="D4" price="60" type="yellow"/>
+	<StockSpace name="D5" price="55" type="yellow"/>
+	<StockSpace name="D6" price="50" type="yellow"/>
+	<StockSpace name="D7" price="45" type="orange"/>
+	<StockSpace name="D8" price="40" type="orange"/>
+	<StockSpace name="D9" price="30" type="brown"/>
+	<StockSpace name="D10" price="20" type="brown"/>
+	<StockSpace name="D11" price="10" type="brown"/>
+	<StockSpace name="E1" price="82" />
+	<StockSpace name="E2" price="76" />
+	<StockSpace name="E3" price="70" />
+	<StockSpace name="E4" price="66" />
+	<StockSpace name="E5" price="62" />
+	<StockSpace name="E6" price="58" type="yellow"/>
+	<StockSpace name="E7" price="54" type="yellow"/>
+	<StockSpace name="E8" price="50" type="yellow"/>
+	<StockSpace name="E9" price="40" type="orange"/>
+	<StockSpace name="E10" price="30" type="brown"/>
+	<StockSpace name="E11" price="20" type="brown"/>
+	<StockSpace name="F1" price="90" />
+	<StockSpace name="F2" price="82" />
+	<StockSpace name="F3" price="76" />
+	<StockSpace name="F4" price="71" />
+	<StockSpace name="F5" price="67" />
+	<StockSpace name="F6" price="65" />
+	<StockSpace name="F7" price="63" />
+	<StockSpace name="F8" price="60" type="yellow"/>
+	<StockSpace name="F9" price="50" type="yellow"/>
+	<StockSpace name="F10" price="40" type="orange"/>
+	<StockSpace name="F11" price="30" type="brown"/>
+	<StockSpace name="G1" price="100" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="G2" price="90" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="G3" price="82" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="G4" price="76" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="G5" price="71" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="G6" price="67" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="G7" price="67" />
+	<StockSpace name="G8" price="67" />
+	<StockSpace name="G9" price="60" type="yellow"/>
+	<StockSpace name="G10" price="50" type="yellow"/>
+	<StockSpace name="G11" price="40" type="orange"/>
+	<StockSpace name="H1" price="112" />
+	<StockSpace name="H2" price="100" />
+	<StockSpace name="H3" price="90" />
+	<StockSpace name="H4" price="82" />
+	<StockSpace name="H5" price="76" />
+	<StockSpace name="H6" price="71" />
+	<StockSpace name="H7" price="69" />
+	<StockSpace name="H8" price="68" />
+	<StockSpace name="I1" price="126" />
+	<StockSpace name="I2" price="112" />
+	<StockSpace name="I3" price="100" />
+	<StockSpace name="I4" price="90" />
+	<StockSpace name="I5" price="82" />
+	<StockSpace name="I6" price="75" />
+	<StockSpace name="I7" price="70" />
+	<StockSpace name="J1" price="142" />
+	<StockSpace name="J2" price="126" />
+	<StockSpace name="J3" price="111" />
+	<StockSpace name="J4" price="100" />
+	<StockSpace name="J5" price="90" />
+	<StockSpace name="J6" price="80" />
+	<StockSpace name="K1" price="160" />
+	<StockSpace name="K2" price="142" />
+	<StockSpace name="K3" price="125" />
+	<StockSpace name="K4" price="110" />
+	<StockSpace name="K5" price="100" />
+	<StockSpace name="L1" price="180" />
+	<StockSpace name="L2" price="160" />
+	<StockSpace name="L3" price="140" />
+	<StockSpace name="L4" price="120" />
+	<StockSpace name="M1" price="200" />
+	<StockSpace name="M2" price="180" />
+	<StockSpace name="M3" price="155" />
+	<StockSpace name="M4" price="130" />
+	<StockSpace name="N1" price="225" />
+	<StockSpace name="N2" price="200" />
+	<StockSpace name="N3" price="170" />
+	<StockSpace name="O1" price="250" />
+	<StockSpace name="O2" price="220" />
+	<StockSpace name="O3" price="185" />
+	<StockSpace name="P1" price="275" />
+	<StockSpace name="P2" price="240" />
+	<StockSpace name="P3" price="200" />
+	<StockSpace name="Q1" price="300" />
+	<StockSpace name="Q2" price="260" />
+	<StockSpace name="R1" price="325" />
+	<StockSpace name="R2" price="280" />
+	<StockSpace name="S1" price="350" />
+	<StockSpace name="S2" price="300" />
+</StockMarket>

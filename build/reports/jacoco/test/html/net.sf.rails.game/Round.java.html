@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Round.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">Round.java</span></div><h1>Round.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import net.sf.rails.common.*;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.StockMarket;
+import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.round.RoundFacade;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Creatable;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.Portfolio;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rails.game.action.*;
+
+
+public abstract class Round extends RailsAbstractItem implements RoundFacade {
+
+<span class="fc" id="L27">    private static final Logger log =</span>
+<span class="fc" id="L28">            LoggerFactory.getLogger(Round.class);</span>
+
+    protected final PossibleActions possibleActions;
+    protected final GuiHints guiHints;
+
+    protected final GameManager gameManager;
+    protected final CompanyManager companyManager;
+    protected final PlayerManager playerManager;
+    protected final Bank bank;
+    protected final PortfolioModel ipo;
+    protected final PortfolioModel pool;
+    protected final PortfolioModel unavailable;
+    protected final PortfolioModel scrapHeap;
+    protected final StockMarket stockMarket;
+    protected final MapManager mapManager;
+
+<span class="fc" id="L44">    protected final BooleanState wasInterrupted = BooleanState.create(this, &quot;wasInterrupted&quot;);</span>
+
+
+    protected Round (GameManager parent, String id) {
+<span class="fc" id="L48">        super(parent, id);</span>
+
+<span class="fc" id="L50">        this.gameManager = parent;</span>
+<span class="fc" id="L51">        this.possibleActions = gameManager.getPossibleActions();</span>
+
+<span class="fc" id="L53">        companyManager = getRoot().getCompanyManager();</span>
+<span class="fc" id="L54">        playerManager = getRoot().getPlayerManager();</span>
+<span class="fc" id="L55">        bank = getRoot().getBank();</span>
+        // TODO: It would be good to work with BankPortfolio and Owner instead of PortfolioModels
+        // However this requires a lot of work inside the Round classes
+<span class="fc" id="L58">        ipo = bank.getIpo().getPortfolioModel();</span>
+<span class="fc" id="L59">        pool = bank.getPool().getPortfolioModel();</span>
+<span class="fc" id="L60">        unavailable = bank.getUnavailable().getPortfolioModel();</span>
+<span class="fc" id="L61">        scrapHeap = bank.getScrapHeap().getPortfolioModel();</span>
+<span class="fc" id="L62">        stockMarket = getRoot().getStockMarket();</span>
+<span class="fc" id="L63">        mapManager = getRoot().getMapManager();</span>
+
+<span class="fc" id="L65">        guiHints = gameManager.getUIHints();</span>
+<span class="fc" id="L66">        guiHints.setCurrentRoundType(getClass());</span>
+<span class="fc" id="L67">    }</span>
+
+    // called from GameManager
+    @Override
+    public boolean process(PossibleAction action) {
+<span class="nc" id="L72">        return true;</span>
+    }
+
+    /**
+     * Default version, does nothing. Subclasses should override this method
+     * with a real version.
+     */
+    @Override
+    public boolean setPossibleActions() {
+<span class="nc" id="L81">        return false;</span>
+    }
+
+    /** Generic stub to resume an interrupted round.
+     * Only valid if implemented in a subclass.
+     *
+     */
+    // called from GameManager
+    @Override
+    public void resume() {
+<span class="nc" id="L91">        log.error(&quot;Calling Round.resume() is invalid&quot;);</span>
+<span class="nc" id="L92">    }</span>
+
+    // called from GameManager and GameUIManager
+    @Override
+    public String getRoundName() {
+<span class="nc" id="L97">        return this.getClass().getSimpleName();</span>
+    }
+
+
+    /** A stub for processing actions triggered by a phase change.
+     * Must be overridden by subclasses that need to process such actions.
+     * @param name (required) The name of the action to be executed
+     * @param value (optional) The value of the action to be executed, if applicable
+     */
+    // can this be moved to GameManager, not yet as there are internal dependencies
+    // called from GameManager
+    @Override
+    public void processPhaseAction (String name, String value) {
+
+<span class="nc" id="L111">    }</span>
+
+    /** Set the operating companies in their current acting order */
+    // What is the reason of that to have that here? =&gt; move to OR?
+    // called only internally
+    public List&lt;PublicCompany&gt; setOperatingCompanies() {
+<span class="fc" id="L117">        return setOperatingCompanies (null, null);</span>
+    }
+
+    // What is the reason of that to have that here =&gt; move to OR?
+    // this is still required for 18EU StockRound as due to the merger there are companies that have to discard trains
+    // called only internally
+    public List&lt;PublicCompany&gt; setOperatingCompanies(List&lt;PublicCompany&gt; oldOperatingCompanies,
+            PublicCompany lastOperatingCompany) {
+
+<span class="fc" id="L126">        Map&lt;Integer, PublicCompany&gt; operatingCompanies =</span>
+            new TreeMap&lt;Integer, PublicCompany&gt;();
+        List&lt;PublicCompany&gt; newOperatingCompanies;
+        StockSpace space;
+        int key;
+<span class="fc" id="L131">        int minorNo = 0;</span>
+<span class="pc bpc" id="L132" title="2 of 6 branches missed.">        boolean reorder = gameManager.isDynamicOperatingOrder()</span>
+        &amp;&amp; oldOperatingCompanies != null &amp;&amp; lastOperatingCompany != null;
+
+        int lastOperatingCompanyndex;
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        if (reorder) {</span>
+<span class="fc" id="L137">            newOperatingCompanies = oldOperatingCompanies;</span>
+<span class="fc" id="L138">            lastOperatingCompanyndex = oldOperatingCompanies.indexOf(lastOperatingCompany);</span>
+        } else {
+<span class="fc" id="L140">            newOperatingCompanies = companyManager.getAllPublicCompanies();</span>
+<span class="fc" id="L141">            lastOperatingCompanyndex = -1;</span>
+        }
+
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        for (PublicCompany company : newOperatingCompanies) {</span>
+<span class="fc bfc" id="L145" title="All 4 branches covered.">            if (!reorder &amp;&amp; !canCompanyOperateThisRound(company)) continue;</span>
+
+<span class="fc bfc" id="L147" title="All 2 branches covered.">            if (reorder</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">                    &amp;&amp; oldOperatingCompanies.indexOf(company) &lt;= lastOperatingCompanyndex) {</span>
+                // Companies that have operated this round get lowest keys
+<span class="fc" id="L150">                key = oldOperatingCompanies.indexOf(company);</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">            } else if (company.hasStockPrice()) {</span>
+                // Key must put companies in reverse operating order, because sort
+                // is ascending.
+<span class="fc" id="L154">                space = company.getCurrentSpace();</span>
+<span class="fc" id="L155">                key = 1000000 * (999 - space.getPrice())</span>
+<span class="fc" id="L156">                + 10000 * (99 - space.getColumn())</span>
+<span class="fc" id="L157">                + 100 * (space.getRow()+1)</span>
+<span class="fc" id="L158">                + space.getStackPosition(company);</span>
+            } else {
+<span class="fc" id="L160">                key = 50 + ++minorNo;</span>
+            }
+<span class="fc" id="L162">            operatingCompanies.put(new Integer(key), company);</span>
+<span class="fc" id="L163">        }</span>
+
+<span class="fc" id="L165">        return new ArrayList&lt;PublicCompany&gt;(operatingCompanies.values());</span>
+    }
+
+    /** Can a public company operate? (Default version) */
+    // What is the reason of that to have that here? =&gt; move to OR?
+    // is called by setOperatingCompanies above
+    // called only internally
+    protected boolean canCompanyOperateThisRound (PublicCompany company) {
+<span class="fc bfc" id="L173" title="All 4 branches covered.">        return company.hasFloated() &amp;&amp; !company.isClosed();</span>
+    }
+
+    /**
+     * Check if a company must be floated, and if so, do it. &lt;p&gt;This method is
+     * included here because it is used in various types of Round.
+     *
+     * @param company
+     */
+    // What is the reason of that to have that here? =&gt; best to move it to PublicCompany in the long-run
+    // is called by StartRound as well
+    // called only internally
+    protected void checkFlotation(PublicCompany company) {
+
+<span class="fc bfc" id="L187" title="All 4 branches covered.">        if (!company.hasStarted() || company.hasFloated()) return;</span>
+
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        if (company.getSoldPercentage() &gt;= company.getFloatPercentage()) {</span>
+            // Company floats
+<span class="fc" id="L191">            floatCompany(company);</span>
+        }
+<span class="fc" id="L193">    }</span>
+
+    /**
+     * Float a company, including a default implementation of moving cash and
+     * shares as a result of flotation. &lt;p&gt;Full capitalisation is implemented
+     * as in 1830. Partial capitalisation is implemented as in 1851. Other ways
+     * to process the consequences of company flotation must be handled in
+     * game-specific subclasses.
+     */
+    // What is the reason of that to have that here? =&gt; move to SR?
+    // called by checkFloatation above
+    // move it to PublicCompany in the long-run
+    // called only internally
+    protected void floatCompany(PublicCompany company) {
+
+        // Move cash and shares where required
+<span class="fc" id="L209">        int soldPercentage = company.getSoldPercentage();</span>
+<span class="fc" id="L210">        int cash = 0;</span>
+<span class="fc" id="L211">        int capitalisationMode = company.getCapitalisation();</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">        if (company.hasStockPrice()) {</span>
+<span class="fc" id="L213">            int capFactor = 0;</span>
+<span class="fc" id="L214">            int shareUnit = company.getShareUnit();</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">            if (capitalisationMode == PublicCompany.CAPITALISE_FULL) {</span>
+                // Full capitalisation as in 1830
+<span class="fc" id="L217">                capFactor = 100 / shareUnit;</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">            } else if (capitalisationMode == PublicCompany.CAPITALISE_INCREMENTAL) {</span>
+                // Incremental capitalisation as in 1851
+<span class="fc" id="L220">                capFactor = soldPercentage / shareUnit;</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">            } else if (capitalisationMode == PublicCompany.CAPITALISE_WHEN_BOUGHT) {</span>
+                // Cash goes directly to treasury at each buy (as in 1856 before phase 6)
+<span class="fc" id="L223">                capFactor = 0;</span>
+            }
+<span class="fc" id="L225">            int price = company.getIPOPrice();</span>
+<span class="fc" id="L226">            cash = capFactor * price;</span>
+<span class="fc" id="L227">        } else {</span>
+<span class="fc" id="L228">            cash = company.getFixedPrice();</span>
+        }
+
+        // Substract initial token cost (e.g. 1851, 18EU)
+<span class="fc" id="L232">        cash -= company.getBaseTokensBuyCost();</span>
+
+<span class="fc" id="L234">        company.setFloated(); // After calculating cash (for 1851: price goes</span>
+        // up)
+
+<span class="fc bfc" id="L237" title="All 2 branches covered.">        if (cash &gt; 0) {</span>
+<span class="fc" id="L238">            String cashText = Currency.fromBank(cash, company);</span>
+<span class="fc" id="L239">            ReportBuffer.add(this, LocalText.getText(&quot;FloatsWithCash&quot;,</span>
+<span class="fc" id="L240">                    company.getId(),</span>
+                    cashText ));
+<span class="fc" id="L242">        } else {</span>
+<span class="fc" id="L243">            ReportBuffer.add(this, LocalText.getText(&quot;Floats&quot;,</span>
+<span class="fc" id="L244">                    company.getId()));</span>
+        }
+
+<span class="fc bfc" id="L247" title="All 2 branches covered.">        if (capitalisationMode == PublicCompany.CAPITALISE_INCREMENTAL</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">                &amp;&amp; company.canHoldOwnShares()) {</span>
+            // move all shares from ipo to the company portfolio
+            // FIXME: Does this work correctly?
+<span class="fc" id="L251">            Portfolio.moveAll(ipo.getCertificates(company), company);</span>
+        }
+<span class="fc" id="L253">    }</span>
+
+    // Could be moved somewhere else (RoundUtils?)
+    // called only internally
+    protected void finishRound() {
+        // Report financials
+<span class="fc" id="L259">        ReportBuffer.add(this, &quot;&quot;);</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        for (PublicCompany c : companyManager.getAllPublicCompanies()) {</span>
+<span class="fc bfc" id="L261" title="All 4 branches covered.">            if (c.hasFloated() &amp;&amp; !c.isClosed()) {</span>
+<span class="fc" id="L262">                ReportBuffer.add(this, LocalText.getText(&quot;Has&quot;, c.getId(),</span>
+<span class="fc" id="L263">                        Bank.format(this, c.getCash())));</span>
+            }
+<span class="fc" id="L265">        }</span>
+<span class="fc bfc" id="L266" title="All 2 branches covered.">        for (Player p : playerManager.getPlayers()) {</span>
+<span class="fc" id="L267">            ReportBuffer.add(this, LocalText.getText(&quot;Has&quot;, p.getId(),</span>
+<span class="fc" id="L268">                    Bank.format(this, p.getCashValue())));</span>
+<span class="fc" id="L269">        }</span>
+        // Inform GameManager
+<span class="fc" id="L271">        gameManager.nextRound(this);</span>
+<span class="fc" id="L272">    }</span>
+
+    // called only from 1835 Operating Round?
+    public boolean wasInterrupted () {
+<span class="fc" id="L276">        return wasInterrupted.value();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

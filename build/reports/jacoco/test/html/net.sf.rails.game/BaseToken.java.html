@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseToken.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">BaseToken.java</span></div><h1>BaseToken.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+/**
+ * A BaseToken object represents a token that a operating public company can
+ * place on the map to act as a rail building and train running starting point.
+ * &lt;p&gt; The &quot;Base&quot; qualifier is used (more or less) consistently in this
+ * rails.game program as it most closely the function of such a token: to act as
+ * a base from which a company can operate. Other names used in various games
+ * and discussions are &quot;railhead&quot;, &quot;station&quot;, &quot;garrison&quot;, or just &quot;token&quot;.
+ */
+
+public class BaseToken extends Token&lt;BaseToken&gt; {
+
+    private BaseToken(PublicCompany parent, String id) {
+<span class="fc" id="L15">        super(parent, id, BaseToken.class);</span>
+<span class="fc" id="L16">    }</span>
+    
+    public static BaseToken create(PublicCompany company) {
+<span class="fc" id="L19">        String uniqueId = Token.createUniqueId(company);</span>
+<span class="fc" id="L20">        return new BaseToken(company, uniqueId);</span>
+    }
+
+    @Override
+    public PublicCompany getParent() {
+<span class="fc" id="L25">        return (PublicCompany)super.getParent();</span>
+    }
+    
+    public boolean isPlaced() {
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        return !(getOwner() == getParent());</span>
+    }
+
+
+    // FIXME: Check if this works, previously it returned the parent id
+    // However this was invalid for the portfolio storage
+//    public String getId() {
+//        return getParent().getId();
+//    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

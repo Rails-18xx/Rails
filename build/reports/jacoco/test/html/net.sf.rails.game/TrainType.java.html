@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TrainType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">TrainType.java</span></div><h1>TrainType.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.state.BooleanState;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+public class TrainType implements Cloneable {
+
+    public final static int TOWN_COUNT_MAJOR = 2;
+    public final static int TOWN_COUNT_MINOR = 1;
+    public final static int NO_TOWN_COUNT = 0;
+
+    protected String name;
+    protected TrainCertificateType certificateType;
+
+<span class="fc" id="L22">    protected String reachBasis = &quot;stops&quot;;</span>
+<span class="fc" id="L23">    protected boolean countHexes = false;</span>
+
+<span class="fc" id="L25">    protected String countTowns = &quot;major&quot;;</span>
+<span class="fc" id="L26">    protected int townCountIndicator = TOWN_COUNT_MAJOR;</span>
+
+<span class="fc" id="L28">    protected String scoreTowns = &quot;yes&quot;;</span>
+<span class="fc" id="L29">    protected int townScoreFactor = 1;</span>
+
+<span class="fc" id="L31">    protected String scoreCities = &quot;single&quot;;</span>
+<span class="fc" id="L32">    protected int cityScoreFactor = 1;</span>
+
+    protected int cost;
+    protected int majorStops;
+    protected int minorStops;
+
+<span class="fc" id="L38">    protected int lastIndex = 0;</span>
+
+    protected BooleanState rusted;
+
+    protected TrainManager trainManager;
+
+    /** In some cases, trains start their life in the Pool */
+<span class="fc" id="L45">    protected String initialPortfolio = &quot;IPO&quot;;</span>
+
+<span class="fc" id="L47">    private static final Logger log =</span>
+<span class="fc" id="L48">        LoggerFactory.getLogger(TrainType.class);</span>
+
+    /**
+     * @param real False for the default type, else real. The default type does
+     * not have top-level attributes.
+     */
+<span class="fc" id="L54">    public TrainType() {</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
+     */
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+
+        // Name
+<span class="fc" id="L63">        name = tag.getAttributeAsString(&quot;name&quot;);</span>
+
+        // Cost
+<span class="fc" id="L66">        cost = tag.getAttributeAsInteger(&quot;cost&quot;);</span>
+
+        // Major stops
+<span class="fc" id="L69">        majorStops = tag.getAttributeAsInteger(&quot;majorStops&quot;);</span>
+
+        // Minor stops
+<span class="fc" id="L72">        minorStops = tag.getAttributeAsInteger(&quot;minorStops&quot;);</span>
+
+        // Reach
+<span class="fc" id="L75">        Tag reachTag = tag.getChild(&quot;Reach&quot;);</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (reachTag != null) {</span>
+            // Reach basis
+<span class="fc" id="L78">            reachBasis = reachTag.getAttributeAsString(&quot;base&quot;, reachBasis);</span>
+
+            // Are towns counted (only relevant is reachBasis = &quot;stops&quot;)
+<span class="fc" id="L81">            countTowns =</span>
+<span class="fc" id="L82">                reachTag.getAttributeAsString(&quot;countTowns&quot;, countTowns);</span>
+        }
+
+        // Score
+<span class="fc" id="L86">        Tag scoreTag = tag.getChild(&quot;Score&quot;);</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (scoreTag != null) {</span>
+            // Reach basis
+<span class="fc" id="L89">            scoreTowns =</span>
+<span class="fc" id="L90">                scoreTag.getAttributeAsString(&quot;scoreTowns&quot;, scoreTowns);</span>
+
+            // Are towns counted (only relevant is reachBasis = &quot;stops&quot;)
+<span class="fc" id="L93">            scoreCities =</span>
+<span class="fc" id="L94">                scoreTag.getAttributeAsString(&quot;scoreCities&quot;, scoreCities);</span>
+        }
+
+        // Check the reach and score values
+<span class="fc" id="L98">        countHexes = reachBasis.equals(&quot;hexes&quot;);</span>
+<span class="fc" id="L99">        townCountIndicator =</span>
+<span class="fc bfc" id="L100" title="All 4 branches covered.">            countTowns.equals(&quot;no&quot;) ? NO_TOWN_COUNT : minorStops &gt; 0</span>
+<span class="fc" id="L101">                    ? TOWN_COUNT_MINOR : TOWN_COUNT_MAJOR;</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        cityScoreFactor = scoreCities.equalsIgnoreCase(&quot;double&quot;) ? 2 : 1;</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        townScoreFactor = scoreTowns.equalsIgnoreCase(&quot;yes&quot;) ? 1 : 0;</span>
+        // Actually we should meticulously check all values....
+
+<span class="fc" id="L106">    }</span>
+
+    public void finishConfiguration (RailsRoot root, TrainCertificateType trainCertificateType)
+    throws ConfigurationException {
+
+<span class="fc" id="L111">        trainManager = root.getTrainManager();</span>
+<span class="fc" id="L112">        this.certificateType = trainCertificateType;</span>
+
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        if (name == null) {</span>
+<span class="nc" id="L115">            throw new ConfigurationException(&quot;No name specified for Train&quot;);</span>
+        }
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if (cost == 0) {</span>
+<span class="nc" id="L118">            throw new ConfigurationException(&quot;No price specified for Train &quot;+name);</span>
+        }
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (majorStops == 0) {</span>
+<span class="nc" id="L121">            throw new ConfigurationException(&quot;No major stops specified for Train &quot;+name);</span>
+        }
+<span class="fc" id="L123">    }</span>
+
+    public TrainCertificateType getCertificateType() {
+<span class="nc" id="L126">        return certificateType;</span>
+    }
+
+    /**
+     * @return Returns the cityScoreFactor.
+     */
+    public int getCityScoreFactor() {
+<span class="nc" id="L133">        return cityScoreFactor;</span>
+    }
+
+    /**
+     * @return Returns the cost.
+     */
+    public int getCost() {
+<span class="fc" id="L140">        return cost;</span>
+    }
+
+    /**
+     * @return Returns the countHexes.
+     */
+    public boolean countsHexes() {
+<span class="nc" id="L147">        return countHexes;</span>
+    }
+
+    /**
+     * @return Returns the majorStops.
+     */
+    public int getMajorStops() {
+<span class="nc" id="L154">        return majorStops;</span>
+    }
+
+    /**
+     * @return Returns the minorStops.
+     */
+    public int getMinorStops() {
+<span class="nc" id="L161">        return minorStops;</span>
+    }
+
+    /**
+     * @return Returns the name.
+     */
+    public String getName() {
+<span class="fc" id="L168">        return name;</span>
+    }
+
+    /**
+     * @return Returns the townCountIndicator.
+     */
+    public int getTownCountIndicator() {
+<span class="nc" id="L175">        return townCountIndicator;</span>
+    }
+
+    /**
+     * @return Returns the townScoreFactor.
+     */
+    public int getTownScoreFactor() {
+<span class="nc" id="L182">        return townScoreFactor;</span>
+    }
+
+    @Override
+    public Object clone() {
+
+<span class="nc" id="L188">        Object clone = null;</span>
+        try {
+<span class="nc" id="L190">            clone = super.clone();</span>
+<span class="nc" id="L191">        } catch (CloneNotSupportedException e) {</span>
+<span class="nc" id="L192">            log.error(&quot;Cannot clone traintype &quot; + name, e);</span>
+<span class="nc" id="L193">            return null;</span>
+<span class="nc" id="L194">        }</span>
+
+<span class="nc" id="L196">        return clone;</span>
+    }
+
+    public TrainManager getTrainManager() {
+<span class="nc" id="L200">        return trainManager;</span>
+    }
+
+    public String getInfo() {
+<span class="nc" id="L204">        StringBuilder b = new StringBuilder (&quot;&lt;html&gt;&quot;);</span>
+<span class="nc" id="L205">        b.append(LocalText.getText(&quot;TrainInfo&quot;, name, Bank.format(trainManager, cost), 0));</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">        if (b.length() == 6) b.append(LocalText.getText(&quot;None&quot;));</span>
+
+<span class="nc" id="L208">        return b.toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L213">        return name;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

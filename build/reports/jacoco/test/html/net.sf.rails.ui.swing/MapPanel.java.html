@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapPanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing</a> &gt; <span class="el_source">MapPanel.java</span></div><h1>MapPanel.java</h1><pre class="source lang-java linenums">/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MapPanel.java,v 1.15 2010/06/24 21:48:08 stefanfrey Exp $*/
+package net.sf.rails.ui.swing;
+
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+
+import net.sf.rails.game.MapManager;
+import net.sf.rails.ui.swing.hexmap.GUIHex;
+import net.sf.rails.ui.swing.hexmap.HexMap;
+import net.sf.rails.ui.swing.hexmap.HexMapImage;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * MapWindow class displays the Map Window. It's shocking, I know.
+ */
+public class MapPanel extends JPanel {
+
+    private static final long serialVersionUID = 1L;
+    //defines how many pixels should be left as safety margin when calculating fit zooms
+    private static final int ZOOM_FIT_SAFETY_MARGIN = 4;
+
+    private MapManager mmgr;
+    private HexMap map;
+    private HexMapImage mapImage;
+    private JScrollPane scrollPane;
+
+    private GameUIManager gameUIManager;
+
+    private JLayeredPane layeredPane;
+    private Dimension originalMapSize;
+    private Dimension currentMapSize;
+
+    //active fit-to zoom options
+<span class="nc" id="L38">    private boolean fitToWidth = false;</span>
+<span class="nc" id="L39">    private boolean fitToHeight = false;</span>
+
+<span class="nc" id="L41">    private static final Logger log = LoggerFactory.getLogger(MapPanel.class);</span>
+
+<span class="nc" id="L43">    public MapPanel(GameUIManager gameUIManager) {</span>
+<span class="nc" id="L44">        this.gameUIManager = gameUIManager;</span>
+
+
+<span class="nc" id="L47">        setLayout(new BorderLayout());</span>
+
+<span class="nc" id="L49">        mmgr = gameUIManager.getRoot().getMapManager();</span>
+        try {
+<span class="nc" id="L51">            map =(HexMap) Class.forName(mmgr.getMapUIClassName()).newInstance();</span>
+<span class="nc" id="L52">            map.init(gameUIManager.getORUIManager(), mmgr);</span>
+<span class="nc" id="L53">            originalMapSize = map.getOriginalSize();</span>
+<span class="nc" id="L54">        } catch (Exception e) {</span>
+<span class="nc" id="L55">            log.error(&quot;Map class instantiation error:&quot;, e);</span>
+<span class="nc" id="L56">            return;</span>
+<span class="nc" id="L57">        }</span>
+
+        //lightwight tooltip possible since tool tip has its own layer in hex map
+<span class="nc" id="L60">        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(true);</span>
+
+        //tooltip should not be dismissed after at all
+<span class="nc" id="L63">        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);</span>
+
+<span class="nc" id="L65">        layeredPane = new JLayeredPane();</span>
+<span class="nc" id="L66">        layeredPane.setLayout(null);</span>
+<span class="nc" id="L67">        layeredPane.setPreferredSize(originalMapSize);</span>
+<span class="nc" id="L68">        map.setBounds(0, 0, originalMapSize.width, originalMapSize.height);</span>
+<span class="nc" id="L69">        map.addLayers(layeredPane, 1);</span>
+
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (mmgr.isMapImageUsed()) {</span>
+<span class="nc" id="L72">            mapImage = new HexMapImage ();</span>
+<span class="nc" id="L73">            mapImage.init(mmgr,map);</span>
+<span class="nc" id="L74">            mapImage.setPreferredSize(originalMapSize);</span>
+<span class="nc" id="L75">            mapImage.setBounds(0, 0, originalMapSize.width, originalMapSize.height);</span>
+<span class="nc" id="L76">            layeredPane.add(mapImage, -1);</span>
+        }
+
+<span class="nc" id="L79">        scrollPane = new JScrollPane(layeredPane);</span>
+<span class="nc" id="L80">        scrollPane.setSize(originalMapSize);</span>
+<span class="nc" id="L81">        add(scrollPane, BorderLayout.CENTER);</span>
+
+<span class="nc" id="L83">        setSize(originalMapSize);</span>
+<span class="nc" id="L84">        setLocation(25, 25);</span>
+
+        //add listener for auto fit upon resize events
+<span class="nc" id="L87">        addComponentListener(new ComponentAdapter() {</span>
+            @Override
+            public void componentResized(ComponentEvent e) {
+<span class="nc" id="L90">                super.componentResized(e);</span>
+<span class="nc" id="L91">                zoomFit (fitToWidth, fitToHeight);</span>
+<span class="nc" id="L92">            }</span>
+        });
+<span class="nc" id="L94">    }</span>
+
+
+    public void scrollPaneShowRectangle(Rectangle rectangle) {
+
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (rectangle == null) return;</span>
+
+<span class="nc" id="L101">        JViewport viewport = scrollPane.getViewport();</span>
+<span class="nc" id="L102">        log.debug(&quot;ScrollPane viewPort =&quot; + viewport);</span>
+
+        // check dimensions
+<span class="nc" id="L105">        log.debug(&quot;Map size =&quot; + map.getSize());</span>
+<span class="nc" id="L106">        log.debug(&quot;ScrollPane visibleRect =&quot; + scrollPane.getVisibleRect());</span>
+<span class="nc" id="L107">        log.debug(&quot;viewport size =&quot; + viewport.getSize());</span>
+
+        double setX, setY;
+<span class="nc" id="L110">        setX = Math.max(0, (rectangle.getCenterX() - viewport.getWidth() / 2));</span>
+<span class="nc" id="L111">        setY = Math.max(0, (rectangle.getCenterY() - viewport.getHeight() / 2));</span>
+
+<span class="nc" id="L113">        setX = Math.min(setX, Math.max(0, map.getSize().getWidth() -  viewport.getWidth()));</span>
+<span class="nc" id="L114">        setY = Math.min(setY, Math.max(0, map.getSize().getHeight() - viewport.getHeight()));</span>
+
+<span class="nc" id="L116">        final Point viewPosition = new Point((int)setX, (int)setY);</span>
+<span class="nc" id="L117">        log.debug(&quot;ViewPosition for ScrollPane = &quot; + viewPosition);</span>
+<span class="nc" id="L118">        SwingUtilities.invokeLater(new Runnable() {</span>
+            public void run() {
+<span class="nc" id="L120">                scrollPane.getViewport().setViewPosition(viewPosition);</span>
+<span class="nc" id="L121">            }</span>
+        });
+<span class="nc" id="L123">    }</span>
+
+    private void adjustToNewMapZoom () {
+<span class="nc" id="L126">        currentMapSize = map.getCurrentSize();</span>
+<span class="nc" id="L127">        log.debug(&quot;Map.size = &quot; +currentMapSize);</span>
+<span class="nc" id="L128">        layeredPane.setPreferredSize(currentMapSize);</span>
+<span class="nc" id="L129">        map.setBounds(0, 0, currentMapSize.width, currentMapSize.height);</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (mapImage != null) {</span>
+<span class="nc" id="L131">            mapImage.setBoundsAndResize(currentMapSize,map.getZoomStep());</span>
+        }
+        //access from map panel to or panel not nice but currently necessary for route drawing
+<span class="nc bnc" id="L134" title="All 4 branches missed.">        if (gameUIManager.getORUIManager() != null &amp;&amp; gameUIManager.getORUIManager().getORPanel() != null)</span>
+<span class="nc" id="L135">            gameUIManager.getORUIManager().getORPanel().redrawRoutes();</span>
+<span class="nc" id="L136">        layeredPane.revalidate();</span>
+<span class="nc" id="L137">    }</span>
+
+    public void zoom (boolean in) {
+<span class="nc" id="L140">        removeFitToOption();</span>
+<span class="nc" id="L141">        map.zoom(in);</span>
+<span class="nc" id="L142">        adjustToNewMapZoom();</span>
+<span class="nc" id="L143">    }</span>
+
+    /**
+     * Zoom-to-fit functionality is based on the discrete zoom steps.
+     * In order to achieve correctly fitting zoom, continuous adjustment factors are
+     * determined on top of that.
+     */
+    private void zoomFit (boolean fitToWidth, boolean fitToHeight) {
+<span class="nc bnc" id="L151" title="All 4 branches missed.">        if (!fitToWidth &amp;&amp; !fitToHeight) return;</span>
+
+<span class="nc" id="L153">        ImageLoader imageLoader = GameUIManager.getImageLoader();</span>
+<span class="nc" id="L154">        int zoomStep = map.getZoomStep();</span>
+
+        //reset adjustment factor
+<span class="nc" id="L157">        imageLoader.resetAdjustmentFactor();</span>
+
+        //determine the available size to fit to
+        //(double needed for subsequent calculations)
+<span class="nc" id="L161">        double width = getSize().width - ZOOM_FIT_SAFETY_MARGIN;</span>
+<span class="nc" id="L162">        double height = getSize().height - ZOOM_FIT_SAFETY_MARGIN;</span>
+
+<span class="nc" id="L164">        double idealFactorWidth = width / originalMapSize.width;</span>
+<span class="nc" id="L165">        double idealFactorHeight = height / originalMapSize.height;</span>
+
+        //determine which dimension will be the critical one for the resize
+<span class="nc bnc" id="L168" title="All 6 branches missed.">        boolean isWidthCritical = ( !fitToHeight</span>
+                || (fitToWidth &amp;&amp; idealFactorWidth &lt; idealFactorHeight));
+
+        //check whether scrollbar will appear in the fit-to dimension and
+        //reduce available size accordingly (not relevant for fit-to-window)
+<span class="nc bnc" id="L173" title="All 4 branches missed.">        if (isWidthCritical &amp;&amp; idealFactorWidth &gt; idealFactorHeight) {</span>
+<span class="nc" id="L174">            width -= scrollPane.getVerticalScrollBar().getPreferredSize().width;</span>
+<span class="nc" id="L175">            idealFactorWidth = width / originalMapSize.width;</span>
+        }
+<span class="nc bnc" id="L177" title="All 4 branches missed.">        if (!isWidthCritical &amp;&amp; idealFactorWidth &lt; idealFactorHeight) {</span>
+<span class="nc" id="L178">            height -= scrollPane.getHorizontalScrollBar().getPreferredSize().height;</span>
+<span class="nc" id="L179">            idealFactorHeight = height / originalMapSize.height;</span>
+        }
+
+        //abort resize if no space available
+<span class="nc bnc" id="L183" title="All 4 branches missed.">        if (width &lt; 0 || height &lt; 0) return;</span>
+
+        //increase zoomFactor until constraints do not hold
+        //OR zoom cannot be increased any more
+        while
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            (</span>
+                    (
+<span class="nc bnc" id="L190" title="All 4 branches missed.">                            (!fitToWidth || idealFactorWidth &gt; imageLoader.getZoomFactor(zoomStep))</span>
+                            &amp;&amp;
+<span class="nc bnc" id="L192" title="All 2 branches missed.">                            (!fitToHeight || idealFactorHeight &gt; imageLoader.getZoomFactor(zoomStep))</span>
+                    )
+                    &amp;&amp;
+<span class="nc bnc" id="L195" title="All 2 branches missed.">                    imageLoader.getZoomFactor(zoomStep+1) != imageLoader.getZoomFactor(zoomStep)</span>
+            )
+<span class="nc" id="L197">            zoomStep++;</span>
+
+        //decrease zoomFactor until constraints do hold
+        //OR zoom cannot be decreased any more
+        while
+<span class="nc bnc" id="L202" title="All 2 branches missed.">            (</span>
+                    (
+<span class="nc bnc" id="L204" title="All 4 branches missed.">                            (fitToWidth &amp;&amp; idealFactorWidth &lt; imageLoader.getZoomFactor(zoomStep))</span>
+                            ||
+<span class="nc bnc" id="L206" title="All 2 branches missed.">                            (fitToHeight &amp;&amp; idealFactorHeight &lt; imageLoader.getZoomFactor(zoomStep))</span>
+                    )
+                    &amp;&amp;
+<span class="nc bnc" id="L209" title="All 2 branches missed.">                    imageLoader.getZoomFactor(zoomStep-1) != imageLoader.getZoomFactor(zoomStep)</span>
+            )
+<span class="nc" id="L211">            zoomStep--;</span>
+
+        //Determine and apply adjustment factor for precise fit
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        double idealFactor = isWidthCritical ? idealFactorWidth : idealFactorHeight;</span>
+<span class="nc" id="L215">        imageLoader.setZoomAdjustmentFactor (</span>
+<span class="nc" id="L216">                idealFactor / imageLoader.getZoomFactor(zoomStep));</span>
+
+        //trigger zoom execution
+<span class="nc" id="L219">        map.setZoomStep(zoomStep);</span>
+
+<span class="nc" id="L221">        adjustToNewMapZoom();</span>
+<span class="nc" id="L222">    }</span>
+
+    private void fitToOption (boolean fitToWidth, boolean fitToHeight) {
+        //ignore if nothing has changed
+<span class="nc bnc" id="L226" title="All 4 branches missed.">        if (this.fitToWidth == fitToWidth &amp;&amp; this.fitToHeight == fitToHeight ) return;</span>
+
+<span class="nc" id="L228">        this.fitToWidth = fitToWidth;</span>
+<span class="nc" id="L229">        this.fitToHeight = fitToHeight;</span>
+<span class="nc" id="L230">        zoomFit(fitToWidth, fitToHeight);</span>
+<span class="nc" id="L231">    }</span>
+
+    public void fitToWindow () {
+<span class="nc" id="L234">        fitToOption (true, true);</span>
+<span class="nc" id="L235">    }</span>
+
+    public void fitToWidth () {
+<span class="nc" id="L238">        fitToOption (true, false);</span>
+<span class="nc" id="L239">    }</span>
+
+    public void fitToHeight () {
+<span class="nc" id="L242">        fitToOption (false, true);</span>
+<span class="nc" id="L243">    }</span>
+
+    public void removeFitToOption () {
+<span class="nc" id="L246">        fitToWidth = false;</span>
+<span class="nc" id="L247">        fitToHeight = false;</span>
+<span class="nc" id="L248">    }</span>
+
+<span class="nc" id="L250">    public void keyPressed(KeyEvent e) {}</span>
+
+<span class="nc" id="L252">    public void keyReleased(KeyEvent e) {}</span>
+
+    public HexMap getMap() {
+<span class="nc" id="L255">        return map;</span>
+    }
+
+    public GUIHex getSelectedHex() {
+<span class="nc" id="L259">        return map.getSelectedHex();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

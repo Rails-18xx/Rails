@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DockingFrame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.elements</a> &gt; <span class="el_source">DockingFrame.java</span></div><h1>DockingFrame.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.elements;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
+import net.sf.rails.common.Config;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.ui.swing.SplashWindow;
+import net.sf.rails.util.SystemOS;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+import bibliothek.gui.DockController;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.ScreenDockStation;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.common.CControl;
+import bibliothek.gui.dock.common.CGrid;
+import bibliothek.gui.dock.common.CStation;
+import bibliothek.gui.dock.common.DefaultSingleCDockable;
+import bibliothek.gui.dock.common.action.predefined.CBlank;
+import bibliothek.gui.dock.common.event.CDockableStateListener;
+import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.DefaultCDockable;
+import bibliothek.gui.dock.common.intern.DefaultCommonDockable;
+import bibliothek.gui.dock.common.intern.ui.CSingleParentRemover;
+import bibliothek.gui.dock.common.menu.CThemeMenuPiece;
+import bibliothek.gui.dock.common.menu.SingleCDockableListMenuPiece;
+import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.common.theme.ThemeMap;
+import bibliothek.gui.dock.event.DockStationAdapter;
+import bibliothek.gui.dock.facile.menu.RootMenuPiece;
+import bibliothek.gui.dock.facile.menu.SubmenuPiece;
+import bibliothek.gui.dock.station.LayoutLocked;
+import bibliothek.gui.dock.support.menu.SeparatingMenuPiece;
+
+
+/**
+ * Superclass for all application frames that want to use the docking
+ * framework for managing its panels.
+ *
+ * All references to the docking framework are private by purpose. This
+ * enforces that any sub-class must not deal with any framework related
+ * issues (this superclass acts as a facade to the framework).
+ *
+ * @author Frederick Weld
+ *
+ */
+public abstract class DockingFrame extends JFrame {
+<span class="nc" id="L66">    public enum DockableProperty {STANDARD, CLOSEABLE, INITIALLY_HIDDEN};</span>
+    private static final long serialVersionUID = 1L;
+    private static final String LAYOUT_DIRECTORY_NAME = &quot;DockableLayout&quot;;
+    private static final String LAYOUT_FILE_SUFFIX = &quot;_layout.rails_ini&quot;;
+    private static final String LAYOUT_NAME_INITIAL = &quot;InitialLayout&quot;;
+    private static final String LAYOUT_NAME_CURRENT = &quot;CurrentLayout&quot;;
+    private static final String DEFAULT_THEME = ThemeMap.KEY_BASIC_THEME;
+
+<span class="nc" id="L74">    private static final Logger log = LoggerFactory.getLogger(DockingFrame.class);</span>
+
+    private boolean isDockingFrameworkEnabled;
+<span class="nc" id="L77">    private CControl control = null;</span>
+<span class="nc" id="L78">    private CGrid gridLayout = null;</span>
+
+    /**
+     * All dockables under the control (currently only single dockables)
+     */
+<span class="nc" id="L83">    private List&lt;DefaultSingleCDockable&gt; dockables = new ArrayList&lt;DefaultSingleCDockable&gt;();</span>
+<span class="nc" id="L84">    private List&lt;DefaultSingleCDockable&gt; dockables_initiallyHidden = new ArrayList&lt;DefaultSingleCDockable&gt;();</span>
+
+    /**
+     * Decision whether docking framework should be activated for a frame
+     * has to be done at the beginning as later switching is not supported
+     */
+<span class="nc" id="L90">    protected DockingFrame(boolean isDockingFrameworkEnabled, SplashWindow splashWindow) {</span>
+
+<span class="nc" id="L92">        this.isDockingFrameworkEnabled = isDockingFrameworkEnabled;</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (!isDockingFrameworkEnabled) return;</span>
+
+<span class="nc" id="L95">        splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_DOCKING_FRAME);</span>
+
+        //init the ccontrol
+<span class="nc" id="L98">        control = new CControl( this );</span>
+<span class="nc" id="L99">        control.setTheme(DEFAULT_THEME);</span>
+<span class="nc" id="L100">        add( control.getContentArea() );</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (&quot;en_us&quot;.equalsIgnoreCase(Config.get(&quot;locale&quot;))) {</span>
+            //hard setting to default in case of US as this is DockingFrames default language
+            //don't use Locale constant as it is en_US (case sensitive)
+<span class="nc" id="L104">            control.setLanguage(new Locale(&quot;&quot;));</span>
+        }
+
+        //init the grid layout
+<span class="nc" id="L108">        gridLayout = new CGrid( control );</span>
+
+        //ensure that externalized dockables get a split station as parent
+        //necessary, otherwise externalized dockables cannot be docked together
+<span class="nc" id="L112">        alwaysAddStationsToExternalizedDockables(control);</span>
+
+
+<span class="nc" id="L115">    }</span>
+
+    public boolean isDockingFrameworkEnabled() {
+<span class="nc" id="L118">        return isDockingFrameworkEnabled;</span>
+    }
+
+    /**
+     * Registers a component that is to become a dockable.
+     * The dockable is only deployed to the frame if deployDockables is called.
+     */
+    protected void addDockable(JComponent c,
+            String dockableConfigKey,
+            int x, int y, int width, int height,
+            DockableProperty dockableProperty) {
+<span class="nc" id="L129">        String dockableTitle = LocalText.getText(dockableConfigKey);</span>
+<span class="nc" id="L130">        DefaultSingleCDockable d = new DefaultSingleCDockable(</span>
+                dockableTitle, dockableTitle );
+<span class="nc" id="L132">        d.add( c, BorderLayout.CENTER );</span>
+<span class="nc" id="L133">        d.setTitleIcon(RailsIcon.getByConfigKey(dockableConfigKey).smallIcon);</span>
+<span class="nc bnc" id="L134" title="All 4 branches missed.">        d.setCloseable(</span>
+                (  dockableProperty == DockableProperty.CLOSEABLE
+                || dockableProperty == DockableProperty.INITIALLY_HIDDEN)
+        );
+<span class="nc" id="L138">        gridLayout.add( x, y, width, height, d );</span>
+<span class="nc" id="L139">        dockables.add(d);</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (dockableProperty == DockableProperty.INITIALLY_HIDDEN ) {</span>
+<span class="nc" id="L141">            dockables_initiallyHidden.add(d);</span>
+        }
+<span class="nc" id="L143">    }</span>
+
+    /**
+     * Deploys to the frame all dockables that have been added before.
+     * Dockables are initially set to invisible if this is as specified
+     */
+    protected void deployDockables() {
+<span class="nc" id="L150">        control.getContentArea().deploy( gridLayout );</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        for (CDockable d : dockables_initiallyHidden) {</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">            if (d.isCloseable()) d.setVisible(false);</span>
+<span class="nc" id="L153">        }</span>
+<span class="nc" id="L154">    }</span>
+
+    /**
+     * Creates a generic layout menu and adds it to the specified menu bar
+     */
+    protected void addDockingFrameMenu(JMenuBar menuBar) {
+<span class="nc" id="L160">        RootMenuPiece layoutMenu = new RootMenuPiece(</span>
+<span class="nc" id="L161">                LocalText.getText(&quot;DockingFrame.menu.layout&quot;),</span>
+                false);
+
+<span class="nc" id="L164">        layoutMenu.add( new SubmenuPiece(</span>
+<span class="nc" id="L165">                LocalText.getText(&quot;DockingFrame.menu.layout.theme&quot;),</span>
+                false,
+                new CThemeMenuPiece( control )
+        ));
+
+<span class="nc" id="L170">        SingleCDockableListMenuPiece closeableDockableMenuPiece =</span>
+<span class="nc" id="L171">                new SingleCDockableListMenuPiece(control) {</span>
+            @Override
+            protected void show(Dockable dockable) {
+<span class="nc" id="L174">                super.show(dockable);</span>
+                //ensure that, if the dockable is externalized, the max button is disabled
+<span class="nc bnc" id="L176" title="All 2 branches missed.">                if (dockable instanceof DefaultCommonDockable) {</span>
+<span class="nc" id="L177">                    adjustExternalizedActions((DefaultCommonDockable)dockable);</span>
+                }
+<span class="nc" id="L179">            }</span>
+        };
+<span class="nc" id="L181">        layoutMenu.add(new SeparatingMenuPiece(closeableDockableMenuPiece,true,true,true));</span>
+
+<span class="nc" id="L183">        JMenuItem resetMenuItem = new JMenuItem (</span>
+<span class="nc" id="L184">                LocalText.getText(&quot;DockingFrame.menu.layout.reset&quot;));</span>
+<span class="nc" id="L185">        resetMenuItem.addActionListener(new ActionListener() {</span>
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L187">                control.load(LAYOUT_NAME_INITIAL);</span>
+<span class="nc" id="L188">                control.setTheme(DEFAULT_THEME);</span>
+<span class="nc" id="L189">            }</span>
+        });
+<span class="nc" id="L191">        layoutMenu.getMenu().add(resetMenuItem);</span>
+<span class="nc" id="L192">        JMenuItem applyFromMenuItem = new JMenuItem (</span>
+<span class="nc" id="L193">                LocalText.getText(&quot;DockingFrame.menu.layout.applyFrom&quot;));</span>
+<span class="nc" id="L194">        applyFromMenuItem.addActionListener(new ActionListener() {</span>
+            public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L196">                loadLayoutUserDefined();</span>
+<span class="nc" id="L197">            }</span>
+        });
+<span class="nc" id="L199">        layoutMenu.getMenu().add(applyFromMenuItem);</span>
+
+        //deploy menu
+<span class="nc" id="L202">        menuBar.add( layoutMenu.getMenu() );</span>
+<span class="nc" id="L203">    }</span>
+
+    /**
+     * May only be called once the docking frame's layout has been constructed.
+     * Remembers that layout as the initial one.
+     * Loads a former layout if that was persisted in a prior session.
+     */
+    protected void initLayout() {
+<span class="nc" id="L211">        control.save(LAYOUT_NAME_INITIAL);</span>
+<span class="nc" id="L212">        loadLayout(getLayoutFile(),true);</span>
+<span class="nc" id="L213">    }</span>
+
+    /**
+     * @return The file name which is to be used for storing the layout upon exit
+     * and restoring prior layout when entering a session.
+     */
+    abstract protected String getLayoutFileName();
+
+    /**
+     * get layout directory (and ensure that it is available)
+     */
+    private File getLayoutDirectory() {
+<span class="nc" id="L225">        return SystemOS.get().getConfigurationFolder(LAYOUT_DIRECTORY_NAME, true);</span>
+    }
+
+    private File getLayoutFile() {
+<span class="nc" id="L229">        File layoutFile = new File(getLayoutDirectory(),</span>
+<span class="nc" id="L230">               getLayoutFileName() + LAYOUT_FILE_SUFFIX);</span>
+<span class="nc" id="L231">        return layoutFile;</span>
+    }
+
+    public void saveLayout() {
+<span class="nc bnc" id="L235" title="All 2 branches missed.">        if (!isDockingFrameworkEnabled) return;</span>
+
+<span class="nc" id="L237">        File layoutFile = getLayoutFile();</span>
+        try {
+<span class="nc" id="L239">            control.save(LAYOUT_NAME_CURRENT);</span>
+<span class="nc" id="L240">            control.writeXML(layoutFile);</span>
+<span class="nc" id="L241">            log.info(&quot;Layout saved to &quot; + layoutFile.getName());</span>
+<span class="nc" id="L242">        } catch (Exception e) {</span>
+<span class="nc" id="L243">            log.error(&quot;Layout could not be saved to &quot; + layoutFile.getName());</span>
+<span class="nc" id="L244">            return;</span>
+<span class="nc" id="L245">        }</span>
+<span class="nc" id="L246">    }</span>
+
+    /**
+     * @param isTentative If true, then method only tries to load specified layout
+     * but would not produce any error popup.
+     */
+    private void loadLayout(File layoutFile, boolean isTentative) {
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        if (!isDockingFrameworkEnabled) return;</span>
+
+        try {
+<span class="nc" id="L256">            control.readXML(layoutFile);</span>
+<span class="nc" id="L257">            control.load(LAYOUT_NAME_CURRENT);</span>
+<span class="nc" id="L258">            log.info(&quot;Layout loaded from &quot; + layoutFile.getName());</span>
+<span class="nc" id="L259">        } catch (Exception e) {</span>
+<span class="nc bnc" id="L260" title="All 2 branches missed.">            if (!isTentative) {</span>
+<span class="nc" id="L261">                JOptionPane.showMessageDialog(this,</span>
+<span class="nc" id="L262">                            &quot;Unable to load layout from &quot; + layoutFile.getName());</span>
+            }
+<span class="nc" id="L264">            log.error(&quot;Layout could not be loaded from &quot; + layoutFile.getName());</span>
+<span class="nc" id="L265">            return;</span>
+<span class="nc" id="L266">        }</span>
+
+<span class="nc" id="L268">        adjustExternalizedActions();</span>
+<span class="nc" id="L269">    }</span>
+
+    /**
+     * Ensures for all dockables that, if they are externalized, they do not have
+     * the default maximize button
+     * (as it won't work for the adjusted externalization setup).
+     */
+    private void adjustExternalizedActions() {
+<span class="nc bnc" id="L277" title="All 2 branches missed.">        for (CDockable d : dockables) {</span>
+<span class="nc" id="L278">            adjustExternalizedActions(d);</span>
+<span class="nc" id="L279">        }</span>
+<span class="nc" id="L280">    }</span>
+
+    /**
+     * Ensure that externalized dockable does not have default maximize button
+     * (as it won't work for the adjusted externalization setup).
+     * @param d Dockable for which the actions are to be adjusted
+     */
+    private void adjustExternalizedActions(CDockable d) {
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        if (d instanceof DefaultSingleCDockable) {</span>
+<span class="nc" id="L289">            DefaultSingleCDockable sd = (DefaultSingleCDockable)d;</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">            if (ExtendedMode.EXTERNALIZED.equals(sd.getExtendedMode())) {</span>
+<span class="nc" id="L291">                sd.putAction( CDockable.ACTION_KEY_MAXIMIZE, CBlank.BLANK );</span>
+            } else {
+<span class="nc" id="L293">                sd.putAction( CDockable.ACTION_KEY_MAXIMIZE, null );</span>
+            }
+        }
+<span class="nc" id="L296">    }</span>
+
+    private void adjustExternalizedActions(Dockable d) {
+<span class="nc bnc" id="L299" title="All 2 branches missed.">        if (d instanceof DefaultCommonDockable) {</span>
+<span class="nc" id="L300">            adjustExternalizedActions(((DefaultCommonDockable)d).getDockable());</span>
+        }
+<span class="nc" id="L302">    }</span>
+
+    /**
+     * Lets user choose a layout in a file chooser popup and then loads/applies it
+     */
+    private void loadLayoutUserDefined() {
+<span class="nc" id="L308">        JFileChooser jfc = new JFileChooser();</span>
+<span class="nc" id="L309">        jfc.setCurrentDirectory(getLayoutDirectory());</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">        if (jfc.showOpenDialog(getContentPane()) != JFileChooser.APPROVE_OPTION) return; // cancel pressed</span>
+<span class="nc" id="L311">        loadLayout(jfc.getSelectedFile(),false);</span>
+<span class="nc" id="L312">    }</span>
+
+    /**
+     * The behavior of the specified CControl is altered by the following:
+     * If a dockable is detached / externalized, it would normally put directly
+     * under the ScreenDockStation - thus inhibiting any docking to/from this
+     * dockable. This is changed such that a split station (that would allow for
+     * that) is put in between the ScreenDockStation and the Dockable.
+     */
+    private void alwaysAddStationsToExternalizedDockables(CControl cc) {
+
+        // access the DockStation which shows our detached (externalized) items
+<span class="nc" id="L324">        CStation&lt;?&gt; screen = (CStation&lt;?&gt;)</span>
+<span class="nc" id="L325">                cc.getStation( CControl.EXTERNALIZED_STATION_ID );</span>
+
+        // remove the standard maximize action when externalizing
+        // and adds it back when unexternalizing
+        // (as maximize won't work for the adjusted externalization setup)
+<span class="nc" id="L330">        cc.addStateListener( new CDockableStateListener() {</span>
+            public void visibilityChanged( CDockable cd ){
+                // ignore
+<span class="nc" id="L333">            }</span>
+
+            public void extendedModeChanged( CDockable cd, ExtendedMode mode ){
+<span class="nc bnc" id="L336" title="All 2 branches missed.">                if( cd instanceof DefaultCDockable ) {</span>
+<span class="nc" id="L337">                    DefaultCDockable dockable = (DefaultCDockable) cd;</span>
+<span class="nc bnc" id="L338" title="All 2 branches missed.">                    if( mode.equals( ExtendedMode.EXTERNALIZED ) ) {</span>
+<span class="nc" id="L339">                        dockable.putAction( CDockable.ACTION_KEY_MAXIMIZE, CBlank.BLANK );</span>
+                    }
+                    else {
+<span class="nc" id="L342">                        dockable.putAction( CDockable.ACTION_KEY_MAXIMIZE, null );</span>
+                    }
+                }
+<span class="nc" id="L345">            }</span>
+        });
+
+        // if a Dockable is added to that station...
+<span class="nc" id="L349">        screen.getStation().addDockStationListener( new ScreenDockStationListener());</span>
+
+        // make sure a SplitDockStation with one child and a parent
+        // that is a ScreenDockStation does not get removed
+<span class="nc" id="L353">        cc.intern().getController().setSingleParentRemover(</span>
+<span class="nc" id="L354">                new CSingleParentRemover( cc ){</span>
+            @Override
+            protected boolean shouldTest( DockStation station ){
+<span class="nc bnc" id="L357" title="All 2 branches missed.">                if( station instanceof SplitDockStation ) {</span>
+<span class="nc" id="L358">                    SplitDockStation split = (SplitDockStation) station;</span>
+<span class="nc bnc" id="L359" title="All 2 branches missed.">                    if( split.getDockParent() instanceof ScreenDockStation ) {</span>
+                        // but we want to remove the station if it does
+                        // not have any children at all
+<span class="nc bnc" id="L362" title="All 2 branches missed.">                        return split.getDockableCount() == 0;</span>
+                    }
+                }
+<span class="nc" id="L365">                return super.shouldTest( station );</span>
+            }
+        } );
+<span class="nc" id="L368">    }</span>
+
+    @LayoutLocked(locked = false)
+<span class="nc" id="L371">    private class ScreenDockStationListener extends DockStationAdapter {</span>
+        public void dockableAdded( DockStation station, final Dockable dockable ){
+            // ... and the new child is not a SplitDockStation ...
+<span class="nc bnc" id="L374" title="All 2 branches missed.">            if( !(dockable instanceof SplitDockStation) ) {</span>
+<span class="nc" id="L375">                SwingUtilities.invokeLater( new Runnable(){</span>
+                    public void run(){
+<span class="nc" id="L377">                        checkAndReplace( dockable );</span>
+<span class="nc" id="L378">                    }</span>
+                } );
+            }
+<span class="nc" id="L381">        }</span>
+        private void checkAndReplace( Dockable dockable ){
+<span class="nc" id="L383">            DockStation station = dockable.getDockParent();</span>
+<span class="nc bnc" id="L384" title="All 2 branches missed.">            if( !(station instanceof ScreenDockStation) ) {</span>
+                // cancel
+<span class="nc" id="L386">                return;</span>
+            }
+
+            // .. then we just insert a SplitDockStation
+<span class="nc" id="L390">            SplitDockStation split = new SplitDockStation();</span>
+<span class="nc" id="L391">            DockController controller = station.getController();</span>
+
+            try {
+                // disable events while rearranging our layout
+<span class="nc" id="L395">                controller.freezeLayout();</span>
+
+<span class="nc" id="L397">                station.replace( dockable, split );</span>
+<span class="nc" id="L398">                split.drop( dockable );</span>
+            }
+            finally {
+                // and enable events after we finished
+<span class="nc" id="L402">                controller.meltLayout();</span>
+            }
+
+            //ensure the correct availability of the maximize button
+<span class="nc" id="L406">            adjustExternalizedActions(dockable);</span>
+<span class="nc" id="L407">        }</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

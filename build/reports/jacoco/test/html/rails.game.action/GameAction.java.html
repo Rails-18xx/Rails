@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameAction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">rails.game.action</a> &gt; <span class="el_source">GameAction.java</span></div><h1>GameAction.java</h1><pre class="source lang-java linenums">package rails.game.action;
+
+import net.sf.rails.util.RailsObjects;
+
+import com.google.common.base.Objects;
+
+// This class does not need to be serialized
+// TODO: This will have to change as soon as actions are used for online play
+
+/**
+ * Rails 2.0: Updated equals and toString methods
+ */
+public class GameAction extends PossibleAction {
+    
+    private static final long serialVersionUID = 1L;
+
+<span class="nc" id="L17">    public static enum Mode { SAVE, LOAD, UNDO, FORCED_UNDO, REDO, EXPORT, RELOAD }</span>
+
+    // Server-side settings
+<span class="nc" id="L20">    protected Mode mode = null;</span>
+
+    // Client-side settings
+<span class="nc" id="L23">    protected String filePath = null; // Only applies to SAVE, LOAD and RELOAD</span>
+<span class="nc" id="L24">    protected int moveStackIndex = -1; // target moveStackIndex, only for FORCED_UNDO and REDO</span>
+
+    public GameAction(Mode mode) {
+<span class="nc" id="L27">        super(null); // not defined by an activity yet</span>
+<span class="nc" id="L28">        this.mode = mode;</span>
+<span class="nc" id="L29">    }</span>
+
+    public void setFilepath(String filepath) {
+<span class="nc" id="L32">        this.filePath = filepath;</span>
+<span class="nc" id="L33">    }</span>
+
+    public String getFilepath() {
+<span class="nc" id="L36">        return filePath;</span>
+    }
+
+    public void setmoveStackIndex(int moveStackIndex) {
+<span class="nc" id="L40">        this.moveStackIndex = moveStackIndex;</span>
+<span class="nc" id="L41">    }</span>
+
+    public int getmoveStackIndex() {
+<span class="nc" id="L44">        return moveStackIndex;</span>
+    }
+    
+    public Mode getMode() {
+<span class="nc" id="L48">        return mode;</span>
+    }
+
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (pa == this) return true;</span>
+        //  super checks both class identity and super class attributes
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        if (!super.equalsAs(pa, asOption)) return false; </span>
+
+        // check asOption attributes
+<span class="nc" id="L59">        GameAction action = (GameAction)pa; </span>
+<span class="nc" id="L60">        boolean options = Objects.equal(this.mode, action.mode);</span>
+        
+        // finish if asOptions check
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        if (asOption) return options;</span>
+        
+        // check asAction attributes
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        return options</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.filePath, action.filePath)</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.moveStackIndex, action.moveStackIndex)</span>
+        ;
+    }
+
+    public String toString() {
+<span class="nc" id="L73">        return super.toString() + </span>
+<span class="nc" id="L74">                RailsObjects.stringHelper(this)</span>
+<span class="nc" id="L75">                    .addToString(&quot;mode&quot;, mode)</span>
+<span class="nc" id="L76">                    .addToStringOnlyActed(&quot;filePath&quot;, filePath)</span>
+<span class="nc" id="L77">                    .addToStringOnlyActed(&quot;moveStackIndex&quot;, moveStackIndex)</span>
+<span class="nc" id="L78">                    .toString()</span>
+        ;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

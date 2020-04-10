@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GUIToken.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing</a> &gt; <span class="el_source">GUIToken.java</span></div><h1>GUIToken.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing;
+
+import java.awt.*;
+import java.awt.font.TextAttribute;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.JPanel;
+
+import net.sf.rails.ui.swing.hexmap.GUIHex.HexPoint;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+/**
+ * This class draws a company's token.
+ */
+
+public class GUIToken extends JPanel {
+<span class="nc" id="L23">    private static final Logger log = LoggerFactory.getLogger(GUIToken.class);</span>
+
+    private static final long serialVersionUID = 1L;
+
+    private final Color fgColor, bgColor;
+    private final Ellipse2D.Double circle;
+    private final String name;
+    private final double diameter;
+
+//    private static final Font tokenFontTemplate = new Font(&quot;DroidSans&quot;, Font.BOLD, 10);
+<span class="nc" id="L33">    private static final Font TOKEN_FONT_TEMPLATE = new Font(&quot;Helvetica&quot;, Font.BOLD, 10);</span>
+    /**
+     * defined by the ratio of margin to diameter
+     * (eg., 0.2 means that 20% of the diameter is used as margin)
+     */
+    private static final double TOKEN_TEXT_MARGIN = 0.15;
+
+    public GUIToken(Color fc, Color bc, String name, HexPoint center,
+            double diameter) {
+<span class="nc" id="L42">        this(fc ,bc, name, center.getX(), center.getY(), diameter);</span>
+<span class="nc" id="L43">    }</span>
+
+    public GUIToken(Color fc, Color bc, String name, double c_x, double c_y,
+            double diameter) {
+<span class="nc" id="L47">        super();</span>
+
+<span class="nc" id="L49">        double x = c_x - 0.5 * diameter;</span>
+<span class="nc" id="L50">        double y = c_y - 0.5 * diameter;</span>
+
+<span class="nc" id="L52">        fgColor = fc;</span>
+<span class="nc" id="L53">        bgColor = bc;</span>
+<span class="nc" id="L54">        this.diameter = diameter;</span>
+
+<span class="nc" id="L56">        circle = new Ellipse2D.Double(x, y, diameter, diameter);</span>
+
+<span class="nc" id="L58">        this.setForeground(fgColor);</span>
+<span class="nc" id="L59">        this.setOpaque(false);</span>
+<span class="nc" id="L60">        this.setVisible(true);</span>
+<span class="nc" id="L61">        this.setBounds((int)Math.round(x), (int)Math.round(y),</span>
+<span class="nc" id="L62">                (int)Math.round(diameter), (int)Math.round(diameter));</span>
+<span class="nc" id="L63">        this.name = name;</span>
+<span class="nc" id="L64">        log.trace(&quot;GUIToken with circle {}&quot;, circle.getBounds2D());</span>
+<span class="nc" id="L65">    }</span>
+
+    @Override
+    public void paintComponent(Graphics g) {
+<span class="nc" id="L69">        super.paintComponent(g);</span>
+<span class="nc" id="L70">        Graphics2D g2d = (Graphics2D) g;</span>
+<span class="nc" id="L71">        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);</span>
+<span class="nc" id="L72">        drawToken(g2d);</span>
+<span class="nc" id="L73">    }</span>
+
+    public void drawToken(Graphics2D g2d) {
+<span class="nc" id="L76">        Color oldColor = g2d.getColor();</span>
+<span class="nc" id="L77">        g2d.setColor(Color.BLACK);</span>
+<span class="nc" id="L78">        g2d.draw(circle);</span>
+<span class="nc" id="L79">        g2d.setColor(bgColor);</span>
+<span class="nc" id="L80">        g2d.fill(circle);</span>
+<span class="nc" id="L81">        g2d.setColor(oldColor);</span>
+
+<span class="nc" id="L83">        HexPoint tokenCenter = new HexPoint(circle.x + diameter/2,circle.y + diameter/2);</span>
+<span class="nc" id="L84">        drawTokenText(name, g2d, fgColor, tokenCenter, diameter);</span>
+<span class="nc" id="L85">    }</span>
+
+    public Color getBgColor() {
+<span class="nc" id="L88">        return bgColor;</span>
+    }
+
+    public Ellipse2D.Double getCircle() {
+<span class="nc" id="L92">        return circle;</span>
+    }
+
+    public Color getFgColor() {
+<span class="nc" id="L96">        return fgColor;</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="nc" id="L101">        return name;</span>
+    }
+
+    public static void drawTokenText (String text, Graphics g, Color c, HexPoint tokenCenter, double tokenDiameter) {
+
+        //recursion if text contains more than 3 characters
+        //not perfect (heuristic!) but good enough for this exceptional case
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (text.length() &gt; 3) {</span>
+<span class="nc" id="L109">            double newTokenDiameter = tokenDiameter / 2 / (1 - TOKEN_TEXT_MARGIN) * 1.2;</span>
+<span class="nc" id="L110">            HexPoint newTokenCenterA = tokenCenter.translate(0, - tokenDiameter / 4 / 1.3);</span>
+<span class="nc" id="L111">            HexPoint newTokenCenterB = tokenCenter.translate(0, tokenDiameter / 4 * 1.1);</span>
+<span class="nc" id="L112">            drawTokenText( text.substring(0, text.length() / 2), g, c,</span>
+                    newTokenCenterA, newTokenDiameter);
+<span class="nc" id="L114">            drawTokenText( text.substring(text.length() / 2, text.length()), g, c,</span>
+                    newTokenCenterB, newTokenDiameter);
+<span class="nc" id="L116">            return;</span>
+        }
+
+        //create condensed font if more than 2 chars in a line
+        Font fontTemplate;
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (text.length() &gt; 2) {</span>
+<span class="nc" id="L122">            Map&lt;TextAttribute, Object&gt; attributes = new HashMap&lt;TextAttribute, Object&gt;();</span>
+<span class="nc" id="L123">            attributes.put(TextAttribute.WIDTH, TextAttribute.WIDTH_CONDENSED);</span>
+<span class="nc" id="L124">            fontTemplate = TOKEN_FONT_TEMPLATE.deriveFont(attributes);</span>
+<span class="nc" id="L125">        } else {</span>
+<span class="nc" id="L126">            fontTemplate = TOKEN_FONT_TEMPLATE;</span>
+        }
+
+        //first calculate font size
+<span class="nc" id="L130">        double allowedTextDiameter = tokenDiameter * (1 - TOKEN_TEXT_MARGIN);</span>
+<span class="nc" id="L131">        Rectangle2D textBoundsInTemplate = g.getFontMetrics(fontTemplate).getStringBounds(text, g);</span>
+<span class="nc" id="L132">        double fontScalingX = allowedTextDiameter / textBoundsInTemplate.getWidth();</span>
+<span class="nc" id="L133">        double fontScalingY = allowedTextDiameter / textBoundsInTemplate.getHeight();</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        double fontScaling = (fontScalingX &lt; fontScalingY) ? fontScalingX : fontScalingY;</span>
+<span class="nc" id="L135">        int fontSize = (int) Math.floor(fontScaling * fontTemplate.getSize());</span>
+
+        //draw text
+<span class="nc" id="L138">        Color oldColor = g.getColor();</span>
+<span class="nc" id="L139">        Font oldFont = g.getFont();</span>
+<span class="nc" id="L140">        g.setColor(c);</span>
+<span class="nc" id="L141">        g.setFont(fontTemplate.deriveFont((float)fontSize)); //float needed to indicate size (not style)</span>
+<span class="nc" id="L142">        Rectangle2D textBounds = g.getFontMetrics().getStringBounds(text, g);</span>
+<span class="nc" id="L143">        g.drawString(text,</span>
+<span class="nc" id="L144">                (int)Math.round(tokenCenter.getX() - textBounds.getCenterX()),</span>
+<span class="nc" id="L145">                (int)Math.round(tokenCenter.getY() - textBounds.getCenterY()));</span>
+<span class="nc" id="L146">        g.setColor(oldColor);</span>
+<span class="nc" id="L147">        g.setFont(oldFont);</span>
+
+<span class="nc" id="L149">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

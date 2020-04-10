@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShareModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.model</a> &gt; <span class="el_source">ShareModel.java</span></div><h1>ShareModel.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.model;
+
+import net.sf.rails.game.PublicCompany;
+
+/**
+ * ShareModel for displaying the share percentages
+ */
+public final class ShareModel extends RailsModel {
+    
+    private final PublicCompany company;
+
+    private ShareModel(CertificatesModel parent, PublicCompany company) {
+<span class="fc" id="L13">        super(parent, &quot;shareModel_&quot; + company.getId());</span>
+<span class="fc" id="L14">        this.company = company;</span>
+        // have share model observe floatation status of company
+<span class="fc" id="L16">        company.getFloatedModel().addModel(this);</span>
+<span class="fc" id="L17">    }</span>
+
+    public static ShareModel create(CertificatesModel certModel, PublicCompany company) {
+<span class="fc" id="L20">        ShareModel model = new ShareModel(certModel, company);</span>
+<span class="fc" id="L21">        certModel.addModel(model);</span>
+<span class="fc" id="L22">        return model;</span>
+    }
+    
+    @Override
+    public CertificatesModel getParent() {
+<span class="nc" id="L27">        return (CertificatesModel)super.getParent();</span>
+    }
+    
+    @Override
+    public String toText() {
+<span class="nc" id="L32">        return getParent().toText(company);</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

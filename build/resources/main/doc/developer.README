@@ -1,0 +1,7 @@
+For the sake of starting some developer documentation:
+
+Here's the setup I've used to successfully compile the current codebase in CVS:
+
+Java JVM: Sun's J2SE 1.4.2 (and 1.5)
+OS: WinXP Pro (both 32-bit and 64-bit), Fedora Core 4
+IDE: Eclipse 3.1

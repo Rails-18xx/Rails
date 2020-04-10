@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShareSellingRound_1880.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1880</a> &gt; <span class="el_source">ShareSellingRound_1880.java</span></div><h1>ShareSellingRound_1880.java</h1><pre class="source lang-java linenums">/**
+ *
+ */
+package net.sf.rails.game.specific._1880;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GameOption;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.financial.BankPortfolio;
+import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.financial.ShareSellingRound;
+import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.GameDef;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.SellShares;
+
+/**
+ * @author Martin
+ *
+ */
+public class ShareSellingRound_1880 extends ShareSellingRound {
+<span class="fc" id="L36">    private static final Logger log = LoggerFactory.getLogger(ShareSellingRound_1880.class);</span>
+
+    /**
+     * @param gameManager
+     * @param parentRound
+     */
+    public ShareSellingRound_1880(GameManager parent, String id) {
+<span class="nc" id="L43">        super(parent, id);</span>
+<span class="nc" id="L44">    }</span>
+
+
+    @Override
+    public boolean setPossibleActions() {
+
+<span class="nc" id="L50">        possibleActions.clear();</span>
+
+<span class="nc" id="L52">        setSellableShares();</span>
+
+<span class="nc" id="L54">        possibleActions.add(new NullAction(NullAction.Mode.DONE));</span>
+
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        for (PossibleAction pa : possibleActions.getList()) {</span>
+<span class="nc" id="L57">            log.debug(currentPlayer.getId() + &quot; may: &quot; + pa.toString());</span>
+<span class="nc" id="L58">        }</span>
+
+<span class="nc" id="L60">        return true;</span>
+    }
+
+
+    /* (non-Javadoc)
+     * @see rails.game.StockRound#process(rails.game.action.PossibleAction)
+     */
+    @Override
+    public boolean process(PossibleAction action) {
+<span class="nc" id="L69">        currentPlayer = playerManager.getCurrentPlayer();</span>
+
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (action instanceof NullAction) {</span>
+<span class="nc" id="L72">             gameManager.finishShareSellingRound();</span>
+<span class="nc" id="L73">             return true;</span>
+        } else {
+<span class="nc" id="L75">            return super.process(action);</span>
+        }
+    }
+
+
+    /* (non-Javadoc)
+     * @see rails.game.ShareSellingRound#sellShares(rails.game.action.SellShares)
+     */
+    @Override
+    public boolean sellShares(SellShares action) {
+<span class="nc" id="L85">        PortfolioModel portfolio = currentPlayer.getPortfolioModel();</span>
+<span class="nc" id="L86">        String playerName = currentPlayer.getId();</span>
+<span class="nc" id="L87">        String errMsg = null;</span>
+<span class="nc" id="L88">        String companyName = action.getCompanyName();</span>
+<span class="nc" id="L89">        PublicCompany company =</span>
+<span class="nc" id="L90">            companyManager.getPublicCompany(action.getCompanyName());</span>
+<span class="nc" id="L91">        PublicCertificate cert = null;</span>
+<span class="nc" id="L92">        PublicCertificate presCert = null;</span>
+<span class="nc" id="L93">        List&lt;PublicCertificate&gt; certsToSell =</span>
+                new ArrayList&lt;PublicCertificate&gt;();
+<span class="nc" id="L95">        Player dumpedPlayer = null;</span>
+<span class="nc" id="L96">        int presSharesToSell = 0;</span>
+<span class="nc" id="L97">        int numberToSell = action.getNumber();</span>
+<span class="nc" id="L98">        int shareUnits = action.getShareUnits();</span>
+<span class="nc" id="L99">        int currentIndex = getCurrentPlayerIndex();</span>
+
+        // Dummy loop to allow a quick jump out
+        while (true) {
+
+            // Check everything
+<span class="nc bnc" id="L105" title="All 2 branches missed.">            if (numberToSell &lt;= 0) {</span>
+<span class="nc" id="L106">                errMsg = LocalText.getText(&quot;NoSellZero&quot;);</span>
+<span class="nc" id="L107">                break;</span>
+            }
+
+            // Check company
+<span class="nc bnc" id="L111" title="All 2 branches missed.">            if (company == null) {</span>
+<span class="nc" id="L112">                errMsg = LocalText.getText(&quot;NoCompany&quot;);</span>
+<span class="nc" id="L113">                break;</span>
+            }
+
+            // May player sell this company
+<span class="nc bnc" id="L117" title="All 2 branches missed.">            if (!mayPlayerSellShareOfCompany(company)) {</span>
+<span class="nc" id="L118">                errMsg = LocalText.getText(&quot;SaleNotAllowed&quot;, companyName);</span>
+<span class="nc" id="L119">                break;</span>
+            }
+
+            // The player must have the share(s)
+<span class="nc bnc" id="L123" title="All 2 branches missed.">            if (portfolio.getShare(company) &lt; numberToSell) {</span>
+<span class="nc" id="L124">                errMsg = LocalText.getText(&quot;NoShareOwned&quot;);</span>
+<span class="nc" id="L125">                break;</span>
+            }
+
+            // The pool may not get over its limit.
+<span class="nc" id="L129">            if (pool.getShare(company) + numberToSell * company.getShareUnit()</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                    &gt; GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)) {</span>
+<span class="nc" id="L131">                errMsg = LocalText.getText(&quot;PoolOverHoldLimit&quot;);</span>
+<span class="nc" id="L132">                break;</span>
+            }
+
+            // Find the certificates to sell
+<span class="nc" id="L136">            Iterator&lt;PublicCertificate&gt; it =</span>
+<span class="nc" id="L137">                    portfolio.getCertificates(company).iterator();</span>
+<span class="nc bnc" id="L138" title="All 4 branches missed.">            while (numberToSell &gt; 0 &amp;&amp; it.hasNext()) {</span>
+<span class="nc" id="L139">                cert = it.next();</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">                if (cert.isPresidentShare()) {</span>
+                    // Remember the president's certificate in case we need it
+<span class="nc bnc" id="L142" title="All 2 branches missed.">                    if (cert.isPresidentShare()) presCert = cert;</span>
+                    continue;
+<span class="nc bnc" id="L144" title="All 2 branches missed.">                } else if (shareUnits != cert.getShares()) {</span>
+                    // Wrong number of share units
+<span class="nc" id="L146">                    continue;</span>
+                }
+                // OK, we will sell this one
+<span class="nc" id="L149">                certsToSell.add(cert);</span>
+<span class="nc" id="L150">                numberToSell--;</span>
+            }
+<span class="nc bnc" id="L152" title="All 2 branches missed.">            if (numberToSell == 0) presCert = null;</span>
+
+<span class="nc bnc" id="L154" title="All 4 branches missed.">            if (numberToSell &gt; 0 &amp;&amp; presCert != null</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">                    &amp;&amp; numberToSell &lt;= presCert.getShares()) {</span>
+                // Not allowed to dump the company that needs the train
+<span class="nc bnc" id="L157" title="All 4 branches missed.">                if (company == cashNeedingCompany || !dumpOtherCompaniesAllowed) {</span>
+<span class="nc" id="L158">                    errMsg =</span>
+<span class="nc" id="L159">                        LocalText.getText(&quot;CannotDumpTrainBuyingPresidency&quot;);</span>
+<span class="nc" id="L160">                    break;</span>
+                }
+                // More to sell and we are President: see if we can dump it.
+                Player otherPlayer;
+<span class="nc" id="L164">                Player player = playerManager.getCurrentPlayer();</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">                for (int i = currentIndex + 1; i &lt; currentIndex</span>
+<span class="nc" id="L166">                + numberOfPlayers; i++) {</span>
+<span class="nc" id="L167">                    otherPlayer = playerManager.getNextPlayerAfter(player);</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">                    if (otherPlayer.getPortfolioModel().getShare(company) &gt;= presCert.getShare()) {</span>
+                        // Check if he has the right kind of share
+<span class="nc bnc" id="L170" title="All 2 branches missed.">                        if (numberToSell &gt; 1</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">                                || otherPlayer.getPortfolioModel().ownsCertificates(</span>
+                                        company, 1, false) &gt;= 1) {
+                            // The poor sod.
+<span class="nc" id="L174">                            dumpedPlayer = otherPlayer;</span>
+<span class="nc" id="L175">                            presSharesToSell = numberToSell;</span>
+<span class="nc" id="L176">                            numberToSell = 0;</span>
+<span class="nc" id="L177">                            break;</span>
+                        }
+                    }
+<span class="nc" id="L180">                    player = otherPlayer;</span>
+                }
+            }
+            // Check if we could sell them all
+<span class="nc bnc" id="L184" title="All 2 branches missed.">            if (numberToSell &gt; 0) {</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">                if (presCert != null) {</span>
+<span class="nc" id="L186">                    errMsg = LocalText.getText(&quot;NoDumping&quot;);</span>
+                } else {
+<span class="nc" id="L188">                    errMsg = LocalText.getText(&quot;NotEnoughShares&quot;);</span>
+                }
+<span class="nc" id="L190">                break;</span>
+            }
+
+            break;
+        }
+
+<span class="nc" id="L196">        int numberSold = action.getNumber();</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        if (errMsg != null) {</span>
+<span class="nc" id="L198">            DisplayBuffer.add(this, LocalText.getText(&quot;CantSell&quot;,</span>
+                    playerName,
+<span class="nc" id="L200">                    numberSold,</span>
+                    companyName,
+                    errMsg ));
+<span class="nc" id="L203">            return false;</span>
+        }
+
+        // All seems OK, now do the selling.
+        StockSpace sellPrice;
+        int price;
+
+     // Get the sell price (does not change within a turn)
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (sellPrices.containsKey(company)</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">                &amp;&amp; GameOption.getAsBoolean(this, &quot;SeparateSalesAtSamePrice&quot;)) {</span>
+<span class="nc" id="L213">            price = (sellPrices.get(company).getPrice());</span>
+        } else {
+<span class="nc" id="L215">            sellPrice = company.getCurrentSpace();</span>
+<span class="nc" id="L216">            price = sellPrice.getPrice();</span>
+<span class="nc" id="L217">            sellPrices.put(company, sellPrice);</span>
+        }
+<span class="nc" id="L219">        int cashAmount = ((numberSold * price * shareUnits)-(numberSold * 5)); //Deduct 5 Yuan per Sharecertificate Sold...</span>
+
+        // FIXME: changeStack.linkToPreviousMoveSet();
+<span class="nc" id="L222">        String cashText = Currency.fromBank(cashAmount, currentPlayer);</span>
+<span class="nc" id="L223">        ReportBuffer.add(this, LocalText.getText(&quot;SELL_SHARES_LOG&quot;,</span>
+                playerName,
+<span class="nc" id="L225">                numberSold,</span>
+<span class="nc" id="L226">                company.getShareUnit(),</span>
+<span class="nc" id="L227">                numberSold * company.getShareUnit(),</span>
+                companyName,
+                cashText ));
+
+<span class="nc" id="L231">        boolean soldBefore = sellPrices.containsKey(company);</span>
+
+<span class="nc" id="L233">        adjustSharePrice (company, numberSold, soldBefore);</span>
+
+<span class="nc bnc" id="L235" title="All 2 branches missed.">        if (!company.isClosed()) {</span>
+
+<span class="nc" id="L237">            executeShareTransfer (company, certsToSell,</span>
+                    dumpedPlayer, presSharesToSell);
+        }
+
+<span class="nc" id="L241">        cashToRaise.add(-numberSold * price);</span>
+
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        if (cashToRaise.value() &lt;= 0) {</span>
+<span class="nc" id="L244">            gameManager.finishShareSellingRound();</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">        } else if (getSellableShares().isEmpty()) {</span>
+<span class="nc" id="L246">            gameManager.finishShareSellingRound();</span>
+        }
+
+<span class="nc" id="L249">        return true;</span>
+    }
+
+    // In 1880 all share transfers via ipo
+    @Override
+    protected void executeShareTransfer( PublicCompany company,
+            List&lt;PublicCertificate&gt; certsToSell,
+            Player dumpedPlayer, int presSharesToSell) {
+
+<span class="nc" id="L258">        executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, (BankPortfolio)ipo.getParent() );</span>
+<span class="nc" id="L259">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

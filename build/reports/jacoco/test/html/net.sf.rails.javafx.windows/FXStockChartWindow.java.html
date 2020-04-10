@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FXStockChartWindow.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.javafx.windows</a> &gt; <span class="el_source">FXStockChartWindow.java</span></div><h1>FXStockChartWindow.java</h1><pre class="source lang-java linenums">package net.sf.rails.javafx.windows;
+
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import net.sf.rails.javafx.stockchart.FXStockChart;
+import net.sf.rails.ui.swing.GameUIManager;
+import net.sf.rails.ui.swing.StatusWindow;
+
+import java.util.concurrent.Executors;
+
+<span class="nc" id="L14">public class FXStockChartWindow extends Application {</span>
+    private static GameUIManager gameUIManager;
+
+    private static Stage stage;
+
+    public static void launch(GameUIManager gameUIManager) {
+<span class="nc" id="L20">        FXStockChartWindow.gameUIManager = gameUIManager;</span>
+
+        // launch the JavaFX window in a new thread, because the call blocks
+<span class="nc" id="L23">        Executors.newSingleThreadExecutor().execute(() -&gt; Application.launch(FXStockChartWindow.class));</span>
+<span class="nc" id="L24">    }</span>
+
+    /**
+     * Shows/Hides the stock-chart window depending on the given flag
+     *
+     * @param visible The show/hide flag
+     */
+    public static void setVisible(boolean visible) {
+<span class="nc" id="L32">        Platform.runLater(() -&gt; {</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">            if (visible) {</span>
+<span class="nc" id="L34">                stage.show();</span>
+            } else {
+<span class="nc" id="L36">                stage.hide();</span>
+            }
+<span class="nc" id="L38">        });</span>
+<span class="nc" id="L39">    }</span>
+
+    @Override
+    public void start(Stage primaryStage) {
+        // set the stock-chart window to hide, if it has been closed
+<span class="nc" id="L44">        Platform.setImplicitExit(false);</span>
+
+<span class="nc" id="L46">        Scene scene = new Scene(new FXStockChart(gameUIManager));</span>
+
+<span class="nc" id="L48">        primaryStage.setTitle(&quot;Rails: Stock Chart&quot;);</span>
+<span class="nc" id="L49">        primaryStage.setScene(scene);</span>
+
+        // uncheck market checkbox in the menu if the stock-chart has been closed
+<span class="nc" id="L52">        primaryStage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, event -&gt; {</span>
+<span class="nc" id="L53">            StatusWindow.uncheckMenuItemBox(StatusWindow.MARKET_CMD);</span>
+<span class="nc" id="L54">        });</span>
+
+        // TODO: save relocation and resizing information of the window
+
+<span class="nc" id="L58">        stage = primaryStage;</span>
+<span class="nc" id="L59">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

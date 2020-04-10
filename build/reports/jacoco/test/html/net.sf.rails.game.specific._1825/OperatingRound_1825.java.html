@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperatingRound_1825.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1825</a> &gt; <span class="el_source">OperatingRound_1825.java</span></div><h1>OperatingRound_1825.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1825;
+
+import java.util.*;
+
+import net.sf.rails.game.*;
+
+
+public class OperatingRound_1825 extends OperatingRound {
+
+    /**
+     * Constructed via Configure
+     */
+    public OperatingRound_1825(GameManager parent, String id) {
+<span class="nc" id="L14">        super(parent, id);</span>
+<span class="nc" id="L15">    }</span>
+    
+    @Override
+    public List&lt;PublicCompany&gt; setOperatingCompanies() {
+<span class="nc" id="L19">        Map&lt;Integer, PublicCompany&gt; operatingCompanies = new TreeMap&lt;Integer, PublicCompany&gt;();</span>
+        int space;
+        int key;
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        for (PublicCompany company : companyManager.getAllPublicCompanies()) {</span>
+<span class="nc" id="L23">            PublicCompany_1825 companycasted = (PublicCompany_1825)company;</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">            if (!canCompanyOperateThisRound(companycasted)) continue;    </span>
+<span class="nc bnc" id="L25" title="All 2 branches missed.">            if (!canCompanyOperateThisRound(company)) continue;</span>
+            // Key must put companies in reverse operating order, because sort
+            // is ascending.
+<span class="nc" id="L28">            space = companycasted.getIPOPrice();</span>
+            //Corps operate in descending IPO price
+            //Corps with the same IPO price operate in the order they were floated
+            //IPO price will inherently be in the right order
+            //subtracting the formation order index will put it at the right point to operate
+            //This wouldn't work if there are lots of corps at the same price
+            //there are not too many corps in each banding for this to be an issue in 1825 even with all 3 units
+<span class="nc" id="L35">            key = 1000000 - (space - companycasted.getFormationOrderIndex());</span>
+<span class="nc" id="L36">            operatingCompanies.put(new Integer(key), companycasted);</span>
+<span class="nc" id="L37">            }</span>
+<span class="nc" id="L38">        return new ArrayList&lt;PublicCompany&gt;(operatingCompanies.values());</span>
+     }
+
+    @Override
+    public List&lt;PublicCompany&gt; setOperatingCompanies(List&lt;PublicCompany&gt; oldOperatingCompanies,
+            PublicCompany lastOperatingCompany) {
+<span class="nc" id="L44">        return setOperatingCompanies();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

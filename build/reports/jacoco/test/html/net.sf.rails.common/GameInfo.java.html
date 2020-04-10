@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameInfo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.common</a> &gt; <span class="el_source">GameInfo.java</span></div><h1>GameInfo.java</h1><pre class="source lang-java linenums">package net.sf.rails.common;
+
+import com.google.common.base.Objects;
+import com.google.common.primitives.Ints;
+
+/**
+ * GameInfo holds basic information about the game, such as:
+ * 1. List of available game names.
+ * 2. Min. and Max. players for the game.
+ * 3. Game credits.
+ */
+public class GameInfo implements Comparable&lt;GameInfo&gt; {
+
+    private final int minPlayers;
+    private final int maxPlayers;
+
+    private final String name;
+    private final String note;
+    private final String description;
+    
+    private final int ordering;
+    
+    private GameInfo(int minPlayers, int maxPlayers, String name, String note,
+<span class="fc" id="L24">            String description, int ordering) {</span>
+<span class="fc" id="L25">        this.minPlayers = minPlayers;</span>
+<span class="fc" id="L26">        this.maxPlayers = maxPlayers;</span>
+<span class="fc" id="L27">        this.name = name;</span>
+<span class="fc" id="L28">        this.note = note;</span>
+<span class="fc" id="L29">        this.description = description;</span>
+<span class="fc" id="L30">        this.ordering = ordering;</span>
+<span class="fc" id="L31">    }</span>
+    
+    @Deprecated
+    public static GameInfo createLegacy(String name) {
+<span class="fc" id="L35">        return new GameInfo(0, 0, name, null, null, 0);</span>
+    }
+
+    public int getMinPlayers() {
+<span class="nc" id="L39">        return minPlayers;</span>
+    }
+
+    public int getMaxPlayers() {
+<span class="nc" id="L43">        return maxPlayers;</span>
+    }
+
+    public String getName() {
+<span class="fc" id="L47">        return name;</span>
+    }
+
+    public String getNote() {
+<span class="nc" id="L51">        return note;</span>
+    }
+
+    public String getDescription() {
+<span class="nc" id="L55">        return description;</span>
+    }
+    
+    public int getOrdering() {
+<span class="nc" id="L59">        return ordering;</span>
+    }
+    
+    @Override
+    public int hashCode() {
+<span class="nc" id="L64">        return Objects.hashCode(name);</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        if (obj == null) return false;</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (getClass() != obj.getClass()) return false;</span>
+<span class="nc" id="L71">        final GameInfo other = (GameInfo) obj;</span>
+<span class="nc" id="L72">        return Objects.equal(this.name, other.name);</span>
+    }
+    
+    @Override
+    public String toString() {
+<span class="nc" id="L77">        return name;</span>
+    }
+
+    public int compareTo(GameInfo other) {
+<span class="nc" id="L81">        return Ints.compare(this.ordering, other.ordering);</span>
+    }
+    
+    public static GameInfo findGame(Iterable&lt;GameInfo&gt; gameList, String gameName) {
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        for (GameInfo game:gameList) { </span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">            if (Objects.equal(game.name,gameName)) {</span>
+<span class="nc" id="L87">                return game;</span>
+            }
+<span class="nc" id="L89">        }</span>
+<span class="nc" id="L90">        return null;</span>
+    }
+
+    public static Builder builder() {
+<span class="nc" id="L94">        return new GameInfo.Builder();</span>
+    }
+    
+    public static class Builder {
+        private int minPlayers;
+        private int maxPlayers;
+        private String name;
+        private String note;
+        private String description;
+
+        private Builder() {};
+        
+        public GameInfo build(int ordering) {
+<span class="nc" id="L107">            return new GameInfo(minPlayers, maxPlayers, name, note, description, ordering);</span>
+        }
+        
+        public void setMinPlayers(int minPlayers) {
+<span class="nc" id="L111">            this.minPlayers = minPlayers;</span>
+<span class="nc" id="L112">        }</span>
+        public void setMaxPlayers(int maxPlayers) {
+<span class="nc" id="L114">            this.maxPlayers = maxPlayers;</span>
+<span class="nc" id="L115">        }</span>
+        public void setName(String name) {
+<span class="nc" id="L117">            this.name = name;</span>
+<span class="nc" id="L118">        }</span>
+        public void setNote(String note) {
+<span class="nc" id="L120">            this.note = note;</span>
+<span class="nc" id="L121">        }</span>
+        public void setDescription(String description) {
+<span class="nc" id="L123">            this.description = description;</span>
+<span class="nc" id="L124">        }</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

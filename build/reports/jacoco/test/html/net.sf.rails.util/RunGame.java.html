@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RunGame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.util</a> &gt; <span class="el_source">RunGame.java</span></div><h1>RunGame.java</h1><pre class="source lang-java linenums">package net.sf.rails.util;
+
+import java.io.File;
+
+import net.sf.rails.common.ConfigManager;
+import net.sf.rails.ui.swing.GameSetupController;
+
+<span class="nc" id="L8">public class RunGame {</span>
+
+    public static void main(String[] args) {
+
+        // Initialize configuration
+<span class="nc" id="L13">        ConfigManager.initConfiguration(false);</span>
+        
+<span class="nc" id="L15">        int nargs = 0;</span>
+<span class="nc bnc" id="L16" title="All 4 branches missed.">        if (args != null &amp;&amp; args.length &gt; 0) {</span>
+<span class="nc" id="L17">            nargs = args.length;</span>
+<span class="nc" id="L18">            System.out.println(&quot;Number of args: &quot;+nargs);</span>
+<span class="nc bnc" id="L19" title="All 2 branches missed.">            for (String arg : args) {</span>
+<span class="nc" id="L20">                System.out.println (&quot;Arg: &quot;+arg);</span>
+            }
+        }
+
+        // currently we only start one game
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        if (nargs &gt;= 1) {</span>
+<span class="nc" id="L26">            loadGame(args[0]);</span>
+        } else {
+            /* Start the rails.game selector, which will do all the rest. */
+<span class="nc" id="L29">            GameSetupController.Builder setupBuilder = GameSetupController.builder();</span>
+<span class="nc" id="L30">            setupBuilder.start();</span>
+        }
+<span class="nc" id="L32">    }</span>
+
+    private static void loadGame (String filePath) {
+<span class="nc" id="L35">        File gameFile = new File(filePath);</span>
+<span class="nc" id="L36">        GameLoader.loadAndStartGame(gameFile);</span>
+<span class="nc" id="L37">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

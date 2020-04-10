@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReportSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.common</a> &gt; <span class="el_source">ReportSet.java</span></div><h1>ReportSet.java</h1><pre class="source lang-java linenums">package net.sf.rails.common;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
+import net.sf.rails.game.state.ChangeSet;
+import net.sf.rails.util.Util;
+
+
+/**
+ * ReportSet contains all messages that reference one ChangeSet
+ */
+
+class ReportSet {
+
+    /**
+     * Newline string
+     * &amp;#10; is the linefeed character to induce line feed on copy &amp; paste
+     */
+    private static final String NEWLINE_STRING = &quot;&lt;br&gt;&amp;#10;&quot;;
+
+    private final ChangeSet changeSet;
+    private final ImmutableList&lt;String&gt; messages;
+    private final String htmlText;
+    private final String htmlTextActive;
+
+<span class="fc" id="L26">    ReportSet(ChangeSet changeSet, ImmutableList&lt;String&gt; messages) {</span>
+<span class="fc" id="L27">        this.changeSet = changeSet;</span>
+<span class="fc" id="L28">        this.messages = messages;</span>
+<span class="fc" id="L29">        this.htmlText = toHtml(false);</span>
+<span class="fc" id="L30">        this.htmlTextActive = toHtml(true);</span>
+<span class="fc" id="L31">    }</span>
+
+    String getAsHtml(ChangeSet currentChangeSet) {
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (currentChangeSet == changeSet) {</span>
+<span class="nc" id="L35">            return htmlTextActive;</span>
+        } else {
+<span class="nc" id="L37">            return htmlText;</span>
+        }
+    }
+
+    ImmutableList&lt;String&gt; getAsList() {
+<span class="fc" id="L42">        return messages;</span>
+    }
+
+    /**
+     * converts messages to html string
+     *
+     * @param activeMessage if true, adds indicator and highlighting for active message
+     */
+    private String toHtml(boolean activeMessage) {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (messages.isEmpty()) {</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            if (activeMessage) {</span>
+<span class="fc" id="L53">                return (&quot;&lt;span bgcolor=Yellow&gt;&quot; + ReportBuffer.ACTIVE_MESSAGE_INDICATOR + &quot;&lt;/span&gt;&quot;</span>
+                        + NEWLINE_STRING);
+            } else {
+<span class="fc" id="L56">                return null;</span>
+            }
+        }
+
+<span class="fc" id="L60">        StringBuilder s = new StringBuilder();</span>
+<span class="fc" id="L61">        boolean init = true;</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        for (String message : messages) {</span>
+<span class="fc" id="L63">            message = Util.convertToHtml(message);</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">            if (init) {</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">                if (activeMessage) {</span>
+<span class="fc" id="L66">                    s.append(&quot;&lt;span bgcolor=Yellow&gt;&quot; + ReportBuffer.ACTIVE_MESSAGE_INDICATOR);</span>
+                }
+<span class="fc" id="L68">                s.append(&quot;&lt;a href=http://rails:&quot;).append(changeSet.getIndex()).append(&quot;&gt;&quot;);</span>
+<span class="fc" id="L69">                s.append(message);</span>
+<span class="fc" id="L70">                s.append(&quot;&lt;/a&gt;&quot;);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">                if (activeMessage) {</span>
+<span class="fc" id="L72">                    s.append(&quot;&lt;/span&gt;&quot;);</span>
+                }
+<span class="fc" id="L74">                s.append(NEWLINE_STRING);</span>
+<span class="fc" id="L75">                init = false;</span>
+            } else {
+<span class="fc" id="L77">                s.append(message).append(NEWLINE_STRING); // see above</span>
+            }
+<span class="fc" id="L79">        }</span>
+<span class="fc" id="L80">        return s.toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L85">        return MoreObjects.toStringHelper(this)</span>
+<span class="nc" id="L86">                .addValue(changeSet)</span>
+<span class="nc" id="L87">                .toString();</span>
+    }
+
+    static Builder builder() {
+<span class="fc" id="L91">        return new Builder();</span>
+    }
+
+    static class Builder {
+
+<span class="fc" id="L96">        private final ImmutableList.Builder&lt;String&gt; messageBuilder = ImmutableList.builder();</span>
+
+<span class="fc" id="L98">        private Builder() {</span>
+<span class="fc" id="L99">        }</span>
+
+        void addMessage(String message) {
+<span class="fc" id="L102">            messageBuilder.add(message);</span>
+<span class="fc" id="L103">        }</span>
+
+        ReportSet build(ChangeSet changeSet) {
+<span class="fc" id="L106">            return new ReportSet(changeSet, messageBuilder.build());</span>
+        }
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

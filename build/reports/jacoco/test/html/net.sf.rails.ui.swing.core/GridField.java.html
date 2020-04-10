@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GridField.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.core</a> &gt; <span class="el_source">GridField.java</span></div><h1>GridField.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.core;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+
+import net.sf.rails.game.state.Item;
+import net.sf.rails.game.state.Observable;
+
+<span class="nc" id="L9">abstract class GridField {</span>
+    
+    private String text;
+    private String tooltip;
+    private GridColors colors;
+    private GridFieldFormat format;
+    
+    GridField setText(String text) {
+<span class="nc" id="L17">        this.text = text;</span>
+<span class="nc" id="L18">        return this;</span>
+    }
+    
+    GridField setTooltip(String tooltip) {
+<span class="nc" id="L22">        this.tooltip = tooltip;</span>
+<span class="nc" id="L23">        return this;</span>
+    }
+    
+    GridField setColors(GridColors colors) {
+<span class="nc" id="L27">        this.colors = colors;</span>
+<span class="nc" id="L28">        return this;</span>
+    }
+    
+    GridField setFormat(GridFieldFormat format) {
+<span class="nc" id="L32">        this.format = format;</span>
+<span class="nc" id="L33">        return this;</span>
+    }
+    
+    JComponent getComponent() {
+<span class="nc" id="L37">        return new JLabel();</span>
+    }
+    
+    abstract TableField toTableField(Item rowItem, Item colItem);
+    
+    final TableField.Builder buildDefaults() {
+<span class="nc" id="L43">        TableField.Builder builder = TableField.builder(getComponent());</span>
+<span class="nc" id="L44">        return builder.setText(text).setTooltip(tooltip).setColors(colors).setFormat(format);</span>
+    }
+    
+    static GridFieldStatic createFrom(String text) {
+<span class="nc" id="L48">        return new GridFieldStatic(text);</span>
+    }
+
+    static GridFieldStatic createFrom(Observable text) {
+<span class="nc" id="L52">        return new GridFieldStatic(text);</span>
+    }
+    
+    static GridFieldDynamic1D createFrom(Accessor1D&lt;? extends Item&gt; text) {
+<span class="nc" id="L56">        return new GridFieldDynamic1D(text);</span>
+    }
+    
+    static GridFieldDynamic2D createFrom(Accessor2D&lt;? extends Item,? extends Item&gt; text) {
+<span class="nc" id="L60">        return new GridFieldDynamic2D(text);</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

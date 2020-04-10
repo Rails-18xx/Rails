@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.sf.rails.game.state.ObservableTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2020-04-10T19:48:53" hostname="marc-desktop" time="0.243">
+  <properties/>
+  <testcase name="testObservers" classname="net.sf.rails.game.state.ObservableTest" time="0.222"/>
+  <testcase name="testGetId" classname="net.sf.rails.game.state.ObservableTest" time="0.0"/>
+  <testcase name="testGetRoot" classname="net.sf.rails.game.state.ObservableTest" time="0.0"/>
+  <testcase name="testGetFullURI" classname="net.sf.rails.game.state.ObservableTest" time="0.001"/>
+  <testcase name="testGetContext" classname="net.sf.rails.game.state.ObservableTest" time="0.001"/>
+  <testcase name="testGetParent" classname="net.sf.rails.game.state.ObservableTest" time="0.001"/>
+  <testcase name="testGetURI" classname="net.sf.rails.game.state.ObservableTest" time="0.0"/>
+  <testcase name="testModels" classname="net.sf.rails.game.state.ObservableTest" time="0.014"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NetworkTrain.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.algorithms</a> &gt; <span class="el_source">NetworkTrain.java</span></div><h1>NetworkTrain.java</h1><pre class="source lang-java linenums">package net.sf.rails.algorithms;
+
+
+import net.sf.rails.game.Train;
+import net.sf.rails.game.TrainType;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+public final class NetworkTrain implements Comparable&lt;NetworkTrain&gt;{
+
+<span class="nc" id="L13">    private static final Logger log = LoggerFactory.getLogger(NetworkTrain.class);</span>
+
+    private int majors;
+    private int minors;
+    private final boolean ignoreMinors;
+    private final int multiplyMajors;
+    private final int multiplyMinors;
+    private final boolean isHTrain;
+    private final boolean isETrain;
+    private String trainName;
+    private final Train railsTrain;
+
+
+    private NetworkTrain(int majors, int minors, boolean ignoreMinors,
+<span class="nc" id="L27">            int multiplyMajors, int multiplyMinors, boolean isHTrain, boolean isETrain, String trainName, Train train) {</span>
+<span class="nc" id="L28">        this.majors = majors;</span>
+<span class="nc" id="L29">        this.minors = minors;</span>
+<span class="nc" id="L30">        this.ignoreMinors = ignoreMinors;</span>
+<span class="nc" id="L31">        this.multiplyMajors = multiplyMajors;</span>
+<span class="nc" id="L32">        this.multiplyMinors = multiplyMinors;</span>
+<span class="nc" id="L33">        this.isHTrain = isHTrain;</span>
+<span class="nc" id="L34">        this.isETrain = isETrain;</span>
+<span class="nc" id="L35">        this.trainName = trainName;</span>
+<span class="nc" id="L36">        this.railsTrain = train;</span>
+<span class="nc" id="L37">        log.debug(&quot;Created NetworkTrain {} / {}&quot;, this.toString(), this.attributes());</span>
+<span class="nc" id="L38">    }</span>
+
+    static NetworkTrain createFromRailsTrain(Train railsTrain){
+<span class="nc" id="L41">        int majors = railsTrain.getMajorStops();</span>
+<span class="nc" id="L42">        int minors = railsTrain.getMinorStops();</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (railsTrain.getTownCountIndicator() == 0) {</span>
+<span class="nc" id="L44">            minors = 999;</span>
+        }
+<span class="nc" id="L46">        int multiplyMajors = railsTrain.getCityScoreFactor();</span>
+<span class="nc" id="L47">        int multiplyMinors = railsTrain.getTownScoreFactor();</span>
+<span class="nc" id="L48">        boolean ignoreMinors = false;</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        if (multiplyMinors == 0){</span>
+<span class="nc" id="L50">            ignoreMinors = true;</span>
+        }
+<span class="nc" id="L52">        boolean isHTrain = railsTrain.isHTrain();</span>
+<span class="nc" id="L53">        boolean isETrain = railsTrain.isETrain();</span>
+<span class="nc" id="L54">        String trainName = railsTrain.toText();</span>
+
+<span class="nc" id="L56">        return new NetworkTrain(majors, minors, ignoreMinors, multiplyMajors, multiplyMinors,</span>
+                isHTrain, isETrain, trainName, railsTrain);
+    }
+
+    public static NetworkTrain createFromString(String trainString) {
+<span class="nc" id="L61">        String t = trainString.trim();</span>
+<span class="nc" id="L62">        int cities = 0; int towns = 0;</span>
+<span class="nc" id="L63">        boolean ignoreTowns = false; int multiplyCities = 1; int multiplyTowns = 1;</span>
+<span class="nc" id="L64">        boolean isHTrain = false;</span>
+<span class="nc" id="L65">        boolean isETrain = false;</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        if (t.equals(&quot;D&quot;)) {</span>
+<span class="nc" id="L67">            log.debug(&quot;RA: found Diesel train&quot;);</span>
+<span class="nc" id="L68">            cities = 99;</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        } else if (t.equals(&quot;TGV&quot;)) {</span>
+<span class="nc" id="L70">            log.debug(&quot;RA: found TGV  train&quot;);</span>
+<span class="nc" id="L71">            cities = 3;</span>
+<span class="nc" id="L72">            ignoreTowns = true;</span>
+<span class="nc" id="L73">            multiplyCities = 2;</span>
+<span class="nc" id="L74">            multiplyTowns = 0;</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        } else if (t.contains(&quot;+&quot;)) {</span>
+<span class="nc" id="L76">            log.debug(&quot;RA: found Plus train&quot;);</span>
+<span class="nc" id="L77">            cities = Integer.parseInt(t.split(&quot;\\+&quot;)[0]); // + train</span>
+<span class="nc" id="L78">            towns = Integer.parseInt(t.split(&quot;\\+&quot;)[1]);</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        } else if (t.contains(&quot;E&quot;)) {</span>
+<span class="nc" id="L80">            log.debug(&quot;RA: found Express train&quot;);</span>
+            //cities = Integer.parseInt(t.replace(&quot;E&quot;, &quot;&quot;));
+<span class="nc" id="L82">            ignoreTowns = true;</span>
+<span class="nc" id="L83">            isETrain = true;</span>
+<span class="nc" id="L84">            multiplyTowns = 0;</span>
+<span class="nc" id="L85">            cities = 99; //for now in 1880, specific implementation in ExpressTrainModifier</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        } else if (t.contains(&quot;D&quot;)) {</span>
+<span class="nc" id="L87">            log.debug(&quot;RA: found Double Express train&quot;);</span>
+<span class="nc" id="L88">            cities = Integer.parseInt(t.replace(&quot;D&quot;,  &quot;&quot;));</span>
+<span class="nc" id="L89">            ignoreTowns = true;</span>
+<span class="nc" id="L90">            isETrain = true;</span>
+<span class="nc" id="L91">            multiplyCities = 2;</span>
+<span class="nc" id="L92">            multiplyTowns = 0;</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        } else if (t.contains(&quot;H&quot;)) {</span>
+<span class="nc" id="L94">            log.debug(&quot;RA: found Hex train&quot;);</span>
+<span class="nc" id="L95">            cities = Integer.parseInt(t.replace(&quot;H&quot;,  &quot;&quot;));</span>
+<span class="nc" id="L96">            isHTrain = true;</span>
+        } else {
+<span class="nc" id="L98">            log.debug(&quot;RA: found Default train&quot;);</span>
+<span class="nc" id="L99">            cities = Integer.parseInt(t);</span>
+        }
+<span class="nc" id="L101">        NetworkTrain train = new NetworkTrain(cities, towns, ignoreTowns, multiplyCities,</span>
+                multiplyTowns, isHTrain, isETrain, t, null);
+<span class="nc" id="L103">        return train;</span>
+    }
+
+    void addToRevenueCalculator(RevenueCalculator rc, int trainId) {
+<span class="nc" id="L107">        rc.setTrain(trainId, majors, minors, ignoreMinors, isHTrain, isETrain);</span>
+<span class="nc" id="L108">    }</span>
+
+    int getMajors(){
+<span class="nc" id="L111">        return majors;</span>
+    }
+
+    void setMajors(int majors){
+<span class="nc" id="L115">        this.majors = majors;</span>
+<span class="nc" id="L116">    }</span>
+
+    int getMinors() {
+<span class="nc" id="L119">        return minors;</span>
+    }
+
+    void setMinors(int minors){
+<span class="nc" id="L123">        this.minors = minors;</span>
+<span class="nc" id="L124">    }</span>
+
+    int getMultiplyMajors() {
+<span class="nc" id="L127">        return multiplyMajors;</span>
+    }
+
+    int getMultiplyMinors() {
+<span class="nc" id="L131">        return multiplyMinors;</span>
+    }
+
+    boolean ignoresMinors() {
+<span class="nc" id="L135">        return ignoreMinors;</span>
+    }
+
+    boolean isHTrain() {
+<span class="nc" id="L139">        return isHTrain;</span>
+    }
+
+    public boolean isETrain() {
+<span class="nc" id="L143">        return isETrain;</span>
+    }
+
+    public void setTrainName(String name) {
+<span class="nc" id="L147">        trainName = name;</span>
+<span class="nc" id="L148">    }</span>
+
+    public String getTrainName() {
+<span class="nc" id="L151">        return trainName;</span>
+    }
+
+    public Train getRailsTrain() {
+<span class="nc" id="L155">        return railsTrain;</span>
+    }
+
+    public TrainType getRailsTrainType() {
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        if (railsTrain == null) return null;</span>
+
+<span class="nc" id="L161">        return railsTrain.getType();</span>
+    }
+
+
+    public String attributes() {
+<span class="nc" id="L166">       StringBuilder attributes = new StringBuilder();</span>
+<span class="nc" id="L167">       attributes.append(&quot;majors = &quot;).append(majors);</span>
+<span class="nc" id="L168">       attributes.append(&quot;, minors = &quot;).append(minors);</span>
+<span class="nc" id="L169">       attributes.append(&quot;, ignoreMinors = &quot;).append(ignoreMinors);</span>
+<span class="nc" id="L170">       attributes.append(&quot;, mulitplyMajors = &quot;).append(multiplyMajors);</span>
+<span class="nc" id="L171">       attributes.append(&quot;, mulitplyMinors = &quot;).append(multiplyMinors);</span>
+<span class="nc" id="L172">       attributes.append(&quot;, isHTrain = &quot;).append(isHTrain);</span>
+<span class="nc" id="L173">       return attributes.toString();</span>
+    }
+
+    public String toString() {
+<span class="nc" id="L177">        return trainName;</span>
+    }
+
+
+    /**
+     * Comperator on trains as defined by train domination
+     *
+     * A train dominates:
+     * it has to be longer in either majors and minors
+     * and at least equally long in both
+     *
+     * Furthermore the dominating train has at least the same multiples as the shorter
+     */
+
+    public int compareTo(NetworkTrain other) {
+
+        // Check if A is the longer train first
+<span class="nc bnc" id="L194" title="All 8 branches missed.">        boolean longerA = this.majors &gt; other.majors &amp;&amp; this.minors &gt;= other.minors || this.majors == other.majors &amp;&amp; this.minors &gt; other.minors;</span>
+
+<span class="nc bnc" id="L196" title="All 2 branches missed.">        if (longerA) {</span>
+            // then check the multiples
+<span class="nc bnc" id="L198" title="All 4 branches missed.">            if (this.multiplyMajors &gt;= other.multiplyMajors &amp;&amp; this.multiplyMinors &gt;= other.multiplyMinors) {</span>
+<span class="nc" id="L199">                return 1;</span>
+            } else {
+<span class="nc" id="L201">                return 0;</span>
+            }
+        } else {
+            // otherwise B might B longer
+<span class="nc bnc" id="L205" title="All 8 branches missed.">            boolean longerB = this.majors &lt; other.majors &amp;&amp; this.minors &lt;= other.minors || this.majors == other.majors &amp;&amp; this.minors &lt; other.minors;</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">            if (longerB) {</span>
+                // then check the multiples
+<span class="nc bnc" id="L208" title="All 4 branches missed.">                if (this.multiplyMajors &lt;= other.multiplyMajors &amp;&amp; this.multiplyMinors &lt;= other.multiplyMinors) {</span>
+<span class="nc" id="L209">                    return -1;</span>
+                } else {
+<span class="nc" id="L211">                    return 0;</span>
+                }
+            } else {
+                // none is longer
+<span class="nc" id="L215">                return 0;</span>
+            }
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

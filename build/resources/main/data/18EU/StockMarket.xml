@@ -1,0 +1,77 @@
+<StockMarket type="rectangular">
+	<StockSpace name="A1" price="82" />
+	<StockSpace name="A2" price="75" />
+	<StockSpace name="A3" price="70" />
+	<StockSpace name="A4" price="65" />
+	<StockSpace name="A5" price="60" />
+	<StockSpace name="A6" price="50" />
+	<StockSpace name="A7" price="40" />
+	<StockSpace name="B1" price="90" />
+	<StockSpace name="B2" price="82" />
+	<StockSpace name="B3" price="75" />
+	<StockSpace name="B4" price="70" />
+	<StockSpace name="B5" price="65" />
+	<StockSpace name="B6" price="60" />
+	<StockSpace name="B7" price="50" />
+	<StockSpace name="C1" price="100" />
+	<StockSpace name="C2" price="90" />
+	<StockSpace name="C3" price="82" />
+	<StockSpace name="C4" price="75" />
+	<StockSpace name="C5" price="70" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="C6" price="65" />
+	<StockSpace name="C7" price="60" />
+	<StockSpace name="D1" price="110" />
+	<StockSpace name="D2" price="100" />
+	<StockSpace name="D3" price="90" />
+	<StockSpace name="D4" price="82" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="D5" price="75" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="D6" price="70" />
+	<StockSpace name="D7" price="65" />
+	<StockSpace name="E1" price="122" />
+	<StockSpace name="E2" price="110" />
+	<StockSpace name="E3" price="100" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="E4" price="90" >
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="E5" price="82" />
+	<StockSpace name="E6" price="75" />
+	<StockSpace name="F1" price="135" />
+	<StockSpace name="F2" price="122" />
+	<StockSpace name="F3" price="110" />
+	<StockSpace name="F4" price="100" />
+	<StockSpace name="F5" price="90" />
+	<StockSpace name="G1" price="150" />
+	<StockSpace name="G2" price="135" />
+	<StockSpace name="G3" price="122" />
+	<StockSpace name="G4" price="110" />
+	<StockSpace name="H1" price="165" />
+	<StockSpace name="H2" price="150" />
+	<StockSpace name="H3" price="135" />
+	<StockSpace name="H4" price="122" />
+	<StockSpace name="I1" price="180" />
+	<StockSpace name="I2" price="165" />
+	<StockSpace name="I3" price="150" />
+	<StockSpace name="J1" price="200" />
+	<StockSpace name="J2" price="180" />
+	<StockSpace name="J3" price="165" />
+	<StockSpace name="K1" price="220" />
+	<StockSpace name="K2" price="200" />
+	<StockSpace name="K3" price="180" />
+	<StockSpace name="L1" price="245" />
+	<StockSpace name="L2" price="220" />
+	<StockSpace name="M1" price="270" />
+	<StockSpace name="M2" price="245" />
+	<StockSpace name="N1" price="300" />
+	<StockSpace name="N2" price="270" />
+	<StockSpace name="O1" price="330" />
+	<StockSpace name="P1" price="360" />
+	<StockSpace name="Q1" price="400" />
+</StockMarket>

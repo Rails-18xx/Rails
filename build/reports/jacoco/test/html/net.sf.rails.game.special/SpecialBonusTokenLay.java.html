@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpecialBonusTokenLay.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.special</a> &gt; <span class="el_source">SpecialBonusTokenLay.java</span></div><h1>SpecialBonusTokenLay.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.special;
+
+import java.util.List;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.BonusToken;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.util.Util;
+
+public class SpecialBonusTokenLay extends SpecialProperty {
+
+<span class="fc" id="L17">    private String locationCodes = null;</span>
+<span class="fc" id="L18">    private List&lt;MapHex&gt; locations = null;</span>
+
+    private BonusToken token;
+
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public SpecialBonusTokenLay(RailsItem parent, String id) {
+<span class="fc" id="L26">        super(parent, id);</span>
+<span class="fc" id="L27">    }</span>
+
+    @Override
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+
+<span class="fc" id="L32">        super.configureFromXML(tag);</span>
+
+<span class="fc" id="L34">        Tag tokenLayTag = tag.getChild(&quot;SpecialBonusTokenLay&quot;);</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if (tokenLayTag == null) {</span>
+<span class="nc" id="L36">            throw new ConfigurationException(&quot;&lt;SpecialBonusTokenLay&gt; tag missing&quot;);</span>
+        }
+
+<span class="fc" id="L39">        locationCodes = tokenLayTag.getAttributeAsString(&quot;location&quot;);</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        if (!Util.hasValue(locationCodes))</span>
+<span class="nc" id="L41">            throw new ConfigurationException(</span>
+                    &quot;SpecialBonusTokenLay: location missing&quot;);
+
+<span class="fc" id="L44">        BonusToken bToken = BonusToken.create(getParent());</span>
+<span class="fc" id="L45">        token = bToken;</span>
+<span class="fc" id="L46">        bToken.configureFromXML(tokenLayTag);</span>
+
+<span class="fc" id="L48">        String tokenName = bToken.getId();</span>
+<span class="fc" id="L49">        int tokenValue = bToken.getValue();</span>
+
+<span class="fc" id="L51">        description = LocalText.getText(&quot;LayBonusTokenInfo&quot;,</span>
+                tokenName,
+<span class="fc" id="L53">                Bank.format(this, tokenValue),</span>
+                locationCodes);
+<span class="fc" id="L55">    }</span>
+
+    @Override
+    public void finishConfiguration (RailsRoot root)
+    throws ConfigurationException {
+
+<span class="fc" id="L61">        locations = root.getMapManager().parseLocations(locationCodes);</span>
+
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (token instanceof BonusToken) {</span>
+<span class="fc" id="L64">            ((BonusToken)token).prepareForRemoval(root.getPhaseManager());</span>
+        }
+<span class="fc" id="L66">    }</span>
+
+    public BonusToken getToken() {
+<span class="fc" id="L69">        return token;</span>
+    }
+    
+    public boolean isExecutionable() {
+<span class="fc" id="L73">        return true;</span>
+    }
+
+    public List&lt;MapHex&gt; getLocations() {
+<span class="fc" id="L77">        return locations;</span>
+    }
+
+    public String getLocationCodeString() {
+<span class="nc" id="L81">        return locationCodes;</span>
+    }
+
+    @Override
+    public String toText() {
+<span class="nc" id="L86">        return description;</span>
+    }
+
+    @Override
+    public String toMenu() {
+<span class="nc" id="L91">        return description;</span>
+    }
+
+    @Override
+    public String getInfo() {
+<span class="fc" id="L96">        return description;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

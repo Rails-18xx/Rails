@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="file" class="ch.qos.logback.core.FileAppender">
+        <file>18xx.log</file>
+        <append>false</append>
+
+        <encoder>
+            <pattern>%d{MM-dd-yyyy:HH:mm:ss.SSS} [%thread] %-5level %logger{10}->%method\(\):%line - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="buffer" class="ch.qos.logback.core.read.CyclicBufferAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <MaxSize>1024</MaxSize>
+        <encoder>
+            <pattern>%d{MM-dd-yyyy:HH:mm:ss.SSS} [%thread] %-5level %logger{10}->%method\(\):%line - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="net.sf.rails.algorithms" level="WARN"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="stdout" />
+        <appender-ref ref="file" />
+        <appender-ref ref="buffer" />
+    </root>
+</configuration>

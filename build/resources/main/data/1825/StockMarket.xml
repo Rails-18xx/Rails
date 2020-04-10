@@ -1,0 +1,39 @@
+<StockMarket type="linear">
+	<!-- Note two supported colour specification formats:
+		RGB decimal with commas and RGB hexadecimal without commas -->
+	<StockSpaceType name="yellow" colour="255,255,0">
+		<NoCertLimit/>
+	</StockSpaceType>  
+  <StockSpace name="A1" price="0" type="yellow">
+  <ClosesCompany/>
+  </StockSpace>
+  <StockSpace name="B1" price="5" type="yellow"/>
+  <StockSpace name="C1" price="10" type="yellow"/>
+  <StockSpace name="D1" price="16" type="yellow"/>
+  <StockSpace name="E1" price="24" type="yellow"/>
+  <StockSpace name="F1" price="34" type="yellow"/>
+  <StockSpace name="G1" price="42" type="yellow"/>
+  <StockSpace name="H1" price="49" type="yellow"/>
+  <StockSpace name="I1" price="55"/>
+  <StockSpace name="J1" price="61"/>
+  <StockSpace name="K1" price="67"/>
+  <StockSpace name="L1" price="71"/>
+  <StockSpace name="M1" price="76"/>
+  <StockSpace name="N1" price="82"/>
+  <StockSpace name="O1" price="90"/>
+  <StockSpace name="P1" price="100"/>
+  <StockSpace name="Q1" price="112"/>
+  <StockSpace name="R1" price="126"/>
+  <StockSpace name="S1" price="142"/>
+  <StockSpace name="T1" price="160"/>
+  <StockSpace name="U1" price="180"/>
+  <StockSpace name="V1" price="205"/>
+  <StockSpace name="W1" price="230"/>
+  <StockSpace name="X1" price="255"/>
+  <StockSpace name="Y1" price="280"/>
+  <StockSpace name="Z1" price="300"/>
+  <StockSpace name="[1" price="320"/>
+  <StockSpace name="\1" price="340">
+  <GameOver/>
+  </StockSpace>
+</StockMarket>

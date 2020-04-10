@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RailsIcon.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.elements</a> &gt; <span class="el_source">RailsIcon.java</span></div><h1>RailsIcon.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.elements;
+
+import java.awt.Image;
+import javax.swing.ImageIcon;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ResourceLoader;
+
+
+/**
+ * Enumeration that provides a specific ImageIcon
+ * Simply use RailsIcon.{IconName}.icon/description 
+ */
+
+<span class="nc" id="L15">public enum RailsIcon {</span>
+    
+    // in parentheses the image file
+<span class="nc" id="L18">    AUCTION_BUY (&quot;auction_hammer_gavel.png&quot;,&quot;BUY&quot;),</span>
+<span class="nc" id="L19">    AUTOPASS (&quot;control_fastforward_blue.png&quot;,&quot;Autopass&quot;),</span>
+<span class="nc" id="L20">    BID (&quot;money_add.png&quot;,&quot;BID&quot;),</span>
+<span class="nc" id="L21">    BUY_PRIVATE (&quot;money_bag.png&quot;,&quot;BUY_PRIVATE&quot;),</span>
+<span class="nc" id="L22">    BUY_TRAIN (&quot;train.png&quot;,&quot;BUY_TRAIN&quot;),</span>
+<span class="nc" id="L23">    CANCEL (&quot;cancel.png&quot;,&quot;CANCEL&quot;),</span>
+<span class="nc" id="L24">    DECLINE_TO_BID (&quot;control_play_blue.png&quot;,&quot;DeclineToBid&quot;),</span>
+<span class="nc" id="L25">    DONE (&quot;accept.png&quot;,&quot;Done&quot;),</span>
+<span class="nc" id="L26">    INFO (&quot;information.png&quot;,&quot;Info&quot;),</span>
+<span class="nc" id="L27">    CONFIRM (&quot;add.png&quot;,&quot;Confirm&quot;),</span>
+<span class="nc" id="L28">    NO (&quot;cancel.png&quot;,&quot;No&quot;),</span>
+<span class="nc" id="L29">    SKIP (&quot;control_play_blue.png&quot;,&quot;Skip&quot;),</span>
+<span class="nc" id="L30">    OK (&quot;accept.png&quot;,&quot;OK&quot;),</span>
+<span class="nc" id="L31">    PANEL_OR (&quot;participation_rate.png&quot;,&quot;Dockable.orWindow.orPanel&quot;),</span>
+<span class="nc" id="L32">    PANEL_OR_BUTTONS (&quot;button.png&quot;,&quot;Dockable.orWindow.buttonPanel&quot;),</span>
+<span class="nc" id="L33">    PANEL_MAP (&quot;globe_model.png&quot;,&quot;Dockable.orWindow.mapPanel&quot;),</span>
+<span class="nc" id="L34">    PANEL_MESSAGE (&quot;script.png&quot;,&quot;Dockable.orWindow.messagePanel&quot;),</span>
+<span class="nc" id="L35">    PANEL_REMAINING_TILES (&quot;rails32.png&quot;,&quot;Dockable.orWindow.remainingTilesPanel&quot;),</span>
+<span class="nc" id="L36">    PANEL_UPGRADE (&quot;bricks.png&quot;,&quot;Dockable.orWindow.upgradePanel&quot;),</span>
+<span class="nc" id="L37">    PASS (&quot;control_play_blue.png&quot;,&quot;PASS&quot;),</span>
+<span class="nc" id="L38">    PAYOUT (&quot;traffic_lights_green.png&quot;,&quot;PAYOUT&quot;),</span>
+<span class="nc" id="L39">    REDO (&quot;arrow_redo.png&quot;,&quot;REDO&quot;),</span>
+<span class="nc" id="L40">    REPAY_LOANS (&quot;cash_stack.png&quot;,&quot;RepayLoans&quot;),</span>
+<span class="nc" id="L41">    REPORT_MOVE_BACKWARD (&quot;clock_delete.png&quot;,&quot;REPORT_MOVE_BACKWARD&quot;),</span>
+<span class="nc" id="L42">    REPORT_MOVE_FORWARD (&quot;clock_add.png&quot;,&quot;REPORT_MOVE_FORWARD&quot;),</span>
+<span class="nc" id="L43">    SELECT_NO_BID (&quot;hand_property.png&quot;,&quot;SelectNoBid&quot;),</span>
+<span class="nc" id="L44">    SET_REVENUE (&quot;coins_in_hand.png&quot;,&quot;SET_REVENUE&quot;),</span>
+<span class="nc" id="L45">    SPLIT (&quot;traffic_lights_yellow.png&quot;,&quot;SPLIT&quot;),</span>
+<span class="nc" id="L46">    UNDO (&quot;arrow_undo.png&quot;,&quot;UNDO&quot;),</span>
+<span class="nc" id="L47">    WITHHOLD (&quot;traffic_lights_red.png&quot;,&quot;WITHHOLD&quot;),</span>
+<span class="nc" id="L48">    YES (&quot;accept.png&quot;,&quot;Yes&quot;),</span>
+    
+    //no icons by purpose
+<span class="nc" id="L51">    END_OF_GAME_CLOSE_ALL_WINDOWS (&quot;&quot;,&quot;END_OF_GAME_CLOSE_ALL_WINDOWS&quot;),</span>
+<span class="nc" id="L52">    OPERATING_COST (&quot;&quot;,&quot;OCButtonLabel&quot;),</span>
+    
+    //null meaning all public fields are null
+<span class="nc" id="L55">    NULL ();</span>
+    
+    private final static String IMAGE_PATH = &quot;/images/ui&quot;;
+    private final static int SMALL_IMAGE_WIDTH = 16;
+    private final static int SMALL_IMAGE_HEIGHT = 16;
+    private final String configKey;
+    /**
+     * icon in original resolution
+     */
+    public final ImageIcon largeIcon;
+    /**
+     * icon in restricted / small resolution
+     */
+    public final ImageIcon smallIcon;
+    public final String description;
+    
+<span class="nc" id="L71">    private RailsIcon() {</span>
+<span class="nc" id="L72">        configKey = null;</span>
+<span class="nc" id="L73">        largeIcon = null;</span>
+<span class="nc" id="L74">        smallIcon = null;</span>
+<span class="nc" id="L75">        description = null;</span>
+<span class="nc" id="L76">    }</span>
+    
+<span class="nc" id="L78">    private RailsIcon(String fileName,String configKey) {</span>
+<span class="nc" id="L79">        this.configKey = configKey;</span>
+<span class="nc" id="L80">        this.description = LocalText.getText(configKey);</span>
+<span class="nc" id="L81">        largeIcon = createIcon(fileName,description);</span>
+<span class="nc" id="L82">        smallIcon = createSmallIcon(largeIcon);</span>
+<span class="nc" id="L83">    }</span>
+    
+    private ImageIcon createIcon(String fileName, String description) {
+        //check whether icon is expected to be found
+        //don't write error messages if icon not expected to be found
+<span class="nc bnc" id="L88" title="All 4 branches missed.">        if (fileName == null || fileName.equals(&quot;&quot;)) {</span>
+<span class="nc" id="L89">            return null;</span>
+        }
+        
+        //get icon
+<span class="nc" id="L93">        String path = IMAGE_PATH + ResourceLoader.SEPARATOR + fileName;</span>
+<span class="nc" id="L94">        java.net.URL imgURL = getClass().getResource(path);</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (imgURL != null) {</span>
+<span class="nc" id="L96">            return new ImageIcon(imgURL, description);</span>
+        } else {
+<span class="nc" id="L98">            System.err.println(&quot;Couldn't find file: &quot; + path);</span>
+<span class="nc" id="L99">            return null;</span>
+        }
+    }
+    
+    private ImageIcon createSmallIcon(ImageIcon originalIcon) {
+<span class="nc" id="L104">        ImageIcon smallIcon = null;</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (originalIcon != null) {</span>
+<span class="nc" id="L106">            Image img = originalIcon.getImage();</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">            if (img != null) {</span>
+<span class="nc" id="L108">                smallIcon = new ImageIcon(</span>
+<span class="nc" id="L109">                        img.getScaledInstance(</span>
+                                SMALL_IMAGE_WIDTH, 
+                                SMALL_IMAGE_HEIGHT,
+                                Image.SCALE_SMOOTH
+                        ),
+<span class="nc" id="L114">                        originalIcon.getDescription()</span>
+                );
+            }
+        }
+<span class="nc" id="L118">        return smallIcon;</span>
+    }
+    
+    /**
+     * @return The Rails icon associated with the key or, if nothing is found, 
+     * RailsConfig.NULL
+     */
+    public static RailsIcon getByConfigKey(String configKey) {
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (configKey == null) return RailsIcon.NULL;</span>
+        
+<span class="nc" id="L128">        RailsIcon ri = null;</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        for (RailsIcon r : RailsIcon.values()) {</span>
+            //ignore case necessary as both Pass and PASS are used by consumers
+<span class="nc bnc" id="L131" title="All 2 branches missed.">            if (configKey.equalsIgnoreCase(r.configKey)) ri = r;</span>
+        }
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (ri == null) {</span>
+<span class="nc" id="L134">            ri = RailsIcon.NULL;</span>
+        }
+<span class="nc" id="L136">        return ri;</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

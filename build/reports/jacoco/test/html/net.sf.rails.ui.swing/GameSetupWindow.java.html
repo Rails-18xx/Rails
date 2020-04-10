@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameSetupWindow.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing</a> &gt; <span class="el_source">GameSetupWindow.java</span></div><h1>GameSetupWindow.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import java.util.List;
+
+import javax.swing.*;
+
+import net.sf.rails.common.Config;
+import net.sf.rails.common.ConfigManager;
+import net.sf.rails.common.GameInfo;
+import net.sf.rails.common.GameOption;
+import net.sf.rails.common.GameOptionsSet;
+import net.sf.rails.common.LocalText;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+
+/**
+ * The Game Setup Window displays the first window presented to the user. This
+ * window contains all of the options available for starting a new rails.game.
+ */
+public class GameSetupWindow extends JDialog {
+    private static final long serialVersionUID = 1L;
+
+<span class="nc" id="L29">    private final JPanel gameListPane = new JPanel();</span>
+<span class="nc" id="L30">    private final JPanel playersPane = new JPanel();</span>
+<span class="nc" id="L31">    private final JPanel buttonPane = new JPanel();</span>
+<span class="nc" id="L32">    private final JPanel optionsPane = new JPanel();</span>
+
+<span class="nc" id="L34">    private final JButton newButton = new JButton(LocalText.getText(&quot;NewGame&quot;));</span>
+<span class="nc" id="L35">    private final JButton loadButton = new JButton(LocalText.getText(&quot;LoadGame&quot;));</span>
+<span class="nc" id="L36">    private final JButton recentButton = new JButton(LocalText.getText(&quot;LoadRecentGame&quot;));</span>
+<span class="nc" id="L37">    private final JButton recoveryButton = new JButton(LocalText.getText(&quot;RecoverGame&quot;));</span>
+<span class="nc" id="L38">    private final JButton quitButton = new JButton(LocalText.getText(&quot;QUIT&quot;));</span>
+<span class="nc" id="L39">    private final JButton optionButton = new JButton(LocalText.getText(&quot;OPTIONS&quot;));</span>
+<span class="nc" id="L40">    private final JButton infoButton = new JButton(LocalText.getText(&quot;INFO&quot;));</span>
+<span class="nc" id="L41">    private final JButton creditsButton = new JButton(LocalText.getText(&quot;CREDITS&quot;));</span>
+<span class="nc" id="L42">    private final JButton configureButton= new JButton(LocalText.getText(&quot;CONFIG&quot;));</span>
+<span class="nc" id="L43">    private final JButton randomizeButton = new JButton(LocalText.getText(&quot;RandomizePlayers&quot;));</span>
+
+<span class="nc" id="L45">    private final JComboBox&lt;String&gt; configureBox = new JComboBox&lt;String&gt;();</span>
+<span class="nc" id="L46">    private final JComboBox&lt;String&gt; gameNameBox = new JComboBox&lt;String&gt;();</span>
+
+<span class="nc" id="L48">    private static class PlayerInfo {</span>
+<span class="nc" id="L49">        private final JLabel number = new JLabel();</span>
+<span class="nc" id="L50">        private final JTextField name = new JTextField();</span>
+    }
+<span class="nc" id="L52">    private final List&lt;PlayerInfo&gt; players = Lists.newArrayList();</span>
+
+<span class="nc" id="L54">    private final SortedMap&lt;GameOption, JComponent&gt; optionComponents =</span>
+<span class="nc" id="L55">            Maps.newTreeMap();</span>
+
+    private final GameSetupController controller;
+
+    public GameSetupWindow(GameSetupController controller) {
+<span class="nc" id="L60">        super();</span>
+
+<span class="nc" id="L62">        this.controller = controller;</span>
+<span class="nc" id="L63">        initialize();</span>
+<span class="nc" id="L64">        initGridBag();</span>
+<span class="nc" id="L65">        GameInfo selectedGame = initGameList();</span>
+<span class="nc" id="L66">        initPlayersPane(selectedGame);</span>
+<span class="nc" id="L67">        initConfigBox();</span>
+<span class="nc" id="L68">        this.pack();</span>
+<span class="nc" id="L69">        this.setVisible(true);</span>
+<span class="nc" id="L70">    }</span>
+
+    private void initialize() {
+<span class="nc" id="L73">        newButton.setMnemonic(KeyEvent.VK_N);</span>
+<span class="nc" id="L74">        loadButton.setMnemonic(KeyEvent.VK_L);</span>
+<span class="nc" id="L75">        recentButton.setMnemonic(KeyEvent.VK_D);</span>
+<span class="nc" id="L76">        recoveryButton.setMnemonic(KeyEvent.VK_R);</span>
+<span class="nc" id="L77">        quitButton.setMnemonic(KeyEvent.VK_Q);</span>
+<span class="nc" id="L78">        optionButton.setMnemonic(KeyEvent.VK_O);</span>
+<span class="nc" id="L79">        infoButton.setMnemonic(KeyEvent.VK_G);</span>
+<span class="nc" id="L80">        creditsButton.setMnemonic(KeyEvent.VK_E);</span>
+<span class="nc" id="L81">        configureButton.setMnemonic(KeyEvent.VK_C);</span>
+<span class="nc" id="L82">        randomizeButton.setMnemonic(KeyEvent.VK_R);</span>
+
+<span class="nc" id="L84">        this.getContentPane().setLayout(new GridBagLayout());</span>
+<span class="nc" id="L85">        this.setTitle(&quot;Rails: New Game&quot;);</span>
+<span class="nc" id="L86">        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);</span>
+
+<span class="nc" id="L88">        gameListPane.add(new JLabel(&quot;Available Games:&quot;));</span>
+<span class="nc" id="L89">        gameListPane.add(gameNameBox);</span>
+<span class="nc" id="L90">        gameListPane.add(optionButton); // empty slot</span>
+<span class="nc" id="L91">        gameListPane.setLayout(new GridLayout(2, 2));</span>
+<span class="nc" id="L92">        gameListPane.setBorder(BorderFactory.createLoweredBevelBorder());</span>
+
+<span class="nc" id="L94">        newButton.addActionListener(controller.getNewAction());</span>
+<span class="nc" id="L95">        loadButton.addActionListener(controller.getLoadAction());</span>
+<span class="nc" id="L96">        recentButton.addActionListener(controller.getRecentAction());</span>
+<span class="nc" id="L97">        recoveryButton.addActionListener(controller.getRecoveryAction());</span>
+<span class="nc" id="L98">        quitButton.addActionListener(controller.getQuitAction());</span>
+<span class="nc" id="L99">        optionButton.addActionListener(controller.getOptionPanelAction());</span>
+<span class="nc" id="L100">        infoButton.addActionListener(controller.getInfoAction());</span>
+<span class="nc" id="L101">        creditsButton.addActionListener(controller.getCreditsAction());</span>
+<span class="nc" id="L102">        configureButton.addActionListener(controller.getConfigureAction());</span>
+<span class="nc" id="L103">        randomizeButton.addActionListener(controller.getRandomizeAction());</span>
+
+<span class="nc" id="L105">        buttonPane.add(configureButton);</span>
+<span class="nc" id="L106">        buttonPane.add(configureBox);</span>
+<span class="nc" id="L107">        buttonPane.add(newButton);</span>
+<span class="nc" id="L108">        buttonPane.add(loadButton);</span>
+<span class="nc" id="L109">        buttonPane.add(recentButton);</span>
+<span class="nc" id="L110">        recoveryButton.setEnabled(Config.get(&quot;save.recovery.active&quot;, &quot;no&quot;).equalsIgnoreCase(&quot;yes&quot;));</span>
+<span class="nc" id="L111">        buttonPane.add(recoveryButton);</span>
+
+<span class="nc" id="L113">        buttonPane.add(infoButton);</span>
+<span class="nc" id="L114">        buttonPane.add(quitButton);</span>
+<span class="nc" id="L115">        buttonPane.add(creditsButton);</span>
+
+<span class="nc" id="L117">        buttonPane.setLayout(new GridLayout(0, 2));</span>
+<span class="nc" id="L118">        buttonPane.setBorder(BorderFactory.createLoweredBevelBorder());</span>
+
+<span class="nc" id="L120">        optionsPane.setLayout(new FlowLayout());</span>
+<span class="nc" id="L121">        optionsPane.setVisible(false);</span>
+<span class="nc" id="L122">    }</span>
+
+    private void initGridBag() {
+        GridBagConstraints gc;
+
+<span class="nc" id="L127">        gc = new GridBagConstraints();</span>
+<span class="nc" id="L128">        gc.gridx = 0;</span>
+<span class="nc" id="L129">        gc.gridy = 0;</span>
+<span class="nc" id="L130">        gc.weightx = 0;</span>
+<span class="nc" id="L131">        gc.weighty = 0;</span>
+<span class="nc" id="L132">        gc.gridwidth = 1;</span>
+<span class="nc" id="L133">        gc.gridheight = 1;</span>
+<span class="nc" id="L134">        gc.ipadx = 0;</span>
+<span class="nc" id="L135">        gc.ipady = 0;</span>
+<span class="nc" id="L136">        gc.anchor = GridBagConstraints.CENTER;</span>
+<span class="nc" id="L137">        gc.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="nc" id="L138">        gc.insets = new Insets(0, 0, 0, 0);</span>
+<span class="nc" id="L139">        this.getContentPane().add(playersPane, gc);</span>
+
+<span class="nc" id="L141">        gc = new GridBagConstraints();</span>
+<span class="nc" id="L142">        gc.gridx = 0;</span>
+<span class="nc" id="L143">        gc.gridy = 1;</span>
+<span class="nc" id="L144">        gc.weightx = 0;</span>
+<span class="nc" id="L145">        gc.weighty = 0;</span>
+<span class="nc" id="L146">        gc.gridwidth = 1;</span>
+<span class="nc" id="L147">        gc.gridheight = 1;</span>
+<span class="nc" id="L148">        gc.ipadx = 0;</span>
+<span class="nc" id="L149">        gc.ipady = 0;</span>
+<span class="nc" id="L150">        gc.anchor = GridBagConstraints.CENTER;</span>
+<span class="nc" id="L151">        gc.fill = GridBagConstraints.BOTH;</span>
+<span class="nc" id="L152">        gc.insets = new Insets(0, 0, 0, 0);</span>
+<span class="nc" id="L153">        this.getContentPane().add(gameListPane, gc);</span>
+
+<span class="nc" id="L155">        gc = new GridBagConstraints();</span>
+<span class="nc" id="L156">        gc.gridx = 0;</span>
+<span class="nc" id="L157">        gc.gridy = 2;</span>
+<span class="nc" id="L158">        gc.weightx = 0;</span>
+<span class="nc" id="L159">        gc.weighty = 0;</span>
+<span class="nc" id="L160">        gc.gridwidth = 1;</span>
+<span class="nc" id="L161">        gc.gridheight = 1;</span>
+<span class="nc" id="L162">        gc.ipadx = 0;</span>
+<span class="nc" id="L163">        gc.ipady = 0;</span>
+<span class="nc" id="L164">        gc.anchor = GridBagConstraints.CENTER;</span>
+<span class="nc" id="L165">        gc.fill = GridBagConstraints.BOTH;</span>
+<span class="nc" id="L166">        gc.insets = new Insets(0, 0, 0, 0);</span>
+<span class="nc" id="L167">        this.getContentPane().add(optionsPane, gc);</span>
+
+<span class="nc" id="L169">        gc = new GridBagConstraints();</span>
+<span class="nc" id="L170">        gc.gridx = 0;</span>
+<span class="nc" id="L171">        gc.gridy = 3;</span>
+<span class="nc" id="L172">        gc.weightx = 0;</span>
+<span class="nc" id="L173">        gc.weighty = 0;</span>
+<span class="nc" id="L174">        gc.gridwidth = 1;</span>
+<span class="nc" id="L175">        gc.gridheight = 1;</span>
+<span class="nc" id="L176">        gc.ipadx = 0;</span>
+<span class="nc" id="L177">        gc.ipady = 0;</span>
+<span class="nc" id="L178">        gc.anchor = GridBagConstraints.CENTER;</span>
+<span class="nc" id="L179">        gc.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="nc" id="L180">        gc.insets = new Insets(0, 0, 0, 0);</span>
+<span class="nc" id="L181">        this.getContentPane().add(buttonPane, gc);</span>
+<span class="nc" id="L182">    }</span>
+
+    private GameInfo initGameList() {
+<span class="nc" id="L185">        GameInfo selectedGame = null;</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        for (GameInfo game : controller.getGameList()) {</span>
+<span class="nc" id="L187">            String gameName = game.getName();</span>
+<span class="nc" id="L188">            String gameText = gameName + &quot; - &quot; + game.getNote();</span>
+<span class="nc" id="L189">            gameNameBox.addItem(gameText);</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">            if (game.equals(controller.getDefaultGame())) {</span>
+<span class="nc" id="L191">                gameNameBox.setSelectedItem(gameText);</span>
+<span class="nc" id="L192">                selectedGame = game;</span>
+            }
+<span class="nc" id="L194">        }</span>
+<span class="nc" id="L195">        gameNameBox.addActionListener(controller.getGameAction());</span>
+<span class="nc" id="L196">        return selectedGame;</span>
+    }
+
+    private void initConfigBox() {
+<span class="nc" id="L200">        final ConfigManager cm = ConfigManager.getInstance();</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        for (String profile:cm.getProfiles()) {</span>
+<span class="nc" id="L202">            configureBox.addItem(profile);</span>
+<span class="nc" id="L203">        }</span>
+<span class="nc" id="L204">        configureBox.setSelectedItem(cm.getActiveProfile());</span>
+
+<span class="nc" id="L206">        configureBox.addItemListener(new ItemListener() {</span>
+            public void itemStateChanged(ItemEvent arg0) {
+<span class="nc" id="L208">                cm.changeProfile((String)configureBox.getSelectedItem());</span>
+<span class="nc" id="L209">            }</span>
+        }
+        );
+<span class="nc" id="L212">    }</span>
+
+    void toggleOptions() {
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        if (optionsPane.isVisible()) {</span>
+<span class="nc" id="L216">            optionsPane.setVisible(false);</span>
+<span class="nc" id="L217">            optionButton.setText(LocalText.getText(&quot;OPTIONS&quot;));</span>
+        } else {
+<span class="nc" id="L219">            optionsPane.setVisible(true);</span>
+<span class="nc" id="L220">            optionButton.setText(LocalText.getText(&quot;HIDE_OPTIONS&quot;));</span>
+        }
+<span class="nc" id="L222">    }</span>
+
+    // TODO: Rewrite Options mechanism to allow for common options
+    void initOptions(GameInfo selectedGame) {
+        // clear all previous options
+<span class="nc" id="L227">        optionsPane.removeAll();</span>
+<span class="nc" id="L228">        optionComponents.clear();</span>
+
+<span class="nc" id="L230">        GameOptionsSet.Builder availableOptions = controller.getAvailableOptions(selectedGame);</span>
+<span class="nc bnc" id="L231" title="All 4 branches missed.">        if (availableOptions == null || availableOptions.getOptions().isEmpty()) {</span>
+            // no options available
+<span class="nc" id="L233">            JLabel label = new JLabel(LocalText.getText(&quot;NoGameOptions&quot;));</span>
+<span class="nc" id="L234">            optionsPane.add(label);</span>
+<span class="nc" id="L235">        } else  {</span>
+<span class="nc" id="L236">            List&lt;GameOption&gt; options = availableOptions.getOptions();</span>
+<span class="nc" id="L237">            optionsPane.setLayout(</span>
+<span class="nc" id="L238">                    new GridLayout(((options.size() + 1) / 2), 2, 2, 2));</span>
+
+<span class="nc bnc" id="L240" title="All 2 branches missed.">            for (GameOption option : options) {</span>
+<span class="nc" id="L241">                String selectedValue = option.getSelectedValue();</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">                if (option.isBoolean()) {</span>
+<span class="nc" id="L243">                    JCheckBox checkbox =</span>
+<span class="nc" id="L244">                            new JCheckBox(option.getLocalisedName());</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">                    if (selectedValue.equalsIgnoreCase(&quot;yes&quot;)) {</span>
+<span class="nc" id="L246">                        checkbox.setSelected(true);</span>
+                    }
+                    // the action related to the action
+<span class="nc" id="L249">                    checkbox.addActionListener(controller.getOptionChangeAction(option));</span>
+<span class="nc" id="L250">                    optionComponents.put(option, checkbox);</span>
+
+<span class="nc" id="L252">                    optionsPane.add(checkbox);</span>
+<span class="nc" id="L253">                } else {</span>
+                    // put dropdown and label into one panel to align with checkboxes
+<span class="nc" id="L255">                    JPanel dropdownPanel = new JPanel();</span>
+<span class="nc" id="L256">                    dropdownPanel.setLayout(new BoxLayout(dropdownPanel, BoxLayout.LINE_AXIS));</span>
+<span class="nc" id="L257">                    dropdownPanel.add(new JLabel(LocalText.getText(&quot;SelectSomething&quot;,</span>
+<span class="nc" id="L258">                            option.getLocalisedName())));</span>
+<span class="nc" id="L259">                    dropdownPanel.add(Box.createHorizontalGlue());</span>
+
+<span class="nc" id="L261">                    JComboBox&lt;String&gt; dropdown = new JComboBox&lt;String&gt;();</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">                    for (String value : option.getAllowedValues()) {</span>
+<span class="nc" id="L263">                        dropdown.addItem(value);</span>
+<span class="nc" id="L264">                    }</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">                    if (selectedValue != null) {</span>
+<span class="nc" id="L266">                        dropdown.setSelectedItem(selectedValue);</span>
+                    }
+                    // the action related to the action
+<span class="nc" id="L269">                    dropdown.addActionListener(controller.getOptionChangeAction(option));</span>
+<span class="nc" id="L270">                    optionComponents.put(option, dropdown);</span>
+
+<span class="nc" id="L272">                    dropdownPanel.add(dropdown);</span>
+<span class="nc" id="L273">                    optionsPane.add(dropdownPanel);</span>
+                }
+<span class="nc" id="L275">            }</span>
+<span class="nc" id="L276">            optionsPane.setVisible(true);</span>
+<span class="nc" id="L277">            optionButton.setText(LocalText.getText(&quot;HIDE_OPTIONS&quot;));</span>
+        }
+<span class="nc" id="L279">    }</span>
+
+    void hideOptions() {
+<span class="nc" id="L282">        optionsPane.setVisible(false);</span>
+<span class="nc" id="L283">        optionsPane.removeAll();</span>
+<span class="nc" id="L284">        optionComponents.clear();</span>
+<span class="nc" id="L285">        optionButton.setText(LocalText.getText(&quot;OPTIONS&quot;));</span>
+<span class="nc" id="L286">    }</span>
+
+    void initPlayersPane(GameInfo selectedGame) {
+<span class="nc" id="L289">        playersPane.setVisible(false);</span>
+
+        // Remember names that have already been filled-in...
+<span class="nc" id="L292">        List&lt;String&gt; prefilledPlayers = Lists.newArrayList();</span>
+<span class="nc bnc" id="L293" title="All 2 branches missed.">        for (PlayerInfo player:players) {</span>
+<span class="nc bnc" id="L294" title="All 2 branches missed.">            if (player.name != null</span>
+<span class="nc bnc" id="L295" title="All 2 branches missed.">                    &amp;&amp; player.name.getText().length() &gt; 0) {</span>
+<span class="nc" id="L296">                prefilledPlayers.add(player.name.getText());</span>
+            }
+<span class="nc" id="L298">        }</span>
+        // and remove existing players
+<span class="nc" id="L300">        players.clear();</span>
+
+        // use default players if none provided so far
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        if (prefilledPlayers.isEmpty()) {</span>
+<span class="nc" id="L304">            prefilledPlayers = Arrays.asList(Config.get(&quot;default_players&quot;).split(&quot;,&quot;));</span>
+        }
+
+        // create playersPane
+<span class="nc" id="L308">        playersPane.removeAll();</span>
+
+<span class="nc" id="L310">        int maxPlayers = selectedGame.getMaxPlayers();</span>
+<span class="nc" id="L311">        int minPlayers = selectedGame.getMinPlayers();</span>
+
+<span class="nc" id="L313">        playersPane.setLayout(new GridLayout(maxPlayers + 1, 0, 0, 2));</span>
+<span class="nc" id="L314">        playersPane.setBorder(BorderFactory.createLoweredBevelBorder());</span>
+<span class="nc" id="L315">        playersPane.add(new JLabel(&quot;Players:&quot;));</span>
+
+<span class="nc" id="L317">        playersPane.add(randomizeButton);</span>
+
+<span class="nc bnc" id="L319" title="All 2 branches missed.">        for (int i = 0; i &lt; maxPlayers; i++) {</span>
+
+<span class="nc" id="L321">            PlayerInfo player = new PlayerInfo();</span>
+
+<span class="nc" id="L323">            player.number.setText(LocalText.getText(&quot;PlayerName&quot;, Integer.toString(i + 1)));</span>
+<span class="nc" id="L324">            player.name.setInputVerifier(controller.getPlayerNameVerifier());</span>
+
+            /*
+             * Prefill with any configured player names. This can be useful to
+             * speed up testing purposes.
+             */
+<span class="nc bnc" id="L330" title="All 2 branches missed.">            if (i &lt; prefilledPlayers.size()) {</span>
+<span class="nc" id="L331">                player.name.setText(prefilledPlayers.get(i));</span>
+            }
+<span class="nc bnc" id="L333" title="All 2 branches missed.">            if (i &lt; minPlayers) {</span>
+<span class="nc" id="L334">                player.name.setBorder(BorderFactory.createLineBorder(Color.RED));</span>
+            }
+<span class="nc bnc" id="L336" title="All 4 branches missed.">            if (i &lt; minPlayers || i &lt;= prefilledPlayers.size()) {</span>
+<span class="nc" id="L337">                player.name.setEnabled(true);</span>
+<span class="nc" id="L338">                player.number.setForeground(Color.BLACK);</span>
+            } else {
+<span class="nc" id="L340">                player.name.setEnabled(false);</span>
+<span class="nc" id="L341">                player.number.setForeground(Color.GRAY);</span>
+            }
+
+            // allow activation of the next field by mouse click
+<span class="nc" id="L345">            final int playerNr = i;</span>
+<span class="nc" id="L346">            player.name.addMouseListener(new MouseAdapter() {</span>
+                @Override
+                public void mouseClicked(MouseEvent e) {
+<span class="nc bnc" id="L349" title="All 2 branches missed.">                    if (playerNr == getPlayerCount()) {</span>
+<span class="nc" id="L350">                        enablePlayer(playerNr);</span>
+<span class="nc" id="L351">                        setFocus(playerNr);</span>
+                    }
+<span class="nc" id="L353">                }</span>
+            });
+
+<span class="nc" id="L356">            playersPane.add(player.number);</span>
+<span class="nc" id="L357">            playersPane.add(player.name);</span>
+<span class="nc" id="L358">            players.add(player);</span>
+        }
+<span class="nc" id="L360">        playersPane.setVisible(true);</span>
+<span class="nc" id="L361">    }</span>
+
+    GameInfo getSelectedGame() {
+<span class="nc" id="L364">        return controller.getGameList().get(gameNameBox.getSelectedIndex());</span>
+    }
+
+    String getPlayerName(int i) {
+<span class="nc" id="L368">        PlayerInfo player = players.get(i);</span>
+<span class="nc" id="L369">        return player.name.getText();</span>
+    }
+
+    int getPlayerCount() {
+<span class="nc" id="L373">        return getPlayers().size();</span>
+    }
+
+    ImmutableList&lt;String&gt; getPlayers() {
+<span class="nc" id="L377">        ImmutableList.Builder&lt;String&gt; playerList = ImmutableList.builder();</span>
+<span class="nc bnc" id="L378" title="All 2 branches missed.">        for (PlayerInfo player:players) {</span>
+<span class="nc" id="L379">            String name = player.name.getText();</span>
+<span class="nc bnc" id="L380" title="All 4 branches missed.">            if (name != null &amp;&amp; name.length() &gt; 0) {</span>
+<span class="nc" id="L381">                playerList.add(name);</span>
+            }
+<span class="nc" id="L383">        }</span>
+<span class="nc" id="L384">        return playerList.build();</span>
+    }
+
+    void setPlayers(List&lt;String&gt; newPlayers) {
+<span class="nc" id="L388">        LinkedList&lt;String&gt; newPlayersCopy = Lists.newLinkedList(newPlayers);</span>
+<span class="nc bnc" id="L389" title="All 2 branches missed.">        for (PlayerInfo player:players) {</span>
+<span class="nc bnc" id="L390" title="All 2 branches missed.">            if (newPlayersCopy.isEmpty()) {</span>
+<span class="nc" id="L391">                player.name.setText(null);</span>
+            } else {
+<span class="nc" id="L393">                player.name.setText(newPlayersCopy.pop());</span>
+            }
+<span class="nc" id="L395">        }</span>
+<span class="nc" id="L396">    }</span>
+
+    void enablePlayer(Integer playerNr) {
+<span class="nc" id="L399">        final PlayerInfo player = players.get(playerNr);</span>
+<span class="nc" id="L400">        player.name.setEnabled(true);</span>
+<span class="nc" id="L401">        player.number.setForeground(Color.BLACK);</span>
+<span class="nc" id="L402">    }</span>
+
+    void disablePlayer(Integer playerNr) {
+<span class="nc" id="L405">        PlayerInfo player = players.get(playerNr);</span>
+<span class="nc" id="L406">        player.name.setEnabled(false);</span>
+<span class="nc" id="L407">        player.number.setForeground(Color.GRAY);</span>
+<span class="nc" id="L408">    }</span>
+
+    boolean isPlayerEnabled(Integer playerNr) {
+<span class="nc" id="L411">        return players.get(playerNr).name.isEnabled();</span>
+    }
+
+    void setFocus(Integer playerNr) {
+<span class="nc" id="L415">        final PlayerInfo focus = players.get(playerNr);</span>
+<span class="nc" id="L416">        EventQueue.invokeLater(new Runnable() {</span>
+            public void run() {
+<span class="nc" id="L418">                focus.name.requestFocusInWindow();</span>
+<span class="nc" id="L419">            }</span>
+        });
+<span class="nc" id="L421">    }</span>
+
+    boolean areOptionsVisible() {
+<span class="nc" id="L424">        return optionsPane.isVisible();</span>
+    }
+
+    String getSelectedGameOption(GameOption option) {
+<span class="nc bnc" id="L428" title="All 2 branches missed.">        if (option.isBoolean()) {</span>
+<span class="nc" id="L429">            JCheckBox checkbox = (JCheckBox) optionComponents.get(option);</span>
+<span class="nc bnc" id="L430" title="All 2 branches missed.">            return checkbox.isSelected() ? &quot;yes&quot; : &quot;no&quot;;</span>
+        } else {
+<span class="nc" id="L432">            JComboBox dropdown = (JComboBox) optionComponents.get(option);</span>
+<span class="nc" id="L433">            return (String) dropdown.getSelectedItem();</span>
+        }
+    }
+
+    void addConfigureProfile(String profile) {
+<span class="nc" id="L438">        configureBox.addItem(profile);</span>
+<span class="nc" id="L439">    }</span>
+
+    void removeConfigureProfile(String profile) {
+<span class="nc" id="L442">        configureBox.removeItem(profile);</span>
+<span class="nc" id="L443">    }</span>
+
+    void changeConfigureProfile(String profile) {
+<span class="nc" id="L446">        configureBox.setSelectedItem(profile);</span>
+<span class="nc" id="L447">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

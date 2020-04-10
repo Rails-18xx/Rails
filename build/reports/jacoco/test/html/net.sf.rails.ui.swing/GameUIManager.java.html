@@ -1,0 +1,1324 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameUIManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing</a> &gt; <span class="el_source">GameUIManager.java</span></div><h1>GameUIManager.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing;
+
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Observable;
+import java.util.Set;
+import java.util.TimeZone;
+import java.util.stream.IntStream;
+
+import javax.swing.*;
+import javax.swing.plaf.FontUIResource;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Iterables;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.PatternLayout;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import ch.qos.logback.core.read.CyclicBufferAppender;
+import net.sf.rails.common.Config;
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.GuiHints;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.notify.Discord;
+import net.sf.rails.common.notify.Slack;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.Phase;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.StartRound;
+import net.sf.rails.game.Station;
+import net.sf.rails.game.SwitchableUIRound;
+import net.sf.rails.game.Train;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.game.round.RoundFacade;
+import net.sf.rails.game.state.Observer;
+import net.sf.rails.javafx.windows.FXStockChartWindow;
+import net.sf.rails.sound.SoundManager;
+import net.sf.rails.ui.swing.elements.CheckBoxDialog;
+import net.sf.rails.ui.swing.elements.DialogOwner;
+import net.sf.rails.ui.swing.elements.MessageDialog;
+import net.sf.rails.ui.swing.elements.NonModalDialog;
+import net.sf.rails.ui.swing.elements.RadioButtonDialog;
+import net.sf.rails.util.Util;
+import rails.game.action.DiscardTrain;
+import rails.game.action.ExchangeTokens;
+import rails.game.action.ExchangeableToken;
+import rails.game.action.GameAction;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.RepayLoans;
+import rails.game.action.StartCompany;
+
+
+/**
+ * This class is called by main() and loads all of the UI components
+ */
+public class GameUIManager implements DialogOwner {
+    protected StatusWindow statusWindow;
+    protected ReportWindow reportWindow;
+    protected ConfigWindow configWindow;
+    protected ORUIManager orUIManager;
+    protected ORWindow orWindow; // TEMPORARY
+    private StartRoundWindow startRoundWindow;
+
+<span class="nc" id="L86">    protected JDialog currentDialog = null;</span>
+<span class="nc" id="L87">    protected PossibleAction currentDialogAction = null;</span>
+
+    protected static ImageLoader imageLoader;
+
+    protected RailsRoot railsRoot;
+    protected PossibleAction lastAction;
+<span class="nc" id="L93">    protected ActionPerformer activeWindow = null;</span>
+    protected StartRound startRound;
+
+    protected RoundFacade currentRound;
+    protected RoundFacade previousRound;
+<span class="nc" id="L98">    protected Class&lt;? extends RoundFacade&gt; previousRoundType = null;</span>
+<span class="nc" id="L99">    protected Class&lt;? extends RoundFacade&gt; currentRoundType = null;</span>
+<span class="nc" id="L100">    protected GuiHints uiHints= null;</span>
+    protected String previousRoundName;
+    protected String currentRoundName;
+
+    protected static final String DEFAULT_SAVE_DIRECTORY = &quot;save&quot;;
+    protected static final String DEFAULT_SAVE_PATTERN = &quot;yyyyMMdd_HHmm&quot;;
+    public static final String DEFAULT_SAVE_EXTENSION = &quot;rails&quot;;
+    protected static final String NEXT_PLAYER_SUFFIX = &quot;NEXT_PLAYER&quot;;
+    protected static final String CURRENT_ROUND_SUFFIX = &quot;CURRENT_ROUND&quot;;
+
+    protected String saveDirectory;
+    protected String savePattern;
+    protected String saveExtension;
+    protected String savePrefix;
+<span class="nc" id="L114">    protected String saveSuffixSpec = &quot;&quot;;</span>
+<span class="nc" id="L115">    protected String saveSuffix = &quot;&quot;;</span>
+<span class="nc" id="L116">    protected String providedName = null;</span>
+    protected SimpleDateFormat saveDateTimeFormat;
+
+<span class="nc" id="L119">    protected boolean autoSaveLoadInitialized = false;</span>
+<span class="nc" id="L120">    protected int autoSaveLoadStatus = 0;</span>
+<span class="nc" id="L121">    protected int autoSaveLoadPollingInterval = 30;</span>
+<span class="nc" id="L122">    protected AutoLoadPoller autoLoadPoller = null;</span>
+<span class="nc" id="L123">    protected boolean myTurn = true;</span>
+<span class="nc" id="L124">    protected String lastSavedFilename = null;</span>
+<span class="nc" id="L125">    protected String localPlayerName = &quot;&quot;;</span>
+
+<span class="nc" id="L127">    protected boolean gameWasLoaded = false;</span>
+
+    protected WindowSettings windowSettings;
+
+<span class="nc" id="L131">    protected boolean configuredStockChartVisibility = false;</span>
+
+    protected boolean previousStockChartVisibilityHint;
+    protected boolean previousStatusWindowVisibilityHint;
+    protected boolean previousORWindowVisibilityHint;
+
+    protected boolean previousResult;
+
+    // Player order
+//    protected PlayerOrderView playerOrderView;
+    /** Player names set at time of initialisation or after reordering.
+     *&lt;p&gt; To be used as a reference to the current player order as shown in the UI.
+     * Note, that getPlayers() currently calls the game engine directly, and
+     * therefore updates before the UI gets notice via the playerOrderView.*/
+    protected List&lt;String&gt; currentGuiPlayerNames;
+
+    /* Keys of dialogs owned by this class */
+    public static final String COMPANY_START_PRICE_DIALOG = &quot;CompanyStartPrice&quot;;
+    public static final String SELECT_COMPANY_DIALOG = &quot;SelectCompany&quot;;
+    public static final String REPAY_LOANS_DIALOG = &quot;RepayLoans&quot;;
+    public static final String EXCHANGE_TOKENS_DIALOG = &quot;ExchangeTokens&quot;;
+
+<span class="fc" id="L153">    private static final Logger log = LoggerFactory.getLogger(GameUIManager.class);</span>
+
+<span class="nc" id="L155">    private SplashWindow splashWindow = null;</span>
+
+<span class="nc" id="L157">    public GameUIManager() { }</span>
+
+    public void init (RailsRoot root, boolean wasLoaded, SplashWindow splashWindow) {
+<span class="nc" id="L160">        this.splashWindow = splashWindow;</span>
+<span class="nc" id="L161">        splashWindow.notifyOfStep(SplashWindow.STEP_INIT_UI);</span>
+
+//        instance = this;
+<span class="nc" id="L164">        this.railsRoot = root;</span>
+<span class="nc" id="L165">        uiHints = railsRoot.getGameManager().getUIHints();</span>
+<span class="nc" id="L166">        savePrefix = railsRoot.getGameName();</span>
+<span class="nc" id="L167">        gameWasLoaded = wasLoaded;</span>
+
+<span class="nc" id="L169">        initWindowSettings();</span>
+<span class="nc" id="L170">        initSaveSettings();</span>
+<span class="nc" id="L171">        initFontSettings();</span>
+
+<span class="nc" id="L173">        configuredStockChartVisibility = &quot;yes&quot;.equalsIgnoreCase(Config.get(&quot;stockchart.window.open&quot;));</span>
+
+//        playerOrderView = new PlayerOrderView();
+<span class="nc" id="L176">        currentGuiPlayerNames = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        for (Player player : getPlayers()) {</span>
+<span class="nc" id="L178">            currentGuiPlayerNames.add (player.getId());</span>
+<span class="nc" id="L179">       }</span>
+<span class="nc" id="L180">    }</span>
+
+    private void initWindowSettings () {
+<span class="nc" id="L183">        windowSettings = new WindowSettings (railsRoot.getGameName());</span>
+<span class="nc" id="L184">        windowSettings.load();</span>
+<span class="nc" id="L185">    }</span>
+
+    public void terminate () {
+<span class="nc" id="L188">        getWindowSettings ().save();</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        if (orWindow != null) orWindow.saveLayout();</span>
+<span class="nc" id="L190">        System.exit(0);</span>
+<span class="nc" id="L191">    }</span>
+
+    public WindowSettings getWindowSettings () {
+<span class="nc" id="L194">        return windowSettings;</span>
+    }
+
+    private void initSaveSettings() {
+<span class="nc" id="L198">        saveDirectory = Config.get(&quot;save.directory&quot;);</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        if (!Util.hasValue(saveDirectory)) {</span>
+<span class="nc" id="L200">            saveDirectory = DEFAULT_SAVE_DIRECTORY;</span>
+        }
+<span class="nc" id="L202">        savePattern = Config.get(&quot;save.filename.date_time_pattern&quot;);</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        if (!Util.hasValue(savePattern)) {</span>
+<span class="nc" id="L204">            savePattern = DEFAULT_SAVE_PATTERN;</span>
+        }
+<span class="nc" id="L206">        saveDateTimeFormat = new SimpleDateFormat(savePattern);</span>
+<span class="nc" id="L207">        saveExtension = Config.get(&quot;save.filename.extension&quot;);</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">        if (!Util.hasValue(saveExtension)) {</span>
+<span class="nc" id="L209">            saveExtension = DEFAULT_SAVE_EXTENSION;</span>
+        }
+<span class="nc" id="L211">        String timezone = Config.get(&quot;save.filename.date_time_zone&quot;);</span>
+        // Default is local time
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        if (Util.hasValue(timezone)) {</span>
+<span class="nc" id="L214">            saveDateTimeFormat.setTimeZone(TimeZone.getTimeZone(timezone));</span>
+        }
+<span class="nc" id="L216">        saveSuffixSpec = Config.get(&quot;save.filename.suffix&quot;);</span>
+<span class="nc bnc" id="L217" title="All 4 branches missed.">        if (!Util.hasValue(saveSuffixSpec) || saveSuffixSpec.equals(NEXT_PLAYER_SUFFIX)) {</span>
+<span class="nc" id="L218">            saveSuffix = getPlayers().get(0).getId();</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">        } else if (saveSuffixSpec.equals(CURRENT_ROUND_SUFFIX))  {</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">            if (currentRound != null) {</span>
+<span class="nc" id="L221">                saveSuffix = currentRound.getRoundName();</span>
+            } else {
+<span class="nc" id="L223">                saveSuffix = &quot;&quot;;</span>
+            }
+        } else { // otherwise use specified suffix
+<span class="nc" id="L226">            saveSuffix = saveSuffixSpec;</span>
+        }
+<span class="nc" id="L228">        log.debug(&quot;Initial save suffix: {}&quot;, saveSuffix);</span>
+
+<span class="nc" id="L230">        String str = Config.get(&quot;save.auto.enabled&quot;);</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">        autoSaveLoadStatus = &quot;yes&quot;.equals(str) ? AutoLoadPoller.ON : AutoLoadPoller.OFF;</span>
+<span class="nc" id="L232">        str = Config.get(&quot;save.auto.interval&quot;);</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        if ( Util.hasValue(str) ) {</span>
+<span class="nc" id="L234">            autoSaveLoadPollingInterval = Integer.parseInt(str);</span>
+        }
+<span class="nc" id="L236">    }</span>
+
+    private void initFontSettings() {
+        // font settings, can be game specific
+<span class="nc" id="L240">        String fontType = Config.getGameSpecific(&quot;font.ui.name&quot;);</span>
+<span class="nc" id="L241">        Font font = null;</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (Util.hasValue(fontType)) {</span>
+<span class="nc" id="L243">            boolean boldStyle = true;</span>
+<span class="nc" id="L244">            String fontStyle = Config.getGameSpecific(&quot;font.ui.style&quot;);</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">            if (Util.hasValue(fontStyle)) {</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">                if (fontStyle.equalsIgnoreCase(&quot;plain&quot;)) {</span>
+<span class="nc" id="L247">                    boldStyle = false;</span>
+                }
+            }
+<span class="nc bnc" id="L250" title="All 2 branches missed.">            if (boldStyle) {</span>
+<span class="nc" id="L251">                font = new Font(fontType, Font.BOLD, 12);</span>
+            } else {
+<span class="nc" id="L253">                font = new Font(fontType, Font.PLAIN, 12);</span>
+            }
+<span class="nc bnc" id="L255" title="All 2 branches missed.">            log.debug(&quot;Change text fonts globally to {} / {}&quot;, font.getName(), boldStyle ? &quot;Bold&quot; : &quot;Plain&quot;);</span>
+        }
+
+<span class="nc" id="L258">        log.debug(&quot;Change text fonts to relative scale {}&quot;, GUIGlobals.getFontsScale());</span>
+<span class="nc" id="L259">        changeGlobalFont(font, GUIGlobals.getFontsScale());</span>
+<span class="nc" id="L260">    }</span>
+
+
+    public void gameUIInit(boolean newGame) {
+<span class="nc" id="L264">        imageLoader = new ImageLoader();</span>
+
+<span class="nc" id="L266">        splashWindow.notifyOfStep(SplashWindow.STEP_STOCK_CHART);</span>
+<span class="nc" id="L267">        FXStockChartWindow.launch(this);</span>
+
+<span class="nc" id="L269">        splashWindow.notifyOfStep(SplashWindow.STEP_REPORT_WINDOW);</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">        if (Config.get(&quot;report.window.type&quot;).equalsIgnoreCase(&quot;static&quot;)) {</span>
+            // reportWindow = new ReportWindowStatic(this);
+        } else {
+<span class="nc" id="L273">            reportWindow = new ReportWindow(this);</span>
+        }
+
+<span class="nc" id="L276">        orWindow = new ORWindow(this, splashWindow);</span>
+<span class="nc" id="L277">        orUIManager = orWindow.getORUIManager();</span>
+
+<span class="nc" id="L279">        splashWindow.notifyOfStep(SplashWindow.STEP_STATUS_WINDOW);</span>
+<span class="nc" id="L280">        String statusWindowClassName = getClassName(GuiDef.ClassName.STATUS_WINDOW);</span>
+        try {
+<span class="nc" id="L282">            Class&lt;? extends StatusWindow&gt; statusWindowClass =</span>
+<span class="nc" id="L283">                Class.forName(statusWindowClassName).asSubclass(StatusWindow.class);</span>
+<span class="nc" id="L284">            statusWindow = statusWindowClass.newInstance();</span>
+
+            //            GraphicsEnvironment ge = GraphicsEnvironment.
+            //            getLocalGraphicsEnvironment();
+            //            GraphicsDevice[] gs = ge.getScreenDevices();
+            //            log.debug(&quot;ScreenDevices = &quot; + Arrays.toString(gs));
+            //            statusWindow = statusWindowClass.getConstructor(GraphicsConfiguration.class).newInstance(gs[1].getDefaultConfiguration());
+
+<span class="nc" id="L292">            statusWindow.init(this);</span>
+<span class="nc" id="L293">        } catch (Exception e) {</span>
+<span class="nc" id="L294">            log.error(&quot;Cannot instantiate class {}&quot;, statusWindowClassName, e);</span>
+<span class="nc" id="L295">            System.exit(1);</span>
+<span class="nc" id="L296">        }</span>
+
+        // removed for reloaded games to avoid double revenue calculation
+<span class="nc bnc" id="L299" title="All 2 branches missed.">        if (newGame) {</span>
+<span class="nc" id="L300">            splashWindow.notifyOfStep(SplashWindow.STEP_INIT_NEW_GAME);</span>
+<span class="nc" id="L301">            updateUI();</span>
+        }
+
+<span class="nc" id="L304">        reportWindow.scrollDown();</span>
+
+        // define configWindow
+<span class="nc" id="L307">        splashWindow.notifyOfStep(SplashWindow.STEP_CONFIG_WINDOW);</span>
+<span class="nc" id="L308">        configWindow = new ConfigWindow(statusWindow);</span>
+<span class="nc" id="L309">        configWindow.init(true);</span>
+
+        // notify sound manager of game initialization
+<span class="nc" id="L312">        splashWindow.notifyOfStep(SplashWindow.STEP_INIT_SOUND);</span>
+<span class="nc" id="L313">        SoundManager.notifyOfGameInit(railsRoot);</span>
+
+        // TODO: switch to injecting Discord to loosely couple
+<span class="nc" id="L316">        Discord.notifyOfGameInit(railsRoot);</span>
+<span class="nc" id="L317">        Slack.notifyOfGameInit(railsRoot);</span>
+
+<span class="nc bnc" id="L319" title="All 4 branches missed.">        if ( gameWasLoaded &amp;&amp; autoSaveLoadStatus &gt; 0 ) {</span>
+<span class="nc" id="L320">            startAutoSaveLoadPoller();</span>
+        }
+<span class="nc" id="L322">    }</span>
+
+    public void startLoadedGame() {
+<span class="nc" id="L325">        gameUIInit(false); // false indicates reload</span>
+
+<span class="nc" id="L327">        splashWindow.notifyOfStep(SplashWindow.STEP_INIT_LOADED_GAME);</span>
+<span class="nc" id="L328">        processAction(new NullAction(NullAction.Mode.START_GAME));</span>
+<span class="nc" id="L329">        statusWindow.setGameActions();</span>
+<span class="nc" id="L330">    }</span>
+
+    public boolean processAction(PossibleAction action) {
+        boolean result;
+
+        // In some cases an Undo requires a different follow-up
+<span class="nc" id="L336">        lastAction = action;</span>
+
+<span class="nc bnc" id="L338" title="All 2 branches missed.">        if (action == null) {</span>
+            // If the action is null, we can skip processing
+            // and continue with following up a previous action.
+            // This occurs after a nonmodal Message dialog.
+<span class="nc" id="L342">            result = previousResult;</span>
+
+        } else {
+<span class="nc" id="L345">            Player oldPlayer = getCurrentPlayer();</span>
+<span class="nc" id="L346">            boolean wasMyTurn = oldPlayer.getId().equals(localPlayerName);</span>
+
+            // Notify the Sound Manager about this action, as it could lead to
+            // playing sfx or music.
+            // Notification has to be done before action processing so that
+            // resulting sfx are played in the correct order (first the action
+            // related sfx and then model-change related sfx)
+<span class="nc" id="L353">            SoundManager.notifyOfActionProcessing(railsRoot, action);</span>
+
+            // Process the action on the server
+<span class="nc" id="L356">            result = previousResult = processOnServer (action);</span>
+
+            // Process any autosaving and turn relinquishing, resp. autoloading and turn pickup
+<span class="nc bnc" id="L359" title="All 4 branches missed.">            if (autoSaveLoadInitialized &amp;&amp; autoSaveLoadStatus != AutoLoadPoller.OFF) {</span>
+<span class="nc" id="L360">                Player newPlayer = getCurrentPlayer();</span>
+<span class="nc" id="L361">                myTurn = newPlayer.getId().equals(localPlayerName);</span>
+<span class="nc" id="L362">                log.debug(&quot;players o:{}/c:{} myTurn:{}&quot;, oldPlayer.getId(), newPlayer.getId(), myTurn);</span>
+<span class="nc bnc" id="L363" title="All 2 branches missed.">                if (newPlayer != oldPlayer) {</span>
+<span class="nc bnc" id="L364" title="All 4 branches missed.">                    if (wasMyTurn &amp;&amp; !myTurn) {</span>
+<span class="nc" id="L365">                        autoSave (newPlayer.getId());</span>
+<span class="nc" id="L366">                        autoLoadPoller.setLastSavedFilename(lastSavedFilename);</span>
+<span class="nc" id="L367">                        autoLoadPoller.setActive(true);</span>
+<span class="nc" id="L368">                        log.info(&quot;Relinquishing turn to {}&quot;, newPlayer.getId());</span>
+<span class="nc bnc" id="L369" title="All 4 branches missed.">                    } else if (!wasMyTurn &amp;&amp; myTurn) {</span>
+<span class="nc" id="L370">                        autoLoadPoller.setActive(false);</span>
+<span class="nc" id="L371">                        setCurrentDialog(new MessageDialog(null, this,</span>
+                                (JFrame) activeWindow,
+<span class="nc" id="L373">                                LocalText.getText(&quot;Message&quot;),</span>
+<span class="nc" id="L374">                                LocalText.getText(&quot;YourTurn&quot;, localPlayerName)),</span>
+                                null);
+<span class="nc" id="L376">                        log.info(&quot;Resuming turn as {}&quot;, localPlayerName);</span>
+                    } else {
+<span class="nc" id="L378">                        log.info(&quot;{} now has the turn&quot;, newPlayer.getId());</span>
+                    }
+                } else {
+                    // first time through after a game load needs to set myTurn
+<span class="nc" id="L382">                    log.info(&quot;{} keeps the turn&quot;, oldPlayer.getId());</span>
+                }
+            }
+        }
+
+        // Check in which round we are now,
+        // and make sure that the right window is active.
+<span class="nc" id="L389">        updateUI();</span>
+
+<span class="nc" id="L391">        statusWindow.initGameActions();</span>
+<span class="nc bnc" id="L392" title="All 2 branches missed.">        if (!myTurn) return true;</span>
+<span class="nc" id="L393">        statusWindow.setGameActions();</span>
+<span class="nc" id="L394">        statusWindow.setCorrectionMenu();</span>
+<span class="nc" id="L395">        reportWindow.setActions();</span>
+
+        // Is this perhaps the right place to display messages...?
+<span class="nc bnc" id="L398" title="All 2 branches missed.">        if (getDisplayBuffer().getAutoDisplay()) {</span>
+<span class="nc bnc" id="L399" title="All 2 branches missed.">            if (displayServerMessage()) {</span>
+                // Interrupt processing.
+                // Will be continued via dialogActionPerformed().
+<span class="nc" id="L402">                return true;</span>
+            }
+        }
+
+        // display the end of game report
+<span class="nc bnc" id="L407" title="All 2 branches missed.">        if (railsRoot.getGameManager().isGameOver()) statusWindow.endOfGameReport();</span>
+
+<span class="nc bnc" id="L409" title="All 2 branches missed.">        if (!result) return false;</span>
+
+<span class="nc" id="L411">        return activeWindow.processImmediateAction();</span>
+    }
+
+    protected boolean processOnServer (PossibleAction action) {
+        boolean result;
+
+<span class="nc" id="L417">        action.setActed();</span>
+<span class="nc" id="L418">        action.setPlayerName(getCurrentPlayer().getId());</span>
+
+<span class="nc" id="L420">        log.debug(&quot;==Passing to server: {}&quot;, action);</span>
+
+        // Process the action on the server
+<span class="nc" id="L423">        result = railsRoot.getGameManager().process(action);</span>
+
+        // Follow-up the result
+<span class="nc" id="L426">        log.debug(&quot;==Result from server: {}&quot;, result);</span>
+
+<span class="nc" id="L428">        return result;</span>
+    }
+
+    public boolean displayServerMessage() {
+<span class="nc" id="L432">        String[] message = getDisplayBuffer().get();</span>
+<span class="nc bnc" id="L433" title="All 2 branches missed.">        if (message != null) {</span>
+<span class="nc" id="L434">            setCurrentDialog(new MessageDialog(null, this,</span>
+                    (JFrame) activeWindow,
+<span class="nc" id="L436">                    LocalText.getText(&quot;Message&quot;),</span>
+<span class="nc" id="L437">                    &quot;&lt;html&gt;&quot; + Util.joinWithDelimiter(message, &quot;&lt;br&gt;&quot;)),</span>
+                    null);
+<span class="nc" id="L439">            return true;</span>
+        }
+<span class="nc" id="L441">        return false;</span>
+    }
+
+    public void updateUI() {
+<span class="nc" id="L445">        previousRoundType = currentRoundType;</span>
+<span class="nc" id="L446">        previousRoundName = currentRoundName;</span>
+<span class="nc" id="L447">        previousRound = currentRound;</span>
+
+<span class="nc" id="L449">        currentRound = railsRoot.getGameManager().getCurrentRound();</span>
+<span class="nc" id="L450">        currentRoundName = currentRound.toString();</span>
+
+<span class="nc" id="L452">        log.debug(&quot;Current round={}, previous round={}&quot;, currentRoundName, previousRoundName);</span>
+
+<span class="nc" id="L454">        currentRoundType = uiHints.getCurrentRoundType();</span>
+
+        /* Process actual round type changes */
+<span class="nc bnc" id="L457" title="All 2 branches missed.">        if (previousRoundType != currentRoundType) {</span>
+
+            /* Finish previous round UI processing */
+<span class="nc bnc" id="L460" title="All 2 branches missed.">            if (previousRoundType != null) {</span>
+                /* close current dialog */
+<span class="nc" id="L462">                setCurrentDialog(null, null);</span>
+
+<span class="nc bnc" id="L464" title="All 2 branches missed.">                if (StockRound.class.isAssignableFrom(previousRoundType)) {</span>
+<span class="nc" id="L465">                    log.debug(&quot;UI leaving Stock Round {}&quot;, previousRoundName);</span>
+<span class="nc" id="L466">                    statusWindow.finishRound();</span>
+<span class="nc bnc" id="L467" title="All 2 branches missed.">                } else if (StartRound.class.isAssignableFrom(previousRoundType)) {</span>
+<span class="nc" id="L468">                    log.debug(&quot;UI leaving Start Round {}&quot;, previousRoundName);</span>
+<span class="nc bnc" id="L469" title="All 2 branches missed.">                    if (startRoundWindow != null) {</span>
+<span class="nc" id="L470">                        startRoundWindow.close();</span>
+<span class="nc" id="L471">                        startRoundWindow = null;</span>
+                    }
+<span class="nc bnc" id="L473" title="All 2 branches missed.">                } else if (OperatingRound.class.isAssignableFrom(previousRoundType)) {</span>
+<span class="nc" id="L474">                    log.debug(&quot;UI leaving Operating Round {}&quot;, previousRoundName);</span>
+<span class="nc" id="L475">                    orUIManager.finish();</span>
+<span class="nc bnc" id="L476" title="All 2 branches missed.">                } else if (SwitchableUIRound.class.isAssignableFrom(previousRoundType) ) {</span>
+<span class="nc" id="L477">                    log.debug(&quot;UI leaving switchable round type {}&quot;, previousRoundName);</span>
+                }
+            }
+        }
+
+<span class="nc bnc" id="L482" title="All 2 branches missed.">        if (currentRound != previousRound) {</span>
+            // Start the new round UI processing
+<span class="nc bnc" id="L484" title="All 2 branches missed.">            if (StartRound.class.isAssignableFrom(currentRoundType)) {</span>
+<span class="nc" id="L485">                log.debug(&quot;UI entering Start Round {}&quot;, currentRoundName);</span>
+<span class="nc" id="L486">                startRound = (StartRound) currentRound;</span>
+<span class="nc bnc" id="L487" title="All 2 branches missed.">                if (startRoundWindow == null) {</span>
+                    //startRoundWindow = new StartRoundWindow(startRound, this);
+<span class="nc" id="L489">                    String startRoundWindowClassName = getClassName(GuiDef.ClassName.START_ROUND_WINDOW);</span>
+                    try {
+<span class="nc" id="L491">                        Class&lt;? extends StartRoundWindow&gt; startRoundWindowClass =</span>
+<span class="nc" id="L492">                            Class.forName(startRoundWindowClassName).asSubclass(StartRoundWindow.class);</span>
+<span class="nc" id="L493">                        startRoundWindow = startRoundWindowClass.newInstance();</span>
+<span class="nc" id="L494">                        startRoundWindow.init(startRound, this);</span>
+<span class="nc" id="L495">                    } catch (Exception e) {</span>
+<span class="nc" id="L496">                        log.error(&quot;Cannot instantiate class {}&quot;, startRoundWindowClassName, e);</span>
+<span class="nc" id="L497">                        System.exit(1);</span>
+<span class="nc" id="L498">                    }</span>
+<span class="nc" id="L499">                }</span>
+
+<span class="nc bnc" id="L501" title="All 2 branches missed.">            } else if (StockRound.class.isAssignableFrom(currentRoundType)) {</span>
+<span class="nc" id="L502">                log.debug(&quot;UI entering Stock Round {}&quot;, currentRoundName);</span>
+
+<span class="nc bnc" id="L504" title="All 2 branches missed.">            } else if (OperatingRound.class.isAssignableFrom(currentRoundType)) {</span>
+<span class="nc" id="L505">                log.debug(&quot;UI entering Operating Round {}&quot;, currentRoundName);</span>
+<span class="nc" id="L506">                orUIManager.initOR((OperatingRound) currentRound);</span>
+
+<span class="nc bnc" id="L508" title="All 2 branches missed.">            } else if (SwitchableUIRound.class.isAssignableFrom(currentRoundType) ) {</span>
+<span class="nc" id="L509">                log.debug(&quot;UI entering switchable round type {}&quot;, currentRoundName);</span>
+<span class="nc" id="L510">                statusWindow.pack();</span>
+            }
+        }
+
+        /* Process visible round type changes */
+
+        // Visibility settings are handled first.
+        // Any window not represented in a setting is left unaffected.
+        // Each window set visible or already being visible will be put
+        // in front as well.
+        // As the settings are handled in which these have been entered,
+        // this means that this way the window top-to-bottom sequence
+        // can be influenced.
+        // To make this work, clearVisbilityHints() should be called
+        // before each sequence of settings (usually at the start of a round).
+<span class="nc bnc" id="L525" title="All 2 branches missed.">        for (GuiHints.VisibilityHint hint : uiHints.getVisibilityHints()) {</span>
+<span class="nc bnc" id="L526" title="All 4 branches missed.">            switch (hint.getType()) {</span>
+            case STOCK_MARKET:
+<span class="nc bnc" id="L528" title="All 4 branches missed.">                boolean stockChartVisibilityHint = hint.getVisibility() || configuredStockChartVisibility;</span>
+<span class="nc bnc" id="L529" title="All 2 branches missed.">                if (stockChartVisibilityHint != previousStockChartVisibilityHint) {</span>
+<span class="nc" id="L530">                    FXStockChartWindow.setVisible(stockChartVisibilityHint);</span>
+<span class="nc" id="L531">                    previousStockChartVisibilityHint = stockChartVisibilityHint;</span>
+                }
+                break;
+            case STATUS:
+<span class="nc" id="L535">                boolean statusWindowVisibilityHint = hint.getVisibility();</span>
+<span class="nc bnc" id="L536" title="All 2 branches missed.">                if (statusWindowVisibilityHint != previousStatusWindowVisibilityHint) {</span>
+<span class="nc" id="L537">                    setMeVisible(statusWindow,statusWindowVisibilityHint);</span>
+<span class="nc" id="L538">                    previousStatusWindowVisibilityHint = statusWindowVisibilityHint;</span>
+                }
+<span class="nc bnc" id="L540" title="All 2 branches missed.">                if (statusWindowVisibilityHint) setMeToFront(statusWindow);</span>
+                break;
+            case MAP:
+<span class="nc" id="L543">                boolean orWindowVisibilityHint = hint.getVisibility();</span>
+<span class="nc bnc" id="L544" title="All 2 branches missed.">                if (orWindowVisibilityHint != previousORWindowVisibilityHint) {</span>
+<span class="nc" id="L545">                    setMeVisible(orWindow,orWindowVisibilityHint);</span>
+<span class="nc" id="L546">                    previousORWindowVisibilityHint = orWindowVisibilityHint;</span>
+                }
+<span class="nc bnc" id="L548" title="All 2 branches missed.">                if (orWindowVisibilityHint) setMeToFront(orWindow);</span>
+                break;
+            case START_ROUND:
+                // Handled elsewhere
+            }
+<span class="nc" id="L553">        }</span>
+
+        //This was always false before ? Bug oversight ?
+<span class="nc" id="L556">        boolean correctionOverride = statusWindow.setupFor(currentRound);</span>
+<span class="nc bnc" id="L557" title="All 2 branches missed.">        if (correctionOverride) {</span>
+<span class="nc" id="L558">            log.debug(&quot;Correction overrides active window: status window active&quot;);</span>
+        }
+
+
+        // Active window settings are handled last.
+        // Side effects: the active window is made visible and put on top.
+<span class="nc bnc" id="L564" title="All 2 branches missed.">        if (uiHints.getActivePanel() == GuiDef.Panel.START_ROUND) {</span>
+<span class="nc" id="L565">            log.debug(&quot;Entering Start Round UI type&quot;);</span>
+<span class="nc" id="L566">            activeWindow = startRoundWindow;</span>
+<span class="nc" id="L567">            setMeVisible(startRoundWindow,true);</span>
+<span class="nc" id="L568">            setMeToFront(startRoundWindow);</span>
+
+<span class="nc bnc" id="L570" title="All 4 branches missed.">        } else if (uiHints.getActivePanel() == GuiDef.Panel.STATUS || correctionOverride) {</span>
+<span class="nc" id="L571">            log.debug(&quot;Entering Stock Round UI type&quot;);</span>
+<span class="nc" id="L572">            activeWindow = statusWindow;</span>
+<span class="nc" id="L573">            FXStockChartWindow.setVisible(true);</span>
+<span class="nc" id="L574">            setMeVisible(statusWindow,true);</span>
+<span class="nc" id="L575">            setMeToFront(statusWindow);</span>
+
+<span class="nc bnc" id="L577" title="All 4 branches missed.">        } else if (uiHints.getActivePanel() == GuiDef.Panel.MAP  &amp;&amp; !correctionOverride) {</span>
+<span class="nc" id="L578">            log.debug(&quot;Entering Operating Round UI type&quot;);</span>
+<span class="nc" id="L579">            activeWindow = orWindow;</span>
+<span class="nc" id="L580">            setMeVisible(orWindow,true);</span>
+<span class="nc" id="L581">            setMeToFront(orWindow);</span>
+        }
+
+<span class="nc bnc" id="L584" title="All 2 branches missed.">        if ( startRoundWindow != null ) {</span>
+<span class="nc" id="L585">            log.debug(&quot;Updating Start round window ({})&quot;, myTurn);</span>
+<span class="nc" id="L586">            startRoundWindow.updateStatus(myTurn);</span>
+        }
+<span class="nc bnc" id="L588" title="All 2 branches missed.">        if ( statusWindow != null ) {</span>
+<span class="nc" id="L589">            log.debug(&quot;Updating Stock (status) round window ({})&quot;, myTurn);</span>
+<span class="nc" id="L590">            statusWindow.updateStatus(myTurn);</span>
+        }
+<span class="nc bnc" id="L592" title="All 2 branches missed.">        if ( orUIManager != null ) {</span>
+<span class="nc" id="L593">            log.debug(&quot;Updating Operating round window ({})&quot;, myTurn);</span>
+<span class="nc" id="L594">            orUIManager.updateStatus(myTurn);</span>
+        }
+
+        // Update the currently visible round window
+        // &quot;Switchable&quot; rounds will be handled from subclasses of this class.
+<span class="nc bnc" id="L599" title="All 2 branches missed.">        if (StartRoundWindow.class.isAssignableFrom(activeWindow.getClass())) {</span>
+<span class="nc" id="L600">            startRoundWindow.setSRPlayerTurn(getRoot().getPlayerManager().getCurrentPlayer().getIndex());</span>
+<span class="nc bnc" id="L601" title="All 2 branches missed.">        } else if (StatusWindow.class.isAssignableFrom(activeWindow.getClass())) {</span>
+<span class="nc bnc" id="L602" title="All 2 branches missed.">        } else if (ORWindow.class.isAssignableFrom(activeWindow.getClass())) {</span>
+        }
+
+<span class="nc" id="L605">        updateStatus(activeWindow);</span>
+<span class="nc" id="L606">    }</span>
+
+    protected void updatePlayerOrder (List&lt;String&gt; newPlayerOrder) {
+<span class="nc bnc" id="L609" title="All 2 branches missed.">            if (startRoundWindow != null) startRoundWindow.updatePlayerOrder (newPlayerOrder);</span>
+<span class="nc bnc" id="L610" title="All 2 branches missed.">            if (statusWindow != null) statusWindow.updatePlayerOrder (newPlayerOrder);</span>
+<span class="nc" id="L611">            currentGuiPlayerNames = newPlayerOrder;</span>
+<span class="nc" id="L612">        }</span>
+
+    /** Stub, to be overridden in subclasses for special round types */
+<span class="nc" id="L615">    protected void updateStatus(ActionPerformer activeWindow) { }</span>
+
+    public void discardTrains (DiscardTrain dt) {
+<span class="nc" id="L618">        PublicCompany c = dt.getCompany();</span>
+<span class="nc" id="L619">        String playerName = dt.getPlayerName();</span>
+<span class="nc" id="L620">        String companyDirector = dt.getCompany().getPresident().getId();</span>
+<span class="nc" id="L621">        Set&lt;Train&gt; trains = dt.getOwnedTrains();</span>
+<span class="nc bnc" id="L622" title="All 2 branches missed.">        int size = trains.size() + (dt.isForced() ? 0 : 1);</span>
+<span class="nc" id="L623">        List&lt;String&gt; trainOptions = new ArrayList&lt;&gt;(size);</span>
+<span class="nc" id="L624">        String[] options = new String[size];</span>
+<span class="nc" id="L625">        String prompt = null;</span>
+
+<span class="nc" id="L627">        int j = 0;</span>
+<span class="nc bnc" id="L628" title="All 2 branches missed.">        if (!dt.isForced()) {</span>
+<span class="nc" id="L629">            trainOptions.add(</span>
+<span class="nc" id="L630">                    options[j++] = LocalText.getText(&quot;None&quot;)</span>
+            );
+<span class="nc" id="L632">            prompt = LocalText.getText(&quot;MayDiscardTrain&quot;, c.getId());</span>
+        }
+<span class="nc" id="L634">        int offset = j;</span>
+<span class="nc bnc" id="L635" title="All 2 branches missed.">        for (int i = 0; i &lt; trains.size(); i++) {</span>
+<span class="nc" id="L636">            trainOptions.add(</span>
+<span class="nc" id="L637">                    options[j++] = LocalText.getText(&quot;N_Train&quot;,</span>
+<span class="nc" id="L638">                            Iterables.get(trains, i).toText())</span>
+            );
+        }
+        //Martin Brumm: 18.7.2017
+        //Need to Check that the player informed here is the director
+        //Underlying problem is that the director might not be the operating player in the
+        //moment and theres no quick way to change that behaviour..
+        //Only Chance would be to introduce a new Discard Train Round with complete separate
+        //Mechanics
+
+<span class="nc bnc" id="L648" title="All 2 branches missed.">        if (prompt == null) {</span>
+<span class="nc bnc" id="L649" title="All 2 branches missed.">            if (playerName.equals(companyDirector)) {</span>
+<span class="nc" id="L650">                prompt = LocalText.getText(</span>
+                &quot;HAS_TOO_MANY_TRAINS&quot;,
+                playerName,
+<span class="nc" id="L653">                c.getId() );</span>
+            } else {
+<span class="nc" id="L655">                prompt = LocalText.getText(</span>
+                        &quot;HAS_TOO_MANY_TRAINS&quot;,
+                        playerName,
+<span class="nc" id="L658">                        c.getId() );</span>
+<span class="nc" id="L659">                prompt += &quot;\n Please contact the director of the &quot;+c.getId()+ &quot; : &quot;+companyDirector+&quot; for guidance.&quot;;</span>
+            }
+        }
+
+<span class="nc" id="L663">        String discardedTrainName =</span>
+<span class="nc" id="L664">            (String) JOptionPane.showInputDialog(orWindow,</span>
+                    prompt,
+<span class="nc" id="L666">                    LocalText.getText(&quot;WhichTrainToDiscard&quot;),</span>
+                    JOptionPane.QUESTION_MESSAGE, null,
+                    options, options[0]);
+<span class="nc bnc" id="L669" title="All 2 branches missed.">        if (discardedTrainName != null) {</span>
+<span class="nc" id="L670">            int index = trainOptions.indexOf(discardedTrainName);</span>
+            // FIXME: Does this work with the new Set defined?
+<span class="nc bnc" id="L672" title="All 2 branches missed.">            if (index &gt;= offset) {</span>
+<span class="nc" id="L673">                Train discardedTrain =</span>
+<span class="nc" id="L674">                        Iterables.get(trains, trainOptions.indexOf(discardedTrainName)-offset);</span>
+<span class="nc" id="L675">                dt.setDiscardedTrain(discardedTrain);</span>
+            }
+
+<span class="nc" id="L678">            orWindow.process(dt);</span>
+        }
+<span class="nc" id="L680">    }</span>
+
+    public void exchangeTokens (ExchangeTokens action) {
+
+        int cityNumber;
+        String prompt, cityName, hexName, oldCompName;
+        String[] ct;
+        MapHex hex;
+<span class="nc" id="L688">        List&lt;String&gt; options = new ArrayList&lt;String&gt;();</span>
+        Station station;
+<span class="nc" id="L690">        List&lt;ExchangeableToken&gt; oldTokens = action.getTokensToExchange();</span>
+
+<span class="nc bnc" id="L692" title="All 2 branches missed.">        for (ExchangeableToken t : oldTokens) {</span>
+<span class="nc" id="L693">            cityName = t.getCityName();</span>
+<span class="nc" id="L694">            ct = cityName.split(&quot;/&quot;);</span>
+<span class="nc" id="L695">            hexName = ct[0];</span>
+            try {
+<span class="nc" id="L697">                cityNumber = Integer.parseInt(ct[1]);</span>
+<span class="nc" id="L698">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L699">                cityNumber = 1;</span>
+<span class="nc" id="L700">            }</span>
+<span class="nc" id="L701">            hex = railsRoot.getMapManager().getHex(hexName);</span>
+<span class="nc" id="L702">            station = hex.getStation(cityNumber);</span>
+<span class="nc" id="L703">            oldCompName = t.getOldCompanyName();</span>
+<span class="nc" id="L704">            options.add(LocalText.getText(&quot;ExchangeableToken&quot;,</span>
+                    oldCompName,
+<span class="nc" id="L706">                    hex.toText(),</span>
+<span class="nc" id="L707">                    cityNumber,</span>
+<span class="nc" id="L708">                    hex.getConnectionString(station)));</span>
+<span class="nc" id="L709">        }</span>
+
+
+<span class="nc" id="L712">        int minNumber = action.getMinNumberToExchange();</span>
+<span class="nc" id="L713">        int maxNumber = action.getMaxNumberToExchange();</span>
+<span class="nc bnc" id="L714" title="All 2 branches missed.">        if (minNumber == maxNumber) {</span>
+<span class="nc" id="L715">            prompt = LocalText.getText(&quot;ExchangeTokensPrompt1&quot;,</span>
+<span class="nc" id="L716">                    minNumber,</span>
+<span class="nc" id="L717">                    action.getCompanyName());</span>
+        } else {
+<span class="nc" id="L719">            prompt = LocalText.getText(&quot;ExchangeTokensPrompt2&quot;,</span>
+<span class="nc" id="L720">                    minNumber, maxNumber,</span>
+<span class="nc" id="L721">                    action.getCompanyName());</span>
+        }
+
+<span class="nc bnc" id="L724" title="All 2 branches missed.">        if (options.size() &gt; 0) {</span>
+<span class="nc" id="L725">            orWindow.setVisible(true);</span>
+<span class="nc" id="L726">            orWindow.toFront();</span>
+
+<span class="nc" id="L728">            CheckBoxDialog dialog = new CheckBoxDialog(EXCHANGE_TOKENS_DIALOG,</span>
+                    this,
+                    orWindow,
+<span class="nc" id="L731">                    LocalText.getText(&quot;ExchangeTokens&quot;),</span>
+                    prompt,
+<span class="nc" id="L733">                    options.toArray(new String[0]));</span>
+<span class="nc" id="L734">            setCurrentDialog (dialog, action);</span>
+
+        }
+<span class="nc" id="L737">    }</span>
+
+    public void dialogActionPerformed () {
+<span class="nc" id="L740">        dialogActionPerformed(false);</span>
+<span class="nc" id="L741">    }</span>
+
+    public void dialogActionPerformed (boolean ready) {
+<span class="nc bnc" id="L744" title="All 2 branches missed.">        if (!ready) {</span>
+
+<span class="nc" id="L746">            String key = &quot;&quot;;</span>
+<span class="nc bnc" id="L747" title="All 2 branches missed.">            if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog)currentDialog).getKey();</span>
+
+<span class="nc bnc" id="L749" title="All 2 branches missed.">            if (currentDialog instanceof AutoSaveLoadDialog) {</span>
+                // Not yet a NonModalDialog subclass
+<span class="nc" id="L751">                startAutoSaveLoadPoller((AutoSaveLoadDialog)currentDialog);</span>
+
+<span class="nc bnc" id="L753" title="All 2 branches missed.">            } else if (!(currentDialog instanceof NonModalDialog)) {</span>
+<span class="nc" id="L754">                log.warn(&quot;Unknown dialog action: dialog=[{}] action=[{}]&quot;, currentDialog, currentDialogAction);</span>
+<span class="nc" id="L755">                currentDialogAction = null;</span>
+
+<span class="nc bnc" id="L757" title="All 2 branches missed.">            } else if (currentDialog instanceof MessageDialog) {</span>
+                // Nothing to do.
+<span class="nc" id="L759">                currentDialogAction = null;</span>
+                // This cancels the currently incomplete user action.
+                // WARNING: always do this if dialog processing terminates in a context
+                // where an action is aborted and the UI must return to its previous state.
+                // This will normally be the case after a CANCEL (but not after a NO).
+
+<span class="nc bnc" id="L765" title="All 2 branches missed.">            } else if (COMPANY_START_PRICE_DIALOG.equals(key)) {</span>
+
+<span class="nc" id="L767">                RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;</span>
+<span class="nc" id="L768">                StartCompany action = (StartCompany) currentDialogAction;</span>
+
+<span class="nc" id="L770">                int index = dialog.getSelectedOption();</span>
+<span class="nc bnc" id="L771" title="All 2 branches missed.">                if (index &gt;= 0) {</span>
+<span class="nc" id="L772">                    int price = action.getStartPrices()[index];</span>
+<span class="nc" id="L773">                    action.setStartPrice(price);</span>
+<span class="nc" id="L774">                    action.setNumberBought(action.getSharesPerCertificate());</span>
+<span class="nc" id="L775">                } else {</span>
+                    // No selection done - no action
+<span class="nc" id="L777">                    currentDialogAction = null;</span>
+                }
+
+<span class="nc bnc" id="L780" title="All 2 branches missed.">            } else if (EXCHANGE_TOKENS_DIALOG.equals(key)) {</span>
+
+<span class="nc" id="L782">                CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;</span>
+<span class="nc" id="L783">                ExchangeTokens action = (ExchangeTokens) currentDialogAction;</span>
+<span class="nc" id="L784">                boolean[] exchanged = dialog.getSelectedOptions();</span>
+<span class="nc" id="L785">                String[] options = dialog.getOptions();</span>
+
+<span class="nc" id="L787">                int numberSelected = (int) IntStream.range(0, options.length).filter(index -&gt; exchanged[index]).count();</span>
+
+<span class="nc" id="L789">                int minNumber = action.getMinNumberToExchange();</span>
+<span class="nc" id="L790">                int maxNumber = action.getMaxNumberToExchange();</span>
+<span class="nc bnc" id="L791" title="All 4 branches missed.">                if (numberSelected &lt; minNumber</span>
+                        || numberSelected &gt; maxNumber) {
+<span class="nc bnc" id="L793" title="All 2 branches missed.">                    if (minNumber == maxNumber) {</span>
+<span class="nc" id="L794">                        JOptionPane.showMessageDialog(null,</span>
+<span class="nc" id="L795">                                LocalText.getText(&quot;YouMustSelect1&quot;, minNumber));</span>
+                    } else {
+<span class="nc" id="L797">                        JOptionPane.showMessageDialog(null,</span>
+<span class="nc" id="L798">                                LocalText.getText(&quot;YouMustSelect2&quot;, minNumber, maxNumber));</span>
+                    }
+<span class="nc" id="L800">                    exchangeTokens (action);</span>
+<span class="nc" id="L801">                    return;</span>
+
+                }
+<span class="nc bnc" id="L804" title="All 2 branches missed.">                for (int index=0; index &lt; options.length; index++) {</span>
+<span class="nc bnc" id="L805" title="All 2 branches missed.">                    if (exchanged[index]) {</span>
+<span class="nc" id="L806">                        action.getTokensToExchange().get(index).setSelected(true);</span>
+                    }
+                }
+<span class="nc bnc" id="L809" title="All 2 branches missed.">            } else if (REPAY_LOANS_DIALOG.equals(key)) {</span>
+
+<span class="nc" id="L811">                RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;</span>
+<span class="nc" id="L812">                RepayLoans action = (RepayLoans) currentDialogAction;</span>
+<span class="nc" id="L813">                int selected = dialog.getSelectedOption();</span>
+<span class="nc" id="L814">                action.setNumberTaken(action.getMinNumber() + selected);</span>
+
+<span class="nc" id="L816">            } else {</span>
+<span class="nc" id="L817">                log.warn(&quot;Unknown NonModal dialog action: dialog=[{}] action=[{}]&quot;, currentDialog, currentDialogAction);</span>
+<span class="nc" id="L818">                currentDialogAction = null;</span>
+            }
+        }
+
+<span class="nc" id="L822">        processAction(currentDialogAction);</span>
+
+<span class="nc" id="L824">    }</span>
+
+    protected void autoSave (String newPlayer) {
+<span class="nc" id="L827">        lastSavedFilename = savePrefix + &quot;_&quot; + saveDateTimeFormat.format(new Date()) + &quot;_&quot; + newPlayer + &quot;.&quot; + saveExtension;</span>
+<span class="nc" id="L828">        GameAction saveAction = new GameAction(GameAction.Mode.SAVE);</span>
+<span class="nc" id="L829">        saveAction.setFilepath(saveDirectory + &quot;/&quot; + lastSavedFilename);</span>
+<span class="nc" id="L830">        log.debug(&quot;Autosaving to {}&quot;, lastSavedFilename);</span>
+<span class="nc" id="L831">        processOnServer (saveAction);</span>
+
+<span class="nc" id="L833">        saveAutoSavedFilename (lastSavedFilename);</span>
+<span class="nc" id="L834">    }</span>
+
+    protected boolean saveAutoSavedFilename (String lastSavedFilename) {
+<span class="nc" id="L837">        String lastSavedFilenameFilepath = saveDirectory + &quot;/&quot; + savePrefix + &quot;.last_rails&quot;;</span>
+        try {
+<span class="nc" id="L839">            File f = new File (lastSavedFilenameFilepath);</span>
+<span class="nc" id="L840">            PrintWriter out = new PrintWriter (new FileWriter (f));</span>
+<span class="nc" id="L841">            out.println (lastSavedFilename);</span>
+<span class="nc" id="L842">            out.close();</span>
+<span class="nc" id="L843">            return true;</span>
+<span class="nc" id="L844">        } catch (IOException e) {</span>
+<span class="nc" id="L845">            log.error(&quot;Exception whilst autosaving file '{}'&quot;, lastSavedFilenameFilepath, e);</span>
+<span class="nc" id="L846">            return false;</span>
+        }
+    }
+
+    protected boolean pollingIsOn () {
+<span class="nc bnc" id="L851" title="All 4 branches missed.">        return autoLoadPoller != null &amp;&amp; autoLoadPoller.getStatus() == AutoLoadPoller.ON;</span>
+    }
+
+    /** Stub, can be overridden by subclasses */
+    protected boolean checkGameSpecificDialogAction() {
+<span class="nc" id="L856">        return false;</span>
+    }
+
+    public JDialog getCurrentDialog() {
+<span class="nc" id="L860">        return currentDialog;</span>
+    }
+
+    public PossibleAction getCurrentDialogAction () {
+<span class="nc" id="L864">        return currentDialogAction;</span>
+    }
+
+    public void setCurrentDialog (JDialog dialog, PossibleAction action) {
+<span class="nc bnc" id="L868" title="All 2 branches missed.">        if (currentDialog != null) {</span>
+<span class="nc" id="L869">            currentDialog.dispose();</span>
+        }
+<span class="nc" id="L871">        currentDialog = dialog;</span>
+<span class="nc" id="L872">        currentDialogAction = action;</span>
+<span class="nc" id="L873">    }</span>
+
+    /**
+     * Change global font size
+     * @param scale
+     */
+    public void changeGlobalFont(Font replaceFont, double scale) {
+<span class="nc" id="L880">        UIDefaults defaults = UIManager.getDefaults();</span>
+<span class="nc" id="L881">        Enumeration&lt;Object&gt; keys = defaults.keys();</span>
+<span class="nc bnc" id="L882" title="All 2 branches missed.">        while(keys.hasMoreElements()) {</span>
+<span class="nc" id="L883">            Object key = keys.nextElement();</span>
+<span class="nc" id="L884">            Object value = defaults.get(key);</span>
+<span class="nc bnc" id="L885" title="All 2 branches missed.">            if( value instanceof Font ) {</span>
+<span class="nc" id="L886">                UIManager.put(key, null);</span>
+                Font font;
+<span class="nc bnc" id="L888" title="All 2 branches missed.">                if (replaceFont != null) {</span>
+<span class="nc" id="L889">                    font = replaceFont;</span>
+                } else {
+<span class="nc" id="L891">                    font = UIManager.getFont(key);</span>
+                }
+<span class="nc bnc" id="L893" title="All 2 branches missed.">                if(font != null) {</span>
+<span class="nc" id="L894">                    float newSize = font.getSize2D() * (float)scale;</span>
+<span class="nc" id="L895">                    UIManager.put(key, new FontUIResource(font.deriveFont(newSize)));</span>
+                }
+            }
+<span class="nc" id="L898">        }</span>
+<span class="nc" id="L899">    }</span>
+
+
+    public void exportGame(GameAction exportAction) {
+<span class="nc" id="L903">        JFileChooser jfc = new JFileChooser();</span>
+        String filename;
+<span class="nc bnc" id="L905" title="All 2 branches missed.">        if (providedName != null) {</span>
+<span class="nc" id="L906">            filename = providedName;</span>
+        } else {
+<span class="nc" id="L908">            filename = saveDirectory + &quot;/&quot; + savePrefix + &quot;_&quot;</span>
+<span class="nc" id="L909">            + saveDateTimeFormat.format(new Date())+ &quot;_&quot;</span>
+            + saveSuffix + &quot;.txt&quot;;
+        }
+
+<span class="nc" id="L913">        File proposedFile = new File(filename);</span>
+<span class="nc" id="L914">        jfc.setSelectedFile(proposedFile);</span>
+
+<span class="nc bnc" id="L916" title="All 2 branches missed.">        if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L917">            File selectedFile = jfc.getSelectedFile();</span>
+<span class="nc" id="L918">            String filepath = selectedFile.getPath();</span>
+<span class="nc" id="L919">            saveDirectory = selectedFile.getParent();</span>
+<span class="nc bnc" id="L920" title="All 2 branches missed.">            if (!selectedFile.getName().equalsIgnoreCase(proposedFile.getName())) {</span>
+<span class="nc" id="L921">                providedName = filepath;</span>
+            }
+<span class="nc" id="L923">            exportAction.setFilepath(filepath);</span>
+<span class="nc" id="L924">            processAction(exportAction);</span>
+        }
+<span class="nc" id="L926">    }</span>
+
+
+    public void saveGame(GameAction saveAction) {
+        // copy latest report buffer entries to clipboard
+<span class="nc" id="L931">        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();</span>
+<span class="nc" id="L932">        StringSelection reportText = new StringSelection(</span>
+<span class="nc" id="L933">                getRoot().getReportManager().getReportBuffer().getRecentPlayer());</span>
+<span class="nc" id="L934">        clipboard.setContents(reportText, null);</span>
+
+<span class="nc" id="L936">        JFileChooser jfc = new JFileChooser();</span>
+        String filename;
+<span class="nc bnc" id="L938" title="All 2 branches missed.">        if (providedName != null) {</span>
+<span class="nc" id="L939">            filename = providedName;</span>
+        } else {
+            String currentSuffix;
+<span class="nc bnc" id="L942" title="All 2 branches missed.">            if (NEXT_PLAYER_SUFFIX.equals(saveSuffixSpec)) {</span>
+<span class="nc" id="L943">                currentSuffix = getCurrentPlayer().getId().replaceAll(&quot;[^-\\w\\.]&quot;, &quot;_&quot;);</span>
+<span class="nc bnc" id="L944" title="All 2 branches missed.">            } else if (CURRENT_ROUND_SUFFIX.equals(saveSuffixSpec)) {</span>
+<span class="nc bnc" id="L945" title="All 2 branches missed.">                if (currentRound != null) {</span>
+<span class="nc" id="L946">                    currentSuffix = currentRound.getRoundName();</span>
+                } else {
+<span class="nc" id="L948">                    currentSuffix = &quot;&quot;;</span>
+                }
+            } else {
+<span class="nc" id="L951">                currentSuffix = saveSuffix;</span>
+            }
+<span class="nc" id="L953">            filename = saveDirectory + &quot;/&quot; + savePrefix + &quot;_&quot; + saveDateTimeFormat.format(new Date()) + &quot;_&quot; +</span>
+                    currentSuffix + &quot;.&quot; + saveExtension;
+        }
+
+<span class="nc" id="L957">        File proposedFile = new File(filename);</span>
+<span class="nc" id="L958">        jfc.setSelectedFile(proposedFile);</span>
+
+        // allows adjustment of the save dialog title, to add hint about copy to clipboard
+<span class="nc" id="L961">        jfc.setDialogTitle(LocalText.getText(&quot;SaveDialogTitle&quot;));</span>
+
+<span class="nc bnc" id="L963" title="All 2 branches missed.">        if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L964">            File selectedFile = jfc.getSelectedFile();</span>
+<span class="nc" id="L965">            String filepath = selectedFile.getPath();</span>
+<span class="nc" id="L966">            saveDirectory = selectedFile.getParent();</span>
+<span class="nc bnc" id="L967" title="All 2 branches missed.">            if (!selectedFile.getName().equalsIgnoreCase(proposedFile.getName())) {</span>
+                // User has not accepted the default name but entered a different one.
+                // Check the new name. If only the prefix has changed, only remember that part.
+<span class="nc" id="L970">                String[] proposedParts = proposedFile.getName().split(&quot;_&quot;, 2);</span>
+<span class="nc" id="L971">                String[] selectedParts = selectedFile.getName().split(&quot;_&quot;, 2);</span>
+<span class="nc bnc" id="L972" title="All 4 branches missed.">                if (proposedParts.length &gt;= 2 &amp;&amp; selectedParts.length &gt;= 2 &amp;&amp;</span>
+<span class="nc bnc" id="L973" title="All 2 branches missed.">                        !proposedParts[0].equals(selectedParts[0]) &amp;&amp;</span>
+<span class="nc bnc" id="L974" title="All 2 branches missed.">                        proposedParts[1].equals(selectedParts[1])) {</span>
+<span class="nc" id="L975">                    savePrefix = selectedParts[0];</span>
+                } else {
+                    // Otherwise, remember and keep using the whole filename.
+<span class="nc" id="L978">                    providedName = filepath;</span>
+                }
+            }
+<span class="nc" id="L981">            saveAction.setFilepath(filepath);</span>
+<span class="nc" id="L982">            processAction(saveAction);</span>
+        }
+<span class="nc" id="L984">    }</span>
+
+    public void reloadGame(GameAction reloadAction) {
+<span class="nc" id="L987">        JFileChooser jfc = new JFileChooser();</span>
+<span class="nc" id="L988">        jfc.setCurrentDirectory(new File(saveDirectory));</span>
+
+<span class="nc bnc" id="L990" title="All 2 branches missed.">        if (jfc.showOpenDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L991">            File selectedFile = jfc.getSelectedFile();</span>
+<span class="nc" id="L992">            saveDirectory = selectedFile.getParent();</span>
+<span class="nc" id="L993">            reloadAction.setFilepath(selectedFile.getPath());</span>
+<span class="nc" id="L994">            processAction(reloadAction);</span>
+<span class="nc" id="L995">        } else { // cancel pressed</span>
+<span class="nc" id="L996">            return;</span>
+        }
+<span class="nc" id="L998">    }</span>
+
+    public void autoSaveLoadGame () {
+<span class="nc" id="L1001">        AutoSaveLoadDialog dialog = new AutoSaveLoadDialog (this,</span>
+                autoSaveLoadStatus,
+                autoSaveLoadPollingInterval);
+<span class="nc" id="L1004">        setCurrentDialog(dialog, null);</span>
+<span class="nc" id="L1005">    }</span>
+
+    public void startAutoSaveLoadPoller(AutoSaveLoadDialog dialog) {
+<span class="nc" id="L1008">        autoSaveLoadStatus = dialog.getStatus();</span>
+<span class="nc" id="L1009">        autoSaveLoadPollingInterval = dialog.getInterval();</span>
+<span class="nc" id="L1010">        startAutoSaveLoadPoller();</span>
+<span class="nc" id="L1011">    }</span>
+
+    public void startAutoSaveLoadPoller() {
+<span class="nc" id="L1014">        localPlayerName = System.getProperty(&quot;local.player.name&quot;);</span>
+<span class="nc bnc" id="L1015" title="All 2 branches missed.">        if (!Util.hasValue(localPlayerName)) {</span>
+<span class="nc" id="L1016">            localPlayerName = Config.get(&quot;local.player.name&quot;);</span>
+        }
+<span class="nc bnc" id="L1018" title="All 2 branches missed.">        if (!Util.hasValue(localPlayerName)) {</span>
+            // FIXME (Rails2.0) Replace this with something better (DisplayBuffer is not available so far
+            // DisplayBuffer.add(this, &quot;You cannot activate AutoSave/Load without setting local.player.name&quot;);
+<span class="nc" id="L1021">            return;</span>
+        }
+<span class="nc" id="L1023">        log.debug(&quot;Polling local player name: {}&quot;, localPlayerName);</span>
+<span class="nc" id="L1024">        log.debug(&quot;AutoSaveLoad parameters: status={} interval={}&quot;, autoSaveLoadStatus, autoSaveLoadPollingInterval);</span>
+
+<span class="nc bnc" id="L1026" title="All 2 branches missed.">        if ( autoSaveLoadStatus != AutoLoadPoller.OFF ) {</span>
+<span class="nc bnc" id="L1027" title="All 2 branches missed.">            if ( ! gameWasLoaded ) {</span>
+                /* The first time (only) we use the normal save process,
+                 * so the player can select a directory, and change
+                 * the prefix if so desired.
+                 */
+<span class="nc" id="L1032">                GameAction saveAction = new GameAction(GameAction.Mode.SAVE);</span>
+<span class="nc" id="L1033">                saveSuffix = localPlayerName;</span>
+<span class="nc" id="L1034">                saveGame (saveAction);</span>
+<span class="nc" id="L1035">                lastSavedFilename = saveAction.getFilepath();</span>
+            }
+<span class="nc bnc" id="L1037" title="All 2 branches missed.">            if ( lastSavedFilename != null ) {</span>
+                /* Now also save the &quot;last saved file&quot; file */
+<span class="nc" id="L1039">                autoSaveLoadInitialized = saveAutoSavedFilename(lastSavedFilename);</span>
+            }
+        }
+
+<span class="nc bnc" id="L1043" title="All 4 branches missed.">        if (autoLoadPoller == null &amp;&amp; autoSaveLoadStatus &gt; 0) {</span>
+<span class="nc" id="L1044">            autoLoadPoller = new AutoLoadPoller (this, saveDirectory, savePrefix, lastSavedFilename,</span>
+                    localPlayerName, autoSaveLoadStatus, autoSaveLoadPollingInterval);
+<span class="nc" id="L1046">            autoLoadPoller.start();</span>
+<span class="nc bnc" id="L1047" title="All 2 branches missed.">        } else if (autoLoadPoller != null) {</span>
+<span class="nc" id="L1048">            autoLoadPoller.setStatus(autoSaveLoadStatus);</span>
+<span class="nc" id="L1049">            autoLoadPoller.setPollingInterval(autoSaveLoadPollingInterval);</span>
+        }
+
+<span class="nc bnc" id="L1052" title="All 2 branches missed.">        if ( autoLoadPoller != null ) {</span>
+<span class="nc" id="L1053">            myTurn = getCurrentPlayer().getId().equals(localPlayerName);</span>
+<span class="nc bnc" id="L1054" title="All 2 branches missed.">            if ( !myTurn ) {</span>
+                // Start autoload polling
+<span class="nc bnc" id="L1056" title="All 2 branches missed.">                autoLoadPoller.setActive(autoSaveLoadStatus == AutoLoadPoller.ON);</span>
+            }
+            // TODO: depending on polling state we should enable/disable buttons
+<span class="nc" id="L1059">            log.debug(&quot;MyTurn={} poller status={} active={}&quot;, myTurn, autoLoadPoller.getStatus(), autoLoadPoller.isActive());</span>
+        }
+<span class="nc" id="L1061">    }</span>
+
+    public void saveGameStatus() {
+<span class="nc" id="L1064">        List&lt;String&gt; status = statusWindow.getGameStatus().getTextContents();</span>
+
+<span class="nc" id="L1066">        JFileChooser jfc = new JFileChooser();</span>
+<span class="nc" id="L1067">        String filename = saveDirectory + &quot;/&quot; + savePrefix + &quot;_&quot;</span>
+<span class="nc" id="L1068">        + saveDateTimeFormat.format(new Date())+ &quot;.status&quot;;</span>
+
+<span class="nc" id="L1070">        File proposedFile = new File(filename);</span>
+<span class="nc" id="L1071">        jfc.setSelectedFile(proposedFile);</span>
+
+<span class="nc bnc" id="L1073" title="All 2 branches missed.">        if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L1074">            File selectedFile = jfc.getSelectedFile();</span>
+            try {
+<span class="nc" id="L1076">                PrintWriter pw = new PrintWriter(selectedFile);</span>
+
+<span class="nc bnc" id="L1078" title="All 2 branches missed.">                for (String line : status) pw.println(line) ;</span>
+
+<span class="nc" id="L1080">                pw.close();</span>
+
+<span class="nc" id="L1082">            } catch (IOException e) {</span>
+<span class="nc" id="L1083">                log.error(&quot;Save failed&quot;, e);</span>
+<span class="nc" id="L1084">                getDisplayBuffer().add(LocalText.getText(&quot;SaveFailed&quot;, e.getMessage()));</span>
+<span class="nc" id="L1085">            }</span>
+        }
+<span class="nc" id="L1087">    }</span>
+
+    public void setGameFile(File gameFile) {
+<span class="nc" id="L1090">        saveDirectory = gameFile.getParent();</span>
+<span class="nc" id="L1091">        lastSavedFilename = gameFile.getName();</span>
+<span class="nc" id="L1092">    }</span>
+
+    public void setSaveDirectory(String saveDirectory) {
+<span class="nc" id="L1095">        this.saveDirectory = saveDirectory;</span>
+<span class="nc" id="L1096">    }</span>
+
+    public PossibleAction getLastAction() {
+<span class="nc" id="L1099">        return lastAction;</span>
+    }
+
+    public static ImageLoader getImageLoader() {
+<span class="nc" id="L1103">        return imageLoader;</span>
+    }
+
+    public RailsRoot getRoot() {
+<span class="nc" id="L1107">        return railsRoot;</span>
+    }
+
+    public GameManager getGameManager() {
+<span class="nc" id="L1111">        return railsRoot.getGameManager();</span>
+    }
+
+    public DisplayBuffer getDisplayBuffer() {
+<span class="nc" id="L1115">        return railsRoot.getReportManager().getDisplayBuffer();</span>
+    }
+
+    public void setORUIManager(ORUIManager orUIManager) {
+<span class="nc" id="L1119">        this.orUIManager = orUIManager;</span>
+<span class="nc" id="L1120">    }</span>
+
+    public ORUIManager getORUIManager() {
+<span class="nc" id="L1123">        return orUIManager;</span>
+    }
+
+    public RoundFacade getCurrentRound() {
+<span class="nc" id="L1127">        return railsRoot.getGameManager().getCurrentRound();</span>
+    }
+
+    public boolean isGameOver() {
+<span class="nc" id="L1131">        return railsRoot.getGameManager().isGameOver();</span>
+    }
+
+    public int getNumberOfPlayers() {
+<span class="nc" id="L1135">        return railsRoot.getPlayerManager().getNumberOfPlayers();</span>
+    }
+
+    public List&lt;Player&gt; getPlayers() {
+<span class="nc" id="L1139">        return railsRoot.getPlayerManager().getPlayers();</span>
+    }
+
+    public Player getCurrentPlayer() {
+<span class="nc" id="L1143">        return railsRoot.getPlayerManager().getCurrentPlayer();</span>
+    }
+
+    public Player getPriorityPlayer () {
+<span class="nc" id="L1147">        return railsRoot.getPlayerManager().getPriorityPlayer();</span>
+    }
+
+    public Phase getCurrentPhase() {
+<span class="nc" id="L1151">        return railsRoot.getPhaseManager().getCurrentPhase();</span>
+    }
+
+    public List&lt;PublicCompany&gt; getAllPublicCompanies(){
+<span class="nc" id="L1155">        return railsRoot.getCompanyManager().getAllPublicCompanies();</span>
+    }
+
+    public String getClassName (GuiDef.ClassName key) {
+<span class="nc" id="L1159">        return railsRoot.getGameManager().getClassName(key);</span>
+    }
+
+    public Object getGameParameter (GuiDef.Parm key) {
+<span class="nc" id="L1163">        return railsRoot.getGameManager().getGuiParameter(key);</span>
+    }
+
+    public boolean getGameParameterAsBoolean (GuiDef.Parm key) {
+<span class="nc" id="L1167">        return (Boolean) getGameParameter(key);</span>
+    }
+
+    private void setEnabledWindow(boolean enabled, JFrame window, JFrame exceptionWindow) {
+
+<span class="nc bnc" id="L1172" title="All 4 branches missed.">        if (window != null &amp;&amp; window != exceptionWindow) {</span>
+<span class="nc" id="L1173">            window.setEnabled(enabled);</span>
+        }
+<span class="nc" id="L1175">    }</span>
+    /**
+     * deactivate all game windows, except the argument one
+     */
+    public void setEnabledAllWindows(boolean enabled, JFrame exceptionWindow) {
+        // setEnabledWindow(enabled, stockChart, exceptionWindow);
+<span class="nc" id="L1181">        setEnabledWindow(enabled, reportWindow, exceptionWindow);</span>
+<span class="nc" id="L1182">        setEnabledWindow(enabled, configWindow, exceptionWindow);</span>
+<span class="nc" id="L1183">        setEnabledWindow(enabled, orWindow, exceptionWindow);</span>
+<span class="nc" id="L1184">        setEnabledWindow(enabled, startRoundWindow, exceptionWindow);</span>
+<span class="nc" id="L1185">        setEnabledWindow(enabled, statusWindow, exceptionWindow);</span>
+<span class="nc" id="L1186">    }</span>
+
+
+    private void updateWindowsLookAndFeel() {
+<span class="nc" id="L1190">        SwingUtilities.updateComponentTreeUI(statusWindow);</span>
+<span class="nc" id="L1191">        statusWindow.pack();</span>
+<span class="nc" id="L1192">        SwingUtilities.updateComponentTreeUI(orWindow);</span>
+<span class="nc" id="L1193">        orWindow.pack();</span>
+<span class="nc" id="L1194">        SwingUtilities.updateComponentTreeUI(reportWindow);</span>
+<span class="nc" id="L1195">        reportWindow.pack();</span>
+<span class="nc" id="L1196">        SwingUtilities.updateComponentTreeUI(configWindow);</span>
+<span class="nc" id="L1197">        configWindow.pack();</span>
+<span class="nc" id="L1198">    }</span>
+
+    // Forwards the format() method to the server
+    public String format(int amount) {
+<span class="nc" id="L1202">        return Bank.format(railsRoot, amount);</span>
+    }
+
+    /** update fonts settings
+     * (after configuration changes)
+     */
+//    public static void updateUILookAndFeel() {
+//        GUIGlobals.initFontsScale();
+//        instance.initFontSettings();
+//        instance.updateWindowsLookAndFeel();
+//    }
+
+    /**
+     * Only set frame directly to visible if the splash phase is already over.
+     * Otherwise, the splash framework remembers this visibility request and
+     * postpones the setVisible to the point in time where the splash is completed.
+     */
+    public void setMeVisible(JFrame frame, boolean setToVisible) {
+<span class="nc bnc" id="L1220" title="All 2 branches missed.">        if (splashWindow == null) {</span>
+<span class="nc" id="L1221">            frame.setVisible(setToVisible);</span>
+        } else {
+<span class="nc" id="L1223">            splashWindow.registerFrameForDeferredVisibility(frame,setToVisible);</span>
+        }
+<span class="nc" id="L1225">    }</span>
+
+    /**
+     * Only set frame directly to front if the splash phase is already over.
+     * Otherwise, the splash framework remembers this toFront request and
+     * postpones the toFront to the point in time where the splash is completed.
+     */
+    public void setMeToFront(JFrame frame) {
+<span class="nc bnc" id="L1233" title="All 2 branches missed.">        if (splashWindow == null) {</span>
+<span class="nc" id="L1234">            frame.toFront();</span>
+        } else {
+<span class="nc" id="L1236">            splashWindow.registerFrameForDeferredToFront(frame);</span>
+        }
+<span class="nc" id="L1238">    }</span>
+
+    /**
+     * called when the splash process is completed
+     * (and visibility changes are not to be deferred any more)
+     */
+    public void notifyOfSplashFinalization() {
+<span class="nc" id="L1245">        splashWindow = null;</span>
+<span class="nc" id="L1246">    }</span>
+
+    /**
+     * Packs specified frame and tries to apply user defined size afterwards.
+     * These actions are performed within the EDT as the caller is assumed to
+     * be run by a non-EDT thread.
+     */
+    public void packAndApplySizing(JFrame frame) {
+<span class="nc" id="L1254">        final JFrame finalFrame = frame;</span>
+<span class="nc" id="L1255">        SwingUtilities.invokeLater(new Thread(() -&gt; {</span>
+<span class="nc" id="L1256">            finalFrame.pack();</span>
+
+<span class="nc" id="L1258">            WindowSettings ws = getWindowSettings();</span>
+<span class="nc" id="L1259">            Rectangle bounds = ws.getBounds(finalFrame);</span>
+<span class="nc bnc" id="L1260" title="All 4 branches missed.">            if (bounds.x != -1 &amp;&amp; bounds.y != -1) finalFrame.setLocation(bounds.getLocation());</span>
+<span class="nc bnc" id="L1261" title="All 4 branches missed.">            if (bounds.width != -1 &amp;&amp; bounds.height != -1) finalFrame.setSize(bounds.getSize());</span>
+<span class="nc" id="L1262">            ws.set(finalFrame);</span>
+<span class="nc" id="L1263">        }));</span>
+<span class="nc" id="L1264">    }</span>
+
+    public List&lt;String&gt; getCurrentGuiPlayerNames() {
+<span class="nc" id="L1267">        return currentGuiPlayerNames;</span>
+    }
+
+    public void saveLogs() {
+<span class="nc" id="L1271">        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();</span>
+
+<span class="nc" id="L1273">        CyclicBufferAppender&lt;?&gt; buffer = (CyclicBufferAppender&lt;?&gt;) lc.getLogger(Logger.ROOT_LOGGER_NAME).getAppender(&quot;buffer&quot;);</span>
+<span class="nc bnc" id="L1274" title="All 2 branches missed.">        if ( buffer == null ) {</span>
+<span class="nc" id="L1275">            log.warn(&quot;Unable to find cyclic buffer appender&quot;);</span>
+<span class="nc" id="L1276">            return;</span>
+        }
+
+<span class="nc" id="L1279">        PatternLayout layout = new PatternLayout();</span>
+<span class="nc" id="L1280">        layout.setContext(lc);</span>
+<span class="nc" id="L1281">        layout.setPattern(&quot;%d{MM-dd-yyyy:HH:mm:ss.SSS} [%thread] %-5level %logger{10}-&gt;%method\\(\\):%line - %msg%n&quot;);</span>
+<span class="nc" id="L1282">        layout.start();</span>
+
+        try {
+<span class="nc" id="L1285">            PrintWriter writer = new PrintWriter(saveDirectory + &quot;/&quot; +</span>
+<span class="nc" id="L1286">                    StringUtils.replace(lastSavedFilename, &quot;.rails&quot;, &quot;_&quot; + localPlayerName + &quot;.log&quot;));</span>
+<span class="nc" id="L1287">            int count = buffer.getLength();</span>
+            LoggingEvent le;
+<span class="nc bnc" id="L1289" title="All 2 branches missed.">            for ( int i = 0; i &lt; count; i++ ) {</span>
+<span class="nc" id="L1290">                le = (LoggingEvent) buffer.get(i);</span>
+<span class="nc" id="L1291">                writer.print(layout.doLayout(le));</span>
+            }
+<span class="nc" id="L1293">            writer.close();</span>
+        }
+<span class="nc" id="L1295">        catch (FileNotFoundException e) {</span>
+<span class="nc" id="L1296">            log.warn(&quot;unable to open log output file&quot;, e);</span>
+<span class="nc" id="L1297">        }</span>
+<span class="nc" id="L1298">    }</span>
+
+    public class PlayerOrderView implements Observer {
+<span class="nc" id="L1301">        PlayerOrderView () {</span>
+<span class="nc" id="L1302">            railsRoot.getPlayerManager().getPlayerOrderModel().addObserver(this);</span>
+<span class="nc" id="L1303">        }</span>
+
+        public void update(Observable o, Object arg) {
+<span class="nc" id="L1306">               List&lt;String&gt; newPlayerNames = Arrays.asList(((String)arg).split(&quot;;&quot;));</span>
+<span class="nc" id="L1307">                updatePlayerOrder (newPlayerNames);</span>
+<span class="nc" id="L1308">        }</span>
+
+        public void deRegister() {
+<span class="nc" id="L1311">        }</span>
+
+        @Override
+        public void update(String text) {
+<span class="nc" id="L1315">        }</span>
+
+        @Override
+        public net.sf.rails.game.state.Observable getObservable() {
+<span class="nc" id="L1319">            return null;</span>
+        }
+   }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

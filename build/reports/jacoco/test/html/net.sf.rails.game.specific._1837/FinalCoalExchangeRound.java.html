@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FinalCoalExchangeRound.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1837</a> &gt; <span class="el_source">FinalCoalExchangeRound.java</span></div><h1>FinalCoalExchangeRound.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1837;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import rails.game.action.MergeCompanies;
+import rails.game.action.NullAction;
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.specific._1837.StockRound_1837;
+
+public class FinalCoalExchangeRound extends StockRound_1837 {
+
+    public FinalCoalExchangeRound(GameManager parent, String id) {
+<span class="nc" id="L19">        super(parent, id);</span>
+<span class="nc" id="L20">        guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);</span>
+<span class="nc" id="L21">        guiHints.setActivePanel(GuiDef.Panel.STATUS);</span>
+
+<span class="nc" id="L23">        raiseIfSoldOut = false;</span>
+<span class="nc" id="L24">    }</span>
+    
+    public static FinalCoalExchangeRound create(GameManager parent, String id){
+<span class="nc" id="L27">        return new FinalCoalExchangeRound(parent, id);</span>
+    }
+
+    public void start(Player playerToStartFCERound) {
+<span class="nc" id="L31">        ReportBuffer.add(this, &quot;&quot;);</span>
+<span class="nc" id="L32">        ReportBuffer.add(this, LocalText.getText(&quot;StartFinalCoalExchangeRound&quot;));</span>
+
+<span class="nc" id="L34">        playerManager.setCurrentPlayer(playerToStartFCERound);</span>
+<span class="nc" id="L35">        initPlayer();</span>
+<span class="nc" id="L36">        ReportBuffer.add(this, LocalText.getText(&quot;HasFirstTurn&quot;,</span>
+<span class="nc" id="L37">                playerToStartFCERound.getId() ));</span>
+<span class="nc" id="L38">    }</span>
+
+    /*----- General methods -----*/
+
+    @Override
+    public boolean setPossibleActions() {
+
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (discardingTrains.value()) {</span>
+<span class="nc" id="L46">            return setTrainDiscardActions();</span>
+        } else {
+<span class="nc" id="L48">            return setMinorMergeActions();</span>
+        }
+
+    }
+
+    private boolean setMinorMergeActions() {
+
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        if (hasActed.value()) {</span>
+<span class="nc" id="L56">            possibleActions.add(new NullAction(NullAction.Mode.DONE));</span>
+<span class="nc" id="L57">            return true;</span>
+        }
+
+<span class="nc" id="L60">        List&lt;PublicCompany&gt; comps =</span>
+<span class="nc" id="L61">            companyManager.getAllPublicCompanies();</span>
+<span class="nc" id="L62">        List&lt;PublicCompany&gt; minors = new ArrayList&lt;PublicCompany&gt;();</span>
+<span class="nc" id="L63">        PublicCompany targetCompany = null;</span>
+        String type;
+
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        for (PublicCompany comp : comps) {</span>
+<span class="nc" id="L67">            type = comp.getType().getId();</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">             if (type.equals(&quot;Coal&quot;)) {</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">                if (comp.isClosed()) continue;</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">                if (comp.getPresident() == currentPlayer) {</span>
+<span class="nc" id="L71">                    minors.add(comp);</span>
+<span class="nc" id="L72">                    targetCompany = companyManager.getPublicCompany(comp.getRelatedNationalCompany());</span>
+                }
+            }
+<span class="nc" id="L75">        }</span>
+
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        while (minors.isEmpty()) {</span>
+<span class="nc" id="L78">            setNextPlayer();</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            for (PublicCompany comp : comps) {</span>
+<span class="nc" id="L80">                type = comp.getType().getId();</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                if (type.equals(&quot;Coal&quot;)) {</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                    if (comp.isClosed()) continue;</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">                    if (comp.getPresident() == currentPlayer) {</span>
+<span class="nc" id="L84">                        minors.add(comp);</span>
+<span class="nc" id="L85">                        targetCompany = companyManager.getPublicCompany(comp.getRelatedNationalCompany());</span>
+                    }
+                }
+<span class="nc" id="L88">            }</span>
+        }
+
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        for (PublicCompany minor : minors) {</span>
+<span class="nc" id="L92">            possibleActions.add(new MergeCompanies(minor, targetCompany, true));</span>
+<span class="nc" id="L93">        }</span>
+
+<span class="nc" id="L95">        return true;</span>
+    }
+
+    @Override
+    // Autopassing does not apply here
+    public boolean done(NullAction action, String playerName, boolean hasAutopassed) {
+
+        // TODO: Here no action is stored
+        
+
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        for (PublicCompany comp : companyManager.getAllPublicCompanies()) {</span>
+<span class="nc bnc" id="L106" title="All 4 branches missed.">            if ((comp.getType().getId().equals(&quot;Coal&quot;)) &amp;&amp; (!comp.isClosed())) {</span>
+<span class="nc" id="L107">                    finishTurn();</span>
+<span class="nc" id="L108">                    return true;</span>
+            }
+<span class="nc" id="L110">        }</span>
+
+<span class="nc" id="L112">        finishRound();</span>
+<span class="nc" id="L113">        return true;</span>
+    }
+
+    @Override
+    protected void initPlayer() {
+
+<span class="nc" id="L119">        currentPlayer = playerManager.getCurrentPlayer();</span>
+<span class="nc" id="L120">        hasActed.set(false);</span>
+
+<span class="nc" id="L122">    }</span>
+
+    /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
+
+    @Override
+    public String toString() {
+<span class="nc" id="L128">        return &quot;FinalCoalExchangeRound&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

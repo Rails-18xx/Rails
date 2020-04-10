@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameStatus_18EU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.gamespecific._18EU</a> &gt; <span class="el_source">GameStatus_18EU.java</span></div><h1>GameStatus_18EU.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.gamespecific._18EU;
+
+import java.awt.event.ActionEvent;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rails.game.action.MergeCompanies;
+import rails.game.action.PossibleAction;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.ui.swing.GameStatus;
+import net.sf.rails.ui.swing.elements.RadioButtonDialog;
+
+
+/**
+ * This class is incorporated into StatusWindow and displays the bulk of
+ * rails.game status information.
+ */
+<span class="nc" id="L22">public class GameStatus_18EU extends GameStatus {</span>
+    private static final long serialVersionUID = 1L;
+
+<span class="fc" id="L25">    private static final Logger log = LoggerFactory.getLogger(GameStatus_18EU.class);</span>
+
+
+    @Override
+    protected void initGameSpecificActions() {
+
+        PublicCompany mergingCompany;
+        int index;
+
+<span class="nc" id="L34">        List&lt;MergeCompanies&gt; mergers =</span>
+<span class="nc" id="L35">            possibleActions.getType(MergeCompanies.class);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        if (mergers != null) {</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">            for (MergeCompanies merger : mergers) {</span>
+<span class="nc" id="L38">                mergingCompany = merger.getMergingCompany();</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">                if (mergingCompany != null) {</span>
+<span class="nc" id="L40">                    index = mergingCompany.getPublicNumber();</span>
+<span class="nc" id="L41">                    setPlayerCertButton(index, merger.getPlayerIndex(), true,</span>
+                            merger);
+                }
+<span class="nc" id="L44">            }</span>
+        }
+
+<span class="nc" id="L47">    }</span>
+
+    /** Start a company - specific procedure for 18EU */
+    @Override
+    protected PossibleAction processGameSpecificActions(ActionEvent actor,
+            PossibleAction chosenAction) {
+
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (chosenAction instanceof MergeCompanies) {</span>
+
+<span class="nc" id="L56">            log.debug(&quot;Merge action: &quot; + chosenAction.toString());</span>
+
+<span class="nc" id="L58">            MergeCompanies action = (MergeCompanies) chosenAction;</span>
+<span class="nc" id="L59">            PublicCompany minor = action.getMergingCompany();</span>
+<span class="nc" id="L60">            List&lt;PublicCompany&gt; targets = action.getTargetCompanies();</span>
+
+<span class="nc bnc" id="L62" title="All 6 branches missed.">            if (minor == null || targets == null || targets.isEmpty()) {</span>
+<span class="nc" id="L63">                log.error(&quot;Bad &quot; + action.toString());</span>
+<span class="nc" id="L64">                return null;</span>
+            }
+
+<span class="nc" id="L67">            String[] options = new String[targets.size()];</span>
+<span class="nc" id="L68">            int i = 0;</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">            for (PublicCompany target : targets) {</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">                if (target != null) {</span>
+<span class="nc" id="L71">                    options[i++] =</span>
+<span class="nc" id="L72">                            target.getId() + &quot; &quot; + target.getLongName();</span>
+                } else {
+<span class="nc" id="L74">                    options[i++] =</span>
+<span class="nc" id="L75">                            LocalText.getText(&quot;CloseMinor&quot;, minor.getId());</span>
+                }
+<span class="nc" id="L77">            }</span>
+
+<span class="nc" id="L79">            RadioButtonDialog dialog = new RadioButtonDialog (</span>
+                    GameUIManager_18EU.SELECT_MERGING_MAJOR,
+                    gameUIManager,
+                    parent,
+<span class="nc" id="L83">                    LocalText.getText(&quot;PleaseSelect&quot;),</span>
+<span class="nc" id="L84">                    LocalText.getText(&quot;SelectCompanyToMergeMinorInto&quot;,</span>
+<span class="nc" id="L85">                            minor.getId()),</span>
+                            options, -1);
+<span class="nc" id="L87">            gameUIManager.setCurrentDialog(dialog, action);</span>
+<span class="nc" id="L88">            parent.disableButtons();</span>
+
+        }
+<span class="nc" id="L91">        return null;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

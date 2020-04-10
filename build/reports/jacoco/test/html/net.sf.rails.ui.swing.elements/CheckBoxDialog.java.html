@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CheckBoxDialog.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.elements</a> &gt; <span class="el_source">CheckBoxDialog.java</span></div><h1>CheckBoxDialog.java</h1><pre class="source lang-java linenums">/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/CheckBoxDialog.java,v 1.9 2010/06/16 20:59:10 evos Exp $*/
+package net.sf.rails.ui.swing.elements;
+
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+
+import javax.swing.*;
+
+/**
+ * A generic dialog for presenting choices by checkboxes.
+ */
+public class CheckBoxDialog extends NonModalDialog {
+
+    private static final long serialVersionUID = 1L;
+
+    private JCheckBox[] checkBoxes;
+
+    private int numOptions;
+    private String[] options;
+    private boolean[] selectedOptions;
+
+    public CheckBoxDialog(String key, DialogOwner owner, JFrame window, String title, String message,
+            String[] options) {
+<span class="nc" id="L24">        this (key, owner, window, title, message, options, null, false);</span>
+<span class="nc" id="L25">    }</span>
+
+    public CheckBoxDialog(String key, DialogOwner owner, JFrame window, String title, String message,
+            String[] options, boolean[] selectedOptions, boolean addCancelButton) {
+
+<span class="nc" id="L30">        super (key, owner, window, title, message);</span>
+<span class="nc" id="L31">        this.hasCancelButton = addCancelButton;</span>
+
+<span class="nc" id="L33">        this.options = options;</span>
+<span class="nc" id="L34">        this.numOptions = options.length;</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        if (selectedOptions != null) {</span>
+<span class="nc" id="L36">            this.selectedOptions = selectedOptions;</span>
+        } else {
+<span class="nc" id="L38">            this.selectedOptions = new boolean[numOptions];</span>
+        }
+
+<span class="nc" id="L41">        initialize(hasCancelButton);</span>
+<span class="nc" id="L42">    }</span>
+
+    @Override
+    protected void initializeInput() {
+<span class="nc" id="L46">        checkBoxes = new JCheckBox[numOptions];</span>
+
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        for (int i = 0; i &lt; numOptions; i++) {</span>
+<span class="nc" id="L49">            checkBoxes[i] =</span>
+                new JCheckBox(options[i], selectedOptions[i]);
+<span class="nc" id="L51">            optionsPane.add(checkBoxes[i], constraints(0, 1 + i, 0, 0, 0, 0));</span>
+            //checkBoxes[i].setPreferredSize(size);
+        }
+<span class="nc" id="L54">    }</span>
+
+    @Override
+    protected void processOK (ActionEvent actionEvent) {
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        for (int i = 0; i &lt; numOptions; i++) {</span>
+<span class="nc" id="L59">            selectedOptions[i] = checkBoxes[i].isSelected();</span>
+        }
+<span class="nc" id="L61">    }</span>
+
+    @Override
+    protected void processCancel (ActionEvent actionEvent) {
+<span class="nc" id="L65">    }</span>
+
+    public String[] getOptions () {
+<span class="nc" id="L68">        return options;</span>
+    }
+
+    public synchronized boolean[] getSelectedOptions() {
+<span class="nc" id="L72">        return selectedOptions;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

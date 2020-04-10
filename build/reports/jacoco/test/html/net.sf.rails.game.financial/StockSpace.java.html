@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StockSpace.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.financial</a> &gt; <span class="el_source">StockSpace.java</span></div><h1>StockSpace.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.financial;
+
+import java.awt.Color;
+
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.model.RailsModel;
+import net.sf.rails.game.state.ArrayListState;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableList;
+
+
+/**
+ * Objects of this class represent a square on the StockMarket.
+ */
+public class StockSpace extends RailsModel implements Comparable&lt;StockSpace&gt; {
+
+    /*--- Class attributes ---*/
+    /*--- Constants ---*/
+    /** The getId() of the XML tag used to configure a stock space. */
+    public static final String ELEMENT_ID = &quot;StockSpace&quot;;
+
+    /**
+     * The getId() of the XML attribute for the stock price's getId() (like &quot;A1&quot; -
+     * naming is like spreadsheet cells.
+     */
+    public static final String NAME_TAG = &quot;name&quot;;
+
+    /** The getId() of the XML attribute for the stock price. */
+    public static final String PRICE_TAG = &quot;price&quot;;
+
+    /** The getId() of the XML attribute for the stock price type (optional). */
+    public static final String TYPE_TAG = &quot;type&quot;;
+
+    /**
+     * The getId() of the XML tag for the &quot;startSpace&quot; property. (indicating an
+     * allowed PAR price)
+     */
+    public static final String START_SPACE_TAG = &quot;StartSpace&quot;;
+
+    /** The getId() of the XML tag for the &quot;below ledge&quot; property. */
+    public static final String BELOW_LEDGE_TAG = &quot;BelowLedge&quot;;
+
+    /** The getId() of the XML tag for the &quot;left of ledge&quot; property. */
+    public static final String LEFT_OF_LEDGE_TAG = &quot;LeftOfLedge&quot;;
+
+    /** The getId() of the XML tag for the &quot;closes company&quot; property. */
+    public static final String CLOSES_COMPANY_TAG = &quot;ClosesCompany&quot;;
+
+    /** The getId() of the XML tag for the &quot;gamn over&quot; property. */
+    public static final String GAME_OVER_TAG = &quot;GameOver&quot;;
+
+    /*--- Instance attributes ---*/
+    private final int row;
+    private final int column;
+    private final int price;
+    private final StockSpaceType type;
+<span class="fc" id="L61">    private boolean belowLedge = false; // For 1870</span>
+<span class="fc" id="L62">    private boolean leftOfLedge = false; // For 1870</span>
+<span class="fc" id="L63">    private boolean closesCompany = false;// For 1856 and other games</span>
+<span class="fc" id="L64">    private boolean endsGame = false; // For 1841 and other games</span>
+<span class="fc" id="L65">    private boolean start = false; // Company may start here</span>
+    
+    
+    /*--- State fields */
+<span class="fc" id="L69">    private final ArrayListState&lt;PublicCompany&gt; tokens = ArrayListState.create(this, &quot;tokens&quot;);</span>
+<span class="fc" id="L70">    private final ArrayListState&lt;PublicCompany&gt; fixedStartPrices = ArrayListState.create(this, &quot;fixedStartPrices&quot;);</span>
+
+<span class="fc" id="L72">    private static final Logger log =</span>
+<span class="fc" id="L73">            LoggerFactory.getLogger(StockSpace.class);</span>
+
+    /*--- Constructors ---*/
+    private StockSpace(StockMarket parent, String id, int price, StockSpaceType type) {
+<span class="fc" id="L77">        super(parent, id);</span>
+<span class="fc" id="L78">        this.price = price;</span>
+<span class="fc" id="L79">        this.type = type;</span>
+
+<span class="fc" id="L81">        this.row = Integer.parseInt(id.substring(1)) - 1;</span>
+<span class="fc" id="L82">        this.column = (id.toUpperCase().charAt(0) - '@') - 1;</span>
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * @return fully initialized StockSpace
+     */
+    public static StockSpace create(StockMarket parent, String id, int price, StockSpaceType type) {
+<span class="fc" id="L89">        return new StockSpace(parent, id, price, type);</span>
+    }
+
+    @Override
+    public StockMarket getParent() {
+<span class="fc" id="L94">        return (StockMarket)super.getParent();</span>
+    }
+    
+    // No constructors for the booleans. Use the setters.
+
+    /*--- Token handling methods ---*/
+    /**
+     * Add a token at the end of the array (i.e. at the bottom of the pile)
+     *
+     * Always returns true;
+     *
+     * @param company The company object to add.
+     */
+    public boolean addToken(PublicCompany company) {
+<span class="fc" id="L108">        log.debug(company.getId() + &quot; price token added to &quot; + getId());</span>
+<span class="fc" id="L109">        tokens.add(company);</span>
+<span class="fc" id="L110">        return true;</span>
+    }
+
+    public boolean addTokenAtStackPosition(PublicCompany company, int stackPosition) {
+<span class="nc" id="L114">        log.debug(company.getId() + &quot; price token added to &quot; + getId() + &quot;  at stack position &quot;+stackPosition);</span>
+<span class="nc" id="L115">        tokens.add(stackPosition, company);</span>
+<span class="nc" id="L116">        return true;</span>
+    }
+
+    /**
+     * Remove a token from the pile.
+     *
+     * @param company The company object to remove.
+     * @return False if the token was not found.
+     */
+    public boolean removeToken(PublicCompany company) {
+<span class="fc" id="L126">        log.debug(company.getId() + &quot; price token removed from &quot; + getId());</span>
+<span class="fc" id="L127">        return tokens.remove(company);</span>
+    }
+
+    public ImmutableList&lt;PublicCompany&gt; getTokens() {
+<span class="nc" id="L131">        return tokens.view();</span>
+    }
+
+    /**
+     * Find the stack position of a company token
+     *
+     * @return Stock position: 0 = top, increasing towards the bottom. -1 if not
+     * found.
+     */
+    public int getStackPosition(PublicCompany company) {
+<span class="fc" id="L141">        return tokens.indexOf(company);</span>
+    }
+
+    /*----- Fixed start prices (e.g. 1835, to show in small print) -----*/
+    public void addFixedStartPrice(PublicCompany company) {
+<span class="fc" id="L146">        fixedStartPrices.add(company);</span>
+<span class="fc" id="L147">    }</span>
+
+    public ImmutableList&lt;PublicCompany&gt; getFixedStartPrices() {
+<span class="nc" id="L150">        return fixedStartPrices.view();</span>
+    }
+
+    /*--- Getters ---*/
+    /**
+     * @return TRUE is the square is just above a ledge.
+     */
+    public boolean isBelowLedge() {
+<span class="fc" id="L158">        return belowLedge;</span>
+    }
+
+    /**
+     * @return TRUE if the square closes companies landing on it.
+     */
+    public boolean closesCompany() {
+<span class="fc" id="L165">        return closesCompany;</span>
+    }
+
+    /**
+     * @return The square's colour.
+     */
+    public Color getColour() {
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (type != null) {</span>
+<span class="nc" id="L173">            return type.getColour();</span>
+        } else {
+<span class="nc" id="L175">            return Color.WHITE;</span>
+        }
+    }
+
+    /**
+     * @return TRUE if the rails.game ends if a company lands on this square.
+     */
+    public boolean endsGame() {
+<span class="fc" id="L183">        return endsGame;</span>
+    }
+
+    /**
+     * @return The stock price associated with the square.
+     */
+    public int getPrice() {
+<span class="fc" id="L190">        return price;</span>
+    }
+
+    /**
+     * @return
+     */
+    public int getColumn() {
+<span class="fc" id="L197">        return column;</span>
+    }
+
+    /**
+     * @return
+     */
+    public StockSpaceType getType() {
+<span class="nc" id="L204">        return type;</span>
+    }
+
+    /**
+     * @return
+     */
+    public int getRow() {
+<span class="fc" id="L211">        return row;</span>
+    }
+
+    /**
+     * @return
+     */
+    public boolean isStart() {
+<span class="nc" id="L218">        return start;</span>
+    }
+
+    /**
+     * @return
+     */
+    public boolean isLeftOfLedge() {
+<span class="fc" id="L225">        return leftOfLedge;</span>
+    }
+
+    /**
+     * @return
+     */
+    public boolean isNoBuyLimit() {
+<span class="pc bpc" id="L232" title="2 of 4 branches missed.">        return type != null &amp;&amp; type.isNoBuyLimit();</span>
+    }
+
+    /**
+     * @return
+     */
+    public boolean isNoCertLimit() {
+<span class="pc bpc" id="L239" title="1 of 4 branches missed.">        return type != null &amp;&amp; type.isNoCertLimit();</span>
+    }
+
+    /**
+     * @return
+     */
+    public boolean isNoHoldLimit() {
+<span class="pc bpc" id="L246" title="1 of 4 branches missed.">        return type != null &amp;&amp; type.isNoHoldLimit();</span>
+    }
+
+    /*--- Setters ---*/
+    /**
+     * @param b See isAboveLedge.
+     */
+    public void setBelowLedge(boolean b) {
+<span class="fc" id="L254">        belowLedge = b;</span>
+<span class="fc" id="L255">    }</span>
+
+    /**
+     * @param b See isClosesCompany.
+     */
+    public void setClosesCompany(boolean b) {
+<span class="fc" id="L261">        closesCompany = b;</span>
+<span class="fc" id="L262">    }</span>
+
+    /**
+     * @param b See isEndsGame.
+     */
+    public void setEndsGame(boolean b) {
+<span class="fc" id="L268">        endsGame = b;</span>
+<span class="fc" id="L269">    }</span>
+
+    /**
+     * @param set space as a starting space
+     */
+    public void setStart(boolean b) {
+<span class="fc" id="L275">        start = b;</span>
+<span class="fc" id="L276">    }</span>
+
+    /**
+     * @param set if token is left of ledge
+     */
+    public void setLeftOfLedge(boolean b) {
+<span class="fc" id="L282">        leftOfLedge = b;</span>
+<span class="fc" id="L283">    }</span>
+
+    /**
+     * @return Returns if the space hasTokens.
+     */
+    public boolean hasTokens() {
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        return !tokens.isEmpty();</span>
+    }
+
+    @Override
+    public String toText() {
+<span class="fc" id="L294">        return Bank.format(getParent(), price);</span>
+    }
+
+    // Comparable method
+    // TODO: Check if this is correct (price &gt; column &gt; row)
+    public int compareTo(StockSpace other) {
+<span class="fc" id="L300">        return ComparisonChain.start()</span>
+<span class="fc" id="L301">                .compare(price, other.price)</span>
+<span class="fc" id="L302">                .compare(column, other.column)</span>
+<span class="fc" id="L303">                .compare(row, other.row)</span>
+<span class="fc" id="L304">                .result();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

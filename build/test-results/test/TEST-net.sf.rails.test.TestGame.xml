@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.sf.rails.test.TestGame" tests="26" skipped="0" failures="0" errors="0" timestamp="2020-04-10T19:48:43" hostname="marc-desktop" time="9.959">
+  <properties/>
+  <testcase name="bugs/1830CF_obsoleteTrains" classname="net.sf.rails.test.TestGame" time="1.16"/>
+  <testcase name="bugs/1835_changePresidentAtStart" classname="net.sf.rails.test.TestGame" time="0.289"/>
+  <testcase name="bugs/1856_tokens" classname="net.sf.rails.test.TestGame" time="0.465"/>
+  <testcase name="bugs/1889_presidentContribution" classname="net.sf.rails.test.TestGame" time="0.35"/>
+  <testcase name="real/1830_B" classname="net.sf.rails.test.TestGame" time="0.239"/>
+  <testcase name="real/1835_KoIT3" classname="net.sf.rails.test.TestGame" time="0.692"/>
+  <testcase name="real/1835_Stoll_12" classname="net.sf.rails.test.TestGame" time="0.556"/>
+  <testcase name="real/1856_A" classname="net.sf.rails.test.TestGame" time="0.549"/>
+  <testcase name="real/1856_CGR-10Shares-Test" classname="net.sf.rails.test.TestGame" time="0.374"/>
+  <testcase name="real/1880_ATG1" classname="net.sf.rails.test.TestGame" time="0.745"/>
+  <testcase name="real/1889_A" classname="net.sf.rails.test.TestGame" time="0.183"/>
+  <testcase name="real/1889_B" classname="net.sf.rails.test.TestGame" time="0.272"/>
+  <testcase name="real/1889_C" classname="net.sf.rails.test.TestGame" time="0.264"/>
+  <testcase name="real/18AL_A" classname="net.sf.rails.test.TestGame" time="0.26"/>
+  <testcase name="real/18EU_A" classname="net.sf.rails.test.TestGame" time="0.458"/>
+  <testcase name="real/18EU_B" classname="net.sf.rails.test.TestGame" time="0.536"/>
+  <testcase name="test/1830_5forDtrainExchange" classname="net.sf.rails.test.TestGame" time="0.286"/>
+  <testcase name="test/1830_Auction_Test" classname="net.sf.rails.test.TestGame" time="0.142"/>
+  <testcase name="test/1830_SellFullPresCert" classname="net.sf.rails.test.TestGame" time="0.213"/>
+  <testcase name="test/1830_SellHalfPresCert" classname="net.sf.rails.test.TestGame" time="0.18"/>
+  <testcase name="test/1830_ShareSelling_Test" classname="net.sf.rails.test.TestGame" time="0.213"/>
+  <testcase name="test/1835_Correct_Sell_Pass" classname="net.sf.rails.test.TestGame" time="0.355"/>
+  <testcase name="test/1835_NatDoubleShare" classname="net.sf.rails.test.TestGame" time="0.305"/>
+  <testcase name="test/1835_SellDoubleShare" classname="net.sf.rails.test.TestGame" time="0.38"/>
+  <testcase name="test/1835_ShareSelling_Test" classname="net.sf.rails.test.TestGame" time="0.323"/>
+  <testcase name="test/1851_Late" classname="net.sf.rails.test.TestGame" time="0.162"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

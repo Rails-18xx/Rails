@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.state</a> &gt; <span class="el_source">AbstractItem.java</span></div><h1>AbstractItem.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.state;
+
+import com.google.common.base.MoreObjects;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+ * An AbstractItem is a default implementation of Item
+ */
+public abstract class AbstractItem implements Item {
+
+    private final String id;
+    private final Item parent;
+    private final Context context;
+
+<span class="fc" id="L17">    protected AbstractItem(Item parent, String id) {</span>
+<span class="fc" id="L18">        checkNotNull(parent, &quot;Parent cannot be null&quot;);</span>
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        checkArgument(id != Root.ID, &quot;Id cannot equal &quot; + Root.ID);</span>
+
+        // defined standard fields
+<span class="fc" id="L22">        this.parent = parent;</span>
+<span class="fc" id="L23">        this.id = id;</span>
+
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        if (parent instanceof Context) {</span>
+<span class="fc" id="L26">            context = (Context) parent;</span>
+        } else {
+            // recursive definition
+<span class="fc" id="L29">            context = parent.getContext();</span>
+        }
+
+        // add item to context
+<span class="fc" id="L33">        context.addItem(this);</span>
+<span class="fc" id="L34">    }</span>
+
+    public String getId() {
+<span class="fc" id="L37">        return id;</span>
+    }
+
+    public Item getParent() {
+<span class="fc" id="L41">        return parent;</span>
+    }
+
+    public Context getContext() {
+<span class="fc" id="L45">        return context;</span>
+    }
+
+    public Root getRoot() {
+        // forward it to the context
+<span class="fc" id="L50">        return context.getRoot();</span>
+    }
+
+    public String getURI() {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (parent instanceof Context) {</span>
+<span class="fc" id="L55">            return id;</span>
+        } else {
+            // recursive definition
+<span class="fc" id="L58">            return parent.getURI() + Item.SEP + id;</span>
+        }
+    }
+
+    public String getFullURI() {
+        // recursive definition
+<span class="fc" id="L64">        return parent.getFullURI() + Item.SEP + id;</span>
+    }
+
+    public String toText() {
+<span class="fc" id="L68">        return id;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L73">        return MoreObjects.toStringHelper(this)</span>
+<span class="fc" id="L74">                .add(&quot;URI&quot;, getFullURI())</span>
+<span class="fc" id="L75">                .toString();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PublicCompany_18TN.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._18TN</a> &gt; <span class="el_source">PublicCompany_18TN.java</span></div><h1>PublicCompany_18TN.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._18TN;
+
+import java.util.Collections;
+import java.util.List;
+
+import net.sf.rails.algorithms.NetworkTrain;
+import net.sf.rails.algorithms.RevenueAdapter;
+import net.sf.rails.algorithms.RevenueStaticModifier;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.state.BooleanState;
+
+
+public final class PublicCompany_18TN extends PublicCompany implements RevenueStaticModifier {
+
+<span class="nc" id="L19">    private final BooleanState civilWar = BooleanState.create(this, &quot;civilWar&quot;);</span>
+
+    public PublicCompany_18TN(RailsItem parent, String id) {
+<span class="nc" id="L22">        super(parent, id);    </span>
+<span class="nc" id="L23">    }</span>
+
+    @Override
+    public void finishConfiguration(RailsRoot root)
+    throws ConfigurationException {
+<span class="nc" id="L28">        super.finishConfiguration(root);</span>
+<span class="nc" id="L29">        root.getRevenueManager().addStaticModifier(this);</span>
+<span class="nc" id="L30">    }</span>
+
+    public boolean isCivilWar() {
+<span class="nc" id="L33">        return civilWar.value();</span>
+    }
+
+    public void setCivilWar(boolean value) {
+<span class="nc" id="L37">        civilWar.set(value);</span>
+<span class="nc" id="L38">    }</span>
+
+    /** Don't move the space if the company has one train in the civil war
+     * (the revenue amount must then be zero)
+     */
+    @Override
+    public void withhold(int amount) {
+<span class="nc bnc" id="L45" title="All 4 branches missed.">        if (isCivilWar() &amp;&amp; portfolio.getNumberOfTrains() == 1) return;</span>
+<span class="nc" id="L46">        getRoot().getStockMarket().withhold(this);</span>
+<span class="nc" id="L47">    }</span>
+
+    /**
+     * Modify the revenue calculation for the civil war by removing the shortest train
+     */
+    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
+        
+        // check first if it is the company for the revenue calculation
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        if (revenueAdapter.getCompany() != this) return false;</span>
+        
+        // check if it is civil war, otherwise no effect
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (!isCivilWar()) return false;</span>
+        
+<span class="nc" id="L60">        List&lt;NetworkTrain&gt; trains = revenueAdapter.getTrains();</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (trains.size() == 0) return false; // no train, no effect</span>
+        
+        // sort trains in ascending order (by domination which is equal to length for TN)
+<span class="nc" id="L64">        Collections.sort(trains);</span>
+        
+        // and remove the first train (shortest)
+<span class="nc" id="L67">        trains.remove(0);</span>
+        
+<span class="nc" id="L69">        return true;</span>
+    }
+
+    public String prettyPrint(RevenueAdapter revenueAdapter) {
+<span class="nc" id="L73">        return LocalText.getText(&quot;CivilWarActive&quot;);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperatingRound_1835.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1835</a> &gt; <span class="el_source">OperatingRound_1835.java</span></div><h1>OperatingRound_1835.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1835;
+
+import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rails.game.action.DiscardTrain;
+import rails.game.action.LayTile;
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GameOption;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.GameDef;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.Phase;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.special.ExchangeForShare;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.Currency;
+import net.sf.rails.game.state.HashMapState;
+import net.sf.rails.game.state.MoneyOwner;
+import net.sf.rails.game.state.Owner;
+
+import com.google.common.collect.Iterables;
+
+
+public class OperatingRound_1835 extends OperatingRound {
+<span class="fc" id="L34">    private static final Logger log = LoggerFactory.getLogger(OperatingRound_1835.class);</span>
+
+<span class="fc" id="L36">    private final BooleanState needPrussianFormationCall = BooleanState.create(this, &quot;NeedPrussianFormationCall&quot;);</span>
+<span class="fc" id="L37">    private final BooleanState hasLaidExtraOBBTile = BooleanState.create(this, &quot;HasLaidExtraOBBTile&quot;);</span>
+
+    /**
+     * Registry of percentage of PR revenue to be denied per player
+     * because of having produced revenue in the same OR.
+     */
+<span class="fc" id="L43">    private final HashMapState&lt;Player, Integer&gt; deniedIncomeShare = HashMapState.create(this, &quot;deniedIncomeShare&quot;);</span>
+
+    /**
+     * Constructed via Configure
+     */
+    public OperatingRound_1835 (GameManager parent, String id) {
+<span class="fc" id="L49">        super (parent, id);</span>
+<span class="fc" id="L50">    }</span>
+
+    /** Can a public company operate? (1835 special version) */
+    @Override
+    protected boolean canCompanyOperateThisRound (PublicCompany company) {
+<span class="fc bfc" id="L55" title="All 4 branches covered.">        if (!company.hasFloated() || company.isClosed()) {</span>
+<span class="fc" id="L56">            return false;</span>
+        }
+        // 1835 specials
+        // Majors always operate
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (company.hasStockPrice()) return true;</span>
+        // In some variants minors don't run if BY has not floated
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (GameOption.getValue(this,GameOption.VARIANT).equalsIgnoreCase(&quot;Clemens&quot;)</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">                || GameOption.getValue(this, &quot;MinorsRequireFloatedBY&quot;).equalsIgnoreCase(&quot;yes&quot;)) {</span>
+<span class="fc" id="L64">            return companyManager.getPublicCompany(GameManager_1835.BY_ID).hasFloated();</span>
+        }
+<span class="fc" id="L66">        return true;</span>
+    }
+
+    @Override
+    protected void privatesPayOut() {
+<span class="fc" id="L71">        int count = 0;</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        for (PrivateCompany priv : companyManager.getAllPrivateCompanies()) {</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            if (!priv.isClosed()) {</span>
+                // The bank portfolios are all not cashOwners themselves!
+<span class="fc bfc" id="L75" title="All 2 branches covered.">                if (priv.getOwner() instanceof MoneyOwner) {</span>
+<span class="fc" id="L76">                    Owner recipient = priv.getOwner();</span>
+<span class="fc" id="L77">                    int revenue = priv.getRevenueByPhase(Phase.getCurrent(this)); // sfy 1889: revenue by phase</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">                    if (count++ == 0) ReportBuffer.add(this, &quot;&quot;);</span>
+<span class="fc" id="L79">                    String revText = Currency.fromBank(revenue, (MoneyOwner)recipient);</span>
+<span class="fc" id="L80">                    ReportBuffer.add(this, LocalText.getText(&quot;ReceivesFor&quot;,</span>
+<span class="fc" id="L81">                            recipient.getId(),</span>
+                            revText,
+<span class="fc" id="L83">                            priv.getId()));</span>
+
+                    /* Register black private equivalent PR share value
+                     * so it can be subtracted if PR operates */
+<span class="pc bpc" id="L87" title="2 of 4 branches missed.">                    if (recipient instanceof Player &amp;&amp; priv.getSpecialProperties() != null</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">                            &amp;&amp; priv.getSpecialProperties().size() &gt; 0) {</span>
+<span class="fc" id="L89">                        SpecialProperty sp = Iterables.get(priv.getSpecialProperties(), 0);</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">                        if (sp instanceof ExchangeForShare) {</span>
+<span class="fc" id="L91">                            ExchangeForShare efs = (ExchangeForShare) sp;</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">                            if (efs.getPublicCompanyName().equalsIgnoreCase(GameManager_1835.PR_ID)) {</span>
+<span class="fc" id="L93">                                int share = efs.getShare();</span>
+<span class="fc" id="L94">                                Player player = (Player) recipient;</span>
+<span class="fc" id="L95">                                addIncomeDenialShare (player, share);</span>
+                            }
+
+                        }
+                    }
+                }
+
+            }
+<span class="fc" id="L103">        }</span>
+
+<span class="fc" id="L105">    }</span>
+
+    private void addIncomeDenialShare (Player player, int share) {
+
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (!deniedIncomeShare.containsKey(player)) {</span>
+<span class="fc" id="L110">            deniedIncomeShare.put(player, share);</span>
+        } else {
+<span class="fc" id="L112">            deniedIncomeShare.put(player, share + deniedIncomeShare.get(player));</span>
+        }
+        //log.debug(&quot;+++ Denied &quot;+share+&quot;% share of PR income to &quot;+player.getName());
+<span class="fc" id="L115">    }</span>
+
+    /** Count the number of shares per revenue recipient&lt;p&gt;
+     * A special rule applies to 1835 to prevent black privates and minors providing
+     * income twice during an OR.
+     */
+    @Override
+    protected  Map&lt;MoneyOwner, Integer&gt;  countSharesPerRecipient () {
+
+<span class="fc" id="L124">        Map&lt;MoneyOwner, Integer&gt; sharesPerRecipient = super.countSharesPerRecipient();</span>
+
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        if (operatingCompany.value().getId().equalsIgnoreCase(GameManager_1835.PR_ID)) {</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            for (Player player : deniedIncomeShare.viewKeySet()) {</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">                if (!sharesPerRecipient.containsKey(player)) continue;</span>
+<span class="fc" id="L129">                int share = deniedIncomeShare.get(player);</span>
+<span class="fc" id="L130">                int shares = share / operatingCompany.value().getShareUnit();</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">                if (this.wasInterrupted()) { //Assuming that the interruption was cause by the Prussian Formation Round</span>
+<span class="nc" id="L132">                sharesPerRecipient.put (player, sharesPerRecipient.get(player) - shares);</span>
+<span class="nc" id="L133">                ReportBuffer.add(this, LocalText.getText(&quot;NoIncomeForPreviousOperation&quot;,</span>
+<span class="nc" id="L134">                        player.getId(),</span>
+<span class="nc" id="L135">                        share,</span>
+                        GameManager_1835.PR_ID));
+                }
+
+<span class="fc" id="L139">            }</span>
+        }
+
+<span class="fc" id="L142">        return sharesPerRecipient;</span>
+    }
+
+    /**
+     * Register black minors as having operated
+     * for the purpose of denying income after conversion to a PR share
+     */
+    @Override
+    protected void initTurn() {
+
+<span class="fc" id="L152">        super.initTurn();</span>
+
+<span class="fc" id="L154">        Set&lt;SpecialProperty&gt; sps = operatingCompany.value().getSpecialProperties();</span>
+<span class="pc bpc" id="L155" title="1 of 4 branches missed.">        if (sps != null &amp;&amp; !sps.isEmpty()) {</span>
+<span class="fc" id="L156">            ExchangeForShare efs = (ExchangeForShare) Iterables.get(sps, 0);</span>
+<span class="fc" id="L157">            addIncomeDenialShare (operatingCompany.value().getPresident(), efs.getShare());</span>
+        }
+<span class="fc" id="L159">    }</span>
+
+    @Override
+    public void resume() {
+<span class="fc" id="L163">        PublicCompany prussian = companyManager.getPublicCompany(GameManager_1835.PR_ID);</span>
+
+<span class="pc bpc" id="L165" title="1 of 4 branches missed.">        if (prussian.hasFloated() &amp;&amp; !prussian.hasOperated()</span>
+                // PR has just started. Check if it can operate this round
+                // That's only the case if M1 has just bought
+                // the first 4-train or 4+4-train
+<span class="nc bnc" id="L169" title="All 2 branches missed.">                &amp;&amp; operatingCompany.value() == companyManager.getPublicCompany(&quot;M1&quot;)) {</span>
+<span class="nc" id="L170">            log.debug(&quot;M2 has not operated: PR can operate&quot;);</span>
+
+            // Insert the Prussian before the first major company
+            // with a lower current price that has not yet operated
+            // and isn't currently operating
+
+<span class="nc" id="L176">            int index = 0;</span>
+<span class="nc" id="L177">            int operatingCompanyndex = getOperatingCompanyndex();</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">            for (PublicCompany company : setOperatingCompanies()) {</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">                if (index &gt; operatingCompanyndex</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">                        &amp;&amp; company.hasStockPrice()</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                        &amp;&amp; company.hasFloated()</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">                        &amp;&amp; !company.isClosed()</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">                        &amp;&amp; company != operatingCompany.value()</span>
+<span class="nc" id="L184">                        &amp;&amp; company.getCurrentSpace().getPrice()</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">                        &lt; prussian.getCurrentSpace().getPrice()) {</span>
+<span class="nc" id="L186">                    log.debug(&quot;PR will operate before &quot;+company.getId());</span>
+<span class="nc" id="L187">                    break;</span>
+                }
+<span class="nc" id="L189">                index++;</span>
+<span class="nc" id="L190">            }</span>
+            // Insert PR at the found index (possibly at the end)
+<span class="nc" id="L192">            operatingCompanies.add(index, prussian);</span>
+<span class="nc" id="L193">            log.debug(&quot;PR will operate at order position &quot;+index);</span>
+
+<span class="nc" id="L195">        } else {</span>
+
+<span class="fc" id="L197">            log.debug(&quot;M2 has operated: PR cannot operate&quot;);</span>
+
+        }
+
+        // Check if the operating company still exists
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">        if (operatingCompany.value().isClosed()) finishTurn();</span>
+
+<span class="fc" id="L204">        guiHints.setCurrentRoundType(getClass());</span>
+<span class="fc" id="L205">        super.resume();</span>
+<span class="fc" id="L206">    }</span>
+
+    @Override
+    protected boolean validateSpecialTileLay (LayTile layTile) {
+
+<span class="fc bfc" id="L211" title="All 2 branches covered.">        if (!super.validateSpecialTileLay(layTile)) return false;</span>
+
+        // Exclude the second OBB free tile if the first was laid in this round
+<span class="fc bfc" id="L214" title="All 2 branches covered.">        if (layTile.getSpecialProperty().getLocationNameString().matches(&quot;M1(7|9)&quot;)</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">                &amp;&amp; hasLaidExtraOBBTile.value()) return false;</span>
+
+<span class="fc" id="L217">        return true;</span>
+    }
+
+    @Override
+    public boolean layTile(LayTile action) {
+
+<span class="fc bfc" id="L223" title="All 2 branches covered.">        boolean hasJustLaidExtraOBBTile = action.getSpecialProperty() != null</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">        &amp;&amp; action.getSpecialProperty().getLocationNameString().matches(&quot;M1(5|7)&quot;);</span>
+
+        // The extra OBB tiles may not both be laid in the same round
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        if (hasJustLaidExtraOBBTile) {</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">            if (hasLaidExtraOBBTile.value()) {</span>
+<span class="nc" id="L229">                String errMsg = LocalText.getText(&quot;InvalidTileLay&quot;);</span>
+<span class="nc" id="L230">                DisplayBuffer.add(this, LocalText.getText(&quot;CannotLayTileOn&quot;,</span>
+<span class="nc" id="L231">                        action.getCompanyName(),</span>
+<span class="nc" id="L232">                        action.getLaidTile().toText(),</span>
+<span class="nc" id="L233">                        action.getChosenHex().getId(),</span>
+<span class="nc" id="L234">                        Bank.format(this, 0),</span>
+                        errMsg ));
+<span class="nc" id="L236">                return false;</span>
+            } else {
+                 // Duplicate, but we have to
+<span class="fc" id="L239">                hasLaidExtraOBBTile.set(true);</span>
+                // Done here to make getSpecialTileLays() return the correct value.
+                // It's provisional, on the assumption that other validations are OK.
+                // TODO To get it really right, we should separate validation and execution.
+            }
+        }
+
+<span class="fc" id="L246">        boolean result = super.layTile(action);</span>
+
+<span class="pc bpc" id="L248" title="3 of 4 branches missed.">        if (!result &amp;&amp; hasJustLaidExtraOBBTile) {</span>
+            // Revert if tile lay is unsuccessful
+<span class="nc" id="L250">            hasLaidExtraOBBTile.set(false);</span>
+        }
+
+<span class="fc" id="L253">        return result;</span>
+    }
+
+    @Override
+    protected void newPhaseChecks() {
+<span class="fc" id="L258">        Phase phase = Phase.getCurrent(this);</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        if (phase.getId().equals(&quot;4&quot;)</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">                || phase.getId().equals(&quot;4+4&quot;)</span>
+<span class="fc bfc" id="L261" title="All 2 branches covered.">                &amp;&amp; !companyManager.getPublicCompany(GameManager_1835.PR_ID).hasStarted()</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">                || phase.getId().equals(&quot;5&quot;)</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">                &amp;&amp; !PrussianFormationRound.prussianIsComplete(gameManager)) {</span>
+<span class="fc bfc" id="L264" title="All 2 branches covered.">            if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {</span>
+                // Postpone until trains are discarded
+<span class="fc" id="L266">                needPrussianFormationCall.set(true);</span>
+            } else {
+                // Do it immediately
+<span class="fc" id="L269">                ((GameManager_1835)gameManager).startPrussianFormationRound (this);</span>
+            }
+        }
+<span class="fc" id="L272">    }</span>
+
+    @Override
+    public boolean discardTrain(DiscardTrain action) {
+
+<span class="fc" id="L277">        boolean result = super.discardTrain(action);</span>
+<span class="pc bpc" id="L278" title="1 of 4 branches missed.">        if (result &amp;&amp; getStep() == GameDef.OrStep.BUY_TRAIN</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">                &amp;&amp; needPrussianFormationCall.value()) {</span>
+            // Do the postponed formation calls
+<span class="fc" id="L281">            ((GameManager_1835)gameManager).startPrussianFormationRound (this);</span>
+<span class="fc" id="L282">            needPrussianFormationCall.set(false);</span>
+        }
+<span class="fc" id="L284">        return result;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

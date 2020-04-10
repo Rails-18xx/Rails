@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameStatus_1880.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.gamespecific._1880</a> &gt; <span class="el_source">GameStatus_1880.java</span></div><h1>GameStatus_1880.java</h1><pre class="source lang-java linenums">/**
+ *
+ */
+package net.sf.rails.ui.swing.gamespecific._1880;
+
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.sound.SoundManager;
+import net.sf.rails.ui.swing.GameStatus;
+import net.sf.rails.ui.swing.GameUIManager;
+import net.sf.rails.ui.swing.elements.ClickField;
+import net.sf.rails.ui.swing.elements.RadioButtonDialog;
+import rails.game.action.BuyCertificate;
+import rails.game.action.PossibleAction;
+import rails.game.action.SellShares;
+import rails.game.action.StartCompany;
+import rails.game.correct.CashCorrectionAction;
+import rails.game.specific._1880.StartCompany_1880;
+
+/**
+ * @author Martin Brumm
+ *
+ */
+public class GameStatus_1880 extends GameStatus {
+       private static final long serialVersionUID = 1L;
+
+<span class="fc" id="L38">    private static final Logger log = LoggerFactory.getLogger(GameStatus_1880.class);</span>
+
+
+    /**
+     *
+     */
+    public GameStatus_1880() {
+<span class="nc" id="L45">       super();</span>
+<span class="nc" id="L46">    }</span>
+
+@Override
+    public void actionPerformed(ActionEvent actor) {
+<span class="nc" id="L50">        JComponent source = (JComponent) actor.getSource();</span>
+        List&lt;PossibleAction&gt; actions;
+<span class="nc" id="L52">        PossibleAction chosenAction = null;</span>
+
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (source instanceof ClickField) {</span>
+<span class="nc" id="L55">            gbc = gb.getConstraints(source);</span>
+<span class="nc" id="L56">            actions = ((ClickField) source).getPossibleActions();</span>
+
+            //notify sound manager that click field has been selected
+<span class="nc" id="L59">            SoundManager.notifyOfClickFieldSelection(actions.get(0));</span>
+
+            // Assume that we will have either sell or buy actions
+            // under one ClickField, not both. This seems guaranteed.
+<span class="nc" id="L63">            log.debug(&quot;Action is &quot; + actions.get(0).toString());</span>
+
+<span class="nc bnc" id="L65" title="All 4 branches missed.">            if (actions == null || actions.size() == 0) {</span>
+
+<span class="nc" id="L67">                log.warn(&quot;No ClickField action found&quot;);</span>
+
+<span class="nc bnc" id="L69" title="All 2 branches missed.">            } else if (actions.get(0) instanceof SellShares) {</span>
+
+<span class="nc" id="L71">                List&lt;String&gt; options = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L72">                List&lt;SellShares&gt; sellActions = new ArrayList&lt;SellShares&gt;();</span>
+<span class="nc" id="L73">                List&lt;Integer&gt; sellAmounts = new ArrayList&lt;Integer&gt;();</span>
+                SellShares sale;
+<span class="nc bnc" id="L75" title="All 2 branches missed.">                for (PossibleAction action : actions) {</span>
+<span class="nc" id="L76">                    sale = (SellShares) action;</span>
+
+                    //for (int i = 1; i &lt;= sale.getMaximumNumber(); i++) {
+<span class="nc" id="L79">                    int i = sale.getNumber();</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                    if (sale.getPresidentExchange() == 0) {</span>
+<span class="nc" id="L81">                        options.add(LocalText.getText(&quot;SellShares&quot;,</span>
+<span class="nc" id="L82">                                i,</span>
+<span class="nc" id="L83">                                sale.getShare(),</span>
+<span class="nc" id="L84">                                i * sale.getShare(),</span>
+<span class="nc" id="L85">                                sale.getCompanyName(),</span>
+<span class="nc" id="L86">                                gameUIManager.format(i * sale.getShareUnits()</span>
+<span class="nc" id="L87">                                        * sale.getPrice()) ));</span>
+                    } else {
+<span class="nc" id="L89">                        options.add(LocalText.getText(&quot;SellSharesWithSwap&quot;,</span>
+<span class="nc" id="L90">                                i,</span>
+<span class="nc" id="L91">                                sale.getShare(),</span>
+<span class="nc" id="L92">                                i * sale.getShare(),</span>
+<span class="nc" id="L93">                                sale.getCompanyName(),</span>
+<span class="nc" id="L94">                                gameUIManager.format(i * sale.getShareUnits() * sale.getPrice()),</span>
+                                // disregard other than double pres.certs. This is for 1835 only.
+<span class="nc" id="L96">                                3 - sale.getPresidentExchange(),</span>
+<span class="nc" id="L97">                                sale.getPresidentExchange() * sale.getShareUnit()));</span>
+                    }
+<span class="nc" id="L99">                    sellActions.add(sale);</span>
+<span class="nc" id="L100">                    sellAmounts.add(i);</span>
+<span class="nc" id="L101">                }</span>
+<span class="nc" id="L102">                int index = 0;</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">                if (options.size() &gt; 1) {</span>
+<span class="nc" id="L104">                    String message = LocalText.getText(&quot;PleaseSelect&quot;);</span>
+<span class="nc" id="L105">                    String sp =</span>
+<span class="nc" id="L106">                        (String) JOptionPane.showInputDialog(this, message,</span>
+                                message, JOptionPane.QUESTION_MESSAGE,
+<span class="nc" id="L108">                                null, options.toArray(new String[0]),</span>
+<span class="nc" id="L109">                                options.get(0));</span>
+<span class="nc" id="L110">                    index = options.indexOf(sp);</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">                } else if (options.size() == 1) {</span>
+<span class="nc" id="L112">                    String message = LocalText.getText(&quot;PleaseConfirm&quot;);</span>
+<span class="nc" id="L113">                    int result =</span>
+<span class="nc" id="L114">                        JOptionPane.showConfirmDialog(this, options.get(0),</span>
+                                message, JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+<span class="nc bnc" id="L117" title="All 2 branches missed.">                    index = (result == JOptionPane.OK_OPTION ? 0 : -1);</span>
+                }
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                if (index &lt; 0) {</span>
+                    // cancelled
+                } else {
+<span class="nc" id="L122">                    chosenAction = sellActions.get(index);</span>
+                    //((SellShares) chosenAction).setNumberSold(sellAmounts.get(index));
+                }
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            } else if (actions.get(0) instanceof BuyCertificate) {</span>
+<span class="nc" id="L126">                boolean startCompany = false;</span>
+
+<span class="nc" id="L128">                List&lt;String&gt; options = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L129">                List&lt;BuyCertificate&gt; buyActions =</span>
+                    new ArrayList&lt;BuyCertificate&gt;();
+<span class="nc" id="L131">                List&lt;Integer&gt; buyAmounts = new ArrayList&lt;Integer&gt;();</span>
+                BuyCertificate buy;
+<span class="nc" id="L133">                String companyName = &quot;&quot;;</span>
+<span class="nc" id="L134">                String playerName = &quot;&quot;;</span>
+                int sharePerCert;
+                int sharesPerCert;
+                int shareUnit;
+
+<span class="nc bnc" id="L139" title="All 2 branches missed.">                for (PossibleAction action : actions) {</span>
+<span class="nc" id="L140">                    buy = (BuyCertificate) action;</span>
+                    //cert = buy.getCertificate();
+<span class="nc" id="L142">                    playerName = buy.getPlayerName ();</span>
+<span class="nc" id="L143">                    PublicCompany company = buy.getCompany();</span>
+<span class="nc" id="L144">                    companyName = company.getId();</span>
+<span class="nc" id="L145">                    sharePerCert = buy.getSharePerCertificate();</span>
+<span class="nc" id="L146">                    shareUnit = company.getShareUnit();</span>
+<span class="nc" id="L147">                    sharesPerCert = sharePerCert / shareUnit;</span>
+
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                    if (buy instanceof StartCompany) {</span>
+
+<span class="nc" id="L151">                        startCompany = true;</span>
+                        int[] startPrices;
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                        if (((StartCompany_1880) buy).mustSelectAPrice()) {</span>
+<span class="nc" id="L154">                            startPrices =</span>
+<span class="nc" id="L155">                                ((StartCompany_1880) buy).getStartPrices();</span>
+<span class="nc" id="L156">                            Arrays.sort(startPrices);</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">                            for (int i = 0; i &lt; startPrices.length; i++) {</span>
+<span class="nc" id="L158">                                options.add(&quot;$&quot; + startPrices[i]);</span>
+                            }
+                        }
+<span class="nc" id="L161">                    } else {</span>
+
+<span class="nc" id="L163">                        options.add(LocalText.getText(&quot;BuyCertificate&quot;,</span>
+<span class="nc" id="L164">                                sharePerCert,</span>
+                                companyName,
+<span class="nc" id="L166">                                buy.getFromPortfolio().getName(),</span>
+<span class="nc" id="L167">                                gameUIManager.format(sharesPerCert * buy.getPrice()) ));</span>
+<span class="nc" id="L168">                        buyActions.add(buy);</span>
+<span class="nc" id="L169">                        buyAmounts.add(1);</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">                        for (int i = 2; i &lt;= buy.getMaximumNumber(); i++) {</span>
+<span class="nc" id="L171">                            options.add(LocalText.getText(&quot;BuyCertificates&quot;,</span>
+<span class="nc" id="L172">                                    i,</span>
+<span class="nc" id="L173">                                    sharePerCert,</span>
+                                    companyName,
+<span class="nc" id="L175">                                    buy.getFromPortfolio().getName(),</span>
+<span class="nc" id="L176">                                    gameUIManager.format(i * sharesPerCert</span>
+<span class="nc" id="L177">                                            * buy.getPrice()) ));</span>
+<span class="nc" id="L178">                            buyActions.add(buy);</span>
+<span class="nc" id="L179">                            buyAmounts.add(i);</span>
+                        }
+                    }
+<span class="nc" id="L182">                }</span>
+<span class="nc" id="L183">                int index = 0;</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                if (options.size() &gt; 1) {</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">                    if (startCompany) {</span>
+<span class="nc" id="L186">                        RadioButtonDialog dialog = new RadioButtonDialog (</span>
+                                GameUIManager.COMPANY_START_PRICE_DIALOG,
+                                gameUIManager,
+                                parent,
+<span class="nc" id="L190">                                LocalText.getText(&quot;PleaseSelect&quot;),</span>
+<span class="nc" id="L191">                                LocalText.getText(&quot;WHICH_START_PRICE&quot;,</span>
+                                        playerName,
+                                        companyName),
+<span class="nc" id="L194">                                        options.toArray(new String[0]), 0);</span>
+<span class="nc" id="L195">                        gameUIManager.setCurrentDialog(dialog, actions.get(0));</span>
+<span class="nc" id="L196">                        parent.disableButtons();</span>
+<span class="nc" id="L197">                        return;</span>
+                    } else {
+<span class="nc" id="L199">                        String sp =</span>
+<span class="nc" id="L200">                            (String) JOptionPane.showInputDialog(this,</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">                                    LocalText.getText(startCompany</span>
+<span class="nc" id="L202">                                            ? &quot;WHICH_PRICE&quot;</span>
+<span class="nc" id="L203">                                                    : &quot;HOW_MANY_SHARES&quot;),</span>
+<span class="nc" id="L204">                                                    LocalText.getText(&quot;PleaseSelect&quot;),</span>
+                                                    JOptionPane.QUESTION_MESSAGE, null,
+<span class="nc" id="L206">                                                    options.toArray(new String[0]),</span>
+<span class="nc" id="L207">                                                    options.get(0));</span>
+<span class="nc" id="L208">                        index = options.indexOf(sp);</span>
+<span class="nc" id="L209">                    }</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">                } else if (options.size() == 1) {</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">                    if (startCompany) {</span>
+<span class="nc" id="L212">                        RadioButtonDialog dialog = new RadioButtonDialog (</span>
+                                GameUIManager.COMPANY_START_PRICE_DIALOG,
+                                gameUIManager,
+                                parent,
+<span class="nc" id="L216">                                LocalText.getText(&quot;PleaseSelect&quot;),</span>
+<span class="nc" id="L217">                                LocalText.getText(&quot;WHICH_START_PRICE&quot;,</span>
+                                        playerName,
+                                        companyName),
+<span class="nc" id="L220">                                        options.toArray(new String[0]), 0);</span>
+<span class="nc" id="L221">                        gameUIManager.setCurrentDialog(dialog, actions.get(0));</span>
+<span class="nc" id="L222">                        parent.disableButtons();</span>
+<span class="nc" id="L223">                        return;</span>
+                    } else {
+<span class="nc" id="L225">                    int result =</span>
+<span class="nc" id="L226">                        JOptionPane.showConfirmDialog(this, options.get(0),</span>
+<span class="nc" id="L227">                                LocalText.getText(&quot;PleaseConfirm&quot;),</span>
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+<span class="nc bnc" id="L230" title="All 2 branches missed.">                    index = (result == JOptionPane.OK_OPTION ? 0 : -1);</span>
+                    }
+                }
+<span class="nc bnc" id="L233" title="All 2 branches missed.">                if (index &lt; 0) {</span>
+                    // cancelled
+<span class="nc bnc" id="L235" title="All 2 branches missed.">                } else if (startCompany) {</span>
+<span class="nc" id="L236">                    chosenAction = buyActions.get(index);</span>
+<span class="nc" id="L237">                    ((StartCompany) chosenAction).setStartPrice(buyAmounts.get(index));</span>
+<span class="nc" id="L238">                    ((StartCompany) chosenAction).setNumberBought(((StartCompany) chosenAction).getSharesPerCertificate());</span>
+                } else {
+<span class="nc" id="L240">                    chosenAction = buyActions.get(index);</span>
+<span class="nc" id="L241">                    ((BuyCertificate) chosenAction).setNumberBought(buyAmounts.get(index));</span>
+                }
+<span class="nc bnc" id="L243" title="All 2 branches missed.">            } else if (actions.get(0) instanceof CashCorrectionAction) {</span>
+<span class="nc" id="L244">                CashCorrectionAction cca = (CashCorrectionAction)actions.get(0);</span>
+<span class="nc" id="L245">                String amountString = (String) JOptionPane.showInputDialog(this,</span>
+<span class="nc" id="L246">                        LocalText.getText(&quot;CorrectCashDialogMessage&quot;, cca.getCashHolderName()),</span>
+<span class="nc" id="L247">                        LocalText.getText(&quot;CorrectCashDialogTitle&quot;),</span>
+<span class="nc" id="L248">                        JOptionPane.QUESTION_MESSAGE, null, null, 0);</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">                if (amountString.substring(0,1).equals(&quot;+&quot;))</span>
+<span class="nc" id="L250">                    amountString = amountString.substring(1);</span>
+                int amount;
+                try {
+<span class="nc" id="L253">                    amount = Integer.parseInt(amountString);</span>
+<span class="nc" id="L254">                } catch (NumberFormatException e) {</span>
+<span class="nc" id="L255">                    amount = 0;</span>
+<span class="nc" id="L256">                }</span>
+<span class="nc" id="L257">                cca.setAmount(amount);</span>
+<span class="nc" id="L258">                chosenAction = cca;</span>
+<span class="nc" id="L259">            } else {</span>
+
+<span class="nc" id="L261">                chosenAction =</span>
+<span class="nc" id="L262">                    processGameSpecificActions(actor, actions.get(0));</span>
+
+            }
+        } else {
+<span class="nc" id="L266">            log.warn(&quot;Action from unknown source: &quot; + source.toString());</span>
+        }
+
+<span class="nc" id="L269">        chosenAction = processGameSpecificFollowUpActions(actor, chosenAction);</span>
+
+<span class="nc bnc" id="L271" title="All 2 branches missed.">        if (chosenAction != null)</span>
+<span class="nc" id="L272">            (parent).process(chosenAction);</span>
+
+<span class="nc" id="L274">        repaint();</span>
+
+<span class="nc" id="L276">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

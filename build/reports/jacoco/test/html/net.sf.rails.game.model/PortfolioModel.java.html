@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PortfolioModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.model</a> &gt; <span class="el_source">PortfolioModel.java</span></div><h1>PortfolioModel.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.model;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.BonusToken;
+import net.sf.rails.game.Company;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsOwner;
+import net.sf.rails.game.Train;
+import net.sf.rails.game.TrainCertificateType;
+import net.sf.rails.game.TrainType;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.BankPortfolio;
+import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.state.MoneyOwner;
+import net.sf.rails.game.state.Owner;
+import net.sf.rails.game.state.Portfolio;
+import net.sf.rails.game.state.PortfolioSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Sets;
+import com.google.common.collect.SortedMultiset;
+
+
+// FIXME: Solve id, name and uniquename clashes
+
+/**
+ * A Portfolio(Model) stores several portfolios
+ */
+public class PortfolioModel extends RailsModel {
+    public static final String ID = &quot;PortfolioModel&quot;;
+
+<span class="fc" id="L48">    private static final Logger log = LoggerFactory.getLogger(PortfolioModel.class);</span>
+
+    /** Owned certificates */
+    private final CertificatesModel certificates;
+
+    /** Owned private companies */
+    private final PrivatesModel privates;
+
+    /** Owned trains */
+    private final TrainsModel trains;
+
+    /** Owned tokens */
+    // TODO Currently only used to discard expired Bonus tokens.
+    private final Portfolio&lt;BonusToken&gt; bonusTokens;
+
+    /**
+     * Private-independent special properties. When moved here, a special
+     * property no longer depends on the private company being alive. Example:
+     * 18AL named train tokens.
+     */
+    private final SpecialPropertiesModel specialProperties;
+
+    private PortfolioModel(RailsOwner parent, String id) {
+<span class="fc" id="L71">        super(parent, id);</span>
+
+        // create internal models and portfolios
+<span class="fc" id="L74">        certificates = CertificatesModel.create(parent);</span>
+<span class="fc" id="L75">        privates = PrivatesModel.create(parent);</span>
+<span class="fc" id="L76">        trains = TrainsModel.create(parent);</span>
+<span class="fc" id="L77">        bonusTokens =</span>
+<span class="fc" id="L78">                PortfolioSet.create(parent, &quot;BonusTokens&quot;, BonusToken.class);</span>
+<span class="fc" id="L79">        specialProperties = SpecialPropertiesModel.create(parent);</span>
+
+        // change display style dependent on owner
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        if (parent instanceof PublicCompany) {</span>
+<span class="fc" id="L83">            trains.setAbbrList(false);</span>
+<span class="fc" id="L84">            privates.setLineBreak(false);</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        } else if (parent instanceof BankPortfolio) {</span>
+<span class="fc" id="L86">            trains.setAbbrList(true);</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        } else if (parent instanceof Player) {</span>
+<span class="fc" id="L88">            privates.setLineBreak(true);</span>
+        }
+
+<span class="fc" id="L91">    }</span>
+
+    public static PortfolioModel create(PortfolioOwner parent) {
+<span class="fc" id="L94">        return new PortfolioModel(parent, ID);</span>
+    }
+
+    public void finishConfiguration() {
+<span class="fc" id="L98">        certificates.initShareModels(getRoot().getCompanyManager().getAllPublicCompanies());</span>
+        // TODO (Rails2.0): the linkage of all portfolios to the GameManager should be removed
+<span class="fc" id="L100">        getRoot().getGameManager().addPortfolio(this);</span>
+<span class="fc" id="L101">    }</span>
+
+    @Override
+    public PortfolioOwner getParent() {
+<span class="fc" id="L105">        return (PortfolioOwner) super.getParent();</span>
+    }
+
+    // returns the associated MoneyOwner
+    public MoneyOwner getMoneyOwner() {
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (getParent() instanceof BankPortfolio) {</span>
+<span class="fc" id="L111">            return ((BankPortfolio) getParent()).getParent();</span>
+        }
+<span class="fc" id="L113">        return (MoneyOwner) getParent();</span>
+    }
+
+    public void transferAssetsFrom(PortfolioModel otherPortfolio) {
+
+        // Move trains
+<span class="fc" id="L119">        otherPortfolio.getTrainsModel().getPortfolio().moveAll(this.getParent());</span>
+
+        // Move treasury certificates
+<span class="fc" id="L122">        otherPortfolio.moveAllCertificates(this.getParent());</span>
+<span class="fc" id="L123">    }</span>
+
+    /**
+     * Low-level method, only to be called by the local addObject() method and
+     * by initialisation code.
+     */
+    // TODO: Ignores position now, is this necessary?
+    public void addPrivateCompany(PrivateCompany company) {
+
+        // add to private Model
+<span class="fc" id="L133">        privates.moveInto(company);</span>
+
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (company.hasSpecialProperties()) {</span>
+<span class="fc" id="L136">            log.debug(company.getId() + &quot; has special properties!&quot;);</span>
+        } else {
+<span class="fc" id="L138">            log.debug(company.getId() + &quot; has no special properties&quot;);</span>
+        }
+
+        // TODO: This should not be necessary as soon as a PlayerModel works
+        // correctly
+<span class="fc" id="L143">        updatePlayerWorth();</span>
+<span class="fc" id="L144">    }</span>
+
+    // FIXME: Solve the presidentShare problem, should not be identified at
+    // position zero
+
+    protected void updatePlayerWorth() {
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">        if (getParent() instanceof Player) {</span>
+<span class="nc" id="L151">            ((Player) getParent()).updateWorth();</span>
+        }
+<span class="fc" id="L153">    }</span>
+
+    public CertificatesModel getCertificatesModel() {
+<span class="nc" id="L156">        return certificates;</span>
+    }
+
+    public ShareModel getShareModel(PublicCompany company) {
+<span class="nc" id="L160">        return certificates.getShareModel(company);</span>
+    }
+
+    public ImmutableSet&lt;PrivateCompany&gt; getPrivateCompanies() {
+<span class="fc" id="L164">        return privates.getPortfolio().items();</span>
+    }
+
+    public ImmutableSortedSet&lt;PublicCertificate&gt; getCertificates() {
+<span class="fc" id="L168">        return certificates.getPortfolio().items();</span>
+    }
+
+    public ShareDetailsModel getShareDetailsModel(PublicCompany company) {
+<span class="nc" id="L172">        return certificates.getShareDetailsModel(company);</span>
+    }
+
+    /** Get the number of certificates that count against the certificate limit */
+    public float getCertificateCount() {
+<span class="fc" id="L177">        return privates.getCertificateCount() +  certificates.getCertificateCount();</span>
+    }
+
+    public ImmutableSetMultimap&lt;PublicCompany, PublicCertificate&gt; getCertsPerCompanyMap() {
+<span class="fc" id="L181">        return certificates.getPortfolio().view();</span>
+    }
+
+    public ImmutableSortedSet&lt;PublicCertificate&gt; getCertificates(
+            PublicCompany company) {
+<span class="fc" id="L186">        return certificates.getCertificates(company);</span>
+    }
+
+    /**
+     * Find a certificate for a given company.
+     *
+     * @param company The public company for which a certificate is found.
+     * @param president Whether we look for a president or non-president
+     * certificate. If there is only one certificate, this parameter has no
+     * meaning.
+     * @return The certificate, or null if not found./
+     */
+    public PublicCertificate findCertificate(PublicCompany company,
+            boolean president) {
+<span class="fc" id="L200">        return findCertificate(company, 1, president);</span>
+    }
+
+    /**
+     * Find a specified certificate
+     *
+     * @return (first) certificate found, null if not found
+     */
+    public PublicCertificate findCertificate(PublicCompany company, int shares,
+            boolean president) {
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        for (PublicCertificate cert : certificates.getPortfolio().items(company)) {</span>
+<span class="fc bfc" id="L211" title="All 4 branches covered.">            if (company.getShareUnit() == 100 || president</span>
+<span class="pc bpc" id="L212" title="2 of 4 branches missed.">                &amp;&amp; cert.isPresidentShare() || !president</span>
+<span class="fc bfc" id="L213" title="All 4 branches covered.">                &amp;&amp; !cert.isPresidentShare() &amp;&amp; cert.getShares() == shares) {</span>
+<span class="fc" id="L214">                return cert;</span>
+            }
+<span class="fc" id="L216">        }</span>
+<span class="nc" id="L217">        return null;</span>
+    }
+
+    public ImmutableList&lt;PublicCertificate&gt; getCertsOfType(String certTypeId) {
+<span class="nc" id="L221">        Builder&lt;PublicCertificate&gt; list = ImmutableList.builder();</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">        for (PublicCertificate cert : certificates) {</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">            if (cert.getTypeId().equals(certTypeId)) {</span>
+<span class="nc" id="L224">                list.add(cert);</span>
+            }
+<span class="nc" id="L226">        }</span>
+<span class="nc" id="L227">        return list.build();</span>
+    }
+
+    /**
+     * @return a sorted Multiset&lt;Integer&gt; of shareNumbers of the certificates
+     * Remark: excludes the presdident share if not of a different size as the standard share...
+     */
+    // FIXME: Integers could be replaced later by CerficateTypes
+    public SortedMultiset&lt;Integer&gt; getCertificateTypeCounts(PublicCompany company) {
+<span class="fc" id="L236">        return certificates.getCertificateTypeCounts(company);</span>
+    }
+
+    public PublicCertificate getAnyCertOfType(String certTypeId) {
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">        for (PublicCertificate cert : certificates) {</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">            if (cert.getTypeId().equals(certTypeId)) {</span>
+<span class="fc" id="L242">                return cert;</span>
+            }
+<span class="fc" id="L244">        }</span>
+<span class="nc" id="L245">        return null;</span>
+    }
+
+    /**
+     * Returns percentage that a portfolio contains of one company.
+     */
+    public int getShare(PublicCompany company) {
+<span class="fc" id="L252">        return certificates.getShare(company);</span>
+    }
+
+
+    /**
+     * @return the number of shares owned by the PorfolioModel for this company
+     */
+    public int getShareNumber(PublicCompany company) {
+<span class="fc" id="L260">        return certificates.getShareNumber(company);</span>
+    }
+
+    /**
+     * @param maxShareNumber maximum share number that is to achieved
+     * @return sorted list of share numbers that are possible for that company
+     */
+   public SortedSet&lt;Integer&gt; getShareNumberCombinations(PublicCompany company, int maxShareNumber) {
+<span class="nc" id="L268">        return certificates.getshareNumberCombinations(company, maxShareNumber);</span>
+    }
+
+   /**
+    * @return true if portfolio contains a multiple (non-president) certificate
+    */
+    public boolean containsMultipleCert(PublicCompany company) {
+<span class="fc" id="L275">        return certificates.containsMultipleCert(company);</span>
+    }
+
+
+    public int ownsCertificates(PublicCompany company, int unit,
+            boolean president) {
+<span class="fc" id="L281">        int certs = 0;</span>
+<span class="pc bpc" id="L282" title="1 of 2 branches missed.">        if (certificates.contains(company)) {</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">            for (PublicCertificate cert : certificates.getPortfolio().items(</span>
+                    company)) {
+<span class="pc bpc" id="L285" title="1 of 2 branches missed.">                if (president) {</span>
+<span class="nc bnc" id="L286" title="All 2 branches missed.">                    if (cert.isPresidentShare()) return 1;</span>
+<span class="fc bfc" id="L287" title="All 2 branches covered.">                } else if (cert.getShares() == unit) {</span>
+<span class="fc" id="L288">                    certs++;</span>
+                }
+<span class="fc" id="L290">            }</span>
+        }
+<span class="fc" id="L292">        return certs;</span>
+    }
+
+    public void moveAllCertificates(Owner owner) {
+<span class="fc" id="L296">        certificates.getPortfolio().moveAll(owner);</span>
+<span class="fc" id="L297">    }</span>
+
+    /**
+     * Swap this Portfolio's President certificate for common shares in another
+     * Portfolio.
+     *
+     * @param company The company whose Presidency is handed over.
+     * @param other The new President's portfolio.
+     * @return The common certificates returned.
+     */
+    public List&lt;PublicCertificate&gt; swapPresidentCertificate(
+            PublicCompany company, PortfolioModel other) {
+<span class="nc" id="L309">        return swapPresidentCertificate (company, other, 0);</span>
+    }
+
+    public List&lt;PublicCertificate&gt; swapPresidentCertificate(
+            PublicCompany company, PortfolioModel other, int swapShareSize) {
+
+<span class="fc" id="L315">        List&lt;PublicCertificate&gt; swapped = new ArrayList&lt;PublicCertificate&gt;();</span>
+        PublicCertificate swapCert;
+
+        // Find the President's certificate
+<span class="fc" id="L319">        PublicCertificate presCert = this.findCertificate(company, true);</span>
+<span class="pc bpc" id="L320" title="1 of 2 branches missed.">        if (presCert == null) return null;</span>
+<span class="fc" id="L321">        int shares = presCert.getShares();</span>
+
+        // If a double cert is requested, try that first
+<span class="fc bfc" id="L324" title="All 4 branches covered.">        if (swapShareSize &gt; 1 &amp;&amp; other.ownsCertificates(company, swapShareSize, false)*swapShareSize &gt;= shares) {</span>
+<span class="fc" id="L325">            swapCert = other.findCertificate(company, swapShareSize, false);</span>
+<span class="fc" id="L326">            swapCert.moveTo(this.getParent());</span>
+<span class="fc" id="L327">            swapped.add(swapCert);</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">        } else if (other.ownsCertificates(company, 1, false) &gt;= shares) {</span>
+            // Check if counterparty has enough single certificates
+<span class="fc bfc" id="L330" title="All 2 branches covered.">            for (int i = 0; i &lt; shares; i++) {</span>
+<span class="fc" id="L331">                swapCert = other.findCertificate(company, 1, false);</span>
+<span class="fc" id="L332">                swapCert.moveTo(this.getParent());</span>
+<span class="fc" id="L333">                swapped.add(swapCert);</span>
+
+            }
+<span class="pc bpc" id="L336" title="1 of 2 branches missed.">        } else if (other.ownsCertificates(company, shares, false) &gt;= 1) {</span>
+<span class="fc" id="L337">            swapCert = other.findCertificate(company, 2, false);</span>
+<span class="fc" id="L338">            swapCert.moveTo(this.getParent());</span>
+<span class="fc" id="L339">            swapped.add(swapCert);</span>
+        } else {
+<span class="nc" id="L341">            return null;</span>
+        }
+<span class="fc" id="L343">        presCert.moveTo(other.getParent());</span>
+
+<span class="fc" id="L345">        return swapped;</span>
+    }
+
+    public int getNumberOfTrains() {
+<span class="fc" id="L349">        return trains.getPortfolio().size();</span>
+    }
+
+    public ImmutableSet&lt;Train&gt; getTrainList() {
+<span class="fc" id="L353">        return trains.getPortfolio().items();</span>
+    }
+
+    public Train[] getTrainsPerType(TrainType type) {
+
+<span class="fc" id="L358">        List&lt;Train&gt; trainsFound = new ArrayList&lt;Train&gt;();</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">        for (Train train : trains.getPortfolio()) {</span>
+<span class="fc bfc" id="L360" title="All 2 branches covered.">            if (train.getType() == type) trainsFound.add(train);</span>
+<span class="fc" id="L361">        }</span>
+
+<span class="fc" id="L363">        return trainsFound.toArray(new Train[0]);</span>
+    }
+
+    public TrainsModel getTrainsModel() {
+<span class="fc" id="L367">        return trains;</span>
+    }
+
+    /** Returns one train of any type held */
+    public Set&lt;Train&gt; getUniqueTrains() {
+<span class="fc" id="L372">        ImmutableSortedSet.Builder&lt;Train&gt; trainsFound = ImmutableSortedSet.naturalOrder();</span>
+<span class="fc" id="L373">        Set&lt;TrainType&gt; trainTypesFound = Sets.newHashSet();</span>
+<span class="fc bfc" id="L374" title="All 2 branches covered.">        for (Train train : trains.getPortfolio()) {</span>
+<span class="fc bfc" id="L375" title="All 2 branches covered.">            if (!trainTypesFound.contains(train.getType())) {</span>
+<span class="fc" id="L376">                trainsFound.add(train);</span>
+<span class="fc" id="L377">                trainTypesFound.add(train.getType());</span>
+            }
+<span class="fc" id="L379">        }</span>
+<span class="fc" id="L380">        return trainsFound.build();</span>
+
+    }
+
+    public Train getTrainOfType(TrainCertificateType type) {
+<span class="fc" id="L385">        return trains.getTrainOfType(type);</span>
+    }
+
+    /**
+     * Add a train to the train portfolio
+     */
+    public boolean addTrain(Train train) {
+<span class="fc" id="L392">        return trains.getPortfolio().add(train);</span>
+    }
+
+    /**
+     * Add an object. Low-level method, only to be called by Move objects.
+     *
+     * @param object The object to add.
+     * @return True if successful.
+     */
+    // TODO: Is this still required?
+
+    /*
+     * public boolean addObject(Holdable object, int position) { if (object
+     * instanceof PublicCertificate) { if (position == null) position = new
+     * int[] {-1, -1, -1}; addCertificate((PublicCertificate) object, position);
+     * return true; } else if (object instanceof PrivateCompany) {
+     * addPrivate((PrivateCompany) object, position == null ? -1 : position[0]);
+     * return true; } else if (object instanceof Train) { if (position == null)
+     * position = new int[] {-1, -1, -1}; addTrain((Train) object, position);
+     * return true; } else if (object instanceof SpecialProperty) { return
+     * addSpecialProperty((SpecialProperty) object, position == null ? -1 :
+     * position[0]); } else if (object instanceof Token) { return
+     * addToken((Token) object, position == null ? -1 : position[0]); } else {
+     * return false; } }
+     */
+
+    /**
+     * Remove an object. Low-level method, only to be called by Move objects.
+     *
+     * @param object The object to remove.
+     * @return True if successful.
+     */
+    // TODO: Is this still required?
+    /*
+     * public boolean removeObject(Holdable object) { if (object instanceof
+     * PublicCertificate) { removeCertificate((PublicCertificate) object);
+     * return true; } else if (object instanceof PrivateCompany) {
+     * removePrivate((PrivateCompany) object); return true; } else if (object
+     * instanceof Train) { removeTrain((Train) object); return true; } else if
+     * (object instanceof SpecialProperty) { return
+     * removeSpecialProperty((SpecialProperty) object); } else if (object
+     * instanceof Token) { return removeToken((Token) object); } else { return
+     * false; } }
+     */
+
+    // TODO: Check if this is still required
+    /*
+     * public int[] getListIndex (Holdable object) { if (object instanceof
+     * PublicCertificate) { PublicCertificate cert = (PublicCertificate) object;
+     * return new int[] { certificates.indexOf(object),
+     * certPerCompany.get(cert.getCompany().getId()).indexOf(cert),
+     * certsPerType.get(cert.getTypeId()).indexOf(cert) }; } else if (object
+     * instanceof PrivateCompany) { return new int[]
+     * {privateCompanies.indexOf(object)}; } else if (object instanceof Train) {
+     * Train train = (Train) object; return new int[] { trains.indexOf(train),
+     * train.getPreviousType() != null ?
+     * trainsPerType.get(train.getPreviousType()).indexOf(train) : -1,
+     * trainsPerCertType.get(train.getCertType()).indexOf(train) }; } else if
+     * (object instanceof SpecialProperty) { return new int[]
+     * {specialProperties.indexOf(object)}; } else if (object instanceof Token)
+     * { return new int[] {tokens.indexOf(object)}; } else { return
+     * Holdable.AT_END; } }
+     */
+
+    /**
+     * @return Set of all special properties we have.
+     */
+    public ImmutableSet&lt;SpecialProperty&gt; getPersistentSpecialProperties() {
+<span class="fc" id="L460">        return specialProperties.getPortfolio().items();</span>
+    }
+
+    public ImmutableList&lt;SpecialProperty&gt; getAllSpecialProperties() {
+<span class="fc" id="L464">        ImmutableList.Builder&lt;SpecialProperty&gt; sps =</span>
+                new ImmutableList.Builder&lt;SpecialProperty&gt;();
+<span class="fc" id="L466">        sps.addAll(specialProperties.getPortfolio().items());</span>
+<span class="fc bfc" id="L467" title="All 2 branches covered.">        for (PrivateCompany priv : privates.getPortfolio()) {</span>
+<span class="pc bpc" id="L468" title="1 of 2 branches missed.">            if (priv.getSpecialProperties() != null) {</span>
+<span class="fc" id="L469">                sps.addAll(priv.getSpecialProperties());</span>
+            }
+<span class="fc" id="L471">        }</span>
+<span class="fc" id="L472">        return sps.build();</span>
+    }
+
+    /**
+     * Do we have any special properties?
+     *
+     * @return Boolean
+     */
+    public boolean hasSpecialProperties() {
+<span class="fc bfc" id="L481" title="All 2 branches covered.">        return !specialProperties.getPortfolio().isEmpty();</span>
+    }
+
+    // TODO: Check if this code can be simplified
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;T extends SpecialProperty&gt; List&lt;T&gt; getSpecialProperties(
+            Class&lt;T&gt; clazz, boolean includeExercised) {
+<span class="fc" id="L488">        List&lt;T&gt; result = new ArrayList&lt;T&gt;();</span>
+        Set&lt;SpecialProperty&gt; sps;
+
+<span class="fc bfc" id="L491" title="All 2 branches covered.">        if (getParent() instanceof Player</span>
+<span class="pc bpc" id="L492" title="1 of 2 branches missed.">            || getParent() instanceof PublicCompany) {</span>
+
+<span class="fc bfc" id="L494" title="All 2 branches covered.">            for (PrivateCompany priv : privates.getPortfolio()) {</span>
+
+<span class="fc" id="L496">                sps = priv.getSpecialProperties();</span>
+<span class="pc bpc" id="L497" title="1 of 2 branches missed.">                if (sps == null) continue;</span>
+
+<span class="fc bfc" id="L499" title="All 2 branches covered.">                for (SpecialProperty sp : sps) {</span>
+<span class="pc bpc" id="L500" title="1 of 4 branches missed.">                    if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))</span>
+<span class="fc bfc" id="L501" title="All 2 branches covered.">                        &amp;&amp; sp.isExecutionable()</span>
+<span class="pc bpc" id="L502" title="1 of 4 branches missed.">                        &amp;&amp; (!sp.isExercised() || includeExercised)</span>
+<span class="fc bfc" id="L503" title="All 2 branches covered.">                        &amp;&amp; (getParent() instanceof Company</span>
+<span class="fc bfc" id="L504" title="All 4 branches covered.">                            &amp;&amp; sp.isUsableIfOwnedByCompany() || getParent() instanceof Player</span>
+<span class="fc bfc" id="L505" title="All 2 branches covered.">                                                                &amp;&amp; sp.isUsableIfOwnedByPlayer())) {</span>
+<span class="fc" id="L506">                        log.debug(&quot;Portfolio &quot; + getParent().getId()</span>
+                                  + &quot; has SP &quot; + sp);
+<span class="fc" id="L508">                        result.add((T) sp);</span>
+                    }
+<span class="fc" id="L510">                }</span>
+<span class="fc" id="L511">            }</span>
+
+            // Private-independent special properties
+<span class="fc bfc" id="L514" title="All 2 branches covered.">            for (SpecialProperty sp : specialProperties.getPortfolio()) {</span>
+<span class="pc bpc" id="L515" title="2 of 4 branches missed.">                if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))</span>
+<span class="nc bnc" id="L516" title="All 2 branches missed.">                    &amp;&amp; sp.isExecutionable()</span>
+<span class="nc bnc" id="L517" title="All 4 branches missed.">                    &amp;&amp; (!sp.isExercised() || includeExercised)</span>
+<span class="nc bnc" id="L518" title="All 2 branches missed.">                    &amp;&amp; (getParent() instanceof Company</span>
+<span class="nc bnc" id="L519" title="All 4 branches missed.">                        &amp;&amp; sp.isUsableIfOwnedByCompany() || getParent() instanceof Player</span>
+<span class="nc bnc" id="L520" title="All 2 branches missed.">                                                            &amp;&amp; sp.isUsableIfOwnedByPlayer())) {</span>
+<span class="nc" id="L521">                    log.debug(&quot;Portfolio &quot; + getParent().getId()</span>
+                              + &quot; has persistent SP &quot; + sp);
+<span class="nc" id="L523">                    result.add((T) sp);</span>
+                }
+<span class="fc" id="L525">            }</span>
+
+        }
+
+<span class="fc" id="L529">        return result;</span>
+    }
+
+    public PrivatesModel getPrivatesOwnedModel() {
+<span class="fc" id="L533">        return privates;</span>
+    }
+
+    public boolean addBonusToken(BonusToken token) {
+<span class="nc" id="L537">        return bonusTokens.add(token);</span>
+    }
+
+    public Portfolio&lt;BonusToken&gt; getTokenHolder() {
+<span class="nc" id="L541">        return bonusTokens;</span>
+    }
+
+    public void rustObsoleteTrains() {
+
+<span class="fc" id="L546">        List&lt;Train&gt; trainsToRust = new ArrayList&lt;Train&gt;();</span>
+<span class="fc bfc" id="L547" title="All 2 branches covered.">        for (Train train : trains.getPortfolio()) {</span>
+<span class="fc bfc" id="L548" title="All 2 branches covered.">            if (train.isObsolete()) {</span>
+<span class="fc" id="L549">                trainsToRust.add(train);</span>
+            }
+<span class="fc" id="L551">        }</span>
+        // Need to separate selection and execution,
+        // otherwise we get a ConcurrentModificationException on trains.
+<span class="fc bfc" id="L554" title="All 2 branches covered.">        for (Train train : trainsToRust) {</span>
+<span class="fc" id="L555">            ReportBuffer.add(this, LocalText.getText(&quot;TrainsObsoleteRusted&quot;,</span>
+<span class="fc" id="L556">                    train.toText(), getParent().getId()));</span>
+<span class="fc" id="L557">            log.debug(&quot;Obsolete train &quot; + train.getId() + &quot; (owned by &quot;</span>
+<span class="fc" id="L558">                      + getParent().getId() + &quot;) rusted&quot;);</span>
+<span class="fc" id="L559">            train.setRusted();</span>
+<span class="fc" id="L560">        }</span>
+        // FIXME:: Still required?
+        // trains.update();
+<span class="fc" id="L563">    }</span>
+
+    /**
+     * Used to identify portfolios on reload
+     */
+    @Deprecated
+    public String getName() {
+<span class="fc" id="L570">        return getParent().getId();</span>
+    }
+
+    /**
+     * Used to identify portfolios on reload TODO: Remove that in the future
+     */
+    @Deprecated
+    public String getUniqueName() {
+        // For BankPortfolios use Bank
+<span class="fc bfc" id="L579" title="All 2 branches covered.">        if (getParent() instanceof BankPortfolio) {</span>
+<span class="fc" id="L580">            return Bank.class.getSimpleName() + &quot;_&quot; + getParent().getId();</span>
+        }
+<span class="fc" id="L582">        return getParent().getClass().getSimpleName() + &quot;_&quot;</span>
+<span class="fc" id="L583">               + getParent().getId();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

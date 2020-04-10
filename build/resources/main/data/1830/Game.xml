@@ -1,0 +1,236 @@
+<?xml version="1.0"?>
+<ComponentManager>
+	<Component name="GameManager" class="net.sf.rails.game.GameManager">
+		<Game name="1830"/>
+		<GameParameters>
+			<PlayerShareLimit percentage="60">
+				<!-- Option "NumberOfPlayers" is automatically set 
+					by the game engine -->
+				<IfOption name="NumberOfPlayers" value="2">
+					<IfOption name="TwoPlayersCertLimit70Percent" value="yes">
+						<Attributes percentage="70"/>
+					</IfOption>
+				</IfOption>
+			</PlayerShareLimit>			
+			<BankPoolLimit percentage="50"/>
+			<StockRound>
+				<NoSaleInFirstSR/>
+			</StockRound>
+            <OperatingRound>
+                <EmergencyTrainBuying mustBuyCheapestTrain="no" mayBuyFromCompany="yes"/>
+            </OperatingRound>
+		</GameParameters>
+		<EndOfGame>
+			<Bankruptcy/>
+			<BankBreaks limit="0" finish="setOfORs"/>
+			<!-- "Runs out"; when "broken", -1 is the limit -->
+		</EndOfGame>
+	</Component>
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
+		<IfOption name="Variant" value="Basegame,Simple">
+			<Players number="2" cash="1200" certLimit="28"/>
+			<Players number="3" cash="800" certLimit="20"/>
+			<Players number="4" cash="600" certLimit="16"/>
+			<Players number="5" cash="480" certLimit="13"/>
+			<Players number="6" cash="400" certLimit="11"/>
+		</IfOption>
+		<IfOption name="Variant" value="Pere Marquette">
+			<Players number="2" cash="1200" certLimit="32"/>
+			<Players number="3" cash="800" certLimit="22"/>
+			<Players number="4" cash="600" certLimit="17"/>
+			<Players number="5" cash="480" certLimit="14"/>
+			<Players number="6" cash="400" certLimit="12"/>
+			<Players number="7" cash="360" certLimit="11"/>
+		</IfOption>
+        <IfOption name="Variant" value="Coalfields">
+            <Players number="2" cash="1200" certLimit="29"/>
+            <Players number="3" cash="800" certLimit="21"/>
+            <Players number="4" cash="600" certLimit="17"/>
+            <Players number="5" cash="480" certLimit="14"/>
+            <Players number="6" cash="400" certLimit="12"/>
+            <Players number="7" cash="360" certLimit="11"/>
+        </IfOption>
+        <IfOption name="Variant" value="Reading">
+			<Players number="2" cash="1200" certLimit="29"/>
+			<Players number="3" cash="800" certLimit="21"/>
+			<Players number="4" cash="600" certLimit="17"/>
+			<Players number="5" cash="480" certLimit="14"/>
+			<Players number="6" cash="400" certLimit="12"/>
+		</IfOption>
+        <IfOption name="Variant" value="Coalfields&amp;Reading">
+			<Players number="2" cash="1200" certLimit="30"/>
+			<Players number="3" cash="800" certLimit="22"/>
+			<Players number="4" cash="600" certLimit="18"/>
+			<Players number="5" cash="480" certLimit="15"/>
+			<Players number="6" cash="400" certLimit="13"/>
+		</IfOption>		
+        <IfOption name="Variant" value="Wabash">
+            <Players number="2" cash="1200" certLimit="29"/>
+            <Players number="3" cash="800" certLimit="22"/>
+            <Players number="4" cash="600" certLimit="17"/>
+            <Players number="5" cash="480" certLimit="15"/>
+            <Players number="6" cash="400" certLimit="13"/>
+        </IfOption>     
+	</Component>
+	<Component name="Bank" class="net.sf.rails.game.financial.Bank">
+        <IfOption name="Variant" value="Basegame,Pere Marquette,Coalfields,Reading,Simple">
+			<Bank amount="12000"/>
+		</IfOption>
+        <IfOption name="Variant" value="Coalfields&amp;Reading">
+			<Bank amount="20000"/>
+		</IfOption>
+        <IfOption name="Variant" value="Wabash">
+            <Bank amount="14000"/>
+        </IfOption>
+		<Money format="$@"/>
+	</Component>
+	<Component name="TileManager" class="net.sf.rails.game.TileManager" 
+		file="TileSet.xml"/>
+	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
+	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager" 
+		file="CompanyManager.xml"/>
+	<Component name="StockMarket" class="net.sf.rails.game.financial.StockMarket" 
+		file="StockMarket.xml"/>
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
+		<IfOption name="Variant"
+				value="Coalfields,Reading,Coalfields&amp;Reading">
+			<Attributes ObsoleteTrainFor="ALL" />
+		</IfOption>
+		<Defaults>
+			<Reach base="stops" countTowns="yes"/>
+			<!-- Alternative values: 
+				base="hexes" for H-trains as in 1826, 1849 etc.
+				countTowns="no" for all trains in 1841, 18EU, etc.,
+				  where towns score but do not count against the train length.
+				  Otherwise, towns are counted as minor or major stops,
+				  depending on the presence or absence of a "minorStops" value.
+			-->
+			<Score towns="yes"/>
+			<!-- Alternative values:
+				towns="no" for trains that ignore towns (e.g. 1826 TGV).
+				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
+			-->
+		</Defaults>
+		<TrainType name="2" majorStops="2" cost="80" quantity="6">
+			<IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
+                <Attributes obsoleting="yes"/>
+            </IfOption>
+            <IfOption name="Variant" value="Wabash">
+                <Attributes quantity="7"/>
+				<!-- NOTE: An alternative way to configure an extra train is: quantityIncrement="+1"
+					(the '+' is optional) -->
+            </IfOption>
+		</TrainType>
+		<TrainType name="3" majorStops="3" cost="180" quantity="5">
+			<NewPhase phaseName="3"/>
+			<IfOption name="Variant"
+				value="Coalfields,Reading,Coalfields&amp;Reading">
+				<Attributes obsoleting="yes"/>
+			</IfOption>
+			<IfOption name="Variant" value="Wabash">
+				<Attributes quantity="6"/>
+			</IfOption>
+		</TrainType>
+		<TrainType name="4" majorStops="4" cost="300" quantity="4">
+            <NewPhase phaseName="4"/>
+			<IfOption name="Variant" value="Coalfields,Reading">
+                <Attributes obsoleting="yes" quantity="5"/>
+			</IfOption>
+			<IfOption name="Variant" value="Coalfields&amp;Reading">
+                <Attributes obsoleting="yes" quantity="6"/>
+			</IfOption>
+            <IfOption name="Variant" value="Wabash">
+                <Attributes quantity="5"/>
+            </IfOption>
+		</TrainType>
+		<TrainType name="5" majorStops="5" cost="450" quantity="3">
+            <NewPhase phaseName="5"/>
+           <IfOption name="Variant" value="Wabash">
+                <Attributes quantity="4"/>
+            </IfOption>
+		</TrainType>
+		<TrainType name="6" majorStops="6" cost="630" quantity="2">
+            <NewPhase phaseName="6"/>
+			<IfOption name="WithOptional6Train" value="yes">
+				<Attributes quantity="3"/>
+			</IfOption>
+			<IfOption name="Variant" value="Coalfields,Reading">
+				<Attributes quantity="3" releasedTrain="7,D"/>
+			</IfOption>
+			<IfOption name="Variant" value="Coalfields&amp;Reading">
+				<Attributes quantity="4" releasedTrain="7,D"/>
+			</IfOption>
+            <IfOption name="Variant" value="Pere Marquette,Simple,Wabash">
+                <Attributes quantity="3"/>
+            </IfOption>
+		</TrainType>
+		<IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
+			<TrainType name="7" majorStops="7" cost="710" quantity="2"/>
+		</IfOption>
+        <IfOption name="Variant" value="Wabash">
+            <TrainType name="7" majorStops="7" cost="830" quantity="-1">
+            	<NewPhase phaseName="D"/>
+	    </TrainType>
+        </IfOption>
+		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Coalfields,Coalfields&amp;Reading,Simple">
+			<TrainType name="D" majorStops="99" quantity="6">
+            <NewPhase phaseName="D"/>
+				<IfOption name="Variant" value="Basegame,Pere Marquette,Simple">
+					<Attributes cost="1100"/>
+					<Exchange cost="800"/>
+				</IfOption>
+				<IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
+					<Attributes cost="900"/>
+					<Exchange cost="750"/>
+				</IfOption>
+				<IfOption name="UnlimitedTopTrains_D" value="yes">
+					<Attributes quantity="-1"/>
+				</IfOption>
+				<Exchange cost="800"/>
+			</TrainType>
+        </IfOption>
+	</Component>
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
+		<!-- Note: released and rusted trains are now specified per TrainType
+			but could as well be moved here. To be sorted out when we do 18US. -->
+		<!-- Each Phase's defaults are the previous one's values -->
+		<Phase name="2" >
+			<Tiles colour="yellow"/>
+			<Privates sellingAllowed="no"/>
+			<OperatingRounds number="1"/>
+			<Trains tradingAllowed="yes"/>
+		</Phase>
+		<Phase name="3">
+			<Tiles colour="yellow,green"/>
+			<Privates sellingAllowed="yes"/>
+			<OperatingRounds number="2"/>
+		</Phase>
+		<Phase name="4">
+            <Trains rusted="2" limitStep="2"/>
+		</Phase>
+		<Phase name="5">
+			<Tiles colour="yellow,green,brown"/>
+			<Trains limitStep="3"/>
+			<!--Privates close="yes"/-->
+			<OperatingRounds number="3"/>
+			<OffBoardRevenue step="2"/>
+		</Phase>
+		<Phase name="6">
+			<Trains rusted="3">
+				<IfOption name="Variant" value="Basegame,Pere Marquette,Simple">
+					<Attributes released="D"/>
+				</IfOption>
+				<IfOption name="Variant"
+					value="Coalfields,Reading,Coalfields&amp;Reading">
+					<Attributes released="7,D"/>
+				</IfOption>
+			</Trains>
+		</Phase>
+		<Phase name="D">
+            <Trains rusted="4"/>
+		</Phase>
+	</Component>
+	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+<!--		Required for coalfield rights '-->
+	</Component>
+</ComponentManager>

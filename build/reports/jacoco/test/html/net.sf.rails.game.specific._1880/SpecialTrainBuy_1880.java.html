@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpecialTrainBuy_1880.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1880</a> &gt; <span class="el_source">SpecialTrainBuy_1880.java</span></div><h1>SpecialTrainBuy_1880.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1880;
+
+import java.util.List;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.TrainType;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.util.Util;
+
+/**
+ * Special private ability involving deductions in train buying. The deduction
+ * can be absolute (an amount) or relative (a percentage)
+ *
+ * @author Erik Voss
+ * @author Martin Brumm
+ *
+ */
+public class SpecialTrainBuy_1880 extends SpecialProperty {
+
+    protected SpecialTrainBuy_1880(RailsItem parent, String id) {
+<span class="nc" id="L25">        super(parent, id);</span>
+        // TODO Auto-generated constructor stub
+<span class="nc" id="L27">    }</span>
+
+<span class="nc" id="L29">    protected String name = &quot;SpecialTrainBuy_1880&quot;;</span>
+<span class="nc" id="L30">    protected String trainTypeName = &quot;&quot;; // Default: all train types</span>
+<span class="nc" id="L31">    protected List&lt;TrainType&gt; trainTypes =null;</span>
+<span class="nc" id="L32">    protected boolean extra = false;</span>
+    protected String deductionString;
+<span class="nc" id="L34">    protected boolean relativeDeduction = false;</span>
+<span class="nc" id="L35">    protected boolean absoluteDeduction = false;</span>
+    protected int deductionAmount; // Money or percentage
+
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+
+<span class="nc" id="L40">        super.configureFromXML(tag);</span>
+
+<span class="nc" id="L42">        Tag trainBuyTag = tag.getChild(&quot;SpecialTrainBuy_1880&quot;);</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (trainBuyTag == null) {</span>
+<span class="nc" id="L44">            throw new ConfigurationException(&quot;&lt;SpecialTrainBuy&gt; tag missing&quot;);</span>
+        }
+
+<span class="nc" id="L47">        trainTypeName =</span>
+<span class="nc" id="L48">                trainBuyTag.getAttributeAsString(&quot;trainType&quot;, trainTypeName);</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        if (trainTypeName.equalsIgnoreCase(&quot;any&quot;)) trainTypeName = &quot;&quot;;</span>
+
+<span class="nc" id="L51">        deductionString = trainBuyTag.getAttributeAsString(&quot;deduction&quot;);</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        if (!Util.hasValue(deductionString)) {</span>
+<span class="nc" id="L53">            throw new ConfigurationException(</span>
+                    &quot;No deduction found in &lt;SpecialTrainBuy&gt; tag&quot;);
+        }
+        String deductionAmountString;
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if (deductionString.endsWith(&quot;%&quot;)) {</span>
+<span class="nc" id="L58">            relativeDeduction = true;</span>
+<span class="nc" id="L59">            deductionAmountString = deductionString.replaceAll(&quot;%&quot;, &quot;&quot;);</span>
+        } else {
+<span class="nc" id="L61">            deductionAmountString = deductionString;</span>
+        }
+        try {
+<span class="nc" id="L64">            deductionAmount = Integer.parseInt(deductionAmountString);</span>
+<span class="nc" id="L65">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L66">            throw new ConfigurationException(&quot;Invalid deduction &quot;</span>
+                                             + deductionString, e);
+<span class="nc" id="L68">        }</span>
+
+<span class="nc" id="L70">    }</span>
+
+    @Override
+    public void finishConfiguration (RailsRoot root)
+    throws ConfigurationException {
+<span class="nc" id="L75">        trainTypes=getRoot().getTrainManager().parseTrainTypes(trainTypeName);</span>
+<span class="nc" id="L76">    }</span>
+
+    public int getPrice(int standardPrice) {
+
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        if (absoluteDeduction) {</span>
+<span class="nc" id="L81">            return standardPrice - deductionAmount;</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        } else if (relativeDeduction) {</span>
+<span class="nc" id="L83">            return (int) (standardPrice * (0.01 * (100 - deductionAmount)));</span>
+        } else {
+<span class="nc" id="L85">            return standardPrice;</span>
+        }
+    }
+
+    public boolean isValidForTrainType(String trainType) {
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        return trainTypeName.equals(&quot;&quot;)</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">               || trainTypeName.equalsIgnoreCase(trainType);</span>
+    }
+
+    public boolean isExecutionable() {
+<span class="nc" id="L95">        return true;</span>
+    }
+
+    public boolean isExtra() {
+<span class="nc" id="L99">        return extra;</span>
+    }
+
+    public boolean isFree() {
+<span class="nc" id="L103">        return false;</span>
+    }
+
+    public String getName() {
+<span class="nc" id="L107">        return name;</span>
+    }
+
+    public boolean isAbsoluteDeduction() {
+<span class="nc" id="L111">        return absoluteDeduction;</span>
+    }
+
+    public int getDeductionAmount() {
+<span class="nc" id="L115">        return deductionAmount;</span>
+    }
+
+    public String getDeductionString() {
+<span class="nc" id="L119">        return deductionString;</span>
+    }
+
+    public boolean isRelativeDeduction() {
+<span class="nc" id="L123">        return relativeDeduction;</span>
+    }
+
+    public String getTrainTypeName() {
+<span class="nc" id="L127">        return trainTypeName;</span>
+    }
+
+    public String toString() {
+<span class="nc" id="L131">        return &quot;SpecialTrainBuy comp=&quot; + originalCompany.getLongName() + &quot; extra=&quot;</span>
+               + extra + &quot; deduction=&quot; + deductionString;
+    }
+
+    @Override
+    public String toMenu() {
+
+<span class="nc" id="L138">            return LocalText.getText(&quot;SpecialTrainBuy_1880&quot;,</span>
+                    trainTypeName,
+                    deductionString,
+<span class="nc" id="L141">                    originalCompany.getLongName());</span>
+    }
+
+    public String getInfo() {
+<span class="nc" id="L145">        return toMenu();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

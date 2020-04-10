@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PublicCompany_1825.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1825</a> &gt; <span class="el_source">PublicCompany_1825.java</span></div><h1>PublicCompany_1825.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1825;
+
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.state.IntegerState;
+
+public final class PublicCompany_1825 extends PublicCompany {
+    
+<span class="nc" id="L9">    protected final IntegerState formationOrderIndex = IntegerState.create(this, &quot;formationOrderIndex&quot;);</span>
+
+    public PublicCompany_1825(RailsItem parent, String id) {
+<span class="nc" id="L12">        super(parent, id);    </span>
+<span class="nc" id="L13">    }</span>
+    
+    public int getFormationOrderIndex() {
+<span class="nc" id="L16">        return formationOrderIndex.value();</span>
+    }
+
+    public void setFormationOrderIndex(int formationOrderIndex) {
+<span class="nc" id="L20">        this.formationOrderIndex.set(formationOrderIndex);</span>
+<span class="nc" id="L21">    }</span>
+
+    @Override
+    public void payout(int amount) {
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        if (amount == 0) return;</span>
+        //Get current price
+<span class="nc" id="L27">        int curSharePrice = currentPrice.getPrice().getPrice();</span>
+        // Move the token
+        // Work out number of spaces to move by dividing amount by current share price and rounding
+        // Move stock token a number of times equal to this multiplier
+<span class="nc bnc" id="L31" title="All 2 branches missed.">        if (hasStockPrice){</span>
+<span class="nc" id="L32">            float shareMultiplier = amount/(float)curSharePrice;</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">            if(shareMultiplier&lt;1){</span>
+<span class="nc" id="L34">                shareMultiplier = Math.round(shareMultiplier);</span>
+            }else{
+<span class="nc" id="L36">                shareMultiplier = (float)Math.floor(shareMultiplier);</span>
+            }
+            
+<span class="nc bnc" id="L39" title="All 4 branches missed.">            for (int i = 0; i &lt; shareMultiplier &amp;&amp; i &lt; 4; i++) {</span>
+<span class="nc" id="L40">                getRoot().getStockMarket().payOut(this);</span>
+            }
+        }
+<span class="nc" id="L43">    }</span>
+
+    @Override
+    public void setFloated() {
+<span class="nc" id="L47">        super.setFloated();</span>
+        
+        //Need to find out if other corps exist at this IPO price
+        //If so increment formationOrderIndex to control Operating sequence
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        for (PublicCompany company : getRoot().getCompanyManager().getAllPublicCompanies()) {</span>
+<span class="nc bnc" id="L52" title="All 4 branches missed.">            if (this.getIPOPrice() == company.getIPOPrice() &amp;&amp; (this.getId().equals(company.getId()))){</span>
+                //Yes, we share IPO prices, has this other company been launched yet?
+<span class="nc bnc" id="L54" title="All 2 branches missed.">                if (company.hasFloated()){</span>
+                    //it has, we need to skip ahead of this corp
+<span class="nc" id="L56">                    formationOrderIndex.add(1);</span>
+                }
+            }
+                
+<span class="nc" id="L60">        }</span>
+<span class="nc" id="L61">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

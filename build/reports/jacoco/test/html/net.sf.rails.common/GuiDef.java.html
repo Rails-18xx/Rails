@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GuiDef.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.common</a> &gt; <span class="el_source">GuiDef.java</span></div><h1>GuiDef.java</h1><pre class="source lang-java linenums">package net.sf.rails.common;
+
+<span class="nc" id="L3">public class GuiDef {</span>
+
+    /** Identifiers and default names for configurable UI classes */
+<span class="fc" id="L6">    public enum ClassName {</span>
+
+<span class="fc" id="L8">        GAME_UI_MANAGER (&quot;net.sf.rails.ui.swing.GameUIManager&quot;),</span>
+<span class="fc" id="L9">        OR_UI_MANAGER (&quot;net.sf.rails.ui.swing.ORUIManager&quot;),</span>
+<span class="fc" id="L10">        STATUS_WINDOW (&quot;net.sf.rails.ui.swing.StatusWindow&quot;),</span>
+<span class="fc" id="L11">        GAME_STATUS (&quot;net.sf.rails.ui.swing.GameStatus&quot;),</span>
+<span class="fc" id="L12">        OR_WINDOW (&quot;net.sf.rails.ui.swing.ORWindow&quot;),</span>
+<span class="fc" id="L13">        START_ROUND_WINDOW (&quot;net.sf.rails.ui.swing.StartRoundWindow&quot;);</span>
+
+        private String defaultClassName;
+
+<span class="fc" id="L17">        ClassName (String defaultClassName) {</span>
+<span class="fc" id="L18">            this.defaultClassName = defaultClassName;</span>
+<span class="fc" id="L19">        }</span>
+
+        public String getDefaultClassName () {
+<span class="fc" id="L22">            return defaultClassName;</span>
+        }
+    }
+
+    public static String getDefaultClassName (ClassName key) {
+<span class="fc" id="L27">        return key.getDefaultClassName();</span>
+    }
+
+    /** Definitions for key/value pairs in the communication
+     * between GameManager and GameUIManager.
+     */
+
+<span class="fc" id="L34">    public enum Parm {</span>
+
+<span class="fc" id="L36">        HAS_ANY_PAR_PRICE,</span>
+<span class="fc" id="L37">        CAN_ANY_COMPANY_HOLD_OWN_SHARES,</span>
+<span class="fc" id="L38">        CAN_ANY_COMPANY_BUY_PRIVATES,</span>
+<span class="fc" id="L39">        DO_BONUS_TOKENS_EXIST,</span>
+<span class="fc" id="L40">        HAS_ANY_COMPANY_LOANS,</span>
+<span class="fc" id="L41">        HAS_ANY_RIGHTS,</span>
+<span class="fc" id="L42">        NO_MAP_MODE,</span>
+<span class="fc" id="L43">        REVENUE_SUGGEST,</span>
+<span class="fc" id="L44">        ROUTE_HIGHLIGHT, </span>
+<span class="fc" id="L45">        PLAYER_ORDER_VARIES, HAS_SPECIAL_COMPANY_INCOME</span>
+    }
+
+    /**
+     * Definitions for UI window types, used by the server
+     * to pass visibility hints to the UI.
+     */
+<span class="fc" id="L52">    public enum Panel {</span>
+<span class="fc" id="L53">        START_ROUND,     // Also used for Parliament Round in 1862</span>
+<span class="fc" id="L54">        STATUS,</span>
+<span class="fc" id="L55">        MAP,</span>
+<span class="fc" id="L56">        STOCK_MARKET</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

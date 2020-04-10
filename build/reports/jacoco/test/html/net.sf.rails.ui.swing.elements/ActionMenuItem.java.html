@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ActionMenuItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.elements</a> &gt; <span class="el_source">ActionMenuItem.java</span></div><h1>ActionMenuItem.java</h1><pre class="source lang-java linenums">/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/ActionMenuItem.java,v 1.4 2008/06/04 19:00:39 evos Exp $*/
+package net.sf.rails.ui.swing.elements;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JMenuItem;
+
+import rails.game.action.ActionTaker;
+import rails.game.action.PossibleAction;
+
+
+
+/**
+ * A subclass of JButton that allows linking &quot;PossibleAction&quot; objects to it.
+ * 
+ * @see ClickField
+ */
+public class ActionMenuItem extends JMenuItem implements ActionTaker {
+
+    private static final long serialVersionUID = 1L;
+
+<span class="nc" id="L23">    private List&lt;PossibleAction&gt; actions = new ArrayList&lt;PossibleAction&gt;(1);</span>
+
+    public ActionMenuItem(String text) {
+<span class="nc" id="L26">        super(text);</span>
+<span class="nc" id="L27">    }</span>
+
+    public void addPossibleAction(PossibleAction o) {
+<span class="nc" id="L30">        actions.add(o);</span>
+<span class="nc" id="L31">    }</span>
+
+    public List&lt;PossibleAction&gt; getPossibleActions() {
+<span class="nc" id="L34">        return actions;</span>
+    }
+
+    public void clearPossibleActions() {
+<span class="nc" id="L38">        actions.clear();</span>
+<span class="nc" id="L39">    }</span>
+
+    public void setPossibleAction(PossibleAction action) {
+<span class="nc" id="L42">        clearPossibleActions();</span>
+<span class="nc" id="L43">        addPossibleAction(action);</span>
+<span class="nc" id="L44">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

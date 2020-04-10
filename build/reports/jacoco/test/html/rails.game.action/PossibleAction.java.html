@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PossibleAction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">rails.game.action</a> &gt; <span class="el_source">PossibleAction.java</span></div><h1>PossibleAction.java</h1><pre class="source lang-java linenums">package rails.game.action;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+
+import net.sf.rails.game.CompanyManager;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.round.Activity;
+import net.sf.rails.game.state.ChangeAction;
+import net.sf.rails.game.state.ChangeActionOwner;
+import net.sf.rails.util.GameLoader.RailsObjectInputStream;
+import net.sf.rails.util.RailsObjects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Objects;
+
+
+/**
+ * PossibleAction is the superclass of all classes that describe an allowed user
+ * action (such as laying a tile or dropping a token on a specific hex, buying a
+ * train etc.).
+ *
+ * Rails 2.0: Added updated equals and toString methods
+ */
+
+// TODO (Rails2.0): Replace this with a new XML version
+
+public abstract class PossibleAction implements ChangeAction, Serializable {
+
+    protected String playerName;
+    protected int playerIndex;
+    transient protected Player player;
+
+<span class="fc" id="L39">    protected boolean acted = false;</span>
+
+    transient protected RailsRoot root;
+    transient protected Activity activity;
+
+    public static final long serialVersionUID = 3L;
+
+<span class="fc" id="L46">    private static final Logger log = LoggerFactory.getLogger(PossibleAction.class);</span>
+
+    // TODO: Replace this by a constructor argument for the player
+<span class="fc" id="L49">    public PossibleAction(Activity activity) {</span>
+<span class="fc" id="L50">        root = RailsRoot.getInstance();</span>
+<span class="fc" id="L51">        player = getRoot().getPlayerManager().getCurrentPlayer();</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        if (player != null) {</span>
+<span class="fc" id="L53">            playerName = player.getId();</span>
+<span class="fc" id="L54">            playerIndex = player.getIndex();</span>
+        }
+<span class="fc" id="L56">        this.activity = activity;</span>
+<span class="fc" id="L57">    }</span>
+
+    public String getPlayerName() {
+<span class="fc" id="L60">        return playerName;</span>
+    }
+
+    public int getPlayerIndex() {
+<span class="nc" id="L64">        return playerIndex;</span>
+    }
+
+    public Player getPlayer() {
+<span class="fc" id="L68">        return player;</span>
+    }
+
+
+    /**
+     * Set the name of the player who &lt;b&gt;executed&lt;/b&gt; the action (as opposed to
+     * the player who was &lt;b&gt;allowed&lt;/b&gt; to do the action, which is the one set
+     * in the constructor).
+     *
+     * @param playerName
+     */
+    public void setPlayerName(String playerName) {
+<span class="nc" id="L80">        this.playerName = playerName;</span>
+<span class="nc" id="L81">    }</span>
+
+    public boolean hasActed() {
+<span class="fc" id="L84">        return acted;</span>
+    }
+
+    public void setActed() {
+<span class="nc" id="L88">        this.acted = true;</span>
+<span class="nc" id="L89">    }</span>
+
+    // joint internal method for both equalAs methods
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // compared to null, always false
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if (pa == null) return false;</span>
+        // not identical class, always false
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (!(this.getClass().equals(pa.getClass()))) return false;</span>
+
+        // check asOption attributes
+<span class="pc bpc" id="L99" title="1 of 4 branches missed.">        boolean options = Objects.equal(this.player, pa.player)</span>
+                        || pa instanceof NullAction // TODO: Old save files are sometimes wrong to assign Null Actions
+        ;
+
+        // finish if asOptions check
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        if (asOption) return options;</span>
+
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        return options</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.acted, pa.acted)</span>
+        ;
+    }
+
+
+    /**
+     * Compare the choice options of two action objects, without regard to whatever choice has been made, if any.
+     * In other words: only the server-set (prior) attributes must be compared.
+     * &lt;p&gt;This method is used by the server (engine) to validate
+     * the incoming action that has actually been chosen in the client (GUI),
+     * but only for the purpose to check if the chosen option was really on offer,
+     * not to check if the chosen action is actually valid.
+     * These perspectives could give different results in cases where
+     * the PossibleAction does not fully restrict choices to valid values only
+     * (such as the blanket LayTile that does no restrict the hex to lay a tile on,
+     * or the SetDividend that will accept any revenue value).
+     * @param pa Another PossibleAction to compare with.
+     * @return True if the compared PossibleAction object has equal choice options.
+     */
+    public final boolean equalsAsOption (PossibleAction pa) {
+<span class="fc" id="L127">        return equalsAs(pa, true);</span>
+    }
+
+    /**
+     * Compare the chosen actions of two action objects.
+     * In other words: the client-set (posterior) attributes must be compared,
+     * in addition to those server-set (prior) attributes that sufficiently identify the action.
+     * &lt;p&gt;This method is used by the server (engine) to check if two action
+     * objects represent the same actual action, as is done when reloading a saved file
+     * (i.e. loading a later stage of the same game).
+     * @param pa Another PossibleAction to compare with.
+     * @return True if the compared PossibleAction object has equal selected action values.
+     */
+    public final boolean equalsAsAction (PossibleAction pa) {
+<span class="nc" id="L141">        return equalsAs(pa, false);</span>
+    }
+
+    protected RailsRoot getRoot() {
+<span class="fc" id="L145">        return root;</span>
+    }
+
+    protected GameManager getGameManager() {
+<span class="fc" id="L149">        return root.getGameManager();</span>
+    }
+
+    protected CompanyManager getCompanyManager () {
+<span class="fc" id="L153">        return root.getCompanyManager();</span>
+    }
+
+    public Activity getActivity() {
+<span class="nc" id="L157">        return activity;</span>
+    }
+
+    /**
+     * @return true if it is an action to correct the game state
+     */
+    public boolean isCorrection() {
+<span class="fc" id="L164">        return false;</span>
+    }
+
+    /** Default version of an Menu item text. To be overridden where useful. */
+    public String toMenu() {
+<span class="nc" id="L169">        return toString();</span>
+    }
+
+    // Implementation for ChangeAction Interface
+    public ChangeActionOwner getActionOwner() {
+<span class="fc" id="L174">        return player;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L179">        return RailsObjects.stringHelper(this).addBaseText().toString();</span>
+    }
+
+    // TODO: Rails 2.0 check if the combination above works correctly
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+<span class="fc" id="L184">        in.defaultReadObject();</span>
+
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if (in instanceof RailsObjectInputStream) {</span>
+<span class="fc" id="L187">            root = ((RailsObjectInputStream) in).getRoot();</span>
+        }
+
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        if (playerName != null) {</span>
+<span class="fc" id="L191">            player = getRoot().getPlayerManager().getPlayerByName(playerName);</span>
+        } else {
+<span class="nc" id="L193">            player = getRoot().getPlayerManager().getPlayerByIndex(playerIndex);</span>
+        }
+<span class="fc" id="L195">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

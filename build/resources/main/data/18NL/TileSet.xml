@@ -1,0 +1,248 @@
+<TileManager tiles="Tiles.xml">
+	<!-- Preprinted Tiles-->
+
+	<!-- Empty space -->
+	<Tile id="0">
+		<Upgrade id="7,8,9" />
+	</Tile>
+
+	<!-- Dit -->
+	<Tile id="-1">
+		<Upgrade id="3,4,58" />
+	</Tile>
+
+	<!-- City -->
+	<Tile id="-10">
+		<Upgrade id="6,57" />
+	</Tile>
+	
+	<!-- grey sharp curve -->
+	<Tile id="-7" />
+	
+	<!-- 2 OO cities -->
+	<Tile id="-20" relayBaseTokens="yes">
+		<Upgrade id="59"/>
+	</Tile>
+	
+	<!-- B5 -->
+	<Tile id="-104" /> 
+
+	<!-- A12 -->
+	<Tile id="-800" /> 
+
+	<!-- Off-board hexes -->
+	<Tile id="-901"/>
+	<Tile id="-902"/>
+	<Tile id="-903"/>
+
+	<Tile id="-1059"> <!-- yellow X 2 cities, revenue 40, E6 -->
+		<Upgrade id="1012,1013,1205,2206"/>
+	</Tile>
+
+	<!-- F13 -->
+	<Tile id="-1101" /> 
+
+	<Tile id="-1759"> <!-- green Z city -->
+		<Upgrade id="1336"/>
+	</Tile>
+
+	<Tile id="-2059"> <!-- yellow X 2 cities, revenue 30, H3 -->
+		<Upgrade id="1012,1013,1205,2206"/>
+	</Tile>
+
+	<Tile id="-3059"> <!-- yellow X 2 cities, revenue 30, H2 -->
+		<Upgrade id="1012,1205,2206"/>
+	</Tile>
+
+	<!-- Yellow Tiles -->
+
+	<!-- Sharp-curve dit (10) -->
+	<Tile id="3" quantity="2" >
+		<Upgrade id="87,88" />
+	</Tile>
+
+	<!-- Straight dit (10) -->
+	<Tile id="4" quantity="2">
+		<Upgrade id="87,88" />
+	</Tile>
+
+	<!-- Gentle-curve city (20) -->
+	<Tile id="6" quantity="3">
+		<Upgrade id="14,15"/>
+	</Tile>
+
+	<!-- Sharp curve -->
+	<Tile id="7" quantity="4">
+		<Upgrade id="18,26,27,28,29" />
+	</Tile>
+
+	<!-- Gentle curve -->
+	<Tile id="8" quantity="8">
+		<Upgrade id="16,19,23,24,25,28,29" />
+	</Tile>
+
+	<!-- Straight track -->
+	<Tile id="9" quantity="7">
+		<Upgrade id="18,19,20,23,24,26,27" />
+	</Tile>
+
+	<!-- Straight city (20) -->
+	<Tile id="57" quantity="4">
+		<Upgrade id="14,15"/>
+	</Tile>
+
+	<!-- Gentle-curve dit (10) -->
+	<Tile id="58" quantity="2">
+		<Upgrade id="87,88" />
+	</Tile>
+
+	<!-- Green Tiles -->
+
+	<!-- X-shape city (30) -->
+	<Tile id="14" quantity="3">
+		<Upgrade id="63" />
+	</Tile>
+
+	<!-- K-shape city (30) -->
+	<Tile id="15" quantity="2">
+		<Upgrade id="63" />
+	</Tile>
+
+	<!-- Two tracks crossing, K shape -->
+	<Tile id="16" quantity="1">
+		<Upgrade id="43,70" />
+	</Tile>
+
+	<!-- Two tracks non-crossing, straight/cuve -->
+	<Tile id="18" quantity="1">
+		<Upgrade id="43" />
+	</Tile>
+
+	<!-- Two tracks crossing, crossbow shape -->
+	<Tile id="19" quantity="1">
+		<Upgrade id="45,46" />
+	</Tile>
+
+	<!-- Two tracks crossing, X shape -->
+	<Tile id="20" quantity="1">
+		<Upgrade id="44,47" />
+	</Tile>
+
+	<!-- Switch, straight and gentle-curve right -->
+	<Tile id="23" quantity="3">
+		<Upgrade id="41,43,45,47" />
+	</Tile>
+
+	<!-- Switch, straight and gentle-curve left -->
+	<Tile id="24" quantity="3">
+		<Upgrade id="42,43,46,47" />
+	</Tile>
+
+	<!-- Switch, two gentle curves -->
+	<Tile id="25" quantity="1">
+		<Upgrade id="40,45,46" />
+	</Tile>
+
+	<!-- Switch, straight and sharp-curve right -->
+	<Tile id="26" quantity="1">
+		<Upgrade id="42,44,45" />
+	</Tile>
+
+	<!-- Switch, straight and sharp-curve left -->
+	<Tile id="27" quantity="1">
+		<Upgrade id="41,44,46" />
+	</Tile>
+
+	<!-- Switch, sharp and gentle curves right -->
+	<Tile id="28" quantity="1">
+		<Upgrade id="39,43,70" />
+	</Tile>
+
+	<!-- Switch, sharp and gentle curves left -->
+	<Tile id="29" quantity="1">
+		<Upgrade id="39,43,70" />
+	</Tile>
+
+	<!-- Double O-Cities -->
+	<Tile id="59" quantity="2">
+		<Upgrade id="64,65,66,67,68" />
+	</Tile>
+
+	<!-- Dit (10), K -->
+	<Tile id="87" quantity="2" />
+
+	<!-- Dit (10), X -->
+	<Tile id="88" quantity="2" />
+
+	<!-- X-City, three exits: epsilon -->
+	<Tile id="1012" extId="NL12" quantity="1">
+		<Upgrade id="1219" />
+	</Tile>
+
+	<!-- X-City, three exits: cross -->
+	<Tile id="1013" extId="NL13" quantity="1">
+		<Upgrade id="1219" />
+	</Tile>
+
+	<!-- X-City, three exits: Y skewed right -->
+	<Tile id="1205" extId="NL205" quantity="1">
+		<Upgrade id="2218,1219" />
+	</Tile>
+
+	<!-- X-City, three exits: Y skewed left -->
+	<Tile id="2206" extId="NL206" quantity="1">
+		<Upgrade id="2218,1219" />
+	</Tile>
+
+	<!-- Brown Tiles -->
+
+	<!-- "Delta" interchange, exits N,NE,SE -->
+	<Tile id="39" quantity="1" />
+
+	<!-- "Delta" interchange, exits NW,NE,S -->
+	<Tile id="40" quantity="1" />
+
+	<!-- "Delta" interchange, exits N,NE,S -->
+	<Tile id="41" quantity="2" />
+
+	<!-- "Delta" interchange, exits N,NW,S -->
+	<Tile id="42" quantity="2" />
+
+	<!-- Interchange, tracks N-S, NE-SE, N-SE, S-NE -->
+	<Tile id="43" quantity="2" />
+
+	<!-- Interchange, tracks N-S, NW-SE, N-NW, S-SE -->
+	<Tile id="44" quantity="1" />
+
+	<!-- Interchange, tracks N-S, NW-NE, N-NW, S-NE -->
+	<Tile id="45" quantity="2" />
+
+	<!-- Interchange, tracks N-S, NW-NE, N-NE, S-NW -->
+	<Tile id="46" quantity="2" />
+
+	<!-- Interchange, tracks N-S, NW-SE, N-SE, S-NW -->
+	<Tile id="47" quantity="1" />
+
+	<!-- 6-way city (40) -->
+	<Tile id="63" quantity="3"/>
+
+	<!-- Double O-Cities -->
+	<Tile id="64" quantity="1" />
+	<Tile id="65" quantity="1" />
+	<Tile id="66" quantity="1" />
+	<Tile id="67" quantity="1" />
+	<Tile id="68" quantity="1" />
+
+	<!-- Interchange, tracks N-SE, S-NE, N-NE, S-SE -->
+	<Tile id="70" quantity="1" />
+
+	<!-- X-City, X-shape -->
+	<Tile id="2218" extId="NL218" quantity="1" />
+
+	<!-- X-City, K-shape -->
+	<Tile id="1219" extId="NL219" quantity="1" />
+	
+	<!-- Z-City -->
+	<Tile id="1336" extId="NL336" quantity="1" />
+
+</TileManager>

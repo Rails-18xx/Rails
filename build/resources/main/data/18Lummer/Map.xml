@@ -1,0 +1,17 @@
+<Map tileOrientation="EW" letterOrientation="vertical" even="A">
+	<Defaults>
+		<Access type="city" runTo="yes" runThrough="yes" loop="yes" score="major"/>
+		<Access type="town" runTo="yes" runThrough="yes" loop="yes" score="minor"/>
+	</Defaults>
+	<!-- The above defaults are redundant, these settings are the system defaults anyway -->
+	<Hex name="B3" tile="-7" orientation="0"/>
+	<Hex name="B5" tile="-1" />
+	<Hex name="B7" tile="0" />
+	<Hex name="B9" tile="-7" orientation="2"/>
+	<Hex name="C4" tile="-10" />
+	<Hex name="C6" tile="-20" cost="120" />
+	<Hex name="C8" tile="-10" />
+	<Hex name="D5" tile="0" />
+	<Hex name="D7" tile="-1" />
+	<Hex name="E6" tile="-7" orientation="4"/>
+</Map>

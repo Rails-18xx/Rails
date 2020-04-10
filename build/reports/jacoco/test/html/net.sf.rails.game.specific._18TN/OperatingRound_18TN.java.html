@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperatingRound_18TN.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._18TN</a> &gt; <span class="el_source">OperatingRound_18TN.java</span></div><h1>OperatingRound_18TN.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._18TN;
+
+import java.util.Set;
+
+import rails.game.action.BuyPrivate;
+import rails.game.action.SetDividend;
+import net.sf.rails.game.*;
+import net.sf.rails.game.state.ArrayListState;
+
+
+public class OperatingRound_18TN extends OperatingRound {
+
+<span class="nc" id="L13">    private ArrayListState&lt;Player&gt; playersSoldInOR1 = ArrayListState.create(this, &quot;PlayersSoldPrivateInOR1&quot;);</span>
+
+    /**
+     * Constructed via Configure
+     */
+    public OperatingRound_18TN (GameManager parent, String id) {
+<span class="nc" id="L19">        super(parent, id);</span>
+<span class="nc" id="L20">    }</span>
+
+    @Override
+    protected boolean isPrivateSellingAllowed() {
+<span class="nc bnc" id="L24" title="All 2 branches missed.">        return super.isPrivateSellingAllowed()</span>
+        // 18TN special
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        || gameManager.getAbsoluteORNumber() == 1</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        &amp;&amp; !ownsPrivate(operatingCompany.value());</span>
+    }
+
+    @Override
+    protected int getPrivateMinimumPrice (PrivateCompany privComp) {
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        if (gameManager.getAbsoluteORNumber() == 1</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">                &amp;&amp; !Phase.getCurrent(this).isPrivateSellingAllowed()) {</span>
+            // 18TN special
+<span class="nc" id="L35">            return privComp.getBasePrice();</span>
+        } else {
+<span class="nc" id="L37">            return super.getPrivateMinimumPrice(privComp);</span>
+        }
+    }
+
+    @Override
+    protected int getPrivateMaximumPrice (PrivateCompany privComp) {
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (gameManager.getAbsoluteORNumber() == 1</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                &amp;&amp; !Phase.getCurrent(this).isPrivateSellingAllowed()) {</span>
+            // 18TN special
+<span class="nc" id="L46">            return privComp.getBasePrice();</span>
+        } else {
+<span class="nc" id="L48">            return super.getPrivateMaximumPrice(privComp);</span>
+        }
+    }
+
+    private boolean ownsPrivate (PublicCompany company) {
+<span class="nc" id="L53">        Set&lt;PrivateCompany&gt; privates = company.getPortfolioModel().getPrivateCompanies();</span>
+<span class="nc bnc" id="L54" title="All 4 branches missed.">        return privates != null &amp;&amp; !privates.isEmpty();</span>
+    }
+
+    @Override
+    protected boolean maySellPrivate (Player player) {
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        return gameManager.getAbsoluteORNumber() != 1</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        || !hasPlayerSoldInOR1(player);</span>
+    }
+
+    private boolean hasPlayerSoldInOR1 (Player player) {
+<span class="nc bnc" id="L64" title="All 4 branches missed.">        return playersSoldInOR1 != null &amp;&amp; playersSoldInOR1.contains(player);</span>
+    }
+
+    @Override
+    public boolean buyPrivate(BuyPrivate action) {
+
+<span class="nc" id="L70">        Player sellingPlayer = null;</span>
+
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (gameManager.getAbsoluteORNumber() == 1) {</span>
+<span class="nc" id="L73">            sellingPlayer = (Player)action.getPrivateCompany().getOwner();</span>
+        }
+
+<span class="nc" id="L76">        boolean result = super.buyPrivate(action);</span>
+
+<span class="nc bnc" id="L78" title="All 4 branches missed.">        if (result &amp;&amp; gameManager.getAbsoluteORNumber() == 1) {</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            if (!playersSoldInOR1.contains(sellingPlayer)) {</span>
+<span class="nc" id="L80">                playersSoldInOR1.add(sellingPlayer);</span>
+            }
+        }
+
+<span class="nc" id="L84">        return result;</span>
+    }
+
+    @Override
+    public void processPhaseAction (String name, String value) {
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (name.equalsIgnoreCase(&quot;CivilWar&quot;)) {</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            for (PublicCompany company : getOperatingCompanies()) {</span>
+<span class="nc bnc" id="L91" title="All 4 branches missed.">                if (company.hasFloated() &amp;&amp; company.getPortfolioModel().getNumberOfTrains() &gt; 0</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">                        &amp;&amp; company.hasRoute()) {</span>
+<span class="nc" id="L93">                    ((PublicCompany_18TN)company).setCivilWar(true);</span>
+                }
+<span class="nc" id="L95">            }</span>
+        }
+<span class="nc" id="L97">    }</span>
+
+
+    @Override
+    protected void executeSetRevenueAndDividend (SetDividend action) {
+
+        // Save operating company (it may change)
+<span class="nc" id="L104">        PublicCompany_18TN company = (PublicCompany_18TN) operatingCompany.value();</span>
+
+<span class="nc" id="L106">        super.executeSetRevenueAndDividend(action);</span>
+
+        // Reset Civil War condition
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (company.isCivilWar()) company.setCivilWar(false);</span>
+<span class="nc" id="L110">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

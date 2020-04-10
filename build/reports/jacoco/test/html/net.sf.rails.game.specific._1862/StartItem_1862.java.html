@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StartItem_1862.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1862</a> &gt; <span class="el_source">StartItem_1862.java</span></div><h1>StartItem_1862.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1862;
+
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.StartItem;
+
+public class StartItem_1862 extends StartItem {
+    protected boolean[] actedOn; // Either bidded or passed
+    protected boolean[] passed;
+        
+    protected StartItem_1862(RailsItem parent, String name, String type,
+            int index, boolean president) {
+<span class="nc" id="L12">        super(parent, name, type, index, president);</span>
+<span class="nc" id="L13">    }</span>
+
+    public static StartItem_1862 create(RailsItem parent, String name, String type, int price, int index, boolean president){
+<span class="nc" id="L16">        StartItem_1862 item = new StartItem_1862(parent, name, type, index, president);</span>
+<span class="nc" id="L17">        item.initBasePrice(price);</span>
+<span class="nc" id="L18">        return item;</span>
+    }
+
+    // FIXME: Has to be adopted to the new structure
+//    public void init(GameManager gameManager) {
+//        super.init(gameManager);
+//        passed = new boolean[numberOfPlayers];
+//        actedOn = new boolean[numberOfPlayers];
+//        for (int i = 0; i &lt; numberOfPlayers; i++) {
+//            actedOn[i] = false;
+//            passed[i] = false;
+//        }
+//        // Override behavior in super class as far as minimum bid...
+//        minimumBid.set(basePrice.value());
+//    }
+//    
+//    public void setPass(Player player) {
+//        actedOn[player.getIndex()] = true;
+//        passed[player.getIndex()] = true;
+//    }
+//
+//    public int getNumActivePlayers() {
+//        int n = 0;
+//        for (int i = 0; i &lt; numberOfPlayers; i++) {
+//            if (passed[i] == false) {
+//                n++;
+//            }
+//        }
+//        return n;
+//    }
+//    
+//    public boolean isActivePlayer(Player player) {
+//        return (!passed[player.getIndex()]);
+//    }
+//    
+//    public void setBid(int amount, Player bidder) {
+//        int index = bidder.getIndex();
+//        actedOn[index] = true;
+//        bids[index].set(amount);
+//        bids[index].setSuppressZero(false);
+//
+//        if (amount &gt;= 0) {
+//            lastBidderIndex.set(index);
+//            minimumBid.set(amount + 5);
+//        } else if (amount == -1) {
+//            passed[index] = true;
+//            bids[index].set(0);
+//        }
+//    }
+
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RevenueCalculatorMulti.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.algorithms</a> &gt; <span class="el_source">RevenueCalculatorMulti.java</span></div><h1>RevenueCalculatorMulti.java</h1><pre class="source lang-java linenums">package net.sf.rails.algorithms;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.game.specific._1856.OperatingRound_1856;
+
+class RevenueCalculatorMulti extends RevenueCalculator {
+<span class="nc" id="L9">    private static final Logger log = LoggerFactory.getLogger(RevenueCalculatorMulti.class);</span>
+
+
+    protected final int[] edgeNbTravelSets;
+    protected final int[][] edgeTravelSets; // edge belongs to a travel set, dimension: nbEdges x nbTravelSets
+
+    // dynamic edge data
+    private final int[] edgeUsed;
+
+    // dynamic train data
+    private final int[] startVertexActive;
+
+
+    public RevenueCalculatorMulti (RevenueAdapter revenueAdapter, int nbVertexes, int nbEdges,
+            int maxNeighbors, int maxVertexSets, int maxEdgeSets, int nbTrains, int nbBonuses) {
+
+        // maxEdgeSet set to zero
+<span class="nc" id="L26">        super(revenueAdapter, nbVertexes, nbEdges,</span>
+                maxNeighbors, maxVertexSets, maxEdgeSets, nbTrains, nbBonuses);
+
+<span class="nc" id="L29">        edgeNbTravelSets = new int[nbEdges];</span>
+<span class="nc" id="L30">        edgeTravelSets = new int[nbEdges][maxEdgeSets];</span>
+
+        // edge used is integer here
+<span class="nc" id="L33">        edgeUsed = new int[nbEdges];</span>
+
+<span class="nc" id="L35">        startVertexActive = new int[nbTrains];</span>
+
+<span class="nc" id="L37">    }</span>
+
+    @Override
+    final void setEdge(int edgeId, boolean greedy, int distance) {
+<span class="nc" id="L41">        super.setEdge(edgeId, greedy, distance);</span>
+        // default number for travel sets
+<span class="nc" id="L43">        edgeNbTravelSets[edgeId] = 0;</span>
+<span class="nc" id="L44">    }</span>
+
+    // define edgeTravelSets
+    final void setTravelSet(int edgeId, int[] edges) {
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        for (int j=0; j &lt; edges.length; j++) {</span>
+<span class="nc" id="L49">            edgeTravelSets[edgeId][edgeNbTravelSets[edgeId]++] = edges[j];</span>
+        }
+<span class="nc" id="L51">    }</span>
+
+    @Override
+    protected void runTrain(final int trainId) {
+<span class="nc" id="L55">        log.debug(&quot;RC: runTrain {}&quot;, trainId);</span>
+
+        // initialize value
+<span class="nc" id="L58">        trainCurrentValue[trainId] = 0;</span>
+
+        // initialize train lengths
+<span class="nc" id="L61">        trainMajors[trainId] = trainMaxMajors[trainId];</span>
+<span class="nc" id="L62">        trainMinors[trainId] = trainMaxMinors[trainId];</span>
+<span class="nc" id="L63">        trainBonuses[trainId] = trainMaxBonuses[trainId];</span>
+
+        // initialize the positions
+<span class="nc" id="L66">        trainStackPos[trainId] = 0;</span>
+<span class="nc" id="L67">        trainBottomActive[trainId] = false;</span>
+
+        // initialize bonuses
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        for (int b=0; b &lt; nbBonuses; b++) {</span>
+<span class="nc" id="L71">            bonusTrainVertices[b][trainId] = bonusRequiresVertices[b];</span>
+        }
+
+        // check if the revenue is enough
+<span class="nc bnc" id="L75" title="All 4 branches missed.">        if (useRevenuePrediction &amp;&amp; predictRevenues(trainId))</span>
+<span class="nc" id="L76">            return;</span>
+
+        // try all startVertexes
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        for (int i=0; i &lt; startVertexes.length; i++) {</span>
+<span class="nc" id="L80">            int vertexId = startVertexes[i];</span>
+<span class="nc" id="L81">            log.debug(&quot;RC: Using startVertex nr. {} for train {}&quot;, i, trainId);</span>
+<span class="nc" id="L82">            boolean stationVertex = encounterVertex(trainId, vertexId, true);</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            if (stationVertex) {</span>
+                // train cannot terminate at start vertex
+<span class="nc bnc" id="L85" title="All 4 branches missed.">                if (useRevenuePrediction &amp;&amp; predictRevenues(trainId)) {</span>
+                    // cannot beat current best value =&gt; leave immediately
+<span class="nc" id="L87">                    encounterVertex(trainId, vertexId, false);</span>
+                    // but keep them on the visited vertex list to avoid route duplication
+<span class="nc" id="L89">                    trainVisited[trainId][vertexId] = true;</span>
+<span class="nc" id="L90">                    log.debug(&quot;RC: finished startVertex {} for train {}&quot;, vertexId, trainId);</span>
+<span class="nc" id="L91">                    continue;</span>
+                }
+            }
+
+            // then try all edges of it
+<span class="nc" id="L96">            startVertexActive[trainId] = vertexId;</span>
+            // for startVertices the sink property is ignored
+<span class="nc bnc" id="L98" title="All 2 branches missed.">            for (int j = 0; j &lt; vertexNbNeighbors[vertexId]; j++) {</span>
+<span class="nc" id="L99">                int edgeId = vertexEdges[vertexId][j];</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">                if (edgeUsed[edgeId] != 0) continue;</span>
+<span class="nc" id="L101">                log.debug(&quot;RC: Testing Neighbor Nr. {} of startVertex&quot;, j);</span>
+<span class="nc" id="L102">                int neighborId = vertexNeighbors[vertexId][j];</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">                if (trainVisited[trainId][neighborId]) {</span>
+<span class="nc" id="L104">                    log.debug(&quot;RC: Hex already visited&quot;);</span>
+<span class="nc" id="L105">                    continue;</span>
+                }
+<span class="nc" id="L107">                travelEdge(trainId, edgeId);</span>
+<span class="nc" id="L108">                trainStartEdge[trainId] = j; // store start edge</span>
+<span class="nc" id="L109">                nextVertex(trainId, neighborId);</span>
+<span class="nc" id="L110">                returnEdge(trainId, edgeId);</span>
+<span class="nc" id="L111">                trainStackPos[trainId]--; // pull from stack</span>
+            }
+
+            // no more edges to find
+<span class="nc" id="L115">            encounterVertex(trainId, vertexId, false);</span>
+            // keep them on the visited vertex list to avoid route duplication
+<span class="nc" id="L117">            trainVisited[trainId][vertexId] = true;</span>
+<span class="nc" id="L118">            log.debug(&quot;RC: finished startVertex {} for train {}&quot;, vertexId, trainId);</span>
+        }
+
+        // finished all tries
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        for ( int startVertex : startVertexes ) {</span>
+            // remove all of them from the visited vertex list
+<span class="nc" id="L124">            trainVisited[trainId][startVertex] = false;</span>
+        }
+
+        // allow that the train does not run at all
+<span class="nc" id="L128">        finalizeVertex(trainId, -1);</span>
+
+<span class="nc" id="L130">        log.debug(&quot;RC: finishTrain {}&quot;, trainId);</span>
+
+<span class="nc" id="L132">    }</span>
+
+    @Override
+    final protected void runBottom(final int trainId) {
+<span class="nc" id="L136">        log.debug(&quot;RC: runBottom {}&quot;, trainId);</span>
+
+        // use startvertex, check if it is a sink
+<span class="nc" id="L139">        int vertexId = startVertexActive[trainId];</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (vertexSink[vertexId]) {</span>
+<span class="nc" id="L141">            log.debug(&quot;RC: startvertex is sink, finished bottom of {}&quot;, trainId);</span>
+<span class="nc" id="L142">            return;</span>
+        }
+
+        // push to stack
+<span class="nc" id="L146">        trainBottomActive[trainId] = true;</span>
+<span class="nc" id="L147">        log.debug(&quot;RC: Restart at bottom at stack position {}&quot;, trainStackPos[trainId]);</span>
+//        trainStack[trainId][trainStackPos[trainId]++] = vertexId;
+
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        for (int j = trainStartEdge[trainId] + 1; j &lt; vertexNbNeighbors[vertexId]; j++) {</span>
+<span class="nc" id="L151">            int edgeId = vertexEdges[vertexId][j];</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">            if (edgeUsed[edgeId] != 0) continue;</span>
+<span class="nc" id="L153">            int neighborId = vertexNeighbors[vertexId][j];</span>
+<span class="nc" id="L154">            log.debug(&quot;RC: Testing Neighbor Nr. {} of bottomVertex is {}&quot;, j, neighborId);</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">            if (trainVisited[trainId][neighborId]) {</span>
+<span class="nc" id="L156">                log.debug(&quot; RC: Hex already visited&quot;);</span>
+<span class="nc" id="L157">                continue;</span>
+            }
+<span class="nc" id="L159">            travelEdge(trainId, edgeId);</span>
+<span class="nc" id="L160">            nextVertex(trainId, neighborId);</span>
+<span class="nc" id="L161">            returnEdge(trainId, edgeId);</span>
+<span class="nc" id="L162">            trainStackPos[trainId]--; // pull from stack</span>
+        }
+
+//        trainStackPos[trainId]--; // pull from stack
+<span class="nc" id="L166">        trainBottomActive[trainId] = false;</span>
+<span class="nc" id="L167">        log.debug(&quot;RC: finished bottom of {}&quot;, trainId);</span>
+
+
+<span class="nc" id="L170">    }</span>
+
+    private final void nextVertex(final int trainId, final int vertexId) {
+
+        // 1. encounterVertex adds value and returns true if value vertex
+<span class="nc" id="L175">        Terminated trainTerminated = Terminated.NOT_YET;</span>
+<span class="nc" id="L176">        boolean stationVertex = encounterVertex(trainId, vertexId, true);</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        if (stationVertex) {</span>
+            // check usual train termination
+<span class="nc" id="L179">            trainTerminated = trainTerminated(trainId);</span>
+<span class="nc bnc" id="L180" title="All 4 branches missed.">            if (trainTerminated == Terminated.WITHOUT_EVALUATION ||</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                    useRevenuePrediction &amp;&amp; predictRevenues(trainId)) {</span>
+                // cannot beat current best value =&gt; leave immediately
+<span class="nc" id="L183">                encounterVertex(trainId, vertexId, false);</span>
+<span class="nc" id="L184">                return;</span>
+            }
+        }
+
+        // 2a. visit neighbors, if train has not terminated and vertex is not a sink
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        if (trainTerminated == Terminated.NOT_YET ) {</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">            if (!vertexSink[vertexId]) {</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">                for (int j = 0; j &lt; vertexNbNeighbors[vertexId]; j++) {</span>
+<span class="nc" id="L192">                    int edgeId = vertexEdges[vertexId][j];</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">                    if (edgeUsed[edgeId] != 0) continue;</span>
+<span class="nc" id="L194">                    int neighborId = vertexNeighbors[vertexId][j];</span>
+<span class="nc" id="L195">                    log.debug(&quot;RC: Testing Neighbor Nr. {} of {} is {}&quot;, j, vertexId, neighborId);</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">                    if (trainVisited[trainId][neighborId]) {</span>
+<span class="nc" id="L197">                        log.debug(&quot;RC: Hex already visited&quot;);</span>
+<span class="nc" id="L198">                        continue;</span>
+                    }
+<span class="nc" id="L200">                    travelEdge(trainId, edgeId);</span>
+<span class="nc" id="L201">                    nextVertex(trainId, neighborId);</span>
+<span class="nc" id="L202">                    returnEdge(trainId, edgeId);</span>
+<span class="nc" id="L203">                    trainStackPos[trainId]--; // pull from stack</span>
+                }
+            }
+            // 2b. restart at startVertex for bottom part
+<span class="nc bnc" id="L207" title="All 4 branches missed.">            if (stationVertex &amp;&amp; !trainBottomActive[trainId]){</span>
+<span class="nc" id="L208">                runBottom(trainId);</span>
+            }
+        }
+
+        // 3. no more edges to visit from here =&gt; evaluate or start new train
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        if (stationVertex)</span>
+<span class="nc" id="L214">            finalizeVertex(trainId, vertexId);</span>
+
+        // 4. then leave that vertex
+<span class="nc" id="L217">        encounterVertex(trainId, vertexId, false);</span>
+<span class="nc" id="L218">    }</span>
+
+    protected void travelEdge(final int trainId, final int edgeId) {
+<span class="nc" id="L221">        log.debug(&quot;RC: Travel edge id {}&quot;, edgeId);</span>
+<span class="nc" id="L222">        edgeUsed[edgeId]++;</span>
+<span class="nc" id="L223">        trainStack[trainId][trainStackPos[trainId]++] = edgeId; // push to stack</span>
+<span class="nc" id="L224">        countEdges++; nbEdgesTravelled++;</span>
+<span class="nc" id="L225">        log.debug(&quot;RC: Count Edges = {}&quot;, countEdges);</span>
+
+        // check edge sets
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        for (int j=0; j &lt; edgeNbTravelSets[edgeId]; j++) {</span>
+<span class="nc" id="L229">            edgeUsed[edgeTravelSets[edgeId][j]]++;</span>
+<span class="nc" id="L230">            log.debug(&quot;RC: travelled edge {} due to edge set.&quot;, edgeTravelSets[edgeId][j]);</span>
+        }
+<span class="nc" id="L232">    }</span>
+
+
+    @Override
+    protected void returnEdge(final int trainId, final int edgeId) {
+<span class="nc bnc" id="L237" title="All 2 branches missed.">          if (edgeUsed[edgeId] != 0) {</span>
+<span class="nc" id="L238">              edgeUsed[edgeId]--;</span>
+<span class="nc" id="L239">              countEdges--;</span>
+<span class="nc" id="L240">              log.debug(&quot;RC: Cleared edge id {}&quot;, edgeId);</span>
+<span class="nc" id="L241">              log.debug(&quot;RC: Count Edges = {}&quot;, countEdges);</span>
+
+              // check edge sets
+<span class="nc bnc" id="L244" title="All 2 branches missed.">              for (int j=0; j &lt; edgeNbTravelSets[edgeId]; j++) {</span>
+<span class="nc" id="L245">                  edgeUsed[edgeTravelSets[edgeId][j]]--;</span>
+<span class="nc" id="L246">                  log.debug(&quot;RC: Cleared edge {} due to edge set.&quot;, edgeTravelSets[edgeId][j]);</span>
+              }
+          } else {
+<span class="nc" id="L249">              log.debug(&quot;RC: Error return edge id used: {}&quot;, edgeId);</span>
+          }
+
+<span class="nc" id="L252">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

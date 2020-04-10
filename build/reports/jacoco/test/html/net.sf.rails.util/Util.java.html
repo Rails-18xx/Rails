@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Util.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.util</a> &gt; <span class="el_source">Util.java</span></div><h1>Util.java</h1><pre class="source lang-java linenums">package net.sf.rails.util;
+
+import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.common.ConfigProfile;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.game.state.Item;
+
+
+public final class Util {
+
+<span class="fc" id="L21">    private static final Logger log = LoggerFactory.getLogger(Util.class);</span>
+
+    /**
+     * No-args private constructor, to prevent (meaningless) construction of one
+     * of these.
+     */
+    private Util() {}
+
+    public static boolean hasValue(String s) {
+<span class="fc bfc" id="L30" title="All 4 branches covered.">        return s != null &amp;&amp; !s.equals(&quot;&quot;);</span>
+    }
+
+    public static String valueWithDefault(String s, String defaultValue) {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (hasValue(s)) {</span>
+<span class="fc" id="L35">            return s;</span>
+        } else {
+<span class="fc" id="L37">            return defaultValue;</span>
+        }
+    }
+
+    public static String appendWithDelimiter(String s1, String s2,
+            String delimiter) {
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        StringBuilder b = new StringBuilder(s1 != null ? s1 : &quot;&quot;);</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        if (b.length() &gt; 0) b.append(delimiter);</span>
+<span class="nc" id="L45">        b.append(s2);</span>
+<span class="nc" id="L46">        return b.toString();</span>
+    }
+
+    public static String joinWithDelimiter (String[] sa, String delimiter) {
+<span class="nc bnc" id="L50" title="All 4 branches missed.">        if (sa == null || sa.length == 0) return &quot;&quot;;</span>
+<span class="nc" id="L51">        StringBuilder b = new StringBuilder();</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        for (String s : sa) {</span>
+<span class="nc bnc" id="L53" title="All 4 branches missed.">            if (Util.hasValue(delimiter) &amp;&amp; b.length() &gt; 0) b.append(delimiter);</span>
+<span class="nc" id="L54">            b.append(s);</span>
+        }
+<span class="nc" id="L56">        return b.toString();</span>
+    }
+
+    public static String joinNamesWithDelimiter (Iterable&lt;? extends Item&gt; items, String delimiter) {
+<span class="fc" id="L60">        StringBuilder b = new StringBuilder(&quot;&quot;);</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (items != null) {</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">            for (Item company : items) {</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">                if (b.length() &gt; 0) b.append(delimiter);</span>
+<span class="fc" id="L64">                b.append(company.getId());</span>
+<span class="fc" id="L65">            }</span>
+        }
+<span class="fc" id="L67">        return b.toString();</span>
+    }
+
+
+    public static String joinWithDelimiter (Iterable&lt;Integer&gt; sa, String delimiter) {
+<span class="fc" id="L72">        StringBuilder b = new StringBuilder();</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        for (int s : sa) {</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            if (b.length() &gt; 0) b.append(delimiter);</span>
+<span class="fc" id="L75">            b.append(s);</span>
+<span class="fc" id="L76">        }</span>
+<span class="fc" id="L77">        return b.toString();</span>
+    }
+
+    public static int parseInt(String value) throws ConfigurationException {
+
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (!hasValue(value)) return 0;</span>
+
+        try {
+<span class="nc" id="L85">            return Integer.parseInt(value);</span>
+<span class="nc" id="L86">        } catch (Exception e) {</span>
+<span class="nc" id="L87">            throw new ConfigurationException(&quot;Invalid integer value: &quot; + value,</span>
+                    e);
+        }
+    }
+
+    public static boolean bitSet(int value, int bitmask) {
+
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        return (value &amp; bitmask) &gt; 0;</span>
+    }
+
+    public static int setBit(int value, int bitmask, boolean set) {
+
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (set) {</span>
+<span class="nc" id="L100">            return bitmask | value;</span>
+        } else {
+<span class="nc" id="L102">            System.out.println(&quot;Reset bit &quot; + value + &quot;: from &quot; + bitmask</span>
+                    + &quot; to &quot; + (bitmask &amp; ~value));
+<span class="nc" id="L104">            return bitmask &amp; ~value;</span>
+        }
+    }
+
+
+    /**
+     * Convert java string to html string
+     * Transformations:
+     * - Converts \n to &lt;br&gt;
+     */
+    public static String convertToHtml(String javaString) {
+<span class="fc" id="L115">        return javaString.replace(&quot;\n&quot;, &quot;&lt;br&gt;&quot;);</span>
+    }
+
+    /**
+     * Parse a boolean value for Rails
+     * @param value string (allowed values for true: standard Boolean.parseBoolean and yes (after conversion to lowercase)
+     * @return parsed value
+     */
+    public static boolean parseBoolean(String s) {
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (s.toLowerCase().equals(&quot;yes&quot;)) {</span>
+<span class="nc" id="L125">            return true;</span>
+        }
+<span class="nc" id="L127">        return Boolean.parseBoolean(s);</span>
+    }
+
+    /**
+     * Parse a colour definition string.
+     * Currently supported formats:
+     *   &quot;RRGGBB&quot; - each character being a hexadecimal digit
+     *   &quot;r,g,b&quot;  - each letter representing an integer 0..255
+     * @param s
+     * @return
+     */
+    public static Color parseColour (String s) throws ConfigurationException{
+<span class="fc" id="L139">        Color c = null;</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if (!Util.hasValue(s)) {</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        } else if (s.indexOf(',') == -1) {</span>
+            // Assume hexadecimal RRGGBB
+            try {
+<span class="fc" id="L144">                c = new Color (Integer.parseInt(s, 16));</span>
+<span class="nc" id="L145">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L146">                getLogger().error (&quot;Invalid hex RGB colour: &quot;+s, e);</span>
+<span class="nc" id="L147">                throw new ConfigurationException (e);</span>
+<span class="fc" id="L148">            }</span>
+        } else {
+            // Assume decimal r,g,b
+            try {
+<span class="fc" id="L152">                String[] parts = s.split(&quot;,&quot;);</span>
+<span class="fc" id="L153">                c = new Color (Integer.parseInt(parts[0]),</span>
+<span class="fc" id="L154">                        Integer.parseInt(parts[1]),</span>
+<span class="fc" id="L155">                        Integer.parseInt(parts[2]));</span>
+<span class="nc" id="L156">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L157">                getLogger().error (&quot;Invalid nummeric RGB colour: &quot;+s, e);</span>
+<span class="nc" id="L158">                throw new ConfigurationException (e);</span>
+<span class="fc" id="L159">            }</span>
+        }
+<span class="fc" id="L161">        return c;</span>
+    }
+
+
+
+
+    /**
+     * Is a colour dark? (to check if FG colour needs be reversed)
+     */
+    public static boolean isDark(Color c) {
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (c == null) return false;</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        return Math.sqrt(0.241*c.getRed()*c.getRed()</span>
+<span class="nc" id="L173">                + 0.691*c.getBlue()*c.getBlue()</span>
+<span class="nc" id="L174">                + 0.068*c.getGreen()*c.getGreen()) &lt; 128;</span>
+        // Copied this formula from
+        // http://www.nbdtech.com/blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
+    }
+
+    public static Logger getLogger () {
+<span class="nc" id="L180">        return log;</span>
+    }
+
+    public static String lowerCaseFirst (String text) {
+<span class="nc" id="L184">        return text.substring(0, 1).toLowerCase() + text.substring(1);</span>
+    }
+
+    /**
+     * Open an input stream from a file, which may exist as a physical file or
+     * in a JAR file. The name must be valid for both options.
+     *
+     * @author Erik Vos
+     */
+    public static InputStream getStreamForFile(String fileName)
+    throws IOException {
+
+<span class="nc" id="L196">        File file = new File(fileName);</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        if (file.exists()) {</span>
+<span class="nc" id="L198">            return new FileInputStream(file);</span>
+        } else {
+<span class="nc" id="L200">            return null;</span>
+        }
+    }
+
+    public static boolean loadProperties(Properties properties, File file) {
+        try {
+<span class="nc" id="L206">            log.info(&quot;Loading properties from file &quot; + file);</span>
+<span class="nc" id="L207">            InputStream inFile = new FileInputStream(file);</span>
+<span class="nc" id="L208">            properties.load(inFile);</span>
+<span class="nc" id="L209">        } catch (Exception e) {</span>
+<span class="nc" id="L210">            log.error(e + &quot; whilst loading properties file &quot;</span>
+                               + file, e);
+<span class="nc" id="L212">            return false;</span>
+<span class="nc" id="L213">        }</span>
+<span class="nc" id="L214">        return true;</span>
+    }
+
+    public static boolean loadPropertiesFromResource(Properties properties, String resourcePath) {
+        try {
+<span class="fc" id="L219">            log.info(&quot;Loading properties from resource {}&quot;, resourcePath);</span>
+            InputStream inFile;
+<span class="fc" id="L221">                inFile = ConfigProfile.class.getClassLoader().getResourceAsStream(resourcePath);</span>
+<span class="fc" id="L222">            properties.load(inFile);</span>
+<span class="nc" id="L223">        } catch (Exception e) {</span>
+<span class="nc" id="L224">            log.error(&quot;Error while loading properties file from resource at {}&quot;, resourcePath, e);</span>
+<span class="nc" id="L225">            return false;</span>
+<span class="fc" id="L226">        }</span>
+<span class="fc" id="L227">        return true;</span>
+    }
+
+    public static boolean storeProperties(Properties properties, File file) {
+<span class="nc" id="L231">        boolean result = true;</span>
+        try {
+<span class="nc" id="L233">            properties.store(new FileOutputStream(file), &quot;Automatically generated, do not edit&quot;);</span>
+<span class="nc" id="L234">            log.info(&quot;Storing properties to file {}&quot;, file.getAbsolutePath());</span>
+<span class="nc" id="L235">        } catch (IOException e) {</span>
+<span class="nc" id="L236">            log.error(&quot;Error while storing properties file {}&quot;, file.getAbsolutePath(), e);</span>
+<span class="nc" id="L237">            result = false;</span>
+<span class="nc" id="L238">        }</span>
+<span class="nc" id="L239">        return result;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

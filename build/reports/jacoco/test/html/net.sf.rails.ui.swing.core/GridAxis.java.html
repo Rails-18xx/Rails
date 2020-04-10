@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GridAxis.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.core</a> &gt; <span class="el_source">GridAxis.java</span></div><h1>GridAxis.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.core;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+
+import net.sf.rails.game.state.Item;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
+/**
+ * GridAxis is used as the set of column or rows coordinates for a table
+ */
+public class GridAxis implements Iterable&lt;GridCoordinate&gt; {
+
+    private static final String PRECON_COORD_CONTAINED = &quot;Coordinate %s already contained in GridAxis&quot;;
+    private static final String PRECON_COORD_MISSING = &quot;Coordinate %s is missing in GridAxis, but was expected&quot;;
+    
+    private final ImmutableList&lt;GridCoordinate&gt; coordinates;
+    
+<span class="nc" id="L22">    private GridAxis(Iterable&lt;GridCoordinate&gt; axis) {</span>
+<span class="nc" id="L23">        this.coordinates = ImmutableList.copyOf(axis);</span>
+<span class="nc" id="L24">    }</span>
+    
+    public ImmutableList&lt;GridCoordinate&gt; getAxis() {
+<span class="nc" id="L27">        return coordinates;</span>
+    }
+    
+    public int size() {
+<span class="nc" id="L31">        return coordinates.size();</span>
+    }
+    
+    @Override
+    public Iterator&lt;GridCoordinate&gt; iterator() {
+<span class="nc" id="L36">        return coordinates.iterator();</span>
+    }
+
+    public static Builder builder() {
+<span class="nc" id="L40">        return new Builder();</span>
+    }
+    
+    public static class Builder {
+        
+<span class="nc" id="L45">        private final LinkedList&lt;GridCoordinate&gt; axis = Lists.newLinkedList();</span>
+        
+<span class="nc" id="L47">        private Builder() {}</span>
+    
+        public Builder add(GridCoordinate coordinate) {
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            Preconditions.checkArgument(!axis.contains(coordinate), PRECON_COORD_CONTAINED, coordinate);</span>
+<span class="nc" id="L51">            axis.addLast(coordinate);</span>
+<span class="nc" id="L52">            return this;</span>
+        }
+        
+        public Builder add(String id) {
+<span class="nc" id="L56">            axis.add(GridCoordinate.from(id));</span>
+<span class="nc" id="L57">            return this;</span>
+        }
+        
+        public Builder add(Enum&lt;?&gt; e) {
+<span class="nc" id="L61">            axis.add(GridCoordinate.from(e));</span>
+<span class="nc" id="L62">            return this;</span>
+        }
+        
+        public Builder add(Item item) {
+<span class="nc" id="L66">            axis.add(GridCoordinate.from(item));</span>
+<span class="nc" id="L67">            return this;</span>
+        }
+        
+        public &lt;T extends Item&gt; Builder add(Iterable&lt;T&gt; items, Class&lt;T&gt; clazz) {
+<span class="nc" id="L71">            axis.add(GridMultiCoordinate.from(items, clazz));</span>
+<span class="nc" id="L72">            return this;</span>
+        }
+
+        public Builder addFirst(GridCoordinate coordinate) {
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            Preconditions.checkArgument(!axis.contains(coordinate), PRECON_COORD_CONTAINED, coordinate);</span>
+<span class="nc" id="L77">            axis.addFirst(coordinate);</span>
+<span class="nc" id="L78">            return this;</span>
+        }
+
+        public Builder addBefore(GridCoordinate coordinate, GridCoordinate before) {
+<span class="nc bnc" id="L82" title="All 2 branches missed.">            Preconditions.checkArgument(!axis.contains(coordinate), PRECON_COORD_CONTAINED, coordinate);</span>
+<span class="nc" id="L83">            Preconditions.checkArgument(axis.contains(before), PRECON_COORD_MISSING, before);</span>
+<span class="nc" id="L84">            int index = axis.indexOf(before);</span>
+<span class="nc" id="L85">            axis.add(index, coordinate);</span>
+<span class="nc" id="L86">            return this;</span>
+        }
+
+        public Builder addAfter(GridCoordinate coordinate, GridCoordinate after) {
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            Preconditions.checkArgument(!axis.contains(coordinate), PRECON_COORD_CONTAINED, coordinate);</span>
+<span class="nc" id="L91">            Preconditions.checkArgument(axis.contains(after), PRECON_COORD_MISSING, after);</span>
+<span class="nc" id="L92">            int index = axis.indexOf(after);</span>
+<span class="nc" id="L93">            axis.add(index + 1, coordinate);</span>
+<span class="nc" id="L94">            return this;</span>
+        }
+        
+        public boolean contains(GridCoordinate coordinate) {
+<span class="nc" id="L98">            return axis.contains(coordinate);</span>
+        }
+        
+        public GridAxis build() {
+<span class="nc" id="L102">            return new GridAxis(axis);</span>
+        }
+        
+    }
+
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

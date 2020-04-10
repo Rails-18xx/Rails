@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConfigProfile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.common</a> &gt; <span class="el_source">ConfigProfile.java</span></div><h1>ConfigProfile.java</h1><pre class="source lang-java linenums">package net.sf.rails.common;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+
+import net.sf.rails.util.SystemOS;
+import net.sf.rails.util.Util;
+
+/**
+ * A profile storing configuration settings
+ */
+
+public final class ConfigProfile implements Comparable&lt;ConfigProfile&gt; {
+
+    // available profile types
+<span class="fc" id="L26">    public enum Type {SYSTEM(0), PREDEFINED(1), USER(2);</span>
+<span class="fc" id="L27">        private Integer sort; Type(int sort) {this.sort = sort;}</span>
+    };
+
+    // Filename extension of profiles
+    public static final String PROFILE_EXTENSION = &quot;.rails_profile&quot;;
+    private static final String PREDEFINED_EXTENSION = &quot;.predefined&quot;;
+
+    // Locations
+    // user inside configuration folder
+    private static final String PROFILE_FOLDER = &quot;profiles/&quot;;
+    // predefined inside jar
+    private static final String PREDEFINED_FOLDER = &quot;data/profiles/&quot;;
+
+    // predefined default profiles
+    private static final String ROOT_PROFILE = &quot;root&quot;;
+    private static final String TEST_PROFILE = &quot;test&quot;;
+
+    // the profile selected at the start ...
+    private static final String STANDARD_PROFILE = &quot;pbem&quot;;
+    // ... unless a cli option has been set
+    private static final String CLI_AND_RECENT_OPTION =&quot;profile&quot;;
+
+
+    // file that stores the list of predefined profiles
+    private static final String LIST_OF_PROFILES = &quot;LIST_OF_PROFILES&quot;;
+
+    // property key of predefined profile in user profile
+    private static final String PARENT_KEY = &quot;profile.parent&quot;;
+    private static final String FINAL_KEY = &quot;profile.final&quot;;
+
+    // map of all profiles
+<span class="fc" id="L58">    private static final Map&lt;String, ConfigProfile&gt; profiles = new HashMap&lt;String, ConfigProfile&gt;();</span>
+
+    // root profile
+    private static ConfigProfile root;
+
+    // profile type
+    private final Type type;
+
+    // profile name
+    private final String name;
+
+    // profile properties
+<span class="fc" id="L70">    private final Properties properties = new Properties();</span>
+
+    // profile loaded
+<span class="fc" id="L73">    private boolean loaded = false;</span>
+
+    // profile parent
+<span class="fc" id="L76">    private ConfigProfile parent = null;</span>
+
+
+    static void loadRoot() {
+<span class="fc" id="L80">        root = new ConfigProfile(Type.SYSTEM, ROOT_PROFILE);</span>
+<span class="fc" id="L81">        root.load();</span>
+<span class="fc" id="L82">    }</span>
+
+    static ConfigProfile loadTest() {
+<span class="fc" id="L85">        ConfigProfile test =  new ConfigProfile(Type.SYSTEM, TEST_PROFILE);</span>
+<span class="fc" id="L86">        test.load();</span>
+<span class="fc" id="L87">        return test;</span>
+    }
+
+    static void readPredefined() {
+<span class="nc" id="L91">        Properties list = new Properties();</span>
+<span class="nc" id="L92">        String filePath = PREDEFINED_FOLDER + LIST_OF_PROFILES;</span>
+<span class="nc" id="L93">        Util.loadPropertiesFromResource(list, filePath);</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        for (String name:list.stringPropertyNames()) {</span>
+<span class="nc" id="L95">            new ConfigProfile(Type.PREDEFINED, name);</span>
+<span class="nc" id="L96">        }</span>
+<span class="nc" id="L97">    }</span>
+
+    static void readUser() {
+<span class="nc" id="L100">        File userFolder = SystemOS.get().getConfigurationFolder(PROFILE_FOLDER, false);</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (userFolder == null) return;</span>
+<span class="nc" id="L102">        FilenameFilter filter = new SuffixFileFilter(PROFILE_EXTENSION, IOCase.SYSTEM);</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        for (String fileName:userFolder.list(filter)) {</span>
+<span class="nc" id="L104">            new ConfigProfile(Type.USER, FilenameUtils.getBaseName(fileName));</span>
+        }
+<span class="nc" id="L106">    }</span>
+
+    static ConfigProfile getStartProfile() {
+        // first checks cli
+<span class="nc" id="L110">        ConfigProfile profile = getProfile(System.getProperty(CLI_AND_RECENT_OPTION));</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if (profile != null) {</span>
+<span class="nc" id="L112">            return profile;</span>
+        }
+        // second check recent
+<span class="nc" id="L115">        profile = getProfile(Config.getRecent(CLI_AND_RECENT_OPTION));</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (profile != null) {</span>
+<span class="nc" id="L117">            return profile;</span>
+        }
+        // third return standard profile
+<span class="nc" id="L120">        profile = getProfile(STANDARD_PROFILE);</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (profile != null) {</span>
+<span class="nc" id="L122">            return profile;</span>
+        }
+        // last return root
+<span class="nc" id="L125">        return root;</span>
+    }
+
+    static ConfigProfile getProfile(String name) {
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        if (name == null) return null;</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (name.equals(ROOT_PROFILE)) return root;</span>
+<span class="nc" id="L131">        return profiles.get(name);</span>
+    }
+
+    static Collection&lt;ConfigProfile&gt;  getProfiles() {
+<span class="nc" id="L135">        return profiles.values();</span>
+    }
+
+<span class="fc" id="L138">    private ConfigProfile(Type type, String name) {</span>
+<span class="fc" id="L139">        this.type = type;</span>
+<span class="fc" id="L140">        this.name = name;</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        if (type != Type.SYSTEM) {</span>
+<span class="nc" id="L142">            profiles.put(name, this);</span>
+        }
+<span class="fc" id="L144">    }</span>
+
+    public Type getType() {
+<span class="nc" id="L147">        return type;</span>
+    }
+
+    public String getName() {
+<span class="fc" id="L151">        return name;</span>
+    }
+
+    boolean isLoaded() {
+<span class="fc" id="L155">        return loaded;</span>
+    }
+
+    boolean isFinal() {
+<span class="nc" id="L159">        ensureLoad();</span>
+
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (Util.hasValue(properties.getProperty(FINAL_KEY))) {</span>
+<span class="nc" id="L162">            return Util.parseBoolean(properties.getProperty(FINAL_KEY));</span>
+        }
+<span class="nc" id="L164">        return false;</span>
+    }
+
+    ConfigProfile setParent(ConfigProfile parent) {
+<span class="fc" id="L168">        ensureLoad();</span>
+<span class="fc" id="L169">        this.parent = parent;</span>
+<span class="fc" id="L170">        properties.setProperty(PARENT_KEY, parent.getName());</span>
+<span class="fc" id="L171">        return this;</span>
+    }
+
+    private ConfigProfile setParent(String name) {
+<span class="nc" id="L175">        return setParent(getProfile(name));</span>
+    }
+
+    ConfigProfile getParent() {
+<span class="nc" id="L179">        ensureLoad();</span>
+<span class="nc" id="L180">        return parent;</span>
+    }
+
+    String getProperty(String key) {
+<span class="fc" id="L184">        ensureLoad();</span>
+<span class="fc bfc" id="L185" title="All 4 branches covered.">        if (this == parent || properties.containsKey(key)) {</span>
+<span class="fc" id="L186">            return properties.getProperty(key);</span>
+        } else {
+<span class="fc" id="L188">            return parent.getProperty(key);</span>
+        }
+    }
+
+    void setProperty(String key, String value) {
+<span class="nc" id="L193">        ensureLoad();</span>
+<span class="nc bnc" id="L194" title="All 4 branches missed.">        if (parent.getProperty(key) != null &amp;&amp; parent.getProperty(key).equals(value)) {</span>
+<span class="nc" id="L195">            properties.remove(key);</span>
+        } else {
+<span class="nc" id="L197">            properties.setProperty(key, value);</span>
+        }
+<span class="nc" id="L199">    }</span>
+
+    void makeActive(){
+<span class="nc" id="L202">        ensureLoad();</span>
+        // and store it to recent
+<span class="nc" id="L204">        Config.storeRecent(CLI_AND_RECENT_OPTION, getName());</span>
+<span class="nc" id="L205">    }</span>
+
+    ConfigProfile deriveUserProfile(String name) {
+<span class="nc" id="L208">        ensureLoad();</span>
+
+<span class="nc" id="L210">        ConfigProfile newProfile = new ConfigProfile(Type.USER, name);</span>
+<span class="nc" id="L211">        newProfile.loaded = true; // the new profile is assumed to be loaded</span>
+
+        ConfigProfile reference;
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (isFinal()) {</span>
+            // set reference for final to the own parent
+<span class="nc" id="L216">            reference = parent;</span>
+        } else {
+            // otherwise to this
+<span class="nc" id="L219">            reference = this;</span>
+        }
+<span class="nc" id="L221">        newProfile.setParent(reference);</span>
+
+        // copy properties
+<span class="nc bnc" id="L224" title="All 2 branches missed.">        for (Object k:properties.keySet()){</span>
+<span class="nc" id="L225">            String key = (String)k;</span>
+<span class="nc bnc" id="L226" title="All 4 branches missed.">            if (!key.equals(PARENT_KEY) &amp;&amp; !key.equals(FINAL_KEY)) {</span>
+<span class="nc" id="L227">                newProfile.setProperty(key, properties.getProperty(key));</span>
+            }
+<span class="nc" id="L229">        }</span>
+
+<span class="nc" id="L231">        return newProfile;</span>
+    }
+
+    private void ensureLoad() {
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">        if ( !loaded ) {</span>
+<span class="nc" id="L236">            load();</span>
+        }
+<span class="fc" id="L238">    }</span>
+
+    boolean load() {
+        // loaded is set independent of success
+<span class="fc" id="L242">        loaded = true;</span>
+        // ... the same for clearing the current selection
+<span class="fc" id="L244">        properties.clear();</span>
+
+        // loading
+        boolean result;
+<span class="pc bpc" id="L248" title="1 of 2 branches missed.">        if (type == Type.USER) {</span>
+<span class="nc" id="L249">            result = loadUser();</span>
+        } else {
+<span class="fc" id="L251">            result = loadResource();</span>
+        }
+
+        // post-load processing
+        // set parent according to properties or root
+<span class="pc bpc" id="L256" title="1 of 2 branches missed.">        if (Util.hasValue(properties.getProperty(PARENT_KEY))) {</span>
+<span class="nc" id="L257">            setParent(properties.getProperty(PARENT_KEY));</span>
+        }
+
+<span class="pc bpc" id="L260" title="1 of 2 branches missed.">        if (parent == null) {</span>
+<span class="fc" id="L261">            setParent(root);</span>
+        }
+
+        // set save directory to the working directory for predefined values
+        // TODO: This is a hack as workaround to be replaced in the future
+<span class="pc bpc" id="L266" title="3 of 4 branches missed.">        if (type == Type.PREDEFINED &amp;&amp; !Util.hasValue(properties.getProperty(&quot;save.directory&quot;))) {</span>
+<span class="nc" id="L267">            properties.put(&quot;save.directory&quot;, System.getProperty(&quot;user.dir&quot;));</span>
+        }
+
+        // check if parent has been loaded, otherwise load parent
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">        if (!parent.isLoaded()) {</span>
+<span class="nc bnc" id="L272" title="All 4 branches missed.">            result = result &amp;&amp; parent.load();</span>
+        }
+
+<span class="fc" id="L275">        return result;</span>
+    }
+
+    private boolean loadUser() {
+<span class="nc" id="L279">        File folder = SystemOS.get().getConfigurationFolder(PROFILE_FOLDER, false);</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">        if (folder == null) {</span>
+<span class="nc" id="L281">            return false;</span>
+        } else {
+<span class="nc" id="L283">            File profile = new File(folder, name + PROFILE_EXTENSION);</span>
+<span class="nc" id="L284">            return Util.loadProperties(properties, profile);</span>
+        }
+    }
+
+    private boolean loadResource(){
+<span class="fc" id="L289">        String filePath = null;</span>
+<span class="pc bpc" id="L290" title="2 of 3 branches missed.">        switch(type) {</span>
+        case SYSTEM:
+<span class="fc" id="L292">            filePath = PREDEFINED_FOLDER + name;</span>
+<span class="fc" id="L293">            break;</span>
+        case PREDEFINED:
+<span class="nc" id="L295">            filePath = PREDEFINED_FOLDER + name + PREDEFINED_EXTENSION ;</span>
+            break;
+        }
+<span class="fc" id="L298">        return Util.loadPropertiesFromResource(properties, filePath);</span>
+    }
+
+    private File getFile() {
+<span class="nc" id="L302">        File folder = SystemOS.get().getConfigurationFolder(PROFILE_FOLDER, true);</span>
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        if (folder == null) {</span>
+<span class="nc" id="L304">            return null;</span>
+        } else {
+<span class="nc" id="L306">            return new File(folder, name + PROFILE_EXTENSION);</span>
+        }
+    }
+
+    /**
+     * stores profile
+     * @return true if save was successful
+     */
+    boolean store() {
+<span class="nc bnc" id="L315" title="All 2 branches missed.">        if (type != Type.USER) return false;</span>
+
+<span class="nc" id="L317">        File file = getFile();</span>
+<span class="nc bnc" id="L318" title="All 2 branches missed.">        if (file != null) {</span>
+<span class="nc" id="L319">            return Util.storeProperties(properties, file);</span>
+        } else {
+<span class="nc" id="L321">            return false;</span>
+        }
+    }
+
+    private List&lt;ConfigProfile&gt; getChildren() {
+<span class="nc" id="L326">        List&lt;ConfigProfile&gt; children = new ArrayList&lt;ConfigProfile&gt;();</span>
+<span class="nc bnc" id="L327" title="All 2 branches missed.">        for (ConfigProfile profile:profiles.values()) {</span>
+<span class="nc bnc" id="L328" title="All 2 branches missed.">            if (profile.getParent() == this) {</span>
+<span class="nc" id="L329">                children.add(profile);</span>
+            }
+<span class="nc" id="L331">        }</span>
+<span class="nc" id="L332">        return children;</span>
+    }
+
+    /**
+     * delete profile (including deleting the saved file and removing from the map of profiles)
+     * @return true if deletion was successful
+     */
+    boolean delete() {
+        // cannot delete parents
+<span class="nc bnc" id="L341" title="All 2 branches missed.">        if (type != Type.USER) return false;</span>
+
+        // delete profile file
+        boolean result;
+<span class="nc" id="L345">        File file = getFile();</span>
+<span class="nc bnc" id="L346" title="All 2 branches missed.">        if (file != null) {</span>
+<span class="nc bnc" id="L347" title="All 2 branches missed.">            if (file.delete()) {</span>
+<span class="nc" id="L348">                profiles.remove(this.name);</span>
+<span class="nc" id="L349">                result = true;</span>
+            } else {
+<span class="nc" id="L351">                result = false;</span>
+            }
+        } else {
+<span class="nc" id="L354">            result = false;</span>
+        }
+
+
+<span class="nc bnc" id="L358" title="All 2 branches missed.">        if (result) {</span>
+            // and reassign and save children
+<span class="nc bnc" id="L360" title="All 2 branches missed.">            for (ConfigProfile child:getChildren()) {</span>
+<span class="nc" id="L361">                child.setParent(parent);</span>
+                // and transfer (directly stored) properties
+<span class="nc bnc" id="L363" title="All 2 branches missed.">                for (Object key:properties.keySet()) {</span>
+<span class="nc" id="L364">                    child.setProperty((String)key, (String)properties.get(key));</span>
+<span class="nc" id="L365">                }</span>
+<span class="nc" id="L366">                child.store();</span>
+<span class="nc" id="L367">            }</span>
+        }
+<span class="nc" id="L369">        return result;</span>
+
+    }
+
+    private int compare(ConfigProfile a, ConfigProfile b) {
+<span class="nc bnc" id="L374" title="All 2 branches missed.">        if (a.type.sort != b.type.sort) {</span>
+<span class="nc" id="L375">            return a.type.sort.compareTo(b.type.sort);</span>
+        } else {
+<span class="nc" id="L377">            return a.getName().compareTo(b.getName());</span>
+        }
+    }
+
+    /**
+     * Compares first on Type.sort than on name
+     */
+    public int compareTo(ConfigProfile other) {
+<span class="nc" id="L385">        return compare(this, other);</span>
+    }
+}
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

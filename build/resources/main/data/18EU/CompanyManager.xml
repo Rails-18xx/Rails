@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Minor" class="net.sf.rails.game.PublicCompany" fgColour="000000"
+		bgColour="CCCCCC">
+		<ShareUnit percentage="100"/>
+		<Certificate type="President" shares="1"/>
+		<StockPrice market="no"/>
+		<Payout split="always"/>
+		<!--TileLays>
+			<Number colour="yellow" phase="2" number="2" occurrences="1"/>
+			<Number colour="green" phase="3,4,5,6,8" number="0"/>
+			<Number colour="brown" phase="5,6,8" number="0"/>
+			<Number colour="grey" phase="8" number="0"/>
+		</TileLays-->
+		<BaseTokens>
+			<HomeBase lay="whenStarted"/>
+		</BaseTokens>
+		<Trains limit="2,1" mandatory="no"/>
+		<InitialTrain type="2" cost="0" tradeable="yes"/>
+	</CompanyType>
+	<CompanyType name="Major" class="net.sf.rails.game.PublicCompany"
+		capitalisation="incremental" restartable="yes">
+		<Float percentage="50"/>
+		<TreasuryCanHoldOwnShares maxPerc="80"/>
+		<HomeBase lay="whenStarted"/>
+		<StockPrice par="no"/>
+		<ShareUnit percentage="10"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Capitalisation type="incremental"/>
+		<BaseTokens>
+			<BuyCost initialTokenCost="100"/>
+			<HomeBase lay="whenStarted"/>
+		</BaseTokens>
+		<Payout split="allowed" mustExceedPriceToMove="yes"/>
+		<Trains limit="4,3,2"/>
+		<TradeShares mustHaveOperated="yes"/>
+	</CompanyType>
+	
+	<Company name="1" longname="Chemin de Fer du Nord" type="Minor">
+		<Home hex="J1" city="1"/>
+	</Company>
+	<Company name="2" longname="État Belge" type="Minor">
+		<Home hex="H3"/>
+	</Company>
+	<Company name="3" longname="Paris-Lyon-Méditerranée" type="Minor">
+		<Home hex="J1" city="2"/>
+	</Company>
+	<Company name="4" longname="Leipzig-Dresdner-Bahn" type="Minor">
+		<Home hex="G10"/>
+	</Company>
+	<Company name="5" longname="Ferrovia Adriatica" type="Minor">
+		<Home hex="S8"/>
+	</Company>
+	<Company name="6" longname="Kaiser-Ferdinand-Nordbahn" type="Minor">
+		<Home hex="N11" city="1"/>
+	</Company>
+	<Company name="7" longname="Berlin-Potsdamer-Bahn" type="Minor">
+		<Home hex="E10" city="2"/>
+	</Company>
+	<Company name="8" longname="Ungarische Staatsbahn" type="Minor">
+		<Home hex="P13"/>
+	</Company>
+	<Company name="9" longname="Berlin-Stettiner-Bahn" type="Minor">
+		<Home hex="E10" city="1"/>
+	</Company>
+	<Company name="10" longname="Strade Ferrate Alta Italia" type="Minor">
+		<Home hex="R5"/>
+	</Company>
+	<Company name="11" longname="Südbahn" type="Minor">
+		<Home hex="N11" city="2"/>
+	</Company>
+	<Company name="12" longname="Hollandsche Maatschappij" type="Minor">
+		<Home hex="C4"/>
+	</Company>
+	<Company name="13" longname="Ludwigsbahn" type="Minor">
+		<Home hex="L7"/>
+	</Company>
+	<Company name="14" longname="Ligne Strasbourg-Bâle" type="Minor">
+		<Home hex="M4"/>
+	</Company>
+	<Company name="15" longname="Grand Central" type="Minor">
+		<Home hex="Q2"/>
+	</Company>
+	
+	<Company name="SNCB" longname="Société Nationale des Chemins de Fer Belges "
+		type="Major" tokens="5" fgColour="000000" bgColour="DDAA00">
+	</Company>
+	<Company name="NS" longname="Nederlandsche Spoorwegen" type="Major" tokens="5"
+		fgColour="0000FF" bgColour="FFDD00">
+	</Company>
+	<Company name="KBS" longname="Königlich-Bayerische Staatseisenbahn"
+		type="Major" tokens="5" fgColour="000000" bgColour="C0E0FF">
+	</Company>
+	<Company name="KPEV" longname="Königlich-Preussische Eisenbahn-Verwaltung"
+		type="Major" tokens="5" fgColour="000000" bgColour="2255FF">
+	</Company>
+	<Company name="KKÖB"
+		longname="Kaiserlich-Königliche Österreichische Staatsbahn" type="Major"
+		tokens="5" fgColour="000000" bgColour="FFFF00">
+	</Company>
+	<Company name="FS" longname="Ferrovie dello Stato" type="Major" tokens="5"
+		fgColour="FFFFFF" bgColour="00AA00">
+	</Company>
+	<Company name="SNCF" longname="Société Nationale des Chemins de Fer Français"
+		type="Major" tokens="5" fgColour="FFFFFF" bgColour="FF0000">
+	</Company>
+	<Company name="DR" longname="Deutsche Reichsbahn" type="Major" tokens="5"
+		fgColour="FFFFFF" bgColour="000000">
+	</Company>
+	
+	<StartPacket roundClass="net.sf.rails.game.specific._18EU.StartRound_18EU">
+		<Bidding initial="0" minimum="5" increment="5"/>
+		<Item name="1" type="Minor" basePrice="100"/>
+		<Item name="2" type="Minor" basePrice="100"/>
+		<Item name="3" type="Minor" basePrice="100"/>
+		<Item name="4" type="Minor" basePrice="100"/>
+		<Item name="5" type="Minor" basePrice="100"/>
+		<Item name="6" type="Minor" basePrice="100"/>
+		<Item name="7" type="Minor" basePrice="100"/>
+		<Item name="8" type="Minor" basePrice="100"/>
+		<Item name="9" type="Minor" basePrice="100"/>
+		<Item name="10" type="Minor" basePrice="100"/>
+		<Item name="11" type="Minor" basePrice="100"/>
+		<Item name="12" type="Minor" basePrice="100"/>
+		<Item name="13" type="Minor" basePrice="100"/>
+		<Item name="14" type="Minor" basePrice="100"/>
+		<Item name="15" type="Minor" basePrice="100"/>
+	</StartPacket>
+</CompanyManager>

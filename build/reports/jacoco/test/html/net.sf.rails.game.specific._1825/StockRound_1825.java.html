@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StockRound_1825.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1825</a> &gt; <span class="el_source">StockRound_1825.java</span></div><h1>StockRound_1825.java</h1><pre class="source lang-java linenums">/**
+ * This class implements the 1835 rules for making new companies
+ * being available in the IPO after buying shares of another company.
+ */
+package net.sf.rails.game.specific._1825;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import rails.game.action.SellShares;
+import net.sf.rails.game.*;
+import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.game.model.PortfolioModel;
+
+
+public class StockRound_1825 extends StockRound {
+    
+<span class="nc" id="L18">    protected int[] priceBands = {100,90,82,76,71,67};</span>
+<span class="nc" id="L19">    private List&lt;PublicCompany&gt; lPublicCompanies = companyManager.getAllPublicCompanies();</span>
+
+    /**
+     * Constructed via Configure
+     */
+    public StockRound_1825 (GameManager parent, String id) {
+<span class="nc" id="L25">        super(parent, id);</span>
+<span class="nc" id="L26">    }</span>
+    
+    protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
+        // Sales do not affect share price, do nothing
+<span class="nc" id="L30">    }</span>
+    
+    /**
+     * In 1825, whenever a company is sold out, the block of companies with the next lowest price become available.
+     *
+     * Hopefully this logic is generic enough to withstand any combination of units for future implementation
+     *
+     * @param boughtfrom The portfolio from which a certificate has been bought.
+     * @param company The company of which a share has been traded.
+     */
+    @Override
+    protected void gameSpecificChecks (PortfolioModel boughtFrom, PublicCompany company) {
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (boughtFrom != ipo) return;</span>
+
+<span class="nc" id="L44">        int sharesInIPO = ipo.getShare(company);</span>
+
+        // Check for group releases
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        if (sharesInIPO == 0) {</span>
+            //Need to release the next block of companies
+            
+            //First find out what price band we were just in
+            //then find out what the next price band is
+            //then cycle through companies to find ones at that price
+            //then set them buyable
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            for (int i = 0; i &lt; priceBands.length; i++) {</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">                if (priceBands[i] == company.getParPriceModel().getPrice().getPrice()) {</span>
+                    //Found the price band we were in
+                    //We had better break out now if it was the last price band or the next loop
+                    //will run infinitely
+<span class="nc bnc" id="L59" title="All 2 branches missed.">                    if (priceBands[i] == priceBands[priceBands.length - 1]) return;</span>
+<span class="nc" id="L60">                    List&lt;PublicCompany&gt; lCompaniesToRelease = new ArrayList&lt;PublicCompany&gt;();</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">                    while (lCompaniesToRelease.isEmpty()) {</span>
+                        //while loop needed in case we have no corps at the next valid price band
+<span class="nc bnc" id="L63" title="All 2 branches missed.">                        for (int k = 0; k &lt; companyManager.getAllPublicCompanies().size(); k++){</span>
+                            //for each public company
+<span class="nc bnc" id="L65" title="All 2 branches missed.">                            if (lPublicCompanies.get(k).getIPOPrice() == priceBands[i+1]){</span>
+                                //this companies IPO matches the next price band value, add it to the list
+<span class="nc" id="L67">                                lCompaniesToRelease.add(lPublicCompanies.get(k));</span>
+                            }
+                        }
+                        //If we found corps the loop won't repeat, if we didn't we need the next price band
+<span class="nc" id="L71">                        i++;</span>
+                    }
+                    //We should have found some companies to release now, so do that
+<span class="nc bnc" id="L74" title="All 2 branches missed.">                    for (int j = 0; j &lt; lCompaniesToRelease.size(); j++) {</span>
+<span class="nc" id="L75">                        releaseCompanyShares(lCompaniesToRelease.get(j));</span>
+<span class="nc" id="L76">                        lCompaniesToRelease.get(j).setBuyable(true);</span>
+                    }
+                }
+            }
+        }
+
+<span class="nc" id="L82">    }</span>
+
+	@Override
+	protected void setPriority(String string) {
+<span class="nc bnc" id="L86" title="All 2 branches missed.">		if (string.equals(&quot;BuyCert&quot;)) {</span>
+<span class="nc" id="L87">			super.setPriority(string);</span>
+		}
+<span class="nc" id="L89">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

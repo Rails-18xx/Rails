@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessagePanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing</a> &gt; <span class="el_source">MessagePanel.java</span></div><h1>MessagePanel.java</h1><pre class="source lang-java linenums">/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/MessagePanel.java,v 1.7 2010/01/05 20:54:05 evos Exp $*/
+package net.sf.rails.ui.swing;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
+public class MessagePanel extends JPanel {
+    private static final long serialVersionUID = 1L;
+
+    //the height of this panel (fixed because scroll bar is used)
+    public static final int DEFAULT_HEIGHT = 45;
+
+    //the height of this panel if details are open
+    public static final int FULL_HEIGHT = 90;
+    public static final int MIN_WIDTH = 100;
+    public static final int SCROLL_UNIT = 8;
+    public static final int MIN_MARGIN_FOR_FULL_HEIGHT = 8;
+
+    private JLabel message;
+    private JScrollPane parentSlider;
+
+    private String currentMessage;
+    private StringBuffer currentInformation;
+    private String currentDetails;
+    private boolean showDetails;
+
+<span class="nc" id="L33">    private Color background = new Color(225, 225, 225);</span>
+
+    public MessagePanel() {
+<span class="nc" id="L36">        super();</span>
+
+<span class="nc" id="L38">        setBackground(background);</span>
+<span class="nc" id="L39">        setBorder(new EmptyBorder(0,0,0,0));</span>
+
+        //add layout manager
+        //necessary for auto word-wrap when diminishing width
+<span class="nc" id="L43">        setLayout(new GridLayout(1,1));</span>
+
+<span class="nc" id="L45">        message = new JLabel(&quot;&quot;);</span>
+<span class="nc" id="L46">        message.setBackground(background);</span>
+<span class="nc" id="L47">        message.setVerticalAlignment(SwingConstants.CENTER);</span>
+<span class="nc" id="L48">        message.setHorizontalAlignment(SwingConstants.CENTER);</span>
+<span class="nc" id="L49">        message.setOpaque(true);</span>
+
+<span class="nc" id="L51">        add(message);</span>
+<span class="nc" id="L52">        message.setVisible(true);</span>
+<span class="nc" id="L53">        setVisible(true);</span>
+
+<span class="nc" id="L55">        this.addMouseListener(new MouseListener() {</span>
+            public void mouseClicked(MouseEvent arg0) {
+<span class="nc" id="L57">                toggleDetailsEnablement();</span>
+<span class="nc" id="L58">            }</span>
+
+<span class="nc" id="L60">            public void mouseEntered(MouseEvent arg0) {}</span>
+<span class="nc" id="L61">            public void mouseExited(MouseEvent arg0) {}</span>
+<span class="nc" id="L62">            public void mousePressed(MouseEvent arg0) {}</span>
+<span class="nc" id="L63">            public void mouseReleased(MouseEvent arg0) {}</span>
+        });
+
+<span class="nc" id="L66">    }</span>
+
+    /**
+     * @param parentSlider Component between OR window and the panel
+     */
+    public void setParentSlider(JScrollPane parentSlider) {
+<span class="nc" id="L72">        this.parentSlider = parentSlider;</span>
+<span class="nc" id="L73">        parentSlider.setBorder(BorderFactory.createLoweredBevelBorder());</span>
+<span class="nc" id="L74">        parentSlider.getVerticalScrollBar().setUnitIncrement(SCROLL_UNIT);</span>
+<span class="nc" id="L75">        parentSlider.setPreferredSize(new Dimension(MIN_WIDTH, DEFAULT_HEIGHT));</span>
+<span class="nc" id="L76">    }</span>
+
+    private void disableDetails() {
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        if (showDetails) {</span>
+<span class="nc" id="L80">            showDetails = false;</span>
+<span class="nc" id="L81">            parentSlider.setPreferredSize(new Dimension(MIN_WIDTH, DEFAULT_HEIGHT));</span>
+<span class="nc" id="L82">            ((JComponent)parentSlider.getParent()).revalidate();</span>
+        }
+<span class="nc" id="L84">    }</span>
+
+    private void enableDetails() {
+<span class="nc bnc" id="L87" title="All 4 branches missed.">        if (!showDetails &amp;&amp; currentDetails != null) {</span>
+<span class="nc" id="L88">            showDetails = true;</span>
+<span class="nc" id="L89">            parentSlider.setPreferredSize(new Dimension(MIN_WIDTH, FULL_HEIGHT));</span>
+<span class="nc" id="L90">            ((JComponent)parentSlider.getParent()).revalidate();</span>
+        }
+<span class="nc" id="L92">    }</span>
+
+    private void toggleDetailsEnablement() {
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (showDetails) {</span>
+<span class="nc" id="L96">            disableDetails();</span>
+        } else {
+<span class="nc" id="L98">            enableDetails();</span>
+        }
+<span class="nc" id="L100">        updateMessageText();</span>
+<span class="nc" id="L101">    }</span>
+
+    private void updateMessageText() {
+<span class="nc" id="L104">        StringBuilder messageText = new StringBuilder() ;</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (currentMessage != null) {</span>
+<span class="nc" id="L106">            messageText.append(currentMessage);</span>
+        }
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (currentInformation != null) {</span>
+<span class="nc" id="L109">            messageText.append(&quot;&lt;span style='color:green'&gt;&quot;);</span>
+<span class="nc" id="L110">            messageText.append(currentInformation);</span>
+<span class="nc" id="L111">            messageText.append(&quot;&lt;/span&gt;&quot;);</span>
+        }
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (showDetails) {</span>
+<span class="nc" id="L114">            messageText.append(&quot;&lt;span style='color:blue; font-size:80%'&gt;&quot;);</span>
+<span class="nc" id="L115">            messageText.append(currentDetails);</span>
+<span class="nc" id="L116">            messageText.append(&quot;&lt;/span&gt;&quot;);</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        } else if (currentDetails != null) {</span>
+<span class="nc" id="L118">            messageText.append(&quot;&lt;span style='color:blue; font-size:80%'&gt;&quot;);</span>
+<span class="nc" id="L119">            messageText.append(&quot;&amp;nbsp; Click for more details&quot;);</span>
+<span class="nc" id="L120">            messageText.append(&quot;&lt;/span&gt;&quot;);</span>
+        }
+        // display
+<span class="nc" id="L123">        String text = messageText.toString();</span>
+<span class="nc" id="L124">        message.setText(&quot;&lt;html&gt;&lt;center&gt;&quot; + text + &quot;&lt;/center&gt;&lt;/html&gt;&quot;);</span>
+
+<span class="nc" id="L126">    }</span>
+
+    public void setMessage(String messageText) {
+<span class="nc" id="L129">        currentMessage = messageText;</span>
+<span class="nc" id="L130">        currentInformation = null;</span>
+<span class="nc" id="L131">        currentDetails = null;</span>
+<span class="nc" id="L132">        disableDetails();</span>
+<span class="nc" id="L133">        updateMessageText();</span>
+<span class="nc" id="L134">    }</span>
+
+    public void setInformation(String infoText) {
+<span class="nc" id="L137">        currentInformation = new StringBuffer();</span>
+<span class="nc" id="L138">        currentInformation.append(&quot;&lt;BR&gt;&quot; + infoText);</span>
+<span class="nc" id="L139">        updateMessageText();</span>
+<span class="nc" id="L140">    }</span>
+
+    public void setDetail(String detailText) {
+<span class="nc" id="L143">        currentDetails = &quot;&lt;BR&gt;&quot; + detailText;</span>
+<span class="nc" id="L144">        updateMessageText();</span>
+<span class="nc" id="L145">    }</span>
+
+    @Override
+    public Dimension getPreferredSize() {
+<span class="nc" id="L149">        Dimension nativeSize = super.getPreferredSize();</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (parentSlider == null) return nativeSize;</span>
+<span class="nc" id="L151">        int width = parentSlider.getSize().width</span>
+<span class="nc" id="L152">                - parentSlider.getVerticalScrollBar().getWidth()</span>
+                - 5;
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        if (width &lt;= 0) width = 1;</span>
+<span class="nc" id="L155">        return new Dimension (width , nativeSize.height);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

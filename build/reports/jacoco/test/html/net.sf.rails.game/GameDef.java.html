@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameDef.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">GameDef.java</span></div><h1>GameDef.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import net.sf.rails.game.financial.StockRound;
+
+/**
+ * This class will hold parameter identifiers for use in the game engine only.
+ * See rails.common.Defs for parameters used in the GUI/engine communication.
+ * @author VosE
+ *
+ */
+<span class="nc" id="L11">public class GameDef {</span>
+
+<span class="fc" id="L13">    public enum Parm {</span>
+
+<span class="fc" id="L15">        NO_SALE_IN_FIRST_SR (false),</span>
+<span class="fc" id="L16">        NO_SALE_IF_NOT_OPERATED (false),</span>
+<span class="fc" id="L17">        STOCK_ROUND_SEQUENCE(StockRound.SELL_BUY_SELL),</span>
+<span class="fc" id="L18">        PLAYER_SHARE_LIMIT (60),</span>
+<span class="fc" id="L19">        POOL_SHARE_LIMIT(50),</span>
+<span class="fc" id="L20">        TREASURY_SHARE_LIMIT(50),</span>
+<span class="fc" id="L21">        FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS(false),</span>
+<span class="fc" id="L22">        SKIP_FIRST_STOCK_ROUND(false),</span>
+<span class="fc" id="L23">        NO_SALE_OF_JUST_BOUGHT_CERT(false),</span>
+<span class="fc" id="L24">        REMOVE_TRAIN_BEFORE_SR(false),</span>
+<span class="fc" id="L25">        EMERGENCY_MUST_BUY_CHEAPEST_TRAIN (true),</span>
+<span class="fc" id="L26">        EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN (false),</span>
+<span class="fc" id="L27">        EMERGENCY_MAY_BUY_FROM_COMPANY (true);</span>
+
+        private Object defaultValue;
+
+<span class="fc" id="L31">        Parm (boolean defaultValue) { this.defaultValue = defaultValue; }</span>
+<span class="fc" id="L32">        Parm (int defaultValue) { this.defaultValue = defaultValue; }</span>
+
+<span class="fc" id="L34">        public Object defaultValue() { return defaultValue; }</span>
+<span class="fc" id="L35">        public boolean defaultValueAsBoolean() { return (Boolean) defaultValue; }</span>
+<span class="fc" id="L36">        public int defaultValueAsInt() { return (Integer) defaultValue; }</span>
+    }
+
+    /**
+     * OR step values
+     * @author Erik
+     */
+<span class="fc" id="L43">    public enum OrStep {</span>
+
+        /* In-sequence steps */
+<span class="fc" id="L46">        INITIAL,</span>
+<span class="fc" id="L47">        LAY_TRACK,</span>
+<span class="fc" id="L48">        LAY_TOKEN,</span>
+<span class="fc" id="L49">        CALC_REVENUE,</span>
+<span class="fc" id="L50">        PAYOUT,</span>
+<span class="fc" id="L51">        BUY_TRAIN,</span>
+<span class="fc" id="L52">        TRADE_SHARES,</span>
+<span class="fc" id="L53">        REPAY_LOANS,</span>
+<span class="fc" id="L54">        FINAL,</span>
+
+        /* Out-of-sequence steps*/
+<span class="fc" id="L57">        DISCARD_TRAINS;</span>
+
+    }
+    
+    public static Object getGameParameter(RailsItem item, GameDef.Parm key) {
+<span class="fc" id="L62">        return item.getRoot().getGameManager().getGameParameter(key);</span>
+    }
+
+    public static int getGameParameterAsInt(RailsItem item, GameDef.Parm key) {
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if (key.defaultValue() instanceof Integer) {</span>
+<span class="fc" id="L67">            return (Integer) getGameParameter(item, key);</span>
+        } else {
+<span class="nc" id="L69">            return -1;</span>
+        }
+    }
+
+    public static boolean getGameParameterAsBoolean(RailsItem item, GameDef.Parm key) {
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (key.defaultValue() instanceof Boolean) {</span>
+<span class="fc" id="L75">            return (Boolean) getGameParameter(item, key);</span>
+        } else {
+<span class="nc" id="L77">            return false;</span>
+        }
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SplashWindow.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing</a> &gt; <span class="el_source">SplashWindow.java</span></div><h1>SplashWindow.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing;
+
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+
+import net.sf.rails.common.Config;
+import net.sf.rails.common.LocalText;
+
+
+/**
+ * Splash window shown during setup of game UI components and game loading.
+ * Provides for a progress bar, status bar, and ensures that frames only become visible
+ * when initialization is complete.
+ *
+ * @author Frederick Weld
+ */
+public class SplashWindow {
+
+    /**
+     * in millisecs
+     */
+    private final static long PROGRESS_UPDATE_INTERVAL = 200;
+
+    private final static String DUMMY_STEP_BEFORE_START = &quot;-1&quot;;
+    private final static String DUMMY_STEP_START = &quot;0&quot;;
+    private final static String DUMMY_STEP_END = &quot;inf&quot;;
+
+    public final static String STEP_LOAD_GAME = &quot;Splash.step.loadGame&quot;;
+    public final static String STEP_INIT_UI = &quot;Splash.step.initUI&quot;;
+    public final static String STEP_STOCK_CHART = &quot;Splash.step.stockChart&quot;;
+    public final static String STEP_REPORT_WINDOW = &quot;Splash.step.reportWindow&quot;;
+    public final static String STEP_OR_INIT_DOCKING_FRAME = &quot;Splash.step.or.initDockingFrame&quot;;
+    public final static String STEP_OR_INIT_PANELS = &quot;Splash.step.or.initPanels&quot;;
+    public final static String STEP_OR_INIT_TILES = &quot;Splash.step.or.initTiles&quot;;
+    public final static String STEP_OR_APPLY_DOCKING_FRAME = &quot;Splash.step.or.applyDockingFrame&quot;;
+    public final static String STEP_STATUS_WINDOW = &quot;Splash.step.statusWindow&quot;;
+    public final static String STEP_INIT_NEW_GAME = &quot;Splash.step.initNewGame&quot;;
+    public final static String STEP_CONFIG_WINDOW = &quot;Splash.step.configWindow&quot;;
+    public final static String STEP_INIT_SOUND = &quot;Splash.step.initSound&quot;;
+    public final static String STEP_INIT_LOADED_GAME = &quot;Splash.step.initLoadedGame&quot;;
+    public final static String STEP_FINALIZE = &quot;Splash.step.finalize&quot;;
+
+<span class="nc" id="L63">    private final static List&lt;String&gt; STEP_GROUP_LOAD = Arrays.asList(</span>
+            STEP_LOAD_GAME,
+            STEP_INIT_LOADED_GAME);
+
+<span class="nc" id="L67">    private final static List&lt;String&gt; STEP_GROUP_DOCKING_LAYOUT = Arrays.asList(</span>
+            STEP_OR_INIT_DOCKING_FRAME,
+            STEP_OR_INIT_TILES,
+            STEP_OR_APPLY_DOCKING_FRAME);
+
+    private static class StepDuration {
+        private long expectedDurationInMillis;
+        private String labelConfigKey;
+<span class="nc" id="L75">        StepDuration(int expectedDurationInMillis,String labelConfigKey) {</span>
+<span class="nc" id="L76">            this.expectedDurationInMillis = expectedDurationInMillis;</span>
+<span class="nc" id="L77">            this.labelConfigKey = labelConfigKey;</span>
+<span class="nc" id="L78">        }</span>
+    }
+<span class="nc" id="L80">    private final static StepDuration[] STEP_DURATION = {</span>
+            new StepDuration ( 0, DUMMY_STEP_BEFORE_START), // used to facilitate array border handling
+            new StepDuration ( 0, DUMMY_STEP_START), // used to facilitate array border handling
+            new StepDuration ( 6000, STEP_LOAD_GAME ),
+            new StepDuration ( 500, STEP_INIT_UI ),
+            new StepDuration ( 230, STEP_STOCK_CHART ),
+            new StepDuration ( 850, STEP_REPORT_WINDOW ),
+            new StepDuration ( 2600, STEP_OR_INIT_DOCKING_FRAME ),
+            new StepDuration ( 1650, STEP_OR_INIT_PANELS ),
+            new StepDuration ( 5000, STEP_OR_INIT_TILES ),
+            new StepDuration ( 3000, STEP_OR_APPLY_DOCKING_FRAME ),
+            new StepDuration ( 400, STEP_STATUS_WINDOW ),
+            new StepDuration ( 300, STEP_INIT_NEW_GAME ),
+            new StepDuration ( 1200, STEP_CONFIG_WINDOW ),
+            new StepDuration ( 200, STEP_INIT_SOUND ),
+            new StepDuration ( 1000, STEP_INIT_LOADED_GAME ),
+            new StepDuration ( 1000, STEP_FINALIZE),
+            new StepDuration ( 0, DUMMY_STEP_END), // used to facilitate array border handling
+    };
+
+<span class="nc" id="L100">    private long totalDuration = 0;</span>
+<span class="nc" id="L101">    private long[] cumulativeDuration = null;</span>
+
+<span class="nc" id="L103">    private Set&lt;JFrame&gt; framesRegisteredAsVisible = new HashSet&lt;JFrame&gt;();</span>
+<span class="nc" id="L104">    private List&lt;JFrame&gt; framesRegisteredToFront = new ArrayList&lt;JFrame&gt;();</span>
+
+    private final static String ICON_PATH = &quot;/images/icon/&quot;;
+
+<span class="nc" id="L108">    private final static String[][] ICONS = new String[][] {</span>
+        { &quot;notile_2towns.png&quot; , &quot;notile_station.png&quot; },
+        { &quot;yellow_track.png&quot; , &quot;yellow_station.png&quot; },
+        { &quot;green_track.png&quot; , &quot;green_station.png&quot; },
+        { &quot;russet_track.png&quot; , &quot;russet_station.png&quot; },
+        { &quot;grey_track.png&quot; , &quot;grey_station.png&quot; }
+    };
+
+<span class="nc" id="L116">    private JWindow myWin = null;</span>
+<span class="nc" id="L117">    private JLabel leftIcon = null;</span>
+<span class="nc" id="L118">    private JLabel rightIcon = null;</span>
+<span class="nc" id="L119">    private JProgressBar progressBar = null;</span>
+<span class="nc" id="L120">    private JLabel stepLabel = null;</span>
+
+<span class="nc" id="L122">    private ProgressVisualizer progressVisualizer = null;</span>
+
+<span class="nc" id="L124">    private int currentStep = 0;</span>
+<span class="nc" id="L125">    private int currentIconIndex = 0;</span>
+
+<span class="nc" id="L127">    public SplashWindow(boolean isLoad, String initDetailsText) {</span>
+        //quit directly when no visualization required
+        //all visualization related attributes remain null then
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (&quot;no&quot;.equals(Config.get(&quot;splash.window.open&quot;))) return;</span>
+
+        //calculate estimated duration for the respective steps
+<span class="nc" id="L133">        cumulativeDuration = new long[STEP_DURATION.length];</span>
+<span class="nc" id="L134">        boolean isDockingLayout = &quot;yes&quot;.equals(Config.get(&quot;or.window.dockablePanels&quot;));</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        for ( int i = 0; i &lt; STEP_DURATION.length ; i++) {</span>
+            //only consider step if relevant for this setup
+<span class="nc bnc" id="L137" title="All 6 branches missed.">            if ( (isLoad || !STEP_GROUP_LOAD.contains(STEP_DURATION[i].labelConfigKey))</span>
+                    &amp;&amp;
+<span class="nc bnc" id="L139" title="All 2 branches missed.">                 (isDockingLayout || !STEP_GROUP_DOCKING_LAYOUT.contains(STEP_DURATION[i].labelConfigKey)) ) {</span>
+<span class="nc" id="L140">                totalDuration += STEP_DURATION[i].expectedDurationInMillis;</span>
+            }
+<span class="nc" id="L142">            cumulativeDuration[i] = totalDuration;</span>
+        }
+
+        //set up dynamic elements
+
+<span class="nc" id="L147">        myWin = new JWindow();</span>
+
+<span class="nc" id="L149">        leftIcon = new JLabel();</span>
+<span class="nc" id="L150">        setIcon(leftIcon, ICONS[currentIconIndex][0]);</span>
+<span class="nc" id="L151">        leftIcon.setBorder(new CompoundBorder(new EmptyBorder(5,5,5,5),new EtchedBorder()));</span>
+<span class="nc" id="L152">        rightIcon = new JLabel();</span>
+<span class="nc" id="L153">        setIcon(rightIcon, ICONS[currentIconIndex][1]);</span>
+<span class="nc" id="L154">        rightIcon.setBorder(new CompoundBorder(new EmptyBorder(5,5,5,5),new EtchedBorder()));</span>
+
+<span class="nc" id="L156">        progressBar = new JProgressBar(0,(int)totalDuration);</span>
+<span class="nc" id="L157">        progressBar.setStringPainted(true);</span>
+<span class="nc" id="L158">        progressBar.setMinimum(0);</span>
+
+<span class="nc" id="L160">        stepLabel = new JLabel(&quot; &quot;); // needed in order to allocate vertical space</span>
+<span class="nc" id="L161">        stepLabel.setAlignmentX(Component.CENTER_ALIGNMENT);</span>
+<span class="nc" id="L162">        stepLabel.setBorder(new EmptyBorder(5,5,5,5));</span>
+
+        //set up static elements
+
+<span class="nc" id="L166">        JLabel railsLabel = new JLabel(&quot;Rails &quot; +Config.getVersion());</span>
+<span class="nc" id="L167">        railsLabel.setFont(railsLabel.getFont().deriveFont(</span>
+<span class="nc" id="L168">                (float)2.0 * railsLabel.getFont().getSize()));</span>
+<span class="nc" id="L169">        railsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);</span>
+
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        String commandTextKey = isLoad ? &quot;Splash.command.loadGame&quot; : &quot;Splash.command.newGame&quot;;</span>
+<span class="nc" id="L172">        JLabel commandLabel = new JLabel(</span>
+<span class="nc" id="L173">                LocalText.getText(commandTextKey,initDetailsText));</span>
+<span class="nc" id="L174">        commandLabel.setFont(commandLabel.getFont().deriveFont(Font.BOLD));</span>
+<span class="nc" id="L175">        commandLabel.setAlignmentX(Component.CENTER_ALIGNMENT);</span>
+
+        //plug elements together and set up layout
+
+<span class="nc" id="L179">        JPanel railsCommandPanel = new JPanel();</span>
+<span class="nc" id="L180">        railsCommandPanel.setLayout(new BoxLayout(railsCommandPanel, BoxLayout.Y_AXIS));</span>
+<span class="nc" id="L181">        railsCommandPanel.add(railsLabel);</span>
+<span class="nc" id="L182">        railsCommandPanel.add(commandLabel);</span>
+<span class="nc" id="L183">        railsCommandPanel.setBorder(new EmptyBorder(3,3,3,3));</span>
+
+<span class="nc" id="L185">        JPanel idPanel = new JPanel();</span>
+<span class="nc" id="L186">        idPanel.setLayout(new BoxLayout(idPanel, BoxLayout.X_AXIS));</span>
+<span class="nc" id="L187">        idPanel.add(leftIcon);</span>
+<span class="nc" id="L188">        idPanel.add(railsCommandPanel);</span>
+<span class="nc" id="L189">        idPanel.add(rightIcon);</span>
+<span class="nc" id="L190">        idPanel.setBorder(new EmptyBorder(3,3,3,3));</span>
+
+<span class="nc" id="L192">        JComponent contentPane = (JComponent)myWin.getContentPane();</span>
+<span class="nc" id="L193">        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));</span>
+<span class="nc" id="L194">        contentPane.add(idPanel);</span>
+<span class="nc" id="L195">        contentPane.add(progressBar);</span>
+<span class="nc" id="L196">        contentPane.add(stepLabel);</span>
+<span class="nc" id="L197">        contentPane.setBorder(new CompoundBorder(new EtchedBorder(),new EmptyBorder(5,5,5,5)));</span>
+
+        //perform layout within the EDT
+        //blocking call as further initialization requires the layout to be frozen
+        try {
+<span class="nc" id="L202">            SwingUtilities.invokeAndWait(new Thread() {</span>
+                @Override
+                public void run() {
+<span class="nc" id="L205">                    myWin.pack();</span>
+<span class="nc" id="L206">                    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();</span>
+<span class="nc" id="L207">                    myWin.setLocation(</span>
+<span class="nc" id="L208">                          (dim.width - myWin.getSize().width) / 2,</span>
+<span class="nc" id="L209">                          (dim.height - myWin.getSize().height) / 2</span>
+                    );
+<span class="nc" id="L211">                    myWin.setVisible(true);</span>
+<span class="nc" id="L212">                }</span>
+            });
+<span class="nc" id="L214">        } catch (Exception e) {}</span>
+
+<span class="nc" id="L216">        progressVisualizer = new ProgressVisualizer();</span>
+<span class="nc" id="L217">        notifyOfStep(DUMMY_STEP_START);</span>
+<span class="nc" id="L218">        progressVisualizer.start();</span>
+<span class="nc" id="L219">    }</span>
+
+    public void notifyOfStep(String stepLabelConfigKey) {
+        //ignore if no visualization requested
+<span class="nc bnc" id="L223" title="All 2 branches missed.">        if (myWin == null) return;</span>
+
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        for ( int i = 0; i &lt; STEP_DURATION.length ; i++) {</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">            if ( STEP_DURATION[i].labelConfigKey.equals(stepLabelConfigKey)) {</span>
+<span class="nc" id="L227">                progressVisualizer.setCurrentStep(i);</span>
+            }
+        }
+
+<span class="nc" id="L231">    }</span>
+
+    /**
+     * @param elapsedTime Refers to a duration normalized based on the expected durations
+     * of the process steps.
+     */
+    synchronized private void visualizeProgress(long elapsedTime, int currentStep) {
+        //update current step (including description)
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        if (currentStep != this.currentStep) {</span>
+<span class="nc" id="L240">            this.currentStep = currentStep;</span>
+            //only display step description for non-dummy steps
+<span class="nc bnc" id="L242" title="All 2 branches missed.">            if ( STEP_DURATION[currentStep].expectedDurationInMillis &gt; 0) {</span>
+<span class="nc" id="L243">                stepLabel.setText(LocalText.getText(</span>
+                        STEP_DURATION[currentStep].labelConfigKey));
+            }
+        }
+
+        //update icon
+<span class="nc" id="L249">        int newIconIndex = (int)(ICONS.length * elapsedTime / totalDuration);</span>
+<span class="nc" id="L250">        newIconIndex = Math.max( Math.min(ICONS.length-1 , newIconIndex) , 0);</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        if (newIconIndex != currentIconIndex) {</span>
+<span class="nc" id="L252">            currentIconIndex = newIconIndex;</span>
+<span class="nc" id="L253">            setIcon(leftIcon, ICONS[newIconIndex][0]);</span>
+<span class="nc" id="L254">            setIcon(rightIcon, ICONS[newIconIndex][1]);</span>
+        }
+
+        //show progress
+<span class="nc" id="L258">        progressBar.setValue((int)elapsedTime);</span>
+
+        //ensure visibility of window
+<span class="nc" id="L261">        myWin.toFront();</span>
+<span class="nc" id="L262">    }</span>
+
+    private void setIcon(JLabel iconLabel, String iconFileName) {
+<span class="nc" id="L265">        String path = ICON_PATH + iconFileName;</span>
+<span class="nc" id="L266">        java.net.URL imgURL = getClass().getResource(path);</span>
+<span class="nc bnc" id="L267" title="All 2 branches missed.">        if (imgURL != null) {</span>
+<span class="nc" id="L268">            iconLabel.setIcon(new ImageIcon(imgURL));</span>
+        } else {
+<span class="nc" id="L270">            System.err.println(&quot;Couldn't find file: &quot; + path);</span>
+        }
+<span class="nc" id="L272">    }</span>
+
+    /**
+     * Remembers that this frame is to be put to visible at the end of the splash process
+     */
+    public void registerFrameForDeferredVisibility(JFrame frame,boolean setToVisible) {
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        if (setToVisible) {</span>
+<span class="nc" id="L279">            framesRegisteredAsVisible.add(frame);</span>
+        } else {
+<span class="nc" id="L281">            framesRegisteredAsVisible.remove(frame);</span>
+        }
+<span class="nc" id="L283">    }</span>
+
+    /**
+     * Remembers that this frame is to be put to front at the end of the splash process
+     * Handles the list of to front requests in order to
+     *  - apply all requests in a FIFO manner
+     *  - ensure that each frame is only sent to the front once (at the latest registered time)
+     */
+    public void registerFrameForDeferredToFront(JFrame frame) {
+<span class="nc" id="L292">        framesRegisteredToFront.remove(frame);</span>
+<span class="nc" id="L293">        framesRegisteredToFront.add(frame);</span>
+<span class="nc" id="L294">    }</span>
+
+    /**
+     * @return window to allow displaying messages on it
+     */
+    public JWindow getWindow() {
+<span class="nc" id="L300">        return myWin;</span>
+    }
+
+    public void finalizeGameInit() {
+<span class="nc" id="L304">        notifyOfStep(STEP_FINALIZE);</span>
+
+        //finally restore visibility / toFront of registered frames
+        //only after EDT is ready (as window built-up could still be pending)
+        //block any frame disposal to the point in time when this is through
+        try {
+<span class="nc" id="L310">            SwingUtilities.invokeAndWait(new Thread() {</span>
+                @Override
+                public void run() {
+                    //visibility
+<span class="nc bnc" id="L314" title="All 2 branches missed.">                    for (JFrame frame : framesRegisteredAsVisible) {</span>
+<span class="nc" id="L315">                        frame.setVisible(true);</span>
+<span class="nc" id="L316">                    }</span>
+                    //to front
+<span class="nc bnc" id="L318" title="All 2 branches missed.">                    for (JFrame frame : framesRegisteredToFront) {</span>
+<span class="nc" id="L319">                        frame.toFront();</span>
+<span class="nc" id="L320">                    }</span>
+<span class="nc" id="L321">                }</span>
+            });
+<span class="nc" id="L323">        } catch (Exception e) {}</span>
+
+        //clean up visualization only if it was requested
+<span class="nc bnc" id="L326" title="All 2 branches missed.">        if (myWin != null) {</span>
+<span class="nc" id="L327">            progressVisualizer.interrupt();</span>
+<span class="nc" id="L328">            myWin.dispose();</span>
+        }
+<span class="nc" id="L330">    }</span>
+
+<span class="nc" id="L332">    private class ProgressVisualizer extends Thread {</span>
+<span class="nc" id="L333">        private long elapsedTime = 0;</span>
+<span class="nc" id="L334">        private int currentStep = 0;</span>
+        @Override
+        public void run() {
+            try {
+<span class="nc bnc" id="L338" title="All 2 branches missed.">                while (!isInterrupted()) {</span>
+<span class="nc" id="L339">                    visualizeProgress(elapsedTime, currentStep);</span>
+
+<span class="nc" id="L341">                    sleep(PROGRESS_UPDATE_INTERVAL);</span>
+
+                    //adjusted elapsed duration
+<span class="nc" id="L344">                    synchronized (this) {</span>
+<span class="nc" id="L345">                        elapsedTime += PROGRESS_UPDATE_INTERVAL;</span>
+                        //elapsed duration must remain within the bounds of the estimated cumulative duration
+                        //between the end of last step and the end of the current step
+<span class="nc" id="L348">                        elapsedTime = Math.max (</span>
+                            cumulativeDuration[currentStep-1],
+<span class="nc" id="L350">                            Math.min( elapsedTime, cumulativeDuration[currentStep] )</span>
+                        );
+<span class="nc" id="L352">                    }</span>
+                }
+<span class="nc" id="L354">            } catch (InterruptedException e) {}</span>
+<span class="nc" id="L355">        }</span>
+
+        synchronized private void setCurrentStep(int currentStep) {
+<span class="nc" id="L358">            this.currentStep = currentStep;</span>
+            //System.out.println(&quot;Time: &quot;+elapsedTime + &quot; (Step: &quot;+stepDuration[currentStep].labelConfigKey+&quot;)&quot;);
+<span class="nc" id="L360">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

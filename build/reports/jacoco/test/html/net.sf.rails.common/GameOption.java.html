@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameOption.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.common</a> &gt; <span class="el_source">GameOption.java</span></div><h1>GameOption.java</h1><pre class="source lang-java linenums">package net.sf.rails.common;
+
+import java.util.List;
+
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.util.Util;
+
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableList;
+
+public class GameOption implements Comparable&lt;GameOption&gt; {
+    
+    // Strings that define yes or no options
+    public static final String OPTION_VALUE_YES = &quot;yes&quot;;
+    public static final String OPTION_VALUE_NO = &quot;no&quot;;
+
+    // Strings that define types
+    public static final String OPTION_TYPE_SELECTION = &quot;selection&quot;;
+    public static final String OPTION_TYPE_TOGGLE = &quot;toggle&quot;;
+    
+    // A default option that will always be set
+    public static final String NUMBER_OF_PLAYERS = &quot;NumberOfPlayers&quot;;
+    // Some other common game options
+    public static final String VARIANT = &quot;Variant&quot;;
+
+    private final String name;
+    private final String localisedName;
+    private final boolean isBoolean;
+    private final String defaultValue;
+    private final List&lt;String&gt; allowedValues;
+    private final int ordering;
+    
+    // dynamic values
+    private String selectedValue;
+
+    public GameOption(String name, String localisedName, boolean isBoolean, 
+<span class="fc" id="L40">            String defaultValue, List&lt;String&gt; allowedValues, int ordering) {</span>
+<span class="fc" id="L41">        this.name = name;</span>
+<span class="fc" id="L42">        this.localisedName = localisedName;</span>
+<span class="fc" id="L43">        this.isBoolean = isBoolean;</span>
+<span class="fc" id="L44">        this.defaultValue = defaultValue;</span>
+<span class="fc" id="L45">        this.allowedValues = allowedValues;</span>
+<span class="fc" id="L46">        this.ordering = ordering;</span>
+<span class="fc" id="L47">    }</span>
+
+    public String getName() {
+<span class="fc" id="L50">        return name;</span>
+    }
+
+    public String getLocalisedName() {
+<span class="nc" id="L54">        return localisedName;</span>
+    }
+
+    public boolean isBoolean() {
+<span class="nc" id="L58">        return isBoolean;</span>
+    }
+
+    public List&lt;String&gt; getAllowedValues() {
+<span class="nc" id="L62">        return allowedValues;</span>
+    }
+
+    public boolean isValueAllowed(String value) {
+<span class="nc" id="L66">        return allowedValues.contains(value);</span>
+    }
+
+    public String getDefaultValue() {
+<span class="nc" id="L70">        return defaultValue;</span>
+    }
+    
+    public void setSelectedValue(String value) {
+<span class="fc" id="L74">        this.selectedValue = value;</span>
+<span class="fc" id="L75">    }</span>
+    
+    public String getSelectedValue() {
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if (selectedValue == null) {</span>
+<span class="fc" id="L79">            return defaultValue;</span>
+        } else {
+<span class="fc" id="L81">            return selectedValue;</span>
+        }
+    }
+    
+    @Override
+    public int hashCode() {
+<span class="nc" id="L87">        return Objects.hashCode(name);</span>
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (obj == null) return false;</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (getClass() != obj.getClass()) return false;</span>
+<span class="nc" id="L94">        final GameOption other = (GameOption) obj;</span>
+<span class="nc" id="L95">        return Objects.equal(this.name, other.name);</span>
+    }
+    
+    @Override
+    public String toString() {
+<span class="nc" id="L100">        return name;</span>
+    }
+
+    public int compareTo(GameOption other) {
+<span class="fc" id="L104">        return ComparisonChain.start()</span>
+<span class="fc" id="L105">                .compare(this.ordering, other.ordering)</span>
+<span class="fc" id="L106">                .compare(this.name, other.name)</span>
+<span class="fc" id="L107">                .result();</span>
+    }
+    
+    public static Builder builder(String name) {
+<span class="fc" id="L111">        return new Builder(name);</span>
+    }
+    
+    public static class Builder {
+        private final String name;
+<span class="fc" id="L116">        private String type = OPTION_TYPE_SELECTION;</span>
+<span class="fc" id="L117">        private String defaultValue = null;</span>
+<span class="fc" id="L118">        private List&lt;String&gt; allowedValues = null;</span>
+<span class="fc" id="L119">        private List&lt;String&gt; parameters = null;</span>
+<span class="fc" id="L120">        private int ordering = 0;</span>
+        
+<span class="fc" id="L122">        private Builder(String name) {</span>
+<span class="fc" id="L123">            this.name = name;</span>
+<span class="fc" id="L124">        }</span>
+        
+        public void setType(String type) {
+<span class="fc" id="L127">            this.type = type;</span>
+<span class="fc" id="L128">        }</span>
+        
+        public void setDefaultValue(String defaultValue) {
+<span class="fc" id="L131">            this.defaultValue = defaultValue;</span>
+<span class="fc" id="L132">        }</span>
+        
+        public void setAllowedValues(Iterable&lt;String&gt; values) {
+<span class="fc" id="L135">            allowedValues = ImmutableList.copyOf(values);</span>
+<span class="fc" id="L136">        }</span>
+
+        public void setParameters(Iterable&lt;String&gt; parameters) {
+<span class="fc" id="L139">            this.parameters = ImmutableList.copyOf(parameters);</span>
+<span class="fc" id="L140">        }</span>
+        
+        public void setOrdering(int ordering) {
+<span class="fc" id="L143">            this.ordering = ordering;</span>
+<span class="fc" id="L144">        }</span>
+
+        private String getLocalisedName() {
+<span class="pc bpc" id="L147" title="1 of 4 branches missed.">            if (parameters == null || parameters.isEmpty()) {</span>
+<span class="fc" id="L148">                return LocalText.getText(name);</span>
+            }
+            
+<span class="fc" id="L151">            ImmutableList.Builder&lt;String&gt; localTextPars = ImmutableList.builder();</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">            for (String par : parameters) {</span>
+<span class="fc" id="L153">                localTextPars.add(LocalText.getText(par));</span>
+<span class="fc" id="L154">            }</span>
+            // TODO (Rails2.0): Change method signature in LocalText
+<span class="fc" id="L156">            return LocalText.getText(name,</span>
+<span class="fc" id="L157">                    (Object[]) localTextPars.build().toArray());</span>
+        }
+
+        private String getFinalDefaultValue(Boolean isBoolean, List&lt;String&gt; finalAllowedValues) {
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">            if (defaultValue != null) {</span>
+<span class="fc" id="L162">                return defaultValue;</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">            } else if (isBoolean) {</span>
+<span class="nc" id="L164">                return OPTION_VALUE_NO;</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">            } else if (!allowedValues.isEmpty()) {</span>
+<span class="nc" id="L166">                return allowedValues.get(0);</span>
+            } else {
+<span class="nc" id="L168">                return null;</span>
+            }
+        }
+        
+        public GameOption build() {
+
+            // use type information
+<span class="fc" id="L175">            Boolean isBoolean = false;</span>
+<span class="fc" id="L176">            List&lt;String&gt; finalAllowedValues = ImmutableList.of();</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">            if (type.equalsIgnoreCase(OPTION_TYPE_TOGGLE)) {</span>
+<span class="fc" id="L178">                isBoolean = true;</span>
+<span class="fc" id="L179">                finalAllowedValues = ImmutableList.of(OPTION_VALUE_YES, OPTION_VALUE_NO);</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">            } else if (type.equalsIgnoreCase(OPTION_TYPE_SELECTION)) {</span>
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">                if (allowedValues == null) {</span>
+<span class="nc" id="L182">                    finalAllowedValues = ImmutableList.of();</span>
+                } else {
+<span class="fc" id="L184">                    finalAllowedValues = allowedValues;</span>
+                }
+            }
+
+<span class="fc" id="L188">            String parameterisedName = constructParameterisedName(name, parameters);</span>
+<span class="fc" id="L189">            String localisedName = getLocalisedName();</span>
+<span class="fc" id="L190">            String finalDefaultValue = getFinalDefaultValue(isBoolean, finalAllowedValues);</span>
+            
+<span class="fc" id="L192">            return new GameOption(parameterisedName, localisedName, isBoolean, </span>
+                    finalDefaultValue, finalAllowedValues, ordering);
+        }
+    }
+
+    /**
+     * Returns parameterised Name
+     */
+    public static String constructParameterisedName(String name, List&lt;String&gt; parameters) {
+<span class="pc bpc" id="L201" title="1 of 4 branches missed.">        if (parameters != null &amp;&amp; !parameters.isEmpty()) {</span>
+<span class="fc" id="L202">            return name + &quot;_&quot; +  Joiner.on(&quot;_&quot;).join(parameters);</span>
+        } else {
+<span class="fc" id="L204">            return name;</span>
+        }
+    }
+    /**
+     * Returns the value of the gameOption in a game which contains the RailItem
+     */
+    public static String getValue(RailsItem item, String gameOption) {
+        // check the System properties for overwrites first
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">        if (Util.hasValue(System.getProperty(gameOption))) {</span>
+<span class="nc" id="L213">            return System.getProperty(gameOption);</span>
+        } else {
+<span class="fc" id="L215">            return item.getRoot().getGameOptions().get(gameOption);</span>
+        }
+    }
+
+    /**
+     * Returns the boolean value of the gameOption in a game which contains the
+     * RailItem If not defined as in OPTION_VALUE_YES, it returns false
+     */
+    public static boolean getAsBoolean(RailsItem item, String gameOption) {
+<span class="fc" id="L224">        String value = getValue(item, gameOption);</span>
+<span class="fc bfc" id="L225" title="All 4 branches covered.">        return value != null &amp;&amp; OPTION_VALUE_YES.equalsIgnoreCase(value);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

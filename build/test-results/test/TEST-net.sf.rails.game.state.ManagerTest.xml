@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.sf.rails.game.state.ManagerTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2020-04-10T19:48:53" hostname="marc-desktop" time="0.004">
+  <properties/>
+  <testcase name="testGetId" classname="net.sf.rails.game.state.ManagerTest" time="0.001"/>
+  <testcase name="testGetRoot" classname="net.sf.rails.game.state.ManagerTest" time="0.0"/>
+  <testcase name="testGetFullURI" classname="net.sf.rails.game.state.ManagerTest" time="0.001"/>
+  <testcase name="testGetContext" classname="net.sf.rails.game.state.ManagerTest" time="0.0"/>
+  <testcase name="testGetParent" classname="net.sf.rails.game.state.ManagerTest" time="0.0"/>
+  <testcase name="testGetURI" classname="net.sf.rails.game.state.ManagerTest" time="0.0"/>
+  <testcase name="testLocate" classname="net.sf.rails.game.state.ManagerTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

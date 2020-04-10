@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShareSellingRound_1856.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1856</a> &gt; <span class="el_source">ShareSellingRound_1856.java</span></div><h1>ShareSellingRound_1856.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1856;
+
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.financial.ShareSellingRound;
+import net.sf.rails.game.state.IntegerState;
+
+/** Needed to copy behaviour on share selling from StockRound_1856. */
+public final class ShareSellingRound_1856 extends ShareSellingRound {
+
+    /* Cope with multiple 5% share sales in one turn */
+<span class="fc" id="L12">    private final IntegerState sharesSoldSoFar = IntegerState.create(this, &quot;sharesSoldSoFar&quot;);</span>
+<span class="fc" id="L13">    private final IntegerState squaresDownSoFar = IntegerState.create(this, &quot;squaresDownSoFar&quot;);</span>
+
+    /**
+     * Created using Configure
+     */
+    public ShareSellingRound_1856(GameManager parent, String id) {
+<span class="fc" id="L19">        super(parent, id);</span>
+<span class="fc" id="L20">    }</span>
+    @Override
+	protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
+
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if (!company.canSharePriceVary()) return;</span>
+
+<span class="fc" id="L26">        int numberOfSpaces = numberSold;</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if (company instanceof PublicCompany_CGR) {</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">            if (company.getShareUnit() == 5) {</span>
+                // Take care for selling 5% shares in multiple blocks per turn
+<span class="nc" id="L30">                numberOfSpaces</span>
+<span class="nc" id="L31">                    = (sharesSoldSoFar.value() + numberSold)/2</span>
+<span class="nc" id="L32">                    - squaresDownSoFar.value();</span>
+<span class="nc" id="L33">                sharesSoldSoFar.add(numberSold);</span>
+<span class="nc" id="L34">                squaresDownSoFar.add(numberOfSpaces);</span>
+            }
+        }
+
+<span class="fc" id="L38">        super.adjustSharePrice (company, numberOfSpaces, soldBefore);</span>
+<span class="fc" id="L39">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RailsObjects.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.util</a> &gt; <span class="el_source">RailsObjects.java</span></div><h1>RailsObjects.java</h1><pre class="source lang-java linenums">package net.sf.rails.util;
+
+import com.google.common.collect.Sets;
+
+import rails.game.action.PossibleAction;
+import net.sf.rails.game.RailsItem;
+
+/**
+ * Utility class to work with Rails objects 
+ */
+<span class="nc" id="L11">public class RailsObjects {</span>
+
+    public static class StringHelper {
+        
+<span class="nc" id="L15">        private final StringBuilder text = new StringBuilder();</span>
+        
+<span class="nc" id="L17">        private StringHelper() {</span>
+            // do nothing =&gt; empty
+<span class="nc" id="L19">        }</span>
+        
+        private boolean testIfNull(Object test, String replace) {
+<span class="nc bnc" id="L22" title="All 2 branches missed.">            if (test == null) {</span>
+<span class="nc" id="L23">                text.append(replace);</span>
+<span class="nc" id="L24">                return true;</span>
+            }
+<span class="nc" id="L26">            return false;</span>
+        }
+        
+<span class="nc" id="L29">        private StringHelper(RailsItem item) {</span>
+<span class="nc" id="L30">            text.append(item.getId() + &quot;(&quot; + item.getClass().getName() + &quot;)&quot;);</span>
+<span class="nc" id="L31">        }</span>
+        
+        public StringHelper addToString(String name, Object value) {
+<span class="nc bnc" id="L34" title="All 2 branches missed.">            if (testIfNull(value, &quot;NULL&quot;)) return this; </span>
+
+<span class="nc" id="L36">            text.append(name + &quot; = &quot; +  value.toString());</span>
+<span class="nc" id="L37">            return this;</span>
+        }
+
+        public StringHelper addToText(String name, RailsItem value) {
+<span class="nc bnc" id="L41" title="All 2 branches missed.">            if (testIfNull(value, &quot;NULL&quot;)) return this; </span>
+
+<span class="nc" id="L43">            text.append(name + &quot; = &quot; + value.toText());</span>
+<span class="nc" id="L44">            return this;</span>
+        }
+
+        public StringHelper addId(String name, RailsItem value) {
+<span class="nc bnc" id="L48" title="All 2 branches missed.">            if (testIfNull(value, &quot;NULL&quot;)) return this; </span>
+
+<span class="nc" id="L50">            text.append(name + &quot; = &quot; + value.getId());</span>
+<span class="nc" id="L51">            return this;</span>
+        }
+
+        public StringHelper addURI(String name, RailsItem value) {
+<span class="nc bnc" id="L55" title="All 2 branches missed.">            if (testIfNull(value, &quot;NULL&quot;)) return this; </span>
+
+<span class="nc" id="L57">            text.append(name + &quot; = &quot; + value.getURI());</span>
+<span class="nc" id="L58">            return this;</span>
+        }
+
+        public StringHelper addFullURI(String name, RailsItem value) {
+<span class="nc bnc" id="L62" title="All 2 branches missed.">            if (testIfNull(value, &quot;NULL&quot;)) return this; </span>
+
+<span class="nc" id="L64">            text.append(name + &quot; = &quot; + value.getFullURI());</span>
+<span class="nc" id="L65">            return this;</span>
+        }
+        
+        public StringHelper append(String text) {
+<span class="nc bnc" id="L69" title="All 2 branches missed.">            if (testIfNull(text, &quot;&quot;)) return this; </span>
+            
+<span class="nc" id="L71">            this.text.append(text);</span>
+<span class="nc" id="L72">            return this;</span>
+        }
+        
+        public String toString() {
+<span class="nc" id="L76">            return text.toString();</span>
+        }
+    }
+    
+    public static class StringHelperForActions {
+        
+<span class="fc" id="L82">        private final StringBuilder text = new StringBuilder();</span>
+        private final PossibleAction action;
+        
+<span class="fc" id="L85">        private StringHelperForActions(PossibleAction action) {</span>
+<span class="fc" id="L86">            this.action = action;</span>
+<span class="fc" id="L87">        }</span>
+        
+        public StringHelperForActions addBaseText() {
+<span class="fc" id="L90">            text.append(action.getPlayer().getId());</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">            if (action.hasActed()) {</span>
+<span class="fc" id="L92">                text.append(&quot; executed &quot;);</span>
+            } else {
+<span class="fc" id="L94">                text.append(&quot; may &quot;);</span>
+            }
+<span class="fc" id="L96">            text.append(action.getClass().getSimpleName());</span>
+<span class="fc" id="L97">            return this;</span>
+        }
+        
+        private Object testIfNull(Object value, String replace) {
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if (value == null) {</span>
+<span class="fc" id="L102">                return replace;</span>
+            } else {
+<span class="fc" id="L104">                return value;</span>
+            }
+        }
+
+        public StringHelperForActions addToString(String name, Object value) {
+<span class="fc" id="L109">            value = testIfNull(value, &quot;NULL&quot;);</span>
+            
+<span class="fc" id="L111">            text.append(&quot;, &quot; + name + &quot; = &quot; +  value.toString());</span>
+<span class="fc" id="L112">            return this;</span>
+        }
+        
+        public StringHelperForActions addToStringOnlyActed(String name, Object value) {
+<span class="fc bfc" id="L116" title="All 2 branches covered.">            if (action.hasActed()) {</span>
+<span class="fc" id="L117">                this.addToString(name, value);</span>
+            }
+<span class="fc" id="L119">            return this;</span>
+        }
+
+        public String toString() {
+<span class="fc" id="L123">            return text.toString();</span>
+        }
+    }
+
+    
+    public static StringHelper stringHelper(RailsItem item) {
+<span class="nc" id="L129">        return new StringHelper(item); </span>
+    }
+
+    public static StringHelperForActions stringHelper(PossibleAction action) {
+<span class="fc" id="L133">        return new StringHelperForActions(action);</span>
+    }
+    
+    public static boolean elementEquals(Iterable&lt;?&gt; a, Iterable&lt;?&gt; b) {
+<span class="pc bpc" id="L137" title="1 of 4 branches missed.">        if (a == null &amp;&amp; b == null) return true;</span>
+<span class="pc bpc" id="L138" title="2 of 4 branches missed.">        if (a == null || b == null) return false;</span>
+        
+<span class="fc" id="L140">        return Sets.newHashSet(a).equals(Sets.newHashSet(b));</span>
+        
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

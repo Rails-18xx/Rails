@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PublicCompany_CGR.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1856</a> &gt; <span class="el_source">PublicCompany_CGR.java</span></div><h1>PublicCompany_CGR.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1856;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.rails.algorithms.RevenueAdapter;
+import net.sf.rails.algorithms.RevenueStaticModifier;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.game.Player;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.Train;
+import net.sf.rails.game.financial.BankPortfolio;
+import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.GenericState;
+
+
+public final class PublicCompany_CGR extends PublicCompany implements RevenueStaticModifier {
+
+    public static final String NAME = &quot;CGR&quot;;
+
+    /** Special rules apply before CGR has got its first permanent train */
+<span class="fc" id="L25">    private final BooleanState hadPermanentTrain = BooleanState.create(this, &quot;hadPermanentTrain&quot;);</span>
+
+    /** If no player has 2 shares, we need a separate attribute to mark the president. */
+<span class="fc" id="L28">    private final GenericState&lt;Player&gt; temporaryPresident = GenericState.create(this, &quot;temporaryPresident&quot;);</span>
+
+    public PublicCompany_CGR(RailsItem parent, String id) {
+<span class="fc" id="L31">        super(parent, id);</span>
+        // Share price is initially fixed
+        // TODO: Is this the correct location or should that moved to some stage later?
+<span class="fc" id="L34">        this.canSharePriceVary.set(false);</span>
+<span class="fc" id="L35">    }</span>
+
+    @Override
+    public void finishConfiguration(RailsRoot root) throws ConfigurationException {
+<span class="fc" id="L39">        super.finishConfiguration(root);</span>
+
+        // add revenue modifier for the case that there is no train
+<span class="fc" id="L42">        getRoot().getRevenueManager().addStaticModifier(this);</span>
+<span class="fc" id="L43">    }</span>
+
+    public boolean hadPermanentTrain() {
+<span class="fc" id="L46">        return this.hadPermanentTrain.value();</span>
+    }
+
+    public void setHadPermanentTrain(boolean hadPermanentTrain) {
+<span class="fc" id="L50">        this.hadPermanentTrain.set(hadPermanentTrain);</span>
+<span class="fc" id="L51">        this.canSharePriceVary.set(true);</span>
+<span class="fc" id="L52">    }</span>
+
+    public boolean hasTemporaryPresident () {
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        return getTemporaryPresident() != null;</span>
+    }
+
+    public Player getTemporaryPresident() {
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        if (this.temporaryPresident != null) {</span>
+<span class="fc" id="L60">            return (Player) this.temporaryPresident.value();</span>
+        } else {
+<span class="nc" id="L62">            return null;</span>
+        }
+    }
+
+    @Override
+    public boolean mayBuyTrainType (Train train) {
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        return !&quot;4&quot;.equals(train.toText());</span>
+    }
+
+    @Override
+    public Player getPresident() {
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        if (hasTemporaryPresident()) {</span>
+<span class="nc" id="L74">            return getTemporaryPresident();</span>
+        } else {
+<span class="fc" id="L76">            return super.getPresident();</span>
+        }
+    }
+
+    public void setTemporaryPresident(Player temporaryPresident) {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (this.temporaryPresident == null) {</span>
+        }
+<span class="nc" id="L83">        this.temporaryPresident.set(temporaryPresident);</span>
+<span class="nc" id="L84">    }</span>
+
+    @Override
+    public boolean canRunTrains() {
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        if (!hadPermanentTrain()) {</span>
+<span class="nc" id="L89">            return true;</span>
+        }
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">        return getNumberOfTrains() &gt; 0;</span>
+    }
+
+    public boolean runsWithBorrowedTrain () {
+<span class="nc bnc" id="L95" title="All 4 branches missed.">        return !hadPermanentTrain() &amp;&amp; getNumberOfTrains() == 0;</span>
+    }
+
+    /**
+     * CGR share price does not move until a permanent train is bought.
+     *
+     * @param The revenue amount.
+     */
+    @Override
+    public void withhold(int amount) {
+<span class="pc bpc" id="L105" title="2 of 4 branches missed.">        if (this.hasStockPrice &amp;&amp; this.canSharePriceVary.value()) {</span>
+<span class="fc" id="L106">            getRoot().getStockMarket().withhold(this);</span>
+        }
+<span class="fc" id="L108">    }</span>
+
+    @Override
+    public void buyTrain(Train train, int price) {
+<span class="fc" id="L112">        super.buyTrain (train, price);</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        if (train.isPermanent()) {</span>
+<span class="fc" id="L114">            setHadPermanentTrain(true);</span>
+        }
+<span class="fc" id="L116">    }</span>
+
+    @SuppressWarnings(&quot;deprecation&quot;)
+    public void setShareUnit (int percentage) {
+        // Only allowed for CGR, the value must be 10
+<span class="pc bpc" id="L121" title="2 of 4 branches missed.">        if (this.shareUnit.value() == 5</span>
+                &amp;&amp; percentage == 10) {
+<span class="fc" id="L123">            this.shareUnit.set(percentage);</span>
+            // Drop the last 10 shares
+            //2018-10-07-MBr: With the remodeled base classes this approach isnt valid anymore as shares
+            //with the id-10 are assigned before shares with the id-2
+<span class="fc" id="L127">            List&lt;PublicCertificate&gt;certs = new ArrayList&lt;PublicCertificate&gt;(this.certificates.view());</span>
+<span class="fc" id="L128">            BankPortfolio scrapHeap = getRoot().getBank().getScrapHeap();</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">                for (PublicCertificate cert : certs) {</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">                    if (cert.getOwner().getId()== &quot;Unavailable&quot; ) {</span>
+<span class="fc" id="L131">                            cert.moveTo(scrapHeap);</span>
+<span class="fc" id="L132">                            this.certificates.remove(cert);</span>
+                        } else {
+<span class="fc" id="L134">                        cert.setCertificateCount(1.0f);</span>
+                    }
+<span class="fc" id="L136">                }</span>
+
+            // Update all owner ShareModels (once)
+            // to have the UI get the correct percentage
+            // FIXME: Do we still neeed this
+/*            List&lt;Portfolio&gt; done = new ArrayList&lt;Portfolio&gt;();
+            Portfolio portfolio;
+            for (PublicCertificate cert : certificates.view()) {
+                portfolio = (Portfolio)cert.getHolder();
+                if (!done.contains(portfolio)) {
+                    portfolio.getShareModel(this).setShare();
+                    done.add(portfolio);
+                }
+            }
+*/
+        }
+
+<span class="fc" id="L153">    }</span>
+
+    @Override
+    public boolean mustOwnATrain() {
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if (!hadPermanentTrain()) {</span>
+<span class="nc" id="L158">            return false;</span>
+        } else {
+<span class="fc" id="L160">            return super.mustOwnATrain();</span>
+        }
+    }
+
+    @Override
+    public String getExtraShareMarks () {
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        return (hasTemporaryPresident() ? &quot;T&quot; : &quot;&quot;);</span>
+    }
+
+    @Override
+    public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
+        // check if the running company is the cgr
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (revenueAdapter.getCompany() != this) {</span>
+<span class="nc" id="L173">            return false;</span>
+        }
+
+        // add the diesel train
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        if (runsWithBorrowedTrain()) {</span>
+<span class="nc" id="L178">            revenueAdapter.addTrainByString(&quot;D&quot;);</span>
+<span class="nc" id="L179">            return true;</span>
+        }
+<span class="nc" id="L181">        return false;</span>
+    }
+
+    @Override
+    public String prettyPrint(RevenueAdapter revenueAdapter) {
+
+<span class="nc" id="L187">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

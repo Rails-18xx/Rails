@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DiscardTrain.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">rails.game.action</a> &gt; <span class="el_source">DiscardTrain.java</span></div><h1>DiscardTrain.java</h1><pre class="source lang-java linenums">package rails.game.action;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.Train;
+import net.sf.rails.game.TrainManager;
+import net.sf.rails.game.TrainType;
+import net.sf.rails.util.RailsObjects;
+
+/**
+ * Rails 2.0: Updated equals and toString methods
+ */
+public class DiscardTrain extends PossibleORAction {
+
+    // Server settings
+<span class="fc" id="L24">    transient private Set&lt;Train&gt; ownedTrains = null;</span>
+    private String[] ownedTrainsUniqueIds;
+
+    /** True if discarding trains is mandatory */
+<span class="fc" id="L28">    private boolean forced = false;</span>
+
+    // Client settings
+<span class="fc" id="L31">    transient private Train discardedTrain = null;</span>
+    private String discardedTrainUniqueId;
+
+    public static final long serialVersionUID = 1L;
+
+    public DiscardTrain(PublicCompany company, Set&lt;Train&gt; trains) {
+
+<span class="fc" id="L38">        super();</span>
+<span class="fc" id="L39">        this.ownedTrains = trains;</span>
+<span class="fc" id="L40">        this.ownedTrainsUniqueIds = new String[trains.size()];</span>
+<span class="fc" id="L41">        int i = 0;</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        for (Train train:trains) {</span>
+<span class="fc" id="L43">            ownedTrainsUniqueIds[i++] = train.getId();</span>
+<span class="fc" id="L44">        }</span>
+<span class="fc" id="L45">        this.company = company;</span>
+<span class="fc" id="L46">        this.companyName = company.getId();</span>
+<span class="fc" id="L47">    }</span>
+
+    public DiscardTrain(PublicCompany company, Set&lt;Train&gt; trainsToDiscardFrom,
+            boolean forced) {
+<span class="fc" id="L51">        this(company, trainsToDiscardFrom);</span>
+<span class="fc" id="L52">        this.forced = forced;</span>
+<span class="fc" id="L53">    }</span>
+
+    public Set&lt;Train&gt; getOwnedTrains() {
+<span class="nc" id="L56">        return ownedTrains;</span>
+    }
+
+    private Set&lt;TrainType&gt; getOwnedTrainTypes() {
+<span class="fc" id="L60">        ImmutableSet.Builder&lt;TrainType&gt; types = ImmutableSet.builder();</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        for (Train train:ownedTrains) {</span>
+<span class="fc" id="L62">            types.add(train.getType());</span>
+<span class="fc" id="L63">        }</span>
+<span class="fc" id="L64">        return types.build();</span>
+    }
+
+    public void setDiscardedTrain(Train train) {
+<span class="nc" id="L68">        discardedTrain = train;</span>
+<span class="nc" id="L69">        discardedTrainUniqueId = train.getId();</span>
+<span class="nc" id="L70">    }</span>
+
+    public Train getDiscardedTrain() {
+<span class="fc" id="L73">        return discardedTrain;</span>
+    }
+
+    public boolean isForced() {
+<span class="fc" id="L77">        return forced;</span>
+    }
+
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (pa == this) return true;</span>
+        //  super checks both class identity and super class attributes
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if (!super.equalsAs(pa, asOption)) return false;</span>
+
+        // check asOption attributes
+<span class="fc" id="L88">        DiscardTrain action = (DiscardTrain)pa;</span>
+        // TODO: only the types have to be identical, due Rails 1.x backward compatibility
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        boolean options = Objects.equal(this.getOwnedTrainTypes(), action.getOwnedTrainTypes())</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">                &amp;&amp; Objects.equal(this.forced, action.forced)</span>
+        ;
+
+        // finish if asOptions check
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if (asOption) return options;</span>
+
+        // check asAction attributes
+        // TODO: only the types have to be identical, due Rails 1.x backward compatibility
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        return options</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.discardedTrain.getType(), action.discardedTrain.getType())</span>
+        ;
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L106">        return super.toString() +</span>
+<span class="fc" id="L107">                RailsObjects.stringHelper(this)</span>
+<span class="fc" id="L108">                    .addToString(&quot;ownedTrains&quot;, ownedTrains)</span>
+<span class="fc" id="L109">                    .addToString(&quot;forced&quot;, forced)</span>
+<span class="fc" id="L110">                    .addToStringOnlyActed(&quot;discardedTrain&quot;, discardedTrain)</span>
+<span class="fc" id="L111">                    .toString()</span>
+        ;
+    }
+
+    /** Deserialize */
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+
+<span class="fc" id="L119">        in.defaultReadObject();</span>
+
+<span class="fc" id="L121">        TrainManager trainManager = RailsRoot.getInstance().getTrainManager();</span>
+
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        if (discardedTrainUniqueId != null) {</span>
+<span class="fc" id="L124">            discardedTrain = trainManager.getTrainByUniqueId(discardedTrainUniqueId);</span>
+        }
+
+<span class="pc bpc" id="L127" title="2 of 4 branches missed.">        if (ownedTrainsUniqueIds != null &amp;&amp; ownedTrainsUniqueIds.length &gt; 0) {</span>
+<span class="fc" id="L128">            ownedTrains = new HashSet&lt;Train&gt;();</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">            for (int i = 0; i &lt; ownedTrainsUniqueIds.length; i++) {</span>
+<span class="fc" id="L130">                ownedTrains.add(trainManager.getTrainByUniqueId(ownedTrainsUniqueIds[i]));</span>
+            }
+        }
+<span class="fc" id="L133">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

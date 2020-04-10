@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Activities.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.round</a> &gt; <span class="el_source">Activities.java</span></div><h1>Activities.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.round;
+
+import rails.game.action.PossibleActions;
+
+import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.MutableClassToInstanceMap;
+
+import net.sf.rails.game.RailsAbstractItem;
+
+/**
+ * Activities allows to bundle several Activity objects
+ */
+public class Activities extends RailsAbstractItem {
+
+<span class="nc" id="L15">    private final ClassToInstanceMap&lt;Activity&gt; activities = MutableClassToInstanceMap.create();</span>
+    
+    protected Activities(RoundNG parent, String id) {
+<span class="nc" id="L18">        super(parent, id);</span>
+<span class="nc" id="L19">    }</span>
+
+    /**
+     * @param activityClass by which the activity was stored
+     * @return the related activity
+     */
+    public &lt;T extends Activity&gt; T getActivity(Class&lt;T&gt; activityClass) {
+<span class="nc" id="L26">        return activities.getInstance(activityClass);</span>
+    }
+    
+    /**
+     * @param activityClass store the activity with the class as key
+     * @param activity to be stored
+     */
+    public &lt;T extends Activity&gt; void addActivity(Class&lt;T&gt; activityClass, T activity) {
+<span class="nc" id="L34">        activities.putInstance(activityClass, activity);</span>
+<span class="nc" id="L35">    }</span>
+    
+    /**
+     * @param activity to be stored using its class as key
+     */
+    public void addActivity(Activity activity) {
+<span class="nc" id="L41">        activities.put(activity.getClass(), activity);</span>
+<span class="nc" id="L42">    }</span>
+
+    /**
+     * create actions and add them to the possibleActions object
+     */
+    public void createActions(Actor actor, PossibleActions actions) {
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        for (Activity activity:activities.values()) {</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">            if (activity.isEnabled()) {</span>
+<span class="nc" id="L50">                activity.createActions(actor, actions);</span>
+            }
+<span class="nc" id="L52">        }</span>
+<span class="nc" id="L53">    }</span>
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

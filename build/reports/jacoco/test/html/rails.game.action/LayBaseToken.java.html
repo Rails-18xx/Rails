@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LayBaseToken.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">rails.game.action</a> &gt; <span class="el_source">LayBaseToken.java</span></div><h1>LayBaseToken.java</h1><pre class="source lang-java linenums">package rails.game.action;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.base.Objects;
+
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.MapManager;
+import net.sf.rails.game.Stop;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.special.SpecialBaseTokenLay;
+import net.sf.rails.util.RailsObjects;
+import net.sf.rails.util.Util;
+
+/**
+ * Rails 2.0: Updated equals and toString methods
+ */
+public class LayBaseToken extends LayToken {
+
+    /* LayTile types */
+    public final static int GENERIC = 0; // Stop-gap only
+    public final static int LOCATION_SPECIFIC = 1; // Valid hex
+    public final static int SPECIAL_PROPERTY = 2; // Directed by a special
+    public final static int HOME_CITY = 3; // If city on home hex is undefined in 1st turn
+    // property
+    public final static int CORRECTION = 99; // Correction token lays
+
+<span class="fc" id="L31">    protected int type = 0;</span>
+
+    /*--- Preconditions ---*/
+
+    /*--- Postconditions ---*/
+
+    /** The station (or city) on the hex where the token is laid */
+<span class="fc" id="L38">    protected int chosenStation = 0; // Default</span>
+
+    public static final long serialVersionUID = 1L;
+
+    public LayBaseToken(int type) {
+<span class="fc" id="L43">        super();</span>
+<span class="fc" id="L44">        this.type = type;</span>
+<span class="fc" id="L45">    }</span>
+    
+    /**
+     * Lay a base token on one of a given list of locations.
+     * &lt;p&gt;This constructor is only intended to be used for normal lays of non-home tokens
+     * in the operating company LAY_TOKEN OR step.
+     * 
+     * @param locations A list of valid locations (hexes) where the acting company can lay a base token.&lt;br&gt;
+     * &lt;i&gt;Note:&lt;/i&gt; Currently, the game engine cannot yet provide such a list, as all knowledge about routes
+     * is contained in the user interface code. As a consequence, this constructor is only called
+     * with the value &lt;b&gt;null&lt;/b&gt;, which allows laying a base token on &lt;i&gt;any&lt;/i&gt; empty city slot.
+     * In fact, the UI will now apply the restriction to valid locations only.
+     * Over time, applying this restriction should be moved to the game engine.
+     */
+    public LayBaseToken(List&lt;MapHex&gt; locations) {
+<span class="fc" id="L60">        super(locations);</span>
+<span class="fc" id="L61">        type = LOCATION_SPECIFIC;</span>
+<span class="fc" id="L62">    }</span>
+
+    /** Lay a base token as allowed via a Special Property.
+     * &lt;p&gt;The valid locations (hexes) of such a token should be defined inside the special property.
+     * Typically, such locations do not need to be connected to the existing network of a company.
+     * 
+     * @param specialProperty The special property that allows laying an extra or unconnected base token.
+     */
+    public LayBaseToken(SpecialBaseTokenLay specialProperty) {
+<span class="fc" id="L71">        super(specialProperty);</span>
+<span class="fc" id="L72">        type = SPECIAL_PROPERTY;</span>
+<span class="fc" id="L73">    }</span>
+
+    /** Lay a base token on a given location.
+     * &lt;p&gt; This constructor is specifically intended to allow the player to select a city for its &lt;b&gt;home&lt;/b&gt; token
+     * on a multi-city hex or tile (e.g. an OO tile, such as the Erie in 1830 or the THB in 1856).
+     * 
+     * @param hex The hex on which a city must be selected to lay a home token on.
+     */
+    public LayBaseToken (MapHex hex) {
+<span class="fc" id="L82">        super (hex);</span>
+<span class="fc" id="L83">        setChosenHex (hex);</span>
+<span class="fc" id="L84">        type = HOME_CITY;</span>
+<span class="fc" id="L85">    }</span>
+    
+    
+
+    @Deprecated
+    public int getChosenStation() {
+<span class="nc" id="L91">        return chosenStation;</span>
+    }
+    
+    public Stop getChosenStop() {
+<span class="fc" id="L95">        return chosenHex.getRelatedStop(chosenStation);</span>
+    }
+
+    public void setChosenStation(int chosenStation) {
+<span class="nc" id="L99">        this.chosenStation = chosenStation;</span>
+<span class="nc" id="L100">    }</span>
+
+    public int getType() {
+<span class="fc" id="L103">        return type;</span>
+    }
+    
+    
+    @Override
+    public SpecialBaseTokenLay getSpecialProperty() {
+<span class="fc" id="L109">        return (SpecialBaseTokenLay)specialProperty;</span>
+    }
+    
+    @Override
+    public int getPotentialCost(MapHex hex) {
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        if (hex == null) {</span>
+<span class="nc" id="L115">            return 0;</span>
+        } else {
+<span class="nc bnc" id="L117" title="All 4 branches missed.">            if (specialProperty != null &amp;&amp; ((SpecialBaseTokenLay)specialProperty).isFree()) {</span>
+<span class="nc" id="L118">                return 0;</span>
+            } else {
+<span class="nc" id="L120">                return company.getBaseTokenLayCost(hex);</span>
+            }
+        }
+              
+    }
+
+    @Override
+    public int getCost() {
+<span class="nc" id="L128">        return getPotentialCost(chosenHex);</span>
+    }
+
+    @Override
+    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
+        // identity always true
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        if (pa == this) return true;</span>
+        //  super checks both class identity and super class attributes
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        if (!super.equalsAs(pa, asOption)) return false; </span>
+
+        // check asOption attributes
+<span class="fc" id="L139">        LayBaseToken action = (LayBaseToken)pa; </span>
+<span class="fc" id="L140">        boolean options = Objects.equal(this.type, action.type);</span>
+        
+        // finish if asOptions check
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        if (asOption) return options;</span>
+        
+        // check asAction attributes
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        return options</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">                &amp;&amp; Objects.equal(this.chosenStation, action.chosenStation)</span>
+        ;
+    }
+
+    @Override
+    public boolean isCorrection() {
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        return (type == LayBaseToken.CORRECTION);</span>
+    }
+    
+    @Override
+    public String toString() {
+<span class="fc" id="L158">        return super.toString() + </span>
+<span class="fc" id="L159">                RailsObjects.stringHelper(this)</span>
+<span class="fc" id="L160">                    .addToString(&quot;type&quot;, type)</span>
+<span class="fc" id="L161">                    .addToStringOnlyActed(&quot;chosenStation&quot;, chosenStation)</span>
+<span class="fc" id="L162">                    .toString()</span>
+        ;
+    }
+
+    /** Deserialize */
+    private void readObject(ObjectInputStream in) throws IOException,
+    ClassNotFoundException {
+
+<span class="fc" id="L170">        in.defaultReadObject();</span>
+
+<span class="fc" id="L172">        MapManager mmgr = getRoot().getMapManager();</span>
+<span class="fc" id="L173">        locations = new ArrayList&lt;MapHex&gt;();</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        if (Util.hasValue(locationNames)) {</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">            for (String hexName : locationNames.split(&quot;,&quot;)) {</span>
+<span class="fc" id="L176">                locations.add(mmgr.getHex(hexName));</span>
+            }
+        }
+
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        if (specialPropertyId &gt; 0) {</span>
+<span class="fc" id="L181">            specialProperty =</span>
+<span class="fc" id="L182">                (SpecialBaseTokenLay) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);</span>
+        }
+<span class="pc bpc" id="L184" title="2 of 4 branches missed.">        if (chosenHexName != null &amp;&amp; chosenHexName.length() &gt; 0) {</span>
+<span class="fc" id="L185">            chosenHex = mmgr.getHex(chosenHexName);</span>
+        }
+<span class="fc" id="L187">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

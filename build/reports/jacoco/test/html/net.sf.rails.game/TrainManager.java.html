@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TrainManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game</a> &gt; <span class="el_source">TrainManager.java</span></div><h1>TrainManager.java</h1><pre class="source lang-java linenums">package net.sf.rails.game;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.common.parser.Configurable;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.BankPortfolio;
+import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.HashMapState;
+import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.Owner;
+import net.sf.rails.util.Util;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+public class TrainManager extends RailsManager implements Configurable {
+    // Static attributes
+<span class="fc" id="L30">    protected final List&lt;TrainType&gt; lTrainTypes = new ArrayList&lt;TrainType&gt;();</span>
+
+<span class="fc" id="L32">    protected final Map&lt;String, TrainType&gt; mTrainTypes</span>
+            = new HashMap&lt;String, TrainType&gt;();
+
+<span class="fc" id="L35">    protected final List&lt;TrainCertificateType&gt; trainCertTypes</span>
+            = new ArrayList&lt;TrainCertificateType&gt;();
+
+<span class="fc" id="L38">    protected final Map&lt;String, TrainCertificateType&gt; trainCertTypeMap</span>
+            = new HashMap&lt;String, TrainCertificateType&gt;();
+
+<span class="fc" id="L41">    protected final Map&lt;String, Train&gt; trainMap</span>
+            = new HashMap&lt;String, Train&gt;();
+
+<span class="fc" id="L44">    protected final Map&lt;TrainCertificateType, List&lt;Train&gt;&gt; trainsPerCertType</span>
+            = new HashMap&lt;TrainCertificateType, List&lt;Train&gt;&gt;();
+
+<span class="fc" id="L47">    private boolean removeTrain = false;</span>
+
+<span class="fc" id="L49">    protected String discardToString = &quot;pool&quot;;</span>
+    protected BankPortfolio discardTo;
+
+    // defines obsolescence
+<span class="fc" id="L53">    public enum ObsoleteTrainForType {ALL, EXCEPT_TRIGGERING}</span>
+<span class="fc" id="L54">    protected ObsoleteTrainForType obsoleteTrainFor = ObsoleteTrainForType.EXCEPT_TRIGGERING; // default is ALL</span>
+
+    // Dynamic attributes
+<span class="fc" id="L57">    protected final IntegerState newTypeIndex = IntegerState.create(this, &quot;newTypeIndex&quot;, 0);</span>
+
+<span class="fc" id="L59">    protected final HashMapState&lt;String, Integer&gt; lastIndexPerType =</span>
+<span class="fc" id="L60">            HashMapState.create(this, &quot;lastIndexPerType&quot;);</span>
+
+<span class="fc" id="L62">    protected final BooleanState phaseHasChanged = BooleanState.create(this, &quot;phaseHasChanged&quot;);</span>
+
+<span class="fc" id="L64">    protected final BooleanState trainAvailabilityChanged = BooleanState.create(this, &quot;trainAvailablityChanged&quot;);</span>
+
+    /** Required for the sell-train-to-foreigners feature of some games */
+<span class="fc" id="L67">    protected final BooleanState anyTrainBought = BooleanState.create(this, &quot;anyTrainBought&quot;);</span>
+
+    // Triggered phase changes
+<span class="fc" id="L70">    protected final Map&lt;TrainCertificateType, Map&lt;Integer, Phase&gt;&gt; newPhases</span>
+            = new HashMap&lt;TrainCertificateType, Map&lt;Integer, Phase&gt;&gt;();
+
+    // For initialisation only
+<span class="fc" id="L74">    protected boolean trainPriceAtFaceValueIfDifferentPresidents = false;</span>
+
+<span class="fc" id="L76">    private static final Logger log = LoggerFactory.getLogger(TrainManager.class);</span>
+
+    /**
+     * Used by Configure (via reflection) only
+     */
+    public TrainManager(RailsRoot parent, String id) {
+<span class="fc" id="L82">        super(parent, id);</span>
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * @see net.sf.rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
+     */
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+
+        TrainType newType;
+
+<span class="fc" id="L92">        Tag defaultsTag = tag.getChild(&quot;Defaults&quot;);</span>
+        // We will use this tag later, to preconfigure TrainCertType and TrainType.
+
+        List&lt;Tag&gt; typeTags;
+
+        // Choice train types (new style)
+<span class="fc" id="L98">        List&lt;Tag&gt; trainTypeTags = tag.getChildren(&quot;TrainType&quot;);</span>
+
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        if (trainTypeTags != null) {</span>
+<span class="fc" id="L101">            int trainTypeIndex = 0;</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">            for (Tag trainTypeTag : trainTypeTags) {</span>
+                // FIXME: Creation of Type to be rewritten
+<span class="fc" id="L104">                String trainTypeId = trainTypeTag.getAttributeAsString(&quot;name&quot;);</span>
+<span class="fc" id="L105">                TrainCertificateType certType = TrainCertificateType.create(this, trainTypeId, trainTypeIndex++);</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">                if (defaultsTag != null) certType.configureFromXML(defaultsTag);</span>
+<span class="fc" id="L107">                certType.configureFromXML(trainTypeTag);</span>
+<span class="fc" id="L108">                trainCertTypes.add(certType);</span>
+<span class="fc" id="L109">                trainCertTypeMap.put(certType.getId(), certType);</span>
+
+                // The potential train types
+<span class="fc" id="L112">                typeTags = trainTypeTag.getChildren(&quot;Train&quot;);</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">                if (typeTags == null) {</span>
+                    // That's OK, all properties are in TrainType, to let's reuse that tag
+<span class="fc" id="L115">                    typeTags = Arrays.asList(trainTypeTag);</span>
+                }
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                for (Tag typeTag : typeTags) {</span>
+<span class="fc" id="L118">                    newType = new TrainType();</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">                    if (defaultsTag != null) newType.configureFromXML(defaultsTag);</span>
+<span class="fc" id="L120">                    newType.configureFromXML(trainTypeTag);</span>
+<span class="fc" id="L121">                    newType.configureFromXML(typeTag);</span>
+<span class="fc" id="L122">                    lTrainTypes.add(newType);</span>
+<span class="fc" id="L123">                    mTrainTypes.put(newType.getName(), newType);</span>
+<span class="fc" id="L124">                    certType.addPotentialTrainType(newType);</span>
+<span class="fc" id="L125">                }</span>
+<span class="fc" id="L126">            }</span>
+        }
+
+
+        // Special train buying rules
+<span class="fc" id="L131">        Tag rulesTag = tag.getChild(&quot;TrainBuyingRules&quot;);</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        if (rulesTag != null) {</span>
+            // A 1851 special
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">            trainPriceAtFaceValueIfDifferentPresidents = rulesTag.getChild(&quot;FaceValueIfDifferentPresidents&quot;) != null;</span>
+        }
+
+        // Train obsolescence
+<span class="fc" id="L138">        String obsoleteAttribute = tag.getAttributeAsString(&quot;ObsoleteTrainFor&quot;);</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        if (Util.hasValue(obsoleteAttribute)) {</span>
+            try {
+<span class="fc" id="L141">                obsoleteTrainFor= ObsoleteTrainForType.valueOf(obsoleteAttribute);</span>
+<span class="nc" id="L142">            } catch (Exception e) {</span>
+<span class="nc" id="L143">                throw new ConfigurationException(e);</span>
+<span class="fc" id="L144">            }</span>
+        }
+
+        // Trains discard
+<span class="fc" id="L148">        Tag discardTag = tag.getChild(&quot;DiscardTrain&quot;);</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        if (discardTag != null) {</span>
+<span class="fc" id="L150">            discardToString = discardTag.getAttributeAsString(&quot;to&quot;);</span>
+        }
+
+        // Are trains sold to foreigners?
+<span class="fc" id="L154">        Tag removeTrainTag = tag.getChild(&quot;RemoveTrainBeforeSR&quot;);</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">        if (removeTrainTag != null) {</span>
+            // Trains &quot;bought by foreigners&quot; (1844, 1824)
+<span class="nc" id="L157">            removeTrain = true; // completed in finishConfiguration()</span>
+        }
+
+<span class="fc" id="L160">    }</span>
+
+    public void finishConfiguration (RailsRoot root)
+    throws ConfigurationException {
+
+        Map&lt;Integer, String&gt; newPhaseNames;
+        Phase phase;
+        String phaseName;
+<span class="fc" id="L168">        PhaseManager phaseManager = root.getPhaseManager();</span>
+
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        for (TrainCertificateType certType : trainCertTypes) {</span>
+<span class="fc" id="L171">            certType.finishConfiguration(root);</span>
+
+<span class="fc" id="L173">            List&lt;TrainType&gt; types = certType.getPotentialTrainTypes();</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">            for (TrainType type : types) {</span>
+<span class="fc" id="L175">                type.finishConfiguration(root, certType);</span>
+<span class="fc" id="L176">            }</span>
+
+            // Now create the trains of this type
+            Train train;
+            // Multi-train certificates cannot yet be assigned a type
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">            TrainType initialType = types.size() == 1 ? types.get(0) : null;</span>
+
+            /* If the amount is infinite, only one train is created.
+             * Each time this train is bought, another one is created.
+             */
+<span class="fc bfc" id="L186" title="All 4 branches covered.">            for (int i = 0; i &lt; (certType.hasInfiniteQuantity() ? 1 : certType.getQuantity()); i++) {</span>
+<span class="fc" id="L187">                train = Train.create(this, getNewUniqueId(certType.getId()), certType, initialType);</span>
+<span class="fc" id="L188">                addTrain(train);</span>
+<span class="fc" id="L189">                Bank.getUnavailable(this).getPortfolioModel().addTrain(train);</span>
+            }
+
+            // Register any phase changes
+<span class="fc" id="L193">            newPhaseNames = certType.getNewPhaseNames();</span>
+<span class="pc bpc" id="L194" title="1 of 4 branches missed.">            if (newPhaseNames != null &amp;&amp; !newPhaseNames.isEmpty()) {</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">                for (int index : newPhaseNames.keySet()) {</span>
+<span class="fc" id="L196">                    phaseName = newPhaseNames.get(index);</span>
+<span class="fc" id="L197">                    phase = (Phase)phaseManager.getPhaseByName(phaseName);</span>
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">                    if (phase == null) {</span>
+<span class="nc" id="L199">                        throw new ConfigurationException (&quot;New phase '&quot;+phaseName+&quot;' does not exist&quot;);</span>
+                    }
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">                    if (newPhases.get(certType) == null) newPhases.put(certType, new HashMap&lt;Integer, Phase&gt;());</span>
+<span class="fc" id="L202">                    newPhases.get(certType).put(index, phase);</span>
+<span class="fc" id="L203">                }</span>
+            }
+
+<span class="fc" id="L206">        }</span>
+
+        // By default, set the first train type to &quot;available&quot;.
+<span class="fc" id="L209">        newTypeIndex.set(0);</span>
+<span class="fc" id="L210">        makeTrainAvailable(trainCertTypes.get(newTypeIndex.value()));</span>
+
+        // Discard Trains To where?
+<span class="fc bfc" id="L213" title="All 2 branches covered.">        if (discardToString.equalsIgnoreCase(&quot;pool&quot;)) {</span>
+<span class="fc" id="L214">            discardTo = root.getBank().getPool();</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">        } else if (discardToString.equalsIgnoreCase(&quot;scrapheap&quot;)) {</span>
+<span class="fc" id="L216">            discardTo = root.getBank().getScrapHeap();</span>
+        } else {
+<span class="nc" id="L218">            throw new ConfigurationException (&quot;Discard to only allow to pool or scrapheap&quot;);</span>
+        }
+
+        // Trains &quot;bought by foreigners&quot; (1844, 1824)
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">        if (removeTrain) {</span>
+<span class="nc" id="L223">            root.getGameManager().setGameParameter(GameDef.Parm.REMOVE_TRAIN_BEFORE_SR, true);</span>
+        }
+
+        // Train trading between different players at face value only (1851)
+<span class="fc" id="L227">        root.getGameManager().setGameParameter(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS,</span>
+<span class="fc" id="L228">                trainPriceAtFaceValueIfDifferentPresidents);</span>
+<span class="fc" id="L229">    }</span>
+
+    /** Create train without throwing exceptions.
+     * To be used &lt;b&gt;after&lt;/b&gt; completing initialization,
+     * i.e. in cloning infinitely available trains.
+     */
+
+    public Train cloneTrain (TrainCertificateType certType) {
+<span class="fc" id="L237">        Train train = null;</span>
+<span class="fc" id="L238">        List&lt;TrainType&gt; types = certType.getPotentialTrainTypes();</span>
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">        TrainType initialType = types.size() == 1 ? types.get(0) : null;</span>
+        try {
+<span class="fc" id="L241">            train = Train.create(this, getNewUniqueId(certType.getId()), certType, initialType);</span>
+<span class="nc" id="L242">        } catch (ConfigurationException e) {</span>
+<span class="nc" id="L243">            log.warn(&quot;Unexpected exception&quot;, e);</span>
+<span class="fc" id="L244">        }</span>
+<span class="fc" id="L245">        addTrain(train);</span>
+<span class="fc" id="L246">        return train;</span>
+    }
+
+    public void addTrain (Train train) {
+<span class="fc" id="L250">        trainMap.put(train.getId(), train);</span>
+
+<span class="fc" id="L252">        TrainCertificateType type = train.getCertType();</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        if (!trainsPerCertType.containsKey(type)) {</span>
+<span class="fc" id="L254">            trainsPerCertType.put (type, new ArrayList&lt;Train&gt;());</span>
+        }
+<span class="fc" id="L256">        trainsPerCertType.get(type).add(train);</span>
+<span class="fc" id="L257">    }</span>
+
+    public Train getTrainByUniqueId(String id) {
+<span class="fc" id="L260">        return trainMap.get(id);</span>
+    }
+
+    public int getNewUniqueId (String typeName) {
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        int newUniqueId = lastIndexPerType.containsKey(typeName) ? lastIndexPerType.get(typeName) + 1 : 0;</span>
+<span class="fc" id="L265">        lastIndexPerType.put (typeName, newUniqueId);</span>
+<span class="fc" id="L266">        return newUniqueId;</span>
+    }
+
+
+    /**
+     * This method handles any consequences of new train buying (from the IPO),
+     * such as rusting and phase changes. It must be called &lt;b&gt;after&lt;/b&gt; the
+     * train has been transferred.
+     *
+     */
+    public void checkTrainAvailability(Train train, Owner from) {
+
+<span class="fc" id="L278">        phaseHasChanged.set(false);</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">        if (from != Bank.getIpo(this)) return;</span>
+
+        TrainCertificateType boughtType, nextType;
+<span class="fc" id="L282">        boughtType = train.getCertType();</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        if (boughtType == (trainCertTypes.get(newTypeIndex.value()))</span>
+<span class="fc bfc" id="L284" title="All 2 branches covered.">            &amp;&amp; Bank.getIpo(this).getPortfolioModel().getTrainOfType(boughtType) == null) {</span>
+            // Last train bought, make a new type available.
+<span class="fc" id="L286">            newTypeIndex.add(1);</span>
+<span class="fc bfc" id="L287" title="All 2 branches covered.">            if (newTypeIndex.value() &lt; lTrainTypes.size()) {</span>
+<span class="fc" id="L288">                nextType = (trainCertTypes.get(newTypeIndex.value()));</span>
+<span class="pc bpc" id="L289" title="1 of 2 branches missed.">                if (nextType != null) {</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">                    if (!nextType.isAvailable()) {</span>
+<span class="fc" id="L291">                        makeTrainAvailable(nextType);</span>
+<span class="fc" id="L292">                        trainAvailabilityChanged.set(true);</span>
+<span class="fc" id="L293">                        ReportBuffer.add(this, &quot;All &quot; + boughtType.toText()</span>
+                                         + &quot;-trains are sold out, &quot;
+<span class="fc" id="L295">                                         + nextType.toText() + &quot;-trains now available&quot;);</span>
+                    }
+                }
+            }
+        }
+
+<span class="fc" id="L301">        int trainIndex = boughtType.getNumberBoughtFromIPO();</span>
+<span class="fc bfc" id="L302" title="All 2 branches covered.">        if (trainIndex == 1) {</span>
+            // First train of a new type bought
+<span class="fc" id="L304">            ReportBuffer.add(this, LocalText.getText(&quot;FirstTrainBought&quot;,</span>
+<span class="fc" id="L305">                    boughtType.toText()));</span>
+        }
+
+        // New style phase changes, can be triggered by any bought train.
+        Phase newPhase;
+<span class="fc bfc" id="L310" title="All 2 branches covered.">        if (newPhases.get(boughtType) != null</span>
+<span class="fc bfc" id="L311" title="All 2 branches covered.">                &amp;&amp; (newPhase = newPhases.get(boughtType).get(trainIndex)) != null) {</span>
+<span class="fc" id="L312">            getRoot().getPhaseManager().setPhase(newPhase, train.getOwner());</span>
+<span class="fc" id="L313">            phaseHasChanged.set(true);</span>
+        }
+<span class="fc" id="L315">    }</span>
+
+    protected void makeTrainAvailable (TrainCertificateType type) {
+
+<span class="fc" id="L319">        type.setAvailable();</span>
+
+        BankPortfolio to =
+<span class="fc bfc" id="L322" title="All 2 branches covered.">            (type.getInitialPortfolio().equalsIgnoreCase(&quot;Pool&quot;) ? Bank.getPool(this)</span>
+<span class="fc" id="L323">                    : Bank.getIpo(this));</span>
+
+<span class="fc bfc" id="L325" title="All 2 branches covered.">        for (Train train : trainsPerCertType.get(type)) {</span>
+<span class="fc" id="L326">            to.getPortfolioModel().addTrain(train);</span>
+<span class="fc" id="L327">        }</span>
+<span class="fc" id="L328">    }</span>
+
+    // checks train obsolete condition
+    private boolean isTrainObsolete(Train train, Owner lastBuyingCompany) {
+        // check fist if train can obsolete at all
+<span class="fc bfc" id="L333" title="All 2 branches covered.">        if (!train.getCertType().isObsoleting()) return false;</span>
+        // and if it is in the pool (always rust)
+<span class="pc bpc" id="L335" title="1 of 2 branches missed.">        if (train.getOwner() == Bank.getPool(this)) return false;</span>
+
+        // then check if obsolete type
+<span class="pc bpc" id="L338" title="1 of 2 branches missed.">        if (obsoleteTrainFor == ObsoleteTrainForType.ALL) {</span>
+<span class="fc" id="L339">            return true;</span>
+        } else  { // otherwise it is AllExceptTriggering
+<span class="nc" id="L341">            Owner owner = train.getOwner();</span>
+<span class="nc bnc" id="L342" title="All 4 branches missed.">            return (owner instanceof PublicCompany &amp;&amp; owner != lastBuyingCompany);</span>
+        }
+    }
+
+    protected void rustTrainType (TrainCertificateType type, Owner lastBuyingCompany) {
+<span class="fc" id="L347">        type.setRusted();</span>
+<span class="fc bfc" id="L348" title="All 2 branches covered.">        for (Train train : trainsPerCertType.get(type)) {</span>
+<span class="fc" id="L349">            Owner owner = train.getOwner();</span>
+            // check condition for train rusting
+<span class="fc bfc" id="L351" title="All 2 branches covered.">            if (isTrainObsolete(train, lastBuyingCompany)) {</span>
+<span class="fc" id="L352">                log.debug(&quot;Train &quot; + train.getId() + &quot; (owned by &quot;</span>
+<span class="fc" id="L353">                        + owner.getId() + &quot;) obsoleted&quot;);</span>
+<span class="fc" id="L354">                train.setObsolete();</span>
+                // TODO: is this still required?
+                // train.getHolder().update();
+            } else {
+<span class="fc" id="L358">                log.debug(&quot;Train &quot; + train.getId() + &quot; (owned by &quot;</span>
+<span class="fc" id="L359">                        + owner.getId() + &quot;) rusted&quot;);</span>
+<span class="fc" id="L360">                train.setRusted();</span>
+            }
+<span class="fc" id="L362">        }</span>
+        // report about event
+<span class="fc bfc" id="L364" title="All 2 branches covered.">        if (type.isObsoleting()) {</span>
+<span class="fc" id="L365">            ReportBuffer.add(this, LocalText.getText(&quot;TrainsObsolete.&quot; + obsoleteTrainFor, type.getId()));</span>
+        } else {
+<span class="fc" id="L367">            ReportBuffer.add(this, LocalText.getText(&quot;TrainsRusted&quot;,type.getId()));</span>
+        }
+<span class="fc" id="L369">    }</span>
+
+    public Set&lt;Train&gt; getAvailableNewTrains() {
+
+<span class="fc" id="L373">        Set&lt;Train&gt; availableTrains = new TreeSet&lt;Train&gt;();</span>
+        Train train;
+
+<span class="fc bfc" id="L376" title="All 2 branches covered.">        for (TrainCertificateType type : trainCertTypes) {</span>
+<span class="fc bfc" id="L377" title="All 2 branches covered.">            if (type.isAvailable()) {</span>
+<span class="fc" id="L378">                train = Bank.getIpo(this).getPortfolioModel().getTrainOfType(type);</span>
+<span class="fc bfc" id="L379" title="All 2 branches covered.">                if (train != null) {</span>
+<span class="fc" id="L380">                    availableTrains.add(train);</span>
+                }
+            }
+<span class="fc" id="L383">        }</span>
+<span class="fc" id="L384">        return availableTrains;</span>
+    }
+
+    public String getTrainCostOverview() {
+<span class="nc" id="L388">        StringBuilder b = new StringBuilder();</span>
+<span class="nc bnc" id="L389" title="All 2 branches missed.">        for (TrainCertificateType certType : trainCertTypes) {</span>
+<span class="nc bnc" id="L390" title="All 2 branches missed.">            if (certType.getCost() &gt; 0) {</span>
+<span class="nc bnc" id="L391" title="All 2 branches missed.">                if (b.length() &gt; 1) b.append(&quot; &quot;);</span>
+<span class="nc" id="L392">                b.append(certType.toText()).append(&quot;:&quot;).append(Bank.format(this, certType.getCost()));</span>
+<span class="nc bnc" id="L393" title="All 2 branches missed.">                if (certType.getExchangeCost() &gt; 0) {</span>
+<span class="nc" id="L394">                    b.append(&quot;(&quot;).append(Bank.format(this, certType.getExchangeCost())).append(&quot;)&quot;);</span>
+                }
+            } else {
+<span class="nc bnc" id="L397" title="All 2 branches missed.">                for (TrainType type : certType.getPotentialTrainTypes()) {</span>
+<span class="nc bnc" id="L398" title="All 2 branches missed.">                    if (b.length() &gt; 1) b.append(&quot; &quot;);</span>
+<span class="nc" id="L399">                    b.append(type.getName()).append(&quot;:&quot;).append(Bank.format(this, type.getCost()));</span>
+<span class="nc" id="L400">                }</span>
+            }
+<span class="nc" id="L402">        }</span>
+<span class="nc" id="L403">        return b.toString();</span>
+    }
+
+    public TrainType getTypeByName(String name) {
+<span class="fc" id="L407">        return mTrainTypes.get(name);</span>
+    }
+
+    public List&lt;TrainType&gt; getTrainTypes() {
+<span class="nc" id="L411">        return lTrainTypes;</span>
+    }
+
+    public List&lt;TrainCertificateType&gt; getTrainCertTypes() {
+<span class="nc" id="L415">        return trainCertTypes;</span>
+    }
+
+    public TrainCertificateType getCertTypeByName (String name) {
+<span class="fc" id="L419">        return trainCertTypeMap.get(name);</span>
+    }
+
+    public boolean hasAvailabilityChanged() {
+<span class="nc" id="L423">        return trainAvailabilityChanged.value();</span>
+    }
+
+    public void resetAvailabilityChanged() {
+<span class="nc" id="L427">        trainAvailabilityChanged.set(false);;</span>
+<span class="nc" id="L428">    }</span>
+
+    public boolean hasPhaseChanged() {
+<span class="fc" id="L431">        return phaseHasChanged.value();</span>
+    }
+
+    public boolean isAnyTrainBought () {
+<span class="fc" id="L435">        return anyTrainBought.value();</span>
+    }
+
+    public void setAnyTrainBought (boolean newValue) {
+<span class="fc bfc" id="L439" title="All 2 branches covered.">        if (isAnyTrainBought() != newValue) {</span>
+<span class="fc" id="L440">            anyTrainBought.set(newValue);</span>
+        }
+<span class="fc" id="L442">    }</span>
+
+    public BankPortfolio discardTo() {
+<span class="fc" id="L445">        return discardTo;</span>
+    }
+
+    public List&lt;TrainType&gt; parseTrainTypes(String trainTypeName) {
+<span class="nc" id="L449">        List &lt;TrainType&gt; trainTypes = new ArrayList&lt;TrainType&gt;();</span>
+        TrainType trainType;
+<span class="nc bnc" id="L451" title="All 2 branches missed.">        for (String trainTypeSingle : trainTypeName.split(&quot;,&quot;)) {</span>
+<span class="nc" id="L452">            trainType = getTypeByName(trainTypeSingle);</span>
+<span class="nc bnc" id="L453" title="All 2 branches missed.">            if (trainType!= null) {</span>
+<span class="nc" id="L454">                trainTypes.add(trainType);</span>
+            } else {
+                continue;
+            }
+        }
+
+<span class="nc" id="L460">        return trainTypes;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

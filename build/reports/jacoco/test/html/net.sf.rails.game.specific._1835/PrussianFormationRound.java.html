@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrussianFormationRound.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.specific._1835</a> &gt; <span class="el_source">PrussianFormationRound.java</span></div><h1>PrussianFormationRound.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.specific._1835;
+
+import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import rails.game.action.DiscardTrain;
+import rails.game.action.PossibleAction;
+import rails.game.specific._1835.FoldIntoPrussian;
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.*;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.game.round.RoundFacade;
+import net.sf.rails.game.special.ExchangeForShare;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.state.Currency;
+
+import com.google.common.collect.Iterables;
+
+
+public class PrussianFormationRound extends StockRound {
+<span class="fc" id="L28">    private static final Logger log = LoggerFactory.getLogger(PrussianFormationRound.class);</span>
+
+
+    private PublicCompany prussian;
+    private PublicCompany m2;
+    private Phase phase;
+
+    private boolean startPr;
+    private boolean forcedStart;
+    private boolean mergePr;
+    private boolean forcedMerge;
+
+    private List&lt;Company&gt; foldablePrePrussians;
+
+<span class="fc" id="L42">    private enum Step {</span>
+<span class="fc" id="L43">        START,</span>
+<span class="fc" id="L44">        MERGE,</span>
+<span class="fc" id="L45">        DISCARD_TRAINS</span>
+    };
+
+    private Step step;
+
+<span class="fc" id="L50">    private static String PR_ID = GameManager_1835.PR_ID;</span>
+<span class="fc" id="L51">    private static String M2_ID = GameManager_1835.M2_ID;</span>
+
+    /**
+     * Constructed via Configure
+     */
+    // change: PrussianFormationRound is a triggered MergerRound
+    // requires: make an independent round type with the merger and related activities
+    public PrussianFormationRound (GameManager parent, String id) {
+<span class="fc" id="L59">        super(parent, id);</span>
+
+<span class="fc" id="L61">        guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);</span>
+<span class="fc" id="L62">        guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);</span>
+<span class="fc" id="L63">    }</span>
+
+    @Override
+    public void start() {
+
+<span class="fc" id="L68">        prussian = companyManager.getPublicCompany(PR_ID);</span>
+<span class="fc" id="L69">        phase = Phase.getCurrent(this);</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        startPr = !prussian.hasStarted();</span>
+<span class="fc" id="L71">        forcedMerge = phase.getId().equals(&quot;5&quot;);</span>
+<span class="fc bfc" id="L72" title="All 4 branches covered.">        forcedStart = phase.getId().equals(&quot;4+4&quot;) || forcedMerge;</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        mergePr = !prussianIsComplete(gameManager);</span>
+
+<span class="fc" id="L75">        ReportBuffer.add(this, LocalText.getText(&quot;StartFormationRound&quot;, PR_ID));</span>
+<span class="fc" id="L76">        log.debug(&quot;StartPr=&quot;+startPr+&quot; forcedStart=&quot;+forcedStart</span>
+                +&quot; mergePr=&quot;+mergePr+&quot; forcedMerge=&quot;+forcedMerge);
+
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        step = startPr ? Step.START : Step.MERGE;</span>
+
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (step == Step.START) {</span>
+<span class="fc" id="L82">            m2 = companyManager.getPublicCompany(M2_ID);</span>
+<span class="fc" id="L83">            setCurrentPlayer(m2.getPresident());</span>
+<span class="fc" id="L84">            ((GameManager_1835)gameManager).setPrussianFormationStartingPlayer(currentPlayer);</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">            if (forcedStart) {</span>
+<span class="fc" id="L86">                executeStartPrussian(true);</span>
+<span class="fc" id="L87">                step = Step.MERGE;</span>
+            }
+        }
+
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (step == Step.MERGE) {</span>
+<span class="fc" id="L92">            startingPlayer</span>
+<span class="fc" id="L93">            = ((GameManager_1835)gameManager).getPrussianFormationStartingPlayer();</span>
+<span class="fc" id="L94">            log.debug(&quot;Original Prussian starting player was &quot;+startingPlayer.getId());</span>
+<span class="fc" id="L95">            setCurrentPlayer(startingPlayer);</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">            if (forcedMerge) {</span>
+                Set&lt;SpecialProperty&gt; sps;
+<span class="fc" id="L98">                setFoldablePrePrussians();</span>
+<span class="fc" id="L99">                List&lt;Company&gt; foldables = new ArrayList&lt;Company&gt; ();</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">                for (PrivateCompany company : gameManager.getAllPrivateCompanies()) {</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">                    if (company.isClosed()) continue;</span>
+<span class="nc" id="L102">                    sps = company.getSpecialProperties();</span>
+<span class="nc bnc" id="L103" title="All 6 branches missed.">                    if (sps != null &amp;&amp; !sps.isEmpty() &amp;&amp; Iterables.get(sps, 0) instanceof ExchangeForShare) {</span>
+<span class="nc" id="L104">                        foldables.add(company);</span>
+                    }
+<span class="nc" id="L106">                }</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">                for (PublicCompany company : gameManager.getAllPublicCompanies()) {</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">                    if (company.isClosed()) continue;</span>
+<span class="fc" id="L109">                    sps = company.getSpecialProperties();</span>
+<span class="pc bpc" id="L110" title="2 of 6 branches missed.">                    if (sps != null &amp;&amp; !sps.isEmpty() &amp;&amp; Iterables.get(sps, 0) instanceof ExchangeForShare) {</span>
+<span class="fc" id="L111">                        foldables.add(company);</span>
+                    }
+<span class="fc" id="L113">                }</span>
+<span class="fc" id="L114">                executeExchange (foldables, false, true);</span>
+
+                // Check if the PR must discard any trains
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                if (prussian.getNumberOfTrains() &gt; prussian.getCurrentTrainLimit()) {</span>
+<span class="fc" id="L118">                    step = Step.DISCARD_TRAINS;</span>
+                } else {
+<span class="fc" id="L120">                    finishRound();</span>
+                }
+<span class="fc" id="L122">            } else {</span>
+<span class="fc" id="L123">                findNextMergingPlayer(false);</span>
+            }
+        }
+<span class="fc" id="L126">    }</span>
+
+    @Override
+    public boolean setPossibleActions() {
+
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if (step == Step.START) {</span>
+<span class="fc" id="L132">            Player m2Owner = m2.getPresident();</span>
+<span class="fc" id="L133">            startingPlayer = m2Owner;</span>
+<span class="fc" id="L134">            setCurrentPlayer(m2Owner);</span>
+<span class="fc" id="L135">            ReportBuffer.add(this, LocalText.getText(&quot;StartingPlayer&quot;,</span>
+<span class="fc" id="L136">                    playerManager.getCurrentPlayer().getId()));</span>
+
+<span class="fc" id="L138">            possibleActions.add(new FoldIntoPrussian(m2));</span>
+
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        } else if (step == Step.MERGE) {</span>
+
+<span class="fc" id="L142">            possibleActions.add(new FoldIntoPrussian(foldablePrePrussians));</span>
+
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        } else if (step == Step.DISCARD_TRAINS) {</span>
+
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">            if (prussian.getNumberOfTrains() &gt; prussian.getCurrentTrainLimit()) {</span>
+<span class="fc" id="L147">                log.debug(&quot;+++ PR has &quot;+prussian.getNumberOfTrains()+&quot;, limit is &quot;+prussian.getCurrentTrainLimit());</span>
+<span class="fc" id="L148">                possibleActions.add(new DiscardTrain(prussian,</span>
+<span class="fc" id="L149">                        prussian.getPortfolioModel().getUniqueTrains(), true));</span>
+            }
+        }
+<span class="fc" id="L152">        return true;</span>
+
+    }
+
+    private void setFoldablePrePrussians () {
+
+<span class="fc" id="L158">        foldablePrePrussians = new ArrayList&lt;Company&gt; ();</span>
+        SpecialProperty sp;
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        for (PrivateCompany company : currentPlayer.getPortfolioModel().getPrivateCompanies()) {</span>
+<span class="fc" id="L161">            sp = Iterables.get(company.getSpecialProperties(), 0);</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">            if (sp instanceof ExchangeForShare) {</span>
+<span class="fc" id="L163">                foldablePrePrussians.add(company);</span>
+            }
+<span class="fc" id="L165">        }</span>
+        PublicCompany company;
+        Set&lt;SpecialProperty&gt; sps;
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        for (PublicCertificate cert : currentPlayer.getPortfolioModel().getCertificates()) {</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">            if (!cert.isPresidentShare()) continue;</span>
+<span class="fc" id="L170">            company = cert.getCompany();</span>
+<span class="fc" id="L171">            sps = company.getSpecialProperties();</span>
+<span class="pc bpc" id="L172" title="2 of 6 branches missed.">            if (sps != null &amp;&amp; !sps.isEmpty() &amp;&amp; Iterables.get(sps, 0) instanceof ExchangeForShare) {</span>
+<span class="fc" id="L173">                foldablePrePrussians.add(company);</span>
+            }
+<span class="fc" id="L175">        }</span>
+<span class="fc" id="L176">    }</span>
+
+    @Override
+    protected boolean processGameSpecificAction(PossibleAction action) {
+
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        if (action instanceof FoldIntoPrussian) {</span>
+
+<span class="fc" id="L183">            FoldIntoPrussian a = (FoldIntoPrussian) action;</span>
+
+<span class="fc bfc" id="L185" title="All 2 branches covered.">            if (step == Step.START) {</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">                if (!startPrussian(a)) {</span>
+<span class="fc" id="L187">                    finishRound();</span>
+                } else {
+<span class="fc" id="L189">                    step = Step.MERGE;</span>
+<span class="fc" id="L190">                    findNextMergingPlayer(false);</span>
+                }
+
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">            } else if (step == Step.MERGE) {</span>
+
+<span class="fc" id="L195">                mergeIntoPrussian (a);</span>
+
+            }
+
+<span class="fc" id="L199">            return true;</span>
+
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">        } else if (action instanceof DiscardTrain) {</span>
+
+<span class="fc" id="L203">            discardTrain ((DiscardTrain) action);</span>
+<span class="fc" id="L204">            return true;</span>
+
+        } else {
+<span class="nc" id="L207">            return false;</span>
+        }
+    }
+
+    protected boolean findNextMergingPlayer(boolean skipCurrentPlayer) {
+
+        while (true) {
+
+<span class="fc bfc" id="L215" title="All 2 branches covered.">            if (skipCurrentPlayer) {</span>
+<span class="fc" id="L216">                setNextPlayer();</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">                if (playerManager.getCurrentPlayer() == startingPlayer) {</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                    if (prussian.getNumberOfTrains() &gt; prussian.getCurrentTrainLimit()) {</span>
+<span class="nc" id="L219">                        step = Step.DISCARD_TRAINS;</span>
+                    } else {
+<span class="fc" id="L221">                        finishRound();</span>
+                    }
+<span class="fc" id="L223">                    return false;</span>
+                }
+            }
+
+<span class="fc" id="L227">            setFoldablePrePrussians();</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">            if (!foldablePrePrussians.isEmpty()) return true;</span>
+<span class="fc" id="L229">            skipCurrentPlayer = true;</span>
+        }
+    }
+
+    private boolean startPrussian (FoldIntoPrussian action) {
+
+        // Validate
+<span class="fc" id="L236">        String errMsg = null;</span>
+
+<span class="fc" id="L238">        List&lt;Company&gt; folded = action.getFoldedCompanies();</span>
+<span class="pc bpc" id="L239" title="1 of 4 branches missed.">        boolean folding = folded != null &amp;&amp; !folded.isEmpty();</span>
+
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        while (folding) {</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">            if (!(M2_ID.equals(action.getFoldedCompanyNames()))) {</span>
+<span class="nc" id="L243">                errMsg = LocalText.getText(&quot;WrongCompany&quot;,</span>
+<span class="nc" id="L244">                        action.getFoldedCompanyNames(),</span>
+                        GameManager_1835.M2_ID);
+                break;
+            }
+            break;
+        }
+
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">        if (errMsg != null) {</span>
+<span class="nc" id="L252">            DisplayBuffer.add(this, LocalText.getText(&quot;CannotMerge&quot;,</span>
+<span class="nc" id="L253">                    action.getFoldedCompanyNames(),</span>
+                    PR_ID,
+                    errMsg));
+<span class="nc" id="L256">            return false;</span>
+        }
+
+        // all actions linked during formation round to avoid serious undo problems
+
+        // FIXME: changeStack.linkToPreviousMoveSet();
+
+<span class="fc bfc" id="L263" title="All 2 branches covered.">        if (folding) executeStartPrussian(false);</span>
+
+<span class="fc" id="L265">        return folding;</span>
+    }
+
+    private void executeStartPrussian (boolean display) {
+
+<span class="fc" id="L270">        prussian.start();</span>
+<span class="fc" id="L271">        String message = LocalText.getText(&quot;START_MERGED_COMPANY&quot;,</span>
+                PR_ID,
+<span class="fc" id="L273">                Bank.format(this, prussian.getIPOPrice()),</span>
+<span class="fc" id="L274">                prussian.getStartSpace().toText());</span>
+<span class="fc" id="L275">        ReportBuffer.add(this, message);</span>
+<span class="fc bfc" id="L276" title="All 2 branches covered.">        if (display) DisplayBuffer.add(this, message);</span>
+
+        // add money from sold shares
+        // Move cash and shares where required
+<span class="fc" id="L280">        int capFactor = prussian.getSoldPercentage() / (prussian.getShareUnit() * prussian.getShareUnitsForSharePrice());</span>
+<span class="fc" id="L281">        int cash = capFactor * prussian.getIPOPrice();</span>
+
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">        if (cash &gt; 0) {</span>
+<span class="fc" id="L284">            String cashText = Currency.fromBank(cash, prussian);</span>
+<span class="fc" id="L285">            ReportBuffer.add(this, LocalText.getText(&quot;FloatsWithCash&quot;,</span>
+<span class="fc" id="L286">                prussian.getId(),</span>
+                cashText ));
+<span class="fc" id="L288">        } else {</span>
+<span class="nc" id="L289">            ReportBuffer.add(this, LocalText.getText(&quot;Floats&quot;,</span>
+<span class="nc" id="L290">                    prussian.getId()));</span>
+        }
+
+<span class="fc" id="L293">        executeExchange (Arrays.asList(new Company[]{m2}), true, false);</span>
+<span class="fc" id="L294">        prussian.setFloated();</span>
+<span class="fc" id="L295">    }</span>
+
+    private boolean mergeIntoPrussian (FoldIntoPrussian action) {
+
+        // Validate
+        // String errMsg = null;
+
+<span class="fc" id="L302">        List&lt;Company&gt; folded = action.getFoldedCompanies();</span>
+<span class="pc bpc" id="L303" title="1 of 4 branches missed.">        boolean folding = folded != null &amp;&amp; !folded.isEmpty();</span>
+
+<span class="fc bfc" id="L305" title="All 2 branches covered.">        while (folding) {</span>
+            // TODO Some validation needed
+            break;
+        }
+
+        // TODO: This is now dead code, but won't be when some sensible validations exist
+        /*
+        if (errMsg != null) {
+            DisplayBuffer.add(this, LocalText.getText(&quot;CannotMerge&quot;,
+                    action.getFoldedCompanyNames(),
+                    PR_ID,
+                    errMsg));
+            return false;
+        }
+        */
+
+        // all actions linked during formation round to avoid serious undo problems
+
+        // FIMXE: changeStack.linkToPreviousMoveSet();
+
+        // Execute
+<span class="fc bfc" id="L326" title="All 2 branches covered.">        if (folding) executeExchange (folded, false, false);</span>
+
+<span class="fc" id="L328">        findNextMergingPlayer(true);</span>
+
+<span class="fc" id="L330">        return folding;</span>
+    }
+
+    private void executeExchange (List&lt;Company&gt; companies, boolean president,
+            boolean display) {
+
+        ExchangeForShare efs;
+        PublicCertificate cert;
+        Player player;
+<span class="fc bfc" id="L339" title="All 2 branches covered.">        for (Company company : companies) {</span>
+<span class="fc" id="L340">            log.debug(&quot;Merging company &quot;+company.getId());</span>
+<span class="fc bfc" id="L341" title="All 2 branches covered.">            if (company instanceof PrivateCompany) {</span>
+<span class="fc" id="L342">                player = (Player)((PrivateCompany)company).getOwner();</span>
+            } else {
+<span class="fc" id="L344">                player = ((PublicCompany)company).getPresident();</span>
+            }
+            // Shortcut, sp should be checked
+<span class="fc" id="L347">            efs = (ExchangeForShare) Iterables.get(company.getSpecialProperties(), 0);</span>
+<span class="fc" id="L348">            cert = unavailable.findCertificate(prussian, efs.getShare()/prussian.getShareUnit(),</span>
+                    president);
+<span class="fc" id="L350">            cert.moveTo(player);</span>
+            //company.setClosed();
+<span class="fc" id="L352">            String message = LocalText.getText(&quot;MERGE_MINOR_LOG&quot;,</span>
+<span class="fc" id="L353">                    player.getId(),</span>
+<span class="fc" id="L354">                    company.getId(),</span>
+                    PR_ID,
+<span class="fc bfc" id="L356" title="All 2 branches covered.">                    company instanceof PrivateCompany ? &quot;no&quot;</span>
+<span class="fc" id="L357">                            : Bank.format(this, ((PublicCompany)company).getCash()),</span>
+<span class="fc bfc" id="L358" title="All 2 branches covered.">                    company instanceof PrivateCompany ? &quot;no&quot;</span>
+<span class="fc" id="L359">                            : ((PublicCompany)company).getPortfolioModel().getTrainList().size());</span>
+<span class="fc" id="L360">            ReportBuffer.add(this, message);</span>
+<span class="fc bfc" id="L361" title="All 2 branches covered.">            if (display) DisplayBuffer.add(this, message);</span>
+<span class="fc" id="L362">            message = LocalText.getText(&quot;GetShareForMinor&quot;,</span>
+<span class="fc" id="L363">                    player.getId(),</span>
+<span class="fc" id="L364">                    cert.getShare(),</span>
+                    PR_ID,
+<span class="fc" id="L366">                    ipo.getParent().getId(),</span>
+<span class="fc" id="L367">                    company.getId());</span>
+<span class="fc" id="L368">            ReportBuffer.add(this, message);</span>
+<span class="fc bfc" id="L369" title="All 2 branches covered.">            if (display) DisplayBuffer.add(this, message);</span>
+
+<span class="fc bfc" id="L371" title="All 2 branches covered.">            if (company instanceof PublicCompany) {</span>
+
+<span class="fc" id="L373">                PublicCompany minor = (PublicCompany) company;</span>
+
+                // Replace the home token
+<span class="fc" id="L376">                BaseToken token = Iterables.get(minor.getAllBaseTokens(),0);</span>
+<span class="fc" id="L377">                Stop city = (Stop) token.getOwner();</span>
+<span class="fc" id="L378">                MapHex hex = city.getParent();</span>
+<span class="fc" id="L379">                token.moveTo(minor);</span>
+<span class="pc bpc" id="L380" title="1 of 4 branches missed.">                if (!hex.hasTokenOfCompany(prussian) &amp;&amp; hex.layBaseToken(prussian, city)) {</span>
+                    /* TODO: the false return value must be impossible. */
+<span class="fc" id="L382">                    message = LocalText.getText(&quot;ExchangesBaseToken&quot;,</span>
+<span class="fc" id="L383">                            PR_ID, minor.getId(),</span>
+<span class="fc" id="L384">                            city.getSpecificId());</span>
+<span class="fc" id="L385">                    ReportBuffer.add(this, message);</span>
+<span class="fc bfc" id="L386" title="All 2 branches covered.">                    if (display) DisplayBuffer.add(this, message);</span>
+
+<span class="fc" id="L388">                    prussian.layBaseToken(hex, 0);</span>
+                }
+
+                // Move any cash
+<span class="fc bfc" id="L392" title="All 2 branches covered.">                if (minor.getCash() &gt; 0) {</span>
+<span class="fc" id="L393">                    Currency.wireAll(minor, prussian);</span>
+                }
+
+                // Move any trains
+                // TODO: Simplify code due to trainlist being immutable anyway
+<span class="fc" id="L398">                List&lt;Train&gt; trains = new ArrayList&lt;Train&gt; (minor.getPortfolioModel().getTrainList());</span>
+<span class="fc bfc" id="L399" title="All 2 branches covered.">                for (Train train : trains) {</span>
+<span class="fc" id="L400">                    prussian.getPortfolioModel().addTrain(train);</span>
+<span class="fc" id="L401">                }</span>
+            }
+
+            // Close the merged companies
+<span class="fc" id="L405">            company.setClosed();</span>
+<span class="fc" id="L406">        }</span>
+
+<span class="fc" id="L408">    }</span>
+
+    public boolean discardTrain(DiscardTrain action) {
+
+<span class="fc" id="L412">        Train train = action.getDiscardedTrain();</span>
+<span class="fc" id="L413">        PublicCompany company = action.getCompany();</span>
+
+<span class="fc" id="L415">        String errMsg = null;</span>
+
+        // Dummy loop to enable a quick jump out.
+        while (true) {
+            // Checks
+            // Must be correct step
+<span class="pc bpc" id="L421" title="1 of 2 branches missed.">            if (company != prussian) {</span>
+<span class="nc" id="L422">                errMsg = LocalText.getText(&quot;WrongCompany&quot;, company.getId(), prussian.getId());</span>
+<span class="nc" id="L423">                break;</span>
+            }
+
+<span class="pc bpc" id="L426" title="3 of 4 branches missed.">            if (train == null &amp;&amp; action.isForced()) {</span>
+<span class="nc" id="L427">                errMsg = LocalText.getText(&quot;NoTrainSpecified&quot;);</span>
+<span class="nc" id="L428">                break;</span>
+            }
+
+            // Does the company own such a train?
+<span class="pc bpc" id="L432" title="1 of 2 branches missed.">            if (!company.getPortfolioModel().getTrainList().contains(train)) {</span>
+<span class="nc" id="L433">                errMsg =</span>
+<span class="nc" id="L434">                    LocalText.getText(&quot;CompanyDoesNotOwnTrain&quot;,</span>
+<span class="nc" id="L435">                                company.getId(),</span>
+<span class="nc" id="L436">                                train.toText() );</span>
+                break;
+            }
+
+            break;
+        }
+<span class="pc bpc" id="L442" title="1 of 2 branches missed.">        if (errMsg != null) {</span>
+<span class="nc" id="L443">            DisplayBuffer.add(this, LocalText.getText(&quot;CannotDiscardTrain&quot;,</span>
+<span class="nc" id="L444">                    company.getId(),</span>
+<span class="nc bnc" id="L445" title="All 2 branches missed.">                    (train != null ?train.toText() : &quot;?&quot;),</span>
+                    errMsg ));
+<span class="nc" id="L447">            return false;</span>
+        }
+
+        /* End of validation, start of execution */
+
+<span class="fc" id="L452">        train.discard();</span>
+
+        // We still might have another excess train
+        // TODO: would be better to have DiscardTrain discard multiple trains
+<span class="pc bpc" id="L456" title="1 of 2 branches missed.">        if (prussian.getNumberOfTrains() &gt; prussian.getCurrentTrainLimit()) {</span>
+<span class="nc" id="L457">            step = Step.DISCARD_TRAINS;</span>
+        } else {
+<span class="fc" id="L459">            finishRound();</span>
+        }
+
+<span class="fc" id="L462">        return true;</span>
+    }
+
+    @Override
+    protected void finishRound() {
+<span class="fc" id="L467">        RoundFacade interruptedRound = gameManager.getInterruptedRound();</span>
+<span class="fc" id="L468">        ReportBuffer.add(this, &quot; &quot;);</span>
+<span class="fc bfc" id="L469" title="All 2 branches covered.">        if (interruptedRound != null) {</span>
+<span class="fc" id="L470">            ReportBuffer.add(this, LocalText.getText(&quot;EndOfFormationRound&quot;, PR_ID,</span>
+<span class="fc" id="L471">                    interruptedRound.getRoundName()));</span>
+        } else {
+<span class="fc" id="L473">            ReportBuffer.add(this, LocalText.getText(&quot;EndOfFormationRoundNoInterrupt&quot;, PR_ID));</span>
+        }
+
+<span class="fc bfc" id="L476" title="All 2 branches covered.">        if (prussian.hasStarted()) prussian.checkPresidency();</span>
+<span class="fc" id="L477">        prussian.setOperated(); // To allow immediate share selling</span>
+        //        super.finishRound();
+        // Inform GameManager
+<span class="fc" id="L480">        gameManager.nextRound(this);</span>
+<span class="fc" id="L481">    }</span>
+
+    public static boolean prussianIsComplete(GameManager gameManager) {
+<span class="fc" id="L484">        boolean resultP = true;</span>
+<span class="fc" id="L485">        boolean resultM = true;</span>
+<span class="fc bfc" id="L486" title="All 2 branches covered.">        for (PublicCompany company : gameManager.getAllPublicCompanies()) {</span>
+<span class="fc" id="L487">            resultM = checkForPrussianMinorExchange(company);</span>
+<span class="fc bfc" id="L488" title="All 2 branches covered.">            if (!resultM) {</span>
+<span class="fc" id="L489">                return false;</span>
+                }
+<span class="fc" id="L491">        }</span>
+<span class="fc bfc" id="L492" title="All 2 branches covered.">        for (PrivateCompany company : gameManager.getAllPrivateCompanies()) {</span>
+<span class="fc" id="L493">            resultP = checkForPrussianPrivateExchange(company);</span>
+<span class="pc bpc" id="L494" title="1 of 2 branches missed.">                if (!resultP) {</span>
+<span class="nc" id="L495">                    return false;</span>
+                }
+<span class="fc" id="L497">        }</span>
+<span class="fc" id="L498">        return true;</span>
+    }
+
+    static boolean checkForPrussianMinorExchange(PublicCompany company) {
+
+<span class="fc bfc" id="L503" title="All 2 branches covered.">        if (!company.getType().getId().equalsIgnoreCase(&quot;Minor&quot;)) {</span>
+<span class="fc" id="L504">            return true;</span>
+        }
+<span class="fc bfc" id="L506" title="All 2 branches covered.">        if (!company.isClosed()) {</span>
+<span class="fc" id="L507">            return false;</span>
+        }
+<span class="fc" id="L509">        return true;</span>
+    }
+
+    private static boolean checkForPrussianPrivateExchange(PrivateCompany company) {
+
+<span class="fc bfc" id="L514" title="All 4 branches covered.">            if ((!company.getId().equals(&quot;HB&quot;)) &amp;&amp; (!company.getId().equals(&quot;BB&quot;))) {</span>
+<span class="fc" id="L515">                return true;</span>
+            }
+<span class="pc bpc" id="L517" title="1 of 2 branches missed.">            if (!company.isClosed()) {</span>
+<span class="nc" id="L518">                return false;</span>
+            }
+<span class="fc" id="L520">                return true;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L525">        return &quot;1835 PrussianFormationRound&quot;;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

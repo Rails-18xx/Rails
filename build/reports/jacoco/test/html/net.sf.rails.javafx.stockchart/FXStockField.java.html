@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FXStockField.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.javafx.stockchart</a> &gt; <span class="el_source">FXStockField.java</span></div><h1>FXStockField.java</h1><pre class="source lang-java linenums">package net.sf.rails.javafx.stockchart;
+
+import com.google.common.collect.Lists;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.state.Observable;
+import net.sf.rails.game.state.Observer;
+import net.sf.rails.javafx.ColorUtils;
+import net.sf.rails.util.Util;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * A populated stock field inside a {@link FXStockChart} component
+ */
+public class FXStockField extends StackPane implements Observer {
+    private final StockSpace model;
+
+    public FXStockField(StockSpace model) {
+<span class="nc" id="L29">        super();</span>
+
+<span class="nc" id="L31">        this.model = model;</span>
+
+<span class="nc" id="L33">        initialize();</span>
+<span class="nc" id="L34">        populate();</span>
+<span class="nc" id="L35">    }</span>
+
+    private void initialize() {
+<span class="nc" id="L38">        setStyle(&quot;-fx-background-color: &quot; + ColorUtils.toRGBString(model.getColour()));</span>
+
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        if (model.isStart()) {</span>
+<span class="nc" id="L41">            setBorder(new Border(new BorderStroke(javafx.scene.paint.Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));</span>
+        }
+
+<span class="nc" id="L44">        model.addObserver(this);</span>
+<span class="nc" id="L45">    }</span>
+
+    /**
+     * Create the stock price text for this stock field
+     *
+     * @return The stock price text
+     */
+    private Text createStockSpacePrice() {
+<span class="nc" id="L53">        Text text = new Text(Integer.toString(model.getPrice()));</span>
+
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        text.setFill(Util.isDark(model.getColour()) ? Color.WHITE : Color.BLACK);</span>
+
+<span class="nc" id="L57">        return text;</span>
+    }
+
+    /**
+     * Create the token objects based on the model of this stock field
+     *
+     * @return A list containing all tokens
+     */
+    private List&lt;FXStockToken&gt; createTokens() {
+<span class="nc" id="L66">        List&lt;FXStockToken&gt; tokens = new ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (model.hasTokens()) {</span>
+<span class="nc" id="L69">            List&lt;PublicCompany&gt; publicCompanies = Lists.reverse(model.getTokens());</span>
+
+<span class="nc bnc" id="L71" title="All 2 branches missed.">            for (int companyIndex = 0; companyIndex &lt; publicCompanies.size(); companyIndex++) {</span>
+<span class="nc" id="L72">                PublicCompany publicCompany = publicCompanies.get(companyIndex);</span>
+
+<span class="nc" id="L74">                FXStockToken token = new FXStockToken(</span>
+<span class="nc" id="L75">                        ColorUtils.toColor(publicCompany.getFgColour()),</span>
+<span class="nc" id="L76">                        ColorUtils.toColor(publicCompany.getBgColour()),</span>
+<span class="nc" id="L77">                        publicCompany.getId()</span>
+                );
+
+<span class="nc" id="L80">                DoubleBinding diameter = Bindings.multiply(Bindings.min(widthProperty(), heightProperty()), 0.5);</span>
+
+<span class="nc" id="L82">                token.minWidthProperty().bind(diameter);</span>
+<span class="nc" id="L83">                token.prefWidthProperty().bind(diameter);</span>
+<span class="nc" id="L84">                token.maxWidthProperty().bind(diameter);</span>
+
+<span class="nc" id="L86">                token.minHeightProperty().bind(diameter);</span>
+<span class="nc" id="L87">                token.prefHeightProperty().bind(diameter);</span>
+<span class="nc" id="L88">                token.maxHeightProperty().bind(diameter);</span>
+
+<span class="nc" id="L90">                StackPane.setAlignment(token, Pos.TOP_RIGHT);</span>
+<span class="nc" id="L91">                StackPane.setMargin(token, new Insets(5 + (companyIndex * 5), 5, 5, 5));</span>
+
+<span class="nc" id="L93">                tokens.add(token);</span>
+            }
+        }
+
+<span class="nc" id="L97">        return tokens;</span>
+    }
+
+    public void populate() {
+<span class="nc" id="L101">        getChildren().clear();</span>
+<span class="nc" id="L102">        getChildren().add(createStockSpacePrice());</span>
+<span class="nc" id="L103">        getChildren().addAll(createTokens());</span>
+<span class="nc" id="L104">    }</span>
+
+    @Override
+    public void update(String text) {
+<span class="nc" id="L108">        Platform.runLater(this::populate);</span>
+<span class="nc" id="L109">    }</span>
+
+    @Override
+    public Observable getObservable() {
+<span class="nc" id="L113">        return model;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

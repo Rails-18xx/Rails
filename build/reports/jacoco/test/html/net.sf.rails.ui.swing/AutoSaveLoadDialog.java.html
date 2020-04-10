@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AutoSaveLoadDialog.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing</a> &gt; <span class="el_source">AutoSaveLoadDialog.java</span></div><h1>AutoSaveLoadDialog.java</h1><pre class="source lang-java linenums">/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/elements/AutoSaveLoadDialog.java,v 1.8 2010/01/31 22:22:34 macfreek Exp $*/
+package net.sf.rails.ui.swing;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.stream.IntStream;
+
+import javax.swing.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.common.LocalText;
+import net.sf.rails.ui.swing.elements.DialogOwner;
+import net.sf.rails.ui.swing.elements.Spinner;
+
+
+/**
+ * A generic dialog for presenting choices by radio buttons.
+ */
+public class AutoSaveLoadDialog extends JDialog implements ActionListener {
+
+    private static final long serialVersionUID = 1L;
+    private GridBagConstraints gc;
+    private JPanel optionsPane, buttonPane;
+    private JButton okButton, cancelButton;
+    private JRadioButton[] choiceButtons;
+    private Spinner intervalSpinner;
+    private Dimension size;
+    private ButtonGroup group;
+    private DialogOwner owner;
+
+    private int status;
+    private int interval;
+
+    private static final int NUM_OPTIONS = 3;
+
+<span class="nc" id="L40">    private static final Logger log = LoggerFactory.getLogger(AutoSaveLoadDialog.class);</span>
+
+    public AutoSaveLoadDialog(DialogOwner owner, int oldStatus, int oldInterval) {
+<span class="nc" id="L43">        super((Frame) null, &quot;AutoSaveLoad settings&quot;, false); // Non-modal</span>
+<span class="nc" id="L44">        this.owner = owner;</span>
+<span class="nc" id="L45">        this.status = oldStatus;</span>
+<span class="nc" id="L46">        this.interval = oldInterval;</span>
+
+<span class="nc" id="L48">        initialize();</span>
+<span class="nc" id="L49">        pack();</span>
+
+<span class="nc" id="L51">        int x = 400;</span>
+<span class="nc" id="L52">        int y = 400;</span>
+<span class="nc" id="L53">        setLocation(x, y);</span>
+
+<span class="nc" id="L55">        setVisible(true);</span>
+<span class="nc" id="L56">        setAlwaysOnTop(true);</span>
+<span class="nc" id="L57">    }</span>
+
+    private void initialize() {
+<span class="nc" id="L60">        gc = new GridBagConstraints();</span>
+
+<span class="nc" id="L62">        optionsPane = new JPanel();</span>
+<span class="nc" id="L63">        buttonPane = new JPanel();</span>
+
+<span class="nc" id="L65">        okButton = new JButton(LocalText.getText(&quot;OK&quot;));</span>
+<span class="nc" id="L66">        okButton.setMnemonic(KeyEvent.VK_O);</span>
+<span class="nc" id="L67">        okButton.addActionListener(this);</span>
+<span class="nc" id="L68">        buttonPane.add(okButton);</span>
+
+<span class="nc" id="L70">        cancelButton = new JButton(LocalText.getText(&quot;Cancel&quot;));</span>
+<span class="nc" id="L71">        cancelButton.setMnemonic(KeyEvent.VK_C);</span>
+<span class="nc" id="L72">        cancelButton.addActionListener(this);</span>
+<span class="nc" id="L73">        buttonPane.add(cancelButton);</span>
+
+<span class="nc" id="L75">        choiceButtons = new JRadioButton[3];</span>
+<span class="nc" id="L76">        intervalSpinner = new Spinner (interval, 3, 0, 1);</span>
+
+<span class="nc" id="L78">        getContentPane().setLayout(new GridBagLayout());</span>
+<span class="nc" id="L79">        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);</span>
+
+<span class="nc" id="L81">        optionsPane.setLayout(new GridBagLayout());</span>
+        // optionsPane.setBorder(BorderFactory.createLoweredBevelBorder());
+<span class="nc" id="L83">        optionsPane.add(new JLabel(LocalText.getText(&quot;AutoSaveLoadOptions&quot;)),</span>
+<span class="nc" id="L84">                constraints(0, 0, 10, 10, 10, 10));</span>
+
+<span class="nc" id="L86">        choiceButtons = new JRadioButton[NUM_OPTIONS];</span>
+<span class="nc" id="L87">        group = new ButtonGroup();</span>
+<span class="nc" id="L88">        String[] options = new String[] {</span>
+<span class="nc" id="L89">                LocalText.getText(&quot;Off&quot;),</span>
+<span class="nc" id="L90">                LocalText.getText(&quot;On&quot;),</span>
+<span class="nc" id="L91">                LocalText.getText(&quot;Suspended&quot;)</span>
+        };
+
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        for (int i = 0; i &lt; NUM_OPTIONS; i++) {</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">            choiceButtons[i] =</span>
+                    new JRadioButton(options[i], i == status);
+<span class="nc" id="L97">            optionsPane.add(choiceButtons[i], constraints(0, 1 + i, 0, 0, 0, 0));</span>
+<span class="nc" id="L98">            choiceButtons[i].setPreferredSize(size);</span>
+<span class="nc" id="L99">            group.add(choiceButtons[i]);</span>
+        }
+
+<span class="nc" id="L102">        optionsPane.add (new JLabel(&quot;Polling interval:&quot;), constraints (0,5,0,0,0,0));</span>
+<span class="nc" id="L103">        intervalSpinner.setVisible(true);</span>
+<span class="nc" id="L104">        optionsPane.add (intervalSpinner, constraints (1, 5, 0,0,0,0));</span>
+<span class="nc" id="L105">        optionsPane.add (new JLabel(&quot;sec.&quot;), constraints (2,5,0,0,0,0));</span>
+
+<span class="nc" id="L107">        getContentPane().add(optionsPane, constraints(0, 0, 0, 0, 0, 0));</span>
+<span class="nc" id="L108">        getContentPane().add(buttonPane, constraints(0, 1, 0, 0, 0, 0));</span>
+<span class="nc" id="L109">    }</span>
+
+    private GridBagConstraints constraints(int gridx, int gridy, int leftinset,
+            int topinset, int rightinset, int bottominset) {
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (gridx &gt;= 0) gc.gridx = gridx;</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        if (gridy &gt;= 0) gc.gridy = gridy;</span>
+<span class="nc" id="L115">        gc.fill = GridBagConstraints.BOTH;</span>
+<span class="nc" id="L116">        gc.weightx = 0.5;</span>
+<span class="nc" id="L117">        gc.weighty = 0.5;</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        if (leftinset &gt;= 0) gc.insets.left = leftinset;</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (topinset &gt;= 0) gc.insets.top = topinset;</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (rightinset &gt;= 0) gc.insets.right = rightinset;</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (bottominset &gt;= 0) gc.insets.bottom = bottominset;</span>
+
+<span class="nc" id="L123">        return gc;</span>
+    }
+
+    public void actionPerformed(ActionEvent arg0) {
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (arg0.getSource().equals(okButton)) {</span>
+<span class="nc" id="L128">            status = IntStream.range(0, NUM_OPTIONS).filter(i -&gt; choiceButtons[i].isSelected()).findFirst().orElse(status);</span>
+<span class="nc" id="L129">            interval = (Integer) intervalSpinner.getValue();</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        } else if (arg0.getSource().equals(cancelButton)) {</span>
+            //status = -1;
+            // Better change nothing?
+        }
+<span class="nc" id="L134">        this.setVisible(false);</span>
+<span class="nc" id="L135">        this.dispose();</span>
+<span class="nc" id="L136">        owner.dialogActionPerformed();</span>
+<span class="nc" id="L137">    }</span>
+
+    public synchronized int getStatus() {
+<span class="nc" id="L140">        return status;</span>
+    }
+
+    public synchronized int getInterval() {
+<span class="nc" id="L144">        return interval;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

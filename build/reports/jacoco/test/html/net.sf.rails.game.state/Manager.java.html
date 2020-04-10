@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Manager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.game.state</a> &gt; <span class="el_source">Manager.java</span></div><h1>Manager.java</h1><pre class="source lang-java linenums">package net.sf.rails.game.state;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+ * A Manager is a baseline implementation of a Context
+ */
+public abstract class Manager extends Context {
+    
+    // item fields
+    private final String id;
+    private final Item parent;
+    // context fields
+    private final Root root;
+    private final String fullURI;
+
+<span class="fc" id="L18">    protected Manager(Item parent, String id) {</span>
+<span class="fc" id="L19">        checkNotNull(id, &quot;Id cannot be null&quot;);</span>
+<span class="fc" id="L20">        this.id = id;</span>
+
+        // check arguments, parent can only be null for Root
+<span class="fc" id="L23">        checkNotNull(parent, &quot;Parent cannot be null&quot;);</span>
+<span class="fc" id="L24">        this.parent = parent;</span>
+        
+        // URI defined recursively
+<span class="fc" id="L27">        fullURI =  parent.getFullURI() + Item.SEP + id;</span>
+        
+        // find root and add context there
+<span class="fc" id="L30">        root = parent.getContext().getRoot();</span>
+        // add to root
+<span class="fc" id="L32">        root.addItem(this);</span>
+<span class="fc" id="L33">    }</span>
+    
+    public String getId() {
+<span class="fc" id="L36">        return id;</span>
+    }
+
+    public Item getParent() {
+<span class="fc" id="L40">        return parent;</span>
+    }
+    
+    public Context getContext() {
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (parent instanceof Context) {</span>
+<span class="fc" id="L45">            return (Context)parent;</span>
+        } else { 
+            // recursive definition
+<span class="fc" id="L48">            return parent.getContext();</span>
+        }
+    }
+    
+    public String getURI() {
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (parent instanceof Context) {</span>
+<span class="fc" id="L54">            return id;</span>
+        } else {
+            // recursive definition
+<span class="fc" id="L57">            return parent.getURI() + Item.SEP + id;</span>
+        }
+    }
+
+    public String getFullURI() {
+<span class="fc" id="L62">        return fullURI;</span>
+    }
+    
+    public String toText() {
+<span class="nc" id="L66">        return id;</span>
+    }
+    
+    // Context methods
+    public Item locate(String uri) {
+        // first try as fullURI
+<span class="fc" id="L72">        Item item = root.locateFullURI(uri);</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (item != null) return item;</span>
+        // otherwise as local
+<span class="fc" id="L75">        return root.locateFullURI(fullURI + Item.SEP + uri);</span>
+    }
+    
+
+   void addItem(Item item) {
+        // check if this context is the containing one
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        checkArgument(item.getContext() == this, &quot;Context is not the container of the item to add&quot;);</span>
+        
+        // add item to root
+<span class="fc" id="L84">        root.addItem(item);</span>
+<span class="fc" id="L85">   }</span>
+   
+   void removeItem(Item item) {
+       // check if this context is the containing one
+<span class="nc bnc" id="L89" title="All 2 branches missed.">       checkArgument(item.getContext() == this, &quot;Context is not the container of the item to add&quot;);</span>
+
+       // remove item from root
+<span class="nc" id="L92">       root.removeItem(item);</span>
+<span class="nc" id="L93">   }</span>
+    
+    public Root getRoot() {
+<span class="fc" id="L96">        return root;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

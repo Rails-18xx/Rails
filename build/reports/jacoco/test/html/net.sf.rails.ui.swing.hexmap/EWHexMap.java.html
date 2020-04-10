@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EWHexMap.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.ui.swing.hexmap</a> &gt; <span class="el_source">EWHexMap.java</span></div><h1>EWHexMap.java</h1><pre class="source lang-java linenums">package net.sf.rails.ui.swing.hexmap;
+
+import java.awt.*;
+
+import net.sf.rails.game.MapOrientation;
+
+
+/**
+ * Class EWHexMap displays a basic hex map with
+ * {@link net.sf.rails.game.MapOrientation#EW EW} exit orientation.
+ */
+
+public class EWHexMap extends HexMap {
+
+<span class="nc" id="L15">    public EWHexMap() {</span>
+        // tile x-reference in EW is left side
+<span class="nc" id="L17">        tileXOffset = -0.5f;</span>
+        // tile y-reference in EW is 1/3 of the baseline
+<span class="nc" id="L19">        tileYOffset = 0.333f;</span>
+
+        // coordinate margins
+<span class="nc" id="L22">        coordinateXMargin = COORDINATE_FLAT_MARGIN;</span>
+<span class="nc" id="L23">        coordinateYMargin = COORDINATE_PEAK_MARGIN;</span>
+<span class="nc" id="L24">    }</span>
+
+    @Override
+    protected double calcXCoordinates(int col, double offset) {
+<span class="nc" id="L28">        double colAdj = (col - minimum.getCol()) / 2.0f + FLAT_MARGIN + offset;</span>
+//        log.debug(&quot;x-Coordinate for col= &quot; + col + &quot; -&gt; colAdj = &quot; + colAdj);
+<span class="nc" id="L30">        return Math.round(scale * 2 * MapOrientation.SQRT3 * colAdj);</span>
+    }
+
+    @Override
+    protected double calcYCoordinates(int row, double offset) {
+<span class="nc" id="L35">       double rowAdj = row  - minimum.getRow()  + PEAK_MARGIN + offset;</span>
+//       log.debug(&quot;y-Coordinate for row= &quot; + row + &quot; -&gt; rowAdj = &quot; + rowAdj);
+<span class="nc" id="L37">       return Math.round(scale * 3 * rowAdj);</span>
+    }
+
+    protected void setOriginalSize() {
+<span class="nc" id="L41">        originalSize = new Dimension( (int) calcXCoordinates(maximum.getCol(), FLAT_MARGIN),</span>
+<span class="nc" id="L42">                        (int) calcYCoordinates(maximum.getRow(), PEAK_MARGIN));</span>
+<span class="nc" id="L43">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ColorUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Rails</a> &gt; <a href="index.source.html" class="el_package">net.sf.rails.javafx</a> &gt; <span class="el_source">ColorUtils.java</span></div><h1>ColorUtils.java</h1><pre class="source lang-java linenums">package net.sf.rails.javafx;
+
+import java.awt.*;
+
+<span class="nc" id="L5">public class ColorUtils {</span>
+    /**
+     * Converts the given {@link Color color} object into a rgb string usable in javafx css
+     *
+     * @param color The color to be converted
+     * @return The rgb string
+     */
+    public static String toRGBString(Color color) {
+<span class="nc" id="L13">        int r = color.getRed();</span>
+<span class="nc" id="L14">        int g = color.getGreen();</span>
+<span class="nc" id="L15">        int b = color.getBlue();</span>
+
+<span class="nc" id="L17">        return &quot;rgb(&quot; + r + &quot;,&quot; + g + &quot;, &quot; + b + &quot;)&quot;;</span>
+    }
+
+    /**
+     * Converts an awt/swing {@link Color} object into a javafx {@link javafx.scene.paint.Color} object
+     *
+     * @param color The awt/swing color object
+     * @return The javafx color object
+     */
+    public static javafx.scene.paint.Color toColor(Color color) {
+<span class="nc" id="L27">        int r = color.getRed();</span>
+<span class="nc" id="L28">        int g = color.getGreen();</span>
+<span class="nc" id="L29">        int b = color.getBlue();</span>
+
+<span class="nc" id="L31">        int a = color.getAlpha();</span>
+<span class="nc" id="L32">        double opacity = a / 255.0;</span>
+
+<span class="nc" id="L34">        return javafx.scene.paint.Color.rgb(r, g, b, opacity);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
