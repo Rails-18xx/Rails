@@ -3,25 +3,26 @@ package net.sf.rails.common;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
 import net.sf.rails.game.RailsAbstractItem;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.state.ChangeReporter;
 import net.sf.rails.game.state.ChangeSet;
 import net.sf.rails.game.state.ChangeStack;
 import net.sf.rails.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Deque;
 import java.util.Queue;
-
 
 /**
  * ReportBuffer stores messages of the game progress.
  * <p>
  * Also used for regression testing comparing the output of the report buffer.
  */
-@Slf4j
 public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
+
+    private static final Logger log = LoggerFactory.getLogger(ReportBuffer.class);
 
     /**
      * Indicator string to find the active message position in the parsed html document
@@ -42,15 +43,10 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     private ReportBuffer.Observer observer;
 
 
-    private ReportBuffer(ReportManager parent, String id) {
+    public ReportBuffer(ReportManager parent, String id) {
         super(parent, id);
 
-        currentReportBuilder = ReportSet.builder();
-    }
-
-    public static ReportBuffer create(ReportManager parent, String id) {
-        ReportBuffer buffer = new ReportBuffer(parent, id);
-        return buffer;
+        this.currentReportBuilder = ReportSet.builder();
     }
 
     public void addObserver(ReportBuffer.Observer observer) {

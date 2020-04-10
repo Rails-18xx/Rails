@@ -1,16 +1,12 @@
 package net.sf.rails.common;
 
-import lombok.Getter;
-
 import java.util.List;
 
 public class GameData {
     private final GameInfo game;
 
-    @Getter
     private final GameOptionsSet gameOptions;
 
-    @Getter
     private final List<String> players;
 
     private GameData(GameInfo game, GameOptionsSet gameOptions, List<String> players) {
@@ -27,5 +23,13 @@ public class GameData {
 
     public String getGameName() {
         return game.getName();
+    }
+
+    public GameOptionsSet getGameOptions() {
+        return gameOptions;
+    }
+
+    public List<String> getPlayers() {
+        return players;
     }
 }

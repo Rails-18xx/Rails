@@ -38,9 +38,9 @@ public class StockRound_18EU extends StockRound {
 
     private static final Logger log = LoggerFactory.getLogger(StockRound_18EU.class);
 
-    protected final ArrayListState<PublicCompany> compWithExcessTrains = ArrayListState.create(this, "compWithExcessTrains");
+    protected final ArrayListState<PublicCompany> compWithExcessTrains = new ArrayListState<>(this, "compWithExcessTrains");
     protected final IntegerState discardingCompanyIndex = IntegerState.create(this, "discardingCompanyIndex");
-    protected final BooleanState discardingTrains = BooleanState.create(this, "discardingTrains");
+    protected final BooleanState discardingTrains = new BooleanState(this, "discardingTrains");
 
     // should this not be a state variable ?
     protected boolean phase5Reached = false;
@@ -50,7 +50,7 @@ public class StockRound_18EU extends StockRound {
     /**
      * Constructed via Configure
      */
-    public StockRound_18EU (GameManager parent, String id) {
+    public StockRound_18EU(GameManager parent, String id) {
         super(parent, id);
     }
 
@@ -225,7 +225,7 @@ public class StockRound_18EU extends StockRound {
                         cert.getShare()) < 1) continue;
                 stockSpace = company.getCurrentSpace();
                 if (!stockSpace.isNoCertLimit()
-                    && !mayPlayerBuyCertificate(currentPlayer, company, 1)) continue;
+                        && !mayPlayerBuyCertificate(currentPlayer, company, 1)) continue;
                 if (company.getMarketPrice() <= playerCash) {
                     possibleActions.add(new BuyCertificate(company, cert.getShare(),
                             company,
@@ -254,10 +254,10 @@ public class StockRound_18EU extends StockRound {
         for (PublicCompany comp : comps) {
             type = comp.getType().getId();
             if (type.equals("Major") && comp.hasStarted()
-                && !comp.hasOperated()) {
+                    && !comp.hasOperated()) {
                 targetCompanies.add(comp);
             } else if (type.equals("Minor")
-                       && comp.getPresident() == currentPlayer) {
+                    && comp.getPresident() == currentPlayer) {
                 minors.add(comp);
             }
         }
@@ -274,7 +274,7 @@ public class StockRound_18EU extends StockRound {
         PublicCompany discardingCompany =
                 discardingCompanies[discardingCompanyIndex.value()];
         log.debug("Company " + discardingCompany.getId()
-                  + " to discard a train");
+                + " to discard a train");
         possibleActions.add(new DiscardTrain(discardingCompany,
                 discardingCompany.getPortfolioModel().getUniqueTrains()));
         // We handle one train at at time.
@@ -285,11 +285,11 @@ public class StockRound_18EU extends StockRound {
     /**
      * Start a company by buying one or more shares (more applies to e.g. 1841)
      *
-     * @param player The player that wants to start a company.
+     * @param player  The player that wants to start a company.
      * @param company The company to start.
-     * @param price The start (par) price (ignored if the price is fixed).
-     * @param shares The number of shares to buy (can be more than 1 in e.g.
-     * 1841).
+     * @param price   The start (par) price (ignored if the price is fixed).
+     * @param shares  The number of shares to buy (can be more than 1 in e.g.
+     *                1841).
      * @return True if the company could be started. False indicates an error.
      */
     @Override
@@ -357,7 +357,7 @@ public class StockRound_18EU extends StockRound {
                 errMsg =
                         LocalText.getText("InvalidStartPrice",
                                 Bank.format(this, price),
-                                company.getId() );
+                                company.getId());
                 break;
             }
 
@@ -371,12 +371,12 @@ public class StockRound_18EU extends StockRound {
                 // Check if the player owns the merged minor
                 minor = startAction.getChosenMinor();
                 if (minor != null
-                    && currentPlayer.getPortfolioModel().getCertificates(
-                            minor) == null) {
+                        && currentPlayer.getPortfolioModel().getCertificates(
+                        minor) == null) {
                     errMsg =
                             LocalText.getText("PlayerDoesNotOwn",
                                     currentPlayer.getId(),
-                                    minor.getId() );
+                                    minor.getId());
                     break;
                 }
             } else {
@@ -386,7 +386,7 @@ public class StockRound_18EU extends StockRound {
                     errMsg =
                             LocalText.getText("InvalidHomeBase",
                                     selectedHomeCity.toString(),
-                                    company.getId() );
+                                    company.getId());
                     break;
                 }
 
@@ -401,10 +401,9 @@ public class StockRound_18EU extends StockRound {
                     playerName,
                     companyName,
                     Bank.format(this, price),
-                    errMsg ));
+                    errMsg));
             return false;
         }
-
 
 
         // All is OK, now start the company
@@ -431,7 +430,7 @@ public class StockRound_18EU extends StockRound {
                 Bank.format(this, shares * price),
                 shares,
                 cert.getShare(),
-                company.getId() ));
+                company.getId()));
 
         // Transfer the President's certificate
         cert.moveTo(currentPlayer);
@@ -451,17 +450,17 @@ public class StockRound_18EU extends StockRound {
                     minor.getId(),
                     company.getId(),
                     Bank.format(this, minorCash),
-                    minorTrains ));
+                    minorTrains));
             ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
                     currentPlayer.getId(),
                     cert2.getShare(),
                     company.getId(),
                     ipo.getParent().getId(),
-                    minor.getId() ));
+                    minor.getId()));
         } else {
             ReportBuffer.add(this, LocalText.getText("SelectedHomeBase",
                     company.getId(),
-                    selectedHomeCity.toText() ));
+                    selectedHomeCity.toText()));
         }
 
         // Move the remaining certificates to the company treasury
@@ -469,7 +468,7 @@ public class StockRound_18EU extends StockRound {
 
         ReportBuffer.add(this, LocalText.getText("SharesPutInTreasury",
                 company.getPortfolioModel().getShare(company),
-                company.getId() ));
+                company.getId()));
 
         // TODO must get this amount from XML
         int tokensCost = 100;
@@ -477,7 +476,7 @@ public class StockRound_18EU extends StockRound {
         ReportBuffer.add(this, LocalText.getText("PaysForTokens",
                 company.getId(),
                 costText,
-                company.getNumberOfBaseTokens() ));
+                company.getNumberOfBaseTokens()));
 
         companyBoughtThisTurnWrapper.set(company);
         hasActed.set(true);
@@ -527,7 +526,6 @@ public class StockRound_18EU extends StockRound {
         // TODO Validation to be added?
 
 
-
         if (major != null) {
             cert = major.getPortfolioModel().findCertificate(major, false);
             if (cert != null) {
@@ -566,7 +564,7 @@ public class StockRound_18EU extends StockRound {
         }
 
         MapHex homeHex = minor.getHomeHexes().get(0);
-        Stop homeStop  = homeHex.getStopOfBaseToken(minor);
+        Stop homeStop = homeHex.getStopOfBaseToken(minor);
         minor.setClosed();
 
         if (major != null && action.getReplaceToken()) {
@@ -577,7 +575,7 @@ public class StockRound_18EU extends StockRound {
 
         if (major != null) {
             if (major.getNumberOfTrains() > major.getCurrentTrainLimit()
-                && !compWithExcessTrains.contains(major)) {
+                    && !compWithExcessTrains.contains(major)) {
                 compWithExcessTrains.add(major);
             }
         }
@@ -589,14 +587,14 @@ public class StockRound_18EU extends StockRound {
                     minor.getId(),
                     major.getId(),
                     Bank.format(this, minorCash),
-                    minorTrains ));
+                    minorTrains));
             // FIXME: CHeck if this still works correctly
             ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
                     currentPlayer.getId(),
                     cert.getShare(),
                     major.getId(),
                     cert.getOwner().getId(),
-                    minor.getId() ));
+                    minor.getId()));
             if (major != null) {
                 if (action.getReplaceToken()) {
                     ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
@@ -623,7 +621,7 @@ public class StockRound_18EU extends StockRound {
                     currentPlayer.getId(),
                     minor.getId(),
                     Bank.format(this, minorCash),
-                    minorTrains ));
+                    minorTrains));
         }
         hasActed.set(true);
 
@@ -632,8 +630,8 @@ public class StockRound_18EU extends StockRound {
 
             // If >60% shares owned, lift sell obligation this round.
             if (currentPlayer.getPortfolioModel().getShare(major)
-            		> GameDef.getGameParameterAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)) {
-            	setSellObligationLifted (major);
+                    > GameDef.getGameParameterAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)) {
+                setSellObligationLifted(major);
             }
 
             setPriority("Merge");
@@ -661,7 +659,7 @@ public class StockRound_18EU extends StockRound {
             String cashText = Currency.fromBank(cash, company);
             ReportBuffer.add(this, LocalText.getText("MonetiseTreasuryShares",
                     company.getId(),
-                    cashText ));
+                    cashText));
 
         }
     }
@@ -696,7 +694,7 @@ public class StockRound_18EU extends StockRound {
                 errMsg =
                         LocalText.getText("CompanyDoesNotOwnTrain",
                                 company.getId(),
-                                train.toText() );
+                                train.toText());
                 break;
             }
 
@@ -706,7 +704,7 @@ public class StockRound_18EU extends StockRound {
             DisplayBuffer.add(this, LocalText.getText("CannotDiscardTrain",
                     companyName,
                     train.toText(),
-                    errMsg ));
+                    errMsg));
             return false;
         }
 

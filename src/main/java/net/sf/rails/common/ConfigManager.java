@@ -1,7 +1,5 @@
 package net.sf.rails.common;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
@@ -9,6 +7,8 @@ import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.SystemOS;
 import net.sf.rails.util.Util;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
@@ -20,8 +20,9 @@ import java.util.*;
  * <p>
  * It is a rewrite of the previously used static class Config
  */
-@Slf4j
 public class ConfigManager implements Configurable {
+
+    private static final Logger log = LoggerFactory.getLogger(ConfigManager.class);
 
     //  XML setup
     private static final String CONFIG_XML_DIR = "data";
@@ -41,14 +42,11 @@ public class ConfigManager implements Configurable {
     // version string and development flag
     private String version = "unknown";
 
-    @Getter
     private boolean develop = false;
 
-    @Getter
     private String buildDate = "unknown";
 
     // configuration items: replace with Multimap in Rails 2.0
-    @Getter
     private final Map<String, List<ConfigItem>> configSections = new HashMap<>();
 
     // recent data
@@ -162,10 +160,22 @@ public class ConfigManager implements Configurable {
         }
     }
 
+    public boolean isDevelop() {
+        return develop;
+    }
+
+    public String getBuildDate() {
+        return buildDate;
+    }
+
+    public Map<String, List<ConfigItem>> getConfigSections() {
+        return configSections;
+    }
+
     /**
      * @return version id (including a "+" attached if development)
      */
-    String getVersion() {
+    public String getVersion() {
         if (develop) {
             return version + "+";
         } else {
@@ -173,10 +183,11 @@ public class ConfigManager implements Configurable {
         }
     }
 
-    String getValue(String key, String defaultValue) {
+    public String getValue(String key, String defaultValue) {
         if (transientConfig.containsKey(key)) {
             return transientConfig.get(key);
         }
+
         // get value from active profile (this escalates)
         String value = activeProfile.getProperty(key);
         if (Util.hasValue(value)) {
@@ -186,7 +197,7 @@ public class ConfigManager implements Configurable {
         }
     }
 
-    void setValue(String key, String value) {
+    public void setValue(String key, String value) {
         transientConfig.put(key, value);
     }
 
@@ -280,7 +291,7 @@ public class ConfigManager implements Configurable {
         }
     }
 
-    String getRecent(String key) {
+    public String getRecent(String key) {
         // get value from active profile (this escalates)
         String value = recentData.getProperty(key);
         if (Util.hasValue(value)) {
@@ -290,7 +301,7 @@ public class ConfigManager implements Configurable {
         }
     }
 
-    boolean storeRecent(String key, String value) {
+    public boolean storeRecent(String key, String value) {
         // check conditions
         if (key == null) return false;
         if (getRecent(key) == null || !getRecent(key).equals(value)) {

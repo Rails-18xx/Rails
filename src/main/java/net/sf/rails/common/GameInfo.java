@@ -3,7 +3,6 @@ package net.sf.rails.common;
 import com.google.common.base.Objects;
 import com.google.common.collect.Streams;
 import com.google.common.primitives.Ints;
-import lombok.Getter;
 
 /**
  * GameInfo holds basic information about the game, such as:
@@ -13,22 +12,16 @@ import lombok.Getter;
  */
 public class GameInfo implements Comparable<GameInfo> {
 
-    @Getter
     private final int minPlayers;
 
-    @Getter
     private final int maxPlayers;
 
-    @Getter
     private final String name;
 
-    @Getter
     private final String note;
 
-    @Getter
     private final String description;
 
-    @Getter
     private final int ordering;
 
     private GameInfo(int minPlayers, int maxPlayers, String name, String note, String description, int ordering) {
@@ -40,6 +33,30 @@ public class GameInfo implements Comparable<GameInfo> {
         this.note = note;
         this.description = description;
         this.ordering = ordering;
+    }
+
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getOrdering() {
+        return ordering;
     }
 
     @Override

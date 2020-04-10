@@ -3,9 +3,6 @@ package net.sf.rails.common;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.Map;
 import java.util.SortedSet;
@@ -15,13 +12,16 @@ import java.util.SortedSet;
  */
 public class GameOptionsSet {
 
-    @Getter
     private final Map<String, String> options;
 
     private GameOptionsSet(Map<String, String> options) {
         super();
 
         this.options = options;
+    }
+
+    public Map<String, String> getOptions() {
+        return options;
     }
 
     public String get(String option) {

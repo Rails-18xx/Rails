@@ -23,16 +23,17 @@ public class OperatingRound_18EU extends OperatingRound {
 
     protected final TrainCertificateType pullmannType;
 
-    protected final BooleanState hasPullmannAtStart = BooleanState.create(this, "ORCompanyHasPullmannAtStart");
+    protected final BooleanState hasPullmannAtStart = new BooleanState(this, "ORCompanyHasPullmannAtStart");
 
     /**
      * Constructed via Configure
      */
-    public OperatingRound_18EU (GameManager parent, String id) {
+    public OperatingRound_18EU(GameManager parent, String id) {
         super(parent, id);
+
         pullmannType = trainManager.getCertTypeByName("P");
     }
-    
+
     @Override
     protected void initTurn() {
         super.initTurn();
@@ -75,7 +76,7 @@ public class OperatingRound_18EU extends OperatingRound {
             extraMessage = LocalText.getText("AutodiscardTrain",
                     pullmannType.toText());
         }
-         /* New trains */
+        /* New trains */
         trains = trainManager.getAvailableNewTrains();
         for (Train train : trains) {
             cost = train.getCost();
@@ -98,8 +99,8 @@ public class OperatingRound_18EU extends OperatingRound {
             // May not buy Pullmann if one is already owned,
             // or if no train is owned at all
             if (train.getCertType() == pullmannType
-                    &&(operatingCompany.value().getPortfolioModel().getTrainOfType(pullmannType) != null
-                            || !hasTrains)) {
+                    && (operatingCompany.value().getPortfolioModel().getTrainOfType(pullmannType) != null
+                    || !hasTrains)) {
                 continue;
             }
             cost = train.getCost();
@@ -145,7 +146,7 @@ public class OperatingRound_18EU extends OperatingRound {
             // first
             int currentPlayerIndex = operatingCompany.value().getPresident().getIndex();
             for (int i = currentPlayerIndex; i < currentPlayerIndex
-                                                 + numberOfPlayers; i++) {
+                    + numberOfPlayers; i++) {
                 companies = companiesPerPlayer.get(i % numberOfPlayers);
                 for (PublicCompany company : companies) {
                     pf = company.getPortfolioModel();
@@ -163,17 +164,19 @@ public class OperatingRound_18EU extends OperatingRound {
 
     }
 
-    /** In 18EU, a company can (effectively) exchange a Pullmann */
+    /**
+     * In 18EU, a company can (effectively) exchange a Pullmann
+     */
     @Override
     protected boolean canBuyTrainNow() {
-        return super.canBuyTrainNow() || hasPullmann ()
-               && hasPullmannAtStart.value();
+        return super.canBuyTrainNow() || hasPullmann()
+                && hasPullmannAtStart.value();
     }
 
     @Override
     public boolean buyTrain(BuyTrain action) {
 
-        boolean mustDiscardPullmann = !super.isBelowTrainLimit() && hasPullmann ();
+        boolean mustDiscardPullmann = !super.isBelowTrainLimit() && hasPullmann();
 
         boolean result = super.buyTrain(action);
 
@@ -192,11 +195,11 @@ public class OperatingRound_18EU extends OperatingRound {
             boolean hasPullmann = false;
             boolean hasNonPullmann = false;
             Train pullmann = null;
-            for (Train sellerTrain : ((PublicCompany)seller).getPortfolioModel().getTrainList()) {
+            for (Train sellerTrain : ((PublicCompany) seller).getPortfolioModel().getTrainList()) {
                 if (sellerTrain.getCertType() == pullmannType) {
                     hasPullmann = true;
                     pullmann = sellerTrain;
-                } else if (sellerTrain != null){
+                } else if (sellerTrain != null) {
                     hasNonPullmann = true;
                 }
             }
@@ -210,16 +213,18 @@ public class OperatingRound_18EU extends OperatingRound {
         // If so, record the current player as the first
         // one to act in the Final Minor Exchange Round.
         if (result && getRoot().getPhaseManager().hasReachedPhase("5")
-            && operatingCompanies.get(0).getType().getId().equalsIgnoreCase("Minor")
-            && ((GameManager_18EU)gameManager).getPlayerToStartFMERound() == null) {
-            ((GameManager_18EU)gameManager).setPlayerToStartFMERound(operatingCompany.value().getPresident());
+                && operatingCompanies.get(0).getType().getId().equalsIgnoreCase("Minor")
+                && ((GameManager_18EU) gameManager).getPlayerToStartFMERound() == null) {
+            ((GameManager_18EU) gameManager).setPlayerToStartFMERound(operatingCompany.value().getPresident());
         }
 
         return result;
 
     }
 
-    /** Special rules for Pullmann trains */
+    /**
+     * Special rules for Pullmann trains
+     */
     @Override
     public boolean checkForExcessTrains() {
 
@@ -239,7 +244,7 @@ public class OperatingRound_18EU extends OperatingRound {
             // A Pullmann always goes first, and automatically.
             // If the last train is a Pullmann, discard it.
             if ((numberOfTrains > comp.getCurrentTrainLimit() || numberOfTrains == 1)
-                && pullmann != null) {
+                    && pullmann != null) {
                 pool.addTrain(pullmann);
                 numberOfTrains--;
             }
@@ -258,7 +263,7 @@ public class OperatingRound_18EU extends OperatingRound {
         return !excessTrainCompanies.isEmpty();
     }
 
-    private boolean hasPullmann () {
+    private boolean hasPullmann() {
         return operatingCompany.value().getPortfolioModel().getTrainOfType(pullmannType) != null;
     }
 

@@ -1,20 +1,21 @@
 package net.sf.rails.common;
 
-import lombok.extern.slf4j.Slf4j;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 
-
 /**
  * Defines an item used for the configuration of rails
- * T represents the value type
  */
-@Slf4j
 public final class ConfigItem {
+
+    private static final Logger log = LoggerFactory.getLogger(ConfigItem.class);
+
     /**
      * Defines possible types (Java classes used as types in ConfigItem below
      */

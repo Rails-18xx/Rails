@@ -17,9 +17,9 @@ public class StartRound_1837_2ndEd extends StartRound {
     public final static int BID_STEP = 3;
 
     private final IntegerState currentStep = IntegerState.create(this, "currentStep", SELECT_STEP);
-    private final GenericState<Player> selectingPlayer = GenericState.create(this, "selectingPlayer");
+    private final GenericState<Player> selectingPlayer = new GenericState<>(this, "selectingPlayer");
     private final IntegerState currentBuyPrice = IntegerState.create(this, "currentBuyPrice");
-    private final GenericState<StartItem> currentAuctionItem = GenericState.create(this, "currentAuctionItem");
+    private final GenericState<StartItem> currentAuctionItem = new GenericState<>(this, "currentAuctionItem");
 
     /**
      * Constructed via Configure

@@ -29,27 +29,27 @@ import com.google.common.collect.ImmutableSet;
  * as much as possible.
  */
 public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<Stop> {
-    private final PortfolioSet<BaseToken> tokens =
-            PortfolioSet.create(this, "tokens", BaseToken.class);
-    private final GenericState<Station> relatedStation =
-            GenericState.create(this, "station");
+    private final PortfolioSet<BaseToken> tokens = PortfolioSet.create(this, "tokens", BaseToken.class);
+    private final GenericState<Station> relatedStation = new GenericState<>(this, "station");
+
     // FIXME: Only used for Rails1.x compatibility
-    private final IntegerState legacyNumber =
-            IntegerState.create(this, "legacyNumber", 0);
+    private final IntegerState legacyNumber = IntegerState.create(this, "legacyNumber", 0);
+
     // FIXME: Only used for Rails1.x compatibility
-    private final HashSetState<Integer> previousNumbers =
-            HashSetState.create(this, "previousNumbers");
+    private final HashSetState<Integer> previousNumbers = HashSetState.create(this, "previousNumbers");
 
     private Stop(MapHex hex, String id, Station station) {
         super(hex, id);
+
         relatedStation.set(station);
         tokens.addModel(hex);
+
         if (station != null) {
             legacyNumber.set(station.getNumber());
         }
     }
 
-    public static Stop create(MapHex hex, Station station){
+    public static Stop create(MapHex hex, Station station) {
         if (station == null) {
             return new Stop(hex, "0", null);
         } else {
@@ -59,7 +59,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
 
     @Override
     public MapHex getParent() {
-        return (MapHex)super.getParent();
+        return (MapHex) super.getParent();
     }
 
     // This should not be used for identification reasons
@@ -117,7 +117,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return tokens.size() < getSlots();
     }
 
-    public int getTokenSlotsLeft () {
+    public int getTokenSlotsLeft() {
         return getSlots() - tokens.size();
     }
 
@@ -165,42 +165,42 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return loopAllowed;
     }
 
-    public Score getScoreType () {
+    public Score getScoreType() {
         Score scoreType = getParent().getStopType().getScoreType();
         if (scoreType == null) scoreType = getParent().getCurrentTile().getStopType().getScoreType();
         if (scoreType == null) scoreType = getRelatedStation().getStopType().getScoreType();
         return scoreType;
     }
 
-    public boolean isRunToAllowedFor (PublicCompany company) {
+    public boolean isRunToAllowedFor(PublicCompany company) {
         switch (getRunToAllowed()) {
-        case YES:
-            return true;
-        case NO:
-            return false;
-        case TOKENONLY:
-            return hasTokenOf (company);
-        default:
-            // Dead code, only to satisfy the compiler
-            return true;
+            case YES:
+                return true;
+            case NO:
+                return false;
+            case TOKENONLY:
+                return hasTokenOf(company);
+            default:
+                // Dead code, only to satisfy the compiler
+                return true;
         }
     }
 
-    public boolean isRunThroughAllowedFor (PublicCompany company) {
+    public boolean isRunThroughAllowedFor(PublicCompany company) {
         switch (getRunThroughAllowed()) {
-        case YES: // either it has no tokens at all, or it has a company tokens or empty token slots
-            return !hasTokens() || hasTokenOf (company) || hasTokenSlotsLeft() ;
-        case NO:
-            return false;
-        case TOKENONLY:
-            return hasTokenOf (company);
-        default:
-            // Dead code, only to satisfy the compiler
-            return true;
+            case YES: // either it has no tokens at all, or it has a company tokens or empty token slots
+                return !hasTokens() || hasTokenOf(company) || hasTokenSlotsLeft();
+            case NO:
+                return false;
+            case TOKENONLY:
+                return hasTokenOf(company);
+            default:
+                // Dead code, only to satisfy the compiler
+                return true;
         }
     }
 
-    public int getValueForPhase (Phase phase) {
+    public int getValueForPhase(Phase phase) {
         if (getParent().hasValuesPerPhase()) {
             return getParent().getCurrentValueForPhase(phase);
         } else {
@@ -215,7 +215,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
                 .compare(o.getTokenSlotsLeft(), this.getTokenSlotsLeft())
                 .compare(this.getId(), o.getId())
                 .result()
-        ;
+                ;
     }
 
     @Override

@@ -8,8 +8,8 @@ import net.sf.rails.game.state.GenericState;
 
 public final class NameableTrain extends Train {
 
-    private final GenericState<NamedTrainToken> nameToken = GenericState.create(this, "nameToken");
-    
+    private final GenericState<NamedTrainToken> nameToken = new GenericState<>(this, "nameToken");
+
     /**
      * Created via Configure
      */

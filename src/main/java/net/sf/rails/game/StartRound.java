@@ -16,7 +16,6 @@ import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Model;
 
-
 public abstract class StartRound extends Round {
     private static final Logger log = LoggerFactory.getLogger(StartRound.class);
 
@@ -49,21 +48,22 @@ public abstract class StartRound extends Round {
      */
     protected final boolean hasBuying;
 
-    private String StartRoundName="Start of Initial StartRound";
+    private String StartRoundName = "Start of Initial StartRound";
 
     // dynamic variables
-    protected final ArrayListState<StartItem> itemsToSell = ArrayListState.create(this, "itemsToSell");
+    protected final ArrayListState<StartItem> itemsToSell = new ArrayListState<>(this, "itemsToSell");
     protected final IntegerState numPasses = IntegerState.create(this, "numPasses");
 
     protected StartRound(GameManager parent, String id, boolean hasBidding, boolean hasBasePrices, boolean hasBuying) {
-        super (parent, id);
+        super(parent, id);
+
         this.hasBidding = hasBidding;
         this.hasBasePrices = hasBasePrices;
         this.hasBuying = hasBuying;
 
         this.startPacket = parent.getStartPacket();
 
-        String variant =  GameOption.getValue(this, GameOption.VARIANT);
+        String variant = GameOption.getValue(this, GameOption.VARIANT);
         this.variant = Util.valueWithDefault(variant, "");
 
         guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
@@ -94,6 +94,7 @@ public abstract class StartRound extends Round {
         ReportBuffer.add(this, LocalText.getText("HasPriority",
                 startPlayer.getId()));
     }
+
     @Override
     public boolean process(PossibleAction action) {
         boolean result = false;
@@ -101,7 +102,7 @@ public abstract class StartRound extends Round {
         log.debug("Processing action {}", action);
 
         if (action instanceof NullAction &&
-                ((NullAction)action).getMode() == NullAction.Mode.PASS) {
+                ((NullAction) action).getMode() == NullAction.Mode.PASS) {
             String playerName = action.getPlayerName();
             NullAction nullAction = (NullAction) action;
             result = pass(nullAction, playerName);
@@ -149,7 +150,9 @@ public abstract class StartRound extends Round {
         return result;
     }
 
-    /** Stub to allow start packet cleanups in subclasses */
+    /**
+     * Stub to allow start packet cleanups in subclasses
+     */
     protected void startPacketChecks() {
         return;
     }
@@ -160,8 +163,6 @@ public abstract class StartRound extends Round {
      * The current player bids on a given start item.
      *
      * @param playerName The name of the current player (for checking purposes).
-     * @param itemName The name of the start item on which the bid is placed.
-     * @param amount The bid amount.
      */
     protected abstract boolean bid(String playerName, BidStartItem startItem);
 
@@ -169,9 +170,6 @@ public abstract class StartRound extends Round {
      * Buy a start item against the base price.
      *
      * @param playerName Name of the buying player.
-     * @param itemName Name of the bought start item.
-     * @param sharePrice If nonzero: share price if item contains a President's
-     * share
      * @return False in case of any errors.
      */
 
@@ -207,14 +205,14 @@ public abstract class StartRound extends Round {
                 sharePrice = boughtItem.getAssociatedSharePrice();
                 if (sharePrice == 0) {
                     errMsg =
-                        LocalText.getText("NoSharePriceSet", shareCompName);
+                            LocalText.getText("NoSharePriceSet", shareCompName);
                     break;
                 }
                 if ((stockMarket.getStartSpace(sharePrice)) == null) {
                     errMsg =
-                        LocalText.getText("InvalidStartPrice",
+                            LocalText.getText("InvalidStartPrice",
                                     Bank.format(this, sharePrice),
-                                shareCompName );
+                                    shareCompName);
                     break;
                 }
             }
@@ -225,7 +223,7 @@ public abstract class StartRound extends Round {
             DisplayBuffer.add(this, LocalText.getText("CantBuyItem",
                     playerName,
                     item.getId(),
-                    errMsg ));
+                    errMsg));
             return false;
         }
 
@@ -248,22 +246,22 @@ public abstract class StartRound extends Round {
      * This method executes the start item buy action.
      *
      * @param player Buying player.
-     * @param item Start item being bought.
-     * @param price Buy price.
+     * @param item   Start item being bought.
+     * @param price  Buy price.
      */
     protected void assignItem(Player player, StartItem item, int price,
-            int sharePrice) {
+                              int sharePrice) {
         Certificate primary = item.getPrimary();
         String priceText = Currency.toBank(player, price);
-        ReportBuffer.add(this,LocalText.getText("BuysItemFor",
+        ReportBuffer.add(this, LocalText.getText("BuysItemFor",
                 player.getId(),
                 primary.toText(),
-                priceText ));
+                priceText));
         primary.moveTo(player);
         checksOnBuying(primary, sharePrice);
         if (item.hasSecondary()) {
             Certificate extra = item.getSecondary();
-            ReportBuffer.add(this,LocalText.getText("ALSO_GETS",
+            ReportBuffer.add(this, LocalText.getText("ALSO_GETS",
                     player.getId(),
                     extra.toText()));
             extra.moveTo(player);
@@ -302,7 +300,8 @@ public abstract class StartRound extends Round {
 
     /**
      * Process a player's pass.
-     * @param action TODO
+     *
+     * @param action     TODO
      * @param playerName The name of the current player (for checking purposes).
      */
     protected abstract boolean pass(NullAction action, String playerName);
@@ -364,6 +363,7 @@ public abstract class StartRound extends Round {
     public Model getBlockedCashModel(Player player) {
         return player.getBlockedCashModel();
     }
+
     /**
      * @return the startRoundName
      */

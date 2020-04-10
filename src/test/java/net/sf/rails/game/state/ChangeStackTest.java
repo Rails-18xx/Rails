@@ -35,7 +35,7 @@ public class ChangeStackTest {
         changeAction = new ChangeActionImpl();
 
         // initial changeset
-        state = BooleanState.create(root, STATE_ID, true);
+        state = new BooleanState(root, STATE_ID, true);
         
         // next changeset
         StateTestUtils.close(root);

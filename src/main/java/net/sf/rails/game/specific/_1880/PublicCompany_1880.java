@@ -52,13 +52,13 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     private BuildingRights_1880 buildingRights = new BuildingRights_1880(this, "buildingRights"); 
    
     //Implementation of PhaseAction to be able to handle the CommunistPhase
-    private BooleanState canStockPriceMove = BooleanState.create(this, "canStockPriceMove", true);
-    private BooleanState canPresidentSellShare = BooleanState.create(this, "canPresidentSellShare", true);
+    private BooleanState canStockPriceMove = new BooleanState(this, "canStockPriceMove", true);
+    private BooleanState canPresidentSellShare = new BooleanState(this, "canPresidentSellShare", true);
             
-    private BooleanState allCertsAvail = BooleanState.create(this, "allCertsAvail", false);
+    private BooleanState allCertsAvail = new BooleanState(this, "allCertsAvail", false);
     
-    private BooleanState fullyCapitalized = BooleanState.create(this, "fullyCapitalized", false);
-    private BooleanState fullCapitalAvailable = BooleanState.create (this, "fullCapitalAvailable", false);
+    private BooleanState fullyCapitalized = new BooleanState(this, "fullyCapitalized", false);
+    private BooleanState fullCapitalAvailable = new BooleanState (this, "fullCapitalAvailable", false);
     private int extraCapital = 0; // Just one Change at Start of the game, can stay as it is..
     
     protected IntegerState formationOrderIndex;

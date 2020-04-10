@@ -10,25 +10,25 @@ import net.sf.rails.game.state.ArrayListState;
 
 public class OperatingRound_18TN extends OperatingRound {
 
-    private ArrayListState<Player> playersSoldInOR1 = ArrayListState.create(this, "PlayersSoldPrivateInOR1");
+    private ArrayListState<Player> playersSoldInOR1 = new ArrayListState<>(this, "PlayersSoldPrivateInOR1");
 
     /**
      * Constructed via Configure
      */
-    public OperatingRound_18TN (GameManager parent, String id) {
+    public OperatingRound_18TN(GameManager parent, String id) {
         super(parent, id);
     }
 
     @Override
     protected boolean isPrivateSellingAllowed() {
         return super.isPrivateSellingAllowed()
-        // 18TN special
-        || gameManager.getAbsoluteORNumber() == 1
-        && !ownsPrivate(operatingCompany.value());
+                // 18TN special
+                || gameManager.getAbsoluteORNumber() == 1
+                && !ownsPrivate(operatingCompany.value());
     }
 
     @Override
-    protected int getPrivateMinimumPrice (PrivateCompany privComp) {
+    protected int getPrivateMinimumPrice(PrivateCompany privComp) {
         if (gameManager.getAbsoluteORNumber() == 1
                 && !Phase.getCurrent(this).isPrivateSellingAllowed()) {
             // 18TN special
@@ -39,7 +39,7 @@ public class OperatingRound_18TN extends OperatingRound {
     }
 
     @Override
-    protected int getPrivateMaximumPrice (PrivateCompany privComp) {
+    protected int getPrivateMaximumPrice(PrivateCompany privComp) {
         if (gameManager.getAbsoluteORNumber() == 1
                 && !Phase.getCurrent(this).isPrivateSellingAllowed()) {
             // 18TN special
@@ -49,18 +49,18 @@ public class OperatingRound_18TN extends OperatingRound {
         }
     }
 
-    private boolean ownsPrivate (PublicCompany company) {
+    private boolean ownsPrivate(PublicCompany company) {
         Set<PrivateCompany> privates = company.getPortfolioModel().getPrivateCompanies();
         return privates != null && !privates.isEmpty();
     }
 
     @Override
-    protected boolean maySellPrivate (Player player) {
+    protected boolean maySellPrivate(Player player) {
         return gameManager.getAbsoluteORNumber() != 1
-        || !hasPlayerSoldInOR1(player);
+                || !hasPlayerSoldInOR1(player);
     }
 
-    private boolean hasPlayerSoldInOR1 (Player player) {
+    private boolean hasPlayerSoldInOR1(Player player) {
         return playersSoldInOR1 != null && playersSoldInOR1.contains(player);
     }
 
@@ -70,7 +70,7 @@ public class OperatingRound_18TN extends OperatingRound {
         Player sellingPlayer = null;
 
         if (gameManager.getAbsoluteORNumber() == 1) {
-            sellingPlayer = (Player)action.getPrivateCompany().getOwner();
+            sellingPlayer = (Player) action.getPrivateCompany().getOwner();
         }
 
         boolean result = super.buyPrivate(action);
@@ -85,12 +85,12 @@ public class OperatingRound_18TN extends OperatingRound {
     }
 
     @Override
-    public void processPhaseAction (String name, String value) {
+    public void processPhaseAction(String name, String value) {
         if (name.equalsIgnoreCase("CivilWar")) {
             for (PublicCompany company : getOperatingCompanies()) {
                 if (company.hasFloated() && company.getPortfolioModel().getNumberOfTrains() > 0
                         && company.hasRoute()) {
-                    ((PublicCompany_18TN)company).setCivilWar(true);
+                    ((PublicCompany_18TN) company).setCivilWar(true);
                 }
             }
         }
@@ -98,7 +98,7 @@ public class OperatingRound_18TN extends OperatingRound {
 
 
     @Override
-    protected void executeSetRevenueAndDividend (SetDividend action) {
+    protected void executeSetRevenueAndDividend(SetDividend action) {
 
         // Save operating company (it may change)
         PublicCompany_18TN company = (PublicCompany_18TN) operatingCompany.value();

@@ -38,7 +38,7 @@ public class StartItem extends RailsAbstractItem {
     protected int index;
 
     // Bids
-    protected final GenericState<Player> lastBidder = GenericState.create(this, "lastBidder");
+    protected final GenericState<Player> lastBidder = new GenericState<>(this, "lastBidder");
     protected final Map<Player, CountingMoneyModel> bids = Maps.newHashMap();
     protected final CountingMoneyModel minimumBid = CountingMoneyModel.create(this, "minimumBid", false);
     protected final Map<Player, BooleanState> active = Maps.newHashMap();
@@ -62,8 +62,8 @@ public class StartItem extends RailsAbstractItem {
     public static final int SOLD = 6;
 
     protected static final String[] statusName =
-            new String[] { "Unavailable", "Biddable", "Buyable", "Selectable",
-                    "Auctioned", "NeedingSharePrice", "Sold" };
+            new String[]{"Unavailable", "Biddable", "Buyable", "Selectable",
+                    "Auctioned", "NeedingSharePrice", "Sold"};
 
     // For initialisation purposes only
     protected String type;
@@ -75,7 +75,9 @@ public class StartItem extends RailsAbstractItem {
     public enum NoBidsReaction {
         REDUCE_AND_REBID,
         RUN_OPERATING_ROUND
-    };
+    }
+
+    ;
 
     protected NoBidsReaction noBidsReaction = NoBidsReaction.RUN_OPERATING_ROUND;
 
@@ -98,14 +100,14 @@ public class StartItem extends RailsAbstractItem {
     }
 
     /**
-     * @param name The Company name of the primary certificate. This name will
-     * also become the name of the start item itself.
-     * @param type The CompanyType name of the primary certificate.
+     * @param name      The Company name of the primary certificate. This name will
+     *                  also become the name of the start item itself.
+     * @param type      The CompanyType name of the primary certificate.
      * @param president True if the primary certificate is the president's
-     * share.
+     *                  share.
      * @return a fully intialized StartItem
      */
-    public static StartItem create(RailsItem parent, String name, String type, int price, boolean reduceable, int index, boolean president){
+    public static StartItem create(RailsItem parent, String name, String type, int price, boolean reduceable, int index, boolean president) {
         StartItem item = new StartItem(parent, name, type, index, president);
         item.initBasePrice(price);
         item.setReducePrice(reduceable);
@@ -123,10 +125,10 @@ public class StartItem extends RailsAbstractItem {
     /**
      * Add a secondary certificate, that "comes with" the primary certificate.
      *
-     * @param name2 The Company name of the secondary certificate.
-     * @param type2 The CompanyType name of the secondary certificate.
+     * @param name2      The Company name of the secondary certificate.
+     * @param type2      The CompanyType name of the secondary certificate.
      * @param president2 True if the secondary certificate is the president's
-     * share.
+     *                   share.
      */
     public void setSecondary(String name2, String type2, boolean president2) {
         this.name2 = name2;
@@ -151,12 +153,12 @@ public class StartItem extends RailsAbstractItem {
     public void init(GameManager gameManager) {
 
         List<Player> players = getRoot().getPlayerManager().getPlayers();
-        for (Player p: players) {
+        for (Player p : players) {
             // TODO: Check if this is correct or that it should be initialized with zero
             CountingMoneyModel bid = CountingMoneyModel.create(this, "bidBy_" + p.getId(), false);
             bid.setSuppressZero(true);
             bids.put(p, bid);
-            active.put(p, BooleanState.create(this, "active_" + p.getId()));
+            active.put(p, new BooleanState(this, "active_" + p.getId()));
         }
         // TODO Leave this for now, but it should be done
         // in the game-specific StartRound class
@@ -175,7 +177,7 @@ public class StartItem extends RailsAbstractItem {
             // Move the certificate to the "unavailable" pool.
             PublicCertificate pubcert = (PublicCertificate) primary;
             if (pubcert.getOwner() == null
-                || pubcert.getOwner() != unavailable.getParent()) {
+                    || pubcert.getOwner() != unavailable.getParent()) {
                 pubcert.moveTo(unavailable);
             }
         }
@@ -219,7 +221,7 @@ public class StartItem extends RailsAbstractItem {
      * Set the start packet row. <p> Applies to games like 1837 where start
      * items are organised and become available in columns.
      *
-     * @param row
+     * @param column
      */
     protected void setColumn(int column) {
         this.column = column;
@@ -228,7 +230,6 @@ public class StartItem extends RailsAbstractItem {
     /**
      * Get the row number.
      *
-     * @see setRow()
      * @return The row number. Default 0.
      */
     public int getRow() {
@@ -238,7 +239,6 @@ public class StartItem extends RailsAbstractItem {
     /**
      * Get the column number.
      *
-     * @see setColumn()
      * @return The column number. Default 0.
      */
     public int getColumn() {
@@ -337,7 +337,7 @@ public class StartItem extends RailsAbstractItem {
      */
     public int getBidders() {
         int bidders = 0;
-        for (Player bidder:active.keySet()) {
+        for (Player bidder : active.keySet()) {
             if (active.get(bidder).value() == true) {
                 bidders++;
             }
@@ -377,7 +377,7 @@ public class StartItem extends RailsAbstractItem {
     /**
      * Check if a player has done any bids on this start item.
      *
-     * @param playerName The name of the player.
+     * @param player The player.
      * @return True if this player is active for this startItem
      */
     public boolean isActive(Player player) {
@@ -391,7 +391,7 @@ public class StartItem extends RailsAbstractItem {
      * participate in an auction (e.g. 1862)
      */
     public void setAllActive() {
-        for (Player p:active.keySet()) {
+        for (Player p : active.keySet()) {
             active.get(p).set(true);
         }
     }
@@ -407,17 +407,14 @@ public class StartItem extends RailsAbstractItem {
 
     /**
      * Set the start item sold status.
-     *
-     * @param sold The new sold status (usually true).
      */
     public void setSold(Player player, int buyPrice) {
         status.set(SOLD);
 
-
         lastBidder.set(player);
 
         // For display purposes, set all lower bids to zero
-        for (Player p:bids.keySet()) {
+        for (Player p : bids.keySet()) {
             CountingMoneyModel bid = bids.get(p);
             // Unblock any bid money
             if (bid.value() > 0) {
@@ -426,7 +423,8 @@ public class StartItem extends RailsAbstractItem {
                     bid.set(0);
                     bid.setSuppressZero(true);
                 }
-                active.get(p).set(false);;
+                active.get(p).set(false);
+                ;
             }
         }
         // for winning bidder set bid to buyprice
@@ -448,7 +446,7 @@ public class StartItem extends RailsAbstractItem {
         if ((company = checkNeedForPriceSetting(primary)) != null) {
             return company;
         } else if (secondary != null
-                   && ((company = checkNeedForPriceSetting(secondary)) != null)) {
+                && ((company = checkNeedForPriceSetting(secondary)) != null)) {
             return company;
         }
 
@@ -484,7 +482,7 @@ public class StartItem extends RailsAbstractItem {
         return status.value();
     }
 
-    public IntegerState getStatusModel () {
+    public IntegerState getStatusModel() {
         return status;
     }
 
@@ -520,7 +518,7 @@ public class StartItem extends RailsAbstractItem {
         return noBidsReaction;
     }
 
-    public String getText () {
+    public String getText() {
         return toString();
     }
 

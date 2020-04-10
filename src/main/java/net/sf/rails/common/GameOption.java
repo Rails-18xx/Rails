@@ -1,17 +1,13 @@
 package net.sf.rails.common;
 
-import java.util.List;
-
-import lombok.Getter;
-import lombok.Setter;
-import net.sf.rails.game.RailsItem;
-import net.sf.rails.util.Util;
-
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.util.Util;
+
+import java.util.List;
 
 public class GameOption implements Comparable<GameOption> {
 
@@ -28,23 +24,18 @@ public class GameOption implements Comparable<GameOption> {
     // Some other common game options
     public static final String VARIANT = "Variant";
 
-    @Getter
     private final String name;
 
-    @Getter
     private final String localisedName;
 
     private final boolean isBoolean;
 
-    @Getter
     private final String defaultValue;
-
-    @Getter
+    
     private final List<String> allowedValues;
 
     private final int ordering;
 
-    @Setter
     private String selectedValue;
 
     public GameOption(String name, String localisedName, boolean isBoolean, String defaultValue, List<String> allowedValues, int ordering) {
@@ -56,6 +47,18 @@ public class GameOption implements Comparable<GameOption> {
         this.defaultValue = defaultValue;
         this.allowedValues = allowedValues;
         this.ordering = ordering;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getLocalisedName() {
+        return localisedName;
+    }
+
+    public List<String> getAllowedValues() {
+        return allowedValues;
     }
 
     public boolean isBoolean() {
@@ -72,6 +75,10 @@ public class GameOption implements Comparable<GameOption> {
         } else {
             return selectedValue;
         }
+    }
+
+    public void setSelectedValue(String selectedValue) {
+        this.selectedValue = selectedValue;
     }
 
     @Override

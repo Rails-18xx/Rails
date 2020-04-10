@@ -13,24 +13,24 @@ public final class PriceModel extends ColorModel {
     // FIXME: Remove duplication of company and parent
     private final PublicCompany company;
 
-    private final GenericState<StockSpace> stockPrice = GenericState.create(this, "stockPrice");
+    private final GenericState<StockSpace> stockPrice = new GenericState<>(this, "stockPrice");
     private boolean showCoordinates = true;
-    
+
     private PriceModel(PublicCompany parent, String id, boolean showCoordinates) {
         super(parent, id);
         company = parent;
         this.showCoordinates = showCoordinates;
     }
 
-    public static PriceModel create(PublicCompany parent, String id, boolean showCoordinates){
+    public static PriceModel create(PublicCompany parent, String id, boolean showCoordinates) {
         return new PriceModel(parent, id, showCoordinates);
     }
-    
+
     @Override
     public PublicCompany getParent() {
-        return (PublicCompany)super.getParent();
+        return (PublicCompany) super.getParent();
     }
-    
+
     public void setPrice(StockSpace price) {
         stockPrice.set(price);
     }
@@ -61,7 +61,7 @@ public final class PriceModel extends ColorModel {
     public String toText() {
         String text = "";
         if (stockPrice.value() != null) {
-            text =  Bank.format(getParent(), stockPrice.value().getPrice());
+            text = Bank.format(getParent(), stockPrice.value().getPrice());
             if (showCoordinates) {
                 text += " (" + stockPrice.value().getId() + ")";
             }

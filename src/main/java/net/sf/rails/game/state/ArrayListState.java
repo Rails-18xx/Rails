@@ -1,42 +1,50 @@
 package net.sf.rails.game.state;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * A stateful version of an ArrayList
  * TODO: Add all methods of List interface
  */
-public final class ArrayListState<E> extends State implements Iterable<E>  {
+public final class ArrayListState<E> extends State implements Iterable<E> {
 
     private final ArrayList<E> list;
 
-    private ArrayListState(Item parent, String id, Collection<E> collection) {
+    /**
+     * Creates a prefilled array list state
+     *
+     * @param parent     The parent
+     * @param id         The id
+     * @param collection The content of the state
+     */
+    public ArrayListState(Item parent, String id, Collection<E> collection) {
         super(parent, id);
-        if (collection == null) list = new ArrayList<E>();
-        else list = new ArrayList<E>(collection);
+
+        if (collection == null) {
+            this.list = new ArrayList<E>();
+        } else {
+            this.list = new ArrayList<E>(collection);
+        }
     }
 
-    /** 
-     * Creates empty ArrayListState 
-     */
-    public static <E> ArrayListState<E> create(Item parent, String id){
-        return new ArrayListState<E>(parent, id, null);
-    }
-    
     /**
-     * Creates a prefilled ArrayListState
+     * Creates an empty array list state
+     *
+     * @param parent The parent
+     * @param id     The id
      */
-    public static <E> ArrayListState<E> create(Item parent, String id, Collection<E> collection){
-        return new ArrayListState<E>(parent, id, collection);
+    public ArrayListState(Item parent, String id) {
+        this(parent, id, null);
     }
-    
+
     /**
      * Appends the specified element to the end of the list
+     *
      * @param element to be appended
      * @return true (similar to the general contract of Collection.add)
      */
@@ -47,6 +55,7 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
 
     /**
      * Inserts specified element at the specified position.
+     *
      * @param element to be added
      * @throws IndexOutOfBoundsException if index is out of range
      */
@@ -62,9 +71,10 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
         new ArrayListChange<E>(this, list.indexOf(element));
         return true;
     }
-    
+
     /**
      * remove element at index position
+     *
      * @param index position
      * @return element removed
      * @throws IndexOutOfBoundsException if index is out of range
@@ -76,14 +86,15 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
         new ArrayListChange<E>(this, index);
         return element;
     }
-    
+
     /**
      * move element to a new index position in the list
      * Remark: index position relative to the list after removal of the element
-     * @param element the specified element 
-     * @param index of the new position
+     *
+     * @param element the specified element
+     * @param index   of the new position
      * @return true if the list contained the specified element
-     * @throws IndexOutOfBoundsException if the new index is out of range (0 <= index < size) 
+     * @throws IndexOutOfBoundsException if the new index is out of range (0 <= index < size)
      */
     public boolean move(E element, int index) {
         if (index < 0 || index > list.size() - 1) throw new IndexOutOfBoundsException();
@@ -94,16 +105,16 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
         }
         return remove;
     }
-    
-    public boolean contains (E element) {
+
+    public boolean contains(E element) {
         return list.contains(element);
     }
 
     /**
-     * removes all elements 
+     * removes all elements
      */
     public void clear() {
-        for (E element:ImmutableList.copyOf(list)) {
+        for (E element : ImmutableList.copyOf(list)) {
             remove(element);
         }
     }
@@ -114,11 +125,12 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
     public void setTo(List<E> newList) {
         int index = 0;
         List<E> copyList = ImmutableList.copyOf(list);
-        for (E element:newList) {
+        for (E element : newList) {
             if (index < copyList.size()) {
                 if (element.equals(copyList.get(index))) {
                     // elements are equal, no change required
-                    index++; continue;
+                    index++;
+                    continue;
                 } else {
                     // elements are unequal, so remove old element
                     new ArrayListChange<E>(this, index);
@@ -132,9 +144,10 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
             new ArrayListChange<E>(this, index);
         }
     }
-    
+
     /**
      * creates an immutable view of the list
+     *
      * @return immutable copy
      */
     public ImmutableList<E> view() {
@@ -144,7 +157,7 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
     public int size() {
         return list.size();
     }
-    
+
     public boolean isEmpty() {
         return list.isEmpty();
     }
@@ -156,15 +169,16 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
     public E get(int index) {
         return list.get(index);
     }
-    
+
     /**
      * creates an iterator derived from the ImmutableCopy of the ArrayListState
+     *
      * @return a suitable iterator for ArrayListState
      */
     public Iterator<E> iterator() {
         return ImmutableList.copyOf(list).iterator();
     }
-    
+
     @Override
     public String toText() {
         return list.toString();
@@ -178,5 +192,5 @@ public final class ArrayListState<E> extends State implements Iterable<E>  {
         }
     }
 
-    
+
 }

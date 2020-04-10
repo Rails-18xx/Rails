@@ -203,23 +203,18 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     ////////////////////////
     // dynamic fields
     ////////////////////////
-    private final GenericState<Tile> currentTile =
-            GenericState.create(this, "currentTile");
-    private final GenericState<HexSide> currentTileRotation =
-            GenericState.create(this, "currentTileRotation");
+    private final GenericState<Tile> currentTile = new GenericState<>(this, "currentTile");
+    private final GenericState<HexSide> currentTileRotation = new GenericState<>(this, "currentTileRotation");
 
     // Stops (Cities, Towns etc.)
-    private final HashBiMapState<Station, Stop> stops =
-            HashBiMapState.create(this, "stops");
+    private final HashBiMapState<Station, Stop> stops = HashBiMapState.create(this, "stops");
 
     // Homes (in 18EU and others the home is selected later in the game
     // Remark: this was a static field in Rails1.x, causing potential undo
     // problems
-    private final HashMapState<PublicCompany, Stop> homes =
-            HashMapState.create(this, "homes");
+    private final HashMapState<PublicCompany, Stop> homes = HashMapState.create(this, "homes");
 
-    private final GenericState<PrivateCompany> blockingPrivateCompany =
-            GenericState.create(this, "blockingPrivateCompany");
+    private final GenericState<PrivateCompany> blockingPrivateCompany = new GenericState<>(this, "blockingPrivateCompany");
 
     /**
      * Is the hex blocked for home tokens? <p> NOTE:<br> ALWAYS means: Always
@@ -233,28 +228,24 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
      * Remark: in Rails 1.x it was a static field, causing potential undo
      * problems
      */
-    public static enum BlockedToken {
+    public enum BlockedToken {
         ALWAYS, RESERVE_SLOT, NEVER
     }
 
-    ;
-
-    private final GenericState<BlockedToken> isBlockedForTokenLays =
-            GenericState.create(this, "isBlockedForTokenLays");
+    private final GenericState<BlockedToken> isBlockedForTokenLays = new GenericState<>(this, "isBlockedForTokenLays");
 
     /**
      * OffStation BonusTokens
      */
-    private final PortfolioSet<BonusToken> bonusTokens =
-            PortfolioSet.create(this, "bonusTokens", BonusToken.class);
+    private final PortfolioSet<BonusToken> bonusTokens = PortfolioSet.create(this, "bonusTokens", BonusToken.class);
 
     private MapHex(MapManager parent, String id, Coordinates coordinates) {
         super(parent, id);
+
         this.coordinates = coordinates;
     }
 
-    public static MapHex create(MapManager parent, Tag tag)
-            throws ConfigurationException {
+    public static MapHex create(MapManager parent, Tag tag) throws ConfigurationException {
         // name serves as id
         String id = tag.getAttributeAsString("name");
         Coordinates coordinates =
@@ -265,7 +256,6 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
-
         preprintedTileId = tag.getAttributeAsString("tile", null);
         preprintedPictureId = tag.getAttributeAsString("pic", preprintedTileId);
         int orientation = tag.getAttributeAsInteger("orientation", 0);

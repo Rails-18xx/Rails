@@ -1,22 +1,17 @@
 package net.sf.rails.game.specific._1856;
 
-import java.util.List;
-
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.Round;
+import net.sf.rails.game.*;
 import net.sf.rails.game.state.BooleanState;
 
+import java.util.List;
 
 
 public class GameManager_1856 extends GameManager {
 
-    private Player playerToStartCGRFRound = null;
+    private Player playerToStartCGRFRound;
 
     private static final int[][] certLimitsTable = {
             {14, 19, 21, 26, 29, 31, 36, 40},
@@ -25,24 +20,23 @@ public class GameManager_1856 extends GameManager {
             {7, 8, 10, 11, 13, 15, 16, 18},
             {6, 7, 8, 10, 11, 12, 14, 15}
     };
-    private final BooleanState cgrFormationPassed = BooleanState.create(this, "CgrFormationPassed");
+
+    private final BooleanState cgrFormationPassed = new BooleanState(this, "CgrFormationPassed");
 
     public GameManager_1856(RailsRoot parent, String id) {
         super(parent, id);
     }
 
-    public void startCGRFormationRound(OperatingRound_1856 or,
-            Player playerToStartCGRFRound) {
-
+    public void startCGRFormationRound(OperatingRound_1856 or, Player playerToStartCGRFRound) {
         this.playerToStartCGRFRound = playerToStartCGRFRound;
-        interruptedRound = or;
+        this.interruptedRound = or;
 
         if (this.playerToStartCGRFRound != null) {
             // TODO: this id will not work
-            createRound (CGRFormationRound.class, "CGRFormationRound").start (this.playerToStartCGRFRound);
+            createRound(CGRFormationRound.class, "CGRFormationRound").start(this.playerToStartCGRFRound);
             this.playerToStartCGRFRound = null;
         } else {
-            resetCertificateLimit (true);
+            resetCertificateLimit(true);
         }
     }
 
@@ -50,7 +44,7 @@ public class GameManager_1856 extends GameManager {
     public void nextRound(Round round) {
         if (round instanceof CGRFormationRound) {
             setRound(interruptedRound);
-            ((OperatingRound_1856)interruptedRound).resume(((CGRFormationRound)round).getMergingCompanies());
+            ((OperatingRound_1856) interruptedRound).resume(((CGRFormationRound) round).getMergingCompanies());
         } else {
             super.nextRound(round);
         }
@@ -83,7 +77,7 @@ public class GameManager_1856 extends GameManager {
         int numCompanies = Math.min(11, Math.max(4, validCompanies));
         int numPlayers = getRoot().getPlayerManager().getNumberOfPlayers();
 
-        int newCertLimit = certLimitsTable[numPlayers-2][numCompanies-4];
+        int newCertLimit = certLimitsTable[numPlayers - 2][numCompanies - 4];
         getRoot().getPlayerManager().setPlayerCertificateLimit(newCertLimit);
         String message = LocalText.getText("CertificateLimit",
                 newCertLimit,

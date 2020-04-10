@@ -1,7 +1,5 @@
 package net.sf.rails.game;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import net.sf.rails.common.*;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
@@ -17,6 +15,8 @@ import net.sf.rails.game.state.*;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
 import net.sf.rails.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rails.game.action.*;
 import rails.game.correct.CorrectionAction;
 import rails.game.correct.CorrectionManager;
@@ -27,13 +27,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
-
 /**
  * This class manages the playing rounds by supervising all implementations of
  * Round. Currently everything is hardcoded &agrave; la 1830.
  */
-@Slf4j
 public class GameManager extends RailsManager implements Configurable, Owner {
+
+    private static final Logger log = LoggerFactory.getLogger(GameManager.class);
 
     protected Class<? extends StockRound> stockRoundClass = StockRound.class;
     protected Class<? extends OperatingRound> operatingRoundClass = OperatingRound.class;
@@ -69,7 +69,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected int gameEndsWhenBankHasLessOrEqual = 0;
     protected boolean gameEndsAfterSetOfORs = true;
 
-    @Getter
     protected boolean dynamicOperatingOrder = true;
 
     /**
@@ -86,7 +85,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      * been sold, it finishes by starting an Operating Round, which handles the
      * privates payout and then immediately starts a new Start Round.
      */
-    protected final GenericState<RoundFacade> currentRound = GenericState.create(this, "currentRound");
+    protected final GenericState<RoundFacade> currentRound = new GenericState<>(this, "currentRound");
     protected RoundFacade interruptedRound = null;
 
     protected final IntegerState startRoundNumber = IntegerState.create(this, "startRoundNumber");
@@ -97,19 +96,19 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected final IntegerState relativeORNumber = IntegerState.create(this, "relativeORNumber");
     protected final IntegerState numOfORs = IntegerState.create(this, "numOfORs");
 
-    protected final BooleanState firstAllPlayersPassed = BooleanState.create(this, "firstAllPlayersPassed");
+    protected final BooleanState firstAllPlayersPassed = new BooleanState(this, "firstAllPlayersPassed");
 
 
     /**
      * GameOver pending, a last OR or set of ORs must still be completed
      */
-    protected final BooleanState gameOverPending = BooleanState.create(this, "gameOverPending");
+    protected final BooleanState gameOverPending = new BooleanState(this, "gameOverPending");
     /**
      * GameOver is executed, no more moves
      */
-    protected final BooleanState gameOver = BooleanState.create(this, "gameOver");
+    protected final BooleanState gameOver = new BooleanState(this, "gameOver");
     protected Boolean gameOverReportedUI = false;
-    protected final BooleanState endedByBankruptcy = BooleanState.create(this, "endedByBankruptcy");
+    protected final BooleanState endedByBankruptcy = new BooleanState(this, "endedByBankruptcy");
 
     /**
      * UI display hints
@@ -121,12 +120,11 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      */
     protected final EnumMap<GuiDef.Parm, Boolean> guiParameters = new EnumMap<>(GuiDef.Parm.class);
 
-    protected GenericState<StartPacket> startPacket = GenericState.create(this, "startPacket");
+    protected GenericState<StartPacket> startPacket = new GenericState<>(this, "startPacket");
 
-    @Getter
     protected PossibleActions possibleActions = PossibleActions.create();
 
-    protected final ArrayListState<PossibleAction> executedActions = ArrayListState.create(this, "executedActions");
+    protected final ArrayListState<PossibleAction> executedActions = new ArrayListState<>(this, "executedActions");
 
     /**
      * Special properties that can be used by other players or companies
@@ -159,7 +157,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Map<String, Object> objectStorage = new HashMap<>();
     protected Map<String, Integer> storageIds = new HashMap<>();
 
-    @Getter
     private static int revenueSpinnerIncrement = 10;
     //Used for Storing the PublicCompany to be Founded by a formationround
     private PublicCompany nationalToFound;
@@ -422,6 +419,18 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         setGuiParameters();
         getRoot().getCompanyManager().initStartPackets(this);
         beginStartRound();
+    }
+
+    public boolean isDynamicOperatingOrder() {
+        return dynamicOperatingOrder;
+    }
+
+    public PossibleActions getPossibleActions() {
+        return possibleActions;
+    }
+
+    public static int getRevenueSpinnerIncrement() {
+        return revenueSpinnerIncrement;
     }
 
     protected void setGuiParameters() {

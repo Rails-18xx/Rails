@@ -27,41 +27,60 @@ import net.sf.rails.util.Util;
 public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner, Configurable {
 
     public static final String ID = "BANK";
-    
-    /** Specific portfolio names */
+
+    /**
+     * Specific portfolio names
+     */
     public static final String IPO_NAME = "IPO";
     public static final String POOL_NAME = "Pool";
     public static final String SCRAPHEAP_NAME = "ScrapHeap";
     public static final String UNAVAILABLE_NAME = "Unavailable";
-    
-    /** Default limit of shares in the bank pool */
+
+    /**
+     * Default limit of shares in the bank pool
+     */
     private static final int DEFAULT_BANK_AMOUNT = 12000;
     private static final String DEFAULT_MONEY_FORMAT = "$@";
 
-    /** The Bank currency */
+    /**
+     * The Bank currency
+     */
     private final Currency currency = Currency.create(this, "currency");
 
-    /** The Bank's amount of cash */
+    /**
+     * The Bank's amount of cash
+     */
     private final PurseMoneyModel cash = PurseMoneyModel.create(this, "cash", false, currency);
-   
-    /** The IPO */
+
+    /**
+     * The IPO
+     */
     private final BankPortfolio ipo = BankPortfolio.create(this, IPO_NAME);
-    /** The Bank Pool */
+    /**
+     * The Bank Pool
+     */
     private final BankPortfolio pool = BankPortfolio.create(this, POOL_NAME);
-    /** Collection of items that will (may) become available in the future */
+    /**
+     * Collection of items that will (may) become available in the future
+     */
     private final BankPortfolio unavailable = BankPortfolio.create(this, UNAVAILABLE_NAME);
-    /** Collection of items that have been discarded (but are kept to allow Undo) */
+    /**
+     * Collection of items that have been discarded (but are kept to allow Undo)
+     */
     private final BankPortfolio scrapHeap = BankPortfolio.create(this, SCRAPHEAP_NAME);
 
-    /** Is the bank broken */
-    private final BooleanState broken = BooleanState.create(this, "broken");
-    
+    /**
+     * Is the bank broken
+     */
+    private final BooleanState broken = new BooleanState(this, "broken");
+
     // Instance initializer to create a BankBroken model
     {
         new Triggerable() {
             {// instance initializer
                 cash.addTrigger(this);
             }
+
             public void triggered(Observable obs, Change change) {
                 if (cash.value() <= 0 && !broken.value()) {
                     broken.set(true);
@@ -71,7 +90,7 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
             }
         };
     }
-    
+
     /**
      * Used by Configure (via reflection) only
      */
@@ -79,10 +98,7 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
         // FIXME: This is a workaround to keep id to large caps
         super(parent, ID);
     }
-    
-    /**
-     * @see net.sf.rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
-     */
+
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
         // Parse the Bank element
@@ -92,7 +108,7 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
         String configFormat = Config.get("money_format");
         if (Util.hasValue(configFormat) && configFormat.matches(".*@.*")) {
             moneyFormat = configFormat;
-        } else { 
+        } else {
             /*
              * Only use the rails.game-specific format if it has not been
              * overridden in the configuration file (see if statement above)
@@ -116,9 +132,9 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
 
     }
 
-    public void finishConfiguration (RailsRoot root) {
+    public void finishConfiguration(RailsRoot root) {
 
-        ReportBuffer.add(this, LocalText.getText("BankSizeIs", 
+        ReportBuffer.add(this, LocalText.getText("BankSizeIs",
                 currency.format(cash.value())));
 
         // finish configuration of BankPortfolios
@@ -126,17 +142,17 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
         pool.finishConfiguration();
         unavailable.finishConfiguration();
         scrapHeap.finishConfiguration();
-        
+
         // Add privates
         List<PrivateCompany> privates =
-            root.getCompanyManager().getAllPrivateCompanies();
+                root.getCompanyManager().getAllPrivateCompanies();
         for (PrivateCompany priv : privates) {
             ipo.getPortfolioModel().addPrivateCompany(priv);
         }
 
         // Add public companies
         List<PublicCompany> companies =
-            root.getCompanyManager().getAllPublicCompanies();
+                root.getCompanyManager().getAllPublicCompanies();
         for (PublicCompany comp : companies) {
             for (PublicCertificate cert : comp.getCertificates()) {
                 if (cert.isInitiallyAvailable()) {
@@ -172,11 +188,11 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
     public BankPortfolio getUnavailable() {
         return unavailable;
     }
-    
+
     public String toText() {
         return LocalText.getText("BANK");
     }
-    
+
     // CurrencyOwner interface
     public Currency getCurrency() {
         return currency;
@@ -186,11 +202,11 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
     public Purse getPurse() {
         return cash.getPurse();
     }
-    
+
     public int getCash() {
         return cash.getPurse().value();
     }
-    
+
     public static String format(RailsItem item, Iterable<Integer> amount) {
         Currency currency = item.getRoot().getBank().getCurrency();
         return currency.format(amount);
@@ -200,23 +216,23 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
         Currency currency = item.getRoot().getBank().getCurrency();
         return currency.format(amount);
     }
-    
+
     public static Bank get(RailsItem item) {
         return item.getRoot().getBank();
     }
-    
+
     public static BankPortfolio getIpo(RailsItem item) {
         return get(item).ipo;
     }
-    
+
     public static BankPortfolio getPool(RailsItem item) {
         return get(item).pool;
     }
-    
+
     public static BankPortfolio getScrapHeap(RailsItem item) {
         return get(item).scrapHeap;
     }
-    
+
     public static BankPortfolio getUnavailable(RailsItem item) {
         return get(item).unavailable;
     }

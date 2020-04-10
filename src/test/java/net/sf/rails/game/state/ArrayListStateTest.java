@@ -44,8 +44,8 @@ public class ArrayListStateTest {
         oneItem = AbstractItemImpl.create(root, ONE_ITEM_ID);
         anotherItem = AbstractItemImpl.create(root, ANOTHER_ITEM_ID);
         
-        stateDefault = ArrayListState.create(root, DEFAULT_ID);
-        stateInit = ArrayListState.create(root, INIT_ID, Lists.newArrayList(oneItem));
+        stateDefault = new ArrayListState<>(root, DEFAULT_ID);
+        stateInit = new ArrayListState<>(root, INIT_ID, Lists.newArrayList(oneItem));
     }
 
     // helper function to check the initial state after undo

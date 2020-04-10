@@ -1,7 +1,6 @@
 package net.sf.rails.util;
 
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
 import net.sf.rails.common.*;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.GameOptionsParser;
@@ -9,6 +8,8 @@ import net.sf.rails.game.GameManager;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.SplashWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rails.game.action.PossibleAction;
 
 import javax.swing.*;
@@ -18,12 +19,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
-
 /**
  * GameLoader is responsible to load a saved Rails game
  */
-@Slf4j
 public class GameLoader {
+
+    private static final Logger log = LoggerFactory.getLogger(GameLoader.class);
 
     // game data
     private final GameIOData gameIOData = new GameIOData();

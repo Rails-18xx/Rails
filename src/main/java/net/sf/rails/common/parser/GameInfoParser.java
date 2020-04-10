@@ -1,7 +1,6 @@
 package net.sf.rails.common.parser;
 
 import com.google.common.collect.Sets;
-import lombok.Getter;
 import net.sf.rails.common.GameInfo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -18,7 +17,6 @@ public class GameInfoParser {
 
     private final XMLParser parser = new XMLParser();
 
-    @Getter
     private String credits;
 
     public GameInfoParser() {
@@ -74,5 +72,9 @@ public class GameInfoParser {
         gameInfo.withOrdering(ordering);
 
         return gameInfo.build();
+    }
+
+    public String getCredits() {
+        return credits;
     }
 }

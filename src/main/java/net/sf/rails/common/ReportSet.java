@@ -2,12 +2,10 @@ package net.sf.rails.common;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
-import lombok.Getter;
 import net.sf.rails.game.state.ChangeSet;
 import net.sf.rails.util.Util;
 
 import java.util.List;
-
 
 /**
  * ReportSet contains all messages that reference one ChangeSet
@@ -22,7 +20,7 @@ public class ReportSet {
 
     private final ChangeSet changeSet;
 
-    @Getter
+
     private final List<String> messages;
 
     private final String htmlText;
@@ -36,6 +34,10 @@ public class ReportSet {
 
         this.htmlText = toHtml(false);
         this.htmlTextActive = toHtml(true);
+    }
+
+    public List<String> getMessages() {
+        return messages;
     }
 
     public String getAsHtml(ChangeSet currentChangeSet) {

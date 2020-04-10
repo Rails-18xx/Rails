@@ -1,12 +1,10 @@
 package net.sf.rails.common;
 
-import lombok.extern.slf4j.Slf4j;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.model.RailsModel;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.util.Util;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,19 +12,16 @@ import org.slf4j.LoggerFactory;
 /**
  * DisplayBuffer stores messages of the current action.
  */
-@Slf4j
 public class DisplayBuffer extends RailsModel {
 
-    private final ArrayListState<String> buffer = ArrayListState.create(this, "buffer");
+    private static final Logger log = LoggerFactory.getLogger(DisplayBuffer.class);
 
-    private final BooleanState autoDisplay = BooleanState.create(this, "autoDisplay");
+    private final ArrayListState<String> buffer = new ArrayListState(this, "buffer");
 
-    private DisplayBuffer(ReportManager parent, String id) {
+    private final BooleanState autoDisplay = new BooleanState(this, "autoDisplay");
+
+    public DisplayBuffer(ReportManager parent, String id) {
         super(parent, id);
-    }
-
-    public static DisplayBuffer create(ReportManager parent, String id) {
-        return new DisplayBuffer(parent, id);
     }
 
     @Override

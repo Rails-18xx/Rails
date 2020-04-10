@@ -1,16 +1,13 @@
 package net.sf.rails.common;
 
+import net.sf.rails.game.RailsAbstractItem;
+import net.sf.rails.game.RailsItem;
+import net.sf.rails.game.round.RoundFacade;
+import net.sf.rails.game.state.GenericState;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.Data;
-import lombok.Getter;
-import net.sf.rails.game.RailsAbstractItem;
-import net.sf.rails.game.RailsItem;
-import net.sf.rails.game.Round;
-import net.sf.rails.game.round.RoundFacade;
-import net.sf.rails.game.state.GenericState;
 
 
 /**
@@ -28,18 +25,17 @@ public final class GuiHints extends RailsAbstractItem implements Serializable {
     /**
      * What round type is currently active in the engine?
      */
-    private GenericState<Class<? extends RoundFacade>> currentRoundType = GenericState.create(this, "currentRoundType");
+    private GenericState<Class<? extends RoundFacade>> currentRoundType = new GenericState(this, "currentRoundType");
 
     /**
      * Which windows should be visible?
      */
-    @Getter
     private List<VisibilityHint> visibilityHints;
 
     /**
      * Which window type is active and should be on top?
      */
-    private GenericState<GuiDef.Panel> activePanel = GenericState.create(this, "activePanel");
+    private GenericState<GuiDef.Panel> activePanel = new GenericState(this, "activePanel");
 
     public GuiHints(RailsItem parent, String id) {
         super(parent, id);
@@ -47,6 +43,10 @@ public final class GuiHints extends RailsAbstractItem implements Serializable {
 
     public Class<? extends RoundFacade> getCurrentRoundType() {
         return this.currentRoundType.value();
+    }
+
+    public List<VisibilityHint> getVisibilityHints() {
+        return visibilityHints;
     }
 
     public void setCurrentRoundType(Class<? extends RoundFacade> currentRoundType) {
@@ -76,10 +76,25 @@ public final class GuiHints extends RailsAbstractItem implements Serializable {
         this.activePanel.set(activePanel);
     }
 
-    @Data
     public static class VisibilityHint {
         private final GuiDef.Panel type;
+
         private final boolean visible;
+
+        public VisibilityHint(GuiDef.Panel type, boolean visible) {
+            super();
+
+            this.type = type;
+            this.visible = visible;
+        }
+
+        public GuiDef.Panel getType() {
+            return type;
+        }
+
+        public boolean isVisible() {
+            return visible;
+        }
     }
 
 }
