@@ -23,7 +23,7 @@ repositories {
 version = '2.2-beta'
 description = 'Rails is a moderator program for 18xx games'
 
-def appName = 'rails-18xx'
+def appName = 'Rails (18xx)'
 def vendor = 'The Rails project team'
 def licenceFile = "./LICENSE"
 
@@ -106,10 +106,6 @@ gitProperties {
     customProperty 'develop', 'true'
 }
 
-def stringify(String string) {
-    return '"' + string + '"'
-}
-
 def appVersion() {
     return rootProject.version
             .replaceAll("\\-", ".")
@@ -123,8 +119,8 @@ task buildDebPackage(type: Exec) {
             '--verbose',
             '--type', 'deb',
             '--name', appName,
-            '--description', stringify(rootProject.description),
-            '--vendor', stringify(vendor),
+            '--description', rootProject.description,
+            '--vendor', vendor,
             '--license-file', licenceFile,
             '--icon', './native/rails.png',
             '--file-associations', './native/rails-linux-association.properties',
@@ -141,8 +137,8 @@ task buildExePackage(type: Exec) {
             '--verbose',
             '--type', 'exe',
             '--name', appName,
-            '--description', stringify(rootProject.description),
-            '--vendor', stringify(vendor),
+            '--description', rootProject.description,
+            '--vendor', vendor,
             '--license-file', licenceFile,
             '--icon', './native/rails.ico',
             '--file-associations', './native/rails-windows-association.properties',
@@ -160,8 +156,8 @@ task buildDmgPackage(type: Exec) {
             '--verbose',
             '--type', 'dmg',
             '--name', appName,
-            '--description', stringify(rootProject.description),
-            '--vendor', stringify(vendor),
+            '--description', rootProject.description,
+            '--vendor', vendor,
             '--license-file', licenceFile,
             '--icon', './native/rails.ico',
             '--file-associations', './native/rails-osx-association.properties',

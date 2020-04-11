@@ -120,7 +120,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.sha }}
-          release_name: Release ${ GITHUB_SHA::8 }
+          release_name: Release $(git rev-parse --short=8 ${{ github.sha }})
           body: |
             Snapshot Release for Commit ${{ github.sha }}
           draft: true
