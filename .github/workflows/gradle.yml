@@ -36,8 +36,10 @@ jobs:
         run: ./gradlew clean test
       - name: Build jar
         run: ./gradlew clean build
-      - name: Create Installer
+      - name: Create Deb Installer
         run: ./gradlew buildDebPackage
+      - name: Rename Deb Installer
+        run: ./gradlew renameExecutables
       - name: Debug
         run: ls -lh
 
@@ -56,8 +58,10 @@ jobs:
         run: ./gradlew.bat clean test
       - name: Build jar
         run: ./gradlew.bat clean build
-      - name: Create Installer
+      - name: Create Exe Installer
         run: ./gradlew.bat buildExePackage
+      - name: Rename Exe Installer
+        run: ./gradlew renameExecutables
       - name: Debug
         run: ls
 
@@ -76,7 +80,9 @@ jobs:
         run: ./gradlew clean test
       - name: Build jar
         run: ./gradlew clean build
-      - name: Create Installer
+      - name: Create Dmg Installer
         run: ./gradlew buildDmgPackage
+      - name: Rename Dmg Installer
+        run: ./gradlew renameExecutables
       - name: Debug
         run: ls -lh

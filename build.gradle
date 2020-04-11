@@ -170,3 +170,13 @@ task buildDmgPackage(type: Exec) {
             '--main-jar', "rails-${version}-all.jar",
             '--mac-package-name', 'rails-18xx'
 }
+
+task renameExecutables(type: Copy) {
+    from fileTree(".").matching {
+        include "*.deb"
+        include "*.exe"
+        include "*.dmg"
+    }
+    into "."
+    rename '(.+)\\.(.+)', 'rails-18xx.$2'
+}
