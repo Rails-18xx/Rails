@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: Java CI with Gradle
 
 on:
   push:
@@ -38,10 +38,13 @@ jobs:
         run: ./gradlew clean build
       - name: Create Deb Installer
         run: ./gradlew buildDebPackage
-      - name: Rename Deb Installer
+      - name: Rename Installer
         run: ./gradlew renameExecutables
-      - name: Debug
-        run: ls -lh
+      - name: Upload Installer
+          uses: actions/upload-artifact@v1
+          with:
+            name: deb
+            path: rails-18xx.deb
 
   windows:
     name: Build - Windows
@@ -55,15 +58,18 @@ jobs:
           java-version: 14
           java-package: jdk
       - name: Execute Tests
-        run: ./gradlew.bat clean test
+        run: ./gradlew clean test
       - name: Build jar
-        run: ./gradlew.bat clean build
+        run: ./gradlew clean build
       - name: Create Exe Installer
-        run: ./gradlew.bat buildExePackage
-      - name: Rename Exe Installer
+        run: ./gradlew buildExePackage
+      - name: Rename Installer
         run: ./gradlew renameExecutables
-      - name: Debug
-        run: ls
+      - name: Upload Installer
+          uses: actions/upload-artifact@v1
+          with:
+            name: exe
+            path: rails-18xx.exe
 
   macos:
     name: Build - MacOS
@@ -82,7 +88,67 @@ jobs:
         run: ./gradlew clean build
       - name: Create Dmg Installer
         run: ./gradlew buildDmgPackage
-      - name: Rename Dmg Installer
+      - name: Rename Installer
         run: ./gradlew renameExecutables
-      - name: Debug
-        run: ls -lh
+      - name: Upload Installer
+          uses: actions/upload-artifact@v1
+          with:
+            name: dmg
+            path: rails-18xx.dmg
+
+  publish:
+    name: Publish Installers
+    needs: [windows, ubuntu, macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download exe
+        uses: actions/download-artifact@v1
+        with:
+          name: exe
+      - name: Download deb
+        uses: actions/download-artifact@v1
+        with:
+          name: deb
+      - name: Download dmg
+        uses: actions/download-artifact@v1
+        with:
+          name: dmg
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.sha }}
+          release_name: Release ${{ github.sha }}
+          body: |
+            Snapshot Release for Commit ${{ github.sha }}
+          draft: true
+          prerelease: true
+      - name: Upload exe
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./exe/rails-18xx.exe
+          asset_name: rails-18xx.exe
+          asset_content_type: application/octet-stream
+      - name: Upload deb
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./deb/rails-18xx.deb
+          asset_name: rails-18xx.deb
+          asset_content_type: application/octet-stream
+      - name: Upload dmg
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dmg/rails-18xx.dmg
+          asset_name: rails-18xx.dmg
+          asset_content_type: application/octet-stream

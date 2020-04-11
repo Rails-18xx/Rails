@@ -172,11 +172,11 @@ task buildDmgPackage(type: Exec) {
 }
 
 task renameExecutables(type: Copy) {
-    from fileTree(".").matching {
-        include "*.deb"
-        include "*.exe"
-        include "*.dmg"
+    from('.') {
+        include '*.deb'
+        include '*.exe'
+        include '*.dmg'
     }
-    into "."
+    into '.'
     rename '(.+)\\.(.+)', 'rails-18xx.$2'
 }
