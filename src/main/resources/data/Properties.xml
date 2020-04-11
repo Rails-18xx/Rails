@@ -10,7 +10,7 @@
 		<Property name="default_players" type="STRING" />
 		<Property name="local.player.name" type="STRING" />
 	</Section>
-	<Section name="Save">
+	<Section name="SaveLoad">
 		<Property name="save.directory" type="DIRECTORY" />
 		<Property name="save.filename.date_time_pattern" type="STRING" />
 		<Property name="save.filename.suffix" type="STRING" />
@@ -18,6 +18,9 @@
 		<Property name="save.recovery.active" type="BOOLEAN" />
         <Property name="save.auto.enabled" type="BOOLEAN" />
         <Property name="save.auto.interval" type="INTEGER" />
+        <Property name="load.recent_files.include_regex" type="REGEX" />
+        <Property name="load.recent_files.exclude_regex" type="REGEX" />
+        <Property name="load.recent_files.include_only_last_rails" type="BOOLEAN" />
     </Section>
     <Section name="Notifications">
         <Property name="notify.discord.webhook" type="STRING" isGameRelated="true" />

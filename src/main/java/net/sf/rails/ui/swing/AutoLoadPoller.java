@@ -42,7 +42,7 @@ public class AutoLoadPoller extends Thread {
         this.pollingStatus = status;
         this.pollingInterval = pollingInterval;
 
-        lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
+        lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + "." + GameUIManager.DEFAULT_SAVE_POLLING_EXTENSION;
 
         log.debug("Poller own postfix: {}", ownPostfix);
         log.debug("Poller last-filename path: {}", lastSavedFilenameFilepath);
