@@ -129,6 +129,7 @@ task buildDebPackage(type: Exec) {
             '--main-jar', shadowJar.archiveName,
             '--linux-package-name', 'rails-18xx',
             '--linux-app-category', 'games',
+            '--linux-app-release', appVersion(),
             '--linux-shortcut'
 }
 
@@ -147,6 +148,7 @@ task buildRpmPackage(type: Exec) {
             '--main-jar', shadowJar.archiveName,
             '--linux-package-name', 'rails-18xx',
             '--linux-app-category', 'games',
+            '--linux-app-release', appVersion(),
             '--linux-shortcut'
 }
 
