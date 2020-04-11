@@ -2,9 +2,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ rails_2_develop ]
+    branches: [ master ]
   pull_request:
-    branches: [ rails_2_develop ]
+    branches: [ master ]
 
 jobs:
   jdk11:
