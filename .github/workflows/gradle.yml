@@ -22,7 +22,7 @@ jobs:
         run: gradle clean test
 
   ubuntu:
-    name: Build - Ubuntu
+    name: Build Ubuntu Installer
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -40,7 +40,7 @@ jobs:
         run: ./gradlew buildDebPackage
       - name: Create Rpm Installer
         run: ./gradlew buildRpmPackage
-      - name: Rename Installer
+      - name: Rename Installers
         run: ./gradlew renameExecutables
       - name: Upload Deb Installer
         uses: actions/upload-artifact@v1
@@ -54,7 +54,7 @@ jobs:
           path: rails-18xx.rpm
 
   windows:
-    name: Build - Windows
+    name: Build Windows Installers
     runs-on: windows-latest
     steps:
       - name: Checkout code
@@ -79,7 +79,7 @@ jobs:
           path: rails-18xx.exe
 
   macos:
-    name: Build - MacOS
+    name: Build MacOS Installers
     runs-on: macos-latest
     steps:
       - name: Checkout code

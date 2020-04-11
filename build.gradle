@@ -27,6 +27,8 @@ def appName = 'rails-18xx'
 def vendor = 'The Rails project team'
 def licenceFile = "./LICENSE"
 
+def jpackage = "${System.getenv('JAVA_HOME')}/bin/jpackage"
+
 dependencies {
     implementation 'commons-io:commons-io:2.6'
     implementation 'com.github.vlsi.mxgraph:jgraphx:4.1.0'
@@ -115,7 +117,7 @@ def appVersion() {
 }
 
 task buildDebPackage(type: Exec) {
-    commandLine 'jpackage',
+    commandLine jpackage,
             '--verbose',
             '--type', 'deb',
             '--name', appName,
@@ -133,7 +135,7 @@ task buildDebPackage(type: Exec) {
 }
 
 task buildRpmPackage(type: Exec) {
-    commandLine 'jpackage',
+    commandLine jpackage,
             '--verbose',
             '--type', 'rpm',
             '--name', appName,
@@ -151,7 +153,7 @@ task buildRpmPackage(type: Exec) {
 }
 
 task buildExePackage(type: Exec) {
-    commandLine 'jpackage',
+    commandLine jpackage,
             '--verbose',
             '--type', 'exe',
             '--name', appName,
@@ -170,7 +172,7 @@ task buildExePackage(type: Exec) {
 }
 
 task buildDmgPackage(type: Exec) {
-    commandLine 'jpackage',
+    commandLine jpackage,
             '--verbose',
             '--type', 'dmg',
             '--name', appName,
