@@ -41,10 +41,10 @@ jobs:
       - name: Rename Installer
         run: ./gradlew renameExecutables
       - name: Upload Installer
-          uses: actions/upload-artifact@v1
-          with:
-            name: deb
-            path: rails-18xx.deb
+        uses: actions/upload-artifact@v1
+        with:
+          name: deb
+          path: rails-18xx.deb
 
   windows:
     name: Build - Windows
@@ -66,10 +66,10 @@ jobs:
       - name: Rename Installer
         run: ./gradlew renameExecutables
       - name: Upload Installer
-          uses: actions/upload-artifact@v1
-          with:
-            name: exe
-            path: rails-18xx.exe
+        uses: actions/upload-artifact@v1
+        with:
+          name: exe
+          path: rails-18xx.exe
 
   macos:
     name: Build - MacOS
@@ -91,10 +91,10 @@ jobs:
       - name: Rename Installer
         run: ./gradlew renameExecutables
       - name: Upload Installer
-          uses: actions/upload-artifact@v1
-          with:
-            name: dmg
-            path: rails-18xx.dmg
+        uses: actions/upload-artifact@v1
+        with:
+          name: dmg
+          path: rails-18xx.dmg
 
   publish:
     name: Publish Installers
