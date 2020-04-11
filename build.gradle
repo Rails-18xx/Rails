@@ -1,6 +1,7 @@
 /// Gradle Build script for 18xx Rails program (rails.sf.net)
 
 import java.text.SimpleDateFormat
+import org.gradle.internal.os.OperatingSystem;
 
 plugins {
     id 'java'
@@ -27,13 +28,13 @@ def appName = 'rails-18xx'
 def vendor = 'The Rails project team'
 def licenceFile = "./LICENSE"
 
-def jpackage = {
+def jpackage() {
     if (OperatingSystem.current().isWindows())
-        "${System.getenv('JAVA_HOME')}/bin/jpackage.exe"
+        return "${System.getenv('JAVA_HOME')}/bin/jpackage.exe"
     else if (OperatingSystem.current().isLinux())
-        "${System.getenv('JAVA_HOME')}/bin/jpackage"
+        return "${System.getenv('JAVA_HOME')}/bin/jpackage"
     else if (OperatingSystem.current().isMacOsX())
-        "${System.getenv('JAVA_HOME')}/bin/jpackage"
+        return "${System.getenv('JAVA_HOME')}/bin/jpackage"
     else
         throw new GradleException("Unknown operating system: ${OperatingSystem.current()}")
 }
@@ -126,7 +127,7 @@ def appVersion() {
 }
 
 task buildDebPackage(type: Exec) {
-    commandLine jpackage,
+    commandLine jpackage(),
             '--verbose',
             '--type', 'deb',
             '--name', appName,
@@ -144,7 +145,7 @@ task buildDebPackage(type: Exec) {
 }
 
 task buildRpmPackage(type: Exec) {
-    commandLine jpackage,
+    commandLine jpackage(),
             '--verbose',
             '--type', 'rpm',
             '--name', appName,
@@ -162,7 +163,7 @@ task buildRpmPackage(type: Exec) {
 }
 
 task buildExePackage(type: Exec) {
-    commandLine jpackage,
+    commandLine jpackage(),
             '--verbose',
             '--type', 'exe',
             '--name', appName,
@@ -181,7 +182,7 @@ task buildExePackage(type: Exec) {
 }
 
 task buildDmgPackage(type: Exec) {
-    commandLine jpackage,
+    commandLine jpackage(),
             '--verbose',
             '--type', 'dmg',
             '--name', appName,
