@@ -101,6 +101,10 @@ jobs:
     needs: [windows, ubuntu, macos]
     runs-on: ubuntu-latest
     steps:
+      - name: Fetch short Commit Hash
+        id: vars
+        run: |
+          echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
       - name: Download exe
         uses: actions/download-artifact@v1
         with:
@@ -120,7 +124,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.sha }}
-          release_name: Release $(git rev-parse --short=8 ${{ github.sha }})
+          release_name: Release ${{ steps.vars.outputs.sha_short }}
           body: |
             Snapshot Release for Commit ${{ github.sha }}
           draft: true
