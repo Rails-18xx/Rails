@@ -101,6 +101,8 @@ jobs:
     needs: [windows, ubuntu, macos]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Fetch short Commit Hash
         id: vars
         run: |

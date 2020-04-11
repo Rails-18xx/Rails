@@ -126,7 +126,7 @@ task buildDebPackage(type: Exec) {
             '--file-associations', './native/rails-linux-association.properties',
             '--app-version', appVersion(),
             '--input', 'build/libs',
-            '--main-jar', "rails-${rootProject.version}-all.jar",
+            '--main-jar', shadowJar.archiveName,
             '--linux-package-name', 'rails-18xx',
             '--linux-app-category', 'games',
             '--linux-shortcut'
@@ -144,7 +144,7 @@ task buildExePackage(type: Exec) {
             '--file-associations', './native/rails-windows-association.properties',
             '--app-version', appVersion(),
             '--input', 'build/libs',
-            '--main-jar', "rails-${rootProject.version}-all.jar",
+            '--main-jar', shadowJar.archiveName,
             '--win-dir-chooser',
             '--win-per-user-install',
             '--win-menu',
@@ -163,7 +163,7 @@ task buildDmgPackage(type: Exec) {
             '--file-associations', './native/rails-osx-association.properties',
             '--app-version', appVersion(),
             '--input', 'build/libs',
-            '--main-jar', "rails-${rootProject.version}-all.jar",
+            '--main-jar', shadowJar.archiveName,
             '--mac-package-name', 'rails-18xx'
 }
 
