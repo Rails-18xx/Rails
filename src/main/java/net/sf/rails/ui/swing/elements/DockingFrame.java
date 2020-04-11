@@ -238,9 +238,9 @@ public abstract class DockingFrame extends JFrame {
         try {
             control.save(LAYOUT_NAME_CURRENT);
             control.writeXML(layoutFile);
-            log.info("Layout saved to " + layoutFile.getName());
+            log.info("Layout saved to {}", layoutFile.getName());
         } catch (Exception e) {
-            log.error("Layout could not be saved to " + layoutFile.getName());
+            log.error("Layout could not be saved to {}", layoutFile.getName());
             return;
         }
     }

@@ -211,7 +211,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         addKeyListener(this);
 
         // set closing behavior and listener
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE );
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         final JFrame thisFrame = this;
         final GameUIManager guiMgr = gameUIManager;
         addWindowListener(new WindowAdapter () {

@@ -14,16 +14,15 @@ import org.slf4j.LoggerFactory;
 
 public class WindowSettings {
 
-    private Map<String, Rectangle> settings = new HashMap<String, Rectangle>();
-    private String filepath;
-    private String defaultpath;
+    private final Map<String, Rectangle> settings = new HashMap<>();
+    private final String filepath;
+    private final String defaultpath;
     private boolean defaultUsed = false;
 
     private static final String SETTINGS_FILENAME = "settings_xxxx.rails_ini";
     private static final String SETTINGS_FOLDER = "windowSettings";
 
-    private static final Logger log =
-        LoggerFactory.getLogger(WindowSettings.class);
+    private static final Logger log = LoggerFactory.getLogger(WindowSettings.class);
 
     public WindowSettings (String gameName) {
         File directory = SystemOS.get().getConfigurationFolder(SETTINGS_FOLDER, true);
@@ -97,7 +96,6 @@ public class WindowSettings {
     }
 
     public void save () {
-
         // Save all settings to file
         log.debug("Saving all window settings");
         try(PrintWriter out = new PrintWriter (new FileWriter (new File (filepath)))) {

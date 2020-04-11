@@ -143,7 +143,7 @@ public final class Util {
             try {
                 c = new Color (Integer.parseInt(s, 16));
             } catch (NumberFormatException e) {
-                getLogger().error ("Invalid hex RGB colour: "+s, e);
+                log.error ("Invalid hex RGB colour: "+s, e);
                 throw new ConfigurationException (e);
             }
         } else {
@@ -154,7 +154,7 @@ public final class Util {
                         Integer.parseInt(parts[1]),
                         Integer.parseInt(parts[2]));
             } catch (NumberFormatException e) {
-                getLogger().error ("Invalid nummeric RGB colour: "+s, e);
+                log.error ("Invalid nummeric RGB colour: "+s, e);
                 throw new ConfigurationException (e);
             }
         }

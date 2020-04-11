@@ -68,31 +68,31 @@ class GameIOData {
     List<PossibleAction> getActions() {
         return actions;
     }
-    
+
     String metaDataAsText() {
         StringBuilder s = new StringBuilder();
-        s.append("Rails saveVersion = " + version + "\n");
-        s.append("File was saved at " + date + "\n");
-        s.append("Saved versionID=" + fileVersionID + "\n");
-        s.append("Save game=" + gameData.getGameName() + "\n");
+        s.append("Rails saveVersion = ").append(version).append("\n");
+        s.append("File was saved at ").append(date).append("\n");
+        s.append("Saved versionID=").append(fileVersionID).append("\n");
+        s.append("Save game=").append(gameData.getGameName()).append("\n");
         return s.toString();
     }
-    
+
     String gameOptionsAsText() {
         StringBuilder s = new StringBuilder();
         for (String key : gameData.getGameOptions().getOptions().keySet()) {
-            s.append("Option "+key+"="+gameData.getGameOptions().get(key)+ "\n");
+            s.append("Option ").append(key).append("=").append(gameData.getGameOptions().get(key)).append("\n");
         }
         return s.toString();
     }
-    
+
     String playerNamesAsText() {
         StringBuilder s = new StringBuilder();
         int i=1;
         for (String player : gameData.getPlayers()) {
-            s.append("Player "+(i++)+": "+player + "\n");
+            s.append("Player ").append(i++).append(": ").append(player).append("\n");
         }
         return s.toString();
     }
-    
+
 }

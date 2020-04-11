@@ -18,26 +18,24 @@ import junit.framework.TestCase;
 
 public class TestGame extends TestCase {
 
-    private String gamePath;
-    private String gameName;
+    private final String gamePath;
+    private final String gameName;
 
     private List<String> testReport = null;
     private List<String> expectedReport = null;
 
     private boolean passed = false;
 
-    private static final Logger log =
-        LoggerFactory.getLogger(TestGame.class);
+    private static final Logger log = LoggerFactory.getLogger(TestGame.class);
 
     public TestGame(String gameName, String gamePath) {
         super(gameName);
         this.gameName = gameName;
         this.gamePath = gamePath;
-        log.debug("Creates TestGame gameName = " + gameName
-                + ", gamePath = " + gamePath);
+        log.debug("Creates TestGame gameName = {}, gamePath = {}", gameName, gamePath);
     }
 
-    protected void runTest() throws Throwable {
+    protected void runTest() {
         gameReportTest();
     }
 
@@ -62,9 +60,9 @@ public class TestGame extends TestCase {
                     		" Last line (" + line + "): " + expectedReport.get(line-1));
                 }
             }
-            log.debug("Comparing line " + (line+1));
-            log.debug("Expected = " + expectedReport.get(line));
-            log.debug("Actual = " + testReport.get(line));
+            log.debug("Comparing line {}", line + 1);
+            log.debug("Expected = {}", expectedReport.get(line));
+            log.debug("Actual = {}", testReport.get(line));
             assertEquals("Reports differ in line " + (line+1),
                     expectedReport.get(line), testReport.get(line));
             line = line + 1;
@@ -81,14 +79,14 @@ public class TestGame extends TestCase {
         File reportFile = new File(reportFilename);
 
         if (reportFile.exists()) {
-            log.debug("Found reportfile at " + reportFilename);
+            log.debug("Found reportfile at {}", reportFilename);
                 Scanner reportScanner = new Scanner(new FileReader(reportFilename));
                 expectedReport = new ArrayList<String>();
                 while (reportScanner.hasNext())
                     expectedReport.add(reportScanner.nextLine());
                 reportScanner.close();
         } else {
-            log.debug("Did not find reportfile at " + reportFilename);
+            log.debug("Did not find reportfile at {}", reportFilename);
         }
 
         // tries to load the game and run
@@ -97,7 +95,7 @@ public class TestGame extends TestCase {
         File gameFile = new File(gameFilename);
 
         if (gameFile.exists()) {
-            log.debug("Found gamefile at " + gameFilename);
+            log.debug("Found gamefile at {}", gameFilename);
             GameLoader gameLoader = new GameLoader();
             if (gameLoader.createFromFile(gameFile)) {
                 testReport = gameLoader.getRoot().getReportManager().getReportBuffer().getAsList();
@@ -105,7 +103,7 @@ public class TestGame extends TestCase {
                 log.error("Game load failed", gameLoader.getException());
             }
         } else {
-            log.error("Did not find gamefile at " + gameFilename);
+            log.error("Did not find gamefile at {}", gameFilename);
         }
    }
 
