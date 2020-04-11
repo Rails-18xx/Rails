@@ -27,7 +27,16 @@ def appName = 'rails-18xx'
 def vendor = 'The Rails project team'
 def licenceFile = "./LICENSE"
 
-def jpackage = "${System.getenv('JAVA_HOME')}/bin/jpackage"
+def jpackage = {
+    if (OperatingSystem.current().isWindows())
+        "${System.getenv('JAVA_HOME')}/bin/jpackage.exe"
+    else if (OperatingSystem.current().isLinux())
+        "${System.getenv('JAVA_HOME')}/bin/jpackage"
+    else if (OperatingSystem.current().isMacOsX())
+        "${System.getenv('JAVA_HOME')}/bin/jpackage"
+    else
+        throw new GradleException("Unknown operating system: ${OperatingSystem.current()}")
+}
 
 dependencies {
     implementation 'commons-io:commons-io:2.6'
