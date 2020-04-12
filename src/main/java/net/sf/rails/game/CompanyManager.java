@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.Configurable;
@@ -13,8 +14,11 @@ import net.sf.rails.common.parser.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.function.Predicate.not;
 
 public class CompanyManager extends RailsManager implements Configurable {
+
+    private static final Logger log = LoggerFactory.getLogger(CompanyManager.class);
 
     /**
      * This is the name by which the CompanyManager should be registered with
@@ -22,45 +26,54 @@ public class CompanyManager extends RailsManager implements Configurable {
      */
     public static final String COMPONENT_NAME = "CompanyManager";
 
-    /** A List with all private companies */
-    private final List<PrivateCompany> lPrivateCompanies =
-            new ArrayList<>();
+    /**
+     * A List with all private companies
+     */
+    private final List<PrivateCompany> lPrivateCompanies = new ArrayList<>();
 
-    /** A List with all public companies */
-    private final List<PublicCompany> lPublicCompanies =
-            new ArrayList<>();
+    /**
+     * A List with all public companies
+     */
+    private final List<PublicCompany> lPublicCompanies = new ArrayList<>();
 
-    /** A map with all private companies by name */
-    private final Map<String, PrivateCompany> mPrivateCompanies =
-            new HashMap<>();
+    /**
+     * A map with all private companies by name
+     */
+    private final Map<String, PrivateCompany> mPrivateCompanies = new HashMap<>();
 
-    /** A map with all public (i.e. non-private) companies by name */
-    private final Map<String, PublicCompany> mPublicCompanies =
-            new HashMap<>();
+    /**
+     * A map with all public (i.e. non-private) companies by name
+     */
+    private final Map<String, PublicCompany> mPublicCompanies = new HashMap<>();
 
-    /** A map of all type names to maps of companies of that type by name */
+    /**
+     * A map of all type names to maps of companies of that type by name
+     */
     // TODO Redundant, current usage can be replaced.
-    private final Map<String, Map<String, Company>> mCompaniesByTypeAndName =
-            new HashMap<>();
+    private final Map<String, Map<String, Company>> mCompaniesByTypeAndName = new HashMap<>();
 
-    /** A list of all company types */
+    /**
+     * A list of all company types
+     */
     private final List<CompanyType> lCompanyTypes = new ArrayList<>();
 
-    /** A list of all start packets (usually one) */
-    protected List<StartPacket> startPackets = new ArrayList<>();
-    /** A map of all start packets, keyed by name. Default name is "Initial" */
-    private final Map<String, StartPacket> startPacketMap
-        = new HashMap<>();
+    /**
+     * A list of all start packets (usually one)
+     */
+    protected final List<StartPacket> startPackets = new ArrayList<>();
+    /**
+     * A map of all start packets, keyed by name. Default name is "Initial"
+     */
+    private final Map<String, StartPacket> startPacketMap = new HashMap<>();
 
-    /** A map to enable translating aliases to names */
-    protected Map<String, String> aliases = null;
-
-    private int numberOfPublicCompanies = 0;
-
-    private static final Logger log =
-            LoggerFactory.getLogger(CompanyManager.class);
+    /**
+     * A map to enable translating aliases to names
+     */
+    protected Map<String, String> aliases;
 
     protected GameManager gameManager;
+
+    private int numberOfPublicCompanies = 0;
 
     /**
      * Used by Configure (via reflection) only
@@ -77,36 +90,32 @@ public class CompanyManager extends RailsManager implements Configurable {
      */
 
     /**
+     *
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
-
-        gameManager = getRoot().getGameManager();
+        this.gameManager = getRoot().getGameManager();
 
         /** A map with all company types, by type name */
         // Localised here as it has no permanent use
-        Map<String, CompanyType> mCompanyTypes
-              = new HashMap<>();
+        Map<String, CompanyType> mCompanyTypes = new HashMap<>();
 
         //NEW//
-        Map<String, Tag> typeTags = new HashMap<String, Tag>();
+        Map<String, Tag> typeTags = new HashMap<>();
 
         for (Tag compTypeTag : tag.getChildren(CompanyType.ELEMENT_ID)) {
             // Extract the attributes of the Component
-            String name =
-                    compTypeTag.getAttributeAsString(CompanyType.NAME_TAG);
+            String name = compTypeTag.getAttributeAsString(CompanyType.NAME_TAG);
             if (name == null) {
-                throw new ConfigurationException(
-                        LocalText.getText("UnnamedCompanyType"));
+                throw new ConfigurationException(LocalText.getText("UnnamedCompanyType"));
             }
-            String className =
-                    compTypeTag.getAttributeAsString(CompanyType.CLASS_TAG);
+
+            String className = compTypeTag.getAttributeAsString(CompanyType.CLASS_TAG);
             if (className == null) {
-                throw new ConfigurationException(LocalText.getText(
-                        "CompanyTypeHasNoClass", name));
+                throw new ConfigurationException(LocalText.getText("CompanyTypeHasNoClass", name));
             }
+
             if (mCompanyTypes.get(name) != null) {
-                throw new ConfigurationException(LocalText.getText(
-                        "CompanyTypeConfiguredTwice", name));
+                throw new ConfigurationException(LocalText.getText("CompanyTypeConfiguredTwice", name));
             }
 
             CompanyType companyType = CompanyType.create(this, name, className);
@@ -123,54 +132,53 @@ public class CompanyManager extends RailsManager implements Configurable {
         /* Read and configure the companies */
         for (Tag companyTag : tag.getChildren(Company.COMPANY_ELEMENT_ID)) {
             // Extract the attributes of the Component
-            String name =
-                    companyTag.getAttributeAsString(Company.COMPANY_NAME_TAG);
+            String name = companyTag.getAttributeAsString(Company.COMPANY_NAME_TAG);
             if (name == null) {
-                throw new ConfigurationException(
-                        LocalText.getText("UnnamedCompany"));
+                throw new ConfigurationException(LocalText.getText("UnnamedCompany"));
             }
-            String type =
-                    companyTag.getAttributeAsString(Company.COMPANY_TYPE_TAG);
+
+            String type = companyTag.getAttributeAsString(Company.COMPANY_TYPE_TAG);
             if (type == null) {
-                throw new ConfigurationException(LocalText.getText(
-                        "CompanyHasNoType", name));
+                throw new ConfigurationException(LocalText.getText("CompanyHasNoType", name));
             }
+
             CompanyType cType = mCompanyTypes.get(type);
             if (cType == null) {
-                throw new ConfigurationException(LocalText.getText(
-                        "CompanyHasUnknownType", name, type ));
+                throw new ConfigurationException(LocalText.getText("CompanyHasUnknownType", name, type));
             }
-            try {
 
+            try {
                 //NEW//Company company = cType.createCompany(name, companyTag);
                 Tag typeTag = typeTags.get(type);
                 Company company = cType.createCompany(name, typeTag, companyTag);
 
                 /* Private or public */
                 if (company instanceof PrivateCompany) {
-                    mPrivateCompanies.put(name, (PrivateCompany) company);
-                    lPrivateCompanies.add((PrivateCompany) company);
+                    final PrivateCompany privateCompany = (PrivateCompany) company;
 
+                    mPrivateCompanies.put(name, privateCompany);
+                    lPrivateCompanies.add(privateCompany);
                 } else if (company instanceof PublicCompany) {
-                    ((PublicCompany)company).setIndex (numberOfPublicCompanies++);
-                    mPublicCompanies.put(name, (PublicCompany) company);
-                    lPublicCompanies.add((PublicCompany) company);
+                    final PublicCompany publicCompany = (PublicCompany) company;
+
+                    publicCompany.setIndex(numberOfPublicCompanies++);
+                    mPublicCompanies.put(name, publicCompany);
+                    lPublicCompanies.add(publicCompany);
                 }
+
                 /* By type and name */
-                if (!mCompaniesByTypeAndName.containsKey(type))
-                    mCompaniesByTypeAndName.put(type,
-                            new HashMap<String, Company>());
-                (mCompaniesByTypeAndName.get(type)).put(
-                        name, company);
+                if (!mCompaniesByTypeAndName.containsKey(type)) {
+                    mCompaniesByTypeAndName.put(type, new HashMap<>());
+                }
+                mCompaniesByTypeAndName.get(type).put(name, company);
 
                 String alias = company.getAlias();
-                if (alias != null) createAlias (alias, name);
-
+                if (alias != null) {
+                    createAlias(alias, name);
+                }
             } catch (Exception e) {
-                throw new ConfigurationException(LocalText.getText(
-                        "ClassCannotBeInstantiated", cType.getClassName()), e);
+                throw new ConfigurationException(LocalText.getText("ClassCannotBeInstantiated", cType.getClassName()), e);
             }
-
         }
 
         /* Read and configure the start packets */
@@ -180,11 +188,10 @@ public class CompanyManager extends RailsManager implements Configurable {
             for (Tag packetTag : tag.getChildren("StartPacket")) {
                 // Extract the attributes of the Component
                 String name = packetTag.getAttributeAsString("name", StartPacket.DEFAULT_ID);
-                String roundClass =
-                        packetTag.getAttributeAsString("roundClass");
+
+                String roundClass = packetTag.getAttributeAsString("roundClass");
                 if (roundClass == null) {
-                    throw new ConfigurationException(LocalText.getText(
-                            "StartPacketHasNoClass", name));
+                    throw new ConfigurationException(LocalText.getText("StartPacketHasNoClass", name));
                 }
 
                 StartPacket sp = StartPacket.create(this, name, roundClass);
@@ -198,33 +205,31 @@ public class CompanyManager extends RailsManager implements Configurable {
     }
 
     // Post XML parsing initialisations
-    public void finishConfiguration (RailsRoot root)
-    throws ConfigurationException {
-
+    public void finishConfiguration(RailsRoot root) throws ConfigurationException {
         for (PublicCompany comp : lPublicCompanies) {
             comp.finishConfiguration(root);
         }
+
         for (PrivateCompany comp : lPrivateCompanies) {
             comp.finishConfiguration(root);
         }
-
     }
 
     public void initStartPackets(GameManager gameManager) {
         // initialize startPackets
-        for (StartPacket packet: startPackets) {
+        for (StartPacket packet : startPackets) {
             packet.init(gameManager);
         }
     }
 
-    private void createAlias (String alias, String name) {
+    private void createAlias(String alias, String name) {
         if (aliases == null) {
             aliases = new HashMap<String, String>();
         }
         aliases.put(alias, name);
     }
 
-    public String checkAlias (String alias) {
+    public String checkAlias(String alias) {
         if (aliases != null && aliases.containsKey(alias)) {
             return aliases.get(alias);
         } else {
@@ -232,18 +237,17 @@ public class CompanyManager extends RailsManager implements Configurable {
         }
     }
 
-    public String checkAliasInCertId (String certId) {
-        String[] parts = certId.split("-");
-        String realName = checkAlias (parts[0]);
+    public String checkAliasInCertId(String certId) {
+        final String[] parts = certId.split("-");
+        final String realName = checkAlias(parts[0]);
+
         if (!parts[0].equals(realName)) {
             return realName + "-" + parts[1];
         } else {
             return certId;
         }
     }
-    /**
-     *
-     */
+
     public PrivateCompany getPrivateCompany(String name) {
         return mPrivateCompanies.get(name);
     }
@@ -261,70 +265,63 @@ public class CompanyManager extends RailsManager implements Configurable {
     }
 
     public List<CompanyType> getCompanyTypes() {
-		return lCompanyTypes;
-	}
+        return lCompanyTypes;
+    }
 
-	public Company getCompany(String type, String name) {
-
+    public Company getCompany(String type, String name) {
         if (mCompaniesByTypeAndName.containsKey(type)) {
-            return (mCompaniesByTypeAndName.get(type)).get(checkAlias(name));
+            return mCompaniesByTypeAndName.get(type).get(checkAlias(name));
         } else {
             return null;
         }
     }
 
     public void closeAllPrivates() {
-        if (lPrivateCompanies == null) return;
-        for (PrivateCompany priv : lPrivateCompanies) {
-            if (priv.isCloseable()) // check if private is closeable
-                priv.setClosed();
+        if (lPrivateCompanies != null) {
+            lPrivateCompanies.stream()
+                    .filter(PrivateCompany::isCloseable)
+                    .forEach(PrivateCompany::setClosed);
         }
     }
 
     public List<PrivateCompany> getPrivatesOwnedByPlayers() {
-        List<PrivateCompany> privatesOwnedByPlayers =
-                new ArrayList<PrivateCompany>();
-        for (PrivateCompany priv : getAllPrivateCompanies()) {
-            if (priv.getOwner() instanceof Player) {
-                privatesOwnedByPlayers.add(priv);
-            }
-        }
-        return privatesOwnedByPlayers;
+        return getAllPrivateCompanies().stream()
+                .filter(priv -> priv.getOwner() instanceof Player)
+                .collect(Collectors.toList());
     }
 
-    public StartPacket getStartPacket (int index) {
+    public StartPacket getStartPacket(int index) {
         return startPackets.get(index);
     }
 
-    public StartPacket getStartPacket (String name) {
+    public StartPacket getStartPacket(String name) {
         return startPacketMap.get(name);
     }
 
-    /** Pass number of turns for which a certain company type can lay extra tiles of a certain colour. */
+    /**
+     * Pass number of turns for which a certain company type can lay extra tiles of a certain colour.
+     */
     // NOTE: Called by phase.finishConfiguration().
     // This implies, that the CompanyManager configuration must finished be BEFORE PhaseManager.
     // (We shouldn't have such dependencies...)
     // TODO: Resolve the issues mentioned above
-    public void addExtraTileLayTurnsInfo (Map<String, Integer> extraTileTurns) {
+    public void addExtraTileLayTurnsInfo(Map<String, Integer> extraTileTurns) {
         for (String typeAndColour : extraTileTurns.keySet()) {
             String[] keys = typeAndColour.split("~");
             Map<String, Company> companies = mCompaniesByTypeAndName.get(keys[0]);
             if (companies != null) {
                 for (Company company : companies.values()) {
-                    ((PublicCompany)company).addExtraTileLayTurnsInfo(keys[1], extraTileTurns.get(typeAndColour));
+                    ((PublicCompany) company).addExtraTileLayTurnsInfo(keys[1], extraTileTurns.get(typeAndColour));
                 }
             }
         }
     }
 
     public StartPacket getNextUnfinishedStartPacket() {
-      for (StartPacket packet: startPackets) {
-          if ( !packet.areAllSold() ) {
-              return packet;
-
-              }
-          }
-      return null;
+        return startPackets.stream()
+                .filter(not(StartPacket::areAllSold))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -332,14 +329,11 @@ public class CompanyManager extends RailsManager implements Configurable {
      * @return the startItem with that id
      */
     public StartItem getStartItemById(String id) {
-        for (StartPacket packet:startPackets) {
-            for (StartItem item:packet.getItems()) {
-                if (item.getId().equals(id)) {
-                    return item;
-                }
-            }
-        }
-        return null;
+        return startPackets.stream()
+                .flatMap(packet -> packet.getItems().stream())
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
 }
