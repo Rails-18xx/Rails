@@ -12,4 +12,5 @@
 	<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
 	<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 	<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
+	<GameOption name="NetworthHidden" type="toggle" default="no" />
 </GameOptions>

@@ -11,5 +11,6 @@
 	<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
 	<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 	<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
+	<GameOption name="NetworthHidden" type="toggle" default="no" />
 </GameOptions>
 
