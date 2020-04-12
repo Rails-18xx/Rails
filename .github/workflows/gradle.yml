@@ -8,17 +8,20 @@ on:
 
 jobs:
   jdk11:
+    name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v1
         with:
           java-version: 11
           java-package: jdk
-      - name: Tests - OpenJDK 11
+      - name: Execute Tests
         run: gradle clean test
 
   ubuntu:
@@ -48,6 +51,7 @@ jobs:
           name: deb
           path: rails-18xx.deb
       - name: Upload Rpm Installer
+        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v1
         with:
           name: rpm
@@ -73,6 +77,7 @@ jobs:
       - name: Rename Installer
         run: ./gradlew renameExecutables
       - name: Upload Installer
+        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v1
         with:
           name: exe
@@ -98,6 +103,7 @@ jobs:
       - name: Rename Installer
         run: ./gradlew renameExecutables
       - name: Upload Installer
+        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v1
         with:
           name: dmg
@@ -107,6 +113,7 @@ jobs:
     name: Publish Installers
     needs: [windows, ubuntu, macos]
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
