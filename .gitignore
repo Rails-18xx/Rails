@@ -1,5 +1,6 @@
 # maven build directory
 /target/
+/build/
 
 # eclipse specific files
 /.settings/

@@ -1,69 +1,46 @@
 /// Gradle Build script for 18xx Rails program (rails.sf.net)
 
 import java.text.SimpleDateFormat
+import org.gradle.internal.os.OperatingSystem;
 
 plugins {
-  id 'java'
-  id 'maven-publish'
-  // https://github.com/johnrengelman/shadow
-  id 'com.github.johnrengelman.shadow' version '5.2.0'
-  // plugin to check for dependency updates via task dependencyUpdates
-  // https://github.com/ben-manes/gradle-versions-plugin
-  id 'com.github.ben-manes.versions' version '0.28.0'
-  // https://github.com/n0mer/gradle-git-properties
-  id 'com.gorylenko.gradle-git-properties' version '2.2.2'
-  // https://github.com/TheBoegl/gradle-launch4j
-  id 'edu.sc.seis.launch4j' version '2.4.6'
-  // https://github.com/crotwell/gradle-macappbundle
-  id 'edu.sc.seis.macAppBundle' version '2.3.0'
-  // https://github.com/nebula-plugins/gradle-ospackage-plugin
-  //id "nebula.rpm" version "8.2.0"
-  //id "nebula.deb" version "8.2.0"
-  id 'nebula.ospackage' version '8.2.0'
-  // https://openjfx.io/openjfx-docs/#gradle
-  id 'org.openjfx.javafxplugin' version '0.0.8'
-  id 'jacoco'
-  id 'org.sonarqube' version '2.8'
+    id 'java'
+    // https://github.com/johnrengelman/shadow
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    // plugin to check for dependency updates via task dependencyUpdates
+    // https://github.com/ben-manes/gradle-versions-plugin
+    id 'com.github.ben-manes.versions' version '0.28.0'
+    // https://github.com/n0mer/gradle-git-properties
+    id 'com.gorylenko.gradle-git-properties' version '2.2.2'
+    // https://openjfx.io/openjfx-docs/#gradle
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'jacoco'
+    id 'org.sonarqube' version '2.8'
 }
 
 repositories {
     mavenLocal()
     mavenCentral()
-//    maven {
-//        url = 'https://jitpack.io'
-//    }
 }
 
 // Rails variables
-//group = 'net.sf'
-version = '2.2-alpha'
-description = 'Rails (18xx)'
+version = '2.2-beta'
+description = 'Rails is a moderator program for 18xx games'
 
-//def railsCodebase = 'rails.sourceforge.net'
-def railsMainClass = 'net.sf.rails.util.RunGame'
-def railsVendor = 'Rails project'
-//def railsHomepage = 'http://rails.sf.net'
-def railsDescription = 'Rails is a moderator program for 18xx games'
-def railsIcon = 'rails.ico'
-def railsCopyright = 'GPL'
+def appName = 'rails-18xx'
+def vendor = 'The Rails project team'
+def licenceFile = "./LICENSE"
 
-// Key variables
-//def keyAlias = 'rails18xx'
-// def keyAlias = 'stefanfrey'
-
-// Build directories
-//def webstartBuildDir = "${buildDir}/webstart/build"
-//def webstartDestDir = "${buildDir}/webstart/signed"
-//def keystoreFile = '../../keystore/rails.keys'
-def buildFilesDir = 'src/main/resources/build'
-//def resourceFilesDir = 'src/main/resources'
-//def versionFile = "version.number"
-
-// Sourceforge variables
-//def sourceforgeJnlpPath = "http://${railsCodebase}/webstart"
-//def sourceforgeUploadPath = 'web.sourceforge.net/home/project-web/rails/htdocs/webstart'
-//def sourceforgeJnlpFileName = 'rails.jnlp'
-//def sourceforgeUserName = 'stefanfrey'
+def jpackage() {
+    if (OperatingSystem.current().isWindows())
+        return "${System.getenv('JAVA_HOME')}/bin/jpackage.exe"
+    else if (OperatingSystem.current().isLinux())
+        return "${System.getenv('JAVA_HOME')}/bin/jpackage"
+    else if (OperatingSystem.current().isMacOsX())
+        return "${System.getenv('JAVA_HOME')}/bin/jpackage"
+    else
+        throw new GradleException("Unknown operating system: ${OperatingSystem.current()}")
+}
 
 dependencies {
     implementation 'commons-io:commons-io:2.6'
@@ -82,7 +59,6 @@ dependencies {
     implementation 'net.java.dev.designgridlayout:designgridlayout:1.11'
     implementation 'org.dockingframes:docking-frames-common:1.1.1'
     implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.2'
-    //implementation 'org.openjfx:javafx-controls:14'
     implementation 'org.apache.httpcomponents:httpclient:4.5.12'
     implementation 'org.apache.commons:commons-lang3:3.10'
     implementation 'org.apache.commons:commons-text:1.8'
@@ -95,7 +71,7 @@ dependencies {
 
 javafx {
     version = '14'
-    modules = [ 'javafx.controls' ]
+    modules = ['javafx.controls']
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -105,7 +81,7 @@ assemble.dependsOn(shadowJar)
 jar {
     manifest {
         attributes(
-                'Main-Class': "${railsMainClass}"
+                'Main-Class': "net.sf.rails.util.RunGame"
         )
     }
 }
@@ -118,22 +94,13 @@ test {
     exclude 'net/sf/rails/test/TestGame.class'
 }
 
-//sonarqube {
-//  properties {
-//    property 'sonar.projectKey', 'Rails'
-//    property 'sonar.organization', 'rails-18xx202003271035'
-//    property 'sonar.host.url', 'https://sonarcloud.io'
-//    property 'sonar.login', ''
-//  }
-//}
-
 jacocoTestReport {
     reports {
         xml.enabled true
     }
 }
 plugins.withType(JacocoPlugin) {
-  tasks['test'].finalizedBy 'jacocoTestReport'
+    tasks['test'].finalizedBy 'jacocoTestReport'
 }
 
 wrapper {
@@ -142,75 +109,118 @@ wrapper {
 
 // BuildDate function adapted from http://stackoverflow.com/questions/19172565/how-append-date-build-to-versionnamesuffix-on-gradle
 def buildDate() {
-       def df = new SimpleDateFormat('yyyy-MM-dd')
-       df.setTimeZone(TimeZone.getTimeZone('UTC'))
-       return df.format(new Date())
+    def df = new SimpleDateFormat('yyyy-MM-dd')
+
+    df.setTimeZone(TimeZone.getTimeZone('UTC'))
+
+    return df.format(new Date())
 }
 
 gitProperties {
-    customProperty 'buildDate', "${buildDate()}"
+    customProperty 'buildDate', buildDate()
     customProperty 'develop', 'true'
 }
 
-launch4j {
-    mainClassName = "${railsMainClass}"
-    jar = "${buildDir}/libs/${project.name}-${project.version}-all.jar"
-    outfile = "${project.name}-${project.version}.exe"
-    icon = "../../${buildFilesDir}/${railsIcon}"
-    textVersion = {  project.version.replace('alpha','98.').replace('beta','99.').replace('RC','100.') }
-    copyright = "${railsCopyright}"
-    companyName = "${railsVendor}"
-    description = "${railsDescription}"
-    productName = "${project.name}"
-    internalName = "${project.name}"
-}
+def isNonStable(String version) {
+    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
+    def regex = /^[0-9,.v-]+(-r)?$/
 
-macAppBundle {
-    mainClassName = "${railsMainClass}"
-    icon = "../../${buildFilesDir}/${railsIcon}"
-    javaProperties.put("apple.laf.useScreenMenuBar", "true")
-    //runtimeConfigurationName = 'shadow'
-    //jarTask = 'shadowJar'
-}
-
-ospackage {
-    release = '1'
-    os = 'LINUX'
-    packageGroup = 'Amusements/Games'
-    packageDescription = ''
-    requires('jdk', '1.8', GREATER | EQUAL)
-
-    from('src/scripts/rails-18xx') {
-        into '/usr/bin/'
-        fileMode 0555
-    }
-    from(jar.outputs.files) {
-        // TODO: needs to be the shadow jar
-        into '/usr/lib/rails-18xx/'
-    }
-    from('src/scripts/rails-18xx.desktop') {
-        into '/usr/share/applications/'
-    }
-    from('./src/main/resources/build/rails.png') {
-        into '/usr/share/pixmaps/'
-    }
-}
-
-//buildRpm.dependsOn shadowJar
-
-
-def isNonStable = { String version ->
-  def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
-  def regex = /^[0-9,.v-]+(-r)?$/
-  return !stableKeyword && !(version ==~ regex)
-//    def rejected = ['alpha', 'beta', 'rc', 'cr', 'm'].any { qualifier -> version ==~ /(?i).*[.-]${qualifier}[.\d-]*/ }
-//    return rejected
+    return !stableKeyword && !(version ==~ regex)
 }
 
 dependencyUpdates {
-  gradleReleaseChannel = 'current'
-  rejectVersionIf {
-    isNonStable(it.candidate.version)
-  }
+    gradleReleaseChannel = 'current'
+    rejectVersionIf {
+        isNonStable(it.candidate.version)
+    }
 }
 
+def appVersion() {
+    return rootProject.version
+            .replaceAll("\\-", ".")
+            .replaceAll("alpha", "0")
+            .replaceAll("beta", "0")
+            .replaceAll("release", "0")
+}
+
+task buildDebPackage(type: Exec) {
+    commandLine jpackage(),
+            '--verbose',
+            '--type', 'deb',
+            '--name', appName,
+            '--description', rootProject.description,
+            '--vendor', vendor,
+            '--license-file', licenceFile,
+            '--icon', './native/rails.png',
+            '--file-associations', './native/rails-linux-association.properties',
+            '--app-version', appVersion(),
+            '--input', 'build/libs',
+            '--main-jar', shadowJar.archiveName,
+            '--linux-package-name', 'rails-18xx',
+            '--linux-app-category', 'games',
+            '--linux-shortcut'
+}
+
+task buildRpmPackage(type: Exec) {
+    commandLine jpackage(),
+            '--verbose',
+            '--type', 'rpm',
+            '--name', appName,
+            '--description', rootProject.description,
+            '--vendor', vendor,
+            '--license-file', licenceFile,
+            '--icon', './native/rails.png',
+            '--file-associations', './native/rails-linux-association.properties',
+            '--app-version', appVersion(),
+            '--input', 'build/libs',
+            '--main-jar', shadowJar.archiveName,
+            '--linux-package-name', 'rails-18xx',
+            '--linux-app-category', 'games',
+            '--linux-shortcut'
+}
+
+task buildExePackage(type: Exec) {
+    commandLine jpackage(),
+            '--verbose',
+            '--type', 'exe',
+            '--name', appName,
+            '--description', rootProject.description,
+            '--vendor', vendor,
+            '--license-file', licenceFile,
+            '--icon', './native/rails.ico',
+            '--file-associations', './native/rails-windows-association.properties',
+            '--app-version', appVersion(),
+            '--input', 'build/libs',
+            '--main-jar', shadowJar.archiveName,
+            '--win-dir-chooser',
+            '--win-per-user-install',
+            '--win-menu',
+            '--win-shortcut'
+}
+
+task buildDmgPackage(type: Exec) {
+    commandLine jpackage(),
+            '--verbose',
+            '--type', 'dmg',
+            '--name', appName,
+            '--description', rootProject.description,
+            '--vendor', vendor,
+            '--license-file', licenceFile,
+            '--icon', './native/rails.ico',
+            '--file-associations', './native/rails-osx-association.properties',
+            '--app-version', appVersion(),
+            '--input', 'build/libs',
+            '--main-jar', shadowJar.archiveName,
+            '--mac-package-name', 'rails-18xx'
+}
+
+task renameExecutables(type: Copy) {
+    from('.') {
+        include '*.deb'
+        include '*.rpm'
+        include '*.exe'
+        include '*.dmg'
+    }
+    into '.'
+    rename '(.+)\\.(.+)', 'rails-18xx.$2'
+}
