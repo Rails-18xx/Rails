@@ -44,8 +44,10 @@ jobs:
       - name: Create Rpm Installer
         run: ./gradlew buildRpmPackage
       - name: Rename Installers
+        if: github.ref == 'refs/heads/master'
         run: ./gradlew renameExecutables
       - name: Upload Deb Installer
+        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v1
         with:
           name: deb
@@ -75,6 +77,7 @@ jobs:
       - name: Create Exe Installer
         run: ./gradlew buildExePackage
       - name: Rename Installer
+        if: github.ref == 'refs/heads/master'
         run: ./gradlew renameExecutables
       - name: Upload Installer
         if: github.ref == 'refs/heads/master'
@@ -101,6 +104,7 @@ jobs:
       - name: Create Dmg Installer
         run: ./gradlew buildDmgPackage
       - name: Rename Installer
+        if: github.ref == 'refs/heads/master'
         run: ./gradlew renameExecutables
       - name: Upload Installer
         if: github.ref == 'refs/heads/master'
@@ -147,7 +151,7 @@ jobs:
           release_name: Release ${{ steps.vars.outputs.sha_short }}
           body: |
             Snapshot Release for Commit ${{ github.sha }}
-          draft: true
+          draft: false
           prerelease: true
       - name: Upload exe
         uses: actions/upload-release-asset@v1
