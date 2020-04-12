@@ -32,7 +32,7 @@ def vendor = 'The Rails project team'
 def licenceFile = "./LICENSE"
 
 def input = './build/libs'
-def output = './installers'
+def output = './build/installers'
 
 def jpackage() {
     if (OperatingSystem.current().isWindows())
