@@ -7,6 +7,9 @@ plugins {
     id 'java'
     // https://github.com/johnrengelman/shadow
     id 'com.github.johnrengelman.shadow' version '5.2.0'
+    // plugin to check for dependency updates via task dependencyUpdates
+    // https://github.com/ben-manes/gradle-versions-plugin
+    id 'com.github.ben-manes.versions' version '0.28.0'
     // https://github.com/n0mer/gradle-git-properties
     id 'com.gorylenko.gradle-git-properties' version '2.2.2'
     // https://openjfx.io/openjfx-docs/#gradle
@@ -116,6 +119,20 @@ def buildDate() {
 gitProperties {
     customProperty 'buildDate', buildDate()
     customProperty 'develop', 'true'
+}
+
+def isNonStable(String version) {
+    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
+    def regex = /^[0-9,.v-]+(-r)?$/
+
+    return !stableKeyword && !(version ==~ regex)
+}
+
+dependencyUpdates {
+    gradleReleaseChannel = 'current'
+    rejectVersionIf {
+        isNonStable(it.candidate.version)
+    }
 }
 
 def appVersion() {
