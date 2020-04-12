@@ -31,6 +31,9 @@ def appName = 'rails-18xx'
 def vendor = 'The Rails project team'
 def licenceFile = "./LICENSE"
 
+def input = './build/libs'
+def output = './installers'
+
 def jpackage() {
     if (OperatingSystem.current().isWindows())
         return "${System.getenv('JAVA_HOME')}/bin/jpackage.exe"
@@ -154,7 +157,8 @@ task buildDebPackage(type: Exec) {
             '--icon', './native/rails.png',
             '--file-associations', './native/rails-linux-association.properties',
             '--app-version', appVersion(),
-            '--input', 'build/libs',
+            '--input', input,
+            '--output', output,
             '--main-jar', shadowJar.archiveName,
             '--linux-package-name', 'rails-18xx',
             '--linux-app-category', 'games',
@@ -172,7 +176,8 @@ task buildRpmPackage(type: Exec) {
             '--icon', './native/rails.png',
             '--file-associations', './native/rails-linux-association.properties',
             '--app-version', appVersion(),
-            '--input', 'build/libs',
+            '--input', input,
+            '--output', output,
             '--main-jar', shadowJar.archiveName,
             '--linux-package-name', 'rails-18xx',
             '--linux-app-category', 'games',
@@ -190,7 +195,8 @@ task buildExePackage(type: Exec) {
             '--icon', './native/rails.ico',
             '--file-associations', './native/rails-windows-association.properties',
             '--app-version', appVersion(),
-            '--input', 'build/libs',
+            '--input', input,
+            '--output', output,
             '--main-jar', shadowJar.archiveName,
             '--win-dir-chooser',
             '--win-per-user-install',
@@ -209,13 +215,14 @@ task buildDmgPackage(type: Exec) {
             '--icon', './native/rails.ico',
             '--file-associations', './native/rails-osx-association.properties',
             '--app-version', appVersion(),
-            '--input', 'build/libs',
+            '--input', input,
+            '--output', output,
             '--main-jar', shadowJar.archiveName,
             '--mac-package-name', 'rails-18xx'
 }
 
 task renameExecutables(type: Copy) {
-    from('.') {
+    from(output) {
         include '*.deb'
         include '*.rpm'
         include '*.exe'

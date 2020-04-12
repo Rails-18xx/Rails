@@ -147,7 +147,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.sha }}
+          tag_name: ${{ github.sha }}-snapshot
           release_name: Release ${{ steps.vars.outputs.sha_short }}
           body: |
             Snapshot Release for Commit ${{ github.sha }}
