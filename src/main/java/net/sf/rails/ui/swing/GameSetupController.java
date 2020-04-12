@@ -176,16 +176,15 @@ public class GameSetupController {
 
             String startError = railsRoot.start();
             if (startError != null) {
-                JOptionPane.showMessageDialog(window, startError, "",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(window, startError, "", JOptionPane.ERROR_MESSAGE);
                 System.exit(-1);
             }
             prepareGameUIInit();
             gameUIManager = GameLoader.startGameUIManager (railsRoot, false, splashWindow);
             gameUIManager.gameUIInit(true); // true indicates new game
 
-            gameUIManager.notifyOfSplashFinalization();
             splashWindow.finalizeGameInit();
+            gameUIManager.notifyOfSplashFinalization();
         }
     }
 

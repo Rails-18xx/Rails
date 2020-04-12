@@ -182,6 +182,15 @@ public class GameUIManager implements DialogOwner {
         for (Player player : getPlayers()) {
             currentGuiPlayerNames.add(player.getId());
         }
+
+        localPlayerName = System.getProperty("local.player.name");
+        if (!Util.hasValue(localPlayerName)) {
+            localPlayerName = Config.get("local.player.name");
+        }
+        if (autoSaveLoadStatus > 0) {
+            myTurn = getCurrentPlayer().getId().equals(localPlayerName);
+            log.debug("starting game with my turn: {}", myTurn);
+        }
     }
 
     private void initWindowSettings() {
@@ -317,13 +326,8 @@ public class GameUIManager implements DialogOwner {
         splashWindow.notifyOfStep(SplashWindow.STEP_INIT_SOUND);
         SoundManager.notifyOfGameInit(railsRoot);
 
-        // TODO: switch to injecting Discord to loosely couple
         new Discord(this, railsRoot);
         new Slack(this, railsRoot);
-
-        if (gameWasLoaded && autoSaveLoadStatus > 0) {
-            startAutoSaveLoadPoller();
-        }
     }
 
     public void startLoadedGame() {
@@ -348,7 +352,6 @@ public class GameUIManager implements DialogOwner {
 
         } else {
             Player oldPlayer = getCurrentPlayer();
-            boolean wasMyTurn = oldPlayer.getId().equals(localPlayerName);
 
             // Notify the Sound Manager about this action, as it could lead to
             // playing sfx or music.
@@ -362,6 +365,7 @@ public class GameUIManager implements DialogOwner {
 
             // Process any autosaving and turn relinquishing, resp. autoloading and turn pickup
             if (autoSaveLoadInitialized && autoSaveLoadStatus != AutoLoadPoller.OFF) {
+                boolean wasMyTurn = oldPlayer.getId().equals(localPlayerName);
                 Player newPlayer = getCurrentPlayer();
                 myTurn = newPlayer.getId().equals(localPlayerName);
                 log.debug("players o:{}/c:{} myTurn:{}", oldPlayer.getId(), newPlayer.getId(), myTurn);
@@ -453,7 +457,6 @@ public class GameUIManager implements DialogOwner {
 
         currentRound = railsRoot.getGameManager().getCurrentRound();
         currentRoundName = currentRound.toString();
-
         log.debug("Current round={}, previous round={}", currentRoundName, previousRoundName);
 
         currentRoundType = uiHints.getCurrentRoundType();
@@ -1022,10 +1025,6 @@ public class GameUIManager implements DialogOwner {
     }
 
     public void startAutoSaveLoadPoller() {
-        localPlayerName = System.getProperty("local.player.name");
-        if (!Util.hasValue(localPlayerName)) {
-            localPlayerName = Config.get("local.player.name");
-        }
         if (!Util.hasValue(localPlayerName)) {
             // FIXME (Rails2.0) Replace this with something better (DisplayBuffer is not available so far
             // DisplayBuffer.add(this, "You cannot activate AutoSave/Load without setting local.player.name");
@@ -1255,6 +1254,10 @@ public class GameUIManager implements DialogOwner {
      */
     public void notifyOfSplashFinalization() {
         splashWindow = null;
+
+        if ( autoSaveLoadStatus > 0 ) {
+            SwingUtilities.invokeLater(this::startAutoSaveLoadPoller);
+        }
     }
 
     /**
