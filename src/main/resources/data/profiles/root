@@ -6,7 +6,6 @@ locale=en_US
 default_game=1830
 default_players=
 local.player.names=
-networth_visibility=yes
 
 ### Panel Save
 save.directory=

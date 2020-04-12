@@ -10,13 +10,13 @@ import java.util.Map;
 
 import javax.swing.*;
 
+import net.sf.rails.common.GameOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import net.sf.rails.common.Config;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Player;
@@ -569,7 +569,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("WORTH")), 0,
                 playerWorthYOffset, 1, 1, 0, true);
         for (int i = 0; i < np; i++) {
-            if (Config.get("networth_visibility").equals("no")) {
+            if (GameOption.getAsBoolean(gameUIManager.getRoot(), "NetworthHidden")) {
                 f = new Caption("*");
             } else {
                 f = playerWorth[i] = new Field(players[i].getWorthModel());
@@ -581,7 +581,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("ORWORTHINCR")), 0,
                 playerORWorthIncreaseYOffset, 1, 1, 0, true);
         for (int i = 0; i < np; i++) {
-            if (Config.get("networth_visibility").equals("no")) {
+            if (GameOption.getAsBoolean(gameUIManager.getRoot(),"NetworthHidden")) {
                 f = new Caption("*");
             } else {
                 f = playerORWorthIncrease[i] = new Field(players[i].getLastORWorthIncrease());
