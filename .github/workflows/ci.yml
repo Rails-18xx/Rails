@@ -43,15 +43,6 @@ jobs:
         run: ./gradlew buildDebPackage
       - name: Create Rpm Installer
         run: ./gradlew buildRpmPackage
-      - name: Rename Installers
-        if: github.ref == 'refs/heads/master'
-        run: ./gradlew renameExecutables
-      - name: Upload Deb Installer
-        if: github.ref == 'refs/heads/master'
-        uses: actions/upload-artifact@v1
-        with:
-          name: deb
-          path: rails-18xx.deb
 
   windows:
     name: Build Windows Installers
@@ -70,9 +61,6 @@ jobs:
         run: ./gradlew clean build
       - name: Create Exe Installer
         run: ./gradlew buildExePackage
-      - name: Rename Installer
-        if: github.ref == 'refs/heads/master'
-        run: ./gradlew renameExecutables
 
   macos:
     name: Build MacOS Installers
@@ -91,6 +79,3 @@ jobs:
         run: ./gradlew clean build
       - name: Create Dmg Installer
         run: ./gradlew buildDmgPackage
-      - name: Rename Installer
-        if: github.ref == 'refs/heads/master'
-        run: ./gradlew renameExecutables

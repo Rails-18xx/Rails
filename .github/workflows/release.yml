@@ -42,16 +42,13 @@ jobs:
       - name: Create Rpm Installer
         run: ./gradlew buildRpmPackage
       - name: Rename Installers
-        if: github.ref == 'refs/heads/master'
         run: ./gradlew renameExecutables
       - name: Upload Deb Installer
-        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v1
         with:
           name: deb
           path: rails-18xx.deb
       - name: Upload Rpm Installer
-        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v1
         with:
           name: rpm
@@ -75,10 +72,8 @@ jobs:
       - name: Create Exe Installer
         run: ./gradlew buildExePackage
       - name: Rename Installer
-        if: github.ref == 'refs/heads/master'
         run: ./gradlew renameExecutables
       - name: Upload Installer
-        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v1
         with:
           name: exe
@@ -102,10 +97,8 @@ jobs:
       - name: Create Dmg Installer
         run: ./gradlew buildDmgPackage
       - name: Rename Installer
-        if: github.ref == 'refs/heads/master'
         run: ./gradlew renameExecutables
       - name: Upload Installer
-        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v1
         with:
           name: dmg
@@ -115,14 +108,12 @@ jobs:
     name: Publish Installers
     needs: [windows, ubuntu, macos]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Fetch short Commit Hash
-        id: vars
-        run: |
-          echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/releases\//}
       - name: Download exe
         uses: actions/download-artifact@v1
         with:
@@ -145,10 +136,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.sha }}-snapshot
-          release_name: Release ${{ steps.vars.outputs.sha_short }}
+          tag_name: releases/${{ steps.get_version.outputs.VERSION }}
+          release_name: ${{ steps.get_version.outputs.VERSION }}
           body: |
-            Snapshot Release for Commit ${{ github.sha }}
+            Rails-18xx version ${{ steps.get_version.outputs.VERSION }}
           draft: false
           prerelease: true
       - name: Upload exe
