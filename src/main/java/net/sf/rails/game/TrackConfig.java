@@ -132,6 +132,7 @@ public class TrackConfig{
      * a description of the connections
      * @deprecated Use {@link #getConnectionString(MapHex,Tile,HexSide,Station)} instead
      */
+    @Deprecated
     public static String getConnectionString(MapHex hex, Tile tile, int rotation,
             Station station) {
                 return getConnectionString(hex, tile, HexSide.get(rotation), station);
@@ -143,7 +144,7 @@ public class TrackConfig{
      */
     public static String getConnectionString(MapHex hex, Tile tile, HexSide rotation,
             Station station) {
-        StringBuilder b = new StringBuilder("");
+        StringBuilder b = new StringBuilder();
         for (TrackPoint endPoint : tile.getTracksPerStation(station)) {
             if (endPoint.getTrackPointType() == TrackPoint.Type.STATION) continue;
             HexSide direction = (HexSide)endPoint.rotate(rotation);
