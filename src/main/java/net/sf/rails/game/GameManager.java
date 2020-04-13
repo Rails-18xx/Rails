@@ -982,11 +982,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         // Check action identity
         int index = 0;
-        int executedCnt = executedActions.size(); // save off the current # of executed actions as it will grow as we execute newly loaded
+        // save off the current # of executed actions as it will grow as we execute newly loaded
+        int executedActionsCount = executedActions.size();
         PossibleAction executedAction;
         try {
             for (PossibleAction savedAction : savedActions) {
-                if (index < executedCnt) {
+                if (index < executedActionsCount) {
                     executedAction = executedActions.get(index);
                     if (!savedAction.equalsAsAction(executedAction)) {
                         DisplayBuffer.add(this, LocalText.getText("LoadFailed",
@@ -996,7 +997,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                         return false;
                     }
                 } else {
-                    if (index == executedCnt) {
+                    if (index == executedActionsCount) {
                         log.info("Finished comparing old actions, starting to process new actions");
                     }
                     // Found a new action: execute it
