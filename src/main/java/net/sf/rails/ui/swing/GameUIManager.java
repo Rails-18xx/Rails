@@ -318,8 +318,8 @@ public class GameUIManager implements DialogOwner {
         SoundManager.notifyOfGameInit(railsRoot);
 
         // TODO: switch to injecting Discord to loosely couple
-        Discord.notifyOfGameInit(railsRoot);
-        Slack.notifyOfGameInit(railsRoot);
+        new Discord(this, railsRoot);
+        new Slack(this, railsRoot);
 
         if (gameWasLoaded && autoSaveLoadStatus > 0) {
             startAutoSaveLoadPoller();
