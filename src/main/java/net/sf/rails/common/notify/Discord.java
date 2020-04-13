@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -23,18 +25,22 @@ import net.sf.rails.game.PlayerManager;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
+import net.sf.rails.ui.swing.GameUIManager;
 
 public class Discord {
     private static final Logger log = LoggerFactory.getLogger(Discord.class);
 
-    private static final Discord instance = new Discord();
+    private RailsRoot root;
+    private GameUIManager gameUiManager;
+
+    private CurrentPlayerModelObserver observer;
 
     private CloseableHttpClient httpClient = null;
 
     private String webhook = null;
     private Map<String, String> playerNameMappings = new HashMap<>();
     private String body = null;
-    private static final String MESSAGE_TEMPLATE = "Your turn @@";
+    private static final String MESSAGE_TEMPLATE = "Your turn ${current}";
     private static final String BODY_TEMPLATE = "{\"content\":\"@@\", \"username\":\"Rails\"}";
 
     public void setConfig() {
@@ -84,18 +90,21 @@ public class Discord {
         public Observable getObservable() {
             return pm.getCurrentPlayerModel();
         }
+
+        public Player getFormerPlayer() {
+            return formerCurrentPlayer;
+        }
     }
 
-    public static void notifyOfGameInit(final RailsRoot root) {
-        instance.init(root);
-    }
-
-    private void init(final RailsRoot root) {
+    public Discord(final GameUIManager gameUIManger, final RailsRoot root) {
+        this.gameUiManager = gameUIManger;
+        this.root = root;
         httpClient = HttpClients.createDefault();
 
         final PlayerManager pm = root.getPlayerManager();
         if ( pm.getCurrentPlayerModel() != null ) {
-            pm.getCurrentPlayerModel().addObserver(new CurrentPlayerModelObserver(pm));
+            observer = new CurrentPlayerModelObserver(pm);
+            pm.getCurrentPlayerModel().addObserver(observer);
         }
     }
 
@@ -104,13 +113,19 @@ public class Discord {
         if ( webhook == null ) {
             return;
         }
-        String mapped = StringUtils.defaultIfBlank(playerNameMappings.get(player), player);
-        String formatted = StringUtils.replace(body, "@@", mapped);
-        log.debug("Sending message '{}' to Discord for user {}", formatted, player);
+        Map<String, String> keys = new HashMap<>();
+        keys.put("game", root.getGameName());
+        //keys.put("gameName", StringUtils.defaultIfBlank(root.getGameData().getUsersGameName(), "[none]"));
+        keys.put("round", gameUiManager.getCurrentRound().getRoundName());
+        keys.put("current", StringUtils.defaultIfBlank(playerNameMappings.get(player), player));
+        keys.put("previous", StringUtils.defaultIfBlank(observer.getFormerPlayer().getId(), "[none]"));
+
+        String msgBody = StringSubstitutor.replace(body, keys);
+        log.debug("Sending message '{}' to Discord for user {}", msgBody, player);
 
         HttpPost httpPost = new HttpPost(webhook);
         try {
-            httpPost.setEntity(new StringEntity(formatted));
+            httpPost.setEntity(new StringEntity(msgBody));
             httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             httpPost.setHeader(HttpHeaders.USER_AGENT, "18xx Rails");
             CloseableHttpResponse response = httpClient.execute(httpPost);
