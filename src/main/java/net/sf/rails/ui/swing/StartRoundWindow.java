@@ -419,9 +419,13 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         // Unselect the selected private
         dummyButton.setSelected(true);
 
-        buyButton.setEnabled(false);
-        bidButton.setEnabled(false);
-        bidAmount.setEnabled(false);
+        if (includeBuying) {
+            buyButton.setEnabled(false);
+        }
+        if (includeBidding) {
+            bidButton.setEnabled(false);
+            bidAmount.setEnabled(false);
+        }
         passButton.setEnabled(false);
 
         RoundFacade currentRound = gameUIManager.getCurrentRound();
