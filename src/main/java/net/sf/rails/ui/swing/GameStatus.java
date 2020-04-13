@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.swing.*;
 
+import net.sf.rails.common.GameOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -564,10 +565,15 @@ public class GameStatus extends GridPanel implements ActionListener {
                     wideGapPosition, true);
         }
 
+
         addField(new Caption(LocalText.getText("WORTH")), 0,
                 playerWorthYOffset, 1, 1, 0, true);
         for (int i = 0; i < np; i++) {
-            f = playerWorth[i] = new Field(players[i].getWorthModel());
+            if (GameOption.getAsBoolean(gameUIManager.getRoot(), "NetworthHidden")) {
+                f = new Caption("*");
+            } else {
+                f = playerWorth[i] = new Field(players[i].getWorthModel());
+            }
             int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, wideGapPosition, true);
         }
@@ -575,8 +581,12 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("ORWORTHINCR")), 0,
                 playerORWorthIncreaseYOffset, 1, 1, 0, true);
         for (int i = 0; i < np; i++) {
-            f = playerORWorthIncrease[i] = new Field(players[i].getLastORWorthIncrease());
-            int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
+            if (GameOption.getAsBoolean(gameUIManager.getRoot(),"NetworthHidden")) {
+                f = new Caption("*");
+            } else {
+                f = playerORWorthIncrease[i] = new Field(players[i].getLastORWorthIncrease());
+            }
+            int wideGapPosition = ((i == 0) ? WIDE_LEFT : 0) + ((i == np - 1) ? WIDE_RIGHT : 0);
             addField(f, playerORWorthIncreaseXOffset + i, playerORWorthIncreaseYOffset, 1, 1, wideGapPosition, true);
         }
 

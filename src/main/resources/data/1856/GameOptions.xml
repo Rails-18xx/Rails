@@ -13,4 +13,5 @@
 	<GameOption name="1856THBHomeBlocked" type="toggle" default="no" />
 	<GameOption name="1856AlternateTrains" type="toggle" default="no" />
 	<GameOption name="1856AlternateDestinations" type="toggle" default="no" />
+	<GameOption name="NetworthHidden" type="toggle" default="no" />
 </GameOptions>

@@ -13,4 +13,5 @@
 	<GameOption name="MinorsRequireFloatedBY" type="toggle" default="no"/>
 	<GameOption name="PrussianReservedIgnored" type="toggle" default="no"/>
 	<GameOption name="NF_PfB_Westermann" type="toggle" default="no"/>
+	<GameOption name="NetworthHidden" type="toggle" default="no" />
 </GameOptions>
