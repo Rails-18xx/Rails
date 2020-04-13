@@ -348,6 +348,7 @@ class ConfigWindow extends JFrame {
             gbc.fill = GridBagConstraints.NONE;
             addToGridBag(panel, colorButton, gbc);
             break;
+        case REGEX:
         case STRING:
         default: // default like String
             final JFormattedTextField textField = new JFormattedTextField();

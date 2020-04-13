@@ -8,12 +8,16 @@ import net.sf.rails.game.GameManager;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.SplashWindow;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.PossibleAction;
 
 import javax.swing.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,6 +45,20 @@ public class GameLoader {
     public static void loadAndStartGame(File gameFile) {
         SplashWindow splashWindow = new SplashWindow(true, gameFile.getAbsolutePath());
         splashWindow.notifyOfStep(SplashWindow.STEP_LOAD_GAME);
+
+        // check to see if we were passed in a last_rails file
+        if ( GameUIManager.DEFAULT_SAVE_POLLING_EXTENSION.equals(StringUtils.substringAfterLast(gameFile.getName(), ".")) ) {
+            // read the filename from the last rails file
+            log.debug("loading current game file from last_rails {}", gameFile);
+            try {
+                String gameFileStr = FileUtils.readFileToString(gameFile, StandardCharsets.ISO_8859_1).trim();
+                gameFile = new File(gameFile.getParentFile(), gameFileStr);
+            }
+            catch (IOException e) {
+                log.warn("unable to load {}", gameFile);
+                return;
+            }
+        }
 
         // use gameLoader instance to start game
         GameLoader gameLoader = new GameLoader();
@@ -123,12 +141,12 @@ public class GameLoader {
             version = "pre-1.0.7";
         }
         gameIOData.setVersion(version);
-        log.info("Reading Rails {} saved file {}", version, gameFile.getName());
+        log.debug("Reading Rails {} saved file {}", version, gameFile.getName());
 
         if (object instanceof String) {
             String date = (String) object;
             gameIOData.setDate(date);
-            log.info("File was saved at {}", date);
+            log.debug("File was saved at {}", date);
             object = ois.readObject();
         }
 

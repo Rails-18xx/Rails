@@ -20,7 +20,7 @@ public final class ConfigItem {
      * Defines possible types (Java classes used as types in ConfigItem below
      */
     public enum ConfigType {
-        BOOLEAN, INTEGER, PERCENT, STRING, LIST, FONT, DIRECTORY, FILE, COLOR
+        BOOLEAN, INTEGER, PERCENT, STRING, LIST, FONT, DIRECTORY, FILE, COLOR, REGEX
     }
 
     // static attributes

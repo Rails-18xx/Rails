@@ -104,6 +104,8 @@ public class GameUIManager implements DialogOwner {
     protected static final String DEFAULT_SAVE_DIRECTORY = "save";
     protected static final String DEFAULT_SAVE_PATTERN = "yyyyMMdd_HHmm";
     public static final String DEFAULT_SAVE_EXTENSION = "rails";
+
+    public static final String DEFAULT_SAVE_POLLING_EXTENSION = "last_rails";
     protected static final String NEXT_PLAYER_SUFFIX = "NEXT_PLAYER";
     protected static final String CURRENT_ROUND_SUFFIX = "CURRENT_ROUND";
 
@@ -840,7 +842,7 @@ public class GameUIManager implements DialogOwner {
     }
 
     protected boolean saveAutoSavedFilename(String lastSavedFilename) {
-        String lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + ".last_rails";
+        String lastSavedFilenameFilepath = saveDirectory + "/" + savePrefix + "." + GameUIManager.DEFAULT_SAVE_POLLING_EXTENSION;
         try {
             File f = new File(lastSavedFilenameFilepath);
             PrintWriter out = new PrintWriter(new FileWriter(f));

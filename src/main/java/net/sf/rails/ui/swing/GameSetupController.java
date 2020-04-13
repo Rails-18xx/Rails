@@ -5,15 +5,18 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +60,8 @@ public class GameSetupController {
     private ConfigWindow configWindow;
     private GameUIManager gameUIManager;
 
+    private final String savedFileExtension;
+
     // Actions
     private final ActionListener newAction = new NewAction();
     private final ActionListener loadAction = new LoadAction();
@@ -76,6 +81,8 @@ public class GameSetupController {
         this.credits = credits;
 
         window = new GameSetupWindow(this);
+
+        savedFileExtension = "." + StringUtils.defaultIfBlank(Config.get("save.filename.extension"), GameUIManager.DEFAULT_SAVE_EXTENSION);
 
         // Notify the sound manager about having started the setup menu
         SoundManager.notifyOfGameSetup();
@@ -100,7 +107,6 @@ public class GameSetupController {
         }
         return gameOptions.get(game);
     }
-
 
     Action getOptionChangeAction(GameOption option) {
         return new OptionChangeAction(option);
@@ -183,6 +189,21 @@ public class GameSetupController {
         }
     }
 
+    private boolean isOurs(File f) {
+        String ext = StringUtils.substringAfterLast(f.getName(), ".");
+        if ( StringUtils.isBlank(ext) ) {
+            // ignore files with no extensions
+            return false;
+        }
+        switch (ext) {
+            case GameUIManager.DEFAULT_SAVE_EXTENSION:
+            case GameUIManager.DEFAULT_SAVE_POLLING_EXTENSION:
+                return true;
+            default:
+                return ext.equals(savedFileExtension);
+        }
+    }
+
     private class LoadAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
@@ -190,18 +211,22 @@ public class GameSetupController {
             String saveDirectory = Config.get("save.directory");
             JFileChooser jfc = new JFileChooser();
             jfc.setCurrentDirectory(new File(saveDirectory));
+            jfc.setFileFilter(new FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    return isOurs(f);
+                }
+
+                @Override
+                public String getDescription() {
+                    return null;
+                }
+            });
 
             if (jfc.showOpenDialog(window.getContentPane()) == JFileChooser.APPROVE_OPTION) {
                 final File selectedFile = jfc.getSelectedFile();
                 //start in new thread so that swing thread is not used for game setup
-                new Thread() {
-                    @Override
-                    public void run() {
-                        loadAndStartGame(selectedFile);
-                    }
-                }.start();
-            } else { // cancel pressed
-                return;
+                new Thread(() -> loadAndStartGame(selectedFile)).start();
             }
         }
 
@@ -220,11 +245,6 @@ public class GameSetupController {
                     .result());
 
             // define saved file extension
-            String savedFileExtension = Config.get("save.filename.extension");
-            if (!Util.hasValue(savedFileExtension)) {
-                savedFileExtension = GameUIManager.DEFAULT_SAVE_EXTENSION;
-            }
-            savedFileExtension = "." + savedFileExtension;
 
             // get recent files
             getRecentFiles(recentFiles, saveDirectory, savedFileExtension);
@@ -240,28 +260,50 @@ public class GameSetupController {
                 options[i] = files[i].getPath().substring(dirPathLength+1);
             }
             String text = LocalText.getText("Select");
-            String result = (String) JOptionPane.showInputDialog(window, text, text,
-                    JOptionPane.OK_CANCEL_OPTION,
-                    null, options, options[0]);
+            String result = (String) JOptionPane.showInputDialog(window, text, text, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
             if (result == null) return;
             final File selectedFile = files[Arrays.asList(options).indexOf(result)];
             if (selectedFile != null) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        loadAndStartGame(selectedFile);
-                    }
-                }.start();
-            } else { // cancel pressed
-                return;
+                new Thread(() -> loadAndStartGame(selectedFile)).start();
             }
         }
 
         private void getRecentFiles (SortedSet<File> recentFiles, File dir, String savedFileExtension) {
             if (!dir.exists() || !dir.isDirectory()) return;
+
+            boolean last_rails_only = Config.getBoolean("load.recent_files.include_only_last_rails", false);
+
+            Pattern include = null;
+            String regEx = Config.get("load.recent_files.include_regex");
+            if ( StringUtils.isNotBlank(regEx) ) {
+                include = Pattern.compile(regEx);
+            }
+
+            Pattern exclude = null;
+            regEx = Config.get("load.recent_files.exclude_regex");
+            if ( StringUtils.isNotBlank(regEx) ) {
+                exclude = Pattern.compile(regEx);
+            }
+
             for (File entry : dir.listFiles()) {
-                if (entry.isFile() && entry.getName().endsWith(savedFileExtension)) {
-                    recentFiles.add(entry);
+                if (entry.isFile() && isOurs(entry) ) {
+                    boolean doInclude = true;
+                    String ext = StringUtils.substringAfterLast(entry.getName(), ".");
+                    if ( last_rails_only ) {
+                        doInclude = GameUIManager.DEFAULT_SAVE_POLLING_EXTENSION.equals(ext);
+                    }
+                    if ( doInclude && include != null ) {
+                        doInclude = include.matcher(entry.getPath()).matches();
+                        log.debug("matching include against {}: included: {}", entry.getPath(), doInclude);
+                    }
+                    if ( doInclude && exclude != null ) {
+                        doInclude = ! exclude.matcher(entry.getPath()).matches();
+                        log.debug("matching exclude against {}: included: {}", entry.getPath(), doInclude);
+                    }
+
+                    if ( doInclude ) {
+                        recentFiles.add(entry);
+                    }
                 } else if (entry.isDirectory()){
                     getRecentFiles(recentFiles, entry, savedFileExtension);
                 }
