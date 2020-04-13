@@ -509,7 +509,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             Phase currentPhase = getRoot().getPhaseManager().getCurrentPhase();
             if (currentPhase == null) log.error("Current Phase is null??", new Exception(""));
             numOfORs.set(currentPhase.getNumberOfOperatingRounds());
-            log.info("Phase={} ORs={}", currentPhase.toText(), numOfORs);
+            log.debug("Phase={} ORs={}", currentPhase.toText(), numOfORs);
 
             // Create a new OperatingRound (never more than one Stock Round)
             // OperatingRound.resetRelativeORNumber();
@@ -956,7 +956,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      * executes the additional action(s)
      */
     protected boolean reload(GameAction reloadAction) {
-        log.info("Reloading started");
+        log.debug("Reloading started");
 
         /* Use gameLoader to load the game data */
         GameLoader gameLoader = new GameLoader();
@@ -982,10 +982,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         // Check action identity
         int index = 0;
+        // save off the current # of executed actions as it will grow as we execute newly loaded
+        int executedActionsCount = executedActions.size();
         PossibleAction executedAction;
         try {
             for (PossibleAction savedAction : savedActions) {
-                if (index < executedActions.size()) {
+                if (index < executedActionsCount) {
                     executedAction = executedActions.get(index);
                     if (!savedAction.equalsAsAction(executedAction)) {
                         DisplayBuffer.add(this, LocalText.getText("LoadFailed",
@@ -995,7 +997,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                         return false;
                     }
                 } else {
-                    if (index == executedActions.size()) {
+                    if (index == executedActionsCount) {
                         log.info("Finished comparing old actions, starting to process new actions");
                     }
                     // Found a new action: execute it
