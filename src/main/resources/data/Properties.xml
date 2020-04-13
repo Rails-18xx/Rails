@@ -75,9 +75,8 @@
 		initclass="net.sf.rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
 	</Section>
 	<Section name="Log">
-		<Property name="report.directory" type="DIRECTORY" />
-		<Property name="report.filename.date_time_pattern" type="STRING" />
-		<Property name="report.filename.extension" type="STRING" />
+		<Property name="log.directory" type="DIRECTORY" />
+		<Property name="log.filename" type="STRING" />
 	</Section>
 	<Section name="Music">
 		<Property name="sound.backgroundMusic" type="LIST" values="disabled,enabled"

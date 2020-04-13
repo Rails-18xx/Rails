@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <define name="logFile" class="net.sf.rails.util.logback.LogFile" />
+
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
@@ -10,7 +12,7 @@
     </appender>
 
     <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>18xx.log</file>
+        <file>${logFile}</file>
         <append>false</append>
 
         <encoder>
