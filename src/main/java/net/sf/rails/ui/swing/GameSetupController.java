@@ -5,12 +5,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.*;
@@ -41,7 +41,6 @@ import net.sf.rails.sound.SoundManager;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
 import net.sf.rails.util.SystemOS;
-import net.sf.rails.util.Util;
 
 
 /** Controller of the GameSetupWindow */
@@ -160,6 +159,14 @@ public class GameSetupController {
                     return;
                 }
             }
+            Set<String> playerNames = new HashSet<>();
+            for ( String player : players ) {
+                if ( playerNames.contains(player) ) {
+                    JOptionPane.showMessageDialog(window, "All players must have unique names");
+                    return;
+                }
+                playerNames.add(player);
+            }
 
             SplashWindow splashWindow = new SplashWindow(false, selectedGame.getName());
 
@@ -260,7 +267,7 @@ public class GameSetupController {
                 options[i] = files[i].getPath().substring(dirPathLength+1);
             }
             String text = LocalText.getText("Select");
-            String result = (String) JOptionPane.showInputDialog(window, text, text, JOptionPane.OK_CANCEL_OPTION, null, options, options[0]);
+            String result = (String) JOptionPane.showInputDialog(window, text, text, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
             if (result == null) return;
             final File selectedFile = files[Arrays.asList(options).indexOf(result)];
             if (selectedFile != null) {
