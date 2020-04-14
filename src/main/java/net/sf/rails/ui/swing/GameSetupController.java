@@ -219,9 +219,10 @@ public class GameSetupController {
 
                 @Override
                 public String getDescription() {
-                    return null;
+                    return "Rails files";
                 }
             });
+            jfc.setAcceptAllFileFilterUsed(false);
 
             if (jfc.showOpenDialog(window.getContentPane()) == JFileChooser.APPROVE_OPTION) {
                 final File selectedFile = jfc.getSelectedFile();
