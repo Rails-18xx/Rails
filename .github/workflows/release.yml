@@ -33,14 +33,17 @@ jobs:
         with:
           java-version: 14
           java-package: jdk
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/releases\//}
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
         run: ./gradlew clean build
       - name: Create Deb Installer
-        run: ./gradlew buildDebPackage
+        run: ./gradlew -Pversion=${{ steps.get_version.outputs.VERSION }} buildDebPackage
       - name: Create Rpm Installer
-        run: ./gradlew buildRpmPackage
+        run: ./gradlew -Pversion=${{ steps.get_version.outputs.VERSION }} buildRpmPackage
       - name: Rename Installers
         run: ./gradlew renameExecutables
       - name: Upload Deb Installer
@@ -65,12 +68,15 @@ jobs:
         with:
           java-version: 14
           java-package: jdk
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/releases\//}
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
         run: ./gradlew clean build
       - name: Create Exe Installer
-        run: ./gradlew buildExePackage
+        run: ./gradlew -Pversion=${{ steps.get_version.outputs.VERSION }} buildExePackage
       - name: Rename Installer
         run: ./gradlew renameExecutables
       - name: Upload Installer
@@ -90,12 +96,15 @@ jobs:
         with:
           java-version: 14
           java-package: jdk
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/releases\//}
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
         run: ./gradlew clean build
       - name: Create Dmg Installer
-        run: ./gradlew buildDmgPackage
+        run: ./gradlew -Pversion=${{ steps.get_version.outputs.VERSION }} buildDmgPackage
       - name: Rename Installer
         run: ./gradlew renameExecutables
       - name: Upload Installer
