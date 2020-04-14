@@ -32,6 +32,7 @@ import net.sf.rails.game.MapManager;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.Tile;
 import net.sf.rails.ui.swing.GameUIManager;
+import net.sf.rails.ui.swing.ImageLoader;
 import net.sf.rails.ui.swing.ORUIManager;
 import net.sf.rails.util.Util;
 
@@ -745,7 +746,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     }
 
     private void zoom() {
-        zoomFactor = GameUIManager.getImageLoader().getZoomFactor(zoomStep);
+        zoomFactor = ImageLoader.getInstance().getZoomFactor(zoomStep);
         log.trace("HexMap: zoomStep = " + zoomStep);
         log.trace("HexMap: zoomFactor = " + zoomFactor);
         setScale();

@@ -45,8 +45,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     protected static final int DEFAULT_SHARE_UNIT = 10;
 
-    protected static int numberOfPublicCompanies = 0;
-
     // Home base & price token lay times
     protected static final int WHEN_STARTED = 0;
     protected static final int WHEN_FLOATED = 1;

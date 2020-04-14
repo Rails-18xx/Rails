@@ -555,7 +555,7 @@ class ConfigWindow extends JFrame {
         this.setVisible(false);
 
         if (parent instanceof StatusWindow) {
-            StatusWindow.uncheckMenuItemBox(StatusWindow.CONFIG_CMD);
+            ((StatusWindow)parent).uncheckMenuItemBox(StatusWindow.CONFIG_CMD);
         }
     }
 

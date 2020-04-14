@@ -53,7 +53,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
 
     private int vbarPos;
 
-    private static String saveDirectory;
+    private String saveDirectory;
     private String filepath;
     private RailsRoot root;
 
@@ -69,15 +69,16 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         // delayed setting of logger
         log = LoggerFactory.getLogger(ListAndFixSavedFiles.class);
 
-        saveDirectory = Config.get("save.directory");
+        String saveDirectory = Config.get("save.directory");
         log.warn("Save directory = {}", saveDirectory);
 
-        new ListAndFixSavedFiles ();
+        new ListAndFixSavedFiles (saveDirectory);
     }
 
-    public ListAndFixSavedFiles () {
+    public ListAndFixSavedFiles (String saveDirectory) {
         super();
 
+        this.saveDirectory = saveDirectory;
         messageWindow = this;
 
         reportText = new JTextArea();

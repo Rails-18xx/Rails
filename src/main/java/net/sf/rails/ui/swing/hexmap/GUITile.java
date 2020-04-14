@@ -34,7 +34,7 @@ public class GUITile {
         // MapHex refers back to Tile if necessary
         String picId = hex.getHex().getPictureId(tile);
 
-        ImageLoader imageLoader = GameUIManager.getImageLoader();
+        ImageLoader imageLoader = ImageLoader.getInstance();
         BufferedImage tileImage = imageLoader.getTile(picId, zoomStep);
 
         if (tileImage != null) {
@@ -75,7 +75,7 @@ public class GUITile {
 
         String picId = tile.getPictureId();
 
-        ImageLoader imageLoader = GameUIManager.getImageLoader();
+        ImageLoader imageLoader = ImageLoader.getInstance();
         BufferedImage uncenteredTileImage = imageLoader.getTile(picId, zoomStep);
 
         if (uncenteredTileImage == null) return null;

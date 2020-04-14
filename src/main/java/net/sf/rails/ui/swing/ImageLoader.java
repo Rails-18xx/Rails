@@ -32,27 +32,32 @@ public class ImageLoader {
     private final DocumentBuilder svgDocBuilder;
 
     private final Map<String, Document> svgMap = Maps.newHashMap();
-    private final HashBasedTable<String, Integer, BufferedImage> tileImages =
-            HashBasedTable.create();
+    private final HashBasedTable<String, Integer, BufferedImage> tileImages = HashBasedTable.create();
 
-    private double[] zoomFactors = new double[21];
+    private final double[] zoomFactors = new double[21];
 
     //defines adjustment of zoom factor (should be close to 1)
     //(used for perfect-fit sizing that requires arbitrary zoom)
     private double zoomAdjustmentFactor = 1;
 
-    private double svgWidth = 75;
-    private double svgHeight = svgWidth * 0.5 * Math.sqrt(3.0);
+    private final double svgWidth = 75;
+    private final double svgHeight = svgWidth * 0.5 * Math.sqrt(3.0);
 
-    private String svgTileDir = "tiles/svg";
-    private String tileRootDir = Config.get("tile.root_directory");
-    private String directory;
+    private final String directory;
 
+    private static final ImageLoader instance = new ImageLoader();
 
-    public ImageLoader() {
+    public static ImageLoader getInstance() {
+        return instance;
+    }
+
+    private ImageLoader() {
+        // tile.root_directory is usually empty but allowed for an override
+        String tileRootDir = Config.get("tile.root_directory");
         if (Util.hasValue(tileRootDir) && !tileRootDir.endsWith("/")) {
             tileRootDir += "/";
         }
+        String svgTileDir = "tiles/svg";
         directory = (tileRootDir + svgTileDir);
 
         // Step 1: create a DocumentBuilderFactory and setNamespaceAware

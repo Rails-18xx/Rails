@@ -50,7 +50,7 @@ public class FXStockChartWindow extends Application {
 
         // uncheck market checkbox in the menu if the stock-chart has been closed
         primaryStage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
-            StatusWindow.uncheckMenuItemBox(StatusWindow.MARKET_CMD);
+            gameUIManager.uncheckMenuItemBox(StatusWindow.MARKET_CMD);
         });
 
         // TODO: save relocation and resizing information of the window
