@@ -46,6 +46,7 @@ public class RailsRoot extends Root implements RailsItem {
     private TileManager tileManager;
     private RevenueManager revenueManager;
     private Bank bank;
+    private CertificateManager certificateManager;
 
     // Other Managers
     private ReportManager reportManager;
@@ -99,6 +100,8 @@ public class RailsRoot extends Root implements RailsItem {
             tileManager = (TileManager) component;
         } else if (component instanceof RevenueManager) {
             revenueManager = (RevenueManager) component;
+        } else if (component instanceof CertificateManager) {
+            certificateManager = (CertificateManager) component;
         }
     }
 
@@ -130,6 +133,9 @@ public class RailsRoot extends Root implements RailsItem {
         // TODO: Can this be merged above?
         playerManager.init();
 
+        if ( certificateManager == null ) {
+            certificateManager = new CertificateManager(this, "CertificateManager");
+        }
         try {
             playerManager.finishConfiguration(this);
             companyManager.finishConfiguration(this);
@@ -147,6 +153,7 @@ public class RailsRoot extends Root implements RailsItem {
             DisplayBuffer.add(this, e.getMessage());
             return false;
         }
+
         return true;
     }
 
@@ -209,6 +216,9 @@ public class RailsRoot extends Root implements RailsItem {
         return reportManager;
     }
 
+    public CertificateManager getCertificateManager() {
+        return certificateManager;
+    }
 
     /**
      * @return the gameName
