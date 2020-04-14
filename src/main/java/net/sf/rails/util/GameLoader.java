@@ -81,10 +81,10 @@ public class GameLoader {
         GameUIManager gameUIManager = startGameUIManager(gameLoader.getRoot(), true, splashWindow);
 
         gameUIManager.setGameFile(gameFile);
-
         gameUIManager.startLoadedGame();
-        gameUIManager.notifyOfSplashFinalization();
+
         splashWindow.finalizeGameInit();
+        gameUIManager.notifyOfSplashFinalization();
     }
 
     public static GameUIManager startGameUIManager(RailsRoot game, boolean wasLoaded, SplashWindow splashWindow) {
