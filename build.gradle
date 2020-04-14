@@ -151,7 +151,7 @@ def appVersion() {
 }
 
 task buildDebPackage(type: Exec) {
-    doLast {
+    doFirst {
         commandLine jpackage(),
                 '--verbose',
                 '--type', 'deb',
@@ -172,7 +172,7 @@ task buildDebPackage(type: Exec) {
 }
 
 task buildRpmPackage(type: Exec) {
-    doLast {
+    doFirst {
         commandLine jpackage(),
                 '--verbose',
                 '--type', 'rpm',
@@ -193,7 +193,7 @@ task buildRpmPackage(type: Exec) {
 }
 
 task buildExePackage(type: Exec) {
-    doLast {
+    doFirst {
         commandLine jpackage(),
                 '--verbose',
                 '--type', 'exe',
@@ -215,7 +215,7 @@ task buildExePackage(type: Exec) {
 }
 
 task buildDmgPackage(type: Exec) {
-    doLast {
+    doFirst {
         commandLine jpackage(),
                 '--verbose',
                 '--type', 'dmg',
