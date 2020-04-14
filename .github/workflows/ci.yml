@@ -1,0 +1,81 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  jdk11:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+          java-package: jdk
+      - name: Execute Tests
+        run: ./gradlew clean test
+
+  ubuntu:
+    name: Build Ubuntu Installer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+          java-package: jdk
+      - name: Execute Tests
+        run: ./gradlew clean test
+      - name: Build jar
+        run: ./gradlew clean build
+      - name: Create Deb Installer
+        run: ./gradlew buildDebPackage
+      - name: Create Rpm Installer
+        run: ./gradlew buildRpmPackage
+
+  windows:
+    name: Build Windows Installers
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+          java-package: jdk
+      - name: Execute Tests
+        run: ./gradlew clean test
+      - name: Build jar
+        run: ./gradlew clean build
+      - name: Create Exe Installer
+        run: ./gradlew buildExePackage
+
+  macos:
+    name: Build MacOS Installers
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+          java-package: jdk
+      - name: Execute Tests
+        run: ./gradlew clean test
+      - name: Build jar
+        run: ./gradlew clean build
+      - name: Create Dmg Installer
+        run: ./gradlew buildDmgPackage
