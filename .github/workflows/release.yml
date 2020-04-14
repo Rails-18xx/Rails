@@ -20,7 +20,7 @@ jobs:
           java-version: 11
           java-package: jdk
       - name: Execute Tests
-        run: gradle clean test
+        run: ./gradlew clean test
 
   ubuntu:
     name: Build Ubuntu Installer
