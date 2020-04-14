@@ -23,6 +23,8 @@ public class AutoLoadPoller extends Thread {
 
     private boolean pollingActive = false;
 
+    private boolean doPolling = true;
+
     private final String lastSavedFilenameFilepath;
     private String lastSavedFilename;
 
@@ -55,7 +57,7 @@ public class AutoLoadPoller extends Thread {
         int currentPollInterval = 1;
         int secs, sleepTime;
 
-        while ( true ) {
+        while ( doPolling ) {
             secs = Calendar.getInstance().get(Calendar.SECOND);
             try {
                 sleepTime = 1000 * (currentPollInterval - secs%currentPollInterval);
@@ -107,7 +109,6 @@ public class AutoLoadPoller extends Thread {
             }
             currentPollInterval = pollingInterval;
         }
-        // This thread never exits
     }
 
     public String getSaveDirectory() {
@@ -167,5 +168,8 @@ public class AutoLoadPoller extends Thread {
         this.lastSavedFilename = lastSavedFilename;
     }
 
+    public void close() {
+        doPolling = false;
+    }
 
 }
