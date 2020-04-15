@@ -15,8 +15,7 @@ public abstract class Token<T extends Token<T>> extends RailsOwnableItem<T> impl
     // TODO: storing id in String is for legacy reasons
     protected static String STORAGE_NAME = "Token";
 
-    private static final Logger log =
-        LoggerFactory.getLogger(Token.class);
+    private static final Logger log = LoggerFactory.getLogger(Token.class);
 
     protected Token(RailsItem parent, String id, Class<T> clazz) {
         super(parent, id, clazz);
@@ -26,12 +25,12 @@ public abstract class Token<T extends Token<T>> extends RailsOwnableItem<T> impl
 
     @Override
     public RailsItem getParent() {
-        return (RailsItem)super.getParent();
+        return super.getParent();
     }
 
     @Override
     public RailsRoot getRoot() {
-        return (RailsRoot)super.getRoot();
+        return super.getRoot();
     }
 
     public String getUniqueId() {
@@ -48,7 +47,7 @@ public abstract class Token<T extends Token<T>> extends RailsOwnableItem<T> impl
     }
 
     public static <T extends Token<T>> T getByUniqueId(RailsItem item, Class<T> clazz, String id) {
-        int i = Integer.valueOf(id.replace(STORAGE_NAME + "_", ""));
+        int i = Integer.parseInt(id.replace(STORAGE_NAME + "_", ""));
         return clazz.cast(item.getRoot().getGameManager().retrieveObject(STORAGE_NAME, i));
     }
 }

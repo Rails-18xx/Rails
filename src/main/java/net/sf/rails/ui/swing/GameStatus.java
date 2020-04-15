@@ -149,8 +149,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected final Map<PublicCompany, Integer> companyIndex = Maps.newHashMap();
     protected final Map<Player, Integer> playerIndex = Maps.newHashMap();
 
-    private static final Logger log =
-        LoggerFactory.getLogger(GameStatus.class);
+    private static final Logger log = LoggerFactory.getLogger(GameStatus.class);
 
     public GameStatus() {
         super();

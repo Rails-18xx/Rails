@@ -81,8 +81,7 @@ public class StartItem extends RailsAbstractItem {
 
     protected NoBidsReaction noBidsReaction = NoBidsReaction.RUN_OPERATING_ROUND;
 
-    private static final Logger log =
-            LoggerFactory.getLogger(StartItem.class);
+    private static final Logger log = LoggerFactory.getLogger(StartItem.class);
 
     /**
      * The constructor, taking the properties of the "primary" (often teh only)

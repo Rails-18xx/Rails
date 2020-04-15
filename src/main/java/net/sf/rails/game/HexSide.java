@@ -13,8 +13,7 @@ public class HexSide extends TrackPoint {
     private static final ImmutableList<HexSide> sides;
 
     static {
-        ImmutableList.Builder<HexSide> sideBuilder =
-                ImmutableList.builder();
+        ImmutableList.Builder<HexSide> sideBuilder = ImmutableList.builder();
         for (int s = 0; s < 6; s++) {
             sideBuilder.add(new HexSide(s));
         }
@@ -30,8 +29,7 @@ public class HexSide extends TrackPoint {
     }
 
     public static List<HexSide> allRotated(HexSide rotation) {
-        ImmutableList.Builder<HexSide> sideBuilder =
-                ImmutableList.builder();
+        ImmutableList.Builder<HexSide> sideBuilder = ImmutableList.builder();
         for (HexSide side : sides) {
             sideBuilder.add(HexSide.get(rotation.number + side.number));
         }

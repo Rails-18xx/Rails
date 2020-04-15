@@ -70,7 +70,7 @@ public class GameSaver {
      * @param file to save game to
      */
     public void saveGame(File file) throws IOException {
-        log.info("Trying to save file to {}", file.getAbsoluteFile());
+        log.info("Saving to {}", file.getAbsoluteFile());
 
         try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(file.toPath()))) {
             oos.writeObject(gameIOData.getVersion());
@@ -98,7 +98,7 @@ public class GameSaver {
             for ( PossibleAction action : gameIOData.getActions() ) {
                 oos.writeObject(action);
             }
-            log.info("File save successful");
+            log.debug("File save successful");
         }
     }
 

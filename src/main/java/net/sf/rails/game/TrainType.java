@@ -44,8 +44,7 @@ public class TrainType implements Cloneable {
     /** In some cases, trains start their life in the Pool */
     protected String initialPortfolio = "IPO";
 
-    private static final Logger log =
-        LoggerFactory.getLogger(TrainType.class);
+    private static final Logger log = LoggerFactory.getLogger(TrainType.class);
 
     /**
      * @param real False for the default type, else real. The default type does

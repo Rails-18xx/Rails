@@ -14,8 +14,7 @@ import java.util.*;
 
 public class TileUpgrade implements Upgrade {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(TileUpgrade.class);
+    private static final Logger log = LoggerFactory.getLogger(TileUpgrade.class);
 
     /**
      * Rotation defines the following details for a tile upgrade

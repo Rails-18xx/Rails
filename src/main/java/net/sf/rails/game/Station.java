@@ -21,31 +21,30 @@ import org.slf4j.LoggerFactory;
  * represented by Tile objects, so laying the first tile on a hex is treated as
  * a normal upgrade in this program. <p> See also the Stop class, which
  * represents stations on tiles that have actually been laid on a MapHex.
- * 
+ *
  * Station has the following ids:
  * String id: The attribute "id" of the station tag (e.g. "city1")
  * int number: The number inside the string (e.g. 1)
- * 
+ *
  */
 public class Station extends TrackPoint implements Comparable<Station> {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(Station.class);
+    private static final Logger log = LoggerFactory.getLogger(Station.class);
 
     public static enum Type {
-        CITY (StopType.Defaults.CITY, "City"), 
-        TOWN (StopType.Defaults.TOWN, "Town"), 
-        HALT (StopType.Defaults.TOWN, "Halt"), 
-        OFFMAPCITY (StopType.Defaults.OFFMAP, "OffMap"), 
-        PORT (StopType.Defaults.TOWN, "Port"), 
-        PASS (StopType.Defaults.CITY, "Pass"), 
+        CITY (StopType.Defaults.CITY, "City"),
+        TOWN (StopType.Defaults.TOWN, "Town"),
+        HALT (StopType.Defaults.TOWN, "Halt"),
+        OFFMAPCITY (StopType.Defaults.OFFMAP, "OffMap"),
+        PORT (StopType.Defaults.TOWN, "Port"),
+        PASS (StopType.Defaults.CITY, "Pass"),
         JUNCTION (StopType.Defaults.NULL, "Junction");
-        
+
         private final StopType stopType;
         private final String text;
-        
+
         private Type(StopType.Defaults type, String text) {
-            this.stopType = type.getStopType(); 
+            this.stopType = type.getStopType();
             this.text = text;
         }
         public StopType getStopType() {
@@ -84,9 +83,9 @@ public class Station extends TrackPoint implements Comparable<Station> {
         if (sid == null)
             throw new ConfigurationException(LocalText.getText(
                     "TileStationHasNoID", tile.getId()));
-        
+
         int number = - TrackPoint.parseTrackPointNumber(sid);
-        
+
         String stype = stationTag.getAttributeAsString("type");
         if (stype == null)
             throw new ConfigurationException(LocalText.getText(
@@ -107,7 +106,7 @@ public class Station extends TrackPoint implements Comparable<Station> {
                     position, cityName);
     }
 
-    
+
     public String getName() {
         return "Station " + id + " on " + tile.getClass().getSimpleName() + " "
         + tile.toText();
@@ -134,7 +133,7 @@ public class Station extends TrackPoint implements Comparable<Station> {
     public int getNumber() {
         return number;
     }
-    
+
     /**
      * @return Returns the baseSlots.
      */
@@ -152,7 +151,7 @@ public class Station extends TrackPoint implements Comparable<Station> {
     public int getPosition() {
         return position;
     }
-    
+
     public StopType getStopType() {
         return type.getStopType();
     }
@@ -160,7 +159,7 @@ public class Station extends TrackPoint implements Comparable<Station> {
     public Station.Type getType() {
         return type;
     }
-    
+
     // TrackPoint methods
     public int getTrackPointNumber() {
         return -number;
@@ -169,21 +168,21 @@ public class Station extends TrackPoint implements Comparable<Station> {
     public TrackPoint.Type getTrackPointType() {
         return TrackPoint.Type.STATION;
     }
-    
+
     public TrackPoint rotate(HexSide rotation) {
         return this;
     }
-    
+
     public String toText() {
         return type.toText() + " " + number;
     }
-    
+
     // Comparable method
     @Override
     public int compareTo(Station other) {
         return this.getId().compareTo(other.getId());
     }
-    
+
     @Override
     public String toString() {
         return "Station " + number + " on tile #" + tile.getId() + " ID: " + id

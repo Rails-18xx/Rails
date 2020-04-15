@@ -14,8 +14,7 @@ import com.google.common.collect.Lists;
 
 public class ChangeStack {
 
-    private static final Logger log =
-        LoggerFactory.getLogger(ChangeStack.class);
+    private static final Logger log = LoggerFactory.getLogger(ChangeStack.class);
 
     // static fields
     private final StateManager stateManager;

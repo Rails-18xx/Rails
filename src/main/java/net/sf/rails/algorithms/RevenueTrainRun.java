@@ -26,8 +26,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
     private static final int PRETTY_PRINT_LENGTH = 100;
     private static final int PRETTY_PRINT_INDENT = 10;
 
-    private static final Logger log =
-            LoggerFactory.getLogger(RevenueTrainRun.class);
+    private static final Logger log = LoggerFactory.getLogger(RevenueTrainRun.class);
 
     // definitions
     private RevenueAdapter revenueAdapter;

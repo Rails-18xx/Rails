@@ -24,8 +24,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class RevenueBonusTemplate implements Configurable {
 
-    private static final Logger log =
-        LoggerFactory.getLogger(RevenueBonusTemplate.class);
+    private static final Logger log = LoggerFactory.getLogger(RevenueBonusTemplate.class);
 
     // bonus value
     private int value;

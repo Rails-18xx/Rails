@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.rails.ui.swing.elements;
 
@@ -18,7 +18,7 @@ import net.sf.rails.common.Config;
 /**
  * A JButton which is able to hold/manage a RailsIcon (specifying what
  * text / icon is to be displayed)
- * 
+ *
  * @author Frederick Weld
  *
  */
@@ -26,18 +26,8 @@ public class RailsIconButton extends JButton {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Set<String> KEYS_TEXT_DISPLAY = new HashSet<String>
-    (Arrays.asList( new String[] {
-            "text and icon",
-            "only text",
-            "",
-            null
-    }));
-    private static final Set<String> KEYS_ICON_DISPLAY = new HashSet<String>
-    (Arrays.asList( new String[] {
-            "text and icon",
-            "only icon"
-    }));
+    private static final Set<String> KEYS_TEXT_DISPLAY = new HashSet<String>(Arrays.asList("text and icon", "only text", "", null));
+    private static final Set<String> KEYS_ICON_DISPLAY = new HashSet<String>(Arrays.asList("text and icon", "only icon"));
 
     private static Set<RailsIconButton> railsIconButtons = new HashSet<RailsIconButton>();
 
@@ -46,7 +36,7 @@ public class RailsIconButton extends JButton {
      * RailsIcon (eg., by calling setText directly).
      */
     private RailsIcon railsIcon = null;
-    
+
     public RailsIconButton(RailsIcon railsIcon, Action action) {
         super();
         setAction(action);
@@ -64,7 +54,7 @@ public class RailsIconButton extends JButton {
         this.railsIcon = railsIcon;
         showRailsIcon();
     }
-    
+
     /**
      * Display according to configuration.
      * If no text/icon is attached, then icon/text is displayed as fallback
@@ -81,14 +71,14 @@ public class RailsIconButton extends JButton {
                 setVerticalTextPosition(SwingConstants.CENTER);
                 setHorizontalTextPosition(SwingConstants.TRAILING);
             }
-            
+
             //set text
             if (isTextEnabled() || railsIcon.largeIcon == null) {
                 super.setText(railsIcon.description);
             } else {
                 super.setText(null);
             }
-            
+
             //set icon and tool tip text
             if (isIconEnabled() || railsIcon.description == null) {
                 if (isIconSizeSmall()) {
@@ -104,7 +94,7 @@ public class RailsIconButton extends JButton {
             }
         }
     }
-    
+
     private boolean isTextEnabled() {
         return KEYS_TEXT_DISPLAY.contains(Config.get("button.iconText",""));
     }
@@ -112,12 +102,12 @@ public class RailsIconButton extends JButton {
     private boolean isIconEnabled() {
         return KEYS_ICON_DISPLAY.contains(Config.get("button.iconText",""));
     }
-    
+
     private boolean isIconSizeSmall() {
         //small is default
         return !"large".equals(Config.get("button.iconSize"));
     }
-    
+
     private boolean isIconAboveText() {
         //left of text is default
         return "above".equals(Config.get("button.iconPosition"));
@@ -133,7 +123,7 @@ public class RailsIconButton extends JButton {
         setIcon(null);
         railsIcon = null;
     }
-    
+
     /**
      * To be called upon change of button display type
      */
@@ -142,5 +132,5 @@ public class RailsIconButton extends JButton {
             rib.showRailsIcon();
         }
     }
-    
+
 }

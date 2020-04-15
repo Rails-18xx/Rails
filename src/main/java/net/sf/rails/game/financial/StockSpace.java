@@ -83,8 +83,7 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
     private final ArrayListState<PublicCompany> tokens = new ArrayListState<>(this, "tokens");
     private final ArrayListState<PublicCompany> fixedStartPrices = new ArrayListState<>(this, "fixedStartPrices");
 
-    private static final Logger log =
-            LoggerFactory.getLogger(StockSpace.class);
+    private static final Logger log = LoggerFactory.getLogger(StockSpace.class);
 
     /*--- Constructors ---*/
     private StockSpace(StockMarket parent, String id, int price, StockSpaceType type) {

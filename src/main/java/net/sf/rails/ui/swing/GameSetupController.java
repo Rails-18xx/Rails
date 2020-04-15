@@ -254,7 +254,7 @@ public class GameSetupController {
             // define saved file extension
 
             // get recent files
-            getRecentFiles(recentFiles, saveDirectory, savedFileExtension);
+            getRecentFiles(recentFiles, saveDirectory);
             if ( recentFiles.size() == 0 ) return;
             File[] files = recentFiles.toArray(new File[]{});
 
@@ -275,7 +275,7 @@ public class GameSetupController {
             }
         }
 
-        private void getRecentFiles (SortedSet<File> recentFiles, File dir, String savedFileExtension) {
+        private void getRecentFiles (SortedSet<File> recentFiles, File dir) {
             if (!dir.exists() || !dir.isDirectory()) return;
 
             boolean last_rails_only = Config.getBoolean("load.recent_files.include_only_last_rails", false);
@@ -312,7 +312,7 @@ public class GameSetupController {
                         recentFiles.add(entry);
                     }
                 } else if (entry.isDirectory()){
-                    getRecentFiles(recentFiles, entry, savedFileExtension);
+                    getRecentFiles(recentFiles, entry);
                 }
             }
         }
