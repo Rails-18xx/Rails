@@ -12,9 +12,12 @@ import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.SpecialBonusTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.*;
+import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
 import net.sf.rails.util.Util;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.*;
@@ -25,7 +28,11 @@ import rails.game.correct.CorrectionType;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Files;
 import java.util.*;
+
+import com.google.common.collect.ComparisonChain;
 
 /**
  * This class manages the playing rounds by supervising all implementations of
@@ -34,6 +41,11 @@ import java.util.*;
 public class GameManager extends RailsManager implements Configurable, Owner {
 
     private static final Logger log = LoggerFactory.getLogger(GameManager.class);
+
+    public static final String ARCHIVE_ENABLED = "save.archive.enabled";
+    public static final String ARCHIVE_DIRECTORY = "save.archive.dir";
+    public static final String ARCHIVE_KEEP_COUNT = "save.archive.keep_count";
+
 
     protected Class<? extends StockRound> stockRoundClass = StockRound.class;
     protected Class<? extends OperatingRound> operatingRoundClass = OperatingRound.class;
@@ -943,12 +955,74 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         File file = new File(saveAction.getFilepath());
         try {
             gameSaver.saveGame(file);
-            return true;
         } catch (IOException e) {
             DisplayBuffer.add(this, LocalText.getText("SaveFailed", e.getMessage()));
             log.error("save failed", e);
             return false;
         }
+
+        boolean archive = Config.getBoolean(ARCHIVE_ENABLED, false);
+        if ( archive ) {
+            int count = Config.getInt(ARCHIVE_KEEP_COUNT, 5);
+            if ( count < 1 ) {
+                count = 1;
+            }
+
+            String archiveDir = Config.get(ARCHIVE_DIRECTORY);
+            if ( StringUtils.isBlank(archiveDir) ) {
+                // default to "archive"
+                archiveDir = "archive";
+            }
+            if ( ! archiveDir.startsWith(File.separator) ) {
+                // it should be relative to the current saved files
+                archiveDir = file.getParent() + File.separator + archiveDir;
+            }
+            log.debug("archiving old saved game files to {}", archiveDir);
+
+            File archiveDirFile = new File(archiveDir);
+            if ( ! archiveDirFile.exists() ) {
+                // create it
+                try {
+                    Files.createDirectories(Path.of(archiveDir,File.separator,"dummy"));
+                }
+                catch (IOException e) {
+                    log.warn("Unable to create archive directory {}", archiveDir, e);
+                    archive = false;
+                }
+            } else if ( archiveDirFile.exists() && ! archiveDirFile.isDirectory() ) {
+                log.warn("Archive directory doesn't seem to be a directory?");
+                archive = false;
+            }
+
+            if ( archive ) {
+                // iterate through files in current directory
+                SortedSet<File> files = new TreeSet<>((a, b) -> ComparisonChain.start()
+                        .compare(b.lastModified(), a.lastModified())
+                        .result());
+
+                for (File entry : file.getParentFile().listFiles()) {
+                    if (entry.isFile() ) {
+                        String ext = StringUtils.substringAfterLast(entry.getName(), ".");
+                        boolean doInclude = GameUIManager.DEFAULT_SAVE_EXTENSION.equals(ext);
+                        // TODO: verify it matches out expected file name format
+                        if ( doInclude ) {
+                            files.add(entry);
+                        }
+                    }
+                }
+                if ( files.size() > count ) {
+                    File[] fileList = files.toArray(new File[]{});
+                    for ( int i = count; i < fileList.length; i++ ) {
+                        File toMove = fileList[i];
+                        File destFile = new File(archiveDir + File.separator + toMove.getName());
+                        if ( ! toMove.renameTo(destFile) ) {
+                            log.warn("Unable to archive {} to {}", toMove.getName(), destFile.getAbsolutePath());
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**

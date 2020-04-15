@@ -1,6 +1,8 @@
 package net.sf.rails.common;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.Util;
@@ -10,6 +12,8 @@ import net.sf.rails.util.Util;
  */
 
 public final class Config {
+
+    private static final Logger log = LoggerFactory.getLogger(Config.class);
 
     /**
     * @return version id (including a "+" attached if development)
@@ -62,6 +66,25 @@ public final class Config {
     public static boolean getBoolean(String key, boolean defaultValue) {
         Boolean bool = getBoolean(key);
         return bool != null ? bool : defaultValue;
+    }
+
+    public static Integer getInt(String key) {
+        String intStr = get(key);
+        if ( StringUtils.isBlank(intStr) ) {
+            return null;
+        }
+        try {
+            return Integer.valueOf(intStr);
+        }
+        catch (NumberFormatException e) {
+            log.warn("Invalid value found in integer config {}: {}", key, intStr);
+        }
+        return null;
+    }
+
+    public static Integer getInt(String key, int defaultValue) {
+        Integer intValue = getInt(key);
+        return intValue != null ? intValue : defaultValue;
     }
 
     public static void set(String key, String value) {

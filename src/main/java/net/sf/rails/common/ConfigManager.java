@@ -47,7 +47,7 @@ public class ConfigManager implements Configurable {
     private String buildDate = "unknown";
 
     // configuration items: replace with Multimap in Rails 2.0
-    private final Map<String, List<ConfigItem>> configSections = new HashMap<>();
+    private final Map<String, List<ConfigItem>> configSections = new TreeMap<>();
 
     // recent data
     private final Properties recentData = new Properties();
@@ -64,8 +64,7 @@ public class ConfigManager implements Configurable {
         try {
             // Find the config tag inside the the config xml file
             // the last arguments refers to the fact that no GameOptions are required
-            Tag configTag =
-                    Tag.findTopTagInFile(CONFIG_XML_FILE, CONFIG_XML_DIR, CONFIG_TAG, null);
+            Tag configTag = Tag.findTopTagInFile(CONFIG_XML_FILE, CONFIG_XML_DIR, CONFIG_TAG, null);
             log.debug("Opened config xml, filename = " + CONFIG_XML_FILE);
             instance.configureFromXML(configTag);
         } catch (ConfigurationException e) {
@@ -102,7 +101,7 @@ public class ConfigManager implements Configurable {
                 // find items
                 List<Tag> itemTags = sectionTag.getChildren(ITEM_TAG);
                 if (itemTags == null || itemTags.size() == 0) continue;
-                List<ConfigItem> sectionItems = new ArrayList<ConfigItem>();
+                List<ConfigItem> sectionItems = new ArrayList<>();
                 for (Tag itemTag : itemTags) {
                     ConfigItem configItem = new ConfigItem(itemTag);
                     sectionItems.add(configItem);

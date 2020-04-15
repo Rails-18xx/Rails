@@ -21,6 +21,9 @@
         <Property name="load.recent_files.include_regex" type="REGEX" />
         <Property name="load.recent_files.exclude_regex" type="REGEX" />
         <Property name="load.recent_files.include_only_last_rails" type="BOOLEAN" />
+        <Property name="save.archive.enabled" type="BOOLEAN" />
+        <Property name="save.archive.dir" type="STRING" />
+        <Property name="save.archive.keep_count" type="INTEGER" />
     </Section>
     <Section name="Notifications">
         <Property name="notify.discord.webhook" type="STRING" isGameRelated="true" />
