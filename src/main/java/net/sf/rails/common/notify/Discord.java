@@ -30,12 +30,12 @@ import net.sf.rails.ui.swing.GameUIManager;
 public class Discord {
     private static final Logger log = LoggerFactory.getLogger(Discord.class);
 
-    private RailsRoot root;
-    private GameUIManager gameUiManager;
+    private final RailsRoot root;
+    private final GameUIManager gameUiManager;
 
     private CurrentPlayerModelObserver observer;
 
-    private CloseableHttpClient httpClient = null;
+    private final CloseableHttpClient httpClient;
 
     private String webhook = null;
     private Map<String, String> playerNameMappings = new HashMap<>();
