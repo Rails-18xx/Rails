@@ -2,7 +2,8 @@ name: Create Releases with Gradle
 
 on:
   push:
-    tags: releases/*
+    tags:
+      - 'releases/*'
 
 jobs:
   jdk11:
