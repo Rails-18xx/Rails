@@ -1,8 +1,0 @@
-Package: rails-18xx
-Version: [[version]]
-Section: games
-Priority: optional
-Architecture: all
-Description: [[description]]
-Maintainer: Rails Team <none>
-Depends: default-jre | java8-runtime

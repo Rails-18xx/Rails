@@ -14,19 +14,20 @@ plugins {
     id 'com.gorylenko.gradle-git-properties' version '2.2.2'
     // https://openjfx.io/openjfx-docs/#gradle
     id 'org.openjfx.javafxplugin' version '0.0.8'
-    id 'jacoco'
+    // https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/
     id 'org.sonarqube' version '2.8'
+    // used by SonarQube for code coverage
+    id 'jacoco'
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
 // Rails variables
 description = 'Rails is a moderator program for 18xx games'
 
-def appName = 'rails-18xx'
+def appName = 'Rails-18xx'
 def vendor = 'The Rails project team'
 def licenceFile = "./LICENSE"
 
@@ -34,14 +35,21 @@ def input = './build/libs'
 def output = './build/installers'
 
 def jpackage() {
-    if (OperatingSystem.current().isWindows())
-        return "${System.getenv('JAVA_HOME')}/bin/jpackage.exe"
-    else if (OperatingSystem.current().isLinux())
-        return "${System.getenv('JAVA_HOME')}/bin/jpackage"
-    else if (OperatingSystem.current().isMacOsX())
-        return "${System.getenv('JAVA_HOME')}/bin/jpackage"
-    else
-        throw new GradleException("Unknown operating system: ${OperatingSystem.current()}")
+    def jpackageExe
+    if (OperatingSystem.current().isWindows()) {
+        jpackageExe = "${System.getenv('JAVA_HOME')}/bin/jpackage.exe"
+    } else if (OperatingSystem.current().isLinux()) {
+        jpackageExe = "${System.getenv('JAVA_HOME')}/bin/jpackage"
+    } else if (OperatingSystem.current().isMacOsX()) {
+        jpackageExe = "${System.getenv('JAVA_HOME')}/bin/jpackage"
+    } else {
+        throw new StopActionException("Unknown operating system: ${OperatingSystem.current()}")
+    }
+
+    if ( ! new File(jpackageExe).exists() ) {
+        throw new StopActionException('jpackage not found (JDK 14+) needed to package')
+    }
+    jpackageExe
 }
 
 dependencies {
@@ -83,7 +91,7 @@ assemble.dependsOn(shadowJar)
 jar {
     manifest {
         attributes(
-                'Main-Class': "net.sf.rails.util.RunGame"
+                'Main-Class': 'net.sf.rails.util.RunGame'
         )
     }
 }
@@ -110,24 +118,21 @@ wrapper {
 }
 
 // BuildDate function adapted from http://stackoverflow.com/questions/19172565/how-append-date-build-to-versionnamesuffix-on-gradle
-def buildDate() {
-    def df = new SimpleDateFormat('yyyy-MM-dd')
-
-    df.setTimeZone(TimeZone.getTimeZone('UTC'))
-
-    return df.format(new Date())
+static def buildDate() {
+    new SimpleDateFormat('yyyy-MM-dd').format(new Date())
 }
 
 gitProperties {
     customProperty 'buildDate', buildDate()
+    // TODO: move this to a property so we can override during a release build
     customProperty 'develop', 'true'
 }
 
-def isNonStable(String version) {
+static def isNonStable(String version) {
     def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
     def regex = /^[0-9,.v-]+(-r)?$/
 
-    return !stableKeyword && !(version ==~ regex)
+    !stableKeyword && !(version ==~ regex)
 }
 
 dependencyUpdates {
@@ -138,86 +143,95 @@ dependencyUpdates {
 }
 
 def appVersion() {
-    return rootProject.version
-            .replaceAll("\\-", ".")
-            .replaceAll("alpha", "0")
-            .replaceAll("beta", "0")
-            .replaceAll("release", "0")
+    rootProject.version
+            .replaceAll('\\-', '.')
+            .replaceAll('alpha', '0')
+            .replaceAll('beta', '0')
+            .replaceAll('release', '0')
 }
 
 task buildDebPackage(type: Exec) {
-    commandLine jpackage(),
-            '--verbose',
-            '--type', 'deb',
-            '--name', appName,
-            '--description', rootProject.description,
-            '--vendor', vendor,
-            '--license-file', licenceFile,
-            '--icon', './native/rails.png',
-            '--file-associations', './native/rails-linux-association.properties',
-            '--app-version', appVersion(),
-            '--input', input,
-            '--dest', output,
-            '--main-jar', shadowJar.archiveName,
-            '--linux-package-name', 'rails-18xx',
-            '--linux-app-category', 'games',
-            '--linux-shortcut'
+    doFirst {
+        commandLine jpackage(),
+                '--verbose',
+                '--type', 'deb',
+                '--name', appName,
+                '--description', rootProject.description,
+                '--vendor', vendor,
+                '--license-file', licenceFile,
+                '--icon', './src/main/resources/images/icon/rails.png',
+                '--file-associations', './src/main/resources/build/rails-linux-association.properties',
+                '--app-version', appVersion(),
+                '--input', input,
+                '--dest', output,
+                '--main-jar', shadowJar.archiveName,
+                '--linux-package-name', 'rails-18xx',
+                '--linux-app-category', 'games',
+                '--linux-shortcut'
+    }
 }
 
 task buildRpmPackage(type: Exec) {
-    commandLine jpackage(),
-            '--verbose',
-            '--type', 'rpm',
-            '--name', appName,
-            '--description', rootProject.description,
-            '--vendor', vendor,
-            '--license-file', licenceFile,
-            '--icon', './native/rails.png',
-            '--file-associations', './native/rails-linux-association.properties',
-            '--app-version', appVersion(),
-            '--input', input,
-            '--dest', output,
-            '--main-jar', shadowJar.archiveName,
-            '--linux-package-name', 'rails-18xx',
-            '--linux-app-category', 'games',
-            '--linux-shortcut'
+    doFirst {
+        commandLine jpackage(),
+                '--verbose',
+                '--type', 'rpm',
+                '--name', appName,
+                '--description', rootProject.description,
+                '--vendor', vendor,
+                '--license-file', licenceFile,
+                '--icon', './src/main/resources/images/icon/rails.png',
+                '--file-associations', './src/main/resources/build/rails-linux-association.properties',
+                '--app-version', appVersion(),
+                '--input', input,
+                '--dest', output,
+                '--main-jar', shadowJar.archiveName,
+                '--linux-package-name', 'rails-18xx',
+                '--linux-app-category', 'games',
+                '--linux-shortcut'
+    }
 }
 
 task buildExePackage(type: Exec) {
-    commandLine jpackage(),
-            '--verbose',
-            '--type', 'exe',
-            '--name', appName,
-            '--description', rootProject.description,
-            '--vendor', vendor,
-            '--license-file', licenceFile,
-            '--icon', './native/rails.ico',
-            '--file-associations', './native/rails-windows-association.properties',
-            '--app-version', appVersion(),
-            '--input', input,
-            '--dest', output,
-            '--main-jar', shadowJar.archiveName,
-            '--win-dir-chooser',
-            '--win-per-user-install',
-            '--win-menu',
-            '--win-shortcut'
+    doFirst {
+        commandLine jpackage(),
+                '--verbose',
+                '--type', 'exe',
+                '--name', appName,
+                '--description', rootProject.description,
+                '--vendor', vendor,
+                '--license-file', licenceFile,
+                '--icon', './src/main/resources/images/icon/rails.ico',
+                '--file-associations', './src/main/resources/build/rails-windows-association.properties',
+                '--app-version', appVersion(),
+                '--input', input,
+                '--dest', output,
+                '--main-jar', shadowJar.archiveName,
+                '--win-dir-chooser',
+                '--win-per-user-install',
+                '--win-menu',
+                '--win-shortcut'
+    }
 }
 
 task buildDmgPackage(type: Exec) {
-    commandLine jpackage(),
-            '--verbose',
-            '--type', 'dmg',
-            '--name', appName,
-            '--description', rootProject.description,
-            '--vendor', vendor,
-            '--license-file', licenceFile,
-            '--icon', './native/rails.ico',
-            '--file-associations', './native/rails-osx-association.properties',
-            '--app-version', appVersion(),
-            '--input', input,
-            '--dest', output,
-            '--main-jar', shadowJar.archiveName,
-            '--mac-package-name', 'rails-18xx'
+    doFirst {
+        commandLine jpackage(),
+                '--verbose',
+                '--type', 'dmg',
+                '--name', appName,
+                '--description', rootProject.description,
+                '--vendor', vendor,
+                '--license-file', licenceFile,
+                '--icon', './src/main/resources/images/icon/rails.icns',
+                '--file-associations', './src/main/resources/build/rails-osx-association.properties',
+                '--file-associations', './src/main/resources/build/last_rails-osx-association.properties',
+                '--app-version', appVersion(),
+                '--input', input,
+                '--dest', output,
+                '--main-jar', shadowJar.archiveName,
+                '--mac-package-name', 'Rails-18xx'
+    }
 }
 
 task renameExecutables(type: Copy) {

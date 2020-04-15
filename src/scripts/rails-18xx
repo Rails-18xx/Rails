@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-CLASSPATH=${CLASSPATH}:/usr/lib/rails-18xx/*
-
-java -classpath "$CLASSPATH" net.sf.rails.util.RunGame "$@"
