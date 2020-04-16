@@ -283,11 +283,9 @@ public class GameUIManager implements DialogOwner {
         FXStockChartWindow.launch(this);
 
         splashWindow.notifyOfStep(SplashWindow.STEP_REPORT_WINDOW);
-        if (Config.get("report.window.type").equalsIgnoreCase("static")) {
-            // reportWindow = new ReportWindowStatic(this);
-        } else {
-            reportWindow = new ReportWindow(this);
-        }
+
+        boolean staticReportWindow = Config.get("report.window.type").equalsIgnoreCase("static");
+        reportWindow = new ReportWindow(this, staticReportWindow);
 
         orWindow = new ORWindow(this, splashWindow);
         orUIManager = orWindow.getORUIManager();
@@ -400,10 +398,10 @@ public class GameUIManager implements DialogOwner {
         updateUI();
 
         statusWindow.initGameActions();
+        reportWindow.setActions();
         if (!myTurn) return true;
         statusWindow.setGameActions();
         statusWindow.setCorrectionMenu();
-        reportWindow.setActions();
 
         // Is this perhaps the right place to display messages...?
         if (getDisplayBuffer().getAutoDisplay()) {
@@ -864,6 +862,10 @@ public class GameUIManager implements DialogOwner {
         return autoLoadPoller != null && autoLoadPoller.getStatus() == AutoLoadPoller.ON;
     }
 
+    public boolean isMyTurn() {
+        return myTurn;
+    }
+
     /**
      * Stub, can be overridden by subclasses
      */
@@ -940,7 +942,6 @@ public class GameUIManager implements DialogOwner {
             processAction(exportAction);
         }
     }
-
 
     public void saveGame(GameAction saveAction) {
         // copy latest report buffer entries to clipboard

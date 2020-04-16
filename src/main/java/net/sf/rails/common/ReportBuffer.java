@@ -1,19 +1,20 @@
 package net.sf.rails.common;
 
+import java.util.Deque;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
 import net.sf.rails.game.RailsAbstractItem;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.state.ChangeReporter;
 import net.sf.rails.game.state.ChangeSet;
 import net.sf.rails.game.state.ChangeStack;
 import net.sf.rails.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Deque;
-import java.util.Queue;
 
 /**
  * ReportBuffer stores messages of the game progress.
@@ -32,9 +33,6 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
     // static data
     private final Deque<ReportSet> pastReports = Lists.newLinkedList();
     private final Deque<ReportSet> futureReports = Lists.newLinkedList();
-
-    // TODO: Remove waitQueue, see functions below
-    private final Queue<String> waitQueue = Lists.newLinkedList();
 
     private ChangeStack changeStack; // initialized via init()
 
@@ -160,23 +158,6 @@ public class ReportBuffer extends RailsAbstractItem implements ChangeReporter {
      */
     public static void add(RailsItem item, String message) {
         item.getRoot().getReportManager().getReportBuffer().addMessage(message);
-    }
-
-    // FIXME: Rails 2.0 Is it possible to remove the only usecase for 1856 escrow money?
-    @Deprecated
-    public static void addWaiting(RailsItem item, String message) {
-        item.getRoot().getReportManager().getReportBuffer().waitQueue.add(message);
-    }
-
-    @Deprecated
-    public static void getAllWaiting(RailsItem item) {
-        ReportBuffer reportBuffer = item.getRoot().getReportManager().getReportBuffer();
-
-        for (String message : reportBuffer.waitQueue) {
-            reportBuffer.addMessage(message);
-        }
-
-        reportBuffer.waitQueue.clear();
     }
 
     public interface Observer {
