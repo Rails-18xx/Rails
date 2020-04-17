@@ -74,7 +74,7 @@ public class Phase extends RailsModel implements Configurable {
     /**
      * Previous phase, defining the current one's defaults
      */
-    private Phase defaults;
+    private final Phase defaults;
 
     /**
      * Items to close if a phase gets activated
@@ -165,15 +165,12 @@ public class Phase extends RailsModel implements Configurable {
                 for (Tag layTag : laysTag) {
                     String colourString = layTag.getAttributeAsString("colour");
                     if (!Util.hasValue(colourString))
-                        throw new ConfigurationException(
-                                "No colour entry for number of tile lays");
+                        throw new ConfigurationException("No colour entry for number of tile lays");
                     String typeString = layTag.getAttributeAsString("companyType");
                     if (!Util.hasValue(typeString))
-                        throw new ConfigurationException(
-                                "No company type entry for number of tile lays");
+                        throw new ConfigurationException("No company type entry for number of tile lays");
                     int number = layTag.getAttributeAsInteger("number", 1);
-                    int validForTurns =
-                            layTag.getAttributeAsInteger("occurrences", 0);
+                    int validForTurns = layTag.getAttributeAsInteger("occurrences", 0);
 
                     String key = typeString + "~" + colourString;
                     if (number == 1) {
@@ -199,9 +196,7 @@ public class Phase extends RailsModel implements Configurable {
         // Private-related properties
         Tag privatesTag = tag.getChild("Privates");
         if (privatesTag != null) {
-            privateSellingAllowed =
-                    privatesTag.getAttributeAsBoolean("sellingAllowed",
-                            privateSellingAllowed);
+            privateSellingAllowed = privatesTag.getAttributeAsBoolean("sellingAllowed", privateSellingAllowed);
             privatesClose = privatesTag.getAttributeAsBoolean("close", false);
             privatesRevenueStep = privatesTag.getAttributeAsInteger("revenueStep", privatesRevenueStep); // sfy 1889
         }
@@ -209,17 +204,13 @@ public class Phase extends RailsModel implements Configurable {
         // Operating rounds
         Tag orTag = tag.getChild("OperatingRounds");
         if (orTag != null) {
-            numberOfOperatingRounds =
-                    orTag.getAttributeAsInteger("number",
-                            numberOfOperatingRounds);
+            numberOfOperatingRounds = orTag.getAttributeAsInteger("number", numberOfOperatingRounds);
         }
 
         // Off-board revenue steps (starts at 1)
         Tag offBoardTag = tag.getChild("OffBoardRevenue");
         if (offBoardTag != null) {
-            offBoardRevenueStep =
-                    offBoardTag.getAttributeAsInteger("step",
-                            offBoardRevenueStep);
+            offBoardRevenueStep = offBoardTag.getAttributeAsInteger("step", offBoardRevenueStep);
         }
 
         Tag trainsTag = tag.getChild("Trains");
@@ -227,21 +218,14 @@ public class Phase extends RailsModel implements Configurable {
             trainLimitStep = trainsTag.getAttributeAsInteger("limitStep", trainLimitStep);
             rustedTrainNames = trainsTag.getAttributeAsString("rusted", null);
             releasedTrainNames = trainsTag.getAttributeAsString("released", null);
-            trainTradingAllowed =
-                    trainsTag.getAttributeAsBoolean("tradingAllowed",
-                            trainTradingAllowed);
-            oneTrainPerTurn =
-                    trainsTag.getAttributeAsBoolean("onePerTurn",
-                            oneTrainPerTurn);
-            oneTrainPerTypePerTurn =
-                    trainsTag.getAttributeAsBoolean("onePerTypePerTurn",
-                            oneTrainPerTypePerTurn);
+            trainTradingAllowed = trainsTag.getAttributeAsBoolean("tradingAllowed", trainTradingAllowed);
+            oneTrainPerTurn = trainsTag.getAttributeAsBoolean("onePerTurn", oneTrainPerTurn);
+            oneTrainPerTypePerTurn = trainsTag.getAttributeAsBoolean("onePerTypePerTurn", oneTrainPerTypePerTurn);
         }
 
         Tag loansTag = tag.getChild("Loans");
         if (loansTag != null) {
-            loanTakingAllowed = loansTag.getAttributeAsBoolean("allowed",
-                    loanTakingAllowed);
+            loanTakingAllowed = loansTag.getAttributeAsBoolean("allowed", loanTakingAllowed);
         }
 
         Tag parameterTag = tag.getChild("Parameters");
@@ -274,8 +258,7 @@ public class Phase extends RailsModel implements Configurable {
 
     }
 
-    public void finishConfiguration(RailsRoot root)
-            throws ConfigurationException {
+    public void finishConfiguration(RailsRoot root) throws ConfigurationException {
 
         TrainManager trainManager = getRoot().getTrainManager();
         TrainCertificateType type;

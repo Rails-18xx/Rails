@@ -134,8 +134,7 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
 
     public void finishConfiguration(RailsRoot root) {
 
-        ReportBuffer.add(this, LocalText.getText("BankSizeIs",
-                currency.format(cash.value())));
+        ReportBuffer.add(this, LocalText.getText("BankSizeIs", currency.format(cash.value())));
 
         // finish configuration of BankPortfolios
         ipo.finishConfiguration();
@@ -144,15 +143,13 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
         scrapHeap.finishConfiguration();
 
         // Add privates
-        List<PrivateCompany> privates =
-                root.getCompanyManager().getAllPrivateCompanies();
+        List<PrivateCompany> privates = root.getCompanyManager().getAllPrivateCompanies();
         for (PrivateCompany priv : privates) {
             ipo.getPortfolioModel().addPrivateCompany(priv);
         }
 
         // Add public companies
-        List<PublicCompany> companies =
-                root.getCompanyManager().getAllPublicCompanies();
+        List<PublicCompany> companies = root.getCompanyManager().getAllPublicCompanies();
         for (PublicCompany comp : companies) {
             for (PublicCertificate cert : comp.getCertificates()) {
                 if (cert.isInitiallyAvailable()) {

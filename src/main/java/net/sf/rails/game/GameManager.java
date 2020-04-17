@@ -62,16 +62,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     // map of correctionManagers
     protected final Map<CorrectionType, CorrectionManager> correctionManagers = new HashMap<>();
 
-    /**
-     * Map relating portfolio names and objects, to enable deserialization.
-     * OBSOLETE since Rails 1.3.1, but still required to enable reading old saved files
-     */
-    protected final Map<String, PortfolioModel> portfolioMap = new HashMap<>();
-    /**
-     * Map relating portfolio unique names and objects, to enable deserialization
-     */
-    protected final Map<String, PortfolioModel> portfolioUniqueNameMap = new HashMap<>();
-
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
     protected boolean showCompositeORNumber = true;
@@ -1115,7 +1105,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     protected boolean export(GameAction exportAction) {
-
         String filename = exportAction.getFilepath();
         boolean result = false;
 
@@ -1131,7 +1120,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             }
             pw.close();
             result = true;
-
 
         } catch (IOException e) {
             log.error("Save failed", e);
@@ -1282,19 +1270,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public List<PrivateCompany> getAllPrivateCompanies() {
         return getRoot().getCompanyManager().getAllPrivateCompanies();
-    }
-
-    public void addPortfolio(PortfolioModel portfolio) {
-        portfolioMap.put(portfolio.getName(), portfolio);
-        portfolioUniqueNameMap.put(portfolio.getUniqueName(), portfolio);
-    }
-
-    public PortfolioModel getPortfolioByName(String name) {
-        return portfolioMap.get(name);
-    }
-
-    public PortfolioModel getPortfolioByUniqueName(String name) {
-        return portfolioUniqueNameMap.get(name);
     }
 
     public StartPacket getStartPacket() {

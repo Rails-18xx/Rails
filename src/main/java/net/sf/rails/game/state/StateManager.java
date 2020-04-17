@@ -16,7 +16,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public final class StateManager extends Manager{
+public final class StateManager extends Manager {
 
     private static final Logger log = LoggerFactory.getLogger(StateManager.class);
 
@@ -29,8 +29,7 @@ public final class StateManager extends Manager{
 
     // observers is not a state variable (as the have to register and de-register themselves)
     // gui eleemnts do not have a state of their own (with respect to the game engine)
-    private final HashMultimap<Observable, Observer> observers =
-            HashMultimap.create();
+    private final HashMultimap<Observable, Observer> observers = HashMultimap.create();
 
     // initialized later in init()
     private PortfolioManager portfolioManager;

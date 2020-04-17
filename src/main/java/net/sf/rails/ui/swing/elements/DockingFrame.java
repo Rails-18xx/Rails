@@ -226,8 +226,7 @@ public abstract class DockingFrame extends JFrame {
     }
 
     private File getLayoutFile() {
-        File layoutFile = new File(getLayoutDirectory(),
-               getLayoutFileName() + LAYOUT_FILE_SUFFIX);
+        File layoutFile = new File(getLayoutDirectory(), getLayoutFileName() + LAYOUT_FILE_SUFFIX);
         return layoutFile;
     }
 
@@ -241,7 +240,6 @@ public abstract class DockingFrame extends JFrame {
             log.info("Layout saved to {}", layoutFile.getName());
         } catch (Exception e) {
             log.error("Layout could not be saved to {}", layoutFile.getName());
-            return;
         }
     }
 

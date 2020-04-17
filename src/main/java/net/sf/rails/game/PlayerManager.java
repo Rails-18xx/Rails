@@ -86,8 +86,7 @@ public class PlayerManager extends RailsManager implements Configurable {
 
         int playerIndex = 0;
         String cashText = null;
-        ImmutableMap.Builder<String, Player> playerNamesBuilder =
-                ImmutableMap.builder();
+        Map<String, Player> playerNamesBuilder = new HashMap<>();
         for (String playerName : playerNames) {
             Player player = Player.create(this, playerName, playerIndex++);
             playerModel.playerOrder.add(player);
@@ -97,7 +96,7 @@ public class PlayerManager extends RailsManager implements Configurable {
                     playerIndex,
                     player.getId()));
         }
-        this.playerNames = playerNamesBuilder.build();
+        this.playerNames = Collections.unmodifiableMap(playerNamesBuilder);
 
         ReportBuffer.add(this, LocalText.getText("PlayerCash", cashText));
         ReportBuffer.add(this, LocalText.getText("BankHas", Bank.format(this, bank.getCash())));
@@ -158,8 +157,7 @@ public class PlayerManager extends RailsManager implements Configurable {
         // transfer messages for the next player to the display buffer
         // TODO: refactor nextPlayerMessages inside DisplayBuffer
         if (getCurrentPlayer() != player && !nextPlayerMessages.isEmpty()) {
-            DisplayBuffer.add(this,
-                    LocalText.getText("NextPlayerMessage", getCurrentPlayer().getId()));
+            DisplayBuffer.add(this, LocalText.getText("NextPlayerMessage", getCurrentPlayer().getId()));
             for (String s : nextPlayerMessages.view())
                 DisplayBuffer.add(this, s);
             nextPlayerMessages.clear();
@@ -274,11 +272,9 @@ public class PlayerManager extends RailsManager implements Configurable {
      * @param ascending Boolean to determine if the playerlist will be sorted in ascending or descending order based on their cash
      * @return Returns the player at index position 0 that is either the player with the most or least cash depending on sort order.
      */
-    public Player reorderPlayersByCash(boolean ascending) {
+    public Player reorderPlayersByCash(final boolean ascending) {
 
-        final boolean ascending_f = ascending;
-
-        Comparator<Player> cashComparator = (p1, p2) -> ascending_f ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
+        Comparator<Player> cashComparator = (p1, p2) -> ascending ? p1.getCash() - p2.getCash() : p2.getCash() - p1.getCash();
 
         playerModel.reorder(cashComparator);
 

@@ -332,7 +332,7 @@ public class GameLoader {
             // 3rd: convert game data (retrieve actions)
             convertGameData();
 
-            // 4tgh: start game
+            // 4th: start game
             railsRoot.start();
 
         } catch (Exception e) {

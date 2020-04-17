@@ -18,6 +18,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,15 +121,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
     private ActionMenuItem redoItem;
     private ActionMenuItem redoItem2;
 
-    private static final Logger log =
-            LoggerFactory.getLogger(StatusWindow.class);
-
-    //    GraphicsConfiguration graphicsConfiguration;
-
-    //    public StatusWindow(GraphicsConfiguration gc) {
-    //        super(gc);
-    //        this.graphicsConfiguration = gc;
-    //    }
+    private static final Logger log = LoggerFactory.getLogger(StatusWindow.class);
 
     public void initMenu() {
         menuBar = new JMenuBar();
@@ -161,8 +154,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         actionMenuItem = new ActionMenuItem(LocalText.getText("SAVE"));
         actionMenuItem.setActionCommand(SAVE_CMD);
         actionMenuItem.setMnemonic(KeyEvent.VK_S);
-        actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-                ActionEvent.ALT_MASK));
+        actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
         actionMenuItem.addActionListener(this);
         actionMenuItem.setEnabled(true);
         actionMenuItem.setPossibleAction(new GameAction(gameUIManager.getRoot(), GameAction.Mode.SAVE));
@@ -171,8 +163,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         actionMenuItem = new ActionMenuItem(LocalText.getText("Reload"));
         actionMenuItem.setActionCommand(RELOAD_CMD);
         actionMenuItem.setMnemonic(KeyEvent.VK_R);
-        actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
-                ActionEvent.ALT_MASK));
+        actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.ALT_MASK));
         actionMenuItem.addActionListener(this);
         actionMenuItem.setEnabled(true);
         actionMenuItem.setPossibleAction(new GameAction(gameUIManager.getRoot(), GameAction.Mode.RELOAD));
@@ -181,8 +172,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         JMenuItem menuItem = new JMenuItem(LocalText.getText("AutoSaveLoad"));
         menuItem.setActionCommand(AUTOSAVELOAD_CMD);
         menuItem.setMnemonic(KeyEvent.VK_A);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
-                ActionEvent.ALT_MASK));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
         menuItem.addActionListener(this);
         menuItem.setEnabled(true);
         fileMenu.add(menuItem);
@@ -190,8 +180,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         menuItem = new JMenuItem(LocalText.getText("SaveGameStatus"));
         menuItem.setActionCommand(SAVESTATUS_CMD);
         menuItem.setMnemonic(KeyEvent.VK_G);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
-                ActionEvent.ALT_MASK));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
         menuItem.addActionListener(this);
         menuItem.setEnabled(true);
         fileMenu.add(menuItem);
@@ -209,8 +198,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         menuItem = new JMenuItem(LocalText.getText("QUIT"));
         menuItem.setActionCommand(QUIT_CMD);
         menuItem.setMnemonic(KeyEvent.VK_Q);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
-                ActionEvent.ALT_MASK));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.ALT_MASK));
         menuItem.addActionListener(this);
         fileMenu.add(menuItem);
 
@@ -229,8 +217,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         menuItem.setName(MARKET_CMD);
         menuItem.setActionCommand(MARKET_CMD);
         menuItem.setMnemonic(KeyEvent.VK_K);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K,
-                ActionEvent.CTRL_MASK));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
 
@@ -238,8 +225,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         menuItem.setName(MAP_CMD);
         menuItem.setActionCommand(MAP_CMD);
         menuItem.setMnemonic(KeyEvent.VK_M);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,
-                ActionEvent.CTRL_MASK));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
 
@@ -263,8 +249,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         undoItem.setName(LocalText.getText("UNDO"));
         undoItem.setActionCommand(UNDO_CMD);
         undoItem.setMnemonic(KeyEvent.VK_U);
-        undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-                ActionEvent.CTRL_MASK));
+        undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
         undoItem.addActionListener(this);
         undoItem.setEnabled(false);
         moveMenu.add(undoItem);
@@ -273,8 +258,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         redoItem.setName(LocalText.getText("REDO"));
         redoItem.setActionCommand(REDO_CMD);
         redoItem.setMnemonic(KeyEvent.VK_R);
-        redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
-                ActionEvent.CTRL_MASK));
+        redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         redoItem.addActionListener(this);
         redoItem.setEnabled(false);
         moveMenu.add(redoItem);
@@ -461,9 +445,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         correctionMenu.setEnabled(false);
 
         // currently only shows CorrectionModeActions
-        List<CorrectionModeAction> corrections =
-            possibleActions.getType(CorrectionModeAction.class);
-
+        List<CorrectionModeAction> corrections = possibleActions.getType(CorrectionModeAction.class);
 
         if (corrections != null && !corrections.isEmpty()) {
             for (CorrectionModeAction a : corrections) {
@@ -495,7 +477,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
 
         // correction actions always possible
         return gameStatus.initCashCorrectionActions();
-
     }
 
     public void updateStatus(boolean myTurn) {
@@ -715,7 +696,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         } else if (command.equals(REPORT_CMD)) {
             gameUIManager.reportWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
             gameUIManager.reportWindow.scrollDown();
-            return;
         } else if (command.equals(MARKET_CMD)) {
             gameUIManager.stockChartWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
         } else if (command.equals(MAP_CMD)) {

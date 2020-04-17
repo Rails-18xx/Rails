@@ -6,7 +6,7 @@
 			- a name, which must also exist as an entry in LocalText.properties,
 			- optionally 'type="toggle"', which has the effect that the
 			  selection uses a checkbox instead of a dropdown list.
-			  In this case, 'values' must be absent 
+			  In this case, 'values' must be absent
 			  (the allowed values are fixed to "yes,no").
 			- optionally, 'values="a,b,c"' i,e, a list of allowed values.
 			- optionally, a default value (only affects a toggle;
@@ -14,17 +14,17 @@
 		-->
 		<!-- The options in Game.xml are not currently used.
 			 See GamesList.xml for the real ones.
-		--> 
+		-->
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
-				<!-- Option "NumberOfPlayers" is automatically set 
+				<!-- Option "NumberOfPlayers" is automatically set
 					by the game engine -->
 				<IfOption name="NumberOfPlayers" value="2">
 					<IfOption name="TwoPlayersCertLimit70Percent" value="yes">
 						<Attributes percentage="70"/>
 					</IfOption>
 				</IfOption>
-			</PlayerShareLimit>			
+			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
 			<StockRound sequence="SellBuyOrBuySell">
 				<NoSaleInFirstSR/>
@@ -51,18 +51,16 @@
 		<Bank amount="7000"/>
 		<Money format="&#xa5;@"/>
 	</Component>
-	<Component name="TileManager" class="net.sf.rails.game.TileManager" 
+	<Component name="TileManager" class="net.sf.rails.game.TileManager"
 		file="TileSet.xml"/>
 	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
 <!-- 	Specific CompanyManager to avoid closing of Uno-Takamatsu Ferry -->
-        <Component name="CompanyManager" class="net.sf.rails.game.CompanyManager" 
-		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="net.sf.rails.game.financial.StockMarket" 
-		file="StockMarket.xml"/>
+        <Component name="CompanyManager" class="net.sf.rails.game.CompanyManager" file="CompanyManager.xml"/>
+	<Component name="StockMarket" class="net.sf.rails.game.financial.StockMarket" file="StockMarket.xml"/>
 	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
-			<!-- Alternative values: 
+			<!-- Alternative values:
 				base="hexes" for H-trains as in 1826, 1849 etc.
 				countTowns="no" for all trains in 1841, 18EU, etc.,
 				  where towns score but do not count against the train length.

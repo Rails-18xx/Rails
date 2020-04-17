@@ -71,12 +71,10 @@ public class TrainType implements Cloneable {
         Tag scoreTag = tag.getChild("Score");
         if (scoreTag != null) {
             // Reach basis
-            scoreTowns =
-                scoreTag.getAttributeAsString("scoreTowns", scoreTowns);
+            scoreTowns = scoreTag.getAttributeAsString("scoreTowns", scoreTowns);
 
             // Are towns counted (only relevant is reachBasis = "stops")
-            scoreCities =
-                scoreTag.getAttributeAsString("scoreCities", scoreCities);
+            scoreCities = scoreTag.getAttributeAsString("scoreCities", scoreCities);
         }
 
         // Check the reach and score values

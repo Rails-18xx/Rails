@@ -1741,7 +1741,7 @@ public class OperatingRound extends Round implements Observer {
     protected void initNormalTileLays() {
 
         // duplicate the phase colours
-        Map<String, Integer> newTileColours = new HashMap<String, Integer>();
+        Map<String, Integer> newTileColours = new HashMap<>();
         for (String colour : Phase.getCurrent(this).getTileColours()) {
             int allowedNumber = operatingCompany.value().getNumberOfTileLays(colour);
             // Replace the null map value with the allowed number of lays

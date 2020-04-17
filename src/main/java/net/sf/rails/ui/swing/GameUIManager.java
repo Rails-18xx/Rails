@@ -212,7 +212,7 @@ public class GameUIManager implements DialogOwner {
 
     public void closeGame() {
         if ( myTurn ) {
-            // TODO: confirm game close if in turn?
+            // TODO: confirm game close if in turn and polling?
         }
         OpenGamesManager.getInstance().removeGame(this);
         getWindowSettings().save();
