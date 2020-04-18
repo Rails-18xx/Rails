@@ -198,6 +198,15 @@ public class GameUIManager implements DialogOwner {
         windowSettings.load();
     }
 
+    public static boolean confirmQuit(JFrame parent) {
+        if ( StringUtils.isNotBlank(Config.get("skip_confirm_quit")) && Util.parseBoolean(Config.get("skip_confirm_quit"))) {
+            // user has a confirm_quit preference and it's not set
+            return true;
+        }
+        return JOptionPane.showConfirmDialog(parent, LocalText.getText("CLOSE_WINDOW"),
+                LocalText.getText("Select"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
+    }
+
     public void terminate() {
         getWindowSettings().save();
         // TODO: save relocation and resizing information of the FKStockChartWindow

@@ -217,8 +217,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         addWindowListener(new WindowAdapter () {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (JOptionPane.showConfirmDialog(thisFrame, LocalText.getText("CLOSE_WINDOW"), LocalText.getText("Select"), JOptionPane.OK_CANCEL_OPTION)
-                        == JOptionPane.OK_OPTION) {
+                if ( GameUIManager.confirmQuit(thisFrame) ) {
                     thisFrame.dispose();
                     guiMgr.terminate();
                 }

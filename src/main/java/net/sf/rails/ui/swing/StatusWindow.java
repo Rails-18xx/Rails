@@ -368,8 +368,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         addWindowListener(new WindowAdapter () {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (JOptionPane.showConfirmDialog(frame, LocalText.getText("CLOSE_WINDOW"), LocalText.getText("Select"), JOptionPane.OK_CANCEL_OPTION)
-                        == JOptionPane.OK_OPTION) {
+                if ( GameUIManager.confirmQuit(frame) ) {
                     frame.dispose();
                     guiMgr.terminate();
                 }
@@ -387,24 +386,17 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         });
 
         if ( Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_QUIT_HANDLER) ) {
-            Desktop.getDesktop().setQuitHandler((e, r) -> {
-                if ( JOptionPane.showConfirmDialog(frame, LocalText.getText("CLOSE_WINDOW"), LocalText.getText("Select"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION ) {
+            Desktop.getDesktop().setQuitHandler((quitEvent, quitResponse) -> {
+                if ( GameUIManager.confirmQuit(frame) ) {
                     frame.dispose();
                     guiMgr.terminate();
-                    r.performQuit();
+                    quitResponse.performQuit();
                 }
                 else {
-                    r.cancelQuit();
+                    quitResponse.cancelQuit();
                 }
             });
         }
-
-//        SwingUtilities.invokeLater(() -> {
-//            JFrame main = new JFrame("java.awt.Desktop");
-//            main.setSize(new Dimension(600, 400));
-//            main.setLocationRelativeTo(null);
-//            main.setVisible(true);
-//        });
 
         gameUIManager.packAndApplySizing(this);
     }

@@ -121,7 +121,7 @@ public final class Util {
      * @return parsed value
      */
     public static boolean parseBoolean(String s) {
-        if (s.toLowerCase().equals("yes")) {
+        if ("yes".toLowerCase().equals(s)) {
             return true;
         }
         return Boolean.parseBoolean(s);
