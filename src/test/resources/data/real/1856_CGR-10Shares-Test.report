@@ -281,7 +281,7 @@ BuysTrain,GT,3,IPO,225
  
 CompanyOperates,WR,Tyler
 LaysTileAt,WR,15,O16,SE
-LAYS_TOKEN_ON,WR,O18,40 Hex O18 (Fort Erie)
+LAYS_TOKEN_ON,WR,O18,40
 CompanyRevenue,WR,160
 CompanyMustPayLoanInterest,WR,20
 InterestPaidFromTreasury,WR,20
@@ -344,7 +344,7 @@ PRICE_MOVES_LOG,GT,70,F6,75,G6
 CompanyOperates,CA,Lonny
 LaysTileAt,CA,8,D15,S
 CompanyTakesLoan,CA,100,100
-LAYS_TOKEN_ON,CA,C14,40 Hex C14 (Maudaumin)
+LAYS_TOKEN_ON,CA,C14,40
 CompanyRevenue,CA,140
 CompanyMustPayLoanInterest,CA,20
 InterestPaidFromTreasury,CA,20
@@ -368,7 +368,7 @@ BuysPrivateFromFor,WR,TCC,Tyler,100
 CompanyOperates,LPS,Lonny
 LaysTileAt,LPS,15,D17,SW
 CompanyTakesLoan,LPS,100,100
-LAYS_TOKEN_ON,LPS,D17,40 Hex D17 (Glencoe)
+LAYS_TOKEN_ON,LPS,D17,40
 CompanyRevenue,LPS,180
 CompanyMustPayLoanInterest,LPS,40
 InterestPaidFromTreasury,LPS,40
@@ -573,7 +573,7 @@ PRICE_MOVES_LOG,TGB,90,D1,80,C1
  
 CompanyOperates,CV,Ron
 LaysTileAt,CV,57,L13,SW
-LAYS_TOKEN_ON,CV,L13,40 Hex L13 (Burlington)
+LAYS_TOKEN_ON,CV,L13,40
 CompanyRevenue,CV,80
 CompanyPaysOutFull,CV,80
 Payout,Ron,32,4,10
@@ -978,7 +978,7 @@ PRICE_MOVES_LOG,CV,100,G3,110,H3
  
 CompanyOperates,GW,Lonny
 LaysTileAt,GW,14,H15,SW
-LAYS_TOKEN_ON,GW,H15,40 Hex H15 (Woodstock)
+LAYS_TOKEN_ON,GW,H15,40
 CompanyDoesNotPayDividend,GW
 PRICE_MOVES_LOG,GW,100,E1,90,D1
 BuysTrain,GW,5,IPO,550
@@ -1284,7 +1284,7 @@ PRICE_MOVES_LOG,GW,100,E1,110,F1
  
 CompanyOperates,WGB,Tyler
 LaysTileAt,WGB,5,J11,NW
-LAYS_TOKEN_ON,WGB,J15,40 Hex J15 (Brantford)
+LAYS_TOKEN_ON,WGB,J15,40
 CompanyDoesNotPayDividend,WGB
 PRICE_MOVES_LOG,WGB,100,E1,90,D1
 BuysTrain,WGB,6,IPO,700

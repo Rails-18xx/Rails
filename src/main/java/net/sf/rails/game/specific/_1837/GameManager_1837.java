@@ -8,17 +8,19 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.game.GameManager;
+import net.sf.rails.game.NationalFormationRound;
+import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Round;
 import net.sf.rails.game.StartPacket;
 import net.sf.rails.game.StartRound;
-import net.sf.rails.game.OperatingRound;
-import net.sf.rails.game.financial.NationalFormationRound;
+import net.sf.rails.game.specific._1837.OperatingRound_1837;
+import net.sf.rails.game.specific._18EU.FinalMinorExchangeRound;
+import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
-import net.sf.rails.game.state.BooleanState;
 
 
 

@@ -568,7 +568,6 @@ public class GameUIManager implements DialogOwner {
             log.debug("Correction overrides active window: status window active");
         }
 
-
         // Active window settings are handled last.
         // Side effects: the active window is made visible and put on top.
         if (uiHints.getActivePanel() == GuiDef.Panel.START_ROUND) {

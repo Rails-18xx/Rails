@@ -124,7 +124,7 @@ public class StockRound_1835 extends StockRound {
     }
 
     // The sell-in-same-turn-at-decreasing-price option does not apply here
-    
+
     // change: check exactly how it differs here
     // requires: do a parameterization
     @Override
@@ -246,11 +246,11 @@ public class StockRound_1835 extends StockRound {
 
   /*  (non-Javadoc)
      * @see net.sf.rails.game.StockRound#mayPlayerSellShareOfCompany(net.sf.rails.game.PublicCompany)
-    */ 
+    */
     @Override
     public boolean mayPlayerSellShareOfCompany(PublicCompany company) {
-        if (!super.mayPlayerSellShareOfCompany(company) ) 
-            { 
+        if (!super.mayPlayerSellShareOfCompany(company) )
+            {
             return false;
             }
         else {
@@ -259,13 +259,13 @@ public class StockRound_1835 extends StockRound {
            * But if he has sold a share in this round he is allowed to sell dump the presidency...
            *
            * */
-            if (company.getPresident() == currentPlayer) { 
+            if (company.getPresident() == currentPlayer) {
                 if (PlayerShareUtils.poolAllowsShareNumbers(company) >1) return true;
                 }
         }
         return true;
     }
-    
+
     @Override
     protected boolean checkIfSplitSaleOfPresidentAllowed() {
         // in 1835 its not allowed to Split the President Certificate on sale
@@ -278,5 +278,5 @@ public class StockRound_1835 extends StockRound {
 			super.setPriority(string);
 		}
 	}
-     
+
 }

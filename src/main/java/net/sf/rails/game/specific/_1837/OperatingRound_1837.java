@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.GameDef;
@@ -27,6 +28,7 @@ import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.NationalFormationRound;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.specific._18EU.GameManager_18EU;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.MoneyOwner;

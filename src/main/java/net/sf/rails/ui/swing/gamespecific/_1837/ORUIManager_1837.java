@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.ORPanel;
 import net.sf.rails.ui.swing.ORUIManager;
+import net.sf.rails.ui.swing.ORWindow;
 import net.sf.rails.ui.swing.gamespecific._1880.StartRoundWindow_1880;
 import rails.game.action.SetDividend;
 

@@ -14,7 +14,7 @@ import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Owner;
 
 public class PublicCompany_1837 extends PublicCompany {
-   
+
     public PublicCompany_1837(RailsItem parent, String id) {
         super(parent, id);
     }
@@ -68,6 +68,6 @@ public class PublicCompany_1837 extends PublicCompany {
     /**
      * @param coalMineTreasuryBonus the coalMineTreasuryBonus to set
      */
-    
-    
+
+
 }
