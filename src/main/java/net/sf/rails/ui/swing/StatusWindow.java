@@ -321,7 +321,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
                 Class.forName(gameStatusClassName).asSubclass(GameStatus.class);
             gameStatus = gameStatusClass.newInstance();
         } catch (Exception e) {
-            log.error("Cannot instantiate class " + gameStatusClassName, e);
+            log.error("Cannot instantiate class {}", gameStatusClassName, e);
             System.exit(1);
         }
 
@@ -385,6 +385,26 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
                 guiMgr.getWindowSettings().set(frame);
             }
         });
+
+        if ( Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_QUIT_HANDLER) ) {
+            Desktop.getDesktop().setQuitHandler((e, r) -> {
+                if ( JOptionPane.showConfirmDialog(frame, LocalText.getText("CLOSE_WINDOW"), LocalText.getText("Select"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION ) {
+                    frame.dispose();
+                    guiMgr.terminate();
+                    r.performQuit();
+                }
+                else {
+                    r.cancelQuit();
+                }
+            });
+        }
+
+//        SwingUtilities.invokeLater(() -> {
+//            JFrame main = new JFrame("java.awt.Desktop");
+//            main.setSize(new Dimension(600, 400));
+//            main.setLocationRelativeTo(null);
+//            main.setVisible(true);
+//        });
 
         gameUIManager.packAndApplySizing(this);
     }
