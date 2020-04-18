@@ -98,13 +98,11 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         this.locations = specialProperty.getLocations();
         if (locations != null) buildLocationNameString();
         this.specialProperty = specialProperty;
-        if (specialProperty != null) {
-            this.specialPropertyId = specialProperty.getUniqueId();
-            Tile tile = specialProperty.getTile();
-            if (tile != null) {
-                tiles = new ArrayList<>();
-                tiles.add(tile);
-            }
+        this.specialPropertyId = specialProperty.getUniqueId();
+        Tile tile = specialProperty.getTile();
+        if (tile != null) {
+            tiles = new ArrayList<>();
+            tiles.add(tile);
         }
     }
 

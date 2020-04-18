@@ -98,8 +98,8 @@ public class GameSaver {
             for ( PossibleAction action : gameIOData.getActions() ) {
                 oos.writeObject(action);
             }
-            log.debug("File save successful");
         }
+        log.debug("File save successful");
     }
 
     /**

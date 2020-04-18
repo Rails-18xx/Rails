@@ -35,14 +35,9 @@ public class TrainType implements Cloneable {
     protected int majorStops;
     protected int minorStops;
 
-    protected int lastIndex = 0;
-
     protected BooleanState rusted;
 
     protected TrainManager trainManager;
-
-    /** In some cases, trains start their life in the Pool */
-    protected String initialPortfolio = "IPO";
 
     private static final Logger log = LoggerFactory.getLogger(TrainType.class);
 
@@ -57,17 +52,9 @@ public class TrainType implements Cloneable {
      * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
-
-        // Name
         name = tag.getAttributeAsString("name");
-
-        // Cost
         cost = tag.getAttributeAsInteger("cost");
-
-        // Major stops
         majorStops = tag.getAttributeAsInteger("majorStops");
-
-        // Minor stops
         minorStops = tag.getAttributeAsInteger("minorStops");
 
         // Reach
@@ -77,8 +64,7 @@ public class TrainType implements Cloneable {
             reachBasis = reachTag.getAttributeAsString("base", reachBasis);
 
             // Are towns counted (only relevant is reachBasis = "stops")
-            countTowns =
-                reachTag.getAttributeAsString("countTowns", countTowns);
+            countTowns = reachTag.getAttributeAsString("countTowns", countTowns);
         }
 
         // Score
@@ -95,17 +81,13 @@ public class TrainType implements Cloneable {
 
         // Check the reach and score values
         countHexes = reachBasis.equals("hexes");
-        townCountIndicator =
-            countTowns.equals("no") ? NO_TOWN_COUNT : minorStops > 0
-                    ? TOWN_COUNT_MINOR : TOWN_COUNT_MAJOR;
+        townCountIndicator = countTowns.equals("no") ? NO_TOWN_COUNT : minorStops > 0 ? TOWN_COUNT_MINOR : TOWN_COUNT_MAJOR;
         cityScoreFactor = scoreCities.equalsIgnoreCase("double") ? 2 : 1;
         townScoreFactor = scoreTowns.equalsIgnoreCase("yes") ? 1 : 0;
         // Actually we should meticulously check all values....
-
     }
 
-    public void finishConfiguration (RailsRoot root, TrainCertificateType trainCertificateType)
-    throws ConfigurationException {
+    public void finishConfiguration (RailsRoot root, TrainCertificateType trainCertificateType) throws ConfigurationException {
 
         trainManager = root.getTrainManager();
         this.certificateType = trainCertificateType;

@@ -775,7 +775,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         // logging of game actions activated
         for (PossibleAction pa : possibleActions.getList()) {
-            log.debug("{}", pa.toString());
+            log.debug("{}", pa);
         }
 
         return result;
