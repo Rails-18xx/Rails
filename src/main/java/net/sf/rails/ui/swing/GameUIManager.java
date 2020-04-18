@@ -379,11 +379,17 @@ public class GameUIManager implements DialogOwner {
                         log.info("Relinquishing turn to {}", newPlayer.getId());
                     } else if (!wasMyTurn && myTurn) {
                         autoLoadPoller.setActive(false);
-                        setCurrentDialog(new MessageDialog(null, this,
-                                        (JFrame) activeWindow,
-                                        LocalText.getText("Message"),
-                                        LocalText.getText("YourTurn", localPlayerName)),
-                                null);
+
+                        if ( Taskbar.getTaskbar().isSupported(Taskbar.Feature.USER_ATTENTION) ) {
+                            Taskbar.getTaskbar().requestUserAttention(true, false);
+                        } else {
+                            setCurrentDialog(new MessageDialog(null, this,
+                                            (JFrame) activeWindow,
+                                            LocalText.getText("Message"),
+                                            LocalText.getText("YourTurn", localPlayerName)),
+                                    null);
+                        }
+
                         log.info("Resuming turn as {}", localPlayerName);
                     } else {
                         log.info("{} now has the turn", newPlayer.getId());
