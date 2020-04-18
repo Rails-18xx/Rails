@@ -220,7 +220,7 @@ public class GameSetupController {
             jfc.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File f) {
-                    return isOurs(f);
+                    return isOurs(f) || f.isDirectory();
                 }
 
                 @Override
