@@ -34,7 +34,7 @@ public class LogFile extends PropertyDefinerBase {
 
                 case WINDOWS:
                     // should point to the Documents directory on Windows
-                    logDir = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator;
+                    logDir = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator + "Rails" + File.separator;
                     break;
 
                 default:
