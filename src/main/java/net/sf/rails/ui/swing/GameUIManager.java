@@ -105,7 +105,7 @@ public class GameUIManager implements DialogOwner {
     protected static final String DEFAULT_SAVE_PATTERN = "yyyyMMdd_HHmm";
     public static final String DEFAULT_SAVE_EXTENSION = "rails";
 
-    public static final String DEFAULT_SAVE_POLLING_EXTENSION = "last_rails";
+    public static final String DEFAULT_SAVE_POLLING_EXTENSION = "lrails";
     protected static final String NEXT_PLAYER_SUFFIX = "NEXT_PLAYER";
     protected static final String CURRENT_ROUND_SUFFIX = "CURRENT_ROUND";
 
