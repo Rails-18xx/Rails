@@ -4,6 +4,8 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.filechooser.FileSystemView;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 
@@ -31,6 +33,10 @@ public class LogFile extends PropertyDefinerBase {
                     break;
 
                 case WINDOWS:
+                    // should point to the Documents directory on Windows
+                    logDir = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + File.separator;
+                    break;
+
                 default:
                     logDir += File.separator + "Rails" + File.separator;
                     // nothing to do
