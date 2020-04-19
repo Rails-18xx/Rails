@@ -52,7 +52,7 @@
 	<Section name="Windows">
 		<Property name="report.window.type" type="LIST" values="static,dynamic" />
 		<Property name="report.window.open" type="BOOLEAN" />
-		<Property name="report.window.editable" type="BOOLEAN" />
+<!--		<Property name="report.window.editable" type="BOOLEAN" />-->
 		<Property name="stockchart.window.open" type="BOOLEAN" />
 		<Property name="or.window.dockablePanels" type="BOOLEAN" />
 		<Property name="splash.window.open" type="BOOLEAN" />

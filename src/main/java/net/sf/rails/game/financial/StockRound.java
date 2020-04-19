@@ -1,13 +1,24 @@
 package net.sf.rails.game.financial;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.SortedSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.rails.game.StartRound;
-import rails.game.action.*;
-import net.sf.rails.common.*;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+import com.google.common.collect.SortedMultiset;
+
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GameOption;
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.GameDef;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
@@ -15,18 +26,26 @@ import net.sf.rails.game.PlayerManager;
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.Round;
-import net.sf.rails.game.GameDef.Parm;
 import net.sf.rails.game.model.PortfolioModel;
-import net.sf.rails.game.round.Activity;
-import net.sf.rails.game.special.*;
-import net.sf.rails.game.state.*;
+import net.sf.rails.game.special.ExchangeForShare;
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.state.ArrayListState;
+import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
-import com.google.common.collect.SortedMultiset;
+import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.HashMapState;
+import net.sf.rails.game.state.HashSetState;
+import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.MoneyOwner;
+import net.sf.rails.game.state.Owner;
+import net.sf.rails.game.state.Portfolio;
+import rails.game.action.BuyCertificate;
+import rails.game.action.NullAction;
+import rails.game.action.PossibleAction;
+import rails.game.action.RequestTurn;
+import rails.game.action.SellShares;
+import rails.game.action.StartCompany;
+import rails.game.action.UseSpecialProperty;
 
 
 /**
@@ -832,7 +851,6 @@ public class StockRound extends Round {
                 shares,
                 cert.getShare(),
                 priceRecipient.getId()));
-        ReportBuffer.getAllWaiting(this);
 
         checkFlotation(company);
 
@@ -1010,7 +1028,6 @@ public class StockRound extends Round {
                     from.getName(),
                     Bank.format(this, cost)));
         }
-        ReportBuffer.getAllWaiting(this);
 
         PublicCertificate cert2;
         for (int i = 0; i < number; i++) {
