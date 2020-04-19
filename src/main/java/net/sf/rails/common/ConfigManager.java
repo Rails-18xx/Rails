@@ -39,6 +39,8 @@ public class ConfigManager implements Configurable {
 
     // INSTANCE DATA
 
+    private boolean initialized = false;
+
     // version string and development flag
     private String version = "unknown";
 
@@ -54,7 +56,7 @@ public class ConfigManager implements Configurable {
 
     // profile storage
     private ConfigProfile activeProfile;
-    private Map<String, String> transientConfig = new HashMap<>();
+    private final Map<String, String> transientConfig = new HashMap<>();
 
     private ConfigManager() {
         // do nothing
@@ -117,6 +119,10 @@ public class ConfigManager implements Configurable {
     }
 
     private void init() {
+        if ( initialized ) {
+            return;
+        }
+
         // load recent data
         File recentFile = new File(SystemOS.get().getConfigurationFolder(false), RECENT_FILE);
         Util.loadProperties(recentData, recentFile);
@@ -132,6 +138,7 @@ public class ConfigManager implements Configurable {
         changeProfile(ConfigProfile.getStartProfile());
 
         initVersion();
+        initialized = true;
     }
 
     private void initTest() {
