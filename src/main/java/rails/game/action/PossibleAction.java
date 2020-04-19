@@ -32,13 +32,14 @@ import com.google.common.base.Objects;
 
 public abstract class PossibleAction implements ChangeAction, Serializable {
 
+    transient protected RailsRoot root;
+
     protected String playerName;
     protected int playerIndex;
     transient protected Player player;
 
     protected boolean acted = false;
 
-    transient protected RailsRoot root;
     transient protected Activity activity;
 
     public static final long serialVersionUID = 3L;
@@ -47,13 +48,29 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
 
     // TODO: Replace this by a constructor argument for the player
     public PossibleAction(Activity activity) {
-        root = RailsRoot.getInstance();
-        player = getRoot().getPlayerManager().getCurrentPlayer();
+        if ( activity == null ) {
+            return;
+        }
+        root = activity.getRoot();
+        setPlayer();
+        this.activity = activity;
+    }
+
+    public PossibleAction(RailsRoot root) {
+        if ( root == null ) {
+            log.debug("missing root", new Exception());
+            return;
+        }
+        this.root = root;
+        setPlayer();
+    }
+
+    private void setPlayer() {
+        player = root.getPlayerManager().getCurrentPlayer();
         if (player != null) {
             playerName = player.getId();
             playerIndex = player.getIndex();
         }
-        this.activity = activity;
     }
 
     public String getPlayerName() {
@@ -183,15 +200,14 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        if (in instanceof RailsObjectInputStream) {
-            root = ((RailsObjectInputStream) in).getRoot();
-        }
+        root = ((RailsObjectInputStream) in).getRoot();
 
         if (playerName != null) {
-            player = getRoot().getPlayerManager().getPlayerByName(playerName);
+            player = root.getPlayerManager().getPlayerByName(playerName);
         } else {
-            player = getRoot().getPlayerManager().getPlayerByIndex(playerIndex);
+            player = root.getPlayerManager().getPlayerByIndex(playerIndex);
         }
     }
+
 
 }

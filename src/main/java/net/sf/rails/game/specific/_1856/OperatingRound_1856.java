@@ -120,7 +120,7 @@ public class OperatingRound_1856 extends OperatingRound {
                     && !((PublicCompany_CGR) operatingCompany.value()).hadPermanentTrain()) {
                 DisplayBuffer.add(this, LocalText.getText("MustWithholdUntilPermanent",
                         PublicCompany_CGR.NAME));
-                possibleActions.add(new SetDividend(
+                possibleActions.add(new SetDividend(getRoot(),
                         operatingCompany.value().getLastRevenue(), true,
                         new int[]{SetDividend.WITHHOLD}));
             } else {
@@ -146,7 +146,7 @@ public class OperatingRound_1856 extends OperatingRound {
                     }
                 }
 
-                possibleActions.add(new SetDividend(
+                possibleActions.add(new SetDividend(getRoot(),
                         operatingCompany.value().getLastRevenue(), true,
                         allowedRevenueActions,
                         requiredCash));
@@ -292,7 +292,7 @@ public class OperatingRound_1856 extends OperatingRound {
             }
         }
         if (possibleDestinations.size() > 0) {
-            possibleActions.add(new ReachDestinations(possibleDestinations));
+            possibleActions.add(new ReachDestinations(getRoot(), possibleDestinations));
         }
     }
 

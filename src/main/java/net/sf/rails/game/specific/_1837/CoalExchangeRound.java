@@ -67,7 +67,7 @@ public class CoalExchangeRound extends StockRound_1837 {
         private boolean setMinorMergeActions() {
 
             if (hasActed.value()) {
-                possibleActions.add(new NullAction(NullAction.Mode.DONE));
+                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
                 return true;
             }
 
@@ -95,7 +95,7 @@ public class CoalExchangeRound extends StockRound_1837 {
                 }
             }
             if (!minors.isEmpty()) {
-                possibleActions.add(new NullAction(NullAction.Mode.DONE));
+                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
                 return true;
             }
 
@@ -117,7 +117,7 @@ public class CoalExchangeRound extends StockRound_1837 {
                     }
                 }
                 if (!minors.isEmpty()) {
-                    possibleActions.add(new NullAction(NullAction.Mode.DONE));
+                    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
                     return true;
                 }
                 //Inner loop

@@ -271,7 +271,6 @@ public class GameLoader {
      * @return false if exception occurred
      */
     public boolean replayGame() {
-
         GameManager gameManager = railsRoot.getGameManager();
         log.debug("Starting to execute loaded actions");
         gameManager.setReloading(true);
@@ -385,16 +384,14 @@ public class GameLoader {
 //        }
     }
 
-    public boolean reloadGameFromFile(File file) {
-
+    public boolean reloadGameFromFile(RailsRoot root, File file) {
         try {
+            railsRoot = root;
             // 1st: loadGameData
             loadGameData(file);
 
-            railsRoot = RailsRoot.getInstance();
             // 2nd: convert game data (retrieve actions)
             convertGameData();
-
 
         } catch (Exception e) {
             log.debug("Exception during createFromFile in gameLoader ", e);
@@ -402,6 +399,5 @@ public class GameLoader {
             return false;
         }
         return true;
-
     }
 }

@@ -25,19 +25,15 @@ public final class HexMapImage extends JSVGCanvas  {
     // TODO: Is this still compatible
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log =
-            LoggerFactory.getLogger(HexMapImage.class);
+    private static final Logger log = LoggerFactory.getLogger(HexMapImage.class);
 
     private MapManager mapManager;
     private HexMap hexMap;
     private double zoomFactor = 1;  // defined dynamically if zoomStep changed
     private int zoomStep = 10; // default value, can be overwritten in config
     private boolean initialized = false;
-    private Dimension initialMapSize = null;
-    private int initialZoomStep = 0;
 
     public void init(MapManager mapManager,HexMap hexMap) {
-
        this.mapManager = mapManager;
        this.hexMap = hexMap;
 
@@ -52,7 +48,7 @@ public final class HexMapImage extends JSVGCanvas  {
      */
     private void initializeSettings() {
         // define zoomStep from config
-        String zoomStepSetting = Config.getGameSpecific("map.zoomstep");
+        String zoomStepSetting = Config.getGameSpecific(mapManager.getRoot().getGameName(), "map.zoomstep");
         if (Util.hasValue(zoomStepSetting)) {
             try {
                 int newZoomStep = Integer.parseInt(zoomStepSetting);
@@ -117,8 +113,6 @@ public final class HexMapImage extends JSVGCanvas  {
             setPreferredSize(currentMapSize);
             zoom(zoomStep);
         } else {
-            initialMapSize = currentMapSize;
-            initialZoomStep = zoomStep;
         }
     }
     public void zoom (boolean in) {

@@ -8,6 +8,7 @@ import java.util.Map;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.specific._1880.PublicCompany_1880;
 import net.sf.rails.util.RailsObjects;
@@ -19,27 +20,28 @@ import rails.game.action.PossibleORAction;
  */
 public class ForcedRocketExchange extends PossibleORAction {
     private static final long serialVersionUID = 1L;
-    
+
     // FIXME: Do not use strings to indicate companies
-    private transient List<String> companiesWithSpace = new ArrayList<String>();
-    private transient Map<String, List<Train>> companiesWithNoSpace = new HashMap<String, List<Train>>();
+    private final transient List<String> companiesWithSpace = new ArrayList<String>();
+    private final transient Map<String, List<Train>> companiesWithNoSpace = new HashMap<String, List<Train>>();
 
     private String companyToReceiveTrain;
     private String trainToReplace;
-        
-    public ForcedRocketExchange() {
+
+    public ForcedRocketExchange(RailsRoot root) {
+        super(root);
         companyToReceiveTrain = null;
         trainToReplace = null;
     }
 
     public void addCompanyWithSpace(PublicCompany_1880 company) {
         companiesWithSpace.add(company.getId());
-    }    
-    
+    }
+
     public List<String> getCompaniesWithSpace() {
         return companiesWithSpace;
     }
-    
+
     public boolean hasCompaniesWithSpace() {
         return (companiesWithSpace.isEmpty() == false);
     }
@@ -52,7 +54,7 @@ public class ForcedRocketExchange extends PossibleORAction {
     public Map<String, List<Train>> getCompaniesWithNoSpace() {
         return companiesWithNoSpace;
     }
-    
+
     public String getCompanyToReceiveTrain() {
         return companyToReceiveTrain;
     }
@@ -60,13 +62,13 @@ public class ForcedRocketExchange extends PossibleORAction {
     public void setCompanyToReceiveTrain(String companyToReceiveTrain) {
         this.companyToReceiveTrain = companyToReceiveTrain;
     }
-    
+
     public String getTrainToReplace() {
         return trainToReplace;
     }
-    
+
     public void setTrainToReplace(String trainToReplace) {
-        this.trainToReplace = trainToReplace;        
+        this.trainToReplace = trainToReplace;
     }
 
     @Override
@@ -74,13 +76,13 @@ public class ForcedRocketExchange extends PossibleORAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // no asOption attributes
         if (asOption) return true;
-        
+
         // check asAction attributes
-        ForcedRocketExchange action = (ForcedRocketExchange)pa; 
+        ForcedRocketExchange action = (ForcedRocketExchange)pa;
         return Objects.equal(this.companyToReceiveTrain, action.companyToReceiveTrain)
                 && Objects.equal(this.trainToReplace, action.trainToReplace)
         ;
@@ -89,12 +91,12 @@ public class ForcedRocketExchange extends PossibleORAction {
     @Override
     public String toString() {
         // TODO: does not print the static values, as they do not get serialized
-        return super.toString() 
+        return super.toString()
                 + RailsObjects.stringHelper(this)
                 .addToStringOnlyActed("companyToReceiveTrain", companyToReceiveTrain)
                 .addToStringOnlyActed("trainToReplace", trainToReplace)
                 .toString()
         ;
     }
-    
+
 }

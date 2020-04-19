@@ -124,7 +124,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 allowedRevenueActions = new int[] { SetDividend.WITHHOLD };
             }
 
-            possibleActions.add(new SetDividend(
+            possibleActions.add(new SetDividend(getRoot(),
                     operatingCompany.value().getLastRevenue(), true,
                     allowedRevenueActions));
         }
@@ -989,12 +989,12 @@ public class OperatingRound_1880 extends OperatingRound {
 
         ForcedRocketExchange action = null;
         if (ownedCompaniesWithSpace.isEmpty() == false) {
-            action = new ForcedRocketExchange();
+            action = new ForcedRocketExchange(getRoot());
             for (PublicCompany_1880 company : ownedCompaniesWithSpace) {
                 action.addCompanyWithSpace(company);
             }
         } else if (ownedCompaniesFull.isEmpty() == false) {
-            action = new ForcedRocketExchange();
+            action = new ForcedRocketExchange(getRoot());
             for (PublicCompany_1880 company : ownedCompaniesFull) {
                 action.addCompanyWithNoSpace(company);
             }

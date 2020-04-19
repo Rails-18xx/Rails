@@ -179,7 +179,7 @@ public class StartRound_1837_Coal extends StartRound {
                     return true;
                 }
             }
-            possibleActions.add(new NullAction(NullAction.Mode.PASS));
+            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
 
         }
 

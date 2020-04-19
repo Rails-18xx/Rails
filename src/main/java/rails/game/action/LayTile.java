@@ -13,6 +13,7 @@ import com.google.common.collect.Ordering;
 
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapManager;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileManager;
 import net.sf.rails.game.special.SpecialProperty;
@@ -79,17 +80,20 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
 
     public static final long serialVersionUID = 1L;
 
-    public LayTile(int type) {
+    public LayTile(RailsRoot root, int type) {
+        super(root);
         this.type = type;
     }
 
-    public LayTile(Map<String, Integer> tileColours) {
+    public LayTile(RailsRoot root, Map<String, Integer> tileColours) {
+        super(root);
         type = GENERIC;
         setTileColours (tileColours);
         // NOTE: tileColours is currently only used for Help purposes.
     }
 
     public LayTile(SpecialTileLay specialProperty) {
+        super(specialProperty.getRoot());
         type = SPECIAL_PROPERTY;
         this.locations = specialProperty.getLocations();
         if (locations != null) buildLocationNameString();

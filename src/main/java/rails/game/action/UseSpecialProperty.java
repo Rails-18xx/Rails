@@ -12,7 +12,7 @@ import net.sf.rails.util.RailsObjects;
 /**
  * This class can only be used to offer a Special Property to the UI that does
  * NOT need any return parameters. Example: the M&H/NYC swap in 1830.
- * 
+ *
  * Rails 2.0: Updated equals and toString methods
  */
 public class UseSpecialProperty extends PossibleORAction {
@@ -20,13 +20,13 @@ public class UseSpecialProperty extends PossibleORAction {
     /*--- Preconditions ---*/
 
     /** The special property that could be used */
-    transient protected SpecialProperty specialProperty = null;
+    transient protected SpecialProperty specialProperty;
     private int specialPropertyId;
 
     /*--- Postconditions ---*/
 
     public UseSpecialProperty(SpecialProperty specialProperty) {
-        super();
+        super(specialProperty.getRoot());
         this.specialProperty = specialProperty;
         if (specialProperty != null)
             this.specialPropertyId = specialProperty.getUniqueId();
@@ -50,17 +50,17 @@ public class UseSpecialProperty extends PossibleORAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        UseSpecialProperty action = (UseSpecialProperty)pa; 
+        UseSpecialProperty action = (UseSpecialProperty)pa;
         return Objects.equal(this.specialProperty, action.specialProperty);
         // no asAction attributes to be checked
     }
-    
+
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("specialProperty", specialProperty)
                     .toString()

@@ -13,6 +13,7 @@ import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainManager;
 import net.sf.rails.game.TrainType;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 
 /**
@@ -21,10 +22,12 @@ import net.sf.rails.util.RailsObjects;
 public class DiscardTrain extends PossibleORAction {
 
     // Server settings
-    transient private Set<Train> ownedTrains = null;
+    transient private Set<Train> ownedTrains;
     private String[] ownedTrainsUniqueIds;
 
-    /** True if discarding trains is mandatory */
+    /**
+     * True if discarding trains is mandatory
+     */
     private boolean forced = false;
 
     // Client settings
@@ -34,12 +37,11 @@ public class DiscardTrain extends PossibleORAction {
     public static final long serialVersionUID = 1L;
 
     public DiscardTrain(PublicCompany company, Set<Train> trains) {
-
-        super();
+        super(company.getRoot());
         this.ownedTrains = trains;
         this.ownedTrainsUniqueIds = new String[trains.size()];
         int i = 0;
-        for (Train train:trains) {
+        for ( Train train : trains ) {
             ownedTrainsUniqueIds[i++] = train.getId();
         }
         this.company = company;
@@ -58,7 +60,7 @@ public class DiscardTrain extends PossibleORAction {
 
     private Set<TrainType> getOwnedTrainTypes() {
         ImmutableSet.Builder<TrainType> types = ImmutableSet.builder();
-        for (Train train:ownedTrains) {
+        for ( Train train : ownedTrains ) {
             types.add(train.getType());
         }
         return types.build();
@@ -80,36 +82,35 @@ public class DiscardTrain extends PossibleORAction {
     @Override
     protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
-        if (pa == this) return true;
+        if ( pa == this ) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false;
+        if ( !super.equalsAs(pa, asOption) ) return false;
 
         // check asOption attributes
-        DiscardTrain action = (DiscardTrain)pa;
+        DiscardTrain action = (DiscardTrain) pa;
         // TODO: only the types have to be identical, due Rails 1.x backward compatibility
         boolean options = Objects.equal(this.getOwnedTrainTypes(), action.getOwnedTrainTypes())
-                && Objects.equal(this.forced, action.forced)
-        ;
+                && Objects.equal(this.forced, action.forced);
 
         // finish if asOptions check
-        if (asOption) return options;
+        if ( asOption ) return options;
 
         // check asAction attributes
         // TODO: only the types have to be identical, due Rails 1.x backward compatibility
         return options
                 && Objects.equal(this.discardedTrain.getType(), action.discardedTrain.getType())
-        ;
+                ;
     }
 
     @Override
     public String toString() {
         return super.toString() +
                 RailsObjects.stringHelper(this)
-                    .addToString("ownedTrains", ownedTrains)
-                    .addToString("forced", forced)
-                    .addToStringOnlyActed("discardedTrain", discardedTrain)
-                    .toString()
-        ;
+                        .addToString("ownedTrains", ownedTrains)
+                        .addToString("forced", forced)
+                        .addToStringOnlyActed("discardedTrain", discardedTrain)
+                        .toString()
+                ;
     }
 
     /** Deserialize */
@@ -118,16 +119,17 @@ public class DiscardTrain extends PossibleORAction {
 
         in.defaultReadObject();
 
-        TrainManager trainManager = RailsRoot.getInstance().getTrainManager();
+        RailsRoot root = ((GameLoader.RailsObjectInputStream) in).getRoot();
+        TrainManager trainManager = root.getTrainManager();
 
-        if (discardedTrainUniqueId != null) {
+        if ( discardedTrainUniqueId != null ) {
             discardedTrain = trainManager.getTrainByUniqueId(discardedTrainUniqueId);
         }
 
-        if (ownedTrainsUniqueIds != null && ownedTrainsUniqueIds.length > 0) {
-            ownedTrains = new HashSet<Train>();
-            for (int i = 0; i < ownedTrainsUniqueIds.length; i++) {
-                ownedTrains.add(trainManager.getTrainByUniqueId(ownedTrainsUniqueIds[i]));
+        if ( ownedTrainsUniqueIds != null && ownedTrainsUniqueIds.length > 0 ) {
+            ownedTrains = new HashSet<>();
+            for ( String ownedTrainsUniqueId : ownedTrainsUniqueIds ) {
+                ownedTrains.add(trainManager.getTrainByUniqueId(ownedTrainsUniqueId));
             }
         }
     }

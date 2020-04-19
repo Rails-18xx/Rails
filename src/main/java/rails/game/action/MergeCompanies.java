@@ -11,6 +11,7 @@ import com.google.common.base.Objects;
 import net.sf.rails.game.CompanyManager;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.RailsObjects;
 import rails.game.action.PossibleAction;
 
@@ -39,7 +40,7 @@ public class MergeCompanies extends PossibleAction {
      */
     public MergeCompanies(PublicCompany mergingCompany,
             List<PublicCompany> targetCompanies, boolean forced) {
-        super(null); // not defined by an activity yet
+        super(mergingCompany.getRoot()); // not defined by an activity yet
         this.mergingCompany = mergingCompany;
         this.mergingCompanyName = mergingCompany.getId();
         this.targetCompanies = targetCompanies;
@@ -70,7 +71,7 @@ public class MergeCompanies extends PossibleAction {
 
     /** Required for deserialization */
     public MergeCompanies() {
-        super(null); // not defined by an activity yet
+        super((RailsRoot) null); // not defined by an activity yet
     }
 
     public PublicCompany getMergingCompany() {

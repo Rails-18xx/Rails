@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.common.base.Objects;
 
 import net.sf.rails.game.MapHex;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.special.SpecialBaseTokenLay;
 import net.sf.rails.game.special.SpecialBonusTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
@@ -40,35 +41,39 @@ public abstract class LayToken extends PossibleORAction {
     /**
      * Allow laying a base token on a given location.
      */
-    public LayToken(List<MapHex> locations) {
+    public LayToken(RailsRoot root, List<MapHex> locations) {
+        super(root);
         this.locations = locations;
         if (locations != null) {
-            this.locations = locations;
             buildLocationNameString();
         }
     }
 
-    public LayToken(SpecialBaseTokenLay specialProperty) {
+    public LayToken(RailsRoot root, SpecialBaseTokenLay specialProperty) {
+        super(root);
         this.locations = specialProperty.getLocations();
         if (locations != null) buildLocationNameString();
         this.specialProperty = specialProperty;
         this.specialPropertyId = specialProperty.getUniqueId();
     }
 
-    public LayToken(SpecialBonusTokenLay specialProperty) {
+    public LayToken(RailsRoot root, SpecialBonusTokenLay specialProperty) {
+        super(root);
         this.locations = specialProperty.getLocations();
         if (locations != null) buildLocationNameString();
         this.specialProperty = specialProperty;
         this.specialPropertyId = specialProperty.getUniqueId();
     }
 
-    public LayToken (MapHex hex) {
-    	this.locations = new ArrayList<MapHex>(1);
+    public LayToken (RailsRoot root, MapHex hex) {
+        super(root);
+    	this.locations = new ArrayList<>(1);
     	locations.add(hex);
         buildLocationNameString();
     }
 
-    public LayToken() {
+    public LayToken(RailsRoot root) {
+        super(root);
         this.locations = null;
     }
 

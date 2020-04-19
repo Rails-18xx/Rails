@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.rails.game.specific._1880;
 
@@ -20,9 +20,9 @@ import rails.game.action.*;
 
 /**
  * @author Martin
- * 
+ *
  * Rails 2.0: OK
- * 
+ *
  */
 public class StartRound_Sequential extends StartRound {
 
@@ -64,7 +64,7 @@ public class StartRound_Sequential extends StartRound {
             currentItem.set(firstUnsoldItem);
             currentItem.value().setStatus(StartItem.BIDDABLE);
             passedPlayers.clear();
-        }        
+        }
     }
 
     private void setNextBiddingPlayer() {
@@ -96,12 +96,12 @@ public class StartRound_Sequential extends StartRound {
                 possibleActions.add(new BidStartItem(currentItem.value(),
                         currentItem.value().getMinimumBid(), startPacket.getModulus(), true));
             }
-            possibleActions.add(new NullAction(NullAction.Mode.PASS));
+            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
         }
-        
+
         return true;
     }
-    
+
     @Override
     protected boolean bid(String playerName, BidStartItem bidItem) {
         Player player = playerManager.getPlayerByName(playerName);
@@ -114,7 +114,7 @@ public class StartRound_Sequential extends StartRound {
         if (currentItem.value().getBid(player) > 0) {
             player.unblockCash(currentItem.value().getBid(player));
         }
-             
+
         currentItem.value().setBid(bidAmount, player);
         player.blockCash(bidAmount);
 
@@ -122,8 +122,8 @@ public class StartRound_Sequential extends StartRound {
                 playerName,
                 Bank.format(this,bidAmount),
                 bidItem.getStartItem().getId(),
-                Bank.format(this,player.getFreeCash())));        
-        
+                Bank.format(this,player.getFreeCash())));
+
         if ((passedPlayers.size() == (getRoot().getPlayerManager().getNumberOfPlayers() - 1))
             && (currentItem.value().getBidder() != null)) {
         // One player has bid, everyone else has passed.
@@ -134,7 +134,7 @@ public class StartRound_Sequential extends StartRound {
         }
         return true;
     }
-    
+
     private boolean validateBid(String playerName, BidStartItem bidItem) {
         String errMsg = null;
 
@@ -150,7 +150,7 @@ public class StartRound_Sequential extends StartRound {
                 errMsg = LocalText.getText("WrongItem", playerName, playerManager.getCurrentPlayer().getId());
                 break;
             }
-            
+
             // Check item
             boolean validItem = false;
             for (StartItemAction activeItem : possibleActions.getType(StartItemAction.class)) {
@@ -159,7 +159,7 @@ public class StartRound_Sequential extends StartRound {
                     break;
                 }
             }
-            
+
             if (!validItem) {
                 errMsg = LocalText.getText("ActionNotAllowed", bidItem.toString());
                 break;
@@ -213,14 +213,14 @@ public class StartRound_Sequential extends StartRound {
         }
 
         ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
-        
+
         if (currentItem.value().getBid(player) > 0) {
             player.unblockCash(currentItem.value().getBid(player));
         }
 
         currentItem.value().setPass(player);
         passedPlayers.add(player);
-        
+
         if (passedPlayers.size() == playerManager.getNumberOfPlayers()) {
         // All players have passed - reduce price or run an operating round
             ReportBuffer.add(this, LocalText.getText("ALL_PASSED"));
@@ -249,7 +249,7 @@ public class StartRound_Sequential extends StartRound {
             assignItem(currentItem.value().getBidder(), currentItem.value(), currentItem.value().getBid()); // Could re-assign starting player...
         } else {
         // There are other players yet to bid
-            setNextBiddingPlayer();     
+            setNextBiddingPlayer();
         }
         return true;
     }
@@ -274,7 +274,7 @@ public class StartRound_Sequential extends StartRound {
                 Bank.format(this, price) ));
         itemAssigned(player, item, price);
     }
-    
+
     protected void itemAssigned(Player player, StartItem item, int price) {
     }
 

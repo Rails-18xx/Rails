@@ -206,7 +206,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             guiHints.setActivePanel(GuiDef.Panel.STATUS);
         } else if (step.value() == Steps.STEP_EXCHANGE_TOKENS) {
             int numberToExchange = cgr.getNumberOfFreeBaseTokens();
-            ExchangeTokens action = new ExchangeTokens(tokensToExchangeFrom,
+            ExchangeTokens action = new ExchangeTokens(getRoot(), tokensToExchangeFrom,
                     numberToExchange, numberToExchange);
             action.setCompany(cgr);
             possibleActions.add(action);

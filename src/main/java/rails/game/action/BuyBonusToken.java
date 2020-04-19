@@ -19,9 +19,9 @@ public class BuyBonusToken extends PossibleORAction {
     // Initial attributes
     transient private PrivateCompany privateCompany;
     private String privateCompanyName;
-    transient private Owner seller = null;
+    transient private Owner seller;
     private String sellerName = null;
-    transient protected SellBonusToken specialProperty = null;
+    transient protected SellBonusToken specialProperty;
     protected int specialPropertyId;
 
     private String name;
@@ -35,7 +35,7 @@ public class BuyBonusToken extends PossibleORAction {
      *
      */
     public BuyBonusToken(SellBonusToken specialProperty) {
-
+        super(specialProperty.getRoot());
         this.specialProperty = specialProperty;
         this.specialPropertyId = specialProperty.getUniqueId();
         this.privateCompany = (PrivateCompany) specialProperty.getOriginalCompany();
@@ -92,10 +92,10 @@ public class BuyBonusToken extends PossibleORAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        BuyBonusToken action = (BuyBonusToken)pa; 
+        BuyBonusToken action = (BuyBonusToken)pa;
         return Objects.equal(this.privateCompany, action.privateCompany)
                 && Objects.equal(this.name, action.name)
                 && Objects.equal(this.price, action.price)
@@ -107,7 +107,7 @@ public class BuyBonusToken extends PossibleORAction {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("privateCompany", privateCompany)
                     .addToString("name", name)

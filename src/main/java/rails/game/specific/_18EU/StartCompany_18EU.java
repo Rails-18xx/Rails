@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.rails.util.GameLoader;
 import rails.game.action.PossibleAction;
 import rails.game.action.StartCompany;
 import net.sf.rails.game.CompanyManager;
@@ -51,10 +52,10 @@ public class StartCompany_18EU extends StartCompany {
 
         minorsToMerge = minors;
 
-        if (minorsToMerge != null) {
+        if ( minorsToMerge != null ) {
             StringBuilder b = new StringBuilder();
-            for (PublicCompany minor : minorsToMerge) {
-                if (b.length() > 0) b.append(",");
+            for ( PublicCompany minor : minorsToMerge ) {
+                if ( b.length() > 0 ) b.append(",");
                 b.append(minor.getId());
             }
             minorsToMergeNames = b.toString();
@@ -64,10 +65,10 @@ public class StartCompany_18EU extends StartCompany {
     public void setAvailableHomeStations(List<Stop> stations) {
         availableHomeStations = stations;
 
-        if (availableHomeStations != null) {
+        if ( availableHomeStations != null ) {
             StringBuilder b = new StringBuilder();
-            for (Stop station : availableHomeStations) {
-                if (b.length() > 0) b.append(",");
+            for ( Stop station : availableHomeStations ) {
+                if ( b.length() > 0 ) b.append(",");
                 b.append(station.getSpecificId());
             }
             availableHomeStationNames = b.toString();
@@ -94,9 +95,9 @@ public class StartCompany_18EU extends StartCompany {
     public Stop getSelectedHomeStation() {
         // use delayed selectedHomeStation initialization
         // as not all cities are defined immediately
-        if (selectedHomeStation == null && selectedHomeStationName != null) {
+        if ( selectedHomeStation == null && selectedHomeStationName != null ) {
             MapManager mapManager = getRoot().getMapManager();
-            String[] parts = parseStationName (selectedHomeStationName);
+            String[] parts = parseStationName(selectedHomeStationName);
             MapHex hex = mapManager.getHex(parts[0]);
             int stationId = Integer.parseInt(parts[1]);
             selectedHomeStation = hex.getRelatedStop(stationId);
@@ -113,72 +114,77 @@ public class StartCompany_18EU extends StartCompany {
     @Override
     protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
-        if (pa == this) return true;
+        if ( pa == this ) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false;
+        if ( !super.equalsAs(pa, asOption) ) return false;
 
         // check asOption attributes
-        StartCompany_18EU action = (StartCompany_18EU)pa;
+        StartCompany_18EU action = (StartCompany_18EU) pa;
         boolean options =
                 Objects.equal(this.requestStartSpaces, action.requestStartSpaces)
-                // availableHomeStations does not work correctly, as here sometimes the station number deviate
-               // && RailsObjects.elementEquals(this.availableHomeStations, action.availableHomeStations)
-                && RailsObjects.elementEquals(this.minorsToMerge, action.minorsToMerge)
-        ;
+                        // availableHomeStations does not work correctly, as here sometimes the station number deviate
+                        // && RailsObjects.elementEquals(this.availableHomeStations, action.availableHomeStations)
+                        && RailsObjects.elementEquals(this.minorsToMerge, action.minorsToMerge);
 
         // finish if asOptions check
-        if (asOption) return options;
+        if ( asOption ) return options;
 
         // check asAction attributes
         return options
                 && Objects.equal(this.chosenMinor, action.chosenMinor)
                 && Objects.equal(this.selectedHomeStation, action.selectedHomeStation)
-        ;
+                ;
     }
 
     @Override
     public String toString() {
         return super.toString() +
                 RailsObjects.stringHelper(this)
-                    .addToString("minorsToMerge", minorsToMerge)
-                    .addToString("requestStartSpaces", requestStartSpaces)
-                    .addToString("availableHomeStations", availableHomeStations)
-                    .addToStringOnlyActed("chosenMinor", chosenMinor)
-                    .addToStringOnlyActed("selectedHomeStation", selectedHomeStation)
-                    .toString()
-        ;
+                        .addToString("minorsToMerge", minorsToMerge)
+                        .addToString("requestStartSpaces", requestStartSpaces)
+                        .addToString("availableHomeStations", availableHomeStations)
+                        .addToStringOnlyActed("chosenMinor", chosenMinor)
+                        .addToStringOnlyActed("selectedHomeStation", selectedHomeStation)
+                        .toString()
+                ;
 
     }
 
-    /** Deserialize */
+    /**
+     * Deserialize
+     */
     private void readObject(ObjectInputStream in) throws IOException,
-    ClassNotFoundException {
+            ClassNotFoundException {
 
         in.defaultReadObject();
 
-        CompanyManager cmgr = getCompanyManager();
-        if (minorsToMergeNames != null) {
+        RailsRoot root = ((GameLoader.RailsObjectInputStream) in).getRoot();
+
+        CompanyManager cmgr = root.getCompanyManager();
+        if ( minorsToMergeNames != null ) {
             minorsToMerge = new ArrayList<PublicCompany>();
-            for (String name : minorsToMergeNames.split(",")) {
+            for ( String name : minorsToMergeNames.split(",") ) {
                 minorsToMerge.add(cmgr.getPublicCompany(name));
             }
         }
-        if (chosenMinorName != null) {
+        if ( chosenMinorName != null ) {
             chosenMinor = cmgr.getPublicCompany(chosenMinorName);
         }
 
-        MapManager mapManager = RailsRoot.getInstance().getMapManager();
-        if (availableHomeStationNames != null) {
+        MapManager mapManager = root.getMapManager();
+        if ( availableHomeStationNames != null ) {
             availableHomeStations = new ArrayList<Stop>();
-            for (String cityName : availableHomeStationNames.split(",")) {
-                String[] parts = parseStationName (cityName);
+            for ( String cityName : availableHomeStationNames.split(",") ) {
+                String[] parts = parseStationName(cityName);
                 MapHex hex = mapManager.getHex(parts[0]);
                 int stationId = Integer.parseInt(parts[1]);
-                availableHomeStations.add (hex.getRelatedStop(stationId));
+                availableHomeStations.add(hex.getRelatedStop(stationId));
             }
         }
         // selectedHomeStation is delayed
     }
+
+    protected void finalizeLoad() { }
 
     private String[] parseStationName (String name) {
 

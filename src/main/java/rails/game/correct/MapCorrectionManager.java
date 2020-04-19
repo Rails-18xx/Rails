@@ -27,22 +27,22 @@ public final class MapCorrectionManager extends CorrectionManager {
     public static MapCorrectionManager create(GameManager parent) {
         return new MapCorrectionManager(parent);
     }
-    
+
     @Override
     public List<CorrectionAction> createCorrections() {
         List<CorrectionAction> actions = super.createCorrections();
 
         if (isActive()) {
             if (activeTileAction == null) {
-                activeTileAction = new MapCorrectionAction();
+                activeTileAction = new MapCorrectionAction(getRoot());
             }
             actions.add(activeTileAction);
             // FIXME: This is a workaround to get the LayTile and LayToken actions created from inside the CorrectionManager
-            LayTile tileAction = new LayTile(LayTile.CORRECTION);
+            LayTile tileAction = new LayTile(getRoot(), LayTile.CORRECTION);
             getParent().getPossibleActions().add(tileAction);
             for (PublicCompany company:getRoot().getCompanyManager().getAllPublicCompanies()) {
                 if (!company.isClosed() && company.hasLaidHomeBaseTokens() && company.getNumberOfFreeBaseTokens() > 0) {
-                    LayBaseToken tokenAction = new LayBaseToken(LayBaseToken.CORRECTION);
+                    LayBaseToken tokenAction = new LayBaseToken(getRoot(), LayBaseToken.CORRECTION);
                     tokenAction.setCompany(company);
                     getParent().getPossibleActions().add(tokenAction);
                 }
@@ -80,7 +80,7 @@ public final class MapCorrectionManager extends CorrectionManager {
         String errMsg = null;
         while (true) {
             // check if chosenTile is still available (not for preprinted)
-            // FIXME: Check if this is still correct (Rails 2.0), removed that check as all 
+            // FIXME: Check if this is still correct (Rails 2.0), removed that check as all
             // tiles have external id defined
             if (chosenTile != null // && rails.util.Util.hasValue(chosenTile.toText())
                     && chosenTile != hex.getCurrentTile()
@@ -187,7 +187,7 @@ public final class MapCorrectionManager extends CorrectionManager {
                 return execute(action);
             }
         case FINISHED:
-            
+
 
             // lays tile
             HexSide orientation = HexSide.get(action.getOrientation());

@@ -71,7 +71,9 @@ public final class RevenueManager extends RailsManager implements Configurable {
                 boolean isModifier = false;
                 // add them to the revenueManager
                 if (modifier instanceof NetworkGraphModifier) {
-                    graphModifiers.add((NetworkGraphModifier) modifier);
+                    NetworkGraphModifier ngm = (NetworkGraphModifier) modifier;
+                    ngm.setRoot(getRoot());
+                    graphModifiers.add(ngm);
                     isModifier = true;
                     log.debug("Added as graph modifier = {}", className);
                 }

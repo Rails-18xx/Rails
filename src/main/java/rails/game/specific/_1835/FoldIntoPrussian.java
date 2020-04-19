@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.sf.rails.game.RailsRoot;
 import rails.game.action.PossibleAction;
 import net.sf.rails.game.Company;
 import net.sf.rails.game.CompanyManager;
@@ -20,8 +21,8 @@ import com.google.common.base.Objects;
 public class FoldIntoPrussian extends PossibleAction {
 
     // Server settings
-    protected transient List<Company> foldableCompanies = null;
-    protected String foldableCompanyNames = null;
+    protected transient List<Company> foldableCompanies;
+    protected String foldableCompanyNames;
 
     // Client settings
     protected transient List<Company> foldedCompanies = null;
@@ -29,14 +30,14 @@ public class FoldIntoPrussian extends PossibleAction {
 
     public static final long serialVersionUID = 1L;
 
-    public FoldIntoPrussian(List<Company> companies) {
-        super(null); // not defined by an activity yet
+    public FoldIntoPrussian(RailsRoot root, List<Company> companies) {
+        super(root); // not defined by an activity yet
         this.foldableCompanies = companies;
         foldableCompanyNames = Util.joinNamesWithDelimiter(foldableCompanies, ",");
     }
 
     public FoldIntoPrussian(Company company) {
-        this (Arrays.asList(new Company[] {company}));
+        this (company.getRoot(), Arrays.asList(company));
     }
 
     public List<Company> getFoldedCompanies() {
@@ -69,21 +70,21 @@ public class FoldIntoPrussian extends PossibleAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        FoldIntoPrussian action = (FoldIntoPrussian)pa; 
-        boolean options = 
+        FoldIntoPrussian action = (FoldIntoPrussian)pa;
+        boolean options =
                 Objects.equal(this.foldableCompanies, action.foldableCompanies) ||
                     // additional conditions required as there is no sorting defined in old save files
                     this.foldableCompanies != null && action.foldableCompanies != null
                     && this.foldableCompanies.containsAll(action.foldableCompanies)
                     && action.foldableCompanies.containsAll(this.foldableCompanies)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.foldedCompanies, action.foldedCompanies) ||
@@ -96,18 +97,18 @@ public class FoldIntoPrussian extends PossibleAction {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("foldableCompanies", foldableCompanies)
                     .addToStringOnlyActed("foldedCompanies", foldedCompanies)
                     .toString()
         ;
     }
-    
+
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {
-        
+
         Company company;
 
         in.defaultReadObject();

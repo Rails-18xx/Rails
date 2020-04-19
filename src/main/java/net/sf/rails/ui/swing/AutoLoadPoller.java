@@ -92,7 +92,7 @@ public class AutoLoadPoller extends Thread {
                         }
                         lastSavedFilename = currentFilename;
 
-                        final GameAction reload = new GameAction(GameAction.Mode.RELOAD);
+                        final GameAction reload = new GameAction(guiMgr.getRoot(), GameAction.Mode.RELOAD);
                         reload.setFilepath(saveDirectory+"/"+currentFilename);
 
                         // The GUI must be accessed on the event dispatch thread only.

@@ -19,15 +19,18 @@ import org.jgrapht.graph.SimpleGraph;
 
 public class BzHTileModifier implements NetworkGraphModifier {
 
-    private static final Logger log =
-        LoggerFactory.getLogger(BzHTileModifier.class);
+    private static final Logger log = LoggerFactory.getLogger(BzHTileModifier.class);
     private List<MapHex> bzhMapHexes = new ArrayList<MapHex> ();
+
+    private RailsRoot root;
+
+    public void setRoot(RailsRoot root) {
+        this.root = root;
+    }
 
     @Override
     public void modifyMapGraph(NetworkGraph mapGraph) {
-
         SimpleGraph<NetworkVertex, NetworkEdge> graph = mapGraph.getGraph();
-        RailsRoot root = RailsRoot.getInstance();
 
         // 1. check Phase
         // this is a violation of the assumption that the track network only dependents on the map configuration

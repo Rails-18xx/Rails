@@ -458,13 +458,13 @@ public class OperatingRound extends Round implements Observer {
                 // lay
                 // I am not sure that this will work with multiple home hexes.
                 for (MapHex home : operatingCompany.value().getHomeHexes()) {
-                    possibleActions.add(new LayBaseToken(home));
+                    possibleActions.add(new LayBaseToken(getRoot(), home));
                 }
                 forced = true;
             } else {
                 possibleActions.addAll(getNormalTileLays(true));
                 possibleActions.addAll(getSpecialTileLays(true));
-                possibleActions.add(new NullAction(NullAction.Mode.SKIP));
+                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
             }
 
         } else if (step == GameDef.OrStep.LAY_TOKEN) {
@@ -475,7 +475,7 @@ public class OperatingRound extends Round implements Observer {
 
             possibleActions.addAll(currentNormalTokenLays);
             possibleActions.addAll(currentSpecialTokenLays);
-            possibleActions.add(new NullAction(NullAction.Mode.SKIP));
+            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
         } else if (step == GameDef.OrStep.CALC_REVENUE) {
             prepareRevenueAndDividendAction();
             if (noMapMode) prepareNoMapActions();
@@ -524,8 +524,7 @@ public class OperatingRound extends Round implements Observer {
                 int minPrice, maxPrice;
                 List<Player> players = playerManager.getPlayers();
                 int numberOfPlayers = playerManager.getNumberOfPlayers();
-                for (int i = currentPlayerIndex; i < currentPlayerIndex
-                        + numberOfPlayers; i++) {
+                for (int i = currentPlayerIndex; i < currentPlayerIndex + numberOfPlayers; i++) {
                     player = players.get(i % numberOfPlayers);
                     if (!maySellPrivate(player)) continue;
                     for (PrivateCompany privComp : player.getPortfolioModel().getPrivateCompanies()) {
@@ -549,8 +548,7 @@ public class OperatingRound extends Round implements Observer {
 
                 // Are there any "common" special properties,
                 // i.e. properties that are available to everyone?
-                List<SpecialProperty> commonSP =
-                        gameManager.getCommonSpecialProperties();
+                List<SpecialProperty> commonSP = gameManager.getCommonSpecialProperties();
                 if (commonSP != null) {
                     SellBonusToken sbt;
                     loop:
@@ -586,7 +584,7 @@ public class OperatingRound extends Round implements Observer {
                                 && sp.isUsableDuringOR(step)) {
                             if (sp instanceof SpecialBaseTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
-                                    possibleActions.add(new LayBaseToken(
+                                    possibleActions.add(new LayBaseToken(getRoot(),
                                             (SpecialBaseTokenLay) sp));
                                 }
                             } else if (!(sp instanceof SpecialTileLay)) {
@@ -605,7 +603,7 @@ public class OperatingRound extends Round implements Observer {
                                 && sp.isUsableDuringOR(step)) {
                             if (sp instanceof SpecialBaseTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
-                                    possibleActions.add(new LayBaseToken(
+                                    possibleActions.add(new LayBaseToken(getRoot(),
                                             (SpecialBaseTokenLay) sp));
                                 }
                             } else {
@@ -618,7 +616,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         if (doneAllowed) {
-            possibleActions.add(new NullAction(NullAction.Mode.DONE));
+            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
         }
 
         for (PossibleAction pa : possibleActions.getList()) {
@@ -815,11 +813,7 @@ public class OperatingRound extends Round implements Observer {
                 if (!company.canRunTrains()) {
                     // No trains, then the revenue is zero.
                     log.debug("OR skips {}: Cannot run trains", step);
-
-                    executeSetRevenueAndDividend(
-                            new SetDividend(0, false, new int[]{SetDividend.NO_TRAIN})
-                    );
-
+                    executeSetRevenueAndDividend(new SetDividend(getRoot(), 0, false, new int[] { SetDividend.NO_TRAIN }));
                     // TODO: This probably does not handle share selling correctly
                     continue;
                 }
@@ -1775,7 +1769,7 @@ public class OperatingRound extends Round implements Observer {
             }
         }
         if (!remainingTileLaysPerColour.isEmpty()) {
-            currentNormalTileLays.add(new LayTile(remainingTileLaysPerColour));
+            currentNormalTileLays.add(new LayTile(getRoot(), remainingTileLaysPerColour));
         }
 
         // NOTE: in a later stage tile lays will be specified per hex or set of
@@ -2135,7 +2129,7 @@ public class OperatingRound extends Round implements Observer {
 
         /* For now, we allow one token of the currently operating company */
         if (operatingCompany.value().getNumberOfFreeBaseTokens() > 0) {
-            currentNormalTokenLays.add(new LayBaseToken((List<MapHex>) null));
+            currentNormalTokenLays.add(new LayBaseToken(getRoot(), (List<MapHex>) null));
         }
 
     }
@@ -2183,7 +2177,7 @@ public class OperatingRound extends Round implements Observer {
                     }
                     if (!canLay) continue;
                 }
-                currentSpecialTokenLays.add(new LayBaseToken(stl));
+                currentSpecialTokenLays.add(new LayBaseToken(getRoot(), stl));
             }
         }
     }
@@ -2323,7 +2317,7 @@ public class OperatingRound extends Round implements Observer {
     protected void setBonusTokenLays() {
 
         for (SpecialBonusTokenLay stl : getSpecialProperties(SpecialBonusTokenLay.class)) {
-            possibleActions.add(new LayBonusToken(stl, stl.getToken()));
+            possibleActions.add(new LayBonusToken(getRoot(), stl, stl.getToken()));
         }
     }
 
@@ -2735,7 +2729,7 @@ public class OperatingRound extends Round implements Observer {
                             SetDividend.PAYOUT,
                             SetDividend.WITHHOLD};
 
-            possibleActions.add(new SetDividend(
+            possibleActions.add(new SetDividend(getRoot(),
                     operatingCompany.value().getLastRevenue(), true,
                     allowedRevenueActions));
         }
@@ -2746,7 +2740,7 @@ public class OperatingRound extends Round implements Observer {
         // LayTile Actions
         for (Integer tc : mapManager.getPossibleTileCosts()) {
             if (tc <= operatingCompany.value().getCash())
-                possibleActions.add(new OperatingCost(
+                possibleActions.add(new OperatingCost(getRoot(),
                         OperatingCost.OCType.LAY_TILE, tc, false));
         }
 
@@ -2779,7 +2773,7 @@ public class OperatingRound extends Round implements Observer {
                     // sequence
                     // costsSet can
                     // be zero
-                    possibleActions.add(new OperatingCost(
+                    possibleActions.add(new OperatingCost(getRoot(),
                             OperatingCost.OCType.LAY_BASE_TOKEN, cost, false));
             }
         }

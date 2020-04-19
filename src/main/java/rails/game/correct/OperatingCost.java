@@ -5,13 +5,14 @@ import java.io.ObjectInputStream;
 
 import com.google.common.base.Objects;
 
+import net.sf.rails.game.RailsRoot;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
 /**
- * OR action for no map mode 
+ * OR action for no map mode
  * mirrors operating actions like tile and token lays, but
  * only changes the cash position of the public company
 
@@ -20,10 +21,10 @@ import net.sf.rails.util.Util;
 public class OperatingCost extends PossibleORAction {
 
     public enum OCType {LAY_TILE, LAY_BASE_TOKEN};
-    
+
     /** The Constant serialVersionUID. */
     public static final long serialVersionUID = 2L;
-    
+
     /* Preconditions */
 
     /** operating cost type (as tile lay, token lay etc.) */
@@ -31,33 +32,31 @@ public class OperatingCost extends PossibleORAction {
 
     /** suggested costs */
     private int suggestedCost;
-    
+
     /** maximum costs */
     private int maximumCost;
-    
+
     /** allow free entry */
     private boolean freeEntryAllowed;
-    
+
     /* Postconditions */
 
     /** selected cash amount */
-    private int operatingCost; 
+    private int operatingCost;
 
    /**
     * Instantiates an operating costs action
-    * 
+    *
     * @param pc Public Company
     */
-   public OperatingCost(OCType ot, int ocCosts, boolean freeEntry) {
-       
-       super();
-
+   public OperatingCost(RailsRoot root, OCType ot, int ocCosts, boolean freeEntry) {
+       super(root);
        operatingCostType = ot;
        suggestedCost = ocCosts;
        freeEntryAllowed = freeEntry;
        maximumCost = company.getCash();
    }
-   
+
    public boolean isFreeEntryAllowed() {
        return freeEntryAllowed;
    }
@@ -76,13 +75,13 @@ public class OperatingCost extends PossibleORAction {
    public OCType getOCType(){
        return operatingCostType;
    }
-   
+
    @Override
    protected boolean equalsAs(PossibleAction pa, boolean asOption) {
        // identity always true
        if (pa == this) return true;
        //  super checks both class identity and super class attributes
-       if (!super.equalsAs(pa, asOption)) return false; 
+       if (!super.equalsAs(pa, asOption)) return false;
 
        // check asOption attributes
        OperatingCost action = (OperatingCost) pa;
@@ -91,19 +90,19 @@ public class OperatingCost extends PossibleORAction {
                && Objects.equal(this.maximumCost, action.maximumCost)
                && Objects.equal(this.freeEntryAllowed, action.freeEntryAllowed)
        ;
-       
+
        // finish if asOptions check
        if (asOption) return options;
-       
+
        // check asAction attributes
        return options
                && Objects.equal(this.operatingCost, action.operatingCost)
        ;
     }
-    
+
    @Override
    public String toString() {
-       return super.toString() + 
+       return super.toString() +
                RailsObjects.stringHelper(this)
                    .addToString("operatingCostType", operatingCostType)
                    .addToString("suggestedCost", suggestedCost)
@@ -113,7 +112,7 @@ public class OperatingCost extends PossibleORAction {
                    .toString()
        ;
    }
-   
+
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException,
             ClassNotFoundException {

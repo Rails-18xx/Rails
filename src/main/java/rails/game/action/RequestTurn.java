@@ -19,7 +19,7 @@ public class RequestTurn extends PossibleAction {
     private String requestingPlayerName;
 
     public RequestTurn (Player player) {
-        super(null); // not defined by an activity yet
+        super(player.getRoot()); // not defined by an activity yet
         // Override player set by superclass
         if (player != null) {
             requestingPlayerName = player.getId();
@@ -29,8 +29,8 @@ public class RequestTurn extends PossibleAction {
     public String getRequestingPlayerName() {
         return requestingPlayerName;
     }
-    
-    
+
+
     @Override
     public String toMenu() {
         return LocalText.getText("RequestTurn", requestingPlayerName);
@@ -41,17 +41,17 @@ public class RequestTurn extends PossibleAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        RequestTurn action = (RequestTurn)pa; 
+        RequestTurn action = (RequestTurn)pa;
         return Objects.equal(this.requestingPlayerName, action.requestingPlayerName);
         // no asAction attributes to be checked
     }
-    
+
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("requestingPlayerName", requestingPlayerName)
                     .toString()

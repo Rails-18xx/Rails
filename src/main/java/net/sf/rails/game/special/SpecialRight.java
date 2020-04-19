@@ -43,7 +43,6 @@ public class SpecialRight extends SpecialProperty implements NetworkGraphModifie
 
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
-
         super.configureFromXML(tag);
 
         Tag rightTag = tag.getChild("SpecialRight");
@@ -55,23 +54,25 @@ public class SpecialRight extends SpecialProperty implements NetworkGraphModifie
         if (!Util.hasValue(rightName))
             throw new ConfigurationException(
                     "SpecialRight: no Right name specified");
-        
+
         rightDefaultValue = rightValue = rightTag.getAttributeAsString("defaultValue", null);
 
         cost = rightTag.getAttributeAsInteger("cost", 0);
-        
+
         locationNames = rightTag.getAttributeAsString("location", null);
     }
+
+    public void setRoot(RailsRoot root) { }
 
     @Override
     public void finishConfiguration (RailsRoot root) throws ConfigurationException {
         super.finishConfiguration(root);
-        
+
         // add them to the call list of the RevenueManager
         root.getRevenueManager().addGraphModifier(this);
-        
+
         if (locationNames != null) {
-            locations = new ArrayList<MapHex>();
+            locations = new ArrayList<>();
             MapManager mmgr = root.getMapManager();
             MapHex hex;
             for (String hexName : locationNames.split(",")) {
@@ -83,18 +84,18 @@ public class SpecialRight extends SpecialProperty implements NetworkGraphModifie
             }
         }
     }
-    
+
     public boolean isExecutionable() {
         // FIXME: Check if this works correctly
         // IT is better to rewrite this check
         // see ExchangeForShare
         return ((PrivateCompany)originalCompany).getOwner() instanceof Player;
     }
- 
+
     public String getName() {
         return rightName;
     }
-    
+
     public String getDefaultValue() {
         return rightDefaultValue;
     }
@@ -127,14 +128,14 @@ public class SpecialRight extends SpecialProperty implements NetworkGraphModifie
         if (cost > 0) b.append(" for ").append(Bank.format(this, cost));
         return b.toString();
     }
-    
+
     @Override
     public String toMenu() {
         return LocalText.getText("BuyRight",
                 rightName,
                 Bank.format(this, cost));
     }
-    
+
     public String getInfo() {
         return toMenu();
     }
@@ -149,15 +150,15 @@ public class SpecialRight extends SpecialProperty implements NetworkGraphModifie
         // 1. check operating company if it has the right then it is excluded from the removal
         // TODO: Only use one right for all companies instead of one per company
         if (this.getOriginalCompany() != company || company.hasRight(this)) return;
-        
+
         SimpleGraph<NetworkVertex, NetworkEdge> graph = routeGraph.getGraph();
-        
+
         // 2. find vertices to hex and remove the station
         Set<NetworkVertex> verticesToRemove = NetworkVertex.getVerticesByHexes(graph.vertexSet(), locations);
         // 3 ... and remove them from the graph
         graph.removeAllVertices(verticesToRemove);
     }
 
- 
+
 
 }

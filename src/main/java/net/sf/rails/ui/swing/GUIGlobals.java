@@ -19,9 +19,8 @@ import org.slf4j.LoggerFactory;
  */
 
 public class GUIGlobals {
-    private static final Logger log = 
-            LoggerFactory.getLogger(GUIGlobals.class);
-    
+    private static final Logger log = LoggerFactory.getLogger(GUIGlobals.class);
+
     private static double scale;
     private static double fontsScale;
     private static RenderingHints renderingHints;
@@ -39,20 +38,20 @@ public class GUIGlobals {
     public static double getFontsScale() {
         return fontsScale;
     }
-    
+
     public static void setRenderingHints(Graphics2D g) {
         g.setRenderingHints(renderingHints);
     }
-    
+
     public static RenderingHints getRenderingHints() {
         return renderingHints;
     }
-    
+
     /**
      * Set the scale so that the MasterBoard fits on the screen. Default scale
      * should be 15 for screen resolutions with height 1000 or more. For less,
      * scale it down linearly.
-     * 
+     *
      */
     private static void initMapScale() {
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -66,7 +65,7 @@ public class GUIGlobals {
     }
 
     public static void initFontsScale() {
-        String fontScaleString = Config.getGameSpecific("font.ui.scale");
+        String fontScaleString = Config.get("font.ui.scale");
         if (Util.hasValue(fontScaleString)) {
             try {
                 fontsScale = Double.parseDouble(fontScaleString);
@@ -78,7 +77,7 @@ public class GUIGlobals {
         }
         log.debug("Fonts-Scale set to " + fontsScale);
     }
-    
+
     public static void initRenderingHints() {
         renderingHints = new RenderingHints(null);
         renderingHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION,
@@ -96,6 +95,6 @@ public class GUIGlobals {
         renderingHints.put(RenderingHints.KEY_TEXT_ANTIALIASING,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
-    
-    
+
+
 }

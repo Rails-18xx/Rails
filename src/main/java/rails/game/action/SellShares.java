@@ -43,7 +43,7 @@ public class SellShares extends PossibleAction {
 
     public SellShares(PublicCompany company, int shareUnits, int number,
             int price, int presidentExchange) {
-        super(null); // not defined by an activity yet
+        super(company.getRoot()); // not defined by an activity yet
         this.company = company;
         this.shareUnits = shareUnits;
         this.price = price;
@@ -101,7 +101,7 @@ public class SellShares extends PossibleAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
         SellShares action = (SellShares) pa;
@@ -119,7 +119,7 @@ public class SellShares extends PossibleAction {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("company", company)
                     .addToString("shareUnit", shareUnit)

@@ -3,6 +3,7 @@ package rails.game.action;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import net.sf.rails.util.GameLoader;
 import rails.game.specific._1880.StartCompany_1880;
 
 import com.google.common.base.Objects;
@@ -14,7 +15,7 @@ import net.sf.rails.game.model.PortfolioOwner;
 import net.sf.rails.util.RailsObjects;
 
 /**
- * 
+ *
  * Rails 2.0: Updated equals and toString methods
  */
 public class BuyCertificate extends PossibleAction {
@@ -48,9 +49,12 @@ public class BuyCertificate extends PossibleAction {
     public BuyCertificate(PublicCompany company, int sharePerCert,
             PortfolioOwner from,
             int price, int maximumNumber) {
-        super(null); // not defined by an activity yet
+        super(company.getRoot()); // not defined by an activity yet
         this.company = company;
         this.sharePerCert = sharePerCert;
+        if ( from == null ) {
+            from = root.getBank().getIpo();
+        }
         this.from = from.getPortfolioModel();
         this.fromName = this.from.getUniqueName();
         this.price = price;
@@ -65,12 +69,6 @@ public class BuyCertificate extends PossibleAction {
             int price) {
         this(company, sharePerCert, from, price, 1);
     }
-
-    /** Required for deserialization */
-    public BuyCertificate() {
-        super(null); // not defined by an activity yet
-    }
-
 
     public PortfolioModel getFromPortfolio() {
         return from;
@@ -119,14 +117,14 @@ public class BuyCertificate extends PossibleAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        BuyCertificate action = (BuyCertificate)pa; 
-        boolean options = 
+        BuyCertificate action = (BuyCertificate)pa;
+        boolean options =
                 // TODO: This is commented out as the certificate is not required anymore
                 // Objects.equal(this.certificate, action.certificate)
-                Objects.equal(this.company, action.company) 
+                Objects.equal(this.company, action.company)
                 // In StartCompany_1880 the sharePerCert can differ
                 && (Objects.equal(this.sharePerCert, action.sharePerCert) || this instanceof StartCompany_1880)
                 && Objects.equal(this.from, action.from)
@@ -134,10 +132,10 @@ public class BuyCertificate extends PossibleAction {
                 && (Objects.equal(this.price, action.price) || this instanceof StartCompany)
                 && Objects.equal(this.maximumNumber, action.maximumNumber)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.numberBought, action.numberBought)
@@ -146,7 +144,7 @@ public class BuyCertificate extends PossibleAction {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("certificate", certificate)
                     .addToString("company", company)
@@ -175,7 +173,7 @@ public class BuyCertificate extends PossibleAction {
 
         numberBought = fields.get("numberBought", numberBought);
 
-        RailsRoot root = RailsRoot.getInstance();
+        RailsRoot root = ((GameLoader.RailsObjectInputStream) in).getRoot();
 
         /* Check for aliases (old company names) */
         CompanyManager companyManager = root.getCompanyManager();
@@ -185,19 +183,18 @@ public class BuyCertificate extends PossibleAction {
             // Old style
             certUniqueId = companyManager.checkAliasInCertId(certUniqueId);
             certificate = PublicCertificate.getByUniqueId(certUniqueId);
-            // TODO: This function needs a compatible replacement 
-            from = getGameManager().getPortfolioByName(fromName);
+            // TODO: This function needs a compatible replacement
+            from = root.getGameManager().getPortfolioByName(fromName);
             company = certificate.getCompany();
             companyName = company.getId();
             sharePerCert = certificate.getShare();
         } else if (companyName != null) {
             // New style (since Rails.1.3.1)
             company = root.getCompanyManager().getPublicCompany(companyName);
-            // TODO: This function needs a compatible replacement 
-            from = getGameManager().getPortfolioByUniqueName(fromName);
+            // TODO: This function needs a compatible replacement
+            from = root.getGameManager().getPortfolioByUniqueName(fromName);
             // We don't need the certificate anymore.
         }
+      }
 
-
-    }
 }

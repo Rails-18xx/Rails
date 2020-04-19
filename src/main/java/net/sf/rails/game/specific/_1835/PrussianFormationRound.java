@@ -139,7 +139,7 @@ public class PrussianFormationRound extends StockRound {
 
         } else if (step == Step.MERGE) {
 
-            possibleActions.add(new FoldIntoPrussian(foldablePrePrussians));
+            possibleActions.add(new FoldIntoPrussian(getRoot(), foldablePrePrussians));
 
         } else if (step == Step.DISCARD_TRAINS) {
 

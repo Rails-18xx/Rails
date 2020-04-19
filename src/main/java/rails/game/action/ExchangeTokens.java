@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.RailsObjects;
 
 import com.google.common.base.Objects;
@@ -14,11 +15,11 @@ import com.google.common.base.Objects;
  */
 
 // FIXME: This stores client settings (action results) in an external object (ExchangeableToken).
-// This is bad practice in Rails. This action is only used in 1856, maybe it should be a specific action there 
+// This is bad practice in Rails. This action is only used in 1856, maybe it should be a specific action there
 public class ExchangeTokens extends PossibleORAction {
 
     // Server settings
-    private List<ExchangeableToken> tokensToExchange = new ArrayList<ExchangeableToken>();
+    private List<ExchangeableToken> tokensToExchange;
     private int minNumberToExchange = 0;
     private int maxNumberToExchange = 0;
 
@@ -26,11 +27,11 @@ public class ExchangeTokens extends PossibleORAction {
 
     public static final long serialVersionUID = 1L;
 
-    public ExchangeTokens(List<ExchangeableToken> tokensToSelectFrom,
+    public ExchangeTokens(RailsRoot root, List<ExchangeableToken> tokensToSelectFrom,
             int minNumberToExchange,
             int maxNumberToExchange) {
 
-        super();
+        super(root);
         this.tokensToExchange = tokensToSelectFrom;
         this.minNumberToExchange = minNumberToExchange;
         this.maxNumberToExchange = maxNumberToExchange;
@@ -59,10 +60,10 @@ public class ExchangeTokens extends PossibleORAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        ExchangeTokens action = (ExchangeTokens)pa; 
+        ExchangeTokens action = (ExchangeTokens)pa;
         return Objects.equal(this.tokensToExchange, action.tokensToExchange)
                 && Objects.equal(this.minNumberToExchange, action.minNumberToExchange)
                 && Objects.equal(this.maxNumberToExchange, action.maxNumberToExchange)
@@ -72,7 +73,7 @@ public class ExchangeTokens extends PossibleORAction {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("tokensToExchange", tokensToExchange)
                     .addToString("minNumberToExchange", minNumberToExchange)

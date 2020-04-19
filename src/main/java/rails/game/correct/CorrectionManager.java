@@ -44,7 +44,7 @@ public abstract class CorrectionManager extends RailsAbstractItem {
     public List<CorrectionAction> createCorrections() {
 
         List<CorrectionAction> actions = new ArrayList<CorrectionAction>();
-        actions.add(new CorrectionModeAction(getCorrectionType(), isActive()));
+        actions.add(new CorrectionModeAction(getRoot(), getCorrectionType(), isActive()));
 
         return actions;
     }

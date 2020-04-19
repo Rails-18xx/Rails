@@ -27,7 +27,7 @@ public class RepayLoans extends PossibleAction {
 
     public RepayLoans(PublicCompany company, int minNumber, int maxNumber,
             int price) {
-        super(null); // not defined by an activity yet
+        super(company.getRoot()); // not defined by an activity yet
         this.company = company;
         this.companyName = company.getId();
         this.minNumber = minNumber;
@@ -77,20 +77,20 @@ public class RepayLoans extends PossibleAction {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
         RepayLoans action = (RepayLoans) pa;
-        boolean options = 
+        boolean options =
                 Objects.equal(this.company, action.company)
                 && Objects.equal(this.minNumber, action.minNumber)
                 && Objects.equal(this.maxNumber, action.maxNumber)
                 && Objects.equal(this.price, action.price)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.numberRepaid, action.numberRepaid)
@@ -99,7 +99,7 @@ public class RepayLoans extends PossibleAction {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("company", company)
                     .addToString("minNumber", minNumber)
