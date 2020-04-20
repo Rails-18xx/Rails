@@ -86,8 +86,6 @@ public class GameUIManager implements DialogOwner {
     protected JDialog currentDialog = null;
     protected PossibleAction currentDialogAction = null;
 
-    protected static ImageLoader imageLoader;
-
     protected RailsRoot railsRoot;
     protected PossibleAction lastAction;
     protected ActionPerformer activeWindow = null;
@@ -165,7 +163,6 @@ public class GameUIManager implements DialogOwner {
         this.splashWindow = splashWindow;
         splashWindow.notifyOfStep(SplashWindow.STEP_INIT_UI);
 
-//        instance = this;
         this.railsRoot = root;
         uiHints = railsRoot.getGameManager().getUIHints();
         savePrefix = railsRoot.getGameName();
@@ -286,8 +283,6 @@ public class GameUIManager implements DialogOwner {
 
 
     public void gameUIInit(boolean newGame) {
-        imageLoader = new ImageLoader();
-
         splashWindow.notifyOfStep(SplashWindow.STEP_STOCK_CHART);
         FXStockChartWindow.launch(this);
 
@@ -632,6 +627,10 @@ public class GameUIManager implements DialogOwner {
         if (startRoundWindow != null) startRoundWindow.updatePlayerOrder(newPlayerOrder);
         if (statusWindow != null) statusWindow.updatePlayerOrder(newPlayerOrder);
         currentGuiPlayerNames = newPlayerOrder;
+    }
+
+    public void uncheckMenuItemBox(String itemName) {
+        statusWindow.uncheckMenuItemBox(itemName);
     }
 
     /**
@@ -1125,10 +1124,6 @@ public class GameUIManager implements DialogOwner {
 
     public PossibleAction getLastAction() {
         return lastAction;
-    }
-
-    public static ImageLoader getImageLoader() {
-        return imageLoader;
     }
 
     public RailsRoot getRoot() {

@@ -107,14 +107,12 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
 
     private JMenuBar menuBar;
 
-    private static JMenu fileMenu, optMenu, moveMenu, moderatorMenu,
-    specialMenu, correctionMenu, developerMenu;
+    private JMenu fileMenu, optMenu, moveMenu, moderatorMenu, specialMenu, correctionMenu, developerMenu;
 
-    private JMenuItem menuItem;
-
-    private ActionMenuItem actionMenuItem;
-
-    private ActionMenuItem undoItem, forcedUndoItem, redoItem, redoItem2, saveLogsItem;
+    private ActionMenuItem undoItem;
+    private ActionMenuItem forcedUndoItem;
+    private ActionMenuItem redoItem;
+    private ActionMenuItem redoItem2;
 
     private static final Logger log =
             LoggerFactory.getLogger(StatusWindow.class);
@@ -140,7 +138,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         moderatorMenu.setMnemonic(KeyEvent.VK_M);
         specialMenu.setMnemonic(KeyEvent.VK_S);
 
-        actionMenuItem = new ActionMenuItem(LocalText.getText("SAVE"));
+        ActionMenuItem actionMenuItem = new ActionMenuItem(LocalText.getText("SAVE"));
         actionMenuItem.setActionCommand(SAVE_CMD);
         actionMenuItem.setMnemonic(KeyEvent.VK_S);
         actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
@@ -160,7 +158,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         actionMenuItem.setPossibleAction(new GameAction(gameUIManager.getRoot(), GameAction.Mode.RELOAD));
         fileMenu.add(actionMenuItem);
 
-        menuItem = new JMenuItem(LocalText.getText("AutoSaveLoad"));
+        JMenuItem menuItem = new JMenuItem(LocalText.getText("AutoSaveLoad"));
         menuItem.setActionCommand(AUTOSAVELOAD_CMD);
         menuItem.setMnemonic(KeyEvent.VK_A);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
@@ -297,7 +295,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             developerMenu.setName("Developer");
             menuBar.add(developerMenu);
 
-            saveLogsItem = new ActionMenuItem("Save Logs");
+            ActionMenuItem saveLogsItem = new ActionMenuItem("Save Logs");
             saveLogsItem.setName("Save Logs");
             saveLogsItem.setActionCommand("Save Logs");
             saveLogsItem.addActionListener(this);
@@ -570,8 +568,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         specialMenu.setEnabled(enabled);
         specialMenu.repaint();
 
-        List<NullAction> inactiveItems =
-            possibleActions.getType(NullAction.class);
+        List<NullAction> inactiveItems = possibleActions.getType(NullAction.class);
         if (inactiveItems != null) {
             for (NullAction na : inactiveItems) {
                 switch (na.getMode()) {
@@ -655,8 +652,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             process(executedAction);
         } else if (command.equals(SELL_CMD)) {
             process(executedAction);
-        } else if (command.equals(DONE_CMD) || command.equals(PASS_CMD)
-                || command.equals(AUTOPASS_CMD)) {
+        } else if (command.equals(DONE_CMD) || command.equals(PASS_CMD) || command.equals(AUTOPASS_CMD)) {
             if (gameUIManager.isGameOver()) {
                 System.exit(0);
             }
@@ -749,13 +745,12 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         return gameStatus;
     }
 
-    public static void uncheckMenuItemBox(String itemName) {
+    public void uncheckMenuItemBox(String itemName) {
         int count = optMenu.getMenuComponentCount();
 
         for (int i = 0; i < count; i++) {
             try {
-                if (optMenu.getMenuComponent(i).getName().equalsIgnoreCase(
-                        itemName)) {
+                if (optMenu.getMenuComponent(i).getName().equalsIgnoreCase(itemName)) {
                     ((JCheckBoxMenuItem) optMenu.getMenuComponent(i)).setSelected(false);
                     optMenu.invalidate();
                 }

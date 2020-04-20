@@ -7,6 +7,7 @@ import java.awt.geom.AffineTransform;
 import net.sf.rails.common.Config;
 import net.sf.rails.game.MapManager;
 import net.sf.rails.ui.swing.GameUIManager;
+import net.sf.rails.ui.swing.ImageLoader;
 import net.sf.rails.util.Util;
 
 import org.apache.batik.swing.JSVGCanvas;
@@ -126,7 +127,7 @@ public final class HexMapImage extends JSVGCanvas  {
     }
 
     private void zoom() {
-        zoomFactor = GameUIManager.getImageLoader().getZoomFactor(zoomStep);
+        zoomFactor = ImageLoader.getInstance().getZoomFactor(zoomStep);
         log.debug("ImageMap zoomStep = " + zoomStep);
         log.debug("ImageMap zoomFactor = " + zoomFactor);
         scaleMap();

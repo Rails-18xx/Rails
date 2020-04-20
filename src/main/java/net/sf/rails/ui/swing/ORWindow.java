@@ -146,7 +146,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
             @Override
             public void windowClosing(WindowEvent e) {
                 saveLayout();
-                StatusWindow.uncheckMenuItemBox(StatusWindow.MAP_CMD);
+                gameUIManager.uncheckMenuItemBox(StatusWindow.MAP_CMD);
                 if (!isDockingFrameworkEnabled()) {
                     frame.dispose();
                 } else {

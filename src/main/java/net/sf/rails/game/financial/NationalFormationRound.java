@@ -40,8 +40,7 @@ public class NationalFormationRound extends StockRound {
         // TODO Auto-generated constructor stub
     }
 
-
-    private static PublicCompany nationalToFound;
+    private PublicCompany nationalToFound;
     private PublicCompany nationalStartingMinor;
     private Phase phase;
     private boolean startNational;

@@ -31,7 +31,7 @@ import org.jgrapht.graph.SimpleGraph;
  * RevenueAdapter links the revenue algorithm to Rails.
  */
 public final class RevenueAdapter implements Runnable {
-    protected static final Logger log = LoggerFactory.getLogger(RevenueAdapter.class);
+    private static final Logger log = LoggerFactory.getLogger(RevenueAdapter.class);
 
     // define VertexVisitSet
     public static class VertexVisit {

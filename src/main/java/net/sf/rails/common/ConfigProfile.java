@@ -55,7 +55,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     private static final String FINAL_KEY = "profile.final";
 
     // map of all profiles
-    private static final Map<String, ConfigProfile> profiles = new HashMap<String, ConfigProfile>();
+    private static final Map<String, ConfigProfile> profiles = new HashMap<>();
 
     // root profile
     private static ConfigProfile root;

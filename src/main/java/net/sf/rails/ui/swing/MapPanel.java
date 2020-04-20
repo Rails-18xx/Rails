@@ -150,7 +150,7 @@ public class MapPanel extends JPanel {
     private void zoomFit (boolean fitToWidth, boolean fitToHeight) {
         if (!fitToWidth && !fitToHeight) return;
 
-        ImageLoader imageLoader = GameUIManager.getImageLoader();
+        ImageLoader imageLoader = ImageLoader.getInstance();
         int zoomStep = map.getZoomStep();
 
         //reset adjustment factor

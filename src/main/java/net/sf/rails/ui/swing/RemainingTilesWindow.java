@@ -32,6 +32,9 @@ import net.sf.rails.ui.swing.elements.Field;
 public class RemainingTilesWindow extends JFrame implements WindowListener,
         ActionListener {
     private static final long serialVersionUID = 1L;
+
+    private ORWindow orWindow;
+
     private final AlignedWidthPanel tilePanel;
     private final JScrollPane slider;
 
@@ -43,6 +46,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     public RemainingTilesWindow(ORWindow orWindow) {
         super();
 
+        this.orWindow = orWindow;
         tilePanel = new AlignedWidthPanel();
         slider = new JScrollPane(tilePanel);
         slider.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -82,7 +86,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
             if (tile.isFixed()) continue;
             String picId = tile.getPictureId();
 
-            BufferedImage hexImage = GameUIManager.getImageLoader().getTile(picId, 10);
+            BufferedImage hexImage = ImageLoader.getInstance().getTile(picId, 10);
             ImageIcon hexIcon = new ImageIcon(hexImage);
             hexIcon.setImage(hexIcon.getImage().getScaledInstance(
                     (int) (hexIcon.getIconWidth() * 0.8),
@@ -138,7 +142,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
     public void windowClosed(WindowEvent e) {}
 
     public void windowClosing(WindowEvent e) {
-        StatusWindow.uncheckMenuItemBox(LocalText.getText("MAP"));
+        orWindow.getGameUIManager().uncheckMenuItemBox(LocalText.getText("MAP"));
 
         for ( Map.Entry<Tile, Observer> entry : observerMap.entrySet() ) {
             entry.getKey().getTilesLaid().removeObserver(entry.getValue());

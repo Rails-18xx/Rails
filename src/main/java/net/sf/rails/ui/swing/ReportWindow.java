@@ -162,7 +162,7 @@ public class ReportWindow extends JFrame implements
             @Override
             public void windowClosing(WindowEvent e) {
                 if (timeWarpMode) return;
-                StatusWindow.uncheckMenuItemBox(StatusWindow.REPORT_CMD);
+                gameUIManager.uncheckMenuItemBox(StatusWindow.REPORT_CMD);
                 frame.dispose();
             }
         });

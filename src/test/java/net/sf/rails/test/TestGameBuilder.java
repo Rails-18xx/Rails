@@ -28,12 +28,6 @@ import junit.framework.TestSuite;
 @RunWith(AllTests.class)
 public final class TestGameBuilder extends TestCase {
 
-    private static char extensionSeparator = '.';
-    private static int maxRecursionLevel = 5;
-
-    // true = optimal for ant html reports, false = optimal for test runner
-    private static boolean extendedTestNames = true;
-
     static void saveGameReport(List<String> report, String reportFilename, boolean failed) {
         PrintWriter reportFile = null;
         try{
@@ -81,6 +75,7 @@ public final class TestGameBuilder extends TestCase {
 
         // check if it is a Rails savefile
         String fileName = gameFile.getName();
+        char extensionSeparator = '.';
         int dot = fileName.lastIndexOf(extensionSeparator);
 
         String gameName = null;
@@ -133,7 +128,8 @@ public final class TestGameBuilder extends TestCase {
                 nextDirPath = f.getName();
             else
                 nextDirPath = dirPath + File.separator + f.getName();
-            if (f.isDirectory() && level <= maxRecursionLevel) {
+            int maxRecursionLevel = 5;
+            if (f.isDirectory() && level <= maxRecursionLevel ) {
                 TestSuite newSuite = recursiveTestSuite(rootPath, nextDirPath, level+1, overrideReport);
                 if (newSuite != null) suite.addTest(newSuite);
             }
@@ -145,7 +141,9 @@ public final class TestGameBuilder extends TestCase {
             String gameName = prepareTestGame(f, overrideReport);
             if (gameName != null) {
                 String extendedGameName;
-                if (extendedTestNames)
+                // true = optimal for ant html reports, false = optimal for test runner
+                boolean extendedTestNames = true;
+                if ( extendedTestNames )
                     extendedGameName = dirPath + File.separator + gameName;
                 else
                     extendedGameName = gameName;
