@@ -178,7 +178,7 @@ public class BuyCertificate extends PossibleAction {
         if (certUniqueId != null) {
             // Old style
             certUniqueId = companyManager.checkAliasInCertId(certUniqueId);
-            certificate = PublicCertificate.getByUniqueId(certUniqueId);
+            certificate = getRoot().getCertificateManager().getCertificate(certUniqueId);
             // TODO: This function needs a compatible replacement
             from = root.getGameManager().getPortfolioByName(fromName);
             company = certificate.getCompany();

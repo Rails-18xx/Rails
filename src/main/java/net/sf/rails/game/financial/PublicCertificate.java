@@ -89,10 +89,6 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     /** Index within company (to be maintained in the IPO) */
     protected int indexInCompany;
 
-    /** A map allowing to find certificates by unique id */
-    // FIXME: Remove static map, replace by other location mechanisms
-    protected static Map<String, PublicCertificate> certMap = new HashMap<>();
-
     private static final Logger log = LoggerFactory.getLogger(PublicCertificate.class);
 
     // TODO: Rewrite constructors
@@ -131,7 +127,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     /** Set the certificate's unique ID, for use in deserializing */
     public void setUniqueId(String name, int index) {
         certId = name + "-" + index;
-        certMap.put(certId, this);
+        getRoot().getCertificateManager().addCertificate(certId, this);
     }
 
     /** Set the certificate's unique ID */
@@ -142,11 +138,6 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     public int getIndexInCompany() {
         return indexInCompany;
     }
-
-    public static PublicCertificate getByUniqueId(String certId) {
-        return certMap.get(certId);
-    }
-
 
     // FIXME: There is no guarantee that the parent of a certificate portfolio is a portfolioModel
     // Replace that by something that works
