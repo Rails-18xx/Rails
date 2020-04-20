@@ -69,9 +69,9 @@ public class ClosePrivate extends PossibleAction {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+
         if (Util.hasValue(privateCompanyName))
                 privateCompany = getCompanyManager().getPrivateCompany(privateCompanyName);
     }

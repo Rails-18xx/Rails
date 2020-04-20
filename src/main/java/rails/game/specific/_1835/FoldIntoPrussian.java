@@ -106,16 +106,13 @@ public class FoldIntoPrussian extends PossibleAction {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
-        Company company;
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
+        Company company;
         CompanyManager cmgr = getCompanyManager();
         if (foldableCompanyNames != null) {
-            foldableCompanies = new ArrayList<Company>();
+            foldableCompanies = new ArrayList<>();
             for (String name : foldableCompanyNames.split(",")) {
                 company = cmgr.getPublicCompany(name);
                 if (company == null) company = cmgr.getPrivateCompany(name);
@@ -123,7 +120,7 @@ public class FoldIntoPrussian extends PossibleAction {
             }
         }
         if (Util.hasValue(foldedCompanyNames)) {
-            foldedCompanies = new ArrayList<Company>();
+            foldedCompanies = new ArrayList<>();
             for (String name : foldedCompanyNames.split(",")) {
                 company = cmgr.getPublicCompany(name);
                 if (company == null) company = cmgr.getPrivateCompany(name);

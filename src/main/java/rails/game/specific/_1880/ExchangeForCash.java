@@ -105,9 +105,9 @@ public class ExchangeForCash extends PossibleAction {
     }
 
     // deserialize to assign owner
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+
         if (Util.hasValue(ownerName)) {
             owner = getRoot().getPlayerManager().getPlayerByName(ownerName);
         }

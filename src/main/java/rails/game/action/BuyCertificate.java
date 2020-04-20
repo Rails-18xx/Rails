@@ -158,9 +158,7 @@ public class BuyCertificate extends PossibleAction {
         ;
     }
 
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-        //in.defaultReadObject();
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         // Custom reading for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();
 
@@ -172,8 +170,6 @@ public class BuyCertificate extends PossibleAction {
         sharePerCert = fields.get("sharePerCert", -1);
 
         numberBought = fields.get("numberBought", numberBought);
-
-        RailsRoot root = ((GameLoader.RailsObjectInputStream) in).getRoot();
 
         /* Check for aliases (old company names) */
         CompanyManager companyManager = root.getCompanyManager();

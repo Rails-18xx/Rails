@@ -153,16 +153,12 @@ public class StartCompany_18EU extends StartCompany {
     /**
      * Deserialize
      */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-
-        RailsRoot root = ((GameLoader.RailsObjectInputStream) in).getRoot();
 
         CompanyManager cmgr = root.getCompanyManager();
         if ( minorsToMergeNames != null ) {
-            minorsToMerge = new ArrayList<PublicCompany>();
+            minorsToMerge = new ArrayList<>();
             for ( String name : minorsToMergeNames.split(",") ) {
                 minorsToMerge.add(cmgr.getPublicCompany(name));
             }
@@ -173,7 +169,7 @@ public class StartCompany_18EU extends StartCompany {
 
         MapManager mapManager = root.getMapManager();
         if ( availableHomeStationNames != null ) {
-            availableHomeStations = new ArrayList<Stop>();
+            availableHomeStations = new ArrayList<>();
             for ( String cityName : availableHomeStationNames.split(",") ) {
                 String[] parts = parseStationName(cityName);
                 MapHex hex = mapManager.getHex(parts[0]);

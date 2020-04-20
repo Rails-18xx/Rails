@@ -133,10 +133,7 @@ public class SellShares extends PossibleAction {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-    ClassNotFoundException {
-
-        //in.defaultReadObject();
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         // Custom reading for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();
 

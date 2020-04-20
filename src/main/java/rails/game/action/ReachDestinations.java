@@ -73,17 +73,13 @@ public class ReachDestinations extends PossibleORAction {
 
         // check asOption attributes
         ReachDestinations action = (ReachDestinations)pa;
-        boolean options =
-                Objects.equal(this.possibleCompanies, action.possibleCompanies)
-        ;
+        boolean options = Objects.equal(this.possibleCompanies, action.possibleCompanies);
 
         // finish if asOptions check
         if (asOption) return options;
 
         // check asAction attributes
-        return options
-                && Objects.equal(this.reachedCompanies, action.reachedCompanies)
-        ;
+        return options && Objects.equal(this.reachedCompanies, action.reachedCompanies);
     }
 
     @Override

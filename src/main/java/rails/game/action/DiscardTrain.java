@@ -114,12 +114,9 @@ public class DiscardTrain extends PossibleORAction {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        RailsRoot root = ((GameLoader.RailsObjectInputStream) in).getRoot();
         TrainManager trainManager = root.getTrainManager();
 
         if ( discardedTrainUniqueId != null ) {

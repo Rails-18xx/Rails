@@ -142,10 +142,7 @@ public class MergeCompanies extends PossibleAction {
     }
 
     @SuppressWarnings("unchecked")
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
-        //in.defaultReadObject();
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         // Custom reading for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();
         mergingCompanyName = (String) fields.get("mergingCompanyName", mergingCompanyName);
@@ -155,10 +152,10 @@ public class MergeCompanies extends PossibleAction {
         replaceToken = fields.get("replaceToken", replaceToken);
 
         CompanyManager cmgr = getCompanyManager();
-
         mergingCompany = cmgr.getPublicCompany(mergingCompanyName);
 
-        targetCompanies = new ArrayList<PublicCompany>();
+        // TODO: verify we should create this array (see issue found with LayBaseToken)
+        targetCompanies = new ArrayList<>();
         for (String name : targetCompanyNames.split(",")) {
             if (name.equals("null")) {
                 targetCompanies.add(null);
@@ -167,10 +164,8 @@ public class MergeCompanies extends PossibleAction {
             }
         }
 
-        if (selectedTargetCompanyName != null
-            && !selectedTargetCompanyName.equals("null")) {
-            selectedTargetCompany =
-                    cmgr.getPublicCompany(selectedTargetCompanyName);
+        if (selectedTargetCompanyName != null && !selectedTargetCompanyName.equals("null")) {
+            selectedTargetCompany = cmgr.getPublicCompany(selectedTargetCompanyName);
         }
     }
 }

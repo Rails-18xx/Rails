@@ -120,23 +120,18 @@ public class BuyBonusToken extends PossibleORAction {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        privateCompany =
-                getCompanyManager().getPrivateCompany(privateCompanyName);
+        privateCompany = getCompanyManager().getPrivateCompany(privateCompanyName);
         if (sellerName.equalsIgnoreCase("Bank")) {
             // TODO: Assume that it is the pool, not the ipo
             seller = getRoot().getBank().getPool();
-        } else if (sellerName != null) {
-            seller =
-                getCompanyManager().getPublicCompany(sellerName);
+        } else {
+            seller = getCompanyManager().getPublicCompany(sellerName);
         }
         if (specialPropertyId > 0) {
-            specialProperty =
-                    (SellBonusToken) SpecialProperty.getByUniqueId(getRoot() ,specialPropertyId);
+            specialProperty = (SellBonusToken) SpecialProperty.getByUniqueId(getRoot() ,specialPropertyId);
         }
     }
 

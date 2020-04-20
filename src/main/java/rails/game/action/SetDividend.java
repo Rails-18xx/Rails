@@ -223,9 +223,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         // Custom deserialization for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();
         presetRevenue = fields.get("presetRevenue", presetRevenue);

@@ -264,10 +264,7 @@ public class BuyTrain extends PossibleORAction {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
-//        in.defaultReadObject();
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         // TEMPORARY Custom reading for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();
         trainUniqueId = (String) fields.get("trainUniqueId", trainUniqueId);
@@ -285,8 +282,6 @@ public class BuyTrain extends PossibleORAction {
         addedCash = fields.get("addedCash", addedCash);
         exchangedTrainUniqueId = (String) fields.get("exchangedTrainUniqueId", exchangedTrainUniqueId);
         extraMessage = (String) fields.get("extraMessage", extraMessage);
-
-        root = ((GameLoader.RailsObjectInputStream) in).getRoot();
 
         TrainManager trainManager = root.getTrainManager();
         CompanyManager companyManager = root.getCompanyManager();
@@ -311,17 +306,15 @@ public class BuyTrain extends PossibleORAction {
 
         // TODO: This has to be replaced by a new mechanism for owners at some time
         from = root.getGameManager().getPortfolioByName(fromName).getParent();
-        if (trainsForExchangeUniqueIds != null
-                && trainsForExchangeUniqueIds.length > 0) {
+        if (trainsForExchangeUniqueIds != null && trainsForExchangeUniqueIds.length > 0) {
             trainsForExchange = new HashSet<Train>();
-            for (int i = 0; i < trainsForExchangeUniqueIds.length; i++) {
-                trainsForExchange.add(trainManager.getTrainByUniqueId(trainsForExchangeUniqueIds[i]));
+            for ( String trainsForExchangeUniqueId : trainsForExchangeUniqueIds ) {
+                trainsForExchange.add(trainManager.getTrainByUniqueId(trainsForExchangeUniqueId));
             }
         }
 
         if (specialPropertyId > 0) {
-            specialProperty =
-                    (SpecialTrainBuy) SpecialProperty.getByUniqueId(root, specialPropertyId);
+            specialProperty = (SpecialTrainBuy) SpecialProperty.getByUniqueId(root, specialPropertyId);
         }
 
         if (Util.hasValue(exchangedTrainUniqueId)) {

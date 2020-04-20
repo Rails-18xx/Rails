@@ -82,11 +82,4 @@ public class ExchangeTokens extends PossibleORAction {
         ;
     }
 
-    /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
-        in.defaultReadObject();
-
-    }
 }

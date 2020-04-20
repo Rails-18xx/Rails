@@ -13,7 +13,7 @@ import rails.game.action.PossibleAction;
 import rails.game.action.StartItemAction;
 
 /**
- * 
+ *
  * Rails 2.0: Updated equals and toString methods
  */
 
@@ -42,9 +42,7 @@ public class SetupNewPublicDetails_1880 extends StartItemAction {
         this.shares = shares;
     }
 
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
         if (Util.hasValue(companyName))
@@ -82,24 +80,24 @@ public class SetupNewPublicDetails_1880 extends StartItemAction {
     public Object getCompanyName() {
         return companyName;
     }
-    
+
     @Override
     protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
         if (pa == this) return true;
         //  super checks both class identity and super class attributes
-        if (!super.equalsAs(pa, asOption)) return false; 
+        if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        SetupNewPublicDetails_1880 action = (SetupNewPublicDetails_1880)pa; 
+        SetupNewPublicDetails_1880 action = (SetupNewPublicDetails_1880)pa;
         boolean options = Objects.equal(this.company, action.company)
                 && Objects.equal(this.price, action.price)
                 && Objects.equal(this.shares, action.shares)
         ;
-        
+
         // finish if asOptions check
         if (asOption) return options;
-        
+
         // check asAction attributes
         return options
                 && Objects.equal(this.parSlotIndex, action.parSlotIndex)
@@ -109,7 +107,7 @@ public class SetupNewPublicDetails_1880 extends StartItemAction {
 
     @Override
     public String toString() {
-        return super.toString() + 
+        return super.toString() +
                 RailsObjects.stringHelper(this)
                 .addToString("company", company)
                 .addToString("price", price)

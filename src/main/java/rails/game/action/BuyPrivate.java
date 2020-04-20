@@ -97,13 +97,10 @@ public class BuyPrivate extends PossibleORAction {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        privateCompany =
-                getCompanyManager().getPrivateCompany(privateCompanyName);
+        privateCompany = getCompanyManager().getPrivateCompany(privateCompanyName);
     }
 
 }
