@@ -93,11 +93,11 @@ public class PlayerShareUtils {
         int potentialShareNumber = potential.getPortfolioModel().getShare(company);
         int shareNumberDumpDifference = presidentShareNumber - potentialShareNumber;
         boolean presidentShareOnly = false;
-        
+
         if (presidentCert.getShare() == presidentShareNumber)  { // Only President Share to be sold...
             presidentShareOnly = true;
         }
-        
+
         // ... if this is less than what the pool allows => goes back to non-president selling
         int poolAllows = poolAllowsShareNumbers(company);
         if ((shareNumberDumpDifference <= poolAllows) && (!presidentShareOnly)) {

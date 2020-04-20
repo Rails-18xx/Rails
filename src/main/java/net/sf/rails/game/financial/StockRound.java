@@ -571,6 +571,7 @@ public class StockRound extends Round {
                     continue;
                 }
 
+                //For a president certificate only the number is 2.. but it may also be 2 if the player has more than just the president certificate..
                 for (int i = 1; i <= number; i++) {
                     if (checkIfSplitSaleOfPresidentAllowed()) {
                         // check if selling would dump the company

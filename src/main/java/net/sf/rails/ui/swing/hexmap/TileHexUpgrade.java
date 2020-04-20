@@ -134,10 +134,10 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
 
     private boolean validate(Phase phase) {
         invalids.clear();
-        
+
         /*MBR 25.11.2018
         Check if the action causes this Validation is a Special Tile Lay
-        If that is the case the current support special action modifications need to be 
+        If that is the case the current support special action modifications need to be
         excluded from the validation:
         As of the time of this writing, the following actions are supported.
         A private blocking hex might be unblocked by laying a tile
@@ -145,7 +145,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         Future Powers consist of Tile lays in a different Colour than the current Phase (1822)
         */
         if (action.getType()== action.SPECIAL_PROPERTY) {
-            
+
             SpecialTileLay sp = (SpecialTileLay)action.getSpecialProperty();
             if (!sp.isFree()) {
                 if (notEnoughCash(0)) {
@@ -158,7 +158,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
                 }
                 if (hexIsReserved()) {
                     invalids.add(Invalids.HEX_RESERVED);
-                }    
+                }
             }
         } else {
             if (hexIsBlocked()) {
@@ -193,7 +193,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         } else if (noValidRotation()) {
             invalids.add(Invalids.NO_VALID_ORIENTATION);
         }
- 
+
         return invalids.isEmpty();
     }
 
@@ -213,7 +213,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
             }
         }
         return false;
-        
+
     }
 
     public boolean noTileAvailable() {
@@ -251,15 +251,15 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         }
         return action.getCompany().getCash() < this.getCost();
     }
-   
+
     public boolean notEnoughCash(int discount) {
-        // correction action does not require cash 
+        // correction action does not require cash
         if (action.getType() == LayTile.CORRECTION) {
             return false;
         }
-        return action.getCompany().getCash() < (this.getCost()-discount); 
+        return action.getCompany().getCash() < (this.getCost()-discount);
     }
-    
+
     public boolean requiresConnection() {
         // Yellow Tile on Company Home
         if (upgrade.getTargetTile().getColourText().equalsIgnoreCase(TileColour.YELLOW.name())

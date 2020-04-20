@@ -135,6 +135,10 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public boolean isMinor(){
         return (stationType != null && stationType == StationType.MINOR);
     }
+    
+    public boolean isMine( ) {
+        return (stationType != null && stationType == StationType.COALMINE);
+    }
 
     public boolean isMine( ) {
         return (stationType != null && stationType == StationType.COALMINE);

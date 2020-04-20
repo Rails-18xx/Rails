@@ -333,4 +333,9 @@ public class StartRound_1837_2ndEd extends StartRound {
         playerManager.setCurrentToNextPlayerAfter(selectingPlayer.value());
     }
 
+    @Override
+    public String getHelp() {
+        return "1837 Start Round help text";
+    }
+
 }

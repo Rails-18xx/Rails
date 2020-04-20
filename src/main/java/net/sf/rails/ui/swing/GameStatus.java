@@ -564,7 +564,6 @@ public class GameStatus extends GridPanel implements ActionListener {
                     wideGapPosition, true);
         }
 
-
         addField(new Caption(LocalText.getText("WORTH")), 0,
                 playerWorthYOffset, 1, 1, 0, true);
         for (int i = 0; i < np; i++) {
