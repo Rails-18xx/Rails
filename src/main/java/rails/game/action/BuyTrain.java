@@ -305,7 +305,7 @@ public class BuyTrain extends PossibleORAction {
         }
 
         // TODO: This has to be replaced by a new mechanism for owners at some time
-        from = root.getGameManager().getPortfolioByName(fromName).getParent();
+        from = root.getPortfolioManager().getPortfolioByName(fromName).getParent();
         if (trainsForExchangeUniqueIds != null && trainsForExchangeUniqueIds.length > 0) {
             trainsForExchange = new HashSet<Train>();
             for ( String trainsForExchangeUniqueId : trainsForExchangeUniqueIds ) {

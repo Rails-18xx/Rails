@@ -1,6 +1,8 @@
 package net.sf.rails.game;
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,8 +80,7 @@ public class PlayerManager extends RailsManager implements Configurable {
         }
     }
 
-    // TODO: rename to initPlayers
-    public void setPlayers(List<String> playerNames, Bank bank) {
+    public void initPlayers(List<String> playerNames, Bank bank) {
 
         int startCash = playerStartCash.get(playerNames.size());
 
@@ -100,20 +101,17 @@ public class PlayerManager extends RailsManager implements Configurable {
 
         ReportBuffer.add(this, LocalText.getText("PlayerCash", cashText));
         ReportBuffer.add(this, LocalText.getText("BankHas", Bank.format(this, bank.getCash())));
+
+        // sets initial priority player and certificate limits
+        priorityPlayer.set(playerModel.playerOrder.get(0));
+        int startCertificates = playerCertificateLimits.get(playerModel.playerOrder.size());
+        playerCertificateLimit.set(startCertificates);
     }
 
     public void finishConfiguration(RailsRoot root) {
         for (Player player : playerModel.playerOrder) {
             player.finishConfiguration(root);
         }
-    }
-
-    // sets initial priority player and certificate limits
-    // TODO: rename method
-    public void init() {
-        priorityPlayer.set(playerModel.playerOrder.get(0));
-        int startCertificates = playerCertificateLimits.get(playerModel.playerOrder.size());
-        playerCertificateLimit.set(startCertificates);
     }
 
     public int getMinPlayers() {
