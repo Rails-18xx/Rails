@@ -40,7 +40,7 @@ jobs:
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
-        run: ./gradlew clean build
+        run: ./gradlew -Pversion=${{ steps.get_version.outputs.VERSION }} clean build
       - name: Create Deb Installer
         run: ./gradlew -Pversion=${{ steps.get_version.outputs.VERSION }} buildDebPackage
       - name: Create Rpm Installer
@@ -75,7 +75,7 @@ jobs:
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
-        run: ./gradlew clean build
+        run: ./gradlew -Pversion=${{ steps.get_version.outputs.VERSION }} clean build
       - name: Create Exe Installer
         run: ./gradlew -Pversion=${{ steps.get_version.outputs.VERSION }} buildExePackage
       - name: Rename Installer
@@ -103,7 +103,7 @@ jobs:
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
-        run: ./gradlew clean build
+        run: ./gradlew -Pversion=${{ steps.get_version.outputs.VERSION }} clean build
       - name: Create Dmg Installer
         run: ./gradlew -Pversion=${{ steps.get_version.outputs.VERSION }} buildDmgPackage
       - name: Rename Installer
