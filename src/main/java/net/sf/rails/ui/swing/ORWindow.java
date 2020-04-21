@@ -141,7 +141,6 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         log.debug("OrWindow size = {}", this.getSize());
 
         final JFrame frame = this;
-        final GameUIManager guiMgr = gameUIManager;
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -153,15 +152,20 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
                     setVisible(false);
                 }
             }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                orPanel.dispose();
+            }
         });
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentMoved(ComponentEvent e) {
-                guiMgr.getWindowSettings().set(frame);
+                gameUIManager.getWindowSettings().set(frame);
             }
             @Override
             public void componentResized(ComponentEvent e) {
-                guiMgr.getWindowSettings().set(frame);
+                gameUIManager.getWindowSettings().set(frame);
             }
         });
 
