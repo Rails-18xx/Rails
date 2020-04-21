@@ -85,9 +85,8 @@ public class LayBonusToken extends LayToken {
         in.defaultReadObject();
 
         MapManager mmgr = getRoot().getMapManager();
-        // TODO: verify we should create this array (see issue found with LayBaseToken)
-        locations = new ArrayList<>();
         if (Util.hasValue(locationNames)) {
+            locations = new ArrayList<>();
             for (String hexName : locationNames.split(",")) {
                 locations.add(mmgr.getHex(hexName));
             }

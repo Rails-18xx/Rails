@@ -102,7 +102,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
             this.specialPropertyId = specialProperty.getUniqueId();
             Tile tile = specialProperty.getTile();
             if (tile != null) {
-                tiles = new ArrayList<Tile>();
+                tiles = new ArrayList<>();
                 tiles.add(tile);
             }
         }
@@ -324,9 +324,8 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         MapManager mmgr = getRoot().getMapManager();
         TileManager tmgr = getRoot().getTileManager();
 
-        // TODO: verify we should create this array (see issue found with LayBaseToken)
-        locations = new ArrayList<>();
         if (Util.hasValue(locationNames)) {
+            locations = new ArrayList<>();
             for (String hexName : locationNames.split(",")) {
                 locations.add(mmgr.getHex(hexName));
             }

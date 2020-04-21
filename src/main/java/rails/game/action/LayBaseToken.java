@@ -142,9 +142,7 @@ public class LayBaseToken extends LayToken {
         if (asOption) return options;
 
         // check asAction attributes
-        return options
-                && Objects.equal(this.chosenStation, action.chosenStation)
-        ;
+        return options && Objects.equal(this.chosenStation, action.chosenStation);
     }
 
     @Override
@@ -163,22 +161,19 @@ public class LayBaseToken extends LayToken {
     }
 
     /** Deserialize */
-    private void readObject(ObjectInputStream in) throws IOException,
-    ClassNotFoundException {
-
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
         MapManager mmgr = getRoot().getMapManager();
-        locations = new ArrayList<MapHex>();
         if (Util.hasValue(locationNames)) {
+            locations = new ArrayList<>();
             for (String hexName : locationNames.split(",")) {
                 locations.add(mmgr.getHex(hexName));
             }
         }
 
         if (specialPropertyId > 0) {
-            specialProperty =
-                (SpecialBaseTokenLay) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
+            specialProperty = SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
         }
         if (chosenHexName != null && chosenHexName.length() > 0) {
             chosenHex = mmgr.getHex(chosenHexName);

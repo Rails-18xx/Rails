@@ -73,8 +73,7 @@ public class PrussianFormationRound extends StockRound {
         mergePr = !prussianIsComplete(gameManager);
 
         ReportBuffer.add(this, LocalText.getText("StartFormationRound", PR_ID));
-        log.debug("StartPr="+startPr+" forcedStart="+forcedStart
-                +" mergePr="+mergePr+" forcedMerge="+forcedMerge);
+        log.debug("StartPr={} forcedStart={} mergePr={} forcedMerge={}", startPr, forcedStart, mergePr, forcedMerge);
 
         step = startPr ? Step.START : Step.MERGE;
 
@@ -89,9 +88,8 @@ public class PrussianFormationRound extends StockRound {
         }
 
         if (step == Step.MERGE) {
-            startingPlayer
-            = ((GameManager_1835)gameManager).getPrussianFormationStartingPlayer();
-            log.debug("Original Prussian starting player was "+startingPlayer.getId());
+            startingPlayer = ((GameManager_1835)gameManager).getPrussianFormationStartingPlayer();
+            log.debug("Original Prussian starting player was {}", startingPlayer.getId());
             setCurrentPlayer(startingPlayer);
             if (forcedMerge) {
                 Set<SpecialProperty> sps;
@@ -144,7 +142,7 @@ public class PrussianFormationRound extends StockRound {
         } else if (step == Step.DISCARD_TRAINS) {
 
             if (prussian.getNumberOfTrains() > prussian.getCurrentTrainLimit()) {
-                log.debug("+++ PR has "+prussian.getNumberOfTrains()+", limit is "+prussian.getCurrentTrainLimit());
+                log.debug("+++ PR has {}, limit is {}", prussian.getNumberOfTrains(), prussian.getCurrentTrainLimit());
                 possibleActions.add(new DiscardTrain(prussian,
                         prussian.getPortfolioModel().getUniqueTrains(), true));
             }

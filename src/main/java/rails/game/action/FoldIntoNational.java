@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.sf.rails.game.Company;
 import net.sf.rails.game.CompanyManager;
 import net.sf.rails.game.RailsRoot;
@@ -24,8 +26,8 @@ import com.google.common.base.Objects;
 public class FoldIntoNational extends PossibleAction {
 
     // Server settings
-    protected transient List<Company> foldableCompanies = null;
-    protected String foldableCompanyNames = null;
+    protected transient List<Company> foldableCompanies;
+    protected String foldableCompanyNames;
 
     // Client settings
     protected transient List<Company> foldedCompanies = null;
@@ -33,9 +35,9 @@ public class FoldIntoNational extends PossibleAction {
 
     public static final long serialVersionUID = 1L;
 
-    public FoldIntoNational(RailsRoot root, List<Company> companies) {
+    public FoldIntoNational(RailsRoot root, @NotNull List<Company> foldableCompanies) {
         super(root); // not defined by an activity yet
-        this.foldableCompanies = companies;
+        this.foldableCompanies = foldableCompanies;
         foldableCompanyNames = Util.joinNamesWithDelimiter(foldableCompanies, ",");
     }
 
@@ -52,7 +54,6 @@ public class FoldIntoNational extends PossibleAction {
         this.foldedCompanies = foldedCompanies;
         foldedCompanyNames = Util.joinNamesWithDelimiter (foldedCompanies, ",");
     }
-
 
     public List<Company> getFoldableCompanies() {
         return foldableCompanies;
@@ -113,10 +114,10 @@ public class FoldIntoNational extends PossibleAction {
         in.defaultReadObject();
 
         Company company;
-
         CompanyManager cmgr = getCompanyManager();
+
+        foldableCompanies = new ArrayList<>();
         if (foldableCompanyNames != null) {
-            foldableCompanies = new ArrayList<>();
             for (String name : foldableCompanyNames.split(",")) {
                 company = cmgr.getPublicCompany(name);
                 if (company == null) company = cmgr.getPrivateCompany(name);

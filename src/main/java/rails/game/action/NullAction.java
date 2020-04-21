@@ -67,6 +67,7 @@ public class NullAction extends PossibleAction {
 
    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
        in.defaultReadObject();
+
        // required since Rails 2.0
        mode_enum = Mode.values()[mode];
    }
