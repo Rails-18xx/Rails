@@ -96,8 +96,7 @@ public class PortfolioModel extends RailsModel {
 
     public void finishConfiguration() {
         certificates.initShareModels(getRoot().getCompanyManager().getAllPublicCompanies());
-        // TODO (Rails2.0): the linkage of all portfolios to the GameManager should be removed
-        getRoot().getGameManager().addPortfolio(this);
+        getRoot().getPortfolioManager().addPortfolio(this);
     }
 
     @Override

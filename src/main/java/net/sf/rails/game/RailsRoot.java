@@ -3,8 +3,6 @@ package net.sf.rails.game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-
 import net.sf.rails.algorithms.RevenueManager;
 import net.sf.rails.common.Config;
 import net.sf.rails.common.DisplayBuffer;
@@ -47,6 +45,7 @@ public class RailsRoot extends Root implements RailsItem {
     private RevenueManager revenueManager;
     private Bank bank;
     private CertificateManager certificateManager;
+    private PortfolioManager portfolioManager;
 
     // Other Managers
     private ReportManager reportManager;
@@ -102,10 +101,12 @@ public class RailsRoot extends Root implements RailsItem {
             revenueManager = (RevenueManager) component;
         } else if (component instanceof CertificateManager) {
             certificateManager = (CertificateManager) component;
+        } else if (component instanceof PortfolioManager) {
+            portfolioManager = (PortfolioManager) component;
         }
     }
 
-    public void initGameFromXML() throws ConfigurationException {
+    private void initGameFromXML() throws ConfigurationException {
         String directory = "data" + ResourceLoader.SEPARATOR + gameData.getGameName();
 
         Tag componentManagerTag = Tag.findTopTagInFile(
@@ -114,12 +115,12 @@ public class RailsRoot extends Root implements RailsItem {
         ComponentManager componentManager = new ComponentManager();
         componentManager.start(this,  componentManagerTag);
         // The componentManager automatically returns results
-
-        // creation of Report facilities
-        reportManager = new ReportManager(this, "reportManager");
     }
 
-    public boolean finishConfiguration() {
+    private boolean finishConfiguration() {
+        // creation of Report facilities
+        reportManager = new ReportManager(this, "reportManager");
+
         /*
          * Initializations that involve relations between components can
          * only be done after all XML has been processed.
@@ -128,14 +129,16 @@ public class RailsRoot extends Root implements RailsItem {
         log.info("Rails version {}", Config.getVersion());
         ReportBuffer.add(this, LocalText.getText("GameIs", gameData.getGameName()));
 
-        playerManager.setPlayers(gameData.getPlayers(), bank);
+        playerManager.initPlayers(gameData.getPlayers(), bank);
         gameManager.init();
-        // TODO: Can this be merged above?
-        playerManager.init();
 
         if ( certificateManager == null ) {
             certificateManager = new CertificateManager(this, "CertificateManager");
         }
+        if ( portfolioManager == null ) {
+            portfolioManager = new PortfolioManager(this, "PortfolioManager");
+        }
+
         try {
             playerManager.finishConfiguration(this);
             companyManager.finishConfiguration(this);
@@ -218,6 +221,10 @@ public class RailsRoot extends Root implements RailsItem {
 
     public CertificateManager getCertificateManager() {
         return certificateManager;
+    }
+
+    public PortfolioManager getPortfolioManager() {
+        return portfolioManager;
     }
 
     /**
