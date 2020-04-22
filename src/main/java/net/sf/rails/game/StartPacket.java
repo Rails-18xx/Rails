@@ -39,7 +39,7 @@ public class StartPacket extends RailsAbstractItem {
         this.roundClassName = roundClassName;
         //packets.put(name, this);
     }
-    
+
     /**
      * @param id The start packet name.
      * @param roundClassName The StartRound class name.
@@ -67,7 +67,7 @@ public class StartPacket extends RailsAbstractItem {
             modulus = biddingTag.getAttributeAsInteger("increment", modulus);
         }
         List<Tag> itemTags = tag.getChildren("Item");
-        
+
         int index = 0;
         for (Tag itemTag : itemTags) {
 
@@ -80,9 +80,9 @@ public class StartPacket extends RailsAbstractItem {
                 throw new ConfigurationException("No item type");
             boolean president =
                     Util.hasValue(itemTag.getAttributeAsString("president", ""));
-           
+
             int basePrice = itemTag.getAttributeAsInteger("basePrice", 0);
-            boolean reduceable = itemTag.getAttributeAsBoolean("reduceable", false); 
+            boolean reduceable = itemTag.getAttributeAsBoolean("reduceable", false);
             StartItem item = StartItem.create(this, itemName, itemType, basePrice, reduceable, index++, president);
             items.add(item);
 
@@ -111,7 +111,7 @@ public class StartPacket extends RailsAbstractItem {
                 }
 
             }
-            log.debug("ItemTag = " + itemTag);
+            log.debug("ItemTag = {}", itemTag);
         }
     }
 
@@ -157,9 +157,9 @@ public class StartPacket extends RailsAbstractItem {
     public StartItem getItem(int index) {
         return items.get(index);
     }
-    
+
     public void addItem(StartItem startItem) {
-        items.add(startItem);        
+        items.add(startItem);
     }
 
     /**

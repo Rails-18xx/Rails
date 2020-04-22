@@ -37,7 +37,7 @@ public class ItalyTileModifier implements NetworkGraphModifier {
         // but not on other things (like phases)
         int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex();
         if (phaseIndex < 4 ) {
-            log.debug("Italy active, index of phase = " + phaseIndex);
+            log.debug("Italy active, index of phase = {}", phaseIndex);
             return;
         }
 
@@ -50,7 +50,7 @@ public class ItalyTileModifier implements NetworkGraphModifier {
 
         // 3 ... and remove them from the graph
         graph.removeAllVertices(italyVertices);
-        log.debug("Italy inactive, index of phase = " + phaseIndex);
+        log.debug("Italy inactive, index of phase = {}", phaseIndex);
 
     }
 

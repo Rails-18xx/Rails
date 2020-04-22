@@ -250,8 +250,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
             if (auctionItem.getBidders() == 2) {
                 // Only one bidder is left after this pass
                 int price = auctionItem.getBid();
-                log.debug("Highest bidder is "
-                        + auctionItem.getBidder().getId());
+                log.debug("Highest bidder is {}", auctionItem.getBidder().getId());
                 if (auctionItem.needsPriceSetting() != null) {
                     auctionItem.setStatus(StartItem.NEEDS_SHARE_PRICE);
                 } else {

@@ -48,7 +48,7 @@ public class ChangeStack {
     public void addChangeReporter(ChangeReporter reporter) {
         this.reporter = reporter;
         reporter.init(this);
-        log.debug("Added ChangeReporter " + reporter);
+        log.debug("Added ChangeReporter {}", reporter);
     }
 
     /**
@@ -152,7 +152,7 @@ public class ChangeStack {
 
     private ChangeSet executeUndo() {
         ChangeSet undoSet = undoStack.pollLast();
-        log.debug("UndoSet = " + undoSet);
+        log.debug("UndoSet = {}", undoSet);
         undoSet.unexecute();
         redoStack.addFirst(undoSet);
 
@@ -205,7 +205,7 @@ public class ChangeStack {
 
     private ChangeSet executeRedo() {
         ChangeSet redoSet = redoStack.pollFirst();
-        log.debug("RedoSet = " + redoSet);
+        log.debug("RedoSet = {}", redoSet);
         redoSet.reexecute();
         undoStack.addLast(redoSet);
 

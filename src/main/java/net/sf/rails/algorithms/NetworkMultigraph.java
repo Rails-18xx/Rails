@@ -51,7 +51,7 @@ public class NetworkMultigraph {
     }
 
     private void initMultigraph(Collection<NetworkVertex> protectedVertices) {
-        log.debug("Ingraph" + inGraph.getGraph());
+        log.debug("Ingraph {}", inGraph.getGraph());
         // clone the inGraph
         SimpleGraph<NetworkVertex, NetworkEdge> graph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
         Graphs.addGraph(graph, inGraph.getGraph());

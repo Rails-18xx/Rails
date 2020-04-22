@@ -36,7 +36,7 @@ public class BirminghamTileModifier implements NetworkGraphModifier {
         // but not on other things (like phases)
         int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex();
         if (phaseIndex >= 2 ) {
-            log.debug("Birmingham active, index of phase = " + phaseIndex);
+            log.debug("Birmingham active, index of phase = {}", phaseIndex);
             return;
         }
 
@@ -46,7 +46,7 @@ public class BirminghamTileModifier implements NetworkGraphModifier {
 
         // 3 ... and remove them from the graph
         graph.removeAllVertices(birmingVertices);
-        log.debug("Birmingham inactive, index of phase = " + phaseIndex);
+        log.debug("Birmingham inactive, index of phase = {}", phaseIndex);
     }
 
     @Override

@@ -95,7 +95,7 @@ public final class RevenueBonusTemplate implements Configurable {
         log.debug("Convert {}", this);
         RevenueBonus bonus = new RevenueBonus(value, name);
         if (!convertVertices(bonus, graph, hex)) {
-            log.warn("Not all vertices of RevenueBonusTemplate found " + this.toString());
+            log.warn("Not all vertices of RevenueBonusTemplate found {}", this.toString());
             return null;
         }
         convertTrainTypes(bonus, root.getTrainManager());

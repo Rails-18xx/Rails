@@ -290,7 +290,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             log.debug(player.getPortfolioModel().getCertificates().toString());
             for (PublicCertificate cert : player.getPortfolioModel().getCertificates()) {
                 if (mergingCompanies.contains(cert.getCompany())) {
-                    log.debug("merge cert= " + cert);
+                    log.debug("merge cert= {}", cert);
                     certs.add((cert));
                     oldShares++;
                     if (cert.isPresidentShare()) {
@@ -381,7 +381,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         ReportBuffer.add(this, message);
 
         Portfolio.moveAll(certs, scrapHeap.getParent());
-        log.info(cgrSharesUsed + " CGR shares are now in play");
+        log.info("{} CGR shares are now in play", cgrSharesUsed);
 
         // If no more than 10 shares are in play, the CGR share
         // unit becomes 10%; otherwise it stays 5%.
@@ -402,12 +402,11 @@ public class CGRFormationRound extends SwitchableUIRound {
         // Assign the new president
         if (newPresident.getPortfolioModel().getShare(cgr) == cgr.getShareUnit()) {
             // Nobody has 2 shares, then takes the first player who has got one share
-            log.debug("Nobody has two shares, creating a temp.pres.: " + firstCGRowner.getId());
+            log.debug("Nobody has two shares, creating a temp.pres.: {}", firstCGRowner.getId());
             cgr.setTemporaryPresident(firstCGRowner);
             newPresident = firstCGRowner;
         } else if (temporaryPresident != null && temporaryPresident != newPresident) {
-            log.debug("Moving pres.share from " + temporaryPresident.getId()
-                    + " to " + newPresident.getId());
+            log.debug("Moving pres.share from {} to {}", temporaryPresident.getId(), newPresident.getId());
             temporaryPresident.getPortfolioModel().swapPresidentCertificate(cgr,
                     newPresident.getPortfolioModel(), 1);
         }
@@ -515,12 +514,12 @@ public class CGRFormationRound extends SwitchableUIRound {
                                     for (SellBonusToken sp : commonSP) {
                                         if (sp.getId().equalsIgnoreCase(b.getName())) {
                                             sp.makeResellable();
-                                            log.debug("BonusToken " + b.getName() + " made sellable again");
+                                            log.debug("BonusToken {} made sellable again", b.getName());
                                             break;
                                         }
                                     }
                                 }
-                                log.debug("Duplicate BonusToken " + b.getName() + " not added to " + cgr.getId());
+                                log.debug("Duplicate BonusToken {} not added to {}", b.getName(), cgr.getId());
                                 continue bonuses;
                             }
                         }
@@ -634,7 +633,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             if (hex.layBaseToken(cgr, stop)) {
                 cgr.layBaseToken(hex, 0);
             } else {
-                log.error("Error in laying CGR token on " + hex.getId() + " " + hex.getStopName());
+                log.error("Error in laying CGR token on {} {}", hex.getId(), hex.getStopName());
             }
         }
     }

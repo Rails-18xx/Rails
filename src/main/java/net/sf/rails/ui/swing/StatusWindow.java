@@ -663,6 +663,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         } else if (command.equals(QUIT_CMD)) {
             gameUIManager.terminate();
         } else if ( command.equals(NEW_CMD) ) {
+            // TODO
         } else if ( command.equals(LOAD_CMD) ) {
             // TODO: does this really belong here?
             String saveDirectory = Config.get("save.directory");

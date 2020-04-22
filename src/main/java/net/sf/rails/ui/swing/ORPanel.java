@@ -833,10 +833,10 @@ implements ActionListener, KeyListener, RevenueListener {
                     ra.addTrainByString(addTrain);
                 }
                 ra.initRevenueCalculator(true); // true => multigraph, false => simplegraph
-                log.debug("Revenue Adapter:" + ra);
+                log.debug("Revenue Adapter:{}", ra);
                 int revenueValue = ra.calculateRevenue();
-                log.debug("Revenue Value:" + revenueValue);
-                log.debug("Revenue Run:" + ra.getOptimalRunPrettyPrint(true));
+                log.debug("Revenue Value:{}", revenueValue);
+                log.debug("Revenue Run:{}", ra.getOptimalRunPrettyPrint(true));
                 //try-catch clause temporary workaround as revenue adapter's
                 //convertRcRun might erroneously raise exceptions
                 try {ra.drawOptimalRunAsPath(orUIManager.getMap());}
@@ -934,7 +934,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 executedAction = executedActions.get(0);
                 // In all cases, the actions in the list must be
                 // instances of the same class
-                log.debug("Action taken is " + executedAction.toString());
+                log.debug("Action taken is {}", executedAction.toString());
             }
 
             if (executedAction instanceof SetDividend) {

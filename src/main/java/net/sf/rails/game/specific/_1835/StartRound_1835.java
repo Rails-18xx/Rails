@@ -241,7 +241,7 @@ public class StartRound_1835 extends StartRound {
             // check if the next player would start a new cycle
             int cycleNumber = (turn.value()) / playerManager.getNumberOfPlayers();
             int playerNumber = (turn.value()) % playerManager.getNumberOfPlayers();
-            log.debug("1835 variant = " + variant + ", turn = " + turn.value() + ", cycleNumber = " + cycleNumber + ", playerNumber = " + playerNumber);
+            log.debug("1835 variant = {}, turn = {}, cycleNumber = {}, playerNumber = {}", variant, turn.value(), cycleNumber, playerNumber);
             if (variant.equalsIgnoreCase(CLEMENS_VARIANT)) {
                 /*  */
                 if (cycleNumber == 1 && playerNumber == 0) {

@@ -61,7 +61,7 @@ public class GUIGlobals {
 //        } else {
 //            scale = 1.0d;
 //        }
-        log.debug("GUI-Scale set to " + scale +" due to screensize of " + d);
+        log.debug("GUI-Scale set to {} due to screensize of {}", scale, d);
     }
 
     public static void initFontsScale() {
@@ -75,7 +75,7 @@ public class GUIGlobals {
         } else {
             fontsScale = 1;
         }
-        log.debug("Fonts-Scale set to " + fontsScale);
+        log.debug("Fonts-Scale set to {}", fontsScale);
     }
 
     public static void initRenderingHints() {

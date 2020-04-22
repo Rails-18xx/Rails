@@ -36,8 +36,8 @@ public class ORUIManager_1837 extends ORUIManager {
             amount = orPanel.getRevenue(orCompIndex);
             bonusAmount = orPanel.getCompanyTreasuryBonusRevenue(orCompIndex);
             orPanel.stopRevenueUpdate();
-            log.debug("Set revenue amount is " + amount);
-            log.debug("The Bonus for the company treasury is " + bonusAmount);
+            log.debug("Set revenue amount is {}", amount);
+            log.debug("The Bonus for the company treasury is {}", bonusAmount);
             action.setActualRevenue(amount);
             action.setActualCompanyTreasuryRevenue(bonusAmount);
 
@@ -47,8 +47,7 @@ public class ORUIManager_1837 extends ORUIManager {
             SoundManager.notifyOfSetRevenue(amount);
 
             if (amount == 0 || action.getRevenueAllocation() != SetDividend.UNKNOWN) {
-                log.debug("Allocation is known: "
-                        + action.getRevenueAllocation());
+                log.debug("Allocation is known: {}", action.getRevenueAllocation());
                 orWindow.process(action);
             } else {
                 log.debug("Allocation is unknown, asking for it");

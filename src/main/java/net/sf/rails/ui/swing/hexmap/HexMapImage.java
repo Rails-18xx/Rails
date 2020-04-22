@@ -71,7 +71,7 @@ public final class HexMapImage extends JSVGCanvas  {
 //             log.debug("ImageFile="+ imageFile.getName());
             setURI(getClass().getResource(mapManager.getMapImageFilepath()).toString());
         } catch (Exception e) {
-            log.error ("Cannot load map image file " + mapManager.getMapImageFilepath(), e);
+            log.error("Cannot load map image file {}", mapManager.getMapImageFilepath(), e);
         }
 
         addGVTTreeRendererListener (new GVTTreeRendererAdapter() {
@@ -94,17 +94,17 @@ public final class HexMapImage extends JSVGCanvas  {
     private void scaleMap () {
         AffineTransform at = new AffineTransform();
 
-        log.debug("MapImage zoomFactor" + zoomFactor);
+        log.debug("MapImage zoomFactor{}", zoomFactor);
         at.scale (zoomFactor, zoomFactor);
 
-        log.debug("MapImage XOffset = " + mapManager.getMapXOffset() + ", YOffset = " + mapManager.getMapYOffset());
+        log.debug("MapImage XOffset = {}, YOffset = {}", mapManager.getMapXOffset(), mapManager.getMapYOffset());
         at.translate(mapManager.getMapXOffset(), mapManager.getMapYOffset());
 
         double mapScale = mapManager.getMapScale();
-        log.debug("MapImage MapScale = " + mapManager.getMapScale());
+        log.debug("MapImage MapScale = {}", mapManager.getMapScale());
         at.scale(mapScale, mapScale);
 
-        log.debug("MapImage Affine Transform " + at);
+        log.debug("MapImage Affine Transform {}", at);
         setRenderingTransform (at, true);
     }
 
@@ -128,8 +128,8 @@ public final class HexMapImage extends JSVGCanvas  {
 
     private void zoom() {
         zoomFactor = ImageLoader.getInstance().getZoomFactor(zoomStep);
-        log.debug("ImageMap zoomStep = " + zoomStep);
-        log.debug("ImageMap zoomFactor = " + zoomFactor);
+        log.debug("ImageMap zoomStep = {}", zoomStep);
+        log.debug("ImageMap zoomFactor = {}", zoomFactor);
         scaleMap();
     }
 

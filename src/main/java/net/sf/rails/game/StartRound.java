@@ -287,7 +287,7 @@ public abstract class StartRound extends Round {
                         // Company has a known start price
                         comp.start();
                     } else {
-                        log.error("No start price for " + comp.getId());
+                        log.error("No start price for {}", comp.getId());
                     }
                 }
             }

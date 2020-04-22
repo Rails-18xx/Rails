@@ -364,7 +364,7 @@ public class StartRound_1837_Coal extends StartRound {
     public boolean process(PossibleAction action) {
         boolean result = false;
 
-        log.debug("Processing action " + action);
+        log.debug("Processing action {}", action);
 
         if (action instanceof NullAction
             && ((NullAction) action).getMode() == NullAction.Mode.PASS) {
@@ -377,7 +377,7 @@ public class StartRound_1837_Coal extends StartRound {
             StartItemAction startItemAction = (StartItemAction) action;
             String playerName = action.getPlayerName();
 
-            log.debug("Item details: " + startItemAction.toString());
+            log.debug("Item details: {}", startItemAction.toString());
 
             if (startItemAction instanceof BuyStartItem) {
 

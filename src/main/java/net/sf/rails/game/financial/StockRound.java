@@ -464,8 +464,8 @@ public class StockRound extends Round {
 
             /* May not sell more than the Pool can accept */
             int poolAllowsShares = PlayerShareUtils.poolAllowsShareNumbers(company);
-            log.debug("company = " + company);
-            log.debug("poolAllowShares = " + poolAllowsShares);
+            log.debug("company = {}", company);
+            log.debug("poolAllowShares = {}", poolAllowsShares);
             int maxShareToSell = Math.min(ownedShare, poolAllowsShares);
 
             // if no share can be sold
@@ -505,9 +505,9 @@ public class StockRound extends Round {
                     dumpThreshold = ownedShare - potential.getPortfolioModel().getShareNumber(company) + 1;
                     possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
                     dumpIsPossible = true;
-                    log.debug("dumpThreshold = " + dumpThreshold);
-                    log.debug("possibleSharesToSell = " + possibleSharesToSell);
-                    log.debug("dumpIsPossible = " + dumpIsPossible);
+                    log.debug("dumpThreshold = {}", dumpThreshold);
+                    log.debug("possibleSharesToSell = {}", possibleSharesToSell);
+                    log.debug("dumpIsPossible = {}", dumpIsPossible);
                 }
             }
 
@@ -538,7 +538,7 @@ public class StockRound extends Round {
                     number += company.getPresidentsShare().getShares();
                     // but limit this to the pool
                     number = Math.min(number, poolAllowsShares);
-                    log.debug("Dump is possible increased single shares to " + number);
+                    log.debug("Dump is possible increased single shares to {}", number);
                 }
 
                 if (number == 0) {
@@ -964,7 +964,7 @@ public class StockRound extends Round {
             // (shortcut: assume 1 cert == 1 certificate)
             PublicCertificate cert = from.findCertificate(company, sharePerCert / shareUnit, false);
             if (cert == null) {
-                log.error("Cannot find " + sharePerCert + "% of " + company.getId() + " in " + from.getId());
+                log.error("Cannot find {}% of {} in {}", sharePerCert, company.getId(), from.getId());
             }
             if (!currentSpace.isNoCertLimit()
                     && !mayPlayerBuyCertificate(currentPlayer, company, number * cert.getCertificateCount())) {
@@ -1033,8 +1033,7 @@ public class StockRound extends Round {
         for (int i = 0; i < number; i++) {
             cert2 = from.findCertificate(company, sharePerCert / shareUnit, false);
             if (cert2 == null) {
-                log.error("Cannot find " + companyName + " " + shareUnit * sharePerCert
-                        + "% share in " + from.getId());
+                log.error("Cannot find {} {}% share in {}", companyName, shareUnit * sharePerCert, from.getId());
             }
             cert2.moveTo(currentPlayer);
         }

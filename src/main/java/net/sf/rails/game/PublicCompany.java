@@ -969,7 +969,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public void start(int price) {
         StockSpace startSpace = getRoot().getStockMarket().getStartSpace(price);
         if (startSpace == null) {
-            log.error("Invalid start price " + Bank.format(this, price)); // TODO: Do this nicer
+            log.error("Invalid start price {}", Bank.format(this, price)); // TODO: Do this nicer
         } else {
             start(startSpace);
         }
@@ -1543,7 +1543,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * @param capitalisation The capitalisation to set.
      */
     public void setCapitalisation(int capitalisation) {
-        log.debug("Capitalisation=" + capitalisation);
+        log.debug("Capitalisation={}", capitalisation);
         this.capitalisation = capitalisation;
     }
 
@@ -1655,7 +1655,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             }
             for (SpecialProperty sp : spsToMoveToGM) {
                 getRoot().getGameManager().addSpecialProperty(sp);
-                log.debug("SP " + sp.getId() + " is now a common property");
+                log.debug("SP {} is now a common property", sp.getId());
             }
         }
 
@@ -1832,8 +1832,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                     }
                 }
             }
-            log.debug(getId() + " lays home base on " + homeHex.getId() + " city "
-                    + homeCityNumber);
+            log.debug("{} lays home base on {} city {}", getId(), homeHex.getId(), homeCityNumber);
             homeHex.layBaseToken(this, homeHex.getRelatedStop(homeCityNumber));
         }
         return true;
@@ -1970,7 +1969,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         try {
             clone = super.clone();
         } catch (CloneNotSupportedException e) {
-            log.error("Cannot clone company " + getId());
+            log.error("Cannot clone company {}", getId());
             return null;
         }
 

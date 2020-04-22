@@ -73,15 +73,15 @@ import net.sf.rails.algorithms.RevenueTrainRun;
             //Find out which Express Train is involved
             for (RevenueTrainRun run:runs) {
                 if (TRAIN_6E.equals(run.getTrain().getTrainName())) {
-                    if (optimalRuns) log.debug("Express Long Run = " + run.getRunVertices());
+                    if (optimalRuns) log.debug("Express Long Run = {}", run.getRunVertices());
                     List<NetworkVertex> expressRun = extractExpressRun(run, 6);
-                    if (optimalRuns) log.debug("Express Best Run = " + expressRun);
+                    if (optimalRuns) log.debug("Express Best Run = {}", expressRun);
                     int expressRunValue = run.getRunValueForVertices(expressRun);
                     value += expressRunValue - run.getRunValue();
                 } else if (TRAIN_8E.equals(run.getTrain().getTrainName())) {
-                    if (optimalRuns) log.debug("Express Long Run = " + run.getRunVertices());
+                    if (optimalRuns) log.debug("Express Long Run = {}", run.getRunVertices());
                     List<NetworkVertex> expressRun = extractExpressRun(run, 8);
-                    if (optimalRuns) log.debug("Express Best Run = " + expressRun);
+                    if (optimalRuns) log.debug("Express Best Run = {}", expressRun);
                     int expressRunValue = run.getRunValueForVertices(expressRun);
                     value += expressRunValue - run.getRunValue();
                 }

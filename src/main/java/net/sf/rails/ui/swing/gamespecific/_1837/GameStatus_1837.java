@@ -59,14 +59,14 @@ public class GameStatus_1837 extends GameStatus {
 
         if (chosenAction instanceof MergeCompanies) {
 
-            log.debug("Merge action: " + chosenAction.toString());
+            log.debug("Merge action: {}", chosenAction.toString());
 
             MergeCompanies action = (MergeCompanies) chosenAction;
             PublicCompany minor = action.getMergingCompany();
             List<PublicCompany> targets = action.getTargetCompanies();
 
             if (minor == null || targets == null || targets.isEmpty()) {
-                log.error("Bad " + action.toString());
+                log.error("Bad {}", action.toString());
                 return null;
             }
 

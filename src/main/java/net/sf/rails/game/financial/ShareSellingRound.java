@@ -44,8 +44,7 @@ public class ShareSellingRound extends StockRound {
 
     public void start(RoundFacade parentRound, Player sellingPlayer, int cashToRaise,
             PublicCompany cashNeedingCompany, boolean dumpOtherCompaniesAllowed) {
-        log.info("Share selling round started, player="
-                +sellingPlayer.getId()+" cash="+cashToRaise);
+        log.info("Share selling round started, player={} cash={}", sellingPlayer.getId(), cashToRaise);
         ReportBuffer.add(this, LocalText.getText("PlayerMustSellShares",
                 sellingPlayer.getId(),
                 Bank.format(this, cashToRaise)));
@@ -55,7 +54,7 @@ public class ShareSellingRound extends StockRound {
         this.cashToRaise = IntegerState.create(this, "CashToRaise", cashToRaise);
 
         this.dumpOtherCompaniesAllowed = dumpOtherCompaniesAllowed;
-        log.debug("Forced selling, dumpOtherCompaniesAllowed = " + dumpOtherCompaniesAllowed);
+        log.debug("Forced selling, dumpOtherCompaniesAllowed = {}", dumpOtherCompaniesAllowed);
         getRoot().getPlayerManager().setCurrentPlayer(sellingPlayer);
         getSellableShares();
         if (getSellableShares().isEmpty()) {
@@ -86,7 +85,7 @@ public class ShareSellingRound extends StockRound {
         setSellableShares();
 
         for (PossibleAction pa : possibleActions.getList()) {
-            log.debug(currentPlayer.getId() + " may: " + pa.toString());
+            log.debug("{} may: {}", currentPlayer.getId(), pa.toString());
         }
 
         return true;
@@ -154,8 +153,7 @@ public class ShareSellingRound extends StockRound {
                 int presidentShare =
                     company.getCertificates().get(0).getShare();
                 boolean dumpPossible;
-                log.debug("Forced selling check: company = " + company +
-                        ", share = " + share + ", maxShareToSell = " + maxShareToSell);
+                log.debug("Forced selling check: company = {}, share = {}, maxShareToSell = {}", company, share, maxShareToSell);
                 if (company == cashNeedingCompany || !dumpOtherCompaniesAllowed) {
                     // case A: selling of president not allowed (either company triggered share selling or no dump of others)
                     int maxOtherShares = 0;
@@ -226,8 +224,7 @@ public class ShareSellingRound extends StockRound {
                 if (number == 0) continue;
 
                 // May not sell more than is needed to buy the train
-                while (number > 0
-                       && ((number - 1) * price) > cashToRaise.value())
+                while (number > 0 && ((number - 1) * price) > cashToRaise.value())
                     number--;
 
                 if (number > 0) {
@@ -246,12 +243,10 @@ public class ShareSellingRound extends StockRound {
         String playerName = currentPlayer.getId();
         String errMsg = null;
         String companyName = action.getCompanyName();
-        PublicCompany company =
-            companyManager.getPublicCompany(action.getCompanyName());
+        PublicCompany company = companyManager.getPublicCompany(action.getCompanyName());
         PublicCertificate cert = null;
         PublicCertificate presCert = null;
-        List<PublicCertificate> certsToSell =
-                new ArrayList<PublicCertificate>();
+        List<PublicCertificate> certsToSell = new ArrayList<PublicCertificate>();
         Player dumpedPlayer = null;
         int presSharesToSell = 0;
         int numberToSell = action.getNumber();

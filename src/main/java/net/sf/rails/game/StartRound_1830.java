@@ -112,7 +112,7 @@ public class StartRound_1830 extends StartRound {
                             break; // No more actions possible!
                         } else {
                             // ERROR, this should have been detected in process()!
-                            log.error("??? Wrong place to assign item "+item.getId());
+                            log.error("??? Wrong place to assign item {}", item.getId());
                             assignItem(item.getBidder(), item, item.getBid(), 0);
                         }
                     } else if (item.getBidders() > 1) {
@@ -319,8 +319,7 @@ public class StartRound_1830 extends StartRound {
                     // All but the highest bidder have passed.
                     int price = auctionItem.getBid();
 
-                    log.debug("Highest bidder is "
-                              + auctionItem.getBidder().getId());
+                    log.debug("Highest bidder is {}", auctionItem.getBidder().getId());
                     if (auctionItem.needsPriceSetting() != null) {
                         auctionItem.setStatus(StartItem.NEEDS_SHARE_PRICE);
                     } else {

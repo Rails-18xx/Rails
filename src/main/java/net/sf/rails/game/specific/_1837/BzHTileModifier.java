@@ -37,7 +37,7 @@ public class BzHTileModifier implements NetworkGraphModifier {
         // but not on other things (like phases)
         int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex();
         if (phaseIndex >= 3 ) {
-            log.debug("Boznia-Herzegovina active, index of phase = " + phaseIndex);
+            log.debug("Boznia-Herzegovina active, index of phase = {}", phaseIndex);
             return;
         }
 
@@ -50,7 +50,7 @@ public class BzHTileModifier implements NetworkGraphModifier {
 
         // 3 ... and remove them from the graph
         graph.removeAllVertices(bzhVertices);
-        log.debug("Bosnia Herzegovina inactive, index of phase = " + phaseIndex);
+        log.debug("Bosnia Herzegovina inactive, index of phase = {}", phaseIndex);
 
     }
 
