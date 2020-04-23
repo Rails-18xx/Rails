@@ -7,20 +7,17 @@ package net.sf.rails.game.specific._1835;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
-import com.google.common.collect.SortedMultiset;
-
+import net.sf.rails.game.financial.*;
+import net.sf.rails.game.model.CertificatesModel;
 import rails.game.action.BuyCertificate;
 import rails.game.action.NullAction;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
-import net.sf.rails.game.financial.PublicCertificate;
-import net.sf.rails.game.financial.StockRound;
-import net.sf.rails.game.financial.StockSpace;
-import net.sf.rails.game.financial.PlayerShareUtils;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.Portfolio;
 
@@ -278,5 +275,43 @@ public class StockRound_1835 extends StockRound {
 			super.setPriority(string);
 		}
 	}
-     
+
+
+    @Override
+    protected void executeShareTransfer(PublicCompany company, List<PublicCertificate> certsToSell, Player dumpedPlayer, int presSharesToSell) {
+
+        BankPortfolio bankTo = (BankPortfolio) pool.getParent();
+
+        if (dumpedPlayer != null && presSharesToSell > 0) {
+            executePresidentTransferAfterDump(company, new TreeSet<>(certsToSell), dumpedPlayer, presSharesToSell, company.getPresident(), bankTo);
+
+            ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
+                    dumpedPlayer.getId(),
+                    company.getId()));
+
+        }
+
+        // Transfer the sold certificates
+        Portfolio.moveAll(certsToSell, bankTo);
+    }
+
+    private void executePresidentTransferAfterDump(PublicCompany company, Set<PublicCertificate> certsToSell, Player newPresident, int presSharesToSell, Player oldPresident, BankPortfolio bankTo) {
+        PublicCertificate presidentCert = company.getPresidentsShare();
+
+        SortedSet<PublicCertificate.Combination> newPresidentsReplacementForPresidentShare = CertificatesModel.certificateCombinations(
+                newPresident.getPortfolioModel().getCertificates(company), presidentCert.getShares());
+
+        // FIXME: This should be based on a selection of the old president, however it chooses the combination with least certificates, which is favorable in most cases
+        PublicCertificate.Combination swapToOldPresident = newPresidentsReplacementForPresidentShare.first();
+
+        Portfolio.moveAll(swapToOldPresident, oldPresident);
+        presidentCert.moveTo(newPresident);
+
+        Set<PublicCertificate> oldPresidentsCertsWithoutCertsToSell = Sets.difference(oldPresident.getPortfolioModel().getCertificates(company), certsToSell);
+        SortedSet<PublicCertificate.Combination> sellableCertificateCombinations = CertificatesModel.certificateCombinations(
+                oldPresidentsCertsWithoutCertsToSell,
+                presSharesToSell);
+
+        Portfolio.moveAll(sellableCertificateCombinations.last(), bankTo);
+    }
 }
