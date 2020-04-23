@@ -54,7 +54,6 @@ import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.Observer;
-import net.sf.rails.javafx.windows.FXStockChartWindow;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.CheckBoxDialog;
 import net.sf.rails.ui.swing.elements.DialogOwner;
@@ -84,6 +83,9 @@ public class GameUIManager implements DialogOwner {
     private StartRoundWindow startRoundWindow;
 
     protected JDialog currentDialog = null;
+
+    protected StockChartWindow stockChartWindow;
+
     protected PossibleAction currentDialogAction = null;
 
     protected RailsRoot railsRoot;
@@ -284,7 +286,7 @@ public class GameUIManager implements DialogOwner {
 
     public void gameUIInit(boolean newGame) {
         splashWindow.notifyOfStep(SplashWindow.STEP_STOCK_CHART);
-        FXStockChartWindow.launch(this);
+        stockChartWindow = new StockChartWindow(this);
 
         splashWindow.notifyOfStep(SplashWindow.STEP_REPORT_WINDOW);
 
@@ -545,7 +547,7 @@ public class GameUIManager implements DialogOwner {
                 case STOCK_MARKET:
                     boolean stockChartVisibilityHint = hint.isVisible() || configuredStockChartVisibility;
                     if (stockChartVisibilityHint != previousStockChartVisibilityHint) {
-                        FXStockChartWindow.setVisible(stockChartVisibilityHint);
+                        stockChartWindow.setVisible(stockChartVisibilityHint);
                         previousStockChartVisibilityHint = stockChartVisibilityHint;
                     }
                     break;
@@ -588,7 +590,7 @@ public class GameUIManager implements DialogOwner {
         } else if (uiHints.getActivePanel() == GuiDef.Panel.STATUS || correctionOverride) {
             log.debug("Entering Stock Round UI type");
             activeWindow = statusWindow;
-            FXStockChartWindow.setVisible(true);
+            stockChartWindow.setVisible(true);
             setMeVisible(statusWindow, true);
             setMeToFront(statusWindow);
 
