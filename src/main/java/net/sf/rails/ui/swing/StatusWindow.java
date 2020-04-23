@@ -31,7 +31,6 @@ import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.game.financial.TreasuryShareRound;
 import net.sf.rails.game.round.RoundFacade;
-import net.sf.rails.javafx.windows.FXStockChartWindow;
 import net.sf.rails.ui.swing.elements.ActionButton;
 import net.sf.rails.ui.swing.elements.ActionCheckBoxMenuItem;
 import net.sf.rails.ui.swing.elements.ActionMenuItem;
@@ -669,7 +668,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             gameUIManager.reportWindow.scrollDown();
             return;
         } else if (command.equals(MARKET_CMD)) {
-            FXStockChartWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
+            gameUIManager.stockChartWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
         } else if (command.equals(MAP_CMD)) {
             gameUIManager.orWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
         } else if (command.equals(CONFIG_CMD)) {
