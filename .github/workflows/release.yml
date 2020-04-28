@@ -38,7 +38,7 @@ jobs:
         uses: olegtarasov/get-tag@v2
         id: get_version
         with:
-          tagRegex: "releases\/(.*)"
+          tagRegex: "releases\\/(.*)"
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
@@ -75,7 +75,7 @@ jobs:
         uses: olegtarasov/get-tag@v2
         id: get_version
         with:
-          tagRegex: "releases\/(.*)"
+          tagRegex: "releases\\/(.*)"
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
@@ -105,7 +105,7 @@ jobs:
         uses: olegtarasov/get-tag@v2
         id: get_version
         with:
-          tagRegex: "releases\/(.*)"
+          tagRegex: "releases\\/(.*)"
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
@@ -131,7 +131,7 @@ jobs:
         uses: olegtarasov/get-tag@v2
         id: get_version
         with:
-          tagRegex: "releases\/(.*)"
+          tagRegex: "releases\\/(.*)"
       - name: Download exe
         uses: actions/download-artifact@v1
         with:
