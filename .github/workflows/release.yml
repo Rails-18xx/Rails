@@ -79,9 +79,9 @@ jobs:
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
-        run: ./gradlew -Pversion=${{ steps.get_version.outputs.tag }} clean build
+        run: ./gradlew -Pversion="${{ steps.get_version.outputs.tag }}" clean build
       - name: Create Exe Installer
-        run: ./gradlew -Pversion=${{ steps.get_version.outputs.tag }} buildExePackage
+        run: ./gradlew -Pversion="${{ steps.get_version.outputs.tag }}" buildExePackage
       - name: Rename Installer
         run: ./gradlew renameExecutables
       - name: Upload Installer
