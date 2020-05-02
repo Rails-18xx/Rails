@@ -10,11 +10,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,7 @@ import net.sf.rails.ui.swing.elements.ActionButton;
 import net.sf.rails.ui.swing.elements.ActionCheckBoxMenuItem;
 import net.sf.rails.ui.swing.elements.ActionMenuItem;
 import net.sf.rails.ui.swing.elements.RailsIcon;
+import net.sf.rails.util.GameLoader;
 import rails.game.action.ActionTaker;
 import rails.game.action.DiscardTrain;
 import rails.game.action.GameAction;
@@ -54,6 +57,10 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
     private static final long serialVersionUID = 1L;
 
     protected static final String QUIT_CMD = "Quit";
+
+    protected static final String NEW_CMD = "New";
+
+    protected static final String LOAD_CMD = "Load";
 
     protected static final String SAVE_CMD = "Save";
 
@@ -137,7 +144,21 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         moderatorMenu.setMnemonic(KeyEvent.VK_M);
         specialMenu.setMnemonic(KeyEvent.VK_S);
 
-        ActionMenuItem actionMenuItem = new ActionMenuItem(LocalText.getText("SAVE"));
+        ActionMenuItem actionMenuItem = new ActionMenuItem(NEW_CMD);
+        actionMenuItem.setActionCommand(NEW_CMD);
+        actionMenuItem.addActionListener(this);
+        actionMenuItem.setEnabled(false);
+        actionMenuItem.setPossibleAction(new GameAction(gameUIManager.getRoot(), GameAction.Mode.NEW));
+        fileMenu.add(actionMenuItem);
+
+        actionMenuItem = new ActionMenuItem(LOAD_CMD);
+        actionMenuItem.setActionCommand(LOAD_CMD);
+        actionMenuItem.addActionListener(this);
+        actionMenuItem.setEnabled(true);
+        actionMenuItem.setPossibleAction(new GameAction(gameUIManager.getRoot(), GameAction.Mode.LOAD));
+        fileMenu.add(actionMenuItem);
+
+        actionMenuItem = new ActionMenuItem(LocalText.getText("SAVE"));
         actionMenuItem.setActionCommand(SAVE_CMD);
         actionMenuItem.setMnemonic(KeyEvent.VK_S);
         actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
@@ -435,7 +456,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
     }
 
     public void setCorrectionMenu() {
-
         // Update the correction  menu
         correctionMenu.removeAll();
         correctionMenu.setEnabled(false);
@@ -460,7 +480,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
     }
 
     public boolean setupFor(RoundFacade round) {
-
         currentRound = round;
 
         if (round instanceof StartRound) {
@@ -527,8 +546,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         }
 
         // New special action handling
-        List<ActionMenuItem> specialActionItems =
-            new ArrayList<ActionMenuItem>();
+        List<ActionMenuItem> specialActionItems = new ArrayList<ActionMenuItem>();
 
         // Special properties
         List<UseSpecialProperty> sps =
@@ -663,6 +681,37 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
 
         } else if (command.equals(QUIT_CMD)) {
             gameUIManager.terminate();
+        } else if ( command.equals(NEW_CMD) ) {
+        } else if ( command.equals(LOAD_CMD) ) {
+            // TODO: does this really belong here?
+            String saveDirectory = Config.get("save.directory");
+            JFileChooser jfc = new JFileChooser();
+            jfc.setCurrentDirectory(new File(saveDirectory));
+            jfc.setFileFilter(new FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    // TODO: need to filter like GameSetupController.isOurs() does
+                    return true;
+                }
+
+                @Override
+                public String getDescription() {
+                    return null;
+                }
+            });
+
+            if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                // close the existing game
+
+                final File selectedFile = jfc.getSelectedFile();
+                //start in new thread so that swing thread is not used for game setup
+                new Thread(() -> {
+                    // close the existing game (which ironically will include us
+                    gameUIManager.closeGame();
+                    // start the new game
+                    GameLoader.loadAndStartGame(selectedFile);
+                }).start();
+            }
         } else if (command.equals(REPORT_CMD)) {
             gameUIManager.reportWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
             gameUIManager.reportWindow.scrollDown();

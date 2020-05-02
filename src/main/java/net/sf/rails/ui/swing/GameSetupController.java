@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -48,9 +47,9 @@ public class GameSetupController {
 
     private static final Logger log = LoggerFactory.getLogger(GameSetupController.class);
 
-    private final SortedSet<GameInfo> gameList;
+    private final SortedSet<GameInfo> gameList = Sets.newTreeSet();
 
-    private final String credits;
+    private String credits;
 
     private final Map<GameInfo, GameOptionsSet.Builder> gameOptions = Maps.newHashMap();
 
@@ -75,9 +74,16 @@ public class GameSetupController {
     private final ActionListener randomizeAction = new RandomizeAction();
     private final InputVerifier playerNameVerifier = new PlayerNameVerifier();
 
-    private GameSetupController(SortedSet<GameInfo> gameList, String credits) {
-        this.gameList = gameList;
-        this.credits = credits;
+    private static final GameSetupController instance = new GameSetupController();
+
+    private GameSetupController() {
+        GameInfoParser gip = new GameInfoParser();
+        try {
+            gameList.addAll(gip.processGameList());
+            credits = gip.getCredits();
+        } catch (ConfigurationException e) {
+            log.error("Unable to initialize Game setup controller", e);
+        }
 
         window = new GameSetupWindow(this);
 
@@ -87,12 +93,20 @@ public class GameSetupController {
         SoundManager.notifyOfGameSetup();
     }
 
-    ImmutableList<GameInfo> getGameList() {
+    public static GameSetupController getInstance() {
+        return instance;
+    }
+
+    public void show() {
+        window.setVisible(true);
+    }
+
+    protected ImmutableList<GameInfo> getGameList() {
         return ImmutableList.copyOf(gameList);
     }
 
     // Return default game, if none is set, returns the first
-    GameInfo getDefaultGame() {
+    protected GameInfo getDefaultGame() {
         GameInfo defaultGame = GameInfo.findGame(gameList, Config.get("default_game"));
         if (defaultGame == null) {
             defaultGame = gameList.first();
@@ -100,14 +114,14 @@ public class GameSetupController {
         return defaultGame;
     }
 
-    GameOptionsSet.Builder getAvailableOptions(GameInfo game) {
+    protected GameOptionsSet.Builder getAvailableOptions(GameInfo game) {
         if (!gameOptions.containsKey(game)) {
             return loadOptions(game);
         }
         return gameOptions.get(game);
     }
 
-    Action getOptionChangeAction(GameOption option) {
+    protected Action getOptionChangeAction(GameOption option) {
         return new OptionChangeAction(option);
     }
 
@@ -124,7 +138,7 @@ public class GameSetupController {
         return loadGameOptions;
     }
 
-    private void prepareGameUIInit() {
+    public void prepareGameUIInit() {
         window.setVisible(false);
         if (configWindow != null) {
             configWindow.dispose();
@@ -463,35 +477,6 @@ public class GameSetupController {
             return true;
         }
 
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-        private SortedSet<GameInfo> gameList = Sets.newTreeSet();
-        private String credits = "Credits";
-
-        private Builder() {}
-
-        public void start() {
-            initialize();
-            new GameSetupController(gameList, credits);
-        }
-
-        public void initialize() {
-            GameInfoParser gip = new GameInfoParser();
-            Set<GameInfo> gameInfoList = ImmutableSet.of();
-            try {
-                gameInfoList = gip.processGameList();
-                credits = gip.getCredits();
-            } catch (ConfigurationException e) {
-                log.error(e.getMessage());
-            }
-            // convert list to map
-            gameList.addAll(gameInfoList);
-        }
     }
 
     public ActionListener getNewAction() {

@@ -1,11 +1,21 @@
 package net.sf.rails.ui.swing;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedMap;
 
 import javax.swing.*;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import net.sf.rails.common.Config;
 import net.sf.rails.common.ConfigManager;
@@ -13,10 +23,6 @@ import net.sf.rails.common.GameInfo;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.GameOptionsSet;
 import net.sf.rails.common.LocalText;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 
 /**
@@ -66,7 +72,7 @@ public class GameSetupWindow extends JDialog {
         initPlayersPane(selectedGame);
         initConfigBox();
         this.pack();
-        this.setVisible(true);
+        this.setVisible(false);
     }
 
     private void initialize() {

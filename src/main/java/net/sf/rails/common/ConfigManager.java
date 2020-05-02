@@ -207,6 +207,10 @@ public class ConfigManager implements Configurable {
         transientConfig.put(key, value);
     }
 
+    public void clearTransientConfig() {
+        transientConfig.clear();
+    }
+
     public String getActiveProfile() {
         return activeProfile.getName();
     }

@@ -33,6 +33,7 @@ import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.read.CyclicBufferAppender;
 import net.sf.rails.common.Config;
+import net.sf.rails.common.ConfigManager;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.GuiHints;
@@ -41,6 +42,7 @@ import net.sf.rails.common.notify.Discord;
 import net.sf.rails.common.notify.Slack;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.MapHex;
+import net.sf.rails.game.OpenGamesManager;
 import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.Player;
@@ -190,6 +192,8 @@ public class GameUIManager implements DialogOwner {
             myTurn = getCurrentPlayer().getId().equals(localPlayerName);
             log.debug("starting game with my turn: {}", myTurn);
         }
+
+        OpenGamesManager.getInstance().addGame(this);
     }
 
     private void initWindowSettings() {
@@ -204,6 +208,40 @@ public class GameUIManager implements DialogOwner {
         }
         return JOptionPane.showConfirmDialog(parent, LocalText.getText("CLOSE_WINDOW"),
                 LocalText.getText("Select"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
+    }
+
+    public void closeGame() {
+        if ( myTurn ) {
+            // TODO: confirm game close if in turn?
+        }
+        OpenGamesManager.getInstance().removeGame(this);
+        getWindowSettings().save();
+        if ( startRoundWindow != null ) {
+            startRoundWindow.dispose();
+        }
+        if ( statusWindow != null ) {
+            statusWindow.dispose();
+        }
+        if ( reportWindow != null ) {
+            reportWindow.dispose();
+        }
+        if ( orWindow != null ) {
+            orWindow.dispose();
+        }
+        if ( configWindow != null ) {
+            configWindow.dispose();
+        }
+        if ( currentDialog != null ) {
+            currentDialog.dispose();
+        }
+        if ( autoLoadPoller != null ) {
+            autoLoadPoller.setActive(false);
+            autoLoadPoller.close();
+        }
+        // TODO: terminate things like Discord
+
+        // clean up config items that are game play specific (ie like Discord)
+        ConfigManager.getInstance().clearTransientConfig();
     }
 
     public void terminate() {

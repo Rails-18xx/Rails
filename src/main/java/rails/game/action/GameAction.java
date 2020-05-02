@@ -15,7 +15,7 @@ public class GameAction extends PossibleAction {
 
     private static final long serialVersionUID = 1L;
 
-    public static enum Mode { SAVE, LOAD, UNDO, FORCED_UNDO, REDO, EXPORT, RELOAD }
+    public static enum Mode { SAVE, LOAD, UNDO, FORCED_UNDO, REDO, EXPORT, RELOAD, NEW }
 
     // Server-side settings
     protected Mode mode = null;
