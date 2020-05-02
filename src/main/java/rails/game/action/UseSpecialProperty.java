@@ -28,8 +28,7 @@ public class UseSpecialProperty extends PossibleORAction {
     public UseSpecialProperty(SpecialProperty specialProperty) {
         super(specialProperty.getRoot());
         this.specialProperty = specialProperty;
-        if (specialProperty != null)
-            this.specialPropertyId = specialProperty.getUniqueId();
+        this.specialPropertyId = specialProperty.getUniqueId();
     }
 
     public static final long serialVersionUID = 1L;

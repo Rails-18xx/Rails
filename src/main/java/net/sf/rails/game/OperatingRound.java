@@ -118,7 +118,7 @@ public class OperatingRound extends Round implements Observer {
                 msg.append(",").append(company.getId());
             }
             if (msg.length() > 0) msg.deleteCharAt(0);
-            log.debug("Initial operating sequence is {}", msg.toString());
+            log.debug("Initial operating sequence is {}", msg);
 
             if (setNextOperatingCompany(true)) {
                 setStep(GameDef.OrStep.INITIAL);
@@ -621,7 +621,7 @@ public class OperatingRound extends Round implements Observer {
 
         for (PossibleAction pa : possibleActions.getList()) {
             try {
-                log.debug("{}: {}", operatingCompany.value().getId(), pa.toString());
+                log.debug("{}: {}", operatingCompany.value().getId(), pa);
             } catch (Exception e) {
                 log.error("Error in toString() of {}", pa.getClass(), e);
             }
@@ -1743,8 +1743,7 @@ public class OperatingRound extends Round implements Observer {
         // duplicate the phase colours
         Map<String, Integer> newTileColours = new HashMap<String, Integer>();
         for (String colour : Phase.getCurrent(this).getTileColours()) {
-            int allowedNumber =
-                    operatingCompany.value().getNumberOfTileLays(colour);
+            int allowedNumber = operatingCompany.value().getNumberOfTileLays(colour);
             // Replace the null map value with the allowed number of lays
             newTileColours.put(colour, allowedNumber);
         }

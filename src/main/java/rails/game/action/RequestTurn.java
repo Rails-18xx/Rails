@@ -21,9 +21,7 @@ public class RequestTurn extends PossibleAction {
     public RequestTurn (Player player) {
         super(player.getRoot()); // not defined by an activity yet
         // Override player set by superclass
-        if (player != null) {
-            requestingPlayerName = player.getId();
-        }
+        requestingPlayerName = player.getId();
     }
 
     public String getRequestingPlayerName() {
