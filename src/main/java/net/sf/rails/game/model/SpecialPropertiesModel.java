@@ -29,11 +29,11 @@ public class SpecialPropertiesModel extends RailsModel implements Triggerable {
         // and add it as triggerable
         specialProperties.addTrigger(this);
     }
-    
+
     public static SpecialPropertiesModel create(RailsOwner parent) {
         return new SpecialPropertiesModel(parent);
     }
-    
+
     @Override
     public RailsOwner getParent() {
         return (RailsOwner)super.getParent();
@@ -42,17 +42,17 @@ public class SpecialPropertiesModel extends RailsModel implements Triggerable {
     PortfolioSet<SpecialProperty> getPortfolio() {
         return specialProperties;
     }
-    
+
     // triggerable interface
-    
+
     public void triggered(Observable observable, Change change) {
-        
+
         // checks if the specialproperty moved into the portfolio carries a LocatedBonus
 
         if (!(change instanceof SetChange)) {
             return;
         }
-        
+
         @SuppressWarnings("rawtypes")
         SetChange sChange = (SetChange)change;
         if (!sChange.isAddToSet()) return;
@@ -61,8 +61,7 @@ public class SpecialPropertiesModel extends RailsModel implements Triggerable {
         if (getParent() instanceof PublicCompany && property instanceof LocatedBonus) {
             PublicCompany company = (PublicCompany)getParent();
             LocatedBonus locBonus = (LocatedBonus)property;
-            Bonus bonus = new Bonus(company, locBonus.getId(), locBonus.getValue(),
-                    locBonus.getLocations());
+            Bonus bonus = new Bonus(company, locBonus.getId(), locBonus.getValue(), locBonus.getLocations());
             company.addBonus(bonus);
             ReportBuffer.add(this, LocalText.getText("AcquiresBonus",
                     getParent().getId(),

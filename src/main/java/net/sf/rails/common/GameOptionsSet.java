@@ -4,8 +4,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * A class to store several GameOptions, including values
@@ -33,7 +37,7 @@ public class GameOptionsSet {
     }
 
     public static class Builder {
-        private final SortedSet<GameOption> options = Sets.newTreeSet();
+        private final Set<GameOption> options = new TreeSet<>();
 
         private int numberOfPlayers;
 

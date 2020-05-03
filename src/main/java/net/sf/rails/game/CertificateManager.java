@@ -5,7 +5,7 @@ import java.util.Map;
 
 import net.sf.rails.game.financial.PublicCertificate;
 
-public class CertificateManager  extends RailsManager {
+public class CertificateManager extends RailsManager {
 
     protected static Map<String, PublicCertificate> certMap = new HashMap<>();
 

@@ -55,14 +55,14 @@ public final class GuiHints extends RailsAbstractItem implements Serializable {
 
     public void setVisibilityHint(GuiDef.Panel type, boolean visibility) {
         if (visibilityHints == null) {
-            visibilityHints = new ArrayList<VisibilityHint>(4);
+            visibilityHints = new ArrayList<>(4);
         }
         visibilityHints.add(new VisibilityHint(type, visibility));
     }
 
     public void clearVisibilityHints() {
         if (visibilityHints == null) {
-            visibilityHints = new ArrayList<VisibilityHint>(4);
+            visibilityHints = new ArrayList<>(4);
         } else {
             visibilityHints.clear();
         }

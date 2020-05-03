@@ -32,8 +32,7 @@ import rails.game.action.GameAction;
 /**
  * ReportWindow displays the game history
  */
-public class ReportWindow extends JFrame implements
-    ActionListener, HyperlinkListener, ReportBuffer.Observer {
+public class ReportWindow extends JFrame implements ActionListener, HyperlinkListener, ReportBuffer.Observer {
 
     private static final long serialVersionUID = 1L;
 

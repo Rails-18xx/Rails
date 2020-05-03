@@ -209,11 +209,7 @@ public class GameSetupWindow extends JDialog {
         }
         configureBox.setSelectedItem(cm.getActiveProfile());
 
-        configureBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent arg0) {
-                cm.changeProfile((String)configureBox.getSelectedItem());
-            }
-        }
+        configureBox.addItemListener(arg0 -> cm.changeProfile((String)configureBox.getSelectedItem())
         );
     }
 
@@ -240,8 +236,7 @@ public class GameSetupWindow extends JDialog {
             optionsPane.add(label);
         } else  {
             List<GameOption> options = availableOptions.getOptions();
-            optionsPane.setLayout(
-                    new GridLayout(((options.size() + 1) / 2), 2, 2, 2));
+            optionsPane.setLayout(new GridLayout(((options.size() + 1) / 2), 2, 2, 2));
 
             for (GameOption option : options) {
                 String selectedValue = option.getSelectedValue();
@@ -419,11 +414,7 @@ public class GameSetupWindow extends JDialog {
 
     void setFocus(Integer playerNr) {
         final PlayerInfo focus = players.get(playerNr);
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                focus.name.requestFocusInWindow();
-            }
-        });
+        EventQueue.invokeLater(() -> focus.name.requestFocusInWindow());
     }
 
     boolean areOptionsVisible() {

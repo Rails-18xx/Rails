@@ -31,8 +31,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
     private final PortfolioModel portfolio = PortfolioModel.create(this);
     private final CertificateCountModel certCount = CertificateCountModel.create(portfolio);
 
-    private final PurseMoneyModel cash =
-            PurseMoneyModel.create(this, "cash", false);
+    private final PurseMoneyModel cash = PurseMoneyModel.create(this, "cash", false);
     private final CalculatedMoneyModel freeCash;
     private final CountingMoneyModel blockedCash = CountingMoneyModel.create(this, "blockedCash", false);
     private final CalculatedMoneyModel worth;
@@ -267,7 +266,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
      */
     public int compareTo(Player p) {
         // first by wealth
-        int result = -new Integer(getWorth()).compareTo(new Integer(p.getWorth()));
+        int result = -Integer.compare(getWorth(), p.getWorth());
         // then by name
         if (result == 0)
             result = getId().compareTo(p.getId());

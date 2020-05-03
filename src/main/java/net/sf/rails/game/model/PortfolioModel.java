@@ -74,8 +74,7 @@ public class PortfolioModel extends RailsModel {
         certificates = CertificatesModel.create(parent);
         privates = PrivatesModel.create(parent);
         trains = TrainsModel.create(parent);
-        bonusTokens =
-                PortfolioSet.create(parent, "BonusTokens", BonusToken.class);
+        bonusTokens = PortfolioSet.create(parent, "BonusTokens", BonusToken.class);
         specialProperties = SpecialPropertiesModel.create(parent);
 
         // change display style dependent on owner
@@ -142,8 +141,7 @@ public class PortfolioModel extends RailsModel {
         updatePlayerWorth();
     }
 
-    // FIXME: Solve the presidentShare problem, should not be identified at
-    // position zero
+    // FIXME: Solve the presidentShare problem, should not be identified at position zero
 
     protected void updatePlayerWorth() {
         if (getParent() instanceof Player) {
@@ -204,8 +202,7 @@ public class PortfolioModel extends RailsModel {
      *
      * @return (first) certificate found, null if not found
      */
-    public PublicCertificate findCertificate(PublicCompany company, int shares,
-            boolean president) {
+    public PublicCertificate findCertificate(PublicCompany company, int shares, boolean president) {
         for (PublicCertificate cert : certificates.getPortfolio().items(company)) {
             if (company.getShareUnit() == 100 || president
                 && cert.isPresidentShare() || !president
@@ -275,8 +272,7 @@ public class PortfolioModel extends RailsModel {
     }
 
 
-    public int ownsCertificates(PublicCompany company, int unit,
-            boolean president) {
+    public int ownsCertificates(PublicCompany company, int unit, boolean president) {
         int certs = 0;
         if (certificates.contains(company)) {
             for (PublicCertificate cert : certificates.getPortfolio().items(
@@ -392,67 +388,6 @@ public class PortfolioModel extends RailsModel {
     }
 
     /**
-     * Add an object. Low-level method, only to be called by Move objects.
-     *
-     * @param object The object to add.
-     * @return True if successful.
-     */
-    // TODO: Is this still required?
-
-    /*
-     * public boolean addObject(Holdable object, int position) { if (object
-     * instanceof PublicCertificate) { if (position == null) position = new
-     * int[] {-1, -1, -1}; addCertificate((PublicCertificate) object, position);
-     * return true; } else if (object instanceof PrivateCompany) {
-     * addPrivate((PrivateCompany) object, position == null ? -1 : position[0]);
-     * return true; } else if (object instanceof Train) { if (position == null)
-     * position = new int[] {-1, -1, -1}; addTrain((Train) object, position);
-     * return true; } else if (object instanceof SpecialProperty) { return
-     * addSpecialProperty((SpecialProperty) object, position == null ? -1 :
-     * position[0]); } else if (object instanceof Token) { return
-     * addToken((Token) object, position == null ? -1 : position[0]); } else {
-     * return false; } }
-     */
-
-    /**
-     * Remove an object. Low-level method, only to be called by Move objects.
-     *
-     * @param object The object to remove.
-     * @return True if successful.
-     */
-    // TODO: Is this still required?
-    /*
-     * public boolean removeObject(Holdable object) { if (object instanceof
-     * PublicCertificate) { removeCertificate((PublicCertificate) object);
-     * return true; } else if (object instanceof PrivateCompany) {
-     * removePrivate((PrivateCompany) object); return true; } else if (object
-     * instanceof Train) { removeTrain((Train) object); return true; } else if
-     * (object instanceof SpecialProperty) { return
-     * removeSpecialProperty((SpecialProperty) object); } else if (object
-     * instanceof Token) { return removeToken((Token) object); } else { return
-     * false; } }
-     */
-
-    // TODO: Check if this is still required
-    /*
-     * public int[] getListIndex (Holdable object) { if (object instanceof
-     * PublicCertificate) { PublicCertificate cert = (PublicCertificate) object;
-     * return new int[] { certificates.indexOf(object),
-     * certPerCompany.get(cert.getCompany().getId()).indexOf(cert),
-     * certsPerType.get(cert.getTypeId()).indexOf(cert) }; } else if (object
-     * instanceof PrivateCompany) { return new int[]
-     * {privateCompanies.indexOf(object)}; } else if (object instanceof Train) {
-     * Train train = (Train) object; return new int[] { trains.indexOf(train),
-     * train.getPreviousType() != null ?
-     * trainsPerType.get(train.getPreviousType()).indexOf(train) : -1,
-     * trainsPerCertType.get(train.getCertType()).indexOf(train) }; } else if
-     * (object instanceof SpecialProperty) { return new int[]
-     * {specialProperties.indexOf(object)}; } else if (object instanceof Token)
-     * { return new int[] {tokens.indexOf(object)}; } else { return
-     * Holdable.AT_END; } }
-     */
-
-    /**
      * @return Set of all special properties we have.
      */
     public ImmutableSet<SpecialProperty> getPersistentSpecialProperties() {
@@ -482,8 +417,7 @@ public class PortfolioModel extends RailsModel {
 
     // TODO: Check if this code can be simplified
     @SuppressWarnings("unchecked")
-    public <T extends SpecialProperty> List<T> getSpecialProperties(
-            Class<T> clazz, boolean includeExercised) {
+    public <T extends SpecialProperty> List<T> getSpecialProperties(Class<T> clazz, boolean includeExercised) {
         List<T> result = new ArrayList<T>();
         Set<SpecialProperty> sps;
 
@@ -502,8 +436,7 @@ public class PortfolioModel extends RailsModel {
                         && (getParent() instanceof Company
                             && sp.isUsableIfOwnedByCompany() || getParent() instanceof Player
                                                                 && sp.isUsableIfOwnedByPlayer())) {
-                        log.debug("Portfolio " + getParent().getId()
-                                  + " has SP " + sp);
+                        log.debug("Portfolio " + getParent().getId() + " has SP " + sp);
                         result.add((T) sp);
                     }
                 }
@@ -517,8 +450,7 @@ public class PortfolioModel extends RailsModel {
                     && (getParent() instanceof Company
                         && sp.isUsableIfOwnedByCompany() || getParent() instanceof Player
                                                             && sp.isUsableIfOwnedByPlayer())) {
-                    log.debug("Portfolio " + getParent().getId()
-                              + " has persistent SP " + sp);
+                    log.debug("Portfolio " + getParent().getId() + " has persistent SP " + sp);
                     result.add((T) sp);
                 }
             }
@@ -551,10 +483,8 @@ public class PortfolioModel extends RailsModel {
         // Need to separate selection and execution,
         // otherwise we get a ConcurrentModificationException on trains.
         for (Train train : trainsToRust) {
-            ReportBuffer.add(this, LocalText.getText("TrainsObsoleteRusted",
-                    train.toText(), getParent().getId()));
-            log.debug("Obsolete train " + train.getId() + " (owned by "
-                      + getParent().getId() + ") rusted");
+            ReportBuffer.add(this, LocalText.getText("TrainsObsoleteRusted", train.toText(), getParent().getId()));
+            log.debug("Obsolete train " + train.getId() + " (owned by " + getParent().getId() + ") rusted");
             train.setRusted();
         }
         // FIXME:: Still required?

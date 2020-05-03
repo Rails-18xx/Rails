@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,9 +27,9 @@ public final class ArrayListState<E> extends State implements Iterable<E> {
         super(parent, id);
 
         if (collection == null) {
-            this.list = new ArrayList<E>();
+            this.list = new ArrayList<>();
         } else {
-            this.list = new ArrayList<E>(collection);
+            this.list = new ArrayList<>(collection);
         }
     }
 
@@ -62,13 +63,13 @@ public final class ArrayListState<E> extends State implements Iterable<E> {
     public void add(int index, E element) {
         if (index < 0 || index > list.size()) throw new IndexOutOfBoundsException();
         // if bounds ok, generate change
-        new ArrayListChange<E>(this, element, index);
+        new ArrayListChange<>(this, element, index);
     }
 
     public boolean remove(E element) {
         // check first if element exists
         if (!list.contains(element)) return false;
-        new ArrayListChange<E>(this, list.indexOf(element));
+        new ArrayListChange<>(this, list.indexOf(element));
         return true;
     }
 
@@ -83,7 +84,7 @@ public final class ArrayListState<E> extends State implements Iterable<E> {
         if (index < 0 || index > list.size()) throw new IndexOutOfBoundsException();
         E element = list.get(index);
         // if bounds ok, generate change
-        new ArrayListChange<E>(this, index);
+        new ArrayListChange<>(this, index);
         return element;
     }
 
@@ -124,7 +125,7 @@ public final class ArrayListState<E> extends State implements Iterable<E> {
      */
     public void setTo(List<E> newList) {
         int index = 0;
-        List<E> copyList = ImmutableList.copyOf(list);
+        List<E> copyList = List.copyOf(list);
         for (E element : newList) {
             if (index < copyList.size()) {
                 if (element.equals(copyList.get(index))) {
@@ -133,15 +134,15 @@ public final class ArrayListState<E> extends State implements Iterable<E> {
                     continue;
                 } else {
                     // elements are unequal, so remove old element
-                    new ArrayListChange<E>(this, index);
+                    new ArrayListChange<>(this, index);
                 }
             }
-            new ArrayListChange<E>(this, element, index);
+            new ArrayListChange<>(this, element, index);
             index++;
         }
         // remove all remaining elements if original list is larger
         for (; index < copyList.size(); index++) {
-            new ArrayListChange<E>(this, index);
+            new ArrayListChange<>(this, index);
         }
     }
 
@@ -176,7 +177,7 @@ public final class ArrayListState<E> extends State implements Iterable<E> {
      * @return a suitable iterator for ArrayListState
      */
     public Iterator<E> iterator() {
-        return ImmutableList.copyOf(list).iterator();
+        return List.copyOf(list).iterator();
     }
 
     @Override

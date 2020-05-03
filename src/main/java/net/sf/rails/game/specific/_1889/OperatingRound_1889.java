@@ -58,13 +58,11 @@ public class OperatingRound_1889 extends OperatingRound {
 
         // private B: lay track at other company tile laying steps
         if (getStep() == GameDef.OrStep.LAY_TRACK) {
-            if (!privB.isClosed() &&
-                    privB.getOwner() instanceof Player &&
+            if (!privB.isClosed() && privB.getOwner() instanceof Player &&
                     privB.getOwner() != operatingCompany.value().getPresident()) {
                 SpecialProperty spPrivB = Iterables.get(privB.getSpecialProperties(), 0);
                 LayTile layTile = new LayTile((SpecialTileLay)spPrivB);
-                if (spPrivB != null && !spPrivB.isExercised()
-                        && validateSpecialTileLay(layTile)) {
+                if ( !spPrivB.isExercised() && validateSpecialTileLay(layTile) ) {
                     if (!activeSpPrivB.value())
                         possibleActions.add(new UseSpecialProperty(spPrivB));
                     else {
@@ -72,7 +70,6 @@ public class OperatingRound_1889 extends OperatingRound {
                         possibleActions.add(layTile);
                         possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
                         DisplayBuffer.add(this, LocalText.getText("1889PrivateBactive", privB.getOwner()));
-
                     }
                 }
             }
@@ -91,7 +88,6 @@ public class OperatingRound_1889 extends OperatingRound {
                 DisplayBuffer.add(this, LocalText.getText("1889PrivateCactive", previousOwnerName));
             }
         }
-
     }
 
     @Override
