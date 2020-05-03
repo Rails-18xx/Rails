@@ -217,7 +217,7 @@ public class GameUIManager implements DialogOwner {
         OpenGamesManager.getInstance().removeGame(this);
         getWindowSettings().save();
         if ( startRoundWindow != null ) {
-            startRoundWindow.dispose();
+            startRoundWindow.close();
         }
         if ( statusWindow != null ) {
             statusWindow.dispose();

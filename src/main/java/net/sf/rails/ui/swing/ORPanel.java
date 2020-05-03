@@ -130,6 +130,8 @@ implements ActionListener, KeyListener, RevenueListener {
     private RevenueAdapter revenueAdapter = null;
     private Thread revenueThread = null;
 
+    private List<JFrame> openWindows = new ArrayList<>();
+
     protected static final Logger log = LoggerFactory.getLogger(ORPanel.class);
 
     public ORPanel(ORWindow parent, ORUIManager orUIManager) {
@@ -803,19 +805,27 @@ implements ActionListener, KeyListener, RevenueListener {
             NetworkAdapter network = NetworkAdapter.create(root);
             NetworkGraph mapGraph = network.getMapGraph();
             mapGraph.optimizeGraph();
-            mapGraph.visualize("Optimized Map Network");
+            JFrame mapWindow = mapGraph.visualize("Optimized Map Network");
+            if ( mapWindow != null ) {
+                openWindows.add(mapWindow);
+            }
         } else {
             CompanyManager cm = root.getCompanyManager();
             PublicCompany company = cm.getPublicCompany(companyName);
             //handle the case of invalid parameters
             //could occur if the method is not invoked by the menu (but by the click listener)
             if (company == null) return;
-            NetworkAdapter network = NetworkAdapter.create(root);
-            NetworkGraph routeGraph = network.getRevenueGraph(company, Lists.<NetworkVertex>newArrayList());
-            routeGraph.visualize("Route Network for " + company);
+            if ( Config.getBoolean("map.route.window.display", true) ) {
+                NetworkAdapter network = NetworkAdapter.create(root);
+                NetworkGraph routeGraph = network.getRevenueGraph(company, Lists.<NetworkVertex>newArrayList());
+                JFrame mapWindow = routeGraph.visualize("Route Network for " + company);
+                if ( mapWindow != null ) {
+                    openWindows.add(mapWindow);
+                }
+            }
             List<String> addTrainList = new ArrayList<String>();
             boolean anotherTrain = true;
-            RevenueAdapter ra = null;
+            RevenueAdapter ra;
             while (anotherTrain) {
                 // multi
                 ra = RevenueAdapter.createRevenueAdapter(root, company, root.getPhaseManager().getCurrentPhase());
@@ -1472,4 +1482,10 @@ implements ActionListener, KeyListener, RevenueListener {
 
     }
 
+    public void dispose() {
+        for ( JFrame frame : openWindows ) {
+            frame.dispose();;
+        }
+        openWindows.clear();
+    }
 }

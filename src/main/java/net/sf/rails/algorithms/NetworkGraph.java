@@ -395,7 +395,7 @@ public class NetworkGraph {
         return vertexes;
     }
 
-    public void visualize(String title) {
+    public JFrame visualize(String title) {
         // show network mapGraph
         if (graph.vertexSet().size() > 0) {
             JGraphXAdapter<NetworkVertex, NetworkEdge> jGraphXAdapter = new JGraphXAdapter<>(graph);
@@ -415,7 +415,9 @@ public class NetworkGraph {
             frame.getContentPane().add(new JScrollPane(graphComponent));
             frame.pack();
             frame.setVisible(true);
+            return frame;
         }
+        return null;
     }
 
     /**
