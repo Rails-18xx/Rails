@@ -21,14 +21,14 @@ public class ComponentManager {
     private static final Logger log = LoggerFactory.getLogger(ComponentManager.class);
 
     private final Map<String, Configurable> mComponentMap = Maps.newHashMap();
-    
+
     public ComponentManager() {}
-    
+
     public void start(RailsRoot root, Tag tag) throws ConfigurationException {
         List<Tag> componentTags = tag.getChildren(XMLTags.COMPONENT_ELEMENT_ID);
         for (Tag componentTag : componentTags) {
             String compName = componentTag.getAttributeAsString("name");
-            log.debug("Found component " + compName);
+            log.debug("Found component {}", compName);
             Configurable component = configureComponent(root, componentTag);
             // feedback to RailsRoot
             root.setComponent(component);
@@ -77,7 +77,7 @@ public class ComponentManager {
         // Add it to the map of known components.
         mComponentMap.put(name, component);
         log.debug(LocalText.getText("ComponentInitAs", name, clazz ));
-        
+
         return component;
     }
 

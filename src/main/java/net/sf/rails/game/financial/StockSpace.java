@@ -120,13 +120,13 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
      * @param company The company object to add.
      */
     public boolean addToken(PublicCompany company) {
-        log.debug(company.getId() + " price token added to " + getId());
+        log.debug("{} price token added to {}", company.getId(), getId());
         tokens.add(company);
         return true;
     }
 
     public boolean addTokenAtStackPosition(PublicCompany company, int stackPosition) {
-        log.debug(company.getId() + " price token added to " + getId() + "  at stack position " + stackPosition);
+        log.debug("{} price token added to {}  at stack position {}", company.getId(), getId(), stackPosition);
         tokens.add(stackPosition, company);
         return true;
     }
@@ -138,7 +138,7 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
      * @return False if the token was not found.
      */
     public boolean removeToken(PublicCompany company) {
-        log.debug(company.getId() + " price token removed from " + getId());
+        log.debug("{} price token removed from {}", company.getId(), getId());
         return tokens.remove(company);
     }
 

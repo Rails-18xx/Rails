@@ -185,7 +185,7 @@ public class NameTrainsDialog extends JDialog implements ActionListener {
                 }
                 if (x == -1) continue;
 
-                log.debug("RadioButton: x=" + x + " y=" + y);
+                log.debug("RadioButton: x={} y={}", x, y);
                 changed = true;
 
                 if (x < trains.size()) {

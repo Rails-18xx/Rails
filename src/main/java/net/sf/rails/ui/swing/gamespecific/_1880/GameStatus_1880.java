@@ -60,7 +60,7 @@ public class GameStatus_1880 extends GameStatus {
 
             // Assume that we will have either sell or buy actions
             // under one ClickField, not both. This seems guaranteed.
-            log.debug("Action is " + actions.get(0).toString());
+            log.debug("Action is {}", actions.get(0).toString());
 
             if (actions == null || actions.size() == 0) {
 
@@ -263,7 +263,7 @@ public class GameStatus_1880 extends GameStatus {
 
             }
         } else {
-            log.warn("Action from unknown source: " + source.toString());
+            log.warn("Action from unknown source: {}", source.toString());
         }
 
         chosenAction = processGameSpecificFollowUpActions(actor, chosenAction);

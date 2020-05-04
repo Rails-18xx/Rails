@@ -188,14 +188,14 @@ public class OperatingRound_1837 extends OperatingRound {
                         && company != operatingCompany.value()
                         && company.getCurrentSpace().getPrice()
                         < suedbahn.getCurrentSpace().getPrice()) {
-                    log.debug("Suedbahn will operate before "+company.getId());
+                    log.debug("Suedbahn will operate before {}", company.getId());
                     break;
                 }
                 index++;
             }
             // Insert SB at the found index (possibly at the end)
             operatingCompanies.add(index, suedbahn);
-            log.debug("SU will operate at order position "+index);
+            log.debug("SU will operate at order position {}", index);
 
         } else {
 
@@ -457,7 +457,7 @@ public class OperatingRound_1837 extends OperatingRound {
             }
         }
         if (phaseIndex >= 4 ) {
-            log.debug("Italy inactive, index of phase = " + phaseIndex);
+            log.debug("Italy inactive, index of phase = {}", phaseIndex);
 
             // 2. retrieve Italy vertices ...
             String [] italyHexes = {"K1","K3","K7","K9","L2","L4","L6","L8","M3","M5","M7"};

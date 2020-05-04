@@ -2699,8 +2699,7 @@ public class OperatingRound extends Round implements Observer {
             // move token to Bank
             BaseToken token = operatingCompany.value().getNextBaseToken();
             if (token == null) {
-                log.error("Company " + operatingCompany.value().getId()
-                        + " has no free token");
+                log.error("Company {} has no free token", operatingCompany.value().getId());
                 return false;
             } else {
                 // FIXME: Check where to lay the base tokens in NoMapMode

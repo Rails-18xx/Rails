@@ -273,8 +273,7 @@ public class StockRound_18EU extends StockRound {
 
         PublicCompany discardingCompany =
                 discardingCompanies[discardingCompanyIndex.value()];
-        log.debug("Company " + discardingCompany.getId()
-                + " to discard a train");
+        log.debug("Company {} to discard a train", discardingCompany.getId());
         possibleActions.add(new DiscardTrain(discardingCompany,
                 discardingCompany.getPortfolioModel().getUniqueTrains()));
         // We handle one train at at time.
@@ -488,7 +487,7 @@ public class StockRound_18EU extends StockRound {
     @Override
     protected boolean processGameSpecificAction(PossibleAction action) {
 
-        log.debug("GameSpecificAction: " + action.toString());
+        log.debug("GameSpecificAction: {}", action.toString());
 
         boolean result = false;
 

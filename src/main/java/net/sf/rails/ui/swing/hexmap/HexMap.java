@@ -747,8 +747,8 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
 
     private void zoom() {
         zoomFactor = ImageLoader.getInstance().getZoomFactor(zoomStep);
-        log.trace("HexMap: zoomStep = " + zoomStep);
-        log.trace("HexMap: zoomFactor = " + zoomFactor);
+        log.trace("HexMap: zoomStep = {}", zoomStep);
+        log.trace("HexMap: zoomFactor = {}", zoomFactor);
         setScale();
         scaleHexesGUI();
         currentSize.width = (int) (originalSize.width * zoomFactor);
@@ -769,10 +769,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     }
 
     public void selectHex(GUIHex clickedHex) {
-        log.debug("selecthex called for hex "
-                  + (clickedHex != null ? clickedHex.toText() : "null")
-                  + ", selected was "
-                  + (selectedHex != null ? selectedHex.toText() : "null"));
+        log.debug("selecthex called for hex {}, selected was {}", clickedHex != null ? clickedHex.toText() : "null", selectedHex != null ? selectedHex.toText() : "null");
 
         if (selectedHex == clickedHex) return;
         if (selectedHex != null) {

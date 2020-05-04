@@ -80,7 +80,7 @@ public class OperatingRound_1856 extends OperatingRound {
                 int soldPercentage = operatingCompany.value().getSoldPercentage();
                 // TODO: Refactor the code duplication
                 Train nextAvailableTrain = Iterables.get(trainManager.getAvailableNewTrains(), 0);
-                log.debug("Next Train type" + nextAvailableTrain.toText());
+                log.debug("Next Train type{}", nextAvailableTrain.toText());
                 int trainNumber;
                 try {
                     trainNumber = Integer.parseInt(nextAvailableTrain.toText());
@@ -89,8 +89,7 @@ public class OperatingRound_1856 extends OperatingRound {
                 }
                 int floatPercentage = 10 * trainNumber;
 
-                log.debug("Float percentage is " + floatPercentage
-                        + " sold percentage is " + soldPercentage);
+                log.debug("Float percentage is {} sold percentage is {}", floatPercentage, soldPercentage);
 
 
                 if (soldPercentage < floatPercentage) {
@@ -198,9 +197,8 @@ public class OperatingRound_1856 extends OperatingRound {
         if (remainder > presCash) {
             // Start a share selling round
             int cashToBeRaisedByPresident = remainder - presCash;
-            log.info("A share selling round must be started as the president cannot pay $"
-                    + remainder + " loan interest");
-            log.info("President has $" + presCash + ", so $" + cashToBeRaisedByPresident + " must be added");
+            log.info("A share selling round must be started as the president cannot pay ${} loan interest", remainder);
+            log.info("President has ${}, so ${} must be added", presCash, cashToBeRaisedByPresident);
             savedAction = action;
             gameManager.startShareSellingRound(operatingCompany.value().getPresident(),
                     cashToBeRaisedByPresident, operatingCompany.value(), false);
@@ -262,8 +260,7 @@ public class OperatingRound_1856 extends OperatingRound {
         int presCash = president.getCash();
         if (remainder > presCash) {
             // This can't happen in this stage, log an error
-            log.error("??? The president still cannot pay $"
-                    + remainder + " loan interest???");
+            log.error("??? The president still cannot pay ${} loan interest???", remainder);
             return 0;
 
         } else {
@@ -386,7 +383,7 @@ public class OperatingRound_1856 extends OperatingRound {
                         // FIXME: Is it ipo or pool portfolio?
                         // Assume it is pool
                         sbt.setSeller(bank.getPool());
-                        log.debug("SP " + sp.getId() + " is now buyable from the Bank");
+                        log.debug("SP {} is now buyable from the Bank", sp.getId());
                     }
                 }
             }
@@ -518,9 +515,9 @@ public class OperatingRound_1856 extends OperatingRound {
 
         for (PublicCompany c : operatingCompanies.view()) {
             if (c.isClosed()) {
-                log.info(c.getId() + " is closed");
+                log.info("{} is closed", c.getId());
             } else {
-                log.debug(c.getId() + " is operating");
+                log.debug("{} is operating", c.getId());
             }
         }
 
@@ -549,7 +546,7 @@ public class OperatingRound_1856 extends OperatingRound {
         // Find the first company that has not yet operated
         // and is not closed.
         if (!roundFinished) {
-            log.debug("Next operating company: " + operatingCompany.value().getId());
+            log.debug("Next operating company: {}", operatingCompany.value().getId());
         } else {
             finishOR();
             return false;

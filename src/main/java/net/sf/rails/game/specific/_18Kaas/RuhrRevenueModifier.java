@@ -30,7 +30,7 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable 
     public void finishConfiguration(RailsRoot root)
             throws ConfigurationException {
         doublesOnlyMajors = GameOption.getAsBoolean(root, "18KaasRuhrgebiedDoublesOnlyMajors");
-        log.debug("Finish configuration of RuhrRevenueModifier, doublesOnlyMajors = " + doublesOnlyMajors);
+        log.debug("Finish configuration of RuhrRevenueModifier, doublesOnlyMajors = {}", doublesOnlyMajors);
     }
 
     // creates revenueBonuses that double the value of each station/value vertex

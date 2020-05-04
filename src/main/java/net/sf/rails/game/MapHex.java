@@ -324,7 +324,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     public void addImpassableSide(HexSide side) {
         impassableBuilder.set(side);
-        log.debug("Added impassable " + side + " to " + this);
+        log.debug("Added impassable {} to {}", side, this);
         // all impassable sides are invalids
         addInvalidSide(side);
     }
@@ -335,7 +335,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     public void addInvalidSide(HexSide side) {
         invalidBuilder.set(side);
-        log.debug("Added invalid " + side + " to " + this);
+        log.debug("Added invalid {} to {}", side, this);
     }
 
     public HexSidesSet getInvalidSides() {
@@ -504,9 +504,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 for (Station newStation : newTile.getStations()) {
                     if (!stopsToNewStations.containsValue(newStation)) {
                         stopsToNewStations.put(stop, newStation);
-                        log.debug("Mapped after relaid tokens: station "
-                                + stop.getRelatedStation() + " to "
-                                + newStation);
+                        log.debug("Mapped after relaid tokens: station {} to {}", stop.getRelatedStation(), newStation);
                         break;
                     }
                 }
@@ -584,16 +582,12 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 // No duplicate tokens allowed in one city, so move to free
                 // tokens
                 token.moveTo(company);
-                log.debug("Duplicate token " + token.getUniqueId()
-                        + " moved from " + origin.getSpecificId() + " to "
-                        + company.getId());
+                log.debug("Duplicate token {} moved from {} to {}", token.getUniqueId(), origin.getSpecificId(), company.getId());
                 ReportBuffer.add(this, LocalText.getText(
                         "DuplicateTokenRemoved", company.getId(), getId()));
             } else {
                 token.moveTo(target);
-                log.debug("Token " + token.getUniqueId() + " moved from "
-                        + origin.getSpecificId() + " to "
-                        + target.getSpecificId());
+                log.debug("Token {} moved from {} to {}", token.getUniqueId(), origin.getSpecificId(), target.getSpecificId());
             }
         }
     }
@@ -878,9 +872,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 // else
             }
         }
-        log.debug("IsBlockedForTokenLays: anyBlockCompanies = "
-                + anyBlockCompanies + " , cityBlockCompanies = "
-                + cityBlockCompanies);
+        log.debug("IsBlockedForTokenLays: anyBlockCompanies = {} , cityBlockCompanies = {}", anyBlockCompanies, cityBlockCompanies);
 
         // check if there are sufficient individual city slots
         if (cityBlockCompanies + 1 > stopToLay.getTokenSlotsLeft()) {

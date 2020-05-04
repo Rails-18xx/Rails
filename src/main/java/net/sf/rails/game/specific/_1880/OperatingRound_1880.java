@@ -180,7 +180,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 msg.append(",").append(company.getId());
             }
             if (msg.length() > 0) msg.deleteCharAt(0);
-            log.info("Initial operating sequence is " + msg.toString());
+            log.info("Initial operating sequence is {}", msg.toString());
 
             if (stepObject == null) {
                  setStep (GameDef.OrStep.INITIAL);
@@ -849,8 +849,7 @@ public class OperatingRound_1880 extends OperatingRound {
             // Was a special property used?
             if (stl != null) {
                 stl.setExercised();
-                log.debug("This was a special tile lay, "
-                          + (extra ? "" : " not") + " extra");
+                log.debug("This was a special tile lay, {} extra", extra ? "" : " not");
             }
             if (!extra) {
                 log.debug("This was a normal tile lay");

@@ -253,13 +253,13 @@ public abstract class DockingFrame extends JFrame {
         try {
             control.readXML(layoutFile);
             control.load(LAYOUT_NAME_CURRENT);
-            log.info("Layout loaded from " + layoutFile.getName());
+            log.info("Layout loaded from {}", layoutFile.getName());
         } catch (Exception e) {
             if (!isTentative) {
                 JOptionPane.showMessageDialog(this,
                             "Unable to load layout from " + layoutFile.getName());
             }
-            log.error("Layout could not be loaded from " + layoutFile.getName());
+            log.error("Layout could not be loaded from {}", layoutFile.getName());
             return;
         }
 

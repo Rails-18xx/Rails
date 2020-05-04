@@ -74,7 +74,7 @@ public class Station extends TrackPoint implements Comparable<Station> {
         this.baseSlots = slots;
         this.position = position;
         this.stopName = cityName;
-        log.debug("Created " + this);
+        log.debug("Created {}", this);
     }
 
     public static Station create(Tile tile, Tag stationTag) throws ConfigurationException {

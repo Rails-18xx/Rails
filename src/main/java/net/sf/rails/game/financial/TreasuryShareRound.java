@@ -83,7 +83,7 @@ public class TreasuryShareRound extends StockRound {
         possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
 
         for (PossibleAction pa : possibleActions.getList()) {
-            log.debug(operatingCompany.getId() + " may: " + pa.toString());
+            log.debug("{} may: {}", operatingCompany.getId(), pa.toString());
         }
 
         return true;

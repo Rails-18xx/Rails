@@ -51,7 +51,7 @@ public class StockRound_1856 extends StockRound {
         int trainNumberAtStart = comp.getTrainNumberAvailableAtStart();
         int floatPercentage = 10 * trainNumberAtStart;
 
-        log.debug ("Floatpercentage is "+floatPercentage);
+        log.debug("Floatpercentage is {}", floatPercentage);
 
         if (soldPercentage >= floatPercentage) {
             // Company floats.

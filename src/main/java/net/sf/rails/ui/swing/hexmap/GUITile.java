@@ -60,7 +60,7 @@ public class GUITile {
             g2.drawImage(tileImage, aop, 0, 0);
 
         } else {
-            log.error("No image for tile "+ tile +" on hex "+hex.toText());
+            log.error("No image for tile {} on hex {}", tile, hex.toText());
         }
     }
 

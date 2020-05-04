@@ -335,7 +335,7 @@ public class PrussianFormationRound extends StockRound {
         PublicCertificate cert;
         Player player;
         for (Company company : companies) {
-            log.debug("Merging company "+company.getId());
+            log.debug("Merging company {}", company.getId());
             if (company instanceof PrivateCompany) {
                 player = (Player)((PrivateCompany)company).getOwner();
             } else {

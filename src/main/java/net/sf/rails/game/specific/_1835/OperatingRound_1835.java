@@ -187,14 +187,14 @@ public class OperatingRound_1835 extends OperatingRound {
                         && company != operatingCompany.value()
                         && company.getCurrentSpace().getPrice()
                         < prussian.getCurrentSpace().getPrice()) {
-                    log.debug("PR will operate before " + company.getId());
+                    log.debug("PR will operate before {}", company.getId());
                     break;
                 }
                 index++;
             }
             // Insert PR at the found index (possibly at the end)
             operatingCompanies.add(index, prussian);
-            log.debug("PR will operate at order position " + index);
+            log.debug("PR will operate at order position {}", index);
 
         } else {
 

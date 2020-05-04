@@ -342,14 +342,12 @@ public class TrainManager extends RailsManager implements Configurable {
             Owner owner = train.getOwner();
             // check condition for train rusting
             if (isTrainObsolete(train, lastBuyingCompany)) {
-                log.debug("Train " + train.getId() + " (owned by "
-                        + owner.getId() + ") obsoleted");
+                log.debug("Train {} (owned by {}) obsoleted", train.getId(), owner.getId());
                 train.setObsolete();
                 // TODO: is this still required?
                 // train.getHolder().update();
             } else {
-                log.debug("Train " + train.getId() + " (owned by "
-                        + owner.getId() + ") rusted");
+                log.debug("Train {} (owned by {}) rusted", train.getId(), owner.getId());
                 train.setRusted();
             }
         }

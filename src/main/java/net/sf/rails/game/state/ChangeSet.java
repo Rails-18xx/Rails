@@ -53,7 +53,7 @@ public class ChangeSet {
     void reexecute() {
         for (Change change : changes) {
             change.execute();
-            log.debug("Redo: " + change);
+            log.debug("Redo: {}", change);
         }
     }
 
@@ -67,9 +67,9 @@ public class ChangeSet {
 
         // iterate reverse
         for (Change change : Lists.reverse(changes)) {
-            log.debug("About to undo: " + change);
+            log.debug("About to undo: {}", change);
             change.undo();
-            log.debug("Undone: " + change);
+            log.debug("Undone: {}", change);
         }
     }
 

@@ -131,9 +131,9 @@ public class PortfolioModel extends RailsModel {
         privates.moveInto(company);
 
         if (company.hasSpecialProperties()) {
-            log.debug(company.getId() + " has special properties!");
+            log.debug("{} has special properties!", company.getId());
         } else {
-            log.debug(company.getId() + " has no special properties");
+            log.debug("{} has no special properties", company.getId());
         }
 
         // TODO: This should not be necessary as soon as a PlayerModel works
@@ -436,7 +436,7 @@ public class PortfolioModel extends RailsModel {
                         && (getParent() instanceof Company
                             && sp.isUsableIfOwnedByCompany() || getParent() instanceof Player
                                                                 && sp.isUsableIfOwnedByPlayer())) {
-                        log.debug("Portfolio " + getParent().getId() + " has SP " + sp);
+                        log.debug("Portfolio {} has SP {}", getParent().getId(), sp);
                         result.add((T) sp);
                     }
                 }
@@ -450,7 +450,7 @@ public class PortfolioModel extends RailsModel {
                     && (getParent() instanceof Company
                         && sp.isUsableIfOwnedByCompany() || getParent() instanceof Player
                                                             && sp.isUsableIfOwnedByPlayer())) {
-                    log.debug("Portfolio " + getParent().getId() + " has persistent SP " + sp);
+                    log.debug("Portfolio {} has persistent SP {}", getParent().getId(), sp);
                     result.add((T) sp);
                 }
             }
@@ -484,7 +484,7 @@ public class PortfolioModel extends RailsModel {
         // otherwise we get a ConcurrentModificationException on trains.
         for (Train train : trainsToRust) {
             ReportBuffer.add(this, LocalText.getText("TrainsObsoleteRusted", train.toText(), getParent().getId()));
-            log.debug("Obsolete train " + train.getId() + " (owned by " + getParent().getId() + ") rusted");
+            log.debug("Obsolete train {} (owned by {}) rusted", train.getId(), getParent().getId());
             train.setRusted();
         }
         // FIXME:: Still required?

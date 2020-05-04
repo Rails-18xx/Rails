@@ -51,7 +51,7 @@ public class StatusWindow_18EU extends StatusWindow {
     // Copied from StartRoundWindow, might become a generic function
     public boolean processImmediateAction() {
 
-        log.debug("ImmediateAction=" + immediateAction);
+        log.debug("ImmediateAction={}", immediateAction);
         if (immediateAction != null) {
             // Make a local copy and discard the original,
             // so that it's not going to loop.

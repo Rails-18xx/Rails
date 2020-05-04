@@ -36,7 +36,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
             return false;
         }
 
-        log.info("OffBoardRevenueModifier: bonusValue = " + bonusValue);
+        log.info("OffBoardRevenueModifier: bonusValue = {}", bonusValue);
 
         // 2. get all off-board type stations and Hamburg
         Set<NetworkVertex> offBoard = new HashSet<NetworkVertex>();
@@ -63,7 +63,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
             revenueAdapter.addVertexVisitSet(hamburgSet);
         }
 
-        log.info("OffBoardRevenueModifier: offBoard = " + offBoard);
+        log.info("OffBoardRevenueModifier: offBoard = {}", offBoard);
 
         // 4. get all base tokens (=> start vertices)
         Set<NetworkVertex> bases = revenueAdapter.getStartVertices();

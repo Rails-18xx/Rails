@@ -168,7 +168,7 @@ public class TrainType implements Cloneable {
         try {
             clone = super.clone();
         } catch (CloneNotSupportedException e) {
-            log.error("Cannot clone traintype " + name, e);
+            log.error("Cannot clone traintype {}", name, e);
             return null;
         }
 
