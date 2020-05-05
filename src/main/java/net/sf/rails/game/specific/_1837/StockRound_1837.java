@@ -123,7 +123,7 @@ public class StockRound_1837 extends StockRound {
     @Override
     protected boolean processGameSpecificAction(PossibleAction action) {
 
-        log.debug("GameSpecificAction: {}", action.toString());
+        log.debug("GameSpecificAction: {}", action);
 
         boolean result = false;
 

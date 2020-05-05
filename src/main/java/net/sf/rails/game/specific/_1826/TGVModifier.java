@@ -18,11 +18,12 @@ import net.sf.rails.common.LocalText;
 public class TGVModifier implements RevenueDynamicModifier {
 
     final private String TGV_NAME = "TGV";
-    
+
     private int nbTGV = 0; // store the number of tgv
-    
+
+    @Override
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
-        
+
         // separate trains into tgv and others
         List<NetworkTrain> allTrains = revenueAdapter.getTrains();
         List<NetworkTrain> tgvTrains = new ArrayList<NetworkTrain>();
@@ -48,18 +49,21 @@ public class TGVModifier implements RevenueDynamicModifier {
         }
     }
 
+    @Override
     public int predictionValue(List<RevenueTrainRun> runs) {
         // nothing to do here
         return 0;
     }
 
+    @Override
     public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
         // nothing to do here
         return 0;
     }
 
+    @Override
     public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
-        // nothing to do 
+        // nothing to do
     }
 
     public boolean providesOwnCalculateRevenue() {
@@ -75,6 +79,7 @@ public class TGVModifier implements RevenueDynamicModifier {
         return value;
     }
 
+    @Override
     public String prettyPrint(RevenueAdapter adapter) {
         return LocalText.getText("TGVModifier");
     }

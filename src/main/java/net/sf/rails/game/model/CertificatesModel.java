@@ -110,6 +110,7 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
         return certificates;
     }
 
+    @Override
     public Iterator<PublicCertificate> iterator() {
         return certificates.iterator();
     }

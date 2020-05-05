@@ -59,10 +59,12 @@ public class Root extends Context {
     * @throws UnsupportedOperationsException
     * Not supported for Root
     */
+   @Override
    public Item getParent() {
        throw new UnsupportedOperationException();
    }
 
+   @Override
    public String getId() {
        return "";
    }
@@ -70,6 +72,7 @@ public class Root extends Context {
    /**
     * @return this
     */
+   @Override
    public Context getContext() {
        return this;
    }
@@ -77,23 +80,28 @@ public class Root extends Context {
    /**
     * @return this
     */
+   @Override
    public Root getRoot() {
        return this;
    }
 
+   @Override
    public String getURI() {
        return "";
    }
 
+   @Override
    public String getFullURI() {
        return "";
    }
 
+   @Override
    public String toText() {
        return TEXT_ID;
    }
 
    // Context methods
+   @Override
    public Item locate(String uri) {
        // first try as fullURI
        Item item = items.get(uri);
@@ -107,6 +115,7 @@ public class Root extends Context {
        return items.get(uri);
    }
 
+   @Override
    void addItem(Item item) {
        // check if it has to be delayed
        if (delayItems) {
@@ -122,6 +131,7 @@ public class Root extends Context {
        items.put(item.getFullURI(), item);
    }
 
+   @Override
    void removeItem(Item item) {
        // check if it already exists
        checkArgument(items.containsKey(item.getFullURI()),

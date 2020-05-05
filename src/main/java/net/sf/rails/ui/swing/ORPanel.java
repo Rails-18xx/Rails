@@ -357,6 +357,7 @@ implements ActionListener, KeyListener, RevenueListener {
                     height += 10;
                     return new Dimension(width,height);
                 }
+                @Override
                 public Dimension getPreferredSize() {
                     return getMinimumSize();
                 }
@@ -399,15 +400,20 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public MouseListener getCompanyCaptionMouseClickListener() {
         return new MouseListener() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getComponent() instanceof Caption) {
                     Caption c = (Caption)e.getComponent();
                     executeNetworkInfo(c.getText());
                 }
             }
+            @Override
             public void mouseExited(MouseEvent e) {}
+            @Override
             public void mouseEntered(MouseEvent e) {}
+            @Override
             public void mousePressed(MouseEvent e) {}
+            @Override
             public void mouseReleased(MouseEvent e) {}
         };
     }
@@ -919,6 +925,7 @@ implements ActionListener, KeyListener, RevenueListener {
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent actor) {
 
         // What kind action has been taken?
@@ -934,7 +941,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 executedAction = executedActions.get(0);
                 // In all cases, the actions in the list must be
                 // instances of the same class
-                log.debug("Action taken is {}", executedAction.toString());
+                log.debug("Action taken is {}", executedAction);
             }
 
             if (executedAction instanceof SetDividend) {
@@ -944,8 +951,7 @@ implements ActionListener, KeyListener, RevenueListener {
                     setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
                             directIncomeSelect[orCompIndex], directIncomeRevenue[orCompIndex], false);
                 } else {
-                setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
-                        false);
+                    setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
                 }
             }
 
@@ -1204,6 +1210,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     }
 
+    @Override
     public void revenueUpdate(int bestRevenue, boolean finalResult) {
         if (isRevenueValueToBeSet) {
             revenueSelect[orCompIndex].setValue(bestRevenue);
@@ -1484,7 +1491,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public void dispose() {
         for ( JFrame frame : openWindows ) {
-            frame.dispose();;
+            frame.dispose();
         }
         openWindows.clear();
     }

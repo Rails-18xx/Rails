@@ -88,6 +88,7 @@ public class StartRoundWindow_1880 extends StartRoundWindow {
         disableButtons();
     }
 
+    @Override
     public void updateStatus(boolean myTurn) {
         for (PossibleAction action : possibleActions.getList()) {
             if (action instanceof SetupNewPublicDetails_1880) {

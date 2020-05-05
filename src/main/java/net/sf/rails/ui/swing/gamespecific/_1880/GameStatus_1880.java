@@ -60,10 +60,9 @@ public class GameStatus_1880 extends GameStatus {
 
             // Assume that we will have either sell or buy actions
             // under one ClickField, not both. This seems guaranteed.
-            log.debug("Action is {}", actions.get(0).toString());
+            log.debug("Action is {}", actions.get(0));
 
-            if (actions == null || actions.size() == 0) {
-
+            if ( actions.isEmpty() ) {
                 log.warn("No ClickField action found");
 
             } else if (actions.get(0) instanceof SellShares) {
@@ -154,8 +153,8 @@ public class GameStatus_1880 extends GameStatus {
                             startPrices =
                                 ((StartCompany_1880) buy).getStartPrices();
                             Arrays.sort(startPrices);
-                            for (int i = 0; i < startPrices.length; i++) {
-                                options.add("$" + startPrices[i]);
+                            for ( int startPrice : startPrices ) {
+                                options.add("$" + startPrice);
                             }
                         }
                     } else {
@@ -173,8 +172,7 @@ public class GameStatus_1880 extends GameStatus {
                                     sharePerCert,
                                     companyName,
                                     buy.getFromPortfolio().getName(),
-                                    gameUIManager.format(i * sharesPerCert
-                                            * buy.getPrice()) ));
+                                    gameUIManager.format(i * sharesPerCert * buy.getPrice()) ));
                             buyActions.add(buy);
                             buyAmounts.add(i);
                         }
@@ -188,19 +186,15 @@ public class GameStatus_1880 extends GameStatus {
                                 gameUIManager,
                                 parent,
                                 LocalText.getText("PleaseSelect"),
-                                LocalText.getText("WHICH_START_PRICE",
-                                        playerName,
-                                        companyName),
-                                        options.toArray(new String[0]), 0);
+                                LocalText.getText("WHICH_START_PRICE", playerName, companyName),
+                                options.toArray(new String[0]), 0);
                         gameUIManager.setCurrentDialog(dialog, actions.get(0));
                         parent.disableButtons();
                         return;
                     } else {
                         String sp =
                             (String) JOptionPane.showInputDialog(this,
-                                    LocalText.getText(startCompany
-                                            ? "WHICH_PRICE"
-                                                    : "HOW_MANY_SHARES"),
+                                    LocalText.getText(startCompany ? "WHICH_PRICE" : "HOW_MANY_SHARES"),
                                                     LocalText.getText("PleaseSelect"),
                                                     JOptionPane.QUESTION_MESSAGE, null,
                                                     options.toArray(new String[0]),
@@ -263,7 +257,7 @@ public class GameStatus_1880 extends GameStatus {
 
             }
         } else {
-            log.warn("Action from unknown source: {}", source.toString());
+            log.warn("Action from unknown source: {}", source);
         }
 
         chosenAction = processGameSpecificFollowUpActions(actor, chosenAction);

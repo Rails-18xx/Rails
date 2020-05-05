@@ -180,11 +180,12 @@ public class OperatingRound_1880 extends OperatingRound {
                 msg.append(",").append(company.getId());
             }
             if (msg.length() > 0) msg.deleteCharAt(0);
-            log.info("Initial operating sequence is {}", msg.toString());
+            log.info("Initial operating sequence is {}", msg);
 
             if (stepObject == null) {
+                // TODO: following will cause a NPE
                  setStep (GameDef.OrStep.INITIAL);
-                  stepObject.addObserver(this);
+                 stepObject.addObserver(this);
             }
 
             if (setNextOperatingCompany(true)) {
@@ -193,7 +194,7 @@ public class OperatingRound_1880 extends OperatingRound {
                     initNormalTileLays();
                 }
                 setStep(orControl.getNextStep());
-                if (orControl.wasStartedFromStockRound() == true) {
+                if ( orControl.wasStartedFromStockRound() ) {
                     trainPurchasedThisTurn.set(true);
                 }
             } else {

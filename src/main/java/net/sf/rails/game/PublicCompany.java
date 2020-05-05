@@ -417,6 +417,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * To configure all public companies from the &lt;PublicCompany&gt; XML
      * element
      */
+    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
         longName = tag.getAttributeAsString("longname", getId());
         infoText = "<html>" + longName;
@@ -652,6 +653,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Final initialisation, after all XML has been processed.
      */
+    @Override
     public void finishConfiguration(RailsRoot root)
             throws ConfigurationException {
 
@@ -2008,23 +2010,28 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     // Owner method
+    @Override
     public PortfolioModel getPortfolioModel() {
         return portfolio;
     }
 
     // Company methods
+    @Override
     public void initType(CompanyType type) {
         this.type = type;
     }
 
+    @Override
     public CompanyType getType() {
         return type;
     }
 
+    @Override
     public boolean isClosed() {
         return closed.value();
     }
 
+    @Override
     public void setClosed() {
         closed.set(true);
 
@@ -2070,32 +2077,39 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     }
 
+    @Override
     public String getLongName() {
         return longName;
     }
 
+    @Override
     public String getAlias() {
         return alias;
     }
 
+    @Override
     public String getInfoText() {
         return infoText;
     }
 
+    @Override
     public ImmutableSet<SpecialProperty> getSpecialProperties() {
         return portfolio.getPersistentSpecialProperties();
     }
 
     // MoneyOwner interface
+    @Override
     public Purse getPurse() {
         return treasury.getPurse();
     }
 
+    @Override
     public int getCash() {
         return getPurse().value();
     }
 
     // Comparable interface
+    @Override
     public int compareTo(PublicCompany other) {
         return this.getId().compareTo(other.getId());
     }

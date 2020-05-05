@@ -63,10 +63,12 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
     public int maxPercofShares(){
         return maxPercofShares;
     }
+    @Override
     public boolean hasStockPrice(){
         return hasStockPrice;
     }
 
+    @Override
     public boolean hasParPrice(){
         return hasParPrice;
     }
@@ -85,12 +87,14 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         return linkedCompany;
     }
 
+    @Override
     public void finishConfiguration(RailsRoot root)
             throws ConfigurationException {
         super.finishConfiguration(root);
         getRoot().getRevenueManager().addStaticModifier(this);
     }
 
+    @Override
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // check if running company is this company, otherwise quit
         if (revenueAdapter.getCompany() == this) {
@@ -102,15 +106,18 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         return false;
     }
 
+    @Override
     public String prettyPrint(RevenueAdapter revenueAdapter) {
         return null;
     }
 
+    @Override
     public boolean canRunTrains() {
         // By the time communism hits, this company can't run anyway.
         return true;
     }
 
+    @Override
     public int getCurrentTrainLimit() {
         return 0;
     }
@@ -187,6 +194,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         return investors;
     }
 
+    @Override
     public BuildingRights_1880 getRightsModel() {
         return buildingRights;
     }

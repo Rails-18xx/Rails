@@ -57,6 +57,7 @@ public class StartRoundWindow_1837 extends StartRoundWindow {
         }
     }
 
+    @Override
     public void updateStatus(boolean myTurn) {
         for (PossibleAction action : possibleActions.getList()) {
             if (action instanceof SetHomeHexLocation) {

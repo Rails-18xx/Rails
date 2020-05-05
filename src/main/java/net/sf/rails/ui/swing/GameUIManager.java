@@ -801,6 +801,7 @@ public class GameUIManager implements DialogOwner {
         }
     }
 
+    @Override
     public void dialogActionPerformed() {
         dialogActionPerformed(false);
     }
@@ -927,14 +928,17 @@ public class GameUIManager implements DialogOwner {
         return false;
     }
 
+    @Override
     public JDialog getCurrentDialog() {
         return currentDialog;
     }
 
+    @Override
     public PossibleAction getCurrentDialogAction() {
         return currentDialogAction;
     }
 
+    @Override
     public void setCurrentDialog(JDialog dialog, PossibleAction action) {
         if (currentDialog != null) {
             currentDialog.dispose();

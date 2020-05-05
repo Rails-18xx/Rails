@@ -59,9 +59,8 @@ public class StartRound_1851 extends StartRound {
         for (StartItem item : startItems) {
             if (!item.isSold()) {
                 item.setStatus(StartItem.BUYABLE);
-                possibleActions.add(action =
-                        new BuyStartItem(item, item.getBasePrice(), false));
-                log.debug("{} may: {}", playerManager.getCurrentPlayer().getId(), action.toString());
+                possibleActions.add(action = new BuyStartItem(item, item.getBasePrice(), false));
+                log.debug("{} may: {}", playerManager.getCurrentPlayer().getId(), action);
             }
 
         }

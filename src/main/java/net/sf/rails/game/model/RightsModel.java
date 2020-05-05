@@ -14,28 +14,29 @@ import net.sf.rails.game.state.HashSetState;
 public class RightsModel extends RailsModel {
 
     private HashSetState<SpecialRight> rights = HashSetState.create(this, "rightsModel");
-    
+
     private RightsModel(PublicCompany parent, String id) {
         super(parent, id);
     }
-    
+
     public static RightsModel create(PublicCompany parent, String id) {
         return new RightsModel(parent, id);
     }
-    
+
     @Override
     public PublicCompany getParent() {
         return (PublicCompany)getParent();
     }
-    
+
     public void add(SpecialRight right) {
         rights.add(right);
     }
-    
+
     public boolean contains(SpecialRight right) {
         return rights.contains(right);
     }
-    
+
+    @Override
     public String toText() {
         ImmutableList.Builder<String> rightsText = ImmutableList.builder();
         for (SpecialRight right:rights) {
@@ -43,5 +44,5 @@ public class RightsModel extends RailsModel {
         }
         return Joiner.on(",").join(rightsText.build()).toString();
     }
-    
+
 }

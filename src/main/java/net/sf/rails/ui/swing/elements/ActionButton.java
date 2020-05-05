@@ -11,7 +11,7 @@ import rails.game.action.PossibleAction;
 
 /**
  * A subclass of JButton that allows linking "PossibleAction" objects to it.
- * 
+ *
  * @see ClickField
  */
 public class ActionButton extends RailsIconButton implements ActionTaker {
@@ -24,18 +24,22 @@ public class ActionButton extends RailsIconButton implements ActionTaker {
         super(railsIcon);
     }
 
+    @Override
     public void addPossibleAction(PossibleAction o) {
         actions.add(o);
     }
 
+    @Override
     public List<PossibleAction> getPossibleActions() {
         return actions;
     }
 
+    @Override
     public void clearPossibleActions() {
         actions.clear();
     }
 
+    @Override
     public void setPossibleAction(PossibleAction action) {
         clearPossibleActions();
         addPossibleAction(action);
