@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -195,7 +196,7 @@ public final class Util {
 
         File file = new File(fileName);
         if (file.exists()) {
-            return new FileInputStream(file);
+            return Files.newInputStream(file.toPath());
         } else {
             return null;
         }
@@ -204,7 +205,7 @@ public final class Util {
     public static boolean loadProperties(Properties properties, File file) {
         try {
             log.info("Loading properties from file {}", file);
-            InputStream inFile = new FileInputStream(file);
+            InputStream inFile = Files.newInputStream(file.toPath());
             properties.load(inFile);
         } catch (Exception e) {
             log.error("{} whilst loading properties file {}", e, file, e);
@@ -229,7 +230,7 @@ public final class Util {
     public static boolean storeProperties(Properties properties, File file) {
         boolean result = true;
         try {
-            properties.store(new FileOutputStream(file), "Automatically generated, do not edit");
+            properties.store(Files.newOutputStream(file.toPath()), "Automatically generated, do not edit");
             log.info("Storing properties to file {}", file.getAbsolutePath());
         } catch (IOException e) {
             log.error("Error while storing properties file {}", file.getAbsolutePath(), e);

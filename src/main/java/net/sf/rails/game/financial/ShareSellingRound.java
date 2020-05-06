@@ -85,7 +85,7 @@ public class ShareSellingRound extends StockRound {
         setSellableShares();
 
         for (PossibleAction pa : possibleActions.getList()) {
-            log.debug("{} may: {}", currentPlayer.getId(), pa.toString());
+            log.debug("{} may: {}", currentPlayer.getId(), pa);
         }
 
         return true;

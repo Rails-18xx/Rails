@@ -27,6 +27,7 @@ public class SpecialTrainBuy extends SpecialProperty {
         super(parent, id);
     }
 
+    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
         super.configureFromXML(tag);
@@ -77,6 +78,7 @@ public class SpecialTrainBuy extends SpecialProperty {
                || trainTypeName.equalsIgnoreCase(trainType);
     }
 
+    @Override
     public boolean isExecutionable() {
         return true;
     }
@@ -89,6 +91,7 @@ public class SpecialTrainBuy extends SpecialProperty {
         return false;
     }
 
+    @Override
     public String getId() {
         return name;
     }
@@ -113,6 +116,7 @@ public class SpecialTrainBuy extends SpecialProperty {
         return trainTypeName;
     }
 
+    @Override
     public String toText() {
         return "SpecialTrainBuy comp=" + originalCompany.getId() + " extra="
                + extra + " deduction=" + deductionString;
@@ -133,6 +137,7 @@ public class SpecialTrainBuy extends SpecialProperty {
         }
     }
 
+    @Override
     public String getInfo() {
         return toMenu();
     }

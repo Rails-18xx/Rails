@@ -60,11 +60,7 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
     }
 
     public Player getTemporaryPresident() {
-        if (this.temporaryPresident != null) {
-            return (Player) this.temporaryPresident.value();
-        } else {
-            return null;
-        }
+        return this.temporaryPresident.value();
     }
 
     @Override
@@ -82,8 +78,6 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
     }
 
     public void setTemporaryPresident(Player temporaryPresident) {
-        if (this.temporaryPresident == null) {
-        }
         this.temporaryPresident.set(temporaryPresident);
     }
 

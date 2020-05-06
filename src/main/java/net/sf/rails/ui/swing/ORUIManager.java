@@ -789,6 +789,7 @@ public class ORUIManager implements DialogOwner {
          */
         if (stopsToQuery.size() == 2) {
             Collections.sort(stopsToQuery, new Comparator<Stop>() {
+                @Override
                 public int compare (Stop s1, Stop s2) {
                     Set<BaseToken> tokens;
                     boolean stop1IsHome = !((tokens = s1.getBaseTokens()).isEmpty())
@@ -1615,6 +1616,7 @@ public class ORUIManager implements DialogOwner {
     }
 
     // DialogOwner interface methods
+    @Override
     public void dialogActionPerformed () {
 
         JDialog currentDialog = getCurrentDialog();
@@ -1647,14 +1649,17 @@ public class ORUIManager implements DialogOwner {
         gameUIManager.processAction(currentDialogAction);
     }
 
+    @Override
     public JDialog getCurrentDialog() {
         return gameUIManager.getCurrentDialog();
     }
 
+    @Override
     public PossibleAction getCurrentDialogAction () {
         return gameUIManager.getCurrentDialogAction();
     }
 
+    @Override
     public void setCurrentDialog (JDialog dialog, PossibleAction action) {
         gameUIManager.setCurrentDialog(dialog, action);
         if (!(dialog instanceof MessageDialog)) orPanel.disableButtons();

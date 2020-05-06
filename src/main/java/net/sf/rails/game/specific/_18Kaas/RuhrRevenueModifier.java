@@ -23,10 +23,12 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable 
 
     private boolean doublesOnlyMajors;
 
+    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
         // does nothing
     }
 
+    @Override
     public void finishConfiguration(RailsRoot root)
             throws ConfigurationException {
         doublesOnlyMajors = GameOption.getAsBoolean(root, "18KaasRuhrgebiedDoublesOnlyMajors");
@@ -34,6 +36,7 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable 
     }
 
     // creates revenueBonuses that double the value of each station/value vertex
+    @Override
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
 
         Set<NetworkVertex> ruhrGebied = new HashSet<NetworkVertex>();
@@ -60,6 +63,7 @@ public class RuhrRevenueModifier implements RevenueStaticModifier, Configurable 
         return false;
     }
 
+    @Override
     public String prettyPrint(RevenueAdapter revenueAdapter) {
         // nothing to print
         return null;

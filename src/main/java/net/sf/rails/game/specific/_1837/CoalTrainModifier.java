@@ -13,14 +13,15 @@ import net.sf.rails.common.LocalText;
 /**
  * Coal Train Modifier based on TGV Modifier by Stefan Frey
  * implementation allows several Coal trains
- * @author MBrumm 
+ * @author MBrumm
  */
 public class CoalTrainModifier implements RevenueDynamicModifier {
 
         private int nbCOAL = 0; // store the number of Coal Trains
-    
+
+    @Override
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
-        
+
         // separate trains into coal trains and others
         List<NetworkTrain> allTrains = revenueAdapter.getTrains();
         List<NetworkTrain> coalTrains = new ArrayList<NetworkTrain>();
@@ -46,18 +47,21 @@ public class CoalTrainModifier implements RevenueDynamicModifier {
         }
     }
 
+    @Override
     public int predictionValue(List<RevenueTrainRun> runs) {
         // nothing to do here
         return 0;
     }
 
+    @Override
     public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
         // nothing to do here
         return 0;
     }
 
+    @Override
     public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
-        // nothing to do 
+        // nothing to do
     }
 
     public boolean providesOwnCalculateRevenue() {
@@ -70,6 +74,7 @@ public class CoalTrainModifier implements RevenueDynamicModifier {
         return value;
     }
 
+    @Override
     public String prettyPrint(RevenueAdapter adapter) {
         return LocalText.getText("CoalTrainModifier");
     }

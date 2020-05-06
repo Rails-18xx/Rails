@@ -101,6 +101,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
         this.privateNumber = numberOfPrivateCompanies++;
     }
 
+    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
         /* Configure private company features */
         try {
@@ -250,6 +251,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
 
     }
 
+    @Override
     public void finishConfiguration(RailsRoot root)
             throws ConfigurationException {
 
@@ -341,6 +343,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
         return closingPhase;
     }
 
+    @Override
     public void setClosed() {
 
         if (isClosed()) return;
@@ -466,10 +469,12 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
         }
     }
 
+    @Override
     public String getClosingInfo() {
         return null;
     }
 
+    @Override
     public void close() {
         setClosed();
     }
@@ -528,30 +533,37 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     }
 
     // Company methods
+    @Override
     public void initType(CompanyType type) {
         this.type = type;
     }
 
+    @Override
     public CompanyType getType() {
         return type;
     }
 
+    @Override
     public boolean isClosed() {
         return closed.value();
     }
 
+    @Override
     public String getLongName() {
         return longName;
     }
 
+    @Override
     public String getAlias() {
         return alias;
     }
 
+    @Override
     public String getInfoText() {
         return infoText;
     }
 
+    @Override
     public ImmutableSet<SpecialProperty> getSpecialProperties() {
         return specialProperties.items();
     }
@@ -569,10 +581,12 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
 
     // Certificate Interface
 
+    @Override
     public float getCertificateCount() {
         return certificateCount;
     }
 
+    @Override
     public void setCertificateCount(float certificateCount) {
         this.certificateCount = certificateCount;
     }

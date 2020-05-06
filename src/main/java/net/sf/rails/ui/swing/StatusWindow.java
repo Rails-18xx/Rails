@@ -479,6 +479,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         return gameStatus.initCashCorrectionActions();
     }
 
+    @Override
     public void updateStatus(boolean myTurn) {
         passButton.setEnabled(false);
         autopassButton.setEnabled(false);
@@ -635,6 +636,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent actor) {
         String command = actor.getActionCommand();
         List<PossibleAction> actions = null;
@@ -732,6 +734,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         }
     }
 
+    @Override
     public boolean process(PossibleAction executedAction) {
         if (executedAction == null) {
             JOptionPane.showMessageDialog(this, "ERROR: no action found!");
@@ -741,6 +744,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         return gameUIManager.processAction(executedAction);
     }
 
+    @Override
     public boolean processImmediateAction() {
         if (immediateAction instanceof DiscardTrain) {
             // Make a local copy and discard the original,
@@ -853,10 +857,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         }
     }
 
+    @Override
     public void keyReleased(KeyEvent e) {}
 
+    @Override
     public void keyPressed(KeyEvent e) {}
 
+    @Override
     public void keyTyped(KeyEvent e) {}
 
     public void updatePlayerOrder(List<String> newPlayerNames) {

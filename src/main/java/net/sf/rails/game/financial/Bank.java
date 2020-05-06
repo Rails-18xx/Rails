@@ -81,6 +81,7 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
                 cash.addTrigger(this);
             }
 
+            @Override
             public void triggered(Observable obs, Change change) {
                 if (cash.value() <= 0 && !broken.value()) {
                     broken.set(true);
@@ -99,6 +100,7 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
         super(parent, ID);
     }
 
+    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
         // Parse the Bank element
@@ -132,6 +134,7 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
 
     }
 
+    @Override
     public void finishConfiguration(RailsRoot root) {
 
         ReportBuffer.add(this, LocalText.getText("BankSizeIs", currency.format(cash.value())));
@@ -186,20 +189,24 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
         return unavailable;
     }
 
+    @Override
     public String toText() {
         return LocalText.getText("BANK");
     }
 
     // CurrencyOwner interface
+    @Override
     public Currency getCurrency() {
         return currency;
     }
 
     // MoneyOwner interface
+    @Override
     public Purse getPurse() {
         return cash.getPurse();
     }
 
+    @Override
     public int getCash() {
         return cash.getPurse().value();
     }

@@ -15,13 +15,14 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
 
     private boolean hasPullman;
     private int maxValue;
-    
+
+    @Override
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
         // 1. check if there is a Pullman in the train set
         hasPullman = false;
         List<NetworkTrain> trains = revenueAdapter.getTrains();
         for (NetworkTrain train:trains) {
-            if (train.getRailsTrainType() != null 
+            if (train.getRailsTrainType() != null
                     && train.getRailsTrainType().getCertificateType().getId().equals("P")) {
                 hasPullman = true;
                 revenueAdapter.removeTrain(train); // remove from revenueAdapter
@@ -34,19 +35,21 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
         return true;
     }
 
+    @Override
     public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
         return pullmanValue(runs);
     }
-    
+
     private int pullmanValue(List<RevenueTrainRun> trainRuns) {
         int maximum = 0;
         for (RevenueTrainRun trainRun:trainRuns) {
             maximum = Math.max(maximum, maximumMajorValue(trainRun.getRunVertices()));
-            if (maximum == maxValue) break; 
+            if (maximum == maxValue) break;
         }
-        return maximum; 
+        return maximum;
     }
-    
+
+    @Override
     public int predictionValue(List<RevenueTrainRun> runs) {
         return maxValue;
     }
@@ -60,10 +63,12 @@ public class PullmanRevenueModifier implements RevenueDynamicModifier {
         // zero does no change
         return 0;
     }
+    @Override
     public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
         // do nothing here (all is done by changing the evaluation value)
     }
 
+    @Override
     public String prettyPrint(RevenueAdapter revenueAdapter) {
         return LocalText.getText("Pullman") + " = " + pullmanValue(revenueAdapter.getOptimalRun());
     }

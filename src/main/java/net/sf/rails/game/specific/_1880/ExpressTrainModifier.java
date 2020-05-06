@@ -24,6 +24,7 @@ import net.sf.rails.algorithms.RevenueTrainRun;
 
         private boolean hasExpress;
 
+        @Override
         public boolean prepareModifier(RevenueAdapter revenueAdapter) {
             // 1. check if there is a Express Train in the train set
             hasExpress = false;
@@ -89,14 +90,17 @@ import net.sf.rails.algorithms.RevenueTrainRun;
             return value;
         }
 
+        @Override
         public int predictionValue(List<RevenueTrainRun> runs) {
             return valueChange(runs, false);
         }
 
+        @Override
         public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
             return valueChange(runs, optimalRuns);
         }
 
+        @Override
         public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
             //Find out which Express Train is involved
             for (RevenueTrainRun run:optimalRuns) {
@@ -118,6 +122,7 @@ import net.sf.rails.algorithms.RevenueTrainRun;
             return 0;
         }
 
+        @Override
         public String prettyPrint(RevenueAdapter revenueAdapter) {
             return null;
         }

@@ -407,6 +407,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
     }
 
+    @Override
     public void updateStatus(boolean myTurn) {
         StartItem item;
         int i, j;
@@ -550,6 +551,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         requestFocus();
     }
 
+    @Override
     public boolean processImmediateAction() {
         if (immediateAction != null) {
             log.debug("ImmediateAction = {}", immediateAction);
@@ -573,6 +575,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
      *
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
+    @Override
     public void actionPerformed(ActionEvent actor) {
         JComponent source = (JComponent) actor.getSource();
 
@@ -686,14 +689,17 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         return true;
     }
 
+    @Override
     public JDialog getCurrentDialog() {
         return currentDialog;
     }
 
+    @Override
     public PossibleAction getCurrentDialogAction () {
         return currentDialogAction;
     }
 
+    @Override
     public void setCurrentDialog (JDialog dialog, PossibleAction action) {
         if (currentDialog != null) {
             currentDialog.dispose();
@@ -703,6 +709,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         disableButtons();
     }
 
+    @Override
     public void dialogActionPerformed () {
 
         if (currentDialog instanceof RadioButtonDialog
@@ -821,12 +828,16 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         return RailsIcon.INFO.smallIcon;
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {}
 
+    @Override
     public void keyReleased(KeyEvent e) {}
 
+    @Override
     public void keyTyped(KeyEvent e) {}
 
+    @Override
     public boolean process(PossibleAction action) {
         return gameUIManager.processAction(action);
     }

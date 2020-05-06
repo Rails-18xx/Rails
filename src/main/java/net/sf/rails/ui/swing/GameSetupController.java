@@ -155,6 +155,7 @@ public class GameSetupController {
     private class NewAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             //start in new thread so that swing thread is not used for game setup
             new Thread(this::startNewGame).start();
@@ -227,6 +228,7 @@ public class GameSetupController {
     private class LoadAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             String saveDirectory = Config.get("save.directory");
             JFileChooser jfc = new JFileChooser();
@@ -256,6 +258,7 @@ public class GameSetupController {
     private class RecentAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             File saveDirectory = new File(Config.get("save.directory"));
 
@@ -335,6 +338,7 @@ public class GameSetupController {
     private class RecoveryAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             new Thread(() -> {
                 String filePath = SystemOS.get().getConfigurationFolder(GameSaver.AUTOSAVE_FOLDER, true).getAbsolutePath()
@@ -347,6 +351,7 @@ public class GameSetupController {
     private static class QuitAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             System.exit(0);
         }
@@ -355,6 +360,7 @@ public class GameSetupController {
     private class OptionPanelAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             if (window.areOptionsVisible()) {
                 window.hideOptions();
@@ -375,6 +381,7 @@ public class GameSetupController {
             this.option = option;
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             Object source = arg0.getSource();
             String value = null;
@@ -396,6 +403,7 @@ public class GameSetupController {
     private class InfoAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             GameInfo game = window.getSelectedGame();
             JOptionPane.showMessageDialog(window,
@@ -408,6 +416,7 @@ public class GameSetupController {
     private class CreditsAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             JOptionPane.showMessageDialog(window,
                     new JLabel(credits), //enable html rendering
@@ -419,6 +428,7 @@ public class GameSetupController {
     private class GameAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             window.initPlayersPane(window.getSelectedGame());
             if (window.areOptionsVisible()) {
@@ -431,6 +441,7 @@ public class GameSetupController {
     private class ConfigureAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             // start configureWindow
             if (configWindow == null) {
@@ -446,6 +457,7 @@ public class GameSetupController {
     private class RandomizeAction extends AbstractAction {
         private static final long serialVersionUID = 0L;
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             List<String> players = Lists.newArrayList(window.getPlayers());
             Collections.shuffle(players);
@@ -455,6 +467,7 @@ public class GameSetupController {
 
     private class PlayerNameVerifier extends InputVerifier {
 
+        @Override
         public boolean verify(JComponent arg0) {
             // normalize players
             List<String> players = window.getPlayers();

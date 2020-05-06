@@ -224,6 +224,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
 
     public void scrollDown (int pos) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 if (vbarPos == -1)
                     messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
@@ -233,6 +234,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         });
     }
 
+    @Override
     public void actionPerformed(ActionEvent actor) {
         String command = actor.getActionCommand();
         if ("TRIM".equalsIgnoreCase(command)) {
@@ -349,6 +351,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             setAlwaysOnTop(true);
         }
 
+        @Override
         public void actionPerformed(ActionEvent arg0) {
             if (arg0.getSource().equals(okButton)) {
                 PossibleAction newAction = processInput();
@@ -491,10 +494,13 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         comp.setVisible(true);
     }
 
+    @Override
     public void keyPressed(KeyEvent e) { }
 
+    @Override
     public void keyReleased(KeyEvent e) {}
 
+    @Override
     public void keyTyped(KeyEvent e) {}
 
 

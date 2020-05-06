@@ -24,6 +24,7 @@ public interface Company extends RailsOwner, Configurable, Cloneable {
      * A Comparator for Companies
      */
     public static final Comparator<Company> COMPANY_COMPARATOR = new Comparator<Company>() {
+        @Override
         public int compare(Company c0, Company c1) {
             return ComparisonChain.start()
                     .compare(c0.getType().getId(), c1.getType().getId())

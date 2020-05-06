@@ -51,10 +51,12 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
 
         // definitions of freeCash
         CalculationMethod freeCashMethod = new CalculationMethod() {
+            @Override
             public int calculate() {
                 return cash.value() - blockedCash.value();
             }
 
+            @Override
             public boolean initialised() {
                 return cash.initialised() && blockedCash.initialised();
             }
@@ -65,6 +67,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
 
         // define definitions of worth
         CalculationMethod worthMethod = new CalculationMethod() {
+            @Override
             public int calculate() {
                 // if player is bankrupt cash is not counted
                 // as this was generated during forced selling
@@ -84,6 +87,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
                 return worth;
             }
 
+            @Override
             public boolean initialised() {
                 return cash.initialised();
             }
@@ -97,6 +101,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
         return new Player(parent, id, index);
     }
 
+    @Override
     public PlayerManager getParent() {
         return (PlayerManager) super.getParent();
     }
@@ -246,15 +251,18 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
     }
 
     // MoneyOwner interface
+    @Override
     public Purse getPurse() {
         return cash.getPurse();
     }
 
+    @Override
     public int getCash() {
         return cash.getPurse().value();
     }
 
     // Owner interface
+    @Override
     public PortfolioModel getPortfolioModel() {
         return portfolio;
     }
@@ -264,6 +272,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
      * implements the Comparable interface.
      * second level decision is by name
      */
+    @Override
     public int compareTo(Player p) {
         // first by wealth
         int result = -Integer.compare(getWorth(), p.getWorth());

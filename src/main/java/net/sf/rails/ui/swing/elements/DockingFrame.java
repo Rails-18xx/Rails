@@ -183,6 +183,7 @@ public abstract class DockingFrame extends JFrame {
         JMenuItem resetMenuItem = new JMenuItem (
                 LocalText.getText("DockingFrame.menu.layout.reset"));
         resetMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 control.load(LAYOUT_NAME_INITIAL);
                 control.setTheme(DEFAULT_THEME);
@@ -192,6 +193,7 @@ public abstract class DockingFrame extends JFrame {
         JMenuItem applyFromMenuItem = new JMenuItem (
                 LocalText.getText("DockingFrame.menu.layout.applyFrom"));
         applyFromMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 loadLayoutUserDefined();
             }
@@ -326,10 +328,12 @@ public abstract class DockingFrame extends JFrame {
         // and adds it back when unexternalizing
         // (as maximize won't work for the adjusted externalization setup)
         cc.addStateListener( new CDockableStateListener() {
+            @Override
             public void visibilityChanged( CDockable cd ){
                 // ignore
             }
 
+            @Override
             public void extendedModeChanged( CDockable cd, ExtendedMode mode ){
                 if( cd instanceof DefaultCDockable ) {
                     DefaultCDockable dockable = (DefaultCDockable) cd;
@@ -367,10 +371,12 @@ public abstract class DockingFrame extends JFrame {
 
     @LayoutLocked(locked = false)
     private class ScreenDockStationListener extends DockStationAdapter {
+        @Override
         public void dockableAdded( DockStation station, final Dockable dockable ){
             // ... and the new child is not a SplitDockStation ...
             if( !(dockable instanceof SplitDockStation) ) {
                 SwingUtilities.invokeLater( new Runnable(){
+                    @Override
                     public void run(){
                         checkAndReplace( dockable );
                     }

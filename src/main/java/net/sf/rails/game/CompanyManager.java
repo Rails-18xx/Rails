@@ -71,6 +71,7 @@ public class CompanyManager extends RailsManager implements Configurable {
 
     /**
      */
+    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
         gameManager = getRoot().getGameManager();
@@ -191,6 +192,7 @@ public class CompanyManager extends RailsManager implements Configurable {
     }
 
     // Post XML parsing initialisations
+    @Override
     public void finishConfiguration (RailsRoot root)
     throws ConfigurationException {
 

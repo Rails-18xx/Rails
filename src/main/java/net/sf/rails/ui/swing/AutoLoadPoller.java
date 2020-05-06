@@ -73,7 +73,6 @@ public class AutoLoadPoller extends Thread {
                     in.close();
                     log.trace("Read filename {}; last seen filename {}", currentFilename, lastSavedFilename);
 
-
                     if (!lastSavedFilename.equals(currentFilename)) {
                         File currFile = new File(saveDirectory+"/"+currentFilename);
                         if ( ! currFile.exists() ) {
@@ -93,6 +92,8 @@ public class AutoLoadPoller extends Thread {
                             }
                         }
                         lastSavedFilename = currentFilename;
+
+                        log.debug("Read filename {}; last seen filename {} -- triggering reload", currentFilename, lastSavedFilename);
 
                         final GameAction reload = new GameAction(guiMgr.getRoot(), GameAction.Mode.RELOAD);
                         reload.setFilepath(saveDirectory+"/"+currentFilename);

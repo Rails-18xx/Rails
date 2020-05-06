@@ -48,19 +48,18 @@ public class GameStatus_18EU extends GameStatus {
 
     /** Start a company - specific procedure for 18EU */
     @Override
-    protected PossibleAction processGameSpecificActions(ActionEvent actor,
-            PossibleAction chosenAction) {
+    protected PossibleAction processGameSpecificActions(ActionEvent actor, PossibleAction chosenAction) {
 
         if (chosenAction instanceof MergeCompanies) {
 
-            log.debug("Merge action: {}", chosenAction.toString());
+            log.debug("Merge action: {}", chosenAction);
 
             MergeCompanies action = (MergeCompanies) chosenAction;
             PublicCompany minor = action.getMergingCompany();
             List<PublicCompany> targets = action.getTargetCompanies();
 
             if (minor == null || targets == null || targets.isEmpty()) {
-                log.error("Bad {}", action.toString());
+                log.error("Bad {}", action);
                 return null;
             }
 
@@ -68,11 +67,9 @@ public class GameStatus_18EU extends GameStatus {
             int i = 0;
             for (PublicCompany target : targets) {
                 if (target != null) {
-                    options[i++] =
-                            target.getId() + " " + target.getLongName();
+                    options[i++] = target.getId() + " " + target.getLongName();
                 } else {
-                    options[i++] =
-                            LocalText.getText("CloseMinor", minor.getId());
+                    options[i++] = LocalText.getText("CloseMinor", minor.getId());
                 }
             }
 
@@ -81,9 +78,8 @@ public class GameStatus_18EU extends GameStatus {
                     gameUIManager,
                     parent,
                     LocalText.getText("PleaseSelect"),
-                    LocalText.getText("SelectCompanyToMergeMinorInto",
-                            minor.getId()),
-                            options, -1);
+                    LocalText.getText("SelectCompanyToMergeMinorInto", minor.getId()),
+                    options, -1);
             gameUIManager.setCurrentDialog(dialog, action);
             parent.disableButtons();
 

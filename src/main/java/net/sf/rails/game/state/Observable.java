@@ -88,29 +88,35 @@ public abstract class Observable implements Item {
      *
      * @return text for observers
      */
+    @Override
     public String toText() {
         return this.toString();
     }
 
     // Item methods
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public Item getParent() {
         return parent;
     }
 
+    @Override
     public Context getContext() {
         return context;
     }
 
+    @Override
     public Root getRoot() {
         // forward it to the context
         return context.getRoot();
     }
 
+    @Override
     public String getURI() {
         if (parent instanceof Context) {
             return id;
@@ -120,6 +126,7 @@ public abstract class Observable implements Item {
         }
     }
 
+    @Override
     public String getFullURI() {
         // recursive definition
         return parent.getFullURI() + Item.SEP + id;

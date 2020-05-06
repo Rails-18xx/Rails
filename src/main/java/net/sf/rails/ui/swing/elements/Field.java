@@ -68,10 +68,12 @@ public class Field extends JLabel implements Observer {
     public void setToolTipModel(Observable toolTipModel) {
         final Observable storeModel = toolTipModel;
         toolTipObserver = new Observer() {
+            @Override
             public void update(String text) {
                 setToolTipText(text);
             }
 
+            @Override
             public Observable getObservable() {
                 return storeModel;
             }
@@ -84,6 +86,7 @@ public class Field extends JLabel implements Observer {
     public void setColorModel(ColorModel colorModel) {
         final ColorModel storeModel = colorModel;
         colorObserver = new Observer() {
+            @Override
             public void update(String text) {
                 if (storeModel.getBackground() != null) {
                     setBackground(storeModel.getBackground());
@@ -95,6 +98,7 @@ public class Field extends JLabel implements Observer {
                 }
             }
 
+            @Override
             public Observable getObservable() {
                 return storeModel;
             }
@@ -166,16 +170,18 @@ public class Field extends JLabel implements Observer {
                 }
                 baseToolTipInfo = b.toString();
                 setToolTipText (b.length()>0 ? "<html>" + baseToolTipInfo : null);
-            }   
+            }
         }
     }
         */
 
     // Observer methods
+    @Override
     public void update(String text) {
         setText(text);
     }
 
+    @Override
     public Observable getObservable() {
         return observable;
     }

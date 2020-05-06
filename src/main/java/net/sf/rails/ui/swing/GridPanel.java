@@ -223,10 +223,13 @@ implements ActionListener, KeyListener {
         return result;
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {}
 
+    @Override
     public void keyReleased(KeyEvent e) {}
 
+    @Override
     public void keyTyped(KeyEvent e) {}
 
     public void setRowVisibility (int rowIndex, boolean value) {
@@ -264,10 +267,12 @@ implements ActionListener, KeyListener {
             return observable.value();
         }
 
+        @Override
         public void update(String text) {
             parent.setRowVisibility(rowIndex, lastValue());
         }
 
+        @Override
         public Observable getObservable() {
             return observable;
         }
@@ -347,6 +352,7 @@ implements ActionListener, KeyListener {
             }
         }
 
+        @Override
         public void paintBorder(Component c,Graphics g, int x, int y, int width,int height) {
             Graphics2D g2d = (Graphics2D)g;
             if (isHighlighted) {
@@ -374,10 +380,12 @@ implements ActionListener, KeyListener {
             g2d.setStroke(oldStroke);
         }
 
+        @Override
         public Insets getBorderInsets (Component c) {
             return new Insets(padTop,padLeft,padBottom,padRight);
         }
 
+        @Override
         public boolean isBorderOpaque() {
             return true;
         }

@@ -217,6 +217,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         return messagePanel;
     }
 
+    @Override
     public boolean process(PossibleAction action) {
 
         // Add the actor for safety checking in the server
@@ -230,6 +231,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
     }
 
     // Not yet used
+    @Override
     public boolean processImmediateAction() {
         return true;
     }
@@ -272,6 +274,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
     }
 
 // Remark: one of the methods to implement the ActionPerformer Interface
+    @Override
     public void updateStatus(boolean myTurn) {
         // Safety check. Do nothing if this method is called outside Operating Rounds,
         // for instance when a token is exchanged during a Stock Round.
@@ -292,6 +295,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         setTitle(LocalText.getText("MapWindowTitle"));
     }
 
+    @Override
     protected String getLayoutFileName() {
         return getClass().getSimpleName() + "_"
                 + gameUIManager.getRoot().getGameName() ;
