@@ -336,8 +336,8 @@ public class StartItem extends RailsAbstractItem {
      */
     public int getBidders() {
         int bidders = 0;
-        for ( Map.Entry<Player, BooleanState> entry  : active.entrySet()) {
-            if ( entry.getValue().value() ) {
+        for (BooleanState booleanState : active.values()) {
+            if (booleanState.value()) {
                 bidders++;
             }
         }
@@ -522,4 +522,3 @@ public class StartItem extends RailsAbstractItem {
     }
 
 }
-
