@@ -390,8 +390,8 @@ public class StartItem extends RailsAbstractItem {
      * participate in an auction (e.g. 1862)
      */
     public void setAllActive() {
-        for ( Map.Entry<Player, BooleanState> entry : active.entrySet()) {
-            entry.getValue().set(true);
+        for (BooleanState booleanState : active.values()) {
+            booleanState.set(true);
         }
     }
 
