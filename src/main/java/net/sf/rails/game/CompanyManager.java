@@ -276,7 +276,7 @@ public class CompanyManager extends RailsManager implements Configurable {
     }
 
     public List<PrivateCompany> getPrivatesOwnedByPlayers() {
-        List<PrivateCompany> privatesOwnedByPlayers = new ArrayList<PrivateCompany>();
+        List<PrivateCompany> privatesOwnedByPlayers = new ArrayList<>();
         for (PrivateCompany priv : getAllPrivateCompanies()) {
             if (priv.getOwner() instanceof Player) {
                 privatesOwnedByPlayers.add(priv);
