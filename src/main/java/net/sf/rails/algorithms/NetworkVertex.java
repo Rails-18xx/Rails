@@ -260,12 +260,12 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         // define locationName
         stopName = null;
         if (station.getType() == Station.Type.OFFMAPCITY) {
-            if (hex.getStopName() != null && !hex.getStopName().equals("")) {
+            if (hex.getStopName() != null && !"".equals(hex.getStopName())) {
                 stopName = hex.getStopName();
             }
         } else {
-            if (hex.getStopName() != null && !hex.getStopName().equals("")
-                    && station.getStopName() != null && !station.getStopName().equals("")) {
+            if (hex.getStopName() != null && !"".equals(hex.getStopName())
+                    && station.getStopName() != null && !"".equals(station.getStopName())) {
                 stopName = hex.getStopName() + "." + station.getStopName();
             }
         }
@@ -307,7 +307,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public static final class ValueOrder implements Comparator<NetworkVertex> {
 
         public int compare(NetworkVertex vA, NetworkVertex vB) {
-            int result = -((Integer)vA.getValue()).compareTo(vB.getValue()); // compare by value, descending
+            int result = -Integer.compare(vA.getValue(), vB.getValue()); // compare by value, descending
             if (result == 0)
                 result = vA.compareTo(vB); // otherwise use natural ordering
             return result;

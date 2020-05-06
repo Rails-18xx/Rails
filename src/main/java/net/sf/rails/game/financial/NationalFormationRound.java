@@ -74,8 +74,8 @@ public class NationalFormationRound extends StockRound {
         PublicCompany nationalToFound = gameManager.getNationalToFound();
         phase = Phase.getCurrent(this);
         startNational = !nationalToFound.hasStarted();
-        forcedMerge = phase.getId().equals("5"); //TODO Make setable
-        forcedStart = phase.getId().equals("4+4") || forcedMerge;//TODO Make setable
+        forcedMerge = "5".equals(phase.getId()); //TODO Make setable
+        forcedStart = "4+4".equals(phase.getId()) || forcedMerge;//TODO Make setable
         mergeNational = !nationalIsComplete(gameManager, nationalToFound.getId());
 
         ReportBuffer.add(this, LocalText.getText("StartFormationRound", nationalToFound.getId()));

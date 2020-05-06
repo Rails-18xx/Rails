@@ -199,7 +199,7 @@ public class OperatingRound_18EU extends OperatingRound {
                 if (sellerTrain.getCertType() == pullmannType) {
                     hasPullmann = true;
                     pullmann = sellerTrain;
-                } else if (sellerTrain != null) {
+                } else {
                     hasNonPullmann = true;
                 }
             }

@@ -316,18 +316,15 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
             // check revenueBonuses (complex)
             List<RevenueBonus> activeBonuses = new ArrayList<RevenueBonus>();
             for (RevenueBonus bonus : revenueAdapter.getRevenueBonuses()) {
-                if (bonus.checkComplexBonus(vertices, train.getRailsTrain(),
-                        revenueAdapter.getPhase())) {
+                if (bonus.checkComplexBonus(vertices, train.getRailsTrain(), revenueAdapter.getPhase())) {
                     activeBonuses.add(bonus);
                 }
             }
-            Map<String, Integer> printBonuses =
-                    RevenueBonus.combineBonuses(activeBonuses);
-            for (String bonusName : printBonuses.keySet()) {
+            Map<String, Integer> printBonuses = RevenueBonus.combineBonuses(activeBonuses);
+            for ( Map.Entry<String, Integer> entry : printBonuses.entrySet()) {
                 runPrettyPrint.append(" + ");
-                runPrettyPrint.append(bonusName).append("(").append(printBonuses.get(bonusName)).append(")");
-                multiple =
-                        prettyPrintNewLine(runPrettyPrint, multiple, initLength);
+                runPrettyPrint.append(entry.getKey()).append("(").append(entry.getValue()).append(")");
+                multiple = prettyPrintNewLine(runPrettyPrint, multiple, initLength);
             }
             runPrettyPrint.append("\n");
         }
@@ -342,16 +339,13 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
             List<NetworkVertex> edgeVertices = edge.getVertexPath();
             boolean initPath = false;
             for (NetworkVertex edgeVertex : edgeVertices) {
-                Point2D edgePoint =
-                        NetworkVertex.getVertexPoint2D(map, edgeVertex);
+                Point2D edgePoint = NetworkVertex.getVertexPoint2D(map, edgeVertex);
                 if (edgePoint == null) continue;
                 if (!initPath) {
-                    path.moveTo((float) edgePoint.getX(),
-                            (float) edgePoint.getY());
+                    path.moveTo((float) edgePoint.getX(), (float) edgePoint.getY());
                     initPath = true;
                 } else {
-                    path.lineTo((float) edgePoint.getX(),
-                            (float) edgePoint.getY());
+                    path.lineTo((float) edgePoint.getX(), (float) edgePoint.getY());
                 }
             }
         }
@@ -359,7 +353,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
     }
 
     public int compareTo(RevenueTrainRun other) {
-        return ((Integer) this.getRunValue()).compareTo(other.getRunValue());
+        return Integer.compare(this.getRunValue(), other.getRunValue());
     }
 
 }

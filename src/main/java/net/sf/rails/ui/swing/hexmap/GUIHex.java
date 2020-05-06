@@ -596,7 +596,7 @@ public class GUIHex implements Observer {
             // FIXME: Check if we need both x and y
             // or only y as in Rails1.x
             double initial = TILE_GRID_SCALE * dimensions.zoomFactor;
-            double r = MapOrientation.DEG30 * (positionCode / 50);
+            double r = MapOrientation.DEG30 * (positionCode / (double)50);
             tokenCenter = new HexPoint(0, initial).rotate(r);
         } else {
             tokenCenter = new HexPoint(0.0, 0.0);
@@ -618,7 +618,7 @@ public class GUIHex implements Observer {
             break;
         case 4:
             delta_x = (-0.5 + currentToken % 2) * CITY_SIZE * dimensions.zoomFactor;
-            delta_y = (0.5 - currentToken / 2) * CITY_SIZE * dimensions.zoomFactor;
+            delta_y = (0.5 - currentToken / (double)2) * CITY_SIZE * dimensions.zoomFactor;
             break;
         case 6:
             switch (currentToken)  {

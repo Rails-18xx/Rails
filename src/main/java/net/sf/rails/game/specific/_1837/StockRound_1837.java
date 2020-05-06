@@ -93,6 +93,7 @@ public class StockRound_1837 extends StockRound {
                 for (PublicCompany majorComp : comps) {
                     if ((comp.isRelatedToNational(majorComp.getId()))
                         && (majorComp.hasStarted())
+                            // FIXME: getType() will never equal "Major"
                         && (majorComp.getType().equals("Major"))) {
                         minors.add(comp);
                         targetRelation.put(comp, majorComp);

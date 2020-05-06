@@ -14,20 +14,20 @@ public class GameManager_1835 extends GameManager {
 	private Round previousRound = null;
     private Player prFormStartingPlayer = null;
 
-    public final static String M2_ID = "M2";
-    public final static String PR_ID = "PR";
-    public final static String OL_ID = "OL";
-    public final static String MS_ID = "MS";
-    public final static String WT_ID = "WT";
-    public final static String HE_ID = "HE";
-    public final static String BA_ID = "BA";
-    public final static String SX_ID = "SX";
-    public final static String BY_ID = "BY";
-    
+    public static final String M2_ID = "M2";
+    public static final String PR_ID = "PR";
+    public static final String OL_ID = "OL";
+    public static final String MS_ID = "MS";
+    public static final String WT_ID = "WT";
+    public static final String HE_ID = "HE";
+    public static final String BA_ID = "BA";
+    public static final String SX_ID = "SX";
+    public static final String BY_ID = "BY";
+
     public GameManager_1835(RailsRoot parent, String id) {
         super(parent, id);
     }
-    
+
     /** In standard 1835, minors can run even if the start packet has not been completely sold,
      * unless the "MinorsRequireFloatedBY" option is in effect and the Bayerische
      * has not yet floated.

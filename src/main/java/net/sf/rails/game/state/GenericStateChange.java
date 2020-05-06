@@ -2,8 +2,8 @@ package net.sf.rails.game.state;
 
 public final class GenericStateChange<E> extends Change {
 
-    final private GenericState<E> state;
-    final private E previous, next;
+    private final GenericState<E> state;
+    private final E previous, next;
 
     public GenericStateChange(GenericState<E> state, E object) {
         this.state = state;

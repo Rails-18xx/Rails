@@ -171,13 +171,13 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
 
                     String ifAttribute = spTag.getAttributeAsString("condition");
                     if (ifAttribute != null) {
-                        closeIfAllExercised = ifAttribute.equalsIgnoreCase("ifExercised")
+                        closeIfAllExercised = "ifExercised".equalsIgnoreCase(ifAttribute)
                                 || ifAttribute.equalsIgnoreCase("ifAllExercised");
-                        closeIfAnyExercised = ifAttribute.equalsIgnoreCase("ifAnyExercised");
+                        closeIfAnyExercised = "ifAnyExercised".equalsIgnoreCase(ifAttribute);
                     }
                     String whenAttribute = spTag.getAttributeAsString("when");
                     if (whenAttribute != null) {
-                        closeAtEndOfTurn = whenAttribute.equalsIgnoreCase("endOfORTurn");
+                        closeAtEndOfTurn = "endOfORTurn".equalsIgnoreCase(whenAttribute);
                     }
                 }
 

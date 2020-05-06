@@ -117,7 +117,7 @@ public final class ConfigItem {
     }
 
     public void setNewValue(String value) {
-        if (value == null || value.equals("") || value.equals(currentValue)) {
+        if (value == null || "".equals(value) || value.equals(currentValue)) {
             newValue = null;
         } else {
             newValue = value;

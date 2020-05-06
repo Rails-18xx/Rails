@@ -167,7 +167,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         }
     }
 
-    private static abstract class HexLayer extends JComponent {
+    private abstract static class HexLayer extends JComponent {
         private static final long serialVersionUID = 1L;
         protected final HexMap hexMap;
 
@@ -186,7 +186,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
 
 
         @Override
-        final public void repaint() {
+        public final void repaint() {
             bufferDirtyRegions.add(new Rectangle(0, 0, getWidth(), getHeight()));
             super.repaint();
         }
@@ -198,7 +198,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         }
 
         @Override
-        final public void paintComponent(Graphics g) {
+        public final void paintComponent(Graphics g) {
             super.paintComponent(g);
 
             // avoid that paintComponent is processed concurrently

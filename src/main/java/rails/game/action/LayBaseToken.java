@@ -22,12 +22,12 @@ import net.sf.rails.util.Util;
 public class LayBaseToken extends LayToken {
 
     /* LayTile types */
-    public final static int GENERIC = 0; // Stop-gap only
-    public final static int LOCATION_SPECIFIC = 1; // Valid hex
-    public final static int SPECIAL_PROPERTY = 2; // Directed by a special
-    public final static int HOME_CITY = 3; // If city on home hex is undefined in 1st turn
+    public static final int GENERIC = 0; // Stop-gap only
+    public static final int LOCATION_SPECIFIC = 1; // Valid hex
+    public static final int SPECIAL_PROPERTY = 2; // Directed by a special
+    public static final int HOME_CITY = 3; // If city on home hex is undefined in 1st turn
     // property
-    public final static int CORRECTION = 99; // Correction token lays
+    public static final int CORRECTION = 99; // Correction token lays
 
     protected int type = 0;
 

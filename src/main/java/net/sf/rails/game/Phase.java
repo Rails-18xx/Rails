@@ -231,10 +231,7 @@ public class Phase extends RailsModel implements Configurable {
         Tag parameterTag = tag.getChild("Parameters");
         if (parameterTag != null) {
             if (parameters == null) parameters = new HashMap<>();
-            Map<String, String> attributes = parameterTag.getAttributes();
-            for (String key : attributes.keySet()) {
-                parameters.put(key, attributes.get(key));
-            }
+            parameters.putAll(parameterTag.getAttributes());
         }
 
         Tag setTag = tag.getChild("Action");
@@ -311,7 +308,7 @@ public class Phase extends RailsModel implements Configurable {
 
         if (closedObjects != null && !closedObjects.isEmpty()) {
             for (Closeable object : closedObjects) {
-                log.debug("Closing object {}", object.toString());
+                log.debug("Closing object {}", object);
                 object.close();
             }
         }
@@ -331,8 +328,8 @@ public class Phase extends RailsModel implements Configurable {
         }
 
         if (actions != null && !actions.isEmpty()) {
-            for (String actionName : actions.keySet()) {
-                getRoot().getGameManager().processPhaseAction(actionName, actions.get(actionName));
+            for ( Map.Entry<String, String> entry : actions.entrySet()) {
+                getRoot().getGameManager().processPhaseAction(entry.getKey(), entry.getValue());
             }
         }
 

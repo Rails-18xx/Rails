@@ -37,9 +37,8 @@ public class SpecialTrainBuy extends SpecialProperty {
             throw new ConfigurationException("<SpecialTrainBuy> tag missing");
         }
 
-        trainTypeName =
-                trainBuyTag.getAttributeAsString("trainType", trainTypeName);
-        if (trainTypeName.equalsIgnoreCase("any")) trainTypeName = "";
+        trainTypeName = trainBuyTag.getAttributeAsString("trainType", trainTypeName);
+        if ( "any".equalsIgnoreCase(trainTypeName)) trainTypeName = "";
 
         deductionString = trainBuyTag.getAttributeAsString("deduction");
         if (!Util.hasValue(deductionString)) {
@@ -74,8 +73,7 @@ public class SpecialTrainBuy extends SpecialProperty {
     }
 
     public boolean isValidForTrainType(String trainType) {
-        return trainTypeName.equals("")
-               || trainTypeName.equalsIgnoreCase(trainType);
+        return "".equals(trainTypeName) || trainTypeName.equalsIgnoreCase(trainType);
     }
 
     @Override
@@ -118,22 +116,16 @@ public class SpecialTrainBuy extends SpecialProperty {
 
     @Override
     public String toText() {
-        return "SpecialTrainBuy comp=" + originalCompany.getId() + " extra="
-               + extra + " deduction=" + deductionString;
+        return "SpecialTrainBuy comp=" + originalCompany.getId() + " extra=" + extra + " deduction=" + deductionString;
     }
 
     @Override
     public String toMenu() {
-        if (trainTypeName.equals("")) {
-            return LocalText.getText("SpecialTrainBuyAny",
-                    deductionString,
-                    originalCompany.getId());
+        if ( "".equals(trainTypeName)) {
+            return LocalText.getText("SpecialTrainBuyAny", deductionString, originalCompany.getId());
         }
         else {
-            return LocalText.getText("SpecialTrainBuy",
-                    trainTypeName,
-                    deductionString,
-                    originalCompany.getId());
+            return LocalText.getText("SpecialTrainBuy", trainTypeName, deductionString, originalCompany.getId());
         }
     }
 

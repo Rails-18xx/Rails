@@ -148,7 +148,7 @@ public class NetworkMultigraph {
         for (NetworkEdge e:edges) {
             s.append("\n").append(e.getOrderedConnection());
         }
-        log.debug("Edges = {}", s.toString());
+        log.debug("Edges = {}", s);
     }
 
     public Map<NetworkEdge, EdgeTravel> getPhaseTwoEdgeSets(RevenueAdapter adapter) {

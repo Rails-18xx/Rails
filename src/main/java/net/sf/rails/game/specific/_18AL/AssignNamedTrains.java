@@ -25,13 +25,13 @@ import rails.game.action.UseSpecialProperty;
 // TODO: Rails 2.0 This seems a pretty complicated action. Is this really required for the task?
 public class AssignNamedTrains extends UseSpecialProperty {
 
-    final transient private List<NameableTrain> nameableTrains = new ArrayList<>();
+    private final transient List<NameableTrain> nameableTrains = new ArrayList<>();
     private final String[] trainIds;
 
-    final transient private List<NameableTrain> preTrainPerToken = new ArrayList<>();
+    private final transient List<NameableTrain> preTrainPerToken = new ArrayList<>();
     private final String[] preTrainds;
 
-    transient private List<NameableTrain> postTrainPerToken = new ArrayList<>();
+    private transient List<NameableTrain> postTrainPerToken = new ArrayList<>();
     private final String[] postTrainds;
 
     public static final long serialVersionUID = 1L;

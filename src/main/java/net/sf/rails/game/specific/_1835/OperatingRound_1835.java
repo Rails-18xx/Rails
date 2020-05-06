@@ -62,8 +62,8 @@ public class OperatingRound_1835 extends OperatingRound {
         // Majors always operate
         if (company.hasStockPrice()) return true;
         // In some variants minors don't run if BY has not floated
-        if (GameOption.getValue(this, GameOption.VARIANT).equalsIgnoreCase("Clemens")
-                || GameOption.getValue(this, "MinorsRequireFloatedBY").equalsIgnoreCase("yes")) {
+        if ( "Clemens".equalsIgnoreCase(GameOption.getValue(this, GameOption.VARIANT))
+                || "yes".equalsIgnoreCase(GameOption.getValue(this, "MinorsRequireFloatedBY"))) {
             return companyManager.getPublicCompany(GameManager_1835.BY_ID).hasFloated();
         }
         return true;
@@ -260,10 +260,9 @@ public class OperatingRound_1835 extends OperatingRound {
     @Override
     protected void newPhaseChecks() {
         Phase phase = Phase.getCurrent(this);
-        if (phase.getId().equals("4")
-                || phase.getId().equals("4+4")
+        if ( "4".equals(phase.getId()) || "4+4".equals(phase.getId())
                 && !companyManager.getPublicCompany(GameManager_1835.PR_ID).hasStarted()
-                || phase.getId().equals("5")
+                || "5".equals(phase.getId())
                 && !PrussianFormationRound.prussianIsComplete(gameManager)) {
             if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
                 // Postpone until trains are discarded

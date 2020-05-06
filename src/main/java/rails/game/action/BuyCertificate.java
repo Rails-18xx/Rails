@@ -27,16 +27,16 @@ public class BuyCertificate extends PossibleAction {
      * The certificate was in fact only used to find the below replacement
      * attributes. It was NOT actually used to select the bought certificate!
      */
-    transient protected PublicCertificate certificate = null;
+    protected transient PublicCertificate certificate = null;
     protected String certUniqueId = null;
 
     /* Replacement for the above.*/
-    transient protected PublicCompany company;
+    protected transient PublicCompany company;
     protected String companyName;
     protected int sharePerCert; // Share % per buyable certificate.
 
     // FIXME: We have to recreate the portfolio name
-    transient protected PortfolioModel from;
+    protected transient PortfolioModel from;
     protected String fromName; // Old: portfolio name. New: portfolio unique name.
     protected int price;
     protected int maximumNumber;

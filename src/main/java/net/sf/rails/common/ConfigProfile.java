@@ -360,8 +360,8 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
             for (ConfigProfile child:getChildren()) {
                 child.setParent(parent);
                 // and transfer (directly stored) properties
-                for (Object key:properties.keySet()) {
-                    child.setProperty((String)key, (String)properties.get(key));
+                for ( Map.Entry<Object, Object> entry :properties.entrySet()) {
+                    child.setProperty((String)entry.getKey(), (String)entry.getValue());
                 }
                 child.store();
             }
@@ -371,7 +371,7 @@ public final class ConfigProfile implements Comparable<ConfigProfile> {
     }
 
     private int compare(ConfigProfile a, ConfigProfile b) {
-        if (a.type.sort != b.type.sort) {
+        if ( !a.type.sort.equals(b.type.sort) ) {
             return a.type.sort.compareTo(b.type.sort);
         } else {
             return a.getName().compareTo(b.getName());

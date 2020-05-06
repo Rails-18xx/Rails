@@ -32,15 +32,15 @@ import com.google.common.base.Objects;
 
 public abstract class PossibleAction implements ChangeAction, Serializable {
 
-    transient protected RailsRoot root;
+    protected transient RailsRoot root;
 
     protected String playerName;
     protected int playerIndex;
-    transient protected Player player;
+    protected transient Player player;
 
     protected boolean acted = false;
 
-    transient protected Activity activity;
+    protected transient Activity activity;
 
     public static final long serialVersionUID = 3L;
 

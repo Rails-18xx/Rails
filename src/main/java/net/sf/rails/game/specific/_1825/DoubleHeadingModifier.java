@@ -16,9 +16,9 @@ import net.sf.rails.common.LocalText;
  */
 public class DoubleHeadingModifier implements RevenueDynamicModifier {
 
-    private final static String TRAIN_SINGLE = "2";
-    private final static String DOUBLEHEAD_NAME = "2&2";
-    private final static String TRAIN_DOUBLE = "3";
+    private static final String TRAIN_SINGLE = "2";
+    private static final String DOUBLEHEAD_NAME = "2&2";
+    private static final String TRAIN_DOUBLE = "3";
 
     @Override
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {

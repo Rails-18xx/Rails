@@ -17,11 +17,11 @@ import net.sf.rails.util.RailsObjects;
 public class BuyBonusToken extends PossibleORAction {
 
     // Initial attributes
-    transient private PrivateCompany privateCompany;
+    private transient PrivateCompany privateCompany;
     private String privateCompanyName;
-    transient private Owner seller;
+    private transient Owner seller;
     private String sellerName = null;
-    transient protected SellBonusToken specialProperty;
+    protected transient SellBonusToken specialProperty;
     protected int specialPropertyId;
 
     private String name;

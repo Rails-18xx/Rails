@@ -404,9 +404,9 @@ abstract class RevenueCalculator {
         return currentBestValue;
     }
 
-    abstract protected void runTrain(final int trainId);
+    protected abstract void runTrain(final int trainId);
 
-    abstract protected void runBottom(final int trainId);
+    protected abstract void runBottom(final int trainId);
 
 
     // next vertex is either:
@@ -481,7 +481,7 @@ abstract class RevenueCalculator {
 //      protected boolean travelEdge(int trainId, int edgeId, boolean previousGreedy);
 //      protected boolean travelEdge(int trainId, int edgeId);
 
-    abstract protected void returnEdge(final int trainId, final int edgeId);
+    protected abstract void returnEdge(final int trainId, final int edgeId);
 
     protected Terminated trainTerminated(final int trainId) {
         Terminated terminated = Terminated.NOT_YET;

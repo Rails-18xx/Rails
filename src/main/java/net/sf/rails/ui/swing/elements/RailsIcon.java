@@ -9,11 +9,11 @@ import net.sf.rails.common.ResourceLoader;
 
 /**
  * Enumeration that provides a specific ImageIcon
- * Simply use RailsIcon.{IconName}.icon/description 
+ * Simply use RailsIcon.{IconName}.icon/description
  */
 
 public enum RailsIcon {
-    
+
     // in parentheses the image file
     AUCTION_BUY ("auction_hammer_gavel.png","BUY"),
     AUTOPASS ("control_fastforward_blue.png","Autopass"),
@@ -46,17 +46,17 @@ public enum RailsIcon {
     UNDO ("arrow_undo.png","UNDO"),
     WITHHOLD ("traffic_lights_red.png","WITHHOLD"),
     YES ("accept.png","Yes"),
-    
+
     //no icons by purpose
     END_OF_GAME_CLOSE_ALL_WINDOWS ("","END_OF_GAME_CLOSE_ALL_WINDOWS"),
     OPERATING_COST ("","OCButtonLabel"),
-    
+
     //null meaning all public fields are null
     NULL ();
-    
-    private final static String IMAGE_PATH = "/images/ui";
-    private final static int SMALL_IMAGE_WIDTH = 16;
-    private final static int SMALL_IMAGE_HEIGHT = 16;
+
+    private static final String IMAGE_PATH = "/images/ui";
+    private static final int SMALL_IMAGE_WIDTH = 16;
+    private static final int SMALL_IMAGE_HEIGHT = 16;
     private final String configKey;
     /**
      * icon in original resolution
@@ -67,28 +67,28 @@ public enum RailsIcon {
      */
     public final ImageIcon smallIcon;
     public final String description;
-    
+
     private RailsIcon() {
         configKey = null;
         largeIcon = null;
         smallIcon = null;
         description = null;
     }
-    
+
     private RailsIcon(String fileName,String configKey) {
         this.configKey = configKey;
         this.description = LocalText.getText(configKey);
         largeIcon = createIcon(fileName,description);
         smallIcon = createSmallIcon(largeIcon);
     }
-    
+
     private ImageIcon createIcon(String fileName, String description) {
         //check whether icon is expected to be found
         //don't write error messages if icon not expected to be found
         if (fileName == null || fileName.equals("")) {
             return null;
         }
-        
+
         //get icon
         String path = IMAGE_PATH + ResourceLoader.SEPARATOR + fileName;
         java.net.URL imgURL = getClass().getResource(path);
@@ -99,7 +99,7 @@ public enum RailsIcon {
             return null;
         }
     }
-    
+
     private ImageIcon createSmallIcon(ImageIcon originalIcon) {
         ImageIcon smallIcon = null;
         if (originalIcon != null) {
@@ -107,7 +107,7 @@ public enum RailsIcon {
             if (img != null) {
                 smallIcon = new ImageIcon(
                         img.getScaledInstance(
-                                SMALL_IMAGE_WIDTH, 
+                                SMALL_IMAGE_WIDTH,
                                 SMALL_IMAGE_HEIGHT,
                                 Image.SCALE_SMOOTH
                         ),
@@ -117,14 +117,14 @@ public enum RailsIcon {
         }
         return smallIcon;
     }
-    
+
     /**
-     * @return The Rails icon associated with the key or, if nothing is found, 
+     * @return The Rails icon associated with the key or, if nothing is found,
      * RailsConfig.NULL
      */
     public static RailsIcon getByConfigKey(String configKey) {
         if (configKey == null) return RailsIcon.NULL;
-        
+
         RailsIcon ri = null;
         for (RailsIcon r : RailsIcon.values()) {
             //ignore case necessary as both Pass and PASS are used by consumers
@@ -135,5 +135,5 @@ public enum RailsIcon {
         }
         return ri;
     }
-    
+
 }

@@ -75,17 +75,14 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
 
         whenText = tag.getAttributeAsString("when");
         if (!Util.hasValue(whenText))
-            throw new ConfigurationException(
-                    "Missing condition in private special property");
-        setUsableDuringSR(whenText.equalsIgnoreCase("anyTurn")
-                || whenText.equalsIgnoreCase("srTurn"));
-        setUsableDuringOR(whenText.equalsIgnoreCase("anyTurn")
-                || whenText.equalsIgnoreCase("orTurn"));
+            throw new ConfigurationException("Missing condition in private special property");
+        setUsableDuringSR("anyTurn".equalsIgnoreCase(whenText) || "srTurn".equalsIgnoreCase(whenText));
+        setUsableDuringOR("anyTurn".equalsIgnoreCase(whenText) || "orTurn".equalsIgnoreCase(whenText));
 
-        setUsableDuringTileLayingStep(whenText.equalsIgnoreCase("tileLayingStep"));
-        setUsableDuringTileLayingStep(whenText.equalsIgnoreCase("tileAndTokenLayingStep"));
-        setUsableDuringTokenLayingStep(whenText.equalsIgnoreCase("tokenLayingStep"));
-        setUsableDuringTokenLayingStep(whenText.equalsIgnoreCase("tileAndTokenLayingStep"));
+        setUsableDuringTileLayingStep("tileLayingStep".equalsIgnoreCase(whenText));
+        setUsableDuringTileLayingStep("tileAndTokenLayingStep".equalsIgnoreCase(whenText));
+        setUsableDuringTokenLayingStep("tokenLayingStep".equalsIgnoreCase(whenText));
+        setUsableDuringTokenLayingStep("tileAndTokenLayingStep".equalsIgnoreCase(whenText));
 
         transferText = tag.getAttributeAsString("transfer", "");
 

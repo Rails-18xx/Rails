@@ -481,14 +481,11 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
         if (relaidTokens != null) {
             // Check for manual handling of tokens
-            for (String compName : relaidTokens.keySet()) {
-                PublicCompany company =
-                        getRoot().getCompanyManager().getPublicCompany(
-                                compName);
+            for ( Map.Entry<String, Integer> entry : relaidTokens.entrySet()) {
+                PublicCompany company = getRoot().getCompanyManager().getPublicCompany(entry.getKey());
                 for (Stop stop : stops) {
                     if (stop.hasTokenOf(company)) {
-                        Station newStation =
-                                newTile.getStation(relaidTokens.get(compName));
+                        Station newStation = newTile.getStation(entry.getValue());
                         stopsToNewStations.put(stop, newStation);
                         log.debug("Mapped by relaid tokens: station {} to {}", stop.getRelatedStation(), newStation);
                         break;
@@ -497,8 +494,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
             }
             // Map all other stops in sequence to the remaining stations
 
-            unassignedStops = Sets.difference(stops.viewValues(),
-                    stopsToNewStations.keySet());
+            unassignedStops = Sets.difference(stops.viewValues(), stopsToNewStations.keySet());
 
             for (Stop stop : unassignedStops) {
                 for (Station newStation : newTile.getStations()) {
@@ -616,11 +612,10 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
         stops.clear();
         if (newStops != null) {
-            for (Stop stop : newStops.keySet()) {
-                Station station = newStops.get(stop);
-                stops.put(station, stop);
-                stop.setRelatedStation(station);
-                log.debug("Tile #{} station {} has tracks to {}", newTile.getId(), station.getNumber(), getConnectionString(station));
+            for ( Map.Entry<Stop, Station> entry  : newStops.entrySet()) {
+                stops.put(entry.getValue(), entry.getKey());
+                entry.getKey().setRelatedStation(entry.getValue());
+                log.debug("Tile #{} station {} has tracks to {}", newTile.getId(), entry.getValue().getNumber(), getConnectionString(entry.getValue()));
             }
         }
     }
@@ -756,7 +751,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
             // not yet decided => create a null stop
             if (home == null) {
                 homes.put(company, Stop.create(this, null));
-                log.debug("Added home of {} in hex {} city not yet decided", company, this.toString());
+                log.debug("Added home of {} in hex {} city not yet decided", company, this);
             } else {
                 homes.put(company, home);
                 log.debug("Added home of {} set to {} id= {}", company, home, home.getSpecificId());
@@ -773,7 +768,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     }
 
     public void addDestination(PublicCompany company) {
-        if (destinations == null) destinations = new ArrayList<PublicCompany>();
+        if (destinations == null) destinations = new ArrayList<>();
         destinations.add(company);
     }
 

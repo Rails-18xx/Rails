@@ -81,7 +81,7 @@ public class GameManager_1837 extends GameManager {
                     if (gameOverPending.value() && gameEndsAfterSetOfORs) {
                         finishGame();
                     } else {
-                        // TODO: This isn't a valid cast...
+                        // FIXME: This isn't a valid cast...
                         ((OperatingRound)round).checkForeignSales();
                         startStockRound();
                     }

@@ -27,24 +27,24 @@ import net.sf.rails.util.Util;
 public class LayTile extends PossibleORAction implements Comparable<LayTile> {
 
     /* LayTile types */
-    public final static int GENERIC = 0; // Stop-gap only
-    public final static int LOCATION_SPECIFIC = 1; // Valid hex and allowed tiles
-    public final static int SPECIAL_PROPERTY = 2; // Directed by a special property
-    public final static int CORRECTION = 99; // Correction tile lays
+    public static final int GENERIC = 0; // Stop-gap only
+    public static final int LOCATION_SPECIFIC = 1; // Valid hex and allowed tiles
+    public static final int SPECIAL_PROPERTY = 2; // Directed by a special property
+    public static final int CORRECTION = 99; // Correction tile lays
 
     protected int type = 0;
 
     /*--- Preconditions ---*/
 
     /** Where to lay a tile (null means anywhere) */
-    transient private List<MapHex> locations = null;
+    private transient List<MapHex> locations = null;
     private String locationNames;
 
     /** Highest tile colour (empty means unspecified) */
     private Map<String, Integer> tileColours = null;
 
     /** Allowed tiles on a specific location (empty means unspecified) */
-    transient private List<Tile> tiles = null;
+    private transient List<Tile> tiles = null;
     private int[] tileIds;
     private String[] sTileIds;
 
@@ -52,7 +52,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
      * Special property that will be fulfilled by this tile lay. If null, this
      * is a normal tile lay.
      */
-    transient private SpecialTileLay specialProperty = null;
+    private transient SpecialTileLay specialProperty = null;
     private int specialPropertyId;
 
     /**
@@ -63,12 +63,12 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
     /*--- Postconditions ---*/
 
     /** The tile actually laid */
-    transient private Tile laidTile = null;
+    private transient Tile laidTile = null;
     private int laidTileId;
     private String sLaidTileId;
 
     /** The map hex on which the tile is laid */
-    transient private MapHex chosenHex = null;
+    private transient MapHex chosenHex = null;
     private String chosenHexName;
 
     /** The tile orientation */

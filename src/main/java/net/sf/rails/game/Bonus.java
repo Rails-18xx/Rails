@@ -89,15 +89,17 @@ public class Bonus implements Closeable, RevenueStaticModifier {
     }
 
 
-    public boolean equals (Bonus b) {
-        return (b.name.equals(name))
-               && b.value == value;
+    public boolean equals (Object obj) {
+        if ( !(obj instanceof Bonus) ) {
+            return false;
+        }
+        Bonus b = (Bonus) obj;
+        return (b.name.equals(name)) && b.value == value;
     }
 
     @Override
     public String toString() {
-        return "Bonus "+name+" hex="
-               + getIdForView() + " value=" + value;
+        return "Bonus "+name+" hex=" + getIdForView() + " value=" + value;
     }
 
     @Override

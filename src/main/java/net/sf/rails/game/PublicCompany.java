@@ -497,7 +497,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             floatPerc = floatTag.getAttributeAsInteger("percentage", floatPerc);
             String sharePriceAttr = floatTag.getAttributeAsString("price");
             if (Util.hasValue(sharePriceAttr)) {
-                sharePriceUpOnFloating = sharePriceAttr.equalsIgnoreCase("up");
+                sharePriceUpOnFloating = "up".equalsIgnoreCase(sharePriceAttr);
             }
         }
 
@@ -510,8 +510,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         Tag payoutTag = tag.getChild("Payout");
         if (payoutTag != null) {
             String split = payoutTag.getAttributeAsString("split", "no");
-            splitAlways = split.equalsIgnoreCase("always");
-            splitAllowed = split.equalsIgnoreCase("allowed");
+            splitAlways = "always".equalsIgnoreCase(split);
+            splitAllowed = "allowed".equalsIgnoreCase(split);
 
             payoutMustExceedPriceToMove = payoutTag.getAttributeAsBoolean("mustExceedPriceToMove", false);
         }
@@ -540,11 +540,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         Tag firstTrainTag = tag.getChild("FirstTrainCloses");
         if (firstTrainTag != null) {
             String typeName = firstTrainTag.getAttributeAsString("type", "Private");
-            if (typeName.equalsIgnoreCase("Private")) {
+            if ( "Private".equalsIgnoreCase(typeName)) {
                 privateToCloseOnFirstTrainName = firstTrainTag.getAttributeAsString("name");
             } else {
-                throw new ConfigurationException(
-                        "Only Privates can be closed on first train buy");
+                throw new ConfigurationException("Only Privates can be closed on first train buy");
             }
         }
 
@@ -552,11 +551,11 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (capitalisationTag != null) {
             String capType =
                     capitalisationTag.getAttributeAsString("type", "full");
-            if (capType.equalsIgnoreCase("full")) {
+            if ( "full".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_FULL);
-            } else if (capType.equalsIgnoreCase("incremental")) {
+            } else if ( "incremental".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_INCREMENTAL);
-            } else if (capType.equalsIgnoreCase("whenBought")) {
+            } else if ( "whenBought".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_WHEN_BOUGHT);
             } else {
                 throw new ConfigurationException("Invalid capitalisation type: " + capType);
@@ -577,28 +576,22 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             // Cost of laying a token
             Tag layCostTag = baseTokenTag.getChild("LayCost");
             if (layCostTag != null) {
-                baseTokenLayCostMethod =
-                        layCostTag.getAttributeAsString("method",
-                                baseTokenLayCostMethod);
+                baseTokenLayCostMethod = layCostTag.getAttributeAsString("method", baseTokenLayCostMethod);
                 if (baseTokenLayCostMethod.equalsIgnoreCase(BASE_COST_SEQUENCE)) {
                     baseTokenLayCostMethod = BASE_COST_SEQUENCE;
                 } else if (baseTokenLayCostMethod.equalsIgnoreCase(BASE_COST_DISTANCE)) {
                     baseTokenLayCostMethod = BASE_COST_DISTANCE;
                 } else {
-                    throw new ConfigurationException(
-                            "Invalid base token lay cost calculation method: "
-                                    + baseTokenLayCostMethod);
+                    throw new ConfigurationException("Invalid base token lay cost calculation method: " + baseTokenLayCostMethod);
                 }
 
-                baseTokenLayCost =
-                        layCostTag.getAttributeAsIntegerList("cost");
+                baseTokenLayCost = layCostTag.getAttributeAsIntegerList("cost");
             }
 
             /* Cost of buying a token (mutually exclusive with laying cost) */
             Tag buyCostTag = baseTokenTag.getChild("BuyCost");
             if (buyCostTag != null) {
-                baseTokensBuyCost =
-                        buyCostTag.getAttributeAsInteger("initialTokenCost", 0);
+                baseTokensBuyCost = buyCostTag.getAttributeAsInteger("initialTokenCost", 0);
             }
 
             Tag tokenLayTimeTag = baseTokenTag.getChild("HomeBase");
@@ -606,8 +599,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                 // When is the home base laid?
                 // Note: if not before, home tokens are in any case laid
                 // at the start of the first OR
-                String layTimeString =
-                        tokenLayTimeTag.getAttributeAsString("lay");
+                String layTimeString = tokenLayTimeTag.getAttributeAsString("lay");
                 if (Util.hasValue(layTimeString)) {
                     for (int i = 0; i < tokenLayTimeNames.length; i++) {
                         if (tokenLayTimeNames[i].equalsIgnoreCase(layTimeString)) {
@@ -622,9 +614,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         Tag sellSharesTag = tag.getChild("TradeShares");
         if (sellSharesTag != null) {
             mayTradeShares = true;
-            mustHaveOperatedToTradeShares =
-                    sellSharesTag.getAttributeAsBoolean("mustHaveOperated",
-                            mustHaveOperatedToTradeShares);
+            mustHaveOperatedToTradeShares = sellSharesTag.getAttributeAsBoolean("mustHaveOperated", mustHaveOperatedToTradeShares);
         }
 
         Tag loansTag = tag.getChild("Loans");
@@ -639,8 +629,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         Tag optionsTag = tag.getChild("Options");
         if (optionsTag != null) {
-            mustTradeTrainsAtFixedPrice = optionsTag.getAttributeAsBoolean
-                    ("mustTradeTrainsAtFixedPrice", mustTradeTrainsAtFixedPrice);
+            mustTradeTrainsAtFixedPrice = optionsTag.getAttributeAsBoolean("mustTradeTrainsAtFixedPrice", mustTradeTrainsAtFixedPrice);
             canClose = optionsTag.getAttributeAsBoolean("canClose", canClose);
         }
     }
@@ -914,8 +903,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     public boolean hasReachedDestination() {
-        return hasReachedDestination != null &&
-                hasReachedDestination.value();
+        return hasReachedDestination.value();
     }
 
     public void setReachedDestination(boolean value) {
@@ -1634,14 +1622,12 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         Set<SpecialProperty> sps = privateCompany.getSpecialProperties();
         if (sps != null) {
             // Need intermediate List to avoid ConcurrentModificationException
-            List<SpecialProperty> spsToMoveHere =
-                    new ArrayList<SpecialProperty>(2);
-            List<SpecialProperty> spsToMoveToGM =
-                    new ArrayList<SpecialProperty>(2);
+            List<SpecialProperty> spsToMoveHere = new ArrayList<SpecialProperty>(2);
+            List<SpecialProperty> spsToMoveToGM = new ArrayList<SpecialProperty>(2);
             for (SpecialProperty sp : sps) {
-                if (sp.getTransferText().equalsIgnoreCase("toCompany")) {
+                if ( "toCompany".equalsIgnoreCase(sp.getTransferText())) {
                     spsToMoveHere.add(sp);
-                } else if (sp.getTransferText().equalsIgnoreCase("toGameManager")) {
+                } else if ( "toGameManager".equalsIgnoreCase(sp.getTransferText())) {
                     // This must be SellBonusToken - remember the owner!
                     if (sp instanceof SellBonusToken) {
                         // TODO: Check if this works correctly
@@ -1669,9 +1655,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     public void layTile(MapHex hex, Tile tile, int orientation, int cost) {
 
-        String tileLaid =
-                "#" + tile.toText() + "/" + hex.getId() + "/"
-                        + hex.getOrientationName(orientation);
+        String tileLaid = "#" + tile.toText() + "/" + hex.getId() + "/" + hex.getOrientationName(orientation);
         tilesLaidThisTurn.append(tileLaid, ", ");
 
         if (cost > 0) tilesCostThisTurn.change(cost);
@@ -1782,7 +1766,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     public boolean removeBonus(String name) {
-        if (bonuses != null && !bonuses.isEmpty()) {
+        if ( !bonuses.isEmpty()) {
             for (Bonus bonus : bonuses.view()) {
                 if (bonus.getName().equals(name)) return removeBonus(bonus);
             }
