@@ -1,5 +1,7 @@
 package net.sf.rails.game.special;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
@@ -73,7 +75,7 @@ public class SpecialTrainBuy extends SpecialProperty {
     }
 
     public boolean isValidForTrainType(String trainType) {
-        return "".equals(trainTypeName) || trainTypeName.equalsIgnoreCase(trainType);
+        return StringUtils.isBlank(trainTypeName) || trainTypeName.equalsIgnoreCase(trainType);
     }
 
     @Override
@@ -121,7 +123,7 @@ public class SpecialTrainBuy extends SpecialProperty {
 
     @Override
     public String toMenu() {
-        if ( "".equals(trainTypeName)) {
+        if ( StringUtils.isBlank(trainTypeName)) {
             return LocalText.getText("SpecialTrainBuyAny", deductionString, originalCompany.getId());
         }
         else {

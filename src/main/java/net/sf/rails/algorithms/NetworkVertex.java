@@ -7,6 +7,7 @@ import java.util.*;
 import net.sf.rails.game.*;
 import net.sf.rails.ui.swing.hexmap.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jgrapht.graph.SimpleGraph;
@@ -260,12 +261,11 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         // define locationName
         stopName = null;
         if (station.getType() == Station.Type.OFFMAPCITY) {
-            if (hex.getStopName() != null && !"".equals(hex.getStopName())) {
+            if ( StringUtils.isNotBlank(hex.getStopName()) ) {
                 stopName = hex.getStopName();
             }
         } else {
-            if (hex.getStopName() != null && !"".equals(hex.getStopName())
-                    && station.getStopName() != null && !"".equals(station.getStopName())) {
+            if ( StringUtils.isNotBlank(hex.getStopName()) && StringUtils.isNotBlank(station.getStopName())) {
                 stopName = hex.getStopName() + "." + station.getStopName();
             }
         }

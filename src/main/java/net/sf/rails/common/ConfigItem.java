@@ -3,6 +3,8 @@ package net.sf.rails.common;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.util.Util;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +119,7 @@ public final class ConfigItem {
     }
 
     public void setNewValue(String value) {
-        if (value == null || "".equals(value) || value.equals(currentValue)) {
+        if ( StringUtils.isBlank(value) || value.equals(currentValue)) {
             newValue = null;
         } else {
             newValue = value;
