@@ -172,24 +172,27 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         //call pack and size init within the swing EDT
         //(as this frame is not inited within the EDT)
         //no standard call to gameUIManager's packAndApplySizing possible (due to docking switch)
-        SwingUtilities.invokeLater(new Thread(() -> {
-            //rearrange layout only if no docking framework active
-            if (!isDockingFrameworkEnabled()) {
-                pack();
-            } else {
-                setSize(new Dimension(600,500));
-            }
+        SwingUtilities.invokeLater(new Thread()  {
 
-            WindowSettings ws = getGameUIManager().getWindowSettings();
-            Rectangle bounds = ws.getBounds(ORWindow.this);
-            if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
-            if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
-            ws.set(frame);
+            public void run() {
+                //rearrange layout only if no docking framework active
+                if (!isDockingFrameworkEnabled()) {
+                    pack();
+                } else {
+                    setSize(new Dimension(600, 500));
+                }
 
-            if (isDockingFrameworkEnabled()) {
-                initLayout();
+                WindowSettings ws = getGameUIManager().getWindowSettings();
+                Rectangle bounds = ws.getBounds(ORWindow.this);
+                if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
+                if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
+                ws.set(frame);
+
+                if (isDockingFrameworkEnabled()) {
+                    initLayout();
+                }
             }
-        }));
+        });
 
     }
 
