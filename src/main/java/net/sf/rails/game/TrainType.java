@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 
 public class TrainType implements Cloneable {
 
-    public final static int TOWN_COUNT_MAJOR = 2;
-    public final static int TOWN_COUNT_MINOR = 1;
-    public final static int NO_TOWN_COUNT = 0;
+    public static final int TOWN_COUNT_MAJOR = 2;
+    public static final int TOWN_COUNT_MINOR = 1;
+    public static final int NO_TOWN_COUNT = 0;
 
     protected String name;
     protected TrainCertificateType certificateType;
@@ -78,10 +78,10 @@ public class TrainType implements Cloneable {
         }
 
         // Check the reach and score values
-        countHexes = reachBasis.equals("hexes");
-        townCountIndicator = countTowns.equals("no") ? NO_TOWN_COUNT : minorStops > 0 ? TOWN_COUNT_MINOR : TOWN_COUNT_MAJOR;
-        cityScoreFactor = scoreCities.equalsIgnoreCase("double") ? 2 : 1;
-        townScoreFactor = scoreTowns.equalsIgnoreCase("yes") ? 1 : 0;
+        countHexes = "hexes".equals(reachBasis);
+        townCountIndicator = "no".equals(countTowns) ? NO_TOWN_COUNT : minorStops > 0 ? TOWN_COUNT_MINOR : TOWN_COUNT_MAJOR;
+        cityScoreFactor = "double".equalsIgnoreCase(scoreCities) ? 2 : 1;
+        townScoreFactor = "yes".equalsIgnoreCase(scoreTowns) ? 1 : 0;
         // Actually we should meticulously check all values....
     }
 

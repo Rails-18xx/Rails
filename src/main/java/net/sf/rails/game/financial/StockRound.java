@@ -85,8 +85,8 @@ public class StockRound extends Round {
     public static final int SELL_BUY_OR_BUY_SELL = 2;
 
     /* Action constants */
-    static public final int BOUGHT = 0;
-    static public final int SOLD = 1;
+    public static final int BOUGHT = 0;
+    public static final int SOLD = 1;
 
     /* Rules */
     protected int sequenceRule;
@@ -109,8 +109,7 @@ public class StockRound extends Round {
     public StockRound(GameManager parent, String id) {
         super(parent, id);
 
-        if (numberOfPlayers == 0)
-            numberOfPlayers = getRoot().getPlayerManager().getPlayers().size();
+        numberOfPlayers = getRoot().getPlayerManager().getPlayers().size();
 
         sequenceRule = GameDef.getGameParameterAsInt(this, GameDef.Parm.STOCK_ROUND_SEQUENCE);
 
@@ -1732,9 +1731,9 @@ public class StockRound extends Round {
     private boolean checkFirstRoundSellRestriction() {
         if (noSaleInFirstSR() && getStockRoundNumber() == 1) {
             // depending on GameOption restriction is either valid during the first (true) Stock Round or the first Round
-            if (GameOption.getValue(this, "FirstRoundSellRestriction").equals("First Stock Round")) {
+            if ( "First Stock Round".equals(GameOption.getValue(this, "FirstRoundSellRestriction"))) {
                 return true;
-            } else if (GameOption.getValue(this, "FirstRoundSellRestriction").equals("First Round")) {
+            } else if ( "First Round".equals(GameOption.getValue(this, "FirstRoundSellRestriction"))) {
                 // if all players have passed it is not the first round
                 return !gameManager.getFirstAllPlayersPassed();
             }

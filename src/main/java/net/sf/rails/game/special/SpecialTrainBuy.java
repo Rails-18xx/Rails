@@ -1,5 +1,7 @@
 package net.sf.rails.game.special;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
@@ -37,9 +39,8 @@ public class SpecialTrainBuy extends SpecialProperty {
             throw new ConfigurationException("<SpecialTrainBuy> tag missing");
         }
 
-        trainTypeName =
-                trainBuyTag.getAttributeAsString("trainType", trainTypeName);
-        if (trainTypeName.equalsIgnoreCase("any")) trainTypeName = "";
+        trainTypeName = trainBuyTag.getAttributeAsString("trainType", trainTypeName);
+        if ( "any".equalsIgnoreCase(trainTypeName)) trainTypeName = "";
 
         deductionString = trainBuyTag.getAttributeAsString("deduction");
         if (!Util.hasValue(deductionString)) {
@@ -74,8 +75,7 @@ public class SpecialTrainBuy extends SpecialProperty {
     }
 
     public boolean isValidForTrainType(String trainType) {
-        return trainTypeName.equals("")
-               || trainTypeName.equalsIgnoreCase(trainType);
+        return StringUtils.isBlank(trainTypeName) || trainTypeName.equalsIgnoreCase(trainType);
     }
 
     @Override
@@ -118,22 +118,16 @@ public class SpecialTrainBuy extends SpecialProperty {
 
     @Override
     public String toText() {
-        return "SpecialTrainBuy comp=" + originalCompany.getId() + " extra="
-               + extra + " deduction=" + deductionString;
+        return "SpecialTrainBuy comp=" + originalCompany.getId() + " extra=" + extra + " deduction=" + deductionString;
     }
 
     @Override
     public String toMenu() {
-        if (trainTypeName.equals("")) {
-            return LocalText.getText("SpecialTrainBuyAny",
-                    deductionString,
-                    originalCompany.getId());
+        if ( StringUtils.isBlank(trainTypeName)) {
+            return LocalText.getText("SpecialTrainBuyAny", deductionString, originalCompany.getId());
         }
         else {
-            return LocalText.getText("SpecialTrainBuy",
-                    trainTypeName,
-                    deductionString,
-                    originalCompany.getId());
+            return LocalText.getText("SpecialTrainBuy", trainTypeName, deductionString, originalCompany.getId());
         }
     }
 

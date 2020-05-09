@@ -3,6 +3,7 @@ package net.sf.rails.tools;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -191,7 +192,7 @@ public class ConvertTilesXML {
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(new DOMSource(outputDoc),
-                    new StreamResult(Files.newOutputStream(new File(outputFilePath).toPath())));
+                    new StreamResult(Files.newOutputStream(Paths.get(outputFilePath))));
 
         } catch (Exception e) {
             throw new ConfigurationException("Document build error", e);

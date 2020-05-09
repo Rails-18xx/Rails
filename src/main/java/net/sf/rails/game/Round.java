@@ -162,7 +162,7 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
             } else {
                 key = 50 + ++minorNo;
             }
-            operatingCompanies.put(new Integer(key), company);
+            operatingCompanies.put(key, company);
         }
 
         return new ArrayList<PublicCompany>(operatingCompanies.values());

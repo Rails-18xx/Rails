@@ -107,8 +107,8 @@ public class MapPanel extends JPanel {
         log.debug("viewport size ={}", viewport.getSize());
 
         double setX, setY;
-        setX = Math.max(0, (rectangle.getCenterX() - viewport.getWidth() / 2));
-        setY = Math.max(0, (rectangle.getCenterY() - viewport.getHeight() / 2));
+        setX = Math.max(0, (rectangle.getCenterX() - viewport.getWidth() / (double)2));
+        setY = Math.max(0, (rectangle.getCenterY() - viewport.getHeight() / (double)2));
 
         setX = Math.min(setX, Math.max(0, map.getSize().getWidth() -  viewport.getWidth()));
         setY = Math.min(setY, Math.max(0, map.getSize().getHeight() - viewport.getHeight()));

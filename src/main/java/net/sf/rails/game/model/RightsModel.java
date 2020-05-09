@@ -25,6 +25,7 @@ public class RightsModel extends RailsModel {
 
     @Override
     public PublicCompany getParent() {
+        // FIXME: should this be calling the parent instead?
         return (PublicCompany)getParent();
     }
 
@@ -42,7 +43,7 @@ public class RightsModel extends RailsModel {
         for (SpecialRight right:rights) {
             rightsText.add(right.getName());
         }
-        return Joiner.on(",").join(rightsText.build()).toString();
+        return Joiner.on(",").join(rightsText.build());
     }
 
 }

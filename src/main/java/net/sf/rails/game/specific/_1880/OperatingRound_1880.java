@@ -183,7 +183,7 @@ public class OperatingRound_1880 extends OperatingRound {
             log.info("Initial operating sequence is {}", msg);
 
             if (stepObject == null) {
-                // TODO: following will cause a NPE
+                // FIXME: following will cause a NPE
                  setStep (GameDef.OrStep.INITIAL);
                  stepObject.addObserver(this);
             }

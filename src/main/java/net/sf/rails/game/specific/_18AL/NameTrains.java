@@ -105,12 +105,12 @@ public class NameTrains extends SpecialProperty {
     public String toText() {
         return description;
     }
-    
+
     @Override
     public String getInfo() {
-        String infoText = LocalText.getText("SpecialNameTrains",
-                tokens.size());
+        String infoText = LocalText.getText("SpecialNameTrains", tokens.size());
         infoText += "<br>" + description;
+        // FIXME: result is ignored?
         infoText.replaceFirst("NameTrains: ", "");
         return infoText;
     }

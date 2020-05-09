@@ -25,14 +25,14 @@ import rails.game.action.PossibleAction;
 public class MergeCompanies extends PossibleAction {
 
     // Server-side settings
-    transient protected PublicCompany mergingCompany;
+    protected transient PublicCompany mergingCompany;
     protected String mergingCompanyName;
-    transient protected List<PublicCompany> targetCompanies;
+    protected transient List<PublicCompany> targetCompanies;
     protected String targetCompanyNames;
     protected List<Boolean> canReplaceToken;
 
     // Client-side settings
-    transient protected PublicCompany selectedTargetCompany = null;
+    protected transient PublicCompany selectedTargetCompany = null;
     protected String selectedTargetCompanyName = null;
     protected boolean replaceToken = false;
 

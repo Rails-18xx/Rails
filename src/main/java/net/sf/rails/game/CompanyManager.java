@@ -269,7 +269,6 @@ public class CompanyManager extends RailsManager implements Configurable {
     }
 
     public void closeAllPrivates() {
-        if (lPrivateCompanies == null) return;
         for (PrivateCompany priv : lPrivateCompanies) {
             if (priv.isCloseable()) // check if private is closeable
                 priv.setClosed();
@@ -277,8 +276,7 @@ public class CompanyManager extends RailsManager implements Configurable {
     }
 
     public List<PrivateCompany> getPrivatesOwnedByPlayers() {
-        List<PrivateCompany> privatesOwnedByPlayers =
-                new ArrayList<PrivateCompany>();
+        List<PrivateCompany> privatesOwnedByPlayers = new ArrayList<>();
         for (PrivateCompany priv : getAllPrivateCompanies()) {
             if (priv.getOwner() instanceof Player) {
                 privatesOwnedByPlayers.add(priv);
@@ -301,12 +299,12 @@ public class CompanyManager extends RailsManager implements Configurable {
     // (We shouldn't have such dependencies...)
     // TODO: Resolve the issues mentioned above
     public void addExtraTileLayTurnsInfo (Map<String, Integer> extraTileTurns) {
-        for (String typeAndColour : extraTileTurns.keySet()) {
-            String[] keys = typeAndColour.split("~");
+        for ( Map.Entry<String, Integer> entry : extraTileTurns.entrySet()) {
+            String[] keys = entry.getKey().split("~");
             Map<String, Company> companies = mCompaniesByTypeAndName.get(keys[0]);
             if (companies != null) {
                 for (Company company : companies.values()) {
-                    ((PublicCompany)company).addExtraTileLayTurnsInfo(keys[1], extraTileTurns.get(typeAndColour));
+                    ((PublicCompany)company).addExtraTileLayTurnsInfo(keys[1], entry.getValue());
                 }
             }
         }
@@ -316,9 +314,8 @@ public class CompanyManager extends RailsManager implements Configurable {
       for (StartPacket packet: startPackets) {
           if ( !packet.areAllSold() ) {
               return packet;
-
-              }
           }
+      }
       return null;
     }
 

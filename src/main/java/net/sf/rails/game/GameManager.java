@@ -216,13 +216,13 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 String stockRoundSequenceRuleString =
                         srTag.getAttributeAsString("sequence");
                 if (Util.hasValue(stockRoundSequenceRuleString)) {
-                    if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuySell")) {
+                    if ( "SellBuySell".equalsIgnoreCase(stockRoundSequenceRuleString)) {
                         setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
                                 StockRound.SELL_BUY_SELL);
-                    } else if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuy")) {
+                    } else if ( "SellBuy".equalsIgnoreCase(stockRoundSequenceRuleString)) {
                         setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
                                 StockRound.SELL_BUY);
-                    } else if (stockRoundSequenceRuleString.equalsIgnoreCase("SellBuyOrBuySell")) {
+                    } else if ( "SellBuyOrBuySell".equalsIgnoreCase(stockRoundSequenceRuleString)) {
                         setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
                                 StockRound.SELL_BUY_OR_BUY_SELL);
                     }
@@ -345,9 +345,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                         bankBreaksTag.getAttributeAsInteger("limit",
                                 gameEndsWhenBankHasLessOrEqual);
                 String attr = bankBreaksTag.getAttributeAsString("finish");
-                if (attr.equalsIgnoreCase("setOfORs")) {
+                if ( "setOfORs".equalsIgnoreCase(attr)) {
                     gameEndsAfterSetOfORs = true;
-                } else if (attr.equalsIgnoreCase("currentOR")) {
+                } else if ( "currentOR".equalsIgnoreCase(attr)) {
                     gameEndsAfterSetOfORs = false;
                 }
             }
@@ -359,8 +359,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             // GameUIManager class
             Tag gameUIMgrTag = guiClassesTag.getChild("GameUIManager");
             if (gameUIMgrTag != null) {
-                gameUIManagerClassName =
-                        gameUIMgrTag.getAttributeAsString("class", gameUIManagerClassName);
+                gameUIManagerClassName = gameUIMgrTag.getAttributeAsString("class", gameUIManagerClassName);
                 // Check instantiatability (not sure if this belongs here)
                 Configure.canClassBeInstantiated(gameUIManagerClassName);
             }
@@ -368,8 +367,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             // ORUIManager class
             Tag orMgrTag = guiClassesTag.getChild("ORUIManager");
             if (orMgrTag != null) {
-                orUIManagerClassName =
-                        orMgrTag.getAttributeAsString("class", orUIManagerClassName);
+                orUIManagerClassName = orMgrTag.getAttributeAsString("class", orUIManagerClassName);
                 // Check instantiatability (not sure if this belongs here)
                 Configure.canClassBeInstantiated(orUIManagerClassName);
             }
@@ -377,8 +375,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             // GameStatus class
             Tag gameStatusTag = guiClassesTag.getChild("GameStatus");
             if (gameStatusTag != null) {
-                gameStatusClassName =
-                        gameStatusTag.getAttributeAsString("class", gameStatusClassName);
+                gameStatusClassName = gameStatusTag.getAttributeAsString("class", gameStatusClassName);
                 // Check instantiatability (not sure if this belongs here)
                 Configure.canClassBeInstantiated(gameStatusClassName);
             }
@@ -386,9 +383,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             // StatusWindow class
             Tag statusWindowTag = guiClassesTag.getChild("StatusWindow");
             if (statusWindowTag != null) {
-                statusWindowClassName =
-                        statusWindowTag.getAttributeAsString("class",
-                                statusWindowClassName);
+                statusWindowClassName = statusWindowTag.getAttributeAsString("class",
+                        statusWindowClassName);
                 // Check instantiatability (not sure if this belongs here)
                 Configure.canClassBeInstantiated(statusWindowClassName);
             }
@@ -396,9 +392,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             // ORWindow class
             Tag orWindowTag = guiClassesTag.getChild("ORWindow");
             if (orWindowTag != null) {
-                orWindowClassName =
-                        orWindowTag.getAttributeAsString("class",
-                                orWindowClassName);
+                orWindowClassName = orWindowTag.getAttributeAsString("class", orWindowClassName);
                 // Check instantiatability (not sure if this belongs here)
                 Configure.canClassBeInstantiated(orWindowClassName);
             }
@@ -406,9 +400,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             // StartRoundWindow class
             Tag startRoundWindowTag = guiClassesTag.getChild("StartRoundWindow");
             if (startRoundWindowTag != null) {
-                startRoundWindowClassName =
-                        startRoundWindowTag.getAttributeAsString("class",
-                                startRoundWindowClassName);
+                startRoundWindowClassName = startRoundWindowTag.getAttributeAsString("class", startRoundWindowClassName);
                 // Check instantiatability (not sure if this belongs here)
                 Configure.canClassBeInstantiated(startRoundWindowClassName);
             }
@@ -852,7 +844,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         getRoot().getReportManager().getDisplayBuffer().clear();
 
         // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
-        if (getRoot().getGameName().equals("1856")
+        if ( "1856".equals(getRoot().getGameName())
                 //&& currentRound.get().getClass() != CGRFormationRound.class
                 && possibleActions.contains(RepayLoans.class)
                 && (!possibleActions.contains(action.getClass())
@@ -1478,7 +1470,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public void setNationalToFound(String national) {
 
         for (PublicCompany company : this.getAllPublicCompanies()) {
-            if (company.getId().equals("national")) {
+            if ( "national".equals(company.getId())) {
                 this.nationalToFound = company;
             }
         }

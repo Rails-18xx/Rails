@@ -185,14 +185,14 @@ public class TrainManager extends RailsManager implements Configurable {
             // Register any phase changes
             newPhaseNames = certType.getNewPhaseNames();
             if (newPhaseNames != null && !newPhaseNames.isEmpty()) {
-                for (int index : newPhaseNames.keySet()) {
-                    phaseName = newPhaseNames.get(index);
-                    phase = (Phase) phaseManager.getPhaseByName(phaseName);
+                for ( Map.Entry<Integer, String> entry : newPhaseNames.entrySet()) {
+                    phaseName = entry.getValue();
+                    phase = phaseManager.getPhaseByName(phaseName);
                     if (phase == null) {
                         throw new ConfigurationException("New phase '" + phaseName + "' does not exist");
                     }
-                    if (newPhases.get(certType) == null) newPhases.put(certType, new HashMap<Integer, Phase>());
-                    newPhases.get(certType).put(index, phase);
+                    newPhases.computeIfAbsent(certType, k -> new HashMap<>());
+                    newPhases.get(certType).put(entry.getKey(), phase);
                 }
             }
 
@@ -203,9 +203,9 @@ public class TrainManager extends RailsManager implements Configurable {
         makeTrainAvailable(trainCertTypes.get(newTypeIndex.value()));
 
         // Discard Trains To where?
-        if (discardToString.equalsIgnoreCase("pool")) {
+        if ( "pool".equalsIgnoreCase(discardToString)) {
             discardTo = root.getBank().getPool();
-        } else if (discardToString.equalsIgnoreCase("scrapheap")) {
+        } else if ( "scrapheap".equalsIgnoreCase(discardToString)) {
             discardTo = root.getBank().getScrapHeap();
         } else {
             throw new ConfigurationException("Discard to only allow to pool or scrapheap");
@@ -311,9 +311,7 @@ public class TrainManager extends RailsManager implements Configurable {
 
         type.setAvailable();
 
-        BankPortfolio to =
-                (type.getInitialPortfolio().equalsIgnoreCase("Pool") ? Bank.getPool(this)
-                        : Bank.getIpo(this));
+        BankPortfolio to = ("Pool".equalsIgnoreCase(type.getInitialPortfolio()) ? Bank.getPool(this) : Bank.getIpo(this));
 
         for (Train train : trainsPerCertType.get(type)) {
             to.getPortfolioModel().addTrain(train);

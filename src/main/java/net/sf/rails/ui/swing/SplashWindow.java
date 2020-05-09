@@ -39,32 +39,32 @@ public class SplashWindow {
     /**
      * in millisecs
      */
-    private final static long PROGRESS_UPDATE_INTERVAL = 200;
+    private static final long PROGRESS_UPDATE_INTERVAL = 200;
 
-    private final static String DUMMY_STEP_BEFORE_START = "-1";
-    private final static String DUMMY_STEP_START = "0";
-    private final static String DUMMY_STEP_END = "inf";
+    private static final String DUMMY_STEP_BEFORE_START = "-1";
+    private static final String DUMMY_STEP_START = "0";
+    private static final String DUMMY_STEP_END = "inf";
 
-    public final static String STEP_LOAD_GAME = "Splash.step.loadGame";
-    public final static String STEP_INIT_UI = "Splash.step.initUI";
-    public final static String STEP_STOCK_CHART = "Splash.step.stockChart";
-    public final static String STEP_REPORT_WINDOW = "Splash.step.reportWindow";
-    public final static String STEP_OR_INIT_DOCKING_FRAME = "Splash.step.or.initDockingFrame";
-    public final static String STEP_OR_INIT_PANELS = "Splash.step.or.initPanels";
-    public final static String STEP_OR_INIT_TILES = "Splash.step.or.initTiles";
-    public final static String STEP_OR_APPLY_DOCKING_FRAME = "Splash.step.or.applyDockingFrame";
-    public final static String STEP_STATUS_WINDOW = "Splash.step.statusWindow";
-    public final static String STEP_INIT_NEW_GAME = "Splash.step.initNewGame";
-    public final static String STEP_CONFIG_WINDOW = "Splash.step.configWindow";
-    public final static String STEP_INIT_SOUND = "Splash.step.initSound";
-    public final static String STEP_INIT_LOADED_GAME = "Splash.step.initLoadedGame";
-    public final static String STEP_FINALIZE = "Splash.step.finalize";
+    public static final String STEP_LOAD_GAME = "Splash.step.loadGame";
+    public static final String STEP_INIT_UI = "Splash.step.initUI";
+    public static final String STEP_STOCK_CHART = "Splash.step.stockChart";
+    public static final String STEP_REPORT_WINDOW = "Splash.step.reportWindow";
+    public static final String STEP_OR_INIT_DOCKING_FRAME = "Splash.step.or.initDockingFrame";
+    public static final String STEP_OR_INIT_PANELS = "Splash.step.or.initPanels";
+    public static final String STEP_OR_INIT_TILES = "Splash.step.or.initTiles";
+    public static final String STEP_OR_APPLY_DOCKING_FRAME = "Splash.step.or.applyDockingFrame";
+    public static final String STEP_STATUS_WINDOW = "Splash.step.statusWindow";
+    public static final String STEP_INIT_NEW_GAME = "Splash.step.initNewGame";
+    public static final String STEP_CONFIG_WINDOW = "Splash.step.configWindow";
+    public static final String STEP_INIT_SOUND = "Splash.step.initSound";
+    public static final String STEP_INIT_LOADED_GAME = "Splash.step.initLoadedGame";
+    public static final String STEP_FINALIZE = "Splash.step.finalize";
 
-    private final static List<String> STEP_GROUP_LOAD = Arrays.asList(
+    private static final List<String> STEP_GROUP_LOAD = Arrays.asList(
             STEP_LOAD_GAME,
             STEP_INIT_LOADED_GAME);
 
-    private final static List<String> STEP_GROUP_DOCKING_LAYOUT = Arrays.asList(
+    private static final List<String> STEP_GROUP_DOCKING_LAYOUT = Arrays.asList(
             STEP_OR_INIT_DOCKING_FRAME,
             STEP_OR_INIT_TILES,
             STEP_OR_APPLY_DOCKING_FRAME);
@@ -77,7 +77,7 @@ public class SplashWindow {
             this.labelConfigKey = labelConfigKey;
         }
     }
-    private final static StepDuration[] STEP_DURATION = {
+    private static final StepDuration[] STEP_DURATION = {
             new StepDuration ( 0, DUMMY_STEP_BEFORE_START), // used to facilitate array border handling
             new StepDuration ( 0, DUMMY_STEP_START), // used to facilitate array border handling
             new StepDuration ( 6000, STEP_LOAD_GAME ),
@@ -103,9 +103,9 @@ public class SplashWindow {
     private Set<JFrame> framesRegisteredAsVisible = new HashSet<JFrame>();
     private List<JFrame> framesRegisteredToFront = new ArrayList<JFrame>();
 
-    private final static String ICON_PATH = "/images/icon/";
+    private static final String ICON_PATH = "/images/icon/";
 
-    private final static String[][] ICONS = new String[][] {
+    private static final String[][] ICONS = new String[][] {
         { "notile_2towns.png" , "notile_station.png" },
         { "yellow_track.png" , "yellow_station.png" },
         { "green_track.png" , "green_station.png" },
@@ -234,7 +234,7 @@ public class SplashWindow {
      * @param elapsedTime Refers to a duration normalized based on the expected durations
      * of the process steps.
      */
-    synchronized private void visualizeProgress(long elapsedTime, int currentStep) {
+    private synchronized void visualizeProgress(long elapsedTime, int currentStep) {
         //update current step (including description)
         if (currentStep != this.currentStep) {
             this.currentStep = currentStep;
@@ -351,7 +351,7 @@ public class SplashWindow {
             } catch (InterruptedException e) {}
         }
 
-        synchronized private void setCurrentStep(int currentStep) {
+        private synchronized void setCurrentStep(int currentStep) {
             this.currentStep = currentStep;
             //System.out.println("Time: "+elapsedTime + " (Step: "+stepDuration[currentStep].labelConfigKey+")");
         }

@@ -25,13 +25,13 @@ import com.google.common.base.Objects;
 public class BuyTrain extends PossibleORAction {
 
     // Initial settings
-    transient private Train train;
+    private transient Train train;
     private String trainUniqueId;
-    transient private Owner from;
+    private transient Owner from;
     private String fromName;
     private int fixedCost = 0;
     private boolean forcedBuyIfNoRoute = false; // TODO Can be disabled once route checking exists
-    transient private Set<Train> trainsForExchange = null;
+    private transient Set<Train> trainsForExchange = null;
     private String[] trainsForExchangeUniqueIds;
 
     /** Obsolete, but left in for backwards compatibility of saved files */
@@ -41,20 +41,20 @@ public class BuyTrain extends PossibleORAction {
     private boolean presidentMayAddCash = false;  // If buying from a company
     private int presidentCashToAdd = 0;
 
-    transient private SpecialTrainBuy specialProperty = null;
+    private transient SpecialTrainBuy specialProperty = null;
     private int specialPropertyId = 0;
 
     private String extraMessage = null;
 
     // Added jun2011 by EV to cover dual trains.
     // NOTE: Train objects from now on represent train *certificates*
-    transient private TrainType type;
+    private transient TrainType type;
     private String typeName;
 
     // User settings
     private int pricePaid = 0;
     private int addedCash = 0;
-    transient private Train exchangedTrain = null;
+    private transient Train exchangedTrain = null;
     private String exchangedTrainUniqueId;
 
     public static final long serialVersionUID = 2L;

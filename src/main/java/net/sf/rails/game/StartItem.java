@@ -336,8 +336,8 @@ public class StartItem extends RailsAbstractItem {
      */
     public int getBidders() {
         int bidders = 0;
-        for (Player bidder : active.keySet()) {
-            if (active.get(bidder).value() == true) {
+        for (BooleanState booleanState : active.values()) {
+            if (booleanState.value()) {
                 bidders++;
             }
         }
@@ -390,8 +390,8 @@ public class StartItem extends RailsAbstractItem {
      * participate in an auction (e.g. 1862)
      */
     public void setAllActive() {
-        for (Player p : active.keySet()) {
-            active.get(p).set(true);
+        for (BooleanState booleanState : active.values()) {
+            booleanState.set(true);
         }
     }
 
@@ -413,8 +413,9 @@ public class StartItem extends RailsAbstractItem {
         lastBidder.set(player);
 
         // For display purposes, set all lower bids to zero
-        for (Player p : bids.keySet()) {
-            CountingMoneyModel bid = bids.get(p);
+        for ( Map.Entry<Player, CountingMoneyModel> entry : bids.entrySet()) {
+            Player p = entry.getKey();
+            CountingMoneyModel bid = entry.getValue();
             // Unblock any bid money
             if (bid.value() > 0) {
                 p.unblockCash(bid.value());
@@ -423,7 +424,6 @@ public class StartItem extends RailsAbstractItem {
                     bid.setSuppressZero(true);
                 }
                 active.get(p).set(false);
-                ;
             }
         }
         // for winning bidder set bid to buyprice
@@ -522,4 +522,3 @@ public class StartItem extends RailsAbstractItem {
     }
 
 }
-

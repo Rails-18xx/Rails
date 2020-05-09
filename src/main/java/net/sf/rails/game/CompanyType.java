@@ -18,7 +18,7 @@ import net.sf.rails.common.parser.Tag;
  * companies.
  */
 public class CompanyType extends RailsAbstractItem {
-    
+
     /*--- Class attributes ---*/
 
     /*--- Constants ---*/
@@ -70,12 +70,11 @@ public class CompanyType extends RailsAbstractItem {
 
     public Company createCompany(String id, Tag typeTag, Tag tag)
     throws ConfigurationException {
-        Company newCompany = null;
+        Company newCompany;
         try {
             newCompany = Configure.create(Company.class, className, this, id);
         } catch (Exception e) {
-            throw new ConfigurationException(LocalText.getText(
-                    "ClassCannotBeInstantiated", className), e);
+            throw new ConfigurationException(LocalText.getText("ClassCannotBeInstantiated", className), e);
         }
         newCompany.initType(this);
         newCompany.configureFromXML(typeTag);
@@ -103,9 +102,9 @@ public class CompanyType extends RailsAbstractItem {
     }
 
     public void setCapitalisation(String mode) {
-        if (mode.equalsIgnoreCase("full")) {
+        if ( "full".equalsIgnoreCase(mode)) {
             this.capitalisation = PublicCompany.CAPITALISE_FULL;
-        } else if (mode.equalsIgnoreCase("incremental")) {
+        } else if ( "incremental".equalsIgnoreCase(mode)) {
             this.capitalisation = PublicCompany.CAPITALISE_INCREMENTAL;
         }
     }

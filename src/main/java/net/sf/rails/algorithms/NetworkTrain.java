@@ -34,7 +34,7 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         this.isETrain = isETrain;
         this.trainName = trainName;
         this.railsTrain = train;
-        log.debug("Created NetworkTrain {} / {}", this.toString(), this.attributes());
+        log.debug("Created NetworkTrain {} / {}", this, this.attributes());
     }
 
     static NetworkTrain createFromRailsTrain(Train railsTrain){
@@ -63,10 +63,10 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         boolean ignoreTowns = false; int multiplyCities = 1; int multiplyTowns = 1;
         boolean isHTrain = false;
         boolean isETrain = false;
-        if (t.equals("D")) {
+        if ( "D".equals(t)) {
             log.debug("RA: found Diesel train");
             cities = 99;
-        } else if (t.equals("TGV")) {
+        } else if ( "TGV".equals(t)) {
             log.debug("RA: found TGV  train");
             cities = 3;
             ignoreTowns = true;

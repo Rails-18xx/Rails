@@ -3,6 +3,7 @@ package net.sf.rails.tools;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -186,7 +187,7 @@ public class MakeGameTileSets {
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(new DOMSource(outputDoc),
-                    new StreamResult(Files.newOutputStream(new File(tilesPath).toPath())));
+                    new StreamResult(Files.newOutputStream(Paths.get(tilesPath))));
 
         } catch (Exception e) {
             throw new ConfigurationException("Document build error", e);

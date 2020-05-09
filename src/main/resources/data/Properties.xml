@@ -10,7 +10,7 @@
 		<Property name="default_players" type="STRING" />
 		<Property name="local.player.name" type="STRING" />
         <Property name="skip_confirm_quit" type="BOOLEAN" />
-	</Section>
+    </Section>
 	<Section name="SaveLoad">
 		<Property name="save.directory" type="DIRECTORY" />
 		<Property name="save.filename.date_time_pattern" type="STRING" />

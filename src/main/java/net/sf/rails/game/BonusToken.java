@@ -81,9 +81,8 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
 
         if (removingObject == null) {
             String[] spec = removingObjectDesc.split(":");
-            if (spec[0].equalsIgnoreCase("Phase")) {
-                removingObject =
-                        phaseManager.getPhaseByName(spec[1]);
+            if ( "Phase".equalsIgnoreCase(spec[0])) {
+                removingObject = phaseManager.getPhaseByName(spec[1]);
             }
         }
 

@@ -112,7 +112,7 @@ public abstract class StartRound extends Round {
             StartItemAction startItemAction = (StartItemAction) action;
             String playerName = action.getPlayerName();
 
-            log.debug("Item details: {}", startItemAction.toString());
+            log.debug("Item details: {}", startItemAction);
 
             if (startItemAction instanceof BuyStartItem) {
 

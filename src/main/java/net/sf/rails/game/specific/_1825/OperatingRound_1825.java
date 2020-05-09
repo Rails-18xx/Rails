@@ -13,7 +13,7 @@ public class OperatingRound_1825 extends OperatingRound {
     public OperatingRound_1825(GameManager parent, String id) {
         super(parent, id);
     }
-    
+
     @Override
     public List<PublicCompany> setOperatingCompanies() {
         Map<Integer, PublicCompany> operatingCompanies = new TreeMap<Integer, PublicCompany>();
@@ -21,7 +21,7 @@ public class OperatingRound_1825 extends OperatingRound {
         int key;
         for (PublicCompany company : companyManager.getAllPublicCompanies()) {
             PublicCompany_1825 companycasted = (PublicCompany_1825)company;
-            if (!canCompanyOperateThisRound(companycasted)) continue;    
+            if (!canCompanyOperateThisRound(companycasted)) continue;
             if (!canCompanyOperateThisRound(company)) continue;
             // Key must put companies in reverse operating order, because sort
             // is ascending.
@@ -33,7 +33,7 @@ public class OperatingRound_1825 extends OperatingRound {
             //This wouldn't work if there are lots of corps at the same price
             //there are not too many corps in each banding for this to be an issue in 1825 even with all 3 units
             key = 1000000 - (space - companycasted.getFormationOrderIndex());
-            operatingCompanies.put(new Integer(key), companycasted);
+            operatingCompanies.put(key, companycasted);
             }
         return new ArrayList<PublicCompany>(operatingCompanies.values());
      }

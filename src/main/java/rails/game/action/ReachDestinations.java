@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.Objects;
@@ -99,7 +100,7 @@ public class ReachDestinations extends PossibleORAction {
         possibleCompanies = new ArrayList<>();
         if (Util.hasValue(possibleCompanyNames)) {
             for (String cname : possibleCompanyNames.split(",")) {
-                if (!"".equals(cname)) {
+                if ( StringUtils.isNotBlank(cname) ) {
                     possibleCompanies.add(cmgr.getPublicCompany(cname));
                 }
             }
@@ -108,7 +109,7 @@ public class ReachDestinations extends PossibleORAction {
         if (Util.hasValue(reachedCompanyNames)) {
             reachedCompanies = new ArrayList<>();
             for (String cname : reachedCompanyNames.split(",")) {
-                if (!"".equals(cname)) {
+                if ( StringUtils.isNotBlank(cname) ) {
                     reachedCompanies.add(cmgr.getPublicCompany(cname));
                 }
             }

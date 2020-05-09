@@ -118,18 +118,16 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         if (colourName == null)
             throw new ConfigurationException(LocalText.getText(
                     "TileColorMissing", getId()));
-        if (colourName.equalsIgnoreCase("gray")) colourName = "grey";
+        if ( "gray".equalsIgnoreCase(colourName)) colourName = "grey";
         try {
             colour = TileColour.valueOfIgnoreCase(colourName);
         } catch (IllegalArgumentException e) {
-            throw new ConfigurationException(LocalText.getText(
-                    "InvalidTileColourName", getId(), colourName), e);
+            throw new ConfigurationException(LocalText.getText("InvalidTileColourName", getId(), colourName), e);
         }
 
         /* Stations */
         List<Tag> stationTags = defTag.getChildren("Station");
-        ImmutableSortedMap.Builder<Integer, Station> stationBuilder =
-                ImmutableSortedMap.naturalOrder();
+        ImmutableSortedMap.Builder<Integer, Station> stationBuilder = ImmutableSortedMap.naturalOrder();
         if (stationTags != null) {
             for (Tag stationTag : stationTags) {
                 Station station = Station.create(this, stationTag);
@@ -146,8 +144,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
                 String fromStr = trackTag.getAttributeAsString("from");
                 String toStr = trackTag.getAttributeAsString("to");
                 if (fromStr == null || toStr == null) {
-                    throw new ConfigurationException(LocalText.getText(
-                            "FromOrToMissing", getId()));
+                    throw new ConfigurationException(LocalText.getText("FromOrToMissing", getId()));
                 }
                 TrackPoint from = TrackPoint.create(this, fromStr);
                 TrackPoint to = TrackPoint.create(this, toStr);
@@ -164,8 +161,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         trackConfigsBuilder.add(trackConfig);
         rotationsBuilder.set(HexSide.defaultRotation());
         for (HexSide rotation:HexSide.allExceptDefault()) {
-            TrackConfig nextConfig =
-                    TrackConfig.createByRotation(trackConfig, rotation);
+            TrackConfig nextConfig = TrackConfig.createByRotation(trackConfig, rotation);
             if (trackConfigsBuilder.contains(nextConfig)) continue;
             trackConfigsBuilder.add(nextConfig);
             rotationsBuilder.set(rotation);
