@@ -5,6 +5,11 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.rails.game.OpenGamesManager;
 import net.sf.rails.util.GameLoader;
 import rails.game.action.PossibleAction;
 import rails.game.action.StartCompany;
@@ -24,6 +29,8 @@ import com.google.common.collect.Sets;
  * Rails 2.0: Updated equals and toString methods
  */
 public class StartCompany_18EU extends StartCompany {
+
+    private static final Logger log = LoggerFactory.getLogger(StartCompany_18EU.class);
 
     // Server settings
     // Before phase 5: select a minor to merge
@@ -104,6 +111,9 @@ public class StartCompany_18EU extends StartCompany {
             MapHex hex = mapManager.getHex(parts[0]);
             int stationId = Integer.parseInt(parts[1]);
             selectedHomeStation = hex.getRelatedStop(stationId);
+            if ( selectedHomeStation == null ) {
+                log.warn("missing home station for {}", selectedHomeStationName);
+            }
         }
 
         return selectedHomeStation;
@@ -150,7 +160,6 @@ public class StartCompany_18EU extends StartCompany {
                         .addToStringOnlyActed("selectedHomeStation", selectedHomeStation)
                         .toString()
                 ;
-
     }
 
     /**
@@ -180,7 +189,8 @@ public class StartCompany_18EU extends StartCompany {
                 availableHomeStations.add(hex.getRelatedStop(stationId));
             }
         }
-        // selectedHomeStation is delayed
+        // force fetching of the selected home station to prevent a load compare issue during reload
+        getSelectedHomeStation();
     }
 
     protected void finalizeLoad() { }
