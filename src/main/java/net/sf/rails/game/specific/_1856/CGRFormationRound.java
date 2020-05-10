@@ -506,7 +506,8 @@ public class CGRFormationRound extends SwitchableUIRound {
                     // Only add if the CGR does not already have the same bonus
                     if (cgr.getBonuses() != null) {
                         for (Bonus b : cgr.getBonuses()) {
-                            if (b.equals(bonus)) {
+                            if (b.getLocations().equals(bonus.getLocations())) {
+                            //if (b.equals(bonus)) { //String Mismatch due too different special property names..
                                 // Remove this duplicate bonus token.
                                 // Check if it should be made available again.
                                 List<SellBonusToken> commonSP = gameManager.getSpecialProperties(SellBonusToken.class, true);
