@@ -1,0 +1,1315 @@
+GameIs,1835
+PlayerIs,1,Ulli Hegemann
+PlayerIs,2,Volker Schnell
+PlayerIs,3,Volker Kuhnle
+PlayerIs,4,Jupp Krupp
+PlayerCash,475
+BankHas,10100
+StartOfPhase,2
+BankSizeIs,10100
+StartOfInitialRound
+HasPriority,Jupp Krupp
+BuysItemFor,Jupp Krupp,M3,80
+FloatsWithCash,M3,80
+BuysItemFor,Volker Kuhnle,M5,80
+FloatsWithCash,M5,80
+BuysItemFor,Volker Schnell,M1,80
+FloatsWithCash,M1,80
+BuysItemFor,Ulli Hegemann,M2,170
+FloatsWithCash,M2,170
+BuysItemFor,Ulli Hegemann,M6,80
+FloatsWithCash,M6,80
+BuysItemFor,Volker Schnell,M4,160
+FloatsWithCash,M4,160
+BuysItemFor,Volker Kuhnle,LD,190
+ALSO_GETS,Volker Kuhnle,PRES_CERT_NAME,SX,20
+BuysItemFor,Jupp Krupp,NF,100
+ALSO_GETS,Jupp Krupp,CERT_NAME,BY,10
+BuysItemFor,Ulli Hegemann,HB,160
+BuysItemFor,Volker Schnell,PfB,150
+ALSO_GETS,Volker Schnell,CERT_NAME,BY,10
+BuysItemFor,Volker Kuhnle,BB,130
+BuysItemFor,Jupp Krupp,OBB,120
+ALSO_GETS,Jupp Krupp,CERT_NAME,BY,10
+CannotBuyAnything,Ulli Hegemann
+CannotBuyAnything,Volker Schnell
+CannotBuyAnything,Volker Kuhnle
+CannotBuyAnything,Jupp Krupp
+ALL_PASSED
+Has,M1,80
+Has,M2,170
+Has,M3,80
+Has,M4,160
+Has,M5,80
+Has,M6,80
+Has,Ulli Hegemann,65
+Has,Volker Schnell,85
+Has,Volker Kuhnle,75
+Has,Jupp Krupp,175
+START_OR,0.0
+ReceivesFor,Jupp Krupp,5,NF
+ReceivesFor,Jupp Krupp,10,OBB
+ReceivesFor,Volker Schnell,15,PfB
+ReceivesFor,Volker Kuhnle,20,LD
+ReceivesFor,Volker Kuhnle,25,BB
+ReceivesFor,Ulli Hegemann,30,HB
+ShortORExecuted
+Has,M1,80
+Has,M2,170
+Has,M3,80
+Has,M4,160
+Has,M5,80
+Has,M6,80
+Has,Ulli Hegemann,95
+Has,Volker Schnell,100
+Has,Volker Kuhnle,120
+Has,Jupp Krupp,190
+StartOfInitialRound
+HasPriority,Ulli Hegemann
+CannotBuyAnything,Ulli Hegemann
+CannotBuyAnything,Volker Schnell
+CannotBuyAnything,Volker Kuhnle
+BuysItemFor,Jupp Krupp,PRES_CERT_NAME,BY,20,184
+FloatsWithCash,BY,460
+Has,M1,80
+Has,M2,170
+Has,M3,80
+Has,M4,160
+Has,M5,80
+Has,M6,80
+Has,BY,460
+Has,Ulli Hegemann,95
+Has,Volker Schnell,100
+Has,Volker Kuhnle,120
+Has,Jupp Krupp,6
+StartStockRound,1
+HasPriority,Ulli Hegemann
+BUY_SHARE_LOG,Ulli Hegemann,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+PASSES,Volker Schnell
+PASSES,Volker Kuhnle
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+ 
+END_SR,1
+Has,M1,80
+Has,M2,170
+Has,M3,80
+Has,M4,160
+Has,M5,80
+Has,M6,80
+Has,BY,552
+Has,Ulli Hegemann,3
+Has,Volker Schnell,100
+Has,Volker Kuhnle,120
+Has,Jupp Krupp,6
+START_OR,1.1
+ReceivesFor,Jupp Krupp,5,NF
+ReceivesFor,Jupp Krupp,10,OBB
+ReceivesFor,Volker Schnell,15,PfB
+ReceivesFor,Volker Kuhnle,20,LD
+ReceivesFor,Volker Kuhnle,25,BB
+ReceivesFor,Ulli Hegemann,30,HB
+ 
+CompanyOperates,M1,Volker Schnell
+LaysTileAt,M1,202,H2,W
+CompanyDoesNotPayDividend,M1
+BuysTrain,M1,2,IPO,80
+FirstTrainBought,2
+ 
+CompanyOperates,M2,Ulli Hegemann
+LaysTileAt,M2,8,E17,E
+CompanyDoesNotPayDividend,M2
+BuysTrain,M2,2,IPO,80
+ 
+CompanyOperates,M3,Jupp Krupp
+LaysTileAt,M3,6,F14,SE
+CompanyDoesNotPayDividend,M3
+BuysTrain,M3,2,IPO,80
+ 
+CompanyOperates,M4,Volker Schnell
+LaysTileAt,M4,6,G5,NE
+CompanyDoesNotPayDividend,M4
+BuysTrain,M4,2,IPO,80
+BuysTrain,M4,2,IPO,80
+ 
+CompanyOperates,M5,Volker Kuhnle
+LaysTileAt,M5,8,D18,NE
+CompanyDoesNotPayDividend,M5
+BuysTrain,M5,2,IPO,80
+ 
+CompanyOperates,M6,Ulli Hegemann
+LaysTileAt,M6,9,B10,NW
+CompanyDoesNotPayDividend,M6
+BuysTrain,M6,2,IPO,80
+ 
+CompanyOperates,BY,Jupp Krupp
+LaysTileAt,BY,202,O15,E
+LaysTileAt,BY,8,N16,SW
+LaysTileAt,BY,4,M15,NW
+LAYS_FREE_TOKEN_ON,BY,L14
+PrivateCloses,NF
+CompanyDoesNotPayDividend,BY
+PRICE_MOVES_LOG,BY,92,C3,86,B3
+BuysTrain,BY,2,IPO,80
+BuysTrain,BY,2,IPO,80
+All 2-trains are sold out, 2+2-trains now available
+BuysTrain,BY,2+2,IPO,120
+FirstTrainBought,2+2
+ 
+EndOfOperatingRound,1.1
+ORWorthIncrease,Ulli Hegemann,1.1,24
+ORWorthIncrease,Volker Schnell,1.1,9
+ORWorthIncrease,Volker Kuhnle,1.1,45
+ORWorthIncrease,Jupp Krupp,1.1,-109
+Has,M1,0
+Has,M2,90
+Has,M3,0
+Has,M4,0
+Has,M5,0
+Has,M6,0
+Has,BY,272
+Has,Ulli Hegemann,33
+Has,Volker Schnell,115
+Has,Volker Kuhnle,165
+Has,Jupp Krupp,21
+StartStockRound,2
+HasPriority,Volker Schnell
+BUY_SHARE_LOG,Volker Schnell,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+BUY_SHARE_LOG,Volker Kuhnle,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+PASSES,Volker Schnell
+PASSES,Volker Kuhnle
+ 
+END_SR,2
+Has,M1,0
+Has,M2,90
+Has,M3,0
+Has,M4,0
+Has,M5,0
+Has,M6,0
+Has,BY,456
+Has,Ulli Hegemann,33
+Has,Volker Schnell,23
+Has,Volker Kuhnle,73
+Has,Jupp Krupp,21
+START_OR,2.1
+ReceivesFor,Jupp Krupp,10,OBB
+ReceivesFor,Volker Schnell,15,PfB
+ReceivesFor,Volker Kuhnle,20,LD
+ReceivesFor,Volker Kuhnle,25,BB
+ReceivesFor,Ulli Hegemann,30,HB
+ 
+CompanyOperates,M1,Volker Schnell
+LaysTileAt,M1,69,H4,SW
+CompanyRevenue,M1,40
+CompanySplits,M1,40
+RECEIVES,M1,20
+Payout,Volker Schnell,20,1,100
+ 
+CompanyOperates,M2,Ulli Hegemann
+LaysTileAt,M2,8,F16,W
+CompanyRevenue,M2,50
+CompanySplits,M2,50
+RECEIVES,M2,25
+Payout,Ulli Hegemann,25,1,100
+ 
+CompanyOperates,M3,Jupp Krupp
+LaysTileAt,M3,9,E13,NW
+CompanyRevenue,M3,50
+CompanySplits,M3,50
+RECEIVES,M3,25
+Payout,Jupp Krupp,25,1,100
+ 
+CompanyOperates,M4,Volker Schnell
+LaysTileAt,M4,3,F4,E
+CompanyRevenue,M4,60
+CompanySplits,M4,60
+RECEIVES,M4,30
+Payout,Volker Schnell,30,1,100
+ 
+CompanyOperates,M5,Volker Kuhnle
+LaysTileAt,M5,8,C19,E
+CompanyRevenue,M5,50
+CompanySplits,M5,50
+RECEIVES,M5,25
+Payout,Volker Kuhnle,25,1,100
+ 
+CompanyOperates,M6,Ulli Hegemann
+LaysTileAt,M6,6,A11,NW
+CompanyRevenue,M6,60
+CompanySplits,M6,60
+RECEIVES,M6,30
+Payout,Ulli Hegemann,30,1,100
+ 
+CompanyOperates,BY,Jupp Krupp
+LaysTileAt,BY,8,K13,SE
+LaysTileAt,BY,58,K11,NW
+CompanyRevenue,BY,110
+CompanyPaysOutFull,BY,110
+Payout,Volker Kuhnle,11,1,10
+Payout,Jupp Krupp,44,4,10
+Payout,Volker Schnell,22,2,10
+Payout,Ulli Hegemann,11,1,10
+PRICE_MOVES_LOG,BY,86,B3,92,C3
+ 
+EndOfOperatingRound,2.1
+ORWorthIncrease,Ulli Hegemann,2.1,102
+ORWorthIncrease,Volker Schnell,2.1,99
+ORWorthIncrease,Volker Kuhnle,2.1,87
+ORWorthIncrease,Jupp Krupp,2.1,103
+Has,M1,20
+Has,M2,115
+Has,M3,25
+Has,M4,30
+Has,M5,25
+Has,M6,30
+Has,BY,456
+Has,Ulli Hegemann,129
+Has,Volker Schnell,110
+Has,Volker Kuhnle,154
+Has,Jupp Krupp,100
+StartStockRound,3
+HasPriority,Jupp Krupp
+BUY_SHARE_LOG,Jupp Krupp,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+BUY_SHARE_LOG,Ulli Hegemann,10,BY,IPO,92
+PriceIsPaidTo,92,BY
+BUY_SHARE_LOG,Volker Schnell,10,SX,IPO,88
+SELL_SHARE_LOG,Volker Kuhnle,10,BY,92
+PRICE_MOVES_LOG,BY,92,C3,88,C4
+BUY_SHARE_LOG,Volker Kuhnle,10,SX,IPO,88
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+PASSES,Volker Schnell
+BUY_SHARE_LOG,Volker Kuhnle,10,SX,IPO,88
+FloatsWithCash,SX,440
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+PASSES,Volker Schnell
+PASSES,Volker Kuhnle
+ 
+END_SR,3
+Has,M1,20
+Has,M2,115
+Has,M3,25
+Has,M4,30
+Has,M5,25
+Has,M6,30
+Has,BY,640
+Has,SX,440
+Has,Ulli Hegemann,37
+Has,Volker Schnell,22
+Has,Volker Kuhnle,70
+Has,Jupp Krupp,8
+START_OR,3.1
+ReceivesFor,Jupp Krupp,10,OBB
+ReceivesFor,Volker Schnell,15,PfB
+ReceivesFor,Volker Kuhnle,20,LD
+ReceivesFor,Volker Kuhnle,25,BB
+ReceivesFor,Ulli Hegemann,30,HB
+ 
+CompanyOperates,M1,Volker Schnell
+LaysTileAt,M1,9,J2,NW
+CompanyRevenue,M1,40
+CompanySplits,M1,40
+RECEIVES,M1,20
+Payout,Volker Schnell,20,1,100
+ 
+CompanyOperates,M2,Ulli Hegemann
+CompanyRevenue,M2,50
+CompanySplits,M2,50
+RECEIVES,M2,25
+Payout,Ulli Hegemann,25,1,100
+BuysTrain,M2,2+2,IPO,120
+ 
+CompanyOperates,M3,Jupp Krupp
+LaysTileAt,M3,8,D12,SE
+CompanyRevenue,M3,50
+CompanySplits,M3,50
+RECEIVES,M3,25
+Payout,Jupp Krupp,25,1,100
+ 
+CompanyOperates,M4,Volker Schnell
+LaysTileAt,M4,58,F6,W
+CompanyRevenue,M4,60
+CompanySplits,M4,60
+RECEIVES,M4,30
+Payout,Volker Schnell,30,1,100
+ 
+CompanyOperates,M5,Volker Kuhnle
+CompanyRevenue,M5,50
+CompanySplits,M5,50
+RECEIVES,M5,25
+Payout,Volker Kuhnle,25,1,100
+ 
+CompanyOperates,M6,Ulli Hegemann
+LaysTileAt,M6,58,B12,NW
+CompanyRevenue,M6,60
+CompanySplits,M6,60
+RECEIVES,M6,30
+Payout,Ulli Hegemann,30,1,100
+ 
+CompanyOperates,BY,Jupp Krupp
+LaysTileAt,BY,8,J10,SE
+LaysTileAt,BY,8,O13,NW
+LAYS_TOKEN_ON,BY,J8,120 Hex J8 (Frankfurt)
+CompanyRevenue,BY,160
+CompanyPaysOutFull,BY,160
+Payout,Jupp Krupp,80,5,10
+Payout,Volker Schnell,32,2,10
+Payout,Ulli Hegemann,32,2,10
+Payout,BY,16,1,10
+PRICE_MOVES_LOG,BY,88,C4,94,D4
+BuysTrain,BY,2+2,IPO,120
+ 
+CompanyOperates,SX,Volker Kuhnle
+LaysTileAt,SX,5,H16,SW
+LaysTileAt,SX,56,I17,NE
+CompanyDoesNotPayDividend,SX
+PRICE_MOVES_LOG,SX,88,C4,84,B4
+BuysTrain,SX,2+2,IPO,120
+PrivateCloses,LD
+All 2+2-trains are sold out, 3-trains now available
+BuysTrain,SX,3,IPO,180
+FirstTrainBought,3
+StartOfPhase,3
+ 
+EndOfOperatingRound,3.1
+ORWorthIncrease,Ulli Hegemann,3.1,129
+ORWorthIncrease,Volker Schnell,3.1,105
+ORWorthIncrease,Volker Kuhnle,3.1,-136
+ORWorthIncrease,Jupp Krupp,3.1,145
+Has,M1,40
+Has,M2,20
+Has,M3,50
+Has,M4,60
+Has,M5,50
+Has,M6,60
+Has,BY,416
+Has,SX,140
+Has,Ulli Hegemann,154
+Has,Volker Schnell,119
+Has,Volker Kuhnle,140
+Has,Jupp Krupp,123
+StartStockRound,4
+HasPriority,Jupp Krupp
+BUY_SHARE_LOG,Jupp Krupp,10,BY,Pool,94
+BUY_SHARE_LOG,Ulli Hegemann,10,SX,IPO,88
+PriceIsPaidTo,88,SX
+BUY_SHARE_LOG,Volker Schnell,10,SX,IPO,88
+PriceIsPaidTo,88,SX
+BUY_SHARE_LOG,Volker Kuhnle,10,SX,IPO,88
+PriceIsPaidTo,88,SX
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+PASSES,Volker Schnell
+PASSES,Volker Kuhnle
+ 
+END_SR,4
+PRICE_MOVES_LOG,BY,94,D4,100,D3
+SoldOut,BY,94,D4,100,D3
+Has,M1,40
+Has,M2,20
+Has,M3,50
+Has,M4,60
+Has,M5,50
+Has,M6,60
+Has,BY,416
+Has,SX,404
+Has,Ulli Hegemann,66
+Has,Volker Schnell,31
+Has,Volker Kuhnle,52
+Has,Jupp Krupp,29
+START_OR,4.1
+ReceivesFor,Jupp Krupp,10,OBB
+ReceivesFor,Volker Schnell,15,PfB
+ReceivesFor,Volker Kuhnle,25,BB
+ReceivesFor,Ulli Hegemann,30,HB
+ 
+CompanyOperates,M1,Volker Schnell
+LaysTileAt,M1,207,H2,E
+CompanyRevenue,M1,50
+CompanySplits,M1,50
+RECEIVES,M1,25
+Payout,Volker Schnell,25,1,100
+ 
+CompanyOperates,M2,Ulli Hegemann
+LaysTileAt,M2,209,E19,NE
+CompanyRevenue,M2,130
+CompanySplits,M2,130
+RECEIVES,M2,65
+Payout,Ulli Hegemann,65,1,100
+ 
+CompanyOperates,M3,Jupp Krupp
+LaysTileAt,M3,206,F14,SW
+CompanyRevenue,M3,70
+CompanySplits,M3,70
+RECEIVES,M3,35
+Payout,Jupp Krupp,35,1,100
+BuysTrain,M3,2+2,BY,85
+ 
+CompanyOperates,M4,Volker Schnell
+LaysTileAt,M4,12,G5,NW
+CompanyRevenue,M4,80
+CompanySplits,M4,80
+RECEIVES,M4,40
+Payout,Volker Schnell,40,1,100
+ 
+CompanyOperates,M5,Volker Kuhnle
+LaysTileAt,M5,9,F20,NW
+CompanyRevenue,M5,70
+CompanySplits,M5,70
+RECEIVES,M5,35
+Payout,Volker Kuhnle,35,1,100
+BuysTrain,M5,3,SX,85
+ 
+CompanyOperates,M6,Ulli Hegemann
+LaysTileAt,M6,12,A11,W
+CompanyRevenue,M6,70
+CompanySplits,M6,70
+RECEIVES,M6,35
+Payout,Ulli Hegemann,35,1,100
+BuysTrain,M6,2+2,M2,95
+ 
+CompanyOperates,BY,Jupp Krupp
+LaysTileAtFor,BY,215,J6,NW,50
+CompanyRevenue,BY,190
+CompanyPaysOutFull,BY,190
+Payout,Jupp Krupp,114,6,10
+Payout,Ulli Hegemann,38,2,10
+Payout,Volker Schnell,38,2,10
+PRICE_MOVES_LOG,BY,100,D3,110,E3
+BuysTrain,BY,3,IPO,180
+ 
+CompanyOperates,SX,Volker Kuhnle
+LaysTileAt,SX,202,H20,W
+CompanyRevenue,SX,60
+CompanyPaysOutFull,SX,60
+Payout,Ulli Hegemann,6,1,10
+Payout,Volker Schnell,12,2,10
+Payout,Volker Kuhnle,30,5,10
+PRICE_MOVES_LOG,SX,84,B4,88,C4
+BuysTrain,SX,3,IPO,180
+BuysTrain,SX,3,IPO,180
+All 3-trains are sold out, 3+3-trains now available
+ 
+EndOfOperatingRound,4.1
+ORWorthIncrease,Ulli Hegemann,4.1,198
+ORWorthIncrease,Volker Schnell,4.1,158
+ORWorthIncrease,Volker Kuhnle,4.1,110
+ORWorthIncrease,Jupp Krupp,4.1,219
+Has,M1,65
+Has,M2,180
+Has,M3,0
+Has,M4,100
+Has,M5,0
+Has,M6,0
+Has,BY,271
+Has,SX,129
+Has,Ulli Hegemann,240
+Has,Volker Schnell,161
+Has,Volker Kuhnle,142
+Has,Jupp Krupp,188
+START_OR,4.2
+ReceivesFor,Jupp Krupp,10,OBB
+ReceivesFor,Volker Schnell,15,PfB
+ReceivesFor,Volker Kuhnle,25,BB
+ReceivesFor,Ulli Hegemann,30,HB
+ 
+CompanyOperates,M1,Volker Schnell
+LaysTileAtFor,M1,212,G3,SE,50
+CompanyRevenue,M1,70
+CompanySplits,M1,70
+RECEIVES,M1,35
+Payout,Volker Schnell,35,1,100
+ 
+CompanyOperates,M2,Ulli Hegemann
+LaysTileAt,M2,25,D18,SE
+CompanyRevenue,M2,70
+CompanySplits,M2,70
+RECEIVES,M2,35
+Payout,Ulli Hegemann,35,1,100
+BuysTrain,M2,2,M6,1
+ 
+CompanyOperates,M3,Jupp Krupp
+LaysTileAt,M3,7,D10,NE
+CompanyRevenue,M3,150
+CompanySplits,M3,150
+RECEIVES,M3,75
+Payout,Jupp Krupp,75,1,100
+ 
+CompanyOperates,M4,Volker Schnell
+LaysTileAt,M4,204,H4,E
+CompanyRevenue,M4,100
+CompanySplits,M4,100
+RECEIVES,M4,50
+Payout,Volker Schnell,50,1,100
+ 
+CompanyOperates,M5,Volker Kuhnle
+LaysTileAt,M5,208,H20,E
+CompanyRevenue,M5,180
+CompanySplits,M5,180
+RECEIVES,M5,90
+Payout,Volker Kuhnle,90,1,100
+ 
+CompanyOperates,M6,Ulli Hegemann
+LaysTileAt,M6,3,B14,SW
+CompanyRevenue,M6,90
+CompanySplits,M6,90
+RECEIVES,M6,45
+Payout,Ulli Hegemann,45,1,100
+ 
+CompanyOperates,BY,Jupp Krupp
+LaysTileAt,BY,6,N12,NW
+CompanyRevenue,BY,270
+CompanyPaysOutFull,BY,270
+Payout,Jupp Krupp,162,6,10
+Payout,Ulli Hegemann,54,2,10
+Payout,Volker Schnell,54,2,10
+PRICE_MOVES_LOG,BY,110,E3,122,F3
+ 
+CompanyOperates,SX,Volker Kuhnle
+LaysTileAt,SX,8,H18,E
+LAYS_TOKEN_ON,SX,E19,60 Hex E19 (Berlin)
+CompanyRevenue,SX,280
+CompanyPaysOutFull,SX,280
+Payout,Ulli Hegemann,28,1,10
+Payout,Volker Schnell,56,2,10
+Payout,Volker Kuhnle,140,5,10
+PRICE_MOVES_LOG,SX,88,C4,94,D4
+ 
+EndOfOperatingRound,4.2
+ORWorthIncrease,Ulli Hegemann,4.2,222
+ORWorthIncrease,Volker Schnell,4.2,246
+ORWorthIncrease,Volker Kuhnle,4.2,285
+ORWorthIncrease,Jupp Krupp,4.2,319
+Has,M1,50
+Has,M2,214
+Has,M3,75
+Has,M4,150
+Has,M5,90
+Has,M6,46
+Has,BY,271
+Has,SX,69
+Has,Ulli Hegemann,432
+Has,Volker Schnell,371
+Has,Volker Kuhnle,397
+Has,Jupp Krupp,435
+StartStockRound,5
+HasPriority,Jupp Krupp
+BUY_SHARE_LOG,Jupp Krupp,10,SX,IPO,88
+PriceIsPaidTo,88,SX
+BUY_SHARE_LOG,Ulli Hegemann,10,SX,IPO,88
+PriceIsPaidTo,88,SX
+SharesReleased,All,BA
+START_COMPANY_LOG,Volker Schnell,BA,84,168,2,20,BANK
+SharesReleased,4 10%,PR
+BUY_SHARE_LOG,Volker Kuhnle,10,PR,IPO,154
+PASSES,Jupp Krupp
+BUY_SHARE_LOG,Ulli Hegemann,10,PR,IPO,154
+BUY_SHARE_LOG,Volker Schnell,10,BA,IPO,84
+PASSES,Volker Kuhnle
+PASSES,Jupp Krupp
+BUY_SHARE_LOG,Ulli Hegemann,10,PR,IPO,154
+BUY_SHARE_LOG,Volker Schnell,10,BA,IPO,84
+PASSES,Volker Kuhnle
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+SELL_SHARE_LOG,Volker Schnell,10,BY,122
+PRICE_MOVES_LOG,BY,122,F3,112,F4
+BUY_SHARE_LOG,Volker Schnell,10,BA,IPO,84
+FloatsWithCash,BA,420
+SharesReleased,All,WT
+BUY_SHARE_LOG,Volker Kuhnle,10,BY,Pool,112
+START_COMPANY_LOG,Jupp Krupp,WT,84,168,2,20,BANK
+PASSES,Ulli Hegemann
+SELL_SHARE_LOG,Volker Schnell,10,BY,112
+PRICE_MOVES_LOG,BY,112,F4,104,F5
+BUY_SHARE_LOG,Volker Schnell,10,BA,IPO,84
+PriceIsPaidTo,84,BA
+BUY_SHARE_LOG,Volker Kuhnle,10,BY,Pool,104
+BUY_SHARE_LOG,Jupp Krupp,10,WT,IPO,84
+PASSES,Ulli Hegemann
+BUY_SHARE_LOG,Volker Schnell,10,BA,IPO,84
+PriceIsPaidTo,84,BA
+PASSES,Volker Kuhnle
+BUY_SHARE_LOG,Jupp Krupp,10,WT,IPO,84
+PASSES,Ulli Hegemann
+PASSES,Volker Schnell
+PASSES,Volker Kuhnle
+PASSES,Jupp Krupp
+ 
+END_SR,5
+PRICE_MOVES_LOG,BY,104,F5,112,F4
+SoldOut,BY,104,F5,112,F4
+PRICE_MOVES_LOG,SX,94,D4,100,D3
+SoldOut,SX,94,D4,100,D3
+Has,M1,50
+Has,M2,214
+Has,M3,75
+Has,M4,150
+Has,M5,90
+Has,M6,46
+Has,BY,271
+Has,SX,245
+Has,BA,588
+Has,Ulli Hegemann,36
+Has,Volker Schnell,17
+Has,Volker Kuhnle,27
+Has,Jupp Krupp,11
+START_OR,5.1
+ReceivesFor,Jupp Krupp,10,OBB
+ReceivesFor,Volker Schnell,15,PfB
+ReceivesFor,Volker Kuhnle,25,BB
+ReceivesFor,Ulli Hegemann,30,HB
+ 
+CompanyOperates,M1,Volker Schnell
+LaysTileAt,M1,8,I5,SW
+CompanyRevenue,M1,70
+CompanySplits,M1,70
+RECEIVES,M1,35
+Payout,Volker Schnell,35,1,100
+BuysTrain,M1,2,M4,85
+ 
+CompanyOperates,M2,Ulli Hegemann
+LaysTileAt,M2,9,D16,W
+CompanyRevenue,M2,150
+CompanySplits,M2,150
+RECEIVES,M2,75
+Payout,Ulli Hegemann,75,1,100
+ 
+CompanyOperates,M3,Jupp Krupp
+LaysTileAt,M3,58,G15,SW
+CompanyRevenue,M3,150
+CompanySplits,M3,150
+RECEIVES,M3,75
+Payout,Jupp Krupp,75,1,100
+ 
+CompanyOperates,M4,Volker Schnell
+LaysTileAtFor,M4,8,K7,SW,50
+CompanyRevenue,M4,60
+CompanySplits,M4,60
+RECEIVES,M4,30
+Payout,Volker Schnell,30,1,100
+ 
+CompanyOperates,M5,Volker Kuhnle
+LaysTileAt,M5,205,H16,SE
+CompanyRevenue,M5,180
+CompanySplits,M5,180
+RECEIVES,M5,90
+Payout,Volker Kuhnle,90,1,100
+ 
+CompanyOperates,M6,Ulli Hegemann
+LaysTileAt,M6,87,B14,SE
+CompanyRevenue,M6,90
+CompanySplits,M6,90
+RECEIVES,M6,45
+Payout,Ulli Hegemann,45,1,100
+BuysTrain,M6,2,M2,90
+ 
+CompanyOperates,BY,Jupp Krupp
+LaysTileAt,BY,207,O15,W
+CompanyRevenue,BY,290
+CompanyPaysOutFull,BY,290
+Payout,Jupp Krupp,174,6,10
+Payout,Volker Kuhnle,58,2,10
+Payout,Ulli Hegemann,58,2,10
+PRICE_MOVES_LOG,BY,112,F4,124,G4
+ 
+CompanyOperates,SX,Volker Kuhnle
+LaysTileAtFor,SX,8,D14,NW,50
+CompanyRevenue,SX,310
+CompanyPaysOutFull,SX,310
+Payout,Jupp Krupp,31,1,10
+Payout,Volker Kuhnle,155,5,10
+Payout,Ulli Hegemann,62,2,10
+Payout,Volker Schnell,62,2,10
+PRICE_MOVES_LOG,SX,100,D3,110,E3
+BuysTrain,SX,2,M5,1
+ 
+CompanyOperates,BA,Volker Schnell
+LaysTileAt,BA,210,L6,E
+LaysTileAtFor,BA,201,I3,NE,50
+LAYS_TOKEN_ON,BA,H2,80 Hex H2 (Düsseldorf)
+CompanyDoesNotPayDividend,BA
+PRICE_MOVES_LOG,BA,84,B4,78,A4
+BuysTrain,BA,3+3,IPO,270
+FirstTrainBought,3+3
+BuysTrain,BA,2,M1,1
+ 
+EndOfOperatingRound,5.1
+ORWorthIncrease,Ulli Hegemann,5.1,314
+ORWorthIncrease,Volker Schnell,5.1,120
+ORWorthIncrease,Volker Kuhnle,5.1,402
+ORWorthIncrease,Jupp Krupp,5.1,372
+Has,M1,1
+Has,M2,379
+Has,M3,150
+Has,M4,215
+Has,M5,181
+Has,M6,1
+Has,BY,271
+Has,SX,194
+Has,BA,187
+Has,Ulli Hegemann,306
+Has,Volker Schnell,159
+Has,Volker Kuhnle,355
+Has,Jupp Krupp,301
+START_OR,5.2
+ReceivesFor,Jupp Krupp,10,OBB
+ReceivesFor,Volker Schnell,15,PfB
+ReceivesFor,Volker Kuhnle,25,BB
+ReceivesFor,Ulli Hegemann,30,HB
+ 
+CompanyOperates,M1,Volker Schnell
+LaysTileAt,M1,208,I3,SW
+CompanyRevenue,M1,80
+CompanySplits,M1,80
+RECEIVES,M1,40
+Payout,Volker Schnell,40,1,100
+ 
+CompanyOperates,M2,Ulli Hegemann
+LaysTileAt,M2,23,F20,NW
+CompanyRevenue,M2,80
+CompanySplits,M2,80
+RECEIVES,M2,40
+Payout,Ulli Hegemann,40,1,100
+BuysTrain,M2,3+3,IPO,270
+ 
+CompanyOperates,M3,Jupp Krupp
+LaysTileAt,M3,9,H14,SW
+CompanyRevenue,M3,150
+CompanySplits,M3,150
+RECEIVES,M3,75
+Payout,Jupp Krupp,75,1,100
+ 
+CompanyOperates,M4,Volker Schnell
+LaysTileAt,M4,87,F4,E
+CompanyRevenue,M4,60
+CompanySplits,M4,60
+RECEIVES,M4,30
+Payout,Volker Schnell,30,1,100
+ 
+CompanyOperates,M5,Volker Kuhnle
+LaysTileAt,M5,16,H18,E
+CompanyRevenue,M5,120
+CompanySplits,M5,120
+RECEIVES,M5,60
+Payout,Volker Kuhnle,60,1,100
+BuysTrain,M5,2,SX,240
+ 
+CompanyOperates,M6,Ulli Hegemann
+LaysTileAt,M6,9,C15,NW
+CompanyRevenue,M6,90
+CompanySplits,M6,90
+RECEIVES,M6,45
+Payout,Ulli Hegemann,45,1,100
+ 
+CompanyOperates,BY,Jupp Krupp
+LaysTileAt,BY,204,K11,W
+CompanyRevenue,BY,290
+CompanyPaysOutFull,BY,290
+Payout,Jupp Krupp,174,6,10
+Payout,Volker Kuhnle,58,2,10
+Payout,Ulli Hegemann,58,2,10
+PRICE_MOVES_LOG,BY,124,G4,138,H4
+ 
+CompanyOperates,SX,Volker Kuhnle
+LaysTileAt,SX,27,H14,NE
+CompanyRevenue,SX,310
+CompanyPaysOutFull,SX,310
+Payout,Jupp Krupp,31,1,10
+Payout,Volker Kuhnle,155,5,10
+Payout,Ulli Hegemann,62,2,10
+Payout,Volker Schnell,62,2,10
+PRICE_MOVES_LOG,SX,110,E3,122,F3
+BuysTrain,SX,3+3,IPO,270
+All 3+3-trains are sold out, 4-trains now available
+ 
+CompanyOperates,BA,Volker Schnell
+LaysTileAt,BA,27,J2,NW
+CompanyRevenue,BA,220
+CompanyPaysOutFull,BA,220
+Payout,Volker Schnell,154,7,10
+PRICE_MOVES_LOG,BA,78,A4,84,B4
+ 
+EndOfOperatingRound,5.2
+ORWorthIncrease,Ulli Hegemann,5.2,287
+ORWorthIncrease,Volker Schnell,5.2,367
+ORWorthIncrease,Volker Kuhnle,5.2,386
+ORWorthIncrease,Jupp Krupp,5.2,386
+Has,M1,41
+Has,M2,149
+Has,M3,225
+Has,M4,245
+Has,M5,1
+Has,M6,46
+Has,BY,271
+Has,SX,164
+Has,BA,187
+Has,Ulli Hegemann,541
+Has,Volker Schnell,460
+Has,Volker Kuhnle,653
+Has,Jupp Krupp,591
+StartStockRound,6
+HasPriority,Ulli Hegemann
+BUY_SHARE_LOG,Ulli Hegemann,10,PR,IPO,154
+BUY_SHARE_LOG,Volker Schnell,10,BA,IPO,84
+PriceIsPaidTo,84,BA
+BUY_SHARE_LOG,Volker Kuhnle,20,BA,IPO,168
+PriceIsPaidTo,168,BA
+BUY_SHARE_LOG,Jupp Krupp,10,WT,IPO,84
+FloatsWithCash,WT,420
+SharesReleased,All,HE
+START_COMPANY_LOG,Ulli Hegemann,HE,84,168,2,20,BANK
+PASSES,Volker Schnell
+PASSES,Volker Kuhnle
+BUY_SHARE_LOG,Jupp Krupp,10,WT,IPO,84
+PriceIsPaidTo,84,WT
+BUY_SHARE_LOG,Ulli Hegemann,10,HE,IPO,84
+PASSES,Volker Schnell
+PASSES,Volker Kuhnle
+BUY_SHARE_LOG,Jupp Krupp,10,BY,Ulli Hegemann,207
+SELL_SHARE_LOG,Ulli Hegemann,10,BY,138
+PRICE_MOVES_LOG,BY,138,H4,126,H5
+BUY_SHARE_LOG,Ulli Hegemann,10,HE,IPO,84
+BUY_SHARE_LOG,Volker Schnell,10,BY,Pool,126
+PASSES,Volker Kuhnle
+PASSES,Jupp Krupp
+BUY_SHARE_LOG,Ulli Hegemann,10,HE,IPO,84
+FloatsWithCash,HE,420
+PASSES,Volker Schnell
+BUY_SHARE_LOG,Volker Kuhnle,10,HE,IPO,84
+PriceIsPaidTo,84,HE
+BUY_SHARE_LOG,Jupp Krupp,10,BY,Volker Schnell,189
+BUY_SHARE_LOG,Ulli Hegemann,10,HE,IPO,84
+PriceIsPaidTo,84,HE
+BUY_SHARE_LOG,Volker Schnell,20,BA,Volker Kuhnle,252
+BUY_SHARE_LOG,Volker Kuhnle,10,WT,IPO,84
+PriceIsPaidTo,84,WT
+PASSES,Jupp Krupp
+BUY_SHARE_LOG,Ulli Hegemann,10,HE,IPO,84
+PriceIsPaidTo,84,HE
+BUY_SHARE_LOG,Volker Schnell,20,HE,IPO,168
+PriceIsPaidTo,168,HE
+BUY_SHARE_LOG,Volker Kuhnle,10,WT,IPO,84
+PriceIsPaidTo,84,WT
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+PASSES,Volker Schnell
+BUY_SHARE_LOG,Volker Kuhnle,20,WT,IPO,168
+PriceIsPaidTo,168,WT
+SharesReleased,All,MS
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+PASSES,Volker Schnell
+START_COMPANY_LOG,Volker Kuhnle,MS,80,160,2,20,BANK
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+PASSES,Volker Schnell
+SELL_SHARE_LOG,Volker Kuhnle,10,BY,126
+BUY_SHARE_LOG,Volker Kuhnle,20,MS,IPO,160
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+PASSES,Volker Schnell
+SELL_SHARE_LOG,Volker Kuhnle,10,BY,126
+BUY_SHARE_LOG,Volker Kuhnle,20,MS,IPO,160
+FloatsWithCash,MS,480
+SharesReleased,All,OL
+SELL_SHARE_LOG,Jupp Krupp,10,SX,122
+PRICE_MOVES_LOG,SX,122,F3,112,F4
+BUY_SHARE_LOG,Jupp Krupp,10,BY,Pool,126
+BUY_SHARE_LOG,Ulli Hegemann,10,SX,Pool,112
+PASSES,Volker Schnell
+BUY_SHARE_LOG,Volker Kuhnle,10,MS,IPO,80
+PriceIsPaidTo,80,MS
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+PASSES,Volker Schnell
+PASSES,Volker Kuhnle
+ 
+END_SR,6
+PRICE_MOVES_LOG,SX,112,F4,122,F3
+SoldOut,SX,112,F4,122,F3
+PRICE_MOVES_LOG,BA,84,B4,86,B3
+SoldOut,BA,84,B4,86,B3
+PRICE_MOVES_LOG,WT,84,B4,86,B3
+SoldOut,WT,84,B4,86,B3
+PRICE_MOVES_LOG,HE,84,B4,86,B3
+SoldOut,HE,84,B4,86,B3
+Has,M1,41
+Has,M2,149
+Has,M3,225
+Has,M4,245
+Has,M5,1
+Has,M6,46
+Has,BY,271
+Has,SX,164
+Has,BA,439
+Has,WT,840
+Has,HE,840
+Has,MS,560
+Has,Ulli Hegemann,32
+Has,Volker Schnell,19
+Has,Volker Kuhnle,9
+Has,Jupp Krupp,23
+START_OR,6.1
+ReceivesFor,Jupp Krupp,10,OBB
+ReceivesFor,Volker Schnell,15,PfB
+ReceivesFor,Volker Kuhnle,25,BB
+ReceivesFor,Ulli Hegemann,30,HB
+ 
+CompanyOperates,M1,Volker Schnell
+LaysTileAt,M1,16,I5,SE
+CompanyRevenue,M1,80
+CompanySplits,M1,80
+RECEIVES,M1,40
+Payout,Volker Schnell,40,1,100
+BuysTrain,M1,2,M4,81
+ 
+CompanyOperates,M2,Ulli Hegemann
+LaysTileAt,M2,23,D16,W
+CompanyRevenue,M2,220
+CompanySplits,M2,220
+RECEIVES,M2,110
+Payout,Ulli Hegemann,110,1,100
+ 
+CompanyOperates,M3,Jupp Krupp
+LaysTileAtFor,M3,4,I13,SW,70
+CompanyRevenue,M3,160
+CompanySplits,M3,160
+RECEIVES,M3,80
+Payout,Jupp Krupp,80,1,100
+ 
+CompanyOperates,M4,Volker Schnell
+LaysTileAt,M4,8,E7,E
+CompanyDoesNotPayDividend,M4
+BuysTrain,M4,2,BA,326
+ 
+CompanyOperates,M5,Volker Kuhnle
+LaysTileAt,M5,203,B12,W
+CompanyRevenue,M5,190
+CompanySplits,M5,190
+RECEIVES,M5,95
+Payout,Volker Kuhnle,95,1,100
+ 
+CompanyOperates,M6,Ulli Hegemann
+LaysTileAt,M6,4,B16,W
+CompanyRevenue,M6,90
+CompanySplits,M6,90
+RECEIVES,M6,45
+Payout,Ulli Hegemann,45,1,100
+ 
+CompanyOperates,BY,Jupp Krupp
+LaysTileAt,BY,9,L10,SW
+CompanyRevenue,BY,290
+CompanyPaysOutFull,BY,290
+Payout,Jupp Krupp,261,9,10
+Payout,BY,29,1,10
+PRICE_MOVES_LOG,BY,126,H5,140,I5
+ 
+CompanyOperates,SX,Volker Kuhnle
+LaysTileAt,SX,8,B18,SE
+CompanyRevenue,SX,430
+CompanyPaysOutFull,SX,430
+Payout,Volker Kuhnle,215,5,10
+Payout,Ulli Hegemann,129,3,10
+Payout,Volker Schnell,86,2,10
+PRICE_MOVES_LOG,SX,122,F3,136,G3
+ 
+CompanyOperates,BA,Volker Schnell
+LaysTileAt,BA,9,K5,NW
+CompanyRevenue,BA,140
+CompanyPaysOutFull,BA,140
+Payout,Volker Schnell,140,10,10
+PRICE_MOVES_LOG,BA,86,B3,92,C3
+BuysTrain,BA,4,IPO,360
+FirstTrainBought,4
+StartOfPhase,4
+TrainsRusted,2
+CompanyDiscardsTrain,SX,2+2,Pool
+StartFormationRound,PR
+StartingPlayer,Ulli Hegemann
+START_MERGED_COMPANY,PR,154,154
+FloatsWithCash,PR,616
+MERGE_MINOR_LOG,Ulli Hegemann,M2,PR,259,1
+GetShareForMinor,Ulli Hegemann,10,PR,IPO,M2
+ExchangesBaseToken,PR,M2,E19/1
+MERGE_MINOR_LOG,Volker Schnell,M1,PR,0,0
+GetShareForMinor,Volker Schnell,5,PR,IPO,M1
+ExchangesBaseToken,PR,M1,H2/1
+MERGE_MINOR_LOG,Volker Schnell,M4,PR,0,0
+GetShareForMinor,Volker Schnell,10,PR,IPO,M4
+ExchangesBaseToken,PR,M4,G5/1
+ 
+EndOfFormationRound,PR,OperatingRound 6.1
+BuysTrain,BA,4,IPO,360
+ 
+CompanyOperates,WT,Jupp Krupp
+LaysTileAt,WT,6,M9,SW
+CompanyDoesNotPayDividend,WT
+PRICE_MOVES_LOG,WT,86,B3,82,A3
+BuysTrain,WT,4,IPO,360
+All 4-trains are sold out, 4+4-trains now available
+BuysTrain,WT,4+4,IPO,440
+All 4+4-trains are sold out, 5-trains now available
+FirstTrainBought,4+4
+StartOfPhase,4+4
+TrainsRusted,2+2
+ 
+CompanyOperates,HE,Ulli Hegemann
+LaysTileAt,HE,24,K7,SW
+CompanyDoesNotPayDividend,HE
+PRICE_MOVES_LOG,HE,86,B3,82,A3
+BuysTrain,HE,5,IPO,500
+FirstTrainBought,5
+StartOfPhase,5
+PhaseClosesAllPrivates,
+PrivateCloses,OBB
+PrivateCloses,PfB
+CompanyDiscardsTrain,BA,3+3,Pool
+CompanyDiscardsTrain,SX,3,Pool
+StartFormationRound,PR
+MERGE_MINOR_LOG,Volker Kuhnle,BB,PR,no,no
+GetShareForMinor,Volker Kuhnle,10,PR,IPO,BB
+PrivateCloses,BB
+MERGE_MINOR_LOG,Ulli Hegemann,HB,PR,no,no
+GetShareForMinor,Ulli Hegemann,10,PR,IPO,HB
+PrivateCloses,HB
+MERGE_MINOR_LOG,Jupp Krupp,M3,PR,235,0
+GetShareForMinor,Jupp Krupp,5,PR,IPO,M3
+ExchangesBaseToken,PR,M3,F14/1
+MERGE_MINOR_LOG,Volker Kuhnle,M5,PR,96,1
+GetShareForMinor,Volker Kuhnle,5,PR,IPO,M5
+MERGE_MINOR_LOG,Ulli Hegemann,M6,PR,91,0
+GetShareForMinor,Ulli Hegemann,5,PR,IPO,M6
+ExchangesBaseToken,PR,M6,C11/1
+ 
+EndOfFormationRound,PR,OperatingRound 6.1
+BuysTrain,HE,3+3,PR,40
+ 
+CompanyOperates,MS,Volker Kuhnle
+LaysTileAt,MS,220,E19,SW
+LAYS_TOKEN_ON,MS,E19,80 Hex E19 (Berlin)
+CompanyDoesNotPayDividend,MS
+PRICE_MOVES_LOG,MS,80,B5,72,A5
+PresidentAddsCash,MS,Volker Kuhnle,20
+BuysTrain,MS,5,IPO,500
+All 5-trains are sold out, 5+5-trains now available
+ 
+EndOfOperatingRound,6.1
+ORWorthIncrease,Ulli Hegemann,6.1,553
+ORWorthIncrease,Volker Schnell,6.1,442
+ORWorthIncrease,Volker Kuhnle,6.1,410
+ORWorthIncrease,Jupp Krupp,6.1,410
+Has,BY,300
+Has,SX,164
+Has,BA,45
+Has,WT,40
+Has,HE,300
+Has,MS,0
+Has,PR,1337
+Has,Ulli Hegemann,346
+Has,Volker Schnell,300
+Has,Volker Kuhnle,324
+Has,Jupp Krupp,374
+START_OR,6.2
+ 
+CompanyOperates,PR,Ulli Hegemann
+LaysTileAt,PR,43,I5,SE
+CompanyRevenue,PR,140
+CompanyPaysOutFull,PR,140
+Payout,Volker Kuhnle,35,5,5
+Payout,Jupp Krupp,7,1,5
+Payout,Ulli Hegemann,77,11,5
+Payout,Volker Schnell,21,3,5
+PRICE_MOVES_LOG,PR,154,I4,172,J4
+BuysTrain,PR,5+5,IPO,600
+All 5+5-trains are sold out, 6-trains now available
+FirstTrainBought,5+5
+BuysTrain,PR,6,IPO,600
+FirstTrainBought,6
+StartOfPhase,6
+TrainsRusted,3
+ 
+CompanyOperates,BY,Jupp Krupp
+LaysTileAt,BY,9,J12,SW
+CompanyDoesNotPayDividend,BY
+PRICE_MOVES_LOG,BY,140,I5,126,H5
+BuysTrain,BY,4,WT,298
+ 
+CompanyOperates,SX,Volker Kuhnle
+LaysTileAtFor,SX,221,C11,SW,50
+CompanyRevenue,SX,190
+CompanyPaysOutFull,SX,190
+Payout,Volker Kuhnle,95,5,10
+Payout,Ulli Hegemann,57,3,10
+Payout,Volker Schnell,38,2,10
+PRICE_MOVES_LOG,SX,136,G3,152,H3
+ 
+CompanyOperates,BA,Volker Schnell
+LaysTileAt,BA,218,G3,W
+CompanyRevenue,BA,270
+CompanyPaysOutFull,BA,270
+Payout,Volker Schnell,270,10,10
+PRICE_MOVES_LOG,BA,92,C3,100,D3
+ 
+CompanyOperates,WT,Jupp Krupp
+LaysTileAt,WT,63,F14,SW
+LAYS_TOKEN_ON,WT,F14,140 Hex F14 (Magdeburg)
+CompanyRevenue,WT,220
+CompanyPaysOutFull,WT,220
+Payout,Volker Kuhnle,88,4,10
+Payout,Jupp Krupp,132,6,10
+PRICE_MOVES_LOG,WT,82,A3,86,B3
+ 
+CompanyOperates,HE,Ulli Hegemann
+LaysTileAt,HE,63,G5,SW
+LAYS_TOKEN_ON,HE,G5,60 Hex G5 (Dortmund)
+CompanyRevenue,HE,310
+CompanyPaysOutFull,HE,310
+Payout,Volker Kuhnle,31,1,10
+Payout,Ulli Hegemann,217,7,10
+Payout,Volker Schnell,62,2,10
+PRICE_MOVES_LOG,HE,82,A3,86,B3
+ 
+CompanyOperates,MS,Volker Kuhnle
+LaysTileAt,MS,216,H20,E
+CompanyRevenue,MS,240
+CompanyPaysOutFull,MS,240
+Payout,Volker Kuhnle,168,7,10
+PRICE_MOVES_LOG,MS,72,A5,80,B5
+ 
+EndOfOperatingRound,6.2
+ORWorthIncrease,Ulli Hegemann,6.2,526
+ORWorthIncrease,Volker Schnell,6.2,538
+ORWorthIncrease,Volker Kuhnle,6.2,618
+ORWorthIncrease,Jupp Krupp,6.2,46
+Has,BY,2
+Has,SX,114
+Has,BA,45
+Has,WT,198
+Has,HE,240
+Has,MS,0
+Has,PR,137
+Has,Ulli Hegemann,697
+Has,Volker Schnell,691
+Has,Volker Kuhnle,741
+Has,Jupp Krupp,513
+StartStockRound,7
+HasPriority,Jupp Krupp
+BUY_SHARE_LOG,Jupp Krupp,10,BY,Pool,126
+SELL_SHARES_LOG,Ulli Hegemann,2,10,20,SX,304
+PRICE_MOVES_LOG,SX,152,H3,138,H4
+BUY_SHARE_LOG,Ulli Hegemann,20,HE,Volker Schnell,258
+BUY_SHARE_LOG,Volker Schnell,10,SX,Pool,138
+PASSES,Volker Kuhnle
+PASSES,Jupp Krupp
+BUY_SHARE_LOG,Ulli Hegemann,10,PR,Volker Kuhnle,258
+BUY_SHARE_LOG,Volker Schnell,10,SX,Pool,138
+BUY_SHARE_LOG,Volker Kuhnle,10,MS,IPO,80
+PriceIsPaidTo,80,MS
+BUY_SHARE_LOG,Jupp Krupp,20,WT,Volker Kuhnle,258
+BUY_SHARE_LOG,Ulli Hegemann,10,PR,Volker Schnell,258
+START_COMPANY_LOG,Volker Schnell,OL,80,160,2,20,BANK
+BUY_SHARE_LOG,Volker Kuhnle,10,MS,IPO,80
+PriceIsPaidTo,80,MS
+PASSES,Jupp Krupp
+SELL_SHARE_LOG,Ulli Hegemann,10,SX,138
+PRICE_MOVES_LOG,SX,138,H4,126,H5
+BUY_SHARE_LOG,Ulli Hegemann,10,PR,Volker Kuhnle,258
+BUY_SHARE_LOG,Volker Schnell,20,OL,IPO,160
+BUY_SHARE_LOG,Volker Kuhnle,10,SX,Pool,126
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+BUY_SHARE_LOG,Volker Schnell,20,OL,IPO,160
+FloatsWithCash,OL,480
+BUY_SHARE_LOG,Volker Kuhnle,10,MS,IPO,80
+PriceIsPaidTo,80,MS
+PASSES,Jupp Krupp
+PASSES,Ulli Hegemann
+SELL_SHARE_LOG,Volker Schnell,5,PR,86
+BUY_SHARE_LOG,Volker Schnell,10,OL,IPO,80
+PriceIsPaidTo,80,OL
+PASSES,Volker Kuhnle
+BUY_SHARE_LOG,Jupp Krupp,5,PR,Pool,86
+PASSES,Ulli Hegemann
+PASSES,Volker Schnell
+PASSES,Volker Kuhnle
+PASSES,Jupp Krupp
+ 
+END_SR,7
+PRICE_MOVES_LOG,PR,172,J4,190,J3
+SoldOut,PR,172,J4,190,J3
+PRICE_MOVES_LOG,BY,126,H5,138,H4
+SoldOut,BY,126,H5,138,H4
+PRICE_MOVES_LOG,SX,126,H5,138,H4
+SoldOut,SX,126,H5,138,H4
+PRICE_MOVES_LOG,BA,100,D3,108,D2
+SoldOut,BA,100,D3,108,D2
+SoldOutNoRaise,WT,86,B3
+SoldOutNoRaise,HE,86,B3
+PRICE_MOVES_LOG,MS,80,B5,84,B4
+SoldOut,MS,80,B5,84,B4
+Has,BY,2
+Has,SX,114
+Has,BA,45
+Has,WT,198
+Has,HE,240
+Has,MS,240
+Has,OL,560
+Has,PR,137
+Has,Ulli Hegemann,107
+Has,Volker Schnell,457
+Has,Volker Kuhnle,1149
+Has,Jupp Krupp,43
+START_OR,7.1
+ 
+CompanyOperates,PR,Ulli Hegemann
+LaysTileAt,PR,216,I3,SW
+CompanyRevenue,PR,530
+CompanyPaysOutFull,PR,530
+Payout,Volker Kuhnle,27,1,5
+Payout,Ulli Hegemann,451,17,5
+Payout,Jupp Krupp,53,2,5
+PRICE_MOVES_LOG,PR,190,J3,212,K3
+ 
+CompanyOperates,BY,Jupp Krupp
+LaysTileAt,BY,41,H14,NE
+CompanyRevenue,BY,160
+CompanyPaysOutFull,BY,160
+Payout,Jupp Krupp,160,10,10
+PRICE_MOVES_LOG,BY,138,H4,154,I4
+BuysTrain,BY,4+4,WT,1
+ 
+CompanyOperates,SX,Volker Kuhnle
+LaysTileAt,SX,25,C19,SW
+CompanyRevenue,SX,200
+CompanyPaysOutFull,SX,200
+Payout,Volker Kuhnle,120,6,10
+Payout,Volker Schnell,80,4,10
+PRICE_MOVES_LOG,SX,138,H4,154,I4
+ 
+CompanyOperates,BA,Volker Schnell
+LaysTileAt,BA,8,E9,W
+CompanyRevenue,BA,300
+CompanyPaysOutFull,BA,300
+Payout,Volker Schnell,300,10,10
+PRICE_MOVES_LOG,BA,108,D2,120,E2
+ 
+CompanyOperates,WT,Jupp Krupp
+LaysTileAt,WT,63,H16,SW
+CompanyDoesNotPayDividend,WT
+PRICE_MOVES_LOG,WT,86,B3,82,A3
+PlayerMustSellShares,Jupp Krupp,145
+SELL_SHARES_LOG,Jupp Krupp,2,5,10,PR,212
+PRICE_MOVES_LOG,PR,212,K3,192,K4
+PresidentAddsCash,WT,Jupp Krupp,401
+BuysTrain,WT,6,IPO,600
+All 6-trains are sold out, 6+6-trains now available
+ 
+CompanyOperates,HE,Ulli Hegemann
