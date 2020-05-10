@@ -172,12 +172,13 @@ public class ShareSellingRound extends StockRound {
                         // dump necessary
                         // there is a player with holding exceeding the president share
                          if (company.findPlayerToDump() != null) {
+                             possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
                              dumpIsPossible = true;
-                             continue;
                          }
                     } else {
-                        dumpIsPossible = false; // no dump necessary
-                        continue;
+                        // no dump necessary
+                        possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
+                        dumpIsPossible = false;
                     }
                 }
                 // keep presidentShare at minimum
