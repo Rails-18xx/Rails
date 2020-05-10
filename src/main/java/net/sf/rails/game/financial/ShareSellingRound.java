@@ -173,11 +173,11 @@ public class ShareSellingRound extends StockRound {
                         // there is a player with holding exceeding the president share
                          if (company.findPlayerToDump() != null) {
                              dumpIsPossible = true;
-                             break;
+                             continue;
                          }
                     } else {
                         dumpIsPossible = false; // no dump necessary
-                        break;
+                        continue;
                     }
                 }
                 // keep presidentShare at minimum
@@ -217,7 +217,7 @@ public class ShareSellingRound extends StockRound {
                     continue;
                 }
                 // May not sell more than is needed to buy the train
-                while (number > 0 && ((number - 1) * price) > cashToRaise.value()) number--;
+                while (number > 0 && ((number - 1) * (price/ company.getShareUnitsForSharePrice())) > cashToRaise.value()) number--;
                 for (int i = 1; i <= number; i++) {
                     if (checkIfSplitSaleOfPresidentAllowed()) {
                         // check if selling would dump the company
