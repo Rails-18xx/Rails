@@ -1,7 +1,5 @@
 # Rails
 
-[![Build Status](https://travis-ci.org/Rails-18xx/Rails.svg?branch=rails_2_develop)](https://travis-ci.org/Rails-18xx/Rails)
-
 Rails: an 18xx game system.
 Copyright (C) 2005 Brett Lentz
 
