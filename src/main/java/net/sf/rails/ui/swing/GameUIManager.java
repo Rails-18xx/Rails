@@ -655,7 +655,7 @@ public class GameUIManager implements DialogOwner {
         // Update the currently visible round window
         // "Switchable" rounds will be handled from subclasses of this class.
         if (StartRoundWindow.class.isAssignableFrom(activeWindow.getClass())) {
-            startRoundWindow.setSRPlayerTurn(getRoot().getPlayerManager().getCurrentPlayer().getIndex());
+            startRoundWindow.setSRPlayerTurn();
         } else if (StatusWindow.class.isAssignableFrom(activeWindow.getClass())) {
         } else if (ORWindow.class.isAssignableFrom(activeWindow.getClass())) {
         }
