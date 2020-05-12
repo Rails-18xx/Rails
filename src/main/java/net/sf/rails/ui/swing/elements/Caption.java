@@ -26,10 +26,12 @@ public class Caption extends Cell {
         this.setOpaque(true);
     }
 
+    @Override
     public void setHighlight(boolean highlight) {
         this.setBackground(highlight ? HIGHLIGHT_BG_COLOUR : NORMAL_BG_COLOUR);
     }
 
+    @Override
     public void setLocalPlayer (boolean highlight) {
         this.setForeground(highlight ? LOCAL_PLAYER_COLOUR : NORMAL_FG_COLOUR);
     }

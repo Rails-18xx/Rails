@@ -64,6 +64,7 @@ public class NamedTrainToken extends Token<NamedTrainToken> implements Configura
 
     }
 
+    @Override
     public String getId() {
         return name;
     }

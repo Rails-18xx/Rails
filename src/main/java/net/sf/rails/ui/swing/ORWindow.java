@@ -172,24 +172,27 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         //call pack and size init within the swing EDT
         //(as this frame is not inited within the EDT)
         //no standard call to gameUIManager's packAndApplySizing possible (due to docking switch)
-        SwingUtilities.invokeLater(new Thread(() -> {
-            //rearrange layout only if no docking framework active
-            if (!isDockingFrameworkEnabled()) {
-                pack();
-            } else {
-                setSize(new Dimension(600,500));
-            }
+        SwingUtilities.invokeLater(new Thread()  {
 
-            WindowSettings ws = getGameUIManager().getWindowSettings();
-            Rectangle bounds = ws.getBounds(ORWindow.this);
-            if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
-            if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
-            ws.set(frame);
+            public void run() {
+                //rearrange layout only if no docking framework active
+                if (!isDockingFrameworkEnabled()) {
+                    pack();
+                } else {
+                    setSize(new Dimension(600, 500));
+                }
 
-            if (isDockingFrameworkEnabled()) {
-                initLayout();
+                WindowSettings ws = getGameUIManager().getWindowSettings();
+                Rectangle bounds = ws.getBounds(ORWindow.this);
+                if (bounds.x != -1 && bounds.y != -1) setLocation(bounds.getLocation());
+                if (bounds.width != -1 && bounds.height != -1) setSize(bounds.getSize());
+                ws.set(frame);
+
+                if (isDockingFrameworkEnabled()) {
+                    initLayout();
+                }
             }
-        }));
+        });
 
     }
 
@@ -217,6 +220,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         return messagePanel;
     }
 
+    @Override
     public boolean process(PossibleAction action) {
 
         // Add the actor for safety checking in the server
@@ -230,6 +234,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
     }
 
     // Not yet used
+    @Override
     public boolean processImmediateAction() {
         return true;
     }
@@ -272,6 +277,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
     }
 
 // Remark: one of the methods to implement the ActionPerformer Interface
+    @Override
     public void updateStatus(boolean myTurn) {
         // Safety check. Do nothing if this method is called outside Operating Rounds,
         // for instance when a token is exchanged during a Stock Round.
@@ -292,6 +298,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         setTitle(LocalText.getText("MapWindowTitle"));
     }
 
+    @Override
     protected String getLayoutFileName() {
         return getClass().getSimpleName() + "_"
                 + gameUIManager.getRoot().getGameName() ;

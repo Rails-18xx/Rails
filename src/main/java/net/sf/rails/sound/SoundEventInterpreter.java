@@ -33,6 +33,7 @@ public class SoundEventInterpreter {
             this.pm = pm;
             if (pm != null) formerCurrentPlayer = pm.getCurrentPlayer();
         }
+        @Override
         public void update(String text) {
             if (formerCurrentPlayer != pm.getCurrentPlayer()) {
                 formerCurrentPlayer = pm.getCurrentPlayer();
@@ -43,6 +44,7 @@ public class SoundEventInterpreter {
                 }
             }
         }
+        @Override
         public Observable getObservable() {
             return pm.getCurrentPlayerModel();
         }
@@ -56,6 +58,7 @@ public class SoundEventInterpreter {
             model = pc.getPresidentModel();
             formerPresident = model.toText();
         }
+        @Override
         public void update(String text) {
             if (formerPresident != text) {
                 formerPresident = text;
@@ -65,6 +68,7 @@ public class SoundEventInterpreter {
             }
         }
 
+        @Override
         public Observable getObservable() {
             return model;
         }
@@ -79,6 +83,7 @@ public class SoundEventInterpreter {
             hasFloated = pc.getFloatedModel().value();
         }
 
+        @Override
         public void update(String text) {
             if (model.value() != hasFloated) {
                 hasFloated = model.value();
@@ -88,6 +93,7 @@ public class SoundEventInterpreter {
             }
         }
 
+        @Override
         public Observable getObservable() {
             return model;
         }
@@ -211,9 +217,11 @@ public class SoundEventInterpreter {
         if (gameManager.getCurrentRoundModel() != null) {
             gameManager.getCurrentRoundModel().addObserver(
                     new Observer() {
+                       @Override
                        public void update(String text) {
                                 context.notifyOfRound(gameManager.getCurrentRound());
                         }
+                       @Override
                        public Observable getObservable() {
                            return gameManager.getCurrentRoundModel();
                        }
@@ -226,6 +234,7 @@ public class SoundEventInterpreter {
             gameOverModel.addObserver(
                     new Observer() {
                         private boolean gameOverPending = false;
+                        @Override
                         public void update(String text) {
                             if (!gameOverPending && gameOverModel.value()) {
                                 if (SoundConfig.isSFXEnabled()) {
@@ -235,6 +244,7 @@ public class SoundEventInterpreter {
                             }
                             gameOverPending = gameOverModel.value();
                         }
+                        @Override
                         public Observable getObservable() {
                             return gameOverModel;
                         }
@@ -245,9 +255,11 @@ public class SoundEventInterpreter {
         if (root.getPhaseManager() != null) {
             root.getPhaseManager().getCurrentPhaseModel().addObserver(
                     new Observer() {
+                        @Override
                         public void update(String text) {
                                  context.notifyOfPhase(gameManager.getCurrentPhase());
                          }
+                        @Override
                         public Observable getObservable() {
                             return root.getPhaseManager().getCurrentPhaseModel();
                         }

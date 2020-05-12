@@ -17,6 +17,7 @@ public class StockMarketBonusModifier implements RevenueDynamicModifier {
 
     private int bonusValue;
 
+    @Override
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
         PublicCompany company = revenueAdapter.getCompany();
         if (company instanceof PublicCompany_1880) {
@@ -27,14 +28,17 @@ public class StockMarketBonusModifier implements RevenueDynamicModifier {
         return false;
     }
 
+    @Override
     public int predictionValue(List<RevenueTrainRun> runs) {
         return bonusValue;
     }
 
+    @Override
     public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
         return bonusValue;
     }
 
+    @Override
     public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {}
 
     public boolean providesOwnCalculateRevenue() {
@@ -45,6 +49,7 @@ public class StockMarketBonusModifier implements RevenueDynamicModifier {
         return 0;
     }
 
+    @Override
     public String prettyPrint(RevenueAdapter revenueAdapter) {
         return LocalText.getText("1880StockMarketBonus", bonusValue);
     }

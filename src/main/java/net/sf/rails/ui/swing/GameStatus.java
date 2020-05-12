@@ -306,10 +306,9 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("PLAYERS")),
                 certPerPlayerXOffset, 0, np, 1, WIDE_LEFT + WIDE_RIGHT, true);
         for (int i = 0; i < np; i++) {
-            playerIndex.put(players[i], new Integer(i));
+            playerIndex.put(players[i], i);
             f = upperPlayerCaption[i] = new Caption(players[i].getNameAndPriority());
-            int wideGapPosition = WIDE_BOTTOM +
-                    ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
+            int wideGapPosition = WIDE_BOTTOM + ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, certPerPlayerXOffset + i, 1, 1, 1, wideGapPosition, true);
         }
         addField(new Caption(LocalText.getText("BANK_SHARES")),
@@ -1153,7 +1152,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         setTreasuryCertButton(i, clickable);
         if (clickable && o != null) {
-            if (clickable) syncToolTipText (certInTreasury[i], certInTreasuryButton[i]);
+            syncToolTipText (certInTreasury[i], certInTreasuryButton[i]);
             if (o instanceof PossibleAction)
                 certInTreasuryButton[i].addPossibleAction((PossibleAction) o);
         }

@@ -697,21 +697,17 @@ public class OperatingRound extends Round implements Observer {
     protected boolean setNextOperatingCompany(boolean initial) {
 
         while (true) {
-            if (initial || operatingCompany.value() == null
-                    || operatingCompany == null) {
+            if (initial || operatingCompany == null || operatingCompany.value() == null) {
                 setOperatingCompany(operatingCompanies.get(0));
                 initial = false;
             } else {
-                int index =
-                        operatingCompanies.indexOf(operatingCompany.value());
+                int index = operatingCompanies.indexOf(operatingCompany.value());
                 if (++index >= operatingCompanies.size()) {
                     return false;
                 }
 
                 // Check if the operating order has changed
-                List<PublicCompany> newOperatingCompanies =
-                        setOperatingCompanies(operatingCompanies.view(),
-                                operatingCompany.value());
+                List<PublicCompany> newOperatingCompanies = setOperatingCompanies(operatingCompanies.view(), operatingCompany.value());
                 PublicCompany company;
                 for (int i = 0; i < newOperatingCompanies.size(); i++) {
                     company = newOperatingCompanies.get(i);
@@ -1780,7 +1776,7 @@ public class OperatingRound extends Round implements Observer {
                 log.debug("No normal tile lays");
             } else {
                 for (LayTile tileLay : currentNormalTileLays) {
-                    log.debug("Normal tile lay: {}", tileLay.toString());
+                    log.debug("Normal tile lay: {}", tileLay);
                 }
             }
         }
@@ -1812,7 +1808,7 @@ public class OperatingRound extends Round implements Observer {
                 log.debug("No special tile lays");
             } else {
                 for (LayTile tileLay : currentSpecialTileLays) {
-                    log.debug("Special tile lay: {}", tileLay.toString());
+                    log.debug("Special tile lay: {}", tileLay);
                 }
             }
         }
@@ -1838,10 +1834,8 @@ public class OperatingRound extends Round implements Observer {
 
         if (layTile == null) return false;
 
-        SpecialProperty sp = layTile.getSpecialProperty();
-        if (sp == null || !(sp instanceof SpecialTileLay)) return false;
-
-        SpecialTileLay stl = (SpecialTileLay) sp;
+        SpecialTileLay sp = layTile.getSpecialProperty();
+        SpecialTileLay stl = sp;
 
         if (!stl.isExtra()
                 // If the special tile lay is not extra, it is only allowed if
@@ -2233,6 +2227,7 @@ public class OperatingRound extends Round implements Observer {
             // Was a special property used?
             if (stl != null) {
                 stl.setExercised();
+                // FIXME: currentSpecialTokenLays can't actually contain a LayBonusToken
                 currentSpecialTokenLays.remove(action);
             }
 

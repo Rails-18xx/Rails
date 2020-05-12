@@ -167,7 +167,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         }
     }
 
-    private static abstract class HexLayer extends JComponent {
+    private abstract static class HexLayer extends JComponent {
         private static final long serialVersionUID = 1L;
         protected final HexMap hexMap;
 
@@ -185,17 +185,20 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         }
 
 
-        final public void repaint() {
+        @Override
+        public final void repaint() {
             bufferDirtyRegions.add(new Rectangle(0, 0, getWidth(), getHeight()));
             super.repaint();
         }
 
+        @Override
         public void repaint(Rectangle r) {
             bufferDirtyRegions.add(r);
             super.repaint(r);
         }
 
-        final public void paintComponent(Graphics g) {
+        @Override
+        public final void paintComponent(Graphics g) {
             super.paintComponent(g);
 
             // avoid that paintComponent is processed concurrently
@@ -925,6 +928,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
      * Mouse Listener methods (hexMap offers listener for all layers)
      */
 
+    @Override
     public synchronized void mouseClicked(MouseEvent arg0) {
         Point point = arg0.getPoint();
         GUIHex clickedHex = getHexContainingPoint(point);
@@ -955,8 +959,10 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         }
     }
 
+    @Override
     public void mouseDragged(MouseEvent arg0) {}
 
+    @Override
     public synchronized void mouseMoved(MouseEvent arg0) {
         Point point = arg0.getPoint();
         GUIHex newHex = getHexContainingPoint(point);
@@ -975,8 +981,10 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         hexAtMousePosition = newHex;
     }
 
+    @Override
     public void mouseEntered(MouseEvent arg0) {}
 
+    @Override
     public synchronized void mouseExited(MouseEvent arg0) {
         // provide for hex highlighting
         if (hexAtMousePosition != null) {
@@ -985,8 +993,10 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         }
     }
 
+    @Override
     public void mousePressed(MouseEvent arg0) {}
 
+    @Override
     public void mouseReleased(MouseEvent arg0) {}
 
     /**

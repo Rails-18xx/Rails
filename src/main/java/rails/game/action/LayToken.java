@@ -20,20 +20,20 @@ public abstract class LayToken extends PossibleORAction {
     /*--- Preconditions ---*/
 
     /** Where to lay a token (null means anywhere) */
-    transient protected List<MapHex> locations;
+    protected transient List<MapHex> locations;
     protected String locationNames;
 
     /**
      * Special property that will be fulfilled by this token lay. If null, this
      * is a normal token lay.
      */
-    transient protected SpecialProperty specialProperty = null;
+    protected transient SpecialProperty specialProperty = null;
     protected int specialPropertyId;
 
     /*--- Postconditions ---*/
 
     /** The map hex on which the token is laid */
-    transient protected MapHex chosenHex = null;
+    protected transient MapHex chosenHex = null;
     protected String chosenHexName;
 
     public static final long serialVersionUID = 1L;

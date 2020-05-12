@@ -9,8 +9,8 @@ import net.sf.rails.util.Util;
 /**
  * A BonusToken object represents a token that a operating public company can
  * place on the map to gain extra revenue or other privileges.
- * <p>Such tokens are usually not placed in city slots, 
- * which are intended for base tokens, but on some unoccupied part of a tile.  
+ * <p>Such tokens are usually not placed in city slots,
+ * which are intended for base tokens, but on some unoccupied part of a tile.
  */
 
 public class BonusToken extends Token<BonusToken> implements Closeable, Configurable  {
@@ -24,13 +24,14 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
     private BonusToken(RailsItem parent, String id) {
         super(parent, id, BonusToken.class);
     }
-    
+
     public static BonusToken create(RailsItem parent) {
         String uniqueId = Token.createUniqueId(parent);
         BonusToken token = new BonusToken(parent, uniqueId);
         return token;
     }
-    
+
+    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
         Tag bonusTokenTag = tag.getChild("BonusToken");
         if (bonusTokenTag == null) {
@@ -51,6 +52,7 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
         removingObjectDesc = bonusTokenTag.getAttributeAsString("removed");
     }
 
+    @Override
     public void finishConfiguration(RailsRoot root) {
         prepareForRemoval (root.getPhaseManager());
     }
@@ -60,6 +62,7 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
      * This method can be called by a certain phase when it starts.
      * See prepareForRemovel().
      */
+    @Override
     public void close() {
         this.moveTo(getRoot().getBank().getScrapHeap());
         if (user != null) {
@@ -78,9 +81,8 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
 
         if (removingObject == null) {
             String[] spec = removingObjectDesc.split(":");
-            if (spec[0].equalsIgnoreCase("Phase")) {
-                removingObject =
-                        phaseManager.getPhaseByName(spec[1]);
+            if ( "Phase".equalsIgnoreCase(spec[0])) {
+                removingObject = phaseManager.getPhaseByName(spec[1]);
             }
         }
 
@@ -97,6 +99,7 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
         return (getOwner() instanceof MapHex);
     }
 
+    @Override
     public String getId() {
         return name;
     }
@@ -105,11 +108,12 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
         return value;
     }
 
+    @Override
     public String getClosingInfo () {
         return description;
     }
 
-    
+
     @Override
     public String toString() {
         return description;

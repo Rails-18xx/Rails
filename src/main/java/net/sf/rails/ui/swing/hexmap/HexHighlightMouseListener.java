@@ -37,9 +37,9 @@ public class HexHighlightMouseListener implements MouseListener {
     private ORUIManager orUIManager;
     private PortfolioModel portfolio;
     private Tile tile;
-    
+
     /**
-     * @param orUIManager The OR UI manager containing the map where the highlighting 
+     * @param orUIManager The OR UI manager containing the map where the highlighting
      * should occur
      */
     private HexHighlightMouseListener(ORUIManager orUIManager){
@@ -48,7 +48,7 @@ public class HexHighlightMouseListener implements MouseListener {
         guiHexList = new ArrayList<GUIHex>();
         portfolio = null;
     }
-    
+
     /**
      * @param pf Portfolio which is dynamically evaluated at mouse-even-time for
      * any contained private companies
@@ -60,13 +60,13 @@ public class HexHighlightMouseListener implements MouseListener {
             c.addMouseListener(l);
         }
     }
-    
+
     /**
      * @param tileId ID of the tile the occurrences of which should be highlighted on
      * the map
      * @param enableIrrespectiveOfHighlightConfig If true, the mouse listener is
      * enabled irrespective of the base configuration. Needed since some highlighting
-     * should not be disabled by configuration. 
+     * should not be disabled by configuration.
      */
     public static void addMouseListener(JComponent c,ORUIManager orUIManager, Tile tile,boolean enableIrrespectiveOfHighlightConfig) {
         if (isEnabled(enableIrrespectiveOfHighlightConfig)) {
@@ -75,13 +75,13 @@ public class HexHighlightMouseListener implements MouseListener {
             c.addMouseListener(l);
         }
     }
-    
+
     /**
      * @param p Private company the hexes associated to which are
      * to be highlighted (in case of events)
      * @param enableIrrespectiveOfHighlightConfig If true, the mouse listener is
      * enabled irrespective of the base configuration. Needed since some highlighting
-     * should not be disabled by configuration. 
+     * should not be disabled by configuration.
      */
     public static void addMouseListener(JComponent c,ORUIManager orUIManager,PrivateCompany p,boolean enableIrrespectiveOfHighlightConfig) {
         if (isEnabled(enableIrrespectiveOfHighlightConfig)) {
@@ -92,13 +92,13 @@ public class HexHighlightMouseListener implements MouseListener {
             c.addMouseListener(l);
         }
     }
-    
+
     /**
      * @param p Public company the hexes associated to it (home, destination, ...) are
      * to be highlighted (in case of events)
      * @param enableIrrespectiveOfHighlightConfig If true, the mouse listener is
      * enabled irrespective of the base configuration. Needed since some highlighting
-     * should not be disabled by configuration. 
+     * should not be disabled by configuration.
      */
     public static void addMouseListener(JComponent c,ORUIManager orUIManager,PublicCompany p,boolean enableIrrespectiveOfHighlightConfig) {
         if (isEnabled(enableIrrespectiveOfHighlightConfig)) {
@@ -108,7 +108,7 @@ public class HexHighlightMouseListener implements MouseListener {
             c.addMouseListener(l);
         }
     }
-    
+
     /**
      * @param si Start Item which is evaluated for any contained private companies
      */
@@ -136,10 +136,10 @@ public class HexHighlightMouseListener implements MouseListener {
     private void initGuiHexList() {
         //only create list if gui hexes are not yet available
         if (!guiHexList.isEmpty()) return;
-        
+
         //initially get hex map if not yet available
         if (hexMap == null) hexMap = orUIManager.getMap();
-        
+
         //create gui hex list based on hex list
         if (hexMap != null) {
             for (MapHex h : hexList) {
@@ -147,7 +147,7 @@ public class HexHighlightMouseListener implements MouseListener {
             }
         }
     }
-    
+
     /**
      * inefficient but probably ok due to very small size of lists
      */
@@ -161,7 +161,7 @@ public class HexHighlightMouseListener implements MouseListener {
         if (h == null) return;
         if (!hexList.contains(h)) hexList.add(h);
     }
-    
+
     private void initPrivateCompanies(Set<PrivateCompany> privList) {
         for (PrivateCompany p : privList) {
             addToHexListDistinct(p.getBlockedHexes());
@@ -184,9 +184,9 @@ public class HexHighlightMouseListener implements MouseListener {
             }
         }
     }
-    
+
     private void clearHexList () {
-        //remove hexes from the list 
+        //remove hexes from the list
         //(as list will be built from the scratch during next mouse entered event)
         hexList.clear();
         guiHexList.clear();
@@ -196,7 +196,7 @@ public class HexHighlightMouseListener implements MouseListener {
         //build the hex list for the contained private companies
         initPrivateCompanies(portfolio.getPrivateCompanies());
     }
-    
+
     private void initTileIdHexList () {
         //initially get hex map if not yet available
         if (hexMap == null) hexMap = orUIManager.getMap();
@@ -206,7 +206,8 @@ public class HexHighlightMouseListener implements MouseListener {
             guiHexList.addAll(hexMap.getHexesByCurrentTileId(tile));
         }
     }
-    
+
+    @Override
     public void mouseEntered(MouseEvent e) {
         if (portfolio != null) initPortfolioHexList();
         if (tile != null) initTileIdHexList();
@@ -218,6 +219,7 @@ public class HexHighlightMouseListener implements MouseListener {
         }
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
         if (hexMap != null && guiHexList.size() > 0) {
             for (GUIHex guiHex : guiHexList) {
@@ -227,20 +229,23 @@ public class HexHighlightMouseListener implements MouseListener {
         if (portfolio != null || tile != null) clearHexList();
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
     }
-    
+
 
     private static boolean isEnabled (boolean enableIrrespectiveOfHighlightConfig) {
-        return (enableIrrespectiveOfHighlightConfig 
+        return (enableIrrespectiveOfHighlightConfig
                 || "yes".equals(Config.get("map.highlightHexes")));
     }
-    
+
 
 }

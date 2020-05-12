@@ -13,7 +13,7 @@ import rails.game.action.PossibleAction;
 
 /**
  * A subclass of JButton that allows linking "PossibleAction" objects to it.
- * 
+ *
  * @see ClickField
  */
 public class ActionMenuItem extends JMenuItem implements ActionTaker {
@@ -26,18 +26,22 @@ public class ActionMenuItem extends JMenuItem implements ActionTaker {
         super(text);
     }
 
+    @Override
     public void addPossibleAction(PossibleAction o) {
         actions.add(o);
     }
 
+    @Override
     public List<PossibleAction> getPossibleActions() {
         return actions;
     }
 
+    @Override
     public void clearPossibleActions() {
         actions.clear();
     }
 
+    @Override
     public void setPossibleAction(PossibleAction action) {
         clearPossibleActions();
         addPossibleAction(action);

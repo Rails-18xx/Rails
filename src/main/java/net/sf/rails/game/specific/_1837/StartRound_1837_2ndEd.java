@@ -11,10 +11,10 @@ import net.sf.rails.game.state.IntegerState;
 
 public class StartRound_1837_2ndEd extends StartRound {
 
-    public final static int SELECT_STEP = 0;
-    public final static int OPEN_STEP = 1;
-    public final static int BUY_STEP = 2;
-    public final static int BID_STEP = 3;
+    public static final int SELECT_STEP = 0;
+    public static final int OPEN_STEP = 1;
+    public static final int BUY_STEP = 2;
+    public static final int BID_STEP = 3;
 
     private final IntegerState currentStep = IntegerState.create(this, "currentStep", SELECT_STEP);
     private final GenericState<Player> selectingPlayer = new GenericState<>(this, "selectingPlayer");

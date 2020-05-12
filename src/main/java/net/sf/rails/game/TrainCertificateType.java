@@ -220,7 +220,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
 
     // Comparable interface
     public int compareTo(TrainCertificateType o) {
-        return ((Integer) index).compareTo(o.getIndex());
+        return Integer.compare(index, o.getIndex());
     }
 
 }

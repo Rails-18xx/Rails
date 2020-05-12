@@ -38,19 +38,23 @@ public class ClickField extends JToggleButton implements ActionTaker {
         group.add(this);
     }
 
+    @Override
     public void addPossibleAction(PossibleAction o) {
         if (actions == null) actions = new ArrayList<PossibleAction>(2);
         actions.add(o);
     }
 
+    @Override
     public List<PossibleAction> getPossibleActions() {
         return actions;
     }
 
+    @Override
     public void clearPossibleActions() {
         if (actions != null) actions.clear();
     }
 
+    @Override
     public void setPossibleAction(PossibleAction action) {
         clearPossibleActions();
         addPossibleAction(action);

@@ -85,8 +85,8 @@ public class StockRound extends Round {
     public static final int SELL_BUY_OR_BUY_SELL = 2;
 
     /* Action constants */
-    static public final int BOUGHT = 0;
-    static public final int SOLD = 1;
+    public static final int BOUGHT = 0;
+    public static final int SOLD = 1;
 
     /* Rules */
     protected int sequenceRule;
@@ -109,8 +109,7 @@ public class StockRound extends Round {
     public StockRound(GameManager parent, String id) {
         super(parent, id);
 
-        if (numberOfPlayers == 0)
-            numberOfPlayers = getRoot().getPlayerManager().getPlayers().size();
+        numberOfPlayers = getRoot().getPlayerManager().getPlayers().size();
 
         sequenceRule = GameDef.getGameParameterAsInt(this, GameDef.Parm.STOCK_ROUND_SEQUENCE);
 
@@ -176,17 +175,13 @@ public class StockRound extends Round {
         // fix of the forced undo bug
         currentPlayer = playerManager.getCurrentPlayer();
 
-        boolean passAllowed = false;
-
         setSellableShares();
 
         // Certificate limits must be obeyed by selling excess shares
         // before any other action is allowed.
-        if (isOverLimits) {
-            return true;
-        }
+        if (isOverLimits) return true;
 
-        passAllowed = true;
+        boolean passAllowed = true;
 
         setBuyableCerts();
 
@@ -228,7 +223,7 @@ public class StockRound extends Round {
      * Create a list of certificates that a player may buy in a Stock Round,
      * taking all rules into account.
      *
-     * @return List of buyable certificates.
+     * @return buyable certificates.
      */
     // called by
     // StockRound: setPossibleActions
@@ -586,13 +581,14 @@ public class StockRound extends Round {
                         }
                     } else {
                         if (dumpIsPossible && i * shareSize >= dumpThreshold) {
-                            if (certCount.isEmpty() && number == 2) {
-
+                            if (certCount.isEmpty() && number == 2) { // 1835 director share only
+                                //ToDO : Adjust Logic for other Games with MultipleShareDirectors where splitting the share is not allowed
                                 possibleActions.add(new SellShares(company, 2, 1, price, 1));
-                            } else {
-                                if (((!certCount.isEmpty()) && (number == 1)) || number > 2) {
-                                    possibleActions.add(new SellShares(company, shareSize, i, price, 1));
-                                }
+                            } else if ((i == 1) && ((!certCount.isEmpty()) && (number == 2))) { //1835 director share once and an action for the single share in the directors hand if we have the room :)
+                                possibleActions.add(new SellShares(company, 2, 1, price, 1));
+                                possibleActions.add(new SellShares(company, shareSize, i, price, 1));
+                            } else if (((!certCount.isEmpty()) && (number == 1)) || number > 2) {
+                                possibleActions.add(new SellShares(company, shareSize, i, price, 1));
                             }
                         } else {
                             possibleActions.add(new SellShares(company, shareSize, i, price, 0));
@@ -721,10 +717,10 @@ public class StockRound extends Round {
     /**
      * Start a company by buying one or more shares (more applies to e.g. 1841)
      *
-     * @param player  The player that wants to start a company.
-     * @param company The company to start.
-     * @param price   The start (par) price (ignored if the price is fixed).
-     * @param shares  The number of shares to buy (can be more than 1 in e.g.
+     * @param playerName  The player that wants to start a company.
+     * @param action containing the company to start, the price(par) and the number of shares to buy.
+     * price   The start (par) price (ignored if the price is fixed).
+     * shares  The number of shares to buy (can be more than 1 in e.g.
      *                1841).
      * @return True if the company could be started. False indicates an error.
      */
@@ -869,7 +865,7 @@ public class StockRound extends Round {
      * Buying one or more single or double-share certificates (more is sometimes
      * possible)
      *
-     * @param player The player that wants to buy shares.
+     * @param playerName The player that wants to buy shares.
      * @param action The executed BuyCertificates action
      * @return True if the certificates could be bought. False indicates an
      * error.
@@ -1093,7 +1089,6 @@ public class StockRound extends Round {
      * With incremental capitalization, this can be the company treasure.
      * This method must be called <i>before</i> transferring the certificate.
      *
-     * @param cert
      * @return
      */
     // called by:
@@ -1203,6 +1198,7 @@ public class StockRound extends Round {
             }
 
             // Find the certificates to sell
+            presCert = company.getPresidentsShare();
 
             // ... check if there is a dump required
             // Player is president => dump is possible
@@ -1213,6 +1209,7 @@ public class StockRound extends Round {
                             company, currentPlayer, dumpedPlayer, numberToSell);
                     // reduce the numberToSell by the president (partial) sold certificate
                     numberToSell -= presidentShareNumbersToSell;
+                    presCert = null;
                 }
             } else {
                 if (currentPlayer == company.getPresident() && shareUnits == 2) {
@@ -1222,6 +1219,7 @@ public class StockRound extends Round {
                                 company, currentPlayer, dumpedPlayer, numberToSell + 1);
                         // reduce the numberToSell by the president (partial) sold certificate
                         numberToSell -= presidentShareNumbersToSell;
+                        presCert = null;
                     }
                 }
             }
@@ -1499,7 +1497,7 @@ public class StockRound extends Round {
      * The current Player passes or is done.
      *
      * @param action TODO
-     * @param player Name of the passing player.
+     * @param playerName Name of the passing player.
      * @return False if an error is found.
      */
     // called by
@@ -1732,9 +1730,9 @@ public class StockRound extends Round {
     private boolean checkFirstRoundSellRestriction() {
         if (noSaleInFirstSR() && getStockRoundNumber() == 1) {
             // depending on GameOption restriction is either valid during the first (true) Stock Round or the first Round
-            if (GameOption.getValue(this, "FirstRoundSellRestriction").equals("First Stock Round")) {
+            if ( "First Stock Round".equals(GameOption.getValue(this, "FirstRoundSellRestriction"))) {
                 return true;
-            } else if (GameOption.getValue(this, "FirstRoundSellRestriction").equals("First Round")) {
+            } else if ( "First Round".equals(GameOption.getValue(this, "FirstRoundSellRestriction"))) {
                 // if all players have passed it is not the first round
                 return !gameManager.getFirstAllPlayersPassed();
             }
@@ -1885,7 +1883,7 @@ public class StockRound extends Round {
      * 100%.
      *
      * @param company The company from which to buy
-     * @param number  The share unit (typically 10%).
+     * @param shareSize  The share unit (typically 10%).
      * @return The maximum number of such shares that would not let the player
      * overrun the per-company share hold limit.
      */
@@ -1908,7 +1906,7 @@ public class StockRound extends Round {
                             : playerShareLimit;
         }
         int maxAllowed = (limit - player.getPortfolioModel().getShare(company)) / shareSize;
-        //        log.debug("MaxAllowedNumberOfSharesToBuy = " + maxAllowed + " for company =  " + company + " shareSize " + shareSize);
+               log.debug("MaxAllowedNumberOfSharesToBuy = " + maxAllowed + " for company =  " + company + " shareSize " + shareSize);
         return maxAllowed;
     }
 

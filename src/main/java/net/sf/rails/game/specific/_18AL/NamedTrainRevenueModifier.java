@@ -25,10 +25,12 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
     private List<RevenueBonus> bonuses;
     private int bonusMaximum;
 
+    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
         // do nothing
     }
 
+    @Override
     public void finishConfiguration(RailsRoot root)
             throws ConfigurationException {
         // TODO (Rails 2.0): Move GameOption to root
@@ -60,6 +62,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
     }
 
 
+    @Override
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // static modifier
         if (dynamic) return false;
@@ -80,6 +83,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         return false;
     }
 
+    @Override
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
         // dynamic modifier
         if (!dynamic) return false;
@@ -101,10 +105,12 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         return true;
     }
 
+    @Override
     public int predictionValue(List<RevenueTrainRun> runs) {
         return bonusMaximum;
     }
 
+    @Override
     public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
         int bonusValue = 0;
         // due to the geography (off-map areas!) each train can only score one bonus
@@ -119,6 +125,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         return bonusValue;
     }
 
+    @Override
     public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
         // do nothing here (all is done by changing the evaluation value)
     }
@@ -133,6 +140,7 @@ public class NamedTrainRevenueModifier implements RevenueStaticModifier, Revenue
         return 0;
     }
 
+    @Override
     public String prettyPrint(RevenueAdapter revenueAdapter) {
 
         List<RevenueTrainRun> runs = revenueAdapter.getOptimalRun();

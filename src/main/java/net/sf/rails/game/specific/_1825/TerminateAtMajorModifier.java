@@ -10,11 +10,13 @@ import net.sf.rails.algorithms.RevenueTrainRun;
 
 public class TerminateAtMajorModifier implements RevenueDynamicModifier {
 
+    @Override
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
         // always active
         return true;
     }
 
+    @Override
     public int predictionValue(List<RevenueTrainRun> runs) {
         // cannot be predicted
         return 0;
@@ -31,7 +33,8 @@ public class TerminateAtMajorModifier implements RevenueDynamicModifier {
         }
         return invalidRuns;
     }
-    
+
+    @Override
     public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
         // optimal runs is already adjusted
         if (optimalRuns) return 0;
@@ -43,6 +46,7 @@ public class TerminateAtMajorModifier implements RevenueDynamicModifier {
         return changeRevenues;
     }
 
+    @Override
     public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
         // set invalid runs to be empty
         for (RevenueTrainRun run:identifyInvalidRuns(optimalRuns)) {
@@ -59,6 +63,7 @@ public class TerminateAtMajorModifier implements RevenueDynamicModifier {
         return 0;
     }
 
+    @Override
     public String prettyPrint(RevenueAdapter adapter) {
         // nothing to do
         return null;

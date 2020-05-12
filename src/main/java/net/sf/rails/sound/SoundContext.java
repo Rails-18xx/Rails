@@ -20,17 +20,17 @@ public class SoundContext {
     private double averageRevenue = 50;
     //to which degree (from 0=none to 1=full) is new revenue considered for determining
     //the new average revenue value
-    private final static double SLIDING_AVERAGE_ADJUSTMENT_FACTOR = 0.2;
+    private static final double SLIDING_AVERAGE_ADJUSTMENT_FACTOR = 0.2;
     //how much percent of the set revenue sfx is played if the revenue is average
-    private final static double AVERAGE_SET_REVENUE_PLAY_SOUND_PROPORTION = 0.4;
+    private static final double AVERAGE_SET_REVENUE_PLAY_SOUND_PROPORTION = 0.4;
     //how much percent of the set revenue sfx is played if the revenue is epsilon;
-    private final static double MINIMUM_SET_REVENUE_PLAY_SOUND_PROPORTION = 0.167;
+    private static final double MINIMUM_SET_REVENUE_PLAY_SOUND_PROPORTION = 0.167;
 
     private RoundFacade currentRound = null;
     private Phase currentPhase = null;
     private String currentBackgroundMusicFileName = null;
 
-    private SoundPlayer player;
+    private final SoundPlayer player;
 
     public SoundContext(SoundPlayer player) {
         this.player = player;

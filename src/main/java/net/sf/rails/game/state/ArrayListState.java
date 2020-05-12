@@ -176,6 +176,7 @@ public final class ArrayListState<E> extends State implements Iterable<E> {
      *
      * @return a suitable iterator for ArrayListState
      */
+    @Override
     public Iterator<E> iterator() {
         return List.copyOf(list).iterator();
     }

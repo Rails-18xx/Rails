@@ -377,7 +377,7 @@ public class StartRound_1837_Coal extends StartRound {
             StartItemAction startItemAction = (StartItemAction) action;
             String playerName = action.getPlayerName();
 
-            log.debug("Item details: {}", startItemAction.toString());
+            log.debug("Item details: {}", startItemAction);
 
             if (startItemAction instanceof BuyStartItem) {
 

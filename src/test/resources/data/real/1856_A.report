@@ -428,7 +428,7 @@ InterestPaidFromTreasury,WR,40
 CompanyDoesNotPayDividend,WR
 PRICE_MOVES_LOG,WR,65,F7,60,E7
 PlayerMustSellShares,Ed,67
-SELL_SHARES_LOG,Ed,1,10,10,CPR,70
+SELL_SHARE_LOG,Ed,10,CPR,70
 PRICE_MOVES_LOG,CPR,70,D4,65,D5
 PresidentAddsCash,WR,Ed,85
 BuysTrain,WR,4,IPO,350
@@ -977,7 +977,7 @@ InterestPaidFromTreasury,TGB,20
 CompanyDoesNotPayDividend,TGB
 PRICE_MOVES_LOG,TGB,80,C1,75,B1
 PlayerMustSellShares,Adam,2
-SELL_SHARES_LOG,Adam,1,10,10,CA,60
+SELL_SHARE_LOG,Adam,10,CA,60
 PRICE_MOVES_LOG,CA,60,E7,55,E8
 PresidentAddsCash,TGB,Adam,30
 BuysTrain,TGB,5,IPO,550

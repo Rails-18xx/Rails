@@ -36,8 +36,8 @@ public final class RevenueAdapter implements Runnable {
     // define VertexVisitSet
     public static class VertexVisit {
         public Set<NetworkVertex> set;
-        public VertexVisit() {set = new HashSet<NetworkVertex>();}
-        public VertexVisit(Collection<NetworkVertex> coll) {set = new HashSet<NetworkVertex>(coll);}
+        public VertexVisit() {set = new HashSet<>();}
+        public VertexVisit(Collection<NetworkVertex> coll) {set = new HashSet<>(coll);}
         public String toString() {
             return "VertexVisit Set:" + set;
         }
@@ -46,8 +46,8 @@ public final class RevenueAdapter implements Runnable {
     // define EdgeTravelSet
     public static class EdgeTravel {
         public Set<NetworkEdge> set;
-        public EdgeTravel() {set = new HashSet<NetworkEdge>();}
-        public EdgeTravel(Collection<NetworkEdge> coll) {set = new HashSet<NetworkEdge>(coll);}
+        public EdgeTravel() {set = new HashSet<>();}
+        public EdgeTravel(Collection<NetworkEdge> coll) {set = new HashSet<>(coll);}
         public String toString() {
             return "EdgeTravel Set:" + set;
         }
@@ -375,14 +375,13 @@ public final class RevenueAdapter implements Runnable {
         for (EdgeTravel edgeTravel:edgeTravelSets.values()) {
             maxNbEdges = Math.max(maxNbEdges, edgeTravel.set.size());
         }
-        for ( NetworkEdge edge : edgeTravelSets.keySet() ) {
-            EdgeTravel edgeTravel = edgeTravelSets.get(edge);
+        for ( Map.Entry<NetworkEdge, EdgeTravel> entry : edgeTravelSets.entrySet() ) {
             StringBuilder edgeString = new StringBuilder("RA: EdgeSet for ").
-                    append(edge.toFullInfoString()).
+                    append(entry.getKey().toFullInfoString()).
                     append(" size = ").
-                    append(edgeTravel.set.size()).
+                    append(entry.getValue().set.size()).
                     append("\n");
-            for ( NetworkEdge edgeInSet : edgeTravel.set ) {
+            for ( NetworkEdge edgeInSet : entry.getValue().set ) {
                 edgeString.append(edgeInSet.toFullInfoString()).append("\n");
             }
             log.info(edgeString.toString());
@@ -515,17 +514,15 @@ public final class RevenueAdapter implements Runnable {
 
         // set edge sets
         if (useMultiGraph) {
-            for (NetworkEdge edge:edgeTravelSets.keySet()) {
-                EdgeTravel edgeTravel = edgeTravelSets.get(edge);
+            for ( Map.Entry<NetworkEdge, EdgeTravel> entry:edgeTravelSets.entrySet()) {
                 int j=0;
-                int[] setArray = new int[edgeTravel.set.size()];
-                for (NetworkEdge n:edgeTravel.set){
+                int[] setArray = new int[entry.getValue().set.size()];
+                for (NetworkEdge n:entry.getValue().set){
                     setArray[j++] = rcEdges.indexOf(n);
                 }
-                ((RevenueCalculatorMulti)rc).setTravelSet(rcEdges.indexOf(edge), setArray);
+                ((RevenueCalculatorMulti)rc).setTravelSet(rcEdges.indexOf(entry.getKey()), setArray);
             }
         }
-
 
         // activate dynamic modifiers
         rc.setDynamicModifiers(hasDynamicModifiers);

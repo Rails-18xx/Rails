@@ -33,20 +33,20 @@ public class MapCorrectionAction extends CorrectionAction {
     public static final long serialVersionUID = 1L;
 
     /** Sequence: Indicates the enrichment of the action */
-    transient private ActionStep step = null;
+    private transient ActionStep step = null;
     private String stepName;
 
-    transient private ActionStep nextStep = null;
+    private transient ActionStep nextStep = null;
     private String nextStepName;
 
     /* Conditions */
 
     /** Location: where to lay the tile */
-    transient private MapHex location = null;
+    private transient MapHex location = null;
     private String locationCoordinates;
 
     /** Tiles: which tile(s) to lay */
-    transient private List<Tile> tiles = null;
+    private transient List<Tile> tiles = null;
     private String[] sTileIds;
     // FIXME: Rewrite this with Rails1.x version flag
     private int[] tileIds;
@@ -55,11 +55,11 @@ public class MapCorrectionAction extends CorrectionAction {
     private int orientation;
 
     /** RelayBaseTokens: how to relay the base tokens */
-    transient private List<BaseToken> tokensToRelay;
+    private transient List<BaseToken> tokensToRelay;
     //private String[]tokensToRelayOwner;
-    transient private List<Station> stationsForRelay;
+    private transient List<Station> stationsForRelay;
     //private int[] stationForRelayId;
-    transient private Collection<Station> possibleStations;
+    private transient Collection<Station> possibleStations;
     //private int[] possibleStationsId;
 
     /**

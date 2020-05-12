@@ -24,6 +24,7 @@ public class AddBuildingPermit extends SpecialProperty {
 
 
 
+    @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
 
         super.configureFromXML(tag);
@@ -36,10 +37,12 @@ public class AddBuildingPermit extends SpecialProperty {
         addedPermitName = addedPermitTag.getAttributeAsString("name", addedPermitName);
     }
 
+    @Override
     public boolean isExecutionable() {
         return true;
     }
 
+    @Override
     public String getId() {
         return name;
     }

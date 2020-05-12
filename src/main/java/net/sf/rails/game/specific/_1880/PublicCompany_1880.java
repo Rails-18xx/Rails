@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package net.sf.rails.game.specific._1880;
 
@@ -34,7 +34,7 @@ import net.sf.rails.common.ReportBuffer;
 public class PublicCompany_1880 extends PublicCompany implements RevenueStaticModifier {
 
 
-    /** 
+    /**
      *  Buildingrights belong to Phases in 1880 the player will be asked to choose which combination
      *   he wants and subsequently his company will be granted the appropriate rightsModel. Further the value
      *  of the presidents share depends on the building right.
@@ -47,31 +47,32 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      *    Bit 2 set True Player can build in Phase B
      *    Bit 3 set True Player can build in Phase C
      *    Bit 4 set True Player can build in Phase D
-     *    
+     *
      */
-    private BuildingRights_1880 buildingRights = new BuildingRights_1880(this, "buildingRights"); 
-   
+    private BuildingRights_1880 buildingRights = new BuildingRights_1880(this, "buildingRights");
+
     //Implementation of PhaseAction to be able to handle the CommunistPhase
     private BooleanState canStockPriceMove = new BooleanState(this, "canStockPriceMove", true);
     private BooleanState canPresidentSellShare = new BooleanState(this, "canPresidentSellShare", true);
-            
+
     private BooleanState allCertsAvail = new BooleanState(this, "allCertsAvail", false);
-    
+
     private BooleanState fullyCapitalized = new BooleanState(this, "fullyCapitalized", false);
     private BooleanState fullCapitalAvailable = new BooleanState (this, "fullCapitalAvailable", false);
     private int extraCapital = 0; // Just one Change at Start of the game, can stay as it is..
-    
+
     protected IntegerState formationOrderIndex;
-    
+
     protected IntegerState operationSlotIndex = IntegerState.create(this,"OperatingSlot", 0);
-  
+
     /**
-     * 
+     *
      */
     public PublicCompany_1880(RailsItem parent, String Id) {
         super(parent, Id);
     }
-    
+
+    @Override
     public void start(StockSpace startSpace) {
         extraCapital = 5 * (startSpace.getPrice());
         super.start(startSpace);
@@ -84,8 +85,8 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     public void configureFromXML(Tag tag) throws ConfigurationException {
         super.configureFromXML(tag);
     }
-    
-    
+
+
     /* (non-Javadoc)
      * @see rails.game.PublicCompany#finishConfiguration(rails.game.GameManagerI)
      */
@@ -108,7 +109,8 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         buildingRights.set(buildingRights.toText() + "+" + permitName);
     }
 
-    
+
+    @Override
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         return false;
     }
@@ -116,17 +118,17 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     public void stockPriceCanMove() {
         canStockPriceMove.set(true);
     }
-        
+
     public void stockPriceCannotMove() {
         canStockPriceMove.set(false);
     }
-    
+
     public boolean canStockPriceMove() {
         return (canStockPriceMove.value());
     }
 
     /** Don't move the space if the company is withholding train income during the CommunistPhase
-     * 
+     *
      */
     @Override
     public void withhold(int amount) {
@@ -134,7 +136,8 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
             getRoot().getStockMarket().withhold(this);
         }
     }
-    
+
+    @Override
     public void payout(int amount) {
         if (canStockPriceMove.value() == true)  {
             getRoot().getStockMarket().payOut(this);
@@ -144,11 +147,11 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     public void presidentCanSellShare() {
         canPresidentSellShare.set(true);
     }
-        
+
     public void presidentCannotSellShare() {
         canPresidentSellShare.set(false);
     }
-    
+
     public boolean canPresidentSellShare() {
         return (canPresidentSellShare.value());
     }
@@ -156,21 +159,21 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
 
     public void setFloatPercentage(int i) {
         this.floatPerc=i;
-        
+
     }
-    
+
     @Override
     public boolean canRunTrains() {
-        return portfolio.getNumberOfTrains() > 0;       
+        return portfolio.getNumberOfTrains() > 0;
     }
-    
+
     /* (non-Javadoc)
      * @see rails.game.PublicCompany#getNumberOfTileLays(java.lang.String)
      */
     @Override
     public int getNumberOfTileLays(String tileColour) {
         Phase phase = getRoot().getPhaseManager().getCurrentPhase();
-        
+
          if ((tileColour.equals("yellow")) && (this.getId().equals("BCR"))) {
              return 2;
          }
@@ -183,38 +186,39 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
              return tileLays;
      }
 
-    
+
     /* (non-Javadoc)
      * @see rails.algorithms.RevenueStaticModifier#prettyPrint(rails.algorithms.RevenueAdapter)
      */
+    @Override
     public String prettyPrint(RevenueAdapter revenueAdapter) {
         return null;
     }
-    
+
     /*
      * @param Phase
      */
     public boolean hasBuildingRightForPhase(Phase phase) {
         return buildingRights.canBuildInPhase(phase);
     }
-    
+
     /*
-     * If we have a different president share percentage we have to remove the old certificate structure 
+     * If we have a different president share percentage we have to remove the old certificate structure
      * and rebuild a new structure. There will be no subsequent certificate alterations in 1880.
-     * 
+     *
      * @author Martin Brumm
      * @param percentage
-     * 
+     *
      * To be called from the StartRound_1880 / StockRoundWindow_1880
      */
     // TODO: Rails 2.0 Check if this is not too complicated and raises problems with undo
     public void setPresidentShares(int percentage) {
         int share = 0;
-        
+
         //Create a new President Certificate with the shares (percentage)
         PublicCertificate certificate = new PublicCertificate(this, "President", (percentage/10), true,
                 true, 1.0f, 0);
-        
+
         //we need to bring that Certificate to the List, do we have to place it at a specific place ? I hope not...
         Owner scrapHeap = getRoot().getBank().getScrapHeap();
         for (PublicCertificate cert : certificates.view()) {
@@ -228,10 +232,10 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
                     cert.setCertificateCount(1.0f);
                     share += cert.getShare();
             }
-             
+
         }
         //Now add the new president share to the list ; do we have to call namecertificates ?
-        
+
         certificates.add(0,certificate); //Need to make sure the new share is at position 0 !
         nameCertificates(); //Just to be sure..
         PublicCertificate cert;
@@ -240,7 +244,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
             cert.setUniqueId(getId(), i);
             cert.setInitiallyAvailable(cert.isInitiallyAvailable());
         }
-        
+
           Owner bankIPO= getRoot().getBank().getIpo();
           certificate.moveTo(bankIPO);
     }
@@ -272,7 +276,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     public void setAllCertsAvail(boolean flag ) {
         this.allCertsAvail.set(flag);
     }
-    
+
     public boolean certsAvailableForSale() {
         if ((sharesInIpo() == 5) && (allCertsAvail.value() == false)) {
             return false;
@@ -281,7 +285,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         }
         return true;
     }
-    
+
     public int sharesInIpo() {
         int sharesInIpo = 0;
         for (PublicCertificate cert : certificates) {
@@ -291,7 +295,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         }
         return sharesInIpo;
     }
-    
+
     public void setFullFundingAvail() {
         this.fullCapitalAvailable.set(true);
         checkToFullyCapitalize();
@@ -303,11 +307,11 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         }
         checkToFullyCapitalize();
     }
-    
+
     protected boolean checkToFullyCapitalize() {
         if ((hasFloated() == true) && (sharesInIpo() <= 5) && (fullCapitalAvailable.value() == true) && (getFloatPercentage() != 60)) {
             fullyCapitalized.set(true);
-            Currency.wire(getRoot().getBank(),extraCapital,this);  
+            Currency.wire(getRoot().getBank(),extraCapital,this);
             ReportBuffer.add(this, LocalText.getText("ReceivesCashforRemainingShares",
                     this.getLongName(),
                     Bank.format(this, extraCapital) ));
@@ -315,11 +319,12 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         }
         return false;
     }
-    
+
+   @Override
    public BuildingRights_1880 getRightsModel () {
         return buildingRights;
     }
-    
+
     static public List<PublicCompany_1880> getPublicCompanies(CompanyManager companyManager) {
         List<PublicCompany_1880> companies = new ArrayList<PublicCompany_1880>();
         for (PublicCompany company : companyManager.getAllPublicCompanies()) {
@@ -358,5 +363,5 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
         }
         return super.getBaseTokenLayCosts();
     }
-    
+
 }

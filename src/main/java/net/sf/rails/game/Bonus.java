@@ -83,22 +83,26 @@ public class Bonus implements Closeable, RevenueStaticModifier {
      * This method can be called by a certain phase when it starts.
      * See prepareForRemovel().
      */
+    @Override
     public void close() {
         owner.getRoot().getRevenueManager().removeStaticModifier(this);
     }
 
 
-    public boolean equals (Bonus b) {
-        return (b.name.equals(name))
-               && b.value == value;
+    public boolean equals (Object obj) {
+        if ( !(obj instanceof Bonus) ) {
+            return false;
+        }
+        Bonus b = (Bonus) obj;
+        return (b.name.equals(name)) && b.value == value;
     }
 
     @Override
     public String toString() {
-        return "Bonus "+name+" hex="
-               + getIdForView() + " value=" + value;
+        return "Bonus "+name+" hex=" + getIdForView() + " value=" + value;
     }
 
+    @Override
     public String getClosingInfo() {
         return toString();
     }
@@ -106,6 +110,7 @@ public class Bonus implements Closeable, RevenueStaticModifier {
     /**
      * Add bonus value to revenue calculator
      */
+    @Override
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
         // 1. check operating company
         if (owner != revenueAdapter.getCompany()) return false;
@@ -123,6 +128,7 @@ public class Bonus implements Closeable, RevenueStaticModifier {
         return found;
     }
 
+    @Override
     public String prettyPrint(RevenueAdapter revenueAdapter) {
         if (name == null) return null;
         return "Bonus active = " + name;

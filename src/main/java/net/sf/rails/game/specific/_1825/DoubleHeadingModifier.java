@@ -16,10 +16,11 @@ import net.sf.rails.common.LocalText;
  */
 public class DoubleHeadingModifier implements RevenueDynamicModifier {
 
-    private final static String TRAIN_SINGLE = "2";
-    private final static String DOUBLEHEAD_NAME = "2&2";
-    private final static String TRAIN_DOUBLE = "3";
-   
+    private static final String TRAIN_SINGLE = "2";
+    private static final String DOUBLEHEAD_NAME = "2&2";
+    private static final String TRAIN_DOUBLE = "3";
+
+    @Override
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
         int nbTrain2 = 0;
         for (NetworkTrain train:revenueAdapter.getTrains()) {
@@ -28,7 +29,7 @@ public class DoubleHeadingModifier implements RevenueDynamicModifier {
                 nbTrain2 ++;
             }
         }
-        
+
         // add dualhead 3 train for each of a pair of 2-trains
         boolean hasDualHead = false;
         while (nbTrain2 >= 2) {
@@ -38,19 +39,20 @@ public class DoubleHeadingModifier implements RevenueDynamicModifier {
             hasDualHead = true;
             nbTrain2 -= 2;
         }
-        
+
         return hasDualHead;
     }
 
-    /** 
+    /**
      * the prediction value itself is zero, as the add value stems from the train above
      */
+    @Override
     public int predictionValue(List<RevenueTrainRun> runs) {
         return 0;
     }
 
     /**
-     * returns the runs of the of the double heading trains 
+     * returns the runs of the of the double heading trains
      */
     private List<RevenueTrainRun> identifyDoubleHeadingTrains(List<RevenueTrainRun> runs) {
         // find and sort the train2Revenues
@@ -61,7 +63,7 @@ public class DoubleHeadingModifier implements RevenueDynamicModifier {
             }
         }
         Collections.sort(train2Runs);
-        
+
         // keep index on train2Runs
         int index2Runs = 0;
         // find DualHeads and remove two 2-train revenues
@@ -74,17 +76,18 @@ public class DoubleHeadingModifier implements RevenueDynamicModifier {
         }
         return train2Runs.subList(0, index2Runs);
     }
-    
-    
+
+
     /**
      * - checks if runs start and end at major stations
      * - allows doubleheading
      */
+    @Override
     public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
 
 
-        if (optimalRuns) return 0; // optimalRuns are adjusted 
-        
+        if (optimalRuns) return 0; // optimalRuns are adjusted
+
         // count the adjustments
         int changeRevenues = 0;
         for (RevenueTrainRun run:identifyDoubleHeadingTrains(runs)) {
@@ -93,6 +96,7 @@ public class DoubleHeadingModifier implements RevenueDynamicModifier {
         return changeRevenues;
     }
 
+    @Override
     public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
         // remove the double heading runs from the revenue list
         optimalRuns.removeAll(identifyDoubleHeadingTrains(optimalRuns));
@@ -117,6 +121,7 @@ public class DoubleHeadingModifier implements RevenueDynamicModifier {
         return 0;
     }
 
+    @Override
     public String prettyPrint(RevenueAdapter adapter) {
         return LocalText.getText("DoubleHeadingModifier1825", DOUBLEHEAD_NAME, TRAIN_SINGLE, TRAIN_DOUBLE);
     }

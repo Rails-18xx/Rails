@@ -240,6 +240,7 @@ public class ReportWindow extends JFrame implements ActionListener, HyperlinkLis
         });
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         ActionButton button = (ActionButton)e.getSource();
         GameAction action = (GameAction)button.getPossibleActions().get(0);
@@ -250,6 +251,7 @@ public class ReportWindow extends JFrame implements ActionListener, HyperlinkLis
         gameUIManager.processAction(action);
     }
 
+    @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && ! isStatic ) {
             activateTimeWarp();
@@ -300,10 +302,12 @@ public class ReportWindow extends JFrame implements ActionListener, HyperlinkLis
     // ReportBuffer.Observer methods
 
     // FIXME: Rails 2.0 Not used so far
+    @Override
     public void append(String text) {
         // do nothing
     }
 
+    @Override
     public void update(String text) {
         log.debug("Update dynamic report window");
         // set the content of the pane to the current

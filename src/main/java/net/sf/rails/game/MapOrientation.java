@@ -74,13 +74,12 @@ public enum MapOrientation {
         }
 
         String letterOrientation = tag.getAttributeAsString("letterOrientation");
-        if (letterOrientation.equals("horizontal")) {
+        if ( "horizontal".equals(letterOrientation)) {
             mapOrientation.lettersGoHorizontal = true;
-        } else if (letterOrientation.equals("vertical")) {
+        } else if ( "vertical".equals(letterOrientation)) {
             mapOrientation.lettersGoHorizontal = false;
         } else {
-            throw new ConfigurationException("Invalid letter orientation: "
-                  + letterOrientation);
+            throw new ConfigurationException("Invalid letter orientation: " + letterOrientation);
         }
 
         String even = tag.getAttributeAsString("even");

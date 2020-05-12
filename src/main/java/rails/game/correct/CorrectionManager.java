@@ -92,7 +92,11 @@ public abstract class CorrectionManager extends RailsAbstractItem {
     }
 
 
-    public boolean equals(CorrectionManager cm) {
+    public boolean equals(Object object) {
+        if ( ! (object instanceof CorrectionManager) ) {
+            return false;
+        }
+        CorrectionManager cm = (CorrectionManager) object;
         return this.getParent() == cm.getParent() && this.correctionType == cm.correctionType;
     }
 }

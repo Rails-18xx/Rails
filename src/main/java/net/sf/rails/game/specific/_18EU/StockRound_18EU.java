@@ -487,7 +487,7 @@ public class StockRound_18EU extends StockRound {
     @Override
     protected boolean processGameSpecificAction(PossibleAction action) {
 
-        log.debug("GameSpecificAction: {}", action.toString());
+        log.debug("GameSpecificAction: {}", action);
 
         boolean result = false;
 
@@ -594,18 +594,16 @@ public class StockRound_18EU extends StockRound {
                     major.getId(),
                     cert.getOwner().getId(),
                     minor.getId()));
-            if (major != null) {
-                if (action.getReplaceToken()) {
-                    ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
-                            major.getId(),
-                            minor.getId(),
-                            homeHex.getId()));
-                } else {
-                    ReportBuffer.add(this, LocalText.getText("NoBaseTokenExchange",
-                            major.getId(),
-                            minor.getId(),
-                            homeHex.getId()));
-                }
+            if (action.getReplaceToken()) {
+                ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
+                        major.getId(),
+                        minor.getId(),
+                        homeHex.getId()));
+            } else {
+                ReportBuffer.add(this, LocalText.getText("NoBaseTokenExchange",
+                        major.getId(),
+                        minor.getId(),
+                        homeHex.getId()));
             }
             cert.moveTo(currentPlayer);
             ReportBuffer.add(this, LocalText.getText("MinorCloses", minor.getId()));

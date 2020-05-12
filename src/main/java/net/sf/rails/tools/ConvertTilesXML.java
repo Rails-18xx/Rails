@@ -2,6 +2,8 @@ package net.sf.rails.tools;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,7 +17,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import net.sf.rails.common.parser.ConfigurationException;
-import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
@@ -191,7 +192,7 @@ public class ConvertTilesXML {
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(new DOMSource(outputDoc),
-                    new StreamResult(new FileOutputStream(new File(outputFilePath))));
+                    new StreamResult(Files.newOutputStream(Paths.get(outputFilePath))));
 
         } catch (Exception e) {
             throw new ConfigurationException("Document build error", e);

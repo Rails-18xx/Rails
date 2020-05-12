@@ -269,14 +269,14 @@ public class Tag {
                 childElement = (Element) childNode;
                 childTagName = childElement.getNodeName();
                 NamedNodeMap nnp = childElement.getAttributes();
-                if (childTagName.equalsIgnoreCase("Attributes")) {
+                if ( "Attributes".equalsIgnoreCase(childTagName)) {
                     for (int j = 0; j < nnp.getLength(); j++) {
                         attribute = nnp.item(j);
                         name = attribute.getNodeName();
                         value = attribute.getNodeValue();
                         attributes.put(name, value);
                     }
-                } else if (childTagName.equalsIgnoreCase("IfOption")) {
+                } else if ( "IfOption".equalsIgnoreCase(childTagName)) {
                     Node nameAttr = nnp.getNamedItem("name");
                     if (nameAttr == null)
                         throw new ConfigurationException(

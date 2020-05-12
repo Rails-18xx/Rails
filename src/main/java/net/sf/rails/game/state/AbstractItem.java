@@ -33,23 +33,28 @@ public abstract class AbstractItem implements Item {
         context.addItem(this);
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public Item getParent() {
         return parent;
     }
 
+    @Override
     public Context getContext() {
         return context;
     }
 
+    @Override
     public Root getRoot() {
         // forward it to the context
         return context.getRoot();
     }
 
+    @Override
     public String getURI() {
         if (parent instanceof Context) {
             return id;
@@ -59,11 +64,13 @@ public abstract class AbstractItem implements Item {
         }
     }
 
+    @Override
     public String getFullURI() {
         // recursive definition
         return parent.getFullURI() + Item.SEP + id;
     }
 
+    @Override
     public String toText() {
         return id;
     }

@@ -123,6 +123,7 @@ public class AutoSaveLoadDialog extends JDialog implements ActionListener {
         return gc;
     }
 
+    @Override
     public void actionPerformed(ActionEvent arg0) {
         if (arg0.getSource().equals(okButton)) {
             status = IntStream.range(0, NUM_OPTIONS).filter(i -> choiceButtons[i].isSelected()).findFirst().orElse(status);

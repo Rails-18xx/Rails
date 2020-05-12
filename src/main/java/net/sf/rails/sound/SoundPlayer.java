@@ -29,8 +29,8 @@ import javazoom.jl.player.advanced.AdvancedPlayer;
 public class SoundPlayer {
 
     private static class SoundFileBuffer {
-        private Map<String,byte[]> fileBuffer = new HashMap<>();
-        synchronized public BufferedInputStream getFileInputStream(String fileName) {
+        private final Map<String,byte[]> fileBuffer = new HashMap<>();
+        public synchronized BufferedInputStream getFileInputStream(String fileName) {
             if (!fileBuffer.containsKey(fileName)) {
                 try (InputStream fis = Files.newInputStream(Paths.get(fileName))) {
                     long length = new File(fileName).length();
@@ -56,7 +56,7 @@ public class SoundPlayer {
             this.priorThread = priorThread;
         }
         //returns once playing is done
-        synchronized public void waitForPlayingDone() {
+        public synchronized void waitForPlayingDone() {
             if (!playingDone) {
                 try {
                     wait();
@@ -180,14 +180,14 @@ public class SoundPlayer {
 
     private LoopPlayerThread lastBGMThread = null;
 
-    private SoundFileBuffer soundFileBuffer = new SoundFileBuffer();
+    private final SoundFileBuffer soundFileBuffer = new SoundFileBuffer();
 
     /**
      * atomic switching of the pointer to the last thread which played an sfx.
      * @param newThread Player thread for the new sfx
      * @return Player thread which was the last to play a sfx
      */
-    synchronized private PlayerThread adjustLastSFXThread(PlayerThread newThread) {
+    private synchronized PlayerThread adjustLastSFXThread(PlayerThread newThread) {
         PlayerThread pt = lastSFXThread;
         lastSFXThread = newThread;
         return pt;
@@ -198,7 +198,7 @@ public class SoundPlayer {
      * @param newThread Player thread for the new music
      * @return Player thread which was the last to play music
      */
-    synchronized private LoopPlayerThread adjustLastBGMThread(LoopPlayerThread newThread) {
+    private synchronized LoopPlayerThread adjustLastBGMThread(LoopPlayerThread newThread) {
         LoopPlayerThread pt = lastBGMThread;
         lastBGMThread = newThread;
         return pt;
