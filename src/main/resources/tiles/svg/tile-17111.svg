@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="svg4044"
+   sodipodi:docname="tile-17111.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   width="393"
+   height="357.5">
+  <metadata
+     id="metadata4050">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs4048" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1018"
+     id="namedview4046"
+     showgrid="false"
+     inkscape:zoom="1.5043697"
+     inkscape:cx="147.50412"
+     inkscape:cy="89.513153"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4044"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     units="px" />
+  <path
+     d="M 98.499992,16.999996 H 294.49999 l 98,170.000004 -98,170 H 98.499992 L 0.49999229,187 Z"
+     id="path4016"
+     inkscape:connector-curvature="0"
+     style="fill:#c0c0c0;stroke:#c0c0c0;stroke-width:1;stroke-linejoin:round" />
+  <polygon
+     points="247,119 247,221 145,221 145,119 "
+     id="polygon4018"
+     style="fill:#ffffff;stroke:#ffffff;stroke-width:12"
+     transform="translate(0.49999229,16.999996)" />
+  <circle
+     cx="145.49998"
+     cy="187.00006"
+     r="51"
+     id="circle4020"
+     style="fill:#ffffff;stroke:#ffffff;stroke-width:12" />
+  <circle
+     cx="247.49998"
+     cy="187.00006"
+     r="51"
+     id="circle4022"
+     style="fill:#ffffff;stroke:#ffffff;stroke-width:12" />
+  <path
+     d="M 196.49999,187 V 16.999996"
+     id="path4024"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke:#ffffff;stroke-width:34;stroke-linecap:butt;stroke-linejoin:round" />
+  <path
+     d="m 196.49999,187 147,-85"
+     id="path4026"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke:#ffffff;stroke-width:34;stroke-linecap:butt;stroke-linejoin:round" />
+  <path
+     d="M 196.49999,187 V 16.999996"
+     id="path4030"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round" />
+  <path
+     d="m 196.49999,187 147,-85"
+     id="path4032"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round" />
+  <polygon
+     points="247,119 247,221 145,221 145,119 "
+     id="polygon4036"
+     style="fill:#ffffff;stroke:#000000;stroke-width:4"
+     transform="translate(0.49999229,16.999996)" />
+  <circle
+     cx="145.49998"
+     cy="187.00006"
+     r="51"
+     id="circle4038"
+     style="fill:#ffffff;stroke:#000000;stroke-width:4" />
+  <circle
+     cx="247.49998"
+     cy="187.00006"
+     r="51"
+     id="circle4040"
+     style="fill:#ffffff;stroke:#000000;stroke-width:4" />
+  <path
+     d="M 98.499992,16.999996 H 294.49999 l 98,170.000004 -98,170 H 98.499992 L 0.49999229,187 Z"
+     id="path4042"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke:#000000;stroke-width:1;stroke-linejoin:round" />
+</svg>

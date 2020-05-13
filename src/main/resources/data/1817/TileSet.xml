@@ -1,0 +1,92 @@
+<TileManager tiles="Tiles.xml">
+	<Defaults>
+		<Access type="offmap" loop="yes"/>
+	</Defaults>
+	<!-- Preprinted tiles -->
+	<Tile id="0"><!-- Empty space -->
+		<Upgrade id="7,8,9"/>
+	</Tile>
+	<Tile id="-10"><!-- 1 city -->
+		<Upgrade id="5,6,57"/>
+	</Tile>
+	<Tile id="-21"><!-- New York -->
+		<Upgrade id="54"/>
+	</Tile>
+	<Tile id="-17902"/><!-- St. Louis -->
+	<Tile id="-17111"/><!-- Cleveland -->
+	<Tile id="-17001"/><!-- Toronto -->
+	<Tile id="-901"/>
+	<Tile id="-902"/>
+	<Tile id="-11"><!--B tiles-->
+		<Upgrade id="592"/>
+	</Tile>
+	
+	<!-- Yellow tiles -->
+	<Tile id="4" quantity="6">
+	<Tile id="3" quantity="6">
+	<Tile id="58" quantity="6">
+	<Tile id="7" quantity="5">
+		<Upgrade id="80,82,83" />
+	</Tile>
+	<Tile id="8" quantity="20">
+		<Upgrade id="80,81,82,83" />
+	</Tile>
+	<Tile id="9" quantity="20">
+		<Upgrade id="82,83" />
+	</Tile>
+	<Tile id="57" quantity="20">
+		<Upgrade id="14,15,619" />
+	</Tile>
+	<Tile id="17013" quantity="1">
+		<Upgrade id="529" hex="F13"/>
+	</Tile>
+	
+	<!-- Green tiles -->
+	<Tile id="14" quantity="7">
+		<Upgrade id="63,611" />
+	</Tile>
+	<Tile id="15" quantity="2">
+			<Upgrade id="63,611,448" />
+	</Tile>
+	<Tile id="54" quantity="1">
+			<Upgrade id="62" />
+	</Tile>
+	<Tile id="80" quantity="7">
+			<Upgrade id="545,546" />
+	</Tile>
+	<Tile id="81" quantity="7">
+			<Upgrade id="546" />
+	</Tile>
+	<Tile id="82" quantity="10">
+			<Upgrade id="544,545,546" />
+	</Tile>
+	<Tile id="83" quantity="10">
+			<Upgrade id="544,545,546" />
+	</Tile>
+	<Tile id="592" quantity="4">
+		<Upgrade id="593" />
+	</Tile>
+	<Tile id="619" quantity="4">
+		<Upgrade id="63,611" />
+	</Tile>
+	
+	<!-- Brown tiles -->
+
+	<Tile id="62" quantity="1" >
+		<Upgrade id="124" />
+    </Tile>
+	<Tile id="63" quantity="8"/>
+ 
+	<Tile id="448" quantity="4" />
+	<Tile id="544" quantity="5" />
+	<Tile id="545" quantity="5" />
+	<Tile id="546" quantity="5" />
+	<Tile id="593" quantity="4" />
+	<Tile id="611" quantity="2" />
+
+
+	<!-- Gray tiles -->
+	<Tile id="597" quantity="4" />
+	<Tile id="17124" quantity="1" />
+	
+</TileManager>

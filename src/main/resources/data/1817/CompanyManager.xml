@@ -1,0 +1,237 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
+		<ClosingConditions>
+		</ClosingConditions>
+		<Tradeable toCompany="no"/>
+		<Tradeable toPlayer="no"/>	
+	</CompanyType>
+	<CompanyType name="Public2Share" class="net.sf.rails.game.PublicCompany">
+		<CanBuyPrivates/>
+		<PoolPaysOut/>
+		<Float percentage="60"/>
+		<ShareUnit percentage="50"/>
+		<BaseTokens>
+			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
+			<HomeBase lay="firstOR"/>
+			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
+			<LayCost method="sequence" cost="0"/>
+		</BaseTokens>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="0"/>
+		<Trains limit="4,3,2"/>
+        <CanUseSpecialProperties/>
+	</CompanyType>
+		<CompanyType name="Public5Share" class="net.sf.rails.game.PublicCompany">
+		<CanBuyPrivates/>
+		<PoolPaysOut/>
+		<Float percentage="60"/>
+		<ShareUnit percentage="20"/>
+		<BaseTokens>
+			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
+			<HomeBase lay="firstOR"/>
+			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
+			<LayCost method="sequence" cost="0,0"/>
+		</BaseTokens>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="3"/>
+		<Trains limit="4,3,2"/>
+        <CanUseSpecialProperties/>
+	</CompanyType>
+		<CompanyType name="Public10Share" class="net.sf.rails.game.PublicCompany">
+		<CanBuyPrivates/>
+		<PoolPaysOut/>
+		<Float percentage="60"/>
+		<ShareUnit percentage="10"/>
+		<BaseTokens>
+			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
+			<HomeBase lay="firstOR"/>
+			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
+			<LayCost method="sequence" cost="0,0,0,0"/>
+		</BaseTokens>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Trains limit="4,3,2"/>
+        <CanUseSpecialProperties/>
+	</CompanyType>
+	<Company name="Pittsburgh" type="Private" basePrice="40" revenue="0"
+			longname="Pittsburgh Steel Mill">
+		<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay tile="17013" location="F13" extra="no" free="yes" connected="no"/>
+			</SpecialProperty>
+	</Company>
+	<Company name="Mountain" type="Private" basePrice="40" revenue="0"
+			longname="Mountain Engineers">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="B20" colour="yellow" extra="yes" free="no" payment="20"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="OBridge" type="Private" basePrice="40" revenue="0"
+		longname="Ohio Bridge Company">
+		<Blocking hex="F16"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="D13,E12,F11,G4,G6,G10,H3,H7,H9" colour="yellow" extra="no" free="yes"/>
+			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringORTurn" class="net.sf.rails.game.special.SpecialBonusTokenLay">
+				<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken" 
+						location="G6,H9,H3" connected="no" extra="yes">
+					<BonusToken name="Bridge" value="10"/>
+		</SpecialProperties>
+	</Company>
+	<Company name="UBridge" type="Private" basePrice="80" revenue="0"
+		longname="Union Bridge Company">
+		<Blocking hex="D18"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="D13,E12,F11,G4,G6,G10,H3,H7,H9" colour="yellow" extra="no" free="yes"/>
+			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringORTurn" class="net.sf.rails.game.special.SpecialBonusTokenLay">
+				<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken" 
+						location="G6,H9,H3" connected="no" extra="yes">
+					<BonusToken name="Bridge1" value="10"/>
+			<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken" 
+						location="G6,H9,H3" connected="no" extra="yes">
+					<BonusToken name="Bridge2" value="10"/>
+		</SpecialProperties>
+	</Company>
+	<Company name="Station" type="Private" basePrice="80" revenue="0"
+		longname="Train Station">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+				<SpecialBaseTokenLay connected="yes" extra="no" free="yes"/>
+		</SpecialProperties>
+	</Company>
+	<Company name="CMinor" type="Private" basePrice="30" revenue="0"
+		longname="Minor Coal Mine">
+		<SpecialProperties>
+					<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="B25,C20,C24,E18,F15,G12,G14,H11,H13,H15,I8,I10" tile="3,4,58" extra="no" free="yes"/>
+				
+		</SpecialProperties>
+	</Company>
+		</Company>
+	<Company name="CMedium" type="Private" basePrice="60" revenue="0"
+		longname="Medium Coal Mine">
+		<SpecialProperties>
+					<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="B25,C20,C24,E18,F15,G12,G14,H11,H13,H15,I8,I10" tile="3,4,58" extra="no" free="yes"/>
+					<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="B25,C20,C24,E18,F15,G12,G14,H11,H13,H15,I8,I10" tile="3,4,58" extra="no" free="yes"/>
+		</SpecialProperties>
+	</Company>
+		</Company>
+	<Company name="CMajor" type="Private" basePrice="90" revenue="0"
+		longname="Major Coal Mine">
+		<SpecialProperties>
+					<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="B25,C20,C24,E18,F15,G12,G14,H11,H13,H15,I8,I10" tile="3,4,58" extra="no" free="yes"/>
+					<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="B25,C20,C24,E18,F15,G12,G14,H11,H13,H15,I8,I10" tile="3,4,58" extra="no" free="yes"/>
+					<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
+				<SpecialTileLay location="B25,C20,C24,E18,F15,G12,G14,H11,H13,H15,I8,I10" tile="3,4,58" extra="no" free="yes"/>
+		</SpecialProperties>
+	</Company>
+	
+	<!-- Note two supported colour specification formats:
+	     RGB decimal with commas and RGB hexadecimal without commas -->
+	<Company name="B&amp;M" type="Public" tokens="2" fgColour="000000" bgColour="60E060"
+			longname="Boston &amp; Maine">
+		<Home hex="E23"/>
+	</Company>	     
+	<Company name="B&amp;O" type="Public" tokens="3" fgColour="255,255,255" bgColour="0,0,255"
+			longname="Baltimore &amp; Ohio">
+		<FirstTrainCloses type="Private" name="B&amp;O"/>
+		<Home hex="I15"/>
+	</Company>
+	<Company name="C&amp;O" type="Public" tokens="3" fgColour="000000" bgColour="A0E0FF"
+			longname="Chesapeake &amp; Ohio">
+		<IfOption name="Variant" value="Basegame,Pere Marquette,Reading,Simple,Wabash">
+			<Home hex="F6"/>
+		</IfOption>
+		<IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
+			<Home hex="K13"/>
+		</IfOption>
+	</Company>
+	<Company name="CPR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000"
+			longname="Canadian Pacific Railroad">
+		<Home hex="A19"/>
+	</Company>
+	<Company name="Erie" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00"
+			longname="Erie Railroad">
+	<!--	city = 0 implies that this is not yet decided (OO-tiles), blocks means that 
+			in each city one slot has to be available -->
+		<Home hex="E11" city="0"/>
+	</Company>
+    <IfOption name="Variant" value="Simple">
+        <Company name="L&amp;N" type="Public" tokens="3" fgColour="FFE600" bgColour="FF0000"
+                longname="Louisville &amp; Nashville">
+            <Home hex="H4"/>
+        </Company>
+    </IfOption>
+    <IfOption name="Variant" value="Simple">
+        <Company name="MILW" type="Public" tokens="3" fgColour="FFFFFF" bgColour="FF8000"
+                longname="Milwaukee Road">
+            <Home hex="D2"/>
+        </Company>
+    </IfOption>
+    <IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
+        <Company name="N&amp;W" type="Public" tokens="3" fgColour="FFFF00" bgColour="000080"
+                longname="Norfolk &amp; Western">
+            <Home hex="L16"/>
+        </Company>
+    </IfOption>
+	<Company name="NYC" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000"
+			longname="New York Central">
+		<Home hex="E19"/>
+	</Company>
+	<Company name="NYNH" type="Public" tokens="2" fgColour="000000" bgColour="FF8000"
+			longname="New York, New Haven &amp; Hartford">
+		<Home hex="G19" city="2"/>
+	</Company>
+	<IfOption name="Variant" value="Pere Marquette">
+		<Company name="PM" type="Public" tokens="3" fgColour="FFFF00" bgColour="000080"
+				longname="Pere Marquette">
+			<Home hex="E5" city="0"/>
+		</Company>
+	</IfOption>
+	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000"
+			longname="Pennsylvania Railroad">
+		<Home hex="H12"/>
+	</Company>
+    <IfOption name="Variant" value="Reading,Coalfields&amp;Reading">
+        <Company name="RDG" type="Public" tokens="2" fgColour="000000" bgColour="C8F526"
+                longname="Reading Railroad">
+            <Home hex="H14"/>
+			<Certificate type="President" shares="3"/>
+			<Certificate shares="1" number="7"/>
+        </Company>
+    </IfOption>
+    <IfOption name="Variant" value="Wabash">
+        <Company name="WAB" type="Public" tokens="2" fgColour="000000" bgColour="FFFFFF"
+                longname="Wabash Railroad">
+            <Home hex="H2"/>
+            <Certificate type="President" shares="2"/>
+            <Certificate shares="1" number="8"/>
+        </Company>
+    </IfOption>
+	
+	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
+		<Bidding initial="5" minimum="5" increment="1"/>
+		<Item name="SVNRR" type="Private" basePrice="20"/>
+		<Item name="C&amp;StL" type="Private" basePrice="40"/>
+		<Item name="D&amp;H" type="Private" basePrice="70"/>
+		<Item name="M&amp;H" type="Private" basePrice="110"/>
+		<Item name="C&amp;A" type="Private" basePrice="160">
+    <IfOption name="C&amp;ACertificate(ReadingOnly)" value="PRR">
+			<SubItem name="PRR" type="Public" />
+	</IfOption>
+    <IfOption name="C&amp;ACertificate(ReadingOnly)" value="RDG">
+    		<SubItem name="RDG" type="Public" />
+    </IfOption>
+		</Item>
+		<Item name="B&amp;O" type="Private" basePrice="220">
+			<SubItem name="B&amp;O" type="Public" president="yes"/>
+		</Item>
+	</StartPacket>
+</CompanyManager>

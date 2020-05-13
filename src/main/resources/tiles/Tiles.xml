@@ -4238,4 +4238,28 @@
 <Track from="side5" gauge="normal" to="city2"/>
 <Track from="side4" gauge="normal" to="city1"/>
 </Tile>
+    <Tile colour="fixed" id="-17111" name="1817 Cleveland">
+        <Station id="city1" position="0" slots="2" type="City" value="-1"/>
+        <Track from="side1" gauge="normal" to="city1" />
+        <Track from="side0" gauge="normal" to="city1" />
+    </Tile>
+    <Tile colour="fixed" id="-17001" name="1817 Toronto tile">
+        <Station id="city1" position="0" type="Town" value="-1"/>
+        <Track from="side2" gauge="normal" to="city1" />
+        <Track from="side5" gauge="normal" to="city1" />
+        <Track from="side0" gauge="normal" to="city1" />
+    </Tile>
+    <Tile colour="yellow" id="17013" name="1817 Pittsburgh">
+        <Station id="city1" position="0" slots="1" type="City" value="30"/>
+        <Track from="side1" gauge="normal" to="city1" />
+        <Track from="side3" gauge="normal" to="city1" />
+        <Track from="side5" gauge="normal" to="city1" />
+    </Tile>
+    <Tile colour="gray" id="17124" name="1817 NYC gray">
+        <Station id="city1" position="0" slots="4" type="City" value="100"/>
+        <Track from="side1" gauge="normal" to="city1" />
+        <Track from="side0" gauge="normal" to="city1" />
+        <Track from="side3" gauge="normal" to="city1" />
+        <Track from="side2" gauge="normal" to="city1" />
+    </Tile>
 </Tiles>
