@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <!-- 18C2C CompanyManager.xml -->
 <CompanyManager>
-	
 	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
 	</CompanyType>
@@ -119,7 +118,7 @@
 	
 	<Company name="SP" type="Private" basePrice="20" revenue="5"
 		longname="The Southern Pacific Railroad">
-		<Blocking hex="S62/>
+		<Blocking hex="S62"/>
 		<ClosingConditions>
 			<Phase name="5"/>
 		</ClosingConditions>
@@ -129,7 +128,7 @@
 	
 	<Company name="SV" type="Private" basePrice="20" revenue="5"
 		longname="Schuylkill Valley">
-		<Blocking hex="K74/>
+		<Blocking hex="K74"/>
 		<ClosingConditions>
 			<Phase name="5"/>
 		</ClosingConditions>
@@ -140,11 +139,11 @@
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
 				when="anyTimeDuringORTurn"
-				class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay class="net.sf.rails.game.BonusToken"
+				class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay class="net.sf.rails.game.BonusToken"
 					location=""
 					connected="yes" extra="no">
-				</SpecialTileLay>
+				</SpecialSingleTileLay>
 			</SpecialProperty>
 		</SpecialProperties>
 		<ClosingConditions>
@@ -214,7 +213,7 @@
 	
 	<Company name="C&amp;A" type="Private" basePrice="20" revenue="5"
 		longname="Camden &amp; Amboy">
-		<Blocking hex="L77/>
+		<Blocking hex="L77"/>
 		<ClosingConditions>
 			<Phase name="5"/>
 		</ClosingConditions>
@@ -223,7 +222,7 @@
 	
 	<Company name="Sou" type="Private" basePrice="20" revenue="5"
 		longname="The Southern Railroad">
-		<Blocking hex="S62/>
+		<Blocking hex="S62"/>
 		<ClosingConditions>
 			<Phase name="5"/>
 		</ClosingConditions>
@@ -270,7 +269,7 @@
 		<Destination hex="A4,A6"/>
 	</Company>
 
-	<Company name="C&O" type="Public" tokens="5" fgColour="0000FF" bgColour="FFFFFF"
+	<Company name="C&amp;O" type="Public" tokens="5" fgColour="0000FF" bgColour="FFFFFF"
 		longname="Chesapeake &amp; Ohio Railroad">
 		<Home hex="J65"/>
 		<Destination hex="O72"/>
@@ -284,14 +283,14 @@
 		</Company>
 	</IfOption>
 
-	<Company name="CB&Q" type="Public" tokens="4" fgColour="FFFFFF" bgColour="848200"
+	<Company name="CB&amp;Q" type="Public" tokens="4" fgColour="FFFFFF" bgColour="848200"
 		longname="Chicago, Burlington &amp; Quincy Railroad">
 		<Home hex="K52"/>
 		<Destination hex="L29"/>
 	</Company>
 
 	<IfOption name="ShortGame" value="no">
-		<Company name="CRI&P" type="Public" tokens="5" fgColour="FFFFFF" bgColour="003000"
+		<Company name="CRI&amp;P" type="Public" tokens="5" fgColour="FFFFFF" bgColour="003000"
 			longname="Chicago, Rock Island &amp; Pacific Railroad">
 			<Home hex="J47"/>
 			<Destination hex="N29"/>
@@ -299,7 +298,7 @@
 	</IfOption>
 
 	<IfOption name="ShortGame" value="no">
-		<Company name="CMStP&P" type="Public" tokens="5" fgColour="FFFFFF" bgColour="840084"
+		<Company name="CMStP&amp;P" type="Public" tokens="5" fgColour="FFFFFF" bgColour="840084"
 			longname="Chicago, Milwaukee, St. Paul &amp; Pacific">
 			<Home hex="F49"/>
 			<Destination hex="C4"/>
@@ -307,7 +306,7 @@
 	</IfOption>
 
 	<IfOption name="ShortGame" value="no">
-		<Company name="D&RGW" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000"
+		<Company name="D&amp;RGW" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000"
 			longname="Denver &amp; Rio Grande Western Railroad">
 			<Home hex="L29"/>
 			<Destination hex="C4"/>
@@ -340,7 +339,7 @@
 		<Destination hex="J57"/>
 	</Company>
 
-	<Company name="L&N" type="Public" tokens="5" fgColour="FFFFFF" bgColour="000084"
+	<Company name="L&amp;N" type="Public" tokens="5" fgColour="FFFFFF" bgColour="000084"
 		longname="Louisville &amp; Nashville Railroad">
 		<Home hex="N59"/>
 		<Destination hex="W54"/>
@@ -364,13 +363,13 @@
 		<Destination hex="J57"/>
 	</Company>
 
-	<Company name="NYNH&H" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF6500"
+	<Company name="NYNH&amp;H" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF6500"
 		longname="New York, New Haven &amp; Hartford Railroad">
 		<Home hex="K78" city="1"/>
 		<Destination hex="E88"/>
 	</Company>
 
-	<Company name="N&W" type="Public" tokens="5" fgColour="840000" bgColour="FFFFFF"
+	<Company name="N&amp;W" type="Public" tokens="5" fgColour="840000" bgColour="FFFFFF"
 		longname="Norfolk and Western Railroad">
 		<Home hex="P73"/>
 		<Destination hex="W54"/>

@@ -36,8 +36,8 @@
 	<Company name="W&amp;SR" type="Private" basePrice="40" revenue="10">
 		<Blocking hex="I12"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay tile="59" location="I12" connected="no" extra="no"/>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay tile="59" location="I12" connected="no" extra="no"/>
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
 				<SpecialBaseTokenLay location="I12" connected="no" extra="no" free="yes"/>
@@ -50,8 +50,8 @@
 	<Company name="TCC" type="Private" basePrice="50" revenue="10">
 		<Blocking hex="H11"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay location="H11" connected="no" extra="yes"/>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay location="H11" connected="no" extra="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>

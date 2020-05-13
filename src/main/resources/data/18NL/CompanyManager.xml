@@ -27,8 +27,8 @@
 			longname="Private 1">
 		<Blocking hex="F5"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay colour="yellow" location="F5" extra="yes" free="no" discount="20" />
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay colour="yellow" location="F5" extra="yes" free="no" discount="20" />
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>

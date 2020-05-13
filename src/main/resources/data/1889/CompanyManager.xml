@@ -52,8 +52,8 @@
 			longName="Mitsubishi Ferry">
 <!-- 			Handling of special property outside of players public company turn is done in OperatingRound_1889, coded against name "B" -->
 			<SpecialProperties>
-				<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
-					<SpecialTileLay location="B11,G10,I12,J9" tile="437" extra="yes" free="yes"/>
+				<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+					<SpecialSingleTileLay location="B11,G10,I12,J9" tile="437" extra="yes" free="yes"/>
 				</SpecialProperty>
 			</SpecialProperties>
 		</Company>
@@ -62,16 +62,16 @@
 			<Blocking hex="C4"/>
 			<SpecialProperties>
 <!-- 			Timing of special property is done in OperatingRound_1889, coded against name "C" -->
-				<SpecialProperty condition="specific" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
-					<SpecialTileLay location="C4" colour="green" extra="yes" free="yes"/>
+				<SpecialProperty condition="specific" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+					<SpecialSingleTileLay location="C4" colour="green" extra="yes" free="yes"/>
 				</SpecialProperty>
 			</SpecialProperties>
 		</Company>
 		<Company name="D" type="Private" basePrice="50" revenue="15"
 			longName="Sumitomo Mines Railway">
 			<SpecialProperties>
-				<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" permanent="yes" class="net.sf.rails.game.special.SpecialTileLay">
-					<SpecialTileLay location="A8,B9,C6,D5,D7,E4,E6,F5,F7,G6,G8,H9,H11,H13" extra="no" free="yes" connected="yes"/>
+				<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" permanent="yes" class="net.sf.rails.game.special.SpecialSingleTileLay">
+					<SpecialSingleTileLay location="A8,B9,C6,D5,D7,E4,E6,F5,F7,G6,G8,H9,H11,H13" extra="no" free="yes" connected="yes"/>
 				</SpecialProperty>
 			</SpecialProperties>
 		</Company>
