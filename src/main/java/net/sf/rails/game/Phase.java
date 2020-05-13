@@ -93,6 +93,10 @@ public class Phase extends RailsModel implements Configurable {
     private ImmutableList<TrainCertificateType> releasedTrains;
     private String releasedTrainNames;
 
+    /** Dual train types to flip (turned upside down) if a phase gets activated */
+    protected List<TrainType> flippedTrains;
+    String flippedTrainNames;
+
     /**
      * Actions for this phase.
      * When this phase is activated, the GameManager method phaseAction() will be called,
@@ -218,6 +222,7 @@ public class Phase extends RailsModel implements Configurable {
             trainLimitStep = trainsTag.getAttributeAsInteger("limitStep", trainLimitStep);
             rustedTrainNames = trainsTag.getAttributeAsString("rusted", null);
             releasedTrainNames = trainsTag.getAttributeAsString("released", null);
+            flippedTrainNames = trainsTag.getAttributeAsString("flip", null);
             trainTradingAllowed = trainsTag.getAttributeAsBoolean("tradingAllowed", trainTradingAllowed);
             oneTrainPerTurn = trainsTag.getAttributeAsBoolean("onePerTurn", oneTrainPerTurn);
             oneTrainPerTypePerTurn = trainsTag.getAttributeAsBoolean("onePerTypePerTurn", oneTrainPerTypePerTurn);
@@ -258,18 +263,19 @@ public class Phase extends RailsModel implements Configurable {
     public void finishConfiguration(RailsRoot root) throws ConfigurationException {
 
         TrainManager trainManager = getRoot().getTrainManager();
-        TrainCertificateType type;
+        TrainCertificateType trainCertType;
+        TrainType trainType;
 
         if (rustedTrainNames != null) {
             ImmutableList.Builder<TrainCertificateType> newRustedTrains =
                     ImmutableList.builder();
             for (String typeName : rustedTrainNames.split(",")) {
-                type = trainManager.getCertTypeByName(typeName);
-                if (type == null) {
-                    throw new ConfigurationException(" Unknown rusted train type '" + typeName + "' for phase '" + getId() + "'");
+                trainCertType = trainManager.getCertTypeByName(typeName);
+                if (trainCertType == null) {
+                    throw new ConfigurationException (" Unknown rusted train type '"+typeName+"' for phase '"+ getId()+"'");
                 }
-                newRustedTrains.add(type);
-                type.setPermanent(false);
+                newRustedTrains.add(trainCertType);
+                trainCertType.setPermanent(false);
             }
             rustedTrains = newRustedTrains.build();
         }
@@ -278,14 +284,29 @@ public class Phase extends RailsModel implements Configurable {
             ImmutableList.Builder<TrainCertificateType> newReleasedTrains =
                     ImmutableList.builder();
             for (String typeName : releasedTrainNames.split(",")) {
-                type = trainManager.getCertTypeByName(typeName);
-                if (type == null) {
-                    throw new ConfigurationException(" Unknown released train type '" + typeName + "' for phase '" + getId() + "'");
+                trainCertType = trainManager.getCertTypeByName(typeName);
+                if (trainCertType == null) {
+                    throw new ConfigurationException (" Unknown released train type '"+typeName+"' for phase '"+getId()+"'");
                 }
-                newReleasedTrains.add(type);
+                newReleasedTrains.add(trainCertType);
             }
             releasedTrains = newReleasedTrains.build();
         }
+
+        if (flippedTrainNames != null) {
+            flippedTrains = new ArrayList<TrainType>(2);
+            for (String typeName : flippedTrainNames.split(",")) {
+                trainType = trainManager.getTypeByName(typeName);
+                if (trainType == null) {
+                    throw new ConfigurationException (" Unknown flipped train type '"+typeName+"' for phase '"+getId()+"'");
+                }
+                if (!trainType.isDual() || !trainType.isFlippable()) {
+                    throw new ConfigurationException (" Train type '"+typeName+"' is not flippable for phase '"+name+"'");
+                }
+                flippedTrains.add(trainType);
+            }
+        }
+
 
         // Push any extra tile lay turns to the appropriate company type.
         if (tileLaysPerColourTurns != null) {
@@ -324,6 +345,12 @@ public class Phase extends RailsModel implements Configurable {
         if (releasedTrains != null && !releasedTrains.isEmpty()) {
             for (TrainCertificateType type : releasedTrains) {
                 trainManager.makeTrainAvailable(type);
+            }
+        }
+
+        if (flippedTrains != null && !flippedTrains.isEmpty()) {
+            for (TrainType type : flippedTrains) {
+                trainManager.flipDualTrainCertificates(type);
             }
         }
 
@@ -437,6 +464,9 @@ public class Phase extends RailsModel implements Configurable {
     public List<TrainCertificateType> getReleasedTrains() {
         return releasedTrains;
     }
+
+    public List<TrainType> getFlippedTrains() { return flippedTrains; }
+
 
     /**
      * @return Returns the offBoardRevenueStep.
