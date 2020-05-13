@@ -45,8 +45,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     private static final int WIDE_TOP = 4;
     private static final int WIDE_BOTTOM = 8;
 
-    private static final Color buyableColour = new Color (0, 128, 0);
-    private static final Color soldColour = new Color (128, 128, 128);
+    private static final Color buyableColour = new Color(0, 128, 0);
+    private static final Color soldColour = new Color(128, 128, 128);
     private static final Color defaultColour = Color.BLACK;
 
     private JPanel statusPanel;
@@ -86,9 +86,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
     private ImageIcon infoIcon = null;
 
-    private int np; // Number of players
     private int ni; // Number of start items
-    private Player[] players;
+    private PlayerManager players;
     private StartItem[] items;
     private StartItemAction[] actionableItems;
     private StartPacket packet;
@@ -104,14 +103,10 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     private StartItem si;
     private JComponent f;
 
-    /** @see StartItem.statusName */
     protected static final String[] itemStatusTextKeys =
-        new String[] { "Status_Unavailable", "Status_Biddable", "Status_Buyable",
-        "Status_Selectable", "Status_Auctioned",
-        "Status_NeedingSharePrice", "Status_Sold" };
-
-    // Current state
-    private int playerIndex = -1;
+            new String[]{"Status_Unavailable", "Status_Biddable", "Status_Buyable",
+                    "Status_Selectable", "Status_Auctioned",
+                    "Status_NeedingSharePrice", "Status_Sold"};
 
     protected PossibleActions possibleActions;
     protected PossibleAction immediateAction = null;
@@ -181,8 +176,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
         gbc = new GridBagConstraints();
 
-        players = gameUIManager.getRoot().getPlayerManager().getPlayers().toArray(new Player[0]);
-        np = gameUIManager.getRoot().getPlayerManager().getNumberOfPlayers();
+        players = gameUIManager.getRoot().getPlayerManager();
+
         packet = round.getStartPacket();
         crossIndex = new int[packet.getNumberOfItems()];
 
@@ -214,10 +209,10 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         final JFrame thisFrame = this;
         final GameUIManager guiMgr = gameUIManager;
-        addWindowListener(new WindowAdapter () {
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if ( GameUIManager.confirmQuit(thisFrame) ) {
+                if (GameUIManager.confirmQuit(thisFrame)) {
                     thisFrame.dispose();
                     guiMgr.terminate();
                 }
@@ -228,6 +223,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             public void componentMoved(ComponentEvent e) {
                 guiMgr.getWindowSettings().set(thisFrame);
             }
+
             @Override
             public void componentResized(ComponentEvent e) {
                 guiMgr.getWindowSettings().set(thisFrame);
@@ -240,6 +236,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     private void initCells() {
         int lastX = -1;
         int lastY = 0;
+
+        int np = players.getNumberOfPlayers();
 
         itemName = new Caption[ni];
         itemNameButton = new ClickField[ni];
@@ -282,13 +280,13 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
         lowerPlayerCaptionYOffset = ++lastY;
 
-        fields = new JComponent[1+infoXOffset] [2+lastY];
+        fields = new JComponent[1 + infoXOffset][2 + lastY];
 
         addField(new Caption(LocalText.getText("ITEM")), 0, 0, 1, 2,
                 WIDE_RIGHT + WIDE_BOTTOM);
         if (showBasePrices) {
             addField(new Caption(LocalText.getText(includeBidding
-                    ? "BASE_PRICE" : "PRICE")), basePriceXOffset, 0, 1, 2,
+                            ? "BASE_PRICE" : "PRICE")), basePriceXOffset, 0, 1, 2,
                     WIDE_BOTTOM);
         }
         if (includeBidding) {
@@ -298,7 +296,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         addField(new Caption(LocalText.getText("PLAYERS")),
                 playerCaptionXOffset, 0, np, 1, 0);
         for (int i = 0; i < np; i++) {
-            f = upperPlayerCaption[i] = new Field(players[i].getPlayerNameModel());
+            f = upperPlayerCaption[i] = new Field(players.getPlayerByPosition(i).getPlayerNameModel());
             addField(f, playerCaptionXOffset + i, upperPlayerCaptionYOffset, 1, 1, WIDE_BOTTOM);
         }
 
@@ -310,9 +308,9 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                     si);
             addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
             f =
-                itemNameButton[i] =
-                    new ClickField(si.getId(), "", "", this,
-                            itemGroup);
+                    itemNameButton[i] =
+                            new ClickField(si.getId(), "", "", this,
+                                    itemGroup);
             HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
                     si);
@@ -331,20 +329,20 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             }
 
             for (int j = 0; j < np; j++) {
-                f = bidPerPlayer[i][j] = new Field(round.getBidModel(i, players[j]));
+                f = bidPerPlayer[i][j] = new Field(round.getBidModel(i, players.getPlayerByPosition(j)));
                 addField(f, bidPerPlayerXOffset + j, bidPerPlayerYOffset + i,
                         1, 1, 0);
             }
 
-            f = info[i] = new Field (infoIcon);
+            f = info[i] = new Field(infoIcon);
             f.setToolTipText(getStartItemDescription(si));
             HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
                     si);
-            addField (f, infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
+            addField(f, infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
 
             // Invisible field, only used to hold current item status.
-            f = itemStatus[i] = new Field (si.getStatusModel());
+            f = itemStatus[i] = new Field(si.getStatusModel());
         }
 
         // Player money
@@ -354,7 +352,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                     playerBidsXOffset - 1, playerBidsYOffset, 1, 1,
                     WIDE_TOP + WIDE_RIGHT);
             for (int i = 0; i < np; i++) {
-                f = playerBids[i] = new Field(round.getBlockedCashModel(players[i]));
+                f = playerBids[i] = new Field(round.getBlockedCashModel(players.getPlayerByPosition(i)));
                 addField(f, playerBidsXOffset + i, playerBidsYOffset, 1, 1,
                         WIDE_TOP);
             }
@@ -362,21 +360,21 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         }
 
         addField(new Caption(
-                LocalText.getText(includeBidding ? "FREE" : "CASH")),
+                        LocalText.getText(includeBidding ? "FREE" : "CASH")),
                 playerFreeCashXOffset - 1, playerFreeCashYOffset, 1, 1,
                 WIDE_RIGHT + (firstBelowTable ? WIDE_TOP : 0));
         for (int i = 0; i < np; i++) {
             f =
-                playerFree[i] =
-                    new Field(includeBidding
-                            ? round.getFreeCashModel(players[i])
-                                    : players[i].getWallet());
+                    playerFree[i] =
+                            new Field(includeBidding
+                                    ? round.getFreeCashModel(players.getPlayerByPosition(i))
+                                    : players.getPlayerByPosition(i).getWallet());
             addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset, 1, 1,
                     firstBelowTable ? WIDE_TOP : 0);
         }
 
         for (int i = 0; i < np; i++) {
-            f = lowerPlayerCaption[i] = new Field(players[i].getPlayerNameModel());
+            f = lowerPlayerCaption[i] = new Field(players.getPlayerByPosition(i).getPlayerNameModel());
             addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset + 1,
                     1, 1, WIDE_TOP);
         }
@@ -398,12 +396,12 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         padTop = (wideGapPositions & WIDE_TOP) > 0 ? WIDE_GAP : NARROW_GAP;
         padLeft = (wideGapPositions & WIDE_LEFT) > 0 ? WIDE_GAP : NARROW_GAP;
         padBottom =
-            (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP : NARROW_GAP;
-            padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP : NARROW_GAP;
-            gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
+                (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP : NARROW_GAP;
+        padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP : NARROW_GAP;
+        gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
 
-            statusPanel.add(comp, gbc);
-            fields[x][y] = comp;
+        statusPanel.add(comp, gbc);
+        fields[x][y] = comp;
 
     }
 
@@ -448,8 +446,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             return;
         }
 
-        int nextPlayerIndex = ((PossibleAction) actions.get(0)).getPlayerIndex();
-        setSRPlayerTurn(nextPlayerIndex);
+        //int nextPlayerIndex = ((PossibleAction) actions.get(0)).getPlayerIndex();
+        setSRPlayerTurn();
 
         boolean buyAllowed = false;
         boolean bidAllowed = false;
@@ -486,7 +484,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                     PossibleAction lastAction = gameUIManager.getLastAction();
                     if (lastAction instanceof GameAction
                             && EnumSet.of(GameAction.Mode.UNDO, GameAction.Mode.FORCED_UNDO).contains(
-                            ((GameAction) lastAction).getMode() )) {
+                            ((GameAction) lastAction).getMode())) {
                         // If we come here via an Undo, we should not start
                         // with a modal dialog, as that would prevent further
                         // Undos.
@@ -626,7 +624,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             }
         } else if (source instanceof ActionButton) {
             PossibleAction activeItem =
-                ((ActionButton) source).getPossibleActions().get(0);
+                    ((ActionButton) source).getPossibleActions().get(0);
 
             if (source == buyButton) {
                 if (activeItem instanceof BuyStartItem
@@ -640,8 +638,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                 process(activeItem);
 
             } else if (source == passButton) {
-                if ( activeItem instanceof BidStartItem
-                        && ((BidStartItem) activeItem).isSelectForAuction() ) {
+                if (activeItem instanceof BidStartItem
+                        && ((BidStartItem) activeItem).isSelectForAuction()) {
                     ((BidStartItem) activeItem).setActualBid(-1);
                 }
                 process(activeItem);
@@ -669,7 +667,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             }
             String[] options = new String[startSpaces.size()];
             int i = 0;
-            for (StockSpace space:startSpaces) {
+            for (StockSpace space : startSpaces) {
                 options[i++] = gameUIManager.format(space.getPrice());
             }
 
@@ -679,11 +677,11 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                     this,
                     LocalText.getText("PleaseSelect"),
                     LocalText.getText("WHICH_START_PRICE",
-                            getSRPlayer(),
+                            players.getCurrentPlayer().getId(),
                             compName),
-                            options,
-                            -1);
-            setCurrentDialog (dialog, activeItem);
+                    options,
+                    -1);
+            setCurrentDialog(dialog, activeItem);
 
         }
         return true;
@@ -695,12 +693,12 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     }
 
     @Override
-    public PossibleAction getCurrentDialogAction () {
+    public PossibleAction getCurrentDialogAction() {
         return currentDialogAction;
     }
 
     @Override
-    public void setCurrentDialog (JDialog dialog, PossibleAction action) {
+    public void setCurrentDialog(JDialog dialog, PossibleAction action) {
         if (currentDialog != null) {
             currentDialog.dispose();
         }
@@ -710,7 +708,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     }
 
     @Override
-    public void dialogActionPerformed () {
+    public void dialogActionPerformed() {
 
         if (currentDialog instanceof RadioButtonDialog
                 && currentDialogAction instanceof BuyStartItem) {
@@ -722,7 +720,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             if (index >= 0) {
                 int price = Iterables.get(startSpaces, index).getPrice();
                 action.setAssociatedSharePrice(price);
-                process (action);
+                process(action);
             } else {
                 // No selection done - no action
                 return;
@@ -734,8 +732,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     }
 
     protected void disableButtons() {
-        if (includeBidding){
-        bidButton.setEnabled(false);
+        if (includeBidding) {
+            bidButton.setEnabled(false);
         }
         if (includeBuying) {
             buyButton.setEnabled(false);
@@ -747,25 +745,14 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         this.dispose();
     }
 
-    public void setSRPlayerTurn(int selectedPlayerIndex) {
-        int j;
-
-        if ((j = this.playerIndex) >= 0) {
-            upperPlayerCaption[j].setHighlight(false);
-            lowerPlayerCaption[j].setHighlight(false);
+    public void setSRPlayerTurn() {
+        for (int i = 0; i < players.getNumberOfPlayers(); i++) {
+            upperPlayerCaption[i].setHighlight(false);
+            lowerPlayerCaption[i].setHighlight(false);
         }
-        this.playerIndex = selectedPlayerIndex;
-        if ((j = this.playerIndex) >= 0) {
-            upperPlayerCaption[j].setHighlight(true);
-            lowerPlayerCaption[j].setHighlight(true);
-        }
-    }
 
-    public String getSRPlayer() {
-        if (playerIndex >= 0)
-            return players[playerIndex].getId();
-        else
-            return "";
+        upperPlayerCaption[players.getCurrentPlayer().getIndex()].setHighlight(true);
+        lowerPlayerCaption[players.getCurrentPlayer().getIndex()].setHighlight(true);
     }
 
     private void setItemNameButton(int i, boolean clickable) {
@@ -779,31 +766,31 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         itemName[i].setToolTipText(clickable ? "" : tooltip);
         itemNameButton[i].setToolTipText(clickable ? tooltip : "");
 
-        itemName[i].setForeground (
+        itemName[i].setForeground(
                 status == StartItem.SOLD ? soldColour : defaultColour);
-        itemNameButton[i].setForeground (
+        itemNameButton[i].setForeground(
                 status == StartItem.BUYABLE ? buyableColour : defaultColour);
     }
 
-    private String getStartItemDescription (StartItem item) {
+    private String getStartItemDescription(StartItem item) {
         StringBuilder b = new StringBuilder("<html>");
         b.append(item.getPrimary().toText());
         if (item.getPrimary() instanceof PrivateCompany) {
             PrivateCompany priv = (PrivateCompany) item.getPrimary();
-                b.append ("<br>Revenue: ").append(Bank.format(item, priv.getRevenue()));
+            b.append("<br>Revenue: ").append(Bank.format(item, priv.getRevenue()));
             List<MapHex> blockedHexes = priv.getBlockedHexes();
             if (blockedHexes == null) {
             } else if (blockedHexes.size() == 1) {
-                    b.append("<br>Blocked hex: ").append(blockedHexes.get(0).getId());
+                b.append("<br>Blocked hex: ").append(blockedHexes.get(0).getId());
             } else if (blockedHexes.size() > 1) {
                 b.append("<br>Blocked hexes:");
                 for (MapHex hex : blockedHexes) {
-                        b.append(" ").append(hex.getId());
+                    b.append(" ").append(hex.getId());
                 }
             }
             if (priv.hasSpecialProperties()) {
                 b.append("<br><b>Special properties:</b>");
-                    for (SpecialProperty sp : priv.getSpecialProperties()) {
+                for (SpecialProperty sp : priv.getSpecialProperties()) {
                     b.append("<br>").append(sp.getInfo());
                 }
             }
@@ -843,9 +830,11 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     }
 
     public void updatePlayerOrder(List<String> newPlayerNames) {
+        int np = players.getNumberOfPlayers();
+
         int[] xref = new int[np];
         List<String> oldPlayerNames = gameUIManager.getCurrentGuiPlayerNames();
-       for (int i=0; i<np; i++) {
+        for (int i = 0; i < np; i++) {
             xref[i] = oldPlayerNames.indexOf(newPlayerNames.get(i));
         }
         log.debug("SRW: old player list: {}", Util.joinWithDelimiter(oldPlayerNames.toArray(new String[0]), ","));
@@ -855,18 +844,18 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         JComponent[] cells = new Cell[np];
         GridBagConstraints[] constraints = new GridBagConstraints[np];
         JComponent f;
-        for (int y=upperPlayerCaptionYOffset; y<=lowerPlayerCaptionYOffset; y++) {
-         for (int i=0, x=playerCaptionXOffset; i<np; i++, x++) {
+        for (int y = upperPlayerCaptionYOffset; y <= lowerPlayerCaptionYOffset; y++) {
+            for (int i = 0, x = playerCaptionXOffset; i < np; i++, x++) {
                 cells[i] = fields[x][y];
                 constraints[i] = gb.getConstraints(cells[i]);
-               statusPanel.remove(cells[i]);
+                statusPanel.remove(cells[i]);
             }
-            for (int i=0, x=playerCaptionXOffset; i<np; i++, x++) {
-               f = fields[x][y] = cells[xref[i]];
-               statusPanel.add (f, constraints[i]);
+            for (int i = 0, x = playerCaptionXOffset; i < np; i++, x++) {
+                f = fields[x][y] = cells[xref[i]];
+                statusPanel.add(f, constraints[i]);
             }
         }
-        for (int i=0, x=playerCaptionXOffset; i<np; i++, x++) {
+        for (int i = 0, x = playerCaptionXOffset; i < np; i++, x++) {
             upperPlayerCaption[i] = (Field) fields[x][upperPlayerCaptionYOffset];
             lowerPlayerCaption[i] = (Field) fields[x][lowerPlayerCaptionYOffset];
         }

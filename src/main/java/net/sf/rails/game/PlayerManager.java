@@ -125,6 +125,10 @@ public class PlayerManager extends RailsManager implements Configurable {
         return playerModel.playerOrder.view();
     }
 
+    public Player getPlayerByPosition(int position) {
+        return playerModel.playerOrder.get(position);
+    }
+
     public Player getPlayerByName(String name) {
         return playerNames.get(name);
     }
