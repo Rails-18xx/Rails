@@ -313,13 +313,17 @@ public abstract class StartRound extends Round {
 
     /*----- Setting up the UI for the next action -----*/
 
+    public List<StartItem> getStartItems() {
+        return itemsToSell.view();
+    }
+
     /**
      * Get the total number of start items
      *
      * @return The number of start items
      */
     public int getNumberOfStartItems() {
-        return itemsToSell.size();
+        return getStartItems().size();
     }
 
     /**
@@ -329,7 +333,7 @@ public abstract class StartRound extends Round {
      * @return The start item with the given index
      */
     public StartItem getStartItem(int index) {
-        return itemsToSell.get(index);
+        return getStartItems().get(index);
     }
 
     /**
