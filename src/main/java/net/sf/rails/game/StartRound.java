@@ -314,14 +314,22 @@ public abstract class StartRound extends Round {
     /*----- Setting up the UI for the next action -----*/
 
     /**
-     * Get the current list of start items.
+     * Get the total number of start items
      *
-     * @return An array of start items, possibly empry.
+     * @return The number of start items
      */
+    public int getNumberOfStartItems() {
+        return itemsToSell.size();
+    }
 
-    public List<StartItem> getStartItems() {
-
-        return itemsToSell.view();
+    /**
+     * Get the start item with the given index
+     *
+     * @param index The index of the requested start item
+     * @return The start item with the given index
+     */
+    public StartItem getStartItem(int index) {
+        return itemsToSell.get(index);
     }
 
     /**
