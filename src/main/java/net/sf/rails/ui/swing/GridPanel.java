@@ -27,6 +27,7 @@ import javax.swing.border.CompoundBorder;
 
 import net.sf.rails.common.Config;
 import net.sf.rails.game.Player;
+import net.sf.rails.game.PlayerManager;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.round.RoundFacade;
@@ -62,8 +63,7 @@ implements ActionListener, KeyListener {
 
     protected static Color buttonHighlight = new Color(255, 160, 80);
 
-    protected int np;
-    protected Player[] players;
+    protected PlayerManager players;
     protected int nc;
     protected PublicCompany[] companies;
     protected RoundFacade round;

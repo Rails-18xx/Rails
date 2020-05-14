@@ -22,6 +22,7 @@ import java.util.stream.IntStream;
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 
+import net.sf.rails.game.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,18 +41,6 @@ import net.sf.rails.common.GuiHints;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.notify.Discord;
 import net.sf.rails.common.notify.Slack;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.OpenGamesManager;
-import net.sf.rails.game.OperatingRound;
-import net.sf.rails.game.Phase;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.StartRound;
-import net.sf.rails.game.Station;
-import net.sf.rails.game.SwitchableUIRound;
-import net.sf.rails.game.Train;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.StockRound;
 import net.sf.rails.game.round.RoundFacade;
@@ -1200,6 +1189,10 @@ public class GameUIManager implements DialogOwner {
 
     public int getNumberOfPlayers() {
         return railsRoot.getPlayerManager().getNumberOfPlayers();
+    }
+
+    public PlayerManager getPlayerManager() {
+        return railsRoot.getPlayerManager();
     }
 
     public List<Player> getPlayers() {

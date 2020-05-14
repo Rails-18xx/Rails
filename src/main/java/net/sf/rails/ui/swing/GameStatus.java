@@ -147,7 +147,6 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected ClickField dummyButton; // To be selected if none else is.
 
     protected final Map<PublicCompany, Integer> companyIndex = Maps.newHashMap();
-    protected final Map<Player, Integer> playerIndex = Maps.newHashMap();
 
     private static final Logger log = LoggerFactory.getLogger(GameStatus.class);
 
@@ -175,8 +174,8 @@ public class GameStatus extends GridPanel implements ActionListener {
         setBorder(BorderFactory.createEtchedBorder());
         setOpaque(false);
 
-        players = gameUIManager.getPlayers().toArray(new Player[0]);
-        np = gameUIManager.getNumberOfPlayers();
+        players = gameUIManager.getPlayerManager();
+
         companies = gameUIManager.getAllPublicCompanies().toArray(new PublicCompany[0]);
         nc = companies.length;
 
@@ -190,6 +189,8 @@ public class GameStatus extends GridPanel implements ActionListener {
         // TODO: Can this be done using ipo and pool directly?
         ipo = bank.getIpo().getPortfolioModel();
         pool = bank.getPool().getPortfolioModel();
+
+        int np = players.getNumberOfPlayers();
 
         certPerPlayer = new Field[nc][np];
         certPerPlayerButton = new ClickField[nc][np];
@@ -298,6 +299,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     }
 
     protected void initFields() {
+        int np = players.getNumberOfPlayers();
 
         MouseListener companyCaptionMouseClickListener = gameUIManager.getORUIManager().getORPanel().getCompanyCaptionMouseClickListener();
 
@@ -306,8 +308,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("PLAYERS")),
                 certPerPlayerXOffset, 0, np, 1, WIDE_LEFT + WIDE_RIGHT, true);
         for (int i = 0; i < np; i++) {
-            playerIndex.put(players[i], i);
-            f = upperPlayerCaption[i] = new Caption(players[i].getNameAndPriority());
+            f = upperPlayerCaption[i] = new Caption(players.getPlayerByPosition(i).getNameAndPriority());
             int wideGapPosition = WIDE_BOTTOM + ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, certPerPlayerXOffset + i, 1, 1, 1, wideGapPosition, true);
         }
@@ -384,17 +385,15 @@ public class GameStatus extends GridPanel implements ActionListener {
             addField(f, 0, certPerPlayerYOffset + i, 1, 1, 0, visible);
 
             for (int j = 0; j < np; j++) {
-                f =
-                    certPerPlayer[i][j] =
-                        new Field(
-                                players[j].getPortfolioModel().getShareModel(
-                                        c));
-                ((Field)f).setColorModel(players[j].getSoldThisRoundModel(c));
+                final Player player = players.getPlayerByPosition(j);
+
+                f = certPerPlayer[i][j] =new Field(player.getPortfolioModel().getShareModel(c));
+                ((Field)f).setColorModel(player.getSoldThisRoundModel(c));
                 int wideGapPosition = ((j==0)? WIDE_LEFT : 0) + ((j==np-1)? WIDE_RIGHT : 0);
                 addField(f, certPerPlayerXOffset + j, certPerPlayerYOffset + i,
                         1, 1, wideGapPosition, visible);
                 // TODO: Simplify the assignment (using f as correct local variable)
-                certPerPlayer[i][j].setToolTipModel(players[j].getPortfolioModel().getShareDetailsModel(c));
+                certPerPlayer[i][j].setToolTipModel(player.getPortfolioModel().getShareDetailsModel(c));
                 f =
                     certPerPlayerButton[i][j] =
                         new ClickField("", SELL_CMD,
@@ -532,7 +531,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("CASH")), 0, playerCashYOffset,
                 1, 1, WIDE_TOP , true);
         for (int i = 0; i < np; i++) {
-            f = playerCash[i] = new Field(players[i].getWallet());
+            f = playerCash[i] = new Field(players.getPlayerByPosition(i).getWallet());
             int wideGapPosition = WIDE_TOP +
                     ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerCashXOffset + i, playerCashYOffset, 1, 1,
@@ -551,13 +550,12 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("PRIVATES")), 0, playerPrivatesYOffset, 1, 1,
                 0, true);
         for (int i = 0; i < np; i++) {
-            f =
-                playerPrivates[i] =
-                    new Field(
-                            players[i].getPortfolioModel().getPrivatesOwnedModel());
+            final Player player = players.getPlayerByPosition(i);
+
+            f = playerPrivates[i] = new Field(player.getPortfolioModel().getPrivatesOwnedModel());
             HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
-                    players[i].getPortfolioModel());
+                    player.getPortfolioModel());
             int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerPrivatesXOffset + i, playerPrivatesYOffset, 1, 1,
                     wideGapPosition, true);
@@ -570,7 +568,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             if (GameOption.getAsBoolean(gameUIManager.getRoot(), "NetworthHidden")) {
                 f = new Caption("*");
             } else {
-                f = playerWorth[i] = new Field(players[i].getWorthModel());
+                f = playerWorth[i] = new Field(players.getPlayerByPosition(i).getWorthModel());
             }
             int wideGapPosition = ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerWorthXOffset + i, playerWorthYOffset, 1, 1, wideGapPosition, true);
@@ -582,7 +580,7 @@ public class GameStatus extends GridPanel implements ActionListener {
             if (GameOption.getAsBoolean(gameUIManager.getRoot(),"NetworthHidden")) {
                 f = new Caption("*");
             } else {
-                f = playerORWorthIncrease[i] = new Field(players[i].getLastORWorthIncrease());
+                f = playerORWorthIncrease[i] = new Field(players.getPlayerByPosition(i).getLastORWorthIncrease());
             }
             int wideGapPosition = ((i == 0) ? WIDE_LEFT : 0) + ((i == np - 1) ? WIDE_RIGHT : 0);
             addField(f, playerORWorthIncreaseXOffset + i, playerORWorthIncreaseYOffset, 1, 1, wideGapPosition, true);
@@ -593,7 +591,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         for (int i = 0; i < np; i++) {
             f =
                 playerCertCount[i] =
-                    new Field(players[i].getCertCountModel(), false, true);
+                    new Field(players.getPlayerByPosition(i).getCertCountModel(), false, true);
             int wideGapPosition = WIDE_TOP +
                     ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, playerCertCountXOffset + i, playerCertCountYOffset, 1,
@@ -601,7 +599,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         }
 
         for (int i = 0; i < np; i++) {
-            f = lowerPlayerCaption[i] = new Caption(players[i].getId());
+            f = lowerPlayerCaption[i] = new Caption(players.getPlayerByPosition(i).getId());
             int wideGapPosition = WIDE_TOP +
                     ((i==0)? WIDE_LEFT : 0) + ((i==np-1)? WIDE_RIGHT : 0);
             addField(f, i + 1, playerCertCountYOffset + 1, 1, 1, wideGapPosition, true);
@@ -935,6 +933,8 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         dummyButton.setSelected(true);
 
+        int np = players.getNumberOfPlayers();
+
         for (i = 0; i < nc; i++) {
             setIPOCertButton(i, false);
             setPoolCertButton(i, false);
@@ -1011,6 +1011,7 @@ public class GameStatus extends GridPanel implements ActionListener {
      * Initializes the CashCorrectionActions
      */
     public boolean initCashCorrectionActions() {
+        int np = players.getNumberOfPlayers();
 
         // Clear all buttons
         for (int i = 0; i < nc; i++) {
@@ -1033,7 +1034,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                 }
                 if (ch instanceof Player) {
                     Player p = (Player)ch;
-                    int i = playerIndex.get(p);
+                    int i = p.getIndex();
                     setPlayerCashButton(i, true, a);
                 }
             }
@@ -1044,15 +1045,18 @@ public class GameStatus extends GridPanel implements ActionListener {
     }
 
     public void setPriorityPlayer(int index) {
+        int np = players.getNumberOfPlayers();
 
         for (int j = 0; j < np; j++) {
-            String playerNameAndPriority = players[j].getId() + (j == index ? " PD" : "");
+            String playerNameAndPriority = players.getPlayerByPosition(j).getId() + (j == index ? " PD" : "");
             upperPlayerCaption[j].setText(playerNameAndPriority);
             lowerPlayerCaption[j].setText(playerNameAndPriority);
         }
     }
 
     public void highlightCurrentPlayer (int index) {
+        int np = players.getNumberOfPlayers();
+
         for (int j = 0; j < np; j++) {
             upperPlayerCaption[j].setHighlight(j == index);
             lowerPlayerCaption[j].setHighlight(j == index);
@@ -1060,6 +1064,8 @@ public class GameStatus extends GridPanel implements ActionListener {
     }
 
     public void highlightLocalPlayer (int index) {
+        int np = players.getNumberOfPlayers();
+
         for (int j = 0; j < np; j++) {
             upperPlayerCaption[j].setLocalPlayer(j == index);
             lowerPlayerCaption[j].setLocalPlayer(j == index);
@@ -1068,7 +1074,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
     public String getSRPlayer() {
         if (actorIndex >= 0)
-            return players[actorIndex].getId();
+            return players.getPlayerByPosition(actorIndex).getId();
         else
             return "";
     }
