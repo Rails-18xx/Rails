@@ -49,6 +49,16 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     private static final Color soldColour = new Color(128, 128, 128);
     private static final Color defaultColour = Color.BLACK;
 
+    protected static final String[] itemStatusTextKeys =
+            new String[]{"Status_Unavailable", "Status_Biddable", "Status_Buyable",
+                    "Status_Selectable", "Status_Auctioned",
+                    "Status_NeedingSharePrice", "Status_Sold"};
+
+    /* Keys of dialogs owned by this class */
+    public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
+
+    private static final Logger log = LoggerFactory.getLogger(StartRoundWindow.class);
+
     private JPanel statusPanel;
     private JPanel buttonPanel;
 
@@ -86,11 +96,10 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
     private ImageIcon infoIcon = null;
 
-    private int ni; // Number of start items
     private PlayerManager players;
-    private StartItem[] items;
+
     private StartItemAction[] actionableItems;
-    private StartPacket packet;
+
     private int[] crossIndex;
     protected StartRound round;
     private GameUIManager gameUIManager;
@@ -103,11 +112,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     private StartItem si;
     private JComponent f;
 
-    protected static final String[] itemStatusTextKeys =
-            new String[]{"Status_Unavailable", "Status_Biddable", "Status_Buyable",
-                    "Status_Selectable", "Status_Auctioned",
-                    "Status_NeedingSharePrice", "Status_Sold"};
-
     protected PossibleActions possibleActions;
     protected PossibleAction immediateAction = null;
 
@@ -117,11 +121,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     private boolean includeBidding;
     private boolean includeBuying;
     private boolean showBasePrices;
-
-    /* Keys of dialogs owned by this class */
-    public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
-
-    private static final Logger log = LoggerFactory.getLogger(StartRoundWindow.class);
 
     public void init(StartRound round, GameUIManager parent) {
         //super();
@@ -159,7 +158,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             buttonPanel.add(bidButton);
 
             spinnerModel =
-                new SpinnerNumberModel(999, 0, null, 1);
+                    new SpinnerNumberModel(999, 0, null, 1);
             bidAmount = new JSpinner(spinnerModel);
             bidAmount.setPreferredSize(new Dimension(50, 28));
             bidAmount.setEnabled(false);
@@ -178,18 +177,15 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
         players = gameUIManager.getRoot().getPlayerManager();
 
-        packet = round.getStartPacket();
-        crossIndex = new int[packet.getNumberOfItems()];
+        crossIndex = new int[round.getNumberOfStartItems()];
 
-        items = round.getStartItems().toArray(new StartItem[0]);
-        ni = items.length;
-        StartItem item;
-        for (int i = 0; i < ni; i++) {
-            item = items[i];
+        for (int i = 0; i < round.getNumberOfStartItems(); i++) {
+            final StartItem item = round.getStartItem(i);
+
             crossIndex[item.getIndex()] = i;
         }
 
-        actionableItems = new StartItemAction[ni];
+        actionableItems = new StartItemAction[round.getNumberOfStartItems()];
 
         infoIcon = createInfoIcon();
 
@@ -238,6 +234,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         int lastY = 0;
 
         int np = players.getNumberOfPlayers();
+        int ni = round.getNumberOfStartItems();
 
         itemName = new Caption[ni];
         itemNameButton = new ClickField[ni];
@@ -301,7 +298,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         }
 
         for (int i = 0; i < ni; i++) {
-            si = items[i];
+            si = round.getStartItem(i);
             f = itemName[i] = new Caption(si.getId());
             HexHighlightMouseListener.addMouseListener(f,
                     gameUIManager.getORUIManager(),
@@ -384,7 +381,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     }
 
     private void addField(JComponent comp, int x, int y, int width, int height,
-            int wideGapPositions) {
+                          int wideGapPositions) {
 
         int padTop, padLeft, padBottom, padRight;
         gbc.gridx = x;
@@ -410,7 +407,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         StartItem item;
         int i, j;
 
-        for (i = 0; i < ni; i++) {
+        for (i = 0; i < round.getNumberOfStartItems(); i++) {
             setItemNameButton(i, false);
             actionableItems[i] = null;
         }
@@ -816,13 +813,16 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {
+    }
 
     @Override
-    public void keyReleased(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {
+    }
 
     @Override
-    public void keyTyped(KeyEvent e) {}
+    public void keyTyped(KeyEvent e) {
+    }
 
     @Override
     public boolean process(PossibleAction action) {
