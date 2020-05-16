@@ -161,7 +161,7 @@ implements ActionListener, KeyListener, RevenueListener {
         initButtonPanel();
         gbc = new GridBagConstraints();
 
-        players = gameUIManager.getPlayers().toArray(new Player[0]);
+        players = gameUIManager.getPlayerManager();
 
         if (round instanceof OperatingRound) {
             companies = ((OperatingRound) round).getOperatingCompanies().toArray(new PublicCompany[0]);
@@ -1422,7 +1422,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public String getORPlayer() {
         if (playerIndex >= 0)
-            return players[playerIndex].getId();
+            return players.getPlayerByPosition(playerIndex).getId();
         else
             return "";
     }
