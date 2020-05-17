@@ -98,8 +98,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
     private PlayerManager players;
 
-    private StartItemAction[] actionableItems;
-
     private int[] crossIndex;
     protected StartRound round;
     private GameUIManager gameUIManager;
@@ -184,8 +182,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
             crossIndex[item.getIndex()] = i;
         }
-
-        actionableItems = new StartItemAction[round.getNumberOfStartItems()];
 
         infoIcon = createInfoIcon();
 
@@ -409,8 +405,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
         for (i = 0; i < round.getNumberOfStartItems(); i++) {
             setItemNameButton(i, false);
-            actionableItems[i] = null;
         }
+
         // Unselect the selected private
         dummyButton.setSelected(true);
 
@@ -456,7 +452,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         for (StartItemAction action : actions) {
             j = action.getItemIndex();
             i = crossIndex[j];
-            actionableItems[i] = action;
+
             item = action.getStartItem();
 
             if (action instanceof BuyStartItem) {
