@@ -143,6 +143,9 @@ public class GameStatus extends GridPanel implements ActionListener {
     // Company (from treasury): -1.
     protected int actorIndex = -2;
 
+    private int nc;
+    private PublicCompany[] companies;
+
     protected final ButtonGroup buySellGroup = new ButtonGroup();
     protected ClickField dummyButton; // To be selected if none else is.
 

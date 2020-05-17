@@ -121,8 +121,10 @@ implements ActionListener, KeyListener, RevenueListener {
     private ActionButton redoButton;
 
     // Current state
-    private int playerIndex = -1;
     private int orCompIndex = -1;
+
+    private int nc;
+    private PublicCompany[] companies;
 
     private PublicCompany orComp = null;
 
@@ -1413,18 +1415,6 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setEnabled(false);
 
         orUIManager.getMap().setTrainPaths(null);
-    }
-
-    // TEMPORARY
-    public PublicCompany getORComp() {
-        return orComp;
-    }
-
-    public String getORPlayer() {
-        if (playerIndex >= 0)
-            return players.getPlayerByPosition(playerIndex).getId();
-        else
-            return "";
     }
 
     private void setSelect(JComponent f, JComponent s, boolean active) {

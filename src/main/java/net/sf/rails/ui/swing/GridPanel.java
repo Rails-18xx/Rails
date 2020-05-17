@@ -64,8 +64,6 @@ implements ActionListener, KeyListener {
     protected static Color buttonHighlight = new Color(255, 160, 80);
 
     protected PlayerManager players;
-    protected int nc;
-    protected PublicCompany[] companies;
     protected RoundFacade round;
     protected PublicCompany c;
     protected JComponent f;
