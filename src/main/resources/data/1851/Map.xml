@@ -22,7 +22,7 @@
 	<Hex name="C5" tile="0"/>
 	<Hex name="C7" tile="0"/>
 	<Hex name="C9" tile="0" cost="40"/>
-	<Hex name="C11" tile="0" cost="40" city="Owensboro"/>
+	<Hex name="C11" tile="-10" cost="40" city="Owensboro"/>
 	<Hex name="C13" tile="0" cost="40"/>
 	<Hex name="C15" tile="0"/>
 	<Hex name="C17" tile="0" cost="40"/>
