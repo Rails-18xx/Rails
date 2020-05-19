@@ -22,16 +22,16 @@
 	<Company name="C&amp;StL" type="Private" basePrice="40" revenue="10">
 		<Blocking hex="D15"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay location="D15" extra="yes"/>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay location="D15" extra="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
 	<Company name="D&amp;H" type="Private" basePrice="70" revenue="15">
 		<Blocking hex="K16"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay location="K16" extra="no" free="no"/>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay location="K16" extra="no" free="no"/>
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
 				<SpecialBaseTokenLay location="K16" extra="no" free="yes"/>

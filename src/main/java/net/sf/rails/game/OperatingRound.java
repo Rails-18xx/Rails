@@ -1800,6 +1800,12 @@ public class OperatingRound extends Round implements Observer {
                 if (validateSpecialTileLay(layTile))
                     currentSpecialTileLays.add(layTile);
             }
+/*              for (SpecialMultiTileLay smtl : getSpecialProperties(SpecialMultiTileLay.class)) {
+
+                LayTile layTile = new LayTile(smtl);
+                if (validateSpecialTileLay(layTile))
+                    currentSpecialTileLays.add(layTile);
+            }*/
         }
 
         if (display) {
