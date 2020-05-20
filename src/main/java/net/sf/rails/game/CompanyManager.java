@@ -23,20 +23,20 @@ public class CompanyManager extends RailsManager implements Configurable {
     public static final String COMPONENT_NAME = "CompanyManager";
 
     /** A List with all private companies */
-    private final List<PrivateCompany> lPrivateCompanies = new ArrayList<>();
+    protected final List<PrivateCompany> lPrivateCompanies = new ArrayList<>();
 
     /** A List with all public companies */
-    private final List<PublicCompany> lPublicCompanies = new ArrayList<>();
+    protected final List<PublicCompany> lPublicCompanies = new ArrayList<>();
 
     /** A map with all private companies by name */
-    private final Map<String, PrivateCompany> mPrivateCompanies = new HashMap<>();
+    protected final Map<String, PrivateCompany> mPrivateCompanies = new HashMap<>();
 
     /** A map with all public (i.e. non-private) companies by name */
-    private final Map<String, PublicCompany> mPublicCompanies = new HashMap<>();
+    protected final Map<String, PublicCompany> mPublicCompanies = new HashMap<>();
 
     /** A map of all type names to maps of companies of that type by name */
     // TODO Redundant, current usage can be replaced.
-    private final Map<String, Map<String, Company>> mCompaniesByTypeAndName = new HashMap<>();
+    protected final Map<String, Map<String, Company>> mCompaniesByTypeAndName = new HashMap<>();
 
     /** A list of all company types */
     private final List<CompanyType> lCompanyTypes = new ArrayList<>();
@@ -49,7 +49,7 @@ public class CompanyManager extends RailsManager implements Configurable {
     /** A map to enable translating aliases to names */
     protected Map<String, String> aliases = null;
 
-    private int numberOfPublicCompanies = 0;
+    protected int numberOfPublicCompanies = 0;
 
     private static final Logger log = LoggerFactory.getLogger(CompanyManager.class);
 
@@ -134,36 +134,7 @@ public class CompanyManager extends RailsManager implements Configurable {
                 throw new ConfigurationException(LocalText.getText(
                         "CompanyHasUnknownType", name, type ));
             }
-            try {
-
-                //NEW//Company company = cType.createCompany(name, companyTag);
-                Tag typeTag = typeTags.get(type);
-                Company company = cType.createCompany(name, typeTag, companyTag);
-
-                /* Private or public */
-                if (company instanceof PrivateCompany) {
-                    mPrivateCompanies.put(name, (PrivateCompany) company);
-                    lPrivateCompanies.add((PrivateCompany) company);
-
-                } else if (company instanceof PublicCompany) {
-                    ((PublicCompany)company).setIndex (numberOfPublicCompanies++);
-                    mPublicCompanies.put(name, (PublicCompany) company);
-                    lPublicCompanies.add((PublicCompany) company);
-                }
-                /* By type and name */
-                if (!mCompaniesByTypeAndName.containsKey(type))
-                    mCompaniesByTypeAndName.put(type,
-                            new HashMap<String, Company>());
-                (mCompaniesByTypeAndName.get(type)).put(
-                        name, company);
-
-                String alias = company.getAlias();
-                if (alias != null) createAlias (alias, name);
-
-            } catch (Exception e) {
-                throw new ConfigurationException(LocalText.getText(
-                        "ClassCannotBeInstantiated", cType.getClassName()), e);
-            }
+            mapCompanyType(typeTags, companyTag, name, type, cType);
 
         }
 
@@ -191,6 +162,49 @@ public class CompanyManager extends RailsManager implements Configurable {
 
     }
 
+    /**
+     * @param typeTags
+     * @param companyTag
+     * @param name
+     * @param type
+     * @param cType
+     * @throws ConfigurationException
+     */
+    protected void mapCompanyType(Map<String, Tag> typeTags, Tag companyTag,
+                                  String name, String type, CompanyType cType)
+            throws ConfigurationException {
+        try {
+            //NEW//Company company = cType.createCompany(name, companyTag);
+            Tag typeTag = typeTags.get(type);
+            Company company = cType.createCompany(name, typeTag, companyTag);
+
+            /* Private or public */
+            if (company instanceof PrivateCompany) {
+                mPrivateCompanies.put(name, (PrivateCompany) company);
+                lPrivateCompanies.add((PrivateCompany) company);
+
+            } else if (company instanceof PublicCompany) {
+                ((PublicCompany) company).setIndex(numberOfPublicCompanies++);
+                mPublicCompanies.put(name, (PublicCompany) company);
+                lPublicCompanies.add((PublicCompany) company);
+            }
+            /* By type and name */
+            if (!mCompaniesByTypeAndName.containsKey(type))
+                mCompaniesByTypeAndName.put(type,
+                        new HashMap<String, Company>());
+            (mCompaniesByTypeAndName.get(type)).put(
+                    name, company);
+
+            String alias = company.getAlias();
+            if (alias != null) createAlias(alias, name);
+
+        } catch (Exception e) {
+            throw new ConfigurationException(LocalText.getText(
+                    "ClassCannotBeInstantiated", cType.getClassName()), e);
+        }
+
+    }
+
     // Post XML parsing initialisations
     @Override
     public void finishConfiguration (RailsRoot root)
@@ -212,7 +226,7 @@ public class CompanyManager extends RailsManager implements Configurable {
         }
     }
 
-    private void createAlias (String alias, String name) {
+    protected void createAlias(String alias, String name) {
         if (aliases == null) {
             aliases = new HashMap<String, String>();
         }

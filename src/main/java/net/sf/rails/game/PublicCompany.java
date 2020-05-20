@@ -35,7 +35,7 @@ import java.util.*;
  */
 public class PublicCompany extends RailsAbstractItem implements Company, RailsMoneyOwner, PortfolioOwner, Comparable<PublicCompany> {
 
-    private static final Logger log = LoggerFactory.getLogger(PublicCompany.class);
+    protected static final Logger log = LoggerFactory.getLogger(PublicCompany.class);
 
     public static final int CAPITALISE_FULL = 0;
 
@@ -295,6 +295,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     protected boolean splitAllowed = false;
 
+    protected boolean hasFixedPrice = false;
+    protected int FixedStockPrice = 0;
+
     /**
      * Is the revenue always split (typical for non-share minors)
      */
@@ -505,6 +508,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (priceTag != null) {
             hasStockPrice = priceTag.getAttributeAsBoolean("market", true);
             hasParPrice = priceTag.getAttributeAsBoolean("par", hasStockPrice);
+            FixedStockPrice = priceTag.getAttributeAsInteger("fixedPrice");
+            if (FixedStockPrice > 0) {
+                hasFixedPrice = true;
+            }
         }
 
         Tag payoutTag = tag.getChild("Payout");
@@ -718,12 +725,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             cert.setInitiallyAvailable(cert.isInitiallyAvailable() && this.certsAreInitiallyAvailable);
         }
 
-        Set<BaseToken> newTokens = Sets.newHashSet();
-        for (int i = 0; i < numberOfBaseTokens; i++) {
-            BaseToken token = BaseToken.create(this);
-            newTokens.add(token);
+        if (numberOfBaseTokens > 0) { //Late initialisation otherwise leads to a Nullpointer exception.
+            TreeSet<BaseToken> newTokens = Sets.newTreeSet();
+            for (int i = 0; i < numberOfBaseTokens; i++) {
+                BaseToken token =  BaseToken.create(this);
+                newTokens.add(token);
+            }
+            baseTokens.initTokens(newTokens);
         }
-        baseTokens.initTokens(newTokens);
 
         if (homeHexNames != null) {
             homeHexes = new ArrayList<MapHex>(2);
@@ -1831,7 +1840,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return baseTokens.getNextToken();
     }
 
-    public ImmutableSet<BaseToken> getAllBaseTokens() {
+    public TreeSetState<BaseToken> getAllBaseTokens() {
         return baseTokens.getAllTokens();
     }
 

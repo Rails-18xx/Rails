@@ -206,6 +206,10 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
         return initialPortfolio;
     }
 
+    public boolean isDual() {
+        return potentialTrainTypes.size() == 2;
+    }
+
     public String getInfo() {
         StringBuilder b = new StringBuilder("<html>");
         b.append(LocalText.getText("TrainInfo", getId(), Bank.format(this, cost), quantity));

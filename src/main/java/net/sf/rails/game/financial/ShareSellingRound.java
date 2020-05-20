@@ -25,7 +25,7 @@ import net.sf.rails.game.state.IntegerState;
 
 // TODO: Check if un-initialized states cause undo problems
 public class ShareSellingRound extends StockRound {
-    private static final Logger log = LoggerFactory.getLogger(ShareSellingRound.class);
+    protected static final Logger log = LoggerFactory.getLogger(ShareSellingRound.class);
 
     protected RoundFacade parentRound;
     protected Player sellingPlayer;

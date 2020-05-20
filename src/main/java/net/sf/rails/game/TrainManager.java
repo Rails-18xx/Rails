@@ -70,7 +70,7 @@ public class TrainManager extends RailsManager implements Configurable {
     // For initialisation only
     protected boolean trainPriceAtFaceValueIfDifferentPresidents = false;
 
-    private static final Logger log = LoggerFactory.getLogger(TrainManager.class);
+    protected static final Logger log = LoggerFactory.getLogger(TrainManager.class);
 
     /**
      * Used by Configure (via reflection) only
@@ -450,4 +450,55 @@ public class TrainManager extends RailsManager implements Configurable {
         return trainTypes;
     }
 
+    /**
+     * Hook for specific game functions that will convert existing trains based on a phase trigger
+     * @param type
+     * @param value
+     */
+    protected void convertTrainType(TrainCertificateType type, Owner value) {
+        //needs to be handled by game specific trainmanager classes.
+
+    }
+    public boolean flipDualTrainCertificates (TrainType oldType) {
+
+        if (!oldType.isFlippable() || !oldType.isDual()) return false;
+        List<Train> trainsToFlip = trainsPerCertType.get(oldType);
+        if (trainsToFlip == null || trainsToFlip.isEmpty()) {
+            log.warn("Flipping requested for train type "+oldType.getName()+" but no such trains exist");
+            return false;
+        }
+
+        TrainCertificateType certType = oldType.getCertificateType();
+        List<TrainType> bothTypes = certType.getPotentialTrainTypes();
+        if (bothTypes.size() != 2) return false;
+
+        int oldIndex = bothTypes.indexOf(oldType);
+        int newIndex = 1 - oldIndex;
+        TrainType newType = bothTypes.get(newIndex);
+
+        for (Train train : trainsPerCertType.get(oldType)) {
+            updateTrainType (train, newType);
+//            train.getOwner().update();
+        }
+        ReportBuffer.add(this, LocalText.getText("DualTrainsFlipped", oldType.getName(), newType.getName()));
+        return true;
+    }
+
+    public void updateTrainType (Train train, TrainType newType) {
+
+        // Only allowed for dual trains
+        if (!newType.isDual()) return;
+
+        TrainType oldType = train.getType();
+        train.setType(newType);
+        if (oldType != null) {
+            if (trainsPerCertType.containsKey(oldType.getCertificateType())) {
+                trainsPerCertType.get(oldType.getCertificateType()).remove(train);
+            }
+        }
+        if (!trainsPerCertType.containsKey(newType.getCertificateType())) {
+            trainsPerCertType.put(newType.getCertificateType(), new ArrayList<Train>());
+        }
+        trainsPerCertType.get(newType).add(train);
+    }
 }

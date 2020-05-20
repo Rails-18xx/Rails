@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import net.sf.rails.game.state.TreeSetState;
 
 
 /**
@@ -21,12 +22,13 @@ public class BaseTokensModel extends RailsModel {
     // the free tokens belong to the company
     private final PortfolioSet<BaseToken> freeBaseTokens;
     // a list of all base tokens, configured later
-    private ImmutableSortedSet<BaseToken> allTokens;
+    private TreeSetState<BaseToken> allTokens;
 
     private BaseTokensModel(PublicCompany parent, String id) {
         super(parent, id);
         freeBaseTokens = PortfolioSet.create(parent, "freeBaseTokens", BaseToken.class);
         freeBaseTokens.addModel(this);
+        allTokens = TreeSetState.create(parent, "allTokens");
     }
 
     public static BaseTokensModel create(PublicCompany parent, String id){
@@ -37,7 +39,9 @@ public class BaseTokensModel extends RailsModel {
      * Initialize a set of tokens
      */
     public void initTokens(Set<BaseToken> tokens) {
-        allTokens = ImmutableSortedSet.copyOf(tokens);
+        for (BaseToken token : tokens){
+            allTokens.add(token);
+        }
         Portfolio.moveAll(allTokens, getParent());
     }
     
@@ -56,8 +60,8 @@ public class BaseTokensModel extends RailsModel {
         if (freeBaseTokens.size() == 0) return null;
         return Iterables.get(freeBaseTokens, 0);
     }
-    
-    public ImmutableSet<BaseToken> getAllTokens() {
+
+    public TreeSetState<BaseToken> getAllTokens() {
         return allTokens;
     }
     
@@ -66,7 +70,7 @@ public class BaseTokensModel extends RailsModel {
     }
     
     public ImmutableSet<BaseToken> getLaidTokens() {
-        return Sets.difference(allTokens, freeBaseTokens.items()).immutableCopy();
+        return Sets.difference(allTokens.view(), freeBaseTokens.items()).immutableCopy();
     }
     
     public int nbAllTokens() {
