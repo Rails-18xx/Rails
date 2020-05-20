@@ -7,8 +7,7 @@
 		<Upgrade id="58"/>
 	</Tile>
 	<Tile id="-10">
-		<Upgrade id="5" hex="-F3"/>
-		<Upgrade id="403" hex="F3"/>
+		<Upgrade id="5"/>
 	</Tile>
 	<Tile id="-911"/>
 	<Tile id="-912"/>
@@ -19,6 +18,9 @@
 	<Tile id="-4007"/>
 	<Tile id="-10004">
 		<Upgrade id="622"/>
+	</Tile>
+	<Tile id="-3012">
+		<Upgrade id="403"/>
 	</Tile>
 	
 	<!-- Yellow Tiles -->

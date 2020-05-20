@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<Tiles>
+<?xml version="1.0" encoding="UTF-8"?><Tiles>
 <Tile colour="red" id="-909" name="OM straight">
 <Track from="side2" gauge="normal" to="side5"/>
 </Tile>
@@ -3764,7 +3763,7 @@
 <Track from="side0" gauge="normal" to="city1"/>
 </Tile>
 <Tile colour="yellow" id="8877" name="8877">
-<Station id="city1" position="0" slots="1" type="City" value="30"/>
+<Station id="city1" position="0" slots="1" type="City" value="20"/>
 <Track from="side3" gauge="normal" to="city1"/>
 <Track from="city1" gauge="normal" to="side0"/>
 </Tile>
@@ -4232,10 +4231,8 @@
 <Track from="side4" gauge="normal" to="city1"/>
 <Track from="side2" gauge="normal" to="city1"/>
 </Tile>
-<Tile colour="yellow" id="-3059" name="NL G2">
-<Station id="city1" position="302" slots="1" type="City" value="30"/>
-<Station id="city2" position="002" slots="1" type="City" value="30"/>
-<Track from="side5" gauge="normal" to="city2"/>
-<Track from="side4" gauge="normal" to="city1"/>
+<Tile colour="white" id="-3012" name="Copenhagen">
+<Station id="city1" position="452" type="Town"/>
+<Station id="city2" position="152" slots="1" type="City"/>
 </Tile>
 </Tiles>
