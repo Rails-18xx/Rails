@@ -94,7 +94,7 @@ public class Phase extends RailsModel implements Configurable {
     private String releasedTrainNames;
 
     /** Dual train types to flip (turned upside down) if a phase gets activated */
-    protected List<TrainType> flippedTrains;
+    private List<TrainType> flippedTrains;
     String flippedTrainNames;
 
     /**

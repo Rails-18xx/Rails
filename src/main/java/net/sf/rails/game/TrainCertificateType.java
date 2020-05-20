@@ -207,8 +207,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     }
 
     public boolean isDual() {
-        if (potentialTrainTypes.size() == 2) return true;
-        else return false;
+        return potentialTrainTypes.size() == 2;
     }
 
     public String getInfo() {

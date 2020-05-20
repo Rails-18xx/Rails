@@ -534,9 +534,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         specialMenu.setEnabled(enabled);
         specialMenu.repaint();
 
-        passButton.setEnabled(false);
-        autopassButton.setEnabled(false);
-
         List<NullAction> inactiveItems =
                 possibleActions.getType(NullAction.class);
         if (inactiveItems != null) {

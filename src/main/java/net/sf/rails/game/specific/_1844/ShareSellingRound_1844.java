@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.sf.rails.game.specific._1844;
 
 import java.util.ArrayList;
