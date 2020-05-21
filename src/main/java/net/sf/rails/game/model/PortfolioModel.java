@@ -376,8 +376,8 @@ public class PortfolioModel extends RailsModel {
 
     }
 
-    public Train getTrainOfType(TrainCertificateType type) {
-        return trains.getTrainOfType(type);
+    public Train getTrainOfType(TrainCertificateType trainCertType) {
+        return trains.getTrainOfType(trainCertType);
     }
 
     /**

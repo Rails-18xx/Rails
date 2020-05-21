@@ -81,7 +81,8 @@ public class OperatingRound extends Round implements Observer {
     protected TrainManager trainManager = getRoot().getTrainManager();
 
     /*
-     * ======================================= 1. OR START and END
+     * =======================================
+     *  1. OR START and END
      * =======================================
      */
 
@@ -200,8 +201,10 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 2. CENTRAL PROCESSING FUNCTIONS
-     * 2.1. PROCESS USER ACTION=======================================
+     * =======================================
+     *  2. CENTRAL PROCESSING FUNCTIONS
+     * 2.1. PROCESS USER ACTION
+     * =======================================
      */
 
     @Override
@@ -416,7 +419,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 2.2. PREPARE NEXT ACTION
+     * =======================================
+     *  2.2. PREPARE NEXT ACTION
      * =======================================
      */
 
@@ -638,7 +642,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 2.3. TURN CONTROL
+     * =======================================
+     *  2.3. TURN CONTROL
      * =======================================
      */
 
@@ -749,7 +754,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 2.4. STEP CONTROL
+     * =======================================
+     *  2.4. STEP CONTROL
      * =======================================
      */
 
@@ -901,8 +907,10 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 3. COMMON ACTIONS (not bound to
-     * steps) 3.1. NOOPS=======================================
+     * =======================================
+     *  3. COMMON ACTIONS (not bound to steps)
+     *  3.1. NOOPS
+     * =======================================
      */
 
     public void skip(NullAction action) {
@@ -941,7 +949,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 3.2. DISCARDING TRAINS
+     * =======================================
+     *  3.2. DISCARDING TRAINS
      * =======================================
      */
 
@@ -1029,8 +1038,9 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 3.3. PRIVATES (BUYING, SELLING,
-     * CLOSING)=======================================
+     * =======================================
+     *  3.3. PRIVATES (BUYING, SELLING, CLOSING)
+     * =======================================
      */
 
     public boolean buyPrivate(BuyPrivate action) {
@@ -1179,7 +1189,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 3.4. DESTINATIONS
+     * =======================================
+     *  3.4. DESTINATIONS
      * =======================================
      */
 
@@ -1223,7 +1234,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 3.5. LOANS
+     * =======================================
+     *  3.5. LOANS
      * =======================================
      */
 
@@ -1425,7 +1437,8 @@ public class OperatingRound extends Round implements Observer {
     // }
 
     /*
-     * ======================================= 3.6. RIGHTS
+     * =======================================
+     *  3.6. RIGHTS
      * =======================================
      */
 
@@ -1478,7 +1491,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 4. LAYING TILES
+     * =======================================
+     *  4. LAYING TILES
      * =======================================
      */
 
@@ -1947,7 +1961,9 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 5. TOKEN LAYING 5.1. BASE TOKENS
+     * =======================================
+     *  5. TOKEN LAYING
+     *  5.1. BASE TOKENS
      * =======================================
      */
 
@@ -2182,7 +2198,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 5.2. BONUS TOKENS
+     * =======================================
+     *  5.2. BONUS TOKENS
      * =======================================
      */
 
@@ -2322,7 +2339,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 6. REVENUE AND DIVIDEND
+     * =======================================
+     *  6. REVENUE AND DIVIDEND
      * =======================================
      */
 
@@ -2790,7 +2808,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 7. TRAIN PURCHASING
+     * =======================================
+     *  7. TRAIN PURCHASING
      * =======================================
      */
 
@@ -3315,7 +3334,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 8. VARIOUS UTILITIES
+     * =======================================
+     *  8. VARIOUS UTILITIES
      * =======================================
      */
 

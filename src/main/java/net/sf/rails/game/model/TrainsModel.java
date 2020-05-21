@@ -50,9 +50,9 @@ public class TrainsModel extends RailsModel {
         return trains.items();
     }
     
-    public Train getTrainOfType(TrainCertificateType type) {
+    public Train getTrainOfType(TrainCertificateType trainCertType) {
         for (Train train:trains) {
-            if (train.getCertType() == type) return train;
+            if (train.getCertType() == trainCertType) return train;
         }
         return null;
     }
