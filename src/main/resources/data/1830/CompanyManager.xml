@@ -39,8 +39,8 @@
 			longname="Champlain &amp; St.Lawrence">
 		<Blocking hex="B20"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay colour="yellow" location="B20" extra="yes" free="yes"/>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay colour="yellow" location="B20" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
@@ -48,8 +48,8 @@
 		longname="Delaware &amp; Hudson">
 		<Blocking hex="F16"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay location="F16" extra="no" free="no" tile="57" />
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay location="F16" extra="no" free="no" tile="57" />
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
 				<SpecialBaseTokenLay location="F16" extra="no" free="yes" requiresTile = "yes"/>

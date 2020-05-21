@@ -22,14 +22,14 @@
 		<CanUseSpecialProperties/>
 	</CompanyType>
 	<Company name="LT" type="Private" basePrice="20" revenue="5"
-		longname="Lexington Terminal Railroad"></Company>
+			 longname="Lexington Terminal Railroad"/>
 	<Company name="MR" type="Private" basePrice="40" revenue="10"
 		longname="Midland Railroad">
 		<Blocking hex="F12"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
-				class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay location="F12" extra="yes" free="yes"/>
+				class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay location="F12" extra="yes" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>

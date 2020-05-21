@@ -70,7 +70,7 @@
 	</Tile>
 	<Tile id="622" quantity="3">
 		<Upgrade id="623" hex="D7"/>
-        <Upgrade id="582" hex="F11,H14"/>
+        <Upgrade id="582" hex="F11,G14"/>
 	</Tile>
 
 	<!-- Brown Tiles -->
