@@ -1,21 +1,10 @@
 package net.sf.rails.game.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.BonusToken;
-import net.sf.rails.game.Company;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PrivateCompany;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsOwner;
-import net.sf.rails.game.Train;
-import net.sf.rails.game.TrainCertificateType;
-import net.sf.rails.game.TrainType;
+import net.sf.rails.game.*;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.PublicCertificate;
@@ -53,8 +42,11 @@ public class PortfolioModel extends RailsModel {
     /** Owned private companies */
     private final PrivatesModel privates;
 
-    /** Owned trains */
-    private final TrainsModel trains;
+    /** Owned train cards */
+    private final TrainsModel trainCards;
+
+    /* /** Owned trains */
+    //private final TrainsModel trains;
 
     /** Owned tokens */
     // TODO Currently only used to discard expired Bonus tokens.
@@ -73,16 +65,19 @@ public class PortfolioModel extends RailsModel {
         // create internal models and portfolios
         certificates = CertificatesModel.create(parent);
         privates = PrivatesModel.create(parent);
-        trains = TrainsModel.create(parent);
+        //trains = TrainsModel.create(parent);
+        trainCards = TrainsModel.create(parent);
         bonusTokens = PortfolioSet.create(parent, "BonusTokens", BonusToken.class);
         specialProperties = SpecialPropertiesModel.create(parent);
 
         // change display style dependent on owner
         if (parent instanceof PublicCompany) {
-            trains.setAbbrList(false);
+            //trains.setAbbrList(false);
+            trainCards.setAbbrList(false);
             privates.setLineBreak(false);
         } else if (parent instanceof BankPortfolio) {
-            trains.setAbbrList(true);
+            //trains.setAbbrList(true);
+            trainCards.setAbbrList(true);
         } else if (parent instanceof Player) {
             privates.setLineBreak(true);
         }
@@ -307,7 +302,7 @@ public class PortfolioModel extends RailsModel {
     public List<PublicCertificate> swapPresidentCertificate(
             PublicCompany company, PortfolioModel other, int swapShareSize) {
 
-        List<PublicCertificate> swapped = new ArrayList<PublicCertificate>();
+        List<PublicCertificate> swapped = new ArrayList<>();
         PublicCertificate swapCert;
 
         // Find the President's certificate
@@ -341,17 +336,25 @@ public class PortfolioModel extends RailsModel {
     }
 
     public int getNumberOfTrains() {
-        return trains.getPortfolio().size();
+        return trainCards.getPortfolio().size();
     }
 
-    public ImmutableSet<Train> getTrainList() {
-        return trains.getPortfolio().items();
+    public Set<Train> getTrainList() {
+        Set<Train> trains = new LinkedHashSet<>();
+        for (TrainCard card : trainCards.getPortfolio()) {
+            if (card.getActualTrain() != null) {
+                trains.add(card.getActualTrain());
+            } else {
+                trains.addAll(card.getTrains());
+            }
+        }
+        return trains;
     }
 
     public Train[] getTrainsPerType(TrainType type) {
 
-        List<Train> trainsFound = new ArrayList<Train>();
-        for (Train train : trains.getPortfolio()) {
+        List<Train> trainsFound = new ArrayList<>();
+        for (Train train : getTrainList()) {
             if (train.getType() == type) trainsFound.add(train);
         }
 
@@ -359,32 +362,48 @@ public class PortfolioModel extends RailsModel {
     }
 
     public TrainsModel getTrainsModel() {
-        return trains;
+        return trainCards;
     }
-
     /** Returns one train of any type held */
     public Set<Train> getUniqueTrains() {
         ImmutableSortedSet.Builder<Train> trainsFound = ImmutableSortedSet.naturalOrder();
         Set<TrainType> trainTypesFound = Sets.newHashSet();
-        for (Train train : trains.getPortfolio()) {
+        for (Train train : getTrainList()) {
             if (!trainTypesFound.contains(train.getType())) {
                 trainsFound.add(train);
                 trainTypesFound.add(train.getType());
             }
         }
         return trainsFound.build();
-
     }
 
-    public Train getTrainOfType(TrainCertificateType trainCertType) {
-        return trains.getTrainOfType(trainCertType);
+    public Train getTrainOfType(TrainType trainType) {
+        return trainCards.getTrainOfType(trainType);
     }
+
+    public TrainCard getTrainCardOfType(TrainCardType trainCardType) {
+        return trainCards.getTrainCardOfType(trainCardType);
+    }
+
 
     /**
      * Add a train to the train portfolio
+     * @Deprecated: Only train cards will be moved,
+     * use addTrainCard(); its trains will follow automatically.
      */
-    public boolean addTrain(Train train) {
-        return trains.getPortfolio().add(train);
+    @Deprecated
+    public void addTrain(Train train) {
+        //trains.getPortfolio().add(train);
+        addTrainCard(train.getCard());
+    }
+
+    /**
+     * Add a train card to the portfolio.
+     * The actual trains are defined via the cards.
+     * @param card
+      */
+    public void addTrainCard (TrainCard card) {
+        trainCards.getPortfolio().add(card);
     }
 
     /**
@@ -396,7 +415,7 @@ public class PortfolioModel extends RailsModel {
 
     public ImmutableList<SpecialProperty> getAllSpecialProperties() {
         ImmutableList.Builder<SpecialProperty> sps =
-                new ImmutableList.Builder<SpecialProperty>();
+                new ImmutableList.Builder<>();
         sps.addAll(specialProperties.getPortfolio().items());
         for (PrivateCompany priv : privates.getPortfolio()) {
             if (priv.getSpecialProperties() != null) {
@@ -418,7 +437,7 @@ public class PortfolioModel extends RailsModel {
     // TODO: Check if this code can be simplified
     @SuppressWarnings("unchecked")
     public <T extends SpecialProperty> List<T> getSpecialProperties(Class<T> clazz, boolean includeExercised) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         Set<SpecialProperty> sps;
 
         if (getParent() instanceof Player
@@ -474,8 +493,8 @@ public class PortfolioModel extends RailsModel {
 
     public void rustObsoleteTrains() {
 
-        List<Train> trainsToRust = new ArrayList<Train>();
-        for (Train train : trains.getPortfolio()) {
+        List<Train> trainsToRust = new ArrayList<>();
+        for (Train train : trainCards.getTrains()) {
             if (train.isObsolete()) {
                 trainsToRust.add(train);
             }

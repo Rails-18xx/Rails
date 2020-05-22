@@ -1,8 +1,6 @@
 package net.sf.rails.game.model;
 
-import net.sf.rails.game.RailsOwner;
-import net.sf.rails.game.Train;
-import net.sf.rails.game.TrainCertificateType;
+import net.sf.rails.game.*;
 import net.sf.rails.game.state.Portfolio;
 import net.sf.rails.game.state.PortfolioSet;
 
@@ -11,19 +9,25 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Multiset;
 
+import java.util.*;
 
+/**
+ * This class is named TrainsModel for backwards compatibility,
+ * but it actually models TrainCards.
+ * Lists of both traincards and trains are provided.
+ */
 public class TrainsModel extends RailsModel {
 
     public static final String ID = "TrainsModel";
     
-    private final PortfolioSet<Train> trains;
+    private final PortfolioSet<TrainCard> trainCards;
     
     private boolean abbrList = false;
 
     private TrainsModel(RailsOwner parent, String id) {
         super(parent, id);
-        trains = PortfolioSet.create(parent, "trains", Train.class);
-        trains.addModel(this);
+        trainCards = PortfolioSet.create(parent, "trains", TrainCard.class);
+        trainCards.addModel(this);
     }
     
     /** 
@@ -38,21 +42,49 @@ public class TrainsModel extends RailsModel {
         return (RailsOwner)super.getParent();
     }
     
-    public Portfolio<Train> getPortfolio() {
-        return trains;
+    public Portfolio<TrainCard> getPortfolio() {
+        return trainCards;
     }
     
     public void setAbbrList(boolean abbrList) {
         this.abbrList = abbrList;
     }
     
-    public ImmutableSet<Train> getTrains() {
-        return trains.items();
+    public ImmutableSet<TrainCard> getTrainCards() {
+        return trainCards.items();
     }
-    
-    public Train getTrainOfType(TrainCertificateType trainCertType) {
-        for (Train train:trains) {
-            if (train.getCertType() == trainCertType) return train;
+
+    public void addTrain (Train train) {
+        TrainCard card = train.getCard();
+        trainCards.add(card);
+        if (card.getType().isDual()) {
+            card.setActualTrain(train);
+        }
+
+    }
+
+    public List<Train> getTrains() {
+        List<Train> trains = new ArrayList<>();
+        for (TrainCard card : getTrainCards()) {
+            if (card.getType().isDual() && card.getActualTrain() != null) {
+                trains.add (card.getActualTrain());
+            } else {
+                trains.addAll(card.getTrains());
+            }
+        }
+        return trains;
+    }
+
+    public Train getTrainOfType(TrainType trainType) {
+        for (Train train:getTrains()) {
+            if (train.getType() == trainType) return train;
+        }
+        return null;
+    }
+
+    public TrainCard getTrainCardOfType (TrainCardType cardType) {
+        for (TrainCard card:getTrainCards()) {
+            if (card.getType() == cardType) return card;
         }
         return null;
     }
@@ -62,10 +94,10 @@ public class TrainsModel extends RailsModel {
      * describing train possessions, except the IPO.
      */
     private String makeListOfTrains() {
-        if (trains.isEmpty()) return "";
+        if (trainCards.isEmpty()) return "";
 
         StringBuilder b = new StringBuilder();
-        for (Train train:trains) {
+        for (Train train:getTrains()) {
             if (b.length() > 0) b.append(" ");
             if (train.isObsolete()) b.append("[");
             b.append(train.toText());
@@ -79,24 +111,24 @@ public class TrainsModel extends RailsModel {
      * Make an abbreviated list of trains, like "2(6) 3(5)" etc, to show in the
      * IPO.
      */
-    public String makeListOfTrainCertificates() {
-        if (trains.isEmpty()) return "";
+    public String makeListOfTrainCards() {
+        if (trainCards.isEmpty()) return "";
 
         // create a bag with train types
-        Multiset<TrainCertificateType> trainCertTypes = HashMultiset.create();
-        for (Train train:trains) {
-            trainCertTypes.add(train.getCertType()); 
+        Multiset<TrainCardType> trainCardTypes = HashMultiset.create();
+        for (TrainCard card:trainCards) {
+            trainCardTypes.add(card.getType());
         }
         
         StringBuilder b = new StringBuilder();
         
-        for (TrainCertificateType certType:ImmutableSortedSet.copyOf(trainCertTypes.elementSet())) {
+        for (TrainCardType cardType:ImmutableSortedSet.copyOf(trainCardTypes.elementSet())) {
             if (b.length() > 0) b.append(" ");
-            b.append(certType.toText()).append("(");
-            if (certType.hasInfiniteQuantity()) {
+            b.append(cardType.toText()).append("(");
+            if (cardType.hasInfiniteQuantity()) {
                 b.append("+");
             } else {
-                b.append(trainCertTypes.count(certType));
+                b.append(trainCardTypes.count(cardType));
             }
             b.append(")");
         }
@@ -109,7 +141,7 @@ public class TrainsModel extends RailsModel {
         if (!abbrList) {
             return makeListOfTrains();
         } else {
-            return makeListOfTrainCertificates();
+            return makeListOfTrainCards();
         }
     }
 }

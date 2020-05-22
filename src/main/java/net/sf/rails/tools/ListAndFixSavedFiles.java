@@ -5,23 +5,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
 
+import net.sf.rails.game.*;
+import net.sf.rails.game.model.PortfolioOwner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.Config;
 import net.sf.rails.common.ConfigManager;
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.Tile;
-import net.sf.rails.game.Train;
 import net.sf.rails.ui.swing.elements.ActionMenuItem;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
@@ -40,9 +40,10 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
     private JPanel messagePanel;
     private ListAndFixSavedFiles messageWindow;
     private JMenuBar menuBar;
-    private JMenu fileMenu, editMenu;
-    private JMenuItem saveItem, loadItem;
+    private JMenu fileMenu, editMenu, taskMenu;
+    private JMenuItem saveItem, loadItem, closeItem, exitItem;
     private JMenuItem trimItem, deleteItem, correctItem;
+    private JMenuItem changeBuyTrainFromFile;
 
     private int correctedIndex;
     private PossibleAction correctedAction;
@@ -105,6 +106,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         fileMenu.setMnemonic(KeyEvent.VK_F);
         editMenu = new JMenu(LocalText.getText("EDIT"));
         editMenu.setMnemonic(KeyEvent.VK_E);
+        taskMenu = new JMenu(LocalText.getText("TASK"));
 
         loadItem = new ActionMenuItem(LocalText.getText("LOAD"));
         loadItem.setActionCommand("LOAD");
@@ -123,6 +125,24 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         saveItem.addActionListener(this);
         saveItem.setEnabled(true);
         fileMenu.add(saveItem);
+
+        closeItem = new ActionMenuItem(LocalText.getText("CLOSE"));
+        closeItem.setActionCommand("CLOSE");
+        closeItem.setMnemonic(KeyEvent.VK_C);
+        closeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+                ActionEvent.ALT_MASK));
+        closeItem.addActionListener(this);
+        closeItem.setEnabled(true);
+        fileMenu.add(closeItem);
+
+        exitItem = new ActionMenuItem(LocalText.getText("EXIT"));
+        exitItem.setActionCommand("EXIT");
+        exitItem.setMnemonic(KeyEvent.VK_X);
+        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
+                ActionEvent.ALT_MASK));
+        exitItem.addActionListener(this);
+        exitItem.setEnabled(true);
+        fileMenu.add(exitItem);
 
         trimItem = new ActionMenuItem("Trim");
         trimItem.setActionCommand("TRIM");
@@ -151,8 +171,18 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         correctItem.setEnabled(true);
         editMenu.add(correctItem);
 
+        changeBuyTrainFromFile = new ActionMenuItem("UpdateBuyTrainFromFile");
+        changeBuyTrainFromFile.setActionCommand("UPDATE_BUYTRAIN");
+        changeBuyTrainFromFile.setMnemonic(KeyEvent.VK_U);
+        changeBuyTrainFromFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,
+                ActionEvent.ALT_MASK));
+        changeBuyTrainFromFile.addActionListener(this);
+        changeBuyTrainFromFile.setEnabled(true);
+        taskMenu.add(changeBuyTrainFromFile);
+
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
+        menuBar.add(taskMenu);
 
         setJMenuBar(menuBar);
 
@@ -194,7 +224,10 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 log.error("exception", e);
             }
             root = gameLoader.getRoot();
+            setTitle(selectedFile.getName());
         }
+
+
     }
 
     public void add (String text) {
@@ -271,10 +304,18 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                     log.error("Number format exception for '{}'", result, e);
                 }
             }
+        } else if ("UPDATE_BUYTRAIN".equalsIgnoreCase(command)) {
+            updateBuyTrainFromFile();
         } else if ("SAVE".equalsIgnoreCase(command)) {
             save();
         } else if ("LOAD".equalsIgnoreCase(command)) {
             load();
+        } else if ("CLOSE".equalsIgnoreCase(command)) {
+            reportText.setText("");
+            gameLoader = null;
+            setTitle("List and fix saved files");
+        } else if ("EXIT".equalsIgnoreCase(command)) {
+            System.exit(0);
         }
     }
 
@@ -374,8 +415,11 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         BuyTrainDialog (BuyTrain action) {
             super ("Edit BuyTrain");
             this.action = action;
-            addLabel (this, "Train UID", null, action.getTrain().getId());  // 0
-            addLabel (this, "From Portfolio", null, action.getFromOwner().getId());  // 1
+            addLabel (this, "From", null, action.getFromOwner().getId());  // 1
+            //addLabel (this, "Train UID", null, action.getTrain().getId());  // 0
+            addTextField (this, "Train UID",
+                    action.getTrain().getId(),
+                    String.valueOf(action.getTrain().getId()));  // 1
             addTextField (this, "Price paid",
                     action.getPricePaid(),
                     String.valueOf(action.getPricePaid()));  // 2
@@ -394,6 +438,9 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         @Override
         PossibleAction processInput() {
             log.debug("Action was {}", action);
+            String trainID = ((JTextField)inputElements.get(1)).getText();
+            Train train = root.getTrainManager().getTrainByUniqueId(trainID);
+            if (train != null) action.setTrain(train);
             try {
                 int pricePaid = Integer.parseInt(((JTextField)inputElements.get(2)).getText());
                 action.setPricePaid(pricePaid);
@@ -492,6 +539,49 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         owner.getContentPane().add(comp, gbc);
 
         comp.setVisible(true);
+    }
+
+    void updateBuyTrainFromFile() {
+        /*
+         *  The correction file must have the same name as that .rails file,
+         * but with extension .def
+         * Each line must contain 3 fields, comma-separated, no spaces:
+         * - action number
+         * - original train UID (e.g. 2_7)
+         * - new train UID
+         * Lines starting with # are ignored.         *
+         */
+
+        String defFilePath = filepath.replace(".rails", ".def");
+        File defFile = new File (defFilePath);
+        BufferedReader in;
+        TrainManager tm = root.getTrainManager();
+        try {
+            in = new BufferedReader(new FileReader(defFilePath));
+            String line;
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+                if (line.startsWith("#")) continue;
+                String[] fields = line.split(",");
+                // Find action number
+                int index = Integer.parseInt(fields[0]);
+                BuyTrain action = (BuyTrain) gameLoader.getActions().get(index);
+                String trainId = ((BuyTrain) action).getTrain().getId();
+                String from = fields[1];
+                String to = fields[2];
+                Train newTrain = tm.getTrainByUniqueId(to);
+                PublicCompany newOwner = (PublicCompany) newTrain.getCard().getOwner();
+                System.out.println("Action " + index + " of " + action.getOwner() + " has " + trainId + ": from "
+                        + from + " to " + to + " > card " + newTrain.getCard().getId() + " owner " + newOwner);
+                action.setTrain(newTrain);
+                //newOwner.buyTrain(newTrain, 0);
+            }
+            in.close();
+        } catch (IOException e) {
+            System.out.println("Error while reading "+filepath+":"+e.toString());
+        }
+
+
     }
 
     @Override

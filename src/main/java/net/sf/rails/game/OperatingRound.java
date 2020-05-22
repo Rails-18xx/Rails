@@ -56,7 +56,7 @@ public class OperatingRound extends Round implements Observer {
      */
     protected Map<Player, List<PublicCompany>> excessTrainCompanies;
 
-    protected final ArrayListState<TrainCertificateType> trainsBoughtThisTurn = new ArrayListState<>(this, "trainsBoughtThisTurn");
+    protected final ArrayListState<TrainCardType> trainsBoughtThisTurn = new ArrayListState<>(this, "trainsBoughtThisTurn");
 
     protected HashMapState<PublicCompany, Integer> loansThisRound;
 
@@ -998,12 +998,7 @@ public class OperatingRound extends Round implements Observer {
 
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
-        // Reset type of dual trains
-        if (train.getCertType().getPotentialTrainTypes().size() > 1) {
-            train.setType(null);
-        }
-
-        train.discard();
+       train.getCard().discard();
 
         // Check if any more companies must discard trains,
         // otherwise continue train buying
@@ -2922,7 +2917,7 @@ public class OperatingRound extends Round implements Observer {
                     // action.setExchangedTrain(exchangedTrain);
                     break;
                 } else if (operatingCompany.value().getPortfolioModel().getTrainOfType(
-                        exchangedTrain.getCertType()) == null) {
+                        exchangedTrain.getType()) == null) {
                     errMsg =
                             LocalText.getText("CompanyDoesNotOwnTrain",
                                     operatingCompany.value().getId(),
@@ -2972,13 +2967,13 @@ public class OperatingRound extends Round implements Observer {
                     cashText));
         }
 
-        Owner oldOwner = train.getOwner();
+        Owner oldOwner = train.getCard().getOwner();
 
         if (exchangedTrain != null) {
             Train oldTrain =
                     operatingCompany.value().getPortfolioModel().getTrainOfType(
-                            exchangedTrain.getCertType());
-            (train.isObsolete() ? scrapHeap : pool).addTrain(oldTrain);
+                            exchangedTrain.getType());
+            (train.isObsolete() ? scrapHeap : pool).addTrainCard(oldTrain.getCard());
             ReportBuffer.add(this, LocalText.getText("ExchangesTrain",
                     companyName, exchangedTrain.toText(), train.toText(),
                     oldOwner.getId(), Bank.format(this, price)));
@@ -2991,22 +2986,22 @@ public class OperatingRound extends Round implements Observer {
                     Bank.format(this, price), stb.getOriginalCompany().getId()));
         }
 
-        train.setType(action.getType()); // Needed for dual trains bought from
+        train.getCard().setActualTrain(train); // Needed for dual trains bought from
         // the Bank
 
         operatingCompany.value().buyTrain(train, price);
 
         if (oldOwner == ipo.getParent()) {
-            train.getCertType().addToBoughtFromIPO();
+            train.getCardType().addToBoughtFromIPO();
             trainManager.setAnyTrainBought(true);
             // Clone the train if infinitely available
-            if (train.getCertType().hasInfiniteQuantity()) {
-                ipo.addTrain(trainManager.cloneTrain(train.getCertType()));
+            if (train.getCardType().hasInfiniteQuantity()) {
+                ipo.addTrainCard(trainManager.cloneTrain(train.getCardType()));
             }
 
         }
         if (oldOwner instanceof BankPortfolio) {
-            trainsBoughtThisTurn.add(train.getCertType());
+            trainsBoughtThisTurn.add(train.getCardType());
         }
 
         if (stb != null) {
@@ -3104,31 +3099,26 @@ public class OperatingRound extends Round implements Observer {
             for (Train train : trains) {
                 if (!operatingCompany.value().mayBuyTrainType(train)) continue;
                 if (!mayBuyMoreOfEachType
-                        && trainsBoughtThisTurn.contains(train.getCertType())) {
+                        && trainsBoughtThisTurn.contains(train.getCardType())) {
                     continue;
                 }
 
-                // Allow dual trains (since jun 2011)
-                List<TrainType> types =
-                        train.getCertType().getPotentialTrainTypes();
-                for (TrainType type : types) {
-                    cost = type.getCost();
-                    if (cost <= cash) {
-                        if (canBuyTrainNow) {
-                            BuyTrain action =
-                                    new BuyTrain(train, type, ipo.getParent(),
-                                            cost);
-                            action.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY
-                            possibleActions.add(action);
-                        }
-                    } else if (mustBuyTrain) {
-                        newEmergencyTrains.put(cost, train);
+                cost = train.getCost();
+                if (cost <= cash) {
+                    if (canBuyTrainNow) {
+                        BuyTrain action =
+                                new BuyTrain(train, train.getType(), ipo.getParent(),
+                                        cost);
+                        action.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY
+                        possibleActions.add(action);
                     }
+                } else if (mustBuyTrain) {
+                    newEmergencyTrains.put(cost, train);
                 }
 
                 // Even at train limit, exchange is allowed (per 1856)
                 if (train.canBeExchanged() && hasTrains) {
-                    cost = train.getCertType().getExchangeCost();
+                    cost = train.getType().getExchangeCost();
                     if (cost <= cash) {
                         Set<Train> exchangeableTrains =
                                 operatingCompany.value().getPortfolioModel().getUniqueTrains();
@@ -3164,7 +3154,7 @@ public class OperatingRound extends Round implements Observer {
             trains = pool.getUniqueTrains();
             for (Train train : trains) {
                 if (!mayBuyMoreOfEachType
-                        && trainsBoughtThisTurn.contains(train.getCertType())) {
+                        && trainsBoughtThisTurn.contains(train.getCardType())) {
                     continue;
                 }
                 cost = train.getCost();
@@ -3326,8 +3316,8 @@ public class OperatingRound extends Round implements Observer {
                 && trainManager.isAnyTrainBought()) {
             Train train =
                     Iterables.get(trainManager.getAvailableNewTrains(), 0);
-            if (train.getCertType().hasInfiniteQuantity()) return;
-            scrapHeap.addTrain(train);
+            if (train.getCardType().hasInfiniteQuantity()) return;
+            scrapHeap.addTrainCard(train.getCard());
             ReportBuffer.add(this,
                     LocalText.getText("RemoveTrain", train.toText()));
         }

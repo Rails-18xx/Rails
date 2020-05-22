@@ -176,12 +176,12 @@
 			<TrainType name="D" majorStops="99" quantity="6">
             <NewPhase phaseName="D"/>
 				<IfOption name="Variant" value="Basegame,Pere Marquette,Simple">
-					<Attributes cost="1100"/>
-					<Exchange cost="800"/>
+					<Attributes cost="1100" exchangeCost="800"/>
+					<!--Exchange cost="800"  Note: this no longer works-->
 				</IfOption>
 				<IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
-					<Attributes cost="900"/>
-					<Exchange cost="750"/>
+					<Attributes cost="900" exchangeCost="750"/>
+					<!--Exchange cost="750"  Note: this no longer works-->
 				</IfOption>
 				<IfOption name="UnlimitedTopTrains_D" value="yes">
 					<Attributes quantity="-1"/>
