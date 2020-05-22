@@ -68,15 +68,15 @@
             <NewPhase phaseName="6"/>
         </TrainType>
 		<IfOption name="1856AlternateTrains" value="no">
-			<TrainType name="D" majorStops="99" cost="1100" quantity="-1">
+			<TrainType name="D" majorStops="99" cost="1100" exchangeCost = "750" quantity="-1">
 				<NewPhase phaseName="D" />
-				<Exchange cost="750" />
+				<!--Exchange cost="750"  Note: this no longer works. See above.-->
 			</TrainType>
 		</IfOption>
 		<IfOption name="1856AlternateTrains" value="yes">
 			<TrainType name="8" majorStops="8" cost="1000" quantity="-1">
 				<NewPhase phaseName="D" />
-				<Exchange cost="650" />
+				<!--Exchange cost="650"  Note: this no longer works. See above.-->
 			</TrainType>
 		</IfOption>
 	</Component>

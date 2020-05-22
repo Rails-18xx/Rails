@@ -6,14 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.sf.rails.game.CompanyManager;
-import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainManager;
 import net.sf.rails.game.TrainType;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialTrainBuy;
 import net.sf.rails.game.state.Owner;
-import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -144,6 +142,12 @@ public class BuyTrain extends PossibleORAction {
         return train;
     }
 
+    // Only for fixing BuyTrain actions by ListAndFixSavedFiles
+    public void setTrain (Train train) {
+        this.train = train;
+        this.trainUniqueId = train.getId();
+    }
+
     public TrainType getType() {
         return type;
     }
@@ -227,7 +231,8 @@ public class BuyTrain extends PossibleORAction {
 
         // check asOption attributes
         BuyTrain action = (BuyTrain)pa;
-        boolean options =  Objects.equal(this.getTrain().getType(), action.getTrain().getType())
+        //boolean options =  Objects.equal(this.getTrain().getType(), action.getTrain().getType())
+        boolean options =  Objects.equal(this.getTrain(), action.getTrain())
                 // only types have to be equal, and the getTrain() avoids train == null
                 && Objects.equal(this.from, action.from)
                 && (action.fixedCost == 0 || Objects.equal(this.fixedCost, action.pricePaid))
@@ -295,13 +300,13 @@ public class BuyTrain extends PossibleORAction {
             if (train == null) {
                 // Kludge to cover not yet cloned unlimited trains
                 typeName = trainUniqueId.split("_")[0];
-                type = trainManager.getTypeByName(typeName);
+                type = trainManager.getTrainTypeByName(typeName);
             } else {
                 type = train.getType();
                 typeName = type.getName();
             }
         } else {
-            type = trainManager.getTypeByName(typeName);
+            type = trainManager.getTrainTypeByName(typeName);
         }
 
         // TODO: This has to be replaced by a new mechanism for owners at some time

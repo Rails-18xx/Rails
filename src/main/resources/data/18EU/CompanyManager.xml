@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <CompanyManager>
-	<CompanyType name="Minor" class="net.sf.rails.game.PublicCompany" fgColour="000000"
-		bgColour="CCCCCC">
+	<CompanyType name="Minor" class="net.sf.rails.game.PublicCompany"
+				 fgColour="000000" bgColour="CCCCCC">
 		<ShareUnit percentage="100"/>
 		<Certificate type="President" shares="1"/>
 		<StockPrice market="no"/>

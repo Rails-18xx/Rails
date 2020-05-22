@@ -2,28 +2,27 @@ package net.sf.rails.game;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.BankPortfolio;
-import net.sf.rails.game.state.BooleanState;
-import net.sf.rails.game.state.Creatable;
-import net.sf.rails.game.state.GenericState;
-import net.sf.rails.game.state.Ownable;
+import net.sf.rails.game.state.*;
 
 import com.google.common.collect.ComparisonChain;
 
 public class Train extends RailsOwnableItem<Train> implements Creatable {
 
-    protected TrainCertificateType certificateType;
+    //protected TrainCardType trainCardType;
+    protected TrainCard trainCard;
 
     protected final GenericState<TrainType> type = new GenericState<>(this, "type");
 
     /**
      * Some specific trains cannot be traded between companies
      */
-    protected boolean tradeable = true;
+    //protected boolean tradeable = true;
 
     protected final BooleanState obsolete = new BooleanState(this, "obsolete");
+
+    protected String name;
 
     // sorting id to correctly sort them inside a portfolio
     // this is a workaround to have 2.0 compatible with 1.x save files
@@ -37,14 +36,16 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
         super(parent, id, Train.class);
     }
 
-    public static Train create(RailsItem parent, int uniqueId, TrainCertificateType certType, TrainType type)
+    /* obsolete
+    public static Train create(RailsItem parent, int uniqueId, TrainCertificateType certType, TrainType trainType)
             throws ConfigurationException {
-        String id = certType.getId() + "_" + uniqueId;
+        String id = trainType.getName() + "_" + uniqueId;
         Train train = certType.createTrain(parent, id, uniqueId);
         train.setCertificateType(certType);
-        train.setType(type);
+        train.setType(trainType);
         return train;
     }
+     */
 
     @Override
     public RailsItem getParent() {
@@ -56,23 +57,38 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
         return (RailsRoot) super.getRoot();
     }
 
+    /*
     public void setSortingId(int sortingId) {
         this.sortingId = sortingId;
     }
 
-    public void setCertificateType(TrainCertificateType type) {
-        this.certificateType = type;
+     */
+
+    public void setCard(TrainCard card) {
+        this.trainCard = card;
     }
 
     public void setType(TrainType type) {
         this.type.set(type);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * @return Returns the type.
      */
-    public TrainCertificateType getCertType() {
-        return certificateType;
+    public TrainCardType getCardType() {
+        return trainCard.getType();
+    }
+
+    public TrainCard getCard() {
+        return trainCard;
     }
 
     public TrainType getType() {
@@ -143,7 +159,7 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
     }
 
     public boolean isPermanent() {
-        return certificateType.isPermanent();
+        return trainCard.getType().isPermanent();
     }
 
     public boolean isObsolete() {
@@ -152,8 +168,8 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
 
     public void setRusted() {
         // if not on scrapheap already
-        if (this.getOwner() != Bank.getScrapHeap(this)) {
-            this.moveTo(Bank.getScrapHeap(this));
+        if (trainCard.getOwner() != Bank.getScrapHeap(this)) {
+            trainCard.moveTo(Bank.getScrapHeap(this));
         }
     }
 
@@ -162,41 +178,44 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
     }
 
     public boolean canBeExchanged() {
-        return certificateType.nextCanBeExchanged();
+        return type.value().canBeExchanged();
     }
 
+    /**
+     * @deprecated
+     * Use TrainCard.discard() instead.
+     */
+    @Deprecated
     public void discard() {
-        BankPortfolio discardTo;
-        if (isObsolete()) {
-            discardTo = Bank.getScrapHeap(this);
-        } else {
-            discardTo = getRoot().getTrainManager().discardTo();
-        }
-        String discardText = LocalText.getText("CompanyDiscardsTrain", getOwner().getId(), this.toText(), discardTo.getId());
-        ReportBuffer.add(this, discardText);
-        this.moveTo(discardTo);
+        trainCard.discard ();
     }
 
     @Override
     public String toText() {
-        return isAssigned() ? type.value().getName() : certificateType.toText();
+        return isAssigned() ? type.value().getName() : type.toText();
     }
 
     public boolean isTradeable() {
-        return tradeable;
+        return trainCard.isTradeable();
     }
 
+    // To avoid a lot of changes
+    public Owner getOwner() {
+        return trainCard.getOwner();
+    }
+
+    /*
     public void setTradeable(boolean tradeable) {
         this.tradeable = tradeable;
-    }
+    }*/
 
     @Override
     public int compareTo(Ownable other) {
         if (other instanceof Train) {
             Train oTrain = (Train) other;
             return ComparisonChain.start()
-                    .compare(this.getCertType(), oTrain.getCertType())
-                    .compare(this.sortingId, oTrain.sortingId)
+                    .compare(this.getCardType(), oTrain.getCardType())
+                    .compare(this.getId(), oTrain.getId())
                     .result();
         }
         return 0;

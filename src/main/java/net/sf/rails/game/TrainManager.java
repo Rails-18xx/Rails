@@ -12,6 +12,7 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Configure;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.BankPortfolio;
@@ -27,17 +28,23 @@ import org.slf4j.LoggerFactory;
 
 public class TrainManager extends RailsManager implements Configurable {
     // Static attributes
-    protected final List<TrainType> lTrainTypes = new ArrayList<>();
+    protected final List<TrainType> trainTypes = new ArrayList<>();
 
     protected final Map<String, TrainType> mTrainTypes = new HashMap<>();
 
-    protected final List<TrainCertificateType> trainCertTypes = new ArrayList<>();
+    protected final List<TrainCardType> trainCardTypes = new ArrayList<>(8);
 
-    protected final Map<String, TrainCertificateType> trainCertTypeMap = new HashMap<>();
+    protected final Map<String, TrainCardType> trainCardTypeMap = new HashMap<>();
+
+    protected final Map<String, TrainCard> trainCardMap = new HashMap<>();
 
     protected final Map<String, Train> trainMap = new HashMap<>();
 
-    protected final Map<TrainCertificateType, List<Train>> trainsPerCertType = new HashMap<>();
+    protected final Map<TrainCardType, List<TrainCard>> cardsPerType = new HashMap<>();
+
+    protected final Map<TrainCardType, List<Train>> trainsPerCardType = new HashMap<>();
+
+    protected final Map<TrainCard, List<Train>> trainsPerCard = new HashMap<>();
 
     private boolean removeTrain = false;
 
@@ -65,7 +72,7 @@ public class TrainManager extends RailsManager implements Configurable {
     protected final BooleanState anyTrainBought = new BooleanState(this, "anyTrainBought");
 
     // Triggered phase changes
-    protected final Map<TrainCertificateType, Map<Integer, Phase>> newPhases = new HashMap<>();
+    protected final Map<TrainCardType, Map<Integer, Phase>> newPhases = new HashMap<>();
 
     // For initialisation only
     protected boolean trainPriceAtFaceValueIfDifferentPresidents = false;
@@ -91,33 +98,33 @@ public class TrainManager extends RailsManager implements Configurable {
         List<Tag> trainTypeTags;
 
         // Choice train types (new style)
-        List<Tag> certTypeTags = tag.getChildren("TrainType");
+        List<Tag> cardTypeTags = tag.getChildren("TrainType");
 
-        if (certTypeTags != null) {
-            int certTypeIndex = 0;
-            for (Tag certTypeTag : certTypeTags) {
+        if (cardTypeTags != null) {
+            int cardTypeIndex = 0;
+            for (Tag cardTypeTag : cardTypeTags) {
                 // FIXME: Creation of Type to be rewritten
-                String certTypeId = certTypeTag.getAttributeAsString("name");
-                TrainCertificateType certType = TrainCertificateType.create(this, certTypeId, certTypeIndex++);
-                if (defaultsTag != null) certType.configureFromXML(defaultsTag);
-                certType.configureFromXML(certTypeTag);
-                trainCertTypes.add(certType);
-                trainCertTypeMap.put(certType.getId(), certType);
+                String cardTypeId = cardTypeTag.getAttributeAsString("name");
+                TrainCardType cardType = TrainCardType.create(this, cardTypeId, cardTypeIndex++);
+                if (defaultsTag != null) cardType.configureFromXML(defaultsTag);
+                cardType.configureFromXML(cardTypeTag);
+                trainCardTypes.add(cardType);
+                trainCardTypeMap.put(cardType.getId(), cardType);
 
                 // The potential train types
-                trainTypeTags = certTypeTag.getChildren("Train");
+                trainTypeTags = cardTypeTag.getChildren("Train");
                 if (trainTypeTags == null) {
                     // That's OK, all properties are in TrainType, to let's reuse that tag
-                    trainTypeTags = Arrays.asList(certTypeTag);
+                    trainTypeTags = Arrays.asList(cardTypeTag);
                 }
                 for (Tag trainTypeTag : trainTypeTags) {
                     newTrainType = new TrainType();
                     if (defaultsTag != null) newTrainType.configureFromXML(defaultsTag);
-                    newTrainType.configureFromXML(certTypeTag);
+                    newTrainType.configureFromXML(cardTypeTag);
                     newTrainType.configureFromXML(trainTypeTag);
-                    lTrainTypes.add(newTrainType);
+                    trainTypes.add(newTrainType);
                     mTrainTypes.put(newTrainType.getName(), newTrainType);
-                    certType.addPotentialTrainType(newTrainType);
+                    cardType.addPotentialTrainType(newTrainType);
                 }
             }
         }
@@ -165,30 +172,40 @@ public class TrainManager extends RailsManager implements Configurable {
         String phaseName;
         PhaseManager phaseManager = root.getPhaseManager();
 
-        for (TrainCertificateType certType : trainCertTypes) {
-            certType.finishConfiguration(root);
-
-            List<TrainType> types = certType.getPotentialTrainTypes();
-            for (TrainType type : types) {
-                type.finishConfiguration(root, certType);
+        for (TrainCardType cardType : trainCardTypes) {
+            cardType.finishConfiguration(root);
+            for (TrainType trainType : cardType.getPotentialTrainTypes()) {
+                trainType.finishConfiguration(root, cardType);
             }
 
-            // Now create the trains of this type
-            Train train;
-            // Multi-train certificates cannot yet be assigned a type
-            TrainType initialType = types.size() == 1 ? types.get(0) : null;
+            // Create the cards of this TrainCardType
 
-            /* If the amount is infinite, only one train is created.
-             * Each time this train is bought, another one is created.
+            /* If the amount is infinite, only one card and train is created.
+             * Each time this card is bought, another one is created.
              */
-            for (int i = 0; i < (certType.hasInfiniteQuantity() ? 1 : certType.getQuantity()); i++) {
-                train = Train.create(this, getNewUniqueId(certType.getId()), certType, initialType);
-                addTrain(train);
-                Bank.getUnavailable(this).getPortfolioModel().addTrain(train);
+            for (int i = 0; i < (cardType.hasInfiniteQuantity() ? 1 : cardType.getQuantity()); i++) {
+                createCardAndTrains (cardType);
+                /*
+                card = createTrainCard (cardType);
+                addTrainCard(card);
+                Bank.getUnavailable(this).getPortfolioModel().addTrainCard(card);
+
+                List<TrainType> trainTypes = cardType.getPotentialTrainTypes();
+                for (TrainType trainType : trainTypes) {
+                    trainType.finishConfiguration(root, cardType);
+
+                    // Create the trains of this TrainType
+                    train = createTrain(trainType, card);
+
+                    addTrain(card, train);
+                    Bank.getUnavailable(this).getPortfolioModel().addTrain(train);
+                }
+
+                 */
             }
 
             // Register any phase changes
-            newPhaseNames = certType.getNewPhaseNames();
+            newPhaseNames = cardType.getNewPhaseNames();
             if (newPhaseNames != null && !newPhaseNames.isEmpty()) {
                 for ( Map.Entry<Integer, String> entry : newPhaseNames.entrySet()) {
                     phaseName = entry.getValue();
@@ -196,8 +213,8 @@ public class TrainManager extends RailsManager implements Configurable {
                     if (phase == null) {
                         throw new ConfigurationException("New phase '" + phaseName + "' does not exist");
                     }
-                    newPhases.computeIfAbsent(certType, k -> new HashMap<>());
-                    newPhases.get(certType).put(entry.getKey(), phase);
+                    newPhases.computeIfAbsent(cardType, k -> new HashMap<>());
+                    newPhases.get(cardType).put(entry.getKey(), phase);
                 }
             }
 
@@ -205,7 +222,7 @@ public class TrainManager extends RailsManager implements Configurable {
 
         // By default, set the first train type to "available".
         newTypeIndex.set(0);
-        makeTrainAvailable(trainCertTypes.get(newTypeIndex.value()));
+        makeTrainsAvailable(trainCardTypes.get(newTypeIndex.value()));
 
         // Discard Trains To where?
         if ( "pool".equalsIgnoreCase(discardToString)) {
@@ -227,39 +244,114 @@ public class TrainManager extends RailsManager implements Configurable {
         root.getGameManager().setGameParameter(GameDef.Parm.DUAL_TRAIN_BECOMES_UNDECIDED_IN_POOL,
                 dualTrainBecomesUndecidedInPool);
     }
+    /*
+    private TrainCard createTrainCard(TrainCardType trainCardType)
+            throws ConfigurationException {
+        int sequenceNumber = getNewUniqueId(trainCardType.getId());
+        String id = trainCardType.getId() + "_" + sequenceNumber;
+        TrainCard card = new TrainCard (this, id);
+        card.setName(id);
+        card.setType(trainCardType);
 
+        return card;
+    }
+
+    private Train createTrain(TrainType trainType, TrainCard trainCard)
+            throws ConfigurationException {
+        int sequenceNumber = getNewUniqueId(trainType.getName());
+        String id = trainType.getName() + "_" + sequenceNumber;
+        Train train = Configure.create(trainCard.getType().getTrainClass(), this, id);
+        train.setSortingId(sequenceNumber); // Hopefully redundant now
+        trainCard.addTrain(train);
+        train.setCard(trainCard);
+        train.setType(trainType);
+
+        return train;
+    }
+
+     */
+
+    private TrainCard createCardAndTrains (TrainCardType cardType) {
+        int sequenceNumber = getNewUniqueId(cardType.getId());
+        // We can't use "_" here, because for non-dual trains
+        // that would duplicate the train id.
+        String id = cardType.getId() + "-" + sequenceNumber;
+        TrainCard card = new TrainCard (this, id);
+        card.setName (id);
+        card.setType (cardType);
+        addTrainCard(card);
+        Bank.getUnavailable(this).getPortfolioModel().addTrainCard(card);
+
+        List<TrainType> trainTypes = cardType.getPotentialTrainTypes();
+        for (TrainType trainType : trainTypes) {
+
+            // Create the trains of this TrainType
+            id = cardType.getId() + "_" + sequenceNumber;
+            Train train = new Train(this, id);
+            card.addTrain(train);
+            train.setCard(card);
+            train.setType(trainType);
+            train.setName(id);
+
+            addTrain(card, train);
+        }
+
+        return card;
+
+    }
     /**
      * Create train without throwing exceptions.
      * To be used <b>after</b> completing initialization,
      * i.e. in cloning infinitely available trains.
      */
 
-    public Train cloneTrain(TrainCertificateType certType) {
+    public TrainCard cloneTrain (TrainCardType cardType) {
+        TrainCard card = createCardAndTrains (cardType);
+        /*
         Train train = null;
-        List<TrainType> types = certType.getPotentialTrainTypes();
-        TrainType initialType = types.size() == 1 ? types.get(0) : null;
         try {
-            train = Train.create(this, getNewUniqueId(certType.getId()), certType, initialType);
+            card = createTrainCard (cardType);
+            addTrainCard(card);
+            List<TrainType> trainTypes = cardType.getPotentialTrainTypes();
+            for (TrainType trainType : trainTypes) {
+                train = createTrain(trainType, card);
+                addTrain(card, train);
+            }
         } catch (ConfigurationException e) {
             log.warn("Unexpected exception", e);
         }
-        addTrain(train);
-        return train;
+         */
+         /* This return can only be used in games without dual train cards.
+         * Only known usage is by 18GA.
+         */
+        return card;
     }
 
-    public void addTrain(Train train) {
+    public void addTrainCard(TrainCard card) {
+        trainCardMap.put(card.getId(), card);
+
+        TrainCardType type = card.getType();
+        if (!cardsPerType.containsKey(type)) {
+            cardsPerType.put(type, new ArrayList<TrainCard>());
+        }
+        cardsPerType.get(type).add(card);
+    }
+
+    public void addTrain(TrainCard card, Train train) {
         trainMap.put(train.getId(), train);
 
-        TrainCertificateType type = train.getCertType();
-        if (!trainsPerCertType.containsKey(type)) {
-            trainsPerCertType.put(type, new ArrayList<Train>());
+        TrainCardType type = train.getCardType();
+        if (!trainsPerCardType.containsKey(type)) {
+            trainsPerCardType.put(type, new ArrayList<Train>());
         }
-        trainsPerCertType.get(type).add(train);
+        trainsPerCardType.get(type).add(train);
     }
 
     public Train getTrainByUniqueId(String id) {
         return trainMap.get(id);
     }
+
+    public TrainCard getTrainCardByUniqueID (String id) { return trainCardMap.get(id); }
 
     public int getNewUniqueId(String typeName) {
         int newUniqueId = lastIndexPerType.containsKey(typeName) ? lastIndexPerType.get(typeName) + 1 : 0;
@@ -278,17 +370,17 @@ public class TrainManager extends RailsManager implements Configurable {
         phaseHasChanged.set(false);
         if (from != Bank.getIpo(this)) return;
 
-        TrainCertificateType boughtType, nextType;
-        boughtType = train.getCertType();
-        if (boughtType == (trainCertTypes.get(newTypeIndex.value()))
-                && Bank.getIpo(this).getPortfolioModel().getTrainOfType(boughtType) == null) {
+        TrainCardType boughtType, nextType;
+        boughtType = train.getCardType();
+        if (boughtType == (trainCardTypes.get(newTypeIndex.value()))
+                && Bank.getIpo(this).getPortfolioModel().getTrainCardOfType(boughtType) == null) {
             // Last train bought, make a new type available.
             newTypeIndex.add(1);
-            if (newTypeIndex.value() < lTrainTypes.size()) {
-                nextType = (trainCertTypes.get(newTypeIndex.value()));
+            if (newTypeIndex.value() < trainTypes.size()) {
+                nextType = (trainCardTypes.get(newTypeIndex.value()));
                 if (nextType != null) {
                     if (!nextType.isAvailable()) {
-                        makeTrainAvailable(nextType);
+                        makeTrainsAvailable(nextType);
                         trainAvailabilityChanged.set(true);
                         ReportBuffer.add(this, "All " + boughtType.toText()
                                 + "-trains are sold out, "
@@ -314,13 +406,13 @@ public class TrainManager extends RailsManager implements Configurable {
         }
     }
 
-    protected void makeTrainAvailable(TrainCertificateType type) {
+    protected void makeTrainsAvailable(TrainCardType cardType) {
 
-        type.setAvailable();
+        cardType.setAvailable();
 
-        BankPortfolio to = ("Pool".equalsIgnoreCase(type.getInitialPortfolio()) ? Bank.getPool(this) : Bank.getIpo(this));
+        BankPortfolio to = ("Pool".equalsIgnoreCase(cardType.getInitialPortfolio()) ? Bank.getPool(this) : Bank.getIpo(this));
 
-        for (Train train : trainsPerCertType.get(type)) {
+        for (Train train : trainsPerCardType.get(cardType)) {
             to.getPortfolioModel().addTrain(train);
         }
     }
@@ -328,7 +420,7 @@ public class TrainManager extends RailsManager implements Configurable {
     // checks train obsolete condition
     private boolean isTrainObsolete(Train train, Owner lastBuyingCompany) {
         // check fist if train can obsolete at all
-        if (!train.getCertType().isObsoleting()) return false;
+        if (!train.getCardType().isObsoleting()) return false;
         // and if it is in the pool (always rust)
         if (train.getOwner() == Bank.getPool(this)) return false;
 
@@ -341,9 +433,9 @@ public class TrainManager extends RailsManager implements Configurable {
         }
     }
 
-    protected void rustTrainType(TrainCertificateType type, Owner lastBuyingCompany) {
+    protected void rustTrainType(TrainCardType type, Owner lastBuyingCompany) {
         type.setRusted();
-        for (Train train : trainsPerCertType.get(type)) {
+        for (Train train : trainsPerCardType.get(type)) {
             Owner owner = train.getOwner();
             // check condition for train rusting
             if (isTrainObsolete(train, lastBuyingCompany)) {
@@ -366,14 +458,16 @@ public class TrainManager extends RailsManager implements Configurable {
 
     public Set<Train> getAvailableNewTrains() {
 
-        Set<Train> availableTrains = new TreeSet<Train>();
+        Set<Train> availableTrains = new TreeSet<>();
         Train train;
 
-        for (TrainCertificateType type : trainCertTypes) {
-            if (type.isAvailable()) {
-                train = Bank.getIpo(this).getPortfolioModel().getTrainOfType(type);
-                if (train != null) {
-                    availableTrains.add(train);
+        for (TrainCardType cardType : trainCardTypes) {
+            if (cardType.isAvailable()) {
+                for (TrainType trainType : cardType.getPotentialTrainTypes()) {
+                    train = Bank.getIpo(this).getPortfolioModel().getTrainOfType(trainType);
+                    if (train != null) {
+                        availableTrains.add(train);
+                    }
                 }
             }
         }
@@ -382,37 +476,39 @@ public class TrainManager extends RailsManager implements Configurable {
 
     public String getTrainCostOverview() {
         StringBuilder b = new StringBuilder();
-        for (TrainCertificateType certType : trainCertTypes) {
-            if (certType.getCost() > 0) {
+        for (TrainType trainType : trainTypes) {
+            if (trainType.getCost() > 0) {
                 if (b.length() > 1) b.append(" ");
-                b.append(certType.toText()).append(":").append(Bank.format(this, certType.getCost()));
-                if (certType.getExchangeCost() > 0) {
-                    b.append("(").append(Bank.format(this, certType.getExchangeCost())).append(")");
+                b.append(trainType.getName()).append(":").append(Bank.format(this, trainType.getCost()));
+                if (trainType.getExchangeCost() > 0) {
+                    b.append("(").append(Bank.format(this, trainType.getExchangeCost())).append(")");
                 }
+                /* Not needed?
             } else {
-                for (TrainType type : certType.getPotentialTrainTypes()) {
+                for (TrainType type : trainType.getPotentialTrainTypes()) {
                     if (b.length() > 1) b.append(" ");
                     b.append(type.getName()).append(":").append(Bank.format(this, type.getCost()));
                 }
+                 */
             }
         }
         return b.toString();
     }
 
-    public TrainType getTypeByName(String name) {
+    public TrainType getTrainTypeByName(String name) {
         return mTrainTypes.get(name);
     }
 
     public List<TrainType> getTrainTypes() {
-        return lTrainTypes;
+        return trainTypes;
     }
 
-    public List<TrainCertificateType> getTrainCertTypes() {
-        return trainCertTypes;
+    public List<TrainCardType> getTrainCardTypes() {
+        return trainCardTypes;
     }
 
-    public TrainCertificateType getCertTypeByName(String name) {
-        return trainCertTypeMap.get(name);
+    public TrainCardType getCardTypeByName(String name) {
+        return trainCardTypeMap.get(name);
     }
 
     public boolean hasAvailabilityChanged() {
@@ -442,11 +538,15 @@ public class TrainManager extends RailsManager implements Configurable {
         return discardTo;
     }
 
+    public boolean doesDualTrainBecomesUndecidedInPool() {
+        return dualTrainBecomesUndecidedInPool;
+    }
+
     public List<TrainType> parseTrainTypes(String trainTypeName) {
-        List<TrainType> trainTypes = new ArrayList<TrainType>();
+        List<TrainType> trainTypes = new ArrayList<>();
         TrainType trainType;
         for (String trainTypeSingle : trainTypeName.split(",")) {
-            trainType = getTypeByName(trainTypeSingle);
+            trainType = getTrainTypeByName(trainTypeSingle);
             if (trainType != null) {
                 trainTypes.add(trainType);
             } else {
