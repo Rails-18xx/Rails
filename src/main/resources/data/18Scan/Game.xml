@@ -73,7 +73,9 @@
 		<TrainType name="4D" majorStops="4" cost="800" quantity="6">
 			<NewPhase phaseName="4D"/>
 		</TrainType>
-		
+		<TrainBuyingRules>
+			<DualTrainBecomesUndecidedInPool/>
+		</TrainBuyingRules>
 	</Component>
 	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<Phase name="2">

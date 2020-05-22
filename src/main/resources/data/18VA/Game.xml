@@ -51,22 +51,36 @@
 			<Reach base="stops" countTowns="no"/>
 			<Score towns="yes"/>
 		</Defaults>
-		<TrainType name="2" majorStops="2" cost="100" quantity="6"/>
-		<TrainType name="3" majorStops="3" cost="200" quantity="5">
+		<TrainType name="2/1G" quantity="6">
+			<Train name="2" majorStops="2" cost="100"/>
+			<Train name="1G" majorStops="1" cost="100"/>
+		</TrainType>
+		<TrainType name="3/2G" quantity="5">
+			<Train name="3" majorStops="3" cost="200"/>
+			<Train name="2G" majorStops="2" cost="200"/>
 			<NewPhase phaseName="3"/>
 		</TrainType>
-		<TrainType name="4" majorStops="4" cost="300" quantity="4">
+		<TrainType name="4/3G" quantity="4">
+			<Train name="4" majorStops="4" cost="300"/>
+			<Train name="3G" majorStops="3" cost="300"/>
 			<NewPhase phaseName="4"/>
 		</TrainType>
-		<TrainType name="5" majorStops="5" cost="500" quantity="3">
+		<TrainType name="5/4G" quantity="3">
+			<Train name="5" majorStops="5" cost="500"/>
+			<Train name="4G" majorStops="4" cost="500"/>
 			<NewPhase phaseName="5"/>
 		</TrainType>
-		<TrainType name="6" majorStops="6" cost="600" quantity="2">
+		<TrainType name="6/5G" quantity="2">
+			<Train name="6" majorStops="6" cost="600"/>
+			<Train name="5G" majorStops="5" cost="600"/>
 			<NewPhase phaseName="6"/>
 		</TrainType>
 		<TrainType name="4D" majorStops="99" cost="800" quantity="10">
 			<NewPhase phaseName="4D"/>
 		</TrainType>
+		<TrainBuyingRules>
+			<DualTrainBecomesUndecidedInPool/>
+		</TrainBuyingRules>
 	</Component>
 	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<!-- Each Phase's defaults are the previous one's values -->

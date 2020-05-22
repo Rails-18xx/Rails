@@ -24,7 +24,8 @@ public class GameDef {
         REMOVE_TRAIN_BEFORE_SR(false),
         EMERGENCY_MUST_BUY_CHEAPEST_TRAIN (true),
         EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN (false),
-        EMERGENCY_MAY_BUY_FROM_COMPANY (true);
+        EMERGENCY_MAY_BUY_FROM_COMPANY (true),
+        DUAL_TRAIN_BECOMES_UNDECIDED_IN_POOL (false);
 
         private Object defaultValue;
 

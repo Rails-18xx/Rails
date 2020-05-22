@@ -70,6 +70,9 @@ public class TrainManager extends RailsManager implements Configurable {
     // For initialisation only
     protected boolean trainPriceAtFaceValueIfDifferentPresidents = false;
 
+    // For dual trains: does the chosen train type become undecided in the pool?
+    protected boolean dualTrainBecomesUndecidedInPool = false;
+
     private static final Logger log = LoggerFactory.getLogger(TrainManager.class);
 
     /**
@@ -80,41 +83,41 @@ public class TrainManager extends RailsManager implements Configurable {
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        TrainType newType;
+        TrainType newTrainType;
 
         Tag defaultsTag = tag.getChild("Defaults");
         // We will use this tag later, to preconfigure TrainCertType and TrainType.
 
-        List<Tag> typeTags;
+        List<Tag> trainTypeTags;
 
         // Choice train types (new style)
-        List<Tag> trainTypeTags = tag.getChildren("TrainType");
+        List<Tag> certTypeTags = tag.getChildren("TrainType");
 
-        if (trainTypeTags != null) {
-            int trainTypeIndex = 0;
-            for (Tag trainTypeTag : trainTypeTags) {
+        if (certTypeTags != null) {
+            int certTypeIndex = 0;
+            for (Tag certTypeTag : certTypeTags) {
                 // FIXME: Creation of Type to be rewritten
-                String trainTypeId = trainTypeTag.getAttributeAsString("name");
-                TrainCertificateType certType = TrainCertificateType.create(this, trainTypeId, trainTypeIndex++);
+                String certTypeId = certTypeTag.getAttributeAsString("name");
+                TrainCertificateType certType = TrainCertificateType.create(this, certTypeId, certTypeIndex++);
                 if (defaultsTag != null) certType.configureFromXML(defaultsTag);
-                certType.configureFromXML(trainTypeTag);
+                certType.configureFromXML(certTypeTag);
                 trainCertTypes.add(certType);
                 trainCertTypeMap.put(certType.getId(), certType);
 
                 // The potential train types
-                typeTags = trainTypeTag.getChildren("Train");
-                if (typeTags == null) {
+                trainTypeTags = certTypeTag.getChildren("Train");
+                if (trainTypeTags == null) {
                     // That's OK, all properties are in TrainType, to let's reuse that tag
-                    typeTags = Arrays.asList(trainTypeTag);
+                    trainTypeTags = Arrays.asList(certTypeTag);
                 }
-                for (Tag typeTag : typeTags) {
-                    newType = new TrainType();
-                    if (defaultsTag != null) newType.configureFromXML(defaultsTag);
-                    newType.configureFromXML(trainTypeTag);
-                    newType.configureFromXML(typeTag);
-                    lTrainTypes.add(newType);
-                    mTrainTypes.put(newType.getName(), newType);
-                    certType.addPotentialTrainType(newType);
+                for (Tag trainTypeTag : trainTypeTags) {
+                    newTrainType = new TrainType();
+                    if (defaultsTag != null) newTrainType.configureFromXML(defaultsTag);
+                    newTrainType.configureFromXML(certTypeTag);
+                    newTrainType.configureFromXML(trainTypeTag);
+                    lTrainTypes.add(newTrainType);
+                    mTrainTypes.put(newTrainType.getName(), newTrainType);
+                    certType.addPotentialTrainType(newTrainType);
                 }
             }
         }
@@ -125,6 +128,8 @@ public class TrainManager extends RailsManager implements Configurable {
         if (rulesTag != null) {
             // A 1851 special
             trainPriceAtFaceValueIfDifferentPresidents = rulesTag.getChild("FaceValueIfDifferentPresidents") != null;
+            // For dual trains (default: false) for 18VA and 18Scan(?)
+            dualTrainBecomesUndecidedInPool = rulesTag.getChild("DualTrainBecomesUndecidedInPool") != null;
         }
 
         // Train obsolescence
@@ -219,6 +224,8 @@ public class TrainManager extends RailsManager implements Configurable {
         // Train trading between different players at face value only (1851)
         root.getGameManager().setGameParameter(GameDef.Parm.FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS,
                 trainPriceAtFaceValueIfDifferentPresidents);
+        root.getGameManager().setGameParameter(GameDef.Parm.DUAL_TRAIN_BECOMES_UNDECIDED_IN_POOL,
+                dualTrainBecomesUndecidedInPool);
     }
 
     /**
