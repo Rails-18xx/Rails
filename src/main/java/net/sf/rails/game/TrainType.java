@@ -57,7 +57,7 @@ public class TrainType implements Cloneable {
             // Reach basis
             reachBasis = reachTag.getAttributeAsString("base", reachBasis);
 
-            // Are towns counted (only relevant is reachBasis = "stops")
+            // Are towns counted (only relevant if reachBasis = "stops")
             countTowns = reachTag.getAttributeAsString("countTowns", countTowns);
         }
 

@@ -1,4 +1,10 @@
 <Map tileOrientation="EW" letterOrientation="vertical" even="A">
+	<Defaults>
+		<!-- See class StopType for allowed values -->
+		<Access type="offMap" runTo="tokenonly" runThrough="no" loop="no" score="major"/>
+		<Access type="city" runTo="yes" runThrough="yes" loop="yes" score="major"/>
+		<Access type="town" runTo="yes" runThrough="yes" loop="yes" score="minor"/>
+	</Defaults>
 	<!-- Hex name="" tile="" orientation="" value="" impassable="" label="" cost="" value="" port="yes/no" -->
 	<Hex name="A4" tile="-911" city="Newcastle"  value="20,50,80"/>
 	<Hex name="A6" tile="0" cost="60"/>
@@ -7,7 +13,9 @@
 	<Hex name="A14" tile="0" cost="60"/>
 	<Hex name="A16" tile="0" cost="60"/>
 	<Hex name="A18" tile="-10" city="Narvik" cost="60"/>
-	<Hex name="A20" tile="-4002" city="Kiruna" value="10,50,10" orientation="2"/>
+	<Hex name="A20" tile="-4002" city="Kiruna" value="10,50,10" orientation="2">
+		<Access runTo="yes" runThrough="yes" score="minor"/>
+	</Hex>
 	<Hex name="B5" tile="-10" city="Bergen" impassable="C4"/>
 	<Hex name="B7" tile="0" cost="60"/>
 	<Hex name="B9" tile="0" cost="60"/>

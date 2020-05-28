@@ -93,7 +93,7 @@ public class TrainManager extends RailsManager implements Configurable {
         TrainType newTrainType;
 
         Tag defaultsTag = tag.getChild("Defaults");
-        // We will use this tag later, to preconfigure TrainCertType and TrainType.
+        // We will use this tag later, to preconfigure TrainCardType and TrainType.
 
         List<Tag> trainTypeTags;
 
@@ -286,7 +286,7 @@ public class TrainManager extends RailsManager implements Configurable {
         for (TrainType trainType : trainTypes) {
 
             // Create the trains of this TrainType
-            id = cardType.getId() + "_" + sequenceNumber;
+            id = trainType.getName() + "_" + sequenceNumber;
             Train train = new Train(this, id);
             card.addTrain(train);
             train.setCard(card);

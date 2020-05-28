@@ -45,7 +45,7 @@
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
-			<Reach base="stops" countTowns="no"/>
+			<Reach base="stops" countTowns="yes"/>
 			<Score towns="yes"/>
 		</Defaults>
 		<TrainType name="2/1+1" quantity="6">
@@ -68,9 +68,13 @@
 			<NewPhase phaseName="5"/>
 		</TrainType>
 		<TrainType name="5E" majorStops="5" cost="600" quantity="2">
+			<Reach countTowns = "no"/>
+			<Score towns = "no"/>
 			<NewPhase phaseName="5E"/>
 		</TrainType>
 		<TrainType name="4D" majorStops="4" cost="800" quantity="6">
+			<Reach countTowns = "no"/>
+			<Score cities = "double" towns = "no"/>
 			<NewPhase phaseName="4D"/>
 		</TrainType>
 		<TrainBuyingRules>
