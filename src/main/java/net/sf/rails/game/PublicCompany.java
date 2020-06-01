@@ -1568,6 +1568,16 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     /**
+     * Stub to enable special handling of companies without train.
+     * Example: 18Scan minors.
+     * @return true if a company can yield income.
+     */
+    public boolean canGenerateRevenue () {
+        // The default:
+        return canRunTrains();
+    }
+
+    /**
      * Must be called in stead of Portfolio.buyTrain if side-effects can occur.
      */
     public void buyTrain(Train train, int price) {
@@ -2013,6 +2023,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     @Override
     public CompanyType getType() {
         return type;
+    }
+
+    public boolean isOfType (String typeName) {
+        return typeName.equalsIgnoreCase(type.getId());
     }
 
     @Override

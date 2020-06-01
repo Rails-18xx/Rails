@@ -14,7 +14,7 @@
 			<StockRound sequence="SellBuy">
 				<NoSaleIfNotOperated/>
 			</StockRound>
-			<OperatingRound>
+			<OperatingRound class="net.sf.rails.game.specific._18Scan.OperatingRound_18Scan">
 				<EmergencyTrainBuying mustBuyCheapestTrain="no"
 					mayBuyFromCompany="yes"/>
 			</OperatingRound>
@@ -35,6 +35,7 @@
 	</Component>
 	<Component name="Bank" class="net.sf.rails.game.financial.Bank">
 		<Bank amount="6000"/>
+		<Money format="K@"/>
 	</Component>
 	<Component name="TileManager" class="net.sf.rails.game.TileManager"
 		file="TileSet.xml"/>

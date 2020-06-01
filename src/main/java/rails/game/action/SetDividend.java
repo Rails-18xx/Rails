@@ -188,7 +188,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         // check asOption attributes
         SetDividend action = (SetDividend)pa;
         boolean options =
-                Objects.equal(this.presetRevenue, action.presetRevenue)
+             Objects.equal(this.presetRevenue, action.presetRevenue)
                 && Objects.equal(this.presetCompanyTreasuryRevenue, action.presetCompanyTreasuryRevenue)
                 && Objects.equal(this.getMayUserSetRevenue(), action.getMayUserSetRevenue())
                 && Arrays.equals(this.getAllowedRevenueAllocations(), action.getAllowedRevenueAllocations())

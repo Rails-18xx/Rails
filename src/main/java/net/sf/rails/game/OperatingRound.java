@@ -812,11 +812,15 @@ public class OperatingRound extends Round implements Observer {
 
             if (step == GameDef.OrStep.CALC_REVENUE) {
 
-                if (!company.canRunTrains()) {
-                    // No trains, then the revenue is zero.
+                if (!company.canGenerateRevenue()) {
+                    // No trains, then the revenue is zero (normally).
                     log.debug("OR skips {}: Cannot run trains", step);
                     executeSetRevenueAndDividend(new SetDividend(getRoot(), 0, false, new int[] { SetDividend.NO_TRAIN }));
                     // TODO: This probably does not handle share selling correctly
+                    continue;
+                } else if (!company.canRunTrains()) {
+                    // In 18Scan a trainless minor company still pays out.
+                    executeTrainlessRevenue (step);
                     continue;
                 }
             }
@@ -869,6 +873,7 @@ public class OperatingRound extends Round implements Observer {
 
             if (!gameSpecificNextStep(step)) {
                 log.debug("OR skips {}: Not game specific", step);
+                // Skipping step
                 continue;
             }
 
@@ -890,6 +895,11 @@ public class OperatingRound extends Round implements Observer {
     protected boolean gameSpecificNextStep(GameDef.OrStep step) {
         return true;
     }
+
+    /**
+     * Stub, to be used in some cases (e.g. 18Scan minors)
+     */
+    protected void executeTrainlessRevenue (GameDef.OrStep step) {}
 
     /**
      * This method is only called at the start of each step (unlike
@@ -2436,7 +2446,7 @@ public class OperatingRound extends Round implements Observer {
                     break;
                 }
             } else {
-                // If there is no revenue, use withhold.
+               // If there is no revenue, use withhold.
                 action.setRevenueAllocation(SetDividend.WITHHOLD);
             }
 
@@ -2454,6 +2464,10 @@ public class OperatingRound extends Round implements Observer {
     }
 
     protected void executeSetRevenueAndDividend(SetDividend action) {
+        executeSetRevenueAndDividend(action, null);
+    }
+
+    protected void executeSetRevenueAndDividend(SetDividend action, String report) {
 
         int amount = action.getActualRevenue();
         int revenueAllocation = action.getRevenueAllocation();
@@ -2467,36 +2481,36 @@ public class OperatingRound extends Round implements Observer {
 
         if (amount == 0) {
 
-            ReportBuffer.add(this, LocalText.getText(
+            if (report == null) report = LocalText.getText (
                     "CompanyDoesNotPayDividend",
-                    operatingCompany.value().getId()));
+                    operatingCompany.value().getId());
+            ReportBuffer.add(this, report);
             withhold(amount);
 
         } else if (revenueAllocation == SetDividend.PAYOUT) {
 
-            ReportBuffer.add(this,
-                    LocalText.getText("CompanyPaysOutFull",
-                            operatingCompany.value().getId(),
-                            Bank.format(this, amount)));
-
+            if (report == null) report = LocalText.getText (
+                    "CompanyPaysOutFull",
+                    operatingCompany.value().getId(),
+                    Bank.format(this, amount));
+            ReportBuffer.add(this, report);
             payout(amount);
 
         } else if (revenueAllocation == SetDividend.SPLIT) {
 
-            ReportBuffer.add(this,
-                    LocalText.getText("CompanySplits",
-                            operatingCompany.value().getId(),
-                            Bank.format(this, amount)));
-
+            if (report == null) report = LocalText.getText (
+                    "CompanySplits",
+                    operatingCompany.value().getId(),
+                    Bank.format(this, amount));
+            ReportBuffer.add(this, report);
             splitRevenue(amount);
 
         } else if (revenueAllocation == SetDividend.WITHHOLD) {
-
-            ReportBuffer.add(this,
-                    LocalText.getText("CompanyWithholds",
-                            operatingCompany.value().getId(),
-                            Bank.format(this, amount)));
-
+            if (report == null) report = LocalText.getText (
+                    "CompanyWithholds",
+                    operatingCompany.value().getId(),
+                    Bank.format(this, amount));
+            ReportBuffer.add(this, report);
             withhold(amount);
 
         }
