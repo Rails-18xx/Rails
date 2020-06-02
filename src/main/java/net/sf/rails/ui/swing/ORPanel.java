@@ -1,13 +1,6 @@
 package net.sf.rails.ui.swing;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.swing.*;
-
+import com.google.common.collect.Lists;
 import net.sf.rails.algorithms.*;
 import net.sf.rails.common.Config;
 import net.sf.rails.common.GuiDef;
@@ -16,13 +9,15 @@ import net.sf.rails.game.*;
 import net.sf.rails.ui.swing.elements.*;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
 import net.sf.rails.util.Util;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import rails.game.action.*;
 
-import com.google.common.collect.Lists;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ORPanel extends GridPanel
@@ -556,7 +551,7 @@ implements ActionListener, KeyListener, RevenueListener {
             HexHighlightMouseListener.addMouseListener(f,
                     orUIManager,c,false);
             f.addMouseListener(companyCaptionMouseClickListener);
-            f.setToolTipText(LocalText.getText("NetworkInfoDialogTitle",c.getId()));
+            f.setToolTipText(LocalText.getText("NetworkInfoDialogTitle", c.getId()));
             addField(f, leftCompNameXOffset, leftCompNameYOffset + i, 1, 1,
                     WIDE_RIGHT, visible);
 
@@ -566,20 +561,21 @@ implements ActionListener, KeyListener, RevenueListener {
                     new Field(c.getPresidentModel());
             addField(f, presidentXOffset, presidentYOffset + i, 1, 1, 0, visible);
 
-            f = sharePrice[i] = new Field(c.getCurrentPriceModel());
-            ((Field) f).setColorModel(c.getCurrentPriceModel());
-            addField(f, sharePriceXOffset, sharePriceYOffset + i, 1, 1, 0, visible);
-
+            if (c.hasStockPrice()) {
+                f = sharePrice[i] = new Field(c.getCurrentPriceModel());
+                ((Field) f).setColorModel(c.getCurrentPriceModel());
+                addField(f, sharePriceXOffset, sharePriceYOffset + i, 1, 1, 0, visible);
+            }
             f = cash[i] = new Field(c.getPurseMoneyModel());
             addField(f, cashXOffset, cashYOffset + i, 1, 1, WIDE_RIGHT, visible);
 
             if (privatesCanBeBought) {
                 f =
-                    privates[i] =
-                        new Field(
+                        privates[i] =
+                                new Field(
                                         c.getPortfolioModel().getPrivatesOwnedModel());
                 HexHighlightMouseListener.addMouseListener(f,
-                        orUIManager,c.getPortfolioModel());
+                        orUIManager, c.getPortfolioModel());
                 addField(f, privatesXOffset, privatesYOffset + i, 1, 1,
                         0, visible);
 
@@ -651,7 +647,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
                 f.setPreferredSize(directIncomeRevenue[i].getPreferredSize());
                 addField(f, bonusRevXOffset, bonusRevYOffset + i, 1, 1, 0,  false);
-}
+            }
 
             f = trains[i] = new Field(c.getPortfolioModel().getTrainsModel());
             addField(f, trainsXOffset, trainsYOffset + i, 1, 1, 0,  visible);
