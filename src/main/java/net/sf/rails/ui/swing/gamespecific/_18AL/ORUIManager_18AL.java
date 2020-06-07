@@ -51,7 +51,7 @@ public class ORUIManager_18AL extends ORUIManager {
         
         if (action instanceof LayBonusToken) { //Special Action from Private Company in 18AL
             PublicCompany company = action.getCompany();
-            NetworkGraph graph = networkAdapter.getRouteGraph(company, true);
+            NetworkGraph graph = networkAdapter.getRouteGraph(company, true, false);
             
             for (MapHex hex:action.getLocations()) {
                 if (graph.getPassableStations().containsKey(hex) )

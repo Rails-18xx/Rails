@@ -51,9 +51,17 @@ public class NetworkGraph {
         return graph;
     }
 
-    public static NetworkGraph createRouteGraph(NetworkGraph mapGraph, PublicCompany company, boolean addHQ) {
+    /**
+     *
+     * @param mapGraph
+     * @param company
+     * @param addHQ
+     * @param running true for train runs, false for tile or token lay allowances
+     * @return
+     */
+    public static NetworkGraph createRouteGraph(NetworkGraph mapGraph, PublicCompany company, boolean addHQ, boolean running) {
         NetworkGraph newGraph = new NetworkGraph();
-        newGraph.initRouteGraph(mapGraph, company, addHQ);
+        newGraph.initRouteGraph(mapGraph, company, addHQ, running);
         newGraph.rebuildVertices();
         return newGraph;
     }
@@ -342,7 +350,14 @@ public class NetworkGraph {
         return removed;
     }
 
-    private void initRouteGraph(NetworkGraph mapGraph, PublicCompany company, boolean addHQ) {
+    /**
+     *
+     * @param mapGraph
+     * @param company
+     * @param addHQ
+     * @param running true for train runs, false for tile or token lay allowances
+     */
+    private void initRouteGraph(NetworkGraph mapGraph, PublicCompany company, boolean addHQ, boolean running) {
 
         // add graph modifiers
         RevenueManager revenueManager = company.getRoot().getRevenueManager();
@@ -351,7 +366,7 @@ public class NetworkGraph {
         }
 
         // set sinks on mapgraph
-        NetworkVertex.initAllRailsVertices(mapGraph, company, null);
+        NetworkVertex.initAllRailsVertices(mapGraph, company, null, running);
 
         // add Company HQ
         NetworkVertex hqVertex = new NetworkVertex(company);

@@ -791,7 +791,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     }
 
     /**
-     * @param private company that blocks the hex (use argument null to unblock)
+     * @param company private company that blocks the hex (use argument null to unblock)
      */
     public void setBlockingPrivateCompany(PrivateCompany company) {
         blockingPrivateCompany.set(company);

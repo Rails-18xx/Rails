@@ -49,7 +49,9 @@
 	<Hex name="E14" tile="0" impassable="E12,D13,D15"/>
 	<Hex name="E16" tile="0"/>
 	<Hex name="E18" tile="0"/>
-	<Hex name="F1" tile="-912" city="Kiel" value="20,30,50" orientation="5"/>
+	<Hex name="F1" tile="-912" city="Kiel" value="20,30,50" orientation="5">
+			<Access runTo="tokenonly"/>
+	</Hex>
 	<Hex name="F3" tile="-3012" city="Odense-Copenhagen" cost="40"/>
 	<Hex name="F5" tile="0" impassable="E4"/>
 	<Hex name="F7" tile="-1" city="Norrköping"/>
@@ -58,7 +60,9 @@
 	<Hex name="F13" tile="-10" city="Turku"/>
 	<Hex name="F15" tile="-10" city="Tampere"/>
 	<Hex name="F17" tile="0"/>
-	<Hex name="G2" tile="-912" city="Stettin" value="10,30,60" orientation="5"/>
+	<Hex name="G2" tile="-912" city="Stettin" value="10,30,60" orientation="5">
+			<Access runTo="tokenonly"/>
+	</Hex>
 	<Hex name="G4" tile="-10" city="Malmö" cost="40"/>
 	<Hex name="G6" tile="0"/>
 	<Hex name="G8" tile="0"/>

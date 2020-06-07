@@ -145,6 +145,13 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     }
 
     public RunTo getRunToAllowed() {
+        // TEMPORARY FOR DEBUGGING
+        String mm,tm;
+        if (getParent().getId().equalsIgnoreCase("G2")) {
+            mm = getParent().getParent().getId();  // "Map"
+            tm = getParent().getCurrentTile().getParent().getId();  // "TileManager"
+            int x=1;
+        }
         RunTo runTo = getParent().getStopType().getRunToAllowed();
         if (runTo == null) runTo = getParent().getCurrentTile().getStopType().getRunToAllowed();
         if (runTo == null) runTo = getRelatedStation().getStopType().getRunToAllowed();
@@ -172,14 +179,17 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return scoreType;
     }
 
-    public boolean isRunToAllowedFor(PublicCompany company) {
+    public boolean isRunToAllowedFor(PublicCompany company, boolean running) {
+
         switch (getRunToAllowed()) {
             case YES:
                 return true;
             case NO:
                 return false;
             case TOKENONLY:
-                return hasTokenOf(company);
+                // Must return true when preparing tile and token laying,
+                // false in all other cases (to show the optimal train routes).
+                return !running || hasTokenOf(company);
             default:
                 // Dead code, only to satisfy the compiler
                 return true;

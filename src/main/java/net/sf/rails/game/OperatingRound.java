@@ -797,41 +797,42 @@ public class OperatingRound extends Round implements Observer {
         // Cycle through the steps until we reach one where a user action is
         // expected.
         int stepIndex;
+        GameDef.OrStep newStep = step;
         for (stepIndex = 0; stepIndex < steps.length; stepIndex++) {
-            if (steps[stepIndex] == step) break;
+            if (steps[stepIndex] == newStep) break;
         }
         while (++stepIndex < steps.length) {
-            step = steps[stepIndex];
-            log.debug("OR considers step {}", step);
+            newStep = steps[stepIndex];
+            log.debug("OR considers newStep {}", newStep);
 
-            if (step == GameDef.OrStep.LAY_TOKEN
+            if (newStep == GameDef.OrStep.LAY_TOKEN
                     && company.getNumberOfFreeBaseTokens() == 0) {
-                log.debug("OR skips {}: No freeBaseTokens", step);
+                log.debug("OR skips {}: No freeBaseTokens", newStep);
                 continue;
             }
 
-            if (step == GameDef.OrStep.CALC_REVENUE) {
+            if (newStep == GameDef.OrStep.CALC_REVENUE) {
 
                 if (!company.canGenerateRevenue()) {
                     // No trains, then the revenue is zero (normally).
-                    log.debug("OR skips {}: Cannot run trains", step);
+                    log.debug("OR skips {}: Cannot run trains", newStep);
                     executeSetRevenueAndDividend(new SetDividend(getRoot(), 0, false, new int[] { SetDividend.NO_TRAIN }));
                     // TODO: This probably does not handle share selling correctly
                     continue;
                 } else if (!company.canRunTrains()) {
                     // In 18Scan a trainless minor company still pays out.
-                    executeTrainlessRevenue (step);
+                    executeTrainlessRevenue (newStep);
                     continue;
                 }
             }
 
-            if (step == GameDef.OrStep.PAYOUT) {
+            if (newStep == GameDef.OrStep.PAYOUT) {
                 // This step is now obsolete
-                log.debug("OR skips {}: Always skipped", step);
+                log.debug("OR skips {}: Always skipped", newStep);
                 continue;
             }
 
-            if (step == GameDef.OrStep.TRADE_SHARES) {
+            if (newStep == GameDef.OrStep.TRADE_SHARES) {
                 // Is company allowed to trade trasury shares?
                 if (!company.mayTradeShares() || !company.hasOperated()) {
                     continue;
@@ -863,7 +864,7 @@ public class OperatingRound extends Round implements Observer {
                         gameManager.setSkipDone(GameDef.OrStep.TRADE_SHARES);
                         log.debug("If the next saved action is 'Done', skip it");
                     }
-                    log.info("Skipping Treasury share trading step");
+                    log.info("Skipping Treasury share trading newStep");
                     continue;
                 }
 
@@ -871,9 +872,9 @@ public class OperatingRound extends Round implements Observer {
 
             }
 
-            if (!gameSpecificNextStep(step)) {
-                log.debug("OR skips {}: Not game specific", step);
-                // Skipping step
+            if (!gameSpecificNextStep(newStep)) {
+                log.debug("OR skips {}: Not game specific", newStep);
+                // Skipping newStep
                 continue;
             }
 
@@ -881,10 +882,10 @@ public class OperatingRound extends Round implements Observer {
             break;
         }
 
-        if (step == GameDef.OrStep.FINAL) {
+        if (newStep == GameDef.OrStep.FINAL) {
             finishTurn();
         } else {
-            setStep(step);
+            setStep(newStep);
         }
 
     }

@@ -40,8 +40,15 @@ public class NetworkAdapter {
         return mapGraph;
     }
 
-    public NetworkGraph getRouteGraph(PublicCompany company, boolean addHQ) {
-        routeGraph = NetworkGraph.createRouteGraph(getMapGraph(), company, addHQ);
+    /**
+     *
+     * @param company
+     * @param addHQ
+     * @param running true for train runs, false for tile or token lay allowances
+     * @return
+     */
+    public NetworkGraph getRouteGraph(PublicCompany company, boolean addHQ, boolean running) {
+        routeGraph = NetworkGraph.createRouteGraph(getMapGraph(), company, addHQ, running);
         this.company = company;
         this.addHQ = addHQ;
         log.info("RouteGraph created");
@@ -51,9 +58,9 @@ public class NetworkAdapter {
     public NetworkGraph getRouteGraphCached(PublicCompany company, boolean addHQ) {
         if (routeGraph == null || company != this.company || addHQ != this.addHQ) {
             if (mapGraph != null) {
-                routeGraph = NetworkGraph.createRouteGraph(mapGraph, company, addHQ);
+                routeGraph = NetworkGraph.createRouteGraph(mapGraph, company, addHQ, true);
             } else {
-                getRouteGraph(company, addHQ);
+                getRouteGraph(company, addHQ, true);
             }
         }
         return routeGraph;
