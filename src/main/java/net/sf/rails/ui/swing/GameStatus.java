@@ -1,22 +1,8 @@
 package net.sf.rails.ui.swing;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.*;
-
-import net.sf.rails.common.GameOption;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
+import net.sf.rails.common.GameOption;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Player;
@@ -31,14 +17,20 @@ import net.sf.rails.ui.swing.elements.Field;
 import net.sf.rails.ui.swing.elements.RadioButtonDialog;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
 import net.sf.rails.util.Util;
-import rails.game.action.BuyCertificate;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
-import rails.game.action.SellShares;
-import rails.game.action.StartCompany;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rails.game.action.*;
 import rails.game.correct.CashCorrectionAction;
 import rails.game.specific._18EU.StartCompany_18EU;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -459,21 +451,21 @@ public class GameStatus extends GridPanel implements ActionListener {
                 f = parPrice[i] = new Field(c.getParPriceModel());
                 addField(f, parPriceXOffset, parPriceYOffset + i, 1, 1, 0, visible);
             }
-
-            f = currPrice[i] = new Field(c.getCurrentPriceModel());
-            ((Field) f).setColorModel(c.getCurrentPriceModel());
-            addField(f, currPriceXOffset, currPriceYOffset + i, 1, 1,
-                    WIDE_RIGHT, visible);
-
+            if (c.hasStockPrice()) {
+                f = currPrice[i] = new Field(c.getCurrentPriceModel());
+                ((Field) f).setColorModel(c.getCurrentPriceModel());
+                addField(f, currPriceXOffset, currPriceYOffset + i, 1, 1,
+                        WIDE_RIGHT, visible);
+            }
             f = compCash[i] = new Field(c.getPurseMoneyModel());
             addField(f, compCashXOffset, compCashYOffset + i, 1, 1, 0, visible);
             f =
-                compCashButton[i] =
-                    new ClickField(
-                            compCash[i].getText(),
-                            CASH_CORRECT_CMD,
-                            LocalText.getText("CorrectCashToolTip"),
-                            this, buySellGroup);
+                    compCashButton[i] =
+                            new ClickField(
+                                    compCash[i].getText(),
+                                    CASH_CORRECT_CMD,
+                                    LocalText.getText("CorrectCashToolTip"),
+                                    this, buySellGroup);
             addField(f, compCashXOffset, compCashYOffset + i, 1, 1,
                     WIDE_RIGHT, false);
 
