@@ -17558,5 +17558,34 @@ object TTilesWrapper
           JunType = jtCity
           Position = tp2CornerC
         end>
+    end
+    item
+      Code = -3059
+      LongName = 'NL G2'
+      Category = 'X'
+      CategoryPosition = tp3SideC
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tp2SideA
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tp2SideD
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2SideD
+          Revenue = 30
+          RevenuePosition = tp3CornerF
+        end
+        item
+          JunType = jtCity
+          Position = tp2SideA
+          Revenue = 30
+          RevenuePosition = tp3CornerF
+        end>
     end>
 end
