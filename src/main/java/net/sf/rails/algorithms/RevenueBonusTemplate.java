@@ -118,7 +118,7 @@ public final class RevenueBonusTemplate implements Configurable {
 
     private void convertTrainTypes(RevenueBonus bonus, TrainManager tm) {
         for (String identTrainType:identTrainTypes) {
-            TrainType trainType = tm.getTypeByName(identTrainType);
+            TrainType trainType = tm.getTrainTypeByName(identTrainType);
             if (trainType != null) {
                 bonus.addTrainType(trainType);
             }

@@ -127,7 +127,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         Multimap<MapHex,Station> iStations;
         NetworkGraph nwGraph = NetworkGraph.createMapGraph(getRoot());
         NetworkGraph companyGraph =
-                NetworkGraph.createRouteGraph(nwGraph, this, true);
+                NetworkGraph.createRouteGraph(nwGraph, this, true, false);
         SimpleGraph<NetworkVertex, NetworkEdge> graph =
                 companyGraph.getGraph();
         Set<NetworkVertex> verticies = graph.vertexSet();
@@ -138,7 +138,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
                 (PublicCompany_1880) ((Investor_1880) this).getLinkedCompany();
 
         if (linkedCompany != null) {
-            NetworkGraph linkedCompanyGraph=NetworkGraph.createRouteGraph(nwGraph, linkedCompany, true);
+            NetworkGraph linkedCompanyGraph=NetworkGraph.createRouteGraph(nwGraph, linkedCompany, true, false);
             // Creating a list of stations blocked by tokens.
             // The connection between investor and Linked Company is NOT blocked by any token of any company.
             // A token that is counted as blocked can be reached by the company for which it blocks the route.

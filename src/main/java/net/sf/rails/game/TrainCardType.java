@@ -20,28 +20,32 @@ import org.slf4j.LoggerFactory;
  * TrainCertificateType indicates the type of a TrainCertficate
  * TrainCertficates can be multi-sided (thus provide several TrainType options)
  */
-public class TrainCertificateType extends RailsAbstractItem implements Configurable, Comparable<TrainCertificateType> {
+public class TrainCardType extends RailsAbstractItem implements Configurable, Comparable<TrainCardType> {
     // FIXME: Rails 2.0, move this to some default .xml!
     private final static String DEFAULT_TRAIN_CLASS = "net.sf.rails.game.Train";
 
     // Static definitions
     private int index; // for sorting
+    private String name;
 
     private int quantity = 0;
     private boolean infiniteQuantity = false;
 
-    private List<TrainType> potentialTrainTypes = new ArrayList<TrainType>(2);
+    private List<TrainType> potentialTrainTypes = new ArrayList<>(2);
 
     private Map<Integer, String> newPhaseNames;
 
     private boolean permanent = true;
     private boolean obsoleting = false;
 
-    private boolean canBeExchanged = false;
-    private int cost;
+    //private int cost;
+    /**
+     * Here used to determine canBeExchanged. Value is passed tp TrainType.
+     */
     private int exchangeCost;
 
     // store the trainClassName to allow dual configuration
+    // TODO Shouldn't this also fall through to the Train class?
     private String trainClassName = DEFAULT_TRAIN_CLASS;
     private Class<? extends Train> trainClass;
 
@@ -55,15 +59,15 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     private final BooleanState available = new BooleanState(this, "available");
     private final BooleanState rusted = new BooleanState(this, "rusted");
 
-    private static final Logger log = LoggerFactory.getLogger(TrainCertificateType.class);
+    private static final Logger log = LoggerFactory.getLogger(TrainCardType.class);
 
-    private TrainCertificateType(TrainManager parent, String id, int index) {
+    private TrainCardType(TrainManager parent, String id, int index) {
         super(parent, id);
         this.index = index;
     }
 
-    public static TrainCertificateType create(TrainManager parent, String id, int index) {
-        return new TrainCertificateType(parent, id, index);
+    public static TrainCardType create(TrainManager parent, String id, int index) {
+        return new TrainCardType(parent, id, index);
     }
 
     @Override
@@ -89,7 +93,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
         if (newPhaseTags != null) {
             int index;
             String phaseName;
-            newPhaseNames = new HashMap<Integer, String>();
+            newPhaseNames = new HashMap<>();
             for (Tag newPhaseTag : newPhaseTags) {
                 phaseName = newPhaseTag.getAttributeAsString("phaseName");
                 if (!Util.hasValue(phaseName)) {
@@ -98,13 +102,6 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
                 index = newPhaseTag.getAttributeAsInteger("trainIndex", 1);
                 newPhaseNames.put(index, phaseName);
             }
-        }
-
-        // Exchangeable
-        Tag swapTag = tag.getChild("Exchange");
-        if (swapTag != null) {
-            exchangeCost = swapTag.getAttributeAsInteger("cost", 0);
-            canBeExchanged = (exchangeCost > 0);
         }
 
         // Can run as obsolete train
@@ -126,11 +123,13 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
         return newPhaseNames;
     }
 
+    /* Obsolete
     public Train createTrain(RailsItem parent, String id, int sortingId) throws ConfigurationException {
         Train train = Configure.create(trainClass, parent, id);
         train.setSortingId(sortingId);
         return train;
     }
+     */
 
     public List<TrainType> getPotentialTrainTypes() {
         return potentialTrainTypes;
@@ -153,6 +152,17 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     public void setAvailable() {
         available.set(true);
     }
+
+    /* Obsolete?
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+     */
 
     public void setRusted() {
         rusted.set(true);
@@ -182,10 +192,6 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
         return infiniteQuantity;
     }
 
-    public boolean nextCanBeExchanged() {
-        return canBeExchanged;
-    }
-
     public void addToBoughtFromIPO() {
         numberBoughtFromIPO.add(1);
     }
@@ -194,21 +200,23 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
         return numberBoughtFromIPO.value();
     }
 
-    public int getCost() {
-        return cost;
-    }
-
-    public int getExchangeCost() {
-        return exchangeCost;
-    }
-
     public String getInitialPortfolio() {
         return initialPortfolio;
     }
 
+    public boolean isDual() {
+        return potentialTrainTypes.size() == 2;
+    }
+
+    /* No longer used
+    public Class<? extends Train> getTrainClass() {
+        return trainClass;
+    }
+     */
+
     public String getInfo() {
         StringBuilder b = new StringBuilder("<html>");
-        b.append(LocalText.getText("TrainInfo", getId(), Bank.format(this, cost), quantity));
+        b.append(LocalText.getText("TrainCardInfo", getId(), quantity));
         if (b.length() == 6) b.append(LocalText.getText("None"));
 
         return b.toString();
@@ -219,7 +227,7 @@ public class TrainCertificateType extends RailsAbstractItem implements Configura
     }
 
     // Comparable interface
-    public int compareTo(TrainCertificateType o) {
+    public int compareTo(TrainCardType o) {
         return Integer.compare(index, o.getIndex());
     }
 

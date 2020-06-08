@@ -226,9 +226,10 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
 
     /**
      * Initialize for rails vertexes
+     * @param running true for train runs, false for tile or token lay allowances
      * @return true = can stay inside the network, false = has to be removed
      */
-    public boolean initRailsVertex(PublicCompany company) {
+    public boolean initRailsVertex(PublicCompany company, boolean running) {
         // side vertices use the defaults, virtuals cannot use this function
         if (virtual || type == VertexType.SIDE) return true;
 
@@ -239,7 +240,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
 
         // check if it has to be removed because it is run-to only
         // if company == null, then no vertex gets removed
-        if (company != null && !stop.isRunToAllowedFor(company)) {
+        if (company != null && !stop.isRunToAllowedFor(company, running)) {
            log.info("Vertex is removed");
            return false;
         }
@@ -319,15 +320,16 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
      * @param graph network graph
      * @param company the company (with regard to values, sinks and removals)
      * @param phase the current phase (with regard to values)
+     * @param running true for train runs, false for tile or token lay allowances
      */
     public static void initAllRailsVertices(NetworkGraph graph,
-            PublicCompany company,  Phase phase) {
+            PublicCompany company,  Phase phase, boolean running) {
 
         // store vertices for removal
         List<NetworkVertex> verticesToRemove = new ArrayList<NetworkVertex>();
         for (NetworkVertex v:graph.getGraph().vertexSet()) {
             if (company != null) {
-                if (!v.initRailsVertex(company)) {
+                if (!v.initRailsVertex(company, running)) {
                     verticesToRemove.add(v);
                 }
             }

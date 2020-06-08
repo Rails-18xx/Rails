@@ -17,7 +17,7 @@ public class TrainType implements Cloneable {
     public static final int NO_TOWN_COUNT = 0;
 
     protected String name;
-    protected TrainCertificateType certificateType;
+    protected TrainCardType trainCardType;
 
     protected String reachBasis = "stops";
     protected boolean countHexes = false;
@@ -32,6 +32,7 @@ public class TrainType implements Cloneable {
     protected int cityScoreFactor = 1;
 
     protected int cost;
+    protected int exchangeCost;
     protected int majorStops;
     protected int minorStops;
 
@@ -41,19 +42,12 @@ public class TrainType implements Cloneable {
 
     private static final Logger log = LoggerFactory.getLogger(TrainType.class);
 
-    /**
-     * @param real False for the default type, else real. The default type does
-     * not have top-level attributes.
-     */
-    public TrainType() {
-    }
+    public TrainType() {}
 
-    /**
-     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
-     */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         name = tag.getAttributeAsString("name");
         cost = tag.getAttributeAsInteger("cost");
+        exchangeCost = tag.getAttributeAsInteger("exchangeCost");
         majorStops = tag.getAttributeAsInteger("majorStops");
         minorStops = tag.getAttributeAsInteger("minorStops");
 
@@ -63,7 +57,7 @@ public class TrainType implements Cloneable {
             // Reach basis
             reachBasis = reachTag.getAttributeAsString("base", reachBasis);
 
-            // Are towns counted (only relevant is reachBasis = "stops")
+            // Are towns counted (only relevant if reachBasis = "stops")
             countTowns = reachTag.getAttributeAsString("countTowns", countTowns);
         }
 
@@ -85,10 +79,10 @@ public class TrainType implements Cloneable {
         // Actually we should meticulously check all values....
     }
 
-    public void finishConfiguration (RailsRoot root, TrainCertificateType trainCertificateType) throws ConfigurationException {
+    public void finishConfiguration (RailsRoot root, TrainCardType trainCardType) throws ConfigurationException {
 
         trainManager = root.getTrainManager();
-        this.certificateType = trainCertificateType;
+        this.trainCardType = trainCardType;
 
         if (name == null) {
             throw new ConfigurationException("No name specified for Train");
@@ -101,8 +95,8 @@ public class TrainType implements Cloneable {
         }
     }
 
-    public TrainCertificateType getCertificateType() {
-        return certificateType;
+    public TrainCardType getTrainCardType() {
+        return trainCardType;
     }
 
     /**
@@ -117,6 +111,14 @@ public class TrainType implements Cloneable {
      */
     public int getCost() {
         return cost;
+    }
+
+    public int getExchangeCost() {
+        return exchangeCost;
+    }
+
+    public boolean canBeExchanged () {
+        return exchangeCost > 0;
     }
 
     /**

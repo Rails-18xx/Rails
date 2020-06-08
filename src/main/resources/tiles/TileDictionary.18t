@@ -17543,32 +17543,49 @@ object TTilesWrapper
         end>
     end
     item
+      Code = -3012
+      LongName = 'Copenhagen'
+      Category = 'Cop'
+      CategoryPosition = tp3SideG
+      Level = tlMapUpgradableToYellow
+      Connections = <>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp2CornerF
+        end
+        item
+          JunType = jtCity
+          Position = tp2CornerC
+        end>
+    end
+    item
       Code = -3059
       LongName = 'NL G2'
       Category = 'X'
       CategoryPosition = tp3SideC
-      Level = tlMapUpgradableToGreen
+      Level = tlYellow
       Connections = <
         item
-          Position1 = tp4SideF
-          Position2 = tp2SideA
+          Position1 = tp2SideA
+          Position2 = tp4SideF
         end
         item
-          Position1 = tp4SideE
-          Position2 = tp2SideD
+          Position1 = tp2SideD
+          Position2 = tp4SideE
         end>
       Junctions = <
         item
           JunType = jtCity
           Position = tp2SideD
           Revenue = 30
-          RevenuePosition = tp2CornerF
+          RevenuePosition = tp3CornerF
         end
         item
           JunType = jtCity
           Position = tp2SideA
           Revenue = 30
-          RevenuePosition = tp2CornerF
+          RevenuePosition = tp3CornerF
         end>
     end>
 end

@@ -26,11 +26,11 @@ public class OperatingRound_18GA extends OperatingRound {
                 && action.getPrivateCompany().getId().equalsIgnoreCase(OS_NAME)
                 && isBelowTrainLimit()) {
             PublicCompany company = operatingCompany.value();
-            TrainCertificateType certType = trainManager.getCertTypeByName(OS_EXTRA_TRAIN_TYPE);
+            TrainCardType certType = trainManager.getCardTypeByName(OS_EXTRA_TRAIN_TYPE);
             if (!certType.hasRusted()) {  // I.e. before phase "4"
-                Train train = trainManager.cloneTrain(certType);
-                company.getPortfolioModel().addTrain(train);
-                train.setTradeable(false);
+                TrainCard card = trainManager.cloneTrain(certType);
+                company.getPortfolioModel().addTrainCard(card);
+                card.setTradeable(false);
                 ReportBuffer.add(this, LocalText.getText("GetsExtraTrain",
                         company.getId(),
                         OS_EXTRA_TRAIN_TYPE));

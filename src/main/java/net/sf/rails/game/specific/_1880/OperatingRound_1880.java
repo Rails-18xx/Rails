@@ -65,9 +65,6 @@ public class OperatingRound_1880 extends OperatingRound {
     private PublicCompany firstCompanyBeforePrivates;
     private PossibleAction manditoryNextAction = null;
 
-    /**
-     * @param gameManager
-     */
     public OperatingRound_1880(GameManager gameManager_1880, String id) {
         super(gameManager_1880, id);
         orControl = ((GameManager_1880) gameManager_1880).getORControl();
@@ -1026,7 +1023,7 @@ public class OperatingRound_1880 extends OperatingRound {
 
         company.buyTrain(train, 0);
         companyManager.getPrivateCompany("RC").close();
-        train.getCertType().addToBoughtFromIPO();
+        train.getCardType().addToBoughtFromIPO();
         trainManager.checkTrainAvailability(train, ipo.getParent());
         // If there are no available trains now, time for a stock round.
         Set<Train> trains =
@@ -1083,12 +1080,12 @@ public class OperatingRound_1880 extends OperatingRound {
                 for (Train train : trains) {
                     if (!operatingCompany.value().mayBuyTrainType(train)) continue;
                     if (!mayBuyMoreOfEachType
-                            && trainsBoughtThisTurn.contains(train.getCertType())) {
+                            && trainsBoughtThisTurn.contains(train.getCardType())) {
                         continue;
                     }
 
                     // Allow dual trains (since jun 2011)
-                    List<TrainType> types = train.getCertType().getPotentialTrainTypes();
+                    List<TrainType> types = train.getCardType().getPotentialTrainTypes();
                     for (TrainType type : types) {
                         cost = type.getCost();
                         if (cost <= cash) {
@@ -1127,7 +1124,7 @@ public class OperatingRound_1880 extends OperatingRound {
                 trains = getRoot().getBank().getPool().getPortfolioModel().getUniqueTrains();
                 for (Train train : trains) {
                     if (!mayBuyMoreOfEachType
-                            && trainsBoughtThisTurn.contains(train.getCertType())) {
+                            && trainsBoughtThisTurn.contains(train.getCardType())) {
                         continue;
                     }
                     cost = train.getCost();

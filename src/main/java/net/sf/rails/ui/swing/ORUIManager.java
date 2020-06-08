@@ -252,7 +252,7 @@ public class ORUIManager implements DialogOwner {
 
 
     private void addConnectedTileLays(LayTile layTile) {
-        NetworkGraph graph = networkAdapter.getRouteGraph(layTile.getCompany(), true);
+        NetworkGraph graph = networkAdapter.getRouteGraph(layTile.getCompany(), true, false);
         Map<MapHex, HexSidesSet> mapHexSides = graph.getReachableSides();
         Multimap<MapHex, Station> mapHexStations = graph.getPassableStations();
 
@@ -329,7 +329,7 @@ public class ORUIManager implements DialogOwner {
 
     private void addGenericTokenLays(LayToken action) {
         PublicCompany company = action.getCompany();
-        NetworkGraph graph = networkAdapter.getRouteGraph(company, true);
+        NetworkGraph graph = networkAdapter.getRouteGraph(company, true, false);
         Multimap<MapHex, Stop> hexStops = graph.getTokenableStops(company);
         for (MapHex hex:hexStops.keySet()) {
             GUIHex guiHex = map.getHex(hex);
@@ -869,7 +869,7 @@ public class ORUIManager implements DialogOwner {
     /**
      * Lay Token finished.
      *
-     * @param action The LayBonusToken action object of the laid token.
+     * @param upgrade The LayBonusToken action object of the laid token.
      */
     // FIXME: This has to be rewritten
     public void layBonusToken(TokenHexUpgrade upgrade) {
