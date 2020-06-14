@@ -18,29 +18,29 @@ public class StopType {
      * StopType defines the characteristics of access to a stop
      */
 
-    public static enum RunThrough {
+    public enum RunThrough {
         YES,
         NO,
         TOKENONLY
     }
 
-    public static enum RunTo {
+    public enum RunTo {
         YES,
         NO,
         TOKENONLY
     }
 
-    public static enum Loop {
+    public enum Loop {
         YES,
         NO
     }
 
-    public static enum Score {
+    public enum Score {
         MAJOR,
         MINOR
     }
 
-    public static enum Defaults {
+    public enum Defaults {
 
         CITY (RunTo.YES, RunThrough.YES, Loop.YES, Score.MAJOR),
         TOWN (RunTo.YES, RunThrough.YES, Loop.YES, Score.MINOR),
@@ -49,7 +49,7 @@ public class StopType {
 
         private StopType stopType;
         
-        private Defaults (RunTo runTo,
+        Defaults (RunTo runTo,
                 RunThrough runThrough,
                 Loop loop,
                 Score scoreType) {
@@ -75,18 +75,20 @@ public class StopType {
         this.scoreType = scoreType;
     }
 
+    /*
     private StopType(String id, RunTo runToAllowed, RunThrough runThroughAllowed, Loop loopAllowed, Score scoreType, StopType defaultType) {
         this.id = id;
-        
+
         if (defaultType == null) { // CITY is the ultimate default
             defaultType = Defaults.CITY.getStopType();
         }
-        
-        this.runToAllowed = (runToAllowed == null) ? defaultType.getRunToAllowed() : runToAllowed;
+
+        this.runToAllowed = (runToAllowed == null) ? defaultType.getRunToAllowed() :runToAllowed;
         this.runThroughAllowed = (runThroughAllowed == null) ? defaultType.getRunThroughAllowed() : runThroughAllowed;
         this.loopAllowed = (loopAllowed == null) ? defaultType.getLoopAllowed() : loopAllowed;
         this.scoreType = (scoreType == null) ? defaultType.getScoreType() : scoreType;
     }
+     */
 
     public String getId() {
         return id;
@@ -147,7 +149,7 @@ public class StopType {
         return id.equals(((StopType) other).id);
     }
 
-    private static StopType parseAccessTag(RailsItem owner, String id, Tag accessTag, StopType defaultType) 
+    private static StopType parseAccessTag(RailsItem owner, String id, Tag accessTag/*, StopType defaultType*/)
             throws ConfigurationException {
 
         String runThroughString = accessTag.getAttributeAsString("runThrough");
@@ -194,10 +196,10 @@ public class StopType {
             }
         }
 
-        return new StopType(id, runTo, runThrough, loop, score, defaultType);
+        return new StopType(id, runTo, runThrough, loop, score/*, defaultType*/);
     }
 
-    private static StopType parseDefault(RailsItem owner, Tag accessTag, StopType defaultType) 
+    private static StopType parseDefault(RailsItem owner, Tag accessTag/*, StopType defaultType*/)
         throws ConfigurationException {
         
         String typeString = accessTag.getAttributeAsString("type");
@@ -210,7 +212,7 @@ public class StopType {
                         + owner +" stop type property: "+typeString, e);
             }
         }
-        return parseAccessTag(owner, type, accessTag, defaultType);
+        return parseAccessTag(owner, type, accessTag/*, defaultType*/);
     }
     
     public static ImmutableMap<String, StopType> parseDefaults(RailsItem owner, List<Tag> accessTags)
@@ -225,7 +227,7 @@ public class StopType {
 
         StopType defaultDefault = StopType.Defaults.NULL.getStopType();
         for (Tag accessTag : accessTags)  {
-            StopType newDefault = StopType.parseDefault(owner, accessTag, defaultDefault);
+            StopType newDefault = StopType.parseDefault(owner, accessTag/*, defaultDefault*/);
             if (newDefault == null) continue;
             if (newDefault.getId() == null) {
                 // id set to null is the default default
@@ -239,10 +241,12 @@ public class StopType {
     
     public static StopType parseStop(RailsItem owner, Tag accessTag, Map<String, StopType> defaultTypes)
         throws ConfigurationException {
-        
+
+        /*
         if (accessTag == null) { 
             return StopType.Defaults.NULL.getStopType();
-        }
+        }*/
+        if (accessTag == null) return null;
         
         String typeString = accessTag.getAttributeAsString("type");
 
@@ -257,7 +261,7 @@ public class StopType {
         }
         
         if (type == null) type = StopType.Defaults.NULL.getStopType();
-        return parseAccessTag(owner, owner.getId(), accessTag, type);
+        return parseAccessTag(owner, owner.getId(), accessTag/*, type*/);
     }
 }
         

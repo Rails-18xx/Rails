@@ -32,12 +32,28 @@ public class Station extends TrackPoint implements Comparable<Station> {
     private static final Logger log = LoggerFactory.getLogger(Station.class);
 
     public static enum Type {
+        // StopType defaults should not be set here.
+        // Only station-specific deviations from the defaults should be specified on Station level,
+        // and only make sense if a tile has different station types that need specific
+        // access parameters that deviate from defaults set elsewhere.
+        // There are no known cases, but for now this option is left in.
+        // Such access parameters should be set in TileSet.xml, NOT in Tiles.XML.
+        // In most cases, setting access on MapHex level will be sufficient.
+        // The 'defaults' are left in for now, but all values have been set to null.
+        /*
         CITY (StopType.Defaults.CITY, "City"),
         TOWN (StopType.Defaults.TOWN, "Town"),
         HALT (StopType.Defaults.TOWN, "Halt"),
         OFFMAPCITY (StopType.Defaults.OFFMAP, "OffMap"),
         PORT (StopType.Defaults.TOWN, "Port"),
         PASS (StopType.Defaults.CITY, "Pass"),
+        */
+        CITY (StopType.Defaults.NULL, "City"),
+        TOWN (StopType.Defaults.NULL, "Town"),
+        HALT (StopType.Defaults.NULL, "Halt"),
+        OFFMAPCITY (StopType.Defaults.NULL, "OffMap"),
+        PORT (StopType.Defaults.NULL, "Port"),
+        PASS (StopType.Defaults.NULL, "Pass"),
         JUNCTION (StopType.Defaults.NULL, "Junction");
 
         private final StopType stopType;
@@ -63,6 +79,7 @@ public class Station extends TrackPoint implements Comparable<Station> {
     private final Tile tile;
     private final int position;
     private final String stopName;
+    private final String mutexId;
 
     private Station(Tile tile, int number, String id, Station.Type type, int value,
             int slots, int position, String cityName) {
@@ -74,6 +91,7 @@ public class Station extends TrackPoint implements Comparable<Station> {
         this.baseSlots = slots;
         this.position = position;
         this.stopName = cityName;
+        this.mutexId = cityName;
         log.debug("Created {}", this);
     }
 
@@ -112,6 +130,8 @@ public class Station extends TrackPoint implements Comparable<Station> {
         + tile.toText();
     }
 
+    // Replaced by mutexId
+    @Deprecated
     public String getStopName() {
         return stopName;
     }
@@ -154,6 +174,10 @@ public class Station extends TrackPoint implements Comparable<Station> {
 
     public StopType getStopType() {
         return type.getStopType();
+    }
+
+    public String getMutexId() {
+        return mutexId;
     }
 
     public Station.Type getType() {

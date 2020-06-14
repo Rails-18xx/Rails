@@ -39,7 +39,7 @@ public class TileManager extends RailsManager implements Configurable {
         super(parent, id);
     }
 
-    /**
+    /*
      * @see net.sf.rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tileSetTop) throws ConfigurationException {
@@ -124,7 +124,7 @@ public class TileManager extends RailsManager implements Configurable {
             List<Tag> accessTags = defaultsTag.getChildren("Access");
             defaultStopTypes = StopType.parseDefaults(this, accessTags);
         } else {
-            defaultStopTypes = ImmutableMap.of();
+            defaultStopTypes = ImmutableMap.of();  // or null?
         }
     }
 

@@ -32,6 +32,12 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     private final PortfolioSet<BaseToken> tokens = PortfolioSet.create(this, "tokens", BaseToken.class);
     private final GenericState<Station> relatedStation = new GenericState<>(this, "station");
 
+    private RunTo runTo;
+    private RunThrough runThrough;
+    private Loop loop;
+    private Score score;
+    private String mutexId;
+
     // FIXME: Only used for Rails1.x compatibility
     private final IntegerState legacyNumber = IntegerState.create(this, "legacyNumber", 0);
 
@@ -137,6 +143,45 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return false;
     }
 
+    public void initStopParameters () {
+        // First set the mutexId, which can only be specified in Station or MapHex
+        if (getParent().getId().equalsIgnoreCase("F1")) {
+            int x = 1;
+        }
+        mutexId = getRelatedStation().getMutexId();
+        if (mutexId == null) mutexId = getParent().getMutexId();
+
+        // Related station on current tile
+        if (getAccessFields(getRelatedStation().getStopType())) return;
+        // Current Tile
+        if (getAccessFields(getParent().getCurrentTile().getStopType())) return;
+        // MapHex
+        if (getAccessFields(getParent().getStopType())) return;
+        // Access fields not yet complete, defaults apply. First we need the stop type name.
+        String typeName = getRelatedStation().getStopType().getId();
+        // TileManager defaults
+        if (getAccessFields(getParent().getCurrentTile().getParent().getDefaultStopTypes().get(typeName))) return;
+        // MapManager defaults
+        if (getAccessFields(getParent().getParent().getDefaultStopTypes().get(typeName))) return;
+        // Built-in defaults
+        if (getAccessFields(StopType.Defaults.valueOf(typeName).getStopType())) return;
+        // The ultimate fall-back
+        getAccessFields(StopType.Defaults.CITY.getStopType());
+   }
+
+    /**
+     * Set those access fields that are still unset.
+     * @param stopType Access parameters of a certain leve
+     * @return true if all access parameters have a value
+     */
+    private boolean getAccessFields(StopType stopType) {
+        if (stopType == null) return false;
+        if (runTo == null) runTo = stopType.getRunToAllowed();
+        if (runThrough == null) runThrough = stopType.getRunThroughAllowed();
+        if (loop == null) loop = stopType.getLoopAllowed();
+        if (score == null) score = stopType.getScoreType();
+        return runTo != null && runThrough != null && loop != null && score != null;
+    }
     /**
      * @return true if stop is tokenable, thus it has open token slots and no company token yet
      */
@@ -145,38 +190,23 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     }
 
     public RunTo getRunToAllowed() {
-        // TEMPORARY FOR DEBUGGING
-        String mm,tm;
-        if (getParent().getId().equalsIgnoreCase("G2")) {
-            mm = getParent().getParent().getId();  // "Map"
-            tm = getParent().getCurrentTile().getParent().getId();  // "TileManager"
-            int x=1;
-        }
-        RunTo runTo = getParent().getStopType().getRunToAllowed();
-        if (runTo == null) runTo = getParent().getCurrentTile().getStopType().getRunToAllowed();
-        if (runTo == null) runTo = getRelatedStation().getStopType().getRunToAllowed();
-        return runTo;
+       return runTo;
     }
 
     public RunThrough getRunThroughAllowed() {
-        RunThrough runThrough = getParent().getStopType().getRunThroughAllowed();
-        if (runThrough == null) runThrough = getParent().getCurrentTile().getStopType().getRunThroughAllowed();
-        if (runThrough == null) runThrough = getRelatedStation().getStopType().getRunThroughAllowed();
-        return runThrough;
+      return runThrough;
     }
 
     public Loop getLoopAllowed() {
-        Loop loopAllowed = getParent().getStopType().getLoopAllowed();
-        if (loopAllowed == null) loopAllowed = getParent().getCurrentTile().getStopType().getLoopAllowed();
-        if (loopAllowed == null) loopAllowed = getRelatedStation().getStopType().getLoopAllowed();
-        return loopAllowed;
+        return loop;
     }
 
     public Score getScoreType() {
-        Score scoreType = getParent().getStopType().getScoreType();
-        if (scoreType == null) scoreType = getParent().getCurrentTile().getStopType().getScoreType();
-        if (scoreType == null) scoreType = getRelatedStation().getStopType().getScoreType();
-        return scoreType;
+        return score;
+    }
+
+    public String getMutexId() {
+        return mutexId;
     }
 
     public boolean isRunToAllowedFor(PublicCompany company, boolean running) {

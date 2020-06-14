@@ -199,6 +199,12 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
      * the type will be derived from the tile properties.
      */
     private StopType stopType = null;
+    /*
+     * An arbitrary string to be set to the same value for any group of hexes
+     * that may not be hit by a train more than once. Also to be used for
+     * hexes with multi-city tiles where a train may hit only once.
+     */
+    private String mutexId = null;
 
     ////////////////////////
     // dynamic fields
@@ -295,8 +301,13 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
         // Stop properties
         Tag accessTag = tag.getChild("Access");
-        stopType = StopType.parseStop(this, accessTag,
-                getParent().getDefaultStopTypes());
+        if (accessTag  != null) {
+            stopType = StopType.parseStop(this, accessTag, null);
+            // Defaults to be assigned later in Stop
+            // getParent().getDefaultStopTypes());
+            // The mutexId can only be set in MapHex or Station:
+            mutexId = accessTag.getAttributeAsString("mutexId", null);
+        }
     }
 
     public void finishConfiguration(RailsRoot root) {
@@ -310,7 +321,18 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         // stations.
         for (Station station : currentTile.value().getStations()) {
             Stop stop = Stop.create(this, station);
+            stop.initStopParameters();
             stops.put(station, stop);
+        }
+
+        // Deprecated but retained for backwards compatibility:
+        // all hexes of an off-map area use their "city name" (off-map area name)
+        // as a mutexId.
+        // Note: the 18xx Rules Difference List states that only 18PA is an exception.
+        // This can be accomodated by setting mutexId="" in Map.xml for all offmap hexes.
+        if (mutexId == null && currentTile.value().getStopType() != null
+                && "OFFMAPCITY".equalsIgnoreCase(currentTile.value().getStopType().toString())) {
+            mutexId = stopName;
         }
 
         impassableSides = impassableBuilder.build();
@@ -911,6 +933,10 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     public String getStopName() {
         return stopName;
+    }
+
+    public String getMutexId() {
+        return mutexId;
     }
 
     public PublicCompany getReservedForCompany() {
