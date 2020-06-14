@@ -412,8 +412,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
     }
 
-
-    /**
+     /**
      * To configure all public companies from the &lt;PublicCompany&gt; XML
      * element
      */
@@ -1026,13 +1025,17 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
 
         if (initialTrainType != null) {
-            TrainManager trainManager = getRoot().getTrainManager();
-            TrainCertificateType type = trainManager.getCertTypeByName(initialTrainType);
-            Train train = getRoot().getBank().getIpo().getPortfolioModel().getTrainOfType(type);
-            buyTrain(train, initialTrainCost);
-            train.setTradeable(initialTrainTradeable);
-            trainManager.checkTrainAvailability(train, getRoot().getBank().getIpo());
+            addInitialTrain();
         }
+    }
+
+    protected void addInitialTrain() {
+        TrainManager trainManager = getRoot().getTrainManager();
+        TrainType type = trainManager.getTrainTypeByName(initialTrainType);
+        Train train = getRoot().getBank().getIpo().getPortfolioModel().getTrainOfType(type);
+        buyTrain(train, initialTrainCost);
+        train.getCard().setTradeable(initialTrainTradeable);
+        trainManager.checkTrainAvailability(train, getRoot().getBank().getIpo());
     }
 
     /**
@@ -1565,26 +1568,38 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     /**
+     * Stub to enable special handling of companies without train.
+     * Example: 18Scan minors.
+     * @return true if a company can yield income.
+     */
+    public boolean canGenerateRevenue () {
+        // The default:
+        return canRunTrains();
+    }
+
+    /**
      * Must be called in stead of Portfolio.buyTrain if side-effects can occur.
      */
     public void buyTrain(Train train, int price) {
 
         // check first if it is bought from another company
-        if (train.getOwner() instanceof PublicCompany) {
-            PublicCompany previousOwner = (PublicCompany) train.getOwner();
-            //  adjust the money spent on trains field
-            previousOwner.getTrainsSpentThisTurnModel().change(-price);
-            // pay the money to the other company
-            Currency.wire(this, price, previousOwner);
-        } else { // TODO: make this a serious test, no assumption
-            // else it is from the bank
-            Currency.toBank(this, price);
-        }
+        if (price != 0) {
+            if (train.getOwner() instanceof PublicCompany) {
+                PublicCompany previousOwner = (PublicCompany) train.getOwner();
+                //  adjust the money spent on trains field
+                previousOwner.getTrainsSpentThisTurnModel().change(-price);
+                // pay the money to the other company
+                Currency.wire(this, price, previousOwner);
+            } else { // TODO: make this a serious test, no assumption
+                // else it is from the bank
+                Currency.toBank(this, price);
+            }
 
-        // increase own train costs
-        trainsCostThisTurn.change(price);
+            // increase own train costs
+            trainsCostThisTurn.change(price);
+        }
         // move the train to here
-        portfolio.getTrainsModel().getPortfolio().add(train);
+        portfolio.getTrainsModel().addTrain(train);
         // check if a private has to be closed on first train buy
         if (privateToCloseOnFirstTrain != null
                 && !privateToCloseOnFirstTrain.isClosed()) {
@@ -2008,6 +2023,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     @Override
     public CompanyType getType() {
         return type;
+    }
+
+    public boolean isOfType (String typeName) {
+        return typeName.equalsIgnoreCase(type.getId());
     }
 
     @Override

@@ -5,7 +5,7 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.Phase;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Train;
-import net.sf.rails.game.TrainCertificateType;
+import net.sf.rails.game.TrainCardType;
 import net.sf.rails.game.TrainManager;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.Owner;
@@ -31,19 +31,19 @@ public class TrainManager_1880 extends TrainManager {
         phaseHasChanged.set(false);;
         if (from != Bank.getIpo(this)) return;
 
-        TrainCertificateType boughtType, nextType;
-        boughtType = train.getCertType();
-        if (boughtType == (trainCertTypes.get(newTypeIndex.value()))
-            && Bank.getIpo(this).getPortfolioModel().getTrainOfType(boughtType) == null) {
+        TrainCardType boughtType, nextType;
+        boughtType = train.getCardType();
+        if (boughtType == (trainCardTypes.get(newTypeIndex.value()))
+            && Bank.getIpo(this).getPortfolioModel().getTrainCardOfType(boughtType) == null) {
             // Last train bought, make a new type available.
             newTypeIndex.add(1);
-            if (newTypeIndex.value() < lTrainTypes.size()) {
-                nextType = (trainCertTypes.get(newTypeIndex.value()));
+            if (newTypeIndex.value() < trainTypes.size()) {
+                nextType = (trainCardTypes.get(newTypeIndex.value()));
                 if (nextType != null) {
                     String nextTypeName = nextType.getId();
                     if (!nextTypeName.equals("2R")) {
                         if (!nextType.isAvailable()) {
-                            makeTrainAvailable(nextType);
+                            makeTrainsAvailable(nextType);
                             trainAvailabilityChanged.set(true);
                             ReportBuffer.add(this, "All " + boughtType.getId()
                                     + "-trains are sold out, "
@@ -52,11 +52,11 @@ public class TrainManager_1880 extends TrainManager {
                     }
                     else {
                         newTypeIndex.add(1);
-                        if (newTypeIndex.value() < lTrainTypes.size()) {
-                            nextType = (trainCertTypes.get(newTypeIndex.value()));
+                        if (newTypeIndex.value() < trainTypes.size()) {
+                            nextType = (trainCardTypes.get(newTypeIndex.value()));
                             if (nextType != null) {
                                 if (!nextType.isAvailable()) {
-                                    makeTrainAvailable(nextType);
+                                    makeTrainsAvailable(nextType);
                                     trainAvailabilityChanged.set(true);
                                     ReportBuffer.add(this, "All " + boughtType.getId()
                                             + "-trains are sold out, "

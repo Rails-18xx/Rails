@@ -57,13 +57,13 @@ public class MapManager extends RailsManager implements Configurable {
         super(parent, id);
     }
     
-    /**
+    /*
      * @see net.sf.rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         
         mapOrientation = MapOrientation.create(tag);
-        
+
         List<Tag> hexTags = tag.getChildren("Hex");
         ImmutableMap.Builder<MapHex.Coordinates, MapHex> hexBuilder = ImmutableMap.builder();
         ImmutableSortedSet.Builder<Integer> tileCostsBuilder= ImmutableSortedSet.naturalOrder();
@@ -262,7 +262,7 @@ public class MapManager extends RailsManager implements Configurable {
      * Calculate the distances between a given tokenable city hex
      * and all other tokenable city hexes.
      * <p> Distances are cached.
-     * @param hex Start hex
+     * @param initHex Start hex
      * @return Sorted integer list containing all occurring distances only once.
      */
     public SortedSet<Integer> getCityDistances (MapHex initHex) {

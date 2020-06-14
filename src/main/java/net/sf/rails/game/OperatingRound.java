@@ -56,7 +56,7 @@ public class OperatingRound extends Round implements Observer {
      */
     protected Map<Player, List<PublicCompany>> excessTrainCompanies;
 
-    protected final ArrayListState<TrainCertificateType> trainsBoughtThisTurn = new ArrayListState<>(this, "trainsBoughtThisTurn");
+    protected final ArrayListState<TrainCardType> trainsBoughtThisTurn = new ArrayListState<>(this, "trainsBoughtThisTurn");
 
     protected HashMapState<PublicCompany, Integer> loansThisRound;
 
@@ -81,7 +81,8 @@ public class OperatingRound extends Round implements Observer {
     protected TrainManager trainManager = getRoot().getTrainManager();
 
     /*
-     * ======================================= 1. OR START and END
+     * =======================================
+     *  1. OR START and END
      * =======================================
      */
 
@@ -200,8 +201,10 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 2. CENTRAL PROCESSING FUNCTIONS
-     * 2.1. PROCESS USER ACTION=======================================
+     * =======================================
+     *  2. CENTRAL PROCESSING FUNCTIONS
+     * 2.1. PROCESS USER ACTION
+     * =======================================
      */
 
     @Override
@@ -416,7 +419,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 2.2. PREPARE NEXT ACTION
+     * =======================================
+     *  2.2. PREPARE NEXT ACTION
      * =======================================
      */
 
@@ -638,7 +642,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 2.3. TURN CONTROL
+     * =======================================
+     *  2.3. TURN CONTROL
      * =======================================
      */
 
@@ -749,7 +754,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 2.4. STEP CONTROL
+     * =======================================
+     *  2.4. STEP CONTROL
      * =======================================
      */
 
@@ -791,37 +797,42 @@ public class OperatingRound extends Round implements Observer {
         // Cycle through the steps until we reach one where a user action is
         // expected.
         int stepIndex;
+        GameDef.OrStep newStep = step;
         for (stepIndex = 0; stepIndex < steps.length; stepIndex++) {
-            if (steps[stepIndex] == step) break;
+            if (steps[stepIndex] == newStep) break;
         }
         while (++stepIndex < steps.length) {
-            step = steps[stepIndex];
-            log.debug("OR considers step {}", step);
+            newStep = steps[stepIndex];
+            log.debug("OR considers newStep {}", newStep);
 
-            if (step == GameDef.OrStep.LAY_TOKEN
+            if (newStep == GameDef.OrStep.LAY_TOKEN
                     && company.getNumberOfFreeBaseTokens() == 0) {
-                log.debug("OR skips {}: No freeBaseTokens", step);
+                log.debug("OR skips {}: No freeBaseTokens", newStep);
                 continue;
             }
 
-            if (step == GameDef.OrStep.CALC_REVENUE) {
+            if (newStep == GameDef.OrStep.CALC_REVENUE) {
 
-                if (!company.canRunTrains()) {
-                    // No trains, then the revenue is zero.
-                    log.debug("OR skips {}: Cannot run trains", step);
+                if (!company.canGenerateRevenue()) {
+                    // No trains, then the revenue is zero (normally).
+                    log.debug("OR skips {}: Cannot run trains", newStep);
                     executeSetRevenueAndDividend(new SetDividend(getRoot(), 0, false, new int[] { SetDividend.NO_TRAIN }));
                     // TODO: This probably does not handle share selling correctly
+                    continue;
+                } else if (!company.canRunTrains()) {
+                    // In 18Scan a trainless minor company still pays out.
+                    executeTrainlessRevenue (newStep);
                     continue;
                 }
             }
 
-            if (step == GameDef.OrStep.PAYOUT) {
+            if (newStep == GameDef.OrStep.PAYOUT) {
                 // This step is now obsolete
-                log.debug("OR skips {}: Always skipped", step);
+                log.debug("OR skips {}: Always skipped", newStep);
                 continue;
             }
 
-            if (step == GameDef.OrStep.TRADE_SHARES) {
+            if (newStep == GameDef.OrStep.TRADE_SHARES) {
                 // Is company allowed to trade trasury shares?
                 if (!company.mayTradeShares() || !company.hasOperated()) {
                     continue;
@@ -853,7 +864,7 @@ public class OperatingRound extends Round implements Observer {
                         gameManager.setSkipDone(GameDef.OrStep.TRADE_SHARES);
                         log.debug("If the next saved action is 'Done', skip it");
                     }
-                    log.info("Skipping Treasury share trading step");
+                    log.info("Skipping Treasury share trading newStep");
                     continue;
                 }
 
@@ -861,8 +872,9 @@ public class OperatingRound extends Round implements Observer {
 
             }
 
-            if (!gameSpecificNextStep(step)) {
-                log.debug("OR skips {}: Not game specific", step);
+            if (!gameSpecificNextStep(newStep)) {
+                log.debug("OR skips {}: Not game specific", newStep);
+                // Skipping newStep
                 continue;
             }
 
@@ -870,10 +882,10 @@ public class OperatingRound extends Round implements Observer {
             break;
         }
 
-        if (step == GameDef.OrStep.FINAL) {
+        if (newStep == GameDef.OrStep.FINAL) {
             finishTurn();
         } else {
-            setStep(step);
+            setStep(newStep);
         }
 
     }
@@ -884,6 +896,11 @@ public class OperatingRound extends Round implements Observer {
     protected boolean gameSpecificNextStep(GameDef.OrStep step) {
         return true;
     }
+
+    /**
+     * Stub, to be used in some cases (e.g. 18Scan minors)
+     */
+    protected void executeTrainlessRevenue (GameDef.OrStep step) {}
 
     /**
      * This method is only called at the start of each step (unlike
@@ -901,8 +918,10 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 3. COMMON ACTIONS (not bound to
-     * steps) 3.1. NOOPS=======================================
+     * =======================================
+     *  3. COMMON ACTIONS (not bound to steps)
+     *  3.1. NOOPS
+     * =======================================
      */
 
     public void skip(NullAction action) {
@@ -941,7 +960,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 3.2. DISCARDING TRAINS
+     * =======================================
+     *  3.2. DISCARDING TRAINS
      * =======================================
      */
 
@@ -989,12 +1009,7 @@ public class OperatingRound extends Round implements Observer {
 
         // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
 
-        // Reset type of dual trains
-        if (train.getCertType().getPotentialTrainTypes().size() > 1) {
-            train.setType(null);
-        }
-
-        train.discard();
+       train.getCard().discard();
 
         // Check if any more companies must discard trains,
         // otherwise continue train buying
@@ -1029,8 +1044,9 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 3.3. PRIVATES (BUYING, SELLING,
-     * CLOSING)=======================================
+     * =======================================
+     *  3.3. PRIVATES (BUYING, SELLING, CLOSING)
+     * =======================================
      */
 
     public boolean buyPrivate(BuyPrivate action) {
@@ -1179,7 +1195,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 3.4. DESTINATIONS
+     * =======================================
+     *  3.4. DESTINATIONS
      * =======================================
      */
 
@@ -1223,7 +1240,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 3.5. LOANS
+     * =======================================
+     *  3.5. LOANS
      * =======================================
      */
 
@@ -1425,7 +1443,8 @@ public class OperatingRound extends Round implements Observer {
     // }
 
     /*
-     * ======================================= 3.6. RIGHTS
+     * =======================================
+     *  3.6. RIGHTS
      * =======================================
      */
 
@@ -1478,7 +1497,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 4. LAYING TILES
+     * =======================================
+     *  4. LAYING TILES
      * =======================================
      */
 
@@ -1947,7 +1967,9 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 5. TOKEN LAYING 5.1. BASE TOKENS
+     * =======================================
+     *  5. TOKEN LAYING
+     *  5.1. BASE TOKENS
      * =======================================
      */
 
@@ -2182,7 +2204,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 5.2. BONUS TOKENS
+     * =======================================
+     *  5.2. BONUS TOKENS
      * =======================================
      */
 
@@ -2322,7 +2345,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 6. REVENUE AND DIVIDEND
+     * =======================================
+     *  6. REVENUE AND DIVIDEND
      * =======================================
      */
 
@@ -2423,7 +2447,7 @@ public class OperatingRound extends Round implements Observer {
                     break;
                 }
             } else {
-                // If there is no revenue, use withhold.
+               // If there is no revenue, use withhold.
                 action.setRevenueAllocation(SetDividend.WITHHOLD);
             }
 
@@ -2441,6 +2465,10 @@ public class OperatingRound extends Round implements Observer {
     }
 
     protected void executeSetRevenueAndDividend(SetDividend action) {
+        executeSetRevenueAndDividend(action, null);
+    }
+
+    protected void executeSetRevenueAndDividend(SetDividend action, String report) {
 
         int amount = action.getActualRevenue();
         int revenueAllocation = action.getRevenueAllocation();
@@ -2454,36 +2482,36 @@ public class OperatingRound extends Round implements Observer {
 
         if (amount == 0) {
 
-            ReportBuffer.add(this, LocalText.getText(
+            if (report == null) report = LocalText.getText (
                     "CompanyDoesNotPayDividend",
-                    operatingCompany.value().getId()));
+                    operatingCompany.value().getId());
+            ReportBuffer.add(this, report);
             withhold(amount);
 
         } else if (revenueAllocation == SetDividend.PAYOUT) {
 
-            ReportBuffer.add(this,
-                    LocalText.getText("CompanyPaysOutFull",
-                            operatingCompany.value().getId(),
-                            Bank.format(this, amount)));
-
+            if (report == null) report = LocalText.getText (
+                    "CompanyPaysOutFull",
+                    operatingCompany.value().getId(),
+                    Bank.format(this, amount));
+            ReportBuffer.add(this, report);
             payout(amount);
 
         } else if (revenueAllocation == SetDividend.SPLIT) {
 
-            ReportBuffer.add(this,
-                    LocalText.getText("CompanySplits",
-                            operatingCompany.value().getId(),
-                            Bank.format(this, amount)));
-
+            if (report == null) report = LocalText.getText (
+                    "CompanySplits",
+                    operatingCompany.value().getId(),
+                    Bank.format(this, amount));
+            ReportBuffer.add(this, report);
             splitRevenue(amount);
 
         } else if (revenueAllocation == SetDividend.WITHHOLD) {
-
-            ReportBuffer.add(this,
-                    LocalText.getText("CompanyWithholds",
-                            operatingCompany.value().getId(),
-                            Bank.format(this, amount)));
-
+            if (report == null) report = LocalText.getText (
+                    "CompanyWithholds",
+                    operatingCompany.value().getId(),
+                    Bank.format(this, amount));
+            ReportBuffer.add(this, report);
             withhold(amount);
 
         }
@@ -2790,7 +2818,8 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /*
-     * ======================================= 7. TRAIN PURCHASING
+     * =======================================
+     *  7. TRAIN PURCHASING
      * =======================================
      */
 
@@ -2903,7 +2932,7 @@ public class OperatingRound extends Round implements Observer {
                     // action.setExchangedTrain(exchangedTrain);
                     break;
                 } else if (operatingCompany.value().getPortfolioModel().getTrainOfType(
-                        exchangedTrain.getCertType()) == null) {
+                        exchangedTrain.getType()) == null) {
                     errMsg =
                             LocalText.getText("CompanyDoesNotOwnTrain",
                                     operatingCompany.value().getId(),
@@ -2953,13 +2982,13 @@ public class OperatingRound extends Round implements Observer {
                     cashText));
         }
 
-        Owner oldOwner = train.getOwner();
+        Owner oldOwner = train.getCard().getOwner();
 
         if (exchangedTrain != null) {
             Train oldTrain =
                     operatingCompany.value().getPortfolioModel().getTrainOfType(
-                            exchangedTrain.getCertType());
-            (train.isObsolete() ? scrapHeap : pool).addTrain(oldTrain);
+                            exchangedTrain.getType());
+            (train.isObsolete() ? scrapHeap : pool).addTrainCard(oldTrain.getCard());
             ReportBuffer.add(this, LocalText.getText("ExchangesTrain",
                     companyName, exchangedTrain.toText(), train.toText(),
                     oldOwner.getId(), Bank.format(this, price)));
@@ -2972,22 +3001,22 @@ public class OperatingRound extends Round implements Observer {
                     Bank.format(this, price), stb.getOriginalCompany().getId()));
         }
 
-        train.setType(action.getType()); // Needed for dual trains bought from
+        train.getCard().setActualTrain(train); // Needed for dual trains bought from
         // the Bank
 
         operatingCompany.value().buyTrain(train, price);
 
         if (oldOwner == ipo.getParent()) {
-            train.getCertType().addToBoughtFromIPO();
+            train.getCardType().addToBoughtFromIPO();
             trainManager.setAnyTrainBought(true);
             // Clone the train if infinitely available
-            if (train.getCertType().hasInfiniteQuantity()) {
-                ipo.addTrain(trainManager.cloneTrain(train.getCertType()));
+            if (train.getCardType().hasInfiniteQuantity()) {
+                ipo.addTrainCard(trainManager.cloneTrain(train.getCardType()));
             }
 
         }
         if (oldOwner instanceof BankPortfolio) {
-            trainsBoughtThisTurn.add(train.getCertType());
+            trainsBoughtThisTurn.add(train.getCardType());
         }
 
         if (stb != null) {
@@ -3085,31 +3114,26 @@ public class OperatingRound extends Round implements Observer {
             for (Train train : trains) {
                 if (!operatingCompany.value().mayBuyTrainType(train)) continue;
                 if (!mayBuyMoreOfEachType
-                        && trainsBoughtThisTurn.contains(train.getCertType())) {
+                        && trainsBoughtThisTurn.contains(train.getCardType())) {
                     continue;
                 }
 
-                // Allow dual trains (since jun 2011)
-                List<TrainType> types =
-                        train.getCertType().getPotentialTrainTypes();
-                for (TrainType type : types) {
-                    cost = type.getCost();
-                    if (cost <= cash) {
-                        if (canBuyTrainNow) {
-                            BuyTrain action =
-                                    new BuyTrain(train, type, ipo.getParent(),
-                                            cost);
-                            action.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY
-                            possibleActions.add(action);
-                        }
-                    } else if (mustBuyTrain) {
-                        newEmergencyTrains.put(cost, train);
+                cost = train.getCost();
+                if (cost <= cash) {
+                    if (canBuyTrainNow) {
+                        BuyTrain action =
+                                new BuyTrain(train, train.getType(), ipo.getParent(),
+                                        cost);
+                        action.setForcedBuyIfNoRoute(mustBuyTrain); // TEMPORARY
+                        possibleActions.add(action);
                     }
+                } else if (mustBuyTrain) {
+                    newEmergencyTrains.put(cost, train);
                 }
 
                 // Even at train limit, exchange is allowed (per 1856)
                 if (train.canBeExchanged() && hasTrains) {
-                    cost = train.getCertType().getExchangeCost();
+                    cost = train.getType().getExchangeCost();
                     if (cost <= cash) {
                         Set<Train> exchangeableTrains =
                                 operatingCompany.value().getPortfolioModel().getUniqueTrains();
@@ -3145,7 +3169,7 @@ public class OperatingRound extends Round implements Observer {
             trains = pool.getUniqueTrains();
             for (Train train : trains) {
                 if (!mayBuyMoreOfEachType
-                        && trainsBoughtThisTurn.contains(train.getCertType())) {
+                        && trainsBoughtThisTurn.contains(train.getCardType())) {
                     continue;
                 }
                 cost = train.getCost();
@@ -3307,15 +3331,16 @@ public class OperatingRound extends Round implements Observer {
                 && trainManager.isAnyTrainBought()) {
             Train train =
                     Iterables.get(trainManager.getAvailableNewTrains(), 0);
-            if (train.getCertType().hasInfiniteQuantity()) return;
-            scrapHeap.addTrain(train);
+            if (train.getCardType().hasInfiniteQuantity()) return;
+            scrapHeap.addTrainCard(train.getCard());
             ReportBuffer.add(this,
                     LocalText.getText("RemoveTrain", train.toText()));
         }
     }
 
     /*
-     * ======================================= 8. VARIOUS UTILITIES
+     * =======================================
+     *  8. VARIOUS UTILITIES
      * =======================================
      */
 

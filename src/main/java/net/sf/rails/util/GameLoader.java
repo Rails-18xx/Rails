@@ -6,6 +6,7 @@ import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.GameOptionsParser;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.TrainCard;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.SplashWindow;
 
@@ -18,6 +19,7 @@ import rails.game.action.PossibleAction;
 import javax.swing.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -282,7 +284,7 @@ public class GameLoader {
             for (PossibleAction action : gameIOData.getActions()) {
                 count++;
                 if (!gameManager.processOnReload(action)) {
-                    log.warn("Replay of game interrupted");
+                    log.warn("Replay of game interrupted at action "+count);
                     String message = LocalText.getText("LoadInterrupted", count);
                     exception = new RailsReplayException(message);
                     break;

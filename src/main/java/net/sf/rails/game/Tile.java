@@ -103,8 +103,8 @@ public class Tile extends RailsModel implements Comparable<Tile> {
     }
 
     /**
-     * @param se &lt;Tile&gt; element from TileSet.xml
-     * @param te &lt;Tile&gt; element from Tiles.xml
+     * @param setTag element from TileSet.xml
+     * @param defTag element from Tiles.xml
      */
     public void configureFromXML(Tag setTag, Tag defTag)
             throws ConfigurationException {

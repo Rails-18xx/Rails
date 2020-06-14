@@ -84,13 +84,13 @@ public class Phase extends RailsModel implements Configurable {
     /**
      * Train types to rust or obsolete if a phase gets activated
      */
-    private ImmutableList<TrainCertificateType> rustedTrains;
+    private ImmutableList<TrainCardType> rustedTrains;
     private String rustedTrainNames;
 
     /**
      * Train types to release (make available for buying) if a phase gets activated
      */
-    private ImmutableList<TrainCertificateType> releasedTrains;
+    private ImmutableList<TrainCardType> releasedTrains;
     private String releasedTrainNames;
 
     /**
@@ -258,13 +258,13 @@ public class Phase extends RailsModel implements Configurable {
     public void finishConfiguration(RailsRoot root) throws ConfigurationException {
 
         TrainManager trainManager = getRoot().getTrainManager();
-        TrainCertificateType type;
+        TrainCardType type;
 
         if (rustedTrainNames != null) {
-            ImmutableList.Builder<TrainCertificateType> newRustedTrains =
+            ImmutableList.Builder<TrainCardType> newRustedTrains =
                     ImmutableList.builder();
             for (String typeName : rustedTrainNames.split(",")) {
-                type = trainManager.getCertTypeByName(typeName);
+                type = trainManager.getCardTypeByName(typeName);
                 if (type == null) {
                     throw new ConfigurationException(" Unknown rusted train type '" + typeName + "' for phase '" + getId() + "'");
                 }
@@ -275,10 +275,10 @@ public class Phase extends RailsModel implements Configurable {
         }
 
         if (releasedTrainNames != null) {
-            ImmutableList.Builder<TrainCertificateType> newReleasedTrains =
+            ImmutableList.Builder<TrainCardType> newReleasedTrains =
                     ImmutableList.builder();
             for (String typeName : releasedTrainNames.split(",")) {
-                type = trainManager.getCertTypeByName(typeName);
+                type = trainManager.getCardTypeByName(typeName);
                 if (type == null) {
                     throw new ConfigurationException(" Unknown released train type '" + typeName + "' for phase '" + getId() + "'");
                 }
@@ -316,14 +316,14 @@ public class Phase extends RailsModel implements Configurable {
         TrainManager trainManager = getRoot().getTrainManager();
 
         if (rustedTrains != null && !rustedTrains.isEmpty()) {
-            for (TrainCertificateType type : rustedTrains) {
+            for (TrainCardType type : rustedTrains) {
                 trainManager.rustTrainType(type, lastTrainBuyer.value());
             }
         }
 
         if (releasedTrains != null && !releasedTrains.isEmpty()) {
-            for (TrainCertificateType type : releasedTrains) {
-                trainManager.makeTrainAvailable(type);
+            for (TrainCardType type : releasedTrains) {
+                trainManager.makeTrainsAvailable(type);
             }
         }
 
@@ -430,11 +430,11 @@ public class Phase extends RailsModel implements Configurable {
         return numberOfOperatingRounds;
     }
 
-    public List<TrainCertificateType> getRustedTrains() {
+    public List<TrainCardType> getRustedTrains() {
         return rustedTrains;
     }
 
-    public List<TrainCertificateType> getReleasedTrains() {
+    public List<TrainCardType> getReleasedTrains() {
         return releasedTrains;
     }
 
