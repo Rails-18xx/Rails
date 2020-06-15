@@ -13240,7 +13240,7 @@ object TTilesWrapper
     end
     item
       Code = -3008
-      LongName = 'city (cent.)'
+      LongName = '-3008'
       Level = tlMapUpgradableToYellow
       Connections = <>
       Junctions = <
@@ -17545,7 +17545,7 @@ object TTilesWrapper
     item
       Code = -3012
       LongName = 'Copenhagen'
-      Category = 'Cop'
+      Category = 'COP'
       CategoryPosition = tp3SideG
       Level = tlMapUpgradableToYellow
       Connections = <>
@@ -17586,6 +17586,318 @@ object TTilesWrapper
           Position = tp2SideA
           Revenue = 30
           RevenuePosition = tp3CornerF
+        end>
+    end
+    item
+      Code = 3901
+      LongName = 'SOH1'
+      Category = 'AMS'
+      CategoryPosition = tp2CornerC
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tp2CornerE
+        end
+        item
+          Position1 = tp2CornerE
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tp4SideF
+          Position2 = tp2CornerA
+        end
+        item
+          Position1 = tp2CornerA
+          Position2 = tp4SideA
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerA
+          Revenue = 30
+          RevenuePosition = tp2CornerB
+        end
+        item
+          JunType = jtCity
+          Position = tp2CornerE
+          Revenue = 30
+          RevenuePosition = tp2CornerD
+        end>
+    end
+    item
+      Code = 3902
+      LongName = 'SOH2'
+      Category = 'AMS'
+      CategoryPosition = tp2CornerC
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp2CornerE
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp2CornerE
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tp4SideF
+          Position2 = tp2CornerA
+        end
+        item
+          Position1 = tp2CornerA
+          Position2 = tp4SideA
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerA
+          Revenue = 40
+          RevenuePosition = tp2CornerB
+        end
+        item
+          JunType = jtCity
+          Position = tp2CornerE
+          Revenue = 40
+          RevenuePosition = tp2CornerD
+        end
+        item
+          Position = tp2CornerA
+        end>
+    end
+    item
+      Code = 3903
+      LongName = 'SOH3'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp1SideC
+        end
+        item
+          Position1 = tp1SideC
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Revenue = 10
+          RevenuePosition = tp2CornerF
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tp1SideC
+          Revenue = 10
+          RevenuePosition = tp3SideC
+        end>
+    end
+    item
+      Code = 3904
+      LongName = 'SOH4'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp1SideE
+        end
+        item
+          Position1 = tp1SideE
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Revenue = 10
+          RevenuePosition = tp2CornerC
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tp1SideE
+          Revenue = 10
+          RevenuePosition = tp3SideE
+        end>
+    end
+    item
+      Code = 3905
+      LongName = 'SOH5'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tp2CornerD
+        end
+        item
+          Position1 = tp2CornerD
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Revenue = 10
+          RevenuePosition = tp2CornerC
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tp2CornerD
+          Revenue = 10
+          RevenuePosition = tp2CornerF
+        end>
+    end
+    item
+      Code = 3906
+      LongName = 'SOH6'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp2CornerE
+        end
+        item
+          Position1 = tp2CornerE
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Revenue = 10
+          RevenuePosition = tp2CornerF
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tp2CornerE
+          Revenue = 10
+          RevenuePosition = tp2CornerC
+        end>
+    end
+    item
+      Code = 3907
+      LongName = 'SOH7'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tp2CornerD
+        end
+        item
+          Position1 = tp2CornerD
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp1SideC
+        end
+        item
+          Position1 = tp1SideC
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp1SideC
+          Revenue = 10
+          RevenuePosition = tp1SideF
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tp2CornerD
+          Revenue = 10
+          RevenuePosition = tp3CornerC
+        end>
+    end
+    item
+      Code = 3908
+      LongName = 'SOH8'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tp2CornerE
+        end
+        item
+          Position1 = tp2CornerE
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp1SideE
+        end
+        item
+          Position1 = tp1SideE
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp1SideE
+          Revenue = 10
+          RevenuePosition = tp1SideB
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tp2CornerE
+          Revenue = 10
+          RevenuePosition = tp3CornerF
+        end>
+    end
+    item
+      Code = 3909
+      LongName = 'SOH9'
+      Category = 'AMS'
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 60
+          RevenuePosition = tp3CornerB
         end>
     end>
 end
