@@ -222,15 +222,8 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
 
     @Override
     public boolean process(PossibleAction action) {
-
-        // Add the actor for safety checking in the server
-        if (action != null) action.setPlayerName(orPanel.getORPlayer());
         // Process the action
-        boolean result = gameUIManager.processAction(action);
-        // Display any error message
-        //displayServerMessage();
-
-        return result;
+        return gameUIManager.processAction(action);
     }
 
     // Not yet used
