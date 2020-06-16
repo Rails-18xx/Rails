@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
+		<ClosingConditions>
+            <Phase>5</Phase>
+		</ClosingConditions>
+		<Tradeable toCompany="yes" lowerPriceFactor="0" upperPriceFactor="2.0"/>
+								<!-- must be lower price="1"-->
+		<Tradeable toPlayer="yes"/>	
+	</CompanyType>
+	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
+		<CanBuyPrivates/>
+		<!-- ? Treasury pays out? -->
+		<Float percentage="60"/><!-- equal to phase number-->
+		<ShareUnit percentage="10"/>
+		<BaseTokens>
+			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
+			<HomeBase lay="firstOR"/>
+			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Trains limit="4,3,2"/>
+        <CanUseSpecialProperties/>
+	</CompanyType>
+	<Company name="AS" type="Private" basePrice="20" revenue="5"
+			longname="Spoorwegmaatschappij Almelo-Salzbergen">
+	</Company>
+	<Company name="KKI" type="Private" basePrice="40" revenue="10"
+			longname="Koninklijk Korps van Ingenieurs">
+	</Company>
+	<Company name="ES" type="Private" basePrice="75" revenue="15"
+		longname="Veerdienst Enkhuizen-Stavoren">
+	</Company>
+	<Company name="VL" type="Private" basePrice="75" revenue="15"
+			 longname="Veerdienst Vlissingen-Londen">
+	</Company>
+	<Company name="RWS" type="Private" basePrice="80" revenue="20"
+		longname="Rijkswaterstaat">
+	</Company>
+	<Company name="WS" type="Private" basePrice="100" revenue="20"
+		longname="Werkspoor">
+	</Company>
+	<Company name="KO" type="Private" basePrice="100" revenue="10"
+		longname="Koninklijke Ondersteuning">
+		<Info key="ComesWithShare" parm="NRS,10"/>
+	</Company>
+	
+	<!-- Note two supported colour specification formats:
+	     RGB decimal with commas and RGB hexadecimal without commas -->
+	<Company name="NBDS" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000A0"
+			longname="Noordbrabants-Duitse Spoorwegnaatschappij">
+		<Home hex="K12"/>
+	</Company>	     
+	<Company name="HSM" type="Public" tokens="4" fgColour="000000" bgColour="00FF00"
+			longname="Hollandsche IJzeren Spoorwegmaatschappij">
+		<Home hex="F9" city="1"/>
+	</Company>
+	<Company name="NRS" type="Public" tokens="4" fgColour="000000" bgColour="80FF80"
+			longname="Nederlandse Rhijnspoorweg">
+		<Home hex="F9" city="2"/>
+	</Company>
+	<Company name="OSM" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000"
+			longname="Overijsselsche Spoorwegmaatschappij">
+		<Home hex="E14"/>
+	</Company>
+	<Company name="AR" type="Public" tokens="4" fgColour="000000" bgColour="FF4040"
+			longname="S.A. des C.d.F d'Anvers a Rotterdam">
+		<Home hex="J7"/>
+	</Company>
+	<Company name="NCS" type="Public" tokens="4" fgColour="FFFFFF" bgColour="A040A0"
+			longname="Nederlandse Centraal Spoorwegmaatschappij">
+		<Home hex="H9"/>
+	</Company>
+	<Company name="NSM" type="Public" tokens="4" fgColour="000000" bgColour="FFFFFF"
+			longname="Nijmeegse Spoorwegmaatschappij">
+		<Home hex="I12"/>
+	</Company>
+
+	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
+		<Bidding initial="5" minimum="5" increment="5"/>
+		<Item name="AS" type="Private" basePrice="20">
+		</Item>
+		<Item name="KKI" type="Private" basePrice="40">
+		</Item>
+		<Item name="ES" type="Private" basePrice="75">
+		</Item>
+		<Item name="VL" type="Private" basePrice="75">
+		</Item>
+		<Item name="RWS" type="Private" basePrice="80">
+		</Item>
+		<Item name="WS" type="Private" basePrice="100">
+		</Item>
+		<Item name="KO" type="Private" basePrice="100">
+			<SubItem name="NRS" type="Public" />
+		</Item>
+	</StartPacket>
+</CompanyManager>

@@ -6,7 +6,7 @@ import org.gradle.internal.os.OperatingSystem;
 plugins {
     id 'java'
     // https://github.com/johnrengelman/shadow
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
     // plugin to check for dependency updates via task dependencyUpdates
     // https://github.com/ben-manes/gradle-versions-plugin
     id 'com.github.ben-manes.versions' version '0.28.0'
@@ -55,8 +55,8 @@ def jpackage() {
 dependencies {
     implementation 'commons-io:commons-io:2.7'
     implementation 'com.github.vlsi.mxgraph:jgraphx:4.1.0'
-    implementation 'org.jgrapht:jgrapht-core:1.4.0'
-    implementation 'org.jgrapht:jgrapht-ext:1.4.0'
+    implementation 'org.jgrapht:jgrapht-core:1.5.0'
+    implementation 'org.jgrapht:jgrapht-ext:1.5.0'
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'org.apache.xmlgraphics:batik-bridge:1.13'
     implementation 'org.apache.xmlgraphics:batik-transcoder:1.13'

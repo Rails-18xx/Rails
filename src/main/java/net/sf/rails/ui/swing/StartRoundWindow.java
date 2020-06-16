@@ -94,26 +94,21 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     private SpinnerNumberModel spinnerModel;
     private ActionButton passButton;
 
-    private ImageIcon infoIcon = null;
+    private ImageIcon infoIcon;
 
     private PlayerManager players;
-
-    private StartItemAction[] actionableItems;
 
     private int[] crossIndex;
     protected StartRound round;
     private GameUIManager gameUIManager;
 
     // For the non-modal dialog to ask for a company starting share price.
-    protected JDialog currentDialog = null;
-    protected PossibleAction currentDialogAction = null;
-    protected SortedSet<StockSpace> startSpaces = null;
-
-    private StartItem si;
-    private JComponent f;
+    protected JDialog currentDialog;
+    protected PossibleAction currentDialogAction;
+    protected SortedSet<StockSpace> startSpaces;
 
     protected PossibleActions possibleActions;
-    protected PossibleAction immediateAction = null;
+    protected PossibleAction immediateAction;
 
     private final ButtonGroup itemGroup = new ButtonGroup();
     private ClickField dummyButton; // To be selected if none else is.
@@ -157,8 +152,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             bidButton.setEnabled(false);
             buttonPanel.add(bidButton);
 
-            spinnerModel =
-                    new SpinnerNumberModel(999, 0, null, 1);
+            spinnerModel = new SpinnerNumberModel(999, 0, null, 1);
             bidAmount = new JSpinner(spinnerModel);
             bidAmount.setPreferredSize(new Dimension(50, 28));
             bidAmount.setEnabled(false);
@@ -177,15 +171,13 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
         players = gameUIManager.getRoot().getPlayerManager();
 
-        crossIndex = new int[round.getNumberOfStartItems()];
+        crossIndex = new int[round.getStartPacket().getNumberOfItems()];
 
         for (int i = 0; i < round.getNumberOfStartItems(); i++) {
             final StartItem item = round.getStartItem(i);
 
             crossIndex[item.getIndex()] = i;
         }
-
-        actionableItems = new StartItemAction[round.getNumberOfStartItems()];
 
         infoIcon = createInfoIcon();
 
@@ -293,66 +285,58 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         addField(new Caption(LocalText.getText("PLAYERS")),
                 playerCaptionXOffset, 0, np, 1, 0);
         for (int i = 0; i < np; i++) {
-            f = upperPlayerCaption[i] = new Field(players.getPlayerByPosition(i).getPlayerNameModel());
-            addField(f, playerCaptionXOffset + i, upperPlayerCaptionYOffset, 1, 1, WIDE_BOTTOM);
+            upperPlayerCaption[i] = new Field(players.getPlayerByPosition(i).getPlayerNameModel());
+            addField(upperPlayerCaption[i], playerCaptionXOffset + i, upperPlayerCaptionYOffset, 1, 1, WIDE_BOTTOM);
         }
 
         for (int i = 0; i < ni; i++) {
-            si = round.getStartItem(i);
-            f = itemName[i] = new Caption(si.getId());
-            HexHighlightMouseListener.addMouseListener(f,
-                    gameUIManager.getORUIManager(),
-                    si);
-            addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
-            f =
-                    itemNameButton[i] =
-                            new ClickField(si.getId(), "", "", this,
-                                    itemGroup);
-            HexHighlightMouseListener.addMouseListener(f,
-                    gameUIManager.getORUIManager(),
-                    si);
-            addField(f, itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
+            final StartItem si = round.getStartItem(i);
+
+            itemName[i] = new Caption(si.getId());
+            HexHighlightMouseListener.addMouseListener(itemName[i], gameUIManager.getORUIManager(), si);
+            addField(itemName[i], itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
+
+            itemNameButton[i] = new ClickField(si.getId(), "", "", this, itemGroup);
+            HexHighlightMouseListener.addMouseListener(itemNameButton[i], gameUIManager.getORUIManager(), si);
+            addField(itemNameButton[i], itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
+
             // Prevent row height resizing after every buy action
             itemName[i].setPreferredSize(itemNameButton[i].getPreferredSize());
 
             if (showBasePrices) {
-                f = basePrice[i] = new Field(si.getBasePriceModel());
-                addField(f, basePriceXOffset, basePriceYOffset + i, 1, 1, 0);
+                basePrice[i] = new Field(si.getBasePriceModel());
+                addField(basePrice[i], basePriceXOffset, basePriceYOffset + i, 1, 1, 0);
             }
 
             if (includeBidding) {
-                f = minBid[i] = new Field(round.getMinimumBidModel(i));
-                addField(f, minBidXOffset, minBidYOffset + i, 1, 1, WIDE_RIGHT);
+                minBid[i] = new Field(round.getMinimumBidModel(i));
+                addField(minBid[i], minBidXOffset, minBidYOffset + i, 1, 1, WIDE_RIGHT);
             }
 
             for (int j = 0; j < np; j++) {
-                f = bidPerPlayer[i][j] = new Field(round.getBidModel(i, players.getPlayerByPosition(j)));
-                addField(f, bidPerPlayerXOffset + j, bidPerPlayerYOffset + i,
-                        1, 1, 0);
+                bidPerPlayer[i][j] = new Field(round.getBidModel(i, players.getPlayerByPosition(j)));
+                addField(bidPerPlayer[i][j], bidPerPlayerXOffset + j, bidPerPlayerYOffset + i, 1, 1, 0);
             }
 
-            f = info[i] = new Field(infoIcon);
-            f.setToolTipText(getStartItemDescription(si));
-            HexHighlightMouseListener.addMouseListener(f,
-                    gameUIManager.getORUIManager(),
-                    si);
-            addField(f, infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
+            info[i] = new Field(infoIcon);
+            info[i].setToolTipText(getStartItemDescription(si));
+            HexHighlightMouseListener.addMouseListener(info[i], gameUIManager.getORUIManager(), si);
+            addField(info[i], infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
 
             // Invisible field, only used to hold current item status.
-            f = itemStatus[i] = new Field(si.getStatusModel());
+            itemStatus[i] = new Field(si.getStatusModel());
         }
 
         // Player money
         boolean firstBelowTable = true;
         if (includeBidding) {
-            addField(new Caption(LocalText.getText("BID")),
-                    playerBidsXOffset - 1, playerBidsYOffset, 1, 1,
-                    WIDE_TOP + WIDE_RIGHT);
+            addField(new Caption(LocalText.getText("BID")), playerBidsXOffset - 1, playerBidsYOffset, 1, 1, WIDE_TOP + WIDE_RIGHT);
+
             for (int i = 0; i < np; i++) {
-                f = playerBids[i] = new Field(round.getBlockedCashModel(players.getPlayerByPosition(i)));
-                addField(f, playerBidsXOffset + i, playerBidsYOffset, 1, 1,
-                        WIDE_TOP);
+                playerBids[i] = new Field(round.getBlockedCashModel(players.getPlayerByPosition(i)));
+                addField(playerBids[i], playerBidsXOffset + i, playerBidsYOffset, 1, 1, WIDE_TOP);
             }
+
             firstBelowTable = false;
         }
 
@@ -361,56 +345,45 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                 playerFreeCashXOffset - 1, playerFreeCashYOffset, 1, 1,
                 WIDE_RIGHT + (firstBelowTable ? WIDE_TOP : 0));
         for (int i = 0; i < np; i++) {
-            f =
-                    playerFree[i] =
-                            new Field(includeBidding
-                                    ? round.getFreeCashModel(players.getPlayerByPosition(i))
-                                    : players.getPlayerByPosition(i).getWallet());
-            addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset, 1, 1,
-                    firstBelowTable ? WIDE_TOP : 0);
+            playerFree[i] = new Field(includeBidding
+                    ? round.getFreeCashModel(players.getPlayerByPosition(i))
+                    : players.getPlayerByPosition(i).getWallet());
+            addField(playerFree[i], playerFreeCashXOffset + i, playerFreeCashYOffset, 1, 1, firstBelowTable ? WIDE_TOP : 0);
         }
 
         for (int i = 0; i < np; i++) {
-            f = lowerPlayerCaption[i] = new Field(players.getPlayerByPosition(i).getPlayerNameModel());
-            addField(f, playerFreeCashXOffset + i, playerFreeCashYOffset + 1,
-                    1, 1, WIDE_TOP);
+            lowerPlayerCaption[i] = new Field(players.getPlayerByPosition(i).getPlayerNameModel());
+            addField(lowerPlayerCaption[i], playerFreeCashXOffset + i, playerFreeCashYOffset + 1, 1, 1, WIDE_TOP);
         }
 
         dummyButton = new ClickField("", "", "", this, itemGroup);
-
     }
 
-    private void addField(JComponent comp, int x, int y, int width, int height,
-                          int wideGapPositions) {
-
-        int padTop, padLeft, padBottom, padRight;
+    private void addField(JComponent comp, int x, int y, int width, int height, int wideGapPositions) {
         gbc.gridx = x;
         gbc.gridy = y;
         gbc.gridwidth = width;
         gbc.gridheight = height;
         gbc.weightx = gbc.weighty = 0.5;
         gbc.fill = GridBagConstraints.BOTH;
-        padTop = (wideGapPositions & WIDE_TOP) > 0 ? WIDE_GAP : NARROW_GAP;
-        padLeft = (wideGapPositions & WIDE_LEFT) > 0 ? WIDE_GAP : NARROW_GAP;
-        padBottom =
-                (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP : NARROW_GAP;
-        padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP : NARROW_GAP;
+
+        int padTop = (wideGapPositions & WIDE_TOP) > 0 ? WIDE_GAP : NARROW_GAP;
+        int padLeft = (wideGapPositions & WIDE_LEFT) > 0 ? WIDE_GAP : NARROW_GAP;
+        int padBottom = (wideGapPositions & WIDE_BOTTOM) > 0 ? WIDE_GAP : NARROW_GAP;
+        int padRight = (wideGapPositions & WIDE_RIGHT) > 0 ? WIDE_GAP : NARROW_GAP;
+
         gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
 
         statusPanel.add(comp, gbc);
         fields[x][y] = comp;
-
     }
 
     @Override
     public void updateStatus(boolean myTurn) {
-        StartItem item;
-        int i, j;
-
-        for (i = 0; i < round.getNumberOfStartItems(); i++) {
+        for (int i = 0; i < round.getNumberOfStartItems(); i++) {
             setItemNameButton(i, false);
-            actionableItems[i] = null;
         }
+
         // Unselect the selected private
         dummyButton.setSelected(true);
 
@@ -454,10 +427,10 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         BuyStartItem buyAction;
 
         for (StartItemAction action : actions) {
-            j = action.getItemIndex();
-            i = crossIndex[j];
-            actionableItems[i] = action;
-            item = action.getStartItem();
+            int j = action.getItemIndex();
+            int i = crossIndex[j];
+
+            StartItem item = action.getStartItem();
 
             if (action instanceof BuyStartItem) {
                 buyAction = (BuyStartItem) action;
@@ -603,12 +576,10 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                     passButton.setEnabled(true);
                     passButton.setRailsIcon(RailsIcon.SELECT_NO_BID);
                     passButton.setVisible(true);
-                    //                    if (!repacked) {
-                    pack();
-                    //                        repacked = true;
-                    //                    }
 
+                    pack();
                 }
+
                 if (includeBidding) {
                     bidButton.setEnabled(true);
                     bidButton.setPossibleAction(currentActiveItem);
@@ -620,13 +591,13 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                 }
             }
         } else if (source instanceof ActionButton) {
-            PossibleAction activeItem =
-                    ((ActionButton) source).getPossibleActions().get(0);
+            PossibleAction activeItem = ((ActionButton) source).getPossibleActions().get(0);
 
             if (source == buyButton) {
-                if (activeItem instanceof BuyStartItem
-                        && ((BuyStartItem) activeItem).hasSharePriceToSet()) {
-                    if (requestStartPrice((BuyStartItem) activeItem)) return;
+                if (activeItem instanceof BuyStartItem && ((BuyStartItem) activeItem).hasSharePriceToSet()) {
+                    if (requestStartPrice((BuyStartItem) activeItem)) {
+                        return;
+                    }
                 } else {
                     process(activeItem);
                 }
@@ -635,18 +606,15 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                 process(activeItem);
 
             } else if (source == passButton) {
-                if (activeItem instanceof BidStartItem
-                        && ((BidStartItem) activeItem).isSelectForAuction()) {
+                if (activeItem instanceof BidStartItem && ((BidStartItem) activeItem).isSelectForAuction()) {
                     ((BidStartItem) activeItem).setActualBid(-1);
                 }
                 process(activeItem);
-
             }
         }
     }
 
     protected boolean requestStartPrice(BuyStartItem activeItem) {
-
         if (activeItem.hasSharePriceToSet()) {
             String compName = activeItem.getCompanyToSetPriceFor();
             StockMarket stockMarket = gameUIManager.getRoot().getStockMarket();
@@ -662,6 +630,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             } else {
                 startSpaces = stockMarket.getStartSpaces();
             }
+
             String[] options = new String[startSpaces.size()];
             int i = 0;
             for (StockSpace space : startSpaces) {
@@ -678,9 +647,10 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                             compName),
                     options,
                     -1);
-            setCurrentDialog(dialog, activeItem);
 
+            setCurrentDialog(dialog, activeItem);
         }
+
         return true;
     }
 
@@ -699,17 +669,16 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         if (currentDialog != null) {
             currentDialog.dispose();
         }
+
         currentDialog = dialog;
         currentDialogAction = action;
+
         disableButtons();
     }
 
     @Override
     public void dialogActionPerformed() {
-
-        if (currentDialog instanceof RadioButtonDialog
-                && currentDialogAction instanceof BuyStartItem) {
-
+        if (currentDialog instanceof RadioButtonDialog && currentDialogAction instanceof BuyStartItem) {
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
             BuyStartItem action = (BuyStartItem) currentDialogAction;
 
@@ -722,9 +691,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                 // No selection done - no action
                 return;
             }
-
-        } else {
-            return;
         }
     }
 
@@ -732,9 +698,11 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         if (includeBidding) {
             bidButton.setEnabled(false);
         }
+
         if (includeBuying) {
             buyButton.setEnabled(false);
         }
+
         passButton.setEnabled(false);
     }
 
@@ -753,7 +721,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     }
 
     private void setItemNameButton(int i, boolean clickable) {
-
         itemName[i].setVisible(!clickable);
         itemNameButton[i].setVisible(clickable);
 
@@ -763,10 +730,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         itemName[i].setToolTipText(clickable ? "" : tooltip);
         itemNameButton[i].setToolTipText(clickable ? tooltip : "");
 
-        itemName[i].setForeground(
-                status == StartItem.SOLD ? soldColour : defaultColour);
-        itemNameButton[i].setForeground(
-                status == StartItem.BUYABLE ? buyableColour : defaultColour);
+        itemName[i].setForeground(status == StartItem.SOLD ? soldColour : defaultColour);
+        itemNameButton[i].setForeground(status == StartItem.BUYABLE ? buyableColour : defaultColour);
     }
 
     private String getStartItemDescription(StartItem item) {
