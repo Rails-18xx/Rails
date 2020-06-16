@@ -1,14 +1,15 @@
 <Map tileOrientation="EW" letterOrientation="vertical" even="B">
-	<Hex name="A3" tile="-902" value="20,30,40,50" city="Russia" />
+	<Image file="1880/1880_spielplan.svg" x="-80" y="-79" scale="1.1545"/>
+	<Hex name="A3" tile="-902" value="20,30,40,50" city="Russia"/>
 	<Hex name="A5" tile="-10" city="Qiqihar"/>
-	<Hex name="A7" tile="-1" />
-	<Hex name="A9" tile="0" />
-	<Hex name="A11" tile="0" />
-	<Hex name="A13" tile="0" />
+	<Hex name="A7" tile="-1"/>
+	<Hex name="A9" tile="0"/>
+	<Hex name="A11" tile="0"/>
+	<Hex name="A13" tile="0"/>
 	<Hex name="A15" tile="-902" orientation="2" value="10,20,30,40" city="Vladivostok"/>
 	<Hex name="B4" tile="0" cost="30"/>
-	<Hex name="B6" tile="0" />
-	<Hex name="B8" tile="-10" city="Harbin" />
+	<Hex name="B6" tile="0"/>
+	<Hex name="B8" tile="-10" city="Harbin"/>
 	<Hex name="B10" tile="0" />
 	<Hex name="B12" tile="-2" />
 	<Hex name="B14" tile="-80001" city="Hunchun"/>
