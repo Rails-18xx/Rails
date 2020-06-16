@@ -37,7 +37,7 @@ def output = './build/installers'
 def jpackage() {
     def jpackageExe
     if (OperatingSystem.current().isWindows()) {
-        jpackageExe = "${System.getenv('JAVA_HOME')}/bin/jpackage.exe"
+        jpackageExe = "${System.getenv('JAVA_HOME')}\\bin\\jpackage.exe"
     } else if (OperatingSystem.current().isLinux()) {
         jpackageExe = "${System.getenv('JAVA_HOME')}/bin/jpackage"
     } else if (OperatingSystem.current().isMacOsX()) {
@@ -245,4 +245,8 @@ task renameExecutables(type: Copy) {
     }
     into '.'
     rename '(.+)\\.(.+)', 'rails-18xx.$2'
+}
+
+task createAllPackages(type: GradleBuild) {
+    tasks = ['buildDmgPackage','buildExePackage', 'buildRpmPackage', 'buildDebPackage' ]
 }
