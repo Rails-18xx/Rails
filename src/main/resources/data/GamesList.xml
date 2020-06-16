@@ -217,7 +217,8 @@ Known Issues:
         <Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
         <Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
         <Option name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
-  </Game> 
+  </Game>
+
   <Game name="18VA">
     <Note>Prototype</Note>
     <Description>18VA</Description>
@@ -225,10 +226,11 @@ Known Issues:
   </Game>
 
    <Game name="18Scan">
-    <Note>Prototype</Note>
+    <Note>In progress</Note>
     <Description>18Scan</Description>
     <Players minimum="2" maximum="4" />
   </Game>
+
    <Game name="1837">
    <Note>Prototype</Note>
    <Description> 1837 - Austria
@@ -236,13 +238,21 @@ Known Issues:
    <Players minimum = "3" maximum = "7" />
    </Game>
 
-
   <Game name="1862">
     <Note>Prototype - Not Playable</Note>
     <Description>1862</Description>
     <Players minimum="2" maximum="8" />
   </Game>
-   	
+
+  <Game name="SOH">
+	<Note>Prototype</Note>
+	<Description>Steam over Holland
+		(c) 2007 Bart van Dijk
+	</Description>
+	<Players minimum="2" maximum="5"/>
+  </Game>
+
+
 	<Credits>&lt;html&gt;Rails is a computer implementation of a number of board games.&lt;br&gt; 
 	These games all have a railroad theme. They are collectively known as "18xx" &lt;br&gt;
 	games due to the naming scheme used by many games in the genre. &lt;br&gt;

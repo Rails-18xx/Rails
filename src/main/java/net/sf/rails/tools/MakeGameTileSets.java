@@ -183,7 +183,7 @@ public class MakeGameTileSets {
             System.out.println("XML output to " + tilesPath);
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            transformerFactory.setAttribute("indent-number", 5);
+            //transformerFactory.setAttribute("indent-number", 5);
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(new DOMSource(outputDoc),
