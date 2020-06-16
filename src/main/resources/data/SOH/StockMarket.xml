@@ -1,0 +1,41 @@
+<StockMarket type="linear">
+	<StockSpace name="A1" price="50"/>
+	<StockSpace name="B1" price="55"/>
+	<StockSpace name="C1" price="60"/>
+	<StockSpace name="D1" price="65">
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="E1" price="70">
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="F1" price="75">
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="G1" price="80">
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="H1" price="90">
+		<StartSpace/>
+	</StockSpace>
+	<StockSpace name="I1" price="100">
+		<StartSpace/>
+		<BelowLedge/>
+	</StockSpace>
+	<StockSpace name="J1" price="110"/>
+	<StockSpace name="K1" price="125"/>
+	<StockSpace name="L1" price="140">
+		<BelowLedge/>
+	</StockSpace>
+	<StockSpace name="M1" price="160"/>
+	<StockSpace name="N1" price="180"/>
+	<StockSpace name="O1" price="210">
+		<BelowLedge/>
+	</StockSpace>
+	<StockSpace name="P1" price="240"/>
+	<StockSpace name="Q1" price="270"/>
+	<StockSpace name="R1" price="300">
+		<BelowLedge/>
+	</StockSpace>
+	<StockSpace name="S1" price="330"/>
+	<StockSpace name="T1" price="360"/>
+</StockMarket>

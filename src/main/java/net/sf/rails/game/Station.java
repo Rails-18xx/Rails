@@ -90,7 +90,6 @@ public class Station extends TrackPoint implements Comparable<Station> {
         if (stype == null)
             throw new ConfigurationException(LocalText.getText(
                     "TileStationHasNoType", tile.getId()));
-
         Station.Type type = Station.Type.valueOf(stype.toUpperCase());
         if (type == null) {
             throw new ConfigurationException(LocalText.getText(
