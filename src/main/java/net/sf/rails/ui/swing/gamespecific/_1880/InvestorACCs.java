@@ -1,5 +1,6 @@
 package net.sf.rails.ui.swing.gamespecific._1880;
 
+import net.sf.rails.game.model.ColorModel;
 import net.sf.rails.game.specific._1880.Investor_1880;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.ui.swing.core.Accessor1D;
@@ -27,6 +28,23 @@ public class InvestorACCs {
                 @Override
                 protected String access(Investor_1880 investor) {
                     return String.valueOf(investor.getId());
+                }
+            };
+
+
+    public static final Accessor1D.AColorModel<Investor_1880> COMPANY_COLORS =
+            new Accessor1D.AColorModel<Investor_1880>(Investor_1880.class) {
+                @Override
+                protected ColorModel access(Investor_1880 investor) {
+                    return investor.getLinkedCompany().getCompanyColors();
+                }
+            };
+
+    public static final Accessor1D.AColorModel<Investor_1880> INVESTOR_COLORS =
+            new Accessor1D.AColorModel<Investor_1880>(Investor_1880.class) {
+                @Override
+                protected ColorModel access(Investor_1880 investor) {
+                    return investor.getCompanyColors();
                 }
             };
 }

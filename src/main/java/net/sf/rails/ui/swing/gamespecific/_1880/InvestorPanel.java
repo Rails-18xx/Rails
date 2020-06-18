@@ -7,6 +7,7 @@ import net.sf.rails.ui.swing.core.GridTable;
 import net.sf.rails.ui.swing.core.TableUI;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class InvestorPanel {
@@ -20,9 +21,16 @@ public class InvestorPanel {
     public InvestorPanel(GameManager_1880 gameManager) {
 
         List<Investor_1880> investors = Investor_1880.getInvestors(gameManager.getRoot().getCompanyManager());
+        List<Investor_1880> investors_new = new ArrayList<Investor_1880>();
+
+        for (Investor_1880 inv : investors) {
+            if (!inv.isClosed()) {
+                investors_new.add(inv);
+            }
+        }
 
         GridAxis rows = GridAxis.builder()
-                .add(Rows.HEADER).add(investors, Investor_1880.class)
+                .add(Rows.HEADER).add(investors_new, Investor_1880.class)
                 .build();
 
         GridAxis cols = GridAxis.builder()
@@ -31,7 +39,7 @@ public class InvestorPanel {
 
         GridTable gridTable = GridTable.builder(rows, cols)
                 .row().add("Investor").add("Company").add("Owner")
-                .row().add(InvestorACCs.INVESTOR).headerFormat().add(InvestorACCs.COMPANY).add(InvestorACCs.PLAYER)
+                .row().add(InvestorACCs.INVESTOR).headerFormat().color(InvestorACCs.INVESTOR_COLORS).add(InvestorACCs.COMPANY).color(InvestorACCs.COMPANY_COLORS).add(InvestorACCs.PLAYER)
                 .build();
 
         TableUI table = TableUI.from(gridTable);
