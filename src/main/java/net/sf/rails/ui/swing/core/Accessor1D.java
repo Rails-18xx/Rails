@@ -1,6 +1,6 @@
 package net.sf.rails.ui.swing.core;
 
-import net.sf.rails.game.state.ColorModel;
+import net.sf.rails.game.model.ColorModel;
 import net.sf.rails.game.state.Item;
 import net.sf.rails.game.state.Observable;
 

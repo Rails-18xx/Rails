@@ -1,12 +1,11 @@
 package net.sf.rails.game.model;
 
-import java.awt.Color;
-
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.state.BooleanState;
-import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.Item;
+
+import java.awt.*;
 
 /**
  * Used to indicate if an player sold a share this round
