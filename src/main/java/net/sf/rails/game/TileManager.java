@@ -1,5 +1,6 @@
 package net.sf.rails.game;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -30,7 +31,7 @@ public class TileManager extends RailsManager implements Configurable {
     private int sortingDigits;
 
     // Stop property defaults per stop type
-    private ImmutableMap<String, StopType> defaultStopTypes;
+    private EnumMap<Stop.Type, Access> defaultAccessTypes = new EnumMap<>(Stop.Type.class);
 
     /**
      * Used by Configure (via reflection) only
@@ -118,13 +119,11 @@ public class TileManager extends RailsManager implements Configurable {
             sortingDigits = Math.max(sortingDigits, tile.toText().length());
         }
 
-        // Parse default stop types
+        // Parse default stop types for whole tiles (use not recommended)
         Tag defaultsTag = tileSetTop.getChild("Defaults");
         if (defaultsTag != null) {
             List<Tag> accessTags = defaultsTag.getChildren("Access");
-            defaultStopTypes = StopType.parseDefaults(this, accessTags);
-        } else {
-            defaultStopTypes = ImmutableMap.of();  // or null?
+            defaultAccessTypes = Access.parseDefaults(this, accessTags);
         }
     }
 
@@ -148,7 +147,10 @@ public class TileManager extends RailsManager implements Configurable {
         return tileSet;
     }
 
-    public ImmutableMap<String, StopType> getDefaultStopTypes() {
-        return defaultStopTypes;
+    public EnumMap<Stop.Type, Access> getDefaultAccessTypes() {
+        return defaultAccessTypes;
     }
+
+    public Access getDefaultAccessType (Stop.Type type) { return defaultAccessTypes.get(type); }
 }
+

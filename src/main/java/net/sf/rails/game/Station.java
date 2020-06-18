@@ -31,58 +31,24 @@ public class Station extends TrackPoint implements Comparable<Station> {
 
     private static final Logger log = LoggerFactory.getLogger(Station.class);
 
-    public static enum Type {
-        // StopType defaults should not be set here.
-        // Only station-specific deviations from the defaults should be specified on Station level,
-        // and only make sense if a tile has different station types that need specific
-        // access parameters that deviate from defaults set elsewhere.
-        // There are no known cases, but for now this option is left in.
-        // Such access parameters should be set in TileSet.xml, NOT in Tiles.XML.
-        // In most cases, setting access on MapHex level will be sufficient.
-        // The 'defaults' are left in for now, but all values have been set to null.
-        /*
-        CITY (StopType.Defaults.CITY, "City"),
-        TOWN (StopType.Defaults.TOWN, "Town"),
-        HALT (StopType.Defaults.TOWN, "Halt"),
-        OFFMAPCITY (StopType.Defaults.OFFMAP, "OffMap"),
-        PORT (StopType.Defaults.TOWN, "Port"),
-        PASS (StopType.Defaults.CITY, "Pass"),
-        */
-        CITY (StopType.Defaults.NULL, "City"),
-        TOWN (StopType.Defaults.NULL, "Town"),
-        HALT (StopType.Defaults.NULL, "Halt"),
-        OFFMAPCITY (StopType.Defaults.NULL, "OffMap"),
-        PORT (StopType.Defaults.NULL, "Port"),
-        PASS (StopType.Defaults.NULL, "Pass"),
-        JUNCTION (StopType.Defaults.NULL, "Junction");
-
-        private final StopType stopType;
-        private final String text;
-
-        private Type(StopType.Defaults type, String text) {
-            this.stopType = type.getStopType();
-            this.text = text;
-        }
-        public StopType getStopType() {
-            return stopType;
-        }
-        public String toText() {
-            return text;
-        }
-    }
-
     private final String id;
-    private final Station.Type type;
+    private final Stop.Type type;
     private final int number;
     private final int value;
     private final int baseSlots;
     private final Tile tile;
     private final int position;
     private final String stopName;
-    private final String mutexId;
 
-    private Station(Tile tile, int number, String id, Station.Type type, int value,
-            int slots, int position, String cityName) {
+    /** Included, but not yet set or used.
+     *  If the need arises (two different stations on one hex with non-default
+     *  access parameters), an Access section should be defined in TileSet.xml
+     *  (NOT in Tiles.xml, which can be overwritten).
+     */
+    private Access access = null;
+
+    private Station(Tile tile, int number, String id, Stop.Type type, int value,
+                    int slots, int position, String cityName) {
         this.tile = tile;
         this.number = number;
         this.id = id;
@@ -91,7 +57,6 @@ public class Station extends TrackPoint implements Comparable<Station> {
         this.baseSlots = slots;
         this.position = position;
         this.stopName = cityName;
-        this.mutexId = cityName;
         log.debug("Created {}", this);
     }
 
@@ -108,8 +73,9 @@ public class Station extends TrackPoint implements Comparable<Station> {
         if (stype == null)
             throw new ConfigurationException(LocalText.getText(
                     "TileStationHasNoType", tile.getId()));
-log.debug("+++ Tile {} station {} stype {}", tile.getId(), sid, stype);
-        Station.Type type = Station.Type.valueOf(stype.toUpperCase());
+
+        if ("OffMapCity".equalsIgnoreCase(stype)) stype = "OffMap";  // Can also be a town
+        Stop.Type type = Stop.Type.valueOf(stype.toUpperCase());
         if (type == null) {
             throw new ConfigurationException(LocalText.getText(
                     "TileStationHasInvalidType",
@@ -172,15 +138,11 @@ log.debug("+++ Tile {} station {} stype {}", tile.getId(), sid, stype);
         return position;
     }
 
-    public StopType getStopType() {
-        return type.getStopType();
+    public Access getAccess() {
+        return access;
     }
 
-    public String getMutexId() {
-        return mutexId;
-    }
-
-    public Station.Type getType() {
+    public Stop.Type getType() {
         return type;
     }
 
@@ -198,7 +160,7 @@ log.debug("+++ Tile {} station {} stype {}", tile.getId(), sid, stype);
     }
 
     public String toText() {
-        return type.toText() + " " + number;
+        return type.toString() + " " + number;
     }
 
     // Comparable method

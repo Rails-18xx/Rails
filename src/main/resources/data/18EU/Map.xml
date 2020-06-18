@@ -18,7 +18,7 @@
 	<Hex name="E6" tile="0" />
 	<Hex name="E8" tile="0" />
 	<Hex name="E10" label="B" tile="-3005" orientation="1" city="Berlin">
-		<Access loop="no"/>
+		<Access mutexId="Berlin"/>
 	</Hex>
 	<Hex name="E12" tile="-1" city="Thorn"/>
 	<Hex name="E14" value="20,30" tile="-901" orientation="2" city="Warsaw"/>
@@ -49,7 +49,7 @@
 	<Hex name="I10" cost="60" tile="0" />
 	<Hex name="I12" cost="60" tile="0" />
 	<Hex name="J1" label="P" tile="-3006" city="Paris">
-        <Access loop="no"/>
+        <Access mutexId="Paris"/>
     </Hex>
 	<Hex name="J3" cost="60" tile="0" />
 	<Hex name="J5" tile="0" />
@@ -82,7 +82,7 @@
 	<Hex name="N7" tile="0" />
 	<Hex name="N9" cost="60" tile="-1" city="Salzburg"/>
 	<Hex name="N11" label="V" tile="-3005" city="Vienna">
-        <Access loop="no"/>
+        <Access mutexId="Vienna"/>
     </Hex>
 	<Hex name="N13" tile="0" />
 	<Hex name="O2" tile="0" />

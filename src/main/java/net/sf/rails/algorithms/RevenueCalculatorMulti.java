@@ -52,7 +52,7 @@ class RevenueCalculatorMulti extends RevenueCalculator {
 
     @Override
     protected void runTrain(final int trainId) {
-        log.debug("RC: runTrain {}", trainId);
+        log.debug("RCM: runTrain {}", trainId);
 
         // initialize value
         trainCurrentValue[trainId] = 0;
@@ -78,7 +78,7 @@ class RevenueCalculatorMulti extends RevenueCalculator {
         // try all startVertexes
         for (int i=0; i < startVertexes.length; i++) {
             int vertexId = startVertexes[i];
-            log.debug("RC: Using startVertex nr. {} for train {}", i, trainId);
+            log.debug("RCM: Using startVertex nr. {} for train {}", i, trainId);
             boolean stationVertex = encounterVertex(trainId, vertexId, true);
             if (stationVertex) {
                 // train cannot terminate at start vertex
@@ -87,7 +87,7 @@ class RevenueCalculatorMulti extends RevenueCalculator {
                     encounterVertex(trainId, vertexId, false);
                     // but keep them on the visited vertex list to avoid route duplication
                     trainVisited[trainId][vertexId] = true;
-                    log.debug("RC: finished startVertex {} for train {}", vertexId, trainId);
+                    log.debug("RCM: finished startVertex {} for train {}", vertexId, trainId);
                     continue;
                 }
             }
@@ -98,10 +98,10 @@ class RevenueCalculatorMulti extends RevenueCalculator {
             for (int j = 0; j < vertexNbNeighbors[vertexId]; j++) {
                 int edgeId = vertexEdges[vertexId][j];
                 if (edgeUsed[edgeId] != 0) continue;
-                log.debug("RC: Testing Neighbor Nr. {} of startVertex", j);
+                log.debug("RCM: Testing Neighbor Nr. {} of startVertex", j);
                 int neighborId = vertexNeighbors[vertexId][j];
                 if (trainVisited[trainId][neighborId]) {
-                    log.debug("RC: Hex already visited");
+                    log.debug("RCM: Hex already visited");
                     continue;
                 }
                 travelEdge(trainId, edgeId);
@@ -115,7 +115,7 @@ class RevenueCalculatorMulti extends RevenueCalculator {
             encounterVertex(trainId, vertexId, false);
             // keep them on the visited vertex list to avoid route duplication
             trainVisited[trainId][vertexId] = true;
-            log.debug("RC: finished startVertex {} for train {}", vertexId, trainId);
+            log.debug("RCM: finished startVertex {} for train {}", vertexId, trainId);
         }
 
         // finished all tries
@@ -127,33 +127,33 @@ class RevenueCalculatorMulti extends RevenueCalculator {
         // allow that the train does not run at all
         finalizeVertex(trainId, -1);
 
-        log.debug("RC: finishTrain {}", trainId);
+        log.debug("RCM: finishTrain {}", trainId);
 
     }
 
     @Override
     final protected void runBottom(final int trainId) {
-        log.debug("RC: runBottom {}", trainId);
+        log.debug("RCM: runBottom {}", trainId);
 
         // use startvertex, check if it is a sink
         int vertexId = startVertexActive[trainId];
         if (vertexSink[vertexId]) {
-            log.debug("RC: startvertex is sink, finished bottom of {}", trainId);
+            log.debug("RCM: startvertex is sink, finished bottom of {}", trainId);
             return;
         }
 
         // push to stack
         trainBottomActive[trainId] = true;
-        log.debug("RC: Restart at bottom at stack position {}", trainStackPos[trainId]);
+        log.debug("RCM: Restart at bottom at stack position {}", trainStackPos[trainId]);
 //        trainStack[trainId][trainStackPos[trainId]++] = vertexId;
 
         for (int j = trainStartEdge[trainId] + 1; j < vertexNbNeighbors[vertexId]; j++) {
             int edgeId = vertexEdges[vertexId][j];
             if (edgeUsed[edgeId] != 0) continue;
             int neighborId = vertexNeighbors[vertexId][j];
-            log.debug("RC: Testing Neighbor Nr. {} of bottomVertex is {}", j, neighborId);
+            log.debug("RCM: Testing Neighbor Nr. {} of bottomVertex is {}", j, neighborId);
             if (trainVisited[trainId][neighborId]) {
-                log.debug(" RC: Hex already visited");
+                log.debug(" RCM: Hex already visited");
                 continue;
             }
             travelEdge(trainId, edgeId);
@@ -164,12 +164,12 @@ class RevenueCalculatorMulti extends RevenueCalculator {
 
 //        trainStackPos[trainId]--; // pull from stack
         trainBottomActive[trainId] = false;
-        log.debug("RC: finished bottom of {}", trainId);
+        log.debug("RCM: finished bottom of {}", trainId);
 
 
     }
 
-    private final void nextVertex(final int trainId, final int vertexId) {
+    private void nextVertex(final int trainId, final int vertexId) {
 
         // 1. encounterVertex adds value and returns true if value vertex
         Terminated trainTerminated = Terminated.NOT_YET;
@@ -192,9 +192,9 @@ class RevenueCalculatorMulti extends RevenueCalculator {
                     int edgeId = vertexEdges[vertexId][j];
                     if (edgeUsed[edgeId] != 0) continue;
                     int neighborId = vertexNeighbors[vertexId][j];
-                    log.debug("RC: Testing Neighbor Nr. {} of {} is {}", j, vertexId, neighborId);
+                    log.debug("RCM: Testing Neighbor Nr. {} of {} is {}", j, vertexId, neighborId);
                     if (trainVisited[trainId][neighborId]) {
-                        log.debug("RC: Hex already visited");
+                        log.debug("RCM: Hex already visited");
                         continue;
                     }
                     travelEdge(trainId, edgeId);
@@ -218,16 +218,16 @@ class RevenueCalculatorMulti extends RevenueCalculator {
     }
 
     protected void travelEdge(final int trainId, final int edgeId) {
-        log.debug("RC: Travel edge id {}", edgeId);
+        log.debug("RCM: Travel edge id {}", edgeId);
         edgeUsed[edgeId]++;
         trainStack[trainId][trainStackPos[trainId]++] = edgeId; // push to stack
         countEdges++; nbEdgesTravelled++;
-        log.debug("RC: Count Edges = {}", countEdges);
+        log.debug("RCM: Count Edges = {}", countEdges);
 
         // check edge sets
         for (int j=0; j < edgeNbTravelSets[edgeId]; j++) {
             edgeUsed[edgeTravelSets[edgeId][j]]++;
-            log.debug("RC: travelled edge {} due to edge set.", edgeTravelSets[edgeId][j]);
+            log.debug("RCM: travelled edge {} due to edge set.", edgeTravelSets[edgeId][j]);
         }
     }
 
@@ -237,16 +237,16 @@ class RevenueCalculatorMulti extends RevenueCalculator {
           if (edgeUsed[edgeId] != 0) {
               edgeUsed[edgeId]--;
               countEdges--;
-              log.debug("RC: Cleared edge id {}", edgeId);
-              log.debug("RC: Count Edges = {}", countEdges);
+              log.debug("RCM: Cleared edge id {}", edgeId);
+              log.debug("RCM: Count Edges = {}", countEdges);
 
               // check edge sets
               for (int j=0; j < edgeNbTravelSets[edgeId]; j++) {
                   edgeUsed[edgeTravelSets[edgeId][j]]--;
-                  log.debug("RC: Cleared edge {} due to edge set.", edgeTravelSets[edgeId][j]);
+                  log.debug("RCM: Cleared edge {} due to edge set.", edgeTravelSets[edgeId][j]);
               }
           } else {
-              log.debug("RC: Error return edge id used: {}", edgeId);
+              log.debug("RCM: Error return edge id used: {}", edgeId);
           }
 
     }
