@@ -1475,3 +1475,15 @@ CompanyOperates,WT,Bjoern
 LaysTileAt,WT,216,H2,SW
 CompanyDoesNotPayDividend,WT
 PRICE_MOVES_LOG,WT,72,A5,64,A6
+PlayerMustSellShares,Bjoern,224
+SELL_SHARE_LOG,Bjoern,10,PR,212
+PRICE_MOVES_LOG,PR,212,K3,192,K4
+SELL_SHARE_LOG,Bjoern,10,WT,64
+PRICE_MOVES_LOG,WT,64,A6,54,A7
+PresidentAddsCash,WT,Bjoern,700
+BuysTrain,WT,6+6,IPO,720
+FirstTrainBought,6+6
+StartOfPhase,6+6
+TrainsRusted,3+3
+ 
+CompanyOperates,OL,Marc
