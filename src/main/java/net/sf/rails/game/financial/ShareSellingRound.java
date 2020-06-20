@@ -1,18 +1,11 @@
 package net.sf.rails.game.financial;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.SortedSet;
-
 import com.google.common.collect.Sets;
 import com.google.common.collect.SortedMultiset;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import rails.game.action.PossibleAction;
-import rails.game.action.SellShares;
-import net.sf.rails.common.*;
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.GameDef;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
@@ -21,6 +14,14 @@ import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.IntegerState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rails.game.action.PossibleAction;
+import rails.game.action.SellShares;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedSet;
 
 
 // TODO: Check if un-initialized states cause undo problems
@@ -407,7 +408,7 @@ public class ShareSellingRound extends StockRound {
                         dumpedPlayer, presidentShareNumbersToSell);
             }
 
-            cashToRaise.add(-numberSold * price);
+            cashToRaise.add(-numberSold * price * shareUnits);
 
             if (cashToRaise.value() <= 0) {
                 gameManager.finishShareSellingRound();
