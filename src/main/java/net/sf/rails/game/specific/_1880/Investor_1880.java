@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import net.sf.rails.algorithms.*;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.game.*;
+import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.Owner;
 import org.jgrapht.graph.SimpleGraph;
 
@@ -12,23 +13,25 @@ import java.util.List;
 import java.util.Set;
 
 
-
 public class Investor_1880 extends PublicCompany implements RevenueStaticModifier {
     /*
      * Investors in 1880 get chosen at start after the initial starting package is sold out. They get one share from a new company
      *
      */
-    protected boolean canOwnShare=true;
+    protected boolean canOwnShare = true;
 
-    protected int maxPercofShares=1;
+    protected int maxPercofShares = 1;
 
-    protected PublicCompany linkedCompany;  // An Investor is always linked to a (exactly one) Public Major Company..
+    private final GenericState<PublicCompany_1880> linkedCompany = new GenericState<>(this, "linkedCompany");
+    // An Investor is always linked to a (exactly one) Public Major Company..
 
     /* Investors in 1880 operate with the newest train model on lease from the bank for zero costs.
      */
-    protected boolean canBorrowTrain=true;
+    protected boolean canBorrowTrain = true;
 
-    private BuildingRights_1880 buildingRights = new BuildingRights_1880(this,"buildingRights");
+    protected boolean hasLinkedCompany = false;
+
+    private BuildingRights_1880 buildingRights = new BuildingRights_1880(this, "buildingRights");
 
 
     /*
@@ -57,18 +60,24 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         return hasParPrice;
     }
 
-    public boolean setLinkedCompany(PublicCompany linkedCompany){
-        if (linkedCompany != null){
+    public boolean setLinkedCompany(PublicCompany_1880 linkedCompany) {
+        if (linkedCompany != null) {
             //Check if Company is valid i.e. not Closed maybe check if theres already the President sold and just the president...
-            if(!linkedCompany.isClosed()){
-                this.linkedCompany=linkedCompany;
-                return true;}
+            if (!linkedCompany.isClosed()) {
+                this.linkedCompany.set(linkedCompany);
+                this.hasLinkedCompany = true;
+                return true;
+            }
         }
         return false;
     }
 
-    public PublicCompany getLinkedCompany(){
-        return linkedCompany;
+    public GenericState<PublicCompany_1880> getLinkedCompany() {
+        return this.linkedCompany;
+    }
+
+    public boolean hasLinkedCompany() {
+        return hasLinkedCompany;
     }
 
     @Override
@@ -76,6 +85,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
             throws ConfigurationException {
         super.finishConfiguration(root);
         getRoot().getRevenueManager().addStaticModifier(this);
+
     }
 
     @Override
@@ -108,7 +118,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
 
     public boolean isConnectedToLinkedCompany() {
         Multimap<MapHex,Station> lStations;
-        Multimap<MapHex,Station> iStations;
+        Multimap<MapHex, Station> iStations;
         NetworkGraph nwGraph = NetworkGraph.createMapGraph(getRoot());
         NetworkGraph companyGraph =
                 NetworkGraph.createRouteGraph(nwGraph, this, true, false);
@@ -117,12 +127,8 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
         Set<NetworkVertex> verticies = graph.vertexSet();
 
 
-
-        PublicCompany_1880 linkedCompany =
-                (PublicCompany_1880) ((Investor_1880) this).getLinkedCompany();
-
-        if (linkedCompany != null) {
-            NetworkGraph linkedCompanyGraph=NetworkGraph.createRouteGraph(nwGraph, linkedCompany, true, false);
+        if (this.linkedCompany != null) {
+            NetworkGraph linkedCompanyGraph = NetworkGraph.createRouteGraph(nwGraph, this.linkedCompany.value(), true, false);
             // Creating a list of stations blocked by tokens.
             // The connection between investor and Linked Company is NOT blocked by any token of any company.
             // A token that is counted as blocked can be reached by the company for which it blocks the route.
@@ -130,7 +136,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
             lStations = linkedCompanyGraph.getNonPassableStations();
             iStations = companyGraph.getNonPassableStations();
             //Case A) the token in Question from a linked Company is actually on the route of the Investor
-            for (BaseToken token : linkedCompany.getLaidBaseTokens()) {
+            for (BaseToken token : linkedCompany.value().getLaidBaseTokens()) {
                 Owner holder = token.getOwner();
                 if (!(holder instanceof Stop)) continue;
                 Stop stop = (Stop) holder;

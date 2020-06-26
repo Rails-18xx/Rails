@@ -39,7 +39,7 @@ public class InvestorPanel {
 
         GridTable gridTable = GridTable.builder(rows, cols)
                 .row().add("Investor").add("Company").add("Owner")
-                .row().add(InvestorACCs.INVESTOR).headerFormat().color(InvestorACCs.INVESTOR_COLORS).add(InvestorACCs.COMPANY).color(InvestorACCs.COMPANY_COLORS).add(InvestorACCs.PLAYER)
+                .row().add(InvestorACCs.INVESTOR).headerFormat().color(InvestorACCs.INVESTOR_COLORS).add(InvestorACCs.COMPANY).add(InvestorACCs.PLAYER)
                 .build();
 
         TableUI table = TableUI.from(gridTable);

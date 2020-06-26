@@ -1,36 +1,12 @@
 package net.sf.rails.game.specific._1880;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.google.common.collect.Iterables;
 import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.common.GuiDef;
-import net.sf.rails.game.BaseToken;
-import net.sf.rails.game.GameDef;
+import net.sf.rails.game.*;
 import net.sf.rails.game.GameDef.OrStep;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.OperatingRound;
-import net.sf.rails.game.Phase;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PrivateCompany;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.Stop;
-import net.sf.rails.game.Tile;
-import net.sf.rails.game.Train;
-import net.sf.rails.game.TrainManager;
-import net.sf.rails.game.TrainType;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.model.PortfolioModel;
@@ -41,18 +17,14 @@ import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.SequenceUtil;
-
-import com.google.common.collect.Iterables;
-
-import rails.game.action.BuyTrain;
-import rails.game.action.LayTile;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.SetDividend;
-import rails.game.action.UseSpecialProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rails.game.action.*;
 import rails.game.specific._1880.CloseInvestor_1880;
 import rails.game.specific._1880.ExchangeForCash;
 import rails.game.specific._1880.ForcedRocketExchange;
+
+import java.util.*;
 
 public class OperatingRound_1880 extends OperatingRound {
     private static final Logger log = LoggerFactory.getLogger(OperatingRound_1880.class);
@@ -599,7 +571,7 @@ public class OperatingRound_1880 extends OperatingRound {
         Investor_1880 investor = closeInvestorAction.getInvestor();
         Player investorOwner = investor.getPresident();
         PublicCompany_1880 linkedCompany =
-                (PublicCompany_1880) investor.getLinkedCompany();
+                (PublicCompany_1880) investor.getLinkedCompany().value();
         ReportBuffer.add(this, LocalText.getText("FIConnected", investor.getId(),
                 linkedCompany.getId()));
 
