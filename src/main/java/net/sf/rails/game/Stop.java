@@ -37,6 +37,15 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     private Access.Score score;
     private String mutexId;
 
+    public enum Type {
+        CITY,
+        TOWN,
+        OFFMAP,
+        MINE,
+        PORT,
+        PASS
+    }
+
     // FIXME: Only used for Rails1.x compatibility
     private final IntegerState legacyNumber = IntegerState.create(this, "legacyNumber", 0);
 
@@ -148,10 +157,12 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
 
         log.debug("--- For hex "+getParent().getId());
         // Related station on current tile
-        // Cannot yet be configured. No need found yet, hence outcommented.
-        // In case it becomes necessary (for different station types on one tile), Access info
-        // on Station level must be added to TileSet.xml (NOT Tiles.xml!) and code written to parse that.
-        /*
+        /* No actual need seems to exist for this most detailed stop property level,
+         * hence the below code is outcommented.
+         * A real need would exist if one tile has stations of different types,
+         * that would also have non-default stop properties.
+         * In such a case, the option to add Access info on Station level added to TileSet.xml
+         * (NOT Tiles.xml!), and code must be written to parse that.
         log.debug("Station: "+getRelatedStation().toString());
         complete = getAccessFields(getRelatedStation().getAccess());
         log.debug("After Station: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
@@ -160,13 +171,13 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
 
         // Current Tile
         // Possible (in  TileSet.xml, NOT Tiles.xml!) but not yet used, and not recommended.
-        complete = getAccessFields(getParent().getCurrentTile().getAccess());
+        complete = updateAccessFields(getParent().getCurrentTile().getAccess());
         log.debug("After Tile: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
         if (complete) return;
 
         // MapHex
         // The recommended place to specify location-specific run and loop specialties.
-        complete = getAccessFields(getParent().getAccess());
+        complete = updateAccessFields(getParent().getAccess());
         log.debug("After MapHex: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
         if (complete) return;
 
@@ -176,24 +187,24 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
 
         // TileManager defaults
         // Possible, but no yet used, and not recommended.
-        complete = getAccessFields(getParent().getCurrentTile().getParent().getDefaultAccessType(type));
+        complete = updateAccessFields(getParent().getCurrentTile().getParent().getDefaultAccessType(type));
         log.debug("After TileManager defaults: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
         if (complete) return;
 
         // MapManager defaults
         // The appropriate place to specify defaults.
-        complete = getAccessFields(getParent().getParent().getDefaultAccessType(type));
+        complete = updateAccessFields(getParent().getParent().getDefaultAccessType(type));
         log.debug("After MapManager defaults: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
         if (complete) return;
 
         // Built-in defaults
         // Defined in class Access, not changeable.
-        complete = getAccessFields(Access.getDefault(type));
+        complete = updateAccessFields(Access.getDefault(type));
         log.debug("After built-in defaults: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
         if (complete) return;
 
          // The ultimate fall-back
-        getAccessFields(Access.getDefault(Stop.Type.CITY));
+        updateAccessFields(Access.getDefault(Stop.Type.CITY));
         log.debug("After last resort default: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
    }
 
@@ -202,7 +213,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
      * @param access Access parameters of a certain leve
      * @return true if all access parameters have a value
      */
-    private boolean getAccessFields(Access access) {
+    private boolean updateAccessFields(Access access) {
         if (access == null) return false;
         if (runTo == null) runTo = access.getRunToAllowed();
         if (runThrough == null) runThrough = access.getRunThroughAllowed();
@@ -299,14 +310,4 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return b.toString();
     }
 
-
-    public enum Type {
-
-        CITY,
-        TOWN,
-        OFFMAP,
-        MINE,
-        PORT,
-        PASS
-    }
 }

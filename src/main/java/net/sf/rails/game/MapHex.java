@@ -302,7 +302,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         // Stop properties
         Tag accessTag = tag.getChild("Access");
         if (accessTag != null) {
-            access = Access.parseAccessTag(this, this.getId(), accessTag);
+            access = Access.parseAccessTag(this, accessTag);
         }
     }
 
@@ -563,18 +563,13 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 }
             }
         }
-        /*
-        if ((stops.size() == 0) && (newTile.getNumStations() > 0)) {
 
-            for (Station newStation : newTile.getStations()) {
-                Stop stop = Stop.create(this, newStation);
-                stopsToNewStations.put(stop, newStation);
-            }
-        }*/
+        // Create a Stop for new Stations
         if (stops.size() < newTile.getNumStations()) {
 
             ST:
             for (Station station : newTile.getStations()) {
+                // EV: I'm sure this can be done in a better way, but at least it works
                 for (Stop stop : stops) {
                     if (stop.getRelatedStation().equals(station)) continue ST;
                 }

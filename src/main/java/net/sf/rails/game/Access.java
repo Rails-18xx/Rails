@@ -33,37 +33,31 @@ public class Access {
         NO
     }
 
-    private String id;
     private RunTo runToAllowed;
     private RunThrough runThroughAllowed;
     private Score scoreType;
     private String mutexId;
-    private String typeName;
     private Stop.Type type;
-    
-    private Access(String id, Stop.Type type, RunTo runToAllowed, RunThrough runThroughAllowed,
-                   String mutexId, Score scoreType, String typeName) {
-        this.id = id;
-        this.runToAllowed = runToAllowed;
-        this.runThroughAllowed = runThroughAllowed;
-        this.scoreType = scoreType;
-        this.mutexId = mutexId;
-        this.typeName = typeName;
-        this.type = type;
+    private RailsItem owner;
 
-    }
-
-    private Access(RunTo runToAllowed, RunThrough runThroughAllowed,
+    private Access(RailsItem owner, Stop.Type type, RunTo runToAllowed, RunThrough runThroughAllowed,
                    String mutexId, Score scoreType) {
         this.runToAllowed = runToAllowed;
         this.runThroughAllowed = runThroughAllowed;
         this.scoreType = scoreType;
         this.mutexId = mutexId;
+        this.type = type;
+        this.owner = owner;
+    }
 
-        this.id=null;
-        this.typeName=null;
-        this.type=null;
-
+    private Access(Stop.Type type, RunTo runToAllowed, RunThrough runThroughAllowed,
+                   String mutexId, Score scoreType) {
+        this.runToAllowed = runToAllowed;
+        this.runThroughAllowed = runThroughAllowed;
+        this.scoreType = scoreType;
+        this.mutexId = mutexId;
+        this.type = type;
+        this.owner = null;
 
     }
 
@@ -74,12 +68,12 @@ public class Access {
      * Different per-game defaults can best be set in Map.xml.
      */
     static {
-        defaults.put(Stop.Type.CITY, new Access (RunTo.YES, RunThrough.YES, null,Score.MAJOR));
-        defaults.put(Stop.Type.TOWN, new Access (RunTo.YES, RunThrough.YES, null,Score.MINOR));
-        defaults.put(Stop.Type.OFFMAP, new Access (RunTo.YES, RunThrough.NO, null, Score.MAJOR));
-        defaults.put(Stop.Type.MINE, new Access (RunTo.NO, RunThrough.NO, null, Score.MINOR));
-        defaults.put(Stop.Type.PORT, new Access (RunTo.YES, RunThrough.NO, null, Score.MINOR));
-        defaults.put(Stop.Type.PASS, new Access (RunTo.YES, RunThrough.YES, null, Score.NO));
+        defaults.put(Stop.Type.CITY, new Access (Stop.Type.CITY, RunTo.YES, RunThrough.YES, null,Score.MAJOR));
+        defaults.put(Stop.Type.TOWN, new Access (Stop.Type.TOWN, RunTo.YES, RunThrough.YES, null,Score.MINOR));
+        defaults.put(Stop.Type.OFFMAP, new Access (Stop.Type.OFFMAP, RunTo.YES, RunThrough.NO, null, Score.MAJOR));
+        defaults.put(Stop.Type.MINE, new Access (Stop.Type.MINE, RunTo.NO, RunThrough.NO, null, Score.MINOR));
+        defaults.put(Stop.Type.PORT, new Access (Stop.Type.PORT, RunTo.YES, RunThrough.NO, null, Score.MINOR));
+        defaults.put(Stop.Type.PASS, new Access (Stop.Type.PASS, RunTo.YES, RunThrough.YES, null, Score.NO));
     }
 
     public static Access getDefault(Stop.Type type) {
@@ -90,9 +84,7 @@ public class Access {
         return type;
     }
 
-    public String getId() {
-        return id;
-    }
+    public RailsItem getOwner() { return owner; }
 
     /** Run-to status of any stops on the hex (whether visible or not).
      * Indicates whether or not a single train can run from or to such stops, i.e. either enter or leave it.
@@ -143,18 +135,7 @@ public class Access {
         return mutexId;
     }
 
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-    
-    @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof Access)) return false;
-        return id.equals(((Access) other).id);
-    }
-
-    public static Access parseAccessTag(RailsItem owner, String id, Tag accessTag)
+    public static Access parseAccessTag(RailsItem owner, Tag accessTag)
             throws ConfigurationException {
 
         String typeName = accessTag.getAttributeAsString("type");
@@ -205,7 +186,7 @@ public class Access {
 
         String mutexId = accessTag.getAttributeAsString("mutexId", null);
 
-        return new Access(id, type, runTo, runThrough, mutexId, score, typeName);
+        return new Access(type, runTo, runThrough, mutexId, score);
     }
 
     public static Access parseDefault(RailsItem owner, Tag accessTag)
@@ -221,7 +202,7 @@ public class Access {
                         + owner +" stop type property: "+typeString, e);
             }
         }
-        return parseAccessTag(owner, type, accessTag);
+        return parseAccessTag(owner, accessTag);
     }
     
     public static EnumMap<Stop.Type, Access> parseDefaults(RailsItem owner, List<Tag> accessTags)
@@ -236,7 +217,7 @@ public class Access {
     }
     
     public String toString() {
-        return "StopType id="+id+" runTo="+runToAllowed+" runThrough="+runThroughAllowed
+        return "StopType="+type.toString()+" runTo="+runToAllowed+" runThrough="+runThroughAllowed
                 +" mutexId="+mutexId+" scoreType="+scoreType;
     }
 

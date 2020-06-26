@@ -247,7 +247,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         // Stop properties (per tile, use not recommended)
         Tag accessTag = setTag.getChild("Access");
         if (accessTag != null) {
-            access = Access.parseAccessTag(this, this.getId(), accessTag);
+            access = Access.parseAccessTag(this, accessTag);
         }
     }
 
