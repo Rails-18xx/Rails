@@ -1,22 +1,20 @@
 package net.sf.rails.ui.swing.core;
 
-import java.awt.Color;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-
-import net.sf.rails.game.state.ColorModel;
+import net.sf.rails.game.model.ColorModel;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class TableField {
 
     private final JComponent component;
-    
+
     private final Observer textObserver;
     private final Observer tooltipObserver;
     private final Observer colorObserver;
-    
+
     private TableField(Builder builder) {
         
         this.component = builder.component;

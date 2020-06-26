@@ -1,32 +1,15 @@
 package net.sf.rails.game.specific._1880;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import net.sf.rails.algorithms.NetworkEdge;
-import net.sf.rails.algorithms.NetworkGraph;
-import net.sf.rails.algorithms.NetworkVertex;
-import net.sf.rails.algorithms.RevenueAdapter;
-import net.sf.rails.algorithms.RevenueStaticModifier;
+import com.google.common.collect.Multimap;
+import net.sf.rails.algorithms.*;
 import net.sf.rails.common.parser.ConfigurationException;
-import net.sf.rails.game.BaseToken;
-import net.sf.rails.game.CompanyManager;
-import net.sf.rails.game.HexSidesSet;
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsItem;
-import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.Station;
-import net.sf.rails.game.Stop;
-import net.sf.rails.game.Train;
-import net.sf.rails.game.TrainManager;
+import net.sf.rails.game.*;
 import net.sf.rails.game.state.Owner;
 import org.jgrapht.graph.SimpleGraph;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 
 
@@ -46,6 +29,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
     protected boolean canBorrowTrain=true;
 
     private BuildingRights_1880 buildingRights = new BuildingRights_1880(this,"buildingRights");
+
 
     /*
      *

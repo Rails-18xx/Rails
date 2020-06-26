@@ -1,6 +1,9 @@
-package net.sf.rails.game.state;
+package net.sf.rails.game.model;
 
-import java.awt.Color;
+import net.sf.rails.game.state.Item;
+import net.sf.rails.game.state.Model;
+
+import java.awt.*;
 
 /**
  * ColourModel defines colors for UI components

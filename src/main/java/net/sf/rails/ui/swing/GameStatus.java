@@ -335,7 +335,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         addField(new Caption(LocalText.getText("COMPANY_DETAILS")),
                 compCashXOffset, 0, 4 + (compCanBuyPrivates ? 1 : 0)
                 + (hasCompanyLoans ? 1 : 0), 1, 0, true);
-        addField(new Caption(LocalText.getText("CASH")), compCashXOffset, 1, 1,
+        addField(new Caption(LocalText.getText("TREASURY")), compCashXOffset, 1, 1,
                 1, WIDE_BOTTOM, true);
         addField(new Caption(LocalText.getText("REVENUE")), compRevenueXOffset,
                 1, 1, 1, WIDE_BOTTOM, true);
