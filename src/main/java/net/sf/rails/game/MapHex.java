@@ -563,11 +563,25 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 }
             }
         }
+        /*
         if ((stops.size() == 0) && (newTile.getNumStations() > 0)) {
 
             for (Station newStation : newTile.getStations()) {
                 Stop stop = Stop.create(this, newStation);
                 stopsToNewStations.put(stop, newStation);
+            }
+        }*/
+        if (stops.size() < newTile.getNumStations()) {
+
+            ST:
+            for (Station station : newTile.getStations()) {
+                for (Stop stop : stops) {
+                    if (stop.getRelatedStation().equals(station)) continue ST;
+                }
+                // New Station found without an existing Stop
+                Stop stop = Stop.create(this, station);
+                stop.initStopParameters();
+                stopsToNewStations.put(stop, station);
             }
         }
 
