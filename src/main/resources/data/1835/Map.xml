@@ -33,7 +33,9 @@
 	<Hex name="E13" tile="0"/>
 	<Hex name="E15" tile="0" cost="50"/>
 	<Hex name="E17" tile="0"/>
-	<Hex name="E19" tile="-806" city="Berlin" unlaidHomeBlocksTokens="no"/>
+	<Hex name="E19" tile="-806" city="Berlin" unlaidHomeBlocksTokens="no">
+		<Access mutexId="Berlin"/>
+	</Hex>
 	<Hex name="E21" tile="-143" orientation="3"/>
 	<Hex name="F4" tile="-1"/>
 	<Hex name="F6" tile="-1"/>
