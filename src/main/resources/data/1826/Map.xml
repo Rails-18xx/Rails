@@ -33,7 +33,9 @@
 	<Hex name="G3" tile="0"/>
 	<Hex name="G5" tile="0"/>
 	<Hex name="G7" tile="0"/>
-	<Hex name="G9" tile="-26001" city="Paris"/>
+	<Hex name="G9" tile="-26001" city="Paris">
+		<Access mutexId="Paris"/>
+	</Hex>
 	<Hex name="G11" tile="0"/>
 	<Hex name="G13" tile="0"/>
 	<Hex name="G15" tile="0"/>

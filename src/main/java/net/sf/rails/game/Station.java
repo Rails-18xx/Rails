@@ -31,32 +31,8 @@ public class Station extends TrackPoint implements Comparable<Station> {
 
     private static final Logger log = LoggerFactory.getLogger(Station.class);
 
-    public static enum Type {
-        CITY (StopType.Defaults.CITY, "City"),
-        TOWN (StopType.Defaults.TOWN, "Town"),
-        HALT (StopType.Defaults.TOWN, "Halt"),
-        OFFMAPCITY (StopType.Defaults.OFFMAP, "OffMap"),
-        PORT (StopType.Defaults.TOWN, "Port"),
-        PASS (StopType.Defaults.CITY, "Pass"),
-        JUNCTION (StopType.Defaults.NULL, "Junction");
-
-        private final StopType stopType;
-        private final String text;
-
-        private Type(StopType.Defaults type, String text) {
-            this.stopType = type.getStopType();
-            this.text = text;
-        }
-        public StopType getStopType() {
-            return stopType;
-        }
-        public String toText() {
-            return text;
-        }
-    }
-
     private final String id;
-    private final Station.Type type;
+    private final Stop.Type type;
     private final int number;
     private final int value;
     private final int baseSlots;
@@ -64,8 +40,15 @@ public class Station extends TrackPoint implements Comparable<Station> {
     private final int position;
     private final String stopName;
 
-    private Station(Tile tile, int number, String id, Station.Type type, int value,
-            int slots, int position, String cityName) {
+    /** Included, but not yet set or used.
+     *  If the need arises (two different stations on one hex with non-default
+     *  access parameters), an Access section should be defined in TileSet.xml
+     *  (NOT in Tiles.xml, which can be overwritten).
+     */
+    private Access access = null;
+
+    private Station(Tile tile, int number, String id, Stop.Type type, int value,
+                    int slots, int position, String cityName) {
         this.tile = tile;
         this.number = number;
         this.id = id;
@@ -90,7 +73,9 @@ public class Station extends TrackPoint implements Comparable<Station> {
         if (stype == null)
             throw new ConfigurationException(LocalText.getText(
                     "TileStationHasNoType", tile.getId()));
-        Station.Type type = Station.Type.valueOf(stype.toUpperCase());
+
+        if ("OffMapCity".equalsIgnoreCase(stype)) stype = "OffMap";  // Can also be a town
+        Stop.Type type = Stop.Type.valueOf(stype.toUpperCase());
         if (type == null) {
             throw new ConfigurationException(LocalText.getText(
                     "TileStationHasInvalidType",
@@ -111,6 +96,8 @@ public class Station extends TrackPoint implements Comparable<Station> {
         + tile.toText();
     }
 
+    // Replaced by mutexId
+    @Deprecated
     public String getStopName() {
         return stopName;
     }
@@ -151,11 +138,11 @@ public class Station extends TrackPoint implements Comparable<Station> {
         return position;
     }
 
-    public StopType getStopType() {
-        return type.getStopType();
+    public Access getAccess() {
+        return access;
     }
 
-    public Station.Type getType() {
+    public Stop.Type getType() {
         return type;
     }
 
@@ -173,7 +160,7 @@ public class Station extends TrackPoint implements Comparable<Station> {
     }
 
     public String toText() {
-        return type.toText() + " " + number;
+        return type.toString() + " " + number;
     }
 
     // Comparable method
