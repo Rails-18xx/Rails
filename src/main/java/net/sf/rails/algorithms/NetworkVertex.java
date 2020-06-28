@@ -17,12 +17,12 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
 
     private static final Logger log = LoggerFactory.getLogger(NetworkVertex.class);
 
-    public static enum VertexType {
+    public enum VertexType {
         STATION,
         SIDE,
         HQ,
     }
-    public static enum StationType {
+    public enum StationType {
         MAJOR,
         MINOR,
         COALMINE
@@ -40,6 +40,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     private int value = 0;
     private boolean sink = false;
     private String stopName = null;
+    private String mutexId = null;
 
     // references to rails objects, if not virtual
     private final MapHex hex;
@@ -190,9 +191,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return stopName;
     }
 
-    public NetworkVertex setStopName(String locationName) {
-        this.stopName = locationName;
-        return this;
+    public String getMutexId() {
+        return mutexId;
     }
 
     // getter for rails objects
@@ -246,9 +246,9 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         }
 
         // check if it is a major or minor
-        if (stop.getScoreType() == StopType.Score.MAJOR) {
+        if (stop.getScoreType() == Access.Score.MAJOR) {
             setStationType(StationType.MAJOR);
-        } else if (stop.getScoreType() == StopType.Score.MINOR) {
+        } else if (stop.getScoreType() == Access.Score.MINOR) {
             setStationType(StationType.MINOR);
         }
 
@@ -259,17 +259,18 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             sink = !stop.isRunThroughAllowedFor(company);
         }
 
-        // define locationName
-        stopName = null;
-        if (station.getType() == Station.Type.OFFMAPCITY) {
-            if ( StringUtils.isNotBlank(hex.getStopName()) ) {
-                stopName = hex.getStopName();
-            }
-        } else {
-            if ( StringUtils.isNotBlank(hex.getStopName()) && StringUtils.isNotBlank(station.getStopName())) {
-                stopName = hex.getStopName() + "." + station.getStopName();
+        // Changed 24/6/2020 by EV: separate the stop name (= city name) from the
+        // mutexId. The former is only used in some modifiers, the latter governs
+        // any loop restrictions.
+        stopName = hex.getStopName();
+        mutexId = stop.getMutexId();
+        if (stop.getRelatedStation().getType() == Stop.Type.OFFMAP) {
+            // For offmap hexes only, the city (or area) name doubles as a default mutexId.
+            if (mutexId == null && StringUtils.isNotBlank(hex.getStopName()) ) {
+                mutexId = hex.getStopName();
             }
         }
+
 
         // no removal
         return true;
@@ -326,7 +327,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             PublicCompany company,  Phase phase, boolean running) {
 
         // store vertices for removal
-        List<NetworkVertex> verticesToRemove = new ArrayList<NetworkVertex>();
+        List<NetworkVertex> verticesToRemove = new ArrayList<>();
         for (NetworkVertex v:graph.getGraph().vertexSet()) {
             if (company != null) {
                 if (!v.initRailsVertex(company, running)) {
@@ -387,6 +388,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         newVertex.value = vertex.value;
         newVertex.sink = vertex.sink;
         newVertex.stopName = vertex.stopName;
+        newVertex.mutexId = vertex.mutexId;
         graph.addVertex(newVertex);
         // copy edges
         Set<NetworkEdge> edges = graph.edgesOf(vertex);
@@ -398,7 +400,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
                 NetworkEdge newEdge = new NetworkEdge(newVertex, edge.getTarget(), edge.isGreedy(), edge.getDistance(), hiddenVertices);
                 graph.addEdge(newVertex, edge.getTarget(), newEdge);
             } else {
-                hiddenVertices = new ArrayList<NetworkVertex>();
+                hiddenVertices = new ArrayList<>();
                 if (addOldVertexAsHidden) hiddenVertices.add(vertex);
                 hiddenVertices.addAll(edge.getHiddenVertices());
                 NetworkEdge newEdge = new NetworkEdge(edge.getSource(), newVertex, edge.isGreedy(), edge.getDistance(), hiddenVertices);
@@ -434,7 +436,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
      * Filters all vertices from a collection of vertices that lay in a specified collection of hexes
      */
     public static Set<NetworkVertex> getVerticesByHexes(Collection<NetworkVertex> vertices, Collection<MapHex> hexes) {
-        Set<NetworkVertex> hexVertices = new HashSet<NetworkVertex>();
+        Set<NetworkVertex> hexVertices = new HashSet<>();
         for (NetworkVertex vertex:vertices) {
             if (vertex.getHex() != null && hexes.contains(vertex.getHex())) {
                 hexVertices.add(vertex);
@@ -447,7 +449,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
      * Returns all vertices for a specified hex
      */
     public static Set<NetworkVertex> getVerticesByHex(Collection<NetworkVertex> vertices, MapHex hex) {
-        Set<NetworkVertex> hexVertices = new HashSet<NetworkVertex>();
+        Set<NetworkVertex> hexVertices = new HashSet<>();
         for (NetworkVertex vertex:vertices) {
             if (vertex.getHex() != null && hex == vertex.getHex()) {
                 hexVertices.add(vertex);

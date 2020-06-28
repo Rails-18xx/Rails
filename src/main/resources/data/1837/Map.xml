@@ -82,7 +82,9 @@
         <IfOption name="Variant" value="Romoth">
         <Hex name="G15" tile="0" cost="30"/>
         </IfOption>
-        <Hex name="G17" tile="-37012" city="Wien"/>
+        <Hex name="G17" tile="-37012" city="Wien">
+                <Access mutexId="Wien"/>
+        </Hex>
         <Hex name="G19" tile="-37008" city="Preßburg" cost="50"/>
         <Hex name="G21" tile="0" cost="50"/>
         <Hex name="G23" tile="-1" cost="50"/>
