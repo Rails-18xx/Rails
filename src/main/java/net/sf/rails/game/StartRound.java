@@ -1,7 +1,10 @@
 package net.sf.rails.game;
 
 import java.util.List;
+import java.util.Set;
 
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.state.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,10 +14,6 @@ import net.sf.rails.util.Util;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.Certificate;
 import net.sf.rails.game.financial.PublicCertificate;
-import net.sf.rails.game.state.ArrayListState;
-import net.sf.rails.game.state.Currency;
-import net.sf.rails.game.state.IntegerState;
-import net.sf.rails.game.state.Model;
 
 public abstract class StartRound extends Round {
     private static final Logger log = LoggerFactory.getLogger(StartRound.class);
@@ -295,6 +294,9 @@ public abstract class StartRound extends Round {
                 checkFlotation(comp);
             }
             if (comp.hasStarted()) comp.checkPresidency();  // Needed for 1835 BY
+        } else if (cert instanceof PrivateCompany) {
+            Set<SpecialProperty> sps = ((PrivateCompany)cert).getSpecialProperties();
+            if (sps != null) getRoot().getGameManager().allocateSpecialProperties((MoneyOwner) cert.getOwner(), sps);
         }
     }
 

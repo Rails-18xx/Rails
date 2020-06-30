@@ -156,8 +156,8 @@ public class PrussianFormationRound extends StockRound {
         foldablePrePrussians = new ArrayList<Company> ();
         SpecialProperty sp;
         for (PrivateCompany company : currentPlayer.getPortfolioModel().getPrivateCompanies()) {
-            sp = Iterables.get(company.getSpecialProperties(), 0);
-            if (sp instanceof ExchangeForShare) {
+            Set<SpecialProperty> sps = company.getSpecialProperties();
+            if (sps != null && !sps.isEmpty() && Iterables.get(sps, 0) instanceof ExchangeForShare) {
                 foldablePrePrussians.add(company);
             }
         }

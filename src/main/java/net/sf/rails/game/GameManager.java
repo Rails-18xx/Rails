@@ -9,6 +9,8 @@ import net.sf.rails.game.PlayerManager.PlayerOrderModel;
 import net.sf.rails.game.financial.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
+import net.sf.rails.game.special.LocatedBonus;
+import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.special.SpecialBonusTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.*;
@@ -441,7 +443,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         loop:
         for (PrivateCompany company : cm.getAllPrivateCompanies()) {
             for (SpecialProperty sp : company.getSpecialProperties()) {
-                if (sp instanceof SpecialBonusTokenLay) {
+                if (sp instanceof SpecialBonusTokenLay || sp instanceof SellBonusToken) {
                     guiParameters.put(GuiDef.Parm.DO_BONUS_TOKENS_EXIST, true);
                     break loop;
                 }
@@ -1317,6 +1319,68 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public RoundFacade getInterruptedRound() {
         return interruptedRound;
+    }
+
+    /**
+     * Move the special property to the party that will later benefit from it:
+     * the company or the player (in the latter case it is stored in the GameManager
+     * as a "common" property: buyable by all companies.
+     * @param owner The current buyer (and future seller) of the property.
+     * @param sps The (set of) property(ies) to be allocated.
+     */
+    public void allocateSpecialProperties(MoneyOwner owner, Set<SpecialProperty> sps) {
+        // Move any special abilities to the portfolio, if configured so.
+
+        if (sps != null) {
+            // Need intermediate List to avoid ConcurrentModificationException
+            List<SpecialProperty> spsToMoveToPC = new ArrayList<>(2);
+            List<SpecialProperty> spsToMoveToGM = new ArrayList<>(2);
+            List<SpecialProperty> spsMoveToPlayer = new ArrayList<>(2);
+            for (SpecialProperty sp : sps) {
+                if ((owner instanceof PublicCompany && sp.isUsableIfOwnedByCompany())
+                        || (owner instanceof Player && sp.isUsableIfOwnedByPlayer())
+                        && "toGameManager".equalsIgnoreCase(sp.getTransferText())) {
+                    // This must be SellBonusToken - remember the owner!
+                    if (sp instanceof SellBonusToken) {
+                        // TODO: Check if this works correctly
+                        ((SellBonusToken) sp).setSeller(owner);
+                        // Also note 1 has been used
+                        // EV: ???? Why this? Breaks 18Scan
+                        //((SellBonusToken) sp).setExercised();
+                        spsToMoveToGM.add(sp);
+                    }
+                    // To satisfy 1856 test reports
+                    if (sp instanceof LocatedBonus) {
+                        PublicCompany company = (PublicCompany) owner;
+                        LocatedBonus b = (LocatedBonus) sp;
+                        ReportBuffer.add(this, LocalText.getText("AcquiresBonus",
+                                company.getId(),
+                                b.getName(),
+                                Bank.format(company, b.getValue()),
+                                b.getLocationNameString()));
+                    }
+
+                } else if (owner instanceof PublicCompany && sp.isUsableIfOwnedByCompany()
+                        && "toCompany".equalsIgnoreCase(sp.getTransferText())) {
+                    spsToMoveToPC.add(sp);
+
+                } else if (owner instanceof Player && sp.isUsableIfOwnedByPlayer()
+                        && "toPlayer".equalsIgnoreCase(sp.getTransferText())) {
+                    spsMoveToPlayer.add (sp);
+                }
+            }
+            for (SpecialProperty sp : spsToMoveToPC) {
+                sp.moveTo(owner);
+            }
+            for (SpecialProperty sp : spsToMoveToGM) {
+                this.addSpecialProperty(sp);
+                log.debug("SP {} is now a common property", sp.getInfo());
+            }
+            for (SpecialProperty sp : spsMoveToPlayer) {
+                sp.moveTo(owner);
+                log.debug("SP {} is now a player property", sp.getInfo());
+            }
+        }
     }
 
     // TODO: Was the int position argument required?

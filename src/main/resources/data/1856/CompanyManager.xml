@@ -74,18 +74,18 @@
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="revenueStep" 
 				class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
-			<LocatedBonus name="Bridge" location="P17,P19" value="10"/>
+				<LocatedBonus name="Bridge" location="P17,P19" value="10"/>
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringOR" 
 				class="net.sf.rails.game.special.SellBonusToken" transfer="toGameManager">
-			<SellBonusToken name="Bridge" location="P17,P19" price="50" value="10">
-				<IfOption name="UnlimitedBonusTokens" value="yes">
-					<Attributes amount="-1"/>
-				</IfOption>
-				<IfOption name="UnlimitedBonusTokens" value="no">
-					<Attributes amount="3"/>
-				</IfOption>
-			</SellBonusToken>
+				<SellBonusToken name="Bridge" location="P17,P19" price="50" value="10">
+					<IfOption name="UnlimitedBonusTokens" value="yes">
+						<Attributes quantity="-1"/>
+					</IfOption>
+					<IfOption name="UnlimitedBonusTokens" value="no">
+						<Attributes quantity="3"/>
+					</IfOption>
+				</SellBonusToken>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
@@ -93,18 +93,18 @@
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="revenueStep" 
 				class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
-			<LocatedBonus name="Tunnel" location="B13" value="10"/>
+				<LocatedBonus name="Tunnel" location="B13" value="10"/>
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringOR" 
 				class="net.sf.rails.game.special.SellBonusToken" transfer="toGameManager">
-			<SellBonusToken name="Tunnel" location="B13" price="50" value="10">
-				<IfOption name="UnlimitedBonusTokens" value="yes">
-					<Attributes amount="-1"/>
-				</IfOption>
-				<IfOption name="UnlimitedBonusTokens" value="no">
-					<Attributes amount="3"/>
-				</IfOption>
-			</SellBonusToken>
+				<SellBonusToken name="Tunnel" location="B13" price="50" value="10">
+					<IfOption name="UnlimitedBonusTokens" value="yes">
+						<Attributes quantity="-1"/>
+					</IfOption>
+					<IfOption name="UnlimitedBonusTokens" value="no">
+						<Attributes quantity="3"/>
+					</IfOption>
+				</SellBonusToken>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
