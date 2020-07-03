@@ -1,12 +1,12 @@
 package net.sf.rails.game.specific._1880;
 
-import java.awt.Color;
-
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsAbstractItem;
-import net.sf.rails.game.state.ColorModel;
+import net.sf.rails.game.model.ColorModel;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.StringState;
+
+import java.awt.*;
 
 /**
  * A ParSlot allows one public company to start at a certain par price

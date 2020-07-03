@@ -1,7 +1,7 @@
 package net.sf.rails.ui.swing.elements;
 
 import com.google.common.base.MoreObjects;
-import net.sf.rails.game.state.ColorModel;
+import net.sf.rails.game.model.ColorModel;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 
