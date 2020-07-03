@@ -53,7 +53,7 @@
 		</ClosingConditions>
 	</Company>
 	<!-- Name of ZRC should be SJS, but it invalidates all my test files... -->
-	<Company name="ZRC" type="Private" basePrice="180" revenue="30"
+	<Company name="SJS" type="Private" basePrice="180" revenue="30"
 			longname="Sjællandske Jernbaneselskab (Zeeland Railway Company)">
 		<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"  transfer="toPlayer"
 						 class="net.sf.rails.game.special.SpecialSingleTileLay">
@@ -103,7 +103,7 @@
 		<Item name="Mine" type="Private" basePrice="150">
 			<SubItem name="S&amp;NJ" type="Public" />
 		</Item>
-		<Item name="ZRC" type="Private" basePrice="180">
+		<Item name="SJS" type="Private" basePrice="180">
 			<SubItem name="DSB" type="Public" president="yes"/>
 		</Item>
 		<Item name="1" type="Minor" basePrice="200"/>

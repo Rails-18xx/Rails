@@ -18,6 +18,11 @@ import net.sf.rails.game.financial.PublicCertificate;
 public abstract class StartRound extends Round {
     private static final Logger log = LoggerFactory.getLogger(StartRound.class);
 
+    public enum Bidding {
+        ON_ITEMS,
+        ON_BUY_RIGHT,
+        NO
+    }
     // FIXME: StartRounds do not set Priority Player
 
     // static at creation
@@ -33,7 +38,7 @@ public abstract class StartRound extends Round {
      * Should the UI present bidding into and facilities? This value MUST be set
      * in the actual StartRound constructor.
      */
-    protected final boolean hasBidding;
+    protected final Bidding hasBidding;
 
     /**
      * Should the UI show base prices? Not useful if the items are all equal, as
@@ -53,7 +58,7 @@ public abstract class StartRound extends Round {
     protected final ArrayListState<StartItem> itemsToSell = new ArrayListState<>(this, "itemsToSell");
     protected final IntegerState numPasses = IntegerState.create(this, "numPasses");
 
-    protected StartRound(GameManager parent, String id, boolean hasBidding, boolean hasBasePrices, boolean hasBuying) {
+    protected StartRound(GameManager parent, String id, Bidding hasBidding, boolean hasBasePrices, boolean hasBuying) {
         super(parent, id);
 
         this.hasBidding = hasBidding;
@@ -73,7 +78,7 @@ public abstract class StartRound extends Round {
 
     protected StartRound(GameManager parent, String id) {
         // default case, set bidding, basePrices and buying all to true
-        this(parent, id, true, true, true);
+        this(parent, id, Bidding.ON_ITEMS, true, true);
     }
 
     public void start() {
@@ -348,7 +353,7 @@ public abstract class StartRound extends Round {
         return startPacket;
     }
 
-    public boolean hasBidding() {
+    public Bidding hasBidding() {
         return hasBidding;
     }
 
