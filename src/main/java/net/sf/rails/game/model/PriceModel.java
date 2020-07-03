@@ -1,12 +1,11 @@
 package net.sf.rails.game.model;
 
-import java.awt.Color;
-
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.StockSpace;
-import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.GenericState;
+
+import java.awt.*;
 
 public final class PriceModel extends ColorModel {
 

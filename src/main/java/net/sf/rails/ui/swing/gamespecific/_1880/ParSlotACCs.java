@@ -1,7 +1,7 @@
 package net.sf.rails.ui.swing.gamespecific._1880;
 
+import net.sf.rails.game.model.ColorModel;
 import net.sf.rails.game.specific._1880.ParSlot;
-import net.sf.rails.game.state.ColorModel;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.ui.swing.core.Accessor1D;
 

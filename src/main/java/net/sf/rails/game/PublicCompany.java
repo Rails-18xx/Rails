@@ -383,6 +383,12 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     private String foundingStartCompany = null;
 
     /**
+     * Introducing the colormodel for companies
+     */
+    private final GenericState<PublicCompany> company = new GenericState<>(this, "company");
+    private ColorModel companyColors;
+
+    /**
      * Used by Configure (via reflection) only
      */
     public PublicCompany(RailsItem parent, String id) {
@@ -410,6 +416,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             currentPrice = PriceModel.create(this, "currentPrice", true);
             canSharePriceVary = new BooleanState(this, "canSharePriceVary", true);
         }
+
+
     }
 
      /**
@@ -790,6 +798,26 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                 hasMultipleCertificates = true;
             }
         }
+        companyColors = new ColorModel(this, "companyColors") {
+            @Override
+            public Color getBackground() {
+                if (company.value() != null) {
+                    return company.value().getBgColour();
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public Color getForeground() {
+                if (company.value() != null) {
+                    return company.value().getFgColour();
+                } else {
+                    return null;
+                }
+            }
+        };
+        company.addModel(companyColors);
     }
 
     /**
@@ -2151,6 +2179,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     public int getDirectIncomeRevenue() {
         return directIncomeRevenue.value();
+    }
+
+    public ColorModel getCompanyColors() {
+        return companyColors;
     }
 
 }
