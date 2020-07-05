@@ -176,8 +176,7 @@ public class StartRound_1830 extends StartRound {
      * The current player bids on a given start item.
      *
      * @param playerName The name of the current player (for checking purposes).
-     * @param itemName The name of the start item on which the bid is placed.
-     * @param amount The bid amount.
+     * @param bidItem The start item on which the bid is placed.
      */
     @Override
     protected boolean bid(String playerName, BidStartItem bidItem) {

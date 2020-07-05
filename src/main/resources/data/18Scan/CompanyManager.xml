@@ -17,6 +17,8 @@
 	</CompanyType>
 	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<Capitalisation type="incremental"/>
+		<StockPrice par="no"/>
+		<TreasuryCanHoldOwnShares maxPerc="100"/>
 		<Float percentage="20"/>
 		<StockPrice par="no"/>
 		<ShareUnit percentage="10"/>
@@ -52,7 +54,6 @@
 			<SpecialProperties condition="ifExercised"/>
 		</ClosingConditions>
 	</Company>
-	<!-- Name of ZRC should be SJS, but it invalidates all my test files... -->
 	<Company name="SJS" type="Private" basePrice="180" revenue="30"
 			longname="Sjællandske Jernbaneselskab (Zeeland Railway Company)">
 		<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"  transfer="toPlayer"
@@ -95,7 +96,7 @@
 		<Trains limit="3"/>
 	</Company>
 
-	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.specific._18Scan.StartRound_18Scan">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="Ferry" type="Private" basePrice="120">
 			<SubItem name="VR" type="Public" />
@@ -106,8 +107,8 @@
 		<Item name="SJS" type="Private" basePrice="180">
 			<SubItem name="DSB" type="Public" president="yes"/>
 		</Item>
-		<Item name="1" type="Minor" basePrice="200"/>
+		<Item name="1" type="Minor" basePrice="260"/>
 		<Item name="2" type="Minor" basePrice="220"/>
-		<Item name="3" type="Minor" basePrice="260"/>
+		<Item name="3" type="Minor" basePrice="200"/>
 	</StartPacket>
 </CompanyManager>

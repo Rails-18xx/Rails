@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="net.sf.rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.specific._18Scan.GameManager_18Scan">
 		<Game name="18Scan"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
@@ -11,7 +11,7 @@
 				</IfOption>
 			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
-			<StockRound sequence="SellBuy">
+			<StockRound sequence="SellBuy" class="net.sf.rails.game.specific._18Scan.StockRound_18Scan">
 				<NoSaleIfNotOperated/>
 			</StockRound>
 			<OperatingRound class="net.sf.rails.game.specific._18Scan.OperatingRound_18Scan">

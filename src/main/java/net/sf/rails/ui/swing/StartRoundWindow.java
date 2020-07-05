@@ -113,7 +113,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     private final ButtonGroup itemGroup = new ButtonGroup();
     private ClickField dummyButton; // To be selected if none else is.
 
-    private boolean includeBidding;
+    private StartRound.Bidding includeBidding;
     private boolean includeBuying;
     private boolean showBasePrices;
 
@@ -145,7 +145,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             buttonPanel.add(buyButton);
         }
 
-        if (includeBidding) {
+        if (includeBidding != StartRound.Bidding.NO) {
             bidButton = new ActionButton(RailsIcon.BID);
             bidButton.setMnemonic(KeyEvent.VK_D);
             bidButton.addActionListener(this);
@@ -248,7 +248,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             basePriceXOffset = ++lastX;
             basePriceYOffset = lastY;
         }
-        if (includeBidding) {
+        if (includeBidding == StartRound.Bidding.ON_ITEMS) {
             minBidXOffset = ++lastX;
             minBidYOffset = lastY;
         }
@@ -260,7 +260,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
         // Bottom rows
         lastY += (ni - 1);
-        if (includeBidding) {
+        if (includeBidding != StartRound.Bidding.NO) {
             playerBidsXOffset = bidPerPlayerXOffset;
             playerBidsYOffset = ++lastY;
         }
@@ -274,11 +274,11 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         addField(new Caption(LocalText.getText("ITEM")), 0, 0, 1, 2,
                 WIDE_RIGHT + WIDE_BOTTOM);
         if (showBasePrices) {
-            addField(new Caption(LocalText.getText(includeBidding
+            addField(new Caption(LocalText.getText(includeBidding == StartRound.Bidding.ON_ITEMS
                             ? "BASE_PRICE" : "PRICE")), basePriceXOffset, 0, 1, 2,
                     WIDE_BOTTOM);
         }
-        if (includeBidding) {
+        if (includeBidding == StartRound.Bidding.ON_ITEMS) {
             addField(new Caption(LocalText.getText("MINIMUM_BID")),
                     minBidXOffset, 0, 1, 2, WIDE_BOTTOM + WIDE_RIGHT);
         }
@@ -308,7 +308,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                 addField(basePrice[i], basePriceXOffset, basePriceYOffset + i, 1, 1, 0);
             }
 
-            if (includeBidding) {
+            if (includeBidding == StartRound.Bidding.ON_ITEMS) {
                 minBid[i] = new Field(round.getMinimumBidModel(i));
                 addField(minBid[i], minBidXOffset, minBidYOffset + i, 1, 1, WIDE_RIGHT);
             }
@@ -329,7 +329,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
         // Player money
         boolean firstBelowTable = true;
-        if (includeBidding) {
+        if (includeBidding != StartRound.Bidding.NO) {
             addField(new Caption(LocalText.getText("BID")), playerBidsXOffset - 1, playerBidsYOffset, 1, 1, WIDE_TOP + WIDE_RIGHT);
 
             for (int i = 0; i < np; i++) {
@@ -341,11 +341,11 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         }
 
         addField(new Caption(
-                        LocalText.getText(includeBidding ? "FREE" : "CASH")),
+                        LocalText.getText(includeBidding != StartRound.Bidding.NO ? "FREE" : "CASH")),
                 playerFreeCashXOffset - 1, playerFreeCashYOffset, 1, 1,
                 WIDE_RIGHT + (firstBelowTable ? WIDE_TOP : 0));
         for (int i = 0; i < np; i++) {
-            playerFree[i] = new Field(includeBidding
+            playerFree[i] = new Field(includeBidding != StartRound.Bidding.NO
                     ? round.getFreeCashModel(players.getPlayerByPosition(i))
                     : players.getPlayerByPosition(i).getWallet());
             addField(playerFree[i], playerFreeCashXOffset + i, playerFreeCashYOffset, 1, 1, firstBelowTable ? WIDE_TOP : 0);
@@ -390,7 +390,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         if (includeBuying) {
             buyButton.setEnabled(false);
         }
-        if (includeBidding) {
+        if (includeBidding != StartRound.Bidding.NO) {
             bidButton.setEnabled(false);
             bidAmount.setEnabled(false);
         }
@@ -446,7 +446,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                     itemNameButton[i].setSelected(selected);
                     itemNameButton[i].setEnabled(!selected);
                     setItemNameButton(i, true);
-                    if (includeBidding && showBasePrices)
+                    if (includeBidding == StartRound.Bidding.ON_ITEMS && showBasePrices)
                         minBid[i].setText("");
                     buyAllowed = selected;
 
@@ -485,10 +485,12 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                     itemNameButton[i].setPossibleAction(action);
                 }
                 bidAllowed = selected;
-                itemNameButton[i].setSelected(selected);
-                itemNameButton[i].setEnabled(!selected);
-                setItemNameButton(i, true);
-                minBid[i].setText(Bank.format(item, item.getMinimumBid()));
+                if (includeBidding == StartRound.Bidding.ON_ITEMS) {
+                    itemNameButton[i].setSelected(selected);
+                    itemNameButton[i].setEnabled(!selected);
+                    setItemNameButton(i, true);
+                    minBid[i].setText(Bank.format(item, item.getMinimumBid()));
+                }
             }
         }
 
@@ -509,7 +511,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             buyButton.setEnabled(buyAllowed);
         }
 
-        if (includeBidding) {
+        if (includeBidding != StartRound.Bidding.NO) {
             bidButton.setEnabled(bidAllowed);
             bidAmount.setEnabled(bidAllowed);
         }
@@ -560,7 +562,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             if (currentActiveItem instanceof BuyStartItem) {
                 buyButton.setEnabled(true);
                 buyButton.setPossibleAction(currentActiveItem);
-                if (includeBidding) {
+                if (includeBidding != StartRound.Bidding.NO) {
                     bidButton.setEnabled(false);
                     bidAmount.setEnabled(false);
                 }
@@ -580,7 +582,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
                     pack();
                 }
 
-                if (includeBidding) {
+                if (includeBidding != StartRound.Bidding.NO) {
                     bidButton.setEnabled(true);
                     bidButton.setPossibleAction(currentActiveItem);
                     bidAmount.setEnabled(true);
@@ -695,7 +697,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     }
 
     protected void disableButtons() {
-        if (includeBidding) {
+        if (includeBidding != StartRound.Bidding.NO) {
             bidButton.setEnabled(false);
         }
 

@@ -58,10 +58,10 @@ public abstract class StartRound extends Round {
     protected final ArrayListState<StartItem> itemsToSell = new ArrayListState<>(this, "itemsToSell");
     protected final IntegerState numPasses = IntegerState.create(this, "numPasses");
 
-    protected StartRound(GameManager parent, String id, Bidding hasBidding, boolean hasBasePrices, boolean hasBuying) {
+    protected StartRound(GameManager parent, String id, Bidding bidding, boolean hasBasePrices, boolean hasBuying) {
         super(parent, id);
 
-        this.hasBidding = hasBidding;
+        this.hasBidding = bidding;
         this.hasBasePrices = hasBasePrices;
         this.hasBuying = hasBuying;
 
@@ -74,6 +74,11 @@ public abstract class StartRound extends Round {
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.START_ROUND);
+    }
+
+    // For backwards compatibility
+    protected StartRound(GameManager parent, String id, boolean hasBidding, boolean hasBasePrices, boolean hasBuying) {
+        this (parent, id, hasBidding ? Bidding.ON_ITEMS : Bidding.NO, hasBasePrices, hasBuying);
     }
 
     protected StartRound(GameManager parent, String id) {

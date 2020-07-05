@@ -1,12 +1,11 @@
 package net.sf.rails.game.specific._18Scan;
 
 import net.sf.rails.common.DisplayBuffer;
-import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
 import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.*;
@@ -19,68 +18,64 @@ public class StartRound_18Scan  extends StartRound {
      * - bidding, on the right to buy the next item, and
      * - buying, choose any unsold start packet item.
      */
-    private boolean buying;
-    int currentBid;
-    int minimumBid;
-    int bidIncrement;
+    protected final BooleanState buying = new BooleanState (this, "biddingOrBuying", false);
+    protected final IntegerState currentBid = IntegerState.create (this, "CurrentBid", 0);
+    int minimumInitialBid;
+    int minimumIncrement;
     int modulus;
-
-    // TEMP. NOTE: initially everything was copied from 1830
+    IntegerState minimumBid = IntegerState.create (this, "minimumBid", 0);
+    HashMapState<Player, Boolean> isActive = HashMapState.create (this, "isPlayerBidding");
+    GenericState<Player> lastBiddingPlayer = new GenericState<>(this, "lastBiddingPlayer");
 
     /**
      * Constructed via Configure
      */
     public StartRound_18Scan(GameManager parent, String id) {
-        super(parent, id);
-        modulus = startPacket.getModulus();
+        super(parent, id, Bidding.ON_BUY_RIGHT, true, true);
+        minimumInitialBid = startPacket.getMinimumInitialIncrement(); // Should be 0 here
+        minimumIncrement = startPacket.getMinimumIncrement(); // Should be 5 here
+        modulus = startPacket.getModulus(); // Should be 5 here
     }
 
     @Override
     public void start() {
         super.start();
-        //auctionItemState.set(null);
-        setPossibleActions();
+        for (StartItem item : itemsToSell) {
+            item.setStatus(StartItem.BUYABLE);
+        }
+        initBidding();
     }
 
-    @Override
-    public boolean process(PossibleAction action) {
-
-        if (!super.process(action)) return false;
-
-        // Assign any further items that have been bid exactly once
-        // and don't need any further player intervention, such
-        // as setting a start price
-        StartItem item;
-        while ((item = startPacket.getFirstUnsoldItem()) != null
-                && item.getBidders() == 1 && item.needsPriceSetting() == null) {
-            assignItem(item.getBidder(), item, item.getBid(), 0);
-
-            // Check if this has exhausted the start packet
-            if (startPacket.areAllSold()) {
-                finishRound();
-                break;
-            }
+    private void initBidding () {
+        for (Player player : playerManager.getPlayers()) {
+            isActive.put(player, true);
+            player.blockCash(-player.getBlockedCash()); // TODO Not nice
+            player.getBlockedCashModel().setSuppressZero(true);
         }
-        return true;
+        buying.set(false);
+        lastBiddingPlayer.set (null);
+        minimumBid.set (minimumInitialBid - minimumIncrement); // TODO Reorganize this
+        setPossibleActions();
     }
 
     @Override
     public boolean setPossibleActions() {
 
+        Player currentPlayer = playerManager.getCurrentPlayer();
         boolean passAllowed = false;
 
         possibleActions.clear();
 
-        Player player = playerManager.getCurrentPlayer();
-        if (player == startPlayer) ReportBuffer.add(this, "");  //??
+        // TODO Why this?
+        if (currentPlayer == startPlayer) ReportBuffer.add(this, "");
 
-        if (buying) {
+        if (buying.value()) {
             // Select any unsold item
             for (StartItem item : itemsToSell.view()) {
 
                 if (item.isSold()) {
                     // Don't include
-                } else if (player.getFreeCash() >= item.getBasePrice()) {
+                } else if (currentPlayer.getFreeCash() >= item.getBasePrice()) {
                     BuyStartItem possibleAction =
                             new BuyStartItem(item, item.getBasePrice(), false);
                     possibleActions.add(possibleAction);
@@ -90,22 +85,21 @@ public class StartRound_18Scan  extends StartRound {
                     passAllowed = false;
                     break; // No more actions
                 } else {
-                    if (player.getFreeCash() >= item.getBasePrice()) {
+                    if (currentPlayer.getFreeCash() >= item.getBasePrice()) {
                         item.setStatus(StartItem.BUYABLE);
                         possibleActions.add(new BuyStartItem(item,
                                 item.getBasePrice(), false));
                     }
                 }
             }
-
+            passAllowed = false;
 
         } else {
             // Bidding
-            int minimumBid = currentBid + bidIncrement;
-            if (player.getFreeCash() >= minimumBid) {
+            if (currentPlayer.getFreeCash() >= minimumBid.value()) {
                     BidStartItem possibleAction =
-                            new BidStartItem(null, minimumBid,
-                                    modulus, false);
+                            new BidStartItem(getRoot(), minimumBid.value(),
+                                    minimumIncrement, true);
                     possibleActions.add(possibleAction);
             }
 
@@ -118,6 +112,7 @@ public class StartRound_18Scan  extends StartRound {
                 //    setNextBiddingPlayer(auctionItemState.value());
                 //}
             }
+            passAllowed = true;
         }
 
         if (passAllowed) {
@@ -127,27 +122,45 @@ public class StartRound_18Scan  extends StartRound {
         return true;
     }
 
+    @Override
+    public boolean process(PossibleAction action) {
+
+        if (action instanceof BidStartItem) {
+
+            return bid(action.getPlayerName(), (BidStartItem) action);
+
+        } else if (action instanceof BuyStartItem) {
+
+            return buy(action.getPlayerName(), (BuyStartItem) action);
+
+        } else if (action instanceof NullAction) {
+
+            return pass((NullAction) action, action.getPlayerName());
+
+        } else {
+            log.error ("Unexpected action: {}", action.toString());
+            return false;
+        }
+    }
     /*----- moveStack methods -----*/
     /**
      * The current player bids on a given start item.
      *
-     * @param playerName The name of the current player (for checking purposes).
      * @param bidItem The name of the start item on which the bid is placed.
       */
-    @Override
-    protected boolean bid(String playerName, BidStartItem bidItem) {
+    protected boolean bid (String playerName, BidStartItem bidItem) {
 
-        StartItem item = bidItem.getStartItem();
         String errMsg = null;
-        Player player = playerManager.getCurrentPlayer();
         int previousBid = 0;
+        Player currentPlayer = playerManager.getCurrentPlayer();
         int bidAmount = bidItem.getActualBid();
+        Player player = bidItem.getPlayer();
 
         while (true) {
 
             // Check player
-            if (!playerName.equals(player.getId())) {
-                errMsg = LocalText.getText("WrongPlayer", playerName, player.getId());
+            if (!player.equals(currentPlayer)) {
+                errMsg = LocalText.getText("WrongPlayer", player, currentPlayer.getId());
                 break;
             }
             // Check item
@@ -166,32 +179,23 @@ public class StartRound_18Scan  extends StartRound {
             }
 
             // Is the item buyable?
-            if (bidItem.getStatus() != StartItem.BIDDABLE
-                    && bidItem.getStatus() != StartItem.AUCTIONED) {
-                errMsg = LocalText.getText("NotForSale");
-                break;
-            }
-
             // Bid must be at least 5 above last bid
-            if (bidAmount < item.getMinimumBid()) {
-                errMsg = LocalText.getText("BidTooLow", ""
-                        + item.getMinimumBid());
+            if (bidAmount < minimumBid.value()) {
+                errMsg = LocalText.getText("BidTooLow", bidAmount);
                 break;
             }
 
             // Bid must be a multiple of the modulus
-            if (bidAmount % startPacket.getModulus() != 0) {
+            if (bidAmount % modulus != 0) {
                 errMsg = LocalText.getText("BidMustBeMultipleOf",
                         bidAmount,
-                        startPacket.getMinimumIncrement());
+                        modulus);
                 break;
             }
 
             // Has the buyer enough cash?
-            previousBid = item.getBid(player);
-            int available = player.getFreeCash() + previousBid;
-            if (bidAmount > available) {
-                errMsg = LocalText.getText("BidTooHigh", Bank.format(this, available));
+            if (bidAmount > currentPlayer.getFreeCash()) {
+                errMsg = LocalText.getText("BidTooHigh", Bank.format(this, bidAmount));
                 break;
             }
 
@@ -200,29 +204,27 @@ public class StartRound_18Scan  extends StartRound {
 
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("InvalidBid",
-                    playerName,
-                    item.getId(),
+                    player.getId(),
+                    bidItem.toString(),
                     errMsg ));
             return false;
         }
 
-
-
-        item.setBid(bidAmount, player);
-        if (previousBid > 0) player.unblockCash(previousBid);
-        player.blockCash(bidAmount);
-        ReportBuffer.add(this, LocalText.getText("BID_ITEM_LOG",
+        currentBid.set(bidAmount);
+        lastBiddingPlayer.set(currentPlayer);
+        // We want to see the initial zero bid!
+        if (bidAmount == 0) currentPlayer.getBlockedCashModel().setSuppressZero(false);
+        previousBid = currentPlayer.getBlockedCash();
+        // TODO: check blocked cash logic in Player, we might not need both blocked and free cash
+        if (previousBid > 0) currentPlayer.unblockCash(previousBid);
+        currentPlayer.blockCash(bidAmount);
+        ReportBuffer.add(this, LocalText.getText("BID_BUY_RIGHT_LOG",
                 playerName,
                 Bank.format(this, bidAmount),
-                item.getId(),
-                Bank.format(this, player.getFreeCash()) ));
+                Bank.format(this, currentPlayer.getFreeCash()) ));
 
-        if (bidItem.getStatus() != StartItem.AUCTIONED) {
-            playerManager.setPriorityPlayerToNext();
-            playerManager.setCurrentToNextPlayer();
-        } else {
-            setNextBiddingPlayer(item);
-        }
+        setNextBiddingPlayer(currentPlayer);
+        minimumBid.set(bidAmount + minimumIncrement);
         numPasses.set(0);
 
         return true;
@@ -231,8 +233,20 @@ public class StartRound_18Scan  extends StartRound {
 
     @Override
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
+
+        boughtItem.select();
         boolean result = super.buy(playerName, boughtItem);
-        //auctionItemState.set(null);
+
+        int numSold = 0;
+        for (StartItem item : itemsToSell) {
+            if (item.isSold()) numSold++;
+        }
+        if (numSold == itemsToSell.size() || lastBiddingPlayer.value() == null) {
+            // All sold, or nobody wanted to bid
+            finishRound();
+        } else {
+            initBidding();
+        }
         return result;
     }
 
@@ -246,7 +260,6 @@ public class StartRound_18Scan  extends StartRound {
 
         String errMsg = null;
         Player player = playerManager.getCurrentPlayer();
-        //StartItem auctionItem = auctionItemState.value();
 
         while (true) {
 
@@ -268,57 +281,60 @@ public class StartRound_18Scan  extends StartRound {
         ReportBuffer.add(this, LocalText.getText("PASSES", playerName));
 
         numPasses.add(1);
+        isActive.put(player, false);
 
-        if (numPasses.value() >= playerManager.getNumberOfPlayers()) {
-            // All players have passed.
-            gameManager.reportAllPlayersPassed();
-            // It the first item has not been sold yet, reduce its price by 5.
-            if (startPacket.getFirstItem() == startPacket.getFirstUnsoldItem() || startPacket.getFirstUnsoldItem().getReduceable()) {
-                startPacket.getFirstUnsoldItem().reduceBasePriceBy(5);
-                ReportBuffer.add(this, LocalText.getText(
-                        "ITEM_PRICE_REDUCED",
-                        startPacket.getFirstUnsoldItem().getId(),
-                        Bank.format(this, startPacket.getFirstUnsoldItem().getBasePrice()) ));
-                numPasses.set(0);
-                if (startPacket.getFirstUnsoldItem().getBasePrice() == 0) {
-                    getRoot().getPlayerManager().setCurrentToNextPlayer();
-                    assignItem(playerManager.getCurrentPlayer(),
-                            startPacket.getFirstUnsoldItem(), 0, 0);
-                    getRoot().getPlayerManager().setPriorityPlayerToNext();
-                    getRoot().getPlayerManager().setCurrentToNextPlayer();
-                } else {
-                    //BR: If the first item's price is reduced, but not to 0,
-                    //    we still need to advance to the next player
-                    playerManager.setCurrentToNextPlayer();
-                }
+        int remainingBidders = playerManager.getNumberOfPlayers() - numPasses.value();
+        if (lastBiddingPlayer.value() == null && remainingBidders == 0) {
+            // Nobody wants to bid.
+            // The first time this happens, the priority holder is obliged to buy,
+            // assuming a bid of zero, and then the round ends.
+            // Otherwise the round ends immediately.
+            playerManager.setCurrentPlayer(playerManager.getPriorityPlayer());
+            if (gameManager.getAbsoluteORNumber() == 0) {
+                finishBidding(true);
             } else {
-                numPasses.set(0);
-                //gameManager.nextRound(this);
+                // To get two ORs, we need to tweak GameManager a bit.
+                gameManager.setShortOR (true);
                 finishRound();
-
+                return true;
             }
+        } else if (lastBiddingPlayer.value() != null && remainingBidders == 1) {
+            // One bidder remains and has won the right to buy
+            playerManager.setCurrentPlayer(lastBiddingPlayer.value());
+            finishBidding(false);
         } else {
-            playerManager.setCurrentToNextPlayer();
+            setNextBiddingPlayer (player);
         }
-
+        setPossibleActions();
         return true;
     }
 
+    private void finishBidding(boolean forcedBuy) {
+        gameManager.reportAllPlayersPassed();
+        Player player = playerManager.getCurrentPlayer();
+        if (forcedBuy) {
+           ReportBuffer.add(this, LocalText.getText("IsForcedToBuyItem",
+                    player.getId()));
+        } else {
+            int amount = currentBid.value();
+            String priceText = Currency.toBank(player, amount);
+            ReportBuffer.add(this, LocalText.getText("PaysForBuyRight",
+                    player.getId(),
+                    priceText));
+        }
 
-    private void setNextBiddingPlayer(StartItem item, Player biddingPlayer) {
-        for (Player player:playerManager.getNextPlayersAfter(biddingPlayer, false, false)) {
-            if (item.isActive(player)) {
+        buying.set(true);
+        playerManager.setPriorityPlayerToNext();
+    }
+
+    private void setNextBiddingPlayer(Player currentPlayer) {
+        for (Player player:playerManager.getNextPlayersAfter(currentPlayer, false, false)) {
+            if (isActive.get(player)) {
                 playerManager.setCurrentPlayer(player);
                 break;
             }
         }
     }
-
-    private void setNextBiddingPlayer(StartItem item) {
-        setNextBiddingPlayer(item, playerManager.getCurrentPlayer());
-    }
-
-
 
 
 }

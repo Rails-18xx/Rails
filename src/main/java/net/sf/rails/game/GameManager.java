@@ -561,7 +561,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     /**
      * Stub, to be overridden if companies can run before the Start Packet has been completely sold
-     * (as in 1835).
+     * (as in 1835). Also see further comments at the overriding method in GameManager_18Scan.
      *
      * @return true if companies can run regardless. Default false.
      */
@@ -1556,6 +1556,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return this.NationalFormStartingPlayer.get(comp);
     }
 
+    /** Stub, used in 18Scan */
+    public void setShortOR (boolean enable) {};
 }
 
 
