@@ -269,23 +269,26 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
         StringBuilder text = new StringBuilder();
 
         // Special properties
+        List<Tag> spTags;
         Tag spsTag = tag.getChild("SpecialProperties");
         if (spsTag != null) {
-
-            List<Tag> spTags = spsTag.getChildren("SpecialProperty");
-            String className;
-            for (Tag spTag : spTags) {
-                className = spTag.getAttributeAsString("class");
-                if (!Util.hasValue(className))
-                    throw new ConfigurationException(
-                            "Missing class in private special property");
-                String uniqueId = SpecialProperty.createUniqueId(company);
-                SpecialProperty sp = Configure.create(SpecialProperty.class, className, company, uniqueId);
-                sp.setOriginalCompany(company);
-                sp.configureFromXML(spTag);
-                sp.moveTo(company);
-                text.append("<br>" + sp.getInfo());
-            }
+            spTags = spsTag.getChildren("SpecialProperty");
+        } else {
+            spTags = tag.getChildren("SpecialProperty");
+        }
+        if (spTags == null) return "";
+        String className;
+        for (Tag spTag : spTags) {
+            className = spTag.getAttributeAsString("class");
+            if (!Util.hasValue(className))
+                throw new ConfigurationException(
+                        "Missing class in private special property");
+            String uniqueId = SpecialProperty.createUniqueId(company);
+            SpecialProperty sp = Configure.create(SpecialProperty.class, className, company, uniqueId);
+            sp.setOriginalCompany(company);
+            sp.configureFromXML(spTag);
+            sp.moveTo(company);
+            text.append("<br>" + sp.getInfo());
         }
         return text.toString();
     }

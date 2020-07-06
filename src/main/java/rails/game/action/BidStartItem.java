@@ -2,6 +2,7 @@ package rails.game.action;
 
 import com.google.common.base.Objects;
 
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.StartItem;
 import net.sf.rails.util.RailsObjects;
 
@@ -42,9 +43,16 @@ public class BidStartItem extends StartItemAction {
 
     }
 
-    public int getMinimumBid() {
-        return minimumBid;
+    public BidStartItem (RailsRoot root, int minimumBid, int bidIncrement,
+                         boolean selected) {
+
+        super(root);
+        this.minimumBid = minimumBid;
+        this.bidIncrement = bidIncrement;
+        this.selected = selected;
     }
+
+    public int getMinimumBid() { return minimumBid; }
 
     public int getBidIncrement() {
         return bidIncrement;

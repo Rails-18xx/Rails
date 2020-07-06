@@ -1661,35 +1661,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
         privatesCostThisTurn.change(price);
 
-        // Move any special abilities to the portfolio, if configured so
+        // Assign the special properties to the rightful owner
         Set<SpecialProperty> sps = privateCompany.getSpecialProperties();
-        if (sps != null) {
-            // Need intermediate List to avoid ConcurrentModificationException
-            List<SpecialProperty> spsToMoveHere = new ArrayList<SpecialProperty>(2);
-            List<SpecialProperty> spsToMoveToGM = new ArrayList<SpecialProperty>(2);
-            for (SpecialProperty sp : sps) {
-                if ( "toCompany".equalsIgnoreCase(sp.getTransferText())) {
-                    spsToMoveHere.add(sp);
-                } else if ( "toGameManager".equalsIgnoreCase(sp.getTransferText())) {
-                    // This must be SellBonusToken - remember the owner!
-                    if (sp instanceof SellBonusToken) {
-                        // TODO: Check if this works correctly
-                        ((SellBonusToken) sp).setSeller(this);
-                        // Also note 1 has been used
-                        ((SellBonusToken) sp).setExercised();
-                    }
-                    spsToMoveToGM.add(sp);
-                }
-            }
-            for (SpecialProperty sp : spsToMoveHere) {
-                sp.moveTo(portfolio.getParent());
-            }
-            for (SpecialProperty sp : spsToMoveToGM) {
-                getRoot().getGameManager().addSpecialProperty(sp);
-                log.debug("SP {} is now a common property", sp.getId());
-            }
-        }
-
+        getRoot().getGameManager().allocateSpecialProperties(this, sps);
     }
 
     public Model getPrivatesSpentThisTurnModel() {

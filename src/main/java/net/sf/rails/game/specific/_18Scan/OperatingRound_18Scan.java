@@ -9,6 +9,8 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.financial.Bank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rails.game.action.LayTile;
+import rails.game.action.PossibleAction;
 import rails.game.action.SetDividend;
 
 public class OperatingRound_18Scan extends OperatingRound {
