@@ -138,6 +138,14 @@ public class MessagePanel extends JPanel {
         updateMessageText();
     }
 
+    /**
+     * Set the primary message without reasing the rest.
+     * @param messageText
+     */
+    public void updateMessage (String messageText) {
+        currentMessage = messageText;
+    }
+
     public void setInformation(String infoText) {
         currentInformation = new StringBuffer();
         currentInformation.append("<BR>" + infoText);

@@ -46,6 +46,7 @@ public class GameDef {
         /* In-sequence steps */
         INITIAL,
         LAY_TRACK,
+        CHECK_DESTINATIONS,
         LAY_TOKEN,
         CALC_REVENUE,
         PAYOUT,
@@ -55,7 +56,7 @@ public class GameDef {
         FINAL,
 
         /* Out-of-sequence steps*/
-        DISCARD_TRAINS;
+        DISCARD_TRAINS
 
     }
     

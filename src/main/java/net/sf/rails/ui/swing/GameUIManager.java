@@ -70,7 +70,7 @@ public class GameUIManager implements DialogOwner {
     protected ReportWindow reportWindow;
     protected ConfigWindow configWindow;
     protected ORUIManager orUIManager;
-    protected ORWindow orWindow; // TEMPORARY
+    protected ORWindow orWindow; // TEMPORARY  -- EV: Why?
     private StartRoundWindow startRoundWindow;
 
     protected JDialog currentDialog = null;

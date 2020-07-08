@@ -26,7 +26,7 @@ public class LayBaseToken extends LayToken {
     public static final int LOCATION_SPECIFIC = 1; // Valid hex
     public static final int SPECIAL_PROPERTY = 2; // Directed by a special
     public static final int HOME_CITY = 3; // If city on home hex is undefined in 1st turn
-    // property
+    public static final int FORCED_LAY = 4; // Lay token even if there is no free slot (18Scan)
     public static final int CORRECTION = 99; // Correction token lays
 
     protected int type = 0;
@@ -83,6 +83,18 @@ public class LayBaseToken extends LayToken {
         super (root, hex);
         setChosenHex (hex);
         type = HOME_CITY;
+    }
+
+    /**
+     * Special for 18Scan: on reaching a Destination, lay token even if there is no free slot.
+     * @param root
+     * @param hex The hex where this token must be laid
+     * @param forced True if token has to be laid outside a city slot, perhaps temporarily.
+     */
+    public LayBaseToken (RailsRoot root, MapHex hex, boolean forced) {
+        super (root, hex);
+        setChosenHex (hex);
+        type = forced ? FORCED_LAY : LOCATION_SPECIFIC;
     }
 
     @Deprecated

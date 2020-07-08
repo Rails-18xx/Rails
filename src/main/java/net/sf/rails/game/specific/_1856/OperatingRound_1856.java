@@ -294,15 +294,17 @@ public class OperatingRound_1856 extends OperatingRound {
     }
 
     @Override
-    protected void reachDestination(PublicCompany company) {
+    protected void executeDestinationActions(List<PublicCompany> companies) {
 
-        PublicCompany_1856 comp = (PublicCompany_1856) company;
-        int cashInEscrow = comp.getMoneyInEscrow();
-        if (cashInEscrow > 0) {
-            String cashText = Currency.fromBank(cashInEscrow, company);
-            ReportBuffer.add(this, LocalText.getText("ReleasedFromEscrow",
-                    company.getId(),
-                    cashText));
+        for (PublicCompany company : companies) {
+            PublicCompany_1856 comp = (PublicCompany_1856) company;
+            int cashInEscrow = comp.getMoneyInEscrow();
+            if (cashInEscrow > 0) {
+                String cashText = Currency.fromBank(cashInEscrow, company);
+                ReportBuffer.add(this, LocalText.getText("ReleasedFromEscrow",
+                        company.getId(),
+                        cashText));
+            }
         }
 
     }

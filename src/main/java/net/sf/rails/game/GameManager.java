@@ -717,7 +717,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 result = processGameActions(gameAction);
             } else {
                 // All other actions: process per round
-                result = processCorrectionActions(action) || getCurrentRound().process(action);
+                result = processCorrectionActions(action)
+                        || getCurrentRound().process(action);
                 if (result && action.hasActed()) {
                     executedActions.add(action);
                 }
@@ -1538,8 +1539,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 this.nationalToFound = company;
             }
         }
-
-
     }
 
     public PublicCompany getNationalToFound() {
@@ -1555,9 +1554,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public Player getNationalFormationStartingPlayer(PublicCompany comp) {
         return this.NationalFormStartingPlayer.get(comp);
     }
-
-    /** Stub, used in 18Scan */
-    public void setShortOR (boolean enable) {};
 }
 
 
