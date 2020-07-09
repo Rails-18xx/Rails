@@ -1190,9 +1190,10 @@ implements ActionListener, KeyListener, RevenueListener {
         revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
         if ( hasDirectCompanyIncomeInOr) {
             directIncomeSelect[orCompIndex].setValue(action.getPresetCompanyTreasuryRevenue());
-            setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], directIncomeSelect[orCompIndex], directIncomeRevenue[orCompIndex], true);
+            setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], directIncomeSelect[orCompIndex],
+                    directIncomeRevenue[orCompIndex], true);
         } else {
-        setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],true);
+            setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],true);
         }
         button1.setRailsIcon(RailsIcon.SET_REVENUE);
         button1.setActionCommand(SET_REVENUE_CMD);
@@ -1254,7 +1255,7 @@ implements ActionListener, KeyListener, RevenueListener {
             setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
                     directIncomeSelect[orCompIndex], directIncomeRevenue[orCompIndex], false);
         } else {
-        setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
+            setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
         }
         if (withhold) {
             button1.setRailsIcon(RailsIcon.WITHHOLD);
@@ -1424,7 +1425,30 @@ implements ActionListener, KeyListener, RevenueListener {
         s.setVisible(active);
         f2.setVisible(!active);
         s2.setVisible(active);
+    }
 
+    // EV: to replace the above two methods
+    private void selectRevenueSpinner (boolean active) {
+        selectRevenueSpinner (orCompIndex, active);
+    }
+
+    private void selectRevenueSpinner (int compIndex, boolean active) {
+        revenue[compIndex].setVisible(!active);
+        revenueSelect[compIndex].setVisible(active);
+        if (revenueSelect[compIndex].isVisible()) {
+            int oldValue = Integer.parseInt(revenue[compIndex].getText()
+                    .replaceAll("[^0-9]", ""));
+            revenueSelect[compIndex].setValue(oldValue);
+        }
+        if (hasDirectCompanyIncomeInOr) {
+            directIncomeRevenue[compIndex].setVisible(active);
+            directIncomeSelect[compIndex].setVisible(!active);
+            if (revenueSelect[compIndex].isVisible()) {
+                int oldValue = Integer.parseInt(directIncomeRevenue[compIndex].getText()
+                        .replaceAll("[^0-9]", ""));
+                directIncomeSelect[compIndex].setValue(oldValue);
+            }
+        }
     }
 
     public PublicCompany[] getOperatingCompanies() {
@@ -1464,6 +1488,7 @@ implements ActionListener, KeyListener, RevenueListener {
             boolean visible = rowVisibilityObservers[i].lastValue() && (showAll || (i == orCompIndex));
             setRowVisibility(i + leftCompNameYOffset, visible);
         }
+        selectRevenueSpinner(!showAll);
     }
 
     public int getCompanyTreasuryBonusRevenue(int orCompIndex) {
