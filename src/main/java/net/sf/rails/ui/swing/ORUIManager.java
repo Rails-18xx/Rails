@@ -1336,7 +1336,7 @@ public class ORUIManager implements DialogOwner {
         // initial deactivation of revenue calculation
         if (!possibleActions.contains(SetDividend.class)) {
             orPanel.stopRevenueUpdate();
-            orPanel.resetCurrentRevenueDisplay();
+            //orPanel.resetCurrentRevenueDisplay();
         }
 
         if (orStep == GameDef.OrStep.LAY_TRACK) {

@@ -945,12 +945,14 @@ implements ActionListener, KeyListener, RevenueListener {
             if (executedAction instanceof SetDividend) {
                 // Hide the spinner here, because we might not return
                 // via InitPayoutStep, where this would otherwise be done.
+                /*
                 if(hasDirectCompanyIncomeInOr) {
                     setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
                             directIncomeSelect[orCompIndex], directIncomeRevenue[orCompIndex], false);
                 } else {
                     setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
-                }
+                }*/
+                selectRevenueSpinner(false);
             }
 
             orUIManager.processAction(command, executedActions);
@@ -1053,14 +1055,17 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public void resetORCompanyTurn(int orCompIndex) {
         for (int i = 0; i < nc; i++) {
+            /*
             if (hasDirectCompanyIncomeInOr) {
                 setSelect(revenue[i], revenueSelect[i], directIncomeSelect[i], directIncomeRevenue[i], false);
             } else {
             setSelect(revenue[i], revenueSelect[i], false);
-            }
+            }*/
+            selectRevenueSpinner(false);
         }
     }
 
+    // No longer used?
     public void resetCurrentRevenueDisplay() {
         if (hasDirectCompanyIncomeInOr) {
             setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
@@ -1167,6 +1172,7 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setVisible(false);
 
         setCompanyVisibility(false);
+        selectRevenueSpinner(false);
     }
 
     public void initTokenLayingStep() {
@@ -1181,6 +1187,7 @@ implements ActionListener, KeyListener, RevenueListener {
         button3.setEnabled(false);
 
         setCompanyVisibility(false);
+        selectRevenueSpinner(false);
     }
 
     public void initRevenueEntryStep(int orCompIndex, SetDividend action) {
@@ -1188,13 +1195,15 @@ implements ActionListener, KeyListener, RevenueListener {
         revenueCaption.setHighlight(true);
         setHighlight(revenueSelect[orCompIndex],true);
         revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
+        selectRevenueSpinner (true);
+        /*
         if ( hasDirectCompanyIncomeInOr) {
             directIncomeSelect[orCompIndex].setValue(action.getPresetCompanyTreasuryRevenue());
             setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], directIncomeSelect[orCompIndex],
                     directIncomeRevenue[orCompIndex], true);
         } else {
             setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],true);
-        }
+        }*/
         button1.setRailsIcon(RailsIcon.SET_REVENUE);
         button1.setActionCommand(SET_REVENUE_CMD);
         button1.setPossibleAction(action);
@@ -1205,8 +1214,7 @@ implements ActionListener, KeyListener, RevenueListener {
         //indicate interest in setting revenue values (and not only displaying routes)
         updateCurrentRoutes(true);
 
-        setCompanyVisibility(false);
-
+        //setCompanyVisibility(false);
     }
 
     @Override
@@ -1238,6 +1246,7 @@ implements ActionListener, KeyListener, RevenueListener {
             }
             catch (Exception e) {}
         }
+        //selectRevenueSpinner (false);
     }
 
     public void stopRevenueUpdate() {
@@ -1251,12 +1260,15 @@ implements ActionListener, KeyListener, RevenueListener {
         setHighlight(decision[orCompIndex],true);
 
         SetDividend clonedAction;
+        /*
         if(hasDirectCompanyIncomeInOr) {
             setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
                     directIncomeSelect[orCompIndex], directIncomeRevenue[orCompIndex], false);
         } else {
             setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
         }
+        */
+        selectRevenueSpinner(false);
         if (withhold) {
             button1.setRailsIcon(RailsIcon.WITHHOLD);
             button1.setActionCommand(WITHHOLD_CMD);
@@ -1435,7 +1447,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private void selectRevenueSpinner (int compIndex, boolean active) {
         revenue[compIndex].setVisible(!active);
         revenueSelect[compIndex].setVisible(active);
-        if (revenueSelect[compIndex].isVisible()) {
+        if (active) {
             int oldValue = Integer.parseInt(revenue[compIndex].getText()
                     .replaceAll("[^0-9]", ""));
             revenueSelect[compIndex].setValue(oldValue);
@@ -1443,7 +1455,7 @@ implements ActionListener, KeyListener, RevenueListener {
         if (hasDirectCompanyIncomeInOr) {
             directIncomeRevenue[compIndex].setVisible(active);
             directIncomeSelect[compIndex].setVisible(!active);
-            if (revenueSelect[compIndex].isVisible()) {
+            if (!active) {
                 int oldValue = Integer.parseInt(directIncomeRevenue[compIndex].getText()
                         .replaceAll("[^0-9]", ""));
                 directIncomeSelect[compIndex].setValue(oldValue);
@@ -1483,6 +1495,11 @@ implements ActionListener, KeyListener, RevenueListener {
         }
     }
 
+    /**
+     * Control visibility of companies in the ORPanel.
+     * @param showAll True if all active companies must be shown,
+     *                false if only the currently operating company is shown.
+     */
     private void setCompanyVisibility(boolean showAll) {
         for (int i = 0; i < nc; i++) {
             boolean visible = rowVisibilityObservers[i].lastValue() && (showAll || (i == orCompIndex));
