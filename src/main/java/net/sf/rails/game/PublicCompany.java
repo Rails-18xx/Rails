@@ -38,10 +38,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     private static final Logger log = LoggerFactory.getLogger(PublicCompany.class);
 
     public static final int CAPITALISE_FULL = 0;
-
     public static final int CAPITALISE_INCREMENTAL = 1;
-
     public static final int CAPITALISE_WHEN_BOUGHT = 2;
+    public static final int CAPITALISE_PART = 3; // 18Scan SJ, also specify part as number of shares
 
     protected static final int DEFAULT_SHARE_UNIT = 10;
 
@@ -316,6 +315,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected int dropPriceToken = WHEN_STARTED;
 
     protected int capitalisation = CAPITALISE_FULL;
+    protected int capitalisationShares;
 
     /**
      * Fixed price (for a 1835-style minor)
@@ -558,8 +558,12 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (capitalisationTag != null) {
             String capType =
                     capitalisationTag.getAttributeAsString("type", "full");
+            capitalisationShares = capitalisationTag.getAttributeAsInteger ("shares", 0);
             if ( "full".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_FULL);
+            } else if ( "part".equalsIgnoreCase(capType)) {
+                setCapitalisation(CAPITALISE_PART);
+                capitalisationShares = capitalisationTag.getAttributeAsInteger ("shares", 0);
             } else if ( "incremental".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_INCREMENTAL);
             } else if ( "whenBought".equalsIgnoreCase(capType)) {
@@ -830,6 +834,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         IntegerState tileLays = IntegerState.create
                 (this, "" + colour + "_ExtraTileTurns", turns);
         turnsWithExtraTileLays.put(colour, tileLays);
+    }
+
+    public void setPrivateToCloseOnFirstTrain (PrivateCompany comp) {
+        privateToCloseOnFirstTrain = comp;
     }
 
     /**
@@ -1558,6 +1566,15 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      */
     public int getCapitalisation() {
         return capitalisation;
+    }
+
+    /**
+     * In case of partial capitalisation, return the number of shares
+     * that are capitalised at floating time. E.g. 18Scan SJ: 7 of 10 shares
+     * @return
+     */
+    public int getCapitalisationShares () {
+        return capitalisationShares;
     }
 
     /**

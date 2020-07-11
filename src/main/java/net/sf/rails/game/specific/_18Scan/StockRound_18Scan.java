@@ -1,6 +1,7 @@
 package net.sf.rails.game.specific._18Scan;
 
 import net.sf.rails.game.GameManager;
+import net.sf.rails.game.Phase;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.financial.StockRound;
 
@@ -14,6 +15,11 @@ public class StockRound_18Scan extends StockRound {
 
         if (!company.hasStarted() || company.hasFloated()) return;
 
+        Phase currentPhase = gameManager.getCurrentPhase();
+        if ("SJ".equalsIgnoreCase(company.getId())
+                && !getRoot().getPhaseManager().hasReachedPhase("5")) {
+            ; // The SJ does not float in a stock round before phase 5
+        } else
         // Company floats if number of shares sold is equal to the current Phase (max 5).
         if (company.getSoldPercentage() >= 10 * Math.min (5,
                 (2 + gameManager.getCurrentPhase().getIndex()))) {
