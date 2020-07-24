@@ -158,8 +158,25 @@ Not yet implemented:
         </Description>
         <Players minimum="2" maximum="4"/>
     </Game>
-	 
-	 
+
+	<Game name="18Scan">
+		<Note>Mostly playable</Note>
+		<Description>18Scan - Railroading under the Northern Lights
+		(c) 20044-2005 David G.D. Hecht
+		Published by Deep Thought Games, LLC
+
+		Limitations:
+		- Revenue bonuses are not correctly calculated.
+		- Minors cannot yet lay destination token on a blocked yellow city.
+		- Bonus token owner is not asked for permission to buy one.
+
+		Known bugs:
+		- LayToken step is skipped if base tokens are all used but a bonus token is still available.
+		- The price of a bonus token sold from phase 5 is payed to the originally owning player in stead of the bank.
+		</Description>
+		<Players minimum="2" maximum="4" />
+	</Game>
+
 	<Game name="1870">
 		<Note>Not yet playable</Note>
 		<Description>1870 - Railroading across the Trans Mississippi
@@ -223,12 +240,6 @@ Known Issues:
     <Note>Prototype</Note>
     <Description>18VA</Description>
     <Players minimum="2" maximum="5" />
-  </Game>
-
-   <Game name="18Scan">
-    <Note>In progress</Note>
-    <Description>18Scan</Description>
-    <Players minimum="2" maximum="4" />
   </Game>
 
    <Game name="1837">
