@@ -6,6 +6,7 @@ import net.sf.rails.common.Config;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.ui.swing.elements.*;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
 import net.sf.rails.util.Util;
@@ -952,7 +953,25 @@ implements ActionListener, KeyListener, RevenueListener {
                 } else {
                     setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
                 }*/
+
+                SetDividend action = (SetDividend) executedAction;
+                // The spinner value may have changed, copy value to the text version
+                if (revenueSelect[orCompIndex].isVisible()) {
+                    revenue[orCompIndex].setText(format(getRevenue(orCompIndex)));
+                }
                 selectRevenueSpinner(false);
+                // If revenue is zero, the company apparently has no route,
+                // because without a train we wouldn't be here.
+                if (getRevenue(orCompIndex) == 0) {
+                    decision[orCompIndex].setText(LocalText.getText("NoRoute"));
+                /*  Does not work well.
+                 *  TODO to be revisited
+                } else if (action.getAllowedAllocations().length == 1) {
+                    int allocation = action.getAllowedAllocations()[0];
+                    if (allocation >= 0 && allocation < SetDividend.NUM_OPTIONS) {
+                        decision[orCompIndex].setText(SetDividend.getAllocationNameKey(allocation));
+                    }*/
+                }
             }
 
             orUIManager.processAction(command, executedActions);
@@ -1021,8 +1040,8 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     public void setRevenue(int orCompIndex, int amount) {
-        // TODO: the round reference is a workaround
-        revenue[orCompIndex].setText(orUIManager.getGameUIManager().format(amount));
+        revenueSelect[orCompIndex].setValue(amount);
+        revenue[orCompIndex].setText(format(amount));
     }
 
     public void resetActions() {
@@ -1194,7 +1213,10 @@ implements ActionListener, KeyListener, RevenueListener {
 
         revenueCaption.setHighlight(true);
         setHighlight(revenueSelect[orCompIndex],true);
-        revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
+        //decision[orCompIndex].setText("");  // Somehow this prevents the actual decision to be shown
+        setRevenue (orCompIndex, action.getPresetRevenue());
+        //revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
+        //revenue[orCompIndex].setText(format(action.getPresetRevenue()));
         selectRevenueSpinner (true);
         /*
         if ( hasDirectCompanyIncomeInOr) {
@@ -1220,7 +1242,9 @@ implements ActionListener, KeyListener, RevenueListener {
     @Override
     public void revenueUpdate(int bestRevenue, boolean finalResult) {
         if (isRevenueValueToBeSet) {
-            revenueSelect[orCompIndex].setValue(bestRevenue);
+            setRevenue (orCompIndex, bestRevenue);
+            //revenueSelect[orCompIndex].setValue(bestRevenue);
+            //revenue[orCompIndex].setText(format(bestRevenue));
             /**
              * This needs to have another value for the automatic setting of a Direct Income for a Company
              */
@@ -1448,18 +1472,28 @@ implements ActionListener, KeyListener, RevenueListener {
         revenue[compIndex].setVisible(!active);
         revenueSelect[compIndex].setVisible(active);
         if (active) {
-            int oldValue = Integer.parseInt(revenue[compIndex].getText()
-                    .replaceAll("[^0-9]", ""));
+            int oldValue = parseOldValue(revenue[compIndex].getText());
             revenueSelect[compIndex].setValue(oldValue);
         }
         if (hasDirectCompanyIncomeInOr) {
             directIncomeRevenue[compIndex].setVisible(active);
             directIncomeSelect[compIndex].setVisible(!active);
             if (!active) {
-                int oldValue = Integer.parseInt(directIncomeRevenue[compIndex].getText()
-                        .replaceAll("[^0-9]", ""));
+                int oldValue = parseOldValue(directIncomeRevenue[compIndex].getText());
                 directIncomeSelect[compIndex].setValue(oldValue);
             }
+        }
+    }
+
+    public String format(int amount) {
+        return orUIManager.getGameUIManager().format(amount);
+    }
+
+    private int parseOldValue (String text) {
+        if (Util.hasValue(text)) {
+            return Integer.parseInt(text.replaceAll("[^0-9]", ""));
+        } else {
+            return 0;
         }
     }
 

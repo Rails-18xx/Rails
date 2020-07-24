@@ -113,7 +113,7 @@ public class OperatingRound_1856 extends OperatingRound {
         int requiredCash = 0;
 
         // There is only revenue if there are any trains
-        if (operatingCompany.value().canRunTrains()) {
+        if (operatingCompany.value().hasTrains()) {
 
             if (operatingCompany.value() instanceof PublicCompany_CGR
                     && !((PublicCompany_CGR) operatingCompany.value()).hadPermanentTrain()) {

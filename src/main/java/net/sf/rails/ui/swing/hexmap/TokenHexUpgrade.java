@@ -72,7 +72,10 @@ public class TokenHexUpgrade extends HexUpgrade {
         allowed.addAll(stops);
 
         // LayBonusToken always and layHome is always allowed
-        if (!(action instanceof LayBonusToken || ((LayBaseToken) action).getType() == LayBaseToken.HOME_CITY)) {
+        if (!(action instanceof LayBonusToken
+                || ((LayBaseToken) action).getType() == LayBaseToken.HOME_CITY)
+                    //Added for 18Scan:
+                || ((LayBaseToken) action).getType() == LayBaseToken.FORCED_LAY) {
             if (hexBlocked()) {
                 invalids.add(Invalids.HEX_BLOCKED);
             }

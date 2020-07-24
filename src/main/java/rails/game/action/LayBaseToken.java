@@ -70,7 +70,9 @@ public class LayBaseToken extends LayToken {
      */
     public LayBaseToken(RailsRoot root, SpecialBaseTokenLay specialProperty) {
         super(root, specialProperty);
-        type = SPECIAL_PROPERTY;
+        type = specialProperty.getForced() == SpecialBaseTokenLay.Forced.IF_YELLOW
+                ? FORCED_LAY : SPECIAL_PROPERTY;
+        // FORCED_LAY implies SPECIAL_PROPERTY
     }
 
     /** Lay a base token on a given location.
@@ -85,19 +87,7 @@ public class LayBaseToken extends LayToken {
         type = HOME_CITY;
     }
 
-    /**
-     * Special for 18Scan: on reaching a Destination, lay token even if there is no free slot.
-     * @param root
-     * @param hex The hex where this token must be laid
-     * @param forced True if token has to be laid outside a city slot, perhaps temporarily.
-     */
-    public LayBaseToken (RailsRoot root, MapHex hex, boolean forced) {
-        super (root, hex);
-        setChosenHex (hex);
-        type = forced ? FORCED_LAY : LOCATION_SPECIFIC;
-    }
-
-    @Deprecated
+   @Deprecated
     public int getChosenStation() {
         return chosenStation;
     }

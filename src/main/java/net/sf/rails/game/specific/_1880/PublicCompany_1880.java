@@ -163,7 +163,7 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
     }
 
     @Override
-    public boolean canRunTrains() {
+    public boolean hasTrains() {
         return portfolio.getNumberOfTrains() > 0;
     }
 

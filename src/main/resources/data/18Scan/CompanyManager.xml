@@ -22,12 +22,13 @@
 		<Trains limit="2,1" mandatory="no"/>
 		<CanUseSpecialProperties/>
 	</CompanyType>
-	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
+	<CompanyType name="Public" class="net.sf.rails.game.specific._18Scan.PublicCompany_18Scan">
 		<Capitalisation type="incremental"/>
 		<StockPrice par="no"/>
 		<TreasuryCanHoldOwnShares maxPerc="100"/>
 		<Float percentage="20"/>
 		<ShareUnit percentage="10"/>
+		<AdjustPriceOnPayout percPerJump="100,200"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
 		<BaseTokens>
@@ -41,6 +42,7 @@
 		<Capitalisation type="part" shares="7"/>
 		<StockPrice par="yes"/>
 		<ShareUnit percentage="10"/>
+		<AdjustPriceOnPayout percPerJump="100,200"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="5"/>
 		<Certificate shares="1" number="3" available="no"/>
@@ -55,7 +57,7 @@
 			 longname="Stockholm-Åbo Ferry Company">
 		<SpecialProperty condition="ifOwnedByPlayer" when="tokenLayingStep"
 						 class="net.sf.rails.game.special.SellBonusToken" transfer="toGameManager">
-			<SellBonusToken name="Ferry" type="link" location="F11,F13" price="20" value="20" quantity="2"/>
+			<SellBonusToken name="Ferry" type="link" location="G12" price="20" value="20" quantity="2"/>
 		</SpecialProperty>
 		<ClosingConditions>
 			<Phase>5</Phase>
@@ -88,14 +90,24 @@
 	<Company name="1" type="Minor" price="260" tokens="2" longname="Västra Stambanan (Western Mainline)">
 		<Home hex="G4" />
 		<Destination hex="E6"/>
+		<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+			<SpecialBaseTokenLay location="E6" connected="yes" extra="no" free="yes" requiresTile="yes" forced="ïfYellow"/>
+			<!-- Only used in Destination Run -->
+		</SpecialProperty>
 	</Company>
 	<Company name="2" type="Minor" price="220" tokens="2" longname="Nordvästra Stambanan (Northwestern Mainline)">
 		<Home hex="F11" city="1"/>
 		<Destination hex="B11"/>
+		<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+			<SpecialBaseTokenLay location="B11" connected="yes" extra="no" free="yes" requiresTile="yes" forced="ïfYellow"/>
+		</SpecialProperty>
 	</Company>
 	<Company name="3" type="Minor" price="200" tokens="2" longname="Södra Stambanan (Southern Mainline)">
 		<Home hex="F11" city="2"/>
 		<Destination hex="D7"/>
+		<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+			<SpecialBaseTokenLay location="D7" connected="yes" extra="no" free="yes" requiresTile="yes" forced="ïfYellow"/>
+		</SpecialProperty>
 	</Company>
 
 	<Company name="DSB" type="Public" tokens="3" fgColour="FFFFFF" bgColour="EE2C2C" longname="Danske Statsbaner">

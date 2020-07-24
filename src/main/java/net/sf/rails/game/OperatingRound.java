@@ -814,15 +814,18 @@ public class OperatingRound extends Round implements Observer {
 
             if (newStep == GameDef.OrStep.CALC_REVENUE) {
 
-                if (!company.canGenerateRevenue()) {
-                    // No trains, then the revenue is zero (normally).
-                    log.debug("OR skips {}: Cannot run trains", newStep);
-                    executeSetRevenueAndDividend(new SetDividend(getRoot(), 0, false, new int[] { SetDividend.NO_TRAIN }));
-                    // TODO: This probably does not handle share selling correctly
-                    continue;
-                } else if (!company.canRunTrains()) {
+                if (company.hasTrains()) {
+                    // All OK, we can't check here if it has a route
+                    ;
+                } else if (company.canGenerateRevenue()) {
                     // In 18Scan a trainless minor company still pays out.
-                    executeTrainlessRevenue (newStep);
+                    executeTrainlessRevenue(newStep);
+                    continue;
+                } else {
+                    log.debug("OR skips {}: Cannot run trains", newStep);
+                    executeSetRevenueAndDividend(new SetDividend(getRoot(), 0,
+                            false, new int[] { SetDividend.NO_TRAIN }));
+                    // TODO: This probably does not handle share selling correctly
                     continue;
                 }
             }
@@ -899,9 +902,19 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /**
-     * Stub, to be used in some cases (e.g. 18Scan minors)
+     * Stub, to be used in case a trainless company still
+     * generates some income (e.g. 18Scan minors)
+     * @param step An OR step that is considered for execution
      */
     protected void executeTrainlessRevenue (GameDef.OrStep step) {}
+
+    /** Stub, to be used in case a zero earnings run still
+     * generates some income (e.g. 18Scan minors)
+     * @param action SetDividend action with zero revenue
+     */
+    protected SetDividend  checkZeroRevenue (SetDividend action) {
+        return action;
+    }
 
     /**
      * This method is only called at the start of each step (unlike
@@ -2376,7 +2389,24 @@ public class OperatingRound extends Round implements Observer {
 
     }
 
-    protected String validateSetRevenueAndDividend(SetDividend action) {
+    /**
+     * Validate the SetRevenue action, default version
+     * @param action The completed SetRevenue action
+     * @return True if valid
+     */
+    protected String validateSetRevenueAndDividend (SetDividend action) {
+        return validateSetRevenueAndDividend (action, true);
+    }
+
+    /**
+     * Validate the SetRevenue action, with option to bypass the allocation check.
+     * This is needed in reloading a saved file, to accept the allocation change
+     * that is needed in 18Scan to process the Minor company default revenue of K10.
+     * @param action The completed SetRevenue action
+     * @param checkAllocation False if the allocation check must be bypassed (18Scan only).
+     * @return True if valid
+     */
+    protected String validateSetRevenueAndDividend(SetDividend action, boolean checkAllocation) {
 
         String errMsg = null;
         PublicCompany company;
@@ -2431,19 +2461,21 @@ public class OperatingRound extends Round implements Observer {
                 }
 
                 // Validate the chosen allocation type
-                int[] allowedAllocations =
-                        ((SetDividend) selectedAction).getAllowedAllocations();
-                boolean valid = false;
-                for (int aa : allowedAllocations) {
-                    if (revenueAllocation == aa) {
-                        valid = true;
+                if (checkAllocation) {
+                    int[] allowedAllocations =
+                            ((SetDividend) selectedAction).getAllowedAllocations();
+                    boolean valid = false;
+                    for (int aa : allowedAllocations) {
+                        if (revenueAllocation == aa) {
+                            valid = true;
+                            break;
+                        }
+                    }
+                    if (!valid) {
+                        errMsg =
+                                LocalText.getText(SetDividend.getAllocationNameKey(revenueAllocation));
                         break;
                     }
-                }
-                if (!valid) {
-                    errMsg =
-                            LocalText.getText(SetDividend.getAllocationNameKey(revenueAllocation));
-                    break;
                 }
             } else {
                // If there is no revenue, use withhold.
@@ -2470,6 +2502,10 @@ public class OperatingRound extends Round implements Observer {
     protected void executeSetRevenueAndDividend(SetDividend action, String report) {
 
         int amount = action.getActualRevenue();
+
+        // Sometimes there still is a payout; if so, the action will be updated
+        //if (amount == 0) action = checkZeroRevenue(action);
+
         int revenueAllocation = action.getRevenueAllocation();
 
         operatingCompany.value().setLastRevenue(amount);
@@ -2744,16 +2780,21 @@ public class OperatingRound extends Round implements Observer {
     protected void prepareRevenueAndDividendAction() {
 
         // There is only revenue if there are any trains
-        if (operatingCompany.value().canRunTrains()) {
-            int[] allowedRevenueActions =
-                    operatingCompany.value().isSplitAlways()
-                            ? new int[]{SetDividend.SPLIT}
-                            : operatingCompany.value().isSplitAllowed()
-                            ? new int[]{SetDividend.PAYOUT,
-                            SetDividend.SPLIT,
-                            SetDividend.WITHHOLD} : new int[]{
-                            SetDividend.PAYOUT,
-                            SetDividend.WITHHOLD};
+        if (operatingCompany.value().hasTrains()) {
+            int[] allowedRevenueActions;
+            if (operatingCompany.value().isSplitAlways()) {
+                allowedRevenueActions = new int[]{
+                        SetDividend.SPLIT};
+            } else if (operatingCompany.value().isSplitAllowed()) {
+                allowedRevenueActions = new int[]{
+                        SetDividend.PAYOUT,
+                        SetDividend.SPLIT,
+                        SetDividend.WITHHOLD};
+            } else {
+                allowedRevenueActions = new int[]{
+                        SetDividend.PAYOUT,
+                        SetDividend.WITHHOLD};
+            }
 
             possibleActions.add(new SetDividend(getRoot(),
                     operatingCompany.value().getLastRevenue(), true,

@@ -313,6 +313,7 @@ public class ORUIManager implements DialogOwner {
                         addGenericTokenLays(layBaseToken);
                     }
                 break;
+                case LayBaseToken.FORCED_LAY :
                 case (LayBaseToken.HOME_CITY):
                     addLocatedTokenLays(layBaseToken);
                 break;

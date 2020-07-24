@@ -6,6 +6,8 @@ import net.sf.rails.game.financial.StockSpace;
 
 public class PublicCompany_18Scan extends PublicCompany {
 
+    transient private boolean enabled = false;
+
     public PublicCompany_18Scan (RailsItem parent, String id) {
         super(parent, id);
     }
@@ -15,22 +17,21 @@ public class PublicCompany_18Scan extends PublicCompany {
 
         // From phase 5, full capitalization applies
         if (getRoot().getPhaseManager().hasReachedPhase("5")
-                && "Major".equalsIgnoreCase(getType().getId())) {
+                && isOfType("Public")) {
             this.capitalisation = CAPITALISE_FULL;
         }
 
         super.start(startSpace);
     }
 
-
-        @Override
+    @Override
     public boolean canGenerateRevenue() {
         // A check for all safety, only minors should get here
-        if ("Minor".equalsIgnoreCase(getType().getId())) {
+        if (isOfType("Minor")) {
             // Even without trains, 18Scan minors yield some money
             return true;
         } else {
-            return canRunTrains();
+            return hasTrains();
         }
     }
 

@@ -32,8 +32,8 @@
 		<Track from="side3" gauge="narrow" to="side4"/>
 	</Tile>
 	<Tile colour="yellow" id="-10004" name="Stockholm">
-		<Station id="city1" position="052" slots="1" type="City" value="30"/>
-		<Station id="city2" position="452" slots="1" type="City" value="30"/>
+		<Station id="city1" position="552" slots="1" type="City" value="30"/>
+		<Station id="city2" position="352" slots="1" type="City" value="30"/>
 		<Track from="city1" gauge="normal" to="side5"/>
 		<Track from="city2" gauge="normal" to="side4"/>
 	</Tile>
