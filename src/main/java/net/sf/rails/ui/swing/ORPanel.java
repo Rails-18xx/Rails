@@ -105,6 +105,12 @@ implements ActionListener, KeyListener, RevenueListener {
     private boolean hasRights = false;
     private boolean hasDirectCompanyIncomeInOr = false;
 
+    // Configured properties
+    private boolean showAllCompanies = "always".equalsIgnoreCase(
+            Config.get("orPanel.showAllCompanies",""));
+    private boolean showSpinner = "yes".equalsIgnoreCase(
+            Config.get("orPanel.showSpinner",""));
+
     private Caption tileCaption, tokenCaption, revenueCaption, trainCaption,
     privatesCaption, loansCaption, directIncomeCaption;
 
@@ -1171,7 +1177,7 @@ implements ActionListener, KeyListener, RevenueListener {
         setHighlight(tileCost[orCompIndex],true);
         button1.setVisible(false);
 
-        setCompanyVisibility(false);
+        setCompanyVisibility(showAllCompanies);
         selectRevenueSpinner(false);
     }
 
@@ -1186,7 +1192,7 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setVisible(false);
         button3.setEnabled(false);
 
-        setCompanyVisibility(false);
+        setCompanyVisibility(showAllCompanies);
         selectRevenueSpinner(false);
     }
 
@@ -1307,7 +1313,7 @@ implements ActionListener, KeyListener, RevenueListener {
             button3.setVisible(false);
         }
 
-        setCompanyVisibility(false);
+        setCompanyVisibility(showAllCompanies);
     }
 
     public void initTrainBuying(boolean enabled) {
@@ -1445,17 +1451,19 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     private void selectRevenueSpinner (int compIndex, boolean active) {
-        revenue[compIndex].setVisible(!active);
-        revenueSelect[compIndex].setVisible(active);
-        if (active) {
+        boolean revActive = active && showSpinner;
+        revenue[compIndex].setVisible(!revActive);
+        revenueSelect[compIndex].setVisible(revActive);
+        if (revActive) {
             int oldValue = Integer.parseInt(revenue[compIndex].getText()
                     .replaceAll("[^0-9]", ""));
             revenueSelect[compIndex].setValue(oldValue);
         }
+        boolean dciActive = !active && showSpinner;
         if (hasDirectCompanyIncomeInOr) {
-            directIncomeRevenue[compIndex].setVisible(active);
-            directIncomeSelect[compIndex].setVisible(!active);
-            if (!active) {
+            directIncomeRevenue[compIndex].setVisible(dciActive);
+            directIncomeSelect[compIndex].setVisible(!dciActive);
+            if (!dciActive) {
                 int oldValue = Integer.parseInt(directIncomeRevenue[compIndex].getText()
                         .replaceAll("[^0-9]", ""));
                 directIncomeSelect[compIndex].setValue(oldValue);
