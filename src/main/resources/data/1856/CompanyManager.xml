@@ -58,7 +58,7 @@
 	<Company name="Ship" type="Private" basePrice="70" revenue="15">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" 
-				when="anyTimeDuringORTurn" 
+				when="orTurn"
 				class="net.sf.rails.game.special.SpecialBonusTokenLay">
 				<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken" 
 						location="C14,D19,E18,F9,F17,H5,H7,H17,J5,J17,K2,M18,O18" connected="yes" extra="yes">
@@ -76,7 +76,7 @@
 				class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
 				<LocatedBonus name="Bridge" location="P17,P19" value="10"/>
 			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringOR" 
+			<SpecialProperty condition="ifOwnedByCompany" when="orTurn"
 				class="net.sf.rails.game.special.SellBonusToken" transfer="toGameManager">
 				<SellBonusToken name="Bridge" location="P17,P19" price="50" value="10">
 					<IfOption name="UnlimitedBonusTokens" value="yes">
@@ -95,7 +95,7 @@
 				class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
 				<LocatedBonus name="Tunnel" location="B13" value="10"/>
 			</SpecialProperty>
-			<SpecialProperty condition="ifOwnedByCompany" when="anyTimeDuringOR" 
+			<SpecialProperty condition="ifOwnedByCompany" when="orTurn"
 				class="net.sf.rails.game.special.SellBonusToken" transfer="toGameManager">
 				<SellBonusToken name="Tunnel" location="B13" price="50" value="10">
 					<IfOption name="UnlimitedBonusTokens" value="yes">

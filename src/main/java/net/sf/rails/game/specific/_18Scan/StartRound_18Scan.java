@@ -62,7 +62,7 @@ public class StartRound_18Scan  extends StartRound {
     public boolean setPossibleActions() {
 
         Player currentPlayer = playerManager.getCurrentPlayer();
-        boolean passAllowed = false;
+        boolean passAllowed;
 
         possibleActions.clear();
 
@@ -82,7 +82,6 @@ public class StartRound_18Scan  extends StartRound {
                 } else if (item.getStatus() == StartItem.NEEDS_SHARE_PRICE) {
                     /* This status is set in buy() if a share price is missing */
                     possibleActions.add(new BuyStartItem(item, item.getBasePrice(), false, true));
-                    passAllowed = false;
                     break; // No more actions
                 } else {
                     if (currentPlayer.getFreeCash() >= item.getBasePrice()) {
@@ -151,7 +150,7 @@ public class StartRound_18Scan  extends StartRound {
     protected boolean bid (String playerName, BidStartItem bidItem) {
 
         String errMsg = null;
-        int previousBid = 0;
+        int previousBid;
         Player currentPlayer = playerManager.getCurrentPlayer();
         int bidAmount = bidItem.getActualBid();
         Player player = bidItem.getPlayer();
@@ -293,8 +292,6 @@ public class StartRound_18Scan  extends StartRound {
             if (gameManager.getAbsoluteORNumber() == 0) {
                 finishBidding(true);
             } else {
-                // To get two ORs, we need to tweak GameManager a bit.
-                gameManager.setShortOR (true);
                 finishRound();
                 return true;
             }

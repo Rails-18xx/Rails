@@ -506,7 +506,7 @@ public class OperatingRound extends Round implements Observer {
         // primary action is not forced.
         if (!forced) {
 
-            setBonusTokenLays();
+            setBonusTokenLays();  // This does not cover "common" bonuses, see below. Confusing.
 
             setDestinationActions();
 
@@ -557,7 +557,7 @@ public class OperatingRound extends Round implements Observer {
                     SellBonusToken sbt;
                     loop:
                     for (SpecialProperty sp : commonSP) {
-                        if (sp instanceof SellBonusToken) {
+                        if (sp instanceof SellBonusToken && sp.isUsableDuringOR(getStep())) {
                             sbt = (SellBonusToken) sp;
                             // Can't buy if already owned
                             if (operatingCompany.value().getBonuses() != null) {
@@ -692,8 +692,9 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /**
-     * Stub, may be overridden in subclasses Return value: TRUE = normal turn
-     * end; FALSE = return immediately from finishTurn().
+     * Stub, may be overridden in subclasses
+     * Return value: TRUE = normal turn end;
+     * FALSE = return immediately from finishTurn().
      */
     protected boolean finishTurnSpecials() {
         return true;
@@ -1204,11 +1205,9 @@ public class OperatingRound extends Round implements Observer {
      * Stub for applying any follow-up actions when a company reaches it
      * destinations. Default version: no actions.
      *
-     * @param company
+     * @param companies Companies that have just been reported as having reached their destinations.
      */
-    protected void reachDestination(PublicCompany company) {
-
-    }
+    protected void executeDestinationActions(List<PublicCompany> companies) {}
 
     public boolean reachDestinations(ReachDestinations action) {
 
@@ -1223,9 +1222,9 @@ public class OperatingRound extends Round implements Observer {
                             company.getDestinationHex().getId()));
                     // Process any consequences of reaching a destination
                     // (default none)
-                    reachDestination(company);
                 }
             }
+            executeDestinationActions(destinedCompanies);
         }
         return true;
     }

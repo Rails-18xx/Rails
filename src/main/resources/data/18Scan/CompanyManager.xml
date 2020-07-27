@@ -12,8 +12,10 @@
 		<Payout split="always"/>
 		<BaseTokens>
 			<HomeBase lay="whenStarted"/>
+			<LayCost method="sequence" cost="0,40"/>
 		</BaseTokens>
 		<Trains limit="2,1" mandatory="no"/>
+		<CanUseSpecialProperties/>
 	</CompanyType>
 	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<Capitalisation type="incremental"/>
@@ -67,12 +69,15 @@
 
 	<Company name="1" type="Minor" price="260" tokens="2" longname="Västra Stambanan (Western Mainline)">
 		<Home hex="G4" />
+		<Destination hex="E6"/>
 	</Company>
 	<Company name="2" type="Minor" price="220" tokens="2" longname="Nordvästra Stambanan (Northwestern Mainline)">
 		<Home hex="F11" city="1"/>
+		<Destination hex="B11"/>
 	</Company>
 	<Company name="3" type="Minor" price="200" tokens="2" longname="Södra Stambanan (Southern Mainline)">
 		<Home hex="F11" city="2"/>
+		<Destination hex="D7"/>
 	</Company>
 
 	<Company name="DSB" type="Public" tokens="3" fgColour="FFFFFF" bgColour="EE2C2C" longname="Danske Statsbaner">
