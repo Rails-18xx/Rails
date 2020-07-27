@@ -106,6 +106,12 @@ implements ActionListener, KeyListener, RevenueListener {
     private boolean hasRights = false;
     private boolean hasDirectCompanyIncomeInOr = false;
 
+    // Configured properties
+    private boolean showAllCompanies = "always".equalsIgnoreCase(
+            Config.get("orPanel.showAllCompanies",""));
+    private boolean showSpinner = "yes".equalsIgnoreCase(
+            Config.get("orPanel.showSpinner",""));
+
     private Caption tileCaption, tokenCaption, revenueCaption, trainCaption,
     privatesCaption, loansCaption, directIncomeCaption;
 
@@ -1469,16 +1475,18 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     private void selectRevenueSpinner (int compIndex, boolean active) {
-        revenue[compIndex].setVisible(!active);
-        revenueSelect[compIndex].setVisible(active);
-        if (active) {
+        boolean revActive = active && showSpinner;
+        revenue[compIndex].setVisible(!revActive);
+        revenueSelect[compIndex].setVisible(revActive);
+        if (revActive) {
             int oldValue = parseOldValue(revenue[compIndex].getText());
             revenueSelect[compIndex].setValue(oldValue);
         }
+        boolean dciActive = !active && showSpinner;
         if (hasDirectCompanyIncomeInOr) {
-            directIncomeRevenue[compIndex].setVisible(active);
-            directIncomeSelect[compIndex].setVisible(!active);
-            if (!active) {
+            directIncomeRevenue[compIndex].setVisible(dciActive);
+            directIncomeSelect[compIndex].setVisible(!dciActive);
+            if (!dciActive) {
                 int oldValue = parseOldValue(directIncomeRevenue[compIndex].getText());
                 directIncomeSelect[compIndex].setValue(oldValue);
             }
