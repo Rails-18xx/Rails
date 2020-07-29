@@ -1353,7 +1353,7 @@ public class ORUIManager implements DialogOwner {
             orWindow.requestFocus();
 
             orPanel.initTokenLayingStep();
-            log.debug("BaseTokens can be laid");
+            log.debug("BaseTokens can be laid or bonus tokens bought");
 
         } else if (possibleActions.contains(SetDividend.class)
                 && localStep == LocalSteps.SELECT_PAYOUT ) {
@@ -1440,6 +1440,9 @@ public class ORUIManager implements DialogOwner {
                 switch (action.getMode()) {
                 case DONE:
                     orPanel.enableDone(action);
+                    break;
+                case SKIP:
+                    orPanel.enableSkip(action);
                     break;
                 default:
                     break;
@@ -1591,6 +1594,10 @@ public class ORUIManager implements DialogOwner {
     // Further Getters
     public MessagePanel getMessagePanel() {
         return messagePanel;
+    }
+
+    public UpgradesPanel getUpgradePanel() {
+        return upgradePanel;
     }
 
     public HexMap getMap() {

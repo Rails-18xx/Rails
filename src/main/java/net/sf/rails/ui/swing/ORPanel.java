@@ -34,6 +34,7 @@ implements ActionListener, KeyListener, RevenueListener {
     public static final String PAYOUT_CMD = "Payout";
     public static final String SET_REVENUE_CMD = "SetRevenue";
     private static final String DONE_CMD = "Done";
+    private static final String SKIP_CMD = "Skip";
     private static final String UNDO_CMD = "Undo";
     private static final String REDO_CMD = "Redo";
     public static final String REM_TILES_CMD = "RemainingTiles";
@@ -61,50 +62,50 @@ implements ActionListener, KeyListener, RevenueListener {
     private ActionMenuItem repayLoans;
 
     // Grid elements per function
-    private Caption leftCompName[];
+    private Caption[] leftCompName;
     private int leftCompNameXOffset, leftCompNameYOffset;
-    private Caption rightCompName[];
+    private Caption[] rightCompName;
     private int rightCompNameXOffset, rightCompNameYOffset;
-    private Field president[];
+    private Field[] president;
     private int presidentXOffset, presidentYOffset;
-    private Field sharePrice[];
+    private Field[] sharePrice;
     private int sharePriceXOffset, sharePriceYOffset;
-    private Field cash[];
+    private Field[] cash;
     private int cashXOffset, cashYOffset;
-    private Field privates[];
+    private Field[] privates;
     private int privatesXOffset, privatesYOffset;
-    private Field newPrivatesCost[];
+    private Field[] newPrivatesCost;
     private Field[] compLoans;
     private int loansXOffset, loansYOffset;
-    private Field tiles[];
+    private Field[] tiles;
     private int tilesXOffset, tilesYOffset;
-    private Field tileCost[];
-    private Field tokens[];
-    private Field tokenCost[];
-    private Field tokensLeft[];
-    private Field tokenBonus[];
+    private Field[] tileCost;
+    private Field[] tokens;
+    private Field[] tokenCost;
+    private Field[] tokensLeft;
+    private Field[] tokenBonus;
     private int tokensXOffset, tokensYOffset;
-    private Field revenue[];
-    private Spinner revenueSelect[];
-    private Field decision[];
+    private Field[] revenue;
+    private Spinner[] revenueSelect;
+    private Field[] decision;
     private int revXOffset, revYOffset;
-    private Field trains[];
+    private Field[] trains;
     private int trainsXOffset, trainsYOffset;
-    private Field newTrainCost[];
+    private Field[] newTrainCost;
     private int rightsXOffset, rightsYOffset;
-    private Field rights[];
+    private Field[] rights;
     /**
      * For the direct Income to be entered during the OR Phase
      */
-    private Spinner directIncomeSelect[];
-    private Field directIncomeRevenue[];
+    private Spinner[] directIncomeSelect;
+    private Field[] directIncomeRevenue;
     private int bonusRevXOffset, bonusRevYOffset;
 
-    private boolean privatesCanBeBought = false;
-    private boolean bonusTokensExist = false;
-    private boolean hasCompanyLoans = false;
-    private boolean hasRights = false;
-    private boolean hasDirectCompanyIncomeInOr = false;
+    private boolean privatesCanBeBought;
+    private boolean bonusTokensExist;
+    private boolean hasCompanyLoans;
+    private boolean hasRights;
+    private boolean hasDirectCompanyIncomeInOr;
 
     // Configured properties
     private boolean showAllCompanies = "always".equalsIgnoreCase(
@@ -451,7 +452,7 @@ implements ActionListener, KeyListener, RevenueListener {
         leftCompNameXOffset = 0;
         leftCompNameYOffset = 2;
         int currentXOffset = leftCompNameXOffset;
-        int lastXWidth = 0;
+        int lastXWidth;
 
         MouseListener companyCaptionMouseClickListener = getCompanyCaptionMouseClickListener();
 
@@ -828,13 +829,13 @@ implements ActionListener, KeyListener, RevenueListener {
             if (company == null) return;
             if ( Config.getBoolean("map.route.window.display", true) ) {
                 NetworkAdapter network = NetworkAdapter.create(root);
-                NetworkGraph routeGraph = network.getRevenueGraph(company, Lists.<NetworkVertex>newArrayList());
+                NetworkGraph routeGraph = network.getRevenueGraph(company, Lists.newArrayList());
                 JFrame mapWindow = routeGraph.visualize("Route Network for " + company);
                 if ( mapWindow != null ) {
                     openWindows.add(mapWindow);
                 }
             }
-            List<String> addTrainList = new ArrayList<String>();
+            List<String> addTrainList = new ArrayList<>();
             boolean anotherTrain = true;
             RevenueAdapter ra;
             while (anotherTrain) {
@@ -852,7 +853,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 //convertRcRun might erroneously raise exceptions
                 try {ra.drawOptimalRunAsPath(orUIManager.getMap());}
                 catch (Exception e) {}
-                /**
+                /*
                  * TODO: Here the automatic calculation of the Special Company Income needs to be implemented
                  * 1837: Coal Mines
                  * 1853: Mail Contract
@@ -936,7 +937,7 @@ implements ActionListener, KeyListener, RevenueListener {
         // What kind action has been taken?
         JComponent source = (JComponent) actor.getSource();
         String command = actor.getActionCommand();
-        List<PossibleAction> executedActions = null;
+        List<PossibleAction> executedActions;
         PossibleAction executedAction = null;
 
         if (source instanceof ActionTaker) {
@@ -1196,7 +1197,7 @@ implements ActionListener, KeyListener, RevenueListener {
         setHighlight(tileCost[orCompIndex],true);
         button1.setVisible(false);
 
-        setCompanyVisibility(false);
+        setCompanyVisibility(showAllCompanies);
         selectRevenueSpinner(false);
     }
 
@@ -1211,7 +1212,7 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setVisible(false);
         button3.setEnabled(false);
 
-        setCompanyVisibility(false);
+        setCompanyVisibility(showAllCompanies);
         selectRevenueSpinner(false);
     }
 
@@ -1251,7 +1252,7 @@ implements ActionListener, KeyListener, RevenueListener {
             setRevenue (orCompIndex, bestRevenue);
             //revenueSelect[orCompIndex].setValue(bestRevenue);
             //revenue[orCompIndex].setText(format(bestRevenue));
-            /**
+            /*
              * This needs to have another value for the automatic setting of a Direct Income for a Company
              */
             if(hasDirectCompanyIncomeInOr) {
@@ -1337,7 +1338,7 @@ implements ActionListener, KeyListener, RevenueListener {
             button3.setVisible(false);
         }
 
-        setCompanyVisibility(false);
+        setCompanyVisibility(showAllCompanies);
     }
 
     public void initTrainBuying(boolean enabled) {
@@ -1406,6 +1407,17 @@ implements ActionListener, KeyListener, RevenueListener {
         button3.setMnemonic(KeyEvent.VK_D);
         button3.setPossibleAction(action);
         button3.setEnabled(true);
+    }
+
+    // Added because Skip is normally not set if there are no Base tokens to lay
+    public void enableSkip (NullAction action) {
+        orUIManager.getUpgradePanel().setActive(); // Only to display Skip.
+        // For unknown reasons the below does not work.
+        //button3.setRailsIcon(RailsIcon.SKIP);
+        //button3.setActionCommand(SKIP_CMD);
+        //button3.setMnemonic(KeyEvent.VK_S);
+        //button3.setPossibleAction(action);
+        //button3.setEnabled(true);
     }
 
     public void enableUndo(GameAction action) {
