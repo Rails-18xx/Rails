@@ -454,7 +454,6 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         return revenueBonuses;
     }
 
-
     @Override
     public String toText() {
         return externalId;

@@ -91,7 +91,7 @@
 		<Home hex="G4" />
 		<Destination hex="E6"/>
 		<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
-			<SpecialBaseTokenLay location="E6" connected="yes" extra="no" free="yes" requiresTile="yes" forced="ïfYellow"/>
+			<SpecialBaseTokenLay location="E6" connected="yes" extra="no" free="yes" requiresTile="no" forced="ifYellow"/>
 			<!-- Only used in Destination Run -->
 		</SpecialProperty>
 	</Company>
@@ -99,14 +99,14 @@
 		<Home hex="F11" city="1"/>
 		<Destination hex="B11"/>
 		<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
-			<SpecialBaseTokenLay location="B11" connected="yes" extra="no" free="yes" requiresTile="yes" forced="ïfYellow"/>
+			<SpecialBaseTokenLay location="B11" connected="yes" extra="no" free="yes" requiresTile="no" forced="ifYellow"/>
 		</SpecialProperty>
 	</Company>
 	<Company name="3" type="Minor" price="200" tokens="2" longname="Södra Stambanan (Southern Mainline)">
 		<Home hex="F11" city="2"/>
 		<Destination hex="D7"/>
 		<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
-			<SpecialBaseTokenLay location="D7" connected="yes" extra="no" free="yes" requiresTile="yes" forced="ïfYellow"/>
+			<SpecialBaseTokenLay location="D7" connected="yes" extra="no" free="yes" requiresTile="no" forced="ifYellow"/>
 		</SpecialProperty>
 	</Company>
 

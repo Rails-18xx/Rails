@@ -9,9 +9,12 @@ import net.sf.rails.game.special.SpecialBaseTokenLay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.LayBaseToken;
+import rails.game.action.LayTile;
 import rails.game.action.NullAction;
 import rails.game.action.SetDividend;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static net.sf.rails.game.GameDef.OrStep.FINAL;
@@ -89,6 +92,7 @@ public class DestinationRound_18Scan extends OperatingRound {
                // If this STL is location specific, check if there
                 // isn't already a token of this company or if it is blocked
             List<MapHex> locations = stl.getLocations();
+            boolean force = false;
             if (locations != null && !locations.isEmpty()) {
                 boolean canLay = false;
                 for (MapHex location : locations) {
@@ -96,16 +100,49 @@ public class DestinationRound_18Scan extends OperatingRound {
                         continue;
                     }
                     for (Stop stop : location.getStops()) {
-                        // TODO: Need to modify this
-                        canLay = !location.isBlockedForTokenLays(destinationCompany, stop)
-                                // An 18Scan special: lay aside the city if tile is yellow
-                                || location.getCurrentTile().getColour() == TileColour.YELLOW;
+                        if (!location.isBlockedForTokenLays(destinationCompany, stop)) {
+                            canLay = true;
+                        } else if (location.getCurrentTile().getColour() == TileColour.YELLOW) {
+                            canLay = true;
+                            force = true;
+                        }
                     }
                 }
                 if (!canLay) continue;
             }
-            currentSpecialTokenLays.add(new LayBaseToken(getRoot(), stl));
+            currentSpecialTokenLays.add(new LayBaseToken(getRoot(), stl, force));
          }
+    }
+
+    @Override
+    public boolean layBaseToken(LayBaseToken action) {
+
+        if (action.getType() == LayBaseToken.FORCED_LAY) {
+
+            // The receiving yellow city tile has no space for the destination token,
+            // so we must create that space.
+            // We replace tile #5 by #3005, which has one extra slot.
+            // The tile shown on the map will remain #5, so any tokens will not fit exactly.
+            // When the tile is upgraded to green, the token will automatically fall in place.
+            // (Checks to be added later)
+            MapHex hex = action.getChosenHex();  // Must be E6, D7 or (unlikely) B11
+            Tile tile = hex.getCurrentTile();  // Must be #5
+
+            LayTile replacement = new LayTile (getRoot(), LayTile.CORRECTION);
+            replacement.setCompany(destinationCompany);
+            replacement.setPlayerName(destinationCompany.getPresident().getId());
+            replacement.setLocations(new ArrayList<>(Arrays.asList(hex)));
+            replacement.setActed();
+            replacement.setChosenHex(hex);
+            replacement.setLaidTile(getRoot().getTileManager().getTile("3005"));
+            replacement.setOrientation(hex.getCurrentTileRotation().getTrackPointNumber());
+
+            action.setChosenStation(1);
+            layTileCorrection (replacement);
+
+        }
+
+        return super.layBaseToken (action);
     }
 
     @Override
@@ -164,6 +201,10 @@ public class DestinationRound_18Scan extends OperatingRound {
     }
 
     public String getRoundName() {
-        return "Destination round for minor "+destinationCompany.getId();
+        return toString();
+    }
+
+    public String toString() {
+        return "Bonus Round minor "+destinationCompany.getId();
     }
 }

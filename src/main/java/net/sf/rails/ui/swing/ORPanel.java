@@ -1400,6 +1400,10 @@ implements ActionListener, KeyListener, RevenueListener {
         specialMenu.setOpaque(true);
     }
 
+    public boolean hasSpecialActions () {
+        return specialMenu.getItemCount() > 0;
+    }
+
     public void enableDone(NullAction action) {
 
         button3.setRailsIcon(RailsIcon.DONE);

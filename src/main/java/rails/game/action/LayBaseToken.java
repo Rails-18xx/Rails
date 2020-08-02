@@ -7,10 +7,7 @@ import java.util.List;
 
 import com.google.common.base.Objects;
 
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.MapManager;
-import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.Stop;
+import net.sf.rails.game.*;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialBaseTokenLay;
 import net.sf.rails.util.RailsObjects;
@@ -70,9 +67,17 @@ public class LayBaseToken extends LayToken {
      */
     public LayBaseToken(RailsRoot root, SpecialBaseTokenLay specialProperty) {
         super(root, specialProperty);
-        type = specialProperty.getForced() == SpecialBaseTokenLay.Forced.IF_YELLOW
-                ? FORCED_LAY : SPECIAL_PROPERTY;
-        // FORCED_LAY implies SPECIAL_PROPERTY
+        type = SPECIAL_PROPERTY;
+    }
+
+    /**
+     * A variant that forces a token lay, possibly outside a city circle
+     * if there is no free spot, but fully functional otherwise.
+     * This may be needed in 18Scan during a minor's Bonus Run.
+     */
+    public LayBaseToken (RailsRoot root, SpecialBaseTokenLay specialProperty, boolean forced) {
+        this (root, specialProperty);
+        if (forced) type = FORCED_LAY;
     }
 
     /** Lay a base token on a given location.

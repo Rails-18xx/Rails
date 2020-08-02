@@ -160,19 +160,16 @@ Not yet implemented:
     </Game>
 
 	<Game name="18Scan">
-		<Note>Mostly playable</Note>
+		<Note>Playable</Note>
 		<Description>18Scan - Railroading under the Northern Lights
-		(c) 20044-2005 David G.D. Hecht
+		(c) 2004-2005 David G.D. Hecht
 		Published by Deep Thought Games, LLC
 
 		Limitations:
 		- Revenue bonuses are not correctly calculated.
-		- Minors cannot yet lay destination token on a blocked yellow city.
-		- Bonus token owner is not asked for permission to buy one.
-
-		Known bugs:
-		- LayToken step is skipped if base tokens are all used but a bonus token is still available.
-		- The price of a bonus token sold from phase 5 is payed to the originally owning player in stead of the bank.
+			To be corrected manually (advice: activate the Revenue Spinner
+			in the Configuration/Apppearance tab at startup).
+		- Bonus token owner is not asked for permission to buy such a token.
 		</Description>
 		<Players minimum="2" maximum="4" />
 	</Game>

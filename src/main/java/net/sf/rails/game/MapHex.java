@@ -657,6 +657,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         if (token == null) {
             log.error("Company {} has no free token", company.getId());
             return false;
+        } else if (stop == null) {  // Added for 18Scan, still necessary?
+            return true;
         } else {
             // transfer token
             token.moveTo(stop);

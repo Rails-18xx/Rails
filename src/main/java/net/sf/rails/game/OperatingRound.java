@@ -2014,7 +2014,8 @@ public class OperatingRound extends Round implements Observer {
             if (getStep() != GameDef.OrStep.LAY_TOKEN
                     && action.getType() != LayBaseToken.HOME_CITY
                     && action.getType() != LayBaseToken.SPECIAL_PROPERTY
-                    && action.getType() != LayBaseToken.CORRECTION) {
+                    && action.getType() != LayBaseToken.CORRECTION
+                    && action.getType() != LayBaseToken.FORCED_LAY) {
                 errMsg = LocalText.getText("WrongActionNoTokenLay");
                 break;
             }

@@ -6,6 +6,7 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.PublicCertificate;
+import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.special.SpecialSingleTileLay;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.Util;
@@ -101,7 +102,7 @@ public class OperatingRound_18Scan extends OperatingRound {
                     company.getId(),
                     Bank.format(this, revenue),
                     company.getPresident().getId());
-            log.debug("OR skips {}: Cannot run trains but still pays {}", revenue);
+            log.debug("Cannot run trains but still pays {}", revenue);
             ReportBuffer.add(this, report);
             action.setActualRevenue(revenue);
             action.setRevenueAllocation(SetDividend.PAYOUT);
@@ -221,6 +222,7 @@ public class OperatingRound_18Scan extends OperatingRound {
                     bonusTokens,
                     SJ));
 
+            // Exchange minor tokens for SJ tokens
             for (BaseToken token : minor.getBaseTokensModel().getLaidTokens()) {
                 // Procedure copied from 1835
                 Stop city = (Stop) token.getOwner();
@@ -240,12 +242,22 @@ public class OperatingRound_18Scan extends OperatingRound {
                     LocalText.getText("MinorClosesAndShareExchanged",
                             minor.getId(), owner.getId(), sjCert.getShare(), SJ));
         }
+
+        // Check if SJ can float
         checkFlotation(sj);
         if (sj.hasFloated()) {
             sj.checkPresidency();
             DisplayBuffer.add(this, LocalText.getText("HasFormedAndFloated", SJ));
         } else {
             DisplayBuffer.add(this, LocalText.getText("HasFormedNotFloated", SJ));
+        }
+
+        // Any unsold bonus tokens must now be paid to the Bank
+        List<SellBonusToken> sbts = gameManager.getSpecialProperties(SellBonusToken.class, false);
+        if (!sbts.isEmpty()) {
+            for (SellBonusToken sbt : sbts) {
+                sbt.setSeller(bank.getPool());
+            }
         }
      }
  }

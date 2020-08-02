@@ -188,9 +188,11 @@ public class ORUIManager implements DialogOwner {
 
         // show selectable hexes if highlight is active
         if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
-        checkHexVisibilityOnUI(actions);
+            checkHexVisibilityOnUI(actions);
         }
 
+        // TODO: This really is too early, the special actions are not yet defined here.
+        // This is now fixed at line 1545, see also line 1449 for an earlier attempt.
         LocalSteps nextSubStep;
         if (tileActions.isEmpty() && tokenActions.isEmpty()) {
             nextSubStep = LocalSteps.INACTIVE;
@@ -442,6 +444,13 @@ public class ORUIManager implements DialogOwner {
                            normalTokenMessage));
                }
             }
+        }
+
+        if (tileLays.isEmpty() && tokenLays.isEmpty() && orPanel.hasSpecialActions()) {
+            // Special actions only. Maybe we need a separate substep for this case.
+            // Restart the message
+            message = new StringBuilder("<font color='red'>" + LocalText.getText("YouHaveSpecialActions") + "</font>");
+            message.append("<br>" + LocalText.getText("YouCannotLayTokens"));
         }
 
         if (correctionActive) {
@@ -744,7 +753,9 @@ public class ORUIManager implements DialogOwner {
         LayBaseToken action = (LayBaseToken) upgrade.getAction();
 
         action.setChosenHex(hex);
-        action.setChosenStation(upgrade.getSelectedStop().getRelatedNumber());
+        if (upgrade.getSelectedStop() != null) { // Added for 18Scan, still necessary?
+            action.setChosenStation(upgrade.getSelectedStop().getRelatedNumber());
+        }
 
         if (!orWindow.process(action)) {
             setLocalStep(LocalSteps.SELECT_HEX);
@@ -1442,7 +1453,7 @@ public class ORUIManager implements DialogOwner {
                     orPanel.enableDone(action);
                     break;
                 case SKIP:
-                    orPanel.enableSkip(action);
+                    //orPanel.enableSkip(action);
                     break;
                 default:
                     break;
@@ -1535,6 +1546,12 @@ public class ORUIManager implements DialogOwner {
 
 
         checkForGameSpecificActions(orComp, orStep, possibleActions);
+
+        // If special actions exist, check if Skip button is activated
+        if (orPanel.hasSpecialActions()) {
+            upgradePanel.setActive();
+            updateMessage(); // Does not work even here !?
+        }
 
         orPanel.redisplay();
     }
