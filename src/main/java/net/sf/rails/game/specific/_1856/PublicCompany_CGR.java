@@ -82,7 +82,7 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
     }
 
     @Override
-    public boolean canRunTrains() {
+    public boolean hasTrains() {
         if (!hadPermanentTrain()) {
             return true;
         }

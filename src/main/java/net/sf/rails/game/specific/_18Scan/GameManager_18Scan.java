@@ -44,7 +44,9 @@ public class GameManager_18Scan extends GameManager {
     private void startDestinationRun () {
         for (PublicCompany company : destinationCompanies) {
             destinationCompany = company;
-            createRound(DestinationRound_18Scan.class, "18Scan_Dest").start(destinationCompany);
+            createRound(DestinationRound_18Scan.class, "DestRun_" + company.getId())
+                    .start(destinationCompany);
+            break; // One at a time.
         }
     }
 

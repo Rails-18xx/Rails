@@ -6,6 +6,7 @@ import net.sf.rails.common.Config;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.ui.swing.elements.*;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
 import net.sf.rails.util.Util;
@@ -33,6 +34,7 @@ implements ActionListener, KeyListener, RevenueListener {
     public static final String PAYOUT_CMD = "Payout";
     public static final String SET_REVENUE_CMD = "SetRevenue";
     private static final String DONE_CMD = "Done";
+    private static final String SKIP_CMD = "Skip";
     private static final String UNDO_CMD = "Undo";
     private static final String REDO_CMD = "Redo";
     public static final String REM_TILES_CMD = "RemainingTiles";
@@ -60,50 +62,50 @@ implements ActionListener, KeyListener, RevenueListener {
     private ActionMenuItem repayLoans;
 
     // Grid elements per function
-    private Caption leftCompName[];
+    private Caption[] leftCompName;
     private int leftCompNameXOffset, leftCompNameYOffset;
-    private Caption rightCompName[];
+    private Caption[] rightCompName;
     private int rightCompNameXOffset, rightCompNameYOffset;
-    private Field president[];
+    private Field[] president;
     private int presidentXOffset, presidentYOffset;
-    private Field sharePrice[];
+    private Field[] sharePrice;
     private int sharePriceXOffset, sharePriceYOffset;
-    private Field cash[];
+    private Field[] cash;
     private int cashXOffset, cashYOffset;
-    private Field privates[];
+    private Field[] privates;
     private int privatesXOffset, privatesYOffset;
-    private Field newPrivatesCost[];
+    private Field[] newPrivatesCost;
     private Field[] compLoans;
     private int loansXOffset, loansYOffset;
-    private Field tiles[];
+    private Field[] tiles;
     private int tilesXOffset, tilesYOffset;
-    private Field tileCost[];
-    private Field tokens[];
-    private Field tokenCost[];
-    private Field tokensLeft[];
-    private Field tokenBonus[];
+    private Field[] tileCost;
+    private Field[] tokens;
+    private Field[] tokenCost;
+    private Field[] tokensLeft;
+    private Field[] tokenBonus;
     private int tokensXOffset, tokensYOffset;
-    private Field revenue[];
-    private Spinner revenueSelect[];
-    private Field decision[];
+    private Field[] revenue;
+    private Spinner[] revenueSelect;
+    private Field[] decision;
     private int revXOffset, revYOffset;
-    private Field trains[];
+    private Field[] trains;
     private int trainsXOffset, trainsYOffset;
-    private Field newTrainCost[];
+    private Field[] newTrainCost;
     private int rightsXOffset, rightsYOffset;
-    private Field rights[];
+    private Field[] rights;
     /**
      * For the direct Income to be entered during the OR Phase
      */
-    private Spinner directIncomeSelect[];
-    private Field directIncomeRevenue[];
+    private Spinner[] directIncomeSelect;
+    private Field[] directIncomeRevenue;
     private int bonusRevXOffset, bonusRevYOffset;
 
-    private boolean privatesCanBeBought = false;
-    private boolean bonusTokensExist = false;
-    private boolean hasCompanyLoans = false;
-    private boolean hasRights = false;
-    private boolean hasDirectCompanyIncomeInOr = false;
+    private boolean privatesCanBeBought;
+    private boolean bonusTokensExist;
+    private boolean hasCompanyLoans;
+    private boolean hasRights;
+    private boolean hasDirectCompanyIncomeInOr;
 
     // Configured properties
     private boolean showAllCompanies = "always".equalsIgnoreCase(
@@ -450,7 +452,7 @@ implements ActionListener, KeyListener, RevenueListener {
         leftCompNameXOffset = 0;
         leftCompNameYOffset = 2;
         int currentXOffset = leftCompNameXOffset;
-        int lastXWidth = 0;
+        int lastXWidth;
 
         MouseListener companyCaptionMouseClickListener = getCompanyCaptionMouseClickListener();
 
@@ -827,13 +829,13 @@ implements ActionListener, KeyListener, RevenueListener {
             if (company == null) return;
             if ( Config.getBoolean("map.route.window.display", true) ) {
                 NetworkAdapter network = NetworkAdapter.create(root);
-                NetworkGraph routeGraph = network.getRevenueGraph(company, Lists.<NetworkVertex>newArrayList());
+                NetworkGraph routeGraph = network.getRevenueGraph(company, Lists.newArrayList());
                 JFrame mapWindow = routeGraph.visualize("Route Network for " + company);
                 if ( mapWindow != null ) {
                     openWindows.add(mapWindow);
                 }
             }
-            List<String> addTrainList = new ArrayList<String>();
+            List<String> addTrainList = new ArrayList<>();
             boolean anotherTrain = true;
             RevenueAdapter ra;
             while (anotherTrain) {
@@ -851,7 +853,7 @@ implements ActionListener, KeyListener, RevenueListener {
                 //convertRcRun might erroneously raise exceptions
                 try {ra.drawOptimalRunAsPath(orUIManager.getMap());}
                 catch (Exception e) {}
-                /**
+                /*
                  * TODO: Here the automatic calculation of the Special Company Income needs to be implemented
                  * 1837: Coal Mines
                  * 1853: Mail Contract
@@ -935,7 +937,7 @@ implements ActionListener, KeyListener, RevenueListener {
         // What kind action has been taken?
         JComponent source = (JComponent) actor.getSource();
         String command = actor.getActionCommand();
-        List<PossibleAction> executedActions = null;
+        List<PossibleAction> executedActions;
         PossibleAction executedAction = null;
 
         if (source instanceof ActionTaker) {
@@ -958,7 +960,25 @@ implements ActionListener, KeyListener, RevenueListener {
                 } else {
                     setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
                 }*/
+
+                SetDividend action = (SetDividend) executedAction;
+                // The spinner value may have changed, copy value to the text version
+                if (revenueSelect[orCompIndex].isVisible()) {
+                    revenue[orCompIndex].setText(format(getRevenue(orCompIndex)));
+                }
                 selectRevenueSpinner(false);
+                // If revenue is zero, the company apparently has no route,
+                // because without a train we wouldn't be here.
+                if (getRevenue(orCompIndex) == 0) {
+                    decision[orCompIndex].setText(LocalText.getText("NoRoute"));
+                /*  Does not work well.
+                 *  TODO to be revisited
+                } else if (action.getAllowedAllocations().length == 1) {
+                    int allocation = action.getAllowedAllocations()[0];
+                    if (allocation >= 0 && allocation < SetDividend.NUM_OPTIONS) {
+                        decision[orCompIndex].setText(SetDividend.getAllocationNameKey(allocation));
+                    }*/
+                }
             }
 
             orUIManager.processAction(command, executedActions);
@@ -1027,8 +1047,8 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     public void setRevenue(int orCompIndex, int amount) {
-        // TODO: the round reference is a workaround
-        revenue[orCompIndex].setText(orUIManager.getGameUIManager().format(amount));
+        revenueSelect[orCompIndex].setValue(amount);
+        revenue[orCompIndex].setText(format(amount));
     }
 
     public void resetActions() {
@@ -1200,7 +1220,10 @@ implements ActionListener, KeyListener, RevenueListener {
 
         revenueCaption.setHighlight(true);
         setHighlight(revenueSelect[orCompIndex],true);
-        revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
+        //decision[orCompIndex].setText("");  // Somehow this prevents the actual decision to be shown
+        setRevenue (orCompIndex, action.getPresetRevenue());
+        //revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
+        //revenue[orCompIndex].setText(format(action.getPresetRevenue()));
         selectRevenueSpinner (true);
         /*
         if ( hasDirectCompanyIncomeInOr) {
@@ -1226,8 +1249,10 @@ implements ActionListener, KeyListener, RevenueListener {
     @Override
     public void revenueUpdate(int bestRevenue, boolean finalResult) {
         if (isRevenueValueToBeSet) {
-            revenueSelect[orCompIndex].setValue(bestRevenue);
-            /**
+            setRevenue (orCompIndex, bestRevenue);
+            //revenueSelect[orCompIndex].setValue(bestRevenue);
+            //revenue[orCompIndex].setText(format(bestRevenue));
+            /*
              * This needs to have another value for the automatic setting of a Direct Income for a Company
              */
             if(hasDirectCompanyIncomeInOr) {
@@ -1375,6 +1400,10 @@ implements ActionListener, KeyListener, RevenueListener {
         specialMenu.setOpaque(true);
     }
 
+    public boolean hasSpecialActions () {
+        return specialMenu.getItemCount() > 0;
+    }
+
     public void enableDone(NullAction action) {
 
         button3.setRailsIcon(RailsIcon.DONE);
@@ -1382,6 +1411,17 @@ implements ActionListener, KeyListener, RevenueListener {
         button3.setMnemonic(KeyEvent.VK_D);
         button3.setPossibleAction(action);
         button3.setEnabled(true);
+    }
+
+    // Added because Skip is normally not set if there are no Base tokens to lay
+    public void enableSkip (NullAction action) {
+        orUIManager.getUpgradePanel().setActive(); // Only to display Skip.
+        // For unknown reasons the below does not work.
+        //button3.setRailsIcon(RailsIcon.SKIP);
+        //button3.setActionCommand(SKIP_CMD);
+        //button3.setMnemonic(KeyEvent.VK_S);
+        //button3.setPossibleAction(action);
+        //button3.setEnabled(true);
     }
 
     public void enableUndo(GameAction action) {
@@ -1455,8 +1495,7 @@ implements ActionListener, KeyListener, RevenueListener {
         revenue[compIndex].setVisible(!revActive);
         revenueSelect[compIndex].setVisible(revActive);
         if (revActive) {
-            int oldValue = Integer.parseInt(revenue[compIndex].getText()
-                    .replaceAll("[^0-9]", ""));
+            int oldValue = parseOldValue(revenue[compIndex].getText());
             revenueSelect[compIndex].setValue(oldValue);
         }
         boolean dciActive = !active && showSpinner;
@@ -1464,10 +1503,21 @@ implements ActionListener, KeyListener, RevenueListener {
             directIncomeRevenue[compIndex].setVisible(dciActive);
             directIncomeSelect[compIndex].setVisible(!dciActive);
             if (!dciActive) {
-                int oldValue = Integer.parseInt(directIncomeRevenue[compIndex].getText()
-                        .replaceAll("[^0-9]", ""));
+                int oldValue = parseOldValue(directIncomeRevenue[compIndex].getText());
                 directIncomeSelect[compIndex].setValue(oldValue);
             }
+        }
+    }
+
+    public String format(int amount) {
+        return orUIManager.getGameUIManager().format(amount);
+    }
+
+    private int parseOldValue (String text) {
+        if (Util.hasValue(text)) {
+            return Integer.parseInt(text.replaceAll("[^0-9]", ""));
+        } else {
+            return 0;
         }
     }
 

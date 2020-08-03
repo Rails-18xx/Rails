@@ -806,23 +806,36 @@ public class OperatingRound extends Round implements Observer {
             newStep = steps[stepIndex];
             log.debug("OR considers newStep {}", newStep);
 
-            if (newStep == GameDef.OrStep.LAY_TOKEN
-                    && company.getNumberOfFreeBaseTokens() == 0) {
-                log.debug("OR skips {}: No freeBaseTokens", newStep);
-                continue;
+            if (newStep == GameDef.OrStep.LAY_TOKEN) {
+                List<SpecialProperty> bonuses = gameManager.getCommonSpecialProperties();
+                boolean bonusTokensForSale = bonuses.size() > 0
+                        // We must (perhaps temporarily) make an exception for 1856,
+                        // because otherwise its test files no longer get loaded.
+                        // BTW the 1856 rules don't state when bonus tokens can be bought.
+                        // TODO: Need to check how Rails handles that game.
+                        // TODO: Also need to consider the "when" value.
+                        && !"1856".equals(getRoot().getGameName());
+                if (company.getNumberOfFreeBaseTokens() == 0
+                    && !bonusTokensForSale) {
+                    log.debug("OR skips {}: No tokens available", newStep);
+                    continue;
+                }
             }
 
             if (newStep == GameDef.OrStep.CALC_REVENUE) {
 
-                if (!company.canGenerateRevenue()) {
-                    // No trains, then the revenue is zero (normally).
-                    log.debug("OR skips {}: Cannot run trains", newStep);
-                    executeSetRevenueAndDividend(new SetDividend(getRoot(), 0, false, new int[] { SetDividend.NO_TRAIN }));
-                    // TODO: This probably does not handle share selling correctly
-                    continue;
-                } else if (!company.canRunTrains()) {
+                if (company.hasTrains()) {
+                    // All OK, we can't check here if it has a route
+
+                } else if (company.canGenerateRevenue()) {
                     // In 18Scan a trainless minor company still pays out.
-                    executeTrainlessRevenue (newStep);
+                    executeTrainlessRevenue(newStep);
+                    continue;
+                } else {
+                    log.debug("OR skips {}: Cannot run trains", newStep);
+                    executeSetRevenueAndDividend(new SetDividend(getRoot(), 0,
+                            false, new int[] { SetDividend.NO_TRAIN }));
+                    // TODO: This probably does not handle share selling correctly
                     continue;
                 }
             }
@@ -899,9 +912,19 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /**
-     * Stub, to be used in some cases (e.g. 18Scan minors)
+     * Stub, to be used in case a trainless company still
+     * generates some income (e.g. 18Scan minors)
+     * @param step An OR step that is considered for execution
      */
     protected void executeTrainlessRevenue (GameDef.OrStep step) {}
+
+    /** Stub, to be used in case a zero earnings run still
+     * generates some income (e.g. 18Scan minors)
+     * @param action SetDividend action with zero revenue
+     */
+    protected SetDividend  checkZeroRevenue (SetDividend action) {
+        return action;
+    }
 
     /**
      * This method is only called at the start of each step (unlike
@@ -1732,7 +1755,7 @@ public class OperatingRound extends Round implements Observer {
             log.debug("No more normal tile lays allowed");
             // currentNormalTileLays.clear();// Shouldn't be needed anymore ??
         } else {
-            List<String> coloursToRemove = new ArrayList<String>();
+            List<String> coloursToRemove = new ArrayList<>();
             for (String key : tileLaysPerColour.viewKeySet()) {
                 if (colour.equals(key)) {
                     tileLaysPerColour.put(key, oldAllowedNumber - 1);
@@ -1769,11 +1792,11 @@ public class OperatingRound extends Round implements Observer {
     protected List<LayTile> getNormalTileLays(boolean display) {
 
         /* Normal tile lays */
-        List<LayTile> currentNormalTileLays = new ArrayList<LayTile>();
+        List<LayTile> currentNormalTileLays = new ArrayList<>();
 
         // Check which colours can still be laid
         Map<String, Integer> remainingTileLaysPerColour =
-                new HashMap<String, Integer>();
+                new HashMap<>();
 
         int lays = 0;
         for (String colourName : tileLaysPerColour.viewKeySet()) {
@@ -1809,7 +1832,7 @@ public class OperatingRound extends Round implements Observer {
     protected List<LayTile> getSpecialTileLays(boolean display) {
 
         /* Special-property tile lays */
-        List<LayTile> currentSpecialTileLays = new ArrayList<LayTile>();
+        List<LayTile> currentSpecialTileLays = new ArrayList<>();
 
         if (operatingCompany.value().canUseSpecialProperties()) {
 
@@ -1859,8 +1882,7 @@ public class OperatingRound extends Round implements Observer {
 
         if (layTile == null) return false;
 
-        SpecialTileLay sp = layTile.getSpecialProperty();
-        SpecialTileLay stl = sp;
+        SpecialTileLay stl = layTile.getSpecialProperty();
 
         if (!stl.isExtra()
                 // If the special tile lay is not extra, it is only allowed if
@@ -1884,7 +1906,7 @@ public class OperatingRound extends Round implements Observer {
         if (stlc == null) {
             layableColours = phaseColours;
         } else {
-            layableColours = new ArrayList<String>();
+            layableColours = new ArrayList<>();
             for (String colour : stlc) {
                 if (phaseColours.contains(colour)) layableColours.add(colour);
             }
@@ -1893,15 +1915,15 @@ public class OperatingRound extends Round implements Observer {
 
         // If any locations are specified, check if tile or colour(s) can be
         // laid there.
-        Map<String, Integer> tc = new HashMap<String, Integer>();
+        Map<String, Integer> tc = new HashMap<>();
         List<MapHex> hexes = stl.getLocations();
         List<MapHex> remainingHexes = null;
         List<String> remainingColours = null;
         int cash = operatingCompany.value().getCash();
 
         if (hexes != null) {
-            remainingHexes = new ArrayList<MapHex>();
-            remainingColours = new ArrayList<String>();
+            remainingHexes = new ArrayList<>();
+            remainingColours = new ArrayList<>();
         }
         for (String colour : layableColours) {
             if (hexes != null) {
@@ -1954,10 +1976,8 @@ public class OperatingRound extends Round implements Observer {
      */
     protected boolean isTileLayAllowed(PublicCompany company, MapHex hex,
                                        int orientation) {
-        boolean result = true;
 
-        result = gameSpecificTileLayAllowed(company, hex, orientation);
-        return result;
+        return gameSpecificTileLayAllowed(company, hex, orientation);
     }
 
     protected boolean gameSpecificTileLayAllowed(PublicCompany company,
@@ -1994,7 +2014,8 @@ public class OperatingRound extends Round implements Observer {
             if (getStep() != GameDef.OrStep.LAY_TOKEN
                     && action.getType() != LayBaseToken.HOME_CITY
                     && action.getType() != LayBaseToken.SPECIAL_PROPERTY
-                    && action.getType() != LayBaseToken.CORRECTION) {
+                    && action.getType() != LayBaseToken.CORRECTION
+                    && action.getType() != LayBaseToken.FORCED_LAY) {
                 errMsg = LocalText.getText("WrongActionNoTokenLay");
                 break;
             }
@@ -2256,7 +2277,7 @@ public class OperatingRound extends Round implements Observer {
             if (stl != null) {
                 stl.setExercised();
                 // FIXME: currentSpecialTokenLays can't actually contain a LayBonusToken
-                currentSpecialTokenLays.remove(action);
+                //currentSpecialTokenLays.remove(action);
             }
 
         }
@@ -2268,8 +2289,8 @@ public class OperatingRound extends Round implements Observer {
 
         String errMsg = null;
         int cost;
-        SellBonusToken sbt = null;
-        MoneyOwner seller = null;
+        SellBonusToken sbt;
+        MoneyOwner seller;
 
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -2327,6 +2348,11 @@ public class OperatingRound extends Round implements Observer {
 
         sbt.setExercised();
 
+        if (currentNormalTokenLays.size() == 0
+                && currentSpecialTokenLays.size() == 0
+                && gameManager.getCommonSpecialProperties().size() == 0)
+            nextStep();
+
         return true;
     }
 
@@ -2376,7 +2402,24 @@ public class OperatingRound extends Round implements Observer {
 
     }
 
-    protected String validateSetRevenueAndDividend(SetDividend action) {
+    /**
+     * Validate the SetRevenue action, default version
+     * @param action The completed SetRevenue action
+     * @return True if valid
+     */
+    protected String validateSetRevenueAndDividend (SetDividend action) {
+        return validateSetRevenueAndDividend (action, true);
+    }
+
+    /**
+     * Validate the SetRevenue action, with option to bypass the allocation check.
+     * This is needed in reloading a saved file, to accept the allocation change
+     * that is needed in 18Scan to process the Minor company default revenue of K10.
+     * @param action The completed SetRevenue action
+     * @param checkAllocation False if the allocation check must be bypassed (18Scan only).
+     * @return True if valid
+     */
+    protected String validateSetRevenueAndDividend(SetDividend action, boolean checkAllocation) {
 
         String errMsg = null;
         PublicCompany company;
@@ -2431,19 +2474,21 @@ public class OperatingRound extends Round implements Observer {
                 }
 
                 // Validate the chosen allocation type
-                int[] allowedAllocations =
-                        ((SetDividend) selectedAction).getAllowedAllocations();
-                boolean valid = false;
-                for (int aa : allowedAllocations) {
-                    if (revenueAllocation == aa) {
-                        valid = true;
+                if (checkAllocation) {
+                    int[] allowedAllocations =
+                            ((SetDividend) selectedAction).getAllowedAllocations();
+                    boolean valid = false;
+                    for (int aa : allowedAllocations) {
+                        if (revenueAllocation == aa) {
+                            valid = true;
+                            break;
+                        }
+                    }
+                    if (!valid) {
+                        errMsg =
+                                LocalText.getText(SetDividend.getAllocationNameKey(revenueAllocation));
                         break;
                     }
-                }
-                if (!valid) {
-                    errMsg =
-                            LocalText.getText(SetDividend.getAllocationNameKey(revenueAllocation));
-                    break;
                 }
             } else {
                // If there is no revenue, use withhold.
@@ -2470,6 +2515,10 @@ public class OperatingRound extends Round implements Observer {
     protected void executeSetRevenueAndDividend(SetDividend action, String report) {
 
         int amount = action.getActualRevenue();
+
+        // Sometimes there still is a payout; if so, the action will be updated
+        //if (amount == 0) action = checkZeroRevenue(action);
+
         int revenueAllocation = action.getRevenueAllocation();
 
         operatingCompany.value().setLastRevenue(amount);
@@ -2563,7 +2612,7 @@ public class OperatingRound extends Round implements Observer {
     protected Map<MoneyOwner, Integer> countSharesPerRecipient() {
 
         Map<MoneyOwner, Integer> sharesPerRecipient =
-                new HashMap<MoneyOwner, Integer>();
+                new HashMap<>();
 
         // Changed to accomodate the CGR 5% share roundup rule.
         // For now it is assumed, that actual payouts are always rounded up
@@ -2625,9 +2674,7 @@ public class OperatingRound extends Round implements Observer {
             ReportBuffer.add(this, LocalText.getText("CompanyClosesAt",
                     company.getId(), newSpace.getId()));
             finishTurn();
-            return;
         }
-
     }
 
     /**
@@ -2744,16 +2791,21 @@ public class OperatingRound extends Round implements Observer {
     protected void prepareRevenueAndDividendAction() {
 
         // There is only revenue if there are any trains
-        if (operatingCompany.value().canRunTrains()) {
-            int[] allowedRevenueActions =
-                    operatingCompany.value().isSplitAlways()
-                            ? new int[]{SetDividend.SPLIT}
-                            : operatingCompany.value().isSplitAllowed()
-                            ? new int[]{SetDividend.PAYOUT,
-                            SetDividend.SPLIT,
-                            SetDividend.WITHHOLD} : new int[]{
-                            SetDividend.PAYOUT,
-                            SetDividend.WITHHOLD};
+        if (operatingCompany.value().hasTrains()) {
+            int[] allowedRevenueActions;
+            if (operatingCompany.value().isSplitAlways()) {
+                allowedRevenueActions = new int[]{
+                        SetDividend.SPLIT};
+            } else if (operatingCompany.value().isSplitAllowed()) {
+                allowedRevenueActions = new int[]{
+                        SetDividend.PAYOUT,
+                        SetDividend.SPLIT,
+                        SetDividend.WITHHOLD};
+            } else {
+                allowedRevenueActions = new int[]{
+                        SetDividend.PAYOUT,
+                        SetDividend.WITHHOLD};
+            }
 
             possibleActions.add(new SetDividend(getRoot(),
                     operatingCompany.value().getLastRevenue(), true,
@@ -2776,7 +2828,7 @@ public class OperatingRound extends Round implements Observer {
                     operatingCompany.value().getBaseTokenLayCosts();
 
             // change to set to allow for identity and ordering
-            Set<Integer> costsSet = new TreeSet<Integer>();
+            Set<Integer> costsSet = new TreeSet<>();
             for (int cost : baseCosts)
                 if (!(cost == 0 && baseCosts.size() != 1)) // fix for sequence
                     // based home token
@@ -3049,14 +3101,14 @@ public class OperatingRound extends Round implements Observer {
 
     public boolean checkForExcessTrains() {
 
-        excessTrainCompanies = new HashMap<Player, List<PublicCompany>>();
+        excessTrainCompanies = new HashMap<>();
         Player player;
         for (PublicCompany comp : operatingCompanies.view()) {
             if (comp.getPortfolioModel().getNumberOfTrains() > comp.getCurrentTrainLimit()) {
                 player = comp.getPresident();
                 if (!excessTrainCompanies.containsKey(player)) {
                     excessTrainCompanies.put(player,
-                            new ArrayList<PublicCompany>(2));
+                            new ArrayList<>(2));
                 }
                 excessTrainCompanies.get(player).add(comp);
             }
@@ -3082,7 +3134,7 @@ public class OperatingRound extends Round implements Observer {
 
         int cash = operatingCompany.value().getCash();
 
-        int cost = 0;
+        int cost;
         Set<Train> trains;
 
         boolean hasTrains =
@@ -3097,9 +3149,9 @@ public class OperatingRound extends Round implements Observer {
         boolean emergency = false;
 
         SortedMap<Integer, Train> newEmergencyTrains =
-                new TreeMap<Integer, Train>();
+                new TreeMap<>();
         SortedMap<Integer, Train> usedEmergencyTrains =
-                new TreeMap<Integer, Train>();
+                new TreeMap<>();
 
         // First check if any more trains may be bought from the Bank
         // Postpone train limit checking, because an exchange might be possible
@@ -3249,9 +3301,9 @@ public class OperatingRound extends Round implements Observer {
 
             // Set up a list per player of presided companies
             List<List<PublicCompany>> companiesPerPlayer =
-                    new ArrayList<List<PublicCompany>>(numberOfPlayers);
+                    new ArrayList<>(numberOfPlayers);
             for (int i = 0; i < numberOfPlayers; i++)
-                companiesPerPlayer.add(new ArrayList<PublicCompany>(4));
+                companiesPerPlayer.add(new ArrayList<>(4));
             List<PublicCompany> companies;
             // Sort out which players preside over which companies.
             for (PublicCompany c : companyManager.getAllPublicCompanies()) {
@@ -3345,7 +3397,7 @@ public class OperatingRound extends Round implements Observer {
 
     protected <T extends SpecialProperty> List<T> getSpecialProperties(
             Class<T> clazz) {
-        List<T> specialProperties = new ArrayList<T>();
+        List<T> specialProperties = new ArrayList<>();
         if (!operatingCompany.value().isClosed()) {
             // OC may have closed itself (e.g. in 1835 when M2 buys 1st 4T and
             // starts PR)

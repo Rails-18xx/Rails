@@ -55,6 +55,8 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     protected String closeAtPhaseName = null;
     // Manual close possible
     protected boolean closeManually = false;
+    // Closes if associated public company buya a train
+    protected String closeAtTrainBuy = null;
 
     protected String blockedHexesString = null;
     protected List<MapHex> blockedHexes = null;
@@ -203,6 +205,12 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
                 if (closeTag != null) {
                     closeAtPhaseName = closeTag.getText();
                 }
+
+                // Close if associated PublicCompany buys its first train
+                Tag trainBuyTag = closureTag.getChild("FirstTrainBought");
+                if (trainBuyTag != null) {
+                    closeAtTrainBuy = trainBuyTag.getAttributeAsString("company");
+                }
             }
 
             // start: br
@@ -276,6 +284,13 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
             Phase closingPhase = root.getPhaseManager().getPhaseByName(closeAtPhaseName);
             if (closingPhase != null) {
                 closingPhase.addObjectToClose(this);
+            }
+        }
+
+        if (Util.hasValue(closeAtTrainBuy)) {
+            PublicCompany closingCompany = root.getCompanyManager().getPublicCompany(closeAtTrainBuy);
+            if (closingCompany != null) {
+                closingCompany.setPrivateToCloseOnFirstTrain(this);
             }
         }
 

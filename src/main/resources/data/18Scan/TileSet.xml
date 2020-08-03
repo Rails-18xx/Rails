@@ -40,6 +40,12 @@
 	<Tile id="403" quantity="1">
 		<Upgrade id="1121"/>
 	</Tile>
+	<Tile id="3005" pic="5" quantity="3">
+		<!-- Replacement for #5 with 2 token spots if a second token is forcibly laid -->
+		<Upgrade id="15" hex="-D7,G14"/>
+		<Upgrade id="622" hex="D7,G14"/>
+	</Tile>
+
 
 	<!-- Green Tiles -->
 	<Tile id="15" quantity="6"/>

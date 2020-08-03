@@ -186,7 +186,12 @@ public class StockMarket extends RailsManager implements Configurable {
     }
 
     public void payOut(PublicCompany company) {
-        moveRightOrUp(company);
+        payOut (company, 1);
+        //moveRightOrUp(company);
+    }
+
+    public void payOut(PublicCompany company, int jumps) {
+        moveRightOrUp(company, jumps);
     }
 
     public void withhold(PublicCompany company) {
@@ -251,16 +256,24 @@ public class StockMarket extends RailsManager implements Configurable {
     }
 
     protected void moveRightOrUp(PublicCompany company) {
+        moveRightOrUp (company, 1);
+    }
+
+    protected void moveRightOrUp(PublicCompany company, int numberOfMoves) {
         /* Ignore the amount for now */
         StockSpace oldsquare = company.getCurrentSpace();
-        StockSpace newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
-        if (col < numCols - 1 && !oldsquare.isLeftOfLedge()
-                && (newsquare = getStockSpace(row, col + 1)) != null) {
-        } else if (row > 0
-                && (newsquare = getStockSpace(row - 1, col)) != null) {
+        for (int i=0; i<numberOfMoves; i++) {
+            if (col < numCols - 1 && !getStockSpace(row, col).isLeftOfLedge()
+                    && (getStockSpace(row, col + 1)) != null) {
+                col++;
+            } else if (row > 0
+                    && (getStockSpace(row - 1, col)) != null) {
+                row--;
+            }
         }
+        StockSpace newsquare = getStockSpace (row, col);
         prepareMove(company, oldsquare, newsquare);
     }
 

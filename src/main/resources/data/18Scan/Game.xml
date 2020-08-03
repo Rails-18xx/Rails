@@ -87,7 +87,7 @@
 		<Phase name="2">
 			<Tiles colour="yellow"/>
 			<OperatingRounds number="2"/>
-			<Trains onePerTurn="yes" tradingAllowed="yes"/>
+			<Trains onePerTypePerTurn="yes" tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
@@ -98,12 +98,12 @@
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
-			<Trains released="5E" limitStep="3"/>
+			<Trains rusted="3/2+2" released="5E" limitStep="3"/>
 			<Privates close="yes"/>
 			<OffBoardRevenue step="3"/>
 		</Phase>
 		<Phase name="5E">
-			<Trains rusted="3/2+2" released="4D"/>
+			<Trains released="4D"/>
 		</Phase>
 		<Phase name="4D">
 			<Trains rusted="4/3+3"/>

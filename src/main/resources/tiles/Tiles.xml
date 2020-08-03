@@ -4312,4 +4312,9 @@
 <Track from="city1" gauge="normal" to="side5"/>
 <Track from="city1" gauge="normal" to="side0"/>
 </Tile>
+<Tile colour="yellow" id="3005" name="5 w 2 slots">
+<Station id="city1" position="0" slots="2" type="City" value="20"/>
+<Track from="city1" gauge="normal" to="side1"/>
+<Track from="city1" gauge="normal" to="side2"/>
+</Tile>
 </Tiles>
