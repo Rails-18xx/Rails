@@ -177,7 +177,6 @@ public class OperatingRound_18Scan extends OperatingRound {
         public void resume() {
         // To return to the normal token lay step, start from the preceding step
         nextStep (GameDef.OrStep.LAY_TRACK);
-        setPossibleActions();
     }
 
     @Override
