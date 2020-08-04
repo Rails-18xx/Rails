@@ -75,14 +75,14 @@
 		<TrainType name="7" majorStops="7" cost="700" quantity="1">
             <NewPhase phaseName="7"/>
         </TrainType>
-		<TrainType name="4D" majorStops="4" cost="800" quantity="5">
+		<TrainType name="4D" majorStops="4" cost="800" exchangeCost="800" quantity="5">
             <NewPhase phaseName="4D"/>
  			<IfOption name="UnlimitedTopTrains_4D" value="yes">
 				<Attributes quantity="-1"/>
 			</IfOption>
 			<Reach countTowns="no"/>
 			<Score cities="double"/>
-			<Exchange cost="800"/>
+			<!--Exchange cost="800"/-->
 		</TrainType>
 	</Component>
 	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
