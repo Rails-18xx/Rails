@@ -8,6 +8,8 @@ import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+
 
 /**
  * DisplayBuffer stores messages of the current action.
@@ -16,7 +18,7 @@ public class DisplayBuffer extends RailsModel {
 
     private static final Logger log = LoggerFactory.getLogger(DisplayBuffer.class);
 
-    private final ArrayListState<String> buffer = new ArrayListState(this, "buffer");
+    private final ArrayList<String> buffer = new ArrayList<>();
 
     private final BooleanState autoDisplay = new BooleanState(this, "autoDisplay");
 
@@ -54,7 +56,7 @@ public class DisplayBuffer extends RailsModel {
     // TODO: (Rails2.0): Refactor this a little bit (use Model facilities)
     public String[] get() {
         if (buffer.size() > 0) {
-            String[] message = buffer.view().toArray(new String[0]);
+            String[] message = buffer.toArray(new String[0]);
             buffer.clear();
             return message;
         } else {

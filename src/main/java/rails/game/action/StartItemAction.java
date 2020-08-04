@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 
 import com.google.common.base.Objects;
 
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.StartItem;
 import net.sf.rails.util.RailsObjects;
 
@@ -29,6 +30,11 @@ public abstract class StartItemAction extends PossibleAction {
         this.startItem = startItem;
         this.startItemName = startItem.getId();
         this.itemIndex = startItem.getIndex();
+    }
+
+    // Null startItem, for 18Scan
+    public StartItemAction (RailsRoot root) {
+        super (root);
     }
 
     /**

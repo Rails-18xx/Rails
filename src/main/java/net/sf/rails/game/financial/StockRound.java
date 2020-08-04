@@ -294,19 +294,24 @@ public class StockRound extends Round {
                             possibleActions.add(new StartCompany(comp, price));
                         }
                     } else {
-                        List<Integer> startPrices = new ArrayList<Integer>();
-                        for (int startPrice : stockMarket.getStartPrices()) {
-                            if (startPrice * cert.getShares() <= playerCash) {
-                                startPrices.add(startPrice);
+                        StockSpace fixedPrice = comp.getStartSpace();
+                        if (fixedPrice != null) {
+                            possibleActions.add(new StartCompany(comp, fixedPrice.getPrice()));
+                        } else {
+                            List<Integer> startPrices = new ArrayList<>();
+                            for (int startPrice : stockMarket.getStartPrices()) {
+                                if (startPrice * cert.getShares() <= playerCash) {
+                                    startPrices.add(startPrice);
+                                }
                             }
-                        }
-                        if (startPrices.size() > 0) {
-                            int[] prices = new int[startPrices.size()];
-                            Arrays.sort(prices);
-                            for (int i = 0; i < prices.length; i++) {
-                                prices[i] = startPrices.get(i);
+                            if (startPrices.size() > 0) {
+                                int[] prices = new int[startPrices.size()];
+                                Arrays.sort(prices);
+                                for (int i = 0; i < prices.length; i++) {
+                                    prices[i] = startPrices.get(i);
+                                }
+                                possibleActions.add(new StartCompany(comp, prices));
                             }
-                            possibleActions.add(new StartCompany(comp, prices));
                         }
                     }
                 }

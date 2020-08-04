@@ -199,11 +199,15 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         if (asOption) return options;
 
         // check asAction attributes
+        // EV 2020/07/18: Disabled. In 18Scan the revenue and allocation
+        // may sometimes be changed afterwards (e.g. minors pay out even if no route)
+        return true;
+        /*
         return options
                 && Objects.equal(this.actualRevenue, action.actualRevenue)
                 && Objects.equal(this.actualCompanyTreasuryRevenue, action.actualCompanyTreasuryRevenue)
-                && Objects.equal(this.revenueAllocation, action.revenueAllocation)
-        ;
+                && Objects.equal(this.revenueAllocation, action.revenueAllocation);
+         */
     }
 
     @Override
@@ -213,11 +217,11 @@ public class SetDividend extends PossibleORAction implements Cloneable {
                     .addToString("presetRevenue", presetRevenue)
                     .addToString("presetTreasuryBonusRevenue",presetCompanyTreasuryRevenue)
                     .addToString("mayUserSetRevenue", getMayUserSetRevenue())
-                    .addToString("allowedRevenueAllocations", getAllowedRevenueAllocations())
+                    .addToString("allowedRevenueAllocations", getAllowedAllocationsAsString())
                     .addToString("requiredCash", requiredCash)
                     .addToStringOnlyActed("actualRevenue", actualRevenue)
                     .addToStringOnlyActed("actualCompanyTreasuryRevenue", actualCompanyTreasuryRevenue)
-                    .addToStringOnlyActed("revenueAllocation", revenueAllocation)
+                    .addToStringOnlyActed("revenueAllocation", getAllocationNameKey(revenueAllocation))
                     .toString()
         ;
     }
@@ -255,6 +259,15 @@ public class SetDividend extends PossibleORAction implements Cloneable {
     public void setAllowedRevenueAllocations(
             int[] allowedRevenueAllocations) {
         this.allowedRevenueAllocations = allowedRevenueAllocations;
+    }
+
+    public String getAllowedAllocationsAsString () {
+        if (allowedRevenueAllocations == null || allowedRevenueAllocations.length == 0) return "";
+        String[] s = new String[allowedRevenueAllocations.length];
+        for (int i=0; i < allowedRevenueAllocations.length; i++) {
+            s[i] = getAllocationNameKey(allowedRevenueAllocations[i]);
+        }
+        return Util.joinWithDelimiter (s, ";");
     }
 
 }

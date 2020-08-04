@@ -9,7 +9,6 @@ import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.financial.*;
 import net.sf.rails.game.model.*;
-import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialRight;
 import net.sf.rails.game.state.Currency;
@@ -38,10 +37,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     private static final Logger log = LoggerFactory.getLogger(PublicCompany.class);
 
     public static final int CAPITALISE_FULL = 0;
-
     public static final int CAPITALISE_INCREMENTAL = 1;
-
     public static final int CAPITALISE_WHEN_BOUGHT = 2;
+    public static final int CAPITALISE_PART = 3; // 18Scan SJ, also specify part as number of shares
 
     protected static final int DEFAULT_SHARE_UNIT = 10;
 
@@ -301,9 +299,27 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected boolean splitAlways = false;
 
     /**
-     * Must payout exceed stock price to move token right?
+     * Must payout equal or exceed stock price to move token right?
+     * Deprecated, to be replaced by percOfPriceToReachPerJump (next item)
      */
+    @Deprecated
     protected boolean payoutMustExceedPriceToMove = false;
+
+    /**
+     * Percentages of share price that must be reached by the
+     * total dividend payout to enable any number of price jumps.
+     * Add 1 if a percentage must be exceeded instead of reached.
+     * The default will be "1" to model the common rule that
+     * any payout amount > 0 causes a price move to the right (or up).
+     * 18EU: 100 - this corresponds to mustExceedPriceToMove="yes"
+     * ('exceed' to read here as 'equals or exceeds').
+     * 18Scan: 100,200; SOH: 101,201 - both one resp. two spaces.
+     * An extreme case is 1825: "51,200,300,400".
+     */
+    protected List<Integer> percOfPriceToReachPerJump;
+
+    // Remember the tag until finishConfiguration()
+    private Tag adjustPriceOnPayoutTag;
 
     /**
      * Multiple certificates those that represent more than one nominal share unit (except president share)
@@ -316,6 +332,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected int dropPriceToken = WHEN_STARTED;
 
     protected int capitalisation = CAPITALISE_FULL;
+    protected int capitalisationShares;
 
     /**
      * Fixed price (for a 1835-style minor)
@@ -519,8 +536,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             String split = payoutTag.getAttributeAsString("split", "no");
             splitAlways = "always".equalsIgnoreCase(split);
             splitAllowed = "allowed".equalsIgnoreCase(split);
-
+            // "Exceed" to be interpreted as "equal or exceed"
             payoutMustExceedPriceToMove = payoutTag.getAttributeAsBoolean("mustExceedPriceToMove", false);
+        }
+
+        Tag priceJumpsTag = tag.getChild("AdjustPriceOnPayout");
+        if (priceJumpsTag != null) {
+            // Process it later
+            adjustPriceOnPayoutTag = priceJumpsTag;
         }
 
         Tag ownSharesTag = tag.getChild("TreasuryCanHoldOwnShares");
@@ -558,8 +581,12 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (capitalisationTag != null) {
             String capType =
                     capitalisationTag.getAttributeAsString("type", "full");
+            capitalisationShares = capitalisationTag.getAttributeAsInteger ("shares", 0);
             if ( "full".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_FULL);
+            } else if ( "part".equalsIgnoreCase(capType)) {
+                setCapitalisation(CAPITALISE_PART);
+                capitalisationShares = capitalisationTag.getAttributeAsInteger ("shares", 0);
             } else if ( "incremental".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_INCREMENTAL);
             } else if ( "whenBought".equalsIgnoreCase(capType)) {
@@ -653,6 +680,18 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public void finishConfiguration(RailsRoot root)
             throws ConfigurationException {
 
+        // Configure the stock price increase details
+        if (adjustPriceOnPayoutTag != null) {
+            percOfPriceToReachPerJump = adjustPriceOnPayoutTag.getAttributeAsIntegerList("percPerJump");
+        }
+        if (adjustPriceOnPayoutTag == null || percOfPriceToReachPerJump.size() == 0) {
+            // Default: move one space right on any payout > 0
+            percOfPriceToReachPerJump = new ArrayList<>(1);
+            int defaultPercToReach = payoutMustExceedPriceToMove ? 100 : 1;
+            percOfPriceToReachPerJump.add(defaultPercToReach);
+        }
+
+
         if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = IntegerState.create(this, "currentNumberOfLoans");
             currentLoanValue = CountingMoneyModel.create(this, "currentLoanValue", false);
@@ -667,7 +706,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                         + startSpace + " for company "
                         + getId());
             currentPrice.setPrice(parPrice.getPrice());
-
         }
 
         int certIndex = 0;
@@ -783,9 +821,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                     if (rightsModel == null) {
                         rightsModel = RightsModel.create(this, "rightsModel");
                     }
-                    // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
-                    sp.finishConfiguration(root);
-                }
+                 }
+                // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
+                sp.finishConfiguration(root);
             }
         }
 
@@ -830,6 +868,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         IntegerState tileLays = IntegerState.create
                 (this, "" + colour + "_ExtraTileTurns", turns);
         turnsWithExtraTileLays.put(colour, tileLays);
+    }
+
+    public void setPrivateToCloseOnFirstTrain (PrivateCompany comp) {
+        privateToCloseOnFirstTrain = comp;
     }
 
     /**
@@ -1355,21 +1397,41 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     /**
-     * Determine if the price token must be moved after a dividend payout.
+     * Determine if the price token must be moved after a dividend payout,
+     * and with how many jumps.
+     *
+     * TODO: Will be renamed to adjustPriceOnPayout
      *
      * @param amount
      */
     public void payout(int amount) {
 
-        if (amount == 0) return;
+        if (!hasStockPrice || amount == 0) return;
+
+        int maxJumps = percOfPriceToReachPerJump.size();
+        int price = getCurrentSpace().getPrice();
+        int jumps = maxJumps;
+        for (int i = maxJumps-1; i>=0; i--, jumps--) {
+            if (amount >= 0.01 * percOfPriceToReachPerJump.get(i) * price) break;
+        }
+        if (jumps > 0) {
+            getRoot().getStockMarket().payOut(this, jumps);
+        } else {
+            ReportBuffer.add(this, LocalText.getText("PRICE_STAYS_LOG",
+                    this.getId(),
+                    Bank.format(this,
+                            price),
+                            getCurrentSpace().getId()));
+        }
+
 
         // Move the token
-        if (hasStockPrice
+        /*hasStockPrice
                 && (!payoutMustExceedPriceToMove
                 || amount >= currentPrice.getPrice().getPrice())) {
             getRoot().getStockMarket().payOut(this);
         }
-
+        */
     }
 
     public boolean paysOutToTreasury(PublicCertificate cert) {
@@ -1561,6 +1623,15 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     /**
+     * In case of partial capitalisation, return the number of shares
+     * that are capitalised at floating time. E.g. 18Scan SJ: 7 of 10 shares
+     * @return
+     */
+    public int getCapitalisationShares () {
+        return capitalisationShares;
+    }
+
+    /**
      * @param capitalisation The capitalisation to set.
      */
     public void setCapitalisation(int capitalisation) {
@@ -1591,8 +1662,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return portfolio.getNumberOfTrains();
     }
 
-    public boolean canRunTrains() {
-        return portfolio.getNumberOfTrains() > 0;
+    // Previously named canRunTrains(), but no route check is done
+    public boolean hasTrains() {
+        return getNumberOfTrains() > 0;
     }
 
     /**
@@ -1602,7 +1674,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      */
     public boolean canGenerateRevenue () {
         // The default:
-        return canRunTrains();
+        return hasTrains();
     }
 
     /**
@@ -1661,35 +1733,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
         privatesCostThisTurn.change(price);
 
-        // Move any special abilities to the portfolio, if configured so
+        // Assign the special properties to the rightful owner
         Set<SpecialProperty> sps = privateCompany.getSpecialProperties();
-        if (sps != null) {
-            // Need intermediate List to avoid ConcurrentModificationException
-            List<SpecialProperty> spsToMoveHere = new ArrayList<SpecialProperty>(2);
-            List<SpecialProperty> spsToMoveToGM = new ArrayList<SpecialProperty>(2);
-            for (SpecialProperty sp : sps) {
-                if ( "toCompany".equalsIgnoreCase(sp.getTransferText())) {
-                    spsToMoveHere.add(sp);
-                } else if ( "toGameManager".equalsIgnoreCase(sp.getTransferText())) {
-                    // This must be SellBonusToken - remember the owner!
-                    if (sp instanceof SellBonusToken) {
-                        // TODO: Check if this works correctly
-                        ((SellBonusToken) sp).setSeller(this);
-                        // Also note 1 has been used
-                        ((SellBonusToken) sp).setExercised();
-                    }
-                    spsToMoveToGM.add(sp);
-                }
-            }
-            for (SpecialProperty sp : spsToMoveHere) {
-                sp.moveTo(portfolio.getParent());
-            }
-            for (SpecialProperty sp : spsToMoveToGM) {
-                getRoot().getGameManager().addSpecialProperty(sp);
-                log.debug("SP {} is now a common property", sp.getId());
-            }
-        }
-
+        getRoot().getGameManager().allocateSpecialProperties(this, sps);
     }
 
     public Model getPrivatesSpentThisTurnModel() {

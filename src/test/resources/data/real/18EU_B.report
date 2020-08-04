@@ -601,6 +601,7 @@ CompanyRevenue,FS,70
 CompanyPaysOutFull,FS,70
 Payout,Arne,35,5,10
 Payout,FS,35,5,10
+PRICE_STAYS_LOG,FS,90,E4
 BuysTrain,FS,3,IPO,200
 BuysTrain,FS,2,13,1
  

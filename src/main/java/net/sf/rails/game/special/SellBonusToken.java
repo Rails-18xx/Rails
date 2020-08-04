@@ -5,12 +5,15 @@ import java.util.List;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.MapHex;
+import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Owner;
 import net.sf.rails.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class SellBonusToken extends SpecialProperty {
@@ -23,6 +26,8 @@ public class SellBonusToken extends SpecialProperty {
     private int value;
     private int maxNumberToSell;
     private final IntegerState numberSold = IntegerState.create(this, "numberSold");
+
+    private static final Logger log = LoggerFactory.getLogger(SellBonusToken.class);
 
     /**
      * Used by Configure (via reflection) only
@@ -54,7 +59,7 @@ public class SellBonusToken extends SpecialProperty {
         if (price <= 0)
             throw new ConfigurationException("Price invalid [" + price + "] or missing");
 
-        maxNumberToSell = sellBonusTokenTag.getAttributeAsInteger("amount", 1);
+        maxNumberToSell = sellBonusTokenTag.getAttributeAsInteger("quantity", 1);
 
     }
 
@@ -66,6 +71,8 @@ public class SellBonusToken extends SpecialProperty {
     @Override
     public void setExercised() {
         numberSold.add(1);
+        log.debug (toText());
+        if (isExercised()) super.setExercised(true);
     }
 
     public void makeResellable() {

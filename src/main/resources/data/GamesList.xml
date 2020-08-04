@@ -158,8 +158,42 @@ Not yet implemented:
         </Description>
         <Players minimum="2" maximum="4"/>
     </Game>
-	 
-	 
+
+	<Game name="18Scan">
+		<Note>Playable</Note>
+		<Description>18Scan - Railroading under the Northern Lights
+		(c) 2004-2005 David G.D. Hecht
+		Published by Deep Thought Games, LLC
+
+		Limitations:
+		- Revenue bonuses are not correctly calculated: the Ferry bonus cannot
+			yet be calculated at all, and the Mine bonus is applied per train
+			instead of once in total. This can be corrected manually.
+			Advice: activate the Revenue Spinner in the Configuration/Appearance
+			tab at startup.
+		- The bonus token owner is not asked for permission to buy such a token.
+			This must be addressed off-game.
+		- As in 1856, the player who has connected a Minor to its destination
+			must immediately report that via the highlighted Special menu,
+			temporarily postponing the token laying step of the active company.
+			If more than one Minor is connected at the same time, it is advised
+			that, if placing a token by one Minor would hinder the other one
+			to do the same, that other minor would get the first turn,
+			because the rule that this other minor may ignore the first laid
+			token is not implemented. Afterwards, the Special menu remains
+			highlighted to enable the initially skipped minor to destinate as yet.
+
+		Remark:
+			The rules say that a destinating minor may place its token
+			even if the destination has a yellow tile #5 where the token spot
+			is reserved or already occupied. This rule is enabled behind the scenes
+			by replacing tile #5 with a similar tile #3005 with two token spots;
+			to avoid confusion the displayed tile remains #5. The result may not
+			look very nice, but works well.
+		</Description>
+		<Players minimum="2" maximum="4" />
+	</Game>
+
 	<Game name="1870">
 		<Note>Not yet playable</Note>
 		<Description>1870 - Railroading across the Trans Mississippi
@@ -223,12 +257,6 @@ Known Issues:
     <Note>Prototype</Note>
     <Description>18VA</Description>
     <Players minimum="2" maximum="5" />
-  </Game>
-
-   <Game name="18Scan">
-    <Note>In progress</Note>
-    <Description>18Scan</Description>
-    <Players minimum="2" maximum="4" />
   </Game>
 
    <Game name="1837">

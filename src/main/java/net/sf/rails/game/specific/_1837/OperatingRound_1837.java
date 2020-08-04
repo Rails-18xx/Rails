@@ -475,7 +475,7 @@ public class OperatingRound_1837 extends OperatingRound {
     protected void prepareRevenueAndDividendAction() {
 
         // There is only revenue if there are any trains
-        if (operatingCompany.value().canRunTrains()) {
+        if (operatingCompany.value().hasTrains()) {
             int[] allowedRevenueActions =
                     operatingCompany.value().isSplitAlways()
                     ? new int[] { SetDividend.SPLIT }

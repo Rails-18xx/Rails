@@ -54,7 +54,7 @@
 	<Hex name="F1" tile="-912" city="Kiel" value="20,30,50" orientation="5">
 			<Access runTo="tokenonly" mutexId="Off"/>
 	</Hex>
-	<Hex name="F3" tile="-3012" city="Odense-Copenhagen" cost="40"/>
+	<Hex name="F3" tile="-3012" city="Odense-Copenhagen" cost="40,40"/>
 	<Hex name="F5" tile="0" impassable="E4"/>
 	<Hex name="F7" tile="-1" city="Norrköping"/>
 	<Hex name="F9" tile="0"/>
