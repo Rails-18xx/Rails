@@ -25,6 +25,7 @@ public class SellBonusToken extends SpecialProperty {
     private int price;
     private int value;
     private int maxNumberToSell;
+    private boolean oneTrainOnly; // If true, only one train may add bonus
     private final IntegerState numberSold = IntegerState.create(this, "numberSold");
 
     private static final Logger log = LoggerFactory.getLogger(SellBonusToken.class);
@@ -60,6 +61,8 @@ public class SellBonusToken extends SpecialProperty {
             throw new ConfigurationException("Price invalid [" + price + "] or missing");
 
         maxNumberToSell = sellBonusTokenTag.getAttributeAsInteger("quantity", 1);
+
+        oneTrainOnly = sellBonusTokenTag.getAttributeAsBoolean ("oneTrainOnly", false);
 
     }
 
@@ -106,6 +109,10 @@ public class SellBonusToken extends SpecialProperty {
 
     public int getValue() {
         return value;
+    }
+
+    public boolean allowOneTrainOnly() {
+        return oneTrainOnly;
     }
 
     public Owner getSeller() {
