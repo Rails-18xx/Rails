@@ -160,17 +160,12 @@ Not yet implemented:
     </Game>
 
 	<Game name="18Scan">
-		<Note>Playable</Note>
+		<Note>Fully Playable</Note>
 		<Description>18Scan - Railroading under the Northern Lights
 		(c) 2004-2005 David G.D. Hecht
 		Published by Deep Thought Games, LLC
 
 		Limitations:
-		- Revenue bonuses are not correctly calculated: the Ferry bonus cannot
-			yet be calculated at all, and the Mine bonus is applied per train
-			instead of once in total. This can be corrected manually.
-			Advice: activate the Revenue Spinner in the Configuration/Appearance
-			tab at startup.
 		- The bonus token owner is not asked for permission to buy such a token.
 			This must be addressed off-game.
 		- As in 1856, the player who has connected a Minor to its destination
@@ -183,13 +178,17 @@ Not yet implemented:
 			token is not implemented. Afterwards, the Special menu remains
 			highlighted to enable the initially skipped minor to destinate as yet.
 
-		Remark:
-			The rules say that a destinating minor may place its token
+		Remarks:
+		- The rules say that a destinating minor may place its token
 			even if the destination has a yellow tile #5 where the token spot
 			is reserved or already occupied. This rule is enabled behind the scenes
 			by replacing tile #5 with a similar tile #3005 with two token spots;
 			to avoid confusion the displayed tile remains #5. The result may not
 			look very nice, but works well.
+		- The run details shown in the Message panel display the added Ferry and Mine
+			bonus amounts in different ways. This is due to the rule, that
+			the Mine bonus applies to one train only, even if two trains reach Kiruna.
+			That restriction necessitated a different approach to make it work.
 		</Description>
 		<Players minimum="2" maximum="4" />
 	</Game>
