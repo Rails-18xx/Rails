@@ -342,7 +342,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                 List<GeneralPath> p2) {
             int margin = (int) Math.ceil(STROKE_WIDTH * hexMap.getZoomFactor());
 
-            List<Rectangle> pathRects = new ArrayList<Rectangle>();
+            List<Rectangle> pathRects = new ArrayList<>();
             if (p1 != null) {
                 for (GeneralPath p : p1)
                     pathRects.add(p.getBounds());
@@ -366,7 +366,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                 }
             }
             return r;
-        };
+        }
 
         @Override
         public void paintImage(Graphics2D g) {
@@ -693,7 +693,14 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
 
     public void setupBars() {
         for (MapHex hex : hex2gui.keySet()) {
-            HexSidesSet barSides = hex.getImpassableSides();
+            // TEMPORARY for debugging
+            if (hex.getId().equalsIgnoreCase("H13")) { // Arnhem
+                int x = 1;
+            }
+            // Display impassables and rivers with same colour for now,
+            // as there are no games in Rails where both apply.
+            // (The difference is that rivers are not impassable).
+            HexSidesSet barSides = hex.getImpassableSides().union(hex.getRiverSides());
             for (HexSide side:barSides) {
                 if (side.getTrackPointNumber() < 3) {
                     hex2gui.get(hex).addBar(side);

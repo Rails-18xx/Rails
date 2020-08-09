@@ -4,7 +4,6 @@
 		<Access type="city" runTo="yes" runThrough="yes" score="major"/>
 		<Access type="town" runTo="yes" runThrough="yes" score="minor"/>
 	</Defaults>
-	<!--Image file="SOH/MapWithRivers.svg" x="15" y="14" scale="1.0"/-->
 
 	<Hex name="A14" tile="0"/>
 	<Hex name="A16" tile="0"/>

@@ -184,6 +184,10 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     private final HexSidesSet.Builder impassableBuilder = HexSidesSet.builder();
     private HexSidesSet impassableSides;
 
+    private String riverTemplate = null;
+    private final HexSidesSet.Builder riverBuilder = HexSidesSet.builder();
+    private HexSidesSet riverSides;
+
     private final HexSidesSet.Builder invalidBuilder = HexSidesSet.builder();
     private HexSidesSet invalidSides;
 
@@ -268,6 +272,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         preprintedTileRotation = HexSide.get(orientation);
 
         impassableTemplate = tag.getAttributeAsString("impassable");
+        riverTemplate = tag.getAttributeAsString("river");
         tileCost = tag.getAttributeAsIntegerList("cost");
 
         // Off-board revenue values
@@ -332,6 +337,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         //}
 
         impassableSides = impassableBuilder.build();
+        riverSides = riverBuilder.build();
         invalidSides = invalidBuilder.build();
     }
 
@@ -351,6 +357,15 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         return impassableSides;
     }
 
+    public void addRiverSide(HexSide side) {
+        riverBuilder.set(side);
+        log.debug("Added river {} to {}", side, this);
+    }
+
+    public HexSidesSet getRiverSides () {
+        return riverSides;
+    }
+
     public void addInvalidSide(HexSide side) {
         invalidBuilder.set(side);
         log.debug("Added invalid {} to {}", side, this);
@@ -362,7 +377,12 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     public boolean isImpassableNeighbour(MapHex neighbour) {
         return impassableTemplate != null
-                && impassableTemplate.indexOf(neighbour.getId()) > -1;
+                && impassableTemplate.contains(neighbour.getId());
+    }
+
+    public boolean isRiverNeighbour (MapHex neighbour) {
+        return riverTemplate != null
+                && riverTemplate.contains(neighbour.getId());
     }
 
     public boolean isValidNeighbour(MapHex neighbour, HexSide side) {
@@ -682,7 +702,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
      * @param token        The bonus token object to place
      * @param phaseManager The PhaseManager is also passed in case the token
      *                     must register itself for removal when a certain phase starts.
-     * @return
+     * @return Always true
      */
     public boolean layBonusToken(BonusToken token, PhaseManager phaseManager) {
         Preconditions.checkArgument(token != null, "No token specified");
