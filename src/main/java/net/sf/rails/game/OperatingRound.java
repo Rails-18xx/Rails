@@ -2333,9 +2333,9 @@ public class OperatingRound extends Round implements Observer {
         // TODO: Is text of cost used below?
         Currency.wire(operatingCompany.value(), cost, seller);
 
-        operatingCompany.value().addBonus(
-                new Bonus(operatingCompany.value(), sbt.getId(),
-                        sbt.getValue(), sbt.getLocations()));
+        Bonus bonus = new Bonus(operatingCompany.value(), sbt.getId(),
+                sbt.getValue(), sbt.getLocations(), sbt.allowOneTrainOnly());
+        operatingCompany.value().addBonus(bonus);
 
         ReportBuffer.add(this, LocalText.getText("BuysBonusTokenFrom",
                 operatingCompany.value().getId(), sbt.getName(),

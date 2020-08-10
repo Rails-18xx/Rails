@@ -51,6 +51,7 @@
 			<LayCost method="sequence" cost="100"/>
 		</BaseTokens>
 		<Trains limit="3"/>
+		<CanUseSpecialProperties/>
 	</CompanyType>
 
 	<Company name="Ferry" type="Private" basePrice="120" revenue="20"
@@ -68,7 +69,7 @@
 			 longname="Lapland Ore Line">
 		<SpecialProperty condition="ifOwnedByPlayer" when="tokenLayingStep"
 						 class="net.sf.rails.game.special.SellBonusToken" transfer="toGameManager">
-			<SellBonusToken name="Mine" type="stop" location="A20" price="50" value="50" quantity="1"/>
+			<SellBonusToken name="Mine" type="stop" location="A20" price="50" value="50" quantity="1" oneTrainOnly="yes"/>
 		</SpecialProperty>
 		<ClosingConditions>
 			<Phase>5</Phase>
