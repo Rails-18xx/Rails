@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="net.sf.rails.game.GameManager">
+	<Component name="GameManager_SOH" class="net.sf.rails.game.specific._SOH.GameManager_SOH">
 		<Game name="SOH"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
@@ -13,7 +13,7 @@
 				</IfOption>
 			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
-			<StockRound>
+			<StockRound class="net.sf.rails.game.specific._SOH.StockRound_SOH">
 				<NoSaleInFirstSR/>
 			</StockRound>
             <OperatingRound>
@@ -98,11 +98,11 @@
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
 			<Trains rusted="3" limitStep="3"/>
-			<!--Privates close="yes"/-->
+			<Privates close="yes"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6">
-			<Trains rusted="3">
+			<Trains rusted="4">
 			</Trains>
 		</Phase>
 	</Component>

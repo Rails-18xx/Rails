@@ -9,10 +9,14 @@
 		<Tradeable toPlayer="yes"/>	
 	</CompanyType>
 	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
+		<Capitalisation type="incremental"/>
+		<StockPrice par="no"/>
+		<TreasuryCanHoldOwnShares maxPerc="100"/>
 		<CanBuyPrivates/>
 		<!-- ? Treasury pays out? -->
 		<Float percentage="60"/><!-- equal to phase number-->
 		<ShareUnit percentage="10"/>
+		<AdjustPriceOnPayout percPerJump="101,201"/>
 		<BaseTokens>
 			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
 			<HomeBase lay="firstOR"/>
@@ -24,25 +28,25 @@
 		<Trains limit="4,3,2"/>
         <CanUseSpecialProperties/>
 	</CompanyType>
-	<Company name="AS" type="Private" basePrice="20" revenue="5"
+	<Company name="1 AS" type="Private" basePrice="20" revenue="5"
 			longname="Spoorwegmaatschappij Almelo-Salzbergen">
 	</Company>
-	<Company name="KKI" type="Private" basePrice="40" revenue="10"
+	<Company name="2 KKI" type="Private" basePrice="40" revenue="10"
 			longname="Koninklijk Korps van Ingenieurs">
 	</Company>
-	<Company name="ES" type="Private" basePrice="75" revenue="15"
+	<Company name="3 ES" type="Private" basePrice="75" revenue="15"
 		longname="Veerdienst Enkhuizen-Stavoren">
 	</Company>
-	<Company name="VL" type="Private" basePrice="75" revenue="15"
+	<Company name="4 VL" type="Private" basePrice="75" revenue="15"
 			 longname="Veerdienst Vlissingen-Londen">
 	</Company>
-	<Company name="RWS" type="Private" basePrice="80" revenue="20"
+	<Company name="5 RWS" type="Private" basePrice="80" revenue="20"
 		longname="Rijkswaterstaat">
 	</Company>
-	<Company name="WS" type="Private" basePrice="100" revenue="20"
+	<Company name="6 WS" type="Private" basePrice="100" revenue="20"
 		longname="Werkspoor">
 	</Company>
-	<Company name="KO" type="Private" basePrice="100" revenue="10"
+	<Company name="7 KO" type="Private" basePrice="100" revenue="10"
 		longname="Koninklijke Ondersteuning">
 		<Info key="ComesWithShare" parm="NRS,10"/>
 	</Company>
@@ -78,22 +82,23 @@
 		<Home hex="I12"/>
 	</Company>
 
-	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
-		<Bidding initial="5" minimum="5" increment="5"/>
-		<Item name="AS" type="Private" basePrice="20">
+	<StartPacket roundClass="net.sf.rails.game.specific._SOH.StartRound_SOH">
+		<Bidding initial="0" minimum="5" increment="1"/>
+		<Item name="1 AS" type="Private" basePrice="20">
 		</Item>
-		<Item name="KKI" type="Private" basePrice="40">
+		<Item name="2 KKI" type="Private" basePrice="40">
 		</Item>
-		<Item name="ES" type="Private" basePrice="75">
+		<Item name="3 ES" type="Private" basePrice="75">
 		</Item>
-		<Item name="VL" type="Private" basePrice="75">
+		<Item name="4 VL" type="Private" basePrice="75">
 		</Item>
-		<Item name="RWS" type="Private" basePrice="80">
+		<Item name="5 RWS" type="Private" basePrice="80">
 		</Item>
-		<Item name="WS" type="Private" basePrice="100">
+		<Item name="6 WS" type="Private" basePrice="100">
 		</Item>
-		<Item name="KO" type="Private" basePrice="100">
-			<SubItem name="NRS" type="Public" />
+		<Item name="7 KO" type="Private" basePrice="100">
+			<!-- Note: the NRS share will be added only
+			if the KO is in the game and actually bought -->
 		</Item>
 	</StartPacket>
 </CompanyManager>

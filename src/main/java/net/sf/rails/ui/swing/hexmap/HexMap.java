@@ -323,7 +323,9 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                 colour2 = Util.parseColour(Config.get("route.colour.2", null));
                 colour3 = Util.parseColour(Config.get("route.colour.3", null));
                 colour4 = Util.parseColour(Config.get("route.colour.4", null));
-            } catch (ConfigurationException e) {} finally {
+            } catch (ConfigurationException e) {
+
+            } finally {
                 if (colour1 == null) colour1 = Color.CYAN;
                 if (colour2 == null) colour2 = Color.PINK;
                 if (colour3 == null) colour3 = Color.ORANGE;
@@ -693,10 +695,6 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
 
     public void setupBars() {
         for (MapHex hex : hex2gui.keySet()) {
-            // TEMPORARY for debugging
-            if (hex.getId().equalsIgnoreCase("H13")) { // Arnhem
-                int x = 1;
-            }
             // Display impassables and rivers with same colour for now,
             // as there are no games in Rails where both apply.
             // (The difference is that rivers are not impassable).

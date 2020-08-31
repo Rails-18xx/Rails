@@ -104,9 +104,6 @@ public class MapManager extends RailsManager implements Configurable {
         ImmutableTable.Builder<MapHex, HexSide, MapHex> hexTableBuilder = ImmutableTable.builder();
         for (MapHex hex:hexes.values()) {
             // TEMPORARY for debugging
-            if (hex.getId().equalsIgnoreCase("H13")) { // Arnhem
-                int x = 1;
-            }
             for (HexSide side:HexSide.all()){
                 MapHex neighbour = hexes.get(mapOrientation.
                         getAdjacentCoordinates(hex.getCoordinates(), side));

@@ -47,7 +47,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
         if (currentAuctionItem() != null) {
             // This item is currently up for bid
             StartItem currentItem = currentAuctionItem();
-            if (playerCanBid(currentPlayer, currentItem)) {
+            if (currentItem != null && playerCanBid(currentPlayer, currentItem)) {
                 BidStartItem possibleAction =
                         new BidStartItem(currentItem,
                                 currentItem.getMinimumBid(),
@@ -69,7 +69,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
             // Nothing is currently up for auction
             boolean atLeastOneBiddable = false;
             for (StartItem item : itemsToSell.view()) {
-                if (item.isSold() == false) {
+                if (!item.isSold()) {
                     item.setAllActive();
                     item.setStatus(StartItem.BIDDABLE);
                     if (playerCanBid(currentPlayer, item)) {
@@ -81,7 +81,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
                     }
                 }
             }
-            if (atLeastOneBiddable == true) {
+            if (atLeastOneBiddable) {
                 possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
             }
         }
@@ -127,7 +127,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
 
     @Override
     protected boolean bid(String playerName, BidStartItem startItem) {
-        if (validateBid(playerName, startItem) == false) {
+        if (!validateBid(playerName, startItem)) {
             return false;
         }
 
@@ -236,7 +236,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
 
     @Override
     protected boolean pass(NullAction action, String playerName) {
-        if (validatePass(action, playerName) == false) {
+        if (!validatePass(action, playerName)) {
             return false;
         }
 
@@ -247,7 +247,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
         if (currentAuctionItem() != null) {
             // An item is currently up for bid
             StartItem auctionItem = currentAuctionItem();
-            if (auctionItem.getBidders() == 2) {
+            if (auctionItem.getActiveBidders() == 2) {
                 // Only one bidder is left after this pass
                 int price = auctionItem.getBid();
                 log.debug("Highest bidder is {}", auctionItem.getBidder().getId());
@@ -303,7 +303,7 @@ public abstract class StartRound_AuctionOnly extends StartRound {
     @Override
     protected boolean buy(String playerName, BuyStartItem boughtItem) {
         boolean result = super.buy(playerName, boughtItem);
-        if (result == true) {
+        if (result) {
             Player player = playerManager.getPlayerByName(playerName);
             auctionWinners.add(player);
             if (auctionWinners.size() == playerManager.getNumberOfPlayers()) {
