@@ -36,7 +36,7 @@ public class StartRound_SOH extends StartRound {
     private List<Player> players;
 
     private List<StartItem> allStartItems;
-    private IntegerState auctionedItemIndex
+    private IntegerState currentItemIndex
             = IntegerState.create (this, "auctionedItemIndex");
 
     private Procedure procedure;
@@ -74,7 +74,7 @@ public class StartRound_SOH extends StartRound {
         if (procedure == Procedure.AUCTION) {
             initAuction();
         } else if (procedure == Procedure.DEAL) {
-            executeDeal();
+            initDeal();
         } else if (procedure == Procedure.SELECT) {
             initSelection();
         }
@@ -123,7 +123,8 @@ public class StartRound_SOH extends StartRound {
     }
 
     private void pickPrivates (int number) {
-        Random generator = new Random (System.currentTimeMillis());
+
+        Random generator = gameManager.getRandomGenerator();
         List<StartItem> items = new ArrayList<>(allStartItems);
         if (procedure == Procedure.DEAL) {
             pickedPrivatesAsList = new ArrayList<>();
@@ -182,7 +183,7 @@ public class StartRound_SOH extends StartRound {
             item = pickedPrivatesAsMap.get(itemNo);
             itemsToSell.add(item);
         }
-        auctionedItemIndex.set(0);
+        currentItemIndex.set(0);
         ReportBuffer.add (this, LocalText.getText(
                 "HasPriority", playerManager.getPriorityPlayer().getId()));
 
@@ -192,7 +193,7 @@ public class StartRound_SOH extends StartRound {
 
     private void initItemAuction() {
 
-        auctionedItem = itemsToSell.get(auctionedItemIndex.value());
+        auctionedItem = itemsToSell.get(currentItemIndex.value());
         // Set the minimum initial bid, which in SOH is the base price.
                 // Note, that this overrides the minimum initial bid as set in StartItem
                 // (see StartItem.init() and .setBid() and the TODO in .init() )
@@ -446,7 +447,6 @@ public class StartRound_SOH extends StartRound {
 
         Player nextPlayer = playerManager.getNextPlayer ();
         if (nextPlayer == startPlayer) {
-            finishRound();
             return false;
         } else {
             playerManager.setCurrentPlayer(nextPlayer);
@@ -456,8 +456,8 @@ public class StartRound_SOH extends StartRound {
     }
 
     private boolean setNextAuctionItem() {
-        auctionedItemIndex.add(1);
-        if (auctionedItemIndex.value() < numberOfPlayers) {
+        currentItemIndex.add(1);
+        if (currentItemIndex.value() < numberOfPlayers) {
             initItemAuction();
             return true;
         }
@@ -473,7 +473,6 @@ public class StartRound_SOH extends StartRound {
             Player currentPlayer = playerManager.getCurrentPlayer();
 
             if (auctionedItem.getStatus() == StartItem.AUCTIONED) {
-
 
                 if (currentPlayer.getFreeCash()
                         + auctionedItem.getBid(currentPlayer) >= auctionedItem.getMinimumBid()) {
@@ -509,50 +508,55 @@ public class StartRound_SOH extends StartRound {
     // 2. DEAL PROCESSING
     // ------------------
 
-    private String[] savedDisplayBuffer;
+
     /**
      * Randomly deal one private to each player.
      */
-    private void executeDeal() {
+    private void initDeal() {
 
         pickPrivates(numberOfPlayers);
-
-        StartItem item;
-        Player player;
-        for (int i = 0; i<players.size(); i++) {
-            item = pickedPrivatesAsList.get(i);
-            player = players.get(i);
-            assignItem(player, item, item.getBasePrice(), 0);
-            log.info ("Player {} gets private {}", player, item.getPrimary());
-            DisplayBuffer.add(this, LocalText.getText("BuysItemFor",
-                    player.getId(),
-                    item.getId(),
-                    item.getBasePrice()));
-
-            checkKO (player, item, true);
+        for (StartItem item : pickedPrivatesAsList) {
+            itemsToSell.add(item);
         }
 
-        // Save the display buffer, which would otherwise be cleared
-        savedDisplayBuffer = DisplayBuffer.copyAll (getRoot());
-        // Start the stock round
-        finishRound();
-        // Enter the normal processing loop
-        gameManager.process (null);
-        // Refill the display buffer
-        DisplayBuffer.addAll (getRoot(), savedDisplayBuffer);
-        // Alas, even this kludge does not make the message being displayed.
-        // Can this be fixed in the UI? I have failed so far. (EV)
-        // In addition, the Report window is shown empty.
-        // Somehow the first entry into the UI (which creates all windows)
-        // does not normally process any initial messages and reports.
+        setDealActions();
+
+        currentItemIndex.set(0);
+
     }
 
     private boolean processDealActions (PossibleAction action) {
+
+        if (action instanceof BuyStartItem) {
+            BuyStartItem buy = (BuyStartItem) action;
+            Player player = buy.getPlayer();
+            StartItem item = buy.getStartItem();
+            assignItem(player, item, item.getBasePrice(), 0);
+            log.info("Player {} gets private {}", player, item.getPrimary());
+
+            checkKO(player, item, true);
+
+            if (setNextSelectingPlayer()) {
+                currentItemIndex.add(1);
+            } else {
+                finishRound();
+            }
+
+        } else {
+            log.error ("Invalid action {}", action);
+            return false;
+        }
 
         return true;
     }
 
     private boolean setDealActions () {
+
+        int index = currentItemIndex.value();
+        StartItem item = itemsToSell.get(index);
+
+        item.setStatus(StartItem.BUYABLE);
+        possibleActions.add(new BuyStartItem (item, item.getBasePrice(), true));
 
         return true;
     }

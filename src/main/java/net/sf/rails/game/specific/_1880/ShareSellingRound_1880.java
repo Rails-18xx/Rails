@@ -230,7 +230,7 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
 
         boolean soldBefore = sellPrices.containsKey(company);
 
-        adjustSharePrice (company, numberSold, soldBefore);
+        adjustSharePrice (company, currentPlayer, numberSold, soldBefore);
 
         if (!company.isClosed()) {
 

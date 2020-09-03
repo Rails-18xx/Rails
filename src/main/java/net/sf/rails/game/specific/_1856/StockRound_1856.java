@@ -77,7 +77,7 @@ public class StockRound_1856 extends StockRound {
     // change: sharePrice adjustment is one row per two shares for CGR
     // requires: add an adjustSharePrice strategy (or a general implementation)
     @Override
-	protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
+	protected void adjustSharePrice (PublicCompany company, Owner seller, int numberSold, boolean soldBefore) {
 
         if (!company.canSharePriceVary()) return;
 
@@ -93,7 +93,7 @@ public class StockRound_1856 extends StockRound {
             }
         }
 
-        super.adjustSharePrice (company, numberOfSpaces, soldBefore);
+        super.adjustSharePrice (company, seller, numberOfSpaces, soldBefore);
     }
 
     // change: money moves to different sources depending on phases

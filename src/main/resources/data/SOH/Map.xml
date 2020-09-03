@@ -2,6 +2,7 @@
 	<Defaults>
 		<Access type="offMap" runTo="yes" runThrough="no" score="major"/>
 		<Access type="city" runTo="yes" runThrough="yes" score="major"/>
+		<!-- Trains may not end in towns, but that is handled by a modifier -->
 		<Access type="town" runTo="yes" runThrough="yes" score="minor"/>
 	</Defaults>
 

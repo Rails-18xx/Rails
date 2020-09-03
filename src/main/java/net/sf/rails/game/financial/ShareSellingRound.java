@@ -400,7 +400,7 @@ public class ShareSellingRound extends StockRound {
                         cashText));
             }
 
-            adjustSharePrice(company, numberSold, soldBefore);
+            adjustSharePrice(company, currentPlayer, numberSold, soldBefore);
 
             if (!company.isClosed()) {
 

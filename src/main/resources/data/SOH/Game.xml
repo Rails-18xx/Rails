@@ -16,10 +16,13 @@
 			<StockRound class="net.sf.rails.game.specific._SOH.StockRound_SOH">
 				<NoSaleInFirstSR/>
 			</StockRound>
-            <OperatingRound>
+            <OperatingRound class = "net.sf.rails.game.specific._SOH.OperatingRound_SOH">
                 <EmergencyTrainBuying mustBuyCheapestTrain="no" mayBuyFromCompany="yes"/>
             </OperatingRound>
 		</GameParameters>
+		<GuiClasses>
+			<GameStatus class="net.sf.rails.ui.swing.gamespecific._SOH.GameStatus_SOH"/>
+		</GuiClasses>
 		<EndOfGame>
 			<Bankruptcy/>
 			<!--BankBreaks limit="0" finish="setOfORs"/-->
@@ -41,7 +44,7 @@
 	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
 	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="net.sf.rails.game.financial.StockMarket"
+	<Component name="StockMarket" class="net.sf.rails.game.specific._SOH.StockMarket_SOH"
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
@@ -83,9 +86,11 @@
 			but could as well be moved here. To be sorted out when we do 18US. -->
 		<!-- Each Phase's defaults are the previous one's values -->
 		<Phase name="2" >
-			<Tiles colour="yellow"/>
-			<Privates sellingAllowed="no"/>
+			<Tiles colour="yellow">
+				<Lays companyType="Public" colour="yellow" number="2"/>
+			</Tiles>
 			<OperatingRounds number="2"/>
+			<Privates sellingAllowed="no"/>
 			<Trains tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
@@ -107,5 +112,7 @@
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+		<!-- Trains may only end at major stops. Reuse the 1825 modifier -->
+		<Modifier class="net.sf.rails.game.specific._1825.TerminateAtMajorModifier" />
 	</Component>
 </ComponentManager>

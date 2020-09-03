@@ -552,7 +552,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 // stations
                 Station newStation = null;
                 String debugText = null;
-                if (stationMapping == null) {
+                if (stationMapping == null || stationMapping.isEmpty()) {
                     int oldNumber = stop.getRelatedStation().getNumber();
                     newStation = newTile.getStation(oldNumber);
                     debugText = "Mapped by default id";
@@ -596,6 +596,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 // New Station found without an existing Stop
                 Stop stop = Stop.create(this, station);
                 stop.initStopParameters();
+                //stops.put (station, stop);
                 stopsToNewStations.put(stop, station);
             }
         }

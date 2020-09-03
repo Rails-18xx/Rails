@@ -19,6 +19,11 @@ public class GameOption implements Comparable<GameOption> {
     public static final String OPTION_TYPE_SELECTION = "selection";
     public static final String OPTION_TYPE_TOGGLE = "toggle";
 
+    /** For the random seed (as in SOH), which must be saved,
+     * but should not appear as a selectable Game option */
+    public static final String OPTION_TYPE_HIDDEN = "hidden";
+    public static final String RANDOM_SEED = "RandomSeed";
+
     // A default option that will always be set
     public static final String NUMBER_OF_PLAYERS = "NumberOfPlayers";
     // Some other common game options
@@ -30,6 +35,8 @@ public class GameOption implements Comparable<GameOption> {
 
     private final boolean isBoolean;
 
+    private final boolean isHidden;
+
     private final String defaultValue;
     
     private final List<String> allowedValues;
@@ -38,12 +45,14 @@ public class GameOption implements Comparable<GameOption> {
 
     private String selectedValue;
 
-    public GameOption(String name, String localisedName, boolean isBoolean, String defaultValue, List<String> allowedValues, int ordering) {
+    public GameOption(String name, String localisedName, boolean isBoolean, boolean isHidden,
+                      String defaultValue, List<String> allowedValues, int ordering) {
         super();
         
         this.name = name;
         this.localisedName = localisedName;
         this.isBoolean = isBoolean;
+        this.isHidden = isHidden;
         this.defaultValue = defaultValue;
         this.allowedValues = allowedValues;
         this.ordering = ordering;
@@ -63,6 +72,10 @@ public class GameOption implements Comparable<GameOption> {
 
     public boolean isBoolean() {
         return isBoolean;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
     }
 
     public boolean isValueAllowed(String value) {
@@ -152,8 +165,7 @@ public class GameOption implements Comparable<GameOption> {
                 localTextPars.add(LocalText.getText(par));
             }
             // TODO (Rails2.0): Change method signature in LocalText
-            return LocalText.getText(name,
-                    (Object[]) localTextPars.build().toArray());
+            return LocalText.getText(name, localTextPars.build().toArray());
         }
 
         private String getFinalDefaultValue(Boolean isBoolean, List<String> finalAllowedValues) {
@@ -161,6 +173,8 @@ public class GameOption implements Comparable<GameOption> {
                 return defaultValue;
             } else if (isBoolean) {
                 return OPTION_VALUE_NO;
+            } else if (type.equalsIgnoreCase(GameOption.OPTION_TYPE_HIDDEN)) {
+                return null;
             } else if (!allowedValues.isEmpty()) {
                 return allowedValues.get(0);
             } else {
@@ -171,7 +185,8 @@ public class GameOption implements Comparable<GameOption> {
         public GameOption build() {
 
             // use type information
-            Boolean isBoolean = false;
+            boolean isBoolean = false;
+            boolean isHidden = false;
             List<String> finalAllowedValues = ImmutableList.of();
             if (type.equalsIgnoreCase(OPTION_TYPE_TOGGLE)) {
                 isBoolean = true;
@@ -182,13 +197,15 @@ public class GameOption implements Comparable<GameOption> {
                 } else {
                     finalAllowedValues = allowedValues;
                 }
+            } else if (type.equalsIgnoreCase(OPTION_TYPE_HIDDEN)) {
+                isHidden = true;
             }
 
             String parameterisedName = constructParameterisedName(name, parameters);
             String localisedName = getLocalisedName();
             String finalDefaultValue = getFinalDefaultValue(isBoolean, finalAllowedValues);
 
-            return new GameOption(parameterisedName, localisedName, isBoolean,
+            return new GameOption(parameterisedName, localisedName, isBoolean, isHidden,
                     finalDefaultValue, finalAllowedValues, ordering);
         }
     }

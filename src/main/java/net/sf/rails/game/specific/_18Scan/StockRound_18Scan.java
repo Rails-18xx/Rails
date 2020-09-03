@@ -23,8 +23,7 @@ public class StockRound_18Scan extends StockRound {
             // The SJ does not float in a stock round before phase 5
         } else
         // Company floats if number of shares sold is equal to the current Phase (max 5).
-        if (company.getSoldPercentage() >= 10 * Math.min (5,
-                (2 + currentPhase.getIndex()))) {
+        if (company.getSoldPercentage() >= 10 * Math.min (5, getPhaseNumber())) {
             // Company floats
             floatCompany(company);
             if (phase5Reached) {

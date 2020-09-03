@@ -1701,7 +1701,6 @@ public class OperatingRound extends Round implements Observer {
                     tile.toText(),
                     hex.getId(),
                     errMsg));
-            ;
             return false;
         }
 
@@ -1746,6 +1745,8 @@ public class OperatingRound extends Round implements Observer {
      * allowed number for the colour of the just laid tile reaches zero, all
      * normal tile lays have been consumed. 2. If any colour is laid, no
      * different colours may be laid. THIS MAY NOT BE TRUE FOR ALL GAMES!
+     * EV sep 2020: Indeed it isn't true for SOH, 1846 and other games.
+     * These games must override this method.
      */
 
     protected void updateAllowedTileColours(String colour, int oldAllowedNumber) {
@@ -1763,7 +1764,7 @@ public class OperatingRound extends Round implements Observer {
                     coloursToRemove.add(key);
                 }
             }
-            // Two-step removal to prevent ConcurrentModificatioonException.
+            // Two-step removal to prevent ConcurrentModificationException.
             for (String key : coloursToRemove) {
                 tileLaysPerColour.remove(key);
             }
@@ -1940,7 +1941,6 @@ public class OperatingRound extends Round implements Observer {
                         tc.put(colour, 1);
                         remainingColours.add(colour);
                         remainingHexes.add(hex);
-                        continue;
                     }
                 }
             } else {
@@ -2574,7 +2574,7 @@ public class OperatingRound extends Round implements Observer {
     /**
      * Distribute the dividend amongst the shareholders.
      *
-     * @param amount
+     * @param amount The dividend to be payed out
      */
     public void payout(int amount) {
 
@@ -2680,7 +2680,7 @@ public class OperatingRound extends Round implements Observer {
     /**
      * Split a dividend. TODO Optional rounding down the payout
      *
-     * @param amount
+     * @param amount The revenue to be split
      */
     public void splitRevenue(int amount) {
 
@@ -2883,7 +2883,7 @@ public class OperatingRound extends Round implements Observer {
         SpecialTrainBuy stb = null;
 
         String errMsg = null;
-        int presidentCash = action.getPresidentCashToAdd();
+        int presidentCash;
         boolean presidentMustSellShares = false;
         int price = action.getPricePaid();
         int actualPresidentCash = 0;
@@ -3093,7 +3093,7 @@ public class OperatingRound extends Round implements Observer {
      * isBelowTrainLimit() to get the result. May be overridden if other
      * considerations apply (such as having a Pullmann in 18EU).
      *
-     * @return
+     * @return True if the company has room buy a train
      */
     protected boolean canBuyTrainNow() {
         return isBelowTrainLimit();
@@ -3371,7 +3371,7 @@ public class OperatingRound extends Round implements Observer {
      * Returns whether or not the company is allowed to buy a train, considering
      * its train limit.
      *
-     * @return
+     * @return True if the company is below its train limit
      */
     protected boolean isBelowTrainLimit() {
         return operatingCompany.value().getNumberOfTrains() < operatingCompany.value().getCurrentTrainLimit();
@@ -3421,9 +3421,6 @@ public class OperatingRound extends Round implements Observer {
         return "OperatingRound " + thisOrNumber;
     }
 
-    /**
-     * @Overrides
-     */
     public boolean equals(RoundFacade round) {
         return round instanceof OperatingRound
                 && thisOrNumber.equals(((OperatingRound) round).thisOrNumber);

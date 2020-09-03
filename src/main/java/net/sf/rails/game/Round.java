@@ -112,6 +112,17 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
     }
 
     /**
+     * Returns the 'phase number', defined as 2 for phase 2, etc.
+     * For use in games where some share-related rules depend on that number,
+     * such as 18Scan and SOH.
+     * @return The phase number
+     */
+    protected int getPhaseNumber () {
+        // The index starts at 0, so we must add 2
+        return gameManager.getCurrentPhase().getIndex() + 2;
+    }
+
+    /**
      * Set the operating companies in their current acting order
      */
     // What is the reason of that to have that here? => move to OR?
@@ -126,8 +137,7 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
     public List<PublicCompany> setOperatingCompanies(List<PublicCompany> oldOperatingCompanies,
                                                      PublicCompany lastOperatingCompany) {
 
-        Map<Integer, PublicCompany> operatingCompanies =
-                new TreeMap<Integer, PublicCompany>();
+        Map<Integer, PublicCompany> operatingCompanies = new TreeMap<>();
         List<PublicCompany> newOperatingCompanies;
         StockSpace space;
         int key;
@@ -182,7 +192,7 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
      * Check if a company must be floated, and if so, do it. <p>This method is
      * included here because it is used in various types of Round.
      *
-     * @param company
+     * @param company Company to be checked for being floatable
      */
     // What is the reason of that to have that here? => best to move it to PublicCompany in the long-run
     // is called by StartRound as well

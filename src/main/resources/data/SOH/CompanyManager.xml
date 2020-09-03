@@ -4,9 +4,9 @@
 		<ClosingConditions>
             <Phase>5</Phase>
 		</ClosingConditions>
-		<Tradeable toCompany="yes" lowerPriceFactor="0" upperPriceFactor="2.0"/>
+		<Tradeable toCompany="yes" lowerPriceFactor="0" upperPriceFactor="1.0"/>
 								<!-- must be lower price="1"-->
-		<Tradeable toPlayer="yes"/>	
+		<Tradeable toPlayer="yes"/>	<!-- ??? -->
 	</CompanyType>
 	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<Capitalisation type="incremental"/>
@@ -36,9 +36,17 @@
 	</Company>
 	<Company name="3 ES" type="Private" basePrice="75" revenue="15"
 		longname="Veerdienst Enkhuizen-Stavoren">
+		<SpecialProperty condition="ifOwnedByCompany" when="revenueStep"
+						 class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
+			 <LocatedBonus name="Enkhuizen-Stavoren" type="link" location="D11" value="20"/>
+		</SpecialProperty>
 	</Company>
 	<Company name="4 VL" type="Private" basePrice="75" revenue="15"
 			 longname="Veerdienst Vlissingen-Londen">
+		<SpecialProperty condition="ifOwnedByCompany" when="revenueStep"
+						 class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
+			<LocatedBonus name="Vlissingen-London" location="J1" value="20"/>
+		</SpecialProperty>
 	</Company>
 	<Company name="5 RWS" type="Private" basePrice="80" revenue="20"
 		longname="Rijkswaterstaat">
@@ -49,19 +57,20 @@
 	<Company name="7 KO" type="Private" basePrice="100" revenue="10"
 		longname="Koninklijke Ondersteuning">
 		<Info key="ComesWithShare" parm="NRS,10"/>
+		<!-- Share is only reserved if KO is in play, this is done in the code -->
 	</Company>
 	
 	<!-- Note two supported colour specification formats:
 	     RGB decimal with commas and RGB hexadecimal without commas -->
-	<Company name="NBDS" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000A0"
+	<Company name="NBDS" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000FF"
 			longname="Noordbrabants-Duitse Spoorwegnaatschappij">
 		<Home hex="K12"/>
 	</Company>	     
-	<Company name="HSM" type="Public" tokens="4" fgColour="000000" bgColour="00FF00"
+	<Company name="HSM" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008800"
 			longname="Hollandsche IJzeren Spoorwegmaatschappij">
 		<Home hex="F9" city="1"/>
 	</Company>
-	<Company name="NRS" type="Public" tokens="4" fgColour="000000" bgColour="80FF80"
+	<Company name="NRS" type="Public" tokens="4" fgColour="000000" bgColour="FFFF40"
 			longname="Nederlandse Rhijnspoorweg">
 		<Home hex="F9" city="2"/>
 	</Company>
@@ -73,7 +82,7 @@
 			longname="S.A. des C.d.F d'Anvers a Rotterdam">
 		<Home hex="J7"/>
 	</Company>
-	<Company name="NCS" type="Public" tokens="4" fgColour="FFFFFF" bgColour="A040A0"
+	<Company name="NCS" type="Public" tokens="4" fgColour="FFFFFF" bgColour="A020A0"
 			longname="Nederlandse Centraal Spoorwegmaatschappij">
 		<Home hex="H9"/>
 	</Company>

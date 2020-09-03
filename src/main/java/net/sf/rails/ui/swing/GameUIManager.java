@@ -739,7 +739,7 @@ public class GameUIManager implements DialogOwner {
         String prompt, cityName, hexName, oldCompName;
         String[] ct;
         MapHex hex;
-        List<String> options = new ArrayList<String>();
+        List<String> options = new ArrayList<>();
         Station station;
         List<ExchangeableToken> oldTokens = action.getTokensToExchange();
 
@@ -826,7 +826,11 @@ public class GameUIManager implements DialogOwner {
                 if (index >= 0) {
                     int price = action.getStartPrices()[index];
                     action.setStartPrice(price);
-                    action.setNumberBought(action.getSharesPerCertificate());
+                    if (action.getNumberBought() == 0) {
+                        // Set bought amount only if it has not been preset
+                        // (used in SOH to start a company from phase 3)
+                        action.setNumberBought(action.getSharesPerCertificate());
+                    }
                 } else {
                     // No selection done - no action
                     currentDialogAction = null;
@@ -1262,15 +1266,6 @@ public class GameUIManager implements DialogOwner {
     public String format(int amount) {
         return Bank.format(railsRoot, amount);
     }
-
-    /** update fonts settings
-     * (after configuration changes)
-     */
-//    public static void updateUILookAndFeel() {
-//        GUIGlobals.initFontsScale();
-//        instance.initFontSettings();
-//        instance.updateWindowsLookAndFeel();
-//    }
 
     /**
      * Only set frame directly to visible if the splash phase is already over.

@@ -1555,6 +1555,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public Player getNationalFormationStartingPlayer(PublicCompany comp) {
         return this.NationalFormStartingPlayer.get(comp);
     }
+
+    private Random randomGenerator;
+    public Random getRandomGenerator () {
+        if (randomGenerator == null) {
+            long seed = Long.parseLong(getRoot().getGameOptions().get(GameOption.RANDOM_SEED));
+            log.info ("Random seed = {}", seed);
+            randomGenerator = new Random (seed);
+        }
+        return randomGenerator;
+    }
 }
 
 

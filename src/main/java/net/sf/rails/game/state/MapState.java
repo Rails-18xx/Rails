@@ -46,7 +46,7 @@ public abstract class MapState<K,V> extends State implements Iterable<V> {
 
     /**
      * Adds all (key,value) pairs
-     * @param getMap() that gets added
+     * @param map that gets added
      * @throws NullPointerException if getMap() is null
      */
     public void putAll(Map<K,V> map) {
@@ -113,7 +113,7 @@ public abstract class MapState<K,V> extends State implements Iterable<V> {
 
     /**
      * (re)initializes the state getMap() from another getMap()
-     * @param getMap() used for initialization
+     * @param initMap the map used for initialization
      */
     public void initFromMap(Map<K,V> initMap) {
         // all from initMap get added

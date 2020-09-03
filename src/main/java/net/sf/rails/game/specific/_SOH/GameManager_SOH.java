@@ -17,20 +17,6 @@ public class GameManager_SOH extends GameManager {
         super(parent, id);
     }
 
-    /*
-    protected void beginStartRound() {
-
-        if (StartRound_SOH.Procedure.valueOf(GameOption.getValue(
-                this, "StartRound").toUpperCase()) == StartRound_SOH.Procedure.DEAL) {
-            executeDeal();
-            startStockRound();
-        } else {
-            super.beginStartRound();
-        }
-    }
-
-     */
-
     @Override
     public void nextRound(Round round) {
         if (round instanceof StartRound) {
