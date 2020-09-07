@@ -1,10 +1,7 @@
 package net.sf.rails.game;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.SortedSet;
 
 import net.sf.rails.common.Config;
 import net.sf.rails.common.parser.Configurable;
@@ -36,7 +33,7 @@ public class MapManager extends RailsManager implements Configurable {
     private ImmutableSortedSet<Integer> possibleTileCosts;
 
     // Stop property defaults per stop type
-    private ImmutableMap<String, StopType> defaultStopTypes;
+    private EnumMap<Stop.Type, Access> defaultAccessTypes = new EnumMap<>(Stop.Type.class);
     
     // if required: distance table
     private Table<MapHex, MapHex, Integer> hexDistances;
@@ -83,9 +80,7 @@ public class MapManager extends RailsManager implements Configurable {
         Tag defaultsTag = tag.getChild("Defaults");
         if (defaultsTag != null) {
             List<Tag> accessTags = defaultsTag.getChildren("Access");
-            defaultStopTypes = StopType.parseDefaults(this, accessTags);
-        } else {
-            defaultStopTypes = ImmutableMap.of();
+            defaultAccessTypes = Access.parseDefaults(this, accessTags);
         }
 
         // Map image attributes
@@ -197,8 +192,8 @@ public class MapManager extends RailsManager implements Configurable {
         return mapOrientation.getUIClassName();
     }
 
-    public Map<String, StopType> getDefaultStopTypes() {
-        return defaultStopTypes;
+    public Access getDefaultAccessType(Stop.Type type) {
+        return defaultAccessTypes.get(type);
     }
 
     public List<Stop> getCurrentStops() {

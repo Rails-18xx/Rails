@@ -11,15 +11,22 @@ import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.Util;
 
 public class SpecialBaseTokenLay extends SpecialProperty {
-    
+
     private String locationCodes = null;
     private List<MapHex> locations = null;
-    
+    private String forcedText;
+
     private boolean extra = false;
     private boolean free = false;
     private boolean connected = false;
     private boolean requiresTile = false;
     private boolean requiresNoTile = false;
+    private Forced forced = Forced.NO;
+
+    public enum Forced {
+        NO,
+        IF_YELLOW
+    }
 
     /**
      * Used by Configure (via reflection) only
@@ -48,8 +55,11 @@ public class SpecialBaseTokenLay extends SpecialProperty {
         connected = tokenLayTag.getAttributeAsBoolean("connected", connected);
         requiresTile = tokenLayTag.getAttributeAsBoolean("requiresTile", requiresTile);
         requiresNoTile = tokenLayTag.getAttributeAsBoolean("requiresNoTile", requiresNoTile);
+        forcedText = tokenLayTag.getAttributeAsString("forced", null);
 
         description = LocalText.getText("LayBaseTokenInfo",
+                connected ? LocalText.getText("aconnected")
+                          : LocalText.getText("anunconnected"),
                 locationCodes,
                 (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
                 (free ? LocalText.getText("noCost") : LocalText.getText("normalCost")));
@@ -58,6 +68,16 @@ public class SpecialBaseTokenLay extends SpecialProperty {
     @Override
     public void finishConfiguration (RailsRoot root) throws ConfigurationException {
         locations = root.getMapManager().parseLocations(locationCodes);
+        if (Util.hasValue(forcedText)) {
+            if ("ifYellow".equalsIgnoreCase(forcedText)) {
+                // 18Scan: destination token may be laid aside a city on a yellow tile
+                forced = Forced.IF_YELLOW;
+            }
+        }
+    }
+
+    public Forced getForced() {
+        return forced;
     }
 
     public boolean isExecutionable() {
@@ -88,6 +108,7 @@ public class SpecialBaseTokenLay extends SpecialProperty {
         return locationCodes;
     }
 
+    // That's rather overdoing revealing descriptions, here below.
     @Override
     public String toText() {
         return description;

@@ -8,9 +8,7 @@ import net.sf.rails.algorithms.RevenueAdapter;
 import net.sf.rails.algorithms.RevenueBonus;
 import net.sf.rails.algorithms.RevenueStaticModifier;
 import net.sf.rails.algorithms.RevenueAdapter.VertexVisit;
-import net.sf.rails.game.Phase;
-import net.sf.rails.game.Station;
-import net.sf.rails.game.TileColour;
+import net.sf.rails.game.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +37,9 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
         log.info("OffBoardRevenueModifier: bonusValue = {}", bonusValue);
 
         // 2. get all off-board type stations and Hamburg
-        Set<NetworkVertex> offBoard = new HashSet<NetworkVertex>();
+        Set<NetworkVertex> offBoard = new HashSet<>();
         for (NetworkVertex vertex:revenueAdapter.getVertices()) {
-            if (vertex.isStation() && vertex.getStation().getType() == Station.Type.OFFMAPCITY){
+            if (vertex.isStation() && vertex.getStation().getType() == Stop.Type.OFFMAP){
                 offBoard.add(vertex);
             }
         }
@@ -71,7 +69,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
 
         // 5. combine those to revenueBonuses
         // always two offboard areas and one base
-        Set<NetworkVertex> destOffBoard = new HashSet<NetworkVertex>(offBoard);
+        Set<NetworkVertex> destOffBoard = new HashSet<>(offBoard);
         for (NetworkVertex offA:offBoard) {
             destOffBoard.remove(offA);
             for (NetworkVertex offB:destOffBoard) {

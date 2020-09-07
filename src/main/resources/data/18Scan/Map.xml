@@ -6,7 +6,9 @@
 		<Access type="town" runTo="yes" runThrough="yes" loop="yes" score="minor"/>
 	</Defaults>
 	<!-- Hex name="" tile="" orientation="" value="" impassable="" label="" cost="" value="" port="yes/no" -->
-	<Hex name="A4" tile="-911" city="Newcastle"  value="20,50,80"/>
+	<Hex name="A4" tile="-911" city="Newcastle"  value="20,50,80">
+		<Access runTo="tokenonly" mutexId="Off"/>
+	</Hex>
 	<Hex name="A6" tile="0" cost="60"/>
 	<Hex name="A8" tile="0" cost="60"/>
 	<Hex name="A10" tile="0" cost="60"/>
@@ -50,9 +52,9 @@
 	<Hex name="E16" tile="0"/>
 	<Hex name="E18" tile="0"/>
 	<Hex name="F1" tile="-912" city="Kiel" value="20,30,50" orientation="5">
-			<Access runTo="tokenonly"/>
+			<Access runTo="tokenonly" mutexId="Off"/>
 	</Hex>
-	<Hex name="F3" tile="-3012" city="Odense-Copenhagen" cost="40"/>
+	<Hex name="F3" tile="-3012" city="Odense-Copenhagen" cost="40,40"/>
 	<Hex name="F5" tile="0" impassable="E4"/>
 	<Hex name="F7" tile="-1" city="Norrköping"/>
 	<Hex name="F9" tile="0"/>
@@ -61,7 +63,7 @@
 	<Hex name="F15" tile="-10" city="Tampere"/>
 	<Hex name="F17" tile="0"/>
 	<Hex name="G2" tile="-912" city="Stettin" value="10,30,60" orientation="5">
-			<Access runTo="tokenonly"/>
+			<Access runTo="tokenonly" mutexId="Off"/>
 	</Hex>
 	<Hex name="G4" tile="-10" city="Malmö" cost="40"/>
 	<Hex name="G6" tile="0"/>
@@ -69,6 +71,10 @@
 	<Hex name="G12" tile="-4007" orientation="2"/>
 	<Hex name="G14" tile="-3007" city="Helsinki"/>
 	<Hex name="G16" tile="-1" city="Lahti"/>
-	<Hex name="H13" tile="-911" city="Tallinn" value="0,30,60" orientation="4"/>
-	<Hex name="H17" tile="-911" city="Vyborg" value="30,50,80" orientation="3"/>
+	<Hex name="H13" tile="-911" city="Tallinn" value="0,30,60" orientation="4">
+		<Access runTo="tokenonly" mutexId="Off"/>
+	</Hex>
+	<Hex name="H17" tile="-911" city="Vyborg" value="30,50,80" orientation="3">
+		<Access runTo="tokenonly" mutexId="Off"/>
+	</Hex>
 </Map>

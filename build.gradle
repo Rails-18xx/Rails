@@ -9,11 +9,11 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.0.0'
     // plugin to check for dependency updates via task dependencyUpdates
     // https://github.com/ben-manes/gradle-versions-plugin
-    id 'com.github.ben-manes.versions' version '0.28.0'
+    id 'com.github.ben-manes.versions' version '0.29.0'
     // https://github.com/n0mer/gradle-git-properties
-    id 'com.gorylenko.gradle-git-properties' version '2.2.2'
+    id 'com.gorylenko.gradle-git-properties' version '2.2.3'
     // https://openjfx.io/openjfx-docs/#gradle
-    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
     // https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/
     id 'org.sonarqube' version '3.0'
     // used by SonarQube for code coverage
@@ -70,15 +70,15 @@ dependencies {
     implementation 'org.dockingframes:docking-frames-common:1.1.1'
     implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.2'
     implementation 'org.apache.httpcomponents:httpclient:4.5.12'
-    implementation 'org.apache.commons:commons-lang3:3.10'
-    implementation 'org.apache.commons:commons-text:1.8'
+    implementation 'org.apache.commons:commons-lang3:3.11'
+    implementation 'org.apache.commons:commons-text:1.9'
     // https://www.jetbrains.com/help/idea/annotating-source-code.html
-    implementation 'org.jetbrains:annotations:19.0.0'
+    implementation 'org.jetbrains:annotations:20.1.0'
 
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
     testImplementation 'org.easytesting:fest-util:1.2.5'
-    testImplementation 'org.mockito:mockito-core:3.3.3'
+    testImplementation 'org.mockito:mockito-core:3.5.10'
 }
 
 javafx {

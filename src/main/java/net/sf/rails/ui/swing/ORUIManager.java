@@ -91,10 +91,10 @@ public class ORUIManager implements DialogOwner {
     private UpgradesPanel upgradePanel;
     private MapPanel mapPanel;
     private HexMap map;
-    private MessagePanel messagePanel;
+    protected MessagePanel messagePanel;
     private RemainingTilesWindow remainingTiles;
 
-    private OperatingRound oRound;
+    protected OperatingRound oRound;
     private List<PublicCompany> companies;
 
     // TODO: Remove storage of those variables
@@ -139,7 +139,7 @@ public class ORUIManager implements DialogOwner {
 
     }
 
-    void initOR(OperatingRound or) {
+    protected void initOR(OperatingRound or) {
         oRound = or;
         companies = or.getOperatingCompanies();
         orWindow.activate(oRound);
@@ -147,7 +147,7 @@ public class ORUIManager implements DialogOwner {
 
     public void finish() {
         orWindow.finish();
-        upgradePanel.setInactive();;
+        upgradePanel.setInactive();
         // TODO: Is this still required, do we need to store in ORUIManager the active OperatingCompany?
         if (!(gameUIManager.getCurrentRound() instanceof ShareSellingRound)) {
             orComp = null;
@@ -188,9 +188,11 @@ public class ORUIManager implements DialogOwner {
 
         // show selectable hexes if highlight is active
         if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
-        checkHexVisibilityOnUI(actions);
+            checkHexVisibilityOnUI(actions);
         }
 
+        // TODO: This really is too early, the special actions are not yet defined here.
+        // This is now fixed at line 1545, see also line 1449 for an earlier attempt.
         LocalSteps nextSubStep;
         if (tileActions.isEmpty() && tokenActions.isEmpty()) {
             nextSubStep = LocalSteps.INACTIVE;
@@ -232,7 +234,7 @@ public class ORUIManager implements DialogOwner {
                 addConnectedTileLays(layTile);
                 break;
             case (LayTile.SPECIAL_PROPERTY):
-                SpecialTileLay sp = (SpecialTileLay)layTile.getSpecialProperty();
+                SpecialTileLay sp = layTile.getSpecialProperty();
                 if (sp.requiresConnection()) {
                     addConnectedTileLays(layTile);
                 } else {
@@ -313,6 +315,7 @@ public class ORUIManager implements DialogOwner {
                         addGenericTokenLays(layBaseToken);
                     }
                 break;
+                case LayBaseToken.FORCED_LAY :
                 case (LayBaseToken.HOME_CITY):
                     addLocatedTokenLays(layBaseToken);
                 break;
@@ -391,7 +394,7 @@ public class ORUIManager implements DialogOwner {
                 Map<String, Integer> tileColours;
                 SpecialProperty sp = tileLay.getSpecialProperty();
                 // For special tile lays add special message
-                if (sp != null && sp instanceof SpecialTileLay) {
+                if (sp instanceof SpecialTileLay) {
                     SpecialTileLay stl = (SpecialTileLay) sp;
                     extraMessage += "<BR>" + stl.getHelp();
                 } else if ((tileColours = tileLay.getTileColours()) != null) {
@@ -441,6 +444,13 @@ public class ORUIManager implements DialogOwner {
                            normalTokenMessage));
                }
             }
+        }
+
+        if (tileLays.isEmpty() && tokenLays.isEmpty() && orPanel.hasSpecialActions()) {
+            // Special actions only. Maybe we need a separate substep for this case.
+            // Restart the message
+            message = new StringBuilder("<font color='red'>" + LocalText.getText("YouHaveSpecialActions") + "</font>");
+            message.append("<br>" + LocalText.getText("YouCannotLayTokens"));
         }
 
         if (correctionActive) {
@@ -743,7 +753,9 @@ public class ORUIManager implements DialogOwner {
         LayBaseToken action = (LayBaseToken) upgrade.getAction();
 
         action.setChosenHex(hex);
-        action.setChosenStation(upgrade.getSelectedStop().getRelatedNumber());
+        if (upgrade.getSelectedStop() != null) { // Added for 18Scan, still necessary?
+            action.setChosenStation(upgrade.getSelectedStop().getRelatedNumber());
+        }
 
         if (!orWindow.process(action)) {
             setLocalStep(LocalSteps.SELECT_HEX);
@@ -788,7 +800,7 @@ public class ORUIManager implements DialogOwner {
          * TODO: (Rails2.0) Check if this still works
          */
         if (stopsToQuery.size() == 2) {
-            Collections.sort(stopsToQuery, new Comparator<Stop>() {
+            Collections.sort(stopsToQuery, new Comparator<>() {
                 @Override
                 public int compare (Stop s1, Stop s2) {
                     Set<BaseToken> tokens;
@@ -819,8 +831,8 @@ public class ORUIManager implements DialogOwner {
                 // TODO: Rewrite this to make this code nicer
                 PublicCompany company = (Iterables.get(oldStop.getBaseTokens(), 0)).getParent();
 
-                List<String> prompts = new ArrayList<String>();
-                Map<String, Integer> promptToCityMap = new HashMap<String, Integer>();
+                List<String> prompts = new ArrayList<>();
+                Map<String, Integer> promptToCityMap = new HashMap<>();
                 String prompt;
                 for (Station newStation : newTile.getStations()) {
                     if (newStation.getBaseSlots() > 0 && freeSlots[newStation.getNumber()] > 0) {
@@ -955,9 +967,8 @@ public class ORUIManager implements DialogOwner {
 
     public void buyTrain() {
 
-        List<String> prompts = new ArrayList<String>();
-        Map<String, PossibleAction> promptToTrain =
-            new HashMap<String, PossibleAction>();
+        List<String> prompts = new ArrayList<>();
+        Map<String, PossibleAction> promptToTrain = new HashMap<>();
         Train train;
         StringBuilder usingPrivates = new StringBuilder();
 
@@ -1079,7 +1090,7 @@ public class ORUIManager implements DialogOwner {
                 exchangedTrain = Iterables.get(oldTrains,0);
             } else {
                 List<String> oldTrainOptions =
-                    new ArrayList<String>(oldTrains.size());
+                    new ArrayList<>(oldTrains.size());
                 String[] options = new String[oldTrains.size()];
                 int jj = 0;
                 for (int j = 0; j < oldTrains.size(); j++) {
@@ -1150,10 +1161,10 @@ public class ORUIManager implements DialogOwner {
     public void buyPrivate() {
 
         int amount, index;
-        List<String> privatesForSale = new ArrayList<String>();
+        List<String> privatesForSale = new ArrayList<>();
         List<BuyPrivate> privates = getPossibleActions().getType(BuyPrivate.class);
         String chosenOption;
-        BuyPrivate chosenAction = null;
+        BuyPrivate chosenAction;
         int minPrice = 0, maxPrice = 0;
         String priceRange;
 
@@ -1337,7 +1348,7 @@ public class ORUIManager implements DialogOwner {
         // initial deactivation of revenue calculation
         if (!possibleActions.contains(SetDividend.class)) {
             orPanel.stopRevenueUpdate();
-            orPanel.resetCurrentRevenueDisplay();
+            //orPanel.resetCurrentRevenueDisplay();
         }
 
         if (orStep == GameDef.OrStep.LAY_TRACK) {
@@ -1353,7 +1364,7 @@ public class ORUIManager implements DialogOwner {
             orWindow.requestFocus();
 
             orPanel.initTokenLayingStep();
-            log.debug("BaseTokens can be laid");
+            log.debug("BaseTokens can be laid or bonus tokens bought");
 
         } else if (possibleActions.contains(SetDividend.class)
                 && localStep == LocalSteps.SELECT_PAYOUT ) {
@@ -1440,6 +1451,9 @@ public class ORUIManager implements DialogOwner {
                 switch (action.getMode()) {
                 case DONE:
                     orPanel.enableDone(action);
+                    break;
+                case SKIP:
+                    //orPanel.enableSkip(action);
                     break;
                 default:
                     break;
@@ -1531,15 +1545,21 @@ public class ORUIManager implements DialogOwner {
         }
 
 
-        checkForGameSpecificActions();
+        checkForGameSpecificActions(orComp, orStep, possibleActions);
+
+        // If special actions exist, check if Skip button is activated
+        if (orPanel.hasSpecialActions()) {
+            upgradePanel.setActive();
+            updateMessage(); // Does not work even here !?
+        }
 
         orPanel.redisplay();
     }
 
     /** Stub, can be overridden by game-specific subclasses */
-    protected void checkForGameSpecificActions() {
-
-    }
+    protected void checkForGameSpecificActions(PublicCompany orComp,
+                                               GameDef.OrStep orStep,
+                                               PossibleActions possibleActions) {}
 
     /** Redraw the ORPanel if the company operating order has changed */
     protected void checkORCompanySequence (List<PublicCompany> oldCompanies, List<PublicCompany> newCompanies) {
@@ -1591,6 +1611,10 @@ public class ORUIManager implements DialogOwner {
     // Further Getters
     public MessagePanel getMessagePanel() {
         return messagePanel;
+    }
+
+    public UpgradesPanel getUpgradePanel() {
+        return upgradePanel;
     }
 
     public HexMap getMap() {

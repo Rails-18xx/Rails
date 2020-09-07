@@ -5,23 +5,30 @@
 			<Phase>5</Phase>
 		</ClosingConditions>
 	</CompanyType>
-
 	<CompanyType name="Minor" class="net.sf.rails.game.specific._18Scan.PublicCompany_18Scan" fgColour="FFCC11" bgColour="9370DB">
 		<ShareUnit percentage="100"/>
 		<Certificate type="President" shares="1"/>
-	<StockPrice market="no"/>
-	<Payout split="always"/>
-	<BaseTokens>
-		<HomeBase lay="whenStarted"/>
-	</BaseTokens>
-	<Trains limit="2,1" mandatory="no"/>
+		<StockPrice market="no"/>
+		<Payout split="always"/>
+		<BaseTokens>
+			<HomeBase lay="whenStarted"/>
+			<LayCost method="sequence" cost="0,40"/>
+		</BaseTokens>
+		<SpecialProperties>
+			<SpecialProperty condition="ifStarted" when="phase:5" class="net.sf.rails.game.special.ExchangeForShare">
+				<ExchangeForShare company="SJ" share="10"/>
+			</SpecialProperty>
+		</SpecialProperties>
+		<Trains limit="2,1" mandatory="no"/>
+		<CanUseSpecialProperties/>
 	</CompanyType>
-	
-	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
+	<CompanyType name="Public" class="net.sf.rails.game.specific._18Scan.PublicCompany_18Scan">
 		<Capitalisation type="incremental"/>
-		<Float percentage="20"/>
 		<StockPrice par="no"/>
+		<TreasuryCanHoldOwnShares maxPerc="100"/>
+		<Float percentage="20"/>
 		<ShareUnit percentage="10"/>
+		<AdjustPriceOnPayout percPerJump="100,200"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
 		<BaseTokens>
@@ -31,45 +38,100 @@
 		<Trains limit="4,3,2"/>
 		<CanUseSpecialProperties/>
 	</CompanyType>
+	<CompanyType name="State" class="net.sf.rails.game.PublicCompany">
+		<Capitalisation type="part" shares="7"/>
+		<StockPrice par="yes"/>
+		<ShareUnit percentage="10"/>
+		<AdjustPriceOnPayout percPerJump="100,200"/>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="5"/>
+		<Certificate shares="1" number="3" available="no"/>
+		<Float percentage="50"/>
+		<BaseTokens>
+			<LayCost method="sequence" cost="100"/>
+		</BaseTokens>
+		<Trains limit="3"/>
+		<CanUseSpecialProperties/>
+	</CompanyType>
+
 	<Company name="Ferry" type="Private" basePrice="120" revenue="20"
-		longname="Stockholm-Åbo Ferry Company (Ferry)"/>
+			 longname="Stockholm-Åbo Ferry Company">
+		<SpecialProperty condition="ifOwnedByPlayer" when="tokenLayingStep"
+						 class="net.sf.rails.game.special.SellBonusToken" transfer="toGameManager">
+			<SellBonusToken name="Ferry" type="link" location="G12" price="20" value="20" quantity="2"/>
+		</SpecialProperty>
+		<ClosingConditions>
+			<Phase>5</Phase>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
+	</Company>
 	<Company name="Mine" type="Private" basePrice="150" revenue="25"
-		longname="Lapland Ore Line (Mine)"/>
-	<Company name="ZRC" type="Private" basePrice="180" revenue="30"
-		longname="Sjællandske Jernbaneselskab (Zeeland Railway Company)"/>
+			 longname="Lapland Ore Line">
+		<SpecialProperty condition="ifOwnedByPlayer" when="tokenLayingStep"
+						 class="net.sf.rails.game.special.SellBonusToken" transfer="toGameManager">
+			<SellBonusToken name="Mine" type="stop" location="A20" price="50" value="50" quantity="1" oneTrainOnly="yes"/>
+		</SpecialProperty>
+		<ClosingConditions>
+			<Phase>5</Phase>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
+	</Company>
+	<Company name="SJS" type="Private" basePrice="180" revenue="30"
+			 longname="Sjællandske Jernbaneselskab (Zeeland Railway Company)">
+		<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"  transfer="toPlayer"
+						 class="net.sf.rails.game.special.SpecialSingleTileLay">
+			<SpecialSingleTileLay location="F3" connected="yes" extra="no" free="yes"/>
+		</SpecialProperty>
+		<ClosingConditions>
+			<Phase>5</Phase>
+			<FirstTrainBought company="DSB"/>
+		</ClosingConditions>
+	</Company>
 
 	<Company name="1" type="Minor" price="260" tokens="2" longname="Västra Stambanan (Western Mainline)">
 		<Home hex="G4" />
+		<Destination hex="E6"/>
+		<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+			<SpecialBaseTokenLay location="E6" connected="yes" extra="no" free="yes" requiresTile="no" forced="ifYellow"/>
+			<!-- Only used in Destination Run -->
+		</SpecialProperty>
 	</Company>
 	<Company name="2" type="Minor" price="220" tokens="2" longname="Nordvästra Stambanan (Northwestern Mainline)">
 		<Home hex="F11" city="1"/>
+		<Destination hex="B11"/>
+		<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+			<SpecialBaseTokenLay location="B11" connected="yes" extra="no" free="yes" requiresTile="no" forced="ifYellow"/>
+		</SpecialProperty>
 	</Company>
 	<Company name="3" type="Minor" price="200" tokens="2" longname="Södra Stambanan (Southern Mainline)">
 		<Home hex="F11" city="2"/>
+		<Destination hex="D7"/>
+		<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+			<SpecialBaseTokenLay location="D7" connected="yes" extra="no" free="yes" requiresTile="no" forced="ifYellow"/>
+		</SpecialProperty>
 	</Company>
 
-	<Company name="DSB" type="Public" tokens="3" fgColour="FFFFFF"
-		bgColour="EE2C2C" longname="Danske Statsbaner">
+	<Company name="DSB" type="Public" tokens="3" fgColour="FFFFFF" bgColour="EE2C2C" longname="Danske Statsbaner">
 		<Home hex="F3" />
+		<!--FirstTrainCloses type="Private" name="SJS"/  now specified with the private-->
 	</Company>
 	<Company name="NSB" type="Public" tokens="4" fgColour="FFFFFF"
-		bgColour="23238E" longname="Norges Statsbaner">
+			 bgColour="23238E" longname="Norges Statsbaner">
 		<Home hex="D7" />
 	</Company>
 	<Company name="S&amp;NJ" type="Public" tokens="3" fgColour="FFFFFF"
-		bgColour="228B22" longname="Sveriges &amp; Norges Järnvägar">
+			 bgColour="228B22" longname="Sveriges &amp; Norges Järnvägar">
 		<Home hex="B19" />
 	</Company>
 	<Company name="VR" type="Public" tokens="4" fgColour="FFFFFF"
-		bgColour="1464F4" longname="Valtionrautatiet">
+			 bgColour="1464F4" longname="Valtionrautatiet">
 		<Home hex="G14" />
 	</Company>
-	<Company name="SJ" type="Public" tokens="6" fgColour="FFCC11"
-		bgColour="9370DB" longname="Statens Järnvägar">
-		<Trains limit="3"/>
+	<Company name="SJ" type="State" startspace="E3" tokens="6" fgColour="FFCC11"
+			 bgColour="9370DB" longname="Statens Järnvägar">
 	</Company>
 
-	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
+	<StartPacket roundClass="net.sf.rails.game.specific._18Scan.StartRound_18Scan">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="Ferry" type="Private" basePrice="120">
 			<SubItem name="VR" type="Public" />
@@ -77,11 +139,11 @@
 		<Item name="Mine" type="Private" basePrice="150">
 			<SubItem name="S&amp;NJ" type="Public" />
 		</Item>
-		<Item name="ZRC" type="Private" basePrice="180">
+		<Item name="SJS" type="Private" basePrice="180">
 			<SubItem name="DSB" type="Public" president="yes"/>
 		</Item>
-		<Item name="1" type="Minor" basePrice="200"/>
+		<Item name="1" type="Minor" basePrice="260"/>
 		<Item name="2" type="Minor" basePrice="220"/>
-		<Item name="3" type="Minor" basePrice="260"/>
+		<Item name="3" type="Minor" basePrice="200"/>
 	</StartPacket>
 </CompanyManager>

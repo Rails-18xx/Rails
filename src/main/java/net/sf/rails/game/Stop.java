@@ -1,9 +1,5 @@
 package net.sf.rails.game;
 
-import net.sf.rails.game.StopType.Loop;
-import net.sf.rails.game.StopType.RunThrough;
-import net.sf.rails.game.StopType.RunTo;
-import net.sf.rails.game.StopType.Score;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.HashSetState;
 import net.sf.rails.game.state.IntegerState;
@@ -12,6 +8,8 @@ import net.sf.rails.util.Util;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -31,6 +29,22 @@ import com.google.common.collect.ImmutableSet;
 public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<Stop> {
     private final PortfolioSet<BaseToken> tokens = PortfolioSet.create(this, "tokens", BaseToken.class);
     private final GenericState<Station> relatedStation = new GenericState<>(this, "station");
+
+    private static final Logger log = LoggerFactory.getLogger(Stop.class);
+
+    private Access.RunTo runTo;
+    private Access.RunThrough runThrough;
+    private Access.Score score;
+    private String mutexId;
+
+    public enum Type {
+        CITY,
+        TOWN,
+        OFFMAP,
+        MINE,
+        PORT,
+        PASS
+    }
 
     // FIXME: Only used for Rails1.x compatibility
     private final IntegerState legacyNumber = IntegerState.create(this, "legacyNumber", 0);
@@ -122,7 +136,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     }
 
     /**
-     * @param company
+     * @param company Operating company
      * @return true if this Stop already contains an instance of the specified
      * company's token. Do this by calling the hasTokenOf with Company Name.
      * Using a tokens.contains(company) fails since the tokens are a ArrayList
@@ -137,6 +151,76 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return false;
     }
 
+    public void initStopParameters () {
+
+        boolean complete;
+
+        log.debug("--- For hex "+getParent().getId());
+        // Related station on current tile
+        /* No actual need seems to exist for this most detailed stop property level,
+         * hence the below code is outcommented.
+         * A real need would exist if one tile has stations of different types,
+         * that would also have non-default stop properties.
+         * In such a case, the option to add Access info on Station level added to TileSet.xml
+         * (NOT Tiles.xml!), and code must be written to parse that.
+        log.debug("Station: "+getRelatedStation().toString());
+        complete = getAccessFields(getRelatedStation().getAccess());
+        log.debug("After Station: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        if (complete) return;
+        */
+
+        // Current Tile
+        // Possible (in  TileSet.xml, NOT Tiles.xml!) but not yet used, and not recommended.
+        complete = updateAccessFields(getParent().getCurrentTile().getAccess());
+        log.debug("After Tile: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        if (complete) return;
+
+        // MapHex
+        // The recommended place to specify location-specific run and loop specialties.
+        complete = updateAccessFields(getParent().getAccess());
+        log.debug("After MapHex: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        if (complete) return;
+
+        // Access fields not yet complete, defaults apply. First we need the stop type name.
+        Stop.Type type = getRelatedStation().getType();
+        log.debug("Type = {}", type.toString());
+
+        // TileManager defaults
+        // Possible, but no yet used, and not recommended.
+        complete = updateAccessFields(getParent().getCurrentTile().getParent().getDefaultAccessType(type));
+        log.debug("After TileManager defaults: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        if (complete) return;
+
+        // MapManager defaults
+        // The appropriate place to specify defaults.
+        complete = updateAccessFields(getParent().getParent().getDefaultAccessType(type));
+        log.debug("After MapManager defaults: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        if (complete) return;
+
+        // Built-in defaults
+        // Defined in class Access, not changeable.
+        complete = updateAccessFields(Access.getDefault(type));
+        log.debug("After built-in defaults: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        if (complete) return;
+
+         // The ultimate fall-back
+        updateAccessFields(Access.getDefault(Stop.Type.CITY));
+        log.debug("After last resort default: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+   }
+
+    /**
+     * Set those access fields that are still unset.
+     * @param access Access parameters of a certain leve
+     * @return true if all access parameters have a value
+     */
+    private boolean updateAccessFields(Access access) {
+        if (access == null) return false;
+        if (runTo == null) runTo = access.getRunToAllowed();
+        if (runThrough == null) runThrough = access.getRunThroughAllowed();
+        if (score == null) score = access.getScoreType();
+        if (mutexId == null) mutexId = access.getMutexId();
+        return runTo != null && runThrough != null && score != null;  // mutexId may stay null
+    }
     /**
      * @return true if stop is tokenable, thus it has open token slots and no company token yet
      */
@@ -144,40 +228,22 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return hasTokenSlotsLeft() && !hasTokenOf(company);
     }
 
-    public RunTo getRunToAllowed() {
-        // TEMPORARY FOR DEBUGGING
-        String mm,tm;
-        if (getParent().getId().equalsIgnoreCase("G2")) {
-            mm = getParent().getParent().getId();  // "Map"
-            tm = getParent().getCurrentTile().getParent().getId();  // "TileManager"
-            int x=1;
-        }
-        RunTo runTo = getParent().getStopType().getRunToAllowed();
-        if (runTo == null) runTo = getParent().getCurrentTile().getStopType().getRunToAllowed();
-        if (runTo == null) runTo = getRelatedStation().getStopType().getRunToAllowed();
-        return runTo;
+    public Access.RunTo getRunToAllowed() {
+       return runTo;
     }
 
-    public RunThrough getRunThroughAllowed() {
-        RunThrough runThrough = getParent().getStopType().getRunThroughAllowed();
-        if (runThrough == null) runThrough = getParent().getCurrentTile().getStopType().getRunThroughAllowed();
-        if (runThrough == null) runThrough = getRelatedStation().getStopType().getRunThroughAllowed();
-        return runThrough;
+    public Access.RunThrough getRunThroughAllowed() {
+      return runThrough;
     }
 
-    public Loop getLoopAllowed() {
-        Loop loopAllowed = getParent().getStopType().getLoopAllowed();
-        if (loopAllowed == null) loopAllowed = getParent().getCurrentTile().getStopType().getLoopAllowed();
-        if (loopAllowed == null) loopAllowed = getRelatedStation().getStopType().getLoopAllowed();
-        return loopAllowed;
+    public Access.Score getScoreType() {
+        return score;
     }
 
-    public Score getScoreType() {
-        Score scoreType = getParent().getStopType().getScoreType();
-        if (scoreType == null) scoreType = getParent().getCurrentTile().getStopType().getScoreType();
-        if (scoreType == null) scoreType = getRelatedStation().getStopType().getScoreType();
-        return scoreType;
+    public String getMutexId() {
+        return mutexId;
     }
+
 
     public boolean isRunToAllowedFor(PublicCompany company, boolean running) {
 
@@ -243,6 +309,5 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         b.append(")");
         return b.toString();
     }
-
 
 }

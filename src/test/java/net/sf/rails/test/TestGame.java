@@ -99,7 +99,7 @@ public class TestGame extends TestCase {
             GameLoader gameLoader = new GameLoader();
             if (gameLoader.createFromFile(gameFile)) {
                 testReport = gameLoader.getRoot().getReportManager().getReportBuffer().getAsList();
-            } else {
+           } else {
                 log.error("Game load failed", gameLoader.getException());
             }
         } else {

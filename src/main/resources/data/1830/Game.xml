@@ -186,7 +186,6 @@
 				<IfOption name="UnlimitedTopTrains_D" value="yes">
 					<Attributes quantity="-1"/>
 				</IfOption>
-				<Exchange cost="800"/>
 			</TrainType>
         </IfOption>
 	</Component>

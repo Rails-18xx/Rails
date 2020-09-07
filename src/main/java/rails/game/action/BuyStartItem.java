@@ -58,6 +58,10 @@ public class BuyStartItem extends StartItemAction {
         return selected;
     }
 
+    public void select() {  // Needed for 18Scan
+        selected = true;
+    }
+
     public int getAssociatedSharePrice() {
         return associatedSharePrice;
     }
@@ -89,7 +93,7 @@ public class BuyStartItem extends StartItemAction {
         BuyStartItem action = (BuyStartItem) pa;
         boolean options =
                 Objects.equal(this.price, action.price)
-                        && Objects.equal(this.selected, action.selected)
+                        //&& Objects.equal(this.selected, action.selected) // This breaks 18Scan
                         && Objects.equal(this.setSharePriceOnly,
                                 action.setSharePriceOnly)
                         && Objects.equal(this.sharePriceToSet,

@@ -16,6 +16,7 @@ import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.OperatingRound;
+import net.sf.rails.game.Round;
 import net.sf.rails.ui.swing.elements.DockingFrame;
 
 import org.slf4j.Logger;
@@ -246,14 +247,9 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
     }
 
     public void activate(OperatingRound or) {
-        GameManager gameManager = gameUIManager.getGameManager();
-        String numORs = gameManager.getNumOfORs ();
 
         orPanel.recreate(or);
-        setTitle(LocalText.getText("MapWindowORTitle",
-                gameManager.getORId(),
-                String.valueOf(gameManager.getRelativeORNumber()),
-                numORs ));
+        setMapWindowTitle (or);
 
         //rearrange layout only if no docking framework active
         if (!isDockingFrameworkEnabled()) {
@@ -269,7 +265,17 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         requestFocus();
     }
 
+    protected void setMapWindowTitle (Round round) {
+        GameManager gameManager = gameUIManager.getGameManager();
+        String numORs = gameManager.getNumOfORs ();
+        setTitle(LocalText.getText("MapWindowORTitle",
+                gameManager.getORId(),
+                String.valueOf(gameManager.getRelativeORNumber()),
+                numORs ));
+    }
+
 // Remark: one of the methods to implement the ActionPerformer Interface
+    // EV: Does not seem to be called from anywhere
     @Override
     public void updateStatus(boolean myTurn) {
         // Safety check. Do nothing if this method is called outside Operating Rounds,

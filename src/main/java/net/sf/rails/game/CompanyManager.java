@@ -1,9 +1,6 @@
 package net.sf.rails.game;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.Configurable;
@@ -266,6 +263,10 @@ public class CompanyManager extends RailsManager implements Configurable {
         } else {
             return null;
         }
+    }
+
+    public List<Company> getCompaniesByType (String type) {
+        return new ArrayList<>(mCompaniesByTypeAndName.get(type).values());
     }
 
     public void closeAllPrivates() {
