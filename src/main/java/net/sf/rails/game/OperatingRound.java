@@ -68,7 +68,6 @@ public class OperatingRound extends Round implements Observer {
 
     public static final int SPLIT_ROUND_DOWN = 2; // More to the treasury
 
-    // protected static GameDef.OrStep[] steps =
     protected GameDef.OrStep[] steps = new GameDef.OrStep[]{
             GameDef.OrStep.INITIAL, GameDef.OrStep.LAY_TRACK,
             GameDef.OrStep.LAY_TOKEN, GameDef.OrStep.CALC_REVENUE,
@@ -441,13 +440,8 @@ public class OperatingRound extends Round implements Observer {
 
         if (getStep() == GameDef.OrStep.INITIAL) {
             initTurn();
-            if (noMapMode) {
-                nextStep(GameDef.OrStep.LAY_TOKEN);
-            } else {
-                initNormalTileLays(); // new: only called once per turn ?
-                setStep(GameDef.OrStep.LAY_TRACK);
-            }
-        }
+            nextStep();
+       }
 
         GameDef.OrStep step = getStep();
         if (step == GameDef.OrStep.LAY_TRACK) {
@@ -480,9 +474,11 @@ public class OperatingRound extends Round implements Observer {
             possibleActions.addAll(currentNormalTokenLays);
             possibleActions.addAll(currentSpecialTokenLays);
             possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
+
         } else if (step == GameDef.OrStep.CALC_REVENUE) {
             prepareRevenueAndDividendAction();
             if (noMapMode) prepareNoMapActions();
+
         } else if (step == GameDef.OrStep.BUY_TRAIN) {
             setBuyableTrains();
             // TODO Need route checking here.
@@ -500,6 +496,9 @@ public class OperatingRound extends Round implements Observer {
 
             forced = true;
             setTrainsToDiscard();
+
+        } else if (step == GameDef.OrStep.TRADE_SHARES) {
+            gameManager.getCurrentRound().setPossibleActions();
         }
 
         // The following additional "common" actions are only available if the
@@ -766,7 +765,7 @@ public class OperatingRound extends Round implements Observer {
      * @return The number that defines the next action.
      */
     public GameDef.OrStep getStep() {
-        return (GameDef.OrStep) stepObject.value();
+        return stepObject.value();
     }
 
     /**
@@ -805,6 +804,10 @@ public class OperatingRound extends Round implements Observer {
         while (++stepIndex < steps.length) {
             newStep = steps[stepIndex];
             log.debug("OR considers newStep {}", newStep);
+
+            if (newStep == GameDef.OrStep.LAY_TRACK) {
+                initNormalTileLays();
+            }
 
             if (newStep == GameDef.OrStep.LAY_TOKEN) {
                 List<SpecialProperty> bonuses = gameManager.getCommonSpecialProperties();
@@ -847,8 +850,9 @@ public class OperatingRound extends Round implements Observer {
             }
 
             if (newStep == GameDef.OrStep.TRADE_SHARES) {
-                // Is company allowed to trade trasury shares?
-                if (!company.mayTradeShares() || !company.hasOperated()) {
+                // Is company allowed to trade treasury shares?
+                if (!company.mayTradeShares() ||
+                        (company.mustHaveOperatedToTradeShares() && !company.hasOperated())) {
                     continue;
                 }
 

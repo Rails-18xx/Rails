@@ -24,9 +24,10 @@
 			<GameStatus class="net.sf.rails.ui.swing.gamespecific._SOH.GameStatus_SOH"/>
 		</GuiClasses>
 		<EndOfGame>
-			<Bankruptcy/>
+			<!--Bankruptcy/-->
 			<!--BankBreaks limit="0" finish="setOfORs"/-->
-			<!-- Fixed set of rounds to be inserted here -->
+			<!--Reaching max price, see StockMarket.xml-->
+			<!--Fixed number of rounds, see GameManager_SOH.nextRound()-->
 		</EndOfGame>
 	</Component>
 	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">

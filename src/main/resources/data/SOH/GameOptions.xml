@@ -5,6 +5,8 @@
 	  selection uses a checkbox instead of a dropdown list.
 	  In this case, 'values' must be absent 
 	  (the allowed values are fixed to "yes,no").
+	- 'type="hidden"' is used for string values that must survive a save/load,
+	  but do not need to be user configurable. In SOH used for random seed.
 	- optionally, 'values="a,b,c"' i,e, a list of allowed values.
 	- optionally, a default value (only affects a toggle;
 	  in a dropdown the first item is always the default).

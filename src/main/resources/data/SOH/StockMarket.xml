@@ -37,5 +37,7 @@
 		<LeftOfLedge/>
 	</StockSpace>
 	<StockSpace name="S1" price="330"/>
-	<StockSpace name="T1" price="360"/>
+	<StockSpace name="T1" price="360">
+		<GameOver/>
+	</StockSpace>
 </StockMarket>

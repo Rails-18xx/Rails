@@ -193,13 +193,44 @@ Not yet implemented:
 		<Players minimum="2" maximum="4" />
 	</Game>
 
+	<Game name="SOH">
+		<Note>In progress</Note>
+		<Description>Steam over Holland
+			(c) 2007 Bart van Dijk
+			Published by Vendetta Games
+
+			The initial round can follow three scenarios, selectable as a Game Option:
+
+			1. Auction. This scenario follows the primary game rule, in which as many privates
+			are drawn randomly as there are players. An 18EU-style auction follows, without
+			downpricing (if all pass, private is discarded). This is the default option.
+
+			2. Deal. This scenario follows the alternative game rule, in which as many privates
+			are drawn randomly as there are players, and then dealt out, one to each player,
+			for base price.
+
+			3. Select. Each player gets one turn, to choose and buy any private for base price,
+			or pass. This scenario was added for testing purposes, and possibly for players who
+			want to distribute privates off-game in their own way. Still maximum one per player.
+
+			Not yet implemented are:
+			- Bridge buiding cost
+			- Most private special properties.
+			- Company bankruptcy
+			Not yet completed and tested are:
+			- Emergency train buying
+			- Game end by reaching max share price
+		</Description>
+		<Players minimum="2" maximum="5"/>
+	</Game>
+
 	<Game name="1870">
 		<Note>Not yet playable</Note>
 		<Description>1870 - Railroading across the Trans Mississippi
 (c) 1992, 1995 Mayfair Games, Inc.
 Designed by Bill Dixon
 Limitations:
-All aspects not present in 1870 have not been implemented yet.
+All aspects different from 1830 have not been implemented yet.
 		</Description>
 		<Players minimum="2" maximum="6"/>
 	</Game>
@@ -269,14 +300,6 @@ Known Issues:
     <Note>Prototype - Not Playable</Note>
     <Description>1862</Description>
     <Players minimum="2" maximum="8" />
-  </Game>
-
-  <Game name="SOH">
-	<Note>Prototype</Note>
-	<Description>Steam over Holland
-		(c) 2007 Bart van Dijk
-	</Description>
-	<Players minimum="2" maximum="5"/>
   </Game>
 
 

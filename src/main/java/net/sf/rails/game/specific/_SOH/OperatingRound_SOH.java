@@ -1,5 +1,6 @@
 package net.sf.rails.game.specific._SOH;
 
+import net.sf.rails.game.GameDef;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.OperatingRound;
 
@@ -9,7 +10,19 @@ import java.util.List;
 public class OperatingRound_SOH extends OperatingRound {
 
     public OperatingRound_SOH (GameManager parent, String id) {
+
         super(parent, id);
+
+        steps = new GameDef.OrStep[]{
+                GameDef.OrStep.INITIAL,
+                GameDef.OrStep.TRADE_SHARES,
+                GameDef.OrStep.LAY_TRACK,
+                GameDef.OrStep.LAY_TOKEN,
+                GameDef.OrStep.CALC_REVENUE,
+                GameDef.OrStep.PAYOUT,
+                GameDef.OrStep.BUY_TRAIN,
+                GameDef.OrStep.FINAL
+        };
     }
 
     /**
