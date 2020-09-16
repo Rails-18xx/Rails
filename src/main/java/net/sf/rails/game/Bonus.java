@@ -4,10 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import net.sf.rails.algorithms.NetworkVertex;
-import net.sf.rails.algorithms.RevenueAdapter;
-import net.sf.rails.algorithms.RevenueBonus;
-import net.sf.rails.algorithms.RevenueStaticModifier;
+import net.sf.rails.algorithms.*;
 import net.sf.rails.game.state.Observable;
 
 /**
@@ -21,32 +18,47 @@ import net.sf.rails.game.state.Observable;
  * <br>3. when a sellable bonus is bought from such a public company by another company.
  * @author VosE
  *
+ * Changed 8/2020 by EV:
+ * This modifier can now also be dynamic in case the bonus is only given once per revenue run.
+ * In that case, the bonus is not assigned to the city, but added at the final evaluation
+ * provided that at least one train has reached that city. This applies to 18Scan Kiruna.
  */
-public class Bonus implements Closeable, RevenueStaticModifier {
+public class Bonus implements Closeable, RevenueStaticModifier, RevenueDynamicModifier {
 
     private PublicCompany owner;
-    private List<MapHex> locations = null;
+    private List<MapHex> locations;
     private String name;
     private int value;
-    // TODO: What was the intention of those?
-/*    private String removingObjectDesc = null;
-    private Object removingObject = null;
-*/
+    private boolean dynamic;
+
+    private Set<NetworkVertex> bonusVertices;
+    private NetworkVertex bonusVertex;
 
     public Bonus (PublicCompany owner,
             String name, int value, List<MapHex> locations) {
+        this(owner, name, value, locations, false);
+    }
+
+    public Bonus (PublicCompany owner,
+                  String name, int value, List<MapHex> locations, boolean onlyOnce) {
         this.owner = owner;
         this.name = name;
         this.value = value;
         this.locations = locations;
+        this.dynamic = onlyOnce;
 
         // add them to the call list of the RevenueManager
-       owner.getRoot().getRevenueManager().addStaticModifier(this);
+        if (dynamic) {
+            owner.getRoot().getRevenueManager().addDynamicModifier(this);
+        } else {
+            owner.getRoot().getRevenueManager().addStaticModifier(this);
+        }
+    }
 
-    }
-    public boolean isExecutionable() {
-        return false;
-    }
+    // Unused (and a misformed name too)
+    //public boolean isExecutionable() {
+    //     return false;
+    //}
 
     public PublicCompany getOwner() {
         return owner;
@@ -81,11 +93,15 @@ public class Bonus implements Closeable, RevenueStaticModifier {
     /**
      * Remove the bonus
      * This method can be called by a certain phase when it starts.
-     * See prepareForRemovel().
+     * See prepareForRemove().
      */
     @Override
     public void close() {
-        owner.getRoot().getRevenueManager().removeStaticModifier(this);
+        if (dynamic) {
+            owner.getRoot().getRevenueManager().removeDynamicModifier(this);
+        } else {
+            owner.getRoot().getRevenueManager().removeStaticModifier(this);
+        }
     }
 
 
@@ -109,24 +125,96 @@ public class Bonus implements Closeable, RevenueStaticModifier {
 
     /**
      * Add bonus value to revenue calculator
+     * Part of static modifier
      */
     @Override
     public boolean modifyCalculator(RevenueAdapter revenueAdapter) {
+        if (dynamic) return false;
+
         // 1. check operating company
         if (owner != revenueAdapter.getCompany()) return false;
 
         // 2. find vertices to hex
         boolean found = false;
-        Set<NetworkVertex> bonusVertices = NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), locations);
+        bonusVertices = NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), locations);
+
+        // 3. First add the bonus to any stations
         for (NetworkVertex bonusVertex:bonusVertices) {
-            if (!bonusVertex.isStation()) continue;
-            RevenueBonus bonus = new RevenueBonus(value, name);
-            bonus.addVertex(bonusVertex);
-            revenueAdapter.addRevenueBonus(bonus);
-            found = true;
+            if (bonusVertex.isStation()) {
+                RevenueBonus bonus = new RevenueBonus(value, name);
+                bonus.addVertex(bonusVertex);
+                revenueAdapter.addRevenueBonus(bonus);
+                this.bonusVertex = bonusVertex;
+                found = true;
+
+            }
+        }
+
+        if (found) return true;
+
+        // 4. OK, then it's plain track, e.g. a Ferry.
+        // Assume for now that we always have simple track with only 2 exits.
+        // Pick just one exit, it doesn't matter which one, then return.
+        for (NetworkVertex bonusVertex:bonusVertices) {
+            if (!bonusVertex.isStation()) {
+                RevenueBonus bonus = new RevenueBonus(value, name);
+                bonus.addVertex(bonusVertex);
+                revenueAdapter.addRevenueBonus(bonus);
+                this.bonusVertex = bonusVertex;
+                found = true;
+                break;  // Only one!
+            }
         }
         return found;
     }
+
+    /**
+     * First of four methods incorporating the dynamic modifier
+     * @param revenueAdapter The calling class
+     * @return True if a bonus location was found in the route graph
+     */
+    public boolean prepareModifier(RevenueAdapter revenueAdapter) {
+        if (!dynamic) return false;
+
+        // 1. check operating company
+        if (owner != revenueAdapter.getCompany()) return false;
+
+        // 2. find vertices to hex
+        boolean found = false;
+        bonusVertices = NetworkVertex.getVerticesByHexes(revenueAdapter.getVertices(), locations);
+
+        // 3. Find the station vertex to enable a later check for train arrival
+        for (NetworkVertex bonusVertex:bonusVertices) {
+            if (bonusVertex.isStation()) {
+                this.bonusVertex = bonusVertex;
+                found=true;
+             }
+        }
+        return found;
+    }
+
+    @Override
+    public int predictionValue(List<RevenueTrainRun> runs) {
+        return value;
+    }
+
+    @Override
+    public int evaluationValue(List<RevenueTrainRun> runs, boolean optimalRuns) {
+        int hits = 0;
+        if (runs.size() == 0) return 0;
+        for (RevenueTrainRun run:runs) {
+            if (run.getUniqueVertices().contains(bonusVertex)) {
+                hits++;
+            }
+        }
+        return hits > 0 ? value : 0;
+    }
+
+    @Override
+    public void adjustOptimalRun(List<RevenueTrainRun> optimalRuns) {
+        // do nothing here (all is done by changing the evaluation value)
+    }
+
 
     @Override
     public String prettyPrint(RevenueAdapter revenueAdapter) {

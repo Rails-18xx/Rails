@@ -71,25 +71,29 @@ public class TokenHexUpgrade extends HexUpgrade {
         invalids.clear();
         allowed.addAll(stops);
 
-        // LayBonusToken always and layHome is always allowed
-        if (!(action instanceof LayBonusToken || ((LayBaseToken) action).getType() == LayBaseToken.HOME_CITY)) {
-            if (hexBlocked()) {
-                invalids.add(Invalids.HEX_BLOCKED);
-            }
-            if (hexReserved()) {
-                invalids.add(Invalids.HEX_RESERVED);
-            }
-            if (notEnoughCash()) {
-                invalids.add(Invalids.NOT_ENOUGH_CASH);
-            }
-            if (containsToken()) {
-                invalids.add(Invalids.CONTAINS_TOKEN);
-            }
-            if (requiresTile()) {
-                invalids.add(Invalids.REQUIRES_TILE);
-            }
-            if (requiresNoTile()) {
-                invalids.add(Invalids.REQUIRES_NO_TILE);
+        // LayBonusToken and layHome is always allowed; forcedLay too
+        if (action instanceof LayBaseToken) {
+            LayBaseToken baseAction = (LayBaseToken) action;
+            if (!(baseAction.getType() == LayBaseToken.HOME_CITY
+                    || baseAction.getType() == LayBaseToken.FORCED_LAY)) {
+                if (hexBlocked()) {
+                    invalids.add(Invalids.HEX_BLOCKED);
+                }
+                if (hexReserved()) {
+                    invalids.add(Invalids.HEX_RESERVED);
+                }
+                if (notEnoughCash()) {
+                    invalids.add(Invalids.NOT_ENOUGH_CASH);
+                }
+                if (containsToken()) {
+                    invalids.add(Invalids.CONTAINS_TOKEN);
+                }
+                if (requiresTile()) {
+                    invalids.add(Invalids.REQUIRES_TILE);
+                }
+                if (requiresNoTile()) {
+                    invalids.add(Invalids.REQUIRES_NO_TILE);
+                }
             }
         }
 
@@ -167,7 +171,7 @@ public class TokenHexUpgrade extends HexUpgrade {
 
     @Override
     public Set<HexUpgrade.Invalids> getInvalids() {
-        return ImmutableSet.<HexUpgrade.Invalids>copyOf(invalids);
+        return ImmutableSet.copyOf(invalids);
     }
 
     @Override
@@ -186,7 +190,7 @@ public class TokenHexUpgrade extends HexUpgrade {
         Color bgColour = null;
         String label = null;
         if (action instanceof LayBaseToken) {
-            PublicCompany comp = ((LayBaseToken) action).getCompany();
+            PublicCompany comp = action.getCompany();
             fgColour = comp.getFgColour();
             bgColour = comp.getBgColour();
             label = comp.getId();
@@ -278,7 +282,7 @@ public class TokenHexUpgrade extends HexUpgrade {
      */
     @Override
     public Comparator<HexUpgrade> getComparator() {
-        return new Comparator<HexUpgrade>() {
+        return new Comparator<>() {
 
             @Override
             public int compare(HexUpgrade u1, HexUpgrade u2) {

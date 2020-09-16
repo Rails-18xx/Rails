@@ -1,7 +1,10 @@
 package net.sf.rails.game;
 
 import java.util.List;
+import java.util.Set;
 
+import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.state.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,14 +14,15 @@ import net.sf.rails.util.Util;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.Certificate;
 import net.sf.rails.game.financial.PublicCertificate;
-import net.sf.rails.game.state.ArrayListState;
-import net.sf.rails.game.state.Currency;
-import net.sf.rails.game.state.IntegerState;
-import net.sf.rails.game.state.Model;
 
 public abstract class StartRound extends Round {
     private static final Logger log = LoggerFactory.getLogger(StartRound.class);
 
+    public enum Bidding {
+        ON_ITEMS,
+        ON_BUY_RIGHT,
+        NO
+    }
     // FIXME: StartRounds do not set Priority Player
 
     // static at creation
@@ -34,7 +38,7 @@ public abstract class StartRound extends Round {
      * Should the UI present bidding into and facilities? This value MUST be set
      * in the actual StartRound constructor.
      */
-    protected final boolean hasBidding;
+    protected final Bidding hasBidding;
 
     /**
      * Should the UI show base prices? Not useful if the items are all equal, as
@@ -54,10 +58,10 @@ public abstract class StartRound extends Round {
     protected final ArrayListState<StartItem> itemsToSell = new ArrayListState<>(this, "itemsToSell");
     protected final IntegerState numPasses = IntegerState.create(this, "numPasses");
 
-    protected StartRound(GameManager parent, String id, boolean hasBidding, boolean hasBasePrices, boolean hasBuying) {
+    protected StartRound(GameManager parent, String id, Bidding bidding, boolean hasBasePrices, boolean hasBuying) {
         super(parent, id);
 
-        this.hasBidding = hasBidding;
+        this.hasBidding = bidding;
         this.hasBasePrices = hasBasePrices;
         this.hasBuying = hasBuying;
 
@@ -72,9 +76,14 @@ public abstract class StartRound extends Round {
         guiHints.setActivePanel(GuiDef.Panel.START_ROUND);
     }
 
+    // For backwards compatibility
+    protected StartRound(GameManager parent, String id, boolean hasBidding, boolean hasBasePrices, boolean hasBuying) {
+        this (parent, id, hasBidding ? Bidding.ON_ITEMS : Bidding.NO, hasBasePrices, hasBuying);
+    }
+
     protected StartRound(GameManager parent, String id) {
         // default case, set bidding, basePrices and buying all to true
-        this(parent, id, true, true, true);
+        this(parent, id, Bidding.ON_ITEMS, true, true);
     }
 
     public void start() {
@@ -295,6 +304,9 @@ public abstract class StartRound extends Round {
                 checkFlotation(comp);
             }
             if (comp.hasStarted()) comp.checkPresidency();  // Needed for 1835 BY
+        } else if (cert instanceof PrivateCompany) {
+            Set<SpecialProperty> sps = ((PrivateCompany)cert).getSpecialProperties();
+            if (sps != null) getRoot().getGameManager().allocateSpecialProperties((MoneyOwner) cert.getOwner(), sps);
         }
     }
 
@@ -346,7 +358,7 @@ public abstract class StartRound extends Round {
         return startPacket;
     }
 
-    public boolean hasBidding() {
+    public Bidding hasBidding() {
         return hasBidding;
     }
 

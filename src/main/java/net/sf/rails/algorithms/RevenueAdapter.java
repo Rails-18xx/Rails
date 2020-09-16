@@ -230,9 +230,10 @@ public final class RevenueAdapter implements Runnable {
 
     private void defineVertexVisitSets() {
         // define map of all locationNames
-        Map<String, VertexVisit> locations = new HashMap<String, VertexVisit>();
+        Map<String, VertexVisit> locations = new HashMap<>();
         for (NetworkVertex vertex:getVertices()) {
-            String ln = vertex.getStopName();
+            //String ln = vertex.getStopName();
+            String ln = vertex.getMutexId();
             if (ln == null) continue;
             if (locations.containsKey(ln)) {
                 locations.get(ln).set.add(vertex);
@@ -253,7 +254,7 @@ public final class RevenueAdapter implements Runnable {
 
     private void defineRevenueBonuses() {
         // create set of all hexes
-        Set<MapHex> hexes = new HashSet<MapHex>();
+        Set<MapHex> hexes = new HashSet<>();
         for (NetworkVertex vertex:getVertices()) {
             MapHex hex = vertex.getHex();
             if (hex != null) hexes.add(hex);
@@ -261,7 +262,7 @@ public final class RevenueAdapter implements Runnable {
 
         // check each vertex hex for a potential revenue bonus
         for (MapHex hex:hexes) {
-            List<RevenueBonusTemplate> bonuses = new ArrayList<RevenueBonusTemplate>();
+            List<RevenueBonusTemplate> bonuses = new ArrayList<>();
             List<RevenueBonusTemplate> hexBonuses = hex.getRevenueBonuses();
             if (hexBonuses != null) bonuses.addAll(hexBonuses);
             List<RevenueBonusTemplate> tileBonuses = hex.getCurrentTile().getRevenueBonuses();
@@ -314,10 +315,10 @@ public final class RevenueAdapter implements Runnable {
         }
 
         // define the vertices and edges lists
-        rcVertices = new ArrayList<NetworkVertex>(rcGraph.vertexSet());
+        rcVertices = new ArrayList<>(rcGraph.vertexSet());
         // define ordering on vertexes by value
         rcVertices.sort(new NetworkVertex.ValueOrder());
-        rcEdges = new ArrayList<NetworkEdge>(rcGraph.edgeSet());
+        rcEdges = new ArrayList<>(rcGraph.edgeSet());
         rcEdges.sort(new NetworkEdge.CostOrder());
 
         // prepare train length
@@ -394,8 +395,8 @@ public final class RevenueAdapter implements Runnable {
     private void prepareTrainLengths(Collection<NetworkVertex> vertices) {
 
         // separate vertexes
-        List<NetworkVertex> cities = new ArrayList<NetworkVertex>();
-        List<NetworkVertex> towns = new ArrayList<NetworkVertex>();
+        List<NetworkVertex> cities = new ArrayList<>();
+        List<NetworkVertex> towns = new ArrayList<>();
         for (NetworkVertex vertex: vertices) {
             if (vertex.isMajor()) cities.add(vertex);
             if (vertex.isMinor()) towns.add(vertex);
@@ -561,7 +562,7 @@ public final class RevenueAdapter implements Runnable {
 
     private List<RevenueTrainRun> convertRcRun(int[][] rcRun) {
 
-        List<RevenueTrainRun> convertRun = new ArrayList<RevenueTrainRun>();
+        List<RevenueTrainRun> convertRun = new ArrayList<>();
 
         for (int j=0; j < rcRun.length; j++) {
             RevenueTrainRun trainRun = new RevenueTrainRun(this, trains.get(j));
@@ -700,7 +701,7 @@ public final class RevenueAdapter implements Runnable {
     public void drawOptimalRunAsPath(HexMap map) {
         List<RevenueTrainRun> listRuns = getOptimalRun();
 
-        List<GeneralPath> pathList = new ArrayList<GeneralPath>();
+        List<GeneralPath> pathList = new ArrayList<>();
         if (listRuns != null) {
             for (RevenueTrainRun run:listRuns) {
                 pathList.add(run.getAsPath(map));

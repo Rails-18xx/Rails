@@ -87,7 +87,7 @@ public class UpgradesPanel extends JPanel {
 
         Action skipAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                UpgradesPanel.this.orUIManager.skipUpgrade();;
+                UpgradesPanel.this.orUIManager.skipUpgrade();
             }
         };
         skipAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);

@@ -220,6 +220,8 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
             if (capitalisationMode == PublicCompany.CAPITALISE_FULL) {
                 // Full capitalisation as in 1830
                 capFactor = 100 / shareUnit;
+            } else if (capitalisationMode == PublicCompany.CAPITALISE_PART) {
+                capFactor = company.getCapitalisationShares();
             } else if (capitalisationMode == PublicCompany.CAPITALISE_INCREMENTAL) {
                 // Incremental capitalisation as in 1851
                 capFactor = soldPercentage / shareUnit;

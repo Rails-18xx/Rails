@@ -578,6 +578,7 @@ CompanyRevenue,SR,70
 CompanyPaysOutFull,SR,70
 Payout,Alice,35,5,10
 Payout,SR,35,5,10
+PRICE_STAYS_LOG,SR,100,D2
  
 CompanyOperates,GM&O,Bob
 LaysTileAt,GM&O,611,G7,W

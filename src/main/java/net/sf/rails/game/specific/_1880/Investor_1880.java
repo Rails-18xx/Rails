@@ -106,7 +106,7 @@ public class Investor_1880 extends PublicCompany implements RevenueStaticModifie
     }
 
     @Override
-    public boolean canRunTrains() {
+    public boolean hasTrains() {
         // By the time communism hits, this company can't run anyway.
         return true;
     }

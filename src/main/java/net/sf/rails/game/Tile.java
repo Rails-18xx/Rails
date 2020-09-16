@@ -29,7 +29,7 @@ import net.sf.rails.game.state.HashSetState;
  */
 public class Tile extends RailsModel implements Comparable<Tile> {
 
-    public static enum Quantity { LIMITED, UNLIMITED, FIXED; }
+    public enum Quantity { LIMITED, UNLIMITED, FIXED }
 
     private static final Logger log = LoggerFactory.getLogger(Tile.class);
 
@@ -69,7 +69,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
     private HexSide fixedOrientation = null;
 
     // Stop properties
-    private StopType stopType = null;
+    private Access access = null;
 
     /**
      * Flag indicating that player must reposition any basetokens during the
@@ -155,7 +155,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         trackConfig = new TrackConfig(this, trackBuilder.build());
 
         // define possibleRotations
-        Set<TrackConfig> trackConfigsBuilder = new HashSet<TrackConfig>(6);
+        Set<TrackConfig> trackConfigsBuilder = new HashSet<>(6);
         HexSidesSet.Builder rotationsBuilder = HexSidesSet.builder();
 
         trackConfigsBuilder.add(trackConfig);
@@ -236,7 +236,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         // revenue bonus
         List<Tag> bonusTags = setTag.getChildren("RevenueBonus");
         if (bonusTags != null) {
-            revenueBonuses = new ArrayList<RevenueBonusTemplate>();
+            revenueBonuses = new ArrayList<>();
             for (Tag bonusTag : bonusTags) {
                 RevenueBonusTemplate bonus = new RevenueBonusTemplate();
                 bonus.configureFromXML(bonusTag);
@@ -244,11 +244,11 @@ public class Tile extends RailsModel implements Comparable<Tile> {
             }
         }
 
-        // Stop properties
+        // Stop properties (per tile, use not recommended)
         Tag accessTag = setTag.getChild("Access");
-        stopType =
-                StopType.parseStop(this, accessTag,
-                        getParent().getDefaultStopTypes());
+        if (accessTag != null) {
+            access = Access.parseAccessTag(this, accessTag);
+        }
     }
 
     public void finishConfiguration(RailsRoot root, int sortingDigits)
@@ -324,7 +324,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
      */
 
     public List<Tile> getAllUpgrades(MapHex hex) {
-        List<Tile> upgr = new ArrayList<Tile>();
+        List<Tile> upgr = new ArrayList<>();
         for (TileUpgrade upgrade : upgrades) {
             Tile tile = upgrade.getTargetTile();
             if (upgrade.isAllowedForHex(hex)) {
@@ -402,8 +402,8 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         return relayBaseTokensOnUpgrade;
     }
 
-    public StopType getStopType() {
-        return stopType;
+    public Access getAccess() {
+        return access;
     }
 
     /** Register a tile of this type being laid on the map. */
@@ -454,7 +454,6 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         return revenueBonuses;
     }
 
-
     @Override
     public String toText() {
         return externalId;
@@ -485,7 +484,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
             String count = null;
             switch (quantity) {
                 case LIMITED:
-                    count = " (" + String.valueOf(getFreeCount()) + ")";
+                    count = " (" + getFreeCount() + ")";
                     break;
                 case UNLIMITED:
                     count = " (+)";

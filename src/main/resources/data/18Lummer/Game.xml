@@ -64,9 +64,9 @@
 		<TrainType name="6" majorStops="6" cost="630" quantity="1">
             <NewPhase phaseName="6"/>
 		</TrainType>
-		<TrainType name="D" majorStops="99" cost="1100" quantity="1">
+		<TrainType name="D" majorStops="99" cost="1100" exchangeCost="800" quantity="1">
 			<NewPhase phaseName="D"/>
-			<Exchange cost="800"/>
+			<!--Exchange cost="800"/-->
 		</TrainType>
 	</Component>
 	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">

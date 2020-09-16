@@ -54,6 +54,7 @@ public class ReachDestinations extends PossibleORAction {
     }
 
     public void addReachedCompany (PublicCompany company) {
+        if (reachedCompanies == null) reachedCompanies = new ArrayList<>();
         reachedCompanies.add (company);
         if (reachedCompanyNames.length() > 0) {
             reachedCompanyNames += ",";

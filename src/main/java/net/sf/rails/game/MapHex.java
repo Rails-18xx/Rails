@@ -198,7 +198,13 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
      * Optional attribute to provide the type of any stops on the hex. Normally
      * the type will be derived from the tile properties.
      */
-    private StopType stopType = null;
+    private Access access = null;
+    /*
+     * An arbitrary string to be set to the same value for any group of hexes
+     * that may not be hit by a train more than once. Also to be used for
+     * hexes with multi-city tiles where a train may hit only once.
+     */
+    //private String mutexId = null;
 
     ////////////////////////
     // dynamic fields
@@ -285,7 +291,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         // revenue bonus
         List<Tag> bonusTags = tag.getChildren("RevenueBonus");
         if (bonusTags != null) {
-            revenueBonuses = new ArrayList<RevenueBonusTemplate>();
+            revenueBonuses = new ArrayList<>();
             for (Tag bonusTag : bonusTags) {
                 RevenueBonusTemplate bonus = new RevenueBonusTemplate();
                 bonus.configureFromXML(bonusTag);
@@ -295,8 +301,9 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
         // Stop properties
         Tag accessTag = tag.getChild("Access");
-        stopType = StopType.parseStop(this, accessTag,
-                getParent().getDefaultStopTypes());
+        if (accessTag != null) {
+            access = Access.parseAccessTag(this, accessTag);
+        }
     }
 
     public void finishConfiguration(RailsRoot root) {
@@ -310,8 +317,19 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         // stations.
         for (Station station : currentTile.value().getStations()) {
             Stop stop = Stop.create(this, station);
+            stop.initStopParameters();
             stops.put(station, stop);
         }
+
+        // Deprecated but retained for backwards compatibility:
+        // all hexes of an off-map area use their "city name" (off-map area name)
+        // as a mutexId.
+        // Note: the 18xx Rules Difference List states that only 18PA is an exception.
+        // This can be accomodated by setting mutexId="" in Map.xml for all offmap hexes.
+        //if (mutexId == null && currentTile.value().getStopType() != null
+        //        && "OFFMAP".equalsIgnoreCase(currentTile.value().getStopType().getTypeName())) {
+        //    mutexId = stopName;
+        //}
 
         impassableSides = impassableBuilder.build();
         invalidSides = invalidBuilder.build();
@@ -435,8 +453,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         return tileCost;
     }
 
-    public StopType getStopType() {
-        return stopType;
+    public Access getAccess() {
+        return access;
     }
 
     /**
@@ -545,11 +563,20 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 }
             }
         }
-        if ((stops.size() == 0) && (newTile.getNumStations() > 0)) {
 
-            for (Station newStation : newTile.getStations()) {
-                Stop stop = Stop.create(this, newStation);
-                stopsToNewStations.put(stop, newStation);
+        // Create a Stop for new Stations
+        if (stops.size() < newTile.getNumStations()) {
+
+            ST:
+            for (Station station : newTile.getStations()) {
+                // EV: I'm sure this can be done in a better way, but at least it works
+                for (Stop stop : stops) {
+                    if (stop.getRelatedStation().equals(station)) continue ST;
+                }
+                // New Station found without an existing Stop
+                Stop stop = Stop.create(this, station);
+                stop.initStopParameters();
+                stopsToNewStations.put(stop, station);
             }
         }
 
@@ -630,6 +657,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         if (token == null) {
             log.error("Company {} has no free token", company.getId());
             return false;
+        } else if (stop == null) {  // Added for 18Scan, still necessary?
+            return true;
         } else {
             // transfer token
             token.moveTo(stop);
@@ -912,6 +941,10 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     public String getStopName() {
         return stopName;
     }
+
+    //public String getMutexId() {
+    //    return mutexId;
+    //}
 
     public PublicCompany getReservedForCompany() {
         return reservedForCompany;

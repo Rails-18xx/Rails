@@ -612,6 +612,7 @@ CompanySplits,SNCF,100
 RECEIVES,SNCF,50
 Payout,Martin,25,5,10
 Payout,SNCF,25,5,10
+PRICE_STAYS_LOG,SNCF,90,E4
 BuysTrain,SNCF,3,IPO,200
 BuysTrain,SNCF,3,IPO,200
  
@@ -632,6 +633,7 @@ CompanyRevenue,FS,70
 CompanyPaysOutFull,FS,70
 Payout,Volker,35,5,10
 Payout,FS,35,5,10
+PRICE_STAYS_LOG,FS,82,D4
  
 EndOfOperatingRound,1.1
 ORWorthIncrease,Volker,1.1,150
