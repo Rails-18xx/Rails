@@ -323,7 +323,9 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                 colour2 = Util.parseColour(Config.get("route.colour.2", null));
                 colour3 = Util.parseColour(Config.get("route.colour.3", null));
                 colour4 = Util.parseColour(Config.get("route.colour.4", null));
-            } catch (ConfigurationException e) {} finally {
+            } catch (ConfigurationException e) {
+
+            } finally {
                 if (colour1 == null) colour1 = Color.CYAN;
                 if (colour2 == null) colour2 = Color.PINK;
                 if (colour3 == null) colour3 = Color.ORANGE;
@@ -342,7 +344,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                 List<GeneralPath> p2) {
             int margin = (int) Math.ceil(STROKE_WIDTH * hexMap.getZoomFactor());
 
-            List<Rectangle> pathRects = new ArrayList<Rectangle>();
+            List<Rectangle> pathRects = new ArrayList<>();
             if (p1 != null) {
                 for (GeneralPath p : p1)
                     pathRects.add(p.getBounds());
@@ -366,7 +368,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                 }
             }
             return r;
-        };
+        }
 
         @Override
         public void paintImage(Graphics2D g) {
@@ -693,7 +695,10 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
 
     public void setupBars() {
         for (MapHex hex : hex2gui.keySet()) {
-            HexSidesSet barSides = hex.getImpassableSides();
+            // Display impassables and rivers with same colour for now,
+            // as there are no games in Rails where both apply.
+            // (The difference is that rivers are not impassable).
+            HexSidesSet barSides = hex.getImpassableSides().union(hex.getRiverSides());
             for (HexSide side:barSides) {
                 if (side.getTrackPointNumber() < 3) {
                     hex2gui.get(hex).addBar(side);

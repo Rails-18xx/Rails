@@ -48,47 +48,47 @@ public class GameStatus extends GridPanel implements ActionListener {
     protected StatusWindow parent;
 
     // Grid elements per function
-    protected Field certPerPlayer[][];
-    protected ClickField certPerPlayerButton[][];
+    protected Field[][] certPerPlayer;
+    protected ClickField[][] certPerPlayerButton;
     protected int certPerPlayerXOffset, certPerPlayerYOffset;
-    protected Field certInIPO[];
-    protected ClickField certInIPOButton[];
+    protected Field[] certInIPO;
+    protected ClickField[] certInIPOButton;
     protected int certInIPOXOffset, certInIPOYOffset;
-    protected Field certInPool[];
-    protected ClickField certInPoolButton[];
+    protected Field[] certInPool;
+    protected ClickField[] certInPoolButton;
     protected int certInPoolXOffset, certInPoolYOffset;
-    protected Field certInTreasury[];
-    protected ClickField certInTreasuryButton[];
+    protected Field[] certInTreasury;
+    protected ClickField[] certInTreasuryButton;
     protected int certInTreasuryXOffset, certInTreasuryYOffset;
-    protected Field parPrice[];
+    protected Field[] parPrice;
     protected int parPriceXOffset, parPriceYOffset;
-    protected Field currPrice[];
+    protected Field[] currPrice;
     protected int currPriceXOffset, currPriceYOffset;
-    protected Field compCash[];
-    protected ClickField compCashButton[];
+    protected Field[] compCash;
+    protected ClickField[] compCashButton;
     protected int compCashXOffset, compCashYOffset;
-    protected Field compRevenue[];
+    protected Field[] compRevenue;
     protected int compRevenueXOffset, compRevenueYOffset;
-    protected Field compTrains[];
+    protected Field[] compTrains;
     protected int compTrainsXOffset, compTrainsYOffset;
-    protected Field compTokens[];
+    protected Field[] compTokens;
     protected int compTokensXOffset, compTokensYOffset;
-    protected Field compPrivates[];
+    protected Field[] compPrivates;
     protected int compPrivatesXOffset, compPrivatesYOffset;
-    protected Field compLoans[];
+    protected Field[] compLoans;
     protected int compLoansXOffset, compLoansYOffset;
     protected int rightsXOffset, rightsYOffset;
-    protected Field rights[];
-    protected Field playerCash[];
-    protected ClickField playerCashButton[];
+    protected Field[] rights;
+    protected Field[] playerCash;
+    protected ClickField[] playerCashButton;
     protected int playerCashXOffset, playerCashYOffset;
-    protected Field playerPrivates[];
+    protected Field[] playerPrivates;
     protected int playerPrivatesXOffset, playerPrivatesYOffset;
-    protected Field playerWorth[];
+    protected Field[] playerWorth;
     protected int playerWorthXOffset, playerWorthYOffset;
-    protected Field playerORWorthIncrease[];
+    protected Field[] playerORWorthIncrease;
     protected int playerORWorthIncreaseXOffset, playerORWorthIncreaseYOffset;
-    protected Field playerCertCount[];
+    protected Field[] playerCertCount;
     protected int playerCertCountXOffset, playerCertCountYOffset;
     protected int certLimitXOffset, certLimitYOffset;
     protected int phaseXOffset, phaseYOffset;
@@ -365,7 +365,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
         for (int i = 0; i < nc; i++) {
             c = companies[i];
-            companyIndex.put(c, new Integer(i));
+            companyIndex.put(c, i);
             rowVisibilityObservers[i]
                                    = new RowVisibility(this, certPerPlayerYOffset + i, c.getInGameModel(), false);
             boolean visible = rowVisibilityObservers[i].lastValue();
@@ -781,37 +781,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
                     if (buy instanceof StartCompany) {
                         startCompany = true;
-                        int[] startPrices;
-                        if (((StartCompany) buy).mustSelectAPrice()) {
-                            startPrices =
-                                ((StartCompany) buy).getStartPrices();
-                            Arrays.sort(startPrices);
-                            if (startPrices.length > 1) {
-                                for (int i = 0; i < startPrices.length; i++) {
-                                    options.add(LocalText.getText("StartCompany",
-                                            gameUIManager.format(startPrices[i]),
-                                            sharePerCert,
-                                            gameUIManager.format(sharesPerCert * startPrices[i]) ));
-                                    buyActions.add(buy);
-                                    buyAmounts.add(startPrices[i]);
-                                }
-                            } else {
-                                options.add (LocalText.getText("StartACompany",
-                                        companyName,
-                                        company.getPresidentsShare().getShare(),
-                                        gameUIManager.format(company.getPresidentsShare().getShares() * startPrices[0])));
-                                buyActions.add(buy);
-                                buyAmounts.add(startPrices[0]);
-                            }
-                        } else {
-                            startPrices = new int[] {((StartCompany) buy).getPrice()};
-                            options.add(LocalText.getText("StartCompanyFixed",
-                                    companyName,
-                                    sharePerCert,
-                                    gameUIManager.format(startPrices[0]) ));
-                            buyActions.add(buy);
-                            buyAmounts.add(startPrices[0]);
-                        }
+                        setupStartCompany ((StartCompany) buy, buyActions, buyAmounts, options);
 
                     } else {
                         options.add(LocalText.getText("BuyCertificate",
@@ -910,6 +880,51 @@ public class GameStatus extends GridPanel implements ActionListener {
             (parent).process(chosenAction);
 
         repaint();
+    }
+
+    /**
+     * Setup a button for buying share(s) to start a new company, usually the President's share.
+     * Extracted from actionPerformed() to allow overriding, as required for SOH,
+     * where all shares to float a company must be bought as one StartCompany action.
+     * @param buy A StartCompany action object
+     * @param buyActions List of BuyCertificate actions
+     * @param buyAmounts Price of BuyCertificate actions
+     * @param options Text to display with each possible initial share price
+     */
+    protected void setupStartCompany (StartCompany buy, List<BuyCertificate> buyActions,
+                                      List<Integer> buyAmounts, List<String> options)  {
+        int[] startPrices;
+        PublicCompany company = buy.getCompany();
+        if (buy.mustSelectAPrice()) {
+            startPrices = buy.getStartPrices();
+            Arrays.sort(startPrices);
+            if (startPrices.length > 1) {
+                for (int i = 0; i < startPrices.length; i++) {
+                    options.add(LocalText.getText("StartCompany",
+                            gameUIManager.format(startPrices[i]),
+                            buy.getSharePerCertificate(),
+                            gameUIManager.format(buy.getSharesPerCertificate() * startPrices[i]) ));
+                    buyActions.add(buy);
+                    buyAmounts.add(startPrices[i]);
+                }
+            } else {
+                options.add (LocalText.getText("StartACompany",
+                        company.getId(),
+                        company.getPresidentsShare().getShare(),
+                        gameUIManager.format(company.getPresidentsShare().getShares() * startPrices[0])));
+                buyActions.add(buy);
+                buyAmounts.add(startPrices[0]);
+            }
+        } else {
+            startPrices = new int[] {buy.getPrice()};
+            options.add(LocalText.getText("StartCompanyFixed",
+                    company.getId(),
+                    buy.getSharePerCertificate(),
+                    gameUIManager.format(startPrices[0]) ));
+            buyActions.add(buy);
+            buyAmounts.add(startPrices[0]);
+        }
+
     }
 
     /** Stub allowing game-specific extensions */

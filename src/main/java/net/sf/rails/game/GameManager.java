@@ -694,6 +694,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             startGameAction = true;
         } else if (action != null) {
             // Should never be null.
+            // EV: actually, it is null if the StartRound needs no user interaction.
+            // Example: Steam Over Holland, when privates are just dealt out randomly.
 
             action.setActed();
 
@@ -1523,8 +1525,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     // shortcut to PlayerManager
     public int getPlayerCertificateLimit(Player player) {
-        int limit = getRoot().getPlayerManager().getPlayerCertificateLimit(player);
-        return limit;
+        return getRoot().getPlayerManager().getPlayerCertificateLimit(player);
     }
 
     // shortcut to PlayerManager
@@ -1553,6 +1554,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public Player getNationalFormationStartingPlayer(PublicCompany comp) {
         return this.NationalFormStartingPlayer.get(comp);
+    }
+
+    private Random randomGenerator;
+    public Random getRandomGenerator () {
+        if (randomGenerator == null) {
+            long seed = Long.parseLong(getRoot().getGameOptions().get(GameOption.RANDOM_SEED));
+            log.info ("Random seed = {}", seed);
+            randomGenerator = new Random (seed);
+        }
+        return randomGenerator;
     }
 }
 

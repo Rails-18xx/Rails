@@ -82,10 +82,6 @@ public class TreasuryShareRound extends StockRound {
 
         possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
 
-        for (PossibleAction pa : possibleActions.getList()) {
-            log.debug("{} may: {}", operatingCompany.getId(), pa);
-        }
-
         return true;
     }
 
@@ -507,7 +503,8 @@ public class TreasuryShareRound extends StockRound {
     /**
      * The current Player passes or is done.
      *
-     * @param player Name of the passing player.
+     * @param action the Pass or Done NULL action
+     * @param playerName Name of the passing player.
      * @return False if an error is found.
      */
     @Override

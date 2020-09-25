@@ -19,23 +19,25 @@
 	</StockSpace>
 	<StockSpace name="I1" price="100">
 		<StartSpace/>
-		<BelowLedge/>
+		<LeftOfLedge/>
 	</StockSpace>
 	<StockSpace name="J1" price="110"/>
 	<StockSpace name="K1" price="125"/>
 	<StockSpace name="L1" price="140">
-		<BelowLedge/>
+		<LeftOfLedge/>
 	</StockSpace>
 	<StockSpace name="M1" price="160"/>
 	<StockSpace name="N1" price="180"/>
 	<StockSpace name="O1" price="210">
-		<BelowLedge/>
+		<LeftOfLedge/>
 	</StockSpace>
 	<StockSpace name="P1" price="240"/>
 	<StockSpace name="Q1" price="270"/>
 	<StockSpace name="R1" price="300">
-		<BelowLedge/>
+		<LeftOfLedge/>
 	</StockSpace>
 	<StockSpace name="S1" price="330"/>
-	<StockSpace name="T1" price="360"/>
+	<StockSpace name="T1" price="360">
+		<GameOver/>
+	</StockSpace>
 </StockMarket>
