@@ -89,4 +89,16 @@ public class DisplayBuffer extends RailsModel {
     public static void add(RailsItem item, String message, boolean autoDisplay) {
         item.getRoot().getReportManager().getDisplayBuffer().add(message, autoDisplay);
     }
+
+    public static void addAll (RailsItem item, String[] messages) {
+        DisplayBuffer instance = item.getRoot().getReportManager().getDisplayBuffer();
+        for (String message : messages) {
+            instance.add (item, message, true);
+        }
+    }
+
+    public static String[] copyAll (RailsItem item) {
+        DisplayBuffer instance = item.getRoot().getReportManager().getDisplayBuffer();
+        return instance.get();
+    }
 }

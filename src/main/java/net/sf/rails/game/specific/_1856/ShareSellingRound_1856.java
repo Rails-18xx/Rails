@@ -4,6 +4,7 @@ import net.sf.rails.game.GameManager;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.Owner;
 
 /** Needed to copy behaviour on share selling from StockRound_1856. */
 public final class ShareSellingRound_1856 extends ShareSellingRound {
@@ -19,7 +20,7 @@ public final class ShareSellingRound_1856 extends ShareSellingRound {
         super(parent, id);
     }
     @Override
-	protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
+	protected void adjustSharePrice (PublicCompany company, Owner seller, int numberSold, boolean soldBefore) {
 
         if (!company.canSharePriceVary()) return;
 
@@ -35,7 +36,7 @@ public final class ShareSellingRound_1856 extends ShareSellingRound {
             }
         }
 
-        super.adjustSharePrice (company, numberOfSpaces, soldBefore);
+        super.adjustSharePrice (company, seller, numberOfSpaces, soldBefore);
     }
 
 }

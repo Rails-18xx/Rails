@@ -2,13 +2,10 @@ package net.sf.rails.common;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import net.sf.rails.util.Util;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -69,6 +66,17 @@ public class GameOptionsSet {
 
             for (GameOption option : options) {
                 gameOptions.put(option.getName(), option.getSelectedValue());
+            }
+
+            // Added EV sep 2020 for SOH:
+            // create a random seed that persists if the game is saved and reloaded.
+            // To make this work, the GameOption "RandomSeed" with type="hidden"
+            // must be defined in GameOption.xml
+            if (gameOptions.containsKey(GameOption.RANDOM_SEED)) {
+                String seed = gameOptions.get(GameOption.RANDOM_SEED);
+                if (!Util.hasValue(seed)) {  // Skip setting it on reloading
+                    gameOptions.put(GameOption.RANDOM_SEED, String.valueOf(System.currentTimeMillis()));
+                }
             }
 
             return new GameOptionsSet(gameOptions);

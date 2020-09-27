@@ -103,12 +103,17 @@ public class MapManager extends RailsManager implements Configurable {
         // Initialise the neighbours
         ImmutableTable.Builder<MapHex, HexSide, MapHex> hexTableBuilder = ImmutableTable.builder();
         for (MapHex hex:hexes.values()) {
+            // TEMPORARY for debugging
             for (HexSide side:HexSide.all()){
                 MapHex neighbour = hexes.get(mapOrientation.
                         getAdjacentCoordinates(hex.getCoordinates(), side));
                 if (neighbour != null) {
                     if (hex.isValidNeighbour(neighbour, side)) {
                         hexTableBuilder.put(hex, side, neighbour);
+                        if (hex.isRiverNeighbour(neighbour)) {
+                            hex.addRiverSide(side);
+                            neighbour.addRiverSide(side.opposite());
+                        }
                     } else {
                         hex.addInvalidSide(side);
                         if (hex.isImpassableNeighbour(neighbour)) {

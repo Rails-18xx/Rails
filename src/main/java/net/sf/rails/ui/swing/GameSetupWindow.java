@@ -48,8 +48,8 @@ public class GameSetupWindow extends JDialog {
     private final JButton configureButton= new JButton(LocalText.getText("CONFIG"));
     private final JButton randomizeButton = new JButton(LocalText.getText("RandomizePlayers"));
 
-    private final JComboBox<String> configureBox = new JComboBox<String>();
-    private final JComboBox<String> gameNameBox = new JComboBox<String>();
+    private final JComboBox<String> configureBox = new JComboBox<>();
+    private final JComboBox<String> gameNameBox = new JComboBox<>();
 
     private static class PlayerInfo {
         private final JLabel number = new JLabel();
@@ -251,6 +251,8 @@ public class GameSetupWindow extends JDialog {
                     optionComponents.put(option, checkbox);
 
                     optionsPane.add(checkbox);
+                } else if (option.isHidden()) {
+                    continue;
                 } else {
                     // put dropdown and label into one panel to align with checkboxes
                     JPanel dropdownPanel = new JPanel();
@@ -259,7 +261,7 @@ public class GameSetupWindow extends JDialog {
                             option.getLocalisedName())));
                     dropdownPanel.add(Box.createHorizontalGlue());
 
-                    JComboBox<String> dropdown = new JComboBox<String>();
+                    JComboBox<String> dropdown = new JComboBox<>();
                     for (String value : option.getAllowedValues()) {
                         dropdown.addItem(value);
                     }

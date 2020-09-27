@@ -123,7 +123,7 @@ public class Phase extends RailsModel implements Configurable {
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
-        if (defaults != null) {
+        if (defaults != null) { // Not used anywhere yet?
             tileColours = defaults.tileColours;
             tileLaysPerColour = defaults.tileLaysPerColour;
             privateSellingAllowed = defaults.privateSellingAllowed;

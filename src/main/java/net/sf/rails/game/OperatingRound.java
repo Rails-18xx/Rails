@@ -68,7 +68,6 @@ public class OperatingRound extends Round implements Observer {
 
     public static final int SPLIT_ROUND_DOWN = 2; // More to the treasury
 
-    // protected static GameDef.OrStep[] steps =
     protected GameDef.OrStep[] steps = new GameDef.OrStep[]{
             GameDef.OrStep.INITIAL, GameDef.OrStep.LAY_TRACK,
             GameDef.OrStep.LAY_TOKEN, GameDef.OrStep.CALC_REVENUE,
@@ -441,13 +440,8 @@ public class OperatingRound extends Round implements Observer {
 
         if (getStep() == GameDef.OrStep.INITIAL) {
             initTurn();
-            if (noMapMode) {
-                nextStep(GameDef.OrStep.LAY_TOKEN);
-            } else {
-                initNormalTileLays(); // new: only called once per turn ?
-                setStep(GameDef.OrStep.LAY_TRACK);
-            }
-        }
+            nextStep();
+       }
 
         GameDef.OrStep step = getStep();
         if (step == GameDef.OrStep.LAY_TRACK) {
@@ -480,9 +474,11 @@ public class OperatingRound extends Round implements Observer {
             possibleActions.addAll(currentNormalTokenLays);
             possibleActions.addAll(currentSpecialTokenLays);
             possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
+
         } else if (step == GameDef.OrStep.CALC_REVENUE) {
             prepareRevenueAndDividendAction();
             if (noMapMode) prepareNoMapActions();
+
         } else if (step == GameDef.OrStep.BUY_TRAIN) {
             setBuyableTrains();
             // TODO Need route checking here.
@@ -500,6 +496,9 @@ public class OperatingRound extends Round implements Observer {
 
             forced = true;
             setTrainsToDiscard();
+
+        } else if (step == GameDef.OrStep.TRADE_SHARES) {
+            gameManager.getCurrentRound().setPossibleActions();
         }
 
         // The following additional "common" actions are only available if the
@@ -766,7 +765,7 @@ public class OperatingRound extends Round implements Observer {
      * @return The number that defines the next action.
      */
     public GameDef.OrStep getStep() {
-        return (GameDef.OrStep) stepObject.value();
+        return stepObject.value();
     }
 
     /**
@@ -805,6 +804,10 @@ public class OperatingRound extends Round implements Observer {
         while (++stepIndex < steps.length) {
             newStep = steps[stepIndex];
             log.debug("OR considers newStep {}", newStep);
+
+            if (newStep == GameDef.OrStep.LAY_TRACK) {
+                initNormalTileLays();
+            }
 
             if (newStep == GameDef.OrStep.LAY_TOKEN) {
                 List<SpecialProperty> bonuses = gameManager.getCommonSpecialProperties();
@@ -847,8 +850,9 @@ public class OperatingRound extends Round implements Observer {
             }
 
             if (newStep == GameDef.OrStep.TRADE_SHARES) {
-                // Is company allowed to trade trasury shares?
-                if (!company.mayTradeShares() || !company.hasOperated()) {
+                // Is company allowed to trade treasury shares?
+                if (!company.mayTradeShares() ||
+                        (company.mustHaveOperatedToTradeShares() && !company.hasOperated())) {
                     continue;
                 }
 
@@ -1701,7 +1705,6 @@ public class OperatingRound extends Round implements Observer {
                     tile.toText(),
                     hex.getId(),
                     errMsg));
-            ;
             return false;
         }
 
@@ -1746,6 +1749,8 @@ public class OperatingRound extends Round implements Observer {
      * allowed number for the colour of the just laid tile reaches zero, all
      * normal tile lays have been consumed. 2. If any colour is laid, no
      * different colours may be laid. THIS MAY NOT BE TRUE FOR ALL GAMES!
+     * EV sep 2020: Indeed it isn't true for SOH, 1846 and other games.
+     * These games must override this method.
      */
 
     protected void updateAllowedTileColours(String colour, int oldAllowedNumber) {
@@ -1763,7 +1768,7 @@ public class OperatingRound extends Round implements Observer {
                     coloursToRemove.add(key);
                 }
             }
-            // Two-step removal to prevent ConcurrentModificatioonException.
+            // Two-step removal to prevent ConcurrentModificationException.
             for (String key : coloursToRemove) {
                 tileLaysPerColour.remove(key);
             }
@@ -1940,7 +1945,6 @@ public class OperatingRound extends Round implements Observer {
                         tc.put(colour, 1);
                         remainingColours.add(colour);
                         remainingHexes.add(hex);
-                        continue;
                     }
                 }
             } else {
@@ -2574,7 +2578,7 @@ public class OperatingRound extends Round implements Observer {
     /**
      * Distribute the dividend amongst the shareholders.
      *
-     * @param amount
+     * @param amount The dividend to be payed out
      */
     public void payout(int amount) {
 
@@ -2680,7 +2684,7 @@ public class OperatingRound extends Round implements Observer {
     /**
      * Split a dividend. TODO Optional rounding down the payout
      *
-     * @param amount
+     * @param amount The revenue to be split
      */
     public void splitRevenue(int amount) {
 
@@ -2883,7 +2887,7 @@ public class OperatingRound extends Round implements Observer {
         SpecialTrainBuy stb = null;
 
         String errMsg = null;
-        int presidentCash = action.getPresidentCashToAdd();
+        int presidentCash;
         boolean presidentMustSellShares = false;
         int price = action.getPricePaid();
         int actualPresidentCash = 0;
@@ -3093,7 +3097,7 @@ public class OperatingRound extends Round implements Observer {
      * isBelowTrainLimit() to get the result. May be overridden if other
      * considerations apply (such as having a Pullmann in 18EU).
      *
-     * @return
+     * @return True if the company has room buy a train
      */
     protected boolean canBuyTrainNow() {
         return isBelowTrainLimit();
@@ -3371,7 +3375,7 @@ public class OperatingRound extends Round implements Observer {
      * Returns whether or not the company is allowed to buy a train, considering
      * its train limit.
      *
-     * @return
+     * @return True if the company is below its train limit
      */
     protected boolean isBelowTrainLimit() {
         return operatingCompany.value().getNumberOfTrains() < operatingCompany.value().getCurrentTrainLimit();
@@ -3421,9 +3425,6 @@ public class OperatingRound extends Round implements Observer {
         return "OperatingRound " + thisOrNumber;
     }
 
-    /**
-     * @Overrides
-     */
     public boolean equals(RoundFacade round) {
         return round instanceof OperatingRound
                 && thisOrNumber.equals(((OperatingRound) round).thisOrNumber);
