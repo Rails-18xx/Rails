@@ -192,6 +192,9 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
         return isAssigned() ? type.value().getName() : type.toText();
     }
 
+    @Override
+    public String toString() { return getId(); }
+
     public boolean isTradeable() {
         return trainCard.isTradeable();
     }

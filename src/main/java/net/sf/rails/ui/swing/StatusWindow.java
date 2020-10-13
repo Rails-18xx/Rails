@@ -503,7 +503,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         if (currentRound instanceof TreasuryShareRound) {
             setTitle(LocalText.getText(
                     "TRADE_TREASURY_SHARES_TITLE",
-                    ((TreasuryShareRound) currentRound).getOperatingCompany().getId()));
+                    ((TreasuryShareRound) currentRound).getOperatingCompany().getId(),
+                    String.valueOf(gameUIManager.getGameManager().getORId())));
             gameStatus.initTurn(-1, true);
 
         } else if ((currentRound instanceof ShareSellingRound)) {
@@ -799,6 +800,11 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         //vanish from the display after the end of a forced
         //Formationround in 1835
         //Martin 19.7.2017
+        // Erik 10.10.2020: However, this somehow completely blanks the
+        // StatusWindow in SOH, each time treasury share selling in the first
+        // OR step completes. I haven't been able to find the cause.
+        // Therefore this method is overridden in SOH.
+        // TODO: a better solution is wanted.
         gameStatus.recreate();
         gameStatus.initTurn(-1, true);
         passButton.setEnabled(false);

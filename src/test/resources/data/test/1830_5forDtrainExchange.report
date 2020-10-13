@@ -76,7 +76,7 @@ PRICE_MOVES_LOG,NYNH,100,G1,90,F1
 BuysTrain,NYNH,2,IPO,80
 BuysTrain,NYNH,2,IPO,80
 BuysTrain,NYNH,2,IPO,80
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
 BuysTrain,NYNH,3,IPO,180
 FirstTrainBought,3
 StartOfPhase,3
@@ -182,7 +182,7 @@ LaysTileAt,C&O,8,G5,W
 CompanyDoesNotPayDividend,C&O
 PRICE_MOVES_LOG,C&O,67,G6,65,F6
 BuysTrain,C&O,3,IPO,180
-All 3-trains are sold out, 4-trains now available
+NewTrainAvailable,3,4
  
 EndOfOperatingRound,2.1
 ORWorthIncrease,Alice,2.1,93
@@ -298,7 +298,7 @@ CompanyRevenue,PRR,80
 CompanyWithholds,PRR,80
 PRICE_MOVES_LOG,PRR,112,H1,100,G1
 BuysTrain,PRR,4,IPO,300
-All 4-trains are sold out, 5-trains now available
+NewTrainAvailable,4,5
  
 CompanyOperates,NYNH,Alice
 LaysTileAt,NYNH,15,F22,W
@@ -328,7 +328,7 @@ CompanyDoesNotPayDividend,B&M
 PRICE_MOVES_LOG,B&M,100,G1,90,F1
 BuysTrain,B&M,5,IPO,450
 BuysTrain,B&M,5,IPO,450
-All 5-trains are sold out, 6-trains now available
+NewTrainAvailable,5,6
  
 CompanyOperates,NYC,Bob
 LaysTileAt,NYC,14,E19,SW

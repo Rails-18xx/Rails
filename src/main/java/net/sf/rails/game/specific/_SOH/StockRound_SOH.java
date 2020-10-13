@@ -10,6 +10,7 @@ import net.sf.rails.game.state.Owner;
 import rails.game.action.PossibleAction;
 import rails.game.action.StartCompany;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StockRound_SOH extends StockRound {
@@ -44,6 +45,7 @@ public class StockRound_SOH extends StockRound {
         int sharesToBuy;
         int numValidPrices;
         List<Integer> startPrices;
+        List<PossibleAction> actionsToRemove = new ArrayList<>();
 
         for (PossibleAction action : possibleActions.getList()) {
             if (action instanceof StartCompany) {
@@ -51,7 +53,7 @@ public class StockRound_SOH extends StockRound {
                 company = buyAction.getCompany();
                 sharesToBuy = sharesToFloat;
                 if (sharesToBuy == 6
-                        && "NRS".equals(company.getId())
+                        && company.getId().equals(GameDef_SOH.NRS)
                         && currentPlayer.getPortfolioModel()
                             .findCertificate(company, false) != null) {
                     sharesToBuy = 5;
@@ -70,14 +72,22 @@ public class StockRound_SOH extends StockRound {
                     for (int i=0; i<numValidPrices; i++) {
                         newPrices[i] = startPrices.get(i);
                     }
-                    possibleActions.remove(action);
+                    //possibleActions.remove(action);
+                    actionsToRemove.add (action);
                     StartCompany startAction = new StartCompany (
                             company, newPrices, sharesToBuy);
                     // Fix the number to be bought
                     startAction.setNumberBought(sharesToBuy);
                     possibleActions.add (startAction);
+                } else {
+                    //possibleActions.remove(action);
+                    actionsToRemove.add(action);
                 }
             }
+        }
+
+        for (PossibleAction action : actionsToRemove) {
+            possibleActions.remove(action);
         }
     }
 

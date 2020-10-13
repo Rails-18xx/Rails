@@ -79,9 +79,7 @@ public class BuyPrivate extends PossibleORAction {
         if (asOption) return options;
 
         // check asAction attributes
-        return options
-                && Objects.equal(this.price, action.price)
-        ;
+        return options && Objects.equal(this.price, action.price);
     }
 
     @Override

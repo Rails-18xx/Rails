@@ -14,20 +14,23 @@
 			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
 			<StockRound class="net.sf.rails.game.specific._SOH.StockRound_SOH">
-				<NoSaleInFirstSR/>
+				<NoSaleOfJustStartedCompany/>
 			</StockRound>
             <OperatingRound class = "net.sf.rails.game.specific._SOH.OperatingRound_SOH">
-                <EmergencyTrainBuying mustBuyCheapestTrain="no" mayBuyFromCompany="yes"/>
+                <EmergencyTrainBuying mustBuyCheapestTrain="no" mayBuyFromCompany="yes"
+						mustSellTreasuryShares="yes" companyBankruptcy="yes"/>
             </OperatingRound>
 		</GameParameters>
 		<GuiClasses>
 			<GameStatus class="net.sf.rails.ui.swing.gamespecific._SOH.GameStatus_SOH"/>
+			<ORUIManager class="net.sf.rails.ui.swing.gamespecific._SOH.ORUIManager_SOH"/>
+			<StatusWindow class="net.sf.rails.ui.swing.gamespecific._SOH.StatusWindow_SOH"/>
 		</GuiClasses>
 		<EndOfGame>
-			<!--Bankruptcy/-->
-			<!--BankBreaks limit="0" finish="setOfORs"/-->
-			<!--Reaching max price, see StockMarket.xml-->
-			<!--Fixed number of rounds, see GameManager_SOH.nextRound()-->
+			<!--Bankruptcy, does not apply here-->
+			<!--BankBreaks, does not apply here-->
+			<MaxPriceReached finish="currentOR"/><!--See also StockMarket.xml-->
+			<MaxRoundsReached number="15"/><!-- SRs + ORs -->
 		</EndOfGame>
 	</Component>
 	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
@@ -74,11 +77,12 @@
 		<TrainType name="5" majorStops="5" cost="400" quantity="3">
             <NewPhase phaseName="5"/>
 		</TrainType>
-		<TrainType name="6" majorStops="6" cost="500" quantity="6">
+		<TrainType name="6" majorStops="6" cost="500" quantity="6"
+				alsoReleased="3E">
             <NewPhase phaseName="6"/>
 		</TrainType>
 		<TrainType name="3E" majorStops="3" cost="600" quantity="6">
-			<Score cities="double"/>
+			<Score cities="double" towns="no"/>
 			<NewPhase phaseName="6"/>
 	    </TrainType>
  	</Component>

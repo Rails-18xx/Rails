@@ -388,7 +388,7 @@ public class PortfolioModel extends RailsModel {
 
     /**
      * Add a train to the train portfolio
-     * @Deprecated: Only train cards will be moved,
+     * @Deprecated Only train cards will be moved,
      * use addTrainCard(); its trains will follow automatically.
      */
     @Deprecated
@@ -531,4 +531,8 @@ public class PortfolioModel extends RailsModel {
                + getParent().getId();
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

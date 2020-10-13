@@ -72,6 +72,12 @@ public class HexSidesSet implements Iterable<HexSide> {
         return HexSidesSet.create(union);
     }
 
+    public HexSidesSet symDiff(HexSidesSet other) {
+        BitSet xxor = (BitSet)sides.clone();
+        xxor.xor(other.getSides());
+        return HexSidesSet.create(xxor);
+    }
+
     @Override
     public String toString() {
         return sides.toString();

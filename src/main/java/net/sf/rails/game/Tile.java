@@ -495,4 +495,10 @@ public class Tile extends RailsModel implements Comparable<Tile> {
             return "#" + externalId + count;
         }
     }
+
+    @Override
+    public String toString() { return externalId
+            + (pictureId != null
+                && !pictureId.equalsIgnoreCase(externalId) ? "("+pictureId+")" : "");
+    }
 }

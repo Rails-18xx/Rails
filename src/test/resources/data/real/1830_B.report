@@ -136,7 +136,7 @@ BuysTrain,NYC,2,IPO,80
 BuysTrain,NYC,2,IPO,80
 BuysTrain,NYC,2,IPO,80
 BuysTrain,NYC,2,IPO,80
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
  
 EndOfOperatingRound,1.1
 ORWorthIncrease,Marcus,1.1,5
@@ -422,7 +422,7 @@ CompanyDoesNotPayDividend,C&O
 PRICE_MOVES_LOG,C&O,90,G2,82,F2
 BuysTrain,C&O,3,IPO,180
 BuysTrain,C&O,3,IPO,180
-All 3-trains are sold out, 4-trains now available
+NewTrainAvailable,3,4
 BuysTrain,C&O,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4

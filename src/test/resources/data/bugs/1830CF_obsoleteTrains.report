@@ -247,7 +247,7 @@ LaysTileAt,N&W,8,L14,E
 CompanyDoesNotPayDividend,N&W
 PRICE_MOVES_LOG,N&W,71,G5,67,F5
 BuysTrain,N&W,2,IPO,80
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
  
 EndOfOperatingRound,3.1
 ORWorthIncrease,Chris,3.1,79
@@ -355,7 +355,7 @@ Payout,Derek,51,3,10
 Payout,Arne,34,2,10
 PRICE_MOVES_LOG,B&M,76,H5,82,I5
 BuysTrain,B&M,3,IPO,180
-All 3-trains are sold out, 4-trains now available
+NewTrainAvailable,3,4
 BuysPrivateFromFor,B&M,C&StL,Scott,80
  
 CompanyOperates,C&O,Arne

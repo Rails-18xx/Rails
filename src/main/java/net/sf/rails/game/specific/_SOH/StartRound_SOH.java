@@ -150,8 +150,8 @@ public class StartRound_SOH extends StartRound {
 
     private void checkKO (Player player, StartItem item, boolean display) {
         // Buyer of 7 KO also gets an NRS share.
-        if (item.getPrimary().getId().equalsIgnoreCase("7 KO")) {
-            PublicCompany nrs = companyManager.getPublicCompany("NRS");
+        if (item.getPrimary().getId().equalsIgnoreCase(GameDef_SOH.KO)) {
+            PublicCompany nrs = companyManager.getPublicCompany(GameDef_SOH.NRS);
             bank.getIpo().getPortfolioModel().findCertificate(nrs, false).moveTo(player);
             String report = LocalText.getText("AlsoGetsShare",
                     player.getId(), nrs.getShareUnit(), nrs.getId());

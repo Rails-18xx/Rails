@@ -35,6 +35,7 @@ public class ShareSellingRound extends StockRound {
     protected boolean dumpOtherCompaniesAllowed;
 
     protected List<SellShares> sellableShares;
+    protected int sellableSharesValue;
 
     /**
      * Created using Configure
@@ -61,14 +62,19 @@ public class ShareSellingRound extends StockRound {
         this.dumpOtherCompaniesAllowed = dumpOtherCompaniesAllowed;
         log.debug("Forced selling, dumpOtherCompaniesAllowed = " + dumpOtherCompaniesAllowed);
         getRoot().getPlayerManager().setCurrentPlayer(sellingPlayer);
-        getSellableShares();
+        //getSellableShares();
         if (getSellableShares().isEmpty()) {
             ReportBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
                     Bank.format(this, this.cashToRaise.value())));
             DisplayBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
                     Bank.format(this, this.cashToRaise.value())));
-            currentPlayer.setBankrupt();
-            gameManager.registerBankruptcy();
+            if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY)) {
+                cashNeedingCompany.setBankrupt();
+                gameManager.registerCompanyBankruptcy();
+            } else {
+                currentPlayer.setBankrupt();
+                gameManager.registerPlayerBankruptcy();
+            }
         }
     }
 
@@ -103,7 +109,15 @@ public class ShareSellingRound extends StockRound {
 
     protected List<SellShares> getSellableShares() {
 
-        sellableShares = new ArrayList<SellShares>();
+        findSellableShares();
+        return sellableShares;
+
+    }
+
+    protected void findSellableShares() {
+
+        sellableShares = new ArrayList<>();
+        sellableSharesValue = 0;
 
         PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
 
@@ -219,7 +233,8 @@ public class ShareSellingRound extends StockRound {
                     continue;
                 }
                 // May not sell more than is needed to buy the train
-                while (number > 0 && ((number - 1) * (price/ company.getShareUnitsForSharePrice())) > cashToRaise.value()) number--;
+                while (number > 0 && ((number - 1) * (price/ company.getShareUnitsForSharePrice()))
+                        > cashToRaise.value()) number--;
                 for (int i = 1; i <= number; i++) {
                     if (checkIfSplitSaleOfPresidentAllowed()) {
                         // check if selling would dump the company
@@ -237,6 +252,7 @@ public class ShareSellingRound extends StockRound {
                         if (certCount.isEmpty() && number == 2) { // 1835 director share only
                             //ToDO : Adjust Logic for other Games with MultipleShareDirectors where splitting the share is not allowed
                             sellableShares.add(new SellShares(company, 2, 1, price, 1));
+                            sellableSharesValue += price;
                         } else if ((i == 1) && ((!certCount.isEmpty()) && (number == 2))) { //1835 director share once and an action for the single share in the directors hand if we have the room :)
                             sellableShares.add(new SellShares(company, 2, 1, price, 1));
                             sellableShares.add(new SellShares(company, shareSize, i, price, 1));
@@ -249,7 +265,6 @@ public class ShareSellingRound extends StockRound {
                 }
             }
         }
-        return sellableShares;
     }
 
     @Override
@@ -301,7 +316,7 @@ public class ShareSellingRound extends StockRound {
 
             // The pool may not get over its limit.
             if (pool.getShare(company) + numberToSell * company.getShareUnit()
-                    > GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)) {
+                    > GameDef.getParmAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }
@@ -415,8 +430,14 @@ public class ShareSellingRound extends StockRound {
             } else if (getSellableShares().isEmpty()) {
                 DisplayBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
                         Bank.format(this, cashToRaise.value())));
-                currentPlayer.setBankrupt();
-                gameManager.registerBankruptcy();
+                if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY)) {
+                    cashNeedingCompany.setBankrupt();
+                    gameManager.registerCompanyBankruptcy();
+                    finishRound();
+                } else {
+                    currentPlayer.setBankrupt();
+                    gameManager.registerPlayerBankruptcy();
+                }
             }
         }
         return true;

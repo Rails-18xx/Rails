@@ -8,9 +8,6 @@ import org.slf4j.LoggerFactory;
 
 public class GameManager_SOH extends GameManager {
 
-    /** The number of operating rounds is fixed. */
-    private final int MAX_ORS = 10;
-
     //private static final Logger log = LoggerFactory.getLogger(GameManager_SOH.class);
 
     public GameManager_SOH (RailsRoot parent, String id) {
@@ -28,7 +25,7 @@ public class GameManager_SOH extends GameManager {
             startOperatingRound(true);
 
         } else if (round instanceof OperatingRound) {
-            if (absoluteORNumber.value() == MAX_ORS) {
+            if (absoluteORNumber.value() + stockRoundNumber.value() == maxRounds) {
                 finishGame();
             } else if (relativeORNumber.add(1) <= numOfORs.value()) {
                 // There will be another OR

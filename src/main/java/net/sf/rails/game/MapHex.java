@@ -407,6 +407,35 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         return getOrientationName(HexSide.get(orientation));
     }
 
+    /**
+     * Get the BitSet of the sides that have tracks
+     * for a given tile and rotation.
+     * @param tile The tile
+     * @param rotation A given rotation of that tile
+     * @return The BitSet indicating which sides have track.
+     */
+    public HexSidesSet getTrackSides (Tile tile, int rotation) {
+        HexSide rotated;
+        HexSidesSet.Builder sidesBuilder = HexSidesSet.builder();
+        for (HexSide side : HexSide.all()) {
+            if (tile.hasTracks(side)) {
+                rotated = side.rotate(rotation);
+                sidesBuilder.set(rotated);
+            }
+        }
+        return sidesBuilder.build();
+    }
+
+    /**
+     * Get the BitSet of the sides that have track
+     * for the current tile on this Hex.
+     * @return
+     */
+    public HexSidesSet getTrackSides () {
+        return getTrackSides (currentTile.value(),
+                currentTileRotation.value().getTrackPointNumber());
+    }
+
     /* ----- Instance methods ----- */
 
     public Coordinates getCoordinates() {
@@ -587,16 +616,12 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         // Create a Stop for new Stations
         if (stops.size() < newTile.getNumStations()) {
 
-            ST:
             for (Station station : newTile.getStations()) {
-                // EV: I'm sure this can be done in a better way, but at least it works
-                for (Stop stop : stops) {
-                    if (stop.getRelatedStation().equals(station)) continue ST;
-                }
-                // New Station found without an existing Stop
-                Stop stop = Stop.create(this, station);
+                if (stopsToNewStations.containsValue(station)) continue;
+                // New Station found without an existing Stop: create a new Stop
+                Stop stop = Stop.create(this, stops.size()+1, station);
                 stop.initStopParameters();
-                //stops.put (station, stop);
+                stops.put (station, stop);
                 stopsToNewStations.put(stop, station);
             }
         }
@@ -963,10 +988,6 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         return stopName;
     }
 
-    //public String getMutexId() {
-    //    return mutexId;
-    //}
-
     public PublicCompany getReservedForCompany() {
         return reservedForCompany;
     }
@@ -995,6 +1016,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     @Override
     public String toString() {
-        return super.toString() + coordinates;
+        //return super.toString() + coordinates;
+        return getId();
     }
 }

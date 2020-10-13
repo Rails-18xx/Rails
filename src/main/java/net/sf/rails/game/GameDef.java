@@ -21,10 +21,13 @@ public class GameDef {
         FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS(false),
         SKIP_FIRST_STOCK_ROUND(false),
         NO_SALE_OF_JUST_BOUGHT_CERT(false),
+        NO_SALE_OF_JUST_STARTED_COMPANY(false),
         REMOVE_TRAIN_BEFORE_SR(false),
         EMERGENCY_MUST_BUY_CHEAPEST_TRAIN (true),
         EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN (false),
         EMERGENCY_MAY_BUY_FROM_COMPANY (true),
+        EMERGENCY_MUST_SELL_TREASURY_SHARES(false),
+        EMERGENCY_COMPANY_BANKRUPTCY(false),
         DUAL_TRAIN_BECOMES_UNDECIDED_IN_POOL (false);
 
         private Object defaultValue;
@@ -60,26 +63,23 @@ public class GameDef {
 
     }
     
-    public static Object getGameParameter(RailsItem item, GameDef.Parm key) {
+    public static Object getParm(RailsItem item, GameDef.Parm key) {
         return item.getRoot().getGameManager().getGameParameter(key);
     }
 
-    public static int getGameParameterAsInt(RailsItem item, GameDef.Parm key) {
+    public static int getParmAsInt(RailsItem item, GameDef.Parm key) {
         if (key.defaultValue() instanceof Integer) {
-            return (Integer) getGameParameter(item, key);
+            return (Integer) getParm(item, key);
         } else {
             return -1;
         }
     }
 
-    public static boolean getGameParameterAsBoolean(RailsItem item, GameDef.Parm key) {
+    public static boolean getParmAsBoolean(RailsItem item, GameDef.Parm key) {
         if (key.defaultValue() instanceof Boolean) {
-            return (Boolean) getGameParameter(item, key);
+            return (Boolean) getParm(item, key);
         } else {
             return false;
         }
     }
-
-
-
 }

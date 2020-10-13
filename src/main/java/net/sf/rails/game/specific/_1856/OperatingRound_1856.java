@@ -524,11 +524,11 @@ public class OperatingRound_1856 extends OperatingRound {
         }
 
         String message;
-        int operatingCompanyndex = getOperatingCompanyndex();
+        int operatingCompanyIndex = getOperatingCompanyIndex();
         if (cgr.hasStarted()) {
             if (cgrCanOperate) {
-                operatingCompanyndex = Math.max(0, operatingCompanyndex);
-                operatingCompanies.add(operatingCompanyndex + 1, cgr);
+                operatingCompanyIndex = Math.max(0, operatingCompanyIndex);
+                operatingCompanies.add(operatingCompanyIndex + 1, cgr);
                 setOperatingCompany(cgr);
                 message = LocalText.getText("CanOperate", cgr.getId());
             } else {
