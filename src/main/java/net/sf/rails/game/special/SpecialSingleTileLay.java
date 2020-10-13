@@ -30,9 +30,10 @@ public class SpecialSingleTileLay extends SpecialTileLay {
         }
 
         locationCodes = tileLayTag.getAttributeAsString("location");
-        // Locations can be null (SOH), in which case all reachable locations are valid.
-        //if (!Util.hasValue(locationCodes))
-        //    throw new ConfigurationException("SpecialSingleTileLay: location missing");
+        // If all locations are allowed, as in SOH, "all" must be specified
+        // ('connected' defines if the locations must be reachable or not).
+        if (!Util.hasValue(locationCodes))
+            throw new ConfigurationException("SpecialSingleTileLay: location missing");
 
         tileId = tileLayTag.getAttributeAsString("tile", null);
 
@@ -83,7 +84,8 @@ public class SpecialSingleTileLay extends SpecialTileLay {
             tile = tmgr.getTile(tileId);
         }
 
-        if (locationCodes != null) {
+        if (locationCodes != null
+                && !locationCodes.equalsIgnoreCase("all")) {
             locations = new ArrayList<>();
             for (String hexName : locationCodes.split(",")) {
                 hex = mmgr.getHex(hexName);

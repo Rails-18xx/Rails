@@ -31,7 +31,8 @@
 			longname="Spoorwegmaatschappij Almelo-Salzbergen">
 		<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
 						 class="net.sf.rails.game.special.SpecialSingleTileLay">
-			<SpecialSingleTileLay colour="yellow,green" extra="yes" free="no" connected="yes"/>
+			<SpecialSingleTileLay colour="yellow,green" location="all"
+								  extra="yes" free="no" connected="yes"/>
 		</SpecialProperty>
 		<ClosingConditions>
 			<SpecialProperties condition="ifExercised"/>
@@ -41,7 +42,8 @@
 			longname="Koninklijk Korps van Ingenieurs">
 		<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
 						 class="net.sf.rails.game.special.SpecialSingleTileLay">
-			<SpecialSingleTileLay colour="yellow" extra="no" free="yes" connected="yes"/>
+			<SpecialSingleTileLay colour="yellow" location="all"
+								  extra="no" free="yes" connected="yes"/>
 			<!-- Should only be used when a river is crossed-->
 		</SpecialProperty>
 		<ClosingConditions>
