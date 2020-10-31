@@ -163,7 +163,7 @@ Not yet implemented:
 		<Note>Fully Playable</Note>
 		<Description>18Scan - Railroading under the Northern Lights
 		(c) 2004-2005 David G.D. Hecht
-		Published by Deep Thought Games, LLC
+		Published 2005 by Deep Thought Games, LLC
 
 		Limitations:
 		- The bonus token owner is not asked for permission to buy such a token.
@@ -194,16 +194,17 @@ Not yet implemented:
 	</Game>
 
 	<Game name="SOH">
-		<Note>In progress</Note>
+		<Note>Playable</Note>
 		<Description>Steam over Holland
 			(c) 2007 Bart van Dijk
-			Published by Vendetta Games
+			Published 2007 by Vendetta Games
 
 			The initial round can follow three scenarios, selectable as a Game Option:
 
 			1. Auction. This scenario follows the primary game rule, in which as many privates
 			are drawn randomly as there are players. An 18EU-style auction follows, without
-			downpricing (if all pass, private is discarded). This is the default option.
+			downpricing (if all pass, private is discarded and not replaced).
+			This is the default option.
 
 			2. Deal. This scenario follows the alternative game rule, in which as many privates
 			are drawn randomly as there are players, and then dealt out, one to each player,
@@ -213,13 +214,8 @@ Not yet implemented:
 			or pass. This scenario was added for testing purposes, and possibly for players who
 			want to distribute privates off-game in their own way. Still maximum one per player.
 
-			Not yet implemented are:
-			- Bridge buiding cost
-			- Most private special properties.
+			Not yet implemented:
 			- Company bankruptcy
-			Not yet completed and tested are:
-			- Emergency train buying
-			- Game end by reaching max share price
 		</Description>
 		<Players minimum="2" maximum="5"/>
 	</Game>

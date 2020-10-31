@@ -139,7 +139,7 @@ CompanyDoesNotPayDividend,BY
 PRICE_MOVES_LOG,BY,92,C3,86,B3
 BuysTrain,BY,2,IPO,80
 BuysTrain,BY,2,IPO,80
-All 2-trains are sold out, 2+2-trains now available
+NewTrainAvailable,2,2+2
 BuysTrain,BY,2+2,IPO,120
 FirstTrainBought,2+2
  
@@ -596,7 +596,7 @@ CompanyOperates,BA,T2
 CompanyDoesNotPayDividend,BA
 PRICE_MOVES_LOG,BA,84,B4,78,A4
 BuysTrain,BA,2+2,IPO,120
-All 2+2-trains are sold out, 3-trains now available
+NewTrainAvailable,2+2,3
 BuysTrain,BA,3,IPO,180
 FirstTrainBought,3
 StartOfPhase,3
@@ -724,7 +724,7 @@ Payout,T2,18,2,10
 Payout,SX,9,1,10
 PRICE_MOVES_LOG,SX,94,D4,102,E4
 BuysTrain,SX,3,IPO,180
-All 3-trains are sold out, 3+3-trains now available
+NewTrainAvailable,3,3+3
 BuysTrain,SX,3+3,IPO,270
 FirstTrainBought,3+3
  

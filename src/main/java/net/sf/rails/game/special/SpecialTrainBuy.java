@@ -74,6 +74,10 @@ public class SpecialTrainBuy extends SpecialProperty {
         }
     }
 
+    public boolean hasDeduction() {
+        return absoluteDeduction || relativeDeduction;
+    }
+
     public boolean isValidForTrainType(String trainType) {
         return StringUtils.isBlank(trainTypeName) || trainTypeName.equalsIgnoreCase(trainType);
     }

@@ -60,7 +60,7 @@ public class GameManager_18EU extends GameManager {
     }
 
     @Override
-    protected void processBankruptcy() {
+    protected void processPlayerBankruptcy() {
 
         // Assume default case as in 18EU: all assets to Bank/Pool
         Player bankrupter = getCurrentPlayer();

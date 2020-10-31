@@ -38,4 +38,7 @@ public final class BankPortfolio extends RailsAbstractItem implements PortfolioO
         return portfolio;
     }
 
+    @Override
+    public String toString() { return "Bank/" + portfolio;}
+
 }

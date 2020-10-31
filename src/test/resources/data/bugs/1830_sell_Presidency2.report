@@ -192,7 +192,7 @@ Payout,Basti,12,4,10
 Payout,Ulrich,3,1,10
 PRICE_MOVES_LOG,PRR,71,F4,76,G4
 BuysTrain,PRR,2,IPO,80
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
 BuysTrain,PRR,3,IPO,180
 FirstTrainBought,3
 StartOfPhase,3
@@ -370,7 +370,7 @@ Payout,Matze,14,2,10
 Payout,Stefan,14,2,10
 PRICE_MOVES_LOG,C&O,76,F3,82,G3
 BuysTrain,C&O,3,IPO,180
-All 3-trains are sold out, 4-trains now available
+NewTrainAvailable,3,4
 BuysPrivateFromFor,C&O,C&A,Thomas,320
  
 CompanyOperates,B&O,Pierre
@@ -988,7 +988,7 @@ Payout,Stefan,11,1,10
 Payout,NYNH,33,3,10
 PRICE_MOVES_LOG,NYNH,90,I4,100,J4
 BuysTrain,NYNH,4,IPO,300
-All 4-trains are sold out, 5-trains now available
+NewTrainAvailable,4,5
  
 CompanyOperates,B&M,Thomas
 LaysTileAt,B&M,8,D20,E
@@ -1018,7 +1018,7 @@ CompanyRevenue,NYC,150
 CompanyWithholds,NYC,150
 PRICE_MOVES_LOG,NYC,75,I6,71,H6
 BuysTrain,NYC,5,IPO,450
-All 5-trains are sold out, 6-trains now available
+NewTrainAvailable,5,6
  
 CompanyOperates,C&O,Matze
 LaysTileAt,C&O,63,H10,SW

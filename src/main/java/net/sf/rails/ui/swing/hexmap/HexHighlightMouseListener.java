@@ -44,8 +44,8 @@ public class HexHighlightMouseListener implements MouseListener {
      */
     private HexHighlightMouseListener(ORUIManager orUIManager){
         this.orUIManager = orUIManager;
-        hexList = new ArrayList<MapHex>();
-        guiHexList = new ArrayList<GUIHex>();
+        hexList = new ArrayList<>();
+        guiHexList = new ArrayList<>();
         portfolio = null;
     }
 
@@ -62,7 +62,7 @@ public class HexHighlightMouseListener implements MouseListener {
     }
 
     /**
-     * @param tileId ID of the tile the occurrences of which should be highlighted on
+     * @param tile the tile the occurrences of which should be highlighted on
      * the map
      * @param enableIrrespectiveOfHighlightConfig If true, the mouse listener is
      * enabled irrespective of the base configuration. Needed since some highlighting
@@ -86,7 +86,7 @@ public class HexHighlightMouseListener implements MouseListener {
     public static void addMouseListener(JComponent c,ORUIManager orUIManager,PrivateCompany p,boolean enableIrrespectiveOfHighlightConfig) {
         if (isEnabled(enableIrrespectiveOfHighlightConfig)) {
             HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);
-            Set<PrivateCompany> privList = new HashSet<PrivateCompany>();
+            Set<PrivateCompany> privList = new HashSet<>();
             privList.add(p);
             l.initPrivateCompanies(privList);
             c.addMouseListener(l);
@@ -115,7 +115,7 @@ public class HexHighlightMouseListener implements MouseListener {
     public static void addMouseListener(JComponent c,ORUIManager orUIManager,StartItem si) {
         if (isEnabled(false)) {
             HexHighlightMouseListener l = new HexHighlightMouseListener(orUIManager);
-            Set<PrivateCompany> privList = new HashSet<PrivateCompany>();
+            Set<PrivateCompany> privList = new HashSet<>();
             if (si.getPrimary() instanceof PrivateCompany) {
                 privList.add((PrivateCompany)si.getPrimary());
             }

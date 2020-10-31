@@ -37,6 +37,12 @@ public class BuyTrain extends PossibleORAction {
 
     private boolean presidentMustAddCash = false; // If buying from the bank
     private boolean presidentMayAddCash = false;  // If buying from a company
+
+    /**
+     * The amount of cash a company is missing to buy a train.
+     * In SOH: any cash that can be raised by selling treasury
+     * shares is subtracted.
+     */
     private int presidentCashToAdd = 0;
 
     private transient SpecialTrainBuy specialProperty = null;
@@ -85,13 +91,13 @@ public class BuyTrain extends PossibleORAction {
     }
 
     public BuyTrain setPresidentMustAddCash(int amount) {
-        presidentMustAddCash = true;
+        presidentMustAddCash = amount > 0;
         presidentCashToAdd = amount;
         return this;
     }
 
     public BuyTrain setPresidentMayAddCash(int amount) {
-        presidentMayAddCash = true;
+        presidentMayAddCash = amount > 0;
         presidentCashToAdd = amount;
         return this;
     }
@@ -255,15 +261,19 @@ public class BuyTrain extends PossibleORAction {
     @Override
     public String toString() {
 
+        // To shorten this long text, the booleans are made implicit
+        String addCash = presidentMustAddCash ? "presMustAdd" :
+                          presidentMayAddCash ? "presMayAdd" : "cashToAdd";
         return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("train", train)
                     .addToString("from", from)
                     .addToString("fixedCost", fixedCost)
                     .addToString("trainsForExchange", trainsForExchange)
+                    .addToString(addCash, presidentCashToAdd)
                     .addToStringOnlyActed("pricePaid", pricePaid)
                     .addToStringOnlyActed("addedCash", addedCash)
-                    .addToStringOnlyActed("exchangedTrainUniqueId", exchangedTrainUniqueId)
+                    .addToStringOnlyActed("exchangedTrain", exchangedTrainUniqueId)
                 .toString()
         ;
     }

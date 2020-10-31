@@ -281,7 +281,7 @@ CompanyDoesNotPayDividend,BY
 PRICE_MOVES_LOG,BY,92,C3,86,B3
 BuysTrain,BY,2,IPO,80
 BuysTrain,BY,2,IPO,80
-All 2-trains are sold out, 2+2-trains now available
+NewTrainAvailable,2,2+2
 BuysTrain,BY,2+2,IPO,120
 FirstTrainBought,2+2
  
@@ -294,7 +294,7 @@ BuysTrain,SX,2+2,IPO,120
 PrivateCloses,LD
 BuysTrain,SX,2+2,IPO,120
 BuysTrain,SX,2+2,IPO,120
-All 2+2-trains are sold out, 3-trains now available
+NewTrainAvailable,2+2,3
  
 EndOfOperatingRound,1.1
 ORWorthIncrease,Lonny,1.1,-146
@@ -563,7 +563,7 @@ CompanyDoesNotPayDividend,BA
 PRICE_MOVES_LOG,BA,84,B4,78,A4
 BuysTrain,BA,2,M4,5
 BuysTrain,BA,3,IPO,180
-All 3-trains are sold out, 3+3-trains now available
+NewTrainAvailable,3,3+3
 BuysTrain,BA,2,M6,230
  
 CompanyOperates,BY,Ronnie
@@ -851,7 +851,7 @@ LaysTileAt,WT,57,M9,NW
 CompanyDoesNotPayDividend,WT
 PRICE_MOVES_LOG,WT,84,B4,78,A4
 BuysTrain,WT,3+3,IPO,270
-All 3+3-trains are sold out, 4-trains now available
+NewTrainAvailable,3+3,4
  
 CompanyOperates,HE,Lonny
 LaysTileAtFor,HE,213,J6,SE,50
@@ -952,7 +952,7 @@ Payout,Stefan,22,1,10
 Payout,SX,22,1,10
 PRICE_MOVES_LOG,SX,104,F5,114,G5
 BuysTrain,SX,4,IPO,360
-All 4-trains are sold out, 4+4-trains now available
+NewTrainAvailable,4,4+4
  
 CompanyOperates,BY,Ronnie
 LaysTileAt,BY,25,N16,SW
@@ -962,7 +962,7 @@ CompanyRevenue,BY,180
 CompanyWithholds,BY,180
 PRICE_MOVES_LOG,BY,98,F6,92,E6
 BuysTrain,BY,4+4,IPO,440
-All 4+4-trains are sold out, 5-trains now available
+NewTrainAvailable,4+4,5
 FirstTrainBought,4+4
 StartOfPhase,4+4
 TrainsRusted,2+2

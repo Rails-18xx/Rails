@@ -201,7 +201,7 @@ LaysTileAt,KO,58,J5,NW
 CompanyDoesNotPayDividend,KO
 PRICE_MOVES_LOG,KO,65,D6,60,C6
 BuysTrain,KO,2,IPO,80
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
 BuysTrain,KO,3,IPO,180
 FirstTrainBought,3
 StartOfPhase,3
@@ -303,7 +303,7 @@ CompanyDoesNotPayDividend,TR
 PRICE_MOVES_LOG,TR,75,D4,70,C4
 BuysTrain,TR,3,IPO,180
 BuysTrain,TR,3,IPO,180
-All 3-trains are sold out, 4-trains now available
+NewTrainAvailable,3,4
 BuysTrain,TR,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
@@ -391,7 +391,7 @@ CompanyPaysOutFull,KU,120
 Payout,bernd,60,5,10
 PRICE_MOVES_LOG,KU,65,C5,70,D5
 BuysTrain,KU,4,IPO,300
-All 4-trains are sold out, 5-trains now available
+NewTrainAvailable,4,5
  
 CompanyOperates,KO,stefan
 LaysTileAt,KO,5,I2,S
@@ -530,7 +530,7 @@ LaysTileAt,AR,6,K8,SE
 CompanyDoesNotPayDividend,AR
 PRICE_MOVES_LOG,AR,70,D5,65,C5
 BuysTrain,AR,5,IPO,450
-All 5-trains are sold out, 6-trains now available
+NewTrainAvailable,5,6
  
 CompanyOperates,KO,stefan
 LaysTileAt,KO,440,K4,S

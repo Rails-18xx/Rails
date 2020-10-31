@@ -406,6 +406,21 @@ public class TileUpgrade implements Upgrade {
                     if (!diffTrack.isEmpty()) return null;
                 }
                 stationMap.put(baseStation, null);
+            } else if (targetNb > 1) {
+                // special case: in SOH, base town station (effectively) splits
+                // TODO: assign the single base to the appropriate target station
+                Set<TrackPoint> baseTrack = base.getStationTracks(baseStation);
+                Set<Station> targetStations = target.getTile().getStations();
+                for (Station targetStation : targetStations) {
+                    //Set<TrackPoint> targetTrack = targetStation.getTile().getTracksPerStation(targetStation);
+                    Set<TrackPoint> targetTrack = target.getStationTracks(targetStation);
+                            SetView<TrackPoint> diffTrack = Sets.difference(baseTrack, targetTrack);
+                    if (diffTrack.isEmpty()) {
+                        stationMap.put(baseStation, targetStation);
+                        break;
+                    }
+                }
+                if (stationMap.isEmpty()) return null;
             }
         } else { // more than one base station, assign by side connectivity
             List<Station> noTrackBaseStations = Lists.newArrayList();

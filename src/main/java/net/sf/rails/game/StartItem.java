@@ -521,4 +521,8 @@ public class StartItem extends RailsAbstractItem {
         return toString();
     }
 
+    public String toString() {
+        return getId();
+    }
+
 }

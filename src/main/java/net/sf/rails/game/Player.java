@@ -150,6 +150,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
         lastORWorthIncrease.set(getWorth() - worthAtORStart.value());
     }
 
+    // TODO Doesn't this duplicate getCash()?
     public int getCashValue() {
         return cash.value();
     }

@@ -71,6 +71,10 @@ public class HexSide extends TrackPoint {
         return get(this.number + rotation.number);
     }
 
+    public HexSide rotate (int rotation) {
+        return get(this.number + rotation);
+    }
+
     @Override
     public int getTrackPointNumber() {
         return number;
@@ -82,10 +86,12 @@ public class HexSide extends TrackPoint {
     }
 
     @Override
+    // EV oct 2020: shortened
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("number", number)
-                .toString();
+        //return MoreObjects.toStringHelper(this)
+        //        .add("number", number)
+        //        .toString();
+        return "side " + number;
     }
 
 }
