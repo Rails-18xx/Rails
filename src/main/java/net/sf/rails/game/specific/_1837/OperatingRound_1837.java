@@ -179,9 +179,9 @@ public class OperatingRound_1837 extends OperatingRound {
             // and isn't currently operating
 
             int index = 0;
-            int operatingCompanyndex = getOperatingCompanyndex();
+            int operatingCompanyIndex = getOperatingCompanyIndex();
             for (PublicCompany company : setOperatingCompanies()) {
-                if (index > operatingCompanyndex
+                if (index > operatingCompanyIndex
                         && company.hasStockPrice()
                         && company.hasFloated()
                         && !company.isClosed()

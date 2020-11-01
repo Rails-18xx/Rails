@@ -46,9 +46,10 @@ public class SpecialBaseTokenLay extends SpecialProperty {
         }
 
         locationCodes = tokenLayTag.getAttributeAsString("location");
-        if (!Util.hasValue(locationCodes))
-            throw new ConfigurationException(
-                    "SpecialBaseTokenLay: location missing");
+        // Locations can be null, in which case all reachable locations are valid.
+        //if (!Util.hasValue(locationCodes))
+        //    throw new ConfigurationException(
+        //            "SpecialBaseTokenLay: location missing");
 
         extra = tokenLayTag.getAttributeAsBoolean("extra", extra);
         free = tokenLayTag.getAttributeAsBoolean("free", free);
@@ -67,11 +68,13 @@ public class SpecialBaseTokenLay extends SpecialProperty {
 
     @Override
     public void finishConfiguration (RailsRoot root) throws ConfigurationException {
-        locations = root.getMapManager().parseLocations(locationCodes);
-        if (Util.hasValue(forcedText)) {
-            if ("ifYellow".equalsIgnoreCase(forcedText)) {
-                // 18Scan: destination token may be laid aside a city on a yellow tile
-                forced = Forced.IF_YELLOW;
+        if (Util.hasValue(locationCodes)) {
+            locations = root.getMapManager().parseLocations(locationCodes);
+            if (Util.hasValue(forcedText)) {
+                if ("ifYellow".equalsIgnoreCase(forcedText)) {
+                    // 18Scan: destination token may be laid aside a city on a yellow tile
+                    forced = Forced.IF_YELLOW;
+                }
             }
         }
     }

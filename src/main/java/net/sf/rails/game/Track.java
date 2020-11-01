@@ -59,11 +59,13 @@ public class Track {
     }
 
     // Object methods
+    // EV oct 2020: shortened
     @Override
+    //public String toString() { return ("Track " + start + "->" + end + " (hc=" + hashCode + ")");
     public String toString() {
-        return ("Track " + start + "->" + end + " (hc = " + hashCode + ")");
+        return "{" + start + "->" + end + "}";
     }
-    
+
     // Two tracks are equal if they share the same hashcode
     @Override
     public boolean equals(Object other) {

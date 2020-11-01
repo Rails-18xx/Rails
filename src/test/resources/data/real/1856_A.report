@@ -110,7 +110,7 @@ InterestPaidFromTreasury,GT,10
 CompanyDoesNotPayDividend,GT
 PRICE_MOVES_LOG,GT,65,E6,60,D6
 BuysTrain,GT,2,IPO,100
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
 BuysTrain,GT,3,IPO,225
 FirstTrainBought,3
 StartOfPhase,3
@@ -399,7 +399,7 @@ Payout,GW,16,2,10
 PRICE_MOVES_LOG,GW,75,F5,80,G5
 BuysTrain,GW,3,IPO,225
 BuysTrain,GW,3,IPO,225
-All 3-trains are sold out, 4-trains now available
+NewTrainAvailable,3,4
  
 CompanyOperates,CPR,Ed
 LaysTileAtFor,CPR,57,N3,SW,40
@@ -731,7 +731,7 @@ InterestPaidFromTreasury,CA,20
 CompanyWithholds,CA,120
 PRICE_MOVES_LOG,CA,55,E8,50,D8
 BuysTrain,CA,4,IPO,350
-All 4-trains are sold out, 5-trains now available
+NewTrainAvailable,4,5
  
 EndOfOperatingRound,4.1
 ORWorthIncrease,Adam,4.1,65
@@ -981,7 +981,7 @@ SELL_SHARE_LOG,Adam,10,CA,60
 PRICE_MOVES_LOG,CA,60,E7,55,E8
 PresidentAddsCash,TGB,Adam,30
 BuysTrain,TGB,5,IPO,550
-All 5-trains are sold out, 6-trains now available
+NewTrainAvailable,5,6
  
 CompanyOperates,CPR,Ed
 LaysTileAt,CPR,127,M4,SW

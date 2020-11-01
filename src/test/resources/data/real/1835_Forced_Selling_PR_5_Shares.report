@@ -153,7 +153,7 @@ CompanyDoesNotPayDividend,BY
 PRICE_MOVES_LOG,BY,92,C3,86,B3
 BuysTrain,BY,2,IPO,80
 BuysTrain,BY,2,IPO,80
-All 2-trains are sold out, 2+2-trains now available
+NewTrainAvailable,2,2+2
 BuysTrain,BY,2+2,IPO,120
 FirstTrainBought,2+2
  
@@ -373,7 +373,7 @@ CompanyDoesNotPayDividend,SX
 PRICE_MOVES_LOG,SX,88,C4,84,B4
 BuysTrain,SX,2+2,IPO,120
 PrivateCloses,LD
-All 2+2-trains are sold out, 3-trains now available
+NewTrainAvailable,2+2,3
 BuysTrain,SX,3,IPO,180
 FirstTrainBought,3
 StartOfPhase,3
@@ -495,7 +495,7 @@ Payout,Volker Kuhnle,30,5,10
 PRICE_MOVES_LOG,SX,84,B4,88,C4
 BuysTrain,SX,3,IPO,180
 BuysTrain,SX,3,IPO,180
-All 3-trains are sold out, 3+3-trains now available
+NewTrainAvailable,3,3+3
  
 EndOfOperatingRound,4.1
 ORWorthIncrease,Ulli Hegemann,4.1,198
@@ -828,7 +828,7 @@ Payout,Ulli Hegemann,62,2,10
 Payout,Volker Schnell,62,2,10
 PRICE_MOVES_LOG,SX,110,E3,122,F3
 BuysTrain,SX,3+3,IPO,270
-All 3+3-trains are sold out, 4-trains now available
+NewTrainAvailable,3+3,4
  
 CompanyOperates,BA,Volker Schnell
 LaysTileAt,BA,27,J2,NW
@@ -1054,9 +1054,9 @@ LaysTileAt,WT,6,M9,SW
 CompanyDoesNotPayDividend,WT
 PRICE_MOVES_LOG,WT,86,B3,82,A3
 BuysTrain,WT,4,IPO,360
-All 4-trains are sold out, 4+4-trains now available
+NewTrainAvailable,4,4+4
 BuysTrain,WT,4+4,IPO,440
-All 4+4-trains are sold out, 5-trains now available
+NewTrainAvailable,4+4,5
 FirstTrainBought,4+4
 StartOfPhase,4+4
 TrainsRusted,2+2
@@ -1099,7 +1099,7 @@ CompanyDoesNotPayDividend,MS
 PRICE_MOVES_LOG,MS,80,B5,72,A5
 PresidentAddsCash,MS,Volker Kuhnle,20
 BuysTrain,MS,5,IPO,500
-All 5-trains are sold out, 5+5-trains now available
+NewTrainAvailable,5,5+5
  
 EndOfOperatingRound,6.1
 ORWorthIncrease,Ulli Hegemann,6.1,553
@@ -1129,7 +1129,7 @@ Payout,Ulli Hegemann,77,11,5
 Payout,Volker Schnell,21,3,5
 PRICE_MOVES_LOG,PR,154,I4,172,J4
 BuysTrain,PR,5+5,IPO,600
-All 5+5-trains are sold out, 6-trains now available
+NewTrainAvailable,5+5,6
 FirstTrainBought,5+5
 BuysTrain,PR,6,IPO,600
 FirstTrainBought,6
@@ -1310,6 +1310,6 @@ SELL_SHARES_LOG,Jupp Krupp,2,5,10,PR,212
 PRICE_MOVES_LOG,PR,212,K3,192,K4
 PresidentAddsCash,WT,Jupp Krupp,401
 BuysTrain,WT,6,IPO,600
-All 6-trains are sold out, 6+6-trains now available
+NewTrainAvailable,6,6+6
  
 CompanyOperates,HE,Ulli Hegemann

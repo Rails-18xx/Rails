@@ -103,6 +103,11 @@ public class StockRound extends Round {
     private final ArrayListState<Player> canRequestTurn = new ArrayListState<>(this, "canRequestTurn");
     private final ArrayListState<Player> hasRequestedTurn = new ArrayListState<>(this, "hasRequestedTurn");
 
+    /*
+     * Companies started this round (shares may not be sold in SOH)
+     */
+    private ArrayListState<PublicCompany> startedThisRound = new ArrayListState<>(this, "startedThisSR");
+
     /**
      * Constructed via Configure
      */
@@ -111,7 +116,7 @@ public class StockRound extends Round {
 
         numberOfPlayers = getRoot().getPlayerManager().getPlayers().size();
 
-        sequenceRule = GameDef.getGameParameterAsInt(this, GameDef.Parm.STOCK_ROUND_SEQUENCE);
+        sequenceRule = GameDef.getParmAsInt(this, GameDef.Parm.STOCK_ROUND_SEQUENCE);
 
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, true);
@@ -143,6 +148,7 @@ public class StockRound extends Round {
         initPlayer();
 
         raiseIfSoldOut = true;
+        startedThisRound.clear();
 
     }
 
@@ -484,7 +490,7 @@ public class StockRound extends Round {
                 violations.append(LocalText.getText("ExceedCertificateLimitCompany",
                         company.getId(),
                         playerPortfolio.getShare(company),
-                        GameDef.getGameParameterAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)
+                        GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)
                 ));
 
             } else {
@@ -831,6 +837,7 @@ public class StockRound extends Round {
 
         // All is OK, now start the company
         company.start(startSpace);
+        startedThisRound.add (company);
 
         MoneyOwner priceRecipient = getSharePriceRecipient(company, ipo.getParent(), price);
 
@@ -1200,7 +1207,7 @@ public class StockRound extends Round {
 
             // The pool may not get over its limit.
             if (pool.getShare(company) + numberToSell * company.getShareUnit()
-                    > GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)) {
+                    > GameDef.getParmAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }
@@ -1462,7 +1469,7 @@ public class StockRound extends Round {
                 // TODO: Not nice to use '1' here, should be percentage.
                 errMsg =
                         LocalText.getText("WouldExceedHoldLimit",
-                                String.valueOf(GameDef.getGameParameterAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)));
+                                String.valueOf(GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)));
                 break;
             }
             break;
@@ -1787,6 +1794,10 @@ public class StockRound extends Round {
         if (noSaleIfNotOperated()
                 && !company.hasOperated()) return false;
 
+        // In SOH, can't sell shares of company started this round
+        if (noSaleIfJustStarted()
+                && startedThisRound.contains(company)) return false;
+
         return true;
     }
 
@@ -1874,7 +1885,7 @@ public class StockRound extends Round {
         // Check for per-company share limit
         if (player.getPortfolioModel().getShare(company)
                 + number * company.getShareUnit()
-                > GameDef.getGameParameterAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)
+                > GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)
                 && !company.getCurrentSpace().isNoHoldLimit()
                 && !isSellObligationLifted(company)) return false;
         return true;
@@ -1902,7 +1913,7 @@ public class StockRound extends Round {
                                              int shareSize) {
 
         int limit;
-        int playerShareLimit = GameDef.getGameParameterAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT);
+        int playerShareLimit = GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT);
         if (!company.hasStarted()) {
             limit = playerShareLimit;
         } else {
@@ -1931,6 +1942,10 @@ public class StockRound extends Round {
     // not overridden
     protected boolean noSaleIfNotOperated() {
         return (Boolean) gameManager.getGameParameter(GameDef.Parm.NO_SALE_IF_NOT_OPERATED);
+    }
+
+    protected boolean noSaleIfJustStarted() {
+        return (Boolean) gameManager.getGameParameter(GameDef.Parm.NO_SALE_OF_JUST_STARTED_COMPANY);
     }
 
     // called by

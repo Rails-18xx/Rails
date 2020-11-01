@@ -13,7 +13,7 @@ import net.sf.rails.util.Util;
 
 public abstract class SpecialTileLay extends SpecialProperty {
 
-    protected String locationCodes = null;
+    protected String locationCodes = "";
     protected List<MapHex> locations = null;
     protected String tileId = null;
     protected Tile tile = null;

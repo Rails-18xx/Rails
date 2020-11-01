@@ -234,6 +234,8 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
                         }
                     }
 
+                    // Buying from another player is foreseen,
+                    // but not further implemented, and not yet used.
                     if (tradeableTag.hasAttribute("toPlayer")) {
                         tradeableToPlayer = tradeableTag.getAttributeAsBoolean("toPlayer");
 
@@ -534,6 +536,7 @@ public class PrivateCompany extends RailsOwnableItem<PrivateCompany> implements 
     /**
      * @return Returns whether or not the company can be bought by a player (from another player)
      */
+    // Not yet used
     public boolean tradeableToPlayer() {
         return tradeableToPlayer;
     }

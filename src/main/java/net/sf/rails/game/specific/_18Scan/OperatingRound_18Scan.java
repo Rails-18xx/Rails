@@ -33,7 +33,7 @@ public class OperatingRound_18Scan extends OperatingRound {
             GameDef.OrStep.FINAL
     };
 
-    private final String SJ = "SJ";
+    private final String SJ = GameDef_18Scan.SJ;
 
     /**
      * To keep record of train types bought in a turn:
@@ -145,8 +145,8 @@ public class OperatingRound_18Scan extends OperatingRound {
         // Pending a better solution, we handle that here.
         // TODO: a generic solution is wanted.
 
-        final PrivateCompany sjs = (PrivateCompany) companyManager.getCompany("Private", "SJS");
-        final PublicCompany dsb = (PublicCompany) companyManager.getCompany("Public", "DSB");
+        final PrivateCompany sjs = (PrivateCompany) companyManager.getCompany("Private", GameDef_18Scan.SJS);
+        final PublicCompany dsb = (PublicCompany) companyManager.getCompany("Public", GameDef_18Scan.DSB);
         boolean sjsWasOpen = false;
         SpecialSingleTileLay sst = null;
 
@@ -189,7 +189,7 @@ public class OperatingRound_18Scan extends OperatingRound {
     }
 
     private void formSJ () {
-        PublicCompany sj = companyManager.getPublicCompany("SJ");
+        PublicCompany sj = companyManager.getPublicCompany(SJ);
         List<Company> minors = companyManager.getCompaniesByType("Minor");
         String message;
         for (Company comp : minors) {

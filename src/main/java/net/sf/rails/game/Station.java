@@ -170,9 +170,11 @@ public class Station extends TrackPoint implements Comparable<Station> {
     }
 
     @Override
+    // EV oct 2020: shortened
     public String toString() {
-        return "Station " + number + " on tile #" + tile.getId() + " ID: " + id
-        + ", Type: " + type + ", Slots: " + baseSlots + ", Value: "
-        + value + ", Position:" + position;
+        //return "Station " + number + " on tile #" + tile.getId() + " ID: " + id
+        //+ ", Type: " + type + ", Slots: " + baseSlots + ", Value: "
+        //+ value + ", Position:" + position;
+        return "station " + number;
     }
 }

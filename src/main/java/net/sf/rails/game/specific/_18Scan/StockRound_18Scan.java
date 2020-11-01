@@ -18,7 +18,7 @@ public class StockRound_18Scan extends StockRound {
 
         Phase currentPhase = gameManager.getCurrentPhase();
         boolean phase5Reached = getRoot().getPhaseManager().hasReachedPhase("5");
-        if ("SJ".equalsIgnoreCase(company.getId())
+        if (company.getId().equalsIgnoreCase(GameDef_18Scan.SJ)
                 && !phase5Reached) {
             // The SJ does not float in a stock round before phase 5
         } else

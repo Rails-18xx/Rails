@@ -1,6 +1,3 @@
-/**
- *
- */
 package net.sf.rails.game.specific._1837;
 
 import org.slf4j.Logger;
@@ -78,7 +75,8 @@ public class GameManager_1837 extends GameManager {
                     // There will be another OR
                     startOperatingRound(true);
                 } else {
-                    if (gameOverPending.value() && gameEndsAfterSetOfORs) {
+                    if (gameOverPending.value()
+                            && gameEndWhen == GameEnd.AFTER_SET_OF_ORS) {
                         finishGame();
                     } else {
                         // FIXME: This isn't a valid cast...
@@ -116,16 +114,16 @@ public class GameManager_1837 extends GameManager {
         } else {
             Phase phase = getCurrentPhase();
             if ((phase.getId().equals("4E") || phase.getId().equals("5"))
-                    && (!NationalFormationRound.nationalIsComplete(((GameManager)this),"Ug"))) {
+                    && (!NationalFormationRound.nationalIsComplete((this),"Ug"))) {
                 previousRound = round;
                 startHungaryFormationRound (null);
             } else if ((phase.getId().equals("4"))
-                    && (!NationalFormationRound.nationalIsComplete(((GameManager)this),"Sd"))) {
+                    && (!NationalFormationRound.nationalIsComplete((this),"Sd"))) {
                 previousRound = round;
                 startSuedBahnFormationRound (null);
             } else if (((phase.getId().equals("4")) || ( phase.getId().equals("4E")) ||
                     (phase.getId().equals("4+1")))
-                    && (!NationalFormationRound.nationalIsComplete(((GameManager) this),"KK"))) {
+                    && (!NationalFormationRound.nationalIsComplete((this),"KK"))) {
                 previousRound = round;
                 startKuKFormationRound (null);
             } else {
@@ -143,7 +141,7 @@ public class GameManager_1837 extends GameManager {
     protected boolean runIfStartPacketIsNotCompletelySold() {
         //After the first Startpacket sold out there will be Operation Rounds
         StartPacket nextStartPacket = getRoot().getCompanyManager().getNextUnfinishedStartPacket();
-        if (nextStartPacket.getId() == "Coal Mines") {
+        if (nextStartPacket.getId().equalsIgnoreCase("Coal Mines")) {
             return false;
         }
         else {
@@ -204,7 +202,7 @@ public class GameManager_1837 extends GameManager {
 
 
     public Player getPlayerToStartFCERound() {
-        return (Player) playerToStartFCERound.value();
+        return playerToStartFCERound.value();
     }
 
 
@@ -213,7 +211,7 @@ public class GameManager_1837 extends GameManager {
     }
 
     public Player getPlayerToStartCERound() {
-        return (Player) playerToStartCERound.value();
+        return playerToStartCERound.value();
     }
 
 

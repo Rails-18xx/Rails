@@ -277,7 +277,7 @@ public class GameLoader {
         log.debug("Starting to execute loaded actions");
         gameManager.setReloading(true);
 
-        int count = -1;
+        int count = 0;
         if (gameIOData.getActions() != null) {
             // set possible actions for first action
             gameManager.getCurrentRound().setPossibleActions();

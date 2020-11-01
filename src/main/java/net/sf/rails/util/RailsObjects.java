@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 
 import rails.game.action.PossibleAction;
 import net.sf.rails.game.RailsItem;
+import rails.game.action.PossibleORAction;
 
 /**
  * Utility class to work with Rails objects 
@@ -33,35 +34,35 @@ public class RailsObjects {
         public StringHelper addToString(String name, Object value) {
             if (testIfNull(value, "NULL")) return this; 
 
-            text.append(name + " = " +  value.toString());
+            text.append(name + "=" +  value.toString());
             return this;
         }
 
         public StringHelper addToText(String name, RailsItem value) {
             if (testIfNull(value, "NULL")) return this; 
 
-            text.append(name + " = " + value.toText());
+            text.append(name + "=" + value.toText());
             return this;
         }
 
         public StringHelper addId(String name, RailsItem value) {
             if (testIfNull(value, "NULL")) return this; 
 
-            text.append(name + " = " + value.getId());
+            text.append(name + "=" + value.getId());
             return this;
         }
 
         public StringHelper addURI(String name, RailsItem value) {
             if (testIfNull(value, "NULL")) return this; 
 
-            text.append(name + " = " + value.getURI());
+            text.append(name + "=" + value.getURI());
             return this;
         }
 
         public StringHelper addFullURI(String name, RailsItem value) {
             if (testIfNull(value, "NULL")) return this; 
 
-            text.append(name + " = " + value.getFullURI());
+            text.append(name + "=" + value.getFullURI());
             return this;
         }
         
@@ -87,12 +88,16 @@ public class RailsObjects {
         }
         
         public StringHelperForActions addBaseText() {
-            text.append(action.getPlayer().getId());
-            if (action.hasActed()) {
-                text.append(" executed ");
-            } else {
+            if (!action.hasActed()) {
+                if (action instanceof PossibleORAction
+                        && ((PossibleORAction) action).getCompany() != null) {
+                    text.append(((PossibleORAction) action).getCompany().getId())
+                            .append("(").append(action.getPlayer().getId()).append(")");
+                } else {
+                    text.append(action.getPlayer().getId());
+                }
                 text.append(" may ");
-            }
+             }
             text.append(action.getClass().getSimpleName());
             return this;
         }
@@ -108,7 +113,7 @@ public class RailsObjects {
         public StringHelperForActions addToString(String name, Object value) {
             value = testIfNull(value, "NULL");
             
-            text.append(", " + name + " = " +  value.toString());
+            text.append(", " + name + "=" +  value.toString());
             return this;
         }
         

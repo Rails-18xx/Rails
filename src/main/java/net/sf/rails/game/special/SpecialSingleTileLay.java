@@ -8,7 +8,6 @@ import net.sf.rails.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class SpecialSingleTileLay extends SpecialTileLay {
     /**
@@ -31,6 +30,8 @@ public class SpecialSingleTileLay extends SpecialTileLay {
         }
 
         locationCodes = tileLayTag.getAttributeAsString("location");
+        // If all locations are allowed, as in SOH, "all" must be specified
+        // ('connected' defines if the locations must be reachable or not).
         if (!Util.hasValue(locationCodes))
             throw new ConfigurationException("SpecialSingleTileLay: location missing");
 
@@ -83,23 +84,26 @@ public class SpecialSingleTileLay extends SpecialTileLay {
             tile = tmgr.getTile(tileId);
         }
 
-        locations = new ArrayList<>();
-        for (String hexName : locationCodes.split(",")) {
-            hex = mmgr.getHex(hexName);
-            if (hex == null)
-                throw new ConfigurationException("Location " + hexName
-                        + " does not exist");
-            locations.add(hex);
+        if (locationCodes != null
+                && !locationCodes.equalsIgnoreCase("all")) {
+            locations = new ArrayList<>();
+            for (String hexName : locationCodes.split(",")) {
+                hex = mmgr.getHex(hexName);
+                if (hex == null)
+                    throw new ConfigurationException("Location " + hexName
+                            + " does not exist");
+                locations.add(hex);
+            }
         }
-
     }
 
     @Override
 	public String toText() {
-        return "SpecialSingleTileLay comp=" + originalCompany.getId()
-        + " hex=" + locationCodes
-        + " colour="+Util.joinWithDelimiter(tileColours, ",")
-        + " extra=" + extra + " cost=" + free + " connected=" + connected;
+        return "SpecialSingleTileLay comp="
+                + (originalCompany == null ? null : originalCompany.getId())
+                + " hex=" + locationCodes
+                + " colour="+Util.joinWithDelimiter(tileColours, ",")
+                + " extra=" + extra + " cost=" + free + " connected=" + connected;
     }
 
     @Override
@@ -111,4 +115,7 @@ public class SpecialSingleTileLay extends SpecialTileLay {
     public String getInfo() {
         return description;
     }
+
+    @Override
+    public String toString() { return toText(); }
 }

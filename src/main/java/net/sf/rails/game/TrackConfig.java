@@ -124,7 +124,7 @@ public class TrackConfig{
 
     @Override
     public String toString() {
-        return "Track on tile " + tile.toString() + ": " + tracks.toString();
+        return "Track #" + tile.toString() + ": " + tracks.toString();
     }
 
     /**

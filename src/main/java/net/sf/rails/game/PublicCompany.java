@@ -1738,6 +1738,11 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         getRoot().getGameManager().allocateSpecialProperties(this, sps);
     }
 
+    public boolean ownsPrivate (String id) {
+        return portfolio.getPrivatesOwnedModel().getPortfolio().containsItem(
+                (getRoot().getCompanyManager()).getPrivateCompany (id));
+    }
+
     public Model getPrivatesSpentThisTurnModel() {
         return privatesCostThisTurn;
     }
@@ -2106,6 +2111,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     @Override
     public boolean isClosed() {
         return closed.value();
+    }
+
+    public void setBankrupt () {
+        setClosed();
     }
 
     @Override
