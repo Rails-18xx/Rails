@@ -806,7 +806,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     protected void logActionTaken (PossibleAction action) {
-        if (getCurrentRound() instanceof OperatingRound) {
+        if (action instanceof NullAction
+                && ((NullAction)action).getMode() == NullAction.Mode.START_GAME)    {
+            log.info("*** Action 0: {}", action);
+        } else if (getCurrentRound() instanceof OperatingRound) {
             OperatingRound thisOR = (OperatingRound) getCurrentRound();
             log.info("*** Action {} by {}: {}", actionCount++,
                     thisOR.getCompAndPresName(thisOR.operatingCompany.value()),
@@ -1175,11 +1178,15 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public void finishShareSellingRound() {
+        finishShareSellingRound(true);
+    }
+
+    public void finishShareSellingRound(boolean resume) {
         setRound(interruptedRound);
         guiHints.setCurrentRoundType(interruptedRound.getClass());
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
-        getCurrentRound().resume();
+        if (resume) getCurrentRound().resume();
     }
 
     public void finishTreasuryShareRound() {
@@ -1188,36 +1195,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
         ((OperatingRound) getCurrentRound()).nextStep();
-    }
-
-    /**
-     * A pre-check for bankruptcy in emergency train buying
-     * before anything is done.<br>
-     * Developed for Steam Over Holland, where treasury shares
-     * must be sold first (in a TreasuryShareRound), and
-     * player certificates later (in a Share SellingRound),
-     * but nothing changes if bankruptcy is inevitable,
-     * except closing the company.
-     * @param owner
-     * @param cashToRaise
-     * @return
-     */
-    public boolean willOwnerGoBankrupt (Owner owner,
-                                        int cashToRaise) {
-        boolean result = false;
-        int cashRaised = 0;
-
-        if (owner instanceof PublicCompany) {
-            PublicCompany company = (PublicCompany) owner;
-            if (company.canHoldOwnShares && getParmAsBoolean (GameDef.Parm.EMERGENCY_MUST_SELL_TREASURY_SHARES)) {
-                // Treasury shares to be sold first
-
-            }
-
-        }
-
-
-        return result;
     }
 
     /**
@@ -1306,10 +1283,15 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public void registerCompanyBankruptcy () {
+        OperatingRound or = (OperatingRound) interruptedRound;
         String message = LocalText.getText("CompanyIsBankrupt",
-                ((OperatingRound) interruptedRound).operatingCompany.getId());
+                or.operatingCompany.value().getId());
         ReportBuffer.add(this, message);
         DisplayBuffer.add(this, message);
+        if (currentRound.value() instanceof ShareSellingRound) {
+            finishShareSellingRound(false);
+        }
+        or.finishTurn();
     }
 
     protected void processPlayerBankruptcy() {

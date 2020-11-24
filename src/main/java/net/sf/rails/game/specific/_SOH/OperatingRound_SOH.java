@@ -1,7 +1,10 @@
 package net.sf.rails.game.specific._SOH;
 
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.PlayerShareUtils;
+import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.special.SpecialTileLay;
+import net.sf.rails.game.state.Owner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.LayTile;
@@ -120,4 +123,92 @@ public class OperatingRound_SOH extends OperatingRound {
             return super.getSpecialTileLays(forReal);
         }
     }
+
+    /**
+     * A pre-check for bankruptcy in emergency train buying
+     * before anything is done.<br>
+     * Developed for Steam Over Holland, where treasury shares
+     * must be sold first (in a TreasuryShareRound), and
+     * player certificates later (in a Share SellingRound).
+     *
+     * This pre-check avoids having to invoke the above-mentioned
+     * two classes if bankruptcy is unavoidable, in which case
+     * nothing is sold and no cash is moved.
+     *
+     * To be called <i>after</i> a train has been selected,
+     * and only if treasury cash is insufficient, because
+     * buying a train from another company may save the current company.
+     *
+     * Currently only handles company bankruptcy, as in SOH.
+     * Can possibly be extended to cover player bankruptcy.
+     * See also the Javadoc in OperatingRound.
+     * @param owner The company needing a train.
+     *              The Owner type allows to specify a player,
+     *              if that would help in other games.
+     * @param cashToRaise The extra cash required to buy the selected train.
+     * @return True if bankruptcy is inevitable.
+     */
+    public boolean willBankruptcyOccur(Owner owner,
+                                       int cashToRaise) {
+        int raisableCash = 0;
+
+        if (owner instanceof PublicCompany) {
+
+            // Company cash
+            PublicCompany company = (PublicCompany) owner;
+            raisableCash = company.getCash();
+            log.info ("Company cash: {}", raisableCash);
+            if (raisableCash >= cashToRaise) return false; // escaped
+
+            int maxSharesInPool = gameManager.getParmAsInt(
+                    GameDef.Parm.POOL_SHARE_LIMIT) / company.getShareUnit();
+
+            // Sell treasury shares
+            if (company.canHoldOwnShares() && gameManager.getParmAsBoolean (
+                    GameDef.Parm.EMERGENCY_MUST_SELL_TREASURY_SHARES)) {
+                // Treasury shares to be sold first
+                int sharesInTreasury = company.getPortfolioModel().getShareNumber(company);
+                int sharesInPool = pool.getShareNumber(company);
+                int sharesToSell = Math.min (sharesInTreasury, maxSharesInPool - sharesInPool);
+                raisableCash += sharesToSell * company.getMarketPrice();
+                log.info ("Cash after selling {} treasury shares: {}", sharesToSell, raisableCash);
+                if (raisableCash >= cashToRaise) return false; // escaped
+            }
+
+            // President cash
+            Player player = company.getPresident();
+            raisableCash += player.getCash();
+            log.info ("Cash after adding president cash: {}", raisableCash);
+            if (raisableCash >= cashToRaise) return false; // escaped
+
+            // Sell player shares, no dumps allowed
+            PortfolioModel playerPortfolio = player.getPortfolioModel();
+            int poolAllowsShares = PlayerShareUtils.poolAllowsShareNumbers(company);
+            for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
+                int ownedShares = playerPortfolio.getShareNumber(comp);
+                if (ownedShares == 0) continue;
+
+                /* May not sell more than the Pool can accept */
+                int maxSharesToSell = Math.min(ownedShares, poolAllowsShares);
+                if (maxSharesToSell == 0) continue;
+
+                /* May not sell if a dump would occur */
+                if (company.getPresident() == player) {
+                    Player potential = company.findPlayerToDump();
+                    if (potential != null) {
+                        // May not sell more shares than this other player has
+                        maxSharesToSell = Math.min(maxSharesToSell,
+                                potential.getPortfolioModel().getShareNumber(comp));
+                        if (maxSharesToSell == 0) continue;
+                        raisableCash += maxSharesToSell * comp.getMarketPrice();
+                        log.info("Cash after selling {} {} shares: {}",
+                                maxSharesToSell, comp.getId(), raisableCash);
+                    }
+                }
+            }
+        }
+        return raisableCash < cashToRaise;
+    }
+
+
 }

@@ -431,9 +431,9 @@ public class ShareSellingRound extends StockRound {
                 DisplayBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
                         Bank.format(this, cashToRaise.value())));
                 if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY)) {
+                    // Currently not used, replaced by code in operatingRound.buyTrain().
                     cashNeedingCompany.setBankrupt();
                     gameManager.registerCompanyBankruptcy();
-                    finishRound();
                 } else {
                     currentPlayer.setBankrupt();
                     gameManager.registerPlayerBankruptcy();

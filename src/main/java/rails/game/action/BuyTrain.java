@@ -264,6 +264,9 @@ public class BuyTrain extends PossibleORAction {
         // To shorten this long text, the booleans are made implicit
         String addCash = presidentMustAddCash ? "presMustAdd" :
                           presidentMayAddCash ? "presMayAdd" : "cashToAdd";
+        String useSP = specialProperty != null
+                ? specialProperty.getOriginalCompany().getId()
+                : null;
         return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("train", train)
@@ -271,6 +274,7 @@ public class BuyTrain extends PossibleORAction {
                     .addToString("fixedCost", fixedCost)
                     .addToString("trainsForExchange", trainsForExchange)
                     .addToString(addCash, presidentCashToAdd)
+                    .addToString("useSP", useSP)
                     .addToStringOnlyActed("pricePaid", pricePaid)
                     .addToStringOnlyActed("addedCash", addedCash)
                     .addToStringOnlyActed("exchangedTrain", exchangedTrainUniqueId)

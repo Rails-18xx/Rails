@@ -270,7 +270,7 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
     }
 
     // Could be moved somewhere else (RoundUtils?)
-    // called only internally
+    // called only internally. EV: why is that an issue?
     protected void finishRound() {
         // Report financials
         ReportBuffer.add(this, "");

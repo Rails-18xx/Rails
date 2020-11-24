@@ -78,7 +78,7 @@ public final class StateManager extends Manager {
     /**
      * Adds the combination of observer to observable
      * Usually this is one via addObserver of the observable
-     * @throws an IllegalArgumentException - if observer is already assigned to an observable
+     * @throws IllegalArgumentException - if observer is already assigned to an observable
      */
     synchronized void addObserver(Observer observer, Observable observable) {
         checkArgument(!observers.containsValue(observer), "Observer can only be assigned to one Observable");
@@ -101,8 +101,8 @@ public final class StateManager extends Manager {
 
     /**
      * Adds the combination of model to observable
-     * @param Model the model that is updated by the observable
-     * @param Observable the observable to monitor
+     * @param model the model that is updated by the observable
+     * @param observable the observable to monitor
      */
     void addModel(Model model, Observable observable) {
         models.put(observable, model);
@@ -118,8 +118,8 @@ public final class StateManager extends Manager {
 
     /**
      * Adds the combination of trigger to observable
-     * @param Triggerable the trigger that tracks the observable
-     * @param Observable the observable to monitor
+     * @param trigger the trigger that tracks the observable
+     * @param observable the observable to monitor
      */
     void addTrigger(Triggerable trigger, Observable observable) {
         triggers.put(observable, trigger);

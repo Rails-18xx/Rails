@@ -2967,9 +2967,18 @@ public class OperatingRound extends Round implements Observer {
             }
 
             /* Check if this is an emergency buy */
-            //if (action.mustPresidentAddCash()) {
             int cashToRaise = Math.max(0, trainPrice - companyCash);
-            if (cashToRaise > 0) {
+            if (emergency || cashToRaise > 0) { // Not all games set emergency yet
+                if (willBankruptcyOccur(company, cashToRaise)) {
+                    DisplayBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
+                            Bank.format(this, cashToRaise)));
+                    if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY)) {
+                        company.setBankrupt();
+                        gameManager.registerCompanyBankruptcy();
+
+                        return true;
+                    }
+                }
 
                 // In some games (SOH) company must sell treasury shares first
                 if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_MUST_SELL_TREASURY_SHARES)) {
@@ -3206,6 +3215,24 @@ public class OperatingRound extends Round implements Observer {
 
         }
         return !excessTrainCompanies.isEmpty();
+    }
+
+    /**
+     * Predict if bankruptcy will occur in emergency train buying.
+     * Must be called <i>after</i> the president has selected a train to buy,
+     * and only if treasury cash is insufficient to buy a selected train.
+     *
+     * Currently a stub, only called in SOH (see OperatingRound_SOH).
+     * May be useful in other cases, in which case the code will likely move to here.
+     *
+     * @param owner Either a player or a PublicCompany.
+     *              Only tested for the latter (SOH).
+     * @param cashToRaise The extra cash amount needed to buy a selected train.
+     * @return True if bankruptcy is inevitable.
+     */
+    public boolean willBankruptcyOccur(Owner owner,
+                                       int cashToRaise) {
+        return false;
     }
 
     /**

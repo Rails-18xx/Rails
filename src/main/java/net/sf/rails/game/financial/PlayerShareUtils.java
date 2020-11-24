@@ -54,7 +54,7 @@ public class PlayerShareUtils {
 
         int maxShares;
         if (potential == null) {
-            // ... if there is none, selling is only possible until the presidentCerificate or pool maximum
+            // ... if there is none, selling is only possible until the presidentCertificate or pool maximum
             maxShares = Math.min(presidentShares - presidentCertificateShares, poolShares);
         } else { 
             // otherwise until pool maximum only

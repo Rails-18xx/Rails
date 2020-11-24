@@ -111,7 +111,7 @@ public class RailsObjects {
         }
 
         public StringHelperForActions addToString(String name, Object value) {
-            value = testIfNull(value, "NULL");
+            value = testIfNull(value, "null");
             
             text.append(", " + name + "=" +  value.toString());
             return this;
