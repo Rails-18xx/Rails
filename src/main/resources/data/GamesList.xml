@@ -194,7 +194,7 @@ Not yet implemented:
 	</Game>
 
 	<Game name="SOH">
-		<Note>Playable</Note>
+		<Note>Fully Playable</Note>
 		<Description>Steam over Holland
 			(c) 2007 Bart van Dijk
 			Published 2007 by Vendetta Games
@@ -213,9 +213,6 @@ Not yet implemented:
 			3. Select. Each player gets one turn, to choose and buy any private for base price,
 			or pass. This scenario was added for testing purposes, and possibly for players who
 			want to distribute privates off-game in their own way. Still maximum one per player.
-
-			Not yet implemented:
-			- Company bankruptcy
 		</Description>
 		<Players minimum="2" maximum="5"/>
 	</Game>
