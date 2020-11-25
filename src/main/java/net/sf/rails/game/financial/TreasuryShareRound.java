@@ -148,6 +148,9 @@ public class TreasuryShareRound extends StockRound {
      * presidencies of other companies has been retained, but not tested. This
      * code will be needed for 1841.
      *
+     * TODO: There is much almost-duplicate code in this and other (pseudo-)stock rounds,
+     * and also in the SOH operating round. Perhaps some more generic code can be written.
+     *
      * @return List of sellable certificates.
      */
     public void setSellableCerts() {

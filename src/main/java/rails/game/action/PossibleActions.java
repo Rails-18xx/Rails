@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
  * in time. Each possible action is represented by an instance of a subclass of
  * PossibleAction. The complete set is stored in an ArrayList.
  * 
- * TODO: Should this be changed to a set?
+ * TODO: Should this be changed to a set? EV: Why? No, unless sequence can be kept.
  */
 public class PossibleActions {
 
@@ -92,7 +92,7 @@ public class PossibleActions {
             return true;
         }
 
-        // Check if action accurs in the list of possible actions
+        // Check if action occurs in the list of possible actions
         for (PossibleAction action : actions) {
             if (action.equalsAsOption(checkedAction)) {
                 return true;
