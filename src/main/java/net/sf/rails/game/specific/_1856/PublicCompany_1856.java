@@ -4,8 +4,6 @@ import net.sf.rails.game.*;
 import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.state.IntegerState;
 
-import com.google.common.collect.Iterables;
-
 
 public final class PublicCompany_1856 extends PublicCompany {
 
@@ -25,15 +23,7 @@ public final class PublicCompany_1856 extends PublicCompany {
 
         super.start(startSpace);
 
-        // TODO: Refactor the code duplication
-        Train nextAvailableTrain
-            = Iterables.get(getRoot().getTrainManager().getAvailableNewTrains(), 0);
-        int trainNumber;
-        try {
-            trainNumber = Integer.parseInt(nextAvailableTrain.toText());
-        } catch (NumberFormatException e) {
-            trainNumber = 6; // Diesel!
-        }
+        int trainNumber = ((GameManager_1856)getRoot().getGameManager()).getNextTrainNumberFromIpo();
         trainNumberAvailableAtStart.set(trainNumber);
 
         if (trainNumber == 6) {

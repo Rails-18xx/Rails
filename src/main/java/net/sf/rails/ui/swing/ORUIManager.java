@@ -821,9 +821,9 @@ public class ORUIManager implements DialogOwner {
                 public int compare (Stop s1, Stop s2) {
                     Set<BaseToken> tokens;
                     boolean stop1IsHome = !((tokens = s1.getBaseTokens()).isEmpty())
-                    && Iterables.get(tokens, 0).getParent().getHomeHexes().contains(hex);
+                        && Iterables.get(tokens, 0).getParent().getHomeHexes().contains(hex);
                     boolean stop2IsHome = !((tokens = s2.getBaseTokens()).isEmpty())
-                    && Iterables.get(tokens, 0).getParent().getHomeHexes().contains(hex);
+                        && Iterables.get(tokens, 0).getParent().getHomeHexes().contains(hex);
                     if (stop1IsHome && !stop2IsHome) {
                         return -1;
                     } else if (stop2IsHome && !stop1IsHome) {
@@ -911,7 +911,7 @@ public class ORUIManager implements DialogOwner {
         GUIHex selectedHex = map.getSelectedHex();
 
         if (selectedHex != null) {
-            LayToken executedAction = (LayToken) action;
+            LayToken executedAction = action;
 
             executedAction.setChosenHex(selectedHex.getHex());
 
@@ -927,7 +927,7 @@ public class ORUIManager implements DialogOwner {
 
     public void operatingCosts(){
 
-        List<String> textOC = new ArrayList<String>();
+        List<String> textOC = new ArrayList<>();
         List<OperatingCost> actionOC = getPossibleActions().getType(OperatingCost.class);
 
         for (OperatingCost ac:actionOC) {
@@ -998,7 +998,6 @@ public class ORUIManager implements DialogOwner {
 
         List<BuyTrain> buyableTrains = getPossibleActions().getType(BuyTrain.class);
         for (BuyTrain bTrain : buyableTrains) {
-            train = bTrain.getTrain();
             cost = bTrain.getFixedCost();
             from = bTrain.getFromOwner();
 

@@ -1,5 +1,6 @@
 package net.sf.rails.game.specific._1856;
 
+import com.google.common.collect.Iterables;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -25,6 +26,20 @@ public class GameManager_1856 extends GameManager {
 
     public GameManager_1856(RailsRoot parent, String id) {
         super(parent, id);
+    }
+
+    public int getNextTrainNumberFromIpo() {
+        Train nextAvailableTrain
+                = Iterables.get(getRoot().getTrainManager().getAvailableNewTrains(), 0);
+        int trainNumber;
+        try {
+            trainNumber = Integer.parseInt(nextAvailableTrain.toText());
+            // Added for Issue #309: 8-train in variant
+            trainNumber = Math.min (trainNumber, 6);
+        } catch (NumberFormatException e) {
+            trainNumber = 6; // Diesel!
+        }
+        return trainNumber;
     }
 
     public void startCGRFormationRound(OperatingRound_1856 or, Player playerToStartCGRFRound) {

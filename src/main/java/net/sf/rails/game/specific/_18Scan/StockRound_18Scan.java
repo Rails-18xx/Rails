@@ -16,7 +16,6 @@ public class StockRound_18Scan extends StockRound {
 
         if (!company.hasStarted() || company.hasFloated()) return;
 
-        Phase currentPhase = gameManager.getCurrentPhase();
         boolean phase5Reached = getRoot().getPhaseManager().hasReachedPhase("5");
         if (company.getId().equalsIgnoreCase(GameDef_18Scan.SJ)
                 && !phase5Reached) {
