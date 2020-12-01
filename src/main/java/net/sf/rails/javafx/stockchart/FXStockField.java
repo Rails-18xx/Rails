@@ -37,8 +37,19 @@ public class FXStockField extends StackPane implements Observer {
     private void initialize() {
         setStyle("-fx-background-color: " + ColorUtils.toRGBString(model.getColour()));
 
-        if (model.isStart()) {
-            setBorder(new Border(new BorderStroke(javafx.scene.paint.Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        if ((model.isStart())&& model.isLeftOfLedge() ) {
+            setBorder(new Border(new BorderStroke(javafx.scene.paint.Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1,5,1,1))));
+        } else {
+            if (model.isStart()) {
+                setBorder(new Border(new BorderStroke(javafx.scene.paint.Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+            }
+            if (model.isBelowLedge()) {
+                setBorder(new Border(new BorderStroke(javafx.scene.paint.Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4, 0, 0, 0))));
+            }
+
+            if (model.isLeftOfLedge()) {
+                setBorder(new Border(new BorderStroke(javafx.scene.paint.Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(0, 4, 0, 0))));
+            }
         }
 
         model.addObserver(this);
