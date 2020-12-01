@@ -21,12 +21,10 @@ public class InvestorPanel {
     public InvestorPanel(GameManager_1880 gameManager) {
 
         List<Investor_1880> investors = Investor_1880.getInvestors(gameManager.getRoot().getCompanyManager());
-        List<Investor_1880> investors_new = new ArrayList<Investor_1880>();
+        List<Investor_1880> investors_new = new ArrayList<>();
 
         for (Investor_1880 inv : investors) {
-            if (!inv.isClosed()) {
-                investors_new.add(inv);
-            }
+            if (inv.hasOperated()) investors_new.add(inv);
         }
 
         GridAxis rows = GridAxis.builder()
