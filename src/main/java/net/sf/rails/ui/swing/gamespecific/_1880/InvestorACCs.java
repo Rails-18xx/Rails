@@ -19,7 +19,7 @@ public class InvestorACCs {
             new Accessor1D.AObservable<>(Investor_1880.class) {
                 @Override
                 protected Observable access(Investor_1880 investor) {
-                    return investor.getLinkedCompany().getPresident().getPlayerNameModel();
+                    return investor.getLinkedCompany().value().getPresident().getPlayerNameModel();
                 }
             };
 
@@ -36,8 +36,13 @@ public class InvestorACCs {
             new Accessor1D.AColorModel<Investor_1880>(Investor_1880.class) {
                 @Override
                 protected ColorModel access(Investor_1880 investor) {
-                    return investor.getLinkedCompany().getCompanyColors();
+                    if (investor.hasLinkedCompany()) {
+                        return investor.getLinkedCompany().value().getCompanyColors();
+                    } else {
+                        return null;
+                    }
                 }
+
             };
 
     public static final Accessor1D.AColorModel<Investor_1880> INVESTOR_COLORS =

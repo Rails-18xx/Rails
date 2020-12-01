@@ -83,9 +83,9 @@
 <Track from="city1" gauge="normal" to="side0"/>
 </Tile>
 <Tile colour="yellow" id="235" name="235">
-<Station id="city1" position="502" slots="1" type="City" value="20"/>
-<Station id="city2" position="252" slots="1" type="City" value="20"/>
-<Track from="city1" gauge="normal" to="side5"/>
+	<Station id="city1" position="502" slots="1" type="City" value="30"/>
+	<Station id="city2" position="252" slots="1" type="City" value="30"/>
+	<Track from="city1" gauge="normal" to="side5"/>
 </Tile>
 <Tile colour="yellow" id="8850" name="8850">
 <Station id="city1" position="252" type="Town" value="20"/>

@@ -1,21 +1,7 @@
 package net.sf.rails.ui.swing.gamespecific._1880;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.JOptionPane;
-
 import com.google.common.collect.Lists;
-
-import rails.game.specific._1880.CloseInvestor_1880;
-import rails.game.specific._1880.ExchangeForCash;
-import rails.game.specific._1880.ForcedRocketExchange;
-import rails.game.specific._1880.SetupNewPublicDetails_1880;
-import rails.game.specific._1880.StartCompany_1880;
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.Phase;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.specific._1880.BuildingRights_1880;
 import net.sf.rails.game.specific._1880.GameManager_1880;
@@ -24,6 +10,16 @@ import net.sf.rails.game.specific._1880.ParSlotManager;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.ui.swing.elements.NonModalDialog;
 import net.sf.rails.ui.swing.elements.RadioButtonDialog;
+import rails.game.specific._1880.CloseInvestor_1880;
+import rails.game.specific._1880.ExchangeForCash;
+import rails.game.specific._1880.ForcedRocketExchange;
+import rails.game.specific._1880.StartCompany_1880;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class GameUIManager_1880 extends GameUIManager {
     public static final String COMPANY_SELECT_BUILDING_RIGHT = "SelectBuildingRight";
@@ -232,12 +228,12 @@ public class GameUIManager_1880 extends GameUIManager {
         } else {
             action.setTreasuryToLinkedCompany(false);
         }
-        if (action.getInvestor().getLinkedCompany().getNumberOfFreeBaseTokens() > 0) {
+        if (action.getInvestor().getLinkedCompany().value().getNumberOfFreeBaseTokens() > 0) {
             String[] tokenOptions = new String[2];
             tokenOptions[0] = LocalText.getText("ReplaceToken", action.getInvestor().getId(), action.getInvestor().getLinkedCompany().getId());
             tokenOptions[1] = LocalText.getText("DoNotReplaceToken", action.getInvestor().getId(), action.getInvestor().getLinkedCompany().getId());
             String tokenChoice =
-                   (String) JOptionPane.showInputDialog(orWindow,
+                    (String) JOptionPane.showInputDialog(orWindow,
                             LocalText.getText("FIClosingAskAboutToken"),
                             LocalText.getText("TokenChoice"),
                             JOptionPane.QUESTION_MESSAGE, null,
