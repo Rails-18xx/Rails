@@ -42,6 +42,12 @@ import com.google.common.collect.ComparisonChain;
  */
 public class GameManager extends RailsManager implements Configurable, Owner {
 
+    protected enum GameEnd {
+        UNDEFINED,
+        AFTER_THIS_OR,
+        AFTER_SET_OF_ORS
+    }
+
     private static final Logger log = LoggerFactory.getLogger(GameManager.class);
 
     public static final String ARCHIVE_ENABLED = "save.archive.enabled";
@@ -71,7 +77,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected boolean forcedSellingCompanyDump = true;
     protected boolean gameEndsWithBankruptcy = false;
     protected int gameEndsWhenBankHasLessOrEqual = 0;
-    protected boolean gameEndsAfterSetOfORs = true;
+    protected GameEnd gameEndWhen = GameEnd.UNDEFINED;
 
     protected boolean dynamicOperatingOrder = true;
 
@@ -93,12 +99,13 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected RoundFacade interruptedRound = null;
 
     protected final IntegerState startRoundNumber = IntegerState.create(this, "startRoundNumber");
-    protected final IntegerState srNumber = IntegerState.create(this, "srNumber");
-
+    protected final IntegerState stockRoundNumber = IntegerState.create(this, "srNumber");
 
     protected final IntegerState absoluteORNumber = IntegerState.create(this, "absoluteORNUmber");
     protected final IntegerState relativeORNumber = IntegerState.create(this, "relativeORNumber");
     protected final IntegerState numOfORs = IntegerState.create(this, "numOfORs");
+
+    protected int maxRounds; // For SOH
 
     protected final BooleanState firstAllPlayersPassed = new BooleanState(this, "firstAllPlayersPassed");
 
@@ -174,6 +181,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return revenueSpinnerIncrement;
     }
 
+    private int actionCount = 0; // To log during reloading
+
     public GameManager(RailsRoot parent, String id) {
         super(parent, id);
 
@@ -245,6 +254,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                         case "NoSaleOfJustBoughtShare":
                             setGameParameter(GameDef.Parm.NO_SALE_OF_JUST_BOUGHT_CERT, true);
                             break;
+                        case "NoSaleOfJustStartedCompany":
+                            setGameParameter(GameDef.Parm.NO_SALE_OF_JUST_STARTED_COMPANY, true);
+                            break;
                     }
 
                 }
@@ -282,6 +294,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                     setGameParameter(GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY,
                             emergencyTag.getAttributeAsBoolean("mayBuyFromCompany",
                                     GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY.defaultValueAsBoolean()));
+                    setGameParameter(GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY,
+                            emergencyTag.getAttributeAsBoolean("companyBankruptcy",
+                                    GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY.defaultValueAsBoolean()));
+                    setGameParameter(GameDef.Parm.EMERGENCY_MUST_SELL_TREASURY_SHARES,
+                            emergencyTag.getAttributeAsBoolean("mustSellTreasuryShares",
+                                    GameDef.Parm.EMERGENCY_MUST_SELL_TREASURY_SHARES.defaultValueAsBoolean()));
                 }
                 Tag revenueIncrementTag = orTag.getChild("RevenueIncrement");
                 if (revenueIncrementTag != null) {
@@ -348,10 +366,26 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                                 gameEndsWhenBankHasLessOrEqual);
                 String attr = bankBreaksTag.getAttributeAsString("finish");
                 if ( "setOfORs".equalsIgnoreCase(attr)) {
-                    gameEndsAfterSetOfORs = true;
+                    gameEndWhen = GameEnd.AFTER_SET_OF_ORS;
                 } else if ( "currentOR".equalsIgnoreCase(attr)) {
-                    gameEndsAfterSetOfORs = false;
+                    gameEndWhen = GameEnd.AFTER_THIS_OR;
                 }
+            }
+            if (endOfGameTag.getChild("Bankruptcy") != null) {
+                gameEndsWithBankruptcy = true;
+            }
+            Tag maxPriceTag = endOfGameTag.getChild("MaxPriceReached");
+            if (maxPriceTag != null) {
+                String attr = maxPriceTag.getAttributeAsString("finish");
+                if ( "setOfORs".equalsIgnoreCase(attr)) {
+                    gameEndWhen = GameEnd.AFTER_SET_OF_ORS;
+                } else if ( "currentOR".equalsIgnoreCase(attr)) {
+                    gameEndWhen = GameEnd.AFTER_THIS_OR;
+                }
+            }
+            Tag maxRoundsTag = endOfGameTag.getChild("MaxRoundsReached");
+            if (maxRoundsTag != null) {
+                maxRounds = maxRoundsTag.getAttributeAsInteger("number", 0);
             }
         }
 
@@ -516,7 +550,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             startOperatingRound(true);
 
         } else if (round instanceof OperatingRound) {
-            if (gameOverPending.value() && !gameEndsAfterSetOfORs) {
+            if (gameOverPending.value() && gameEndWhen == GameEnd.AFTER_THIS_OR) {
 
                 finishGame();
 
@@ -526,7 +560,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             } else if (getRoot().getCompanyManager().getNextUnfinishedStartPacket() != null) {
                 beginStartRound();
             } else {
-                if (gameOverPending.value() && gameEndsAfterSetOfORs) {
+                if (gameOverPending.value() && gameEndWhen == GameEnd.AFTER_SET_OF_ORS) {
                     finishGame();
                 } else {
                     ((OperatingRound) round).checkForeignSales();
@@ -570,8 +604,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     protected void startStockRound() {
-        StockRound sr = createRound(stockRoundClass, "SR_" + srNumber.value());
-        srNumber.add(1);
+        StockRound sr = createRound(stockRoundClass, "SR_" + stockRoundNumber.value());
+        stockRoundNumber.add(1);
         sr.start();
     }
 
@@ -640,7 +674,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public String getCompositeORNumber() {
-        return srNumber.value() + "." + relativeORNumber.value();
+        return stockRoundNumber.value() + "." + relativeORNumber.value();
     }
 
     public int getRelativeORNumber() {
@@ -656,7 +690,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public int getSRNumber() {
-        return srNumber.value();
+        return stockRoundNumber.value();
     }
 
     public void startShareSellingRound(Player player, int cashToRaise,
@@ -664,7 +698,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         interruptedRound = getCurrentRound();
 
-        // An id basd on interruptedRound and company id
+        // An id based on interruptedRound and company id
         String id = "SSR_" + interruptedRound.getId() + "_" + cashNeedingCompany.getId();
         // check if other companies can be dumped
         createRound(shareSellingRoundClass, id).start(
@@ -688,12 +722,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
         boolean startGameAction = false;
 
+        logActionTaken (action);
+
         if (action instanceof NullAction && ((NullAction) action).getMode() == NullAction.Mode.START_GAME) {
             // Skip processing at game start after Load.
             // We're only here to create PossibleActions.
             startGameAction = true;
         } else if (action != null) {
             // Should never be null.
+            // EV: actually, it is null if the StartRound needs no user interaction.
+            // Example: Steam Over Holland, when privates are just dealt out randomly.
 
             action.setActed();
 
@@ -759,11 +797,26 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
 
         // logging of game actions activated
+        log.debug ("Action result: {}", result);
         for (PossibleAction pa : possibleActions.getList()) {
-            log.debug("{}", pa);
+            log.info("{}", pa);
         }
 
         return result;
+    }
+
+    protected void logActionTaken (PossibleAction action) {
+        if (action instanceof NullAction
+                && ((NullAction)action).getMode() == NullAction.Mode.START_GAME)    {
+            log.info("*** Action 0: {}", action);
+        } else if (getCurrentRound() instanceof OperatingRound) {
+            OperatingRound thisOR = (OperatingRound) getCurrentRound();
+            log.info("*** Action {} by {}: {}", actionCount++,
+                    thisOR.getCompAndPresName(thisOR.operatingCompany.value()),
+                    action);
+        } else {
+            log.info("*** Action {} by {}: {}", actionCount++, action.getPlayerName(), action);
+        }
     }
 
     /**
@@ -845,6 +898,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public boolean processOnReload(PossibleAction action) {
         getRoot().getReportManager().getDisplayBuffer().clear();
+        RoundFacade thisRound = getCurrentRound();
 
         // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
         if ( "1856".equals(getRoot().getGameName())
@@ -855,18 +909,17 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 && ((NullAction) action).getMode() != NullAction.Mode.DONE))) {
             // Insert "Done"
             log.debug("Action DONE inserted");
-            getCurrentRound().process(new NullAction(getRoot(), NullAction.Mode.DONE));
+            thisRound.process(new NullAction(getRoot(), NullAction.Mode.DONE));
             possibleActions.clear();
-            getCurrentRound().setPossibleActions();
+            thisRound.setPossibleActions();
             if (!isGameOver()) setCorrectionActions();
         }
 
-        log.debug("Action ({}): {}", action.getPlayerName(), action);
+        logActionTaken (action);
 
-        // Log possible actions (normally this is outcommented)
-        String playerName = getCurrentPlayer().getId();
+       // Log possible actions (normally this is outcommented)
         for (PossibleAction a : possibleActions.getList()) {
-            log.debug("{} may: {}", playerName, a);
+            log.info("{}", a);
         }
 
         // New in Rails2.0: Check if the action is allowed
@@ -1125,11 +1178,15 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public void finishShareSellingRound() {
+        finishShareSellingRound(true);
+    }
+
+    public void finishShareSellingRound(boolean resume) {
         setRound(interruptedRound);
         guiHints.setCurrentRoundType(interruptedRound.getClass());
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
-        getCurrentRound().resume();
+        if (resume) getCurrentRound().resume();
     }
 
     public void finishTreasuryShareRound() {
@@ -1140,7 +1197,78 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         ((OperatingRound) getCurrentRound()).nextStep();
     }
 
-    public void registerBankruptcy() {
+    /**
+     * NOTE: this is provisional, incomplete and not used yet.
+     * Calculate the total value of sellable shares in an emergency case,
+     * taking the pool limit into account.<br>
+     * Note: the complex 1841 rules cannot easily be included here,
+     * these probably will need a subclass.
+     * @param company The company possibly holding shares.
+     * @param cashToRaise A required cash value (an emergency train price).
+     *                    If zero, just the total share value is returned.
+     * @return The potential yield of selling treasury shares.
+     */
+    protected int getSellableSharesValue (PublicCompany company, int cashToRaise,
+                                          boolean dumpAllowed) {
+
+        if (company == null || !company.hasStarted() || company.isClosed()) return 0;
+
+        int value = 0;
+        PortfolioModel pool = getRoot().getBank().getPool().getPortfolioModel();
+
+        // Note every company's pool space in number of shares.
+        Map <PublicCompany, Integer> poolSpace = new HashMap<>();
+        for (PublicCompany comp : getAllPublicCompanies()) {
+            poolSpace.put(comp,
+                    getParmAsInt(GameDef.Parm.POOL_SHARE_LIMIT) / comp.getShareUnit()
+                    - pool.getShareNumber(comp));
+        }
+
+        // Treasury shares
+        if (company.canHoldOwnShares()) {
+            // Other companies (as in 1841) not yet considered.
+            PortfolioModel portfolio = company.getPortfolioModel();
+            int numberAvailable = portfolio.getShareNumber(company);
+            int numberToSell = 0;
+            if (numberAvailable > 0) {
+                int sharePrice = company.getCurrentSpace().getPrice();
+
+                // If a required cash value is specified, restrict the
+                // number to sell to just the required minimum.
+                if (cashToRaise > 0) {
+                    // For now, assume that all treasury certs are single shares.
+                    // Calculate how many certs we should sell.
+                    while (++numberToSell * sharePrice < cashToRaise
+                            && numberToSell < numberAvailable) {}
+                } else {
+                    // Count all shares
+                    numberToSell = numberAvailable;
+                }
+                // Don't exceed the 50% pool limit
+                int space = poolSpace.get(company);
+                numberToSell = Math.min(numberToSell, space);
+                value += numberToSell * sharePrice;
+                // Subtract from pool space
+                poolSpace.put (company, space - numberToSell);
+            }
+        }
+
+        Player player = company.getPresident();
+
+        value += player.getCash();
+        /*
+        if (player != null) {
+            Map<PublicCompany, PublicCertificate> certsMap =
+            for (PublicCompany comp : certsMap.keySet()) {
+                for (PublicCertificate cert : certsMap.get (comp))
+            }
+        }*/
+
+        return value;
+    }
+
+
+    public void registerPlayerBankruptcy() {
         endedByBankruptcy.set(true);
         String message =
                 LocalText.getText("PlayerIsBankrupt",
@@ -1150,21 +1278,33 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         if (gameEndsWithBankruptcy) {
             finishGame();
         } else {
-            processBankruptcy();
+            processPlayerBankruptcy();
         }
     }
 
-    protected void processBankruptcy() {
+    public void registerCompanyBankruptcy () {
+        OperatingRound or = (OperatingRound) interruptedRound;
+        String message = LocalText.getText("CompanyIsBankrupt",
+                or.operatingCompany.value().getId());
+        ReportBuffer.add(this, message);
+        DisplayBuffer.add(this, message);
+        if (currentRound.value() instanceof ShareSellingRound) {
+            finishShareSellingRound(false);
+        }
+        or.finishTurn();
+    }
+
+    protected void processPlayerBankruptcy() {
         // Currently a stub, don't know if there is any generic handling (EV)
     }
 
     public void registerBrokenBank() {
         gameOverPending.set(true);
         ReportBuffer.add(this, LocalText.getText("BankIsBrokenReportText"));
-        String msgContinue;
-        if (gameEndsAfterSetOfORs)
+        String msgContinue = "";
+        if (gameEndWhen == GameEnd.AFTER_SET_OF_ORS)
             msgContinue = LocalText.getText("gameOverPlaySetOfORs");
-        else
+        else if (gameEndWhen == GameEnd.AFTER_THIS_OR)
             msgContinue = LocalText.getText("gameOverPlayOnlyOR");
         String msg = LocalText.getText("BankIsBrokenDisplayText", msgContinue);
         DisplayBuffer.add(this, msg);
@@ -1176,10 +1316,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         ReportBuffer.add(this, LocalText.getText("MaxedSharePriceReportText",
                 company.getId(),
                 Bank.format(this, space.getPrice())));
-        String msgContinue;
-        if (gameEndsAfterSetOfORs)
+        String msgContinue = "";
+        if (gameEndWhen == GameEnd.AFTER_SET_OF_ORS)
             msgContinue = LocalText.getText("gameOverPlaySetOfORs");
-        else
+        else if (gameEndWhen == GameEnd.AFTER_THIS_OR)
             msgContinue = LocalText.getText("gameOverPlayOnlyOR");
         String msg = LocalText.getText("MaxedSharePriceDisplayText",
                 company.getId(),
@@ -1318,6 +1458,24 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return gameParameters.getOrDefault(key, false);
     }
 
+    public int getParmAsInt (GameDef.Parm key) {
+        Object parm = getGameParameter (key);
+        if (parm instanceof Integer) {
+            return (Integer) parm;
+        } else {
+            return -1;
+        }
+    }
+
+    public boolean getParmAsBoolean (GameDef.Parm key) {
+        Object parm = getGameParameter (key);
+        if (parm instanceof Boolean) {
+            return (Boolean) parm;
+        } else {
+            return false;
+        }
+    }
+
     public RoundFacade getInterruptedRound() {
         return interruptedRound;
     }
@@ -1350,15 +1508,21 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                         //((SellBonusToken) sp).setExercised();
                         spsToMoveToGM.add(sp);
                     }
-                    // To satisfy 1856 test reports
+                    // Used in 1856 (reporting only) and SOH (no reporting)
+                    // -- Strange, but true
                     if (sp instanceof LocatedBonus) {
                         PublicCompany company = (PublicCompany) owner;
                         LocatedBonus b = (LocatedBonus) sp;
-                        ReportBuffer.add(this, LocalText.getText("AcquiresBonus",
-                                company.getId(),
-                                b.getName(),
-                                Bank.format(company, b.getValue()),
-                                b.getLocationNameString()));
+                        if (!"SOH".equals(getRoot().getGameName())) { //Prevent reporting twice
+                            ReportBuffer.add(this, LocalText.getText("AcquiresBonus",
+                                    company.getId(),
+                                    b.getName(),
+                                    Bank.format(company, b.getValue()),
+                                    b.getLocationNameString()));
+                        }
+                        if (!"1856".equals(getRoot().getGameName())) { // Necessary, but why not here?
+                            spsToMoveToPC.add(sp); // Required for SOH
+                        }
                     }
 
                 } else if (owner instanceof PublicCompany && sp.isUsableIfOwnedByCompany()
@@ -1523,8 +1687,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     // shortcut to PlayerManager
     public int getPlayerCertificateLimit(Player player) {
-        int limit = getRoot().getPlayerManager().getPlayerCertificateLimit(player);
-        return limit;
+        return getRoot().getPlayerManager().getPlayerCertificateLimit(player);
     }
 
     // shortcut to PlayerManager
@@ -1553,6 +1716,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public Player getNationalFormationStartingPlayer(PublicCompany comp) {
         return this.NationalFormStartingPlayer.get(comp);
+    }
+
+    private Random randomGenerator;
+    public Random getRandomGenerator () {
+        if (randomGenerator == null) {
+            long seed = Long.parseLong(getRoot().getGameOptions().get(GameOption.RANDOM_SEED));
+            log.info ("Random seed = {}", seed);
+            randomGenerator = new Random (seed);
+        }
+        return randomGenerator;
     }
 }
 

@@ -24,7 +24,7 @@ public class TerminateAtMajorModifier implements RevenueDynamicModifier {
 
     private List<RevenueTrainRun> identifyInvalidRuns(List<RevenueTrainRun> runs) {
         // check if runs end and start at major stations
-        List<RevenueTrainRun> invalidRuns = new ArrayList<RevenueTrainRun>();
+        List<RevenueTrainRun> invalidRuns = new ArrayList<>();
         for (RevenueTrainRun run:runs) {
             if (!run.hasAValidRun()) continue;
             if (!run.getFirstVertex().isMajor() || !run.getLastVertex().isMajor()) {
@@ -53,6 +53,7 @@ public class TerminateAtMajorModifier implements RevenueDynamicModifier {
             run.getRunVertices().clear();
         }
     }
+
     public boolean providesOwnCalculateRevenue() {
         // does not
         return false;

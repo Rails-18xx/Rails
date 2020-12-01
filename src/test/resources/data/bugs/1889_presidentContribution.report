@@ -208,7 +208,7 @@ CompanyRevenue,UR,0
 CompanyDoesNotPayDividend,UR
 PRICE_MOVES_LOG,UR,60,C6,55,B6
 BuysTrain,UR,2,IPO,80
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
 BuysTrain,UR,3,IPO,180
 FirstTrainBought,3
 StartOfPhase,3
@@ -300,7 +300,7 @@ CompanyDoesNotPayDividend,TR
 PRICE_MOVES_LOG,TR,80,D3,75,C3
 BuysTrain,TR,3,IPO,180
 BuysTrain,TR,3,IPO,180
-All 3-trains are sold out, 4-trains now available
+NewTrainAvailable,3,4
 BuysTrain,TR,4,IPO,300
 FirstTrainBought,4
 StartOfPhase,4
@@ -488,7 +488,7 @@ CompanyRevenue,UR,100
 CompanyWithholds,UR,100
 PRICE_MOVES_LOG,UR,55,B6,50,A6
 BuysTrain,UR,4,IPO,300
-All 4-trains are sold out, 5-trains now available
+NewTrainAvailable,4,5
  
 CompanyOperates,IR,Mark
 LaysTileAt,IR,6,G4,SE
@@ -576,7 +576,7 @@ CompanyRevenue,IR,150
 CompanyWithholds,IR,150
 PRICE_MOVES_LOG,IR,40,B9,30,A9
 BuysTrain,IR,5,IPO,450
-All 5-trains are sold out, 6-trains now available
+NewTrainAvailable,5,6
  
 EndOfOperatingRound,5.2
 ORWorthIncrease,Chris,5.2,183

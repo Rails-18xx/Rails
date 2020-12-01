@@ -47,7 +47,7 @@ public class StartRound_1830 extends StartRound {
         // as setting a start price
         StartItem item;
         while ((item = startPacket.getFirstUnsoldItem()) != null
-                && item.getBidders() == 1 && item.needsPriceSetting() == null) {
+                && item.getActiveBidders() == 1 && item.needsPriceSetting() == null) {
             assignItem(item.getBidder(), item, item.getBid(), 0);
 
             // Check if this has exhausted the start packet
@@ -98,7 +98,7 @@ public class StartRound_1830 extends StartRound {
                     passAllowed = false;
                     break; // No more actions
                 } else if (item == startPacket.getFirstUnsoldItem()) {
-                    if (item.getBidders() == 1) {
+                    if (item.getActiveBidders() == 1) {
                         // Bid upon by one player.
                         // If we need a share price, ask for it.
                         PublicCompany comp = item.needsPriceSetting();
@@ -115,7 +115,7 @@ public class StartRound_1830 extends StartRound {
                             log.error("??? Wrong place to assign item {}", item.getId());
                             assignItem(item.getBidder(), item, item.getBid(), 0);
                         }
-                    } else if (item.getBidders() > 1) {
+                    } else if (item.getActiveBidders() > 1) {
                         ReportBuffer.add(this, LocalText.getText("TO_AUCTION",
                                 item.getId()));
                         // Start left of the currently highest bidder
@@ -314,7 +314,7 @@ public class StartRound_1830 extends StartRound {
             numPasses.add(1);
             if (auctionItem != null) {
 
-                if (numPasses.value() >= auctionItem.getBidders() - 1) {
+                if (numPasses.value() >= auctionItem.getActiveBidders() - 1) {
                     // All but the highest bidder have passed.
                     int price = auctionItem.getBid();
 

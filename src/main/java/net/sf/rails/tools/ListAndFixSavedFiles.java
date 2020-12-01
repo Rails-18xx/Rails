@@ -246,10 +246,13 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         reportText.setText(headerText.toString());
         // append actionText
         int i=0;
-        for (PossibleAction action : gameLoader.getActions()) {
-            reportText.append("Action "+i+" "+action.getPlayerName()+"(" + action.getPlayerIndex() + "): "+action.toString());
-            reportText.append("\n");
-            i++;
+        List<PossibleAction> actions = gameLoader.getActions();
+        if (actions != null) {
+            for (PossibleAction action : actions) {
+                reportText.append("Action " + i + " " + action.getPlayerName() + "(" + action.getPlayerIndex() + "): " + action.toString());
+                reportText.append("\n");
+                i++;
+            }
         }
         scrollDown(vbarPos);
     }
@@ -362,8 +365,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
     private abstract class EditDialog extends JDialog implements ActionListener {
 
         private static final long serialVersionUID = 1L;
-        private List<Object> originalValues = new ArrayList<Object>();
-        protected List<JComponent> inputElements = new ArrayList<JComponent>();
+        private List<Object> originalValues = new ArrayList<>();
+        protected List<JComponent> inputElements = new ArrayList<>();
         private GridBagConstraints gc = new GridBagConstraints();
         private int length = 0;
         private JButton okButton, cancelButton;
@@ -397,7 +400,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             if (arg0.getSource().equals(okButton)) {
                 PossibleAction newAction = processInput();
                 if (newAction != null) messageWindow.processCorrections(newAction);
-            } else if (arg0.getSource().equals(cancelButton)) {;
+            } else if (arg0.getSource().equals(cancelButton)) {
 
             }
             this.setVisible(false);
@@ -566,7 +569,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 // Find action number
                 int index = Integer.parseInt(fields[0]);
                 BuyTrain action = (BuyTrain) gameLoader.getActions().get(index);
-                String trainId = ((BuyTrain) action).getTrain().getId();
+                String trainId = action.getTrain().getId();
                 String from = fields[1];
                 String to = fields[2];
                 Train newTrain = tm.getTrainByUniqueId(to);

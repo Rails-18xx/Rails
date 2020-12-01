@@ -11,6 +11,7 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsManager;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.model.StockMarketModel;
+import net.sf.rails.game.state.Owner;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ public class StockMarket extends RailsManager implements Configurable {
 
     protected final StockMarketModel marketModel = StockMarketModel.create(this);
 
+    protected ChartType stockChartType = ChartType.RECTANGULAR;
     protected StockSpace stockChart[][];
     protected int numRows = 0;
     protected int numCols = 0;
@@ -43,6 +45,12 @@ public class StockMarket extends RailsManager implements Configurable {
     /* Sold out and at top: go down or right (1870) */
 
     // TODO: There used to be a BooleanState gameOver, did this have a function?
+
+    public enum ChartType {
+        LINEAR,
+        RECTANGULAR,
+        HEXAGONAL   // Not yet used
+    }
 
     /**
      * Used by Configure (via reflection) only
@@ -58,6 +66,9 @@ public class StockMarket extends RailsManager implements Configurable {
         // Define a default stockspace type with colour white
         defaultType = new StockSpaceType(DEFAULT, StockSpaceType.WHITE);
         stockSpaceTypes.put(DEFAULT, defaultType);
+
+        stockChartType = ChartType.valueOf(tag.getAttributeAsString(
+                "type", stockChartType.toString()).toUpperCase());
 
         /* Read and configure the stock market space types */
         List<Tag> typeTags = tag.getChildren(StockSpaceType.ELEMENT_ID);
@@ -165,6 +176,10 @@ public class StockMarket extends RailsManager implements Configurable {
 
     }
 
+    public ChartType getStockChartType() {
+        return stockChartType;
+    }
+
     public StockSpace getStockSpace(int row, int col) {
         if (row >= 0 && row < numRows && col >= 0 && col < numCols) {
             return stockChart[row][col];
@@ -191,15 +206,28 @@ public class StockMarket extends RailsManager implements Configurable {
     }
 
     public void payOut(PublicCompany company, int jumps) {
-        moveRightOrUp(company, jumps);
+        if (stockChartType == ChartType.LINEAR) {
+            moveRight(company,  jumps);
+        } else {
+            moveRightOrUp(company, jumps);
+        }
     }
 
     public void withhold(PublicCompany company) {
         moveLeftOrDown(company);
     }
 
+    // Old version for backwards compatibility. See below for new version.
     public void sell(PublicCompany company, int numberOfSpaces) {
-        moveDown(company, numberOfSpaces);
+        moveDown(company, null, numberOfSpaces);
+    }
+
+    public void sell(PublicCompany company, Owner seller, int numberOfSpaces) {
+        if (stockChartType == ChartType.LINEAR) {
+            moveLeft(company, seller, numberOfSpaces);
+        } else {
+            moveDown(company, seller, numberOfSpaces);
+        }
     }
 
     public void soldOut(PublicCompany company) {
@@ -223,7 +251,13 @@ public class StockMarket extends RailsManager implements Configurable {
         prepareMove(company, company.getCurrentSpace(), null);
     }
 
-    protected void moveDown(PublicCompany company, int numberOfSpaces) {
+    protected void moveDown (PublicCompany company, int numberOfSpaces) {
+        moveDown (company, null, numberOfSpaces);
+    }
+
+    // Default version, ignoring seller.
+    // Games where the seller matters must override this method.
+    protected void moveDown(PublicCompany company, Owner seller, int numberOfSpaces) {
         StockSpace oldsquare = company.getCurrentSpace();
         StockSpace newsquare = oldsquare;
         int row = oldsquare.getRow();
@@ -255,6 +289,36 @@ public class StockMarket extends RailsManager implements Configurable {
         }
     }
 
+    /** Replaces (moveRightOrUp) for linear stockmarkets.
+     * @param company Company that has just paid dividends
+     * @param numberOfSpaces The number of spaces to move.
+     */
+    protected void moveRight (PublicCompany company, int numberOfSpaces) {
+
+        StockSpace oldsquare = company.getCurrentSpace();
+        int row = oldsquare.getRow();
+        int col = oldsquare.getColumn();
+        for (int i=0; i<numberOfSpaces; i++) {
+            if (col < numCols - 1
+                    && (getStockSpace(row, col + 1)) != null) {
+                col++;
+           }
+        }
+        StockSpace newsquare = getStockSpace (row, col);
+        prepareMove(company, oldsquare, newsquare);
+    }
+
+    /** Replaces moveDown() for linear stockmarkets.
+     * As we don't yet need a generic version, this default method does nothing.
+     * SOH overrides it, as it needs a special version.
+     * @param company Company of which shares are sold
+     * @param seller The selling entity (player or company)
+     * @param numberOfSpaces The number of spaces to move.
+     */
+    protected void moveLeft (PublicCompany company, Owner seller, int numberOfSpaces) {
+
+    }
+
     protected void moveRightOrUp(PublicCompany company) {
         moveRightOrUp (company, 1);
     }
@@ -282,7 +346,8 @@ public class StockMarket extends RailsManager implements Configurable {
         StockSpace newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
-        if (col > 0 && (newsquare = getStockSpace(row, col - 1)) != null) {
+        if (col > 0 &&
+                (newsquare = getStockSpace(row, col - 1)) != null) {
         } else if (row < numRows - 1 &&
                 (newsquare = getStockSpace(row + 1, col)) != null) {
         } else {

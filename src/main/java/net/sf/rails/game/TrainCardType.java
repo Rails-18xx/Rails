@@ -54,6 +54,12 @@ public class TrainCardType extends RailsAbstractItem implements Configurable, Co
      */
     private String initialPortfolio = "IPO";
 
+    /**
+     * Train types released at the same time as this one
+     */
+    protected List<TrainCardType> alsoReleased;
+    private String alsoReleasedNames;
+
     // Dynamic state variables
     private final IntegerState numberBoughtFromIPO = IntegerState.create(this, "numberBoughtFromIPO");
     private final BooleanState available = new BooleanState(this, "available");
@@ -88,6 +94,9 @@ public class TrainCardType extends RailsAbstractItem implements Configurable, Co
                 tag.getAttributeAsString("initialPortfolio",
                         initialPortfolio);
 
+        // Released at the same time
+        alsoReleasedNames = tag.getAttributeAsString("alsoReleased", null);
+
         // New style phase changes (to replace 'startPhase' attribute and <Sub> tag)
         List<Tag> newPhaseTags = tag.getChildren("NewPhase");
         if (newPhaseTags != null) {
@@ -116,6 +125,15 @@ public class TrainCardType extends RailsAbstractItem implements Configurable, Co
             infiniteQuantity = true;
         } else if (quantity <= 0) {
             throw new ConfigurationException("Invalid quantity " + quantity + " for train cert type " + this);
+        }
+
+        if (alsoReleasedNames != null) {
+            alsoReleased = new ArrayList<>();
+            TrainCardType otherTCType;
+            for (String otherTCTypeName : alsoReleasedNames.split(",")) {
+                otherTCType = getRoot().getTrainManager().getCardTypeByName(otherTCTypeName);
+                if (otherTCType != null) alsoReleased.add (otherTCType);
+            }
         }
     }
 
@@ -151,6 +169,10 @@ public class TrainCardType extends RailsAbstractItem implements Configurable, Co
      */
     public void setAvailable() {
         available.set(true);
+    }
+
+    public List<TrainCardType> getAlsoReleased() {
+        return alsoReleased;
     }
 
     /* Obsolete?
@@ -230,5 +252,8 @@ public class TrainCardType extends RailsAbstractItem implements Configurable, Co
     public int compareTo(TrainCardType o) {
         return Integer.compare(index, o.getIndex());
     }
+
+    @Override
+    public String toString() { return getId(); }
 
 }

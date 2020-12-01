@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.sf.rails.algorithms.RevenueAdapter;
 import net.sf.rails.algorithms.RevenueStaticModifier;
+import net.sf.rails.common.GameOption;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
@@ -122,10 +123,10 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
             // Drop the last 10 shares
             //2018-10-07-MBr: With the remodeled base classes this approach isnt valid anymore as shares
             //with the id-10 are assigned before shares with the id-2
-            List<PublicCertificate> certs = new ArrayList<PublicCertificate>(this.certificates.view());
+            List<PublicCertificate> certs = new ArrayList<>(this.certificates.view());
             BankPortfolio scrapHeap = getRoot().getBank().getScrapHeap();
             for (PublicCertificate cert : certs) {
-                if (cert.getOwner().getId() == "Unavailable") {
+                if (cert.getOwner().getId().equalsIgnoreCase("Unavailable")) {
                     cert.moveTo(scrapHeap);
                     this.certificates.remove(cert);
                 } else {
@@ -173,7 +174,12 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
 
         // add the diesel train
         if (runsWithBorrowedTrain()) {
-            revenueAdapter.addTrainByString("D");
+            if (GameOption.getValue( this,
+                    "1856AlternateTrains").equalsIgnoreCase("yes")) {
+                revenueAdapter.addTrainByString("8");
+            } else {
+                revenueAdapter.addTrainByString("D");
+            }
             return true;
         }
         return false;

@@ -133,7 +133,7 @@ Payout,Phil,10,1,10
 Payout,Simon,50,5,10
 PRICE_MOVES_LOG,SR,60,C6,65,D6
 BuysTrain,SR,2,IPO,80
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
  
 EndOfOperatingRound,2.1
 ORWorthIncrease,Phil,2.1,90
@@ -279,7 +279,7 @@ LaysTileAtFor,KO,439,I4,S,80
 CompanyDoesNotPayDividend,KO
 PRICE_MOVES_LOG,KO,65,D6,60,C6
 BuysTrain,KO,3,IPO,180
-All 3-trains are sold out, 4-trains now available
+NewTrainAvailable,3,4
 BuysTrain,KO,2,SR,250
  
 EndOfOperatingRound,4.1
@@ -429,7 +429,7 @@ CompanyDoesNotPayDividend,TR
 PRICE_MOVES_LOG,TR,70,D5,65,C5
 BuysTrain,TR,4,IPO,300
 BuysTrain,TR,4,IPO,300
-All 4-trains are sold out, 5-trains now available
+NewTrainAvailable,4,5
  
 CompanyOperates,KO,Simon
 LaysTileAtFor,KO,8,K6,N,80
@@ -611,7 +611,7 @@ LaysTileAt,KU,12,A10,SE
 CompanyDoesNotPayDividend,KU
 PRICE_MOVES_LOG,KU,70,D5,65,C5
 BuysTrain,KU,5,IPO,450
-All 5-trains are sold out, 6-trains now available
+NewTrainAvailable,5,6
 BuysTrain,KU,3,UR,250
  
 EndOfOperatingRound,6.1

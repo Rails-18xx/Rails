@@ -37,8 +37,10 @@ public abstract class StartRound extends Round {
     /**
      * Should the UI present bidding into and facilities? This value MUST be set
      * in the actual StartRound constructor.
+     * EV: That does not work for SOH, where different start round procedures
+     * have different needs, so I had to remove 'final' here.
      */
-    protected final Bidding hasBidding;
+    protected Bidding hasBidding;
 
     /**
      * Should the UI show base prices? Not useful if the items are all equal, as
@@ -162,9 +164,7 @@ public abstract class StartRound extends Round {
     /**
      * Stub to allow start packet cleanups in subclasses
      */
-    protected void startPacketChecks() {
-        return;
-    }
+    protected void startPacketChecks() {}
 
     /*----- Processing player actions -----*/
 

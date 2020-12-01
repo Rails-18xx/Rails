@@ -1,13 +1,11 @@
 <Map tileOrientation="EW" letterOrientation="vertical" even="A">
 	<Defaults>
-		<Access type="offMap" runTo="yes" runThrough="no" loop="no" score="major"/>
-		<Access type="city" runTo="yes" runThrough="yes" loop="yes" score="major"/>
-		<Access type="town" runTo="yes" runThrough="yes" loop="yes" score="minor"/>
+		<Access type="offMap" runTo="yes" runThrough="no" score="major"/>
+		<Access type="city" runTo="yes" runThrough="yes" score="major"/>
+		<Access type="town" runTo="yes" runThrough="yes" score="minor"/>
+		<!-- Trains may not end in towns, but that is handled by a modifier -->
 	</Defaults>
-	<!-- The above defaults are redundant, these settings are the system defaults anyway -->
 
-	<!-- Note: the edges marked "impassable" are actually representing rivers
-	     that can be bridged at a cost. To be replaced later with something more sensible. -->
 	<Hex name="A14" tile="0"/>
 	<Hex name="A16" tile="0"/>
 	<Hex name="A18" tile="0"/>
@@ -29,58 +27,58 @@
 	<Hex name="D17" tile="0"/>
 	<Hex name="D19" tile="0"/>
 	<Hex name="E8"  tile="0"/>
-	<Hex name="E14" tile="-3008" city="Zwolle" impassable="F13"/>
+	<Hex name="E14" tile="-3008" city="Zwolle" river="F13"/>
 	<Hex name="E16" tile="0"/>
 	<Hex name="E18" tile="0"/>
 	<Hex name="F7"  tile="-1"  city="Haarlem"/>
 	<Hex name="F9"  tile="-80020" orientation="5" city="Amsterdam"/>
-	<Hex name="F13" tile="0" impassable="F15"/>
+	<Hex name="F13" tile="0" river="F15"/>
 	<Hex name="F15" tile="0"/>
 	<Hex name="F17" tile="-1" orientation="2" city="Almelo"/>
 	<Hex name="F19" tile="0"/>
-	<Hex name="G6"  tile="-1" oriewntation="3" city="Leiden"/>
+	<Hex name="G6"  tile="-1" orientation="3" city="Leiden"/>
 	<Hex name="G8"  tile="0"/>
 	<Hex name="G10" tile="0"/>
 	<Hex name="G12" tile="-1" orientation="4" city="Amersfoort"/>
-	<Hex name="G14" tile="-1" impassable="F15,G16,H15" city="Apeldoorn"/>
+	<Hex name="G14" tile="-1" river="F15,G16,H15" city="Apeldoorn"/>
 	<Hex name="G16" tile="0"/>
-	<Hex name="G18" tile="-1" city="Enschede"/>
+	<Hex name="G18" tile="-1" orientation="1" city="Enschede"/>
 	<Hex name="G20" tile="-901" orientation="2" value="40,60" city="Salzbergen"/>
 	<Hex name="H5"  tile="-3008" city="Den Haag"/>
 	<Hex name="H7"  tile="-1" orientation="3" city="Gouda"/>
-	<Hex name="H9"  tile="-3008" impassable="I10" city="Utrecht"/>
-	<Hex name="H11" tile="0" impassable="I10,I12"/>
-	<Hex name="H13"  tile="-3008" impassable="H15,I12,I14" city="Arnhem"/>
-	<Hex name="H15" tile="0"/>
+	<Hex name="H9"  tile="-3008" river="I10" city="Utrecht"/>
+	<Hex name="H11" tile="0" river="I10,I12"/>
+	<Hex name="H13"  tile="-3008" river="H15,I12,I14" city="Arnhem"/>
+	<Hex name="H15" tile="0" river="I14"/>
 	<Hex name="H17" tile="0"/>
-	<Hex name="I4" tile="0" impassable="J3,J5"/>
-	<Hex name="I6"  tile="-3008" impassable="J5,J7" city="Rotterdam"/>
-	<Hex name="I8"  tile="0" impassable="I10,J9,J11"/>
+	<Hex name="I4" tile="0" river="J3,J5"/>
+	<Hex name="I6"  tile="-3008" river="J5,J7" city="Rotterdam"/>
+	<Hex name="I8"  tile="0" river="I10,J7,J9"/>
 	<Hex name="I10" tile="-1" orientation="3" city="Den Bosch"/>
-	<Hex name="I12" tile="-3008" impassable="I14" city="Nijmegen"/>
-	<Hex name="I14" tile="0" impassable="J13"/>
+	<Hex name="I12" tile="-3008" river="I14" city="Nijmegen"/>
+	<Hex name="I14" tile="0" river="J13"/>
 	<Hex name="I16" tile="-901" orientation="2" value="40,50" city="Emmerich"/>
 	<Hex name="J1"  tile="-901" orientation="0" value="40,60" city="Vlissingen"/>
-	<Hex name="J3"  tile="0" impassable="J5,K4,K6"/>
+	<Hex name="J3"  tile="0" river="J5,K2,K4"/>
 	<Hex name="J5"  tile="0"/>
 	<Hex name="J7"  tile="-3008" city="Breda"/>
 	<Hex name="J9"  tile="-1" orientation="4" city="Tilburg"/>
 	<Hex name="J11" tile="0"/>
-	<Hex name="J13" tile="0" impassable="J15"/>
+	<Hex name="J13" tile="0" river="J15"/>
 	<Hex name="J15" tile="-901" orientation="1" value="40,50" city="Kleve"/>
-	<Hex name="K2"  tile="-1" impassable="K4" city="Middelburg"/>
+	<Hex name="K2"  tile="-1" river="K4" city="Middelburg"/>
 	<Hex name="K4"  tile="0"/>
 	<Hex name="K6"  tile="0"/>
 	<Hex name="K8"  tile="0"/>
 	<Hex name="K10" tile="0"/>
 	<Hex name="K12" tile="-3008" city="Eindhoven"/>
-	<Hex name="K14" tile="-1" impassable="J15" city="Venlo"/>
+	<Hex name="K14" tile="-1" river="J15" city="Venlo"/>
 	<Hex name="L5"  tile="-901" orientation="4" value="40,60" city="Antwerpen"/>
 	<Hex name="L11" tile="0"/>
 	<Hex name="L13" tile="0"/>
 	<Hex name="M12" tile="0"/>
 	<Hex name="M14" tile="0"/>
-	<Hex name="N13" tile="-1" oprientation="3" city="Maastricht"/>
+	<Hex name="N13" tile="-1" orientation="3" city="Maastricht"/>
 	<Hex name="O12" tile="-901" orientation="4" value="40,60" city="Liège"/>
 
 </Map>

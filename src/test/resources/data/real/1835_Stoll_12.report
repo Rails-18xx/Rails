@@ -207,7 +207,7 @@ Payout,Nick,6,1,10
 Payout,Christian,24,4,10
 PRICE_MOVES_LOG,BY,86,B3,92,C3
 BuysTrain,BY,2,IPO,80
-All 2-trains are sold out, 2+2-trains now available
+NewTrainAvailable,2,2+2
 BuysTrain,BY,2+2,IPO,120
 FirstTrainBought,2+2
  
@@ -428,7 +428,7 @@ PRICE_MOVES_LOG,SX,88,C4,84,B4
 BuysTrain,SX,2+2,IPO,120
 PrivateCloses,LD
 BuysTrain,SX,2+2,IPO,120
-All 2+2-trains are sold out, 3-trains now available
+NewTrainAvailable,2+2,3
 BuysTrain,SX,3,IPO,180
 FirstTrainBought,3
 StartOfPhase,3
@@ -595,7 +595,7 @@ CompanySplits,M2,80
 RECEIVES,M2,40
 Payout,Nick,40,1,100
 BuysTrain,M2,3,IPO,180
-All 3-trains are sold out, 3+3-trains now available
+NewTrainAvailable,3,3+3
  
 CompanyOperates,M3,Christian
 LaysTileAt,M3,4,G15,NW
@@ -818,7 +818,7 @@ LaysTileAt,WT,5,M9,NE
 CompanyDoesNotPayDividend,WT
 PRICE_MOVES_LOG,WT,84,B4,78,A4
 BuysTrain,WT,3+3,IPO,270
-All 3+3-trains are sold out, 4-trains now available
+NewTrainAvailable,3+3,4
  
 EndOfOperatingRound,6.1
 ORWorthIncrease,Eyal,6.1,94
@@ -1137,7 +1137,7 @@ CompanyRevenue,SX,230
 CompanyWithholds,SX,230
 PRICE_MOVES_LOG,SX,134,F2,120,E2
 BuysTrain,SX,4,IPO,360
-All 4-trains are sold out, 4+4-trains now available
+NewTrainAvailable,4,4+4
  
 CompanyOperates,HE,Nick
 LaysTileAt,HE,3,M15,W
@@ -1148,7 +1148,7 @@ PRICE_MOVES_LOG,HE,86,B3,82,A3
 BuysTrain,HE,2+2,WT,177
 BuysTrain,HE,3,M2,1
 BuysTrain,HE,4+4,IPO,440
-All 4+4-trains are sold out, 5-trains now available
+NewTrainAvailable,4+4,5
 FirstTrainBought,4+4
 StartOfPhase,4+4
 TrainsRusted,2+2
@@ -1209,7 +1209,7 @@ Payout,Nick,117,9,10
 Payout,Eyal,13,1,10
 PRICE_MOVES_LOG,WT,80,B5,86,C5
 BuysTrain,WT,5,IPO,500
-All 5-trains are sold out, 5+5-trains now available
+NewTrainAvailable,5,5+5
  
 CompanyOperates,BA,Eyal
 LaysTileAt,BA,27,E13,NW
@@ -1249,7 +1249,7 @@ Payout,Nick,45,6,5
 Payout,Eyal,60,8,5
 PRICE_MOVES_LOG,PR,154,I4,172,J4
 BuysTrain,PR,5+5,IPO,600
-All 5+5-trains are sold out, 6-trains now available
+NewTrainAvailable,5+5,6
 FirstTrainBought,5+5
  
 CompanyOperates,BY,Christian
@@ -1423,7 +1423,7 @@ FirstTrainBought,6
 StartOfPhase,6
 TrainsRusted,3
 BuysTrain,PR,6,IPO,600
-All 6-trains are sold out, 6+6-trains now available
+NewTrainAvailable,6,6+6
  
 CompanyOperates,BY,Christian
 LaysTileAt,BY,47,K5,W

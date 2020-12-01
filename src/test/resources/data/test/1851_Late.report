@@ -68,7 +68,7 @@ CompanyDoesNotPayDividend,GM&O
 PRICE_MOVES_LOG,GM&O,75,C4,70,B4
 BuysTrain,GM&O,2,IPO,100
 BuysTrain,GM&O,2,IPO,100
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
  
 CompanyOperates,TC,Charlie
 LaysTileAtFor,TC,202,F12,SE,40
@@ -228,7 +228,7 @@ CompanyRevenue,TC,110
 CompanyWithholds,TC,110
 PRICE_MOVES_LOG,TC,82,D4,75,C4
 BuysTrain,TC,3,IPO,200
-All 3-trains are sold out, 4-trains now available
+NewTrainAvailable,3,4
  
 CompanyOperates,GM&O,Bob
 LaysTileAt,GM&O,619,G7,SE
@@ -395,7 +395,7 @@ Payout,Bob,11,1,10
 Payout,TC,11,1,10
 PRICE_MOVES_LOG,TC,90,E4,100,F4
 BuysTrain,TC,4,IPO,300
-All 4-trains are sold out, 5-trains now available
+NewTrainAvailable,4,5
  
 CompanyOperates,GM&O,Bob
 LaysTileAt,GM&O,24,G11,W
@@ -513,7 +513,7 @@ Payout,Charlie,66,6,10
 Payout,TC,11,1,10
 PRICE_MOVES_LOG,TC,90,F5,100,F4
 BuysTrain,TC,5,IPO,500
-All 5-trains are sold out, 6-trains now available
+NewTrainAvailable,5,6
  
 CompanyOperates,GM&O,Bob
 LaysTileAt,GM&O,8,G13,SE
@@ -548,7 +548,7 @@ CompanyRevenue,L&N,190
 CompanyWithholds,L&N,190
 PRICE_MOVES_LOG,L&N,110,G4,100,F4
 BuysTrain,L&N,6,IPO,600
-All 6-trains are sold out, 8-trains now available
+NewTrainAvailable,6,8
  
 CompanyOperates,TC,Charlie
 LaysTileAt,TC,611,D14,W

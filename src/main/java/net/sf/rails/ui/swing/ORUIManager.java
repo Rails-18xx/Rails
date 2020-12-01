@@ -252,21 +252,24 @@ public class ORUIManager implements DialogOwner {
 
     }
 
-
     private void addConnectedTileLays(LayTile layTile) {
         NetworkGraph graph = networkAdapter.getRouteGraph(layTile.getCompany(), true, false);
         Map<MapHex, HexSidesSet> mapHexSides = graph.getReachableSides();
         Multimap<MapHex, Station> mapHexStations = graph.getPassableStations();
 
-        boolean allLocations = (layTile.getLocations() == null || layTile.getLocations().isEmpty());
+        boolean allLocations = (layTile.getLocations() == null
+                || layTile.getLocations().isEmpty());
 
         for (MapHex hex:Sets.union(mapHexSides.keySet(), mapHexStations.keySet())) {
             if (allLocations || layTile.getLocations().contains(hex)) {
                 GUIHex guiHex = map.getHex(hex);
-                String routeAlgorithm = GameOption.getValue(gameUIManager.getRoot(), "RouteAlgorithm");
-                Set<TileHexUpgrade> upgrades = TileHexUpgrade.create(guiHex, mapHexSides.get(hex),
+                String routeAlgorithm = GameOption.getValue(gameUIManager.getRoot(),
+                        "RouteAlgorithm");
+                Set<TileHexUpgrade> upgrades = TileHexUpgrade.create(guiHex,
+                        mapHexSides.get(hex),
                         mapHexStations.get(hex), layTile, routeAlgorithm);
                 TileHexUpgrade.validates(upgrades, gameUIManager.getCurrentPhase());
+                gameSpecificTileUpgradeValidation (upgrades, layTile);
                 hexUpgrades.putAll(guiHex, upgrades);
             }
         }
@@ -281,12 +284,25 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
+    /**
+     * Stub to do additional validation.
+     * Used in SOH to prevent showing an upgrade that
+     * incorrectly uses a private special property.
+     * @param upgrades
+     * @param layTile
+     */
+    protected void gameSpecificTileUpgradeValidation (Set<TileHexUpgrade> upgrades,
+                                                      LayTile layTile) {
+    }
+
     private void addLocatedTileLays(LayTile layTile) {
-        for (MapHex hex:layTile.getLocations()) {
-            GUIHex guiHex = map.getHex(hex);
-            Set<TileHexUpgrade> upgrades = TileHexUpgrade.createLocated(guiHex, layTile);
-            TileHexUpgrade.validates(upgrades, gameUIManager.getCurrentPhase());
-            hexUpgrades.putAll(guiHex, upgrades);
+        if (layTile.getLocations() != null) {
+            for (MapHex hex : layTile.getLocations()) {
+                GUIHex guiHex = map.getHex(hex);
+                Set<TileHexUpgrade> upgrades = TileHexUpgrade.createLocated(guiHex, layTile);
+                TileHexUpgrade.validates(upgrades, gameUIManager.getCurrentPhase());
+                hexUpgrades.putAll(guiHex, upgrades);
+            }
         }
     }
 
@@ -684,7 +700,7 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
-    private void layTile(TileHexUpgrade upgrade) {
+    protected void layTile(TileHexUpgrade upgrade) {
         LayTile allowance = upgrade.getAction();
         // FIXME: Removed a lot of checks here
         //            List<LayTile> allowances =
@@ -805,9 +821,9 @@ public class ORUIManager implements DialogOwner {
                 public int compare (Stop s1, Stop s2) {
                     Set<BaseToken> tokens;
                     boolean stop1IsHome = !((tokens = s1.getBaseTokens()).isEmpty())
-                    && Iterables.get(tokens, 0).getParent().getHomeHexes().contains(hex);
+                        && Iterables.get(tokens, 0).getParent().getHomeHexes().contains(hex);
                     boolean stop2IsHome = !((tokens = s2.getBaseTokens()).isEmpty())
-                    && Iterables.get(tokens, 0).getParent().getHomeHexes().contains(hex);
+                        && Iterables.get(tokens, 0).getParent().getHomeHexes().contains(hex);
                     if (stop1IsHome && !stop2IsHome) {
                         return -1;
                     } else if (stop2IsHome && !stop1IsHome) {
@@ -895,7 +911,7 @@ public class ORUIManager implements DialogOwner {
         GUIHex selectedHex = map.getSelectedHex();
 
         if (selectedHex != null) {
-            LayToken executedAction = (LayToken) action;
+            LayToken executedAction = action;
 
             executedAction.setChosenHex(selectedHex.getHex());
 
@@ -911,7 +927,7 @@ public class ORUIManager implements DialogOwner {
 
     public void operatingCosts(){
 
-        List<String> textOC = new ArrayList<String>();
+        List<String> textOC = new ArrayList<>();
         List<OperatingCost> actionOC = getPossibleActions().getType(OperatingCost.class);
 
         for (OperatingCost ac:actionOC) {
@@ -982,7 +998,6 @@ public class ORUIManager implements DialogOwner {
 
         List<BuyTrain> buyableTrains = getPossibleActions().getType(BuyTrain.class);
         for (BuyTrain bTrain : buyableTrains) {
-            train = bTrain.getTrain();
             cost = bTrain.getFixedCost();
             from = bTrain.getFromOwner();
 
@@ -1126,8 +1141,11 @@ public class ORUIManager implements DialogOwner {
 
             buyAction.setPricePaid(price);
             buyAction.setExchangedTrain(exchangedTrain);
+            if (buyAction.mustPresidentAddCash()) {
+                buyAction.setAddedCash(buyAction.getPresidentCashToAdd());
+            }
 
-            if (orWindow.process(selectedAction)) {
+            if (orWindow.process(buyAction)) {
                 // FIXME: Rails 2.0 Is there still a functionality involved that we require?
 
                 // Check if any trains must be discarded
@@ -1321,13 +1339,13 @@ public class ORUIManager implements DialogOwner {
         GameDef.OrStep orStep = oRound.getStep();
         log.debug("OR step={}", orStep);
 
-        if (oRound.getOperatingCompanyndex() != orCompIndex) {
+        if (oRound.getOperatingCompanyIndex() != orCompIndex) {
             if (orCompIndex >= 0) {
                 orPanel.finishORCompanyTurn(orCompIndex);
             }
             // Check if sequence has changed
             checkORCompanySequence(companies, oRound.getOperatingCompanies());
-            orCompIndex = oRound.getOperatingCompanyndex();
+            orCompIndex = oRound.getOperatingCompanyIndex();
         }
 
         orPanel.initORCompanyTurn(orComp, orCompIndex);

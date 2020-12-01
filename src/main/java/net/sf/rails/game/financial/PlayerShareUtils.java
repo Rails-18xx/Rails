@@ -1,13 +1,11 @@
 package net.sf.rails.game.financial;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 
 import net.sf.rails.game.GameDef;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.GameDef.Parm;
 import net.sf.rails.game.financial.PublicCertificate.Combination;
 import net.sf.rails.game.model.CertificatesModel;
 import net.sf.rails.game.state.Portfolio;
@@ -40,7 +38,7 @@ public class PlayerShareUtils {
     
     public static int poolAllowsShareNumbers(PublicCompany company) {
         int poolShares = Bank.getPool(company).getPortfolioModel().getShareNumber(company);
-        int poolMax = (GameDef.getGameParameterAsInt(company, GameDef.Parm.POOL_SHARE_LIMIT) / company.getShareUnit() 
+        int poolMax = (GameDef.getParmAsInt(company, GameDef.Parm.POOL_SHARE_LIMIT) / company.getShareUnit()
                 - poolShares);
         return poolMax;
     }
@@ -56,7 +54,7 @@ public class PlayerShareUtils {
 
         int maxShares;
         if (potential == null) {
-            // ... if there is none, selling is only possible until the presidentCerificate or pool maximum
+            // ... if there is none, selling is only possible until the presidentCertificate or pool maximum
             maxShares = Math.min(presidentShares - presidentCertificateShares, poolShares);
         } else { 
             // otherwise until pool maximum only

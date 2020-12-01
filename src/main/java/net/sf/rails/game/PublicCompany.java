@@ -771,7 +771,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         baseTokens.initTokens(newTokens);
 
         if (homeHexNames != null) {
-            homeHexes = new ArrayList<MapHex>(2);
+            homeHexes = new ArrayList<>(2);
             MapHex homeHex;
             for (String homeHexName : homeHexNames.split(",")) {
                 homeHex = getRoot().getMapManager().getHex(homeHexName);
@@ -863,7 +863,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      */
     public void addExtraTileLayTurnsInfo(String colour, int turns) {
         if (turnsWithExtraTileLays == null) {
-            turnsWithExtraTileLays = new HashMap<String, IntegerState>();
+            turnsWithExtraTileLays = new HashMap<>();
         }
         IntegerState tileLays = IntegerState.create
                 (this, "" + colour + "_ExtraTileTurns", turns);
@@ -927,11 +927,11 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     /**
      * Return the company's Home hexes (usually one).
-     *
+     * EV nov 2020 fixed for issue #307: if none, return empty list.
      * @return Returns the homeHex.
      */
     public List<MapHex> getHomeHexes() {
-        return homeHexes;
+        return homeHexes != null ? homeHexes : new ArrayList<>();
     }
 
     /**
@@ -942,7 +942,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * @param homeHex The homeHex to set.
      */
     public void setHomeHex(MapHex homeHex) {
-        homeHexes = new ArrayList<MapHex>(1);
+        homeHexes = new ArrayList<>(2);
         homeHexes.add(homeHex);
     }
 
@@ -979,9 +979,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         hasReachedDestination.set(value);
     }
 
-    /**
-     * @return
-     */
     public boolean canBuyStock() {
         return canBuyStock;
     }
@@ -1498,7 +1495,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     /**
-     * @reeturn true if company has Multiple certificates, representing more than one nominal share unit (except president share)
+     * @return true if company has Multiple certificates, representing more than one nominal share unit (except president share)
      */
     public boolean hasMultipleCertificates() {
         return hasMultipleCertificates;
@@ -1646,7 +1643,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Get the current maximum number of trains got a given limit index.
      *
-     * @parm index The index of the train limit step as defined for the current phase. Values start at 0.
+     * @param index The index of the train limit step as defined for the current phase. Values start at 0.
      * <p>N.B. the new style limit steps per phase start at 1,
      * so one must be subtracted before calling this method.
      */
@@ -1738,6 +1735,11 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         getRoot().getGameManager().allocateSpecialProperties(this, sps);
     }
 
+    public boolean ownsPrivate (String id) {
+        return portfolio.getPrivatesOwnedModel().getPortfolio().containsItem(
+                (getRoot().getCompanyManager()).getPrivateCompany (id));
+    }
+
     public Model getPrivatesSpentThisTurnModel() {
         return privatesCostThisTurn;
     }
@@ -1818,6 +1820,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             return ImmutableSet.of(getBaseTokenLayCost(null));
         } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
             // WARNING: no provision yet for multiple home hexes.
+            // EV: and not for zero, but there may be no such cases.
             Collection<Integer> distances = getRoot().getMapManager().getCityDistances(homeHexes.get(0));
             ImmutableSet.Builder<Integer> costs = ImmutableSet.builder();
             for (int distance : distances) {
@@ -1893,7 +1896,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                     // Cover the case that there already is another token.
                     // Allowing this is optional for 1856 Hamilton (THB home)
                     Set<Stop> stops = homeHex.getStops();
-                    List<Stop> openStops = new ArrayList<Stop>();
+                    List<Stop> openStops = new ArrayList<>();
                     for (Stop stop : stops) {
                         if (stop.hasTokenSlotsLeft()) openStops.add(stop);
                     }
@@ -2106,6 +2109,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     @Override
     public boolean isClosed() {
         return closed.value();
+    }
+
+    public void setBankrupt () {
+        setClosed();
     }
 
     @Override

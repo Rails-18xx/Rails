@@ -6,6 +6,7 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
+import net.sf.rails.game.financial.StockMarket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,14 @@ public class StockChartWindow extends JFrame {
         final JFXPanel fxPanel = new JFXPanel();
         add(fxPanel);
         setTitle("Rails: Stock Chart");
-        setPreferredSize(new Dimension(600, 400));
+
+        StockMarket.ChartType type = gameUIManager.getRoot().getStockMarket().getStockChartType();
+        if (type == StockMarket.ChartType.LINEAR) {
+            setPreferredSize(new Dimension(600, 150));
+        } else {
+            setPreferredSize(new Dimension(600, 400));
+        }
+
         setVisible(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 

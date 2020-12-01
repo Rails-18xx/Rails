@@ -102,14 +102,17 @@ public class GUIHex implements Observer {
 
     }
 
-    public static enum State {
+    public enum State {
 
-        NORMAL(1.0, Color.black), SELECTABLE(0.9, Color.red), SELECTED(0.8, Color.red), INVALIDS (0.9, Color.pink);
+        NORMAL(1.0, Color.black),
+        SELECTABLE(0.9, Color.red),
+        SELECTED(0.8, Color.red),
+        INVALIDS (0.9, Color.pink);
 
         private final double scale;
         private final Color color;
 
-        private State(double scale, Color color) {
+        State(double scale, Color color) {
             this.scale = scale;
             this.color = color;
         }
@@ -402,7 +405,7 @@ public class GUIHex implements Observer {
 
     /**
      * Marks are selected / selectable / highlighted
-     * @param g
+     * @param g A graphics 2D object
      */
     public void paintMarks(Graphics2D g) {
         GUIGlobals.setRenderingHints(g);
@@ -669,7 +672,7 @@ public class GUIHex implements Observer {
     private String bonusToolTipText(List<RevenueBonusTemplate> bonuses) {
         StringBuilder tt = new StringBuilder();
         if (bonuses != null) {
-            Set<String> bonusNames = new HashSet<String>();
+            Set<String> bonusNames = new HashSet<>();
             for (RevenueBonusTemplate bonus:bonuses) {
                 if (bonus.getName() == null) {
                     tt.append("<br>Bonus:");

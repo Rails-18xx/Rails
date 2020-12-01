@@ -627,7 +627,7 @@ public class StockRound_18EU extends StockRound {
 
             // If >60% shares owned, lift sell obligation this round.
             if (currentPlayer.getPortfolioModel().getShare(major)
-                    > GameDef.getGameParameterAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)) {
+                    > GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)) {
                 setSellObligationLifted(major);
             }
 

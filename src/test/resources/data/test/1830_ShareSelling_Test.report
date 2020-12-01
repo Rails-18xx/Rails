@@ -136,7 +136,7 @@ BuysTrain,NYC,2,IPO,80
 BuysTrain,NYC,2,IPO,80
 BuysTrain,NYC,2,IPO,80
 BuysTrain,NYC,2,IPO,80
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
  
 EndOfOperatingRound,1.1
 ORWorthIncrease,Marcus,1.1,5

@@ -65,14 +65,26 @@ public class HexSidesSet implements Iterable<HexSide> {
     public boolean intersects(HexSidesSet other) {
         return sides.intersects(other.getSides());
     }
-    
+
+    public HexSidesSet union(HexSidesSet other) {
+        BitSet union = (BitSet)sides.clone();
+        union.or(other.getSides());
+        return HexSidesSet.create(union);
+    }
+
+    public HexSidesSet symDiff(HexSidesSet other) {
+        BitSet xxor = (BitSet)sides.clone();
+        xxor.xor(other.getSides());
+        return HexSidesSet.create(xxor);
+    }
+
     @Override
     public String toString() {
         return sides.toString();
     }
 
     public Iterator<HexSide> iterator() {
-        return new Iterator<HexSide>() {
+        return new Iterator<>() {
             private int i = 0;
             public boolean hasNext() {
                 return (sides.nextSetBit(i) != -1);

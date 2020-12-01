@@ -98,8 +98,9 @@ public class LocalText extends ResourceBundle {
         if (localeCode.equals(TEST_LOCALE)) {
             StringBuilder s = new StringBuilder(key);
             if (parameters != null)
-                for (Object o:parameters)
-                    s.append(",").append(o.toString());
+                for (Object o:parameters) {
+                    if (o != null) s.append(",").append(o.toString());
+                }
             return s.toString();
         }
 

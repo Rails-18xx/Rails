@@ -18,8 +18,6 @@ import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 
-import com.google.common.collect.Iterables;
-
 
 public class OperatingRound_1856 extends OperatingRound {
 
@@ -59,7 +57,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
         //log.debug("+++ old OC is "+(operatingCompany.getObject()!=null?operatingCompany.getObject().getName():"null"));
         while (true) {
-            if (initial || operatingCompany.value() == null || operatingCompany == null) {
+            if (initial || operatingCompany == null || operatingCompany.value() == null ) {
                 setOperatingCompany(operatingCompanies.get(0));
                 initial = false;
             } else {
@@ -78,15 +76,7 @@ public class OperatingRound_1856 extends OperatingRound {
 
             if (!operatingCompany.value().hasOperated()) {
                 int soldPercentage = operatingCompany.value().getSoldPercentage();
-                // TODO: Refactor the code duplication
-                Train nextAvailableTrain = Iterables.get(trainManager.getAvailableNewTrains(), 0);
-                log.debug("Next Train type{}", nextAvailableTrain.toText());
-                int trainNumber;
-                try {
-                    trainNumber = Integer.parseInt(nextAvailableTrain.toText());
-                } catch (NumberFormatException e) {
-                    trainNumber = 6; // Diesel!
-                }
+                int trainNumber = ((GameManager_1856)gameManager).getNextTrainNumberFromIpo();
                 int floatPercentage = 10 * trainNumber;
 
                 log.debug("Float percentage is {} sold percentage is {}", floatPercentage, soldPercentage);
@@ -280,7 +270,7 @@ public class OperatingRound_1856 extends OperatingRound {
     @Override
     protected void setDestinationActions() {
 
-        List<PublicCompany> possibleDestinations = new ArrayList<PublicCompany>();
+        List<PublicCompany> possibleDestinations = new ArrayList<>();
         for (PublicCompany comp : operatingCompanies.view()) {
             if (comp.hasDestination()
                     && ((PublicCompany_1856) comp).getTrainNumberAvailableAtStart() < 5
@@ -431,7 +421,7 @@ public class OperatingRound_1856 extends OperatingRound {
         int amount = super.calculateLoanAmount(numberOfLoans);
 
         // Deduct interest immediately?
-        if (((GameDef.OrStep) stepObject.value()).compareTo(GameDef.OrStep.PAYOUT) > 0) {
+        if ((stepObject.value()).compareTo(GameDef.OrStep.PAYOUT) > 0) {
             amount -= calculateLoanInterest(numberOfLoans);
         }
 
@@ -524,11 +514,11 @@ public class OperatingRound_1856 extends OperatingRound {
         }
 
         String message;
-        int operatingCompanyndex = getOperatingCompanyndex();
+        int operatingCompanyIndex = getOperatingCompanyIndex();
         if (cgr.hasStarted()) {
             if (cgrCanOperate) {
-                operatingCompanyndex = Math.max(0, operatingCompanyndex);
-                operatingCompanies.add(operatingCompanyndex + 1, cgr);
+                operatingCompanyIndex = Math.max(0, operatingCompanyIndex);
+                operatingCompanies.add(operatingCompanyIndex + 1, cgr);
                 setOperatingCompany(cgr);
                 message = LocalText.getText("CanOperate", cgr.getId());
             } else {

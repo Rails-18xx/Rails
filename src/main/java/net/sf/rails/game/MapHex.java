@@ -184,6 +184,10 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     private final HexSidesSet.Builder impassableBuilder = HexSidesSet.builder();
     private HexSidesSet impassableSides;
 
+    private String riverTemplate = null;
+    private final HexSidesSet.Builder riverBuilder = HexSidesSet.builder();
+    private HexSidesSet riverSides;
+
     private final HexSidesSet.Builder invalidBuilder = HexSidesSet.builder();
     private HexSidesSet invalidSides;
 
@@ -268,6 +272,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         preprintedTileRotation = HexSide.get(orientation);
 
         impassableTemplate = tag.getAttributeAsString("impassable");
+        riverTemplate = tag.getAttributeAsString("river");
         tileCost = tag.getAttributeAsIntegerList("cost");
 
         // Off-board revenue values
@@ -332,6 +337,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         //}
 
         impassableSides = impassableBuilder.build();
+        riverSides = riverBuilder.build();
         invalidSides = invalidBuilder.build();
     }
 
@@ -351,6 +357,15 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         return impassableSides;
     }
 
+    public void addRiverSide(HexSide side) {
+        riverBuilder.set(side);
+        log.debug("Added river {} to {}", side, this);
+    }
+
+    public HexSidesSet getRiverSides () {
+        return riverSides;
+    }
+
     public void addInvalidSide(HexSide side) {
         invalidBuilder.set(side);
         log.debug("Added invalid {} to {}", side, this);
@@ -362,7 +377,12 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     public boolean isImpassableNeighbour(MapHex neighbour) {
         return impassableTemplate != null
-                && impassableTemplate.indexOf(neighbour.getId()) > -1;
+                && impassableTemplate.contains(neighbour.getId());
+    }
+
+    public boolean isRiverNeighbour (MapHex neighbour) {
+        return riverTemplate != null
+                && riverTemplate.contains(neighbour.getId());
     }
 
     public boolean isValidNeighbour(MapHex neighbour, HexSide side) {
@@ -385,6 +405,35 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     @Deprecated
     public String getOrientationName(int orientation) {
         return getOrientationName(HexSide.get(orientation));
+    }
+
+    /**
+     * Get the BitSet of the sides that have tracks
+     * for a given tile and rotation.
+     * @param tile The tile
+     * @param rotation A given rotation of that tile
+     * @return The BitSet indicating which sides have track.
+     */
+    public HexSidesSet getTrackSides (Tile tile, int rotation) {
+        HexSide rotated;
+        HexSidesSet.Builder sidesBuilder = HexSidesSet.builder();
+        for (HexSide side : HexSide.all()) {
+            if (tile.hasTracks(side)) {
+                rotated = side.rotate(rotation);
+                sidesBuilder.set(rotated);
+            }
+        }
+        return sidesBuilder.build();
+    }
+
+    /**
+     * Get the BitSet of the sides that have track
+     * for the current tile on this Hex.
+     * @return
+     */
+    public HexSidesSet getTrackSides () {
+        return getTrackSides (currentTile.value(),
+                currentTileRotation.value().getTrackPointNumber());
     }
 
     /* ----- Instance methods ----- */
@@ -532,7 +581,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 // stations
                 Station newStation = null;
                 String debugText = null;
-                if (stationMapping == null) {
+                if (stationMapping == null || stationMapping.isEmpty()) {
                     int oldNumber = stop.getRelatedStation().getNumber();
                     newStation = newTile.getStation(oldNumber);
                     debugText = "Mapped by default id";
@@ -567,15 +616,12 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         // Create a Stop for new Stations
         if (stops.size() < newTile.getNumStations()) {
 
-            ST:
             for (Station station : newTile.getStations()) {
-                // EV: I'm sure this can be done in a better way, but at least it works
-                for (Stop stop : stops) {
-                    if (stop.getRelatedStation().equals(station)) continue ST;
-                }
-                // New Station found without an existing Stop
-                Stop stop = Stop.create(this, station);
+                if (stopsToNewStations.containsValue(station)) continue;
+                // New Station found without an existing Stop: create a new Stop
+                Stop stop = Stop.create(this, stops.size()+1, station);
                 stop.initStopParameters();
+                stops.put (station, stop);
                 stopsToNewStations.put(stop, station);
             }
         }
@@ -682,7 +728,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
      * @param token        The bonus token object to place
      * @param phaseManager The PhaseManager is also passed in case the token
      *                     must register itself for removal when a certain phase starts.
-     * @return
+     * @return Always true
      */
     public boolean layBonusToken(BonusToken token, PhaseManager phaseManager) {
         Preconditions.checkArgument(token != null, "No token specified");
@@ -942,10 +988,6 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         return stopName;
     }
 
-    //public String getMutexId() {
-    //    return mutexId;
-    //}
-
     public PublicCompany getReservedForCompany() {
         return reservedForCompany;
     }
@@ -974,6 +1016,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     @Override
     public String toString() {
-        return super.toString() + coordinates;
+        //return super.toString() + coordinates;
+        return getId();
     }
 }

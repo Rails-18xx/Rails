@@ -131,7 +131,7 @@ InterestPaidFromTreasury,GW,10
 CompanyDoesNotPayDividend,GW
 PRICE_MOVES_LOG,GW,65,E6,60,D6
 BuysTrain,GW,2,IPO,100
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
  
 EndOfOperatingRound,1.1
 ORWorthIncrease,Juho,1.1,10
@@ -362,7 +362,7 @@ Payout,Peter,19,1,10
 Payout,Bill,76,4,10
 PRICE_MOVES_LOG,LPS,70,F6,75,G6
 BuysTrain,LPS,3,IPO,225
-All 3-trains are sold out, 4-trains now available
+NewTrainAvailable,3,4
 CompanyTakesLoan,LPS,100,90
  
 CompanyOperates,GW,Aliza
@@ -833,7 +833,7 @@ CompanyWithholds,CA,110
 PRICE_MOVES_LOG,CA,80,H6,75,G6
 CompanyTakesLoan,CA,100,90
 BuysTrain,CA,4,IPO,350
-All 4-trains are sold out, 5-trains now available
+NewTrainAvailable,4,5
  
 CompanyOperates,CPR,Peter
 LaysTileAt,CPR,7,M12,N

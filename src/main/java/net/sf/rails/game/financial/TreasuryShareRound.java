@@ -82,10 +82,6 @@ public class TreasuryShareRound extends StockRound {
 
         possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
 
-        for (PossibleAction pa : possibleActions.getList()) {
-            log.debug("{} may: {}", operatingCompany.getId(), pa);
-        }
-
         return true;
     }
 
@@ -124,7 +120,7 @@ public class TreasuryShareRound extends StockRound {
             int ownedShare =
                     operatingCompany.getPortfolioModel().getShare(operatingCompany);
             // Max share that may be owned
-            int maxShare = GameDef.getGameParameterAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT);
+            int maxShare = GameDef.getParmAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT);
             // Max number of shares to add
             int maxBuyable =
                     (maxShare - ownedShare) / operatingCompany.getShareUnit();
@@ -152,6 +148,9 @@ public class TreasuryShareRound extends StockRound {
      * presidencies of other companies has been retained, but not tested. This
      * code will be needed for 1841.
      *
+     * TODO: There is much almost-duplicate code in this and other (pseudo-)stock rounds,
+     * and also in the SOH operating round. Perhaps some more generic code can be written.
+     *
      * @return List of sellable certificates.
      */
     public void setSellableCerts() {
@@ -176,7 +175,7 @@ public class TreasuryShareRound extends StockRound {
             /* May not sell more than the Pool can accept */
             maxShareToSell =
                     Math.min(maxShareToSell,
-                            GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)
+                            GameDef.getParmAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)
                                     - pool.getShare(company));
             if (maxShareToSell == 0) continue;
 
@@ -227,7 +226,7 @@ public class TreasuryShareRound extends StockRound {
      * Buying one or more single or double-share certificates (more is sometimes
      * possible)
      *
-     * @param player The player that wants to buy shares.
+     * @param playerName The player that wants to buy shares.
      * @param action The executed action
      * @return True if the certificates could be bought. False indicates an
      * error.
@@ -304,7 +303,7 @@ public class TreasuryShareRound extends StockRound {
             portfolio = operatingCompany.getPortfolioModel();
 
             // Check if company would exceed the per-company share limit
-            int treasuryShareLimit = GameDef.getGameParameterAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT);
+            int treasuryShareLimit = GameDef.getParmAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT);
             if (portfolio.getShare(company) + share > treasuryShareLimit) {
                 errMsg =
                         LocalText.getText("TreasuryOverHoldLimit",
@@ -426,7 +425,7 @@ public class TreasuryShareRound extends StockRound {
 
             // The pool may not get over its limit.
             if (pool.getShare(company) + numberToSell * company.getShareUnit()
-                    > GameDef.getGameParameterAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)) {
+                    > GameDef.getParmAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT)) {
                 errMsg = LocalText.getText("PoolOverHoldLimit");
                 break;
             }
@@ -507,7 +506,8 @@ public class TreasuryShareRound extends StockRound {
     /**
      * The current Player passes or is done.
      *
-     * @param player Name of the passing player.
+     * @param action the Pass or Done NULL action
+     * @param playerName Name of the passing player.
      * @return False if an error is found.
      */
     @Override

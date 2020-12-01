@@ -171,7 +171,7 @@ Payout,Justin,25,5,10
 Payout,WRA,5,1,10
 PRICE_MOVES_LOG,WRA,50,B4,55,C4
 BuysTrain,WRA,2,IPO,100
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
  
 EndOfOperatingRound,2.1
 ORWorthIncrease,Jim,2.1,103
@@ -345,7 +345,7 @@ Payout,Justin,102,6,10
 Payout,Peter,17,1,10
 PRICE_MOVES_LOG,WRA,60,D4,65,E4
 BuysTrain,WRA,3,IPO,180
-All 3-trains are sold out, 4-trains now available
+NewTrainAvailable,3,4
  
 CompanyOperates,ATN,Jim
 LaysTileAt,ATN,9,J1,S
@@ -437,7 +437,7 @@ CompanyDoesNotPayDividend,L&N
 PRICE_MOVES_LOG,L&N,65,E4,60,D4
 BuysTrainUsingSP,L&N,4,IPO,150,NDY
 PrivateCloses,NDY
-All 4-trains are sold out, 5-trains now available
+NewTrainAvailable,4,5
  
 CompanyOperates,M&O,Jim
 LaysTileAt,M&O,6,K2,NE
@@ -563,7 +563,7 @@ Payout,Steve,13,1,10
 Payout,ATN,13,1,10
 PRICE_MOVES_LOG,ATN,65,F5,70,G5
 BuysTrain,ATN,5,IPO,450
-All 5-trains are sold out, 6-trains now available
+NewTrainAvailable,5,6
  
 CompanyOperates,M&O,Jim
 LaysTileAt,M&O,57,H3,SW

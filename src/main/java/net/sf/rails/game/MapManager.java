@@ -14,6 +14,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -46,6 +48,8 @@ public class MapManager extends RailsManager implements Configurable {
     private int mapYOffset = 0;
     private float mapScale = (float)1.0;
     private boolean mapImageUsed = false;
+
+    private static final Logger log = LoggerFactory.getLogger(MapManager.class);
 
     /**
      * Used by Configure (via reflection) only
@@ -103,12 +107,16 @@ public class MapManager extends RailsManager implements Configurable {
         // Initialise the neighbours
         ImmutableTable.Builder<MapHex, HexSide, MapHex> hexTableBuilder = ImmutableTable.builder();
         for (MapHex hex:hexes.values()) {
-            for (HexSide side:HexSide.all()){
+           for (HexSide side:HexSide.all()){
                 MapHex neighbour = hexes.get(mapOrientation.
                         getAdjacentCoordinates(hex.getCoordinates(), side));
                 if (neighbour != null) {
                     if (hex.isValidNeighbour(neighbour, side)) {
                         hexTableBuilder.put(hex, side, neighbour);
+                        if (hex.isRiverNeighbour(neighbour)) {
+                            hex.addRiverSide(side);
+                            neighbour.addRiverSide(side.opposite());
+                        }
                     } else {
                         hex.addInvalidSide(side);
                         if (hex.isImpassableNeighbour(neighbour)) {
@@ -173,6 +181,68 @@ public class MapManager extends RailsManager implements Configurable {
     
     public MapHex getNeighbour(MapHex hex, HexSide side) {
         return hexTable.get(hex, side);
+    }
+
+    /**
+     * A utility to find if a newly laid tile will create a "bridge"
+     * (i.e. connect track across a "river" between neighbouring hexes).
+     * It is placed here because it is used in both the UI and the server.
+     *
+     * @param hex The MapHex where a new tile is (being) laid.
+     * @param newTile The tile (being) laid.
+     * @param newTileRotation The rotation of that tile.
+     * @return A HexSideSet object that describes any new bridges,
+     * or null if there isn't any.
+     */
+    public HexSidesSet findNewBridgeSides(MapHex hex, Tile newTile, int newTileRotation) {
+
+        // Has this hex any river sides?
+        HexSidesSet rivers = hex.getRiverSides();
+        logHexSides(rivers, "River:");
+        if (rivers.isEmpty()) return null;
+
+        // Which tracks has the newly laid tile?
+        HexSidesSet newTracks = hex.getTrackSides(newTile, newTileRotation);
+        logHexSides(newTracks, "New tile track:");
+
+        // Which tracks has the current (i.e. old) tile?
+        HexSidesSet oldTracks = hex.getTrackSides();
+        logHexSides(oldTracks, "Old tile track:");
+
+        // Which tracks are really new?
+        newTracks = newTracks.symDiff(oldTracks);
+        logHexSides(newTracks, "New track:");
+
+        // Which new tracks reach a river?
+        HexSidesSet bridgePoints = rivers.intersection(newTracks);
+        logHexSides(bridgePoints, "New track+river:");
+        if (bridgePoints.isEmpty()) return null;
+
+        // Do neighbours have track reaching the same river sides?
+        BitSet newBridgeBitSet = new BitSet();
+        Iterator it = bridgePoints.iterator();
+        while (it.hasNext()) {
+            HexSide side = (HexSide) it.next();
+            MapHex neighbour = getNeighbour(hex, side);
+            Tile nbTile = neighbour.getCurrentTile();
+            int nbRot = neighbour.getCurrentTileRotation().getTrackPointNumber();
+            if (neighbour.getTrackSides(nbTile, nbRot).get(side.opposite())) {
+                newBridgeBitSet.set(side.getTrackPointNumber(), true);
+            }
+        }
+        HexSidesSet newBridges = HexSidesSet.create(newBridgeBitSet);
+        logHexSides(newBridges, "New bridge:");
+
+        return newBridges.isEmpty() ? null : newBridges;
+    }
+
+    // For debugging
+    public void logHexSides(HexSidesSet sides, String prefix) {
+        if (!log.isDebugEnabled() || sides == null) return;
+        Iterator<HexSide> it = sides.iterator();
+        while (it.hasNext()) {
+            log.debug("{} {}", prefix, it.next());
+        }
     }
 
     public MapHex getHex(String locationCode) {

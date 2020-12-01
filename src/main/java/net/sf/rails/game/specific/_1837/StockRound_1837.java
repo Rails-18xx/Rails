@@ -207,7 +207,7 @@ public class StockRound_1837 extends StockRound {
             companyBoughtThisTurnWrapper.set(major);
 
             // If >60% shares owned, lift sell obligation this round.
-            if (currentPlayer.getPortfolioModel().getShare(major) > GameDef.getGameParameterAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)) {
+            if (currentPlayer.getPortfolioModel().getShare(major) > GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)) {
                 setSellObligationLifted(major);
             }
 

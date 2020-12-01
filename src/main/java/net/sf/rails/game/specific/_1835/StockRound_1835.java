@@ -16,6 +16,7 @@ import com.google.common.collect.SortedMultiset;
 import net.sf.rails.game.financial.*;
 import net.sf.rails.game.financial.PublicCertificate.Combination;
 import net.sf.rails.game.model.CertificatesModel;
+import net.sf.rails.game.state.Owner;
 import rails.game.action.BuyCertificate;
 import rails.game.action.NullAction;
 import net.sf.rails.common.LocalText;
@@ -147,10 +148,10 @@ public class StockRound_1835 extends StockRound {
     // change: specific share price adjustment
     // requires: do a parameterization
     @Override
-    protected void adjustSharePrice (PublicCompany company, int numberSold, boolean soldBefore) {
+    protected void adjustSharePrice (PublicCompany company, Owner seller, int numberSold, boolean soldBefore) {
         // No more changes if it has already dropped
         if (!soldBefore) {
-            super.adjustSharePrice (company, 1, soldBefore);
+            super.adjustSharePrice (company, seller,1, soldBefore);
         }
     }
 

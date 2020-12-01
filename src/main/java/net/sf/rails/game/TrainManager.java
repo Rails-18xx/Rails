@@ -374,6 +374,7 @@ public class TrainManager extends RailsManager implements Configurable {
 
         TrainCardType boughtType, nextType;
         boughtType = train.getCardType();
+        List<TrainCardType> alsoReleasedTypes;
         if (boughtType == (trainCardTypes.get(newTypeIndex.value()))
                 && Bank.getIpo(this).getPortfolioModel().getTrainCardOfType(boughtType) == null) {
             // Last train bought, make a new type available.
@@ -384,9 +385,19 @@ public class TrainManager extends RailsManager implements Configurable {
                     if (!nextType.isAvailable()) {
                         makeTrainsAvailable(nextType);
                         trainAvailabilityChanged.set(true);
-                        ReportBuffer.add(this, "All " + boughtType.toText()
-                                + "-trains are sold out, "
-                                + nextType.toText() + "-trains now available");
+                        ReportBuffer.add(this, LocalText.getText(
+                               "NewTrainAvailable", boughtType.toText(), nextType.toText()));
+                    }
+                    alsoReleasedTypes = nextType.getAlsoReleased();
+                    if (alsoReleasedTypes != null) {
+                        for (TrainCardType alsoReleasedType : alsoReleasedTypes) {
+                            if (!alsoReleasedType.isAvailable()) {
+                                makeTrainsAvailable(alsoReleasedType);
+                                trainAvailabilityChanged.set(true);
+                                ReportBuffer.add(this, LocalText.getText(
+                                        "NewTrainAlsoAvailable", alsoReleasedType.toText()));
+                            }
+                        }
                     }
                 }
             }

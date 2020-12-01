@@ -76,8 +76,7 @@ public class StartItem extends RailsAbstractItem {
         REDUCE_AND_REBID,
         RUN_OPERATING_ROUND
     }
-
-    ;
+    // Note: SOH does not yet use this enum, but if it did, it would need a third option: DISCARD_ITEM
 
     protected NoBidsReaction noBidsReaction = NoBidsReaction.RUN_OPERATING_ROUND;
 
@@ -161,6 +160,7 @@ public class StartItem extends RailsAbstractItem {
         }
         // TODO Leave this for now, but it should be done
         // in the game-specific StartRound class
+        // EV: To be replaced with setMinimumBid();
         minimumBid.set(basePrice.value() + 5);
 
         BankPortfolio ipo = getRoot().getBank().getIpo();
@@ -330,11 +330,11 @@ public class StartItem extends RailsAbstractItem {
 
     /**
      * Return the total number of players that has done bids so far on this
-     * item.
+     * item and are still active.
      *
-     * @return The number of bidders.
+     * @return The number of active bidders.
      */
-    public int getBidders() {
+    public int getActiveBidders() {
         int bidders = 0;
         for (BooleanState booleanState : active.values()) {
             if (booleanState.value()) {
@@ -519,6 +519,10 @@ public class StartItem extends RailsAbstractItem {
 
     public String getText() {
         return toString();
+    }
+
+    public String toString() {
+        return getId();
     }
 
 }

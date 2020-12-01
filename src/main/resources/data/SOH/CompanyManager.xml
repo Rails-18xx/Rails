@@ -4,15 +4,17 @@
 		<ClosingConditions>
             <Phase>5</Phase>
 		</ClosingConditions>
-		<Tradeable toCompany="yes" lowerPriceFactor="0" upperPriceFactor="2.0"/>
-								<!-- must be lower price="1"-->
-		<Tradeable toPlayer="yes"/>	
+		<Tradeable toCompany="yes" lowerPrice="1" upperPriceFactor="1.0"/>
 	</CompanyType>
 	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
+		<Capitalisation type="incremental"/>
+		<StockPrice par="no"/>
+		<TreasuryCanHoldOwnShares maxPerc="100"/>
 		<CanBuyPrivates/>
 		<!-- ? Treasury pays out? -->
 		<Float percentage="60"/><!-- equal to phase number-->
 		<ShareUnit percentage="10"/>
+		<AdjustPriceOnPayout percPerJump="101,201"/>
 		<BaseTokens>
 			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
 			<HomeBase lay="firstOR"/>
@@ -21,43 +23,81 @@
 		</BaseTokens>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="8"/>
+		<TradeShares mustHaveOperated="no"/>
 		<Trains limit="4,3,2"/>
         <CanUseSpecialProperties/>
 	</CompanyType>
-	<Company name="AS" type="Private" basePrice="20" revenue="5"
+	<Company name="1_AS" type="Private" basePrice="20" revenue="5"
 			longname="Spoorwegmaatschappij Almelo-Salzbergen">
+		<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
+						 class="net.sf.rails.game.special.SpecialSingleTileLay">
+			<SpecialSingleTileLay colour="yellow,green" location="all"
+								  extra="yes" free="no" connected="yes"/>
+		</SpecialProperty>
+		<ClosingConditions>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
 	</Company>
-	<Company name="KKI" type="Private" basePrice="40" revenue="10"
+	<Company name="2_KKI" type="Private" basePrice="40" revenue="10"
 			longname="Koninklijk Korps van Ingenieurs">
+		<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep"
+						 class="net.sf.rails.game.special.SpecialSingleTileLay">
+			<SpecialSingleTileLay colour="yellow" location="all"
+								  extra="no" free="yes" connected="yes"/>
+			<!-- Should only be used when a river is crossed-->
+		</SpecialProperty>
+		<ClosingConditions>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
 	</Company>
-	<Company name="ES" type="Private" basePrice="75" revenue="15"
+	<Company name="3_ES" type="Private" basePrice="75" revenue="15"
 		longname="Veerdienst Enkhuizen-Stavoren">
+		<SpecialProperty condition="ifOwnedByCompany" when="revenueStep"
+						 class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
+			 <LocatedBonus name="Veer ES" type="link" location="D11" value="20"/>
+		</SpecialProperty>
 	</Company>
-	<Company name="VL" type="Private" basePrice="75" revenue="15"
+	<Company name="4_VL" type="Private" basePrice="75" revenue="15"
 			 longname="Veerdienst Vlissingen-Londen">
+		<SpecialProperty condition="ifOwnedByCompany" when="revenueStep"
+						 class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
+			<LocatedBonus name="Veer VL" location="J1" value="20"/>
+		</SpecialProperty>
 	</Company>
-	<Company name="RWS" type="Private" basePrice="80" revenue="20"
+	<Company name="5_RWS" type="Private" basePrice="80" revenue="20"
 		longname="Rijkswaterstaat">
+		<SpecialProperty condition="ifOwnedByCompany" when="tokenLayingStep"
+						 class="net.sf.rails.game.special.SpecialBaseTokenLay">
+			<SpecialBaseTokenLay extra="no" free="yes" requiresTile="yes"/>
+		</SpecialProperty>
+		<ClosingConditions>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
 	</Company>
-	<Company name="WS" type="Private" basePrice="100" revenue="20"
+	<Company name="6_WS" type="Private" basePrice="100" revenue="20"
 		longname="Werkspoor">
+		<SpecialProperty condition="ifOwnedByCompany" when="trainBuyingStep"
+						 class="net.sf.rails.game.special.SpecialTrainBuy">
+			<SpecialTrainBuy deduction="10%"/>
+		</SpecialProperty>
 	</Company>
-	<Company name="KO" type="Private" basePrice="100" revenue="10"
+	<Company name="7_KO" type="Private" basePrice="100" revenue="10"
 		longname="Koninklijke Ondersteuning">
-		<Info key="ComesWithShare" parm="NRS,10"/>
+		<Info key="ComesWithCertificate" parm="NRS,10"/>
+		<!-- Share is only reserved if KO is in play, this is done in the code -->
 	</Company>
 	
 	<!-- Note two supported colour specification formats:
 	     RGB decimal with commas and RGB hexadecimal without commas -->
-	<Company name="NBDS" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000A0"
+	<Company name="NBDS" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000FF"
 			longname="Noordbrabants-Duitse Spoorwegnaatschappij">
 		<Home hex="K12"/>
 	</Company>	     
-	<Company name="HSM" type="Public" tokens="4" fgColour="000000" bgColour="00FF00"
+	<Company name="HSM" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008800"
 			longname="Hollandsche IJzeren Spoorwegmaatschappij">
 		<Home hex="F9" city="1"/>
 	</Company>
-	<Company name="NRS" type="Public" tokens="4" fgColour="000000" bgColour="80FF80"
+	<Company name="NRS" type="Public" tokens="4" fgColour="000000" bgColour="FFFF40"
 			longname="Nederlandse Rhijnspoorweg">
 		<Home hex="F9" city="2"/>
 	</Company>
@@ -69,7 +109,7 @@
 			longname="S.A. des C.d.F d'Anvers a Rotterdam">
 		<Home hex="J7"/>
 	</Company>
-	<Company name="NCS" type="Public" tokens="4" fgColour="FFFFFF" bgColour="A040A0"
+	<Company name="NCS" type="Public" tokens="4" fgColour="FFFFFF" bgColour="A020A0"
 			longname="Nederlandse Centraal Spoorwegmaatschappij">
 		<Home hex="H9"/>
 	</Company>
@@ -78,22 +118,23 @@
 		<Home hex="I12"/>
 	</Company>
 
-	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
-		<Bidding initial="5" minimum="5" increment="5"/>
-		<Item name="AS" type="Private" basePrice="20">
+	<StartPacket roundClass="net.sf.rails.game.specific._SOH.StartRound_SOH">
+		<Bidding initial="0" minimum="5" increment="1"/>
+		<Item name="1_AS" type="Private" basePrice="20">
 		</Item>
-		<Item name="KKI" type="Private" basePrice="40">
+		<Item name="2_KKI" type="Private" basePrice="40">
 		</Item>
-		<Item name="ES" type="Private" basePrice="75">
+		<Item name="3_ES" type="Private" basePrice="75">
 		</Item>
-		<Item name="VL" type="Private" basePrice="75">
+		<Item name="4_VL" type="Private" basePrice="75">
 		</Item>
-		<Item name="RWS" type="Private" basePrice="80">
+		<Item name="5_RWS" type="Private" basePrice="80">
 		</Item>
-		<Item name="WS" type="Private" basePrice="100">
+		<Item name="6_WS" type="Private" basePrice="100">
 		</Item>
-		<Item name="KO" type="Private" basePrice="100">
-			<SubItem name="NRS" type="Public" />
+		<Item name="7_KO" type="Private" basePrice="100">
+			<!-- Note: the NRS share will be added only
+			if the KO is in the game and actually bought -->
 		</Item>
 	</StartPacket>
 </CompanyManager>

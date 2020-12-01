@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="net.sf.rails.game.GameManager">
+	<Component name="GameManager_SOH" class="net.sf.rails.game.specific._SOH.GameManager_SOH">
 		<Game name="SOH"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
@@ -13,17 +13,24 @@
 				</IfOption>
 			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
-			<StockRound>
-				<NoSaleInFirstSR/>
+			<StockRound class="net.sf.rails.game.specific._SOH.StockRound_SOH">
+				<NoSaleOfJustStartedCompany/>
 			</StockRound>
-            <OperatingRound>
-                <EmergencyTrainBuying mustBuyCheapestTrain="no" mayBuyFromCompany="yes"/>
+            <OperatingRound class = "net.sf.rails.game.specific._SOH.OperatingRound_SOH">
+                <EmergencyTrainBuying mustBuyCheapestTrain="no" mayBuyFromCompany="yes"
+						mustSellTreasuryShares="yes" companyBankruptcy="yes"/>
             </OperatingRound>
 		</GameParameters>
+		<GuiClasses>
+			<GameStatus class="net.sf.rails.ui.swing.gamespecific._SOH.GameStatus_SOH"/>
+			<ORUIManager class="net.sf.rails.ui.swing.gamespecific._SOH.ORUIManager_SOH"/>
+			<StatusWindow class="net.sf.rails.ui.swing.gamespecific._SOH.StatusWindow_SOH"/>
+		</GuiClasses>
 		<EndOfGame>
-			<Bankruptcy/>
-			<!--BankBreaks limit="0" finish="setOfORs"/-->
-			<!-- Fixed set of rounds to be inserted here -->
+			<!--Bankruptcy, does not apply here-->
+			<!--BankBreaks, does not apply here-->
+			<MaxPriceReached finish="currentOR"/><!--See also StockMarket.xml-->
+			<MaxRoundsReached number="15"/><!-- SRs + ORs -->
 		</EndOfGame>
 	</Component>
 	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
@@ -41,7 +48,7 @@
 	<Component name="Map" class="net.sf.rails.game.MapManager" file="Map.xml"/>
 	<Component name="CompanyManager" class="net.sf.rails.game.CompanyManager"
 		file="CompanyManager.xml"/>
-	<Component name="StockMarket" class="net.sf.rails.game.financial.StockMarket"
+	<Component name="StockMarket" class="net.sf.rails.game.specific._SOH.StockMarket_SOH"
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
@@ -70,11 +77,12 @@
 		<TrainType name="5" majorStops="5" cost="400" quantity="3">
             <NewPhase phaseName="5"/>
 		</TrainType>
-		<TrainType name="6" majorStops="6" cost="500" quantity="6">
+		<TrainType name="6" majorStops="6" cost="500" quantity="6"
+				alsoReleased="3E">
             <NewPhase phaseName="6"/>
 		</TrainType>
 		<TrainType name="3E" majorStops="3" cost="600" quantity="6">
-			<Score cities="double"/>
+			<Score cities="double" towns="no"/>
 			<NewPhase phaseName="6"/>
 	    </TrainType>
  	</Component>
@@ -83,9 +91,11 @@
 			but could as well be moved here. To be sorted out when we do 18US. -->
 		<!-- Each Phase's defaults are the previous one's values -->
 		<Phase name="2" >
-			<Tiles colour="yellow"/>
-			<Privates sellingAllowed="no"/>
+			<Tiles colour="yellow">
+				<Lays companyType="Public" colour="yellow" number="2"/>
+			</Tiles>
 			<OperatingRounds number="2"/>
+			<Privates sellingAllowed="no"/>
 			<Trains tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
@@ -98,14 +108,16 @@
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
 			<Trains rusted="3" limitStep="3"/>
-			<!--Privates close="yes"/-->
+			<Privates close="yes"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6">
-			<Trains rusted="3">
+			<Trains rusted="4">
 			</Trains>
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+		<!-- Trains may only end at major stops. Reuse the 1825 modifier -->
+		<Modifier class="net.sf.rails.game.specific._1825.TerminateAtMajorModifier" />
 	</Component>
 </ComponentManager>

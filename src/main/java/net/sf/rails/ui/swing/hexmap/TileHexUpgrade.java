@@ -31,7 +31,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
 
     // static fields
     private final TileUpgrade upgrade;
-    private final LayTile action;
+    private LayTile action; // Not final, must be changeable for SOH
 
     // validation fields
     private HexSidesSet rotations;
@@ -141,18 +141,18 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         excluded from the validation:
         As of the time of this writing, the following actions are supported.
         A private blocking hex might be unblocked by laying a tile
-        The tilelay might be free of cost, or carry a discount
+        The tile lay might be free of cost, or carry a discount
         Future Powers consist of Tile lays in a different Colour than the current Phase (1822)
         */
         if (action.getType()== action.SPECIAL_PROPERTY) {
 
-            SpecialTileLay sp = (SpecialTileLay)action.getSpecialProperty();
+            SpecialTileLay sp = action.getSpecialProperty();
             if (!sp.isFree()) {
                 if (notEnoughCash(0)) {
                     invalids.add(Invalids.NOT_ENOUGH_CASH);
                 }
             }
-            if (!(action.getSpecialProperty().getLocations().contains(hex.getHex()))) {
+            if (!(sp.getLocations() != null && sp.getLocations().contains(hex.getHex()))) {
                 if (hexIsBlocked()) {
                     invalids.add(Invalids.HEX_BLOCKED);
                 }
@@ -267,10 +267,12 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
             return false;
             // Special Property with specified hexes and require connection
             // TODO: Do we require the second test
-        } else if (action.getType() == LayTile.SPECIAL_PROPERTY
-                && action.getSpecialProperty().getLocations().contains(hex)) {
-            // FIXME: action.getSpecialProperty().getLocations() above can't actually contain a GUIHex
-            return action.getSpecialProperty().requiresConnection();
+        } else if (action.getType() == LayTile.SPECIAL_PROPERTY) {
+            SpecialTileLay sp = action.getSpecialProperty();
+            if (sp.getLocations() == null
+                    || sp.getLocations().contains(hex.getHex())) {
+                return sp.requiresConnection();
+            }
         }
         return true;
 
@@ -278,6 +280,10 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
 
     public LayTile getAction() {
         return action;
+    }
+
+    public void setAction (LayTile action) {
+        this.action = action;
     }
 
     /**
@@ -321,7 +327,7 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
 
     @Override
     public Set<HexUpgrade.Invalids> getInvalids() {
-        return ImmutableSet.<HexUpgrade.Invalids>copyOf(invalids);
+        return ImmutableSet.copyOf(invalids);
     }
 
     @Override

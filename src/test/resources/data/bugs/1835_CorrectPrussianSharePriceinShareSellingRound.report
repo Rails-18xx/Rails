@@ -395,7 +395,7 @@ CompanyDoesNotPayDividend,SX
 PRICE_MOVES_LOG,SX,88,C4,84,B4
 BuysTrain,SX,2,IPO,80
 PrivateCloses,LD
-All 2-trains are sold out, 2+2-trains now available
+NewTrainAvailable,2,2+2
 BuysTrain,SX,2+2,IPO,120
 FirstTrainBought,2+2
 BuysTrain,SX,2+2,IPO,120
@@ -412,7 +412,7 @@ Payout,Christian,5,1,10
 Payout,BY,5,1,10
 PRICE_MOVES_LOG,BY,86,C5,90,D5
 BuysTrain,BY,2+2,IPO,120
-All 2+2-trains are sold out, 3-trains now available
+NewTrainAvailable,2+2,3
 BuysTrain,BY,3,IPO,180
 FirstTrainBought,3
 StartOfPhase,3
@@ -602,7 +602,7 @@ CompanySplits,M4,60
 RECEIVES,M4,30
 Payout,Marc,30,1,100
 BuysTrain,M4,3,IPO,180
-All 3-trains are sold out, 3+3-trains now available
+NewTrainAvailable,3,3+3
  
 CompanyOperates,M5,Bjoern
 LaysTileAt,M5,23,F20,NW
@@ -1098,7 +1098,7 @@ LaysTileAt,HE,9,J12,W
 CompanyDoesNotPayDividend,HE
 PRICE_MOVES_LOG,HE,86,B3,82,A3
 BuysTrain,HE,3+3,IPO,270
-All 3+3-trains are sold out, 4-trains now available
+NewTrainAvailable,3+3,4
 BuysTrain,HE,4,IPO,360
 FirstTrainBought,4
 StartOfPhase,4
@@ -1119,7 +1119,7 @@ LaysTileAt,OL,25,E7,SW
 CompanyDoesNotPayDividend,OL
 PRICE_MOVES_LOG,OL,80,B5,72,A5
 BuysTrain,OL,4,IPO,360
-All 4-trains are sold out, 4+4-trains now available
+NewTrainAvailable,4,4+4
  
 CompanyOperates,BA,Rainer
 LaysTileAt,BA,16,I5,SE
@@ -1127,7 +1127,7 @@ LAYS_TOKEN_ON,BA,J8,40 Hex J8 (Frankfurt)
 CompanyDoesNotPayDividend,BA
 PRICE_MOVES_LOG,BA,66,B7,54,A7
 BuysTrain,BA,4+4,IPO,440
-All 4+4-trains are sold out, 5-trains now available
+NewTrainAvailable,4+4,5
 FirstTrainBought,4+4
 StartOfPhase,4+4
 TrainsRusted,2+2
@@ -1241,14 +1241,14 @@ Payout,Christian,13,1,10
 Payout,BY,13,1,10
 PRICE_MOVES_LOG,BY,140,I5,154,I4
 BuysTrain,BY,5,IPO,500
-All 5-trains are sold out, 5+5-trains now available
+NewTrainAvailable,5,5+5
  
 CompanyOperates,SX,Bjoern
 LaysTileAt,SX,63,H16,SW
 CompanyDoesNotPayDividend,SX
 PRICE_MOVES_LOG,SX,114,G5,104,F5
 BuysTrain,SX,5+5,IPO,600
-All 5+5-trains are sold out, 6-trains now available
+NewTrainAvailable,5+5,6
 FirstTrainBought,5+5
 BuysTrain,SX,6,IPO,600
 FirstTrainBought,6
@@ -1287,7 +1287,7 @@ CompanyDoesNotPayDividend,OL
 PRICE_MOVES_LOG,OL,72,A5,64,A6
 PresidentAddsCash,OL,Marc,130
 BuysTrain,OL,6,IPO,600
-All 6-trains are sold out, 6+6-trains now available
+NewTrainAvailable,6,6+6
  
 CompanyOperates,BA,Rainer
 LaysTileAt,BA,217,J6,SE

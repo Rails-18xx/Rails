@@ -186,7 +186,7 @@ ITEM_PRICE_REDUCED,11,70
 DeclinedToBid,Arne
 DeclinedToBid,Jupp
 BuysItemFor,Volker,11,70
-All 2-trains are sold out, 3-trains now available
+NewTrainAvailable,2,3
 Floats,11
 Has,1,0
 Has,2,0
@@ -624,7 +624,7 @@ Payout,Arne,75,5,10
 Payout,KKÖB,75,5,10
 PRICE_MOVES_LOG,KKÖB,90,E4,100,F4
 BuysTrain,KKÖB,3,IPO,200
-All 3-trains are sold out, 4-trains now available
+NewTrainAvailable,3,4
  
 CompanyOperates,FS,Volker
 LaysTileAt,FS,581,N11,SW
@@ -839,7 +839,7 @@ Payout,Jupp,44,4,10
 Payout,KPEV,22,2,10
 PRICE_MOVES_LOG,KPEV,110,G4,122,H4
 BuysTrain,KPEV,4,IPO,300
-All 4-trains are sold out, 5-trains now available
+NewTrainAvailable,4,5
  
 CompanyOperates,KKÖB,Arne
 LaysTileAtFor,KKÖB,4,O12,NW,60
@@ -961,7 +961,7 @@ Payout,Martin,108,6,10
 Payout,SNCF,18,1,10
 PRICE_MOVES_LOG,SNCF,110,G4,122,H4
 BuysTrain,SNCF,5,IPO,500
-All 5-trains are sold out, 6-trains now available
+NewTrainAvailable,5,6
 BUY_SHARE_LOG,SNCF,10,SNCF,Pool,122
  
 CompanyOperates,NS,Arne
@@ -1134,7 +1134,7 @@ CompanyPaysOutFull,KKÖB,240
 Payout,Arne,144,6,10
 PRICE_MOVES_LOG,KKÖB,122,H4,135,H3
 BuysTrain,KKÖB,6,IPO,600
-All 6-trains are sold out, 8-trains now available
+NewTrainAvailable,6,8
  
 CompanyOperates,NS,Arne
 LaysTileAt,NS,9,C8,NW
