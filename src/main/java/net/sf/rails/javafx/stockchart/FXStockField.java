@@ -41,6 +41,13 @@ public class FXStockField extends StackPane implements Observer {
             setBorder(new Border(new BorderStroke(javafx.scene.paint.Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         }
 
+        if (model.isBelowLedge()) {
+            setBorder(new Border(new BorderStroke(javafx.scene.paint.Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4,0,0,0))));
+        }
+
+        if (model.isLeftOfLedge()) {
+            setBorder(new Border(new BorderStroke(javafx.scene.paint.Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(0,4,0,0))));
+        }
         model.addObserver(this);
     }
 
