@@ -36,17 +36,17 @@ jobs:
           java-package: jdk
       - name: Get the version
         uses: little-core-labs/get-git-tag@v3.0.2
-        id: get_version
+        id: tagName
         with:
           tagRegex: "releases\\/(.*)"
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
-        run: ./gradlew -Pversion=${{ steps.get_version.outputs.tag }} clean build
+        run: ./gradlew -Pversion=${{ steps.tagName.outputs.tag }} clean build
       - name: Create Deb Installer
-        run: ./gradlew -Pversion=${{ steps.get_version.outputs.tag }} buildDebPackage
+        run: ./gradlew -Pversion=${{ steps.tagName.outputs.tag }} buildDebPackage
       - name: Create Rpm Installer
-        run: ./gradlew -Pversion=${{ steps.get_version.outputs.tag }} buildRpmPackage
+        run: ./gradlew -Pversion=${{ steps.tagName.outputs.tag }} buildRpmPackage
       - name: Rename Installers
         run: ./gradlew renameExecutables
       - name: Upload Deb Installer
@@ -73,15 +73,15 @@ jobs:
           java-package: jdk
       - name: Get the version
         uses: little-core-labs/get-git-tag@v3.0.2
-        id: get_version
+        id: tagName
         with:
           tagRegex: "releases\\/(.*)"
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
-        run: ./gradlew -Pversion="${{ steps.get_version.outputs.tag }}" clean build
+        run: ./gradlew -Pversion="${{ steps.tagName.outputs.tag }}" clean build
       - name: Create Exe Installer
-        run: ./gradlew -Pversion="${{ steps.get_version.outputs.tag }}" buildExePackage
+        run: ./gradlew -Pversion="${{ steps.tagName.outputs.tag }}" buildExePackage
       - name: Rename Installer
         run: ./gradlew renameExecutables
       - name: Upload Installer
@@ -103,15 +103,15 @@ jobs:
           java-package: jdk
       - name: Get the version
         uses: little-core-labs/get-git-tag@v3.0.2
-        id: get_version
+        id: tagName
         with:
           tagRegex: "releases\\/(.*)"
       - name: Execute Tests
         run: ./gradlew clean test
       - name: Build jar
-        run: ./gradlew -Pversion=${{ steps.get_version.outputs.tag }} clean build
+        run: ./gradlew -Pversion=${{ steps.tagName.outputs.tag }} clean build
       - name: Create Dmg Installer
-        run: ./gradlew -Pversion=${{ steps.get_version.outputs.tag }} buildDmgPackage
+        run: ./gradlew -Pversion=${{ steps.tagName.outputs.tag }} buildDmgPackage
       - name: Rename Installer
         run: ./gradlew renameExecutables
       - name: Upload Installer
@@ -129,7 +129,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Get the version
         uses: little-core-labs/get-git-tag@v3.0.2
-        id: get_version
+        id: tagName
         with:
           tagRegex: "releases\\/(.*)"
       - name: Download exe
@@ -154,10 +154,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: releases/${{ steps.get_version.outputs.tag }}
-          release_name: ${{ steps.get_version.outputs.tag }}
+          tag_name: releases/${{ steps.tagName.outputs.tag }}
+          release_name: ${{ steps.tagName.outputs.tag }}
           body: |
-            Rails-18xx version ${{ steps.get_version.outputs.tag }}
+            Rails-18xx version ${{ steps.tagName.outputs.tag }}
           draft: false
           prerelease: true
       - name: Upload exe
