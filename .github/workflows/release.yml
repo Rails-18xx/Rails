@@ -35,7 +35,7 @@ jobs:
           java-version: 14
           java-package: jdk
       - name: Get the version
-        uses: olegtarasov/get-tag@v2
+        uses: little-core-labs/get-git-tag@v3.0.2
         id: get_version
         with:
           tagRegex: "releases\\/(.*)"
@@ -72,7 +72,7 @@ jobs:
           java-version: 14
           java-package: jdk
       - name: Get the version
-        uses: olegtarasov/get-tag@v2
+        uses: little-core-labs/get-git-tag@v3.0.2
         id: get_version
         with:
           tagRegex: "releases\\/(.*)"
@@ -102,7 +102,7 @@ jobs:
           java-version: 14
           java-package: jdk
       - name: Get the version
-        uses: olegtarasov/get-tag@v2
+        uses: little-core-labs/get-git-tag@v3.0.2
         id: get_version
         with:
           tagRegex: "releases\\/(.*)"
@@ -128,7 +128,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Get the version
-        uses: olegtarasov/get-tag@v2
+        uses: little-core-labs/get-git-tag@v3.0.2
         id: get_version
         with:
           tagRegex: "releases\\/(.*)"
