@@ -15399,12 +15399,12 @@ object TTilesWrapper
         item
           JunType = jtCity
           Position = tp2SideF
-          Revenue = 20
+          Revenue = 30
         end
         item
           JunType = jtCity
           Position = tp2CornerD
-          Revenue = 20
+          Revenue = 30
         end>
     end
     item
