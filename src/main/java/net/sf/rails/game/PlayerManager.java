@@ -1,10 +1,6 @@
 package net.sf.rails.game;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -230,7 +226,7 @@ public class PlayerManager extends RailsManager implements Configurable {
     /**
      * @return a list of the next (active) playerOrder after the current player
      * (including/excluding the current player at the start)
-     * @boolean include the current player at the start
+     * @include include the current player at the start
      */
     public ImmutableList<Player> getNextPlayers(boolean include) {
         return getNextPlayersAfter(currentPlayer.value(), include, false);

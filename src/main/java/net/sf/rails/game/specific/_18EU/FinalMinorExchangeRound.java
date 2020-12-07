@@ -40,10 +40,25 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
         ReportBuffer.add(this, "");
         ReportBuffer.add(this, LocalText.getText("StartFinalMinorExchangeRound"));
 
-        playerManager.setCurrentPlayer(playerToStartFMERound);
+        // Check if the starting player is still active;
+        // if not, get the next one
+        Player startingPlayer = playerToStartFMERound;
+        boolean initial = true;
+        while (startingPlayer.isBankrupt()) {
+            if (initial) {
+                ReportBuffer.add(this, LocalText.getText("FirstPlayerIsBankrupt",
+                        startingPlayer.getId()));
+                initial = false;
+            } else {
+                ReportBuffer.add(this, LocalText.getText("PlayerIsBankrupt",
+                        startingPlayer.getId()));
+            }
+            startingPlayer = playerManager.getNextPlayer();
+        }
+        playerManager.setCurrentPlayer(startingPlayer);
         initPlayer();
         ReportBuffer.add(this, LocalText.getText("HasFirstTurn",
-                playerToStartFMERound.getId() ));
+                startingPlayer.getId() ));
     }
 
     /*----- General methods -----*/
@@ -68,8 +83,8 @@ public final class FinalMinorExchangeRound extends StockRound_18EU {
 
         List<PublicCompany> comps =
             companyManager.getAllPublicCompanies();
-        List<PublicCompany> minors = new ArrayList<PublicCompany>();
-        List<PublicCompany> targetCompanies = new ArrayList<PublicCompany>();
+        List<PublicCompany> minors = new ArrayList<>();
+        List<PublicCompany> targetCompanies = new ArrayList<>();
         String type;
 
         for (PublicCompany comp : comps) {

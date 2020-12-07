@@ -281,8 +281,10 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
             }
         }
         for (Player p : playerManager.getPlayers()) {
-            ReportBuffer.add(this, LocalText.getText("Has", p.getId(),
-                    Bank.format(this, p.getCashValue())));
+            if (!p.isBankrupt()) {
+                ReportBuffer.add(this, LocalText.getText("Has", p.getId(),
+                        Bank.format(this, p.getCashValue())));
+            }
         }
         // Inform GameManager
         gameManager.nextRound(this);

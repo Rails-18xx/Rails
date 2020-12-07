@@ -62,19 +62,8 @@ public class ShareSellingRound extends StockRound {
         this.dumpOtherCompaniesAllowed = dumpOtherCompaniesAllowed;
         log.debug("Forced selling, dumpOtherCompaniesAllowed = " + dumpOtherCompaniesAllowed);
         getRoot().getPlayerManager().setCurrentPlayer(sellingPlayer);
-        //getSellableShares();
         if (getSellableShares().isEmpty()) {
-            ReportBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
-                    Bank.format(this, this.cashToRaise.value())));
-            DisplayBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
-                    Bank.format(this, this.cashToRaise.value())));
-            if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY)) {
-                cashNeedingCompany.setBankrupt();
-                gameManager.registerCompanyBankruptcy();
-            } else {
-                currentPlayer.setBankrupt();
-                gameManager.registerPlayerBankruptcy();
-            }
+            declareBankruptcy();
         }
     }
 
@@ -276,16 +265,12 @@ public class ShareSellingRound extends StockRound {
         PublicCompany company =
             companyManager.getPublicCompany(action.getCompanyName());
         PublicCertificate cert = null;
-        PublicCertificate presCert = null;
-        List<PublicCertificate> certsToSell =
-                new ArrayList<PublicCertificate>();
+        PublicCertificate presCert;
+        List<PublicCertificate> certsToSell =  new ArrayList<>();
         Player dumpedPlayer = null;
-        int presSharesToSell = 0;
         int numberToSell = action.getNumber();
         int shareUnits = action.getShareUnits();
-        int presidentExchange = action.getPresidentExchange();
         int presidentShareNumbersToSell = 0;
-
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -371,76 +356,82 @@ public class ShareSellingRound extends StockRound {
                     }
                     break;
                 }
-
-                break;
             }
+            break;
+        }
 
-            int numberSold = action.getNumber();
-            if (errMsg != null) {
-                DisplayBuffer.add(this, LocalText.getText("CantSell",
-                        playerName,
-                        numberSold,
-                        companyName,
-                        errMsg));
-                return false;
-            }
+        int numberSold = action.getNumber();
+        if (errMsg != null) {
+            DisplayBuffer.add(this, LocalText.getText("CantSell",
+                    playerName,
+                    numberSold,
+                    companyName,
+                    errMsg));
+            return false;
+        }
 
-            // All seems OK, now do the selling.
+        // All seems OK, now do the selling.
 
-            // Selling price
-            int price = getCurrentSellPrice(company);
-            int cashAmount = numberSold * price * shareUnits;
+        // Selling price
+        int price = getCurrentSellPrice(company);
+        int cashAmount = numberSold * price * shareUnits;
 
-            // Save original price as it may be reused in subsequent sale actions in the same turn
-            boolean soldBefore = sellPrices.containsKey(company);
-            if (!soldBefore) {
-                sellPrices.put(company, company.getCurrentSpace());
-            }
+        // Save original price as it may be reused in subsequent sale actions in the same turn
+        boolean soldBefore = sellPrices.containsKey(company);
+        if (!soldBefore) {
+            sellPrices.put(company, company.getCurrentSpace());
+        }
 
+        String cashText = Currency.fromBank(cashAmount, currentPlayer);
 
-            String cashText = Currency.fromBank(cashAmount, currentPlayer);
-            if (numberSold == 1) {
-                ReportBuffer.add(this, LocalText.getText("SELL_SHARE_LOG",
-                        playerName,
-                        company.getShareUnit() * shareUnits,
-                        companyName,
-                        cashText));
-            } else {
-                ReportBuffer.add(this, LocalText.getText("SELL_SHARES_LOG",
-                        playerName,
-                        numberSold,
-                        company.getShareUnit() * shareUnits,
-                        numberSold * company.getShareUnit() * shareUnits,
-                        companyName,
-                        cashText));
-            }
+        if (numberSold == 1) {
+            ReportBuffer.add(this, LocalText.getText("SELL_SHARE_LOG",
+                    playerName,
+                    company.getShareUnit() * shareUnits,
+                    companyName,
+                    cashText));
+        } else {
+            ReportBuffer.add(this, LocalText.getText("SELL_SHARES_LOG",
+                    playerName,
+                    numberSold,
+                    company.getShareUnit() * shareUnits,
+                    numberSold * company.getShareUnit() * shareUnits,
+                    companyName,
+                    cashText));
+        }
 
-            adjustSharePrice(company, currentPlayer, numberSold, soldBefore);
+        adjustSharePrice(company, currentPlayer, numberSold, soldBefore);
 
-            if (!company.isClosed()) {
+        if (!company.isClosed()) {
 
-                executeShareTransfer(company, certsToSell,
-                        dumpedPlayer, presidentShareNumbersToSell);
-            }
+            executeShareTransfer(company, certsToSell,
+                    dumpedPlayer, presidentShareNumbersToSell);
+        }
 
-            cashToRaise.add(-numberSold * price * shareUnits);
+        cashToRaise.add(-cashAmount);
 
-            if (cashToRaise.value() <= 0) {
-                gameManager.finishShareSellingRound();
-            } else if (getSellableShares().isEmpty()) {
-                DisplayBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
-                        Bank.format(this, cashToRaise.value())));
-                if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY)) {
-                    // Currently not used, replaced by code in operatingRound.buyTrain().
-                    cashNeedingCompany.setBankrupt();
-                    gameManager.registerCompanyBankruptcy();
-                } else {
-                    currentPlayer.setBankrupt();
-                    gameManager.registerPlayerBankruptcy();
-                }
-            }
+        if (cashToRaise.value() <= 0) {
+            gameManager.finishShareSellingRound();
+        } else if (getSellableShares().isEmpty()) {
+           declareBankruptcy();
         }
         return true;
+    }
+
+    private void declareBankruptcy () {
+        String message = LocalText.getText("YouMustRaiseCashButCannot",
+                Bank.format(this, this.cashToRaise.value()));
+        ReportBuffer.add(this, message);
+        DisplayBuffer.add(this, message);
+        if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY)) {
+            // Currently not used, replaced by code in operatingRound.buyTrain().
+            cashNeedingCompany.setBankrupt();
+            gameManager.registerCompanyBankruptcy(cashNeedingCompany);
+        } else {
+            Currency.wireAll(currentPlayer, cashNeedingCompany);
+            gameManager.registerPlayerBankruptcy(currentPlayer);
+            currentPlayer.setBankrupt();
+        }
     }
 
     public int getRemainingCashToRaise() {

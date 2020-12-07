@@ -1598,7 +1598,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     public Player findNextPotentialPresident(int minimumShareNumber) {
-
         int requiredShareNumber = minimumShareNumber;
         Player potentialDirector = null;
 
@@ -2118,6 +2117,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     @Override
     public void setClosed() {
         closed.set(true);
+        reinitialise(); // to reset all values
 
         PortfolioOwner shareDestination;
         // If applicable, prepare for a restart
@@ -2127,7 +2127,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             } else {
                 shareDestination = getRoot().getBank().getUnavailable();
             }
-            reinitialise();
         } else {
             shareDestination = getRoot().getBank().getScrapHeap();
             inGameState.set(false);

@@ -699,7 +699,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         interruptedRound = getCurrentRound();
 
         // An id based on interruptedRound and company id
-        String id = "SSR_" + interruptedRound.getId() + "_" + cashNeedingCompany.getId();
+        String id = "SSR_" + interruptedRound.getId() + "_" + cashNeedingCompany.getId()+"_"+cashToRaise;
+
         // check if other companies can be dumped
         createRound(shareSellingRoundClass, id).start(
                 interruptedRound, player, cashToRaise, cashNeedingCompany,
@@ -1268,11 +1269,11 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
 
-    public void registerPlayerBankruptcy() {
+    public void registerPlayerBankruptcy(Player player) {
         endedByBankruptcy.set(true);
         String message =
                 LocalText.getText("PlayerIsBankrupt",
-                        getCurrentPlayer().getId());
+                        player.getId());
         ReportBuffer.add(this, message);
         DisplayBuffer.add(this, message);
         if (gameEndsWithBankruptcy) {
@@ -1282,10 +1283,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
     }
 
-    public void registerCompanyBankruptcy () {
+    public void registerCompanyBankruptcy (PublicCompany company) {
         OperatingRound or = (OperatingRound) interruptedRound;
         String message = LocalText.getText("CompanyIsBankrupt",
-                or.operatingCompany.value().getId());
+                company.getId());
         ReportBuffer.add(this, message);
         DisplayBuffer.add(this, message);
         if (currentRound.value() instanceof ShareSellingRound) {

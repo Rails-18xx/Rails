@@ -130,9 +130,9 @@ public class OperatingRound_18EU extends OperatingRound {
 
             // Set up a list per player of presided companies
             List<List<PublicCompany>> companiesPerPlayer =
-                    new ArrayList<List<PublicCompany>>(numberOfPlayers);
+                    new ArrayList<>(numberOfPlayers);
             for (int i = 0; i < numberOfPlayers; i++)
-                companiesPerPlayer.add(new ArrayList<PublicCompany>(4));
+                companiesPerPlayer.add(new ArrayList<>(4));
             List<PublicCompany> companies;
             // Sort out which players preside over wich companies.
             for (PublicCompany c : operatingCompanies.view()) {
@@ -227,7 +227,7 @@ public class OperatingRound_18EU extends OperatingRound {
     @Override
     public boolean checkForExcessTrains() {
 
-        excessTrainCompanies = new HashMap<Player, List<PublicCompany>>();
+        excessTrainCompanies = new HashMap<>();
         Player player;
         TrainCard pullmann;
         PortfolioModel portfolio;
@@ -255,7 +255,7 @@ public class OperatingRound_18EU extends OperatingRound {
                 player = comp.getPresident();
                 if (!excessTrainCompanies.containsKey(player)) {
                     excessTrainCompanies.put(player,
-                            new ArrayList<PublicCompany>(2));
+                            new ArrayList<>(2));
                 }
                 excessTrainCompanies.get(player).add(comp);
             }
@@ -270,11 +270,16 @@ public class OperatingRound_18EU extends OperatingRound {
     @Override
     public void resume() {
         if (playerManager.getCurrentPlayer().isBankrupt()) {
-            // Do not complete the train buying action
-            savedAction = null;
-            finishTurn();
-        }
-        if (gameManager.getCurrentRound() == this) {
+            // Is there a new president?
+            Player newPresident = operatingCompany.value().getPresident();
+            if (newPresident != null) {
+                // The new president must complete the train buying action
+                playerManager.setCurrentPlayer(operatingCompany.value().getPresident());
+                super.resume();
+            } else {
+                finishTurn();
+            }
+        } else if (gameManager.getCurrentRound() == this) {
             super.resume();
         }
     }
