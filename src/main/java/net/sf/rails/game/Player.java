@@ -287,4 +287,8 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
         return cash;
     }
 
+    public String toString() {
+        return getId();
+    }
+
 }

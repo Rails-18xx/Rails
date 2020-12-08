@@ -19,7 +19,7 @@
 		<InitialTrain type="2" cost="0" tradeable="yes"/>
 	</CompanyType>
 	<CompanyType name="Major" class="net.sf.rails.game.PublicCompany"
-		capitalisation="incremental" restartable="yes">
+				capitalisation="incremental" restartable="yes">
 		<Float percentage="50"/>
 		<TreasuryCanHoldOwnShares maxPerc="80"/>
 		<HomeBase lay="whenStarted"/>

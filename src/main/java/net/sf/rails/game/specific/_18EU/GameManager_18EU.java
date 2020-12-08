@@ -5,12 +5,7 @@ import java.util.List;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PlayerManager;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.Round;
+import net.sf.rails.game.*;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.model.PortfolioModel;
@@ -37,8 +32,8 @@ public class GameManager_18EU extends GameManager {
             if (playerToStartFMERound.value() != null
                     && relativeORNumber.value() == numOfORs.value()) {
                 // TODO: Fix the ID issue
-                createRound(FinalMinorExchangeRound.class, "FinalMinorExchangeRound").start
-                        ((Player) playerToStartFMERound.value());
+                createRound(FinalMinorExchangeRound.class, "FinalMinorExchangeRound")
+                        .start (playerToStartFMERound.value());
                 playerToStartFMERound.set(null);
             } else {
                 super.nextRound(round);
@@ -56,7 +51,7 @@ public class GameManager_18EU extends GameManager {
     }
 
     public Player getPlayerToStartFMERound() {
-        return (Player) playerToStartFMERound.value();
+        return playerToStartFMERound.value();
     }
 
     @Override
@@ -66,7 +61,7 @@ public class GameManager_18EU extends GameManager {
         Player bankrupter = getCurrentPlayer();
         Currency.toBankAll(bankrupter);
         PortfolioModel bpf = bankrupter.getPortfolioModel();
-        List<PublicCompany> presidencies = new ArrayList<PublicCompany>();
+        List<PublicCompany> presidencies = new ArrayList<>();
         for (PublicCertificate cert : bpf.getCertificates()) {
             if (cert.isPresidentShare()) presidencies.add(cert.getCompany());
         }
@@ -86,6 +81,9 @@ public class GameManager_18EU extends GameManager {
             if (newPresident != null) {
                 bankrupter.getPortfolioModel().swapPresidentCertificate(company,
                         newPresident.getPortfolioModel());
+                ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
+                        newPresident.getId(),
+                        company.getId()));
             } else {
                 company.setClosed();  // This also makes majors restartable
                 ReportBuffer.add(this, LocalText.getText("CompanyCloses", company.getId()));
@@ -93,7 +91,8 @@ public class GameManager_18EU extends GameManager {
         }
 
         // Dump all shares to pool
-        Portfolio.moveAll(PublicCertificate.class, bankrupter, getRoot().getBank());
+        Portfolio.moveAll(PublicCertificate.class, bankrupter,
+                getRoot().getBank().getPool());
         bankrupter.setBankrupt();
 
         // Finish the share selling round

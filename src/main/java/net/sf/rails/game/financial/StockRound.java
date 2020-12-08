@@ -140,6 +140,19 @@ public class StockRound extends Round {
         ReportBuffer.add(this, LocalText.getText("StartStockRound",
                 getStockRoundNumber()));
 
+        Player priorityPlayer = playerManager.getPriorityPlayer();
+        boolean initial = true;
+        while (priorityPlayer.isBankrupt()) {
+            if (initial) {
+                ReportBuffer.add(this, LocalText.getText("PriorityPlayerIsBankrupt",
+                        priorityPlayer.getId()));
+                initial = false;
+            } else {
+                ReportBuffer.add(this, LocalText.getText("PlayerIsBankrupt",
+                        priorityPlayer.getId()));
+            }
+            priorityPlayer = playerManager.setPriorityPlayerToNext();
+        }
         playerManager.setCurrentToPriorityPlayer();
         startingPlayer = playerManager.getCurrentPlayer(); // For the Report
         ReportBuffer.add(this, LocalText.getText("HasPriority",

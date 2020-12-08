@@ -397,9 +397,9 @@ public class OperatingRound extends Round implements Observer {
 
 
         Certificate cert =
-                ipoHasShare ? (PublicCertificate) ipo.findCertificate(publicCompany,
-                        false) : (PublicCertificate) pool.findCertificate(publicCompany,
-                        false);
+                ipoHasShare
+                        ? ipo.findCertificate(publicCompany,false)
+                        : pool.findCertificate(publicCompany,false);
         cert.moveTo(player);
         ReportBuffer.add(this, LocalText.getText("SwapsPrivateForCertificate",
                 player.getId(),
@@ -754,8 +754,7 @@ public class OperatingRound extends Round implements Observer {
     }
 
     public int getOperatingCompanyIndex() {
-        int index = operatingCompanies.indexOf(getOperatingCompany());
-        return index;
+        return operatingCompanies.indexOf(getOperatingCompany());
     }
 
     /*
@@ -2974,7 +2973,7 @@ public class OperatingRound extends Round implements Observer {
                             Bank.format(this, cashToRaise)));
                     if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY)) {
                         company.setBankrupt();
-                        gameManager.registerCompanyBankruptcy();
+                        gameManager.registerCompanyBankruptcy(company);
 
                         return true;
                     }
@@ -3121,8 +3120,6 @@ public class OperatingRound extends Round implements Observer {
         }
 
         if (actualPresidentCash > 0) {
-            // FIXME: It used to be presidentCash, should it not have been
-            // actualPresidentCash
             // MoneyModel.cashMove(currentPlayer, operatingCompany.value(),
             // presidentCash);
             String cashText =

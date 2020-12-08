@@ -94,10 +94,11 @@ public abstract class Portfolio<T extends Ownable> extends Model implements Iter
      * Moves all items of a specific type from one owner to the other
      */
     public static <T extends Ownable> void moveAll(Class<T> type, Owner owner, Owner newOwner) {
-        // get the portfolio
-        Portfolio<T> pf = owner.getRoot().getStateManager().getPortfolioManager().getPortfolio(type, newOwner);
+        // get the portfolios
+        //Portfolio<T> pf = owner.getRoot().getStateManager().getPortfolioManager().getPortfolio(type, newOwner);
+        Portfolio<T> pf = owner.getRoot().getStateManager().getPortfolioManager().getPortfolio(type, owner);
         // and move items
-        pf.moveAll(newOwner);
+        if (pf != null) pf.moveAll(newOwner);
     }
 
 }

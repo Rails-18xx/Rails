@@ -106,9 +106,6 @@ Limitation:
 		<Description>18EU - A century of railroading in Europe
 (c) 1997-2004 David G.D. Hecht
 Published 2004 by Deep Thought Games, LLC
- 
-Not yet implemented:
-- Bankruptcy rules (game currently hangs when a player goes bankrupt)
 		</Description>
 		<Players minimum="2" maximum="6"/>
 	</Game>
