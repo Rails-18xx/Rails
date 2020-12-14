@@ -68,7 +68,7 @@ dependencies {
     implementation 'com.google.guava:guava:23.0'
     implementation 'net.java.dev.designgridlayout:designgridlayout:1.11'
     implementation 'org.dockingframes:docking-frames-common:1.1.1'
-    implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.2'
+    implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.3'
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation 'org.apache.commons:commons-lang3:3.11'
     implementation 'org.apache.commons:commons-text:1.9'
