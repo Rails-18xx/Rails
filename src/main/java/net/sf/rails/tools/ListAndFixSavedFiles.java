@@ -1,10 +1,7 @@
 package net.sf.rails.tools;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -26,6 +23,7 @@ import net.sf.rails.ui.swing.elements.ActionMenuItem;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
 import net.sf.rails.util.Util;
+import rails.game.action.BuyCertificate;
 import rails.game.action.BuyTrain;
 import rails.game.action.LayTile;
 import rails.game.action.PossibleAction;
@@ -60,9 +58,6 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
 
     private static Logger log;
 
-    /**
-     * @param args
-     */
     public static void main(String[] args) {
         // intialize configuration
         ConfigManager.initConfiguration(false);
@@ -259,14 +254,11 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
 
 
     public void scrollDown (int pos) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if (vbarPos == -1)
-                    messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
-                else
-                    messageWindow.vbar.setValue(vbarPos);
-            }
+        SwingUtilities.invokeLater(() -> {
+            if (vbarPos == -1)
+                messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
+            else
+                messageWindow.vbar.setValue(vbarPos);
         });
     }
 
@@ -348,7 +340,9 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         if (correctedAction instanceof BuyTrain) {
             new BuyTrainDialog ((BuyTrain)correctedAction);
         } else if (correctedAction instanceof LayTile) {
-            new LayTileDialog ((LayTile)correctedAction);
+            new LayTileDialog((LayTile) correctedAction);
+        } else if (correctedAction instanceof BuyCertificate) {
+            new BuyCertificateDialog ((BuyCertificate) correctedAction);
         } else {
             JOptionPane.showMessageDialog(this, "Action type '" + correctedAction.getClass().getSimpleName()
                     + "' cannot yet be edited");
@@ -507,6 +501,37 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             }
 
             log.debug("Action is {}", action);
+            return action;
+
+        }
+    }
+
+    private class BuyCertificateDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private BuyCertificate action;
+
+        BuyCertificateDialog(BuyCertificate action) {
+            super("Edit BuyCertificate");
+            this.action = action;
+            addTextField(this, "President",
+                    action.isPresident(),
+                    String.valueOf(action.isPresident()));  // 0
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+            log.info("Action was {}", action);
+            String input = "";
+            try {
+                input = ((JTextField)inputElements.get(0)).getText();
+                boolean president = Boolean.valueOf(input);
+                action.setPresident(president);
+            } catch (NumberFormatException e) {
+                log.error ("Error in president: {}", input, e);
+            }
+
+            log.info("Action is {}", action);
             return action;
 
         }

@@ -6,8 +6,6 @@ import net.sf.rails.game.financial.StockSpace;
 
 public class PublicCompany_18Scan extends PublicCompany {
 
-    transient private boolean enabled = false;
-
     public PublicCompany_18Scan (RailsItem parent, String id) {
         super(parent, id);
     }
@@ -34,5 +32,4 @@ public class PublicCompany_18Scan extends PublicCompany {
             return hasTrains();
         }
     }
-
 }

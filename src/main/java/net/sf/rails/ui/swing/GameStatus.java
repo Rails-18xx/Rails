@@ -106,7 +106,7 @@ public class GameStatus extends GridPanel implements ActionListener {
      * Next Field is needed for the direct payment of Income and display of sum
      * during an OR for a Company, that is not linked to a share.
      */
-    private Field compDirectRevenue[];
+    private Field[] compDirectRevenue;
     private int compDirectRevXOffset, compDirectRevYOffset;
 
 
@@ -785,7 +785,8 @@ public class GameStatus extends GridPanel implements ActionListener {
                         setupStartCompany ((StartCompany) buy, buyActions, buyAmounts, options);
 
                     } else {
-                        options.add(LocalText.getText("BuyCertificate",
+                        String key = buy.isPresident() ? "BuyPresidentCert" : "BuyCertificate";
+                        options.add(LocalText.getText(key,
                                 sharePerCert,
                                 companyName,
                                 buy.getFromPortfolio().getParent().getId(),
@@ -857,7 +858,7 @@ public class GameStatus extends GridPanel implements ActionListener {
                         LocalText.getText("CorrectCashDialogMessage", cca.getCashHolderName()),
                         LocalText.getText("CorrectCashDialogTitle"),
                         JOptionPane.QUESTION_MESSAGE, null, null, 0);
-                if (amountString.substring(0,1).equals("+"))
+                if (amountString.charAt(0) == '+')
                     amountString = amountString.substring(1);
                 int amount;
                 try {
@@ -900,13 +901,13 @@ public class GameStatus extends GridPanel implements ActionListener {
             startPrices = buy.getStartPrices();
             Arrays.sort(startPrices);
             if (startPrices.length > 1) {
-                for (int i = 0; i < startPrices.length; i++) {
+                for (int startPrice : startPrices) {
                     options.add(LocalText.getText("StartCompany",
-                            gameUIManager.format(startPrices[i]),
+                            gameUIManager.format(startPrice),
                             buy.getSharePerCertificate(),
-                            gameUIManager.format(buy.getSharesPerCertificate() * startPrices[i]) ));
+                            gameUIManager.format(buy.getSharesPerCertificate() * startPrice)));
                     buyActions.add(buy);
-                    buyAmounts.add(startPrices[i]);
+                    buyAmounts.add(startPrice);
                 }
             } else {
                 options.add (LocalText.getText("StartACompany",

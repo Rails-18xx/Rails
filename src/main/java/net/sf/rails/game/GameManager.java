@@ -14,6 +14,7 @@ import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.special.SpecialBonusTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.*;
+import net.sf.rails.game.state.Currency;
 import net.sf.rails.ui.swing.GameUIManager;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
@@ -300,6 +301,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                     setGameParameter(GameDef.Parm.EMERGENCY_MUST_SELL_TREASURY_SHARES,
                             emergencyTag.getAttributeAsBoolean("mustSellTreasuryShares",
                                     GameDef.Parm.EMERGENCY_MUST_SELL_TREASURY_SHARES.defaultValueAsBoolean()));
+                    setGameParameter(GameDef.Parm.MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE,
+                            emergencyTag.getAttributeAsBoolean("mustBuyTrainEvenIfNoRoute",
+                                    GameDef.Parm.MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE.defaultValueAsBoolean()));
                 }
                 Tag revenueIncrementTag = orTag.getChild("RevenueIncrement");
                 if (revenueIncrementTag != null) {
@@ -1295,8 +1299,63 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         or.finishTurn();
     }
 
+    /**
+     * Process the effects of a player going bankrupt, without ending the game.
+     * This code applies to (most of) the David Hecht games.
+     * So far 1826, 18EU, 18VA, 18Scan have been identified to use this code.
+     */
     protected void processPlayerBankruptcy() {
-        // Currently a stub, don't know if there is any generic handling (EV)
+
+        // Assume default case as in 18EU: all assets to Bank/Pool
+        Player bankrupter = getCurrentPlayer();
+        Currency.toBankAll(bankrupter); // All money has already gone to company
+        PortfolioModel bpf = bankrupter.getPortfolioModel();
+        List<PublicCompany> presidencies = new ArrayList<>();
+        for (PublicCertificate cert : bpf.getCertificates()) {
+            if (cert.isPresidentShare()) presidencies.add(cert.getCompany());
+        }
+        for (PublicCompany company : presidencies) {
+            // Check if the presidency is dumped onto someone
+            Player newPresident = null;
+            int maxShare = 0;
+            PlayerManager pm = getRoot().getPlayerManager();
+            for (Player player : pm.getNextPlayers(false)) {
+                int share = player.getPortfolioModel().getShare(company);
+                if (share >= company.getPresidentsShare().getShare()
+                        && (share > maxShare)) {
+                    maxShare = share;
+                    newPresident = player;
+                }
+            }
+            if (newPresident != null) {
+                bankrupter.getPortfolioModel().swapPresidentCertificate(company,
+                        newPresident.getPortfolioModel());
+                ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
+                        newPresident.getId(),
+                        company.getId()));
+            } else {
+                // This process is game-dependent.
+                processCompanyAfterPlayerBankruptcy(bankrupter, company);
+            }
+        }
+
+        // Dump all shares to pool
+        Portfolio.moveAll(PublicCertificate.class, bankrupter,
+                getRoot().getBank().getPool());
+        bankrupter.setBankrupt();
+
+        // Finish the share selling round
+        if (getCurrentRound() instanceof ShareSellingRound) {
+            finishShareSellingRound();
+        }
+    }
+
+    /** Stub, to be implemented by per-game subclasses.
+     *  Only to be called by processPlayerBankruptcy().
+     * (Perhaps a default version can be put here if sensible)
+     */
+    protected void processCompanyAfterPlayerBankruptcy(Player player, PublicCompany company) {
+        return;
     }
 
     public void registerBrokenBank() {
@@ -1373,8 +1432,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         List<String> b = new ArrayList<>();
 
         /* Sort players by total worth */
-        List<Player> rankedPlayers = new ArrayList<>();
-        rankedPlayers.addAll(getRoot().getPlayerManager().getPlayers());
+        List<Player> rankedPlayers = new ArrayList<>(getRoot().getPlayerManager().getPlayers());
         Collections.sort(rankedPlayers);
 
         /* Report winner */

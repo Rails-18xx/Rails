@@ -35,7 +35,7 @@ public class ShareSellingRound extends StockRound {
     protected boolean dumpOtherCompaniesAllowed;
 
     protected List<SellShares> sellableShares;
-    protected int sellableSharesValue;
+    //protected int sellableSharesValue; // unused, may be useful later
 
     /**
      * Created using Configure
@@ -49,8 +49,8 @@ public class ShareSellingRound extends StockRound {
 
     public void start(RoundFacade parentRound, Player sellingPlayer, int cashToRaise,
             PublicCompany cashNeedingCompany, boolean dumpOtherCompaniesAllowed) {
-        log.info("Share selling round started, player="
-                +sellingPlayer.getId()+" cash="+cashToRaise);
+        log.info("Share selling round started, player={} cash={}",
+                sellingPlayer.getId(), cashToRaise);
         ReportBuffer.add(this, LocalText.getText("PlayerMustSellShares",
                 sellingPlayer.getId(),
                 Bank.format(this, cashToRaise)));
@@ -60,7 +60,7 @@ public class ShareSellingRound extends StockRound {
         this.cashToRaise = IntegerState.create(this, "CashToRaise", cashToRaise);
 
         this.dumpOtherCompaniesAllowed = dumpOtherCompaniesAllowed;
-        log.debug("Forced selling, dumpOtherCompaniesAllowed = " + dumpOtherCompaniesAllowed);
+        log.debug("Forced selling, dumpOtherCompaniesAllowed={}", dumpOtherCompaniesAllowed);
         getRoot().getPlayerManager().setCurrentPlayer(sellingPlayer);
         if (getSellableShares().isEmpty()) {
             declareBankruptcy();
@@ -85,7 +85,7 @@ public class ShareSellingRound extends StockRound {
         setSellableShares();
 
         for (PossibleAction pa : possibleActions.getList()) {
-            log.debug(currentPlayer.getId() + " may: " + pa.toString());
+            log.debug("{} may: {}", currentPlayer.getId(), pa.toString());
         }
 
         return true;
@@ -106,7 +106,7 @@ public class ShareSellingRound extends StockRound {
     protected void findSellableShares() {
 
         sellableShares = new ArrayList<>();
-        sellableSharesValue = 0;
+        //sellableSharesValue = 0;
 
         PortfolioModel playerPortfolio = currentPlayer.getPortfolioModel();
 
@@ -119,21 +119,32 @@ public class ShareSellingRound extends StockRound {
             // Check if shares of this company can be sold at all
             if (!mayPlayerSellShareOfCompany(company)) continue;
 
-            int ownedShare = playerPortfolio.getShareNumber(company);
-            if (ownedShare == 0) {
+            int ownedShares = playerPortfolio.getShareNumber(company);
+            if (ownedShares == 0) {
                 continue;
             }
 
             /* May not sell more than the Pool can accept */
             int poolAllowsShares = PlayerShareUtils.poolAllowsShareNumbers(company);
-            log.debug("company = " + company);
-            log.debug("poolAllowShares = " + poolAllowsShares);
-            int maxShareToSell = Math.min(ownedShare, poolAllowsShares);
+            log.debug("company={}", company);
+            log.debug("poolAllowShares={}", poolAllowsShares);
+            int maxSharesToSell = Math.min(ownedShares, poolAllowsShares);
 
             // if no share can be sold
-            if (maxShareToSell == 0) {
+            if (maxSharesToSell == 0) {
                 continue;
             }
+            // May not sell more than is needed to buy the train
+            int price = getCurrentSellPrice(company);
+            while (maxSharesToSell > 0
+                    && ((maxSharesToSell - 1) * (price/company.getShareUnitsForSharePrice()))
+                        > cashToRaise.value()) {
+                maxSharesToSell--;
+            }
+
+            // For debugging 18Scan only
+            //maxSharesToSell = 5;
+
             /*
              * If the current Player is president, check if he can dump the
              * presidency onto someone else
@@ -158,26 +169,31 @@ public class ShareSellingRound extends StockRound {
             boolean dumpIsPossible = false;
             if (company.getPresident() == currentPlayer) {
 
-                log.debug("Forced selling check: company = " + company +
-                        ", ownedShare = " + ownedShare + ", maxShareToSell = " + maxShareToSell);
+                log.debug("Forced selling check: company={}, ownedShare={}, maxShareToSell={}",
+                        company, ownedShares, maxSharesToSell);
+                int presidentShareSize = company.getPresidentsShare().getShares();
                 if (company == cashNeedingCompany || !dumpOtherCompaniesAllowed) {
                     // case A: selling of president not allowed (either company triggered share selling or no dump of others)
                      Player potential = company.findPlayerToDump();
                      if (potential != null) {
                          // limit shares to sell to difference between president and second largest ownership
-                         maxShareToSell = ownedShare - potential.getPortfolioModel().getShareNumber(company);
+                         maxSharesToSell = ownedShares - potential.getPortfolioModel().getShareNumber(company);
                          possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
-                         log.debug("dumpThreshold = " + dumpThreshold);
-                         log.debug("possibleSharesToSell = " + possibleSharesToSell);
+                         log.debug("dumpThreshold={}", dumpThreshold);
+                         log.debug("possibleSharesToSell={}", possibleSharesToSell);
                      }
                 } else {
                     // case B: potential sale of president certificate possible
-                    if (ownedShare - maxShareToSell < company.getPresidentsShare().getShares()) {
-                        // dump necessary
-                        // there is a player with holding exceeding the president share
+                    if (ownedShares - maxSharesToSell < presidentShareSize) {
+                        dumpThreshold = ownedShares - presidentShareSize + 1;
+                        // Is dumping possible?
                          if (company.findPlayerToDump() != null) {
                              possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
                              dumpIsPossible = true;
+                         } else {
+                             // No dumpee found
+                             maxSharesToSell = Math.min (maxSharesToSell,
+                                     ownedShares - presidentShareSize);
                          }
                     } else {
                         // no dump necessary
@@ -185,30 +201,27 @@ public class ShareSellingRound extends StockRound {
                         dumpIsPossible = false;
                     }
                 }
-                // keep presidentShare at minimum
-                maxShareToSell = Math.min(maxShareToSell, ownedShare - company.getPresidentsShare().getShares());
             }
-            // Check the price. If a cert was sold before this turn, the original price is still valid.
-            int price = getCurrentSellPrice(company);
-
 
             /* Allow for different share units (as in 1835) */
             SortedMultiset<Integer> certCount = playerPortfolio.getCertificateTypeCounts(company);
-
+            log.debug ("certCount={}", certCount);
             // Make sure that single shares are always considered (due to possible dumping)
             SortedSet<Integer> certSizeElements = Sets.newTreeSet(certCount.elementSet());
             certSizeElements.add(1);
+            log.debug ("CertSizeElements={}", certSizeElements);
 
             for (int shareSize : certSizeElements) {
                 int number = certCount.count(shareSize);
 
                 // If you can dump a presidency, you add the shareNumbers of the presidency
                 // to the single shares to be sold
-                if (dumpIsPossible && shareSize == 1 && number + company.getPresidentsShare().getShares() >= dumpThreshold) {
+                if (dumpIsPossible && shareSize == 1
+                        && number + company.getPresidentsShare().getShares() >= dumpThreshold) {
                     number += company.getPresidentsShare().getShares();
                     // but limit this to the pool
                     number = Math.min(number, poolAllowsShares);
-                    log.debug("Dump is possible increased single shares to " + number);
+                    log.debug("Dump is possible increased single shares to {}", number);
                 }
 
                 if (number == 0) {
@@ -216,14 +229,11 @@ public class ShareSellingRound extends StockRound {
                 }
 
                 // Check against the maximum share that can be sold
-                number = Math.min(number, maxShareToSell / shareSize);
+                number = Math.min(number, maxSharesToSell / shareSize);
 
                 if (number <= 0) {
                     continue;
                 }
-                // May not sell more than is needed to buy the train
-                while (number > 0 && ((number - 1) * (price/ company.getShareUnitsForSharePrice()))
-                        > cashToRaise.value()) number--;
                 for (int i = 1; i <= number; i++) {
                     if (checkIfSplitSaleOfPresidentAllowed()) {
                         // check if selling would dump the company
@@ -241,7 +251,7 @@ public class ShareSellingRound extends StockRound {
                         if (certCount.isEmpty() && number == 2) { // 1835 director share only
                             //ToDO : Adjust Logic for other Games with MultipleShareDirectors where splitting the share is not allowed
                             sellableShares.add(new SellShares(company, 2, 1, price, 1));
-                            sellableSharesValue += price;
+                            //sellableSharesValue += price;
                         } else if ((i == 1) && ((!certCount.isEmpty()) && (number == 2))) { //1835 director share once and an action for the single share in the directors hand if we have the room :)
                             sellableShares.add(new SellShares(company, 2, 1, price, 1));
                             sellableShares.add(new SellShares(company, shareSize, i, price, 1));
@@ -413,7 +423,7 @@ public class ShareSellingRound extends StockRound {
         if (cashToRaise.value() <= 0) {
             gameManager.finishShareSellingRound();
         } else if (getSellableShares().isEmpty()) {
-           declareBankruptcy();
+            declareBankruptcy();
         }
         return true;
     }
@@ -444,7 +454,7 @@ public class ShareSellingRound extends StockRound {
 
     @Override
     public String toString() {
-        return "ShareSellingRound";
+        return getId();
     }
 
 }

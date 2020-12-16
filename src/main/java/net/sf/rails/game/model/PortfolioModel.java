@@ -198,10 +198,12 @@ public class PortfolioModel extends RailsModel {
      * @return (first) certificate found, null if not found
      */
     public PublicCertificate findCertificate(PublicCompany company, int shares, boolean president) {
+        log.debug("Looking for {} {} shares, pres={}",
+                company, shares, president);
         for (PublicCertificate cert : certificates.getPortfolio().items(company)) {
-            if (company.getShareUnit() == 100 || president
-                && cert.isPresidentShare() || !president
-                && !cert.isPresidentShare() && cert.getShares() == shares) {
+            if (company.getShareUnit() == 100
+                    || president && cert.isPresidentShare()
+                    || !president && !cert.isPresidentShare() && cert.getShares() == shares) {
                 return cert;
             }
         }
@@ -388,7 +390,7 @@ public class PortfolioModel extends RailsModel {
 
     /**
      * Add a train to the train portfolio
-     * @Deprecated Only train cards will be moved,
+     * Only train cards will be moved,
      * use addTrainCard(); its trains will follow automatically.
      */
     @Deprecated
@@ -400,7 +402,7 @@ public class PortfolioModel extends RailsModel {
     /**
      * Add a train card to the portfolio.
      * The actual trains are defined via the cards.
-     * @param card
+     * @param card A train card to be added to the portfolio
       */
     public void addTrainCard (TrainCard card) {
         trainCards.getPortfolio().add(card);
@@ -533,6 +535,6 @@ public class PortfolioModel extends RailsModel {
 
     @Override
     public String toString() {
-        return getName();
+        return getParent().getId();
     }
 }

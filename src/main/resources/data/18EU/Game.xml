@@ -11,7 +11,7 @@
 			<OperatingRound
 				class="net.sf.rails.game.specific._18EU.OperatingRound_18EU">
 				<EmergencyTrainBuying mustBuyCheapestTrain="no"
-					mayBuyFromCompany="yes"/>
+					mustBuyTrainEvenIfNoRoute="yes" mayBuyFromCompany="yes"/>
 			</OperatingRound>
 			<PlayerShareLimit percentage="60"/>
 			<BankPoolLimit percentage="50"/>
