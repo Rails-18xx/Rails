@@ -3000,7 +3000,7 @@ public class OperatingRound extends Round implements Observer {
                         numberSold = Math.min (numberSold,
                                 GameDef.getParmAsInt(this,
                                         GameDef.Parm.POOL_SHARE_LIMIT )/ company.getShareUnit()
-                                        - pool.getShareNumber(company));
+                                        - pool.getShares(company));
                         int raisedCash = numberSold * sharePrice;
 
                         // Get the money
@@ -3534,7 +3534,7 @@ public class OperatingRound extends Round implements Observer {
                 numberToSell = Math.min(numberToSell,
                         GameDef.getParmAsInt(this,
                                 GameDef.Parm.POOL_SHARE_LIMIT) / company.getShareUnit()
-                            - pool.getShareNumber(company));
+                            - pool.getShares(company));
                 value += numberToSell * sharePrice;
 
             }

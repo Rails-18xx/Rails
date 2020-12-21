@@ -132,7 +132,7 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
     }
 
     SortedSet<Integer> getshareNumberCombinations(PublicCompany company, int maxShareNumber) {
-        return shareNumberCombinations(certificates.items(company), maxShareNumber);
+        return shareNumberCombinations(certificates.items(company), maxShareNumber, true);
     }
 
     boolean containsMultipleCert(PublicCompany company) {
@@ -171,7 +171,9 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
      * @param maxShareNumber maximum share number that is to achieved
      * @return sorted list of share numbers that are possible from the list of certificates
      */
-    public static SortedSet<Integer> shareNumberCombinations(Collection<PublicCertificate> certificates, int maxShareNumber) {
+    public static SortedSet<Integer> shareNumberCombinations(Collection<PublicCertificate> certificates,
+                                                             int maxShareNumber,
+                                                             boolean includePresident) {
 
         // create vector for combinatorics
         ICombinatoricsVector<PublicCertificate> certVector = CombinatoricsFactory.createVector(certificates);
@@ -183,6 +185,7 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
         for (ICombinatoricsVector<PublicCertificate> certSubSet : certGenerator) {
             int sum = 0;
             for (PublicCertificate cert : certSubSet) {
+                if (cert.isPresidentShare() && !includePresident) continue;
                 sum += cert.getShares();
                 if (sum > maxShareNumber) {
                     break;

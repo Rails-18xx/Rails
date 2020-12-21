@@ -920,12 +920,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             if (!isGameOver()) setCorrectionActions();
         }
 
-        logActionTaken (action);
-
        // Log possible actions (normally this is outcommented)
         for (PossibleAction a : possibleActions.getList()) {
             log.info("{}", a);
         }
+
+        logActionTaken (action);
 
         // New in Rails2.0: Check if the action is allowed
         if (!possibleActions.validate(action)) {
@@ -1226,14 +1226,14 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         for (PublicCompany comp : getAllPublicCompanies()) {
             poolSpace.put(comp,
                     getParmAsInt(GameDef.Parm.POOL_SHARE_LIMIT) / comp.getShareUnit()
-                    - pool.getShareNumber(comp));
+                    - pool.getShares(comp));
         }
 
         // Treasury shares
         if (company.canHoldOwnShares()) {
             // Other companies (as in 1841) not yet considered.
             PortfolioModel portfolio = company.getPortfolioModel();
-            int numberAvailable = portfolio.getShareNumber(company);
+            int numberAvailable = portfolio.getShares(company);
             int numberToSell = 0;
             if (numberAvailable > 0) {
                 int sharePrice = company.getCurrentSpace().getPrice();

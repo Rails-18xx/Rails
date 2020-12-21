@@ -503,7 +503,7 @@ public class StockRound extends Round {
                 continue;
             }
 
-            int ownedShare = playerPortfolio.getShareNumber(company);
+            int ownedShare = playerPortfolio.getShares(company);
             if (ownedShare == 0) {
                 continue;
             }
@@ -548,7 +548,7 @@ public class StockRound extends Round {
             if (company.getPresident() == currentPlayer) {
                 Player potential = company.findPlayerToDump();
                 if (potential != null) {
-                    dumpThreshold = ownedShare - potential.getPortfolioModel().getShareNumber(company) + 1;
+                    dumpThreshold = ownedShare - potential.getPortfolioModel().getShares(company) + 1;
                     possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
                     dumpIsPossible = true;
                     log.debug("dumpThreshold = {}", dumpThreshold);
@@ -1290,7 +1290,8 @@ public class StockRound extends Round {
                 }
             }
 
-            certsToSell = PlayerShareUtils.findCertificatesToSell(company, currentPlayer, numberToSell, shareUnits);
+            certsToSell = PlayerShareUtils.findCertificatesToSell(company, currentPlayer, numberToSell,
+                    shareUnits, dumpedPlayer != null);
 
             // reduce numberToSell to double check
             for (PublicCertificate c : certsToSell) {
@@ -1357,6 +1358,10 @@ public class StockRound extends Round {
             executeShareTransfer(company, certsToSell,
                     dumpedPlayer, presidentShareNumbersToSell);
         }
+
+        // The above does not transfer the presidency
+        // if onlt non-pres. shares have been sold
+        company.checkPresidency (dumpedPlayer);
 
         // Remember that the player has sold this company this round.
         currentPlayer.setSoldThisRound(company);

@@ -241,12 +241,18 @@ public class PlayerManager extends RailsManager implements Configurable {
      */
     public ImmutableList<Player> getNextPlayersAfter(Player player, boolean includeAtStart, boolean includeAtEnd) {
         ImmutableList.Builder<Player> playersAfter = ImmutableList.builder();
+        // For all certainty, build a normal list in parallel
+        // and check if a player was already included.
+        // It is needed!
+        List<Player> parList = new ArrayList<>();
         if (includeAtStart) {
             playersAfter.add(player);
+            parList.add(player);
         }
         Player nextPlayer = playerModel.getPlayerAfter(player);
-        while (nextPlayer != player) {
+        while (nextPlayer != player && !parList.contains(nextPlayer)) {
             playersAfter.add(nextPlayer);
+            parList.add (nextPlayer);
             nextPlayer = playerModel.getPlayerAfter(nextPlayer);
         }
         if (includeAtEnd) {

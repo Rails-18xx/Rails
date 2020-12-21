@@ -1585,10 +1585,25 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
     }
 
+    public void checkPresidency(Player dumpedPlayer) {
+
+        if (getPresident() == null && dumpedPlayer != null) {
+            // No president, then pres.share must be in the Pool
+            getRoot().getBank().getPool().getPortfolioModel()
+                    .swapPresidentCertificate(this, dumpedPlayer.getPortfolioModel(), 2);
+            ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
+                    dumpedPlayer.getId(),
+                    getId()));
+
+        } else {
+            checkPresidency();
+        }
+    }
+
     public void checkPresidency() {
 
         // check if there is a new potential president
-        int presidentShareNumber = getPresident().getPortfolioModel().getShareNumber(this) + 1;
+        int presidentShareNumber = getPresident().getPortfolioModel().getShares(this) + 1;
         Player nextPotentialPresident = findNextPotentialPresident(presidentShareNumber);
 
         // no change, return
@@ -1597,7 +1612,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
 
         // otherwise Hand presidency to the player with the highest share
-        getPresident().getPortfolioModel().swapPresidentCertificate(this, nextPotentialPresident.getPortfolioModel(), 2);
+        getPresident().getPortfolioModel().swapPresidentCertificate(this,
+                nextPotentialPresident.getPortfolioModel(), 2);
         ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                 nextPotentialPresident.getId(),
                 getId()));
@@ -1612,7 +1628,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         Player potentialDirector = null;
 
         for (Player nextPlayer : getRoot().getPlayerManager().getNextPlayersAfter(getPresident(), false, false)) {
-            int nextPlayerShareNumber = nextPlayer.getPortfolioModel().getShareNumber(this);
+            int nextPlayerShareNumber = nextPlayer.getPortfolioModel().getShares(this);
             if (nextPlayerShareNumber >= requiredShareNumber) {
                 potentialDirector = nextPlayer;
                 requiredShareNumber = nextPlayerShareNumber + 1;

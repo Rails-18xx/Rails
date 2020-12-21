@@ -247,9 +247,9 @@ public class PortfolioModel extends RailsModel {
 
 
     /**
-     * @return the number of shares owned by the PorfolioModel for this company
+     * @return the number of shares owned by the PortfolioModel for this company
      */
-    public int getShareNumber(PublicCompany company) {
+    public int getShares(PublicCompany company) {
         return certificates.getShareNumber(company);
     }
 
