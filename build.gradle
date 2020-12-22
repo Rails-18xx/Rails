@@ -82,7 +82,7 @@ dependencies {
 }
 
 javafx {
-    version = '14'
+    version = '15'
     modules = ['javafx.controls', 'javafx.swing']
 }
 
@@ -124,17 +124,16 @@ static def buildDate() {
     new SimpleDateFormat('yyyy-MM-dd').format(new Date())
 }
 
-gitProperties {
-    customProperty 'buildDate', buildDate()
-    // TODO: move this to a property so we can override during a release build
-    customProperty 'develop', 'true'
-}
-
 static def isNonStable(String version) {
     def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
     def regex = /^[0-9,.v-]+(-r)?$/
 
     !stableKeyword && !(version ==~ regex)
+}
+
+gitProperties {
+    customProperty 'buildDate', buildDate()
+    customProperty 'develop', isNonStable(rootProject.version as String)
 }
 
 dependencyUpdates {
@@ -144,12 +143,23 @@ dependencyUpdates {
     }
 }
 
+/**
+ * Converts the version to a jpackage conform form.
+ * Examples:
+ * 2.4.0         -> 2.4.0
+ * 2.4.0-alpha   -> 2.4.0
+ * 2.4.0-release -> 2.4.0
+ *
+ * @return The converted version string
+ */
 def appVersion() {
     rootProject.version
-            .replaceAll('\\-', '.')
-            .replaceAll('alpha', '0')
-            .replaceAll('beta', '0')
-            .replaceAll('release', '0')
+            .toUpperCase()
+            .replaceAll('\\-ALPHA', '')
+            .replaceAll('\\-BETA', '')
+            .replaceAll('\\-RELEASE', '')
+            .replaceAll('\\-FINAL', '')
+            .replaceAll('\\-GA', '')
 }
 
 task buildDebPackage(type: Exec) {
