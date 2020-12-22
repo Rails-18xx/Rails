@@ -143,15 +143,23 @@ dependencyUpdates {
     }
 }
 
+/**
+ * Converts the version to a jpackage conform form.
+ * Examples:
+ * 2.4.0         -> 2.4.0
+ * 2.4.0-alpha   -> 2.4.0
+ * 2.4.0-release -> 2.4.0
+ *
+ * @return The converted version string
+ */
 def appVersion() {
     rootProject.version
             .toUpperCase()
-            .replaceAll('\\-', '.')
-            .replaceAll('ALPHA', '0')
-            .replaceAll('BETA', '0')
-            .replaceAll('RELEASE', '0')
-            .replaceAll('FINAL', '0')
-            .replaceAll('GA', '0')
+            .replaceAll('\\-ALPHA', '')
+            .replaceAll('\\-BETA', '')
+            .replaceAll('\\-RELEASE', '')
+            .replaceAll('\\-FINAL', '')
+            .replaceAll('\\-GA', '')
 }
 
 task buildDebPackage(type: Exec) {
