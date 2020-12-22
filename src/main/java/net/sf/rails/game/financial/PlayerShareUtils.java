@@ -12,12 +12,16 @@ import net.sf.rails.game.state.Portfolio;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * PlayerShareUtils is a class with static methods around president changes etc.
  */
 public class PlayerShareUtils {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(PlayerShareUtils.class);
+
     public static SortedSet<Integer> sharesToSell (PublicCompany company, Player player) {
         
         if (company.hasMultipleCertificates()) {
@@ -37,7 +41,7 @@ public class PlayerShareUtils {
     }
     
     public static int poolAllowsShareNumbers(PublicCompany company) {
-        int poolShares = Bank.getPool(company).getPortfolioModel().getShareNumber(company);
+        int poolShares = Bank.getPool(company).getPortfolioModel().getShares(company);
         int poolMax = (GameDef.getParmAsInt(company, GameDef.Parm.POOL_SHARE_LIMIT) / company.getShareUnit()
                 - poolShares);
         return poolMax;
@@ -45,7 +49,7 @@ public class PlayerShareUtils {
     
     // President selling for companies WITHOUT multiple certificates
     private static SortedSet<Integer> presidentSellStandard(PublicCompany company, Player president) {
-        int presidentShares = president.getPortfolioModel().getShareNumber(company);
+        int presidentShares = president.getPortfolioModel().getShares(company);
         int poolShares = poolAllowsShareNumbers(company);
         
         // check if there is a potential new president ...
@@ -70,7 +74,7 @@ public class PlayerShareUtils {
     
     // Non-president selling for companies WITHOUT multiple certificates
     private static SortedSet<Integer> otherSellStandard(PublicCompany company, Player player) {
-        int playerShares = player.getPortfolioModel().getShareNumber(company);
+        int playerShares = player.getPortfolioModel().getShares(company);
         int poolShares = poolAllowsShareNumbers(company);
         
         ImmutableSortedSet.Builder<Integer> sharesToSell = ImmutableSortedSet.naturalOrder();
@@ -88,10 +92,16 @@ public class PlayerShareUtils {
         int presidentShareNumber = president.getPortfolioModel().getShare(company);
         PublicCertificate presidentCert = company.getPresidentsShare();
         Player potential = company.findPlayerToDump();
-        int potentialShareNumber = potential.getPortfolioModel().getShare(company);
-        int shareNumberDumpDifference = presidentShareNumber - potentialShareNumber;
+
+        int shareNumberDumpDifference = 0;
+        // For unknown reasons, this method previously relied on dumping always be possible.
+        // As that is not the case, it's hoped that the following added extra condition works out rightly. (EV)
+        if (potential != null) {
+            int potentialShareNumber = potential.getPortfolioModel().getShare(company);
+            shareNumberDumpDifference = presidentShareNumber - potentialShareNumber;
+        }
+
         boolean presidentShareOnly = false;
-        
         if (presidentCert.getShare() == presidentShareNumber)  { // Only President Share to be sold...
             presidentShareOnly = true;
         }
@@ -111,13 +121,17 @@ public class PlayerShareUtils {
         }
         
         // third: retrieve the share number combinations of the non-president certificates
-        SortedSet<Integer> otherShareNumbers = CertificatesModel.shareNumberCombinations(otherCerts.build(), poolAllows);
+        SortedSet<Integer> otherShareNumbers = CertificatesModel.shareNumberCombinations(otherCerts.build(),
+                poolAllows, false);
         
         // fourth: combine pool and potential certificates, those are possible returns
         ImmutableList.Builder<PublicCertificate> returnCerts = ImmutableList.builder();
         returnCerts.addAll(Bank.getPool(company).getPortfolioModel().getCertificates(company));
-        returnCerts.addAll(potential.getPortfolioModel().getCertificates(company));
-        SortedSet<Integer> returnShareNumbers = CertificatesModel.shareNumberCombinations(returnCerts.build(), presidentCert.getShares());
+        if (potential != null) {
+            returnCerts.addAll(potential.getPortfolioModel().getCertificates(company));
+        }
+        SortedSet<Integer> returnShareNumbers = CertificatesModel.shareNumberCombinations(returnCerts.build(),
+                presidentCert.getShares(), true);
         
         ImmutableSortedSet.Builder<Integer> sharesToSell = ImmutableSortedSet.naturalOrder();
         for (Integer s:otherShareNumbers) {
@@ -148,7 +162,7 @@ public class PlayerShareUtils {
         if (player.getPortfolioModel().containsMultipleCert(company)) {
             int poolAllows = poolAllowsShareNumbers(company);
             SortedSet<PublicCertificate> certificates = player.getPortfolioModel().getCertificates(company);
-            return CertificatesModel.shareNumberCombinations(certificates, poolAllows);
+            return CertificatesModel.shareNumberCombinations(certificates, poolAllows, false);
         } else { // otherwise standard case
             return otherSellStandard(company, player);
         }
@@ -156,7 +170,7 @@ public class PlayerShareUtils {
 
     // FIXME: Rails 2.x This is a helper function as long as the sold certificates are not stored
     public static int presidentShareNumberToSell(PublicCompany company, Player president, Player dumpedPlayer,  int nbCertsToSell) {
-        int dumpThreshold = president.getPortfolioModel().getShareNumber(company) - dumpedPlayer.getPortfolioModel().getShareNumber(company);
+        int dumpThreshold = president.getPortfolioModel().getShares(company) - dumpedPlayer.getPortfolioModel().getShares(company);
         if (nbCertsToSell > dumpThreshold) {
             // reduce the nbCertsToSell by the presidentShare (but it can be sold partially...)
             return Math.min(company.getPresidentsShare().getShares(), nbCertsToSell);
@@ -166,8 +180,13 @@ public class PlayerShareUtils {
     }
     
     // FIXME: Rails 2.x This is a helper function as long as the sold certificates are not stored
-    public static List<PublicCertificate> findCertificatesToSell(PublicCompany company, Player player, int nbCertsToSell, int shareUnits) {
-  
+    // EV: dumpPossible parameter added to prevent that in 1835 a president share is sold
+    // instead of a non-pres 20% share, if no dumping is possible.
+    public static List<PublicCertificate> findCertificatesToSell(PublicCompany company, Player player,
+                                                                 int nbCertsToSell, int shareUnits,
+                                                                 boolean dumpPossible) {
+        PublicCertificate presCert = null;
+  log.info ("----- number={} units={}", nbCertsToSell, shareUnits);
         // check for <= 0 => empty list
         if (nbCertsToSell <= 0) {
             return ImmutableList.of();
@@ -175,20 +194,28 @@ public class PlayerShareUtils {
         
         ImmutableList.Builder<PublicCertificate> certsToSell = ImmutableList.builder();
         for (PublicCertificate cert:player.getPortfolioModel().getCertificates(company)) {
+            log.info("--c-- {}", cert);
             if (!cert.isPresidentShare() && cert.getShares() == shareUnits) {
+                log.info("--n-- {}", cert);
                 certsToSell.add(cert);
                 nbCertsToSell--;
                 if (nbCertsToSell == 0) {
                     break;
                 }
-            }
-                else if (cert.isPresidentShare() && cert.getShares()== shareUnits) {
-                    certsToSell.add(cert);
-                    nbCertsToSell--;
-                    if (nbCertsToSell == 0) {
-                        break;
+            } else if (dumpPossible && cert.isPresidentShare() && cert.getShares()== shareUnits) {
+                // Pres.share must be added last, if needed at all
+                //certsToSell.add(cert);
+                presCert = cert;
+                //nbCertsToSell--;
+                if (nbCertsToSell == 0) {
+                    break;
                 }
             }
+        }
+        if (nbCertsToSell > 0 && presCert != null) {
+            log.info("--p-- {}", presCert);
+            certsToSell.add(presCert);
+            nbCertsToSell--;
         }
         
         return certsToSell.build();

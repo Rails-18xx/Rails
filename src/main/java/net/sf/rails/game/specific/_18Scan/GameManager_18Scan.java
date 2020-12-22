@@ -1,8 +1,8 @@
 package net.sf.rails.game.specific._18Scan;
 
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
-import net.sf.rails.game.specific._1856.CGRFormationRound;
-import net.sf.rails.game.specific._1856.OperatingRound_1856;
 
 import java.util.List;
 
@@ -64,4 +64,12 @@ public class GameManager_18Scan extends GameManager {
             super.nextRound(round);
         }
     }
+
+    @Override
+    protected void processCompanyAfterPlayerBankruptcy(Player player, PublicCompany company) {
+        ReportBuffer.add (this, LocalText.getText(
+                "PresidentShareToPool", company.getId()));
+        company.setHibernating(true);
+    }
+
 }

@@ -1428,9 +1428,13 @@ public class ORUIManager implements DialogOwner {
 
             // TEMPORARY extra message about having no route
             for (BuyTrain bTrain : possibleActions.getType(BuyTrain.class)) {
-                if (bTrain.isForcedBuyIfNoRoute()) {
+                if (bTrain.isForcedBuyIfHasRoute()) {
                     b.append("<br><font color=\"red\">");
-                    b.append(LocalText.getText("MustBuyTrainIfNoRoute"));
+                    if (bTrain.isForcedBuyIfNoRoute()) {
+                        b.append(LocalText.getText("MustBuyTrainIfNoRoute"));
+                    } else {
+                        b.append(LocalText.getText("MustBuyTrainIfHasRoute"));
+                    }
                     b.append("</font>");
                     break;
                 }

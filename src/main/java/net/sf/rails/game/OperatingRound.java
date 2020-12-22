@@ -730,7 +730,8 @@ public class OperatingRound extends Round implements Observer {
                 setOperatingCompany(operatingCompanies.get(index));
             }
 
-            if (operatingCompany.value().isClosed()) continue;
+            if (operatingCompany.value().isClosed()
+                    || operatingCompany.value().isHibernating()) continue;
 
             return true;
         }
@@ -1411,7 +1412,7 @@ public class OperatingRound extends Round implements Observer {
 
         int number = action.getNumberRepaid();
         int payment;
-        int remainder = 0;
+        int remainder;
 
         operatingCompany.value().addLoans(-number);
         int amount = number * operatingCompany.value().getValuePerLoan();
@@ -1830,7 +1831,7 @@ public class OperatingRound extends Round implements Observer {
         Map<String, Integer> remainingTileLaysPerColour =
                 new HashMap<>();
 
-        int lays = 0;
+        int lays;
         for (String colourName : tileLaysPerColour.viewKeySet()) {
             lays = tileLaysPerColour.get(colourName);
             if (lays != 0) {
@@ -2923,7 +2924,7 @@ public class OperatingRound extends Round implements Observer {
         int actualPresidentCash = 0;
         int cashToBeRaisedByPresident = 0;
         Player currentPlayer = operatingCompany.value().getPresident();
-        int playerCash = currentPlayer.getCash();
+        int playerCash = currentPlayer != null ? currentPlayer.getCash() : 0;
 
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -2999,7 +3000,7 @@ public class OperatingRound extends Round implements Observer {
                         numberSold = Math.min (numberSold,
                                 GameDef.getParmAsInt(this,
                                         GameDef.Parm.POOL_SHARE_LIMIT )/ company.getShareUnit()
-                                        - pool.getShareNumber(company));
+                                        - pool.getShares(company));
                         int raisedCash = numberSold * sharePrice;
 
                         // Get the money
@@ -3257,14 +3258,15 @@ public class OperatingRound extends Round implements Observer {
         boolean useReducedPrice = false;
         boolean useNormalPrice = true;
         SpecialTrainBuy reducePrice = null;
-        /**
+
+        /*
          * Only relevant if a special property offers a reduced price,
          * and usage would imply closing a private company.
          * In such a case, both usage and non-usage are made possible.
          */
-        boolean withAndWithoutDeduction = false;
-        Set<Train> trains;
+        boolean withAndWithoutDeduction;
 
+        Set<Train> trains;
         boolean hasTrains =
                 company.getPortfolioModel().getNumberOfTrains() > 0;
 
@@ -3274,6 +3276,9 @@ public class OperatingRound extends Round implements Observer {
         boolean canBuyTrainNow = canBuyTrainNow();
         boolean mustBuyTrain =
                 !hasTrains && company.mustOwnATrain();
+        boolean mustBuyTrainWithoutRoute =
+                mustBuyTrain && GameDef.getParmAsBoolean(this,
+                        GameDef.Parm.MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE);
 
         emergency = false;
         newEmergencyTrains = new TreeMap<>();
@@ -3315,12 +3320,14 @@ public class OperatingRound extends Round implements Observer {
 
                 // First with the reduced price, if applicable
                 if (useReducedPrice) {
-                    addBuyTrainOption (train, ipo, companyCash, reducePrice, canBuyTrainNow, mustBuyTrain);
+                    addBuyTrainOption (train, ipo, companyCash, reducePrice,
+                            canBuyTrainNow, mustBuyTrain, mustBuyTrainWithoutRoute);
                 }
 
                 // With the normal price, if sensible
                 if (useNormalPrice) {
-                    addBuyTrainOption (train, ipo, companyCash, null, canBuyTrainNow, mustBuyTrain);
+                    addBuyTrainOption (train, ipo, companyCash, null,
+                            canBuyTrainNow, mustBuyTrain,mustBuyTrainWithoutRoute);
                 }
 
                 // Even at train limit, exchange is allowed (per 1856)
@@ -3338,9 +3345,6 @@ public class OperatingRound extends Round implements Observer {
                         canBuyTrainNow = true;
                     }
                 }
-
-                if (!canBuyTrainNow) continue;
-
             }
             if (!canBuyTrainNow) return;
 
@@ -3352,10 +3356,12 @@ public class OperatingRound extends Round implements Observer {
                     continue;
                 }
                 if (useReducedPrice) {
-                    addBuyTrainOption(train, pool, companyCash, reducePrice, canBuyTrainNow, mustBuyTrain);
+                    addBuyTrainOption(train, pool, companyCash, reducePrice,
+                            canBuyTrainNow, mustBuyTrain, mustBuyTrainWithoutRoute);
                 }
                 if (useNormalPrice) {
-                    addBuyTrainOption(train, pool, companyCash, null, canBuyTrainNow, mustBuyTrain);
+                    addBuyTrainOption(train, pool, companyCash, null,
+                            canBuyTrainNow, mustBuyTrain, mustBuyTrainWithoutRoute);
                 }
             }
 
@@ -3382,33 +3388,33 @@ public class OperatingRound extends Round implements Observer {
                     }
                     if (useReducedPrice) {
                         addEmergencyBuyTrainOption(cheapestTrain, cheapestTrain.getOwner(),
-                                companyCash, reducePrice, mustBuyTrain);
+                                companyCash, reducePrice, mustBuyTrain, mustBuyTrainWithoutRoute);
                     }
                     if (useNormalPrice) {
                         addEmergencyBuyTrainOption(cheapestTrain, cheapestTrain.getOwner(),
-                                companyCash, null, mustBuyTrain);
+                                companyCash, null, mustBuyTrain, mustBuyTrainWithoutRoute);
                     }
                 } else {
                     // All possible bank trains are buyable
                     for (Train train : newEmergencyTrains.values()) {
                         if (useReducedPrice) {
                             addEmergencyBuyTrainOption(train, train.getOwner(),
-                                    companyCash, reducePrice, mustBuyTrain);
+                                    companyCash, reducePrice, mustBuyTrain, mustBuyTrainWithoutRoute);
                         }
                         if (useNormalPrice) {
                             addEmergencyBuyTrainOption(train, train.getOwner(),
-                                    companyCash, null, mustBuyTrain);
+                                    companyCash, null, mustBuyTrain, mustBuyTrainWithoutRoute);
                         }
 
                     }
                     for (Train train : usedEmergencyTrains.values()) {
                         if (useReducedPrice) {
                             addEmergencyBuyTrainOption(train, train.getOwner(),
-                                    companyCash, reducePrice, mustBuyTrain);
+                                    companyCash, reducePrice, mustBuyTrain, mustBuyTrainWithoutRoute);
                         }
                         if (useNormalPrice) {
                             addEmergencyBuyTrainOption(train, train.getOwner(),
-                                    companyCash, null, mustBuyTrain);
+                                    companyCash, null, mustBuyTrain, mustBuyTrainWithoutRoute);
                         }
                     }
                 }
@@ -3438,6 +3444,7 @@ public class OperatingRound extends Round implements Observer {
                 if (!c.hasFloated()) continue;
                 if (c.isClosed() || c == company) continue;
                 p = c.getPresident();
+                if (p == null) continue; // Can occur in 18Scan
                 index = p.getIndex();
                 companiesPerPlayer.get(index).add(c);
             }
@@ -3527,7 +3534,7 @@ public class OperatingRound extends Round implements Observer {
                 numberToSell = Math.min(numberToSell,
                         GameDef.getParmAsInt(this,
                                 GameDef.Parm.POOL_SHARE_LIMIT) / company.getShareUnit()
-                            - pool.getShareNumber(company));
+                            - pool.getShares(company));
                 value += numberToSell * sharePrice;
 
             }
@@ -3537,7 +3544,8 @@ public class OperatingRound extends Round implements Observer {
 
     protected void addBuyTrainOption(Train train, PortfolioModel from,
                                      int companyCash, SpecialTrainBuy reducePrice,
-                                     boolean canBuyTrainNow, boolean mustBuyTrain) {
+                                     boolean canBuyTrainNow, boolean mustBuyTrain,
+                                     boolean mustBuyTrainWithoutRoute) {
 
         int cost = train.getCost();
         if (reducePrice != null) cost = reducePrice.getPrice(cost);
@@ -3545,7 +3553,8 @@ public class OperatingRound extends Round implements Observer {
             if (canBuyTrainNow) {
                 BuyTrain action =
                         new BuyTrain(train, train.getType(), from.getParent(), cost);
-                action.setForcedBuyIfNoRoute(mustBuyTrain);
+                action.setForcedBuyIfNoRoute(mustBuyTrainWithoutRoute);
+                action.setForcedBuyIfHasRoute(mustBuyTrain);
                 if (reducePrice != null) action.setSpecialProperty(reducePrice);
                 possibleActions.add(action);
             }
@@ -3561,7 +3570,8 @@ public class OperatingRound extends Round implements Observer {
 
     protected void addEmergencyBuyTrainOption (Train train, Owner from,
                                                int companyCash, SpecialTrainBuy reducePrice,
-                                               boolean mustBuyTrain) {
+                                               boolean mustBuyTrain,
+                                               boolean mustBuyTrainWithoutRoute) {
         int cost = train.getCost();
         if (reducePrice != null) cost = reducePrice.getPrice(cost);
         BuyTrain bt = new BuyTrain(train, from, cost);
@@ -3587,7 +3597,8 @@ public class OperatingRound extends Round implements Observer {
         // In the BuyTrain action object, presidentCash being > 0
         // has the side effect of being the emergency indicator.
         bt.setPresidentMustAddCash(presidentCash);
-        bt.setForcedBuyIfNoRoute(mustBuyTrain);
+        bt.setForcedBuyIfHasRoute(mustBuyTrain);
+        bt.setForcedBuyIfNoRoute(mustBuyTrainWithoutRoute);
         // TEMPORARY
         possibleActions.add(bt);
     }

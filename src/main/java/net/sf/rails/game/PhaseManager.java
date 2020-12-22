@@ -68,7 +68,7 @@ public class PhaseManager extends RailsManager implements Configurable {
         return currentPhase;
     }
 
-    public int getCurrentPhasendex() {
+    public int getCurrentPhaseIndex() {
         return getCurrentPhase().getIndex();
     }
 

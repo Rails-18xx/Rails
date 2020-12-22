@@ -159,7 +159,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
      * @return The number of shares.
      */
     public int getShares() {
-        return (Integer) shares.value();
+        return shares.value();
     }
 
     /**
@@ -283,6 +283,10 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
                     company.getId(),
                     getShare());
         }
+    }
+
+    public String toString() {
+        return getId();
     }
 
 }
