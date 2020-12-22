@@ -82,7 +82,7 @@ dependencies {
 }
 
 javafx {
-    version = '14'
+    version = '15'
     modules = ['javafx.controls', 'javafx.swing']
 }
 
@@ -124,17 +124,16 @@ static def buildDate() {
     new SimpleDateFormat('yyyy-MM-dd').format(new Date())
 }
 
-gitProperties {
-    customProperty 'buildDate', buildDate()
-    // TODO: move this to a property so we can override during a release build
-    customProperty 'develop', 'true'
-}
-
 static def isNonStable(String version) {
     def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
     def regex = /^[0-9,.v-]+(-r)?$/
 
     !stableKeyword && !(version ==~ regex)
+}
+
+gitProperties {
+    customProperty 'buildDate', buildDate()
+    customProperty 'develop', isNonStable(rootProject.version as String)
 }
 
 dependencyUpdates {
@@ -146,10 +145,13 @@ dependencyUpdates {
 
 def appVersion() {
     rootProject.version
+            .toUpperCase()
             .replaceAll('\\-', '.')
-            .replaceAll('alpha', '0')
-            .replaceAll('beta', '0')
-            .replaceAll('release', '0')
+            .replaceAll('ALPHA', '0')
+            .replaceAll('BETA', '0')
+            .replaceAll('RELEASE', '0')
+            .replaceAll('FINAL', '0')
+            .replaceAll('GA', '0')
 }
 
 task buildDebPackage(type: Exec) {
