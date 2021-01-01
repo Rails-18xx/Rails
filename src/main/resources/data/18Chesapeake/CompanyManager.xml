@@ -49,8 +49,8 @@
 		longname="Chesapeake and Ohio Canal">
 		<Blocking hex="D2"/>
 		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialTileLay">
-				<SpecialTileLay location="D2" extra="yes" free="yes" tile="57" />
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay location="D2" extra="yes" free="yes" tile="57" />
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="tokenlayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
 				<SpecialBaseTokenLay location="D2" extra="yes" free="yes" requiresTile="57"/>

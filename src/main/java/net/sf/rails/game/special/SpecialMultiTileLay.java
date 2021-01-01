@@ -142,14 +142,14 @@ public class SpecialMultiTileLay extends SpecialProperty {
 
     @Override
 	public void setExercised(boolean value) {
-		 occured.add(1);
+		 occurred.add(1);
 		 //After the first occurrance check the constraints...
-		  if (occured.value() == 1) { //FIXME: this assumes the only constraint that subsequent tile lays need to be connected to the first
+		  if (occurred.value() == 1) { //FIXME: this assumes the only constraint that subsequent tile lays need to be connected to the first
 			  if (constraints.equals("connected")) {
 				  connected = true;
 			  }
 		  }
-		 if (maxOccurrance == occured.value()) {
+		 if (maxOccurrance == occurred.value()) {
 			 super.setExercised(true);
 		 }
 	}

@@ -56,7 +56,7 @@ public class StartItem_18Chesapeake extends StartItem {
             CountingMoneyModel bid = CountingMoneyModel.create(this, "bidBy_" + p.getId(), false);
             bid.setSuppressZero(true);
             bids.put(p, bid);
-            active.put(p, BooleanState.create(this, "active_" + p.getId()));
+            active.put(p, new BooleanState(this, "active_" + p.getId()));
         }
         // TODO Leave this for now, but it should be done
         // in the game-specific StartRound class
@@ -86,8 +86,8 @@ public class StartItem_18Chesapeake extends StartItem {
         	List<PublicCompany> rList18CH;
         	rList18CH = compMgr.getAllPublicCompanies();
         	
-        	int seed= getRoot().getSeed();
-        	Random randomStart =new Random(seed);
+
+        	Random randomStart = gameManager.getRandomGenerator();
         	
         	String rname = rList18CH.get(randomStart.nextInt(6)).getId();
             Company company2 = compMgr.getCompany(type2,rname);
@@ -95,8 +95,6 @@ public class StartItem_18Chesapeake extends StartItem {
                 secondary =
                         ipo.getPortfolioModel().findCertificate((PublicCompany) company2,
                                 president2);
-                // Move the certificate to the "unavailable" pool.
-                // FIXME: This is still an issue to resolve  ???
                 PublicCertificate pubcert2 = (PublicCertificate) secondary;
                 if (pubcert2.getOwner() != unavailable) {
                     pubcert2.moveTo(unavailable);

@@ -109,6 +109,5 @@
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
-<!--		Required for coalfield rights '-->
 	</Component>
 </ComponentManager>

@@ -18,4 +18,5 @@
 	<GameOption name="BeginnerGame" type="toggle" default="no" />
 	<GameOption name="FirstRoundSellRestriction" values="First Round,First Stock Round" default="First Round" />
 	<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
+	<GameOption name="RandomSeed" type="hidden"/>
 </GameOptions>

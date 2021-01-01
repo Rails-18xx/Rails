@@ -28,8 +28,8 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
 
     protected static final String STORAGE_NAME = "SpecialProperty";
 
-    protected final BooleanState exercised = BooleanState.create(this, "exercised");
-    protected final IntegerState occured = IntegerState.create(this, "occured");
+    protected final BooleanState exercised = new BooleanState(this, "exercised");
+    protected final IntegerState occurred = IntegerState.create(this, "occurred");
     protected Company originalCompany;
     
     /* Usability conditions. Not all of these are already being used. */
