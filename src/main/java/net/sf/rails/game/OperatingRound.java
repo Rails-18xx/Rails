@@ -3619,9 +3619,20 @@ public class OperatingRound extends Round implements Observer {
             Train train =
                     Iterables.get(trainManager.getAvailableNewTrains(), 0);
             if (train.getCardType().hasInfiniteQuantity()) return;
-            scrapHeap.addTrainCard(train.getCard());
+                   scrapHeap.addTrainCard(train.getCard());
             ReportBuffer.add(this,
                     LocalText.getText("RemoveTrain", train.toText()));
+            //MBr: 02012020 - 18Chesapeake Remove a non permanent train before every Stockround
+        } else {
+            if (GameDef.getParmAsBoolean(this, GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)) {
+                Train train =
+                        Iterables.get(trainManager.getAvailableNewTrains(), 0);
+                if (train.getCardType().isPermanent()) return;
+                if (train.getCardType().hasInfiniteQuantity()) return;
+                scrapHeap.addTrainCard(train.getCard());
+                ReportBuffer.add(this,
+                        LocalText.getText("RemoveTrain", train.toText()));
+            }
         }
     }
 
