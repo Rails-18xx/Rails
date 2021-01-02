@@ -160,6 +160,8 @@ public class TrainManager extends RailsManager implements Configurable {
         if (removeTrainTag != null) {
             // Trains "bought by foreigners" (1844, 1824)
             removeTrain = true; // completed in finishConfiguration()
+            // to determine if permanent trains are also removed
+            boolean removePermanent = removeTrainTag.getAttributeAsBoolean("permanent", false);
         }
 
     }

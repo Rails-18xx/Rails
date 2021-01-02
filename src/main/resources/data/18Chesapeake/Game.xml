@@ -39,7 +39,7 @@
 	<Component name="StockMarket" class="net.sf.rails.game.financial.StockMarket" 
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
-		<RemoveTrainBeforeSR/>
+		<RemoveTrainBeforeSR permanent="false"/>
 		<Defaults>
 			<Reach base="stops" countTowns="yes"/>
 			<!-- Alternative values: 
