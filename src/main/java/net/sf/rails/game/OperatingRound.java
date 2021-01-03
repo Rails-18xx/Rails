@@ -3619,20 +3619,38 @@ public class OperatingRound extends Round implements Observer {
             Train train =
                     Iterables.get(trainManager.getAvailableNewTrains(), 0);
             if (train.getCardType().hasInfiniteQuantity()) return;
+            //Dont export Permanent Trains; MBR: 030102021
+            if (train.getCardType().isPermanent()) return;
                    scrapHeap.addTrainCard(train.getCard());
             ReportBuffer.add(this,
                     LocalText.getText("RemoveTrain", train.toText()));
-            //MBr: 02012020 - 18Chesapeake Remove a non permanent train before every Stockround
+            //MBr: 03012021 Trains were not made available after export prior
+            trainManager.checkTrainAvailability(train,bank.getIpo());
+            //MBr: 02012021 - 18Chesapeake Remove a non permanent train before every Stockround
         } else {
             if (GameDef.getParmAsBoolean(this, GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)
-                    && (!GameDef.getParmAsBoolean( this, GameDef.Parm.REMOVE_PERMANENT))) {
+                    && (!GameDef.getParmAsBoolean(this, GameDef.Parm.REMOVE_PERMANENT))) {
                 Train train =
                         Iterables.get(trainManager.getAvailableNewTrains(), 0);
                 if (train.getCardType().isPermanent()) return;
                 if (train.getCardType().hasInfiniteQuantity()) return;
                 scrapHeap.addTrainCard(train.getCard());
+                trainManager.checkTrainAvailability(train, bank.getIpo());
                 ReportBuffer.add(this,
                         LocalText.getText("RemoveTrain", train.toText()));
+            }
+        else { //MBr: 03012021 export a train if one has been sold....
+                if (GameDef.getParmAsBoolean(this, GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)
+                        && trainManager.isAnyTrainBought()) {
+                    Train train =
+                            Iterables.get(trainManager.getAvailableNewTrains(), 0);
+                    if (train.getCardType().hasInfiniteQuantity()) return;
+                    scrapHeap.addTrainCard(train.getCard());
+                    ReportBuffer.add(this,
+                            LocalText.getText("RemoveTrain", train.toText()));
+                    //MBr: 03012021 Trains were not made available after export prior
+                    trainManager.checkTrainAvailability(train, bank.getIpo());
+                }
             }
         }
     }
