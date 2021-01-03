@@ -54,7 +54,8 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     protected boolean isORProperty = false;
     protected boolean isSRProperty = false;
     
-    /** Optional descriptive text, for display in menus and info text.
+    /**
+     * Optional descriptive text, for display in menus and info text.
      * Subclasses may put real text in it.
      */
     protected String description = "";
@@ -67,7 +68,7 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
         getRoot().getGameManager().storeObject(STORAGE_NAME, this);
     }
 
-   public void configureFromXML(Tag tag) throws ConfigurationException {
+    public void configureFromXML(Tag tag) throws ConfigurationException {
 
         conditionText = tag.getAttributeAsString("condition");
         if (!Util.hasValue(conditionText))
@@ -78,17 +79,14 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
 
         whenText = tag.getAttributeAsString("when");
         if (!Util.hasValue(whenText))
-            throw new ConfigurationException(
-                    "Missing condition in private special property");
-        setUsableDuringSR(whenText.equalsIgnoreCase("anyTurn") 
-                || whenText.equalsIgnoreCase("srTurn"));
-        setUsableDuringOR(whenText.equalsIgnoreCase("anyTurn") 
-                || whenText.equalsIgnoreCase("orTurn"));
+            throw new ConfigurationException("Missing condition in private special property");
+        setUsableDuringSR("anyTurn".equalsIgnoreCase(whenText) || "srTurn".equalsIgnoreCase(whenText));
+        setUsableDuringOR("anyTurn".equalsIgnoreCase(whenText) || "orTurn".equalsIgnoreCase(whenText));
         
-        setUsableDuringTileLayingStep(whenText.equalsIgnoreCase("tileLayingStep"));
-        setUsableDuringTileLayingStep(whenText.equalsIgnoreCase("tileAndTokenLayingStep"));
-        setUsableDuringTokenLayingStep(whenText.equalsIgnoreCase("tokenLayingStep"));
-        setUsableDuringTokenLayingStep(whenText.equalsIgnoreCase("tileAndTokenLayingStep"));
+        setUsableDuringTileLayingStep("tileLayingStep".equalsIgnoreCase(whenText)
+                                   || "tileAndTokenLayingStep".equalsIgnoreCase(whenText));
+        setUsableDuringTokenLayingStep("tokenLayingStep".equalsIgnoreCase(whenText)
+                                   || "tileAndTokenLayingStep".equalsIgnoreCase(whenText));
 
         transferText = tag.getAttributeAsString("transfer", "");
         
@@ -271,23 +269,26 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
       StringBuilder text = new StringBuilder();
         
       // Special properties
+        List<Tag> spTags;
       Tag spsTag = tag.getChild("SpecialProperties");
       if (spsTag != null) {
-
-          List<Tag> spTags = spsTag.getChildren("SpecialProperty");
-          String className;
-          for (Tag spTag : spTags) {
-              className = spTag.getAttributeAsString("class");
-              if (!Util.hasValue(className))
-                  throw new ConfigurationException(
-                  "Missing class in private special property");
-              String uniqueId = SpecialProperty.createUniqueId(company);
-              SpecialProperty sp = Configure.create(SpecialProperty.class, className, company, uniqueId);
-              sp.setOriginalCompany(company);
-              sp.configureFromXML(spTag);
-              sp.moveTo(company);
-              text.append("<br>" + sp.getInfo());
-          }
+          spTags = spsTag.getChildren("SpecialProperty");
+      } else {
+          spTags = tag.getChildren("SpecialProperty");
+      }
+      if (spTags == null) return "";
+      String className;
+      for (Tag spTag : spTags) {
+          className = spTag.getAttributeAsString("class");
+          if (!Util.hasValue(className))
+              throw new ConfigurationException(
+              "Missing class in private special property");
+          String uniqueId = SpecialProperty.createUniqueId(company);
+          SpecialProperty sp = Configure.create(SpecialProperty.class, className, company, uniqueId);
+          sp.setOriginalCompany(company);
+          sp.configureFromXML(spTag);
+          sp.moveTo(company);
+          text.append("<br>" + sp.getInfo());
       }
       return text.toString();
   }
