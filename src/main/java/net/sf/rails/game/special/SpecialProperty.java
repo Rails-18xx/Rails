@@ -14,6 +14,7 @@ import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.RailsOwnableItem;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.state.BooleanState;
+import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.util.Util;
 
 import org.slf4j.Logger;
@@ -23,13 +24,14 @@ import com.google.common.base.Preconditions;
 
 public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> implements Configurable {
 
-    private static final Logger log = LoggerFactory.getLogger(SpecialProperty.class);
+    protected static Logger log = LoggerFactory.getLogger(SpecialProperty.class);
 
     protected static final String STORAGE_NAME = "SpecialProperty";
 
     protected final BooleanState exercised = new BooleanState(this, "exercised");
+    protected final IntegerState occurred = IntegerState.create(this, "occurred");
     protected Company originalCompany;
-
+    
     /* Usability conditions. Not all of these are already being used. */
     protected boolean usableIfOwnedByPlayer = false;
     protected boolean usableIfOwnedByCompany = false;
@@ -45,11 +47,13 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     // if exercising contributes to closing, if private has the closing conditions set, thus default is true
     // allows to exclude special properties that do not close privates that are closeable
     protected boolean closesPrivate = true;
-
-
+    
+    //for multiple but finite use of the SpecialProperty
+    protected int maxOccurrance;
+    
     protected boolean isORProperty = false;
     protected boolean isSRProperty = false;
-
+    
     /**
      * Optional descriptive text, for display in menus and info text.
      * Subclasses may put real text in it.
@@ -59,13 +63,13 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     protected int uniqueId;
 
     protected SpecialProperty(RailsItem parent, String id) {
-        super(parent, convertId(id), SpecialProperty.class);
-
-        uniqueId = Integer.parseInt(id);
+        super(parent, convertId(id) , SpecialProperty.class);
+        uniqueId = Integer.valueOf(id);
         getRoot().getGameManager().storeObject(STORAGE_NAME, this);
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
+
         conditionText = tag.getAttributeAsString("condition");
         if (!Util.hasValue(conditionText))
             throw new ConfigurationException(
@@ -78,21 +82,21 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
             throw new ConfigurationException("Missing condition in private special property");
         setUsableDuringSR("anyTurn".equalsIgnoreCase(whenText) || "srTurn".equalsIgnoreCase(whenText));
         setUsableDuringOR("anyTurn".equalsIgnoreCase(whenText) || "orTurn".equalsIgnoreCase(whenText));
-
+        
         setUsableDuringTileLayingStep("tileLayingStep".equalsIgnoreCase(whenText)
                                    || "tileAndTokenLayingStep".equalsIgnoreCase(whenText));
         setUsableDuringTokenLayingStep("tokenLayingStep".equalsIgnoreCase(whenText)
                                    || "tileAndTokenLayingStep".equalsIgnoreCase(whenText));
 
         transferText = tag.getAttributeAsString("transfer", "");
-
-        permanent = tag.getAttributeAsBoolean("permanent", permanent);
-
+        
+        permanent = tag.getAttributeAsBoolean("permanent", permanent); 
+        
         closesPrivate = tag.getAttributeAsBoolean("closesPrivate", closesPrivate);
-
+        
     }
-
-    public void finishConfiguration(RailsRoot root) throws ConfigurationException {
+    
+    public void finishConfiguration (RailsRoot root) throws ConfigurationException {
         // do nothing specific
     }
 
@@ -137,19 +141,19 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     public void setUsableIfOwnedByPlayer(boolean usableIfOwnedByPlayer) {
         this.usableIfOwnedByPlayer = usableIfOwnedByPlayer;
     }
-
+    
 
     public boolean isUsableDuringOR(GameDef.OrStep step) {
-
+        
         if (usableDuringOR) return true;
-
+        
         switch (step) {
-            case LAY_TRACK:
-                return usableDuringTileLayingStep;
-            case LAY_TOKEN:
-                return usableDuringTokenLayingStep;
-            default:
-                return false;
+        case LAY_TRACK:
+            return usableDuringTileLayingStep;
+        case LAY_TOKEN:
+            return usableDuringTokenLayingStep;
+        default:
+            return false;
         }
     }
 
@@ -185,20 +189,20 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
         setExercised(true);
     }
 
-    public void setExercised(boolean value) {
-        if (permanent) return; // sfy 1889
+    public void setExercised (boolean value) {
+        if (permanent) return; // sfy 1889 
         exercised.set(value);
         if (value && closesPrivate && originalCompany instanceof PrivateCompany) {
-            ((PrivateCompany) originalCompany).checkClosingIfExercised(false);
+            ((PrivateCompany)originalCompany).checkClosingIfExercised(false);
         }
     }
 
     public boolean isExercised() {
         return exercised.value();
     }
-
-    public abstract boolean isExecutionable();
-
+    
+    public abstract boolean isExecutionable(); 
+    
 
     public boolean isSRProperty() {
         return isSRProperty;
@@ -220,29 +224,25 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
         return toString();
     }
 
-    /**
-     * Default Info text. To be overridden where useful.
-     */
+    /** Default Info text. To be overridden where useful. */
     public String getInfo() {
         return toString();
     }
 
-    /**
-     * Default Help text: "You can " + the menu description
-     */
+    /** Default Help text: "You can " + the menu description */
     public String getHelp() {
-        return LocalText.getText("YouCan", Util.lowerCaseFirst(toMenu()));
+        return LocalText.getText ("YouCan", Util.lowerCaseFirst(toMenu()));
 
     }
-
-
+    
+ 
     // TODO: Rails 2.0: Move this to a new SpecialPropertyManager
-
-    // convert to the full id used
+    
+    // convert to the full id used 
     private static String convertId(String id) {
         return STORAGE_NAME + "_" + id;
     }
-
+    
     // return new storage id
     private static String createUniqueId(RailsItem item) {
         return String.valueOf(item.getRoot().getGameManager().getStorageId(STORAGE_NAME) + 1);
@@ -255,43 +255,43 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
         id -= 1;
         // decrease retrieval id to allow loading old save files (which increase by 1)
         // TODO: remove that legacy issue
-        return (SpecialProperty) item.getRoot().getGameManager().retrieveObject(STORAGE_NAME, id);
+        return (SpecialProperty)item.getRoot().getGameManager().retrieveObject(STORAGE_NAME, id);
     }
 
     /**
      * @param company the company that owns the SpecialProperties
-     * @param tag     with XML to create SpecialProperties
+     * @param tag with XML to create SpecialProperties
      * @return additional InfoText
      * @throws ConfigurationException
      */
     public static String configure(Company company, Tag tag) throws ConfigurationException {
 
-        StringBuilder text = new StringBuilder();
-
-        // Special properties
+      StringBuilder text = new StringBuilder();
+        
+      // Special properties
         List<Tag> spTags;
-        Tag spsTag = tag.getChild("SpecialProperties");
-        if (spsTag != null) {
-            spTags = spsTag.getChildren("SpecialProperty");
-        } else {
-            spTags = tag.getChildren("SpecialProperty");
-        }
-        if (spTags == null) return "";
-        String className;
-        for (Tag spTag : spTags) {
-            className = spTag.getAttributeAsString("class");
-            if (!Util.hasValue(className))
-                throw new ConfigurationException(
-                        "Missing class in private special property");
-            String uniqueId = SpecialProperty.createUniqueId(company);
-            SpecialProperty sp = Configure.create(SpecialProperty.class, className, company, uniqueId);
-            sp.setOriginalCompany(company);
-            sp.configureFromXML(spTag);
-            sp.moveTo(company);
-            text.append("<br>" + sp.getInfo());
-        }
-        return text.toString();
-    }
+      Tag spsTag = tag.getChild("SpecialProperties");
+      if (spsTag != null) {
+          spTags = spsTag.getChildren("SpecialProperty");
+      } else {
+          spTags = tag.getChildren("SpecialProperty");
+      }
+      if (spTags == null) return "";
+      String className;
+      for (Tag spTag : spTags) {
+          className = spTag.getAttributeAsString("class");
+          if (!Util.hasValue(className))
+              throw new ConfigurationException(
+              "Missing class in private special property");
+          String uniqueId = SpecialProperty.createUniqueId(company);
+          SpecialProperty sp = Configure.create(SpecialProperty.class, className, company, uniqueId);
+          sp.setOriginalCompany(company);
+          sp.configureFromXML(spTag);
+          sp.moveTo(company);
+          text.append("<br>" + sp.getInfo());
+      }
+      return text.toString();
+  }
 
-
+    
 }

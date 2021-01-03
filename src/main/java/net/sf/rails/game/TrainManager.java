@@ -47,6 +47,7 @@ public class TrainManager extends RailsManager implements Configurable {
     protected final Map<TrainCard, List<Train>> trainsPerCard = new HashMap<>();
 
     private boolean removeTrain = false;
+    private boolean removePermanent;
 
     protected String discardToString = "pool";
     protected BankPortfolio discardTo;
@@ -160,6 +161,8 @@ public class TrainManager extends RailsManager implements Configurable {
         if (removeTrainTag != null) {
             // Trains "bought by foreigners" (1844, 1824)
             removeTrain = true; // completed in finishConfiguration()
+            // to determine if permanent trains are also removed
+            removePermanent = removeTrainTag.getAttributeAsBoolean("permanent", false);
         }
 
     }
@@ -233,9 +236,12 @@ public class TrainManager extends RailsManager implements Configurable {
             throw new ConfigurationException("Discard to only allow to pool or scrapheap");
         }
 
-        // Trains "bought by foreigners" (1844, 1824)
+        // Trains "bought by foreigners" (1844, 1824, 18Chesapeake)
         if (removeTrain) {
             root.getGameManager().setGameParameter(GameDef.Parm.REMOVE_TRAIN_BEFORE_SR, true);
+                if (removePermanent) {
+                    root.getGameManager().setGameParameter(GameDef.Parm.REMOVE_PERMANENT, true);
+                }
         }
 
         // Train trading between different players at face value only (1851)

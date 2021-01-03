@@ -292,6 +292,13 @@ Known Issues:
     <Players minimum="2" maximum="8" />
   </Game>
 
+	<Game name="18Chesapeake">
+		<Note>Prototype</Note>
+		<Description> 18Cheaspeake - North East USA
+			(c) 2019 Scott Pedersen    </Description>
+		<Players minimum = "2" maximum = "6" />
+	</Game>
+
 
 	<Credits>&lt;html&gt;Rails is a computer implementation of a number of board games.&lt;br&gt; 
 	These games all have a railroad theme. They are collectively known as "18xx" &lt;br&gt;
@@ -308,6 +315,8 @@ Contributors: &lt;br&gt;
 	Martin Brumm&lt;br&gt;
 	Chris Shaffer &lt;br&gt;
 	Brett Lentz&lt;br&gt;
+	Jason Klappste&lt;br&gt;
+	Marc Arndt&lt;br&gt;
 &lt;br&gt;
 All rights reserved by the respective owners of the original games&lt;br&gt; 
 (see the Game Notes per game for specific acknowledgements).&lt;br&gt;

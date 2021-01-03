@@ -18,18 +18,18 @@ import org.slf4j.LoggerFactory;
  */
 public class StartPacket extends RailsAbstractItem {
 
-    private static final Logger log = LoggerFactory.getLogger(StartPacket.class);
+    protected static final Logger log = LoggerFactory.getLogger(StartPacket.class);
 
     /** The name of the class that implements the Start Round for this packet. */
     private String roundClassName;
     /** The start items in this packet. */
     protected List<StartItem> items = new ArrayList<StartItem>();
     /** The minimum initial bidding increment above the share price */
-    private int minimumInitialIncrement = 5;
+    protected int minimumInitialIncrement = 5;
     /** The minimum increment between subsequent bids */
-    private int minimumIncrement = 5;
+    protected int minimumIncrement = 5;
     /** The modulus of all bids (i.e. of which value the bid must be a multiple) */
-    private int modulus = 5;
+    protected int modulus = 5;
 
     /** Default name */
     public static final String DEFAULT_ID = "Initial";
@@ -52,7 +52,7 @@ public class StartPacket extends RailsAbstractItem {
      * Configure the start packet from the contents of a &lt;StartPacket&gt; XML
      * element.
      *
-     * @param element The &lt;StartPacket&gt; Element object.
+     * @param tag The &lt;StartPacket&gt; Element object.
      * @throws ConfigurationException if anything goes wrong.
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
