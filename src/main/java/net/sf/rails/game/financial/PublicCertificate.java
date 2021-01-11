@@ -64,6 +64,10 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
             return certs.iterator();
         }
 
+        public String toString() {
+            return certs.toString();
+        }
+
     }
 
 

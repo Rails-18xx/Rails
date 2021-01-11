@@ -1,12 +1,9 @@
 package net.sf.rails.game.specific._1835;
 
 import net.sf.rails.common.GameOption;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.Phase;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.Round;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.*;
 
 
 public class GameManager_1835 extends GameManager {
@@ -97,6 +94,37 @@ public class GameManager_1835 extends GameManager {
                     && player.getPortfolioModel().getShare(company) >= 80) limit++;
         }
         return limit;
+    }
+
+    /** Pick a new president for a company that is going into hibernation */
+    @Override
+    protected void processCompanyAfterPlayerBankruptcy(Player oldPresident, PublicCompany company) {
+
+        company.setHibernating(true);
+
+        // Is there any player with one share?
+        Player newPresident = null;
+        PlayerManager pm = getRoot().getPlayerManager();
+        for (Player player : pm.getNextPlayers(false)) {
+            int share = player.getPortfolioModel().getShare(company);
+            if (share == 1) {
+                newPresident = player;
+                break;
+            }
+        }
+
+        // Otherwise, the priority holder will have to do it.
+        newPresident = pm.getPriorityPlayer();
+
+        // Assigning the president this way isn't yet possible,
+        // as presidency is now defined as holding the pres.cert,
+        // which is in the Pool if we get to here.
+        // TODO Add a president attribute to PublicCompany
+        //company.setPresident (newPresident);
+
+        ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
+                newPresident.getId(),
+                company.getId()));
     }
 
 }

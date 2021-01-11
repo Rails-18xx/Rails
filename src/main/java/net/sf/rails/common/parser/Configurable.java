@@ -14,13 +14,13 @@ public interface Configurable extends Creatable {
      * element.
      *
      * @param tag the XML element containing the configuration
-     * @throws ConfigurationException
+     * @throws ConfigurationException the name says it all
      */
     void configureFromXML(Tag tag) throws ConfigurationException;
 
     /**
      * This method is intended to be called for each configurable
-     * component, to perforn any initialisation activities that
+     * component, to perform any initialisation activities that
      * require any other components to be initialised first.
      * This includes creating any required relationships to other
      * configured components and objects.

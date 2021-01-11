@@ -182,7 +182,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return revenueSpinnerIncrement;
     }
 
-    private int actionCount = 0; // To log during reloading
+    private IntegerState actionCount = IntegerState.create (this, "actionCount");
 
     public GameManager(RailsRoot parent, String id) {
         super(parent, id);
@@ -813,14 +813,17 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected void logActionTaken (PossibleAction action) {
         if (action instanceof NullAction
                 && ((NullAction)action).getMode() == NullAction.Mode.START_GAME)    {
-            log.info("*** Action 0: {}", action);
-        } else if (getCurrentRound() instanceof OperatingRound) {
-            OperatingRound thisOR = (OperatingRound) getCurrentRound();
-            log.info("*** Action {} by {}: {}", actionCount++,
-                    thisOR.getCompAndPresName(thisOR.operatingCompany.value()),
-                    action);
+            log.info("*** Action -1: {}", action);
         } else {
-            log.info("*** Action {} by {}: {}", actionCount++, action.getPlayerName(), action);
+            if (getCurrentRound() instanceof OperatingRound) {
+                OperatingRound thisOR = (OperatingRound) getCurrentRound();
+                log.info("*** Action {} by {}: {}", actionCount.value(),
+                        thisOR.getCompAndPresName(thisOR.operatingCompany.value()),
+                        action);
+            } else {
+                log.info("*** Action {} by {}: {}", actionCount.value(), action.getPlayerName(), action);
+            }
+            actionCount.add(1);
         }
     }
 
@@ -1303,6 +1306,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      * Process the effects of a player going bankrupt, without ending the game.
      * This code applies to (most of) the David Hecht games.
      * So far 1826, 18EU, 18VA, 18Scan have been identified to use this code.
+     * Also 1835.
      */
     protected void processPlayerBankruptcy() {
 
@@ -1562,26 +1566,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                     if (sp instanceof SellBonusToken) {
                         // TODO: Check if this works correctly
                         ((SellBonusToken) sp).setSeller(owner);
-                        // Also note 1 has been used
-                        // EV: ???? Why this? Breaks 18Scan
-                        //((SellBonusToken) sp).setExercised();
                         spsToMoveToGM.add(sp);
                     }
-                    // Used in 1856 (reporting only) and SOH (no reporting)
-                    // -- Strange, but true
                     if (sp instanceof LocatedBonus) {
-                        PublicCompany company = (PublicCompany) owner;
-                        LocatedBonus b = (LocatedBonus) sp;
-                        if (!"SOH".equals(getRoot().getGameName())) { //Prevent reporting twice
-                            ReportBuffer.add(this, LocalText.getText("AcquiresBonus",
-                                    company.getId(),
-                                    b.getName(),
-                                    Bank.format(company, b.getValue()),
-                                    b.getLocationNameString()));
-                        }
-                        if (!"1856".equals(getRoot().getGameName())) { // Necessary, but why not here?
-                            spsToMoveToPC.add(sp); // Required for SOH
-                        }
+                        spsToMoveToPC.add(sp);
                     }
 
                 } else if (owner instanceof PublicCompany && sp.isUsableIfOwnedByCompany()

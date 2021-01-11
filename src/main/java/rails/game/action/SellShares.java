@@ -28,6 +28,7 @@ public class SellShares extends PossibleAction {
      * 1 = exchange against 1-share certificates (usually 10%);<br>
      * 2 = exchange against a 2-share certificate (as can occur in 1835);<br>
      * etc.
+     * EV since v2.3.1:
      */
     private int presidentExchange;
 

@@ -39,7 +39,7 @@ public class StockRound_1880 extends StockRound {
      * Constructor with the GameManager, will call super class (StockRound's)
      * Constructor to initialize
      * 
-     * @param aGameManager The GameManager Object needed to initialize the Stock
+     * @param parent The GameManager Object needed to initialize the Stock
      * Round
      * 
      */
@@ -505,11 +505,11 @@ public class StockRound_1880 extends StockRound {
 
     // In 1880 all share transfers via ipo
     @Override
-    protected void executeShareTransfer( PublicCompany company,
+    protected boolean executeShareTransfer( PublicCompany company,
             List<PublicCertificate> certsToSell, 
             Player dumpedPlayer, int presSharesToSell) {
         
-        executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, (BankPortfolio) ipo.getParent() );
+        return executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, (BankPortfolio) ipo.getParent() );
     }
     
 }

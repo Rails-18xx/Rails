@@ -1585,7 +1585,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
     }
 
-    public void checkPresidency(Player dumpedPlayer) {
+    public boolean checkPresidency(Player dumpedPlayer) {
 
         if (getPresident() == null && dumpedPlayer != null) {
             // No president, then pres.share must be in the Pool
@@ -1594,13 +1594,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                     dumpedPlayer.getId(),
                     getId()));
+            return true;
 
         } else {
-            checkPresidency();
+            return checkPresidency();
         }
     }
 
-    public void checkPresidency() {
+    public boolean checkPresidency() {
 
         // check if there is a new potential president
         int presidentShareNumber = getPresident().getPortfolioModel().getShares(this) + 1;
@@ -1608,7 +1609,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         // no change, return
         if (nextPotentialPresident == null) {
-            return;
+            return false;
         }
 
         // otherwise Hand presidency to the player with the highest share
@@ -1617,6 +1618,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                 nextPotentialPresident.getId(),
                 getId()));
+        return true;
     }
 
     public Player findPlayerToDump() {

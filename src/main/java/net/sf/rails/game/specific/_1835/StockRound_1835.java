@@ -285,8 +285,9 @@ public class StockRound_1835 extends StockRound {
 	}
 
     @Override
-    protected void executeShareTransfer(PublicCompany company, List<PublicCertificate> certsToSell, Player dumpedPlayer, int presSharesToSell) {
+    protected boolean executeShareTransfer(PublicCompany company, List<PublicCertificate> certsToSell, Player dumpedPlayer, int presSharesToSell) {
 
+        boolean swapped = false;
         BankPortfolio bankTo = (BankPortfolio) pool.getParent();
 
         if (dumpedPlayer != null && presSharesToSell > 0) {
@@ -295,11 +296,13 @@ public class StockRound_1835 extends StockRound {
             ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                     dumpedPlayer.getId(),
                     company.getId()));
+            swapped = true;
 
         }
 
         // Transfer the sold certificates
         Portfolio.moveAll(certsToSell, bankTo);
+        return swapped;
     }
 
     private void executePresidentTransferAfterDump(PublicCompany company, Set<PublicCertificate> certsToSell, Player newPresident, int presSharesToSell, Player oldPresident, BankPortfolio bankTo) {
