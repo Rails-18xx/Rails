@@ -68,7 +68,7 @@ dependencies {
     implementation 'com.google.guava:guava:23.0'
     implementation 'net.java.dev.designgridlayout:designgridlayout:1.11'
     implementation 'org.dockingframes:docking-frames-common:1.1.1'
-    implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.2'
+    implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.3'
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation 'org.apache.commons:commons-lang3:3.11'
     implementation 'org.apache.commons:commons-text:1.9'
@@ -78,11 +78,11 @@ dependencies {
     testImplementation 'junit:junit:4.13.1'
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
     testImplementation 'org.easytesting:fest-util:1.2.5'
-    testImplementation 'org.mockito:mockito-core:3.6.0'
+    testImplementation 'org.mockito:mockito-core:3.6.28'
 }
 
 javafx {
-    version = '14'
+    version = '15'
     modules = ['javafx.controls', 'javafx.swing']
 }
 
@@ -124,17 +124,16 @@ static def buildDate() {
     new SimpleDateFormat('yyyy-MM-dd').format(new Date())
 }
 
-gitProperties {
-    customProperty 'buildDate', buildDate()
-    // TODO: move this to a property so we can override during a release build
-    customProperty 'develop', 'true'
-}
-
 static def isNonStable(String version) {
     def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
     def regex = /^[0-9,.v-]+(-r)?$/
 
     !stableKeyword && !(version ==~ regex)
+}
+
+gitProperties {
+    customProperty 'buildDate', buildDate()
+    customProperty 'develop', isNonStable(rootProject.version as String)
 }
 
 dependencyUpdates {
@@ -144,12 +143,23 @@ dependencyUpdates {
     }
 }
 
+/**
+ * Converts the version to a jpackage conform form.
+ * Examples:
+ * 2.4.0         -> 2.4.0
+ * 2.4.0-alpha   -> 2.4.0
+ * 2.4.0-release -> 2.4.0
+ *
+ * @return The converted version string
+ */
 def appVersion() {
     rootProject.version
-            .replaceAll('\\-', '.')
-            .replaceAll('alpha', '0')
-            .replaceAll('beta', '0')
-            .replaceAll('release', '0')
+            .toUpperCase()
+            .replaceAll('\\-ALPHA', '')
+            .replaceAll('\\-BETA', '')
+            .replaceAll('\\-RELEASE', '')
+            .replaceAll('\\-FINAL', '')
+            .replaceAll('\\-GA', '')
 }
 
 task buildDebPackage(type: Exec) {

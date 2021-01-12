@@ -316,7 +316,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             if (ssrTag != null) {
                 // FIXME: Rails 2.0, move this to some default .xml!
                 String ssrClassName =
-                        ssrTag.getAttributeAsString("class", "net.sf.rails.game.ShareSellingRound");
+                        ssrTag.getAttributeAsString("class", "net.sf.rails.game.financial.ShareSellingRound");
                 try {
                     shareSellingRoundClass =
                             Class.forName(ssrClassName).asSubclass(ShareSellingRound.class);
