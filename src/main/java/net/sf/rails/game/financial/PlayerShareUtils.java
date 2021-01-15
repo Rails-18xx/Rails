@@ -171,7 +171,7 @@ public class PlayerShareUtils {
     // FIXME: Rails 2.x This is a helper function as long as the sold certificates are not stored
     public static int presidentShareNumberToSell(PublicCompany company, Player president, Player dumpedPlayer,
                                                  int nbCertsToSell) {
-        log.debug ("++ {} {} to {} certsToSell={}", company, president, dumpedPlayer, nbCertsToSell);
+        log.debug ("Dump {} {} to {} certsToSell={}", company, president, dumpedPlayer, nbCertsToSell);
         int dumpThreshold = president.getPortfolioModel().getShares(company) - dumpedPlayer.getPortfolioModel().getShares(company);
         if (nbCertsToSell > dumpThreshold) {
             // reduce the nbCertsToSell by the presidentShare (but it can be sold partially...)
@@ -187,7 +187,7 @@ public class PlayerShareUtils {
     public static List<PublicCertificate> findCertificatesToSell(PublicCompany company, Player player,
                                                                  int nbCertsToSell, int shareSize,
                                                                  boolean dumpAllowed) {
-        log.debug ("----- findCerts: {} {} number={} units={} dump={}",
+        log.debug ("FindCertsToSell: {} {} number={} units={} dump={}",
                 company, player, nbCertsToSell, shareSize, dumpAllowed);
         PublicCertificate presCert = null;
         // check for <= 0 => empty list
@@ -197,9 +197,10 @@ public class PlayerShareUtils {
 
         ImmutableList.Builder<PublicCertificate> certsToSell = ImmutableList.builder();
         for (PublicCertificate cert:player.getPortfolioModel().getCertificates(company)) {
-            log.debug("--c-- {} {}%", cert, cert.getShares()*company.getShareUnit());
+            log.debug("Found {} {}%{}", cert, cert.getShares()*company.getShareUnit(),
+                    (cert.isPresidentShare() ? "P" : ""));
             if (!cert.isPresidentShare() && cert.getShares() == shareSize) {
-                log.debug("--n-- {}", cert);
+                log.debug("Added {}", cert);
                 certsToSell.add(cert);
                 nbCertsToSell--;
                 if (nbCertsToSell == 0) {
@@ -207,16 +208,14 @@ public class PlayerShareUtils {
                 }
             } else if (dumpAllowed && cert.isPresidentShare() && cert.getShares()== shareSize) {
                 // Pres.share must be added last, if needed at all
-                //certsToSell.add(cert);
                 presCert = cert;
-                //nbCertsToSell--;
                 if (nbCertsToSell == 0) {
                     break;
                 }
             }
         }
         if (nbCertsToSell > 0 && presCert != null) {
-            log.debug("--p-- {}", presCert);
+            log.debug("Added {}P", presCert);
             certsToSell.add(presCert);
             nbCertsToSell--;
         }

@@ -176,9 +176,9 @@ public class ShareSellingRound extends StockRound {
             SortedSet<Integer> possibleSharesToSell = null;
             boolean dumpIsPossible = false;
             Player dumpedPlayer = company.findPlayerToDump();
-            int dumpedPlayerShares = dumpedPlayer != null
+            int dumpedPlayerShares = (dumpedPlayer != null
                     ? dumpedPlayer.getPortfolioModel().getShares(company)
-                    : 0;
+                    : 0);
             int presidentShareSize = company.getPresidentsShare().getShares();
             if (company.getPresident() == currentPlayer) {
 
@@ -493,7 +493,6 @@ public class ShareSellingRound extends StockRound {
         adjustSharePrice(company, currentPlayer, numberSold, soldBefore);
 
         if (!company.isClosed()) {
-            log.debug("+++ certsToSell={} soldCertificates={}", certsToSell, soldCertificates);
             if (executeShareTransfer(company, /*certsToSell*/ soldCertificates,
                     dumpedPlayer, presCertSharesToSell)) {
                 log.debug ("Pre-selling pres.swap of {}", company);
@@ -517,6 +516,7 @@ public class ShareSellingRound extends StockRound {
 
     private void declareBankruptcy () {
         String message = LocalText.getText("YouMustRaiseCashButCannot",
+                currentPlayer,
                 Bank.format(this, this.cashToRaise.value()));
         ReportBuffer.add(this, message);
         DisplayBuffer.add(this, message);

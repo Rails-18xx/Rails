@@ -132,6 +132,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * PresidentModel
      */
+    protected GenericState<Player> president = new GenericState<>(this, getId()+"_Pres");
     protected final PresidentModel presidentModel = PresidentModel.create(this);
 
     /**
@@ -1341,12 +1342,20 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     // FIXME: This has to be redesigned
     // Relying on the ordering is not a good thing
     public Player getPresident() {
+        /*
         if (hasStarted()) {
             Owner owner = certificates.get(0).getOwner();
             if (owner instanceof Player) return (Player) owner;
         }
         return null;
+        */
+        return president.value();
     }
+
+    public void setPresident(Player newPresident) {
+        president.set(newPresident);
+    }
+
 
     public PresidentModel getPresidentModel() {
         return presidentModel;

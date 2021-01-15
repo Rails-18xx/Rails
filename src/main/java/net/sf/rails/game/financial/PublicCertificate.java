@@ -6,13 +6,11 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsItem;
-import net.sf.rails.game.RailsOwnableItem;
-import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.*;
 import net.sf.rails.game.model.CertificatesModel;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Ownable;
+import net.sf.rails.game.state.Owner;
 import net.sf.rails.game.state.Typable;
 
 import org.slf4j.Logger;
@@ -265,7 +263,22 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
         this.certificateCount = certificateCount;
     }
 
-    // Item interface
+    @Override
+    public void moveTo(Owner newOwner) {
+        super.moveTo (newOwner);
+
+        // If this is a president certificate, also set the president
+        if (president) {
+            PublicCompany company = (PublicCompany) getParent();
+            if (newOwner instanceof BankPortfolio) {
+                company.setPresident(null);
+            } else {
+                company.setPresident((Player)newOwner);
+            }
+        }
+    }
+
+        // Item interface
     /**
      * Get the name of a certificate. The name is derived from the company name
      * and the share percentage of this certificate. If it is a 100% share (as

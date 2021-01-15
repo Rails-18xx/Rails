@@ -1,9 +1,11 @@
 package net.sf.rails.game.specific._1835;
 
 import net.sf.rails.common.GameOption;
+import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.ShareSellingRound;
 
 
 public class GameManager_1835 extends GameManager {
@@ -96,35 +98,42 @@ public class GameManager_1835 extends GameManager {
         return limit;
     }
 
-    /** Pick a new president for a company that is going into hibernation */
+    /** Pick a new president for a company of which the president went bankrupt */
     @Override
-    protected void processCompanyAfterPlayerBankruptcy(Player oldPresident, PublicCompany company) {
-
-        company.setHibernating(true);
+    protected Player processCompanyAfterPlayerBankruptcy(Player oldPresident, PublicCompany company) {
 
         // Is there any player with one share?
         Player newPresident = null;
         PlayerManager pm = getRoot().getPlayerManager();
         for (Player player : pm.getNextPlayers(false)) {
-            int share = player.getPortfolioModel().getShare(company);
-            if (share == 1) {
+            int shares = player.getPortfolioModel().getShares(company);
+            if (shares == 1) {
                 newPresident = player;
                 break;
             }
         }
 
         // Otherwise, the priority holder will have to do it.
-        newPresident = pm.getPriorityPlayer();
-
-        // Assigning the president this way isn't yet possible,
-        // as presidency is now defined as holding the pres.cert,
-        // which is in the Pool if we get to here.
-        // TODO Add a president attribute to PublicCompany
-        //company.setPresident (newPresident);
+        if (newPresident == null) newPresident = pm.getPriorityPlayer();
 
         ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                 newPresident.getId(),
                 company.getId()));
+
+        return newPresident;
     }
+
+    @Override
+    public void finishShareSellingRound(boolean resume) {
+        int remainingCashToRaise = ((ShareSellingRound)getCurrentRound()).getRemainingCashToRaise();
+        OperatingRound_1835 or = (OperatingRound_1835) interruptedRound;
+        setRound(or);
+        guiHints.setCurrentRoundType(interruptedRound.getClass());
+        guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
+        guiHints.setActivePanel(GuiDef.Panel.MAP);
+        interruptedRound = null;
+        or.resumeAfterSSR(remainingCashToRaise);
+    }
+
 
 }

@@ -2,9 +2,12 @@ package net.sf.rails.game.specific._1835;
 
 import java.util.*;
 
+import net.sf.rails.game.state.*;
+import net.sf.rails.game.state.Currency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rails.game.action.BuyTrain;
 import rails.game.action.DiscardTrain;
 import rails.game.action.LayTile;
 import net.sf.rails.common.DisplayBuffer;
@@ -21,20 +24,18 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
-import net.sf.rails.game.state.BooleanState;
-import net.sf.rails.game.state.Currency;
-import net.sf.rails.game.state.HashMapState;
-import net.sf.rails.game.state.MoneyOwner;
-import net.sf.rails.game.state.Owner;
 
 import com.google.common.collect.Iterables;
+import rails.game.action.SetDividend;
 
 
 public class OperatingRound_1835 extends OperatingRound {
     private static final Logger log = LoggerFactory.getLogger(OperatingRound_1835.class);
 
-    private final BooleanState needPrussianFormationCall = new BooleanState(this, "NeedPrussianFormationCall");
-    private final BooleanState hasLaidExtraOBBTile = new BooleanState(this, "HasLaidExtraOBBTile");
+    private final BooleanState needPrussianFormationCall
+            = new BooleanState(this, "NeedPrussianFormationCall");
+    private final BooleanState hasLaidExtraOBBTile
+            = new BooleanState(this, "HasLaidExtraOBBTile");
 
     /**
      * Registry of percentage of PR revenue to be denied per player
@@ -162,6 +163,27 @@ public class OperatingRound_1835 extends OperatingRound {
         }
     }
 
+    public void resumeAfterSSR (int remainingCashToRaise) {
+        if (savedAction instanceof BuyTrain) {
+
+            PublicCompany_1835 company =
+                    (PublicCompany_1835) ((BuyTrain) savedAction).getCompany();
+
+            // After a bankruptcy, the Bank will loan the missing cash
+            // to buy the intended train.
+            if (remainingCashToRaise > 0) {
+                Currency.fromBank(remainingCashToRaise, company);
+                company.setBankLoan(remainingCashToRaise);
+                String message = LocalText.getText("CompanyGetsLoanToBuyTrain",
+                        company, Bank.format(this, remainingCashToRaise));
+                ReportBuffer.add (this, message);
+                DisplayBuffer.add(this, message);
+            }
+        }
+
+        super.resume();
+    }
+
     @Override
     public void resume() {
         PublicCompany prussian = companyManager.getPublicCompany(GameManager_1835.PR_ID);
@@ -255,6 +277,40 @@ public class OperatingRound_1835 extends OperatingRound {
         }
 
         return result;
+    }
+
+    @Override
+    protected void prepareRevenueAndDividendAction() {
+
+        PublicCompany company = operatingCompany.value();
+        if (company.hasTrains() && company instanceof PublicCompany_1835
+                && ((PublicCompany_1835)company).hasBankLoan())  {
+            int[] allowedRevenueActions = new int[] {SetDividend.WITHHOLD};
+            possibleActions.add(new SetDividend(getRoot(),
+                    company.getLastRevenue(), true,
+                    allowedRevenueActions));
+        } else {
+            super.prepareRevenueAndDividendAction();
+        }
+    }
+
+    @Override
+    protected void executeSetRevenueAndDividend(SetDividend action) {
+        executeSetRevenueAndDividend(action, null);
+
+        PublicCompany company = action.getCompany();
+        if (company instanceof PublicCompany_1835) {
+            PublicCompany_1835 comp1835 = (PublicCompany_1835) company;
+            if (comp1835.hasBankLoan()) {
+                int repayment = Math.min (comp1835.getBankLoan(), action.getActualRevenue());
+                Currency.toBank(company, repayment);
+                comp1835.repayBankLoan(repayment);
+                ReportBuffer.add (this, LocalText.getText(
+                        "CompanyRepaysBankLoan", company,
+                        Bank.format(this, repayment),
+                        Bank.format(this, comp1835.getBankLoan())));
+            }
+        }
     }
 
     @Override

@@ -1315,6 +1315,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         Currency.toBankAll(bankrupter); // All money has already gone to company
         PortfolioModel bpf = bankrupter.getPortfolioModel();
         List<PublicCompany> presidencies = new ArrayList<>();
+        Map<PublicCompany, Player> newPresidencies = new HashMap<>();
         for (PublicCertificate cert : bpf.getCertificates()) {
             if (cert.isPresidentShare()) presidencies.add(cert.getCompany());
         }
@@ -1339,14 +1340,24 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                         company.getId()));
             } else {
                 // This process is game-dependent.
-                processCompanyAfterPlayerBankruptcy(bankrupter, company);
+                newPresident = processCompanyAfterPlayerBankruptcy(bankrupter, company);
+            }
+            newPresidencies.put (company, newPresident);
+        }
+
+        // Dump all remaining shares to pool
+        // (note: this will reset the company president to null)
+        Portfolio.moveAll(PublicCertificate.class, bankrupter,
+                getRoot().getBank().getPool());
+
+        // Now we can safely set any new presidencies
+        for (PublicCompany company : newPresidencies.keySet()) {
+            if (company.getPresident() == null) {
+                company.setPresident(newPresidencies.get(company));
             }
         }
 
-        // Dump all shares to pool
-        Portfolio.moveAll(PublicCertificate.class, bankrupter,
-                getRoot().getBank().getPool());
-        bankrupter.setBankrupt();
+        bankrupter.setBankrupt(); // this is a duplicate
 
         // Finish the share selling round
         if (getCurrentRound() instanceof ShareSellingRound) {
@@ -1358,8 +1369,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      *  Only to be called by processPlayerBankruptcy().
      * (Perhaps a default version can be put here if sensible)
      */
-    protected void processCompanyAfterPlayerBankruptcy(Player player, PublicCompany company) {
-        return;
+    protected Player processCompanyAfterPlayerBankruptcy(Player player, PublicCompany company) {
+        return null;
     }
 
     public void registerBrokenBank() {

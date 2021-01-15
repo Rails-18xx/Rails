@@ -976,7 +976,7 @@ PRICE_MOVES_LOG,FS,65,B5,60,A5
 PlayerMustSellShares,Volker,308
 SELL_SHARES_LOG,Volker,4,10,40,FS,240
 PRICE_MOVES_LOG,FS,60,A5,40,A7
-YouMustRaiseCashButCannot,68
+YouMustRaiseCashButCannot,Volker,68
 PlayerIsBankrupt,Volker
 CompanyCloses,13
 CompanyCloses,14
