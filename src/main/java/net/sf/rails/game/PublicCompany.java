@@ -132,6 +132,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * PresidentModel
      */
+    protected GenericState<Player> president = new GenericState<>(this, getId()+"_Pres");
     protected final PresidentModel presidentModel = PresidentModel.create(this);
 
     /**
@@ -1341,12 +1342,20 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     // FIXME: This has to be redesigned
     // Relying on the ordering is not a good thing
     public Player getPresident() {
+        /*
         if (hasStarted()) {
             Owner owner = certificates.get(0).getOwner();
             if (owner instanceof Player) return (Player) owner;
         }
         return null;
+        */
+        return president.value();
     }
+
+    public void setPresident(Player newPresident) {
+        president.set(newPresident);
+    }
+
 
     public PresidentModel getPresidentModel() {
         return presidentModel;
@@ -1585,7 +1594,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
     }
 
-    public void checkPresidency(Player dumpedPlayer) {
+    public boolean checkPresidency(Player dumpedPlayer) {
 
         if (getPresident() == null && dumpedPlayer != null) {
             // No president, then pres.share must be in the Pool
@@ -1594,13 +1603,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                     dumpedPlayer.getId(),
                     getId()));
+            return true;
 
         } else {
-            checkPresidency();
+            return checkPresidency();
         }
     }
 
-    public void checkPresidency() {
+    public boolean checkPresidency() {
 
         // check if there is a new potential president
         int presidentShareNumber = getPresident().getPortfolioModel().getShares(this) + 1;
@@ -1608,7 +1618,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         // no change, return
         if (nextPotentialPresident == null) {
-            return;
+            return false;
         }
 
         // otherwise Hand presidency to the player with the highest share
@@ -1617,6 +1627,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                 nextPotentialPresident.getId(),
                 getId()));
+        return true;
     }
 
     public Player findPlayerToDump() {

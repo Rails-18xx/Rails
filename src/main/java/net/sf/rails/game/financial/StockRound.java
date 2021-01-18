@@ -507,10 +507,10 @@ public class StockRound extends Round {
             if (ownedShare == 0) {
                 continue;
             }
+            log.debug("company = {}", company);
 
             /* May not sell more than the Pool can accept */
             int poolAllowsShares = PlayerShareUtils.poolAllowsShareNumbers(company);
-            log.debug("company = {}", company);
             log.debug("poolAllowShares = {}", poolAllowsShares);
             int maxShareToSell = Math.min(ownedShare, poolAllowsShares);
 
@@ -1217,7 +1217,7 @@ public class StockRound extends Round {
         Player dumpedPlayer = null;
         int presidentShareNumbersToSell = 0;
         int numberToSell = action.getNumber();
-        int shareUnits = action.getShareUnits();
+        int shareSizeToSell = action.getShareUnits();
 
         // Dummy loop to allow a quick jump out
         while (true) {
@@ -1268,6 +1268,7 @@ public class StockRound extends Round {
 
             // ... check if there is a dump required
             // Player is president => dump is possible
+            /* United
             if (currentPlayer == company.getPresident() && shareUnits == 1) {
                 dumpedPlayer = company.findPlayerToDump();
                 if (dumpedPlayer != null) {
@@ -1289,9 +1290,22 @@ public class StockRound extends Round {
                     }
                 }
             }
+            */
+            if (currentPlayer == company.getPresident()) {
+                dumpedPlayer = company.findPlayerToDump();
+                if (dumpedPlayer != null) {
+                    presidentShareNumbersToSell = PlayerShareUtils.presidentShareNumberToSell(
+                            company, currentPlayer, dumpedPlayer, numberToSell + shareSizeToSell - 1);
+                    // reduce the numberToSell by the president (partial) sold certificate
+                    numberToSell -= presidentShareNumbersToSell;
+                    presCert = null;
+                }
+            }
 
+            log.debug ("SR presSharesToSell={} certsToSell={}", presidentShareNumbersToSell, numberToSell);
             certsToSell = PlayerShareUtils.findCertificatesToSell(company, currentPlayer, numberToSell,
-                    shareUnits, dumpedPlayer != null);
+                    shareSizeToSell, dumpedPlayer != null);
+            log.debug("SR soldCertificates={}", certsToSell);
 
             // reduce numberToSell to double check
             for (PublicCertificate c : certsToSell) {
@@ -1325,7 +1339,7 @@ public class StockRound extends Round {
 
         // Selling price
         int price = getCurrentSellPrice(company);
-        int cashAmount = numberSold * price * shareUnits;
+        int cashAmount = numberSold * price * shareSizeToSell;
 
         // Save original price as it may be reused in subsequent sale actions in the same turn
         boolean soldBefore = sellPrices.containsKey(company);
@@ -1338,15 +1352,15 @@ public class StockRound extends Round {
         if (numberSold == 1) {
             ReportBuffer.add(this, LocalText.getText("SELL_SHARE_LOG",
                     playerName,
-                    company.getShareUnit() * shareUnits,
+                    company.getShareUnit() * shareSizeToSell,
                     companyName,
                     cashText));
         } else {
             ReportBuffer.add(this, LocalText.getText("SELL_SHARES_LOG",
                     playerName,
                     numberSold,
-                    company.getShareUnit() * shareUnits,
-                    numberSold * company.getShareUnit() * shareUnits,
+                    company.getShareUnit() * shareSizeToSell,
+                    numberSold * company.getShareUnit() * shareSizeToSell,
                     companyName,
                     cashText));
         }
@@ -1354,13 +1368,13 @@ public class StockRound extends Round {
         adjustSharePrice(company, currentPlayer, numberSold, soldBefore);
 
         if (!company.isClosed()) {
-
+            log.info("certsToSell={}", certsToSell);
             executeShareTransfer(company, certsToSell,
                     dumpedPlayer, presidentShareNumbersToSell);
         }
 
         // The above does not transfer the presidency
-        // if onlt non-pres. shares have been sold
+        // if only non-pres. shares have been sold
         company.checkPresidency (dumpedPlayer);
 
         // Remember that the player has sold this company this round.
@@ -1381,24 +1395,29 @@ public class StockRound extends Round {
     // ShareSellingRound 1880: executeShareTransfer
 
     // not overriden
-    protected final void executeShareTransferTo(PublicCompany company,
+    protected final boolean executeShareTransferTo(PublicCompany company,
                                                 List<PublicCertificate> certsToSell, Player dumpedPlayer, int presSharesToSell,
                                                 BankPortfolio bankTo) {
+        boolean swapped = false;
 
         // Check if the presidency has changed
         if (dumpedPlayer != null && presSharesToSell > 0) {
 
-            PlayerShareUtils.executePresidentTransferAfterDump(company, dumpedPlayer, bankTo, presSharesToSell);
+            PlayerShareUtils.executePresidentTransferAfterDump(company, dumpedPlayer, bankTo,
+                    presSharesToSell);
 
             ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                     dumpedPlayer.getId(),
                     company.getId()));
+            swapped = true;
 
         }
 
         // Transfer the sold certificates
+        log.info ("Certs to pool: {}", certsToSell);
         Portfolio.moveAll(certsToSell, bankTo);
 
+        return swapped;
     }
 
     // called by:
@@ -1408,11 +1427,11 @@ public class StockRound extends Round {
     // overridden by
     // StockRound 1880
     // ShareSellingRound 1880
-    protected void executeShareTransfer(PublicCompany company,
+    protected boolean executeShareTransfer(PublicCompany company,
                                         List<PublicCertificate> certsToSell,
                                         Player dumpedPlayer, int presSharesToSell) {
 
-        executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, (BankPortfolio) pool.getParent());
+        return executeShareTransferTo(company, certsToSell, dumpedPlayer, presSharesToSell, (BankPortfolio) pool.getParent());
     }
 
     // called by:

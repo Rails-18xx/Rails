@@ -66,10 +66,11 @@ public class GameManager_18Scan extends GameManager {
     }
 
     @Override
-    protected void processCompanyAfterPlayerBankruptcy(Player player, PublicCompany company) {
+    protected Player processCompanyAfterPlayerBankruptcy(Player player, PublicCompany company) {
         ReportBuffer.add (this, LocalText.getText(
                 "PresidentShareToPool", company.getId()));
         company.setHibernating(true);
+        return null;
     }
 
 }

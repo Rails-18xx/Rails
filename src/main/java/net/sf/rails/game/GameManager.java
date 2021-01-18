@@ -182,7 +182,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return revenueSpinnerIncrement;
     }
 
-    private int actionCount = 0; // To log during reloading
+    private IntegerState actionCount = IntegerState.create (this, "actionCount");
 
     public GameManager(RailsRoot parent, String id) {
         super(parent, id);
@@ -813,14 +813,17 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected void logActionTaken (PossibleAction action) {
         if (action instanceof NullAction
                 && ((NullAction)action).getMode() == NullAction.Mode.START_GAME)    {
-            log.info("*** Action 0: {}", action);
-        } else if (getCurrentRound() instanceof OperatingRound) {
-            OperatingRound thisOR = (OperatingRound) getCurrentRound();
-            log.info("*** Action {} by {}: {}", actionCount++,
-                    thisOR.getCompAndPresName(thisOR.operatingCompany.value()),
-                    action);
+            log.info("*** Action -1: {}", action);
         } else {
-            log.info("*** Action {} by {}: {}", actionCount++, action.getPlayerName(), action);
+            if (getCurrentRound() instanceof OperatingRound) {
+                OperatingRound thisOR = (OperatingRound) getCurrentRound();
+                log.info("*** Action {} by {}: {}", actionCount.value(),
+                        thisOR.getCompAndPresName(thisOR.operatingCompany.value()),
+                        action);
+            } else {
+                log.info("*** Action {} by {}: {}", actionCount.value(), action.getPlayerName(), action);
+            }
+            actionCount.add(1);
         }
     }
 
@@ -1303,6 +1306,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      * Process the effects of a player going bankrupt, without ending the game.
      * This code applies to (most of) the David Hecht games.
      * So far 1826, 18EU, 18VA, 18Scan have been identified to use this code.
+     * Also 1835.
      */
     protected void processPlayerBankruptcy() {
 
@@ -1311,6 +1315,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         Currency.toBankAll(bankrupter); // All money has already gone to company
         PortfolioModel bpf = bankrupter.getPortfolioModel();
         List<PublicCompany> presidencies = new ArrayList<>();
+        Map<PublicCompany, Player> newPresidencies = new HashMap<>();
         for (PublicCertificate cert : bpf.getCertificates()) {
             if (cert.isPresidentShare()) presidencies.add(cert.getCompany());
         }
@@ -1335,14 +1340,24 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                         company.getId()));
             } else {
                 // This process is game-dependent.
-                processCompanyAfterPlayerBankruptcy(bankrupter, company);
+                newPresident = processCompanyAfterPlayerBankruptcy(bankrupter, company);
+            }
+            newPresidencies.put (company, newPresident);
+        }
+
+        // Dump all remaining shares to pool
+        // (note: this will reset the company president to null)
+        Portfolio.moveAll(PublicCertificate.class, bankrupter,
+                getRoot().getBank().getPool());
+
+        // Now we can safely set any new presidencies
+        for (PublicCompany company : newPresidencies.keySet()) {
+            if (company.getPresident() == null) {
+                company.setPresident(newPresidencies.get(company));
             }
         }
 
-        // Dump all shares to pool
-        Portfolio.moveAll(PublicCertificate.class, bankrupter,
-                getRoot().getBank().getPool());
-        bankrupter.setBankrupt();
+        bankrupter.setBankrupt(); // this is a duplicate
 
         // Finish the share selling round
         if (getCurrentRound() instanceof ShareSellingRound) {
@@ -1354,8 +1369,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      *  Only to be called by processPlayerBankruptcy().
      * (Perhaps a default version can be put here if sensible)
      */
-    protected void processCompanyAfterPlayerBankruptcy(Player player, PublicCompany company) {
-        return;
+    protected Player processCompanyAfterPlayerBankruptcy(Player player, PublicCompany company) {
+        return null;
     }
 
     public void registerBrokenBank() {
@@ -1562,26 +1577,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                     if (sp instanceof SellBonusToken) {
                         // TODO: Check if this works correctly
                         ((SellBonusToken) sp).setSeller(owner);
-                        // Also note 1 has been used
-                        // EV: ???? Why this? Breaks 18Scan
-                        //((SellBonusToken) sp).setExercised();
                         spsToMoveToGM.add(sp);
                     }
-                    // Used in 1856 (reporting only) and SOH (no reporting)
-                    // -- Strange, but true
                     if (sp instanceof LocatedBonus) {
-                        PublicCompany company = (PublicCompany) owner;
-                        LocatedBonus b = (LocatedBonus) sp;
-                        if (!"SOH".equals(getRoot().getGameName())) { //Prevent reporting twice
-                            ReportBuffer.add(this, LocalText.getText("AcquiresBonus",
-                                    company.getId(),
-                                    b.getName(),
-                                    Bank.format(company, b.getValue()),
-                                    b.getLocationNameString()));
-                        }
-                        if (!"1856".equals(getRoot().getGameName())) { // Necessary, but why not here?
-                            spsToMoveToPC.add(sp); // Required for SOH
-                        }
+                        spsToMoveToPC.add(sp);
                     }
 
                 } else if (owner instanceof PublicCompany && sp.isUsableIfOwnedByCompany()

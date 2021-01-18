@@ -10,7 +10,7 @@
             <HomeBase lay="whenFloated"/>
         </BaseTokens>
 		<Payout split="always"/>
-	<Trains limit="2,1" mandatory="no"/>
+		<Trains limit="2,1" mandatory="no"/>
 	</CompanyType>
 	<CompanyType name="Major" class="net.sf.rails.game.specific._1835.PublicCompany_1835" capitalisation="incremental">
 		<PoolPaysOut/>

@@ -169,7 +169,9 @@ public class PlayerShareUtils {
     }
 
     // FIXME: Rails 2.x This is a helper function as long as the sold certificates are not stored
-    public static int presidentShareNumberToSell(PublicCompany company, Player president, Player dumpedPlayer,  int nbCertsToSell) {
+    public static int presidentShareNumberToSell(PublicCompany company, Player president, Player dumpedPlayer,
+                                                 int nbCertsToSell) {
+        log.debug ("Dump {} {} to {} certsToSell={}", company, president, dumpedPlayer, nbCertsToSell);
         int dumpThreshold = president.getPortfolioModel().getShares(company) - dumpedPlayer.getPortfolioModel().getShares(company);
         if (nbCertsToSell > dumpThreshold) {
             // reduce the nbCertsToSell by the presidentShare (but it can be sold partially...)
@@ -183,73 +185,87 @@ public class PlayerShareUtils {
     // EV: dumpPossible parameter added to prevent that in 1835 a president share is sold
     // instead of a non-pres 20% share, if no dumping is possible.
     public static List<PublicCertificate> findCertificatesToSell(PublicCompany company, Player player,
-                                                                 int nbCertsToSell, int shareUnits,
-                                                                 boolean dumpPossible) {
+                                                                 int nbCertsToSell, int shareSize,
+                                                                 boolean dumpAllowed) {
+        log.debug ("FindCertsToSell: {} {} number={} units={} dump={}",
+                company, player, nbCertsToSell, shareSize, dumpAllowed);
         PublicCertificate presCert = null;
-  log.info ("----- number={} units={}", nbCertsToSell, shareUnits);
         // check for <= 0 => empty list
         if (nbCertsToSell <= 0) {
             return ImmutableList.of();
         }
-        
+
         ImmutableList.Builder<PublicCertificate> certsToSell = ImmutableList.builder();
         for (PublicCertificate cert:player.getPortfolioModel().getCertificates(company)) {
-            log.info("--c-- {}", cert);
-            if (!cert.isPresidentShare() && cert.getShares() == shareUnits) {
-                log.info("--n-- {}", cert);
+            log.debug("Found {} {}%{}", cert, cert.getShares()*company.getShareUnit(),
+                    (cert.isPresidentShare() ? "P" : ""));
+            if (!cert.isPresidentShare() && cert.getShares() == shareSize) {
+                log.debug("Added {}", cert);
                 certsToSell.add(cert);
                 nbCertsToSell--;
                 if (nbCertsToSell == 0) {
                     break;
                 }
-            } else if (dumpPossible && cert.isPresidentShare() && cert.getShares()== shareUnits) {
+            } else if (dumpAllowed && cert.isPresidentShare() && cert.getShares()== shareSize) {
                 // Pres.share must be added last, if needed at all
-                //certsToSell.add(cert);
                 presCert = cert;
-                //nbCertsToSell--;
                 if (nbCertsToSell == 0) {
                     break;
                 }
             }
         }
         if (nbCertsToSell > 0 && presCert != null) {
-            log.info("--p-- {}", presCert);
+            log.debug("Added {}P", presCert);
             certsToSell.add(presCert);
             nbCertsToSell--;
         }
         
         return certsToSell.build();
     }
-    
-    public static void executePresidentTransferAfterDump(PublicCompany company, Player newPresident, BankPortfolio bankTo, int presSharesToSell) {
-        
+
+    public static void executePresidentTransferAfterDump(PublicCompany company, Player newPresident,
+                                                         BankPortfolio bankTo, int presSharesToSell) {
+
+        Player oldPresident = company.getPresident();
+        log.debug("Company = {}, presSharesToSell={}", company, presSharesToSell);
+
         // 1. Move the swap certificates from new president to the pool
         PublicCertificate presidentCert = company.getPresidentsShare();
 
         // ... get all combinations for the presidentCert share numbers
         SortedSet<Combination> combinations = CertificatesModel.certificateCombinations(
                 newPresident.getPortfolioModel().getCertificates(company), presidentCert.getShares());
+        log.debug("newPres combinations={} (owned {})", combinations, newPresident.getPortfolioModel().getCertificates(company));
     
         // ... move them to the Bank
         // FIXME: this should be based on a selection of the new president, however it chooses the combination with most certificates
         Combination swapToBank = combinations.last();
+        log.debug("swapToBank={} from newPres to pool", swapToBank);
         Portfolio.moveAll(swapToBank, bankTo);
         
         // 2. Move the replace certificates from the bank to the old president
         
         // What is the difference between the shares to sell and the president share number
         int replaceShares = presidentCert.getShares() - presSharesToSell;
+        log.debug("presShares={} presSharesToSell={} replaceShares={}",
+                presidentCert.getShares(), presSharesToSell, replaceShares);
         if (replaceShares > 0) {
             combinations = CertificatesModel.certificateCombinations(
                     bankTo.getPortfolioModel().getCertificates(company), replaceShares);
+            log.debug("pool combinations={} (owned {})", combinations, bankTo.getPortfolioModel().getCertificates(company));
             // FIXME: this should be based on a selection of the previous president, however it chooses the combination with least certificates
             Combination swapFromBank = combinations.first();
+            log.debug("swapFromBank={} from pool to old pres.", swapFromBank);
             // ... move to (old) president
-            Portfolio.moveAll(swapFromBank, company.getPresident());
+            Portfolio.moveAll(swapFromBank, oldPresident);
         }
         
         // 3. Transfer the president certificate
+        log.debug ("move pres.cert from {} to {}", oldPresident, newPresident);
         presidentCert.moveTo(newPresident);
+        log.debug("newPresident ({}) now has {}", newPresident, newPresident.getPortfolioModel().getCertificates(company));
+        log.debug("oldPresident ({}) now has {}", oldPresident, oldPresident.getPortfolioModel().getCertificates(company));
+        log.debug("pool now has {}", bankTo.getPortfolioModel().getCertificates(company));
     }
     
 }

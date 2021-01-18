@@ -65,7 +65,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
         setPlayer();
     }
 
-    private void setPlayer() {
+    public void setPlayer() {
         player = root.getPlayerManager().getCurrentPlayer();
         if (player != null) {
             playerName = player.getId();

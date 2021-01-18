@@ -517,7 +517,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             int cash =
                 ((ShareSellingRound) currentRound).getRemainingCashToRaise();
                 JOptionPane.showMessageDialog(this, LocalText.getText(
-                        "YouMustRaiseCash", gameUIManager.format(cash)), "",
+                        "YouMustRaiseCash", getCurrentPlayer(),
+                        gameUIManager.format(cash)), "",
                         JOptionPane.OK_OPTION);
         } else if (currentRound instanceof StockRound && !updateGameSpecificSettings()) {
 

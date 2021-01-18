@@ -55,9 +55,10 @@ public class GameManager_18EU extends GameManager {
     }
 
     @Override
-    protected void processCompanyAfterPlayerBankruptcy(Player player, PublicCompany company) {
+    protected Player processCompanyAfterPlayerBankruptcy(Player player, PublicCompany company) {
         company.setClosed();  // This also makes majors restartable
         ReportBuffer.add(this, LocalText.getText("CompanyCloses", company.getId()));
+        return null;
     }
 
 }
