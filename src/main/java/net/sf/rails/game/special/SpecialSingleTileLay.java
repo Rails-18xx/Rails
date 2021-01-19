@@ -102,7 +102,7 @@ public class SpecialSingleTileLay extends SpecialTileLay {
         return "SpecialSingleTileLay comp="
                 + (originalCompany == null ? null : originalCompany.getId())
                 + " hex=" + locationCodes
-                + " colour="+Util.joinWithDelimiter(tileColours, ",")
+                + " colour="+Util.join(tileColours, ",")
                 + " extra=" + extra + " cost=" + free + " connected=" + connected;
     }
 

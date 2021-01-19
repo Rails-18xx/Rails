@@ -198,7 +198,7 @@ public class SpecialMultiTileLay extends SpecialProperty {
 	public String toText() {
         return "SpecialMultiTileLay comp=" + originalCompany.getId()
         + " hex=" + locationCodes
-        + " colour="+Util.joinWithDelimiter(tileColours, ",")
+        + " colour="+Util.join(tileColours, ",")
         + " extra=" + extra + " cost=" + free + " connected=" + connected + " constraints=" + constraints;
     }
 

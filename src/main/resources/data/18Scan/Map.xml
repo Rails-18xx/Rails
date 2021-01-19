@@ -1,6 +1,6 @@
 <Map tileOrientation="EW" letterOrientation="vertical" even="A">
 	<Defaults>
-		<!-- See class StopType for allowed values -->
+		<!-- See class Access for allowed values -->
 		<Access type="offMap" runTo="tokenonly" runThrough="no" loop="no" score="major"/>
 		<Access type="city" runTo="yes" runThrough="yes" loop="yes" score="major"/>
 		<Access type="town" runTo="yes" runThrough="yes" loop="yes" score="minor"/>

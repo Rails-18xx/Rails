@@ -804,8 +804,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         for (int i = 0; i < np; i++) {
             xref[i] = oldPlayerNames.indexOf(newPlayerNames.get(i));
         }
-        log.debug("SRW: old player list: {}", Util.joinWithDelimiter(oldPlayerNames.toArray(new String[0]), ","));
-        log.debug("SRW: new player list: {}", Util.joinWithDelimiter(newPlayerNames.toArray(new String[0]), ","));
+        log.debug("SRW: old player list: {}", Util.join(oldPlayerNames.toArray(new String[0]), ","));
+        log.debug("SRW: new player list: {}", Util.join(newPlayerNames.toArray(new String[0]), ","));
 
 
         JComponent[] cells = new Cell[np];

@@ -811,7 +811,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         if (trainLimit != null) {
             infoText += "<br>" + LocalText.getText("CompInfoMaxTrains",
-                    Util.joinWithDelimiter(trainLimit, ", "));
+                    Util.join(trainLimit, ", "));
 
         }
 

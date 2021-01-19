@@ -1,10 +1,7 @@
 package net.sf.rails.game;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,14 +62,14 @@ public class Tile extends RailsModel implements Comparable<Tile> {
     private int count;
     private boolean allowsMultipleBasesOfOneCompany = false;
 
-    /** Fixed orientation; null if free to rotate */
+    /** Fixed orientation; null or -1 if free to rotate */
     private HexSide fixedOrientation = null;
 
     // Stop properties
     private Access access = null;
 
     /**
-     * Flag indicating that player must reposition any basetokens during the
+     * Flag indicating that player must reposition any base tokens during the
      * upgrade.
      */
     private boolean relayBaseTokensOnUpgrade = false;
@@ -126,11 +123,23 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         }
 
         /* Stations */
-        List<Tag> stationTags = defTag.getChildren("Station");
+        List<Tag> stationDefTags = defTag.getChildren("Station");
+        Map<String, Tag> stationSetTags = new HashMap<>();
+        if (setTag != null && setTag.hasChild("Station")) {
+            // Station attribute values from TileSet.xml to add to
+            // or replace values from Tile.xml (such as "type")
+            for (Tag stationSetTag : setTag.getChildren("Station")) {
+                String sid2 = stationSetTag.getAttributeAsString("id");
+                stationSetTags.put(sid2, stationSetTag);
+            }
+        }
         ImmutableSortedMap.Builder<Integer, Station> stationBuilder = ImmutableSortedMap.naturalOrder();
-        if (stationTags != null) {
-            for (Tag stationTag : stationTags) {
-                Station station = Station.create(this, stationTag);
+
+        if (stationDefTags != null) {
+            for (Tag stationDefTag : stationDefTags) {
+                String sid = stationDefTag.getAttributeAsString("id");
+                Tag stationSetTag = stationSetTags.get(sid);
+                Station station = Station.create(this, stationDefTag, stationSetTag);
                 stationBuilder.put(station.getNumber(), station);
             }
         }
@@ -398,6 +407,7 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         return slots;
     }
 
+    @Deprecated // Should only be specified in the upgrade Tag
     public boolean relayBaseTokensOnUpgrade() {
         return relayBaseTokensOnUpgrade;
     }

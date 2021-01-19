@@ -348,7 +348,7 @@ public class PlayerManager extends RailsManager implements Configurable {
         public String toText() {
             // FIXME: This has to be checked if this returns the correct structure
             // and may be it is better to use another method instead of toText?
-            return Util.joinWithDelimiter(playerOrder.view().toArray(new String[0]), ";");
+            return Util.join(playerOrder.view().toArray(new String[0]), ";");
         }
     }
 

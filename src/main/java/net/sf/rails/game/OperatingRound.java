@@ -2940,6 +2940,12 @@ public class OperatingRound extends Round implements Observer {
                 break;
             }
 
+            if (!company.mayBuyTrainType(train)) {
+                errMsg = LocalText.getText("MayNotBuyTrain",
+                        company, train.getType());
+            }
+
+
             // Amount must be non-negative
             if (trainPrice < 0) {
                 errMsg =
@@ -3351,6 +3357,7 @@ public class OperatingRound extends Round implements Observer {
             /* Used trains */
             trains = pool.getUniqueTrains();
             for (Train train : trains) {
+                if (!company.mayBuyTrainType(train)) continue;
                 if (!mayBuyMoreOfEachType
                         && trainsBoughtThisTurn.contains(train.getCardType())) {
                     continue;
@@ -3458,8 +3465,8 @@ public class OperatingRound extends Round implements Observer {
                 for (PublicCompany c : companies) {
                     trains = c.getPortfolioModel().getUniqueTrains();
                     for (Train train : trains) {
-                        if (train.isObsolete() || !train.isTradeable())
-                            continue;
+                        if (!company.mayBuyTrainType(train)) continue;
+                        if (train.isObsolete() || !train.isTradeable()) continue;
                         bt = null;
                         if (i != currentPlayerIndex
                                 && GameDef.getParmAsBoolean(this,

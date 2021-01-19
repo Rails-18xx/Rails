@@ -18,6 +18,7 @@ public class TrainType implements Cloneable {
 
     protected String name;
     protected TrainCardType trainCardType;
+    protected String trainCategory; // Default passenger; or goods etc.
 
     protected String reachBasis = "stops";
     protected boolean countHexes = false;
@@ -50,6 +51,7 @@ public class TrainType implements Cloneable {
         exchangeCost = tag.getAttributeAsInteger("exchangeCost");
         majorStops = tag.getAttributeAsInteger("majorStops");
         minorStops = tag.getAttributeAsInteger("minorStops");
+        trainCategory = tag.getAttributeAsString("category", "passenger");
 
         // Reach
         Tag reachTag = tag.getChild("Reach");
@@ -147,6 +149,10 @@ public class TrainType implements Cloneable {
      */
     public String getName() {
         return name;
+    }
+
+    public String getCategory() {
+        return trainCategory;
     }
 
     /**

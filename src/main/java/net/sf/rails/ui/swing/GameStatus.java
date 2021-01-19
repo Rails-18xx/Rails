@@ -672,8 +672,8 @@ public class GameStatus extends GridPanel implements ActionListener {
     }
     public void updatePlayerOrder (List<String> newPlayerNames) {
         List<String> oldPlayerNames = gameUIManager.getCurrentGuiPlayerNames();
-        log.debug("GS: old player list: {}", Util.joinWithDelimiter(oldPlayerNames.toArray(new String[0]), ","));
-        log.debug("GS: new player list: {}", Util.joinWithDelimiter(newPlayerNames.toArray(new String[0]), ","));
+        log.debug("GS: old player list: {}", Util.join(oldPlayerNames.toArray(new String[0]), ","));
+        log.debug("GS: new player list: {}", Util.join(newPlayerNames.toArray(new String[0]), ","));
         /* Currently, the passed new player order is ignored.
          * A call to this method only serves as a signal to rebuild the player columns in the proper order
          * (in fact, the shortcut is taken to rebuild the whole GameStatus panel).

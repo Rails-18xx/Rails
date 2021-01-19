@@ -267,7 +267,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         for (int i=0; i < allowedRevenueAllocations.length; i++) {
             s[i] = getAllocationNameKey(allowedRevenueAllocations[i]);
         }
-        return Util.joinWithDelimiter (s, ";");
+        return Util.join (s, ";");
     }
 
 }

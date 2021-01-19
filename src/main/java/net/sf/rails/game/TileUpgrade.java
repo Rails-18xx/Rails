@@ -137,6 +137,7 @@ public class TileUpgrade implements Upgrade {
      */
     private Map<HexSide, Rotation> rotations;
     private HexSidesSet rotationSides;
+    private boolean relayBaseTokens;
 
     /**
      * Hexes where the upgrade can be executed
@@ -172,10 +173,12 @@ public class TileUpgrade implements Upgrade {
 
             String hexes = upgradeTag.getAttributeAsString("hex");
             String phases = upgradeTag.getAttributeAsString("phase");
+            boolean relayBaseTokens = upgradeTag.getAttributeAsBoolean("relayBaseTokens");
 
             for (String sid : ids.split(",")) {
                 try {
                     TileUpgrade upgrade = new TileUpgrade(tile, sid, hexes, phases);
+                    if (relayBaseTokens) upgrade.setRelayBaseTokens(relayBaseTokens);
                     allUpgrades.add(upgrade);
                 } catch (NumberFormatException e) {
                     log.error("Catched Exception", e);
@@ -349,16 +352,69 @@ public class TileUpgrade implements Upgrade {
         return allowed;
     }
 
+    public boolean isRelayBaseTokens() {
+        return relayBaseTokens;
+    }
+
+    public void setRelayBaseTokens(boolean relayBaseTokens) {
+        this.relayBaseTokens = relayBaseTokens;
+    }
+
     private Rotation processRotations(HexSide side) {
 
         TrackConfig base = baseTile.getTrackConfig();
+        log.debug("----- Tile {} to {}, rot={}",
+                baseTile, targetTile, side.getTrackPointNumber());
         TrackConfig target = targetTile.getTrackConfig();
         // create rotation of target, unless default (= 0) rotation
-        if (side != HexSide.get(0)) {
+        HexSide baseFixedOrientation = baseTile.getFixedOrientation();
+        boolean baseFixed =  baseFixedOrientation != null
+                && baseFixedOrientation.getTrackPointNumber() > -1;
+                // Note: adding preprinted (also fixed) make many tests fail
+        HexSide targetFixedOrientation = targetTile.getFixedOrientation();
+        boolean targetFixed = targetFixedOrientation != null
+                && targetFixedOrientation.getTrackPointNumber() > -1;
+        log.debug("bFO={} tFO={}", baseFixedOrientation, targetFixedOrientation);
+        if (baseFixed && targetFixed) {
+            base = TrackConfig.createByRotation(base, baseFixedOrientation);
+            target = TrackConfig.createByRotation(target, targetFixedOrientation);
+            log.debug("base (fixed) = {}, target (fixed)={}", base, target);
+        } else if (side != HexSide.get(0)) {
             target = TrackConfig.createByRotation(target, side);
+            log.debug("base={} target={}", base, target);
         }
         // check if there are stations to map
         Map<Station, Station> stationMapping = assignStations(base, target);
+
+        // Try something else: match sides with old and new Stations in a simple way
+        // Each pair of stations that matches with the same side is connected.
+        // This finally appears to work for the 1837 green Vienna upgrade.
+        // Though it may only work where both base and target tiles have a fixed orientation.
+        if (stationMapping == null) {
+            stationMapping = new HashMap<>(6);
+            Station b, t;
+            for (int i = 0; i<=5; ++i) {
+                HexSide hs = HexSide.get(i);
+                if (base.hasSideTracks(hs) && target.hasSideTracks(hs)) {
+                    for (TrackPoint tpb : base.getSideTracks(hs)) {
+                        if (tpb.getTrackPointType() == TrackPoint.Type.STATION) {
+                            b = (Station) tpb;
+                            for (TrackPoint tpt : target.getSideTracks(hs)) {
+                                 if (tpt.getTrackPointType() == TrackPoint.Type.STATION) {
+                                     t = (Station) tpt;
+                                     stationMapping.put (b, t);
+                                 }
+                            }
+                       }
+                    }
+                }
+            }
+            log.debug ("My stationmapping: {}", stationMapping);
+        } else {
+            log.debug("Auto stationmapping: {}", stationMapping);
+        }
+
+
         if (stationMapping != null && !stationMapping.isEmpty()) {
             if (stationMapping.containsValue(null)) {
                 base = TrackConfig.createByDowngrade(base, base.getTile().getStation(1));
@@ -366,18 +422,21 @@ public class TileUpgrade implements Upgrade {
             base = TrackConfig.createByStationMapping(base, stationMapping);
         }
 
-        // and finally check if all tracks are maintained
+        // Finally check if all tracks are maintained
         Set<Track> baseTracks = base.getTracks();
         Set<Track> targetTracks = target.getTracks();
+        log.debug("base tracks: {}", baseTracks);
+        log.debug("target tracks: {}", targetTracks);
         SetView<Track> diffTrack = Sets.difference(baseTracks, targetTracks);
+        log.debug("diff tracks: {}", diffTrack);
         if (diffTrack.isEmpty()) {
             SetView<Track> newTracks = Sets.difference(targetTracks, baseTracks);
             boolean allowed = (targetTile.getPossibleRotations().get(side));
             Rotation rotObject = new Rotation(targetTracks, newTracks, side, stationMapping, allowed);
-            log.trace("New Rotation for {} => {}: \n{}", baseTile, targetTile, rotObject);
+            log.debug("New Rotation for {} => {}: \n{}", baseTile, targetTile, rotObject);
             return rotObject;
         } else {
-            log.trace("No Rotation found {} => {}, rotation ={}, remaining Tracks = {}", baseTile, targetTile, side, diffTrack);
+            log.debug("No Rotation found {} => {}, rotation ={}, remaining Tracks = {}", baseTile, targetTile, side, diffTrack);
             return null;
         }
     }
@@ -459,6 +518,7 @@ public class TileUpgrade implements Upgrade {
 
     private boolean checkTrackConnectivity(Set<TrackPoint> baseTrack, Set<TrackPoint> targetTrack) {
         SetView<TrackPoint> diffTrack = Sets.difference(baseTrack, targetTrack);
+        log.info("BaseTrack={} TargetTrack={} DiffTrack={}", baseTrack, baseTrack,diffTrack);
         if (diffTrack.isEmpty()) {
             // target maintains connectivity
             return true;
