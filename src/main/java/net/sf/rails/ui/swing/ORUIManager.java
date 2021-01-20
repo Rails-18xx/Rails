@@ -33,6 +33,7 @@ import net.sf.rails.game.Train;
 import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.special.SpecialSingleTileLay;
 import net.sf.rails.game.special.SpecialTileLay;
 import net.sf.rails.game.special.SpecialBaseTokenLay;
 import net.sf.rails.game.state.Owner;
@@ -237,8 +238,15 @@ public class ORUIManager implements DialogOwner {
                 SpecialTileLay sp = layTile.getSpecialProperty();
                 if (sp.requiresConnection()) {
                     addConnectedTileLays(layTile);
+                    //MBr: 20210120 - So far no Private has connected and neighbours as power,
+                    // so we dont need to add this here.
                 } else {
-                    addLocatedTileLays(layTile);
+                    //MBr: 20210120 - Introducing the hook for the new private power for 18Chesapeake and also 1844
+                    if (((SpecialSingleTileLay) sp).hasNeighbours()) {
+                        addNeighbouredTileLays(layTile);
+                    } else {
+                        addLocatedTileLays(layTile);
+                    }
                 }
                 break;
             case (LayTile.LOCATION_SPECIFIC):
@@ -250,6 +258,9 @@ public class ORUIManager implements DialogOwner {
             }
         }
 
+    }
+
+    private void addNeighbouredTileLays(LayTile layTile) {
     }
 
     private void addConnectedTileLays(LayTile layTile) {
