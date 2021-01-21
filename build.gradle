@@ -59,7 +59,7 @@ dependencies {
     implementation 'org.jgrapht:jgrapht-ext:1.5.0'
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'org.apache.xmlgraphics:batik-bridge:1.14'
-    implementation 'org.apache.xmlgraphics:batik-transcoder:1.13'
+    implementation 'org.apache.xmlgraphics:batik-transcoder:1.14'
     implementation 'org.apache.xmlgraphics:batik-svggen:1.14'
     implementation 'org.apache.xmlgraphics:batik-ext:1.14'
     implementation 'org.apache.xmlgraphics:batik-swing:1.14'
