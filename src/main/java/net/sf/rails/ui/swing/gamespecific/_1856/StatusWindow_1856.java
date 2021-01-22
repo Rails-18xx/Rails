@@ -86,7 +86,7 @@ public class StatusWindow_1856 extends StatusWindow {
                 action.getCompanyName());
         String[] waitingMessages = gameUIManager.getDisplayBuffer().get();
         if (waitingMessages != null) {
-            message = "<html>" + Util.joinWithDelimiter(waitingMessages, "<br>")
+            message = "<html>" + Util.join(waitingMessages, "<br>")
             + "<br>" + message;
         }
 

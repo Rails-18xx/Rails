@@ -482,7 +482,7 @@ public class GameUIManager implements DialogOwner {
             setCurrentDialog(new MessageDialog(null, this,
                             (JFrame) activeWindow,
                             LocalText.getText("Message"),
-                            "<html>" + Util.joinWithDelimiter(message, "<br>")),
+                            "<html>" + Util.join(message, "<br>")),
                     null);
             return true;
         }

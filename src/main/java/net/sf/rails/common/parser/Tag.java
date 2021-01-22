@@ -235,8 +235,8 @@ public class Tag {
         if (parsed || parsing) return;
         parsing = true;
 
-        attributes = new HashMap<String, String>();
-        children = new HashMap<String, List<Tag>>();
+        attributes = new HashMap<>();
+        children = new HashMap<>();
 
         NamedNodeMap nnp = element.getAttributes();
         Node attribute;

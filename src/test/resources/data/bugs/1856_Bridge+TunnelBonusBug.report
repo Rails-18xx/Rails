@@ -1,0 +1,630 @@
+GameIs,1856
+PlayerIs,1,Volker Schnell
+PlayerIs,2,Klaus-Jürgen Fleischer
+PlayerIs,3,Volker Kuhnle
+PlayerIs,4,Ulli Hegemann
+PlayerIs,5,Jupp Krupp
+PlayerCash,300
+BankHas,10500
+StartOfPhase,2
+BankSizeIs,10500
+StartOfInitialRound
+HasPriority,Volker Schnell
+BID_ITEM_LOG,Volker Schnell,75,Ship,225
+BID_ITEM_LOG,Klaus-Jürgen Fleischer,80,Ship,220
+BID_ITEM_LOG,Volker Kuhnle,45,W&SR,255
+BID_ITEM_LOG,Ulli Hegemann,55,TCC,245
+BID_ITEM_LOG,Jupp Krupp,105,Tunn,195
+BID_ITEM_LOG,Volker Schnell,50,W&SR,175
+PASSES,Klaus-Jürgen Fleischer
+BID_ITEM_LOG,Volker Kuhnle,85,Ship,170
+BID_ITEM_LOG,Ulli Hegemann,110,Tunn,135
+BID_ITEM_LOG,Jupp Krupp,60,TCC,135
+BuysItemFor,Volker Schnell,Flos,20
+TO_AUCTION,W&SR
+BID_ITEM_LOG,Volker Kuhnle,55,W&SR,160
+BID_ITEM_LOG,Volker Schnell,60,W&SR,145
+PASSES,Volker Kuhnle
+BuysItemFor,Volker Schnell,W&SR,60
+TO_AUCTION,TCC
+BID_ITEM_LOG,Ulli Hegemann,65,TCC,125
+PASSES,Jupp Krupp
+BuysItemFor,Ulli Hegemann,TCC,65
+TO_AUCTION,Ship
+PASSES,Volker Schnell
+PASSES,Klaus-Jürgen Fleischer
+BuysItemFor,Volker Kuhnle,Ship,85
+BuysItemFor,Klaus-Jürgen Fleischer,Brdg,100
+TO_AUCTION,Tunn
+BID_ITEM_LOG,Jupp Krupp,115,Tunn,185
+PASSES,Ulli Hegemann
+BuysItemFor,Jupp Krupp,Tunn,115
+Has,Volker Schnell,220
+Has,Klaus-Jürgen Fleischer,200
+Has,Volker Kuhnle,215
+Has,Ulli Hegemann,235
+Has,Jupp Krupp,185
+StartStockRound,1
+HasPriority,Volker Kuhnle
+START_COMPANY_LOG,Volker Kuhnle,LPS,70,140,2,20,LPS
+Floats,LPS
+START_COMPANY_LOG,Ulli Hegemann,TGB,75,150,2,20,TGB
+Floats,TGB
+START_COMPANY_LOG,Jupp Krupp,CA,80,160,2,20,CA
+Floats,CA
+BUY_SHARE_LOG,Volker Schnell,10,LPS,IPO,70
+PriceIsPaidTo,70,LPS
+START_COMPANY_LOG,Klaus-Jürgen Fleischer,WR,65,130,2,20,WR
+Floats,WR
+BUY_SHARE_LOG,Volker Kuhnle,10,LPS,IPO,70
+PriceIsPaidTo,70,LPS
+BUY_SHARE_LOG,Ulli Hegemann,10,TGB,IPO,75
+PriceIsPaidTo,75,TGB
+PASSES,Jupp Krupp
+BUY_SHARE_LOG,Volker Schnell,10,LPS,IPO,70
+PriceIsPaidTo,70,LPS
+BUY_SHARE_LOG,Klaus-Jürgen Fleischer,10,WR,IPO,65
+PriceIsPaidTo,65,WR
+PASSES,Volker Kuhnle
+PASSES,Ulli Hegemann
+Autopasses,Jupp Krupp
+HoldMoneyInEscrow,70,70,LPS
+BUY_SHARE_LOG,Volker Schnell,10,LPS,IPO,70
+PASSES,Klaus-Jürgen Fleischer
+PASSES,Volker Kuhnle
+Autopasses,Ulli Hegemann
+Autopasses,Jupp Krupp
+PASSES,Volker Schnell
+ 
+END_SR,1
+Has,LPS,350
+Has,WR,195
+Has,CA,160
+Has,TGB,225
+Has,Volker Schnell,10
+Has,Klaus-Jürgen Fleischer,5
+Has,Volker Kuhnle,5
+Has,Ulli Hegemann,10
+Has,Jupp Krupp,25
+START_OR,1.1
+ReceivesFor,Volker Schnell,5,Flos
+ReceivesFor,Volker Schnell,10,W&SR
+ReceivesFor,Ulli Hegemann,10,TCC
+ReceivesFor,Volker Kuhnle,15,Ship
+ReceivesFor,Klaus-Jürgen Fleischer,20,Brdg
+ReceivesFor,Jupp Krupp,20,Tunn
+ 
+CompanyOperates,CA,Jupp Krupp
+LaysTileAt,CA,6,D17,S
+CompanyDoesNotPayDividend,CA
+PRICE_MOVES_LOG,CA,80,E3,75,D3
+CompanyTakesLoan,CA,100,90
+BuysTrain,CA,2,IPO,100
+FirstTrainBought,2
+ 
+CompanyOperates,TGB,Ulli Hegemann
+LaysTileAt,TGB,6,K8,NE
+CompanyTakesLoan,TGB,100,100
+InterestPaidFromTreasury,TGB,10
+CompanyDoesNotPayDividend,TGB
+PRICE_MOVES_LOG,TGB,75,E4,70,D4
+BuysTrain,TGB,2,IPO,100
+ 
+CompanyOperates,LPS,Volker Kuhnle
+CompanyTakesLoan,LPS,100,100
+LaysTileAt,LPS,57,C14,NW
+InterestPaidFromTreasury,LPS,10
+CompanyDoesNotPayDividend,LPS
+PRICE_MOVES_LOG,LPS,70,E5,65,D5
+BuysTrain,LPS,2,IPO,100
+BuysTrain,LPS,2,IPO,100
+ 
+CompanyOperates,WR,Klaus-Jürgen Fleischer
+LaysTileAt,WR,5,O16,SW
+CompanyDoesNotPayDividend,WR
+PRICE_MOVES_LOG,WR,65,E6,60,D6
+BuysTrain,WR,2,IPO,100
+CompanyTakesLoan,WR,100,90
+ 
+EndOfOperatingRound,1.1
+ORWorthIncrease,Volker Schnell,1.1,-30
+ORWorthIncrease,Klaus-Jürgen Fleischer,1.1,-25
+ORWorthIncrease,Volker Kuhnle,1.1,-30
+ORWorthIncrease,Ulli Hegemann,1.1,-35
+ORWorthIncrease,Jupp Krupp,1.1,-10
+Has,LPS,240
+Has,WR,185
+Has,CA,150
+Has,TGB,215
+Has,Volker Schnell,25
+Has,Klaus-Jürgen Fleischer,25
+Has,Volker Kuhnle,20
+Has,Ulli Hegemann,20
+Has,Jupp Krupp,45
+StartStockRound,2
+HasPriority,Klaus-Jürgen Fleischer
+PASSES,Klaus-Jürgen Fleischer
+PASSES,Volker Kuhnle
+PASSES,Ulli Hegemann
+PASSES,Jupp Krupp
+PASSES,Volker Schnell
+ 
+END_SR,2
+Has,LPS,240
+Has,WR,185
+Has,CA,150
+Has,TGB,215
+Has,Volker Schnell,25
+Has,Klaus-Jürgen Fleischer,25
+Has,Volker Kuhnle,20
+Has,Ulli Hegemann,20
+Has,Jupp Krupp,45
+START_OR,2.1
+ReceivesFor,Volker Schnell,5,Flos
+ReceivesFor,Volker Schnell,10,W&SR
+ReceivesFor,Ulli Hegemann,10,TCC
+ReceivesFor,Volker Kuhnle,15,Ship
+ReceivesFor,Klaus-Jürgen Fleischer,20,Brdg
+ReceivesFor,Jupp Krupp,20,Tunn
+ 
+CompanyOperates,CA,Jupp Krupp
+LaysTileAt,CA,56,E18,N
+CompanyTakesLoan,CA,100,100
+CompanyRevenue,CA,30
+CompanyMustPayLoanInterest,CA,20
+InterestPaidFromTreasury,CA,20
+CompanyPaysOutFull,CA,30
+Payout,Jupp Krupp,6,2,10
+PRICE_MOVES_LOG,CA,75,D3,80,E3
+BuysTrain,CA,2,IPO,100
+NewTrainAvailable,2,3
+ 
+CompanyOperates,TGB,Ulli Hegemann
+LaysTileAt,TGB,58,J9,NW
+CompanyRevenue,TGB,30
+CompanyMustPayLoanInterest,TGB,10
+InterestPaidFromTreasury,TGB,10
+CompanyPaysOutFull,TGB,30
+Payout,Ulli Hegemann,9,3,10
+PRICE_MOVES_LOG,TGB,70,D4,75,E4
+CompanyTakesLoan,TGB,100,90
+BuysTrain,TGB,3,IPO,225
+FirstTrainBought,3
+StartOfPhase,3
+BuysPrivateFromFor,TGB,TCC,Ulli Hegemann,70
+ 
+CompanyOperates,LPS,Volker Kuhnle
+CompanyTakesLoan,LPS,100,100
+LaysTileAt,LPS,8,D15,S
+BuysPrivateFromFor,LPS,Ship,Volker Kuhnle,95
+LaysBonusTokenOn,LPS,Port,20,C14
+PrivateCloses,Ship
+CompanyRevenue,LPS,130
+CompanyMustPayLoanInterest,LPS,20
+InterestPaidFromTreasury,LPS,20
+CompanyPaysOutFull,LPS,130
+Payout,Volker Kuhnle,39,3,10
+Payout,Volker Schnell,39,3,10
+PRICE_MOVES_LOG,LPS,65,D5,70,E5
+BuysTrain,LPS,3,IPO,225
+ 
+CompanyOperates,WR,Klaus-Jürgen Fleischer
+LaysTileAt,WR,5,O18,SE
+CompanyRevenue,WR,50
+CompanyMustPayLoanInterest,WR,10
+InterestPaidFromTreasury,WR,10
+CompanyPaysOutFull,WR,50
+Payout,Klaus-Jürgen Fleischer,15,3,10
+PRICE_MOVES_LOG,WR,60,D6,65,E6
+CompanyTakesLoan,WR,100,90
+BuysTrain,WR,3,IPO,225
+ 
+EndOfOperatingRound,2.1
+ORWorthIncrease,Volker Schnell,2.1,39
+ORWorthIncrease,Klaus-Jürgen Fleischer,2.1,20
+ORWorthIncrease,Volker Kuhnle,2.1,64
+ORWorthIncrease,Ulli Hegemann,2.1,24
+ORWorthIncrease,Jupp Krupp,2.1,16
+Has,LPS,0
+Has,WR,40
+Has,CA,130
+Has,TGB,0
+Has,Volker Schnell,79
+Has,Klaus-Jürgen Fleischer,60
+Has,Volker Kuhnle,169
+Has,Ulli Hegemann,109
+Has,Jupp Krupp,71
+StartStockRound,3
+HasPriority,Klaus-Jürgen Fleischer
+PASSES,Klaus-Jürgen Fleischer
+HoldMoneyInEscrow,70,140,LPS
+BUY_SHARE_LOG,Volker Kuhnle,10,LPS,IPO,70
+BUY_SHARE_LOG,Ulli Hegemann,10,TGB,IPO,75
+PriceIsPaidTo,75,TGB
+BUY_SHARE_LOG,Jupp Krupp,10,WR,IPO,65
+PriceIsPaidTo,65,WR
+HoldMoneyInEscrow,70,210,LPS
+BUY_SHARE_LOG,Volker Schnell,10,LPS,IPO,70
+PASSES,Klaus-Jürgen Fleischer
+HoldMoneyInEscrow,70,280,LPS
+BUY_SHARE_LOG,Volker Kuhnle,10,LPS,IPO,70
+PASSES,Ulli Hegemann
+Autopasses,Jupp Krupp
+PASSES,Volker Schnell
+PASSES,Klaus-Jürgen Fleischer
+PASSES,Volker Kuhnle
+ 
+END_SR,3
+Has,LPS,0
+Has,WR,105
+Has,CA,130
+Has,TGB,75
+Has,Volker Schnell,9
+Has,Klaus-Jürgen Fleischer,60
+Has,Volker Kuhnle,29
+Has,Ulli Hegemann,34
+Has,Jupp Krupp,6
+START_OR,3.1
+ReceivesFor,Volker Schnell,5,Flos
+ReceivesFor,Volker Schnell,10,W&SR
+ReceivesFor,TGB,10,TCC
+ReceivesFor,Klaus-Jürgen Fleischer,20,Brdg
+ReceivesFor,Jupp Krupp,20,Tunn
+ 
+CompanyOperates,CA,Jupp Krupp
+LaysTileAt,CA,14,C14,SW
+LAYS_TOKEN_ON,CA,C14,40 Hex C14 (Maudaumin)
+BuysPrivateFromFor,CA,Tunn,Jupp Krupp,90
+AcquiresBonus,CA,Tunnel,10,B13
+CompanyRevenue,CA,120
+CompanyMustPayLoanInterest,CA,20
+InterestPaidFromRevenue,CA,20,20
+CompanyPaysOutFull,CA,100
+Payout,Jupp Krupp,20,2,10
+PRICE_MOVES_LOG,CA,80,E3,90,F3
+ 
+CompanyOperates,TGB,Ulli Hegemann
+LaysTileAt,TGB,57,I8,NW
+LAYS_TOKEN_ON,TGB,I8,40 Hex I8 ()
+CompanyRevenue,TGB,60
+CompanyMustPayLoanInterest,TGB,20
+InterestPaidFromTreasury,TGB,20
+CompanyPaysOutFull,TGB,60
+Payout,Ulli Hegemann,24,4,10
+PRICE_MOVES_LOG,TGB,75,E4,80,F4
+ 
+CompanyOperates,LPS,Volker Kuhnle
+CompanyTakesLoan,LPS,100,100
+LaysTileAt,LPS,7,B15,N
+BuysBonusTokenFrom,LPS,Tunnel,10,CA,50
+CompanyRevenue,LPS,250
+CompanyMustPayLoanInterest,LPS,30
+InterestPaidFromTreasury,LPS,30
+CompanyPaysOutFull,LPS,250
+Payout,Volker Schnell,100,4,10
+Payout,Volker Kuhnle,125,5,10
+PRICE_MOVES_LOG,LPS,70,E5,75,F5
+ 
+CompanyOperates,WR,Klaus-Jürgen Fleischer
+LaysTileAt,WR,15,O16,SE
+CompanyTakesLoan,WR,100,100
+BuysPrivateFromFor,WR,Brdg,Klaus-Jürgen Fleischer,200
+AcquiresBonus,WR,Bridge,10,P17,P19
+CompanyRevenue,WR,160
+CompanyMustPayLoanInterest,WR,30
+InterestPaidFromRevenue,WR,30,30
+CompanyPaysOutFull,WR,130
+Payout,Klaus-Jürgen Fleischer,39,3,10
+Payout,Jupp Krupp,13,1,10
+PRICE_MOVES_LOG,WR,65,E6,70,F6
+ 
+EndOfOperatingRound,3.1
+ORWorthIncrease,Volker Schnell,3.1,95
+ORWorthIncrease,Klaus-Jürgen Fleischer,3.1,144
+ORWorthIncrease,Volker Kuhnle,3.1,100
+ORWorthIncrease,Ulli Hegemann,3.1,44
+ORWorthIncrease,Jupp Krupp,3.1,58
+Has,LPS,20
+Has,WR,5
+Has,CA,50
+Has,TGB,25
+Has,Volker Schnell,124
+Has,Klaus-Jürgen Fleischer,319
+Has,Volker Kuhnle,154
+Has,Ulli Hegemann,58
+Has,Jupp Krupp,149
+START_OR,3.2
+ReceivesFor,Volker Schnell,5,Flos
+ReceivesFor,Volker Schnell,10,W&SR
+ReceivesFor,TGB,10,TCC
+ReceivesFor,WR,20,Brdg
+ReceivesFor,CA,20,Tunn
+ 
+CompanyOperates,CA,Jupp Krupp
+LaysTileAt,CA,57,F17,SW
+CompanyRevenue,CA,140
+CompanyMustPayLoanInterest,CA,20
+InterestPaidFromTreasury,CA,20
+CompanyPaysOutFull,CA,140
+Payout,Jupp Krupp,28,2,10
+PRICE_MOVES_LOG,CA,90,F3,100,G3
+ 
+CompanyOperates,TGB,Ulli Hegemann
+LaysTileAt,TGB,69,H7,NE
+CompanyRevenue,TGB,90
+CompanyMustPayLoanInterest,TGB,20
+InterestPaidFromTreasury,TGB,20
+CompanyPaysOutFull,TGB,90
+Payout,Ulli Hegemann,36,4,10
+PRICE_MOVES_LOG,TGB,80,F4,90,G4
+ 
+CompanyOperates,LPS,Volker Kuhnle
+LaysTileAt,LPS,14,D17,NW
+DestinationReached,TGB,H5
+DestinationReached,LPS,F17
+ReleasedFromEscrow,LPS,280
+CompanyRevenue,LPS,270
+CompanyMustPayLoanInterest,LPS,30
+InterestPaidFromTreasury,LPS,30
+CompanyPaysOutFull,LPS,270
+Payout,Volker Kuhnle,135,5,10
+Payout,Volker Schnell,108,4,10
+PRICE_MOVES_LOG,LPS,75,F5,80,G5
+ 
+CompanyOperates,WR,Klaus-Jürgen Fleischer
+CompanyTakesLoan,WR,100,100
+LaysTileAt,WR,15,O18,NW
+CompanyRevenue,WR,150
+CompanyMustPayLoanInterest,WR,40
+InterestPaidFromTreasury,WR,40
+CompanyPaysOutFull,WR,150
+Payout,Klaus-Jürgen Fleischer,45,3,10
+Payout,Jupp Krupp,15,1,10
+PRICE_MOVES_LOG,WR,70,F6,75,G6
+ 
+EndOfOperatingRound,3.2
+ORWorthIncrease,Volker Schnell,3.2,143
+ORWorthIncrease,Klaus-Jürgen Fleischer,3.2,30
+ORWorthIncrease,Volker Kuhnle,3.2,160
+ORWorthIncrease,Ulli Hegemann,3.2,76
+ORWorthIncrease,Jupp Krupp,3.2,58
+Has,LPS,270
+Has,WR,85
+Has,CA,50
+Has,TGB,15
+Has,Volker Schnell,247
+Has,Klaus-Jürgen Fleischer,364
+Has,Volker Kuhnle,289
+Has,Ulli Hegemann,94
+Has,Jupp Krupp,192
+StartStockRound,4
+HasPriority,Ulli Hegemann
+BUY_SHARE_LOG,Ulli Hegemann,10,LPS,IPO,70
+PriceIsPaidTo,70,LPS
+BUY_SHARE_LOG,Jupp Krupp,10,CA,IPO,80
+PriceIsPaidTo,80,CA
+BUY_SHARE_LOG,Volker Schnell,10,CA,IPO,80
+PriceIsPaidTo,80,CA
+START_COMPANY_LOG,Klaus-Jürgen Fleischer,GT,70,140,2,20,GT
+BUY_SHARE_LOG,Volker Kuhnle,10,CA,IPO,80
+PriceIsPaidTo,80,CA
+PASSES,Ulli Hegemann
+HoldMoneyInEscrow,80,80,CA
+BUY_SHARE_LOG,Jupp Krupp,10,CA,IPO,80
+HoldMoneyInEscrow,80,160,CA
+BUY_SHARE_LOG,Volker Schnell,10,CA,IPO,80
+BUY_SHARE_LOG,Klaus-Jürgen Fleischer,10,GT,IPO,70
+PriceIsPaidTo,70,GT
+Floats,GT
+BUY_SHARE_LOG,Volker Kuhnle,10,TGB,IPO,75
+PriceIsPaidTo,75,TGB
+PASSES,Ulli Hegemann
+SELL_SHARE_LOG,Jupp Krupp,10,WR,75
+PRICE_MOVES_LOG,WR,75,G6,70,G7
+HoldMoneyInEscrow,80,240,CA
+BUY_SHARE_LOG,Jupp Krupp,10,CA,IPO,80
+HoldMoneyInEscrow,80,320,CA
+BUY_SHARE_LOG,Volker Schnell,10,CA,IPO,80
+BUY_SHARE_LOG,Klaus-Jürgen Fleischer,10,GT,IPO,70
+PriceIsPaidTo,70,GT
+HoldMoneyInEscrow,80,400,CA
+BUY_SHARE_LOG,Volker Kuhnle,10,CA,IPO,80
+PASSES,Ulli Hegemann
+Autopasses,Jupp Krupp
+SELL_SHARES_LOG,Volker Schnell,4,10,40,LPS,320
+PRICE_MOVES_LOG,LPS,80,G5,70,G7
+BUY_SHARE_LOG,Volker Schnell,10,TGB,IPO,75
+PriceIsPaidTo,75,TGB
+BUY_SHARE_LOG,Klaus-Jürgen Fleischer,10,WR,IPO,65
+PriceIsPaidTo,65,WR
+SELL_SHARES_LOG,Volker Kuhnle,2,10,20,CA,200
+PRICE_MOVES_LOG,CA,100,G3,80,G5
+SELL_SHARE_LOG,Volker Kuhnle,10,TGB,90
+PRICE_MOVES_LOG,TGB,90,G4,80,G5
+START_COMPANY_LOG,Volker Kuhnle,GW,80,160,2,20,GW
+PASSES,Ulli Hegemann
+Autopasses,Jupp Krupp
+SELL_SHARES_LOG,Volker Schnell,3,10,30,CA,240
+PRICE_MOVES_LOG,CA,80,G5,70,G7
+SELL_SHARE_LOG,Volker Schnell,10,TGB,80
+PRICE_MOVES_LOG,TGB,80,G5,75,G6
+START_COMPANY_LOG,Volker Schnell,THB,80,160,2,20,THB
+PASSES,Klaus-Jürgen Fleischer
+BUY_SHARE_LOG,Volker Kuhnle,10,GW,IPO,80
+PriceIsPaidTo,80,GW
+Floats,GW
+Autopasses,Ulli Hegemann
+Autopasses,Jupp Krupp
+START_COMPANY_LOG,Volker Schnell,CV,80,160,2,20,CV
+SELL_SHARE_LOG,Klaus-Jürgen Fleischer,10,WR,70
+BUY_SHARE_LOG,Klaus-Jürgen Fleischer,10,GT,IPO,70
+PriceIsPaidTo,70,GT
+BUY_SHARE_LOG,Volker Kuhnle,10,GW,IPO,80
+PriceIsPaidTo,80,GW
+Autopasses,Ulli Hegemann
+Autopasses,Jupp Krupp
+BUY_SHARE_LOG,Volker Schnell,10,THB,IPO,80
+PriceIsPaidTo,80,THB
+Floats,THB
+PASSES,Klaus-Jürgen Fleischer
+PASSES,Volker Kuhnle
+Autopasses,Ulli Hegemann
+Autopasses,Jupp Krupp
+BUY_SHARE_LOG,Volker Schnell,10,CV,IPO,80
+PriceIsPaidTo,80,CV
+Floats,CV
+Autopasses,Klaus-Jürgen Fleischer
+PASSES,Volker Kuhnle
+Autopasses,Ulli Hegemann
+Autopasses,Jupp Krupp
+BUY_SHARE_LOG,Volker Schnell,10,CV,IPO,80
+PriceIsPaidTo,80,CV
+Autopasses,Klaus-Jürgen Fleischer
+PASSES,Volker Kuhnle
+Autopasses,Ulli Hegemann
+Autopasses,Jupp Krupp
+PASSES,Volker Schnell
+ 
+END_SR,4
+Has,GT,350
+Has,THB,240
+Has,LPS,340
+Has,WR,150
+Has,CV,320
+Has,CA,290
+Has,TGB,165
+Has,GW,320
+Has,Volker Schnell,12
+Has,Klaus-Jürgen Fleischer,19
+Has,Volker Kuhnle,24
+Has,Ulli Hegemann,24
+Has,Jupp Krupp,27
+START_OR,4.1
+ReceivesFor,Volker Schnell,5,Flos
+ReceivesFor,Volker Schnell,10,W&SR
+ReceivesFor,TGB,10,TCC
+ReceivesFor,WR,20,Brdg
+ReceivesFor,CA,20,Tunn
+ 
+CompanyOperates,GW,Volker Kuhnle
+LaysTileAt,GW,121,F15,SW
+CompanyDoesNotPayDividend,GW
+PRICE_MOVES_LOG,GW,80,E3,75,D3
+CompanyTakesLoan,GW,100,90
+BuysTrain,GW,3,IPO,225
+BuysTrain,GW,2,LPS,185
+ 
+CompanyOperates,THB,Volker Schnell
+LaysTileAtFor,THB,59,L15,N,40
+CompanyDoesNotPayDividend,THB
+PRICE_MOVES_LOG,THB,80,E3,75,D3
+CompanyTakesLoan,THB,100,90
+BuysTrain,THB,3,IPO,225
+NewTrainAvailable,3,4
+BuysPrivateFromFor,THB,Flos,Volker Schnell,40
+ 
+CompanyOperates,CV,Volker Schnell
+LaysTileAt,CV,9,M12,SW
+CompanyDoesNotPayDividend,CV
+PRICE_MOVES_LOG,CV,80,E3,75,D3
+CompanyTakesLoan,CV,100,90
+BuysTrain,CV,4,IPO,350
+FirstTrainBought,4
+StartOfPhase,4
+TrainsRusted,2
+ 
+CompanyOperates,TGB,Ulli Hegemann
+LaysTileAt,TGB,14,I8,NW
+CompanyRevenue,TGB,70
+CompanyMustPayLoanInterest,TGB,20
+InterestPaidFromTreasury,TGB,20
+CompanyPaysOutFull,TGB,70
+Payout,Ulli Hegemann,28,4,10
+Payout,TGB,14,2,10
+PRICE_MOVES_LOG,TGB,75,G6,80,H6
+ 
+CompanyOperates,WR,Klaus-Jürgen Fleischer
+LaysTileAt,WR,59,N17,S
+CompanyRevenue,WR,100
+CompanyMustPayLoanInterest,WR,40
+InterestPaidFromTreasury,WR,40
+CompanyPaysOutFull,WR,100
+Payout,Klaus-Jürgen Fleischer,30,3,10
+Payout,WR,20,2,10
+PRICE_MOVES_LOG,WR,70,G7,75,G6
+CompanyRepaysLoans,WR,100,100,1,100
+ 
+CompanyOperates,LPS,Volker Kuhnle
+LaysTileAt,LPS,15,F17,SW
+LAYS_TOKEN_ON,LPS,F15,40 Hex F15 (London)
+CompanyRevenue,LPS,120
+CompanyMustPayLoanInterest,LPS,30
+InterestPaidFromTreasury,LPS,30
+CompanyPaysOutFull,LPS,120
+Payout,Volker Kuhnle,60,5,10
+Payout,Ulli Hegemann,12,1,10
+Payout,LPS,48,4,10
+PRICE_MOVES_LOG,LPS,70,G7,75,G6
+BuysTrain,LPS,4,IPO,350
+CompanyRepaysLoans,LPS,100,100,1,100
+ 
+CompanyOperates,CA,Jupp Krupp
+LaysTileAt,CA,9,G16,SW
+CompanyTakesLoan,CA,100,100
+InterestPaidFromTreasury,CA,30
+CompanyDoesNotPayDividend,CA
+PRICE_MOVES_LOG,CA,70,G7,65,F7
+BuysTrain,CA,4,IPO,350
+ 
+CompanyOperates,GT,Klaus-Jürgen Fleischer
+LaysTileAt,GT,57,P9,SW
+CompanyDoesNotPayDividend,GT
+PRICE_MOVES_LOG,GT,70,E5,65,D5
+CompanyTakesLoan,GT,100,90
+BuysTrain,GT,4,IPO,350
+NewTrainAvailable,4,5
+ 
+EndOfOperatingRound,4.1
+ORWorthIncrease,Volker Schnell,4.1,-70
+ORWorthIncrease,Klaus-Jürgen Fleischer,4.1,0
+ORWorthIncrease,Volker Kuhnle,4.1,75
+ORWorthIncrease,Ulli Hegemann,4.1,75
+ORWorthIncrease,Jupp Krupp,4.1,-75
+Has,GT,90
+Has,THB,25
+Has,LPS,53
+Has,WR,50
+Has,CV,60
+Has,CA,30
+Has,TGB,169
+Has,GW,0
+Has,Volker Schnell,67
+Has,Klaus-Jürgen Fleischer,49
+Has,Volker Kuhnle,84
+Has,Ulli Hegemann,64
+Has,Jupp Krupp,27
+START_OR,4.2
+ReceivesFor,THB,5,Flos
+ReceivesFor,Volker Schnell,10,W&SR
+ReceivesFor,TGB,10,TCC
+ReceivesFor,WR,20,Brdg
+ReceivesFor,CA,20,Tunn
+ 
+CompanyOperates,TGB,Ulli Hegemann
+LaysTileAt,TGB,8,I6,S
+CompanyRevenue,TGB,70
+CompanyMustPayLoanInterest,TGB,20
+InterestPaidFromTreasury,TGB,20
+CompanyPaysOutFull,TGB,70
+Payout,Ulli Hegemann,28,4,10
+Payout,TGB,14,2,10
+PRICE_MOVES_LOG,TGB,80,H6,90,I6
+ 
+CompanyOperates,WR,Klaus-Jürgen Fleischer
+CompanyRevenue,WR,110
+CompanyMustPayLoanInterest,WR,30
+InterestPaidFromTreasury,WR,30
+CompanyPaysOutFull,WR,110
+Payout,Klaus-Jürgen Fleischer,33,3,10
+Payout,WR,22,2,10
+PRICE_MOVES_LOG,WR,75,G6,80,H6

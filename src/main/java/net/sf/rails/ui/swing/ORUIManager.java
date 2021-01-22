@@ -745,7 +745,9 @@ public class ORUIManager implements DialogOwner {
         allowance.setChosenHex(upgrade.getHex().getHex());
         int orientation = upgrade.getCurrentRotation().getTrackPointNumber();
         allowance.setOrientation(orientation);
-        allowance.setLaidTile(upgrade.getUpgrade().getTargetTile());
+        Tile targetTile = upgrade.getUpgrade().getTargetTile();
+        allowance.setLaidTile(targetTile);
+        allowance.setRelayBaseTokens(upgrade.isRelayBaseTokens());
 
         relayBaseTokens (allowance);
 
@@ -793,8 +795,11 @@ public class ORUIManager implements DialogOwner {
         final MapHex hex = action.getChosenHex();
         Tile newTile = action.getLaidTile();
         Tile oldTile = hex.getCurrentTile();
+
+        // Why does that need to be configured?
+        // Shouldn't tokens always be relaid??
         if (!action.isRelayBaseTokens()
-                && !oldTile.relayBaseTokensOnUpgrade()) return;
+                && !oldTile.relayBaseTokensOnUpgrade()) return; // is deprecated
 
         List<Stop> stopsToQuery = Lists.newArrayList(hex.getStops());
 
@@ -841,6 +846,7 @@ public class ORUIManager implements DialogOwner {
             freeSlots[newStation.getNumber()] = newStation.getBaseSlots();
         }
 
+        // Ask the user to specify new token positions
         for (Stop oldStop : stopsToQuery) {
             if (oldStop.hasTokens()) {
                 // Assume only 1 token (no exceptions known)

@@ -317,7 +317,8 @@ public class OperatingRound_1837 extends OperatingRound {
             }
             String withheldText = Currency.fromBank(withheld, operatingCompany.value());
 
-            ReportBuffer.add(this, operatingCompany.value().getId() + LocalText.getText("Receives") + withheldText);
+            ReportBuffer.add(this, LocalText.getText("Receives",
+                    operatingCompany.value().getId(), withheldText));
             // Payout the remainder
             int payed = amount - withheld;
             payout(payed, roundUp, true);
@@ -364,11 +365,9 @@ public class OperatingRound_1837 extends OperatingRound {
          *  payout the direct Income from the Coal Mine if any
          */
         String partText = Currency.fromBank( operatingCompany.value().getDirectIncomeRevenue(), operatingCompany.value());
-        ReportBuffer.add(this, LocalText.getText("Payout",
-                operatingCompany.getId(),
-                partText,
-                " companies treasury."
-                ));
+        ReportBuffer.add(this, LocalText.getText("ReceivedDirectIncomeFromMine",
+                operatingCompany.value().getId(),
+                partText));
 
         // Move the token
         ((PublicCompany_1837) operatingCompany.value()).payout(amount, b);
@@ -487,8 +486,9 @@ public class OperatingRound_1837 extends OperatingRound {
                             SetDividend.WITHHOLD };
 
             possibleActions.add(new SetDividend(getRoot(),
-                    operatingCompany.value().getLastRevenue(), operatingCompany.value().getLastDirectIncome(), true,
-                    allowedRevenueActions,0));
+                    operatingCompany.value().getLastRevenue(),
+                    operatingCompany.value().getLastDirectIncome(),
+                    true, allowedRevenueActions,0));
         }
     }
 

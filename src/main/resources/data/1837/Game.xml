@@ -52,32 +52,19 @@
                 file="StockMarket.xml"/>
         <Component name="TrainManager" class="net.sf.rails.game.TrainManager">
                 <Defaults>
-                        <Reach base="stops" countTowns="no"/>
+                        <Reach base="stops" countTowns="yes"/>
                         <Score towns="yes"/>
                 </Defaults>
-                <TrainType name="1G" majorStops="1" cost="100" quantity="10">
-                        <Reach countTowns="no"/>
-                        <Score towns="yes"/>
-                        <NewPhase phaseName="2"/>
-                </TrainType>
-                <TrainType name="2" majorStops="2" cost="90" quantity="14"/>
+                <TrainType name="2" majorStops="2" cost="90" quantity="14"
+                                alsoReleased="1G"/>
                 <TrainType name="3" majorStops="3" cost="180" quantity="5">
                         <NewPhase phaseName="3"/>
-                </TrainType>
-                <TrainType name="2G" majorStops="2" cost="230" quantity="6">
-                        <Reach countTowns="no"/>
-                        <Score towns="yes"/>
                 </TrainType>
                 <TrainType name="3+1" majorStops="3" minorStops="1" cost="280" quantity="2">
                         <NewPhase phaseName="3+1"/>
                 </TrainType>
                 <TrainType name="4" majorStops="4" cost="470" quantity="4">
                         <NewPhase phaseName="4"/>
-                </TrainType>
-                <TrainType name="3G" majorStops="3" cost="590" quantity="2">
-                        <Reach countTowns="no"/>
-                        <Score towns="yes"/>
-                        <NewPhase phaseName="3G"/>
                 </TrainType>
                 <TrainType name="4E" majorStops="4" cost="500" quantity="1">
                         <Reach countTowns="no"/>
@@ -104,8 +91,26 @@
                                 <Attributes quantity="-1"/>
                         </IfOption>
                 </TrainType>
-
-                <TrainType name="4G" majorStops="4" cost="1000" quantity="3">
+                <!-- These G-train specs have been moved to the end, because these
+                do not follow the normal train sequence rules, and interrupted the
+                normal passenger train progress (2G was blocking 3+1 to be release
+                after the last 3 was bought. Only the 1G had to be kept at the top,
+                to prevent its first buy being undone behind the scenes by ) -->
+                <TrainType name="1G" category="goods" majorStops="1" cost="100" quantity="10">
+                        <Reach countTowns="no"/>
+                        <Score towns="yes"/>
+                        <!--NewPhase phaseName="2"/ -->
+                </TrainType>
+                <TrainType name="2G" category="goods" majorStops="2" cost="230" quantity="6">
+                        <Reach countTowns="no"/>
+                        <Score towns="yes"/>
+                </TrainType>
+                <TrainType name="3G" category="goods" majorStops="3" cost="590" quantity="2">
+                        <Reach countTowns="no"/>
+                        <Score towns="yes"/>
+                        <NewPhase phaseName="3G"/>
+                </TrainType>
+                <TrainType name="4G" category="goods" majorStops="4" cost="1000" quantity="3">
                         <Reach countTowns="no"/>
                         <Score towns="yes"/>
                         <NewPhase phaseName="4G"/>
@@ -132,7 +137,6 @@
                              a problem, since all ten coal companies need to buy
                              1G trains on their first turn in order to run.) -->
                         <Tiles colour="yellow"/>
-                        <Trains released="2"/>
                         <OperatingRounds number="1"/>
                 </Phase>
                 <Phase name="3" realName="2">
@@ -223,11 +227,12 @@
                         <Trains rusted="3+1"/>
                 </Phase>
         </Component>
-        		<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+        <Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
 				<Modifier class="net.sf.rails.game.specific._1837.ItalyTileModifier" />
 				<Modifier class="net.sf.rails.game.specific._1837.BzHTileModifier" />
-				<!-- <Modifier class="net.sf.rails.game.specific._1837.CoalMineModifier"/>
-				//<Modifier class="net.sf.rails.game.specific._1837.CoalTrainModifier"/>
-				//<Modifier class="net.sf.rails.game.specific._1837.StartAtCoalMineModifier"/> -->
+				<Modifier class="net.sf.rails.game.specific._1837.RunToCoalMineModifier"/>
+				<!--><Modifier class="net.sf.rails.game.specific._1837.CoalTrainModifier"/>
+				//<Modifier class="net.sf.rails.game.specific._1837.RunToCoalMineModifier"/> -->
         </Component>
 </ComponentManager>
+

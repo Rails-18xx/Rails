@@ -7,8 +7,6 @@ import net.sf.rails.common.parser.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * A Station object represents any junction on a tile, where one, two or more
  * track fragments meet. The usual Station types are "City", "Town" and
@@ -48,7 +46,7 @@ public class Station extends TrackPoint implements Comparable<Station> {
     private Access access = null;
 
     private Station(Tile tile, int number, String id, Stop.Type type, int value,
-                    int slots, int position, String cityName) {
+                    int slots, int position, String cityName, Tag accessTag) {
         this.tile = tile;
         this.number = number;
         this.id = id;
@@ -57,11 +55,21 @@ public class Station extends TrackPoint implements Comparable<Station> {
         this.baseSlots = slots;
         this.position = position;
         this.stopName = cityName;
-        log.debug("Created {}", this);
+
+        log.debug ("----- Tile={} station={} type={} value={}",
+                tile.getId(), id, type, value);
+        if (accessTag != null) {
+            try {
+                access = Access.parseAccessTag(tile, accessTag);
+            } catch (ConfigurationException e) {
+                log.error("Exception while parsing Access of tile {}: {}", tile, e);
+            }
+        }
     }
 
-    public static Station create(Tile tile, Tag stationTag) throws ConfigurationException {
-        String sid = stationTag.getAttributeAsString("id");
+    public static Station create(Tile tile, Tag stationDefTag, Tag stationSetTag)
+            throws ConfigurationException {
+        String sid = stationDefTag.getAttributeAsString("id");
 
         if (sid == null)
             throw new ConfigurationException(LocalText.getText(
@@ -69,10 +77,15 @@ public class Station extends TrackPoint implements Comparable<Station> {
 
         int number = - TrackPoint.parseTrackPointNumber(sid);
 
-        String stype = stationTag.getAttributeAsString("type");
+        String stype = stationDefTag.getAttributeAsString("type");
+        Tag accessTag = null;
         if (stype == null)
             throw new ConfigurationException(LocalText.getText(
                     "TileStationHasNoType", tile.getId()));
+        if (stationSetTag != null) {
+            stype = stationSetTag.getAttributeAsString("type", stype);
+            accessTag = stationSetTag.getChild("Access");
+        }
 
         if ("OffMapCity".equalsIgnoreCase(stype)) stype = "OffMap";  // Can also be a town
         Stop.Type type = Stop.Type.valueOf(stype.toUpperCase());
@@ -82,12 +95,15 @@ public class Station extends TrackPoint implements Comparable<Station> {
                     tile.getId(),
                     type ));
         }
-        int value = stationTag.getAttributeAsInteger("value", 0);
-        int slots = stationTag.getAttributeAsInteger("slots", 0);
-        int position = stationTag.getAttributeAsInteger("position", 0);
-        String cityName = stationTag.getAttributeAsString("city");
-        return new Station(tile, number, sid, type, value, slots,
-                    position, cityName);
+        int value = stationDefTag.getAttributeAsInteger("value", 0);
+        int slots = stationDefTag.getAttributeAsInteger("slots", 0);
+        int position = stationDefTag.getAttributeAsInteger("position", 0);
+        String cityName = stationDefTag.getAttributeAsString("city");
+
+        //Station station = new Station(tile, number, sid, type, value, slots,
+        Station station = new Station(tile, number, String.valueOf(number), type, value, slots,
+                    position, cityName, accessTag);
+        return station;
     }
 
 
