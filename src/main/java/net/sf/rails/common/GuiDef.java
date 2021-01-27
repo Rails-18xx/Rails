@@ -42,7 +42,8 @@ public class GuiDef {
         NO_MAP_MODE,
         REVENUE_SUGGEST,
         ROUTE_HIGHLIGHT, 
-        PLAYER_ORDER_VARIES, HAS_SPECIAL_COMPANY_INCOME
+        PLAYER_ORDER_VARIES,
+        HAS_SPECIAL_COMPANY_INCOME
     }
 
     /**

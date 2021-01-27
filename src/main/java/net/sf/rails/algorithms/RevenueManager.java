@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class RevenueManager extends RailsManager implements Configurable {
 
+    private int specialRevenue;
+
     private static final Logger log = LoggerFactory.getLogger(RevenueManager.class);
 
     // Modifiers that are configurable
@@ -200,6 +202,8 @@ public final class RevenueManager extends RailsManager implements Configurable {
      * @return revenue from active calculator
      */
     // FIXME: This does not fully cover all cases that needs the revenue from the calculator
+    // EV: indeed, it used in a different way in 1837, so beware!
+    // See RunToCoalMineModifier.
     int revenueFromDynamicCalculator(RevenueAdapter revenueAdapter) {
         return calculatorModifier.calculateRevenue(revenueAdapter);
 
@@ -229,7 +233,14 @@ public final class RevenueManager extends RailsManager implements Configurable {
         for (RevenueDynamicModifier modifier : activeDynamicModifiers) {
             value += modifier.evaluationValue(run, optimal);
         }
+        if (calculatorModifier != null) {
+            specialRevenue = calculatorModifier.getSpecialRevenue();
+        }
         return value;
+    }
+
+    public int getSpecialRevenue () {
+        return specialRevenue;
     }
 
     /**

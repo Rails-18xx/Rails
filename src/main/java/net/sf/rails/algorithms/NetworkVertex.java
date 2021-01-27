@@ -7,6 +7,7 @@ import java.util.*;
 import net.sf.rails.game.*;
 import net.sf.rails.ui.swing.hexmap.*;
 
+import net.sf.rails.util.Util;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,8 +95,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     /** factory method for virtual vertex
      */
     public static NetworkVertex getVirtualVertex(VertexType type, String name) {
-        NetworkVertex vertex = new NetworkVertex(type, name);
-        return vertex;
+        return new NetworkVertex(type, name);
     }
 
     void addToRevenueCalculator(RevenueCalculator rc, int vertexId) {

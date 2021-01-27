@@ -294,7 +294,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
 
     public int getValueForPhase(Phase phase) {
         int fixedValue = relatedStation.value().getValue();
-        if (getParent().hasValuesPerPhase() && fixedValue == 0) {
+        if (getParent().hasValuesPerPhase() && fixedValue <= 0) {
             // Don't override a fixed value defined on the tile.
             // This matters for 1837 hex J34, which has
             // a fixed town value and a phase-dependent mine value (ZKB).

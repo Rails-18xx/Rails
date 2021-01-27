@@ -106,6 +106,10 @@ public abstract class StartRound extends Round {
                 startPlayer.getId()));
     }
 
+    public int getStartRoundNumber() {
+        return gameManager.getStartRoundNumber();
+    }
+
     @Override
     public boolean process(PossibleAction action) {
         boolean result = false;

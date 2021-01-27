@@ -29,6 +29,7 @@ public class BuyTrain extends PossibleORAction {
     private String fromName;
     private int fixedCost;
 
+    /** In 1837 also used for volutary train scrapping */
     private transient Set<Train> trainsForExchange = null;
     private String[] trainsForExchangeUniqueIds;
 
@@ -112,6 +113,13 @@ public class BuyTrain extends PossibleORAction {
                 trainsForExchangeUniqueIds[i++] = train.getId();
             }
         }
+        return this;
+    }
+
+    public BuyTrain setTrainForExchange(Train train) {
+        Set<Train> trains = new HashSet<>();
+        trains.add (train);
+        setTrainsForExchange (trains);
         return this;
     }
 
