@@ -5,6 +5,7 @@
                 <Access type="city" runTo="yes" runThrough="yes" score="major"/>
                 <Access type="town" runTo="yes" runThrough="yes" loop="yes" score="minor"/>
                 <Access type="mine" runTo="trains:goods" runThrough="yes" mutexId="Mine" score="minor"/>
+                        <!-- Mine revenue is calculated separately and goes directly to the comp. treasury -->
         </Defaults>
         <Hex name="A11" tile="-3"/>
         <Hex name="A13" tile="-37001" value="30,50" orientation="3" city="RGTE" mutexId="Mine"/>

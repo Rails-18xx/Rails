@@ -104,7 +104,7 @@ public class TileUpgrade implements Upgrade {
 
         @Override
         public String toString() {
-            return new StringBuilder().append("rotation = ").append(rotation).append(", connectedSides = ").
+            return new StringBuilder("rotation = ").append(rotation).append(", connectedSides = ").
                     append(connectedSides.toString()).append(", sidesWithNewTrack = ").append(sidesWithNewTrack.toString()).
                     append(", stationMapping = ").append(stationMapping).append(", stationsWithNewTrack = ").append(stationsWithNewTrack).toString();
         }
@@ -231,8 +231,7 @@ public class TileUpgrade implements Upgrade {
     }
 
     public boolean isAllowedForPhase(Phase phase) {
-        if (allowedPhases != null
-                && !allowedPhases.contains(phase)) {
+        if (allowedPhases != null && !allowedPhases.contains(phase)) {
             return false;
         } else {
             return true;
@@ -518,13 +517,13 @@ public class TileUpgrade implements Upgrade {
 
     private boolean checkTrackConnectivity(Set<TrackPoint> baseTrack, Set<TrackPoint> targetTrack) {
         SetView<TrackPoint> diffTrack = Sets.difference(baseTrack, targetTrack);
-        log.info("BaseTrack={} TargetTrack={} DiffTrack={}", baseTrack, baseTrack,diffTrack);
+        log.debug("BaseTrack={} TargetTrack={} DiffTrack={}", baseTrack, baseTrack,diffTrack);
         if (diffTrack.isEmpty()) {
             // target maintains connectivity
             return true;
         } else {
             // if not all connections are maintained,
-            Predicate<TrackPoint> checkForStation = new Predicate<TrackPoint>() {
+            Predicate<TrackPoint> checkForStation = new Predicate<>() {
                 public boolean apply(TrackPoint p) {
                     return (p.getTrackPointType() == TrackPoint.Type.SIDE);
                 }
