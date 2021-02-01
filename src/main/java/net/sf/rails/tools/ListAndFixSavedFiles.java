@@ -23,10 +23,7 @@ import net.sf.rails.ui.swing.elements.ActionMenuItem;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
 import net.sf.rails.util.Util;
-import rails.game.action.BuyCertificate;
-import rails.game.action.BuyTrain;
-import rails.game.action.LayTile;
-import rails.game.action.PossibleAction;
+import rails.game.action.*;
 
 
 public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyListener {
@@ -343,6 +340,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             new LayTileDialog((LayTile) correctedAction);
         } else if (correctedAction instanceof BuyCertificate) {
             new BuyCertificateDialog ((BuyCertificate) correctedAction);
+        } else if (correctedAction instanceof SetDividend) {
+            new SetDividendDialog ((SetDividend) correctedAction);
         } else {
             JOptionPane.showMessageDialog(this, "Action type '" + correctedAction.getClass().getSimpleName()
                     + "' cannot yet be edited");
@@ -536,6 +535,39 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
 
         }
     }
+
+    private class SetDividendDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private SetDividend action;
+
+        SetDividendDialog(SetDividend action) {
+            super("Edit SetDividend");
+            this.action = action;
+            addTextField(this, "Preset revenue",
+                    action.getPresetRevenue(),
+                    String.valueOf(action.getPresetRevenue()));  // 0
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+            log.info("Action was {}", action);
+            String input = "";
+            try {
+                input = ((JTextField)inputElements.get(0)).getText();
+                int presetRevenue = Integer.valueOf(input);
+                action.setPresetRevenue(presetRevenue);
+            } catch (NumberFormatException e) {
+                log.error ("Error in president: {}", input, e);
+            }
+
+            log.info("Action is {}", action);
+            return action;
+
+        }
+    }
+
+
 
     protected void addLabel (EditDialog owner, String caption, Object initialObject, String initialValue) {
         JComponent element = new JLabel (initialValue);

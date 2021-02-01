@@ -2546,68 +2546,89 @@ public class OperatingRound extends Round implements Observer {
 
     protected void executeSetRevenueAndDividend(SetDividend action, String report) {
 
-        int amount = action.getActualRevenue();
+        int earnings = action.getActualRevenue();
+        int specialRevenue = action.getActualCompanyTreasuryRevenue();
+
+        PublicCompany company = operatingCompany.value();
 
         // Sometimes there still is a payout; if so, the action will be updated
-        //if (amount == 0) action = checkZeroRevenue(action);
+        // TODO: no need to comment this out? See 18Scan.
+        //if (earnings == 0) action = checkZeroRevenue(action);
 
         int revenueAllocation = action.getRevenueAllocation();
 
-        operatingCompany.value().setLastRevenue(amount);
-        operatingCompany.value().setLastRevenueAllocation(revenueAllocation);
+        company.setLastRevenue(earnings);
+        company.setLastRevenueAllocation(revenueAllocation);
 
         // Pay any debts from treasury, revenue and/or president's cash
         // The remaining dividend may be less that the original income
-        amount = executeDeductions(action);
+        earnings = executeDeductions(action);
 
-        if (amount == 0) {
+        // Assign any income that goes to the company.
+        // The dividend may be changed!
+        int dividend = processSpecialRevenue(earnings, specialRevenue);
+        company.setLastRevenue(earnings);
+
+        if (dividend == 0) {
 
             if (report == null) report = LocalText.getText (
                     "CompanyDoesNotPayDividend",
-                    operatingCompany.value().getId());
+                     company.getId());
             ReportBuffer.add(this, report);
-            withhold(amount);
+            withhold(dividend);
 
         } else if (revenueAllocation == SetDividend.PAYOUT) {
 
             if (report == null) report = LocalText.getText (
                     "CompanyPaysOutFull",
-                    operatingCompany.value().getId(),
-                    Bank.format(this, amount));
+                    company.getId(),
+                    Bank.format(this, dividend));
             ReportBuffer.add(this, report);
-            payout(amount);
+            payout(dividend);
 
         } else if (revenueAllocation == SetDividend.SPLIT) {
 
             if (report == null) report = LocalText.getText (
                     "CompanySplits",
-                    operatingCompany.value().getId(),
-                    Bank.format(this, amount));
+                    company.getId(),
+                    Bank.format(this, dividend));
             ReportBuffer.add(this, report);
-            splitRevenue(amount);
+            splitRevenue(dividend);
 
         } else if (revenueAllocation == SetDividend.WITHHOLD) {
             if (report == null) report = LocalText.getText (
                     "CompanyWithholds",
-                    operatingCompany.value().getId(),
-                    Bank.format(this, amount));
+                    company.getId(),
+                    Bank.format(this, dividend));
             ReportBuffer.add(this, report);
-            withhold(amount);
+            withhold(dividend);
 
         }
 
         // Rust any obsolete trains
-        operatingCompany.value().getPortfolioModel().rustObsoleteTrains();
+        company.getPortfolioModel().rustObsoleteTrains();
 
         // We have done the payout step, so continue from there
         nextStep(GameDef.OrStep.PAYOUT);
     }
 
     /**
-     * Distribute the dividend amongst the shareholders.
-     *
-     * @param amount The dividend to be payed out
+     * Process any special revenue, adapting the dividend as required.
+     * Default version: dividend = earnings.
+     * To be overridden if any special revenue must be processed.
+     * @param earnings The total income from train runs.
+     * @param specialRevenue Any income that needs special processing.
+     * @return The resulting dividend (default: equal to the earnings).
      */
+    protected int processSpecialRevenue(int earnings, int specialRevenue) {
+        return earnings;
+    }
+
+        /**
+         * Distribute the dividend amongst the shareholders.
+         *
+         * @param amount The dividend to be payed out
+         */
     public void payout(int amount) {
 
         if (amount == 0) return;
@@ -3348,9 +3369,16 @@ public class OperatingRound extends Round implements Observer {
                         action.setTrainsForExchange(exchangeableTrains);
                         // if (atTrainLimit) action.setForcedExchange(true);
                         possibleActions.add(action);
-                        canBuyTrainNow = true;
                     }
                 }
+
+                // In some games (e.g. 1837) trains can be voluntary discarded
+                // at train limit by a different mechanism.
+                // Assumption: restricted to when buying new trains.
+                if (hasTrains && !train.canBeExchanged() && !isBelowTrainLimit()) {
+                    addOtherExchangesAtTrainLimit(company, train);
+                }
+
             }
             if (!canBuyTrainNow) return;
 
@@ -3503,6 +3531,9 @@ public class OperatingRound extends Round implements Observer {
                 || operatingCompany.value().getPortfolioModel().getNumberOfTrains() > 0) {
             doneAllowed = true;
         }
+    }
+
+    protected void addOtherExchangesAtTrainLimit(PublicCompany company, Train train) {
     }
 
     /**

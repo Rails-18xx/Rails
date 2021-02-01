@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -248,5 +249,13 @@ public final class Util {
             result = false;
         }
         return result;
+    }
+
+    /** Quickly set a conditional breakpoint */
+    public static void breakIf (String a, String list) {
+        if (Arrays.asList(list.split(",")).contains(a)) {
+            return; // Set a permanent breakpoint on this line.
+        }
+        return;
     }
 }

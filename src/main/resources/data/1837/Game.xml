@@ -131,20 +131,12 @@
         </Component>
         <Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
                 <Phase name="2" realName="1">
-                        <!-- Wish list: This "phase change" ought not be needed.
-                             It is triggered by the first purchase of a 1G-train
-                             and makes 2-trains available.  (I doubt it will be
-                             a problem, since all ten coal companies need to buy
-                             1G trains on their first turn in order to run.) -->
                         <Tiles colour="yellow"/>
                         <OperatingRounds number="1"/>
                 </Phase>
                 <Phase name="3" realName="2">
                         <Tiles colour="yellow,green"/>
                         <Trains tradingAllowed="yes" limitStep="2" released="2G"/>
-                        <!-- Wish list: The 2G trains ought not be available
-                             until both the first 3-train and the last 1G-train
-                             have been purchased. -->
                         <!-- TBD: Private companies no longer block tile-laying
                                   in their hex by other players. -->
                         <!-- Open Bosnia-Herzegovina for building: -->
@@ -162,9 +154,6 @@
                         <Trains limitStep="3"/>
                 </Phase>
                 <Phase name="4" realName="2">
-                        <!-- Wish list: The 3G trains ought not be available
-                             until both the first 4-train and the last 2G-train
-                             have been purchased. -->
                         <Trains rusted="2" released="3G"/>
                         <!-- Clear out Italy, make it off-limits, and place
                              green tile 426 on Bozen: -->
@@ -207,9 +196,6 @@
                 </Phase>
                 <Phase name="5" realName="3">
                         <Tiles colour="yellow,green,brown"/>
-                        <!-- Wish list: The 4G trains ought not be available
-                             until both the first 5-train and the last 3G-train
-                             have been purchased. -->
                         <Trains rusted="3" limitStep="4" released="4G"/>
                         <!--Privates close="yes"/-->
                         <Info key="PhaseClosesAllPrivates"/>
@@ -218,6 +204,7 @@
                         <!-- TBD: All coal companies must convert even if their
                                   major companies haven't formed. -->
                         <OffBoardRevenue step="2"/> <!--  Where do we read that..  -->
+                        <!-- EV: should be renamed to PhaseDependentRevenue -->
                         <OperatingRounds number="3"/>
                 </Phase>
                 <Phase name="4G" realName="3">
@@ -231,8 +218,8 @@
 				<Modifier class="net.sf.rails.game.specific._1837.ItalyTileModifier" />
 				<Modifier class="net.sf.rails.game.specific._1837.BzHTileModifier" />
 				<Modifier class="net.sf.rails.game.specific._1837.RunToCoalMineModifier"/>
-				<!--><Modifier class="net.sf.rails.game.specific._1837.CoalTrainModifier"/>
-				//<Modifier class="net.sf.rails.game.specific._1837.RunToCoalMineModifier"/> -->
+				<!-- <Modifier class="net.sf.rails.game.specific._1837.CoalTrainModifier"/>
+				Not sure why the above modifier was outcommented, I have replaced it anyway. -->
         </Component>
 </ComponentManager>
 

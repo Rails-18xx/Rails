@@ -591,9 +591,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     protected void createStartRound(StartPacket startPacket) {
         String startRoundClassName = startPacket.getRoundClassName();
+        startRoundNumber.add(1);
         StartRound startRound = createRound(startRoundClassName,
                 "startRound_" + startRoundNumber.value());
-        startRoundNumber.add(1);
         startRound.start();
     }
 

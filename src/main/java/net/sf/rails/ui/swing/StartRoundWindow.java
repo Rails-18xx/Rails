@@ -11,9 +11,7 @@ import javax.swing.*;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
-import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.financial.StockMarket;
-import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.financial.*;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.sound.SoundManager;
@@ -126,7 +124,8 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         gameUIManager = parent;
         possibleActions = gameUIManager.getGameManager().getPossibleActions();
 
-        setTitle(LocalText.getText("START_ROUND_TITLE"));
+        setTitle(LocalText.getText("START_ROUND_TITLE",
+                String.valueOf(round.getStartRoundNumber())));
         getContentPane().setLayout(new BorderLayout());
 
         statusPanel = new JPanel();
@@ -185,7 +184,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
         getContentPane().add(statusPanel, BorderLayout.NORTH);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-        setTitle("Rails: Start Round");
+        //setTitle("Rails: Start Round");
         setLocation(300, 150);
         setSize(275, 325);
         gameUIManager.setMeVisible(this, true);
@@ -319,7 +318,17 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             }
 
             info[i] = new Field(infoIcon);
-            info[i].setToolTipText(getStartItemDescription(si));
+            //info[i].setToolTipText(getStartItemDescription(si));
+            Certificate cert = si.getPrimary();
+            Company comp = null;
+            if (cert instanceof PublicCertificate) {
+                comp = (PublicCompany) cert.getParent();
+            } else if (cert instanceof PrivateCompany) {
+                comp = (PrivateCompany) cert;
+            }
+            String infoText = comp.getInfoText().replaceFirst("^<html>",
+                    "<html>" + comp.getType().getId() + " company: ");
+            info[i].setToolTipText(infoText);
             HexHighlightMouseListener.addMouseListener(info[i], gameUIManager.getORUIManager(), si);
             addField(info[i], infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
 
@@ -736,6 +745,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         itemNameButton[i].setForeground(status == StartItem.BUYABLE ? buyableColour : defaultColour);
     }
 
+    /* Replaced by the texts from the Info menu.
     private String getStartItemDescription(StartItem item) {
         StringBuilder b = new StringBuilder("<html>");
         b.append(item.getPrimary().toText());
@@ -773,7 +783,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             b.append(item.getSecondary().toText());
         }
         return b.toString();
-    }
+    }*/
 
     private ImageIcon createInfoIcon() {
         return RailsIcon.INFO.smallIcon;

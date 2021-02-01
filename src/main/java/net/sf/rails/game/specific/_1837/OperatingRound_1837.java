@@ -8,21 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.rails.game.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.GameDef;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.OperatingRound;
-import net.sf.rails.game.Phase;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PrivateCompany;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.NationalFormationRound;
 import net.sf.rails.game.special.ExchangeForShare;
@@ -301,6 +293,7 @@ public class OperatingRound_1837 extends OperatingRound {
      * @see net.sf.rails.game.OperatingRound#splitRevenue(int)
      */
 
+    // TODO: perhaps make roundUp generic?
     public void splitRevenue(int amount, boolean roundUp) {
         int withheld = 0;
         if (amount > 0) {
@@ -364,10 +357,17 @@ public class OperatingRound_1837 extends OperatingRound {
         /**
          *  payout the direct Income from the Coal Mine if any
          */
+        /* EV: I don't think this belongs here.
+         * What if the company withholds?
+         * Paying out direct income is a separate process,
+         * and is now done in processSpecialRevenue()
+         */
+        /*
         String partText = Currency.fromBank( operatingCompany.value().getDirectIncomeRevenue(), operatingCompany.value());
         ReportBuffer.add(this, LocalText.getText("ReceivedDirectIncomeFromMine",
                 operatingCompany.value().getId(),
                 partText));
+        */
 
         // Move the token
         ((PublicCompany_1837) operatingCompany.value()).payout(amount, b);
@@ -375,9 +375,9 @@ public class OperatingRound_1837 extends OperatingRound {
 
 
 
-    /* (non-Javadoc)
-     * @see net.sf.rails.game.OperatingRound#executeSetRevenueAndDividend(rails.game.action.SetDividend)
-     */
+    /* Outcommented for now, as the mine revenue code has been put
+     * into a separate method (processSpecialRevenue()).
+     */ /*
     @Override
     protected void executeSetRevenueAndDividend(SetDividend action) {
 
@@ -431,10 +431,26 @@ public class OperatingRound_1837 extends OperatingRound {
         nextStep(GameDef.OrStep.PAYOUT);
     }
 
-
     /* (non-Javadoc)
      * @see net.sf.rails.game.OperatingRound#gameSpecificTileLayAllowed(net.sf.rails.game.PublicCompany, net.sf.rails.game.MapHex, int)
      */
+    @Override
+    protected int processSpecialRevenue(int earnings, int specialRevenue) {
+        int dividend = earnings;
+        PublicCompany company = operatingCompany.value();
+        if (specialRevenue > 0) {
+            dividend -= specialRevenue;
+            company.setLastDirectIncome(specialRevenue);
+            ReportBuffer.add(this, LocalText.getText("CompanyDividesEarnings",
+                    company,
+                    Bank.format(this, earnings),
+                    Bank.format(this, dividend),
+                    Bank.format(this, specialRevenue)));
+            Currency.fromBank(specialRevenue, company);
+        }
+        company.setLastDividend(dividend);
+        return dividend;
+    }
 
     @Override
     protected boolean gameSpecificTileLayAllowed(PublicCompany company,
@@ -492,6 +508,39 @@ public class OperatingRound_1837 extends OperatingRound {
         }
     }
 
+    /**
+     * Can the operating company buy a train now?
+     * In 1837 it is allowed if another (different) train is scrapped.
+     *
+     * @return True if the company is allowed to buy a train
+     */
+    protected boolean canBuyTrainNow() {
+        return isBelowTrainLimit();
+    }
+
+    /**
+     * New standard method to allow discarding trains when at the train limit.
+     * Note: 18EU has a different procedure for discarding Pullmann trains.
+     * @param company
+     * @param newTrain
+     */
+    @Override
+    protected void addOtherExchangesAtTrainLimit(PublicCompany company, Train newTrain) {
+        // May only discard train if at train limit.
+        if (isBelowTrainLimit()) return;
+
+        Set<Train> oldTrains = company.getPortfolioModel().getUniqueTrains();
+
+        for (Train oldTrain : oldTrains) {
+            // May not exchange for same type
+            if (oldTrain.getType().equals(newTrain.getType())) continue;
+            // New train cost is raised with half the old train cost
+            int price = newTrain.getCost() + oldTrain.getCost() / 2;
+            BuyTrain buyTrain = new BuyTrain (newTrain, bank.getIpo(), price);
+            buyTrain.setTrainForExchange(oldTrain);
+            possibleActions.add(buyTrain);
+        }
+    }
 
     /* (non-Javadoc)
      * @see net.sf.rails.game.OperatingRound#buyTrain(rails.game.action.BuyTrain)
@@ -510,6 +559,8 @@ public class OperatingRound_1837 extends OperatingRound {
         }
         return result;
     }
+
+
 
     @Override
     protected void finishRound() {

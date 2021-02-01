@@ -157,6 +157,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     public final CountingMoneyModel directIncomeRevenue = CountingMoneyModel.create(this, "directIncome", false);
 
+    public final CountingMoneyModel lastDividend = CountingMoneyModel.create (this, "lastDividend", false);
+
     /**
      * Most recent Direct Company Treasury income earned.
      */
@@ -423,6 +425,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public PublicCompany(RailsItem parent, String id, boolean hasStockPrice) {
         super(parent, id);
         lastRevenue.setSuppressInitialZero(true);
+        lastDirectIncome.setSuppressZero(true);
+        lastDividend.setSuppressZero(true);
 
         /* Spendings in the current operating turn */
         privatesCostThisTurn.setSuppressZero(true);
@@ -1368,10 +1372,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Store the last revenue earned by this company.
      *
-     * @param i The last revenue amount.
+     * @param amount The last revenue amount.
      */
-    public void setLastRevenue(int i) {
-        lastRevenue.set(i);
+    public void setLastRevenue(int amount) {
+        lastRevenue.set(amount);
+    }
+
+    public void setLastDividend (int amount) {
+        lastDividend.set (amount);
     }
 
     /**
@@ -1385,6 +1393,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     public Model getLastRevenueModel() {
         return lastRevenue;
+    }
+
+    public int getLastDividend() {
+        return lastDividend.value();
+    }
+
+    public Model getLastDividendModel () {
+        return lastDividend;
     }
 
     /**
@@ -2278,10 +2294,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Store the last direct Income earned by this company.
      *
-     * @param i The last revenue amount.
+     * @param amount The last revenue amount.
      */
-    public void setLastDirectIncome(int i) {
-        lastDirectIncome.set(i);
+    public void setLastDirectIncome(int amount) {
+        lastDirectIncome.set(amount);
     }
 
     /**
