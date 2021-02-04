@@ -222,8 +222,7 @@ Published 2004 by Deep Thought Games, LLC
 			Known limitations:
 			- Buying the KK and Ug minors in subsequent Start rounds does not work well.
 			  These rounds should be changed to Stock Rounds.
-			- Multiple-city green upgrades often need tokens to be replaced manually.
-			- Not yet tested after the 3-train phase.
+			- Not yet tested beyond the 3-train phase.
 		</Description>
 		<Players minimum = "3" maximum = "7" />
 	</Game>
