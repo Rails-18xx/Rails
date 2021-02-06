@@ -607,7 +607,7 @@ BUY_SHARE_LOG,Ulli Hegemann,10,SX,IPO,88
 PriceIsPaidTo,88,SX
 SharesReleased,All,BA
 START_COMPANY_LOG,Volker Schnell,BA,84,168,2,20,BANK
-SharesReleased,4 10%,PR
+SharesReleased,40%,PR
 BUY_SHARE_LOG,Volker Kuhnle,10,PR,IPO,154
 PASSES,Jupp Krupp
 BUY_SHARE_LOG,Ulli Hegemann,10,PR,IPO,154

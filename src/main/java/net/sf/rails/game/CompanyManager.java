@@ -7,6 +7,7 @@ import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 
+import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,9 @@ public class CompanyManager extends RailsManager implements Configurable {
     private static final Logger log = LoggerFactory.getLogger(CompanyManager.class);
 
     protected GameManager gameManager;
+
+    /** Release rules */
+    protected List<ReleaseRule> releaseRules;
 
     /**
      * Used by Configure (via reflection) only
@@ -181,6 +185,25 @@ public class CompanyManager extends RailsManager implements Configurable {
             }
         }
 
+        /* Read and configure any company release rules */
+        List<Tag> releaseTags = tag.getChildren ("ReleaseRule");
+        if (releaseTags != null) {
+            int numberOfRules = releaseTags.size();
+            releaseRules = new ArrayList<>(numberOfRules);
+
+            int id = 0;
+            for (Tag releaseTag : releaseTags) {
+                String sold = releaseTag.getAttributeAsString("sold");
+                if (!Util.hasValue(sold)) {
+                    throw new ConfigurationException("ReleaseRule has no 'sold' info");
+                }
+                String released = releaseTag.getAttributeAsString("released");
+                if (!Util.hasValue(released)) {
+                    throw new ConfigurationException("ReleaseRule has no 'released' info");
+                }
+                releaseRules.add (new ReleaseRule(this, String.valueOf(id++), sold, released));
+            }
+        }
     }
 
     protected void configureStartPacket(Tag packetTag, String name, String roundClass) throws ConfigurationException {
@@ -296,6 +319,10 @@ public class CompanyManager extends RailsManager implements Configurable {
 
     public StartPacket getStartPacket (String name) {
         return startPacketMap.get(name);
+    }
+
+    public List<ReleaseRule> getReleaseRules() {
+        return releaseRules;
     }
 
     /** Pass number of turns for which a certain company type can lay extra tiles of a certain colour. */

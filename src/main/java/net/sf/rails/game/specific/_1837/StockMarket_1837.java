@@ -58,19 +58,18 @@ public class StockMarket_1837 extends StockMarket {
         }  
     }
 
-
-
     @Override
     public void soldOut(PublicCompany company) {
-        
-        if (GameOption.getValue(this,GameOption.VARIANT).equalsIgnoreCase("Basegame")){
-                if (company.getPresident().getPortfolioModel().getCertificates(company).size()>=4) { //President has 4 shares (50% or more)
-          moveLeftAndUp(company);  
-                }
+
+        if (GameOption.getValue(this, GameOption.VARIANT).equalsIgnoreCase("Basegame")) {
+            if (company.getPresident().getPortfolioModel().getCertificates(company).size() >= 4) { //President has 4 shares (50% or more)
+                moveLeftAndUp(company);
+            }
         } else {
-        moveUp(company);
+            moveUp(company);
         }
     }
+
     private void moveLeftAndUp(PublicCompany company) {
         StockSpace oldsquare = company.getCurrentSpace();
         StockSpace newsquare = oldsquare;

@@ -29,8 +29,8 @@ import rails.game.specific._1837.SetHomeHexLocation;
 /**
  * Implements an 1837-style startpacket sale.
  */
-public class StartRound_1837_Coal extends StartRound {
-    private static final Logger log = LoggerFactory.getLogger(StartRound_1837_Coal.class);
+public class StartRound_1837_v1 extends StartRound {
+    private static final Logger log = LoggerFactory.getLogger(StartRound_1837_v1.class);
 
     protected final int bidIncrement;
 
@@ -48,7 +48,7 @@ public class StartRound_1837_Coal extends StartRound {
     /**
      * Constructor, only to be used in dynamic instantiation.
      */
-    public StartRound_1837_Coal(GameManager gameManager, String id) {
+    public StartRound_1837_v1(GameManager gameManager, String id) {
         super(gameManager, id, false, true, true);
         bidIncrement = startPacket.getModulus();
         this.setStartRoundName("Initial Minor StartRound (Coal and Privates including Suedbahn)");

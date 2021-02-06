@@ -88,6 +88,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected String homeHexNames = null;
     protected List<MapHex> homeHexes = null;
     protected int homeCityNumber = 1;
+    protected boolean displayHomeHex = true;
 
     /**
      * Destination hex *
@@ -265,8 +266,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * The certificates of this company (minimum 1)
      */
     protected final ArrayListState<PublicCertificate> certificates = new ArrayListState<>(this, "ownCertificates");
+
     /**
      * Are the certificates available from the first SR?
+     * Added by EV 2/2021:
+     * This attribute defines company-level availability.
+     * If false, all certs initially go to 'unavailable'.
+     * If true, only the certs defined as available on the certificate level
+     * go to the IPO; the remainder (usually exchange certs) goes to 'unavailable'.
      */
     protected boolean certsAreInitiallyAvailable = true;
 
@@ -335,6 +342,12 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * Multiple certificates those that represent more than one nominal share unit (except president share)
      */
     protected boolean hasMultipleCertificates = false;
+
+    /**
+     * Certain companies (e.g. 1837 minors) effectively have a 100% playerShareLimit.
+     * -1 means not applicable.
+     */
+    protected int playerShareLimit = -1;
 
     /*---- variables needed during initialisation -----*/
     protected String startSpace = null;
@@ -488,6 +501,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         canBeRestarted = tag.getAttributeAsBoolean("restartable", canBeRestarted);
 
+        playerShareLimit = tag.getAttributeAsInteger("playerShareLimit", playerShareLimit);
+
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
             shareUnit.set(shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
@@ -498,6 +513,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (homeBaseTag != null) {
             homeHexNames = homeBaseTag.getAttributeAsString("hex");
             homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
+            displayHomeHex = homeBaseTag.getAttributeAsBoolean("mapDisplay", true);
         }
 
         Tag destinationTag = tag.getChild("Destination");
@@ -539,7 +555,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         Tag priceTag = tag.getChild("StockPrice");
         if (priceTag != null) {
-            hasStockPrice = priceTag.getAttributeAsBoolean("market", true);
+            hasStockPrice = priceTag.getAttributeAsBoolean("market", hasStockPrice);
             hasParPrice = priceTag.getAttributeAsBoolean("par", hasStockPrice);
         }
 
@@ -703,7 +719,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             percOfPriceToReachPerJump.add(defaultPercToReach);
         }
 
-
         if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = IntegerState.create(this, "currentNumberOfLoans");
             currentLoanValue = CountingMoneyModel.create(this, "currentLoanValue", false);
@@ -728,7 +743,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             // Throw away
             // the per-type
             // specification
-
             // TODO: Move this to PublicCertificate class, as it belongs there
             for (Tag certificateTag : certificateTags) {
                 int shares = certificateTag.getAttributeAsInteger("shares", 1);
@@ -739,8 +753,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                 int number = certificateTag.getAttributeAsInteger("number", 1);
 
                 boolean certIsInitiallyAvailable
-                        = certificateTag.getAttributeAsBoolean("available",
-                        certsAreInitiallyAvailable);
+                        = certificateTag.getAttributeAsBoolean("available", true);
 
                 float certificateCount = certificateTag.getAttributeAsFloat("certificateCount", 1.0f);
 
@@ -772,7 +785,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         for (int i = 0; i < certificates.size(); i++) {
             cert = certificates.get(i);
             cert.setUniqueId(getId(), i);
-            cert.setInitiallyAvailable(cert.isInitiallyAvailable() && this.certsAreInitiallyAvailable);
         }
 
         Set<BaseToken> newTokens = Sets.newHashSet();
@@ -965,6 +977,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return homeCityNumber;
     }
 
+    public boolean isDisplayHomeHex() {
+        return displayHomeHex;
+    }
+
     /**
      * @param number The homeStation to set.
      */
@@ -1013,7 +1029,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public void start(StockSpace startSpace) {
 
         hasStarted.set(true);
-        if (hasStockPrice) buyable.set(true);
+        if (certificates.size() > 1) buyable.set(true);
 
         // In case of a restart: undo closing
         if (closed.value()) closed.set(false);
@@ -1338,6 +1354,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected boolean certCountsAsSold(PublicCertificate cert) {
         Owner owner = cert.getOwner();
         return owner instanceof Player || owner == getRoot().getBank().getPool();
+    }
+
+    public int getPlayerShareLimit() {
+        return playerShareLimit;
     }
 
     /**
@@ -1935,6 +1955,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         if (hasLaidHomeBaseTokens()) return true;
 
+        // TEMPORARY - S5 buyer must choose home hex
+        if (homeHexes == null) return true;
+
         for (MapHex homeHex : homeHexes) {
             if (homeCityNumber == 0) {
                 // This applies to cases like 1830 Erie and 1856 THB.
@@ -2184,6 +2207,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         // If applicable, prepare for a restart
         if (canBeRestarted) {
             if (certsAreInitiallyAvailable) {
+                // Probably no need to check cert-level availability here.
                 shareDestination = getRoot().getBank().getIpo();
             } else {
                 shareDestination = getRoot().getBank().getUnavailable();
@@ -2239,6 +2263,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     @Override
     public ImmutableSet<SpecialProperty> getSpecialProperties() {
         return portfolio.getPersistentSpecialProperties();
+    }
+
+    public boolean areCertsInitiallyAvailable() {
+        return certsAreInitiallyAvailable;
     }
 
     // MoneyOwner interface

@@ -1,7 +1,9 @@
 package net.sf.rails.ui.swing.gamespecific._1837;
 
 import net.sf.rails.common.GuiDef;
+import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
+import net.sf.rails.ui.swing.elements.RadioButtonDialog;
 import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +12,9 @@ import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.ORPanel;
 import net.sf.rails.ui.swing.ORUIManager;
 import rails.game.action.LayTile;
+import rails.game.action.PossibleActions;
 import rails.game.action.SetDividend;
+import rails.game.specific._1837.SetHomeHexLocation2;
 
 import java.util.Set;
 
@@ -19,6 +23,9 @@ import java.util.Set;
  *
  */
 public class ORUIManager_1837 extends ORUIManager {
+
+    public static final String COMPANY_START_HEX_DIALOG = "CompanyStartHex";
+    private static final String[] hexes = {"L2", "L8"};
 
     private static final Logger log = LoggerFactory.getLogger(ORUIManager_1837.class);
 
@@ -102,4 +109,51 @@ public class ORUIManager_1837 extends ORUIManager {
             }
         }
     }
+
+    @Override
+    protected void checkForGameSpecificActions(PublicCompany orComp,
+                                               GameDef.OrStep orStep,
+                                               PossibleActions possibleActions) {
+        if (orComp.getId().equalsIgnoreCase("S5")
+              && possibleActions.contains(SetHomeHexLocation2.class)) {
+            SetHomeHexLocation2 action = possibleActions.getType(SetHomeHexLocation2.class).get(0);
+            requestHomeHex(action);
+
+        }
+
+    }
+    private boolean requestHomeHex(SetHomeHexLocation2 action) {
+
+        RadioButtonDialog dialog = new RadioButtonDialog(
+                COMPANY_START_HEX_DIALOG, this, orWindow,
+                LocalText.getText("PleaseSelect"),
+                LocalText.getText("StartingHomeHexS5", action.getPlayerName(), action.getCompanyName()),
+                hexes, 0);
+        setCurrentDialog (dialog, action);
+        return true;
+    }
+
+    @Override
+    public void dialogActionPerformed() {
+        if (getCurrentDialogAction() instanceof SetHomeHexLocation2) {
+            handleStartHex();
+        } else {
+            super.dialogActionPerformed();
+        }
+
+    }
+
+    private void handleStartHex() {
+        RadioButtonDialog dialog = (RadioButtonDialog) getCurrentDialog();
+        SetHomeHexLocation2 action =
+                (SetHomeHexLocation2) getCurrentDialogAction();
+
+        int index = dialog.getSelectedOption();
+        if (index >= 0) {
+            action.setHomeHex(hexes[index]);
+            gameUIManager.processAction(action);
+        }
+    }
+
+
 }

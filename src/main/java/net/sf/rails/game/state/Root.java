@@ -56,7 +56,6 @@ public class Root extends Context {
    // Item methods
 
    /**
-    * @throws UnsupportedOperationsException
     * Not supported for Root
     */
    @Override
