@@ -16,7 +16,8 @@
         <Trains limit="2,2,1" mandatory="no"/>
         <CanUseSpecialProperties/>
     </CompanyType>
-    <CompanyType name="Minor1" class="net.sf.rails.game.specific._1837.PublicCompany_1837">
+    <CompanyType name="Minor1" class="net.sf.rails.game.specific._1837.PublicCompany_1837"
+                playerShareLimit="100">
         <ShareUnit percentage="100"/>
         <Certificate type="President" shares="1"/>
         <StockPrice market="no"/>
@@ -27,7 +28,8 @@
         <Trains limit="2,2,1" mandatory="no"/>
         <CanUseSpecialProperties/>
     </CompanyType>
-    <CompanyType name="Minor2" class="net.sf.rails.game.specific._1837.PublicCompany_1837" capitalisation="full">
+    <CompanyType name="Minor2" class="net.sf.rails.game.specific._1837.PublicCompany_1837"
+                 capitalisation="full" playerShareLimit="100">
         <ShareUnit percentage="50"/>
         <Certificate type="President" shares="1"/>
         <Certificate shares="1" number="1"/>
@@ -39,7 +41,8 @@
         <Trains limit="2,2,1" mandatory="no"/>
         <CanUseSpecialProperties/>
     </CompanyType>
-    <CompanyType name="Major" class="net.sf.rails.game.specific._1837.PublicCompany_1837" capitalisation="incremental">
+    <CompanyType name="Major" class="net.sf.rails.game.specific._1837.PublicCompany_1837"
+                 capitalisation="incremental">
         <PoolPaysOut/>
         <Float percentage="50"/>
         <StockPrice par="yes"/>
@@ -232,70 +235,70 @@
             <ExchangeForShare company="Sd" share="10"/>
         </SpecialProperty>
     </Company>
-    <Company name="K1" longname="Kaiser Ferdinand-Nordbahn" type="Minor1" price="90" tokens="1" fgColour="FFFFFF"
-             bgColour="C98A5C">
+    <Company name="K1" longname="Kaiser Ferdinand-Nordbahn" type="Minor1" price="90" tokens="1"
+             fgColour="FFFFFF" bgColour="C98A5C">
+        <IfVariant value="Basegame,Romoth">
+            <Attributes available="no"/>
+        </IfVariant>
         <Home hex="G17" city="1"/>
         <SpecialProperty condition="phase=4" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="KK" share="10"/>
         </SpecialProperty>
     </Company>
-    <IfOption name="Variant" value="Basegame,1837-2ndEd.">
-        <Company name="K2" longname="Kaiserin Elisabeth-Bahn" type="Minor1" price="140" tokens="1" fgColour="FFFFFF"
-                 bgColour="C98A5C">
-            <Home hex="G17" city="3"/>
-            <SpecialProperty condition="ifStarted" when="exchangeRound"
-                             class="net.sf.rails.game.special.ExchangeForShare">
-                <ExchangeForShare company="KK" share="10"/>
-            </SpecialProperty>
-        </Company>
-    </IfOption>
-    <IfOption name="Variant" value="Romoth">
-        <Company name="K2" longname="Kaiserin Elisabeth-Bahn" type="Minor1" price="120" tokens="1" fgColour="FFFFFF"
-                 bgColour="C98A5C">
-            <Home hex="G17" city="3"/>
-            <SpecialProperty condition="ifStarted" when="exchangeRound"
-                             class="net.sf.rails.game.special.ExchangeForShare">
-                <ExchangeForShare company="KK" share="10"/>
-            </SpecialProperty>
-        </Company>
-    </IfOption>
-    <Company name="K3" longname="Kaiser Franz Joseph-Bahn" type="Minor1" price="90" tokens="1" fgColour="FFFFFF"
-             bgColour="C98A5C">
+    <Company name="K2" longname="Kaiserin Elisabeth-Bahn" type="Minor1" tokens="1"
+             fgColour="FFFFFF" bgColour="C98A5C">
+        <IfVariant value="Basegame,Romoth">
+            <Attributes available="no"/>
+        </IfVariant>
+        <IfVariant value="Basegame,1837-2ndEd.">
+            <Attributes price="140"/>
+        </IfVariant>
+        <IfVariant value="Romoth">
+            <Attributes price="120"/>
+        </IfVariant>
+        <Home hex="G17" city="3"/>
+        <SpecialProperty condition="ifStarted" when="exchangeRound"
+                         class="net.sf.rails.game.special.ExchangeForShare">
+            <ExchangeForShare company="KK" share="10"/>
+        </SpecialProperty>
+    </Company>
+    <Company name="K3" longname="Kaiser Franz Joseph-Bahn" type="Minor1" price="90" tokens="1"
+             fgColour="FFFFFF" bgColour="C98A5C">
+        <IfVariant value="Basegame,Romoth">
+            <Attributes available="no"/>
+        </IfVariant>
         <Home hex="G17" city="2"/>
         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="KK" share="10"/>
         </SpecialProperty>
     </Company>
-    <Company name="U1W" longname="Bahnhof Pest" type="Private" basePrice="90" revenue="0">
-        <Certificate certificateCount="0"/>
-        <ClosingConditions>
-            <Closemanually/>
-        </ClosingConditions>
-    </Company>
-    <Company name="U1" longname="Eisenbahn Pest-Waitzen" type="Minor2" price="180" tokens="1" fgColour="FFFFFF"
-             bgColour="FF55AA">
+    <Company name="U1" longname="Eisenbahn Pest-Waitzen" type="Minor2" price="90" tokens="1"
+             fgColour="FFFFFF" bgColour="FF55AA">
+        <IfVariant value="Basegame,Romoth">
+            <Attributes available="no"/>
+        </IfVariant>
         <Home hex="H22" city="1"/>
         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="Ug" share="10"/>
         </SpecialProperty>
         <Trains limit="2"/>
     </Company>
-    <Company name="U2" longname="Mohacs-Fünfkirchner Bahn" type="Minor1" price="90" tokens="1" fgColour="FFFFFF"
-             bgColour="FF55AA">
+    <Company name="U2" longname="Mohacs-Fünfkirchner Bahn" type="Minor1" price="90" tokens="1"
+             fgColour="FFFFFF" bgColour="FF55AA">
+        <IfVariant value="Basegame,Romoth">
+            <Attributes available="no"/>
+        </IfVariant>
         <Home hex="K21"/>
         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="Ug" share="10"/>
         </SpecialProperty>
         <Trains limit="2"/>
     </Company>
-    <Company name="U3C" longname="Bahnhof Czegled" type="Private" basePrice="90" revenue="0">
-        <Certificate certificateCount="0"/>
-        <ClosingConditions>
-            <Closemanually/>
-        </ClosingConditions>
-    </Company>
-    <Company name="U3" longname="Eisenbahn Pest-Czegléd" type="Minor2" price="180" tokens="1" fgColour="FFFFFF"
-             bgColour="FF55AA">
+    <Company name="U3" longname="Eisenbahn Pest-Czegléd" type="Minor2" price="90" tokens="1"
+             fgColour="FFFFFF" bgColour="FF55AA">
+        <IfVariant value="Basegame,Romoth">
+            <Attributes available="no"/>
+        </IfVariant>
         <Home hex="H22" city="2"/>
         <SpecialProperty condition="ifStarted" when="exchangeRound"
                          class="net.sf.rails.game.special.ExchangeForShare">
@@ -303,104 +306,97 @@
         </SpecialProperty>
         <Trains limit="2"/>
     </Company>
-    <Company name="BH" longname="Bosnisch-Herzegowinische Landesbahn" type="Major" tokens="3" fgColour="000000"
-             bgColour="FF0000">
+    <Company name="BH" longname="Bosnisch-Herzegowinische Landesbahn" type="Major" tokens="3"
+             available="no" fgColour="000000" bgColour="FF0000">
         <Home hex="N20"/>
         <Float percentage="50"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="7"/>
         <Certificate shares="1" number="1" available="false"/>
     </Company>
-    <Company name="BK" longname="Böhmische Kommerzbahn" type="Major" tokens="3" fgColour="FFFFFF" bgColour="0000FF">
+    <Company name="BK" longname="Böhmische Kommerzbahn" type="Major" tokens="3"
+             available="no" fgColour="FFFFFF" bgColour="0000FF">
         <Home hex="C11"/>
         <Float percentage="50"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="6"/>
         <Certificate shares="1" number="2" available="false"/>
     </Company>
-    <Company name="CL" longname="Carl-Ludwigs-Bahn" type="Major" tokens="3" fgColour="FFFFFF" bgColour="000000">
+    <Company name="CL" longname="Carl-Ludwigs-Bahn" type="Major" tokens="3"
+             available="no" fgColour="FFFFFF" bgColour="000000">
         <Home hex="C33"/>
         <Float percentage="50"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="7"/>
         <Certificate shares="1" number="1" available="false"/>
     </Company>
-    <Company name="GT" longname="Galizische Transversalbahn" type="Major" tokens="3" fgColour="FFFFFF"
-             bgColour="00B000">
+    <Company name="GT" longname="Galizische Transversalbahn" type="Major" tokens="3"
+             available="no" fgColour="FFFFFF" bgColour="00B000">
         <Home hex="D36"/>
         <Float percentage="50"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="8"/>
     </Company>
-    <Company name="MS" longname="Mährisch-schlesische Eisenbahn" type="Major" tokens="3" fgColour="000000"
-             bgColour="FFFF00">
+    <Company name="MS" longname="Mährisch-schlesische Eisenbahn" type="Major" tokens="3"
+             available="no" fgColour="000000" bgColour="FFFF00">
         <Home hex="E17"/>
         <Float percentage="50"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="6"/>
         <Certificate shares="1" number="2" available="false"/>
     </Company>
-    <Company name="SB" longname="Siebenbürgische Bahn" type="Major" tokens="3" fgColour="000000" bgColour="88FF48">
+    <Company name="SB" longname="Siebenbürgische Bahn" type="Major" tokens="3"
+             available="no" fgColour="000000" bgColour="88FF48">
         <Home hex="J36"/>
         <Float percentage="50"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="6"/>
         <Certificate shares="1" number="2" available="false"/>
     </Company>
-    <Company name="TH" longname="Theißbahn" type="Major" tokens="3" fgColour="000000" bgColour="AAFFFF">
+    <Company name="TH" longname="Theißbahn" type="Major" tokens="3"
+             available="no" fgColour="000000" bgColour="AAFFFF">
         <Home hex="F28"/>
         <Float percentage="50"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="6"/>
         <Certificate shares="1" number="2" available="false"/>
     </Company>
-    <IfOption name="Variant" value="Basegame,1837-2ndEd.">
-        <Company name="Sd" longname="Südbahn" type="National" tokens="5" fgColour="FFFFFF" bgColour="FF5400"
-                 startspace="K4" foundingCompany="S1">
-            <Home hex="G17" city="4" mapDisplay="no"/>
-            <Certificate type="President" shares="1" status="reserved"/>
-            <Certificate shares="1" number="4"/>
-            <Certificate shares="1" number="5" available="false"/>
-            <Trains limit="4,4,4,3"/>
-        </Company>
-    </IfOption>
-    <IfOption name="Variant" value="Romoth">
-        <Company name="Sd" longname="Südbahn" type="National" tokens="5" fgColour="FFFFFF" bgColour="FF5400"
-                 startspace="I4" foundingCompany="S1">
-            <Home hex="G17" city="4" mapDisplay="no"/>
-            <Certificate type="President" shares="1" status="reserved"/>
-            <Certificate shares="1" number="4"/>
-            <Certificate shares="1" number="5" available="false"/>
-            <Trains limit="4,4,4,3"/>
-        </Company>
-    </IfOption>
-    <Company name="KK" longname="k.k. Staatsbahn" type="National" tokens="3" fgColour="FFFFFF" bgColour="C98A5C"
-             startspace="I4" foundingCompany="K1">
+    <Company name="Sd" longname="Südbahn" type="National" tokens="5" foundingCompany="S1"
+             available="no" fgColour="FFFFFF" bgColour="FF5400">
+        <IfVariant value="Basegame,1837-2ndEd.">
+                <Attributes startspace="K4"/>
+        </IfVariant>
+        <IfVariant value="Romoth">
+                <Attributes startspace="I4"/>
+        </IfVariant>
+        <Home hex="G17" city="4" mapDisplay="no"/>
+        <Certificate type="President" shares="1" status="reserved"/>
+        <Certificate shares="1" number="4"/>
+        <Certificate shares="1" number="5" available="false"/>
+        <Trains limit="4,4,4,3"/>
+    </Company>
+    <Company name="KK" longname="k.k. Staatsbahn" type="National" tokens="3" available="no"
+             fgColour="FFFFFF" bgColour="C98A5C" startspace="I4" foundingCompany="K1">
         <Home hex="G17" city="1" mapDisplay="no"/>
         <Certificate type="President" shares="1" status="reserved"/>
         <Certificate shares="1" number="6"/>
         <Certificate shares="1" number="3" available="false"/>
     </Company>
-    <IfOption name="Variant" value="Basegame,1837-2ndEd.">
-        <Company name="Ug" longname="Ungarische Staatsbahn" type="National" tokens="3" fgColour="FFFFFF"
-                 bgColour="FF55AA" startspace="M4" foundingCompany="U1">
-            <Home hex="H22" city="1" mapDisplay="no"/>
-            <Certificate type="President" shares="1" status="reserved"/>
-            <Certificate shares="1" number="4"/>
-            <Certificate shares="1" number="5" available="false"/>
-        </Company>
-    </IfOption>
-    <IfOption name="Variant" value="Romoth">
-        <Company name="Ug" longname="Ungarische Staatsbahn" type="National" tokens="3" fgColour="FFFFFF"
-                 bgColour="FF55AA" startspace="K4" foundingCompany="U1">
-            <Home hex="H22" city="1" mapDisplay="no"/>
-            <Certificate type="President" shares="1" status="reserved"/>
-            <Certificate shares="1" number="4"/>
-            <Certificate shares="1" number="5" available="false"/>
-        </Company>
-    </IfOption>
+    <Company name="Ug" longname="Ungarische Staatsbahn" type="National" tokens="3" available="no"
+             fgColour="FFFFFF" bgColour="FF55AA" startspace="M4" foundingCompany="U1">
+        <IfVariant value="Basegame,1837-2ndEd.">
+            <Attributes startspace="M4"/>
+        </IfVariant>
+        <IfVariant value="Romoth">
+            <Attributes startspace="K4"/>
+        </IfVariant>
+        <Home hex="H22" city="1" mapDisplay="no"/>
+        <Certificate type="President" shares="1" status="reserved"/>
+        <Certificate shares="1" number="4"/>
+        <Certificate shares="1" number="5" available="false"/>
+    </Company>
     <IfOption name="Variant" value="Basegame,Romoth">
-        <StartPacket name="Coal Mines" roundClass="net.sf.rails.game.specific._1837.StartRound_1837_Coal">
+        <StartPacket name="Coal Mines" roundClass="net.sf.rails.game.specific._1837.StartRound_1837_v1">
             <MultipleColumns/>
             <Item name="EKT" type="Coal" basePrice="100" column="1" row="1"/>
             <Item name="EPP" type="Coal" basePrice="100" column="2" row="1"/>
@@ -430,28 +426,9 @@
                 <SubItem name="S5" type="Minor1"/>
             </Item>
         </StartPacket>
-        <StartPacket name="KuK Privates" roundClass="net.sf.rails.game.specific._1837.StartRound_1837_Minors_KuK">
-            <Item name="K1" type="Minor1" basePrice="90"/>
-            <IfOption name="Variant" value="Basegame">
-                <Item name="K2" type="Minor1" basePrice="140"/>
-            </IfOption>
-            <IfOption name="Variant" value="Romoth">
-                <Item name="K2" type="Minor1" basePrice="120"/>
-            </IfOption>
-            <Item name="K3" type="Minor1" basePrice="90"/>
-        </StartPacket>
-        <StartPacket name="Hungary Privates"
-                     roundClass="net.sf.rails.game.specific._1837.StartRound_1837_Minors_Hungary">
-            <Item name="U1" president="yes" basePrice="90" type="Minor2"/>
-            <Item name="U1W" type="Private" basePrice="90">
-                <SubItem name="U1" type="Minor2"/>
-            </Item>
-            <Item name="U2" type="Minor1" basePrice="90"/>
-            <Item name="U3" type="Minor2" basePrice="90" president="yes"/>
-            <Item name="U3C" type="Private" basePrice="90">
-                <SubItem name="U3" type="Minor2"/>
-            </Item>
-        </StartPacket>
+        <ReleaseRule sold="StartPacket" released="K1,K2,K3"/>
+        <ReleaseRule sold="K1,K2,K3" released="U1,U2,U3"/>
+        <ReleaseRule sold="U1,U2,U3" released="BH,BK,CL,GT,MS,SB,TH,KK,Sd,Ug"/>
     </IfOption>
     <IfOption name="Variant" value="1837-2ndEd.">
         <StartPacket name="Coal Mines" roundClass="net.sf.rails.game.specific._1837.StartRound_1837_2ndEd">
@@ -486,18 +463,12 @@
             <Item name="K1" type="Minor1" basePrice="60"/>
             <Item name="K2" type="Minor1" basePrice="60"/>
             <Item name="K3" type="Minor1" basePrice="60"/>
-            <Item name="U1" president="yes" basePrice="80" type="Minor2"/>
+            <Item name="U1" type="Minor2" president="yes" basePrice="80"/>
             <Item name="U2" type="Minor1" basePrice="80"/>
-            <Item name="U3" type="Minor2" basePrice="80" president="yes"/>
+            <Item name="U3" type="Minor2" president="yes" basePrice="80"/>
         </StartPacket>
-        <StartPacket name="Hungary Privates"
-                     roundClass="net.sf.rails.game.specific._1837.StartRound_1837_Minors_Hungary">
-            <Item name="U1W" type="Private" basePrice="90">
-                <SubItem name="U1" type="Minor2"/>
-            </Item>
-            <Item name="U3C" type="Private" basePrice="90">
-                <SubItem name="U3" type="Minor2"/>
-            </Item>
-        </StartPacket>
+        <!--ReleaseRule step="0" sold="StartPacket" released="U1,U3"/-->
+        <!--Unclear why the above is redundant here, but not in v1-->
+        <ReleaseRule sold="U1,U3" released="BH,BK,CL,GT,MS,SB,TH,KK,Sd,Ug"/>
     </IfOption>
 </CompanyManager>

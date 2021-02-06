@@ -457,7 +457,7 @@ PRICE_MOVES_LOG,BY,88,C4,86,C5
 BUY_SHARE_LOG,Helmut,10,SX,Pool,86
 Autopasses,Lonny
 START_COMPANY_LOG,Stefan,BA,84,168,2,20,BANK
-SharesReleased,4 10%,PR
+SharesReleased,40%,PR
 Autopasses,Ronnie
 SELL_SHARE_LOG,Helmut,10,BY,86
 PRICE_MOVES_LOG,BY,86,C5,82,C6

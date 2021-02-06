@@ -198,8 +198,8 @@ public class PortfolioModel extends RailsModel {
      * @return (first) certificate found, null if not found
      */
     public PublicCertificate findCertificate(PublicCompany company, int shares, boolean president) {
-        log.debug("Looking for {} {} shares, pres={}",
-                company, shares, president);
+        log.debug("Looking in {} for {} {} shares, pres={}",
+                this, company, shares, president);
         for (PublicCertificate cert : certificates.getPortfolio().items(company)) {
             if (company.getShareUnit() == 100
                     || president && cert.isPresidentShare()

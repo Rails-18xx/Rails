@@ -567,8 +567,7 @@ public class OperatingRound_1837 extends OperatingRound {
         ReportBuffer.add(this, " ");
         ReportBuffer.add(
                 this,
-                LocalText.getText("END_OR",
-                        String.valueOf(getRoundName())));
+                LocalText.getText("EndOfOperatingRound", thisOrNumber));
 
         for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
             if ((company.hasStockPrice()) && (company.hasFloated())){

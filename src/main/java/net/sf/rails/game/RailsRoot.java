@@ -141,7 +141,7 @@ public class RailsRoot extends Root implements RailsItem {
 
         try {
             playerManager.finishConfiguration(this);
-            companyManager.finishConfiguration(this);
+            companyManager.finishConfiguration(this); // Requires bank to be finished later!
             trainManager.finishConfiguration(this);
             phaseManager.finishConfiguration(this);
             tileManager.finishConfiguration(this);
