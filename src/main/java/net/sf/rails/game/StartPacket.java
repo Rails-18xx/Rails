@@ -30,6 +30,14 @@ public class StartPacket extends RailsAbstractItem {
     protected int minimumIncrement = 5;
     /** The modulus of all bids (i.e. of which value the bid must be a multiple) */
     protected int modulus = 5;
+    /** Is multiple-column display enabled?
+     *  If so, row and col attributes become mandatory for all start items
+     *  (if the <MultipleColumn> tag precedes all start items).*/
+    protected boolean multipleColumns = false;
+    /** The number of columns. Will be derived from the column attributes. */
+    protected int numberOfColumns = 1;
+    /** The number of rows. Will be derived from the row attributes, if multipleColumns is true. */
+    protected int numberOfRows;
 
     /** Default name */
     public static final String DEFAULT_ID = "Initial";
@@ -56,6 +64,12 @@ public class StartPacket extends RailsAbstractItem {
      * @throws ConfigurationException if anything goes wrong.
      */
     public void configureFromXML(Tag tag) throws ConfigurationException {
+
+        // Multiple column display?
+        Tag columnsTag = tag.getChild("MultipleColumns");
+        multipleColumns = columnsTag != null;
+
+        // Bidding parameters, if applicable
         Tag biddingTag = tag.getChild("Bidding");
         if (biddingTag != null) {
             minimumInitialIncrement =
@@ -83,14 +97,27 @@ public class StartPacket extends RailsAbstractItem {
 
             int basePrice = itemTag.getAttributeAsInteger("basePrice", 0);
             boolean reduceable = itemTag.getAttributeAsBoolean("reduceable", false);
-            StartItem item = StartItem.create(this, itemName, itemType, basePrice, reduceable, index++, president);
+            StartItem item = StartItem.create(this, itemName, itemType,
+                    basePrice, reduceable, index++, president);
             items.add(item);
 
             // Optional attributes
             int row = itemTag.getAttributeAsInteger("row", 0);
-            if (row > 0) item.setRow(row);
+            item.setRow(row);
             int column = itemTag.getAttributeAsInteger("column", 0);
-            if (column > 0) item.setColumn(column);
+            if (multipleColumns) {
+                if (!(row > 0 && column > 0)) {
+                    throw new ConfigurationException(
+                            "With multiple columns, both row and column attributes are required");
+                }
+                item.setColumn(column);
+                numberOfRows = Math.max (numberOfRows, row);
+                numberOfColumns = Math.max (numberOfColumns, column);
+            }
+
+            // Displayed name
+            String displayName = itemTag.getAttributeAsString("displayName", null);
+            if (displayName != null) item.setDisplayName(displayName);
 
             // Check if there is another certificate
             List<Tag> subItemTags = itemTag.getChildren("SubItem");
@@ -241,4 +268,15 @@ public class StartPacket extends RailsAbstractItem {
         return modulus;
     }
 
+    public boolean isMultipleColumns() {
+        return multipleColumns;
+    }
+
+    public int getNumberOfColumns() {
+        return numberOfColumns;
+    }
+
+    public int getNumberOfRows() {
+        return numberOfRows;
+    }
 }

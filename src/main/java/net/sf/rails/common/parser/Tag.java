@@ -276,18 +276,24 @@ public class Tag {
                         value = attribute.getNodeValue();
                         attributes.put(name, value);
                     }
-                } else if ( "IfOption".equalsIgnoreCase(childTagName)) {
-                    Node nameAttr = nnp.getNamedItem("name");
-                    if (nameAttr == null)
-                        throw new ConfigurationException(
-                                "IfOption has no optionName attribute");
-                    name = nameAttr.getNodeValue();
+                } else if ("IfOption".equalsIgnoreCase(childTagName)
+                        || "IfVariant".equalsIgnoreCase(childTagName)) {
 
-                    Node parmAttr = nnp.getNamedItem("parm");
-                    if (parmAttr != null) {
-                        value = parmAttr.getNodeValue();
-                        Iterable<String> parameters = Splitter.on(XMLTags.VALUES_DELIM).split(value);
-                        name = GameOption.constructParameterisedName(name, ImmutableList.copyOf(parameters));
+                    if ("IfOption".equalsIgnoreCase(childTagName)) {
+                        Node nameAttr = nnp.getNamedItem("name");
+                        if (nameAttr == null)
+                            throw new ConfigurationException(
+                                    "IfOption has no optionName attribute");
+                        name = nameAttr.getNodeValue();
+
+                        Node parmAttr = nnp.getNamedItem("parm");
+                        if (parmAttr != null) {
+                            value = parmAttr.getNodeValue();
+                            Iterable<String> parameters = Splitter.on(XMLTags.VALUES_DELIM).split(value);
+                            name = GameOption.constructParameterisedName(name, ImmutableList.copyOf(parameters));
+                        }
+                    } else {  // IfVariant
+                        name = "Variant";
                     }
 
                     Node valueAttr = nnp.getNamedItem("value");

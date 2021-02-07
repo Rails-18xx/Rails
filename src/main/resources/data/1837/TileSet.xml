@@ -49,13 +49,13 @@
                 <Upgrade id="434"/>
         </Tile>
         <Tile id="-37010"><!-- yellow Buda/Pest -->
-                <Upgrade id="425" relayBaseTokens="yes"/>
+                <Upgrade id="425"/>
         </Tile>
         <Tile id="-37011"><!-- yellow Marburg -->
                 <Upgrade id="5,57"/>
         </Tile>
         <Tile id="-37012"><!-- yellow Wien -->
-                <Upgrade id="427" relayBaseTokens="yes"/>
+                <Upgrade id="427"/>
         </Tile>
         <Tile id="-37103"><!-- Preprinted yellow tile 3 -->
                 <Upgrade id="416,417,422,423"/>

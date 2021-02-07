@@ -383,12 +383,13 @@ public class TileUpgrade implements Upgrade {
             log.debug("base={} target={}", base, target);
         }
         // check if there are stations to map
-        Map<Station, Station> stationMapping = assignStations(base, target);
+       Map<Station, Station> stationMapping = assignStations(base, target);
 
         // Try something else: match sides with old and new Stations in a simple way
         // Each pair of stations that matches with the same side is connected.
         // This finally appears to work for the 1837 green Vienna upgrade.
         // Though it may only work where both base and target tiles have a fixed orientation.
+        // (may be obsolete, now that automatic relay works better (see issue #341).
         if (stationMapping == null) {
             stationMapping = new HashMap<>(6);
             Station b, t;
@@ -506,8 +507,11 @@ public class TileUpgrade implements Upgrade {
                 }
             }
             // check if all base and target stations are assigned
-            if (stationMap.keySet().size() != baseNb ||
-                    Sets.newHashSet(stationMap.values()).size() != targetNb) {
+            if (stationMap.keySet().size() != baseNb
+                /* Unclear why the all-stations-mapped check was applied to the new tile.
+                It inhibited upgrading 1837 Vienna to green (4 -> 6 stations).
+                || Sets.newHashSet(stationMap.values()).size() != targetNb*/
+            ) {
                 stationMap = null;
                 log.debug("Mapping: Not all stations assigned, set stationMap to null");
             }

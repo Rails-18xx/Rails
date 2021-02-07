@@ -37,6 +37,10 @@ public class StartItem extends RailsAbstractItem {
     protected int column = 0;
     protected int index;
 
+    // To allow the displayed name to include both primary and secondary.
+    // Default is the primary name (id) only.
+    protected String displayName = null;
+
     // Bids
     protected final GenericState<Player> lastBidder = new GenericState<>(this, "lastBidder");
     protected final Map<Player, CountingMoneyModel> bids = Maps.newHashMap();
@@ -269,6 +273,14 @@ public class StartItem extends RailsAbstractItem {
      */
     public Certificate getSecondary() {
         return secondary;
+    }
+
+    public String getDisplayName() {
+        return (displayName != null ? displayName : getId());
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     /**

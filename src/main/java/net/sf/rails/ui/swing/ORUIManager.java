@@ -788,8 +788,9 @@ public class ORUIManager implements DialogOwner {
         Tile newTile = action.getLaidTile();
         Tile oldTile = hex.getCurrentTile();
 
-        // Why does that need to be configured?
-        // Shouldn't tokens always be relaid??
+        // Check if manual token relay is required.
+        // This was an emergency measure in cases where automatic relay
+        // did not work (e.g. 1837 tile 427). Now probably obsolete.
         if (!action.isRelayBaseTokens()
                 && !oldTile.relayBaseTokensOnUpgrade()) return; // is deprecated
 
@@ -798,7 +799,6 @@ public class ORUIManager implements DialogOwner {
         /* Check which tokens must be relaid, and in which sequence.
          * Ideally, the game engine should instruct the UI what to do
          * if there is more than one stop and more than one token.
-         * TODO LayTile does not yet allow that.
          *
          * For now, the only case that needs special handling is the 1835 BA home hex L6,
          * where it it possible to have two tokens laid before even one tile.
