@@ -19,17 +19,7 @@ import net.sf.rails.common.Config;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.BaseToken;
-import net.sf.rails.game.GameDef;
-import net.sf.rails.game.HexSidesSet;
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.OperatingRound;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.Station;
-import net.sf.rails.game.Stop;
-import net.sf.rails.game.Tile;
-import net.sf.rails.game.TrackConfig;
-import net.sf.rails.game.Train;
+import net.sf.rails.game.*;
 import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.SpecialProperty;
@@ -256,6 +246,7 @@ public class ORUIManager implements DialogOwner {
         NetworkGraph graph = networkAdapter.getRouteGraph(layTile.getCompany(), true, false);
         Map<MapHex, HexSidesSet> mapHexSides = graph.getReachableSides();
         Multimap<MapHex, Station> mapHexStations = graph.getPassableStations();
+        Phase currentPhase = gameUIManager.getCurrentPhase();
 
         boolean allLocations = (layTile.getLocations() == null
                 || layTile.getLocations().isEmpty());
@@ -268,8 +259,8 @@ public class ORUIManager implements DialogOwner {
                 Set<TileHexUpgrade> upgrades = TileHexUpgrade.create(guiHex,
                         mapHexSides.get(hex),
                         mapHexStations.get(hex), layTile, routeAlgorithm);
-                TileHexUpgrade.validates(upgrades, gameUIManager.getCurrentPhase());
-                gameSpecificTileUpgradeValidation (upgrades, layTile);
+                TileHexUpgrade.validates(upgrades, currentPhase);
+                gameSpecificTileUpgradeValidation (upgrades, layTile, currentPhase);
                 hexUpgrades.putAll(guiHex, upgrades);
             }
         }
@@ -292,7 +283,8 @@ public class ORUIManager implements DialogOwner {
      * @param layTile
      */
     protected void gameSpecificTileUpgradeValidation (Set<TileHexUpgrade> upgrades,
-                                                      LayTile layTile) {
+                                                      LayTile layTile,
+                                                      Phase currentPhase) {
     }
 
     private void addLocatedTileLays(LayTile layTile) {
@@ -796,8 +788,9 @@ public class ORUIManager implements DialogOwner {
         Tile newTile = action.getLaidTile();
         Tile oldTile = hex.getCurrentTile();
 
-        // Why does that need to be configured?
-        // Shouldn't tokens always be relaid??
+        // Check if manual token relay is required.
+        // This was an emergency measure in cases where automatic relay
+        // did not work (e.g. 1837 tile 427). Now probably obsolete.
         if (!action.isRelayBaseTokens()
                 && !oldTile.relayBaseTokensOnUpgrade()) return; // is deprecated
 
@@ -806,7 +799,6 @@ public class ORUIManager implements DialogOwner {
         /* Check which tokens must be relaid, and in which sequence.
          * Ideally, the game engine should instruct the UI what to do
          * if there is more than one stop and more than one token.
-         * TODO LayTile does not yet allow that.
          *
          * For now, the only case that needs special handling is the 1835 BA home hex L6,
          * where it it possible to have two tokens laid before even one tile.
@@ -1014,8 +1006,11 @@ public class ORUIManager implements DialogOwner {
                     bTrain.getType(),
                     from.getId() ));
             if (bTrain.isForExchange()) {
-                b.append(" (").append(LocalText.getText("EXCHANGED")).append(
-                ")");
+                String exchTrainTypes = bTrain.getTrainsForExchange().toString()
+                        // Replacing e.g. "[4_0]" by "4", or "[4_0, 5_0, 6_0]" by "4,5 or 6"
+                        .replaceAll("[\\[ ]?(\\w+)_\\d+(,)?\\s?]?", "$1$2")
+                        .replaceFirst(",(\\w+)$"," or $1");
+                b.append(" (").append(LocalText.getText("DiscardingTrain", exchTrainTypes)).append(")");
             }
             if (cost > 0) {
                 b.append(" ").append(

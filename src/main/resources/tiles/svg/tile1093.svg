@@ -10,11 +10,11 @@
    inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
    height="357"
    width="393"
-   sodipodi:docname="tile-37009.svg"
-   id="svg18"
+   sodipodi:docname="tile1093.svg"
+   id="svg26"
    version="1.1">
   <metadata
-     id="metadata24">
+     id="metadata32">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -26,12 +26,12 @@
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs22" />
+     id="defs30" />
   <sodipodi:namedview
-     inkscape:current-layer="svg18"
-     inkscape:window-maximized="1"
-     inkscape:window-y="-9"
-     inkscape:window-x="-9"
+     inkscape:current-layer="svg26"
+     inkscape:window-maximized="0"
+     inkscape:window-y="0"
+     inkscape:window-x="0"
      inkscape:cy="75.5"
      inkscape:cx="150.49999"
      inkscape:zoom="3.6933333"
@@ -40,9 +40,9 @@
      fit-margin-left="0"
      fit-margin-top="0"
      showgrid="false"
-     id="namedview20"
-     inkscape:window-height="2081"
-     inkscape:window-width="3840"
+     id="namedview28"
+     inkscape:window-height="1697"
+     inkscape:window-width="2187"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0"
      guidetolerance="10"
@@ -55,11 +55,22 @@
      id="path2"
      stroke-linejoin="round"
      stroke-width="1"
-     stroke="#38ac00"
-     fill="#38ac00"
+     stroke="#b46301"
+     fill="#b46301"
      d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z" />
+  <text
+     id="text4"
+     font-weight="bold"
+     font-size="31px"
+     font-family="Arial"
+     text-anchor="middle"
+     stroke="#000000"
+     fill="#000000"
+     dy="9.3000002"
+     y="318.5"
+     x="245.49998">1093</text>
   <circle
-     id="circle4"
+     id="circle6"
      stroke-width="12"
      stroke="#ffffff"
      fill="#ffffff"
@@ -67,7 +78,7 @@
      cy="170.5"
      cx="196.49998" />
   <path
-     id="path6"
+     id="path8"
      stroke-linejoin="round"
      stroke-linecap="butt"
      stroke-width="34"
@@ -75,15 +86,31 @@
      fill="none"
      d="m 196.49999,170.5 147,-85" />
   <path
-     id="path8"
+     id="path10"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="34"
+     stroke="#ffffff"
+     fill="none"
+     d="m 196.49999,170.5 v 170" />
+  <path
+     id="path12"
      stroke-linejoin="round"
      stroke-linecap="butt"
      stroke-width="26"
      stroke="#000000"
      fill="none"
      d="m 196.49999,170.5 147,-85" />
+  <path
+     id="path14"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="26"
+     stroke="#000000"
+     fill="none"
+     d="m 196.49999,170.5 v 170" />
   <circle
-     id="circle10"
+     id="circle16"
      stroke-width="4"
      stroke="#000000"
      fill="#ffffff"
@@ -91,27 +118,37 @@
      cy="170.5"
      cx="196.49998" />
   <ellipse
-     id="ellipse12"
+     id="ellipse18"
      stroke-linejoin="round"
      stroke-width="2"
      stroke="#000000"
      fill="#ffffff"
      cy="43.5"
      cx="123.49999"
-     ry="34"
-     rx="38" />
+     ry="30"
+     rx="31" />
   <text
-     id="text14"
-     font-size="51px"
+     id="text20"
+     font-size="43px"
      font-family="'Bookman Old Style'"
      text-anchor="middle"
      stroke="#000000"
      fill="#000000"
-     dy="15.3"
+     dy="12.900001"
      y="43.5"
-     x="123.49999">20</text>
+     x="123.49999">70</text>
+  <text
+     id="text22"
+     font-size="54px"
+     font-family="TimpaniHeavy"
+     text-anchor="middle"
+     stroke="#000000"
+     fill="#000000"
+     dy="16.200001"
+     y="170.5"
+     x="49.499992">Z</text>
   <path
-     id="path16"
+     id="path24"
      stroke-linejoin="round"
      stroke-width="1"
      stroke="#000000"

@@ -41,12 +41,7 @@
 	<Hex name="D14" tile="-102" value="20"/>
 	<Hex name="D16" tile="0"/>
 	<Hex name="D18" tile="0"/>
-    <IfOption name="Variant" value="Basegame,Pere Marquette,Coalfields,Reading,Coalfields&amp;Reading,Simple">
-		<Hex name="D20" tile="0"/>
-    </IfOption>
-    <IfOption name="Variant" value="Wabash">
-		<Hex name="D20" tile="-25007" orientation="3"/>
-    </IfOption>
+    <Hex name="D20" tile="0"/>
 	<Hex name="D22" tile="0" cost="120"/>
     <IfOption name="Variant" value="Basegame,Pere Marquette,Wabash,Simple">
 	    <Hex name="D24" tile="-7" orientation="2"/>

@@ -7,10 +7,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.1"
-   id="svg4626"
+   height="357"
+   width="393"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
    sodipodi:docname="tile18CHX9.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+   id="svg4626"
+   version="1.1">
   <metadata
      id="metadata4632">
     <rdf:RDF>
@@ -26,223 +28,230 @@
   <defs
      id="defs4630" />
   <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     id="namedview4628"
-     showgrid="false"
-     inkscape:zoom="1.44"
-     inkscape:cx="50"
-     inkscape:cy="-5.5555556"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     fit-margin-bottom="0"
+     fit-margin-right="0"
+     fit-margin-left="0"
+     fit-margin-top="0"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="svg4626"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg4626" />
+     inkscape:window-y="-9"
+     inkscape:window-x="-9"
+     inkscape:cy="-5.0555556"
+     inkscape:cx="50.499992"
+     inkscape:zoom="1.44"
+     showgrid="false"
+     id="namedview4628"
+     inkscape:window-height="2081"
+     inkscape:window-width="3840"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
   <path
-     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
-     id="path4576"
-     stroke-linejoin="round"
-     stroke-width="1"
+     fill="#808080"
      stroke="#808080"
-     fill="#808080" />
-  <polygon
-     points="145,90 247,90 291,167 240,255 152,255 101,167"
-     fill="#FFFFFF"
-     stroke="#FFFFFF"
-     stroke-width="12"
-     id="polygon4580" />
-  <circle
-     cx="145"
-     cy="141"
-     r="51"
-     fill="#FFFFFF"
-     stroke="#FFFFFF"
-     stroke-width="12"
-     id="circle4582" />
-  <circle
-     cx="247"
-     cy="141"
-     r="51"
-     fill="#FFFFFF"
-     stroke="#FFFFFF"
-     stroke-width="12"
-     id="circle4584" />
-  <circle
-     cx="196"
-     cy="229"
-     r="51"
-     fill="#FFFFFF"
-     stroke="#FFFFFF"
-     stroke-width="12"
-     id="circle4586" />
-  <path
-     d="M 196,170 L 196,340"
-     fill="none"
-     stroke="#FFFFFF"
-     stroke-width="34"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4588" />
-  <path
-     d="M 196,170 L 49,255"
-     fill="none"
-     stroke="#FFFFFF"
-     stroke-width="34"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4590" />
-  <path
-     d="M 196,170 L 49,85"
-     fill="none"
-     stroke="#FFFFFF"
-     stroke-width="34"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4592" />
-  <path
-     d="M 196,170 L 343,85"
-     fill="none"
-     stroke="#FFFFFF"
-     stroke-width="34"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4596" />
-  <path
-     d="M 196,170 L 343,255"
-     fill="none"
-     stroke="#FFFFFF"
-     stroke-width="34"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4598" />
-  <path
-     d="M 196,170 L 196,340"
-     fill="none"
-     stroke="#000000"
-     stroke-width="26"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4600" />
-  <path
-     d="M 196,170 L 49,255"
-     fill="none"
-     stroke="#000000"
-     stroke-width="26"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4602" />
-  <path
-     d="M 196,170 L 49,85"
-     fill="none"
-     stroke="#000000"
-     stroke-width="26"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4604" />
-  <path
-     d="M 196,170 L 343,85"
-     fill="none"
-     stroke="#000000"
-     stroke-width="26"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4608" />
-  <path
-     d="M 196,170 L 343,255"
-     fill="none"
-     stroke="#000000"
-     stroke-width="26"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path4610" />
-  <polygon
-     points="145,90 247,90 291,167 240,255 152,255 101,167"
-     fill="#FFFFFF"
-     stroke="#000000"
-     stroke-width="4"
-     id="polygon4612" />
-  <circle
-     cx="145"
-     cy="141"
-     r="51"
-     fill="#FFFFFF"
-     stroke="#000000"
-     stroke-width="4"
-     id="circle4614" />
-  <circle
-     cx="247"
-     cy="141"
-     r="51"
-     fill="#FFFFFF"
-     stroke="#000000"
-     stroke-width="4"
-     id="circle4616" />
-  <circle
-     cx="196"
-     cy="229"
-     r="51"
-     fill="#FFFFFF"
-     stroke="#000000"
-     stroke-width="4"
-     id="circle4618" />
-  <ellipse
-     rx="38"
-     ry="34"
-     cx="343"
-     cy="167"
-     id="ellipse4620"
-     style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-linejoin:round" />
-  <text
-     x="343"
-     y="167"
-     dy="15.3"
-     font-size="51"
-     id="text4622"
-     style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:40px;font-family:'Bookman Old Style';-inkscape-font-specification:'Bookman Old Style, Light';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000">
-    <tspan
-       sodipodi:role="line"
-       id="tspan5315"
-       x="343"
-       y="167">70</tspan>
-  </text>
-  <path
-     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
-     fill="none"
-     stroke="black"
      stroke-width="1"
      stroke-linejoin="round"
-     id="path4624" />
+     id="path4576"
+     d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z" />
+  <polygon
+     transform="translate(0.49999229,0.5)"
+     id="polygon4580"
+     stroke-width="12"
+     stroke="#ffffff"
+     fill="#ffffff"
+     points="152,255 101,167 145,90 247,90 291,167 240,255 " />
+  <circle
+     id="circle4582"
+     stroke-width="12"
+     stroke="#ffffff"
+     fill="#ffffff"
+     r="51"
+     cy="141.5"
+     cx="145.49998" />
+  <circle
+     id="circle4584"
+     stroke-width="12"
+     stroke="#ffffff"
+     fill="#ffffff"
+     r="51"
+     cy="141.5"
+     cx="247.49998" />
+  <circle
+     id="circle4586"
+     stroke-width="12"
+     stroke="#ffffff"
+     fill="#ffffff"
+     r="51"
+     cy="229.5"
+     cx="196.49998" />
+  <path
+     id="path4588"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="34"
+     stroke="#ffffff"
+     fill="none"
+     d="m 196.49999,170.5 v 170" />
+  <path
+     id="path4590"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="34"
+     stroke="#ffffff"
+     fill="none"
+     d="m 196.49999,170.5 -146.999998,85" />
+  <path
+     id="path4592"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="34"
+     stroke="#ffffff"
+     fill="none"
+     d="M 196.49999,170.5 49.499992,85.5" />
+  <path
+     id="path4596"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="34"
+     stroke="#ffffff"
+     fill="none"
+     d="m 196.49999,170.5 147,-85" />
+  <path
+     id="path4598"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="34"
+     stroke="#ffffff"
+     fill="none"
+     d="m 196.49999,170.5 147,85" />
+  <path
+     id="path4600"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="26"
+     stroke="#000000"
+     fill="none"
+     d="m 196.49999,170.5 v 170" />
+  <path
+     id="path4602"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="26"
+     stroke="#000000"
+     fill="none"
+     d="m 196.49999,170.5 -146.999998,85" />
+  <path
+     id="path4604"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="26"
+     stroke="#000000"
+     fill="none"
+     d="M 196.49999,170.5 49.499992,85.5" />
+  <path
+     id="path4608"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="26"
+     stroke="#000000"
+     fill="none"
+     d="m 196.49999,170.5 147,-85" />
+  <path
+     id="path4610"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="26"
+     stroke="#000000"
+     fill="none"
+     d="m 196.49999,170.5 147,85" />
+  <polygon
+     transform="translate(0.49999229,0.5)"
+     id="polygon4612"
+     stroke-width="4"
+     stroke="#000000"
+     fill="#ffffff"
+     points="152,255 101,167 145,90 247,90 291,167 240,255 " />
+  <circle
+     id="circle4614"
+     stroke-width="4"
+     stroke="#000000"
+     fill="#ffffff"
+     r="51"
+     cy="141.5"
+     cx="145.49998" />
+  <circle
+     id="circle4616"
+     stroke-width="4"
+     stroke="#000000"
+     fill="#ffffff"
+     r="51"
+     cy="141.5"
+     cx="247.49998" />
+  <circle
+     id="circle4618"
+     stroke-width="4"
+     stroke="#000000"
+     fill="#ffffff"
+     r="51"
+     cy="229.5"
+     cx="196.49998" />
+  <ellipse
+     style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-linejoin:round"
+     id="ellipse4620"
+     cy="167.5"
+     cx="343.5"
+     ry="34"
+     rx="38" />
+  <text
+     style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:40px;font-family:'Bookman Old Style';-inkscape-font-specification:'Bookman Old Style, Light';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000"
+     id="text4622"
+     font-size="51"
+     dy="15.3"
+     y="167.5"
+     x="343.5"><tspan
+       y="167.5"
+       x="343.5"
+       id="tspan5315"
+       sodipodi:role="line">70</tspan></text>
+  <path
+     id="path4624"
+     stroke-linejoin="round"
+     stroke-width="1"
+     stroke="#000000"
+     fill="none"
+     d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z" />
   <flowRoot
-     xml:space="preserve"
+     transform="translate(376.99999,52)"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      id="flowRoot4642"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.66666603px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     transform="translate(376.5,51.5)"><flowRegion
-       id="flowRegion4644"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.66666603px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"><rect
-         id="rect4646"
-         width="93.055557"
-         height="61.111111"
-         x="-145.13889"
+     xml:space="preserve"><flowRegion
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
+       id="flowRegion4644"><rect
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.66666603px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
          y="256.25"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.66666603px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start" /></flowRegion><flowPara
-       id="flowPara5313">X9</flowPara></flowRoot>  <flowRoot
-     xml:space="preserve"
+         x="-145.13889"
+         height="61.111111"
+         width="93.055557"
+         id="rect4646" /></flowRegion><flowPara
+       id="flowPara5313">X9</flowPara></flowRoot>
+  <flowRoot
+     transform="translate(14.499992,-1.5)"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:40px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      id="flowRoot5317"
-     style="font-style:normal;font-weight:bold;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;-inkscape-font-specification:'sans-serif, Bold';font-stretch:normal;font-variant:normal;text-anchor:start;text-align:start;writing-mode:lr;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;"
-     transform="translate(14,-2)"><flowRegion
-       id="flowRegion5319"
-       style="-inkscape-font-specification:'sans-serif, Bold';font-family:sans-serif;font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:40px;text-anchor:start;text-align:start;writing-mode:lr;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;"><rect
-         id="rect5321"
-         width="96.527779"
-         height="49.305557"
-         x="146.52777"
+     xml:space="preserve"><flowRegion
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:40px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
+       id="flowRegion5319"><rect
+         style="-inkscape-font-specification:'sans-serif, Bold';font-family:sans-serif;font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:40px;text-anchor:start;text-align:start;writing-mode:lr;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;"
          y="14.583333"
-         style="-inkscape-font-specification:'sans-serif, Bold';font-family:sans-serif;font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:40px;text-anchor:start;text-align:start;writing-mode:lr;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;" /></flowRegion><flowPara
-       id="flowPara5323">OO</flowPara></flowRoot></svg>
+         x="146.52777"
+         height="49.305557"
+         width="96.527779"
+         id="rect5321" /></flowRegion><flowPara
+       id="flowPara5323">OO</flowPara></flowRoot>
+</svg>

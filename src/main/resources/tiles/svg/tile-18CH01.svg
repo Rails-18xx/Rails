@@ -7,10 +7,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.1"
-   id="svg3745"
+   height="357"
+   width="393"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
    sodipodi:docname="tile-18CH01.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+   id="svg3745"
+   version="1.1">
   <metadata
      id="metadata3751">
     <rdf:RDF>
@@ -26,66 +28,73 @@
   <defs
      id="defs3749" />
   <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     id="namedview3747"
-     showgrid="false"
-     inkscape:zoom="0.89"
-     inkscape:cx="50"
-     inkscape:cy="50"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     fit-margin-bottom="0"
+     fit-margin-right="0"
+     fit-margin-left="0"
+     fit-margin-top="0"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="layer2"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer2" />
+     inkscape:window-y="-9"
+     inkscape:window-x="-9"
+     inkscape:cy="51.133735"
+     inkscape:cx="50.717293"
+     inkscape:zoom="0.89"
+     showgrid="false"
+     id="namedview3747"
+     inkscape:window-height="2081"
+     inkscape:window-width="3840"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
   <g
-     inkscape:groupmode="layer"
+     transform="translate(0.71729266,1.1337349)"
+     inkscape:label="Layer 1"
      id="layer1"
-     inkscape:label="Layer 1" />
+     inkscape:groupmode="layer" />
   <g
-     inkscape:groupmode="layer"
+     transform="translate(0.71729266,1.1337349)"
+     inkscape:label="Layer 2"
      id="layer2"
-     inkscape:label="Layer 2">
+     inkscape:groupmode="layer">
     <path
-       d="M 295.1035,339.35907 99.107645,340.63374 0.00414318,171.27466 96.896497,0.64092284 292.89235,-0.6337351 391.99586,168.72534 Z"
+       style="fill:#c0c0c0;stroke:#c0c0c0;stroke-width:1;stroke-linejoin:round"
+       inkscape:connector-curvature="0"
        id="path3733"
-       inkscape:connector-curvature="0"
-       style="fill:#c0c0c0;stroke:#c0c0c0;stroke-width:1;stroke-linejoin:round" />
+       d="M 295.1035,339.35907 99.107645,340.63374 0.00414318,171.27466 96.896497,0.64092284 292.89235,-0.6337351 391.99586,168.72534 Z" />
     <path
-       style="fill:none;stroke:#ffffff;stroke-width:34;stroke-linecap:butt;stroke-linejoin:round"
-       inkscape:connector-curvature="0"
+       id="path3737"
        d="M 342.09042,251.22666 A 98,98 0 0 0 197.2163,339.80141"
-       id="path3737" />
-    <path
        inkscape:connector-curvature="0"
-       style="fill:none;stroke:#000000;stroke-width:1;stroke-linejoin:round"
+       style="fill:none;stroke:#ffffff;stroke-width:34;stroke-linecap:butt;stroke-linejoin:round" />
+    <path
+       id="path3743"
        d="M 99.107645,340.63374 -0.2173004,171.66464 96.675055,1.0309046 292.89235,-0.6337351 392.2173,168.33536 295.32495,338.9691 Z"
-       id="path3743" />
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linejoin:round"
+       inkscape:connector-curvature="0" />
     <g
-       id="g3761"
-       transform="rotate(-120.44825,196,170)">
+       transform="rotate(-120.44825,196,170)"
+       id="g3761">
       <path
-         style="fill:none;stroke:#ffffff;stroke-width:34;stroke-linecap:butt;stroke-linejoin:round"
-         inkscape:connector-curvature="0"
+         d="M 196,340 A 294,294 0 0 0 49,85"
          id="path3735"
-         d="M 196,340 A 294,294 0 0 0 49,85" />
-      <path
-         style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round"
          inkscape:connector-curvature="0"
+         style="fill:none;stroke:#ffffff;stroke-width:34;stroke-linecap:butt;stroke-linejoin:round" />
+      <path
+         d="M 196,340 A 294,294 0 0 0 49,85"
          id="path3739"
-         d="M 196,340 A 294,294 0 0 0 49,85" />
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round" />
     </g>
     <path
-       style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round"
-       inkscape:connector-curvature="0"
+       id="path3741"
        d="M 344.09042,251.22666 A 98,98 0 0 0 199.2163,339.80141"
-       id="path3741" />
+       inkscape:connector-curvature="0"
+       style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round" />
   </g>
 </svg>

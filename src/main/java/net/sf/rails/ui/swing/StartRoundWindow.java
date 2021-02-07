@@ -11,11 +11,8 @@ import javax.swing.*;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
-import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.financial.StockMarket;
-import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.financial.*;
 import net.sf.rails.game.round.RoundFacade;
-import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
@@ -66,26 +63,34 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     private GridBagConstraints gbc;
 
     // Grid elements per function
-    private Caption itemName[];
-    private ClickField itemNameButton[];
-    private int itemNameXOffset, itemNameYOffset;
-    private Field basePrice[];
-    private int basePriceXOffset, basePriceYOffset;
-    private Field minBid[];
-    private int minBidXOffset, minBidYOffset;
-    private Field bidPerPlayer[][];
-    private int bidPerPlayerXOffset, bidPerPlayerYOffset;
-    private Field playerBids[];
-    private int playerBidsXOffset, playerBidsYOffset;
-    private Field playerFree[];
-    private int playerFreeCashXOffset, playerFreeCashYOffset;
-    private Field info[];
-    private int infoXOffset, infoYOffset;
-    private Field itemStatus[]; // Remains invisible, only used for status tooltip
+    private Caption[] itemName;
+    private ClickField[] itemNameButton;
+    private int[] itemNameXOffset;
+    private int itemNameYOffset;
+    private Field[] basePrice;
+    private int[] basePriceXOffset;
+    private int basePriceYOffset;
+    private Field[] minBid;
+    private int[] minBidXOffset;
+    private int minBidYOffset;
+    private Field[][] bidPerPlayer;
+    private int[] bidPerPlayerXOffset;
+    private int bidPerPlayerYOffset;
+    private Field[] playerBids;
+    private int[] playerBidsXOffset;
+    private int playerBidsYOffset;
+    private Field[] playerFree;
+    private int[] playerFreeCashXOffset;
+    private int playerFreeCashYOffset;
+    private Field[] info;
+    private int[] infoXOffset;
+    private int infoYOffset;
+    private Field[] itemStatus; // Remains invisible, only used for status tooltip
 
-    private int playerCaptionXOffset, upperPlayerCaptionYOffset, lowerPlayerCaptionYOffset;
-    private Field upperPlayerCaption[];
-    private Field lowerPlayerCaption[];
+    private int[] playerCaptionXOffset;
+    private int upperPlayerCaptionYOffset, lowerPlayerCaptionYOffset;
+    private Field[][] upperPlayerCaption;
+    private Field[] lowerPlayerCaption;
     private JComponent[][] fields;
 
     private ActionButton bidButton;
@@ -101,6 +106,11 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     private int[] crossIndex;
     protected StartRound round;
     private GameUIManager gameUIManager;
+    protected StartPacket startPacket;
+    protected boolean multipleColumns;
+    protected int numberOfColumns;
+    protected int numberOfRows;
+    protected int columnWidth = 0;
 
     // For the non-modal dialog to ask for a company starting share price.
     protected JDialog currentDialog;
@@ -120,13 +130,23 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     public void init(StartRound round, GameUIManager parent) {
         //super();
         this.round = round;
+        startPacket = round.getStartPacket();
+        multipleColumns = startPacket.isMultipleColumns();
+        if (multipleColumns) {
+            numberOfColumns = startPacket.getNumberOfColumns();
+            numberOfRows = startPacket.getNumberOfRows();
+        } else {
+            numberOfRows = round.getNumberOfStartItems();
+            numberOfColumns = 1;
+        }
         includeBidding = round.hasBidding();
         includeBuying = round.hasBuying();
         showBasePrices = round.hasBasePrices();
         gameUIManager = parent;
         possibleActions = gameUIManager.getGameManager().getPossibleActions();
 
-        setTitle(LocalText.getText("START_ROUND_TITLE"));
+        setTitle(LocalText.getText("START_ROUND_TITLE",
+                String.valueOf(round.getStartRoundNumber())));
         getContentPane().setLayout(new BorderLayout());
 
         statusPanel = new JPanel();
@@ -185,7 +205,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
         getContentPane().add(statusPanel, BorderLayout.NORTH);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-        setTitle("Rails: Start Round");
+        //setTitle("Rails: Start Round");
         setLocation(300, 150);
         setSize(275, 325);
         gameUIManager.setMeVisible(this, true);
@@ -228,6 +248,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         int np = players.getNumberOfPlayers();
         int ni = round.getNumberOfStartItems();
 
+
         itemName = new Caption[ni];
         itemNameButton = new ClickField[ni];
         basePrice = new Field[ni];
@@ -235,93 +256,140 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         bidPerPlayer = new Field[ni][np];
         info = new Field[ni];
         itemStatus = new Field[ni];
-        upperPlayerCaption = new Field[np];
+        upperPlayerCaption = new Field[numberOfColumns][np];
         lowerPlayerCaption = new Field[np];
         playerBids = new Field[np];
         playerFree = new Field[np];
 
+        itemNameXOffset = new int[numberOfColumns];
+        if (showBasePrices) basePriceXOffset = new int[numberOfColumns];
+        if (includeBidding == StartRound.Bidding.ON_ITEMS) minBidXOffset = new int[numberOfColumns];
+        bidPerPlayerXOffset = new int[numberOfColumns];
+        playerCaptionXOffset = new int[numberOfColumns];
+        infoXOffset = new int[numberOfColumns];
+        if (includeBidding != StartRound.Bidding.NO) playerBidsXOffset = new int[numberOfColumns];
+        playerFreeCashXOffset = new int[numberOfColumns];
+
         upperPlayerCaptionYOffset = ++lastY;
 
-        itemNameXOffset = ++lastX;
-        itemNameYOffset = ++lastY;
-        if (showBasePrices) {
-            basePriceXOffset = ++lastX;
-            basePriceYOffset = lastY;
-        }
-        if (includeBidding == StartRound.Bidding.ON_ITEMS) {
-            minBidXOffset = ++lastX;
-            minBidYOffset = lastY;
-        }
-        bidPerPlayerXOffset = playerCaptionXOffset = ++lastX;
-        bidPerPlayerYOffset = lastY;
+        for (int col = 0; col < numberOfColumns; col++) {
+            itemNameXOffset[col] = ++lastX;
+            if (col == 0) itemNameYOffset = ++lastY;
+            if (showBasePrices) {
+                basePriceXOffset[col] = ++lastX;
+                if (col == 0) basePriceYOffset = lastY;
+            }
+            if (includeBidding == StartRound.Bidding.ON_ITEMS) {
+                minBidXOffset[col] = ++lastX;
+                if (col == 0) minBidYOffset = lastY;
+            }
+            bidPerPlayerXOffset[col] = playerCaptionXOffset[col] = ++lastX;
+            if (col == 0) bidPerPlayerYOffset = lastY;
 
-        infoXOffset = bidPerPlayerXOffset + np;
-        infoYOffset = lastY;
+            infoXOffset[col] = bidPerPlayerXOffset[col] + np;
+            lastX += np;
+            if (col == 0) {
+                infoYOffset = lastY;
+                columnWidth = lastX + 1;
+            }
 
-        // Bottom rows
-        lastY += (ni - 1);
-        if (includeBidding != StartRound.Bidding.NO) {
-            playerBidsXOffset = bidPerPlayerXOffset;
-            playerBidsYOffset = ++lastY;
+
+            // Bottom rows
+            lastY += (numberOfRows - 1);
+            if (includeBidding != StartRound.Bidding.NO) {
+                playerBidsXOffset[col] = bidPerPlayerXOffset[col];
+                if (col == 0) playerBidsYOffset = ++lastY;
+            }
+            playerFreeCashXOffset[col] = bidPerPlayerXOffset[col];
+
+            if (col == 0) {
+                playerFreeCashYOffset = ++lastY;
+                lowerPlayerCaptionYOffset = ++lastY;
+
+                fields = new JComponent[columnWidth * numberOfColumns][2 + lastY];
+                log.debug("Columns={} (width/col={} nbOfCol={}) rows={}", columnWidth * numberOfColumns,
+                        columnWidth, numberOfColumns, 2 + lastY);
+            }
+
+            addField(new Caption(LocalText.getText("ITEM")),
+                    itemNameXOffset[col], 0, 1, 2,
+            WIDE_LEFT + WIDE_RIGHT + WIDE_BOTTOM);
+
+            if (showBasePrices) {
+                addField(new Caption(LocalText.getText(includeBidding == StartRound.Bidding.ON_ITEMS
+                                ? "BASE_PRICE" : "PRICE")), basePriceXOffset[col], 0, 1, 2,
+                        WIDE_BOTTOM);
+            }
+            if (includeBidding == StartRound.Bidding.ON_ITEMS) {
+                addField(new Caption(LocalText.getText("MINIMUM_BID")),
+                        minBidXOffset[col], 0, 1, 2, WIDE_BOTTOM + WIDE_RIGHT);
+            }
+            addField(new Caption(LocalText.getText("PLAYERS")),
+                    playerCaptionXOffset[col], 0, np, 1, 0);
+            for (int i = 0; i < np; i++) {
+                upperPlayerCaption[col][i] = new Field(players.getPlayerByPosition(i).getPlayerNameModel());
+                addField(upperPlayerCaption[col][i], playerCaptionXOffset[col] + i,
+                        upperPlayerCaptionYOffset, 1, 1, WIDE_BOTTOM);
+            }
         }
-        playerFreeCashXOffset = bidPerPlayerXOffset;
-        playerFreeCashYOffset = ++lastY;
 
-        lowerPlayerCaptionYOffset = ++lastY;
-
-        fields = new JComponent[1 + infoXOffset][2 + lastY];
-
-        addField(new Caption(LocalText.getText("ITEM")), 0, 0, 1, 2,
-                WIDE_RIGHT + WIDE_BOTTOM);
-        if (showBasePrices) {
-            addField(new Caption(LocalText.getText(includeBidding == StartRound.Bidding.ON_ITEMS
-                            ? "BASE_PRICE" : "PRICE")), basePriceXOffset, 0, 1, 2,
-                    WIDE_BOTTOM);
-        }
-        if (includeBidding == StartRound.Bidding.ON_ITEMS) {
-            addField(new Caption(LocalText.getText("MINIMUM_BID")),
-                    minBidXOffset, 0, 1, 2, WIDE_BOTTOM + WIDE_RIGHT);
-        }
-        addField(new Caption(LocalText.getText("PLAYERS")),
-                playerCaptionXOffset, 0, np, 1, 0);
-        for (int i = 0; i < np; i++) {
-            upperPlayerCaption[i] = new Field(players.getPlayerByPosition(i).getPlayerNameModel());
-            addField(upperPlayerCaption[i], playerCaptionXOffset + i, upperPlayerCaptionYOffset, 1, 1, WIDE_BOTTOM);
-        }
-
+        int row, col;
         for (int i = 0; i < ni; i++) {
             final StartItem si = round.getStartItem(i);
 
-            itemName[i] = new Caption(si.getId());
-            HexHighlightMouseListener.addMouseListener(itemName[i], gameUIManager.getORUIManager(), si);
-            addField(itemName[i], itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
+            if (multipleColumns) {
+                row = si.getRow() - 1;
+                col = si.getColumn() - 1;
+            } else {
+                row = i;
+                col = 0;
+            }
 
-            itemNameButton[i] = new ClickField(si.getId(), "", "", this, itemGroup);
+            itemName[i] = new Caption(si.getDisplayName());
+            HexHighlightMouseListener.addMouseListener(itemName[i], gameUIManager.getORUIManager(), si);
+            addField(itemName[i], itemNameXOffset[col], itemNameYOffset + row,
+                    1, 1, WIDE_LEFT + WIDE_RIGHT);
+
+            itemNameButton[i] = new ClickField(si.getDisplayName(), "", "", this, itemGroup);
             HexHighlightMouseListener.addMouseListener(itemNameButton[i], gameUIManager.getORUIManager(), si);
-            addField(itemNameButton[i], itemNameXOffset, itemNameYOffset + i, 1, 1, WIDE_RIGHT);
+            addField(itemNameButton[i], itemNameXOffset[col], itemNameYOffset + row,
+                    1, 1, WIDE_LEFT + WIDE_RIGHT);
 
             // Prevent row height resizing after every buy action
             itemName[i].setPreferredSize(itemNameButton[i].getPreferredSize());
 
             if (showBasePrices) {
                 basePrice[i] = new Field(si.getBasePriceModel());
-                addField(basePrice[i], basePriceXOffset, basePriceYOffset + i, 1, 1, 0);
+                addField(basePrice[i], basePriceXOffset[col], basePriceYOffset + row,
+                        1, 1, 0);
             }
 
             if (includeBidding == StartRound.Bidding.ON_ITEMS) {
                 minBid[i] = new Field(round.getMinimumBidModel(i));
-                addField(minBid[i], minBidXOffset, minBidYOffset + i, 1, 1, WIDE_RIGHT);
+                addField(minBid[i], minBidXOffset[col], minBidYOffset + row,
+                        1, 1, WIDE_RIGHT);
             }
 
             for (int j = 0; j < np; j++) {
                 bidPerPlayer[i][j] = new Field(round.getBidModel(i, players.getPlayerByPosition(j)));
-                addField(bidPerPlayer[i][j], bidPerPlayerXOffset + j, bidPerPlayerYOffset + i, 1, 1, 0);
+                addField(bidPerPlayer[i][j], bidPerPlayerXOffset[col] + j, bidPerPlayerYOffset + row,
+                        1, 1, 0);
             }
 
             info[i] = new Field(infoIcon);
-            info[i].setToolTipText(getStartItemDescription(si));
+
+            Certificate cert = si.getPrimary();
+            Company comp = null;
+            if (cert instanceof PublicCertificate) {
+                comp = (PublicCompany) cert.getParent();
+            } else if (cert instanceof PrivateCompany) {
+                comp = (PrivateCompany) cert;
+            }
+            String infoText = comp.getInfoText().replaceFirst("^<html>",
+                    "<html>" + comp.getType().getId() + " company: ");
+            info[i].setToolTipText(infoText);
             HexHighlightMouseListener.addMouseListener(info[i], gameUIManager.getORUIManager(), si);
-            addField(info[i], infoXOffset, infoYOffset + i, 1, 1, WIDE_LEFT);
+            addField(info[i], infoXOffset[col], infoYOffset + row, 1, 1, WIDE_LEFT + WIDE_RIGHT);
 
             // Invisible field, only used to hold current item status.
             itemStatus[i] = new Field(si.getStatusModel());
@@ -330,11 +398,13 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         // Player money
         boolean firstBelowTable = true;
         if (includeBidding != StartRound.Bidding.NO) {
-            addField(new Caption(LocalText.getText("BID")), playerBidsXOffset - 1, playerBidsYOffset, 1, 1, WIDE_TOP + WIDE_RIGHT);
+            addField(new Caption(LocalText.getText("BID")), playerBidsXOffset[0] - 1, playerBidsYOffset,
+                    1, 1, WIDE_TOP + WIDE_RIGHT);
 
             for (int i = 0; i < np; i++) {
                 playerBids[i] = new Field(round.getBlockedCashModel(players.getPlayerByPosition(i)));
-                addField(playerBids[i], playerBidsXOffset + i, playerBidsYOffset, 1, 1, WIDE_TOP);
+                addField(playerBids[i], playerBidsXOffset[0] + i, playerBidsYOffset,
+                        1, 1, WIDE_TOP);
             }
 
             firstBelowTable = false;
@@ -342,18 +412,18 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
 
         addField(new Caption(
                         LocalText.getText(includeBidding != StartRound.Bidding.NO ? "FREE" : "CASH")),
-                playerFreeCashXOffset - 1, playerFreeCashYOffset, 1, 1,
+                playerFreeCashXOffset[0] - 1, playerFreeCashYOffset, 1, 1,
                 WIDE_RIGHT + (firstBelowTable ? WIDE_TOP : 0));
         for (int i = 0; i < np; i++) {
             playerFree[i] = new Field(includeBidding != StartRound.Bidding.NO
                     ? round.getFreeCashModel(players.getPlayerByPosition(i))
                     : players.getPlayerByPosition(i).getWallet());
-            addField(playerFree[i], playerFreeCashXOffset + i, playerFreeCashYOffset, 1, 1, firstBelowTable ? WIDE_TOP : 0);
+            addField(playerFree[i], playerFreeCashXOffset[0] + i, playerFreeCashYOffset, 1, 1, firstBelowTable ? WIDE_TOP : 0);
         }
 
         for (int i = 0; i < np; i++) {
             lowerPlayerCaption[i] = new Field(players.getPlayerByPosition(i).getPlayerNameModel());
-            addField(lowerPlayerCaption[i], playerFreeCashXOffset + i, playerFreeCashYOffset + 1, 1, 1, WIDE_TOP);
+            addField(lowerPlayerCaption[i], playerFreeCashXOffset[0] + i, playerFreeCashYOffset + 1, 1, 1, WIDE_TOP);
         }
 
         dummyButton = new ClickField("", "", "", this, itemGroup);
@@ -713,13 +783,13 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     }
 
     public void setSRPlayerTurn() {
+        int playerIndex = players.getCurrentPlayer().getIndex();
         for (int i = 0; i < players.getNumberOfPlayers(); i++) {
-            upperPlayerCaption[i].setHighlight(false);
-            lowerPlayerCaption[i].setHighlight(false);
+            for (int j = 0; j < numberOfColumns; j++) {
+                upperPlayerCaption[j][i].setHighlight(i == playerIndex);
+            }
+            lowerPlayerCaption[i].setHighlight(i == playerIndex);
         }
-
-        upperPlayerCaption[players.getCurrentPlayer().getIndex()].setHighlight(true);
-        lowerPlayerCaption[players.getCurrentPlayer().getIndex()].setHighlight(true);
     }
 
     private void setItemNameButton(int i, boolean clickable) {
@@ -736,6 +806,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         itemNameButton[i].setForeground(status == StartItem.BUYABLE ? buyableColour : defaultColour);
     }
 
+    /* Replaced by the texts from the Info menu.
     private String getStartItemDescription(StartItem item) {
         StringBuilder b = new StringBuilder("<html>");
         b.append(item.getPrimary().toText());
@@ -773,7 +844,7 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             b.append(item.getSecondary().toText());
         }
         return b.toString();
-    }
+    }*/
 
     private ImageIcon createInfoIcon() {
         return RailsIcon.INFO.smallIcon;
@@ -797,6 +868,9 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     }
 
     public void updatePlayerOrder(List<String> newPlayerNames) {
+
+        // Multiple columns are here ignored for now.
+        // When is this called?
         int np = players.getNumberOfPlayers();
 
         int[] xref = new int[np];
@@ -812,18 +886,20 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         GridBagConstraints[] constraints = new GridBagConstraints[np];
         JComponent f;
         for (int y = upperPlayerCaptionYOffset; y <= lowerPlayerCaptionYOffset; y++) {
-            for (int i = 0, x = playerCaptionXOffset; i < np; i++, x++) {
+            for (int i = 0, x = playerCaptionXOffset[0]; i < np; i++, x++) {
                 cells[i] = fields[x][y];
                 constraints[i] = gb.getConstraints(cells[i]);
                 statusPanel.remove(cells[i]);
             }
-            for (int i = 0, x = playerCaptionXOffset; i < np; i++, x++) {
+            for (int i = 0, x = playerCaptionXOffset[0]; i < np; i++, x++) {
                 f = fields[x][y] = cells[xref[i]];
                 statusPanel.add(f, constraints[i]);
             }
         }
-        for (int i = 0, x = playerCaptionXOffset; i < np; i++, x++) {
-            upperPlayerCaption[i] = (Field) fields[x][upperPlayerCaptionYOffset];
+        for (int i = 0, x = playerCaptionXOffset[0]; i < np; i++, x++) {
+            for (int col = 0; col < numberOfColumns; col++) {
+                upperPlayerCaption[col][i] = (Field) fields[x][upperPlayerCaptionYOffset];
+            }
             lowerPlayerCaption[i] = (Field) fields[x][lowerPlayerCaptionYOffset];
         }
 

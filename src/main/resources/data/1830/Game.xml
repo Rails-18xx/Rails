@@ -177,7 +177,7 @@
             <NewPhase phaseName="D"/>
 				<IfOption name="Variant" value="Basegame,Pere Marquette,Simple">
 					<Attributes cost="1100" exchangeCost="800"/>
-					<!--Exchange cost="800"  Note: this no longer works-->
+					<!-- <Exchange cost="800"/>  Note: this no longer works-->
 				</IfOption>
 				<IfOption name="Variant" value="Coalfields,Reading,Coalfields&amp;Reading">
 					<Attributes cost="900" exchangeCost="750"/>

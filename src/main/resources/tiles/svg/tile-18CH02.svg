@@ -7,10 +7,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.1"
-   id="svg3919"
+   height="357"
+   width="393"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
    sodipodi:docname="tile-18CH02.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+   id="svg3919"
+   version="1.1">
   <metadata
      id="metadata3925">
     <rdf:RDF>
@@ -26,101 +28,106 @@
   <defs
      id="defs3923" />
   <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1229"
-     inkscape:window-height="834"
-     id="namedview3921"
-     showgrid="false"
-     inkscape:zoom="0.96"
-     inkscape:cx="50"
-     inkscape:cy="50"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     fit-margin-bottom="0"
+     fit-margin-right="0"
+     fit-margin-left="0"
+     fit-margin-top="0"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="svg3919"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg3919" />
+     inkscape:window-y="0"
+     inkscape:window-x="0"
+     inkscape:cy="50.5"
+     inkscape:cx="50.499992"
+     inkscape:zoom="0.96"
+     showgrid="false"
+     id="namedview3921"
+     inkscape:window-height="834"
+     inkscape:window-width="1229"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
   <path
-     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
-     fill="#C0C0C0"
-     stroke="#C0C0C0"
+     id="path3903"
+     stroke-linejoin="round"
      stroke-width="1"
-     stroke-linejoin="round"
-     id="path3903" />
+     stroke="#c0c0c0"
+     fill="#c0c0c0"
+     d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z" />
   <line
-     x1="132"
-     y1="281"
-     x2="162"
-     y2="229"
-     stroke="#FFFFFF"
-     stroke-width="34"
+     id="line3905"
      stroke-linecap="butt"
-     id="line3905" />
+     stroke-width="34"
+     stroke="#ffffff"
+     y2="229.5"
+     x2="162.49998"
+     y1="281.5"
+     x1="132.49998" />
   <path
-     d="M 196,340 A 98,98 0 0,0 147,255"
-     fill="none"
-     stroke="#FFFFFF"
-     stroke-width="34"
-     stroke-linecap="butt"
+     id="path3907"
      stroke-linejoin="round"
-     id="path3907" />
-  <path
-     d="M 147,255 A 98,98 0 0,0 49,255"
-     fill="none"
-     stroke="#FFFFFF"
-     stroke-width="34"
      stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path3909" />
-  <path
-     d="M 196,340 A 98,98 0 0,0 147,255"
+     stroke-width="34"
+     stroke="#ffffff"
      fill="none"
-     stroke="#000000"
+     d="m 196.49999,340.5 a 98,98 0 0 0 -49,-85" />
+  <path
+     id="path3909"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="34"
+     stroke="#ffffff"
+     fill="none"
+     d="m 147.49999,255.5 a 98,98 0 0 0 -97.999998,0" />
+  <path
+     id="path3911"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
      stroke-width="26"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path3911" />
-  <path
-     d="M 147,255 A 98,98 0 0,0 49,255"
-     fill="none"
      stroke="#000000"
-     stroke-width="26"
-     stroke-linecap="butt"
+     fill="none"
+     d="m 196.49999,340.5 a 98,98 0 0 0 -49,-85" />
+  <path
+     id="path3913"
      stroke-linejoin="round"
-     id="path3913" />
+     stroke-linecap="butt"
+     stroke-width="26"
+     stroke="#000000"
+     fill="none"
+     d="m 147.49999,255.5 a 98,98 0 0 0 -97.999998,0" />
   <line
-     x1="134"
-     y1="278"
-     x2="160"
-     y2="232"
-     stroke="#000000"
-     stroke-width="26"
+     id="line3915"
      stroke-linecap="butt"
-     id="line3915" />
+     stroke-width="26"
+     stroke="#000000"
+     y2="232.5"
+     x2="160.49998"
+     y1="278.5"
+     x1="134.49998" />
   <path
-     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
-     fill="none"
-     stroke="black"
+     id="path3917"
+     stroke-linejoin="round"
      stroke-width="1"
-     stroke-linejoin="round"
-     id="path3917" />
+     stroke="#000000"
+     fill="none"
+     d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z" />
   <ellipse
-     style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-linejoin:round"
-     rx="38"
+     id="ellipse3773"
+     cy="83.833336"
+     cx="265.08334"
      ry="34"
-     cx="264.58334"
-     cy="83.333336"
-     id="ellipse3773" />
+     rx="38"
+     style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-linejoin:round" />
   <text
-     style="font-size:51px;font-family:'Bookman Old Style';text-anchor:middle;fill:#000000;stroke:#000000"
-     x="264.58334"
-     y="83.333336"
-     dy="15.3"
+     id="text3775"
      font-size="51"
-     id="text3775">30</text>
+     dy="15.3"
+     y="83.833336"
+     x="265.08334"
+     style="font-size:51px;font-family:'Bookman Old Style';text-anchor:middle;fill:#000000;stroke:#000000">30</text>
 </svg>

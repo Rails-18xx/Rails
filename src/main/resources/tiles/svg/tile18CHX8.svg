@@ -7,10 +7,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.1"
-   id="svg5445"
+   height="357"
+   width="393"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
    sodipodi:docname="tile18CHX8.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+   id="svg5445"
+   version="1.1">
   <metadata
      id="metadata5451">
     <rdf:RDF>
@@ -26,245 +28,245 @@
   <defs
      id="defs5449" />
   <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     id="namedview5447"
-     showgrid="false"
-     inkscape:zoom="0.95"
-     inkscape:cx="54.210526"
-     inkscape:cy="50"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     fit-margin-bottom="0"
+     fit-margin-right="0"
+     fit-margin-left="0"
+     fit-margin-top="0"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="svg5445"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg5445" />
+     inkscape:window-y="-9"
+     inkscape:window-x="-9"
+     inkscape:cy="50.5"
+     inkscape:cx="54.710518"
+     inkscape:zoom="0.95"
+     showgrid="false"
+     id="namedview5447"
+     inkscape:window-height="2081"
+     inkscape:window-width="3840"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
   <path
-     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
-     fill="#808080"
+     id="path5393"
+     stroke-linejoin="round"
+     stroke-width="1"
      stroke="#808080"
-     stroke-width="1"
-     stroke-linejoin="round"
-     id="path5393" />
+     fill="#808080"
+     d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z" />
   <text
-     x="245"
-     y="318"
-     dy="0.3em"
-     font-size="31"
-     font-weight="bold"
-     id="text5395"
-     style="-inkscape-font-specification:'Arial, Bold';font-family:Arial;font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-size:31px;text-anchor:middle;text-align:center;writing-mode:lr;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;"
-     text-anchor="middle"
+     fill="#000000"
+     stroke="#000000"
      font-family="Arial"
-     stroke="#000000"
-     fill="#000000">
-    <tspan
-       sodipodi:role="line"
-       id="tspan5453">X8</tspan>
-  </text>
+     text-anchor="middle"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:31px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle"
+     id="text5395"
+     font-weight="bold"
+     font-size="31"
+     dy="9.3000002"
+     y="318.5"
+     x="245.49998"><tspan
+       y="318.5"
+       x="245.49998"
+       id="tspan5453"
+       sodipodi:role="line">X8</tspan></text>
   <path
-     d="M 196,170 L 196,0"
+     id="path5407"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="34"
+     stroke="#ffffff"
      fill="none"
-     stroke="#FFFFFF"
+     d="M 196.49999,170.5 V 0.5" />
+  <path
+     fill="none"
+     stroke="#ffffff"
      stroke-width="34"
      stroke-linecap="butt"
      stroke-linejoin="round"
-     id="path5407" />
-  <path
-     d="M 196,170 L 343,85"
      id="path5409"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="34"
-     stroke="#FFFFFF"
-     fill="none" />
+     d="m 196.49999,170.5 147,-85" />
   <path
-     d="M 196,170 L 343,255"
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
      id="path5411"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="34"
-     stroke="#FFFFFF"
-     fill="none" />
+     d="m 196.49999,170.5 147,85" />
   <path
-     d="M 196,170 L 196,340"
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
      id="path5413"
+     d="m 196.49999,170.5 v 170" />
+  <path
+     id="path5415"
      stroke-linejoin="round"
      stroke-linecap="butt"
      stroke-width="34"
-     stroke="#FFFFFF"
-     fill="none" />
-  <path
-     d="M 196,170 L 49,85"
+     stroke="#ffffff"
      fill="none"
-     stroke="#FFFFFF"
-     stroke-width="34"
-     stroke-linecap="butt"
-     stroke-linejoin="round"
-     id="path5415" />
+     d="M 196.49999,170.5 49.499992,85.5" />
   <path
-     d="M 196,170 343,85"
+     style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:connector-curvature="0"
      id="path5419"
-     inkscape:connector-curvature="0"
-     style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round" />
+     d="m 196.49999,170.5 147,-85" />
   <ellipse
-     rx="46"
-     ry="30"
-     cx="269"
-     cy="43"
-     fill="#FFFFFF"
-     stroke="#000000"
+     id="ellipse5437"
+     stroke-linejoin="round"
      stroke-width="2"
-     stroke-linejoin="round"
-     id="ellipse5437" />
+     stroke="#000000"
+     fill="#ffffff"
+     cy="43.5"
+     cx="269.5"
+     ry="30"
+     rx="46" />
   <text
-     x="47"
-     y="165"
-     dy="16.200001"
-     font-size="54"
+     style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:37.3333px;font-family:'Bookman Old Style';-inkscape-font-specification:'Bookman Old Style, Light';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000"
      id="text5441"
-     style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:37.33333206px;font-family:'Bookman Old Style';-inkscape-font-specification:'Bookman Old Style, Light';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000">
-    <tspan
-       sodipodi:role="line"
+     font-size="54"
+     dy="16.200001"
+     y="165.5"
+     x="47.499992"><tspan
+       y="165.5"
+       x="47.499992"
        id="tspan5565"
-       x="47"
-       y="165">DC</tspan>
-  </text>
+       sodipodi:role="line">DC</tspan></text>
   <path
-     d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z"
-     fill="none"
-     stroke="black"
-     stroke-width="1"
+     id="path5443"
      stroke-linejoin="round"
-     id="path5443" />
+     stroke-width="1"
+     stroke="#000000"
+     fill="none"
+     d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z" />
   <path
-     inkscape:connector-curvature="0"
+     id="path5409-7"
+     d="m 49.499992,255.5 146.999998,-85"
      style="fill:none;stroke:#ffffff;stroke-width:34;stroke-linecap:butt;stroke-linejoin:round"
-     d="M 49,255 196,170"
-     id="path5409-7" />
+     inkscape:connector-curvature="0" />
   <g
-     inkscape:groupmode="layer"
+     transform="translate(0.49999229,0.5)"
+     inkscape:label="Layer 1"
      id="layer1"
-     inkscape:label="Layer 1">
+     inkscape:groupmode="layer">
     <path
-       inkscape:connector-curvature="0"
-       style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round"
+       id="path5419-0"
        d="M 49.000012,254.99999 196,170"
-       id="path5419-0" />
+       style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round"
+       inkscape:connector-curvature="0" />
     <path
-       style=""
-       d="M 196,170 L 196,340"
+       fill="none"
+       stroke="#000000"
+       stroke-width="26"
+       stroke-linecap="butt"
+       stroke-linejoin="round"
        id="path5423"
-       stroke-linejoin="round"
-       stroke-linecap="butt"
-       stroke-width="26"
-       stroke="#000000"
-       fill="none" />
+       d="M 196,170 V 340" />
     <path
-       style=""
-       d="M 196,170 L 343,255"
+       fill="none"
+       stroke="#000000"
+       stroke-width="26"
+       stroke-linecap="butt"
+       stroke-linejoin="round"
        id="path5421"
-       stroke-linejoin="round"
-       stroke-linecap="butt"
-       stroke-width="26"
-       stroke="#000000"
-       fill="none" />
+       d="m 196,170 147,85" />
     <path
-       style=""
-       d="M 196,170 L 196,0"
-       fill="none"
-       stroke="#000000"
-       stroke-width="26"
-       stroke-linecap="butt"
+       id="path5417"
        stroke-linejoin="round"
-       id="path5417" />
+       stroke-linecap="butt"
+       stroke-width="26"
+       stroke="#000000"
+       fill="none"
+       d="M 196,170 V 0" />
     <path
-       style=""
-       d="M 196,170 L 49,85"
-       fill="none"
-       stroke="#000000"
-       stroke-width="26"
-       stroke-linecap="butt"
+       id="path5425"
        stroke-linejoin="round"
-       id="path5425" />
+       stroke-linecap="butt"
+       stroke-width="26"
+       stroke="#000000"
+       fill="none"
+       d="M 196,170 49,85" />
     <g
-       id="g5492"
-       transform="translate(-5.2631574,1.0526342)">
+       transform="translate(-5.2631574,1.0526342)"
+       id="g5492">
       <g
          id="g5471">
         <polygon
-           points="298,221 247,272 145,272 94,221 94,119 145,68 247,68 298,119 "
+           style="fill:#ffffff;stroke:#ffffff;stroke-width:12"
            id="polygon5397"
-           style="fill:#ffffff;stroke:#ffffff;stroke-width:12" />
+           points="94,119 145,68 247,68 298,119 298,221 247,272 145,272 94,221 " />
       </g>
       <circle
-         id="circle5399"
-         r="51"
-         cy="119"
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:12"
          cx="145"
-         style="fill:#ffffff;stroke:#ffffff;stroke-width:12" />
-      <circle
-         id="circle5401"
-         r="51"
          cy="119"
-         cx="247"
-         style="fill:#ffffff;stroke:#ffffff;stroke-width:12" />
-      <circle
-         id="circle5403"
          r="51"
-         cy="221"
-         cx="247"
-         style="fill:#ffffff;stroke:#ffffff;stroke-width:12" />
+         id="circle5399" />
       <circle
-         id="circle5405"
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:12"
+         cx="247"
+         cy="119"
          r="51"
+         id="circle5401" />
+      <circle
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:12"
+         cx="247"
          cy="221"
+         r="51"
+         id="circle5403" />
+      <circle
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:12"
          cx="145"
-         style="fill:#ffffff;stroke:#ffffff;stroke-width:12" />
+         cy="221"
+         r="51"
+         id="circle5405" />
       <polygon
-         id="polygon5427"
-         points="298,221 247,272 145,272 94,221 94,119 145,68 247,68 298,119 "
-         style="fill:#ffffff;stroke:#000000;stroke-width:4" />
+         style="fill:#ffffff;stroke:#000000;stroke-width:4"
+         points="94,119 145,68 247,68 298,119 298,221 247,272 145,272 94,221 "
+         id="polygon5427" />
       <g
          id="g5477">
         <circle
-           cx="145"
-           cy="119"
-           r="51"
+           style="fill:#ffffff;stroke:#000000;stroke-width:4"
            id="circle5429"
-           style="fill:#ffffff;stroke:#000000;stroke-width:4" />
-        <circle
-           cx="247"
+           r="51"
            cy="119"
-           r="51"
+           cx="145" />
+        <circle
+           style="fill:#ffffff;stroke:#000000;stroke-width:4"
            id="circle5431"
-           style="fill:#ffffff;stroke:#000000;stroke-width:4" />
-        <circle
-           cx="247"
-           cy="221"
            r="51"
+           cy="119"
+           cx="247" />
+        <circle
+           style="fill:#ffffff;stroke:#000000;stroke-width:4"
            id="circle5433"
-           style="fill:#ffffff;stroke:#000000;stroke-width:4" />
-        <circle
-           cx="145"
-           cy="221"
            r="51"
+           cy="221"
+           cx="247" />
+        <circle
+           style="fill:#ffffff;stroke:#000000;stroke-width:4"
            id="circle5435"
-           style="fill:#ffffff;stroke:#000000;stroke-width:4" />
+           r="51"
+           cy="221"
+           cx="145" />
       </g>
       <text
-         id="text5439"
-         font-size="43"
-         dy="0.30000001em"
-         y="43"
+         style="font-size:43px;font-family:'Bookman Old Style';text-anchor:middle;fill:#000000;stroke:#000000"
          x="269"
-         style="font-size:43px;font-family:'Bookman Old Style';text-anchor:middle;fill:#000000;stroke:#000000">100</text>
+         y="43"
+         dy="0.30000001em"
+         font-size="43"
+         id="text5439">100</text>
     </g>
   </g>
 </svg>

@@ -230,25 +230,26 @@
 	</Company>
 	
 	<StartPacket roundClass="net.sf.rails.game.specific._1835.StartRound_1835" variant="Snake">
-		<Item name="NF"		type="Private" basePrice="100" row="1">
+		<MultipleColumns/>
+		<Item name="NF"		type="Private" basePrice="100" row="1" column="1" displayName="NF+By">
 			<SubItem name="Bay" type="Major"/>
 		</Item>
-		<Item name="M1"		type="Minor" basePrice="80" row="2"/>
-		<Item name="LD"		type="Private" basePrice="190" row="2">
+		<Item name="M1"		type="Minor" basePrice="80" row="2" column="1"/>
+		<Item name="LD"		type="Private" basePrice="190" row="2" column="2" displayName="LD+SxP">
 			<SubItem name="Sax" type="Major" president="yes"/>
 		</Item>
-		<Item name="M2"		type="Minor" basePrice="170" row="2"/>
-		<Item name="M3"		type="Minor" basePrice="80" row="3"/>
-		<Item name="M4"		type="Minor" basePrice="160" row="3"/>
-		<Item name="Bay"	type="Major" president="yes" basePrice="184" row="3"/>
-		<Item name="BB"		type="Private" basePrice="130" row="3"/>
-		<Item name="HB"		type="Private" basePrice="160" row="4"/>
-		<Item name="M5"		type="Minor" basePrice="80" row="4"/>
-		<Item name="M6"		type="Minor" basePrice="80" row="4"/>
-		<Item name="OBB"	type="Private" basePrice="120" row="4">
+		<Item name="M2"		type="Minor" basePrice="170" row="2" column="3"/>
+		<Item name="M3"		type="Minor" basePrice="80" row="3" column="1"/>
+		<Item name="M4"		type="Minor" basePrice="160" row="3" column="2"/>
+		<Item name="Bay"	type="Major" president="yes" basePrice="184" row="3" column="3"/>
+		<Item name="BB"		type="Private" basePrice="130" row="3" column="4"/>
+		<Item name="HB"		type="Private" basePrice="160" row="4" column="1"/>
+		<Item name="M5"		type="Minor" basePrice="80" row="4" column="2"/>
+		<Item name="M6"		type="Minor" basePrice="80" row="4" column="3"/>
+		<Item name="OBB"	type="Private" basePrice="120" row="4" column="4" displayName="OBB+By">
 			<SubItem name="Bay" type="Major"/>
 		</Item>
-		<Item name="PfB"	type="Private" basePrice="150" row="4">
+		<Item name="PfB"	type="Private" basePrice="150" row="4" column="5" displayName="PfB+By">
 			<SubItem name="Bay" type="Major"/>
 		</Item>
 	</StartPacket>

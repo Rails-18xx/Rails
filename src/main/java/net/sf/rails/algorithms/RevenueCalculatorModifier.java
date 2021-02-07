@@ -7,8 +7,8 @@ public interface RevenueCalculatorModifier {
      * If several dynamic modifier have their own method, their prediction values are added up.  
      * @return optimal value
      */
-    public int calculateRevenue(RevenueAdapter revenueAdpater);
+    public int calculateRevenue(RevenueAdapter revenueAdapter);
 
-    
+    public int getSpecialRevenue();
     
 }

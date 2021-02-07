@@ -10,11 +10,11 @@
    inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
    height="357"
    width="393"
-   sodipodi:docname="tile18CHX4.svg"
-   id="svg42"
+   sodipodi:docname="tile1092.svg"
+   id="svg38"
    version="1.1">
   <metadata
-     id="metadata48">
+     id="metadata44">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -26,13 +26,13 @@
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs46" />
+     id="defs42" />
   <sodipodi:namedview
-     inkscape:current-layer="svg42"
-     inkscape:window-maximized="1"
-     inkscape:window-y="-9"
-     inkscape:window-x="-9"
-     inkscape:cy="162.1426"
+     inkscape:current-layer="svg38"
+     inkscape:window-maximized="0"
+     inkscape:window-y="0"
+     inkscape:window-x="0"
+     inkscape:cy="183.80325"
      inkscape:cx="150.49999"
      inkscape:zoom="3.6933333"
      fit-margin-bottom="0"
@@ -40,9 +40,9 @@
      fit-margin-left="0"
      fit-margin-top="0"
      showgrid="false"
-     id="namedview44"
-     inkscape:window-height="2081"
-     inkscape:window-width="3840"
+     id="namedview40"
+     inkscape:window-height="1556"
+     inkscape:window-width="2724"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0"
      guidetolerance="10"
@@ -58,30 +58,40 @@
      stroke="#38ac00"
      fill="#38ac00"
      d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z" />
-  <circle
-     id="circle6"
+  <text
+     id="text4"
+     font-weight="bold"
+     font-size="31px"
+     font-family="Arial"
+     text-anchor="middle"
+     stroke="#000000"
+     fill="#000000"
+     dy="9.3000002"
+     y="318.5"
+     x="245.49998">1092</text>
+  <polygon
+     transform="translate(0.49999229,0.5)"
+     id="polygon6"
      stroke-width="12"
      stroke="#ffffff"
      fill="#ffffff"
-     r="51"
-     cy="255.5"
-     cx="147.49998" />
+     points="145,119 247,119 247,221 145,221 " />
   <circle
      id="circle8"
      stroke-width="12"
      stroke="#ffffff"
      fill="#ffffff"
      r="51"
-     cy="85.5"
-     cx="147.49998" />
-  <path
-     id="path10"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="34"
+     cy="170.5"
+     cx="145.49998" />
+  <circle
+     id="circle10"
+     stroke-width="12"
      stroke="#ffffff"
-     fill="none"
-     d="m 147.49999,85.5 a 98,98 0 0 0 49,-85" />
+     fill="#ffffff"
+     r="51"
+     cy="170.5"
+     cx="247.49998" />
   <path
      id="path12"
      stroke-linejoin="round"
@@ -89,7 +99,7 @@
      stroke-width="34"
      stroke="#ffffff"
      fill="none"
-     d="m 49.499992,85.5 a 98,98 0 0 0 97.999998,0" />
+     d="M 196.49999,170.5 49.499992,85.5" />
   <path
      id="path14"
      stroke-linejoin="round"
@@ -97,7 +107,7 @@
      stroke-width="34"
      stroke="#ffffff"
      fill="none"
-     d="m 147.49999,255.5 a 98,98 0 0 0 -97.999998,0" />
+     d="m 196.49999,170.5 147,85" />
   <path
      id="path16"
      stroke-linejoin="round"
@@ -105,7 +115,7 @@
      stroke-width="34"
      stroke="#ffffff"
      fill="none"
-     d="m 196.49999,340.5 a 98,98 0 0 0 -49,-85" />
+     d="m 196.49999,170.5 -146.999998,85" />
   <path
      id="path18"
      stroke-linejoin="round"
@@ -113,7 +123,7 @@
      stroke-width="26"
      stroke="#000000"
      fill="none"
-     d="m 147.49999,85.5 a 98,98 0 0 0 49,-85" />
+     d="M 196.49999,170.5 49.499992,85.5" />
   <path
      id="path20"
      stroke-linejoin="round"
@@ -121,7 +131,7 @@
      stroke-width="26"
      stroke="#000000"
      fill="none"
-     d="m 49.499992,85.5 a 98,98 0 0 0 97.999998,0" />
+     d="m 196.49999,170.5 147,85" />
   <path
      id="path22"
      stroke-linejoin="round"
@@ -129,83 +139,62 @@
      stroke-width="26"
      stroke="#000000"
      fill="none"
-     d="m 147.49999,255.5 a 98,98 0 0 0 -97.999998,0" />
-  <path
-     id="path24"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="26"
+     d="m 196.49999,170.5 -146.999998,85" />
+  <polygon
+     transform="translate(0.49999229,0.5)"
+     id="polygon24"
+     stroke-width="4"
      stroke="#000000"
-     fill="none"
-     d="m 196.49999,340.5 a 98,98 0 0 0 -49,-85" />
+     fill="#ffffff"
+     points="145,119 247,119 247,221 145,221 " />
   <circle
      id="circle26"
      stroke-width="4"
      stroke="#000000"
      fill="#ffffff"
      r="51"
-     cy="255.5"
-     cx="147.49998" />
+     cy="170.5"
+     cx="145.49998" />
+  <circle
+     id="circle28"
+     stroke-width="4"
+     stroke="#000000"
+     fill="#ffffff"
+     r="51"
+     cy="170.5"
+     cx="247.49998" />
   <ellipse
-     id="ellipse28"
+     id="ellipse30"
      stroke-linejoin="round"
      stroke-width="2"
      stroke="#000000"
      fill="#ffffff"
      cy="43.5"
-     cx="269.5"
-     ry="34"
-     rx="38" />
+     cx="123.49999"
+     ry="30"
+     rx="31" />
   <text
-     id="text30"
-     font-size="51px"
+     id="text32"
+     font-size="43px"
      font-family="'Bookman Old Style'"
      text-anchor="middle"
      stroke="#000000"
      fill="#000000"
-     dy="15.3"
+     dy="12.900001"
      y="43.5"
-     x="269.5">40</text>
-  <circle
-     id="circle32"
-     stroke-width="4"
-     stroke="#000000"
-     fill="#ffffff"
-     r="51"
-     cy="85.5"
-     cx="147.49998" />
-  <ellipse
-     id="ellipse34"
-     stroke-linejoin="round"
-     stroke-width="2"
-     stroke="#000000"
-     fill="#ffffff"
-     cy="256.34476"
-     cx="279.51804"
-     ry="34"
-     rx="38" />
+     x="123.49999">50</text>
   <text
-     id="text36"
-     font-size="51px"
-     font-family="'Bookman Old Style'"
-     text-anchor="middle"
-     stroke="#000000"
-     fill="#000000"
-     dy="15.3"
-     y="256.34476"
-     x="279.51804">40</text>
-  <text
-     id="text38"
-     font-size="51px"
+     id="text34"
+     font-size="54px"
      font-family="TimpaniHeavy"
      text-anchor="middle"
      stroke="#000000"
      fill="#000000"
-     dy="15.3"
+     dy="16.200001"
      y="170.5"
-     x="49.499992">OO</text>
+     x="49.499992">X</text>
   <path
-     id="path40"
+     id="path36"
      stroke-linejoin="round"
      stroke-width="1"
      stroke="#000000"

@@ -31,6 +31,9 @@ import org.jgrapht.graph.SimpleGraph;
  * RevenueAdapter links the revenue algorithm to Rails.
  */
 public final class RevenueAdapter implements Runnable {
+
+    int specialRevenue;
+
     private static final Logger log = LoggerFactory.getLogger(RevenueAdapter.class);
 
     // define VertexVisitSet
@@ -589,12 +592,20 @@ public final class RevenueAdapter implements Runnable {
 
     public int calculateRevenue() {
         // allows (one) dynamic modifiers to have their own revenue calculation method
-        // TODO: Still to be added
+        // TODO: Still to be added - beware: it is used differently in 1837
+        // (see RunToCoalMineModifier).
 //        if (hasDynamicCalculator) {
 //            return revenueManager.revenueFromDynamicCalculator(this);
+        // For 1837 we need to do both!
+        specialRevenue = revenueManager.revenueFromDynamicCalculator(this);
 //        } else { // otherwise standard calculation
-            return calculateRevenue(0, trains.size() - 1);
+        return calculateRevenue(0, trains.size() - 1);
 //        }
+    }
+
+    // Another way to get the special revenue
+    public void setSpecialRevenue (int value) {
+        specialRevenue = value;
     }
 
     public int calculateRevenue(int startTrain, int finalTrain) {
@@ -606,10 +617,15 @@ public final class RevenueAdapter implements Runnable {
         rc.initRuns(startTrain, finalTrain);
         rc.executePredictions(startTrain, finalTrain);
         int value = rc.calculateRevenue(startTrain, finalTrain);
+
         return value;
     }
 
-    public  List<RevenueTrainRun> getOptimalRun() {
+    public int getSpecialRevenue() {
+        return specialRevenue;
+    }
+
+    public List<RevenueTrainRun> getOptimalRun() {
         if (optimalRun == null) {
             optimalRun = convertRcRun(rc.getOptimalRun());
             if (hasDynamicModifiers) {
@@ -630,6 +646,7 @@ public final class RevenueAdapter implements Runnable {
         int value = 0;
         if (hasDynamicModifiers) {
             value = revenueManager.evaluationValue(this.getCurrentRun(), false);
+            specialRevenue = revenueManager.getSpecialRevenue();
         }
         return value;
     }
@@ -649,14 +666,16 @@ public final class RevenueAdapter implements Runnable {
         this.revenueListener = listener;
     }
 
-    void notifyRevenueListener(final int revenue, final boolean finalResult) {
+    void notifyRevenueListener(final int revenue, final int specialRevenue, final boolean finalResult) {
         if (revenueListener == null) return;
 
         EventQueue.invokeLater(
                 new Runnable() {
                     public void run() {
                         //listener could have deregistered himself in the meantime
-                        if (revenueListener != null) revenueListener.revenueUpdate(revenue, finalResult);
+                        if (revenueListener != null) {
+                            revenueListener.revenueUpdate(revenue, specialRevenue, finalResult);
+                        }
                     }
                 });
     }

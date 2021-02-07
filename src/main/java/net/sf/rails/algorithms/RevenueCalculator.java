@@ -53,6 +53,8 @@ abstract class RevenueCalculator {
     protected final int [] trainStartEdge;
     protected final int[] trainDistance; // keeps track of distance travelled (for H-trains)
 
+    int specialRevenue;
+
     // static bonus data
     protected final int [] bonusValue;
     protected final boolean [][] bonusActiveForTrain; // dimensions: bonus x train
@@ -264,14 +266,14 @@ abstract class RevenueCalculator {
         return statistics.toString();
     }
 
-    private void notifyRevenueAdapter(final int revenue, final boolean finalResult) {
+    private void notifyRevenueAdapter(final int revenue, final int specialRevenue, final boolean finalResult) {
         String modifier;
         if (finalResult)
             modifier = "final";
         else
             modifier = "new best";
         log.debug("Report {} result of {} after {}", modifier, revenue, getStatistics());
-        revenueAdapter.notifyRevenueListener(revenue, finalResult);
+        revenueAdapter.notifyRevenueListener(revenue, specialRevenue, finalResult);
     }
 
     private int[] bestRevenues(final int[] values, final int length) {
@@ -399,7 +401,7 @@ abstract class RevenueCalculator {
         runTrain(startTrain);
 
         // inform revenue listener via adapter
-        notifyRevenueAdapter(currentBestValue, true);
+        notifyRevenueAdapter(currentBestValue, specialRevenue, true);
 
         return currentBestValue;
     }
@@ -526,7 +528,10 @@ abstract class RevenueCalculator {
 //            }
         }
 
-        if (callDynamicModifiers) totalValue += revenueAdapter.dynamicEvaluation();
+        if (callDynamicModifiers) {
+            totalValue += revenueAdapter.dynamicEvaluation();
+            specialRevenue = revenueAdapter.getSpecialRevenue();
+        }
 
         nbEvaluations++;
         log.debug("RC: current total value {}", totalValue);
@@ -547,7 +552,8 @@ abstract class RevenueCalculator {
             }
             log.debug("RC: Found better run with {}", totalValue);
             // inform revenue listener via adapter
-            notifyRevenueAdapter(currentBestValue, false);
+            // special revenue only to be reported with the final result
+            notifyRevenueAdapter(currentBestValue, specialRevenue, false);
         }
     }
 
