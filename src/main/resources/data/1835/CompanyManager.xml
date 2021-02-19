@@ -12,7 +12,8 @@
 		<Payout split="always"/>
 		<Trains limit="2,1" mandatory="no"/>
 	</CompanyType>
-	<CompanyType name="Major" class="net.sf.rails.game.specific._1835.PublicCompany_1835" capitalisation="incremental">
+	<CompanyType name="Major" class="net.sf.rails.game.specific._1835.PublicCompany_1835"
+				 capitalisation="incremental">
 		<PoolPaysOut/>
 		<Float percentage="50"/>
 		<StockPrice par="yes"/>
@@ -183,49 +184,50 @@
 		<Home hex="H16"/>
 		<FirstTrainCloses type="Private" name="LD"/>
 	</Company>
-	<Company name="BA" longname="Badische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="FFFFFF" bgColour="808000"
-			alias="Bad">
+	<Company name="BA" longname="Badische Eisenbahn" type="Major" startspace="B4" available="no"
+			 tokens="2" fgColour="FFFFFF" bgColour="808000" alias="Bad">
 		<Home hex="L6" city="0"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="6"/>
 		<Certificate shares="2" number="1"/>
 	</Company>
-	<Company name="WT" longname="W&#252;rttembergische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="000000" bgColour="FFFF00"
-			alias="Wrt">
+	<Company name="WT" longname="W&#252;rttembergische Eisenbahn" type="Major" startspace="B4"
+			 available="no" tokens="2" fgColour="000000" bgColour="FFFF00" alias="Wrt">
 		<Home hex="M9"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="6"/>
 		<Certificate shares="2" number="1"/>
 	</Company>
-	<Company name="HE" longname="Hessische Eisenbahn" type="Major" startspace="B4" available="no" tokens="2" fgColour="000000" bgColour="00CC00"
-			alias="Hes">
+	<Company name="HE" longname="Hessische Eisenbahn" type="Major" startspace="B4" available="no"
+			 tokens="2" fgColour="000000" bgColour="00CC00" alias="Hes">
 		<Home hex="J8"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="1" number="6"/>
 		<Certificate shares="2" number="1"/>
 	</Company>
-	<Company name="MS" longname="Eisenbahn Mecklenburg-Schwerin" type="Major" startspace="B5" available="no" tokens="2" fgColour="FFFFFF" bgColour="800080">
+	<Company name="MS" longname="Eisenbahn Mecklenburg-Schwerin" type="Major" startspace="B5"
+			 available="no" tokens="2" fgColour="FFFFFF" bgColour="800080">
 		<Home hex="C13"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="2" number="2"/>
 		<Certificate shares="1" number="4"/>
 	</Company>
-	<Company name="OL" longname="Oldenburgische Eisenbahn" type="Major" startspace="B5" available="no" tokens="2" fgColour="000000" bgColour="C0C0C0"
-			alias="Old">
+	<Company name="OL" longname="Oldenburgische Eisenbahn" type="Major" startspace="B5"
+			 available="no" tokens="2" fgColour="000000" bgColour="C0C0C0" alias="Old">
 		<Home hex="D6"/>
 		<Certificate type="President" shares="2"/>
 		<Certificate shares="2" number="2"/>
 		<Certificate shares="1" number="4"/>
 	</Company>
-	<Company name="PR" longname="Preu&#223;ische Eisenbahn" type="Major" startspace="I4" available="no" tokens="7" fgColour="FFFFFF" bgColour="000000"
-			alias="Pr">
+	<Company name="PR" longname="Preu&#223;ische Eisenbahn" type="Major" startspace="I4"
+			 available="no" tokens="7" fgColour="FFFFFF" bgColour="000000" alias="Pr">
         <Home hex="E19"/>
 		<ShareUnit percentage="5" sharePriceUnits="2"/>
 		<Float percentage="10"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="2" number="3"/>
-		<Certificate shares="2" number="4" status="reserved"/>
-		<Certificate shares="1" number="4" status="reserved"/>
+		<Certificate type="President" shares="2" available="no"/>
+		<Certificate shares="2" number="4"/>
+		<Certificate shares="2" number="3" available="no"/>
+		<Certificate shares="1" number="4" available="no"/>
 	    <Trains limit="4,4,3"/>
 	</Company>
 	
@@ -253,7 +255,13 @@
 			<SubItem name="Bay" type="Major"/>
 		</Item>
 	</StartPacket>
-	<BaseTokens>
+	<ReleaseRule sold="BY,SX" released="BA"/>
+	<ReleaseRule sold="BA:20" released="PR"/>
+	<ReleaseRule sold="BA:50" released="WT"/>
+	<ReleaseRule sold="WT:50" released="HE"/>
+	<ReleaseRule sold="BA,WT,HE" released="MS"/>
+	<ReleaseRule sold="MS:60" released="OL"/>
+ 	<BaseTokens>
 		<!-- Not sure if this belongs here -->
 		<LayCost method="distance" cost="20"/>
 	</BaseTokens>

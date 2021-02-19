@@ -20,7 +20,7 @@ import org.jgrapht.graph.SimpleGraph;
 public class BzHTileModifier implements NetworkGraphModifier {
 
     private static final Logger log = LoggerFactory.getLogger(BzHTileModifier.class);
-    private List<MapHex> bzhMapHexes = new ArrayList<MapHex> ();
+    private List<MapHex> bzhMapHexes = new ArrayList<> ();
 
     private RailsRoot root;
 
@@ -38,12 +38,12 @@ public class BzHTileModifier implements NetworkGraphModifier {
         // but not on other things (like phases)
         int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex();
         if (phaseIndex >= 3 ) {
-            log.debug("Boznia-Herzegovina active, index of phase = {}", phaseIndex);
+            log.debug("Bosnia-Herzegovina active, index of phase = {}", phaseIndex);
             return;
         }
 
         // 2. retrieve BzH vertices ...
-        String[] bzhHexes = {"L16","L18","L20","L22","M17","M19","M21","N18","N20"};
+        String[] bzhHexes = GameDef_1837.BzHHexes.split(",");
         for(String bzhHex:bzhHexes){
             bzhMapHexes.add(root.getMapManager().getHex(bzhHex));
         }

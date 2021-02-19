@@ -1,6 +1,3 @@
-/**
- *
- */
 package net.sf.rails.game.specific._1837;
 
 import java.util.ArrayList;
@@ -8,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.rails.game.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,10 +16,6 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.GameDef;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.Train;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.financial.StockRound;
@@ -66,6 +60,9 @@ public class StockRound_1837 extends StockRound {
         if (((GameManager_1837) gameManager).getPlayerToStartCERound()!= null) {
             ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
         }
+        // Check for certificates to be released
+        gameSpecificChecks (ipo, null);
+
     }
 
     @Override
@@ -82,9 +79,8 @@ public class StockRound_1837 extends StockRound {
         if (!mayCurrentPlayerBuyAnything()) return;
 
         List<PublicCompany> comps = companyManager.getAllPublicCompanies();
-        Map<PublicCompany, PublicCompany> targetRelation =
-                new HashMap<PublicCompany, PublicCompany>();
-        List<PublicCompany> minors = new ArrayList<PublicCompany>();
+        Map<PublicCompany, PublicCompany> targetRelation = new HashMap<>();
+        List<PublicCompany> minors = new ArrayList<>();
         String type;
 
         for (PublicCompany comp : comps) {
@@ -93,8 +89,7 @@ public class StockRound_1837 extends StockRound {
                 for (PublicCompany majorComp : comps) {
                     if ((comp.isRelatedToNational(majorComp.getId()))
                         && (majorComp.hasStarted())
-                            // FIXME: getType() will never equal "Major"
-                        && (majorComp.getType().equals("Major"))) {
+                        && (majorComp.getType().getId().equals("Major"))) {
                         minors.add(comp);
                         targetRelation.put(comp, majorComp);
                     }
@@ -220,6 +215,8 @@ public class StockRound_1837 extends StockRound {
     public boolean discardTrain(DiscardTrain action) {
 
         Train train = action.getDiscardedTrain();
+        if (train == null && !action.isForced()) return true;
+
         PublicCompany company = action.getCompany();
         String companyName = company.getId();
 
@@ -303,7 +300,7 @@ public class StockRound_1837 extends StockRound {
         // If the Romoth Variant is played this rule will be ignored
         if (GameOption.getValue(this,GameOption.VARIANT).equalsIgnoreCase("basegame")) {
             for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
-                if ((company.hasStockPrice()) && (company.isSoldOut())) {
+                if ((company.hasStarted() && company.hasStockPrice()) && (company.isSoldOut())) {
                     forcedMergeCompanyRoutine(company);
                 }
             }
@@ -315,7 +312,7 @@ public class StockRound_1837 extends StockRound {
                     if (findStartingPlayerForCoalExchange(company)) exchangedCoalCompanies.set(true);
                 }
             }
-         }
+        }
         else {
             ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
         }
@@ -356,7 +353,7 @@ public class StockRound_1837 extends StockRound {
 
     private void forcedMergeCompanyRoutine(PublicCompany company) {
         List<PublicCompany> comps = companyManager.getAllPublicCompanies();
-        List<PublicCompany> minors = new ArrayList<PublicCompany>();
+        List<PublicCompany> minors = new ArrayList<>();
         PublicCompany targetCompany = company;
         String type;
 
@@ -377,7 +374,7 @@ public class StockRound_1837 extends StockRound {
 
     private boolean findStartingPlayerForCoalExchange(PublicCompany company) {
         List<PublicCompany> comps = companyManager.getAllPublicCompanies();
-        List<PublicCompany> minors = new ArrayList<PublicCompany>();
+        List<PublicCompany> minors = new ArrayList<>();
         String type;
 
         for (PublicCompany comp : comps) {

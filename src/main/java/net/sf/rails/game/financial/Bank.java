@@ -151,11 +151,12 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
             ipo.getPortfolioModel().addPrivateCompany(priv);
         }
 
-        // Add public companies
+        // Add public companies.
+        // TODO: This was hard to find. Perhaps move to GameManager? (EV)
         List<PublicCompany> companies = root.getCompanyManager().getAllPublicCompanies();
         for (PublicCompany comp : companies) {
             for (PublicCertificate cert : comp.getCertificates()) {
-                if (cert.isInitiallyAvailable()) {
+                if (comp.areCertsInitiallyAvailable() && cert.isInitiallyAvailable()) {
                     cert.moveTo(ipo);
                 } else {
                     cert.moveTo(unavailable);

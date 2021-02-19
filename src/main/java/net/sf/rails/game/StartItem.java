@@ -176,11 +176,12 @@ public class StartItem extends RailsAbstractItem {
         if (company instanceof PrivateCompany) {
             primary = (Certificate) company;
         } else {
-            primary = ipo.getPortfolioModel().findCertificate((PublicCompany) company, president);
+            BankPortfolio source = (((PublicCompany)company).certsAreInitiallyAvailable)
+                    ? ipo : unavailable;
+            primary = source.getPortfolioModel().findCertificate((PublicCompany) company, president);
             // Move the certificate to the "unavailable" pool.
             PublicCertificate pubcert = (PublicCertificate) primary;
-            if (pubcert.getOwner() == null
-                    || pubcert.getOwner() != unavailable.getParent()) {
+            if (pubcert.getOwner() == null || source != unavailable) {
                 pubcert.moveTo(unavailable);
             }
         }
