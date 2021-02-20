@@ -383,4 +383,50 @@ public class MapManager extends RailsManager implements Configurable {
         return mapImageUsed;
     }
 
+    /**
+     * A utility to find if a newly laid tile will create a "connection to a neighbour hex"
+     * (i.e. connect track between neighbouring hexes).
+     * It is placed here because it is used in both the UI and the server.
+     *
+     * @param hex The MapHex where a new tile is (being) laid.
+     * @param newTile The tile (being) laid.
+     * @param newTileRotation The rotation of that tile.
+     * @return A HexSideSet object that describes any neighbours,
+     * or null if there isn't any.
+     */
+    public HexSidesSet findNewNeighbourSides(MapHex hex, Tile newTile, int newTileRotation) {
+
+        /**
+         * Find the neighbours to this hex, check if theres a neighbour with a track pointing towards us.
+         * Design decision treat one neighbour at a time from one hex to the next one
+         */
+
+        // Which tracks has the newly laid tile?
+        HexSidesSet newTracks = hex.getTrackSides(newTile, newTileRotation);
+        logHexSides(newTracks, "New tile track:");
+
+        //Assuming that new special tile Lay will add new tracks (At least so far thats the case in 1837 and 1844)
+        //we know the NeighbourHex for the given rotation
+        //check if the hex is valid by checking the Special Power, where should this happen ?
+        //If we find a Neighbour thats valid we flag that side as ture
+        BitSet newNeighbourBitSet = new BitSet();
+        Iterator it = newTracks.iterator();
+        while (it.hasNext()) {
+            HexSide side = (HexSide) it.next();
+            MapHex neighbour = getNeighbour(hex, side);
+            Tile nbTile = neighbour.getCurrentTile();
+            int nbRot = neighbour.getCurrentTileRotation().getTrackPointNumber();
+            if (neighbour.getTrackSides(nbTile, nbRot).get(side.opposite())) {
+                newNeighbourBitSet.set(side.getTrackPointNumber(), true);
+            }
+        }
+        HexSidesSet newNeighbours = HexSidesSet.create(newNeighbourBitSet);
+        logHexSides(newNeighbours, "New bridge:");
+
+        return newNeighbours.isEmpty() ? null : newNeighbours;
+
+
+
+    }
+
 }

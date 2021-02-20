@@ -9,10 +9,13 @@
 			<StockRound>
 				<NoSaleInFirstSR/>
 			</StockRound>
-            <OperatingRound>
+			<OperatingRound class="net.sf.rails.game.specific._18Chesapeake.OperatingRound_18Chesapeake">
                 <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="yes"/>
             </OperatingRound>
 		</GameParameters>
+		<GuiClasses>
+			<ORUIManager class="net.sf.rails.ui.swing.gamespecific._18Chesapeake.ORUIManager_18Chesapeake"/>
+		</GuiClasses>
 		<EndOfGame>
 			<Bankruptcy/>
 			<BankBreaks limit="0" finish="setOfORs"/>

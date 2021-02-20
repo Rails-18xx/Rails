@@ -189,22 +189,26 @@ public class StartItem extends RailsAbstractItem {
         // Check if there is another certificate
         if (name2 != null) {
 
-            Company company2 = compMgr.getCompany(type2, name2);
-            if (company2 instanceof PrivateCompany) {
-                secondary = (Certificate) company2;
-            } else {
-                secondary =
-                        ipo.getPortfolioModel().findCertificate((PublicCompany) company2,
-                                president2);
-                // Move the certificate to the "unavailable" pool.
-                // FIXME: This is still an issue to resolve  ???
-                PublicCertificate pubcert2 = (PublicCertificate) secondary;
-                if (pubcert2.getOwner() != unavailable) {
-                    pubcert2.moveTo(unavailable);
-                }
-            }
+            assignStartSubItem(gameManager, ipo, unavailable, compMgr, name2, president2);
         }
 
+    }
+
+    protected void assignStartSubItem(GameManager gameMgr, BankPortfolio ipo, BankPortfolio unavailable, CompanyManager compMgr, String name2, boolean president2) {
+        Company company2 = compMgr.getCompany(type2, this.name2);
+        if (company2 instanceof PrivateCompany) {
+            secondary = (Certificate) company2;
+        } else {
+            secondary =
+                    ipo.getPortfolioModel().findCertificate((PublicCompany) company2,
+                            president2);
+            // Move the certificate to the "unavailable" pool.
+            // FIXME: This is still an issue to resolve  ???
+            PublicCertificate pubcert2 = (PublicCertificate) secondary;
+            if (pubcert2.getOwner() != unavailable) {
+                pubcert2.moveTo(unavailable);
+            }
+        }
     }
 
     public int getIndex() {

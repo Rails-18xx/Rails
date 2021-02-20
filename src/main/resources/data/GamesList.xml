@@ -214,6 +214,14 @@ Published 2004 by Deep Thought Games, LLC
 		<Players minimum="2" maximum="5"/>
 	</Game>
 
+	<Game name="18Chesapeake">
+		<Note>Fully playable - Tests needed</Note>
+		<Description> 18Cheaspeake - North East USA
+			(c) 2019 Scott Pedersen    </Description>
+		<Players minimum = "2" maximum = "6" />
+	</Game>
+
+
 	<Game name="1837">
 		<Note>Partly playable</Note>
 		<Description> 1837 - Austria
@@ -300,12 +308,6 @@ Known Issues:
     <Players minimum="2" maximum="8" />
   </Game>
 
-	<Game name="18Chesapeake">
-		<Note>Prototype</Note>
-		<Description> 18Cheaspeake - North East USA
-			(c) 2019 Scott Pedersen    </Description>
-		<Players minimum = "2" maximum = "6" />
-	</Game>
 
 
 	<Credits>&lt;html&gt;Rails is a computer implementation of a number of board games.&lt;br&gt; 
