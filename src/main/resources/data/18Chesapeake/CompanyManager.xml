@@ -32,10 +32,10 @@
 		<Blocking hex="H2,I3"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
-				<SpecialMultiTileLay colour="yellow" location="H2" extra="yes" free="yes" tiles="8,9" constraints="connected" neighbour="I3" />
+				<SpecialSingleTileLay colour="yellow" location="H2" extra="yes" free="yes" tiles="8,9" constraints="connected" neighbour="I3" />
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
-				<SpecialMultiTileLay colour="yellow" location="I3" extra="yes" free="yes" tiles="8,9" constraints="connected" neighbour="H2" />
+				<SpecialSingleTileLay colour="yellow" location="I3" extra="yes" free="yes" tiles="8,9" constraints="connected" neighbour="H2" />
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
@@ -44,10 +44,10 @@
 		<Blocking hex="F4,G5"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
-				<SpecialMultiTileLay colour="yellow" location="F4" extra="yes" free="yes" tiles="8,9" constraints="connected" neighbour="G5" />
+				<SpecialSingleTileLay colour="yellow" location="F4" extra="yes" free="yes" tiles="8,9" constraints="connected" neighbour="G5" />
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
-				<SpecialMultiTileLay colour="yellow" location="G5" extra="yes" free="yes" tiles="8,9" constraints="connected" neighbour="F4" />
+				<SpecialSingleTileLay colour="yellow" location="G5" extra="yes" free="yes" tiles="8,9" constraints="connected" neighbour="F4" />
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
@@ -117,8 +117,10 @@
 		<Item name="CPR" type="Private" basePrice="40"/>
 		<Item name="BSR" type="Private" basePrice="50"/>
 		<Item name="C&amp;OC" type="Private" basePrice="80"/>
-		<Item name="B&amp;OR" type="Private" basePrice="100"/>
-		<Item name="CV" type="Private" basePrice="200">
+		<Item name="B&amp;OR" type="Private" basePrice="100">
+			<SubItem name="B&amp;O" type="Public" />
+		</Item>
+		<Item name="CV" type="Private" basePrice="200" displayname="CV+Random">
 			<SubItem name="random" type="Public" president="yes"/>
 		</Item>
 	</StartPacket>

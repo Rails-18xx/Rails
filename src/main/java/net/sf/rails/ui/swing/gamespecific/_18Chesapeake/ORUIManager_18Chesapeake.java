@@ -36,17 +36,17 @@ public class ORUIManager_18Chesapeake extends ORUIManager {
 
         MapHex hex;
         MapManager mmgr = gameUIManager.getRoot().getMapManager();
-        HexSidesSet bridgeSides;
+        HexSidesSet neighbourSides;
         for (TileHexUpgrade upgrade : upgrades) {
             hex = upgrade.getHex().getHex();
             for (HexSide rotation : upgrade.getRotations()) {
-                bridgeSides = mmgr.findNewBridgeSides(hex,
+                neighbourSides = mmgr.findNewNeighbourSides(hex,
                         upgrade.getUpgrade().getTargetTile(),
                         rotation.getTrackPointNumber());
                 log.info ("Hex={} upgrade={} rotation={}", hex, upgrade, rotation);
-                mmgr.logHexSides (bridgeSides, "+++++ Bridges");
-                if (bridgeSides == null) {
-                    // No bridges, then no free-bridge upgrade
+                mmgr.logHexSides (neighbourSides, "+++++ Neighbours");
+                if (neighbourSides == null) {
+                    // No allowed Neighbours, then no free tile lay
                     upgrade.setVisible(false);
                 }
             }

@@ -57,7 +57,7 @@ public class SpecialSingleTileLay extends SpecialTileLay {
         connected = tileLayTag.getAttributeAsBoolean("connected", connected);
         discount = tileLayTag.getAttributeAsInteger("discount", discount);
 
-        neighbouringHexesCode = tileLayTag.getAttributeAsString("neighbours", "null");
+        neighbouringHexesCode = tileLayTag.getAttributeAsString("neighbours", null);
         // If neighbours is defined the subsequent tile lays need to be connected to the first tile lay.
 
         if (tileId != null) {
@@ -113,7 +113,7 @@ public class SpecialSingleTileLay extends SpecialTileLay {
             for (String hexName : neighbouringHexesCode.split(",")) {
                 hex = mmgr.getHex(hexName);
                 if (hex == null)
-                    throw new ConfigurationException("Location " + hexName
+                    throw new ConfigurationException("Neighbour " + hexName
                             + " does not exist");
                 neighbouringHexes.add(hex);
             }
@@ -127,14 +127,14 @@ public class SpecialSingleTileLay extends SpecialTileLay {
                     return "SpecialSingleTileLay comp="
                             + (originalCompany == null ? null : originalCompany.getId())
                             + " hex=" + locationCodes
-                            + " colour=" + Util.joinWithDelimiter(tileColours, ",")
+                            + " colour=" + Util.join(tileColours, ",")
                             + " extra=" + extra + " cost=" + free + " connected=" + connected
                             + " neighours=" + neighbouringHexesCode;
                 }
         return "SpecialSingleTileLay comp="
                 + (originalCompany == null ? null : originalCompany.getId())
                 + " hex=" + locationCodes
-                + " colour=" + Util.joinWithDelimiter(tileColours, ",")
+                + " colour=" + Util.join(tileColours, ",")
                 + " extra=" + extra + " cost=" + free + " connected=" + connected;
     }
 
