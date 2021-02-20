@@ -81,8 +81,21 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     /** Count against certificate limits */
     protected float certificateCount = 1.0f;
 
-    /** Availability at the start of the game */
-    protected boolean initiallyAvailable;
+    /** Certificate-level availability at the start of the game.
+     *  Added by EV 2/2021:
+     *  Normally, only available certificates can be bought in a Stock Round.
+     *  Unavailable certs must always be picked up individually, usually
+     *  to be exchanged against a single minor or private certificate.
+     *
+     *  This setting is now partly independent of the similar setting for the whole company.
+     *  At setup, the company-level is checked first;
+     *  - if true, then the available certs go to IPO, the unavailable to 'unavailable'.
+     *  - if false, then all certificates go to 'unavailable'.
+     *  In the latter case, the company must be explicitly made available ('released'),
+     *  normally in a method overriding StockRound.gameSpecificChecks().
+     *  At that time, only the available certificates got to IPO.
+     * */
+    protected boolean initiallyAvailable = true;
 
     /** A key identifying the certificate's unique ID */
     protected String certId;

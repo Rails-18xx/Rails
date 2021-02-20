@@ -126,7 +126,12 @@ public class RailsRoot extends Root implements RailsItem {
          * only be done after all XML has been processed.
          */
         log.info("========== Start of rails.game {} ==========", gameData.getGameName());
+        if (gameData.getGameOptions().getOptions().containsKey("Variant")) {
+            String variant = getGameOptions().getOptions().get("Variant");
+            log.info("Variant "+variant);
+        }
         log.info("Rails version {}", Config.getVersion());
+
         ReportBuffer.add(this, LocalText.getText("GameIs", gameData.getGameName()));
 
         playerManager.initPlayers(gameData.getPlayers(), bank);
@@ -141,7 +146,7 @@ public class RailsRoot extends Root implements RailsItem {
 
         try {
             playerManager.finishConfiguration(this);
-            companyManager.finishConfiguration(this);
+            companyManager.finishConfiguration(this); // Requires bank to be finished later!
             trainManager.finishConfiguration(this);
             phaseManager.finishConfiguration(this);
             tileManager.finishConfiguration(this);

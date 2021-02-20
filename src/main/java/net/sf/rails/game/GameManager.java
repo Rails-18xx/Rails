@@ -176,6 +176,15 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected PlayerOrderModel playerNamesModel;
 
     /**
+     * To register the step number of subsequent company releases
+     * (i.e. making companies available, as in 1835 and 1837).
+     */
+    protected final IntegerState companyReleaseStep =
+            IntegerState.create (this, "releaseStep", 0);
+
+
+
+    /**
      * @return the revenueSpinnerIncrement
      */
     public int getRevenueSpinnerIncrement() {
@@ -610,6 +619,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected void startStockRound() {
         StockRound sr = createRound(stockRoundClass, "SR_" + stockRoundNumber.value());
         stockRoundNumber.add(1);
+
+        // For debugging only: check where the certs are.
+        if (log.isDebugEnabled() && stockRoundNumber.value() == 1) {
+            for (PublicCompany comp : this.getAllPublicCompanies()) {
+                for (PublicCertificate cert : comp.certificates) {
+                    log.debug("{} cert {} owned by {}", comp.getId(), cert.getId(), cert.getOwner());
+                }
+            }
+       }
+
         sr.start();
     }
 
@@ -1695,6 +1714,14 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
 
         return new ArrayList<>(operatingCompanies.values());
+    }
+
+    public int getCompanyReleaseStep() {
+        return companyReleaseStep.value();
+    }
+
+    public void setCompanyReleaseStep(int value) {
+        companyReleaseStep.set(value);
     }
 
     public boolean isReloading() {

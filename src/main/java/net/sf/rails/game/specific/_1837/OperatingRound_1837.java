@@ -1,6 +1,3 @@
-/**
- *
- */
 package net.sf.rails.game.specific._1837;
 
 import java.util.ArrayList;
@@ -24,11 +21,13 @@ import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.SequenceUtil;
 import rails.game.action.BuyTrain;
+import rails.game.action.PossibleAction;
 import rails.game.action.SetDividend;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Table;
+import rails.game.specific._1837.SetHomeHexLocation2;
 
 
 /**
@@ -65,8 +64,8 @@ public class OperatingRound_1837 extends OperatingRound {
             }
         }
         if (phase.getId().equals("4")
-                && !companyManager.getPublicCompany("Sd").hasStarted()
-                && !NationalFormationRound.nationalIsComplete(gameManager, "Sd")) {
+                && !companyManager.getPublicCompany(GameDef_1837.Sd).hasStarted()
+                && !NationalFormationRound.nationalIsComplete(gameManager, GameDef_1837.Sd)) {
             if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
                 // Postpone until trains are discarded
                 needSuedBahnFormationCall.set(true);
@@ -76,8 +75,8 @@ public class OperatingRound_1837 extends OperatingRound {
             }
         }
         if (phase.getId().equals("4+1")
-                && !companyManager.getPublicCompany("KK").hasStarted()
-                && !NationalFormationRound.nationalIsComplete(gameManager,"KK")) {
+                && !companyManager.getPublicCompany(GameDef_1837.KK).hasStarted()
+                && !NationalFormationRound.nationalIsComplete(gameManager,GameDef_1837.KK)) {
             if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
                 // Postpone until trains are discarded
                 needKuKFormationCall.set(true);
@@ -86,8 +85,8 @@ public class OperatingRound_1837 extends OperatingRound {
                 ((GameManager_1837)gameManager).startKuKFormationRound (this);
             }
             if (phase.getId().equals("4E")
-                    && !companyManager.getPublicCompany("Ug").hasStarted()
-                    && !NationalFormationRound.nationalIsComplete(gameManager, "Ug")) {
+                    && !companyManager.getPublicCompany(GameDef_1837.Ug).hasStarted()
+                    && !NationalFormationRound.nationalIsComplete(gameManager, GameDef_1837.Ug)) {
                 if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
                     // Postpone until trains are discarded
                     needHungaryFormationCall.set(true);
@@ -120,7 +119,7 @@ public class OperatingRound_1837 extends OperatingRound {
 
         Map<MoneyOwner, Integer> sharesPerRecipient = super.countSharesPerRecipient();
 
-        if (operatingCompany.value().getId().equalsIgnoreCase("Sd")) {
+        if (operatingCompany.value().getId().equalsIgnoreCase(GameDef_1837.Sd)) {
             for (Player player : deniedIncomeShare.rowKeySet()) {
                 if (!sharesPerRecipient.containsKey(player)) continue;
                 int share = deniedIncomeShare.get(player,operatingCompany.value());
@@ -129,7 +128,7 @@ public class OperatingRound_1837 extends OperatingRound {
                 ReportBuffer.add(this, LocalText.getText("NoIncomeForPreviousOperation",
                         player.getId(),
                         share,
-                        "Sd"));
+                        GameDef_1837.Sd));
             }
         }
 
@@ -154,7 +153,7 @@ public class OperatingRound_1837 extends OperatingRound {
 
     @Override
     public void resume() {
-        PublicCompany suedbahn = companyManager.getPublicCompany("Sd");
+        PublicCompany suedbahn = companyManager.getPublicCompany(GameDef_1837.Sd);
         //        PublicCompany hungary = companyManager.getPublicCompany("Ug");
         //       PublicCompany kuk = companyManager.getPublicCompany("KK");
 
@@ -163,7 +162,7 @@ public class OperatingRound_1837 extends OperatingRound {
                 // That's only the case if another Pre Suedbahn S2-S5 still hasnt
                 // operated. Trains that have run this OR cant run again, shares that have
                 // been exchanged cant get their income distributed again.
-                && (operatingCompany.value().getType().getId().equals("Minor1")) ) {
+                && (operatingCompany.value().getType().getId().equals(GameDef_1837.Minor1)) ) {
             log.debug("a Pre Suedbahn has not operated: Suedbahn can operate");
 
             // Insert the Suedbahn before the first major company
@@ -191,12 +190,40 @@ public class OperatingRound_1837 extends OperatingRound {
 
         } else {
 
-            log.debug("S1 has operated: SU cannot operate");
+            log.debug("S1 has operated: Sd cannot operate");
 
         }
 
         guiHints.setCurrentRoundType(getClass());
         super.resume();
+    }
+
+    public boolean setPossibleActions() {
+
+        PublicCompany company = operatingCompany.value();
+        if (GameDef_1837.S5.equalsIgnoreCase(company.getId())
+            && (company.getHomeHexes().isEmpty()
+                || !company.hasLaidHomeBaseTokens())) {
+
+            possibleActions.add(new SetHomeHexLocation2(getRoot(),
+                    company, GameDef_1837.S5homes));
+            return true;
+        } else {
+            return super.setPossibleActions();
+        }
+    }
+
+    public boolean processGameSpecificAction (PossibleAction action) {
+        if (action instanceof SetHomeHexLocation2) {
+            SetHomeHexLocation2 selectHome = (SetHomeHexLocation2) action;
+            PublicCompany company = selectHome.getCompany();
+            MapHex chosenHome = selectHome.getSelectedHomeHex();
+            company.setHomeHex(chosenHome);
+            company.layHomeBaseTokens();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /* (non-Javadoc)
@@ -207,8 +234,8 @@ public class OperatingRound_1837 extends OperatingRound {
         String errMsg = null;
         PublicCompany company;
         String companyName;
-        int amount = 0;
-        int revenueAllocation = -1;
+        int amount;
+        int revenueAllocation;
 
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -456,7 +483,7 @@ public class OperatingRound_1837 extends OperatingRound {
     protected boolean gameSpecificTileLayAllowed(PublicCompany company,
             MapHex hex, int orientation) {
         RailsRoot root = gameManager.getRoot();
-        List<MapHex> italyMapHexes = new ArrayList<MapHex> ();
+        List<MapHex> italyMapHexes = new ArrayList<> ();
         // 1. check Phase
 
         int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex();
@@ -475,7 +502,7 @@ public class OperatingRound_1837 extends OperatingRound {
             log.debug("Italy inactive, index of phase = {}", phaseIndex);
 
             // 2. retrieve Italy vertices ...
-            String [] italyHexes = {"K1","K3","K7","K9","L2","L4","L6","L8","M3","M5","M7"};
+            String [] italyHexes = GameDef_1837.ItalyHexes.split(",");
             for (String italyHex:italyHexes){
                 italyMapHexes.add(root.getMapManager().getHex(italyHex));
             }
@@ -553,7 +580,7 @@ public class OperatingRound_1837 extends OperatingRound {
         // If so, record the current player as the first
         // one to act in the Final Minor Exchange Round.
         if ((result) && getRoot().getPhaseManager().hasReachedPhase("5")
-                && operatingCompanies.get(0).getType().getId().equalsIgnoreCase("Minor")
+                && operatingCompanies.get(0).getType().getId().startsWith("Minor")
                 && ((GameManager_1837)gameManager).getPlayerToStartFCERound() == null) {
             ((GameManager_1837)gameManager).setPlayerToStartFCERound(operatingCompany.value().getPresident());
         }
@@ -567,8 +594,7 @@ public class OperatingRound_1837 extends OperatingRound {
         ReportBuffer.add(this, " ");
         ReportBuffer.add(
                 this,
-                LocalText.getText("END_OR",
-                        String.valueOf(getRoundName())));
+                LocalText.getText("EndOfOperatingRound", thisOrNumber));
 
         for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
             if ((company.hasStockPrice()) && (company.hasFloated())){
@@ -588,7 +614,7 @@ public class OperatingRound_1837 extends OperatingRound {
 
     private boolean findStartingPlayerForCoalExchange(PublicCompany company) {
         List<PublicCompany> comps = companyManager.getAllPublicCompanies();
-        List<PublicCompany> minors = new ArrayList<PublicCompany>();
+        List<PublicCompany> minors = new ArrayList<>();
         String type;
 
         for (PublicCompany comp : comps) {

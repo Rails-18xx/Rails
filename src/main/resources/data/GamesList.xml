@@ -215,13 +215,15 @@ Published 2004 by Deep Thought Games, LLC
 	</Game>
 
 	<Game name="1837">
-		<Note>In progress</Note>
+		<Note>Partly playable</Note>
 		<Description> 1837 - Austria
 			(c) 1994 Leonhard Orgler (self-published)
 
 			Known limitations:
-			- Buying the KK and Ug minors in subsequent Start rounds does not work well.
-			  These rounds should be changed to Stock Rounds.
+			- In v1, the S5 home must be chosen in the initial round rather than
+			  in its first OR. In v2, this has already been corrected.
+			- Several problems exist with (not) executing the coal
+			  company exchange, whether mandatory or not.
 			- Not yet tested beyond the 3-train phase.
 		</Description>
 		<Players minimum = "3" maximum = "7" />

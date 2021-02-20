@@ -60,7 +60,8 @@ public abstract class StartRound extends Round {
     protected final ArrayListState<StartItem> itemsToSell = new ArrayListState<>(this, "itemsToSell");
     protected final IntegerState numPasses = IntegerState.create(this, "numPasses");
 
-    protected StartRound(GameManager parent, String id, Bidding bidding, boolean hasBasePrices, boolean hasBuying) {
+    protected StartRound(GameManager parent, String id,
+                         Bidding bidding, boolean hasBasePrices, boolean hasBuying) {
         super(parent, id);
 
         this.hasBidding = bidding;

@@ -663,7 +663,7 @@ PriceIsPaidTo,92,BY
 SharesReleased,All,BA
 PASSES,Marc
 START_COMPANY_LOG,Rainer,BA,84,168,2,20,BANK
-SharesReleased,4 10%,PR
+SharesReleased,40%,PR
 BUY_SHARE_LOG,Christian,10,PR,IPO,154
 BUY_SHARE_LOG,Bjoern,10,PR,IPO,154
 BUY_SHARE_LOG,Marc,10,BA,IPO,84
