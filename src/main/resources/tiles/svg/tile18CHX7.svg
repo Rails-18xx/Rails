@@ -5,14 +5,10 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   height="357"
-   width="393"
-   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
-   sodipodi:docname="tile18CHX7.svg"
+   version="1.1"
    id="svg5667"
-   version="1.1">
+   width="393"
+   height="357">
   <metadata
      id="metadata5673">
     <rdf:RDF>
@@ -27,216 +23,178 @@
   </metadata>
   <defs
      id="defs5671" />
-  <sodipodi:namedview
-     fit-margin-bottom="0"
-     fit-margin-right="0"
-     fit-margin-left="0"
-     fit-margin-top="0"
-     inkscape:document-rotation="0"
-     inkscape:current-layer="svg5667"
-     inkscape:window-maximized="1"
-     inkscape:window-y="-9"
-     inkscape:window-x="-9"
-     inkscape:cy="50.5"
-     inkscape:cx="50.499992"
-     inkscape:zoom="1"
-     showgrid="false"
-     id="namedview5669"
-     inkscape:window-height="2081"
-     inkscape:window-width="3840"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0"
-     guidetolerance="10"
-     gridtolerance="10"
-     objecttolerance="10"
-     borderopacity="1"
-     bordercolor="#666666"
-     pagecolor="#ffffff" />
   <path
-     id="path5625"
-     stroke-linejoin="round"
-     stroke-width="1"
-     stroke="#b46301"
+     d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z"
      fill="#b46301"
-     d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z" />
-  <polygon
-     transform="translate(0.49999229,0.5)"
-     id="polygon5627"
-     stroke-width="12"
-     stroke="#ffffff"
-     fill="#ffffff"
-     points="145,119 247,119 247,221 145,221 " />
-  <circle
-     id="circle5629"
-     stroke-width="12"
-     stroke="#ffffff"
-     fill="#ffffff"
-     r="51"
-     cy="170.5"
-     cx="145.49998" />
-  <circle
-     id="circle5631"
-     stroke-width="12"
-     stroke="#ffffff"
-     fill="#ffffff"
-     r="51"
-     cy="170.5"
-     cx="247.49998" />
-  <path
-     id="path5633"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="34"
-     stroke="#ffffff"
-     fill="none"
-     d="m 196.49999,170.5 147,-85" />
-  <path
-     id="path5635"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="34"
-     stroke="#ffffff"
-     fill="none"
-     d="m 196.49999,170.5 147,85" />
-  <path
-     id="path5637"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="34"
-     stroke="#ffffff"
-     fill="none"
-     d="m 196.49999,170.5 v 170" />
-  <path
-     id="path5639"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="34"
-     stroke="#ffffff"
-     fill="none"
-     d="m 196.49999,170.5 -146.999998,85" />
-  <path
-     id="path5641"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="34"
-     stroke="#ffffff"
-     fill="none"
-     d="M 196.49999,170.5 49.499992,85.5" />
-  <path
-     id="path5643"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="26"
-     stroke="#000000"
-     fill="none"
-     d="m 196.49999,170.5 147,-85" />
-  <path
-     id="path5645"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="26"
-     stroke="#000000"
-     fill="none"
-     d="m 196.49999,170.5 147,85" />
-  <path
-     id="path5647"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="26"
-     stroke="#000000"
-     fill="none"
-     d="m 196.49999,170.5 v 170" />
-  <path
-     id="path5649"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="26"
-     stroke="#000000"
-     fill="none"
-     d="m 196.49999,170.5 -146.999998,85" />
-  <path
-     id="path5651"
-     stroke-linejoin="round"
-     stroke-linecap="butt"
-     stroke-width="26"
-     stroke="#000000"
-     fill="none"
-     d="M 196.49999,170.5 49.499992,85.5" />
-  <polygon
-     transform="translate(0.49999229,0.5)"
-     id="polygon5653"
-     stroke-width="4"
-     stroke="#000000"
-     fill="#ffffff"
-     points="145,119 247,119 247,221 145,221 " />
-  <circle
-     id="circle5655"
-     stroke-width="4"
-     stroke="#000000"
-     fill="#ffffff"
-     r="51"
-     cy="170.5"
-     cx="145.49998" />
-  <circle
-     id="circle5657"
-     stroke-width="4"
-     stroke="#000000"
-     fill="#ffffff"
-     r="51"
-     cy="170.5"
-     cx="247.49998" />
-  <ellipse
-     id="ellipse5659"
-     stroke-linejoin="round"
-     stroke-width="2"
-     stroke="#000000"
-     fill="#ffffff"
-     cy="297.5"
-     cx="123.49999"
-     ry="34"
-     rx="38" />
-  <text
-     id="text5661"
-     font-size="51px"
-     font-family="'Bookman Old Style'"
-     text-anchor="middle"
-     stroke="#000000"
-     fill="#000000"
-     dy="15.3"
-     y="297.5"
-     x="123.49999">50</text>
-  <text
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:51px;font-family:TimpaniHeavy;-inkscape-font-specification:'TimpaniHeavy, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle"
-     id="text5663"
-     font-size="51"
-     font-family="TimpaniHeavy"
-     text-anchor="middle"
-     stroke="#000000"
-     fill="#000000"
-     dy="15.3"
-     y="43.5"
-     x="196.49998"><tspan
-       y="43.5"
-       x="196.49998"
-       id="tspan5675"
-       sodipodi:role="line">OO</tspan></text>
-  <path
-     id="path5665"
-     stroke-linejoin="round"
+     stroke="#b46301"
      stroke-width="1"
-     stroke="#000000"
+     stroke-linejoin="round"
+     id="path5625" />
+  <polygon
+     points="145,119 247,119 247,221 145,221 "
+     fill="#ffffff"
+     stroke="#ffffff"
+     stroke-width="12"
+     id="polygon5627"
+     transform="translate(0.49999229,0.5)" />
+  <circle
+     cx="145.49998"
+     cy="170.5"
+     r="51"
+     fill="#ffffff"
+     stroke="#ffffff"
+     stroke-width="12"
+     id="circle5629" />
+  <circle
+     cx="247.49998"
+     cy="170.5"
+     r="51"
+     fill="#ffffff"
+     stroke="#ffffff"
+     stroke-width="12"
+     id="circle5631" />
+  <path
+     d="m 196.49999,170.5 147,-85"
      fill="none"
-     d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z" />
-  <flowRoot
-     transform="translate(0.49999229,0.5)"
-     style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     id="flowRoot5677"
-     xml:space="preserve"><flowRegion
-       id="flowRegion5679"><rect
-         y="289"
-         x="230"
-         height="51"
-         width="64"
-         id="rect5681" /></flowRegion><flowPara
-       id="flowPara5683">X7</flowPara></flowRoot>
+     stroke="#ffffff"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5633" />
+  <path
+     d="m 196.49999,170.5 147,85"
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5635" />
+  <path
+     d="m 196.49999,170.5 v 170"
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5637" />
+  <path
+     d="m 196.49999,170.5 -146.999998,85"
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5639" />
+  <path
+     d="M 196.49999,170.5 49.499992,85.5"
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5641" />
+  <path
+     d="m 196.49999,170.5 147,-85"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5643" />
+  <path
+     d="m 196.49999,170.5 147,85"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5645" />
+  <path
+     d="m 196.49999,170.5 v 170"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5647" />
+  <path
+     d="m 196.49999,170.5 -146.999998,85"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5649" />
+  <path
+     d="M 196.49999,170.5 49.499992,85.5"
+     fill="none"
+     stroke="#000000"
+     stroke-width="26"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5651" />
+  <polygon
+     points="145,119 247,119 247,221 145,221 "
+     fill="#ffffff"
+     stroke="#000000"
+     stroke-width="4"
+     id="polygon5653"
+     transform="translate(0.49999229,0.5)" />
+  <circle
+     cx="145.49998"
+     cy="170.5"
+     r="51"
+     fill="#ffffff"
+     stroke="#000000"
+     stroke-width="4"
+     id="circle5655" />
+  <circle
+     cx="247.49998"
+     cy="170.5"
+     r="51"
+     fill="#ffffff"
+     stroke="#000000"
+     stroke-width="4"
+     id="circle5657" />
+  <ellipse
+     rx="38"
+     ry="34"
+     cx="123.49999"
+     cy="297.5"
+     fill="#ffffff"
+     stroke="#000000"
+     stroke-width="2"
+     stroke-linejoin="round"
+     id="ellipse5659" />
+  <text
+     x="123.49999"
+     y="297.5"
+     dy="15.3"
+     fill="#000000"
+     stroke="#000000"
+     text-anchor="middle"
+     font-family="'Bookman Old Style'"
+     font-size="51px"
+     id="text5661">50</text>
+  <text
+     x="196.49998"
+     y="43.5"
+     dy="15.3"
+     fill="#000000"
+     stroke="#000000"
+     text-anchor="middle"
+     font-family="TimpaniHeavy"
+     font-size="51"
+     id="text5663"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:51px;font-family:TimpaniHeavy;-inkscape-font-specification:'TimpaniHeavy, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle"><tspan
+       id="tspan5675"
+       x="196.49998"
+       y="43.5">OO</tspan></text>
+  <path
+     d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z"
+     fill="none"
+     stroke="#000000"
+     stroke-width="1"
+     stroke-linejoin="round"
+     id="path5665" />
 </svg>
