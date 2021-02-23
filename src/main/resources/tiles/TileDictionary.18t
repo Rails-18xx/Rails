@@ -17915,5 +17915,37 @@ object TTilesWrapper
           JunType = jtDoubleCity
           Revenue = 20
         end>
+    end
+    item
+      Code = 915
+      LongName = '5 leg spider, 3 slots'
+      Level = tlGray
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtTripleCity
+          Revenue = 50
+          RevenuePosition = tp3SideA
+        end>
     end>
 end

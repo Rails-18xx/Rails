@@ -131,5 +131,5 @@
 	<Tile id="-18CH03"/>
 	<Tile id="-18CHOO" relayBaseTokens="yes">
 	<Upgrade id="18CHX3,18CHX4,18CHX5"></Upgrade>
-	</Tile>>
+	</Tile>
 </TileManager>
