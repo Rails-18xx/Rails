@@ -39,7 +39,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public static final int CAPITALISE_FULL = 0;
     public static final int CAPITALISE_INCREMENTAL = 1;
     public static final int CAPITALISE_WHEN_BOUGHT = 2;
-    public static final int CAPITALISE_PART = 3; // 18Scan SJ, also specify part as number of shares
+    // 18Scan SJ, also specify part as number of shares:
+    public static final int CAPITALISE_PART = 3;
+    // 1837 U1/3, also specify initial treasury cash:
+    public static final int CAPITALISE_FIXED_CASH = 4;
 
     protected static final int DEFAULT_SHARE_UNIT = 10;
 
@@ -55,7 +58,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected static final String[] tokenLayTimeNames = new String[]{"whenStarted", "whenFloated", "firstOR"};
 
     protected int homeBaseTokensLayTime = START_OF_FIRST_OR;
-
 
     /**
      * Foreground (i.e. text) colour of the company tokens (if pictures are not
@@ -355,7 +357,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected int dropPriceToken = WHEN_STARTED;
 
     protected int capitalisation = CAPITALISE_FULL;
-    protected int capitalisationShares;
+    protected int capitalisationShares; // 18Scan
+    protected int capitalisationFixedCash; // 1837
 
     /**
      * Fixed price (for a 1835-style minor)
@@ -615,15 +618,23 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             } else if ( "part".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_PART);
                 capitalisationShares = capitalisationTag.getAttributeAsInteger ("shares", 0);
+                if (capitalisationShares == 0) {
+                    throw new ConfigurationException("Missing capitalisation shares for " + getId());
+                }
             } else if ( "incremental".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_INCREMENTAL);
             } else if ( "whenBought".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_WHEN_BOUGHT);
+            } else if ("fixedCash".equalsIgnoreCase(capType)) {
+                setCapitalisation(CAPITALISE_FIXED_CASH);
+                capitalisationFixedCash = capitalisationTag.getAttributeAsInteger("cash", 0);
+                if (capitalisationFixedCash == 0) {
+                    throw new ConfigurationException("Missing capitalisation cash for " + getId());
+                }
             } else {
                 throw new ConfigurationException("Invalid capitalisation type: " + capType);
             }
         }
-
 
         // TODO: Check if this still works correctly
         // The certificate init was moved to the finishConfig phase
@@ -1566,6 +1577,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     public int getFixedPrice() {
         return fixedPrice;
+    }
+
+    public int getCapitalisationFixedCash() {
+        return capitalisationFixedCash;
     }
 
     public int getBaseTokensBuyCost() {

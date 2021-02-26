@@ -215,7 +215,7 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
      * game-specific subclasses.
      */
     // What is the reason of that to have that here? => move to SR?
-    // called by checkFloatation above
+    // called by checkFlotation above
     // move it to PublicCompany in the long-run
     // called only internally
     protected void floatCompany(PublicCompany company) {
@@ -241,6 +241,8 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
             }
             int price = company.getIPOPrice();
             cash = capFactor * price;
+        } else if (capitalisationMode == PublicCompany.CAPITALISE_FIXED_CASH) {
+            cash = company.getCapitalisationFixedCash();
         } else {
             cash = company.getFixedPrice();
         }

@@ -85,7 +85,9 @@
 		<Hex name="L10" tile="0" open="2,3" />
 		<Hex name="L12" tile="0" cost="100" open="2,3" />
 		<Hex name="L14" tile="-10" city="Darlington" open="2,3" reserved="NER" />
-		<Hex name="K17" tile="-4000" />
+		<IfOption name="Include" parm="Unit3" value="no">
+			<Hex name="K17" tile="-4000" />
+		</IfOption>
 		<Hex name="K19" tile="-4005" orientation="4" />
 		<Hex name="L6" tile="-4000" />
 		<Hex name="L16" tile="0" open="2" />
@@ -106,7 +108,12 @@
 		<Hex name="N16" tile="0" />
 		<Hex name="N18" tile="-10" cost="40" city="Hull" />
 		<Hex name="N20" tile="-4000" />
-		<Hex name="O7" tile="-4004" orientation="1" />
+		<IfOption name="Include" parm="R1" value="no">
+			<Hex name="O7" tile="-4004" orientation="1" />
+		</IfOption>
+		<IfOption name="Include" parm="R1" value="yes">
+			<Hex name="O7" tile="-4000"/>
+		</IfOption>
 		<Hex name="O9" tile="-25009" cost="40" city="Liverpool" />
 		<Hex name="O11" tile="-25002" orientation="1" city="Manchester" />
 		<Hex name="O13" tile="0" cost="100" />
@@ -122,7 +129,9 @@
 		<Hex name="P18" tile="-1" city="Lincoln" />
 		<Hex name="P20" tile="0" />
 		<Hex name="P22" tile="-4004" orientation="4" />
-		<Hex name="Q9" tile="0" open="0,5" />
+		<IfOption name="Include" parm="Unit1" value="no">
+			<Hex name="Q9" tile="0" open="0,5" />
+		</IfOption>
 		<Hex name="Q11" tile="-25004" city="Crewe" />
 		<Hex name="Q13" tile="-2" city="Newcastle u/L, Hanley" open="0,5" />
 		<Hex name="Q15" tile="-10" city="Derby" open="0,5" reserved="MR" />
@@ -141,8 +150,8 @@
 			<Hex name="Q15" tile="-25017" orientation="4" />
 			<Hex name="Q17" tile="-25017" orientation="4" />
 			<Hex name="Q19" tile="-25017" orientation="4" />
+			<Hex name="Q21" tile="-4000" />
 		</IfOption>
-		<Hex name="Q21" tile="-4000" />
 		<IfOption name="Include" parm="R3" value="no">
 			<Hex name="Q23" tile="-25017" orientation="4" />
 			<Hex name="Q25" tile="-25017" orientation="4" />
@@ -258,7 +267,9 @@
 		<IfOption name="Include" parm="R1" value="yes">
 			<Hex name="O3" tile="-4005" orientation="4" />
 			<Hex name="O5" tile="-4005" orientation="4" />
-			<Hex name="O7" tile="-4005" orientation="4" />
+			<IfOption name="Include" parm="Unit2" value="no">
+				<Hex name="O7" tile="-4005" orientation="4" />
+			</IfOption>
 			<Hex name="P2" tile="-4004" orientation="1" />
 			<Hex name="P4" tile="-5" city="Holyhead" />
 			<Hex name="P6" tile="0" cost="40" />
