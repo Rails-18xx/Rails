@@ -41,7 +41,7 @@
 	<Hex name="F10" tile="0" cost="40"/>
 	<Hex name="F12" tile="0"/>
 	<Hex name="F14" tile="-7" orientation="5"/>
-	<Hex name="G1" tile="-18CH01" orientation="1"/>
+	<Hex name="G1" tile="-7710" orientation="1"/>
     <Hex name="G3" tile="-1" cost="40"/>
 	<Hex name="G5" tile="0"/>
 	<Hex name="G7" tile="0"/>
@@ -50,20 +50,20 @@
 	<Hex name="G13" tile="-10" city="Richmond"/>
 	<Hex name="H2" tile="0"/>
     <Hex name="H4" tile="-10" city="Strasburg"/>
-	<Hex name="H6" tile="-18CHOO" orientation="4" city="Baltimore" label="OO" />
+	<Hex name="H6" tile="-7713" orientation="4" city="Baltimore" label="OO" />
 	<Hex name="H8" tile="-4000"/>
     <Hex name="H12" tile="0" cost="40"/>
     <Hex name="H14" tile="-901" orientation="3" value="30,40,50,60" city="Norfolk"/>
     <Hex name="I3" tile="0"/>
 	<Hex name="I5" tile="-1" cost="40"/>
 	<Hex name="I7" tile="0"/>
-	<Hex name="I9" tile="-18CH03" orientation="2" town="Delmarva Penninsula" value="30"/>
+	<Hex name="I9" tile="-7712" orientation="2" town="Delmarva Penninsula" value="30"/>
 	<Hex name="J2" tile="-10" city="Allentown"/>
-    <Hex name="J4" tile="-18CHOO" orientation="0" city="Philadelphia" label="OO"/>
+    <Hex name="J4" tile="-7713" orientation="0" city="Philadelphia" label="OO"/>
 	<Hex name="J6" tile="-10" city="Camden" cost="40"/>
 	<Hex name="J8" tile="0"/>
 	<Hex name="J10" tile="0"/>
-	<Hex name="K1" tile="-18CH02" orientation="0" value="30" town="Easton"/>
+	<Hex name="K1" tile="-7711" orientation="0" value="30" town="Easton"/>
 	<Hex name="K3" tile="-2" town="Trenton, Amboy"/>
 	<Hex name="K5" tile="-2" town="Princeton, Burlington"/>
 	<Hex name="K7" tile="-7" orientation="4"/>

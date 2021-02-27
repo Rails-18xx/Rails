@@ -29,7 +29,8 @@
         <CanUseSpecialProperties/>
     </CompanyType>
     <CompanyType name="Minor2" class="net.sf.rails.game.specific._1837.PublicCompany_1837"
-                 capitalisation="full" playerShareLimit="100">
+                 playerShareLimit="100">
+        <Capitalisation type="fixedCash" cash="180"/>
         <ShareUnit percentage="50"/>
         <Certificate type="President" shares="1"/>
         <Certificate shares="1" number="1"/>
@@ -41,8 +42,7 @@
         <Trains limit="2,2,1" mandatory="no"/>
         <CanUseSpecialProperties/>
     </CompanyType>
-    <CompanyType name="Major" class="net.sf.rails.game.specific._1837.PublicCompany_1837"
-                 capitalisation="incremental">
+    <CompanyType name="Major" class="net.sf.rails.game.specific._1837.PublicCompany_1837">
         <PoolPaysOut/>
         <Float percentage="50"/>
         <StockPrice par="yes"/>
@@ -310,6 +310,7 @@
              available="no" fgColour="000000" bgColour="FF0000">
         <Home hex="N20"/>
         <Float percentage="50"/>
+        <Capitalisation type="part" shares="9"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="7"/>
         <Certificate shares="1" number="1" available="false"/>
@@ -318,6 +319,7 @@
              available="no" fgColour="FFFFFF" bgColour="0000FF">
         <Home hex="C11"/>
         <Float percentage="50"/>
+        <Capitalisation type="part" shares="8"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="6"/>
         <Certificate shares="1" number="2" available="false"/>
@@ -326,6 +328,7 @@
              available="no" fgColour="FFFFFF" bgColour="000000">
         <Home hex="C33"/>
         <Float percentage="50"/>
+        <Capitalisation type="part" shares="9"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="7"/>
         <Certificate shares="1" number="1" available="false"/>
@@ -334,6 +337,7 @@
              available="no" fgColour="FFFFFF" bgColour="00B000">
         <Home hex="D36"/>
         <Float percentage="50"/>
+        <Capitalisation type="full"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="8"/>
     </Company>
@@ -341,6 +345,7 @@
              available="no" fgColour="000000" bgColour="FFFF00">
         <Home hex="E17"/>
         <Float percentage="50"/>
+        <Capitalisation type="part" shares="8"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="6"/>
         <Certificate shares="1" number="2" available="false"/>
@@ -349,6 +354,7 @@
              available="no" fgColour="000000" bgColour="88FF48">
         <Home hex="J36"/>
         <Float percentage="50"/>
+        <Capitalisation type="part" shares="8"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="6"/>
         <Certificate shares="1" number="2" available="false"/>
@@ -357,6 +363,7 @@
              available="no" fgColour="000000" bgColour="AAFFFF">
         <Home hex="F28"/>
         <Float percentage="50"/>
+        <Capitalisation type="part" shares="8"/>
         <Certificate type="President" shares="2"/>
         <Certificate shares="1" number="6"/>
         <Certificate shares="1" number="2" available="false"/>
@@ -370,6 +377,7 @@
                 <Attributes startspace="I4"/>
         </IfVariant>
         <Home hex="G17" city="4" mapDisplay="no"/>
+        <Capitalisation type="part" shares="5"/>
         <Certificate type="President" shares="1" status="reserved"/>
         <Certificate shares="1" number="4"/>
         <Certificate shares="1" number="5" available="false"/>
@@ -378,6 +386,7 @@
     <Company name="KK" longname="k.k. Staatsbahn" type="National" tokens="3" available="no"
              fgColour="FFFFFF" bgColour="C98A5C" startspace="I4" foundingCompany="K1">
         <Home hex="G17" city="1" mapDisplay="no"/>
+        <Capitalisation type="part" shares="7"/>
         <Certificate type="President" shares="1" status="reserved"/>
         <Certificate shares="1" number="6"/>
         <Certificate shares="1" number="3" available="false"/>
@@ -390,6 +399,7 @@
         <IfVariant value="Romoth">
             <Attributes startspace="K4"/>
         </IfVariant>
+        <Capitalisation type="part" shares="5"/>
         <Home hex="H22" city="1" mapDisplay="no"/>
         <Certificate type="President" shares="1" status="reserved"/>
         <Certificate shares="1" number="4"/>

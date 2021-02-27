@@ -781,11 +781,11 @@ SharesReleased,All,U1
 SharesReleased,All,U2
 SharesReleased,All,U3
 START_COMPANY_LOG,Charlie,U1,90,90,1,50,BANK
-FloatsWithCash,U1,90
+FloatsWithCash,U1,180
 START_COMPANY_LOG,Alice,U2,90,90,1,100,BANK
 FloatsWithCash,U2,90
 START_COMPANY_LOG,Bob,U3,90,90,1,50,BANK
-FloatsWithCash,U3,90
+FloatsWithCash,U3,180
 BUY_SHARE_LOG,Charlie,50,U1,IPO,90
 BUY_SHARE_LOG,Alice,50,U3,IPO,90
 SharesReleased,90%,BH
@@ -828,9 +828,9 @@ Has,S5,90
 Has,K1,90
 Has,K2,140
 Has,K3,90
-Has,U1,90
+Has,U1,180
 Has,U2,90
-Has,U3,90
+Has,U3,180
 Has,Alice,30
 Has,Bob,45
 Has,Charlie,20
@@ -974,16 +974,16 @@ Has,S5,0
 Has,K1,0
 Has,K2,0
 Has,K3,0
-Has,U1,0
+Has,U1,90
 Has,U2,0
-Has,U3,0
+Has,U3,90
 Has,Alice,100
 Has,Bob,75
 Has,Charlie,60
 StartStockRound,3
 HasPriority,Alice
 BUY_SHARE_LOG,Alice,10,BK,IPO,70
-FloatsWithCash,BK,700
+FloatsWithCash,BK,560
 BUY_SHARE_LOG,Bob,10,BK,IPO,70
 PASSES,Charlie
 PASSES,Alice
@@ -1010,10 +1010,10 @@ Has,S5,0
 Has,K1,0
 Has,K2,0
 Has,K3,0
-Has,U1,0
+Has,U1,90
 Has,U2,0
-Has,U3,0
-Has,BK,700
+Has,U3,90
+Has,BK,560
 Has,Alice,30
 Has,Bob,5
 Has,Charlie,60
@@ -1213,10 +1213,10 @@ Has,S5,25
 Has,K1,25
 Has,K2,30
 Has,K3,25
-Has,U1,30
+Has,U1,120
 Has,U2,0
-Has,U3,24
-Has,BK,250
+Has,U3,114
+Has,BK,110
 Has,Alice,248
 Has,Bob,178
 Has,Charlie,225
@@ -1227,7 +1227,7 @@ BUY_SHARE_LOG,Alice,10,MS,IPO,70
 BUY_SHARE_LOG,Bob,10,BK,IPO,70
 BUY_SHARE_LOG,Charlie,10,MS,IPO,70
 BUY_SHARE_LOG,Alice,10,MS,IPO,70
-FloatsWithCash,MS,700
+FloatsWithCash,MS,560
 BUY_SHARE_LOG,Bob,10,MS,IPO,70
 PASSES,Charlie
 BUY_SHARE_LOG,Alice,10,BK,IPO,70
@@ -1265,11 +1265,11 @@ Has,S5,25
 Has,K1,25
 Has,K2,30
 Has,K3,25
-Has,U1,30
+Has,U1,120
 Has,U2,0
-Has,U3,24
-Has,BK,335
-Has,MS,700
+Has,U3,114
+Has,BK,195
+Has,MS,560
 Has,Alice,38
 Has,Bob,38
 Has,Charlie,15
@@ -1431,10 +1431,9 @@ PRICE_MOVES_LOG,MS,70,C7,67,B7
 BuysTrain,MS,3,IPO,180
 BuysTrain,MS,2G,IPO,230
 FirstTrainBought,2G
-BuysTrain,MS,2G,IPO,230
  
 CompanyOperates,BK,Bob
-LaysTileAt,BK,25,B10,SE
+LaysTileAt,BK,26,C9,NW
 LAYS_TOKEN_ON,BK,E17,80 Hex E17 (Brünn)
 CompanyRevenue,BK,280
 CompanyDividesEarnings,BK,280,230,50
@@ -1443,7 +1442,6 @@ Payout,Alice,92,4,10
 Payout,Bob,92,4,10
 Payout,Charlie,46,2,10
 PRICE_MOVES_LOG,BK,67,B7,70,C7
-ExchangesTrain,BK,1G,2G,IPO,280
  
 EndOfOperatingRound,4.1
 ORWorthIncrease,Alice,4.1,408
@@ -1467,11 +1465,11 @@ Has,S5,60
 Has,K1,60
 Has,K2,75
 Has,K3,60
-Has,U1,80
+Has,U1,170
 Has,U2,40
-Has,U3,74
-Has,BK,25
-Has,MS,60
+Has,U3,164
+Has,BK,165
+Has,MS,150
 Has,Alice,440
 Has,Bob,325
 Has,Charlie,281
@@ -1509,15 +1507,15 @@ RECEIVES,MLB,30
 Payout,Alice,30,1,100
  
 CompanyOperates,ZKB,Charlie
-LaysTileAt,ZKB,5,H34,W
-CompanyRevenue,ZKB,75
-CompanyDividesEarnings,ZKB,75,50,25
-CompanySplits,ZKB,50
-RECEIVES,ZKB,25
-Payout,Charlie,25,1,100
+LaysTileAt,ZKB,405,J36,NE
+CompanyRevenue,ZKB,85
+CompanyDividesEarnings,ZKB,85,60,25
+CompanySplits,ZKB,60
+RECEIVES,ZKB,30
+Payout,Charlie,30,1,100
  
 CompanyOperates,SPB,Charlie
-LaysTileAt,SPB,404,H30,E
+LaysTileAt,SPB,404,H30,W
 CompanyRevenue,SPB,60
 CompanyDividesEarnings,SPB,60,40,20
 CompanySplits,SPB,40
@@ -1525,7 +1523,7 @@ RECEIVES,SPB,20
 Payout,Charlie,20,1,100
  
 CompanyOperates,LRB,Bob
-LaysTileAt,LRB,406,J26,SW
+LaysTileAtFor,LRB,9,I25,NW,50
 CompanyRevenue,LRB,65
 CompanyDividesEarnings,LRB,65,40,25
 CompanySplits,LRB,40
@@ -1549,18 +1547,18 @@ RECEIVES,EHS,25
 Payout,Bob,25,1,100
  
 CompanyOperates,S1,Charlie
-LaysTileAt,S1,205,I15,E
+LaysTileAt,S1,206,I15,W
 CompanyRevenue,S1,90
 CompanySplits,S1,90
 RECEIVES,S1,45
 Payout,Charlie,45,1,100
  
 CompanyOperates,S2,Alice
-LaysTileAt,S2,8,K11,NE
-CompanyRevenue,S2,30
-CompanySplits,S2,30
-RECEIVES,S2,15
-Payout,Alice,15,1,100
+LaysTileAt,S2,12,J16,NW
+CompanyRevenue,S2,60
+CompanySplits,S2,60
+RECEIVES,S2,30
+Payout,Alice,30,1,100
  
 CompanyOperates,S3,Bob
 CompanyRevenue,S3,70
@@ -1577,7 +1575,6 @@ Payout,Alice,35,1,100
 BuysTrain,S4,2,Pool,90
  
 CompanyOperates,S5,Bob
-LaysTileAt,S5,8,M3,NW
 CompanyRevenue,S5,70
 CompanySplits,S5,70
 RECEIVES,S5,35
@@ -1585,7 +1582,6 @@ Payout,Bob,35,1,100
 BuysTrain,S5,2,Pool,90
  
 CompanyOperates,K1,Charlie
-LaysTileAt,K1,87,F18,SW
 CompanyRevenue,K1,70
 CompanySplits,K1,70
 RECEIVES,K1,35
@@ -1599,18 +1595,18 @@ RECEIVES,K2,45
 Payout,Alice,45,1,100
  
 CompanyOperates,K3,Bob
-LaysTileAt,K3,412,F16,E
+LaysTileAt,K3,420,F16,SW
 CompanyRevenue,K3,70
 CompanySplits,K3,70
 RECEIVES,K3,35
 Payout,Bob,35,1,100
  
 CompanyOperates,U1,Charlie
-LaysTileAtFor,U1,402,G19,SW,50
 CompanyRevenue,U1,100
 CompanySplits,U1,100
 RECEIVES,U1,50
 Payout,Charlie,50,2,50
+BuysTrain,U1,3,IPO,180
  
 CompanyOperates,U2,Alice
 CompanyRevenue,U2,80
@@ -1619,62 +1615,66 @@ RECEIVES,U2,40
 Payout,Alice,40,1,100
  
 CompanyOperates,U3,Bob
-LaysTileAt,U3,9,H24,W
+LaysTileAt,U3,8,H24,SE
 CompanyRevenue,U3,100
 CompanySplits,U3,100
 RECEIVES,U3,50
 Payout,Alice,25,1,50
 Payout,Bob,25,1,50
+BuysTrain,U3,3,IPO,180
  
 CompanyOperates,BK,Bob
-LaysTileAt,BK,9,D20,W
-CompanyRevenue,BK,340
-CompanyDividesEarnings,BK,340,290,50
-CompanyPaysOutFull,BK,290
-Payout,Alice,116,4,10
-Payout,Bob,116,4,10
-Payout,Charlie,58,2,10
+LaysTileAt,BK,87,F18,SW
+CompanyRevenue,BK,280
+CompanyDividesEarnings,BK,280,230,50
+CompanyPaysOutFull,BK,230
+Payout,Alice,92,4,10
+Payout,Bob,92,4,10
+Payout,Charlie,46,2,10
 PRICE_MOVES_LOG,BK,70,C7,73,D7
+PresidentAddsCash,BK,Bob,15
+ExchangesTrain,BK,1G,3,IPO,230
+NewTrainAvailable,3,3+1
  
 CompanyOperates,MS,Charlie
-LaysTileAt,MS,8,D24,NW
-CompanyRevenue,MS,380
-CompanyDividesEarnings,MS,380,330,50
-CompanyPaysOutFull,MS,330
-Payout,Alice,66,2,10
-Payout,Bob,33,1,10
-Payout,Charlie,99,3,10
+LaysTileAt,MS,9,D20,W
+CompanyRevenue,MS,250
+CompanyDividesEarnings,MS,250,220,30
+CompanyPaysOutFull,MS,220
+Payout,Alice,44,2,10
+Payout,Bob,22,1,10
+Payout,Charlie,66,3,10
 PRICE_MOVES_LOG,MS,67,B7,70,C7
  
 EndOfOperatingRound,4.2
-ORWorthIncrease,Alice,4.2,510
-ORWorthIncrease,Bob,4.2,369
-ORWorthIncrease,Charlie,4.2,402
+ORWorthIncrease,Alice,4.2,479
+ORWorthIncrease,Bob,4.2,319
+ORWorthIncrease,Charlie,4.2,362
  
 EndOfOperatingRound,4.2
 Has,EOD,135
 Has,EKT,145
 Has,MLB,135
-Has,ZKB,145
+Has,ZKB,150
 Has,SPB,105
-Has,LRB,130
+Has,LRB,80
 Has,BB,75
 Has,EHS,120
 Has,S1,115
-Has,S2,50
+Has,S2,65
 Has,S3,0
 Has,S4,5
 Has,S5,5
 Has,K1,95
 Has,K2,120
 Has,K3,95
-Has,U1,80
+Has,U1,40
 Has,U2,80
-Has,U3,124
-Has,BK,75
-Has,MS,110
-Has,Alice,932
-Has,Bob,679
-Has,Charlie,668
+Has,U3,34
+Has,BK,0
+Has,MS,180
+Has,Alice,901
+Has,Bob,629
+Has,Charlie,628
 StartStockRound,5
 HasPriority,Bob

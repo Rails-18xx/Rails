@@ -234,7 +234,7 @@ public class OperatingRound_1837 extends OperatingRound {
         String errMsg = null;
         PublicCompany company;
         String companyName;
-        int amount;
+        int amount, directAmount;
         int revenueAllocation;
 
         // Dummy loop to enable a quick jump out.
@@ -269,6 +269,29 @@ public class OperatingRound_1837 extends OperatingRound {
                 errMsg =
                         LocalText.getText("AmountMustBeMultipleOf5",
                                 String.valueOf(amount));
+                break;
+            }
+
+            // Direct revenue must be non-negative multiple of 5,
+            // and at least 10 less than the total revenue
+            directAmount = action.getActualCompanyTreasuryRevenue();
+            if (directAmount < 0) {
+                errMsg =
+                        LocalText.getText("NegativeAmountNotAllowed",
+                                String.valueOf(amount));
+                break;
+            }
+            if (directAmount % 5 != 0) {
+                errMsg =
+                        LocalText.getText("AmountMustBeMultipleOf5",
+                                String.valueOf(amount));
+                break;
+            }
+            if (amount > 0 && amount - directAmount < 10) {
+                errMsg = LocalText.getText("WrongDirectRevenue",
+                        String.valueOf(directAmount),
+                        "10",
+                        String.valueOf(amount));
                 break;
             }
 

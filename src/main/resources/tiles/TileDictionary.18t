@@ -17918,9 +17918,13 @@ object TTilesWrapper
     end
     item
       Code = 915
-      LongName = '5 leg spider, 3 slots'
+      LongName = '5L spider 3C'
       Level = tlGray
       Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
         item
           Position1 = tpCenter
           Position2 = tp4SideC
@@ -17936,10 +17940,6 @@ object TTilesWrapper
         item
           Position1 = tpCenter
           Position2 = tp4SideF
-        end
-        item
-          Position1 = tpCenter
-          Position2 = tp4SideB
         end>
       Junctions = <
         item
@@ -17947,5 +17947,761 @@ object TTilesWrapper
           Revenue = 50
           RevenuePosition = tp3SideA
         end>
+    end
+    item
+      Code = -37001
+      LongName = 'Mine'
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+        end>
+    end
+    item
+      Code = -37002
+      LongName = 'Mine'
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCurve1LeftE
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCurve1LeftE
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tpCurve1LeftE
+          Revenue = 10
+          RevenuePosition = tp3CornerE
+        end>
+    end
+    item
+      Code = -37003
+      LongName = 'Mine'
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp4SideF
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+        end>
+    end
+    item
+      Code = -37007
+      LongName = 'T city'
+      Category = 'T'
+      Level = tlMapUpgradableToYellow
+      Connections = <>
+      Junctions = <
+        item
+          JunType = jtCity
+        end>
+    end
+    item
+      Code = -37008
+      LongName = 'X city'
+      Category = 'X'
+      Level = tlMapUpgradableToYellow
+      Connections = <>
+      Junctions = <
+        item
+          JunType = jtCity
+        end>
+    end
+    item
+      Code = -37009
+      LongName = 'green city'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 20
+        end>
+    end
+    item
+      Code = -37010
+      LongName = 'OO city'
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tp2CornerD
+          Position2 = tp2CornerD
+        end
+        item
+          Position1 = tp2CornerD
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp2CornerD
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp2SideF
+          Position2 = tp2SideF
+        end
+        item
+          Position1 = tp1SideF
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp1SideF
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerD
+          Revenue = 40
+          RevenuePosition = tp2SideB
+        end
+        item
+          JunType = jtCity
+          Position = tp1SideF
+          Revenue = 40
+          RevenuePosition = tp2SideB
+        end>
+    end
+    item
+      Code = -37011
+      LongName = 'X city'
+      Category = 'X'
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 30
+        end>
+    end
+    item
+      Code = -37012
+      LongName = 'Wien'
+      Category = 'Wien'
+      CategoryPosition = tp2CornerC
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tp2CornerB
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp2CornerD
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCurve2LeftF
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCurve2RightE
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerB
+          Revenue = 40
+          RevenuePosition = tpCenter
+        end
+        item
+          JunType = jtCity
+          Position = tp2CornerD
+          Revenue = 40
+          RevenuePosition = tpCenter
+        end
+        item
+          JunType = jtCity
+          Position = tpCurve2LeftF
+          Revenue = 40
+          RevenuePosition = tpCenter
+        end
+        item
+          JunType = jtCity
+          Position = tpCurve2RightE
+          Revenue = 40
+          RevenuePosition = tpCenter
+        end>
+    end
+    item
+      Code = -37103
+      LongName = 'yellow town'
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tp2CornerA
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp2CornerA
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp2CornerA
+          Revenue = 10
+          RevenuePosition = tpCenter
+        end>
+    end
+    item
+      Code = -37109
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tp4SideB
+          Position2 = tp4SideE
+        end>
+      Junctions = <>
+    end
+    item
+      Code = -37123
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp4SideA
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp4SideA
+          Position2 = tp4SideE
+        end>
+      Junctions = <>
+    end
+    item
+      Code = -37156
+      LongName = 'double town'
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tpCurve2RightF
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCurve2RightF
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCurve2LeftC
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCurve2LeftC
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tpCurve2RightF
+          Revenue = 10
+        end
+        item
+          JunType = jtWhistlestop
+          Position = tpCurve2LeftC
+          Revenue = 10
+          RevenuePosition = tp3CornerC
+        end>
+    end
+    item
+      Code = -37158
+      LongName = 'town'
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tp1SideA
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp1SideA
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp1SideA
+          Revenue = 10
+          RevenuePosition = tp1CornerE
+        end>
+    end
+    item
+      Code = -37206
+      LongName = 'green city'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 30
+        end>
+    end
+    item
+      Code = -37402
+      LongName = 'X city'
+      Category = 'X'
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 20
+        end>
+    end
+    item
+      Code = -42
+      Connections = <
+        item
+          Position1 = tp4SideA
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tp4SideF
+          Position2 = tp4SideA
+        end>
+      Junctions = <>
+    end
+    item
+      Code = 7701
+      LongName = '18Ches DC'
+      Category = 'DC'
+      CategoryPosition = tp2CornerF
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 30
+        end>
+    end
+    item
+      Code = 7702
+      LongName = '18Ches DC'
+      Category = 'DC'
+      CategoryPosition = tp2SideA
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 40
+        end>
+    end
+    item
+      Code = 7703
+      LongName = '18Ches OO'
+      Category = 'OO'
+      CategoryPosition = tp3CornerA
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCurve2RightB
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCurve2RightB
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCurve2RightE
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCurve2RightE
+          Position2 = tp4SideC
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tpCurve2RightB
+          Revenue = 40
+          RevenuePosition = tp3CornerC
+        end
+        item
+          JunType = jtCity
+          Position = tpCurve2RightE
+          Revenue = 40
+          RevenuePosition = tp3CornerF
+        end>
+    end
+    item
+      Code = 7704
+      LongName = '18Ches OO'
+      Category = 'OO'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tp2CornerE
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tp2CornerE
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp2CornerA
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp2CornerA
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2CornerE
+          Revenue = 40
+          RevenuePosition = tp2CornerB
+        end
+        item
+          JunType = jtCity
+          Position = tp2CornerA
+          Revenue = 40
+          RevenuePosition = tp2CornerD
+        end>
+    end
+    item
+      Code = 7705
+      LongName = '18Ches OO'
+      Category = 'OO'
+      CategoryPosition = tp3CornerA
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCurve2RightB
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCurve2RightB
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCurve2LeftE
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCurve2LeftE
+          Position2 = tp4SideA
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tpCurve2LeftE
+          Revenue = 40
+          RevenuePosition = tp3CornerE
+        end
+        item
+          JunType = jtCity
+          Position = tpCurve2RightB
+          Revenue = 40
+          RevenuePosition = tp3CornerC
+        end>
+    end
+    item
+      Code = 7706
+      LongName = '18Ches DC'
+      Category = 'DC'
+      CategoryPosition = tp3CornerB
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtTripleCity
+          Revenue = 70
+        end>
+    end
+    item
+      Code = 7707
+      LongName = '18Ches OO'
+      Category = 'OO'
+      CategoryPosition = tp3SideA
+      Level = tlBrown
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 50
+          RevenuePosition = tp3CornerE
+        end>
+    end
+    item
+      Code = 7708
+      LongName = '18Ches DC'
+      Category = 'DC'
+      Level = tlGray
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtQuadrupleCity
+          Revenue = 100
+        end>
+    end
+    item
+      Code = 7709
+      LongName = '18Ches'
+      Level = tlGray
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtTripleCity
+          Revenue = 70
+        end>
+    end
+    item
+      Code = -7710
+      LongName = '18Ches'
+      Connections = <
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp4SideD
+          Position2 = tp4SideC
+        end>
+      Junctions = <>
+    end
+    item
+      Code = -7711
+      LongName = '18Ches'
+      Connections = <
+        item
+          Position1 = tp2CornerE
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp2CornerE
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp2CornerE
+          Revenue = 30
+          RevenuePosition = tp3CornerB
+        end>
+    end
+    item
+      Code = -7712
+      LongName = '18Ches'
+      Connections = <
+        item
+          Position1 = tp1SideF
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tp1SideF
+          Position2 = tp4SideE
+        end>
+      Junctions = <
+        item
+          JunType = jtWhistlestop
+          Position = tp1SideF
+          Revenue = 30
+          RevenuePosition = tp3CornerB
+        end>
+    end
+    item
+      Code = -7713
+      LongName = '18Ches OO'
+      Category = 'OO'
+      CategoryPosition = tp3CornerA
+      Level = tlMapUpgradableToGreen
+      Connections = <
+        item
+          Position1 = tp2SideE
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tp2SideB
+          Position2 = tp4SideA
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2SideE
+          Revenue = 30
+          RevenuePosition = tpCurve1RightF
+        end
+        item
+          JunType = jtCity
+          Position = tp2SideB
+          Revenue = 30
+          RevenuePosition = tpCurve1RightC
+        end>
+    end
+    item
+      Code = -4000
+      Connections = <>
+      Junctions = <>
     end>
 end
