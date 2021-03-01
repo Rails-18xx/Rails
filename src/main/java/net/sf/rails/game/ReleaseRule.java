@@ -74,7 +74,6 @@ public class ReleaseRule {
         List<PublicCertificate> certsToMove = new ArrayList<>();
         for (PublicCertificate cert : unavailable.getCertificates(company)) {
             if (cert.isInitiallyAvailable()) {
-                Util.breakIf(cert.getCompany().getId(), "U1,U3");
                 certsToMove.add(cert);
                 share = cert.getShare();
                 totalShare += share;

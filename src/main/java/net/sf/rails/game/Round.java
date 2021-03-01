@@ -297,4 +297,9 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
         return wasInterrupted.value();
     }
 
+    /** Stub to allow lower subclasses to provide their own window title */
+    public String getOwnWindowTitle() {
+        return null;
+    }
+
 }

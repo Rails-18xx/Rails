@@ -76,6 +76,7 @@ public class StockRound_1837 extends StockRound {
 
     @Override
     protected void setGameSpecificActions() {
+        /*
         if (!mayCurrentPlayerBuyAnything()) return;
 
         List<PublicCompany> comps = companyManager.getAllPublicCompanies();
@@ -101,7 +102,7 @@ public class StockRound_1837 extends StockRound {
         for (PublicCompany minor : minors) {
             possibleActions.add(new MergeCompanies(minor,
                     targetRelation.get(minor), false));
-        }
+        }*/
     }
 
     protected boolean setTrainDiscardActions() {
@@ -361,7 +362,7 @@ public class StockRound_1837 extends StockRound {
             type = comp.getType().getId();
             if (type.equals("Coal")) {
                 if (comp.isClosed()) continue;
-                if (comp.getRelatedNationalCompany().equals(company.getId())) {
+                if (comp.getRelatedPublicCompanyName().equals(company.getId())) {
                     minors.add(comp);
 
                 }
@@ -381,7 +382,7 @@ public class StockRound_1837 extends StockRound {
             type = comp.getType().getId();
             if (type.equals("Coal")) {
                 if (comp.isClosed()) continue;
-                if (comp.getRelatedNationalCompany().equals(company.getId())) {
+                if (comp.getRelatedPublicCompanyName().equals(company.getId())) {
                     minors.add(comp);
                     //The president of a Major Company is the first one to get the chance to exchange a share.
                     if (((GameManager_1837) gameManager).getPlayerToStartCERound()== null) {

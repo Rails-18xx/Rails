@@ -1,23 +1,17 @@
 package net.sf.rails.game.specific._1837;
 
 import net.sf.rails.common.GameOption;
+import net.sf.rails.game.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.GuiDef;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.Phase;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.Round;
-import net.sf.rails.game.StartPacket;
-import net.sf.rails.game.StartRound;
-import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.financial.NationalFormationRound;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.BooleanState;
 
+import java.util.List;
 
 
 /**
@@ -94,17 +88,22 @@ public class GameManager_1837 extends GameManager {
             //super.nextRound(round);
             getCurrentRound().setPossibleActions();
         } else if ((round instanceof StockRound_1837) || (round instanceof OperatingRound_1837)) {
-            //Check if a Major is started and if so ask the Owner of the Coal Company to fold
-            // FIXME: This does not seem right: if any unfolded coal companies remain,
-            // the CER should be run before *all* stock and operating rounds, which is not the case yet.
-            // Giving a player priority is only relevant just after floating his major company,
-            // but merging remains optional until all certs are sold or phase 5 is reached.
-            if (playerToStartCERound.value() != null) {
-                if (round instanceof StockRound_1837) setCoalRoundFollowedByOR(true);
+            // If any mergeable coal companies exist, start a CoalExchangeRound (CER)
+            List<Company> possibleMergers =
+                    getRoot().getCompanyManager().getCompaniesByType("Coal");
+            boolean runCER = false;
+            for (Company coalComp : possibleMergers) {
+                if (!coalComp.isClosed()
+                        && ((PublicCompany) coalComp).getRelatedPublicCompany().hasFloated()) {
+                    runCER = true;
+                    break;
+                }
+            }
+            if (runCER) {
+                if (round instanceof StockRound_1837) CoalRoundFollowedByOR.set(true);
                 cerNumber.add(1);
                 createRound(CoalExchangeRound.class, "CoalExchangeRound " + cerNumber.value())
-                        .start(playerToStartCERound.value());
-                playerToStartCERound.set(null);
+                        .start(cerNumber.value());
             } else {
                 super.nextRound(round);
             }

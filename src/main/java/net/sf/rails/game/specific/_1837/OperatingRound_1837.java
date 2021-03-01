@@ -644,7 +644,7 @@ public class OperatingRound_1837 extends OperatingRound {
             type = comp.getType().getId();
             if (type.equals("Coal")) {
                 if (comp.isClosed()) continue;
-                if (comp.getRelatedNationalCompany().equals(company.getId())) {
+                if (comp.getRelatedPublicCompanyName().equals(company.getId())) {
                     minors.add(comp);
                     //The president of a Major Company is the first one to get the chance to exchange a share.
                     if (((GameManager_1837) gameManager).getPlayerToStartCERound()== null) {
