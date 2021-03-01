@@ -196,7 +196,7 @@ public class StockRound_1835 extends StockRound {
 
 	@Override
 	protected void setPriority(String string) {
-		if (string.equals("BuyCert")) {
+		if (string.matches("BuyCert|StartCompany")) {
 			super.setPriority(string);
 		}
 	}
