@@ -70,7 +70,7 @@ dependencies {
     implementation 'org.dockingframes:docking-frames-common:1.1.1'
     implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.3'
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
-    implementation 'org.apache.commons:commons-lang3:3.11'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.apache.commons:commons-text:1.9'
     // https://www.jetbrains.com/help/idea/annotating-source-code.html
     implementation 'org.jetbrains:annotations:20.1.0'
