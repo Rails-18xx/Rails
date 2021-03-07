@@ -126,9 +126,20 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
      * Set the operating companies in their current acting order
      */
     // What is the reason of that to have that here? => move to OR?
+    // EV: No, also used in 1837/CoalExchangeRound
     // called only internally
     public List<PublicCompany> setOperatingCompanies() {
         return setOperatingCompanies(null, null);
+    }
+
+    public List<PublicCompany> setOperatingCompanies (String type) {
+        List<PublicCompany> selectedCompanies = new ArrayList<>();
+        for (PublicCompany comp : setOperatingCompanies()) {
+            if (type.equals(comp.getType())) {
+                selectedCompanies.add (comp);
+            }
+        }
+        return selectedCompanies;
     }
 
     // What is the reason of that to have that here => move to OR?

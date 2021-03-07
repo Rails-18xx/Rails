@@ -546,10 +546,13 @@ public class GameUIManager implements DialogOwner {
                 }
 
             } else if (StockRound.class.isAssignableFrom(currentRoundType)) {
-                log.debug("UI entering Stock Round {}", currentRoundName);
+                log.debug("UI entering Stock Round type {}", currentRoundName);
+                // Not sure if this is the right place
+                // but it is required for the 1837 CoalExchangeRound
+                statusWindow.getGameStatus().initGameSpecificActions ();
 
             } else if (OperatingRound.class.isAssignableFrom(currentRoundType)) {
-                log.debug("UI entering Operating Round {}", currentRoundName);
+                log.debug("UI entering Operating Round type {}", currentRoundName);
                 orUIManager.initOR((OperatingRound) currentRound);
 
             } else if (SwitchableUIRound.class.isAssignableFrom(currentRoundType)) {

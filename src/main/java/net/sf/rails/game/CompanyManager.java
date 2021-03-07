@@ -296,6 +296,16 @@ public class CompanyManager extends RailsManager implements Configurable {
         return new ArrayList<>(mCompaniesByTypeAndName.get(type).values());
     }
 
+    public List<PublicCompany> getPublicCompaniesByType (String type) {
+        List<PublicCompany> pubComps = new ArrayList<>();
+        for (Company comp : getCompaniesByType (type)) {
+            if (comp instanceof PublicCompany) {
+                pubComps.add ((PublicCompany)comp);
+            }
+        }
+        return pubComps;
+    }
+
     public void closeAllPrivates() {
         for (PrivateCompany priv : lPrivateCompanies) {
             if (priv.isCloseable()) // check if private is closeable

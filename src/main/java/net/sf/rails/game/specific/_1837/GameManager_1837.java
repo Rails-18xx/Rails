@@ -59,52 +59,28 @@ public class GameManager_1837 extends GameManager {
             //round decision down to this class and cant call the superclass :(
 
             if (this.CoalRoundFollowedByOR.value()) {
+                // Start the first OR after an SR.
                 Phase currentPhase = getRoot().getPhaseManager().getCurrentPhase();
                 if (currentPhase == null) log.error("Current Phase is null??", new Exception(""));
                 numOfORs.set(currentPhase.getNumberOfOperatingRounds());
-                log.info("Phase={} ORs={}", currentPhase.toText(), numOfORs);
+                log.debug("Phase={} ORs={}", currentPhase.toText(), numOfORs.value());
 
                 // Create a new OperatingRound (never more than one Stock Round)
                 // OperatingRound.resetRelativeORNumber();
                 relativeORNumber.set(1);
                 startOperatingRound(true);
+            } else if (relativeORNumber.value() < numOfORs.value()) {
+                // There will be another OR
+                relativeORNumber.add(1);
+                startOperatingRound(true);
             } else {
-                if (relativeORNumber.add(1) <= numOfORs.value()) {
-                    // There will be another OR
-                    startOperatingRound(true);
-                } else {
-                    if (gameOverPending.value()
-                            && gameEndWhen == GameEnd.AFTER_SET_OF_ORS) {
-                        finishGame();
-                    } else {
-                        // FIXME: This isn't a valid cast...
-                        ((OperatingRound) round).checkForeignSales();
-                        startStockRound();
-                    }
-                }
-
+                startStockRound();
             }
 
-            //super.nextRound(round);
             getCurrentRound().setPossibleActions();
-        } else if ((round instanceof StockRound_1837) || (round instanceof OperatingRound_1837)) {
-            // If any mergeable coal companies exist, start a CoalExchangeRound (CER)
-            List<Company> possibleMergers =
-                    getRoot().getCompanyManager().getCompaniesByType("Coal");
-            boolean runCER = false;
-            for (Company coalComp : possibleMergers) {
-                if (!coalComp.isClosed()
-                        && ((PublicCompany) coalComp).getRelatedPublicCompany().hasFloated()) {
-                    runCER = true;
-                    break;
-                }
-            }
-            if (runCER) {
-                if (round instanceof StockRound_1837) CoalRoundFollowedByOR.set(true);
-                cerNumber.add(1);
-                createRound(CoalExchangeRound.class, "CoalExchangeRound " + cerNumber.value())
-                        .start(cerNumber.value());
-            } else {
+
+        } else if (round instanceof StockRound_1837 || round instanceof OperatingRound_1837) {
+            if (!checkAndRunCER(round)) {
                 super.nextRound(round);
             }
         } else if (round instanceof NationalFormationRound) {
@@ -136,6 +112,26 @@ public class GameManager_1837 extends GameManager {
             }
         }
 
+    }
+
+    private boolean checkAndRunCER(Round round) {
+        List<PublicCompany> coalCompanies =
+                getRoot().getCompanyManager().getPublicCompaniesByType("Coal");
+        boolean runCER = false;
+        for (PublicCompany coalComp : coalCompanies) {
+            if (!coalComp.isClosed()
+                    && coalComp.getRelatedPublicCompany().hasFloated()) {
+                runCER = true;
+                break;
+            }
+        }
+        if (runCER) {
+            CoalRoundFollowedByOR.set(round instanceof StockRound_1837);
+            cerNumber.add(1);
+            createRound(CoalExchangeRound.class, "CoalExchangeRound " + cerNumber.value())
+                    .start(cerNumber.value());
+        }
+        return runCER;
     }
 
     /* (non-Javadoc)

@@ -14,6 +14,7 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.Train;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.GenericState;
@@ -30,10 +31,10 @@ public class CoalExchangeRound extends StockRound_1837 {
 
     private HashMultimapState<PublicCompany, PublicCompany> coalCompsPerMajor;
     private HashMultimapState<Player, PublicCompany> coalCompsPerPlayer;
+    private HashMultimapState<PublicCompany, Train> discardableTrainsPerMajor; // TODO
     private ArrayListState<PublicCompany> currentMajorOrder;
     private ArrayListState<Player> currentPlayerOrder;
     private GenericState<PublicCompany> currentMajor;
-    private List<PublicCompany> mergingCompanies;
     private boolean reachedPhase5;
     private int cerNumber;
 
@@ -61,11 +62,14 @@ public class CoalExchangeRound extends StockRound_1837 {
         coalCompsPerPlayer = HashMultimapState.create(this, "CoalsPerPlayer_"+getId());
         currentMajorOrder = new ArrayListState (this, "MajorOrder_"+getId());
         currentPlayerOrder = new ArrayListState(this, "PlayerOrder_"+getId());
+        currentMajor = new GenericState<>(this, "CurrentMajor_"+getId());
         reachedPhase5 = getRoot().getPhaseManager().hasReachedPhase("5");
 
         init();
 
-        setPossibleActions();
+        if (currentMajorOrder.isEmpty()) {
+            finishRound();
+        }
     }
 
     /**
@@ -77,15 +81,14 @@ public class CoalExchangeRound extends StockRound_1837 {
      *  but Steve Thomas has issued a clarification to the same effect.
      */
     private void init() {
-        List<PublicCompany> comps = companyManager.getAllPublicCompanies();
+        List<PublicCompany> comps = companyManager.getPublicCompaniesByType("Coal");
         HashMultimap<Player, PublicCompany> mergingMinors = HashMultimap.create();
         String type;
 
         // Find all mergeable coal companies,
         // and register these per related major company and player.
         for (PublicCompany comp : comps) {
-            type = comp.getType().getId();
-            if (!comp.isClosed() && type.equals("Coal")) {
+            if (!comp.isClosed()) {
                 PublicCompany major = companyManager
                         .getPublicCompany(comp.getRelatedPublicCompanyName());
                 if (majorMustMerge(major)) {
@@ -119,7 +122,7 @@ public class CoalExchangeRound extends StockRound_1837 {
             }
          }
 
-        // Put the majors in the operating order
+        // Put the majors in the operating order to initiate voluntary mergers
         for (PublicCompany major : setOperatingCompanies()) {
             if (coalCompsPerMajor.containsKey(major)) {
                 currentMajorOrder.add(major);
@@ -143,6 +146,7 @@ public class CoalExchangeRound extends StockRound_1837 {
 
         if (action instanceof MergeCompanies) {
             return executeMerge ((MergeCompanies) action);
+
         } else if (action instanceof NullAction
                 && ((NullAction)action).getMode() == NullAction.Mode.DONE) {
             return done((NullAction)action, action.getPlayerName(), false);
@@ -152,12 +156,23 @@ public class CoalExchangeRound extends StockRound_1837 {
     }
 
     public boolean executeMerge (MergeCompanies action) {
-        return mergeCompanies(action.getMergingCompany(), action.getSelectedTargetCompany());
+        boolean result =
+                mergeCompanies(action.getMergingCompany(), action.getSelectedTargetCompany());
+        if (result) {
+            coalCompsPerPlayer.remove(currentPlayer, action.getMergingCompany());
+            if (coalCompsPerPlayer.get(currentPlayer).isEmpty()) {
+                if (!nextPlayer()) {
+                    finishRound();
+                }
+            }
+        }
+        return result;
     }
 
     @Override
     public boolean setPossibleActions() {
 
+        possibleActions.clear();
         if (discardingTrains.value()) {
             return setTrainDiscardActions();
         } else {
@@ -172,38 +187,31 @@ public class CoalExchangeRound extends StockRound_1837 {
         //    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
         //    return true;
         //}
-        List<PublicCompany> minors = new ArrayList<>();
+        //List<PublicCompany> minors = new ArrayList<>();
 
-        // Pick the first remaining major company that has minors to merge
-        for (PublicCompany major : currentMajorOrder) {
-            // Determine the player sequence, president first
-            // Search who owns the coal companies related to that major
-            for (Player player : currentPlayerOrder.view()) {
-                for (PublicCompany minor : coalCompsPerMajor.get(major)) {
-                    if (player == minor.getPresident()) {
-                        minors.add(minor);
-                    }
+        // If there is anything to do, find the first player to merge into the first major company.
+        if (nextPlayer()) {
+            Player player = currentPlayer;
+            // Get the mergeable minors of the current major
+            for (PublicCompany minor : coalCompsPerMajor.get(currentMajor.value())) {
+                if (player == minor.getPresident()) {
+                    //minors.add(minor);
+                    possibleActions.add(new MergeCompanies(minor, currentMajor.value(), false));
                 }
-                if (!minors.isEmpty()) break;
             }
-            if (!minors.isEmpty()) {
-                Player playerToAct = minors.get(0).getPresident();
-                for (PublicCompany minor : minors){
-                    possibleActions.add(new MergeCompanies(minor, major, false));
-                }
-                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
-                playerManager.setCurrentPlayer(playerToAct);
-                return true;
-            }
+            // It's optional, so pass is allowed
+            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
+            return true;
+        } else {
+            return false;
         }
-
-
-/**
-* we need to make sure that everyone is asked who has a share of a minor that is corresponding to the floated Major..
-*/
-        return false;
     }
 
+
+    /**
+     * Find the next major company that is related to mergeable coal companies.
+     * @return True if such a company is found. If not, the round is finished.
+     */
     private boolean nextMajorCompany () {
         if (currentMajorOrder.isEmpty()) {
             return false;
@@ -217,46 +225,59 @@ public class CoalExchangeRound extends StockRound_1837 {
             for (Player player : playerManager.getNextPlayersAfter(
                     president, true, false)) {
                 for (PublicCompany coalComp : coalCompsPerMajor) {
-                    if (!coalComp.isClosed()) {
-                        currentPlayerOrder.add(player);
+                    if (!coalComp.isClosed() && player == coalComp.getPresident()) {
+                         currentPlayerOrder.add(player);
+                         // Once in the list is enough
+                         break;
                     }
                 }
             }
 
+            // Select the first player to act with the new major
             return nextPlayer();
         }
     }
 
+    /**
+     * Find the next player entitled to optionally merge a coal company.
+     * This process includes selecting the next major company in the OR sequence.
+     * @return True if such a player has been found.
+     */
     private boolean nextPlayer() {
         if (currentPlayerOrder.isEmpty()) {
+            // No more players for this major, then this major is done
+            currentMajorOrder.remove(currentMajor.value());
+            // Find the next one, if any
             return nextMajorCompany();
         } else {
+            // Find the next player to act with the current major
             Player nextPlayer = currentPlayerOrder.get(0);
             setCurrentPlayer(nextPlayer);
             return true;
         }
     }
 
-
-
     @Override
-    // Autopassing does not apply here
     public boolean done(NullAction action, String playerName, boolean hasAutopassed) {
 
-        for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
-            if ((comp.getType().getId().equals("Coal")) && (!comp.isClosed()) && (companyManager.getPublicCompany(comp.getRelatedPublicCompanyName()).hasFloated())) {
+        // Autopassing does not apply here
+        ReportBuffer.add(this, LocalText.getText("PASSES",
+                playerName));
 
-                    finishTurn();
-                    return true;
-            }
+        // Remove the player and his not chosen player actions
+        // from the action list of the current major
+        currentPlayerOrder.remove(currentPlayer);
+
+        // Is there another major, and if so, who is the next player?
+        if (!nextPlayer()) {
+            // Nobody, then the round ends
+            finishRound();
         }
-
-        finishRound();
         return true;
     }
 
     @Override
-    protected void initPlayer() {
+    protected void initPlayer() {  // Still used?
 
         currentPlayer = playerManager.getCurrentPlayer();
         hasActed.set(false);
@@ -270,7 +291,7 @@ public class CoalExchangeRound extends StockRound_1837 {
         ReportBuffer.add(this, " ");
         ReportBuffer.add(
                 this,
-                LocalText.getText("END_CoalExchangeRound",
+                LocalText.getText("EndOfCoalExchangeRound",
                         String.valueOf(getCoalExchangeRoundNumber())));
 
         if (discardingTrains.value()) {

@@ -611,7 +611,7 @@ public class OperatingRound_1837 extends OperatingRound {
     }
 
 
-
+    // Can probably be removed
     @Override
     protected void finishRound() {
         ReportBuffer.add(this, " ");
@@ -624,17 +624,17 @@ public class OperatingRound_1837 extends OperatingRound {
 //                if (findStartingPlayerForCoalExchange(company)) exchangedCoalCompanies.set(true);
 //                {}
 
-        }
-        else {
-            ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
-        }
+            } else {
+                ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
+            }
 
 
-    }
+        }
         super.finishRound();
 
     }
 
+    // No longer used
     private boolean findStartingPlayerForCoalExchange(PublicCompany company) {
         List<PublicCompany> comps = companyManager.getAllPublicCompanies();
         List<PublicCompany> minors = new ArrayList<>();

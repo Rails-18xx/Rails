@@ -160,7 +160,7 @@ public class StockRound_1837 extends StockRound {
         // TODO Validation to be added?
         if (major != null) {
             cert = unavailable.findCertificate(major, false);
-                cashDestination = major;
+            cashDestination = major;
         }
         //TODO: what happens if the major hasnt operated/founded/Started sofar in the FinalCoalExchangeRound ?
 
@@ -178,22 +178,33 @@ public class StockRound_1837 extends StockRound {
             major.transferAssetsFrom(minor);
         }
 
-        minor.setClosed();
 
         if (major.getNumberOfTrains() > major.getCurrentTrainLimit()
-            && !compWithExcessTrains.contains(major)) {
+                && !compWithExcessTrains.contains(major)) {
             compWithExcessTrains.add(major);
+            // TODO: only transferred trains from a merger may be discarded
         }
 
+        boolean autoMerge = (currentPlayer == null);
+        Player minorPres = minor.getPresident();
+
         ReportBuffer.add(this, "");
-        ReportBuffer.add(this, LocalText.getText("MERGE_MINOR_LOG",
-                currentPlayer.getId(), minor.getId(), major.getId(),
-                Bank.format(this, minorCash), minorTrains));
+        if (autoMerge) {
+            ReportBuffer.add(this, LocalText.getText("AutoMergeMinorLog",
+                    minor.getId(), major.getId(),
+                    Bank.format(this, minorCash), minorTrains));
+        } else {
+            ReportBuffer.add(this, LocalText.getText("MERGE_MINOR_LOG",
+                    minorPres, minor.getId(), major.getId(),
+                    Bank.format(this, minorCash), minorTrains));
+        }
         // FIXME: CHeck if this still works correctly
         ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
-                currentPlayer.getId(), cert.getShare(), major.getId(),
+                minorPres, cert.getShare(), major.getId(),
                 cert.getOwner().getId(), minor.getId()));
-        cert.moveTo(currentPlayer);
+        cert.moveTo(minorPres);
+
+        minor.setClosed();
         ReportBuffer.add(this, LocalText.getText("MinorCloses", minor.getId()));
         checkFlotation(major);
 
@@ -203,7 +214,8 @@ public class StockRound_1837 extends StockRound {
             companyBoughtThisTurnWrapper.set(major);
 
             // If >60% shares owned, lift sell obligation this round.
-            if (currentPlayer.getPortfolioModel().getShare(major) > GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)) {
+            if (minorPres.getPortfolioModel().getShare(major)
+                    > GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)) {
                 setSellObligationLifted(major);
             }
 

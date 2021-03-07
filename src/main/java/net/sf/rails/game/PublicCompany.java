@@ -1177,7 +1177,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     /**
      * Reinitialize a company, i.e. close it and make the shares available for a new company start.
-     * IMplemented rules are now as in 18EU.
+     * Implemented rules are now as in 18EU.
      * TODO Will see later if this is generic enough.
      */
     protected void reinitialise() {
