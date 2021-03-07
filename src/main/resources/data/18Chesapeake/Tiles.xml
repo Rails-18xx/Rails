@@ -370,18 +370,18 @@
 	<Tile colour="yellow" id="-7713" label="OO">
 	<Station id="city2" value="30" type="City" position="302" slots="1"/>
 	<Station id="city1" value="30" type="City" position="002" slots="1"/>
-	<Track to="side0" from="city1" gauge="normal"/>
-	<Track to="side3" from="city2" gauge="normal"/>
+	<Track  from="city1" gauge="normal" to="side0"/>
+	<Track  from="city2" gauge="normal" to="side3"/>
 	</Tile>
 	<Tile colour="fixed" id="-7711">
-	<Station id="city1" value="30" type="Town" position="252"></Station>
-	<Track to="side2" gauge="normal" from="city1"></Track>
-	<Track to="side1" gauge="normal" from="city1"></Track>
+	<Station id="city1" value="30" type="Town" position="352"></Station>
+	<Track  gauge="normal" from="city1" to="side3"></Track>
+	<Track gauge="normal" from="city1" to="side4" ></Track>
 	</Tile>
 	<Tile colour="fixed" id="-7712">
 	<Station id="city1" value="30" type="Town" position="401"></Station>
-	<Track to="side3" gauge="normal" from="city1"></Track>
-	<Track to="side0" gauge="normal" from="city1"></Track>
+	<Track from="city1" gauge="normal" to="side3" ></Track>
+	<Track from="city1" gauge="normal" to="side0"></Track>
 	</Tile>
 </Tiles>
 
