@@ -7,7 +7,7 @@ PlayerCash,475
 BankHas,10100
 StartOfPhase,2
 BankSizeIs,10100
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,m4
 BuysItemFor,m4,NF,100
 ALSO_GETS,m4,CERT_NAME,BY,10

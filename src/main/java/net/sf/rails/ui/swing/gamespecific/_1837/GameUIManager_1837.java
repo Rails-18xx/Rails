@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import net.sf.rails.game.specific._1837.LayBaseToken_1837;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rails.game.action.DiscardTrain;
 import rails.game.action.MergeCompanies;
 import rails.game.specific._1837.FoldIntoHungary;
@@ -26,11 +29,11 @@ public class GameUIManager_1837 extends GameUIManager {
     public static final String START_HUNGARY_DIALOG = "StartHungary";
     public static final String MERGE_INTO_HUNGARY_DIALOG = "MergeIntoHungary";
     public static final String SELECT_CONVERTING_MINOR = "SelectConvertingMinor";
-    public static final String SELECT_MERGING_MAJOR = "SelectMergingMajor";
+    public static final String SELECT_MERGING_MAJOR = "SelectMergingMajor"; // Not used??
     public static final String SELECT_MERGING_MINOR = "SelectMergingMinor";
+    public static final String SELECT_EXCHANGED_TOKENS = "SelectExchangedTokens";
 
-
-
+    private static final Logger log = LoggerFactory.getLogger(GameUIManager_1837.class);
 
     public GameUIManager_1837() {
     }
@@ -131,6 +134,7 @@ public class GameUIManager_1837 extends GameUIManager {
         } else if (SELECT_MERGING_MAJOR.equals(key)) {
 
             // *** Should no longer be used
+            log.warn("Not expected here: {}", SELECT_MERGING_MAJOR);
 
             // A major company has been selected (or not) to merge a minor into.
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
@@ -143,21 +147,11 @@ public class GameUIManager_1837 extends GameUIManager {
             PublicCompany major = action.getTargetCompanies().get(choice);
             action.setSelectedTargetCompany(major);
 
-            if (major != null && action.canReplaceToken(choice)) {
-
-                boolean replaceToken =
-                        JOptionPane.showConfirmDialog(statusWindow, LocalText.getText(
-                                "WantToReplaceToken",
-                                minor.getId(),
-                                major.getId() ),
-                                LocalText.getText("PleaseSelect"),
-                                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
-                action.setReplaceToken(replaceToken);
-            }
-
         } else if (SELECT_CONVERTING_MINOR.equals(key)) {
 
             // **** No longer used
+            log.warn("Not expected here: {}", SELECT_CONVERTING_MINOR);
+
             // A minor has been selected (or not) to merge into a starting company before phase 6.
             RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
             StartCompany_18EU action = (StartCompany_18EU) currentDialogAction;
@@ -167,6 +161,17 @@ public class GameUIManager_1837 extends GameUIManager {
             } else {
                 PublicCompany minor = action.getMinorsToMerge().get(choice);
                 action.setChosenMinor(minor);
+            }
+
+        } else if (SELECT_EXCHANGED_TOKENS.equals(key)) {
+
+            CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
+            LayBaseToken_1837 action = (LayBaseToken_1837) currentDialogAction;
+            int numberOfOptions = action.getMinors().size();
+            boolean[] exchanged = dialog.getSelectedOptions();
+
+            for (int i=0; i<numberOfOptions; i++) {
+                action.setSelected(i, exchanged[i]);
             }
 
         } else {

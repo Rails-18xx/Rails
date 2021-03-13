@@ -7,7 +7,7 @@ PlayerCash,350
 BankHas,10600
 StartOfPhase,2
 BankSizeIs,10600
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Volker
  
 SelectForAuctioning,Volker,12

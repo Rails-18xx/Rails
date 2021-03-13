@@ -595,6 +595,7 @@ public class OperatingRound_1837 extends OperatingRound {
     /* (non-Javadoc)
      * @see net.sf.rails.game.OperatingRound#buyTrain(rails.game.action.BuyTrain)
      */
+    /*
     @Override
     public boolean buyTrain(BuyTrain action) {
         boolean result = super.buyTrain(action);
@@ -610,14 +611,17 @@ public class OperatingRound_1837 extends OperatingRound {
         return result;
     }
 
+     */
+
 
     // Can probably be removed
+    /*
     @Override
     protected void finishRound() {
-        ReportBuffer.add(this, " ");
-        ReportBuffer.add(
-                this,
-                LocalText.getText("EndOfOperatingRound", thisOrNumber));
+        //ReportBuffer.add(this, " ");
+        //ReportBuffer.add(
+         //       this,
+        //        LocalText.getText("EndOfOperatingRound", thisOrNumber));
 
         for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
             if ((company.hasStockPrice()) && (company.hasFloated())){
@@ -633,7 +637,9 @@ public class OperatingRound_1837 extends OperatingRound {
         super.finishRound();
 
     }
+    */
 
+    /*
     // No longer used
     private boolean findStartingPlayerForCoalExchange(PublicCompany company) {
         List<PublicCompany> comps = companyManager.getAllPublicCompanies();
@@ -665,4 +671,6 @@ public class OperatingRound_1837 extends OperatingRound {
         }
         return false;
     }
+
+     */
 }

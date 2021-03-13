@@ -167,7 +167,7 @@
             <ExchangeForShare company="CL" share="10"/>
         </SpecialProperty>
     </Company>
-    <Company name="ZKB" longname="Zarnesti-Kronstadt Bahn" type="Coal" price="100" tokens="1" relatedCompany="CL"
+    <Company name="ZKB" longname="Zarnesti-Kronstadt Bahn" type="Coal" price="100" tokens="1" relatedCompany="SB"
              fgColour="000000" bgColour="FFFFFF">
         <Home hex="J34"/>
         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">

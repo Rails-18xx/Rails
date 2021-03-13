@@ -6,7 +6,7 @@ PlayerCash,800
 BankHas,9600
 StartOfPhase,2
 BankSizeIs,9600
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Alice
 BuysItemFor,Alice,SVNRR,20
 BuysItemFor,Bob,C&StL,40

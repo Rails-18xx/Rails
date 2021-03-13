@@ -8,7 +8,7 @@ PlayerCash,480
 BankHas,17600
 StartOfPhase,2
 BankSizeIs,17600
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Marcus
 BID_ITEM_LOG,Marcus,115,M&H,365
 BID_ITEM_LOG,Si,165,C&A,315
@@ -41,7 +41,7 @@ Has,Si,270
 Has,Ed,480
 Has,Phil,405
 Has,Chris,435
-START_OR,0.0
+START_OR,0.1
 ReceivesFor,Marcus,5,SVNRR
 ReceivesFor,Chris,10,C&StL
 ReceivesFor,Phil,15,D&H
@@ -53,7 +53,7 @@ Has,Si,295
 Has,Ed,480
 Has,Phil,420
 Has,Chris,445
-StartOfInitialRound
+StartOfInitialRound,2
 HasPriority,Si
 PASSES,Si
 BuysItemFor,Ed,B&O,220

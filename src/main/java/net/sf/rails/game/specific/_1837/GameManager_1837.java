@@ -2,6 +2,8 @@ package net.sf.rails.game.specific._1837;
 
 import net.sf.rails.common.GameOption;
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.game.state.StringState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +23,6 @@ import java.util.List;
 public class GameManager_1837 extends GameManager {
 
     private static final Logger log = LoggerFactory.getLogger(GameManager_1837.class);
-
-    protected final IntegerState cerNumber = IntegerState.create(this, "cerNumber");
-
 
     private Round previousRound = null;
     protected final GenericState<Player> playerToStartFCERound =
@@ -67,11 +66,10 @@ public class GameManager_1837 extends GameManager {
 
                 // Create a new OperatingRound (never more than one Stock Round)
                 // OperatingRound.resetRelativeORNumber();
-                relativeORNumber.set(1);
+                relativeORNumber.set(0);
                 startOperatingRound(true);
             } else if (relativeORNumber.value() < numOfORs.value()) {
                 // There will be another OR
-                relativeORNumber.add(1);
                 startOperatingRound(true);
             } else {
                 startStockRound();
@@ -114,7 +112,7 @@ public class GameManager_1837 extends GameManager {
 
     }
 
-    private boolean checkAndRunCER(Round round) {
+    private boolean checkAndRunCER(Round prevRound) {
         List<PublicCompany> coalCompanies =
                 getRoot().getCompanyManager().getPublicCompaniesByType("Coal");
         boolean runCER = false;
@@ -126,10 +124,19 @@ public class GameManager_1837 extends GameManager {
             }
         }
         if (runCER) {
-            CoalRoundFollowedByOR.set(round instanceof StockRound_1837);
-            cerNumber.add(1);
-            createRound(CoalExchangeRound.class, "CoalExchangeRound " + cerNumber.value())
-                    .start(cerNumber.value());
+            CoalRoundFollowedByOR.set(prevRound instanceof StockRound_1837);
+            // Number the CER with the numeric part of the previous round.
+            // After SR_n: CER_n.0
+            // After OR_n.m: CER_n.m; if OR_n then CER_n.1
+            String cerId;
+            if (prevRound instanceof StockRound_1837) {
+                cerId = prevRound.getId().replaceFirst("SR_(\\d+)", "CER_$1.0");
+            } else {
+                cerId = prevRound.getId().replaceFirst("OR_(\\d+)(\\.\\d+)?", "CER_$1$2");
+                if (!cerId.contains(".")) cerId += ".1";
+            }
+            log.debug("Prev round {}, new round {}", prevRound.getId(), cerId);
+            createRound(CoalExchangeRound.class, cerId).start();
         }
         return runCER;
     }
@@ -214,7 +221,7 @@ public class GameManager_1837 extends GameManager {
 
     }
 
-
+/*
     public Player getPlayerToStartFCERound() {
         return playerToStartFCERound.value();
     }
@@ -232,11 +239,7 @@ public class GameManager_1837 extends GameManager {
     public void setPlayerToStartCERound(Player president) {
         this.playerToStartCERound.set(president);
     }
-
-    public int getCERNumber() {
-        return cerNumber.value();
-    }
-
+*/
     public void setCoalRoundFollowedByOR(boolean b) {
         this.CoalRoundFollowedByOR.set(b);
     }
