@@ -595,6 +595,7 @@ public class OperatingRound_1837 extends OperatingRound {
     /* (non-Javadoc)
      * @see net.sf.rails.game.OperatingRound#buyTrain(rails.game.action.BuyTrain)
      */
+    /*
     @Override
     public boolean buyTrain(BuyTrain action) {
         boolean result = super.buyTrain(action);
@@ -610,31 +611,36 @@ public class OperatingRound_1837 extends OperatingRound {
         return result;
     }
 
+     */
 
 
+    // Can probably be removed
+    /*
     @Override
     protected void finishRound() {
-        ReportBuffer.add(this, " ");
-        ReportBuffer.add(
-                this,
-                LocalText.getText("EndOfOperatingRound", thisOrNumber));
+        //ReportBuffer.add(this, " ");
+        //ReportBuffer.add(
+         //       this,
+        //        LocalText.getText("EndOfOperatingRound", thisOrNumber));
 
         for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
             if ((company.hasStockPrice()) && (company.hasFloated())){
 //                if (findStartingPlayerForCoalExchange(company)) exchangedCoalCompanies.set(true);
 //                {}
 
-        }
-        else {
-            ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
-        }
+            } else {
+                ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
+            }
 
 
-    }
+        }
         super.finishRound();
 
     }
+    */
 
+    /*
+    // No longer used
     private boolean findStartingPlayerForCoalExchange(PublicCompany company) {
         List<PublicCompany> comps = companyManager.getAllPublicCompanies();
         List<PublicCompany> minors = new ArrayList<>();
@@ -644,7 +650,7 @@ public class OperatingRound_1837 extends OperatingRound {
             type = comp.getType().getId();
             if (type.equals("Coal")) {
                 if (comp.isClosed()) continue;
-                if (comp.getRelatedNationalCompany().equals(company.getId())) {
+                if (comp.getRelatedPublicCompanyName().equals(company.getId())) {
                     minors.add(comp);
                     //The president of a Major Company is the first one to get the chance to exchange a share.
                     if (((GameManager_1837) gameManager).getPlayerToStartCERound()== null) {
@@ -665,4 +671,6 @@ public class OperatingRound_1837 extends OperatingRound {
         }
         return false;
     }
+
+     */
 }

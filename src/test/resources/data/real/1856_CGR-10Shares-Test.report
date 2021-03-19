@@ -7,7 +7,7 @@ PlayerCash,375
 BankHas,10500
 StartOfPhase,2
 BankSizeIs,10500
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Lonny
 BID_ITEM_LOG,Lonny,105,Tunn,270
 BID_ITEM_LOG,Tyler,75,Ship,300

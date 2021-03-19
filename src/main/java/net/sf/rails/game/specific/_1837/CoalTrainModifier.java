@@ -14,6 +14,7 @@ import net.sf.rails.common.LocalText;
  * Coal Train Modifier based on TGV Modifier by Stefan Frey
  * implementation allows several Coal trains
  * @author MBrumm
+ * ///// NOT USED /////
  */
 public class CoalTrainModifier implements RevenueDynamicModifier {
 

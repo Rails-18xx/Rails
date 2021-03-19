@@ -9,7 +9,7 @@ PlayerCash,400
 BankHas,9600
 StartOfPhase,2
 BankSizeIs,9600
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Thomas
 BID_ITEM_LOG,Thomas,165,C&A,235
 BID_ITEM_LOG,Ulrich,170,C&A,230

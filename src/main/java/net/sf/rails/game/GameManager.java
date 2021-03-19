@@ -134,7 +134,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     protected PossibleActions possibleActions = PossibleActions.create();
 
-    protected final ArrayListState<PossibleAction> executedActions = new ArrayListState<>(this, "executedActions");
+    protected final ArrayListState<PossibleAction> executedActions
+            = new ArrayListState<>(this, "executedActions");
 
     /**
      * Special properties that can be used by other players or companies
@@ -540,7 +541,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                         // Create a new OperatingRound (never more than one Stock Round)
                         // OperatingRound.resetRelativeORNumber();
 
-                        relativeORNumber.set(1);
+                        relativeORNumber.set(0);
                         startOperatingRound(true);
                     } else {
                         startStockRound();
@@ -559,7 +560,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
             // Create a new OperatingRound (never more than one Stock Round)
             // OperatingRound.resetRelativeORNumber();
-            relativeORNumber.set(1);
+            relativeORNumber.set(0);
             startOperatingRound(true);
 
         } else if (round instanceof OperatingRound) {
@@ -567,7 +568,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
                 finishGame();
 
-            } else if (relativeORNumber.add(1) <= numOfORs.value()) {
+            } else if (relativeORNumber.value() < numOfORs.value()) {
                 // There will be another OR
                 startOperatingRound(true);
             } else if (getRoot().getCompanyManager().getNextUnfinishedStartPacket() != null) {
@@ -602,7 +603,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         String startRoundClassName = startPacket.getRoundClassName();
         startRoundNumber.add(1);
         StartRound startRound = createRound(startRoundClassName,
-                "startRound_" + startRoundNumber.value());
+                "IR_" + startRoundNumber.value());
         startRound.start();
     }
 
@@ -617,8 +618,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     protected void startStockRound() {
-        StockRound sr = createRound(stockRoundClass, "SR_" + stockRoundNumber.value());
         stockRoundNumber.add(1);
+        StockRound sr = createRound(stockRoundClass, "SR_" + stockRoundNumber.value());
 
         // For debugging only: check where the certs are.
         if (log.isDebugEnabled() && stockRoundNumber.value() == 1) {
@@ -636,12 +637,19 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         log.debug("Operating round started with operate-flag={}", operate);
         String orId;
         if (operate) {
-            orId = "OR_" + absoluteORNumber.value();
+            absoluteORNumber.add(1);
+            if (showCompositeORNumber) {
+                relativeORNumber.add (1);
+                orId = "OR_" + stockRoundNumber.value() + "." + relativeORNumber.value();
+            } else {
+                orId = "OR_" + absoluteORNumber.value();
+            }
         } else {
-            orId = "OR_Start_" + startRoundNumber.value();
+            relativeORNumber.add(1);
+            orId = "OR_0." + relativeORNumber.value();
         }
         OperatingRound or = createRound(operatingRoundClass, orId);
-        if (operate) absoluteORNumber.add(1);
+        //if (operate) absoluteORNumber.add(1);
         or.start();
     }
 

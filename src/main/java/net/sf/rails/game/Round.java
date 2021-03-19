@@ -12,7 +12,6 @@ import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.BooleanState;
-import net.sf.rails.game.state.Creatable;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Portfolio;
 
@@ -126,9 +125,19 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
      * Set the operating companies in their current acting order
      */
     // What is the reason of that to have that here? => move to OR?
-    // called only internally
+    // EV: No, also used in 1837/CoalExchangeRound, which is an SR type
     public List<PublicCompany> setOperatingCompanies() {
         return setOperatingCompanies(null, null);
+    }
+
+    public List<PublicCompany> setOperatingCompanies (String type) {
+        List<PublicCompany> selectedCompanies = new ArrayList<>();
+        for (PublicCompany comp : setOperatingCompanies()) {
+            if (type.equals(comp.getType().getId())) {
+                selectedCompanies.add (comp);
+            }
+        }
+        return selectedCompanies;
     }
 
     // What is the reason of that to have that here => move to OR?
@@ -145,20 +154,20 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
         boolean reorder = gameManager.isDynamicOperatingOrder()
                 && oldOperatingCompanies != null && lastOperatingCompany != null;
 
-        int lastOperatingCompanyndex;
+        int lastOperatingCompanyIndex;
         if (reorder) {
             newOperatingCompanies = oldOperatingCompanies;
-            lastOperatingCompanyndex = oldOperatingCompanies.indexOf(lastOperatingCompany);
+            lastOperatingCompanyIndex = oldOperatingCompanies.indexOf(lastOperatingCompany);
         } else {
             newOperatingCompanies = companyManager.getAllPublicCompanies();
-            lastOperatingCompanyndex = -1;
+            lastOperatingCompanyIndex = -1;
         }
 
         for (PublicCompany company : newOperatingCompanies) {
             if (!reorder && !canCompanyOperateThisRound(company)) continue;
 
             if (reorder
-                    && oldOperatingCompanies.indexOf(company) <= lastOperatingCompanyndex) {
+                    && oldOperatingCompanies.indexOf(company) <= lastOperatingCompanyIndex) {
                 // Companies that have operated this round get lowest keys
                 key = oldOperatingCompanies.indexOf(company);
             } else if (company.hasStockPrice()) {
@@ -175,7 +184,7 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
             operatingCompanies.put(key, company);
         }
 
-        return new ArrayList<PublicCompany>(operatingCompanies.values());
+        return new ArrayList<>(operatingCompanies.values());
     }
 
     /**
@@ -222,7 +231,7 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
 
         // Move cash and shares where required
         int soldPercentage = company.getSoldPercentage();
-        int cash = 0;
+        int cash;
         int capitalisationMode = company.getCapitalisation();
         if (company.hasStockPrice()) {
             int capFactor = 0;
@@ -247,7 +256,7 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
             cash = company.getFixedPrice();
         }
 
-        // Substract initial token cost (e.g. 1851, 18EU)
+        // Subtract initial token cost (e.g. 1851, 18EU)
         cash -= company.getBaseTokensBuyCost();
 
         company.setFloated(); // After calculating cash (for 1851: price goes
@@ -295,6 +304,11 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
     // called only from 1835 Operating Round?
     public boolean wasInterrupted() {
         return wasInterrupted.value();
+    }
+
+    /** Stub to allow lower subclasses to provide their own window title */
+    public String getOwnWindowTitle() {
+        return null;
     }
 
 }

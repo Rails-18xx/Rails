@@ -230,8 +230,10 @@ public class GameLoader {
             } else if (actionObject instanceof PossibleAction) {
                 List<PossibleAction> actions = Lists.newArrayList();
                 // Since Rails 1.3.1: separate PossibleActionsObjects
+                int n = 0;
                 while (actionObject instanceof PossibleAction) {
                     actions.add((PossibleAction) actionObject);
+                    log.debug("Reading action {}: {}", ++n, actionObject.getClass().getSimpleName());
                     try {
                         actionObject = ois.readObject();
                     } catch (EOFException e) {

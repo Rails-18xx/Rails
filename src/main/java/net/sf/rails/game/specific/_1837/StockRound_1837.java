@@ -1,10 +1,5 @@
 package net.sf.rails.game.specific._1837;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.sf.rails.game.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +8,6 @@ import rails.game.action.DiscardTrain;
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
 import net.sf.rails.common.DisplayBuffer;
-import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.financial.Bank;
@@ -57,9 +51,9 @@ public class StockRound_1837 extends StockRound {
         if (discardingTrains.value()) {
             discardingTrains.set(false);
         }
-        if (((GameManager_1837) gameManager).getPlayerToStartCERound()!= null) {
-            ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
-        }
+        //if (((GameManager_1837) gameManager).getPlayerToStartCERound()!= null) {
+        //    ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
+        //}
         // Check for certificates to be released
         gameSpecificChecks (ipo, null);
 
@@ -76,6 +70,7 @@ public class StockRound_1837 extends StockRound {
 
     @Override
     protected void setGameSpecificActions() {
+        /*
         if (!mayCurrentPlayerBuyAnything()) return;
 
         List<PublicCompany> comps = companyManager.getAllPublicCompanies();
@@ -101,7 +96,7 @@ public class StockRound_1837 extends StockRound {
         for (PublicCompany minor : minors) {
             possibleActions.add(new MergeCompanies(minor,
                     targetRelation.get(minor), false));
-        }
+        }*/
     }
 
     protected boolean setTrainDiscardActions() {
@@ -152,6 +147,14 @@ public class StockRound_1837 extends StockRound {
         return mergeCompanies(minor, major);
     }
 
+    /**
+     * Complemented by a shorter version in subclass CoalExchangeRound.
+     * TODO: to be reconsidered once Nationals formation has been tested.
+     *
+     * @param minor
+     * @param major
+     * @return
+     */
     protected boolean mergeCompanies(PublicCompany minor, PublicCompany major) {
         PublicCertificate cert = null;
         MoneyOwner cashDestination = null; // Bank
@@ -159,7 +162,7 @@ public class StockRound_1837 extends StockRound {
         // TODO Validation to be added?
         if (major != null) {
             cert = unavailable.findCertificate(major, false);
-                cashDestination = major;
+            cashDestination = major;
         }
         //TODO: what happens if the major hasnt operated/founded/Started sofar in the FinalCoalExchangeRound ?
 
@@ -177,22 +180,34 @@ public class StockRound_1837 extends StockRound {
             major.transferAssetsFrom(minor);
         }
 
-        minor.setClosed();
 
+        /* TODO can probably be removed, at least for the CoalExchangeRound */
         if (major.getNumberOfTrains() > major.getCurrentTrainLimit()
-            && !compWithExcessTrains.contains(major)) {
+                && !compWithExcessTrains.contains(major)) {
             compWithExcessTrains.add(major);
+            // TODO: only transferred trains from a merger may be discarded
         }
 
+        boolean autoMerge = (currentPlayer == null);
+        Player minorPres = minor.getPresident();
+
         ReportBuffer.add(this, "");
-        ReportBuffer.add(this, LocalText.getText("MERGE_MINOR_LOG",
-                currentPlayer.getId(), minor.getId(), major.getId(),
-                Bank.format(this, minorCash), minorTrains));
+        if (autoMerge) {
+            ReportBuffer.add(this, LocalText.getText("AutoMergeMinorLog",
+                    minor.getId(), major.getId(),
+                    Bank.format(this, minorCash), minorTrains));
+        } else {
+            ReportBuffer.add(this, LocalText.getText("MERGE_MINOR_LOG",
+                    minorPres, minor.getId(), major.getId(),
+                    Bank.format(this, minorCash), minorTrains));
+        }
         // FIXME: CHeck if this still works correctly
         ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
-                currentPlayer.getId(), cert.getShare(), major.getId(),
-                cert.getOwner().getId(), minor.getId()));
-        cert.moveTo(currentPlayer);
+                minorPres, cert.getShare(), major.getId(),
+                minor.getId()));
+        cert.moveTo(minorPres);
+
+        minor.setClosed();
         ReportBuffer.add(this, LocalText.getText("MinorCloses", minor.getId()));
         checkFlotation(major);
 
@@ -202,7 +217,8 @@ public class StockRound_1837 extends StockRound {
             companyBoughtThisTurnWrapper.set(major);
 
             // If >60% shares owned, lift sell obligation this round.
-            if (currentPlayer.getPortfolioModel().getShare(major) > GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)) {
+            if (minorPres.getPortfolioModel().getShare(major)
+                    > GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)) {
                 setSellObligationLifted(major);
             }
 
@@ -286,7 +302,8 @@ public class StockRound_1837 extends StockRound {
         }
     }
 
-    @Override
+    //@Override
+    /*
     protected void finishRound() {
         ReportBuffer.add(this, " ");
         ReportBuffer.add(
@@ -298,6 +315,7 @@ public class StockRound_1837 extends StockRound {
         // independently
         // if thats the case the Coal companies need to be merged in the basegame.
         // If the Romoth Variant is played this rule will be ignored
+        /*
         if (GameOption.getValue(this,GameOption.VARIANT).equalsIgnoreCase("basegame")) {
             for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
                 if ((company.hasStarted() && company.hasStockPrice()) && (company.isSoldOut())) {
@@ -345,12 +363,13 @@ public class StockRound_1837 extends StockRound {
             setCurrentPlayer(discardingCompany.getPresident());
 
         } else {
+*/
+            //super.finishRound();
 
-            super.finishRound();
+        //}
+    //}
 
-        }
-    }
-
+    /*
     private void forcedMergeCompanyRoutine(PublicCompany company) {
         List<PublicCompany> comps = companyManager.getAllPublicCompanies();
         List<PublicCompany> minors = new ArrayList<>();
@@ -361,7 +380,7 @@ public class StockRound_1837 extends StockRound {
             type = comp.getType().getId();
             if (type.equals("Coal")) {
                 if (comp.isClosed()) continue;
-                if (comp.getRelatedNationalCompany().equals(company.getId())) {
+                if (comp.getRelatedPublicCompanyName().equals(company.getId())) {
                     minors.add(comp);
 
                 }
@@ -371,7 +390,9 @@ public class StockRound_1837 extends StockRound {
             mergeCompanies(minor, targetCompany);
         }
     }
+    */
 
+/*
     private boolean findStartingPlayerForCoalExchange(PublicCompany company) {
         List<PublicCompany> comps = companyManager.getAllPublicCompanies();
         List<PublicCompany> minors = new ArrayList<>();
@@ -381,7 +402,7 @@ public class StockRound_1837 extends StockRound {
             type = comp.getType().getId();
             if (type.equals("Coal")) {
                 if (comp.isClosed()) continue;
-                if (comp.getRelatedNationalCompany().equals(company.getId())) {
+                if (comp.getRelatedPublicCompanyName().equals(company.getId())) {
                     minors.add(comp);
                     //The president of a Major Company is the first one to get the chance to exchange a share.
                     if (((GameManager_1837) gameManager).getPlayerToStartCERound()== null) {
@@ -393,7 +414,7 @@ public class StockRound_1837 extends StockRound {
             } //Coal Company Found
 
         } //Check if we have a minor that has a started Major
-              while (!minors.isEmpty()) {
+              while (!minors.isEmpty()) {  // LOOPING!!
                   //The first minors president will start the CoalExchangeRound
                   if (((GameManager_1837) gameManager).getPlayerToStartCERound()== null) {
                       ((GameManager_1837) gameManager).setPlayerToStartCERound(minors.get(0).getPresident());
@@ -402,4 +423,6 @@ public class StockRound_1837 extends StockRound {
               }
     return false;
     }
+
+ */
 }

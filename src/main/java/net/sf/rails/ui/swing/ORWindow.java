@@ -267,11 +267,10 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
 
     protected void setMapWindowTitle (Round round) {
         GameManager gameManager = gameUIManager.getGameManager();
-        String numORs = gameManager.getNumOfORs ();
         setTitle(LocalText.getText("MapWindowORTitle",
                 gameManager.getORId(),
-                String.valueOf(gameManager.getRelativeORNumber()),
-                numORs ));
+                gameManager.getRelativeORNumber(),
+                gameManager.getNumOfORs()));
     }
 
 // Remark: one of the methods to implement the ActionPerformer Interface

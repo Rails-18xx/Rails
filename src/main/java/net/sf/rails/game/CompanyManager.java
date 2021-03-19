@@ -36,6 +36,9 @@ public class CompanyManager extends RailsManager implements Configurable {
     // TODO Redundant, current usage can be replaced.
     private final Map<String, Map<String, Company>> mCompaniesByTypeAndName = new HashMap<>();
 
+    /** A map of lists of companies per type, kept in sequence */
+    private final Map<String, List<PublicCompany>> mlCompaniesByType = new HashMap<>();
+
     /** A list of all company types */
     private final List<CompanyType> lCompanyTypes = new ArrayList<>();
 
@@ -83,7 +86,7 @@ public class CompanyManager extends RailsManager implements Configurable {
               = new HashMap<>();
 
         //NEW//
-        Map<String, Tag> typeTags = new HashMap<String, Tag>();
+        Map<String, Tag> typeTags = new HashMap<>();
 
         for (Tag compTypeTag : tag.getChildren(CompanyType.ELEMENT_ID)) {
             // Extract the attributes of the Component
@@ -150,13 +153,22 @@ public class CompanyManager extends RailsManager implements Configurable {
                     ((PublicCompany)company).setIndex (numberOfPublicCompanies++);
                     mPublicCompanies.put(name, (PublicCompany) company);
                     lPublicCompanies.add((PublicCompany) company);
+
+                    /* Lists in original order of public companies by Type */
+                    if (!mlCompaniesByType.containsKey(type)) {
+                        mlCompaniesByType.put(type, new ArrayList<>());
+                    }
+                    mlCompaniesByType.get(type).add ((PublicCompany)company);
                 }
+
                 /* By type and name */
                 if (!mCompaniesByTypeAndName.containsKey(type))
                     mCompaniesByTypeAndName.put(type,
                             new HashMap<String, Company>());
                 (mCompaniesByTypeAndName.get(type)).put(
                         name, company);
+
+
 
                 String alias = company.getAlias();
                 if (alias != null) createAlias (alias, name);
@@ -294,6 +306,10 @@ public class CompanyManager extends RailsManager implements Configurable {
 
     public List<Company> getCompaniesByType (String type) {
         return new ArrayList<>(mCompaniesByTypeAndName.get(type).values());
+    }
+
+    public List<PublicCompany> getPublicCompaniesByType (String type) {
+        return new ArrayList<>(mlCompaniesByType.get(type));
     }
 
     public void closeAllPrivates() {

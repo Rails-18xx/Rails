@@ -95,16 +95,4 @@ public class TrainCard extends RailsOwnableItem<TrainCard> implements Creatable 
         this.moveTo(discardTo);
     }
 
-    /* obsolete
-    public void discard(BankPortfolio discardTo, boolean dualTrainBecomesUndecidedInPool) {
-        this.moveTo(discardTo);
-        if(trainCardType.isDual() && discardTo == Bank.getPool(this)) {
-            if (dualTrainBecomesUndecidedInPool) {
-                setActualTrain(null);
-            }
-        }
-        String discardText = LocalText.getText("CompanyDiscardsTrain", getOwner().getId(), this.toText(), discardTo.getId());
-        ReportBuffer.add(this, discardText);
-    }*/
-
 }

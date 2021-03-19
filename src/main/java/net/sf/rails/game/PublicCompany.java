@@ -421,7 +421,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Relation to a later to be founded National/Regional Major Company
      */
-    private String relatedPublicCompany = null;
+    private String relatedPublicCompanyName = null;
+    private PublicCompany relatedPublicCompany = null;
 
     private String foundingStartCompany = null;
 
@@ -485,7 +486,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         floatPerc = tag.getAttributeAsInteger("floatPerc", floatPerc);
 
-        relatedPublicCompany = tag.getAttributeAsString("relatedCompany", relatedPublicCompany);
+        relatedPublicCompanyName = tag.getAttributeAsString("relatedCompany", relatedPublicCompanyName);
 
         foundingStartCompany = tag.getAttributeAsString("foundingCompany", foundingStartCompany);
 
@@ -744,6 +745,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                         + startSpace + " for company "
                         + getId());
             currentPrice.setPrice(parPrice.getPrice());
+        }
+
+        if (Util.hasValue(relatedPublicCompanyName)) {
+            relatedPublicCompany = getRoot().getCompanyManager().getPublicCompany(relatedPublicCompanyName);
         }
 
         int certIndex = 0;
@@ -1172,7 +1177,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     /**
      * Reinitialize a company, i.e. close it and make the shares available for a new company start.
-     * IMplemented rules are now as in 18EU.
+     * Implemented rules are now as in 18EU.
      * TODO Will see later if this is generic enough.
      */
     protected void reinitialise() {
@@ -2301,17 +2306,16 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return this.getId().compareTo(other.getId());
     }
 
-    public void setRelatedNationalCompany(String companyName) {
-        this.relatedPublicCompany = companyName;
+    public String getRelatedPublicCompanyName() {
+        return relatedPublicCompanyName;
     }
 
-    public String getRelatedNationalCompany() {
+    public PublicCompany getRelatedPublicCompany() {
         return relatedPublicCompany;
     }
 
-
     public boolean isRelatedToNational(String nationalInFounding) {
-        return this.getRelatedNationalCompany().equals(nationalInFounding);
+        return this.getRelatedPublicCompanyName().equals(nationalInFounding);
     }
 
     /**

@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import net.sf.rails.game.specific._1837.LayBaseToken_1837;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rails.game.action.DiscardTrain;
 import rails.game.action.MergeCompanies;
 import rails.game.specific._1837.FoldIntoHungary;
@@ -26,9 +29,11 @@ public class GameUIManager_1837 extends GameUIManager {
     public static final String START_HUNGARY_DIALOG = "StartHungary";
     public static final String MERGE_INTO_HUNGARY_DIALOG = "MergeIntoHungary";
     public static final String SELECT_CONVERTING_MINOR = "SelectConvertingMinor";
-    public static final String SELECT_MERGING_MAJOR = "SelectMergingMajor";
+    public static final String SELECT_MERGING_MAJOR = "SelectMergingMajor"; // Not used??
+    public static final String SELECT_MERGING_MINOR = "SelectMergingMinor";
+    public static final String SELECT_EXCHANGED_TOKENS = "SelectExchangedTokens";
 
-
+    private static final Logger log = LoggerFactory.getLogger(GameUIManager_1837.class);
 
     public GameUIManager_1837() {
     }
@@ -49,7 +54,16 @@ public class GameUIManager_1837 extends GameUIManager {
         if (currentDialog instanceof NonModalDialog) key = ((NonModalDialog)currentDialog).getKey();
 
         // Check for the dialogs that are postprocessed in this class.
-        if (START_HUNGARY_DIALOG.equals(key)) {
+        if ("MergeCoalCompany".equalsIgnoreCase(key)) {
+
+            ConfirmationDialog dialog = (ConfirmationDialog) currentDialog;
+            MergeCompanies action = (MergeCompanies) currentDialogAction;
+            if (dialog.getAnswer()) {
+                // Always only one target present under the current 1837 rules
+                action.setSelectedTargetCompany(action.getTargetCompanies().get(0));
+            }
+
+        } else if (START_HUNGARY_DIALOG.equals(key)) {
 
             ConfirmationDialog dialog = (ConfirmationDialog) currentDialog;
             FoldIntoHungary action = (FoldIntoHungary) currentDialogAction;
@@ -64,7 +78,7 @@ public class GameUIManager_1837 extends GameUIManager {
             boolean[] exchanged = dialog.getSelectedOptions();
             String[] options = dialog.getOptions();
 
-            List<Company> foldedCompanies = new ArrayList<Company>();
+            List<Company> foldedCompanies = new ArrayList<>();
             for (int index=0; index < options.length; index++) {
                 if (exchanged[index]) {
                     foldedCompanies.add(action.getFoldableCompanies().get(index));
@@ -72,73 +86,99 @@ public class GameUIManager_1837 extends GameUIManager {
             }
             action.setFoldedCompanies(foldedCompanies);
 
-        } else 
-            if (START_KUK_DIALOG.equals(key)) {
+        } else if (START_KUK_DIALOG.equals(key)) {
 
-                ConfirmationDialog dialog = (ConfirmationDialog) currentDialog;
-                FoldIntoKuK action = (FoldIntoKuK) currentDialogAction;
-                if (dialog.getAnswer()) {
-                    action.setFoldedCompanies(action.getFoldableCompanies());
-                }
-
-            } else if (MERGE_INTO_KUK_DIALOG.equals(key)) {
-
-                CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
-                FoldIntoKuK action = (FoldIntoKuK) currentDialogAction;
-                boolean[] exchanged = dialog.getSelectedOptions();
-                String[] options = dialog.getOptions();
-
-                List<Company> foldedCompanies = new ArrayList<Company>();
-                for (int index=0; index < options.length; index++) {
-                    if (exchanged[index]) {
-                        foldedCompanies.add(action.getFoldableCompanies().get(index));
-                    }
-                }
-                action.setFoldedCompanies(foldedCompanies);
+            ConfirmationDialog dialog = (ConfirmationDialog) currentDialog;
+            FoldIntoKuK action = (FoldIntoKuK) currentDialogAction;
+            if (dialog.getAnswer()) {
+                action.setFoldedCompanies(action.getFoldableCompanies());
             }
-            else if (SELECT_MERGING_MAJOR.equals(key)) {
 
-                // A major company has been selected (or not) to merge a minor into.
-                RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
-                MergeCompanies action = (MergeCompanies) currentDialogAction;
-                PublicCompany minor = action.getMergingCompany();
+        } else if (MERGE_INTO_KUK_DIALOG.equals(key)) {
 
-                int choice = dialog.getSelectedOption();
-                if (choice < 0) return;
+            CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
+            FoldIntoKuK action = (FoldIntoKuK) currentDialogAction;
+            boolean[] exchanged = dialog.getSelectedOptions();
+            String[] options = dialog.getOptions();
 
-                PublicCompany major = action.getTargetCompanies().get(choice);
-                action.setSelectedTargetCompany(major);
-
-                if (major != null && action.canReplaceToken(choice)) {
-
-                    boolean replaceToken =
-                            JOptionPane.showConfirmDialog(statusWindow, LocalText.getText(
-                                    "WantToReplaceToken",
-                                    minor.getId(),
-                                    major.getId() ),
-                                    LocalText.getText("PleaseSelect"),
-                                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
-                    action.setReplaceToken(replaceToken);
+            List<Company> foldedCompanies = new ArrayList<>();
+            for (int index = 0; index < options.length; index++) {
+                if (exchanged[index]) {
+                    foldedCompanies.add(action.getFoldableCompanies().get(index));
                 }
+            }
+            action.setFoldedCompanies(foldedCompanies);
 
-            } else if (SELECT_CONVERTING_MINOR.equals(key)) {
+        } else if (SELECT_MERGING_MINOR.equals(key)) {
 
-                // A minor has been selected (or not) to merge into a starting company before phase 6.
-                RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
-                StartCompany_18EU action = (StartCompany_18EU) currentDialogAction;
-                int choice = dialog.getSelectedOption();
-                if (choice < 0) {
-                    currentDialogAction = null;
-                } else {
-                    PublicCompany minor = action.getMinorsToMerge().get(choice);
-                    action.setChosenMinor(minor);
-                }
+            ConfirmationDialog dialog = (ConfirmationDialog) currentDialog;
+            MergeCompanies action = (MergeCompanies) currentDialogAction;
+            PublicCompany minor = action.getMergingCompany();
+            PublicCompany major = action.getTargetCompanies().get(0); // Always one
 
+            if (!dialog.getAnswer()) return; // Answer is "no"
+
+            action.setSelectedTargetCompany(major);
+            if (major != null && action.canReplaceToken(0)) {
+
+                boolean replaceToken =
+                        JOptionPane.showConfirmDialog(statusWindow, LocalText.getText(
+                                "WantToReplaceToken",
+                                minor.getId(),
+                                major.getId()),
+                                LocalText.getText("PleaseSelect"),
+                                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+                action.setReplaceToken(replaceToken);
+            }
+
+        } else if (SELECT_MERGING_MAJOR.equals(key)) {
+
+            // *** Should no longer be used
+            log.warn("Not expected here: {}", SELECT_MERGING_MAJOR);
+
+            // A major company has been selected (or not) to merge a minor into.
+            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+            MergeCompanies action = (MergeCompanies) currentDialogAction;
+            PublicCompany minor = action.getMergingCompany();
+
+            int choice = dialog.getSelectedOption();
+            if (choice < 0) return;
+
+            PublicCompany major = action.getTargetCompanies().get(choice);
+            action.setSelectedTargetCompany(major);
+
+        } else if (SELECT_CONVERTING_MINOR.equals(key)) {
+
+            // **** No longer used
+            log.warn("Not expected here: {}", SELECT_CONVERTING_MINOR);
+
+            // A minor has been selected (or not) to merge into a starting company before phase 6.
+            RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+            StartCompany_18EU action = (StartCompany_18EU) currentDialogAction;
+            int choice = dialog.getSelectedOption();
+            if (choice < 0) {
+                currentDialogAction = null;
             } else {
-                // Current dialog not found yet, try the superclass.
-                super.dialogActionPerformed(false);
-                return;
+                PublicCompany minor = action.getMinorsToMerge().get(choice);
+                action.setChosenMinor(minor);
             }
+
+        } else if (SELECT_EXCHANGED_TOKENS.equals(key)) {
+
+            CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
+            LayBaseToken_1837 action = (LayBaseToken_1837) currentDialogAction;
+            int numberOfOptions = action.getMinors().size();
+            boolean[] exchanged = dialog.getSelectedOptions();
+
+            for (int i=0; i<numberOfOptions; i++) {
+                action.setSelected(i, exchanged[i]);
+            }
+
+        } else {
+            // Current dialog not found yet, try the superclass.
+            super.dialogActionPerformed(false);
+            return;
+        }
 
         // Dialog action found and processed, let the superclass initiate processing.
         super.dialogActionPerformed(true);

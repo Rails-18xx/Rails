@@ -6,7 +6,7 @@ PlayerCash,420
 BankHas,5740
 StartOfPhase,2
 BankSizeIs,5740
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Phil
 BID_ITEM_LOG,Phil,55,D,365
 BID_ITEM_LOG,Simon,35,B,385
