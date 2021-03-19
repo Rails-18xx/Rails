@@ -7,7 +7,7 @@ PlayerCash,480
 BankHas,28080
 StartOfPhase,2
 BankSizeIs,28080
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Lonny
 BID_ITEM_LOG,Lonny,5,WR,475
 BID_ITEM_LOG,Helmut,20,WR,460
@@ -74,7 +74,7 @@ Has,Helmut,180
 Has,Lonny,330
 Has,Ronnie,340
 Has,Stefan,480
-StartOfInitialRound
+StartOfInitialRound,2
 HasPriority,Helmut
 ChoosesInvestor,Helmut,7
 ChoosesInvestor,Lonny,5

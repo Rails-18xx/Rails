@@ -77,6 +77,7 @@ public abstract class StartRound extends Round {
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.START_ROUND);
+        log.info("Starting initial round type: {}", getId());
     }
 
     // For backwards compatibility
@@ -102,7 +103,7 @@ public abstract class StartRound extends Round {
         // init current with priority player
         startPlayer = playerManager.setCurrentToPriorityPlayer();
 
-        ReportBuffer.add(this, LocalText.getText("StartOfInitialRound"));
+        ReportBuffer.add(this, LocalText.getText("StartOfInitialRound", getStartRoundNumber()));
         ReportBuffer.add(this, LocalText.getText("HasPriority",
                 startPlayer.getId()));
     }

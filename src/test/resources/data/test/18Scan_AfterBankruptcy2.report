@@ -6,7 +6,7 @@ PlayerCash,600
 BankHas,4200
 StartOfPhase,2
 BankSizeIs,4200
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Alice
 BID_BUY_RIGHT_LOG,Alice,0,600
 PASSES,Bob

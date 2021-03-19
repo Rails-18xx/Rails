@@ -6,7 +6,7 @@ PlayerCash,420
 BankHas,5740
 StartOfPhase,2
 BankSizeIs,5740
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Klaus
 BID_ITEM_LOG,Klaus,65,E,355
 BID_ITEM_LOG,Henning,55,D,365

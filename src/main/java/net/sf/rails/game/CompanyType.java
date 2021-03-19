@@ -57,9 +57,6 @@ public class CompanyType extends RailsAbstractItem {
         return new CompanyType(parent, id, className);
     }
 
-    /**
-     * @see net.sf.rails.common.parser.Configurable#configureFromXML(org.w3c.dom.Element)
-     */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         //No longer needed.
     }

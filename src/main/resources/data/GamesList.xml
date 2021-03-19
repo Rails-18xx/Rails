@@ -230,8 +230,6 @@ Published 2004 by Deep Thought Games, LLC
 			Known limitations:
 			- In v1, the S5 home must be chosen in the initial round rather than
 			  in its first OR. In v2, this has already been corrected.
-			- Several problems exist with (not) executing the coal
-			  company exchange, whether mandatory or not.
 			- Not yet tested beyond the 3-train phase.
 		</Description>
 		<Players minimum = "3" maximum = "7" />

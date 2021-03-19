@@ -203,16 +203,23 @@ public class ConvertTilesXML {
     private void convertXML(Element inputElement, Document outputDoc) throws ConfigurationException {
 
         NodeList children = inputElement.getElementsByTagName("tile");
-        for (int i = 0; i < children.getLength(); i++) {
-            Element inputTile = (Element) children.item(i);
-            Element outputTile = outputDoc.createElement("Tile");
-            outputDoc.getDocumentElement().appendChild(outputTile);
-            convertTile(inputTile, outputTile);
-        }
+            for (int i = 0; i < children.getLength(); i++) {
+                try {
+                    Element inputTile = (Element) children.item(i);
+                    Element outputTile = outputDoc.createElement("Tile");
+                    outputDoc.getDocumentElement().appendChild(outputTile);
+                    convertTile(inputTile, outputTile);
+
+                } catch (Exception e) {
+                    log.error("Exception at i={}: {}", i, e);
+                }
+            }
+
 
     }
 
     private void convertTile(Element inputTile, Element outputTile) throws ConfigurationException {
+
         String id = inputTile.getElementsByTagName("ID").item(0).getFirstChild().getNodeValue();
         log.debug("id: {}", id);
         outputTile.setAttribute("id", id);
@@ -231,17 +238,20 @@ public class ConvertTilesXML {
             outputTile.setAttribute("colour", colour);
         }
 
-        String name = inputTile.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
-        Matcher m = namePattern.matcher(name);
-        if (m.matches()) {
-            outputTile.setAttribute("name", m.group(1));
-        } else
-            outputTile.setAttribute("name", name);
-        // The below does not work for "B+"
-        /*
-         * if (intId > 0) { throw new ConfigurationException("Tile with ID=" +
-         * id + " has a name not starting with a number: " + name); }
-         */
+        Node nameNode = inputTile.getElementsByTagName("name").item(0);
+        if (nameNode != null) {
+            String name = inputTile.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
+            Matcher m = namePattern.matcher(name);
+            if (m.matches()) {
+                outputTile.setAttribute("name", m.group(1));
+            } else
+                outputTile.setAttribute("name", name);
+            // The below does not work for "B+"
+            /*
+             * if (intId > 0) { throw new ConfigurationException("Tile with ID=" +
+             * id + " has a name not starting with a number: " + name); }
+             */
+        }
 
         /*
          * Create map to hold the station 'identifiers', which are referred to

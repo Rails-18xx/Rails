@@ -117,6 +117,7 @@ public class StockRound extends Round {
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, true);
         guiHints.setActivePanel(GuiDef.Panel.STATUS);
+        log.info ("--- Starting SR type round: {} ---", getId());
     }
 
     /**
@@ -1423,7 +1424,7 @@ public class StockRound extends Round {
         adjustSharePrice(company, currentPlayer, numberSold, soldBefore);
 
         if (!company.isClosed()) {
-            log.info("certsToSell={}", certsToSell);
+            log.debug("certsToSell={}", certsToSell);
             executeShareTransfer(company, certsToSell,
                     dumpedPlayer, presidentShareNumbersToSell);
         }
@@ -1469,7 +1470,7 @@ public class StockRound extends Round {
         }
 
         // Transfer the sold certificates
-        log.info ("Certs to pool: {}", certsToSell);
+        log.debug ("Certs to pool: {}", certsToSell);
         Portfolio.moveAll(certsToSell, bankTo);
 
         return swapped;
@@ -1842,7 +1843,7 @@ public class StockRound extends Round {
     // NationalFormationRound, 1835PrussianFormationRound: setPossibleActions, start
 
     // not overridden
-    @Deprecated
+    // @Deprecated   // Why???
     public void setCurrentPlayer(Player player) {
         getRoot().getPlayerManager().setCurrentPlayer(player);
         currentPlayer = player;

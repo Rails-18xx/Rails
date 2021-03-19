@@ -9,7 +9,7 @@ PlayerCash,250
 BankHas,10500
 StartOfPhase,2
 BankSizeIs,10500
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Juho
 BID_ITEM_LOG,Juho,75,Ship,175
 BID_ITEM_LOG,Peter,105,Brdg,145

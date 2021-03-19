@@ -11,7 +11,6 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.GameManager;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.specific._1837.StockRound_1837;
 
 public class FinalCoalExchangeRound extends StockRound_1837 {
 
@@ -69,7 +68,7 @@ public class FinalCoalExchangeRound extends StockRound_1837 {
                 if (comp.isClosed()) continue;
                 if (comp.getPresident() == currentPlayer) {
                     minors.add(comp);
-                    targetCompany = companyManager.getPublicCompany(comp.getRelatedNationalCompany());
+                    targetCompany = companyManager.getPublicCompany(comp.getRelatedPublicCompanyName());
                 }
             }
         }
@@ -82,7 +81,7 @@ public class FinalCoalExchangeRound extends StockRound_1837 {
                     if (comp.isClosed()) continue;
                     if (comp.getPresident() == currentPlayer) {
                         minors.add(comp);
-                        targetCompany = companyManager.getPublicCompany(comp.getRelatedNationalCompany());
+                        targetCompany = companyManager.getPublicCompany(comp.getRelatedPublicCompanyName());
                     }
                 }
             }

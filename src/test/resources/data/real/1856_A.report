@@ -8,7 +8,7 @@ PlayerCash,300
 BankHas,10500
 StartOfPhase,2
 BankSizeIs,10500
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Adam
 BID_ITEM_LOG,Adam,75,Ship,225
 BID_ITEM_LOG,Aliza,105,Tunn,195

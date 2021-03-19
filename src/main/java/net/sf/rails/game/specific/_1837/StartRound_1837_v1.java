@@ -402,16 +402,16 @@ public class StartRound_1837_v1 extends StartRound {
                 floatCompany(company);
 
                 pendingAction.set(null);
-
+/*
                 if ((startPacket.areAllSold())
                     && (pendingAction.value() == null)) {
                     /*
                      * If the complete start packet has been sold, start a Stock
                      * round,
-                     */
+                     *//*
                     possibleActions.clear();
                     finishRound();
-                }
+                }*/
                 result = true;
             } else {
 

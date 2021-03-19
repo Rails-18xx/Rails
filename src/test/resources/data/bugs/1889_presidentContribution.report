@@ -7,7 +7,7 @@ PlayerCash,420
 BankHas,5320
 StartOfPhase,2
 BankSizeIs,5320
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Chris
 BID_ITEM_LOG,Chris,45,C,375
 BID_ITEM_LOG,Breno,55,D,365

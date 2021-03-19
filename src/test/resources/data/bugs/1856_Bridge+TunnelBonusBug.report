@@ -8,7 +8,7 @@ PlayerCash,300
 BankHas,10500
 StartOfPhase,2
 BankSizeIs,10500
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Volker Schnell
 BID_ITEM_LOG,Volker Schnell,75,Ship,225
 BID_ITEM_LOG,Klaus-Jürgen Fleischer,80,Ship,220

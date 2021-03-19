@@ -7,7 +7,7 @@ PlayerCash,420
 BankHas,5320
 StartOfPhase,2
 BankSizeIs,5320
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,klaus
 BID_ITEM_LOG,klaus,65,E,355
 BID_ITEM_LOG,Josha,55,D,365

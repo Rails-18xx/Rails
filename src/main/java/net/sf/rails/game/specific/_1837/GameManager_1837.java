@@ -1,23 +1,19 @@
 package net.sf.rails.game.specific._1837;
 
 import net.sf.rails.common.GameOption;
+import net.sf.rails.game.*;
+import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.game.state.StringState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.GuiDef;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.Phase;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.Round;
-import net.sf.rails.game.StartPacket;
-import net.sf.rails.game.StartRound;
-import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.financial.NationalFormationRound;
 import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.BooleanState;
 
+import java.util.List;
 
 
 /**
@@ -27,9 +23,6 @@ import net.sf.rails.game.state.BooleanState;
 public class GameManager_1837 extends GameManager {
 
     private static final Logger log = LoggerFactory.getLogger(GameManager_1837.class);
-
-    protected final IntegerState cerNumber = IntegerState.create(this, "cerNumber");
-
 
     private Round previousRound = null;
     protected final GenericState<Player> playerToStartFCERound =
@@ -65,47 +58,27 @@ public class GameManager_1837 extends GameManager {
             //round decision down to this class and cant call the superclass :(
 
             if (this.CoalRoundFollowedByOR.value()) {
+                // Start the first OR after an SR.
                 Phase currentPhase = getRoot().getPhaseManager().getCurrentPhase();
                 if (currentPhase == null) log.error("Current Phase is null??", new Exception(""));
                 numOfORs.set(currentPhase.getNumberOfOperatingRounds());
-                log.info("Phase={} ORs={}", currentPhase.toText(), numOfORs);
+                log.debug("Phase={} ORs={}", currentPhase.toText(), numOfORs.value());
 
                 // Create a new OperatingRound (never more than one Stock Round)
                 // OperatingRound.resetRelativeORNumber();
-                relativeORNumber.set(1);
+                relativeORNumber.set(0);
+                startOperatingRound(true);
+            } else if (relativeORNumber.value() < numOfORs.value()) {
+                // There will be another OR
                 startOperatingRound(true);
             } else {
-                if (relativeORNumber.add(1) <= numOfORs.value()) {
-                    // There will be another OR
-                    startOperatingRound(true);
-                } else {
-                    if (gameOverPending.value()
-                            && gameEndWhen == GameEnd.AFTER_SET_OF_ORS) {
-                        finishGame();
-                    } else {
-                        // FIXME: This isn't a valid cast...
-                        ((OperatingRound) round).checkForeignSales();
-                        startStockRound();
-                    }
-                }
-
+                startStockRound();
             }
 
-            //super.nextRound(round);
             getCurrentRound().setPossibleActions();
-        } else if ((round instanceof StockRound_1837) || (round instanceof OperatingRound_1837)) {
-            //Check if a Major is started and if so ask the Owner of the Coal Company to fold
-            // FIXME: This does not seem right: if any unfolded coal companies remain,
-            // the CER should be run before *all* stock and operating rounds, which is not the case yet.
-            // Giving a player priority is only relevant just after floating his major company,
-            // but merging remains optional until all certs are sold or phase 5 is reached.
-            if (playerToStartCERound.value() != null) {
-                if (round instanceof StockRound_1837) setCoalRoundFollowedByOR(true);
-                cerNumber.add(1);
-                createRound(CoalExchangeRound.class, "CoalExchangeRound " + cerNumber.value())
-                        .start(playerToStartCERound.value());
-                playerToStartCERound.set(null);
-            } else {
+
+        } else if (round instanceof StockRound_1837 || round instanceof OperatingRound_1837) {
+            if (!checkAndRunCER(round)) {
                 super.nextRound(round);
             }
         } else if (round instanceof NationalFormationRound) {
@@ -137,6 +110,35 @@ public class GameManager_1837 extends GameManager {
             }
         }
 
+    }
+
+    private boolean checkAndRunCER(Round prevRound) {
+        List<PublicCompany> coalCompanies =
+                getRoot().getCompanyManager().getPublicCompaniesByType("Coal");
+        boolean runCER = false;
+        for (PublicCompany coalComp : coalCompanies) {
+            if (!coalComp.isClosed()
+                    && coalComp.getRelatedPublicCompany().hasFloated()) {
+                runCER = true;
+                break;
+            }
+        }
+        if (runCER) {
+            CoalRoundFollowedByOR.set(prevRound instanceof StockRound_1837);
+            // Number the CER with the numeric part of the previous round.
+            // After SR_n: CER_n.0
+            // After OR_n.m: CER_n.m; if OR_n then CER_n.1
+            String cerId;
+            if (prevRound instanceof StockRound_1837) {
+                cerId = prevRound.getId().replaceFirst("SR_(\\d+)", "CER_$1.0");
+            } else {
+                cerId = prevRound.getId().replaceFirst("OR_(\\d+)(\\.\\d+)?", "CER_$1$2");
+                if (!cerId.contains(".")) cerId += ".1";
+            }
+            log.debug("Prev round {}, new round {}", prevRound.getId(), cerId);
+            createRound(CoalExchangeRound.class, cerId).start();
+        }
+        return runCER;
     }
 
     /* (non-Javadoc)
@@ -219,7 +221,7 @@ public class GameManager_1837 extends GameManager {
 
     }
 
-
+/*
     public Player getPlayerToStartFCERound() {
         return playerToStartFCERound.value();
     }
@@ -237,11 +239,7 @@ public class GameManager_1837 extends GameManager {
     public void setPlayerToStartCERound(Player president) {
         this.playerToStartCERound.set(president);
     }
-
-    public int getCERNumber() {
-        return cerNumber.value();
-    }
-
+*/
     public void setCoalRoundFollowedByOR(boolean b) {
         this.CoalRoundFollowedByOR.set(b);
     }
