@@ -1304,12 +1304,10 @@ MERGE_MINOR_LOG,Charlie,SPB,SB,30,1
 GetShareForMinor,Charlie,10,SB,SPB
 MinorCloses,SPB
 PlayerDoesNoWantToMerge,Charlie,ZKB,SB
-LaysFreeTokenOn,SB,Alice,K31
 MERGE_MINOR_LOG,Alice,EKT,MS,45,1
 GetShareForMinor,Alice,10,MS,EKT
 MinorCloses,EKT
 PlayerDoesNoWantToMerge,Alice,EOD,MS
-LaysFreeTokenOn,MS,Charlie,C21
 PlayerDoesNoWantToMerge,Bob,EPP, RGTE,BK
  
 EndOfCoalExchangeRound,3.0

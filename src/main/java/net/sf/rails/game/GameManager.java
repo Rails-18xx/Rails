@@ -843,9 +843,18 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             log.info("*** Action -1: {}", action);
         } else {
             if (getCurrentRound() instanceof OperatingRound) {
-                OperatingRound thisOR = (OperatingRound) getCurrentRound();
+                //OperatingRound thisOR = (OperatingRound) getCurrentRound();
+                String actor;
+                if (action instanceof PossibleORAction) {
+                    PossibleORAction orAction = (PossibleORAction) action;
+                    actor = orAction.getCompanyName()
+                            + "(" + orAction.getPlayerName() + ")";
+                } else {
+                    actor = action.getPlayerName();
+                }
                 log.info("*** Action {} by {}: {}", actionCount.value(),
-                        thisOR.getCompAndPresName(thisOR.operatingCompany.value()),
+                        //thisOR.getCompAndPresName(thisOR.operatingCompany.value()),
+                        actor,
                         action);
             } else {
                 log.info("*** Action {} by {}: {}", actionCount.value(), action.getPlayerName(), action);

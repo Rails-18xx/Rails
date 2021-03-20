@@ -1015,7 +1015,6 @@ MERGE_MINOR_LOG,Charlie,SPB,SB,60,1
 GetShareForMinor,Charlie,10,SB,SPB
 MinorCloses,SPB
 PlayerDoesNoWantToMerge,Charlie,ZKB,SB
-LaysFreeTokenOn,SB,Charlie,K31
 PlayerDoesNoWantToMerge,Alice,MLB,CL
 AutoMergeMinorLog,EOD,MS,100,1
 GetShareForMinor,Alice,10,MS,EOD
@@ -1023,7 +1022,6 @@ MinorCloses,EOD
 AutoMergeMinorLog,EKT,MS,140,1
 GetShareForMinor,Alice,10,MS,EKT
 MinorCloses,EKT
-LaysFreeTokenOn,MS,Bob,C21
 AutoMergeMinorLog,EPP,BK,120,1
 GetShareForMinor,Bob,10,BK,EPP
 MinorCloses,EPP
@@ -1324,7 +1322,7 @@ RECEIVES,BB,35
 Payout,Charlie,35,1,100
  
 CompanyOperates,EHS,Bob
-LaysTileAt,EHS,205,F28,E
+LaysTileAt,EHS,205,F28,W
 CompanyRevenue,EHS,80
 CompanyDividesEarnings,EHS,80,60,20
 CompanySplits,EHS,60
@@ -1403,11 +1401,12 @@ Payout,Bob,48,1,50
 Payout,Charlie,48,1,50
  
 CompanyOperates,SB,Charlie
-LaysTileAt,SB,25,J30,SE
-CompanyRevenue,SB,205
-CompanyDividesEarnings,SB,205,150,55
-CompanyPaysOutFull,SB,150
-Payout,Charlie,90,6,10
+LaysTileAt,SB,408,H30,NW
+LAYS_TOKEN_ON,SB,H30,80 Hex H30 (Debrecin/Großwardein SW,W,SE)
+CompanyRevenue,SB,265
+CompanyDividesEarnings,SB,265,210,55
+CompanyPaysOutFull,SB,210
+Payout,Charlie,126,6,10
 PRICE_MOVES_LOG,SB,114,F1,121,G1
  
 CompanyOperates,MS,Bob
@@ -1439,7 +1438,7 @@ PRICE_MOVES_LOG,BK,61,G10,64,H10
 EndOfOperatingRound,3.2
 ORWorthIncrease,Alice,3.2,669
 ORWorthIncrease,Bob,3.2,583
-ORWorthIncrease,Charlie,3.2,496
+ORWorthIncrease,Charlie,3.2,532
 Has,MLB,185
 Has,ZKB,205
 Has,LRB,125
@@ -1459,10 +1458,10 @@ Has,U3,214
 Has,BK,518
 Has,CL,483
 Has,MS,385
-Has,SB,567
+Has,SB,487
 Has,Alice,1154
 Has,Bob,963
-Has,Charlie,790
+Has,Charlie,826
 StartCoalExchangeRound,3.2
 PlayerDoesNoWantToMerge,Charlie,ZKB,SB
 PlayerDoesNoWantToMerge,Alice,MLB,CL
@@ -1487,9 +1486,9 @@ Has,U3,214
 Has,BK,518
 Has,CL,483
 Has,MS,385
-Has,SB,567
+Has,SB,487
 Has,Alice,1154
 Has,Bob,963
-Has,Charlie,790
+Has,Charlie,826
 StartStockRound,4
 HasPriority,Charlie

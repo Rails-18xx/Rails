@@ -56,7 +56,7 @@ public class GameStatus_1837 extends GameStatus {
                             merger);
                 }
             }
-        } else if (possibleActions.contains(LayBaseToken_1837.class)) {
+/*        } else if (possibleActions.contains(LayBaseToken_1837.class)) { // Not used
             // Only one action expected
             LayBaseToken_1837 action = possibleActions.getType(LayBaseToken_1837.class).get(0);
             PublicCompany major = action.getMajor();
@@ -89,7 +89,7 @@ public class GameStatus_1837 extends GameStatus {
             gameUIManager.setCurrentDialog (dialog, action);
             parent.disableButtons();
             gameUIManager.getORUIManager().getORWindow().setVisible(true);
-
+*/
 
         }
 
