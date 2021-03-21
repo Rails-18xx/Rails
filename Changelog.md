@@ -1,4 +1,4 @@
-# Rails-18xx 2.4 Release
+# Rails-18xx 2.4.5 Release
 This release is meant to show the current state of the Rails-18xx implementation.
 
 Due to different reasons Rails-18xx 2.0 and 2.1 have not been release as production releases. We hope that the audience
@@ -16,21 +16,19 @@ We would like to **thank** the varios bug reporters and the developers who have 
 
 ## New games
 
-* 18Scan
-* Steam over Holland implemented by Erik Vos.
-
 ## Status of Games
-* Implementation of 18Chesapeake started, needs playtesting, bug reports welcome
-* Implementation of 1837 - Have a look but be prepared that it might break... 
-   * Open Topics in 1837 Implementation:
-        * Coal Minors merging round implementation not always working as intended..
+
+* Implementation of 18Chesapeake finished, needs playtesting, bug reports welcome
+* Implementation of 1837
+  * Coal Minors merging round implementation needs to be tested.
 
 ## Bug Fixes
-* Various svg-Tiles werent configured correctly which lead to graphic error while resizing or moving the map. Issue reported for 18NL/18TN by Lou Jerkich; Fixes done for  1837 1880 and 18Chesapeake
+
+* Various svg-Tiles werent configured correctly which lead to graphic error while resizing or moving the map. Issue
+  reported for 18NL/18TN by Lou Jerkich; Fixes done for 1837 1880 and 18Chesapeake
 
 ## Issues fixed:
- * #342
- * #338
- * #329
- * #326
- * #320
+
+* # 353
+* # 356
+ 
