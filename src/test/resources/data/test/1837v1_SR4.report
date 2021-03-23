@@ -726,7 +726,6 @@ ALL_PASSED
 ITEM_PRICE_REDUCED,KB,70
 BuysItemFor,Bob,KB,70
 ALSO_GETS,Bob,S5
-SetsHomeHexS5,S5,L2
 FloatsWithCash,S5,90
 Has,EPP,100
 Has,RGTE,100
@@ -892,6 +891,8 @@ CompanyOperates,S4,Alice
 LaysTileAt,S4,57,K5,SW
 CompanyDoesNotPayDividend,S4
 BuysTrain,S4,2,IPO,90
+ 
+CompanyOperates,S5,Bob
  
 CompanyOperates,S5,Bob
 LaysTileAt,S5,202,L2,SE

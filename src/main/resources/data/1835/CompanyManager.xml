@@ -231,8 +231,10 @@
 	    <Trains limit="4,4,3"/>
 	</Company>
 	
-	<StartPacket roundClass="net.sf.rails.game.specific._1835.StartRound_1835" variant="Snake">
-		<MultipleColumns/>
+	<StartPacket roundClass="net.sf.rails.game.specific._1835.StartRound_1835">
+		<IfVariant value="Standard,Snake">
+			<MultipleColumns/>
+		</IfVariant>
 		<Item name="NF"		type="Private" basePrice="100" row="1" column="1" displayName="NF+By">
 			<SubItem name="Bay" type="Major"/>
 		</Item>

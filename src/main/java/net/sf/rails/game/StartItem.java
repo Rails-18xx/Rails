@@ -305,7 +305,6 @@ public class StartItem extends RailsAbstractItem {
         basePrice.change(-amount);
     }
 
-
     /**
      * Register a bid. <p> This method does <b>not</b> check off the amount of
      * money that a player has available for bidding.

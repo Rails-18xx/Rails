@@ -1,20 +1,16 @@
 
 package net.sf.rails.game.specific._1837;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
 import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.state.*;
 import rails.game.action.*;
 
@@ -104,8 +100,6 @@ public class CoalExchangeRound extends StockRound_1837 {
      */
     private void init() {
         List<PublicCompany> comps = companyManager.getPublicCompaniesByType("Coal");
-        //HashMultimap<Player, PublicCompany> forcedMergingMinors = HashMultimap.create();
-        //String type;
 
         // Find all mergeable coal companies,
         // and register these per related major company and player.
@@ -113,38 +107,12 @@ public class CoalExchangeRound extends StockRound_1837 {
             if (!comp.isClosed()) {
                 PublicCompany major = companyManager
                         .getPublicCompany(comp.getRelatedPublicCompanyName());
-                /*if (majorMustMerge(major)) {
-                    forcedMergingMinors.put(comp.getPresident(), comp);
-                } else */if (major.hasFloated()) {
+                if (major.hasFloated()) {
                     coalCompsPerMajor.put(major, comp);
                     coalCompsPerPlayer.put (comp.getPresident(), comp);
                 }
             }
         }
-
-        /*
-        // First process the forced mergers
-        if (!forcedMergingMinors.isEmpty()) {
-            // Group mergers by player, starting with the PD
-            List<Player> players
-                    = playerManager.getNextPlayersAfter(playerManager.getPriorityPlayer(),
-                    true, false);
-
-            for (Player player : players) {
-                if (forcedMergingMinors.containsKey(player)) {
-                    for (PublicCompany coal : forcedMergingMinors.get(player)) {
-                        PublicCompany major = coal.getRelatedPublicCompany();
-                        DisplayBuffer.add(this,
-                                LocalText.getText("AutoMergeMinorLog",
-                                coal, major,
-                                Bank.format(this, coal.getCash()),
-                                coal.getPortfolioModel().getTrainList().size()));
-
-                        mergeCompanies (coal, major);
-                    }
-                }
-            }
-         }*/
 
         // Put the majors in the operating order to initiate mergers
         for (PublicCompany major : setOperatingCompanies("Major")) {
@@ -213,83 +181,13 @@ public class CoalExchangeRound extends StockRound_1837 {
     }
 
     /**
-     * A stripped-down version of OperatingRound.layBaseToken,
-     * usable in a StockRound subclass.
-     * @param action
-     * @return
-     *//*
-    public boolean layBaseToken(LayBaseToken_1837 action) {
-
-        String errMsg = null;
-        String errHex = "";
-
-        PublicCompany major = action.getMajor();
-        String majorName = major.getId();
-        List<PublicCompany> minors = action.getMinors();
-
-        // Dummy loop to enable a quick jump out.
-        while (true) {
-
-            if (major.getNumberOfFreeBaseTokens() == 0) {
-                errMsg = LocalText.getText("HasNoTokensLeft", majorName);
-                break;
-            }
-
-            for (PublicCompany minor : minors) {
-                MapHex hex = minor.getHomeHexes().get(0);
-                if (hex.hasTokenOfCompany(major)) {
-                    errHex += hex.getId() + " ";
-                    errMsg =
-                            LocalText.getText("TileAlreadyHasToken", hex.getId(),
-                                    majorName);
-                    break;
-                }
-            }
-
-            break;
-        }
-        if (errMsg != null) {
-            DisplayBuffer.add(
-                    this,
-                    LocalText.getText("CannotLayBaseTokenOn", majorName,
-                            errHex, "-", errMsg));
-            return false;
-        }
-
-        /* End of validation, start of execution *//*
-
-        for (int i = 0; i<minors.size(); i++) {
-            if (!action.getSelected(i)) continue;
-
-            MapHex hex = minors.get(i).getHomeHexes().get(0);
-            Stop stop = hex.getRelatedStop(1);
-            if (hex.layBaseToken(major, stop)) {
-                /* TODO: the false return value must be impossible. *//*
-
-                major.layBaseToken(hex, 0);
-
-                StringBuilder text = new StringBuilder();
-                if (action.isCorrection()) {
-                    text.append(LocalText.getText("CorrectionPrefix"));
-                }
-                text.append(LocalText.getText("LaysFreeTokenOn",
-                        majorName, action.getPlayerName(), hex.getId()));
-                ReportBuffer.add(this, text.toString());
-            }
-        }
-        closedMinors.clear();
-
-        if (!checkForExcessTrains() && !nextPlayer()) finishRound();
-
-        return true;
-    }*/
-
-    /**
      * Check for the need to have the president select trains to discard.
      * This only occurs if the major has too many trains, and has
      * different types of discardable trains.
      * If there is only one such type, discarding is automatic.
-     * @return true if manual excess train selection is necessary.
+     * @return True if manual excess train selection is necessary.
+     * False if the major has no excess trains, or if it had only one type of train to discard;
+     * in the latter case, discarding is automatic, without user interaction.
      */
     private boolean checkForExcessTrains () {
 
@@ -374,24 +272,6 @@ public class CoalExchangeRound extends StockRound_1837 {
     @Override
     public boolean setPossibleActions() {
 
-        //possibleActions.clear();
-
-        // Are there more minor owners for this major?
-        /*if (!currentPlayerOrder.isEmpty()) {
-            return setMinorMergeActions();
-        // If not, then handle token laying for each merged minor (if any)
- /*       } else if (!closedMinors.isEmpty()) {
-            return setTokenLayingActions();
-        // ... and then check if the major must discard any excess trains
- *//*       } else if (!discardableTrains.isEmpty()) {
-            PublicCompany major = currentMajor.value();
-            int excess = major.getNumberOfTrains() - major.getCurrentTrainLimit();
-            if (excess > 0) return setTrainDiscardActions();
-        }
-        // If all the above is done, check if there is another major to deal with
-        return setMinorMergeActions();
-    */
-        // Try again
         while (true) {
             if (step.value() == MERGE && setMinorMergeActions()) {
                 return true;
@@ -407,17 +287,6 @@ public class CoalExchangeRound extends StockRound_1837 {
     }
 
     private boolean setMinorMergeActions() {
-
-        //if (hasActed.value()) {  //??? Do we need this?
-        //    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
-        //    return true;
-        //}
-        //List<PublicCompany> minors = new ArrayList<>();
-
-        /*
-        if (currentPlayerOrder.isEmpty() && nextMajorCompany()) {
-            PublicCompany major = currentMajor.value();
-        }*/
 
         // If there is anything to do, find the first player to merge into the first major company.
         if (nextPlayer()) {
@@ -486,49 +355,11 @@ public class CoalExchangeRound extends StockRound_1837 {
         }
     }
 
-    /*
-     * An extract of the superclass method tailored to new-style
-     * forced coal company mergers.
-     * TODO: this needs to be reconsidered.
-     *
-     * @param minor The automerging coal company
-     * @param major The related major company
-     * @param forced Added to distinguish this method from its superclass parent
-     * @return
+    /**
+     * Find the next major company that is related to mergeable coal companies.
+     * @return True if such a company is found and is not forcibly merged.
+     * False if a (forced) automatic merge has been executed.
      */
-    /*
-    protected boolean mergeCompanies(PublicCompany minor, PublicCompany major, boolean forced) {
-
-        if (!forced) return super.mergeCompanies(minor, major);
-
-        PublicCertificate cert = null;
-        MoneyOwner cashDestination = null; // Bank
-
-        // TODO Validation to be added?
-        if (major != null) {  // When would this be null?
-            cert = unavailable.findCertificate(major, false);
-            cashDestination = major;
-        }
-        //TODO: what happens if the major hasn't operated/founded/Started sofar in the FinalCoalExchangeRound ?
-
-        // Transfer the minor assets
-        int minorCash = minor.getCash();
-        if (cashDestination == null) {
-            // Assets go to the bank
-            if (minorCash > 0) {
-                Currency.toBankAll(minor);
-            }
-            pool.transferAssetsFrom(minor.getPortfolioModel());
-        } else {
-            // Assets go to the major company
-            major.transferAssetsFrom(minor);
-        }
-    }*/
-
-        /**
-         * Find the next major company that is related to mergeable coal companies.
-         * @return True if such a company is found. If not, the round is finished.
-         */
     private boolean nextMajorCompany () {
         if (currentMajorOrder.isEmpty()) {
             return false;
@@ -566,17 +397,6 @@ public class CoalExchangeRound extends StockRound_1837 {
         }
     }
 
-    /*
-    private boolean setTokenLayingActions () {
-        if (!closedMinors.isEmpty()) {
-            setCurrentPlayer(currentMajor.value().getPresident());
-            possibleActions.add (new LayBaseToken_1837(getRoot(),
-                    currentMajor.value(), closedMinors.view()));
-        }
-        // Add done?
-        return true;
-    }*/
-
     protected boolean setTrainDiscardActions() {
 
         PublicCompany major = currentMajor.value();
@@ -603,7 +423,7 @@ public class CoalExchangeRound extends StockRound_1837 {
 
     }
 
-    /*----- METHODS TO BE CALLED TO SET UP THE NEXT TURN -----*/
+    /*----- METHODS TO BE CALLED TO SET UP THE NEXT ROUND -----*/
 
     @Override
     protected void finishRound() {

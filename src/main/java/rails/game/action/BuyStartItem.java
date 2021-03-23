@@ -112,12 +112,14 @@ public class BuyStartItem extends StartItemAction {
 
     public String toString() {
         return super.toString()
-               + RailsObjects.stringHelper(this).addToString("price", price).addToString(
-                       "selected", selected).addToString("setSharePriceOnly",
-                       setSharePriceOnly).addToString("sharePriceToSet",
-                       sharePriceToSet).addToString("companyNeedingSharePrice",
-                       companyNeedingSharePrice).addToStringOnlyActed(
-                       "associatedSharePrice", associatedSharePrice).toString();
+               + RailsObjects.stringHelper(this)
+                .addToString("price", price)
+                .addToString("selected", selected)
+                .addToString("setSharePriceOnly", setSharePriceOnly)
+                .addToString("sharePriceToSet", sharePriceToSet)
+                .addToString("companyNeedingSharePrice", companyNeedingSharePrice)
+                .addToStringOnlyActed("associatedSharePrice", associatedSharePrice)
+                .toString();
     }
 
     public boolean containsStartSpaces() {

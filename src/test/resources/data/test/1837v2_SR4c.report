@@ -302,6 +302,8 @@ CompanyDoesNotPayDividend,S4
 BuysTrain,S4,2,IPO,90
  
 CompanyOperates,S5,Bob
+ 
+CompanyOperates,S5,Bob
 LaysTileAt,S5,202,L2,SE
 CompanyDoesNotPayDividend,S5
 BuysTrain,S5,2,IPO,90

@@ -37,7 +37,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
     private JMenuBar menuBar;
     private JMenu fileMenu, editMenu, taskMenu;
     private JMenuItem saveItem, loadItem, closeItem, exitItem;
-    private JMenuItem trimItem, deleteItem, correctItem;
+    private JMenuItem trimItem, deleteItem, correctItem, copyItem, pasteItem;
     private JMenuItem changeBuyTrainFromFile;
 
     private int correctedIndex;
@@ -52,6 +52,11 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
     private String saveDirectory;
     private String filepath;
     private RailsRoot root;
+
+    /**
+     *  An action to be copied to another file
+     */
+    private PossibleAction copiedAction;
 
     private static Logger log;
 
@@ -156,12 +161,30 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
 
         correctItem = new ActionMenuItem("Correct");
         correctItem.setActionCommand("CORRECT");
-        correctItem.setMnemonic(KeyEvent.VK_C);
-        correctItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+        correctItem.setMnemonic(KeyEvent.VK_R);
+        correctItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
                 ActionEvent.ALT_MASK));
         correctItem.addActionListener(this);
         correctItem.setEnabled(true);
         editMenu.add(correctItem);
+
+        copyItem = new ActionMenuItem("Copy");
+        copyItem.setActionCommand("COPY");
+        copyItem.setMnemonic(KeyEvent.VK_C);
+        copyItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+                ActionEvent.ALT_MASK));
+        copyItem.addActionListener(this);
+        copyItem.setEnabled(true);
+        editMenu.add(copyItem);
+
+        pasteItem = new ActionMenuItem("Paste");
+        pasteItem.setActionCommand("PASTE");
+        pasteItem.setMnemonic(KeyEvent.VK_P);
+        pasteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
+                ActionEvent.ALT_MASK));
+        pasteItem.addActionListener(this);
+        pasteItem.setEnabled(true);
+        editMenu.add(pasteItem);
 
         changeBuyTrainFromFile = new ActionMenuItem("UpdateBuyTrainFromFile");
         changeBuyTrainFromFile.setActionCommand("UPDATE_BUYTRAIN");
@@ -296,6 +319,26 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                     log.error("Number format exception for '{}'", result, e);
                 }
             }
+        } else if ("COPY".equalsIgnoreCase(command)) {
+            String result = JOptionPane.showInputDialog("Enter action number to be copied");
+            if (Util.hasValue(result)) {
+                try {
+                    int index = Integer.parseInt(result);
+                    copy (index);
+                } catch (NumberFormatException e) {
+                    log.error("Number format exception for '{}'", result, e);
+                }
+            }
+        } else if ("PASTE".equalsIgnoreCase(command)) {
+            String result = JOptionPane.showInputDialog("Enter action number after which to paste");
+            if (Util.hasValue(result)) {
+                try {
+                    int index = Integer.parseInt(result);
+                    paste (index);
+                } catch (NumberFormatException e) {
+                    log.error("Number format exception for '{}'", result, e);
+                }
+            }
         } else if ("UPDATE_BUYTRAIN".equalsIgnoreCase(command)) {
             updateBuyTrainFromFile();
         } else if ("SAVE".equalsIgnoreCase(command)) {
@@ -346,6 +389,15 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             JOptionPane.showMessageDialog(this, "Action type '" + correctedAction.getClass().getSimpleName()
                     + "' cannot yet be edited");
         }
+    }
+
+    private void copy (int index) {
+        copiedAction = gameLoader.getActions().get(index);
+    }
+
+    private void paste (int index) {
+        gameLoader.getActions().add(index+1, copiedAction);
+        setReportText(false);
     }
 
     protected void processCorrections (PossibleAction newAction) {

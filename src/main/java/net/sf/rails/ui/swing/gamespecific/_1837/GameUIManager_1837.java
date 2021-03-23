@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import net.sf.rails.game.specific._1837.LayBaseToken_1837;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.DiscardTrain;
@@ -31,16 +30,12 @@ public class GameUIManager_1837 extends GameUIManager {
     public static final String SELECT_CONVERTING_MINOR = "SelectConvertingMinor";
     public static final String SELECT_MERGING_MAJOR = "SelectMergingMajor"; // Not used??
     public static final String SELECT_MERGING_MINOR = "SelectMergingMinor";
-    public static final String SELECT_EXCHANGED_TOKENS = "SelectExchangedTokens";
 
     private static final Logger log = LoggerFactory.getLogger(GameUIManager_1837.class);
 
     public GameUIManager_1837() {
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.rails.ui.swing.GameUIManager#updateUI()
-     */
     @Override
     public void updateUI() {
         super.updateUI();
@@ -161,17 +156,6 @@ public class GameUIManager_1837 extends GameUIManager {
             } else {
                 PublicCompany minor = action.getMinorsToMerge().get(choice);
                 action.setChosenMinor(minor);
-            }
-
-        } else if (SELECT_EXCHANGED_TOKENS.equals(key)) {
-
-            CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
-            LayBaseToken_1837 action = (LayBaseToken_1837) currentDialogAction;
-            int numberOfOptions = action.getMinors().size();
-            boolean[] exchanged = dialog.getSelectedOptions();
-
-            for (int i=0; i<numberOfOptions; i++) {
-                action.setSelected(i, exchanged[i]);
             }
 
         } else {

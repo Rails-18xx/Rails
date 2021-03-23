@@ -180,14 +180,6 @@ public class StockRound_1837 extends StockRound {
             major.transferAssetsFrom(minor);
         }
 
-
-        /* TODO can probably be removed, at least for the CoalExchangeRound */
-        if (major.getNumberOfTrains() > major.getCurrentTrainLimit()
-                && !compWithExcessTrains.contains(major)) {
-            compWithExcessTrains.add(major);
-            // TODO: only transferred trains from a merger may be discarded
-        }
-
         boolean autoMerge = (currentPlayer == null);
         Player minorPres = minor.getPresident();
 

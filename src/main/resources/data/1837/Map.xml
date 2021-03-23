@@ -154,10 +154,10 @@
         <Hex name="J34" tile="-37002" orientation="1" value="25,50" city="ZKB" mutexId="Mine"/>
         <Hex name="J36" tile="-37007" city="Kronstadt"/>
         <Hex name="K1" tile="-800" orientation="5"/>
-        <Hex name="K3" tile="0" cost="70"/>
+        <Hex name="K3" tile="0" pic="-6100" cost="70"/>
         <Hex name="K5" tile="-10" city="Bozen"/>
-        <Hex name="K7" tile="0" cost="70"/>
-        <Hex name="K9" tile="-1"/>
+        <Hex name="K7" tile="0" pic="-6100" cost="70"/>
+        <Hex name="K9" tile="-1" pic="-6101"/>
         <Hex name="K11" tile="0" cost="110"/>
         <Hex name="K13" tile="-1" cost="110"/>
         <Hex name="K15" tile="0"/>
@@ -174,10 +174,10 @@
         <IfOption name="Variant" value="Romoth,1837-2ndEd.">
         <Hex name="K31" tile="-37001" value="30,50" orientation="5" city="SPB" mutexId="Mine"/>
         </IfOption>
-        <Hex name="L2" tile="-3007" city="Mailand"/>
-        <Hex name="L4" tile="0"/>
-        <Hex name="L6" tile="-2"/>
-        <Hex name="L8" tile="-10" city="Venedig"/>
+        <Hex name="L2" tile="-3007" pic="-6107" city="Mailand"/>
+        <Hex name="L4" tile="0" pic="-6100"/>
+        <Hex name="L6" tile="-2" pic="-6102"/>
+        <Hex name="L8" tile="-10" pic="-6110" city="Venedig"/>
         <Hex name="L12" tile="-37007" city="Triest"/>
         <Hex name="L14" tile="0" cost="70"/>
         <Hex name="L16" tile="0" pic="-6000"/>
@@ -188,9 +188,9 @@
         <Hex name="L26" tile="0"/>
         <Hex name="L28" tile="0"/>
         <Hex name="L30" tile="-37001" value="25,50" orientation="5" city="LRB" mutexId="Mine"/>
-        <Hex name="M3" tile="0"/>
-        <Hex name="M5" tile="-1"/>
-        <Hex name="M7" tile="0"/>
+        <Hex name="M3" tile="0" pic="-6100"/>
+        <Hex name="M5" tile="-1" pic="-6101"/>
+        <Hex name="M7" tile="0" pic="-6100"/>
         <Hex name="M13" tile="-3" orientation="4"/>
         <Hex name="M15" tile="0"/>
         <Hex name="M17" tile="0" pic="-6000" cost="70"/>

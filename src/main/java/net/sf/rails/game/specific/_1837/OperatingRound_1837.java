@@ -205,6 +205,8 @@ public class OperatingRound_1837 extends OperatingRound {
             && (company.getHomeHexes().isEmpty()
                 || !company.hasLaidHomeBaseTokens())) {
 
+            initTurn();
+            possibleActions.clear();
             possibleActions.add(new SetHomeHexLocation2(getRoot(),
                     company, GameDef_1837.S5homes));
             return true;
