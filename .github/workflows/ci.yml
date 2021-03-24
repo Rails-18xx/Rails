@@ -33,7 +33,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: 15
           java-package: jdk
       - name: Execute Tests
         run: ./gradlew clean test
@@ -53,7 +53,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: 15
           java-package: jdk
       - name: Execute Tests
         run: ./gradlew clean test
@@ -71,7 +71,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: 15
           java-package: jdk
       - name: Execute Tests
         run: ./gradlew clean test
