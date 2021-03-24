@@ -1,16 +1,15 @@
 package net.sf.rails.game;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.util.Util;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class Access {
@@ -18,13 +17,15 @@ public class Access {
     public enum RunThrough {
         YES,
         NO,
-        TOKENONLY
+        TOKENONLY,
+        TRAINS
     }
 
     public enum RunTo {
         YES,
         NO,
-        TOKENONLY
+        TOKENONLY, // Only if the company has a token laid
+        TRAINS     // Only certain train categories (e.g. goods)
     }
 
     public enum Score {
@@ -35,15 +36,24 @@ public class Access {
 
     private RunTo runToAllowed;
     private RunThrough runThroughAllowed;
+    private List<String> runToTrainCategories;
     private Score scoreType;
     private String mutexId;
     private Stop.Type type;
     private RailsItem owner;
 
-    private Access(RailsItem owner, Stop.Type type, RunTo runToAllowed, RunThrough runThroughAllowed,
+    private static final Logger log = LoggerFactory.getLogger(Access.class);
+
+    private Access(RailsItem owner, Stop.Type type,
+                   RunTo runToAllowed, List<String> runToAllowedCategories,
+                   RunThrough runThroughAllowed,
                    String mutexId, Score scoreType) {
         this.runToAllowed = runToAllowed;
         this.runThroughAllowed = runThroughAllowed;
+        this.runToTrainCategories
+                = (runToAllowedCategories != null
+                ? runToAllowedCategories
+                : new ArrayList<>());
         this.scoreType = scoreType;
         this.mutexId = mutexId;
         this.type = type;
@@ -52,13 +62,8 @@ public class Access {
 
     private Access(Stop.Type type, RunTo runToAllowed, RunThrough runThroughAllowed,
                    String mutexId, Score scoreType) {
-        this.runToAllowed = runToAllowed;
-        this.runThroughAllowed = runThroughAllowed;
-        this.scoreType = scoreType;
-        this.mutexId = mutexId;
-        this.type = type;
-        this.owner = null;
-
+        this (null, type, runToAllowed, null, runThroughAllowed,
+                mutexId, scoreType);
     }
 
     public static EnumMap<Stop.Type, Access> defaults = new EnumMap<>(Stop.Type.class);
@@ -71,7 +76,7 @@ public class Access {
         defaults.put(Stop.Type.CITY, new Access (Stop.Type.CITY, RunTo.YES, RunThrough.YES, null,Score.MAJOR));
         defaults.put(Stop.Type.TOWN, new Access (Stop.Type.TOWN, RunTo.YES, RunThrough.YES, null,Score.MINOR));
         defaults.put(Stop.Type.OFFMAP, new Access (Stop.Type.OFFMAP, RunTo.YES, RunThrough.NO, null, Score.MAJOR));
-        defaults.put(Stop.Type.MINE, new Access (Stop.Type.MINE, RunTo.NO, RunThrough.NO, null, Score.MINOR));
+        defaults.put(Stop.Type.MINE, new Access (Stop.Type.MINE, RunTo.YES, RunThrough.NO, null, Score.MINOR));
         defaults.put(Stop.Type.PORT, new Access (Stop.Type.PORT, RunTo.YES, RunThrough.NO, null, Score.MINOR));
         defaults.put(Stop.Type.PASS, new Access (Stop.Type.PASS, RunTo.YES, RunThrough.YES, null, Score.NO));
     }
@@ -99,6 +104,13 @@ public class Access {
      */
     public RunTo getRunToAllowed() {
         return runToAllowed;
+    }
+
+    /** Train categories allowed to run to a Station (e.g. mine).
+     * Requires runToAllowed == TRAINS
+     */
+    public List<String> getRunToTrainCategories() {
+        return runToTrainCategories;
     }
 
     /** Run-through status of any stops on the hex (whether visible or not).
@@ -162,11 +174,16 @@ public class Access {
             }
         }
 
+        List<String> runToTrainCategories = new ArrayList<>();
         String runToString = accessTag.getAttributeAsString("runTo");
         RunTo runTo = null;
         if (Util.hasValue(runToString)) {
             try {
-                runTo = RunTo.valueOf(runToString.toUpperCase());
+                String[] parts = runToString.split(":");
+                runTo = RunTo.valueOf(parts[0].toUpperCase());
+                if (runTo.toString().equals("TRAINS") && parts.length == 2 && Util.hasValue(parts[1])) {
+                    runToTrainCategories = Arrays.asList(parts[1].split(","));
+                }
             } catch (IllegalArgumentException e) {
                 throw new ConfigurationException ("Illegal value for "
                         + owner +" runTo property: "+runToString, e);
@@ -186,7 +203,8 @@ public class Access {
 
         String mutexId = accessTag.getAttributeAsString("mutexId", null);
 
-        return new Access(type, runTo, runThrough, mutexId, score);
+        return new Access(owner, type, runTo, runToTrainCategories,
+                runThrough, mutexId, score);
     }
 
     public static Access parseDefault(RailsItem owner, Tag accessTag)

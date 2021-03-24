@@ -23,6 +23,7 @@ public abstract class NonModalDialog extends JDialog implements ActionListener {
     protected RailsIconButton okButton, cancelButton;
     protected String okTextKey = "OK";
     protected String cancelTextKey = "Cancel";
+    protected String doneTextKey = "Done";
 
     public NonModalDialog(String key,
             DialogOwner owner, JFrame window, String title, String message) {

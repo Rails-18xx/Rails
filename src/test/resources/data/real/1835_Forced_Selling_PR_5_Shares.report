@@ -7,7 +7,7 @@ PlayerCash,475
 BankHas,10100
 StartOfPhase,2
 BankSizeIs,10100
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Jupp Krupp
 BuysItemFor,Jupp Krupp,M3,80
 FloatsWithCash,M3,80
@@ -46,7 +46,7 @@ Has,Ulli Hegemann,65
 Has,Volker Schnell,85
 Has,Volker Kuhnle,75
 Has,Jupp Krupp,175
-START_OR,0.0
+START_OR,0.1
 ReceivesFor,Jupp Krupp,5,NF
 ReceivesFor,Jupp Krupp,10,OBB
 ReceivesFor,Volker Schnell,15,PfB
@@ -64,7 +64,7 @@ Has,Ulli Hegemann,95
 Has,Volker Schnell,100
 Has,Volker Kuhnle,120
 Has,Jupp Krupp,190
-StartOfInitialRound
+StartOfInitialRound,2
 HasPriority,Ulli Hegemann
 CannotBuyAnything,Ulli Hegemann
 CannotBuyAnything,Volker Schnell
@@ -607,7 +607,7 @@ BUY_SHARE_LOG,Ulli Hegemann,10,SX,IPO,88
 PriceIsPaidTo,88,SX
 SharesReleased,All,BA
 START_COMPANY_LOG,Volker Schnell,BA,84,168,2,20,BANK
-SharesReleased,4 10%,PR
+SharesReleased,40%,PR
 BUY_SHARE_LOG,Volker Kuhnle,10,PR,IPO,154
 PASSES,Jupp Krupp
 BUY_SHARE_LOG,Ulli Hegemann,10,PR,IPO,154

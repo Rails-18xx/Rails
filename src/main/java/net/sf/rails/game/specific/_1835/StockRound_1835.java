@@ -155,89 +155,6 @@ public class StockRound_1835 extends StockRound {
         }
     }
 
-    /**
-     * The company release rules for 1835.
-     *
-     * For now these rules are hardcoded (which makes this code vulnerable
-     * to company name changes!). It did not seem worthwhile to
-     * invent come complex XML for the unique 1835 rules on this matter.
-     *
-     * @param boughtFrom The portfolio from which a certificate has been bought.
-     * @param company The company of which a share has been traded.
-     */
-    // change: release of shares to IPO
-    // requires: trigger on IPO portfolio
-    @Override
-    protected void gameSpecificChecks (PortfolioModel boughtFrom,
-            PublicCompany company) {
-
-        if (boughtFrom != ipo) return;
-
-        String name = company.getId();
-        int sharesInIPO = ipo.getShare(company);
-
-        // Check for group releases
-        if (sharesInIPO == 0) {
-            if (name.equals(GameManager_1835.SX_ID) &&
-                    ipo.getShare(companyManager.getPublicCompany(GameManager_1835.BY_ID)) == 0
-                    || name.equals(GameManager_1835.BY_ID) &&
-                    ipo.getShare(companyManager.getPublicCompany(GameManager_1835.SX_ID)) == 0) {
-                // Group 1 sold out: release Badische
-                releaseCompanyShares (companyManager.getPublicCompany(GameManager_1835.BA_ID));
-                ReportBuffer.add(this, LocalText.getText("SharesReleased",
-                        "All", GameManager_1835.BA_ID));
-            } else if (name.equals(GameManager_1835.BA_ID) || name.equals(GameManager_1835.WT_ID) || name.equals(GameManager_1835.HE_ID)) {
-                if (ipo.getShare(companyManager.getPublicCompany(GameManager_1835.BA_ID)) == 0
-                        && ipo.getShare(companyManager.getPublicCompany(GameManager_1835.WT_ID)) == 0
-                        && ipo.getShare(companyManager.getPublicCompany(GameManager_1835.HE_ID)) == 0) {
-                    // Group 2 sold out: release MS
-                    releaseCompanyShares (companyManager.getPublicCompany(GameManager_1835.MS_ID));
-                    ReportBuffer.add(this, LocalText.getText("SharesReleased",
-                            "All", GameManager_1835.MS_ID));
-                }
-            }
-        }
-
-        // Check for releases within group
-        /* We leave out the Bayern/Sachsen connection, as the latter
-         * will always be available at the start of SR1.
-         */
-        switch (name) {
-            case GameManager_1835.BA_ID:
-                if (sharesInIPO == 50) {  // 50% sold: release Wurttemberg
-                    releaseCompanyShares(companyManager.getPublicCompany(GameManager_1835.WT_ID));
-                    ReportBuffer.add(this, LocalText.getText("SharesReleased",
-                            "All", GameManager_1835.WT_ID));
-                } else if (sharesInIPO == 80) {
-                    // President sold: release four 10% Prussian shares
-                    companyManager.getPublicCompany(GameManager_1835.PR_ID).setBuyable(true);
-                    for (int i = 0; i < 4; i++) {
-                        unavailable.getAnyCertOfType(GameManager_1835.PR_ID + "_10%").moveTo(ipo.getParent());
-                    }
-                    ReportBuffer.add(this, LocalText.getText("SharesReleased",
-                            "4 10%", GameManager_1835.PR_ID));
-                }
-                break;
-            case GameManager_1835.WT_ID:   //Wurttembergische
-                if (sharesInIPO == 50) {  // 50% sold: release Hessische
-                    releaseCompanyShares(companyManager.getPublicCompany(GameManager_1835.HE_ID));
-                    ReportBuffer.add(this, LocalText.getText("SharesReleased",
-                            "All", GameManager_1835.HE_ID));
-                }
-                break;
-            case GameManager_1835.MS_ID:   // Mecklenburg/Schwerin
-                if (sharesInIPO == 40) {  // 60% sold: release Oldenburg
-                    releaseCompanyShares(companyManager.getPublicCompany(GameManager_1835.OL_ID));
-                    ReportBuffer.add(this, LocalText.getText("SharesReleased",
-                            "All", GameManager_1835.OL_ID));
-                }
-                break;
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.rails.game.StockRound#done(rails.game.action.NullAction, java.lang.String, boolean)
-     */
     @Override
     public boolean done(NullAction action, String playerName,
             boolean hasAutopassed) {
@@ -279,14 +196,15 @@ public class StockRound_1835 extends StockRound {
 
 	@Override
 	protected void setPriority(String string) {
-		if (string.equals("BuyCert")) {
+		if (string.matches("BuyCert|StartCompany")) {
 			super.setPriority(string);
 		}
 	}
 
     @Override
-    protected void executeShareTransfer(PublicCompany company, List<PublicCertificate> certsToSell, Player dumpedPlayer, int presSharesToSell) {
+    protected boolean executeShareTransfer(PublicCompany company, List<PublicCertificate> certsToSell, Player dumpedPlayer, int presSharesToSell) {
 
+        boolean swapped = false;
         BankPortfolio bankTo = (BankPortfolio) pool.getParent();
 
         if (dumpedPlayer != null && presSharesToSell > 0) {
@@ -295,11 +213,13 @@ public class StockRound_1835 extends StockRound {
             ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                     dumpedPlayer.getId(),
                     company.getId()));
+            swapped = true;
 
         }
 
         // Transfer the sold certificates
         Portfolio.moveAll(certsToSell, bankTo);
+        return swapped;
     }
 
     private void executePresidentTransferAfterDump(PublicCompany company, Set<PublicCertificate> certsToSell, Player newPresident, int presSharesToSell, Player oldPresident, BankPortfolio bankTo) {

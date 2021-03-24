@@ -16,7 +16,8 @@
 			</StockRound>
 			<OperatingRound class="net.sf.rails.game.specific._18Scan.OperatingRound_18Scan">
 				<EmergencyTrainBuying mustBuyCheapestTrain="no"
-					mayBuyFromCompany="yes"/>
+									  mustBuyTrainEvenIfNoRoute="yes"
+									  mayBuyFromCompany="yes"/>
 			</OperatingRound>
 		</GameParameters>
 		<GuiClasses>

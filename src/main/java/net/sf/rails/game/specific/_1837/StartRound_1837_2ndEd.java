@@ -1,5 +1,6 @@
 package net.sf.rails.game.specific._1837;
 
+import net.sf.rails.game.state.BooleanState;
 import rails.game.action.*;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
@@ -16,10 +17,20 @@ public class StartRound_1837_2ndEd extends StartRound {
     public static final int BUY_STEP = 2;
     public static final int BID_STEP = 3;
 
-    private final IntegerState currentStep = IntegerState.create(this, "currentStep", SELECT_STEP);
-    private final GenericState<Player> selectingPlayer = new GenericState<>(this, "selectingPlayer");
-    private final IntegerState currentBuyPrice = IntegerState.create(this, "currentBuyPrice");
-    private final GenericState<StartItem> currentAuctionItem = new GenericState<>(this, "currentAuctionItem");
+    protected final IntegerState currentStep = IntegerState.create(this, "currentStep", SELECT_STEP);
+    protected final GenericState<Player> selectingPlayer = new GenericState<>(this, "selectingPlayer");
+    protected final IntegerState currentBuyPrice = IntegerState.create(this, "currentBuyPrice");
+    protected final GenericState<StartItem> currentAuctionItem = new GenericState<>(this, "currentAuctionItem");
+    protected final IntegerState numPasses = IntegerState.create(this, "numberOfPasses", 0);
+
+    /**
+     * True if the first start round has finished, either complete or not.
+     * In version 2, any subsequent start rounds are officially stock rounds
+     * (only buying at list price, no bidding).
+     * If in such a subsequent round the start packet is completely sold,
+     * it will not be followed by an operating round but by a stock round.
+     */
+    private boolean buyOnly = false;
 
     /**
      * Constructed via Configure
@@ -29,12 +40,26 @@ public class StartRound_1837_2ndEd extends StartRound {
         // bidding, with base prices
     }
 
+    /**
+     * A pass-through for subclass StartRound_1837_2ndEd_buying
+     * @param parent
+     * @param id
+     * @param hasBidding
+     * @param hasBasePrices
+     * @param hasBuying
+     */
+    protected StartRound_1837_2ndEd(GameManager parent, String id,
+                        Bidding hasBidding, boolean hasBasePrices, boolean hasBuying) {
+        super(parent, id, hasBidding, hasBasePrices, hasBuying);
+
+    }
+
     @Override
     public void start() {
         super.start();
+        buyOnly = ((GameManager_1837)gameManager).isBuyOnly();
 
         currentStep.set(SELECT_STEP);
-
         setPossibleActions();
     }
 
@@ -50,33 +75,42 @@ public class StartRound_1837_2ndEd extends StartRound {
             // In the selection step, all not yet sold items are selectable.
             // The current player MUST select an item,
             // and may then bid for it or pass.
+            // NO! Passing is allowed as per the v2.0 rules (2015, English Version by Lonny).
 
             selectingPlayer.set(currentPlayer);
             currentBuyPrice.set(100);
 
             for (StartItem item : itemsToSell.view()) {
                 if (!item.isSold()) {
-                    item.setStatus(StartItem.SELECTABLE);
-                    item.setMinimumBid(item.getBasePrice());
-                    BidStartItem possibleAction =
-                            new BidStartItem(item, item.getBasePrice(),
-                                    startPacket.getModulus(), false, true);
-                    possibleActions.add(possibleAction);
+                    if (hasBuying) {
+                        item.setStatus(StartItem.SELECTABLE);
+                        BuyStartItem possibleAction =
+                                new BuyStartItem (item, item.getBasePrice(), false);
+                        possibleActions.add(possibleAction);
+                    } else {
+                        item.setStatus(StartItem.SELECTABLE);
+                        item.setMinimumBid(item.getBasePrice());
+                        BidStartItem possibleAction =
+                                new BidStartItem(item, item.getBasePrice(),
+                                        startPacket.getModulus(), false, true);
+                        possibleActions.add(possibleAction);
+                    }
                 }
             }
+            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
             break;
         case BUY_STEP:
             // only offer buy if enough money
             if (currentBuyPrice.value() <= currentPlayer.getFreeCash()) {
                 possibleActions.add(new BuyStartItem(
-                        (StartItem) currentAuctionItem.value(),
+                        currentAuctionItem.value(),
                         currentBuyPrice.value(), true));
             }
             possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
             break;
         case OPEN_STEP:
         case BID_STEP:
-            StartItem item = (StartItem) currentAuctionItem.value();
+            StartItem item = currentAuctionItem.value();
             // only offer if enough money
             if (item.getMinimumBid() <= currentPlayer.getFreeCash()) {
                 BidStartItem possibleAction =
@@ -131,7 +165,9 @@ public class StartRound_1837_2ndEd extends StartRound {
 
         assignItem(player, item, price, 0);
         ((PublicCertificate) item.getPrimary()).getCompany().start();
+        getRoot().getPlayerManager().setPriorityPlayerToNext();
         setNextSelectingPlayer();
+        numPasses.set (0);
         currentStep.set(SELECT_STEP);
 
         return true;
@@ -141,8 +177,7 @@ public class StartRound_1837_2ndEd extends StartRound {
      * The current player bids on a given start item.
      *
      * @param playerName The name of the current player (for checking purposes).
-     * @param itemName The name of the start item on which the bid is placed.
-     * @param amount The bid amount.
+     * @param bidItem The  start item on which the bid is placed.
      */
     @Override
     protected boolean bid(String playerName, BidStartItem bidItem) {
@@ -317,6 +352,15 @@ public class StartRound_1837_2ndEd extends StartRound {
                 currentStep.set(SELECT_STEP);
                 setNextSelectingPlayer();
             }
+            break;
+        case SELECT_STEP:
+            numPasses.add(1);
+            if (numPasses.value() == playerManager.getNumberOfPlayers()) {
+                finishRound();
+            } else {
+                setNextSelectingPlayer();
+            }
+
         }
 
         return true;
@@ -329,7 +373,7 @@ public class StartRound_1837_2ndEd extends StartRound {
         } while ( !currentAuctionItem.value().isActive(currentPlayer) );
     }
 
-    private void setNextSelectingPlayer() {
+    protected void setNextSelectingPlayer() {
         playerManager.setCurrentToNextPlayerAfter(selectingPlayer.value());
     }
 

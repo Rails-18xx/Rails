@@ -19,20 +19,11 @@ import net.sf.rails.common.Config;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.BaseToken;
-import net.sf.rails.game.GameDef;
-import net.sf.rails.game.HexSidesSet;
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.OperatingRound;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.Station;
-import net.sf.rails.game.Stop;
-import net.sf.rails.game.Tile;
-import net.sf.rails.game.TrackConfig;
-import net.sf.rails.game.Train;
+import net.sf.rails.game.*;
 import net.sf.rails.game.financial.ShareSellingRound;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.game.special.SpecialSingleTileLay;
 import net.sf.rails.game.special.SpecialTileLay;
 import net.sf.rails.game.special.SpecialBaseTokenLay;
 import net.sf.rails.game.state.Owner;
@@ -237,8 +228,15 @@ public class ORUIManager implements DialogOwner {
                 SpecialTileLay sp = layTile.getSpecialProperty();
                 if (sp.requiresConnection()) {
                     addConnectedTileLays(layTile);
+                    //MBr: 20210120 - So far no Private has connected and neighbours as power,
+                    // so we dont need to add this here.
                 } else {
-                    addLocatedTileLays(layTile);
+                    //MBr: 20210120 - Introducing the hook for the new private power for 18Chesapeake and also 1844
+                    if (((SpecialSingleTileLay) sp).hasNeighbours()) {
+                        addNeighbouredTileLays(layTile);
+                    } else {
+                        addLocatedTileLays(layTile);
+                    }
                 }
                 break;
             case (LayTile.LOCATION_SPECIFIC):
@@ -252,10 +250,14 @@ public class ORUIManager implements DialogOwner {
 
     }
 
+    private void addNeighbouredTileLays(LayTile layTile) {
+    }
+
     private void addConnectedTileLays(LayTile layTile) {
         NetworkGraph graph = networkAdapter.getRouteGraph(layTile.getCompany(), true, false);
         Map<MapHex, HexSidesSet> mapHexSides = graph.getReachableSides();
         Multimap<MapHex, Station> mapHexStations = graph.getPassableStations();
+        Phase currentPhase = gameUIManager.getCurrentPhase();
 
         boolean allLocations = (layTile.getLocations() == null
                 || layTile.getLocations().isEmpty());
@@ -268,8 +270,8 @@ public class ORUIManager implements DialogOwner {
                 Set<TileHexUpgrade> upgrades = TileHexUpgrade.create(guiHex,
                         mapHexSides.get(hex),
                         mapHexStations.get(hex), layTile, routeAlgorithm);
-                TileHexUpgrade.validates(upgrades, gameUIManager.getCurrentPhase());
-                gameSpecificTileUpgradeValidation (upgrades, layTile);
+                TileHexUpgrade.validates(upgrades, currentPhase);
+                gameSpecificTileUpgradeValidation (upgrades, layTile, currentPhase);
                 hexUpgrades.putAll(guiHex, upgrades);
             }
         }
@@ -292,7 +294,8 @@ public class ORUIManager implements DialogOwner {
      * @param layTile
      */
     protected void gameSpecificTileUpgradeValidation (Set<TileHexUpgrade> upgrades,
-                                                      LayTile layTile) {
+                                                      LayTile layTile,
+                                                      Phase currentPhase) {
     }
 
     private void addLocatedTileLays(LayTile layTile) {
@@ -745,7 +748,9 @@ public class ORUIManager implements DialogOwner {
         allowance.setChosenHex(upgrade.getHex().getHex());
         int orientation = upgrade.getCurrentRotation().getTrackPointNumber();
         allowance.setOrientation(orientation);
-        allowance.setLaidTile(upgrade.getUpgrade().getTargetTile());
+        Tile targetTile = upgrade.getUpgrade().getTargetTile();
+        allowance.setLaidTile(targetTile);
+        allowance.setRelayBaseTokens(upgrade.isRelayBaseTokens());
 
         relayBaseTokens (allowance);
 
@@ -793,15 +798,18 @@ public class ORUIManager implements DialogOwner {
         final MapHex hex = action.getChosenHex();
         Tile newTile = action.getLaidTile();
         Tile oldTile = hex.getCurrentTile();
+
+        // Check if manual token relay is required.
+        // This was an emergency measure in cases where automatic relay
+        // did not work (e.g. 1837 tile 427). Now probably obsolete.
         if (!action.isRelayBaseTokens()
-                && !oldTile.relayBaseTokensOnUpgrade()) return;
+                && !oldTile.relayBaseTokensOnUpgrade()) return; // is deprecated
 
         List<Stop> stopsToQuery = Lists.newArrayList(hex.getStops());
 
         /* Check which tokens must be relaid, and in which sequence.
          * Ideally, the game engine should instruct the UI what to do
          * if there is more than one stop and more than one token.
-         * TODO LayTile does not yet allow that.
          *
          * For now, the only case that needs special handling is the 1835 BA home hex L6,
          * where it it possible to have two tokens laid before even one tile.
@@ -841,6 +849,7 @@ public class ORUIManager implements DialogOwner {
             freeSlots[newStation.getNumber()] = newStation.getBaseSlots();
         }
 
+        // Ask the user to specify new token positions
         for (Stop oldStop : stopsToQuery) {
             if (oldStop.hasTokens()) {
                 // Assume only 1 token (no exceptions known)
@@ -1008,8 +1017,11 @@ public class ORUIManager implements DialogOwner {
                     bTrain.getType(),
                     from.getId() ));
             if (bTrain.isForExchange()) {
-                b.append(" (").append(LocalText.getText("EXCHANGED")).append(
-                ")");
+                String exchTrainTypes = bTrain.getTrainsForExchange().toString()
+                        // Replacing e.g. "[4_0]" by "4", or "[4_0, 5_0, 6_0]" by "4,5 or 6"
+                        .replaceAll("[\\[ ]?(\\w+)_\\d+(,)?\\s?]?", "$1$2")
+                        .replaceFirst(",(\\w+)$"," or $1");
+                b.append(" (").append(LocalText.getText("DiscardingTrain", exchTrainTypes)).append(")");
             }
             if (cost > 0) {
                 b.append(" ").append(
@@ -1428,9 +1440,13 @@ public class ORUIManager implements DialogOwner {
 
             // TEMPORARY extra message about having no route
             for (BuyTrain bTrain : possibleActions.getType(BuyTrain.class)) {
-                if (bTrain.isForcedBuyIfNoRoute()) {
+                if (bTrain.isForcedBuyIfHasRoute()) {
                     b.append("<br><font color=\"red\">");
-                    b.append(LocalText.getText("MustBuyTrainIfNoRoute"));
+                    if (bTrain.isForcedBuyIfNoRoute()) {
+                        b.append(LocalText.getText("MustBuyTrainIfNoRoute"));
+                    } else {
+                        b.append(LocalText.getText("MustBuyTrainIfHasRoute"));
+                    }
                     b.append("</font>");
                     break;
                 }

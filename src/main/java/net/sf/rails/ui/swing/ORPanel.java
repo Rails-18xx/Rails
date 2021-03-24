@@ -6,7 +6,6 @@ import net.sf.rails.common.Config;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
-import net.sf.rails.game.financial.Bank;
 import net.sf.rails.ui.swing.elements.*;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
 import net.sf.rails.util.Util;
@@ -96,7 +95,9 @@ implements ActionListener, KeyListener, RevenueListener {
     private Field[] rights;
     /**
      * For the direct Income to be entered during the OR Phase
+     * and the (remaining) dividend
      */
+    private Field[] dividend;
     private Spinner[] directIncomeSelect;
     private Field[] directIncomeRevenue;
     private int bonusRevXOffset, bonusRevYOffset;
@@ -105,7 +106,7 @@ implements ActionListener, KeyListener, RevenueListener {
     private boolean bonusTokensExist;
     private boolean hasCompanyLoans;
     private boolean hasRights;
-    private boolean hasDirectCompanyIncomeInOr;
+    private boolean hasDirectCompanyIncomeInOR;
 
     // Configured properties
     private boolean showAllCompanies = "always".equalsIgnoreCase(
@@ -161,7 +162,7 @@ implements ActionListener, KeyListener, RevenueListener {
         bonusTokensExist = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.DO_BONUS_TOKENS_EXIST);
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
         hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);
-        hasDirectCompanyIncomeInOr= gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
+        hasDirectCompanyIncomeInOR = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
 
         initButtonPanel();
         gbc = new GridBagConstraints();
@@ -441,7 +442,8 @@ implements ActionListener, KeyListener, RevenueListener {
         if (hasRights) rights = new Field[nc];
         revenue = new Field[nc];
         revenueSelect = new Spinner[nc];
-        if (hasDirectCompanyIncomeInOr) {
+        if (hasDirectCompanyIncomeInOR) {
+            dividend = new Field[nc];
             directIncomeRevenue = new Field[nc];
             directIncomeSelect = new Spinner[nc];
         }
@@ -467,7 +469,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         sharePriceXOffset = currentXOffset += lastXWidth;
         sharePriceYOffset = leftCompNameYOffset;
-        addField(new Caption("<html>Share<br>value</html>"), sharePriceXOffset,
+        addField(new Caption("<html><center>Share<br>value</center></html>"), sharePriceXOffset,
                 0, lastXWidth = 1, 2, WIDE_BOTTOM);
 
         cashXOffset = currentXOffset += lastXWidth;
@@ -524,15 +526,20 @@ implements ActionListener, KeyListener, RevenueListener {
 
         revXOffset = currentXOffset += lastXWidth;
         revYOffset = leftCompNameYOffset;
-        addField(revenueCaption = new Caption("Revenue"), revXOffset, 0, lastXWidth = 2, 1, WIDE_RIGHT);
-        addField(new Caption("earned"), revXOffset, 1, 1, 1, WIDE_BOTTOM);
-        addField(new Caption("payout"), revXOffset + 1, 1, 1, 1, WIDE_BOTTOM + WIDE_RIGHT);
 
-        if (hasDirectCompanyIncomeInOr) {
+        if (hasDirectCompanyIncomeInOR) {
+            addField(revenueCaption = new Caption("Revenue"), revXOffset, 0, lastXWidth = 3, 1, 0);
+            addField(new Caption("earned"), revXOffset, 1, 1, 1, WIDE_BOTTOM);
+            addField(new Caption("payout"), revXOffset + 1, 1, 1, 1, WIDE_BOTTOM );
+            addField(new Caption("dividend"), revXOffset + 2, 1, 1, 1, WIDE_BOTTOM );
             bonusRevXOffset = currentXOffset += lastXWidth;
             bonusRevYOffset =leftCompNameYOffset;
-            addField(directIncomeCaption = new Caption("CompanyIncome"), bonusRevXOffset, 0, lastXWidth = 3, 1, WIDE_RIGHT);
-            addField(new Caption("income"), revXOffset, 1, 1, 1, WIDE_BOTTOM + WIDE_RIGHT);
+            addField(directIncomeCaption = new Caption("<html><center>Company<br>direct<br>income</center></html>"),
+                    bonusRevXOffset, 0, lastXWidth = 1, 2, WIDE_BOTTOM + WIDE_RIGHT);
+        } else {
+            addField(revenueCaption = new Caption("Revenue"), revXOffset, 0, lastXWidth = 2, 1, WIDE_RIGHT);
+            addField(new Caption("earned"), revXOffset, 1, 1, 1, WIDE_BOTTOM);
+            addField(new Caption("payout"), revXOffset + 1, 1, 1, 1, WIDE_BOTTOM + WIDE_RIGHT);
         }
 
         trainsXOffset = currentXOffset += lastXWidth;
@@ -580,17 +587,12 @@ implements ActionListener, KeyListener, RevenueListener {
             addField(f, cashXOffset, cashYOffset + i, 1, 1, WIDE_RIGHT, visible);
 
             if (privatesCanBeBought) {
-                f =
-                        privates[i] =
-                                new Field(
-                                        c.getPortfolioModel().getPrivatesOwnedModel());
-                HexHighlightMouseListener.addMouseListener(f,
-                        orUIManager, c.getPortfolioModel());
+                f = privates[i] = new Field (c.getPortfolioModel().getPrivatesOwnedModel());
+                HexHighlightMouseListener.addMouseListener(f, orUIManager, c.getPortfolioModel());
                 addField(f, privatesXOffset, privatesYOffset + i, 1, 1,
                         0, visible);
 
-                f =
-                    newPrivatesCost[i] =
+                f = newPrivatesCost[i] =
                         new Field(c.getPrivatesSpentThisTurnModel());
                 addField(f, privatesXOffset + 1, privatesYOffset + i, 1, 1,
                         WIDE_RIGHT, visible);
@@ -633,30 +635,48 @@ implements ActionListener, KeyListener, RevenueListener {
                         WIDE_RIGHT, visible);
             }
 
-            f = revenue[i] = new Field(c.getLastRevenueModel());
-            addField(f, revXOffset, revYOffset + i, 1, 1, 0, visible);
+            if(hasDirectCompanyIncomeInOR) {
+                f = revenue[i] = new Field(c.getLastRevenueModel());
+                addField(f, revXOffset, revYOffset + i, 1, 1, 0, visible);
 
-            f = revenueSelect[i] = new Spinner(0, 0, 0,
-                    orUIManager.getGameUIManager().getGameManager().getRevenueSpinnerIncrement());
-            //align spinner size with field size
-            //(so that changes to visibility don't affect panel sizing)
-            f.setPreferredSize(revenue[i].getPreferredSize());
-            addField(f, revXOffset, revYOffset + i, 1, 1, 0,  false);
-            // deactived below, as this caused problems by gridpanel rowvisibility function -- sfy
-            //            revenue[i].addDependent(revenueSelect[i]);
+                f = revenueSelect[i] = new Spinner(0, 0, 0,
+                        orUIManager.getGameUIManager().getGameManager().getRevenueSpinnerIncrement());
+                //align spinner size with field size
+                //(so that changes to visibility don't affect panel sizing)
+                f.setPreferredSize(revenue[i].getPreferredSize());
+                addField(f, revXOffset, revYOffset + i, 1, 1, 0,  false);
+                // deactivated below, as this caused problems by gridpanel rowvisibility function -- sfy
+                //            revenue[i].addDependent(revenueSelect[i]);
 
-            f = decision[i] = new Field(c.getLastRevenueAllocationModel());
-            addField(f, revXOffset + 1, revYOffset + i, 1, 1, WIDE_RIGHT,  visible);
+                f = decision[i] = new Field(c.getLastRevenueAllocationModel());
+                addField(f, revXOffset + 1, revYOffset + i, 1, 1, 0,  visible);
 
-            if(hasDirectCompanyIncomeInOr) {
+                f = dividend[i] = new Field(c.getLastDividendModel());
+                addField (f, revXOffset + 2, revYOffset + i, 1, 1, 0,  visible);
+
                 f = directIncomeRevenue[i] = new Field(c.getLastDirectIncomeModel());
-                addField(f, bonusRevXOffset, bonusRevYOffset + i, 1, 1, 0, visible);
+                addField(f, bonusRevXOffset, bonusRevYOffset + i, 1, 1, WIDE_RIGHT, visible);
 
                 f = directIncomeSelect[i] = new Spinner(0, 0, 0,
                         orUIManager.getGameUIManager().getGameManager().getRevenueSpinnerIncrement());
-
                 f.setPreferredSize(directIncomeRevenue[i].getPreferredSize());
-                addField(f, bonusRevXOffset, bonusRevYOffset + i, 1, 1, 0,  false);
+                addField(f, bonusRevXOffset, bonusRevYOffset + i, 1, 1,
+                        WIDE_RIGHT,  false);
+            } else {
+                f = revenue[i] = new Field(c.getLastRevenueModel());
+                addField(f, revXOffset, revYOffset + i, 1, 1, 0, visible);
+
+                f = revenueSelect[i] = new Spinner(0, 0, 0,
+                        orUIManager.getGameUIManager().getGameManager().getRevenueSpinnerIncrement());
+                //align spinner size with field size
+                //(so that changes to visibility don't affect panel sizing)
+                f.setPreferredSize(revenue[i].getPreferredSize());
+                addField(f, revXOffset, revYOffset + i, 1, 1, 0,  false);
+                // deactived below, as this caused problems by gridpanel rowvisibility function -- sfy
+                //            revenue[i].addDependent(revenueSelect[i]);
+
+                f = decision[i] = new Field(c.getLastRevenueAllocationModel());
+                addField(f, revXOffset + 1, revYOffset + i, 1, 1, WIDE_RIGHT,  visible);
             }
 
             f = trains[i] = new Field(c.getPortfolioModel().getTrainsModel());
@@ -861,7 +881,8 @@ implements ActionListener, KeyListener, RevenueListener {
                  * 1822CA: Mail Contract
                  * 1854 old/new : Mail Contract ?
                  */
-
+                int specialRevenue = ra.getSpecialRevenue();
+                log.debug("Special revenue: {}", specialRevenue);
 
                 if (!Config.isDevelop()) {
                     //parent component is ORPanel so that dialog won't hide the routes painted on the map
@@ -1051,11 +1072,17 @@ implements ActionListener, KeyListener, RevenueListener {
         revenue[orCompIndex].setText(format(amount));
     }
 
+    public void setDividend (int orCompIndex, int amount) {
+        if (hasDirectCompanyIncomeInOR) {
+            dividend[orCompIndex].setText(format(amount));
+        }
+    }
+
     public void resetActions() {
         tileCaption.setHighlight(false);
         tokenCaption.setHighlight(false);
         revenueCaption.setHighlight(false);
-        if(hasDirectCompanyIncomeInOr) {
+        if(hasDirectCompanyIncomeInOR) {
             directIncomeCaption.setHighlight(false);
         }
         trainCaption.setHighlight(false);
@@ -1093,7 +1120,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
     // No longer used?
     public void resetCurrentRevenueDisplay() {
-        if (hasDirectCompanyIncomeInOr) {
+        if (hasDirectCompanyIncomeInOR) {
             setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
                     directIncomeSelect[orCompIndex], directIncomeRevenue[orCompIndex], false);
         } else {
@@ -1247,16 +1274,18 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     @Override
-    public void revenueUpdate(int bestRevenue, boolean finalResult) {
+    public void revenueUpdate(int bestRevenue, int specialRevenue, boolean finalResult) {
         if (isRevenueValueToBeSet) {
             setRevenue (orCompIndex, bestRevenue);
+
+            //setTreasuryBonusRevenue (orCompIndex, specialRevenue);
             //revenueSelect[orCompIndex].setValue(bestRevenue);
             //revenue[orCompIndex].setText(format(bestRevenue));
             /*
              * This needs to have another value for the automatic setting of a Direct Income for a Company
              */
-            if(hasDirectCompanyIncomeInOr) {
-                directIncomeSelect[orCompIndex].setValue(0);
+            if(hasDirectCompanyIncomeInOR) {
+                directIncomeSelect[orCompIndex].setValue(specialRevenue);
             }
         }
         if (finalResult) {
@@ -1499,7 +1528,7 @@ implements ActionListener, KeyListener, RevenueListener {
             revenueSelect[compIndex].setValue(oldValue);
         }
         boolean dciActive = !active && showSpinner;
-        if (hasDirectCompanyIncomeInOr) {
+        if (hasDirectCompanyIncomeInOR) {
             directIncomeRevenue[compIndex].setVisible(dciActive);
             directIncomeSelect[compIndex].setVisible(!dciActive);
             if (!dciActive) {
@@ -1571,8 +1600,10 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     public void setTreasuryBonusRevenue(int orCompIndex2, int bonusAmount) {
-        directIncomeRevenue[orCompIndex2].setText(orUIManager.getGameUIManager().format(bonusAmount));
-
+        directIncomeRevenue[orCompIndex2]
+                .setText(orUIManager
+                        .getGameUIManager()
+                        .format(bonusAmount));
     }
 
     public void dispose() {

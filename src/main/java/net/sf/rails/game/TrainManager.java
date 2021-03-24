@@ -47,6 +47,7 @@ public class TrainManager extends RailsManager implements Configurable {
     protected final Map<TrainCard, List<Train>> trainsPerCard = new HashMap<>();
 
     private boolean removeTrain = false;
+    private boolean removePermanent;
 
     protected String discardToString = "pool";
     protected BankPortfolio discardTo;
@@ -160,6 +161,8 @@ public class TrainManager extends RailsManager implements Configurable {
         if (removeTrainTag != null) {
             // Trains "bought by foreigners" (1844, 1824)
             removeTrain = true; // completed in finishConfiguration()
+            // to determine if permanent trains are also removed
+            removePermanent = removeTrainTag.getAttributeAsBoolean("permanent", false);
         }
 
     }
@@ -222,7 +225,7 @@ public class TrainManager extends RailsManager implements Configurable {
 
         // By default, set the first train type to "available".
         newTypeIndex.set(0);
-        makeTrainsAvailable(trainCardTypes.get(newTypeIndex.value()));
+        releaseInitialTrainTypes (trainCardTypes.get(newTypeIndex.value()));
 
         // Discard Trains To where?
         if ( "pool".equalsIgnoreCase(discardToString)) {
@@ -233,9 +236,12 @@ public class TrainManager extends RailsManager implements Configurable {
             throw new ConfigurationException("Discard to only allow to pool or scrapheap");
         }
 
-        // Trains "bought by foreigners" (1844, 1824)
+        // Trains "bought by foreigners" (1844, 1824, 18Chesapeake)
         if (removeTrain) {
             root.getGameManager().setGameParameter(GameDef.Parm.REMOVE_TRAIN_BEFORE_SR, true);
+                if (removePermanent) {
+                    root.getGameManager().setGameParameter(GameDef.Parm.REMOVE_PERMANENT, true);
+                }
         }
 
         // Train trading between different players at face value only (1851)
@@ -374,7 +380,6 @@ public class TrainManager extends RailsManager implements Configurable {
 
         TrainCardType boughtType, nextType;
         boughtType = train.getCardType();
-        List<TrainCardType> alsoReleasedTypes;
         if (boughtType == (trainCardTypes.get(newTypeIndex.value()))
                 && Bank.getIpo(this).getPortfolioModel().getTrainCardOfType(boughtType) == null) {
             // Last train bought, make a new type available.
@@ -382,23 +387,7 @@ public class TrainManager extends RailsManager implements Configurable {
             if (newTypeIndex.value() < trainTypes.size()) {
                 nextType = (trainCardTypes.get(newTypeIndex.value()));
                 if (nextType != null) {
-                    if (!nextType.isAvailable()) {
-                        makeTrainsAvailable(nextType);
-                        trainAvailabilityChanged.set(true);
-                        ReportBuffer.add(this, LocalText.getText(
-                               "NewTrainAvailable", boughtType.toText(), nextType.toText()));
-                    }
-                    alsoReleasedTypes = nextType.getAlsoReleased();
-                    if (alsoReleasedTypes != null) {
-                        for (TrainCardType alsoReleasedType : alsoReleasedTypes) {
-                            if (!alsoReleasedType.isAvailable()) {
-                                makeTrainsAvailable(alsoReleasedType);
-                                trainAvailabilityChanged.set(true);
-                                ReportBuffer.add(this, LocalText.getText(
-                                        "NewTrainAlsoAvailable", alsoReleasedType.toText()));
-                            }
-                        }
-                    }
+                    releaseTrainTypes (boughtType, nextType, true);
                 }
             }
         }
@@ -419,6 +408,36 @@ public class TrainManager extends RailsManager implements Configurable {
         }
     }
 
+    protected void releaseInitialTrainTypes (TrainCardType cardType) {
+        releaseTrainTypes (null, cardType, false);
+    }
+
+    protected void releaseTrainTypes (TrainCardType boughtType, TrainCardType cardType, boolean reportIt) {
+        List<TrainCardType> alsoReleasedTypes;
+        if (!cardType.isAvailable()) {
+            makeTrainsAvailable(cardType);
+            trainAvailabilityChanged.set(true);
+            if (reportIt) { // No reporting of the initial release (don't break test reports)
+                ReportBuffer.add(this, LocalText.getText(
+                        "NewTrainAvailable", boughtType.toText(), cardType.toText()));
+            }
+        }
+        alsoReleasedTypes = cardType.getAlsoReleased();
+        if (alsoReleasedTypes != null) {
+            for (TrainCardType alsoReleasedType : alsoReleasedTypes) {
+                if (!alsoReleasedType.isAvailable()) {
+                    makeTrainsAvailable(alsoReleasedType);
+                    trainAvailabilityChanged.set(true);
+                    if (reportIt) {
+                        ReportBuffer.add(this, LocalText.getText(
+                                "NewTrainAlsoAvailable", alsoReleasedType.toText()));
+                    }
+                }
+            }
+        }
+
+    }
+
     protected void makeTrainsAvailable(TrainCardType cardType) {
 
         cardType.setAvailable();
@@ -431,7 +450,9 @@ public class TrainManager extends RailsManager implements Configurable {
         } */
 
         for (TrainCard card : cardsPerType.get(cardType)) {
-            to.getPortfolioModel().addTrainCard(card);
+            if (!(card.getOwner() instanceof PublicCompany)) { // to circumvent a bug in 1837
+                to.getPortfolioModel().addTrainCard(card);
+            }
         }
     }
 

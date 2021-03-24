@@ -6,7 +6,7 @@ PlayerCash,800
 BankHas,9600
 StartOfPhase,2
 BankSizeIs,9600
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Stefan
 PASSES,Stefan
 PASSES,Martin
@@ -39,14 +39,14 @@ ALL_PASSED
 Has,Stefan,800
 Has,Martin,755
 Has,Erik,800
-START_OR,0.0
+START_OR,0.1
 ReceivesFor,Erik,5,SVNRR
 ReceivesFor,Martin,10,C&StL
 ShortORExecuted
 Has,Stefan,800
 Has,Martin,765
 Has,Erik,805
-StartOfInitialRound
+StartOfInitialRound,2
 HasPriority,Stefan
 BID_ITEM_LOG,Stefan,115,M&H,685
 BuysItemFor,Martin,D&H,70

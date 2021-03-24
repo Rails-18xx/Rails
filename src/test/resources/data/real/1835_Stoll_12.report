@@ -7,7 +7,7 @@ PlayerCash,475
 BankHas,10100
 StartOfPhase,2
 BankSizeIs,10100
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Eyal
 BuysItemFor,Eyal,M1,80
 FloatsWithCash,M1,80
@@ -661,7 +661,7 @@ Has,Christian,370
 StartStockRound,6
 HasPriority,Eyal
 START_COMPANY_LOG,Eyal,BA,84,168,2,20,BANK
-SharesReleased,4 10%,PR
+SharesReleased,40%,PR
 PASSES,Marco
 PASSES,Nick
 PASSES,Christian

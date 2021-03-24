@@ -11,6 +11,8 @@ import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 
 /**
  * A Stop object represents any junction on the map that is relevant for
@@ -33,6 +35,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     private static final Logger log = LoggerFactory.getLogger(Stop.class);
 
     private Access.RunTo runTo;
+    private List<String> runToTrainCategories;
     private Access.RunThrough runThrough;
     private Access.Score score;
     private String mutexId;
@@ -72,7 +75,12 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     }
 
     public static Stop create (MapHex hex, int stopNumber, Station station) {
+        log.debug("Creating new stop on {}: {} - {}", hex, stopNumber, station);
         return new Stop (hex, String.valueOf(stopNumber), station);
+    }
+
+    public static Stop getInstance(RailsItem item, String fullURI) {
+        return (Stop) item.getRoot().locate(fullURI);
     }
 
     @Override
@@ -155,34 +163,32 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return false;
     }
 
-    public void initStopParameters () {
+    public void initStopParameters (Station station) {
 
         boolean complete;
 
-        log.debug("--- For hex "+getParent().getId());
+        log.debug("--- For hex {} {}", getParent().getId(), getRelatedStation().toString());
+
         // Related station on current tile
-        /* No actual need seems to exist for this most detailed stop property level,
-         * hence the below code is outcommented.
-         * A real need would exist if one tile has stations of different types,
-         * that would also have non-default stop properties.
-         * In such a case, the option to add Access info on Station level added to TileSet.xml
-         * (NOT Tiles.xml!), and code must be written to parse that.
-        log.debug("Station: "+getRelatedStation().toString());
-        complete = getAccessFields(getRelatedStation().getAccess());
-        log.debug("After Station: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        // To be used only with different stops (qua properties) properties on the same tile
+        complete = updateAccessFields(getRelatedStation().getAccess());
+        log.debug("After Station: runTo={} {} runThrough={} mutexId={} score={}",
+                runTo, Util.join(runToTrainCategories, ","), runThrough, mutexId, score);
         if (complete) return;
-        */
 
         // Current Tile
         // Possible (in  TileSet.xml, NOT Tiles.xml!) but not yet used, and not recommended.
         complete = updateAccessFields(getParent().getCurrentTile().getAccess());
-        log.debug("After Tile: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        log.debug("After Tile ({}.{}): runTo={} {} runThrough={} mutexId={} score={}",
+                getParent().getCurrentTile(), station,
+                runTo, Util.join(runToTrainCategories, ","), runThrough, mutexId, score);
         if (complete) return;
 
         // MapHex
         // The recommended place to specify location-specific run and loop specialties.
         complete = updateAccessFields(getParent().getAccess());
-        log.debug("After MapHex: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        log.debug("After MapHex: runTo={} {} runThrough={} mutexId={} score={}",
+                runTo, Util.join(runToTrainCategories, ","), runThrough, mutexId, score);
         if (complete) return;
 
         // Access fields not yet complete, defaults apply. First we need the stop type name.
@@ -192,24 +198,28 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         // TileManager defaults
         // Possible, but no yet used, and not recommended.
         complete = updateAccessFields(getParent().getCurrentTile().getParent().getDefaultAccessType(type));
-        log.debug("After TileManager defaults: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        log.debug("After TileManager defaults: runTo={} {} runThrough={} mutexId={} score={}",
+                runTo, Util.join(runToTrainCategories, ","), runThrough, mutexId, score);
         if (complete) return;
 
         // MapManager defaults
         // The appropriate place to specify defaults.
         complete = updateAccessFields(getParent().getParent().getDefaultAccessType(type));
-        log.debug("After MapManager defaults: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        log.debug("After MapManager defaults: runTo={} {} runThrough={} mutexId={} score={}",
+                runTo, Util.join(runToTrainCategories, ","), runThrough, mutexId, score);
         if (complete) return;
 
         // Built-in defaults
         // Defined in class Access, not changeable.
         complete = updateAccessFields(Access.getDefault(type));
-        log.debug("After built-in defaults: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        log.debug("After built-in defaults: runTo={} {} runThrough={} mutexId={} score={}",
+                runTo, Util.join(runToTrainCategories, ","), runThrough, mutexId, score);
         if (complete) return;
 
          // The ultimate fall-back
         updateAccessFields(Access.getDefault(Stop.Type.CITY));
-        log.debug("After last resort default: runTo={} runThrough={} mutexId={} score={}", runTo, runThrough, mutexId, score);
+        log.debug("After last resort default: runTo={} {} runThrough={} mutexId={} score={}",
+                runTo, Util.join(runToTrainCategories, ","), runThrough, mutexId, score);
    }
 
     /**
@@ -220,6 +230,8 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     private boolean updateAccessFields(Access access) {
         if (access == null) return false;
         if (runTo == null) runTo = access.getRunToAllowed();
+        if (runToTrainCategories == null || runToTrainCategories.isEmpty())
+                runToTrainCategories = access.getRunToTrainCategories();
         if (runThrough == null) runThrough = access.getRunThroughAllowed();
         if (score == null) score = access.getScoreType();
         if (mutexId == null) mutexId = access.getMutexId();
@@ -281,10 +293,14 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     }
 
     public int getValueForPhase(Phase phase) {
-        if (getParent().hasValuesPerPhase()) {
+        int fixedValue = relatedStation.value().getValue();
+        if (getParent().hasValuesPerPhase() && fixedValue <= 0) {
+            // Don't override a fixed value defined on the tile.
+            // This matters for 1837 hex J34, which has
+            // a fixed town value and a phase-dependent mine value (ZKB).
             return getParent().getCurrentValueForPhase(phase);
         } else {
-            return relatedStation.value().getValue();
+            return fixedValue;
         }
     }
 

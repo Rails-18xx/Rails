@@ -8,8 +8,16 @@ import net.sf.rails.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SpecialSingleTileLay extends SpecialTileLay {
+
+
+
+
+    protected List<MapHex> neighbouringHexes = null;
+    protected String neighbouringHexesCode =null;
+
     /**
      * Used by Configure (via reflection) only
      *
@@ -49,6 +57,9 @@ public class SpecialSingleTileLay extends SpecialTileLay {
         connected = tileLayTag.getAttributeAsBoolean("connected", connected);
         discount = tileLayTag.getAttributeAsInteger("discount", discount);
 
+        neighbouringHexesCode = tileLayTag.getAttributeAsString("neighbours", null);
+        // If neighbours is defined the subsequent tile lays need to be connected to the first tile lay.
+
         if (tileId != null) {
             description = LocalText.getText("LayNamedTileInfo",
                     tileId,
@@ -57,7 +68,8 @@ public class SpecialSingleTileLay extends SpecialTileLay {
                             (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
                             (free ? LocalText.getText("noCost") : discount != 0 ? LocalText.getText("discount", discount) :
                                 LocalText.getText("normalCost")),
-                            (connected ? LocalText.getText("connected") : LocalText.getText("unconnected"))
+                            (connected ? LocalText.getText("connected") : LocalText.getText("unconnected")),
+                            neighbouringHexesCode
             );
         } else {
             description = LocalText.getText("LayTileInfo",
@@ -66,7 +78,8 @@ public class SpecialSingleTileLay extends SpecialTileLay {
                     (extra ? LocalText.getText("extra"):LocalText.getText("notExtra")),
                     (free ? LocalText.getText("noCost") : discount != 0 ? LocalText.getText("discount", discount) :
                         LocalText.getText("normalCost")),
-                    (connected ? LocalText.getText("connected") : LocalText.getText("unconnected"))
+                    (connected ? LocalText.getText("connected") : LocalText.getText("unconnected")),
+                    neighbouringHexesCode
             );
         }
 
@@ -95,14 +108,33 @@ public class SpecialSingleTileLay extends SpecialTileLay {
                 locations.add(hex);
             }
         }
+        if (neighbouringHexesCode != null) {
+            neighbouringHexes = new ArrayList<>();
+            for (String hexName : neighbouringHexesCode.split(",")) {
+                hex = mmgr.getHex(hexName);
+                if (hex == null)
+                    throw new ConfigurationException("Neighbour " + hexName
+                            + " does not exist");
+                neighbouringHexes.add(hex);
+            }
+        }
+
     }
 
     @Override
 	public String toText() {
+                if (neighbouringHexesCode != null) {
+                    return "SpecialSingleTileLay comp="
+                            + (originalCompany == null ? null : originalCompany.getId())
+                            + " hex=" + locationCodes
+                            + " colour=" + Util.join(tileColours, ",")
+                            + " extra=" + extra + " cost=" + free + " connected=" + connected
+                            + " neighours=" + neighbouringHexesCode;
+                }
         return "SpecialSingleTileLay comp="
                 + (originalCompany == null ? null : originalCompany.getId())
                 + " hex=" + locationCodes
-                + " colour="+Util.joinWithDelimiter(tileColours, ",")
+                + " colour=" + Util.join(tileColours, ",")
                 + " extra=" + extra + " cost=" + free + " connected=" + connected;
     }
 
@@ -118,4 +150,16 @@ public class SpecialSingleTileLay extends SpecialTileLay {
 
     @Override
     public String toString() { return toText(); }
+
+    public List<MapHex> getNeighbouringHexes() {
+        return neighbouringHexes;
+    }
+
+    public void setNeighbouringHexes(List<MapHex> neighbouringHexes) {
+        this.neighbouringHexes = neighbouringHexes;
+    }
+
+    public boolean hasNeighbours() {
+        return false;
+    }
 }

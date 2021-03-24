@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
-
 public class ComponentManager {
 
     private static final Logger log = LoggerFactory.getLogger(ComponentManager.class);

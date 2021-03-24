@@ -24,9 +24,21 @@
         <Tile id="-3007"><!-- unbuilt "Y" city -->
                 <Upgrade id="201,202"/>
         </Tile>
-        <Tile id="-37001"/><!-- Coal mine; similar to offboard -->
-        <Tile id="-37002"/><!-- "ZKB" coal mine + sharp-curve dit -->
-        <Tile id="-37003"/><!-- "EHS" coal mine + sharp curve -->
+        <Tile id="-37001"><!-- Coal mine; similar to offboard -->
+                <Station id="city1" type="Mine">
+                        <Access runTo="trains:goods"/>
+                </Station>
+        </Tile>
+        <Tile id="-37002"><!-- "ZKB" coal mine + sharp-curve dit -->
+                <Station id="city1" type="Mine">
+                        <Access runTo="trains:goods"/>
+                </Station>
+        </Tile>
+        <Tile id="-37003"><!-- "EHS" coal mine + sharp curve -->
+                <Station id="city1" type="Mine">
+                        <Access runTo="trains:goods"/>
+                </Station>
+        </Tile>
         <Tile id="-37007"><!-- unbuilt "T" city -->
                 <Upgrade id="401"/>
         </Tile>
@@ -37,13 +49,13 @@
                 <Upgrade id="434"/>
         </Tile>
         <Tile id="-37010"><!-- yellow Buda/Pest -->
-                <Upgrade id="425" relayBaseTokens="yes"/>
+                <Upgrade id="425"/>
         </Tile>
         <Tile id="-37011"><!-- yellow Marburg -->
-                <Upgrade id="5,57"/>
+                <Upgrade id="406,429"/>
         </Tile>
         <Tile id="-37012"><!-- yellow Wien -->
-                <Upgrade id="427" relayBaseTokens="yes"/>
+                <Upgrade id="427"/>
         </Tile>
         <Tile id="-37103"><!-- Preprinted yellow tile 3 -->
                 <Upgrade id="416,417,422,423"/>
@@ -214,7 +226,7 @@
         <Tile id="426" quantity="1">
                 <Upgrade id="434"/>
         </Tile>
-        <Tile id="427" quantity="1">
+        <Tile id="427" orientation="0" quantity="1">
                 <Upgrade id="436" relayBaseTokens="yes"/>
         </Tile>
         <Tile id="429" quantity="2">

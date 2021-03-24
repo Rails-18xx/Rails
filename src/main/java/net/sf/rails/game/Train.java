@@ -1,9 +1,6 @@
 package net.sf.rails.game;
 
-import net.sf.rails.common.LocalText;
-import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.state.*;
 
 import com.google.common.collect.ComparisonChain;
@@ -76,6 +73,10 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
 
     public String getName() {
         return name;
+    }
+
+    public String getCategory () {
+        return getType().getCategory();
     }
 
     public void setName(String name) {

@@ -9,13 +9,13 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
     // plugin to check for dependency updates via task dependencyUpdates
     // https://github.com/ben-manes/gradle-versions-plugin
-    id 'com.github.ben-manes.versions' version '0.36.0'
+    id 'com.github.ben-manes.versions' version '0.38.0'
     // https://github.com/n0mer/gradle-git-properties
     id 'com.gorylenko.gradle-git-properties' version '2.2.4'
     // https://openjfx.io/openjfx-docs/#gradle
     id 'org.openjfx.javafxplugin' version '0.0.9'
     // https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/
-    id 'org.sonarqube' version '3.0'
+    id 'org.sonarqube' version '3.1.1'
     // used by SonarQube for code coverage
     id 'jacoco'
 }
@@ -58,31 +58,31 @@ dependencies {
     implementation 'org.jgrapht:jgrapht-core:1.5.0'
     implementation 'org.jgrapht:jgrapht-ext:1.5.0'
     implementation 'org.slf4j:slf4j-api:1.7.30'
-    implementation 'org.apache.xmlgraphics:batik-bridge:1.13'
-    implementation 'org.apache.xmlgraphics:batik-transcoder:1.13'
-    implementation 'org.apache.xmlgraphics:batik-svggen:1.13'
-    implementation 'org.apache.xmlgraphics:batik-ext:1.13'
-    implementation 'org.apache.xmlgraphics:batik-swing:1.13'
+    implementation 'org.apache.xmlgraphics:batik-bridge:1.14'
+    implementation 'org.apache.xmlgraphics:batik-transcoder:1.14'
+    implementation 'org.apache.xmlgraphics:batik-svggen:1.14'
+    implementation 'org.apache.xmlgraphics:batik-ext:1.14'
+    implementation 'org.apache.xmlgraphics:batik-swing:1.14'
     implementation 'javazoom:jlayer:1.0.1'
     implementation 'ch.qos.logback:logback-classic:1.2.3'
     implementation 'com.google.guava:guava:23.0'
     implementation 'net.java.dev.designgridlayout:designgridlayout:1.11'
     implementation 'org.dockingframes:docking-frames-common:1.1.1'
-    implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.2'
+    implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.3'
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
-    implementation 'org.apache.commons:commons-lang3:3.11'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.apache.commons:commons-text:1.9'
     // https://www.jetbrains.com/help/idea/annotating-source-code.html
     implementation 'org.jetbrains:annotations:20.1.0'
 
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
     testImplementation 'org.easytesting:fest-util:1.2.5'
-    testImplementation 'org.mockito:mockito-core:3.6.28'
+    testImplementation 'org.mockito:mockito-core:3.8.0'
 }
 
 javafx {
-    version = '14'
+    version = '15'
     modules = ['javafx.controls', 'javafx.swing']
 }
 
@@ -124,17 +124,16 @@ static def buildDate() {
     new SimpleDateFormat('yyyy-MM-dd').format(new Date())
 }
 
-gitProperties {
-    customProperty 'buildDate', buildDate()
-    // TODO: move this to a property so we can override during a release build
-    customProperty 'develop', 'true'
-}
-
 static def isNonStable(String version) {
     def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
     def regex = /^[0-9,.v-]+(-r)?$/
 
     !stableKeyword && !(version ==~ regex)
+}
+
+gitProperties {
+    customProperty 'buildDate', buildDate()
+    customProperty 'develop', isNonStable(rootProject.version as String)
 }
 
 dependencyUpdates {
@@ -144,12 +143,23 @@ dependencyUpdates {
     }
 }
 
+/**
+ * Converts the version to a jpackage conform form.
+ * Examples:
+ * 2.4.0         -> 2.4.0
+ * 2.4.0-alpha   -> 2.4.0
+ * 2.4.0-release -> 2.4.0
+ *
+ * @return The converted version string
+ */
 def appVersion() {
     rootProject.version
-            .replaceAll('\\-', '.')
-            .replaceAll('alpha', '0')
-            .replaceAll('beta', '0')
-            .replaceAll('release', '0')
+            .toUpperCase()
+            .replaceAll('\\-ALPHA', '')
+            .replaceAll('\\-BETA', '')
+            .replaceAll('\\-RELEASE', '')
+            .replaceAll('\\-FINAL', '')
+            .replaceAll('\\-GA', '')
 }
 
 task buildDebPackage(type: Exec) {

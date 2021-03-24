@@ -27,13 +27,39 @@ public class BuyTrain extends PossibleORAction {
     private String trainUniqueId;
     private transient Owner from;
     private String fromName;
-    private int fixedCost = 0;
-    private boolean forcedBuyIfNoRoute = false; // TODO Can be disabled once route checking exists
+    private int fixedCost;
+
+    /** In 1837 also used for volutary train scrapping */
     private transient Set<Train> trainsForExchange = null;
     private String[] trainsForExchangeUniqueIds;
 
-    /** Obsolete, but left in for backwards compatibility of saved files */
-    private boolean forcedExchange = false;
+    /** This variable is set if and only if a major company has no trains.
+     *
+     * Its intended effect is to force a train buy if the company <i>has</i> a route.
+     * Currently, its only effect is that, when its value is true,
+     * an extra red-coloured message is displayed above the map.
+     *
+     * This variable replaces the disused variable forcedExchange since v2.3.1.
+     */
+    private boolean forcedBuyIfHasRoute = false;
+
+    /** This variable is set if the company has no trains,
+     * and is forced to buy one even if it has no route.
+     * The latter condition is effectuated by setting
+     * the game parameter MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE.
+     * It is used in 18EU and similar games.
+     *
+     * The intended effect of this attribute is to force a train buy
+     * if the company has <i>no</i> route.
+     * Currently, its only effect is to differentiate
+     * the red message above the map, mentioned above.
+     *
+     * Previously, this variable had the role that 'forcedBuyIfHasRoute' now has,
+     * and as such it was grossly misnamed. It could not be renamed
+     * for backwards compatibility reasons. Its usage was changed since v2.3.1.
+     */
+    private boolean forcedBuyIfNoRoute = false;
+
 
     private boolean presidentMustAddCash = false; // If buying from the bank
     private boolean presidentMayAddCash = false;  // If buying from a company
@@ -90,6 +116,13 @@ public class BuyTrain extends PossibleORAction {
         return this;
     }
 
+    public BuyTrain setTrainForExchange(Train train) {
+        Set<Train> trains = new HashSet<>();
+        trains.add (train);
+        setTrainsForExchange (trains);
+        return this;
+    }
+
     public BuyTrain setPresidentMustAddCash(int amount) {
         presidentMustAddCash = amount > 0;
         presidentCashToAdd = amount;
@@ -104,6 +137,10 @@ public class BuyTrain extends PossibleORAction {
 
     public void setForcedBuyIfNoRoute(boolean hasNoTrains) {
         this.forcedBuyIfNoRoute = hasNoTrains;
+    }
+
+    public void setForcedBuyIfHasRoute(boolean forcedBuyIfHasRoute) {
+        this.forcedBuyIfHasRoute = forcedBuyIfHasRoute;
     }
 
     public void setExtraMessage (String message) {
@@ -139,7 +176,7 @@ public class BuyTrain extends PossibleORAction {
      * the train attribute will be null (because readObject() is called and the
      * train is initiated before the actions have been executed - the second
      * train is in this case only created after buying the first one).
-     * @return
+     * @return The train bought
      */
     public Train getTrain() {
         if (train == null) {
@@ -193,6 +230,10 @@ public class BuyTrain extends PossibleORAction {
 
     public boolean isForcedBuyIfNoRoute() {
         return forcedBuyIfNoRoute;
+    }
+
+    public boolean isForcedBuyIfHasRoute() {
+        return forcedBuyIfHasRoute;
     }
 
     public Owner getOwner() {
@@ -290,9 +331,9 @@ public class BuyTrain extends PossibleORAction {
         typeName = (String) fields.get("typeName", null);
         fromName = (String) fields.get("fromName", fromName);
         fixedCost = fields.get("fixedCost", fixedCost);
-        forcedBuyIfNoRoute = fields.get("forcedBuyIfNoRoute", forcedBuyIfNoRoute);//TEMPORARY
         trainsForExchangeUniqueIds = (String[]) fields.get("trainsForExchangeUniqueIds", trainsForExchangeUniqueIds);
-        forcedExchange = fields.get("forcedExchange", forcedExchange);
+        forcedBuyIfNoRoute = fields.get("forcedBuyIfNoRoute", forcedBuyIfNoRoute);
+        forcedBuyIfHasRoute = fields.get("forcedBuyIfHasRoute", forcedBuyIfHasRoute);
         presidentMustAddCash = fields.get("presidentMustAddCash", presidentMustAddCash);
         presidentMayAddCash = fields.get("presidentMayAddCash", presidentMayAddCash);
         presidentCashToAdd = fields.get("presidentCashToAdd", presidentCashToAdd);
@@ -326,7 +367,7 @@ public class BuyTrain extends PossibleORAction {
         // TODO: This has to be replaced by a new mechanism for owners at some time
         from = root.getPortfolioManager().getPortfolioByName(fromName).getParent();
         if (trainsForExchangeUniqueIds != null && trainsForExchangeUniqueIds.length > 0) {
-            trainsForExchange = new HashSet<Train>();
+            trainsForExchange = new HashSet<>();
             for ( String trainsForExchangeUniqueId : trainsForExchangeUniqueIds ) {
                 trainsForExchange.add(trainManager.getTrainByUniqueId(trainsForExchangeUniqueId));
             }

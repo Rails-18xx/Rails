@@ -35,7 +35,7 @@ public class FoldIntoPrussian extends PossibleAction {
     public FoldIntoPrussian(RailsRoot root, @NotNull List<Company> foldableCompanies) {
         super(root); // not defined by an activity yet
         this.foldableCompanies = foldableCompanies;
-        foldableCompanyNames = Util.joinNamesWithDelimiter(foldableCompanies, ",");
+        foldableCompanyNames = Util.joinNames(foldableCompanies, ",");
     }
 
     public FoldIntoPrussian(Company company) {
@@ -49,7 +49,7 @@ public class FoldIntoPrussian extends PossibleAction {
 
     public void setFoldedCompanies(@NotNull List<Company> foldedCompanies) {
         this.foldedCompanies = foldedCompanies;
-        foldedCompanyNames = Util.joinNamesWithDelimiter (foldedCompanies, ",");
+        foldedCompanyNames = Util.joinNames(foldedCompanies, ",");
     }
 
     public List<Company> getFoldableCompanies() {

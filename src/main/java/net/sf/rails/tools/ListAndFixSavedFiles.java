@@ -1,10 +1,7 @@
 package net.sf.rails.tools;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -26,9 +23,7 @@ import net.sf.rails.ui.swing.elements.ActionMenuItem;
 import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
 import net.sf.rails.util.Util;
-import rails.game.action.BuyTrain;
-import rails.game.action.LayTile;
-import rails.game.action.PossibleAction;
+import rails.game.action.*;
 
 
 public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyListener {
@@ -42,7 +37,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
     private JMenuBar menuBar;
     private JMenu fileMenu, editMenu, taskMenu;
     private JMenuItem saveItem, loadItem, closeItem, exitItem;
-    private JMenuItem trimItem, deleteItem, correctItem;
+    private JMenuItem trimItem, deleteItem, correctItem, copyItem, pasteItem;
     private JMenuItem changeBuyTrainFromFile;
 
     private int correctedIndex;
@@ -58,11 +53,13 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
     private String filepath;
     private RailsRoot root;
 
+    /**
+     *  An action to be copied to another file
+     */
+    private PossibleAction copiedAction;
+
     private static Logger log;
 
-    /**
-     * @param args
-     */
     public static void main(String[] args) {
         // intialize configuration
         ConfigManager.initConfiguration(false);
@@ -164,12 +161,30 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
 
         correctItem = new ActionMenuItem("Correct");
         correctItem.setActionCommand("CORRECT");
-        correctItem.setMnemonic(KeyEvent.VK_C);
-        correctItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+        correctItem.setMnemonic(KeyEvent.VK_R);
+        correctItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
                 ActionEvent.ALT_MASK));
         correctItem.addActionListener(this);
         correctItem.setEnabled(true);
         editMenu.add(correctItem);
+
+        copyItem = new ActionMenuItem("Copy");
+        copyItem.setActionCommand("COPY");
+        copyItem.setMnemonic(KeyEvent.VK_C);
+        copyItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+                ActionEvent.ALT_MASK));
+        copyItem.addActionListener(this);
+        copyItem.setEnabled(true);
+        editMenu.add(copyItem);
+
+        pasteItem = new ActionMenuItem("Paste");
+        pasteItem.setActionCommand("PASTE");
+        pasteItem.setMnemonic(KeyEvent.VK_P);
+        pasteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
+                ActionEvent.ALT_MASK));
+        pasteItem.addActionListener(this);
+        pasteItem.setEnabled(true);
+        editMenu.add(pasteItem);
 
         changeBuyTrainFromFile = new ActionMenuItem("UpdateBuyTrainFromFile");
         changeBuyTrainFromFile.setActionCommand("UPDATE_BUYTRAIN");
@@ -259,14 +274,11 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
 
 
     public void scrollDown (int pos) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if (vbarPos == -1)
-                    messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
-                else
-                    messageWindow.vbar.setValue(vbarPos);
-            }
+        SwingUtilities.invokeLater(() -> {
+            if (vbarPos == -1)
+                messageWindow.vbar.setValue(messageWindow.vbar.getMaximum());
+            else
+                messageWindow.vbar.setValue(vbarPos);
         });
     }
 
@@ -303,6 +315,26 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 try {
                     int index = Integer.parseInt(result);
                     correct (index);
+                } catch (NumberFormatException e) {
+                    log.error("Number format exception for '{}'", result, e);
+                }
+            }
+        } else if ("COPY".equalsIgnoreCase(command)) {
+            String result = JOptionPane.showInputDialog("Enter action number to be copied");
+            if (Util.hasValue(result)) {
+                try {
+                    int index = Integer.parseInt(result);
+                    copy (index);
+                } catch (NumberFormatException e) {
+                    log.error("Number format exception for '{}'", result, e);
+                }
+            }
+        } else if ("PASTE".equalsIgnoreCase(command)) {
+            String result = JOptionPane.showInputDialog("Enter action number after which to paste");
+            if (Util.hasValue(result)) {
+                try {
+                    int index = Integer.parseInt(result);
+                    paste (index);
                 } catch (NumberFormatException e) {
                     log.error("Number format exception for '{}'", result, e);
                 }
@@ -348,11 +380,24 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         if (correctedAction instanceof BuyTrain) {
             new BuyTrainDialog ((BuyTrain)correctedAction);
         } else if (correctedAction instanceof LayTile) {
-            new LayTileDialog ((LayTile)correctedAction);
+            new LayTileDialog((LayTile) correctedAction);
+        } else if (correctedAction instanceof BuyCertificate) {
+            new BuyCertificateDialog ((BuyCertificate) correctedAction);
+        } else if (correctedAction instanceof SetDividend) {
+            new SetDividendDialog ((SetDividend) correctedAction);
         } else {
             JOptionPane.showMessageDialog(this, "Action type '" + correctedAction.getClass().getSimpleName()
                     + "' cannot yet be edited");
         }
+    }
+
+    private void copy (int index) {
+        copiedAction = gameLoader.getActions().get(index);
+    }
+
+    private void paste (int index) {
+        gameLoader.getActions().add(index+1, copiedAction);
+        setReportText(false);
     }
 
     protected void processCorrections (PossibleAction newAction) {
@@ -511,6 +556,70 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
 
         }
     }
+
+    private class BuyCertificateDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private BuyCertificate action;
+
+        BuyCertificateDialog(BuyCertificate action) {
+            super("Edit BuyCertificate");
+            this.action = action;
+            addTextField(this, "President",
+                    action.isPresident(),
+                    String.valueOf(action.isPresident()));  // 0
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+            log.info("Action was {}", action);
+            String input = "";
+            try {
+                input = ((JTextField)inputElements.get(0)).getText();
+                boolean president = Boolean.valueOf(input);
+                action.setPresident(president);
+            } catch (NumberFormatException e) {
+                log.error ("Error in president: {}", input, e);
+            }
+
+            log.info("Action is {}", action);
+            return action;
+
+        }
+    }
+
+    private class SetDividendDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private SetDividend action;
+
+        SetDividendDialog(SetDividend action) {
+            super("Edit SetDividend");
+            this.action = action;
+            addTextField(this, "Preset revenue",
+                    action.getPresetRevenue(),
+                    String.valueOf(action.getPresetRevenue()));  // 0
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+            log.info("Action was {}", action);
+            String input = "";
+            try {
+                input = ((JTextField)inputElements.get(0)).getText();
+                int presetRevenue = Integer.valueOf(input);
+                action.setPresetRevenue(presetRevenue);
+            } catch (NumberFormatException e) {
+                log.error ("Error in president: {}", input, e);
+            }
+
+            log.info("Action is {}", action);
+            return action;
+
+        }
+    }
+
+
 
     protected void addLabel (EditDialog owner, String caption, Object initialObject, String initialValue) {
         JComponent element = new JLabel (initialValue);

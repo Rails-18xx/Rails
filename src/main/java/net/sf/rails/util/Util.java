@@ -1,12 +1,13 @@
 package net.sf.rails.util;
 
 import java.awt.*;
+import java.lang.*;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ public final class Util {
         return b.toString();
     }
 
-    public static String joinWithDelimiter (String[] sa, String delimiter) {
+    public static String join (String[] sa, String delimiter) {
         if (sa == null || sa.length == 0) return "";
         StringBuilder b = new StringBuilder();
         for (String s : sa) {
@@ -57,7 +58,7 @@ public final class Util {
         return b.toString();
     }
 
-    public static String joinNamesWithDelimiter (Iterable<? extends Item> items, String delimiter) {
+    public static String joinNames(Iterable<? extends Item> items, String delimiter) {
         StringBuilder b = new StringBuilder("");
         if (items != null) {
             for (Item company : items) {
@@ -69,11 +70,22 @@ public final class Util {
     }
 
 
-    public static String joinWithDelimiter (Iterable<Integer> sa, String delimiter) {
+    public static String join(Iterable<Integer> sa, String delimiter) {
         StringBuilder b = new StringBuilder();
         for (int s : sa) {
             if (b.length() > 0) b.append(delimiter);
             b.append(s);
+        }
+        return b.toString();
+    }
+
+    public static String join(List<String> strings, String delimiter) {
+        StringBuilder b = new StringBuilder();
+        if (strings != null) {
+            for (String s : strings) {
+                if (b.length() > 0) b.append(delimiter);
+                b.append(s);
+            }
         }
         return b.toString();
     }
@@ -118,7 +130,7 @@ public final class Util {
 
     /**
      * Parse a boolean value for Rails
-     * @param value string (allowed values for true: standard Boolean.parseBoolean and yes (after conversion to lowercase)
+     * @param s string (allowed values for true: standard Boolean.parseBoolean and yes (after conversion to lowercase)
      * @return parsed value
      */
     public static boolean parseBoolean(String s) {
@@ -237,5 +249,13 @@ public final class Util {
             result = false;
         }
         return result;
+    }
+
+    /** Quickly set a conditional breakpoint */
+    public static void breakIf (String a, String list) {
+        if (Arrays.asList(list.split(",")).contains(a)) {
+            return; // Set a permanent breakpoint on this line.
+        }
+        return;
     }
 }

@@ -21,13 +21,13 @@ public class GameManager_SOH extends GameManager {
 
         } else if (round instanceof StockRound) {
             numOfORs.set(getCurrentPhase().getNumberOfOperatingRounds());
-            relativeORNumber.set(1);
+            relativeORNumber.set(0);
             startOperatingRound(true);
 
         } else if (round instanceof OperatingRound) {
             if (absoluteORNumber.value() + stockRoundNumber.value() == maxRounds) {
                 finishGame();
-            } else if (relativeORNumber.add(1) <= numOfORs.value()) {
+            } else if (relativeORNumber.value() < numOfORs.value()) {
                 // There will be another OR
                 startOperatingRound(true);
             } else {

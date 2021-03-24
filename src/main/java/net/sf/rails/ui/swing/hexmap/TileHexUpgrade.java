@@ -37,14 +37,17 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     private HexSidesSet rotations;
     private boolean permissiveRoutePossible;
     private final EnumSet<Invalids> invalids = EnumSet.noneOf(Invalids.class);
+    private boolean relayBaseTokens;
 
     // ui fields
     private HexSide selectedRotation;
+
 
     private TileHexUpgrade(GUIHex hex, TileUpgrade upgrade, LayTile action) {
         super(hex);
         this.upgrade = upgrade;
         this.action = action;
+        this.relayBaseTokens = upgrade.isRelayBaseTokens();
     }
 
     public static Set<TileHexUpgrade> create(GUIHex hex, HexSidesSet connected, Collection<Station> stations,
@@ -54,7 +57,15 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         ImmutableSet.Builder<TileHexUpgrade> upgrades = ImmutableSet.builder();
         for (TileUpgrade upgrade : hex.getHex().getCurrentTile().getTileUpgrades()) {
             TileHexUpgrade hexUpgrade = new TileHexUpgrade(hex, upgrade, action);
-            if (routeAlgorithm.equalsIgnoreCase("PERMISSIVE")) {
+
+            Tile targetTile = upgrade.getTargetTile();
+            HexSide fixedRotation = targetTile.getFixedOrientation();
+            if (fixedRotation != null) {
+                BitSet b = new BitSet();
+                b.set (fixedRotation.getTrackPointNumber());
+                hexUpgrade.rotations = HexSidesSet.create(b);
+                hexUpgrade.selectedRotation = fixedRotation;
+            } else if (routeAlgorithm.equalsIgnoreCase("PERMISSIVE")) {
                 hexUpgrade.findValidRotations(connected, stations, false);
             } else if (routeAlgorithm.equalsIgnoreCase("RESTRICTIVE")) {
                 hexUpgrade.findValidRotations(connected, stations, true);
@@ -101,6 +112,11 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         return upgrades.build();
     }
 
+    /* FIXME: this method fails to find a valid orientation
+     * for the 1837 Vienna green upgrade tile #427, which
+     * is a 6-fold symmetric tile where all orientations are OK!
+     * (this has been circumvented by configuring a fixed orientation).
+     */
     private void findValidRotations(HexSidesSet connectedSides, Collection<Station> stations, boolean restrictive) {
         MapHex modelHex = hex.getHex();
 
@@ -302,6 +318,10 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
 
     public HexSide getCurrentRotation() {
         return selectedRotation;
+    }
+
+    public boolean isRelayBaseTokens() {
+        return relayBaseTokens;
     }
 
     public Iterator<HexSide> iterator() {

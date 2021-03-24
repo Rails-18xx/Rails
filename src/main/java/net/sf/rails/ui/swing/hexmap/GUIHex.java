@@ -475,7 +475,7 @@ public class GUIHex implements Observer {
                 }
                 // check the number of tokens laid there already
                 HexPoint p = getTokenCenter (1, homeCity);
-                drawHome(g, company, p);
+                if (company.isDisplayHomeHex()) drawHome(g, company, p);
             }
         }
 

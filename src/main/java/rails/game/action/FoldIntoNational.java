@@ -38,7 +38,7 @@ public class FoldIntoNational extends PossibleAction {
     public FoldIntoNational(RailsRoot root, @NotNull List<Company> foldableCompanies) {
         super(root); // not defined by an activity yet
         this.foldableCompanies = foldableCompanies;
-        foldableCompanyNames = Util.joinNamesWithDelimiter(foldableCompanies, ",");
+        foldableCompanyNames = Util.joinNames(foldableCompanies, ",");
     }
 
     public FoldIntoNational(Company company) {
@@ -52,7 +52,7 @@ public class FoldIntoNational extends PossibleAction {
 
     public void setFoldedCompanies(List<Company> foldedCompanies) {
         this.foldedCompanies = foldedCompanies;
-        foldedCompanyNames = Util.joinNamesWithDelimiter (foldedCompanies, ",");
+        foldedCompanyNames = Util.joinNames(foldedCompanies, ",");
     }
 
     public List<Company> getFoldableCompanies() {

@@ -7,7 +7,7 @@ PlayerCash,475
 BankHas,10100
 StartOfPhase,2
 BankSizeIs,10100
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Lonny
 BuysItemFor,Lonny,M1,80
 FloatsWithCash,M1,80
@@ -46,7 +46,7 @@ Has,Lonny,125
 Has,Stefan,135
 Has,Ronnie,55
 Has,Helmut,85
-START_OR,0.0
+START_OR,0.1
 ReceivesFor,Stefan,5,NF
 ReceivesFor,Ronnie,10,OBB
 ReceivesFor,Helmut,15,PfB
@@ -84,11 +84,11 @@ LaysTileAt,M6,9,B10,NW
 CompanyDoesNotPayDividend,M6
 BuysTrain,M6,2,IPO,80
  
-EndOfOperatingRound,0.0
-ORWorthIncrease,Lonny,0.0,20
-ORWorthIncrease,Stefan,0.0,5
-ORWorthIncrease,Ronnie,0.0,35
-ORWorthIncrease,Helmut,0.0,45
+EndOfOperatingRound,0.1
+ORWorthIncrease,Lonny,0.1,20
+ORWorthIncrease,Stefan,0.1,5
+ORWorthIncrease,Ronnie,0.1,35
+ORWorthIncrease,Helmut,0.1,45
 Has,M1,0
 Has,M2,170
 Has,M3,0
@@ -99,7 +99,7 @@ Has,Lonny,145
 Has,Stefan,140
 Has,Ronnie,90
 Has,Helmut,130
-StartOfInitialRound
+StartOfInitialRound,2
 HasPriority,Lonny
 CannotBuyAnything,Lonny
 CannotBuyAnything,Stefan
@@ -116,7 +116,7 @@ Has,Lonny,145
 Has,Stefan,140
 Has,Ronnie,90
 Has,Helmut,130
-START_OR,0.1
+START_OR,0.2
 ReceivesFor,Stefan,5,NF
 ReceivesFor,Ronnie,10,OBB
 ReceivesFor,Helmut,15,PfB
@@ -165,11 +165,11 @@ CompanySplits,M6,60
 RECEIVES,M6,30
 Payout,Stefan,30,1,100
  
-EndOfOperatingRound,0.1
-ORWorthIncrease,Lonny,0.1,60
-ORWorthIncrease,Stefan,0.1,50
-ORWorthIncrease,Ronnie,0.1,35
-ORWorthIncrease,Helmut,0.1,65
+EndOfOperatingRound,0.2
+ORWorthIncrease,Lonny,0.2,60
+ORWorthIncrease,Stefan,0.2,50
+ORWorthIncrease,Ronnie,0.2,35
+ORWorthIncrease,Helmut,0.2,65
 Has,M1,20
 Has,M2,90
 Has,M3,20
@@ -180,7 +180,7 @@ Has,Lonny,205
 Has,Stefan,190
 Has,Ronnie,125
 Has,Helmut,195
-StartOfInitialRound
+StartOfInitialRound,3
 HasPriority,Lonny
 PASSES,Lonny
 PASSES,Stefan
@@ -457,7 +457,7 @@ PRICE_MOVES_LOG,BY,88,C4,86,C5
 BUY_SHARE_LOG,Helmut,10,SX,Pool,86
 Autopasses,Lonny
 START_COMPANY_LOG,Stefan,BA,84,168,2,20,BANK
-SharesReleased,4 10%,PR
+SharesReleased,40%,PR
 Autopasses,Ronnie
 SELL_SHARE_LOG,Helmut,10,BY,86
 PRICE_MOVES_LOG,BY,86,C5,82,C6

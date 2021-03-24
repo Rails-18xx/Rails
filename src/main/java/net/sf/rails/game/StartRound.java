@@ -60,7 +60,8 @@ public abstract class StartRound extends Round {
     protected final ArrayListState<StartItem> itemsToSell = new ArrayListState<>(this, "itemsToSell");
     protected final IntegerState numPasses = IntegerState.create(this, "numPasses");
 
-    protected StartRound(GameManager parent, String id, Bidding bidding, boolean hasBasePrices, boolean hasBuying) {
+    protected StartRound(GameManager parent, String id,
+                         Bidding bidding, boolean hasBasePrices, boolean hasBuying) {
         super(parent, id);
 
         this.hasBidding = bidding;
@@ -76,6 +77,7 @@ public abstract class StartRound extends Round {
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
         guiHints.setActivePanel(GuiDef.Panel.START_ROUND);
+        log.info("Starting initial round type: {}", getId());
     }
 
     // For backwards compatibility
@@ -101,9 +103,13 @@ public abstract class StartRound extends Round {
         // init current with priority player
         startPlayer = playerManager.setCurrentToPriorityPlayer();
 
-        ReportBuffer.add(this, LocalText.getText("StartOfInitialRound"));
+        ReportBuffer.add(this, LocalText.getText("StartOfInitialRound", getStartRoundNumber()));
         ReportBuffer.add(this, LocalText.getText("HasPriority",
                 startPlayer.getId()));
+    }
+
+    public int getStartRoundNumber() {
+        return gameManager.getStartRoundNumber();
     }
 
     @Override

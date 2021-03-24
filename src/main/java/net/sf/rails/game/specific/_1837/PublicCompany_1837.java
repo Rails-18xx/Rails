@@ -23,9 +23,10 @@ public class PublicCompany_1837 extends PublicCompany {
      * @see net.sf.rails.game.PublicCompany#mayBuyTrainType(net.sf.rails.game.Train)
      */
     @Override
-    public boolean mayBuyTrainType(Train train) { // Coal trains in 1837 are only allowed to buy/operate G-Trains
+    public boolean mayBuyTrainType(Train train) {
+        // Coal trains in 1837 are only allowed to buy/operate G-Trains
         if (this.getType().getId().equals("Coal")){
-            if (train.getType().getInfo().contains("G")){
+            if (train.getType().getCategory().equalsIgnoreCase("goods")){
                 return true;
             }
             else {
@@ -37,6 +38,7 @@ public class PublicCompany_1837 extends PublicCompany {
 
     /* (non-Javadoc)
      * @see net.sf.rails.game.PublicCompany#payout(int)
+     * TODO: rewrite using the new price rise configuration framework (EV)
      */
     public void payout(int amount, boolean b) {
         if (amount == 0) return;

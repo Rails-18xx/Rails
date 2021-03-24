@@ -7,6 +7,7 @@ import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 
+import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,13 +36,16 @@ public class CompanyManager extends RailsManager implements Configurable {
     // TODO Redundant, current usage can be replaced.
     private final Map<String, Map<String, Company>> mCompaniesByTypeAndName = new HashMap<>();
 
+    /** A map of lists of companies per type, kept in sequence */
+    private final Map<String, List<PublicCompany>> mlCompaniesByType = new HashMap<>();
+
     /** A list of all company types */
     private final List<CompanyType> lCompanyTypes = new ArrayList<>();
 
     /** A list of all start packets (usually one) */
     protected List<StartPacket> startPackets = new ArrayList<>();
     /** A map of all start packets, keyed by name. Default name is "Initial" */
-    private final Map<String, StartPacket> startPacketMap = new HashMap<>();
+    protected final Map<String, StartPacket> startPacketMap = new HashMap<>();
 
     /** A map to enable translating aliases to names */
     protected Map<String, String> aliases = null;
@@ -51,6 +55,9 @@ public class CompanyManager extends RailsManager implements Configurable {
     private static final Logger log = LoggerFactory.getLogger(CompanyManager.class);
 
     protected GameManager gameManager;
+
+    /** Release rules */
+    protected List<ReleaseRule> releaseRules;
 
     /**
      * Used by Configure (via reflection) only
@@ -79,7 +86,7 @@ public class CompanyManager extends RailsManager implements Configurable {
               = new HashMap<>();
 
         //NEW//
-        Map<String, Tag> typeTags = new HashMap<String, Tag>();
+        Map<String, Tag> typeTags = new HashMap<>();
 
         for (Tag compTypeTag : tag.getChildren(CompanyType.ELEMENT_ID)) {
             // Extract the attributes of the Component
@@ -146,13 +153,22 @@ public class CompanyManager extends RailsManager implements Configurable {
                     ((PublicCompany)company).setIndex (numberOfPublicCompanies++);
                     mPublicCompanies.put(name, (PublicCompany) company);
                     lPublicCompanies.add((PublicCompany) company);
+
+                    /* Lists in original order of public companies by Type */
+                    if (!mlCompaniesByType.containsKey(type)) {
+                        mlCompaniesByType.put(type, new ArrayList<>());
+                    }
+                    mlCompaniesByType.get(type).add ((PublicCompany)company);
                 }
+
                 /* By type and name */
                 if (!mCompaniesByTypeAndName.containsKey(type))
                     mCompaniesByTypeAndName.put(type,
                             new HashMap<String, Company>());
                 (mCompaniesByTypeAndName.get(type)).put(
                         name, company);
+
+
 
                 String alias = company.getAlias();
                 if (alias != null) createAlias (alias, name);
@@ -177,16 +193,39 @@ public class CompanyManager extends RailsManager implements Configurable {
                     throw new ConfigurationException(LocalText.getText(
                             "StartPacketHasNoClass", name));
                 }
-
-                StartPacket sp = StartPacket.create(this, name, roundClass);
-                startPackets.add(sp);
-                startPacketMap.put(name, sp);
-
-                sp.configureFromXML(packetTag);
+                configureStartPacket(packetTag, name, roundClass);
             }
         }
 
+        /* Read and configure any company release rules */
+        List<Tag> releaseTags = tag.getChildren ("ReleaseRule");
+        if (releaseTags != null) {
+            int numberOfRules = releaseTags.size();
+            releaseRules = new ArrayList<>(numberOfRules);
+
+            int id = 0;
+            for (Tag releaseTag : releaseTags) {
+                String sold = releaseTag.getAttributeAsString("sold");
+                if (!Util.hasValue(sold)) {
+                    throw new ConfigurationException("ReleaseRule has no 'sold' info");
+                }
+                String released = releaseTag.getAttributeAsString("released");
+                if (!Util.hasValue(released)) {
+                    throw new ConfigurationException("ReleaseRule has no 'released' info");
+                }
+                releaseRules.add (new ReleaseRule(this, String.valueOf(id++), sold, released));
+            }
+        }
     }
+
+    protected void configureStartPacket(Tag packetTag, String name, String roundClass) throws ConfigurationException {
+        StartPacket sp = StartPacket.create(this, name, roundClass);
+        startPackets.add(sp);
+        startPacketMap.put(name, sp);
+
+        sp.configureFromXML(packetTag);
+    }
+
 
     // Post XML parsing initialisations
     @Override
@@ -269,6 +308,10 @@ public class CompanyManager extends RailsManager implements Configurable {
         return new ArrayList<>(mCompaniesByTypeAndName.get(type).values());
     }
 
+    public List<PublicCompany> getPublicCompaniesByType (String type) {
+        return new ArrayList<>(mlCompaniesByType.get(type));
+    }
+
     public void closeAllPrivates() {
         for (PrivateCompany priv : lPrivateCompanies) {
             if (priv.isCloseable()) // check if private is closeable
@@ -292,6 +335,10 @@ public class CompanyManager extends RailsManager implements Configurable {
 
     public StartPacket getStartPacket (String name) {
         return startPacketMap.get(name);
+    }
+
+    public List<ReleaseRule> getReleaseRules() {
+        return releaseRules;
     }
 
     /** Pass number of turns for which a certain company type can lay extra tiles of a certain colour. */

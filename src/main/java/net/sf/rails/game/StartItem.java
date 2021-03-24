@@ -37,6 +37,10 @@ public class StartItem extends RailsAbstractItem {
     protected int column = 0;
     protected int index;
 
+    // To allow the displayed name to include both primary and secondary.
+    // Default is the primary name (id) only.
+    protected String displayName = null;
+
     // Bids
     protected final GenericState<Player> lastBidder = new GenericState<>(this, "lastBidder");
     protected final Map<Player, CountingMoneyModel> bids = Maps.newHashMap();
@@ -172,11 +176,12 @@ public class StartItem extends RailsAbstractItem {
         if (company instanceof PrivateCompany) {
             primary = (Certificate) company;
         } else {
-            primary = ipo.getPortfolioModel().findCertificate((PublicCompany) company, president);
+            BankPortfolio source = (((PublicCompany)company).certsAreInitiallyAvailable)
+                    ? ipo : unavailable;
+            primary = source.getPortfolioModel().findCertificate((PublicCompany) company, president);
             // Move the certificate to the "unavailable" pool.
             PublicCertificate pubcert = (PublicCertificate) primary;
-            if (pubcert.getOwner() == null
-                    || pubcert.getOwner() != unavailable.getParent()) {
+            if (pubcert.getOwner() == null || source != unavailable) {
                 pubcert.moveTo(unavailable);
             }
         }
@@ -184,22 +189,26 @@ public class StartItem extends RailsAbstractItem {
         // Check if there is another certificate
         if (name2 != null) {
 
-            Company company2 = compMgr.getCompany(type2, name2);
-            if (company2 instanceof PrivateCompany) {
-                secondary = (Certificate) company2;
-            } else {
-                secondary =
-                        ipo.getPortfolioModel().findCertificate((PublicCompany) company2,
-                                president2);
-                // Move the certificate to the "unavailable" pool.
-                // FIXME: This is still an issue to resolve  ???
-                PublicCertificate pubcert2 = (PublicCertificate) secondary;
-                if (pubcert2.getOwner() != unavailable) {
-                    pubcert2.moveTo(unavailable);
-                }
-            }
+            assignStartSubItem(gameManager, ipo, unavailable, compMgr, name2, president2);
         }
 
+    }
+
+    protected void assignStartSubItem(GameManager gameMgr, BankPortfolio ipo, BankPortfolio unavailable, CompanyManager compMgr, String name2, boolean president2) {
+        Company company2 = compMgr.getCompany(type2, this.name2);
+        if (company2 instanceof PrivateCompany) {
+            secondary = (Certificate) company2;
+        } else {
+            secondary =
+                    ipo.getPortfolioModel().findCertificate((PublicCompany) company2,
+                            president2);
+            // Move the certificate to the "unavailable" pool.
+            // FIXME: This is still an issue to resolve  ???
+            PublicCertificate pubcert2 = (PublicCertificate) secondary;
+            if (pubcert2.getOwner() != unavailable) {
+                pubcert2.moveTo(unavailable);
+            }
+        }
     }
 
     public int getIndex() {
@@ -271,6 +280,14 @@ public class StartItem extends RailsAbstractItem {
         return secondary;
     }
 
+    public String getDisplayName() {
+        return (displayName != null ? displayName : getId());
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     /**
      * Get the start item base price.
      *
@@ -287,7 +304,6 @@ public class StartItem extends RailsAbstractItem {
     public void reduceBasePriceBy(int amount) {
         basePrice.change(-amount);
     }
-
 
     /**
      * Register a bid. <p> This method does <b>not</b> check off the amount of

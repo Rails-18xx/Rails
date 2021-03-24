@@ -6,13 +6,11 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsItem;
-import net.sf.rails.game.RailsOwnableItem;
-import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.*;
 import net.sf.rails.game.model.CertificatesModel;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Ownable;
+import net.sf.rails.game.state.Owner;
 import net.sf.rails.game.state.Typable;
 
 import org.slf4j.Logger;
@@ -64,6 +62,10 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
             return certs.iterator();
         }
 
+        public String toString() {
+            return certs.toString();
+        }
+
     }
 
 
@@ -79,8 +81,21 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
     /** Count against certificate limits */
     protected float certificateCount = 1.0f;
 
-    /** Availability at the start of the game */
-    protected boolean initiallyAvailable;
+    /** Certificate-level availability at the start of the game.
+     *  Added by EV 2/2021:
+     *  Normally, only available certificates can be bought in a Stock Round.
+     *  Unavailable certs must always be picked up individually, usually
+     *  to be exchanged against a single minor or private certificate.
+     *
+     *  This setting is now partly independent of the similar setting for the whole company.
+     *  At setup, the company-level is checked first;
+     *  - if true, then the available certs go to IPO, the unavailable to 'unavailable'.
+     *  - if false, then all certificates go to 'unavailable'.
+     *  In the latter case, the company must be explicitly made available ('released'),
+     *  normally in a method overriding StockRound.gameSpecificChecks().
+     *  At that time, only the available certificates got to IPO.
+     * */
+    protected boolean initiallyAvailable = true;
 
     /** A key identifying the certificate's unique ID */
     protected String certId;
@@ -159,7 +174,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
      * @return The number of shares.
      */
     public int getShares() {
-        return (Integer) shares.value();
+        return shares.value();
     }
 
     /**
@@ -261,7 +276,22 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
         this.certificateCount = certificateCount;
     }
 
-    // Item interface
+    @Override
+    public void moveTo(Owner newOwner) {
+        super.moveTo (newOwner);
+
+        // If this is a president certificate, also set the president
+        if (president) {
+            PublicCompany company = (PublicCompany) getParent();
+            if (newOwner instanceof BankPortfolio) {
+                company.setPresident(null);
+            } else {
+                company.setPresident((Player)newOwner);
+            }
+        }
+    }
+
+        // Item interface
     /**
      * Get the name of a certificate. The name is derived from the company name
      * and the share percentage of this certificate. If it is a 100% share (as
@@ -283,6 +313,10 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate> imple
                     company.getId(),
                     getShare());
         }
+    }
+
+    public String toString() {
+        return getId();
     }
 
 }

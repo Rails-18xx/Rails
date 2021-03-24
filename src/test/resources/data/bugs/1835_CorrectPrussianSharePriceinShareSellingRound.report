@@ -7,7 +7,7 @@ PlayerCash,475
 BankHas,10100
 StartOfPhase,2
 BankSizeIs,10100
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Rainer
 BuysItemFor,Rainer,M1,80
 FloatsWithCash,M1,80
@@ -46,7 +46,7 @@ Has,Christian,95
 Has,Bjoern,85
 Has,Marc,75
 Has,Rainer,145
-START_OR,0.0
+START_OR,0.1
 ReceivesFor,Rainer,5,NF
 ReceivesFor,Bjoern,10,OBB
 ReceivesFor,Rainer,15,PfB
@@ -64,7 +64,7 @@ Has,Christian,120
 Has,Bjoern,115
 Has,Marc,105
 Has,Rainer,165
-StartOfInitialRound
+StartOfInitialRound,2
 HasPriority,Christian
 CannotBuyAnything,Christian
 CannotBuyAnything,Bjoern
@@ -81,7 +81,7 @@ Has,Christian,120
 Has,Bjoern,115
 Has,Marc,105
 Has,Rainer,165
-START_OR,0.1
+START_OR,0.2
 ReceivesFor,Rainer,5,NF
 ReceivesFor,Bjoern,10,OBB
 ReceivesFor,Rainer,15,PfB
@@ -99,7 +99,7 @@ Has,Christian,145
 Has,Bjoern,145
 Has,Marc,135
 Has,Rainer,185
-StartOfInitialRound
+StartOfInitialRound,3
 HasPriority,Christian
 CannotBuyAnything,Christian
 CannotBuyAnything,Bjoern
@@ -663,7 +663,7 @@ PriceIsPaidTo,92,BY
 SharesReleased,All,BA
 PASSES,Marc
 START_COMPANY_LOG,Rainer,BA,84,168,2,20,BANK
-SharesReleased,4 10%,PR
+SharesReleased,40%,PR
 BUY_SHARE_LOG,Christian,10,PR,IPO,154
 BUY_SHARE_LOG,Bjoern,10,PR,IPO,154
 BUY_SHARE_LOG,Marc,10,BA,IPO,84

@@ -1,45 +1,52 @@
-/**
- *
- */
 package rails.game.specific._1837;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
 import com.google.common.base.Objects;
-
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.MapManager;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.StartItem;
+import net.sf.rails.game.*;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 import rails.game.action.PossibleAction;
+import rails.game.action.PossibleORAction;
 import rails.game.action.StartItemAction;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author martin
  *
  */
-public class SetHomeHexLocation extends StartItemAction {
+public class SetHomeHexLocation2 extends PossibleORAction {
 
     private static final long serialVersionUID = 1L;
+
+    /*--- Server-side settings ---*/
+    protected transient PublicCompany company;
+    protected String companyName;
+    protected transient List<MapHex> potentialHexes;
+    protected String potentialHexNames;
+
+    /*--- Client-side settings ---*/
     protected transient MapHex selectedHomeHex = null;
     protected String selectedHomeHexName = null;
-    transient protected PublicCompany company;
-    protected String companyName;
+
     /**
-     * @param startItem
-     * @param price
-     * @param player
+     * @param root
+     * @param company
+     * @param hexNames
      */
-    public SetHomeHexLocation(StartItem startItem,
-            PublicCompany company, Player player, int price) {
-        super(startItem);
-        startItem.setSold(player, price);
+    public SetHomeHexLocation2(RailsRoot root, PublicCompany company,
+                               String hexNames) {
+        super(root);
         this.company = company;
         this.companyName = company.getId();
+        this.potentialHexNames = hexNames;
+        this.potentialHexes = new ArrayList<>(2);
+        for (String hexName : hexNames.split(",")) {
+            potentialHexes.add (root.getMapManager().getHex(hexName));
+        }
     }
 
     public void setHomeHex(MapHex homeHex) {
@@ -90,7 +97,7 @@ public class SetHomeHexLocation extends StartItemAction {
         if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        SetHomeHexLocation action = (SetHomeHexLocation)pa;
+        SetHomeHexLocation2 action = (SetHomeHexLocation2)pa;
         boolean options = Objects.equal(this.company, action.company);
         // finish if asOptions check
         if (asOption) return options;
@@ -104,13 +111,14 @@ public class SetHomeHexLocation extends StartItemAction {
     public String toString() {
         return super.toString() +
                 RailsObjects.stringHelper(this)
-                .addToString("company", company)
-                .addToStringOnlyActed("selectedHomeHex", selectedHomeHex)
+                //.addToString("company", company) // Already done in super
+                .addToString("possibleHomeHexes", potentialHexNames)
+                .addToStringOnlyActed("selectedHomeHex", selectedHomeHexName)
                 .toString()
         ;
     }
 
-    public Object getCompanyName() {
+    public String getCompanyName() {
         return companyName;
     }
 
@@ -119,5 +127,9 @@ public class SetHomeHexLocation extends StartItemAction {
         MapHex homeHex=mapManager.getHex(string);
         selectedHomeHex = homeHex;
         selectedHomeHexName = homeHex.getId();
+    }
+
+    public List<MapHex> getPotentialHexes() {
+        return potentialHexes;
     }
 }

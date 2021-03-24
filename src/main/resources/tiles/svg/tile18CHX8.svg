@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="357"
+   width="393"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="tile18CHX8.svg"
+   id="svg5445"
+   version="1.1">
+  <metadata
+     id="metadata5451">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs5449" />
+  <sodipodi:namedview
+     fit-margin-bottom="0"
+     fit-margin-right="0"
+     fit-margin-left="0"
+     fit-margin-top="0"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="svg5445"
+     inkscape:window-maximized="1"
+     inkscape:window-y="-9"
+     inkscape:window-x="-9"
+     inkscape:cy="50.5"
+     inkscape:cx="54.710518"
+     inkscape:zoom="0.95"
+     showgrid="false"
+     id="namedview5447"
+     inkscape:window-height="2081"
+     inkscape:window-width="3840"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <path
+     id="path5393"
+     stroke-linejoin="round"
+     stroke-width="1"
+     stroke="#808080"
+     fill="#808080"
+     d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z" />
+  <text
+     fill="#000000"
+     stroke="#000000"
+     font-family="Arial"
+     text-anchor="middle"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:31px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle"
+     id="text5395"
+     font-weight="bold"
+     font-size="31"
+     dy="9.3000002"
+     y="318.5"
+     x="245.49998"><tspan
+       y="318.5"
+       x="245.49998"
+       id="tspan5453"
+       sodipodi:role="line">X8</tspan></text>
+  <path
+     id="path5407"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="34"
+     stroke="#ffffff"
+     fill="none"
+     d="M 196.49999,170.5 V 0.5" />
+  <path
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5409"
+     d="m 196.49999,170.5 147,-85" />
+  <path
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5411"
+     d="m 196.49999,170.5 147,85" />
+  <path
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="34"
+     stroke-linecap="butt"
+     stroke-linejoin="round"
+     id="path5413"
+     d="m 196.49999,170.5 v 170" />
+  <path
+     id="path5415"
+     stroke-linejoin="round"
+     stroke-linecap="butt"
+     stroke-width="34"
+     stroke="#ffffff"
+     fill="none"
+     d="M 196.49999,170.5 49.499992,85.5" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:connector-curvature="0"
+     id="path5419"
+     d="m 196.49999,170.5 147,-85" />
+  <ellipse
+     id="ellipse5437"
+     stroke-linejoin="round"
+     stroke-width="2"
+     stroke="#000000"
+     fill="#ffffff"
+     cy="43.5"
+     cx="269.5"
+     ry="30"
+     rx="46" />
+  <text
+     style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:37.3333px;font-family:'Bookman Old Style';-inkscape-font-specification:'Bookman Old Style, Light';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000"
+     id="text5441"
+     font-size="54"
+     dy="16.200001"
+     y="165.5"
+     x="47.499992"><tspan
+       y="165.5"
+       x="47.499992"
+       id="tspan5565"
+       sodipodi:role="line">DC</tspan></text>
+  <path
+     id="path5443"
+     stroke-linejoin="round"
+     stroke-width="1"
+     stroke="#000000"
+     fill="none"
+     d="M 98.499992,0.5 H 294.49999 l 98,170 -98,170 H 98.499992 L 0.49999229,170.5 Z" />
+  <path
+     id="path5409-7"
+     d="m 49.499992,255.5 146.999998,-85"
+     style="fill:none;stroke:#ffffff;stroke-width:34;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:connector-curvature="0" />
+  <g
+     transform="translate(0.49999229,0.5)"
+     inkscape:label="Layer 1"
+     id="layer1"
+     inkscape:groupmode="layer">
+    <path
+       id="path5419-0"
+       d="M 49.000012,254.99999 196,170"
+       style="fill:none;stroke:#000000;stroke-width:26;stroke-linecap:butt;stroke-linejoin:round"
+       inkscape:connector-curvature="0" />
+    <path
+       fill="none"
+       stroke="#000000"
+       stroke-width="26"
+       stroke-linecap="butt"
+       stroke-linejoin="round"
+       id="path5423"
+       d="M 196,170 V 340" />
+    <path
+       fill="none"
+       stroke="#000000"
+       stroke-width="26"
+       stroke-linecap="butt"
+       stroke-linejoin="round"
+       id="path5421"
+       d="m 196,170 147,85" />
+    <path
+       id="path5417"
+       stroke-linejoin="round"
+       stroke-linecap="butt"
+       stroke-width="26"
+       stroke="#000000"
+       fill="none"
+       d="M 196,170 V 0" />
+    <path
+       id="path5425"
+       stroke-linejoin="round"
+       stroke-linecap="butt"
+       stroke-width="26"
+       stroke="#000000"
+       fill="none"
+       d="M 196,170 49,85" />
+    <g
+       transform="translate(-5.2631574,1.0526342)"
+       id="g5492">
+      <g
+         id="g5471">
+        <polygon
+           style="fill:#ffffff;stroke:#ffffff;stroke-width:12"
+           id="polygon5397"
+           points="94,119 145,68 247,68 298,119 298,221 247,272 145,272 94,221 " />
+      </g>
+      <circle
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:12"
+         cx="145"
+         cy="119"
+         r="51"
+         id="circle5399" />
+      <circle
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:12"
+         cx="247"
+         cy="119"
+         r="51"
+         id="circle5401" />
+      <circle
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:12"
+         cx="247"
+         cy="221"
+         r="51"
+         id="circle5403" />
+      <circle
+         style="fill:#ffffff;stroke:#ffffff;stroke-width:12"
+         cx="145"
+         cy="221"
+         r="51"
+         id="circle5405" />
+      <polygon
+         style="fill:#ffffff;stroke:#000000;stroke-width:4"
+         points="94,119 145,68 247,68 298,119 298,221 247,272 145,272 94,221 "
+         id="polygon5427" />
+      <g
+         id="g5477">
+        <circle
+           style="fill:#ffffff;stroke:#000000;stroke-width:4"
+           id="circle5429"
+           r="51"
+           cy="119"
+           cx="145" />
+        <circle
+           style="fill:#ffffff;stroke:#000000;stroke-width:4"
+           id="circle5431"
+           r="51"
+           cy="119"
+           cx="247" />
+        <circle
+           style="fill:#ffffff;stroke:#000000;stroke-width:4"
+           id="circle5433"
+           r="51"
+           cy="221"
+           cx="247" />
+        <circle
+           style="fill:#ffffff;stroke:#000000;stroke-width:4"
+           id="circle5435"
+           r="51"
+           cy="221"
+           cx="145" />
+      </g>
+      <text
+         style="font-size:43px;font-family:'Bookman Old Style';text-anchor:middle;fill:#000000;stroke:#000000"
+         x="269"
+         y="43"
+         dy="0.30000001em"
+         font-size="43"
+         id="text5439">100</text>
+    </g>
+  </g>
+</svg>

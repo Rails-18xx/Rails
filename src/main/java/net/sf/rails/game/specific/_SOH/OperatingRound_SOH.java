@@ -167,8 +167,8 @@ public class OperatingRound_SOH extends OperatingRound {
             if (company.canHoldOwnShares() && gameManager.getParmAsBoolean (
                     GameDef.Parm.EMERGENCY_MUST_SELL_TREASURY_SHARES)) {
                 // Treasury shares to be sold first
-                int sharesInTreasury = company.getPortfolioModel().getShareNumber(company);
-                int sharesInPool = pool.getShareNumber(company);
+                int sharesInTreasury = company.getPortfolioModel().getShares(company);
+                int sharesInPool = pool.getShares(company);
                 int sharesToSell = Math.min (sharesInTreasury, maxSharesInPool - sharesInPool);
                 raisableCash += sharesToSell * company.getMarketPrice();
                 log.info ("Cash after selling {} treasury shares: {}", sharesToSell, raisableCash);
@@ -185,7 +185,7 @@ public class OperatingRound_SOH extends OperatingRound {
             PortfolioModel playerPortfolio = player.getPortfolioModel();
             int poolAllowsShares = PlayerShareUtils.poolAllowsShareNumbers(company);
             for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
-                int ownedShares = playerPortfolio.getShareNumber(comp);
+                int ownedShares = playerPortfolio.getShares(comp);
                 if (ownedShares == 0) continue;
 
                 /* May not sell more than the Pool can accept */
@@ -198,7 +198,7 @@ public class OperatingRound_SOH extends OperatingRound {
                     if (potential != null) {
                         // May not sell more shares than this other player has
                         maxSharesToSell = Math.min(maxSharesToSell,
-                                potential.getPortfolioModel().getShareNumber(comp));
+                                potential.getPortfolioModel().getShares(comp));
                         if (maxSharesToSell == 0) continue;
                         raisableCash += maxSharesToSell * comp.getMarketPrice();
                         log.info("Cash after selling {} {} shares: {}",

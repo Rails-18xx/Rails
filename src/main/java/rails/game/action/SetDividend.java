@@ -113,6 +113,10 @@ public class SetDividend extends PossibleORAction implements Cloneable {
                 action.requiredCash);
     }
 
+    public void setPresetRevenue(int presetRevenue) {
+        this.presetRevenue = presetRevenue;
+    }
+
     public int getPresetRevenue() {
         return presetRevenue;
     }
@@ -201,13 +205,13 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         // check asAction attributes
         // EV 2020/07/18: Disabled. In 18Scan the revenue and allocation
         // may sometimes be changed afterwards (e.g. minors pay out even if no route)
-        return true;
-        /*
+
         return options
                 && Objects.equal(this.actualRevenue, action.actualRevenue)
                 && Objects.equal(this.actualCompanyTreasuryRevenue, action.actualCompanyTreasuryRevenue)
                 && Objects.equal(this.revenueAllocation, action.revenueAllocation);
-         */
+
+        //return true;
     }
 
     @Override
@@ -267,7 +271,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
         for (int i=0; i < allowedRevenueAllocations.length; i++) {
             s[i] = getAllocationNameKey(allowedRevenueAllocations[i]);
         }
-        return Util.joinWithDelimiter (s, ";");
+        return Util.join (s, ";");
     }
 
 }

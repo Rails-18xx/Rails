@@ -1,0 +1,72 @@
+<Map tileOrientation="NS" letterOrientation="horizontal" even="B">
+	<Defaults>
+		<Access type="offMap" runTo="yes" runThrough="no" loop="no" score="major"/>
+		<Access type="city" runTo="yes" runThrough="yes" loop="yes" score="major"/>
+		<Access type="town" runTo="yes" runThrough="yes" loop="yes" score="minor"/>
+	</Defaults>
+	<!-- The above defaults are redundant, these settings are the system defaults anyway -->
+	<Hex name="A3" tile="-911" orientation="0" value="40,50,60,80" city="Pittsburgh"/>
+	<Hex name="A7" tile="-902" orientation="0" value="40,60,80,100" city="Ohio"/>
+	<Hex name="A13" tile="-901" orientation="5" value="40,50,60,80" city="West Virgina Coal Fields"/>
+	<Hex name="B2" tile="-901" orientation="0" value="40,50,60,80"/>
+	<Hex name="B4" tile="-2"/>
+	<Hex name="B6" tile="0"/>
+	<Hex name="B8" tile="0"/>
+	<Hex name="B10" tile="0"/>
+	<Hex name="B12" tile="0" cost="80"/>
+	<Hex name="B14" tile="-902" orientation="5" value="40,50,60,80"/>
+	<Hex name="C3" tile="0"/>
+	<Hex name="C5" tile="-10" city="Green Spring"/>
+	<Hex name="C7" tile="0" />
+	<Hex name="C9" tile="0" />
+	<Hex name="C11" tile="0" />
+	<Hex name="C13" tile="-10" cost="80" city="Lynchburg"/>
+	<Hex name="D2" tile="-10" cost="80" city="Berlin"/>
+	<Hex name="D4" tile="0" cost="80"/>
+	<Hex name="D6" tile="0" cost="80"/>
+	<Hex name="D8" tile="-10" cost="80" City="Leesburg"/>
+	<Hex name="D10" tile="0" cost="80"/>
+	<Hex name="D12" tile="-10" city="Charlottesville"/>
+	<Hex name="E1" tile="-8" orientation="2"/>
+	<Hex name="E3" tile="-10" city="Hagerstown"/>
+	<Hex name="E5" tile="0" cost="80"/>
+	<Hex name="E7" tile="0"/>
+	<Hex name="E9" tile="0"/>
+	<Hex name="E11" tile="-1"/>
+	<Hex name="E13" tile="0"/>
+	<Hex name="F2" tile="-10" city="Harrisburg"/>
+	<Hex name="F4" tile="-1" cost="40"/>
+	<Hex name="F6" tile="0"/>
+	<Hex name="F8" tile="-10" city="Washington" label="DC"/>
+	<Hex name="F10" tile="0" cost="40"/>
+	<Hex name="F12" tile="0"/>
+	<Hex name="F14" tile="-7" orientation="5"/>
+	<Hex name="G1" tile="-7710" orientation="1"/>
+    <Hex name="G3" tile="-1" cost="40"/>
+	<Hex name="G5" tile="0"/>
+	<Hex name="G7" tile="0"/>
+	<Hex name="G9" tile="0" cost="40"/>
+	<Hex name="G11" tile="0" cost="40"/>
+	<Hex name="G13" tile="-10" city="Richmond"/>
+	<Hex name="H2" tile="0"/>
+    <Hex name="H4" tile="-10" city="Strasburg"/>
+	<Hex name="H6" tile="-7713" orientation="4" city="Baltimore" label="OO" />
+	<Hex name="H8" tile="-4000"/>
+    <Hex name="H12" tile="0" cost="40"/>
+    <Hex name="H14" tile="-901" orientation="3" value="30,40,50,60" city="Norfolk"/>
+    <Hex name="I3" tile="0"/>
+	<Hex name="I5" tile="-1" cost="40"/>
+	<Hex name="I7" tile="0"/>
+	<Hex name="I9" tile="-7712" orientation="2" town="Delmarva Penninsula" value="30"/>
+	<Hex name="J2" tile="-10" city="Allentown"/>
+    <Hex name="J4" tile="-7713" orientation="0" city="Philadelphia" label="OO"/>
+	<Hex name="J6" tile="-10" city="Camden" cost="40"/>
+	<Hex name="J8" tile="0"/>
+	<Hex name="J10" tile="0"/>
+	<Hex name="K1" tile="-7711" orientation="0" value="30" town="Easton"/>
+	<Hex name="K3" tile="-2" town="Trenton, Amboy"/>
+	<Hex name="K5" tile="-2" town="Princeton, Burlington"/>
+	<Hex name="K7" tile="-7" orientation="4"/>
+	<Hex name="L2" tile="-902" orientation="2" value="40,60,80,100" city="New York"/>
+	<Hex name="L4" tile="0"/>
+</Map>

@@ -145,8 +145,10 @@ public class OperatingRound_18Scan extends OperatingRound {
         // Pending a better solution, we handle that here.
         // TODO: a generic solution is wanted.
 
-        final PrivateCompany sjs = (PrivateCompany) companyManager.getCompany("Private", GameDef_18Scan.SJS);
-        final PublicCompany dsb = (PublicCompany) companyManager.getCompany("Public", GameDef_18Scan.DSB);
+        final PrivateCompany sjs =
+                (PrivateCompany) companyManager.getCompany("Private", GameDef_18Scan.SJS);
+        final PublicCompany dsb =
+                (PublicCompany) companyManager.getCompany("Public", GameDef_18Scan.DSB);
         boolean sjsWasOpen = false;
         SpecialSingleTileLay sst = null;
 
@@ -174,9 +176,16 @@ public class OperatingRound_18Scan extends OperatingRound {
     }
 
 
-        public void resume() {
-        // To return to the normal token lay step, start from the preceding step
-        nextStep (GameDef.OrStep.LAY_TRACK);
+    public void resume() {
+        if (getStep() == GameDef.OrStep.LAY_TOKEN) {
+            // After a destination run, to return to normal processing,
+            // resume from the end of the track laying step which initiated it all.
+            nextStep(GameDef.OrStep.LAY_TRACK);
+        } else if (operatingCompany.value().isHibernating()) {
+            finishTurn();
+        } else {
+            super.resume();
+        }
     }
 
     @Override

@@ -7,7 +7,7 @@ PlayerCash,350
 BankHas,10600
 StartOfPhase,2
 BankSizeIs,10600
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Volker
  
 SelectForAuctioning,Volker,12
@@ -978,7 +978,7 @@ PRICE_MOVES_LOG,FS,75,B3,70,A3
 PlayerMustSellShares,Volker,308
 SELL_SHARES_LOG,Volker,4,10,40,FS,280
 PRICE_MOVES_LOG,FS,70,A3,40,A7
-YouMustRaiseCashButCannot,28
+YouMustRaiseCashButCannot,Volker,28
 PlayerIsBankrupt,Volker
 CompanyCloses,13
 CompanyCloses,14

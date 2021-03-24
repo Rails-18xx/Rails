@@ -28,7 +28,9 @@ public class GameDef {
         EMERGENCY_MAY_BUY_FROM_COMPANY (true),
         EMERGENCY_MUST_SELL_TREASURY_SHARES(false),
         EMERGENCY_COMPANY_BANKRUPTCY(false),
-        DUAL_TRAIN_BECOMES_UNDECIDED_IN_POOL (false);
+        DUAL_TRAIN_BECOMES_UNDECIDED_IN_POOL (false),
+        MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE (false),
+        REMOVE_PERMANENT (false);
 
         private Object defaultValue;
 

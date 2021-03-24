@@ -1,6 +1,14 @@
 <Map tileOrientation="EW" letterOrientation="vertical" even="B">
+        <Defaults>
+                <!-- See class Access for allowed values -->
+                <Access type="offMap" runTo="tokenonly" runThrough="no" score="major"/>
+                <Access type="city" runTo="yes" runThrough="yes" score="major"/>
+                <Access type="town" runTo="yes" runThrough="yes" loop="yes" score="minor"/>
+                <Access type="mine" runTo="trains:goods" runThrough="yes" mutexId="Mine" score="minor"/>
+                        <!-- Mine revenue is calculated separately and goes directly to the comp. treasury -->
+        </Defaults>
         <Hex name="A11" tile="-3"/>
-        <Hex name="A13" tile="-37001" value="30,50" orientation="3" city="RGTE"/>
+        <Hex name="A13" tile="-37001" value="30,50" orientation="3" city="RGTE" mutexId="Mine"/>
         <Hex name="B8" tile="-3" orientation="5"/>
         <Hex name="B10" tile="0"/>
         <Hex name="B12" tile="0"/>
@@ -9,15 +17,15 @@
         <Hex name="B26" tile="-8" orientation="1"/>
         <Hex name="B28" tile="0"/>
         <Hex name="B30" tile="0"/>
-        <Hex name="B32" tile="-37001" value="20,50" orientation="3" city="MLB"/>
+        <Hex name="B32" tile="-37001" value="20,50" orientation="3" city="MLB" mutexId="Mine"/>
         <Hex name="B34" tile="0"/>
         <Hex name="C9" tile="0"/>
         <Hex name="C11" tile="-37402" city="Prag"/>
         <Hex name="C13" tile="0"/>
         <Hex name="C15" tile="-1"/>
         <Hex name="C17" tile="0" cost="70"/>
-        <Hex name="C19" tile="-37001" value="20,40" orientation="3" city="EOD"/>
-        <Hex name="C21" tile="-37001" value="25,45" orientation="2" city="EKT"/>
+        <Hex name="C19" tile="-37001" value="20,40" orientation="3" city="EOD" mutexId="Mine"/>
+        <Hex name="C21" tile="-37001" value="25,45" orientation="2" city="EKT" mutexId="Mine"/>
         <Hex name="C23" tile="-37007" city="Krakau"/>
         <Hex name="C25" tile="0" cost="70"/>
         <Hex name="C27" tile="-1" cost="70"/>
@@ -41,10 +49,10 @@
         <Hex name="D36" tile="-3007" city="Tarnopol"/>
         <Hex name="D38" tile="-7" orientation="2"/>
         <IfOption name="Variant" value="Basegame">
-          <Hex name="E11" tile="-37001" value="30,50" orientation="5" city="EPP"/>
+          <Hex name="E11" tile="-37001" value="30,50" orientation="5" city="EPP" mutexId="Mine"/>
         </IfOption>
 		<IfOption name="Variant" value="Romoth,1837-2ndEd.">
-    	     <Hex name="E11" tile="-37001" value="20,40" orientation="5" city="EPP"/>
+    	     <Hex name="E11" tile="-37001" value="20,40" orientation="5" city="EPP" mutexId="Mine"/>
         </IfOption>
         <Hex name="E13" tile="-1"/>
         <Hex name="E15" tile="-1"/>
@@ -66,7 +74,7 @@
         <Hex name="F20" tile="0" cost="70"/>
         <Hex name="F22" tile="-1"/>
         <Hex name="F24" tile="0"/>
-        <Hex name="F26" tile="-37003" orientation="2" value="20,40" city="EHS"/>
+        <Hex name="F26" tile="-37003" orientation="2" value="20,40" city="EHS" mutexId="Mine"/>
         <Hex name="F28" tile="-10" city="Kaschau"/>
         <Hex name="F30" tile="-1"/>
         <Hex name="F32" tile="-1"/>
@@ -143,13 +151,13 @@
         <Hex name="J28" tile="-20" city="Arad/Temesvar" label="OO"/>
         <Hex name="J30" tile="0"/>
         <Hex name="J32" tile="0" cost="70"/>
-        <Hex name="J34" tile="-37002" orientation="1" value="25,50" city="ZKB"/>
+        <Hex name="J34" tile="-37002" orientation="1" value="25,50" city="ZKB" mutexId="Mine"/>
         <Hex name="J36" tile="-37007" city="Kronstadt"/>
         <Hex name="K1" tile="-800" orientation="5"/>
-        <Hex name="K3" tile="0" cost="70"/>
+        <Hex name="K3" tile="0" pic="-6100" cost="70"/>
         <Hex name="K5" tile="-10" city="Bozen"/>
-        <Hex name="K7" tile="0" cost="70"/>
-        <Hex name="K9" tile="-1"/>
+        <Hex name="K7" tile="0" pic="-6100" cost="70"/>
+        <Hex name="K9" tile="-1" pic="-6101"/>
         <Hex name="K11" tile="0" cost="110"/>
         <Hex name="K13" tile="-1" cost="110"/>
         <Hex name="K15" tile="0"/>
@@ -161,15 +169,15 @@
         <Hex name="K27" tile="0"/>
         <Hex name="K29" tile="-1"/>
         <IfOption name="Variant" value="Basegame">
-          <Hex name="K31" tile="-37001" value="20,50" orientation="5" city="SPB"/>
+          <Hex name="K31" tile="-37001" value="20,50" orientation="5" city="SPB" mutexId="Mine"/>
         </IfOption>
         <IfOption name="Variant" value="Romoth,1837-2ndEd.">
-        <Hex name="K31" tile="-37001" value="30,50" orientation="5" city="SPB"/>
+        <Hex name="K31" tile="-37001" value="30,50" orientation="5" city="SPB" mutexId="Mine"/>
         </IfOption>
-        <Hex name="L2" tile="-3007" city="Mailand"/>
-        <Hex name="L4" tile="0"/>
-        <Hex name="L6" tile="-2"/>
-        <Hex name="L8" tile="-10" city="Venedig"/>
+        <Hex name="L2" tile="-3007" pic="-6107" city="Mailand"/>
+        <Hex name="L4" tile="0" pic="-6100"/>
+        <Hex name="L6" tile="-2" pic="-6102"/>
+        <Hex name="L8" tile="-10" pic="-6110" city="Venedig"/>
         <Hex name="L12" tile="-37007" city="Triest"/>
         <Hex name="L14" tile="0" cost="70"/>
         <Hex name="L16" tile="0" pic="-6000"/>
@@ -179,10 +187,10 @@
         <Hex name="L24" tile="-2" cost="50"/>
         <Hex name="L26" tile="0"/>
         <Hex name="L28" tile="0"/>
-        <Hex name="L30" tile="-37001" value="25,50" orientation="5" city="LRB"/>
-        <Hex name="M3" tile="0"/>
-        <Hex name="M5" tile="-1"/>
-        <Hex name="M7" tile="0"/>
+        <Hex name="L30" tile="-37001" value="25,50" orientation="5" city="LRB" mutexId="Mine"/>
+        <Hex name="M3" tile="0" pic="-6100"/>
+        <Hex name="M5" tile="-1" pic="-6101"/>
+        <Hex name="M7" tile="0" pic="-6100"/>
         <Hex name="M13" tile="-3" orientation="4"/>
         <Hex name="M15" tile="0"/>
         <Hex name="M17" tile="0" pic="-6000" cost="70"/>
@@ -195,5 +203,5 @@
         <Hex name="N22" tile="-7" orientation="3"/>
         <Hex name="O17" tile="-58" orientation="3"/>
         <Hex name="O19" tile="0"/>
-        <Hex name="P20" tile="-37001" value="35,60" orientation="5" city="BB"/>
+        <Hex name="P20" tile="-37001" value="35,60" orientation="5" city="BB" mutexId="Mine"/>
 </Map>

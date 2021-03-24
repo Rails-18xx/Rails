@@ -1,6 +1,7 @@
 package net.sf.rails.game.specific._1837;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -14,41 +15,31 @@ import net.sf.rails.game.Player;
 import net.sf.rails.game.StartItem;
 import net.sf.rails.game.StartRound;
 import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.financial.Certificate;
-import net.sf.rails.game.financial.PublicCertificate;
-import net.sf.rails.game.state.Currency;
-import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 import rails.game.action.BidStartItem;
 import rails.game.action.BuyStartItem;
 import rails.game.action.NullAction;
 import rails.game.action.PossibleAction;
 import rails.game.action.StartItemAction;
-import rails.game.specific._1837.SetHomeHexLocation;
+//import rails.game.specific._1837.SetHomeHexLocation;
 
 /**
  * Implements an 1837-style startpacket sale.
  */
-public class StartRound_1837_Coal extends StartRound {
-    private static final Logger log = LoggerFactory.getLogger(StartRound_1837_Coal.class);
+public class StartRound_1837_v1 extends StartRound {
+    private static final Logger log = LoggerFactory.getLogger(StartRound_1837_v1.class);
 
     protected final int bidIncrement;
 
-    private final GenericState<SetHomeHexLocation> pendingAction =
-            new GenericState<>(this, "pendingAction");
-    private final GenericState<Player> pendingPlayer = new GenericState<>(
-            this, "pendingPlayer");
-    private final GenericState<PublicCertificate> pendingCertificate =
-            new GenericState<>(this, "pendingCertificate");
-
     protected IntegerState numRoundsPassed = IntegerState.create(this,
             "StartRoundRoundsPassed");
+    protected HashMap<StartItem, Integer> originalBasePrice = new HashMap<>();
 
 
     /**
      * Constructor, only to be used in dynamic instantiation.
      */
-    public StartRound_1837_Coal(GameManager gameManager, String id) {
+    public StartRound_1837_v1(GameManager gameManager, String id) {
         super(gameManager, id, false, true, true);
         bidIncrement = startPacket.getModulus();
         this.setStartRoundName("Initial Minor StartRound (Coal and Privates including Suedbahn)");
@@ -63,6 +54,7 @@ public class StartRound_1837_Coal extends StartRound {
             // at the start of the current StartRound
             if (!item.isSold()) {
                 itemsToSell.add(item);
+                originalBasePrice.put (item, item.getBasePrice());
             }
         }
         numPasses.set(0);
@@ -97,16 +89,6 @@ public class StartRound_1837_Coal extends StartRound {
         int minRow = 0;
         boolean[][] soldStartItems = new boolean[3][6];
 
-        if (pendingAction.value() != null) {
-            playerManager.setCurrentPlayer(pendingPlayer.value());
-            possibleActions.add(pendingAction.value());
-            return true;
-        }
-        /*
-         * First, mark which items are buyable. Once buyable, they always remain
-         * so until bought, so there is no need to check if an item is still
-         * buyable.
-         */
         if ((!startPacket.areAllSold())) {
             for (StartItem item : startItems) {
                 buyable = false;
@@ -237,7 +219,7 @@ public class StartRound_1837_Coal extends StartRound {
             for (StartItem item : startPacket.getItems()) {
                 if ((item.getStatus() == 2) && (item.getBasePrice() != 0)) {
                     if (item.getBasePrice() >=10) {
-                    item.reduceBasePriceBy(10);
+                        item.reduceBasePriceBy(10);
                     } else { //Assumption only 5 G remain
                         item.reduceBasePriceBy(5);
                     }
@@ -321,44 +303,16 @@ public class StartRound_1837_Coal extends StartRound {
         List<StartItem> startItems = startPacket.getItems();
         for (StartItem item : startItems) {
             if ((!item.isSold()) && (item.getStatus() == StartItem.BUYABLE)) {
-                item.reduceBasePriceBy(-(i * 10));// Attention there is at least one certificate that has a price not based on 10G.
-             if (item.getId() =="AB") {
-                 item.reduceBasePriceBy(5);
-             }
+                item.reduceBasePriceBy(-(originalBasePrice.get(item) - item.getBasePrice()));
+                //item.reduceBasePriceBy(-(i * 10));// Attention there is at least one certificate that has a price not based on 10G.
+             //if (item.getId() =="AB") {  <<<< not smart! And not needed too.
+                 //item.reduceBasePriceBy(5);
+             //}
             }
         }
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see net.sf.rails.game.StartRound#assignItem(net.sf.rails.game.Player,
-     * net.sf.rails.game.StartItem, int, int)
-     */
-    @Override
-    protected void assignItem(Player player, StartItem item, int price,
-            int sharePrice) {
-        if ((item.hasSecondary())
-            && (item.getSecondary().getParent().getId().equals("S5"))) {
-            Certificate primary = item.getPrimary();
-            Currency.toBank(player, price);
-            primary.moveTo(player);
-            ReportBuffer.add(
-                    this,
-                    LocalText.getText("BuysItemFor", player.getId(),
-                            primary.toText(), Bank.format(this, price)));
-            PublicCertificate secondary =
-                    (PublicCertificate) item.getSecondary();
-            playerManager.setCurrentPlayer(player);
-            pendingAction.set(new SetHomeHexLocation(item,
-                    secondary.getCompany(), player, price));
-            pendingPlayer.set(player);
-            pendingCertificate.set(secondary);
-        } else {
-            super.assignItem(player, item, price, sharePrice);
-        }
-    }
 
     @Override
     public boolean process(PossibleAction action) {
@@ -383,36 +337,6 @@ public class StartRound_1837_Coal extends StartRound {
 
                 BuyStartItem buyAction = (BuyStartItem) startItemAction;
                 result = buy(playerName, buyAction);
-            } else if (startItemAction instanceof SetHomeHexLocation) {
-
-                SetHomeHexLocation castAction = (SetHomeHexLocation) action;
-                Player player = playerManager.getCurrentPlayer();
-
-                pendingCertificate.value().moveTo(player);
-                ReportBuffer.add(this, LocalText.getText("ALSO_GETS",
-                        player.getId(), pendingCertificate.value().toText()));
-
-                PublicCompany_1837 company =
-                        (PublicCompany_1837) castAction.getCompany();
-                company.setHomeHex(castAction.getSelectedHomeHex());
-                ReportBuffer.add(this, LocalText.getText("SetsHomeHexS5",
-                        company.getId(),
-                        castAction.getSelectedHomeHex().getId()));
-                company.start();
-                floatCompany(company);
-
-                pendingAction.set(null);
-
-                if ((startPacket.areAllSold())
-                    && (pendingAction.value() == null)) {
-                    /*
-                     * If the complete start packet has been sold, start a Stock
-                     * round,
-                     */
-                    possibleActions.clear();
-                    finishRound();
-                }
-                result = true;
             } else {
 
                 DisplayBuffer.add(
@@ -420,12 +344,7 @@ public class StartRound_1837_Coal extends StartRound {
                         LocalText.getText("UnexpectedAction", action.toString()));
             }
         }
-        if ((startPacket.areAllSold())
-                && (pendingAction.value() == null)) {
-                /*
-                 * If the complete start packet has been sold, start a Stock
-                 * round,
-                 */
+        if ((startPacket.areAllSold())) {
                 possibleActions.clear();
                 finishRound();
             }

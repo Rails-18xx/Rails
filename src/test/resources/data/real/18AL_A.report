@@ -7,7 +7,7 @@ PlayerCash,500
 BankHas,6000
 StartOfPhase,2
 BankSizeIs,6000
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Jim
 BID_ITEM_LOG,Jim,105,M&C,395
 BID_ITEM_LOG,Steve,125,NDY,375

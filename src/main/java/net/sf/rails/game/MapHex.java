@@ -322,7 +322,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         // stations.
         for (Station station : currentTile.value().getStations()) {
             Stop stop = Stop.create(this, station);
-            stop.initStopParameters();
+            stop.initStopParameters(station);
             stops.put(station, stop);
         }
 
@@ -508,13 +508,14 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     /**
      * new wrapper function for the LayTile action that calls the actual upgrade
-     * mehod
+     * method
      *
      * @param action executed LayTile action
      */
     public void upgrade(LayTile action) {
         Tile newTile = action.getLaidTile();
-        HexSide newRotation = HexSide.get(action.getOrientation());
+        HexSide newRotation = action.getLaidTile().getFixedOrientation();
+        if (newRotation == null) newRotation = HexSide.get(action.getOrientation());
         Map<String, Integer> relaidTokens = action.getRelaidBaseTokens();
 
         upgrade(newTile, newRotation, relaidTokens);
@@ -539,7 +540,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
             stationMapping = rotation.getStationMapping();
         } else {
             stationMapping = null;
-            log.error("No valid rotation was found: newRotation= {}currentRotation{}", newRotation, currentTileRotation.value());
+            log.error("No valid rotation was found: newRotation={} currentRotation={}", newRotation, currentTileRotation.value());
         }
 
         BiMap<Stop, Station> stopsToNewStations = HashBiMap.create();
@@ -613,14 +614,25 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
             }
         }
 
+        for (Stop s : getStops()) {
+            log.debug ("Hex {} has stop {}", getId(), s);
+        }
+        for (Station s : currentTile.value().getStations()) {
+            log.debug ("Hex {} old tile {} has station {}", getId(),currentTile.value().getURI(), s);
+        }
+        for (Station s : newTile.getStations()) {
+            log.debug ("Hex {} new tile {} has station {}", getId(), newTile.getURI(), s);
+        }
+
         // Create a Stop for new Stations
         if (stops.size() < newTile.getNumStations()) {
 
+            int stopNumber = stops.size();
             for (Station station : newTile.getStations()) {
                 if (stopsToNewStations.containsValue(station)) continue;
                 // New Station found without an existing Stop: create a new Stop
-                Stop stop = Stop.create(this, stops.size()+1, station);
-                stop.initStopParameters();
+                Stop stop = Stop.create(this, ++stopNumber, station);
+                stop.initStopParameters(station);
                 stops.put (station, stop);
                 stopsToNewStations.put(stop, station);
             }

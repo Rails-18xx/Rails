@@ -7,7 +7,7 @@ PlayerCash,475
 BankHas,10100
 StartOfPhase,2
 BankSizeIs,10100
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Volker S.
 BuysItemFor,Volker S.,M3,80
 FloatsWithCash,M3,80

@@ -18,6 +18,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
+import net.sf.rails.util.Util;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -294,7 +295,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         // opaque
         menuBar.add(specialMenu);
 
-        if ( Config.isDevelop() ) {
+        if (Config.isDevelop()) {
             developerMenu = new JMenu("Developer");
             developerMenu.setName("Developer");
             menuBar.add(developerMenu);
@@ -320,7 +321,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         String gameStatusClassName = gameUIManager.getClassName(GuiDef.ClassName.GAME_STATUS);
         try {
             Class<? extends GameStatus> gameStatusClass =
-                Class.forName(gameStatusClassName).asSubclass(GameStatus.class);
+                    Class.forName(gameStatusClassName).asSubclass(GameStatus.class);
             gameStatus = gameStatusClass.newInstance();
         } catch (Exception e) {
             log.error("Cannot instantiate class {}", gameStatusClassName, e);
@@ -364,13 +365,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         buttonPanel.addKeyListener(this);
         addKeyListener(this);
 
-        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE );
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         final JFrame frame = this;
         final GameUIManager guiMgr = gameUIManager;
-        addWindowListener(new WindowAdapter () {
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if ( GameUIManager.confirmQuit(frame) ) {
+                if (GameUIManager.confirmQuit(frame)) {
                     frame.dispose();
                     guiMgr.terminate();
                 }
@@ -381,20 +382,20 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             public void componentMoved(ComponentEvent e) {
                 guiMgr.getWindowSettings().set(frame);
             }
+
             @Override
             public void componentResized(ComponentEvent e) {
                 guiMgr.getWindowSettings().set(frame);
             }
         });
 
-        if ( Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_QUIT_HANDLER) ) {
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_QUIT_HANDLER)) {
             Desktop.getDesktop().setQuitHandler((quitEvent, quitResponse) -> {
-                if ( GameUIManager.confirmQuit(frame) ) {
+                if (GameUIManager.confirmQuit(frame)) {
                     frame.dispose();
                     guiMgr.terminate();
                     quitResponse.performQuit();
-                }
-                else {
+                } else {
                     quitResponse.cancelQuit();
                 }
             });
@@ -418,22 +419,22 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         if (gameActions != null) {
             for (GameAction na : gameActions) {
                 switch (na.getMode()) {
-                case UNDO:
-                    undoItem.setEnabled(true);
-                    undoItem.setPossibleAction(na);
-                    break;
-                case FORCED_UNDO:
-                    forcedUndoItem.setEnabled(true);
-                    forcedUndoItem.setPossibleAction(na);
-                    break;
-                case REDO:
-                    redoItem.setEnabled(true);
-                    redoItem.setPossibleAction(na);
-                    redoItem2.setEnabled(true);
-                    redoItem2.setPossibleAction(na);
-                    break;
-                default:
-                    break;
+                    case UNDO:
+                        undoItem.setEnabled(true);
+                        undoItem.setPossibleAction(na);
+                        break;
+                    case FORCED_UNDO:
+                        forcedUndoItem.setEnabled(true);
+                        forcedUndoItem.setPossibleAction(na);
+                        break;
+                    case REDO:
+                        redoItem.setEnabled(true);
+                        redoItem.setPossibleAction(na);
+                        redoItem2.setEnabled(true);
+                        redoItem2.setPossibleAction(na);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -449,7 +450,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
 
         if (corrections != null && !corrections.isEmpty()) {
             for (CorrectionModeAction a : corrections) {
-                ActionCheckBoxMenuItem item = new ActionCheckBoxMenuItem (
+                ActionCheckBoxMenuItem item = new ActionCheckBoxMenuItem(
                         LocalText.getText(a.getCorrectionName()));
                 item.addActionListener(this);
                 item.addPossibleAction(a);
@@ -500,7 +501,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             return;
         }
 
-        if (currentRound instanceof TreasuryShareRound) {
+        // Set window title
+        // We cannot cope here with all lower Round subclasses,
+        // so give these a chance to provide a title.
+        String title = currentRound.getOwnWindowTitle();
+        if (Util.hasValue(title)) {
+            setTitle(title);
+        } else if (currentRound instanceof TreasuryShareRound) {
             setTitle(LocalText.getText(
                     "TRADE_TREASURY_SHARES_TITLE",
                     ((TreasuryShareRound) currentRound).getOperatingCompany().getId(),
@@ -515,10 +522,11 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());
 
             int cash =
-                ((ShareSellingRound) currentRound).getRemainingCashToRaise();
-                JOptionPane.showMessageDialog(this, LocalText.getText(
-                        "YouMustRaiseCash", gameUIManager.format(cash)), "",
-                        JOptionPane.OK_OPTION);
+                    ((ShareSellingRound) currentRound).getRemainingCashToRaise();
+            JOptionPane.showMessageDialog(this, LocalText.getText(
+                    "YouMustRaiseCash", getCurrentPlayer(),
+                    gameUIManager.format(cash)), "",
+                    JOptionPane.OK_OPTION);
         } else if (currentRound instanceof StockRound && !updateGameSpecificSettings()) {
 
             setTitle(LocalText.getText(
@@ -533,7 +541,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
 
         // Special properties
         List<UseSpecialProperty> sps =
-            possibleActions.getType(UseSpecialProperty.class);
+                possibleActions.getType(UseSpecialProperty.class);
         for (ActionMenuItem item : specialActionItems) {
             item.removeActionListener(this);
         }
@@ -572,26 +580,26 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         if (inactiveItems != null) {
             for (NullAction na : inactiveItems) {
                 switch (na.getMode()) {
-                case PASS:
-                    passButton.setRailsIcon(RailsIcon.PASS);
-                    passButton.setEnabled(true);
-                    passButton.setActionCommand(PASS_CMD);
-                    passButton.setMnemonic(KeyEvent.VK_P);
-                    passButton.setPossibleAction(na);
-                    break;
-                case DONE:
-                    passButton.setRailsIcon(RailsIcon.DONE);
-                    passButton.setEnabled(true);
-                    passButton.setActionCommand(DONE_CMD);
-                    passButton.setMnemonic(KeyEvent.VK_D);
-                    passButton.setPossibleAction(na);
-                    break;
-                case AUTOPASS:
-                    autopassButton.setEnabled(true);
-                    autopassButton.setPossibleAction(na);
-                    break;
-                default:
-                    break;
+                    case PASS:
+                        passButton.setRailsIcon(RailsIcon.PASS);
+                        passButton.setEnabled(true);
+                        passButton.setActionCommand(PASS_CMD);
+                        passButton.setMnemonic(KeyEvent.VK_P);
+                        passButton.setPossibleAction(na);
+                        break;
+                    case DONE:
+                        passButton.setRailsIcon(RailsIcon.DONE);
+                        passButton.setEnabled(true);
+                        passButton.setActionCommand(DONE_CMD);
+                        passButton.setMnemonic(KeyEvent.VK_D);
+                        passButton.setPossibleAction(na);
+                        break;
+                    case AUTOPASS:
+                        autopassButton.setEnabled(true);
+                        autopassButton.setPossibleAction(na);
+                        break;
+                    default:
+                        break;
                 }
             }
         }

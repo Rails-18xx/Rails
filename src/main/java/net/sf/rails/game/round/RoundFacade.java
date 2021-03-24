@@ -7,16 +7,16 @@ import rails.game.action.PossibleAction;
 public interface RoundFacade extends Creatable, RailsItem {
 
     // called from GameManager
-    public abstract boolean process(PossibleAction action);
+    boolean process(PossibleAction action);
 
     // called from GameManager and GameLoader
-    public abstract boolean setPossibleActions();
+    boolean setPossibleActions();
 
     // called from GameManager
-    public abstract void resume();
+    void resume();
 
     // called from GameManager and GameUIManager
-    public abstract String getRoundName();
+    String getRoundName();
 
     /** A stub for processing actions triggered by a phase change.
      * Must be overridden by subclasses that need to process such actions.
@@ -25,7 +25,7 @@ public interface RoundFacade extends Creatable, RailsItem {
      */
     // can this be moved to GameManager, not yet as there are internal dependencies
     // called from GameManager
-    public abstract void processPhaseAction(String name, String value);
+    void processPhaseAction(String name, String value);
 
-
+    String getOwnWindowTitle ();
 }

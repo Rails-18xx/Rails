@@ -214,6 +214,27 @@ Published 2004 by Deep Thought Games, LLC
 		<Players minimum="2" maximum="5"/>
 	</Game>
 
+	<Game name="18Chesapeake">
+		<Note>Fully playable - Tests needed</Note>
+		<Description> 18Cheaspeake - North East USA
+			(c) 2019 Scott Pedersen    </Description>
+		<Players minimum = "2" maximum = "6" />
+	</Game>
+
+
+	<Game name="1837">
+		<Note>Partly playable</Note>
+		<Description> 1837 - Austria
+			(c) 1994 Leonhard Orgler (self-published)
+
+			Known limitations:
+			- In v1, the S5 home must be chosen in the initial round rather than
+			  in its first OR. In v2, this has already been corrected.
+			- Not yet tested beyond the 3-train phase.
+		</Description>
+		<Players minimum = "3" maximum = "7" />
+	</Game>
+
 	<Game name="1870">
 		<Note>Not yet playable</Note>
 		<Description>1870 - Railroading across the Trans Mississippi
@@ -279,18 +300,12 @@ Known Issues:
     <Players minimum="2" maximum="5" />
   </Game>
 
-   <Game name="1837">
-   <Note>Prototype</Note>
-   <Description> 1837 - Austria
-   (c) 199x Leonhard Orgler    </Description>
-   <Players minimum = "3" maximum = "7" />
-   </Game>
-
   <Game name="1862">
     <Note>Prototype - Not Playable</Note>
     <Description>1862</Description>
     <Players minimum="2" maximum="8" />
   </Game>
+
 
 
 	<Credits>&lt;html&gt;Rails is a computer implementation of a number of board games.&lt;br&gt; 
@@ -308,6 +323,8 @@ Contributors: &lt;br&gt;
 	Martin Brumm&lt;br&gt;
 	Chris Shaffer &lt;br&gt;
 	Brett Lentz&lt;br&gt;
+	Jason Klappste&lt;br&gt;
+	Marc Arndt&lt;br&gt;
 &lt;br&gt;
 All rights reserved by the respective owners of the original games&lt;br&gt; 
 (see the Game Notes per game for specific acknowledgements).&lt;br&gt;

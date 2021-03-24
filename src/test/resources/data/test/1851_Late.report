@@ -6,7 +6,7 @@ PlayerCash,500
 BankHas,6540
 StartOfPhase,2
 BankSizeIs,6540
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Alice
 BuysItemFor,Alice,L&O,200
 ALSO_GETS,Alice,PRES_CERT_NAME,L&N,20

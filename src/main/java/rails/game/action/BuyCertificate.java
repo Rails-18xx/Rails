@@ -41,6 +41,10 @@ public class BuyCertificate extends PossibleAction {
     protected int price;
     protected int maximumNumber;
 
+    // In exceptional cases, a president's share may end up in the pool and be buyable.
+    // This can occur after a bankruptcy in 1835 and 18Scan
+    protected boolean president = false;
+
     // Client-side settings
     protected int numberBought = 0;
 
@@ -112,6 +116,14 @@ public class BuyCertificate extends PossibleAction {
         this.numberBought = numberBought;
     }
 
+    public boolean isPresident() {
+        return president;
+    }
+
+    public void setPresident (boolean newValue) {
+        this.president = newValue;
+    }
+
     @Override
     protected boolean equalsAs(PossibleAction pa, boolean asOption) {
         // identity always true
@@ -149,10 +161,10 @@ public class BuyCertificate extends PossibleAction {
                     .addToString("certificate", certificate)
                     .addToString("company", company)
                     .addToString("sharePerCert", sharePerCert)
-                    .addToString("fromName", fromName)
                     .addToString("from", from)
                     .addToString("price", price)
                     .addToString("maximumNumber", maximumNumber)
+                    .addToString("president", president)
                     .addToStringOnlyActed("numberBought", numberBought)
                     .toString()
         ;
@@ -168,6 +180,7 @@ public class BuyCertificate extends PossibleAction {
         price = fields.get("price", price);
         maximumNumber = fields.get("maximumNumber", maximumNumber);
         sharePerCert = fields.get("sharePerCert", -1);
+        president = fields.get("president", false);
 
         numberBought = fields.get("numberBought", numberBought);
 

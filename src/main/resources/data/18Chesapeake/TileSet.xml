@@ -1,0 +1,135 @@
+<TileManager tiles="Tiles.xml">
+    <Defaults>
+        <Access type="offmap" loop="yes"/>
+    </Defaults>
+    <!-- Preprinted tiles -->
+    <Tile id="0"><!-- Empty space -->
+        <Upgrade id="7,8,9"/>
+    </Tile>
+    <Tile id="-1"><!-- 1 town -->
+        <Upgrade id="3,4,58"/>
+    </Tile>
+    <Tile id="-2"><!-- 2 towns -->
+        <Upgrade id="1,2,55,56,69"/>
+    </Tile>
+    <Tile id="-3"/>
+    <Tile id="-5"/>
+    <Tile id="-7"/>
+    <Tile id="-8"/>
+    <Tile id="-10"><!-- 1 city -->
+        <Upgrade id="57"/>
+    </Tile>
+    <Tile id="-58"/>
+    <Tile id="-901"/>
+    <Tile id="-902"/>
+    <Tile id="-903"/>
+    <Tile id="-911"/>
+    <Tile id="-4000"/>
+
+    <!-- Yellow tiles -->
+    <Tile id="1" quantity="1">
+    </Tile>
+    <Tile id="2" quantity="1">
+    </Tile>
+    <Tile id="3" quantity="2"/>
+    <Tile id="4" quantity="2"/>
+    <Tile id="7" quantity="-1">
+        <Upgrade id="26,27,28,29"/>
+    </Tile>
+    <Tile id="8" quantity="-1">
+        <Upgrade id="16,19,23,24,25,28,29"/>
+    </Tile>
+    <Tile id="9" quantity="-1">
+        <Upgrade id="19,20,23,24,26,27"/>
+    </Tile>
+    <Tile id="55" quantity="1">
+    </Tile>
+    <Tile id="56" quantity="1">
+    </Tile>
+    <Tile id="57">
+        <Attributes quantity="7"/>
+        <Upgrade id="14,15"/>
+    </Tile>
+    <Tile id="58" quantity="2"/>
+    <Tile id="69" quantity="1"/>
+    <Tile id="7701" quantity="1">
+        <Upgrade id="7702"/>
+    </Tile>
+    <!-- Green tiles -->
+    <Tile id="14">
+        <Attributes quantity="5"/>
+        <Upgrade id="611"/>
+    </Tile>
+    <Tile id="15" quantity="5"/>
+    <Upgrade id="611"/>
+    <Tile id="16" quantity="1">
+        <Upgrade id="43,70"/>
+    </Tile>
+    <Tile id="19" quantity="1">
+        <Upgrade id="45,46"/>
+    </Tile>
+    <Tile id="20" quantity="1">
+        <Upgrade id="44,47"/>
+    </Tile>
+    <Tile id="23" quantity="3">
+        <Upgrade id="41,43,45,47"/>
+    </Tile>
+    <Tile id="24" quantity="3">
+        <Upgrade id="42,43,46,47"/>
+    </Tile>
+    <Tile id="25" quantity="1">
+        <Upgrade id="40,45,46"/>
+    </Tile>
+    <Tile id="26" quantity="1">
+        <Upgrade id="42,44,45"/>
+    </Tile>
+    <Tile id="27" quantity="1">
+        <Upgrade id="41,44,46"/>
+    </Tile>
+    <Tile id="28" quantity="1">
+        <Upgrade id="39,43,46,70"/>
+    </Tile>
+    <Tile id="29" quantity="1">
+        <Upgrade id="39,43,45,70"/>
+    </Tile>
+    <Tile id="7702" quantity="1">
+        <Upgrade id="7706"></Upgrade>
+    </Tile>
+    <Tile id="7703" quantity="1">
+        <Upgrade id="7707"></Upgrade>
+    </Tile>
+    <Tile id="7704" quantity="1">
+        <Upgrade id="7707"></Upgrade>
+    </Tile>
+    <Tile id="7705" quantity="1">
+        <Upgrade id="7707"></Upgrade>
+    </Tile>
+    <!-- Brown tiles -->
+    <Tile id="39" quantity="1"/>
+    <Tile id="40" quantity="1"/>
+    <Tile id="41" quantity="1"/>
+    <Tile id="42" quantity="1"/>
+    <Tile id="43" quantity="2"/>
+    <Tile id="44" quantity="1"/>
+    <Tile id="45" quantity="1"/>
+    <Tile id="46" quantity="1"/>
+    <Tile id="47" quantity="1"/>
+    <Tile id="70" quantity="1"/>
+    <Tile id="611" quantity="5"/>
+    <Tile id="7706" quantity="1">
+        <Upgrade id="7708"></Upgrade>
+    </Tile>
+    <Tile id="7707" quantity="2">
+        <Upgrade id="7709"></Upgrade>
+    </Tile>
+    <!-- Grey tiles -->
+    <Tile id="915" quantity="1"/>
+    <Tile id="7708" quantity="1"/>
+    <Tile id="7709" quantity="1"/>
+    <Tile id="-7710"/>
+    <Tile id="-7711"/>
+    <Tile id="-7712"/>
+    <Tile id="-7713" relayBaseTokens="yes">
+        <Upgrade id="7703,7704,7705"></Upgrade>
+    </Tile>
+</TileManager>

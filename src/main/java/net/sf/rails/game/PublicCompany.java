@@ -39,7 +39,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public static final int CAPITALISE_FULL = 0;
     public static final int CAPITALISE_INCREMENTAL = 1;
     public static final int CAPITALISE_WHEN_BOUGHT = 2;
-    public static final int CAPITALISE_PART = 3; // 18Scan SJ, also specify part as number of shares
+    // 18Scan SJ, also specify part as number of shares:
+    public static final int CAPITALISE_PART = 3;
+    // 1837 U1/3, also specify initial treasury cash:
+    public static final int CAPITALISE_FIXED_CASH = 4;
 
     protected static final int DEFAULT_SHARE_UNIT = 10;
 
@@ -55,7 +58,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected static final String[] tokenLayTimeNames = new String[]{"whenStarted", "whenFloated", "firstOR"};
 
     protected int homeBaseTokensLayTime = START_OF_FIRST_OR;
-
 
     /**
      * Foreground (i.e. text) colour of the company tokens (if pictures are not
@@ -88,6 +90,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected String homeHexNames = null;
     protected List<MapHex> homeHexes = null;
     protected int homeCityNumber = 1;
+    protected boolean displayHomeHex = true;
 
     /**
      * Destination hex *
@@ -132,6 +135,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * PresidentModel
      */
+    protected GenericState<Player> president = new GenericState<>(this, getId()+"_Pres");
     protected final PresidentModel presidentModel = PresidentModel.create(this);
 
     /**
@@ -147,7 +151,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Acquires Bonus objects
      */
-    protected final ArrayListState<Bonus> bonuses = new ArrayListState(this, "bonuses");
+    protected final ArrayListState<Bonus> bonuses = new ArrayListState<>(this, "bonuses");
 
     /**
      * Most recent revenue earned.
@@ -155,6 +159,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected final CountingMoneyModel lastRevenue = CountingMoneyModel.create(this, "lastRevenue", false);
 
     public final CountingMoneyModel directIncomeRevenue = CountingMoneyModel.create(this, "directIncome", false);
+
+    public final CountingMoneyModel lastDividend = CountingMoneyModel.create (this, "lastDividend", false);
 
     /**
      * Most recent Direct Company Treasury income earned.
@@ -180,6 +186,13 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * Are company shares buyable (i.e. before started)?
      */
     protected final BooleanState buyable = new BooleanState(this, "buyable");
+
+    /**
+     * Is the company hibernating, i.e. temporarily not operating?
+     * So far, this only occurs in 18Scan.
+     * Perhaps receiverships in other games may qualify to use this stats
+     */
+    protected BooleanState hibernating = new BooleanState (this, "hibernating");
 
     /**
      * In-game state.
@@ -255,8 +268,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * The certificates of this company (minimum 1)
      */
     protected final ArrayListState<PublicCertificate> certificates = new ArrayListState<>(this, "ownCertificates");
+
     /**
      * Are the certificates available from the first SR?
+     * Added by EV 2/2021:
+     * This attribute defines company-level availability.
+     * If false, all certs initially go to 'unavailable'.
+     * If true, only the certs defined as available on the certificate level
+     * go to the IPO; the remainder (usually exchange certs) goes to 'unavailable'.
      */
     protected boolean certsAreInitiallyAvailable = true;
 
@@ -326,13 +345,20 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      */
     protected boolean hasMultipleCertificates = false;
 
+    /**
+     * Certain companies (e.g. 1837 minors) effectively have a 100% playerShareLimit.
+     * -1 means not applicable.
+     */
+    protected int playerShareLimit = -1;
+
     /*---- variables needed during initialisation -----*/
     protected String startSpace = null;
 
     protected int dropPriceToken = WHEN_STARTED;
 
     protected int capitalisation = CAPITALISE_FULL;
-    protected int capitalisationShares;
+    protected int capitalisationShares; // 18Scan
+    protected int capitalisationFixedCash; // 1837
 
     /**
      * Fixed price (for a 1835-style minor)
@@ -395,7 +421,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Relation to a later to be founded National/Regional Major Company
      */
-    private String relatedPublicCompany = null;
+    private String relatedPublicCompanyName = null;
+    private PublicCompany relatedPublicCompany = null;
 
     private String foundingStartCompany = null;
 
@@ -415,6 +442,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public PublicCompany(RailsItem parent, String id, boolean hasStockPrice) {
         super(parent, id);
         lastRevenue.setSuppressInitialZero(true);
+        lastDirectIncome.setSuppressZero(true);
+        lastDividend.setSuppressZero(true);
 
         /* Spendings in the current operating turn */
         privatesCostThisTurn.setSuppressZero(true);
@@ -457,7 +486,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         floatPerc = tag.getAttributeAsInteger("floatPerc", floatPerc);
 
-        relatedPublicCompany = tag.getAttributeAsString("relatedCompany", relatedPublicCompany);
+        relatedPublicCompanyName = tag.getAttributeAsString("relatedCompany", relatedPublicCompanyName);
 
         foundingStartCompany = tag.getAttributeAsString("foundingCompany", foundingStartCompany);
 
@@ -476,6 +505,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         canBeRestarted = tag.getAttributeAsBoolean("restartable", canBeRestarted);
 
+        playerShareLimit = tag.getAttributeAsInteger("playerShareLimit", playerShareLimit);
+
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
             shareUnit.set(shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
@@ -486,6 +517,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (homeBaseTag != null) {
             homeHexNames = homeBaseTag.getAttributeAsString("hex");
             homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
+            displayHomeHex = homeBaseTag.getAttributeAsBoolean("mapDisplay", true);
         }
 
         Tag destinationTag = tag.getChild("Destination");
@@ -527,7 +559,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         Tag priceTag = tag.getChild("StockPrice");
         if (priceTag != null) {
-            hasStockPrice = priceTag.getAttributeAsBoolean("market", true);
+            hasStockPrice = priceTag.getAttributeAsBoolean("market", hasStockPrice);
             hasParPrice = priceTag.getAttributeAsBoolean("par", hasStockPrice);
         }
 
@@ -587,15 +619,23 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             } else if ( "part".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_PART);
                 capitalisationShares = capitalisationTag.getAttributeAsInteger ("shares", 0);
+                if (capitalisationShares == 0) {
+                    throw new ConfigurationException("Missing capitalisation shares for " + getId());
+                }
             } else if ( "incremental".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_INCREMENTAL);
             } else if ( "whenBought".equalsIgnoreCase(capType)) {
                 setCapitalisation(CAPITALISE_WHEN_BOUGHT);
+            } else if ("fixedCash".equalsIgnoreCase(capType)) {
+                setCapitalisation(CAPITALISE_FIXED_CASH);
+                capitalisationFixedCash = capitalisationTag.getAttributeAsInteger("cash", 0);
+                if (capitalisationFixedCash == 0) {
+                    throw new ConfigurationException("Missing capitalisation cash for " + getId());
+                }
             } else {
                 throw new ConfigurationException("Invalid capitalisation type: " + capType);
             }
         }
-
 
         // TODO: Check if this still works correctly
         // The certificate init was moved to the finishConfig phase
@@ -691,7 +731,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             percOfPriceToReachPerJump.add(defaultPercToReach);
         }
 
-
         if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = IntegerState.create(this, "currentNumberOfLoans");
             currentLoanValue = CountingMoneyModel.create(this, "currentLoanValue", false);
@@ -708,6 +747,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             currentPrice.setPrice(parPrice.getPrice());
         }
 
+        if (Util.hasValue(relatedPublicCompanyName)) {
+            relatedPublicCompany = getRoot().getCompanyManager().getPublicCompany(relatedPublicCompanyName);
+        }
+
         int certIndex = 0;
         if (certificateTags != null) {
             int shareTotal = 0;
@@ -716,7 +759,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             // Throw away
             // the per-type
             // specification
-
             // TODO: Move this to PublicCertificate class, as it belongs there
             for (Tag certificateTag : certificateTags) {
                 int shares = certificateTag.getAttributeAsInteger("shares", 1);
@@ -727,8 +769,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                 int number = certificateTag.getAttributeAsInteger("number", 1);
 
                 boolean certIsInitiallyAvailable
-                        = certificateTag.getAttributeAsBoolean("available",
-                        certsAreInitiallyAvailable);
+                        = certificateTag.getAttributeAsBoolean("available", true);
 
                 float certificateCount = certificateTag.getAttributeAsFloat("certificateCount", 1.0f);
 
@@ -760,7 +801,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         for (int i = 0; i < certificates.size(); i++) {
             cert = certificates.get(i);
             cert.setUniqueId(getId(), i);
-            cert.setInitiallyAvailable(cert.isInitiallyAvailable() && this.certsAreInitiallyAvailable);
         }
 
         Set<BaseToken> newTokens = Sets.newHashSet();
@@ -803,7 +843,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         if (trainLimit != null) {
             infoText += "<br>" + LocalText.getText("CompInfoMaxTrains",
-                    Util.joinWithDelimiter(trainLimit, ", "));
+                    Util.join(trainLimit, ", "));
 
         }
 
@@ -953,6 +993,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return homeCityNumber;
     }
 
+    public boolean isDisplayHomeHex() {
+        return displayHomeHex;
+    }
+
     /**
      * @param number The homeStation to set.
      */
@@ -1001,7 +1045,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public void start(StockSpace startSpace) {
 
         hasStarted.set(true);
-        if (hasStockPrice) buyable.set(true);
+        if (certificates.size() > 1) buyable.set(true);
 
         // In case of a restart: undo closing
         if (closed.value()) closed.set(false);
@@ -1133,7 +1177,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     /**
      * Reinitialize a company, i.e. close it and make the shares available for a new company start.
-     * IMplemented rules are now as in 18EU.
+     * Implemented rules are now as in 18EU.
      * TODO Will see later if this is generic enough.
      */
     protected void reinitialise() {
@@ -1157,7 +1201,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * used to start a company!</i> Use <code><b>start()</b></code> in
      * stead.
      *
-     * @param space
+     * @param space The start stock space of this company
      */
     public void setParSpace(StockSpace space) {
         if (hasStockPrice) {
@@ -1206,7 +1250,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * Normally, it is equal to the market price,
      * but in some games (e.g. 1856) deductions may apply.
      *
-     * @return
+     * @return The price per share
      */
     public int getGameEndPrice() {
         return getMarketPrice() / getShareUnitsForSharePrice();
@@ -1274,9 +1318,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return treasury;
     }
 
-    /**
-     * @return
-     */
     public int getPublicNumber() {
         return publicNumber;
     }
@@ -1331,18 +1372,30 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return owner instanceof Player || owner == getRoot().getBank().getPool();
     }
 
+    public int getPlayerShareLimit() {
+        return playerShareLimit;
+    }
+
     /**
      * Get the company President.
      */
     // FIXME: This has to be redesigned
     // Relying on the ordering is not a good thing
     public Player getPresident() {
+        /*
         if (hasStarted()) {
             Owner owner = certificates.get(0).getOwner();
             if (owner instanceof Player) return (Player) owner;
         }
         return null;
+        */
+        return president.value();
     }
+
+    public void setPresident(Player newPresident) {
+        president.set(newPresident);
+    }
+
 
     public PresidentModel getPresidentModel() {
         return presidentModel;
@@ -1355,10 +1408,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Store the last revenue earned by this company.
      *
-     * @param i The last revenue amount.
+     * @param amount The last revenue amount.
      */
-    public void setLastRevenue(int i) {
-        lastRevenue.set(i);
+    public void setLastRevenue(int amount) {
+        lastRevenue.set(amount);
+    }
+
+    public void setLastDividend (int amount) {
+        lastDividend.set (amount);
     }
 
     /**
@@ -1372,6 +1429,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     public Model getLastRevenueModel() {
         return lastRevenue;
+    }
+
+    public int getLastDividend() {
+        return lastDividend.value();
+    }
+
+    public Model getLastDividendModel () {
+        return lastDividend;
     }
 
     /**
@@ -1399,7 +1464,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      *
      * TODO: Will be renamed to adjustPriceOnPayout
      *
-     * @param amount
+     * @param amount The total revenue that has been paid out
      */
     public void payout(int amount) {
 
@@ -1434,11 +1499,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public boolean paysOutToTreasury(PublicCertificate cert) {
 
         Owner owner = cert.getOwner();
-        if (owner == getRoot().getBank().getIpo() && ipoPaysOut
-                || owner == getRoot().getBank().getPool() && poolPaysOut) {
-            return true;
-        }
-        return false;
+        return owner == getRoot().getBank().getIpo() && ipoPaysOut
+            || owner == getRoot().getBank().getPool() && poolPaysOut;
     }
 
     /**
@@ -1471,7 +1533,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     /**
-     * @return
+     * @return True if the company can buy a private from a player
      */
     public boolean canBuyPrivates() {
         return canBuyPrivates;
@@ -1522,6 +1584,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return fixedPrice;
     }
 
+    public int getCapitalisationFixedCash() {
+        return capitalisationFixedCash;
+    }
+
     public int getBaseTokensBuyCost() {
         return baseTokensBuyCost;
     }
@@ -1564,33 +1630,60 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (!hasStarted() || buyer == getPresident() || certificates.size() < 2)
             return;
         Player pres = getPresident();
-        int presShare = pres.getPortfolioModel().getShare(this);
-        int buyerShare = buyer.getPortfolioModel().getShare(this);
-        if (buyerShare > presShare) {
-            pres.getPortfolioModel().swapPresidentCertificate(this,
-                    buyer.getPortfolioModel(), 0);
+        if (pres != null) {
+            int presShare = pres.getPortfolioModel().getShare(this);
+            int buyerShare = buyer.getPortfolioModel().getShare(this);
+            if (buyerShare > presShare) {
+                pres.getPortfolioModel().swapPresidentCertificate(this,
+                        buyer.getPortfolioModel(), 0);
+                ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
+                        buyer.getId(),
+                        getId()));
+            }
+        } else {
+            // No president, then it must be in the Pool (18Scan)
+            getRoot().getBank().getPool().getPortfolioModel()
+                    .swapPresidentCertificate(this, buyer.getPortfolioModel(), 2);
             ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                     buyer.getId(),
                     getId()));
         }
     }
 
-    public void checkPresidency() {
+    public boolean checkPresidency(Player dumpedPlayer) {
+
+        if (getPresident() == null && dumpedPlayer != null) {
+            // No president, then pres.share must be in the Pool
+            getRoot().getBank().getPool().getPortfolioModel()
+                    .swapPresidentCertificate(this, dumpedPlayer.getPortfolioModel(), 2);
+            ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
+                    dumpedPlayer.getId(),
+                    getId()));
+            return true;
+
+        } else {
+            return checkPresidency();
+        }
+    }
+
+    public boolean checkPresidency() {
 
         // check if there is a new potential president
-        int presidentShareNumber = getPresident().getPortfolioModel().getShareNumber(this) + 1;
+        int presidentShareNumber = getPresident().getPortfolioModel().getShares(this) + 1;
         Player nextPotentialPresident = findNextPotentialPresident(presidentShareNumber);
 
         // no change, return
         if (nextPotentialPresident == null) {
-            return;
+            return false;
         }
 
         // otherwise Hand presidency to the player with the highest share
-        getPresident().getPortfolioModel().swapPresidentCertificate(this, nextPotentialPresident.getPortfolioModel(), 2);
+        getPresident().getPortfolioModel().swapPresidentCertificate(this,
+                nextPotentialPresident.getPortfolioModel(), 2);
         ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                 nextPotentialPresident.getId(),
                 getId()));
+        return true;
     }
 
     public Player findPlayerToDump() {
@@ -1602,7 +1695,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         Player potentialDirector = null;
 
         for (Player nextPlayer : getRoot().getPlayerManager().getNextPlayersAfter(getPresident(), false, false)) {
-            int nextPlayerShareNumber = nextPlayer.getPortfolioModel().getShareNumber(this);
+            int nextPlayerShareNumber = nextPlayer.getPortfolioModel().getShares(this);
             if (nextPlayerShareNumber >= requiredShareNumber) {
                 potentialDirector = nextPlayer;
                 requiredShareNumber = nextPlayerShareNumber + 1;
@@ -1621,7 +1714,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * In case of partial capitalisation, return the number of shares
      * that are capitalised at floating time. E.g. 18Scan SJ: 7 of 10 shares
-     * @return
+     * @return The number of shares of which the total value will form the company starting capital
      */
     public int getCapitalisationShares () {
         return capitalisationShares;
@@ -1882,6 +1975,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         if (hasLaidHomeBaseTokens()) return true;
 
+        // TEMPORARY - S5 buyer must choose home hex
+        if (homeHexes == null) return true;
+
         for (MapHex homeHex : homeHexes) {
             if (homeCityNumber == 0) {
                 // This applies to cases like 1830 Erie and 1856 THB.
@@ -2114,6 +2210,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         setClosed();
     }
 
+    public boolean isHibernating() {
+        return hibernating.value();
+    }
+
+    public void setHibernating(boolean hibernating) {
+        this.hibernating.set(hibernating);
+    }
+
     @Override
     public void setClosed() {
         closed.set(true);
@@ -2123,6 +2227,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         // If applicable, prepare for a restart
         if (canBeRestarted) {
             if (certsAreInitiallyAvailable) {
+                // Probably no need to check cert-level availability here.
                 shareDestination = getRoot().getBank().getIpo();
             } else {
                 shareDestination = getRoot().getBank().getUnavailable();
@@ -2180,6 +2285,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return portfolio.getPersistentSpecialProperties();
     }
 
+    public boolean areCertsInitiallyAvailable() {
+        return certsAreInitiallyAvailable;
+    }
+
     // MoneyOwner interface
     @Override
     public Purse getPurse() {
@@ -2197,20 +2306,16 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return this.getId().compareTo(other.getId());
     }
 
-    public void setRelatedNationalCompany(String companyName) {
-        this.relatedPublicCompany = companyName;
+    public String getRelatedPublicCompanyName() {
+        return relatedPublicCompanyName;
     }
 
-    public String getRelatedNationalCompany() {
+    public PublicCompany getRelatedPublicCompany() {
         return relatedPublicCompany;
     }
 
-
     public boolean isRelatedToNational(String nationalInFounding) {
-        if (this.getRelatedNationalCompany().equals(nationalInFounding)) {
-            return true;
-        }
-        return false;
+        return this.getRelatedPublicCompanyName().equals(nationalInFounding);
     }
 
     /**
@@ -2236,10 +2341,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Store the last direct Income earned by this company.
      *
-     * @param i The last revenue amount.
+     * @param amount The last revenue amount.
      */
-    public void setLastDirectIncome(int i) {
-        lastDirectIncome.set(i);
+    public void setLastDirectIncome(int amount) {
+        lastDirectIncome.set(amount);
     }
 
     /**

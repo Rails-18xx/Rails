@@ -205,6 +205,6 @@ public class DestinationRound_18Scan extends OperatingRound {
     }
 
     public String toString() {
-        return "Bonus Round minor "+destinationCompany.getId();
+        return getId();
     }
 }

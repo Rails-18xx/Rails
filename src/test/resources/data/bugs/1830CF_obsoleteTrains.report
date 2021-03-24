@@ -9,7 +9,7 @@ PlayerCash,400
 BankHas,17600
 StartOfPhase,2
 BankSizeIs,17600
-StartOfInitialRound
+StartOfInitialRound,1
 HasPriority,Chris
 BID_ITEM_LOG,Chris,165,C&A,235
 BID_ITEM_LOG,Derek,115,M&H,285

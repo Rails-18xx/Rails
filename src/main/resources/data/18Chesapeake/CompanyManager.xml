@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<CompanyManager>
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
+		<ClosingConditions>
+            <Phase>5</Phase>
+		</ClosingConditions>
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<Tradeable toPlayer="yes"/>	
+	</CompanyType>
+	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
+		<CanBuyPrivates/>
+		<PoolPaysOut/>
+		<Float percentage="60"/>
+		<ShareUnit percentage="10"/>
+		<BaseTokens>
+			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
+			<HomeBase lay="firstOR"/>
+			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
+			<LayCost method="sequence" cost="0,40,100"/>
+		</BaseTokens>
+		<Certificate type="President" shares="2"/>
+		<Certificate shares="1" number="8"/>
+		<Trains limit="4,3,2"/>
+        <CanUseSpecialProperties/>
+	</CompanyType>
+		<Company name="D&amp;RC" type="Private" basePrice="20" revenue="5"
+			longname="Delaware and Raritan Canal">
+		<Blocking hex="K3"/>
+	</Company>
+	<Company name="CPR" type="Private" basePrice="40" revenue="10"
+			longname="Columbia-Philadelphia Railroad">
+		<Blocking hex="H2,I3"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay colour="yellow" location="H2" extra="yes" free="yes" tiles="8,9" constraints="connected" neighbour="I3" />
+			</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay colour="yellow" location="I3" extra="yes" free="yes" tiles="8,9" constraints="connected" neighbour="H2" />
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="BSR" type="Private" basePrice="50" revenue="10"
+		longname="Baltimore and Susquehanna Railroad">
+		<Blocking hex="F4,G5"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay colour="yellow" location="F4" extra="yes" free="yes" tiles="8,9" constraints="connected" neighbour="G5" />
+			</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay colour="yellow" location="G5" extra="yes" free="yes" tiles="8,9" constraints="connected" neighbour="F4" />
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="C&amp;OC" type="Private" basePrice="80" revenue="15"
+		longname="Chesapeake and Ohio Canal">
+		<Blocking hex="D2"/>
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay location="D2" extra="yes" free="yes" tile="57" />
+			</SpecialProperty>
+			<SpecialProperty condition="ifOwnedByCompany" when="tokenlayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
+				<SpecialBaseTokenLay location="D2" extra="yes" free="yes" requiresTile="57"/>
+			</SpecialProperty>
+		</SpecialProperties>
+	</Company>
+	<Company name="B&amp;OR" type="Private" basePrice="100" revenue="0"
+		longname="Baltimore and Ohio Railroad">
+		<Info key="ComesWithCertificate" parm="B&amp;O,10"/>
+	</Company>
+	<Company name="CV" type="Private" basePrice="200" revenue="30"
+		longname="Cornelius Vanderbuil">
+		<Info key="ComesWithPresidency" parm="random,20"/>
+		<Tradeable toCompany="no"/>
+	</Company>
+	
+	<!-- Note two supported colour specification formats:
+	     RGB decimal with commas and RGB hexadecimal without commas -->
+	<Company name="C&amp;A" type="Public" tokens="2" fgColour="000000" bgColour="60E060"
+			longname="Camdon and Amboy">
+		<FirstTrainCloses type="Private" name="random"/>
+		<Home hex="J6"/>
+	</Company>	     
+	<Company name="B&amp;O" type="Public" tokens="3" fgColour="255,255,255" bgColour="0,0,255"
+			longname="Baltimore &amp; Ohio">
+		<FirstTrainCloses type="Private" name="random"/>
+		<Home hex="H6" city="1"/>
+	</Company>
+	<Company name="C&amp;O" type="Public" tokens="4" fgColour="000000" bgColour="A0E0FF"
+			longname="Chesapeake &amp; Ohio">
+		<FirstTrainCloses type="Private" name="random"/>
+		<Home hex="G13"/>
+	</Company>
+	<Company name="LV" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF0000"
+			longname="Lehigh Valley Railroad">
+		<Home hex="J2"/>
+	</Company>
+	<Company name="PLE" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00"
+			longname="Pittsburgh and Lake Erie Railroad">
+		<Home hex="A3"/>
+	</Company>
+	<Company name="N&amp;W" type="Public" tokens="3" fgColour="FFFFFF" bgColour="000000"
+			longname="Norfolk and Western Railway">
+		<Home hex="C13"/>
+	</Company>
+	<Company name="SRR" type="Public" tokens="2" fgColour="000000" bgColour="FF8000"
+			longname="Strasburg Rail Road">
+		<Home hex="H4"/>
+	</Company>
+	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000"
+			longname="Pennsylvania Railroad">
+		<Home hex="F2"/>
+	</Company>
+	
+	<StartPacket roundClass="net.sf.rails.game.specific._18Chesapeake.StartRound_18Chesapeake">
+		<Bidding initial="5" minimum="5" increment="1"/>
+		<Item name="D&amp;RC" type="Private" basePrice="20"/>
+		<Item name="CPR" type="Private" basePrice="40"/>
+		<Item name="BSR" type="Private" basePrice="50"/>
+		<Item name="C&amp;OC" type="Private" basePrice="80"/>
+		<Item name="B&amp;OR" type="Private" basePrice="100">
+			<SubItem name="B&amp;O" type="Public" />
+		</Item>
+		<Item name="CV" type="Private" basePrice="200" displayname="CV+Random">
+			<SubItem name="random" type="Public" president="yes"/>
+		</Item>
+	</StartPacket>
+</CompanyManager>

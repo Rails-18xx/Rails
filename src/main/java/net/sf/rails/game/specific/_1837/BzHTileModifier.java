@@ -9,6 +9,7 @@ import net.sf.rails.algorithms.NetworkGraph;
 import net.sf.rails.algorithms.NetworkGraphModifier;
 import net.sf.rails.algorithms.NetworkVertex;
 import net.sf.rails.game.MapHex;
+import net.sf.rails.game.PhaseManager;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 
@@ -20,7 +21,7 @@ import org.jgrapht.graph.SimpleGraph;
 public class BzHTileModifier implements NetworkGraphModifier {
 
     private static final Logger log = LoggerFactory.getLogger(BzHTileModifier.class);
-    private List<MapHex> bzhMapHexes = new ArrayList<MapHex> ();
+    private List<MapHex> bzhMapHexes = new ArrayList<> ();
 
     private RailsRoot root;
 
@@ -36,14 +37,16 @@ public class BzHTileModifier implements NetworkGraphModifier {
         // 1. check Phase
         // this is a violation of the assumption that the track network only dependents on the map configuration
         // but not on other things (like phases)
-        int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex();
-        if (phaseIndex >= 3 ) {
-            log.debug("Boznia-Herzegovina active, index of phase = {}", phaseIndex);
+        //int phaseIndex = root.getPhaseManager().getCurrentPhase().getIndex();
+        PhaseManager phm = root.getPhaseManager();
+        if (phm.hasReachedPhase("3"))   {
+            log.debug("Bosnia-Herzegovina active, phase={}",
+                    phm.getCurrentPhase().getId());
             return;
         }
 
         // 2. retrieve BzH vertices ...
-        String[] bzhHexes = {"L16","L18","L20","L22","M17","M19","M21","N18","N20"};
+        String[] bzhHexes = GameDef_1837.BzHHexes.split(",");
         for(String bzhHex:bzhHexes){
             bzhMapHexes.add(root.getMapManager().getHex(bzhHex));
         }
@@ -51,7 +54,8 @@ public class BzHTileModifier implements NetworkGraphModifier {
 
         // 3 ... and remove them from the graph
         graph.removeAllVertices(bzhVertices);
-        log.debug("Bosnia Herzegovina inactive, index of phase = {}", phaseIndex);
+        log.debug("Bosnia-Herzegovina inactive, phase={}",
+                phm.getCurrentPhase().getId());
 
     }
 
