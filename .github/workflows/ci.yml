@@ -39,8 +39,6 @@ jobs:
         run: ./gradlew clean test
       - name: Build jar
         run: ./gradlew clean build
-      - name: Install System Dependencies
-        run: sudo apt install --reinstall --yes libx11-6 libxtst6 libxcb1 libxrender1 libxdmcp6 libxext6 libxau6 libbsd0 libasound2 libxi6
       - name: Create Deb Installer
         run: ./gradlew buildDebPackage
       - name: Create Rpm Installer
