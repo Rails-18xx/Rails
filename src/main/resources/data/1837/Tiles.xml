@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Tiles>
-	<Tile colour="fixed" id="0" name="empty"/>
-	<Tile colour="fixed" id="-1" name="1 village">
+	<Tile colour="white" id="0" name="empty"/>
+	<Tile colour="white" id="-1" name="1 village">
 		<Station id="city1" position="002" type="Town"/>
 	</Tile>
-	<Tile colour="fixed" id="-2" name="2 villages">
+	<Tile colour="white" id="-2" name="2 villages">
 		<Station id="city1" position="102" type="Town"/>
 		<Station id="city2" position="302" type="Town"/>
 	</Tile>
@@ -19,10 +19,10 @@
 	<Tile colour="fixed" id="-8" name="MF 8">
 		<Track from="side2" gauge="normal" to="side0"/>
 	</Tile>
-	<Tile colour="fixed" id="-10" name="1 city">
+	<Tile colour="white" id="-10" name="1 city">
 		<Station id="city1" position="302" slots="1" type="City"/>
 	</Tile>
-	<Tile colour="fixed" id="-20" name="2 cities">
+	<Tile colour="white" id="-20" name="2 cities">
 		<Station id="city1" position="208" slots="1" type="City"/>
 		<Station id="city2" position="508" slots="1" type="City"/>
 	</Tile>
@@ -40,7 +40,7 @@
 		<Station id="city1" position="302" type="Town" value="10"/>
 		<Track from="city1" gauge="normal" to="side3"/>
 	</Tile>
-	<Tile colour="fixed" id="-3007" name="Y city (cent)">
+	<Tile colour="white" id="-3007" name="Y city (cent)">
 		<Station id="city1" position="0" slots="1" type="City"/>
 	</Tile>
 	<Tile colour="fixed" id="-37001">
@@ -59,10 +59,10 @@
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="side5" gauge="normal" to="side4"/>
 	</Tile>
-	<Tile colour="fixed" id="-37007" name="T">
+	<Tile colour="white" id="-37007" name="T">
 		<Station id="city1" position="0" slots="1" type="City"/>
 	</Tile>
-	<Tile colour="fixed" id="-37008" name="X">
+	<Tile colour="white" id="-37008" name="X">
 		<Station id="city1" position="0" slots="1" type="City"/>
 	</Tile>
 	<Tile colour="green" id="-37009" name="Bregenz">

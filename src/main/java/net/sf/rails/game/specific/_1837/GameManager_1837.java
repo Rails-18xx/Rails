@@ -221,25 +221,6 @@ public class GameManager_1837 extends GameManager {
 
     }
 
-/*
-    public Player getPlayerToStartFCERound() {
-        return playerToStartFCERound.value();
-    }
-
-
-    public void setPlayerToStartFCERound(Player president) {
-        this.playerToStartFCERound.set(president);
-    }
-
-    public Player getPlayerToStartCERound() {
-        return playerToStartCERound.value();
-    }
-
-
-    public void setPlayerToStartCERound(Player president) {
-        this.playerToStartCERound.set(president);
-    }
-*/
     public void setCoalRoundFollowedByOR(boolean b) {
         this.CoalRoundFollowedByOR.set(b);
     }

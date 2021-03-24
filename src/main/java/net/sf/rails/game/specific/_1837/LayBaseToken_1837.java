@@ -63,7 +63,6 @@ public class LayBaseToken_1837 extends PossibleAction {
             names[i++] = minor.getId();
         }
         minorNames = String.join(",", names);
-        //log.info (">>>>> Serialize: {} -> \"{}\"", minors, minorNames);
 
         selected = new ArrayList<>(Collections.nCopies(numberOfMinors, false));
         //Collections.fill(selected, false);
@@ -89,7 +88,6 @@ public class LayBaseToken_1837 extends PossibleAction {
     }
 
     public List<Boolean> getSelected() {
-    //public boolean[] getSelected() {
         return selected;
     }
 
@@ -101,7 +99,6 @@ public class LayBaseToken_1837 extends PossibleAction {
     /*--- Setters ---*/
 
     public void setSelected(int index, boolean value) {
-        //selected[index] = value;
         selected.set(index, value);
         setSelectedString();
     }
@@ -163,13 +160,8 @@ public class LayBaseToken_1837 extends PossibleAction {
         for (int i=0; i<names.length; i++) {
             minors.add(cmgr.getPublicCompany(names[i]));
         }
-        //log.info ("<<<<< Deserialize: \"{}\" -> {}", minorNames, minors);
-
-        //selected = new boolean[minors.size()];
         selected = new ArrayList<>();
-        //int index = 0;
         for (String s : selectedString.split(",")) {
-            //selected[index++] = Boolean.parseBoolean(s);
             selected.add(Boolean.parseBoolean(s));
         }
     }
