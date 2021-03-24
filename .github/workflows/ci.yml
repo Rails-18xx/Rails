@@ -39,6 +39,8 @@ jobs:
         run: ./gradlew clean test
       - name: Build jar
         run: ./gradlew clean build
+      - name: Install System Dependencies
+        run: sudo apt install -y libc6 xdg-utils zlib1g
       - name: Create Deb Installer
         run: ./gradlew buildDebPackage
       - name: Create Rpm Installer
