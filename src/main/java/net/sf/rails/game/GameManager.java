@@ -315,6 +315,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                             emergencyTag.getAttributeAsBoolean("mustBuyTrainEvenIfNoRoute",
                                     GameDef.Parm.MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE.defaultValueAsBoolean()));
                 }
+
                 Tag revenueIncrementTag = orTag.getChild("RevenueIncrement");
                 if (revenueIncrementTag != null) {
                     revenueSpinnerIncrement = revenueIncrementTag.getAttributeAsInteger("amount", 10);
@@ -1553,10 +1554,19 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public Object getGuiParameter(GuiDef.Parm key) {
+        if (key == GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME) {
+            log.debug("+++ Get {}={} OrDefault={}",
+                    key,
+                    guiParameters.get(key),
+                    guiParameters.getOrDefault(key, false));
+        }
         return guiParameters.getOrDefault(key, false);
     }
 
     public void setGuiParameter(GuiDef.Parm key, boolean value) {
+        if (key == GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME) {
+            log.debug("+++ Set {}={}", key, value);
+        }
         guiParameters.put(key, value);
     }
 

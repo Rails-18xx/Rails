@@ -1035,7 +1035,7 @@ LaysTileAt,EPP,9,C9,NW
 CompanyRevenue,EPP,50
 CompanyDividesEarnings,EPP,50,20,30
 CompanySplits,EPP,20
-RECEIVES,EPP,10
+Receives,EPP,10
 Payout,Bob,10,1,100
  
 CompanyOperates,RGTE,Bob
@@ -1043,14 +1043,14 @@ LaysTileAt,RGTE,8,B10,NE
 CompanyRevenue,RGTE,60
 CompanyDividesEarnings,RGTE,60,30,30
 CompanySplits,RGTE,30
-RECEIVES,RGTE,15
+Receives,RGTE,15
 Payout,Bob,15,1,100
  
 CompanyOperates,EOD,Alice
 CompanyRevenue,EOD,60
 CompanyDividesEarnings,EOD,60,40,20
 CompanySplits,EOD,40
-RECEIVES,EOD,20
+Receives,EOD,20
 Payout,Alice,20,1,100
  
 CompanyOperates,EKT,Alice
@@ -1058,7 +1058,7 @@ LaysTileAt,EKT,401,C23,W
 CompanyRevenue,EKT,65
 CompanyDividesEarnings,EKT,65,40,25
 CompanySplits,EKT,40
-RECEIVES,EKT,20
+Receives,EKT,20
 Payout,Alice,20,1,100
  
 CompanyOperates,MLB,Alice
@@ -1066,14 +1066,14 @@ LaysTileAt,MLB,201,C33,W
 CompanyRevenue,MLB,60
 CompanyDividesEarnings,MLB,60,40,20
 CompanySplits,MLB,40
-RECEIVES,MLB,20
+Receives,MLB,20
 Payout,Alice,20,1,100
  
 CompanyOperates,ZKB,Charlie
 CompanyRevenue,ZKB,55
 CompanyDividesEarnings,ZKB,55,30,25
 CompanySplits,ZKB,30
-RECEIVES,ZKB,15
+Receives,ZKB,15
 Payout,Charlie,15,1,100
  
 CompanyOperates,SPB,Charlie
@@ -1081,7 +1081,7 @@ LaysTileAt,SPB,404,J28,SW
 CompanyRevenue,SPB,40
 CompanyDividesEarnings,SPB,40,20,20
 CompanySplits,SPB,20
-RECEIVES,SPB,10
+Receives,SPB,10
 Payout,Charlie,10,1,100
  
 CompanyOperates,LRB,Bob
@@ -1089,7 +1089,7 @@ LaysTileAt,LRB,402,J26,NE
 CompanyRevenue,LRB,55
 CompanyDividesEarnings,LRB,55,30,25
 CompanySplits,LRB,30
-RECEIVES,LRB,15
+Receives,LRB,15
 Payout,Bob,15,1,100
  
 CompanyOperates,BB,Charlie
@@ -1097,74 +1097,74 @@ LaysTileAt,BB,8,N16,SE
 CompanyRevenue,BB,55
 CompanyDividesEarnings,BB,55,20,35
 CompanySplits,BB,20
-RECEIVES,BB,10
+Receives,BB,10
 Payout,Charlie,10,1,100
  
 CompanyOperates,EHS,Bob
 CompanyRevenue,EHS,50
 CompanyDividesEarnings,EHS,50,30,20
 CompanySplits,EHS,30
-RECEIVES,EHS,15
+Receives,EHS,15
 Payout,Bob,15,1,100
  
 CompanyOperates,S1,Charlie
 LaysTileAt,S1,57,I15,SW
 CompanyRevenue,S1,60
 CompanySplits,S1,60
-RECEIVES,S1,30
+Receives,S1,30
 Payout,Charlie,30,1,100
  
 CompanyOperates,S2,Alice
 LaysTileAt,S2,1,J12,SW
 CompanyRevenue,S2,40
 CompanySplits,S2,40
-RECEIVES,S2,20
+Receives,S2,20
 Payout,Alice,20,1,100
  
 CompanyOperates,S3,Bob
 LaysTileAt,S3,9,I5,W
 CompanyRevenue,S3,50
 CompanySplits,S3,50
-RECEIVES,S3,25
+Receives,S3,25
 Payout,Bob,25,1,100
  
 CompanyOperates,S4,Alice
 LaysTileAt,S4,9,J6,SW
 CompanyRevenue,S4,50
 CompanySplits,S4,50
-RECEIVES,S4,25
+Receives,S4,25
 Payout,Alice,25,1,100
  
 CompanyOperates,S5,Bob
 LaysTileAt,S5,8,L4,W
 CompanyRevenue,S5,50
 CompanySplits,S5,50
-RECEIVES,S5,25
+Receives,S5,25
 Payout,Bob,25,1,100
  
 CompanyOperates,K1,Charlie
 CompanyRevenue,K1,50
 CompanySplits,K1,50
-RECEIVES,K1,25
+Receives,K1,25
 Payout,Charlie,25,1,100
  
 CompanyOperates,K2,Alice
 LaysTileAt,K2,404,G13,NW
 CompanyRevenue,K2,60
 CompanySplits,K2,60
-RECEIVES,K2,30
+Receives,K2,30
 Payout,Alice,30,1,100
  
 CompanyOperates,K3,Bob
 CompanyRevenue,K3,50
 CompanySplits,K3,50
-RECEIVES,K3,25
+Receives,K3,25
 Payout,Bob,25,1,100
  
 CompanyOperates,U1,Charlie
 CompanyRevenue,U1,60
 CompanySplits,U1,60
-RECEIVES,U1,30
+Receives,U1,30
 Payout,Charlie,30,2,50
 BuysTrain,U1,2,IPO,90
  
@@ -1176,9 +1176,9 @@ CompanyOperates,U3,Bob
 LaysTileAt,U3,1,H18,W
 CompanyRevenue,U3,50
 CompanySplits,U3,50
-RECEIVES,U3,24
-Payout,Alice,13,1,50
-Payout,Bob,13,1,50
+Receives,U3,25
+Payout,Alice,12,1,50
+Payout,Bob,12,1,50
 BuysTrain,U3,2,IPO,90
  
 CompanyOperates,BK,Bob
@@ -1194,8 +1194,8 @@ BuysTrain,BK,2G,IPO,230
 FirstTrainBought,2G
  
 EndOfOperatingRound,2.1
-ORWorthIncrease,Alice,2.1,215
-ORWorthIncrease,Bob,2.1,164
+ORWorthIncrease,Alice,2.1,214
+ORWorthIncrease,Bob,2.1,163
 ORWorthIncrease,Charlie,2.1,154
 Has,EPP,40
 Has,RGTE,45
@@ -1217,10 +1217,10 @@ Has,K2,30
 Has,K3,25
 Has,U1,30
 Has,U2,0
-Has,U3,24
+Has,U3,25
 Has,BK,60
-Has,Alice,248
-Has,Bob,178
+Has,Alice,247
+Has,Bob,177
 Has,Charlie,220
 StartCoalExchangeRound,2.1
 PlayerDoesNoWantToMerge,Bob,EPP, RGTE,BK
@@ -1246,10 +1246,10 @@ Has,K2,30
 Has,K3,25
 Has,U1,30
 Has,U2,0
-Has,U3,24
+Has,U3,25
 Has,BK,60
-Has,Alice,248
-Has,Bob,178
+Has,Alice,247
+Has,Bob,177
 Has,Charlie,220
 StartStockRound,3
 HasPriority,Charlie
@@ -1293,12 +1293,12 @@ Has,K2,30
 Has,K3,25
 Has,U1,30
 Has,U2,0
-Has,U3,24
+Has,U3,25
 Has,BK,60
 Has,MS,560
 Has,SB,600
-Has,Alice,3
-Has,Bob,48
+Has,Alice,2
+Has,Bob,47
 Has,Charlie,4
 StartCoalExchangeRound,3.0
 MERGE_MINOR_LOG,Charlie,SPB,SB,30,1
@@ -1330,12 +1330,12 @@ Has,K2,30
 Has,K3,25
 Has,U1,30
 Has,U2,0
-Has,U3,24
+Has,U3,25
 Has,BK,60
 Has,MS,605
 Has,SB,630
-Has,Alice,3
-Has,Bob,48
+Has,Alice,2
+Has,Bob,47
 Has,Charlie,4
 START_OR,3.1
 ReceivesFor,Alice,25,KwB
@@ -1351,7 +1351,7 @@ LaysTileAt,EPP,25,B10,SE
 CompanyRevenue,EPP,70
 CompanyDividesEarnings,EPP,70,40,30
 CompanySplits,EPP,40
-RECEIVES,EPP,20
+Receives,EPP,20
 Payout,Bob,20,1,100
  
 CompanyOperates,RGTE,Bob
@@ -1359,7 +1359,7 @@ LaysTileAt,RGTE,406,C11,SW
 CompanyRevenue,RGTE,80
 CompanyDividesEarnings,RGTE,80,50,30
 CompanySplits,RGTE,50
-RECEIVES,RGTE,25
+Receives,RGTE,25
 Payout,Bob,25,1,100
  
 CompanyOperates,EOD,Alice
@@ -1367,7 +1367,7 @@ LaysTileAt,EOD,406,E17,W
 CompanyRevenue,EOD,80
 CompanyDividesEarnings,EOD,80,60,20
 CompanySplits,EOD,60
-RECEIVES,EOD,30
+Receives,EOD,30
 Payout,Alice,30,1,100
  
 CompanyOperates,MLB,Alice
@@ -1375,7 +1375,7 @@ LaysTileAt,MLB,7,D32,NW
 CompanyRevenue,MLB,70
 CompanyDividesEarnings,MLB,70,50,20
 CompanySplits,MLB,50
-RECEIVES,MLB,25
+Receives,MLB,25
 Payout,Alice,25,1,100
  
 CompanyOperates,ZKB,Charlie
@@ -1383,7 +1383,7 @@ LaysTileAt,ZKB,405,J36,NE
 CompanyRevenue,ZKB,65
 CompanyDividesEarnings,ZKB,65,40,25
 CompanySplits,ZKB,40
-RECEIVES,ZKB,20
+Receives,ZKB,20
 Payout,Charlie,20,1,100
  
 CompanyOperates,LRB,Bob
@@ -1391,7 +1391,7 @@ LaysTileAt,LRB,408,J28,SE
 CompanyRevenue,LRB,65
 CompanyDividesEarnings,LRB,65,40,25
 CompanySplits,LRB,40
-RECEIVES,LRB,20
+Receives,LRB,20
 Payout,Bob,20,1,100
  
 CompanyOperates,BB,Charlie
@@ -1399,7 +1399,7 @@ LaysTileAt,BB,7,M15,SW
 CompanyRevenue,BB,65
 CompanyDividesEarnings,BB,65,30,35
 CompanySplits,BB,30
-RECEIVES,BB,15
+Receives,BB,15
 Payout,Charlie,15,1,100
  
 CompanyOperates,EHS,Bob
@@ -1407,28 +1407,28 @@ LaysTileAt,EHS,206,F28,NW
 CompanyRevenue,EHS,60
 CompanyDividesEarnings,EHS,60,40,20
 CompanySplits,EHS,40
-RECEIVES,EHS,20
+Receives,EHS,20
 Payout,Bob,20,1,100
  
 CompanyOperates,S1,Charlie
 LaysTileAt,S1,427,G17,SW
 CompanyRevenue,S1,80
 CompanySplits,S1,80
-RECEIVES,S1,40
+Receives,S1,40
 Payout,Charlie,40,1,100
  
 CompanyOperates,S2,Alice
 LaysTileAt,S2,5,J16,NW
 CompanyRevenue,S2,30
 CompanySplits,S2,30
-RECEIVES,S2,15
+Receives,S2,15
 Payout,Alice,15,1,100
  
 CompanyOperates,S3,Bob
 LaysTileAt,S3,207,I7,SE
 CompanyRevenue,S3,60
 CompanySplits,S3,60
-RECEIVES,S3,30
+Receives,S3,30
 Payout,Bob,30,1,100
 BuysTrain,S3,2,BK,55
  
@@ -1436,56 +1436,56 @@ CompanyOperates,S4,Alice
 LaysTileAt,S4,205,K5,E
 CompanyRevenue,S4,70
 CompanySplits,S4,70
-RECEIVES,S4,35
+Receives,S4,35
 Payout,Alice,35,1,100
  
 CompanyOperates,S5,Bob
 LaysTileAt,S5,207,L2,NE
 CompanyRevenue,S5,70
 CompanySplits,S5,70
-RECEIVES,S5,35
+Receives,S5,35
 Payout,Bob,35,1,100
  
 CompanyOperates,K1,Charlie
 LaysTileAt,K1,87,F18,SW
 CompanyRevenue,K1,70
 CompanySplits,K1,70
-RECEIVES,K1,35
+Receives,K1,35
 Payout,Charlie,35,1,100
  
 CompanyOperates,K2,Alice
 LaysTileAt,K2,408,G13,W
 CompanyRevenue,K2,90
 CompanySplits,K2,90
-RECEIVES,K2,45
+Receives,K2,45
 Payout,Alice,45,1,100
  
 CompanyOperates,K3,Bob
 LaysTileAt,K3,412,F16,E
 CompanyRevenue,K3,70
 CompanySplits,K3,70
-RECEIVES,K3,35
+Receives,K3,35
 Payout,Bob,35,1,100
  
 CompanyOperates,U1,Charlie
 LaysTileAt,U1,425,H22,W
 CompanyRevenue,U1,170
 CompanySplits,U1,170
-RECEIVES,U1,84
-Payout,Charlie,86,2,50
+Receives,U1,85
+Payout,Charlie,85,2,50
  
 CompanyOperates,U2,Alice
 LaysTileAt,U2,417,I21,E
 CompanyRevenue,U2,80
 CompanySplits,U2,80
-RECEIVES,U2,40
+Receives,U2,40
 Payout,Alice,40,1,100
  
 CompanyOperates,U3,Bob
 LaysTileAt,U3,9,H24,W
 CompanyRevenue,U3,180
 CompanySplits,U3,180
-RECEIVES,U3,90
+Receives,U3,90
 Payout,Alice,45,1,50
 Payout,Bob,45,1,50
  
@@ -1525,7 +1525,7 @@ PRICE_MOVES_LOG,BK,55,B9,59,C9
 EndOfOperatingRound,3.1
 ORWorthIncrease,Alice,3.1,346
 ORWorthIncrease,Bob,3.1,372
-ORWorthIncrease,Charlie,3.1,287
+ORWorthIncrease,Charlie,3.1,286
 Has,EPP,90
 Has,RGTE,100
 Has,EOD,90
@@ -1542,15 +1542,15 @@ Has,S5,60
 Has,K1,60
 Has,K2,75
 Has,K3,60
-Has,U1,114
+Has,U1,115
 Has,U2,40
-Has,U3,114
+Has,U3,115
 Has,BK,109
 Has,MS,220
 Has,SB,245
-Has,Alice,334
-Has,Bob,401
-Has,Charlie,273
+Has,Alice,333
+Has,Bob,400
+Has,Charlie,272
 StartCoalExchangeRound,3.1
 PlayerDoesNoWantToMerge,Charlie,ZKB,SB
 PlayerDoesNoWantToMerge,Alice,EOD,MS
@@ -1573,15 +1573,15 @@ Has,S5,60
 Has,K1,60
 Has,K2,75
 Has,K3,60
-Has,U1,114
+Has,U1,115
 Has,U2,40
-Has,U3,114
+Has,U3,115
 Has,BK,109
 Has,MS,220
 Has,SB,245
-Has,Alice,334
-Has,Bob,401
-Has,Charlie,273
+Has,Alice,333
+Has,Bob,400
+Has,Charlie,272
 START_OR,3.2
 ReceivesFor,Alice,25,KwB
 ReceivesFor,Alice,15,BrB
@@ -1596,7 +1596,7 @@ LaysTileAt,EPP,25,D14,NW
 CompanyRevenue,EPP,90
 CompanyDividesEarnings,EPP,90,60,30
 CompanySplits,EPP,60
-RECEIVES,EPP,30
+Receives,EPP,30
 Payout,Bob,30,1,100
  
 CompanyOperates,RGTE,Bob
@@ -1604,14 +1604,14 @@ LaysTileAt,RGTE,3,E13,NE
 CompanyRevenue,RGTE,90
 CompanyDividesEarnings,RGTE,90,60,30
 CompanySplits,RGTE,60
-RECEIVES,RGTE,30
+Receives,RGTE,30
 Payout,Bob,30,1,100
  
 CompanyOperates,EOD,Alice
 CompanyRevenue,EOD,70
 CompanyDividesEarnings,EOD,70,50,20
 CompanySplits,EOD,50
-RECEIVES,EOD,25
+Receives,EOD,25
 Payout,Alice,25,1,100
  
 CompanyOperates,MLB,Alice
@@ -1619,7 +1619,7 @@ LaysTileAt,MLB,207,C33,SE
 CompanyRevenue,MLB,80
 CompanyDividesEarnings,MLB,80,60,20
 CompanySplits,MLB,60
-RECEIVES,MLB,30
+Receives,MLB,30
 Payout,Alice,30,1,100
  
 CompanyOperates,ZKB,Charlie
@@ -1627,7 +1627,7 @@ LaysTileAt,ZKB,58,I33,SE
 CompanyRevenue,ZKB,85
 CompanyDividesEarnings,ZKB,85,60,25
 CompanySplits,ZKB,60
-RECEIVES,ZKB,30
+Receives,ZKB,30
 Payout,Charlie,30,1,100
  
 CompanyOperates,LRB,Bob
@@ -1635,7 +1635,7 @@ LaysTileAtFor,LRB,9,I25,NW,50
 CompanyRevenue,LRB,65
 CompanyDividesEarnings,LRB,65,40,25
 CompanySplits,LRB,40
-RECEIVES,LRB,20
+Receives,LRB,20
 Payout,Bob,20,1,100
  
 CompanyOperates,BB,Charlie
@@ -1643,7 +1643,7 @@ LaysTileAtFor,BB,7,L14,SW,70
 CompanyRevenue,BB,65
 CompanyDividesEarnings,BB,65,30,35
 CompanySplits,BB,30
-RECEIVES,BB,15
+Receives,BB,15
 Payout,Charlie,15,1,100
  
 CompanyOperates,EHS,Bob
@@ -1651,81 +1651,81 @@ LaysTileAt,EHS,4,F30,W
 CompanyRevenue,EHS,70
 CompanyDividesEarnings,EHS,70,50,20
 CompanySplits,EHS,50
-RECEIVES,EHS,25
+Receives,EHS,25
 Payout,Bob,25,1,100
  
 CompanyOperates,S1,Charlie
 LaysTileAt,S1,206,I15,W
 CompanyRevenue,S1,90
 CompanySplits,S1,90
-RECEIVES,S1,45
+Receives,S1,45
 Payout,Charlie,45,1,100
  
 CompanyOperates,S2,Alice
 LaysTileAt,S2,8,K11,NE
 CompanyRevenue,S2,30
 CompanySplits,S2,30
-RECEIVES,S2,15
+Receives,S2,15
 Payout,Alice,15,1,100
  
 CompanyOperates,S3,Bob
 CompanyRevenue,S3,130
 CompanySplits,S3,130
-RECEIVES,S3,65
+Receives,S3,65
 Payout,Bob,65,1,100
  
 CompanyOperates,S4,Alice
 CompanyRevenue,S4,70
 CompanySplits,S4,70
-RECEIVES,S4,35
+Receives,S4,35
 Payout,Alice,35,1,100
 BuysTrain,S4,2,U1,95
  
 CompanyOperates,S5,Bob
 CompanyRevenue,S5,70
 CompanySplits,S5,70
-RECEIVES,S5,35
+Receives,S5,35
 Payout,Bob,35,1,100
  
 CompanyOperates,K1,Charlie
 LaysTileAtFor,K1,402,G19,W,50
 CompanyRevenue,K1,70
 CompanySplits,K1,70
-RECEIVES,K1,35
+Receives,K1,35
 Payout,Charlie,35,1,100
  
 CompanyOperates,K2,Alice
 LaysTileAt,K2,8,H12,W
 CompanyRevenue,K2,90
 CompanySplits,K2,90
-RECEIVES,K2,45
+Receives,K2,45
 Payout,Alice,45,1,100
  
 CompanyOperates,K3,Bob
 CompanyRevenue,K3,70
 CompanySplits,K3,70
-RECEIVES,K3,35
+Receives,K3,35
 Payout,Bob,35,1,100
  
 CompanyOperates,U1,Charlie
 LaysTileAt,U1,406,G19,W
 CompanyRevenue,U1,100
 CompanySplits,U1,100
-RECEIVES,U1,50
+Receives,U1,50
 Payout,Charlie,50,2,50
 BuysTrain,U1,3,IPO,180
  
 CompanyOperates,U2,Alice
 CompanyRevenue,U2,80
 CompanySplits,U2,80
-RECEIVES,U2,40
+Receives,U2,40
 Payout,Alice,40,1,100
  
 CompanyOperates,U3,Bob
 LaysTileAt,U3,9,H28,W
 CompanyRevenue,U3,180
 CompanySplits,U3,180
-RECEIVES,U3,90
+Receives,U3,90
 Payout,Alice,45,1,50
 Payout,Bob,45,1,50
  
@@ -1778,15 +1778,15 @@ Has,S5,95
 Has,K1,45
 Has,K2,120
 Has,K3,95
-Has,U1,79
+Has,U1,80
 Has,U2,80
-Has,U3,204
+Has,U3,205
 Has,BK,189
 Has,MS,190
 Has,SB,290
-Has,Alice,723
-Has,Bob,829
-Has,Charlie,661
+Has,Alice,722
+Has,Bob,828
+Has,Charlie,660
 StartCoalExchangeRound,3.2
 PlayerDoesNoWantToMerge,Charlie,ZKB,SB
 PlayerDoesNoWantToMerge,Alice,EOD,MS
@@ -1809,14 +1809,14 @@ Has,S5,95
 Has,K1,45
 Has,K2,120
 Has,K3,95
-Has,U1,79
+Has,U1,80
 Has,U2,80
-Has,U3,204
+Has,U3,205
 Has,BK,189
 Has,MS,190
 Has,SB,290
-Has,Alice,723
-Has,Bob,829
-Has,Charlie,661
+Has,Alice,722
+Has,Bob,828
+Has,Charlie,660
 StartStockRound,4
 HasPriority,Bob

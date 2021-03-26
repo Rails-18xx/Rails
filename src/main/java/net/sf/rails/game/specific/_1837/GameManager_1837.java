@@ -216,7 +216,7 @@ public class GameManager_1837 extends GameManager {
     @Override
     public void setGuiParameters() {
         super.setGuiParameters();
-        //Flags the Game that a special Company income is needed...
+        log.debug("+++ Put {}={}",GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME, true);
         guiParameters.put(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME, true);
 
     }

@@ -345,37 +345,30 @@ public class OperatingRound_1837 extends OperatingRound {
      * @see net.sf.rails.game.OperatingRound#splitRevenue(int)
      */
 
-    // TODO: perhaps make roundUp generic?
-    public void splitRevenue(int amount, boolean roundUp) {
+    public void splitRevenue(int amount) {
         int withheld = 0;
         if (amount > 0) {
-            int numberOfShares = operatingCompany.value().getNumberOfShares();
-            if (roundUp) {
-                // Withhold half of it
-                withheld =
-                        (amount / (2 * numberOfShares)) * numberOfShares;
-
-            } else {
-                //withhold half of it and make sure the bank gets any remaining rounding victims
-                withheld =
-                        (int) Math.ceil(amount * 0.5);
-            }
+            withheld = calculateCompanyIncomeFromSplit(amount);
             String withheldText = Currency.fromBank(withheld, operatingCompany.value());
 
             ReportBuffer.add(this, LocalText.getText("Receives",
                     operatingCompany.value().getId(), withheldText));
             // Payout the remainder
             int payed = amount - withheld;
-            payout(payed, roundUp, true);
+            payout(payed, true);
         }
 
     }
 
+    @Override
+    protected int calculateCompanyIncomeFromSplit (int revenue) {
+        return roundIncome(0.5 * revenue, Rounding.UP, ToMultipleOf.ONE);
+    }
 
     /*
      * Rounds up or down the individual payments based on the boolean value
      */
-    public void payout(int amount, boolean roundUp, boolean b) {
+    public void payout(int amount, boolean b) {
         if (amount == 0) return;
 
         int part;
@@ -392,12 +385,9 @@ public class OperatingRound_1837 extends OperatingRound {
 
             shares = (sharesPerRecipient.get(recipient));
             if (shares == 0) continue;
-            if (roundUp)  {
-                part = (int) Math.ceil(amount * shares * operatingCompany.value().getShareUnit() / 100.0);
-            }
-            else {
-                part = (int) Math.floor(amount * shares * operatingCompany.value().getShareUnit() / 100.0);
-            }
+
+            double payoutPerShare = amount * operatingCompany.value().getShareUnit() / 100.0;
+            part = calculateShareholderPayout(payoutPerShare, shares);
 
             String partText = Currency.fromBank(part, recipient);
             ReportBuffer.add(this, LocalText.getText("Payout",
@@ -406,82 +396,16 @@ public class OperatingRound_1837 extends OperatingRound {
                     shares,
                     operatingCompany.value().getShareUnit()));
         }
-        /**
-         *  payout the direct Income from the Coal Mine if any
-         */
-        /* EV: I don't think this belongs here.
-         * What if the company withholds?
-         * Paying out direct income is a separate process,
-         * and is now done in processSpecialRevenue()
-         */
-        /*
-        String partText = Currency.fromBank( operatingCompany.value().getDirectIncomeRevenue(), operatingCompany.value());
-        ReportBuffer.add(this, LocalText.getText("ReceivedDirectIncomeFromMine",
-                operatingCompany.value().getId(),
-                partText));
-        */
 
         // Move the token
         ((PublicCompany_1837) operatingCompany.value()).payout(amount, b);
     }
 
-
-
-    /* Outcommented for now, as the mine revenue code has been put
-     * into a separate method (processSpecialRevenue()).
-     */ /*
-    @Override
-    protected void executeSetRevenueAndDividend(SetDividend action) {
-
-        int amount = action.getActualRevenue();
-        int revenueAllocation = action.getRevenueAllocation();
-        int directIncome = action.getActualCompanyTreasuryRevenue();
-
-        operatingCompany.value().setLastRevenue(amount);
-        operatingCompany.value().setLastRevenueAllocation(revenueAllocation);
-        operatingCompany.value().setLastDirectIncome(directIncome);
-        operatingCompany.value().setDirectIncomeRevenue(directIncome);
-
-        // Pay any debts from treasury, revenue and/or president's cash
-        // The remaining dividend may be less that the original income
-        amount = executeDeductions (action);
-
-        if (amount == 0) {
-
-            ReportBuffer.add(this, LocalText.getText("CompanyDoesNotPayDividend",
-                    operatingCompany.value().getId()));
-            withhold(amount);
-
-        } else if (revenueAllocation == SetDividend.PAYOUT) {
-
-            ReportBuffer.add(this, LocalText.getText("CompanyPaysOutFull",
-                    operatingCompany.value().getId(), Bank.format(this, amount) ));
-
-            payout(amount, false, false); //1837 is paying out the rounded down amount except to the bank..
-
-        } else if (revenueAllocation == SetDividend.SPLIT) {
-
-            ReportBuffer.add(this, LocalText.getText("CompanySplits",
-                    operatingCompany.value().getId(), Bank.format(this, amount) ));
-
-            splitRevenue(amount, false);
-
-        } else if (revenueAllocation == SetDividend.WITHHOLD) {
-
-            ReportBuffer.add(this, LocalText.getText("CompanyWithholds",
-                    operatingCompany.value().getId(),
-                    Bank.format(this, amount) ));
-
-            withhold(amount);
-
-        }
-
-        // Rust any obsolete trains
-        operatingCompany.value().getPortfolioModel().rustObsoleteTrains();
-
-        // We have done the payout step, so continue from there
-        nextStep(GameDef.OrStep.PAYOUT);
+    protected int calculateShareholderPayout (double payoutPerShare, int numberOfShares) {
+        return roundShareholderPayout(payoutPerShare, numberOfShares,
+                Rounding.DOWN, Multiplication.BEFORE_ROUNDING);
     }
+
 
     /* (non-Javadoc)
      * @see net.sf.rails.game.OperatingRound#gameSpecificTileLayAllowed(net.sf.rails.game.PublicCompany, net.sf.rails.game.MapHex, int)
@@ -593,86 +517,4 @@ public class OperatingRound_1837 extends OperatingRound {
             possibleActions.add(buyTrain);
         }
     }
-
-    /* (non-Javadoc)
-     * @see net.sf.rails.game.OperatingRound#buyTrain(rails.game.action.BuyTrain)
-     */
-    /*
-    @Override
-    public boolean buyTrain(BuyTrain action) {
-        boolean result = super.buyTrain(action);
-        // Check if we have just started Phase 5 and
-        // if we still have at least one Minor operating.
-        // If so, record the current player as the first
-        // one to act in the Final Minor Exchange Round.
-        if ((result) && getRoot().getPhaseManager().hasReachedPhase("5")
-                && operatingCompanies.get(0).getType().getId().startsWith("Minor")
-                && ((GameManager_1837)gameManager).getPlayerToStartFCERound() == null) {
-            ((GameManager_1837)gameManager).setPlayerToStartFCERound(operatingCompany.value().getPresident());
-        }
-        return result;
-    }
-
-     */
-
-
-    // Can probably be removed
-    /*
-    @Override
-    protected void finishRound() {
-        //ReportBuffer.add(this, " ");
-        //ReportBuffer.add(
-         //       this,
-        //        LocalText.getText("EndOfOperatingRound", thisOrNumber));
-
-        for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
-            if ((company.hasStockPrice()) && (company.hasFloated())){
-//                if (findStartingPlayerForCoalExchange(company)) exchangedCoalCompanies.set(true);
-//                {}
-
-            } else {
-                ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
-            }
-
-
-        }
-        super.finishRound();
-
-    }
-    */
-
-    /*
-    // No longer used
-    private boolean findStartingPlayerForCoalExchange(PublicCompany company) {
-        List<PublicCompany> comps = companyManager.getAllPublicCompanies();
-        List<PublicCompany> minors = new ArrayList<>();
-        String type;
-
-        for (PublicCompany comp : comps) {
-            type = comp.getType().getId();
-            if (type.equals("Coal")) {
-                if (comp.isClosed()) continue;
-                if (comp.getRelatedPublicCompanyName().equals(company.getId())) {
-                    minors.add(comp);
-                    //The president of a Major Company is the first one to get the chance to exchange a share.
-                    if (((GameManager_1837) gameManager).getPlayerToStartCERound()== null) {
-                        ((GameManager_1837) gameManager).setPlayerToStartCERound(company.getPresident());
-                        return true;
-                        //We found a victim lets move on.
-                    }
-                } // Coal Company & Major Found
-            } //Coal Company Found
-
-        } //Check if we have a minor that has a started Major
-        while (!minors.isEmpty()) {
-            //The first minors president will start the CoalExchangeRound
-            if (((GameManager_1837) gameManager).getPlayerToStartCERound()== null) {
-                ((GameManager_1837) gameManager).setPlayerToStartCERound(minors.get(0).getPresident());
-                return true;
-            }
-        }
-        return false;
-    }
-
-     */
 }

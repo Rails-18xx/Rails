@@ -163,6 +163,7 @@ implements ActionListener, KeyListener, RevenueListener {
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
         hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);
         hasDirectCompanyIncomeInOR = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
+        log.debug("+++ Got {}", hasDirectCompanyIncomeInOR);
 
         initButtonPanel();
         gbc = new GridBagConstraints();

@@ -25,7 +25,7 @@ public class StockMarket_1837 extends StockMarket {
     
     public void payOut(PublicCompany company, boolean split) {
         if (!split) {
-        moveRightOrUp(company);
+            moveRightOrUp(company);
         } else {
             moveRightandDown(company);
         }
@@ -48,8 +48,9 @@ public class StockMarket_1837 extends StockMarket {
             while (newcol >= numCols || getStockSpace(newrow, newcol) == null)
                 newcol--;
         }
-            
-        if ((newrow > row) || (newcol > col)) {
+
+        // Changed the "||" into "&&", because both movements must be possible
+        if ((newrow > row) && (newcol > col)) {
             newsquare = getStockSpace(newrow, newcol);
         }
         

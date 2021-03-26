@@ -180,6 +180,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
         hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);
         hasDirectCompanyIncomeInOr= gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
+        log.debug("+++ Got {}", hasDirectCompanyIncomeInOr);
 
         // TODO: Can this be done using ipo and pool directly?
         ipo = bank.getIpo().getPortfolioModel();
