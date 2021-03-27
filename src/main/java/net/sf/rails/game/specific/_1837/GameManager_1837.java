@@ -3,6 +3,7 @@ package net.sf.rails.game.specific._1837;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.game.*;
 import net.sf.rails.game.financial.StockRound;
+import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.state.StringState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,9 @@ import net.sf.rails.game.state.GenericState;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.BooleanState;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -39,7 +42,6 @@ public class GameManager_1837 extends GameManager {
 
     public GameManager_1837(RailsRoot parent, String id) {
         super(parent, id);
-
     }
 
 

@@ -46,10 +46,7 @@ public class OperatingRound_1837 extends OperatingRound {
      * because of having produced revenue in the same OR.
      */
     private final Table<Player, PublicCompany, Integer> deniedIncomeShare = HashBasedTable.create();
-    /**
-     * @param parent
-     * @param id
-     */
+
     public OperatingRound_1837(GameManager parent, String id) {
         super(parent, id);
     }
@@ -346,9 +343,8 @@ public class OperatingRound_1837 extends OperatingRound {
      */
 
     public void splitRevenue(int amount) {
-        int withheld = 0;
         if (amount > 0) {
-            withheld = calculateCompanyIncomeFromSplit(amount);
+            int withheld = calculateCompanyIncomeFromSplit(amount);
             String withheldText = Currency.fromBank(withheld, operatingCompany.value());
 
             ReportBuffer.add(this, LocalText.getText("Receives",
@@ -401,11 +397,11 @@ public class OperatingRound_1837 extends OperatingRound {
         ((PublicCompany_1837) operatingCompany.value()).payout(amount, b);
     }
 
+    @Override
     protected int calculateShareholderPayout (double payoutPerShare, int numberOfShares) {
         return roundShareholderPayout(payoutPerShare, numberOfShares,
                 Rounding.DOWN, Multiplication.BEFORE_ROUNDING);
     }
-
 
     /* (non-Javadoc)
      * @see net.sf.rails.game.OperatingRound#gameSpecificTileLayAllowed(net.sf.rails.game.PublicCompany, net.sf.rails.game.MapHex, int)
