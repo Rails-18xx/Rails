@@ -65,7 +65,7 @@ public class StockRound_18Scan extends StockRound {
 
     @Override
     protected void gameSpecificChecks(PortfolioModel boughtFrom,
-                                      PublicCompany company) {
+                                      PublicCompany company, boolean arg) {
 
         if (company.isHibernating()
                 && currentPlayer == company.getPresident()) {

@@ -32,7 +32,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: 15
           java-package: jdk
       - name: Get the version
         uses: little-core-labs/get-git-tag@v3.0.2
@@ -69,7 +69,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: 15
           java-package: jdk
       - name: Get the version
         uses: little-core-labs/get-git-tag@v3.0.2
@@ -99,7 +99,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: 15
           java-package: jdk
       - name: Get the version
         uses: little-core-labs/get-git-tag@v3.0.2
