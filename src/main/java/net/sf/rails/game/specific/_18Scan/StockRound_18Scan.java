@@ -33,10 +33,12 @@ public class StockRound_18Scan extends StockRound {
             if ("Minor".equalsIgnoreCase(comp.getType().getId())) {
                 if (!mayPlayerBuyCertificate(currentPlayer, comp, 1)) continue;
                 comp.setBuyable(true);
+                /* This is currently handled in the superclass
                 BuyCertificate bc = new BuyCertificate(comp, 100, pool.getParent(),
                         comp.getFixedPrice(), 1);
                 bc.setPresident(true);
                 possibleActions.add(bc);
+                */
             }
         }
     }
@@ -66,7 +68,7 @@ public class StockRound_18Scan extends StockRound {
                                       PublicCompany company) {
 
         if (company.isHibernating()
-                && currentPlayer.getPortfolioModel().findCertificate(company, true) != null) {
+                && currentPlayer == company.getPresident()) {
             company.setHibernating(false);
         }
     }
