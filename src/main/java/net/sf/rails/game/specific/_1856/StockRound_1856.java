@@ -149,7 +149,7 @@ public class StockRound_1856 extends StockRound {
     // requires: trigger on the portfolio of the president of CGR? or a modifier on shareSelling
     @Override
     protected void gameSpecificChecks (PortfolioModel boughtFrom,
-            PublicCompany company) {
+            PublicCompany company, boolean arg) {
 
         if (company.getId().equalsIgnoreCase(PublicCompany_CGR.NAME)
                 && ((PublicCompany_CGR)company).hasTemporaryPresident()) {

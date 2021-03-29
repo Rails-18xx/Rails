@@ -76,10 +76,10 @@ public class StockRound_1880 extends StockRound {
     // requires: write this a trigger?
     @Override
     protected void gameSpecificChecks(PortfolioModel boughtFrom,
-            PublicCompany company) {
+            PublicCompany company, boolean arg) {
         
         ((PublicCompany_1880) company).sharePurchased();        
-        super.gameSpecificChecks(boughtFrom, company);
+        super.gameSpecificChecks(boughtFrom, company, arg);
     }
     /**
      * Float a company, including a default implementation of moving cash and
