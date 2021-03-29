@@ -43,6 +43,7 @@ public class ORUIManager_1837 extends ORUIManager {
 
         boolean hasDirectCompanyIncomeInOR
                 = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
+        log.debug("+++ Got {}", hasDirectCompanyIncomeInOR);
 
         int amount, bonusAmount, dividend;
 

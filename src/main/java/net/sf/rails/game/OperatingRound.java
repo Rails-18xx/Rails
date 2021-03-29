@@ -11,7 +11,6 @@ import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 import net.sf.rails.game.state.*;
 import net.sf.rails.util.SequenceUtil;
-import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.*;
@@ -30,7 +29,8 @@ public class OperatingRound extends Round implements Observer {
     private static final Logger log = LoggerFactory.getLogger(OperatingRound.class);
 
     /* Transient memory (per round only) */
-    protected final GenericState<GameDef.OrStep> stepObject = new GenericState<>(this, "ORStep", GameDef.OrStep.INITIAL);
+    protected final GenericState<GameDef.OrStep> stepObject
+            = new GenericState<>(this, "ORStep", GameDef.OrStep.INITIAL);
 
     protected boolean actionPossible = true;
 
@@ -68,8 +68,6 @@ public class OperatingRound extends Round implements Observer {
     protected PossibleAction selectedAction;
 
     protected PossibleAction savedAction;
-
-    public static final int SPLIT_ROUND_DOWN = 2; // More to the treasury
 
     protected GameDef.OrStep[] steps = new GameDef.OrStep[]{
             GameDef.OrStep.INITIAL, GameDef.OrStep.LAY_TRACK,
@@ -2406,6 +2404,7 @@ public class OperatingRound extends Round implements Observer {
     /*
      * =======================================
      *  6. REVENUE AND DIVIDEND
+     *  6.1. VALIDATE
      * =======================================
      */
 
@@ -2435,6 +2434,12 @@ public class OperatingRound extends Round implements Observer {
         return true;
 
     }
+
+    /*
+     * =======================================
+     *  6.2. EXECUTE REVENUE AND DIVIDEND
+     * =======================================
+     */
 
     /**
      * Validate the SetRevenue action, default version
@@ -2626,11 +2631,17 @@ public class OperatingRound extends Round implements Observer {
         return earnings;
     }
 
-        /**
-         * Distribute the dividend amongst the shareholders.
-         *
-         * @param amount The dividend to be payed out
-         */
+    /*
+     * =======================================
+     *  6.3. EARNINGS DISTRIBUTION
+     * =======================================
+     */
+
+    /**
+     * Distribute the dividend amongst the shareholders.
+     *
+     * @param amount The dividend to be payed out
+     */
     public void payout(int amount) {
 
         if (amount == 0) return;
@@ -2648,10 +2659,9 @@ public class OperatingRound extends Round implements Observer {
             if (recipient instanceof Bank) continue;
             shares = (sharesPerRecipient.get(recipient));
             if (shares == 0) continue;
-            part =
-                    (int) Math.ceil(amount * shares
-                            * operatingCompany.value().getShareUnit()
-                            / 100.0);
+
+            double pricePerShare = amount * operatingCompany.value().getShareUnit() / 100.0;
+            part = roundShareholderPayout (pricePerShare, shares, Rounding.UP, Multiplication.BEFORE_ROUNDING);
 
             String partText = Currency.fromBank(part, recipient);
             ReportBuffer.add(this, LocalText.getText("Payout",
@@ -2668,11 +2678,6 @@ public class OperatingRound extends Round implements Observer {
 
         Map<MoneyOwner, Integer> sharesPerRecipient =
                 new HashMap<>();
-
-        // Changed to accomodate the CGR 5% share roundup rule.
-        // For now it is assumed, that actual payouts are always rounded up
-        // (the withheld half of split revenues is not handled here, see
-        // splitRevenue()).
 
         // First count the shares per recipient
         for (PublicCertificate cert : operatingCompany.value().getCertificates()) {
@@ -2733,7 +2738,11 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /**
-     * Split a dividend. TODO Optional rounding down the payout
+     * Split a dividend, default version.
+     *
+     * NOTE: to set different payout or rounding rules, don't override
+     * this method but the method calculateCompanyIncomeFromSplit(),
+     * which is called in the body of this method.
      *
      * @param amount The revenue to be split
      */
@@ -2741,9 +2750,10 @@ public class OperatingRound extends Round implements Observer {
 
         if (amount > 0) {
             // Withhold half of it
-            // For now, hardcode the rule that payout is rounded up.
             int numberOfShares = operatingCompany.value().getNumberOfShares();
-            int withheld = (amount / (2 * numberOfShares)) * numberOfShares;
+
+            int withheld = calculateCompanyIncomeFromSplit (amount);
+
             String withheldText =
                     Currency.fromBank(withheld, operatingCompany.value());
 
@@ -2756,6 +2766,106 @@ public class OperatingRound extends Round implements Observer {
         }
 
     }
+
+    /*
+     * =======================================
+     *  6.4. ROUNDING
+     * =======================================
+     */
+
+    /* Rounding enums */
+    protected enum Rounding { UP, DOWN; }
+    protected enum ToMultipleOf {
+        ONE (1),
+        TEN (10);
+        private int value;
+        ToMultipleOf (int value) { this.value = value; }
+    }
+    protected enum Multiplication { BEFORE_ROUNDING, AFTER_ROUNDING };
+
+    /**
+     * Rounds a split revenue or payout up or down, depending on
+     * - the value of the rounding parameter (up or down),
+     * - the nearest multiple to which the split revenue must be rounded.
+     *   Normally one, but 18EU and 1870 have 10.
+     *
+     * This method is not meant to be overridden, hence the 'final' modifier.
+     * To properly round a split revenue or a shareholder payout,
+     * use the below overridable methods calculateCompanyIncomeFromSplit()
+     * or calculateCompanyIncomeFromSplit(), which can be overridden to
+     * apply different rules than de default ones used here.
+     *
+     * @param amount A double-precision value to be rounded as required
+     * @param rounding Up or down
+     * @param multipleOf The multiple to which the amount must be rounded to (e.g. 10 in 18EU majors)
+     * @return The integer rounding result
+     */
+    public final int roundIncome(double amount, Rounding rounding, ToMultipleOf multipleOf) {
+        // The bitwise xor works as a logical xor on booleans.
+        int result;
+        int multiple = multipleOf.value;
+        if (rounding == Rounding.DOWN) {
+            // Round down
+            result = multiple * ((int) (amount/multiple + 0.01));
+        } else {
+            // Round up
+            result = multiple * ((int) (amount/multiple + 0.51));
+        }
+        log.info("$$$ [{},{}] {} rounded to {}", rounding, multipleOf, amount, result);
+        return result;
+    }
+
+   /** To set the shareholder payout before rounding */
+    protected final int roundShareholderPayout (double payoutPerShare, int shares,
+                                             Rounding rounding, Multiplication beforeOrAfter) {
+        int result;
+        if (beforeOrAfter == Multiplication.BEFORE_ROUNDING) {
+            // First multiply, then round
+            result = roundIncome(shares * payoutPerShare, rounding, ToMultipleOf.ONE);
+        } else {
+            // First round, then multiply
+            result = shares * roundIncome(payoutPerShare, rounding, ToMultipleOf.ONE);
+        }
+        log.info("$$$ [{},{}] {}*{} rounded to {}", rounding, beforeOrAfter, shares, payoutPerShare, result);
+        return result;
+    }
+
+    /**
+     * Default version for calculating the company part of
+     * a revenue amount being split.
+     *
+     * This method should be overriden in games where a different rule applies.
+     *
+     * @param revenue The revenue amount to be split.
+     * @return The part that goes directly to the company treasury.
+     * (the difference is to be payed out to the shareholders).
+     *
+     */
+    protected int calculateCompanyIncomeFromSplit (int revenue) {
+        return roundIncome(0.5 * revenue, Rounding.DOWN, ToMultipleOf.ONE);
+    }
+
+    /**
+     * Default version of calculating a shareholder's part
+     * of a dividend to be payed out.
+     *
+     * This method should be overridden in games where a different rule applies.
+     *
+     * @param revenue The revenue amount to be split.
+     * @return The part that goes directly to the company treasury.
+     * (the difference is to be payed out to the shareholders).
+     *
+     */
+    protected int calculateShareholderPayout (double payoutPerShare, int numberOfShares) {
+        return roundShareholderPayout(payoutPerShare, numberOfShares,
+                Rounding.UP, Multiplication.BEFORE_ROUNDING);
+    }
+
+    /*
+     * =======================================
+     *  6.5. DEDUCTIONS
+     * =======================================
+     */
 
     /**
      * Default version, to be overridden if need be
@@ -2843,6 +2953,12 @@ public class OperatingRound extends Round implements Observer {
         return true;
     }
 
+    /*
+     * =======================================
+     *  6.6. PREPARE ACTION
+     * =======================================
+     */
+
     protected void prepareRevenueAndDividendAction() {
 
         // There is only revenue if there are any trains
@@ -2910,16 +3026,6 @@ public class OperatingRound extends Round implements Observer {
                             OperatingCost.OCType.LAY_BASE_TOKEN, cost, false));
             }
         }
-
-        // Default OperatingCost Actions
-        // possibleActions.add(new OperatingCost(
-        // OperatingCost.OCType.LAY_TILE, 0, true
-        // ));
-        // if (operatingCompany.getObject().getNumberOfFreeBaseTokens() != 0
-        // && operatingCompany.getObject().getBaseTokenLayCost(null) != 0) {
-        // possibleActions.add(new
-        // OperatingCost(OperatingCost.OCType.LAY_BASE_TOKEN, 0, true));
-        // }
 
     }
 

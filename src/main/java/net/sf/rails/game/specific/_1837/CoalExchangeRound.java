@@ -5,10 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.rails.common.DisplayBuffer;
-import net.sf.rails.common.GuiDef;
-import net.sf.rails.common.LocalText;
-import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.common.*;
 import net.sf.rails.game.*;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.*;
@@ -44,10 +41,6 @@ public class CoalExchangeRound extends StockRound_1837 {
     private static final int DISCARD = 2;
     private static final int FINAL = 3;
 
-    /**
-     * @param parent
-     * @param id
-     */
     public CoalExchangeRound(GameManager parent, String id) {
        super(parent, id);
        //guiHints.setVisibilityHint(GuiDef.Panel.MAP, true);
@@ -67,12 +60,12 @@ public class CoalExchangeRound extends StockRound_1837 {
         coalCompsPerMajor = ArrayListMultimapState.create(this, "CoalsPerMajor_"+getId());
         coalCompsPerPlayer = ArrayListMultimapState.create(this, "CoalsPerPlayer_"+getId());
 
-        currentMajorOrder = new ArrayListState (this, "MajorOrder_"+getId());
-        currentPlayerOrder = new ArrayListState(this, "PlayerOrder_"+getId());
+        currentMajorOrder = new ArrayListState<> (this, "MajorOrder_"+getId());
+        currentPlayerOrder = new ArrayListState<>(this, "PlayerOrder_"+getId());
         currentMajor = new GenericState<>(this, "CurrentMajor_"+getId());
 
         discardableTrains = HashMultimapState.create(this, "NewTrainsPerMajor_"+getId());
-        closedMinors = new ArrayListState(this, "ClosedMinorsPerMajor_"+getId());
+        closedMinors = new ArrayListState<>(this, "ClosedMinorsPerMajor_"+getId());
         numberOfExcessTrains = IntegerState.create(this, "NumberOfExcessTrains");
 
         reachedPhase5 = getRoot().getPhaseManager().hasReachedPhase("5");
@@ -130,7 +123,10 @@ public class CoalExchangeRound extends StockRound_1837 {
     }
 
     private boolean majorMustMerge (PublicCompany major) {
-        return reachedPhase5 || ipo.getShares(major) == 0;
+        return reachedPhase5
+                || (ipo.getShares(major) == 0
+                    // In the Romoth variant, merging remains optional until phase 5
+                    && !GameOption.getValue(this, GameOption.VARIANT).equals("Romoth"));
     }
 
     /*----- Validation and execution -----*/

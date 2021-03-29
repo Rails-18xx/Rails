@@ -35,7 +35,7 @@ public class StockMarket extends RailsManager implements Configurable {
     protected final StockMarketModel marketModel = StockMarketModel.create(this);
 
     protected ChartType stockChartType = ChartType.RECTANGULAR;
-    protected StockSpace stockChart[][];
+    protected StockSpace[][] stockChart;
     protected int numRows = 0;
     protected int numCols = 0;
     protected StockSpaceType defaultType;
@@ -350,8 +350,6 @@ public class StockMarket extends RailsManager implements Configurable {
                 (newsquare = getStockSpace(row, col - 1)) != null) {
         } else if (row < numRows - 1 &&
                 (newsquare = getStockSpace(row + 1, col)) != null) {
-        } else {
-            newsquare = oldsquare;
         }
         prepareMove(company, oldsquare, newsquare);
     }
@@ -366,7 +364,7 @@ public class StockMarket extends RailsManager implements Configurable {
                     from.getId()));
             return;
         } else if (from == null && to != null) {
-            ;
+
         } else if (from != null && to != null) {
             ReportBuffer.add(this, LocalText.getText("PRICE_MOVES_LOG",
                     company.getId(),
@@ -398,7 +396,6 @@ public class StockMarket extends RailsManager implements Configurable {
     /**
      * Return start prices as list of prices
      */
-    @Deprecated
     public List<Integer> getStartPrices() {
         List<Integer> prices = Lists.newArrayList();
         for (StockSpace space : startSpaces) {
@@ -414,7 +411,6 @@ public class StockMarket extends RailsManager implements Configurable {
         return ImmutableSortedSet.copyOf(startSpaces);
     }
 
-    @Deprecated
     public StockSpace getStartSpace(int price) {
         for (StockSpace space : startSpaces) {
             if (space.getPrice() == price) return space;

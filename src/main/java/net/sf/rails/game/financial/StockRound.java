@@ -921,7 +921,7 @@ public class StockRound extends Round {
 
         // Check for any game-specific consequences
         // (such as making another company available in the IPO)
-        gameSpecificChecks(ipo, company);
+        gameSpecificChecks(ipo, company, true);
         // Check for any new companies to be made purchaseable
         checkForCompanyReleases();
 
@@ -1130,7 +1130,7 @@ public class StockRound extends Round {
 
         // Check for any game-specific consequences
         // (such as making another company available in the IPO)
-        gameSpecificChecks(from, company);
+        gameSpecificChecks(from, company, false);
 
         // Check for any new companies to be made purchaseable
         if (from == ipo) checkForCompanyReleases();
@@ -1148,7 +1148,13 @@ public class StockRound extends Round {
     // overridden by:
     // StockRound 1825, 1856, 1880
     protected void gameSpecificChecks(PortfolioModel boughtFrom,
-                                      PublicCompany company) {}
+                                      PublicCompany company,
+                                      boolean justStarted) {}
+
+    protected void gameSpecificChecks(PortfolioModel boughtFrom,
+                                       PublicCompany company) {
+        gameSpecificChecks (boughtFrom, company, false /*actually: doesn't matter*/);
+    }
 
     protected void checkForCompanyReleases () {
 
