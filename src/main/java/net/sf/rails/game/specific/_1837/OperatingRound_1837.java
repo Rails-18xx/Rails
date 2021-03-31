@@ -27,7 +27,7 @@ import rails.game.action.SetDividend;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Table;
-import rails.game.specific._1837.SetHomeHexLocation2;
+import rails.game.specific._1837.SetHomeHexLocation;
 
 
 /**
@@ -204,7 +204,7 @@ public class OperatingRound_1837 extends OperatingRound {
 
             initTurn();
             possibleActions.clear();
-            possibleActions.add(new SetHomeHexLocation2(getRoot(),
+            possibleActions.add(new SetHomeHexLocation(getRoot(),
                     company, GameDef_1837.S5homes));
             return true;
         } else {
@@ -213,8 +213,8 @@ public class OperatingRound_1837 extends OperatingRound {
     }
 
     public boolean processGameSpecificAction (PossibleAction action) {
-        if (action instanceof SetHomeHexLocation2) {
-            SetHomeHexLocation2 selectHome = (SetHomeHexLocation2) action;
+        if (action instanceof SetHomeHexLocation) {
+            SetHomeHexLocation selectHome = (SetHomeHexLocation) action;
             PublicCompany company = selectHome.getCompany();
             MapHex chosenHome = selectHome.getSelectedHomeHex();
             company.setHomeHex(chosenHome);
