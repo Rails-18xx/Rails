@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.rails.util.GameLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -96,12 +97,38 @@ public class ReachDestinations extends PossibleORAction {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            CompanyManager cmgr = getCompanyManager();
+
+            possibleCompanies = new ArrayList<>();
+            if (Util.hasValue(possibleCompanyNames)) {
+                for (String cname : possibleCompanyNames.split(",")) {
+                    if (StringUtils.isNotBlank(cname)) {
+                        possibleCompanies.add(cmgr.getPublicCompany(cname));
+                    }
+                }
+            }
+
+            if (Util.hasValue(reachedCompanyNames)) {
+                reachedCompanies = new ArrayList<>();
+                for (String cname : reachedCompanyNames.split(",")) {
+                    if (StringUtils.isNotBlank(cname)) {
+                        reachedCompanies.add(cmgr.getPublicCompany(cname));
+                    }
+                }
+            }
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
+
         CompanyManager cmgr = getCompanyManager();
 
         possibleCompanies = new ArrayList<>();
         if (Util.hasValue(possibleCompanyNames)) {
             for (String cname : possibleCompanyNames.split(",")) {
-                if ( StringUtils.isNotBlank(cname) ) {
+                if (StringUtils.isNotBlank(cname)) {
                     possibleCompanies.add(cmgr.getPublicCompany(cname));
                 }
             }
@@ -110,7 +137,7 @@ public class ReachDestinations extends PossibleORAction {
         if (Util.hasValue(reachedCompanyNames)) {
             reachedCompanies = new ArrayList<>();
             for (String cname : reachedCompanyNames.split(",")) {
-                if ( StringUtils.isNotBlank(cname) ) {
+                if (StringUtils.isNotBlank(cname)) {
                     reachedCompanies.add(cmgr.getPublicCompany(cname));
                 }
             }

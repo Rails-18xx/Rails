@@ -14,6 +14,7 @@ import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Token;
 import net.sf.rails.game.special.SpecialBonusTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.Util;
 
 /**
@@ -83,6 +84,30 @@ public class LayBonusToken extends LayToken {
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            MapManager mmgr = getRoot().getMapManager();
+            if (Util.hasValue(locationNames)) {
+                locations = new ArrayList<>();
+                for (String hexName : locationNames.split(",")) {
+                    locations.add(mmgr.getHex(hexName));
+                }
+            }
+
+            if (tokenId != null) {
+                token = Token.getByUniqueId(getRoot(), BonusToken.class, tokenId);
+            }
+            if (specialPropertyId > 0) {
+                specialProperty = SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
+            }
+            if (chosenHexName != null && chosenHexName.length() > 0) {
+                chosenHex = mmgr.getHex(chosenHexName);
+            }
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
 
         MapManager mmgr = getRoot().getMapManager();
         if (Util.hasValue(locationNames)) {

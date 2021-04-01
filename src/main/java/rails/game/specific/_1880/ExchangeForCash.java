@@ -8,8 +8,10 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 
 import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.TrainType;
 import net.sf.rails.game.state.Owner;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 import rails.game.action.PossibleAction;
@@ -107,6 +109,17 @@ public class ExchangeForCash extends PossibleAction {
     // deserialize to assign owner
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            if (Util.hasValue(ownerName)) {
+                owner = getRoot().getPlayerManager().getPlayerByName(ownerName);
+            }
+        }
+    }
+
+    @Override
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
 
         if (Util.hasValue(ownerName)) {
             owner = getRoot().getPlayerManager().getPlayerByName(ownerName);

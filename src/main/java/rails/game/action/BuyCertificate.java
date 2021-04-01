@@ -187,22 +187,49 @@ public class BuyCertificate extends PossibleAction {
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        // Custom reading for backwards compatibility
-        ObjectInputStream.GetField fields = in.readFields();
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            // Custom reading for backwards compatibility
+            ObjectInputStream.GetField fields = in.readFields();
 
-        certUniqueId = (String) fields.get("certUniqueId", null);
-        companyName = (String) fields.get("companyName", null);
-        fromName = (String) fields.get("fromName", fromName);
-        price = fields.get("price", price);
-        maximumNumber = fields.get("maximumNumber", maximumNumber);
-        sharePerCert = fields.get("sharePerCert", -1);
-        president = fields.get("president", false);
+            certUniqueId = (String) fields.get("certUniqueId", null);
+            companyName = (String) fields.get("companyName", null);
+            fromName = (String) fields.get("fromName", fromName);
+            price = fields.get("price", price);
+            maximumNumber = fields.get("maximumNumber", maximumNumber);
+            sharePerCert = fields.get("sharePerCert", -1);
+            president = fields.get("president", false);
 
-        numberBought = fields.get("numberBought", numberBought);
+            numberBought = fields.get("numberBought", numberBought);
+
+            /* Check for aliases (old company names) */
+            CompanyManager companyManager = root.getCompanyManager();
+            companyName = companyManager.checkAlias(companyName);
+
+            if (certUniqueId != null) {
+                // Old style
+                certUniqueId = companyManager.checkAliasInCertId(certUniqueId);
+                certificate = getRoot().getCertificateManager().getCertificate(certUniqueId);
+                from = root.getPortfolioManager().getPortfolioByName(fromName);
+                company = certificate.getCompany();
+                companyName = company.getId();
+                sharePerCert = certificate.getShare();
+            } else if (companyName != null) {
+                // New style (since Rails.1.3.1)
+                company = root.getCompanyManager().getPublicCompany(companyName);
+                from = root.getPortfolioManager().getPortfolioByUniqueName(fromName);
+                // We don't need the certificate anymore.
+            }
+        } else {
+            in.defaultReadObject();
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
 
         /* Check for aliases (old company names) */
         CompanyManager companyManager = root.getCompanyManager();
-        companyName = companyManager.checkAlias (companyName);
+        companyName = companyManager.checkAlias(companyName);
 
         if (certUniqueId != null) {
             // Old style
@@ -218,6 +245,5 @@ public class BuyCertificate extends PossibleAction {
             from = root.getPortfolioManager().getPortfolioByUniqueName(fromName);
             // We don't need the certificate anymore.
         }
-      }
-
+    }
 }

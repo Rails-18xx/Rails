@@ -6,9 +6,11 @@ import java.io.ObjectInputStream;
 import com.google.common.base.Objects;
 
 import net.sf.rails.game.PrivateCompany;
+import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.Owner;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 
 /**
@@ -123,6 +125,24 @@ public class BuyBonusToken extends PossibleORAction {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            privateCompany = getCompanyManager().getPrivateCompany(privateCompanyName);
+            if (sellerName.equalsIgnoreCase("Bank")) {
+                // TODO: Assume that it is the pool, not the ipo
+                seller = getRoot().getBank().getPool();
+            } else {
+                seller = getCompanyManager().getPublicCompany(sellerName);
+            }
+            if (specialPropertyId > 0) {
+                specialProperty = (SellBonusToken) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
+            }
+        }
+    }
+
+    @Override
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
+
         privateCompany = getCompanyManager().getPrivateCompany(privateCompanyName);
         if (sellerName.equalsIgnoreCase("Bank")) {
             // TODO: Assume that it is the pool, not the ipo
@@ -131,7 +151,7 @@ public class BuyBonusToken extends PossibleORAction {
             seller = getCompanyManager().getPublicCompany(sellerName);
         }
         if (specialPropertyId > 0) {
-            specialProperty = (SellBonusToken) SpecialProperty.getByUniqueId(getRoot() ,specialPropertyId);
+            specialProperty = (SellBonusToken) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
         }
     }
 

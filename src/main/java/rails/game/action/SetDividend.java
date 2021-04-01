@@ -7,6 +7,7 @@ import java.util.Arrays;
 import com.google.common.base.Objects;
 
 import net.sf.rails.game.RailsRoot;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -233,16 +234,28 @@ public class SetDividend extends PossibleORAction implements Cloneable {
 
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        // Custom deserialization for backwards compatibility
-        ObjectInputStream.GetField fields = in.readFields();
-        presetRevenue = fields.get("presetRevenue", presetRevenue);
-        presetCompanyTreasuryRevenue = fields.get("presetCompanyTreasuryRevenue", presetCompanyTreasuryRevenue);
-        setMayUserSetRevenue(fields.get("mayUserSetRevenue", getMayUserSetRevenue()));
-        setAllowedRevenueAllocations((int[]) fields.get("allowedRevenueAllocations", getAllowedRevenueAllocations()));
-        requiredCash = fields.get("requiredCash", 0);
-        actualRevenue = fields.get("actualRevenue", actualRevenue);
-        actualCompanyTreasuryRevenue = fields.get("actualCompanyTreasuryRevenue", actualCompanyTreasuryRevenue);
-        revenueAllocation = fields.get("revenueAllocation", revenueAllocation);
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            // Custom deserialization for backwards compatibility
+            ObjectInputStream.GetField fields = in.readFields();
+            presetRevenue = fields.get("presetRevenue", presetRevenue);
+            presetCompanyTreasuryRevenue = fields.get("presetCompanyTreasuryRevenue", presetCompanyTreasuryRevenue);
+            setMayUserSetRevenue(fields.get("mayUserSetRevenue", getMayUserSetRevenue()));
+            setAllowedRevenueAllocations((int[]) fields.get("allowedRevenueAllocations", getAllowedRevenueAllocations()));
+            requiredCash = fields.get("requiredCash", 0);
+            actualRevenue = fields.get("actualRevenue", actualRevenue);
+            actualCompanyTreasuryRevenue = fields.get("actualCompanyTreasuryRevenue", actualCompanyTreasuryRevenue);
+            revenueAllocation = fields.get("revenueAllocation", revenueAllocation);
+
+            if (Util.hasValue(companyName)) {
+                company = getCompanyManager().getPublicCompany(companyName);
+            }
+        } else {
+            in.defaultReadObject();
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
 
         if (Util.hasValue(companyName)) {
             company = getCompanyManager().getPublicCompany(companyName);

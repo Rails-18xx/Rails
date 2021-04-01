@@ -119,15 +119,34 @@ public class DiscardTrain extends PossibleORAction {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            TrainManager trainManager = root.getTrainManager();
+
+            if (discardedTrainUniqueId != null) {
+                discardedTrain = trainManager.getTrainByUniqueId(discardedTrainUniqueId);
+            }
+
+            ownedTrains = new HashSet<>();
+            if (ownedTrainsUniqueIds != null && ownedTrainsUniqueIds.length > 0) {
+                for (String ownedTrainsUniqueId : ownedTrainsUniqueIds) {
+                    ownedTrains.add(trainManager.getTrainByUniqueId(ownedTrainsUniqueId));
+                }
+            }
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
+
         TrainManager trainManager = root.getTrainManager();
 
-        if ( discardedTrainUniqueId != null ) {
+        if (discardedTrainUniqueId != null) {
             discardedTrain = trainManager.getTrainByUniqueId(discardedTrainUniqueId);
         }
 
         ownedTrains = new HashSet<>();
-        if ( ownedTrainsUniqueIds != null && ownedTrainsUniqueIds.length > 0 ) {
-            for ( String ownedTrainsUniqueId : ownedTrainsUniqueIds ) {
+        if (ownedTrainsUniqueIds != null && ownedTrainsUniqueIds.length > 0) {
+            for (String ownedTrainsUniqueId : ownedTrainsUniqueIds) {
                 ownedTrains.add(trainManager.getTrainByUniqueId(ownedTrainsUniqueId));
             }
         }

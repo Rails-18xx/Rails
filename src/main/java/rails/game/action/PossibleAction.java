@@ -24,7 +24,7 @@ import com.google.common.base.Objects;
  * PossibleAction is the superclass of all classes that describe an allowed user
  * action (such as laying a tile or dropping a token on a specific hex, buying a
  * train etc.).
- *
+ * <p>
  * Rails 2.0: Added updated equals and toString methods
  */
 
@@ -48,7 +48,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
 
     // TODO: Replace this by a constructor argument for the player
     public PossibleAction(Activity activity) {
-        if ( activity == null ) {
+        if (activity == null) {
             return;
         }
         root = activity.getRoot();
@@ -57,12 +57,16 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     }
 
     public PossibleAction(RailsRoot root) {
-        if ( root == null ) {
+        if (root == null) {
             log.debug("missing root", new Exception());
             return;
         }
         this.root = root;
         setPlayer();
+    }
+
+    protected PossibleAction() {
+        // do nothing
     }
 
     public void setPlayer() {
@@ -114,8 +118,8 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
 
         // check asOption attributes
         boolean options = Objects.equal(this.player, pa.player)
-                        || pa instanceof NullAction // TODO: Old save files are sometimes wrong to assign Null Actions
-        ;
+                || pa instanceof NullAction // TODO: Old save files are sometimes wrong to assign Null Actions
+                ;
 
         // finish if asOptions check
         if (asOption) return options;
@@ -135,10 +139,11 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
      * the PossibleAction does not fully restrict choices to valid values only
      * (such as the blanket LayTile that does no restrict the hex to lay a tile on,
      * or the SetDividend that will accept any revenue value).
+     *
      * @param pa Another PossibleAction to compare with.
      * @return True if the compared PossibleAction object has equal choice options.
      */
-    public final boolean equalsAsOption (PossibleAction pa) {
+    public final boolean equalsAsOption(PossibleAction pa) {
         return equalsAs(pa, true);
     }
 
@@ -149,10 +154,11 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
      * <p>This method is used by the server (engine) to check if two action
      * objects represent the same actual action, as is done when reloading a saved file
      * (i.e. loading a later stage of the same game).
+     *
      * @param pa Another PossibleAction to compare with.
      * @return True if the compared PossibleAction object has equal selected action values.
      */
-    public final boolean equalsAsAction (PossibleAction pa) {
+    public final boolean equalsAsAction(PossibleAction pa) {
         return equalsAs(pa, false);
     }
 
@@ -164,7 +170,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
         return root.getGameManager();
     }
 
-    protected CompanyManager getCompanyManager () {
+    protected CompanyManager getCompanyManager() {
         return root.getCompanyManager();
     }
 
@@ -179,7 +185,9 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
         return false;
     }
 
-    /** Default version of an Menu item text. To be overridden where useful. */
+    /**
+     * Default version of an Menu item text. To be overridden where useful.
+     */
     public String toMenu() {
         return toString();
     }
@@ -198,8 +206,20 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        // inject RailsRoot for use by all subclasses during their own deserializing
-        root = ((RailsObjectInputStream) in).getRoot();
+        if (in instanceof RailsObjectInputStream) {
+            // inject RailsRoot for use by all subclasses during their own deserializing
+            this.root = ((RailsObjectInputStream) in).getRoot();
+
+            if (playerName != null) {
+                player = root.getPlayerManager().getPlayerByName(playerName);
+            } else {
+                player = root.getPlayerManager().getPlayerByIndex(playerIndex);
+            }
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        this.root = root;
 
         if (playerName != null) {
             player = root.getPlayerManager().getPlayerByName(playerName);
@@ -207,5 +227,4 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
             player = root.getPlayerManager().getPlayerByIndex(playerIndex);
         }
     }
-
 }

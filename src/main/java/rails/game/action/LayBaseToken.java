@@ -10,6 +10,7 @@ import com.google.common.base.Objects;
 import net.sf.rails.game.*;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialBaseTokenLay;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -171,6 +172,27 @@ public class LayBaseToken extends LayToken {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            MapManager mmgr = getRoot().getMapManager();
+            if (Util.hasValue(locationNames)) {
+                locations = new ArrayList<>();
+                for (String hexName : locationNames.split(",")) {
+                    locations.add(mmgr.getHex(hexName));
+                }
+            }
+
+            if (specialPropertyId > 0) {
+                specialProperty = SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
+            }
+            if (chosenHexName != null && chosenHexName.length() > 0) {
+                chosenHex = mmgr.getHex(chosenHexName);
+            }
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
+
         MapManager mmgr = getRoot().getMapManager();
         if (Util.hasValue(locationNames)) {
             locations = new ArrayList<>();
@@ -186,5 +208,4 @@ public class LayBaseToken extends LayToken {
             chosenHex = mmgr.getHex(chosenHexName);
         }
     }
-
 }

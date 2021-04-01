@@ -7,6 +7,7 @@ import com.google.common.base.Objects;
 
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.StartItem;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 
 
@@ -35,6 +36,10 @@ public abstract class StartItemAction extends PossibleAction {
     // Null startItem, for 18Scan
     public StartItemAction (RailsRoot root) {
         super (root);
+    }
+
+    protected StartItemAction() {
+        super();
     }
 
     /**
@@ -78,6 +83,18 @@ public abstract class StartItemAction extends PossibleAction {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        startItem = root.getCompanyManager().getStartItemById(startItemName);
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            if (root != null) {
+                startItem = root.getCompanyManager().getStartItemById(startItemName);
+            }
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
+
+        if (root != null) {
+            startItem = root.getCompanyManager().getStartItemById(startItemName);
+        }
     }
 }
