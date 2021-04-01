@@ -264,6 +264,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     protected List<Tag> certificateTags = null;
 
+    protected int reservedShare = 0;
+
     /**
      * The certificates of this company (minimum 1)
      */
@@ -787,6 +789,11 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                             certIsInitiallyAvailable, certificateCount, certIndex++);
                     certificates.add(certificate);
                     shareTotal += shares * shareUnit.value();
+
+
+                }
+                if (!certIsInitiallyAvailable){
+                    reservedShare += number * shares * shareUnit.value();
                 }
             }
             if (shareTotal != 100)
@@ -1730,6 +1737,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     public int getNumberOfShares() {
         return 100 / shareUnit.value();
+    }
+
+    public int getReservedShare() {
+        return reservedShare;
     }
 
     /**
