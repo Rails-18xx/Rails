@@ -9,6 +9,7 @@ import net.sf.rails.game.OperatingRound;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.round.RoundFacade;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -86,7 +87,17 @@ public abstract class PossibleORAction extends PossibleAction {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        if (Util.hasValue(companyName))
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            if (Util.hasValue(companyName))
+                company = getCompanyManager().getPublicCompany(companyName);
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
+
+        if (Util.hasValue(companyName)) {
             company = getCompanyManager().getPublicCompany(companyName);
+        }
     }
 }

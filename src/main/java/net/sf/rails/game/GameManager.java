@@ -16,9 +16,7 @@ import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.*;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.ui.swing.GameUIManager;
-import net.sf.rails.util.GameLoader;
-import net.sf.rails.util.GameSaver;
-import net.sf.rails.util.Util;
+import net.sf.rails.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -907,9 +905,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         ChangeStack changeStack = getRoot().getStateManager().getChangeStack();
         int index = gameAction.getmoveStackIndex();
         switch (gameAction.getMode()) {
-            case SAVE:
-                result = save(gameAction);
+            case XML_SAVE: {
+                IGameSaver gameSaver = new XmlGameSaver(getRoot().getGameData(), executedActions.view());
+                result = save(gameAction, gameSaver);
                 break;
+            }
+            case SAVE: {
+                IGameSaver gameSaver = new GameSaver(getRoot().getGameData(), executedActions.view());
+                result = save(gameAction, gameSaver);
+                break;
+            }
             case RELOAD:
                 result = reload(gameAction);
                 break;
@@ -1035,8 +1040,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
     }
 
-    protected boolean save(GameAction saveAction) {
-        GameSaver gameSaver = new GameSaver(getRoot().getGameData(), executedActions.view());
+    protected boolean save(GameAction saveAction, IGameSaver gameSaver) {
         File file = new File(saveAction.getFilepath());
         try {
             gameSaver.saveGame(file);

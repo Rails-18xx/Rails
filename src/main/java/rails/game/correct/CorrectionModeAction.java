@@ -78,10 +78,19 @@ public class CorrectionModeAction extends CorrectionAction {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        if (Util.hasValue(correctionName))
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            if (Util.hasValue(correctionName))
                 correctionType = CorrectionType.valueOf(correctionName);
+        }
     }
 
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
+
+        if (Util.hasValue(correctionName)) {
+            correctionType = CorrectionType.valueOf(correctionName);
+        }
+    }
 
 //   a version with enumsets:
 //    // pre-conditions

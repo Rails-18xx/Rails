@@ -7,6 +7,8 @@ import com.google.common.base.Objects;
 
 import net.sf.rails.game.CompanyManager;
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -135,17 +137,30 @@ public class SellShares extends PossibleAction {
 
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        // Custom reading for backwards compatibility
-        ObjectInputStream.GetField fields = in.readFields();
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            // Custom reading for backwards compatibility
+            ObjectInputStream.GetField fields = in.readFields();
 
-        companyName = (String) fields.get("companyName", null);
-        shareUnit = fields.get("shareUnit", shareUnit);
-        shareUnits = fields.get("shareUnits", shareUnits);
-        share = fields.get("share", share);
-        price = fields.get("price", price);
-        numberSold = fields.get("numberSold", 0); // For backwards compatibility
-        number = fields.get("number", numberSold);
-        presidentExchange = fields.get("presidentExchange", 0);
+            companyName = (String) fields.get("companyName", null);
+            shareUnit = fields.get("shareUnit", shareUnit);
+            shareUnits = fields.get("shareUnits", shareUnits);
+            share = fields.get("share", share);
+            price = fields.get("price", price);
+            numberSold = fields.get("numberSold", 0); // For backwards compatibility
+            number = fields.get("number", numberSold);
+            presidentExchange = fields.get("presidentExchange", 0);
+
+            CompanyManager companyManager = getCompanyManager();
+            if (Util.hasValue(companyName))
+                companyName = companyManager.checkAlias(companyName);
+            company = companyManager.getPublicCompany(companyName);
+        } else {
+            in.defaultReadObject();
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
 
         CompanyManager companyManager = getCompanyManager();
         if (Util.hasValue(companyName))

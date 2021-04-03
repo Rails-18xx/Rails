@@ -89,7 +89,7 @@ public class PossibleActions {
 
         // Some actions are always allowed
         if (checkedAction instanceof GameAction
-                && EnumSet.of(GameAction.Mode.SAVE, GameAction.Mode.RELOAD, GameAction.Mode.EXPORT).contains(
+                && EnumSet.of(GameAction.Mode.XML_SAVE, GameAction.Mode.SAVE, GameAction.Mode.RELOAD, GameAction.Mode.EXPORT).contains(
                         ((GameAction)checkedAction).getMode() )) {
             return true;
         }

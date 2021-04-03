@@ -16,6 +16,7 @@ import net.sf.rails.common.ConfigManager;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.GameLoader;
 
+import net.sf.rails.util.XmlGameLoader;
 import org.junit.runners.AllTests;
 import org.junit.runner.RunWith;
 
@@ -55,7 +56,7 @@ public final class TestGameBuilder extends TestCase {
         RailsRoot root = null;
         if (gameFile.exists()) {
             System.out.println("Found game at " + gameFile.getAbsolutePath());
-            GameLoader gameLoader = new GameLoader();
+            XmlGameLoader gameLoader = new XmlGameLoader();
             if (gameLoader.createFromFile(gameFile)) {
                 root = gameLoader.getRoot();
             }

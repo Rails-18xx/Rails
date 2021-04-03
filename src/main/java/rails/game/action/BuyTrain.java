@@ -5,13 +5,11 @@ import java.io.ObjectInputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.sf.rails.game.CompanyManager;
-import net.sf.rails.game.Train;
-import net.sf.rails.game.TrainManager;
-import net.sf.rails.game.TrainType;
+import net.sf.rails.game.*;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialTrainBuy;
 import net.sf.rails.game.state.Owner;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -325,28 +323,74 @@ public class BuyTrain extends PossibleORAction {
 
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        // TEMPORARY Custom reading for backwards compatibility
-        ObjectInputStream.GetField fields = in.readFields();
-        trainUniqueId = (String) fields.get("trainUniqueId", trainUniqueId);
-        typeName = (String) fields.get("typeName", null);
-        fromName = (String) fields.get("fromName", fromName);
-        fixedCost = fields.get("fixedCost", fixedCost);
-        trainsForExchangeUniqueIds = (String[]) fields.get("trainsForExchangeUniqueIds", trainsForExchangeUniqueIds);
-        forcedBuyIfNoRoute = fields.get("forcedBuyIfNoRoute", forcedBuyIfNoRoute);
-        forcedBuyIfHasRoute = fields.get("forcedBuyIfHasRoute", forcedBuyIfHasRoute);
-        presidentMustAddCash = fields.get("presidentMustAddCash", presidentMustAddCash);
-        presidentMayAddCash = fields.get("presidentMayAddCash", presidentMayAddCash);
-        presidentCashToAdd = fields.get("presidentCashToAdd", presidentCashToAdd);
-        specialPropertyId = fields.get("specialPropertyId", specialPropertyId);
-        pricePaid = fields.get("pricePaid", pricePaid);
-        addedCash = fields.get("addedCash", addedCash);
-        exchangedTrainUniqueId = (String) fields.get("exchangedTrainUniqueId", exchangedTrainUniqueId);
-        extraMessage = (String) fields.get("extraMessage", extraMessage);
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            // TEMPORARY Custom reading for backwards compatibility
+            ObjectInputStream.GetField fields = in.readFields();
+            trainUniqueId = (String) fields.get("trainUniqueId", trainUniqueId);
+            typeName = (String) fields.get("typeName", null);
+            fromName = (String) fields.get("fromName", fromName);
+            fixedCost = fields.get("fixedCost", fixedCost);
+            trainsForExchangeUniqueIds = (String[]) fields.get("trainsForExchangeUniqueIds", trainsForExchangeUniqueIds);
+            forcedBuyIfNoRoute = fields.get("forcedBuyIfNoRoute", forcedBuyIfNoRoute);
+            forcedBuyIfHasRoute = fields.get("forcedBuyIfHasRoute", forcedBuyIfHasRoute);
+            presidentMustAddCash = fields.get("presidentMustAddCash", presidentMustAddCash);
+            presidentMayAddCash = fields.get("presidentMayAddCash", presidentMayAddCash);
+            presidentCashToAdd = fields.get("presidentCashToAdd", presidentCashToAdd);
+            specialPropertyId = fields.get("specialPropertyId", specialPropertyId);
+            pricePaid = fields.get("pricePaid", pricePaid);
+            addedCash = fields.get("addedCash", addedCash);
+            exchangedTrainUniqueId = (String) fields.get("exchangedTrainUniqueId", exchangedTrainUniqueId);
+            extraMessage = (String) fields.get("extraMessage", extraMessage);
+
+            TrainManager trainManager = root.getTrainManager();
+            CompanyManager companyManager = root.getCompanyManager();
+
+            fromName = companyManager.checkAlias(fromName);
+
+            train = trainManager.getTrainByUniqueId(trainUniqueId);
+            // Note: the 2nd etc. copy of an unlimited quantity train will become null this way.
+            // Set getTrain() for how this is fixed.
+            if (typeName == null) {
+                if (train == null) {
+                    // Kludge to cover not yet cloned unlimited trains
+                    typeName = trainUniqueId.split("_")[0];
+                    type = trainManager.getTrainTypeByName(typeName);
+                } else {
+                    type = train.getType();
+                    typeName = type.getName();
+                }
+            } else {
+                type = trainManager.getTrainTypeByName(typeName);
+            }
+
+            // TODO: This has to be replaced by a new mechanism for owners at some time
+            from = root.getPortfolioManager().getPortfolioByName(fromName).getParent();
+            if (trainsForExchangeUniqueIds != null && trainsForExchangeUniqueIds.length > 0) {
+                trainsForExchange = new HashSet<>();
+                for (String trainsForExchangeUniqueId : trainsForExchangeUniqueIds) {
+                    trainsForExchange.add(trainManager.getTrainByUniqueId(trainsForExchangeUniqueId));
+                }
+            }
+
+            if (specialPropertyId > 0) {
+                specialProperty = (SpecialTrainBuy) SpecialProperty.getByUniqueId(root, specialPropertyId);
+            }
+
+            if (Util.hasValue(exchangedTrainUniqueId)) {
+                exchangedTrain = trainManager.getTrainByUniqueId(exchangedTrainUniqueId);
+            }
+        } else {
+            in.defaultReadObject();
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
 
         TrainManager trainManager = root.getTrainManager();
         CompanyManager companyManager = root.getCompanyManager();
 
-        fromName = companyManager.checkAlias (fromName);
+        fromName = companyManager.checkAlias(fromName);
 
         train = trainManager.getTrainByUniqueId(trainUniqueId);
         // Note: the 2nd etc. copy of an unlimited quantity train will become null this way.
@@ -368,7 +412,7 @@ public class BuyTrain extends PossibleORAction {
         from = root.getPortfolioManager().getPortfolioByName(fromName).getParent();
         if (trainsForExchangeUniqueIds != null && trainsForExchangeUniqueIds.length > 0) {
             trainsForExchange = new HashSet<>();
-            for ( String trainsForExchangeUniqueId : trainsForExchangeUniqueIds ) {
+            for (String trainsForExchangeUniqueId : trainsForExchangeUniqueIds) {
                 trainsForExchange.add(trainManager.getTrainByUniqueId(trainsForExchangeUniqueId));
             }
         }
