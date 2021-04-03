@@ -42,6 +42,8 @@ class ConfigWindow extends JFrame {
     private JTabbedPane configPane;
     private JPanel buttonPanel;
 
+    private boolean dirty = false;
+
     private ConfigManager cm;
 
     ConfigWindow(Window parent) {
@@ -71,9 +73,12 @@ class ConfigWindow extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_CLOSE_MESSAGE"), LocalText.getText("CONFIG_CLOSE_TITLE")
-                        , JOptionPane.INFORMATION_MESSAGE);
-                closeConfig(false);
+                if (dirty) {
+                    JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_CLOSE_MESSAGE"), LocalText.getText("CONFIG_CLOSE_TITLE")
+                            , JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    closeConfig(true);
+                }
             }
         });
     }
@@ -112,7 +117,7 @@ class ConfigWindow extends JFrame {
         profilePanel.add(userLabel);
        String[] profiles = cm.getProfiles().toArray(new String[cm.getProfiles().size()]);
 
-        final JComboBox<String> comboBoxProfile = new JComboBox<String>(profiles);
+        final JComboBox<String> comboBoxProfile = new JComboBox<>(profiles);
         comboBoxProfile.setSelectedItem(activeProfile);
         comboBoxProfile.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent arg0) {
@@ -203,6 +208,7 @@ class ConfigWindow extends JFrame {
                     } else {
                         item.setNewValue("no");
                     }
+                    if (item.hasChanged()) dirty = true;
                 }
             }
             );
@@ -238,8 +244,8 @@ class ConfigWindow extends JFrame {
                     } else {
                         item.setNewValue(value.toString());
                     }
-
-                }
+                    if (item.hasChanged()) dirty = true;
+               }
             }
             );
             gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -259,7 +265,7 @@ class ConfigWindow extends JFrame {
             } else {
                 allowedValues = item.allowedValues.toArray(allowedValues);
             }
-            final JComboBox<String> comboBox = new JComboBox<String>(allowedValues);
+            final JComboBox<String> comboBox = new JComboBox<>(allowedValues);
             comboBox.setSelectedItem(configValue);
             comboBox.setToolTipText(toolTip);
             comboBox.addFocusListener(new FocusListener() {
@@ -267,7 +273,9 @@ class ConfigWindow extends JFrame {
                     // do nothing
                 }
                 public void focusLost(FocusEvent arg0) {
-                  item.setNewValue((String)comboBox.getSelectedItem());
+                    item.setNewValue((String)comboBox.getSelectedItem());
+                    if (item.hasChanged()) dirty = true;
+
                 }
             }
             );
@@ -302,6 +310,7 @@ class ConfigWindow extends JFrame {
                                 dirLabel.setText(file.getPath());
                                 item.setNewValue(file.getPath());
                             }
+                            if (item.hasChanged()) dirty = true;
                         }
                     }
             );
@@ -342,6 +351,7 @@ class ConfigWindow extends JFrame {
                             } else {
                                 colorLabel.setForeground(Color.BLACK);
                             }
+                            if (item.hasChanged()) dirty = true;
                         }
                     }
             );
@@ -358,7 +368,8 @@ class ConfigWindow extends JFrame {
                     // do nothing
                 }
                 public void focusLost(FocusEvent arg0) {
-                  item.setNewValue(textField.getText());
+                    item.setNewValue(textField.getText());
+                    if (item.hasChanged()) dirty = true;
                 }
             }
             );
@@ -370,6 +381,7 @@ class ConfigWindow extends JFrame {
             addEmptyLabel(panel, gbc);
             break;
         }
+
         // add info icon for infoText
         if (infoText != null) {
             JLabel infoIcon = new JLabel(RailsIcon.INFO.smallIcon);
@@ -442,6 +454,7 @@ class ConfigWindow extends JFrame {
                     public void actionPerformed(ActionEvent arg0) {
                         // reset button: revert to activeProfile
                         changeProfile(cm.getActiveProfile());
+                        dirty = false;
                     }
                 }
         );
@@ -466,6 +479,21 @@ class ConfigWindow extends JFrame {
                     );
             buttonPanel.add(deleteButton);
         }
+
+        JButton closeButton = new JButton(LocalText.getText("CLOSE"));
+        closeButton.addActionListener (
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        if (dirty) {
+                            JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_CLOSE_MESSAGE"), LocalText.getText("CONFIG_CLOSE_TITLE")
+                                    , JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            closeConfig(false);
+                        }
+                    }
+                }
+        );
+        buttonPanel.add (closeButton);
 
     }
 
@@ -507,6 +535,7 @@ class ConfigWindow extends JFrame {
         if (result) {
             JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_CONFIRM_MESSAGE", cm.getActiveProfile()),
                     LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.INFORMATION_MESSAGE);
+            dirty = false;
         } else {
             JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_ERROR_MESSAGE", cm.getActiveProfile()),
                     LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.ERROR_MESSAGE);
@@ -524,7 +553,7 @@ class ConfigWindow extends JFrame {
         List<String> allProfileNames = cm.getProfiles();
 
         // select profile name
-        String newProfile = null;
+        String newProfile;
         do {
             newProfile = JOptionPane.showInputDialog(ConfigWindow.this, LocalText.getText("CONFIG_NEW_MESSAGE"),
                 LocalText.getText("CONFIG_NEW_TITLE"), JOptionPane.QUESTION_MESSAGE);
