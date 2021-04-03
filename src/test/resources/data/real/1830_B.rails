@@ -82,8 +82,8 @@
       <string>Chris</string>
     </players>
   </gameData>
-  <version>2.4.0-alpha+</version>
-  <date>2021-04-03 17:40:02</date>
+  <version>2.4.6+</version>
+  <date>2021-04-03 18:10:00</date>
   <fileVersionID>9</fileVersionID>
   <actions>
     <rails.game.action.BidStartItem serialization="custom">

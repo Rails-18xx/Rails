@@ -73,8 +73,8 @@
       <string>Volker S.</string>
     </players>
   </gameData>
-  <version>2.4.0-alpha+</version>
-  <date>2021-04-03 17:39:54</date>
+  <version>2.4.6+</version>
+  <date>2021-04-03 18:09:53</date>
   <fileVersionID>9</fileVersionID>
   <actions>
     <rails.game.action.BuyStartItem serialization="custom">
