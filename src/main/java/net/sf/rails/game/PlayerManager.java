@@ -92,7 +92,7 @@ public class PlayerManager extends RailsManager implements Configurable {
                     playerIndex,
                     player.getId()));
         }
-        this.playerNames = Collections.unmodifiableMap(playerNamesBuilder);
+        this.playerNames = new HashMap<>(playerNamesBuilder);
 
         ReportBuffer.add(this, LocalText.getText("PlayerCash", cashText));
         ReportBuffer.add(this, LocalText.getText("BankHas", Bank.format(this, bank.getCash())));
