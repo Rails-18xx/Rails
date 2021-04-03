@@ -10,6 +10,7 @@ import net.sf.rails.common.Config;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.GameLoader;
 
+import net.sf.rails.util.XmlGameLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +97,7 @@ public class TestGame extends TestCase {
 
         if (gameFile.exists()) {
             log.debug("Found gamefile at {}", gameFilename);
-            GameLoader gameLoader = new GameLoader();
+            XmlGameLoader gameLoader = new XmlGameLoader();
             if (gameLoader.createFromFile(gameFile)) {
                 testReport = gameLoader.getRoot().getReportManager().getReportBuffer().getAsList();
            } else {
