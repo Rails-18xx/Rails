@@ -2,6 +2,7 @@ package rails.game.specific._1837;
 
 import com.google.common.base.Objects;
 import net.sf.rails.game.*;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 import rails.game.action.PossibleAction;
@@ -81,8 +82,18 @@ public class SetHomeHexLocation2 extends PossibleORAction {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        if (Util.hasValue(companyName))
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            if (Util.hasValue(companyName))
+                company = getCompanyManager().getPublicCompany(companyName);
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
+
+        if (Util.hasValue(companyName)) {
             company = getCompanyManager().getPublicCompany(companyName);
+        }
     }
 
     public PublicCompany getCompany() {
