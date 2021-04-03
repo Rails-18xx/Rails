@@ -294,6 +294,7 @@ public class TrainManager extends RailsManager implements Configurable {
             // Create the trains of this TrainType
             id = trainType.getName() + "_" + sequenceNumber;
             Train train = new Train(this, id);
+            if (trainTypes.size() == 1) card.setActualTrain(train);
             card.addTrain(train);
             train.setCard(card);
             train.setType(trainType);

@@ -3,12 +3,10 @@ package net.sf.rails.game;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Portfolio;
-import net.sf.rails.util.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +18,7 @@ public class ReleaseRule {
     BooleanState done;
     String soldString, releaseString;
     boolean soldStartPacket = false;
-    Map<PublicCompany, Integer> soldPercPerCompany = new HashMap<>();
+    Map<PublicCompany, Integer> remainingPercPerCompany = new HashMap<>();
     Map<PublicCompany, Boolean> statusPerCompany = new HashMap<>();
     List<PublicCompany> companiesToRelease = new ArrayList<>();
 
@@ -47,8 +45,11 @@ public class ReleaseRule {
             for (String cNameAndPerc : soldString.split(",")) {
                 String[] parts = cNameAndPerc.split(":");
                 PublicCompany company = companyManager.getPublicCompany(parts[0]);
-                int percSold = (parts.length > 1 ? Integer.parseInt(parts[1]) : 100);
-                soldPercPerCompany.put(company, percSold);
+                int availableShare = 100 - company.getReservedShare();
+                int percRemaining = (parts.length > 1
+                        ? availableShare - Integer.parseInt(parts[1])
+                        : 0);
+                remainingPercPerCompany.put(company, percRemaining);
                 statusPerCompany.put(company, false);
             }
         }
@@ -59,11 +60,7 @@ public class ReleaseRule {
     }
 
     private boolean ifSold(PublicCompany company, int percSold) {
-        if (percSold == 0) {
-            return ipo.getShare(company) == 0;
-        } else {
-            return ipo.getShare(company) <= 100 - percSold;
-        }
+        return ipo.getShare(company) <= remainingPercPerCompany.get(company);
     }
 
     private void releaseCompanyShares(PublicCompany company) {
@@ -100,9 +97,9 @@ public class ReleaseRule {
                     return false;
                 }
             } else {
-                for (PublicCompany company : soldPercPerCompany.keySet()) {
+                for (PublicCompany company : remainingPercPerCompany.keySet()) {
                     if (!statusPerCompany.get(company)) {
-                        if (ifSold(company, soldPercPerCompany.get(company))) {
+                        if (ifSold(company, remainingPercPerCompany.get(company))) {
                             statusPerCompany.put(company, true);
                         } else {
                             return false;
