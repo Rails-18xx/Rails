@@ -1,5 +1,6 @@
 package net.sf.rails.common;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameData {
@@ -14,7 +15,7 @@ public class GameData {
 
         this.game = game;
         this.gameOptions = gameOptions;
-        this.players = players;
+        this.players = new ArrayList<>(players);
     }
 
     public static GameData create(GameInfo game, GameOptionsSet.Builder gameOptions, List<String> players) {

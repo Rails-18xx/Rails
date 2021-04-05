@@ -1,5 +1,6 @@
 package net.sf.rails.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rails.game.action.PossibleAction;
@@ -23,7 +24,7 @@ class GameIOData {
         this.version = version;
         this.date = date;
         this.fileVersionID = fileVersionID;
-        this.actions = actions;
+        this.actions = new ArrayList<>(actions);
     }
     
     GameIOData() {}
@@ -62,7 +63,7 @@ class GameIOData {
     }
     
     void setActions(List<PossibleAction> actions) {
-        this.actions = actions;
+        this.actions = new ArrayList<>(actions);
     }
 
     List<PossibleAction> getActions() {

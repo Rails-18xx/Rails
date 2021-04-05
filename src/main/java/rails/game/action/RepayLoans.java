@@ -6,6 +6,8 @@ import java.io.ObjectInputStream;
 import com.google.common.base.Objects;
 
 import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 
 /**
@@ -113,6 +115,14 @@ public class RepayLoans extends PossibleAction {
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            company = getCompanyManager().getPublicCompany(companyName);
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
 
         company = getCompanyManager().getPublicCompany(companyName);
     }

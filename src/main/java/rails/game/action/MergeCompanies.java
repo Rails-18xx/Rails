@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import net.sf.rails.util.GameLoader;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.Objects;
@@ -143,13 +144,37 @@ public class MergeCompanies extends PossibleAction {
 
     @SuppressWarnings("unchecked")
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        // Custom reading for backwards compatibility
-        ObjectInputStream.GetField fields = in.readFields();
-        mergingCompanyName = (String) fields.get("mergingCompanyName", mergingCompanyName);
-        targetCompanyNames = (String) fields.get("targetCompanyNames", targetCompanyNames);
-        canReplaceToken = (List<Boolean>) fields.get("canReplaceToken", canReplaceToken);
-        selectedTargetCompanyName = (String) fields.get("selectedTargetCompanyName", selectedTargetCompanyName);
-        replaceToken = fields.get("replaceToken", replaceToken);
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            // Custom reading for backwards compatibility
+            ObjectInputStream.GetField fields = in.readFields();
+            mergingCompanyName = (String) fields.get("mergingCompanyName", mergingCompanyName);
+            targetCompanyNames = (String) fields.get("targetCompanyNames", targetCompanyNames);
+            canReplaceToken = (List<Boolean>) fields.get("canReplaceToken", canReplaceToken);
+            selectedTargetCompanyName = (String) fields.get("selectedTargetCompanyName", selectedTargetCompanyName);
+            replaceToken = fields.get("replaceToken", replaceToken);
+
+            CompanyManager cmgr = getCompanyManager();
+            mergingCompany = cmgr.getPublicCompany(mergingCompanyName);
+
+            targetCompanies = new ArrayList<>();
+            for (String name : targetCompanyNames.split(",")) {
+                if (name.equals("null")) {
+                    targetCompanies.add(null);
+                } else {
+                    targetCompanies.add(cmgr.getPublicCompany(name));
+                }
+            }
+
+            if (selectedTargetCompanyName != null && !selectedTargetCompanyName.equals("null")) {
+                selectedTargetCompany = cmgr.getPublicCompany(selectedTargetCompanyName);
+            }
+        } else {
+            in.defaultReadObject();
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
 
         CompanyManager cmgr = getCompanyManager();
         mergingCompany = cmgr.getPublicCompany(mergingCompanyName);

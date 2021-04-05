@@ -7,6 +7,7 @@ import java.util.*;
 import com.google.common.base.Objects;
 
 import net.sf.rails.game.RailsRoot;
+import net.sf.rails.util.GameLoader;
 import rails.game.action.PossibleAction;
 import rails.game.correct.MapCorrectionManager.*;
 import net.sf.rails.game.BaseToken;
@@ -29,10 +30,14 @@ import net.sf.rails.util.Util;
 @Deprecated
 public class MapCorrectionAction extends CorrectionAction {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
     public static final long serialVersionUID = 1L;
 
-    /** Sequence: Indicates the enrichment of the action */
+    /**
+     * Sequence: Indicates the enrichment of the action
+     */
     private transient ActionStep step = null;
     private String stepName;
 
@@ -41,20 +46,28 @@ public class MapCorrectionAction extends CorrectionAction {
 
     /* Conditions */
 
-    /** Location: where to lay the tile */
+    /**
+     * Location: where to lay the tile
+     */
     private transient MapHex location = null;
     private String locationCoordinates;
 
-    /** Tiles: which tile(s) to lay */
+    /**
+     * Tiles: which tile(s) to lay
+     */
     private transient List<Tile> tiles = null;
     private String[] sTileIds;
     // FIXME: Rewrite this with Rails1.x version flag
     private int[] tileIds;
 
-    /** Orientation: how to lay the tile */
+    /**
+     * Orientation: how to lay the tile
+     */
     private int orientation;
 
-    /** RelayBaseTokens: how to relay the base tokens */
+    /**
+     * RelayBaseTokens: how to relay the base tokens
+     */
     private transient List<BaseToken> tokensToRelay;
     //private String[]tokensToRelayOwner;
     private transient List<Station> stationsForRelay;
@@ -124,7 +137,7 @@ public class MapCorrectionAction extends CorrectionAction {
         this.possibleStations = possibleStations;
     }
 
-    public int getOrientation(){
+    public int getOrientation() {
         return orientation;
     }
 
@@ -202,26 +215,63 @@ public class MapCorrectionAction extends CorrectionAction {
         if (asOption) return true;
 
         // check asAction attributes
-        MapCorrectionAction action = (MapCorrectionAction)pa;
+        MapCorrectionAction action = (MapCorrectionAction) pa;
         return Objects.equal(this.location, action.location)
                 && Objects.equal(this.tiles, action.tiles)
                 && Objects.equal(this.orientation, action.orientation)
-        ;
+                ;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return super.toString() +
                 RailsObjects.stringHelper(this)
-                .addToStringOnlyActed("location", location)
-                .addToStringOnlyActed("tiles", tiles)
-                .addToStringOnlyActed("orientation", orientation)
-        ;
+                        .addToStringOnlyActed("location", location)
+                        .addToStringOnlyActed("tiles", tiles)
+                        .addToStringOnlyActed("orientation", orientation)
+                ;
     }
 
-    /** Deserialize */
+    /**
+     * Deserialize
+     */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            if (Util.hasValue(correctionName))
+                correctionType = CorrectionType.valueOf(correctionName);
+
+            if (Util.hasValue(stepName))
+                step = ActionStep.valueOf(stepName);
+
+            if (Util.hasValue(nextStepName))
+                nextStep = ActionStep.valueOf(nextStepName);
+
+            MapManager mmgr = getRoot().getMapManager();
+            if (Util.hasValue(locationCoordinates))
+                location = mmgr.getHex(locationCoordinates);
+
+            TileManager tmgr = getRoot().getTileManager();
+            if (sTileIds != null && sTileIds.length > 0) {
+                tiles = new ArrayList<>();
+                for (String sTileId : sTileIds) {
+                    tiles.add(tmgr.getTile(sTileId));
+                }
+            }
+
+            // FIXME: Rewrite this with Rails1.x version flag
+            if (tileIds != null && tileIds.length > 0) {
+                tiles = new ArrayList<>();
+                for (int tileId : tileIds) {
+                    tiles.add(tmgr.getTile(String.valueOf(tileId)));
+                }
+            }
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
 
         if (Util.hasValue(correctionName))
             correctionType = CorrectionType.valueOf(correctionName);
@@ -239,7 +289,7 @@ public class MapCorrectionAction extends CorrectionAction {
         TileManager tmgr = getRoot().getTileManager();
         if (sTileIds != null && sTileIds.length > 0) {
             tiles = new ArrayList<>();
-            for ( String sTileId : sTileIds ) {
+            for (String sTileId : sTileIds) {
                 tiles.add(tmgr.getTile(sTileId));
             }
         }
@@ -247,7 +297,7 @@ public class MapCorrectionAction extends CorrectionAction {
         // FIXME: Rewrite this with Rails1.x version flag
         if (tileIds != null && tileIds.length > 0) {
             tiles = new ArrayList<>();
-            for ( int tileId : tileIds ) {
+            for (int tileId : tileIds) {
                 tiles.add(tmgr.getTile(String.valueOf(tileId)));
             }
         }

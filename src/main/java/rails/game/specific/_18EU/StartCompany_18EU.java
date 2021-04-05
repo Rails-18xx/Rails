@@ -168,21 +168,52 @@ public class StartCompany_18EU extends StartCompany {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            CompanyManager cmgr = root.getCompanyManager();
+            if (minorsToMergeNames != null) {
+                minorsToMerge = new ArrayList<>();
+                for (String name : minorsToMergeNames.split(",")) {
+                    minorsToMerge.add(cmgr.getPublicCompany(name));
+                }
+            }
+            if (chosenMinorName != null) {
+                chosenMinor = cmgr.getPublicCompany(chosenMinorName);
+            }
+
+            MapManager mapManager = root.getMapManager();
+            if (availableHomeStationNames != null) {
+                availableHomeStations = new ArrayList<>();
+                for (String cityName : availableHomeStationNames.split(",")) {
+                    String[] parts = parseStationName(cityName);
+                    MapHex hex = mapManager.getHex(parts[0]);
+                    int stationId = Integer.parseInt(parts[1]);
+                    availableHomeStations.add(hex.getRelatedStop(stationId));
+                }
+            }
+            // force fetching of the selected home station to prevent a load compare issue during reload
+            getSelectedHomeStation();
+        }
+    }
+
+    @Override
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
+
         CompanyManager cmgr = root.getCompanyManager();
-        if ( minorsToMergeNames != null ) {
+        if (minorsToMergeNames != null) {
             minorsToMerge = new ArrayList<>();
-            for ( String name : minorsToMergeNames.split(",") ) {
+            for (String name : minorsToMergeNames.split(",")) {
                 minorsToMerge.add(cmgr.getPublicCompany(name));
             }
         }
-        if ( chosenMinorName != null ) {
+        if (chosenMinorName != null) {
             chosenMinor = cmgr.getPublicCompany(chosenMinorName);
         }
 
         MapManager mapManager = root.getMapManager();
-        if ( availableHomeStationNames != null ) {
+        if (availableHomeStationNames != null) {
             availableHomeStations = new ArrayList<>();
-            for ( String cityName : availableHomeStationNames.split(",") ) {
+            for (String cityName : availableHomeStationNames.split(",")) {
                 String[] parts = parseStationName(cityName);
                 MapHex hex = mapManager.getHex(parts[0]);
                 int stationId = Integer.parseInt(parts[1]);

@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import com.google.common.base.Objects;
 
 import net.sf.rails.game.RailsRoot;
+import net.sf.rails.util.GameLoader;
 import rails.game.action.PossibleAction;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
@@ -124,6 +125,22 @@ public class CashCorrectionAction extends CorrectionAction {
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            if (Util.hasValue(correctionName))
+                correctionType = CorrectionType.valueOf(correctionName);
+
+            if (Util.hasValue(cashHolderType) && Util.hasValue(cashHolderName)) {
+                if (cashHolderType.equals("Player"))
+                    correctCashHolder = getGameManager().getRoot().getPlayerManager().getPlayerByName(cashHolderName);
+                else if (cashHolderType.equals("PublicCompany"))
+                    correctCashHolder = getCompanyManager().getPublicCompany(cashHolderName);
+            }
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
 
         if (Util.hasValue(correctionName))
             correctionType = CorrectionType.valueOf(correctionName);

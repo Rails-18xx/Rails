@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 
 import com.google.common.base.Objects;
 
+import net.sf.rails.game.RailsRoot;
+import net.sf.rails.util.GameLoader;
 import rails.game.action.PossibleAction;
 import net.sf.rails.game.PrivateCompany;
 import net.sf.rails.util.RailsObjects;
@@ -72,7 +74,17 @@ public class ClosePrivate extends PossibleAction {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
-        if (Util.hasValue(privateCompanyName))
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            if (Util.hasValue(privateCompanyName))
                 privateCompany = getCompanyManager().getPrivateCompany(privateCompanyName);
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
+
+        if (Util.hasValue(privateCompanyName)) {
+            privateCompany = getCompanyManager().getPrivateCompany(privateCompanyName);
+        }
     }
 }

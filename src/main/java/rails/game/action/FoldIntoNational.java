@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.sf.rails.util.GameLoader;
 import org.jetbrains.annotations.NotNull;
 
 import net.sf.rails.game.Company;
@@ -112,6 +113,32 @@ public class FoldIntoNational extends PossibleAction {
     /** Deserialize */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            Company company;
+            CompanyManager cmgr = getCompanyManager();
+
+            foldableCompanies = new ArrayList<>();
+            if (foldableCompanyNames != null) {
+                for (String name : foldableCompanyNames.split(",")) {
+                    company = cmgr.getPublicCompany(name);
+                    if (company == null) company = cmgr.getPrivateCompany(name);
+                    if (company != null) foldableCompanies.add(company);
+                }
+            }
+            if (Util.hasValue(foldedCompanyNames)) {
+                foldedCompanies = new ArrayList<>();
+                for (String name : foldedCompanyNames.split(",")) {
+                    company = cmgr.getPublicCompany(name);
+                    if (company == null) company = cmgr.getPrivateCompany(name);
+                    if (company != null) foldedCompanies.add(company);
+                }
+            }
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
 
         Company company;
         CompanyManager cmgr = getCompanyManager();

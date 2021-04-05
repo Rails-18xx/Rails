@@ -18,6 +18,7 @@ import net.sf.rails.game.Tile;
 import net.sf.rails.game.TileManager;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialTileLay;
+import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
@@ -299,25 +300,73 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
     /** Deserialize */
     @SuppressWarnings("unchecked")
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        // Custom reading for backwards compatibility
-        ObjectInputStream.GetField fields = in.readFields();
+        if (in instanceof GameLoader.RailsObjectInputStream) {
+            // Custom reading for backwards compatibility
+            ObjectInputStream.GetField fields = in.readFields();
 
-        locationNames = (String) fields.get("locationNames", locationNames);
-        tileColours = (Map<String, Integer>) fields.get("tileColours", tileColours);
-        // FIXME: Rewrite this with Rails1.x version flag
-        tileIds = (int[]) fields.get("tileIds", tileIds);
-        sTileIds = (String[]) fields.get("tileIds", sTileIds);
+            locationNames = (String) fields.get("locationNames", locationNames);
+            tileColours = (Map<String, Integer>) fields.get("tileColours", tileColours);
+            // FIXME: Rewrite this with Rails1.x version flag
+            tileIds = (int[]) fields.get("tileIds", tileIds);
+            sTileIds = (String[]) fields.get("tileIds", sTileIds);
 
-        specialPropertyId = fields.get("specialPropertyId", specialPropertyId);
-        // FIXME: Rewrite this with Rails1.x version flag
-        laidTileId = fields.get("laidTileId", laidTileId);
-        sLaidTileId = (String)fields.get("sLaidTileId", sLaidTileId);
+            specialPropertyId = fields.get("specialPropertyId", specialPropertyId);
+            // FIXME: Rewrite this with Rails1.x version flag
+            laidTileId = fields.get("laidTileId", laidTileId);
+            sLaidTileId = (String) fields.get("sLaidTileId", sLaidTileId);
 
-        chosenHexName = (String) fields.get("chosenHexName", chosenHexName);
-        orientation = fields.get("orientation", orientation);
-        relayBaseTokens = fields.get("relayBaseTokens", relayBaseTokens);
-        relaidBaseTokens = (Map<String,Integer>)fields.get("relaidBaseTokens", relaidBaseTokens);
-        relaidBaseTokensString = (String) fields.get("relaidBaseTokensString", relaidBaseTokensString);
+            chosenHexName = (String) fields.get("chosenHexName", chosenHexName);
+            orientation = fields.get("orientation", orientation);
+            relayBaseTokens = fields.get("relayBaseTokens", relayBaseTokens);
+            relaidBaseTokens = (Map<String, Integer>) fields.get("relaidBaseTokens", relaidBaseTokens);
+            relaidBaseTokensString = (String) fields.get("relaidBaseTokensString", relaidBaseTokensString);
+
+            MapManager mmgr = getRoot().getMapManager();
+            TileManager tmgr = getRoot().getTileManager();
+
+            if (Util.hasValue(locationNames)) {
+                locations = new ArrayList<>();
+                for (String hexName : locationNames.split(",")) {
+                    locations.add(mmgr.getHex(hexName));
+                }
+            }
+
+            // FIXME: Rewrite this with Rails1.x version flag
+            if (tileIds != null && tileIds.length > 0) {
+                tiles = new ArrayList<>();
+                for (int tileNb : tileIds) {
+                    tiles.add(tmgr.getTile(String.valueOf(tileNb)));
+                }
+            }
+
+            if (sTileIds != null && sTileIds.length > 0) {
+                tiles = new ArrayList<>();
+                for (String tileId : sTileIds) {
+                    tiles.add(tmgr.getTile(tileId));
+                }
+            }
+
+            if (specialPropertyId > 0) {
+                specialProperty = (SpecialTileLay) SpecialProperty.getByUniqueId(getRoot(), specialPropertyId);
+            }
+            // FIXME: Rewrite this with Rails1.x version flag
+            if (laidTileId != 0) {
+                sLaidTileId = String.valueOf(laidTileId);
+            }
+            if (sLaidTileId != null) {
+                laidTile = tmgr.getTile(sLaidTileId);
+            }
+
+            if (chosenHexName != null && chosenHexName.length() > 0) {
+                chosenHex = mmgr.getHex(chosenHexName);
+            }
+        } else {
+            in.defaultReadObject();
+        }
+    }
+
+    public void applyRailsRoot(RailsRoot root) {
+        super.applyRailsRoot(root);
 
         MapManager mmgr = getRoot().getMapManager();
         TileManager tmgr = getRoot().getTileManager();
@@ -332,14 +381,14 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         // FIXME: Rewrite this with Rails1.x version flag
         if (tileIds != null && tileIds.length > 0) {
             tiles = new ArrayList<>();
-            for (int tileNb:tileIds) {
+            for (int tileNb : tileIds) {
                 tiles.add(tmgr.getTile(String.valueOf(tileNb)));
             }
         }
 
         if (sTileIds != null && sTileIds.length > 0) {
             tiles = new ArrayList<>();
-            for (String tileId:sTileIds) {
+            for (String tileId : sTileIds) {
                 tiles.add(tmgr.getTile(tileId));
             }
         }
@@ -358,7 +407,6 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         if (chosenHexName != null && chosenHexName.length() > 0) {
             chosenHex = mmgr.getHex(chosenHexName);
         }
-
     }
 
     private void buildLocationNameString() {

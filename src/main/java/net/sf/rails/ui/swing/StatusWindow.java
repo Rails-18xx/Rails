@@ -19,6 +19,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
 import net.sf.rails.util.Util;
+import net.sf.rails.util.XmlGameLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,8 +64,10 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
     protected static final String NEW_CMD = "New";
 
     protected static final String LOAD_CMD = "Load";
+    protected static final String XML_LOAD_CMD = "XML-Load";
 
     protected static final String SAVE_CMD = "Save";
+    protected static final String XML_SAVE_CMD = "XML-Save";
 
     protected static final String RELOAD_CMD = "Reload";
 
@@ -152,6 +155,14 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         actionMenuItem.setPossibleAction(new GameAction(gameUIManager.getRoot(), GameAction.Mode.LOAD));
         fileMenu.add(actionMenuItem);
 
+        actionMenuItem = new ActionMenuItem(XML_LOAD_CMD);
+        actionMenuItem.setActionCommand(XML_LOAD_CMD);
+        actionMenuItem.addActionListener(this);
+        actionMenuItem.setEnabled(true);
+        actionMenuItem.setPossibleAction(new GameAction(gameUIManager.getRoot(), GameAction.Mode.LOAD));
+        fileMenu.add(actionMenuItem);
+
+
         actionMenuItem = new ActionMenuItem(LocalText.getText("SAVE"));
         actionMenuItem.setActionCommand(SAVE_CMD);
         actionMenuItem.setMnemonic(KeyEvent.VK_S);
@@ -159,6 +170,13 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         actionMenuItem.addActionListener(this);
         actionMenuItem.setEnabled(true);
         actionMenuItem.setPossibleAction(new GameAction(gameUIManager.getRoot(), GameAction.Mode.SAVE));
+        fileMenu.add(actionMenuItem);
+
+        actionMenuItem = new ActionMenuItem(XML_SAVE_CMD);
+        actionMenuItem.setActionCommand(XML_SAVE_CMD);
+        actionMenuItem.addActionListener(this);
+        actionMenuItem.setEnabled(true);
+        actionMenuItem.setPossibleAction(new GameAction(gameUIManager.getRoot(), GameAction.Mode.XML_SAVE));
         fileMenu.add(actionMenuItem);
 
         actionMenuItem = new ActionMenuItem(LocalText.getText("Reload"));
@@ -611,12 +629,14 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         toFront();
     }
 
-    public void disableButtons () {
+    public void disableButtons() {
         passButton.setEnabled(false);
         autopassButton.setEnabled(false);
     }
 
-    /** Stub, may be overridden in game-specific subclasses */
+    /**
+     * Stub, may be overridden in game-specific subclasses
+     */
     protected boolean updateGameSpecificSettings() {
         return false;
     }
@@ -673,9 +693,9 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
 
         } else if (command.equals(QUIT_CMD)) {
             gameUIManager.terminate();
-        } else if ( command.equals(NEW_CMD) ) {
+        } else if (command.equals(NEW_CMD)) {
             // TODO
-        } else if ( command.equals(LOAD_CMD) ) {
+        } else if (command.equals(LOAD_CMD)) {
             // TODO: does this really belong here?
             String saveDirectory = Config.get("save.directory");
             JFileChooser jfc = new JFileChooser();
@@ -705,6 +725,36 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
                     GameLoader.loadAndStartGame(selectedFile);
                 }).start();
             }
+        } else if (command.equals(XML_LOAD_CMD)) {
+            // TODO: does this really belong here?
+            String saveDirectory = Config.get("save.directory");
+            JFileChooser jfc = new JFileChooser();
+            jfc.setCurrentDirectory(new File(saveDirectory));
+            jfc.setFileFilter(new FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    // TODO: need to filter like GameSetupController.isOurs() does
+                    return true;
+                }
+
+                @Override
+                public String getDescription() {
+                    return null;
+                }
+            });
+
+            if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                // close the existing game
+
+                final File selectedFile = jfc.getSelectedFile();
+                //start in new thread so that swing thread is not used for game setup
+                new Thread(() -> {
+                    // close the existing game (which ironically will include us
+                    gameUIManager.closeGame();
+                    // start the new game
+                    XmlGameLoader.loadAndStartGame(selectedFile);
+                }).start();
+            }
         } else if (command.equals(REPORT_CMD)) {
             gameUIManager.reportWindow.setVisible(((JMenuItem) actor.getSource()).isSelected());
             gameUIManager.reportWindow.scrollDown();
@@ -718,28 +768,29 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             gameUIManager.autoSaveLoadGame();
         } else if (command.equals(SAVESTATUS_CMD)) {
             gameUIManager.saveGameStatus();
-        } else if ( command.equals("Save Logs")) {
+        } else if (command.equals("Save Logs")) {
             gameUIManager.saveLogs();
         } else if (executedAction == null) {
             ;
         } else if (executedAction instanceof GameAction) {
             switch (((GameAction) executedAction).getMode()) {
-            case SAVE:
-                gameUIManager.saveGame((GameAction) executedAction);
-                break;
-            case RELOAD:
-                gameUIManager.reloadGame((GameAction) executedAction);
-                break;
-            case EXPORT:
-                gameUIManager.exportGame((GameAction) executedAction);
-                break;
-            default:
-                process(executedAction);
-                break;
+                case XML_SAVE:
+                case SAVE:
+                    gameUIManager.saveGame((GameAction) executedAction);
+                    break;
+                case RELOAD:
+                    gameUIManager.reloadGame((GameAction) executedAction);
+                    break;
+                case EXPORT:
+                    gameUIManager.exportGame((GameAction) executedAction);
+                    break;
+                default:
+                    process(executedAction);
+                    break;
             }
         } else {
             // Unknown action, let UIManager catch it
-            process (executedAction);
+            process(executedAction);
         }
     }
 
@@ -760,7 +811,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             // so that it's not going to loop.
             DiscardTrain nextAction = (DiscardTrain) immediateAction;
             immediateAction = null;
-            gameUIManager.discardTrains (nextAction);
+            gameUIManager.discardTrains(nextAction);
         }
         return true;
     }
@@ -835,7 +886,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         gameUIManager.orWindow.finish();
     }
 
-    public Player getCurrentPlayer () {
+    public Player getCurrentPlayer() {
         return gameUIManager.getCurrentPlayer();
     }
 
@@ -860,7 +911,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             List<String> gameReport = gm.getGameReport();
             Collections.reverse(gameReport);
             StringBuilder report = new StringBuilder();
-            for (String s:gameReport) {
+            for (String s : gameReport) {
                 report.insert(0, s + "\n");
                 JOptionPane.showMessageDialog(this,
                         report,
@@ -872,16 +923,19 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {
+    }
 
     @Override
-    public void keyPressed(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {
+    }
 
     @Override
-    public void keyTyped(KeyEvent e) {}
+    public void keyTyped(KeyEvent e) {
+    }
 
     public void updatePlayerOrder(List<String> newPlayerNames) {
-       gameStatus.updatePlayerOrder(newPlayerNames);
+        gameStatus.updatePlayerOrder(newPlayerNames);
     }
 
 
