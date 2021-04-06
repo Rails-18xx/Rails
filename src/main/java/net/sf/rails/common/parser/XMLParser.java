@@ -20,7 +20,7 @@ import org.xml.sax.SAXException;
 public class XMLParser {
     protected final static Logger log = LoggerFactory.getLogger(XMLParser.class);
 
-    protected final HashMap<String, Document> documentCache = new HashMap<String, Document>();
+    protected final HashMap<String, Document> documentCache = new HashMap<>();
 
 	public XMLParser() {}
 

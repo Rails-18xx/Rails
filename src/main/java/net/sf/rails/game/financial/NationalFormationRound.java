@@ -383,7 +383,7 @@ public class NationalFormationRound extends StockRound {
                     /* TODO: the false return value must be impossible. */
                     message = LocalText.getText("ExchangesBaseToken",
                             nationalToFound.getId(), minor.getId(),
-                            city.getRelatedNumber());
+                            city.getRelatedStationNumber());
                     ReportBuffer.add(this, message);
                     if (display) DisplayBuffer.add(this, message);
 

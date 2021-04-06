@@ -775,7 +775,7 @@ public class ORUIManager implements DialogOwner {
 
         action.setChosenHex(hex);
         if (upgrade.getSelectedStop() != null) { // Added for 18Scan, still necessary?
-            action.setChosenStation(upgrade.getSelectedStop().getRelatedNumber());
+            action.setChosenStation(upgrade.getSelectedStop().getRelatedStationNumber());
         }
 
         if (!orWindow.process(action)) {

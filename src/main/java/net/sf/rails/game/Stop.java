@@ -49,8 +49,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         PASS
     }
 
-    // FIXME: Only used for Rails1.x compatibility
-    private final IntegerState legacyNumber = IntegerState.create(this, "legacyNumber", 0);
+    private final IntegerState number = IntegerState.create(this, "legacyNumber", 0);
 
     // FIXME: Only used for Rails1.x compatibility
     private final HashSetState<Integer> previousNumbers = HashSetState.create(this, "previousNumbers");
@@ -62,7 +61,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         tokens.addModel(hex);
 
         if (station != null) {
-            legacyNumber.set(station.getNumber());
+            number.set(Integer.parseInt(id));
         }
     }
 
@@ -88,11 +87,8 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return (MapHex) super.getParent();
     }
 
-    // This should not be used for identification reasons
-    // It is better to use the getRelatedNumber()
-    @Deprecated
-    public String getSpecificId() {
-        return getParent().getId() + "/" + this.getRelatedNumber();
+    public String getComposedId() {
+        return getParent().getId() + "/" + this.getNumber();
     }
 
     public Station getRelatedStation() {
@@ -103,16 +99,12 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         relatedStation.set(station);
     }
 
-    // FIMXE: Due to Rails1.x compatibility use the legacy number
-    public int getRelatedNumber() {
-        // return relatedStation.value().getNumber();
-        return getLegacyNumber();
+    public int getRelatedStationNumber() {
+        return relatedStation.value().getNumber();
     }
 
-    // FIMXE: Due to Rails1.x compatibility
-    @Deprecated
-    public int getLegacyNumber() {
-        return legacyNumber.value();
+    public int getNumber() {
+        return number.value();
     }
 
     // FIMXE: Due to Rails1.x compatibility

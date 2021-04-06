@@ -5,24 +5,19 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.rails.game.OpenGamesManager;
-import net.sf.rails.util.GameLoader;
 import rails.game.action.PossibleAction;
 import rails.game.action.StartCompany;
 import net.sf.rails.game.CompanyManager;
 import net.sf.rails.game.MapHex;
 import net.sf.rails.game.MapManager;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Stop;
 import net.sf.rails.util.RailsObjects;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
 
 
 /**
@@ -77,7 +72,7 @@ public class StartCompany_18EU extends StartCompany {
             StringBuilder b = new StringBuilder();
             for ( Stop station : availableHomeStations ) {
                 if ( b.length() > 0 ) b.append(",");
-                b.append(station.getSpecificId());
+                b.append(station.getComposedId());
             }
             availableHomeStationNames = b.toString();
         } else {
@@ -121,7 +116,7 @@ public class StartCompany_18EU extends StartCompany {
 
     public void setHomeStation(Stop homeStation) {
         selectedHomeStation = homeStation;
-        selectedHomeStationName = homeStation.getSpecificId();
+        selectedHomeStationName = homeStation.getComposedId();
     }
 
     @Override
