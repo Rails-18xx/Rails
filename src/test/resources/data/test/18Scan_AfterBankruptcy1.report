@@ -515,17 +515,14 @@ Has,Alice,528
 Has,Bob,585
 StartStockRound,4
 HasPriority,Alice
-BUY_SHARE_LOG,Alice,10,DSB,DSB,75
+BuyPresidentLog,Alice,20,DSB,Pool,150
 IS_NOW_PRES_OF,Alice,DSB
 BUY_SHARE_LOG,Bob,10,S&NJ,S&NJ,165
 BUY_SHARE_LOG,Alice,10,DSB,DSB,75
-IS_NOW_PRES_OF,Alice,DSB
 BUY_SHARE_LOG,Bob,10,S&NJ,S&NJ,165
 BUY_SHARE_LOG,Alice,10,DSB,DSB,75
 BuyPresidentLog,Bob,20,SJ,Pool,200
 IS_NOW_PRES_OF,Bob,SJ
-BUY_SHARE_LOG,Alice,10,DSB,DSB,75
-PASSES,Bob
 BUY_SHARE_LOG,Alice,10,DSB,DSB,75
 PASSES,Bob
 BUY_SHARE_LOG,Alice,10,DSB,DSB,75
@@ -536,7 +533,7 @@ END_SR,4
 Has,1,250
 Has,2,220
 Has,3,0
-Has,DSB,572
+Has,DSB,422
 Has,S&NJ,827
 Has,VR,198
 Has,Alice,78
@@ -587,7 +584,7 @@ ORWorthIncrease,Charlie,4.1,0
 Has,1,310
 Has,2,270
 Has,3,0
-Has,DSB,272
+Has,DSB,122
 Has,S&NJ,939
 Has,VR,278
 Has,Alice,202
@@ -632,6 +629,7 @@ LaysTileAt,DSB,82,D11,E
 CompanyRevenue,DSB,150
 CompanyPaysOutFull,DSB,150
 Payout,Alice,90,6,10
+Payout,DSB,30,2,10
 PRICE_MOVES_LOG,DSB,70,C5,82,E5
  
 EndOfOperatingRound,4.2
@@ -641,7 +639,7 @@ ORWorthIncrease,Charlie,4.2,0
 Has,1,625
 Has,2,320
 Has,3,0
-Has,DSB,272
+Has,DSB,152
 Has,S&NJ,1063
 Has,VR,3
 Has,Alice,416

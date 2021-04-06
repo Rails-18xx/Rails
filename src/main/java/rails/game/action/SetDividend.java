@@ -195,7 +195,8 @@ public class SetDividend extends PossibleORAction implements Cloneable {
              Objects.equal(this.presetRevenue, action.presetRevenue)
                 && Objects.equal(this.presetCompanyTreasuryRevenue, action.presetCompanyTreasuryRevenue)
                 && Objects.equal(this.getMayUserSetRevenue(), action.getMayUserSetRevenue())
-                && Arrays.equals(this.getAllowedRevenueAllocations(), action.getAllowedRevenueAllocations())
+                     // Temporarily disabled
+                //&& Arrays.equals(this.getAllowedRevenueAllocations(), action.getAllowedRevenueAllocations())
                 && Objects.equal(this.requiredCash, action.requiredCash)
         ;
 

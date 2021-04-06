@@ -54,6 +54,7 @@
             <LayCost method="distance" cost="40" number="1"/>
             <HomeBase lay="whenFloated"/>
         </BaseTokens>
+        <Payout split="allowed" />
         <Trains limit="4,3,3,2"/>
         <CanUseSpecialProperties/>
     </CompanyType>
@@ -64,6 +65,7 @@
         <ShareUnit percentage="10"/>
         <Certificate type="President" shares="2"/>
         <Float percentage="60"/>
+        <Payout split="allowed"/>
         <Trains limit="4,4,4,3"/>
         <BaseTokens>
             <LayCost method="distance" cost="20" number="1"/>

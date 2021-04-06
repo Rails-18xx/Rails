@@ -1,13 +1,15 @@
-/**
- * 
- */
 package net.sf.rails.game.specific._1837;
 
+import com.google.common.collect.Lists;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.financial.StockMarket;
 import net.sf.rails.game.financial.StockSpace;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Martin Brumm
@@ -15,17 +17,55 @@ import net.sf.rails.game.financial.StockSpace;
  */
 public class StockMarket_1837 extends StockMarket {
 
-    /**
-     * @param parent
-     * @param id
-     */
+    private Map<StockSpace, Integer> parSpaceUsers = new HashMap<>();
+
     public StockMarket_1837(RailsRoot parent, String id) {
         super(parent, id);
     }
-    
+
+    /**
+     * Return start prices as list of prices
+     * but no more that two on each space
+     */
+    public List<Integer> getStartPrices() {
+        List<Integer> prices = Lists.newArrayList();
+        for (StockSpace space : startSpaces) {
+            if (canAddParSpaceUser(space)) {
+                prices.add(space.getPrice());
+            }
+        }
+        return prices;
+    }
+
+    @Override
+    public StockSpace getStartSpace(int price) {
+        StockSpace space = super.getStartSpace(price);
+        if (canAddParSpaceUser(space)) {
+            return space;
+        } else {
+            return null;
+        }
+    }
+
+    public void addParSpaceUser (StockSpace space) {
+        if (parSpaceUsers.get(space) == null) {
+            parSpaceUsers.put (space, 1);
+        } else {
+            parSpaceUsers.replace(space, parSpaceUsers.get(space) + 1);
+        }
+    }
+
+    public boolean canAddParSpaceUser (StockSpace space) {
+        Integer count = parSpaceUsers.get(space);
+        return count == null || count < 2;
+    }
+
+
+
+
     public void payOut(PublicCompany company, boolean split) {
         if (!split) {
-        moveRightOrUp(company);
+            moveRightOrUp(company);
         } else {
             moveRightandDown(company);
         }
@@ -48,12 +88,13 @@ public class StockMarket_1837 extends StockMarket {
             while (newcol >= numCols || getStockSpace(newrow, newcol) == null)
                 newcol--;
         }
-            
-        if ((newrow > row) || (newcol > col)) {
+
+        // Changed the "||" into "&&", because both movements must be possible
+        if ((newrow > row) && (newcol > col)) {
             newsquare = getStockSpace(newrow, newcol);
         }
         
-        if (newsquare != oldsquare) {
+        if (newsquare != null) {
             prepareMove(company, oldsquare, newsquare);
         }  
     }
@@ -61,10 +102,10 @@ public class StockMarket_1837 extends StockMarket {
     @Override
     public void soldOut(PublicCompany company) {
 
-        if (GameOption.getValue(this, GameOption.VARIANT).equalsIgnoreCase("Basegame")) {
-            if (company.getPresident().getPortfolioModel().getCertificates(company).size() >= 4) { //President has 4 shares (50% or more)
-                moveLeftAndUp(company);
-            }
+        if (GameOption.getValue(this, GameOption.VARIANT).matches("Basegame|1837-2ndEd.")
+                && company.getPresident().getPortfolioModel().getCertificates(company).size() >= 4) {
+            //President has 4 shares (50% or more) except in the Romoth variant
+            moveLeftAndUp(company);
         } else {
             moveUp(company);
         }
@@ -78,7 +119,7 @@ public class StockMarket_1837 extends StockMarket {
         if ((row > 0) && (col > 0)){
             newsquare = getStockSpace(row - 1, col -1);
         }
-        if (newsquare != null) prepareMove(company, oldsquare, newsquare); 
+        if (newsquare != null) prepareMove(company, oldsquare, newsquare);
         
     }
 

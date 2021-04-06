@@ -41,6 +41,23 @@ public class OperatingRound_18EU extends OperatingRound {
     }
 
     /**
+     * In 18EU, the part of the split revenue that goes to the
+     * company treasury is rounded down to the nearest multiple of 10
+     *
+     * @param revenue The revenue amount to be split.
+     * @return The part that is for the company
+     */
+    @Override
+    protected int calculateCompanyIncomeFromSplit (int revenue) {
+        if (operatingCompany.value().getType().getId().equalsIgnoreCase("Major")) {
+            return roundIncome(0.5 * revenue, Rounding.DOWN, ToMultipleOf.TEN);
+        } else {
+            return super.calculateCompanyIncomeFromSplit (revenue);
+        }
+    }
+
+
+    /**
      * Modify possibleActions to follow the Pullmann train trading rules.
      */
     @Override

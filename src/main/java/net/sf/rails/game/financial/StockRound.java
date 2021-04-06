@@ -266,6 +266,21 @@ public class StockRound extends Round {
         int number;
         int unitsForPrice;
 
+        /* Let's first check if there any presidents in the Pool.
+         * If so, that's the only cert of that company we may buy,
+         * except when the current player has one share.
+         *
+         * NOTE: this currently only affects 18Scan.
+         * Perhaps code related to this aspect should be moved to StockRound_18Scan
+         */
+        Map<PublicCompany, Boolean> presidentsInPool = new HashMap<>();
+        for (PublicCompany comp : gameManager.getAllPublicCompanies()) {
+            if (comp.getPresidentsShare().getOwner() == pool.getParent()) {
+                int sharesOfPlayer = currentPlayer.getPortfolioModel().getShares(comp);
+                presidentsInPool.put (comp, sharesOfPlayer == 1);
+            }
+        }
+
         int playerCash = currentPlayer.getCashValue();
 
         /* Get the next available IPO certificates */
@@ -279,6 +294,12 @@ public class StockRound extends Round {
 
             for (PublicCompany comp : map.keySet()) {
                 if (currentPlayer.hasSoldThisRound(comp)) continue;
+                if (presidentsInPool.keySet().contains(comp)) {
+                    // If president is in the pool, no cert from IPO may be bought
+                    // except if the player has one share
+                    if (!presidentsInPool.get(comp)) continue;
+                }
+
                 certs = map.get(comp);
                 // if (certs.isEmpty()) continue; // TODO: is this removal correct?
 
@@ -357,7 +378,7 @@ public class StockRound extends Round {
 
         /* Get the unique Pool certificates and check which ones can be bought */
         from = pool;
-        ImmutableSetMultimap<PublicCompany, PublicCertificate> map =
+        ImmutableSetMultimap<PublicCompany, PublicCertificate> certsPerCompanyMap =
                 from.getCertsPerCompanyMap();
         /* Allow for multiple share unit certificates (e.g. 1835) */
         PublicCertificate[] uniqueCerts;
@@ -368,19 +389,36 @@ public class StockRound extends Round {
         boolean president = false;
         int presShareSize = 0;
 
-        for (PublicCompany comp : map.keySet()) {
+        for (PublicCompany comp : certsPerCompanyMap.keySet()) {
             if (currentPlayer.hasSoldThisRound(comp)) continue;
-            certs = map.get(comp);
-            if (certs.isEmpty()) continue;
-
-            unitsForPrice = comp.getShareUnitsForSharePrice();
-            // In 18Scan, minors and president shares may end up in the Pool and be for sale
             if (comp.hasStockPrice()) {
                 stockSpace = comp.getCurrentSpace();
-                price = stockSpace.getPrice() / unitsForPrice;
+                price = stockSpace.getPrice() / comp.getShareUnitsForSharePrice();
             } else { // Minors may have a fixed price
                 price = comp.getFixedPrice();
             }
+
+            // If the president's share is in the Pool,
+            // that is the only one we may buy, except
+            // when the player has already one share
+            if (presidentsInPool.keySet().contains(comp)) {
+                cert = comp.getPresidentsShare();
+                int buyPrice = price * cert.getShares();
+                if (playerCash >= buyPrice) {
+                    BuyCertificate bc = new BuyCertificate(comp,
+                            cert.getShare(),
+                            pool.getParent(), buyPrice, 1);
+                    bc.setPresident(true);
+                    possibleActions.addFirst(bc);
+                    log.info("$$$ Buy president {} from pool: price={} shares={} share={}",
+                            comp, buyPrice, cert.getShares(), cert.getShare());
+                }
+                continue;
+            }
+
+            certs = certsPerCompanyMap.get(comp);
+            if (certs.isEmpty()) continue;
+
             shareUnit = comp.getShareUnit();
             maxNumberOfSharesToBuy
                     = maxAllowedNumberOfSharesToBuy(currentPlayer, comp, shareUnit);
@@ -462,12 +500,17 @@ public class StockRound extends Round {
             for (PublicCompany company : companyManager.getAllPublicCompanies()) {
                 // TODO: Has to be rewritten (director)
                 if (currentPlayer.hasSoldThisRound(company)) continue;
+                if (presidentsInPool.keySet().contains(company)) {
+                    // If president is in the pool, no cert from IPO may be bought
+                    // except if the player has one share
+                    if (!presidentsInPool.get(company)) continue;
+                }
+
                 certs = company.getPortfolioModel().getCertificates(company);
                 if (certs.isEmpty()) continue;
                 cert = Iterables.get(certs, 0);
                 if (!checkAgainstHoldLimit(currentPlayer, company, 1)) continue;
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, company,
-                        //cert.getShare()) < 1) continue;
                         company.getShareUnit()) < 1) continue;
                 stockSpace = company.getCurrentSpace();
                 if (!stockSpace.isNoCertLimit()
@@ -921,7 +964,7 @@ public class StockRound extends Round {
 
         // Check for any game-specific consequences
         // (such as making another company available in the IPO)
-        gameSpecificChecks(ipo, company);
+        gameSpecificChecks(ipo, company, true);
         // Check for any new companies to be made purchaseable
         checkForCompanyReleases();
 
@@ -1148,7 +1191,13 @@ public class StockRound extends Round {
     // overridden by:
     // StockRound 1825, 1856, 1880
     protected void gameSpecificChecks(PortfolioModel boughtFrom,
-                                      PublicCompany company) {}
+                                      PublicCompany company,
+                                      boolean justStarted) {}
+
+    protected void gameSpecificChecks(PortfolioModel boughtFrom,
+                                       PublicCompany company) {
+        gameSpecificChecks (boughtFrom, company, false /*actually: doesn't matter*/);
+    }
 
     protected void checkForCompanyReleases () {
 

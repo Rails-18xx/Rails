@@ -12,7 +12,6 @@ import java.util.List;
 import javax.swing.*;
 
 import net.sf.rails.game.*;
-import net.sf.rails.game.model.PortfolioOwner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,11 +36,11 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
     private JMenuBar menuBar;
     private JMenu fileMenu, editMenu, taskMenu;
     private JMenuItem saveItem, loadItem, closeItem, exitItem;
-    private JMenuItem trimItem, deleteItem, correctItem, copyItem, pasteItem;
+    private JMenuItem trimItem, deleteItem, editItem, copyItem, pasteItem;
     private JMenuItem changeBuyTrainFromFile;
 
-    private int correctedIndex;
-    private PossibleAction correctedAction;
+    private int editedIndex;
+    private PossibleAction editedAction;
 
     private StringBuffer headerText = new StringBuffer();
 
@@ -159,14 +158,14 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         deleteItem.setEnabled(true);
         editMenu.add(deleteItem);
 
-        correctItem = new ActionMenuItem("Correct");
-        correctItem.setActionCommand("CORRECT");
-        correctItem.setMnemonic(KeyEvent.VK_R);
-        correctItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
+        editItem = new ActionMenuItem("Edit");
+        editItem.setActionCommand("EDIT");
+        editItem.setMnemonic(KeyEvent.VK_E);
+        editItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
                 ActionEvent.ALT_MASK));
-        correctItem.addActionListener(this);
-        correctItem.setEnabled(true);
-        editMenu.add(correctItem);
+        editItem.addActionListener(this);
+        editItem.setEnabled(true);
+        editMenu.add(editItem);
 
         copyItem = new ActionMenuItem("Copy");
         copyItem.setActionCommand("COPY");
@@ -309,12 +308,12 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                     log.error("Number format exception for '{}'", result, e);
                 }
             }
-        } else if ("CORRECT".equalsIgnoreCase(command)) {
+        } else if ("EDIT".equalsIgnoreCase(command)) {
             String result = JOptionPane.showInputDialog("Enter action number to be corrected");
             if (Util.hasValue(result)) {
                 try {
                     int index = Integer.parseInt(result);
-                    correct (index);
+                    edit(index);
                 } catch (NumberFormatException e) {
                     log.error("Number format exception for '{}'", result, e);
                 }
@@ -374,19 +373,19 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         }
     }
 
-    private void correct (int index) {
-        correctedAction = gameLoader.getActions().get(index);
-        correctedIndex = index;
-        if (correctedAction instanceof BuyTrain) {
-            new BuyTrainDialog ((BuyTrain)correctedAction);
-        } else if (correctedAction instanceof LayTile) {
-            new LayTileDialog((LayTile) correctedAction);
-        } else if (correctedAction instanceof BuyCertificate) {
-            new BuyCertificateDialog ((BuyCertificate) correctedAction);
-        } else if (correctedAction instanceof SetDividend) {
-            new SetDividendDialog ((SetDividend) correctedAction);
+    private void edit(int index) {
+        editedAction = gameLoader.getActions().get(index);
+        editedIndex = index;
+        if (editedAction instanceof BuyTrain) {
+            new BuyTrainDialog ((BuyTrain) editedAction);
+        } else if (editedAction instanceof LayTile) {
+            new LayTileDialog((LayTile) editedAction);
+        } else if (editedAction instanceof BuyCertificate) {
+            new BuyCertificateDialog ((BuyCertificate) editedAction);
+        } else if (editedAction instanceof SetDividend) {
+            new SetDividendDialog ((SetDividend) editedAction);
         } else {
-            JOptionPane.showMessageDialog(this, "Action type '" + correctedAction.getClass().getSimpleName()
+            JOptionPane.showMessageDialog(this, "Action type '" + editedAction.getClass().getSimpleName()
                     + "' cannot yet be edited");
         }
     }
@@ -401,8 +400,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
     }
 
     protected void processCorrections (PossibleAction newAction) {
-        if (newAction != null && !newAction.equalsAsAction(correctedAction)) {
-            gameLoader.getActions().set(correctedIndex, newAction);
+        if (newAction != null && !newAction.equalsAsAction(editedAction)) {
+            gameLoader.getActions().set(editedIndex, newAction);
             setReportText(false);
         }
     }
@@ -566,7 +565,19 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             this.action = action;
             addTextField(this, "President",
                     action.isPresident(),
-                    String.valueOf(action.isPresident()));  // 0
+                    String.valueOf(action.isPresident()));
+            addTextField(this, "Share size",
+                    action.getSharePerCertificate(),
+                    String.valueOf(action.getSharePerCertificate()));
+            addTextField (this, "Buy price",
+                    action.getPrice(),
+                    String.valueOf(action.getPrice()));
+            addTextField (this, "From (e.g. Bank_Pool)",
+                    action.getFromPortfolio(),
+                    action.getFromPortfolio() != null
+                        ? action.getFromPortfolio().getUniqueName()
+                        : "null");
+            // NOTE: enter pool as "Bank_Pool"
             finish();
         }
 
@@ -581,7 +592,25 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             } catch (NumberFormatException e) {
                 log.error ("Error in president: {}", input, e);
             }
-
+            try {
+                input = ((JTextField)inputElements.get(1)).getText();
+                int shareSize = Integer.valueOf(input);
+                action.setSharePerCert(shareSize);
+            } catch (NumberFormatException e) {
+                log.error ("Error in share size: {}", input, e);
+            }
+            try {
+                input = ((JTextField)inputElements.get(2)).getText();
+                int price = Integer.valueOf(input);
+                action.setPrice(price);
+            } catch (NumberFormatException e) {
+                log.error ("Error in price: {}", input, e);
+            }
+            input = ((JTextField)inputElements.get(3)).getText();
+            action.setFromByName(input);
+            if (action.getFromPortfolio() == null) {
+                log.error ("Error in from: {}", input);
+            }
             log.info("Action is {}", action);
             return action;
 

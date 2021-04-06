@@ -6,19 +6,17 @@ import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 import rails.game.action.PossibleAction;
 import rails.game.action.PossibleORAction;
-import rails.game.action.StartItemAction;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author martin
  *
  */
-public class SetHomeHexLocation2 extends PossibleORAction {
+public class SetHomeHexLocation extends PossibleORAction {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,8 +35,8 @@ public class SetHomeHexLocation2 extends PossibleORAction {
      * @param company
      * @param hexNames
      */
-    public SetHomeHexLocation2(RailsRoot root, PublicCompany company,
-                               String hexNames) {
+    public SetHomeHexLocation(RailsRoot root, PublicCompany company,
+                              String hexNames) {
         super(root);
         this.company = company;
         this.companyName = company.getId();
@@ -97,7 +95,7 @@ public class SetHomeHexLocation2 extends PossibleORAction {
         if (!super.equalsAs(pa, asOption)) return false;
 
         // check asOption attributes
-        SetHomeHexLocation2 action = (SetHomeHexLocation2)pa;
+        SetHomeHexLocation action = (SetHomeHexLocation)pa;
         boolean options = Objects.equal(this.company, action.company);
         // finish if asOptions check
         if (asOption) return options;

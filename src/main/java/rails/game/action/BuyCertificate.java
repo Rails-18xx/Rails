@@ -92,6 +92,11 @@ public class BuyCertificate extends PossibleAction {
         return price;
     }
 
+    /* Only to enable fixing an action in ListAndFixSavedFiles */
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
     public PublicCompany getCompany() {
         return company;
     }
@@ -102,6 +107,11 @@ public class BuyCertificate extends PossibleAction {
 
     public int getSharePerCertificate() {
         return sharePerCert;
+    }
+
+    /* Only to enable fixing an action in ListAndFixSavedFiles */
+    public void setSharePerCert(int sharePerCert) {
+        this.sharePerCert = sharePerCert;
     }
 
     public int getSharesPerCertificate() {
@@ -122,6 +132,12 @@ public class BuyCertificate extends PossibleAction {
 
     public void setPresident (boolean newValue) {
         this.president = newValue;
+    }
+
+    /* Only to enable fixing an action in ListAndFixSavedFiles */
+    public void setFromByName(String from) {
+        this.fromName = from;
+        this.from = root.getPortfolioManager().getPortfolioByUniqueName(from);
     }
 
     @Override

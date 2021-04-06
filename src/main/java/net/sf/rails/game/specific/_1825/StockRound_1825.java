@@ -38,7 +38,7 @@ public class StockRound_1825 extends StockRound {
      * @param company The company of which a share has been traded.
      */
     @Override
-    protected void gameSpecificChecks (PortfolioModel boughtFrom, PublicCompany company) {
+    protected void gameSpecificChecks (PortfolioModel boughtFrom, PublicCompany company, boolean arg) {
         if (boughtFrom != ipo) return;
 
         int sharesInIPO = ipo.getShare(company);

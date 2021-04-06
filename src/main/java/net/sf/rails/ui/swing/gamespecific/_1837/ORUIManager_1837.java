@@ -14,7 +14,7 @@ import net.sf.rails.ui.swing.ORUIManager;
 import rails.game.action.LayTile;
 import rails.game.action.PossibleActions;
 import rails.game.action.SetDividend;
-import rails.game.specific._1837.SetHomeHexLocation2;
+import rails.game.specific._1837.SetHomeHexLocation;
 
 import java.util.Set;
 
@@ -43,6 +43,7 @@ public class ORUIManager_1837 extends ORUIManager {
 
         boolean hasDirectCompanyIncomeInOR
                 = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
+        log.debug("+++ Got {}", hasDirectCompanyIncomeInOR);
 
         int amount, bonusAmount, dividend;
 
@@ -115,14 +116,14 @@ public class ORUIManager_1837 extends ORUIManager {
                                                GameDef.OrStep orStep,
                                                PossibleActions possibleActions) {
         if (orComp.getId().equalsIgnoreCase("S5")
-              && possibleActions.contains(SetHomeHexLocation2.class)) {
-            SetHomeHexLocation2 action = possibleActions.getType(SetHomeHexLocation2.class).get(0);
+              && possibleActions.contains(SetHomeHexLocation.class)) {
+            SetHomeHexLocation action = possibleActions.getType(SetHomeHexLocation.class).get(0);
             requestHomeHex(action);
 
         }
 
     }
-    private boolean requestHomeHex(SetHomeHexLocation2 action) {
+    private boolean requestHomeHex(SetHomeHexLocation action) {
 
         RadioButtonDialog dialog = new RadioButtonDialog(
                 COMPANY_START_HEX_DIALOG, this, orWindow,
@@ -135,7 +136,7 @@ public class ORUIManager_1837 extends ORUIManager {
 
     @Override
     public void dialogActionPerformed() {
-        if (getCurrentDialogAction() instanceof SetHomeHexLocation2) {
+        if (getCurrentDialogAction() instanceof SetHomeHexLocation) {
             handleStartHex();
         } else {
             super.dialogActionPerformed();
@@ -145,8 +146,8 @@ public class ORUIManager_1837 extends ORUIManager {
 
     private void handleStartHex() {
         RadioButtonDialog dialog = (RadioButtonDialog) getCurrentDialog();
-        SetHomeHexLocation2 action =
-                (SetHomeHexLocation2) getCurrentDialogAction();
+        SetHomeHexLocation action =
+                (SetHomeHexLocation) getCurrentDialogAction();
 
         int index = dialog.getSelectedOption();
         if (index >= 0) {

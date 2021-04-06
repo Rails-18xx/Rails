@@ -1,6 +1,9 @@
 package net.sf.rails.game.specific._1837;
 
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.state.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,11 +16,6 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.financial.StockRound;
-import net.sf.rails.game.state.ArrayListState;
-import net.sf.rails.game.state.BooleanState;
-import net.sf.rails.game.state.Currency;
-import net.sf.rails.game.state.IntegerState;
-import net.sf.rails.game.state.MoneyOwner;
 
 /**
  * @author martin
@@ -32,15 +30,11 @@ public class StockRound_1837 extends StockRound {
             this, "discardingCompanyIndex");
     protected final BooleanState discardingTrains = new BooleanState(this,
             "discardingTrains");
-    protected final BooleanState exchangedCoalCompanies = new BooleanState(this,
-            "exchangdCoalCompanies");
+    //protected final BooleanState exchangedCoalCompanies = new BooleanState(this,
+    //        "exchangedCoalCompanies");
 
     protected PublicCompany[] discardingCompanies;
 
-    /**
-     * @param parent
-     * @param id
-     */
     public StockRound_1837(GameManager parent, String id) {
         super(parent, id);
     }
@@ -51,13 +45,31 @@ public class StockRound_1837 extends StockRound {
         if (discardingTrains.value()) {
             discardingTrains.set(false);
         }
-        //if (((GameManager_1837) gameManager).getPlayerToStartCERound()!= null) {
-        //    ((GameManager_1837) gameManager).setPlayerToStartCERound(null);
-        //}
-        // Check for certificates to be released
-        gameSpecificChecks (ipo, null);
-
     }
+
+    @Override
+    protected void gameSpecificChecks(PortfolioModel boughtFrom,
+                                      PublicCompany company,
+                                      boolean justStarted) {
+        if (justStarted) {
+            StockSpace parSpace = company.getCurrentSpace();
+            ((StockMarket_1837) stockMarket).addParSpaceUser(parSpace);
+        }
+    }
+
+    /**
+     * Share price goes down 1 space for any number of shares sold.
+     */
+    @Override
+    // Copied from 1835
+    protected void adjustSharePrice (PublicCompany company, Owner seller, int numberSold, boolean soldBefore) {
+        // No more changes if it has already dropped
+        if (!soldBefore) {
+            super.adjustSharePrice (company, seller,1, soldBefore);
+        }
+    }
+
+
 
     @Override
     public boolean setPossibleActions() {
@@ -105,8 +117,8 @@ public class StockRound_1837 extends StockRound {
      * that case, the MergeCompanies.major attribute is null, which never occurs
      * in normal stock rounds).
      *
-     * @param action
-     * @return
+     * @param action The MergeCompanies chosen action
+     * @return True if the merge was successful
      */
     protected boolean mergeCompanies(MergeCompanies action) {
 
@@ -120,9 +132,9 @@ public class StockRound_1837 extends StockRound {
      * Complemented by a shorter version in subclass CoalExchangeRound.
      * TODO: to be reconsidered once Nationals formation has been tested.
      *
-     * @param minor
-     * @param major
-     * @return
+     * @param minor The minor (or coal company) to be merged into...
+     * @param major ...the related major company
+     * @return True if the merge was successful
      */
     protected boolean mergeCompanies(PublicCompany minor, PublicCompany major) {
         PublicCertificate cert = null;

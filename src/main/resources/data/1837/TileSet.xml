@@ -15,7 +15,7 @@
         <Tile id="-10"><!-- 1 city -->
                 <Upgrade id="5,57"/>
         </Tile>
-        <Tile id="-20" relayBaseTokens="yes"><!-- 2 cities -->
+        <Tile id="-20"><!-- relayBaseTokens="yes"--> <!-- 2 cities -->
                 <Upgrade id="404"/>
         </Tile>
         <Tile id="-42"/>
@@ -132,7 +132,7 @@
                 <Upgrade id="406,429"/>
         </Tile>
         <Tile id="404" quantity="4">
-                <Upgrade id="408" relayBaseTokens="yes"/>
+                <Upgrade id="408"/> <!--relayBaseTokens="yes"/-->
         </Tile>
 
         <!-- green tiles -->
@@ -203,7 +203,7 @@
                 <Upgrade id="430"/>
         </Tile>
         <Tile id="408" quantity="4">
-                <Upgrade id="432" relayBaseTokens="yes"/>
+                <Upgrade id="432"/> <!--relayBaseTokens="yes"/-->
         </Tile>
         <Tile id="410" quantity="2"/>
         <Tile id="411" quantity="2"/>

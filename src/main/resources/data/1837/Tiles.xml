@@ -112,15 +112,15 @@
 		<Track from="city2" gauge="normal" to="side4"/>
 	</Tile>
 	<Tile colour="yellow" id="-37158" name="-37158">
-		<Station id="city1" position="301" type="Town" value="10"/>
-		<Track from="city1" gauge="normal" to="side2"/>
-		<Track from="city1" gauge="normal" to="side4"/>
+		<Station id="city1" position="001" type="Town" value="10"/>
+		<Track from="city1" gauge="normal" to="side5"/>
+		<Track from="city1" gauge="normal" to="side1"/>
 	</Tile>
 	<Tile colour="green" id="-37206" name="Fuenfkirchen">
 		<Station id="city1" position="0" slots="1" type="City" value="30"/>
-		<Track from="city1" gauge="normal" to="side1"/>
-		<Track from="city1" gauge="normal" to="side2"/>
+		<Track from="city1" gauge="normal" to="side4"/>
 		<Track from="city1" gauge="normal" to="side5"/>
+		<Track from="city1" gauge="normal" to="side2"/>
 	</Tile>
 	<Tile colour="yellow" id="-37402" name="Prag">
 		<Station id="city1" position="0" slots="1" type="City" value="20"/>

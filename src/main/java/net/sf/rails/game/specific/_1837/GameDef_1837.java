@@ -14,5 +14,5 @@ public class GameDef_1837 {
     public static final String Minor1 = "Minor1";
 
     public static final String ItalyHexes = "K1,K3,K7,K9,L2,L4,L6,L8,M3,M5,M7";
-    public static final String BzHHexes = "L16,L18,L20,L22,M17,M19,M21,N18,N20";
+    public static final String BzHHexes = "L16,L18,L20,M17,M19,M21,N18,N20";
 }

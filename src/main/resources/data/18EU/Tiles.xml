@@ -37,6 +37,7 @@
     <Tile colour="yellow" id="-3005" name="B/V">
         <Station id="city1" position="102" slots="1" type="City" city="B/V" value="30"/>
         <Station id="city2" position="402" slots="1" type="City" city="B/V" value="30"/>
+        <Station id="city3" position="602" slots="1" type="City"/>
         <Track from="side3" gauge="normal" to="city2"/>
         <Track from="side0" gauge="normal" to="city1"/>
     </Tile>
