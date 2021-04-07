@@ -137,6 +137,14 @@
     <Company name="EPP" longname="Eisenbahn Pilsen-Priesen" type="Coal" price="100" tokens="1" relatedCompany="BK"
              fgColour="000000" bgColour="FFFFFF">
         <Home hex="E11"/>
+        <Info key="MineRevenue">
+            <IfVariant value="Basegame,Romoth">
+                <Attributes parm="20,40"/>
+            </IfVariant>
+            <IfVariant value="1837-2ndEd.">
+                <Attributes parm="30,50"/>
+            </IfVariant>
+        </Info>
         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="BK" share="10"/>
         </SpecialProperty>
@@ -144,6 +152,7 @@
     <Company name="RGTE" longname="Reichenberg-Gablonz-Tannwalder-Eisenbahn" type="Coal" price="100" tokens="1"
              relatedCompany="BK" fgColour="000000" bgColour="FFFFFF">
         <Home hex="A13"/>
+        <Info key="MineRevenue" parm="30,50"/>
         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="BK" share="10"/>
         </SpecialProperty>
@@ -151,6 +160,7 @@
     <Company name="EOD" longname="Eisenbahn Oderberg-Dombran" type="Coal" price="100" tokens="1" relatedCompany="MS"
              fgColour="000000" bgColour="FFFFFF">
         <Home hex="C19"/>
+        <Info key="MineRevenue" parm="20,40"/>
         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="MS" share="10"/>
         </SpecialProperty>
@@ -158,6 +168,7 @@
     <Company name="EKT" longname="Eisenbahn Karwin-Teschen" type="Coal" price="100" tokens="1" relatedCompany="MS"
              fgColour="000000" bgColour="FFFFFF">
         <Home hex="C21"/>
+        <Info key="MineRevenue" parm="25,45"/>
         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="MS" share="10"/>
         </SpecialProperty>
@@ -165,6 +176,7 @@
     <Company name="MLB" longname="Mosty-Lemberg Bahn" type="Coal" price="100" tokens="1" relatedCompany="CL"
              fgColour="000000" bgColour="FFFFFF">
         <Home hex="B32"/>
+        <Info key="MineRevenue" parm="20,50"/>
         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="CL" share="10"/>
         </SpecialProperty>
@@ -172,6 +184,7 @@
     <Company name="ZKB" longname="Zarnesti-Kronstadt Bahn" type="Coal" price="100" tokens="1" relatedCompany="SB"
              fgColour="000000" bgColour="FFFFFF">
         <Home hex="J34"/>
+        <Info key="MineRevenue" parm="25,50"/>
         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="SB" share="10"/>
         </SpecialProperty>
@@ -179,6 +192,14 @@
     <Company name="SPB" longname="Simeria-Petroseni Bahn" type="Coal" price="100" tokens="1" relatedCompany="SB"
              fgColour="000000" bgColour="FFFFFF">
         <Home hex="K31"/>
+        <Info key="MineRevenue">
+            <IfVariant value="Basegame,Romoth">
+                <Attributes parm="30,50"/>
+            </IfVariant>
+            <IfVariant value="1837-2ndEd.">
+                <Attributes parm="20,50"/>
+            </IfVariant>
+        </Info>
         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="SB" share="10"/>
         </SpecialProperty>
@@ -186,6 +207,7 @@
     <Company name="LRB" longname="Lugoj-Resita Bahn" type="Coal" price="100" tokens="1" relatedCompany="TH"
              fgColour="000000" bgColour="FFFFFF">
         <Home hex="L30"/>
+        <Info key="MineRevenue" parm="25,50"/>
         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="TH" share="10"/>
         </SpecialProperty>
@@ -193,6 +215,7 @@
     <Company name="BB" longname="Bosna-Bahn" type="Coal" price="100" tokens="1" relatedCompany="BH" fgColour="000000"
              bgColour="FFFFFF">
         <Home hex="P20"/>
+        <Info key="MineRevenue" parm="35,60"/>
         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="BH" share="10"/>
         </SpecialProperty>
@@ -200,6 +223,7 @@
     <Company name="EHS" longname="Eisenbahn Hatvan-Salgotarjan" type="Coal" price="100" tokens="1" relatedCompany="TH"
              fgColour="000000" bgColour="FFFFFF">
         <Home hex="F26"/>
+        <Info key="MineRevenue" parm="20,40"/>
         <SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="TH" share="10"/>
         </SpecialProperty>
