@@ -2008,7 +2008,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                     }
                     if (openStops.size() == 1) {
                         // Just one spot: lay the home base there.
-                        homeCityNumber = openStops.get(0).getRelatedNumber();
+                        homeCityNumber = openStops.get(0).getRelatedStationNumber();
                     } else {
                         // ??
                         // TODO Will player be asked??

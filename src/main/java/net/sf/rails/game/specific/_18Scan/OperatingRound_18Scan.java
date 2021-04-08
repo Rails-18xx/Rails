@@ -239,7 +239,7 @@ public class OperatingRound_18Scan extends OperatingRound {
                 if (!hex.hasTokenOfCompany(sj) && hex.layBaseToken(sj, city)) {
                     message = LocalText.getText("ExchangesBaseToken",
                             SJ, minor.getId(),
-                            city.getSpecificId());
+                            city.getComposedId());
                     ReportBuffer.add(this, message);
 
                     sj.layBaseToken(hex, 0); // Already laid, but this handles some consequences

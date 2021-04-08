@@ -410,10 +410,10 @@ public class StockRound_18EU extends StockRound {
         int homeCityNumber = 1;
         if (minor != null) {
             homeHex = minor.getHomeHexes().get(0);
-            homeCityNumber = homeHex.getStopOfBaseToken(minor).getRelatedNumber();
+            homeCityNumber = homeHex.getStopOfBaseToken(minor).getRelatedStationNumber();
         } else if (selectedHomeCity != null) {
             homeHex = selectedHomeCity.getParent();
-            homeCityNumber = selectedHomeCity.getRelatedNumber();
+            homeCityNumber = selectedHomeCity.getRelatedStationNumber();
             //Bugfix for Error reported by John Galt- Mar 31 2012 ; Martin Brumm
             //The maphex needs to have the homes map set with the company value.
             homeHex.addHome(company, selectedHomeCity);

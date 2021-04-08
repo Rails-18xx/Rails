@@ -775,7 +775,7 @@ public class ORUIManager implements DialogOwner {
 
         action.setChosenHex(hex);
         if (upgrade.getSelectedStop() != null) { // Added for 18Scan, still necessary?
-            action.setChosenStation(upgrade.getSelectedStop().getRelatedNumber());
+            action.setChosenStation(upgrade.getSelectedStop().getRelatedStationNumber());
         }
 
         if (!orWindow.process(action)) {
@@ -1146,45 +1146,12 @@ public class ORUIManager implements DialogOwner {
         }
 
         if (train != null) {
-            // FIXME: See below
-            // Remember the old off-board revenue step
-//            int oldOffBoardRevenueStep =
-//                gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
 
             buyAction.setPricePaid(price);
             buyAction.setExchangedTrain(exchangedTrain);
             if (buyAction.mustPresidentAddCash()) {
                 buyAction.setAddedCash(buyAction.getPresidentCashToAdd());
             }
-
-            if (orWindow.process(buyAction)) {
-                // FIXME: Rails 2.0 Is there still a functionality involved that we require?
-
-                // Check if any trains must be discarded
-                // Keep looping until all relevant companies have acted
-
-                // TODO This must be split off from here, as in the future
-                // different clients may handle the discards of each company.
-                /*
-                while (possibleActions.contains(DiscardTrain.class)) {
-                    // Check if there are any forced discards;
-                    // otherwise, nothing to do here
-                    DiscardTrain dt =
-                            possibleActions.getType(DiscardTrain.class).get(0);
-                    if (dt == null) break;
-
-                    gameUIManager.discardTrains(dt);
-                }
-                 */
-            }
-
-            // FIXME: Rails 2.0 are offboard Revenues still automatically updated
-//            int newOffBoardRevenueStep =
-//                gameUIManager.getCurrentPhase().getOffBoardRevenueStep();
-//            if (newOffBoardRevenueStep != oldOffBoardRevenueStep) {
-//                map.updateOffBoardToolTips();
-//            }
-
         }
     }
 
@@ -1516,30 +1483,6 @@ public class ORUIManager implements DialogOwner {
         orPanel.enableRedo(redoAction);
 
         orPanel.initSpecialActions();
-
-        // TODO: Rails 2.0, this should not be required anymore as tile and token lays are possible anytime now
-
-//        // Bonus tokens (and sometimes base tokens) can be laid anytime,
-//        // so we must also handle these outside the token laying step.
-//        if (possibleActions.contains(LayToken.class)
-//                && orStep != GameDef.OrStep.LAY_TOKEN) {
-//
-//            List<LayToken> tokenActions =
-//                possibleActions.getType(LayToken.class);
-//            for (LayToken tAction : tokenActions) {
-//
-//                if (tAction instanceof LayBaseToken
-//                        && ((LayBaseToken)tAction).getType() == LayBaseToken.HOME_CITY) {
-//
-//                    // FIXME: Does this work
-//                    orWindow.requestFocus();
-//                    orPanel.initTokenLayingStep();
-//                } else {
-//                    SpecialProperty stl = tAction.getSpecialProperty();
-//                    if (stl != null) orPanel.addSpecialAction(tAction, stl.toMenu());
-//                }
-//            }
-//        }
 
         // Can bonus tokens be bought?
         if (possibleActions.contains(BuyBonusToken.class)) {

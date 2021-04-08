@@ -546,6 +546,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         BiMap<Stop, Station> stopsToNewStations = HashBiMap.create();
         Set<Stop> droppedStops = Sets.newHashSet();
         SetView<Stop> unassignedStops;
+        Map<Stop, Station> oldRelations = stops.view().inverse();
 
         if (relaidTokens != null) {
             // Check for manual handling of tokens
@@ -604,18 +605,20 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                         moveTokens(stop, otherStop);
                         droppedStops.add(stop);
                         // FIXME: Due to Rails1.x compatibility
-                        otherStop.addPreviousNumbers(stop.getLegacyNumber());
+                        otherStop.addPreviousNumbers(stop.getNumber());
                     } else {
                         // otherwise use the existing stop
                         stopsToNewStations.put(stop, newStation);
                     }
-                    log.debug("{}: station {} to {}", debugText, oldStation, newStation);
                 }
+                log.debug("{}: stop {} from {} to {}",
+                        debugText, stop.getNumber(), oldStation, newStation);
             }
         }
 
         for (Stop s : getStops()) {
-            log.debug ("Hex {} has stop {}", getId(), s);
+            log.debug ("Hex {} has stop {} related to station {}",
+                    getId(), s.getNumber(), s.getRelatedStationNumber());
         }
         for (Station s : currentTile.value().getStations()) {
             log.debug ("Hex {} old tile {} has station {}", getId(),currentTile.value().getURI(), s);
@@ -632,6 +635,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 if (stopsToNewStations.containsValue(station)) continue;
                 // New Station found without an existing Stop: create a new Stop
                 Stop stop = Stop.create(this, ++stopNumber, station);
+                log.debug ("Creating stop {} for station {}", stopNumber, station.getNumber());
                 stop.initStopParameters(station);
                 stops.put (station, stop);
                 stopsToNewStations.put(stop, station);
@@ -652,7 +656,17 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         if (!unassignedStations.isEmpty()) {
             log.error("Unassigned Stations :{}", unassignedStations);
         }
+
         executeTileLay(newTile, newRotation, stopsToNewStations);
+
+        for (Stop stop : stops.viewValues()) {
+            Station oldStation = oldRelations.get(stop);
+            log.debug ("Stop {} station from {} to {}, connections to {}",
+                    stop.getNumber(),
+                    (oldStation != null ? oldStation.getNumber() : 0),
+                    stop.getRelatedStationNumber(),
+                    getConnectionString(stop.getRelatedStation()));
+        }
 
     }
 
@@ -663,12 +677,12 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 // No duplicate tokens allowed in one city, so move to free
                 // tokens
                 token.moveTo(company);
-                log.debug("Duplicate token {} moved from {} to {}", token.getUniqueId(), origin.getSpecificId(), company.getId());
+                log.debug("Duplicate token {} moved from {} to {}", token.getUniqueId(), origin.getComposedId(), company.getId());
                 ReportBuffer.add(this, LocalText.getText(
                         "DuplicateTokenRemoved", company.getId(), getId()));
             } else {
                 token.moveTo(target);
-                log.debug("Token {} moved from {} to {}", token.getUniqueId(), origin.getSpecificId(), target.getSpecificId());
+                log.debug("Token {} moved from {} to {}", token.getUniqueId(), origin.getComposedId(), target.getComposedId());
             }
         }
     }
@@ -689,7 +703,9 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
             currentTile.value().remove(this);
         }
 
-        log.debug("On hex {} replacing tile {}/{} by {}/{}", getId(), currentTile.value().getId(), currentTileRotation, newTile.getId(), newOrientation);
+        log.debug("On hex {} replacing tile {}/{} by {}/{}", getId(), currentTile.value().getId(),
+                currentTileRotation.value().getTrackPointNumber(),
+                newTile.getId(), newOrientation.getTrackPointNumber());
 
         newTile.add(this);
         currentTile.set(newTile);
@@ -700,7 +716,9 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
             for ( Map.Entry<Stop, Station> entry  : newStops.entrySet()) {
                 stops.put(entry.getValue(), entry.getKey());
                 entry.getKey().setRelatedStation(entry.getValue());
-                log.debug("Tile #{} station {} has tracks to {}", newTile.getId(), entry.getValue().getNumber(), getConnectionString(entry.getValue()));
+                log.debug("Tile #{} stop {} station {} has tracks to {}", newTile.getId(),
+                        entry.getKey().getNumber(),
+                        entry.getValue().getNumber(), getConnectionString(entry.getValue()));
             }
         }
     }
@@ -814,7 +832,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     // numbers
     public Stop getRelatedStop(int stationNb) {
         for (Stop stop : stops) {
-            if (stop.getLegacyNumber() == stationNb) return stop;
+            if (stop.getNumber() == stationNb) return stop;
         }
         for (Stop stop : stops) {
             if (stop.checkPreviousNumbers(stationNb)) return stop;
@@ -841,7 +859,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 log.debug("Added home of {} in hex {} city not yet decided", company, this);
             } else {
                 homes.put(company, home);
-                log.debug("Added home of {} set to {} id= {}", company, home, home.getSpecificId());
+                log.debug("Added home of {} set to {} id= {}", company, home, home.getComposedId());
             }
         }
     }

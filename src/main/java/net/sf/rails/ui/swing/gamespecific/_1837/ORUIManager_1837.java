@@ -43,22 +43,21 @@ public class ORUIManager_1837 extends ORUIManager {
 
         boolean hasDirectCompanyIncomeInOR
                 = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
-        log.debug("+++ Got {}", hasDirectCompanyIncomeInOR);
 
-        int amount, bonusAmount, dividend;
+        int amount, treasuryAmount, dividend;
 
         if (command.equals(ORPanel.SET_REVENUE_CMD)) {
             amount = orPanel.getRevenue(orCompIndex);
-            bonusAmount = orPanel.getCompanyTreasuryBonusRevenue(orCompIndex);
+            treasuryAmount = orPanel.getCompanyTreasuryBonusRevenue(orCompIndex);
             if (hasDirectCompanyIncomeInOR) {
-                dividend = amount - bonusAmount;
+                dividend = amount - treasuryAmount;
                 orPanel.setDividend(orCompIndex, dividend);
             }
             orPanel.stopRevenueUpdate();
             log.debug("Set revenue amount is {}", amount);
-            log.debug("The Bonus for the company treasury is {}", bonusAmount);
+            log.debug("The Bonus for the company treasury is {}", treasuryAmount);
             action.setActualRevenue(amount);
-            action.setActualCompanyTreasuryRevenue(bonusAmount);
+            action.setActualCompanyTreasuryRevenue(treasuryAmount);
 
             // notify sound manager of set revenue amount as soon as
             // set revenue is pressed (not waiting for the completion
@@ -75,7 +74,7 @@ public class ORUIManager_1837 extends ORUIManager {
 
                 // Locally update revenue if we don't inform the server yet.
                 orPanel.setRevenue(orCompIndex, amount);
-                orPanel.setTreasuryBonusRevenue(orCompIndex, bonusAmount);
+                orPanel.setTreasuryBonusRevenue(orCompIndex, treasuryAmount);
             }
         } else {
             // The revenue allocation has been selected

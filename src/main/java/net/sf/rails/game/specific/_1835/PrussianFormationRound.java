@@ -379,7 +379,7 @@ public class PrussianFormationRound extends StockRound {
                     /* TODO: the false return value must be impossible. */
                     message = LocalText.getText("ExchangesBaseToken",
                             PR_ID, minor.getId(),
-                            city.getSpecificId());
+                            city.getComposedId());
                     ReportBuffer.add(this, message);
                     if (display) DisplayBuffer.add(this, message);
 

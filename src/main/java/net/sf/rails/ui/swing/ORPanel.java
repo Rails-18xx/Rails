@@ -163,7 +163,6 @@ implements ActionListener, KeyListener, RevenueListener {
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS);
         hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);
         hasDirectCompanyIncomeInOR = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
-        log.debug("+++ Got {}", hasDirectCompanyIncomeInOR);
 
         initButtonPanel();
         gbc = new GridBagConstraints();
@@ -973,21 +972,7 @@ implements ActionListener, KeyListener, RevenueListener {
             }
 
             if (executedAction instanceof SetDividend) {
-                // Hide the spinner here, because we might not return
-                // via InitPayoutStep, where this would otherwise be done.
-                /*
-                if(hasDirectCompanyIncomeInOr) {
-                    setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
-                            directIncomeSelect[orCompIndex], directIncomeRevenue[orCompIndex], false);
-                } else {
-                    setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
-                }*/
 
-                SetDividend action = (SetDividend) executedAction;
-                // The spinner value may have changed, copy value to the text version
-                if (revenueSelect[orCompIndex].isVisible()) {
-                    revenue[orCompIndex].setText(format(getRevenue(orCompIndex)));
-                }
                 selectRevenueSpinner(false);
                 // If revenue is zero, the company apparently has no route,
                 // because without a train we wouldn't be here.
@@ -1054,7 +1039,7 @@ implements ActionListener, KeyListener, RevenueListener {
             } catch (NumberFormatException e) {} // do nothing
             orWindow.getMapPanel().zoom(true);
             orWindow.getMapPanel().zoom(false);
-        } else if (command == NETWORK_INFO_CMD) {
+        } else if (command.equalsIgnoreCase(NETWORK_INFO_CMD)) {
             JMenuItem item = (JMenuItem)actor.getSource();
             executeNetworkInfo(item.getText());
         } else {
@@ -1071,6 +1056,13 @@ implements ActionListener, KeyListener, RevenueListener {
     public void setRevenue(int orCompIndex, int amount) {
         revenueSelect[orCompIndex].setValue(amount);
         revenue[orCompIndex].setText(format(amount));
+    }
+
+    public void setDirectRevenue(int orCompIndex, int amount) {
+        if (hasDirectCompanyIncomeInOR) {
+            directIncomeSelect[orCompIndex].setValue(amount);
+            directIncomeRevenue[orCompIndex].setText(format(amount));
+        }
     }
 
     public void setDividend (int orCompIndex, int amount) {
@@ -1107,6 +1099,7 @@ implements ActionListener, KeyListener, RevenueListener {
         removeAllHighlights();
     }
 
+    // *** Apparently not used
     public void resetORCompanyTurn(int orCompIndex) {
         for (int i = 0; i < nc; i++) {
             /*
@@ -1179,7 +1172,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
             //only consider revenue quantification for the set revenue step and only
             //if suggest option is on
-            isRevenueValueToBeSet = isSetRevenueStep ? isSuggestRevenue() : false;
+            isRevenueValueToBeSet = isSetRevenueStep && isSuggestRevenue();
 
             RailsRoot root = orUIManager.getGameUIManager().getRoot();
             revenueAdapter = RevenueAdapter.createRevenueAdapter(root, orComp, root.getPhaseManager().getCurrentPhase());
@@ -1248,19 +1241,18 @@ implements ActionListener, KeyListener, RevenueListener {
 
         revenueCaption.setHighlight(true);
         setHighlight(revenueSelect[orCompIndex],true);
-        //decision[orCompIndex].setText("");  // Somehow this prevents the actual decision to be shown
-        setRevenue (orCompIndex, action.getPresetRevenue());
-        //revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
-        //revenue[orCompIndex].setText(format(action.getPresetRevenue()));
+
+    // *** We don't really need the presets.
+    //    setRevenue (orCompIndex, action.getPresetRevenue());
+    //    if (hasDirectCompanyIncomeInOR) {
+    //        setDirectRevenue (orCompIndex, action.getPresetCompanyTreasuryRevenue());
+    //        setDividend(orCompIndex,
+    //                action.getPresetRevenue() - action.getPresetCompanyTreasuryRevenue());
+    //    }
+    //    //revenueSelect[orCompIndex].setValue(action.getPresetRevenue());
+    //    //revenue[orCompIndex].setText(format(action.getPresetRevenue()));
         selectRevenueSpinner (true);
-        /*
-        if ( hasDirectCompanyIncomeInOr) {
-            directIncomeSelect[orCompIndex].setValue(action.getPresetCompanyTreasuryRevenue());
-            setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], directIncomeSelect[orCompIndex],
-                    directIncomeRevenue[orCompIndex], true);
-        } else {
-            setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],true);
-        }*/
+
         button1.setRailsIcon(RailsIcon.SET_REVENUE);
         button1.setActionCommand(SET_REVENUE_CMD);
         button1.setPossibleAction(action);
@@ -1279,14 +1271,12 @@ implements ActionListener, KeyListener, RevenueListener {
         if (isRevenueValueToBeSet) {
             setRevenue (orCompIndex, bestRevenue);
 
-            //setTreasuryBonusRevenue (orCompIndex, specialRevenue);
-            //revenueSelect[orCompIndex].setValue(bestRevenue);
-            //revenue[orCompIndex].setText(format(bestRevenue));
             /*
              * This needs to have another value for the automatic setting of a Direct Income for a Company
              */
             if(hasDirectCompanyIncomeInOR) {
-                directIncomeSelect[orCompIndex].setValue(specialRevenue);
+                setDirectRevenue(orCompIndex, specialRevenue);
+                setDividend(orCompIndex, bestRevenue - specialRevenue);
             }
         }
         if (finalResult) {
@@ -1321,14 +1311,6 @@ implements ActionListener, KeyListener, RevenueListener {
         setHighlight(decision[orCompIndex],true);
 
         SetDividend clonedAction;
-        /*
-        if(hasDirectCompanyIncomeInOr) {
-            setSelect(revenue[orCompIndex], revenueSelect[orCompIndex],
-                    directIncomeSelect[orCompIndex], directIncomeRevenue[orCompIndex], false);
-        } else {
-            setSelect(revenue[orCompIndex], revenueSelect[orCompIndex], false);
-        }
-        */
         selectRevenueSpinner(false);
         if (withhold) {
             button1.setRailsIcon(RailsIcon.WITHHOLD);
@@ -1444,6 +1426,7 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     // Added because Skip is normally not set if there are no Base tokens to lay
+    // *** Apparently not used
     public void enableSkip (NullAction action) {
         orUIManager.getUpgradePanel().setActive(); // Only to display Skip.
         // For unknown reasons the below does not work.
@@ -1521,21 +1504,29 @@ implements ActionListener, KeyListener, RevenueListener {
     }
 
     private void selectRevenueSpinner (int compIndex, boolean active) {
-        boolean revActive = active && showSpinner;
-        revenue[compIndex].setVisible(!revActive);
-        revenueSelect[compIndex].setVisible(revActive);
-        if (revActive) {
-            int oldValue = parseOldValue(revenue[compIndex].getText());
-            revenueSelect[compIndex].setValue(oldValue);
+        int oldRevenue;
+        int oldDirectRevenue;
+
+        boolean spinnerActivated = active && showSpinner;
+        revenue[compIndex].setVisible(!spinnerActivated);
+        setHighlight(revenue[compIndex], active && !showSpinner);
+        revenueSelect[compIndex].setVisible(spinnerActivated);
+        setHighlight(revenueSelect[compIndex],spinnerActivated);
+
+        oldRevenue = parseOldValue(revenue[compIndex].getText());
+        if (spinnerActivated) {
+            revenueSelect[compIndex].setValue(oldRevenue);
         }
-        boolean dciActive = !active && showSpinner;
         if (hasDirectCompanyIncomeInOR) {
-            directIncomeRevenue[compIndex].setVisible(dciActive);
-            directIncomeSelect[compIndex].setVisible(!dciActive);
-            if (!dciActive) {
-                int oldValue = parseOldValue(directIncomeRevenue[compIndex].getText());
-                directIncomeSelect[compIndex].setValue(oldValue);
+            directIncomeRevenue[compIndex].setVisible(!spinnerActivated);
+            setHighlight(directIncomeRevenue[compIndex], active && !showSpinner);
+            directIncomeSelect[compIndex].setVisible(spinnerActivated);
+            setHighlight(directIncomeSelect[compIndex], spinnerActivated);
+            oldDirectRevenue = parseOldValue(directIncomeRevenue[compIndex].getText());
+            if (spinnerActivated) {
+                directIncomeSelect[compIndex].setValue(oldDirectRevenue);
             }
+            setHighlight(dividend[compIndex], active);
         }
     }
 
