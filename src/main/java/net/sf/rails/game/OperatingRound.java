@@ -2811,7 +2811,7 @@ public class OperatingRound extends Round implements Observer {
             // Round up
             result = multiple * ((int) (amount/multiple + 0.51));
         }
-        log.info("$$$ [{},{}] {} rounded to {}", rounding, multipleOf, amount, result);
+        log.debug("$$$ [{},{}] {} rounded to {}", rounding, multipleOf, amount, result);
         return result;
     }
 
@@ -2826,7 +2826,7 @@ public class OperatingRound extends Round implements Observer {
             // First round, then multiply
             result = shares * roundIncome(payoutPerShare, rounding, ToMultipleOf.ONE);
         }
-        log.info("$$$ [{},{}] {}*{} rounded to {}", rounding, beforeOrAfter, shares, payoutPerShare, result);
+        log.debug("$$$ [{},{}] {}*{} rounded to {}", rounding, beforeOrAfter, shares, payoutPerShare, result);
         return result;
     }
 

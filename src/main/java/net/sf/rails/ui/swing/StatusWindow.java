@@ -178,14 +178,6 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         menuItem.setEnabled(true);
         fileMenu.add(menuItem);
 
-        menuItem = new JMenuItem(LocalText.getText("SaveGameStatus"));
-        menuItem.setActionCommand(SAVESTATUS_CMD);
-        menuItem.setMnemonic(KeyEvent.VK_G);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
-        menuItem.addActionListener(this);
-        menuItem.setEnabled(true);
-        fileMenu.add(menuItem);
-
         // export menu item
         //        exportItem = new ActionMenuItem(LocalText.getText("EXPORT"));
         //        exportItem.setActionCommand(EXPORT_CMD);
@@ -305,7 +297,15 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             saveLogsItem.setActionCommand("Save Logs");
             saveLogsItem.addActionListener(this);
             developerMenu.add(saveLogsItem);
-        }
+
+            menuItem = new JMenuItem(LocalText.getText("SaveGameStatus"));
+            menuItem.setActionCommand(SAVESTATUS_CMD);
+            menuItem.setMnemonic(KeyEvent.VK_G);
+            menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
+            menuItem.addActionListener(this);
+            menuItem.setEnabled(true);
+            developerMenu.add(menuItem);
+       }
 
         setJMenuBar(menuBar);
 
@@ -721,7 +721,7 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         } else if ( command.equals("Save Logs")) {
             gameUIManager.saveLogs();
         } else if (executedAction == null) {
-            ;
+            
         } else if (executedAction instanceof GameAction) {
             switch (((GameAction) executedAction).getMode()) {
             case SAVE:
