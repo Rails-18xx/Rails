@@ -1152,6 +1152,7 @@ public class ORUIManager implements DialogOwner {
             if (buyAction.mustPresidentAddCash()) {
                 buyAction.setAddedCash(buyAction.getPresidentCashToAdd());
             }
+            orWindow.process(buyAction);
         }
     }
 
