@@ -815,19 +815,25 @@ public class OperatingRound extends Round implements Observer {
             }
 
             if (newStep == GameDef.OrStep.LAY_TOKEN) {
+                /*
                 List<SpecialProperty> bonuses = gameManager.getCommonSpecialProperties();
-                boolean bonusTokensForSale = bonuses.size() > 0
-                        // We must (perhaps temporarily) make an exception for 1856,
-                        // because otherwise its test files no longer get loaded.
-                        // BTW the 1856 rules don't state when bonus tokens can be bought.
-                        // TODO: Need to check how Rails handles that game.
-                        // TODO: Also need to consider the "when" value.
-                        && !"1856".equals(getRoot().getGameName());
+                boolean bonusTokensForSale =
+                        //bonuses.size() > 0
+                        // FIXME The above condition is probably wrong, it likely should be:
+                        !getSpecialProperties(SpecialBonusTokenLay.class).isEmpty()
+                        // but that needs to be sorted out precisely.
+                        // The intended effect is that the TOKEN_LAY step is skipped
+                        // if there are no base or bonus tokens to be laid.
+                        //
+                        // Note: removed temporary exception for 1856 14apr2021
+                        ;
                 if (company.getNumberOfFreeBaseTokens() == 0
-                    && !bonusTokensForSale) {
+                        && !bonusTokensForSale) {  */
+                if (!canLayAnyTokens(true)) {
                     log.debug("OR skips {}: No tokens available", newStep);
                     continue;
                 }
+
             }
 
             if (newStep == GameDef.OrStep.CALC_REVENUE) {
@@ -2170,8 +2176,9 @@ public class OperatingRound extends Round implements Observer {
             }
             setSpecialTokenLays();
             log.debug("There are now {} special token lay objects", currentSpecialTokenLays.size());
-            if (currentNormalTokenLays.isEmpty()
-                    && currentSpecialTokenLays.isEmpty()) {
+
+            // Can more tokens be laid? Otherwise, next step
+            if (!canLayAnyTokens(false)) {
                 nextStep();
             }
 
@@ -2197,11 +2204,15 @@ public class OperatingRound extends Round implements Observer {
     }
 
     protected void setNormalTokenLays() {
+        PublicCompany company = operatingCompany.value();
         /* Normal token lays */
         currentNormalTokenLays.clear();
 
         /* For now, we allow one token of the currently operating company */
-        if (operatingCompany.value().getNumberOfFreeBaseTokens() > 0) {
+        if (company.getNumberOfFreeBaseTokens() > 0
+                // Can the company pay for one? This only works for BASE_COST_SEQUENCE
+                //&& company.getBaseTokenLayCost(null) <= company.getCash()
+        ) {
             currentNormalTokenLays.add(new LayBaseToken(getRoot(), (List<MapHex>) null));
         }
 
@@ -2311,6 +2322,10 @@ public class OperatingRound extends Round implements Observer {
                 // FIXME: currentSpecialTokenLays can't actually contain a LayBonusToken
                 //currentSpecialTokenLays.remove(action);
             }
+            // Copied from layBaseToken. Does this help??
+            if (!canLayAnyTokens(false)) {
+                nextStep();
+            }
 
         }
 
@@ -2380,10 +2395,9 @@ public class OperatingRound extends Round implements Observer {
 
         sbt.setExercised();
 
-        if (currentNormalTokenLays.size() == 0
-                && currentSpecialTokenLays.size() == 0
-                && gameManager.getCommonSpecialProperties().size() == 0)
+        if (getStep() == GameDef.OrStep.LAY_TOKEN && !canLayAnyTokens(false)) {
             nextStep();
+        }
 
         return true;
     }
@@ -2399,6 +2413,21 @@ public class OperatingRound extends Round implements Observer {
         for (SpecialBonusTokenLay stl : getSpecialProperties(SpecialBonusTokenLay.class)) {
             possibleActions.add(new LayBonusToken(getRoot(), stl, stl.getToken()));
         }
+    }
+
+    /*
+     * =======================================
+     *  5.3. ALL LAYABLE TOKENS
+     * =======================================
+     */
+
+    protected boolean canLayAnyTokens (boolean resetTokenLays) {
+        if (resetTokenLays) setNormalTokenLays();
+        if (!currentNormalTokenLays.isEmpty()) return true;
+        if (resetTokenLays) setSpecialTokenLays();
+        if (!currentSpecialTokenLays.isEmpty()) return true;
+        if (!getSpecialProperties(SpecialBonusTokenLay.class).isEmpty()) return true;
+        return false;
     }
 
     /*

@@ -1162,7 +1162,7 @@ ExchangesBaseToken,CGR,CPR,M4/1
 ExchangesBaseToken,CGR,WR,O16/1
 ExchangesBaseToken,CGR,LPS,C14/1
 DiscardsBaseToken,CGR,CA,C14/1
-DiscardsBaseToken,CGR,GT,N11/1
+DiscardsBaseToken,CGR,GT,N11/2
 Has,THB,402
 Has,CV,380
 Has,CGR,208

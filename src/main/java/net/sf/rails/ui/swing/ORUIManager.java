@@ -1455,7 +1455,11 @@ public class ORUIManager implements DialogOwner {
                     orPanel.enableDone(action);
                     break;
                 case SKIP:
-                    //orPanel.enableSkip(action);
+                    // Was disabled, because actionless steps
+                    // are normally skipped. But sometines (18Scan) not,
+                    // because of a confusion about bonus token layability.
+                    // See OperatingRound.nextStep().
+                    orPanel.enableSkip(action);
                     break;
                 default:
                     break;
