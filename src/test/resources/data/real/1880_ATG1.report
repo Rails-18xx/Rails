@@ -530,12 +530,12 @@ PASSES,Lonny
 PASSES,Ronnie
  
 END_SR,3
+SoldOut,Baocheng Railway
 PRICE_MOVES_LOG,BCR,110,F2,115,F1
-SoldOut,Baocheng Railway,110,F2,115,F1
+SoldOut,Najiang Railway
 PRICE_MOVES_LOG,NJR,110,F2,115,F1
-SoldOut,Najiang Railway,110,F2,115,F1
+SoldOut,Jingha Railway
 PRICE_MOVES_LOG,JHA,85,E6,90,E5
-SoldOut,Jingha Railway,85,E6,90,E5
 Has,Baocheng Railway,10
 Has,Jingha Railway,160
 Has,Jinghu     Railway,60
@@ -1346,10 +1346,10 @@ Autopasses,Ronnie
 PASSES,Stefan
  
 END_SR,8
+SoldOut,Najiang Railway
 PRICE_STAYS_LOG,NJR,130,I1
-SoldOutNoRaise,Najiang Railway,130,I1
+SoldOut,Qinshen     Railway
 PRICE_MOVES_LOG,QSR,100,H6,105,H5
-SoldOut,Qinshen     Railway,100,H6,105,H5
 Has,Baocheng Railway,168
 Has,Jingha Railway,2
 Has,Jinghu     Railway,0
@@ -1636,16 +1636,16 @@ Autopasses,Stefan
 PASSES,Helmut
  
 END_SR,9
+SoldOut,Najiang Railway
 PRICE_MOVES_LOG,NJR,125,I2,130,I1
-SoldOut,Najiang Railway,125,I2,130,I1
+SoldOut,Hukun Railway
 PRICE_MOVES_LOG,HKR,120,J5,125,J4
-SoldOut,Hukun Railway,120,J5,125,J4
+SoldOut,Baocheng Railway
 PRICE_MOVES_LOG,BCR,115,I4,120,I3
-SoldOut,Baocheng Railway,115,I4,120,I3
+SoldOut,Qinshen     Railway
 PRICE_MOVES_LOG,QSR,110,I5,115,I4
-SoldOut,Qinshen     Railway,110,I5,115,I4
+SoldOut,Chengkun Railway
 PRICE_MOVES_LOG,CKR,85,F7,90,F6
-SoldOut,Chengkun Railway,85,F7,90,F6
 Has,Baocheng Railway,168
 Has,Jingha Railway,332
 Has,Jinghu     Railway,390
@@ -1792,16 +1792,16 @@ PASSES,Stefan
 PASSES,Helmut
  
 END_SR,10
+SoldOut,Najiang Railway
 PRICE_STAYS_LOG,NJR,130,I1
-SoldOutNoRaise,Najiang Railway,130,I1
+SoldOut,Qinshen     Railway
 PRICE_MOVES_LOG,QSR,125,J4,130,J3
-SoldOut,Qinshen     Railway,125,J4,130,J3
+SoldOut,Hukun Railway
 PRICE_MOVES_LOG,HKR,120,J5,125,J4
-SoldOut,Hukun Railway,120,J5,125,J4
+SoldOut,Baocheng Railway
 PRICE_MOVES_LOG,BCR,110,I5,115,I4
-SoldOut,Baocheng Railway,110,I5,115,I4
+SoldOut,Chengkun Railway
 PRICE_MOVES_LOG,CKR,90,F6,95,F5
-SoldOut,Chengkun Railway,90,F6,95,F5
 Has,Baocheng Railway,168
 Has,Jingha Railway,720
 Has,Jinghu     Railway,2

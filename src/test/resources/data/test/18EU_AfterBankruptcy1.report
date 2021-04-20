@@ -785,8 +785,8 @@ PASSES,Martin
 PASSES,Arne
  
 END_SR,2
+SoldOut,FS
 PRICE_MOVES_LOG,FS,75,C4,82,C3
-SoldOut,FS,75,C4,82,C3
 Has,1,45
 Has,2,68
 Has,4,51

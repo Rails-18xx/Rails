@@ -1755,22 +1755,9 @@ public class StockRound extends Round {
             /* Check if any companies are sold out. */
             for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
                 if (company.hasStarted() && company.hasStockPrice() && company.isSoldOut()) {
-                    StockSpace oldSpace = company.getCurrentSpace();
+                    ReportBuffer.add(this,LocalText.getText("SoldOut",
+                            company.getId()));
                     stockMarket.soldOut(company);
-                    StockSpace newSpace = company.getCurrentSpace();
-                    if (newSpace != oldSpace) {
-                        ReportBuffer.add(this, LocalText.getText("SoldOut",
-                                company.getId(),
-                                Bank.format(this, oldSpace.getPrice()),
-                                oldSpace.getId(),
-                                Bank.format(this, newSpace.getPrice()),
-                                newSpace.getId()));
-                    } else {
-                        ReportBuffer.add(this, LocalText.getText("SoldOutNoRaise",
-                                company.getId(),
-                                Bank.format(this, newSpace.getPrice()),
-                                newSpace.getId()));
-                    }
                 }
             }
         }
