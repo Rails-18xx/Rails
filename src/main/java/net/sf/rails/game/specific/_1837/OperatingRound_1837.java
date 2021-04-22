@@ -295,9 +295,9 @@ public class OperatingRound_1837 extends OperatingRound {
             }
 
             // Check chosen revenue distribution
+            revenueAllocation = action.getRevenueAllocation();
             if (amount > 0) {
                 // Check the allocation type index (see SetDividend for values)
-                revenueAllocation = action.getRevenueAllocation();
                 if (revenueAllocation < 0
                         || revenueAllocation >= SetDividend.NUM_OPTIONS) {
                     errMsg =
@@ -321,7 +321,7 @@ public class OperatingRound_1837 extends OperatingRound {
                             LocalText.getText(SetDividend.getAllocationNameKey(revenueAllocation));
                     break;
                 }
-            } else {
+            } else if (revenueAllocation != SetDividend.NO_ROUTE){
                 // If there is no revenue, use withhold.
                 action.setRevenueAllocation(SetDividend.WITHHOLD);
             }
@@ -493,8 +493,8 @@ public class OperatingRound_1837 extends OperatingRound {
     /**
      * New standard method to allow discarding trains when at the train limit.
      * Note: 18EU has a different procedure for discarding Pullmann trains.
-     * @param company
-     * @param newTrain
+     * @param company Operating company
+     * @param newTrain Train to get via exchange
      */
     @Override
     protected void addOtherExchangesAtTrainLimit(PublicCompany company, Train newTrain) {

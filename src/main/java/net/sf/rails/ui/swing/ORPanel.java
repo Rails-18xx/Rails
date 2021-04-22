@@ -977,15 +977,18 @@ implements ActionListener, KeyListener, RevenueListener {
                 // If revenue is zero, the company apparently has no route,
                 // because without a train we wouldn't be here.
                 if (getRevenue(orCompIndex) == 0) {
-                    decision[orCompIndex].setText(LocalText.getText("NoRoute"));
-                /*  Does not work well.
-                 *  TODO to be revisited
+                    //    decision[orCompIndex].setText(LocalText.getText("NO_ROUTE"));
+                /* Disabled, we should only set this value from the model
+                   via a new allocation type */
+                    ((SetDividend) executedAction).setRevenueAllocation(SetDividend.NO_ROUTE);
+                }
+                /* Disabled, we should only set this value from the model.
                 } else if (action.getAllowedAllocations().length == 1) {
                     int allocation = action.getAllowedAllocations()[0];
                     if (allocation >= 0 && allocation < SetDividend.NUM_OPTIONS) {
                         decision[orCompIndex].setText(SetDividend.getAllocationNameKey(allocation));
-                    }*/
-                }
+                    }
+                }*/
             }
 
             orUIManager.processAction(command, executedActions);

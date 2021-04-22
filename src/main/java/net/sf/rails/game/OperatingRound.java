@@ -2476,7 +2476,8 @@ public class OperatingRound extends Round implements Observer {
      * @return True if valid
      */
     protected String validateSetRevenueAndDividend (SetDividend action) {
-        return validateSetRevenueAndDividend (action, true);
+        return validateSetRevenueAndDividend (action,
+                action.getRevenueAllocation() != SetDividend.NO_ROUTE);
     }
 
     /**
@@ -2530,9 +2531,9 @@ public class OperatingRound extends Round implements Observer {
             }
 
             // Check chosen revenue distribution
+            revenueAllocation = action.getRevenueAllocation();
             if (amount > 0) {
                 // Check the allocation type index (see SetDividend for values)
-                revenueAllocation = action.getRevenueAllocation();
                 if (revenueAllocation < 0
                         || revenueAllocation >= SetDividend.NUM_OPTIONS) {
                     errMsg =
@@ -2558,7 +2559,7 @@ public class OperatingRound extends Round implements Observer {
                         break;
                     }
                 }
-            } else {
+            } else if (revenueAllocation != SetDividend.NO_ROUTE){
                // If there is no revenue, use withhold.
                 action.setRevenueAllocation(SetDividend.WITHHOLD);
             }
@@ -2741,6 +2742,7 @@ public class OperatingRound extends Round implements Observer {
 
     /**
      * Withhold a given amount of revenue (and store it).
+     * Note: the amount can be zero if the company had no route.
      *
      * @param amount The revenue amount.
      */
@@ -2749,7 +2751,7 @@ public class OperatingRound extends Round implements Observer {
         PublicCompany company = operatingCompany.value();
 
         // Payout revenue to company
-        Currency.fromBank(amount, company);
+        if (amount > 0) Currency.fromBank(amount, company);
 
         // Move the token
         company.withhold(amount);
