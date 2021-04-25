@@ -20,6 +20,8 @@ import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.ChangeActionOwner;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Purse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Player extends RailsAbstractItem implements RailsMoneyOwner, PortfolioOwner, ChangeActionOwner, Comparable<Player> {
 
@@ -41,6 +43,8 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
     private final IntegerState worthAtORStart = IntegerState.create(this, "worthAtORStart");
     private final Map<PublicCompany, SoldThisRoundModel> soldThisRound = Maps.newHashMap();
     private final PlayerNameModel playerNameModel = PlayerNameModel.create(this);
+
+    private static final Logger log = LoggerFactory.getLogger(Player.class);
 
     private Player(PlayerManager parent, String id, int index) {
         super(parent, id);
@@ -84,6 +88,7 @@ public class Player extends RailsAbstractItem implements RailsMoneyOwner, Portfo
                 for (PrivateCompany priv : getPortfolioModel().getPrivateCompanies()) {
                     worth += priv.getBasePrice();
                 }
+                log.debug ("$$$$$ Player {} worth is {}", id, worth);
                 return worth;
             }
 

@@ -12,9 +12,13 @@ import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.IntegerState;
 import net.sf.rails.game.state.Owner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PublicCompany_1837 extends PublicCompany {
-   
+
+    private static final Logger log = LoggerFactory.getLogger(PublicCompany_1837.class);
+
     public PublicCompany_1837(RailsItem parent, String id) {
         super(parent, id);
     }
@@ -26,12 +30,7 @@ public class PublicCompany_1837 extends PublicCompany {
     public boolean mayBuyTrainType(Train train) {
         // Coal trains in 1837 are only allowed to buy/operate G-Trains
         if (this.getType().getId().equals("Coal")){
-            if (train.getType().getCategory().equalsIgnoreCase("goods")){
-                return true;
-            }
-            else {
-                return false;
-            }
+            return train.getType().getCategory().equalsIgnoreCase("goods");
         }
         return super.mayBuyTrainType(train);
     }
@@ -68,8 +67,26 @@ public class PublicCompany_1837 extends PublicCompany {
     }
 
     /**
-     * @param coalMineTreasuryBonus the coalMineTreasuryBonus to set
+     * Get the company price to be used in calculating a player's worth,
+     * not only at game end but also during the game, for UI display.
+     * Implements a proposal by John David Galt
+     * @return Company share price to be used in calculating player worth.
      */
-    
-    
+    @Override
+    public int getGameEndPrice() {
+        String type = getType().getId();
+        int price = 0;
+        switch (type) {
+            case "Coal":
+            case "Minor1":
+            case "Minor2":
+                price = getRelatedPublicCompany().getMarketPrice();
+                break;
+            case "Major":
+            case "National":
+                price = getMarketPrice();
+        }
+        log.debug("$$$ {} price is {}", getId(), price);
+        return price;
+    }
 }
