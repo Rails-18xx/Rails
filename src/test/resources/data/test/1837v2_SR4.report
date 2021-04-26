@@ -406,7 +406,7 @@ StartOfPhase,3
  
 EndOfOperatingRound,1.1
 ORWorthIncrease,Alice,1.1,67
-ORWorthIncrease,Bob,1.1,27
+ORWorthIncrease,Bob,1.1,21
 ORWorthIncrease,Charlie,1.1,31
 Has,EPP,0
 Has,RGTE,0
@@ -686,14 +686,14 @@ LaysTileAt,BK,406,C11,SW
 CompanyRevenue,BK,80
 CompanyDividesEarnings,BK,80,50,30
 CompanyPaysOutFull,BK,50
+Payout,Bob,10,2,10
 Payout,Alice,5,1,10
 Payout,Charlie,15,3,10
-Payout,Bob,10,2,10
 PRICE_MOVES_LOG,BK,82,D4,85,E4
  
 EndOfOperatingRound,2.1
 ORWorthIncrease,Alice,2.1,305
-ORWorthIncrease,Bob,2.1,261
+ORWorthIncrease,Bob,2.1,264
 ORWorthIncrease,Charlie,2.1,201
 Has,RGTE,45
 Has,EOD,50
@@ -910,8 +910,8 @@ LaysTileAt,BK,26,G15,W
 CompanyRevenue,BK,270
 CompanyDividesEarnings,BK,270,240,30
 CompanyPaysOutFull,BK,240
-Payout,Alice,24,1,10
 Payout,Bob,48,2,10
+Payout,Alice,24,1,10
 Payout,Charlie,72,3,10
 PRICE_MOVES_LOG,BK,85,E4,89,F4
 ExchangesTrain,BK,1G,2G,IPO,280
@@ -919,7 +919,7 @@ FirstTrainBought,2G
  
 EndOfOperatingRound,2.2
 ORWorthIncrease,Alice,2.2,360
-ORWorthIncrease,Bob,2.2,346
+ORWorthIncrease,Bob,2.2,350
 ORWorthIncrease,Charlie,2.2,296
 Has,RGTE,100
 Has,EOD,100
@@ -1248,7 +1248,7 @@ Payout,Charlie,192,6,10
 PRICE_MOVES_LOG,BK,91,E3,95,F3
  
 EndOfOperatingRound,3.1
-ORWorthIncrease,Alice,3.1,435
+ORWorthIncrease,Alice,3.1,445
 ORWorthIncrease,Bob,3.1,419
 ORWorthIncrease,Charlie,3.1,414
 Has,EOD,150
@@ -1467,7 +1467,7 @@ Payout,Charlie,48,3,10
 PRICE_MOVES_LOG,GT,93,D2,97,E2
  
 EndOfOperatingRound,3.2
-ORWorthIncrease,Alice,3.2,660
+ORWorthIncrease,Alice,3.2,667
 ORWorthIncrease,Bob,3.2,521
 ORWorthIncrease,Charlie,3.2,537
 Has,EOD,195
