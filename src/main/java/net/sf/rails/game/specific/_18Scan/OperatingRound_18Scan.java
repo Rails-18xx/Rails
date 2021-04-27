@@ -67,7 +67,7 @@ public class OperatingRound_18Scan extends OperatingRound {
         if (step == GameDef.OrStep.CALC_REVENUE && company.isOfType("Minor")
                 && !company.hasTrains()) {
             int amount = 10;
-            String report = LocalText.getText("NoTrainsButBankPaysAnyway",
+            String report = LocalText.getText("NoRunButBankPaysAnyway",
                     company.getId(),
                     Bank.format(this, amount),
                     company.getPresident().getId());
@@ -98,7 +98,7 @@ public class OperatingRound_18Scan extends OperatingRound {
         if (!Util.hasValue(errMsg) && company.isOfType("Minor")
                 && action.getActualRevenue() == 0) {
             int revenue = 10;
-            String report = LocalText.getText("NoTrainsButBankPaysAnyway",
+            String report = LocalText.getText("NoRunButBankPaysAnyway",
                     company.getId(),
                     Bank.format(this, revenue),
                     company.getPresident().getId());

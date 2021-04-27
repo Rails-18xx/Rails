@@ -26,11 +26,12 @@ public class SetDividend extends PossibleORAction implements Cloneable {
     public static final int SPLIT = 1;
     public static final int PAYOUT = 2;
     public static final int NO_TRAIN = 3;
-    public static final int NUM_OPTIONS = 4;
+    public static final int NO_ROUTE = 4;
+    public static final int NUM_OPTIONS = 5;
 
     /** Allocation name keys in the resource bundle */
     protected static final String[] allocationNameKeys =
-            new String[] { "WITHHOLD", "SPLIT", "PAYOUT", "NO_TRAIN" };
+            new String[] { "WITHHOLD", "SPLIT", "PAYOUT", "NO_TRAIN", "NO_ROUTE" };
 
     /*--- Server-side settings ---*/
     /**
@@ -195,8 +196,7 @@ public class SetDividend extends PossibleORAction implements Cloneable {
              Objects.equal(this.presetRevenue, action.presetRevenue)
                 && Objects.equal(this.presetCompanyTreasuryRevenue, action.presetCompanyTreasuryRevenue)
                 && Objects.equal(this.getMayUserSetRevenue(), action.getMayUserSetRevenue())
-                     // Temporarily disabled
-                //&& Arrays.equals(this.getAllowedRevenueAllocations(), action.getAllowedRevenueAllocations())
+                && Arrays.equals(this.getAllowedRevenueAllocations(), action.getAllowedRevenueAllocations())
                 && Objects.equal(this.requiredCash, action.requiredCash)
         ;
 

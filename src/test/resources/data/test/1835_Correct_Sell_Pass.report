@@ -481,8 +481,8 @@ Autopasses,Lonny
 PASSES,Stefan
  
 END_SR,3
+SoldOut,SX
 PRICE_MOVES_LOG,SX,86,C5,88,C4
-SoldOut,SX,86,C5,88,C4
 Has,M1,60
 Has,M2,110
 Has,M3,70
@@ -760,8 +760,8 @@ Autopasses,Ronnie
 PASSES,Helmut
  
 END_SR,4
+SoldOut,BY
 PRICE_MOVES_LOG,BY,90,E7,92,E6
-SoldOut,BY,90,E7,92,E6
 Has,M1,80
 Has,M2,0
 Has,M3,140
@@ -1045,8 +1045,8 @@ PASSES,Ronnie
 PASSES,Helmut
  
 END_SR,5
+SoldOut,BY
 PRICE_MOVES_LOG,BY,92,E6,96,E5
-SoldOut,BY,92,E6,96,E5
 Has,M5,181
 Has,M6,210
 Has,BY,135

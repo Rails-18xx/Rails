@@ -73,7 +73,7 @@
             <HomeBase lay="whenFloated"/>
         </BaseTokens>
     </CompanyType>
-    <Company name="KwB" longname="Karawankenbahn" type="Private" basePrice="170" revenue="25">
+    <Company name="KwB" longname="Karawankenbahn" type="Private" revenue="25">
         <Blocking hex="J12"/>
         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
                          class="net.sf.rails.game.special.SpecialSingleTileLay">
@@ -82,7 +82,7 @@
         </SpecialProperty>
         <Info key="ComesWithPresidency" parm="S2,100"/>
     </Company>
-    <Company name="BrB" longname="Brennerbahn" type="Private" basePrice="140" revenue="15">
+    <Company name="BrB" longname="Brennerbahn" type="Private" revenue="15">
         <Blocking hex="J6"/>
         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
                          class="net.sf.rails.game.special.SpecialSingleTileLay">
@@ -91,7 +91,7 @@
         </SpecialProperty>
         <Info key="ComesWithPresidency" parm="S4,100"/>
     </Company>
-    <Company name="WB" longname="Wocheinerbahn" type="Private" basePrice="130" revenue="30">
+    <Company name="WB" longname="Wocheinerbahn" type="Private" revenue="30">
         <Blocking hex="K11"/>
         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
                          class="net.sf.rails.game.special.SpecialSingleTileLay">
@@ -99,7 +99,7 @@
                                   extra="no" free="yes" connected="yes"/>
         </SpecialProperty>
     </Company>
-    <Company name="AB" longname="Arlbergbahn" type="Private" basePrice="185" revenue="20">
+    <Company name="AB" longname="Arlbergbahn" type="Private" revenue="20">
         <Blocking hex="I5"/>
         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
                          class="net.sf.rails.game.special.SpecialSingleTileLay">
@@ -108,7 +108,7 @@
         </SpecialProperty>
         <Info key="ComesWithPresidency" parm="S3,100"/>
     </Company>
-    <Company name="KB" longname="Karstbahn" type="Private" basePrice="120" revenue="10">
+    <Company name="KB" longname="Karstbahn" type="Private" revenue="10">
         <Blocking hex="K13"/>
         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
                          class="net.sf.rails.game.special.SpecialSingleTileLay">
@@ -117,7 +117,7 @@
         </SpecialProperty>
         <Info key="ComesWithPresidency" parm="S5,100"/>
     </Company>
-    <Company name="SmB" longname="Semmeringbahn" type="Private" basePrice="150" revenue="5">
+    <Company name="SmB" longname="Semmeringbahn" type="Private" revenue="5">
         <Blocking hex="H16"/>
         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
                          class="net.sf.rails.game.special.SpecialSingleTileLay">
@@ -126,7 +126,7 @@
         </SpecialProperty>
         <Info key="ComesWithPresidency" parm="S1,100"/>
     </Company>
-    <Company name="TB" longname="Tauernbahn" type="Private" basePrice="150" revenue="35">
+    <Company name="TB" longname="Tauernbahn" type="Private" revenue="35">
         <Blocking hex="J10"/>
         <SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
                          class="net.sf.rails.game.special.SpecialSingleTileLay">
@@ -228,41 +228,42 @@
             <ExchangeForShare company="TH" share="10"/>
         </SpecialProperty>
     </Company>
-    <Company name="S1" longname="Wien-Gloggitzner Bahn" type="Minor1" price="90" tokens="1" fgColour="FFFFFF"
-             bgColour="FF5400">
+    <Company name="S1" longname="Wien-Gloggitzner Bahn" type="Minor1" price="90" tokens="1"
+             relatedCompany="Sd" fgColour="FFFFFF" bgColour="FF5400">
         <Home hex="G17" city="4"/>
         <SpecialProperty condition="phase=4" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="Sd" share="10"/>
         </SpecialProperty>
     </Company>
-    <Company name="S2" longname="Kärntner Bahn" type="Minor1" price="90" tokens="1" fgColour="FFFFFF" bgColour="FF5400">
+    <Company name="S2" longname="Kärntner Bahn" type="Minor1" price="90" tokens="1"
+             relatedCompany="Sd" fgColour="FFFFFF" bgColour="FF5400">
         <Home hex="J16"/>
         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="Sd" share="10"/>
         </SpecialProperty>
     </Company>
-    <Company name="S3" longname="Nordtiroler Staatsbahn" type="Minor1" price="90" tokens="1" fgColour="FFFFFF"
-             bgColour="FF5400">
+    <Company name="S3" longname="Nordtiroler Staatsbahn" type="Minor1" price="90" tokens="1"
+             relatedCompany="Sd" fgColour="FFFFFF" bgColour="FF5400">
         <Home hex="I7"/>
         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="Sd" share="10"/>
         </SpecialProperty>
     </Company>
-    <Company name="S4" longname="Südtiroler Staatsbahn" type="Minor1" price="90" tokens="1" fgColour="FFFFFF"
-             bgColour="FF5400">
+    <Company name="S4" longname="Südtiroler Staatsbahn" type="Minor1" price="90" tokens="1"
+             relatedCompany="Sd" fgColour="FFFFFF" bgColour="FF5400">
         <Home hex="K5"/>
         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="Sd" share="10"/>
         </SpecialProperty>
     </Company>
-    <Company name="S5" longname="Lombardo-Venetianische Eisenbahn" type="Minor1" price="90" tokens="1" fgColour="FFFFFF"
-             bgColour="FF5400">
+    <Company name="S5" longname="Lombardo-Venetianische Eisenbahn" type="Minor1" price="90" tokens="1"
+             relatedCompany="Sd" fgColour="FFFFFF" bgColour="FF5400">
         <SpecialProperty condition="ifStarted" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
             <ExchangeForShare company="Sd" share="10"/>
         </SpecialProperty>
     </Company>
     <Company name="K1" longname="Kaiser Ferdinand-Nordbahn" type="Minor1" price="90" tokens="1"
-             fgColour="FFFFFF" bgColour="C98A5C">
+             relatedCompany="KK" fgColour="FFFFFF" bgColour="C98A5C">
         <IfVariant value="Basegame,Romoth">
             <Attributes available="no"/>
         </IfVariant>
@@ -272,7 +273,7 @@
         </SpecialProperty>
     </Company>
     <Company name="K2" longname="Kaiserin Elisabeth-Bahn" type="Minor1" tokens="1"
-             fgColour="FFFFFF" bgColour="C98A5C">
+             relatedCompany="KK" fgColour="FFFFFF" bgColour="C98A5C">
         <IfVariant value="Basegame,Romoth">
             <Attributes available="no"/>
         </IfVariant>
@@ -289,7 +290,7 @@
         </SpecialProperty>
     </Company>
     <Company name="K3" longname="Kaiser Franz Joseph-Bahn" type="Minor1" price="90" tokens="1"
-             fgColour="FFFFFF" bgColour="C98A5C">
+             relatedCompany="KK" fgColour="FFFFFF" bgColour="C98A5C">
         <IfVariant value="Basegame,Romoth">
             <Attributes available="no"/>
         </IfVariant>
@@ -299,7 +300,7 @@
         </SpecialProperty>
     </Company>
     <Company name="U1" longname="Eisenbahn Pest-Waitzen" type="Minor2" price="90" tokens="1"
-             fgColour="FFFFFF" bgColour="FF55AA">
+             relatedCompany="Ug" fgColour="FFFFFF" bgColour="FF55AA">
         <IfVariant value="Basegame,Romoth">
             <Attributes available="no"/>
         </IfVariant>
@@ -310,7 +311,7 @@
         <Trains limit="2"/>
     </Company>
     <Company name="U2" longname="Mohacs-Fünfkirchner Bahn" type="Minor1" price="90" tokens="1"
-             fgColour="FFFFFF" bgColour="FF55AA">
+             relatedCompany="Ug" fgColour="FFFFFF" bgColour="FF55AA">
         <IfVariant value="Basegame,Romoth">
             <Attributes available="no"/>
         </IfVariant>
@@ -321,7 +322,7 @@
         <Trains limit="2"/>
     </Company>
     <Company name="U3" longname="Eisenbahn Pest-Czegléd" type="Minor2" price="90" tokens="1"
-             fgColour="FFFFFF" bgColour="FF55AA">
+             relatedCompany="Ug" fgColour="FFFFFF" bgColour="FF55AA">
         <IfVariant value="Basegame,Romoth">
             <Attributes available="no"/>
         </IfVariant>

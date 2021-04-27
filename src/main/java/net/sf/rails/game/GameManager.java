@@ -943,22 +943,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public boolean processOnReload(PossibleAction action) {
         getRoot().getReportManager().getDisplayBuffer().clear();
-        RoundFacade thisRound = getCurrentRound();
-
-        // TEMPORARY FIX TO ALLOW OLD 1856 SAVED FILES TO BE PROCESSED
-        if ( "1856".equals(getRoot().getGameName())
-                //&& currentRound.get().getClass() != CGRFormationRound.class
-                && possibleActions.contains(RepayLoans.class)
-                && (!possibleActions.contains(action.getClass())
-                || (action.getClass() == NullAction.class
-                && ((NullAction) action).getMode() != NullAction.Mode.DONE))) {
-            // Insert "Done"
-            log.debug("Action DONE inserted");
-            thisRound.process(new NullAction(getRoot(), NullAction.Mode.DONE));
-            possibleActions.clear();
-            thisRound.setPossibleActions();
-            if (!isGameOver()) setCorrectionActions();
-        }
 
        // Log possible actions (normally this is outcommented)
         for (PossibleAction a : possibleActions.getList()) {
@@ -966,6 +950,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
 
         logActionTaken (action);
+
+        // Allow but negate spurious NullAction (usually Skip)
+        if (action instanceof NullAction
+                && !possibleActions.contains(NullAction.class)) {
+            return true;
+        }
 
         // New in Rails2.0: Check if the action is allowed
         if (!possibleActions.validate(action)) {

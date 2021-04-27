@@ -1,4 +1,4 @@
-/**
+/*
  * This class implements the 1880 rules for making new companies
  * being available in the IPO after buying shares of another company.
  */
@@ -55,7 +55,7 @@ public class StockRound_1880 extends StockRound {
     @Override
     protected void adjustSharePrice(PublicCompany company, Owner seller, int numberSold,
             boolean soldBefore) {
-        if (((PublicCompany_1880) company).canStockPriceMove() == true) {      
+        if (((PublicCompany_1880) company).canStockPriceMove()) {
             super.adjustSharePrice(company, seller, numberSold, soldBefore);
         }
     }
@@ -99,7 +99,7 @@ public class StockRound_1880 extends StockRound {
         // 50 percent of the shares.
         // The exception of the rule of course are the late starting companies after the first 6 has been bought when the 
         // flotation will happen after 60 percent have been bought.
-        if (((PublicCompany_1880) company).getFloatPercentage() == 60) {
+        if ((company).getFloatPercentage() == 60) {
             cash = 10 * price;
         } else {
             cash = 5 * price;
@@ -142,7 +142,7 @@ public class StockRound_1880 extends StockRound {
         /* Get the next available IPO certificates */
         // Never buy more than one from the IPO
         PublicCompany companyBoughtThisTurn =
-            (PublicCompany) companyBoughtThisTurnWrapper.value();
+            companyBoughtThisTurnWrapper.value();
         if (companyBoughtThisTurn == null) {
             from = ipo;
             ImmutableSetMultimap<PublicCompany, PublicCertificate> map =
@@ -321,22 +321,9 @@ public class StockRound_1880 extends StockRound {
             for (PublicCompany company : gameManager.getCompaniesInRunningOrder()) {
                 // change: Line below, the conditions for sold out are different to standard 18xx, check with rules
                 if (company.hasStarted() && (company instanceof PublicCompany_1880) && !((PublicCompany_1880) company).certsAvailableForSale() && (((PublicCompany_1880) company).canStockPriceMove())) {
-                    StockSpace oldSpace = company.getCurrentSpace();
+                    ReportBuffer.add(this,LocalText.getText("SoldOut",
+                            company.getLongName()));
                     stockMarket.soldOut(company);
-                    StockSpace newSpace = company.getCurrentSpace();
-                    if (newSpace != oldSpace) {
-                        ReportBuffer.add(this,LocalText.getText("SoldOut",
-                                company.getLongName(),
-                                Bank.format(this, oldSpace.getPrice()),
-                                oldSpace.getId(),
-                                Bank.format(this, newSpace.getPrice()),
-                                newSpace.getId()));
-                    } else {
-                        ReportBuffer.add(this,LocalText.getText("SoldOutNoRaise",
-                                company.getLongName(),
-                                Bank.format(this, newSpace.getPrice()),
-                                newSpace.getId()));
-                    }
                 }
             }
         }
@@ -350,7 +337,7 @@ public class StockRound_1880 extends StockRound {
         }
         // change: end
         
-        /** At the end of each Stockround the current amount of negative cash is subject to a fine of 50 percent
+        /* At the end of each Stockround the current amount of negative cash is subject to a fine of 50 percent
          * 
          */
         // requires: finishRound modifier

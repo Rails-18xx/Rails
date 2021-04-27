@@ -61,8 +61,8 @@ Autopasses,Arne
 Autopasses,Scott
  
 END_SR,1
+SoldOut,C&O
 PRICE_MOVES_LOG,C&O,67,G6,71,G5
-SoldOut,C&O,67,G6,71,G5
 Has,B&M,710
 Has,C&O,670
 Has,Chris,34
@@ -130,8 +130,8 @@ Autopasses,Chris
 Autopasses,Derek
  
 END_SR,2
+SoldOut,C&O
 PRICE_MOVES_LOG,C&O,67,F5,71,F4
-SoldOut,C&O,67,F5,71,F4
 Has,B&M,550
 Has,C&O,590
 Has,Chris,59
@@ -201,10 +201,10 @@ Autopasses,Chris
 PASSES,Derek
  
 END_SR,3
+SoldOut,C&O
 PRICE_MOVES_LOG,C&O,76,G4,82,G3
-SoldOut,C&O,76,G4,82,G3
+SoldOut,B&M
 PRICE_MOVES_LOG,B&M,71,G5,76,G4
-SoldOut,B&M,71,G5,76,G4
 Has,B&M,390
 Has,C&O,370
 Has,N&W,710
@@ -306,8 +306,8 @@ Autopasses,Bill
 PASSES,Chris
  
 END_SR,4
+SoldOut,B&M
 PRICE_MOVES_LOG,B&M,71,H6,76,H5
-SoldOut,B&M,71,H6,76,H5
 Has,B&M,350
 Has,B&O,1000
 Has,C&O,290

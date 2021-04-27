@@ -681,8 +681,8 @@ Autopasses,Aliza
 Autopasses,Carlos
  
 END_SR,5
+SoldOut,LPS
 PRICE_MOVES_LOG,LPS,80,H6,90,H5
-SoldOut,LPS,80,H6,90,H5
 Has,GT,90
 Has,LPS,108
 Has,WR,140

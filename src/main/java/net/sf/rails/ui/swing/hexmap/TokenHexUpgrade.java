@@ -162,6 +162,10 @@ public class TokenHexUpgrade extends HexUpgrade {
     @Override
     public void nextSelection() {
         Stop next = allowed.higher(selectedStop);
+        //?? This happened once; not sure what 'null' does
+        if (allowed.isEmpty()) {
+            selectedStop = null;
+        } else
         if (next == null) {
             selectedStop = allowed.first();
         } else {

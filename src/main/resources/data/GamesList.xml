@@ -227,12 +227,20 @@ Published 2004 by Deep Thought Games, LLC
 		<Description> 1837 - Austria
 			(c) 1994 Leonhard Orgler (self-published)
 
+			Variants:
+			- v1 ("Basegame", as described by JD Galt and clarified by Steve Thomas),
+			- Romoth (v1, with some different prices),
+			- v2 (as described by Lonny Orgler, 2015).
+
+			Mid-game player worth is calculated as follows:
+			- Major and National shares as usual,
+			- Coal and Minor shares as the price of the related
+			  Major (if started) or National company,
+			- Privates (mountain railways) worth is zero.
+
 			Known limitations:
 			- Not yet tested beyond the 3+1-train phase.
 			- The 4-train effects are known to fail.
-			- Reports that the coal mine payout is incorrect could not be reproduced (EV).
-			- All or most previous saved files are no longer loadable.
-			  Loadability of the current release is expected to be stable up to the 3+1 trains phase.
 		</Description>
 		<Players minimum = "3" maximum = "7" />
 	</Game>

@@ -165,7 +165,7 @@
 		 <!-- Alternate: Hamilton, this is identical to the standard -->
 	</Company>
 	<Company name="CV"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="800080">
-		<Home hex="N11" city="2"/>
+		<Home hex="N11" city="1"/>
         <IfOption name="1856AlternateDestinations" value="no">
 			<Destination hex="I14"/>
         </IfOption>        

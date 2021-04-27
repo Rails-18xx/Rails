@@ -89,20 +89,20 @@ ReceivesFor,Charlie,30,SJS
  
 CompanyOperates,1,Alice
 LaysTileAtFor,1,5,G4,NE,40
-NoTrainsButBankPaysAnyway,1,10,Alice
+NoRunButBankPaysAnyway,1,10,Alice
 Payout,Alice,10,1,100
 BuysTrain,1,2,IPO,100
 FirstTrainBought,2/1+1
  
 CompanyOperates,2,Bob
 LaysTileAt,2,58,E10,NE
-NoTrainsButBankPaysAnyway,2,10,Bob
+NoRunButBankPaysAnyway,2,10,Bob
 Payout,Bob,10,1,100
 BuysTrain,2,1+1,IPO,80
  
 CompanyOperates,3,Charlie
 LaysTileAt,3,8,F9,NW
-NoTrainsButBankPaysAnyway,3,10,Charlie
+NoRunButBankPaysAnyway,3,10,Charlie
 Payout,Charlie,10,1,100
 BuysTrain,3,2,IPO,100
  
@@ -332,7 +332,7 @@ Payout,Bob,40,1,100
  
 CompanyOperates,3,Charlie
 LaysTileAt,3,5,E6,SE
-NoTrainsButBankPaysAnyway,3,10,Charlie
+NoRunButBankPaysAnyway,3,10,Charlie
 Payout,Charlie,10,1,100
  
 CompanyOperates,S&NJ,Bob
@@ -423,7 +423,7 @@ Payout,Bob,45,1,100
  
 CompanyOperates,3,Charlie
 LaysTileAt,3,8,D13,E
-NoTrainsButBankPaysAnyway,3,10,Charlie
+NoRunButBankPaysAnyway,3,10,Charlie
 Payout,Charlie,10,1,100
  
 CompanyOperates,S&NJ,Bob
@@ -486,7 +486,7 @@ Payout,Bob,50,1,100
  
 CompanyOperates,3,Charlie
 LaysTileAt,3,8,G8,W
-NoTrainsButBankPaysAnyway,3,10,Charlie
+NoRunButBankPaysAnyway,3,10,Charlie
 Payout,Charlie,10,1,100
  
 CompanyOperates,S&NJ,Bob
@@ -544,8 +544,8 @@ PASSES,Alice
 PASSES,Bob
  
 END_SR,4
+SoldOut,DSB
 PRICE_MOVES_LOG,DSB,150,I3,165,I2
-SoldOut,DSB,150,I3,165,I2
 Has,1,240
 Has,2,155
 Has,3,0
@@ -573,7 +573,7 @@ Payout,Bob,50,1,100
  
 CompanyOperates,3,Charlie
 LaysTileAt,3,81,F9,W
-NoTrainsButBankPaysAnyway,3,10,Charlie
+NoRunButBankPaysAnyway,3,10,Charlie
 Payout,Charlie,10,1,100
  
 CompanyOperates,DSB,Charlie
@@ -698,10 +698,10 @@ PASSES,Bob
 PASSES,Charlie
  
 END_SR,5
+SoldOut,DSB
 PRICE_MOVES_LOG,DSB,200,K2,220,K1
-SoldOut,DSB,200,K2,220,K1
+SoldOut,SJ
 PRICE_MOVES_LOG,SJ,90,D3,100,D2
-SoldOut,SJ,90,D3,100,D2
 Has,DSB,331
 Has,NSB,1000
 Has,S&NJ,302
@@ -828,10 +828,10 @@ PASSES,Charlie
 PASSES,Alice
  
 END_SR,6
+SoldOut,DSB
 PRICE_STAYS_LOG,DSB,245,L1
-SoldOutNoRaise,DSB,245,L1
+SoldOut,SJ
 PRICE_MOVES_LOG,SJ,110,E2,122,E1
-SoldOut,SJ,110,E2,122,E1
 Has,DSB,331
 Has,NSB,160
 Has,S&NJ,384
@@ -952,10 +952,10 @@ PASSES,Charlie
 PASSES,Alice
  
 END_SR,7
+SoldOut,DSB
 PRICE_STAYS_LOG,DSB,245,L1
-SoldOutNoRaise,DSB,245,L1
+SoldOut,SJ
 PRICE_STAYS_LOG,SJ,100,C1
-SoldOutNoRaise,SJ,100,C1
 Has,DSB,331
 Has,NSB,160
 Has,S&NJ,456

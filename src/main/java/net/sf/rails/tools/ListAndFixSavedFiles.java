@@ -383,7 +383,9 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         } else if (editedAction instanceof BuyCertificate) {
             new BuyCertificateDialog ((BuyCertificate) editedAction);
         } else if (editedAction instanceof SetDividend) {
-            new SetDividendDialog ((SetDividend) editedAction);
+            new SetDividendDialog((SetDividend) editedAction);
+        } else if (editedAction instanceof LayBaseToken) {
+            new LayBaseTokenDialog ((LayBaseToken)editedAction);
         } else {
             JOptionPane.showMessageDialog(this, "Action type '" + editedAction.getClass().getSimpleName()
                     + "' cannot yet be edited");
@@ -639,7 +641,38 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 int presetRevenue = Integer.valueOf(input);
                 action.setPresetRevenue(presetRevenue);
             } catch (NumberFormatException e) {
-                log.error ("Error in president: {}", input, e);
+                log.error ("Error in presetRevenue: {}", input, e);
+            }
+
+            log.info("Action is {}", action);
+            return action;
+
+        }
+    }
+
+    private class LayBaseTokenDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private LayBaseToken action;
+
+        LayBaseTokenDialog(LayBaseToken action) {
+            super("Edit LayBaseToken");
+            this.action = action;
+            addTextField(this, "Station",
+                    action.getChosenStop().getNumber(),
+                    String.valueOf(action.getChosenStop().getNumber()));  // 0
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+            log.info("Action was {}", action);
+            String input = "";
+            try {
+                input = ((JTextField)inputElements.get(0)).getText();
+                int chosenStop = Integer.valueOf(input);
+                action.setChosenStation(chosenStop);
+            } catch (NumberFormatException e) {
+                log.error ("Error in chosenStop: {}", input, e);
             }
 
             log.info("Action is {}", action);
