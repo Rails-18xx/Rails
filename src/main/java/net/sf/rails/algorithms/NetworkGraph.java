@@ -35,12 +35,12 @@ public class NetworkGraph {
     private NetworkIterator iterator;
 
     private NetworkGraph() {
-        graph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
+        graph = new SimpleGraph<>(NetworkEdge.class);
         vertices = Maps.newHashMap();
     }
 
     private NetworkGraph(NetworkGraph inGraph) {
-        graph = new SimpleGraph<NetworkVertex, NetworkEdge>(NetworkEdge.class);
+        graph = new SimpleGraph<>(NetworkEdge.class);
         Graphs.addGraph(graph, inGraph.graph);
         vertices = Maps.newHashMap(inGraph.vertices);
     }
@@ -53,11 +53,11 @@ public class NetworkGraph {
 
     /**
      *
-     * @param mapGraph
-     * @param company
-     * @param addHQ
+     * @param mapGraph The current map graph
+     * @param company The company to create a route graph for
+     * @param addHQ ??
      * @param running true for train runs, false for tile or token lay allowances
-     * @return
+     * @return The updated graph
      */
     public static NetworkGraph createRouteGraph(NetworkGraph mapGraph, PublicCompany company, boolean addHQ, boolean running) {
         NetworkGraph newGraph = new NetworkGraph();
@@ -183,6 +183,9 @@ public class NetworkGraph {
         MapManager mapManager = root.getMapManager();
         RevenueManager revenueManager = root.getRevenueManager();
         for (MapHex hex : mapManager.getHexes()) {
+            // Don't add any inaccessible hexes to the graph
+            if (!hex.isOpen()) continue;
+
             // get Tile
             Tile tile = hex.getCurrentTile();
 
@@ -209,6 +212,8 @@ public class NetworkGraph {
 
         // loop over all hex and add tracks
         for (MapHex hex : mapManager.getHexes()) {
+            if (!hex.isOpen()) continue;
+
             // get Tile
             Tile tile = hex.getCurrentTile();
             // get Tracks
@@ -270,7 +275,7 @@ public class NetworkGraph {
     }
 
     public void optimizeGraph() {
-        optimizeGraph(new ArrayList<NetworkVertex>(0));
+        optimizeGraph(new ArrayList<>(0));
     }
 
     private void optimizeGraph(Collection<NetworkVertex> protectedVertices) {
@@ -352,9 +357,9 @@ public class NetworkGraph {
 
     /**
      *
-     * @param mapGraph
-     * @param company
-     * @param addHQ
+     * @param mapGraph The map graph
+     * @param company The company to create a route graph for
+     * @param addHQ ??
      * @param running true for train runs, false for tile or token lay allowances
      */
     private void initRouteGraph(NetworkGraph mapGraph, PublicCompany company, boolean addHQ, boolean running) {
@@ -374,7 +379,7 @@ public class NetworkGraph {
 
         // create vertex set for subgraph
         List<NetworkVertex> tokenVertexes = mapGraph.getCompanyBaseTokenVertexes(company);
-        Set<NetworkVertex> vertexes = new HashSet<NetworkVertex>();
+        Set<NetworkVertex> vertexes = new HashSet<>();
 
         for (NetworkVertex vertex : tokenVertexes) {
             // allow to leave tokenVertices even if those are sinks
@@ -386,8 +391,9 @@ public class NetworkGraph {
             graph.addVertex(vertex);
             graph.addEdge(vertex, hqVertex, new NetworkEdge(vertex, hqVertex, false));
             iterator = new NetworkIterator(mapGraph.getGraph(), vertex, company);
-            for (; iterator.hasNext(); )
+            while (iterator.hasNext()) {
                 vertexes.add(iterator.next());
+            }
             // restore sink property
             vertex.setSink(storeSink);
         }
@@ -401,7 +407,7 @@ public class NetworkGraph {
     }
 
     public List<NetworkVertex> getCompanyBaseTokenVertexes(PublicCompany company) {
-        List<NetworkVertex> vertexes = new ArrayList<NetworkVertex>();
+        List<NetworkVertex> vertexes = new ArrayList<>();
         for (BaseToken token : company.getLaidBaseTokens()) {
             NetworkVertex vertex = getVertex(token);
             if (vertex == null) continue;

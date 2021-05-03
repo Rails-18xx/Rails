@@ -21,6 +21,7 @@ import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.SequenceUtil;
 import rails.game.action.BuyTrain;
+import rails.game.action.LayTile;
 import rails.game.action.PossibleAction;
 import rails.game.action.SetDividend;
 
@@ -37,7 +38,6 @@ import rails.game.specific._1837.SetHomeHexLocation;
 public class OperatingRound_1837 extends OperatingRound {
     private static final Logger log = LoggerFactory.getLogger(OperatingRound_1837.class);
 
-    private final BooleanState needSuedBahnFormationCall = new BooleanState(this, "NeedSuedBahnFormationCall");
     private final BooleanState needHungaryFormationCall = new BooleanState(this, "NeedHungaryFormationCall");
     private final BooleanState needKuKFormationCall = new BooleanState(this, "NeedKuKFormationCall");
 
@@ -55,23 +55,52 @@ public class OperatingRound_1837 extends OperatingRound {
     @Override
     protected void newPhaseChecks() {
         Phase phase = Phase.getCurrent(this);
+
         if (phase.getId().equals("3")) {
+            // Unblock the hexes blocked by private companies
             for(PrivateCompany comp:gameManager.getAllPrivateCompanies())  {
                 comp.unblockHexes();
             }
-        }
-        if (phase.getId().equals("4")
-                && !companyManager.getPublicCompany(GameDef_1837.Sd).hasStarted()
-                && !NationalFormationRound.nationalIsComplete(gameManager, GameDef_1837.Sd)) {
-            if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
-                // Postpone until trains are discarded
-                needSuedBahnFormationCall.set(true);
-            } else {
-                // Do it immediately
-                ((GameManager_1837)gameManager).startSuedBahnFormationRound (this);
+            // Open the Bosnian territory
+            MapManager map = getRoot().getMapManager();
+            for (String bzhHex : GameDef_1837.BzHHexes.split(",")){
+                map.getHex(bzhHex).setOpen(true);
             }
-        }
-        if (phase.getId().equals("4+1")
+            String report = LocalText.getText("TerritoryIsOpened", "Bosnian");
+            ReportBuffer.add (this, report);
+            DisplayBuffer.add (this, report);
+
+        } else if (phase.getId().equals("4")) {
+            // Form the Südbahn, and exchange shares and tokens of its minors
+            formSd();
+
+            // Close the Italian territory
+            MapManager map = getRoot().getMapManager();
+            for (String itHex : GameDef_1837.ItalyHexes.split(",")){
+                MapHex hex = map.getHex(itHex);
+                hex.setOpen(false);
+                hex.clear();
+            }
+            String report = LocalText.getText("TerritoryIsClosed", "Italian");
+            ReportBuffer.add (this, report);
+            DisplayBuffer.add (this, report);
+
+            // Lay the new Bozen (Bolzano) tile
+            LayTile action = new LayTile(getRoot(), LayTile.CORRECTION);
+            MapHex hex = map.getHex(GameDef_1837.bozenHex);
+            Tile tile = getRoot().getTileManager().getTile(GameDef_1837.newBozenTile);
+            int orientation = GameDef_1837.newBozenTileOrientation;
+            action.setChosenHex(hex);
+            action.setLaidTile(tile);
+            action.setOrientation(orientation);
+            hex.upgrade (action);
+            report = LocalText.getText("LaysTileAt", "Rails",
+                            tile.getId(),
+                            hex.getId(),
+                            hex.getOrientationName(HexSide.get(orientation)));
+            ReportBuffer.add (this, report);
+
+        } else if (phase.getId().equals("4+1")
                 && !companyManager.getPublicCompany(GameDef_1837.KK).hasStarted()
                 && !NationalFormationRound.nationalIsComplete(gameManager,GameDef_1837.KK)) {
             if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
@@ -95,6 +124,29 @@ public class OperatingRound_1837 extends OperatingRound {
 
         }
 
+    }
+
+    /**
+     * Form the Südbahn, and exchange all shares and tokens of
+     * its related minors by those of the Sd.
+     */
+    private void formSd() {
+        PublicCompany sd = companyManager.getPublicCompany(GameDef_1837.Sd);
+        PublicCompany sdMinor;
+        for (String minorName : GameDef_1837.SdMinors.split(",")) {
+            sdMinor = companyManager.getPublicCompany(minorName);
+            boolean willBecomeMajorPresident = GameDef_1837.S1.equals(sdMinor.getId());
+            MapHex minorHome = sdMinor.getHomeHexes().get(0);
+            Stop minorStop = minorHome.getStopOfBaseToken(sdMinor);
+            ((GameManager_1837)gameManager).mergeCompanies(sdMinor, sd,
+                    willBecomeMajorPresident, true);
+            minorHome.layBaseToken(sd, minorStop);
+            sd.layBaseToken(sdMinor.getHomeHexes().get(0), 0);
+
+        }
+        floatCompany(sd); // Will also finance it
+        sd.setOperated(); // May not operate this round
+        // NOTE: this might need to be refined in case none of the Sd minors has been operated.
     }
 
     private void addIncomeDenialShare (Player player, PublicCompany company, int share) {
@@ -148,6 +200,9 @@ public class OperatingRound_1837 extends OperatingRound {
         }
     }
 
+    // PROBABLY NO LONGER NEEDED!
+    // Südbahn may not run if formed in an OR. Could it be formed elsewhere??
+    // Check again after KK/Ug formation has been fixed
     @Override
     public void resume() {
         PublicCompany suedbahn = companyManager.getPublicCompany(GameDef_1837.Sd);
@@ -206,6 +261,12 @@ public class OperatingRound_1837 extends OperatingRound {
             possibleActions.clear();
             possibleActions.add(new SetHomeHexLocation(getRoot(),
                     company, GameDef_1837.S5homes));
+            return true;
+        } else if (company.isClosed()) {
+            // This can occur if a Sd minor buys the first 4-train
+            finishTurn();
+            possibleActions.clear();
+            super.setPossibleActions();
             return true;
         } else {
             return super.setPossibleActions();

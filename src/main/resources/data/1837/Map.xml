@@ -184,9 +184,9 @@
         <Hex name="L8" tile="-10" pic="-6110" city="Venedig"/>
         <Hex name="L12" tile="-37007" city="Triest"/>
         <Hex name="L14" tile="0" cost="70"/>
-        <Hex name="L16" tile="0" pic="-6000"/>
-        <Hex name="L18" tile="-1" pic="-6001"/>
-        <Hex name="L20" tile="0" pic="-6000"/>
+        <Hex name="L16" tile="0" open="no"/>
+        <Hex name="L18" tile="-1" open="no"/>
+        <Hex name="L20" tile="0" open="no"/>
         <Hex name="L22" tile="-37158"/>
         <Hex name="L24" tile="-2" cost="50"/>
         <Hex name="L26" tile="0"/>
@@ -197,13 +197,13 @@
         <Hex name="M7" tile="0" pic="-6100"/>
         <Hex name="M13" tile="-3" orientation="4"/>
         <Hex name="M15" tile="0"/>
-        <Hex name="M17" tile="0" pic="-6000" cost="70"/>
-        <Hex name="M19" tile="0" pic="-6000" cost="70"/>
-        <Hex name="M21" tile="0" pic="-6000" cost="70"/>
+        <Hex name="M17" tile="0" cost="70" open="no"/>
+        <Hex name="M19" tile="0" cost="70" open="no"/>
+        <Hex name="M21" tile="0" cost="70" open="no"/>
         <Hex name="N14" tile="-3" orientation="4"/>
         <Hex name="N16" tile="0"/>
-        <Hex name="N18" tile="0" pic="-6000" cost="70"/>
-        <Hex name="N20" tile="-3007" pic="-6007" city="Sarajevo"/>
+        <Hex name="N18" tile="0" cost="70" open="no"/>
+        <Hex name="N20" tile="-3007" city="Sarajevo" open="no"/>
         <Hex name="N22" tile="-7" orientation="3"/>
         <Hex name="O17" tile="-58" orientation="3"/>
         <Hex name="O19" tile="0"/>

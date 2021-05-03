@@ -1195,6 +1195,7 @@ NewTrainAvailable,2,3
 BuysTrain,BK,3,IPO,180
 FirstTrainBought,3
 StartOfPhase,3
+TerritoryIsOpened,Bosnian
  
 EndOfOperatingRound,2.1
 ORWorthIncrease,Alice,2.1,234

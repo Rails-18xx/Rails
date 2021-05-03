@@ -1,18 +1,15 @@
 package net.sf.rails.game.specific._1837;
 
 import net.sf.rails.common.GameOption;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
-import net.sf.rails.game.financial.StockRound;
-import net.sf.rails.game.financial.StockSpace;
-import net.sf.rails.game.state.StringState;
+import net.sf.rails.game.financial.*;
+import net.sf.rails.game.state.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.rails.common.GuiDef;
-import net.sf.rails.game.financial.NationalFormationRound;
-import net.sf.rails.game.state.GenericState;
-import net.sf.rails.game.state.IntegerState;
-import net.sf.rails.game.state.BooleanState;
 
 import java.util.HashMap;
 import java.util.List;
@@ -150,11 +147,7 @@ public class GameManager_1837 extends GameManager {
     protected boolean runIfStartPacketIsNotCompletelySold() {
         //After the first Startpacket sold out there will be Operation Rounds
         StartPacket nextStartPacket = getRoot().getCompanyManager().getNextUnfinishedStartPacket();
-        if (nextStartPacket.getId().equalsIgnoreCase("Coal Mines")) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(nextStartPacket.getId().equalsIgnoreCase("Coal Mines"));
     }
 
     @Override
@@ -212,13 +205,71 @@ public class GameManager_1837 extends GameManager {
         createRound(NationalFormationRound.class, roundName).start();
     }
 
-    /* (non-Javadoc)
+    /**
+     * Moved here from StockRound_1837, to make this method usable by
+     * OperatingRound_1837 for the Sd formation.
+     *
+     * @param minor The minor (or coal company) to be merged into...
+     * @param major ...the related major company
+     * @return True if the merge was successful
+     */
+    protected boolean mergeCompanies(PublicCompany minor, PublicCompany major,
+                                     boolean majorPresident, boolean autoMerge) {
+        PublicCertificate cert = null;
+        MoneyOwner cashDestination = null; // Bank
+        Bank bank = getRoot().getBank();
+
+        // TODO Validation to be added?
+        if (major != null) {
+            cert = bank.getUnavailable().getPortfolioModel().findCertificate(major, majorPresident);
+            cashDestination = major;
+        }
+        //TODO: what happens if the major hasnt operated/founded/Started sofar in the FinalCoalExchangeRound ?
+
+        // Transfer the minor assets
+        int minorCash = minor.getCash();
+        int minorTrains = minor.getPortfolioModel().getTrainList().size();
+        if (cashDestination == null) {
+            // Assets go to the bank
+            if (minorCash > 0) {
+                Currency.toBankAll(minor);
+            }
+            bank.getPool().getPortfolioModel().transferAssetsFrom(minor.getPortfolioModel());
+        } else {
+            // Assets go to the major company
+            major.transferAssetsFrom(minor);
+        }
+
+        Player minorPres = minor.getPresident();
+
+        ReportBuffer.add(this, "");
+        if (autoMerge) {
+            ReportBuffer.add(this, LocalText.getText("AutoMergeMinorLog",
+                    minor.getId(), major.getId(),
+                    Bank.format(this, minorCash), minorTrains));
+        } else {
+            ReportBuffer.add(this, LocalText.getText("MERGE_MINOR_LOG",
+                    minorPres, minor.getId(), major.getId(),
+                    Bank.format(this, minorCash), minorTrains));
+        }
+        ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
+                minorPres, cert.getShare(), major.getId(),
+                minor.getId()));
+        cert.moveTo(minorPres);
+
+        minor.setClosed();
+        major.checkPresidency();
+        ReportBuffer.add(this, LocalText.getText("MinorCloses", minor.getId()));
+
+        return true;
+    }
+
+        /* (non-Javadoc)
      * @see net.sf.rails.game.GameManager#setGuiParameter(net.sf.rails.common.GuiDef.Parm, boolean)
      */
     @Override
     public void setGuiParameters() {
         super.setGuiParameters();
-        log.debug("+++ Put {}={}",GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME, true);
         guiParameters.put(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME, true);
 
     }

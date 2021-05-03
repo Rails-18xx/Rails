@@ -211,7 +211,7 @@
     </Component>
     <Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
         <Modifier class="net.sf.rails.game.specific._1837.ItalyTileModifier"/>
-        <Modifier class="net.sf.rails.game.specific._1837.BzHTileModifier"/>
+        <!--Modifier class="net.sf.rails.game.specific._1837.BzHTileModifier"/-->
         <Modifier class="net.sf.rails.game.specific._1837.RunToCoalMineModifier"/>
         <!-- <Modifier class="net.sf.rails.game.specific._1837.CoalTrainModifier"/>
         Not sure why the above modifier was outcommented, I have replaced it anyway. -->
