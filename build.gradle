@@ -13,7 +13,7 @@ plugins {
     // https://github.com/n0mer/gradle-git-properties
     id 'com.gorylenko.gradle-git-properties' version '2.3.1'
     // https://openjfx.io/openjfx-docs/#gradle
-    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
     // https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/
     id 'org.sonarqube' version '3.2.0'
     // used by SonarQube for code coverage
