@@ -471,10 +471,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
 
         private String getLetterLabel(int index) {
             if (index > 26) {
-                return "A" + String.valueOf((char) ('@' + (index - 26))); // For
-                                                                          // 1825U1
-                                                                          // row
-                                                                          // "AA"
+                return "A" + (char) ('@' + (index - 26)); // For 1825 row "AA"
             } else {
                 return String.valueOf((char) ('@' + index));
             }
@@ -698,11 +695,15 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
             // Display impassables and rivers with same colour for now,
             // as there are no games in Rails where both apply.
             // (The difference is that rivers are not impassable).
-            HexSidesSet barSides = hex.getImpassableSides().union(hex.getRiverSides());
-            for (HexSide side:barSides) {
+            HexSidesSet sides = hex.getImpassableSides().union(hex.getRiverSides());
+            for (HexSide side:sides) {
                 if (side.getTrackPointNumber() < 3) {
                     hex2gui.get(hex).addBar(side);
                 }
+            }
+            sides = hex.getBorderSides();
+            for (HexSide side:sides) {
+                hex2gui.get(hex).addBorder(side);
             }
         }
     }

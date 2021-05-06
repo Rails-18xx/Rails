@@ -185,6 +185,10 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     private final HexSidesSet.Builder riverBuilder = HexSidesSet.builder();
     private HexSidesSet riverSides;
 
+    private String borderTemplate = null;
+    private final HexSidesSet.Builder borderBuilder = HexSidesSet.builder();
+    private HexSidesSet borderSides;
+
     private final HexSidesSet.Builder invalidBuilder = HexSidesSet.builder();
     private HexSidesSet invalidSides;
 
@@ -276,6 +280,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
         impassableTemplate = tag.getAttributeAsString("impassable");
         riverTemplate = tag.getAttributeAsString("river");
+        borderTemplate = tag.getAttributeAsString("border");
+
         tileCost = tag.getAttributeAsIntegerList("cost");
 
         // Off-board revenue values
@@ -341,6 +347,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
         impassableSides = impassableBuilder.build();
         riverSides = riverBuilder.build();
+        borderSides = borderBuilder.build();
         invalidSides = invalidBuilder.build();
     }
 
@@ -382,6 +389,13 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         log.debug("Added invalid {} to {}", side, this);
     }
 
+    public HexSidesSet getBorderSides() { return borderSides; }
+
+    public void addBorderSide (HexSide side) {
+        borderBuilder.set(side);
+        log.debug("Added border {} to {}", side, this);
+    }
+
     public HexSidesSet getInvalidSides() {
         return invalidSides;
     }
@@ -394,6 +408,11 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     public boolean isRiverNeighbour (MapHex neighbour) {
         return riverTemplate != null
                 && riverTemplate.contains(neighbour.getId());
+    }
+
+    public boolean isBorderNeighbour (MapHex neighbour) {
+        return borderTemplate != null
+                && borderTemplate.contains(neighbour.getId());
     }
 
     public boolean isValidNeighbour(MapHex neighbour, HexSide side) {

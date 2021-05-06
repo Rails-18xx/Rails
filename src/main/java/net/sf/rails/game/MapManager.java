@@ -124,6 +124,9 @@ public class MapManager extends RailsManager implements Configurable {
                             neighbour.addImpassableSide(side.opposite());
                         }
                     }
+                    if (hex.isBorderNeighbour(neighbour)) {
+                        hex.addBorderSide(side);
+                    }
                 } else { // neighbour is null
                     hex.addInvalidSide(side);
                 }
@@ -220,9 +223,9 @@ public class MapManager extends RailsManager implements Configurable {
 
         // Do neighbours have track reaching the same river sides?
         BitSet newBridgeBitSet = new BitSet();
-        Iterator it = bridgePoints.iterator();
+        Iterator<HexSide> it = bridgePoints.iterator();
         while (it.hasNext()) {
-            HexSide side = (HexSide) it.next();
+            HexSide side = it.next();
             MapHex neighbour = getNeighbour(hex, side);
             Tile nbTile = neighbour.getCurrentTile();
             int nbRot = neighbour.getCurrentTileRotation().getTrackPointNumber();
@@ -396,7 +399,7 @@ public class MapManager extends RailsManager implements Configurable {
      */
     public HexSidesSet findNewNeighbourSides(MapHex hex, Tile newTile, int newTileRotation) {
 
-        /**
+        /*
          * Find the neighbours to this hex, check if theres a neighbour with a track pointing towards us.
          * Design decision treat one neighbour at a time from one hex to the next one
          */
@@ -410,9 +413,9 @@ public class MapManager extends RailsManager implements Configurable {
         //check if the hex is valid by checking the Special Power, where should this happen ?
         //If we find a Neighbour thats valid we flag that side as ture
         BitSet newNeighbourBitSet = new BitSet();
-        Iterator it = newTracks.iterator();
+        Iterator<HexSide> it = newTracks.iterator();
         while (it.hasNext()) {
-            HexSide side = (HexSide) it.next();
+            HexSide side = it.next();
             MapHex neighbour = getNeighbour(hex, side);
             Tile nbTile = neighbour.getCurrentTile();
             int nbRot = neighbour.getCurrentTileRotation().getTrackPointNumber();
