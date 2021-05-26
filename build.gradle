@@ -73,7 +73,7 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.apache.commons:commons-text:1.9'
     // https://www.jetbrains.com/help/idea/annotating-source-code.html
-    implementation 'org.jetbrains:annotations:20.1.0'
+    implementation 'org.jetbrains:annotations:21.0.1'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
