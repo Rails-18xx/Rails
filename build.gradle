@@ -57,7 +57,7 @@ dependencies {
     implementation 'com.github.vlsi.mxgraph:jgraphx:4.2.2'
     implementation 'org.jgrapht:jgrapht-core:1.5.1'
     implementation 'org.jgrapht:jgrapht-ext:1.5.1'
-    implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'org.slf4j:slf4j-api:1.7.31'
     implementation 'org.apache.xmlgraphics:batik-bridge:1.14'
     implementation 'org.apache.xmlgraphics:batik-transcoder:1.14'
     implementation 'org.apache.xmlgraphics:batik-svggen:1.14'
