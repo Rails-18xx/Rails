@@ -11,16 +11,26 @@ public class GameDef_1837 {
     public static final String U1 = "U1";
 
     public static final String Sd = "Sd";
+    public static final String SdMinors = "S1,S2,S3,S4,S5";
     public static final String KK = "KK";
+    public static final String KKMinors = "K1,K2,K3";
     public static final String Ug = "Ug";
+
+    public static final String UgMinors = "U1,U2,U3";
+    public static final String[] Nationals = {Sd, KK, Ug};
 
     public static final String Minor1 = "Minor1";
 
     public static final String ItalyHexes = "K1,K3,K7,K9,L2,L4,L6,L8,M3,M5,M7";
     public static final String BzHHexes = "L16,L18,L20,M17,M19,M21,N18,N20";
-    public static final String SdMinors = "S1,S2,S3,S4,S5";
 
     public static final String bozenHex = "K5";
     public static final String newBozenTile = "426";
     public static final int newBozenTileOrientation = 4;
+
+    public enum FormStep {
+        START,
+        FORCED_START,
+        FORCED_MERGE
+    }
 }

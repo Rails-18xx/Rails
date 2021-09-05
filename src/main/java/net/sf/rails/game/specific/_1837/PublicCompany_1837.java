@@ -1,29 +1,79 @@
 package net.sf.rails.game.specific._1837;
 
-import net.sf.rails.common.LocalText;
-import net.sf.rails.common.ReportBuffer;
+import com.google.common.collect.Lists;
+import net.sf.rails.common.parser.ConfigurationException;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.*;
 import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.PublicCertificate;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsItem;
-import net.sf.rails.game.Train;
-import net.sf.rails.game.financial.BankPortfolio;
-import net.sf.rails.game.financial.PublicCertificate;
-import net.sf.rails.game.state.Currency;
-import net.sf.rails.game.state.IntegerState;
+import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Owner;
+import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PublicCompany_1837 extends PublicCompany {
 
     private static final Logger log = LoggerFactory.getLogger(PublicCompany_1837.class);
 
+    // For the national companies
+    private PublicCompany_1837 startingMinor;
+    private String startingMinorName;
+    private List<PublicCompany_1837> minors;
+    private String minorNames;
+    private String formationStartPhase;
+    private String forcedStartPhase;
+    private String forcedMergePhase;
+    private BooleanState complete;
+
     public PublicCompany_1837(RailsItem parent, String id) {
+
         super(parent, id);
     }
 
-    /* (non-Javadoc)
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+
+        super.configureFromXML(tag);
+
+        // For national companies
+        Tag formationTag = tag.getChild("Formation");
+        if (formationTag != null) {
+            minorNames = formationTag.getAttributeAsString("minors");
+            startingMinorName = formationTag.getAttributeAsString("startMinor");
+            formationStartPhase = formationTag.getAttributeAsString("startPhase");
+            forcedStartPhase = formationTag.getAttributeAsString("forcedStartPhase");
+            forcedMergePhase = formationTag.getAttributeAsString("forcedMergePhase");
+        }
+
+    }
+
+    public void finishConfiguration(RailsRoot root)
+            throws ConfigurationException {
+
+        super.finishConfiguration(root);
+
+        if (getType().getId().equalsIgnoreCase("National")) {
+            complete = new BooleanState (this, getId() + "_complete");
+            complete.set (false);
+
+            minors = new ArrayList<>();
+            CompanyManager cmgr = getRoot().getCompanyManager();
+            if (Util.hasValue(minorNames)) {
+                for (String minorName : minorNames.split(",")) {
+                    PublicCompany_1837 minor = (PublicCompany_1837) cmgr.getPublicCompany(minorName);
+                    minors.add (minor);
+                }
+            }
+            if (Util.hasValue(startingMinorName)) {
+                startingMinor = (PublicCompany_1837) cmgr.getPublicCompany(startingMinorName);
+            }
+        }
+    }
+
+        /* (non-Javadoc)
      * @see net.sf.rails.game.PublicCompany#mayBuyTrainType(net.sf.rails.game.Train)
      */
     @Override
@@ -88,5 +138,31 @@ public class PublicCompany_1837 extends PublicCompany {
         }
         log.debug("$$$ {} price is {}", getId(), price);
         return price;
+    }
+
+    public List<PublicCompany_1837> getMinors() {
+        return minors;
+    }
+
+    public PublicCompany_1837 getStartingMinor() { return startingMinor; }
+
+    public boolean isComplete() {
+        return complete.value();
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete.set(complete);
+    }
+
+    public String getFormationStartPhase() {
+        return formationStartPhase;
+    }
+
+    public String getForcedStartPhase() {
+        return forcedStartPhase;
+    }
+
+    public String getForcedMergePhase() {
+        return forcedMergePhase;
     }
 }

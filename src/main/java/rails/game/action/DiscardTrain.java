@@ -69,8 +69,10 @@ public class DiscardTrain extends PossibleORAction {
     }
 
     public void setDiscardedTrain(Train train) {
-        discardedTrain = train;
-        discardedTrainUniqueId = train.getId();
+        if (train != null) {
+            discardedTrain = train;
+            discardedTrainUniqueId = train.getId();
+        }
     }
 
     public Train getDiscardedTrain() {

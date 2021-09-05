@@ -64,7 +64,7 @@ public class GameManager_1880 extends GameManager {
     }// End of nextRound
 
     protected void startStockRound_1880(OperatingRound_1880 or) {
-        interruptedRound = or;
+        setInterruptedRound(or);
         super.startStockRound();
     }
 
@@ -76,12 +76,12 @@ public class GameManager_1880 extends GameManager {
             PublicCompany cashNeedingCompany, boolean problemDumpOtherCompanies) {
 
 
-        interruptedRound = getCurrentRound();
+        setInterruptedRound(getCurrentRound());
 
      // An id basd on interruptedRound and company id
-        String id = "SSR_" + interruptedRound.getId() + "_" + cashNeedingCompany.getId();
+        String id = "SSR_" + getInterruptedRound().getId() + "_" + cashNeedingCompany.getId();
         // check if other companies can be dumped
-        createRound(shareSellingRoundClass, id).start(interruptedRound, player, cashToRaise, cashNeedingCompany,
+        createRound(shareSellingRoundClass, id).start(getInterruptedRound(), player, cashToRaise, cashNeedingCompany,
                 !problemDumpOtherCompanies || forcedSellingCompanyDump);
         // the last parameter indicates if the dump of other companies is allowed, either this is explicit or
         // the action does not require that check

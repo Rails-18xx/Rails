@@ -498,7 +498,8 @@ public class GameUIManager implements DialogOwner {
         currentRoundName = currentRound.toString();
         log.debug("Current round={}, previous round={}", currentRoundName, previousRoundName);
 
-        currentRoundType = uiHints.getCurrentRoundType();
+        //currentRoundType = uiHints.getCurrentRoundType();
+        currentRoundType = currentRound.getClass();
 
         /* Process actual round type changes */
         if (previousRoundType != currentRoundType) {

@@ -1,6 +1,3 @@
-/**
- *
- */
 package rails.game.action;
 
 import java.io.IOException;
@@ -9,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.specific._1837.PublicCompany_1837;
 import org.jetbrains.annotations.NotNull;
 
 import net.sf.rails.game.Company;
@@ -17,15 +16,29 @@ import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
+import rails.game.action.PossibleAction;
+
 import com.google.common.base.Objects;
 
 /**
  * @author martin
  *
+ * This class is much alike the generic action class MergeCompanies,
+ * but there are some differences.
+ * The main difference is, that MergeCompanies can offer a choice
+ * of multiple major companies into which *one* minor can possibly merge,
+ * as is the common case in 18EU;
+ * whereas this class can offer a choice of multiple minors of which
+ * any number can be merged into a specific major (or national) company.
+ *
+ * Merging these two classes into one could be a future improvement.
+ * (EV)
  */
 public class FoldIntoNational extends PossibleAction {
 
     // Server settings
+    protected transient PublicCompany_1837 nationalCompany;
+    protected String nationalCompanyName;
     protected transient List<Company> foldableCompanies;
     protected String foldableCompanyNames;
 
@@ -35,14 +48,21 @@ public class FoldIntoNational extends PossibleAction {
 
     public static final long serialVersionUID = 1L;
 
-    public FoldIntoNational(RailsRoot root, @NotNull List<Company> foldableCompanies) {
-        super(root); // not defined by an activity yet
+    public FoldIntoNational(@NotNull PublicCompany_1837 nationalCompany,
+                            @NotNull List<Company> foldableCompanies) {
+        super(nationalCompany.getRoot()); // not defined by an activity yet
+        this.nationalCompany = nationalCompany;
+        nationalCompanyName = nationalCompany.getId();
         this.foldableCompanies = foldableCompanies;
         foldableCompanyNames = Util.joinNames(foldableCompanies, ",");
     }
 
-    public FoldIntoNational(Company company) {
-        this (company.getRoot(), Arrays.asList(company));
+    public FoldIntoNational(PublicCompany_1837 nationalCompany, Company company) {
+        this (nationalCompany, Arrays.asList(company));
+    }
+
+    public PublicCompany_1837 getNationalCompany() {
+        return nationalCompany;
     }
 
     public List<Company> getFoldedCompanies() {
@@ -50,7 +70,7 @@ public class FoldIntoNational extends PossibleAction {
     }
 
 
-    public void setFoldedCompanies(List<Company> foldedCompanies) {
+    public void setFoldedCompanies(@NotNull List<Company> foldedCompanies) {
         this.foldedCompanies = foldedCompanies;
         foldedCompanyNames = Util.joinNames(foldedCompanies, ",");
     }
@@ -79,11 +99,12 @@ public class FoldIntoNational extends PossibleAction {
         // check asOption attributes
         FoldIntoNational action = (FoldIntoNational)pa;
         boolean options =
-                Objects.equal(this.foldableCompanies, action.foldableCompanies) ||
-                    // additional conditions required as there is no sorting defined in old save files
-                    this.foldableCompanies != null && action.foldableCompanies != null
-                    && this.foldableCompanies.containsAll(action.foldableCompanies)
-                    && action.foldableCompanies.containsAll(this.foldableCompanies)
+                Objects.equal(this.nationalCompany, action.nationalCompany)
+            && (Objects.equal(this.foldableCompanies, action.foldableCompanies) ||
+                // additional conditions required as there is no sorting defined in old save files
+                this.foldableCompanies != null && action.foldableCompanies != null
+                && this.foldableCompanies.containsAll(action.foldableCompanies)
+                && action.foldableCompanies.containsAll(this.foldableCompanies))
         ;
 
         // finish if asOptions check
@@ -103,6 +124,7 @@ public class FoldIntoNational extends PossibleAction {
     public String toString() {
         return super.toString() +
                 RailsObjects.stringHelper(this)
+                    .addToString("nationalCompany", nationalCompany)
                     .addToString("foldableCompanies", foldableCompanies)
                     .addToStringOnlyActed("foldedCompanies", foldedCompanies)
                     .toString()
@@ -115,6 +137,8 @@ public class FoldIntoNational extends PossibleAction {
 
         Company company;
         CompanyManager cmgr = getCompanyManager();
+
+        nationalCompany = (PublicCompany_1837) cmgr.getPublicCompany(nationalCompanyName);
 
         foldableCompanies = new ArrayList<>();
         if (foldableCompanyNames != null) {

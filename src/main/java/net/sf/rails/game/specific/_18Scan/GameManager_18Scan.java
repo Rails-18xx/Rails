@@ -3,6 +3,7 @@ package net.sf.rails.game.specific._18Scan;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
+import net.sf.rails.game.specific._1856.OperatingRound_1856;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class GameManager_18Scan extends GameManager {
 
     public void StartDestinationRuns (OperatingRound or, List<PublicCompany> companies) {
 
-        this.interruptedRound = or;
+        setInterruptedRound(or);
         this.destinationCompanies = companies;
         startDestinationRun();
     }
@@ -55,6 +56,7 @@ public class GameManager_18Scan extends GameManager {
         if (round instanceof DestinationRound_18Scan) {
             destinationCompanies.remove(destinationCompany);
             if (destinationCompanies.isEmpty()) {
+                OperatingRound_18Scan interruptedRound = (OperatingRound_18Scan) getInterruptedRound();
                 setRound(interruptedRound);
                 interruptedRound.resume();
             } else {

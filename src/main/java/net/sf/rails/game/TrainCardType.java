@@ -60,6 +60,9 @@ public class TrainCardType extends RailsAbstractItem implements Configurable, Co
     protected List<TrainCardType> alsoReleased;
     private String alsoReleasedNames;
 
+    protected List<TrainCardType> rustedTrainTypes;
+    private String rustedTrainTypeNames;
+
     // Dynamic state variables
     private final IntegerState numberBoughtFromIPO = IntegerState.create(this, "numberBoughtFromIPO");
     private final BooleanState available = new BooleanState(this, "available");
@@ -113,6 +116,14 @@ public class TrainCardType extends RailsAbstractItem implements Configurable, Co
             }
         }
 
+        // Trains to rust when this type is bought, without creating a new phase for this purpose alone.
+        // Used in 1837
+
+        Tag rustedTag = tag.getChild ("Rusted");
+        if (rustedTag != null) {
+            rustedTrainTypeNames = rustedTag.getAttributeAsString("type", "");
+        }
+
         // Can run as obsolete train
         obsoleting = tag.getAttributeAsBoolean("obsoleting");
 
@@ -133,6 +144,15 @@ public class TrainCardType extends RailsAbstractItem implements Configurable, Co
             for (String otherTCTypeName : alsoReleasedNames.split(",")) {
                 otherTCType = getRoot().getTrainManager().getCardTypeByName(otherTCTypeName);
                 if (otherTCType != null) alsoReleased.add (otherTCType);
+            }
+        }
+
+        if (rustedTrainTypeNames != null) {
+            rustedTrainTypes = new ArrayList<>();
+            TrainCardType otherTCType;
+            for (String otherTCTypeName : rustedTrainTypeNames.split(",")) {
+                otherTCType = getRoot().getTrainManager().getCardTypeByName(otherTCTypeName);
+                if (otherTCType != null) rustedTrainTypes.add (otherTCType);
             }
         }
     }
@@ -173,6 +193,10 @@ public class TrainCardType extends RailsAbstractItem implements Configurable, Co
 
     public List<TrainCardType> getAlsoReleased() {
         return alsoReleased;
+    }
+
+    public List<TrainCardType> getRustedTrainTypes() {
+        return rustedTrainTypes;
     }
 
     /* Obsolete?

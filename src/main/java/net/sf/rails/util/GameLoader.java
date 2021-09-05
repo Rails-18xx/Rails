@@ -40,6 +40,8 @@ public class GameLoader {
     private RailsRoot railsRoot = null;
     private Exception exception = null;
 
+    private int actionCounter = 1;
+
     public GameLoader() {
         // do nothing
     }
@@ -85,6 +87,7 @@ public class GameLoader {
         gameUIManager.setGameFile(gameFile);
         gameUIManager.startLoadedGame();
 
+        Util.breakIf(""+gameLoader.getActionCounter(), "992");
         splashWindow.finalizeGameInit();
         gameUIManager.notifyOfSplashFinalization();
     }
@@ -275,19 +278,21 @@ public class GameLoader {
      * @return false if exception occurred
      */
     public boolean replayGame() {
+
+        int actionCount;
         GameManager gameManager = railsRoot.getGameManager();
         log.debug("Starting to execute loaded actions");
         gameManager.setReloading(true);
 
-        int count = 0;
         if (gameIOData.getActions() != null) {
             // set possible actions for first action
             gameManager.getCurrentRound().setPossibleActions();
             for (PossibleAction action : gameIOData.getActions()) {
-                count++;
+                actionCount = increaseActionCounter();
+
                 if (!gameManager.processOnReload(action)) {
-                    log.warn("Replay of game interrupted at action "+count);
-                    String message = LocalText.getText("LoadInterrupted", count);
+                    log.warn("Replay of game interrupted at action "+actionCount);
+                    String message = LocalText.getText("LoadInterrupted", actionCount);
                     exception = new RailsReplayException(message);
                     break;
                 }
@@ -403,5 +408,13 @@ public class GameLoader {
             return false;
         }
         return true;
+    }
+
+    public int getActionCounter() {
+        return actionCounter;
+    }
+
+    public int increaseActionCounter() {
+        return ++actionCounter;
     }
 }

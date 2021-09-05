@@ -97,7 +97,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      * privates payout and then immediately starts a new Start Round.
      */
     protected final GenericState<RoundFacade> currentRound = new GenericState<>(this, "currentRound");
-    protected RoundFacade interruptedRound = null;
+    private GenericState<RoundFacade> interruptedRound = new GenericState<> (this, "interruptedRound");
 
     protected final IntegerState startRoundNumber = IntegerState.create(this, "startRoundNumber");
     protected final IntegerState stockRoundNumber = IntegerState.create(this, "srNumber");
@@ -107,6 +107,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected final IntegerState numOfORs = IntegerState.create(this, "numOfORs");
 
     protected int maxRounds; // For SOH
+
+    /** The previous OR or SR, excluding all merge rounds.
+     * Needed in 1837 when merge Rounds occur */
+    protected GenericState<Round> currentSRorOR = new GenericState<>(this, "prevMainRound");
 
     protected final BooleanState firstAllPlayersPassed = new BooleanState(this, "firstAllPlayersPassed");
 
@@ -458,8 +462,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
     }
 
-    public void finishConfiguration(RailsRoot root) {
-    }
+    /* WARNING: required but never never called */
+    public void finishConfiguration(RailsRoot root) {}
 
     public void init() {
         showCompositeORNumber = !"simple".equalsIgnoreCase(Config.get("or.number_format"));
@@ -522,8 +526,15 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
     }
 
-    protected void setRound(RoundFacade round) {
+    public void setRound(RoundFacade round) {
         currentRound.set(round);
+    }
+
+    public void setInterruptedRound(RoundFacade interruptedRound) {
+        this.interruptedRound.set (interruptedRound);
+    }
+    public RoundFacade getInterruptedRound() {
+        return interruptedRound.value();
     }
 
     public void nextRound(Round round) {
@@ -621,6 +632,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected void startStockRound() {
         stockRoundNumber.add(1);
         StockRound sr = createRound(stockRoundClass, "SR_" + stockRoundNumber.value());
+        currentSRorOR.set (sr);
 
         // For debugging only: check where the certs are.
         if (log.isDebugEnabled() && stockRoundNumber.value() == 1) {
@@ -629,7 +641,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                     log.debug("{} cert {} owned by {}", comp.getId(), cert.getId(), cert.getOwner());
                 }
             }
-       }
+        }
 
         sr.start();
     }
@@ -651,6 +663,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
         OperatingRound or = createRound(operatingRoundClass, orId);
         //if (operate) absoluteORNumber.add(1);
+        currentSRorOR.set (or);
         or.start();
     }
 
@@ -728,23 +741,23 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public void startShareSellingRound(Player player, int cashToRaise,
                                        PublicCompany cashNeedingCompany, boolean problemDumpOtherCompanies) {
 
-        interruptedRound = getCurrentRound();
+        interruptedRound.set(getCurrentRound());
 
         // An id based on interruptedRound and company id
-        String id = "SSR_" + interruptedRound.getId() + "_" + cashNeedingCompany.getId()+"_"+cashToRaise;
+        String id = "SSR_" + getInterruptedRound().getId() + "_" + cashNeedingCompany.getId()+"_"+cashToRaise;
 
         // check if other companies can be dumped
         createRound(shareSellingRoundClass, id).start(
-                interruptedRound, player, cashToRaise, cashNeedingCompany,
+                getInterruptedRound(), player, cashToRaise, cashNeedingCompany,
                 !problemDumpOtherCompanies || forcedSellingCompanyDump);
         // the last parameter indicates if the dump of other companies is allowed, either this is explicit or
         // the action does not require that check
     }
 
     public void startTreasuryShareTradingRound(PublicCompany company) {
-        interruptedRound = getCurrentRound();
-        String id = "TreasuryShareRound_" + interruptedRound.getId() + "_" + company.getId();
-        createRound(TreasuryShareRound.class, id).start(interruptedRound);
+        interruptedRound.set(getCurrentRound());
+        String id = "TreasuryShareRound_" + getInterruptedRound().getId() + "_" + company.getId();
+        createRound(TreasuryShareRound.class, id).start(getInterruptedRound());
     }
 
     public boolean process(PossibleAction action) {
@@ -1217,16 +1230,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public void finishShareSellingRound(boolean resume) {
-        setRound(interruptedRound);
-        guiHints.setCurrentRoundType(interruptedRound.getClass());
+        setRound(getInterruptedRound());
+        guiHints.setCurrentRoundType(getInterruptedRound().getClass());
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
         if (resume) getCurrentRound().resume();
     }
 
     public void finishTreasuryShareRound() {
-        setRound(interruptedRound);
-        guiHints.setCurrentRoundType(interruptedRound.getClass());
+        setRound(getInterruptedRound());
+        guiHints.setCurrentRoundType(getInterruptedRound().getClass());
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
         ((OperatingRound) getCurrentRound()).nextStep();
@@ -1318,7 +1331,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     }
 
     public void registerCompanyBankruptcy (PublicCompany company) {
-        OperatingRound or = (OperatingRound) interruptedRound;
+        OperatingRound or = (OperatingRound) getInterruptedRound();
         String message = LocalText.getText("CompanyIsBankrupt",
                 company.getId());
         ReportBuffer.add(this, message);
@@ -1584,10 +1597,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         } else {
             return false;
         }
-    }
-
-    public RoundFacade getInterruptedRound() {
-        return interruptedRound;
     }
 
     /**

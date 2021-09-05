@@ -407,6 +407,16 @@ public class TrainManager extends RailsManager implements Configurable {
             getRoot().getPhaseManager().setPhase(newPhase, train.getOwner());
             phaseHasChanged.set(true);
         }
+
+        // Rust trains without creating a new phase
+        // Used in 1837
+        List<TrainCardType> rustedTrains = boughtType.getRustedTrainTypes();
+        if (rustedTrains != null && !rustedTrains.isEmpty()) {
+            for (TrainCardType type : rustedTrains) {
+                rustTrainType(type, null); // TODO Can buyingCompany be null?
+            }
+        }
+
     }
 
     protected void releaseInitialTrainTypes (TrainCardType cardType) {

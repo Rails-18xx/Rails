@@ -230,7 +230,9 @@ public final class RevenueManager extends RailsManager implements Configurable {
         // this allows dynamic modifiers to change the optimal run
         // however this is forbidden outside the optimal run!
         int value = 0;
-        for (RevenueDynamicModifier modifier : activeDynamicModifiers) {
+        // To prevent "concurrent modification" exceptions, make a copy first
+        ArrayList<RevenueDynamicModifier> adm = (ArrayList<RevenueDynamicModifier>) activeDynamicModifiers.clone();
+        for (RevenueDynamicModifier modifier : adm) {
             value += modifier.evaluationValue(run, optimal);
         }
         if (calculatorModifier != null) {

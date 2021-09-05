@@ -166,7 +166,7 @@ public class OperatingRound extends Round implements Observer {
         } else if (savedAction instanceof RepayLoans) {
             executeRepayLoans((RepayLoans) savedAction);
         } else if (savedAction == null) {
-            // nextStep();
+            setPossibleActions();  // In case it wouldn't otherwise happen
         }
         savedAction = null;
         wasInterrupted.set(true);
@@ -2878,13 +2878,13 @@ public class OperatingRound extends Round implements Observer {
 
     /**
      * Default version of calculating a shareholder's part
-     * of a dividend to be payed out.
+     * of a dividend to be payed out, rounded up.
      *
      * This method should be overridden in games where a different rule applies.
      *
-     * @param revenue The revenue amount to be split.
-     * @return The part that goes directly to the company treasury.
-     * (the difference is to be payed out to the shareholders).
+     * @param payoutPerShare The unrounded revenue amount to be paid per share.
+     * @param numberOfShares the number of shares held buy the shareholder
+     * @return The rounded revenue amount to be paid to the shareholder
      *
      */
     protected int calculateShareholderPayout (double payoutPerShare, int numberOfShares) {
