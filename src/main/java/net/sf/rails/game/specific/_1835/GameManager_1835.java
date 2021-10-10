@@ -6,6 +6,7 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
 import net.sf.rails.game.financial.ShareSellingRound;
+import net.sf.rails.game.round.RoundFacade;
 
 
 public class GameManager_1835 extends GameManager {
@@ -45,10 +46,11 @@ public class GameManager_1835 extends GameManager {
     public void nextRound(Round round) {
 
         if (round instanceof PrussianFormationRound) {
+            RoundFacade interruptedRound = getInterruptedRound();
             if (interruptedRound != null) {
                 setRound(interruptedRound);
                 interruptedRound.resume();
-                interruptedRound = null;
+                setInterruptedRound(null);
             } else if (previousRound != null) {
                 super.nextRound(previousRound);
                 previousRound = null;
@@ -68,9 +70,9 @@ public class GameManager_1835 extends GameManager {
     }
 
     public void startPrussianFormationRound(OperatingRound_1835 or) {
-        interruptedRound = or;
+        setInterruptedRound(or);
         String roundName;
-        if (interruptedRound == null) {
+        if (getInterruptedRound() == null) {
             // after a round
             roundName = "PrussianFormationRound_after_" + previousRound.getId();
         } else {
@@ -126,12 +128,12 @@ public class GameManager_1835 extends GameManager {
     @Override
     public void finishShareSellingRound(boolean resume) {
         int remainingCashToRaise = ((ShareSellingRound)getCurrentRound()).getRemainingCashToRaise();
-        OperatingRound_1835 or = (OperatingRound_1835) interruptedRound;
+        OperatingRound_1835 or = (OperatingRound_1835) getInterruptedRound();
         setRound(or);
-        guiHints.setCurrentRoundType(interruptedRound.getClass());
+        guiHints.setCurrentRoundType(getInterruptedRound().getClass());
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setActivePanel(GuiDef.Panel.MAP);
-        interruptedRound = null;
+        setInterruptedRound(null);
         or.resumeAfterSSR(remainingCashToRaise);
     }
 

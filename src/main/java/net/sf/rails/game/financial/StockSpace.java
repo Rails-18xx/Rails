@@ -311,6 +311,8 @@ public class StockSpace extends RailsModel implements Comparable<StockSpace> {
         return Bank.format(getParent(), price);
     }
 
+    public String toString() { return getId(); }
+
     // Comparable method
     // TODO: Check if this is correct (price > column > row)
     public int compareTo(StockSpace other) {

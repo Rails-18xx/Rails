@@ -13,19 +13,13 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.financial.NationalFormationRound;
-import net.sf.rails.game.special.ExchangeForShare;
-import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.SequenceUtil;
-import rails.game.action.BuyTrain;
-import rails.game.action.PossibleAction;
-import rails.game.action.SetDividend;
+import rails.game.action.*;
 
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Table;
 import rails.game.specific._1837.SetHomeHexLocation;
 
@@ -37,7 +31,6 @@ import rails.game.specific._1837.SetHomeHexLocation;
 public class OperatingRound_1837 extends OperatingRound {
     private static final Logger log = LoggerFactory.getLogger(OperatingRound_1837.class);
 
-    private final BooleanState needSuedBahnFormationCall = new BooleanState(this, "NeedSuedBahnFormationCall");
     private final BooleanState needHungaryFormationCall = new BooleanState(this, "NeedHungaryFormationCall");
     private final BooleanState needKuKFormationCall = new BooleanState(this, "NeedKuKFormationCall");
 
@@ -55,144 +48,62 @@ public class OperatingRound_1837 extends OperatingRound {
     @Override
     protected void newPhaseChecks() {
         Phase phase = Phase.getCurrent(this);
+
         if (phase.getId().equals("3")) {
+            // Unblock the hexes blocked by private companies
             for(PrivateCompany comp:gameManager.getAllPrivateCompanies())  {
                 comp.unblockHexes();
             }
-        }
-        if (phase.getId().equals("4")
-                && !companyManager.getPublicCompany(GameDef_1837.Sd).hasStarted()
-                && !NationalFormationRound.nationalIsComplete(gameManager, GameDef_1837.Sd)) {
-            if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
-                // Postpone until trains are discarded
-                needSuedBahnFormationCall.set(true);
-            } else {
-                // Do it immediately
-                ((GameManager_1837)gameManager).startSuedBahnFormationRound (this);
+            // Open the Bosnian territory
+            MapManager map = getRoot().getMapManager();
+            for (String bzhHex : GameDef_1837.BzHHexes.split(",")){
+                map.getHex(bzhHex).setOpen(true);
             }
-        }
-        if (phase.getId().equals("4+1")
-                && !companyManager.getPublicCompany(GameDef_1837.KK).hasStarted()
-                && !NationalFormationRound.nationalIsComplete(gameManager,GameDef_1837.KK)) {
-            if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
-                // Postpone until trains are discarded
-                needKuKFormationCall.set(true);
-            } else {
-                // Do it immediately
-                ((GameManager_1837)gameManager).startKuKFormationRound (this);
+            String report = LocalText.getText("TerritoryIsOpened", "Bosnian");
+            ReportBuffer.add (this, report);
+            DisplayBuffer.add (this, report);
+
+        } else if (phase.getId().equals("4")) {
+           // Close the Italian territory
+            MapManager map = getRoot().getMapManager();
+            for (String itHex : GameDef_1837.ItalyHexes.split(",")) {
+                MapHex hex = map.getHex(itHex);
+                hex.setOpen(false);
+                hex.clear();
             }
-            if (phase.getId().equals("4E")
-                    && !companyManager.getPublicCompany(GameDef_1837.Ug).hasStarted()
-                    && !NationalFormationRound.nationalIsComplete(gameManager, GameDef_1837.Ug)) {
-                if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {
-                    // Postpone until trains are discarded
-                    needHungaryFormationCall.set(true);
-                } else {
-                    // Do it immediately
-                    ((GameManager_1837)gameManager).startHungaryFormationRound (this);
-                }
+            String report = LocalText.getText("TerritoryIsClosed", "Italian");
+            ReportBuffer.add(this, report);
+            DisplayBuffer.add(this, report);
+
+            // Lay the new Bozen (Bolzano) tile
+            LayTile action = new LayTile(getRoot(), LayTile.CORRECTION);
+            MapHex hex = map.getHex(GameDef_1837.bozenHex);
+            Tile tile = getRoot().getTileManager().getTile(GameDef_1837.newBozenTile);
+            int orientation = GameDef_1837.newBozenTileOrientation;
+            action.setChosenHex(hex);
+            action.setLaidTile(tile);
+            action.setOrientation(orientation);
+            hex.upgrade(action);
+            report = LocalText.getText("LaysTileAt", "Rails",
+                    tile.getId(),
+                    hex.getId(),
+                    hex.getOrientationName(HexSide.get(orientation)));
+            ReportBuffer.add(this, report);
+            // Note: the Sd and KK formation timings specified in their <Formation> tags
+
+        } else if (phase.getId().equals("5")) {
+            if (((GameManager_1837)gameManager).checkAndRunCER("5", this,this )) {
+                return;
             }
-
+            // Note: The Ug formation timing is specified in its <Formation> tag
         }
 
-    }
-
-    private void addIncomeDenialShare (Player player, PublicCompany company, int share) {
-
-        if (!deniedIncomeShare.contains(player, company)) {
-            deniedIncomeShare.put(player, company, share);
-        } else {
-            deniedIncomeShare.put(player, company, share + deniedIncomeShare.get(player, company));
-        }
-        //log.debug("+++ Denied "+share+"% share of PR income to "+player.getName());
-    }
-
-    /** Count the number of shares per revenue recipient<p>
-     * A special rule applies to 1835 to prevent black privates and minors providing
-     * income twice during an OR.
-     */
-    @Override
-    protected  Map<MoneyOwner, Integer>  countSharesPerRecipient () {
-
-        Map<MoneyOwner, Integer> sharesPerRecipient = super.countSharesPerRecipient();
-
-        if (operatingCompany.value().getId().equalsIgnoreCase(GameDef_1837.Sd)) {
-            for (Player player : deniedIncomeShare.rowKeySet()) {
-                if (!sharesPerRecipient.containsKey(player)) continue;
-                int share = deniedIncomeShare.get(player,operatingCompany.value());
-                int shares = share / operatingCompany.value().getShareUnit();
-                sharesPerRecipient.put (player, sharesPerRecipient.get(player) - shares);
-                ReportBuffer.add(this, LocalText.getText("NoIncomeForPreviousOperation",
-                        player.getId(),
-                        share,
-                        GameDef_1837.Sd));
-            }
-        }
-
-
-        return sharesPerRecipient;
-    }
-    /**
-     * Register black minors as having operated
-     * for the purpose of denying income after conversion to a PR share
-     */
-    @Override
-    protected void initTurn() {
-
-        super.initTurn();
-
-        Set<SpecialProperty> sps = operatingCompany.value().getSpecialProperties();
-        if (sps != null && !sps.isEmpty()) {
-            ExchangeForShare efs = (ExchangeForShare) Iterables.get(sps, 0);
-            addIncomeDenialShare (operatingCompany.value().getPresident(), operatingCompany.value(), efs.getShare());
-        }
-    }
-
-    @Override
-    public void resume() {
-        PublicCompany suedbahn = companyManager.getPublicCompany(GameDef_1837.Sd);
-        //        PublicCompany hungary = companyManager.getPublicCompany("Ug");
-        //       PublicCompany kuk = companyManager.getPublicCompany("KK");
-
-        if ((suedbahn.hasFloated()) && (!suedbahn.hasOperated())
-                // Suedbahn has just started. Check if it can operate this round
-                // That's only the case if another Pre Suedbahn S2-S5 still hasnt
-                // operated. Trains that have run this OR cant run again, shares that have
-                // been exchanged cant get their income distributed again.
-                && (operatingCompany.value().getType().getId().equals(GameDef_1837.Minor1)) ) {
-            log.debug("a Pre Suedbahn has not operated: Suedbahn can operate");
-
-            // Insert the Suedbahn before the first major company
-            // with a lower current price that has not yet operated
-            // and isn't currently operating
-
-            int index = 0;
-            int operatingCompanyIndex = getOperatingCompanyIndex();
-            for (PublicCompany company : setOperatingCompanies()) {
-                if (index > operatingCompanyIndex
-                        && company.hasStockPrice()
-                        && company.hasFloated()
-                        && !company.isClosed()
-                        && company != operatingCompany.value()
-                        && company.getCurrentSpace().getPrice()
-                        < suedbahn.getCurrentSpace().getPrice()) {
-                    log.debug("Suedbahn will operate before {}", company.getId());
-                    break;
-                }
-                index++;
-            }
-            // Insert SB at the found index (possibly at the end)
-            operatingCompanies.add(index, suedbahn);
-            log.debug("SU will operate at order position {}", index);
-
-        } else {
-
-            log.debug("S1 has operated: Sd cannot operate");
+        PhaseManager phmgr = getRoot().getPhaseManager();
+        if (phmgr.hasReachedPhase("4") && !phmgr.hasReachedPhase("5+2")) {
+            ((GameManager_1837)gameManager).setNewPhaseId(phase.getId());
+            ((GameManager_1837) gameManager).checkAndRunNFR(phase.getId(), null, this );
 
         }
-
-        guiHints.setCurrentRoundType(getClass());
-        super.resume();
     }
 
     public boolean setPossibleActions() {
@@ -207,8 +118,30 @@ public class OperatingRound_1837 extends OperatingRound {
             possibleActions.add(new SetHomeHexLocation(getRoot(),
                     company, GameDef_1837.S5homes));
             return true;
+        } else if (company.isClosed()) {
+            // This can occur if a Sd minor buys the first 4-train
+            finishTurn();
+            possibleActions.clear();
+            super.setPossibleActions();
+            return true;
         } else {
             return super.setPossibleActions();
+        }
+    }
+
+    /** 1837 nationals may not lay their reserved tokens elsewhere
+     * until formation is complete
+     * (This I presume, the v2.0 rules are not clear on that matter. EV)
+     */
+    @Override
+    protected boolean canLayAnyTokens (boolean resetTokenLays) {
+
+        PublicCompany_1837 company = (PublicCompany_1837) operatingCompany.value();
+
+        if (company.getType().getId().equals("National") && !company.isComplete()) {
+            return false;
+        } else {
+            return super.canLayAnyTokens(resetTokenLays);
         }
     }
 
@@ -508,6 +441,8 @@ public class OperatingRound_1837 extends OperatingRound {
             if (oldTrain.getType().equals(newTrain.getType())) continue;
             // New train cost is raised with half the old train cost
             int price = newTrain.getCost() + oldTrain.getCost() / 2;
+            if (price > company.getCash()) continue;
+
             BuyTrain buyTrain = new BuyTrain (newTrain, bank.getIpo(), price);
             buyTrain.setTrainForExchange(oldTrain);
             possibleActions.add(buyTrain);

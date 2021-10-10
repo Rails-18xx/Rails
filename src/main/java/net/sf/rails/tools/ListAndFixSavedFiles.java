@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
@@ -386,6 +386,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             new SetDividendDialog((SetDividend) editedAction);
         } else if (editedAction instanceof LayBaseToken) {
             new LayBaseTokenDialog ((LayBaseToken)editedAction);
+        } else if (editedAction instanceof DiscardTrain) {
+            new DiscardTrainDialog ((DiscardTrain)editedAction);
         } else {
             JOptionPane.showMessageDialog(this, "Action type '" + editedAction.getClass().getSimpleName()
                     + "' cannot yet be edited");
@@ -475,6 +477,9 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             addTextField (this, "Added cash",
                     action.getAddedCash(),
                     String.valueOf(action.getAddedCash()));  // 3
+            addTextField (this, "Trains for exchange",
+                    action.getTrainsForExchange(),
+                    action.getTrainsForExchange() != null ? action.getTrainsForExchange().toString() : "[]");  // 4
             addTextField (this, "Exchange train UID",
                     action.getExchangedTrain(),
                     action.getExchangedTrain() != null ? action.getExchangedTrain().getId() : "");  // 4
@@ -500,11 +505,24 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 action.setAddedCash(addedCash);
             } catch (NumberFormatException e) {
             }
-            String exchangedTrainID = ((JTextField)inputElements.get(4)).getText();
+
+            String trainsForExchangeInput = ((JTextField)inputElements.get(4)).getText();
+            String trainsForExchangeIds = trainsForExchangeInput
+                    .replaceAll(".*\\[(.*)\\].*", "$1");
+            Set<Train> trainsForExchange = new HashSet<>();
+            for (String trainId : trainsForExchangeIds.split(",")) {
+                log.info ("+++ Exchange train id: {}", trainId);
+                trainsForExchange.add(root.getTrainManager().getTrainByUniqueId(trainId));
+            }
+            log.info ("+++++ Exchange trains: {}", trainsForExchange);
+            action.setTrainsForExchange(trainsForExchange);
+
+            String exchangedTrainID = ((JTextField)inputElements.get(5)).getText();
             Train exchangedTrain = root.getTrainManager().getTrainByUniqueId(exchangedTrainID);
             if (exchangedTrain != null) action.setExchangedTrain(exchangedTrain);
+
             try {
-                int fixedCost = Integer.parseInt(((JTextField)inputElements.get(5)).getText());
+                int fixedCost = Integer.parseInt(((JTextField)inputElements.get(6)).getText());
                 action.setFixedCost(fixedCost);
             } catch (NumberFormatException e) {
             }
@@ -676,6 +694,55 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             }
 
             log.info("Action is {}", action);
+            return action;
+
+        }
+    }
+
+    private class DiscardTrainDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private DiscardTrain action;
+
+        DiscardTrainDialog (DiscardTrain action) {
+            super ("Edit DiscardTrain");
+            this.action = action;
+            addLabel (this, "Company", null, action.getCompany().getId()); // 0
+            addTextField (this, "Trains",
+                    action.getOwnedTrains(),
+                    String.valueOf(action.getOwnedTrains()));  // 1
+            addTextField (this, "Forced",
+                    action.isForced(),
+                    String.valueOf(action.isForced()));  // 2
+            addTextField (this, "Discarded",
+                    action.getDiscardedTrain(),
+                    String.valueOf(action.getDiscardedTrain()));  // 3
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+            log.info("Action was {}", action);
+
+            String ownedTrainsInput = ((JTextField)inputElements.get(1)).getText();
+            log.info ("Field 1: {}", ownedTrainsInput);
+            String ownedTrainsIds = ownedTrainsInput
+                    .replaceAll("\\[(.*)\\]", "$1").replaceAll("\\s+", "");
+            log.info ("Field 1 trimmed: {}", ownedTrainsInput);
+            Set<Train> ownedTrains = new HashSet<>();
+            for (String trainId : ownedTrainsIds.split(",")) {
+                log.info ("+++ Exchange train id: {}", trainId);
+                ownedTrains.add(root.getTrainManager().getTrainByUniqueId(trainId));
+            }
+            log.info ("+++++ Exchange trains: {}", ownedTrains);
+            action.setOwnedTrains(ownedTrains);
+
+            action.setForced(Boolean.valueOf(((JTextField)inputElements.get(2)).getText()));
+
+            String trainID = ((JTextField)inputElements.get(3)).getText();
+            Train train = root.getTrainManager().getTrainByUniqueId(trainID);
+            if (train != null) action.setDiscardedTrain(train);
+
+            log.info("Action is  {}", action);
             return action;
 
         }

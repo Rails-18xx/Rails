@@ -166,7 +166,7 @@ public class OperatingRound extends Round implements Observer {
         } else if (savedAction instanceof RepayLoans) {
             executeRepayLoans((RepayLoans) savedAction);
         } else if (savedAction == null) {
-            // nextStep();
+            setPossibleActions();  // In case it wouldn't otherwise happen
         }
         savedAction = null;
         wasInterrupted.set(true);
@@ -2878,13 +2878,13 @@ public class OperatingRound extends Round implements Observer {
 
     /**
      * Default version of calculating a shareholder's part
-     * of a dividend to be payed out.
+     * of a dividend to be payed out, rounded up.
      *
      * This method should be overridden in games where a different rule applies.
      *
-     * @param revenue The revenue amount to be split.
-     * @return The part that goes directly to the company treasury.
-     * (the difference is to be payed out to the shareholders).
+     * @param payoutPerShare The unrounded revenue amount to be paid per share.
+     * @param numberOfShares the number of shares held buy the shareholder
+     * @return The rounded revenue amount to be paid to the shareholder
      *
      */
     protected int calculateShareholderPayout (double payoutPerShare, int numberOfShares) {
@@ -3062,7 +3062,8 @@ public class OperatingRound extends Round implements Observer {
 
     /*
      * =======================================
-     *  7. TRAIN PURCHASING
+     *  7. TRAIN PURCHASING STEP
+     *  7.1 BUY TRAIN EXECUTION
      * =======================================
      */
 
@@ -3352,15 +3353,16 @@ public class OperatingRound extends Round implements Observer {
         return true;
     }
 
-    /**
-     * Can the operating company buy a train now? Normally only calls
-     * isBelowTrainLimit() to get the result. May be overridden if other
-     * considerations apply (such as having a Pullmann in 18EU).
-     *
-     * @return True if the company has room buy a train
+    /*
+     * =======================================
+     *  7.2 BUY TRAIN EFFECTS
+     * =======================================
      */
-    protected boolean canBuyTrainNow() {
-        return isBelowTrainLimit();
+
+    /**
+     * Stub
+     */
+    protected void newPhaseChecks() {
     }
 
     public boolean checkForExcessTrains() {
@@ -3381,6 +3383,23 @@ public class OperatingRound extends Round implements Observer {
         return !excessTrainCompanies.isEmpty();
     }
 
+    /*
+     * =======================================
+     *  7.3 BUY TRAIN PREPARATION
+     * =======================================
+     */
+
+    /**
+     * Can the operating company buy a train now? Normally only calls
+     * isBelowTrainLimit() to get the result. May be overridden if other
+     * considerations apply (such as having a Pullmann in 18EU).
+     *
+     * @return True if the company has room tobuy a train
+     */
+    protected boolean canBuyTrainNow() {
+        return isBelowTrainLimit();
+    }
+
     /**
      * Predict if bankruptcy will occur in emergency train buying.
      * Must be called <i>after</i> the president has selected a train to buy,
@@ -3397,12 +3416,6 @@ public class OperatingRound extends Round implements Observer {
     public boolean willBankruptcyOccur(Owner owner,
                                        int cashToRaise) {
         return false;
-    }
-
-    /**
-     * Stub
-     */
-    protected void newPhaseChecks() {
     }
 
     protected SortedMap<Integer, Train> newEmergencyTrains;

@@ -41,7 +41,9 @@ public class MergeCompanies extends PossibleAction {
     /**
      * Common constructor.
      */
-    public MergeCompanies(PublicCompany mergingCompany, @NotNull List<PublicCompany> targetCompanies, boolean forced) {
+    public MergeCompanies(PublicCompany mergingCompany,
+                          @NotNull List<PublicCompany> targetCompanies,
+                          boolean forced) {
         super(mergingCompany.getRoot()); // not defined by an activity yet
         this.mergingCompany = mergingCompany;
         this.mergingCompanyName = mergingCompany.getId();

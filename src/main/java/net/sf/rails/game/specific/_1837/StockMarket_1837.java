@@ -6,6 +6,7 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.financial.StockMarket;
 import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.state.HashMapState;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +18,8 @@ import java.util.Map;
  */
 public class StockMarket_1837 extends StockMarket {
 
-    private Map<StockSpace, Integer> parSpaceUsers = new HashMap<>();
+    private HashMapState<StockSpace, Integer> parSpaceUsers
+            = HashMapState.create(this, "parSpaceUsers");
 
     public StockMarket_1837(RailsRoot parent, String id) {
         super(parent, id);
@@ -47,21 +49,29 @@ public class StockMarket_1837 extends StockMarket {
         }
     }
 
+    /**
+     * Add 1 to the number of companies that have a given par price
+     * (whether this is allowed should have been checked first using canAddParSpaceUser())
+     * @param space The StartSpace of the given par price
+     */
     public void addParSpaceUser (StockSpace space) {
         if (parSpaceUsers.get(space) == null) {
             parSpaceUsers.put (space, 1);
         } else {
-            parSpaceUsers.replace(space, parSpaceUsers.get(space) + 1);
+            parSpaceUsers.put(space, parSpaceUsers.get(space) + 1);
         }
     }
 
+    /**
+     * Check if a new company can use a specific par price.
+     * In 1837, the maximum number of companies that can use a par price is 2.
+     * @param space The StartSpace of a given par price
+     * @return True if starting a company with that price is allowed
+     */
     public boolean canAddParSpaceUser (StockSpace space) {
         Integer count = parSpaceUsers.get(space);
         return count == null || count < 2;
     }
-
-
-
 
     public void payOut(PublicCompany company, boolean split) {
         if (!split) {

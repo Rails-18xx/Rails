@@ -227,7 +227,7 @@
                 <Upgrade id="434"/>
         </Tile>
         <Tile id="427" orientation="0" quantity="1">
-                <Upgrade id="436" relayBaseTokens="yes"/>
+                <Upgrade id="436"/>
         </Tile>
         <Tile id="429" quantity="2">
                 <Upgrade id="430"/>
@@ -251,5 +251,5 @@
         <Tile id="432" quantity="4"/>
         <Tile id="434" quantity="2"/>
         <Tile id="435" quantity="1"/>
-        <Tile id="436" quantity="1" orientation="5"/>
+        <Tile id="436" quantity="1" orientation="0"/>
 </TileManager>

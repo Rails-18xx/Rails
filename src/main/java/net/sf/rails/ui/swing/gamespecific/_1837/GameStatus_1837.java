@@ -3,9 +3,13 @@ package net.sf.rails.ui.swing.gamespecific._1837;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
+import net.sf.rails.common.LocalText;
+import net.sf.rails.game.Company;
+import net.sf.rails.game.specific._1837.PublicCompany_1837;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import rails.game.action.FoldIntoNational;
 import rails.game.action.LayBaseToken;
 import rails.game.action.MergeCompanies;
 import rails.game.action.PossibleAction;
@@ -45,10 +49,38 @@ public class GameStatus_1837 extends GameStatus {
                             merger);
                 }
             }
-       }
+            /* This could be the 'silent mode' prompt to merge a minor
+        } else if (possibleActions.contains(FoldIntoNational.class)) {
+            FoldIntoNational mergers =
+                    possibleActions.getType(FoldIntoNational.class).get(0);
+            PublicCompany_1837 national = mergers.getNationalCompany();
+            for (Company merger : mergers.getFoldableCompanies()) {
+                if (merger instanceof PublicCompany) {
+                    PublicCompany minor = (PublicCompany) merger;
+                    index = minor.getPublicNumber();
+                    setPlayerCertButton(index, mergers.getPlayerIndex(), true,
+                            merger);
+                }
+            }*/
+        }
     }
 
-    /** Start a company - specific procedure for 1837 copied from 18EU */
+    @Override
+    protected void setPlayerCertButton(int i, int j, boolean clickable, Object o) {
+
+        super.setPlayerCertButton(i, j, clickable, o);
+
+        if (clickable && o instanceof PossibleAction) {
+            if (o instanceof FoldIntoNational) {
+                addToolTipText (certPerPlayerButton[i][j], LocalText.getText("MergeTooltip",
+                        ((FoldIntoNational) o).getNationalCompany().getId()));
+
+            }
+        }
+    }
+
+
+        /** Start a company - specific procedure for 1837 copied from 18EU */
     @Override
     protected PossibleAction processGameSpecificActions(ActionEvent actor,
             PossibleAction chosenAction) {
@@ -61,8 +93,8 @@ public class GameStatus_1837 extends GameStatus {
             PublicCompany minor = action.getMergingCompany();
             List<PublicCompany> targets = action.getTargetCompanies();
 
-            if (minor == null || targets == null || targets.isEmpty()
-                    || targets.size() > 1 || targets.get(0) == null) {
+            if (minor == null || targets == null
+                    || targets.size() != 1 || targets.get(0) == null) {
                 log.error("Bad {}", action);
                 return null;
             }

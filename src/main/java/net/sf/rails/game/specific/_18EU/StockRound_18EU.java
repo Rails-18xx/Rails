@@ -80,8 +80,6 @@ public class StockRound_18EU extends StockRound {
     /**
      * Create a list of certificates that a player may buy in a Stock Round,
      * taking all rules into account.
-     *
-     * @return List of buyable certificates.
      */
     @Override
     // changes: 18EU only allows to start a company with a merged minor (until phase 5)
@@ -284,11 +282,6 @@ public class StockRound_18EU extends StockRound {
     /**
      * Start a company by buying one or more shares (more applies to e.g. 1841)
      *
-     * @param player  The player that wants to start a company.
-     * @param company The company to start.
-     * @param price   The start (par) price (ignored if the price is fixed).
-     * @param shares  The number of shares to buy (can be more than 1 in e.g.
-     *                1841).
      * @return True if the company could be started. False indicates an error.
      */
     @Override

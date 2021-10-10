@@ -23,7 +23,7 @@ public abstract class OwnableItem<T extends Ownable> extends AbstractItem implem
 
     public void moveTo(Owner newOwner) {
         Preconditions.checkArgument(newOwner != owner.value(), 
-                "New Owner identical to the existing owner" + newOwner);
+                "New Owner identical to the existing owner: " + newOwner);
         
 
         // check newPortfolio

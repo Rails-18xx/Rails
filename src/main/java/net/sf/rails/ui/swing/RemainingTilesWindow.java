@@ -83,7 +83,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener,
         log.debug("There are {} tiles known in this game", tiles.size());
 
         for (Tile tile:tiles) {
-            if (tile.isFixed()) continue;
+            if (tile.isPrepainted()) continue;
             String picId = tile.getPictureId();
 
             BufferedImage hexImage = ImageLoader.getInstance().getTile(picId, 10);

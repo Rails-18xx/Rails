@@ -141,6 +141,7 @@ public class Phase extends RailsModel implements Configurable {
         }
 
         // Real name (as in the printed game)
+        // Note: realName="*" means that the printed name does not change
         name = tag.getAttributeAsString("realName", null);
 
         // Allowed tile colours
@@ -388,6 +389,8 @@ public class Phase extends RailsModel implements Configurable {
     }
 
     public String getRealName() {
+        if (name == null) return getId();
+
         return (name != null) ? name : getId();
     }
 
@@ -482,6 +485,9 @@ public class Phase extends RailsModel implements Configurable {
     public String toText() {
         return getRealName();
     }
+
+    @Override
+    public String toString() { return getId(); }
 
     public static Phase getCurrent(RailsItem item) {
         return item.getRoot().getPhaseManager().getCurrentPhase();
