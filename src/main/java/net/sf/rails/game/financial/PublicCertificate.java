@@ -27,7 +27,8 @@ import com.google.common.collect.ImmutableSortedSet;
  * Then clean up the current mess, including the static map, which is only for backward compatibility for early 1.x versions
  */
 
-public class PublicCertificate extends RailsOwnableItem<PublicCertificate> implements Certificate, Cloneable, Typable<PublicCompany> {
+public class PublicCertificate extends RailsOwnableItem<PublicCertificate>
+        implements Certificate, Cloneable, Typable<PublicCompany> {
 
     /**
      * Combination defines a set of certificates

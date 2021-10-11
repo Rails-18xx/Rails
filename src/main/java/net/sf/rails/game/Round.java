@@ -21,7 +21,8 @@ import org.slf4j.LoggerFactory;
 import rails.game.action.*;
 
 
-public abstract class Round extends RailsAbstractItem implements RoundFacade {
+// Cannot be abstract because must be instantiatable to make it stateful, see GameManager_1837.
+public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade {
 
     private static final Logger log = LoggerFactory.getLogger(Round.class);
 
@@ -229,6 +230,8 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
     // called only internally
     protected void floatCompany(PublicCompany company) {
 
+        if (company.hasFloated()) return;
+
         // Move cash and shares where required
         int soldPercentage = company.getSoldPercentage();
         int cash;
@@ -280,21 +283,27 @@ public abstract class Round extends RailsAbstractItem implements RoundFacade {
         }
     }
 
+    protected void finishRound () {
+        finishRound (true);
+    }
+
     // Could be moved somewhere else (RoundUtils?)
     // called only internally. EV: why is that an issue?
-    protected void finishRound() {
-        // Report financials
-        ReportBuffer.add(this, "");
-        for (PublicCompany c : companyManager.getAllPublicCompanies()) {
-            if (c.hasFloated() && !c.isClosed()) {
-                ReportBuffer.add(this, LocalText.getText("Has", c.getId(),
-                        Bank.format(this, c.getCash())));
+    protected void finishRound(boolean reportFinancials) {
+
+        if (reportFinancials) {
+            ReportBuffer.add(this, "");
+            for (PublicCompany c : companyManager.getAllPublicCompanies()) {
+                if (c.hasFloated() && !c.isClosed()) {
+                    ReportBuffer.add(this, LocalText.getText("Has", c.getId(),
+                            Bank.format(this, c.getCash())));
+                }
             }
-        }
-        for (Player p : playerManager.getPlayers()) {
-            if (!p.isBankrupt()) {
-                ReportBuffer.add(this, LocalText.getText("Has", p.getId(),
-                        Bank.format(this, p.getCashValue())));
+            for (Player p : playerManager.getPlayers()) {
+                if (!p.isBankrupt()) {
+                    ReportBuffer.add(this, LocalText.getText("Has", p.getId(),
+                            Bank.format(this, p.getCashValue())));
+                }
             }
         }
         // Inform GameManager

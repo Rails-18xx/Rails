@@ -50,6 +50,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected static final int WHEN_STARTED = 0;
     protected static final int WHEN_FLOATED = 1;
     protected static final int START_OF_FIRST_OR = 2; // Only applies to home base tokens
+    protected static final int EXPLICIT = 3; // Not automatic
 
     // Base token lay cost calculation methods
     public static final String BASE_COST_SEQUENCE = "sequence";
@@ -1066,7 +1067,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                 getRoot().getStockMarket().start(this, startSpace);
             }
         }
-
 
         if (homeBaseTokensLayTime == WHEN_STARTED) {
             layHomeBaseTokens();
@@ -2318,7 +2318,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     public String getRelatedPublicCompanyName() {
-        return relatedPublicCompanyName;
+        return relatedPublicCompany.getId();
     }
 
     public PublicCompany getRelatedPublicCompany() {

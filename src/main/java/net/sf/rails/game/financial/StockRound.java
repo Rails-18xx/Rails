@@ -828,7 +828,7 @@ public class StockRound extends Round {
      * @param action containing the company to start, the price(par) and the number of shares to buy.
      * price   The start (par) price (ignored if the price is fixed).
      * shares  The number of shares to buy (can be more than 1 in e.g.
-     *                1841).
+     *                1841 and SOH).
      * @return True if the company could be started. False indicates an error.
      */
     // called by:

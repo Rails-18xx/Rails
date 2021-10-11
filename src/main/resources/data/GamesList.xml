@@ -216,7 +216,7 @@ Published 2004 by Deep Thought Games, LLC
 
 	<Game name="18Chesapeake">
 		<Note>Fully playable - Tests needed</Note>
-		<Description> 18Cheaspeake - North East USA
+		<Description> 18Chesapeake - North East USA
 			(c) 2019 Scott Pedersen    </Description>
 		<Players minimum = "2" maximum = "6" />
 	</Game>
@@ -239,8 +239,11 @@ Published 2004 by Deep Thought Games, LLC
 			- Privates (mountain railways) worth is zero.
 
 			Known limitations:
-			- Not yet tested beyond the 3+1-train phase.
-			- The 4-train effects are known to fail.
+			- Laying a token involving backtracking must be done in Correction mode.
+
+			Not yet done:
+			- The details of running/not running trains after mergers caused by phase changes.
+			- Game end and bankruptcy rules.
 		</Description>
 		<Players minimum = "3" maximum = "7" />
 	</Game>

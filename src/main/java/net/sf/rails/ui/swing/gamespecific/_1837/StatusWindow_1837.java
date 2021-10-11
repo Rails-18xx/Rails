@@ -1,23 +1,18 @@
-/**
- *
- */
 package net.sf.rails.ui.swing.gamespecific._1837;
 
 import java.util.List;
 
 import net.sf.rails.game.specific._1837.CoalExchangeRound;
+import net.sf.rails.game.specific._1837.PublicCompany_1837;
 import rails.game.action.DiscardTrain;
 import rails.game.action.FoldIntoNational;
-import rails.game.specific._1837.FoldIntoHungary;
-import rails.game.specific._1837.FoldIntoKuK;
-import rails.game.specific._1837.FoldIntoSuedbahn;
 
 import com.google.common.collect.Iterables;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Company;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.financial.NationalFormationRound;
+import net.sf.rails.game.specific._1837.NationalFormationRound;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.ui.swing.GameUIManager;
@@ -61,13 +56,14 @@ public class StatusWindow_1837 extends StatusWindow {
             }
             if (! (currentRound instanceof NationalFormationRound)) {
                 super.updateStatus(myTurn);
-            } else if (possibleActions.contains(FoldIntoHungary.class)) {
-                immediateAction = possibleActions.getType(FoldIntoHungary.class).get(0);
+            } else if (possibleActions.contains(FoldIntoNational.class)) {
+                immediateAction = possibleActions.getType(FoldIntoNational.class).get(0);
+                /*
             } else if (possibleActions.contains(FoldIntoKuK.class)) {
                 immediateAction = possibleActions.getType(FoldIntoKuK.class).get(0);
             } else if (possibleActions.contains(FoldIntoSuedbahn.class)) {
                 immediateAction = possibleActions.getType(FoldIntoSuedbahn.class).get(0);
-            } else if (possibleActions.contains(DiscardTrain.class)) {
+            */} else if (possibleActions.contains(DiscardTrain.class)) {
                 immediateAction = possibleActions.getType(DiscardTrain.class).get(0);
             }
         }
@@ -93,40 +89,41 @@ public class StatusWindow_1837 extends StatusWindow {
         // Code partly copied from ORUIManager
         protected void fold (FoldIntoNational action) {
 
+            PublicCompany_1837 national = action.getNationalCompany();
+            PublicCompany_1837 startingMinor = national.getStartingMinor();
             List<Company> foldables = action.getFoldableCompanies();
             NonModalDialog currentDialog;
 
-            if (foldables.get(0).getId().equals("U1")) {
-                // Ask if the Hungary should be started
-                currentDialog = new ConfirmationDialog (GameUIManager_1837.START_HUNGARY_DIALOG,
+            if (foldables.get(0).equals(national.getStartingMinor())) {
+                currentDialog = new ConfirmationDialog (GameUIManager_1837.START_NATIONAL_DIALOG,
                         gameUIManager, this,
                         LocalText.getText("Select"),
                         LocalText.getText("MergeMinorConfirm",
                                 getCurrentPlayer().getId(),
-                                "U1", "Ug"),
-                                "Yes",
-                                "No"
-                );
+                                startingMinor.getId(), national.getId()),
+                        "Yes",
+                        "No");
             } else {
                 // Ask if any other preNationals should be folded
                 String[] options = new String[foldables.size()];
-                Company company;
+                PublicCompany company;
                 for (int i=0; i<options.length; i++) {
-                    company = foldables.get(i);
+                    company = (PublicCompany)foldables.get(i); // TODO: in 1835 also privates are involved
                     options[i] = LocalText.getText("MergeOption",
                             company.getId(),
                             company.getLongName(),
-                            hungary.getId(),
-                            ((ExchangeForShare)(Iterables.get(company.getSpecialProperties(),0))).getShare()
+                            national.getId(),
+                            national.getShareUnit()   /// TODO Check this
+                            //((ExchangeForShare)(Iterables.get(company.getSpecialProperties(),0))).getShare()
                     );
                 }
-                currentDialog = new CheckBoxDialog (GameUIManager_1837.MERGE_INTO_HUNGARY_DIALOG,
+                currentDialog = new CheckBoxDialog (GameUIManager_1837.MERGE_INTO_NATIONAL_DIALOG,
                         gameUIManager,
                         this,
                         LocalText.getText("Select"),
                         LocalText.getText("SelectCompaniesToFold",
                                 getCurrentPlayer().getId(),
-                                hungary.getLongName()),
+                                national.getLongName()),
                                 options);
             }
             gameUIManager.setCurrentDialog (currentDialog, action);

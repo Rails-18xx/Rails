@@ -225,6 +225,8 @@ public class GUIHex implements Observer {
 
     private static final Color BAR_COLOUR = Color.BLUE;
     private static final int BAR_WIDTH = 5;
+    private static final Color BORDER_COLOUR = Color.RED;
+    private static final int BORDER_WIDTH = 2;
 
     private static final Color highlightedFillColor = new Color(255,255,255,128);
     private static final Color highlightedBorderColor = Color.BLACK;
@@ -251,6 +253,7 @@ public class GUIHex implements Observer {
     private HexUpgrade upgrade;
 
     private List<HexSide> barSides;
+    private List<HexSide> borderSides;
 
     // A counter instead of a boolean is used here in order to be able to correctly
     // handle racing conditions for mouse events.
@@ -295,9 +298,16 @@ public class GUIHex implements Observer {
     // TODO: Make this based on MapHex model
     public void addBar(HexSide side) {
         if (barSides == null) {
-            barSides = Lists.newArrayListWithCapacity(2);
+            barSides = Lists.newArrayListWithCapacity(4);
         }
         barSides.add(side);
+    }
+
+    public void addBorder(HexSide side) {
+        if (borderSides == null) {
+            borderSides = Lists.newArrayListWithCapacity(4);
+        }
+        borderSides.add(side);
     }
 
     public Rectangle getBounds() {
@@ -514,9 +524,15 @@ public class GUIHex implements Observer {
     }
 
     public void paintBars(Graphics2D g) {
-        if (barSides == null) return;
-        for (HexSide startPoint : barSides) {
-            drawBar(g, dimensions.points.get(startPoint), dimensions.points.get(startPoint.next()));
+        if (barSides != null) {
+            for (HexSide startPoint : barSides) {
+                drawBar(g, dimensions.points.get(startPoint), dimensions.points.get(startPoint.next()));
+            }
+        }
+        if (borderSides != null) {
+            for (HexSide startPoint : borderSides) {
+                drawBorder(g, dimensions.points.get(startPoint), dimensions.points.get(startPoint.next()));
+            }
         }
     }
 
@@ -526,6 +542,18 @@ public class GUIHex implements Observer {
 
         g2d.setColor(BAR_COLOUR);
         g2d.setStroke(new BasicStroke(BAR_WIDTH));
+        g2d.draw(new Line2D.Double(start.get2D(),end.get2D()));
+
+        g2d.setColor(oldColor);
+        g2d.setStroke(oldStroke);
+    }
+
+    protected void drawBorder(Graphics2D g2d, HexPoint start, HexPoint end) {
+        Color oldColor = g2d.getColor();
+        Stroke oldStroke = g2d.getStroke();
+
+        g2d.setColor(BORDER_COLOUR);
+        g2d.setStroke(new BasicStroke(BORDER_WIDTH));
         g2d.draw(new Line2D.Double(start.get2D(),end.get2D()));
 
         g2d.setColor(oldColor);

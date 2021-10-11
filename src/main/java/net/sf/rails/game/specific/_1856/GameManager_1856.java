@@ -44,7 +44,7 @@ public class GameManager_1856 extends GameManager {
 
     public void startCGRFormationRound(OperatingRound_1856 or, Player playerToStartCGRFRound) {
         this.playerToStartCGRFRound = playerToStartCGRFRound;
-        this.interruptedRound = or;
+       setInterruptedRound(or);
 
         if (this.playerToStartCGRFRound != null) {
             // TODO: this id will not work
@@ -58,8 +58,9 @@ public class GameManager_1856 extends GameManager {
     @Override
     public void nextRound(Round round) {
         if (round instanceof CGRFormationRound) {
+            OperatingRound_1856 interruptedRound = (OperatingRound_1856) getInterruptedRound();
             setRound(interruptedRound);
-            ((OperatingRound_1856) interruptedRound).resume(((CGRFormationRound) round).getMergingCompanies());
+            interruptedRound.resume(((CGRFormationRound) round).getMergingCompanies());
         } else {
             super.nextRound(round);
         }

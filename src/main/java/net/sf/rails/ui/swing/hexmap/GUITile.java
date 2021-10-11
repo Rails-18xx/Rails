@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 
 import net.sf.rails.game.HexSide;
 import net.sf.rails.game.MapOrientation;
@@ -57,6 +58,12 @@ public class GUITile {
             //g2.drawImage(tileImage, aop, (int) difference.getX(), (int) difference.getY());
             // already a first approach, integrated into the affine transform, however it does not
             // increase the quality of the map
+
+            if (!hex.getHex().isOpen()) {
+                RescaleOp r = new RescaleOp(new float[]{1f, 1f, 1f, 0.4f}, new float[]{0, 0, 0, 0}, null);
+                tileImage = r.filter(tileImage, null);
+            }
+
             g2.drawImage(tileImage, aop, 0, 0);
 
         } else {

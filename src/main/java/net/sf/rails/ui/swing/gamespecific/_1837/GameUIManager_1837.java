@@ -8,9 +8,8 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.DiscardTrain;
+import rails.game.action.FoldIntoNational;
 import rails.game.action.MergeCompanies;
-import rails.game.specific._1837.FoldIntoHungary;
-import rails.game.specific._1837.FoldIntoKuK;
 import rails.game.specific._18EU.StartCompany_18EU;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.Company;
@@ -25,8 +24,8 @@ public class GameUIManager_1837 extends GameUIManager {
     // Keys of dialogs owned by this class.
     public static final String START_KUK_DIALOG = "StartKuK";
     public static final String MERGE_INTO_KUK_DIALOG = "MergeIntoKuK";
-    public static final String START_HUNGARY_DIALOG = "StartHungary";
-    public static final String MERGE_INTO_HUNGARY_DIALOG = "MergeIntoHungary";
+    public static final String START_NATIONAL_DIALOG = "StartNational";
+    public static final String MERGE_INTO_NATIONAL_DIALOG = "MergeIntoNational";
     public static final String SELECT_CONVERTING_MINOR = "SelectConvertingMinor";
     public static final String SELECT_MERGING_MAJOR = "SelectMergingMajor"; // Not used??
     public static final String SELECT_MERGING_MINOR = "SelectMergingMinor";
@@ -58,46 +57,23 @@ public class GameUIManager_1837 extends GameUIManager {
                 action.setSelectedTargetCompany(action.getTargetCompanies().get(0));
             }
 
-        } else if (START_HUNGARY_DIALOG.equals(key)) {
+        } else if (START_NATIONAL_DIALOG.equals(key)) {
 
             ConfirmationDialog dialog = (ConfirmationDialog) currentDialog;
-            FoldIntoHungary action = (FoldIntoHungary) currentDialogAction;
+            FoldIntoNational action = (FoldIntoNational) currentDialogAction;
             if (dialog.getAnswer()) {
                 action.setFoldedCompanies(action.getFoldableCompanies());
             }
 
-        } else if (MERGE_INTO_HUNGARY_DIALOG.equals(key)) {
+        } else if (MERGE_INTO_NATIONAL_DIALOG.equals(key)) {
 
             CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
-            FoldIntoHungary action = (FoldIntoHungary) currentDialogAction;
+            FoldIntoNational action = (FoldIntoNational) currentDialogAction;
             boolean[] exchanged = dialog.getSelectedOptions();
             String[] options = dialog.getOptions();
 
             List<Company> foldedCompanies = new ArrayList<>();
             for (int index=0; index < options.length; index++) {
-                if (exchanged[index]) {
-                    foldedCompanies.add(action.getFoldableCompanies().get(index));
-                }
-            }
-            action.setFoldedCompanies(foldedCompanies);
-
-        } else if (START_KUK_DIALOG.equals(key)) {
-
-            ConfirmationDialog dialog = (ConfirmationDialog) currentDialog;
-            FoldIntoKuK action = (FoldIntoKuK) currentDialogAction;
-            if (dialog.getAnswer()) {
-                action.setFoldedCompanies(action.getFoldableCompanies());
-            }
-
-        } else if (MERGE_INTO_KUK_DIALOG.equals(key)) {
-
-            CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
-            FoldIntoKuK action = (FoldIntoKuK) currentDialogAction;
-            boolean[] exchanged = dialog.getSelectedOptions();
-            String[] options = dialog.getOptions();
-
-            List<Company> foldedCompanies = new ArrayList<>();
-            for (int index = 0; index < options.length; index++) {
                 if (exchanged[index]) {
                     foldedCompanies.add(action.getFoldableCompanies().get(index));
                 }

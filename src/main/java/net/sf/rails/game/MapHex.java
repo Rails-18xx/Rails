@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.rails.game.state.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +29,6 @@ import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.TileUpgrade.Rotation;
 import net.sf.rails.game.model.RailsModel;
-import net.sf.rails.game.state.GenericState;
-import net.sf.rails.game.state.HashBiMapState;
-import net.sf.rails.game.state.HashMapState;
-import net.sf.rails.game.state.PortfolioSet;
 import net.sf.rails.util.Util;
 import rails.game.action.LayTile;
 
@@ -188,6 +185,10 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     private final HexSidesSet.Builder riverBuilder = HexSidesSet.builder();
     private HexSidesSet riverSides;
 
+    private String borderTemplate = null;
+    private final HexSidesSet.Builder borderBuilder = HexSidesSet.builder();
+    private HexSidesSet borderSides;
+
     private final HexSidesSet.Builder invalidBuilder = HexSidesSet.builder();
     private HexSidesSet invalidSides;
 
@@ -213,6 +214,11 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     ////////////////////////
     // dynamic fields
     ////////////////////////
+    /**
+     * open: True (default) is the tile is accessible (for tiles, tokens, trains).
+     * In some games (e.g. 1837), parts of the map are inaccessible in some phases.
+     */
+    private final BooleanState open = new BooleanState (this, "isOpen", true);
     private final GenericState<Tile> currentTile = new GenericState<>(this, "currentTile");
     private final GenericState<HexSide> currentTileRotation = new GenericState<>(this, "currentTileRotation");
 
@@ -266,6 +272,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
+        open.set(tag.getAttributeAsBoolean("open", true));
         preprintedTileId = tag.getAttributeAsString("tile", null);
         preprintedPictureId = tag.getAttributeAsString("pic", preprintedTileId);
         int orientation = tag.getAttributeAsInteger("orientation", 0);
@@ -273,6 +280,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
         impassableTemplate = tag.getAttributeAsString("impassable");
         riverTemplate = tag.getAttributeAsString("river");
+        borderTemplate = tag.getAttributeAsString("border");
+
         tileCost = tag.getAttributeAsIntegerList("cost");
 
         // Off-board revenue values
@@ -338,12 +347,21 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
         impassableSides = impassableBuilder.build();
         riverSides = riverBuilder.build();
+        borderSides = borderBuilder.build();
         invalidSides = invalidBuilder.build();
     }
 
     @Override
     public MapManager getParent() {
         return (MapManager) super.getParent();
+    }
+
+    public void setOpen (boolean open) {
+        this.open.set (open);
+    }
+
+    public boolean isOpen () {
+        return open.value();
     }
 
     public void addImpassableSide(HexSide side) {
@@ -371,6 +389,13 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         log.debug("Added invalid {} to {}", side, this);
     }
 
+    public HexSidesSet getBorderSides() { return borderSides; }
+
+    public void addBorderSide (HexSide side) {
+        borderBuilder.set(side);
+        log.debug("Added border {} to {}", side, this);
+    }
+
     public HexSidesSet getInvalidSides() {
         return invalidSides;
     }
@@ -383,6 +408,11 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     public boolean isRiverNeighbour (MapHex neighbour) {
         return riverTemplate != null
                 && riverTemplate.contains(neighbour.getId());
+    }
+
+    public boolean isBorderNeighbour (MapHex neighbour) {
+        return borderTemplate != null
+                && borderTemplate.contains(neighbour.getId());
     }
 
     public boolean isValidNeighbour(MapHex neighbour, HexSide side) {
@@ -429,7 +459,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     /**
      * Get the BitSet of the sides that have track
      * for the current tile on this Hex.
-     * @return
+     * @return the resulting bitset
      */
     public HexSidesSet getTrackSides () {
         return getTrackSides (currentTile.value(),
@@ -847,6 +877,24 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     public Station getStation(int stationNb) {
         return currentTile.value().getStation(stationNb);
+    }
+
+    /**
+     * Remove tile and tokens from hex
+     */
+    public void clear() {
+        // Remove any tokens
+        for (Stop stop : stops) {
+            for (BaseToken token : stop.getBaseTokens()) {
+                token.moveTo(token.getParent());
+            }
+        }
+        // If a tile was laid, restore the initial (preprinted) tile
+        if (currentTile.value() != null
+                && Integer.parseInt(currentTile.value().getId()) > 0) {
+            currentTile.set(getRoot().getTileManager().getTile(preprintedTileId));
+            currentTileRotation.set(preprintedTileRotation);
+        }
     }
 
     public void addHome(PublicCompany company, Stop home) {

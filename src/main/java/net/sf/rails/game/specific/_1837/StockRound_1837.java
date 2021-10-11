@@ -30,8 +30,6 @@ public class StockRound_1837 extends StockRound {
             this, "discardingCompanyIndex");
     protected final BooleanState discardingTrains = new BooleanState(this,
             "discardingTrains");
-    //protected final BooleanState exchangedCoalCompanies = new BooleanState(this,
-    //        "exchangedCoalCompanies");
 
     protected PublicCompany[] discardingCompanies;
 
@@ -101,7 +99,7 @@ public class StockRound_1837 extends StockRound {
 
         if (action instanceof MergeCompanies) {
 
-            result = mergeCompanies((MergeCompanies) action);
+            result = mergeCompanies((MergeCompanies) action);  // Always true
 
         } else if (action instanceof DiscardTrain) {
 
@@ -125,24 +123,30 @@ public class StockRound_1837 extends StockRound {
         PublicCompany minor = action.getMergingCompany();
         PublicCompany major = action.getSelectedTargetCompany();
 
-        return mergeCompanies(minor, major);
+        return mergeCompanies(minor, major, false,
+                currentPlayer == null);
     }
 
     /**
      * Complemented by a shorter version in subclass CoalExchangeRound.
      * TODO: to be reconsidered once Nationals formation has been tested.
      *
-     * @param minor The minor (or coal company) to be merged into...
-     * @param major ...the related major company
+     * @param minor The minor (or coal company) to be merged...
+     * @param major ...into the related major company
      * @return True if the merge was successful
      */
     protected boolean mergeCompanies(PublicCompany minor, PublicCompany major) {
+        return mergeCompanies (minor, major, false, false);
+    }
+
+    protected boolean mergeCompanies(PublicCompany minor, PublicCompany major,
+                                     boolean majorPresident, boolean autoMerge) {
         PublicCertificate cert = null;
         MoneyOwner cashDestination = null; // Bank
 
         // TODO Validation to be added?
         if (major != null) {
-            cert = unavailable.findCertificate(major, false);
+            cert = unavailable.findCertificate(major, majorPresident);
             cashDestination = major;
         }
         //TODO: what happens if the major hasnt operated/founded/Started sofar in the FinalCoalExchangeRound ?
@@ -161,7 +165,6 @@ public class StockRound_1837 extends StockRound {
             major.transferAssetsFrom(minor);
         }
 
-        boolean autoMerge = (currentPlayer == null);
         Player minorPres = minor.getPresident();
 
         ReportBuffer.add(this, "");
@@ -174,29 +177,34 @@ public class StockRound_1837 extends StockRound {
                     minorPres, minor.getId(), major.getId(),
                     Bank.format(this, minorCash), minorTrains));
         }
-        // FIXME: CHeck if this still works correctly
         ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
                 minorPres, cert.getShare(), major.getId(),
                 minor.getId()));
         cert.moveTo(minorPres);
+
+        // FIXME: CHeck if this still works correctly
+
+        // Check if minors have more certs (1837 Ug minors 1 and 3)
+
+        if (minor.getCertificates().size() > 1) {
+            for (PublicCertificate minorCert : minor.getCertificates()) {
+                if (minorCert.isPresidentShare()) continue;
+                Owner owner = minorCert.getOwner();
+                if (owner instanceof Player) {
+                    cert = unavailable.findCertificate(major, false);
+                    ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
+                            owner, cert.getShare(), major.getId(),
+                            minor.getId()));
+                    cert.moveTo(owner);
+                }
+            }
+        }
 
         minor.setClosed();
         ReportBuffer.add(this, LocalText.getText("MinorCloses", minor.getId()));
         checkFlotation(major);
 
         hasActed.set(true);
-
-        if (!(this instanceof FinalCoalExchangeRound)) {
-            companyBoughtThisTurnWrapper.set(major);
-
-            // If >60% shares owned, lift sell obligation this round.
-            if (minorPres.getPortfolioModel().getShare(major)
-                    > GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)) {
-                setSellObligationLifted(major);
-            }
-
-            setPriority("MergeCompany");
-        }
 
         return true;
     }
