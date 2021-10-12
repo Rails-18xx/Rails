@@ -112,6 +112,8 @@ public class BuyTrain extends PossibleORAction {
             for (Train train:trains) {
                 trainsForExchangeUniqueIds[i++] = train.getId();
             }
+        } else {
+            trainsForExchangeUniqueIds = null;
         }
         return this;
     }
@@ -262,8 +264,11 @@ public class BuyTrain extends PossibleORAction {
 
     public void setExchangedTrain(Train exchangedTrain) {
         this.exchangedTrain = exchangedTrain;
-        if (exchangedTrain != null)
+        if (exchangedTrain != null) {
             this.exchangedTrainUniqueId = exchangedTrain.getId();
+        } else {
+            this.exchangedTrainUniqueId = null;
+        }
     }
 
 

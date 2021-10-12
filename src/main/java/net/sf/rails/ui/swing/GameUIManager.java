@@ -61,7 +61,6 @@ import rails.game.action.PossibleAction;
 import rails.game.action.RepayLoans;
 import rails.game.action.StartCompany;
 
-
 /**
  * This class is called by main() and loads all of the UI components
  */
@@ -1358,6 +1357,34 @@ public class GameUIManager implements DialogOwner {
         } catch (FileNotFoundException e) {
             log.warn("unable to open log output file", e);
         }
+    }
+
+    public void saveReportFile() {
+
+        List<String> report = getRoot().getReportManager().getReportBuffer().getAsList();
+
+        JFileChooser jfc = new JFileChooser();
+        String filename = saveDirectory + "/" + savePrefix + "_"
+                + saveDateTimeFormat.format(new Date()) + ".report";
+
+        File proposedFile = new File(filename);
+        jfc.setSelectedFile(proposedFile);
+
+        if (jfc.showSaveDialog(statusWindow) == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = jfc.getSelectedFile();
+            try {
+                PrintWriter pw = new PrintWriter(selectedFile);
+
+                for (String line : report) pw.println(line);
+
+                pw.close();
+
+            } catch (IOException e) {
+                log.error("Save failed", e);
+                getDisplayBuffer().add(LocalText.getText("SaveFailed", e.getMessage()));
+            }
+        }
+
     }
 
     public class PlayerOrderView implements Observer {

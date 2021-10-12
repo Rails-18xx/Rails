@@ -34,14 +34,11 @@ public class CoalExchangeRound extends StockRound_1837 {
 
     private boolean reachedPhase5;
     private String cerNumber;
-    private boolean atNewPhase;
 
     /** A state variable to set the next action to take */
     private IntegerState step; // Wish we had an EnumState!
-    private static final int INITIAL = 0;
     private static final int MERGE = 1;
     private static final int DISCARD = 2;
-    private static final int FINAL = 3;
 
     public CoalExchangeRound(GameManager parent, String id) {
         super(parent, id);
@@ -54,10 +51,9 @@ public class CoalExchangeRound extends StockRound_1837 {
         return new CoalExchangeRound(parent, id);
     }
 
-    public void start(boolean atNewPhase) {
+    public void start() {
 
         cerNumber = getId().replaceFirst("CER_(.+)", "$1");
-        this.atNewPhase = atNewPhase;
 
         coalCompsPerMajor = ArrayListMultimapState.create(this, "CoalsPerMajor_"+getId());
         coalCompsPerPlayer = ArrayListMultimapState.create(this, "CoalsPerPlayer_"+getId());
@@ -213,10 +209,8 @@ public class CoalExchangeRound extends StockRound_1837 {
         PublicCompany major = currentMajor.value();
         // Here we will only deal with excess trains caused by coal company mergers.
         // Excess caused by a phase change is handled elsewhere.
-        //if (major.getNumberOfTrains() <= major.getCurrentTrainLimit()) {
-        //}
         int excess = major.getNumberOfTrains() - major.getCurrentTrainLimit();
-        int maxExcessFromMerger = discardableTrains.keySet().size();
+        int maxExcessFromMerger = discardableTrains.values().size();
         int excessFromMerger = Math.min(excess, maxExcessFromMerger);
         if (excessFromMerger <= 0) {
             step.set(MERGE);
@@ -297,8 +291,6 @@ public class CoalExchangeRound extends StockRound_1837 {
                 step.set(DISCARD);
             } else if (!nextMajorCompany()){
                 finishRound();
-            } else {
-                //nextPlayer();
             }
         } else {
             nextPlayer();
@@ -335,7 +327,6 @@ public class CoalExchangeRound extends StockRound_1837 {
             // Get the mergeable minors of the current major
             for (PublicCompany minor : coalCompsPerMajor.get(currentMajor.value())) {
                 if (player == minor.getPresident()) {
-                    //minors.add(minor);
                     possibleActions.add(new MergeCompanies(minor, currentMajor.value(), false));
                 }
             }
@@ -378,7 +369,6 @@ public class CoalExchangeRound extends StockRound_1837 {
 
         currentPlayerOrder.clear();
         closedMinors.clear();
-        clearDiscardableTrains();
 
         while (true) {
             if (currentMajorOrder.isEmpty()) {
@@ -388,6 +378,7 @@ public class CoalExchangeRound extends StockRound_1837 {
                 PublicCompany major = currentMajorOrder.get(0);
                 currentMajor.set(major);
                 Player president = major.getPresident();
+                clearDiscardableTrains();
 
                 if (majorMustMerge(major)) {
                     // If mergers are forced for this major, a different procedure applies.

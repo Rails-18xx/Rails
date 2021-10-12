@@ -218,11 +218,12 @@ public final class TestGameBuilder extends TestCase {
             chooser.showDialog(panel, "Select");
             File[] files = chooser.getSelectedFiles();
             for (File f : files)
-                if (f.isDirectory())
+                if (f.isDirectory()) {
                     // discard testsuite, only override the report files
                     recursiveTestSuite(f.getAbsolutePath(), "", 0, true);
-                else if (f.isFile())
+                } else if (f.isFile()) {
                     prepareTestGame(f, true);
+                }
         }
     }
 }

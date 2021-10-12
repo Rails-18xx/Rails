@@ -13,7 +13,7 @@ import java.util.List;
 
 
 /**
- * @author martin
+ * @author martin, erik
  *
  */
 public class GameManager_1837 extends GameManager {
@@ -75,7 +75,6 @@ public class GameManager_1837 extends GameManager {
                 log.debug("Phase={} ORs={}", currentPhase.toText(), numOfORs.value());
 
                 // Create a new OperatingRound (never more than one Stock Round)
-                // OperatingRound.resetRelativeORNumber();
                 relativeORNumber.set(0);
                 startOperatingRound(true);
             } else if (relativeORNumber.value() < numOfORs.value()) {
@@ -97,11 +96,8 @@ public class GameManager_1837 extends GameManager {
             if (interruptedRound != null) {
                 setRound(interruptedRound);
                 interruptedRound.resume();
-                //setInterruptedRound(null);
-            } else /*if (previousRound != null)*/ {
-                //super.nextRound(previousRound);
+            } else {
                 super.nextRound(previousSRorOR.value());
-                //previousRound = null;
             }
         } else if (prevRound instanceof StockRound_1837 || prevRound instanceof OperatingRound_1837) {
             previousSRorOR.set (prevRound); // Remember where we came from!
@@ -146,7 +142,7 @@ public class GameManager_1837 extends GameManager {
                 if (!cerId.contains(".")) cerId += ".1";
             }
             log.debug("Prev round {}, new round {}", namingRound.getId(), cerId);
-            createRound(CoalExchangeRound.class, cerId).start(Util.hasValue(newPhaseId));
+            createRound(CoalExchangeRound.class, cerId).start();
         } else {
             doneThisRound.add("CER");
         }

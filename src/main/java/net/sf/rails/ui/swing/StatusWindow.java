@@ -72,6 +72,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
 
     protected static final String SAVESTATUS_CMD = "SaveGameStatus";
 
+    protected static final String SAVEREPORT_CMD = "SaveReportFile";
+
     protected static final String EXPORT_CMD = "Export";
 
     protected static final String UNDO_CMD = "Undo";
@@ -302,6 +304,14 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             menuItem.setActionCommand(SAVESTATUS_CMD);
             menuItem.setMnemonic(KeyEvent.VK_G);
             menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
+            menuItem.addActionListener(this);
+            menuItem.setEnabled(true);
+            developerMenu.add(menuItem);
+
+            menuItem = new JMenuItem(LocalText.getText("SaveReportFile"));
+            menuItem.setActionCommand(SAVEREPORT_CMD);
+            menuItem.setMnemonic(KeyEvent.VK_R);
+            menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.ALT_MASK));
             menuItem.addActionListener(this);
             menuItem.setEnabled(true);
             developerMenu.add(menuItem);
@@ -720,6 +730,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             gameUIManager.saveGameStatus();
         } else if ( command.equals("Save Logs")) {
             gameUIManager.saveLogs();
+        } else if (command.equals(SAVEREPORT_CMD)) {
+            gameUIManager.saveReportFile();
         } else if (executedAction == null) {
             
         } else if (executedAction instanceof GameAction) {
