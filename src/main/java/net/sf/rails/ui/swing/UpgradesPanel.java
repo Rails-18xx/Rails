@@ -182,8 +182,10 @@ public class UpgradesPanel extends JPanel {
         HexUpgrade activeUpgrade = hexUpgrades.getActiveUpgrade();
         if (activeUpgrade != null) {
             confirmButton.setEnabled(true);
+            orUIManager.orPanel.enableConfirm(true);
         } else {
             confirmButton.setEnabled(false);
+            orUIManager.orPanel.enableConfirm(false);
         }
         setButtons();
     }

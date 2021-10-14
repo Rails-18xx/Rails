@@ -469,7 +469,7 @@ public class ORUIManager implements DialogOwner {
             // Special actions only. Maybe we need a separate substep for this case.
             // Restart the message
             message = new StringBuilder("<font color='red'>" + LocalText.getText("YouHaveSpecialActions") + "</font>");
-            message.append("<br>" + LocalText.getText("YouCannotLayTokens"));
+            message.append("<br>").append(LocalText.getText("YouCannotLayTokens"));
         }
 
         if (correctionActive) {
@@ -489,7 +489,7 @@ public class ORUIManager implements DialogOwner {
     // FIXME: Can this be really a list of actions?
     public void processAction(String command, List<PossibleAction> actions) {
 
-        if (actions != null && actions.size() > 0
+        if (actions != null && actions.size() > 0 && actions.get(0) != null
                 && !processGameSpecificActions(actions)) {
 
             Class<? extends PossibleAction> actionType =
@@ -547,6 +547,9 @@ public class ORUIManager implements DialogOwner {
 
             displayRemainingTiles();
 
+        } else if (command.equals(ORPanel.CONFIRM_CMD)) {
+
+            confirmUpgrade();
         }
     }
 
@@ -1353,6 +1356,7 @@ public class ORUIManager implements DialogOwner {
             //if (possibleActions.contains(LayTile.class)) {
 
             orPanel.initTileLayingStep();
+            orPanel.setupConfirm();
 
             orWindow.requestFocus();
 
@@ -1362,6 +1366,7 @@ public class ORUIManager implements DialogOwner {
             orWindow.requestFocus();
 
             orPanel.initTokenLayingStep();
+            orPanel.setupConfirm();
             log.debug("BaseTokens can be laid or bonus tokens bought");
 
         } else if (possibleActions.contains(SetDividend.class)
