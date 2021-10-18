@@ -33,6 +33,7 @@ implements ActionListener, KeyListener, RevenueListener {
     public static final String PAYOUT_CMD = "Payout";
     public static final String SET_REVENUE_CMD = "SetRevenue";
     private static final String DONE_CMD = "Done";
+    public static final String CONFIRM_CMD = "Confirm";
     private static final String SKIP_CMD = "Skip";
     private static final String UNDO_CMD = "Undo";
     private static final String REDO_CMD = "Redo";
@@ -313,18 +314,18 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.addActionListener(this);
         button1.setEnabled(false);
 
-        button2 = new ActionButton(RailsIcon.BUY_PRIVATE);
-        button2.setActionCommand(BUY_PRIVATE_CMD);
-        button2.setMnemonic(KeyEvent.VK_V);
+        button2 = new ActionButton(RailsIcon.DONE);
+        button2.setActionCommand(DONE_CMD);
+        button2.setMnemonic(KeyEvent.VK_D);
         button2.addActionListener(this);
         button2.setEnabled(false);
-        button2.setVisible(false);
 
-        button3 = new ActionButton(RailsIcon.DONE);
-        button3.setActionCommand(DONE_CMD);
-        button3.setMnemonic(KeyEvent.VK_D);
+        button3 = new ActionButton(RailsIcon.BUY_PRIVATE);
+        button3.setActionCommand(BUY_PRIVATE_CMD);
+        button3.setMnemonic(KeyEvent.VK_V);
         button3.addActionListener(this);
         button3.setEnabled(false);
+        button3.setVisible(false);
 
         undoButton = new ActionButton(RailsIcon.UNDO);
         undoButton.setActionCommand(UNDO_CMD);
@@ -1234,7 +1235,7 @@ implements ActionListener, KeyListener, RevenueListener {
         if (tokenBonus != null) setHighlight(tokenBonus[orCompIndex],true);
         button1.setEnabled(false);
         button1.setVisible(false);
-        button3.setEnabled(false);
+        button2.setEnabled(false);
 
         setCompanyVisibility(showAllCompanies);
         selectRevenueSpinner(false);
@@ -1262,6 +1263,8 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setMnemonic(KeyEvent.VK_R);
         button1.setEnabled(true);
         button1.setVisible(true);
+
+        button2.setVisible(false);
 
         //indicate interest in setting revenue values (and not only displaying routes)
         updateCurrentRoutes(true);
@@ -1349,6 +1352,7 @@ implements ActionListener, KeyListener, RevenueListener {
             button3.setPossibleAction(clonedAction);
             button3.setMnemonic(KeyEvent.VK_P);
             button3.setEnabled(true);
+            button3.setVisible(true);
         } else {
             button3.setVisible(false);
         }
@@ -1368,6 +1372,8 @@ implements ActionListener, KeyListener, RevenueListener {
         button1.setEnabled(enabled);
         button1.setVisible(true);
 
+        button2.setVisible(true);
+
         setCompanyVisibility(true);
     }
 
@@ -1385,16 +1391,16 @@ implements ActionListener, KeyListener, RevenueListener {
 
         if (privatesCanBeBought) {
             if (enabled) {
-                button2.setRailsIcon(RailsIcon.BUY_PRIVATE);
-                button2.setActionCommand(BUY_PRIVATE_CMD);
-                button2.setMnemonic(KeyEvent.VK_V);
+                button3.setRailsIcon(RailsIcon.BUY_PRIVATE);
+                button3.setActionCommand(BUY_PRIVATE_CMD);
+                button3.setMnemonic(KeyEvent.VK_V);
             }
-            button2.setEnabled(enabled);
-            button2.setVisible(enabled);
+            button3.setEnabled(enabled);
+            button3.setVisible(enabled);
             privatesCaption.setHighlight(enabled);
             setHighlight(privates[orCompIndex],enabled);
         } else {
-            button2.setVisible(false);
+            button3.setVisible(false);
         }
     }
 
@@ -1421,11 +1427,25 @@ implements ActionListener, KeyListener, RevenueListener {
 
     public void enableDone(NullAction action) {
 
-        button3.setRailsIcon(RailsIcon.DONE);
-        button3.setActionCommand(DONE_CMD);
-        button3.setMnemonic(KeyEvent.VK_D);
-        button3.setPossibleAction(action);
-        button3.setEnabled(true);
+        button2.setRailsIcon(RailsIcon.DONE);
+        button2.setActionCommand(DONE_CMD);
+        button2.setMnemonic(KeyEvent.VK_D);
+        button2.setPossibleAction(action);
+        button2.setEnabled(true);
+    }
+
+    public void setupConfirm() {
+        orUIManager.getUpgradePanel().setActive();
+        button1.setRailsIcon(RailsIcon.CONFIRM);
+        button1.setActionCommand(CONFIRM_CMD);
+        button1.setMnemonic(KeyEvent.VK_C);
+        button1.setPossibleAction(null);
+        button1.setVisible(true);
+        enableConfirm(false);
+    }
+
+    public void enableConfirm(boolean enable) {
+        button1.setEnabled(enable);
     }
 
     // Added because Skip is normally not set if there are no Base tokens to lay
@@ -1433,11 +1453,12 @@ implements ActionListener, KeyListener, RevenueListener {
     public void enableSkip (NullAction action) {
         orUIManager.getUpgradePanel().setActive(); // Only to display Skip.
         // For unknown reasons the below does not work.
-        //button3.setRailsIcon(RailsIcon.SKIP);
-        //button3.setActionCommand(SKIP_CMD);
-        //button3.setMnemonic(KeyEvent.VK_S);
-        //button3.setPossibleAction(action);
-        //button3.setEnabled(true);
+        button2.setRailsIcon(RailsIcon.SKIP);
+        button2.setActionCommand(SKIP_CMD);
+        button2.setMnemonic(KeyEvent.VK_S);
+        button2.setPossibleAction(action);
+        button2.setEnabled(true);
+        button2.setVisible(true);
     }
 
     public void enableUndo(GameAction action) {
