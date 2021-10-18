@@ -25,7 +25,6 @@ public class NationalFormationRound extends StockRound_1837 {
 
     public NationalFormationRound(GameManager parent, String id) {
         super(parent, id);
-        // TODO Auto-generated constructor stub
     }
 
     private PublicCompany_1837 national;
@@ -112,12 +111,9 @@ public class NationalFormationRound extends StockRound_1837 {
 
         log.debug("StartNational={} forcedStart={} mergeNational={} forcedMerge={}", startNational, forcedStart, mergeNational, forcedMerge);
 
-        //step.set (startNational ? Step.START : Step.MERGE);
-
         if (step.value() == Step.START) {
 
             setCurrentPlayer(startingMinor.getPresident());
-            //gameManager.setNationalFormationStartingPlayer( national, currentPlayer);
             if (forcedStart) {
                 executeStartNational(true);
 
@@ -145,26 +141,6 @@ public class NationalFormationRound extends StockRound_1837 {
                 }
                 national.checkPresidency();
 
-            /*
-            Set<SpecialProperty> sps;
-            //setFoldablePreNationals(national.getAlias());
-            List<Company> foldables = new ArrayList<Company> ();
-            for (PrivateCompany company : gameManager.getAllPrivateCompanies()) {
-                if (company.isClosed()) continue;
-                sps = company.getSpecialProperties();
-                if (sps != null && !sps.isEmpty() && Iterables.get(sps, 0) instanceof ExchangeForShare) {
-                    foldables.add(company);
-                }
-            }
-            for (PublicCompany company : gameManager.getAllPublicCompanies()) {
-                if (company.isClosed()) continue;
-                sps = company.getSpecialProperties();
-                if (sps != null && !sps.isEmpty() && Iterables.get(sps, 0) instanceof ExchangeForShare) {
-                    foldables.add(company);
-                }
-            }
-            //executeExchange (foldables, false, true);  ????
-            `*/
                 // Check if the National must discard any trains
                 if (national.getNumberOfTrains() > national.getCurrentTrainLimit()) {
                     step.set(Step.DISCARD_TRAINS);
@@ -176,24 +152,6 @@ public class NationalFormationRound extends StockRound_1837 {
             }
         }
     }
-
-    /*
-    private void setFoldablePreNationals(String nationalInFounding2) {
-
-        foldablePreNationals = new ArrayList<Company> ();
-
-        PublicCompany company;
-        Set<SpecialProperty> sps;
-        for (PublicCertificate cert : currentPlayer.getPortfolioModel().getCertificates()) {
-            company = cert.getCompany();
-            if (company.isRelatedToNational(nationalInFounding2)) {
-                sps = company.getSpecialProperties();
-                if (sps != null && !sps.isEmpty() && Iterables.get(sps, 0) instanceof ExchangeForShare) {
-                    foldablePreNationals.add(company);
-                }
-             }
-        }
-    }*/
 
     @Override
     public boolean setPossibleActions() {
@@ -221,9 +179,7 @@ public class NationalFormationRound extends StockRound_1837 {
             }
         }
         return true;
-
     }
-
 
     @Override
     protected boolean processGameSpecificAction(PossibleAction action) {
@@ -231,23 +187,6 @@ public class NationalFormationRound extends StockRound_1837 {
         if (action instanceof FoldIntoNational) {
 
             foldIntoNational((FoldIntoNational) action);
-
-            /*
-            FoldIntoNational a = (FoldIntoNational) action;
-
-            if (step.value() == Step.START) {
-                if (!startNational(a)) {
-                    finishRound();
-                } else {
-                    step.set (Step.MERGE);
-                    findNextMergingPlayer(false);
-                }
-
-            } else if (step.value() == Step.MERGE) {
-
-                mergeIntoNational (a);
-
-            }*/
 
             return true;
 
@@ -263,26 +202,6 @@ public class NationalFormationRound extends StockRound_1837 {
 
     protected boolean findNextMergingPlayer(boolean skipCurrentPlayer) {
 
-        /*
-        while (true) {
-
-            if (skipCurrentPlayer) {
-                setNextPlayer();
-                if (playerManager.getCurrentPlayer() == startingPlayer) {
-                    if (national.getNumberOfTrains() > national.getCurrentTrainLimit()) {
-                        step = Step.DISCARD_TRAINS;
-                    } else {
-                        finishRound();
-                    }
-                    return false;
-                }
-            }
-
-            setFoldablePreNationals(national.getAlias());
-            if (!foldablePreNationals.isEmpty()) return true;
-            skipCurrentPlayer = true;
-        }
-         */
         if (currentPlayerOrder.isEmpty()) {
             return false;
         } else {
@@ -402,26 +321,6 @@ CHECK:  while (true) {
         floatCompany(national);
     }
 
-        // add money from sold shares
-        // Move cash and shares where required
-        /* THIS IS DONE BELOW BY floatCompany()
-        int capFactor = national.getSoldPercentage() / (national.getShareUnit() * national.getShareUnitsForSharePrice());
-        int cash = capFactor * national.getIPOPrice();
-
-        if (cash > 0) {
-            String cashText = Currency.fromBank(cash, national);
-            ReportBuffer.add(this, LocalText.getText("FloatsWithCash",
-                    national.getId(),
-                cashText ));
-        } else {
-            ReportBuffer.add(this, LocalText.getText("Floats",
-                    national.getId()));
-        }
-        */
-        //executeExchange (Arrays.asList(new Company[]{nationalStartingMinor}), true, false);
-        //((GameManager_1837)gameManager).mergeCompanies(startingMinor, national,
-        //        true, false);
-
     private void executeMergeMinors (List<PublicCompany_1837> minorsToMerge) {
 
         for (PublicCompany_1837 minor : minorsToMerge) {
@@ -463,205 +362,7 @@ CHECK:  while (true) {
 
     }
 
-    /**
-     * Merge a minor with its related national company.
-     * @param action A MergeCompanies action selected by the minor owner.
-     * @return True if the merge is successful, and new possible action(s) can be selected.
-     */
-    /* NOT USED
-    public boolean executeMerge (MergeCompanies action) {
-
-        PublicCompany minor = action.getMergingCompany();
-        PublicCompany major = action.getSelectedTargetCompany();
-
-        boolean result = mergeCompanies(minor, major);
-        closedMinors.add (minor);
-        minorsPerPlayer.remove (currentPlayer, minor);
-
-        MapHex minorHome = minor.getHomeHexes().get(0);
-        Stop minorStop = minorHome.getStopOfBaseToken(minor);
-        minorHome.layBaseToken(major, minorStop);
-        major.layBaseToken(minorHome, 0);
-
-        // TODO: to be moved outside this method
-        if (result) {
-            minorsPerPlayer.remove(currentPlayer, minor);
-            if (minorsPerPlayer.get(currentPlayer).isEmpty()) {
-                step.set(Step.DISCARD_TRAINS);
-            }
-        }
-        return result;
-    }*/
-
-
-    /**
-     * Merge a minor into a national that has already started.
-     * @param action
-     * @return True if one or more companies are to be folded
-     */
-
-    /* No longer used
-    private boolean mergeIntoNational(FoldIntoNational action) {
-
-        // Validate
-        String errMsg = null;
-
-        List<Company> folded = action.getFoldedCompanies();
-        boolean folding = folded != null && !folded.isEmpty();
-        PublicCompany_1837 national = action.getNationalCompany();
-        List<PublicCompany_1837> minors = national.getMinors();
-
-CHECK:  while (folding) {
-
-            if (!national.hasStarted()) {
-                errMsg = LocalText.getText("NotYetStarted",
-                        national.getId());
-                break;
-            }
-            for (Company comp : folded) {
-                if (!minors.contains(comp) || comp == national.getStartingMinor()) {
-                    errMsg = LocalText.getText("WrongCompany", comp.getId(),
-                            action.getFoldableCompanyNames());
-                    break CHECK;
-
-                }
-            }
-            break;
-        }
-
-        if (errMsg != null) {
-            DisplayBuffer.add(this, LocalText.getText("CannotMerge",
-                    action.getFoldedCompanyNames(),
-                    national.getId(),
-                    errMsg));
-            return false;
-        }
-
-
-        // all actions linked during formation round to avoid serious undo problems
-
-        // FIMXE: changeStack.linkToPreviousMoveSet();
-
-        // Execute
-        //if (folding) executeExchange (folded, false, false);
-        if (folding) {
-            for (Company comp : folded) {
-                if (comp instanceof PublicCompany) {
-                    PublicCompany minor = (PublicCompany) comp;
-                    mergeCompanies((PublicCompany) comp, national); // Also closes minor
-
-                    // Replace the home token
-                    MapHex hex = minor.getHomeHexes().get(0);
-                    Stop city = hex.getRelatedStop(minor.getHomeCityNumber());
-                    if (hex.layBaseToken(national, city)) {
-                        /* TODO: the false return value must be impossible. *//*
-                        String message = LocalText.getText("ExchangesBaseToken",
-                                national.getId(), minor.getId(),
-                                hex.getId(), city.getRelatedStationNumber());
-                        ReportBuffer.add(this, message);
-                        //if (display) DisplayBuffer.add(this, message);
-
-                        national.layBaseToken(hex, 0);
-                    }
-
-                } else {
-                    // Private companies to be dealt with if/when
-                    // 1835 is going to be handled by this code
-                }
-            }
-        } else {
-            ReportBuffer.add (this, LocalText.getText("NoMerge",
-                    currentPlayer.getId(), action.getFoldableCompanyNames(), national));
-        }
-
-        currentPlayerOrder.remove(currentPlayer);
-        if (currentPlayerOrder.isEmpty()) {
-            finishRound();
-        } else {
-            findNextMergingPlayer(true);
-        }
-
-        return folding;
-    }*/
-
-    /*
-    private void executeExchange(List<Company> companies, boolean president, boolean display) {
-
-        ExchangeForShare efs;
-        PublicCertificate cert;
-        Player player;
-        for (Company company : companies) {
-            log.debug("Merging company {}", company.getId());
-            if (company instanceof PrivateCompany) {
-                player = (Player)((PrivateCompany)company).getOwner();
-            } else {
-                player = ((PublicCompany)company).getPresident();
-            }
-            // Shortcut, sp should be checked
-            efs = (ExchangeForShare) Iterables.get(company.getSpecialProperties(), 0);
-            cert = unavailable.findCertificate(national, efs.getShare()/national.getShareUnit(),
-                    president);
-            cert.moveTo(player);
-            //company.setClosed();
-            String message = LocalText.getText("MERGE_MINOR_LOG",
-                    player.getId(),
-                    company.getId(),
-                    national.getId(),
-                    company instanceof PrivateCompany ? "no"
-                            : Bank.format(this, ((PublicCompany)company).getCash()),
-                    company instanceof PrivateCompany ? "no"
-                            : ((PublicCompany)company).getPortfolioModel().getTrainList().size());
-            ReportBuffer.add(this, message);
-            if (display) DisplayBuffer.add(this, message);
-            message = LocalText.getText("GetShareForMinor",
-                    player.getId(),
-                    cert.getShare(),
-                    national.getId(),
-                    ipo.getParent().getId(),
-                    company.getId());
-            ReportBuffer.add(this, message);
-            if (display) DisplayBuffer.add(this, message);
-
-            if (company instanceof PublicCompany) {
-
-                PublicCompany minor = (PublicCompany) company;
-
-                // Replace the home token
-                BaseToken token = Iterables.get(minor.getAllBaseTokens(),0);
-                Stop city = (Stop) token.getOwner();
-                MapHex hex = city.getParent();
-                token.moveTo(minor);
-                if (hex.layBaseToken(national, city)) {
-                    // TODO: the false return value must be impossible.
-                    message = LocalText.getText("ExchangesBaseToken",
-                            national.getId(), minor.getId(),
-                            city.getRelatedStationNumber());
-                    ReportBuffer.add(this, message);
-                    if (display) DisplayBuffer.add(this, message);
-
-                    national.layBaseToken(hex, 0);
-                }
-
-                // Move any cash
-                if (minor.getCash() > 0) {
-                    Currency.wireAll(minor, national);
-                }
-
-                // Move any trains
-                // TODO: Simplify code due to trainlist being immutable anyway
-                List<Train> trains = new ArrayList<Train> (minor.getPortfolioModel().getTrainList());
-                for (Train train : trains) {
-                    national.getPortfolioModel().addTrain(train);
-                }
-            }
-
-            // Close the merged companies
-            company.setClosed();
-        }
-
-    }*/
-
-    public boolean discardTrain(DiscardTrain action) {
+   public boolean discardTrain(DiscardTrain action) {
 
         Train train = action.getDiscardedTrain();
         PublicCompany company = action.getCompany();
@@ -732,9 +433,8 @@ CHECK:  while (folding) {
 
         if (national.hasStarted()) national.checkPresidency();
         national.setOperated(); // FIXME: only if anything has been merged! And not between rounds!
-        //        super.finishRound();
-        // Inform GameManager
 
+        // Inform GameManager
         gameManager.nextRound(this);
     }
 

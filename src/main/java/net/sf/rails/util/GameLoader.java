@@ -87,7 +87,6 @@ public class GameLoader {
         gameUIManager.setGameFile(gameFile);
         gameUIManager.startLoadedGame();
 
-        Util.breakIf(""+gameLoader.getActionCounter(), "992");
         splashWindow.finalizeGameInit();
         gameUIManager.notifyOfSplashFinalization();
     }

@@ -30,7 +30,6 @@ public class RunToCoalMineModifier
 
     @Override
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
-        //evaluateMine = true;
         directRevenueFromMines = 0;
         return true;
     }
@@ -43,7 +42,6 @@ public class RunToCoalMineModifier
 
     private List<RevenueTrainRun> identifyInvalidRuns(List<RevenueTrainRun> runs) {
 
-        //if (evaluateMine) directRevenueFromMines = 0; // Prevent later overwriting by 0
         int totalMineRevenue = 0;
 
         List<RevenueTrainRun> invalidRuns = new ArrayList<>();
@@ -95,13 +93,12 @@ public class RunToCoalMineModifier
                 if (firstStationIsMine == lastStationIsMine) {
                     log.debug("Invalid, GT mines: {}, {}",firstStationIsMine,lastStationIsMine);
                     invalidRuns.add(run);
-                } else /*if (evaluateMine)*/ {
+                } else {
                     // Save the revenue from the mine(s), which in 1837
                     // becomes 'direct revenue' into the company treasury.
                     Stop mine = (firstStationIsMine ? firstStop : lastStop);
                     Phase phase = run.getTrain().getRailsTrain().getRoot().getPhaseManager().getCurrentPhase();
                     int mineRevenue = mine.getParent().getCurrentValueForPhase(phase);
-                    //directRevenueFromMines += mineRevenue;
                     totalMineRevenue += mineRevenue;
                 }
             }
@@ -133,11 +130,6 @@ public class RunToCoalMineModifier
         }
     }
 
-    public boolean providesOwnCalculateRevenue() {  // not used??
-        // does not
-        return false;
-    }
-
     /**
      * Here used to separately report the revenue from mines.
      * The engine will later subtract that from the total revenue.
@@ -150,10 +142,6 @@ public class RunToCoalMineModifier
         // so I could not use to report just the mines revenue.
         // It was also intended for a different purpose, as it seems.
         // It has been replaced with a new method, see getSpecialRevenue().
-        /*
-        revenueAdapter.setSpecialRevenue(directRevenueFromMines);
-        return directRevenueFromMines;
-        */
         return 0;
     }
 

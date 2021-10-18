@@ -509,17 +509,23 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             String trainsForExchangeInput = ((JTextField)inputElements.get(4)).getText();
             String trainsForExchangeIds = trainsForExchangeInput
                     .replaceAll(".*\\[(.*)\\].*", "$1");
-            Set<Train> trainsForExchange = new HashSet<>();
-            for (String trainId : trainsForExchangeIds.split(",")) {
-                log.info ("+++ Exchange train id: {}", trainId);
-                trainsForExchange.add(root.getTrainManager().getTrainByUniqueId(trainId));
+            if (Util.hasValue(trainsForExchangeIds)) {
+                Set<Train> trainsForExchange = new HashSet<>();
+                for (String trainId : trainsForExchangeIds.split(",")) {
+                    trainsForExchange.add(root.getTrainManager().getTrainByUniqueId(trainId));
+                }
+                 action.setTrainsForExchange(trainsForExchange);
+            } else {
+                action.setTrainsForExchange(null);
             }
-            log.info ("+++++ Exchange trains: {}", trainsForExchange);
-            action.setTrainsForExchange(trainsForExchange);
 
-            String exchangedTrainID = ((JTextField)inputElements.get(5)).getText();
-            Train exchangedTrain = root.getTrainManager().getTrainByUniqueId(exchangedTrainID);
-            if (exchangedTrain != null) action.setExchangedTrain(exchangedTrain);
+            String exchangedTrainID = ((JTextField) inputElements.get(5)).getText();
+            if (Util.hasValue(exchangedTrainID)) {
+                Train exchangedTrain = root.getTrainManager().getTrainByUniqueId(exchangedTrainID);
+                if (exchangedTrain != null) action.setExchangedTrain(exchangedTrain);
+            } else {
+                action.setExchangedTrain(null);
+            }
 
             try {
                 int fixedCost = Integer.parseInt(((JTextField)inputElements.get(6)).getText());

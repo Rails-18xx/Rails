@@ -71,6 +71,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     // map of correctionManagers
     protected final Map<CorrectionType, CorrectionManager> correctionManagers = new HashMap<>();
 
+    protected String gameName;
     protected int currentNumberOfOperatingRounds = 1;
     protected boolean skipFirstStockRound = false;
     protected boolean showCompositeORNumber = true;
@@ -211,7 +212,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             throw new ConfigurationException(
                     "No Game tag specified in GameManager tag");
 
-        String gameName = gameTag.getAttributeAsString("name");
+        gameName = gameTag.getAttributeAsString("name");
         // TODO (Rails 2.0): Check if this still works and is still needed
         if (gameName == null) {
             throw new ConfigurationException("No gameName specified in Game tag");
@@ -695,6 +696,10 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public void newPhaseChecks(RoundFacade round) {
 
+    }
+
+    public String getGameName() {
+        return gameName;
     }
 
     public void reportAllPlayersPassed() {

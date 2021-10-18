@@ -58,7 +58,7 @@
         </Hex>
         <Hex name="E13" tile="-1"/>
         <Hex name="E15" tile="-1"/>
-        <Hex name="E17" tile="-37008" city="Brünn"/>
+        <Hex name="E17" tile="-37008" city="Br&#252;nn"/>
         <Hex name="E19" tile="0"/>
         <Hex name="E21" tile="0" cost="70"/>
         <Hex name="E23" tile="0" cost="70"/>
@@ -95,7 +95,7 @@
         <Hex name="G17" tile="-37012" city="Wien">
                 <Access mutexId="Wien"/>
         </Hex>
-        <Hex name="G19" tile="-37008" city="Preßburg" cost="50"/>
+        <Hex name="G19" tile="-37008" city="Pre&#233;burg" cost="50"/>
         <Hex name="G21" tile="0" cost="50"/>
         <Hex name="G23" tile="-1" cost="50"/>
         <Hex name="G25" tile="0"/>
@@ -116,7 +116,7 @@
         <Hex name="H24" tile="0"/>
         <Hex name="H26" tile="-37109"/>
         <Hex name="H28" tile="0"/>
-        <Hex name="H30" tile="-20" city="Debrecin/Großwardein" label="OO"/>
+        <Hex name="H30" tile="-20" city="Debrecin/Gro&#233;wardein" label="OO"/>
         <Hex name="H32" tile="0" cost="70"/>
         <Hex name="H34" tile="-10" city="Klausenburg"/>
         <Hex name="H36" tile="-1" cost="70"/>
@@ -165,7 +165,7 @@
         <Hex name="K15" tile="0"/>
         <Hex name="K17" tile="-10" city="Agram"/>
         <Hex name="K19" tile="0" cost="50"/>
-        <Hex name="K21" tile="-37206" city="Fünfkirchen"/>
+        <Hex name="K21" tile="-37206" city="F&#252;nfkirchen"/>
         <Hex name="K23" tile="0" cost="50"/>
         <Hex name="K25" tile="0" cost="50"/>
         <Hex name="K27" tile="0"/>

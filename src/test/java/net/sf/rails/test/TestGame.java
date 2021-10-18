@@ -51,7 +51,7 @@ public class TestGame extends TestCase {
                 if (line >= testReport.size()) {
                     break; // test successful
                 } else {
-                    fail("Test report exceeeds expected report." +
+                    fail("Test report exceeds expected report." +
                     		" Last line (" + line + "): " + testReport.get(line-1));
                 }
             } else {
