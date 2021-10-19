@@ -403,7 +403,7 @@
         <IfVariant value="Romoth">
                 <Attributes startspace="I4"/>
         </IfVariant>
-        <Formation minors="S1,S2,S3,S4,S5" startMinor="S1" startPhase="4" forcedStartPhase="4" forcedMergePhase="4"/>
+        <Formation minors="S1,S2,S3,S4,S5" startMinor="S1" forcedMergePhase="4"/>
         <Home hex="G17" city="4" mapDisplay="no"/>
         <Capitalisation type="part" shares="5"/>
         <Certificate type="President" shares="1" available="false"/>
@@ -413,7 +413,7 @@
     </Company>
     <Company name="KK" longname="k.k. Staatsbahn" type="National" tokens="3" available="no"
              fgColour="FFFFFF" bgColour="C98A5C" startspace="I4" foundingCompany="K1">
-        <Formation minors="K1,K2,K3" startMinor="K1" startPhase="4" forcedStartPhase="4+1" forcedMergePhase="4+1"/>
+        <Formation minors="K1,K2,K3" startMinor="K1" startPhase="4" forcedMergePhase="4+1"/>
         <Home hex="G17" city="1" mapDisplay="no"/>
         <Capitalisation type="part" shares="7"/>
         <Certificate type="President" shares="1" available="false"/>
@@ -428,7 +428,7 @@
         <IfVariant value="Romoth">
             <Attributes startspace="K4"/>
         </IfVariant>
-        <Formation minors="U1,U2,U3" startMinor="U1" startPhase="4E" forcedStartPhase="5" forcedMergePhase="5"/>
+        <Formation minors="U1,U2,U3" startMinor="U1" startPhase="4E" forcedMergePhase="5"/>
         <Capitalisation type="part" shares="5"/>
         <Home hex="H22" city="1" mapDisplay="no"/>
         <Certificate type="President" shares="1" available="false"/>
