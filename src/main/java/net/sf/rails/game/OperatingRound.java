@@ -102,6 +102,11 @@ public class OperatingRound extends Round implements Observer {
         this.guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         this.guiHints.setActivePanel(GuiDef.Panel.MAP);
         log.info ("--- Starting OR type round: {} ---", getId());
+
+        // Clear registry of items that could otherwise generate income twice per OR
+        // Used by 1837
+        gameManager.clearBlockedCertificates();
+        gameManager.clearBlockedTrains();
     }
 
     public void start() {
@@ -233,12 +238,10 @@ public class OperatingRound extends Round implements Observer {
 
             LayTile layTileAction = (LayTile) selectedAction;
 
-            switch (layTileAction.getType()) {
-                case (LayTile.CORRECTION):
-                    result = layTileCorrection(layTileAction);
-                    break;
-                default:
-                    result = layTile(layTileAction);
+            if (layTileAction.getType() == LayTile.CORRECTION) {
+                result = layTileCorrection(layTileAction);
+            } else {
+                result = layTile(layTileAction);
             }
 
         } else if (selectedAction instanceof LayBaseToken) {
@@ -778,7 +781,7 @@ public class OperatingRound extends Round implements Observer {
      * should only be done for specific rails.game exceptions, such as forced
      * train purchases.
      *
-     * @param step
+     * @param step The next OR step to be executed
      */
     protected void setStep(GameDef.OrStep step) {
         stepObject.set(step);
@@ -838,10 +841,11 @@ public class OperatingRound extends Round implements Observer {
 
             if (newStep == GameDef.OrStep.CALC_REVENUE) {
 
-                if (company.hasTrains()) {
+                //if (company.hasTrains()) {
+                if (companyHasRunningTrains(true)) {
                     // All OK, we can't check here if it has a route
 
-                } else if (company.canGenerateRevenue()) {
+                } else if (company.canGenerateOtherRevenue()) {
                     // In 18Scan a trainless minor company still pays out.
                     executeTrainlessRevenue(newStep);
                     continue;
@@ -917,6 +921,16 @@ public class OperatingRound extends Round implements Observer {
             setStep(newStep);
         }
 
+    }
+
+    /**
+     * Stub, may be overridden if there are non-running trains.
+     * Used in 1837
+     * @param display Not used here; see 1837 version
+     * @return True if the company has trains that are allowed to run
+     */
+    protected boolean companyHasRunningTrains(boolean display) {
+        return operatingCompany.value().hasTrains();
     }
 
     /**
@@ -1502,7 +1516,6 @@ public class OperatingRound extends Round implements Observer {
             }
             right = (SpecialRight) sp;
             rightName = right.getName();
-            rightValue = right.getValue();
             cost = right.getCost();
 
             if (cost > 0 && cost > operatingCompany.value().getCash()) {
@@ -2712,7 +2725,12 @@ public class OperatingRound extends Round implements Observer {
         // First count the shares per recipient
         for (PublicCertificate cert : operatingCompany.value().getCertificates()) {
             MoneyOwner recipient = getBeneficiary(cert);
-            if (!sharesPerRecipient.containsKey(recipient)) {
+            if (recipient instanceof Player && gameManager.isCertificateBlocked(cert)) { // 1837
+                ReportBuffer.add(this, LocalText.getText("PayoutBlocked",
+                        recipient,
+                        cert.getShare(),
+                        operatingCompany.value()));
+            } else if (!sharesPerRecipient.containsKey(recipient)) {
                 sharesPerRecipient.put(recipient, cert.getShares());
             } else {
                 sharesPerRecipient.put(recipient,
@@ -2812,7 +2830,7 @@ public class OperatingRound extends Round implements Observer {
         private int value;
         ToMultipleOf (int value) { this.value = value; }
     }
-    protected enum Multiplication { BEFORE_ROUNDING, AFTER_ROUNDING };
+    protected enum Multiplication { BEFORE_ROUNDING, AFTER_ROUNDING }
 
     /**
      * Rounds a split revenue or payout up or down, depending on

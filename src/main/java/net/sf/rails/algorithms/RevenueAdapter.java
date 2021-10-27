@@ -13,11 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 import net.sf.rails.common.LocalText;
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.Phase;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsRoot;
-import net.sf.rails.game.Train;
+import net.sf.rails.common.ReportBuffer;
+import net.sf.rails.game.*;
 import net.sf.rails.ui.swing.hexmap.HexMap;
 
 import org.slf4j.Logger;
@@ -58,6 +55,7 @@ public final class RevenueAdapter implements Runnable {
 
     // basic links, to be defined at creation
     private final RailsRoot root;
+    private final GameManager gameManager;
     private final RevenueManager revenueManager;
     private final NetworkAdapter networkAdapter;
     private final PublicCompany company;
@@ -87,6 +85,7 @@ public final class RevenueAdapter implements Runnable {
     public RevenueAdapter(RailsRoot root, NetworkAdapter networkAdapter,
             PublicCompany company, Phase phase){
         this.root = root;
+        this.gameManager = root.getGameManager();
         this.revenueManager = root.getRevenueManager();
         this.networkAdapter = networkAdapter;
         this.company = company;
@@ -176,7 +175,7 @@ public final class RevenueAdapter implements Runnable {
     public boolean addTrainByString(String trainString) {
         NetworkTrain train = NetworkTrain.createFromString(trainString);
         if (train == null) return false;
-        trains.add(train);
+        addTrain(train);
         return true;
     }
 
@@ -221,7 +220,9 @@ public final class RevenueAdapter implements Runnable {
 
         // define Trains
         for (Train train:company.getPortfolioModel().getTrainList()) {
-            addTrain(train);
+            if (!gameManager.isTrainBlocked(train)) {
+                addTrain(train);
+            }
         }
 
         // add all static modifiers
