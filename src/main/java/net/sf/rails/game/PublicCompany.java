@@ -306,7 +306,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Does the company have a stock price (minors often don't)
      */
-    protected boolean hasStockPrice = true;
+    protected boolean hasStockPrice;
 
     /**
      * Does the company have a par price?
@@ -1772,9 +1772,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * Example: 18Scan minors.
      * @return true if a company can yield income.
      */
-    public boolean canGenerateRevenue () {
+    public boolean canGenerateOtherRevenue() {
         // The default:
-        return hasTrains();
+        return false;
     }
 
     /**
@@ -2149,7 +2149,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     @Override
     public Object clone() {
 
-        Object clone = null;
+        Object clone;
         try {
             clone = super.clone();
         } catch (CloneNotSupportedException e) {

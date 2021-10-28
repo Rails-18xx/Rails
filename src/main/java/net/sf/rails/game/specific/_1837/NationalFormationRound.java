@@ -432,7 +432,7 @@ CHECK:  while (true) {
         }
 
         if (national.hasStarted()) national.checkPresidency();
-        national.setOperated(); // FIXME: only if anything has been merged! And not between rounds!
+        //national.setOperated(); // was a duplicate
 
         // Inform GameManager
         gameManager.nextRound(this);

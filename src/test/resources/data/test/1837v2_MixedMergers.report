@@ -1842,11 +1842,12 @@ ExchangesBaseToken2,KK,K2,G17/W
 EndOfFormationRound,KK,OperatingRound 4.2
  
 CompanyOperates,KK,Charlie
-CompanyRevenue,KK,350
-CompanyPaysOutFull,KK,350
-Payout,Alice,35,1,10
-Payout,Bob,35,1,10
-Payout,Charlie,140,4,10
+TrainInherited,4,KK
+CompanyRevenue,KK,180
+CompanyPaysOutFull,KK,180
+PayoutBlocked,Alice,10,KK
+Payout,Bob,18,1,10
+Payout,Charlie,72,4,10
 PRICE_MOVES_LOG,KK,98,H4,105,I4
  
 CompanyOperates,TH,Charlie
@@ -1908,9 +1909,9 @@ CompanyDiscardsTrain,TH,1G,Pool
 CompanyDiscardsTrain,SB,1G,Pool
  
 EndOfOperatingRound,4.2
-ORWorthIncrease,Alice,4.2,903
-ORWorthIncrease,Bob,4.2,669
-ORWorthIncrease,Charlie,4.2,722
+ORWorthIncrease,Alice,4.2,868
+ORWorthIncrease,Bob,4.2,652
+ORWorthIncrease,Charlie,4.2,654
 Has,BH,339
 Has,BK,120
 Has,CL,361
@@ -1921,9 +1922,9 @@ Has,TH,528
 Has,Sd,200
 Has,KK,630
 Has,Ug,905
-Has,Alice,1101
-Has,Bob,828
-Has,Charlie,875
+Has,Alice,1066
+Has,Bob,811
+Has,Charlie,807
 StartStockRound,5
 HasPriority,Bob
 BUY_SHARE_LOG,Bob,10,Ug,IPO,142

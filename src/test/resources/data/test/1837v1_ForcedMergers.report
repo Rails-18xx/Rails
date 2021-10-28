@@ -2361,3 +2361,21 @@ CompanyDiscardsTrain,TH,1G,Pool
 BuysTrain,KK,3+1,Pool,280
  
 CompanyOperates,GT,Alice
+LaysTileAt,GT,401,F38,NE
+CompanyRevenue,GT,260
+CompanyDividesEarnings,GT,260,210,50
+CompanyPaysOutFull,GT,210
+Payout,Alice,126,6,10
+Payout,Bob,21,1,10
+PRICE_MOVES_LOG,GT,97,C2,102,D2
+ 
+CompanyOperates,BH,Bob
+LaysTileAt,BH,201,N20,W
+LAYS_TOKEN_ON,BH,L12,100 Hex L12 (Triest)
+TrainInherited,1G,BH
+CompanyDoesNotPayDividend,BH
+PRICE_MOVES_LOG,BH,97,C2,93,B2
+BuysTrain,BH,5,IPO,800
+NewTrainAvailable,5,5E
+ 
+CompanyOperates,TH,Alice
