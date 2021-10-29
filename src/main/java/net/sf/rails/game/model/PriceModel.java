@@ -4,6 +4,7 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.IntegerState;
 
 import java.awt.*;
 
@@ -12,7 +13,13 @@ public final class PriceModel extends ColorModel {
     // FIXME: Remove duplication of company and parent
     private final PublicCompany company;
 
+    /** Share price as represented by a field on the stock market (StockSpace) */
     private final GenericState<StockSpace> stockPrice = new GenericState<>(this, "stockPrice");
+
+    /** Share price as represented by an integer value.
+     * Used in 1837 for fixed minor buy cost (face price) in a stock round. */
+    private final IntegerState facePrice = IntegerState.create (this, "facePrice");
+
     private boolean showCoordinates = true;
 
     private PriceModel(PublicCompany parent, String id, boolean showCoordinates) {
@@ -34,9 +41,13 @@ public final class PriceModel extends ColorModel {
         stockPrice.set(price);
     }
 
+    public void setPrice (int price) { facePrice.set(price); }
+
     public StockSpace getPrice() {
         return stockPrice.value();
     }
+
+    public int getPriceAsInt() { return facePrice.value(); }
 
     public PublicCompany getCompany() {
         return company;
@@ -53,7 +64,11 @@ public final class PriceModel extends ColorModel {
 
     @Override
     public Color getForeground() {
-        return null;
+        if (getPriceAsInt() == 0) {
+            return null;
+        } else {
+            return Color.GRAY;
+        }
     }
 
     @Override
@@ -64,6 +79,8 @@ public final class PriceModel extends ColorModel {
             if (showCoordinates) {
                 text += " (" + stockPrice.value().getId() + ")";
             }
+        } else if (facePrice.value() > 0) {
+            text = Bank.format(getParent(), facePrice.value());
         }
         return text;
     }

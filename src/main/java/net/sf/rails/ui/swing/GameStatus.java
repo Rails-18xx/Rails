@@ -454,6 +454,7 @@ public class GameStatus extends GridPanel implements ActionListener {
 
             if (this.hasParPrices) {
                 f = parPrice[i] = new Field(c.getParPriceModel());
+                ((Field)f).setColorModel(c.getParPriceModel());
                 addField(f, parPriceXOffset, parPriceYOffset + i, 1, 1, 0, visible);
             }
             if (c.hasStockPrice()) {

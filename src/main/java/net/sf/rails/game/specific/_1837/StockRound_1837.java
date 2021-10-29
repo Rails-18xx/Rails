@@ -7,9 +7,7 @@ import net.sf.rails.game.state.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.action.DiscardTrain;
-import rails.game.action.MergeCompanies;
-import rails.game.action.PossibleAction;
+import rails.game.action.*;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
@@ -75,6 +73,49 @@ public class StockRound_1837 extends StockRound {
         } else {
             return super.setPossibleActions();
         }
+    }
+
+    public void setBuyableCerts() {
+        super.setBuyableCerts();
+
+        // If minors are for sale, the face value should be shown in the Par column.
+        for (PossibleAction possibleAction : possibleActions.getList()) {
+            if (possibleAction instanceof BuyCertificate) {
+                BuyCertificate buyAction = (BuyCertificate) possibleAction;
+                PublicCompany company = buyAction.getCompany();
+                if (company.getType().getId().startsWith("Minor")
+                        && company.getFixedPrice() > 0) {
+                    company.getParPriceModel().setPrice(company.getFixedPrice());
+
+                }
+            }
+        }
+    }
+
+    public boolean buyShares(String playerName, BuyCertificate action) {
+
+        boolean result = super.buyShares(playerName, action);
+
+        // For minors, reset Par column (now having its fixed price)
+        PublicCompany company = action.getCompany();
+        if (company.getType().getId().startsWith("Minor")) {
+            company.getParPriceModel().setPrice(0);
+        }
+
+        return result;
+    }
+
+    public boolean startCompany(String playerName, StartCompany action) {
+
+        boolean result = super.startCompany(playerName, action);
+
+        // For minors, reset Par column (now having its fixed price)
+        PublicCompany company = action.getCompany();
+        if (company.getType().getId().startsWith("Minor")) {
+            company.getParPriceModel().setPrice(0);
+        }
+
+        return result;
     }
 
     protected boolean setTrainDiscardActions() {
