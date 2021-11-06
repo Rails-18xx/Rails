@@ -1,13 +1,7 @@
 package net.sf.rails.ui.swing;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -310,9 +304,11 @@ public class ORUIManager implements DialogOwner {
     }
 
     private void addCorrectionTileLays(LayTile layTile) {
+        EnumSet<TileHexUpgrade.Invalids> allowances
+                = EnumSet.of(TileHexUpgrade.Invalids.HEX_RESERVED);
         for (GUIHex hex:map.getHexes()) {
             Set<TileHexUpgrade> upgrades = TileHexUpgrade.createCorrection(hex, layTile);
-            TileHexUpgrade.validates(upgrades, gameUIManager.getCurrentPhase());
+            TileHexUpgrade.validates(upgrades, gameUIManager.getCurrentPhase(), allowances);
             hexUpgrades.putAll(hex, upgrades);
         }
     }

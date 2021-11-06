@@ -1622,16 +1622,6 @@ public class OperatingRound extends Round implements Observer {
             }
 
             // Sort out cost
-            /*
-            if (stl != null && stl.isFree()) {
-                cost = 0;
-            } else {
-                cost = hex.getTileCost() + extraLayTileCost(action);
-                if (stl != null) {
-                    cost = Math.max(0, cost - stl.getDiscount());
-                }
-            }
-            */
             cost = tileLayCost(action);
 
             // Amount must be non-negative multiple of 10

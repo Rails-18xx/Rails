@@ -149,6 +149,10 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     }
 
     private boolean validate(Phase phase) {
+        return validate(phase, EnumSet.noneOf(Invalids.class));
+    }
+
+    private boolean validate(Phase phase, EnumSet<Invalids> allowances) {
         invalids.clear();
 
         /*MBR 25.11.2018
@@ -169,18 +173,18 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
                 }
             }
             if (!(sp.getLocations() != null && sp.getLocations().contains(hex.getHex()))) {
-                if (hexIsBlocked()) {
+                if (hexIsBlocked() && !allowances.contains(Invalids.HEX_BLOCKED)) {
                     invalids.add(Invalids.HEX_BLOCKED);
                 }
-                if (hexIsReserved()) {
+                if (hexIsReserved() && !allowances.contains(Invalids.HEX_RESERVED)) {
                     invalids.add(Invalids.HEX_RESERVED);
                 }
             }
         } else {
-            if (hexIsBlocked()) {
+            if (hexIsBlocked() && !allowances.contains(Invalids.HEX_BLOCKED)) {
                 invalids.add(Invalids.HEX_BLOCKED);
             }
-            if (hexIsReserved()) {
+            if (hexIsReserved() && !allowances.contains(Invalids.HEX_RESERVED)) {
                 invalids.add(Invalids.HEX_RESERVED);
             }
             if (notEnoughCash(0)) {
@@ -480,9 +484,16 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
     /**
      * sets both validation and visibility for upgrades
      */
-    public static void validates(Iterable<TileHexUpgrade> upgrades, Phase current) {
+    public static void validates(Iterable<TileHexUpgrade> upgrades,
+                                 Phase current) {
+        validates(upgrades, current, EnumSet.noneOf(Invalids.class));
+    }
+
+    public static void validates(Iterable<TileHexUpgrade> upgrades,
+                                 Phase current,
+                                 EnumSet<Invalids> allowances) {
         for (TileHexUpgrade upgrade : upgrades) {
-            if (upgrade.validate(current)) {
+            if (upgrade.validate(current, allowances)) {
                 upgrade.setVisible(true);
             } else if (upgrade.tileColourNotAllowed(current)) {
                 upgrade.setVisible(false);
