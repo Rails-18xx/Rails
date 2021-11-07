@@ -257,6 +257,16 @@ public class ORUIManager implements DialogOwner {
                 || layTile.getLocations().isEmpty());
 
         for (MapHex hex:Sets.union(mapHexSides.keySet(), mapHexStations.keySet())) {
+
+            // Accept an immediate tile lay on reserved hexes if the reserving company
+            // president is the current player.
+            EnumSet allowances = EnumSet.noneOf(TileHexUpgrade.Invalids.class);
+            if (hex.isReservedForCompany())  {
+                PublicCompany reservingCompany = hex.getReservedForCompany();
+                if (reservingCompany.getPresident().equals(layTile.getPlayer())) {
+                    allowances.add(TileHexUpgrade.Invalids.HEX_RESERVED);
+                }
+            }
             if (allLocations || layTile.getLocations().contains(hex)) {
                 GUIHex guiHex = map.getHex(hex);
                 String routeAlgorithm = GameOption.getValue(gameUIManager.getRoot(),
@@ -264,7 +274,7 @@ public class ORUIManager implements DialogOwner {
                 Set<TileHexUpgrade> upgrades = TileHexUpgrade.create(guiHex,
                         mapHexSides.get(hex),
                         mapHexStations.get(hex), layTile, routeAlgorithm);
-                TileHexUpgrade.validates(upgrades, currentPhase);
+                TileHexUpgrade.validates(upgrades, currentPhase, allowances);
                 gameSpecificTileUpgradeValidation (upgrades, layTile, currentPhase);
                 hexUpgrades.putAll(guiHex, upgrades);
             }
