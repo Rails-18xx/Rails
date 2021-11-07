@@ -53,7 +53,7 @@ def jpackage() {
 }
 
 dependencies {
-    implementation 'commons-io:commons-io:2.8.0'
+    implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.github.vlsi.mxgraph:jgraphx:4.2.2'
     implementation 'org.jgrapht:jgrapht-core:1.5.1'
     implementation 'org.jgrapht:jgrapht-ext:1.5.1'
