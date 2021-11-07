@@ -9,7 +9,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
     // plugin to check for dependency updates via task dependencyUpdates
     // https://github.com/ben-manes/gradle-versions-plugin
-    id 'com.github.ben-manes.versions' version '0.38.0'
+    id 'com.github.ben-manes.versions' version '0.39.0'
     // https://github.com/n0mer/gradle-git-properties
     id 'com.gorylenko.gradle-git-properties' version '2.3.1'
     // https://openjfx.io/openjfx-docs/#gradle
