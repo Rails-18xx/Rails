@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.sf.rails.game.*;
+import net.sf.rails.game.state.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,14 +14,9 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.state.BooleanState;
-import net.sf.rails.game.state.Currency;
-import net.sf.rails.game.state.MoneyOwner;
 import net.sf.rails.util.SequenceUtil;
 import rails.game.action.*;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import rails.game.specific._1837.SetHomeHexLocation;
 
 
@@ -30,15 +26,6 @@ import rails.game.specific._1837.SetHomeHexLocation;
  */
 public class OperatingRound_1837 extends OperatingRound {
     private static final Logger log = LoggerFactory.getLogger(OperatingRound_1837.class);
-
-    private final BooleanState needHungaryFormationCall = new BooleanState(this, "NeedHungaryFormationCall");
-    private final BooleanState needKuKFormationCall = new BooleanState(this, "NeedKuKFormationCall");
-
-    /**
-     * Registry of percentage of nationals revenue to be denied per player
-     * because of having produced revenue in the same OR.
-     */
-    private final Table<Player, PublicCompany, Integer> deniedIncomeShare = HashBasedTable.create();
 
     public OperatingRound_1837(GameManager parent, String id) {
         super(parent, id);
@@ -395,7 +382,7 @@ public class OperatingRound_1837 extends OperatingRound {
     protected void prepareRevenueAndDividendAction() {
 
         // There is only revenue if there are any trains
-        if (operatingCompany.value().hasTrains()) {
+        if (companyHasRunningTrains(false)) {
             int[] allowedRevenueActions =
                     operatingCompany.value().isSplitAlways()
                     ? new int[] { SetDividend.SPLIT }
@@ -411,6 +398,31 @@ public class OperatingRound_1837 extends OperatingRound {
                     operatingCompany.value().getLastDirectIncome(),
                     true, allowedRevenueActions,0));
         }
+    }
+
+    /**
+     * If a train has already run this round for a minor,
+     * it may not run again after a merger into a major.
+     * @param display Should be true only once.
+     * @return True if there is at least one train that is allowed to run
+     */
+    @Override
+    protected boolean companyHasRunningTrains(boolean display) {
+        boolean hasRunningTrains = false;
+        Set<Train> trains = operatingCompany.value().getPortfolioModel().getTrainList();
+        for (Train train : trains) {
+            if (gameManager.isTrainBlocked(train)) {
+                if (display) {
+                    String message = LocalText.getText(
+                            "TrainInherited", train.getType(), operatingCompany.value());
+                    ReportBuffer.add(this, message);
+                    DisplayBuffer.add(this, message);
+                }
+            } else {
+                hasRunningTrains = true;
+            }
+        }
+        return hasRunningTrains;
     }
 
     /**

@@ -1,21 +1,18 @@
 package net.sf.rails.game.specific._1837;
 
 import net.sf.rails.game.*;
-import net.sf.rails.game.financial.StockSpace;
+import net.sf.rails.game.financial.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.action.DiscardTrain;
-import rails.game.action.MergeCompanies;
-import rails.game.action.PossibleAction;
+import rails.game.action.*;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.financial.PublicCertificate;
-import net.sf.rails.game.financial.StockRound;
+
+import java.util.Set;
 
 /**
  * @author martin
@@ -78,6 +75,49 @@ public class StockRound_1837 extends StockRound {
         }
     }
 
+    public void setBuyableCerts() {
+        super.setBuyableCerts();
+
+        // If minors are for sale, the face value should be shown in the Par column.
+        for (PossibleAction possibleAction : possibleActions.getList()) {
+            if (possibleAction instanceof BuyCertificate) {
+                BuyCertificate buyAction = (BuyCertificate) possibleAction;
+                PublicCompany company = buyAction.getCompany();
+                if (company.getType().getId().startsWith("Minor")
+                        && company.getFixedPrice() > 0) {
+                    company.getParPriceModel().setPrice(company.getFixedPrice());
+
+                }
+            }
+        }
+    }
+
+    public boolean buyShares(String playerName, BuyCertificate action) {
+
+        boolean result = super.buyShares(playerName, action);
+
+        // For minors, reset Par column (now having its fixed price)
+        PublicCompany company = action.getCompany();
+        if (company.getType().getId().startsWith("Minor")) {
+            company.getParPriceModel().setPrice(0);
+        }
+
+        return result;
+    }
+
+    public boolean startCompany(String playerName, StartCompany action) {
+
+        boolean result = super.startCompany(playerName, action);
+
+        // For minors, reset Par column (now having its fixed price)
+        PublicCompany company = action.getCompany();
+        if (company.getType().getId().startsWith("Minor")) {
+            company.getParPriceModel().setPrice(0);
+        }
+
+        return result;
+    }
+
     protected boolean setTrainDiscardActions() {
 
         PublicCompany discardingCompany =
@@ -110,11 +150,7 @@ public class StockRound_1837 extends StockRound {
     }
 
     /**
-     * Merge a minor into an already started company. <p>Also covers the actions
-     * of the Final Minor Exchange Round, in which minors can also be closed (in
-     * that case, the MergeCompanies.major attribute is null, which never occurs
-     * in normal stock rounds).
-     *
+     * Merge a minor into an already started company.
      * @param action The MergeCompanies chosen action
      * @return True if the merge was successful
      */
@@ -151,9 +187,12 @@ public class StockRound_1837 extends StockRound {
         }
         //TODO: what happens if the major hasnt operated/founded/Started sofar in the FinalCoalExchangeRound ?
 
+        // Save minor details that are needed after merging
+        Set<Train> minorTrains = minor.getPortfolioModel().getTrainList();
+        int minorTrainsNo = minorTrains.size();
+
         // Transfer the minor assets
         int minorCash = minor.getCash();
-        int minorTrains = minor.getPortfolioModel().getTrainList().size();
         if (cashDestination == null) {
             // Assets go to the bank
             if (minorCash > 0) {
@@ -163,6 +202,12 @@ public class StockRound_1837 extends StockRound {
         } else {
             // Assets go to the major company
             major.transferAssetsFrom(minor);
+            if (minor.hasOperated()) {
+                gameManager.blockCertificate(cert);
+                for (Train train : minorTrains) {
+                    gameManager.blockTrain(train);
+                }
+            }
         }
 
         Player minorPres = minor.getPresident();
@@ -171,11 +216,11 @@ public class StockRound_1837 extends StockRound {
         if (autoMerge) {
             ReportBuffer.add(this, LocalText.getText("AutoMergeMinorLog",
                     minor.getId(), major.getId(),
-                    Bank.format(this, minorCash), minorTrains));
+                    Bank.format(this, minorCash), minorTrainsNo));
         } else {
             ReportBuffer.add(this, LocalText.getText("MERGE_MINOR_LOG",
                     minorPres, minor.getId(), major.getId(),
-                    Bank.format(this, minorCash), minorTrains));
+                    Bank.format(this, minorCash), minorTrainsNo));
         }
         ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
                 minorPres, cert.getShare(), major.getId(),

@@ -1834,6 +1834,55 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return this.NationalFormStartingPlayer.get(comp);
     }
 
+    //--------------------------------------------
+    // Register certificates and trains to prevent double income in one round.
+    // Used by 1837. (Not yet by 1835)
+    //--------------------------------------------
+
+    /**
+     * Registry of exchanged certificates to be denied income
+     * because their precursors produced revenue in the same OR.
+     */
+    private final HashSetState<Certificate> blockedCertificates
+            = HashSetState.create(this, "BlockedCertificates");
+
+    /**
+     * Registry of exchanged trains that may not run for a major company
+     * because they have already run for the associated minor in the same OR.
+     * NOTE: here and in many other places the term "minors" includes coal companies.
+     */
+    private final HashSetState<Train> blockedTrains
+            = HashSetState.create(this, "BlockedTrains");
+
+    public void clearBlockedCertificates() {
+        blockedCertificates.clear();
+    }
+
+    public void blockCertificate (Certificate certificate) {
+        blockedCertificates.add(certificate);
+    }
+
+    public boolean isCertificateBlocked (Certificate certificate) {
+        return blockedCertificates.contains(certificate);
+    }
+
+    public void clearBlockedTrains() {
+        blockedTrains.clear();
+    }
+
+    public void blockTrain (Train train) {
+        blockedTrains.add(train);
+    }
+
+    public boolean isTrainBlocked (Train train) {
+        return blockedTrains.contains(train);
+    }
+
+
+    //------------------------------------
+    // Random generator
+    // Used by SOH
+    //------------------------------------
     private Random randomGenerator;
     public Random getRandomGenerator () {
         if (randomGenerator == null) {

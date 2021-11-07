@@ -1,10 +1,6 @@
 package net.sf.rails.game;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -696,6 +692,21 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                     (oldStation != null ? oldStation.getNumber() : 0),
                     stop.getRelatedStationNumber(),
                     getConnectionString(stop.getRelatedStation()));
+
+            // Check if home tokens are now on a different station number
+            if (oldStation != null && oldStation.getNumber() != stop.getRelatedStationNumber()) {
+                for (BaseToken token : stop.getBaseTokens()) {
+                    PublicCompany company = token.getParent();
+                    if (!company.getHomeHexes().isEmpty() && this.equals(token.getParent().getHomeHexes().get(0))) {
+                        // If so, update the company home station number
+                        token.getParent().setHomeCityNumber(stop.getRelatedStationNumber());
+                        log.info("{} home station number changed from {} to {}",
+                                token.getParent(), oldStation.getNumber(),
+                                stop.getRelatedStationNumber());
+
+                    }
+                }
+            }
         }
 
     }
@@ -713,6 +724,17 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
             } else {
                 token.moveTo(target);
                 log.debug("Token {} moved from {} to {}", token.getUniqueId(), origin.getComposedId(), target.getComposedId());
+                // Also update (single) home station if that has changed
+                if (currentTile.value().getNumStations() > 1
+                        && !company.getHomeHexes().isEmpty()
+                        && this.equals(company.getHomeHexes().get(0))
+                        && origin.getRelatedStationNumber() == company.getHomeCityNumber()) {
+                    int oldvalue=company.getHomeCityNumber();
+                    company.setHomeCityNumber(target.getRelatedStationNumber());
+                    log.debug("{} home station number changed from {} ({}) to {}",
+                            company, oldvalue, origin.getRelatedStationNumber(),
+                            target.getRelatedStationNumber());
+                }
             }
         }
     }
@@ -858,17 +880,19 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         return stops.get(station);
     }
 
-    // FIXME: Due to Rails1.x compatibility use legacy number or previous
-    // numbers
     public Stop getRelatedStop(int stationNb) {
+
+        /* NOTE: Apparently, the below outcommented code had replaced the original one
+           to cope with WRONG chosen station numbers for token lays on multiple-city tiles
+           in old saved files, which have been edited.
         for (Stop stop : stops) {
-            if (stop.getNumber() == stationNb) return stop;
+            if (stop.getRelatedStation().getNumber() == stationNb) return stop;
         }
         for (Stop stop : stops) {
             if (stop.checkPreviousNumbers(stationNb)) return stop;
         }
-        return null;
-        // return stops.get(getStation(stationNb));
+        return null;*/
+        return stops.get(getStation(stationNb));
     }
 
     public ImmutableSet<Station> getStations() {

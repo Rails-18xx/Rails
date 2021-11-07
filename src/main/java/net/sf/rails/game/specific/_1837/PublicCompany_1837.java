@@ -24,9 +24,22 @@ public class PublicCompany_1837 extends PublicCompany {
     private String startingMinorName;
     private List<PublicCompany_1837> minors;
     private String minorNames;
+    /**
+     * The phase from which national formation may start.
+     * Optional if equal to the forcedStartPhase, which is the default value.
+     */
     private String formationStartPhase;
+    /**
+     * The phase at the start of which national formation must start.
+     * Optional if equal to the forcedMergePhase, which is the default value.
+     */
     private String forcedStartPhase;
+    /**
+     * The phase of which national formation must complete.
+     * Mandatory.
+     */
     private String forcedMergePhase;
+
     private BooleanState complete;
 
     public PublicCompany_1837(RailsItem parent, String id) {
@@ -39,15 +52,16 @@ public class PublicCompany_1837 extends PublicCompany {
         super.configureFromXML(tag);
 
         // For national companies
-        Tag formationTag = tag.getChild("Formation");
-        if (formationTag != null) {
-            minorNames = formationTag.getAttributeAsString("minors");
-            startingMinorName = formationTag.getAttributeAsString("startMinor");
-            formationStartPhase = formationTag.getAttributeAsString("startPhase");
-            forcedStartPhase = formationTag.getAttributeAsString("forcedStartPhase");
-            forcedMergePhase = formationTag.getAttributeAsString("forcedMergePhase");
+        if (getType().getId().equalsIgnoreCase("National")) {
+            Tag formationTag = tag.getChild("Formation");
+            if (formationTag != null) {
+                minorNames = formationTag.getAttributeAsString("minors");
+                startingMinorName = formationTag.getAttributeAsString("startMinor");
+                forcedMergePhase = formationTag.getAttributeAsString("forcedMergePhase");
+                forcedStartPhase = formationTag.getAttributeAsString("forcedStartPhase", forcedMergePhase);
+                formationStartPhase = formationTag.getAttributeAsString("startPhase", forcedStartPhase);
+            }
         }
-
     }
 
     public void finishConfiguration(RailsRoot root)

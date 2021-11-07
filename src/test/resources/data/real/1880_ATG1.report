@@ -1253,7 +1253,7 @@ StartOfPhase,6
 TrainsRusted,3
  
 CompanyOperates,JLR,Lonny
-LAYS_TOKEN_ON,JLR,F10,40 Hex F10 (Tianjin)
+LAYS_FREE_TOKEN_ON,JLR,F10
 CompanyDoesNotPayDividend,JLR
 PRICE_MOVES_LOG,JLR,90,D4,85,C4
 BuysTrain,JLR,6,IPO,600
@@ -1306,7 +1306,7 @@ Has,BCR,168
 Has,JHA,2
 Has,JHU,0
 Has,JGG,110
-Has,JLR,260
+Has,JLR,300
 Has,SCR,10
 Has,CKR,0
 Has,HKR,340
@@ -1354,7 +1354,7 @@ Has,Baocheng Railway,168
 Has,Jingha Railway,2
 Has,Jinghu     Railway,0
 Has,Jingguang Railway,110
-Has,Jinglan Railway,260
+Has,Jinglan Railway,300
 Has,Schichang Railway,10
 Has,Chengkun Railway,0
 Has,Hukun Railway,340
@@ -1406,7 +1406,7 @@ PRICE_MOVES_LOG,CKR,90,D4,95,E4
 CompanyOperates,JLR,Lonny
 CompanyDoesNotPayDividend,JLR
 PRICE_MOVES_LOG,JLR,85,C4,75,B4
-PresidentAddsCash,JLR,Lonny,100
+PresidentAddsCash,JLR,Lonny,60
 BuysTrain,JLR,6E,IPO,700
  
 CompanyOperates,JHU,Stefan
@@ -1438,7 +1438,7 @@ PRICE_MOVES_LOG,SCR,80,F8,85,F7
  
 EndOfOperatingRound,8.1
 ORWorthIncrease,Helmut,8.1,358
-ORWorthIncrease,Lonny,8.1,405
+ORWorthIncrease,Lonny,8.1,445
 ORWorthIncrease,Ronnie,8.1,160
 ORWorthIncrease,Stefan,8.1,607
 Has,BCR,168
@@ -1452,7 +1452,7 @@ Has,HKR,0
 Has,NJR,230
 Has,QSR,0
 Has,Helmut,331
-Has,Lonny,415
+Has,Lonny,455
 Has,Ronnie,244
 Has,Stefan,586
 START_OR,8.2
@@ -1518,7 +1518,7 @@ Has,HKR,0
 Has,NJR,230
 Has,QSR,0
 Has,Helmut,802
-Has,Lonny,830
+Has,Lonny,870
 Has,Ronnie,683
 Has,Stefan,738
 StartStockRound,9
@@ -1659,7 +1659,7 @@ Has,Najiang Railway,230
 Has,Qinshen     Railway,0
 Has,Wunan Railway,900
 Has,Helmut,312
-Has,Lonny,105
+Has,Lonny,145
 Has,Ronnie,198
 Has,Stefan,123
 START_OR,9.1
@@ -1691,8 +1691,8 @@ BuysTrain,JHU,4+4,JHA,388
 CompanyOperates,QSR,Stefan
 CompanyRevenue,QSR,370
 CompanyPaysOutFull,QSR,370
-Payout,Stefan,333,9,10
 Payout,Lonny,37,1,10
+Payout,Stefan,333,9,10
 PRICE_MOVES_LOG,QSR,115,I4,125,J4
 BuysTrain,QSR,8,IPO,800
 All 8-trains are sold out, 8E-trains now available
@@ -1715,7 +1715,7 @@ Has,NJR,230
 Has,QSR,78
 Has,WNR,2
 Has,Helmut,312
-Has,Lonny,142
+Has,Lonny,182
 Has,Ronnie,198
 Has,Stefan,456
 StartStockRound,10
@@ -1816,7 +1816,7 @@ Has,Najiang Railway,230
 Has,Qinshen     Railway,78
 Has,Wunan Railway,2
 Has,Helmut,277
-Has,Lonny,137
+Has,Lonny,177
 Has,Ronnie,198
 Has,Stefan,276
 START_OR,10.1
@@ -1926,7 +1926,7 @@ Has,NJR,230
 Has,QSR,78
 Has,WNR,1
 Has,Helmut,769
-Has,Lonny,1215
+Has,Lonny,1255
 Has,Ronnie,808
 Has,Stefan,503
 START_OR,10.2
@@ -2047,7 +2047,7 @@ Has,NJR,230
 Has,QSR,79
 Has,WNR,1
 Has,Helmut,444
-Has,Lonny,2100
+Has,Lonny,2140
 Has,Ronnie,1436
 Has,Stefan,743
 START_OR,10.3
@@ -2161,7 +2161,7 @@ Has,NJR,230
 Has,QSR,1
 Has,WNR,1
 Has,Helmut,1467
-Has,Lonny,3024
+Has,Lonny,3064
 Has,Ronnie,2148
 Has,Stefan,1452
 START_OR,10.4
@@ -2192,13 +2192,13 @@ Has,NJR,230
 Has,QSR,1
 Has,WNR,1
 Has,Helmut,1467
-Has,Lonny,3131
+Has,Lonny,3171
 Has,Ronnie,2148
 Has,Stefan,2415
 GameOver
 EoGWinnerLonny!
 EoGFinalRanking :
-1. 5851 Lonny
+1. 5891 Lonny
 2. 5265 Stefan
 3. 4528 Ronnie
 4. 3747 Helmut

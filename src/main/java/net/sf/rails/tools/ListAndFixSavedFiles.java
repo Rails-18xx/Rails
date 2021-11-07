@@ -653,6 +653,9 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             addTextField(this, "Preset revenue",
                     action.getPresetRevenue(),
                     String.valueOf(action.getPresetRevenue()));  // 0
+            addTextField(this, "Actual revenue",
+                    action.getActualRevenue(),
+                    String.valueOf(action.getActualRevenue()));
             finish();
         }
 
@@ -666,6 +669,13 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 action.setPresetRevenue(presetRevenue);
             } catch (NumberFormatException e) {
                 log.error ("Error in presetRevenue: {}", input, e);
+            }
+            try {
+                input = ((JTextField)inputElements.get(1)).getText();
+                int actualRevenue = Integer.valueOf(input);
+                action.setActualRevenue(actualRevenue);
+            } catch (NumberFormatException e) {
+                log.error ("Error in actualRevenue: {}", input, e);
             }
 
             log.info("Action is {}", action);

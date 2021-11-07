@@ -322,4 +322,16 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return b.toString();
     }
 
+    public String toString() {
+        StringBuilder b = new StringBuilder();
+        b.append(getParent().getId());
+        if (getParent().getStops().size() > 1) {
+            b.append("/")
+                    .append(relatedStation.value().getNumber())
+                    .append("(")
+                    .append(getParent().getConnectionString(relatedStation.value()))
+                    .append(")");
+        }
+        return b.toString();
+    }
 }

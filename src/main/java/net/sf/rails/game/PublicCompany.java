@@ -90,7 +90,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      */
     protected String homeHexNames = null;
     protected List<MapHex> homeHexes = null;
-    protected int homeCityNumber = 1;
+    //protected int homeCityNumber = 1;
+    /** The home city number of multiple-city hexes can change with tile upgrades, so it's a state variable now.
+     * The default number is 1 */
+    protected IntegerState homeCityNumber = IntegerState.create (this,"HomeCityNumber", 1);
     protected boolean displayHomeHex = true;
 
     /**
@@ -306,7 +309,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Does the company have a stock price (minors often don't)
      */
-    protected boolean hasStockPrice = true;
+    protected boolean hasStockPrice;
 
     /**
      * Does the company have a par price?
@@ -519,7 +522,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         Tag homeBaseTag = tag.getChild("Home");
         if (homeBaseTag != null) {
             homeHexNames = homeBaseTag.getAttributeAsString("hex");
-            homeCityNumber = homeBaseTag.getAttributeAsInteger("city", 1);
+            homeCityNumber.set(homeBaseTag.getAttributeAsInteger("city", 1));
             displayHomeHex = homeBaseTag.getAttributeAsBoolean("mapDisplay", true);
         }
 
@@ -998,7 +1001,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * @return Returns the homeStation.
      */
     public int getHomeCityNumber() {
-        return homeCityNumber;
+        return homeCityNumber.value();
     }
 
     public boolean isDisplayHomeHex() {
@@ -1009,7 +1012,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * @param number The homeStation to set.
      */
     public void setHomeCityNumber(int number) {
-        this.homeCityNumber = number;
+        this.homeCityNumber.set(number);
     }
 
     /**
@@ -1772,9 +1775,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * Example: 18Scan minors.
      * @return true if a company can yield income.
      */
-    public boolean canGenerateRevenue () {
+    public boolean canGenerateOtherRevenue() {
         // The default:
-        return hasTrains();
+        return false;
     }
 
     /**
@@ -1990,14 +1993,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (homeHexes == null) return true;
 
         for (MapHex homeHex : homeHexes) {
-            if (homeCityNumber == 0) {
+            if (homeCityNumber.value() == 0) {
                 // This applies to cases like 1830 Erie and 1856 THB.
                 // On a trackless tile it does not matter, but if
                 // the tile has track (such as the green OO tile),
                 // the player must select a city.
                 if (homeHex.getCurrentTile().hasNoStationTracks()) {
                     // No tracks, then it doesn't matter
-                    homeCityNumber = 1;
+                    homeCityNumber.set(1);
                 } else {
                     // Cover the case that there already is another token.
                     // Allowing this is optional for 1856 Hamilton (THB home)
@@ -2008,7 +2011,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                     }
                     if (openStops.size() == 1) {
                         // Just one spot: lay the home base there.
-                        homeCityNumber = openStops.get(0).getRelatedStationNumber();
+                        homeCityNumber.set(openStops.get(0).getRelatedStationNumber());
                     } else {
                         // ??
                         // TODO Will player be asked??
@@ -2016,8 +2019,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                     }
                 }
             }
-            log.debug("{} lays home base on {} city {}", getId(), homeHex.getId(), homeCityNumber);
-            homeHex.layBaseToken(this, homeHex.getRelatedStop(homeCityNumber));
+            log.debug("{} lays home base on {} city {}", getId(), homeHex.getId(), homeCityNumber.value());
+            homeHex.layBaseToken(this, homeHex.getRelatedStop(homeCityNumber.value()));
         }
         return true;
     }
@@ -2149,7 +2152,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     @Override
     public Object clone() {
 
-        Object clone = null;
+        Object clone;
         try {
             clone = super.clone();
         } catch (CloneNotSupportedException e) {

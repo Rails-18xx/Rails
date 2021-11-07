@@ -343,14 +343,16 @@ CHECK:  while (true) {
 
         MapHex hex = minor.getHomeHexes().get(0);
         if (hex.isOpen()) {  // 1837 S5 Italian home hex has already been closed here
-            Stop city = hex.getRelatedStop(minor.getHomeCityNumber());
-            if (!city.hasTokenOf(national) && hex.layBaseToken(national, city)) {
+            Stop stop = hex.getRelatedStop(minor.getHomeCityNumber());
+            log.debug("Hex={} city={}/{} minor.getHomeCity={}",
+                    hex, stop, stop.getRelatedStation(), minor.getHomeCityNumber());
+            if (!stop.hasTokenOf(national) && hex.layBaseToken(national, stop)) {
                 /* TODO: the false return value must be impossible. */
                 String message = LocalText.getText("ExchangesBaseToken2",
                         national.getId(), minor.getId(),
                         hex.getId() +
                                 (hex.getStops().size() > 1
-                                ? "/" + hex.getConnectionString(city.getRelatedStation())
+                                ? "/" + hex.getConnectionString(stop.getRelatedStation())
                                 : "")
                         );
                 ReportBuffer.add(this, message);
@@ -432,7 +434,7 @@ CHECK:  while (true) {
         }
 
         if (national.hasStarted()) national.checkPresidency();
-        national.setOperated(); // FIXME: only if anything has been merged! And not between rounds!
+        //national.setOperated(); // was a duplicate
 
         // Inform GameManager
         gameManager.nextRound(this);

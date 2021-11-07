@@ -985,7 +985,7 @@ NewTrainAvailable,5,6
  
 CompanyOperates,CPR,Ed
 LaysTileAt,CPR,127,M4,SW
-LAYS_TOKEN_ON,CPR,N11,40 Hex N11 (Toronto NE,N)
+LAYS_TOKEN_ON,CPR,N11,40 Hex N11 (Toronto NW,SW)
 CompanyRevenue,CPR,160
 CompanyMustPayLoanInterest,CPR,30
 InterestPaidFromTreasury,CPR,30

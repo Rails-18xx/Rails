@@ -23,7 +23,7 @@ public class PublicCompany_18Scan extends PublicCompany {
     }
 
     @Override
-    public boolean canGenerateRevenue() {
+    public boolean canGenerateOtherRevenue() {
         // A check for all safety, only minors should get here
         if (isOfType("Minor")) {
             // Even without trains, 18Scan minors yield some money

@@ -318,7 +318,6 @@ public class StockRound extends Round {
 
                 unitsForPrice = comp.getShareUnitsForSharePrice();
                 if (maxAllowedNumberOfSharesToBuy(currentPlayer, comp,
-                        //cert.getShare()) < 1) continue;
                         comp.getShareUnit()) < 1) continue;
 
                 /* Would the player exceed the total certificate limit? */
@@ -541,7 +540,6 @@ public class StockRound extends Round {
 
         if (!mayCurrentPlayerSellAnything()) return;
 
-        boolean choiceOfPresidentExchangeCerts = false;
         isOverLimits = false;
         overLimitsDetail = null;
 
