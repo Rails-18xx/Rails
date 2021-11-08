@@ -690,7 +690,8 @@ public class ORUIManager implements DialogOwner {
     protected boolean gotPermission(GUIHex guiHex) {
 
         // Check if the clicked hex is reserved for a company
-        if (!guiHex.getHex().isReservedForCompany()) return true;
+        MapHex hex = guiHex.getHex();
+        if (!hex.isReservedForCompany() || !hex.isPreprintedTileCurrent()) return true;
 
         // Check if this is a tile upgrade
         HexUpgrade hexUpgrade = (HexUpgrade) hexUpgrades.getUpgrades(guiHex).toArray()[0];
@@ -1688,7 +1689,6 @@ public class ORUIManager implements DialogOwner {
                 && currentDialogAction instanceof LayTile) {
 
             ConfirmationDialog dialog = (ConfirmationDialog) currentDialog;
-            LayTile action = (LayTile) currentDialogAction;
             boolean gotPermission = dialog.getAnswer();
             if (gotPermission) {
                 return;
