@@ -22,11 +22,7 @@ import net.sf.rails.game.special.SpecialTileLay;
 import net.sf.rails.game.special.SpecialBaseTokenLay;
 import net.sf.rails.game.state.Owner;
 import net.sf.rails.sound.SoundManager;
-import net.sf.rails.ui.swing.elements.CheckBoxDialog;
-import net.sf.rails.ui.swing.elements.DialogOwner;
-import net.sf.rails.ui.swing.elements.GUIHexUpgrades;
-import net.sf.rails.ui.swing.elements.MessageDialog;
-import net.sf.rails.ui.swing.elements.RadioButtonDialog;
+import net.sf.rails.ui.swing.elements.*;
 import net.sf.rails.ui.swing.hexmap.GUIHex;
 import net.sf.rails.ui.swing.hexmap.HexMap;
 import net.sf.rails.ui.swing.hexmap.HexUpgrade;
@@ -101,6 +97,7 @@ public class ORUIManager implements DialogOwner {
     /* Keys of dialogs owned by this class */
     public static final String SELECT_DESTINATION_COMPANIES_DIALOG = "SelectDestinationCompanies";
     public static final String REPAY_LOANS_DIALOG = "RepayLoans";
+    public static final String GOT_PERMISSION_DIALOG = "AskedPermissionDialog";
 
     public ORUIManager() {
 
@@ -262,10 +259,8 @@ public class ORUIManager implements DialogOwner {
             // president is the current player.
             EnumSet allowances = EnumSet.noneOf(TileHexUpgrade.Invalids.class);
             if (hex.isReservedForCompany())  {
-                PublicCompany reservingCompany = hex.getReservedForCompany();
-                if (reservingCompany.getPresident().equals(layTile.getPlayer())) {
-                    allowances.add(TileHexUpgrade.Invalids.HEX_RESERVED);
-                }
+                // For now we accept this action, but will later check for permission
+                allowances.add(TileHexUpgrade.Invalids.HEX_RESERVED);
             }
             if (allLocations || layTile.getLocations().contains(hex)) {
                 GUIHex guiHex = map.getHex(hex);
@@ -669,6 +664,8 @@ public class ORUIManager implements DialogOwner {
         if (hexUpgrades.containsVisible(clickedHex)) {
             switch (localStep) {
                 case SELECT_HEX:
+                    if (!gotPermission(clickedHex)) return false;
+                    // if permitted, falls through
                 case SELECT_UPGRADE:
                     map.selectHex(clickedHex);
                     setLocalStep(LocalSteps.SELECT_UPGRADE);
@@ -688,6 +685,35 @@ public class ORUIManager implements DialogOwner {
             default:
                 return false;
         }
+    }
+
+    protected boolean gotPermission(GUIHex guiHex) {
+
+        // Check if the clicked hex is reserved for a company
+        if (!guiHex.getHex().isReservedForCompany()) return true;
+
+        // Check if this is a tile upgrade
+        HexUpgrade hexUpgrade = (HexUpgrade) hexUpgrades.getUpgrades(guiHex).toArray()[0];
+        if (!(hexUpgrade instanceof TileHexUpgrade)) return true;
+
+        // Check if permission from another player is required
+        TileHexUpgrade upgrade = (TileHexUpgrade) hexUpgrade;
+        LayTile action = upgrade.getAction();
+        Player thisPlayer = action.getPlayer();
+        Player otherPlayer = guiHex.getHex().getReservedForCompany().getPresident();
+        if (thisPlayer.equals(otherPlayer)) return true;
+
+        // We have to, so start a dialog.
+        // The current player should have got permission off-game.
+        ConfirmationDialog dialog = new ConfirmationDialog(GOT_PERMISSION_DIALOG,
+                this,
+                orWindow,
+                LocalText.getText("GotPermission"),
+                LocalText.getText("GotPermissionDialog", otherPlayer, upgrade.getHex().getHex()),
+                LocalText.getText("Yes"),
+                LocalText.getText("No"));
+        setCurrentDialog (dialog, action);
+        return true;
     }
 
     // FIXME: Inform SoundManager about Rotation of Tile (selection of upgrade)
@@ -1648,7 +1674,7 @@ public class ORUIManager implements DialogOwner {
             boolean[] destined = dialog.getSelectedOptions();
             String[] options = dialog.getOptions();
 
-            for (int index=0; index < options.length; index++) {
+            for (int index = 0; index < options.length; index++) {
                 if (destined[index]) {
                     action.addReachedCompany(action.getPossibleCompanies().get(index));
                 }
@@ -1657,6 +1683,18 @@ public class ORUIManager implements DialogOwner {
             // Prevent that a null action gets processed
             if (action.getReachedCompanies() == null
                     || action.getReachedCompanies().isEmpty()) currentDialogAction = null;
+
+        } else if (currentDialog instanceof ConfirmationDialog
+                && currentDialogAction instanceof LayTile) {
+
+            ConfirmationDialog dialog = (ConfirmationDialog) currentDialog;
+            LayTile action = (LayTile) currentDialogAction;
+            boolean gotPermission = dialog.getAnswer();
+            if (gotPermission) {
+                return;
+            } else {
+                currentDialogAction = null;
+            }
 
         } else {
             currentDialogAction = null;
