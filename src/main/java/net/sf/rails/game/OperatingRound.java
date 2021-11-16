@@ -6,6 +6,7 @@ import net.sf.rails.game.financial.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.*;
+import net.sf.rails.game.specific._1835.PublicCompany_1835;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
@@ -2645,6 +2646,17 @@ public class OperatingRound extends Round implements Observer {
 
         }
 
+        if (company.hasBankLoan()) {
+            int repayment = Math.min (company.getBankLoan(), action.getActualRevenue());
+            Currency.toBank(company, repayment);
+            company.repayBankLoan(repayment);
+            ReportBuffer.add (this, LocalText.getText(
+                    "CompanyRepaysBankLoan", company,
+                    Bank.format(this, repayment),
+                    Bank.format(this, company.getBankLoan())));
+        }
+
+
         // Rust any obsolete trains
         company.getPortfolioModel().rustObsoleteTrains();
 
@@ -3085,7 +3097,7 @@ public class OperatingRound extends Round implements Observer {
 
         String errMsg = null;
         boolean presidentMustSellShares = false;
-        boolean companyMustSellShares = false;
+        //boolean companyMustSellShares = false;
         int trainPrice = action.getPricePaid();
         int companyCash = company.getCash();
 
@@ -3166,22 +3178,22 @@ public class OperatingRound extends Round implements Observer {
                         // For now, assume that all treasury certs are single shares.
                         // Check how many certs we can and must sell.
                         List<PublicCertificate> soldCerts = new ArrayList<>();
-                        int numberSold = 0;
+                        int sharesSold = 0;
                         for (PublicCertificate cert : ownedCerts) {
                             soldCerts.add (cert);
-                            if (++numberSold * sharePrice >= cashToRaise) break;
+                            if (++sharesSold * sharePrice >= cashToRaise) break;
                         }
                         // Don't exceed the 50% pool limit
-                        numberSold = Math.min (numberSold,
+                        sharesSold = Math.min (sharesSold,
                                 GameDef.getParmAsInt(this,
                                         GameDef.Parm.POOL_SHARE_LIMIT )/ company.getShareUnit()
                                         - pool.getShares(company));
-                        int raisedCash = numberSold * sharePrice;
+                        int raisedCash = sharesSold * sharePrice;
 
                         // Get the money
                         String cashText = Currency.fromBank(raisedCash, company);
                         String message;
-                        if (numberSold == 1) {
+                        if (sharesSold == 1) {
                             message = LocalText.getText("SELL_SHARE_LOG",
                                     companyName + " ("+currentPlayer.getId()+")",
                                     company.getShareUnit(),
@@ -3190,9 +3202,9 @@ public class OperatingRound extends Round implements Observer {
                         } else {
                             message = LocalText.getText("SELL_SHARES_LOG",
                                     companyName + " ("+currentPlayer.getId()+")",
-                                    numberSold,
+                                    sharesSold,
                                     company.getShareUnit(),
-                                    numberSold * company.getShareUnit(),
+                                    sharesSold * company.getShareUnit(),
                                     companyName,
                                     cashText);
                         }
@@ -3201,7 +3213,7 @@ public class OperatingRound extends Round implements Observer {
 
                         // Transfer the sold certificates
                         Portfolio.moveAll(soldCerts, pool.getParent());
-                        stockMarket.sell(company, company, numberSold);
+                        stockMarket.sell(company, company, sharesSold);
                         cashToRaise -= raisedCash;
                         if (cashToRaise <= 0) break;
                         companyCash += raisedCash;
@@ -3288,6 +3300,10 @@ public class OperatingRound extends Round implements Observer {
         if (presidentMustSellShares) {
             savedAction = action;
 
+            /* Would like to add this report line, but it will affect many saved files:*/
+            ReportBuffer.add (this, LocalText.getText("PlayerMustRaiseCash",
+                    currentPlayer, Bank.format(this, cashToBeRaisedByPresident), train.getType()));
+            /* */
             gameManager.startShareSellingRound(
                     operatingCompany.value().getPresident(),
                     cashToBeRaisedByPresident, operatingCompany.value(), true);

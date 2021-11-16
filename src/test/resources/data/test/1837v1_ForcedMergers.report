@@ -1923,7 +1923,7 @@ START_MERGED_COMPANY,Sd,142,K4
 FloatsWithCash,Sd,710
 IS_NOW_PRES_OF,Charlie,Sd
 AutoMergeMinorLog,S1,Sd,155,0
-GetShareForMinor,Charlie,10,Sd,S1
+GetPresShareForMinor,Charlie,10,Sd,S1
 MinorCloses,S1
 ExchangesBaseToken2,Sd,S1,G17/SW
 AutoMergeMinorLog,S2,Sd,105,0
@@ -2102,7 +2102,7 @@ START_MERGED_COMPANY,KK,120,I4
 FloatsWithCash,KK,840
 IS_NOW_PRES_OF,Charlie,KK
 AutoMergeMinorLog,K1,KK,80,0
-GetShareForMinor,Charlie,10,KK,K1
+GetPresShareForMinor,Charlie,10,KK,K1
 MinorCloses,K1
 ExchangesBaseToken2,KK,K1,G17/NE
 AutoMergeMinorLog,K2,KK,100,0
@@ -2339,8 +2339,8 @@ START_MERGED_COMPANY,Ug,175,M4
 FloatsWithCash,Ug,875
 IS_NOW_PRES_OF,Charlie,Ug
 AutoMergeMinorLog,U1,Ug,200,0
+GetPresShareForMinor,Charlie,10,Ug,U1
 GetShareForMinor,Charlie,10,Ug,U1
-GetShareForMinor,Bob,10,Ug,U1
 MinorCloses,U1
 ExchangesBaseToken2,Ug,U1,H22/W,NW,NE
 AutoMergeMinorLog,U2,Ug,90,0
@@ -2349,7 +2349,7 @@ MinorCloses,U2
 ExchangesBaseToken2,Ug,U2,K21
 AutoMergeMinorLog,U3,Ug,305,0
 GetShareForMinor,Alice,10,Ug,U3
-GetShareForMinor,Charlie,10,Ug,U3
+GetShareForMinor,Alice,10,Ug,U3
 MinorCloses,U3
 ExchangesBaseToken2,Ug,U3,H22/E,SE,SW
  

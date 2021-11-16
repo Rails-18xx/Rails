@@ -4,6 +4,8 @@ import com.google.common.collect.*;
 import net.sf.rails.game.Player;
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsOwner;
+import net.sf.rails.game.financial.Bank;
+import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.state.PortfolioMap;
 import org.paukov.combinatorics.CombinatoricsFactory;
@@ -147,12 +149,14 @@ public class CertificatesModel extends RailsModel implements Iterable<PublicCert
     String toText(PublicCompany company) {
         int share = this.getShare(company);
 
-        if (share == 0) return "";
+        //if (share == 0) return "";
         StringBuilder b = new StringBuilder();
-        b.append(share).append("%");
+        if (share > 0) b.append(share).append("%");
 
-        if (getParent() instanceof Player
-                && company.getPresident() == getParent()) {
+        RailsOwner parent = getParent();
+        BankPortfolio pool = Bank.getPool(parent);
+        if (parent instanceof Player && company.getPresident() == parent
+                || parent == pool && pool.getPortfolioModel().findCertificate(company, true) != null) {
             b.append("P");
             if (!company.hasFloated()) b.append("U");
             b.append(company.getExtraShareMarks());

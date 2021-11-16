@@ -1022,6 +1022,7 @@ BuysTrain,KU,6,IPO,630
 CompanyOperates,KO,klaus
 CompanyDoesNotPayDividend,KO
 PRICE_MOVES_LOG,KO,100,H5,90,G5
+PlayerMustRaiseCash,klaus,239,D
 PlayerMustSellShares,klaus,239
 SELL_SHARES_LOG,klaus,3,10,30,TR,330
 PRICE_MOVES_LOG,TR,110,F2,80,F5
@@ -1031,6 +1032,7 @@ BuysTrain,KO,D,IPO,1100
 CompanyOperates,UR,bernd
 CompanyDoesNotPayDividend,UR
 PRICE_MOVES_LOG,UR,100,H5,90,G5
+PlayerMustRaiseCash,bernd,101,D
 PlayerMustSellShares,bernd,101
 SELL_SHARE_LOG,bernd,10,AR,60
 PRICE_MOVES_LOG,AR,60,A4,55,A5
@@ -1042,6 +1044,7 @@ BuysTrain,UR,D,IPO,1100
 CompanyOperates,IR,klaus
 CompanyDoesNotPayDividend,IR
 PRICE_MOVES_LOG,IR,90,G5,80,F5
+PlayerMustRaiseCash,klaus,231,D
 PlayerMustSellShares,klaus,231
 SELL_SHARE_LOG,klaus,10,TR,80
 PRICE_MOVES_LOG,TR,80,F5,75,F6

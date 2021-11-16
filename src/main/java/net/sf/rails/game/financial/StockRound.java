@@ -294,7 +294,7 @@ public class StockRound extends Round {
 
             for (PublicCompany comp : map.keySet()) {
                 if (currentPlayer.hasSoldThisRound(comp)) continue;
-                if (presidentsInPool.keySet().contains(comp)) {
+                if (presidentsInPool.containsKey(comp)) {
                     // If president is in the pool, no cert from IPO may be bought
                     // except if the player has one share
                     if (!presidentsInPool.get(comp)) continue;
@@ -400,7 +400,7 @@ public class StockRound extends Round {
             // If the president's share is in the Pool,
             // that is the only one we may buy, except
             // when the player has already one share
-            if (presidentsInPool.keySet().contains(comp)) {
+            if (presidentsInPool.containsKey(comp)) {
                 cert = comp.getPresidentsShare();
                 int buyPrice = price * cert.getShares();
                 if (playerCash >= buyPrice) {
@@ -409,7 +409,7 @@ public class StockRound extends Round {
                             pool.getParent(), buyPrice, 1);
                     bc.setPresident(true);
                     possibleActions.addFirst(bc);
-                    log.info("$$$ Buy president {} from pool: price={} shares={} share={}",
+                    log.debug("Buy president {} from pool: price={} shares={} share={}",
                             comp, buyPrice, cert.getShares(), cert.getShare());
                 }
                 continue;
@@ -499,7 +499,7 @@ public class StockRound extends Round {
             for (PublicCompany company : companyManager.getAllPublicCompanies()) {
                 // TODO: Has to be rewritten (director)
                 if (currentPlayer.hasSoldThisRound(company)) continue;
-                if (presidentsInPool.keySet().contains(company)) {
+                if (presidentsInPool.containsKey(company)) {
                     // If president is in the pool, no cert from IPO may be bought
                     // except if the player has one share
                     if (!presidentsInPool.get(company)) continue;
@@ -1125,7 +1125,7 @@ public class StockRound extends Round {
                     playerName,
                     share,
                     companyName,
-                    from.getName(),
+                    from,
                     Bank.format(this, cost)));
             cert.moveTo(currentPlayer);
             if (president) {
@@ -1139,9 +1139,8 @@ public class StockRound extends Round {
                     share,
                     shares,
                     companyName,
-                    from.getName(),
+                    from,
                     Bank.format(this, cost)));
-            PublicCertificate cert2;
             for (int i = 0; i < number; i++) {
                 cert = from.findCertificate(company, sharePerCert / shareUnit, false);
                 if (cert == null) {
@@ -1369,31 +1368,6 @@ public class StockRound extends Round {
             // Find the certificates to sell
             presCert = company.getPresidentsShare();
 
-            // ... check if there is a dump required
-            // Player is president => dump is possible
-            /* United
-            if (currentPlayer == company.getPresident() && shareUnits == 1) {
-                dumpedPlayer = company.findPlayerToDump();
-                if (dumpedPlayer != null) {
-                    presidentShareNumbersToSell = PlayerShareUtils.presidentShareNumberToSell(
-                            company, currentPlayer, dumpedPlayer, numberToSell);
-                    // reduce the numberToSell by the president (partial) sold certificate
-                    numberToSell -= presidentShareNumbersToSell;
-                    presCert = null;
-                }
-            } else {
-                if (currentPlayer == company.getPresident() && shareUnits == 2) {
-                    dumpedPlayer = company.findPlayerToDump();
-                    if (dumpedPlayer != null) {
-                        presidentShareNumbersToSell = PlayerShareUtils.presidentShareNumberToSell(
-                                company, currentPlayer, dumpedPlayer, numberToSell + 1);
-                        // reduce the numberToSell by the president (partial) sold certificate
-                        numberToSell -= presidentShareNumbersToSell;
-                        presCert = null;
-                    }
-                }
-            }
-            */
             if (currentPlayer == company.getPresident()) {
                 dumpedPlayer = company.findPlayerToDump();
                 if (dumpedPlayer != null) {
@@ -1429,6 +1403,8 @@ public class StockRound extends Round {
         }
 
         int numberSold = action.getNumber();
+        int sharesSold = numberSold * shareSizeToSell;
+
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("CantSell",
                     playerName,
@@ -1442,11 +1418,11 @@ public class StockRound extends Round {
 
         // Selling price
         int price = getCurrentSellPrice(company);
-        int cashAmount = numberSold * price * shareSizeToSell;
+        int cashAmount = sharesSold * price;
 
         // Save original price as it may be reused in subsequent sale actions in the same turn
-        boolean soldBefore = sellPrices.containsKey(company);
-        if (!soldBefore) {
+        boolean soldBeforeInSameTurn = sellPrices.containsKey(company);
+        if (!soldBeforeInSameTurn) {
             sellPrices.put(company, company.getCurrentSpace());
         }
 
@@ -1463,12 +1439,12 @@ public class StockRound extends Round {
                     playerName,
                     numberSold,
                     company.getShareUnit() * shareSizeToSell,
-                    numberSold * company.getShareUnit() * shareSizeToSell,
+                    sharesSold * company.getShareUnit(),
                     companyName,
                     cashText));
         }
 
-        adjustSharePrice(company, currentPlayer, numberSold, soldBefore);
+        adjustSharePrice(company, currentPlayer, sharesSold, soldBeforeInSameTurn);
 
         if (!company.isClosed()) {
             log.debug("certsToSell={}", certsToSell);
@@ -1568,11 +1544,11 @@ public class StockRound extends Round {
     // overridden by:
     // StockRound 1825, 1835, 1856, 1880, SOH
     // ShareSellingRound 1856
-    protected void adjustSharePrice (PublicCompany company, Owner seller, int numberSold, boolean soldBefore) {
+    protected void adjustSharePrice (PublicCompany company, Owner seller, int sharesSold, boolean soldBefore) {
 
         if (!company.canSharePriceVary()) return;
 
-        stockMarket.sell(company, seller, numberSold);
+        stockMarket.sell(company, seller, sharesSold);
 
         StockSpace newSpace = company.getCurrentSpace();
 
@@ -1683,6 +1659,31 @@ public class StockRound extends Round {
     }
 
     /**
+     * A generic method to exchange minor for major certificates.
+     * It has been developed for 1837, to handle minor certificates owned by
+     * a player going bankrupt, and is currently only used for that purpose,
+     * by calling it during a ShareSellingRound.
+     *
+     * Hopefully this routine can find wider application.
+     * Basically it can be called by any StockRound subclass, including
+     * the company-type specific exchange rounds, or by the GameManager
+     * via such a round.
+     * (EV dec 2021)
+     *
+     * @param minorCertificate The certificate to be exchanged
+     * @param major The major company of which a certificate is obtained.
+     *              This certificate should be found in the 'reserved' portfolio
+     *              (currently still named 'unavailable')
+     * @param becomeMajorPresident If true, get the president certificate
+     * @return
+     */
+    public boolean exchangeMinorForNewShare (PublicCertificate minorCertificate,
+                                             PublicCompany major,
+                                             boolean becomeMajorPresident) {
+        return true;
+    }
+
+    /**
      * The current Player passes or is done.
      *
      * @param action TODO
@@ -1696,8 +1697,6 @@ public class StockRound extends Round {
     // StockRound 1837, 18EU
     // TreasuryShareRound
     public boolean done(NullAction action, String playerName, boolean hasAutopassed) {
-
-        //currentPlayer = getCurrentPlayer();
 
         if (!playerName.equals(currentPlayer.getId())) {
             DisplayBuffer.add(this, LocalText.getText("WrongPlayer", playerName, currentPlayer.getId()));

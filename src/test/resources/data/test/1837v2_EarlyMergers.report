@@ -1330,7 +1330,7 @@ START_MERGED_COMPANY,Sd,120,K4
 FloatsWithCash,Sd,600
 IS_NOW_PRES_OF,Charlie,Sd
 AutoMergeMinorLog,S1,Sd,165,0
-GetShareForMinor,Charlie,10,Sd,S1
+GetPresShareForMinor,Charlie,10,Sd,S1
 MinorCloses,S1
 ExchangesBaseToken2,Sd,S1,G17/SW
 AutoMergeMinorLog,S2,Sd,125,0
@@ -1356,7 +1356,7 @@ StartingPlayer,Charlie
 START_MERGED_COMPANY,KK,105,I4
 FloatsWithCash,KK,735
 MERGE_MINOR_LOG,Charlie,K1,KK,140,0
-GetShareForMinor,Charlie,10,KK,K1
+GetPresShareForMinor,Charlie,10,KK,K1
 MinorCloses,K1
 ExchangesBaseToken2,KK,K1,G17/NE
 MERGE_MINOR_LOG,Alice,K2,KK,165,0
@@ -1561,8 +1561,8 @@ StartingPlayer,Charlie
 START_MERGED_COMPANY,Ug,142,M4
 FloatsWithCash,Ug,710
 MERGE_MINOR_LOG,Charlie,U1,Ug,195,1
+GetPresShareForMinor,Charlie,10,Ug,U1
 GetShareForMinor,Charlie,10,Ug,U1
-GetShareForMinor,Alice,10,Ug,U1
 MinorCloses,U1
 ExchangesBaseToken2,Ug,U1,H22/W,NW,NE
 MERGE_MINOR_LOG,Alice,U2,Ug,110,0

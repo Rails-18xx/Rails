@@ -718,12 +718,12 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 // No duplicate tokens allowed in one city, so move to free
                 // tokens
                 token.moveTo(company);
-                log.debug("Duplicate token {} moved from {} to {}", token.getUniqueId(), origin.getComposedId(), company.getId());
+                log.debug("Duplicate token {} moved from {} to {}", token.getUniqueId(), origin.getStationComposedId(), company.getId());
                 ReportBuffer.add(this, LocalText.getText(
                         "DuplicateTokenRemoved", company.getId(), getId()));
             } else {
                 token.moveTo(target);
-                log.debug("Token {} moved from {} to {}", token.getUniqueId(), origin.getComposedId(), target.getComposedId());
+                log.debug("Token {} moved from {} to {}", token.getUniqueId(), origin.getStationComposedId(), target.getStationComposedId());
                 // Also update (single) home station if that has changed
                 if (currentTile.value().getNumStations() > 1
                         && !company.getHomeHexes().isEmpty()
@@ -931,7 +931,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
                 log.debug("Added home of {} in hex {} city not yet decided", company, this);
             } else {
                 homes.put(company, home);
-                log.debug("Added home of {} set to {} id= {}", company, home, home.getComposedId());
+                log.debug("Added home of {} set to {} id= {}", company, home, home.getStationComposedId());
             }
         }
     }

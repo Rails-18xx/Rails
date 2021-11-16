@@ -218,16 +218,33 @@ public class StockMarket extends RailsManager implements Configurable {
     }
 
     // Old version for backwards compatibility. See below for new version.
+    /*
     public void sell(PublicCompany company, int numberOfSpaces) {
         moveDown(company, null, numberOfSpaces);
     }
+    */
+    public void sell(PublicCompany company, Owner seller, int sharesSold) {
 
-    public void sell(PublicCompany company, Owner seller, int numberOfSpaces) {
+        int numberOfSpacesDown = spacesDownOnSale (sharesSold, seller);
         if (stockChartType == ChartType.LINEAR) {
-            moveLeft(company, seller, numberOfSpaces);
+            moveLeft(company, seller, numberOfSpacesDown);
         } else {
-            moveDown(company, seller, numberOfSpaces);
+            moveDown(company, seller, numberOfSpacesDown);
         }
+    }
+
+    /** Stub that must be overridden in special cases where
+     * after selling shares the number of spaces down is not
+     * (always) equal to the number of shares sold.
+     *
+     * Examples: 1835, 1837, SOH.
+     *
+     * @param sharesSold The number of share units sold
+     * @param seller The player or company that sold these shares
+     * @return The number of spaces down (or left in linear markets).
+     */
+    public int spacesDownOnSale (int sharesSold, Owner seller) {
+        return sharesSold;
     }
 
     public void soldOut(PublicCompany company) {

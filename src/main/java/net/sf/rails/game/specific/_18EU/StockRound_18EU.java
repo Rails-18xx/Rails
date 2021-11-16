@@ -106,7 +106,7 @@ public class StockRound_18EU extends StockRound {
                 }
             }
         } else {
-            freeStops = new ArrayList<Stop>();
+            freeStops = new ArrayList<>();
             MapManager map = getRoot().getMapManager();
             for (Stop stop : map.getCurrentStops()) {
                 if (stop.hasTokenSlotsLeft()) {
@@ -447,7 +447,6 @@ public class StockRound_18EU extends StockRound {
                     currentPlayer.getId(),
                     cert2.getShare(),
                     company.getId(),
-                    ipo.getParent().getId(),
                     minor.getId()));
         } else {
             ReportBuffer.add(this, LocalText.getText("SelectedHomeBase",
@@ -585,10 +584,9 @@ public class StockRound_18EU extends StockRound {
                     currentPlayer.getId(),
                     cert.getShare(),
                     major.getId(),
-                    cert.getOwner().getId(),
                     minor.getId()));
             if (action.getReplaceToken()) {
-                ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
+                ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken2",
                         major.getId(),
                         minor.getId(),
                         homeHex.getId()));

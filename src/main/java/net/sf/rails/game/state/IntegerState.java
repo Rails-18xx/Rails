@@ -48,5 +48,9 @@ public final class IntegerState extends State {
     void change(int value) {
         this.value = value;
     }
+
+    public String toString() {
+        return Integer.toString(value);
+    }
     
 }

@@ -1,6 +1,7 @@
 
 package net.sf.rails.game.specific._1837;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -140,7 +141,7 @@ public class CoalExchangeRound extends StockRound_1837 {
 
         } else if (action instanceof NullAction
                 && ((NullAction)action).getMode() == NullAction.Mode.DONE) {
-            return done((NullAction)action, action.getPlayerName(), false);
+            return done((NullAction)action, action.getPlayer(), false);
         } else {
             return super.process(action);
         }
@@ -172,6 +173,7 @@ public class CoalExchangeRound extends StockRound_1837 {
         boolean result = mergeCompanies(minor, major,false, autoMerge);
         closedMinors.add (minor);
         coalCompsPerMajor.remove (major, minor);
+        major.checkPresidency();
 
         // TODO: to be moved outside this method (?)
         if (result) {
@@ -245,9 +247,11 @@ public class CoalExchangeRound extends StockRound_1837 {
         boolean result;
         result = super.discardTrain(action);
 
-        discardableTrains.remove (action.getDiscardedTrain().getType(),
-                action.getDiscardedTrain());
-        numberOfExcessTrains.add(-1);
+        if (action.getDiscardedTrain() != null) {
+            discardableTrains.remove(action.getDiscardedTrain().getType(),
+                    action.getDiscardedTrain());
+            numberOfExcessTrains.add(-1);
+        }
 
         if (numberOfExcessTrains.value() == 0) {
             if (!nextMajorCompany()) {
@@ -266,17 +270,23 @@ public class CoalExchangeRound extends StockRound_1837 {
         }
     }
 
-    @Override
-    public boolean done(NullAction action, String playerName, boolean hasAutopassed) {
+    public boolean done(NullAction action, Player player, boolean hasAutopassed) {
 
         // Report not (yet) merged coal companies
         List<PublicCompany> remainingMinors = coalCompsPerMajor.get(currentMajor.value());
         if (!remainingMinors.isEmpty()) {
-            ReportBuffer.add(this, LocalText.getText("PlayerDoesNoWantToMerge",
-                    playerName,
-                    // Remove the square brackets from the minors list
-                    remainingMinors.toString().replaceAll("[\\[\\]]", ""),
-                    currentMajor.value()));
+            // Pick this player's minor(s)
+            List<PublicCompany> rejectedMinors = new ArrayList<>(2);
+            for (PublicCompany minor : remainingMinors) {
+                if (player == minor.getPresident()) rejectedMinors.add (minor);
+            }
+            if (!rejectedMinors.isEmpty()) {
+                ReportBuffer.add(this, LocalText.getText("PlayerDoesNoWantToMerge",
+                        player,
+                        // Remove the square brackets from the minors list
+                        rejectedMinors.toString().replaceAll("[\\[\\]]", ""),
+                        currentMajor.value()));
+            }
         }
 
         // Remove the player and his not chosen player actions
@@ -396,6 +406,7 @@ public class CoalExchangeRound extends StockRound_1837 {
                                 false, true);
                         closedMinors.add(minor);
                     }
+                    major.checkPresidency();
                     currentMajorOrder.remove(major);
                     if (!closedMinors.isEmpty() && checkForExcessTrains()) {
                         step.set(DISCARD);
@@ -446,10 +457,16 @@ public class CoalExchangeRound extends StockRound_1837 {
             List<Train> trainsPerType = discardableTrains.get(type).asList();
             trains.add(trainsPerType.get(0));
         }
-        possibleActions.add(new DiscardTrain(major, trains));
+        possibleActions.add(new DiscardTrain(major, trains, true));
+
+        // Update StockRound_1837 bookkeeping
+        discardingTrains.set(true);
+        if (discardingCompanies == null) discardingCompanies = new PublicCompany[4];
+        discardingCompanies[discardingCompanyIndex.value()] = major;
+        discardingCompanyIndex.add(1);
+
         // We handle one train at a time.
         // We come back here until all excess trains have been discarded.
-
         return true;
     }
 

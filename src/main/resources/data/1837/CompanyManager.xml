@@ -64,7 +64,7 @@
         <StockPrice par="yes"/>
         <ShareUnit percentage="10"/>
         <Certificate type="President" shares="2"/>
-        <Float percentage="60"/>
+        <Float percentage="10"/>
         <Payout split="allowed"/>
         <Trains limit="4,4,4,3"/>
         <BaseTokens>

@@ -14,6 +14,8 @@
                 <EmergencyTrainBuying mustBuyCheapestTrain="no" mayAlwaysBuyNewTrain="yes" mayBuyFromCompany="yes"/>
                 <RevenueIncrement amount="5"/>
             </OperatingRound>
+            <ShareSellingRound class="net.sf.rails.game.specific._1835.ShareSellingRound_1835"/><!-- No typo!-->
+            <Bankruptcy style="_1835"/><!-- No typo!-->
         </GameParameters>
         <GuiClasses>
             <GameStatus class="net.sf.rails.ui.swing.gamespecific._1837.GameStatus_1837"/>

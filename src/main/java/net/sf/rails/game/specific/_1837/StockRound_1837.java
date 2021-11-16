@@ -24,11 +24,11 @@ public class StockRound_1837 extends StockRound {
     protected final ArrayListState<PublicCompany> compWithExcessTrains =
             new ArrayListState<>(this, "compWithExcessTrains");
     protected final IntegerState discardingCompanyIndex = IntegerState.create(
-            this, "discardingCompanyIndex");
+            this, "discardingCompanyIndex"); // Still needed?
     protected final BooleanState discardingTrains = new BooleanState(this,
             "discardingTrains");
 
-    protected PublicCompany[] discardingCompanies;
+    protected PublicCompany[] discardingCompanies; // Still needed?
 
     public StockRound_1837(GameManager parent, String id) {
         super(parent, id);
@@ -57,8 +57,8 @@ public class StockRound_1837 extends StockRound {
      */
     @Override
     // Copied from 1835
-    protected void adjustSharePrice (PublicCompany company, Owner seller, int numberSold, boolean soldBefore) {
-        // No more changes if it has already dropped
+    protected void adjustSharePrice (PublicCompany company, Owner seller, int sharesSold, boolean soldBefore) {
+        // No more changes if it has already dropped *in the same turn*
         if (!soldBefore) {
             super.adjustSharePrice (company, seller,1, soldBefore);
         }
@@ -96,10 +96,20 @@ public class StockRound_1837 extends StockRound {
 
         boolean result = super.buyShares(playerName, action);
 
-        // For minors, reset Par column (now having its fixed price)
         PublicCompany company = action.getCompany();
-        if (company.getType().getId().startsWith("Minor")) {
-            company.getParPriceModel().setPrice(0);
+
+        // If the president certificate is bought from the Pool,
+        // make sure that it is handled correctly
+        if (action.isPresident()) {
+            if (!company.hasStarted()) company.start();
+            if (company.getType().getId().equals("National")) {
+                if (!company.hasFloated()) floatCompany(company);
+            } else if (company.getType().getId().equals("Major")) {
+                //if (action.getPlayer() != company.getPresident()) {
+                //company.checkPresidency();
+                company.checkPresidencyOnBuy(action.getPlayer());
+                //}
+            }
         }
 
         return result;
@@ -171,82 +181,11 @@ public class StockRound_1837 extends StockRound {
      * @param major ...into the related major company
      * @return True if the merge was successful
      */
-    protected boolean mergeCompanies(PublicCompany minor, PublicCompany major) {
-        return mergeCompanies (minor, major, false, false);
-    }
 
     protected boolean mergeCompanies(PublicCompany minor, PublicCompany major,
                                      boolean majorPresident, boolean autoMerge) {
-        PublicCertificate cert = null;
-        MoneyOwner cashDestination = null; // Bank
+        Mergers.mergeCompanies(gameManager, minor, major, majorPresident, autoMerge);
 
-        // TODO Validation to be added?
-        if (major != null) {
-            cert = unavailable.findCertificate(major, majorPresident);
-            cashDestination = major;
-        }
-        //TODO: what happens if the major hasnt operated/founded/Started sofar in the FinalCoalExchangeRound ?
-
-        // Save minor details that are needed after merging
-        Set<Train> minorTrains = minor.getPortfolioModel().getTrainList();
-        int minorTrainsNo = minorTrains.size();
-
-        // Transfer the minor assets
-        int minorCash = minor.getCash();
-        if (cashDestination == null) {
-            // Assets go to the bank
-            if (minorCash > 0) {
-                Currency.toBankAll(minor);
-            }
-            pool.transferAssetsFrom(minor.getPortfolioModel());
-        } else {
-            // Assets go to the major company
-            major.transferAssetsFrom(minor);
-            if (minor.hasOperated()) {
-                gameManager.blockCertificate(cert);
-                for (Train train : minorTrains) {
-                    gameManager.blockTrain(train);
-                }
-            }
-        }
-
-        Player minorPres = minor.getPresident();
-
-        ReportBuffer.add(this, "");
-        if (autoMerge) {
-            ReportBuffer.add(this, LocalText.getText("AutoMergeMinorLog",
-                    minor.getId(), major.getId(),
-                    Bank.format(this, minorCash), minorTrainsNo));
-        } else {
-            ReportBuffer.add(this, LocalText.getText("MERGE_MINOR_LOG",
-                    minorPres, minor.getId(), major.getId(),
-                    Bank.format(this, minorCash), minorTrainsNo));
-        }
-        ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
-                minorPres, cert.getShare(), major.getId(),
-                minor.getId()));
-        cert.moveTo(minorPres);
-
-        // FIXME: CHeck if this still works correctly
-
-        // Check if minors have more certs (1837 Ug minors 1 and 3)
-
-        if (minor.getCertificates().size() > 1) {
-            for (PublicCertificate minorCert : minor.getCertificates()) {
-                if (minorCert.isPresidentShare()) continue;
-                Owner owner = minorCert.getOwner();
-                if (owner instanceof Player) {
-                    cert = unavailable.findCertificate(major, false);
-                    ReportBuffer.add(this, LocalText.getText("GetShareForMinor",
-                            owner, cert.getShare(), major.getId(),
-                            minor.getId()));
-                    cert.moveTo(owner);
-                }
-            }
-        }
-
-        minor.setClosed();
-        ReportBuffer.add(this, LocalText.getText("MinorCloses", minor.getId()));
         checkFlotation(major);
 
         hasActed.set(true);
@@ -314,7 +253,7 @@ public class StockRound_1837 extends StockRound {
         } else {
             PublicCompany comp =
                     discardingCompanies[discardingCompanyIndex.value()];
-            if (comp.getNumberOfTrains() <= comp.getCurrentTrainLimit()) {
+            if (comp != null && comp.getNumberOfTrains() <= comp.getCurrentTrainLimit()) {
                 discardingCompanyIndex.add(1);
                 if (discardingCompanyIndex.value() >= discardingCompanies.length) {
                     // All excess trains have been discarded
@@ -324,7 +263,9 @@ public class StockRound_1837 extends StockRound {
             }
             PublicCompany discardingCompany =
                     discardingCompanies[discardingCompanyIndex.value()];
-            setCurrentPlayer(discardingCompany.getPresident());
+            if (discardingCompany != null) {
+                setCurrentPlayer(discardingCompany.getPresident());
+            }
         }
     }
 }

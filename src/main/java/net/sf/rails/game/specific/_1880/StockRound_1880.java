@@ -53,10 +53,10 @@ public class StockRound_1880 extends StockRound {
     // change: this implements a blockade of the stock price move (from PublicCompany_1880)
     // requires: move this to general code (or modifier of PublicCompany)
     @Override
-    protected void adjustSharePrice(PublicCompany company, Owner seller, int numberSold,
+    protected void adjustSharePrice(PublicCompany company, Owner seller, int sharesSold,
             boolean soldBefore) {
         if (((PublicCompany_1880) company).canStockPriceMove()) {
-            super.adjustSharePrice(company, seller, numberSold, soldBefore);
+            super.adjustSharePrice(company, seller, sharesSold, soldBefore);
         }
     }
 

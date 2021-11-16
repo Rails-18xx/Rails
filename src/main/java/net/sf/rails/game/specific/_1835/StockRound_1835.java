@@ -148,7 +148,7 @@ public class StockRound_1835 extends StockRound {
     // change: specific share price adjustment
     // requires: do a parameterization
     @Override
-    protected void adjustSharePrice (PublicCompany company, Owner seller, int numberSold, boolean soldBefore) {
+    protected void adjustSharePrice (PublicCompany company, Owner seller, int sharesSold, boolean soldBefore) {
         // No more changes if it has already dropped
         if (!soldBefore) {
             super.adjustSharePrice (company, seller,1, soldBefore);

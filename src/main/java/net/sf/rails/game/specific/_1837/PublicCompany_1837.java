@@ -160,8 +160,20 @@ public class PublicCompany_1837 extends PublicCompany {
 
     public PublicCompany_1837 getStartingMinor() { return startingMinor; }
 
+    /**
+     * A national company is "complete" if all its minors have been converted.
+     * Only call this method for nationals!
+     * @return True if a national is fully formed.
+     */
     public boolean isComplete() {
-        return complete.value();
+        if (!complete.value()) {
+            // Check if all minors have been closed
+            for (PublicCompany_1837 minor : minors) {
+                if (!minor.isClosed()) return false;
+            }
+            complete.set(true);
+        }
+        return true;
     }
 
     public void setComplete(boolean complete) {

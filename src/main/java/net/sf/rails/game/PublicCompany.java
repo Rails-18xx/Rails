@@ -1653,7 +1653,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         } else {
             // No president, then it must be in the Pool (18Scan)
             getRoot().getBank().getPool().getPortfolioModel()
-                    .swapPresidentCertificate(this, buyer.getPortfolioModel(), 2);
+                    .swapPresidentCertificate(this, buyer.getPortfolioModel(),
+                            getPresidentsShare().getShares());
             ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                     buyer.getId(),
                     getId()));
@@ -1679,7 +1680,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public boolean checkPresidency() {
 
         // check if there is a new potential president
-        int presidentShareNumber = getPresident().getPortfolioModel().getShares(this) + 1;
+
+        PortfolioOwner owner = (PortfolioOwner) getPresidentsShare().getOwner(); // Can be Pool
+        int presidentShareNumber = owner.getPortfolioModel().getShares(this) + 1;
+        if (!(owner instanceof Player)) presidentShareNumber = getPresidentsShare().getShares();
         Player nextPotentialPresident = findNextPotentialPresident(presidentShareNumber);
 
         // no change, return
@@ -1688,8 +1692,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         }
 
         // otherwise Hand presidency to the player with the highest share
-        getPresident().getPortfolioModel().swapPresidentCertificate(this,
-                nextPotentialPresident.getPortfolioModel(), 2);
+        owner.getPortfolioModel().swapPresidentCertificate(this,
+                nextPotentialPresident.getPortfolioModel(), getPresidentsShare().getShares());
         ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
                 nextPotentialPresident.getId(),
                 getId()));
@@ -2381,5 +2385,27 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     public ColorModel getCompanyColors() {
         return companyColors;
     }
+
+    /* Bank loan instance and methods, used in 1835 and 1837 */
+
+    private IntegerState bankLoan = IntegerState.create (
+            this, "bankLoan_" + getId(), 0);
+
+    public int getBankLoan() {
+        return bankLoan.value();
+    }
+
+    public void setBankLoan(int bankLoan) {
+        this.bankLoan.set(bankLoan);
+    }
+
+    public void repayBankLoan (int repayment) {
+        this.bankLoan.add (-repayment);
+    }
+
+    public boolean hasBankLoan () {
+        return getBankLoan() > 0;
+    }
+
 
 }

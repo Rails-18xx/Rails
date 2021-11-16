@@ -541,7 +541,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 /* TODO: the false return value must be impossible. */
                 ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
                         cgr.toText(), token.getParent().getId(),
-                        stop.getComposedId()));
+                        stop.getStationComposedId()));
                 cgr.layBaseToken(hex, 0);
             }
         }
@@ -557,7 +557,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                             || nonHomeTokens.contains(token2) && token2 != token) {
                         ReportBuffer.add(this, LocalText.getText("DiscardsBaseToken",
                                 cgr.toText(), token.getParent().getId(),
-                                stop.getComposedId()));
+                                stop.getStationComposedId()));
                         // return token to home
                         token.moveTo(token.getParent());
                         nonHomeTokens.remove(token);
@@ -575,7 +575,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             String cityName;
             for (BaseToken token : nonHomeTokens) {
                 if (token.getOwner() instanceof Stop) {
-                    cityName = ((Stop) token.getOwner()).getComposedId();
+                    cityName = ((Stop) token.getOwner()).getStationComposedId();
                     if (oldTokens.containsKey(cityName)) {
                         oldTokens.put(cityName,
                                 oldTokens.get(cityName) + "," + token.getParent().getId());
@@ -840,14 +840,14 @@ public class CGRFormationRound extends SwitchableUIRound {
                         ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
                                 comp.getId(),
                                 token.getOldCompanyName(),
-                                stop.getComposedId()));
+                                stop.getStationComposedId()));
                         comp.layBaseToken(hex, 0);
                     }
                 } else {
                     ReportBuffer.add(this, LocalText.getText("NoBaseTokenExchange",
                             comp.getId(),
                             token.getOldCompanyName(),
-                            stop.getComposedId()));
+                            stop.getStationComposedId()));
                 }
             }
         }

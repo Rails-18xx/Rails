@@ -30,12 +30,14 @@ public class GameDef {
         EMERGENCY_COMPANY_BANKRUPTCY(false),
         DUAL_TRAIN_BECOMES_UNDECIDED_IN_POOL (false),
         MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE (false),
-        REMOVE_PERMANENT (false);
+        REMOVE_PERMANENT (false),
+        BANKRUPTCY_STYLE (Bankruptcy.Style.DEFAULT);
 
         private Object defaultValue;
 
         Parm (boolean defaultValue) { this.defaultValue = defaultValue; }
         Parm (int defaultValue) { this.defaultValue = defaultValue; }
+        Parm (Object defaultValue) {this.defaultValue = defaultValue; }
 
         public Object defaultValue() { return defaultValue; }
         public boolean defaultValueAsBoolean() { return (Boolean) defaultValue; }

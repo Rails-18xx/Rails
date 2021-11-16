@@ -1287,6 +1287,7 @@ CompanyOperates,Erie,Matze
 LaysTileAt,Erie,65,E11,SE
 CompanyDoesNotPayDividend,Erie
 PRICE_MOVES_LOG,Erie,75,I6,71,H6
+PlayerMustRaiseCash,Matze,228,D
 PlayerMustSellShares,Matze,228
 SELL_SHARES_LOG,Matze,2,10,20,C&O,138
 PRICE_MOVES_LOG,C&O,69,H7,68,H8

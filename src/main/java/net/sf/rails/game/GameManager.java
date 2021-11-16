@@ -188,8 +188,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected final IntegerState companyReleaseStep =
             IntegerState.create (this, "releaseStep", 0);
 
-
-
     /**
      * @return the revenueSpinnerIncrement
      */
@@ -243,13 +241,13 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 String stockRoundSequenceRuleString =
                         srTag.getAttributeAsString("sequence");
                 if (Util.hasValue(stockRoundSequenceRuleString)) {
-                    if ( "SellBuySell".equalsIgnoreCase(stockRoundSequenceRuleString)) {
+                    if ("SellBuySell".equalsIgnoreCase(stockRoundSequenceRuleString)) {
                         setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
                                 StockRound.SELL_BUY_SELL);
-                    } else if ( "SellBuy".equalsIgnoreCase(stockRoundSequenceRuleString)) {
+                    } else if ("SellBuy".equalsIgnoreCase(stockRoundSequenceRuleString)) {
                         setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
                                 StockRound.SELL_BUY);
-                    } else if ( "SellBuyOrBuySell".equalsIgnoreCase(stockRoundSequenceRuleString)) {
+                    } else if ("SellBuyOrBuySell".equalsIgnoreCase(stockRoundSequenceRuleString)) {
                         setGameParameter(GameDef.Parm.STOCK_ROUND_SEQUENCE,
                                 StockRound.SELL_BUY_OR_BUY_SELL);
                     }
@@ -364,6 +362,15 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 setGameParameter(GameDef.Parm.TREASURY_SHARE_LIMIT,
                         shareLimitTag.getAttributeAsInteger("percentage",
                                 GameDef.Parm.TREASURY_SHARE_LIMIT.defaultValueAsInt()));
+            }
+
+            Tag bankruptcyTag = gameParmTag.getChild("Bankruptcy");
+            if (bankruptcyTag != null) {
+                String bankruptcyStyle = bankruptcyTag.getAttributeAsString("style", "DEFAULT");
+                Bankruptcy.Style styleObject = Bankruptcy.Style.valueOf(bankruptcyStyle);
+                if (styleObject != null) {
+                    setGameParameter(GameDef.Parm.BANKRUPTCY_STYLE, styleObject);
+                }
             }
         }
 
@@ -534,9 +541,21 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public void setInterruptedRound(RoundFacade interruptedRound) {
         this.interruptedRound.set (interruptedRound);
     }
+
     public RoundFacade getInterruptedRound() {
         return interruptedRound.value();
     }
+
+    /*
+    public PossibleAction getSavedAction() {
+        RoundFacade interruptedRound = getInterruptedRound();
+        if (interruptedRound != null
+                && interruptedRound instanceof OperatingRound) {
+            return ((OperatingRound)interruptedRound).savedAction;
+        } else {
+            return null;
+        }
+    }*/
 
     public void nextRound(Round round) {
         if (round instanceof StartRound) {
@@ -1000,7 +1019,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         if (doProcess && !processCorrectionActions(action) && !getCurrentRound().process(action)) {
             String msg = "Player " + action.getPlayerName() + "'s action \""
-                    + action.toString() + "\"\n  in " + getCurrentRound().getRoundName()
+                    + action + "\"\n  in " + getCurrentRound().getRoundName()
                     + " is considered invalid by the game engine";
             log.error(msg);
             DisplayBuffer.add(this, msg);
@@ -1014,7 +1033,6 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
         if (!isGameOver()) setCorrectionActions();
 
-        log.debug("Turn: {}", getCurrentPlayer().getId());
         return true;
     }
 
@@ -1169,7 +1187,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                     if (!savedAction.equalsAsAction(executedAction)) {
                         log.warn("loaded action {} is not the same as expected game action {}", savedAction, executedAction);
                         DisplayBuffer.add(this, LocalText.getText("LoadFailed",
-                                "loaded action \"" + savedAction.toString()
+                                "loaded action \"" + savedAction
                                         + "\"<br>   is not same as game action \"" + executedAction.toString()
                                         + "\""));
                         return false;
@@ -1351,13 +1369,19 @@ public class GameManager extends RailsManager implements Configurable, Owner {
      * Process the effects of a player going bankrupt, without ending the game.
      * This code applies to (most of) the David Hecht games.
      * So far 1826, 18EU, 18VA, 18Scan have been identified to use this code.
-     * Also 1835.
+     * Also 1835, 1837.
      */
     protected void processPlayerBankruptcy() {
 
         // Assume default case as in 18EU: all assets to Bank/Pool
         Player bankrupter = getCurrentPlayer();
         Currency.toBankAll(bankrupter); // All money has already gone to company
+
+        PlayerManager plmgr = getRoot().getPlayerManager();
+        if (bankrupter == plmgr.getPriorityPlayer()) {
+            plmgr.setPriorityPlayerToNext();
+        }
+
         PortfolioModel bpf = bankrupter.getPortfolioModel();
         List<PublicCompany> presidencies = new ArrayList<>();
         Map<PublicCompany, Player> newPresidencies = new HashMap<>();
@@ -1385,6 +1409,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                         company.getId()));
             } else {
                 // This process is game-dependent.
+                // WARNING: The default version in this class currently does nothing.
+                // Games needing it must override the method called here!
                 newPresident = processCompanyAfterPlayerBankruptcy(bankrupter, company);
             }
             newPresidencies.put (company, newPresident);
@@ -1402,7 +1428,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             }
         }
 
-        bankrupter.setBankrupt(); // this is a duplicate
+        //bankrupter.setBankrupt(); // this is a duplicate
 
         // Finish the share selling round
         if (getCurrentRound() instanceof ShareSellingRound) {
@@ -1410,12 +1436,15 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
     }
 
-    /** Stub, to be implemented by per-game subclasses.
-     *  Only to be called by processPlayerBankruptcy().
-     * (Perhaps a default version can be put here if sensible)
+    /**
+     *  Should only be called by processPlayerBankruptcy().
+     * @param player The player having gone bankrupt
+     * @param company The company that caused the player going bankrupt
+     * @return The new president, if any; else null
      */
     protected Player processCompanyAfterPlayerBankruptcy(Player player, PublicCompany company) {
-        return null;
+        return Bankruptcy.processCompanyAfterPlayerBankruptcy(this, player, company,
+                (Bankruptcy.Style) getGameParameter(GameDef.Parm.BANKRUPTCY_STYLE));
     }
 
     public void registerBrokenBank() {
@@ -1582,6 +1611,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         gameParameters.put(key, value);
     }
 
+    /* Returned value must be cast to the appropriate type */
     public Object getGameParameter(GameDef.Parm key) {
         return gameParameters.getOrDefault(key, false);
     }
@@ -1811,6 +1841,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         return getRoot().getPlayerManager().getCurrentPlayer();
     }
 
+    /*
     public void setNationalToFound(String national) {
 
         for (PublicCompany company : this.getAllPublicCompanies()) {
@@ -1832,7 +1863,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public Player getNationalFormationStartingPlayer(PublicCompany comp) {
         return this.NationalFormStartingPlayer.get(comp);
-    }
+    }*/
 
     //--------------------------------------------
     // Register certificates and trains to prevent double income in one round.

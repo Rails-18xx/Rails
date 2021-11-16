@@ -72,7 +72,7 @@ public class StartCompany_18EU extends StartCompany {
             StringBuilder b = new StringBuilder();
             for ( Stop station : availableHomeStations ) {
                 if ( b.length() > 0 ) b.append(",");
-                b.append(station.getComposedId());
+                b.append(station.getStopComposedId());
             }
             availableHomeStationNames = b.toString();
         } else {
@@ -100,7 +100,7 @@ public class StartCompany_18EU extends StartCompany {
     public Stop getSelectedHomeStation() {
         // use delayed selectedHomeStation initialization
         // as not all cities are defined immediately
-        if ( selectedHomeStation == null && selectedHomeStationName != null ) {
+        if (selectedHomeStationName != null ) {
             MapManager mapManager = getRoot().getMapManager();
             String[] parts = parseStationName(selectedHomeStationName);
             MapHex hex = mapManager.getHex(parts[0]);
@@ -112,11 +112,22 @@ public class StartCompany_18EU extends StartCompany {
         }
 
         return selectedHomeStation;
+
     }
 
     public void setHomeStation(Stop homeStation) {
         selectedHomeStation = homeStation;
-        selectedHomeStationName = homeStation.getComposedId();
+        selectedHomeStationName = homeStation.getStopComposedId();
+    }
+
+    public void setHomeStationName(String homeStationName) {
+        selectedHomeStationName = homeStationName;
+        selectedHomeStation = getSelectedHomeStation();
+    }
+
+    public void clearHomeStation() { // needed for ListAndFixedSavedFiles program
+        selectedHomeStation = null;
+        selectedHomeStationName = null;
     }
 
     @Override
@@ -197,8 +208,8 @@ public class StartCompany_18EU extends StartCompany {
             String[] parts = name.split(" ");
             return new String[] {parts[4], parts[1]};
         } else {
-            // New style
-            return name.split("/");
+            // New style (remove anything in parentheses, we can have e.g. "E10/1(S,SE)"
+            return name.replaceFirst("(.*)(\\(.*\\))?", "$1").split("/");
         }
     }
 
