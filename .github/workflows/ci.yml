@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  jdk11:
+  jdk15:
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -19,7 +19,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 15
           java-package: jdk
       - name: Execute Tests
         run: ./gradlew clean test
