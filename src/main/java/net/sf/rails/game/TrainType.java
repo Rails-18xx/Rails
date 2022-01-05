@@ -39,18 +39,16 @@ public class TrainType implements Cloneable {
 
     protected TrainManager trainManager;
 
+    /** A dual train whose certificate can be 'flipped' to the train on the 'reverse' side.
+     *  A flip attempt has no effect on non-dual trains.
+     */
+    protected boolean flippable = false;
+
     private static final Logger log = LoggerFactory.getLogger(TrainType.class);
 
-    /**
-     * @param real False for the default type, else real. The default type does
-     * not have top-level attributes.
-     */
     public TrainType() {
     }
 
-    /**
-     * @see rails.common.parser.ConfigurableComponent#configureFromXML(org.w3c.dom.Element)
-     */
     public void configureFromXML(Tag tag) throws ConfigurationException {
         name = tag.getAttributeAsString("name");
         cost = tag.getAttributeAsInteger("cost");
@@ -75,6 +73,13 @@ public class TrainType implements Cloneable {
 
             // Are towns counted (only relevant is reachBasis = "stops")
             scoreCities = scoreTag.getAttributeAsString("scoreCities", scoreCities);
+        }
+
+        // Another type into which this type can be swapped
+        // (used for 'flippable' dual trains)
+        Tag swapTag = tag.getChild("Flippable");
+        if (swapTag != null) {
+            flippable = true;
         }
 
         // Check the reach and score values
@@ -161,10 +166,14 @@ public class TrainType implements Cloneable {
         return townScoreFactor;
     }
 
+    protected boolean isFlippable() { return flippable; }
+
+    protected boolean isDual() { return certificateType.isDual(); }
+
     @Override
     public Object clone() {
 
-        Object clone = null;
+        Object clone;
         try {
             clone = super.clone();
         } catch (CloneNotSupportedException e) {

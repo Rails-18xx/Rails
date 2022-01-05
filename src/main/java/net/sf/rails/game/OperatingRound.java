@@ -2949,6 +2949,10 @@ public class OperatingRound extends Round implements Observer {
 
         Owner oldOwner = train.getOwner();
 
+        if (oldOwner == ipo && action.getType().isDual()) {
+            trainManager.updateTrainType(train, action.getType());
+        }
+
         if (exchangedTrain != null) {
             Train oldTrain =
                     operatingCompany.value().getPortfolioModel().getTrainOfType(

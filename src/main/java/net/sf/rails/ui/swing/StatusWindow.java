@@ -114,7 +114,8 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
 
     private JMenuBar menuBar;
 
-    private JMenu fileMenu, optMenu, moveMenu, moderatorMenu, specialMenu, correctionMenu, developerMenu;
+    private JMenu fileMenu, optMenu, moveMenu, moderatorMenu, correctionMenu, developerMenu;
+    protected static JMenu specialMenu;
 
     private ActionMenuItem undoItem;
     private ActionMenuItem forcedUndoItem;
@@ -527,12 +528,58 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             gameStatus.setPriorityPlayer(gameUIManager.getPriorityPlayer().getIndex());
         }
 
+        // Must Special menu be enabled?
+        boolean enabled = updateSpecialActionMenu();
+        specialMenu.setOpaque(enabled);
+        specialMenu.setEnabled(enabled);
+        specialMenu.repaint();
+
+        List<NullAction> inactiveItems =
+                possibleActions.getType(NullAction.class);
+        if (inactiveItems != null) {
+
+            for (NullAction na : inactiveItems) {
+                switch (na.getMode()) {
+                    case PASS:
+                        passButton.setRailsIcon(RailsIcon.PASS);
+                        passButton.setEnabled(true);
+                        passButton.setActionCommand(PASS_CMD);
+                        passButton.setMnemonic(KeyEvent.VK_P);
+                        passButton.setPossibleAction(na);
+                        break;
+                    case DONE:
+                        passButton.setRailsIcon(RailsIcon.DONE);
+                        passButton.setEnabled(true);
+                        passButton.setActionCommand(DONE_CMD);
+                        passButton.setMnemonic(KeyEvent.VK_D);
+                        passButton.setPossibleAction(na);
+                        break;
+                    case AUTOPASS:
+                        autopassButton.setEnabled(true);
+                        autopassButton.setPossibleAction(na);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        if (currentRound instanceof EndOfGameRound) endOfGame();
+        pack();
+
+        toFront();
+    }
+
+    /**
+     * @return
+     *
+     */
+    protected boolean updateSpecialActionMenu() {
         // New special action handling
         List<ActionMenuItem> specialActionItems = new ArrayList<ActionMenuItem>();
 
         // Special properties
-        List<UseSpecialProperty> sps =
-            possibleActions.getType(UseSpecialProperty.class);
+        List<UseSpecialProperty> sps = possibleActions.getType(UseSpecialProperty.class);
         for (ActionMenuItem item : specialActionItems) {
             item.removeActionListener(this);
         }
@@ -561,45 +608,12 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             }
         }
 
-        // Must Special menu be enabled?
-        boolean enabled = specialActionItems.size() > 0;
-        specialMenu.setOpaque(enabled);
-        specialMenu.setEnabled(enabled);
-        specialMenu.repaint();
-
-        List<NullAction> inactiveItems = possibleActions.getType(NullAction.class);
-        if (inactiveItems != null) {
-            for (NullAction na : inactiveItems) {
-                switch (na.getMode()) {
-                case PASS:
-                    passButton.setRailsIcon(RailsIcon.PASS);
-                    passButton.setEnabled(true);
-                    passButton.setActionCommand(PASS_CMD);
-                    passButton.setMnemonic(KeyEvent.VK_P);
-                    passButton.setPossibleAction(na);
-                    break;
-                case DONE:
-                    passButton.setRailsIcon(RailsIcon.DONE);
-                    passButton.setEnabled(true);
-                    passButton.setActionCommand(DONE_CMD);
-                    passButton.setMnemonic(KeyEvent.VK_D);
-                    passButton.setPossibleAction(na);
-                    break;
-                case AUTOPASS:
-                    autopassButton.setEnabled(true);
-                    autopassButton.setPossibleAction(na);
-                    break;
-                default:
-                    break;
-                }
-            }
+        if (specialActionItems.size() > 0) {
+            return true;
         }
-
-        if (currentRound instanceof EndOfGameRound) endOfGame();
-
-        pack();
-
-        toFront();
+        else {
+            return false;
+        }
     }
 
     public void disableButtons () {
