@@ -1475,6 +1475,7 @@ CompanyOperates,WT,Bjoern
 LaysTileAt,WT,216,H2,SW
 CompanyDoesNotPayDividend,WT
 PRICE_MOVES_LOG,WT,72,A5,64,A6
+PlayerMustRaiseCash,Bjoern,224,6+6
 PlayerMustSellShares,Bjoern,224
 SELL_SHARE_LOG,Bjoern,10,PR,212
 PRICE_MOVES_LOG,PR,212,K3,192,K4

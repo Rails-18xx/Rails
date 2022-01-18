@@ -351,6 +351,7 @@ public class StartRound_1837_2ndEd extends StartRound {
                         auctionedItem.getBid(), 0);
                 currentStep.set(SELECT_STEP);
                 setNextSelectingPlayer();
+                numPasses.set(0);
             }
             break;
         case SELECT_STEP:

@@ -1305,6 +1305,7 @@ CompanyOperates,WT,Jupp Krupp
 LaysTileAt,WT,63,H16,SW
 CompanyDoesNotPayDividend,WT
 PRICE_MOVES_LOG,WT,86,B3,82,A3
+PlayerMustRaiseCash,Jupp Krupp,145,6
 PlayerMustSellShares,Jupp Krupp,145
 SELL_SHARES_LOG,Jupp Krupp,2,5,10,PR,212
 PRICE_MOVES_LOG,PR,212,K3,192,K4

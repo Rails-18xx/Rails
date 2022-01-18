@@ -26,7 +26,7 @@ public class StockMarket_SOH extends StockMarket {
         int col = oldsquare.getColumn();
 
         // A company selling its own shares drops one less
-        if (seller instanceof PublicCompany) numberOfSpaces--;
+        if (seller == company) numberOfSpaces--;
         if (numberOfSpaces == 0) return;
 
         for (int i=1; i<=numberOfSpaces && --col>=0; i++) {

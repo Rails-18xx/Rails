@@ -5,7 +5,6 @@ import net.sf.rails.game.*;
 import net.sf.rails.game.financial.*;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.*;
-import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,10 +151,11 @@ public class GameManager_1837 extends GameManager {
     /**
      * Check if a national formation (or minor merge) round needs be started
      * @param namingRound The OR in which a phase has changed. Null if we are between rounds.
-     * @param interruptedRound
+     * @param interruptedRound The OR in which a phase has changed. Null if we are between rounds.
      */
     public boolean checkAndRunNFR(String newPhaseId, Round namingRound, Round interruptedRound) {
         // Check the nationals for having reached one of their formation steps
+        // TODO Can namingRound be removed? Where is the NFR named then?
 
         this.newPhaseId.set(newPhaseId);
         setInterruptedRound(interruptedRound);
@@ -168,9 +168,9 @@ public class GameManager_1837 extends GameManager {
                 // Check if this national is affected by a phase change
                 if (newPhaseId != null) {
                     if (newPhaseId.equals(national.getFormationStartPhase())
+                                && NationalFormationRound.presidencyIsInPool(national)
                             || newPhaseId.equals(national.getForcedStartPhase())
                             || newPhaseId.equals(national.getForcedMergePhase())) {
-                        //setInterruptedRound(namingRound);
                         startNationalFormationRound(nationalName);
                         return true;
                     } else {

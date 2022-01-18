@@ -223,7 +223,7 @@ Published 2004 by Deep Thought Games, LLC
 
 
 	<Game name="1837">
-		<Note>Partly playable</Note>
+		<Note>Playable (beta)</Note>
 		<Description> 1837 - Austria
 			(c) 1994 Leonhard Orgler (self-published)
 
@@ -240,10 +240,6 @@ Published 2004 by Deep Thought Games, LLC
 
 			Known limitations:
 			- Laying a token involving backtracking must be done in Correction mode.
-
-			Not yet done:
-			- The details of running/not running trains after mergers caused by phase changes.
-			- Game end and bankruptcy rules.
 		</Description>
 		<Players minimum = "3" maximum = "7" />
 	</Game>

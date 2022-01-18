@@ -454,6 +454,7 @@ LaysTileAt,DSB,622,D7,NE
 LAYS_TOKEN_ON,DSB,F1,40 Hex F1 (Kiel)
 CompanyDoesNotPayDividend,DSB
 PRICE_MOVES_LOG,DSB,82,E5,75,D5
+PlayerMustRaiseCash,Charlie,178,4
 PlayerMustSellShares,Charlie,178
 YouMustRaiseCashButCannot,Charlie,178
 PlayerIsBankrupt,Charlie

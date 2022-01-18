@@ -132,7 +132,7 @@ public class GameUIManager_18EU extends GameUIManager {
             StartCompany_18EU action = (StartCompany_18EU) currentDialogAction;
 
             if (action.getAvailableHomeStations() != null) {
-                // From phase 6: a home station has been selected (or not)
+                // From phase 5: a home station has been selected (or not)
 
                 int index = dialog.getSelectedOption();
                 if (index < 0) {

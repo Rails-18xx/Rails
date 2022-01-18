@@ -298,6 +298,7 @@ ReceivesFor,Charlie,20,6_WS
  
 CompanyOperates,NRS,Alice
 SELL_SHARES_LOG,NRS,2,10,20,NRS,320
+PRICE_MOVES_LOG,NRS,160,M1,140,L1
 LaysTileAt,NRS,14,I6,W
 LaysTileAt,NRS,58,J9,W
 LAYS_TOKEN_ON,NRS,J7,100 Hex J7 (Breda)
@@ -305,7 +306,7 @@ CompanyRevenue,NRS,240
 CompanyPaysOutFull,NRS,240
 Payout,Alice,120,5,10
 Payout,NRS,72,3,10
-PRICE_MOVES_LOG,NRS,160,M1,180,N1
+PRICE_MOVES_LOG,NRS,140,L1,160,M1
 BuysTrain,NRS,5,IPO,400
 FirstTrainBought,5
 StartOfPhase,5
@@ -335,7 +336,7 @@ PRICE_MOVES_LOG,AR,70,E1,65,D1
 CompanyIsBankrupt,AR
  
 EndOfOperatingRound,3.2
-ORWorthIncrease,Alice,3.2,220
+ORWorthIncrease,Alice,3.2,120
 ORWorthIncrease,Bob,3.2,-350
 ORWorthIncrease,Charlie,3.2,34
 Has,HSM,534

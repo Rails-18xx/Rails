@@ -16,8 +16,10 @@ public class PublicCompany_1835 extends PublicCompany {
      * the Bank loans money to buy the intended train.
      * The company must withhold until the load has been paid back fully.
      */
+    /* moved to parent
     private IntegerState bankLoan = IntegerState.create (
             this, "bankLoan_" + getId(), 0);
+    */
 
     public PublicCompany_1835 (RailsItem parent, String Id) {
         super(parent, Id);
@@ -38,6 +40,7 @@ public class PublicCompany_1835 extends PublicCompany {
         return true;
     }
 
+    /* moved to parent
     public int getBankLoan() {
         return bankLoan.value();
     }
@@ -53,4 +56,5 @@ public class PublicCompany_1835 extends PublicCompany {
     public boolean hasBankLoan () {
         return getBankLoan() > 0;
     }
+    */
 }

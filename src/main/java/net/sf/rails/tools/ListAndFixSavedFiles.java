@@ -23,6 +23,7 @@ import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.GameSaver;
 import net.sf.rails.util.Util;
 import rails.game.action.*;
+import rails.game.specific._18EU.StartCompany_18EU;
 
 
 public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyListener {
@@ -380,6 +381,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             new BuyTrainDialog ((BuyTrain) editedAction);
         } else if (editedAction instanceof LayTile) {
             new LayTileDialog((LayTile) editedAction);
+        } else if (editedAction instanceof StartCompany_18EU) {
+            new StartCompany18EUDialog((StartCompany_18EU) editedAction);
         } else if (editedAction instanceof BuyCertificate) {
             new BuyCertificateDialog ((BuyCertificate) editedAction);
         } else if (editedAction instanceof SetDividend) {
@@ -637,6 +640,62 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             if (action.getFromPortfolio() == null) {
                 log.error ("Error in from: {}", input);
             }
+            log.info("Action is {}", action);
+            return action;
+
+        }
+    }
+
+    private class StartCompany18EUDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private StartCompany_18EU action;
+
+        StartCompany18EUDialog(StartCompany_18EU action) {
+            super("Edit StartCompany");
+            this.action = action;
+            addTextField(this, "President",
+                    action.isPresident(),
+                    String.valueOf(action.isPresident()));
+            addTextField(this, "Share size",
+                    action.getSharePerCertificate(),
+                    String.valueOf(action.getSharePerCertificate()));
+            addTextField (this, "Buy price",
+                    action.getPrice(),
+                    String.valueOf(action.getPrice()));
+            addTextField (this, "Home station",
+                    action.getSelectedHomeStation(),
+                    action.getSelectedHomeStation().getStationComposedId());
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+            log.info("Action was {}", action);
+            String input = "";
+            try {
+                input = ((JTextField)inputElements.get(0)).getText();
+                boolean president = Boolean.valueOf(input);
+                action.setPresident(president);
+            } catch (NumberFormatException e) {
+                log.error ("Error in president: {}", input, e);
+            }
+            try {
+                input = ((JTextField)inputElements.get(1)).getText();
+                int shareSize = Integer.valueOf(input);
+                action.setSharePerCert(shareSize);
+            } catch (NumberFormatException e) {
+                log.error ("Error in share size: {}", input, e);
+            }
+            try {
+                input = ((JTextField)inputElements.get(2)).getText();
+                int price = Integer.valueOf(input);
+                action.setPrice(price);
+            } catch (NumberFormatException e) {
+                log.error ("Error in price: {}", input, e);
+            }
+            input = ((JTextField)inputElements.get(3)).getText();
+            action.clearHomeStation();
+            action.setHomeStationName(input);
             log.info("Action is {}", action);
             return action;
 

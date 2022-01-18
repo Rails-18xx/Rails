@@ -164,6 +164,7 @@ public class OperatingRound_1835 extends OperatingRound {
     }
 
     public void resumeAfterSSR (int remainingCashToRaise) {
+        /* Moved to Bankruptcy
         if (savedAction instanceof BuyTrain) {
 
             PublicCompany_1835 company =
@@ -180,7 +181,7 @@ public class OperatingRound_1835 extends OperatingRound {
                 DisplayBuffer.add(this, message);
             }
         }
-
+        */
         super.resume();
     }
 
@@ -284,7 +285,7 @@ public class OperatingRound_1835 extends OperatingRound {
 
         PublicCompany company = operatingCompany.value();
         if (company.hasTrains() && company instanceof PublicCompany_1835
-                && ((PublicCompany_1835)company).hasBankLoan())  {
+                && company.hasBankLoan())  {
             int[] allowedRevenueActions = new int[] {SetDividend.WITHHOLD};
             possibleActions.add(new SetDividend(getRoot(),
                     company.getLastRevenue(), true,
@@ -294,6 +295,7 @@ public class OperatingRound_1835 extends OperatingRound {
         }
     }
 
+    /*
     @Override
     protected void executeSetRevenueAndDividend(SetDividend action) {
         executeSetRevenueAndDividend(action, null);
@@ -311,7 +313,7 @@ public class OperatingRound_1835 extends OperatingRound {
                         Bank.format(this, comp1835.getBankLoan())));
             }
         }
-    }
+    }*/
 
     @Override
     protected void newPhaseChecks() {

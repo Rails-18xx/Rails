@@ -448,6 +448,7 @@ LaysTileAt,DSB,8,G8,W
 LAYS_TOKEN_ON,DSB,D7,40 Hex D7 (Oslo)
 CompanyDoesNotPayDividend,DSB
 PRICE_MOVES_LOG,DSB,82,E5,75,D5
+PlayerMustRaiseCash,Charlie,178,4
 PlayerMustSellShares,Charlie,178
 YouMustRaiseCashButCannot,Charlie,178
 PlayerIsBankrupt,Charlie

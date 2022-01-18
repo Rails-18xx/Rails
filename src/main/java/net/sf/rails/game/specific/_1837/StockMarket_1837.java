@@ -7,6 +7,7 @@ import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.financial.StockMarket;
 import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.state.HashMapState;
+import net.sf.rails.game.state.Owner;
 
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +74,8 @@ public class StockMarket_1837 extends StockMarket {
         return count == null || count < 2;
     }
 
+    /*----- Sell action interface methods -----*/
+
     public void payOut(PublicCompany company, boolean split) {
         if (!split) {
             moveRightOrUp(company);
@@ -80,6 +83,26 @@ public class StockMarket_1837 extends StockMarket {
             moveRightandDown(company);
         }
     }
+
+    public int spacesDownOnSale (int sharesSold, Owner seller) {
+        return 1;
+    }
+
+    @Override
+    public void soldOut(PublicCompany company) {
+
+        if (GameOption.getValue(this, GameOption.VARIANT).matches("Basegame|1837-2ndEd.")
+                && company.getPresident().getPortfolioModel().getCertificates(company).size() >= 4) {
+            //President has 4 shares (50% or more) except in the Romoth variant
+            moveLeftAndUp(company);
+        } else {
+            moveUp(company);
+        }
+    }
+
+    /*----- Execute share price moves. -----*/
+    // In principle, these should be internal (private) methods
+
     private void moveRightandDown(PublicCompany company) {
         StockSpace oldsquare = company.getCurrentSpace();
         StockSpace newsquare = oldsquare;
@@ -107,18 +130,6 @@ public class StockMarket_1837 extends StockMarket {
         if (newsquare != null) {
             prepareMove(company, oldsquare, newsquare);
         }  
-    }
-
-    @Override
-    public void soldOut(PublicCompany company) {
-
-        if (GameOption.getValue(this, GameOption.VARIANT).matches("Basegame|1837-2ndEd.")
-                && company.getPresident().getPortfolioModel().getCertificates(company).size() >= 4) {
-            //President has 4 shares (50% or more) except in the Romoth variant
-            moveLeftAndUp(company);
-        } else {
-            moveUp(company);
-        }
     }
 
     private void moveLeftAndUp(PublicCompany company) {

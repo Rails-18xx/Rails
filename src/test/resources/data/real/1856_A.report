@@ -427,6 +427,7 @@ CompanyTakesLoan,WR,100,100
 InterestPaidFromTreasury,WR,40
 CompanyDoesNotPayDividend,WR
 PRICE_MOVES_LOG,WR,65,F7,60,E7
+PlayerMustRaiseCash,Ed,67,4
 PlayerMustSellShares,Ed,67
 SELL_SHARE_LOG,Ed,10,CPR,70
 PRICE_MOVES_LOG,CPR,70,D4,65,D5
@@ -976,6 +977,7 @@ ReleasedFromEscrow,TGB,100
 InterestPaidFromTreasury,TGB,20
 CompanyDoesNotPayDividend,TGB
 PRICE_MOVES_LOG,TGB,80,C1,75,B1
+PlayerMustRaiseCash,Adam,2,5
 PlayerMustSellShares,Adam,2
 SELL_SHARE_LOG,Adam,10,CA,60
 PRICE_MOVES_LOG,CA,60,E7,55,E8

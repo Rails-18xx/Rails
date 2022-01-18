@@ -1265,6 +1265,7 @@ CompanyDiscardsTrain,PR,3,Pool
 CompanyOperates,HE,Nick
 CompanyDoesNotPayDividend,HE
 PRICE_MOVES_LOG,HE,82,A3,78,A4
+PlayerMustRaiseCash,Nick,206,5
 PlayerMustSellShares,Nick,206
 SELL_SHARE_LOG,Nick,20,WT,144
 PRICE_MOVES_LOG,WT,72,A5,64,A6
@@ -1283,6 +1284,7 @@ PRICE_MOVES_LOG,MS,72,A5,80,B5
 CompanyOperates,OL,Eyal
 CompanyDoesNotPayDividend,OL
 PRICE_MOVES_LOG,OL,72,A5,64,A6
+PlayerMustRaiseCash,Eyal,251,5+5
 PlayerMustSellShares,Eyal,251
 SELL_SHARE_LOG,Eyal,10,WT,54
 SELL_SHARES_LOG,Eyal,2,10,20,BA,128
@@ -1296,9 +1298,10 @@ FirstTrainBought,5+5
 CompanyOperates,WT,Nick
 CompanyDoesNotPayDividend,WT
 PRICE_STAYS_LOG,WT,54,A7
+PlayerMustRaiseCash,Nick,584,6
 PlayerMustSellShares,Nick,584
 SELL_SHARES_LOG,Nick,5,10,50,HE,390
-PRICE_MOVES_LOG,HE,78,A4,54,A7
+PRICE_MOVES_LOG,HE,78,A4,72,A5
 IS_NOW_PRES_OF,Christian,HE
 SELL_SHARE_LOG,Nick,10,PR,172
 SELL_SHARE_LOG,Nick,10,WT,54
@@ -1311,6 +1314,7 @@ TrainsRusted,3
 CompanyOperates,BA,Eyal
 CompanyDoesNotPayDividend,BA
 PRICE_STAYS_LOG,BA,54,A7
+PlayerMustRaiseCash,Eyal,571,6
 PlayerMustSellShares,Eyal,571
 SELL_SHARES_LOG,Eyal,2,10,20,OL,128
 PRICE_MOVES_LOG,OL,64,A6,54,A7
@@ -1324,9 +1328,9 @@ NewTrainAvailable,6,6+6
  
 EndOfOperatingRound,7.2
 ORWorthIncrease,Eyal,7.2,-1168
-ORWorthIncrease,Marco,7.2,-147
-ORWorthIncrease,Nick,7.2,-1187
-ORWorthIncrease,Christian,7.2,697
+ORWorthIncrease,Marco,7.2,-111
+ORWorthIncrease,Nick,7.2,-1169
+ORWorthIncrease,Christian,7.2,733
 Has,BY,50
 Has,SX,1734
 Has,BA,0

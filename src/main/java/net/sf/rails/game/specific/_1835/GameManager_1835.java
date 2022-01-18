@@ -100,31 +100,7 @@ public class GameManager_1835 extends GameManager {
         return limit;
     }
 
-    /** Pick a new president for a company of which the president went bankrupt */
-    @Override
-    protected Player processCompanyAfterPlayerBankruptcy(Player oldPresident, PublicCompany company) {
-
-        // Is there any player with one share?
-        Player newPresident = null;
-        PlayerManager pm = getRoot().getPlayerManager();
-        for (Player player : pm.getNextPlayers(false)) {
-            int shares = player.getPortfolioModel().getShares(company);
-            if (shares == 1) {
-                newPresident = player;
-                break;
-            }
-        }
-
-        // Otherwise, the priority holder will have to do it.
-        if (newPresident == null) newPresident = pm.getPriorityPlayer();
-
-        ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
-                newPresident.getId(),
-                company.getId()));
-
-        return newPresident;
-    }
-
+    /*
     @Override
     public void finishShareSellingRound(boolean resume) {
         int remainingCashToRaise = ((ShareSellingRound)getCurrentRound()).getRemainingCashToRaise();
@@ -136,6 +112,6 @@ public class GameManager_1835 extends GameManager {
         setInterruptedRound(null);
         or.resumeAfterSSR(remainingCashToRaise);
     }
-
+*/
 
 }

@@ -261,10 +261,11 @@ public class PlayerManager extends RailsManager implements Configurable {
         return playersAfter.build();
     }
 
-    // TODO: Check if this change is valid to set only non-bankrupt playerOrder
-    // to be priority playerOrder
     public Player setPriorityPlayerToNext() {
-        Player priorityPlayer = getNextPlayer();
+        Player priorityPlayer;
+        do {
+            priorityPlayer = getNextPlayer();
+        } while (priorityPlayer.isBankrupt());
         setPriorityPlayer(priorityPlayer);
         return priorityPlayer;
     }

@@ -8,6 +8,7 @@ import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.ArrayListMultimapState;
 import net.sf.rails.game.state.ArrayListState;
 import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.Owner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ public class NationalFormationRound extends StockRound_1837 {
 
     private ArrayListState<Player> currentPlayerOrder; // To exchange minors
     private ArrayListMultimapState<Player, Company> minorsPerPlayer;
-    private ArrayListState<PublicCompany> closedMinors;
+    //private ArrayListState<PublicCompany> closedMinors;
 
     protected enum Step {
             START,
@@ -58,21 +59,31 @@ public class NationalFormationRound extends StockRound_1837 {
         return true;
     }
 
+    public static boolean presidencyIsInPool(PublicCompany_1837 national) {
+        // After a bankruptcy it is possible that the president certificate
+        // is in the bank pool. In such a case we will not start.
+        return national.getPresidentsShare().getOwner() != national.getRoot().getBank().getPool();
+    }
+
 
     public void start(PublicCompany_1837 national, boolean atNewPhase, String nfrReportName) {
         this.national = national;
         this.atNewPhase = atNewPhase;
         this.nfrReportName = nfrReportName;
+
         PhaseManager phaseManager = getRoot().getPhaseManager();
-        startNational = phaseManager.hasReachedPhase(national.getFormationStartPhase());
-        forcedStart = phaseManager.hasReachedPhase(national.getForcedStartPhase());
-        forcedMerge = phaseManager.hasReachedPhase(national.getForcedMergePhase());
+        startNational = !national.hasStarted()
+                && phaseManager.hasReachedPhase(national.getFormationStartPhase());
+        forcedStart = !national.hasStarted()
+                && phaseManager.hasReachedPhase(national.getForcedStartPhase());
+        forcedMerge = !national.isComplete()
+                && phaseManager.hasReachedPhase(national.getForcedMergePhase());
 
         minors = national.getMinors();
         startingMinor = national.getStartingMinor();
         currentPlayerOrder = new ArrayListState<>(this, "PlayerOrder_"+getId());
         minorsPerPlayer = ArrayListMultimapState.create(this, "MinorsPerPlayer_"+getId());
-        closedMinors = new ArrayListState<>(this, "ClosedMinorsPerMajor_"+getId());
+        //closedMinors = new ArrayListState<>(this, "ClosedMinorsPerMajor_"+getId());
         step = new GenericState<>(this, getId()+"_step",
                 (national.hasStarted() ? Step.MERGE : Step.START));
 
@@ -88,16 +99,28 @@ public class NationalFormationRound extends StockRound_1837 {
         }
 
         currentPlayerOrder.clear();
-        for (Player player : playerManager.getNextPlayersAfter(
-                startingPlayer, true, false)) {
-            for (PublicCompany_1837 minor : minors) {
-                if (!minor.isClosed() && player == minor.getPresident()) {
-                    currentPlayerOrder.add(player);
-                    // Once in the list is enough
-                    break;
+        if (startingPlayer == null) {
+            if (atNewPhase && (forcedStart || forcedMerge)) {
+                // For all certainty; it has happened (1837 U1 in pool when starting Ug)
+                startingPlayer = playerManager.getPriorityPlayer();
+                currentPlayerOrder.add(startingPlayer);
+            } else {
+                finishRound();
+                return;
+            }
+        } //else {
+            for (Player player : playerManager.getNextPlayersAfter(
+                    startingPlayer, true, false)) {
+                for (PublicCompany_1837 minor : minors) {
+                    if (!minor.isClosed() && player == minor.getPresident()
+                            && !currentPlayerOrder.contains(player)) {
+                        currentPlayerOrder.add(player);
+                        // Once in the list is enough
+                        break;
+                    }
                 }
             }
-        }
+        //}
 
         ReportBuffer.add(this, LocalText.getText("StartFormationRound", national.getId(), nfrReportName));
 
@@ -113,20 +136,23 @@ public class NationalFormationRound extends StockRound_1837 {
 
         if (step.value() == Step.START) {
 
-            setCurrentPlayer(startingMinor.getPresident());
             if (forcedStart) {
                 executeStartNational(true);
 
                 // The starting minor president becomes the initial major president
-                national.setPresident(currentPlayer);
-                ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
-                        currentPlayer.getId(),
-                        national.getId()));
-
+                if (startingMinor.getPresident() != null) {
+                    setCurrentPlayer(startingMinor.getPresident());
+                    national.setPresident(currentPlayer);
+                    ReportBuffer.add(this, LocalText.getText("IS_NOW_PRES_OF",
+                            currentPlayer.getId(),
+                            national.getId()));
+                } else if (national.isComplete()) {
+                    finishRound();
+                }
                 startNational = false;
-                step.set (Step.MERGE);
+                step.set(Step.MERGE);
             }
-        }
+       }
 
         if (step.value() == Step.MERGE) {
             if (forcedMerge) {  // TODO Below code to be replaced
@@ -136,10 +162,15 @@ public class NationalFormationRound extends StockRound_1837 {
                                 minor == startingMinor,
                                 forcedMerge);
                         // Replace the home token
-                        exchangeMinorToken (minor);
+                        Mergers.exchangeMinorToken (gameManager, minor, national);
                     }
-                }
-                national.checkPresidency();
+                 }
+                 if (national.checkPresidency()) {
+                     Owner newPresident = national.getPresident();
+                     if (newPresident instanceof Player) {
+                         floatCompany(national);
+                     }
+                 }
 
                 // Check if the National must discard any trains
                 if (national.getNumberOfTrains() > national.getCurrentTrainLimit()) {
@@ -157,7 +188,12 @@ public class NationalFormationRound extends StockRound_1837 {
     public boolean setPossibleActions() {
 
         if (step.value() == Step.START) {
-            startingPlayer = startingMinor.getPresident();
+            if (startingMinor.isClosed()) {
+                // Can occur after a bankruptcy
+                startingPlayer = national.getPresident();
+            } else {
+                startingPlayer = startingMinor.getPresident();
+            }
             setCurrentPlayer(startingPlayer); // Duplicate
             ReportBuffer.add(this, LocalText.getText("StartingPlayer",
                     startingPlayer.getId()
@@ -225,17 +261,21 @@ public class NationalFormationRound extends StockRound_1837 {
             }
         }
         boolean folding = !folded.isEmpty();
-        boolean toStart = !national.hasStarted();
+        boolean toStart = !national.hasStarted() && folded.contains(national.getStartingMinor());
 
         if (!folding) {
             ReportBuffer.add (this, LocalText.getText("NoMerge",
                     currentPlayer.getId(), action.getFoldableCompanyNames(), national));
+
+            if (currentPlayer == startingPlayer) {
+                // Does not want to start
+                finishRound();
+                return true;
+            }
             currentPlayerOrder.remove(currentPlayer);
 
-            // Does not want to start, or if started, does not want to merge
-            if (toStart
-                    // If already started, is there another player to merge?
-                    || !findNextMergingPlayer(true)) {
+            // Does not want to merge
+            if (!findNextMergingPlayer(true)) {
                 if (national.hasStarted()) {
                     national.checkPresidency();
                 }
@@ -329,39 +369,14 @@ CHECK:  while (true) {
                     minor == startingMinor, false);
 
             // Replace the home token
-            exchangeMinorToken (minor);
+            Mergers.exchangeMinorToken (gameManager, minor, national);
 
-            closedMinors.add (minor);
+            //closedMinors.add (minor);
             // Remove minor
             minorsPerPlayer.remove(currentPlayer, minor);
         }
 
         if (atNewPhase) national.setOperated();
-    }
-
-    private void exchangeMinorToken (PublicCompany_1837 minor) {
-
-        MapHex hex = minor.getHomeHexes().get(0);
-        if (hex.isOpen()) {  // 1837 S5 Italian home hex has already been closed here
-            Stop stop = hex.getRelatedStop(minor.getHomeCityNumber());
-            log.debug("Hex={} city={}/{} minor.getHomeCity={}",
-                    hex, stop, stop.getRelatedStation(), minor.getHomeCityNumber());
-            if (!stop.hasTokenOf(national) && hex.layBaseToken(national, stop)) {
-                /* TODO: the false return value must be impossible. */
-                String message = LocalText.getText("ExchangesBaseToken2",
-                        national.getId(), minor.getId(),
-                        hex.getId() +
-                                (hex.getStops().size() > 1
-                                ? "/" + hex.getConnectionString(stop.getRelatedStation())
-                                : "")
-                        );
-                ReportBuffer.add(this, message);
-                national.layBaseToken(hex, 0);
-            } else {
-                log.error("Cannot lay {} token on {} home {}", national, minor, hex);
-            }
-        }
-
     }
 
    public boolean discardTrain(DiscardTrain action) {

@@ -496,7 +496,7 @@ public class TreasuryShareRound extends StockRound {
             }
         }
          */
-        stockMarket.sell(company, numberSold);
+        stockMarket.sell(company, company, numberSold);
 
         hasSold.set(true);
 

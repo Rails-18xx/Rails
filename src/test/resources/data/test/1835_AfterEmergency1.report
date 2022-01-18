@@ -1307,6 +1307,7 @@ LaysTileAt,OL,41,E13,NW
 LAYS_TOKEN_ON,OL,F14,100 Hex F14 (Magdeburg)
 CompanyDoesNotPayDividend,OL
 PRICE_MOVES_LOG,OL,72,A5,64,A6
+PlayerMustRaiseCash,Eyal,11,6
 PlayerMustSellShares,Eyal,11
 SELL_SHARE_LOG,Eyal,10,WT,90
 PRICE_MOVES_LOG,WT,90,D5,88,D6

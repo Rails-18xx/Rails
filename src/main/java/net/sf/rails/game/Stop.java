@@ -87,8 +87,12 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return (MapHex) super.getParent();
     }
 
-    public String getComposedId() {
-        return getParent().getId() + "/" + this.getNumber();
+    public String getStationComposedId() {
+        return getParent().getId() + "/" + this.getRelatedStationNumber();
+    }
+
+    public String getStopComposedId() {
+        return getParent().getId() + "/" + this.number;
     }
 
     public Station getRelatedStation() {
@@ -326,8 +330,8 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         StringBuilder b = new StringBuilder();
         b.append(getParent().getId());
         if (getParent().getStops().size() > 1
-                // AFAIK, null is seen in the test log only
-                && relatedStation != null) {
+                // AFAIK, nulls are seen in the test log only
+                && relatedStation != null && relatedStation.value() != null) {
             b.append("/")
                     .append(getRelatedStationNumber())
                     .append("(")

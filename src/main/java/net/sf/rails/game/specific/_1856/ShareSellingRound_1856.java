@@ -20,18 +20,18 @@ public final class ShareSellingRound_1856 extends ShareSellingRound {
         super(parent, id);
     }
     @Override
-	protected void adjustSharePrice (PublicCompany company, Owner seller, int numberSold, boolean soldBefore) {
+	protected void adjustSharePrice (PublicCompany company, Owner seller, int sharesSold, boolean soldBefore) {
 
         if (!company.canSharePriceVary()) return;
 
-        int numberOfSpaces = numberSold;
+        int numberOfSpaces = sharesSold;
         if (company instanceof PublicCompany_CGR) {
             if (company.getShareUnit() == 5) {
                 // Take care for selling 5% shares in multiple blocks per turn
                 numberOfSpaces
-                    = (sharesSoldSoFar.value() + numberSold)/2
+                    = (sharesSoldSoFar.value() + sharesSold)/2
                     - squaresDownSoFar.value();
-                sharesSoldSoFar.add(numberSold);
+                sharesSoldSoFar.add(sharesSold);
                 squaresDownSoFar.add(numberOfSpaces);
             }
         }

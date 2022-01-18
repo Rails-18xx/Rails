@@ -19,6 +19,7 @@
 									  mustBuyTrainEvenIfNoRoute="yes"
 									  mayBuyFromCompany="yes"/>
 			</OperatingRound>
+			<Bankruptcy style="_18Scan"/>
 		</GameParameters>
 		<GuiClasses>
 			<ORUIManager class="net.sf.rails.game.specific._18Scan.ORUIManager_18Scan"/>

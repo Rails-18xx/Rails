@@ -6,10 +6,7 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.GameDef;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PublicCompany;
+import net.sf.rails.game.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.Currency;
@@ -215,7 +212,6 @@ public class ShareSellingRound extends StockRound {
                 } else {
                     // no dump necessary (not even possible! (EV))
                     possibleSharesToSell = PlayerShareUtils.sharesToSell(company, currentPlayer);
-                    dumpIsPossible = false;
                     log.debug("case C: {} no dump possible, sharesToSell={}",
                             company, possibleSharesToSell);
                 }
@@ -417,7 +413,6 @@ public class ShareSellingRound extends StockRound {
                     break;
                 }
                 dumpAllowed = false;
-                dumpedPlayer = null;
             } else if (currentPlayer == company.getPresident() && dumpedPlayerFound) {
                 //  no selling restriction beyond actual need and pool capacity
                 dumpAllowed = true;
@@ -526,8 +521,14 @@ public class ShareSellingRound extends StockRound {
             gameManager.registerCompanyBankruptcy(cashNeedingCompany);
         } else {
             Currency.wireAll(currentPlayer, cashNeedingCompany);
-            gameManager.registerPlayerBankruptcy(currentPlayer);
             currentPlayer.setBankrupt();
+            gameManager.registerPlayerBankruptcy(currentPlayer);
+
+            // A bankrupt player must pass on the priority
+            PlayerManager pmgr = gameManager.getRoot().getPlayerManager();
+            if (pmgr.getPriorityPlayer().equals(currentPlayer)) {
+                pmgr.setPriorityPlayerToNext();
+            }
         }
     }
 
