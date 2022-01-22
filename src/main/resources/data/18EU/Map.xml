@@ -3,7 +3,10 @@
 	<!-- Hex name="" tile="" orientation="" value="" impassable="" label="" cost="" value="" port="yes/no" -->
 	<Hex name="A4" port="yes" value="10" tile="-800" orientation="0"/>
 	<Hex name="B7" value="30,50" tile="-903" pic="-939" orientation="1" city="Hamburg">
-		<Access runThrough="yes"/>
+		<IfOption name="ExtraMinorFor4p" value="0 Hamburg">
+			<Attributes tile="-1903" pic="-939"/><!-- Add an invisible token spot -->
+		</IfOption>
+		<Access runThrough="always"/>
 	</Hex>
 	<Hex name="C4" label="Y" tile="-3007" city="Amsterdam"/>
 	<Hex name="C6" tile="-1" city="Bremen"/>

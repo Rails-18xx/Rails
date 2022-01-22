@@ -18703,5 +18703,31 @@ object TTilesWrapper
       Code = -4000
       Connections = <>
       Junctions = <>
+    end
+    item
+      Code = -1903
+      LongName = 'HHEUmin0'
+      Category = 'Hamburg'
+      CategoryPosition = tp3SideA
+      Level = tlOffMap
+      Connections = <
+        item
+          Position1 = tp2SideC
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tp2SideC
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tp2SideC
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Position = tp2SideC
+          Revenue = -1
+        end>
     end>
 end

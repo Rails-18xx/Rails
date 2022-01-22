@@ -36,7 +36,12 @@
 		<Trains limit="4,3,2"/>
 		<TradeShares mustHaveOperated="yes"/>
 	</CompanyType>
-	
+
+	<IfOption name="ExtraMinorFor4p" value="0 Hamburg">
+		<Company name="0" longname="Berlin-Hamburger Bahn" type="Minor">
+			<Home hex="B7"/>
+		</Company>
+	</IfOption>
 	<Company name="1" longname="Chemin de Fer du Nord" type="Minor">
 		<Home hex="J1" city="1"/>
 	</Company>
@@ -82,7 +87,12 @@
 	<Company name="15" longname="Grand Central" type="Minor">
 		<Home hex="Q2"/>
 	</Company>
-	
+	<IfOption name="ExtraMinorFor4p" value="16 Frankfurt">
+		<Company name="16" longname="Main-Neckar Bahn" type="Minor">
+			<Home hex="I6"/>
+		</Company>
+	</IfOption>
+
 	<Company name="SNCB" longname="Société Nationale des Chemins de Fer Belges "
 		type="Major" tokens="5" fgColour="000000" bgColour="DDAA00">
 	</Company>
@@ -111,6 +121,9 @@
 	
 	<StartPacket roundClass="net.sf.rails.game.specific._18EU.StartRound_18EU">
 		<Bidding initial="0" minimum="5" increment="5"/>
+		<IfOption name="ExtraMinorFor4p" value="0 Hamburg">
+			<Item name="0" type="Minor" basePrice="100"/>
+		</IfOption>
 		<Item name="1" type="Minor" basePrice="100"/>
 		<Item name="2" type="Minor" basePrice="100"/>
 		<Item name="3" type="Minor" basePrice="100"/>
@@ -126,5 +139,8 @@
 		<Item name="13" type="Minor" basePrice="100"/>
 		<Item name="14" type="Minor" basePrice="100"/>
 		<Item name="15" type="Minor" basePrice="100"/>
+		<IfOption name="ExtraMinorFor4p" value="16 Frankfurt">
+			<Item name="16" type="Minor" basePrice="100"/>
+		</IfOption>
 	</StartPacket>
 </CompanyManager>
