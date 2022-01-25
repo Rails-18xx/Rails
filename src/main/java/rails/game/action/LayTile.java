@@ -106,6 +106,15 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         }
     }
 
+    /** Lay a special tile on (a) certain location(s) without a special property */
+    public LayTile (RailsRoot root, List<MapHex> locations, Map<String, Integer> colours) {
+        super(root);
+        type = LOCATION_SPECIFIC;
+        this.locations = locations;
+        if (locations != null) buildLocationNameString();
+        setTileColours (colours);
+    }
+
     /**
      * @return Returns the chosenHex.
      */
@@ -204,7 +213,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
     }
 
     public void setTileColours(Map<String, Integer> map) {
-        tileColours = new HashMap<String, Integer>();
+        tileColours = new HashMap<>();
         // Check the map. Sometimes 0 values creep in, and these can't easily
         // be intercepted in the UI code (see comment at previous method).
         // TODO This is a dirty fix, but the quickest one too.
@@ -226,7 +235,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
 
     public void addRelayBaseToken (String companyName, Integer cityNumber) {
         if (relaidBaseTokens == null) {
-            relaidBaseTokens = new HashMap<String, Integer>();
+            relaidBaseTokens = new HashMap<>();
         }
         relaidBaseTokens.put(companyName, cityNumber);
         relaidBaseTokensString = Util.appendWithDelimiter(relaidBaseTokensString,

@@ -1,16 +1,15 @@
 package net.sf.rails.game.specific._18EU;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import net.sf.rails.common.GameOption;
 import rails.game.action.BuyTrain;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Owner;
+import rails.game.action.LayTile;
 
 
 /**
@@ -39,6 +38,46 @@ public class OperatingRound_18EU extends OperatingRound {
         hasPullmannAtStart.set(operatingCompany.value().getPortfolioModel()
                 .getTrainCardOfType(pullmannType) != null);
     }
+
+    protected List<LayTile> getNormalTileLays(boolean forReal) {
+
+        List<LayTile> currentNormalTileLays = super.getNormalTileLays(forReal);
+
+        PublicCompany company = operatingCompany.value();
+        if (GameOption.getValue(this, "MinorGreenTile").equalsIgnoreCase("HomeBaseOnly")
+                && company.getType().getId().equals("Minor")
+                && getRoot().getPhaseManager().hasReachedPhase("3")) {
+            MapHex homeBase = company.getHomeHexes().get(0);
+            if (homeBase.getCurrentTile().getColour()== TileColour.YELLOW) {
+                Map<String, Integer> colour = Map.of("green", 1);
+                LayTile greenHomeTile = new LayTile(getRoot(), List.of(homeBase), colour);
+
+                currentNormalTileLays.add (greenHomeTile);
+            }
+        }
+        return currentNormalTileLays;
+    }
+
+    /**
+     * Allow a minor laying a green tile on its home base if that variant is chosen
+     * @param tile The tile being laid
+     * @param update True if the allowed tile numbers per colour needs be updated
+     * @return True if the lay is valid
+     */
+    @Override
+    protected boolean checkNormalTileLay(Tile tile, boolean update) {
+        PublicCompany company = operatingCompany.value();
+        if (GameOption.getValue(this, "MinorGreenTile").equalsIgnoreCase("HomeBaseOnly")
+                && company.getType().getId().equalsIgnoreCase("Minor")
+                && tile.getColourText().equalsIgnoreCase("green")) {
+            // In any case, this is the only tile that can be laid
+            tileLaysPerColour.clear();
+            return true;
+        } else {
+            return super.checkNormalTileLay(tile, update);
+        }
+    }
+
 
     /**
      * In 18EU, the part of the split revenue that goes to the
