@@ -111,6 +111,7 @@ public class TokenHexUpgrade extends HexUpgrade {
     }
 
     public boolean hexReserved() {
+        if (stops.isEmpty()) return false;
         for (Stop stop : stops) {
             if (hex.getHex().isBlockedForReservedHomes(stop)) {
                 allowed.remove(stop);
@@ -230,7 +231,7 @@ public class TokenHexUpgrade extends HexUpgrade {
                                 + action.getSpecialProperty().getOriginalCompany().getId()
                                 + "] </font>";
             }
-            if (isValid() && !hasSingleSelection()) {
+            if (isValid() && !hasSingleSelection() && selectedStop != null) {
                 text += "<br> <font size=-2>";
                 text += hex.getHex().getConnectionString(selectedStop.getRelatedStation());
                 text += "</font>";

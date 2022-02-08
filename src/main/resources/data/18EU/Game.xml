@@ -128,5 +128,8 @@
 	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
 		<Modifier class="net.sf.rails.game.specific._18EU.OffBoardRevenueModifier"/>
 		<Modifier class="net.sf.rails.game.specific._18EU.PullmanRevenueModifier"/>
+		<IfOption name="AlpineTokens" value="Yes">
+			<Modifier class="net.sf.rails.game.specific._18EU.AlpineTokenRevenueModifier"/>
+		</IfOption>
 	</Component>
 </ComponentManager>

@@ -26,7 +26,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
     public enum StationType {
         MAJOR,
         MINOR,
-        COALMINE
+        COALMINE,
+        PASS
     }
 
     // vertex types and flag for virtual (thus not related to a rails object)
@@ -142,6 +143,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         return (stationType != null && stationType == StationType.COALMINE);
     }
 
+    public boolean isPass() { return stationType != null && stationType == StationType.PASS; }
+
     public StationType getStationType() {
         return stationType;
     }
@@ -240,7 +243,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
 
         // check if it has to be removed because it is run-to only
         // if company == null, then no vertex gets removed
-        if (company != null && !stop.isRunToAllowedFor(company, running)) {
+        if (company != null && !stop.isRunToAllowedFor(company, running) && !stop.isRunThroughAllowedFor(company)) {
            log.info("Vertex is removed");
            return false;
         }
@@ -250,6 +253,8 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             setStationType(StationType.MAJOR);
         } else if (stop.getScoreType() == Access.Score.MINOR) {
             setStationType(StationType.MINOR);
+        } else if (stop.getScoreType() == Access.Score.NO) { // Used in 18EU Alpine variant
+            setStationType(StationType.PASS); // Not sure if this is sensible for 18EU
         }
 
         // check if it is a sink
@@ -473,7 +478,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         GUIHex guiHex = map.getHex(vertex.getHex());
         if (vertex.isMajor()) {
             return guiHex.getStopPoint2D(vertex.getStop());
-        } else if (vertex.isMinor()) {
+        } else if (vertex.isMinor() || vertex.isPass()) {
             return guiHex.getStopPoint2D(vertex.getStop());
             //            return guiHex.getCenterPoint2D();
         } else if (vertex.isSide()) {
