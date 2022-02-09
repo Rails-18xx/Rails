@@ -29,7 +29,7 @@ public class StatusWindow_1835 extends StatusWindow {
     @Override
     public void init (GameUIManager gameUIManager) {
         super.init(gameUIManager);
-        prussian = gameUIManager.getRoot().getCompanyManager().getPublicCompany(GameManager_1835.PR_ID);
+        prussian = gameUIManager.getRoot().getCompanyManager().getPublicCompany(GameDef_1835.PR_ID);
     }
 
     @Override
@@ -68,14 +68,14 @@ public class StatusWindow_1835 extends StatusWindow {
         List<Company> foldables = action.getFoldableCompanies();
         NonModalDialog currentDialog;
 
-        if (foldables.get(0).getId().equals("M2")) {
+        if (foldables.get(0).getId().equals(GameDef_1835.M2_ID)) {
             // Ask if the Prussian should be started
             currentDialog = new ConfirmationDialog (GameUIManager_1835.START_PRUSSIAN_DIALOG,
                     gameUIManager, this,
                     LocalText.getText("Select"),
                     LocalText.getText("MergeMinorConfirm",
                             getCurrentPlayer().getId(),
-                            GameManager_1835.M2_ID, GameManager_1835.PR_ID),
+                            GameDef_1835.M2_ID, GameDef_1835.PR_ID),
                             "Yes",
                             "No"
             );

@@ -14,16 +14,6 @@ public class GameManager_1835 extends GameManager {
 	private Round previousRound = null;
     private Player prFormStartingPlayer = null;
 
-    public static final String M2_ID = "M2";
-    public static final String PR_ID = "PR";
-    public static final String OL_ID = "OL";
-    public static final String MS_ID = "MS";
-    public static final String WT_ID = "WT";
-    public static final String HE_ID = "HE";
-    public static final String BA_ID = "BA";
-    public static final String SX_ID = "SX";
-    public static final String BY_ID = "BY";
-
     public GameManager_1835(RailsRoot parent, String id) {
         super(parent, id);
     }
@@ -37,7 +27,7 @@ public class GameManager_1835 extends GameManager {
     protected boolean runIfStartPacketIsNotCompletelySold() {
         if (GameOption.getAsBoolean(this, "Clemens")
                 || GameOption.getAsBoolean(this, "MinorsRequireFloatedBY")) {
-            return getRoot().getCompanyManager().getPublicCompany(GameManager_1835.BY_ID).hasFloated();
+            return getRoot().getCompanyManager().getPublicCompany(GameDef_1835.BY_ID).hasFloated();
         }
         return true;
     }

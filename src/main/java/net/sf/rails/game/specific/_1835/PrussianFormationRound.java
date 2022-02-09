@@ -43,12 +43,12 @@ public class PrussianFormationRound extends StockRound {
         START,
         MERGE,
         DISCARD_TRAINS
-    };
+    }
 
     private Step step;
 
-    private static String PR_ID = GameManager_1835.PR_ID;
-    private static String M2_ID = GameManager_1835.M2_ID;
+    private static String PR_ID = GameDef_1835.PR_ID;
+    private static String M2_ID = GameDef_1835.M2_ID;
 
     /**
      * Constructed via Configure
@@ -94,7 +94,7 @@ public class PrussianFormationRound extends StockRound {
             if (forcedMerge) {
                 Set<SpecialProperty> sps;
                 setFoldablePrePrussians();
-                List<Company> foldables = new ArrayList<Company> ();
+                List<Company> foldables = new ArrayList<> ();
                 for (PrivateCompany company : gameManager.getAllPrivateCompanies()) {
                     if (company.isClosed()) continue;
                     sps = company.getSpecialProperties();
@@ -153,7 +153,7 @@ public class PrussianFormationRound extends StockRound {
 
     private void setFoldablePrePrussians () {
 
-        foldablePrePrussians = new ArrayList<Company> ();
+        foldablePrePrussians = new ArrayList<> ();
         SpecialProperty sp;
         for (PrivateCompany company : currentPlayer.getPortfolioModel().getPrivateCompanies()) {
             Set<SpecialProperty> sps = company.getSpecialProperties();
@@ -240,7 +240,7 @@ public class PrussianFormationRound extends StockRound {
             if (!(M2_ID.equals(action.getFoldedCompanyNames()))) {
                 errMsg = LocalText.getText("WrongCompany",
                         action.getFoldedCompanyNames(),
-                        GameManager_1835.M2_ID);
+                        GameDef_1835.M2_ID);
                 break;
             }
             break;
@@ -393,7 +393,7 @@ public class PrussianFormationRound extends StockRound {
 
                 // Move any trains
                 // TODO: Simplify code due to trainlist being immutable anyway
-                List<Train> trains = new ArrayList<Train> (minor.getPortfolioModel().getTrainList());
+                List<Train> trains = new ArrayList<> (minor.getPortfolioModel().getTrainList());
                 for (Train train : trains) {
                     prussian.getPortfolioModel().addTrain(train);
                 }
@@ -479,19 +479,16 @@ public class PrussianFormationRound extends StockRound {
     }
 
     public static boolean prussianIsComplete(GameManager gameManager) {
-        boolean resultP = true;
-        boolean resultM = true;
+
         for (PublicCompany company : gameManager.getAllPublicCompanies()) {
-            resultM = checkForPrussianMinorExchange(company);
-            if (!resultM) {
+            if (!checkForPrussianMinorExchange(company)) {
                 return false;
-                }
+            }
         }
         for (PrivateCompany company : gameManager.getAllPrivateCompanies()) {
-            resultP = checkForPrussianPrivateExchange(company);
-                if (!resultP) {
-                    return false;
-                }
+            if (!checkForPrussianPrivateExchange(company)) {
+                return false;
+            }
         }
         return true;
     }
@@ -509,13 +506,13 @@ public class PrussianFormationRound extends StockRound {
 
     private static boolean checkForPrussianPrivateExchange(PrivateCompany company) {
 
-            if ((!company.getId().equals("HB")) && (!company.getId().equals("BB"))) {
-                return true;
-            }
-            if (!company.isClosed()) {
-                return false;
-            }
-                return true;
+        if ((!company.getId().equals("HB")) && (!company.getId().equals("BB"))) {
+            return true;
+        }
+        if (!company.isClosed()) {
+            return false;
+        }
+        return true;
     }
 
     @Override
