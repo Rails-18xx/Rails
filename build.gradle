@@ -230,7 +230,7 @@ task buildDmgPackage(type: Exec) {
     doFirst {
         commandLine jpackage(),
                 '--verbose',
-                '--type', 'dmg',
+                '--type', 'pkg',
                 '--name', appName,
                 '--description', rootProject.description,
                 '--vendor', vendor,
@@ -251,7 +251,7 @@ task renameExecutables(type: Copy) {
         include '*.deb'
         include '*.rpm'
         include '*.exe'
-        include '*.dmg'
+        include '*.pkg'
     }
     into '.'
     rename '(.+)\\.(.+)', 'rails-18xx.$2'
