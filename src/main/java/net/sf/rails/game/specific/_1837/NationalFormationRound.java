@@ -381,49 +381,7 @@ CHECK:  while (true) {
 
    public boolean discardTrain(DiscardTrain action) {
 
-        Train train = action.getDiscardedTrain();
-        PublicCompany company = action.getCompany();
-
-        String errMsg = null;
-
-        // Dummy loop to enable a quick jump out.
-        while (true) {
-            // Checks
-            // Must be correct step
-            if (company != national) {
-                errMsg = LocalText.getText("WrongCompany", company.getId(), national.getId());
-                break;
-            }
-
-            if (train == null && action.isForced()) {
-                errMsg = LocalText.getText("NoTrainSpecified");
-                break;
-            }
-
-            // Does the company own such a train?
-            if (!company.getPortfolioModel().getTrainList().contains(train)) {
-                errMsg =
-                    LocalText.getText("CompanyDoesNotOwnTrain",
-                                company.getId(),
-                                train.toText() );
-                break;
-            }
-
-            break;
-        }
-        if (errMsg != null) {
-            DisplayBuffer.add(this, LocalText.getText("CannotDiscardTrain",
-                    company.getId(),
-                    (train != null ?train.toText() : "?"),
-                    errMsg ));
-            return false;
-        }
-
-        /* End of validation, start of execution */
-
-        // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
-
-        train.discard();
+        if (!action.process(this)) return false;
 
         // We still might have another excess train
         // TODO: would be better to have DiscardTrain discard multiple trains

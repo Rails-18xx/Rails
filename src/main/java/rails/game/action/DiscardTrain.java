@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.*;
 
+import net.sf.rails.common.DisplayBuffer;
+import net.sf.rails.common.LocalText;
+import net.sf.rails.game.*;
 import net.sf.rails.game.state.AbstractItem;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.Objects;
 
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.Train;
-import net.sf.rails.game.TrainManager;
-import net.sf.rails.game.TrainType;
 import net.sf.rails.util.RailsObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +102,61 @@ public class DiscardTrain extends PossibleORAction {
 
     public boolean isForced() {
         return forced;
+    }
+
+    /**
+     * This method replaces various (at least 4)
+     * almost identical discardTrain() methods.
+     * Only the follow-up actions (finishTurn() etc.) are different
+     * and must be done in the calling round.
+     *
+     * @param round The current round
+     * @return True if train discarding finishes successfully
+     */
+    public boolean process (Round round) {
+
+        // NOTE: not sure if the !forced part applies to all use cases
+        if (discardedTrain == null && !forced) return true;
+
+        /*--- Validation ---*/
+        String errMsg = null;
+
+        // Dummy loop
+        while (true) {
+            if (round instanceof OperatingRound) {
+                // Must be in the correct step
+                GameDef.OrStep step = ((OperatingRound) round).getStep();
+                if (step != GameDef.OrStep.BUY_TRAIN && step != GameDef.OrStep.DISCARD_TRAINS) {
+                    errMsg = LocalText.getText("WrongActionNoDiscardTrain");
+                    break;
+                }
+            }
+            // Must specify a train if discard in mandatory
+            if (discardedTrain == null && forced) {
+                errMsg = LocalText.getText("NoTrainSpecified");
+                break;
+            }
+            // Does company own the specified train?
+            if (!company.getPortfolioModel().getTrainList().contains(discardedTrain)) {
+                errMsg = LocalText.getText("CompanyDoesNotOwnTrain",
+                        companyName, discardedTrain.toText());
+                break;
+            }
+            break;
+        }
+        if (errMsg != null) {
+            DisplayBuffer.add (round, LocalText.getText("CannotDiscardTrain",
+                    companyName,
+                    (discardedTrain != null ? discardedTrain.toText() : "?"),
+                    errMsg));
+            return false;
+        }
+
+        /*--- Execution ---*/
+        discardedTrain.getCard().discard();
+
+        // NOTE: any follow-up actions to be specified in the calling round
+        return true;
     }
 
     /**

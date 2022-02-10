@@ -344,6 +344,7 @@ public class OperatingRound_1835 extends OperatingRound {
     public boolean discardTrain(DiscardTrain action) {
 
         boolean result = super.discardTrain(action);
+
         if (result && getStep() == GameDef.OrStep.BUY_TRAIN
                 && needPrussianFormationCall.value()) {
             // Do the postponed formation calls

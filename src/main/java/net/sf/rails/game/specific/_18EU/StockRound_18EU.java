@@ -656,48 +656,7 @@ public class StockRound_18EU extends StockRound {
     // requires: think about triggered activities?
     public boolean discardTrain(DiscardTrain action) {
 
-        Train train = action.getDiscardedTrain();
-        PublicCompany company = action.getCompany();
-        String companyName = company.getId();
-
-        String errMsg = null;
-
-        // Dummy loop to enable a quick jump out.
-        while (true) {
-            // Checks
-            // Must be correct step
-            if (!discardingTrains.value()) {
-                errMsg = LocalText.getText("WrongActionNoDiscardTrain");
-                break;
-            }
-
-            if (train == null) {
-                errMsg = LocalText.getText("NoTrainSpecified");
-                break;
-            }
-
-            // Does the company own such a train?
-
-            if (!company.getPortfolioModel().getTrainList().contains(train)) {
-                errMsg =
-                        LocalText.getText("CompanyDoesNotOwnTrain",
-                                company.getId(),
-                                train.toText());
-                break;
-            }
-
-            break;
-        }
-        if (errMsg != null) {
-            DisplayBuffer.add(this, LocalText.getText("CannotDiscardTrain",
-                    companyName,
-                    train.toText(),
-                    errMsg));
-            return false;
-        }
-
-        /* End of validation, start of execution */
-        train.discard();
+        if (!action.process(this)) return false;
 
         finishTurn();
 

@@ -1020,50 +1020,8 @@ public class OperatingRound extends Round implements Observer {
      */
 
     public boolean discardTrain(DiscardTrain action) {
-        Train train = action.getDiscardedTrain();
-        PublicCompany company = action.getCompany();
-        String companyName = company.getId();
 
-        String errMsg = null;
-
-        // Dummy loop to enable a quick jump out.
-        while (true) {
-            // Checks
-            // Must be correct step
-            if (getStep() != GameDef.OrStep.BUY_TRAIN
-                    && getStep() != GameDef.OrStep.DISCARD_TRAINS) {
-                errMsg = LocalText.getText("WrongActionNoDiscardTrain");
-                break;
-            }
-
-            if (train == null && action.isForced()) {
-                errMsg = LocalText.getText("NoTrainSpecified");
-                break;
-            }
-
-            // Does the company own such a train?
-
-            if (!company.getPortfolioModel().getTrainList().contains(train)) {
-                errMsg =
-                        LocalText.getText("CompanyDoesNotOwnTrain",
-                                company.getId(), train.toText());
-                break;
-            }
-
-            break;
-        }
-        if (errMsg != null) {
-            DisplayBuffer.add(this,
-                    LocalText.getText("CannotDiscardTrain", companyName,
-                            (train != null ? train.toText() : "?"), errMsg));
-            return false;
-        }
-
-        /* End of validation, start of execution */
-
-        // FIXME: if (action.isForced()) changeStack.linkToPreviousMoveSet();
-
-       train.getCard().discard();
+        if (!action.process(this)) return false;
 
         // Check if any more companies must discard trains,
         // otherwise continue train buying
@@ -1072,8 +1030,6 @@ public class OperatingRound extends Round implements Observer {
             playerManager.setCurrentPlayer(operatingCompany.value().getPresident());
             stepObject.set(GameDef.OrStep.BUY_TRAIN);
         }
-
-        // setPossibleActions();
 
         return true;
     }
