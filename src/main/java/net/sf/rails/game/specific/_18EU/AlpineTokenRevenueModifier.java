@@ -2,6 +2,7 @@ package net.sf.rails.game.specific._18EU;
 
 import com.google.common.collect.Lists;
 import net.sf.rails.algorithms.*;
+import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
 import net.sf.rails.game.specific._18Scan.DestinationRound_18Scan;
@@ -31,7 +32,7 @@ public class AlpineTokenRevenueModifier implements RevenueDynamicModifier {
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
 
         company = revenueAdapter.getCompany();
-        if (company.getRoot().getGameOptions().get("AlpineTokens").equalsIgnoreCase("No")) {
+        if (GameOption.getAsBoolean(company.getRoot(),"AlpineTokens")) {
             return false;
         }
         alpineTokenHexes.clear();

@@ -56,15 +56,17 @@
 		<Upgrade id="576,577,578,579" />
 	</Tile>
 	<!-- For the Alpine token variant -->
-	<Tile id="4007" pic="7" quantity="-1">
-		<Upgrade id="4080,4082,4083"/>
-	</Tile>
-	<Tile id="4008" pic="8" quantity="-1">
-		<Upgrade id="4080,4081,4082,4083"/>
-	</Tile>
-	<Tile id="4009" pic="9" quantity="-1">
-		<Upgrade id="4082,4083"/>
-	</Tile>
+	<IfOption name="AlpineTokens" value="Yes">
+		<Tile id="4007" pic="7" quantity="-1" hide="yes">
+			<Upgrade id="4080,4082,4083"/>
+		</Tile>
+		<Tile id="4008" pic="8" quantity="-1" hide="yes">
+			<Upgrade id="4080,4081,4082,4083"/>
+		</Tile>
+		<Tile id="4009" pic="9" quantity="-1" hide="yes">
+			<Upgrade id="4082,4083"/>
+		</Tile>
+	</IfOption>
 
 	<!-- Green tiles -->
 	<Tile id="14" quantity="4">
@@ -118,18 +120,21 @@
 		<AllowsMultipleBasesOfOneCompany/>
 	</Tile>
 	<!-- For the Alpine token variant -->
-	<Tile id="4080" pic="3080" quantity="-1">
-		<Upgrade id="4545,4546"/>
-	</Tile>
-	<Tile id="4081" pic="3081" quantity="-1">
-		<Upgrade id="4546"/>
-	</Tile>
-	<Tile id="4082" pic="3082" quantity="-1">
-		<Upgrade id="4544,4545,4546"/>
-	</Tile>
-	<Tile id="4083" pic="3083" quantity="-1">
-		<Upgrade id="4544,4545,4546"/>
-	</Tile>
+	<IfOption name="AlpineTokens" value="Yes">
+		<Tile id="4080" pic="3080" quantity="-1" hide="yes">
+			<Upgrade id="4545,4546"/>
+		</Tile>
+		<Tile id="4081" pic="3081" quantity="-1" hide="yes">
+			<Upgrade id="4546"/>
+		</Tile>
+		<Tile id="4082" pic="3082" quantity="-1" hide="yes">
+			<Upgrade id="4544,4545,4546"/>
+		</Tile>
+		<Tile id="4083" pic="3083" quantity="-1" hide="yes">
+			<Upgrade id="4544,4545,4546"/>
+		</Tile>
+	</IfOption>
+
 
 	<!-- Brown tiles -->
 	<Tile id="145" quantity="4" />
@@ -147,9 +152,11 @@
 		<Upgrade id="513" />
 	</Tile>
 	<!-- For the Alpine token variant -->
-	<Tile id="4544" pic="3544" quantity="-1"/>
-	<Tile id="4545" pic="3545" quantity="-1"/>
-	<Tile id="4546" pic="3546" quantity="-1"/>
+	<IfOption name="AlpineTokens" value="Yes">
+		<Tile id="4544" pic="3544" quantity="-1" hide="yes"/>
+		<Tile id="4545" pic="3545" quantity="-1" hide="yes"/>
+		<Tile id="4546" pic="3546" quantity="-1" hide="yes"/>
+	</IfOption>
 
 	<!-- Grey tiles -->
 	<Tile id="513" quantity="5" />

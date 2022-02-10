@@ -92,7 +92,7 @@ public class OperatingRound_18EU extends OperatingRound {
         // Ask the user if he wants to place a token there.
         if (result
                 && action.getLaidTile() != null
-                && GameOption.getValue(this, "AlpineTokens").equalsIgnoreCase("Yes")
+                && GameOption.getAsBoolean(this, "AlpineTokens")
                 && action.getChosenHex().getLabel().equalsIgnoreCase("M")
                 && action.getLaidTile().getColour().toText().equalsIgnoreCase("yellow")
                 && action.getCompany().getNumberOfFreeBaseTokens() > 0) {

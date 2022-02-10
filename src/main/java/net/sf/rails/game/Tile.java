@@ -44,6 +44,12 @@ public class Tile extends RailsModel implements Comparable<Tile> {
     private String pictureId;
 
     /**
+     * Don't show tile in 'RemainingTiles' window
+     * Used in 18EU
+     */
+    private boolean hide = false;
+
+    /**
      * The 'sorting id' which defines the ordering
      */
     private String sortingId;
@@ -184,19 +190,17 @@ public class Tile extends RailsModel implements Comparable<Tile> {
         /* Picture id */
         pictureId = setTag.getAttributeAsString("pic", getId());
 
+        /* Hide from RemainingTiles */
+        hide = setTag.getAttributeAsBoolean("hide", false);
+
         /* prepainted */
         try {
             int intNb = Integer.parseInt(getId());
-            if (intNb <= 0) {
-               prepainted = true;
-           } else {
-               prepainted = false;
-           }
+            prepainted = (intNb <= 0);
         } catch (NumberFormatException e) {
-            // assume that it is not pre-painted to be save if id is non-numerical
+            // assume that it is not pre-painted to be safe if id is non-numerical
             prepainted = false;
         }
-
 
         /* Quantity */
         count = setTag.getAttributeAsInteger("quantity", 0);
@@ -292,6 +296,8 @@ public class Tile extends RailsModel implements Comparable<Tile> {
     public String getPictureId() {
         return pictureId;
     }
+
+    public boolean isHidden() { return hide; }
 
     public boolean isPrepainted() {
         return prepainted;
