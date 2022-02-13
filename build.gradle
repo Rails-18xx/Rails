@@ -226,7 +226,7 @@ task buildExePackage(type: Exec) {
     }
 }
 
-task buildDmgPackage(type: Exec) {
+task buildpkgPackage(type: Exec) {
     doFirst {
         commandLine jpackage(),
                 '--verbose',
