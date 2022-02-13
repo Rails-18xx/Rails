@@ -2,7 +2,7 @@
 <GameOptions>
 	<GameOption name="ExtraMinorFor4p" values="No,0 Hamburg,16 Frankfurt" default="No"/>
 	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight"/>
-	<GameOption name="AlpineTokens" values="No,Yes" default="No"/>
+	<GameOption name="AlpineTokens" type="toggle" default="no"/>
 	<GameOption name="NoMapMode" type="toggle" default="no"/>
 	<GameOption name="MinorGreenTile" values="Never,HomeBaseOnly" default="Never"/>
 	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
