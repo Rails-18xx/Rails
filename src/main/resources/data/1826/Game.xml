@@ -47,7 +47,7 @@
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults>
-			<Reach base="stops" countTowns="yes"/>
+			<Reach base="stops"/>
 			<!-- Alternative values: 
 				base="hexes" for H-trains as in 1826, 1849 etc.
 				countTowns="no" for all trains in 1841, 18EU, etc.,
@@ -61,15 +61,20 @@
 				cities="double" if city-revenue is doubled (e.g. 1826 TGV).
 			-->
 		</Defaults>
-		<TrainType name="2H" majorStops="2" cost="100" quantity="8"/>
+		<TrainType name="2H" majorStops="2" cost="100" quantity="8">
+			<Reach base="hexes"/>
+		</TrainType>
 		<TrainType name="4H" majorStops="4" cost="200" quantity="7">
+			<Reach base="hexes"/>
             <NewPhase phaseName="4H"/>
 		</TrainType>
 		<TrainType name="6H" majorStops="6" cost="300" quantity="6">
-            <NewPhase phaseName="6H"/>
+			<Reach base="hexes"/>
+			<NewPhase phaseName="6H"/>
         </TrainType>
 		<TrainType name="10H" majorStops="10" cost="600" quantity="5">
-            <NewPhase phaseName="10H"/>
+			<Reach base="hexes"/>
+			<NewPhase phaseName="10H"/>
         </TrainType>
 		<TrainType name="E" majorStops="6" cost="800" quantity="4">
             <NewPhase phaseName="E"/>
