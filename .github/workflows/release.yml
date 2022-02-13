@@ -111,14 +111,14 @@ jobs:
       - name: Build jar
         run: ./gradlew -Pversion=${{ steps.tagName.outputs.tag }} clean build
       - name: Create Dmg Installer
-        run: ./gradlew -Pversion=${{ steps.tagName.outputs.tag }} buildDmgPackage
+        run: ./gradlew -Pversion=${{ steps.tagName.outputs.tag }} buildpkgPackage
       - name: Rename Installer
         run: ./gradlew renameExecutables
       - name: Upload Installer
         uses: actions/upload-artifact@v1
         with:
-          name: dmg
-          path: rails-18xx.dmg
+          name: pkg
+          path: rails-18xx.pkg
 
   publish:
     name: Publish Installers
@@ -144,10 +144,10 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: rpm
-      - name: Download dmg
+      - name: Download pkg
         uses: actions/download-artifact@v1
         with:
-          name: dmg
+          name: pkg
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -193,6 +193,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dmg/rails-18xx.dmg
-          asset_name: rails-18xx.dmg
+          asset_path: ./dmg/rails-18xx.pkg
+          asset_name: rails-18xx.pkg
           asset_content_type: application/octet-stream
