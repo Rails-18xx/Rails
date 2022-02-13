@@ -17,8 +17,9 @@ public class Access {
     public enum RunThrough {
         YES,
         NO,
-        TOKENONLY,
-        TRAINS
+        TOKENONLY, // Only if the company has a token laid
+        TRAINS,    // Only certain train categories (e.g. goods)
+        ALWAYS     // Even if fully tokened
     }
 
     public enum RunTo {
@@ -214,6 +215,7 @@ public class Access {
         String type = null; // If type is not defined the "default default" is defined
         if (Util.hasValue(typeString)) {
             try {
+                // FIXME type is never used - why this code?
                 type = typeString.toUpperCase();
             } catch (IllegalArgumentException e) {
                 throw new ConfigurationException ("Illegal value for "

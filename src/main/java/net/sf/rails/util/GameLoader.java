@@ -179,7 +179,7 @@ public class GameLoader {
             String name = option.getName();
             if (savedOptions.containsKey(name)) {
                 option.setSelectedValue(savedOptions.get(name));
-                log.debug("Assigned option from game file {}", name);
+                log.info("Assigned option from game file {}={}", name, option.getSelectedValue());
             } else {
                 // FIXME: Rails 2.0 add unassigned value as other default possibility
                 log.debug("Missing option in save file {} using default value instead", name);

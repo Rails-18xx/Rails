@@ -1722,7 +1722,18 @@ public class OperatingRound extends Round implements Observer {
         return cost;
     }
 
-    public boolean layTileCorrection(LayTile action) {
+    public boolean layTileCorrection (LayTile action) {
+        return layTileCorrection (action, false);
+    }
+
+    /** Lay a tile, but suppress reporting.
+     * Used to hide a behind-the-screen action to lay an invisible tile
+     * that adds functionality to the visible tile.
+     * @param action A LayTileCorrection action.
+     * @param suppressReport True if the action should not show up in the game report.
+     * @return True if successful.
+     */
+    public boolean layTileCorrection(LayTile action, boolean suppressReport) {
 
         Tile tile = action.getLaidTile();
         MapHex hex = action.getChosenHex();
@@ -1749,9 +1760,12 @@ public class OperatingRound extends Round implements Observer {
         // lays tile
         hex.upgrade(action);
 
-        String msg = LocalText.getText("CorrectMapLaysTileAt",
-                tile.toText(), hex.getId(), hex.getOrientationName(orientation));
-        ReportBuffer.add(this, msg);
+        if (!suppressReport) {
+            String msg = LocalText.getText("CorrectMapLaysTileAt",
+                    tile.toText(), hex.getId(), hex.getOrientationName(orientation));
+            ReportBuffer.add(this, msg);
+        }
+
         return true;
     }
 

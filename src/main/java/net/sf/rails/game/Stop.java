@@ -282,6 +282,8 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
                 return false;
             case TOKENONLY:
                 return hasTokenOf(company);
+            case ALWAYS:
+                return true; // E.g. 18EU 16th minor based in Hamburg
             default:
                 // Dead code, only to satisfy the compiler
                 return true;

@@ -34,6 +34,13 @@
         <Track from="city1" gauge="normal" to="side2"/>
         <Track from="city1" gauge="normal" to="side1"/>
     </Tile>
+    <Tile colour="red" id="-1903" name="HHEUmin0">
+        <!-- Underlying Hamburg tile for 16th minor -->
+        <Station id="city1" position="202" slots="1" type="OffMapCity" value="-1"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+    </Tile>
     <Tile colour="yellow" id="-3005" name="B/V">
         <Station id="city1" position="102" slots="1" type="City" city="B/V" value="30"/>
         <Station id="city2" position="402" slots="1" type="City" city="B/V" value="30"/>
@@ -271,5 +278,66 @@
         <Track from="city1" gauge="normal" to="side3"/>
         <Track from="city1" gauge="normal" to="side4"/>
         <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <!-- Below tiles are for the Alpine token variant only -->
+    <Tile colour="yellow" id="4007" name="7 w token">
+        <Station id="city1" position="0" slots="1" type="City"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+    </Tile>
+    <Tile colour="yellow" id="4008" name="8 w token">
+        <Station id="city1" position="0" slots="1" type="City"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="yellow" id="4009" name="9 w token">
+        <Station id="city1" position="0" slots="1" type="City"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="green" id="4080" name="80 w token">
+        <Station id="city1" position="0" slots="1" type="City"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+    </Tile>
+    <Tile colour="green" id="4081" name="81 w token">
+        <Station id="city1" position="0" slots="1" type="City"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="green" id="4082" name="82 w token">
+        <Station id="city1" position="0" slots="1" type="City"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="green" id="4083" name="83 w token">
+        <Station id="city1" position="0" slots="1" type="City"/>
+        <Track from="city1" gauge="normal" to="side2"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+    </Tile>
+    <Tile colour="brown" id="4544" name="544 w token">
+        <Station id="city1" position="0" slots="1" type="City"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side1"/>
+    </Tile>
+    <Tile colour="brown" id="4545" name="545 w token">
+        <Station id="city1" position="0" slots="1" type="City"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+    </Tile>
+    <Tile colour="brown" id="4546" name="546 w token">
+        <Station id="city1" position="0" slots="1" type="City"/>
+        <Track from="city1" gauge="normal" to="side3"/>
+        <Track from="city1" gauge="normal" to="side5"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city1" gauge="normal" to="side1"/>
     </Tile>
 </Tiles>

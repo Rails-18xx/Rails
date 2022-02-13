@@ -2,6 +2,7 @@ package net.sf.rails.game.specific._1835;
 
 import java.util.*;
 
+import net.sf.rails.game.*;
 import net.sf.rails.game.state.*;
 import net.sf.rails.game.state.Currency;
 import org.slf4j.Logger;
@@ -14,13 +15,6 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.GameDef;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.OperatingRound;
-import net.sf.rails.game.Phase;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PrivateCompany;
-import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.special.ExchangeForShare;
 import net.sf.rails.game.special.SpecialProperty;
@@ -65,7 +59,7 @@ public class OperatingRound_1835 extends OperatingRound {
         // In some variants minors don't run if BY has not floated
         if ( "Clemens".equalsIgnoreCase(GameOption.getValue(this, GameOption.VARIANT))
                 || "yes".equalsIgnoreCase(GameOption.getValue(this, "MinorsRequireFloatedBY"))) {
-            return companyManager.getPublicCompany(GameManager_1835.BY_ID).hasFloated();
+            return companyManager.getPublicCompany(GameDef_1835.BY_ID).hasFloated();
         }
         return true;
     }
@@ -93,7 +87,7 @@ public class OperatingRound_1835 extends OperatingRound {
                         SpecialProperty sp = Iterables.get(priv.getSpecialProperties(), 0);
                         if (sp instanceof ExchangeForShare) {
                             ExchangeForShare efs = (ExchangeForShare) sp;
-                            if (efs.getPublicCompanyName().equalsIgnoreCase(GameManager_1835.PR_ID)) {
+                            if (efs.getPublicCompanyName().equalsIgnoreCase(GameDef_1835.PR_ID)) {
                                 int share = efs.getShare();
                                 Player player = (Player) recipient;
                                 addIncomeDenialShare(player, share);
@@ -128,7 +122,7 @@ public class OperatingRound_1835 extends OperatingRound {
 
         Map<MoneyOwner, Integer> sharesPerRecipient = super.countSharesPerRecipient();
 
-        if (operatingCompany.value().getId().equalsIgnoreCase(GameManager_1835.PR_ID)) {
+        if (operatingCompany.value().getId().equalsIgnoreCase(GameDef_1835.PR_ID)) {
             for (Player player : deniedIncomeShare.viewKeySet()) {
                 if (!sharesPerRecipient.containsKey(player)) continue;
                 int share = deniedIncomeShare.get(player);
@@ -138,7 +132,7 @@ public class OperatingRound_1835 extends OperatingRound {
                     ReportBuffer.add(this, LocalText.getText("NoIncomeForPreviousOperation",
                             player.getId(),
                             share,
-                            GameManager_1835.PR_ID));
+                            GameDef_1835.PR_ID));
                 }
 
             }
@@ -187,7 +181,7 @@ public class OperatingRound_1835 extends OperatingRound {
 
     @Override
     public void resume() {
-        PublicCompany prussian = companyManager.getPublicCompany(GameManager_1835.PR_ID);
+        PublicCompany prussian = companyManager.getPublicCompany(GameDef_1835.PR_ID);
 
         if (prussian.hasFloated() && !prussian.hasOperated()
                 // PR has just started. Check if it can operate this round
@@ -238,7 +232,7 @@ public class OperatingRound_1835 extends OperatingRound {
         if (!super.validateSpecialTileLay(layTile)) return false;
 
         // Exclude the second OBB free tile if the first was laid in this round
-        if (layTile.getSpecialProperty().getLocationNameString().matches("M1(7|9)")
+        if (layTile.getSpecialProperty().getLocationNameString().matches("M1[57]")
                 && hasLaidExtraOBBTile.value()) return false;
 
         return true;
@@ -248,7 +242,7 @@ public class OperatingRound_1835 extends OperatingRound {
     public boolean layTile(LayTile action) {
 
         boolean hasJustLaidExtraOBBTile = action.getSpecialProperty() != null
-                && action.getSpecialProperty().getLocationNameString().matches("M1(5|7)");
+                && action.getSpecialProperty().getLocationNameString().matches("M1[57]");
 
         // The extra OBB tiles may not both be laid in the same round
         if (hasJustLaidExtraOBBTile) {
@@ -275,6 +269,20 @@ public class OperatingRound_1835 extends OperatingRound {
         if (!result && hasJustLaidExtraOBBTile) {
             // Revert if tile lay is unsuccessful
             hasLaidExtraOBBTile.set(false);
+        }
+
+        /* Close OBB if both tiles have been laid */
+        PrivateCompany obb = companyManager.getPrivateCompany((GameDef_1835.OBB_ID));
+        if (!obb.isClosed()) {
+            boolean toClose = true;
+            MapManager mapMgr = getRoot().getMapManager();
+            for (String hexId : List.of("M15", "M17")) {
+                if (mapMgr.getHex(hexId).isPreprintedTileCurrent()) {
+                    toClose = false;
+                    break;
+                }
+            }
+            if (toClose) obb.setClosed();
         }
 
         return result;
@@ -319,7 +327,7 @@ public class OperatingRound_1835 extends OperatingRound {
     protected void newPhaseChecks() {
         Phase phase = Phase.getCurrent(this);
         if ( "4".equals(phase.getId()) || "4+4".equals(phase.getId())
-                && !companyManager.getPublicCompany(GameManager_1835.PR_ID).hasStarted()
+                && !companyManager.getPublicCompany(GameDef_1835.PR_ID).hasStarted()
                 || "5".equals(phase.getId())
                 && !PrussianFormationRound.prussianIsComplete(gameManager)) {
             if (getStep() == GameDef.OrStep.DISCARD_TRAINS) {

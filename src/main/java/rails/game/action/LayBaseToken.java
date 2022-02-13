@@ -24,6 +24,7 @@ public class LayBaseToken extends LayToken {
     public static final int SPECIAL_PROPERTY = 2; // Directed by a special
     public static final int HOME_CITY = 3; // If city on home hex is undefined in 1st turn
     public static final int FORCED_LAY = 4; // Lay token even if there is no free slot (18Scan)
+    public static final int NON_CITY = 5; // Lay token on plain track or town (special cases)
     public static final int CORRECTION = 99; // Correction token lays
 
     protected int type = 0;
@@ -108,6 +109,8 @@ public class LayBaseToken extends LayToken {
     public int getType() {
         return type;
     }
+
+    public void setType(int type) { this.type = type; }
 
 
     @Override

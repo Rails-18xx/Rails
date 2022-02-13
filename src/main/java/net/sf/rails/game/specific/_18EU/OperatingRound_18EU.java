@@ -1,16 +1,18 @@
 package net.sf.rails.game.specific._18EU;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import net.sf.rails.common.GameOption;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rails.game.action.BuyTrain;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Owner;
+import rails.game.action.LayBaseToken;
+import rails.game.action.LayTile;
 
 
 /**
@@ -23,6 +25,8 @@ public class OperatingRound_18EU extends OperatingRound {
     protected final TrainCardType pullmannType;
 
     protected final BooleanState hasPullmannAtStart = new BooleanState(this, "ORCompanyHasPullmannAtStart");
+
+    private MapHex alpineTokenLocation = null;
 
     /**
      * Constructed via Configure
@@ -39,6 +43,112 @@ public class OperatingRound_18EU extends OperatingRound {
         hasPullmannAtStart.set(operatingCompany.value().getPortfolioModel()
                 .getTrainCardOfType(pullmannType) != null);
     }
+
+    protected List<LayTile> getNormalTileLays(boolean forReal) {
+
+        List<LayTile> currentNormalTileLays = super.getNormalTileLays(forReal);
+
+        PublicCompany company = operatingCompany.value();
+        if (GameOption.getValue(this, "MinorGreenTile").equalsIgnoreCase("HomeBaseOnly")
+                && company.getType().getId().equals("Minor")
+                && getRoot().getPhaseManager().hasReachedPhase("3")) {
+            MapHex homeBase = company.getHomeHexes().get(0);
+            if (homeBase.getCurrentTile().getColour()== TileColour.YELLOW) {
+                Map<String, Integer> colour = Map.of("green", 1);
+                LayTile greenHomeTile = new LayTile(getRoot(), List.of(homeBase), colour);
+
+                currentNormalTileLays.add (greenHomeTile);
+            }
+        }
+        return currentNormalTileLays;
+    }
+
+    /**
+     * Allow a minor laying a green tile on its home base if that variant is chosen
+     * @param tile The tile being laid
+     * @param update True if the allowed tile numbers per colour needs be updated
+     * @return True if the lay is valid
+     */
+    @Override
+    protected boolean checkNormalTileLay(Tile tile, boolean update) {
+        PublicCompany company = operatingCompany.value();
+        if (GameOption.getValue(this, "MinorGreenTile").equalsIgnoreCase("HomeBaseOnly")
+                && company.getType().getId().equalsIgnoreCase("Minor")
+                && tile.getColourText().equalsIgnoreCase("green")) {
+            // In any case, this is the only tile that can be laid
+            tileLaysPerColour.clear();
+            return true;
+        } else {
+            return super.checkNormalTileLay(tile, update);
+        }
+    }
+
+    @Override
+    public boolean layTile (LayTile action) {
+
+        boolean result = super.layTile(action);
+
+        // If a yellow tile is laid on an Alp and the Alpine variant is enabled,
+        // Ask the user if he wants to place a token there.
+        if (result
+                && action.getLaidTile() != null
+                && GameOption.getValue(this, "AlpineTokens").equalsIgnoreCase("Yes")
+                && action.getChosenHex().getLabel().equalsIgnoreCase("M")
+                && action.getLaidTile().getColour().toText().equalsIgnoreCase("yellow")
+                && action.getCompany().getNumberOfFreeBaseTokens() > 0) {
+            alpineTokenLocation = action.getChosenHex();
+            stepObject.set(GameDef.OrStep.LAY_TOKEN);
+        }
+
+        return result;
+    }
+
+    @Override
+    protected void setNormalTokenLays() {
+
+        if (alpineTokenLocation!= null) {
+            PublicCompany company = operatingCompany.value();
+            LayBaseToken layBaseToken = new LayBaseToken(getRoot(), List.of(alpineTokenLocation));
+            layBaseToken.setType (LayBaseToken.NON_CITY);
+            currentNormalTokenLays.add(layBaseToken);
+            alpineTokenLocation = null;
+        } else {
+            super.setNormalTokenLays();
+        }
+    }
+
+    @Override
+    public boolean layBaseToken(LayBaseToken action) {
+
+        if (action.getType() == LayBaseToken.NON_CITY) {
+
+            // Create space for the alpine token by inserting a dummy city.
+            // This will remain an underlying tile, the visible tile will not change.
+            MapHex hex = action.getChosenHex();
+            PublicCompany company = action.getCompany();
+            Tile tile = hex.getCurrentTile();
+
+            // Replace plain track tile with the corresponding virtual city tile.
+            // Add 4000 to the original tile number.
+            String oldTileNumber = hex.getCurrentTile().getId();
+            String newTileNumber = String.valueOf(Integer.valueOf(oldTileNumber) + 4000);
+
+            LayTile replacement = new LayTile (getRoot(), LayTile.CORRECTION);
+            replacement.setCompany(company);
+            replacement.setPlayerName(company.getPresident().getId());
+            replacement.setLocations(new ArrayList<>(Arrays.asList(hex)));
+            replacement.setActed();
+            replacement.setChosenHex(hex);
+            replacement.setLaidTile(getRoot().getTileManager().getTile(newTileNumber));
+            replacement.setOrientation(hex.getCurrentTileRotation().getTrackPointNumber());
+
+            layTileCorrection (replacement, true);
+            action.setChosenStation(1);
+        }
+
+        return super.layBaseToken (action);
+    }
+
 
     /**
      * In 18EU, the part of the split revenue that goes to the

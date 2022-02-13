@@ -160,6 +160,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     private String stopName;
     private String reservedForCompanyName = null;
     private PublicCompany reservedForCompany = null;
+    private String label = "";
 
     /**
      * Values if this is an off-board hex
@@ -279,6 +280,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         borderTemplate = tag.getAttributeAsString("border");
 
         tileCost = tag.getAttributeAsIntegerList("cost");
+        label = tag.getAttributeAsString("label", "");
 
         // Off-board revenue values
         valuesPerPhase = tag.getAttributeAsIntegerList("value");
@@ -531,6 +533,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     public Access getAccess() {
         return access;
     }
+
+    public String getLabel() { return label; }
 
     /**
      * new wrapper function for the LayTile action that calls the actual upgrade

@@ -1118,6 +1118,7 @@ Payout,m3,95,1,100
  
 CompanyOperates,M3,m4
 LaysTileAtFor,M3,9,M17,NW,50
+PrivateCloses,OBB
 CompanyRevenue,M3,180
 CompanySplits,M3,180
 RECEIVES,M3,90
@@ -1208,7 +1209,7 @@ CompanyWithholds,WT,140
 PRICE_MOVES_LOG,WT,64,A6,54,A7
  
 EndOfOperatingRound,8.1
-ORWorthIncrease,m1,8.1,308
+ORWorthIncrease,m1,8.1,188
 ORWorthIncrease,m2,8.1,226
 ORWorthIncrease,m3,8.1,428
 ORWorthIncrease,m4,8.1,288
@@ -1228,7 +1229,6 @@ StartFormationRound,PR
  
 EndOfFormationRoundNoInterrupt,PR
 START_OR,8.2
-ReceivesFor,m1,10,OBB
 ReceivesFor,m1,15,PfB
  
 CompanyOperates,M3,m4
@@ -1251,8 +1251,8 @@ CompanyRevenue,BY,100
 CompanyPaysOutFull,BY,100
 Payout,m4,40,4,10
 Payout,m3,10,1,10
-Payout,m1,30,3,10
 Payout,m2,20,2,10
+Payout,m1,30,3,10
 PRICE_MOVES_LOG,BY,166,G1,186,H1
 BuysTrain,BY,4+4,IPO,440
 NewTrainAvailable,4+4,5
@@ -1266,14 +1266,13 @@ CompanyRevenue,PR,120
 CompanyPaysOutFull,PR,120
 Payout,m4,12,2,5
 Payout,m3,42,7,5
-Payout,m1,24,4,5
 Payout,m2,30,5,5
+Payout,m1,24,4,5
 PRICE_MOVES_LOG,PR,154,I4,172,J4
 BuysTrain,PR,5,IPO,500
 FirstTrainBought,5
 StartOfPhase,5
 PhaseClosesAllPrivates,
-PrivateCloses,OBB
 PrivateCloses,PfB
 CompanyDiscardsTrain,BA,3,Pool
 CompanyDiscardsTrain,SX,3,Pool
@@ -1317,7 +1316,7 @@ NewTrainAvailable,5+5,6
 FirstTrainBought,5+5
  
 EndOfOperatingRound,8.2
-ORWorthIncrease,m1,8.2,-131
+ORWorthIncrease,m1,8.2,-21
 ORWorthIncrease,m2,8.2,75
 ORWorthIncrease,m3,8.2,83
 ORWorthIncrease,m4,8.2,375
@@ -1327,7 +1326,7 @@ Has,BA,530
 Has,WT,38
 Has,HE,0
 Has,PR,1641
-Has,m1,350
+Has,m1,340
 Has,m2,379
 Has,m3,616
 Has,m4,842
@@ -1375,7 +1374,7 @@ Has,WT,290
 Has,HE,0
 Has,MS,720
 Has,PR,1641
-Has,m1,26
+Has,m1,16
 Has,m2,131
 Has,m3,376
 Has,m4,628
@@ -1451,7 +1450,7 @@ Has,WT,290
 Has,HE,0
 Has,MS,100
 Has,PR,2111
-Has,m1,283
+Has,m1,273
 Has,m2,548
 Has,m3,579
 Has,m4,831
@@ -1537,7 +1536,7 @@ Has,WT,290
 Has,HE,0
 Has,MS,30
 Has,PR,2041
-Has,m1,739
+Has,m1,729
 Has,m2,1125
 Has,m3,1132
 Has,m4,1317
@@ -1632,7 +1631,7 @@ Has,WT,290
 Has,HE,0
 Has,MS,30
 Has,PR,601
-Has,m1,1279
+Has,m1,1269
 Has,m2,1664
 Has,m3,1646
 Has,m4,1925

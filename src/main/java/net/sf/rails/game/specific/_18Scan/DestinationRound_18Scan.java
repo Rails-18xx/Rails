@@ -138,7 +138,7 @@ public class DestinationRound_18Scan extends OperatingRound {
             replacement.setOrientation(hex.getCurrentTileRotation().getTrackPointNumber());
 
             action.setChosenStation(1);
-            layTileCorrection (replacement);
+            layTileCorrection (replacement, true);
 
         }
 

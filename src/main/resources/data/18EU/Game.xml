@@ -55,7 +55,11 @@
 			<Reach base="stops" countTowns="no"/>
 			<Score towns="yes"/>
 		</Defaults>
-		<TrainType name="2" majorStops="2" cost="100" quantity="15"/>
+		<TrainType name="2" majorStops="2" cost="100" quantity="15">
+				<IfOption name="ExtraMinorFor4p" value="0 Hamburg,16 Frankfurt">
+					<Attributes quantity="16"/>
+				</IfOption>
+		</TrainType>
 		<TrainType name="3" majorStops="3" cost="200">
 			<NewPhase phaseName="3"/>
 			<IfOption name="Extra3Trains" value="0">
@@ -124,5 +128,8 @@
 	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
 		<Modifier class="net.sf.rails.game.specific._18EU.OffBoardRevenueModifier"/>
 		<Modifier class="net.sf.rails.game.specific._18EU.PullmanRevenueModifier"/>
+		<IfOption name="AlpineTokens" value="Yes">
+			<Modifier class="net.sf.rails.game.specific._18EU.AlpineTokenRevenueModifier"/>
+		</IfOption>
 	</Component>
 </ComponentManager>
