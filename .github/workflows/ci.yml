@@ -78,4 +78,4 @@ jobs:
       - name: Build jar
         run: ./gradlew clean build
       - name: Create Dmg Installer
-        run: ./gradlew buildDmgPackage
+        run: ./gradlew buildpkgPackage
