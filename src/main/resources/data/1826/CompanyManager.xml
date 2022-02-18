@@ -2,7 +2,7 @@
 <CompanyManager>
 	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 		<ClosingConditions>
-			<Phase>5</Phase>
+			<Phase>10H</Phase>
 		</ClosingConditions>
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="1.5"/>
 		<Tradeable toPlayer="yes"/>
@@ -17,6 +17,7 @@
 			<Certificate shares="1" number="3"/>
 			<Certificate shares="1" number="5" available="no"/>
 		</Shares>
+		<Payout split="allowed"/>
 		<BaseTokens>
 			<HomeBase lay="firstOR"/>
 			<LayCost method="distance"/>
@@ -60,12 +61,13 @@
 	<Company name="Alsatian" type="Private" basePrice="220" revenue="30"
 		longname="Ligne - Strasbourg-Bâle"></Company>
 
-	<Company name="A" type="Public" tokens="4" fgColour="FFFFFF" bgColour="120A8F"
+	<Company name="Als" type="Public" tokens="4" fgColour="FFFFFF" bgColour="120A8F"
 		longname="Chemin de Fer d'Alsace">
-		<Home hex="G19"/>
+		<Home hex="G19"/> <!-- Strasbourg -->
+		<Destination hex="L14"/> <!-- Lyon-->
 	</Company>
 
-	<Company name="B" type="Public" tokens="4" fgColour="FFFFFF" bgColour="2E6444"
+	<Company name="Belg" type="Public" tokens="4" fgColour="FFFFFF" bgColour="2E6444"
 		longname="Chemin de Fer de L'Etat Belge">
 		<Home hex="C13"/>
 		<Shares unit="10">
@@ -77,42 +79,50 @@
 
 	<Company name="Est" type="Public" tokens="4" fgColour="000000" bgColour="FF6600"
 		longname="Chemin de Fer de L'Est">
-		<Home hex="G9" city="2"/>
+		<Home hex="G9" city="2"/> <!-- Paris (E) -->
+		<Destination hex="F16"/> <!-- Nancy -->
 	</Company>
 
 	<Company name="GC" type="Public" tokens="4" fgColour="000000" bgColour="BCD2EE"
 		longname="Grand Central de France">
-		<Home hex="L14"/>
+		<Home hex="L14"/> <!-- Lyon -->
+		<Destination hex="M3"/> <!-- Bordeaux -->
 	</Company>
 
 	<Company name="Midi" type="Public" tokens="4" fgColour="FFFFFF" bgColour="308014"
 		longname="Chemin de Fer du Midi">
-		<Home hex="M3"/>
+		<Home hex="M3"/> <!-- Bordeaux -->
+		<Destination hex="N16"/> <!-- Marseille -->
 	</Company>
 	
-	<Company name="N" type="Public" tokens="4" fgColour="FFFFFF" bgColour="EE0000"
+	<Company name="Nord" type="Public" tokens="4" fgColour="FFFFFF" bgColour="EE0000"
 		longname="Chemin de Fer du Nord">
-		<Home hex="G9" city="1"/>
+		<Home hex="G9" city="1"/> <!-- Paris (NE) -->
+		<Destination hex="C11"/> <!-- Lille -->
 	</Company>
 
 	<Company name="Ouest" type="Public" tokens="4" fgColour="000000" bgColour="FF92BB"
 		longname="Chemin de Fer de L'Ouest">
-		<Home hex="G9" city="5"/>
+		<Home hex="G9" city="5"/> <!-- Paris (W) -->
+		<Destination hex="H2"/> <!-- Rennes -->
 	</Company>
 	
 	<Company name="Paris" type="Public" tokens="4" fgColour="000000" bgColour="CECC15"
 		longname="Chemin de Fer de Paris">
-		<Home hex="G9" city="6"/>
+		<Home hex="G9" city="6"/> <!-- Paris (NW) -->
+		<Destination hex="E5"/> <!-- Le Havre -->
 	</Company>
 
 	<Company name="PLM" type="Public" tokens="4" fgColour="FFFFFF" bgColour="691F01"
 		longname="Chemin de Fer Paris-Lyon-Méditerranée">
-		<Home hex="G9" city="3"/>
+		<Home hex="G9" city="3"/> <!-- Paris (SE) -->
+		<Destination hex="L14"/> <!-- Lyon -->
 	</Company>
 
 	<Company name="PO" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000CD"
 		longname="Chemin de Fer Paris-Orléans">
-		<Home hex="G9" city="4"/>
+		<Home hex="G9" city="4"/> <!-- Paris (SW) -->
+		<Destination hex="K5"/> <!--Poitiers -->
 	</Company>
 
 	<Company name="Etat" type="National" tokens="4" fgColour="FFFFFF" bgColour="000000"
@@ -124,18 +134,18 @@
 	</Company>
 	
 	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
-		<Bidding initial="5" minimum="5" increment="1"/>
+		<Bidding initial="5" minimum="5" increment="5"/>
 		<Item name="Bridge" type="Private" basePrice="20"/>
 		<Item name="Mail" type="Private" basePrice="40"/>
 		<Item name="Algerian" type="Private" basePrice="70"/>
 		<Item name="Belgian" type="Private" basePrice="110">
-			<SubItem name="B" type="Public" />
+			<SubItem name="Belg" type="Public" />
 		</Item>
 		<Item name="Parisian" type="Private" basePrice="160">
 			<SubItem name="Paris" type="Public" />
 		</Item>
 		<Item name="Alsatian" type="Private" basePrice="220">
-			<SubItem name="A" type="Public" president="yes"/>
+			<SubItem name="Als" type="Public" president="yes"/>
 		</Item>
 	</StartPacket>
 </CompanyManager>

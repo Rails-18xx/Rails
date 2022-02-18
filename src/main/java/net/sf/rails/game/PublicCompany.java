@@ -256,7 +256,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     protected boolean poolPaysOut = false;
 
+    /* not used
     protected boolean treasuryPaysOut = false;
+     */
 
     protected boolean canHoldOwnShares = false;
 
@@ -604,7 +606,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         Tag ownSharesTag = tag.getChild("TreasuryCanHoldOwnShares");
         if (ownSharesTag != null) {
             canHoldOwnShares = true;
-            treasuryPaysOut = true;
+            //treasuryPaysOut = true;
 
             maxPercOfOwnShares = ownSharesTag.getAttributeAsInteger("maxPerc", maxPercOfOwnShares);
         }
