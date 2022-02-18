@@ -264,7 +264,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     protected boolean mayTradeShares = false;
 
-    protected boolean mustHaveOperatedToTradeShares = false;
+    protected boolean mustHaveOperatedToBuyShares = false;
+    protected boolean mustHaveOperatedToSellShares = false;
 
     protected List<Tag> certificateTags = null;
 
@@ -691,10 +692,13 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             }
         }
 
-        Tag sellSharesTag = tag.getChild("TradeShares");
-        if (sellSharesTag != null) {
+        Tag tradeSharesTag = tag.getChild("TradeShares");
+        if (tradeSharesTag != null) {
             mayTradeShares = true;
-            mustHaveOperatedToTradeShares = sellSharesTag.getAttributeAsBoolean("mustHaveOperated", mustHaveOperatedToTradeShares);
+            mustHaveOperatedToBuyShares = tradeSharesTag
+                    .getAttributeAsBoolean("mustHaveOperatedToBuy", mustHaveOperatedToBuyShares);
+            mustHaveOperatedToSellShares = tradeSharesTag
+                    .getAttributeAsBoolean("mustHaveOperatedToSell", mustHaveOperatedToSellShares);
         }
 
         Tag loansTag = tag.getChild("Loans");
@@ -1049,8 +1053,16 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return true;
     }
 
+    public boolean mustHaveOperatedToSellShares() {
+        return mustHaveOperatedToSellShares;
+    }
+
+    public boolean mustHaveOperatedToBuyShares() {
+        return mustHaveOperatedToBuyShares;
+    }
+
     public boolean mustHaveOperatedToTradeShares() {
-        return mustHaveOperatedToTradeShares;
+        return mustHaveOperatedToSellShares && mustHaveOperatedToBuyShares;
     }
 
     public void start(StockSpace startSpace) {

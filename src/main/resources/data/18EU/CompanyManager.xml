@@ -34,7 +34,7 @@
 		</BaseTokens>
 		<Payout split="allowed" mustExceedPriceToMove="yes"/>
 		<Trains limit="4,3,2"/>
-		<TradeShares mustHaveOperated="yes"/>
+		<TradeShares mustHaveOperatedToSell="yes" mustHaveOperatedToBuy="no"/>
 	</CompanyType>
 
 	<IfOption name="ExtraMinorFor4p" value="0 Hamburg">

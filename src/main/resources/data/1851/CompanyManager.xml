@@ -20,7 +20,7 @@
 		<!--TileLays>
 			<Number colour="yellow" phase="3,4,5,6,8" number="2"/>
 		</TileLays-->
-		<TradeShares mustHaveOperated="yes"/>
+		<TradeShares mustHaveOperatedToSell="yes" mustHaveOperatedToBuy="no"/>
 	</CompanyType>
 	<Company name="L&amp;O" type="Private" basePrice="200" revenue="5" longname="Lexington &amp; Ohio Railroad">
 		<Info key="ComesWithPresidency" parm="L&amp;N,20"></Info></Company>

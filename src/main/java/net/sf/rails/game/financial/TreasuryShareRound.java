@@ -34,6 +34,9 @@ public class TreasuryShareRound extends StockRound {
     protected Player sellingPlayer;
     protected PublicCompany operatingCompany;
 
+    private boolean mayBuy;
+    private boolean maySell;
+
     private final BooleanState hasBought = new BooleanState(this, "hasBought");
     private final BooleanState hasSold = new BooleanState(this, "hasSold");
 
@@ -51,6 +54,11 @@ public class TreasuryShareRound extends StockRound {
         log.info("Treasury share trading round started");
 
         operatingCompany = ((OperatingRound) parentRound).getOperatingCompany();
+        mayBuy = operatingCompany.hasOperated()
+                || !operatingCompany.mustHaveOperatedToBuyShares();
+        maySell = operatingCompany.hasOperated()
+                || !operatingCompany.mustHaveOperatedToSellShares();
+
         sellingPlayer = operatingCompany.getPresident();
         getRoot().getPlayerManager().setCurrentPlayer(sellingPlayer);
         currentPlayer = sellingPlayer;
@@ -70,11 +78,8 @@ public class TreasuryShareRound extends StockRound {
     public boolean setPossibleActions() {
         possibleActions.clear();
 
-        if (operatingCompany.mustHaveOperatedToTradeShares()
-                && !operatingCompany.hasOperated()) return true;
-
-        if (!hasSold.value()) setBuyableCerts();
-        if (!hasBought.value()) setSellableCerts();
+        if (mayBuy && !hasSold.value()) setBuyableCerts();
+        if (maySell && !hasBought.value()) setSellableCerts();
 
         if (possibleActions.isEmpty()) {
             // TODO Finish the round before it started...
@@ -86,10 +91,8 @@ public class TreasuryShareRound extends StockRound {
     }
 
     /**
-     * Create a list of certificates that a player may buy in a Stock Round,
-     * taking all rules into account.
-     *
-     * @return List of buyable certificates.
+     * Create a list of certificates that a company may buy from the Pool
+     * in a TreasuryShareRound, taking all rules into account.
      */
     @Override
     public void setBuyableCerts() {
@@ -150,8 +153,6 @@ public class TreasuryShareRound extends StockRound {
      *
      * TODO: There is much almost-duplicate code in this and other (pseudo-)stock rounds,
      * and also in the SOH operating round. Perhaps some more generic code can be written.
-     *
-     * @return List of sellable certificates.
      */
     public void setSellableCerts() {
         int price;
