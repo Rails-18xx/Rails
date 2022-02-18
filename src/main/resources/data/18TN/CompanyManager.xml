@@ -11,13 +11,14 @@
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
 		<Float percentage="60"/>
-		<ShareUnit percentage="10"/>
 		<BaseTokens>
 			<HomeBase lay="firstOR"/>
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="8"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
 		<Trains limit="4,3,2"/>
         <CanUseSpecialProperties/>
         <!--TileLays>

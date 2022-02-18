@@ -345,7 +345,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * Deprecated, to be replaced by percOfPriceToReachPerJump (next item)
      */
     @Deprecated
-    protected boolean payoutMustExceedPriceToMove = false;
+    //protected boolean payoutMustExceedPriceToMove = false;
 
     /**
      * Percentages of share price that must be reached by the
@@ -359,10 +359,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * 18Scan: 100,200; SOH: 101,201 - both one resp. two spaces.
      * An extreme case is 1825: "51,200,300,400".
      */
-    protected List<Integer> percOfPriceToReachPerJump;
+    protected List<Integer> percOfPriceToReachPerJump = List.of (1); // Default
 
     // Remember the tag until finishConfiguration()
-    private Tag adjustPriceOnPayoutTag;
+    private Tag payoutTag;
 
     /**
      * Multiple certificates those that represent more than one nominal share unit (except president share)
@@ -588,7 +588,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             hasParPrice = priceTag.getAttributeAsBoolean("par", hasStockPrice);
         }
 
-        Tag payoutTag = tag.getChild("Payout");
+        if (tag.getChild("Payout") != null) payoutTag = tag.getChild("Payout");
+        // Process in finishConfiguration, where we come only once
+        /*
         if (payoutTag != null) {
             String split = payoutTag.getAttributeAsString("split", "no");
             splitAlways = "always".equalsIgnoreCase(split);
@@ -601,7 +603,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (priceJumpsTag != null) {
             // Process it later
             adjustPriceOnPayoutTag = priceJumpsTag;
-        }
+        }*/
 
         Tag ownSharesTag = tag.getChild("TreasuryCanHoldOwnShares");
         if (ownSharesTag != null) {
@@ -677,12 +679,13 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
          * must be defined. XML parsing will use the lowest unit size for validation.
          * The first unit size specified will be the initial one.
          */
-        List<Tag> certTags = tag.getChildren("Certificate");  // Old style
+        //List<Tag> certTags = tag.getChildren("Certificate");  // Old style
         Tag sharesTag = tag.getChild("Shares"); // New style
-        if (certTags != null) {  // Old style
-            certificateTags = certTags;
-            requiredNumberOfShares = 100 / shareUnit.value();
-        } else if (sharesTag != null) { // New style
+        //if (certTags != null) {  // Old style
+        //    certificateTags = certTags;
+        //    requiredNumberOfShares = 100 / shareUnit.value();
+        //} else
+        if (sharesTag != null) { // New style
             certificateTags = sharesTag.getChildren ("Certificate");
             // Will be parsed in 'finishConfiguration()' below.
 
@@ -771,6 +774,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             throws ConfigurationException {
 
         // Configure the stock price increase details
+        /*
         if (adjustPriceOnPayoutTag != null) {
             percOfPriceToReachPerJump = adjustPriceOnPayoutTag.getAttributeAsIntegerList("percPerJump");
         }
@@ -779,7 +783,23 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             percOfPriceToReachPerJump = new ArrayList<>(1);
             int defaultPercToReach = payoutMustExceedPriceToMove ? 100 : 1;
             percOfPriceToReachPerJump.add(defaultPercToReach);
+        }*/
+
+        if (payoutTag != null) {
+            String split = payoutTag.getAttributeAsString("split", "no");
+            splitAlways = "always".equalsIgnoreCase(split);
+            splitAllowed = "allowed".equalsIgnoreCase(split);
+
+            // payoutMustExceedPriceToMove = payoutTag.getAttributeAsBoolean("mustExceedPriceToMove", false);
+            percOfPriceToReachPerJump = payoutTag.getAttributeAsIntegerList("percPerJump", List.of(1));
         }
+/*
+        Tag priceJumpsTag = tag.getChild("AdjustPriceOnPayout");
+        if (priceJumpsTag != null) {
+            // Process it later
+            adjustPriceOnPayoutTag = priceJumpsTag;
+
+        }*/
 
         if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = IntegerState.create(this, "currentNumberOfLoans");

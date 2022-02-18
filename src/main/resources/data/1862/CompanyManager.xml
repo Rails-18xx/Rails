@@ -2,8 +2,9 @@
 <CompanyManager>
     
     <CompanyType name="ParliamentCharter" class="net.sf.rails.game.specific._1862.ParliamentCharter">
-		<ShareUnit percentage="100"/>
-		<Certificate type="President" shares="1"/>
+		<Shares unit="100">
+			<Certificate type="President" shares="1"/>
+		</Shares>
     </CompanyType>
 
     <Company name="E&amp;H" type="ParliamentCharter"/>
@@ -30,9 +31,10 @@
     <CompanyType name="Public" class="net.sf.rails.game.specific._1862.PublicCompany_1862">
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
-		<ShareUnit percentage="10"/>
-		<Certificate type="President" shares="3"/>
-		<Certificate shares="1" number="7"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="3"/>
+			<Certificate shares="1" number="7"/>
+		</Shares>
 		<Capitalisation type="whenBought"/>
 		<BaseTokens>
 			<LayCost method="sequence" cost="0,40,100"/>

@@ -6,9 +6,10 @@
 	<CompanyType name="Public" class="net.sf.rails.game.specific._1856.PublicCompany_1856">
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
-		<ShareUnit percentage="10"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="8"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
 		<Capitalisation type="whenBought"/>
 		<BaseTokens>
 			<LayCost method="sequence" cost="0,40,100"/>
@@ -20,9 +21,10 @@
 	</CompanyType>
 	<CompanyType name="State" class="net.sf.rails.game.specific._1856.PublicCompany_CGR">
 		<PoolPaysOut/>
-		<ShareUnit percentage="5"/>
-		<Certificate type="President" shares="2" certificateCount="1"/>
-		<Certificate shares="1" number="18" certificateCount="0.5"/>
+		<Shares unit="5,10">
+			<Certificate type="President" shares="2" certificateCount="1"/>
+			<Certificate shares="1" number="18" certificateCount="0.5"/>
+		</Shares>
 		<BaseTokens>
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>

@@ -6,8 +6,9 @@
 		</ClosingConditions>
 	</CompanyType>
 	<CompanyType name="Minor" class="net.sf.rails.game.specific._18Scan.PublicCompany_18Scan" fgColour="FFCC11" bgColour="9370DB">
-		<ShareUnit percentage="100"/>
-		<Certificate type="President" shares="1"/>
+		<Shares unit="100">
+			<Certificate type="President" shares="1"/>
+		</Shares>
 		<StockPrice market="no"/>
 		<Payout split="always"/>
 		<BaseTokens>
@@ -27,10 +28,11 @@
 		<StockPrice par="no"/>
 		<TreasuryCanHoldOwnShares maxPerc="100"/>
 		<Float percentage="20"/>
-		<ShareUnit percentage="10"/>
-		<AdjustPriceOnPayout percPerJump="100,200"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="8"/>
+		<Payout percPerJump="100,200"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
 		<BaseTokens>
 			<HomeBase lay="firstOR"/>
 			<LayCost method="sequence" cost="0,40,100"/>
@@ -41,11 +43,12 @@
 	<CompanyType name="State" class="net.sf.rails.game.PublicCompany">
 		<Capitalisation type="part" shares="7"/>
 		<StockPrice par="yes"/>
-		<ShareUnit percentage="10"/>
-		<AdjustPriceOnPayout percPerJump="100,200"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="5"/>
-		<Certificate shares="1" number="3" available="no"/>
+		<Payout percPerJump="100,200"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="5"/>
+			<Certificate shares="1" number="3" available="no"/>
+		</Shares>
 		<Float percentage="50"/>
 		<BaseTokens>
 			<LayCost method="sequence" cost="100"/>

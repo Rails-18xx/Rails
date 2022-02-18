@@ -11,15 +11,16 @@
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
 		<Float percentage="60"/>
-		<ShareUnit percentage="10"/>
 		<BaseTokens>
 			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
 			<HomeBase lay="firstOR"/>
 			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="8"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
 		<Trains limit="4,3,2"/>
         <CanUseSpecialProperties/>
         <IfOption name="Variant" value="Coalfields,Coalfields&amp;Reading">
@@ -147,8 +148,10 @@
         <Company name="RDG" type="Public" tokens="2" fgColour="000000" bgColour="C8F526"
                 longname="Reading Railroad">
             <Home hex="H14"/>
-			<Certificate type="President" shares="3"/>
-			<Certificate shares="1" number="7"/>
+			<Shares unit="10">
+				<Certificate type="President" shares="3"/>
+				<Certificate shares="1" number="7"/>
+			</Shares>
         </Company>
     </IfOption>
     <IfOption name="Variant" value="Wabash">

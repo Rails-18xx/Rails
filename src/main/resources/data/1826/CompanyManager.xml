@@ -17,7 +17,7 @@
 			<Certificate shares="1" number="3"/>
 			<Certificate shares="1" number="5" available="no"/>
 		</Shares>
-		<Payout split="allowed"/>
+		<Payout split="allowed" percPerJump="100"/>
 		<BaseTokens>
 			<HomeBase lay="firstOR"/>
 			<LayCost method="distance"/>
@@ -31,9 +31,10 @@
 		<Capitalisation type="incremental"/>
 		<StockPrice par="no"/>
 		<Float percentage="50"/>
-		<ShareUnit percentage="10"/>
-		<Certificate type="President" shares="1"/>
-		<Certificate shares="1" number="9"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="1"/>
+			<Certificate shares="1" number="9"/>
+		</Shares>
 		<BaseTokens>
 			<HomeBase lay="firstOR"/>
 			<LayCost method="distance"/>

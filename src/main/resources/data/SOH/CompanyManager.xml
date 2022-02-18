@@ -13,17 +13,18 @@
 		<CanBuyPrivates/>
 		<!-- ? Treasury pays out? -->
 		<Float percentage="60"/><!-- equal to phase number-->
-		<ShareUnit percentage="10"/>
-		<AdjustPriceOnPayout percPerJump="101,201"/>
+		<Payout percPerJump="101,201"/>
 		<BaseTokens>
 			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
 			<HomeBase lay="firstOR"/>
 			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="8"/>
-		<TradeShares mustHaveOperated="no"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+		<TradeShares/>
 		<Trains limit="4,3,2"/>
         <CanUseSpecialProperties/>
 	</CompanyType>
