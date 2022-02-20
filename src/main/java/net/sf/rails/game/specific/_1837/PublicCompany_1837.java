@@ -103,15 +103,11 @@ public class PublicCompany_1837 extends PublicCompany {
      * @see net.sf.rails.game.PublicCompany#payout(int)
      * TODO: rewrite using the new price rise configuration framework (EV)
      */
-    public void payout(int amount, boolean b) {
-        if (amount == 0) return;
+    public void payout(int amount, boolean split) {
+        if (amount == 0 || !hasStockPrice) return;
 
         // Move the token
-        if (hasStockPrice
-                && (!payoutMustExceedPriceToMove
-                        || amount >= currentPrice.getPrice().getPrice())) {
-           ((StockMarket_1837) getRoot().getStockMarket()).payOut(this, b);
-        }
+       ((StockMarket_1837) getRoot().getStockMarket()).payOut(this, split);
 
     }
     /* (non-Javadoc)

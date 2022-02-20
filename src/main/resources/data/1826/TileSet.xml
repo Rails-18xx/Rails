@@ -64,11 +64,11 @@
 
 	<!-- Green tiles -->
     <Tile id="14" quantity="3">
-		<Upgrade id="63" hex="-B12,-C15"/>
+		<Upgrade id="63" hex="-B12,C15"/>
 		<Upgrade id="611" hex="B12,C15"/>	
 	</Tile>
     <Tile id="15" quantity="3">
-		<Upgrade id="63" hex="-B12,-C15"/>
+		<Upgrade id="63" hex="-B12,C15"/>
 		<Upgrade id="611" hex="B12,C15"/>	
 	</Tile>
     <Tile id="16" quantity="1">
@@ -112,7 +112,7 @@
  		<Upgrade id="515" />
 	</Tile>
 	<Tile id="619" quantity="3">
-		<Upgrade id="63" hex="-B12,-C15"/>
+		<Upgrade id="63" hex="-B12,C15"/>
 		<Upgrade id="611" hex="B12,C15"/>	
 	</Tile>
     

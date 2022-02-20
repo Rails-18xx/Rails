@@ -256,7 +256,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     protected boolean poolPaysOut = false;
 
+    /* not used
     protected boolean treasuryPaysOut = false;
+     */
 
     protected boolean canHoldOwnShares = false;
 
@@ -289,7 +291,22 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * What percentage of ownership constitutes "one share"
      */
-    protected IntegerState shareUnit = IntegerState.create(this, "shareUnit", DEFAULT_SHARE_UNIT);
+    protected IntegerState shareUnit
+            = IntegerState.create(this, "shareUnit", DEFAULT_SHARE_UNIT);
+
+    /**
+     * New: an array of unit sizes that may occur. Default: 10.
+     * Examples:
+     *   1826 French majors: first 20, then 10.
+     *   1856 CGR: either 5 or 10.
+     */
+    protected List<Integer> shareUnitSizes
+            = new ArrayList<> (List.of(DEFAULT_SHARE_UNIT));
+
+    /** The number of shares to be specified by <Certificate> tags.
+     * E.g., for 1826 5/10-share companies 10 shares must be configured.
+     */
+    int requiredNumberOfShares;
 
     /**
      * What number of share units relates to the share price
@@ -329,7 +346,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * Deprecated, to be replaced by percOfPriceToReachPerJump (next item)
      */
     @Deprecated
-    protected boolean payoutMustExceedPriceToMove = false;
+    //protected boolean payoutMustExceedPriceToMove = false;
 
     /**
      * Percentages of share price that must be reached by the
@@ -337,15 +354,16 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * Add 1 if a percentage must be exceeded instead of reached.
      * The default will be "1" to model the common rule that
      * any payout amount > 0 causes a price move to the right (or up).
+     *
      * 18EU: 100 - this corresponds to mustExceedPriceToMove="yes"
      * ('exceed' to read here as 'equals or exceeds').
      * 18Scan: 100,200; SOH: 101,201 - both one resp. two spaces.
      * An extreme case is 1825: "51,200,300,400".
      */
-    protected List<Integer> percOfPriceToReachPerJump;
+    protected List<Integer> percOfPriceToReachPerJump = List.of (1); // Default
 
     // Remember the tag until finishConfiguration()
-    private Tag adjustPriceOnPayoutTag;
+    private Tag payoutTag;
 
     /**
      * Multiple certificates those that represent more than one nominal share unit (except president share)
@@ -514,6 +532,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         playerShareLimit = tag.getAttributeAsInteger("playerShareLimit", playerShareLimit);
 
+        /* Old style share unit definition, see also <Shares> below. */
         Tag shareUnitTag = tag.getChild("ShareUnit");
         if (shareUnitTag != null) {
             shareUnit.set(shareUnitTag.getAttributeAsInteger("percentage", DEFAULT_SHARE_UNIT));
@@ -570,7 +589,9 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             hasParPrice = priceTag.getAttributeAsBoolean("par", hasStockPrice);
         }
 
-        Tag payoutTag = tag.getChild("Payout");
+        if (tag.getChild("Payout") != null) payoutTag = tag.getChild("Payout");
+        // Process in finishConfiguration, where we come only once
+        /*
         if (payoutTag != null) {
             String split = payoutTag.getAttributeAsString("split", "no");
             splitAlways = "always".equalsIgnoreCase(split);
@@ -583,12 +604,12 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (priceJumpsTag != null) {
             // Process it later
             adjustPriceOnPayoutTag = priceJumpsTag;
-        }
+        }*/
 
         Tag ownSharesTag = tag.getChild("TreasuryCanHoldOwnShares");
         if (ownSharesTag != null) {
             canHoldOwnShares = true;
-            treasuryPaysOut = true;
+            //treasuryPaysOut = true;
 
             maxPercOfOwnShares = ownSharesTag.getAttributeAsInteger("maxPerc", maxPercOfOwnShares);
         }
@@ -644,11 +665,37 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             }
         }
 
-        // TODO: Check if this still works correctly
-        // The certificate init was moved to the finishConfig phase
-        // as PublicCompany is configured twice
-        List<Tag> certTags = tag.getChildren("Certificate");
-        if (certTags != null) certificateTags = certTags;
+        /* The new way to configure certificates is to embed these
+         * in the new <Shares> tag, where any special rules can be specified,
+         * such as what is defined by the old-style <ShareUnit> tag.
+         * This feature was introduced for 1826, where 5-share companies
+         * will later be converted to 10-share ones.
+         * This requires an attribute 'unit="20,10"', highest value first.
+         *
+         * The intention is to also use this in cases where at some point
+         * a choice must be made, as for the CGR in 1856.
+         * The attribute will then be 'unit="5,10"', lowest value first.
+         *
+         * In all cases the highest number of potentially required certificates
+         * must be defined. XML parsing will use the lowest unit size for validation.
+         * The first unit size specified will be the initial one.
+         */
+        //List<Tag> certTags = tag.getChildren("Certificate");  // Old style
+        Tag sharesTag = tag.getChild("Shares"); // New style
+        //if (certTags != null) {  // Old style
+        //    certificateTags = certTags;
+        //    requiredNumberOfShares = 100 / shareUnit.value();
+        //} else
+        if (sharesTag != null) { // New style
+            certificateTags = sharesTag.getChildren ("Certificate");
+            // Will be parsed in 'finishConfiguration()' below.
+
+            shareUnitSizes = sharesTag.getAttributeAsIntegerList("unit", shareUnitSizes);
+            shareUnit.set(shareUnitSizes.get(0)); // First value if a list is provided
+            shareUnitsForSharePrice = sharesTag.getAttributeAsInteger(
+                    "unitsForPrice", shareUnitsForSharePrice);
+            requiredNumberOfShares = 100 / Collections.min(shareUnitSizes);
+        }
 
         // BaseToken
         Tag baseTokenTag = tag.getChild("BaseTokens");
@@ -731,6 +778,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             throws ConfigurationException {
 
         // Configure the stock price increase details
+        /*
         if (adjustPriceOnPayoutTag != null) {
             percOfPriceToReachPerJump = adjustPriceOnPayoutTag.getAttributeAsIntegerList("percPerJump");
         }
@@ -739,7 +787,23 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             percOfPriceToReachPerJump = new ArrayList<>(1);
             int defaultPercToReach = payoutMustExceedPriceToMove ? 100 : 1;
             percOfPriceToReachPerJump.add(defaultPercToReach);
+        }*/
+
+        if (payoutTag != null) {
+            String split = payoutTag.getAttributeAsString("split", "no");
+            splitAlways = "always".equalsIgnoreCase(split);
+            splitAllowed = "allowed".equalsIgnoreCase(split);
+
+            // payoutMustExceedPriceToMove = payoutTag.getAttributeAsBoolean("mustExceedPriceToMove", false);
+            percOfPriceToReachPerJump = payoutTag.getAttributeAsIntegerList("percPerJump", List.of(1));
         }
+/*
+        Tag priceJumpsTag = tag.getChild("AdjustPriceOnPayout");
+        if (priceJumpsTag != null) {
+            // Process it later
+            adjustPriceOnPayoutTag = priceJumpsTag;
+
+        }*/
 
         if (maxNumberOfLoans != 0) {
             currentNumberOfLoans = IntegerState.create(this, "currentNumberOfLoans");
@@ -763,7 +827,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         int certIndex = 0;
         if (certificateTags != null) {
-            int shareTotal = 0;
+            //int shareTotal = 0;
+            int numberOfShares = 0;
             boolean gotPresident = false;
             PublicCertificate certificate;
             // Throw away
@@ -796,17 +861,20 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                     certificate = new PublicCertificate(this, "cert_" + certIndex, shares, president,
                             certIsInitiallyAvailable, certificateCount, certIndex++);
                     certificates.add(certificate);
-                    shareTotal += shares * shareUnit.value();
-
-
+                    //shareTotal += shares * shareUnit.value();
+                    //numberOfShares += shares;
                 }
+                numberOfShares += shares * number;
                 if (!certIsInitiallyAvailable){
                     reservedShare += number * shares * shareUnit.value();
                 }
             }
-            if (shareTotal != 100)
+            //if (shareTotal != 100)
+            //    throw new ConfigurationException("Company type " + getId()
+            //            + " total shares is not 100%");
+            if (numberOfShares != requiredNumberOfShares)
                 throw new ConfigurationException("Company type " + getId()
-                        + " total shares is not 100%");
+                        + " total shares is " + numberOfShares + ", not " + requiredNumberOfShares);
         }
 
         nameCertificates();

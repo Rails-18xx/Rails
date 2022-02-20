@@ -58,7 +58,6 @@ public class Tag {
     /**
      * Return all child Elements with a given name of an Element.
      *
-     * @param element
      * @param tagName
      * @return
      * @throws ConfigurationException
@@ -73,7 +72,6 @@ public class Tag {
     /**
      * Return the (first) child Element with a given name from an Element.
      *
-     * @param element
      * @param tagName
      * @return
      * @throws ConfigurationException
@@ -171,9 +169,16 @@ public class Tag {
 
     public List<Integer> getAttributeAsIntegerList(String name)
             throws ConfigurationException {
+        return getAttributeAsIntegerList (name, null);
+    }
+
+    public List<Integer> getAttributeAsIntegerList(String name, List<Integer> dfault)
+            throws ConfigurationException {
 
         String valueString = getAttributeAsString(name);
-        if (!Util.hasValue(valueString)) return ImmutableList.of();
+        if (!Util.hasValue(valueString)) {
+            return (dfault == null ? ImmutableList.of() : dfault);
+        }
 
         ImmutableList.Builder<Integer> result = ImmutableList.builder();
         try {
@@ -368,7 +373,7 @@ public class Tag {
      * Opens and parses an xml file. Searches the root level of the file for an
      * element with the supplied name.
      *
-     * @param fileName the name of the file to open
+     * @param filename the name of the file to open
      * @param tagName  the name of the top-level tag to find
      * @return the named element in the named file
      * @throws ConfigurationException if there is any problem opening and

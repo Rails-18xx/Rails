@@ -6,8 +6,9 @@
         </ClosingConditions>
     </CompanyType>
     <CompanyType name="Coal" class="net.sf.rails.game.specific._1837.PublicCompany_1837">
-        <ShareUnit percentage="100"/>
-        <Certificate type="President" shares="1"/>
+        <Shares unit="100">
+            <Certificate type="President" shares="1"/>
+        </Shares>
         <StockPrice market="no"/>
         <BaseTokens>
             <HomeBase lay="whenFloated"/>
@@ -18,8 +19,9 @@
     </CompanyType>
     <CompanyType name="Minor1" class="net.sf.rails.game.specific._1837.PublicCompany_1837"
                 playerShareLimit="100">
-        <ShareUnit percentage="100"/>
-        <Certificate type="President" shares="1"/>
+        <Shares unit="100">
+            <Certificate type="President" shares="1"/>
+        </Shares>
         <StockPrice market="no"/>
         <BaseTokens>
             <HomeBase lay="whenFloated"/>
@@ -31,9 +33,10 @@
     <CompanyType name="Minor2" class="net.sf.rails.game.specific._1837.PublicCompany_1837"
                  playerShareLimit="100">
         <Capitalisation type="fixedCash" cash="180"/>
-        <ShareUnit percentage="50"/>
-        <Certificate type="President" shares="1"/>
-        <Certificate shares="1" number="1"/>
+        <Shares unit="50">
+            <Certificate type="President" shares="1"/>
+            <Certificate shares="1" number="1"/>
+        </Shares>
         <StockPrice market="no"/>
         <BaseTokens>
             <HomeBase lay="whenFloated"/>
@@ -46,9 +49,10 @@
         <PoolPaysOut/>
         <Float percentage="50"/>
         <StockPrice par="yes"/>
-        <ShareUnit percentage="10"/>
-        <Certificate type="President" shares="2"/>
-        <Certificate shares="1" number="8"/>
+        <Shares unit="10">
+            <Certificate type="President" shares="2"/>
+            <Certificate shares="1" number="8"/>
+        </Shares>
         <BaseTokens>
             <LayCost method="distance" cost="20" number="1"/>
             <LayCost method="distance" cost="40" number="1"/>
@@ -62,8 +66,9 @@
                  capitalisation="incremental">
         <PoolPaysOut/>
         <StockPrice par="yes"/>
-        <ShareUnit percentage="10"/>
-        <Certificate type="President" shares="2"/>
+        <!--Shares unit="10">
+            <Certificate type="President" shares="2"/>
+        </Shares-->
         <Float percentage="10"/>
         <Payout split="allowed"/>
         <Trains limit="4,4,4,3"/>
@@ -338,62 +343,76 @@
         <Home hex="N20"/>
         <Float percentage="50"/>
         <Capitalisation type="part" shares="9"/>
-        <Certificate type="President" shares="2"/>
-        <Certificate shares="1" number="7"/>
-        <Certificate shares="1" number="1" available="false"/>
+        <Shares unit="10">
+            <Certificate type="President" shares="2"/>
+            <Certificate shares="1" number="7"/>
+            <Certificate shares="1" number="1" available="false"/>
+        </Shares>
     </Company>
     <Company name="BK" longname="Böhmische Kommerzbahn" type="Major" tokens="3"
              available="no" fgColour="FFFFFF" bgColour="0000FF">
         <Home hex="C11"/>
         <Float percentage="50"/>
         <Capitalisation type="part" shares="8"/>
-        <Certificate type="President" shares="2"/>
-        <Certificate shares="1" number="6"/>
-        <Certificate shares="1" number="2" available="false"/>
+        <Shares unit="10">
+            <Certificate type="President" shares="2"/>
+            <Certificate shares="1" number="6"/>
+            <Certificate shares="1" number="2" available="false"/>
+        </Shares>
     </Company>
     <Company name="CL" longname="Carl-Ludwigs-Bahn" type="Major" tokens="3"
              available="no" fgColour="FFFFFF" bgColour="000000">
         <Home hex="C33"/>
         <Float percentage="50"/>
         <Capitalisation type="part" shares="9"/>
-        <Certificate type="President" shares="2"/>
-        <Certificate shares="1" number="7"/>
-        <Certificate shares="1" number="1" available="false"/>
+        <Shares unit="10">
+            <Certificate type="President" shares="2"/>
+            <Certificate shares="1" number="7"/>
+            <Certificate shares="1" number="1" available="false"/>
+        </Shares>
     </Company>
     <Company name="GT" longname="Galizische Transversalbahn" type="Major" tokens="3"
              available="no" fgColour="FFFFFF" bgColour="00B000">
         <Home hex="D36"/>
         <Float percentage="50"/>
         <Capitalisation type="full"/>
-        <Certificate type="President" shares="2"/>
-        <Certificate shares="1" number="8"/>
+        <Shares unit="10">
+            <Certificate type="President" shares="2"/>
+            <Certificate shares="1" number="8"/>
+        </Shares>
     </Company>
     <Company name="MS" longname="Mährisch-schlesische Eisenbahn" type="Major" tokens="3"
              available="no" fgColour="000000" bgColour="FFFF00">
         <Home hex="E17"/>
         <Float percentage="50"/>
         <Capitalisation type="part" shares="8"/>
-        <Certificate type="President" shares="2"/>
-        <Certificate shares="1" number="6"/>
-        <Certificate shares="1" number="2" available="false"/>
+        <Shares unit="10">
+            <Certificate type="President" shares="2"/>
+            <Certificate shares="1" number="6"/>
+            <Certificate shares="1" number="2" available="false"/>
+        </Shares>
     </Company>
     <Company name="SB" longname="Siebenbürgische Bahn" type="Major" tokens="3"
              available="no" fgColour="000000" bgColour="88FF48">
         <Home hex="J36"/>
         <Float percentage="50"/>
         <Capitalisation type="part" shares="8"/>
-        <Certificate type="President" shares="2"/>
-        <Certificate shares="1" number="6"/>
-        <Certificate shares="1" number="2" available="false"/>
+        <Shares unit="10">
+            <Certificate type="President" shares="2"/>
+            <Certificate shares="1" number="6"/>
+            <Certificate shares="1" number="2" available="false"/>
+        </Shares>
     </Company>
     <Company name="TH" longname="Theißbahn" type="Major" tokens="3"
              available="no" fgColour="000000" bgColour="AAFFFF">
         <Home hex="F28"/>
         <Float percentage="50"/>
         <Capitalisation type="part" shares="8"/>
-        <Certificate type="President" shares="2"/>
-        <Certificate shares="1" number="6"/>
-        <Certificate shares="1" number="2" available="false"/>
+        <Shares unit="10">
+            <Certificate type="President" shares="2"/>
+            <Certificate shares="1" number="6"/>
+            <Certificate shares="1" number="2" available="false"/>
+        </Shares>
     </Company>
     <Company name="Sd" longname="Südbahn" type="National" tokens="5" foundingCompany="S1"
              available="no" fgColour="FFFFFF" bgColour="FF5400">
@@ -406,9 +425,11 @@
         <Formation minors="S1,S2,S3,S4,S5" startMinor="S1" forcedMergePhase="4"/>
         <Home hex="G17" city="4" mapDisplay="no"/>
         <Capitalisation type="part" shares="5"/>
-        <Certificate type="President" shares="1" available="false"/>
-        <Certificate shares="1" number="4" available="false"/>
-        <Certificate shares="1" number="5"/>
+        <Shares unit="10">
+            <Certificate type="President" shares="1" available="false"/>
+            <Certificate shares="1" number="4" available="false"/>
+            <Certificate shares="1" number="5"/>
+        </Shares>
         <Trains limit="4,4,4,3"/>
     </Company>
     <Company name="KK" longname="k.k. Staatsbahn" type="National" tokens="3" available="no"
@@ -416,9 +437,11 @@
         <Formation minors="K1,K2,K3" startMinor="K1" startPhase="4" forcedMergePhase="4+1"/>
         <Home hex="G17" city="1" mapDisplay="no"/>
         <Capitalisation type="part" shares="7"/>
-        <Certificate type="President" shares="1" available="false"/>
-        <Certificate shares="1" number="2" available="false"/>
-        <Certificate shares="1" number="7"/>
+        <Shares unit="10">
+            <Certificate type="President" shares="1" available="false"/>
+            <Certificate shares="1" number="2" available="false"/>
+            <Certificate shares="1" number="7"/>
+        </Shares>
     </Company>
     <Company name="Ug" longname="Ungarische Staatsbahn" type="National" tokens="3" available="no"
              fgColour="FFFFFF" bgColour="FF55AA" startspace="M4" foundingCompany="U1">
@@ -431,9 +454,11 @@
         <Formation minors="U1,U2,U3" startMinor="U1" startPhase="4E" forcedMergePhase="5"/>
         <Capitalisation type="part" shares="5"/>
         <Home hex="H22" city="1" mapDisplay="no"/>
-        <Certificate type="President" shares="1" available="false"/>
-        <Certificate shares="1" number="4" available="false"/>
-        <Certificate shares="1" number="5"/>
+        <Shares unit="10">
+            <Certificate type="President" shares="1" available="false"/>
+            <Certificate shares="1" number="4" available="false"/>
+            <Certificate shares="1" number="5"/>
+        </Shares>
     </Company>
     <IfOption name="Variant" value="Basegame,Romoth">
         <StartPacket name="Coal Mines" roundClass="net.sf.rails.game.specific._1837.StartRound_1837_v1">

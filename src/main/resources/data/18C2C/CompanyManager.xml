@@ -10,8 +10,9 @@
 		<IPOPaysOut/>
 		<Float percentage="60"/>
 		<CanSplitDividend/>
-		<ShareUnit percentage="10"/>
-		<Certificate type="President" shares="2"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+		</Shares>
 		<Certificate shares="1" number="8"/>
 		<BaseTokens>
 			<LayCost method="sequence" cost="0,40,100"/>
