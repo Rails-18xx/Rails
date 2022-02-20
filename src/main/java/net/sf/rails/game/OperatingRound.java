@@ -881,12 +881,14 @@ public class OperatingRound extends Round implements Observer {
                 int poolShare = pool.getShare(company); // Expensive, do it once
                 // Can it buy?
                 boolean canBuy =
-                        ownShare < GameDef.getParmAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT)
+                        (company.hasOperated.value() || !company.mustHaveOperatedToBuyShares())
+                                && ownShare < GameDef.getParmAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT)
                                 && company.getCash() >= company.getCurrentSpace().getPrice()
                                 && poolShare > 0;
                 // Can it sell?
                 boolean canSell =
-                        company.getPortfolioModel().getShare(company) > 0
+                        (company.hasOperated.value() || !company.mustHaveOperatedToSellShares())
+                                && company.getPortfolioModel().getShare(company) > 0
                                 && poolShare < GameDef.getParmAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT);
                 // Above we ignore the possible existence of double shares (as
                 // in 1835).
@@ -2795,7 +2797,7 @@ public class OperatingRound extends Round implements Observer {
      */
 
     /* Rounding enums */
-    protected enum Rounding { UP, DOWN; }
+    protected enum Rounding { UP, DOWN }
     protected enum ToMultipleOf {
         ONE (1),
         TEN (10);

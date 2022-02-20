@@ -3,8 +3,9 @@
 	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
 	</CompanyType>
 	<CompanyType name="Minor" class="net.sf.rails.game.specific._1835.PublicCompany_1835">
-		<ShareUnit percentage="100"/>
-		<Certificate type="President" shares="1"/>
+		<Shares unit="100">
+			<Certificate type="President" shares="1"/>
+		</Shares>
 		<StockPrice market="no"/>
         <BaseTokens>
             <HomeBase lay="whenFloated"/>
@@ -17,9 +18,10 @@
 		<PoolPaysOut/>
 		<Float percentage="50"/>
 		<StockPrice par="yes"/>
-		<ShareUnit percentage="10"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="8"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
 		<!--NumberOfTileLays colour="yellow" phase="2" number="2"/-->
 		<TileLays>
 			<Number colour="yellow" phase="2" number="2"/>
@@ -187,47 +189,58 @@
 	<Company name="BA" longname="Badische Eisenbahn" type="Major" startspace="B4" available="no"
 			 tokens="2" fgColour="FFFFFF" bgColour="808000" alias="Bad">
 		<Home hex="L6" city="0"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="6"/>
-		<Certificate shares="2" number="1"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="6"/>
+			<Certificate shares="2" number="1"/>
+		</Shares>
 	</Company>
 	<Company name="WT" longname="W&#252;rttembergische Eisenbahn" type="Major" startspace="B4"
 			 available="no" tokens="2" fgColour="000000" bgColour="FFFF00" alias="Wrt">
 		<Home hex="M9"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="6"/>
-		<Certificate shares="2" number="1"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="6"/>
+			<Certificate shares="2" number="1"/>
+		</Shares>
 	</Company>
 	<Company name="HE" longname="Hessische Eisenbahn" type="Major" startspace="B4" available="no"
 			 tokens="2" fgColour="000000" bgColour="00CC00" alias="Hes">
 		<Home hex="J8"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="6"/>
-		<Certificate shares="2" number="1"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="6"/>
+			<Certificate shares="2" number="1"/>
+		</Shares>
 	</Company>
 	<Company name="MS" longname="Eisenbahn Mecklenburg-Schwerin" type="Major" startspace="B5"
 			 available="no" tokens="2" fgColour="FFFFFF" bgColour="800080">
 		<Home hex="C13"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="2" number="2"/>
-		<Certificate shares="1" number="4"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="2" number="2"/>
+			<Certificate shares="1" number="4"/>
+		</Shares>
 	</Company>
 	<Company name="OL" longname="Oldenburgische Eisenbahn" type="Major" startspace="B5"
 			 available="no" tokens="2" fgColour="000000" bgColour="C0C0C0" alias="Old">
 		<Home hex="D6"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="2" number="2"/>
-		<Certificate shares="1" number="4"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="2" number="2"/>
+			<Certificate shares="1" number="4"/>
+		</Shares>
 	</Company>
 	<Company name="PR" longname="Preu&#223;ische Eisenbahn" type="Major" startspace="I4"
 			 available="no" tokens="7" fgColour="FFFFFF" bgColour="000000" alias="Pr">
         <Home hex="E19"/>
-		<ShareUnit percentage="5" sharePriceUnits="2"/>
 		<Float percentage="10"/>
-		<Certificate type="President" shares="2" available="no"/>
-		<Certificate shares="2" number="4"/>
-		<Certificate shares="2" number="3" available="no"/>
-		<Certificate shares="1" number="4" available="no"/>
+		<Shares unit="5" unitsForPrice="2">
+			<Certificate type="President" shares="2" available="no"/>
+			<Certificate shares="2" number="4"/>
+			<Certificate shares="2" number="3" available="no"/>
+			<Certificate shares="1" number="4" available="no"/>
+		</Shares>
 	    <Trains limit="4,4,3"/>
 	</Company>
 	

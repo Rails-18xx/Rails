@@ -5,15 +5,17 @@
 	
 	<CompanyType name="Public" class="net.sf.rails.game.specific._1825.PublicCompany_1825">
 		<Float percentage="60"/>
-		<StockPrice par="yes"></StockPrice><ShareUnit percentage="10"/>
+		<StockPrice par="yes"/>
         <BaseTokens>
 			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
 `		    <HomeBase lay="firstOR"/>
 			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
 	        <LayCost method="sequence" cost="0,40,100"/>
         </BaseTokens>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="8"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
 		<Trains limit="4,3"/>
 		<!--TileLays>
 			<Number colour="yellow" number="2" phase="1,2,3,4"></Number></TileLays--></CompanyType>

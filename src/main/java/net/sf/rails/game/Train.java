@@ -146,8 +146,7 @@ public class Train extends RailsOwnableItem<Train> implements Creatable {
      * @return true => hex train (examples 1826, 1844), false => standard 1830 type train
      */
     public boolean isHTrain() {
-        // TODO Auto-generated method stub
-        return false;
+        return type.value().countsHexes();
     }
 
     /**

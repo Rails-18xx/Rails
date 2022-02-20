@@ -3,8 +3,9 @@
 <CompanyManager>
 	
 	<CompanyType name="Investor" class="net.sf.rails.game.specific._1880.Investor_1880">
-		<ShareUnit percentage="100"/>
-		<Certificate type="President" shares="1"/>
+		<Shares unit="100">
+			<Certificate type="President" shares="1"/>
+		</Shares>
 		<StockPrice market="no"/>
 		<BaseTokens>
 			<HomeBase lay="whenFloated"/>
@@ -13,8 +14,9 @@
 	</CompanyType>
 	
 	<CompanyType name="Minor" class="net.sf.rails.game.specific._1880.PublicCompany_1880">
-		<ShareUnit percentage="100"/>
-		<Certificate type="President" shares="1"/>
+		<Shares unit="100">
+			<Certificate type="President" shares="1"/>
+		</Shares>
 		<StockPrice market="no"/>
 		<BaseTokens>
 			<HomeBase lay="whenFloated"/>
@@ -36,9 +38,10 @@
 	<CompanyType name="Major" class="net.sf.rails.game.specific._1880.PublicCompany_1880">
 		<Float percentage="20"/>
 		<StockPrice par="no"/>
-		<ShareUnit percentage="10"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="8"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
 		<BaseTokens>
 			<HomeBase lay="whenFloated"/>
 			<LayCost method="sequence" cost="0,40,100"/>

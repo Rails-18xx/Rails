@@ -284,7 +284,7 @@ public class OperatingRound_1837 extends OperatingRound {
     /*
      * Rounds up or down the individual payments based on the boolean value
      */
-    public void payout(int amount, boolean b) {
+    public void payout(int amount, boolean split) {
         if (amount == 0) return;
 
         int part;
@@ -314,7 +314,7 @@ public class OperatingRound_1837 extends OperatingRound {
         }
 
         // Move the token
-        ((PublicCompany_1837) operatingCompany.value()).payout(amount, b);
+        ((PublicCompany_1837) operatingCompany.value()).payout(amount, split);
     }
 
     @Override

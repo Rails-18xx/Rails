@@ -7,20 +7,21 @@
 		<StockPrice par="no"/>
 		<TreasuryCanHoldOwnShares maxPerc="50"/>
 		<Float percentage="50" price="up"/>
-		<ShareUnit percentage="10"/>
-		<Certificate type="President" shares="2"/>
-		<Certificate shares="1" number="8"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
 		<Trains limit="4,3,2"/>
 		<BaseTokens>
 			<BuyCost initialTokenCost="100"/>
 			<HomeBase lay="whenFloated"/>
 		</BaseTokens>
-		<Payout split="allowed" mustExceedPriceToMove="yes"/>
+		<Payout split="allowed" percPerJump="100"/>
 		<!--NumberOfTileLays colour="yellow" phase="3,4,5,6,8" number="2"/-->
 		<!--TileLays>
 			<Number colour="yellow" phase="3,4,5,6,8" number="2"/>
 		</TileLays-->
-		<TradeShares mustHaveOperated="yes"/>
+		<TradeShares mustHaveOperatedToSell="yes" mustHaveOperatedToBuy="no"/>
 	</CompanyType>
 	<Company name="L&amp;O" type="Private" basePrice="200" revenue="5" longname="Lexington &amp; Ohio Railroad">
 		<Info key="ComesWithPresidency" parm="L&amp;N,20"></Info></Company>
