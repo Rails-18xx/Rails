@@ -78,7 +78,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
     testImplementation 'org.easytesting:fest-util:1.2.5'
-    testImplementation 'org.mockito:mockito-core:4.3.1'
+    testImplementation 'org.mockito:mockito-core:4.5.0'
 }
 
 javafx {
