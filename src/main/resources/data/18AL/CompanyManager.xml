@@ -22,7 +22,7 @@
 		longname="South &amp; North Alabama Railroad">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
-				when="anyTimeDuringORTurn"
+				when="orTurn"
 				class="net.sf.rails.game.special.SpecialBonusTokenLay">
 				<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken"
 					location="E6,G4,G6,H3,H5" extra="yes">
@@ -46,7 +46,7 @@
 		longname="Memphis &amp; Charleston Railroad">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
-				when="anyTimeDuringORTurn"
+				when="orTurn"
 				class="net.sf.rails.game.specific._18AL.NameTrains" transfer="toCompany">
 				<NameTrains
 					class="net.sf.rails.game.specific._18AL.NamedTrainToken">

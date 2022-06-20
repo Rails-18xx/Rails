@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.special.SpecialRight;
+import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.HashSetState;
 
 /**
@@ -23,12 +24,6 @@ public class RightsModel extends RailsModel {
         return new RightsModel(parent, id);
     }
 
-    @Override
-    public PublicCompany getParent() {
-        // FIXME: should this be calling the parent instead?
-        return (PublicCompany)getParent();
-    }
-
     public void add(SpecialRight right) {
         rights.add(right);
     }
@@ -37,13 +32,24 @@ public class RightsModel extends RailsModel {
         return rights.contains(right);
     }
 
+    /** Get the first (normally the only) right of a certain type */
+    public <T extends SpecialRight> T getRightType (Class<T> rightClass) {
+        for (SpecialRight right : rights) {
+            if (right.getClass() == rightClass) return (T)right;
+        }
+        return null;
+    }
+
+    public boolean isEmpty() { return rights.isEmpty(); }
+
     @Override
     public String toText() {
-        ImmutableList.Builder<String> rightsText = ImmutableList.builder();
+        StringBuilder b = new StringBuilder("");
         for (SpecialRight right:rights) {
-            rightsText.add(right.getName());
+            if (b.length() > 0) b.append(" ");
+            b.append(right.toText());
         }
-        return Joiner.on(",").join(rightsText.build());
+        return b.toString();
     }
 
 }

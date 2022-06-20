@@ -124,26 +124,8 @@ public final class ArrayListState<E> extends State implements Iterable<E> {
      * make the list identical to the argument list
      */
     public void setTo(List<E> newList) {
-        int index = 0;
-        List<E> copyList = List.copyOf(list);
-        for (E element : newList) {
-            if (index < copyList.size()) {
-                if (element.equals(copyList.get(index))) {
-                    // elements are equal, no change required
-                    index++;
-                    continue;
-                } else {
-                    // elements are unequal, so remove old element
-                    new ArrayListChange<>(this, index);
-                }
-            }
-            new ArrayListChange<>(this, element, index);
-            index++;
-        }
-        // remove all remaining elements if original list is larger
-        for (; index < copyList.size(); index++) {
-            new ArrayListChange<>(this, index);
-        }
+        clear();
+        for (E element : newList) add(element);
     }
 
     /**

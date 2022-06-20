@@ -33,23 +33,7 @@ import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.action.BuyBonusToken;
-import rails.game.action.BuyPrivate;
-import rails.game.action.BuyTrain;
-import rails.game.action.DiscardTrain;
-import rails.game.action.GameAction;
-import rails.game.action.LayBaseToken;
-import rails.game.action.LayBonusToken;
-import rails.game.action.LayTile;
-import rails.game.action.LayToken;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
-import rails.game.action.ReachDestinations;
-import rails.game.action.RepayLoans;
-import rails.game.action.SetDividend;
-import rails.game.action.TakeLoans;
-import rails.game.action.UseSpecialProperty;
+import rails.game.action.*;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
 
@@ -513,7 +497,11 @@ public class ORUIManager implements DialogOwner {
 
             } else if (actionType == ReachDestinations.class) {
 
-                reachDestinations ((ReachDestinations) actions.get(0));
+                reachDestinations((ReachDestinations) actions.get(0));
+
+            } else if (actionType == GrowCompany.class) {
+
+                orWindow.process(actions.get(0));
 
             } else if (actionType == TakeLoans.class) {
 
@@ -1547,6 +1535,13 @@ public class ORUIManager implements DialogOwner {
         if (possibleActions.contains(ReachDestinations.class)) {
             orPanel.addSpecialAction(possibleActions.getType(ReachDestinations.class).get(0),
                     LocalText.getText("DestinationsReached"));
+        }
+
+        if (possibleActions.contains(GrowCompany.class)) {
+            GrowCompany action = possibleActions.getType(GrowCompany.class).get(0);
+            orPanel.addSpecialAction(possibleActions.getType(GrowCompany.class).get(0),
+                    LocalText.getText("GrowCompany",
+                            action.getCompany(), 100 / action.getNewShareUnit()));
         }
 
         // Any other special properties, to be shown in the "Special" menu.

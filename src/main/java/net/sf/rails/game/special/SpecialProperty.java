@@ -2,6 +2,7 @@ package net.sf.rails.game.special;
 
 import java.util.List;
 
+import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
@@ -39,6 +40,7 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     protected boolean usableDuringOR = false;
     protected boolean usableDuringTileLayingStep = false;
     protected boolean usableDuringTokenLayingStep = false;
+    protected boolean usableDuringTrainBuyingStep = false;
 
     protected String conditionText = "";
     protected String whenText = "";
@@ -50,10 +52,7 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     
     //for multiple but finite use of the SpecialProperty
     protected int maxOccurrance;
-    
-    protected boolean isORProperty = false;
-    protected boolean isSRProperty = false;
-    
+
     /**
      * Optional descriptive text, for display in menus and info text.
      * Subclasses may put real text in it.
@@ -87,6 +86,7 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
                                    || "tileAndTokenLayingStep".equalsIgnoreCase(whenText));
         setUsableDuringTokenLayingStep("tokenLayingStep".equalsIgnoreCase(whenText)
                                    || "tileAndTokenLayingStep".equalsIgnoreCase(whenText));
+        setUsableDuringTrainBuyingStep("trainBuyingStep".equalsIgnoreCase(whenText));
 
         transferText = tag.getAttributeAsString("transfer", "");
         
@@ -185,6 +185,14 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
         this.usableDuringTokenLayingStep = usableDuringTokenLayingStep;
     }
 
+    public boolean isUsableDuringTrainBuyingStep() {
+        return usableDuringTrainBuyingStep;
+    }
+
+    public void setUsableDuringTrainBuyingStep(boolean usableDuringTrainBuyingStep) {
+        this.usableDuringTrainBuyingStep = usableDuringTrainBuyingStep;
+    }
+
     public void setExercised() {
         setExercised(true);
     }
@@ -203,15 +211,6 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
     
     public abstract boolean isExecutionable(); 
     
-
-    public boolean isSRProperty() {
-        return isSRProperty;
-    }
-
-    public boolean isORProperty() {
-        return isORProperty;
-    }
-
     public String getTransferText() {
         return transferText;
     }
@@ -288,7 +287,12 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
           sp.setOriginalCompany(company);
           sp.configureFromXML(spTag);
           sp.moveTo(company);
-          text.append("<br>" + sp.getInfo());
+          text.append("<br>").append(sp.getInfo());
+
+          if (sp instanceof SpecialRight) {
+              company.getRoot().getGameManager().setGuiParameter(GuiDef.Parm.HAS_ANY_RIGHTS, true);
+          }
+
       }
       return text.toString();
   }

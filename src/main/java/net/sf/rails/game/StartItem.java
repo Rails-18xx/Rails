@@ -194,7 +194,8 @@ public class StartItem extends RailsAbstractItem {
 
     }
 
-    protected void assignStartSubItem(GameManager gameMgr, BankPortfolio ipo, BankPortfolio unavailable, CompanyManager compMgr, String name2, boolean president2) {
+    protected void assignStartSubItem(GameManager gameMgr, BankPortfolio ipo, BankPortfolio unavailable,
+                                      CompanyManager compMgr, String name2, boolean president2) {
         Company company2 = compMgr.getCompany(type2, this.name2);
         if (company2 instanceof PrivateCompany) {
             secondary = (Certificate) company2;
@@ -219,17 +220,17 @@ public class StartItem extends RailsAbstractItem {
      * Set the start packet row. <p> Applies to games like 1835 where start
      * items are organised and become available in rows.
      *
-     * @param row
+     * @param row Start item row number
      */
     protected void setRow(int row) {
         this.row = row;
     }
 
     /**
-     * Set the start packet row. <p> Applies to games like 1837 where start
+     * Set the start packet column. <p> Applies to games like 1837 where start
      * items are organised and become available in columns.
      *
-     * @param column
+     * @param column Start item column number
      */
     protected void setColumn(int column) {
         this.column = column;
@@ -469,10 +470,10 @@ public class StartItem extends RailsAbstractItem {
     }
 
     /**
-     * If a start item component a President's certificate that needs price
-     * setting, return the name of thecompany for which the price must be set.
+     * If a start item component has a President's certificate that needs price
+     * setting, return the company for which the price must be set.
      *
-     * @param certificate
+     * @param certificate The certificate to be checked for the need of price setting
      * @return Name of public company, or null
      */
     protected PublicCompany checkNeedForPriceSetting(Certificate certificate) {

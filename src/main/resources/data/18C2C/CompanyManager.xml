@@ -42,7 +42,7 @@
 		longname="The Southern Cattle Company">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
-				when="anyTimeDuringORTurn"
+				when="orTurn"
 				class="net.sf.rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay class="rails.game.BonusToken"
 					location="K40,K44,M44,O42,Q36,Q42,R49,S34,T41,T43,U22,U28,U48,V41,V45,W40,W46"
@@ -57,7 +57,7 @@
 		longname="The Grace Mountain Lumber Company">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
-				when="anyTimeDuringORTurn"
+				when="orTurn"
 				class="net.sf.rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay class="rails.game.BonusToken"
 					location="A4,C4,C22,D49,E4,E18,E24,E46,E62,F53,F85,G2,H13,H19,I16,I28"
@@ -79,7 +79,7 @@
 		basePrice="80" revenue="15" longname="The Gold Eagle Mining Company">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
-				when="anyTimeDuringORTurn"
+				when="orTurn"
 				class="net.sf.rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay class="net.sf.rails.game.BonusToken"
 					location="E4,E18,K30,L29,M4,M8,N29,P15,Q28,R27,T21" connected="yes" extra="yes">
@@ -97,7 +97,7 @@
 		<Blocking hex="T15,S16"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
-				when="anyTimeDuringORTurn"
+				when="orTurn"
 				class="net.sf.rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay class="net.sf.rails.game.BonusToken"
 					location="K40,K44,M44,O42,Q36,Q42,R49,S34,T41,T43,U22,U28,U48,V41,V45,W40,W46"
@@ -139,7 +139,7 @@
 		longname="The Keystone Tunnel Company">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
-				when="anyTimeDuringORTurn"
+				when="orTurn"
 				class="net.sf.rails.game.special.SpecialSingleTileLay">
 				<SpecialSingleTileLay class="net.sf.rails.game.BonusToken"
 					location=""
@@ -156,7 +156,7 @@
 		longname="The Azure Fisheries">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
-				when="anyTimeDuringORTurn"
+				when="orTurn"
 				class="net.sf.rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay class="net.sf.rails.game.BonusToken"
 					location="C4,E88,F85,I82,P73,T69,U66,W66"
@@ -171,7 +171,7 @@
 		longname="The Appalachian Coal Mining Company">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
-				when="anyTimeDuringORTurn"
+				when="orTurn"
 				class="net.sf.rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay class="net.sf.rails.game.BonusToken"
 					location="L69,N65,O68,P63,S58,S62"
@@ -186,7 +186,7 @@
 		basePrice="80" revenue="15" longname="The Gulf Shipping Company">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany"
-				when="anyTimeDuringORTurn"
+				when="orTurn"
 				class="net.sf.rails.game.special.SpecialTokenLay">
 				<SpecialTokenLay class="net.sf.rails.game.BonusToken"
 					location="C18,H17,K16,M20,N7,N17" connected="yes" extra="yes">

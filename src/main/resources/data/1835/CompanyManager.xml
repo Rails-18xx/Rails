@@ -27,7 +27,7 @@
 			<Number colour="yellow" phase="2" number="2"/>
 		</TileLays>
 		<BaseTokens>
-			<LayCost method="distance" cost="20"/>
+			<LayCost method="distance" cost="20"/><!-- Cost per hex -->
             <HomeBase lay="whenFloated"/>
         </BaseTokens>
 		<Capitalisation type="incremental"/>

@@ -281,6 +281,10 @@ public class OperatingRound extends Round implements Observer {
 
             result = reachDestinations((ReachDestinations) selectedAction);
 
+        } else if (selectedAction instanceof GrowCompany) {
+
+            result = growCompany((GrowCompany)action);
+
         } else if (selectedAction instanceof TakeLoans) {
 
             result = takeLoans((TakeLoans) selectedAction);
@@ -1231,8 +1235,7 @@ public class OperatingRound extends Round implements Observer {
                     ReportBuffer.add(this, LocalText.getText(
                             "DestinationReached", company.getId(),
                             company.getDestinationHex().getId()));
-                    // Process any consequences of reaching a destination
-                    // (default none)
+
                 }
             }
             executeDestinationActions(destinedCompanies);
@@ -1383,6 +1386,7 @@ public class OperatingRound extends Round implements Observer {
     protected String validateRepayLoans(RepayLoans action) {
 
         String errMsg = null;
+        // TODO add validation
 
         return errMsg;
     }
@@ -1495,12 +1499,33 @@ public class OperatingRound extends Round implements Observer {
 
         operatingCompany.value().setRight(right);
         // TODO: Creates a zero cost transfer if cost == 0
-        String costText = Currency.toBank(operatingCompany.value(), cost);
+        String costText;
+        if (cost > 0) {
+            costText = Currency.toBank(operatingCompany.value(), cost);
+        } else {
+            costText = "free";
+        }
 
         ReportBuffer.add(this, LocalText.getText("BuysRight",
                 operatingCompany.value().getId(), rightName, costText));
 
         sp.setExercised();
+
+        return true;
+    }
+
+    /*
+     * =======================================
+     *  3.7. SHARE ACTIONS
+     * =======================================
+     */
+
+    public boolean growCompany (GrowCompany action) {
+
+        // TODO Validation to be added
+
+        PublicCompany company = action.getCompany();
+        company.grow(action.getNewShareUnit());
 
         return true;
     }
@@ -2089,10 +2114,10 @@ public class OperatingRound extends Round implements Observer {
             break;
         }
         if (errMsg != null) {
-            DisplayBuffer.add(
-                    this,
-                    LocalText.getText("CannotLayBaseTokenOn", companyName,
-                            hex.getId(), Bank.format(this, cost), errMsg));
+            String msg = LocalText.getText("CannotLayBaseTokenOn", companyName,
+                    hex.getId(), Bank.format(this, cost), errMsg);
+            log.error (msg);
+            DisplayBuffer.add(this, msg);
             return false;
         }
 
@@ -2387,7 +2412,9 @@ public class OperatingRound extends Round implements Observer {
     protected void setBonusTokenLays() {
 
         for (SpecialBonusTokenLay stl : getSpecialProperties(SpecialBonusTokenLay.class)) {
-            possibleActions.add(new LayBonusToken(getRoot(), stl, stl.getToken()));
+            if (stl.isUsableDuringOR(getStep())) {
+                possibleActions.add(new LayBonusToken(getRoot(), stl, stl.getToken()));
+            }
         }
     }
 

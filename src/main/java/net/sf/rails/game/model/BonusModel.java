@@ -1,10 +1,21 @@
 package net.sf.rails.game.model;
 
+import com.google.common.collect.ImmutableSet;
 import net.sf.rails.game.Bonus;
+import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsItem;
 import net.sf.rails.game.financial.Bank;
-import net.sf.rails.game.state.ArrayListState;
+import net.sf.rails.game.special.SpecialRight;
+import net.sf.rails.game.state.*;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/* This class has been extended to also display any SpecialRights info
+ * in the "Token/Bonus" box in ORPanel.
+ */
 public class BonusModel extends RailsModel {
 
     private ArrayListState<Bonus> bonuses;
@@ -39,7 +50,7 @@ public class BonusModel extends RailsModel {
             }
             b.append(bonus.getIdForView());
             // insert a break if there is more than one location.
-            if (bonus.getIdForView().length()>3) b.append("<br>");
+            if (bonus.getIdForView().length() > 3) b.append("<br>");
             b.append("+").append(Bank.format(getParent(), bonus.getValue()));
         }
 

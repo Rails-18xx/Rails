@@ -1,6 +1,8 @@
 package net.sf.rails.game.model;
 
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.PublicCompany;
@@ -8,9 +10,9 @@ import net.sf.rails.game.state.Portfolio;
 import net.sf.rails.game.state.PortfolioSet;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import net.sf.rails.game.state.TreeSetState;
 
 
 /**
@@ -20,8 +22,11 @@ public class BaseTokensModel extends RailsModel {
 
     // the free tokens belong to the company
     private final PortfolioSet<BaseToken> freeBaseTokens;
+
     // a list of all base tokens, configured later
-    private ImmutableSortedSet<BaseToken> allTokens;
+    // EV 6/2022: No longer Immutable, as in 1826 the quantity
+    // of base tokens of most companies may increase during the game
+    private TreeSetState<BaseToken> allBaseTokens;
 
     private BaseTokensModel(PublicCompany parent, String id) {
         super(parent, id);
@@ -36,11 +41,21 @@ public class BaseTokensModel extends RailsModel {
     /**
      * Initialize a set of tokens
      */
-    public void initTokens(Set<BaseToken> tokens) {
-        allTokens = ImmutableSortedSet.copyOf(tokens);
-        Portfolio.moveAll(allTokens, getParent());
+    public void initBaseTokens(SortedSet<BaseToken> tokens) {
+        allBaseTokens = TreeSetState.create (this, "allBaseTokens", tokens);
+        Portfolio.moveAll(allBaseTokens, getParent());
     }
-    
+
+    /**
+     * Add more tokens than the initially configured number.
+     * This is required for 1826.
+     */
+    public void addBaseToken(BaseToken token, boolean laid) {
+        allBaseTokens.add(token);
+        Portfolio.moveAll(allBaseTokens, getParent());
+        if (!laid) freeBaseTokens.add(token);
+    }
+
     /**
      * @return parent the public company
      */
@@ -57,8 +72,8 @@ public class BaseTokensModel extends RailsModel {
         return Iterables.get(freeBaseTokens, 0);
     }
     
-    public ImmutableSet<BaseToken> getAllTokens() {
-        return allTokens;
+    public SortedSet<BaseToken> getAllBaseTokens() {
+        return allBaseTokens.getSet();
     }
     
     public ImmutableSet<BaseToken> getFreeTokens() {
@@ -66,11 +81,11 @@ public class BaseTokensModel extends RailsModel {
     }
     
     public ImmutableSet<BaseToken> getLaidTokens() {
-        return Sets.difference(allTokens, freeBaseTokens.items()).immutableCopy();
+        return Sets.difference(allBaseTokens.view(), freeBaseTokens.items()).immutableCopy();
     }
     
     public int nbAllTokens() {
-        return allTokens.size();
+        return allBaseTokens.size();
     }
     
     public int nbFreeTokens() {
@@ -78,14 +93,14 @@ public class BaseTokensModel extends RailsModel {
     }
     
     public int nbLaidTokens() {
-        return allTokens.size() - freeBaseTokens.size();
+        return allBaseTokens.size() - freeBaseTokens.size();
     }
     
     /**
      * @return true if token is laid
      */
     public boolean tokenIsLaid(BaseToken token) {
-        return allTokens.contains(token);
+        return allBaseTokens.contains(token);
     }
     
     @Override 

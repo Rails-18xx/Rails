@@ -1,8 +1,6 @@
 package net.sf.rails.game;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.ConfigurationException;
@@ -150,12 +148,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Total bonus tokens amount
      */
-    protected final BonusModel bonusValue = BonusModel.create(this, "bonusValue");
+    protected final BonusModel bonusModel = BonusModel.create(this, "bonusValue");
 
     /**
      * Acquires Bonus objects
      */
     protected final ArrayListState<Bonus> bonuses = new ArrayListState<>(this, "bonuses");
+
+    protected final RightsModel rightsModel = RightsModel.create(this, "rightsModel");
 
     /**
      * Most recent revenue earned.
@@ -393,7 +393,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Train limit per phase (index)
      */
-    protected List<Integer> trainLimit;
+    protected ArrayListState<Integer> trainLimit
+            = new ArrayListState<>(this, "trainLimits_"+getId());
 
     /**
      * Private to close if first train is bought
@@ -431,9 +432,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected CountingMoneyModel currentLoanValue = null; // init during finishConfig
 
     protected BooleanState canSharePriceVary;
-
-    protected RightsModel rightsModel = null; // init if required
-    // created in finishConfiguration
 
     // used for Company interface
     private String longName;
@@ -478,7 +476,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         trainsCostThisTurn.setDisplayNegative(true);
 
         // Bonuses
-        bonusValue.setBonuses(bonuses);
+        bonusModel.setBonuses(bonuses);
 
         this.hasStockPrice = hasStockPrice;
 
@@ -616,7 +614,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         Tag trainsTag = tag.getChild("Trains");
         if (trainsTag != null) {
-            trainLimit = trainsTag.getAttributeAsIntegerList("limit");
+            trainLimit.setTo(trainsTag.getAttributeAsIntegerList("limit"));
             mustOwnATrain = trainsTag.getAttributeAsBoolean("mandatory", mustOwnATrain);
         }
 
@@ -742,10 +740,15 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         Tag tradeSharesTag = tag.getChild("TradeShares");
         if (tradeSharesTag != null) {
             mayTradeShares = true;
-            mustHaveOperatedToBuyShares = tradeSharesTag
-                    .getAttributeAsBoolean("mustHaveOperatedToBuy", mustHaveOperatedToBuyShares);
-            mustHaveOperatedToSellShares = tradeSharesTag
-                    .getAttributeAsBoolean("mustHaveOperatedToSell", mustHaveOperatedToSellShares);
+            if (tradeSharesTag.hasAttribute("mustHaveOperated")) {
+                mustHaveOperatedToBuyShares = mustHaveOperatedToSellShares =
+                        tradeSharesTag.getAttributeAsBoolean("mustHaveOperated");
+            } else {
+                mustHaveOperatedToBuyShares = tradeSharesTag
+                        .getAttributeAsBoolean("mustHaveOperatedToBuy", mustHaveOperatedToBuyShares);
+                mustHaveOperatedToSellShares = tradeSharesTag
+                        .getAttributeAsBoolean("mustHaveOperatedToSell", mustHaveOperatedToSellShares);
+            }
         }
 
         Tag loansTag = tag.getChild("Loans");
@@ -886,12 +889,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             cert.setUniqueId(getId(), i);
         }
 
-        Set<BaseToken> newTokens = Sets.newHashSet();
-        for (int i = 0; i < numberOfBaseTokens; i++) {
-            BaseToken token = BaseToken.create(this);
-            newTokens.add(token);
-        }
-        baseTokens.initTokens(newTokens);
+        initBaseTokens();
 
         if (homeHexNames != null) {
             homeHexes = new ArrayList<>(2);
@@ -924,27 +922,17 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                             privateToCloseOnFirstTrainName);
         }
 
-        if (trainLimit != null) {
+        if (trainLimit != null && !trainLimit.isEmpty()) {
             infoText += "<br>" + LocalText.getText("CompInfoMaxTrains",
-                    Util.join(trainLimit, ", "));
+                    Util.join(trainLimit.view(), ", "));
 
         }
 
         infoText += parentInfoText;
         parentInfoText = "";
 
-        // Can companies acquire special rightsModel (such as in 1830 Coalfields)?
-        // TODO: Can this be simplified?
         if (portfolio.hasSpecialProperties()) {
             for (SpecialProperty sp : portfolio.getPersistentSpecialProperties()) {
-                if (sp instanceof SpecialRight) {
-                    getRoot().getGameManager().setGuiParameter(GuiDef.Parm.HAS_ANY_RIGHTS, true);
-                    // Initialize rightsModel here to prevent overhead if not used,
-                    // but if rightsModel are used, the GUI needs it from the start.
-                    if (rightsModel == null) {
-                        rightsModel = RightsModel.create(this, "rightsModel");
-                    }
-                 }
                 // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
                 sp.finishConfiguration(root);
             }
@@ -1104,6 +1092,16 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     public void setReachedDestination(boolean value) {
         hasReachedDestination.set(value);
+    }
+
+    /** Stub to trigger a company to make more shares available,
+     * in other words: become a higher-number-of-shares company.
+     * @return false if conversion failed.
+     *
+     * Used by overriding in 1826 (perhaps that code could be put here)
+     */
+    public boolean grow(int newNumberOfShares) {
+        return true;
     }
 
     public boolean canBuyStock() {
@@ -1838,7 +1836,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * so one must be subtracted before calling this method.
      */
     protected int getTrainLimit(int index) {
-        return trainLimit.get(Math.min(index, trainLimit.size() - 1));
+        return trainLimit.view().get(Math.min(index, trainLimit.size() - 1));
     }
 
     public int getCurrentTrainLimit() {
@@ -2061,19 +2059,33 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     public BonusModel getBonusTokensModel() {
-        return bonusValue;
+        return bonusModel;
     }
 
     public boolean hasLaidHomeBaseTokens() {
         return baseTokens.nbLaidTokens() > 0;
     }
 
+    /**
+     * Create the base tokens.
+     * Note: in 1826 additional tokens may be created and added later on.
+     */
+    protected void initBaseTokens() {
+        SortedSet<BaseToken> newTokens = new TreeSet<>();
+        for (int i = 0; i < numberOfBaseTokens; i++) {
+            BaseToken token = BaseToken.create(this);
+            newTokens.add(token);
+        }
+        baseTokens.initBaseTokens(newTokens);
+    }
+
+
     // Return value is not used
     public boolean layHomeBaseTokens() {
 
         if (hasLaidHomeBaseTokens()) return true;
 
-        // TEMPORARY - S5 buyer must choose home hex
+        // TEMPORARY - 1837 S5 buyer must choose home hex
         if (homeHexes == null) return true;
 
         for (MapHex homeHex : homeHexes) {
@@ -2116,8 +2128,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return baseTokens.getNextToken();
     }
 
-    public ImmutableSet<BaseToken> getAllBaseTokens() {
-        return baseTokens.getAllTokens();
+    public Set<BaseToken> getAllBaseTokens() {
+        return baseTokens.getAllBaseTokens();
     }
 
     public ImmutableSet<BaseToken> getLaidBaseTokens() {
@@ -2223,9 +2235,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     public void setRight(SpecialRight right) {
-        if (rightsModel == null) {
-            rightsModel = RightsModel.create(this, "RightsModel");
-        }
         rightsModel.add(right);
     }
 
