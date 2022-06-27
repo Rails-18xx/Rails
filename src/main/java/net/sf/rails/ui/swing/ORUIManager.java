@@ -335,13 +335,18 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
-    private void addGenericTokenLays(LayToken action) {
+    private void addGenericTokenLays(LayBaseToken action) {
         PublicCompany company = action.getCompany();
         NetworkGraph graph = networkAdapter.getRouteGraph(company, true, false);
-        Multimap<MapHex, Stop> hexStops = graph.getTokenableStops(company);
-        for (MapHex hex:hexStops.keySet()) {
+        //Multimap<MapHex, Stop> hexStops = graph.getTokenableStops(company);
+        //Map<Stop, Integer> tokenableStops = graph.getTokenableStops(company);
+        Map<Stop, Integer> tokenableStops = Routes.getTokenLayRouteDistances(
+                company.getRoot(), company, false, false);
+        //if (company.getBaseTokenLayCostMethod().equalsIgnoreCase(PublicCompany.BASE_COST_ROUTE_LENGTH)) {
+       for (Stop stop : tokenableStops.keySet()) {
+            MapHex hex = stop.getParent();
             GUIHex guiHex = map.getHex(hex);
-            TokenHexUpgrade upgrade = TokenHexUpgrade.create(guiHex, hexStops.get(hex), action);
+            TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, tokenableStops.keySet(), action);
             TokenHexUpgrade.validates(upgrade);
             hexUpgrades.put(guiHex, upgrade);
         }
@@ -351,7 +356,7 @@ public class ORUIManager implements DialogOwner {
         for (MapHex hex:action.getLocations()) {
             GUIHex guiHex = map.getHex(hex);
             TokenHexUpgrade upgrade = TokenHexUpgrade.create(
-                    guiHex, hex.getTokenableStops(action.getCompany()), action);
+                    this, guiHex, hex.getTokenableStops(action.getCompany()), action);
             TokenHexUpgrade.validates(upgrade);
             hexUpgrades.put(guiHex, upgrade);
         }
@@ -367,7 +372,7 @@ public class ORUIManager implements DialogOwner {
                 }
             }
             if (!tokenableStops.isEmpty()) {
-                TokenHexUpgrade upgrade = TokenHexUpgrade.create(guiHex, tokenableStops, action);
+                TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, tokenableStops, action);
                 TokenHexUpgrade.validates(upgrade);
                 hexUpgrades.put(guiHex, upgrade);
             }
@@ -1722,5 +1727,4 @@ public class ORUIManager implements DialogOwner {
     protected GUIHexUpgrades getHexUpgrades() {
         return hexUpgrades;
     }
-
 }

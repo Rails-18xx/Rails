@@ -216,7 +216,7 @@ CompanyTakesLoan,LPS,100,90
  
 CompanyOperates,GW,Aliza
 LaysTileAt,GW,56,E18,N
-LAYS_TOKEN_ON,GW,F17,40 Hex F17 (St.Thomas)
+LAYS_TOKEN_ON,GW,F17,40
 CompanyRevenue,GW,50
 CompanyMustPayLoanInterest,GW,10
 InterestPaidFromTreasury,GW,10
@@ -313,7 +313,7 @@ BuysTrain,WR,3,IPO,225
  
 CompanyOperates,CA,Jerry
 LaysTileAt,CA,9,C16,S
-LAYS_TOKEN_ON,CA,C14,40 Hex C14 (Maudaumin)
+LAYS_TOKEN_ON,CA,C14,40
 CompanyRevenue,CA,120
 CompanyMustPayLoanInterest,CA,20
 InterestPaidFromTreasury,CA,20
@@ -496,7 +496,7 @@ TrainsRusted,2
  
 CompanyOperates,LPS,Bill
 LaysTileAt,LPS,8,E14,SE
-LAYS_TOKEN_ON,LPS,F17,40 Hex F17 (St.Thomas)
+LAYS_TOKEN_ON,LPS,F17,40
 CompanyRevenue,LPS,160
 CompanyMustPayLoanInterest,LPS,40
 InterestPaidFromTreasury,LPS,40
@@ -525,7 +525,7 @@ BuysTrain,GT,4,IPO,350
  
 CompanyOperates,CA,Jerry
 LaysTileAt,CA,121,F15,SW
-LAYS_TOKEN_ON,CA,F15,100 Hex F15 (London)
+LAYS_TOKEN_ON,CA,F15,100
 CompanyRevenue,CA,110
 CompanyMustPayLoanInterest,CA,40
 InterestPaidFromTreasury,CA,40
@@ -861,7 +861,7 @@ CompanyTakesLoan,WR,100,90
 CompanyOperates,GT,Juho
 LaysTileAt,GT,3,N9,S
 CompanyTakesLoan,GT,100,100
-LAYS_TOKEN_ON,GT,N11,100 Hex N11 (Toronto NE,N)
+LAYS_TOKEN_ON,GT,N11,100
 CompanyRevenue,GT,140
 CompanyMustPayLoanInterest,GT,40
 InterestPaidFromTreasury,GT,40
@@ -990,7 +990,7 @@ ReceivesFor,CPR,20,Tunn
  
 CompanyOperates,GW,Aliza
 LaysTileAt,GW,55,I14,SW
-LAYS_TOKEN_ON,GW,H15,100 Hex H15 (Woodstock)
+LAYS_TOKEN_ON,GW,H15,100
 CompanyRevenue,GW,110
 CompanyMustPayLoanInterest,GW,50
 InterestPaidFromTreasury,GW,50

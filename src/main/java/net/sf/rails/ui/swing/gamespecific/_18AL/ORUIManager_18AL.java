@@ -57,7 +57,7 @@ public class ORUIManager_18AL extends ORUIManager {
                 if (graph.getPassableStations().containsKey(hex) )
                 {
                     GUIHex guiHex = orWindow.getMapPanel().getMap().getHex(hex);
-                    TokenHexUpgrade upgrade = TokenHexUpgrade.create(
+                    TokenHexUpgrade upgrade = TokenHexUpgrade.create(this,
                             guiHex, hex.getTokenableStops(action.getCompany()), action);
                     TokenHexUpgrade.validates(upgrade);
                     hexUpgrades.put(guiHex, upgrade);

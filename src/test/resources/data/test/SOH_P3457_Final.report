@@ -121,7 +121,7 @@ BuysTrain,NCS,3,IPO,200
 CompanyOperates,NRS,Dora
 LaysTileAt,NRS,6,H5,SW
 LaysTileAt,NRS,3902,F9,SE
-LAYS_TOKEN_ON,NRS,I6,40 Hex I6 (Rotterdam)
+LAYS_TOKEN_ON,NRS,I6,40
 CompanyRevenue,NRS,120
 CompanyPaysOutFull,NRS,120
 Payout,Dora,36,3,10
@@ -204,7 +204,7 @@ CompanyOperates,NRS,Dora
 SELL_SHARES_LOG,NRS,1,10,10,NRS,100
 LaysTileAt,NRS,14,I6,W
 LaysTileAt,NRS,58,G6,E
-LAYS_TOKEN_ON,NRS,H9,100 Hex H9 (Utrecht)
+LAYS_TOKEN_ON,NRS,H9,100
 CompanyRevenue,NRS,230
 CompanyPaysOutFull,NRS,230
 Payout,Dora,69,3,10
@@ -214,7 +214,7 @@ PRICE_MOVES_LOG,NRS,100,I1,125,K1
 CompanyOperates,HSM,Alice
 LaysTileAt,HSM,57,B17,W
 LaysTileAt,HSM,8,B19,SE
-LAYS_TOKEN_ON,HSM,B17,40 Hex B17 (Groningen)
+LAYS_TOKEN_ON,HSM,B17,40
 CompanyRevenue,HSM,170
 CompanyPaysOutFull,HSM,170
 Payout,Charlie,17,1,10
@@ -226,7 +226,7 @@ CompanyOperates,AR,Bob
 SELL_SHARES_LOG,AR,1,10,10,AR,75
 LaysTileAtFor,AR,15,J7,SW,50
 LaysTileAt,AR,9,K6,SW
-LAYS_TOKEN_ON,AR,I6,40 Hex I6 (Rotterdam)
+LAYS_TOKEN_ON,AR,I6,40
 CompanyRevenue,AR,140
 CompanyPaysOutFull,AR,140
 Payout,Bob,56,4,10
@@ -477,7 +477,7 @@ START_OR,4.1
 CompanyOperates,NCS,Charlie
 SELL_SHARES_LOG,NCS,1,10,10,NCS,180
 LaysTileAt,NCS,611,H9,W
-LAYS_TOKEN_ON,NCS,H13,40 Hex H13 (Arnhem)
+LAYS_TOKEN_ON,NCS,H13,40
 CompanyRevenue,NCS,460
 CompanyPaysOutFull,NCS,460
 Payout,Charlie,184,4,10
@@ -611,7 +611,7 @@ Has,Dora,50
 START_OR,5.1
  
 CompanyOperates,NCS,Charlie
-LAYS_TOKEN_ON,NCS,J7,100 Hex J7 (Breda)
+LAYS_TOKEN_ON,NCS,J7,100
 CompanyRevenue,NCS,610
 CompanyPaysOutFull,NCS,610
 Payout,Bob,61,1,10

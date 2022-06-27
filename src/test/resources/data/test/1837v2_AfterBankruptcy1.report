@@ -814,7 +814,7 @@ Payout,Bob,90,2,50
  
 CompanyOperates,BK,Charlie
 LaysTileAt,BK,9,D12,NW
-LAYS_TOKEN_ON,BK,E17,80 Hex E17 (Brünn)
+LAYS_TOKEN_ON,BK,E17,80
 CompanyRevenue,BK,280
 CompanyDividesEarnings,BK,280,250,30
 CompanyPaysOutFull,BK,250
@@ -1071,7 +1071,7 @@ Payout,Bob,90,2,50
  
 CompanyOperates,MS,Bob
 LaysTileAt,MS,9,D20,W
-LAYS_TOKEN_ON,MS,C11,80 Hex C11 (Prag)
+LAYS_TOKEN_ON,MS,C11,80
 CompanyDoesNotPayDividend,MS
 PRICE_MOVES_LOG,MS,104,E1,99,D1
 BuysTrain,MS,3,IPO,180
@@ -1089,7 +1089,7 @@ BuysTrain,CL,3,IPO,180
  
 CompanyOperates,GT,Charlie
 LaysTileAt,GT,201,D36,NW
-LAYS_TOKEN_ON,GT,C33,40 Hex C33 (Lemberg)
+LAYS_TOKEN_ON,GT,C33,40
 CompanyDoesNotPayDividend,GT
 PRICE_MOVES_LOG,GT,97,E2,93,D2
 BuysTrain,GT,3,IPO,180
@@ -1527,7 +1527,7 @@ BuysTrain,KK,2G,GT,10
  
 CompanyOperates,SB,Bob
 LaysTileAtFor,SB,9,H32,W,70
-LAYS_TOKEN_ON,SB,H30,80 Hex H30 (Debrecin/Groéwardein SE,SW,E)
+LAYS_TOKEN_ON,SB,H30,80
 CompanyRevenue,SB,75
 CompanyDividesEarnings,SB,75,50,25
 CompanyWithholds,SB,50
@@ -1579,7 +1579,7 @@ TrainsRusted,2G
  
 CompanyOperates,TH,Alice
 LaysTileAt,TH,432,H30,W
-LAYS_TOKEN_ON,TH,H30,40 Hex H30 (Debrecin/Groéwardein W,NW,NE)
+LAYS_TOKEN_ON,TH,H30,40
 CompanyRevenue,TH,100
 CompanyDividesEarnings,TH,100,60,40
 CompanyWithholds,TH,60

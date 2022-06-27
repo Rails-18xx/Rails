@@ -433,7 +433,7 @@ Payout,Thomas,30,1,100
 CompanyOperates,BY,Frank
 LaysTileAt,BY,58,K11,SW
 LaysTileAt,BY,8,J10,SE
-LAYS_TOKEN_ON,BY,J8,120 Hex J8 (Frankfurt)
+LAYS_TOKEN_ON,BY,J8,120
 CompanyRevenue,BY,170
 CompanyPaysOutFull,BY,170
 Payout,Basti,34,2,10
@@ -714,7 +714,7 @@ BuysTrain,M6,2,SX,180
  
 CompanyOperates,BY,Frank
 LaysTileAt,BY,14,H16,SW
-LAYS_TOKEN_ON,BY,H20,160 Hex H20 (Dresden)
+LAYS_TOKEN_ON,BY,H20,160
 CompanyRevenue,BY,190
 CompanyPaysOutFull,BY,190
 Payout,Stefan,57,3,10
@@ -726,7 +726,7 @@ FirstTrainBought,3+3
  
 CompanyOperates,SX,Thomas
 LaysTileAt,SX,208,H20,W
-LAYS_TOKEN_ON,SX,C11,100 Hex C11 (Hamburg E,NE)
+LAYS_TOKEN_ON,SX,C11,100
 CompanyRevenue,SX,290
 CompanyPaysOutFull,SX,290
 Payout,Basti,87,3,10
@@ -735,7 +735,7 @@ PRICE_MOVES_LOG,SX,92,E6,98,F6
  
 CompanyOperates,BA,Basti
 LaysTileAt,BA,207,I3,NE
-LAYS_TOKEN_ON,BA,I3,60 Hex I3 (Köln)
+LAYS_TOKEN_ON,BA,I3,60
 CompanyRevenue,BA,180
 CompanyPaysOutFull,BA,180
 Payout,Thomas,18,1,10
@@ -1013,7 +1013,7 @@ BuysTrain,M6,2+2,SX,200
  
 CompanyOperates,BY,Thomas
 LaysTileAt,BY,1,I17,SW
-LAYS_TOKEN_ON,BY,H16,140 Hex H16 (Leipzig)
+LAYS_TOKEN_ON,BY,H16,140
 CompanyRevenue,BY,400
 CompanyPaysOutFull,BY,400
 Payout,Frank,40,1,10
@@ -1068,7 +1068,7 @@ IS_NOW_PRES_OF,Stefan,PR
  
 CompanyOperates,HE,Basti
 LaysTileAtFor,HE,8,K7,W,50
-LAYS_TOKEN_ON,HE,I3,60 Hex I3 (Köln)
+LAYS_TOKEN_ON,HE,I3,60
 CompanyDoesNotPayDividend,HE
 PRICE_MOVES_LOG,HE,86,B3,82,A3
 BuysTrain,HE,4,IPO,360
@@ -1077,7 +1077,7 @@ NewTrainAvailable,4,4+4
  
 CompanyOperates,MS,Frank
 LaysTileAt,MS,25,C19,SW
-LAYS_TOKEN_ON,MS,E19,80 Hex E19 (Berlin)
+LAYS_TOKEN_ON,MS,E19,80
 CompanyDoesNotPayDividend,MS
 PRICE_MOVES_LOG,MS,80,B5,72,A5
 BuysTrain,MS,4+4,IPO,440
@@ -1196,7 +1196,7 @@ NewTrainAvailable,5,5+5
  
 CompanyOperates,WT,Frank
 LaysTileAt,WT,69,M7,NE
-LAYS_TOKEN_ON,WT,L6,40 Hex L6 (Ludwigshafen/Mannheim E,SE)
+LAYS_TOKEN_ON,WT,L6,40
 CompanyRevenue,WT,60
 CompanyPaysOutFull,WT,60
 Payout,Frank,36,6,10
@@ -1326,7 +1326,7 @@ Payout,Thomas,256,8,10
 PRICE_MOVES_LOG,SX,154,I4,172,J4
  
 CompanyOperates,BY,Thomas
-LAYS_TOKEN_ON,BY,E19,200 Hex E19 (Berlin)
+LAYS_TOKEN_ON,BY,E19,200
 CompanyRevenue,BY,310
 CompanyPaysOutFull,BY,310
 Payout,Thomas,186,6,10
@@ -1378,7 +1378,7 @@ PRICE_MOVES_LOG,MS,84,B4,88,C4
  
 CompanyOperates,OL,Basti
 LaysTileAt,OL,8,E7,NW
-LAYS_TOKEN_ON,OL,C11,60 Hex C11 (Hamburg SW)
+LAYS_TOKEN_ON,OL,C11,60
 CompanyDoesNotPayDividend,OL
 PRICE_MOVES_LOG,OL,80,B5,72,A5
 BuysTrain,OL,3+3,BA,565
@@ -1521,7 +1521,7 @@ PRICE_MOVES_LOG,BA,150,G2,168,H2
  
 CompanyOperates,PR,Stefan
 LaysTileAt,PR,25,E7,E
-LAYS_TOKEN_ON,PR,H20,60 Hex H20 (Dresden)
+LAYS_TOKEN_ON,PR,H20,60
 CompanyRevenue,PR,550
 CompanyPaysOutFull,PR,550
 Payout,Basti,55,2,5

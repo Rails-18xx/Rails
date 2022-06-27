@@ -381,7 +381,7 @@ CompanyOperates,CA,Joakim
 LaysTileAt,CA,57,D17,SW
 CompanyTakesLoan,CA,100,100
 BuysBonusTokenFrom,CA,Tunnel,10,GW,50
-LAYS_TOKEN_ON,CA,F15,40 Hex F15 (London)
+LAYS_TOKEN_ON,CA,F15,40
 InterestPaidFromTreasury,CA,10
 CompanyDoesNotPayDividend,CA
 PRICE_MOVES_LOG,CA,80,E3,75,D3
@@ -503,7 +503,7 @@ PRICE_MOVES_LOG,CPR,65,D5,70,E5
 CompanyOperates,GT,Aliza
 CompanyTakesLoan,GT,100,100
 LaysTileAt,GT,8,M8,N
-LAYS_TOKEN_ON,GT,N11,40 Hex N11 (Toronto NE,N)
+LAYS_TOKEN_ON,GT,N11,40
 DestinationReached,CPR,N11
 CompanyRevenue,GT,210
 CompanyMustPayLoanInterest,GT,50
@@ -836,7 +836,7 @@ CompanyOperates,CA,Joakim
 LaysTileAt,CA,5,H15,N
 DestinationReached,CA,H15
 ReleasedFromEscrow,CA,400
-LAYS_TOKEN_ON,CA,C14,100 Hex C14 (Maudaumin)
+LAYS_TOKEN_ON,CA,C14,100
 CompanyRevenue,CA,310
 CompanyMustPayLoanInterest,CA,20
 InterestPaidFromTreasury,CA,20
@@ -987,7 +987,7 @@ NewTrainAvailable,5,6
  
 CompanyOperates,CPR,Ed
 LaysTileAt,CPR,127,M4,SW
-LAYS_TOKEN_ON,CPR,N11,40 Hex N11 (Toronto NW,SW)
+LAYS_TOKEN_ON,CPR,N11,40
 CompanyRevenue,CPR,160
 CompanyMustPayLoanInterest,CPR,30
 InterestPaidFromTreasury,CPR,30
@@ -1061,7 +1061,7 @@ CompanyRepaysLoans,GW,200,200,2,100
  
 CompanyOperates,LPS,Stefan
 LaysTileAt,LPS,8,C16,N
-LAYS_TOKEN_ON,LPS,F17,40 Hex F17 (St.Thomas)
+LAYS_TOKEN_ON,LPS,F17,40
 CompanyRevenue,LPS,310
 CompanyMustPayLoanInterest,LPS,20
 InterestPaidFromTreasury,LPS,20
@@ -1073,7 +1073,7 @@ CompanyRepaysLoans,LPS,100,100,1,100
  
 CompanyOperates,THB,Aliza
 LaysTileAt,THB,57,L13,S
-LAYS_TOKEN_ON,THB,L13,40 Hex L13 (Burlington)
+LAYS_TOKEN_ON,THB,L13,40
 CompanyRevenue,THB,60
 CompanyPaysOutFull,THB,60
 Payout,Aliza,36,6,10
@@ -1104,7 +1104,7 @@ CompanyOperates,WR,Ed
 LaysTileAt,WR,3,K16,NE
 DestinationReached,WR,L15
 ReleasedFromEscrow,WR,130
-LAYS_TOKEN_ON,WR,L15,40 Hex L15 (Hamilton SW)
+LAYS_TOKEN_ON,WR,L15,40
 CompanyRevenue,WR,150
 CompanyMustPayLoanInterest,WR,40
 InterestPaidFromTreasury,WR,40
@@ -1321,7 +1321,7 @@ BuysTrain,BBG,D,IPO,1100
  
 CompanyOperates,CV,Joakim
 LaysTileAt,CV,123,L15,N
-LAYS_TOKEN_ON,CV,L15,40 Hex L15 (Hamilton)
+LAYS_TOKEN_ON,CV,L15,40
 CompanyRevenue,CV,300
 CompanyPaysOutFull,CV,300
 Payout,Aliza,60,2,10
@@ -1360,7 +1360,7 @@ START_OR,6.2
  
 CompanyOperates,GW,Stefan
 LaysTileAt,GW,15,J15,NE
-LAYS_TOKEN_ON,GW,J15,40 Hex J15 (Brantford)
+LAYS_TOKEN_ON,GW,J15,40
 CompanyRevenue,GW,230
 CompanyPaysOutFull,GW,230
 Payout,Stefan,115,5,10
@@ -1370,7 +1370,7 @@ BuysTrain,GW,D,BBG,82
  
 CompanyOperates,CV,Joakim
 LaysTileAt,CV,9,M6,S
-LAYS_TOKEN_ON,CV,M4,100 Hex M4 (Barrie)
+LAYS_TOKEN_ON,CV,M4,100
 CompanyRevenue,CV,340
 CompanyPaysOutFull,CV,340
 Payout,Joakim,204,6,10
@@ -1399,7 +1399,7 @@ PRICE_MOVES_LOG,THB,90,E2,100,F2
  
 CompanyOperates,BBG,Stefan
 LaysTileAt,BBG,27,K14,NE
-LAYS_TOKEN_ON,BBG,N11,40 Hex N11 (Toronto)
+LAYS_TOKEN_ON,BBG,N11,40
 CompanyDoesNotPayDividend,BBG
 PRICE_MOVES_LOG,BBG,90,D1,80,C1
 BuysTrain,BBG,5,GW,1
@@ -1424,7 +1424,7 @@ START_OR,6.3
  
 CompanyOperates,GW,Stefan
 LaysTileAt,GW,63,D17,S
-LAYS_TOKEN_ON,GW,L13,100 Hex L13 (Burlington)
+LAYS_TOKEN_ON,GW,L13,100
 CompanyRevenue,GW,500
 CompanyPaysOutFull,GW,500
 Payout,Stefan,250,5,10
@@ -1535,7 +1535,7 @@ START_OR,7.1
  
 CompanyOperates,GW,Stefan
 LaysTileAt,GW,24,J7,SE
-LAYS_TOKEN_ON,GW,N11,100 Hex N11 (Toronto)
+LAYS_TOKEN_ON,GW,N11,100
 CompanyRevenue,GW,610
 CompanyPaysOutFull,GW,610
 Payout,Stefan,366,6,10
@@ -1991,7 +1991,7 @@ PRICE_MOVES_LOG,BBG,125,I3,150,J3
  
 CompanyOperates,WGB,Adam
 LaysTileAt,WGB,8,I10,N
-LAYS_TOKEN_ON,WGB,C14,40 Hex C14 (Maudaumin)
+LAYS_TOKEN_ON,WGB,C14,40
 CompanyRevenue,WGB,310
 CompanyPaysOutFull,WGB,310
 Payout,Adam,186,6,10

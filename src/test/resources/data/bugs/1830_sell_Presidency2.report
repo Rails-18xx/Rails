@@ -105,7 +105,7 @@ ReceivesFor,Ulrich,30,B&O
  
 CompanyOperates,B&O,Pierre
 LaysTileAtFor,B&O,57,J14,SW,80
-LAYS_TOKEN_ON,B&O,J14,40 Hex J14 (Washington)
+LAYS_TOKEN_ON,B&O,J14,40
 CompanyDoesNotPayDividend,B&O
 PRICE_MOVES_LOG,B&O,82,G3,76,F3
 BuysTrain,B&O,2,IPO,80
@@ -375,7 +375,7 @@ BuysPrivateFromFor,C&O,C&A,Thomas,320
  
 CompanyOperates,B&O,Pierre
 LaysTileAt,B&O,27,H14,E
-LAYS_TOKEN_ON,B&O,H16,100 Hex H16 ()
+LAYS_TOKEN_ON,B&O,H16,100
 CompanyRevenue,B&O,210
 CompanyWithholds,B&O,210
 PRICE_MOVES_LOG,B&O,71,H6,67,G6
@@ -517,7 +517,7 @@ BuysPrivateFromFor,NYC,SVNRR,Stefan,40
  
 CompanyOperates,PRR,Basti
 LaysTileAt,PRR,2,G17,SW
-LAYS_TOKEN_ON,PRR,H16,40 Hex H16 ()
+LAYS_TOKEN_ON,PRR,H16,40
 CompanyRevenue,PRR,90
 CompanyPaysOutFull,PRR,90
 Payout,Thomas,9,1,10
@@ -772,7 +772,7 @@ PRICE_MOVES_LOG,NYC,67,G6,71,H6
  
 CompanyOperates,C&O,Matze
 LaysTileAt,C&O,15,H10,W
-LAYS_TOKEN_ON,C&O,H10,40 Hex H10 ()
+LAYS_TOKEN_ON,C&O,H10,40
 CompanyRevenue,C&O,100
 CompanyPaysOutFull,C&O,100
 Payout,Basti,20,2,10
@@ -1005,7 +1005,7 @@ BuysTrain,B&M,5,IPO,450
  
 CompanyOperates,Erie,Matze
 LaysTileAt,Erie,9,D16,W
-LAYS_TOKEN_ON,Erie,E19,40 Hex E19 ()
+LAYS_TOKEN_ON,Erie,E19,40
 CompanyRevenue,Erie,100
 CompanyPaysOutFull,Erie,100
 Payout,Pierre,10,1,10
@@ -1032,7 +1032,7 @@ PRICE_MOVES_LOG,C&O,71,H6,75,I6
  
 CompanyOperates,CPR,Ulrich
 LaysTileAt,CPR,57,B10,NW
-LAYS_TOKEN_ON,CPR,B10,40 Hex B10 ()
+LAYS_TOKEN_ON,CPR,B10,40
 CompanyRevenue,CPR,160
 CompanyWithholds,CPR,160
 PRICE_MOVES_LOG,CPR,70,I7,69,H7
@@ -1110,7 +1110,7 @@ TrainsRusted,3
  
 CompanyOperates,NYC,Stefan
 LaysTileAt,NYC,62,G19,SW
-LAYS_TOKEN_ON,NYC,G19,40 Hex G19 (New York NW,NE)
+LAYS_TOKEN_ON,NYC,G19,40
 CompanyRevenue,NYC,380
 CompanyPaysOutFull,NYC,380
 Payout,Pierre,76,2,10

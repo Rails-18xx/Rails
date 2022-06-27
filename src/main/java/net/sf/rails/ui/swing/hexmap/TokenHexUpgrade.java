@@ -12,6 +12,7 @@ import net.sf.rails.game.Stop;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.special.SpecialBaseTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.ui.swing.ORUIManager;
 import net.sf.rails.ui.swing.elements.TokenIcon;
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayBonusToken;
@@ -34,9 +35,13 @@ public class TokenHexUpgrade extends HexUpgrade {
 
     }
 
+    // Required for BASE_COST_ROUTE_LENGTH
+    private ORUIManager parent;
+
     // static fields
     private final LayToken action;
     private final ImmutableSet<Stop> stops;
+    private int cost;
 
     // validation fields
     private final NavigableSet<Stop> allowed = Sets.newTreeSet();
@@ -45,14 +50,15 @@ public class TokenHexUpgrade extends HexUpgrade {
     // ui fields
     private Stop selectedStop;
 
-    private TokenHexUpgrade(GUIHex hex, Collection<Stop> stops, LayToken action) {
+    private TokenHexUpgrade(ORUIManager parent, GUIHex hex, Collection<Stop> stops, LayToken action) {
         super(hex);
+        this.parent = parent;
         this.action = action;
         this.stops = ImmutableSet.copyOf(stops);
     }
 
-    public static TokenHexUpgrade create(GUIHex hex, Collection<Stop> stops, LayToken action) {
-        return new TokenHexUpgrade(hex, stops, action);
+    public static TokenHexUpgrade create(ORUIManager parent, GUIHex hex, Collection<Stop> stops, LayToken action) {
+        return new TokenHexUpgrade(parent, hex, stops, action);
     }
 
     public LayToken getAction() {
@@ -65,6 +71,10 @@ public class TokenHexUpgrade extends HexUpgrade {
 
     public Stop getSelectedStop() {
         return selectedStop;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
     }
 
     private boolean validate() {
@@ -186,7 +196,11 @@ public class TokenHexUpgrade extends HexUpgrade {
 
     @Override
     public int getCost() {
-        return action.getPotentialCost(hex.getHex());
+        if (cost != 0) {
+            return cost;
+        } else {
+            return action.getPotentialCost(hex.getHex());
+        }
     }
 
     @Override
@@ -219,7 +233,11 @@ public class TokenHexUpgrade extends HexUpgrade {
         String text = null;
         if (action instanceof LayBaseToken) {
             text = "<html>";
-            if (action.getPotentialCost(hex.getHex()) != 0) {
+            if (action.getCompany().getBaseTokenLayCostMethod()
+                    == PublicCompany.BaseCostMethod.ROUTE_DISTANCE) {
+                String cost = Bank.format(action.getCompany(), action.getCost());
+                text += LocalText.getText("TOKEN_UPGRADE_COST", cost);
+            } else if (action.getPotentialCost(hex.getHex()) != 0) {
                 String cost = Bank.format(action.getCompany(), action.getPotentialCost(hex.getHex()));
                 text += LocalText.getText("TOKEN_UPGRADE_COST", cost);
             } else {

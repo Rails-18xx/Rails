@@ -356,7 +356,7 @@ Payout,Ulli Hegemann,30,1,100
 CompanyOperates,BY,Jupp Krupp
 LaysTileAt,BY,8,J10,SE
 LaysTileAt,BY,8,O13,NW
-LAYS_TOKEN_ON,BY,J8,120 Hex J8 (Frankfurt)
+LAYS_TOKEN_ON,BY,J8,120
 CompanyRevenue,BY,160
 CompanyPaysOutFull,BY,160
 Payout,Jupp Krupp,80,5,10
@@ -574,7 +574,7 @@ PRICE_MOVES_LOG,BY,110,E3,122,F3
  
 CompanyOperates,SX,Volker Kuhnle
 LaysTileAt,SX,8,H18,E
-LAYS_TOKEN_ON,SX,E19,60 Hex E19 (Berlin)
+LAYS_TOKEN_ON,SX,E19,60
 CompanyRevenue,SX,280
 CompanyPaysOutFull,SX,280
 Payout,Ulli Hegemann,28,1,10
@@ -734,7 +734,7 @@ BuysTrain,SX,2,M5,1
 CompanyOperates,BA,Volker Schnell
 LaysTileAt,BA,210,L6,E
 LaysTileAtFor,BA,201,I3,NE,50
-LAYS_TOKEN_ON,BA,H2,80 Hex H2 (Düsseldorf)
+LAYS_TOKEN_ON,BA,H2,80
 CompanyDoesNotPayDividend,BA
 PRICE_MOVES_LOG,BA,84,B4,78,A4
 BuysTrain,BA,3+3,IPO,270
@@ -1094,7 +1094,7 @@ BuysTrain,HE,3+3,PR,40
  
 CompanyOperates,MS,Volker Kuhnle
 LaysTileAt,MS,220,E19,SW
-LAYS_TOKEN_ON,MS,E19,80 Hex E19 (Berlin)
+LAYS_TOKEN_ON,MS,E19,80
 CompanyDoesNotPayDividend,MS
 PRICE_MOVES_LOG,MS,80,B5,72,A5
 PresidentAddsCash,MS,Volker Kuhnle,20
@@ -1160,7 +1160,7 @@ PRICE_MOVES_LOG,BA,92,C3,100,D3
  
 CompanyOperates,WT,Jupp Krupp
 LaysTileAt,WT,63,F14,SW
-LAYS_TOKEN_ON,WT,F14,140 Hex F14 (Magdeburg)
+LAYS_TOKEN_ON,WT,F14,140
 CompanyRevenue,WT,220
 CompanyPaysOutFull,WT,220
 Payout,Volker Kuhnle,88,4,10
@@ -1169,7 +1169,7 @@ PRICE_MOVES_LOG,WT,82,A3,86,B3
  
 CompanyOperates,HE,Ulli Hegemann
 LaysTileAt,HE,63,G5,SW
-LAYS_TOKEN_ON,HE,G5,60 Hex G5 (Dortmund)
+LAYS_TOKEN_ON,HE,G5,60
 CompanyRevenue,HE,310
 CompanyPaysOutFull,HE,310
 Payout,Volker Kuhnle,31,1,10

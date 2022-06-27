@@ -451,7 +451,7 @@ BuysTrain,VR,4,DSB,1
  
 CompanyOperates,DSB,Charlie
 LaysTileAt,DSB,622,D7,NE
-LAYS_TOKEN_ON,DSB,F1,40 Hex F1 (Kiel)
+LAYS_TOKEN_ON,DSB,F1,40
 CompanyDoesNotPayDividend,DSB
 PRICE_MOVES_LOG,DSB,82,E5,75,D5
 PlayerMustRaiseCash,Charlie,178,4

@@ -96,13 +96,13 @@ public class NetworkMultigraph {
             startVertex.setSink(false); // deactivate sink for that vertex
             // define iterator to find all routes from here
             NetworkIterator iterator = new NetworkIterator(graph, startVertex).setRouteIterator(true);
-            log.info("Phase 2 Graph: Start routes from {}", startVertex);
+            log.debug("Phase 2 Graph: Start routes from {}", startVertex);
             while ( iterator.hasNext() ) {
                 // found new route
                 NetworkVertex nextVertex = iterator.next();
                 if (nextVertex.isSink() && nextVertex != startVertex) {
                     List<NetworkVertex> route = iterator.getCurrentRoute();
-                    log.info("Phase 2 Graph: Route found to {} with route = {}", nextVertex, route);
+                    log.debug("Phase 2 Graph: Route found to {} with route = {}", nextVertex, route);
                     // define routeEdge
                     NetworkEdge routeEdge = null;
                     Set<NetworkEdge> partialEdges = new HashSet<NetworkEdge>();

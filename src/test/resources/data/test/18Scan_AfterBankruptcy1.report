@@ -435,7 +435,7 @@ BuysTrain,S&NJ,4,DSB,1
  
 CompanyOperates,VR,Alice
 LaysTileAt,VR,15,F13,NE
-LAYS_TOKEN_ON,VR,H13,40 Hex H13 (Tallinn)
+LAYS_TOKEN_ON,VR,H13,40
 CompanyRevenue,VR,160
 CompanyPaysOutFull,VR,160
 Payout,Bob,16,1,10
@@ -445,7 +445,7 @@ PRICE_MOVES_LOG,VR,90,D3,100,E3
  
 CompanyOperates,DSB,Charlie
 LaysTileAt,DSB,8,G8,W
-LAYS_TOKEN_ON,DSB,D7,40 Hex D7 (Oslo)
+LAYS_TOKEN_ON,DSB,D7,40
 CompanyDoesNotPayDividend,DSB
 PRICE_MOVES_LOG,DSB,82,E5,75,D5
 PlayerMustRaiseCash,Charlie,178,4
@@ -616,7 +616,7 @@ PRICE_MOVES_LOG,S&NJ,180,K3,200,K2
  
 CompanyOperates,VR,Alice
 LaysTileAt,VR,58,G16,SE
-LAYS_TOKEN_ON,VR,H17,100 Hex H17 (Vyborg)
+LAYS_TOKEN_ON,VR,H17,100
 CompanyRevenue,VR,160
 CompanyPaysOutFull,VR,160
 Payout,Bob,16,1,10

@@ -22,7 +22,7 @@
 		<Payout split="allowed" percPerJump="100"/>
 		<BaseTokens>
 			<HomeBase lay="firstOR"/>
-			<LayCost method="distance" cost="20"/>
+			<LayCost method="route_length" cost="20"/>
 		</BaseTokens>
 		<Trains limit="2,1"/><!-- as a 5-share company, will become 4,3,2 later -->
 		<CanBuyPrivates/>
@@ -42,7 +42,7 @@
 		<Payout split="allowed" percPerJump="100"/>
 		<BaseTokens>
 			<HomeBase lay="firstOR"/>
-			<LayCost method="distance" cost="20"/><!-- Cost per hex -->
+			<LayCost method="route_length" cost="20"/><!-- Cost per hex -->
 		</BaseTokens>
 		<Trains limit="5,4,3"/>
 		<CanBuyPrivates/>

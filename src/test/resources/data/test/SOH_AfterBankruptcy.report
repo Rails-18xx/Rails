@@ -91,7 +91,7 @@ BuysPrivateFromFor,NRS,1_AS,Alice,20
 LaysTileAt,NRS,8,I8,W
 LaysTileAt,NRS,6,I6,SE
 PrivateCloses,1_AS
-LAYS_TOKEN_ON,NRS,I6,40 Hex I6 (Rotterdam)
+LAYS_TOKEN_ON,NRS,I6,40
 CompanyRevenue,NRS,120
 CompanyPaysOutFull,NRS,120
 Payout,Alice,36,3,10
@@ -163,7 +163,7 @@ NewTrainAvailable,3,4
 CompanyOperates,AR,Bob
 SELL_SHARES_LOG,AR,1,10,10,AR,90
 LaysTileAtFor,AR,23,I8,SW,50
-LAYS_TOKEN_ON,AR,H9,40 Hex H9 (Utrecht)
+LAYS_TOKEN_ON,AR,H9,40
 CompanyRevenue,AR,190
 CompanyPaysOutFull,AR,190
 Payout,Bob,76,4,10
@@ -301,7 +301,7 @@ SELL_SHARES_LOG,NRS,2,10,20,NRS,320
 PRICE_MOVES_LOG,NRS,160,M1,140,L1
 LaysTileAt,NRS,14,I6,W
 LaysTileAt,NRS,58,J9,W
-LAYS_TOKEN_ON,NRS,J7,100 Hex J7 (Breda)
+LAYS_TOKEN_ON,NRS,J7,100
 CompanyRevenue,NRS,240
 CompanyPaysOutFull,NRS,240
 Payout,Alice,120,5,10

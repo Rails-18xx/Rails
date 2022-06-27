@@ -303,7 +303,7 @@ Payout,Marco,30,1,100
 CompanyOperates,BY,Christian
 LaysTileAt,BY,1,I17,SW
 LaysTileAt,BY,202,H20,W
-LAYS_TOKEN_ON,BY,H20,160 Hex H20 (Dresden)
+LAYS_TOKEN_ON,BY,H20,160
 CompanyRevenue,BY,180
 CompanyPaysOutFull,BY,180
 Payout,Eyal,36,2,10
@@ -548,7 +548,7 @@ BuysTrain,BY,3,IPO,180
  
 CompanyOperates,SX,Marco
 LaysTileAt,SX,9,G17,SW
-LAYS_TOKEN_ON,SX,E19,60 Hex E19 (Berlin)
+LAYS_TOKEN_ON,SX,E19,60
 CompanyRevenue,SX,260
 CompanyPaysOutFull,SX,260
 Payout,Eyal,52,2,10
@@ -808,7 +808,7 @@ PRICE_MOVES_LOG,SX,100,D3,110,E3
 CompanyOperates,BA,Eyal
 LaysTileAt,BA,213,L6,NE
 LaysTileAt,BA,23,K5,E
-LAYS_TOKEN_ON,BA,H2,80 Hex H2 (Düsseldorf)
+LAYS_TOKEN_ON,BA,H2,80
 CompanyDoesNotPayDividend,BA
 PRICE_MOVES_LOG,BA,84,B4,78,A4
 BuysTrain,BA,3+3,IPO,270
@@ -1132,7 +1132,7 @@ BuysTrain,BY,4,IPO,360
  
 CompanyOperates,SX,Marco
 LaysTileAt,SX,19,F16,E
-LAYS_TOKEN_ON,SX,H20,40 Hex H20 (Dresden)
+LAYS_TOKEN_ON,SX,H20,40
 CompanyRevenue,SX,230
 CompanyWithholds,SX,230
 PRICE_MOVES_LOG,SX,134,F2,120,E2
@@ -1142,7 +1142,7 @@ NewTrainAvailable,4,4+4
 CompanyOperates,HE,Nick
 LaysTileAt,HE,3,M15,W
 LaysTileAtFor,HE,212,J6,SW,50
-LAYS_TOKEN_ON,HE,H16,100 Hex H16 (Leipzig)
+LAYS_TOKEN_ON,HE,H16,100
 CompanyDoesNotPayDividend,HE
 PRICE_MOVES_LOG,HE,86,B3,82,A3
 BuysTrain,HE,2+2,WT,177
@@ -1183,7 +1183,7 @@ EndOfFormationRound,PR,OperatingRound 7.1
 IS_NOW_PRES_OF,Eyal,PR
  
 CompanyOperates,MS,Christian
-LAYS_TOKEN_ON,MS,C11,20 Hex C11 (Hamburg E,NE)
+LAYS_TOKEN_ON,MS,C11,20
 CompanyDoesNotPayDividend,MS
 PRICE_MOVES_LOG,MS,80,B5,72,A5
 BuysTrain,MS,3+3,WT,1
@@ -1192,7 +1192,7 @@ BuysTrain,MS,4+4,HE,1
  
 CompanyOperates,OL,Eyal
 LaysTileAt,OL,24,E13,NW
-LAYS_TOKEN_ON,OL,F14,100 Hex F14 (Magdeburg)
+LAYS_TOKEN_ON,OL,F14,100
 CompanyDoesNotPayDividend,OL
 PRICE_MOVES_LOG,OL,80,B5,72,A5
 BuysTrain,OL,4,SX,530

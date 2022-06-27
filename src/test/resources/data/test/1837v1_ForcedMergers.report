@@ -1424,7 +1424,7 @@ BuysTrain,MS,1G,Pool,100
  
 CompanyOperates,BK,Bob
 LaysTileAt,BK,8,D14,NW
-LAYS_TOKEN_ON,BK,E17,80 Hex E17 (Brünn)
+LAYS_TOKEN_ON,BK,E17,80
 CompanyRevenue,BK,250
 CompanyDividesEarnings,BK,250,220,30
 CompanyPaysOutFull,BK,220
@@ -1614,7 +1614,7 @@ Payout,Charlie,45,1,50
  
 CompanyOperates,MS,Charlie
 LaysTileAt,MS,406,C11,SW
-LAYS_TOKEN_ON,MS,C11,80 Hex C11 (Prag)
+LAYS_TOKEN_ON,MS,C11,80
 CompanyRevenue,MS,330
 CompanyDividesEarnings,MS,330,280,50
 CompanyPaysOutFull,MS,280
@@ -1880,7 +1880,7 @@ BuysTrain,CL,2G,IPO,230
  
 CompanyOperates,GT,Alice
 LaysTileAt,GT,201,D36,NW
-LAYS_TOKEN_ON,GT,C33,40 Hex C33 (Lemberg)
+LAYS_TOKEN_ON,GT,C33,40
 CompanyDoesNotPayDividend,GT
 PRICE_MOVES_LOG,GT,104,C1,99,B1
 BuysTrain,GT,3+1,IPO,280
@@ -1892,7 +1892,7 @@ BuysTrain,GT,2G,IPO,230
  
 CompanyOperates,SB,Charlie
 LaysTileAt,SB,8,I31,NW
-LAYS_TOKEN_ON,SB,H30,80 Hex H30 (Debrecin/Groéwardein SE,W)
+LAYS_TOKEN_ON,SB,H30,80
 CompanyRevenue,SB,85
 CompanyDividesEarnings,SB,85,60,25
 CompanyPaysOutFull,SB,60
@@ -2067,7 +2067,7 @@ NewTrainAvailable,4,4E
  
 CompanyOperates,CL,Bob
 LaysTileAt,CL,207,D36,SW
-LAYS_TOKEN_ON,CL,D36,40 Hex D36 (Tarnopol)
+LAYS_TOKEN_ON,CL,D36,40
 CompanyRevenue,CL,160
 CompanyDividesEarnings,CL,160,140,20
 CompanyPaysOutFull,CL,140
@@ -2118,7 +2118,7 @@ EndOfFormationRound,KK,OperatingRound 4.2
  
 CompanyOperates,SB,Charlie
 LaysTileAt,SB,27,H24,E
-LAYS_TOKEN_ON,SB,J28,80 Hex J28 (Arad/Temesvar NE,E,NW)
+LAYS_TOKEN_ON,SB,J28,80
 CompanyRevenue,SB,300
 CompanyDividesEarnings,SB,300,245,55
 CompanyWithholds,SB,245
@@ -2371,7 +2371,7 @@ PRICE_MOVES_LOG,GT,97,C2,102,D2
  
 CompanyOperates,BH,Bob
 LaysTileAt,BH,201,N20,W
-LAYS_TOKEN_ON,BH,L12,100 Hex L12 (Triest)
+LAYS_TOKEN_ON,BH,L12,100
 TrainInherited,1G,BH
 CompanyDoesNotPayDividend,BH
 PRICE_MOVES_LOG,BH,97,C2,93,B2

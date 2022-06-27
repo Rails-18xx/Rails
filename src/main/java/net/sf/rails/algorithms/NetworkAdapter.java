@@ -36,7 +36,7 @@ public class NetworkAdapter {
 
     public NetworkGraph getMapGraph() {
         mapGraph = NetworkGraph.createMapGraph(root);
-        log.info("MapGraph created");
+        log.debug("MapGraph created");
         return mapGraph;
     }
 
@@ -51,7 +51,7 @@ public class NetworkAdapter {
         routeGraph = NetworkGraph.createRouteGraph(getMapGraph(), company, addHQ, running);
         this.company = company;
         this.addHQ = addHQ;
-        log.info("RouteGraph created");
+        log.debug("RouteGraph created");
         return routeGraph;
     }
 
@@ -71,7 +71,7 @@ public class NetworkAdapter {
         if (revenueGraph == null) {
             revenueGraph = NetworkGraph.createOptimizedGraph(getRouteGraphCached(company, false),
                     protectedVertices);
-            log.info("RevenueGraph created");
+            log.debug("RevenueGraph created");
         }
 
         return revenueGraph;
@@ -82,7 +82,7 @@ public class NetworkAdapter {
         if (multiGraph == null) {
             multiGraph = NetworkMultigraph.create(
                     getRevenueGraph(company, protectedVertices), protectedVertices);
-            log.info("MultiGraph created");
+            log.debug("MultiGraph created");
         }
         return multiGraph;
     }

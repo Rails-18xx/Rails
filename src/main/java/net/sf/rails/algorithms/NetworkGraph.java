@@ -154,22 +154,6 @@ public class NetworkGraph {
         return hexStations.build();
     }
 
-    /**
-     * @return a list of all stops that are tokenable for the argument company
-     */
-    public Multimap<MapHex, Stop> getTokenableStops(PublicCompany company) {
-
-        ImmutableMultimap.Builder<MapHex, Stop> hexStops =
-                ImmutableMultimap.builder();
-
-        for (NetworkVertex vertex : graph.vertexSet()) {
-            Stop stop = vertex.getStop();
-            if (stop != null && stop.isTokenableFor(company)) {
-                hexStops.put(vertex.getHex(), stop);
-            }
-        }
-        return hexStops.build();
-    }
 
     private void rebuildVertices() {
         // rebuild mapVertices
@@ -196,7 +180,7 @@ public class NetworkGraph {
                 NetworkVertex stationVertex = new NetworkVertex(hex, station);
                 graph.addVertex(stationVertex);
                 vertices.put(stationVertex.getIdentifier(), stationVertex);
-                log.info("Added {}", stationVertex);
+                log.debug("Added {}", stationVertex);
             }
 
             // get tracks per side to add that vertex
@@ -206,7 +190,7 @@ public class NetworkGraph {
                     NetworkVertex sideVertex = new NetworkVertex(hex, rotated);
                     graph.addVertex(sideVertex);
                     vertices.put(sideVertex.getIdentifier(), sideVertex);
-                    log.info("Added {}", sideVertex);
+                    log.debug("Added {}", sideVertex);
                 }
         }
 
@@ -222,13 +206,13 @@ public class NetworkGraph {
             for (Track track : tracks) {
                 NetworkVertex startVertex = getVertexRotated(hex, track.getStart());
                 NetworkVertex endVertex = getVertexRotated(hex, track.getEnd());
-                log.info("Track: {}", track);
+                log.debug("Track: {}", track);
                 NetworkEdge edge = new NetworkEdge(startVertex, endVertex, false);
                 if (startVertex == endVertex) {
                     log.error("Track {} on hex {}has identical start/end", track, hex);
                 } else {
                     graph.addEdge(startVertex, endVertex, edge);
-                    log.info("Added non-greedy edge {}", edge.getConnection());
+                    log.debug("Added non-greedy edge {}", edge.getConnection());
                 }
             }
 
@@ -237,33 +221,33 @@ public class NetworkGraph {
             for (HexSide side : HexSide.head()) {
                 MapHex neighborHex = mapManager.getNeighbour(hex, side);
                 if (neighborHex == null) {
-                    log.info("No connection for Hex {} at {}, No Neighbor", hex.getId(), hex.getOrientationName(side));
+                    log.debug("No connection for Hex {} at {}, No Neighbor", hex.getId(), hex.getOrientationName(side));
                     continue;
                 }
                 NetworkVertex vertex = getVertex(hex, side);
                 HexSide rotated = side.opposite();
                 NetworkVertex otherVertex = getVertex(neighborHex, rotated);
                 if (vertex == null && otherVertex == null) {
-                    log.info("Hex {} has no track at {}", hex.getId(), hex.getOrientationName(side));
-                    log.info("And Hex {} has no track at {}", neighborHex.getId(), neighborHex.getOrientationName(rotated));
+                    log.debug("Hex {} has no track at {}", hex.getId(), hex.getOrientationName(side));
+                    log.debug("And Hex {} has no track at {}", neighborHex.getId(), neighborHex.getOrientationName(rotated));
                     continue;
                 } else if (vertex == null && otherVertex != null) {
-                    log.info("Deadend connection for Hex {} at {}, NeighborHex {} has no track at side {}", neighborHex.getId(), neighborHex.getOrientationName(rotated), hex.getId(), hex.getOrientationName(side));
+                    log.debug("Deadend connection for Hex {} at {}, NeighborHex {} has no track at side {}", neighborHex.getId(), neighborHex.getOrientationName(rotated), hex.getId(), hex.getOrientationName(side));
                     vertex = new NetworkVertex(hex, side);
                     graph.addVertex(vertex);
                     vertices.put(vertex.getIdentifier(), vertex);
-                    log.info("Added deadend vertex {}", vertex);
+                    log.debug("Added deadend vertex {}", vertex);
                 } else if (otherVertex == null) {
-                    log.info("Deadend connection for Hex {} at {}, NeighborHex {} has no track at side {}", hex.getId(), hex.getOrientationName(side), neighborHex.getId(), neighborHex.getOrientationName(rotated));
+                    log.debug("Deadend connection for Hex {} at {}, NeighborHex {} has no track at side {}", hex.getId(), hex.getOrientationName(side), neighborHex.getId(), neighborHex.getOrientationName(rotated));
                     otherVertex = new NetworkVertex(neighborHex, rotated);
                     graph.addVertex(otherVertex);
                     vertices.put(otherVertex.getIdentifier(), otherVertex);
-                    log.info("Added deadend vertex {}", otherVertex);
+                    log.debug("Added deadend vertex {}", otherVertex);
                 }
                 NetworkEdge edge = new NetworkEdge(vertex, otherVertex, true);
                 graph.addEdge(vertex, otherVertex,
                         edge);
-                log.info("Added greedy edge {}", edge.getConnection());
+                log.debug("Added greedy edge {}", edge.getConnection());
             }
         }
 
@@ -300,7 +284,7 @@ public class NetworkGraph {
             if ((source.isSide() && graph.edgesOf(source).size() == 2 || source.isStation()) &&
                     (target.isSide() && graph.edgesOf(target).size() == 2 || target.isStation())) {
                 edge.setGreedy(true);
-                log.info("Increased greedness for {}", edge.getConnection());
+                log.debug("Increased greedness for {}", edge.getConnection());
             }
         }
     }
@@ -322,7 +306,7 @@ public class NetworkGraph {
 
             // remove hermit
             if (vertexEdges.size() == 0) {
-                log.info("Remove hermit (no connection) = {}", vertex);
+                log.debug("Remove hermit (no connection) = {}", vertex);
                 graph.removeVertex(vertex);
                 removed = true;
             }
@@ -331,14 +315,14 @@ public class NetworkGraph {
             if (!vertex.isSide()) continue;
 
             if (vertexEdges.size() == 1) {
-                log.info("Remove deadend side (single connection) = {}", vertex);
+                log.debug("Remove deadend side (single connection) = {}", vertex);
                 graph.removeVertex(vertex);
                 removed = true;
             } else if (vertexEdges.size() == 2) { // not necessary vertices
                 NetworkEdge[] edges = vertexEdges.toArray(new NetworkEdge[2]);
                 if (edges[0].isGreedy() == edges[1].isGreedy()) {
                     if (!edges[0].isGreedy()) {
-                        log.info("Remove deadend side (no greedy connection) = {}", vertex);
+                        log.debug("Remove deadend side (no greedy connection) = {}", vertex);
                         // two non greedy edges indicate a deadend
                         graph.removeVertex(vertex);
                         removed = true;

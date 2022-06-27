@@ -27,6 +27,8 @@ public abstract class PossibleORAction extends PossibleAction {
     transient protected PublicCompany company;
     protected String companyName;
 
+    protected int cost = 0;
+
     /**
      *
      */
@@ -52,7 +54,11 @@ public abstract class PossibleORAction extends PossibleAction {
      * @return costs of executing the action, default for an ORAction is zero
      */
     public int getCost() {
-        return 0;
+        return cost;
+    }
+
+    public void setCost (int cost) {
+        this.cost = cost;
     }
 
     /** To be used in the client (to enable safety check in the server) */

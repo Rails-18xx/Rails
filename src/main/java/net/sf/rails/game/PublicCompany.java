@@ -51,8 +51,40 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected static final int EXPLICIT = 3; // Not automatic
 
     // Base token lay cost calculation methods
+    /* Superseded by enum
     public static final String BASE_COST_SEQUENCE = "sequence";
     public static final String BASE_COST_DISTANCE = "distance";
+    public static final String BASE_COST_ROUTE_LENGTH = "route_length"; // Assumed: from any laid token.
+    */
+    public enum BaseCostMethod {
+        SEQUENCE ("sequence"),     // First, second token etc.
+        HEX_DISTANCE ("distance"), // As the crow flies
+        ROUTE_DISTANCE("route_length");
+
+        private String configName;
+
+        private BaseCostMethod (String configName) {
+            this.configName = configName;
+        }
+
+        public String configName () {return configName;}
+
+        public static BaseCostMethod get(String configName) {
+            switch (configName) {
+                case "sequence" : return SEQUENCE;
+                case "distance" : return HEX_DISTANCE;
+                case "route_length" : return ROUTE_DISTANCE;
+            }
+            return null;
+        }
+    }
+    /* Further specifications to ROUTE_DISTANCE */
+    /** May distance measurement only start at the *home* base token? */
+    public static boolean FROM_HOME_ONLY = false;
+    /** In distance measurement, include both start and final city hex? */
+    public static boolean INCL_START_HEX = false;
+    /** Tokenable stops and their cost (where that counts) */
+    public Map<Stop, Integer> tokenableStops;
 
     protected static final String[] tokenLayTimeNames = new String[]{"whenStarted", "whenFloated", "firstOR"};
 
@@ -108,12 +140,18 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     protected int numberOfBaseTokens = 0;
 
+    /**
+     * In case of distance-dependent token lay cost,
+     * this value will have the incremental cost per hex passed.
+     */
     protected int baseTokensBuyCost = 0;
+
     /**
      * An array of base token laying costs, per successive token
      */
     protected List<Integer> baseTokenLayCost;
-    protected String baseTokenLayCostMethod = "sequential";
+    //protected String baseTokenLayCostMethod = "sequence";
+    protected BaseCostMethod baseTokenLayCostMethod = BaseCostMethod.SEQUENCE;
 
     protected final BaseTokensModel baseTokens = BaseTokensModel.create(this, "baseTokens"); // Create after cloning ?
     protected final PortfolioModel portfolio = PortfolioModel.create(this);
@@ -702,13 +740,11 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             // Cost of laying a token
             Tag layCostTag = baseTokenTag.getChild("LayCost");
             if (layCostTag != null) {
-                baseTokenLayCostMethod = layCostTag.getAttributeAsString("method", baseTokenLayCostMethod);
-                if (baseTokenLayCostMethod.equalsIgnoreCase(BASE_COST_SEQUENCE)) {
-                    baseTokenLayCostMethod = BASE_COST_SEQUENCE;
-                } else if (baseTokenLayCostMethod.equalsIgnoreCase(BASE_COST_DISTANCE)) {
-                    baseTokenLayCostMethod = BASE_COST_DISTANCE;
-                } else {
-                    throw new ConfigurationException("Invalid base token lay cost calculation method: " + baseTokenLayCostMethod);
+                 String methodName = layCostTag.getAttributeAsString("method", "sequence");
+                baseTokenLayCostMethod = BaseCostMethod.get(methodName);
+                if (baseTokenLayCostMethod == null) {
+                    throw new ConfigurationException("Invalid base token lay cost calculation method: "
+                            + methodName);
                 }
 
                 baseTokenLayCost = layCostTag.getAttributeAsIntegerList("cost");
@@ -1961,23 +1997,28 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (cost > 0) tokensCostThisTurn.change(cost);
     }
 
-    public void layBaseTokennNoMapMode(int cost) {
+    public void layBaseTokenInNoMapMode(int cost) {
         if (cost > 0) tokensCostThisTurn.change(cost);
         tokensLaidThisTurn.append(Bank.format(this, cost), ",");
     }
 
+    /** Return the configured (list of) base token lay cost(s) */
+    public List<Integer> getBaseTokenLayCostList() {
+        return baseTokenLayCost;
+    }
+
     /**
-     * Calculate the cost of laying a token, given the hex where
-     * the token is laid. This only makes a difference for de "distance" method.
+     * Calculate the cost of laying a token, given the stop where
+     * the token is laid. This only makes a difference for the "distance" methods.
      *
-     * @param hex The hex where the token is to be laid.
+     * @param stop The Stop where the token is to be laid.
      * @return The cost of laying that token.
      */
-    public int getBaseTokenLayCost(MapHex hex) {
+    public int getBaseTokenLayCost(Stop stop) {
 
-        if (baseTokenLayCost == null) return 0;
-
-        if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
+        //if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
+        if (baseTokenLayCostMethod == BaseCostMethod.SEQUENCE) {
+            if (baseTokenLayCost == null) return 0;
             int index = getNumberOfLaidBaseTokens();
 
             if (index >= baseTokenLayCost.size()) {
@@ -1986,27 +2027,48 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                 index = 0;
             }
             return baseTokenLayCost.get(index);
-        } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
-            if (hex == null) {
+            //} else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
+        } else if (baseTokenLayCostMethod == BaseCostMethod.HEX_DISTANCE) {
+            if (baseTokenLayCost == null) return 0;
+            if (stop == null) {
                 return baseTokenLayCost.get(0);
             } else {
+                MapHex hex = stop.getHex();
                 // WARNING: no provision yet for multiple home hexes.
                 return getRoot().getMapManager().getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost.get(0);
             }
+        //} else if (baseTokenLayCostMethod.equals(BASE_COST_ROUTE_LENGTH)
+         } else if (baseTokenLayCostMethod == BaseCostMethod.ROUTE_DISTANCE
+                && stop != null) {
+            // TODO  Stop is null in NoMapMode. No idea what to do with that. (EV)
+            if (tokenableStops == null) setTokenableStops();
+            return baseTokenLayCost.get(0) * tokenableStops.get(stop);
         } else {
             return 0;
         }
     }
 
-    /**
-     * Return all possible token lay costs to be incurred for the
-     * company's next token lay. For the distance method it will be a full list
-     */
+    public void setTokenableStops() {
+        if (tokenableStops == null) {
+            tokenableStops = new HashMap<>(Routes.getTokenLayRouteDistances(getRoot(), this,
+                    PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY));
+        }
+    }
+
+    /** To be called at the start of the LAY_TOKEN step */
+    public void clearTokenableStops() {
+        tokenableStops = null;
+    }
+
+            /**
+             * Return all possible token lay costs to be incurred for the
+             * company's next token lay. For the distance method it will be a full list.
+             */
     public Set<Integer> getBaseTokenLayCosts() {
 
-        if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
+        if (baseTokenLayCostMethod == BaseCostMethod.SEQUENCE) {
             return ImmutableSet.of(getBaseTokenLayCost(null));
-        } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
+        } else if (baseTokenLayCostMethod == BaseCostMethod.HEX_DISTANCE) {
             // WARNING: no provision yet for multiple home hexes.
             // EV: and not for zero, but there may be no such cases.
             Collection<Integer> distances = getRoot().getMapManager().getCityDistances(homeHexes.get(0));
@@ -2015,10 +2077,20 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                 costs.add(distance * baseTokenLayCost.get(0));
             }
             return costs.build();
+        } else if (baseTokenLayCostMethod == BaseCostMethod.ROUTE_DISTANCE) {
+            Map<Stop, Integer> layableTokens
+                    = Routes.getTokenLayRouteDistances(getRoot(), this, false, false);
+            Set<Integer> results = new TreeSet<>();
+            for (int i : layableTokens.values()) { results.add(i); }
+            return results;
         } else {
             return ImmutableSet.of(0);
         }
 
+    }
+
+    public BaseCostMethod getBaseTokenLayCostMethod() {
+        return baseTokenLayCostMethod;
     }
 
     public StringState getTokensLaidThisTurnModel() {

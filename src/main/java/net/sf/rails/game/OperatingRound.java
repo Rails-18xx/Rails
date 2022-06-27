@@ -6,7 +6,6 @@ import net.sf.rails.game.financial.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.*;
-import net.sf.rails.game.specific._1835.PublicCompany_1835;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
@@ -837,11 +836,12 @@ public class OperatingRound extends Round implements Observer {
                         ;
                 if (company.getNumberOfFreeBaseTokens() == 0
                         && !bonusTokensForSale) {  */
+
+                company.clearTokenableStops();
                 if (!canLayAnyTokens(true)) {
                     log.debug("OR skips {}: No tokens available", newStep);
                     continue;
                 }
-
             }
 
             if (newStep == GameDef.OrStep.CALC_REVENUE) {
@@ -2098,8 +2098,16 @@ public class OperatingRound extends Round implements Observer {
                 stl = action.getSpecialProperty();
                 if (stl != null) extra = stl.isExtra();
             }
-
-            cost = company.getBaseTokenLayCost(hex);
+            if (company.getBaseTokenLayCostMethod()
+                    == PublicCompany.BaseCostMethod.ROUTE_DISTANCE) {
+                cost = action.getCost();
+                if (cost > 0 && cost != company.getBaseTokenLayCost(stop)) {
+                    errMsg = LocalText.getText("WrongCost", cost, company.getBaseTokenLayCost(stop));
+                    break;
+                }
+            } else {
+                cost = company.getBaseTokenLayCost(stop);
+            }
             if (stl != null && stl.isFree()) cost = 0;
 
             // Does the company have the money?
@@ -2141,8 +2149,8 @@ public class OperatingRound extends Round implements Observer {
                 String costText =
                         Currency.toBank(company, cost);
                 text.append(LocalText.getText("LAYS_TOKEN_ON", companyName,
-                        hex.getId(), costText));
-                text.append(" ").append(stop.toText());
+                        hex.getId(), Bank.format(this, cost)));
+                //text.append(" ").append(stop.toText());
             } else {
                 text.append(LocalText.getText("LAYS_FREE_TOKEN_ON",
                         companyName, hex.getId()));
@@ -2214,9 +2222,22 @@ public class OperatingRound extends Round implements Observer {
                 // Can the company pay for one? This only works for BASE_COST_SEQUENCE
                 //&& company.getBaseTokenLayCost(null) <= company.getCash()
         ) {
-            currentNormalTokenLays.add(new LayBaseToken(getRoot(), (List<MapHex>) null));
-        }
+            PublicCompany.BaseCostMethod baseCostMethod = company.getBaseTokenLayCostMethod();
+            switch (baseCostMethod) {
+                case SEQUENCE:
+                case HEX_DISTANCE:
+                    currentNormalTokenLays.add(new LayBaseToken(getRoot(), (List<MapHex>) null));
+                    break;
+                case ROUTE_DISTANCE:
+                    company.setTokenableStops();
+                    for (Stop stop : company.tokenableStops.keySet()) {
+                        int cost = company.getBaseTokenLayCost(stop);
+                        currentNormalTokenLays.add(
+                                new LayBaseToken (getRoot(), List.of(stop.getHex()), cost));
+                    }
+            }
 
+        }
     }
 
     /**
@@ -2995,7 +3016,7 @@ public class OperatingRound extends Round implements Observer {
                 // FIXME: Check where to lay the base tokens in NoMapMode
                 // (bank.getUnavailable().addBonusToken(token));
             }
-            operatingCompany.value().layBaseTokennNoMapMode(amount);
+            operatingCompany.value().layBaseTokenInNoMapMode(amount);
             ReportBuffer.add(this, LocalText.getText("OCLayBaseTokenExecuted",
                     operatingCompany.value().getId(), cashText));
         }
