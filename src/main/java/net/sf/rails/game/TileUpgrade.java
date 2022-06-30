@@ -347,7 +347,8 @@ public class TileUpgrade implements Upgrade {
             }
         }
         HexSidesSet allowed = builder.build();
-        log.trace("allowed = {}hexSides = {}impassable ={} rotationSides = {}", allowed, connected, impassable, rotationSides);
+        log.debug("tile from=#{} to=#{} allowed={} connected={} impassable={} rotationSides={}",
+                baseTile, targetTile, allowed, connected, impassable, rotationSides);
         return allowed;
     }
 

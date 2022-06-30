@@ -24,7 +24,7 @@ public class Routes {
      * and their distances to a valid start base token.
      * @param root Root
      * @param company Currently active PublicCompany
-     * @param includeStartHex True is both the start and end Hex must be counted.
+     * @param includeStartHex True if both the start and final hex must be counted.
      * @param toHomeOnly True if only the distance to a home hex counts.
      * @return A HashMap with tokenable stops as keys and the distances as values.
      */
@@ -49,42 +49,65 @@ public class Routes {
             }
         }
 
+        Map<MapHex, Integer> beenThere = new HashMap<>();
+
         for (Stop baseTokenStop : usableBases) {
-            MapHex hex = baseTokenStop.getParent();
+            MapHex tokenedHex = baseTokenStop.getParent();
             Station station = baseTokenStop.getRelatedStation();
-            NetworkVertex startVertex = mapGraph.getVertex(hex, station);
+            NetworkVertex startVertex = mapGraph.getVertex(tokenedHex, station);
+            log.debug(">>>>> Start search from base at {}", tokenedHex);
 
             NetworkIterator iterator = new NetworkIterator(graph, startVertex);
             int edges = 0;
+            boolean skipUntilStartVertex = false;
 
             NetworkVertex prev = startVertex;
             while (iterator.hasNext()) {
                 NetworkVertex item = iterator.next();
-                if (item.isSide() && !item.getHex().equals(prev.getHex())) {
-                    if (item.getHex().equals(startVertex.getHex())) {
+                log.debug("      Checking {}", item);
+                MapHex hex = item.getHex();
+                if (skipUntilStartVertex && hex != tokenedHex) continue;
+                if (hex == tokenedHex) {
+                    log.debug("Continue search from base at {}", tokenedHex);
+                    skipUntilStartVertex = false;
+                }
+                if (item.isSide() && !hex.equals(prev.getHex())) {
+                    if (hex == prev.getHex()) continue;
+                    if (hex.equals(startVertex.getHex())) {
                         edges = 0;
-                    } else {
+                    } else if (!beenThere.containsKey(hex)){
                         edges++;
+                        beenThere.put(hex, edges);
+                    } else if (beenThere.containsKey(hex) && beenThere.get(hex) > edges+1) {
+                        edges++;
+                        beenThere.put(hex, edges);
+                    } else if (beenThere.containsKey(hex)) {
+                        edges = beenThere.get(hex);
+                    } else {
+                        continue;
                     }
                     log.debug("~~~~~ Start: {}  Edge: {} count={}", startVertex, item.getIdentifier(), edges);
                 } else if (item.isStation()) {
                     log.debug("===== Start={} End={} Sides={}", startVertex,
                             item.getIdentifier().replaceFirst("-", ""), edges);
                     Stop stop = item.getStop();
+                    if (stop.hasTokenOf(company)) {
+                        skipUntilStartVertex = true;
+                        continue;
+                    }
+                    if (beenThere.containsKey(hex)) edges = beenThere.get(hex);
                     if (stop.isTokenableFor(company)) {
                         log.debug("+++++ Found {} edges from {} to {}", edges, baseTokenStop, item.getStop());
                         if (!stopsAndDistancesMap.containsKey(stop)
                                 || edges < stopsAndDistancesMap.get(stop)) {
                             int distance = includeStartHex ? edges+1 : edges;
                             stopsAndDistancesMap.put (stop, distance);
-                            log.info("Found distance {} from {} to {}", distance, baseTokenStop, stop);
+                            log.debug("Found distance {} from {} to {}", distance, baseTokenStop, stop);
                         }
                     }
                 }
                 prev = item;
             }
-
-
         }
         return stopsAndDistancesMap;
     }
