@@ -389,6 +389,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             new SetDividendDialog((SetDividend) editedAction);
         } else if (editedAction instanceof LayBaseToken) {
             new LayBaseTokenDialog ((LayBaseToken)editedAction);
+        } else if (editedAction instanceof LayBonusToken) {
+            new LayBonusTokenDialog ((LayBonusToken)editedAction);
         } else if (editedAction instanceof DiscardTrain) {
             new DiscardTrainDialog ((DiscardTrain)editedAction);
         } else {
@@ -750,6 +752,9 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         LayBaseTokenDialog(LayBaseToken action) {
             super("Edit LayBaseToken");
             this.action = action;
+            addTextField(this, "Locations",
+                    action.getLocationNameString(),
+                    action.getLocationNameString());
             addTextField(this, "Station",
                     action.getChosenStop().getNumber(),
                     String.valueOf(action.getChosenStop().getNumber()));  // 0
@@ -760,13 +765,42 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         PossibleAction processInput() {
             log.info("Action was {}", action);
             String input = "";
+            input = ((JTextField)inputElements.get(0)).getText();
+            action.setLocationNames(input);
             try {
-                input = ((JTextField)inputElements.get(0)).getText();
+                input = ((JTextField)inputElements.get(1)).getText();
                 int chosenStop = Integer.valueOf(input);
                 action.setChosenStation(chosenStop);
             } catch (NumberFormatException e) {
                 log.error ("Error in chosenStop: {}", input, e);
             }
+
+            log.info("Action is {}", action);
+            return action;
+
+        }
+    }
+
+    private class LayBonusTokenDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private LayBonusToken action;
+
+        LayBonusTokenDialog(LayBonusToken action) {
+            super("Edit LayBonusToken");
+            this.action = action;
+            addTextField(this, "Locations",
+                    action.getLocationNameString(),
+                    action.getLocationNameString());
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+            log.info("Action was {}", action);
+            String input = "";
+
+            input = ((JTextField)inputElements.get(0)).getText();
+            action.setLocationNames(input);
 
             log.info("Action is {}", action);
             return action;

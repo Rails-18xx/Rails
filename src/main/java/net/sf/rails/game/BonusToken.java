@@ -108,6 +108,10 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
         return value;
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public String getClosingInfo () {
         return description;

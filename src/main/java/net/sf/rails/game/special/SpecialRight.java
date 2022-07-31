@@ -1,9 +1,11 @@
 package net.sf.rails.game.special;
 
+import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.Owner;
 import net.sf.rails.util.Util;
 
@@ -54,6 +56,8 @@ public class SpecialRight extends SpecialProperty implements Configurable, Close
     public void finishConfiguration(RailsRoot root) throws ConfigurationException {
 
         prepareForRemoval (root.getPhaseManager());
+
+        rightTag = null;
     }
 
     /**
@@ -119,5 +123,13 @@ public class SpecialRight extends SpecialProperty implements Configurable, Close
 
     public String toText() {
         return rightName;
+    }
+
+    public String toMenu() {
+        if (cost > 0) {
+            return LocalText.getText("BuyRight" , rightName, Bank.format(this, cost));
+        } else {
+            return LocalText.getText("GetRight", rightName);
+        }
     }
 }

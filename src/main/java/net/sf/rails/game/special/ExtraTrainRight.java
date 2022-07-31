@@ -28,19 +28,11 @@ public class ExtraTrainRight extends SpecialRight {
         return extraTrains;
     }
 
-    public String toMenu() {
-        StringBuilder b = new StringBuilder();
-        b.append(getCost() > 0 ? "Buy '" : "Use '").append(getName()).append("' right");
-        if (getCost() > 0) b.append(" for ").append(Bank.format(this, getCost()));
-        return b.toString();
-    }
-
     @Override
     public String toText() {
-        //return LocalText.getText("ExtraTrains",
-        //        getOwner(), extraTrains);
         return "Tr+"+extraTrains;
     }
+    // Note: for toMenu() see the superclass SpecialRight
 
     public String getInfo() {
         return toMenu();

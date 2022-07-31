@@ -95,20 +95,10 @@ public class SpecialAccessRight extends SpecialRight implements NetworkGraphModi
 
     @Override
     public String toMenu() {
-        StringBuilder b = new StringBuilder();
-        b.append(getCost() > 0 ? "Buy '" : "Get '").append(getName()).append("'");
+        StringBuilder b = new StringBuilder(super.toMenu());
         if (locationNames != null) b.append(" at ").append(locationNames);
-        if (getCost() > 0) b.append(" for ").append(Bank.format(this, getCost()));
         return b.toString();
     }
-
-    /*
-    @Override
-    public String toMenu() {
-        return LocalText.getText("BuyRight",
-                getName(),
-                Bank.format(this, getCost()));
-    }*/
 
     public String toString() {
         return getName();

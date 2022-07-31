@@ -6,11 +6,13 @@ import java.util.List;
 import com.google.common.base.Objects;
 
 import net.sf.rails.game.MapHex;
+import net.sf.rails.game.MapManager;
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.special.SpecialBaseTokenLay;
 import net.sf.rails.game.special.SpecialBonusTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.util.RailsObjects;
+import net.sf.rails.util.Util;
 
 /**
  * Rails 2.0: Updated equals and toString methods
@@ -111,6 +113,18 @@ public abstract class LayToken extends PossibleORAction {
 
     public String getLocationNameString() {
         return locationNames;
+    }
+
+    /** Used by ListAndFixSavedFiles */
+    public void setLocationNames (String locationNames) {
+        this.locationNames = locationNames;
+        locations = new ArrayList<>();
+        if (Util.hasValue(locationNames)) {
+            MapManager mmgr = root.getMapManager();
+            for (String hexName : locationNames.split(",\\s*")) {
+                locations.add(mmgr.getHex(hexName));
+            }
+        }
     }
 
     private void buildLocationNameString() {

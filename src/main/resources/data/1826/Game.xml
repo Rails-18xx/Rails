@@ -86,14 +86,14 @@
 				<Lays companyType="Public" colour="yellow" number="2" occurrences="1"/>
 			</Tiles>
 			<OperatingRounds number="1"/>
-			<Trains tradingAllowed="yes"/>
+			<Trains tradingAllowed="no"/>
 		</Phase>
 		<Phase name="4H" >
 			<Tiles colour="yellow,green"/>
 			<OperatingRounds number="2"/>
 		</Phase>
 		<Phase name="6H" >
-			<Trains rusted="2H" limitStep="2"/>
+			<Trains rusted="2H" limitStep="2" tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="10H" >
 			<Tiles colour="yellow,green,brown"/>

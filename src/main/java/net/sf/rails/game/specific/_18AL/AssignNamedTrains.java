@@ -10,10 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.Objects;
 
-import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Train;
 import net.sf.rails.game.TrainManager;
-import net.sf.rails.util.GameLoader;
 import net.sf.rails.util.RailsObjects;
 import rails.game.action.PossibleAction;
 import rails.game.action.UseSpecialProperty;
@@ -29,10 +27,10 @@ public class AssignNamedTrains extends UseSpecialProperty {
     private final String[] trainIds;
 
     private final transient List<NameableTrain> preTrainPerToken = new ArrayList<>();
-    private final String[] preTrainds;
+    private final String[] preTrainIds;
 
     private transient List<NameableTrain> postTrainPerToken = new ArrayList<>();
-    private final String[] postTrainds;
+    private final String[] postTrainIds;
 
     public static final long serialVersionUID = 1L;
 
@@ -47,8 +45,8 @@ public class AssignNamedTrains extends UseSpecialProperty {
             nameableTrains.add((NameableTrain) train);
         }
         trainIds = new String[numberOfTrains];
-        preTrainds = new String[numberOfTokens];
-        postTrainds = new String[numberOfTokens];
+        preTrainIds = new String[numberOfTokens];
+        postTrainIds = new String[numberOfTokens];
 
         for ( int i = 0; i < numberOfTokens; i++) {
             preTrainPerToken.add(null);
@@ -62,7 +60,7 @@ public class AssignNamedTrains extends UseSpecialProperty {
             if (token != null) {
                 preTrainPerToken.set(tokens.indexOf(token), train);
                 tokenIndex = tokens.indexOf(token);
-                preTrainds[tokenIndex] = train.getId();
+                preTrainIds[tokenIndex] = train.getId();
             }
             trainIndex++;
         }
@@ -95,9 +93,9 @@ public class AssignNamedTrains extends UseSpecialProperty {
         if (postTokensPerTrain != null) {
             for (NameableTrain train : postTokensPerTrain) {
                 if (train == null) {
-                    postTrainds[postTokensPerTrain.indexOf(train)] = null;
+                    postTrainIds[postTokensPerTrain.indexOf(train)] = null;
                 } else {
-                    postTrainds[postTokensPerTrain.indexOf(train)] = train.getId();
+                    postTrainIds[postTokensPerTrain.indexOf(train)] = train.getId();
                 }
             }
         }
@@ -148,8 +146,8 @@ public class AssignNamedTrains extends UseSpecialProperty {
             }
         }
 
-        if (preTrainds != null) {
-            for (String trainId : preTrainds) {
+        if (preTrainIds != null) {
+            for (String trainId : preTrainIds) {
                 if (trainId != null && trainId.length() > 0) {
 //                    preTrainPerToken.add((NameableTrain) Token.getByUniqueId(trainId));
                   preTrainPerToken.add((NameableTrain) trainManager.getTrainByUniqueId(trainId));
@@ -159,8 +157,8 @@ public class AssignNamedTrains extends UseSpecialProperty {
             }
         }
 
-        if (postTrainds != null) {
-            for (String trainId : postTrainds) {
+        if (postTrainIds != null) {
+            for (String trainId : postTrainIds) {
                 if (trainId != null && trainId.length() > 0) {
 //                    postTrainPerToken.add((NameableTrain) Token.getByUniqueId(trainId));
                     postTrainPerToken.add((NameableTrain) trainManager.getTrainByUniqueId(trainId));

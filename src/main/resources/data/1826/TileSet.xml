@@ -108,7 +108,7 @@
     <Tile id="143" quantity="1" />
     <Tile id="203" quantity="1" />
     <Tile id="204" quantity="2" />
-    <Tile id="514" quantity="1">
+    <Tile id="514" quantity="1" orientation="1">
  		<Upgrade id="515" />
 	</Tile>
 	<Tile id="619" quantity="3">
@@ -130,13 +130,13 @@
 		<Upgrade id="513" hex="C11,C13,L14"/>
 	</Tile>
     <Tile id="70" quantity="1"/>
-    <Tile id="515" quantity="1">
+    <Tile id="515" quantity="1" orientation="1">
  		<Upgrade id="516" />
 	</Tile>
     <Tile id="611" quantity="2"/>
 
 	<!-- Gray tiles -->
     <Tile id="513" quantity="3"/>
-    <Tile id="516" quantity="1"/>
+    <Tile id="516" quantity="1" orientation="1"/>
 
 </TileManager>

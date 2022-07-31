@@ -22,6 +22,10 @@ import java.util.Set;
 
 public class PublicCompany_1826 extends PublicCompany {
 
+    public static String ETAT = "Etat";
+    public static String SNCF = "SNCF";
+    public static String BELG = "Belg";
+
     private static final Logger log = LoggerFactory.getLogger(PublicCompany_1826.class);
 
     public PublicCompany_1826(RailsItem parent, String id) {
@@ -50,6 +54,7 @@ public class PublicCompany_1826 extends PublicCompany {
         return getType().getId().equals("Public") && !getId().equals("Belg");
     }
 
+    /** Check if a company must get more tokens that the configured minimal number.*/
     @Override
     public void setFloated() {
 
@@ -76,7 +81,7 @@ public class PublicCompany_1826 extends PublicCompany {
 
     /** Convert company from a 5-share to a 10-share company */
     /* TODO: the numbers here should become configurable */
-    public boolean grow (int newNumberOfShares) {  // argument not used
+    public boolean grow (int newShareUnit) {  // argument not used
 
         if (getShareUnit() == 20 && hasReachedDestination()) {
 
@@ -89,7 +94,7 @@ public class PublicCompany_1826 extends PublicCompany {
             }
 
             ReportBuffer.add(this, LocalText.getText("CompanyHasGrown",
-                    this, newNumberOfShares));
+                    this, getNumberOfShares()));
 
             trainLimit.setTo(List.of(4,3,2));
 
@@ -127,5 +132,19 @@ public class PublicCompany_1826 extends PublicCompany {
         return limit;
     }
 
+    /** Check if a company must take a loan to buy a train from the Bank
+     * or to pay loan interest or bond revenue.
+     * (The player can still decide to buy a cheap train from another
+     * company, so loan taking is not really mandatory)
+     *
+     * @return True if a loan should be taken
+     */
+    public boolean canLoan() {
+        int loanValue = getLoanValueModel().value();
 
+        int interest = loanValue * getLoanInterestPct() / 100;
+        int compCash = getCash();
+        return (compCash < interest || getNumberOfTrains() == 0)
+                && currentNumberOfLoans.value() < 2;
+    }
 }

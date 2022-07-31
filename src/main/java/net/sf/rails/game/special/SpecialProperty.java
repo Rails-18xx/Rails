@@ -295,7 +295,11 @@ public abstract class SpecialProperty extends RailsOwnableItem<SpecialProperty> 
 
       }
       return text.toString();
-  }
+    }
+
+    public String toString() {
+        return getClass().getName();
+    }
 
     
 }

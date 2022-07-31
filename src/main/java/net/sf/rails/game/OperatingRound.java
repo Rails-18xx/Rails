@@ -478,8 +478,8 @@ public class OperatingRound extends Round implements Observer {
         } else if (step == GameDef.OrStep.LAY_TOKEN) {
             setNormalTokenLays();
             setSpecialTokenLays();
-            log.debug("Normal token lays: {}", currentNormalTokenLays.size());
-            log.debug("Special token lays: {}", currentSpecialTokenLays.size());
+            log.info("Normal token lays: {}", currentNormalTokenLays.size());
+            log.info("Special token lays: {}", currentSpecialTokenLays.size());
 
             possibleActions.addAll(currentNormalTokenLays);
             possibleActions.addAll(currentSpecialTokenLays);
@@ -600,7 +600,8 @@ public class OperatingRound extends Round implements Observer {
                                     possibleActions.add(new LayBaseToken(getRoot(),
                                             (SpecialBaseTokenLay) sp));
                                 }
-                            } else if (!(sp instanceof SpecialTileLay)) {
+                            } else if (!(sp instanceof SpecialTileLay)
+                                    && !(sp instanceof SpecialBonusTokenLay)) {
                                 possibleActions.add(new UseSpecialProperty(sp));
                             }
                         }
@@ -608,8 +609,7 @@ public class OperatingRound extends Round implements Observer {
                 }
                 // Are there other step-independent special properties owned by
                 // the president?
-                orsps =
-                        playerManager.getCurrentPlayer().getPortfolioModel().getAllSpecialProperties();
+                orsps = playerManager.getCurrentPlayer().getPortfolioModel().getAllSpecialProperties();
                 if (orsps != null) {
                     for (SpecialProperty sp : orsps) {
                         if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer()
@@ -619,7 +619,14 @@ public class OperatingRound extends Round implements Observer {
                                     possibleActions.add(new LayBaseToken(getRoot(),
                                             (SpecialBaseTokenLay) sp));
                                 }
-                            } else {
+                            } else if (sp instanceof SpecialBonusTokenLay) {
+                                if (getStep() != GameDef.OrStep.LAY_TOKEN) {
+                                    possibleActions.add(new LayBonusToken(getRoot(),
+                                            (SpecialBonusTokenLay) sp,
+                                            ((SpecialBonusTokenLay) sp).getToken()));
+
+                                }
+                            } else if (!(sp instanceof SpecialTileLay)){
                                 possibleActions.add(new UseSpecialProperty(sp));
                             }
                         }
@@ -2247,21 +2254,14 @@ public class OperatingRound extends Round implements Observer {
      * preparation, perhaps the two can be merged to one generic procedure.
      */
     protected void setSpecialTokenLays() {
-        /* Special-property tile lays */
+
+        /* Special-property base token lays */
         currentSpecialTokenLays.clear();
 
         PublicCompany company = operatingCompany.value();
         if (!company.canUseSpecialProperties()) return;
         // Check if the company still has tokens
         if (company.getNumberOfFreeBaseTokens() == 0) return;
-
-        /*
-         * In 1835, this only applies to major companies. TODO: For now,
-         * hardcode this, but it must become configurable later.
-         */
-        // Removed EV 24-11-2011 - entirely redundant; why did I ever do this??
-        // if (operatingCompany.get().getType().getName().equals("Minor"))
-        // return;
 
         for (SpecialBaseTokenLay stl : getSpecialProperties(SpecialBaseTokenLay.class)) {
             // If the special tile lay is not extra, it is only allowed if
@@ -2426,9 +2426,12 @@ public class OperatingRound extends Round implements Observer {
 
     /**
      * TODO Should be merged with setSpecialTokenLays() in the future.
+     * EV: No, that one is for base tokens only. For refactoring,
+     * it may be more useful to look at the "can use special properties" code from line 560.
+     *
      * Assumptions: 1. Bonus tokens can be laid anytime during the OR. 2. Bonus
-     * token laying is always extra. TODO This assumptions will be made
-     * configurable conditions.
+     * token laying is always extra.
+     * TODO These assumptions should be made configurable conditions.
      */
     protected void setBonusTokenLays() {
 
@@ -3596,7 +3599,7 @@ public class OperatingRound extends Round implements Observer {
                 }
             }
 
-            // If we must buy a train and the company does no have
+            // If we must buy a train and the company does not have
             // enough cash, the president must supply the difference.
             if (emergency
                     // Some people think it's allowed in 1835 to buy a new train

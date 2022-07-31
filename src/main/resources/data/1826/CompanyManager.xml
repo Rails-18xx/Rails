@@ -25,6 +25,7 @@
 			<LayCost method="route_length" cost="20"/>
 		</BaseTokens>
 		<Trains limit="2,1"/><!-- as a 5-share company, will become 4,3,2 later -->
+		<Loans value="500" maxNumber="2" interestPct="10"/>
 		<CanBuyPrivates/>
 		<CanUseSpecialProperties/>
 	</CompanyType>
@@ -45,6 +46,7 @@
 			<LayCost method="route_length" cost="20"/><!-- Cost per hex -->
 		</BaseTokens>
 		<Trains limit="5,4,3"/>
+		<Loans value="500" maxNumber="2" interestPct="10"/>
 		<CanBuyPrivates/>
 		<CanUseSpecialProperties/>
 	</CompanyType>
@@ -69,7 +71,7 @@
 						 when="tokenLayingStep"
 						 class="net.sf.rails.game.special.SpecialBonusTokenLay">
 			<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken"
-								  location="B12,C11,C13,C15,E5,E15,F12,G9,H6,I1,I7,I13,K17,L14,M3,M13"
+								  location="B12,C11,C13,C15,E5,E15,F12,G9,G19,H6,I1,I7,I13,K17,L14,M3,M13"
 								  connected="yes" extra="yes">
 				<BonusToken name="Mail" value="10" removed="Phase:E"/>
 			</SpecialBonusTokenLay>

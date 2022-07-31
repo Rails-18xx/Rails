@@ -789,11 +789,11 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         Tag loansTag = tag.getChild("Loans");
         if (loansTag != null) {
-            maxNumberOfLoans = loansTag.getAttributeAsInteger("number", -1);
+            maxNumberOfLoans = loansTag.getAttributeAsInteger("maxNumber", -1);
             // Note: -1 means undefined, to be handled in the code
             // (for instance: 1856).
             valuePerLoan = loansTag.getAttributeAsInteger("value", 0);
-            loanInterestPct = loansTag.getAttributeAsInteger("interest", 0);
+            loanInterestPct = loansTag.getAttributeAsInteger("interestPct", 0);
             maxLoansPerRound = loansTag.getAttributeAsInteger("perRound", -1);
         }
 
@@ -1136,7 +1136,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      *
      * Used by overriding in 1826 (perhaps that code could be put here)
      */
-    public boolean grow(int newNumberOfShares) {
+    public boolean grow(int newShareUnit) {
         return true;
     }
 
