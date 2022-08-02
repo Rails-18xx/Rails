@@ -4,19 +4,14 @@
  */
 package net.sf.rails.game.specific._1835;
 
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
-import com.google.common.collect.SortedMultiset;
 
 import net.sf.rails.game.financial.*;
-import net.sf.rails.game.financial.PublicCertificate.Combination;
 import net.sf.rails.game.model.CertificatesModel;
 import net.sf.rails.game.state.Owner;
+import rails.game.action.AdjustSharePrice;
 import rails.game.action.BuyCertificate;
 import rails.game.action.NullAction;
 import net.sf.rails.common.LocalText;
@@ -24,6 +19,7 @@ import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.state.Portfolio;
+import rails.game.action.PossibleAction;
 
 
 public class StockRound_1835 extends StockRound {
@@ -124,25 +120,6 @@ public class StockRound_1835 extends StockRound {
         return price;
     }
 
-    // The sell-in-same-turn-at-decreasing-price option does not apply here
-    
-    // change: check exactly how it differs here
-    // requires: do a parameterization
-    @Override
-    protected int getCurrentSellPrice (PublicCompany company) {
-
-        int price;
-        if (sellPrices.containsKey(company)) {
-            price = (sellPrices.get(company)).getPrice();
-        } else {
-            price = company.getCurrentSpace().getPrice();
-        }
-        // stored price is the previous unadjusted price
-        price = price / company.getShareUnitsForSharePrice();
-        return price;
-    }
-
-
     /** Share price goes down 1 space for any number of shares sold.
      */
     // change: specific share price adjustment
@@ -150,7 +127,9 @@ public class StockRound_1835 extends StockRound {
     @Override
     protected void adjustSharePrice (PublicCompany company, Owner seller, int sharesSold, boolean soldBefore) {
         // No more changes if it has already dropped
-        if (!soldBefore) {
+        if (soldBefore) {
+            lastSoldCompany = company;
+        } else {
             super.adjustSharePrice (company, seller,1, soldBefore);
         }
     }
@@ -182,17 +161,39 @@ public class StockRound_1835 extends StockRound {
            *
            * */
             if (company.getPresident() == currentPlayer) { 
-                if (PlayerShareUtils.poolAllowsShareNumbers(company) >1) return true;
+                if (PlayerShareUtils.poolAllowsShares(company) >1) return true;
                 }
         }
         return true;
     }
-    
+
+    protected void setGameSpecificActions() {
+        /* If in one turn multiple sales of the same company occur,
+         * this is normally done at the same price.
+         * In 1835 the rules state otherwise, a special action
+         * enables following that rule strictly.
+         */
+        if (lastSoldCompany != null) {
+            possibleActions.add(new AdjustSharePrice(lastSoldCompany, EnumSet.of(AdjustSharePrice.Direction.DOWN)));
+        }
+    }
+
+    protected boolean processGameSpecificAction(PossibleAction action) {
+        if (action instanceof AdjustSharePrice) {
+            super.adjustSharePrice ((AdjustSharePrice)action);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /*
     @Override
     protected boolean checkIfSplitSaleOfPresidentAllowed() {
         // in 1835 its not allowed to Split the President Certificate on sale
         return false;
-    }
+    }*/
 
 	@Override
 	protected void setPriority(String string) {

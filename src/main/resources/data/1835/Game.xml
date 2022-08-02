@@ -10,6 +10,7 @@
 				sequence="SellBuySell">
 				<NoSaleInFirstSR/>
 				<NoSaleIfNotOperated/>
+				<NoCertificateSplitOnSelling/>
 			</StockRound>
 			<OperatingRound class="net.sf.rails.game.specific._1835.OperatingRound_1835">
 				<EmergencyTrainBuying mustBuyCheapestTrain="no" mayAlwaysBuyNewTrain="yes" mayBuyFromCompany="yes"/>

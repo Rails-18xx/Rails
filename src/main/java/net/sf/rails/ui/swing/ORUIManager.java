@@ -42,6 +42,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import static net.sf.rails.ui.swing.GameUIManager.ADJUST_SHARE_PRICE_DIALOG;
+
 // FIXME: Add back corrections mechanisms
 // Rails 2.0, Even better add a new mechanism that allows to use the standard mechanism for corrections
 public class ORUIManager implements DialogOwner {
@@ -514,7 +516,7 @@ public class ORUIManager implements DialogOwner {
 
             } else if (actionType == RepayLoans.class) {
 
-                repayLoans ((RepayLoans)actions.get(0));
+                repayLoans((RepayLoans) actions.get(0));
 
             } else if (actionType == UseSpecialProperty.class) {
 

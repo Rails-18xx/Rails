@@ -271,6 +271,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                         case "NoSaleOfJustStartedCompany":
                             setGameParameter(GameDef.Parm.NO_SALE_OF_JUST_STARTED_COMPANY, true);
                             break;
+                        case "NoCertificateSplitOnSelling":
+                            setGameParameter(GameDef.Parm.NO_CERTIFICATE_SPLIT_ON_SELLING, true);
+                            break;
                     }
 
                 }

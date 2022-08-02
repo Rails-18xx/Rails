@@ -183,7 +183,7 @@ public class OperatingRound_SOH extends OperatingRound {
 
             // Sell player shares, no dumps allowed
             PortfolioModel playerPortfolio = player.getPortfolioModel();
-            int poolAllowsShares = PlayerShareUtils.poolAllowsShareNumbers(company);
+            int poolAllowsShares = PlayerShareUtils.poolAllowsShares(company);
             for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
                 int ownedShares = playerPortfolio.getShares(comp);
                 if (ownedShares == 0) continue;

@@ -1,15 +1,15 @@
 package net.sf.rails.util;
 
 import java.awt.*;
+import java.io.*;
 import java.lang.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +59,7 @@ public final class Util {
     }
 
     public static String joinNames(Iterable<? extends Item> items, String delimiter) {
-        StringBuilder b = new StringBuilder("");
+        StringBuilder b = new StringBuilder();
         if (items != null) {
             for (Item company : items) {
                 if (b.length() > 0) b.append(delimiter);
@@ -145,8 +145,8 @@ public final class Util {
      * Currently supported formats:
      *   "RRGGBB" - each character being a hexadecimal digit
      *   "r,g,b"  - each letter representing an integer 0..255
-     * @param s
-     * @return
+     * @param s Colour as hexadecimal RRGGBB or decimal r,g,b.
+     * @return Colour object
      */
     public static Color parseColour (String s) throws ConfigurationException{
         Color c = null;
@@ -173,9 +173,6 @@ public final class Util {
         }
         return c;
     }
-
-
-
 
     /**
      * Is a colour dark? (to check if FG colour needs be reversed)
@@ -256,6 +253,6 @@ public final class Util {
         if (Arrays.asList(list.split(",")).contains(a)) {
             return; // Set a permanent breakpoint on this line.
         }
-        return;
     }
+
 }

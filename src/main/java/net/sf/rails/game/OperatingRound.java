@@ -3323,10 +3323,9 @@ public class OperatingRound extends Round implements Observer {
         if (presidentMustSellShares) {
             savedAction = action;
 
-            /* Would like to add this report line, but it will affect many saved files:*/
             ReportBuffer.add (this, LocalText.getText("PlayerMustRaiseCash",
                     currentPlayer, Bank.format(this, cashToBeRaisedByPresident), train.getType()));
-            /* */
+
             gameManager.startShareSellingRound(
                     operatingCompany.value().getPresident(),
                     cashToBeRaisedByPresident, operatingCompany.value(), true);

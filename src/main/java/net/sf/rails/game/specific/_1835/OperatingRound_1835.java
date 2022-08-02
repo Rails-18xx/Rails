@@ -242,7 +242,7 @@ public class OperatingRound_1835 extends OperatingRound {
     public boolean layTile(LayTile action) {
 
         boolean hasJustLaidExtraOBBTile = action.getSpecialProperty() != null
-                && action.getSpecialProperty().getLocationNameString().matches("M1[57]");
+                && action.getSpecialProperty().getLocationNameString().matches("M1[57]"); // M15 & M17
 
         // The extra OBB tiles may not both be laid in the same round
         if (hasJustLaidExtraOBBTile) {

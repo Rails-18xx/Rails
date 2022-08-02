@@ -1346,9 +1346,10 @@ BUY_SHARE_LOG,Nick,10,PR,Pool,172
 SELL_SHARE_LOG,Christian,5,PR,86
 BUY_SHARE_LOG,Christian,10,MS,IPO,80
 PriceIsPaidTo,80,MS
-SELL_SHARES_LOG,Eyal,2,10,20,OL,160
+SELL_SHARE_LOG,Eyal,20,OL,160
 PRICE_MOVES_LOG,OL,80,B5,74,B6
 IS_NOW_PRES_OF,Marco,OL
+SELL_SHARE_LOG,Eyal,10,OL,80
 BUY_SHARE_LOG,Eyal,5,PR,Pool,86
 SELL_SHARE_LOG,Marco,5,PR,86
 BUY_SHARE_LOG,Marco,20,OL,Pool,148
@@ -1395,8 +1396,6 @@ SoldOut,BA
 PRICE_MOVES_LOG,BA,84,D7,88,D6
 SoldOut,HE
 PRICE_MOVES_LOG,HE,84,B4,86,B3
-SoldOut,OL
-PRICE_MOVES_LOG,OL,66,B7,74,B6
 SoldOut,MS
 PRICE_MOVES_LOG,MS,64,A6,72,A5
 Has,BY,41
@@ -1407,7 +1406,7 @@ Has,HE,22
 Has,MS,759
 Has,OL,199
 Has,PR,1117
-Has,Eyal,520
+Has,Eyal,600
 Has,Marco,659
 Has,Nick,455
 Has,Christian,657
@@ -1465,18 +1464,6 @@ Payout,Nick,304,8,10
 Payout,WT,76,2,10
 PRICE_MOVES_LOG,WT,84,D7,90,E7
  
-CompanyOperates,OL,Marco
-LaysTileAt,OL,45,D14,SW
-CompanyRevenue,OL,140
-CompanyPaysOutFull,OL,140
-Payout,Marco,126,9,10
-Payout,Eyal,14,1,10
-PRICE_MOVES_LOG,OL,74,B6,82,C6
-BuysTrain,OL,6+6,IPO,720
-FirstTrainBought,6+6
-StartOfPhase,6+6
-TrainsRusted,3+3
- 
 CompanyOperates,MS,Christian
 LaysTileAt,MS,42,D10,W
 CompanyRevenue,MS,170
@@ -1484,10 +1471,19 @@ CompanyPaysOutFull,MS,170
 Payout,Christian,170,10,10
 PRICE_MOVES_LOG,MS,72,A5,80,B5
 BuysTrain,MS,6+6,IPO,720
+FirstTrainBought,6+6
+StartOfPhase,6+6
+TrainsRusted,3+3
+ 
+CompanyOperates,OL,Marco
+LaysTileAt,OL,45,D14,SW
+CompanyDoesNotPayDividend,OL
+PRICE_MOVES_LOG,OL,66,B7,54,A7
+BuysTrain,OL,6+6,IPO,720
  
 EndOfOperatingRound,8.1
-ORWorthIncrease,Eyal,8.1,232
-ORWorthIncrease,Marco,8.1,575
+ORWorthIncrease,Eyal,8.1,210
+ORWorthIncrease,Marco,8.1,269
 ORWorthIncrease,Nick,8.1,488
 ORWorthIncrease,Christian,8.1,687
 Has,BY,41
@@ -1498,8 +1494,8 @@ Has,HE,22
 Has,MS,39
 Has,OL,33
 Has,PR,98
-Has,Eyal,804
-Has,Marco,996
+Has,Eyal,870
+Has,Marco,870
 Has,Nick,927
 Has,Christian,1038
 START_OR,8.2

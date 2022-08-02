@@ -29,15 +29,23 @@ Three variants have been implemented:
 
 The following options are possible:
 	
-	-Bayern floats at values 50% or 20% default=50%
-	-LDIncome values can be 20M or 30M default is 30M
-	-MinorsRequireFloatedBY type=toggle default=no
-	-PrussianReservedIgnored ( Ignores reserved shares at determining sold out status
+	- Bayern floats at values 50% or 20% default=50%
+	- LDIncome values can be 20M or 30M default is 30M
+	- MinorsRequireFloatedBY type=toggle default=no
+	- PrussianReservedIgnored ( Ignores reserved shares at determining sold out status
 	after prussian formation round) type=toggle default=no
+	- AllowSeparateSalesAtSamePrice type=toggle default=yes
 	
-Known limitations:
-	- OBB and PfB do not always close when required. 
-	  Workaround: close minor via the Special menu.
+From 08/2022 share selling is strictly limited to whole certificates.
+So it is no longer possible to sell 30% in one action while having one 20% and one 10% certificate
+(it can still be done with two actions in the same turn, and at the same price).
+This change was needed to fix some bugs, and also it has much simplified the selling code.
+
+However, it also violates German rule 3.3.7, and for that reason it can be reset
+for a whole game by disabling a new GameOption named AllowSeparateSalesAtSamePrice (see above).
+Another option is to select the Special|AdjustSharePrice menu option, by
+which the price token can be moved one square down. This option is *only*
+available *immediately* after any second (or third, etc.) sale of shares of one company.
 		</Description>
 		<Players minimum="3" maximum="7"/>
 	</Game>

@@ -57,11 +57,12 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
      *  An action to be copied to another file
      */
     private PossibleAction copiedAction;
+    private Class<? extends PossibleAction> oldActionClass;
 
     private static Logger log;
 
     public static void main(String[] args) {
-        // intialize configuration
+        // initialize configuration
         ConfigManager.initConfiguration(false);
 
         // delayed setting of logger
@@ -262,6 +263,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         // append actionText
         int i=0;
         List<PossibleAction> actions = gameLoader.getActions();
+        log.info("Actions={}", actions.size());
         if (actions != null) {
             for (PossibleAction action : actions) {
                 reportText.append("Action " + i + " " + action.getPlayerName() + "(" + action.getPlayerIndex() + "): " + action.toString());
@@ -385,6 +387,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             new StartCompany18EUDialog((StartCompany_18EU) editedAction);
         } else if (editedAction instanceof BuyCertificate) {
             new BuyCertificateDialog ((BuyCertificate) editedAction);
+        } else if (editedAction instanceof SellShares) {
+            new SellSharesDialog ((SellShares) editedAction);
         } else if (editedAction instanceof SetDividend) {
             new SetDividendDialog((SetDividend) editedAction);
         } else if (editedAction instanceof LayBaseToken) {
@@ -704,6 +708,81 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         }
     }
 
+    private class SellSharesDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private SellShares action;
+
+        SellSharesDialog(SellShares action) {
+            super("Edit SellShares");
+            this.action = action;
+            addTextField(this, "Company",
+                    action.getCompanyName(),
+                    action.getCompanyName());
+            addTextField(this, "Share size",
+                    action.getShareUnits(),
+                    String.valueOf(action.getShareUnits()));
+            addTextField (this, "Share qty",
+                    action.getNumber(),
+                    String.valueOf(action.getNumber()));
+            addTextField (this, "Share",
+                    action.getShare(),
+                    String.valueOf(action.getShare()));
+            addTextField (this, "Price",
+                    action.getPrice(),
+                    String.valueOf(action.getPrice()));
+            addTextField (this, "Pres exch",
+                    action.getPresidentExchange(),
+                    String.valueOf(action.getPresidentExchange()));
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+            log.info("Action was {}", action);
+            String input = "";
+            String companyName = ((JTextField)inputElements.get(0)).getText();
+            action.setCompanyName(companyName);
+            try {
+                input = ((JTextField)inputElements.get(1)).getText();
+                int shareSize = Integer.valueOf(input);
+                action.setShareUnits(shareSize);
+            } catch (NumberFormatException e) {
+                log.error ("Error in share size: {}", input, e);
+            }
+            try {
+                input = ((JTextField)inputElements.get(2)).getText();
+                int number = Integer.valueOf(input);
+                action.setNumber(number);
+            } catch (NumberFormatException e) {
+                log.error ("Error in number: {}", input, e);
+            }
+            try {
+                input = ((JTextField)inputElements.get(3)).getText();
+                int share = Integer.valueOf(input);
+                action.setShare(share);
+            } catch (NumberFormatException e) {
+                log.error ("Error in number: {}", input, e);
+            }
+            try {
+                input = ((JTextField)inputElements.get(4)).getText();
+                int price = Integer.valueOf(input);
+                action.setPrice(price);
+            } catch (NumberFormatException e) {
+                log.error ("Error in number: {}", input, e);
+            }
+            try {
+                input = ((JTextField)inputElements.get(5)).getText();
+                int presExchange = Integer.valueOf(input);
+                action.setPresidentExchange(presExchange);
+            } catch (NumberFormatException e) {
+                log.error ("Error in number: {}", input, e);
+            }
+            log.info("Action is {}", action);
+            return action;
+
+        }
+    }
+
     private class SetDividendDialog extends EditDialog {
         private static final long serialVersionUID = 1L;
         private SetDividend action;
@@ -830,19 +909,14 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
 
         @Override
         PossibleAction processInput() {
-            log.info("Action was {}", action);
 
             String ownedTrainsInput = ((JTextField)inputElements.get(1)).getText();
-            log.info ("Field 1: {}", ownedTrainsInput);
             String ownedTrainsIds = ownedTrainsInput
                     .replaceAll("\\[(.*)\\]", "$1").replaceAll("\\s+", "");
-            log.info ("Field 1 trimmed: {}", ownedTrainsInput);
             Set<Train> ownedTrains = new HashSet<>();
             for (String trainId : ownedTrainsIds.split(",")) {
-                log.info ("+++ Exchange train id: {}", trainId);
                 ownedTrains.add(root.getTrainManager().getTrainByUniqueId(trainId));
             }
-            log.info ("+++++ Exchange trains: {}", ownedTrains);
             action.setOwnedTrains(ownedTrains);
 
             action.setForced(Boolean.valueOf(((JTextField)inputElements.get(2)).getText()));

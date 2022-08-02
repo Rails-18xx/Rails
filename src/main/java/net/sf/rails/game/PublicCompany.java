@@ -1818,15 +1818,17 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return findNextPotentialPresident(getPresidentsShare().getShares());
     }
 
-    public Player findNextPotentialPresident(int minimumShareNumber) {
-        int requiredShareNumber = minimumShareNumber;
+    public Player findNextPotentialPresident(int minimumShares) {
+        int requiredSharesForNextPres = minimumShares;
         Player potentialDirector = null;
 
         for (Player nextPlayer : getRoot().getPlayerManager().getNextPlayersAfter(getPresident(), false, false)) {
-            int nextPlayerShareNumber = nextPlayer.getPortfolioModel().getShares(this);
-            if (nextPlayerShareNumber >= requiredShareNumber) {
+            int nextPlayerShares = nextPlayer.getPortfolioModel().getShares(this);
+            if (nextPlayerShares >= requiredSharesForNextPres) {
                 potentialDirector = nextPlayer;
-                requiredShareNumber = nextPlayerShareNumber + 1;
+                // Found a potential next president.
+                // Another player must own more shares to become the next president.
+                requiredSharesForNextPres = nextPlayerShares + 1;
             }
         }
         return potentialDirector;
