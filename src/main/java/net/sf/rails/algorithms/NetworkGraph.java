@@ -122,8 +122,8 @@ public class NetworkGraph {
         // first create builders for all HexSides
         Map<MapHex, HexSidesSet.Builder> hexSides = Maps.newHashMap();
         for (NetworkVertex vertex : graph.vertexSet()) {
-            if (vertex.isSide() && iterator.getSeenData().get(vertex)
-                    != NetworkIterator.greedyState.GREEDY ) {
+            if (vertex.isSide() /*&& iterator.getSeenData().get(vertex)
+                    != NetworkIterator.greedyState.GREEDY */) {
                 MapHex hex = vertex.getHex();
                 if (!hexSides.containsKey(hex)) {
                     hexSides.put(hex, HexSidesSet.builder());

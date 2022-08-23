@@ -835,8 +835,12 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                     action.getLocationNameString(),
                     action.getLocationNameString());
             addTextField(this, "Station",
-                    action.getChosenStop().getNumber(),
-                    String.valueOf(action.getChosenStop().getNumber()));  // 0
+                    // getChosenStation is deprecated, but chosenStop is still derived from it,
+                    // and therefore must be used in ListAndFixSavedFiles
+                    action.getChosenStation(),
+                    String.valueOf(action.getChosenStation()));  // 0
+                    //action.getChosenStop().getNumber(),
+                    //String.valueOf(action.getChosenStop().getNumber()));  // 0
             finish();
         }
 
@@ -845,11 +849,12 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             log.info("Action was {}", action);
             String input = "";
             input = ((JTextField)inputElements.get(0)).getText();
+
             action.setLocationNames(input);
             try {
                 input = ((JTextField)inputElements.get(1)).getText();
-                int chosenStop = Integer.valueOf(input);
-                action.setChosenStation(chosenStop);
+                int chosenStation = Integer.valueOf(input);
+                action.setChosenStation(chosenStation);
             } catch (NumberFormatException e) {
                 log.error ("Error in chosenStop: {}", input, e);
             }
