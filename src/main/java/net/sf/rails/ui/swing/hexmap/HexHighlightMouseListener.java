@@ -16,12 +16,7 @@ import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.StartItem;
 import net.sf.rails.game.Tile;
 import net.sf.rails.game.model.PortfolioModel;
-import net.sf.rails.game.special.LocatedBonus;
-import net.sf.rails.game.special.SellBonusToken;
-import net.sf.rails.game.special.SpecialProperty;
-import net.sf.rails.game.special.SpecialRight;
-import net.sf.rails.game.special.SpecialTileLay;
-import net.sf.rails.game.special.SpecialBaseTokenLay;
+import net.sf.rails.game.special.*;
 import net.sf.rails.ui.swing.ORUIManager;
 
 
@@ -172,8 +167,8 @@ public class HexHighlightMouseListener implements MouseListener {
                 if (sp instanceof SpecialBaseTokenLay) {
                     addToHexListDistinct(((SpecialBaseTokenLay)sp).getLocations());
                 }
-                if (sp instanceof SpecialRight) {
-                    addToHexListDistinct(((SpecialRight)sp).getLocations());
+                if (sp instanceof SpecialAccessRight) {
+                    addToHexListDistinct(((SpecialAccessRight)sp).getLocations());
                 }
                 if (sp instanceof LocatedBonus) {
                     addToHexListDistinct(((LocatedBonus)sp).getLocations());

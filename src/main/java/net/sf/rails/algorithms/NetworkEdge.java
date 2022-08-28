@@ -194,7 +194,7 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
     }
 
     public static MergeResult mergeEdges(NetworkEdge edgeA, NetworkEdge edgeB) {
-        log.info("Merge of edge {} and edge {}", edgeA.toFullInfoString(), edgeB.toFullInfoString());
+        log.debug("Merge of edge {} and edge {}", edgeA.toFullInfoString(), edgeB.toFullInfoString());
 
         NetworkVertex sourceA = edgeA.getSource();
         NetworkVertex targetA = edgeA.getTarget();
@@ -228,7 +228,7 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
             return null;
         }
 
-        log.info("Merge newSource = {} newTarget = {} remove vertex = {}", newSource, newTarget, vertex);
+        log.debug("Merge newSource = {} newTarget = {} remove vertex = {}", newSource, newTarget, vertex);
 
         // define new edge
         int distance = edgeA.getDistance() + edgeB.getDistance();
@@ -250,7 +250,7 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
         hiddenVertexes.addAll(hiddenB);
         NetworkEdge newEdge =
             new NetworkEdge(newSource, newTarget, true, distance, hiddenVertexes);
-        log.info("New edge = {}", newEdge.toFullInfoString());
+        log.debug("New edge = {}", newEdge.toFullInfoString());
 
         // returns newEdge
         return new MergeResult(newEdge, vertex);
@@ -271,7 +271,7 @@ public final class NetworkEdge implements Comparable<NetworkEdge> {
 
         graph.addEdge(newEdge.getSource(), newEdge.getTarget(), newEdge);
 
-        log.info("New edge = {}", newEdge.toFullInfoString());
+        log.debug("New edge = {}", newEdge.toFullInfoString());
 
         // remove vertex
         graph.removeVertex(removedVertex);

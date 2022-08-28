@@ -60,6 +60,11 @@ public class LayBaseToken extends LayToken {
         type = LOCATION_SPECIFIC;
     }
 
+    public LayBaseToken (RailsRoot root, List<MapHex> locations, int cost) {
+        this (root, locations);
+        setCost (cost);
+    }
+
     /** Lay a base token as allowed via a Special Property.
      * <p>The valid locations (hexes) of such a token should be defined inside the special property.
      * Typically, such locations do not need to be connected to the existing network of a company.
@@ -126,15 +131,10 @@ public class LayBaseToken extends LayToken {
             if (specialProperty != null && ((SpecialBaseTokenLay)specialProperty).isFree()) {
                 return 0;
             } else {
-                return company.getBaseTokenLayCost(hex);
+                return company.getBaseTokenLayCost(null);
             }
         }
 
-    }
-
-    @Override
-    public int getCost() {
-        return getPotentialCost(chosenHex);
     }
 
     @Override
@@ -165,6 +165,7 @@ public class LayBaseToken extends LayToken {
         return super.toString() +
                 RailsObjects.stringHelper(this)
                     .addToString("type", type)
+                    .addToString("cost", cost)
                     .addToStringOnlyActed("chosenStation", chosenStation)
                     .toString()
         ;

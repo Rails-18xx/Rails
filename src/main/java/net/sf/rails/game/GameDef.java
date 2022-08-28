@@ -22,6 +22,7 @@ public class GameDef {
         SKIP_FIRST_STOCK_ROUND(false),
         NO_SALE_OF_JUST_BOUGHT_CERT(false),
         NO_SALE_OF_JUST_STARTED_COMPANY(false),
+        NO_CERTIFICATE_SPLIT_ON_SELLING(false),
         REMOVE_TRAIN_BEFORE_SR(false),
         EMERGENCY_MUST_BUY_CHEAPEST_TRAIN (true),
         EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN (false),

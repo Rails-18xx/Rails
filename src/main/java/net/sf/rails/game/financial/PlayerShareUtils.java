@@ -1,7 +1,6 @@
 package net.sf.rails.game.financial;
 
-import java.util.List;
-import java.util.SortedSet;
+import java.util.*;
 
 import net.sf.rails.game.GameDef;
 import net.sf.rails.game.Player;
@@ -22,6 +21,12 @@ public class PlayerShareUtils {
 
     private static final Logger log = LoggerFactory.getLogger(PlayerShareUtils.class);
 
+    /** Find which number of shares a player can sell in case splitting is allowed
+     * (also implying that half a presidency can be dumped, as in 1830 and in most other games)
+     * @param company Company to sell shares of
+     * @param player Selling player
+     * @return A list of share quantities that can be sold, given the current pool capacity
+     */
     public static SortedSet<Integer> sharesToSell (PublicCompany company, Player player) {
         
         if (company.hasMultipleCertificates()) {
@@ -39,8 +44,44 @@ public class PlayerShareUtils {
         }
         
     }
+
+    /** Find which certificates a player can sell in case splitting is not allowed.
+     * This implies that only whole certificates may be sold,
+     * possibly including the president certificate.
+     *
+     * So far, this concept only applies to 1835.
+     *
+     * Note: the existence of non-president certs of different sizes is assumed,
+     * as is the case in 1835. Hopefully it will also work generally.
+     *
+     * @param company Company to sell shares of
+     * @param player Selling player
+     * @return A Map from share sizes to quantities of that share type.
+     */
+    public static SortedMap<Integer, Integer> certificatesToSell (PublicCompany company, Player player) {
+
+        int allowedSharesToPool = poolAllowsShares(company);
+
+        SortedMap<Integer, Integer> sellableCertificates = new TreeMap<>();
+        List<PublicCertificate> ownedCerts = player.getPortfolioModel().getCertificates().asList();
+        for (PublicCertificate cert : ownedCerts) {
+            if (cert.getCompany() == company) {
+                if (cert.isPresidentShare()) continue;
+                int certSize = cert.getShares();
+                int certsOfSize = (sellableCertificates.containsKey(certSize)
+                        ? sellableCertificates.get(certSize)
+                        : 0);
+                if ((certsOfSize + 1) * certSize <= allowedSharesToPool) {
+                     sellableCertificates.put(certSize, certsOfSize + 1);
+                }
+                log.debug("{} size={} toSell={}", company, certSize, sellableCertificates);
+            }
+        }
+
+        return sellableCertificates;
+    }
     
-    public static int poolAllowsShareNumbers(PublicCompany company) {
+    public static int poolAllowsShares(PublicCompany company) {
         int poolShares = Bank.getPool(company).getPortfolioModel().getShares(company);
         int poolMax = (GameDef.getParmAsInt(company, GameDef.Parm.POOL_SHARE_LIMIT) / company.getShareUnit()
                 - poolShares);
@@ -50,7 +91,7 @@ public class PlayerShareUtils {
     // President selling for companies WITHOUT multiple certificates
     private static SortedSet<Integer> presidentSellStandard(PublicCompany company, Player president) {
         int presidentShares = president.getPortfolioModel().getShares(company);
-        int poolShares = poolAllowsShareNumbers(company);
+        int poolShares = poolAllowsShares(company);
         
         // check if there is a potential new president ...
         int presidentCertificateShares = company.getPresidentsShare().getShares();
@@ -75,7 +116,7 @@ public class PlayerShareUtils {
     // Non-president selling for companies WITHOUT multiple certificates
     private static SortedSet<Integer> otherSellStandard(PublicCompany company, Player player) {
         int playerShares = player.getPortfolioModel().getShares(company);
-        int poolShares = poolAllowsShareNumbers(company);
+        int poolShares = poolAllowsShares(company);
         
         ImmutableSortedSet.Builder<Integer> sharesToSell = ImmutableSortedSet.naturalOrder();
         for (int s=1; s <= Math.min(playerShares, poolShares); s++) {
@@ -107,7 +148,7 @@ public class PlayerShareUtils {
         }
         
         // ... if this is less than what the pool allows => goes back to non-president selling
-        int poolAllows = poolAllowsShareNumbers(company);
+        int poolAllows = poolAllowsShares(company);
         if ((shareNumberDumpDifference <= poolAllows) && (!presidentShareOnly)) {
             return otherSellMultiple(company, president);
         }
@@ -160,7 +201,7 @@ public class PlayerShareUtils {
         
         // check if there is a multiple certificate inside the portfolio
         if (player.getPortfolioModel().containsMultipleCert(company)) {
-            int poolAllows = poolAllowsShareNumbers(company);
+            int poolAllows = poolAllowsShares(company);
             SortedSet<PublicCertificate> certificates = player.getPortfolioModel().getCertificates(company);
             return CertificatesModel.shareNumberCombinations(certificates, poolAllows, false);
         } else { // otherwise standard case

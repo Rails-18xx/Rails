@@ -30,7 +30,7 @@ public class ReachDestinations extends PossibleORAction {
 
     // Client-side settings
     transient protected List<PublicCompany> reachedCompanies;
-    protected String reachedCompanyNames = "";
+    protected String reachedCompanyNames;
 
     public static final long serialVersionUID = 1L;
 
@@ -43,6 +43,7 @@ public class ReachDestinations extends PossibleORAction {
             b.append (company.getId());
         }
         possibleCompanyNames = b.toString();
+        reachedCompanyNames = "";
     }
 
     public List<PublicCompany> getPossibleCompanies() {

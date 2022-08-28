@@ -303,7 +303,7 @@ Payout,Marco,30,1,100
 CompanyOperates,BY,Christian
 LaysTileAt,BY,1,I17,SW
 LaysTileAt,BY,202,H20,W
-LAYS_TOKEN_ON,BY,H20,160 Hex H20 (Dresden)
+LAYS_TOKEN_ON,BY,H20,160
 CompanyRevenue,BY,180
 CompanyPaysOutFull,BY,180
 Payout,Eyal,36,2,10
@@ -548,7 +548,7 @@ BuysTrain,BY,3,IPO,180
  
 CompanyOperates,SX,Marco
 LaysTileAt,SX,9,G17,SW
-LAYS_TOKEN_ON,SX,E19,60 Hex E19 (Berlin)
+LAYS_TOKEN_ON,SX,E19,60
 CompanyRevenue,SX,260
 CompanyPaysOutFull,SX,260
 Payout,Eyal,52,2,10
@@ -808,7 +808,7 @@ PRICE_MOVES_LOG,SX,100,D3,110,E3
 CompanyOperates,BA,Eyal
 LaysTileAt,BA,213,L6,NE
 LaysTileAt,BA,23,K5,E
-LAYS_TOKEN_ON,BA,H2,80 Hex H2 (Düsseldorf)
+LAYS_TOKEN_ON,BA,H2,80
 CompanyDoesNotPayDividend,BA
 PRICE_MOVES_LOG,BA,84,B4,78,A4
 BuysTrain,BA,3+3,IPO,270
@@ -1132,7 +1132,7 @@ BuysTrain,BY,4,IPO,360
  
 CompanyOperates,SX,Marco
 LaysTileAt,SX,19,F16,E
-LAYS_TOKEN_ON,SX,H20,40 Hex H20 (Dresden)
+LAYS_TOKEN_ON,SX,H20,40
 CompanyRevenue,SX,230
 CompanyWithholds,SX,230
 PRICE_MOVES_LOG,SX,134,F2,120,E2
@@ -1142,7 +1142,7 @@ NewTrainAvailable,4,4+4
 CompanyOperates,HE,Nick
 LaysTileAt,HE,3,M15,W
 LaysTileAtFor,HE,212,J6,SW,50
-LAYS_TOKEN_ON,HE,H16,100 Hex H16 (Leipzig)
+LAYS_TOKEN_ON,HE,H16,100
 CompanyDoesNotPayDividend,HE
 PRICE_MOVES_LOG,HE,86,B3,82,A3
 BuysTrain,HE,2+2,WT,177
@@ -1183,7 +1183,7 @@ EndOfFormationRound,PR,OperatingRound 7.1
 IS_NOW_PRES_OF,Eyal,PR
  
 CompanyOperates,MS,Christian
-LAYS_TOKEN_ON,MS,C11,20 Hex C11 (Hamburg E,NE)
+LAYS_TOKEN_ON,MS,C11,20
 CompanyDoesNotPayDividend,MS
 PRICE_MOVES_LOG,MS,80,B5,72,A5
 BuysTrain,MS,3+3,WT,1
@@ -1192,7 +1192,7 @@ BuysTrain,MS,4+4,HE,1
  
 CompanyOperates,OL,Eyal
 LaysTileAt,OL,24,E13,NW
-LAYS_TOKEN_ON,OL,F14,100 Hex F14 (Magdeburg)
+LAYS_TOKEN_ON,OL,F14,100
 CompanyDoesNotPayDividend,OL
 PRICE_MOVES_LOG,OL,80,B5,72,A5
 BuysTrain,OL,4,SX,530
@@ -1267,10 +1267,8 @@ CompanyDoesNotPayDividend,HE
 PRICE_MOVES_LOG,HE,82,A3,78,A4
 PlayerMustRaiseCash,Nick,206,5
 PlayerMustSellShares,Nick,206
-SELL_SHARE_LOG,Nick,20,WT,144
+SELL_SHARES_LOG,Nick,3,10,30,WT,216
 PRICE_MOVES_LOG,WT,72,A5,64,A6
-SELL_SHARE_LOG,Nick,10,WT,64
-PRICE_MOVES_LOG,WT,64,A6,54,A7
 PresidentAddsCash,HE,Nick,426
 BuysTrain,HE,5,IPO,500
 NewTrainAvailable,5,5+5
@@ -1286,7 +1284,8 @@ CompanyDoesNotPayDividend,OL
 PRICE_MOVES_LOG,OL,72,A5,64,A6
 PlayerMustRaiseCash,Eyal,251,5+5
 PlayerMustSellShares,Eyal,251
-SELL_SHARE_LOG,Eyal,10,WT,54
+SELL_SHARE_LOG,Eyal,10,WT,64
+PRICE_MOVES_LOG,WT,64,A6,54,A7
 SELL_SHARES_LOG,Eyal,2,10,20,BA,128
 PRICE_MOVES_LOG,BA,64,A6,54,A7
 SELL_SHARE_LOG,Eyal,5,PR,86
@@ -1298,10 +1297,11 @@ FirstTrainBought,5+5
 CompanyOperates,WT,Nick
 CompanyDoesNotPayDividend,WT
 PRICE_STAYS_LOG,WT,54,A7
-PlayerMustRaiseCash,Nick,584,6
-PlayerMustSellShares,Nick,584
-SELL_SHARES_LOG,Nick,5,10,50,HE,390
+PlayerMustRaiseCash,Nick,576,6
+PlayerMustSellShares,Nick,576
+SELL_SHARES_LOG,Nick,3,10,30,HE,234
 PRICE_MOVES_LOG,HE,78,A4,72,A5
+SELL_SHARE_LOG,Nick,20,HE,156
 IS_NOW_PRES_OF,Christian,HE
 SELL_SHARE_LOG,Nick,10,PR,172
 SELL_SHARE_LOG,Nick,10,WT,54
@@ -1314,12 +1314,12 @@ TrainsRusted,3
 CompanyOperates,BA,Eyal
 CompanyDoesNotPayDividend,BA
 PRICE_STAYS_LOG,BA,54,A7
-PlayerMustRaiseCash,Eyal,571,6
-PlayerMustSellShares,Eyal,571
-SELL_SHARES_LOG,Eyal,2,10,20,OL,128
+PlayerMustRaiseCash,Eyal,561,6
+PlayerMustSellShares,Eyal,561
+SELL_SHARE_LOG,Eyal,20,OL,128
 PRICE_MOVES_LOG,OL,64,A6,54,A7
-SELL_SHARES_LOG,Eyal,2,5,10,PR,172
-SELL_SHARES_LOG,Eyal,2,5,10,PR,172
+SELL_SHARE_LOG,Eyal,10,PR,172
+SELL_SHARE_LOG,Eyal,10,PR,172
 IS_NOW_PRES_OF,Marco,PR
 SELL_SHARE_LOG,Eyal,10,PR,172
 PresidentAddsCash,BA,Eyal,588
@@ -1327,9 +1327,9 @@ BuysTrain,BA,6,IPO,600
 NewTrainAvailable,6,6+6
  
 EndOfOperatingRound,7.2
-ORWorthIncrease,Eyal,7.2,-1168
+ORWorthIncrease,Eyal,7.2,-1298
 ORWorthIncrease,Marco,7.2,-111
-ORWorthIncrease,Nick,7.2,-1169
+ORWorthIncrease,Nick,7.2,-1161
 ORWorthIncrease,Christian,7.2,733
 Has,BY,50
 Has,SX,1734
@@ -1339,9 +1339,14 @@ Has,HE,0
 Has,MS,457
 Has,OL,0
 Has,PR,1134
-Has,Eyal,73
+Has,Eyal,83
 Has,Marco,311
-Has,Nick,32
+Has,Nick,40
 Has,Christian,855
 StartStockRound,8
 HasPriority,Marco
+SELL_SHARE_LOG,Marco,10,SX,108
+PRICE_MOVES_LOG,SX,108,D2,100,D3
+SELL_SHARE_LOG,Marco,10,SX,108
+PRICE_MOVES_LOG,SX,100,D3,94,D4
+PASSES,Marco

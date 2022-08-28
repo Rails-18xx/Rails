@@ -1293,7 +1293,7 @@ BuysTrain,GT,2G,IPO,230
  
 CompanyOperates,MS,Bob
 LaysTileAt,MS,411,F16,SW
-LAYS_TOKEN_ON,MS,C11,80 Hex C11 (Prag)
+LAYS_TOKEN_ON,MS,C11,80
 CompanyRevenue,MS,390
 CompanyDividesEarnings,MS,390,330,60
 CompanyPaysOutFull,MS,330
@@ -1445,7 +1445,7 @@ BuysTrain,GT,2G,IPO,230
  
 CompanyOperates,MS,Bob
 LaysTileAt,MS,405,C23,SW
-LAYS_TOKEN_ON,MS,G19,40 Hex G19 (Preéburg)
+LAYS_TOKEN_ON,MS,G19,40
 CompanyRevenue,MS,140
 CompanyPaysOutFull,MS,140
 Payout,Alice,42,3,10
@@ -1454,7 +1454,7 @@ PRICE_MOVES_LOG,MS,85,H6,89,I6
 BuysTrain,MS,2G,IPO,230
  
 CompanyOperates,BK,Alice
-LAYS_TOKEN_ON,BK,G19,120 Hex G19 (Preéburg)
+LAYS_TOKEN_ON,BK,G19,120
 CompanyRevenue,BK,140
 CompanyPaysOutFull,BK,140
 Payout,Alice,84,6,10
@@ -1633,7 +1633,7 @@ StartOfPhase,4+1
  
 CompanyOperates,SB,Alice
 LaysTileAt,SB,8,I37,SW
-LAYS_TOKEN_ON,SB,J28,80 Hex J28 (Arad/Temesvar NW,NE,E)
+LAYS_TOKEN_ON,SB,J28,80
 CompanyRevenue,SB,205
 CompanyDividesEarnings,SB,205,160,45
 CompanyPaysOutFull,SB,160
@@ -1683,7 +1683,7 @@ CompanyOperates,KK,Bob
 LaysTileAt,KK,436,G17,SW
 DuplicateTokenRemoved,KK,G17
 DuplicateTokenRemoved,KK,G17
-LAYS_TOKEN_ON,KK,E17,40 Hex E17 (Brünn)
+LAYS_TOKEN_ON,KK,E17,40
 CompanyRevenue,KK,190
 CompanyPaysOutFull,KK,190
 Payout,Bob,57,3,10
@@ -1712,7 +1712,7 @@ PRICE_MOVES_LOG,MS,83,I7,87,J7
  
 CompanyOperates,TH,Alice
 LaysTileAt,TH,58,F30,NW
-LAYS_TOKEN_ON,TH,H30,40 Hex H30 (Debrecin/Groéwardein W,NW,NE)
+LAYS_TOKEN_ON,TH,H30,40
 CompanyRevenue,TH,160
 CompanyDividesEarnings,TH,160,120,40
 CompanyPaysOutFull,TH,120
@@ -1751,7 +1751,7 @@ PRICE_MOVES_LOG,Ug,157,N4,175,O4
  
 CompanyOperates,Sd,Alice
 LaysTileAt,Sd,432,G13,W
-LAYS_TOKEN_ON,Sd,H22,60 Hex H22 (Buda/Pest)
+LAYS_TOKEN_ON,Sd,H22,60
 CompanyRevenue,Sd,390
 CompanyPaysOutFull,Sd,390
 Payout,Alice,156,4,10
@@ -1803,7 +1803,7 @@ PRICE_MOVES_LOG,KK,96,I5,102,J5
  
 CompanyOperates,BK,Alice
 LaysTileAt,BK,216,I7,W
-LAYS_TOKEN_ON,BK,G13,80 Hex G13 (Linz/Wels E,SE,SW)
+LAYS_TOKEN_ON,BK,G13,80
 CompanyRevenue,BK,210
 CompanyDividesEarnings,BK,210,160,50
 CompanyPaysOutFull,BK,160

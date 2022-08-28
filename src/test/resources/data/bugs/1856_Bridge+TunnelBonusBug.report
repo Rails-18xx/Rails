@@ -273,7 +273,7 @@ ReceivesFor,Jupp Krupp,20,Tunn
  
 CompanyOperates,CA,Jupp Krupp
 LaysTileAt,CA,14,C14,SW
-LAYS_TOKEN_ON,CA,C14,40 Hex C14 (Maudaumin)
+LAYS_TOKEN_ON,CA,C14,40
 BuysPrivateFromFor,CA,Tunn,Jupp Krupp,90
 AcquiresBonus,CA,Tunnel,10,B13
 CompanyRevenue,CA,120
@@ -285,7 +285,7 @@ PRICE_MOVES_LOG,CA,80,E3,90,F3
  
 CompanyOperates,TGB,Ulli Hegemann
 LaysTileAt,TGB,57,I8,NW
-LAYS_TOKEN_ON,TGB,I8,40 Hex I8 ()
+LAYS_TOKEN_ON,TGB,I8,40
 CompanyRevenue,TGB,60
 CompanyMustPayLoanInterest,TGB,20
 InterestPaidFromTreasury,TGB,20
@@ -556,7 +556,7 @@ CompanyRepaysLoans,WR,100,100,1,100
  
 CompanyOperates,LPS,Volker Kuhnle
 LaysTileAt,LPS,15,F17,SW
-LAYS_TOKEN_ON,LPS,F15,40 Hex F15 (London)
+LAYS_TOKEN_ON,LPS,F15,40
 CompanyRevenue,LPS,120
 CompanyMustPayLoanInterest,LPS,30
 InterestPaidFromTreasury,LPS,30

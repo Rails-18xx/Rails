@@ -12,9 +12,6 @@ import java.util.List;
 
 public class SpecialSingleTileLay extends SpecialTileLay {
 
-
-
-
     protected List<MapHex> neighbouringHexes = null;
     protected String neighbouringHexesCode =null;
 

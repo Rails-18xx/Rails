@@ -6,7 +6,6 @@ import net.sf.rails.game.financial.*;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.*;
-import net.sf.rails.game.specific._1835.PublicCompany_1835;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
@@ -281,6 +280,10 @@ public class OperatingRound extends Round implements Observer {
 
             result = reachDestinations((ReachDestinations) selectedAction);
 
+        } else if (selectedAction instanceof GrowCompany) {
+
+            result = growCompany((GrowCompany)action);
+
         } else if (selectedAction instanceof TakeLoans) {
 
             result = takeLoans((TakeLoans) selectedAction);
@@ -475,8 +478,8 @@ public class OperatingRound extends Round implements Observer {
         } else if (step == GameDef.OrStep.LAY_TOKEN) {
             setNormalTokenLays();
             setSpecialTokenLays();
-            log.debug("Normal token lays: {}", currentNormalTokenLays.size());
-            log.debug("Special token lays: {}", currentSpecialTokenLays.size());
+            log.info("Normal token lays: {}", currentNormalTokenLays.size());
+            log.info("Special token lays: {}", currentSpecialTokenLays.size());
 
             possibleActions.addAll(currentNormalTokenLays);
             possibleActions.addAll(currentSpecialTokenLays);
@@ -597,7 +600,8 @@ public class OperatingRound extends Round implements Observer {
                                     possibleActions.add(new LayBaseToken(getRoot(),
                                             (SpecialBaseTokenLay) sp));
                                 }
-                            } else if (!(sp instanceof SpecialTileLay)) {
+                            } else if (!(sp instanceof SpecialTileLay)
+                                    && !(sp instanceof SpecialBonusTokenLay)) {
                                 possibleActions.add(new UseSpecialProperty(sp));
                             }
                         }
@@ -605,8 +609,7 @@ public class OperatingRound extends Round implements Observer {
                 }
                 // Are there other step-independent special properties owned by
                 // the president?
-                orsps =
-                        playerManager.getCurrentPlayer().getPortfolioModel().getAllSpecialProperties();
+                orsps = playerManager.getCurrentPlayer().getPortfolioModel().getAllSpecialProperties();
                 if (orsps != null) {
                     for (SpecialProperty sp : orsps) {
                         if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer()
@@ -616,7 +619,14 @@ public class OperatingRound extends Round implements Observer {
                                     possibleActions.add(new LayBaseToken(getRoot(),
                                             (SpecialBaseTokenLay) sp));
                                 }
-                            } else {
+                            } else if (sp instanceof SpecialBonusTokenLay) {
+                                if (getStep() != GameDef.OrStep.LAY_TOKEN) {
+                                    possibleActions.add(new LayBonusToken(getRoot(),
+                                            (SpecialBonusTokenLay) sp,
+                                            ((SpecialBonusTokenLay) sp).getToken()));
+
+                                }
+                            } else if (!(sp instanceof SpecialTileLay)){
                                 possibleActions.add(new UseSpecialProperty(sp));
                             }
                         }
@@ -833,11 +843,12 @@ public class OperatingRound extends Round implements Observer {
                         ;
                 if (company.getNumberOfFreeBaseTokens() == 0
                         && !bonusTokensForSale) {  */
+
+                company.clearTokenableStops();
                 if (!canLayAnyTokens(true)) {
                     log.debug("OR skips {}: No tokens available", newStep);
                     continue;
                 }
-
             }
 
             if (newStep == GameDef.OrStep.CALC_REVENUE) {
@@ -1231,8 +1242,7 @@ public class OperatingRound extends Round implements Observer {
                     ReportBuffer.add(this, LocalText.getText(
                             "DestinationReached", company.getId(),
                             company.getDestinationHex().getId()));
-                    // Process any consequences of reaching a destination
-                    // (default none)
+
                 }
             }
             executeDestinationActions(destinedCompanies);
@@ -1383,6 +1393,7 @@ public class OperatingRound extends Round implements Observer {
     protected String validateRepayLoans(RepayLoans action) {
 
         String errMsg = null;
+        // TODO add validation
 
         return errMsg;
     }
@@ -1495,12 +1506,33 @@ public class OperatingRound extends Round implements Observer {
 
         operatingCompany.value().setRight(right);
         // TODO: Creates a zero cost transfer if cost == 0
-        String costText = Currency.toBank(operatingCompany.value(), cost);
+        String costText;
+        if (cost > 0) {
+            costText = Currency.toBank(operatingCompany.value(), cost);
+        } else {
+            costText = "free";
+        }
 
         ReportBuffer.add(this, LocalText.getText("BuysRight",
                 operatingCompany.value().getId(), rightName, costText));
 
         sp.setExercised();
+
+        return true;
+    }
+
+    /*
+     * =======================================
+     *  3.7. SHARE ACTIONS
+     * =======================================
+     */
+
+    public boolean growCompany (GrowCompany action) {
+
+        // TODO Validation to be added
+
+        PublicCompany company = action.getCompany();
+        company.grow(action.getNewShareUnit());
 
         return true;
     }
@@ -2073,8 +2105,16 @@ public class OperatingRound extends Round implements Observer {
                 stl = action.getSpecialProperty();
                 if (stl != null) extra = stl.isExtra();
             }
-
-            cost = company.getBaseTokenLayCost(hex);
+            if (company.getBaseTokenLayCostMethod()
+                    == PublicCompany.BaseCostMethod.ROUTE_DISTANCE) {
+                cost = action.getCost();
+                if (cost > 0 && cost != company.getBaseTokenLayCost(stop)) {
+                    errMsg = LocalText.getText("WrongCost", cost, company.getBaseTokenLayCost(stop));
+                    break;
+                }
+            } else {
+                cost = company.getBaseTokenLayCost(stop);
+            }
             if (stl != null && stl.isFree()) cost = 0;
 
             // Does the company have the money?
@@ -2089,10 +2129,10 @@ public class OperatingRound extends Round implements Observer {
             break;
         }
         if (errMsg != null) {
-            DisplayBuffer.add(
-                    this,
-                    LocalText.getText("CannotLayBaseTokenOn", companyName,
-                            hex.getId(), Bank.format(this, cost), errMsg));
+            String msg = LocalText.getText("CannotLayBaseTokenOn", companyName,
+                    hex.getId(), Bank.format(this, cost), errMsg);
+            log.error (msg);
+            DisplayBuffer.add(this, msg);
             return false;
         }
 
@@ -2116,8 +2156,8 @@ public class OperatingRound extends Round implements Observer {
                 String costText =
                         Currency.toBank(company, cost);
                 text.append(LocalText.getText("LAYS_TOKEN_ON", companyName,
-                        hex.getId(), costText));
-                text.append(" ").append(stop.toText());
+                        hex.getId(), Bank.format(this, cost)));
+                //text.append(" ").append(stop.toText());
             } else {
                 text.append(LocalText.getText("LAYS_FREE_TOKEN_ON",
                         companyName, hex.getId()));
@@ -2189,9 +2229,22 @@ public class OperatingRound extends Round implements Observer {
                 // Can the company pay for one? This only works for BASE_COST_SEQUENCE
                 //&& company.getBaseTokenLayCost(null) <= company.getCash()
         ) {
-            currentNormalTokenLays.add(new LayBaseToken(getRoot(), (List<MapHex>) null));
-        }
+            PublicCompany.BaseCostMethod baseCostMethod = company.getBaseTokenLayCostMethod();
+            switch (baseCostMethod) {
+                case SEQUENCE:
+                case HEX_DISTANCE:
+                    currentNormalTokenLays.add(new LayBaseToken(getRoot(), (List<MapHex>) null));
+                    break;
+                case ROUTE_DISTANCE:
+                    company.setTokenableStops();
+                    for (Stop stop : company.tokenableStops.keySet()) {
+                        int cost = company.getBaseTokenLayCost(stop);
+                        currentNormalTokenLays.add(
+                                new LayBaseToken (getRoot(), List.of(stop.getHex()), cost));
+                    }
+            }
 
+        }
     }
 
     /**
@@ -2201,21 +2254,14 @@ public class OperatingRound extends Round implements Observer {
      * preparation, perhaps the two can be merged to one generic procedure.
      */
     protected void setSpecialTokenLays() {
-        /* Special-property tile lays */
+
+        /* Special-property base token lays */
         currentSpecialTokenLays.clear();
 
         PublicCompany company = operatingCompany.value();
         if (!company.canUseSpecialProperties()) return;
         // Check if the company still has tokens
         if (company.getNumberOfFreeBaseTokens() == 0) return;
-
-        /*
-         * In 1835, this only applies to major companies. TODO: For now,
-         * hardcode this, but it must become configurable later.
-         */
-        // Removed EV 24-11-2011 - entirely redundant; why did I ever do this??
-        // if (operatingCompany.get().getType().getName().equals("Minor"))
-        // return;
 
         for (SpecialBaseTokenLay stl : getSpecialProperties(SpecialBaseTokenLay.class)) {
             // If the special tile lay is not extra, it is only allowed if
@@ -2380,14 +2426,19 @@ public class OperatingRound extends Round implements Observer {
 
     /**
      * TODO Should be merged with setSpecialTokenLays() in the future.
+     * EV: No, that one is for base tokens only. For refactoring,
+     * it may be more useful to look at the "can use special properties" code from line 560.
+     *
      * Assumptions: 1. Bonus tokens can be laid anytime during the OR. 2. Bonus
-     * token laying is always extra. TODO This assumptions will be made
-     * configurable conditions.
+     * token laying is always extra.
+     * TODO These assumptions should be made configurable conditions.
      */
     protected void setBonusTokenLays() {
 
         for (SpecialBonusTokenLay stl : getSpecialProperties(SpecialBonusTokenLay.class)) {
-            possibleActions.add(new LayBonusToken(getRoot(), stl, stl.getToken()));
+            if (stl.isUsableDuringOR(getStep())) {
+                possibleActions.add(new LayBonusToken(getRoot(), stl, stl.getToken()));
+            }
         }
     }
 
@@ -2968,7 +3019,7 @@ public class OperatingRound extends Round implements Observer {
                 // FIXME: Check where to lay the base tokens in NoMapMode
                 // (bank.getUnavailable().addBonusToken(token));
             }
-            operatingCompany.value().layBaseTokennNoMapMode(amount);
+            operatingCompany.value().layBaseTokenInNoMapMode(amount);
             ReportBuffer.add(this, LocalText.getText("OCLayBaseTokenExecuted",
                     operatingCompany.value().getId(), cashText));
         }
@@ -3272,10 +3323,9 @@ public class OperatingRound extends Round implements Observer {
         if (presidentMustSellShares) {
             savedAction = action;
 
-            /* Would like to add this report line, but it will affect many saved files:*/
             ReportBuffer.add (this, LocalText.getText("PlayerMustRaiseCash",
                     currentPlayer, Bank.format(this, cashToBeRaisedByPresident), train.getType()));
-            /* */
+
             gameManager.startShareSellingRound(
                     operatingCompany.value().getPresident(),
                     cashToBeRaisedByPresident, operatingCompany.value(), true);
@@ -3548,7 +3598,7 @@ public class OperatingRound extends Round implements Observer {
                 }
             }
 
-            // If we must buy a train and the company does no have
+            // If we must buy a train and the company does not have
             // enough cash, the president must supply the difference.
             if (emergency
                     // Some people think it's allowed in 1835 to buy a new train

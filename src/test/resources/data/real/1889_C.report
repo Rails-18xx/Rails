@@ -112,7 +112,7 @@ ReceivesFor,Henning,20,F
  
 CompanyOperates,UR,Stefan
 LaysTileAt,UR,9,B5,S
-LAYS_TOKEN_ON,UR,C4,40 Hex C4 (大洲 - Ohzu)
+LAYS_TOKEN_ON,UR,C4,40
 CompanyDoesNotPayDividend,UR
 PRICE_MOVES_LOG,UR,65,D6,60,C6
 BuysTrain,UR,2,IPO,80
@@ -120,7 +120,7 @@ BuysTrain,UR,2,IPO,80
  
 CompanyOperates,IR,Klaus
 LaysTileAt,IR,5,F3,NE
-LAYS_TOKEN_ON,IR,F3,40 Hex F3 (西條 - Saijou)
+LAYS_TOKEN_ON,IR,F3,40
 CompanyRevenue,IR,140
 CompanyPaysOutFull,IR,140
 Payout,Henning,56,4,10
@@ -300,7 +300,7 @@ ReceivesFor,TR,20,F
  
 CompanyOperates,TR,Henning
 LaysTileAt,TR,8,D9,NW
-LAYS_TOKEN_ON,TR,B7,40 Hex B7 (宇和島 - Uwajima)
+LAYS_TOKEN_ON,TR,B7,40
 CompanyRevenue,TR,220
 CompanyPaysOutFull,TR,220
 Payout,Henning,132,6,10
@@ -506,7 +506,7 @@ BuysTrain,IR,5,IPO,450
  
 CompanyOperates,UR,Stefan
 LaysTileAtFor,UR,8,F5,SW,80
-LAYS_TOKEN_ON,UR,F3,40 Hex F3 (西條 - Saijou)
+LAYS_TOKEN_ON,UR,F3,40
 CompanyRevenue,UR,130
 CompanyPaysOutFull,UR,130
 Payout,Klaus,39,3,10
@@ -684,7 +684,7 @@ PRICE_MOVES_LOG,SR,90,D2,100,E2
  
 CompanyOperates,AR,Henning
 LaysTileAtFor,AR,465,F9,NE,80
-LAYS_TOKEN_ON,AR,F9,40 Hex F9 (高知 - Kouchi)
+LAYS_TOKEN_ON,AR,F9,40
 CompanyRevenue,AR,300
 CompanyPaysOutFull,AR,300
 Payout,Henning,150,5,10
@@ -780,7 +780,7 @@ PRICE_MOVES_LOG,KU,75,E5,80,F5
  
 CompanyOperates,KO,Stefan
 LaysTileAt,KO,23,J3,NW
-LAYS_TOKEN_ON,KO,I4,40 Hex I4 (琴平 - Kotohira)
+LAYS_TOKEN_ON,KO,I4,40
 CompanyRevenue,KO,150
 CompanyWithholds,KO,150
 PRICE_MOVES_LOG,KO,60,C6,55,B6
@@ -997,7 +997,7 @@ START_OR,8.2
  
 CompanyOperates,TR,Henning
 LaysTileAtFor,TR,7,G6,NE,80
-LAYS_TOKEN_ON,TR,G4,40 Hex G4 (新居浜 - Niihama)
+LAYS_TOKEN_ON,TR,G4,40
 CompanyRevenue,TR,270
 CompanyPaysOutFull,TR,270
 Payout,Klaus,27,1,10

@@ -20,7 +20,8 @@ import java.util.SortedSet;
 
 /**
  * Model that contains and manages the certificates
- * TODO: It might improve performance to separate the large multimap into smaller ones per individual companies, but I doubt it
+ * TODO: It might improve performance to separate the large multimap into smaller ones per individual companies,
+ * but I doubt it
  * // TODO: find out where the president model has to be linked
  * // this.addModel(company.getPresidentModel());
  */

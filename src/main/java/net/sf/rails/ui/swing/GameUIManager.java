@@ -9,14 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.List;
-import java.util.Observable;
-import java.util.Set;
-import java.util.TimeZone;
 import java.util.stream.IntStream;
 
 import javax.swing.*;
@@ -52,14 +46,7 @@ import net.sf.rails.ui.swing.elements.MessageDialog;
 import net.sf.rails.ui.swing.elements.NonModalDialog;
 import net.sf.rails.ui.swing.elements.RadioButtonDialog;
 import net.sf.rails.util.Util;
-import rails.game.action.DiscardTrain;
-import rails.game.action.ExchangeTokens;
-import rails.game.action.ExchangeableToken;
-import rails.game.action.GameAction;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.RepayLoans;
-import rails.game.action.StartCompany;
+import rails.game.action.*;
 
 /**
  * This class is called by main() and loads all of the UI components
@@ -143,6 +130,7 @@ public class GameUIManager implements DialogOwner {
     public static final String SELECT_COMPANY_DIALOG = "SelectCompany";
     public static final String REPAY_LOANS_DIALOG = "RepayLoans";
     public static final String EXCHANGE_TOKENS_DIALOG = "ExchangeTokens";
+    public static final String ADJUST_SHARE_PRICE_DIALOG = "AdjustSharePrice";
 
     private static final Logger log = LoggerFactory.getLogger(GameUIManager.class);
 
@@ -457,6 +445,28 @@ public class GameUIManager implements DialogOwner {
 
         return activeWindow.processImmediateAction();
     }
+    public void adjustSharePrice (AdjustSharePrice action) {
+
+        int optionsCount = action.getDirections().size();
+        String[] options = new String[optionsCount+1];
+        options[0] = LocalText.getText("None");
+
+        Iterator<AdjustSharePrice.Direction> iterator = action.getDirections().iterator();
+        int i = 0;
+        while (iterator.hasNext()) {
+            options[++i] = LocalText.getText("AdjustDirection", iterator.next());
+        }
+
+        RadioButtonDialog dialog = new RadioButtonDialog (ADJUST_SHARE_PRICE_DIALOG,
+                this, statusWindow,
+                LocalText.getText("AdjustSharePrice", action.getCompanyName()),
+                LocalText.getText("SelectPriceAdjustment", action.getCompanyName()),
+                options, 0);
+        setCurrentDialog (dialog, action);
+
+    }
+
+
 
     protected boolean processOnServer(PossibleAction action) {
         boolean result;
@@ -874,6 +884,16 @@ public class GameUIManager implements DialogOwner {
                 RepayLoans action = (RepayLoans) currentDialogAction;
                 int selected = dialog.getSelectedOption();
                 action.setNumberTaken(action.getMinNumber() + selected);
+
+            } else if (ADJUST_SHARE_PRICE_DIALOG.equals(key)) {
+                RadioButtonDialog dialog = (RadioButtonDialog) currentDialog;
+                AdjustSharePrice action = (AdjustSharePrice) currentDialogAction;
+                EnumSet<AdjustSharePrice.Direction> directions = action.getDirections();
+                int selected = dialog.getSelectedOption();
+                if (selected > 0) {
+                    action.setChosenDirection(
+                            (AdjustSharePrice.Direction) directions.toArray()[selected - 1]);
+                }
 
             } else {
                 log.warn("Unknown NonModal dialog action: dialog=[{}] action=[{}]", currentDialog, currentDialogAction);

@@ -28,7 +28,7 @@ public class SellShares extends PossibleAction {
      * 1 = exchange against 1-share certificates (usually 10%);<br>
      * 2 = exchange against a 2-share certificate (as can occur in 1835);<br>
      * etc.
-     * EV since v2.3.1:
+     * EV since v2.3.1: it appears that only value 1 is used, as if it was a boolean
      */
     private int presidentExchange;
 
@@ -55,6 +55,7 @@ public class SellShares extends PossibleAction {
         shareUnit = company.getShareUnit();
         share = shareUnits * shareUnit;
     }
+
 
     /**
      * @return Returns the maximumNumber.
@@ -139,6 +140,7 @@ public class SellShares extends PossibleAction {
         ObjectInputStream.GetField fields = in.readFields();
 
         companyName = (String) fields.get("companyName", null);
+        setCompany (companyName);
         shareUnit = fields.get("shareUnit", shareUnit);
         shareUnits = fields.get("shareUnits", shareUnits);
         share = fields.get("share", share);
@@ -146,10 +148,47 @@ public class SellShares extends PossibleAction {
         numberSold = fields.get("numberSold", 0); // For backwards compatibility
         number = fields.get("number", numberSold);
         presidentExchange = fields.get("presidentExchange", 0);
-
+        /*
         CompanyManager companyManager = getCompanyManager();
         if (Util.hasValue(companyName))
             companyName = companyManager.checkAlias(companyName);
         company = companyManager.getPublicCompany(companyName);
+         */
+    }
+
+    private void setCompany (String companyName) {
+        CompanyManager companyManager = getCompanyManager();
+        if (Util.hasValue(companyName)) {
+            companyName = companyManager.checkAlias(companyName);
+            company = companyManager.getPublicCompany(companyName);
+        }
+    }
+
+    // Following setters are for use by ListAndFixSavedFiles tool only.
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+        setCompany (companyName);
+    }
+
+    public void setShareUnits(int shareUnits) {
+        this.shareUnits = shareUnits;
+        share = shareUnits * shareUnit;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    public void setShare(int share) {
+        this.share = share;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public void setPresidentExchange(int presidentExchange) {
+        this.presidentExchange = presidentExchange;
     }
 }

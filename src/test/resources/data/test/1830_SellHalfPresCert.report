@@ -60,7 +60,7 @@ ReceivesFor,Charlie,30,B&O
  
 CompanyOperates,B&O,Charlie
 LaysTileAtFor,B&O,57,J14,SW,80
-LAYS_TOKEN_ON,B&O,J14,40 Hex J14 (Washington)
+LAYS_TOKEN_ON,B&O,J14,40
 CompanyDoesNotPayDividend,B&O
 PRICE_MOVES_LOG,B&O,100,G1,90,F1
 BuysTrain,B&O,2,IPO,80
@@ -145,7 +145,7 @@ ReceivesFor,PRR,25,C&A
  
 CompanyOperates,PRR,Bob
 LaysTileAt,PRR,57,H16,W
-LAYS_TOKEN_ON,PRR,H16,40 Hex H16 ()
+LAYS_TOKEN_ON,PRR,H16,40
 CompanyRevenue,PRR,30
 CompanyPaysOutFull,PRR,30
 Payout,Bob,18,6,10
@@ -159,7 +159,7 @@ BuysTrain,NYC,3,IPO,180
  
 CompanyOperates,NYNH,Alice
 LaysTileAtFor,NYNH,57,F22,W,80
-LAYS_TOKEN_ON,NYNH,F22,40 Hex F22 ()
+LAYS_TOKEN_ON,NYNH,F22,40
 CompanyRevenue,NYNH,130
 CompanyPaysOutFull,NYNH,130
 Payout,Alice,65,5,10

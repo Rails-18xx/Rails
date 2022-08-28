@@ -360,7 +360,7 @@ abstract class RevenueCalculator {
         // start prediction runs
         nbEvaluations = 0; nbPredictions = 0; nbEdgesTravelled = 0;
 
-        log.info("RC: start individual prediction Runs");
+        log.debug("RC: start individual prediction Runs");
         int[] maxSingleTrainRevenues = new int[nbTrains];
         for (int j = startTrain; j <= finalTrain; j++) {
             this.startTrain = j;
@@ -379,7 +379,7 @@ abstract class RevenueCalculator {
 
         if (startTrain == finalTrain - 1) return;
 
-        log.info("RC: start combined prediction runs");
+        log.debug("RC: start combined prediction runs");
         this.finalTrain = finalTrain;
         for (int j=finalTrain - 1; j > startTrain; j--) {
             this.startTrain = j;

@@ -117,7 +117,7 @@ ReceivesFor,Simon,20,F
  
 CompanyOperates,UR,Chris
 LaysTileAt,UR,8,C8,S
-LAYS_TOKEN_ON,UR,C4,40 Hex C4 (大洲 - Ohzu)
+LAYS_TOKEN_ON,UR,C4,40
 CompanyRevenue,UR,100
 CompanyPaysOutFull,UR,100
 Payout,Phil,20,2,10
@@ -186,7 +186,7 @@ LaysTileAt,UR,14,C4,SW
  
 CompanyOperates,SR,Simon
 LaysTileAt,SR,58,J5,NW
-LAYS_TOKEN_ON,SR,I4,40 Hex I4 (琴平 - Kotohira)
+LAYS_TOKEN_ON,SR,I4,40
 CompanyRevenue,SR,150
 CompanyPaysOutFull,SR,150
 Payout,Phil,15,1,10
@@ -315,7 +315,7 @@ PRICE_MOVES_LOG,UR,100,F3,110,G3
  
 CompanyOperates,IR,Phil
 LaysTileAt,IR,205,E2,SE
-LAYS_TOKEN_ON,IR,B7,40 Hex B7 (宇和島 - Uwajima)
+LAYS_TOKEN_ON,IR,B7,40
 CompanyRevenue,IR,190
 CompanyPaysOutFull,IR,190
 Payout,Chris,19,1,10
@@ -333,7 +333,7 @@ PRICE_MOVES_LOG,SR,70,F7,75,F6
  
 CompanyOperates,KO,Simon
 LaysTileAt,KO,9,J3,NW
-LAYS_TOKEN_ON,KO,I4,40 Hex I4 (琴平 - Kotohira)
+LAYS_TOKEN_ON,KO,I4,40
 CompanyRevenue,KO,170
 CompanyPaysOutFull,KO,170
 Payout,Simon,85,5,10

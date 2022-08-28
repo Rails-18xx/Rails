@@ -13,12 +13,7 @@ import net.sf.rails.algorithms.RevenueAdapter;
 import net.sf.rails.algorithms.RevenueStaticModifier;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
-import net.sf.rails.game.CompanyManager;
-import net.sf.rails.game.MapHex;
-import net.sf.rails.game.Phase;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsItem;
-import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.*;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.financial.StockSpace;
@@ -340,14 +335,14 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      * @see rails.game.PublicCompany#getBaseTokenLayCost(rails.game.MapHex)
      */
     @Override
-    public int getBaseTokenLayCost(MapHex hex) {
+    public int getBaseTokenLayCost(Stop stop) {
         Phase phase = getRoot().getPhaseManager().getCurrentPhase();
         if (phase.getRealName().startsWith("D")) {
             int result;
-            result = super.getBaseTokenLayCost(hex) * 2;
+            result = super.getBaseTokenLayCost(null) * 2;
             return result;
         }
-        return super.getBaseTokenLayCost(hex);
+        return super.getBaseTokenLayCost(null);
     }
 
     @Override

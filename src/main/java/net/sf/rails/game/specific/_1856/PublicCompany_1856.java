@@ -10,10 +10,6 @@ public final class PublicCompany_1856 extends PublicCompany {
     private final IntegerState trainNumberAvailableAtStart = IntegerState.create(this, "trainNumberAvailableAtStart");
     private final IntegerState moneyInEscrow = IntegerState.create(this, "moneyInEscrow");
 
-    /** Used for CGR */
-    // TODO: Is this still used, as CGR has it owns class
-    private boolean hadPermanentTrain = false;
-
     public PublicCompany_1856(RailsItem parent, String id) {
         super(parent, id);    
     }
@@ -36,10 +32,6 @@ public final class PublicCompany_1856 extends PublicCompany {
         return trainNumberAvailableAtStart.value();
     }
 
-    public void setMoneyInEscrow (int amount) {
-        moneyInEscrow.set(amount);
-    }
-
     public void addMoneyInEscrow (int amount) {
         moneyInEscrow.add(amount);
     }
@@ -48,14 +40,10 @@ public final class PublicCompany_1856 extends PublicCompany {
        return moneyInEscrow.value();
     }
 
-    public boolean hadPermanentTrain() {
-        return hadPermanentTrain;
-    }
-
     @Override
     public void buyTrain(Train train, int price) {
         super.buyTrain (train, price);
-        if (train.isPermanent()) hadPermanentTrain = true;
+        //if (train.isPermanent()) hadPermanentTrain = true;
     }
     
     public int getGameEndPrice() {

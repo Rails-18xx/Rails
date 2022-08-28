@@ -438,7 +438,7 @@ NewTrainAvailable,4/3+3,5/4+4
  
 CompanyOperates,DSB,Charlie
 LaysTileAt,DSB,622,D7,NE
-LAYS_TOKEN_ON,DSB,E6,40 Hex E6 (Göteborg)
+LAYS_TOKEN_ON,DSB,E6,40
 CompanyRevenue,DSB,220
 CompanyPaysOutFull,DSB,220
 Payout,Alice,22,1,10
@@ -499,7 +499,7 @@ PRICE_MOVES_LOG,S&NJ,135,H3,150,I3
  
 CompanyOperates,DSB,Charlie
 LaysTileAt,DSB,5,B5,SW
-LAYS_TOKEN_ON,DSB,F1,100 Hex F1 (Kiel)
+LAYS_TOKEN_ON,DSB,F1,100
 CompanyRevenue,DSB,250
 CompanyPaysOutFull,DSB,250
 Payout,Charlie,150,6,10
@@ -509,7 +509,7 @@ PRICE_MOVES_LOG,DSB,122,G3,150,I3
  
 CompanyOperates,VR,Alice
 LaysTileAt,VR,5,F15,NW
-LAYS_TOKEN_ON,VR,H13,40 Hex H13 (Tallinn)
+LAYS_TOKEN_ON,VR,H13,40
 CompanyRevenue,VR,140
 CompanyPaysOutFull,VR,140
 Payout,Bob,14,1,10
@@ -611,7 +611,7 @@ BuysTrain,S&NJ,4+4,IPO,480
  
 CompanyOperates,VR,Alice
 LaysTileAt,VR,582,G14,SW
-LAYS_TOKEN_ON,VR,F11,100 Hex F11 (Stockholm)
+LAYS_TOKEN_ON,VR,F11,100
 CompanyRevenue,VR,180
 CompanyPaysOutFull,VR,180
 Payout,Bob,18,1,10
@@ -660,7 +660,7 @@ Payout,VR,57,3,10
 PRICE_MOVES_LOG,VR,122,G3,135,H3
  
 CompanyOperates,SJ,Charlie
-LAYS_TOKEN_ON,SJ,A4,100 Hex A4 (Newcastle)
+LAYS_TOKEN_ON,SJ,A4,100
 CompanyDoesNotPayDividend,SJ
 PRICE_MOVES_LOG,SJ,100,E3,90,D3
 BuysTrain,SJ,5E,IPO,600
@@ -801,7 +801,7 @@ PRICE_MOVES_LOG,SJ,122,F2,110,E2
 BuysTrain,SJ,4D,IPO,800
  
 CompanyOperates,NSB,Charlie
-LAYS_TOKEN_ON,NSB,G2,40 Hex G2 (Stettin)
+LAYS_TOKEN_ON,NSB,G2,40
 CompanyRevenue,NSB,200
 CompanyPaysOutFull,NSB,200
 Payout,Bob,20,1,10
@@ -852,7 +852,7 @@ Payout,Alice,48,2,10
 PRICE_STAYS_LOG,DSB,245,L1
  
 CompanyOperates,S&NJ,Bob
-LAYS_TOKEN_ON,S&NJ,H17,40 Hex H17 (Vyborg)
+LAYS_TOKEN_ON,S&NJ,H17,40
 CompanyRevenue,S&NJ,280
 CompanyPaysOutFull,S&NJ,280
 Payout,Bob,168,6,10

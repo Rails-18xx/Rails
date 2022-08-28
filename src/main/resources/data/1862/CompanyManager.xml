@@ -40,7 +40,7 @@
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
 		<Trains limit="4,3,2"/>
-		<Loans value="100" perRound="1" interest="10"/>
+		<Loans value="100" perRound="1" interestPct="10"/>
 		<!-- Number of loans is undefined and handled in the code -->
         <CanUseSpecialProperties/>
 	</CompanyType>

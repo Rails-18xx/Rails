@@ -1052,7 +1052,7 @@ Payout,Bob,32,1,50
  
 CompanyOperates,MS,Alice
 LaysTileAt,MS,87,F18,SW
-LAYS_TOKEN_ON,MS,C11,80 Hex C11 (Prag)
+LAYS_TOKEN_ON,MS,C11,80
 CompanyRevenue,MS,290
 CompanyDividesEarnings,MS,290,260,30
 CompanyPaysOutFull,MS,260
@@ -1062,7 +1062,7 @@ BuysTrain,MS,1G,Pool,100
  
 CompanyOperates,BK,Bob
 LaysTileAt,BK,411,D18,W
-LAYS_TOKEN_ON,BK,E17,80 Hex E17 (Brünn)
+LAYS_TOKEN_ON,BK,E17,80
 CompanyRevenue,BK,370
 CompanyDividesEarnings,BK,370,340,30
 CompanyPaysOutFull,BK,340
@@ -1329,7 +1329,7 @@ CompanyDiscardsTrain,S4,2,Pool
  
 CompanyOperates,SB,Alice
 LaysTileAt,SB,27,I35,SE
-LAYS_TOKEN_ON,SB,H30,80 Hex H30 (Debrecin/Groéwardein SW,E)
+LAYS_TOKEN_ON,SB,H30,80
 CompanyDoesNotPayDividend,SB
 PRICE_MOVES_LOG,SB,97,E2,93,D2
 BuysTrain,SB,2G,IPO,230
@@ -1557,7 +1557,7 @@ EndOfFormationRound,KK,OperatingRound 4.2
  
 CompanyOperates,BH,Bob
 LaysTileAt,BH,25,O19,W
-LAYS_TOKEN_ON,BH,J16,80 Hex J16 (Marburg)
+LAYS_TOKEN_ON,BH,J16,80
 CompanyRevenue,BH,140
 CompanyPaysOutFull,BH,140
 Payout,Bob,84,6,10
@@ -1584,7 +1584,7 @@ PRICE_MOVES_LOG,MS,73,F7,76,G7
  
 CompanyOperates,BK,Bob
 LaysTileAt,BK,410,G11,SE
-LAYS_TOKEN_ON,BK,H10,100 Hex H10 (Salzburg)
+LAYS_TOKEN_ON,BK,H10,100
 CompanyRevenue,BK,270
 CompanyPaysOutFull,BK,270
 Payout,Bob,162,6,10
@@ -2191,7 +2191,7 @@ CompanyDiscardsTrain,SB,2G,Pool
  
 CompanyOperates,SB,Alice
 LaysTileAt,SB,432,J28,NW
-LAYS_TOKEN_ON,SB,J28,80 Hex J28 (Arad/Temesvar SE,SW,W)
+LAYS_TOKEN_ON,SB,J28,80
 CompanyRevenue,SB,310
 CompanyPaysOutFull,SB,310
 Payout,Bob,31,1,10
@@ -2209,7 +2209,7 @@ NewTrainAvailable,5,5E
 CompanyOperates,MS,Alice
 LaysTileAt,MS,435,H22,SW
 DuplicateTokenRemoved,Ug,H22
-LAYS_TOKEN_ON,MS,H22,80 Hex H22 (Buda/Pest)
+LAYS_TOKEN_ON,MS,H22,80
 CompanyRevenue,MS,420
 CompanyDividesEarnings,MS,420,370,50
 CompanyPaysOutFull,MS,370
@@ -2228,7 +2228,7 @@ FirstTrainBought,5E
  
 CompanyOperates,TH,Alice
 LaysTileAt,TH,432,H30,W
-LAYS_TOKEN_ON,TH,F38,100 Hex F38 (Czernowitz)
+LAYS_TOKEN_ON,TH,F38,100
 TrainInherited,3G,TH
 CompanyRevenue,TH,210
 CompanyDividesEarnings,TH,210,160,50
@@ -2295,7 +2295,7 @@ TrainsRusted,3+1
  
 CompanyOperates,Sd,Alice
 LaysTileAt,Sd,63,I15,SW
-LAYS_TOKEN_ON,Sd,H22,60 Hex H22 (Buda/Pest)
+LAYS_TOKEN_ON,Sd,H22,60
 CompanyRevenue,Sd,440
 CompanyPaysOutFull,Sd,440
 Payout,Bob,88,2,10
@@ -2306,7 +2306,7 @@ BuysTrain,Sd,5E,CL,390
  
 CompanyOperates,KK,Bob
 LaysTileAt,KK,432,H20,NW
-LAYS_TOKEN_ON,KK,I15,40 Hex I15 (Graz)
+LAYS_TOKEN_ON,KK,I15,40
 CompanyRevenue,KK,270
 CompanyPaysOutFull,KK,270
 Payout,Bob,27,1,10

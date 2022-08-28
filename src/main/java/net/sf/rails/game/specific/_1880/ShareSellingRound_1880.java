@@ -1,6 +1,3 @@
-/**
- *
- */
 package net.sf.rails.game.specific._1880;
 
 import java.util.ArrayList;
@@ -36,8 +33,8 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
     private static final Logger log = LoggerFactory.getLogger(ShareSellingRound_1880.class);
 
     /**
-     * @param gameManager
-     * @param parentRound
+     * @param parent gameManager
+     * @param id parentRound
      */
     public ShareSellingRound_1880(GameManager parent, String id) {
         super(parent, id);
@@ -49,7 +46,7 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
 
         possibleActions.clear();
 
-        setSellableShares();
+        setSellShareActions();
 
         possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
 
@@ -88,10 +85,10 @@ public class ShareSellingRound_1880 extends ShareSellingRound {
         String companyName = action.getCompanyName();
         PublicCompany company =
             companyManager.getPublicCompany(action.getCompanyName());
-        PublicCertificate cert = null;
+        PublicCertificate cert;
         PublicCertificate presCert = null;
         List<PublicCertificate> certsToSell =
-                new ArrayList<PublicCertificate>();
+                new ArrayList<>();
         Player dumpedPlayer = null;
         int presSharesToSell = 0;
         int numberToSell = action.getNumber();

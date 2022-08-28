@@ -14,14 +14,12 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import net.sf.rails.game.Stop;
 import net.sf.rails.ui.swing.elements.GUIHexUpgrades;
 import net.sf.rails.ui.swing.elements.UpgradeLabel;
 import net.sf.rails.ui.swing.elements.RailsIcon;
 import net.sf.rails.ui.swing.elements.RailsIconButton;
-import net.sf.rails.ui.swing.hexmap.GUIHex;
-import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
-import net.sf.rails.ui.swing.hexmap.HexUpgrade;
-import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
+import net.sf.rails.ui.swing.hexmap.*;
 
 
 public class UpgradesPanel extends JPanel {

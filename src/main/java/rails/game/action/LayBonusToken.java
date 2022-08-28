@@ -14,6 +14,7 @@ import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.Token;
 import net.sf.rails.game.special.SpecialBonusTokenLay;
 import net.sf.rails.game.special.SpecialProperty;
+import net.sf.rails.util.RailsObjects;
 import net.sf.rails.util.Util;
 
 /**
@@ -70,6 +71,7 @@ public class LayBonusToken extends LayToken {
 
     @Override
     public String toString() {
+        /*
         StringBuilder b = new StringBuilder("LayBonusToken ");
         if (chosenHex == null) {
             b.append(" location=").append(locationNames).append(" spec.prop=").append(
@@ -78,6 +80,15 @@ public class LayBonusToken extends LayToken {
             b.append("hex=").append(chosenHex.getId());
         }
         return b.toString();
+        */
+
+        return super.toString() +
+                RailsObjects.stringHelper(this)
+                        .addToString("name", token.getName())
+                        .addToString("value", token.getValue())
+                        .toString()
+                ;
+
     }
 
     /** Deserialize */

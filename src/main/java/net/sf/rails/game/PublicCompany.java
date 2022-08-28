@@ -1,8 +1,6 @@
 package net.sf.rails.game;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.ConfigurationException;
@@ -53,8 +51,40 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected static final int EXPLICIT = 3; // Not automatic
 
     // Base token lay cost calculation methods
+    /* Superseded by enum
     public static final String BASE_COST_SEQUENCE = "sequence";
     public static final String BASE_COST_DISTANCE = "distance";
+    public static final String BASE_COST_ROUTE_LENGTH = "route_length"; // Assumed: from any laid token.
+    */
+    public enum BaseCostMethod {
+        SEQUENCE ("sequence"),     // First, second token etc.
+        HEX_DISTANCE ("distance"), // As the crow flies
+        ROUTE_DISTANCE("route_length");
+
+        private String configName;
+
+        private BaseCostMethod (String configName) {
+            this.configName = configName;
+        }
+
+        public String configName () {return configName;}
+
+        public static BaseCostMethod get(String configName) {
+            switch (configName) {
+                case "sequence" : return SEQUENCE;
+                case "distance" : return HEX_DISTANCE;
+                case "route_length" : return ROUTE_DISTANCE;
+            }
+            return null;
+        }
+    }
+    /* Further specifications to ROUTE_DISTANCE */
+    /** May distance measurement only start at the *home* base token? */
+    public static boolean FROM_HOME_ONLY = false;
+    /** In distance measurement, include both start and final city hex? */
+    public static boolean INCL_START_HEX = false;
+    /** Tokenable stops and their cost (where that counts) */
+    public Map<Stop, Integer> tokenableStops;
 
     protected static final String[] tokenLayTimeNames = new String[]{"whenStarted", "whenFloated", "firstOR"};
 
@@ -110,12 +140,18 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     protected int numberOfBaseTokens = 0;
 
+    /**
+     * In case of distance-dependent token lay cost,
+     * this value will have the incremental cost per hex passed.
+     */
     protected int baseTokensBuyCost = 0;
+
     /**
      * An array of base token laying costs, per successive token
      */
     protected List<Integer> baseTokenLayCost;
-    protected String baseTokenLayCostMethod = "sequential";
+    //protected String baseTokenLayCostMethod = "sequence";
+    protected BaseCostMethod baseTokenLayCostMethod = BaseCostMethod.SEQUENCE;
 
     protected final BaseTokensModel baseTokens = BaseTokensModel.create(this, "baseTokens"); // Create after cloning ?
     protected final PortfolioModel portfolio = PortfolioModel.create(this);
@@ -150,12 +186,14 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Total bonus tokens amount
      */
-    protected final BonusModel bonusValue = BonusModel.create(this, "bonusValue");
+    protected final BonusModel bonusModel = BonusModel.create(this, "bonusValue");
 
     /**
      * Acquires Bonus objects
      */
     protected final ArrayListState<Bonus> bonuses = new ArrayListState<>(this, "bonuses");
+
+    protected final RightsModel rightsModel = RightsModel.create(this, "rightsModel");
 
     /**
      * Most recent revenue earned.
@@ -393,7 +431,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     /**
      * Train limit per phase (index)
      */
-    protected List<Integer> trainLimit;
+    protected ArrayListState<Integer> trainLimit
+            = new ArrayListState<>(this, "trainLimits_"+getId());
 
     /**
      * Private to close if first train is bought
@@ -431,9 +470,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected CountingMoneyModel currentLoanValue = null; // init during finishConfig
 
     protected BooleanState canSharePriceVary;
-
-    protected RightsModel rightsModel = null; // init if required
-    // created in finishConfiguration
 
     // used for Company interface
     private String longName;
@@ -478,7 +514,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         trainsCostThisTurn.setDisplayNegative(true);
 
         // Bonuses
-        bonusValue.setBonuses(bonuses);
+        bonusModel.setBonuses(bonuses);
 
         this.hasStockPrice = hasStockPrice;
 
@@ -616,7 +652,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
         Tag trainsTag = tag.getChild("Trains");
         if (trainsTag != null) {
-            trainLimit = trainsTag.getAttributeAsIntegerList("limit");
+            trainLimit.setTo(trainsTag.getAttributeAsIntegerList("limit"));
             mustOwnATrain = trainsTag.getAttributeAsBoolean("mandatory", mustOwnATrain);
         }
 
@@ -704,13 +740,11 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             // Cost of laying a token
             Tag layCostTag = baseTokenTag.getChild("LayCost");
             if (layCostTag != null) {
-                baseTokenLayCostMethod = layCostTag.getAttributeAsString("method", baseTokenLayCostMethod);
-                if (baseTokenLayCostMethod.equalsIgnoreCase(BASE_COST_SEQUENCE)) {
-                    baseTokenLayCostMethod = BASE_COST_SEQUENCE;
-                } else if (baseTokenLayCostMethod.equalsIgnoreCase(BASE_COST_DISTANCE)) {
-                    baseTokenLayCostMethod = BASE_COST_DISTANCE;
-                } else {
-                    throw new ConfigurationException("Invalid base token lay cost calculation method: " + baseTokenLayCostMethod);
+                 String methodName = layCostTag.getAttributeAsString("method", "sequence");
+                baseTokenLayCostMethod = BaseCostMethod.get(methodName);
+                if (baseTokenLayCostMethod == null) {
+                    throw new ConfigurationException("Invalid base token lay cost calculation method: "
+                            + methodName);
                 }
 
                 baseTokenLayCost = layCostTag.getAttributeAsIntegerList("cost");
@@ -742,19 +776,24 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         Tag tradeSharesTag = tag.getChild("TradeShares");
         if (tradeSharesTag != null) {
             mayTradeShares = true;
-            mustHaveOperatedToBuyShares = tradeSharesTag
-                    .getAttributeAsBoolean("mustHaveOperatedToBuy", mustHaveOperatedToBuyShares);
-            mustHaveOperatedToSellShares = tradeSharesTag
-                    .getAttributeAsBoolean("mustHaveOperatedToSell", mustHaveOperatedToSellShares);
+            if (tradeSharesTag.hasAttribute("mustHaveOperated")) {
+                mustHaveOperatedToBuyShares = mustHaveOperatedToSellShares =
+                        tradeSharesTag.getAttributeAsBoolean("mustHaveOperated");
+            } else {
+                mustHaveOperatedToBuyShares = tradeSharesTag
+                        .getAttributeAsBoolean("mustHaveOperatedToBuy", mustHaveOperatedToBuyShares);
+                mustHaveOperatedToSellShares = tradeSharesTag
+                        .getAttributeAsBoolean("mustHaveOperatedToSell", mustHaveOperatedToSellShares);
+            }
         }
 
         Tag loansTag = tag.getChild("Loans");
         if (loansTag != null) {
-            maxNumberOfLoans = loansTag.getAttributeAsInteger("number", -1);
+            maxNumberOfLoans = loansTag.getAttributeAsInteger("maxNumber", -1);
             // Note: -1 means undefined, to be handled in the code
             // (for instance: 1856).
             valuePerLoan = loansTag.getAttributeAsInteger("value", 0);
-            loanInterestPct = loansTag.getAttributeAsInteger("interest", 0);
+            loanInterestPct = loansTag.getAttributeAsInteger("interestPct", 0);
             maxLoansPerRound = loansTag.getAttributeAsInteger("perRound", -1);
         }
 
@@ -886,12 +925,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
             cert.setUniqueId(getId(), i);
         }
 
-        Set<BaseToken> newTokens = Sets.newHashSet();
-        for (int i = 0; i < numberOfBaseTokens; i++) {
-            BaseToken token = BaseToken.create(this);
-            newTokens.add(token);
-        }
-        baseTokens.initTokens(newTokens);
+        initBaseTokens();
 
         if (homeHexNames != null) {
             homeHexes = new ArrayList<>(2);
@@ -924,27 +958,17 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                             privateToCloseOnFirstTrainName);
         }
 
-        if (trainLimit != null) {
+        if (trainLimit != null && !trainLimit.isEmpty()) {
             infoText += "<br>" + LocalText.getText("CompInfoMaxTrains",
-                    Util.join(trainLimit, ", "));
+                    Util.join(trainLimit.view(), ", "));
 
         }
 
         infoText += parentInfoText;
         parentInfoText = "";
 
-        // Can companies acquire special rightsModel (such as in 1830 Coalfields)?
-        // TODO: Can this be simplified?
         if (portfolio.hasSpecialProperties()) {
             for (SpecialProperty sp : portfolio.getPersistentSpecialProperties()) {
-                if (sp instanceof SpecialRight) {
-                    getRoot().getGameManager().setGuiParameter(GuiDef.Parm.HAS_ANY_RIGHTS, true);
-                    // Initialize rightsModel here to prevent overhead if not used,
-                    // but if rightsModel are used, the GUI needs it from the start.
-                    if (rightsModel == null) {
-                        rightsModel = RightsModel.create(this, "rightsModel");
-                    }
-                 }
                 // TODO: This is only a workaround for the missing finishConfiguration of special properties (SFY)
                 sp.finishConfiguration(root);
             }
@@ -1104,6 +1128,16 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     public void setReachedDestination(boolean value) {
         hasReachedDestination.set(value);
+    }
+
+    /** Stub to trigger a company to make more shares available,
+     * in other words: become a higher-number-of-shares company.
+     * @return false if conversion failed.
+     *
+     * Used by overriding in 1826 (perhaps that code could be put here)
+     */
+    public boolean grow(int newShareUnit) {
+        return true;
     }
 
     public boolean canBuyStock() {
@@ -1784,15 +1818,17 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return findNextPotentialPresident(getPresidentsShare().getShares());
     }
 
-    public Player findNextPotentialPresident(int minimumShareNumber) {
-        int requiredShareNumber = minimumShareNumber;
+    public Player findNextPotentialPresident(int minimumShares) {
+        int requiredSharesForNextPres = minimumShares;
         Player potentialDirector = null;
 
         for (Player nextPlayer : getRoot().getPlayerManager().getNextPlayersAfter(getPresident(), false, false)) {
-            int nextPlayerShareNumber = nextPlayer.getPortfolioModel().getShares(this);
-            if (nextPlayerShareNumber >= requiredShareNumber) {
+            int nextPlayerShares = nextPlayer.getPortfolioModel().getShares(this);
+            if (nextPlayerShares >= requiredSharesForNextPres) {
                 potentialDirector = nextPlayer;
-                requiredShareNumber = nextPlayerShareNumber + 1;
+                // Found a potential next president.
+                // Another player must own more shares to become the next president.
+                requiredSharesForNextPres = nextPlayerShares + 1;
             }
         }
         return potentialDirector;
@@ -1838,7 +1874,7 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
      * so one must be subtracted before calling this method.
      */
     protected int getTrainLimit(int index) {
-        return trainLimit.get(Math.min(index, trainLimit.size() - 1));
+        return trainLimit.view().get(Math.min(index, trainLimit.size() - 1));
     }
 
     public int getCurrentTrainLimit() {
@@ -1963,23 +1999,28 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         if (cost > 0) tokensCostThisTurn.change(cost);
     }
 
-    public void layBaseTokennNoMapMode(int cost) {
+    public void layBaseTokenInNoMapMode(int cost) {
         if (cost > 0) tokensCostThisTurn.change(cost);
         tokensLaidThisTurn.append(Bank.format(this, cost), ",");
     }
 
+    /** Return the configured (list of) base token lay cost(s) */
+    public List<Integer> getBaseTokenLayCostList() {
+        return baseTokenLayCost;
+    }
+
     /**
-     * Calculate the cost of laying a token, given the hex where
-     * the token is laid. This only makes a difference for de "distance" method.
+     * Calculate the cost of laying a token, given the stop where
+     * the token is laid. This only makes a difference for the "distance" methods.
      *
-     * @param hex The hex where the token is to be laid.
+     * @param stop The Stop where the token is to be laid.
      * @return The cost of laying that token.
      */
-    public int getBaseTokenLayCost(MapHex hex) {
+    public int getBaseTokenLayCost(Stop stop) {
 
-        if (baseTokenLayCost == null) return 0;
-
-        if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
+        //if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
+        if (baseTokenLayCostMethod == BaseCostMethod.SEQUENCE) {
+            if (baseTokenLayCost == null) return 0;
             int index = getNumberOfLaidBaseTokens();
 
             if (index >= baseTokenLayCost.size()) {
@@ -1988,27 +2029,48 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                 index = 0;
             }
             return baseTokenLayCost.get(index);
-        } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
-            if (hex == null) {
+            //} else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
+        } else if (baseTokenLayCostMethod == BaseCostMethod.HEX_DISTANCE) {
+            if (baseTokenLayCost == null) return 0;
+            if (stop == null) {
                 return baseTokenLayCost.get(0);
             } else {
+                MapHex hex = stop.getHex();
                 // WARNING: no provision yet for multiple home hexes.
                 return getRoot().getMapManager().getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost.get(0);
             }
+        //} else if (baseTokenLayCostMethod.equals(BASE_COST_ROUTE_LENGTH)
+         } else if (baseTokenLayCostMethod == BaseCostMethod.ROUTE_DISTANCE
+                && stop != null) {
+            // TODO  Stop is null in NoMapMode. No idea what to do with that. (EV)
+            if (tokenableStops == null) setTokenableStops();
+            return baseTokenLayCost.get(0) * tokenableStops.get(stop);
         } else {
             return 0;
         }
     }
 
-    /**
-     * Return all possible token lay costs to be incurred for the
-     * company's next token lay. For the distance method it will be a full list
-     */
+    public void setTokenableStops() {
+        if (tokenableStops == null) {
+            tokenableStops = new HashMap<>(Routes.getTokenLayRouteDistances(getRoot(), this,
+                    PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY));
+        }
+    }
+
+    /** To be called at the start of the LAY_TOKEN step */
+    public void clearTokenableStops() {
+        tokenableStops = null;
+    }
+
+            /**
+             * Return all possible token lay costs to be incurred for the
+             * company's next token lay. For the distance method it will be a full list.
+             */
     public Set<Integer> getBaseTokenLayCosts() {
 
-        if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
+        if (baseTokenLayCostMethod == BaseCostMethod.SEQUENCE) {
             return ImmutableSet.of(getBaseTokenLayCost(null));
-        } else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
+        } else if (baseTokenLayCostMethod == BaseCostMethod.HEX_DISTANCE) {
             // WARNING: no provision yet for multiple home hexes.
             // EV: and not for zero, but there may be no such cases.
             Collection<Integer> distances = getRoot().getMapManager().getCityDistances(homeHexes.get(0));
@@ -2017,10 +2079,20 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
                 costs.add(distance * baseTokenLayCost.get(0));
             }
             return costs.build();
+        } else if (baseTokenLayCostMethod == BaseCostMethod.ROUTE_DISTANCE) {
+            Map<Stop, Integer> layableTokens
+                    = Routes.getTokenLayRouteDistances(getRoot(), this, false, false);
+            Set<Integer> results = new TreeSet<>();
+            for (int i : layableTokens.values()) { results.add(i); }
+            return results;
         } else {
             return ImmutableSet.of(0);
         }
 
+    }
+
+    public BaseCostMethod getBaseTokenLayCostMethod() {
+        return baseTokenLayCostMethod;
     }
 
     public StringState getTokensLaidThisTurnModel() {
@@ -2061,19 +2133,33 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     public BonusModel getBonusTokensModel() {
-        return bonusValue;
+        return bonusModel;
     }
 
     public boolean hasLaidHomeBaseTokens() {
         return baseTokens.nbLaidTokens() > 0;
     }
 
+    /**
+     * Create the base tokens.
+     * Note: in 1826 additional tokens may be created and added later on.
+     */
+    protected void initBaseTokens() {
+        SortedSet<BaseToken> newTokens = new TreeSet<>();
+        for (int i = 0; i < numberOfBaseTokens; i++) {
+            BaseToken token = BaseToken.create(this);
+            newTokens.add(token);
+        }
+        baseTokens.initBaseTokens(newTokens);
+    }
+
+
     // Return value is not used
     public boolean layHomeBaseTokens() {
 
         if (hasLaidHomeBaseTokens()) return true;
 
-        // TEMPORARY - S5 buyer must choose home hex
+        // TEMPORARY - 1837 S5 buyer must choose home hex
         if (homeHexes == null) return true;
 
         for (MapHex homeHex : homeHexes) {
@@ -2116,8 +2202,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return baseTokens.getNextToken();
     }
 
-    public ImmutableSet<BaseToken> getAllBaseTokens() {
-        return baseTokens.getAllTokens();
+    public Set<BaseToken> getAllBaseTokens() {
+        return baseTokens.getAllBaseTokens();
     }
 
     public ImmutableSet<BaseToken> getLaidBaseTokens() {
@@ -2223,9 +2309,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     }
 
     public void setRight(SpecialRight right) {
-        if (rightsModel == null) {
-            rightsModel = RightsModel.create(this, "RightsModel");
-        }
         rightsModel.add(right);
     }
 

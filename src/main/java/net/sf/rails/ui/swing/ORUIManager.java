@@ -33,23 +33,7 @@ import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rails.game.action.BuyBonusToken;
-import rails.game.action.BuyPrivate;
-import rails.game.action.BuyTrain;
-import rails.game.action.DiscardTrain;
-import rails.game.action.GameAction;
-import rails.game.action.LayBaseToken;
-import rails.game.action.LayBonusToken;
-import rails.game.action.LayTile;
-import rails.game.action.LayToken;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
-import rails.game.action.ReachDestinations;
-import rails.game.action.RepayLoans;
-import rails.game.action.SetDividend;
-import rails.game.action.TakeLoans;
-import rails.game.action.UseSpecialProperty;
+import rails.game.action.*;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
 
@@ -57,6 +41,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+
+import static net.sf.rails.ui.swing.GameUIManager.ADJUST_SHARE_PRICE_DIALOG;
 
 // FIXME: Add back corrections mechanisms
 // Rails 2.0, Even better add a new mechanism that allows to use the standard mechanism for corrections
@@ -351,13 +337,18 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
-    private void addGenericTokenLays(LayToken action) {
+    private void addGenericTokenLays(LayBaseToken action) {
         PublicCompany company = action.getCompany();
         NetworkGraph graph = networkAdapter.getRouteGraph(company, true, false);
-        Multimap<MapHex, Stop> hexStops = graph.getTokenableStops(company);
-        for (MapHex hex:hexStops.keySet()) {
+        //Multimap<MapHex, Stop> hexStops = graph.getTokenableStops(company);
+        //Map<Stop, Integer> tokenableStops = graph.getTokenableStops(company);
+        Map<Stop, Integer> tokenableStops = Routes.getTokenLayRouteDistances(
+                company.getRoot(), company, false, false);
+        //if (company.getBaseTokenLayCostMethod().equalsIgnoreCase(PublicCompany.BASE_COST_ROUTE_LENGTH)) {
+       for (Stop stop : tokenableStops.keySet()) {
+            MapHex hex = stop.getParent();
             GUIHex guiHex = map.getHex(hex);
-            TokenHexUpgrade upgrade = TokenHexUpgrade.create(guiHex, hexStops.get(hex), action);
+            TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, tokenableStops.keySet(), action);
             TokenHexUpgrade.validates(upgrade);
             hexUpgrades.put(guiHex, upgrade);
         }
@@ -367,7 +358,7 @@ public class ORUIManager implements DialogOwner {
         for (MapHex hex:action.getLocations()) {
             GUIHex guiHex = map.getHex(hex);
             TokenHexUpgrade upgrade = TokenHexUpgrade.create(
-                    guiHex, hex.getTokenableStops(action.getCompany()), action);
+                    this, guiHex, hex.getTokenableStops(action.getCompany()), action);
             TokenHexUpgrade.validates(upgrade);
             hexUpgrades.put(guiHex, upgrade);
         }
@@ -383,7 +374,7 @@ public class ORUIManager implements DialogOwner {
                 }
             }
             if (!tokenableStops.isEmpty()) {
-                TokenHexUpgrade upgrade = TokenHexUpgrade.create(guiHex, tokenableStops, action);
+                TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, tokenableStops, action);
                 TokenHexUpgrade.validates(upgrade);
                 hexUpgrades.put(guiHex, upgrade);
             }
@@ -513,7 +504,11 @@ public class ORUIManager implements DialogOwner {
 
             } else if (actionType == ReachDestinations.class) {
 
-                reachDestinations ((ReachDestinations) actions.get(0));
+                reachDestinations((ReachDestinations) actions.get(0));
+
+            } else if (actionType == GrowCompany.class) {
+
+                orWindow.process(actions.get(0));
 
             } else if (actionType == TakeLoans.class) {
 
@@ -521,7 +516,7 @@ public class ORUIManager implements DialogOwner {
 
             } else if (actionType == RepayLoans.class) {
 
-                repayLoans ((RepayLoans)actions.get(0));
+                repayLoans((RepayLoans) actions.get(0));
 
             } else if (actionType == UseSpecialProperty.class) {
 
@@ -1549,6 +1544,13 @@ public class ORUIManager implements DialogOwner {
                     LocalText.getText("DestinationsReached"));
         }
 
+        if (possibleActions.contains(GrowCompany.class)) {
+            GrowCompany action = possibleActions.getType(GrowCompany.class).get(0);
+            orPanel.addSpecialAction(possibleActions.getType(GrowCompany.class).get(0),
+                    LocalText.getText("GrowCompany",
+                            action.getCompany(), 100 / action.getNewShareUnit()));
+        }
+
         // Any other special properties, to be shown in the "Special" menu.
         // Example: 18AL AssignNamedTrains
         if (possibleActions.contains(UseSpecialProperty.class)) {
@@ -1727,5 +1729,4 @@ public class ORUIManager implements DialogOwner {
     protected GUIHexUpgrades getHexUpgrades() {
         return hexUpgrades;
     }
-
 }

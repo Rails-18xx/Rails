@@ -87,6 +87,8 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return (MapHex) super.getParent();
     }
 
+    public MapHex getHex() { return getParent(); }
+
     public String getStationComposedId() {
         return getParent().getId() + "/" + this.getRelatedStationNumber();
     }

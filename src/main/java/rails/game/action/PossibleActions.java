@@ -38,12 +38,16 @@ public class PossibleActions {
     }
 
     public void addAll(List<? extends PossibleAction> actions) {
-        this.actions.addAll(actions);
+        if (actions != null && !actions.isEmpty()) {
+            this.actions.addAll(actions);
+        }
     }
 
     public boolean contains(Class<? extends PossibleAction> clazz) {
-        for (PossibleAction action : actions) {
-            if (clazz.isAssignableFrom(action.getClass())) return true;
+        if (actions != null) {
+            for (PossibleAction action : actions) {
+                if (clazz.isAssignableFrom(action.getClass())) return true;
+            }
         }
         return false;
     }

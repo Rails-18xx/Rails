@@ -303,7 +303,7 @@ Payout,Marco,30,1,100
 CompanyOperates,BY,Christian
 LaysTileAt,BY,1,I17,SW
 LaysTileAt,BY,202,H20,W
-LAYS_TOKEN_ON,BY,H20,160 Hex H20 (Dresden)
+LAYS_TOKEN_ON,BY,H20,160
 CompanyRevenue,BY,180
 CompanyPaysOutFull,BY,180
 Payout,Eyal,36,2,10
@@ -548,7 +548,7 @@ BuysTrain,BY,3,IPO,180
  
 CompanyOperates,SX,Marco
 LaysTileAt,SX,9,G17,SW
-LAYS_TOKEN_ON,SX,E19,60 Hex E19 (Berlin)
+LAYS_TOKEN_ON,SX,E19,60
 CompanyRevenue,SX,260
 CompanyPaysOutFull,SX,260
 Payout,Eyal,52,2,10
@@ -808,7 +808,7 @@ PRICE_MOVES_LOG,SX,100,D3,110,E3
 CompanyOperates,BA,Eyal
 LaysTileAt,BA,213,L6,NE
 LaysTileAt,BA,23,K5,E
-LAYS_TOKEN_ON,BA,H2,80 Hex H2 (Düsseldorf)
+LAYS_TOKEN_ON,BA,H2,80
 CompanyDoesNotPayDividend,BA
 PRICE_MOVES_LOG,BA,84,B4,78,A4
 BuysTrain,BA,3+3,IPO,270
@@ -1132,7 +1132,7 @@ BuysTrain,BY,4,IPO,360
  
 CompanyOperates,SX,Marco
 LaysTileAt,SX,19,F16,E
-LAYS_TOKEN_ON,SX,H20,40 Hex H20 (Dresden)
+LAYS_TOKEN_ON,SX,H20,40
 CompanyRevenue,SX,230
 CompanyWithholds,SX,230
 PRICE_MOVES_LOG,SX,134,F2,120,E2
@@ -1142,7 +1142,7 @@ NewTrainAvailable,4,4+4
 CompanyOperates,HE,Nick
 LaysTileAt,HE,3,M15,W
 LaysTileAtFor,HE,212,J6,SW,50
-LAYS_TOKEN_ON,HE,H16,100 Hex H16 (Leipzig)
+LAYS_TOKEN_ON,HE,H16,100
 CompanyDoesNotPayDividend,HE
 PRICE_MOVES_LOG,HE,86,B3,82,A3
 BuysTrain,HE,2+2,WT,177
@@ -1183,7 +1183,7 @@ EndOfFormationRound,PR,OperatingRound 7.1
 IS_NOW_PRES_OF,Eyal,PR
  
 CompanyOperates,MS,Christian
-LAYS_TOKEN_ON,MS,C11,20 Hex C11 (Hamburg E,NE)
+LAYS_TOKEN_ON,MS,C11,20
 CompanyDoesNotPayDividend,MS
 PRICE_MOVES_LOG,MS,80,B5,72,A5
 BuysTrain,MS,4,BY,191
@@ -1202,7 +1202,7 @@ CompanyDiscardsTrain,SX,3,Pool
  
 CompanyOperates,WT,Nick
 LaysTileAt,WT,219,L6,SW
-LAYS_TOKEN_ON,WT,C11,200 Hex C11 (Hamburg SW)
+LAYS_TOKEN_ON,WT,C11,200
 CompanyRevenue,WT,130
 CompanyPaysOutFull,WT,130
 Payout,Nick,117,9,10
@@ -1254,7 +1254,7 @@ FirstTrainBought,5+5
  
 CompanyOperates,BY,Christian
 LaysTileAt,BY,216,H20,E
-LAYS_TOKEN_ON,BY,E19,200 Hex E19 (Berlin)
+LAYS_TOKEN_ON,BY,E19,200
 CompanyRevenue,BY,290
 CompanyPaysOutFull,BY,290
 Payout,Christian,290,10,10
@@ -1302,7 +1302,7 @@ PRICE_MOVES_LOG,MS,72,A5,64,A6
  
 CompanyOperates,OL,Eyal
 LaysTileAt,OL,8,E11,E
-LAYS_TOKEN_ON,OL,F14,100 Hex F14 (Magdeburg)
+LAYS_TOKEN_ON,OL,F14,100
 CompanyRevenue,OL,180
 CompanyPaysOutFull,OL,180
 Payout,Marco,54,3,10
@@ -1346,9 +1346,10 @@ BUY_SHARE_LOG,Nick,10,PR,Pool,172
 SELL_SHARE_LOG,Christian,5,PR,86
 BUY_SHARE_LOG,Christian,10,MS,IPO,80
 PriceIsPaidTo,80,MS
-SELL_SHARES_LOG,Eyal,2,10,20,OL,160
+SELL_SHARE_LOG,Eyal,20,OL,160
 PRICE_MOVES_LOG,OL,80,B5,74,B6
 IS_NOW_PRES_OF,Marco,OL
+SELL_SHARE_LOG,Eyal,10,OL,80
 BUY_SHARE_LOG,Eyal,5,PR,Pool,86
 SELL_SHARE_LOG,Marco,5,PR,86
 BUY_SHARE_LOG,Marco,20,OL,Pool,148
@@ -1395,8 +1396,6 @@ SoldOut,BA
 PRICE_MOVES_LOG,BA,84,D7,88,D6
 SoldOut,HE
 PRICE_MOVES_LOG,HE,84,B4,86,B3
-SoldOut,OL
-PRICE_MOVES_LOG,OL,66,B7,74,B6
 SoldOut,MS
 PRICE_MOVES_LOG,MS,64,A6,72,A5
 Has,BY,41
@@ -1407,7 +1406,7 @@ Has,HE,22
 Has,MS,759
 Has,OL,199
 Has,PR,1117
-Has,Eyal,520
+Has,Eyal,600
 Has,Marco,659
 Has,Nick,455
 Has,Christian,657
@@ -1465,18 +1464,6 @@ Payout,Nick,304,8,10
 Payout,WT,76,2,10
 PRICE_MOVES_LOG,WT,84,D7,90,E7
  
-CompanyOperates,OL,Marco
-LaysTileAt,OL,45,D14,SW
-CompanyRevenue,OL,140
-CompanyPaysOutFull,OL,140
-Payout,Marco,126,9,10
-Payout,Eyal,14,1,10
-PRICE_MOVES_LOG,OL,74,B6,82,C6
-BuysTrain,OL,6+6,IPO,720
-FirstTrainBought,6+6
-StartOfPhase,6+6
-TrainsRusted,3+3
- 
 CompanyOperates,MS,Christian
 LaysTileAt,MS,42,D10,W
 CompanyRevenue,MS,170
@@ -1484,10 +1471,19 @@ CompanyPaysOutFull,MS,170
 Payout,Christian,170,10,10
 PRICE_MOVES_LOG,MS,72,A5,80,B5
 BuysTrain,MS,6+6,IPO,720
+FirstTrainBought,6+6
+StartOfPhase,6+6
+TrainsRusted,3+3
+ 
+CompanyOperates,OL,Marco
+LaysTileAt,OL,45,D14,SW
+CompanyDoesNotPayDividend,OL
+PRICE_MOVES_LOG,OL,66,B7,54,A7
+BuysTrain,OL,6+6,IPO,720
  
 EndOfOperatingRound,8.1
-ORWorthIncrease,Eyal,8.1,232
-ORWorthIncrease,Marco,8.1,575
+ORWorthIncrease,Eyal,8.1,210
+ORWorthIncrease,Marco,8.1,269
 ORWorthIncrease,Nick,8.1,488
 ORWorthIncrease,Christian,8.1,687
 Has,BY,41
@@ -1498,8 +1494,8 @@ Has,HE,22
 Has,MS,39
 Has,OL,33
 Has,PR,98
-Has,Eyal,804
-Has,Marco,996
+Has,Eyal,870
+Has,Marco,870
 Has,Nick,927
 Has,Christian,1038
 START_OR,8.2

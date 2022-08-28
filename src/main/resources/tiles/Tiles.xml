@@ -4154,7 +4154,7 @@
 <Track from="city5" gauge="normal" to="side4"/>
 <Track from="city6" gauge="normal" to="side5"/>
 </Tile>
-<Tile colour="fixed" id="-26002" name="Nantes/Sstrasbourg">
+<Tile colour="fixed" id="-26002" name="Nantes/Strasbourg">
 <Station id="city1" position="0" slots="1" type="City" value="40"/>
 <Track from="city1" gauge="normal" to="side0"/>
 <Track from="city1" gauge="normal" to="side1"/>

@@ -17,12 +17,15 @@
 			<Certificate shares="1" number="3"/>
 			<Certificate shares="1" number="5" available="no"/>
 		</Shares>
+		<TreasuryCanHoldOwnShares maxPerc="80"/>
+		<TradeShares mustHaveOperated="yes"/>
 		<Payout split="allowed" percPerJump="100"/>
 		<BaseTokens>
 			<HomeBase lay="firstOR"/>
-			<LayCost method="distance"/>
+			<LayCost method="route_length" cost="20"/>
 		</BaseTokens>
 		<Trains limit="2,1"/><!-- as a 5-share company, will become 4,3,2 later -->
+		<Loans value="500" maxNumber="2" interestPct="10"/>
 		<CanBuyPrivates/>
 		<CanUseSpecialProperties/>
 	</CompanyType>
@@ -32,40 +35,84 @@
 		<StockPrice par="no"/>
 		<Float percentage="50"/>
 		<Shares unit="10">
-			<Certificate type="President" shares="1"/>
-			<Certificate shares="1" number="9"/>
+			<Certificate type="President" shares="1" available="no"/>
+			<Certificate shares="1" number="9" available="no"/>
 		</Shares>
+		<TreasuryCanHoldOwnShares maxPerc="80"/>
+		<TradeShares mustHaveOperated="yes"/>
+		<Payout split="allowed" percPerJump="100"/>
 		<BaseTokens>
 			<HomeBase lay="firstOR"/>
-			<LayCost method="distance"/>
+			<LayCost method="route_length" cost="20"/><!-- Cost per hex -->
 		</BaseTokens>
 		<Trains limit="5,4,3"/>
+		<Loans value="500" maxNumber="2" interestPct="10"/>
 		<CanBuyPrivates/>
 		<CanUseSpecialProperties/>
 	</CompanyType>
 
 	<Company name="Bridge" type="Private" basePrice="20" revenue="5"
-		longname="Ponts et Chaussées"></Company>
+		longname="Ponts et Chaussées">
+		<SpecialProperties>
+			<SpecialProperty condition="ifOwnedByPlayer" when="tileLayingStep"
+							 class="net.sf.rails.game.special.SpecialSingleTileLay">
+				<SpecialSingleTileLay location="B12,B14,C15,E7,F6,F8,F10,F12,I3,I5,M5,M15"
+									  connected="yes" extra="no" free="yes"/>
+			</SpecialProperty>
+		</SpecialProperties>
+		<ClosingConditions>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
+	</Company>
 
 	<Company name="Mail" type="Private" basePrice="40" revenue="10"
-		longname="Régie des Postes"></Company>
+		longname="Régie des Postes">
+		<SpecialProperty condition="ifOwnedByPlayer"
+						 when="tokenLayingStep"
+						 class="net.sf.rails.game.special.SpecialBonusTokenLay">
+			<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken"
+								  location="B12,C11,C13,C15,E5,E15,F12,G9,G19,H6,I1,I7,I13,K17,L14,M3,M13"
+								  connected="yes" extra="yes">
+				<BonusToken name="Mail" value="10" removed="Phase:E"/>
+			</SpecialBonusTokenLay>
+		</SpecialProperty>
+		<ClosingConditions>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
+	</Company>
 		
 	<Company name="Algerian" type="Private" basePrice="70" revenue="15"
-		longname="Chemins de Fer D'Algérie"></Company>
+		longname="Chemins de Fer D'Algérie">
+		<SpecialProperty condition="ifOwnedByPlayer"
+						 when="trainBuyingStep"
+						 class="net.sf.rails.game.special.ExtraTrainRight">
+			<SpecialRight type="extraTrains" name="ExtraTrain" extraTrains="1" removed="Phase:E"/>
+		</SpecialProperty>
+		<ClosingConditions>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
+	</Company>
 
 	<Company name="Belgian" type="Private" basePrice="110" revenue="20"
-		longname="Grand Central Belge"></Company>
+		longname="Grand Central Belge">
+		<Info key="ComesWithCertificate" parm="Belg,10"/>
+	</Company>
 		
 	<Company name="Parisian" type="Private" basePrice="160" revenue="25"
-		longname="Compagnie Paris-Rouen"></Company>
+		longname="Compagnie Paris-Rouen">
+		<Info key="ComesWithCertificate" parm="Paris,20"/>
+	</Company>
 
 	<Company name="Alsatian" type="Private" basePrice="220" revenue="30"
-		longname="Ligne - Strasbourg-Bâle"></Company>
+		longname="Ligne - Strasbourg-Bâle">
+		<Info key="ComesWithCertificate" parm="Als,20"/>
+	</Company>
 
 	<Company name="Als" type="Public" tokens="4" fgColour="FFFFFF" bgColour="120A8F"
 		longname="Chemin de Fer d'Alsace">
 		<Home hex="G19"/> <!-- Strasbourg -->
 		<Destination hex="L14"/> <!-- Lyon-->
+		<FirstTrainCloses type="Private" name="Alsatian"/>
 	</Company>
 
 	<Company name="Belg" type="Public" tokens="4" fgColour="FFFFFF" bgColour="2E6444"
@@ -76,57 +123,61 @@
 			<Certificate shares="1" number="8"/>
 		</Shares>
 		<Trains limit="4,3,2"/>
+		<FirstTrainCloses type="Private" name="Belgian"/>
 	</Company>
 
-	<Company name="Est" type="Public" tokens="4" fgColour="000000" bgColour="FF6600"
+	<Company name="Est" type="Public" tokens="3" fgColour="000000" bgColour="FF6600"
 		longname="Chemin de Fer de L'Est">
+		<!-- Note: the number of tokens being 3 applies to floating as a 5-share company.
+			 As a 10-share company, the number will be 4 or 5, see OperatingRound_1826.setFloated() -->
 		<Home hex="G9" city="2"/> <!-- Paris (E) -->
 		<Destination hex="F16"/> <!-- Nancy -->
 	</Company>
 
-	<Company name="GC" type="Public" tokens="4" fgColour="000000" bgColour="BCD2EE"
+	<Company name="GC" type="Public" tokens="3" fgColour="000000" bgColour="BCD2EE"
 		longname="Grand Central de France">
 		<Home hex="L14"/> <!-- Lyon -->
 		<Destination hex="M3"/> <!-- Bordeaux -->
 	</Company>
 
-	<Company name="Midi" type="Public" tokens="4" fgColour="FFFFFF" bgColour="308014"
+	<Company name="Midi" type="Public" tokens="3" fgColour="FFFFFF" bgColour="308014"
 		longname="Chemin de Fer du Midi">
 		<Home hex="M3"/> <!-- Bordeaux -->
 		<Destination hex="N16"/> <!-- Marseille -->
 	</Company>
 	
-	<Company name="Nord" type="Public" tokens="4" fgColour="FFFFFF" bgColour="EE0000"
+	<Company name="Nord" type="Public" tokens="3" fgColour="FFFFFF" bgColour="EE0000"
 		longname="Chemin de Fer du Nord">
 		<Home hex="G9" city="1"/> <!-- Paris (NE) -->
 		<Destination hex="C11"/> <!-- Lille -->
 	</Company>
 
-	<Company name="Ouest" type="Public" tokens="4" fgColour="000000" bgColour="FF92BB"
+	<Company name="Ouest" type="Public" tokens="3" fgColour="000000" bgColour="FF92BB"
 		longname="Chemin de Fer de L'Ouest">
 		<Home hex="G9" city="5"/> <!-- Paris (W) -->
 		<Destination hex="H2"/> <!-- Rennes -->
 	</Company>
 	
-	<Company name="Paris" type="Public" tokens="4" fgColour="000000" bgColour="CECC15"
+	<Company name="Paris" type="Public" tokens="3" fgColour="000000" bgColour="CECC15"
 		longname="Chemin de Fer de Paris">
 		<Home hex="G9" city="6"/> <!-- Paris (NW) -->
 		<Destination hex="E5"/> <!-- Le Havre -->
+		<FirstTrainCloses type="Private" name="Parisian"/>
 	</Company>
 
-	<Company name="PLM" type="Public" tokens="4" fgColour="FFFFFF" bgColour="691F01"
+	<Company name="PLM" type="Public" tokens="3" fgColour="FFFFFF" bgColour="691F01"
 		longname="Chemin de Fer Paris-Lyon-Méditerranée">
 		<Home hex="G9" city="3"/> <!-- Paris (SE) -->
 		<Destination hex="L14"/> <!-- Lyon -->
 	</Company>
 
-	<Company name="PO" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000CD"
+	<Company name="PO" type="Public" tokens="3" fgColour="FFFFFF" bgColour="0000CD"
 		longname="Chemin de Fer Paris-Orléans">
 		<Home hex="G9" city="4"/> <!-- Paris (SW) -->
 		<Destination hex="K5"/> <!--Poitiers -->
 	</Company>
 
-	<Company name="Etat" type="National" tokens="4" fgColour="FFFFFF" bgColour="000000"
+	<Company name="Etat" type="National" tokens="3" fgColour="FFFFFF" bgColour="000000"
 		longname="Chemin de Fer de L'Etat">
 	</Company>
 
@@ -143,7 +194,7 @@
 			<SubItem name="Belg" type="Public" />
 		</Item>
 		<Item name="Parisian" type="Private" basePrice="160">
-			<SubItem name="Paris" type="Public" />
+			<SubItem name="Paris" type="Public" president="yes"/>
 		</Item>
 		<Item name="Alsatian" type="Private" basePrice="220">
 			<SubItem name="Als" type="Public" president="yes"/>

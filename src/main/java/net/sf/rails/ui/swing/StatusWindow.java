@@ -40,14 +40,7 @@ import net.sf.rails.ui.swing.elements.ActionCheckBoxMenuItem;
 import net.sf.rails.ui.swing.elements.ActionMenuItem;
 import net.sf.rails.ui.swing.elements.RailsIcon;
 import net.sf.rails.util.GameLoader;
-import rails.game.action.ActionTaker;
-import rails.game.action.DiscardTrain;
-import rails.game.action.GameAction;
-import rails.game.action.NullAction;
-import rails.game.action.PossibleAction;
-import rails.game.action.PossibleActions;
-import rails.game.action.RequestTurn;
-import rails.game.action.UseSpecialProperty;
+import rails.game.action.*;
 import rails.game.correct.CorrectionModeAction;
 
 
@@ -580,6 +573,19 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
             }
         }
 
+        // Adjust price manually
+        if (possibleActions.contains(AdjustSharePrice.class)) {
+            for (AdjustSharePrice action : possibleActions.getType(AdjustSharePrice.class)) {
+                ActionMenuItem item = new ActionMenuItem(action.toMenu());
+                item.addActionListener(this);
+                item.setEnabled(false);
+                item.addPossibleAction(action);
+                item.setEnabled(true);
+                specialActionItems.add(item);
+                specialMenu.add(item);
+            }
+        }
+
         // Must Special menu be enabled?
         boolean enabled = specialActionItems.size() > 0;
         specialMenu.setOpaque(enabled);
@@ -680,6 +686,12 @@ public class StatusWindow extends JFrame implements ActionListener, KeyListener,
         } else if (executedAction instanceof UseSpecialProperty
                 || executedAction instanceof RequestTurn) {
             process(executedAction);
+
+        } else if (executedAction instanceof AdjustSharePrice) {
+            // Not sure where this should be handled.
+            // Will proably also be accessible from OR instances,
+            // so let GameUIManager handle it.
+            gameUIManager.adjustSharePrice((AdjustSharePrice)executedAction);
 
         } else if (command.equals(QUIT_CMD)) {
             gameUIManager.terminate();
