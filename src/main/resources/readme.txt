@@ -2,6 +2,8 @@
 
 Major Contributor: Erik Vos
 
+1837: Actually, the main achievement of this release is the completion of 1837 (still marked beta though).
+      1826 is being worked on (I'm currently wrestling with the hex distance to determine tokening cost to be counted via laid track. A few weeks ago it seemed to work, but later appeared to break with closed loops.)
 
 
     The new <Shares> tag replaces <ShareUnit> and now allows specification of different share sizes, like ... unit="20,10". This will be used in 1826, where companies start with 5 shares, and convert later to 10-share companies. The <Certificate> tags are now children of the <Shares> tag.
