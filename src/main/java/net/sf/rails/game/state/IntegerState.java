@@ -32,7 +32,7 @@ public final class IntegerState extends State {
 
     public int add(int value) {
         int newValue = this.value + value;
-        set(this.value + value);
+        set(newValue);
         return newValue;
     }
 

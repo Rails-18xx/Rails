@@ -49,11 +49,16 @@ public class BaseTokensModel extends RailsModel {
     /**
      * Add more tokens than the initially configured number.
      * This is required for 1826.
+     * @param token A newly created token
+     * @param laid True if the new token will immediately be laid,
+     *             i.e. it will never be a freely layable token.
      */
     public void addBaseToken(BaseToken token, boolean laid) {
         allBaseTokens.add(token);
-        Portfolio.moveAll(allBaseTokens, getParent());
-        if (!laid) freeBaseTokens.add(token);
+        if (!laid) {
+            freeBaseTokens.add(token);
+            token.moveTo(getParent()); //???
+        }
     }
 
     /**
@@ -96,7 +101,7 @@ public class BaseTokensModel extends RailsModel {
         return allBaseTokens.size() - freeBaseTokens.size();
     }
     
-    /**
+    /** Not used??
      * @return true if token is laid
      */
     public boolean tokenIsLaid(BaseToken token) {

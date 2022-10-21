@@ -1298,19 +1298,19 @@ IS_NOW_PRES_OF,Charlie,Sd
 AutoMergeMinorLog,S1,Sd,165,0
 GetPresShareForMinor,Charlie,10,Sd,S1
 MinorCloses,S1
-ExchangesBaseToken2,Sd,S1,G17/SW
+ExchangesBaseToken,Sd,S1,G17/SW
 AutoMergeMinorLog,S2,Sd,125,0
 GetShareForMinor,Alice,10,Sd,S2
 MinorCloses,S2
-ExchangesBaseToken2,Sd,S2,J16
+ExchangesBaseToken,Sd,S2,J16
 AutoMergeMinorLog,S3,Sd,55,0
 GetShareForMinor,Bob,10,Sd,S3
 MinorCloses,S3
-ExchangesBaseToken2,Sd,S3,I7
+ExchangesBaseToken,Sd,S3,I7
 AutoMergeMinorLog,S4,Sd,130,0
 GetShareForMinor,Alice,10,Sd,S4
 MinorCloses,S4
-ExchangesBaseToken2,Sd,S4,K5
+ExchangesBaseToken,Sd,S4,K5
 AutoMergeMinorLog,S5,Sd,130,0
 GetShareForMinor,Bob,10,Sd,S5
 MinorCloses,S5
@@ -1324,15 +1324,15 @@ FloatsWithCash,KK,735
 MERGE_MINOR_LOG,Charlie,K1,KK,70,0
 GetPresShareForMinor,Charlie,10,KK,K1
 MinorCloses,K1
-ExchangesBaseToken2,KK,K1,G17/NE
+ExchangesBaseToken,KK,K1,G17/NE
 MERGE_MINOR_LOG,Alice,K2,KK,170,0
 GetShareForMinor,Alice,10,KK,K2
 MinorCloses,K2
-ExchangesBaseToken2,KK,K2,G17/W
+ExchangesBaseToken,KK,K2,G17/W
 MERGE_MINOR_LOG,Bob,K3,KK,165,0
 GetShareForMinor,Bob,10,KK,K3
 MinorCloses,K3
-ExchangesBaseToken2,KK,K3,G17/NW
+ExchangesBaseToken,KK,K3,G17/NW
  
 EndOfFormationRound,KK,OperatingRound 3.2
  
@@ -1497,16 +1497,16 @@ MERGE_MINOR_LOG,Charlie,U1,Ug,60,2
 GetPresShareForMinor,Charlie,10,Ug,U1
 GetShareForMinor,Charlie,10,Ug,U1
 MinorCloses,U1
-ExchangesBaseToken2,Ug,U1,H22/W,NW,NE
+ExchangesBaseToken,Ug,U1,H22/W,NW,NE
 MERGE_MINOR_LOG,Alice,U2,Ug,0,0
 GetShareForMinor,Alice,10,Ug,U2
 MinorCloses,U2
-ExchangesBaseToken2,Ug,U2,K21
+ExchangesBaseToken,Ug,U2,K21
 MERGE_MINOR_LOG,Bob,U3,Ug,340,2
 GetShareForMinor,Bob,10,Ug,U3
 GetShareForMinor,Bob,10,Ug,U3
 MinorCloses,U3
-ExchangesBaseToken2,Ug,U3,H22/E,SE,SW
+ExchangesBaseToken,Ug,U3,H22/E,SE,SW
  
 EndOfFormationRound,Ug,OperatingRound 4.1
 BuysTrain,Sd,2G,BK,10

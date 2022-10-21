@@ -1313,11 +1313,11 @@ WillMergeInto,TGB,CGR
  
 CompanyHasLoans,CA,Justin,6,100,600
 WillMergeInto,CA,CGR
-HasMergedShares,Tyler,6,3,CGR
-HasMergedShares,Ron,2,1,CGR
-HasMergedShares,Justin,7,3,CGR
+SharesReplacedForShares,Tyler,6,3,CGR
+SharesReplacedForShares,Ron,2,1,CGR
+SharesReplacedForShares,Justin,7,3,CGR
 HasPutShareInPool,Justin
-HasMergedShares,POOL,7,3,CGR
+SharesReplacedForShares,POOL,7,3,CGR
  
 CompanyHasShares,CGR,10,10
 IS_NOW_PRES_OF,Tyler,CGR

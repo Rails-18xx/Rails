@@ -1,12 +1,11 @@
 package net.sf.rails.game.specific._1826;
 
+import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.ConfigurationException;
-import net.sf.rails.game.BaseToken;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsItem;
-import net.sf.rails.game.RailsRoot;
+import net.sf.rails.common.parser.Tag;
+import net.sf.rails.game.*;
 import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.model.PortfolioOwner;
@@ -16,8 +15,8 @@ import net.sf.rails.game.state.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class PublicCompany_1826 extends PublicCompany {
@@ -25,6 +24,18 @@ public class PublicCompany_1826 extends PublicCompany {
     public static String ETAT = "Etat";
     public static String SNCF = "SNCF";
     public static String BELG = "Belg";
+
+    private int minNumberToExchange = 0;
+    /**
+     * The maximum number to exchange *per company*; 0 = unlimited
+     */
+    private int maxNumberToExchange = 0;
+    /**
+     * False: the numbers to exchange are counted over all old companies,
+     * True: the numbers to exchange are counted per old company.
+     */
+    private boolean exchangeCountPerCompany = true;
+
 
     private static final Logger log = LoggerFactory.getLogger(PublicCompany_1826.class);
 
@@ -36,6 +47,36 @@ public class PublicCompany_1826 extends PublicCompany {
         super(parent, id, hasStockPrice);
     }
 
+    public void configureFromXML(Tag tag) throws ConfigurationException {
+
+        super.configureFromXML(tag);
+
+        // For national companies
+        if (getType().getId().equalsIgnoreCase("National")) {
+            Tag formationTag = tag.getChild("Formation");
+            if (formationTag != null) {
+                minNumberToExchange = formationTag.getAttributeAsInteger("minNumberToExchange");
+                maxNumberToExchange = formationTag.getAttributeAsInteger("maxNumberToExchange");
+                exchangeCountPerCompany = formationTag.getAttributeAsBoolean(
+                        "exchangeCountPerCompany", exchangeCountPerCompany);
+            }
+        }
+
+        Tag bondsTag = tag.getChild("Bonds");
+        if (bondsTag != null) {
+            numberOfBonds = bondsTag.getAttributeAsInteger("number", 0);
+            portfolio.getBondsModel(this).setBondsCount(numberOfBonds);
+            priceOfBonds = bondsTag.getAttributeAsInteger("price", 0);
+            bondsInterest = bondsTag.getAttributeAsInteger("interest", 0);
+        }
+
+
+        if (getId().equals(SNCF)) {
+            hasBonds = true;
+        }
+    }
+
+
     public void finishConfiguration(RailsRoot root)
             throws ConfigurationException {
 
@@ -43,11 +84,20 @@ public class PublicCompany_1826 extends PublicCompany {
 
         // 5-share companies have an initial share unit of 20%
         if (isPotentialFiveShareCompany()) {
-            shareUnit.set(20);
-            for (PublicCertificate cert : certificates) {
-
-            }
+            setShareUnit(20);
         }
+    }
+
+    public int getMinNumberToExchange() {
+        return minNumberToExchange;
+    }
+
+    public int getMaxNumberToExchange() {
+        return maxNumberToExchange;
+    }
+
+    public boolean isExchangeCountPerCompany() {
+        return exchangeCountPerCompany;
     }
 
     private boolean isPotentialFiveShareCompany() {
@@ -60,15 +110,14 @@ public class PublicCompany_1826 extends PublicCompany {
 
         int extraTokens = 0;
 
-        if (isPotentialFiveShareCompany()) {
-            if (shareUnit.value() == 10) {  // Floating as a 10-share company
-                // 4 tokens
-                extraTokens++;
-                if (getRoot().getPhaseManager().hasReachedPhase("10H")) {
-                    // 5 tokens
-                    extraTokens++;
-                }
-            }
+        if (isPotentialFiveShareCompany() && shareUnit.value() == 10) {
+           // 4 tokens (Belge alrady starts with 4)
+            extraTokens++;
+        }
+        if (getType().getId().equals("Public")  // includes Belge
+                && getRoot().getPhaseManager().hasReachedPhase("10H")) {
+            // 5 tokens
+            extraTokens++;
         }
 
         for (int i = 0; i < extraTokens; i++) {
@@ -79,51 +128,69 @@ public class PublicCompany_1826 extends PublicCompany {
         super.setFloated();
     }
 
+    protected void setCapitalizationShares() {
+        if (getId().equals(SNCF)) {
+            capitalisationShares = getPortfolioModel().getShares(this);
+        } else {  //ETAT
+            capitalisationShares = 0;
+        }
+        log.debug("{} CapFactor set to {}", this, capitalisationShares);
+    }
+
     /** Convert company from a 5-share to a 10-share company */
-    /* TODO: the numbers here should become configurable */
-    public boolean grow (int newShareUnit) {  // argument not used
+    /* The intention is to make this code usable for other games as well. */
+    public boolean grow (boolean checkDestination) {
 
-        if (getShareUnit() == 20 && hasReachedDestination()) {
+        if (!validateGrow(checkDestination)) return false;
 
-            shareUnit.set(10);
+        growStep.add(1);
+        setShareUnit(shareUnitSizes.get(growStep.value()));
 
-            BankPortfolio reserved = getRoot().getBank().getUnavailable();
-            Set<PublicCertificate> last5Shares = reserved.getPortfolioModel().getCertificates(this);
-            for (PublicCertificate cert : last5Shares) {
-                cert.moveTo(this);
-            }
+        BankPortfolio reserved = getRoot().getBank().getUnavailable();
+        Set<PublicCertificate> last5Shares = reserved.getPortfolioModel().getCertificates(this);
+        for (PublicCertificate cert : last5Shares) {
+            cert.moveTo(this);
+        }
 
-            ReportBuffer.add(this, LocalText.getText("CompanyHasGrown",
-                    this, getNumberOfShares()));
+        ReportBuffer.add(this, LocalText.getText("CompanyHasGrown",
+                this, getActiveShareCount()));
 
-            trainLimit.setTo(List.of(4,3,2));
+        currentTrainLimits.setTo(trainLimits.get(growStep.value()));
+        ReportBuffer.add(this,
+                LocalText.getText("PhaseDependentTrainLimitsSetTo",
+                        this, currentTrainLimits.view(), getCurrentTrainLimit()));
 
-            // For some reason the shareUnit change does not update
-            // the percentages shown in the GameStatus window.
-            // E.g. 60% should become 30%, etc.
-            // There must be a nicer way to accomplish that,
-            // but for now the below code works.
-            Set<Model> modelsToUpdate = new HashSet<>();
-            PortfolioOwner owner;
-            Model model;
-            for (PublicCertificate cert : getCertificates()) {
-                owner = (PortfolioOwner) cert.getOwner();
-                model = owner.getPortfolioModel().getShareModel(this);
-                if (!modelsToUpdate.contains(model)) modelsToUpdate.add(model);
-            }
-            for (Model m : modelsToUpdate) {
-                for (Observer obs : m.getObservers()) {
-                    obs.update(m.toText());
-                }
+
+        // For some reason the shareUnit change does not update
+        // the percentages shown in the GameStatus window.
+        // E.g. 60% should become 30%, etc.
+        // There must be a nicer way to accomplish that,
+        // but for now the below code works.
+        Set<Model> modelsToUpdate = new HashSet<>();
+        PortfolioOwner owner;
+        Model model;
+        for (PublicCertificate cert : getCertificates()) {
+            owner = (PortfolioOwner) cert.getOwner();
+            model = owner.getPortfolioModel().getShareModel(this);
+            if (!modelsToUpdate.contains(model)) modelsToUpdate.add(model);
+        }
+        for (Model m : modelsToUpdate) {
+            for (Observer obs : m.getObservers()) {
+                obs.update(m.toText());
             }
         }
         return true;
     }
 
-    @Override
-    protected int getTrainLimit(int index) {
+    protected boolean validateGrow(boolean checkDestination) {
+        return super.validateGrow()
+                && (!checkDestination || hasReachedDestination());
+    }
 
-        int limit = super.getTrainLimit(index);
+    @Override
+    protected int getTrainLimit(int phaseIndex) {
+
+        int limit = super.getTrainLimit(phaseIndex);
         if (rightsModel == null || rightsModel.isEmpty()) return limit;
 
         ExtraTrainRight etr = rightsModel.getRightType(ExtraTrainRight.class);

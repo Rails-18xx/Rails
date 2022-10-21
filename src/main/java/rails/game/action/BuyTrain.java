@@ -29,7 +29,7 @@ public class BuyTrain extends PossibleORAction {
     private String fromName;
     private int fixedCost;
 
-    /** In 1837 also used for volutary train scrapping */
+    /** In 1837 also used for voluntary train scrapping */
     private transient Set<Train> trainsForExchange = null;
     private String[] trainsForExchangeUniqueIds;
 
@@ -63,6 +63,8 @@ public class BuyTrain extends PossibleORAction {
 
     private boolean presidentMustAddCash = false; // If buying from the bank
     private boolean presidentMayAddCash = false;  // If buying from a company
+
+    private int loansToTake = 0; // 1826, if buying from the Bank
 
     /**
      * The amount of cash a company is missing to buy a train.
@@ -153,6 +155,14 @@ public class BuyTrain extends PossibleORAction {
         return extraMessage;
     }
 
+    public int getLoansToTake() {
+        return loansToTake;
+    }
+
+    public void setLoansToTake(int loansToTake) {
+        this.loansToTake = loansToTake;
+    }
+
     /**
      * @return Returns the specialProperty.
      */
@@ -226,6 +236,10 @@ public class BuyTrain extends PossibleORAction {
         return presidentMayAddCash;
     }
 
+    public void setPresidentCashToAdd(int presidentCashToAdd) {
+        this.presidentCashToAdd = presidentCashToAdd;
+    }
+
     public int getPresidentCashToAdd() {
         return presidentCashToAdd;
     }
@@ -289,6 +303,7 @@ public class BuyTrain extends PossibleORAction {
                 && Objects.equal(this.from, action.from)
                 && (action.fixedCost == 0 || Objects.equal(this.fixedCost, action.pricePaid))
                 && Objects.equal(this.trainsForExchange, action.trainsForExchange)
+                && this.loansToTake == action.loansToTake;
         ;
 
         // finish if asOptions check
@@ -320,6 +335,7 @@ public class BuyTrain extends PossibleORAction {
                     .addToString("fixedCost", fixedCost)
                     .addToString("trainsForExchange", trainsForExchange)
                     .addToString(addCash, presidentCashToAdd)
+                    .addToString("loansToTake", loansToTake)
                     .addToString("useSP", useSP)
                     .addToStringOnlyActed("pricePaid", pricePaid)
                     .addToStringOnlyActed("addedCash", addedCash)
@@ -345,6 +361,7 @@ public class BuyTrain extends PossibleORAction {
         specialPropertyId = fields.get("specialPropertyId", specialPropertyId);
         pricePaid = fields.get("pricePaid", pricePaid);
         addedCash = fields.get("addedCash", addedCash);
+        loansToTake = fields.get("loansToTake", loansToTake);
         exchangedTrainUniqueId = (String) fields.get("exchangedTrainUniqueId", exchangedTrainUniqueId);
         extraMessage = (String) fields.get("extraMessage", extraMessage);
 

@@ -9,7 +9,7 @@
 	<Tile id="-11"><!-- Boston,Baltimore,Atlanta,Seattle,Detroit,KC,Raleigh -->
 		<Upgrade id="592"/>
 	</Tile>
-	<Tile id="-21"><!-- New York City,Chicago,San Francisco -->
+	<Tile id="-21"><!-- New York Location,Chicago,San Francisco -->
 		<Upgrade id="54" hex="K78,O4"/>
 		<Upgrade id="590" hex="J57"/>
 	</Tile>
@@ -21,7 +21,7 @@
 	<Tile id="-1925"/><!-- Montreal -->
 	<Tile id="-1933"/><!-- New Orleans -->
 	<Tile id="-1943"/><!-- Thunder Bay -->
-	<Tile id="-1944"/><!-- Mackinaw City -->
+	<Tile id="-1944"/><!-- Mackinaw Location -->
 	<Tile id="-2014"/><!-- Calgary,Winnipeg,Quebec -->
 	
 	<!-- Yellow -->

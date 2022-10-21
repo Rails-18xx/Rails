@@ -32,7 +32,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
     public static final int SPECIAL_PROPERTY = 2; // Directed by a special property
     public static final int CORRECTION = 99; // Correction tile lays
 
-    protected int type = 0;
+    protected int type;
 
     /*--- Preconditions ---*/
 
@@ -199,6 +199,9 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         return type;
     }
 
+    public void setType(int type) {  // Needed by ListAndFixSavedFiles
+        this.type = type;
+    }
     /**
      * @return Returns the tileColours.
      */
@@ -270,7 +273,9 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         // check asOption attributes
         LayTile action = (LayTile)pa;
         boolean options = (this.locations == null || this.locations.isEmpty() || this.locations.contains(action.chosenHex))
-                && (this.tiles == null || this.tiles.isEmpty() || Objects.equal(this.tiles, action.tiles) || this.tiles.contains(action.getLaidTile()) )
+                && (this.tiles == null || this.tiles.isEmpty()
+                        || Objects.equal(this.tiles, action.tiles)
+                        || this.tiles.contains(action.getLaidTile()) )
 //              && Objects.equal(this.type, action.type) // type is not always stored
                 && Objects.equal(this.specialProperty, action.specialProperty)
         ;

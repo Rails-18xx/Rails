@@ -28,6 +28,7 @@ public class GameDef {
         EMERGENCY_MAY_ALWAYS_BUY_NEW_TRAIN (false),
         EMERGENCY_MAY_BUY_FROM_COMPANY (true),
         EMERGENCY_MUST_SELL_TREASURY_SHARES(false),
+        EMERGENCY_MUST_TAKE_LOANS(false),
         EMERGENCY_COMPANY_BANKRUPTCY(false),
         DUAL_TRAIN_BECOMES_UNDECIDED_IN_POOL (false),
         MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE (false),
@@ -61,11 +62,12 @@ public class GameDef {
         BUY_TRAIN,
         TRADE_SHARES,
         REPAY_LOANS,
+        BUY_BONDS,
         FINAL,
 
         /* Out-of-sequence steps*/
-        DISCARD_TRAINS
-
+        DISCARD_TRAINS,
+        EXCHANGE_TOKENS,
     }
     
     public static Object getParm(RailsItem item, GameDef.Parm key) {

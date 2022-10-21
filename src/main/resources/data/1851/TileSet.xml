@@ -3,7 +3,7 @@
 	<Tile id="0"><!-- Empty space -->
 		<Upgrade id="7,8,9"/>
 	</Tile>
-	<Tile id="-3"/> <!-- Johnson City -->
+	<Tile id="-3"/> <!-- Johnson Location -->
 	<Tile id="-10"><!-- 1 city -->
 		<Upgrade id="5,6,57" hex="A5,B10,B18,C11,D8,D14,E11,F6,F16,F20,G7,I13"/>
 		<Upgrade id="202" hex="F12,H4,H16"/>

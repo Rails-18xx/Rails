@@ -1144,15 +1144,15 @@ WillMergeInto,WR,CGR
  
 CompanyHasLoans,LPS,Stefan,1,100,100
 WillMergeInto,LPS,CGR
-HasMergedShares,Joakim,6,3,CGR
-HasMergedShares,Adam,6,3,CGR
-HasMergedShares,Aliza,5,2,CGR
+SharesReplacedForShares,Joakim,6,3,CGR
+SharesReplacedForShares,Adam,6,3,CGR
+SharesReplacedForShares,Aliza,5,2,CGR
 HasPutShareInPool,Aliza
-HasMergedShares,Ed,9,4,CGR
+SharesReplacedForShares,Ed,9,4,CGR
 HasPutShareInPool,Ed
-HasMergedShares,Stefan,7,3,CGR
+SharesReplacedForShares,Stefan,7,3,CGR
 HasPutShareInPool,Stefan
-HasMergedShares,POOL,13,5,CGR
+SharesReplacedForShares,POOL,13,5,CGR
  
 CompanyHasShares,CGR,20,5
 IS_NOW_PRES_OF,Ed,CGR

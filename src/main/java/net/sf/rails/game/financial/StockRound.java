@@ -82,7 +82,7 @@ public class StockRound extends Round {
     /* Rules */
     protected int sequenceRule;
     protected boolean raiseIfSoldOut = false;
-    protected boolean certificateSplitAllowed = true;
+    protected boolean certificateSplitAllowed;
     protected SortedMap<Integer, Integer> certCountsPerSize;
 
     /* Generated SellShares actions
@@ -576,7 +576,7 @@ public class StockRound extends Round {
          * maximum percentage he is allowed to sell.
          */
         for (PublicCompany company : companyManager.getAllPublicCompanies()) {
-Util.breakIf(company.getId(), "NYNH");
+
             int ownedShares = playerPortfolio.getShares(company);
             if (ownedShares == 0) {
                 continue;
@@ -1088,7 +1088,7 @@ Util.breakIf(company.getId(), "NYNH");
         boolean president = action.isPresident();
 
         String errMsg = null;
-        int price = 0;
+        int price;
         int cost = 0;
 
         currentPlayer = playerManager.getCurrentPlayer();
@@ -1810,7 +1810,7 @@ Util.breakIf(company.getId(), "NYNH");
      *              This certificate should be found in the 'reserved' portfolio
      *              (currently still named 'unavailable')
      * @param becomeMajorPresident If true, get the president certificate
-     * @return
+     * @return True if successful
      */
     public boolean exchangeMinorForNewShare (PublicCertificate minorCertificate,
                                              PublicCompany major,
@@ -2070,12 +2070,9 @@ Util.breakIf(company.getId(), "NYNH");
             return false;
         }
 
-        if (companyBoughtThisTurnWrapper.value() != null
-                && (sequenceRule == SELL_BUY_OR_BUY_SELL
-                && hasSoldThisTurnBeforeBuying.value() || sequenceRule == SELL_BUY)) {
-            return false;
-        }
-        return true;
+        return companyBoughtThisTurnWrapper.value() == null
+                || ((sequenceRule != SELL_BUY_OR_BUY_SELL
+                || !hasSoldThisTurnBeforeBuying.value()) && sequenceRule != SELL_BUY);
     }
 
 
@@ -2096,10 +2093,8 @@ Util.breakIf(company.getId(), "NYNH");
                 && !company.hasOperated()) return false;
 
         // In SOH, can't sell shares of company started this round
-        if (noSaleIfJustStarted()
-                && startedThisRound.contains(company)) return false;
-
-        return true;
+        return !noSaleIfJustStarted()
+                || !startedThisRound.contains(company);
     }
 
 
@@ -2161,10 +2156,8 @@ Util.breakIf(company.getId(), "NYNH");
         if (comp.hasFloated()
                 && comp.hasStockPrice() && comp.getCurrentSpace().isNoCertLimit())
             return true;
-        if (player.getPortfolioModel().getCertificateCount() + number
-                > gameManager.getPlayerCertificateLimit(player))
-            return false;
-        return true;
+        return !(player.getPortfolioModel().getCertificateCount() + number
+                > gameManager.getPlayerCertificateLimit(player));
     }
 
     /**
@@ -2186,13 +2179,11 @@ Util.breakIf(company.getId(), "NYNH");
     public boolean checkAgainstHoldLimit(Player player, PublicCompany company,
                                          int number) {
         // Check for per-company share limit
-        if (player.getPortfolioModel().getShare(company)
-                        + number * company.getShareUnit()
-                    > GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)
-                && company.hasStockPrice()
-                && !company.getCurrentSpace().isNoHoldLimit()
-                && !isSellObligationLifted(company)) return false;
-        return true;
+        return player.getPortfolioModel().getShare(company)
+                + number * company.getShareUnit() <= GameDef.getParmAsInt(this, GameDef.Parm.PLAYER_SHARE_LIMIT)
+                || !company.hasStockPrice()
+                || company.getCurrentSpace().isNoHoldLimit()
+                || isSellObligationLifted(company);
     }
 
     /**

@@ -1332,19 +1332,19 @@ IS_NOW_PRES_OF,Charlie,Sd
 AutoMergeMinorLog,S1,Sd,165,0
 GetPresShareForMinor,Charlie,10,Sd,S1
 MinorCloses,S1
-ExchangesBaseToken2,Sd,S1,G17/SW
+ExchangesBaseToken,Sd,S1,G17/SW
 AutoMergeMinorLog,S2,Sd,125,0
 GetShareForMinor,Alice,10,Sd,S2
 MinorCloses,S2
-ExchangesBaseToken2,Sd,S2,J16
+ExchangesBaseToken,Sd,S2,J16
 AutoMergeMinorLog,S3,Sd,35,0
 GetShareForMinor,Bob,10,Sd,S3
 MinorCloses,S3
-ExchangesBaseToken2,Sd,S3,I7
+ExchangesBaseToken,Sd,S3,I7
 AutoMergeMinorLog,S4,Sd,35,0
 GetShareForMinor,Alice,10,Sd,S4
 MinorCloses,S4
-ExchangesBaseToken2,Sd,S4,K5
+ExchangesBaseToken,Sd,S4,K5
 AutoMergeMinorLog,S5,Sd,130,0
 GetShareForMinor,Bob,10,Sd,S5
 MinorCloses,S5
@@ -1358,7 +1358,7 @@ FloatsWithCash,KK,735
 MERGE_MINOR_LOG,Charlie,K1,KK,140,0
 GetPresShareForMinor,Charlie,10,KK,K1
 MinorCloses,K1
-ExchangesBaseToken2,KK,K1,G17/NE
+ExchangesBaseToken,KK,K1,G17/NE
 NoMerge,Alice,K2,KK
 NoMerge,Bob,K3,KK
  
@@ -1408,7 +1408,7 @@ NoMerge,Alice,K2,KK
 MERGE_MINOR_LOG,Bob,K3,KK,165,0
 GetShareForMinor,Bob,10,KK,K3
 MinorCloses,K3
-ExchangesBaseToken2,KK,K3,G17/NW
+ExchangesBaseToken,KK,K3,G17/NW
  
 EndOfFormationRoundNoInterrupt,KK,3.2
 StartStockRound,4
@@ -1609,7 +1609,7 @@ MERGE_MINOR_LOG,Charlie,U1,Ug,5,2
 GetPresShareForMinor,Charlie,10,Ug,U1
 GetShareForMinor,Charlie,10,Ug,U1
 MinorCloses,U1
-ExchangesBaseToken2,Ug,U1,H22/W,NW,NE
+ExchangesBaseToken,Ug,U1,H22/W,NW,NE
 NoMerge,Alice,U2,Ug
 NoMerge,Bob,U3,Ug
  
@@ -1714,7 +1714,7 @@ StartFormationRound,Ug,4.1
 MERGE_MINOR_LOG,Alice,U2,Ug,110,0
 GetShareForMinor,Alice,10,Ug,U2
 MinorCloses,U2
-ExchangesBaseToken2,Ug,U2,K21
+ExchangesBaseToken,Ug,U2,K21
 NoMerge,Bob,U3,Ug
 IS_NOW_PRES_OF,Alice,Ug
  
@@ -1837,7 +1837,7 @@ StartFormationRound,KK,phase 4+1
 AutoMergeMinorLog,K2,KK,90,1
 GetShareForMinor,Alice,10,KK,K2
 MinorCloses,K2
-ExchangesBaseToken2,KK,K2,G17/W
+ExchangesBaseToken,KK,K2,G17/W
  
 EndOfFormationRound,KK,OperatingRound 4.2
  
@@ -1902,7 +1902,7 @@ AutoMergeMinorLog,U3,Ug,80,0
 GetShareForMinor,Bob,10,Ug,U3
 GetShareForMinor,Bob,10,Ug,U3
 MinorCloses,U3
-ExchangesBaseToken2,Ug,U3,H22/E,SE,SW
+ExchangesBaseToken,Ug,U3,H22/E,SE,SW
  
 EndOfFormationRound,Ug,OperatingRound 4.2
 CompanyDiscardsTrain,TH,1G,Pool

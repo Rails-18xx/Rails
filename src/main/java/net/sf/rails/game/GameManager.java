@@ -317,6 +317,9 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                     setGameParameter(GameDef.Parm.EMERGENCY_MUST_SELL_TREASURY_SHARES,
                             emergencyTag.getAttributeAsBoolean("mustSellTreasuryShares",
                                     GameDef.Parm.EMERGENCY_MUST_SELL_TREASURY_SHARES.defaultValueAsBoolean()));
+                    setGameParameter(GameDef.Parm.EMERGENCY_MUST_TAKE_LOANS,
+                            emergencyTag.getAttributeAsBoolean("mustTakeLoans",
+                                    GameDef.Parm.EMERGENCY_MUST_TAKE_LOANS.defaultValueAsBoolean()));
                     setGameParameter(GameDef.Parm.MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE,
                             emergencyTag.getAttributeAsBoolean("mustBuyTrainEvenIfNoRoute",
                                     GameDef.Parm.MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE.defaultValueAsBoolean()));
@@ -502,6 +505,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             if (company.canBuyPrivates()) guiParameters.put(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES, true);
             if (company.canHoldOwnShares()) guiParameters.put(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES, true);
             if (company.getMaxNumberOfLoans() != 0) guiParameters.put(GuiDef.Parm.HAS_ANY_COMPANY_LOANS, true);
+            if (company.getShareUnitSizes().size() > 1) guiParameters.put(GuiDef.Parm.HAS_GROWING_NUMBER_OF_SHARES, true);
+            if (company.hasBonds()) guiParameters.put(GuiDef.Parm.HAS_BONDS, true);
         }
 
         loop:

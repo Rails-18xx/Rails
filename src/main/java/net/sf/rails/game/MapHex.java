@@ -285,7 +285,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         // Off-board revenue values
         valuesPerPhase = tag.getAttributeAsIntegerList("value");
 
-        // City name
+        // Location name
         stopName = tag.getAttributeAsString("city", "");
 
         if (tag.getAttributeAsString("unlaidHomeBlocksTokens") == null) {
@@ -989,9 +989,9 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
      * <p>
      * There are the following cases to check for each company located there
      * <p>
-     * A) City is decided or there is only one city => check if the city has a
+     * A) Location is decided or there is only one city => check if the city has a
      * free slot or not (examples: NYNH in 1830 for a two city tile, NYC for a
-     * one city tile) B) City is not decided (example: Erie in 1830) two
+     * one city tile) B) Location is not decided (example: Erie in 1830) two
      * subcases depending on isHomeBlockedForAllCities - (true): all cities of
      * the hex have remaining slots available - (false): no city of the hex has
      * remaining slots available C) Or the company does not block its home city
@@ -1061,11 +1061,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         for (Stop stop : stops) {
             allTokenSlotsLeft += stop.getTokenSlotsLeft();
         }
-        if (anyBlockCompanies + cityBlockCompanies + 1 > allTokenSlotsLeft) {
-            return true; // all located companies plus the additonal token
-            // exceeds the available slots
-        }
-        return false;
+        // exceeds the available slots
+        return anyBlockCompanies + cityBlockCompanies + 1 > allTokenSlotsLeft; // all located companies plus the additonal token
     }
 
     public BlockedToken getBlockedForTokenLays() {

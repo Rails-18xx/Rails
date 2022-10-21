@@ -15,7 +15,7 @@
 				 <NoSaleInFirstSR/>
 			</StockRound>
 			<OperatingRound class="net.sf.rails.game.specific._1826.OperatingRound_1826">
-				<EmergencyTrainBuying mustBuyCheapestTrain="no" mayBuyFromCompany="yes"/>
+				<EmergencyTrainBuying mustBuyCheapestTrain="no" mayBuyFromCompany="yes" mustTakeLoans="yes"/>
 			</OperatingRound>
 		</GameParameters>
 		<GuiClasses>
@@ -34,6 +34,7 @@
 	</Component>
 	<Component name="Bank" class="net.sf.rails.game.financial.Bank">
 		<Bank amount="12000"/>
+		<Money format="F@"/>
 	</Component>
 	<Component name="TileManager" class="net.sf.rails.game.TileManager" 
 		file="TileSet.xml"/>

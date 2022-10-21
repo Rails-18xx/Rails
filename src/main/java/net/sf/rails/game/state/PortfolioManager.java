@@ -69,17 +69,17 @@ public class PortfolioManager extends Manager {
      * @throws IllegalArgumentException if a portfolio of that type is already added
      */
     <T extends Ownable> void addPortfolio(Portfolio<T> portfolio) {
-        PMKey<T> key = new PMKey<T>(portfolio);
+        PMKey<T> key = new PMKey<>(portfolio);
         checkArgument(!portfolios.containsKey(key), "A portfolio of that type is defined for that owner already");
         portfolios.put(key, portfolio);
     }
 
     /**
-     * @param portfolio to remove
+     * @param p portfolio to remove
      */
 
     <T extends Ownable> void removePortfolio(Portfolio<T> p) {
-        portfolios.remove(new PMKey<T>(p));
+        portfolios.remove(new PMKey<>(p));
     }
 
     /**
@@ -93,12 +93,12 @@ public class PortfolioManager extends Manager {
     // however it should not be a problem as we store only type-safe portfolios
     @SuppressWarnings("unchecked")
     <T extends Ownable> Portfolio<T> getPortfolio(Class<T> type, Owner owner) {
-        return (Portfolio<T>) portfolios.get(new PMKey<T>(type, owner));
+        return (Portfolio<T>) portfolios.get(new PMKey<>(type, owner));
     }
 
     // backdoor for testing
     <T extends Ownable> PMKey<T> createPMKey(Class<T> type, Owner owner) {
-        return new PMKey<T>(type, owner);
+        return new PMKey<>(type, owner);
     }
 
 }

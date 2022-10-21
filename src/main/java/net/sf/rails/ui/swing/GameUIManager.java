@@ -418,6 +418,14 @@ public class GameUIManager implements DialogOwner {
                 }
             }
         }
+        // Is this perhaps the right place to display messages...?
+        if (getDisplayBuffer().getAutoDisplay()) {
+            if (displayServerMessage()) {
+                // Interrupt processing.
+                // Will be continued via dialogActionPerformed().
+                return true;
+            }
+        }
 
         // Check in which round we are now,
         // and make sure that the right window is active.
@@ -430,13 +438,14 @@ public class GameUIManager implements DialogOwner {
         statusWindow.setCorrectionMenu();
 
         // Is this perhaps the right place to display messages...?
+        /* See above for what is perhaps a better place
         if (getDisplayBuffer().getAutoDisplay()) {
             if (displayServerMessage()) {
                 // Interrupt processing.
                 // Will be continued via dialogActionPerformed().
                 return true;
             }
-        }
+        }*/
 
         // display the end of game report
         if (railsRoot.getGameManager().isGameOver()) statusWindow.endOfGameReport();

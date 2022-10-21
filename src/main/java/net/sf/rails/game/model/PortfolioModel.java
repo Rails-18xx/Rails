@@ -9,10 +9,7 @@ import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.special.SpecialProperty;
-import net.sf.rails.game.state.MoneyOwner;
-import net.sf.rails.game.state.Owner;
-import net.sf.rails.game.state.Portfolio;
-import net.sf.rails.game.state.PortfolioSet;
+import net.sf.rails.game.state.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +36,9 @@ public class PortfolioModel extends RailsModel {
     /** Owned certificates */
     private final CertificatesModel certificates;
 
+    /** Owned Bonds */
+    private final HashMapState<PublicCompany, BondsModel> bonds;
+
     /** Owned private companies */
     private final PrivatesModel privates;
 
@@ -64,6 +64,7 @@ public class PortfolioModel extends RailsModel {
 
         // create internal models and portfolios
         certificates = CertificatesModel.create(parent);
+        bonds = HashMapState.create (parent, parent.getId() + "_bondModels");
         privates = PrivatesModel.create(parent);
         //trains = TrainsModel.create(parent);
         trainCards = TrainsModel.create(parent);
@@ -144,16 +145,13 @@ public class PortfolioModel extends RailsModel {
         }
     }
 
+    /* Certificates and shares */
     public CertificatesModel getCertificatesModel() {
         return certificates;
     }
 
     public ShareModel getShareModel(PublicCompany company) {
         return certificates.getShareModel(company);
-    }
-
-    public ImmutableSet<PrivateCompany> getPrivateCompanies() {
-        return privates.getPortfolio().items();
     }
 
     public ImmutableSortedSet<PublicCertificate> getCertificates() {
@@ -176,6 +174,17 @@ public class PortfolioModel extends RailsModel {
     public ImmutableSortedSet<PublicCertificate> getCertificates(
             PublicCompany company) {
         return certificates.getCertificates(company);
+    }
+
+    /* Bonds */
+    public BondsModel getBondsModel (PublicCompany company) {
+        if (!bonds.containsKey(company)) bonds.put (company, BondsModel.create(getParent()));
+        return bonds.get(company);
+    }
+
+    /* Privates */
+    public ImmutableSet<PrivateCompany> getPrivateCompanies() {
+        return privates.getPortfolio().items();
     }
 
     /**
@@ -224,7 +233,7 @@ public class PortfolioModel extends RailsModel {
      * @return a sorted Multiset<Integer> of shareNumbers of the certificates
      * Remark: excludes the presdident share if not of a different size as the standard share...
      */
-    // FIXME: Integers could be replaced later by CerficateTypes
+    // FIXME: Integers could be replaced later by CertificateTypes
     public SortedMultiset<Integer> getCertificateTypeCounts(PublicCompany company) {
         return certificates.getCertificateTypeCounts(company);
     }

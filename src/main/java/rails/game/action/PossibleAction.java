@@ -67,6 +67,11 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
 
     public void setPlayer() {
         player = root.getPlayerManager().getCurrentPlayer();
+        setPlayer (player);
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
         if (player != null) {
             playerName = player.getId();
             playerIndex = player.getIndex();
@@ -133,7 +138,7 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
      * not to check if the chosen action is actually valid.
      * These perspectives could give different results in cases where
      * the PossibleAction does not fully restrict choices to valid values only
-     * (such as the blanket LayTile that does no restrict the hex to lay a tile on,
+     * (such as the blanket LayTile that does not restrict the hex to lay a tile on,
      * or the SetDividend that will accept any revenue value).
      * @param pa Another PossibleAction to compare with.
      * @return True if the compared PossibleAction object has equal choice options.
@@ -168,9 +173,10 @@ public abstract class PossibleAction implements ChangeAction, Serializable {
         return root.getCompanyManager();
     }
 
+    /* Not used
     public Activity getActivity() {
         return activity;
-    }
+    }*/
 
     /**
      * @return true if it is an action to correct the game state

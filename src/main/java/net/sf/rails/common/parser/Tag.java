@@ -3,6 +3,7 @@ package net.sf.rails.common.parser;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.sf.rails.common.GameOption;
 import net.sf.rails.common.GameOptionsSet;
 import net.sf.rails.common.ResourceLoader;
@@ -189,7 +190,22 @@ public class Tag {
             throw new ConfigurationException("Invalid integer in attribute " + name + "'");
         }
         return result.build();
+    }
 
+    public List<ArrayList<Integer>> getAttributeAsListOfIntegerLists(String name)
+                throws ConfigurationException {
+        String valueString = getAttributeAsString(name);
+        if (!Util.hasValue(valueString)) return null;
+
+        List<ArrayList<Integer>> result = new ArrayList<> ();
+        for (String stepString : valueString.split(";")) {
+            ArrayList<Integer> stepList = new ArrayList<>();
+            for (String value : stepString.split(",")) {
+                stepList.add (Integer.parseInt(value));
+            }
+            result.add (stepList);
+        }
+        return result;
     }
 
     public boolean getAttributeAsBoolean(String name, boolean defaultValue)

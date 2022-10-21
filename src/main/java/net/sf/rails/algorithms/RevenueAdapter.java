@@ -324,6 +324,7 @@ public final class RevenueAdapter implements Runnable {
         rcVertices.sort(new NetworkVertex.ValueOrder());
         rcEdges = new ArrayList<>(rcGraph.edgeSet());
         rcEdges.sort(new NetworkEdge.CostOrder());
+        log.debug("rcVertices={} rcEdges={}", rcVertices, rcEdges);
 
         // prepare train length
         prepareTrainLengths(rcVertices);
@@ -566,17 +567,36 @@ public final class RevenueAdapter implements Runnable {
 
     private List<RevenueTrainRun> convertRcRun(int[][] rcRun) {
 
+        // Just for logging
+        int i=0;
+        for (int[] j : rcRun) {
+            log.debug("rcRun {}={}", i++, j);
+        }
+        log.debug ("rcEdges={}", rcEdges);
+
         List<RevenueTrainRun> convertRun = new ArrayList<>();
 
         for (int j=0; j < rcRun.length; j++) {
             RevenueTrainRun trainRun = new RevenueTrainRun(this, trains.get(j));
             convertRun.add(trainRun);
 
+            List<Integer> uniques = new ArrayList<>();
+
             if (rcEdges.size() == 0) continue;
             for (int v=0; v < rcRun[j].length; v++) {
                 int id= rcRun[j][v];
                 if (id == -1) break;
+
+                // Avoid duplicates
+                // This only fixes the per-train values in the message panel,
+                // but NOT the calculated total income used by the main code.
+                // See GitHub issue #483 and RevenueTrainRun.convertEdgesToVertices().
+                // (I know this is a quick, dirty fix, but that's all I can do for now (EV))
+                if (uniques.contains(id)) continue;
+                uniques.add(id);
+
                 if (useMultiGraph) {
+                    log.debug("Adding edge {}={}", id, rcEdges.get(id));
                     trainRun.addEdge(rcEdges.get(id));
                 } else {
                     trainRun.addVertex(rcVertices.get(id));

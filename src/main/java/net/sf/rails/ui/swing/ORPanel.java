@@ -554,12 +554,12 @@ implements ActionListener, KeyListener, RevenueListener {
         addField(new Caption("Company"), rightCompNameXOffset, 0, 1, 2, WIDE_BOTTOM);
 
         fields = new JComponent[1+currentXOffset][2+nc];
-        rowVisibilityObservers = new RowVisibility[nc];
+        shareRowVisibilityObservers = new RowVisibility[nc];
 
         for (int i = 0; i < nc; i++) {
             c = companies[i];
-            rowVisibilityObservers[i] = new RowVisibility(this, leftCompNameYOffset + i, c.getInGameModel(), true);
-            observers.add(rowVisibilityObservers[i]);
+            shareRowVisibilityObservers[i] = new RowVisibility(this, leftCompNameYOffset + i, c.getInGameModel());
+            observers.add(shareRowVisibilityObservers[i]);
 
             boolean visible = !c.isClosed();
 
@@ -1198,7 +1198,7 @@ implements ActionListener, KeyListener, RevenueListener {
 
         this.orComp = orComp;
         this.orCompIndex = orCompIndex;
-        president[orCompIndex].setHighlight(true);
+        if (orCompIndex >= 0) president[orCompIndex].setHighlight(true);
 
         removeAllHighlights();
 
@@ -1398,7 +1398,7 @@ implements ActionListener, KeyListener, RevenueListener {
             button3.setEnabled(enabled);
             button3.setVisible(enabled);
             privatesCaption.setHighlight(enabled);
-            setHighlight(privates[orCompIndex],enabled);
+            if (orCompIndex >= 0) setHighlight(privates[orCompIndex],enabled);
         } else {
             button3.setVisible(false);
         }
@@ -1605,7 +1605,7 @@ implements ActionListener, KeyListener, RevenueListener {
      */
     private void setCompanyVisibility(boolean showAll) {
         for (int i = 0; i < nc; i++) {
-            boolean visible = rowVisibilityObservers[i].lastValue() && (showAll || (i == orCompIndex));
+            boolean visible = shareRowVisibilityObservers[i].lastValue() && (showAll || (i == orCompIndex));
             setRowVisibility(i + leftCompNameYOffset, visible);
         }
         selectRevenueSpinner(!showAll);

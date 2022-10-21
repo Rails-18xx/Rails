@@ -69,11 +69,11 @@ public class ConvertTilesXML {
 
         Map<String, String[]> tempAMap = new HashMap<>();
         tempAMap.put("jtWhistlestop", new String[] { "Town", "0" });
-        tempAMap.put("jtCity", new String[] { "City", "1" });
-        tempAMap.put("jtDoubleCity", new String[] { "City", "2" });
-        tempAMap.put("jtTripleCity", new String[] { "City", "3" });
-        tempAMap.put("jtQuadrupleCity", new String[] { "City", "4" });
-        tempAMap.put("jtHextupleCity", new String[] { "City", "6" });
+        tempAMap.put("jtCity", new String[] { "Location", "1" });
+        tempAMap.put("jtDoubleCity", new String[] { "Location", "2" });
+        tempAMap.put("jtTripleCity", new String[] { "Location", "3" });
+        tempAMap.put("jtQuadrupleCity", new String[] { "Location", "4" });
+        tempAMap.put("jtHextupleCity", new String[] { "Location", "6" });
         tempAMap.put("jtNone", new String[] { "", "0" });
         // Note: an additional station type is "Pass".
         stationMap = Collections.unmodifiableMap(tempAMap);

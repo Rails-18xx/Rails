@@ -24,6 +24,41 @@ import java.util.*;
  * each new Operating Round. At the end of a round, the current instance should
  * be discarded.
  */
+/* Because if its sheer size, this class has been divided into a number of "chapters".
+ * TABLE OF CONTENTS:
+ * 1. OR START AND END
+ * 2. CENTRAL PROCESSING
+ *   2.1. Process user action
+ *   2.2. Prepare next action
+ *   2.3. Turn control
+ *   2.4. Operating companies
+ *   2.5. Step control
+ * 3. COMMON ACTIONS
+ *   3.1. Noops
+ *   3.2. Discarding trains
+ *   3.3. Privates
+ *   3.4. Destinations
+ *   3.5. Loans
+ *   3.6. Rights
+ *   3.7. Share actions
+ * 4. LAYING TILES
+ * 5. TOKEN LAYING
+ *   5.1. Base tokens
+ *   5.2. Bonus tokens
+ *   5.3. All layable tokens
+ * 6. REVENUE AND DIVIDEND
+ *   6.1. Validate
+ *   6.2. Execute revenue and dividend
+ *   6.3. Earnings distribution
+ *   6.4. Rounding
+ *   6.5. Deductions
+ *   6.6. Prepare action
+ * 7. TRAIN PURCHASING
+ *   7.1. Buy train execution
+ *   7.2. Buy train effects
+ *   7.3. Buy train preparation
+ * 8. VARIOUS UTILITIES
+ */
 public class OperatingRound extends Round implements Observer {
 
     private static final Logger log = LoggerFactory.getLogger(OperatingRound.class);
@@ -478,8 +513,8 @@ public class OperatingRound extends Round implements Observer {
         } else if (step == GameDef.OrStep.LAY_TOKEN) {
             setNormalTokenLays();
             setSpecialTokenLays();
-            log.info("Normal token lays: {}", currentNormalTokenLays.size());
-            log.info("Special token lays: {}", currentSpecialTokenLays.size());
+            log.debug("Normal token lays: {}", currentNormalTokenLays.size());
+            log.debug("Special token lays: {}", currentSpecialTokenLays.size());
 
             possibleActions.addAll(currentNormalTokenLays);
             possibleActions.addAll(currentSpecialTokenLays);
@@ -718,6 +753,12 @@ public class OperatingRound extends Round implements Observer {
         return true;
     }
 
+    /*
+     * =======================================
+     *  2.4. OPERATING COMPANIES
+     * =======================================
+     */
+
     protected boolean setNextOperatingCompany(boolean initial) {
 
         while (true) {
@@ -751,8 +792,52 @@ public class OperatingRound extends Round implements Observer {
         }
     }
 
+    /**
+     * Insert a newly formed company that is allowed to operate
+     * into the current list of operating companies at the proper spot:
+     * just before the first company with a lower current price
+     * that has not yet operated and isn't currently operating.
+     * @param newCompany New company to insert in operating order
+     */
+    /* Currently used by 1826 and 1835 */
+    protected void insertNewOperatingCompany (PublicCompany newCompany) {
+        int index = 0;
+        int operatingCompanyIndex = getOperatingCompanyIndex();
+        List<PublicCompany> companies = setOperatingCompanies();
+        for (PublicCompany company : companies) {
+            if (index > operatingCompanyIndex
+                    && company.hasStockPrice()
+                    && company.hasFloated()
+                    && !company.isClosed()
+                    && company != operatingCompany.value()
+                    && company.getCurrentSpace().getPrice()
+                    < newCompany.getCurrentSpace().getPrice()) {
+                log.debug("{} will operate before {}", newCompany, company);
+                break;
+            }
+            if (index < companies.size()-1) index++;
+        }
+        // Insert PR at the found index (possibly at the end)
+        log.debug("Adding {} to {} at index {}", newCompany, operatingCompanies.view(), index);
+        operatingCompanies.add(index, newCompany);
+        log.info("Operation sequence is now {}", operatingCompanies.view());
+    }
+
+
     protected void setOperatingCompany(PublicCompany company) {
         operatingCompany.set(company);
+    }
+
+    /**
+     * Close an operating company.
+     *
+     * Currently only called by OperatingEound_1826
+     *
+     * @param company The company to close
+     */
+    protected void closeCompany (PublicCompany company) {
+        company.setClosed();
+        operatingCompanies.remove(company);
     }
 
     /**
@@ -774,7 +859,7 @@ public class OperatingRound extends Round implements Observer {
 
     /*
      * =======================================
-     *  2.4. STEP CONTROL
+     *  2.5. STEP CONTROL
      * =======================================
      */
 
@@ -876,6 +961,12 @@ public class OperatingRound extends Round implements Observer {
                 continue;
             }
 
+            if (newStep == GameDef.OrStep.REPAY_LOANS) {
+                if (!company.canLoan() || company.getCurrentNumberOfLoans() == 0) {
+                    continue;
+                }
+            }
+
             if (newStep == GameDef.OrStep.TRADE_SHARES) {
                 // Is company allowed to trade treasury shares?
                 if (!company.mayTradeShares() ||
@@ -920,7 +1011,6 @@ public class OperatingRound extends Round implements Observer {
             }
 
             if (!gameSpecificNextStep(newStep)) {
-                log.debug("OR skips {}: Not game specific", newStep);
                 // Skipping newStep
                 continue;
             }
@@ -949,6 +1039,8 @@ public class OperatingRound extends Round implements Observer {
 
     /**
      * Stub, can be overridden in subclasses to check for extra steps
+     * @param step An OR step to be checked for producing possible actions
+     * @return True if this step has any possible actions
      */
     protected boolean gameSpecificNextStep(GameDef.OrStep step) {
         return true;
@@ -1265,6 +1357,11 @@ public class OperatingRound extends Round implements Observer {
      * =======================================
      */
 
+    /** Stub, to be overridden for games that have automatic loan taking (1826) */
+    protected int canTakeLoans (PublicCompany company, int cashToRaise) {
+        return 0;
+    }
+
     protected boolean takeLoans(TakeLoans action) {
 
         String errMsg = validateTakeLoans(action);
@@ -1277,7 +1374,7 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
-        executeTakeLoans(action);
+        executeTakeLoans(action.getNumberTaken());
 
         return true;
 
@@ -1320,9 +1417,8 @@ public class OperatingRound extends Round implements Observer {
         return errMsg;
     }
 
-    protected void executeTakeLoans(TakeLoans action) {
+    protected void executeTakeLoans(int number) {
 
-        int number = action.getNumberTaken();
         int amount = calculateLoanAmount(number);
         operatingCompany.value().addLoans(number);
         Currency.fromBank(amount, operatingCompany.value());
@@ -1531,8 +1627,7 @@ public class OperatingRound extends Round implements Observer {
 
         // TODO Validation to be added
 
-        PublicCompany company = action.getCompany();
-        company.grow(action.getNewShareUnit());
+        action.getCompany().grow();
 
         return true;
     }
@@ -2824,7 +2919,7 @@ public class OperatingRound extends Round implements Observer {
 
         if (amount > 0) {
             // Withhold half of it
-            int numberOfShares = operatingCompany.value().getNumberOfShares();
+            int numberOfShares = operatingCompany.value().getActiveShareCount();
 
             int withheld = calculateCompanyIncomeFromSplit (amount);
 
@@ -3241,9 +3336,27 @@ public class OperatingRound extends Round implements Observer {
                         if (cashToRaise <= 0) break;
                         companyCash += raisedCash;
                    }
+                } else if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_MUST_TAKE_LOANS)
+                        && company.canLoan()) {
+                    // As in 1826
+                    int loansToTake = 0;
+                    int numberOfLoans = company.getCurrentNumberOfLoans();
+                    int loanValue = company.getValuePerLoan();
+                    while (numberOfLoans < company.getMaxNumberOfLoans()
+                            && company.getValuePerLoan() <= companyCash
+                            && cashToRaise > 0) {
+                        loansToTake++;
+                        numberOfLoans++;
+                        cashToRaise -= loanValue;
+                        companyCash -= loanValue;
+                    }
+                    if (loansToTake > 0) {
+                        executeTakeLoans(loansToTake);
+                    }
                 }
 
-                // Check what the president can add
+
+                    // Check what the president can add
                 //presidentCash = action.getPresidentCashToAdd();
                 if (playerCash >= cashToRaise) {
                     actualPresidentCash = cashToRaise;
@@ -3814,6 +3927,20 @@ public class OperatingRound extends Round implements Observer {
         PublicCompany company = operatingCompany.value();
 
         int cashToRaise = cost-companyCash;
+
+        // In 1826, companies must first take loans before the president can help
+        if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_MUST_TAKE_LOANS)) {
+            int loansToTake = canTakeLoans (company, cashToRaise);
+            if (loansToTake > 0) {
+                bt.setLoansToTake(loansToTake);
+                cashToRaise = Math.max (0, cashToRaise - loansToTake * company.getValuePerLoan());
+                bt.setExtraMessage(LocalText.getText ("MustTakeLoan",
+                        company.getId(),
+                        loansToTake));
+            }
+        }
+
+        // President contribution
         int presidentCash = cashToRaise;
         if (cashToRaise > 0) {
             // Check if company has shares to sell (as in SOH).

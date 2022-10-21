@@ -82,7 +82,7 @@ public class ReachDestinations extends PossibleORAction {
         if (asOption) return options;
 
         // check asAction attributes
-        return options && Objects.equal(this.reachedCompanies, action.reachedCompanies);
+        return options && action.reachedCompanies.containsAll(this.reachedCompanies);
     }
 
     @Override

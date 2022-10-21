@@ -11,7 +11,7 @@
 		<Upgrade id="3,4,58" />
 	</Tile>
 
-	<!-- City -->
+	<!-- Location -->
 	<Tile id="-10">
 		<Upgrade id="6,57" />
 	</Tile>
@@ -174,22 +174,22 @@
 	<!-- Dit (10), X -->
 	<Tile id="88" quantity="2" />
 
-	<!-- X-City, three exits: epsilon -->
+	<!-- X-Location, three exits: epsilon -->
 	<Tile id="1012" extId="NL12" quantity="1">
 		<Upgrade id="1219" />
 	</Tile>
 
-	<!-- X-City, three exits: cross -->
+	<!-- X-Location, three exits: cross -->
 	<Tile id="1013" extId="NL13" quantity="1">
 		<Upgrade id="1219" />
 	</Tile>
 
-	<!-- X-City, three exits: Y skewed right -->
+	<!-- X-Location, three exits: Y skewed right -->
 	<Tile id="1205" extId="NL205" quantity="1">
 		<Upgrade id="2218,1219" />
 	</Tile>
 
-	<!-- X-City, three exits: Y skewed left -->
+	<!-- X-Location, three exits: Y skewed left -->
 	<Tile id="2206" extId="NL206" quantity="1">
 		<Upgrade id="2218,1219" />
 	</Tile>
@@ -236,13 +236,13 @@
 	<!-- Interchange, tracks N-SE, S-NE, N-NE, S-SE -->
 	<Tile id="70" quantity="1" />
 
-	<!-- X-City, X-shape -->
+	<!-- X-Location, X-shape -->
 	<Tile id="2218" extId="NL218" quantity="1" />
 
-	<!-- X-City, K-shape -->
+	<!-- X-Location, K-shape -->
 	<Tile id="1219" extId="NL219" quantity="1" />
 	
-	<!-- Z-City -->
+	<!-- Z-Location -->
 	<Tile id="1336" extId="NL336" quantity="1" />
 
 </TileManager>

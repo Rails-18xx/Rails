@@ -14,7 +14,7 @@
 	<Tile id="-111"/> <!-- Meridian -->
 	<Tile id="-112"/> <!-- Tupelo -->
 	<Tile id="-113"/> <!-- Oxmoor -->
-	<Tile id="-3"/> <!-- Phenix City, Rome -->
+	<Tile id="-3"/> <!-- Phenix Location, Rome -->
 	<Tile id="-901"/> <!-- Corinth, Chattanooga -->
 	<Tile id="-902"/> <!-- Atlanta, Gulf -->
 	<Tile id="-912"/> <!-- Nashville -->

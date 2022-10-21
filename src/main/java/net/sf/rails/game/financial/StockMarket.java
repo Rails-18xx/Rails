@@ -310,7 +310,7 @@ public class StockMarket extends RailsManager implements Configurable {
      * @param company Company that has just paid dividends
      * @param numberOfSpaces The number of spaces to move.
      */
-    protected void moveRight (PublicCompany company, int numberOfSpaces) {
+    public void moveRight (PublicCompany company, int numberOfSpaces) {
 
         StockSpace oldsquare = company.getCurrentSpace();
         int row = oldsquare.getRow();

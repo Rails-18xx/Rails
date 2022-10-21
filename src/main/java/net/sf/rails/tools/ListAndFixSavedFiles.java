@@ -263,8 +263,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         // append actionText
         int i=0;
         List<PossibleAction> actions = gameLoader.getActions();
-        log.info("Actions={}", actions.size());
         if (actions != null) {
+            log.info("Actions={}", actions.size());
             for (PossibleAction action : actions) {
                 reportText.append("Action " + i + " " + action.getPlayerName() + "(" + action.getPlayerIndex() + "): " + action.toString());
                 reportText.append("\n");
@@ -398,7 +398,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         } else if (editedAction instanceof DiscardTrain) {
             new DiscardTrainDialog ((DiscardTrain)editedAction);
         } else {
-            JOptionPane.showMessageDialog(this, "Action type '" + editedAction.getClass().getSimpleName()
+            JOptionPane.showMessageDialog(this,
+                    "Action type '" + editedAction.getClass().getSimpleName()
                     + "' cannot yet be edited");
         }
     }
@@ -413,7 +414,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
     }
 
     protected void processCorrections (PossibleAction newAction) {
-        if (newAction != null && !newAction.equalsAsAction(editedAction)) {
+        if (newAction != null /*&& (!newAction.equalsAsAction(editedAction)*/) {
             gameLoader.getActions().set(editedIndex, newAction);
             setReportText(false);
         }
@@ -483,18 +484,24 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             addTextField (this, "Price paid",
                     action.getPricePaid(),
                     String.valueOf(action.getPricePaid()));  // 2
+            addTextField (this, "Pres.cash to add",
+                    action.getPresidentCashToAdd(),
+                    String.valueOf(action.getPresidentCashToAdd()));  // 3
             addTextField (this, "Added cash",
                     action.getAddedCash(),
-                    String.valueOf(action.getAddedCash()));  // 3
+                    String.valueOf(action.getAddedCash()));  // 4
+            addTextField (this, "Loans to take",
+                    action.getLoansToTake(),
+                    String.valueOf(action.getLoansToTake()));  // 5
             addTextField (this, "Trains for exchange",
                     action.getTrainsForExchange(),
-                    action.getTrainsForExchange() != null ? action.getTrainsForExchange().toString() : "[]");  // 4
+                    action.getTrainsForExchange() != null ? action.getTrainsForExchange().toString() : "[]");  // 6
             addTextField (this, "Exchange train UID",
                     action.getExchangedTrain(),
-                    action.getExchangedTrain() != null ? action.getExchangedTrain().getId() : "");  // 4
+                    action.getExchangedTrain() != null ? action.getExchangedTrain().getId() : "");  // 7
             addTextField (this, "Fixed Price",
                     action.getFixedCost(),
-                    String.valueOf(action.getFixedCost()));  // 5
+                    String.valueOf(action.getFixedCost()));  // 8
             finish();
         }
 
@@ -510,12 +517,21 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             } catch (NumberFormatException e) {
             }
             try {
-                int addedCash = Integer.parseInt(((JTextField)inputElements.get(3)).getText());
+                int presCash = Integer.parseInt(((JTextField)inputElements.get(3)).getText());
+                action.setPresidentCashToAdd(presCash);
+            } catch (NumberFormatException e) {
+            }
+            try {
+                int addedCash = Integer.parseInt(((JTextField)inputElements.get(4)).getText());
                 action.setAddedCash(addedCash);
             } catch (NumberFormatException e) {
             }
-
-            String trainsForExchangeInput = ((JTextField)inputElements.get(4)).getText();
+            try {
+                int loansToTake = Integer.parseInt(((JTextField)inputElements.get(5)).getText());
+                action.setLoansToTake(loansToTake);
+            } catch (NumberFormatException e) {
+            }
+            String trainsForExchangeInput = ((JTextField)inputElements.get(6)).getText();
             String trainsForExchangeIds = trainsForExchangeInput
                     .replaceAll(".*\\[(.*)\\].*", "$1");
             if (Util.hasValue(trainsForExchangeIds)) {
@@ -528,7 +544,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 action.setTrainsForExchange(null);
             }
 
-            String exchangedTrainID = ((JTextField) inputElements.get(5)).getText();
+            String exchangedTrainID = ((JTextField) inputElements.get(7)).getText();
             if (Util.hasValue(exchangedTrainID)) {
                 Train exchangedTrain = root.getTrainManager().getTrainByUniqueId(exchangedTrainID);
                 if (exchangedTrain != null) action.setExchangedTrain(exchangedTrain);
@@ -537,7 +553,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             }
 
             try {
-                int fixedCost = Integer.parseInt(((JTextField)inputElements.get(6)).getText());
+                int fixedCost = Integer.parseInt(((JTextField)inputElements.get(8)).getText());
                 action.setFixedCost(fixedCost);
             } catch (NumberFormatException e) {
             }
@@ -564,12 +580,15 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             addTextField (this, "Orientation",
                     action.getOrientation(),
                     String.valueOf(action.getOrientation()));  // 2
+            addTextField (this, "Type",
+                    action.getType(),
+                    String.valueOf(action.getType()));  // 3
             finish();
         }
 
         @Override
         PossibleAction processInput() {
-            log.debug("Action was {}", action);
+            log.info("Action was {}, elements={}", action, inputElements);
             try {
                 String tileID = ((JTextField)inputElements.get(0)).getText();
                 Tile tile = root.getTileManager().getTile(tileID);
@@ -584,8 +603,13 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 action.setOrientation(orientation);
             } catch (NumberFormatException e) {
             }
+            try {
+                int type = Integer.parseInt(((JTextField)inputElements.get(3)).getText());
+                action.setType(type);
+            } catch (NumberFormatException e) {
+            }
 
-            log.debug("Action is {}", action);
+            log.info("Action is {}", action);
             return action;
 
         }

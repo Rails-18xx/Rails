@@ -6,6 +6,7 @@ import java.util.*;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+import net.sf.rails.algorithms.DLLGraph;
 import net.sf.rails.algorithms.NetworkAdapter;
 import net.sf.rails.algorithms.NetworkGraph;
 import net.sf.rails.algorithms.NetworkVertex;
@@ -42,7 +43,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import static net.sf.rails.ui.swing.GameUIManager.ADJUST_SHARE_PRICE_DIALOG;
+import static net.sf.rails.ui.swing.GameUIManager.EXCHANGE_TOKENS_DIALOG;
 
 // FIXME: Add back corrections mechanisms
 // Rails 2.0, Even better add a new mechanism that allows to use the standard mechanism for corrections
@@ -84,6 +85,7 @@ public class ORUIManager implements DialogOwner {
     public static final String SELECT_DESTINATION_COMPANIES_DIALOG = "SelectDestinationCompanies";
     public static final String REPAY_LOANS_DIALOG = "RepayLoans";
     public static final String GOT_PERMISSION_DIALOG = "AskedPermissionDialog";
+    public static final String TOKEN_EXCHANGE_DIALOG = "SelectTokensToExchange";
 
     public ORUIManager() {
 
@@ -339,11 +341,11 @@ public class ORUIManager implements DialogOwner {
 
     private void addGenericTokenLays(LayBaseToken action) {
         PublicCompany company = action.getCompany();
-        NetworkGraph graph = networkAdapter.getRouteGraph(company, true, false);
+        //NetworkGraph graph = networkAdapter.getRouteGraph(company, true, false);
         //Multimap<MapHex, Stop> hexStops = graph.getTokenableStops(company);
         //Map<Stop, Integer> tokenableStops = graph.getTokenableStops(company);
-        Map<Stop, Integer> tokenableStops = Routes.getTokenLayRouteDistances(
-                company.getRoot(), company, false, false);
+        Map<Stop, Integer> tokenableStops = new Routes().getTokenLayRouteDistances2(
+                company, PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
         //if (company.getBaseTokenLayCostMethod().equalsIgnoreCase(PublicCompany.BASE_COST_ROUTE_LENGTH)) {
        for (Stop stop : tokenableStops.keySet()) {
             MapHex hex = stop.getParent();
@@ -1346,7 +1348,8 @@ public class ORUIManager implements DialogOwner {
         // End of possible action debug listing
 
         PublicCompany orComp = oRound.getOperatingCompany();
-        log.debug("OR company = {} in round {}", orComp.getId(), oRound.getRoundName());
+        log.debug("OR company = {} in round {} index={}", orComp.getId(),
+                oRound.getRoundName(),oRound.getOperatingCompanyIndex());
 
         GameDef.OrStep orStep = oRound.getStep();
         log.debug("OR step={}", orStep);
@@ -1462,7 +1465,11 @@ public class ORUIManager implements DialogOwner {
 
         } else if (possibleActions.contains(RepayLoans.class)) {
 
-            orPanel.enableLoanRepayment (possibleActions.getType(RepayLoans.class).get(0));
+            orPanel.enableLoanRepayment(possibleActions.getType(RepayLoans.class).get(0));
+
+        } else if (possibleActions.contains(ExchangeTokens2.class)) {
+
+            prepareExchangeTokens (possibleActions.getType(ExchangeTokens2.class).get(0));
 
         } else if (orStep == GameDef.OrStep.FINAL) {
             // Does not occur???
@@ -1631,6 +1638,80 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
+    /* If the token exchange limits are *per merged company*,
+     * we need separator lines. This is used in 1826
+     */
+    private Integer[] separatorLines = null;
+    public Integer[] getSeparatorLines() {return separatorLines;}
+    public void clearSeparatorLines() {separatorLines = null; }
+
+    private void prepareExchangeTokens (ExchangeTokens2 action) {
+        prepareExchangeTokens(action, null);
+    }
+
+    private void prepareExchangeTokens (ExchangeTokens2 action, String errMsg) {
+
+        List<String> options = new ArrayList<>();
+        List<ExchangeTokens2.Location> locations = action.getLocations();
+        List<Integer> sepLinesAfterOption = new ArrayList<>();
+
+        PublicCompany newCompany = action.getNewCompany();
+        int minimumExchanges = action.getMinNumberToExchange();
+        int maximumExchanges = action.getMaxNumberToExchange();
+        boolean perCompany = action.isExchangeCountPerCompany();
+
+        ExchangeTokens2.Location location;
+        PublicCompany oldCompany;
+        PublicCompany prevOldCompany = null;
+        Stop stop;
+
+        for (int i=0; i<locations.size(); i++) {
+            location = locations.get(i);
+            oldCompany = location.getOldCompany();
+            if (prevOldCompany != null && !oldCompany.equals(prevOldCompany)) {
+                sepLinesAfterOption.add(i-1);
+            }
+            stop = location.getStop();
+            options.add(LocalText.getText("SelectTokenExchangeOption",
+                    oldCompany.getId(), stop.getStopComposedId()));
+            prevOldCompany = oldCompany;
+        }
+        if (sepLinesAfterOption.size() > 0) {
+            separatorLines = sepLinesAfterOption.toArray(new Integer[0]);
+        }
+
+        if (options.size() > 0) {
+            orWindow.setVisible(true);
+            orWindow.toFront();
+
+            String title = LocalText.getText("SelectTokensToExchange");
+            String prompt;
+            if (perCompany) {
+                prompt = LocalText.getText("SelectTokensToExchangePerComp",
+                        maximumExchanges, newCompany);
+            } else {
+                prompt = LocalText.getText("SelectTokensToExchangeAllComps",
+                        (minimumExchanges == maximumExchanges
+                                ? maximumExchanges + ""
+                                : minimumExchanges + "-" + maximumExchanges),
+                        newCompany);
+            }
+
+            if (errMsg != null && errMsg.length() > 0) {
+                prompt = "<html><font color=\"red\">" + errMsg + "</font><br>"
+                        + prompt + "</html>";
+            }
+
+            CheckBoxDialog dialog = new CheckBoxDialog(EXCHANGE_TOKENS_DIALOG,
+                    this,
+                    orWindow,
+                    title,
+                    prompt,
+                    options.toArray(new String[0]));
+            setCurrentDialog (dialog, action);
+        }
+    }
+
     // Further Getters
     public MessagePanel getMessagePanel() {
         return messagePanel;
@@ -1669,24 +1750,72 @@ public class ORUIManager implements DialogOwner {
         JDialog currentDialog = getCurrentDialog();
         PossibleAction currentDialogAction = getCurrentDialogAction();
 
-        if (currentDialog instanceof CheckBoxDialog
-                && currentDialogAction instanceof ReachDestinations) {
+        if (currentDialog instanceof CheckBoxDialog) {
 
             CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
-            ReachDestinations action = (ReachDestinations) currentDialogAction;
 
-            boolean[] destined = dialog.getSelectedOptions();
-            String[] options = dialog.getOptions();
+            if (currentDialogAction instanceof ReachDestinations) {
+                ReachDestinations action = (ReachDestinations) currentDialogAction;
 
-            for (int index = 0; index < options.length; index++) {
-                if (destined[index]) {
-                    action.addReachedCompany(action.getPossibleCompanies().get(index));
+                boolean[] destined = dialog.getSelectedOptions();
+                String[] options = dialog.getOptions();
+
+                for (int index = 0; index < options.length; index++) {
+                    if (destined[index]) {
+                        action.addReachedCompany(action.getPossibleCompanies().get(index));
+                    }
+                }
+
+                // Prevent that a null action gets processed
+                if (action.getReachedCompanies() == null
+                        || action.getReachedCompanies().isEmpty()) currentDialogAction = null;
+
+            } else if (currentDialogAction instanceof ExchangeTokens2) {
+                ExchangeTokens2 action = (ExchangeTokens2) currentDialogAction;
+                boolean[] selected = dialog.getSelectedOptions();
+
+                for (int i=0; i<action.getLocations().size(); i++) {
+                    if (selected[i]) action.getLocations().get(i).setSelected();
+                }
+
+                int maxCount = action.getMaxNumberToExchange();
+                int minCount = action.getMinNumberToExchange();
+                PublicCompany newCompany = action.getNewCompany();
+                String errMsg = "";
+
+                // Some prevalidation
+                if (action.isExchangeCountPerCompany()) {
+
+                    Map<PublicCompany, Integer> counts = new HashMap<>();
+                    for (ExchangeTokens2.Location location : action.getLocations()) {
+                        PublicCompany company = location.getOldCompany();
+                        int prevCount = (counts.containsKey(company) ? counts.get(company) : 0);
+                        if (location.isSelected()) counts.put(company, prevCount + 1);
+                    }
+                    for (PublicCompany company : counts.keySet()) {
+                        int count = counts.get(company);
+                        if (count < minCount || count > maxCount) {
+                            if (errMsg.length() > 0) errMsg += "<br>";
+                            errMsg += LocalText.getText("WrongNumberOfTokensExchanged2",
+                                    newCompany, minCount, maxCount, company, count);
+                        }
+                    }
+                } else {
+                    int count = 0;
+                    for (ExchangeTokens2.Location location : action.getLocations()) {
+                        if (location.isSelected()) count++;
+                    }
+                    if (count < minCount || count > maxCount) {
+                        errMsg = LocalText.getText("WrongNumberOfTokensExchanged",
+                                newCompany, minCount, maxCount, count);
+                    }
+                }
+                if (errMsg.length() > 0) {
+                    action.clearSelections();
+                    prepareExchangeTokens(action, errMsg);
+                    return;
                 }
             }
-
-            // Prevent that a null action gets processed
-            if (action.getReachedCompanies() == null
-                    || action.getReachedCompanies().isEmpty()) currentDialogAction = null;
 
         } else if (currentDialog instanceof ConfirmationDialog
                 && currentDialogAction instanceof LayTile) {

@@ -67,10 +67,12 @@ public class ConfigManager implements Configurable {
             // Find the config tag inside the the config xml file
             // the last arguments refers to the fact that no GameOptions are required
             Tag configTag = Tag.findTopTagInFile(CONFIG_XML_FILE, CONFIG_XML_DIR, CONFIG_TAG, null);
-            log.debug("Opened config xml, filename = " + CONFIG_XML_FILE);
+            //log.debug("Opened config xml, filename = " + CONFIG_XML_FILE);
             instance.configureFromXML(configTag);
         } catch (ConfigurationException e) {
             log.error("Configuration error in setup of " + CONFIG_XML_FILE, e);
+        } catch (Exception e) {
+            log.error ("Unexpected error in reading config file {}: {}", CONFIG_XML_FILE, e);
         }
 
         if (test) {
