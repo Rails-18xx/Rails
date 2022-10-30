@@ -482,6 +482,7 @@ public class ORUIManager implements DialogOwner {
      * Processes button presses and menu selection actions
      */
     // FIXME: Can this be really a list of actions?
+    // Answer: Not yet, but who knows? (EV)
     public void processAction(String command, List<PossibleAction> actions) {
 
         if (actions != null && actions.size() > 0 && actions.get(0) != null
@@ -1573,7 +1574,6 @@ public class ORUIManager implements DialogOwner {
                 orPanel.addSpecialAction(action, action.getInfo());
             }
         }
-
 
         checkForGameSpecificActions(orComp, orStep, possibleActions);
 

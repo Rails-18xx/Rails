@@ -182,6 +182,10 @@ public class PortfolioModel extends RailsModel {
         return bonds.get(company);
     }
 
+    public int getBondsCount(PublicCompany company) {
+        return getBondsModel(company).getBondsCount();
+    }
+
     /* Privates */
     public ImmutableSet<PrivateCompany> getPrivateCompanies() {
         return privates.getPortfolio().items();

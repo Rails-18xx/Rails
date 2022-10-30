@@ -75,5 +75,5 @@ public class Currency extends CountableItem<Currency> {
         currency.move(currency.getParent(), amount, to);
         return currency.format(amount);
     }
-    
+
 }

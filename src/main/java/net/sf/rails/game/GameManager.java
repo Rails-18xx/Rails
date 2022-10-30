@@ -59,6 +59,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Class<? extends StockRound> stockRoundClass = StockRound.class;
     protected Class<? extends OperatingRound> operatingRoundClass = OperatingRound.class;
     protected Class<? extends ShareSellingRound> shareSellingRoundClass = ShareSellingRound.class;
+    protected Class<? extends TreasuryShareRound> treasuryShareRoundClass = TreasuryShareRound.class;
 
     // Variable UI Class names
     protected String gameUIManagerClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.GAME_UI_MANAGER);
@@ -343,6 +344,20 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 } catch (ClassNotFoundException e) {
                     throw new ConfigurationException("Cannot find class "
                             + ssrClassName, e);
+                }
+            }
+
+            // TreasuryShareRound class
+            Tag tsrTag = gameParmTag.getChild("TreasuryShareRound");
+            if (tsrTag != null) {
+                String tsrClassName =
+                        tsrTag.getAttributeAsString("class", "net.sf.rails.game.financial.TreasuryShareRound");
+                try {
+                    treasuryShareRoundClass =
+                            Class.forName(tsrClassName).asSubclass(TreasuryShareRound.class);
+                } catch (ClassNotFoundException e) {
+                    throw new ConfigurationException("Cannot find class "
+                            + tsrClassName, e);
                 }
             }
 
@@ -789,7 +804,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public void startTreasuryShareTradingRound(PublicCompany company) {
         interruptedRound.set(getCurrentRound());
         String id = "TreasuryShareRound_" + getInterruptedRound().getId() + "_" + company.getId();
-        createRound(TreasuryShareRound.class, id).start(getInterruptedRound());
+        createRound(treasuryShareRoundClass, id).start(getInterruptedRound());
     }
 
     public boolean process(PossibleAction action) {
@@ -811,7 +826,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             // EV: actually, it is null if the StartRound needs no user interaction.
             // Example: Steam Over Holland, when privates are just dealt out randomly.
 
-            action.setActed();
+            action.setActed(); // Duplicate?
 
             // Check player
             String actionPlayerName = action.getPlayerName();

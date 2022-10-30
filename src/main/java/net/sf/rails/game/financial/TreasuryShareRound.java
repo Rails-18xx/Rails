@@ -2,6 +2,7 @@ package net.sf.rails.game.financial;
 
 import java.util.*;
 
+import net.sf.rails.game.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,11 +11,6 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.GameDef;
-import net.sf.rails.game.GameManager;
-import net.sf.rails.game.OperatingRound;
-import net.sf.rails.game.Player;
-import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.BooleanState;
@@ -80,6 +76,8 @@ public class TreasuryShareRound extends StockRound {
 
         if (mayBuy && !hasSold.value()) setBuyableCerts();
         if (maySell && !hasBought.value()) setSellableCerts();
+
+        addGameSpecificPossibleActions();
 
         if (possibleActions.isEmpty()) {
             // TODO Finish the round before it started...
@@ -222,6 +220,9 @@ public class TreasuryShareRound extends StockRound {
             }
         }
     }
+
+    /** Stub to enable subclasses add specific actions */
+    public void addGameSpecificPossibleActions() {}
 
     /**
      * Buying one or more single or double-share certificates (more is sometimes

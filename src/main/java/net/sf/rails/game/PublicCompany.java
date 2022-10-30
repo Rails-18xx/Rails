@@ -31,7 +31,8 @@ import java.util.*;
  * but this will still be the form in which ownership is expressed. <p> Company
  * shares may or may not have a price on the stock market.
  */
-public class PublicCompany extends RailsAbstractItem implements Company, RailsMoneyOwner, PortfolioOwner, Comparable<PublicCompany> {
+public class PublicCompany extends RailsAbstractItem
+        implements Company, RailsMoneyOwner, PortfolioOwner, Comparable<PublicCompany> {
 
     private static final Logger log = LoggerFactory.getLogger(PublicCompany.class);
 
@@ -495,8 +496,6 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
     protected CountingMoneyModel currentLoanValue = null; // init during finishConfig
 
     /* Bonds */
-    // TEMPORARY FIXTURE needed for 1826
-    protected boolean hasBonds = false;
     protected int numberOfBonds = 0;
     protected int priceOfBonds = 0;
     protected int bondsInterest = 0;
@@ -1186,6 +1185,10 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
 
     public boolean mayTradeShares() {
         return mayTradeShares;
+    }
+
+    public boolean mayTradeBonds() {
+        return hasBonds();
     }
 
     /**
@@ -2639,8 +2642,8 @@ public class PublicCompany extends RailsAbstractItem implements Company, RailsMo
         return getBankLoan() > 0;
     }
 
-    /* Bonds */
-    public boolean hasBonds() { return hasBonds; }
+    /* Stub to indicate that a company has Bonds */
+    public boolean hasBonds() { return numberOfBonds > 0; }
 
     public int getNumberOfBonds() {return numberOfBonds; }
 

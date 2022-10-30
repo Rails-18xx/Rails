@@ -69,11 +69,6 @@ public class PublicCompany_1826 extends PublicCompany {
             priceOfBonds = bondsTag.getAttributeAsInteger("price", 0);
             bondsInterest = bondsTag.getAttributeAsInteger("interest", 0);
         }
-
-
-        if (getId().equals(SNCF)) {
-            hasBonds = true;
-        }
     }
 
 
@@ -206,7 +201,7 @@ public class PublicCompany_1826 extends PublicCompany {
      *
      * @return True if a loan should be taken
      */
-    public boolean canLoan() {
+    public boolean canTakeLoan() {
         int loanValue = getLoanValueModel().value();
 
         int interest = loanValue * getLoanInterestPct() / 100;

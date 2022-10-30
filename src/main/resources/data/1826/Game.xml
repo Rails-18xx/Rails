@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="net.sf.rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.specific._1826.GameManager_1826">
 		<Game name="1826"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
@@ -11,14 +11,17 @@
 				</IfOption>
 			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
-			<StockRound>
+			<StockRound class="net.sf.rails.game.specific._1826.StockRound_1826"
+				sequence="SellBuy">
 				 <NoSaleInFirstSR/>
 			</StockRound>
 			<OperatingRound class="net.sf.rails.game.specific._1826.OperatingRound_1826">
 				<EmergencyTrainBuying mustBuyCheapestTrain="no" mayBuyFromCompany="yes" mustTakeLoans="yes"/>
 			</OperatingRound>
+			<TreasuryShareRound class="net.sf.rails.game.specific._1826.TreasuryShareRound_1826"/>
 		</GameParameters>
 		<GuiClasses>
+			<GameStatus class="net.sf.rails.ui.swing.gamespecific._1826.GameStatus_1826"/>
 		</GuiClasses>
 		<EndOfGame>
 			<BankBreaks limit="0" finish="setOfORs"/>
@@ -74,11 +77,16 @@
 			<Reach base="hexes"/>
 			<NewPhase phaseName="10H"/>
         </TrainType>
-		<TrainType name="E" majorStops="6" cost="800" quantity="4">
+		<TrainType name="E" majorStops="2" cost="800" quantity="4">
+			<!-- Initial values, will in 1826 be adapted as E-trains are bought-->
             <NewPhase phaseName="E"/>
+			<Reach countTowns="no"/>
+			<Score towns="no" cities="double"/>
         </TrainType>
-		<TrainType name="TGV" majorStops="4" cost="1000" quantity="10">
+		<TrainType name="TGV" majorStops="3" cost="1000" quantity="10">
             <NewPhase phaseName="TGV"/>
+			<Reach countTowns="no"/>
+			<Score towns="no" cities="double"/>
         </TrainType>
 	</Component>
 	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
@@ -105,7 +113,7 @@
             <Trains rusted="6H"/>
 		</Phase>
 		<Phase name="TGV" >
-			<Tiles colour="yellow,green,brown,gray"/>
+			<Tiles colour="yellow,green,brown,grey"/>
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">

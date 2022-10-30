@@ -1295,6 +1295,10 @@ public class GameUIManager implements DialogOwner {
     }
 
     // Forwards the format() method to the server
+    // EV: Not really. The client also knows about the Bank
+    // and all static configuration details. All the complexities
+    // built around the money format, including the Currency class,
+    // look completely redundant to me.
     public String format(int amount) {
         return Bank.format(railsRoot, amount);
     }

@@ -67,9 +67,7 @@ public class OperatingRound extends Round implements Observer {
     protected final GenericState<GameDef.OrStep> stepObject
             = new GenericState<>(this, "ORStep", GameDef.OrStep.INITIAL);
 
-    protected boolean actionPossible = true;
-
-    /* flag for using rails without map support */
+    /* flag for using Rails without map support */
     protected final boolean noMapMode;
 
     // TODO: Check if this should not be turned into a State?
@@ -77,13 +75,13 @@ public class OperatingRound extends Round implements Observer {
 
     protected ArrayListState<PublicCompany> operatingCompanies;
 
-    protected final GenericState<PublicCompany> operatingCompany = new GenericState<>(this, "operatingCompany");
-    // do not use a operatingCompany.getObject() as reference
-    // TODO: Question is this remark above still relevant?
+    protected final GenericState<PublicCompany> operatingCompany
+            = new GenericState<>(this, "operatingCompany");
 
     // Non-persistent lists (are recreated after each user action)
 
-    protected final HashMapState<String, Integer> tileLaysPerColour = HashMapState.create(this, "tileLaysPerColour");
+    protected final HashMapState<String, Integer> tileLaysPerColour
+            = HashMapState.create(this, "tileLaysPerColour");
 
     protected final List<LayBaseToken> currentNormalTokenLays = new ArrayList<>();
 
@@ -94,7 +92,8 @@ public class OperatingRound extends Round implements Observer {
      */
     protected Map<Player, List<PublicCompany>> excessTrainCompanies;
 
-    protected final ArrayListState<TrainCardType> trainsBoughtThisTurn = new ArrayListState<>(this, "trainsBoughtThisTurn");
+    protected final ArrayListState<TrainCardType> trainsBoughtThisTurn
+            = new ArrayListState<>(this, "trainsBoughtThisTurn");
 
     protected HashMapState<PublicCompany, Integer> loansThisRound;
 
@@ -969,8 +968,9 @@ public class OperatingRound extends Round implements Observer {
 
             if (newStep == GameDef.OrStep.TRADE_SHARES) {
                 // Is company allowed to trade treasury shares?
-                if (!company.mayTradeShares() ||
-                        (company.mustHaveOperatedToTradeShares() && !company.hasOperated())) {
+                if ((!company.mayTradeShares() ||
+                        (company.mustHaveOperatedToTradeShares() && !company.hasOperated()))
+                    && !company.mayTradeBonds() ) {
                     continue;
                 }
 
@@ -981,6 +981,7 @@ public class OperatingRound extends Round implements Observer {
                 // Preload some expensive results
                 int ownShare = company.getPortfolioModel().getShare(company);
                 int poolShare = pool.getShare(company); // Expensive, do it once
+                int bondsCount = company.getPortfolioModel().getBondsCount(company);
                 // Can it buy?
                 boolean canBuy =
                         (company.hasOperated.value() || !company.mustHaveOperatedToBuyShares())
@@ -994,8 +995,10 @@ public class OperatingRound extends Round implements Observer {
                                 && poolShare < GameDef.getParmAsInt(this, GameDef.Parm.POOL_SHARE_LIMIT);
                 // Above we ignore the possible existence of double shares (as
                 // in 1835).
+                // Can we buy Bonds (only in 1826)?
+                boolean canBuyBonds = company.hasBonds() && bondsCount < company.getNumberOfBonds();
 
-                if (!canBuy && !canSell) {
+                if (!canBuy && !canSell && !canBuyBonds) {
                     // XXX For BACKWARDS COMPATIBILITY only,
                     // register a Done skip action during reloading.
                     if (gameManager.isReloading()) {
@@ -1419,30 +1422,31 @@ public class OperatingRound extends Round implements Observer {
 
     protected void executeTakeLoans(int number) {
 
+        PublicCompany company = operatingCompany.value();
         int amount = calculateLoanAmount(number);
-        operatingCompany.value().addLoans(number);
-        Currency.fromBank(amount, operatingCompany.value());
+        company.addLoans(number);
+        Currency.fromBank(amount, company);
         if (number == 1) {
             ReportBuffer.add(this, LocalText.getText("CompanyTakesLoan",
-                    operatingCompany.value().getId(), Bank.format(this,
-                            operatingCompany.value().getValuePerLoan()),
-                    Bank.format(this, amount)));
+                    company.getId(),
+                    bank.format(company.getValuePerLoan()),
+                    bank.format(amount)));
         } else {
             ReportBuffer.add(this, LocalText.getText("CompanyTakesLoans",
-                    operatingCompany.value().getId(), number, Bank.format(this,
-                            operatingCompany.value().getValuePerLoan()),
-                    Bank.format(this, amount)));
+                    company.getId(), number,
+                    bank.format(company.getValuePerLoan()),
+                    bank.format( amount)));
         }
 
-        if (operatingCompany.value().getMaxLoansPerRound() > 0) {
+        if (company.getMaxLoansPerRound() > 0) {
             int oldLoansThisRound = 0;
             if (loansThisRound == null) {
                 loansThisRound = HashMapState.create(this, "loansThisRound");
-            } else if (loansThisRound.containsKey(operatingCompany.value())) {
+            } else if (loansThisRound.containsKey(company)) {
                 oldLoansThisRound =
-                        loansThisRound.get(operatingCompany.value());
+                        loansThisRound.get(company);
             }
-            loansThisRound.put(operatingCompany.value(), oldLoansThisRound + number);
+            loansThisRound.put(company, oldLoansThisRound + number);
         }
     }
 
@@ -2761,7 +2765,6 @@ public class OperatingRound extends Round implements Observer {
                     Bank.format(this, dividend));
             ReportBuffer.add(this, report);
             withhold(dividend);
-
         }
 
         if (company.hasBankLoan()) {
@@ -2816,7 +2819,7 @@ public class OperatingRound extends Round implements Observer {
 
         // Calculate, round up, report and add the cash
 
-        // Define a precise sequence for the reporting
+        // Define a reproducible sequence for reporting (otherwise tests will fail)
         Set<MoneyOwner> recipientSet = sharesPerRecipient.keySet();
         for (MoneyOwner recipient : SequenceUtil.sortCashHolders(recipientSet)) {
             if (recipient instanceof Bank) continue;
@@ -2834,7 +2837,6 @@ public class OperatingRound extends Round implements Observer {
 
         // Move the token
         operatingCompany.value().payout(amount);
-
     }
 
     protected Map<MoneyOwner, Integer> countSharesPerRecipient() {
@@ -3038,9 +3040,21 @@ public class OperatingRound extends Round implements Observer {
 
     /**
      * Default version, to be overridden if need be
+     * NOT USED - so far. See executeDeductions()
      */
     protected int checkForDeductions(SetDividend action) {
         return action.getActualRevenue();
+    }
+
+    protected int calculateLoanInterest(PublicCompany company) {
+
+        if (company.canLoan()) {
+            return company.getCurrentNumberOfLoans()
+                    * company.getValuePerLoan()
+                    * company.getLoanInterestPct() / 100;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -3218,6 +3232,7 @@ public class OperatingRound extends Round implements Observer {
         //boolean companyMustSellShares = false;
         int trainPrice = action.getPricePaid();
         int companyCash = company.getCash();
+        int loansTaken = 0;
 
         int presidentCash;
         int actualPresidentCash = 0;
@@ -3343,15 +3358,17 @@ public class OperatingRound extends Round implements Observer {
                     int numberOfLoans = company.getCurrentNumberOfLoans();
                     int loanValue = company.getValuePerLoan();
                     while (numberOfLoans < company.getMaxNumberOfLoans()
-                            && company.getValuePerLoan() <= companyCash
                             && cashToRaise > 0) {
                         loansToTake++;
                         numberOfLoans++;
                         cashToRaise -= loanValue;
-                        companyCash -= loanValue;
+                        companyCash += loanValue;
                     }
-                    if (loansToTake > 0) {
-                        executeTakeLoans(loansToTake);
+                    loansTaken = action.getLoansToTake();
+                    if (loansToTake != loansTaken) {
+                        errMsg = LocalText.getText ("WrongNumberOfLoansTaken",
+                                loansTaken, loansToTake);
+                        break;
                     }
                 }
 
@@ -3445,6 +3462,8 @@ public class OperatingRound extends Round implements Observer {
 
             return true;
         }
+
+        if (loansTaken > 0) executeTakeLoans(loansTaken);
 
         if (actualPresidentCash > 0) {
             // MoneyModel.cashMove(currentPlayer, operatingCompany.value(),

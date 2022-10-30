@@ -9,12 +9,12 @@ import net.sf.rails.game.state.IntegerState;
  */
 public final class BondsModel extends RailsModel {
 
-
     private IntegerState bondsCount;
 
     private BondsModel(RailsOwner parent) {
         super(parent, "bondsModel_" + parent.getId());
         bondsCount = IntegerState.create(parent, "_bonds");
+        bondsCount.addModel(this);
     }
 
     public static BondsModel create(RailsOwner parent) {

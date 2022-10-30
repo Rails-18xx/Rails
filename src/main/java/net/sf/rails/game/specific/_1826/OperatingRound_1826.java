@@ -11,9 +11,10 @@ import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.financial.StockMarket;
 import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
+import net.sf.rails.game.model.PortfolioOwner;
 import net.sf.rails.game.special.SpecialRight;
-import net.sf.rails.game.state.Owner;
-import net.sf.rails.game.state.Portfolio;
+import net.sf.rails.game.state.*;
+import net.sf.rails.game.state.Currency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.*;
@@ -24,11 +25,11 @@ public class OperatingRound_1826 extends OperatingRound {
 
     private static final Logger log = LoggerFactory.getLogger(OperatingRound_1826.class);
 
-    /** To prevent a double check, create BuyBond and RepayLoans actions
+    /** To prevent a double check, create BuyBonds and RepayLoans actions
      *  already when the possibility check is done in the nextStep() process,
      *  and temporarily store these in a local list.
      */
-    private List<BuyBond> buyableBonds = new ArrayList<>();
+    private List<BuyBonds> buyableBonds = new ArrayList<>();
     private List<RepayLoans> repayableLoans = new ArrayList<>();
 
     public OperatingRound_1826(GameManager parent, String id) {
@@ -42,8 +43,7 @@ public class OperatingRound_1826 extends OperatingRound {
                 GameDef.OrStep.PAYOUT,
                 GameDef.OrStep.BUY_TRAIN,
                 GameDef.OrStep.REPAY_LOANS,
-                GameDef.OrStep.BUY_BONDS,
-                GameDef.OrStep.TRADE_SHARES,
+                GameDef.OrStep.TRADE_SHARES, // including Bonds
                 GameDef.OrStep.FINAL
         };
     }
@@ -109,12 +109,13 @@ public class OperatingRound_1826 extends OperatingRound {
             }
         }
 
-        if (getStep() == GameDef.OrStep.REPAY_LOANS) {
+      if (getStep() == GameDef.OrStep.REPAY_LOANS) {
 
             // The possibility has already been checked in gameSpecificNextStep()
             if (!repayableLoans.isEmpty()) {
                 possibleActions.addAll (repayableLoans);
                 repayableLoans.clear();
+                doneAllowed=true;
             }
 
         } else if (getStep() == GameDef.OrStep.BUY_BONDS) {
@@ -123,7 +124,7 @@ public class OperatingRound_1826 extends OperatingRound {
             if (!buyableBonds.isEmpty()) {
                 possibleActions.addAll(buyableBonds);
                 buyableBonds.clear();
-            }
+                doneAllowed=true;            }
         }
 
     }
@@ -149,37 +150,35 @@ public class OperatingRound_1826 extends OperatingRound {
                 if (maxNumber > 0) {
                     repayableLoans.add(new RepayLoans(company,
                             minNumber, maxNumber, company.getValuePerLoan()));
-                    doneAllowed = true;  // ??? Needed here?
                     return true;
                 }
             }
 
             return false;
 
-        } else if (newStep == GameDef.OrStep.BUY_BONDS) {
+       } else if (newStep == GameDef.OrStep.BUY_BONDS) {
 
             buyableBonds.clear();
 
             // Check if any bonds can be bought
 
             // Check if any bonds are NOT in its Treasury
-            if (company.hasBonds() && company.getPortfolioModel().getBondsModel(company).getBondsCount()
-                    < company.getNumberOfBonds()) {
+            if (company.hasBonds()
+                    && company.getPortfolioModel().getBondsCount(company) < company.getNumberOfBonds()) {
                 // Scan all potential owners: the Pool first, then all players.
                 if (pool.getBondsModel(company).getBondsCount() > 0) {
-                    buyableBonds.add (new BuyBond (pool.getParent(),
-                            company, company, company.getPriceOfBonds()));
+                    buyableBonds.add (new BuyBonds(pool.getParent(),
+                            company, company, 1, company.getPriceOfBonds()));
                     return true;
                 }
                 for (Player player : playerManager.getPlayers()) {
-                    if (player.getPortfolioModel().getBondsModel(company).getBondsCount() > 0) {
-                        buyableBonds.add(new BuyBond(player,
-                                company, company, company.getPriceOfBonds()));
-                        return true;
+                    if (player.getPortfolioModel().getBondsCount(company) > 0) {
+                        buyableBonds.add(new BuyBonds(player,
+                                company, company, 1, company.getPriceOfBonds()));
                     }
                 }
             }
-            return false; // Skip this step
+            return !buyableBonds.isEmpty();
         }
         return true;  // We are at a step that is not relevant here
     }
@@ -202,7 +201,7 @@ public class OperatingRound_1826 extends OperatingRound {
         if (phaseId.equals("6H")) {
             // Form Etat
             national = etat;
-        } else if (phaseId.equals("10H") || phaseId.equals("E")) {
+        } else if (phaseId.equals("10H") || phaseId.equals("E") && !sncf.hasStarted()) {
             // Form SNCF (if not started before)
             national = sncf;
             growRemaining5shares();
@@ -293,7 +292,7 @@ public class OperatingRound_1826 extends OperatingRound {
         log.debug ("National price is {} at {}", nationalStockSpace.getPrice(),
                 nationalStockSpace.getId());
         String msg = LocalText.getText("START_MERGED_COMPANY", national.getId(),
-                Bank.format(this, nationalStockSpace.getPrice()),
+                bank.format(nationalStockSpace.getPrice()),
                 nationalStockSpace.getId());
         DisplayBuffer.add (this, msg);
         ReportBuffer.add (this, msg);
@@ -349,6 +348,8 @@ public class OperatingRound_1826 extends OperatingRound {
         Map<Stop, PublicCompany> homeTokens = new HashMap<>();
         // A TreeMap failed to .get() some companies - weird!
 
+        int loansTransferred = 0;
+        int maxLoansTransferred = national.getMaxNumberOfLoans() - national.getCurrentNumberOfLoans();
         for (PublicCompany company : trainlessCompanies) {
 
             ReportBuffer.add (this, LocalText.getText("AutoMergeMinorLog",
@@ -356,6 +357,15 @@ public class OperatingRound_1826 extends OperatingRound {
 
             // Move all company assets to the national company
             national.transferAssetsFrom(company);
+
+            // Take over max. 2 loans
+            int loans = company.getCurrentNumberOfLoans();
+            int loansToTransfer = Math.min(loans, maxLoansTransferred - loansTransferred);
+            if (loansToTransfer > 0) {
+                loansTransferred += loansToTransfer;
+                ReportBuffer.add(this, LocalText.getText("LoansTransfer",
+                        national, loansToTransfer, company));
+            }
 
             // Note any tokens that can be converted to national tokens
             for (BaseToken token : company.getLaidBaseTokens()) {
@@ -378,6 +388,12 @@ public class OperatingRound_1826 extends OperatingRound {
             // Close the merging company, this also removes the tokens
             //company.setClosed();
             closeCompany (company);
+        }
+
+        // Take the loans to be transferred
+        if (loansTransferred > 0) {
+            national.addLoans(loansTransferred);
+            getRoot().getStockMarket().moveLeftOrDown(national, loansTransferred);
         }
 
         // Immediately replace all home tokens.
@@ -551,6 +567,197 @@ public class OperatingRound_1826 extends OperatingRound {
         }
     }
 
+    /**
+     * Execute the interest payments of loans and bonds.
+     * This has to be done before actual dividend payouts.
+     * If needed, any missing cash will be raised first.
+     *
+     * @param action The SetDividend action returned by the player
+     * @return The remaining earnings after any deductions
+     */
+    @Override
+    protected int executeDeductions(SetDividend action) {
+
+        PublicCompany company = action.getCompany();
+        int dividend = action.getActualRevenue();
+        int availableCash = company.getCash();
+        int loanInterest = 0;
+        int bondInterest = 0;
+        int remainsDueForLoans = 0;
+        int remainsDueForBonds = 0;
+        int payment;
+
+        // First we'll check if interests can be paid.
+        // If not, cash will be raised.
+        // Actual interest payments will be done at the end.
+
+        // Check for loan interest payment
+        if (company.canLoan()) {
+            // First try to pay the full amount from company treasury
+            // (per the 1826 rules, a partial amount may not be deducted
+            // if the treasury cash is insufficient)
+            loanInterest = calculateLoanInterest(company);
+            remainsDueForLoans = loanInterest;
+
+            if (loanInterest > 0) {
+                if (loanInterest <= availableCash) {
+                    // Pay whole amount from treasury
+                    payment = loanInterest;
+                    ReportBuffer.add(this, LocalText.getText("InterestPaidFromTreasury",
+                            company,
+                            bank.format(payment),
+                            LocalText.getText("loan")));
+                    availableCash -= payment;
+                    remainsDueForLoans = 0;
+                } else if (dividend > 0) {
+                    // Pay from earnings (partially if insufficient)
+                    payment = Math.min(dividend, loanInterest);
+                    Currency.fromBank(payment, company);
+                    // Earmarked for loans, so unavailable for other purposes
+                    ReportBuffer.add(this, LocalText.getText("InterestPaidFromRevenue",
+                            company,
+                            bank.format(payment),
+                            bank.format(loanInterest),
+                            LocalText.getText("loan")));
+                    remainsDueForLoans -= payment;
+                    dividend -= payment;
+                }
+            }
+        }
+
+        if (company.hasBonds()) {
+            // First try to pay the full amount from company treasury
+            // (per the 1826 rules, a partial amount may not be deducted
+            // if the treasury cash is insufficient)
+            bondInterest = calculateBondInterest(company);
+            remainsDueForBonds = bondInterest;
+            if (bondInterest > 0) {
+                if (bondInterest <= availableCash) {
+                    payment = bondInterest;
+                    ReportBuffer.add(this, LocalText.getText("InterestPaidFromTreasury",
+                            company,
+                            bank.format(payment),
+                            LocalText.getText("bond")));
+                    availableCash -= payment;
+                    remainsDueForBonds = 0;
+                } else if (dividend > 0) {
+                    payment = Math.min(dividend, bondInterest);
+                    Currency.fromBank(payment, company);
+                    // Earmarked for Bonds
+                    ReportBuffer.add(this, LocalText.getText("InterestPaidFromRevenue",
+                            company,
+                            bank.format(payment),
+                            bank.format(bondInterest),
+                            LocalText.getText("bond")));
+                    remainsDueForBonds -= payment;
+                    dividend -= payment;
+
+                }
+            }
+        }
+
+        if (dividend < action.getActualRevenue()) {
+            String msg = LocalText.getText("RevenueReduced",
+                    company, bank.format(dividend));
+            ReportBuffer.add (this, msg);
+            DisplayBuffer.add (this, msg);
+        }
+
+        // TODO Testing has not progressed yet beyond this point
+
+        int remainder = remainsDueForLoans + remainsDueForBonds;
+        if (remainder > 0) {
+            // Take a loan if possible. One loan should always be sufficient.
+            if (company.canLoan()
+                    && company.getCurrentNumberOfLoans() < company.getMaxNumberOfLoans()) {
+                executeTakeLoans(1);
+                int loanValue = company.getValuePerLoan();
+                ReportBuffer.add(this, LocalText.getText("CompanyTakesLoan",
+                        company, bank.format(loanValue),
+                        bank.format(loanValue)));
+                remainder -= loanValue;
+            }
+        }
+
+        // Pay any remainder from president cash
+        if (remainder > 0) {
+            Player president = company.getPresident();
+            int presCash = president.getCash();
+            // First check if president has enough cash
+            if (remainder > presCash) {
+                // For now, we assume that this will not happen.
+                // Nevertheless, give a warning
+                // TODO Insert running a ShareSellingRound here
+                log.warn("??? The president still cannot pay ${} loan interest???", remainder);
+                return 0;
+            } else {
+                payment = remainder;
+                ReportBuffer.add(this, LocalText.getText("InterestPaidFromPresidentCash",
+                        operatingCompany.value().getId(),
+                        bank.format(payment),
+                        bank.format(loanInterest),
+                        LocalText.getText("loan/bond"),
+                        president.getId()));
+                Currency.wire (president, payment, company);
+            }
+        }
+
+        // Payout loan interest
+        if (loanInterest > 0) Currency.toBank (company, loanInterest);
+
+        // Payout bond interest
+        for (PortfolioModel portfolio : dueInterests.keySet()) {
+            payment = dueInterests.get(portfolio);
+            Currency.wire (company, payment, portfolio.getMoneyOwner());
+            ReportBuffer.add(this, LocalText.getText("PayoutForBonds",
+                    portfolio.getMoneyOwner().getId(),
+                    bank.format(payment),
+                    portfolio.getBondsCount(company),
+                    company));
+        }
+        return dividend;
+    }
+
+    /* A map noting to whom bond interest amounts must be paid */
+    private Map<PortfolioModel, Integer> dueInterests = new HashMap<>();
+
+    /** Calculate the bonds interest due to a bond holder
+     *
+     * @param company The company that has issued bonds
+     * @return The interest to pay
+     * As a side effect, the map 'dueInterests' will be composed
+     */
+    private int calculateBondInterest (PublicCompany company) {
+
+        if (!company.hasBonds()) return 0;
+
+        int bonds, payout;
+        int total = 0;
+        dueInterests.clear();
+        for (Player player : playerManager.getPlayers()) {
+            bonds = player.getPortfolioModel().getBondsCount(company);
+            if (bonds > 0) {
+                payout = calculateBondInterestPayout(company, player.getPortfolioModel());
+                dueInterests.put (player.getPortfolioModel(), payout);
+                total += payout;
+            }
+        }
+        bonds = pool.getBondsCount(company);
+        if (bonds > 0) {
+            payout = calculateBondInterestPayout(company, pool);
+            dueInterests.put (pool, payout);
+            total += payout;
+        }
+        return total;
+    }
+
+    private int calculateBondInterestPayout(PublicCompany company, PortfolioModel portfolio) {
+
+        return portfolio.getBondsCount(company)
+                * company.getPriceOfBonds()
+                * company.getBondsInterest() / 100;
+    }
+
     private boolean processExchangeTokens (ExchangeTokens2 action, boolean isHome) {
 
         for (ExchangeTokens2.Location location : action.getLocations()) {
@@ -587,6 +794,12 @@ public class OperatingRound_1826 extends OperatingRound {
     }
 
     @Override
+    protected void executeTakeLoans(int number) {
+        super.executeTakeLoans(number);
+        getRoot().getStockMarket().moveLeftOrDown(operatingCompany.value(), number);
+    }
+
+    @Override
     protected boolean repayLoans(RepayLoans action) {
 
         String errMsg = validateRepayLoans(action);
@@ -594,18 +807,52 @@ public class OperatingRound_1826 extends OperatingRound {
         if (errMsg != null) {
             DisplayBuffer.add(this, LocalText.getText("CannotRepayLoans",
                     action.getCompanyName(), action.getNumberRepaid(),
-                    Bank.format(this, action.getPrice()), errMsg));
+                    bank.format(action.getPrice()), errMsg));
             return false;
         }
 
         int repayNumber = action.getNumberRepaid();
         if (repayNumber > 0) {
             executeRepayLoans(action);
-            getRoot().getStockMarket().moveRight(getOperatingCompany(), 1);
+            getRoot().getStockMarket().moveRightOrUp(getOperatingCompany(), repayNumber);
         }
-
+        nextStep();
         return true;
     }
 
+    @Override
+    public boolean buyTrain(BuyTrain action) {
+
+        boolean result = super.buyTrain(action);
+
+        GameManager_1826 gm = (GameManager_1826)getRoot().getGameManager();
+        TrainType type = action.getType();
+        int[] eTrainStops = new int[] {2,3,3,4};
+        String[] scoreFactors = new String[] {"single", "double"};
+
+        // Change E-train properties as these and the first TGV are bought
+        if (type.getName().equals("E")) {
+            gm.addETrainsBought();
+            type.setMajorStops(eTrainStops[(gm.getETrainsBought()) - 1]);
+            ReportBuffer.add(this, LocalText.getText("TrainScoreAndReach",
+                    type.getName(),
+                    LocalText.getText(scoreFactors[type.getCityScoreFactor() - 1]),
+                    type.getMajorStops()));
+
+        } else if (type.getName().equals("TGV")) {
+            if (!gm.getTgvTrainBought()) {
+                TrainType eType = getRoot().getTrainManager().getTrainTypeByName("E");
+                eType.setMajorStops(5);
+                eType.setCityScoreFactor(1);
+                gm.setTgvTrainBought(true);
+                ReportBuffer.add(this, LocalText.getText("TrainScoreAndReach",
+                        eType.getName(),
+                        LocalText.getText(scoreFactors[type.getCityScoreFactor() - 1]),
+                        eType.getMajorStops()));
+            }
+        }
+
+        return result;
+    }
 
 }

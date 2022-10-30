@@ -387,6 +387,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             new StartCompany18EUDialog((StartCompany_18EU) editedAction);
         } else if (editedAction instanceof BuyCertificate) {
             new BuyCertificateDialog ((BuyCertificate) editedAction);
+        } else if (editedAction instanceof BuyBonds) {
+            new BuyBondDialog ((BuyBonds) editedAction);
         } else if (editedAction instanceof SellShares) {
             new SellSharesDialog ((SellShares) editedAction);
         } else if (editedAction instanceof SetDividend) {
@@ -615,6 +617,56 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         }
     }
 
+    private class BuyBondDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private BuyBonds action;
+
+        BuyBondDialog(BuyBonds action) {
+            super("Edit BuyCertificate");
+            this.action = action;
+            addTextField (this, "Bond value",
+                    action.getPrice(),
+                    String.valueOf(action.getPrice()));
+            addTextField (this, "Maximum",
+                    action.getMaxNumber(),
+                    String.valueOf(action.getMaxNumber()));
+            addTextField (this, "Bought",
+                    action.getNumberBought(),
+                    String.valueOf(action.getNumberBought()));
+
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+            log.info("Action was {}", action);
+            String input = "";
+            try {
+                input = ((JTextField)inputElements.get(0)).getText();
+                int bondValue = Integer.valueOf(input);
+                action.setPrice(bondValue);
+            } catch (NumberFormatException e) {
+                log.error ("Error in price: {}", input, e);
+            }
+            try {
+                input = ((JTextField)inputElements.get(1)).getText();
+                int maxNumber = Integer.valueOf(input);
+                action.setMaxNumber(maxNumber);
+            } catch (NumberFormatException e) {
+                log.error ("Error in max: {}", input, e);
+            }
+            input = ((JTextField)inputElements.get(2)).getText();
+            try{
+                int bought = Integer.valueOf(input);
+                action.setNumberBought(bought);
+            } catch (NumberFormatException e) {
+                log.error ("Error in bought: {}", input, e);
+            }
+            log.info("Action is {}", action);
+            return action;
+        }
+    }
+
     private class BuyCertificateDialog extends EditDialog {
         private static final long serialVersionUID = 1L;
         private BuyCertificate action;
@@ -634,8 +686,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             addTextField (this, "From (e.g. Bank_Pool)",
                     action.getFromPortfolio(),
                     action.getFromPortfolio() != null
-                        ? action.getFromPortfolio().getUniqueName()
-                        : "null");
+                            ? action.getFromPortfolio().getUniqueName()
+                            : "null");
             // NOTE: enter pool as "Bank_Pool"
             finish();
         }

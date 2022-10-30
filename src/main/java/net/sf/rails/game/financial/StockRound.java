@@ -244,7 +244,7 @@ public class StockRound extends Round {
     // StockRound: setPossibleActions
 
     // overridden by:
-    // StockRound 1835, 1837, 18EU
+    // StockRound 1826, 1835, 1837, 18EU
     protected void setGameSpecificActions() {
 
     }
@@ -903,7 +903,7 @@ public class StockRound extends Round {
     // StockRound: process
 
     // overridden by:
-    // StockRound 1837, 18EU
+    // StockRound 1826, 1837, 18EU
     // PrussianFormationRound, NationalFormationRound
     protected boolean processGameSpecificAction(PossibleAction action) {
 
@@ -1206,8 +1206,6 @@ public class StockRound extends Round {
         }
 
         // All seems OK, now buy the shares.
-
-
         MoneyOwner priceRecipient = getSharePriceRecipient(company, from.getParent(), cost);
 
         if (number == 1) {
