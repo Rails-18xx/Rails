@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -176,7 +176,7 @@ public class StateManagerTest {
         verify(o_B2).update(ID.get(4));
         verify(o_C1).update(ID.get(5));
         verify(o_C2).update(ID.get(6));
-        verifyZeroInteractions(o_A2, o_A3, o_C3);
+        verifyNoInteractions(o_A2, o_A3, o_C3);
     }
 
     @Test

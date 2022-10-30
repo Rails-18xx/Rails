@@ -6,16 +6,16 @@ import org.gradle.internal.os.OperatingSystem;
 plugins {
     id 'java'
     // https://github.com/johnrengelman/shadow
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     // plugin to check for dependency updates via task dependencyUpdates
     // https://github.com/ben-manes/gradle-versions-plugin
-    id 'com.github.ben-manes.versions' version '0.38.0'
+    id 'com.github.ben-manes.versions' version '0.42.0'
     // https://github.com/n0mer/gradle-git-properties
-    id 'com.gorylenko.gradle-git-properties' version '2.3.1'
+    id 'com.gorylenko.gradle-git-properties' version '2.3.2'
     // https://openjfx.io/openjfx-docs/#gradle
-    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
     // https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/
-    id 'org.sonarqube' version '3.2.0'
+    id 'org.sonarqube' version '3.4.0.2513'
     // used by SonarQube for code coverage
     id 'jacoco'
 }
@@ -53,32 +53,32 @@ def jpackage() {
 }
 
 dependencies {
-    implementation 'commons-io:commons-io:2.8.0'
+    implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.github.vlsi.mxgraph:jgraphx:4.2.2'
     implementation 'org.jgrapht:jgrapht-core:1.5.1'
     implementation 'org.jgrapht:jgrapht-ext:1.5.1'
-    implementation 'org.slf4j:slf4j-api:1.7.30'
-    implementation 'org.apache.xmlgraphics:batik-bridge:1.14'
-    implementation 'org.apache.xmlgraphics:batik-transcoder:1.14'
-    implementation 'org.apache.xmlgraphics:batik-svggen:1.14'
-    implementation 'org.apache.xmlgraphics:batik-ext:1.14'
-    implementation 'org.apache.xmlgraphics:batik-swing:1.14'
+    implementation 'org.slf4j:slf4j-api:2.0.3'
+    implementation 'org.apache.xmlgraphics:batik-bridge:1.15'
+    implementation 'org.apache.xmlgraphics:batik-transcoder:1.15'
+    implementation 'org.apache.xmlgraphics:batik-svggen:1.15'
+    implementation 'org.apache.xmlgraphics:batik-ext:1.15'
+    implementation 'org.apache.xmlgraphics:batik-swing:1.15'
     implementation 'javazoom:jlayer:1.0.1'
-    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    implementation 'ch.qos.logback:logback-classic:1.4.4'
     implementation 'com.google.guava:guava:23.0'
     implementation 'net.java.dev.designgridlayout:designgridlayout:1.11'
     implementation 'org.dockingframes:docking-frames-common:1.1.1'
     implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.3'
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'org.apache.commons:commons-text:1.9'
+    implementation 'org.apache.commons:commons-text:1.10.0'
     // https://www.jetbrains.com/help/idea/annotating-source-code.html
-    implementation 'org.jetbrains:annotations:20.1.0'
+    implementation 'org.jetbrains:annotations:23.0.0'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
     testImplementation 'org.easytesting:fest-util:1.2.5'
-    testImplementation 'org.mockito:mockito-core:3.9.0'
+    testImplementation 'org.mockito:mockito-core:4.8.0'
 }
 
 javafx {
@@ -226,11 +226,11 @@ task buildExePackage(type: Exec) {
     }
 }
 
-task buildDmgPackage(type: Exec) {
+task buildpkgPackage(type: Exec) {
     doFirst {
         commandLine jpackage(),
                 '--verbose',
-                '--type', 'dmg',
+                '--type', 'pkg',
                 '--name', appName,
                 '--description', rootProject.description,
                 '--vendor', vendor,
@@ -251,7 +251,7 @@ task renameExecutables(type: Copy) {
         include '*.deb'
         include '*.rpm'
         include '*.exe'
-        include '*.dmg'
+        include '*.pkg'
     }
     into '.'
     rename '(.+)\\.(.+)', 'rails-18xx.$2'
