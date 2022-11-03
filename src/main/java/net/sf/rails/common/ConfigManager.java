@@ -64,10 +64,10 @@ public class ConfigManager implements Configurable {
 
     public static void initConfiguration(boolean test) {
         try {
-            // Find the config tag inside the the config xml file
+            // Find the config tag inside the config xml file
             // the last arguments refers to the fact that no GameOptions are required
             Tag configTag = Tag.findTopTagInFile(CONFIG_XML_FILE, CONFIG_XML_DIR, CONFIG_TAG, null);
-            //log.debug("Opened config xml, filename = " + CONFIG_XML_FILE);
+            log.info("Opened config xml, filename = " + CONFIG_XML_FILE);
             instance.configureFromXML(configTag);
         } catch (ConfigurationException e) {
             log.error("Configuration error in setup of " + CONFIG_XML_FILE, e);

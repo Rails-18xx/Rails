@@ -208,6 +208,7 @@ public class PublicCompany extends RailsAbstractItem
 
     /**
      * Most recent Direct Company Treasury income earned.
+     * Used in 1837 for mine revenue.
      */
     protected final CountingMoneyModel lastDirectIncome = CountingMoneyModel.create(this, "lastDirectIncome", false);
 
@@ -488,6 +489,12 @@ public class PublicCompany extends RailsAbstractItem
     protected boolean initialTrainTradeable = true;
 
     /* Loans */
+    /** Each Loan is a fixed amount of money, and is represented
+     * by a loan marker. This type of loan is used in 1826 and 1856.
+     *
+     * This is different from a 'bank loan', as used in 1835 and 1837.
+     * Bank loans are defined and described near the end of this class code.
+     */
     protected int maxNumberOfLoans = 0;
     protected int valuePerLoan = 0;
     protected IntegerState currentNumberOfLoans = null; // init during finishConfig
@@ -2372,6 +2379,10 @@ public class PublicCompany extends RailsAbstractItem
         return currentLoanValue;
     }
 
+    public int getLoanValue() {
+        return currentLoanValue.value();
+    }
+
     public Observable getRightsModel() {
         return rightsModel;
     }
@@ -2474,7 +2485,6 @@ public class PublicCompany extends RailsAbstractItem
     @Override
     public void setClosed() {
         closed.set(true);
-        reinitialise(); // to reset all values
 
         PortfolioOwner shareDestination;
         // If applicable, prepare for a restart
@@ -2515,6 +2525,10 @@ public class PublicCompany extends RailsAbstractItem
 
         // close company on the stock market
         getRoot().getStockMarket().close(this);
+
+        // Reset all state booleans, just in case we can restart this company.
+        // Moved here, otherwise StockMarket cannot remove token
+        reinitialise();
 
     }
 
@@ -2623,6 +2637,13 @@ public class PublicCompany extends RailsAbstractItem
 
     /* Bank loan instance and methods, used in 1835 and 1837 */
 
+    /** A Bank Loan is an arbitrary amount of money that a bankrupt
+     * company must borrow from the Bank to finance a train.
+     * It will gradually be paid back by withholding earnings.
+     *
+     * There is no relationship with the fixed Loan amounts
+     * represented by loan markers, as are used in 1826 and 1856.
+     */
     private IntegerState bankLoan = IntegerState.create (
             this, "bankLoan_" + getId(), 0);
 

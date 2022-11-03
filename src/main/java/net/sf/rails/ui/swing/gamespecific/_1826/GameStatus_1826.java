@@ -27,19 +27,18 @@ public class GameStatus_1826 extends GameStatus {
     protected void initGameSpecificActions() {
 
         PublicCompany company;
-        int compIndex, playerIndex;
+        int cIdx, pIdx;
 
-        // Initialize all bonds buttons to not highlighted
-        for (PublicCompany c : companyBondsRow.keySet()) {
-            int i = c.getPublicNumber();
-            setPoolBondsButton(i, false);
-            for (int j=0; j < players.getNumberOfPlayers(); j++) {
-                setPlayerCertButton (i, j, false);
+        // Deactivate all bond buttons
+        for (cIdx = 0; cIdx < nc; cIdx++) {
+            if (companies[cIdx].hasBonds()) {
+                setPoolBondsButton(cIdx, false);
+                for (pIdx = 0; pIdx < np; pIdx++) setPlayerBondsButton(cIdx, pIdx, false);
+                if (compCanHoldOwnShares) setTreasuryBondsButton(cIdx, false);
             }
-            if (compCanHoldOwnShares) setTreasuryBondsButton(i, false);
-
         }
 
+        // Activate and highlight buyable bond buttons
         List<BuyBonds> buyableBonds =
                 possibleActions.getType(BuyBonds.class);
         if (buyableBonds != null && !buyableBonds.isEmpty()) {
@@ -48,26 +47,27 @@ public class GameStatus_1826 extends GameStatus {
                 RailsOwner from = buyBond.getFrom();
                 //RailsOwner to = buyBond.getTo();
                 //PortfolioModel portfolio;
-                compIndex = company.getPublicNumber();
+                cIdx = company.getPublicNumber();
                 if (from instanceof BankPortfolio) {
                     if ((((BankPortfolio) from).getPortfolioModel()) == pool) {
-                        setPoolBondsButton(compIndex, true, buyBond);
+                        setPoolBondsButton(cIdx, true, buyBond);
                     }
                 } else if (from instanceof Player) {
-                    playerIndex = ((Player)from).getIndex();
-                    setPlayerBondsButton(compIndex, playerIndex, true, buyBond);
+                    pIdx = ((Player)from).getIndex();
+                    setPlayerBondsButton(cIdx, pIdx, true, buyBond);
                 }
             }
         }
 
+        // Activate and highlight all sellable bond buttons
         List<SellBonds> sellableBonds =
                 possibleActions.getType(SellBonds.class);
         if (sellableBonds != null && !sellableBonds.isEmpty()) {
             for (SellBonds sellBonds : sellableBonds) {
                 company = sellBonds.getCompany();
-                compIndex = company.getPublicNumber();
-                playerIndex = sellBonds.getPlayer().getIndex();
-                setPlayerBondsButton(compIndex, playerIndex, true, sellBonds);
+                cIdx = company.getPublicNumber();
+                pIdx = sellBonds.getPlayer().getIndex();
+                setPlayerBondsButton(cIdx, pIdx, true, sellBonds);
             }
         }
     }
@@ -189,7 +189,7 @@ public class GameStatus_1826 extends GameStatus {
     protected void setPlayerBondsButton(int i, int j, boolean clickable, Object o) {
 
         if (j < 0) return;
-        setPlayerCertButton(i, j, clickable);
+        setPlayerBondsButton(i, j, clickable);
         if (clickable) syncToolTipText (bondsPerPlayer[i][j], bondsPerPlayerButton[i][j]);
         if (clickable && o != null) {
             if (o instanceof PossibleAction) {
@@ -203,18 +203,21 @@ public class GameStatus_1826 extends GameStatus {
         }
     }
 
-    protected void setPlayerBondsButton(int i, int j, boolean clickable) {
-        if (j < 0) return;
-        boolean visible = bondsRowVisibilityObservers[i].lastValue();
+    protected void setPlayerBondsButton(int compIndex, int playerIndex, boolean clickable) {
+        if (playerIndex < 0) return;
+        boolean visible = bondsRowVisibilityObservers[compIndex].lastValue();
+        //int row = compIndex + 1;
+        // TODO This will fail if the company with bonds is not the last one
 
         if (clickable) {
-            bondsPerPlayerButton[i][j].setText(bondsPerPlayer[i][j].getText());
-            syncToolTipText (certPerPlayer[i][j], certPerPlayerButton[i][j]);
+            bondsPerPlayerButton[compIndex][playerIndex]
+                    .setText(bondsPerPlayer[compIndex][playerIndex].getText());
+            syncToolTipText (certPerPlayer[compIndex][playerIndex], certPerPlayerButton[compIndex][playerIndex]);
         } else {
-            bondsPerPlayerButton[i][j].clearPossibleActions();
+            bondsPerPlayerButton[compIndex][playerIndex].clearPossibleActions();
         }
-        bondsPerPlayer[i][j].setVisible(visible && !clickable);
-        bondsPerPlayerButton[i][j].setVisible(visible && clickable);
+        bondsPerPlayer[compIndex][playerIndex].setVisible(visible && !clickable);
+        bondsPerPlayerButton[compIndex][playerIndex].setVisible(visible && clickable);
     }
 
     protected void setTreasuryBondsButton(int i, boolean clickable) {

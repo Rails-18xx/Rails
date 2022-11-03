@@ -6,7 +6,6 @@ import java.util.*;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import net.sf.rails.algorithms.DLLGraph;
 import net.sf.rails.algorithms.NetworkAdapter;
 import net.sf.rails.algorithms.NetworkGraph;
 import net.sf.rails.algorithms.NetworkVertex;
@@ -245,7 +244,8 @@ public class ORUIManager implements DialogOwner {
 
             // Accept an immediate tile lay on reserved hexes if the reserving company
             // president is the current player.
-            EnumSet allowances = EnumSet.noneOf(TileHexUpgrade.Invalids.class);
+            EnumSet<TileHexUpgrade.Invalids> allowances
+                    = EnumSet.noneOf(TileHexUpgrade.Invalids.class);
             if (hex.isReservedForCompany())  {
                 // For now we accept this action, but will later check for permission
                 allowances.add(TileHexUpgrade.Invalids.HEX_RESERVED);
@@ -632,31 +632,28 @@ public class ORUIManager implements DialogOwner {
 
         // if selectedHex is clicked again ==> change Upgrade, or Upgrade-Selection
         if (selectedHex == clickedHex) {
-            switch (localStep) {
-                case SELECT_UPGRADE:
-                    if (rightClick) { // right-click => next upgrade
-                        upgradePanel.nextUpgrade();
-                    } else {
-                        upgradePanel.nextSelection();
-                    }
-                    return true;
-                default: // should not occur (as a hex is selected), however let us define that in case
-                    return false;
+            // should not occur (as a hex is selected), however let us define that in case
+            if (localStep == LocalSteps.SELECT_UPGRADE) {
+                if (rightClick) { // right-click => next upgrade
+                    upgradePanel.nextUpgrade();
+                } else {
+                    upgradePanel.nextSelection();
+                }
+                return true;
             }
+            return false;
         }
 
         // if clickedHex is not on map => deactivate upgrade selection and use
         if (clickedHex == null) {
-            switch (localStep) {
-                case SELECT_UPGRADE:
-                    if (selectedHex != null) {
-                        map.selectHex(null);
-                    }
-                    setLocalStep(LocalSteps.SELECT_HEX);
-                    return true;
-                default:
-                    return false;
+            if (localStep == LocalSteps.SELECT_UPGRADE) {
+                if (selectedHex != null) {
+                    map.selectHex(null);
+                }
+                setLocalStep(LocalSteps.SELECT_HEX);
+                return true;
             }
+            return false;
         }
 
         // otherwise a clickedHex is defined ==> select the hex if upgrades are provided
@@ -1059,8 +1056,17 @@ public class ORUIManager implements DialogOwner {
                 b.append(" (").append(LocalText.getText("DiscardingTrain", exchTrainTypes)).append(")");
             }
             if (cost > 0) {
-                b.append(" ").append(
-                        LocalText.getText("AT_PRICE", gameUIManager.format(cost)));
+                BuyTrain.Mode mode = bTrain.getFixedCostMode();
+                if (mode == null || mode == BuyTrain.Mode.FIXED) {
+                    b.append(" ").append(
+                            LocalText.getText("AT_PRICE", gameUIManager.format(cost)));
+                } else if (mode == BuyTrain.Mode.MAX) {
+                    b.append(" ").append(
+                            LocalText.getText("AT_MAX_PRICE", gameUIManager.format(cost)));
+                } else if (mode == BuyTrain.Mode.MIN) {
+                    b.append(" ").append(
+                            LocalText.getText("AT_MIN_PRICE", gameUIManager.format(cost)));
+                }
             }
             if (bTrain.hasSpecialProperty()) {
                 String priv =
@@ -1115,14 +1121,37 @@ public class ORUIManager implements DialogOwner {
 
         buyAction = (BuyTrain) selectedAction;
         train = buyAction.getTrain();
+        PublicCompany company = buyAction.getCompany();
         Owner seller = buyAction.getFromOwner();
-        int price = buyAction.getFixedCost();
+        int fixedCost = buyAction.getFixedCost();
+        BuyTrain.Mode mode = buyAction.getFixedCostMode();
+        log.debug("From {} cost {} mode {}", seller, fixedCost, mode);
 
-        if (price == 0 && seller instanceof PublicCompany) {
+        // The somewhat complex relationship between fixedCost and mode
+        // is explained in the Javadoc of the Mode enum in the BuyTrain class.
+        if (seller instanceof PublicCompany
+                && !company.mustTradeTrainsAtFixedPrice()
+                && !((PublicCompany) seller).mustTradeTrainsAtFixedPrice()
+                && (fixedCost == 0 || mode != null && mode != BuyTrain.Mode.FIXED)) {
+            String remark = "";
+            String priceText;
+            // If the price is 0, mode is ignored, the price is free (but >0)
+            if (fixedCost > 0 && mode != null) {
+                priceText = gameUIManager.format(fixedCost);
+                switch (mode) {
+                    case MIN:
+                        remark = LocalText.getText("OrMore", priceText);
+                        break;
+                    case MAX:
+                        remark = LocalText.getText("OrLess", priceText);
+                    default:
+                }
+            }
             prompt = LocalText.getText("WHICH_TRAIN_PRICE",
                     buyAction.getCompany().getId(),
                     train.toText(),
-                    seller.getId() );
+                    seller.getId(),
+                    remark);
             String response;
             for (;;) {
                 response =
@@ -1130,13 +1159,20 @@ public class ORUIManager implements DialogOwner {
                             LocalText.getText("WHICH_PRICE"),
                             JOptionPane.QUESTION_MESSAGE);
                 if (response == null) return; // Cancel
+                int enteredPrice;
                 try {
-                    price = Integer.parseInt(response);
+                    enteredPrice = Integer.parseInt(response);
                 } catch (NumberFormatException e) {
                     // Price stays 0, this is handled below
+                    enteredPrice = 0;
                 }
-                if (price > 0) break; // Got a good (or bad, but valid) price.
-
+                if (enteredPrice > 0
+                        && (mode == BuyTrain.Mode.MIN && enteredPrice >= fixedCost
+                            || mode ==  BuyTrain.Mode.MAX && enteredPrice <= fixedCost
+                            || mode == null)) {
+                    fixedCost = enteredPrice;
+                    break; // Got a valid price.
+                }
                 if (!prompt.startsWith("Please")) {
                     prompt =
                         LocalText.getText("ENTER_PRICE_OR_CANCEL") + "\n"
@@ -1163,7 +1199,7 @@ public class ORUIManager implements DialogOwner {
                 String exchangedTrainName =
                     (String) JOptionPane.showInputDialog(orWindow,
                             LocalText.getText("WHICH_TRAIN_EXCHANGE_FOR",
-                                        gameUIManager.format(price)),
+                                        gameUIManager.format(fixedCost)),
                                     LocalText.getText("WHICH_TRAIN_TO_EXCHANGE"),
                                     JOptionPane.QUESTION_MESSAGE, null, options,
                                     options[0]);
@@ -1182,7 +1218,7 @@ public class ORUIManager implements DialogOwner {
 
         if (train != null) {
 
-            buyAction.setPricePaid(price);
+            buyAction.setPricePaid(fixedCost);
             buyAction.setExchangedTrain(exchangedTrain);
             if (buyAction.mustPresidentAddCash()) {
                 buyAction.setAddedCash(buyAction.getPresidentCashToAdd());

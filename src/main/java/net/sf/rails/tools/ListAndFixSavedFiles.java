@@ -398,7 +398,9 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         } else if (editedAction instanceof LayBonusToken) {
             new LayBonusTokenDialog ((LayBonusToken)editedAction);
         } else if (editedAction instanceof DiscardTrain) {
-            new DiscardTrainDialog ((DiscardTrain)editedAction);
+            new DiscardTrainDialog((DiscardTrain) editedAction);
+        } else if (editedAction instanceof NullAction) {
+            new NullActionDialog((NullAction) editedAction);
         } else {
             JOptionPane.showMessageDialog(this,
                     "Action type '" + editedAction.getClass().getSimpleName()
@@ -1012,6 +1014,32 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         }
     }
 
+    private class NullActionDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private NullAction action;
+
+        NullActionDialog (NullAction action) {
+            super ("Edit NullAction");
+            this.action = action;
+            //addLabel (this, "Company", null, action.getCompany().getId()); // 0
+            addTextField (this, "Mode",
+                    action.getMode(),
+                    String.valueOf(action.getMode()));  // 0
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+
+            String modeName = ((JTextField)inputElements.get(0)).getText();
+            NullAction.Mode mode = NullAction.Mode.valueOf(modeName);
+
+            action.setMode(mode);
+
+            log.info("Action is  {}", action);
+            return action;
+        }
+    }
 
 
     protected void addLabel (EditDialog owner, String caption, Object initialObject, String initialValue) {

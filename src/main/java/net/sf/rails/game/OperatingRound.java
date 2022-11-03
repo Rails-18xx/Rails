@@ -3230,7 +3230,7 @@ public class OperatingRound extends Round implements Observer {
         String errMsg = null;
         boolean presidentMustSellShares = false;
         //boolean companyMustSellShares = false;
-        int trainPrice = action.getPricePaid();
+        int pricePaid = action.getPricePaid();
         int companyCash = company.getCash();
         int loansTaken = 0;
 
@@ -3259,22 +3259,29 @@ public class OperatingRound extends Round implements Observer {
                         company, train.getType());
             }
 
-
-            // Amount must be non-negative
-            if (trainPrice < 0) {
-                errMsg =
-                        LocalText.getText("NegativeAmountNotAllowed",
-                                Bank.format(this, trainPrice));
-                break;
-            }
-
-            // Fixed price must be honoured
+            // The somewhat complex relationship between fixedCost and mode
+            // is explained in the Javadoc of the Mode enum in the BuyTrain class.
             int fixedPrice = action.getFixedCost();
-            if (fixedPrice != 0 && fixedPrice != trainPrice) {
+            BuyTrain.Mode mode = action.getFixedCostMode();
+            boolean validPrice = pricePaid > 0
+                    || pricePaid==0 && mode==BuyTrain.Mode.FIXED;// Exception for 1880
+            if (validPrice && fixedPrice != 0) {
+                if ((mode == null || mode == BuyTrain.Mode.FIXED)
+                        && pricePaid != fixedPrice) {
+                    validPrice = false;
+                } else if (mode == BuyTrain.Mode.MIN
+                        && pricePaid < fixedPrice) {
+                    validPrice = false;
+                } else if (mode == BuyTrain.Mode.MAX
+                        && pricePaid > fixedPrice) {
+                    validPrice = false;
+                }
+            }
+            if (!validPrice) {
                 errMsg =
-                        LocalText.getText("FixedPriceNotPaid",
-                                Bank.format(this, trainPrice),
-                                Bank.format(this, fixedPrice));
+                        LocalText.getText("InvalidPricePaid",
+                                Bank.format(this, pricePaid));
+                break;
             }
 
             // Does the company have room for another train?
@@ -3287,7 +3294,7 @@ public class OperatingRound extends Round implements Observer {
             }
 
             /* Check if this is an emergency buy */
-            int cashToRaise = Math.max(0, trainPrice - companyCash);
+            int cashToRaise = Math.max(0, pricePaid - companyCash);
             if (emergency || cashToRaise > 0) { // Not all games set emergency yet
                 if (willBankruptcyOccur(company, cashToRaise)) {
                     DisplayBuffer.add(this, LocalText.getText("YouMustRaiseCashButCannot",
@@ -3373,7 +3380,7 @@ public class OperatingRound extends Round implements Observer {
                 }
 
 
-                    // Check what the president can add
+                // Check what the president can add
                 //presidentCash = action.getPresidentCashToAdd();
                 if (playerCash >= cashToRaise) {
                     actualPresidentCash = cashToRaise;
@@ -3383,7 +3390,7 @@ public class OperatingRound extends Round implements Observer {
                 }
             } else if (action.mayPresidentAddCash()) {
                 // From another company
-                presidentCash = trainPrice - operatingCompany.value().getCash();
+                presidentCash = pricePaid - operatingCompany.value().getCash();
                 if (presidentCash > action.getPresidentCashToAdd()) {
                     errMsg =
                             LocalText.getText(
@@ -3401,14 +3408,14 @@ public class OperatingRound extends Round implements Observer {
 
             } else {
                 // No forced buy - does the company have the money?
-                if (trainPrice > companyCash) {
+                if (pricePaid > companyCash) {
                     errMsg =
                             LocalText.getText(
                                     "NotEnoughMoney",
                                     companyName,
                                     Bank.format(this,
                                             operatingCompany.value().getCash()),
-                                    Bank.format(this, trainPrice));
+                                    Bank.format(this, pricePaid));
                     break;
                 }
             }
@@ -3442,7 +3449,7 @@ public class OperatingRound extends Round implements Observer {
             DisplayBuffer.add(
                     this,
                     LocalText.getText("CannotBuyTrainFor", companyName,
-                            train.toText(), Bank.format(this, trainPrice), errMsg));
+                            train.toText(), Bank.format(this, pricePaid), errMsg));
             return false;
         }
 
@@ -3485,20 +3492,20 @@ public class OperatingRound extends Round implements Observer {
             (train.isObsolete() ? scrapHeap : pool).addTrainCard(oldTrain.getCard());
             ReportBuffer.add(this, LocalText.getText("ExchangesTrain",
                     companyName, exchangedTrain.toText(), train.toText(),
-                    oldOwner.getId(), Bank.format(this, trainPrice)));
+                    oldOwner.getId(), Bank.format(this, pricePaid)));
         } else if (stb == null) {
             ReportBuffer.add(this, LocalText.getText("BuysTrain", companyName,
-                    train.toText(), oldOwner.getId(), Bank.format(this, trainPrice)));
+                    train.toText(), oldOwner.getId(), Bank.format(this, pricePaid)));
         } else {
             ReportBuffer.add(this, LocalText.getText("BuysTrainUsingSP",
                     companyName, train.toText(), oldOwner.getId(),
-                    Bank.format(this, trainPrice), stb.getOriginalCompany().getId()));
+                    Bank.format(this, pricePaid), stb.getOriginalCompany().getId()));
         }
 
         train.getCard().setActualTrain(train); // Needed for dual trains bought from
         // the Bank
 
-        operatingCompany.value().buyTrain(train, trainPrice);
+        operatingCompany.value().buyTrain(train, pricePaid);
 
         if (oldOwner == ipo.getParent()) {
             train.getCardType().addToBoughtFromIPO();
@@ -3604,6 +3611,7 @@ public class OperatingRound extends Round implements Observer {
      * trains that the company has no money for. If there is no cash to buy any
      * train from the Bank, prepare for emergency train buying.
      */
+    // Overridden by 1826 to allow min. and max. prices
     public void setBuyableTrains() {
 
         PublicCompany company = operatingCompany.value();
@@ -3846,7 +3854,9 @@ public class OperatingRound extends Round implements Observer {
 
                             // In some games the president may add extra cash up
                             // to the list price
-                            if (emergency && potentialCompanyCash < train.getCost()) {
+                            if (GameDef.getParmAsBoolean(this,
+                                    GameDef.Parm.EMERGENCY_MAY_ADD_PRES_CASH_FROM_COMPANY)
+                                    && emergency && potentialCompanyCash < train.getCost()) {
                                 bt.setPresidentMayAddCash(Math.min(
                                         train.getCost() - potentialCompanyCash, presidentCash));
                             }

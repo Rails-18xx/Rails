@@ -127,18 +127,14 @@ public class OperatingRound_1880 extends OperatingRound {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see rails.game.OperatingRound#initNormalTileLays()
+    /**
+     * Create a List of allowed normal tile lays (see LayTile class). This
+     * method should be called only once per company turn in an OR: at the
+     * start of the tile laying step.
      */
     @Override
     protected void initNormalTileLays() {
-        /**
-         * Create a List of allowed normal tile lays (see LayTile class). This
-         * method should be called only once per company turn in an OR: at the
-         * start of the tile laying step.
-         */
+
         // duplicate the phase colours
         Map<String, Integer> newTileColours = new HashMap<>();
         for (String colour : Phase.getCurrent(this).getTileColours()) {
@@ -211,11 +207,9 @@ public class OperatingRound_1880 extends OperatingRound {
 
     private boolean trainTypeCanAffectOR(TrainType type) {
 
-        if ((type.getName().equals("2R") == false) && (type.getName().equals("10") == false)
-                && (type.getName().equals("8E") == false)) {
-            return true;
-                }
-        return false;
+        return (!type.getName().equals("2R"))
+                && (!type.getName().equals("10"))
+                && (!type.getName().equals("8E"));
     }
 
     public boolean specialBuyTrain(BuyTrain action) {
@@ -231,7 +225,7 @@ public class OperatingRound_1880 extends OperatingRound {
                   for (PublicCompany excessTrainCompany : excessTrainCompaniesList) { //extract the Company from the list
                       int numberofTrainsToDiscard = (excessTrainCompany.getNumberOfTrains()- excessTrainCompany.getCurrentTrainLimit());
                       Set<Train>trains = excessTrainCompany.getPortfolioModel().getTrainList();
-                      List<Train> trainsToDiscard = new ArrayList<Train>(4);
+                      List<Train> trainsToDiscard = new ArrayList<>(4);
                       for (Train train : trains) {
                           trainsToDiscard.add(train);
                               if (--numberofTrainsToDiscard == 0) break;
@@ -268,21 +262,21 @@ public class OperatingRound_1880 extends OperatingRound {
 
     @Override
     public boolean buyTrain(BuyTrain action) {
-        if (super.buyTrain(action) != true) {
+        if (!super.buyTrain(action)) {
             return false;
         }
 
         // If this train was not from the ipo, nothing else to do.
         if (action.getFromOwner() == Bank.getIpo(this)) {
             SpecialTrainBuy stb = action.getSpecialProperty();
-            if ((stb == null) || (stb.isExercised() == false)) {
-                if (trainTypeCanAffectOR(action.getType()) == true) {
+            if ((stb == null) || (!stb.isExercised())) {
+                if (trainTypeCanAffectOR(action.getType())) {
                     trainPurchasedThisTurn.set(true);
-                    orControl.trainPurchased((PublicCompany_1880) operatingCompany.value());
+                    orControl.trainPurchased(operatingCompany.value());
                     //Only Change that trainpurchase indicator if we are not in the last two phases...
                     if ((!getRoot().getPhaseManager().getCurrentPhase().getRealName().equals("D2"))&&
                             (!getRoot().getPhaseManager().getCurrentPhase().getRealName().equals("D3"))) {
-                    ((GameManager_1880) getRoot().getGameManager()).getParSlotManager().trainPurchased((PublicCompany_1880) operatingCompany.value());
+                    ((GameManager_1880) getRoot().getGameManager()).getParSlotManager().trainPurchased(operatingCompany.value());
                     }
                 }
             }
@@ -296,7 +290,7 @@ public class OperatingRound_1880 extends OperatingRound {
             if ((ipo.getTrainsPerType(action.getType()).length == 0)
                 && (trainTypeCanAffectOR(action.getType()))) {
                 if (action.getType().getName().equals("8")) {
-                    orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.value()));
+                    orControl.setLastCompanyToOperate(operatingCompany.value());
                     orControl.setFinalOperatingRoundSequence(true);
                 }
                 if (orControl.getFinalOperatingRoundSequenceNumber()<2){
@@ -353,7 +347,7 @@ public class OperatingRound_1880 extends OperatingRound {
                     finishOR();
                     }
 
-                    if ((trainPurchasedThisTurn.value() == false) && (!orControl.noTrainsToDiscard())) {
+                    if ((!trainPurchasedThisTurn.value()) && (!orControl.noTrainsToDiscard())) {
                         // The current Company is the Company that has bought
                         // the last train and that purchase was not in this OR..
                         // we now discard the remaining active trains of that
@@ -371,7 +365,7 @@ public class OperatingRound_1880 extends OperatingRound {
                         }
                         if (activeTrainTypeToDiscard != null) {
                             if (activeTrainTypeToDiscard.getName().equals("8")) {
-                                orControl.setLastCompanyToOperate(((PublicCompany_1880) operatingCompany.value()));
+                                orControl.setLastCompanyToOperate(operatingCompany.value());
                                 orControl.setFinalOperatingRoundSequence(true);
                             }
 
@@ -381,7 +375,7 @@ public class OperatingRound_1880 extends OperatingRound {
                             // If we need to do a rocket exchange, then leave one 4-train
                             int firstTrainToDiscard = 0;
                             if ((activeTrainTypeToDiscard.getName().equals("4")) &&
-                                    (checkForForcedRocketExchange() == true)) {
+                                    (checkForForcedRocketExchange())) {
                                 firstTrainToDiscard = 1;
                             }
 
@@ -436,7 +430,10 @@ public class OperatingRound_1880 extends OperatingRound {
             BuyTrain buyTrain =
                     new BuyTrain(Iterables.get(trains,0),
                             ipo.getParent(), 0); // TODO get from special action
-            buyTrain.setSpecialProperty((SpecialTrainBuy) ((UseSpecialProperty) action).getSpecialProperty()); // TODO
+            // Make price 0 valid. See the Mode Javadoc in class BuyTrain.
+            buyTrain.setFixedCostMode(BuyTrain.Mode.FIXED);
+            buyTrain.setSpecialProperty((SpecialTrainBuy) ((UseSpecialProperty) action).getSpecialProperty());
+            // TODO Fix (??? EV)
                                                                                                                // Fix.
             result = specialBuyTrain(buyTrain);
             return result;
@@ -454,7 +451,7 @@ public class OperatingRound_1880 extends OperatingRound {
             result= super.process(action);
             if (operatingCompany.value() instanceof Investor_1880) {
                 Investor_1880 investor = (Investor_1880)  (operatingCompany.value());
-                if ((action instanceof SetDividend) && (investor.isConnectedToLinkedCompany() == false)) {
+                if ((action instanceof SetDividend) && (!investor.isConnectedToLinkedCompany())) {
                     result = done(null);
                 }
             }
@@ -609,7 +606,7 @@ public class OperatingRound_1880 extends OperatingRound {
         Currency.wire(bank, 50, investorOwner);
 
         // Pick where the treasury goes
-        if (closeInvestorAction.getTreasuryToLinkedCompany() == true) {
+        if (closeInvestorAction.getTreasuryToLinkedCompany()) {
             ReportBuffer.add(this, LocalText.getText("FIConnectedTreasuryToCompany",
                     linkedCompany.getId(), investor.getId(),
                     investor.getCash()));
@@ -628,7 +625,7 @@ public class OperatingRound_1880 extends OperatingRound {
         token.moveTo(investor);
 
         // Pick if the token gets replaced
-        if (closeInvestorAction.getReplaceToken() == true) {
+        if (closeInvestorAction.getReplaceToken()) {
             if (hex.layBaseToken(linkedCompany, city)) {
                 ReportBuffer.add(this, LocalText.getText("FIConnectedReplaceToken",
                         linkedCompany.getId(), investor.getId()));
@@ -672,11 +669,11 @@ public class OperatingRound_1880 extends OperatingRound {
         orControl = ((GameManager_1880) gameManager).getORControl();
         parSlotManager = ((GameManager_1880) gameManager).getParSlotManager();
 
-        List<PublicCompany> companyList = new ArrayList<PublicCompany>();
+        List<PublicCompany> companyList = new ArrayList<>();
 
         // Put in Foreign Investors first
         for (Investor_1880 investor : Investor_1880.getInvestors(companyManager)) {
-            if (investor.isClosed() == false) {
+            if (!investor.isClosed()) {
                 companyList.add(investor);
             }
         }
@@ -702,7 +699,7 @@ public class OperatingRound_1880 extends OperatingRound {
                     Collections.rotate(companyList, 1);
                 }
             }
-        return new ArrayList<PublicCompany>(companyList);
+        return new ArrayList<>(companyList);
     }
 
     /*
@@ -911,7 +908,7 @@ public class OperatingRound_1880 extends OperatingRound {
             operatingCompany.value().setOperated();
             companiesOperatedThisRound.add(operatingCompany.value());
 
-            for (PrivateCompany priv : new ArrayList<PrivateCompany>(
+            for (PrivateCompany priv : new ArrayList<>(
                     operatingCompany.value().getPortfolioModel().getPrivateCompanies())) {
                 priv.checkClosingIfExercised(true);
             }
@@ -970,7 +967,7 @@ public class OperatingRound_1880 extends OperatingRound {
         List<PublicCompany_1880> ownedCompaniesWithSpace =
                 new ArrayList<PublicCompany_1880>();
         List<PublicCompany_1880> ownedCompaniesFull =
-                new ArrayList<PublicCompany_1880>();
+                new ArrayList<>();
 
         for (PublicCompany_1880 company : PublicCompany_1880.getPublicCompanies(companyManager)) {
             if (company.getPresident() == rocketOwner) {
@@ -983,12 +980,12 @@ public class OperatingRound_1880 extends OperatingRound {
         }
 
         ForcedRocketExchange action = null;
-        if (ownedCompaniesWithSpace.isEmpty() == false) {
+        if (!ownedCompaniesWithSpace.isEmpty()) {
             action = new ForcedRocketExchange(getRoot());
             for (PublicCompany_1880 company : ownedCompaniesWithSpace) {
                 action.addCompanyWithSpace(company);
             }
-        } else if (ownedCompaniesFull.isEmpty() == false) {
+        } else if (!ownedCompaniesFull.isEmpty()) {
             action = new ForcedRocketExchange(getRoot());
             for (PublicCompany_1880 company : ownedCompaniesFull) {
                 action.addCompanyWithNoSpace(company);
@@ -1064,8 +1061,8 @@ public class OperatingRound_1880 extends OperatingRound {
             boolean mustBuyTrain = !hasValidTrains() && operatingCompany.value().mustOwnATrain();
             boolean emergency = false;
 
-            SortedMap<Integer, Train> newEmergencyTrains = new TreeMap<Integer, Train>();
-            SortedMap<Integer, Train> usedEmergencyTrains = new TreeMap<Integer, Train>();
+            SortedMap<Integer, Train> newEmergencyTrains = new TreeMap<>();
+            SortedMap<Integer, Train> usedEmergencyTrains = new TreeMap<>();
             TrainManager trainMgr = getRoot().getTrainManager();
 
             // First check if any more trains may be bought from the Bank
@@ -1184,9 +1181,9 @@ public class OperatingRound_1880 extends OperatingRound {
 
                 // Set up a list per player of presided companies
                 List<List<PublicCompany>> companiesPerPlayer =
-                    new ArrayList<List<PublicCompany>>(numberOfPlayers);
+                        new ArrayList<>(numberOfPlayers);
                 for (int i = 0; i < numberOfPlayers; i++)
-                    companiesPerPlayer.add(new ArrayList<PublicCompany>(4));
+                    companiesPerPlayer.add(new ArrayList<>(4));
                 List<PublicCompany> companies;
                 // Sort out which players preside over which companies.
                 for (PublicCompany c : companyManager.getAllPublicCompanies()) {
@@ -1245,7 +1242,7 @@ public class OperatingRound_1880 extends OperatingRound {
     private boolean hasValidTrains() {
         Set<Train> trains = operatingCompany.value().getPortfolioModel().getTrainList();
         int rTypeFound = 0;
-        int numberOfTrainsFound = 0;
+        int numberOfTrainsFound;
 
         numberOfTrainsFound = operatingCompany.value().getPortfolioModel().getNumberOfTrains();
 
@@ -1253,8 +1250,7 @@ public class OperatingRound_1880 extends OperatingRound {
             for (Train train : trains) {
                 if (train.getType().getName().equals("2R")) rTypeFound++;
             }
-            if (numberOfTrainsFound == rTypeFound) return false;
-            return true;
+            return numberOfTrainsFound != rTypeFound;
         }
         else {
             return false;

@@ -16,7 +16,8 @@
 				 <NoSaleInFirstSR/>
 			</StockRound>
 			<OperatingRound class="net.sf.rails.game.specific._1826.OperatingRound_1826">
-				<EmergencyTrainBuying mustBuyCheapestTrain="no" mayBuyFromCompany="yes" mustTakeLoans="yes"/>
+				<EmergencyTrainBuying mustBuyCheapestTrain="no" mayBuyFromCompany="yes"
+									  mustTakeLoans="yes" mayAddPresCashFromCompany="no"/>
 			</OperatingRound>
 			<TreasuryShareRound class="net.sf.rails.game.specific._1826.TreasuryShareRound_1826"/>
 		</GameParameters>
@@ -117,6 +118,6 @@
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
-				<Modifier class="net.sf.rails.game.specific._1826.TGVModifier" /> 
+		<Modifier class="net.sf.rails.game.specific._1826.TGVModifier" />
 	</Component>
 </ComponentManager>

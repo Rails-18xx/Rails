@@ -20,7 +20,7 @@ public class NullAction extends PossibleAction {
     // optional label that is returned on toString instead of the standard labels defined below
     private String optionalLabel = null;
 
-    protected transient Mode mode_enum = null;
+    protected transient Mode mode_enum;
     // Remark: it would have been better to store the enum name, however due to backward compatibility not an option
     protected int mode;
 
@@ -38,6 +38,12 @@ public class NullAction extends PossibleAction {
     public NullAction setLabel(String label) {
         this.optionalLabel = label;
         return this;
+    }
+
+    // Used by ListAndFixSavedFiles
+    public void setMode(Mode mode) {
+        this.mode_enum = mode;
+        this.mode = mode.ordinal();
     }
 
     @Override

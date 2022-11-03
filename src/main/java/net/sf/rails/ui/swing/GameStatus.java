@@ -147,9 +147,9 @@ public class GameStatus extends GridPanel implements ActionListener {
     // Company (from treasury): -1.
     protected int actorIndex = -2;
 
-    private int nc;
-    private PublicCompany[] companies;
-    private int np;  // Number of players
+    protected int nc;
+    protected PublicCompany[] companies;
+    protected int np;  // Number of players
     private int nb = 0; // Number of extra Bond lines
     private int y; // Actual number of each company row, including any extra Bond rows
     protected Map<PublicCompany, Integer> companyCertRow = new HashMap<>();
@@ -1074,18 +1074,19 @@ public class GameStatus extends GridPanel implements ActionListener {
         return chosenAction;
     }
 
+    // Overridden (extended) by 1826 to include Bonds.
     public void initTurn(int actorIndex, boolean myTurn) {
-        int i, j;
+        int cIdx, pIdx;
 
         dummyButton.setSelected(true);
 
         int np = players.getNumberOfPlayers();
 
-        for (i = 0; i < nc; i++) {
-            setIPOCertButton(i, false);
-            setPoolCertButton(i, false);
-            for (j=0; j < np; j++) setPlayerCertButton (i, j, false);
-            if (compCanHoldOwnShares) setTreasuryCertButton(i, false);
+        for (cIdx = 0; cIdx < nc; cIdx++) {
+            setIPOCertButton(cIdx, false);
+            setPoolCertButton(cIdx, false);
+            for (pIdx=0; pIdx < np; pIdx++) setPlayerCertButton (cIdx, pIdx, false);
+            if (compCanHoldOwnShares) setTreasuryCertButton(cIdx, false);
         }
 
         this.actorIndex = actorIndex;
@@ -1094,7 +1095,7 @@ public class GameStatus extends GridPanel implements ActionListener {
         if (treasurySharesCaption != null) treasurySharesCaption.setHighlight(actorIndex == -1);
 
         // Set new highlights
-        if ((j = this.actorIndex) >= -1) {
+        if ((pIdx = this.actorIndex) >= -1) {
             if (myTurn) {
                 PublicCompany company;
                 int index;
@@ -1125,9 +1126,9 @@ public class GameStatus extends GridPanel implements ActionListener {
                     for (SellShares share : sellableShares) {
                         company = share.getCompany();
                         index = company.getPublicNumber();
-                        if (j >= 0) {
-                            setPlayerCertButton(index, j, true, share);
-                        } else if (j == -1 && compCanHoldOwnShares) {
+                        if (pIdx >= 0) {
+                            setPlayerCertButton(index, pIdx, true, share);
+                        } else if (pIdx == -1 && compCanHoldOwnShares) {
                             setTreasuryCertButton(index, true, share);
                         }
                     }
@@ -1149,6 +1150,7 @@ public class GameStatus extends GridPanel implements ActionListener {
     }
 
     /** Stub, can be overridden by game-specific subclasses */
+    // Overridden by 1826 to add bonds
     protected void initGameSpecificActions() {
 
     }

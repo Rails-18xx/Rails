@@ -15,6 +15,7 @@ import net.sf.rails.game.model.PortfolioOwner;
 import net.sf.rails.game.special.SpecialRight;
 import net.sf.rails.game.state.*;
 import net.sf.rails.game.state.Currency;
+import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.*;
@@ -821,6 +822,42 @@ public class OperatingRound_1826 extends OperatingRound {
     }
 
     @Override
+    public void setBuyableTrains() {
+
+        super.setBuyableTrains();
+
+        PublicCompany company = operatingCompany.value();
+        boolean buyerHasLoan = company.getLoanValue() > 0;
+
+        for (PossibleAction action : possibleActions.getType(BuyTrain.class)) {
+            BuyTrain bt = (BuyTrain) action;
+            Owner seller = ((BuyTrain) action).getFromOwner();
+            if (seller instanceof PublicCompany
+                   && !company.mustTradeTrainsAtFixedPrice()
+                   && !((PublicCompany)seller).mustTradeTrainsAtFixedPrice()) {
+
+                boolean sellerHasLoan = ((PublicCompany) seller).getLoanValue() > 0;
+                log.debug("Seller {} BuyerLoan {} SellerLoan {}", seller, buyerHasLoan, sellerHasLoan);
+
+                if (buyerHasLoan || sellerHasLoan) {
+                    // Set a fixed price or price limit
+                    // The somewhat complex relationship between fixedCost and mode
+                    // is explained in the Javadoc of the Mode enum in the BuyTrain class.
+                    // Mode is only effective if a nonzero fixed price has been set
+                    bt.setFixedCost(bt.getTrain().getCost());
+                    if (buyerHasLoan && !sellerHasLoan) {
+                        bt.setFixedCostMode(BuyTrain.Mode.MAX);
+                    } else if (sellerHasLoan && !buyerHasLoan) {
+                        bt.setFixedCostMode(BuyTrain.Mode.MIN);
+                    } else {
+                        bt.setFixedCostMode(BuyTrain.Mode.FIXED);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public boolean buyTrain(BuyTrain action) {
 
         boolean result = super.buyTrain(action);
@@ -831,7 +868,7 @@ public class OperatingRound_1826 extends OperatingRound {
         String[] scoreFactors = new String[] {"single", "double"};
 
         // Change E-train properties as these and the first TGV are bought
-        if (type.getName().equals("E")) {
+        if (type.getName().equals("E") && action.getFromName().equals("IPO")) {
             gm.addETrainsBought();
             type.setMajorStops(eTrainStops[(gm.getETrainsBought()) - 1]);
             ReportBuffer.add(this, LocalText.getText("TrainScoreAndReach",

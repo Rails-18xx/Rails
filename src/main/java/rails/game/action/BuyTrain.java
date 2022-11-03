@@ -22,6 +22,31 @@ import com.google.common.base.Objects;
 */
 public class BuyTrain extends PossibleORAction {
 
+    /**
+     * The Mode enum is used to set a minimum or maximum price
+     * to buy a train. This is used in 1826 for companies that have a loan.
+     *
+     * For backwards compatibility, the use of mode is optional,
+     * and it is currently not used in other games than 1826.
+     * The usual value is null.
+     *
+     * The usage rules are:
+     * - if fixedCost is > 0, then Mode defines the meaning of that value:
+     *   either a fixed price, a minimum price, or a maximum price.
+     *   In this case, Mode == null is equivalent to mode == FIXED.
+     * - if fixedCost is 0, and mode is null, the actual train price is free
+     *   (but must be set to at least 1).
+     *   Mode being not null is ignored, except in the below special case.
+     * - if fixedCost is 0 and mode == FIXED, the zero price is accepted
+     *   and applied. This is an exception created for 1880,
+     *   which has a special property to buy a train for free.
+     */
+    public enum Mode {
+        FIXED,
+        MIN,
+        MAX
+    }
+
     // Initial settings
     private transient Train train;
     private String trainUniqueId;
@@ -60,16 +85,21 @@ public class BuyTrain extends PossibleORAction {
      */
     private boolean forcedBuyIfNoRoute = false;
 
-
     private boolean presidentMustAddCash = false; // If buying from the bank
     private boolean presidentMayAddCash = false;  // If buying from a company
 
+    /**
+     * LoansToTake refers to the 1826 rule, that in emergency train buying
+     * the company MUST take a loan when buying a train from the bank
+     * if treasury cash is insufficient.
+     */
     private int loansToTake = 0; // 1826, if buying from the Bank
 
     /**
      * The amount of cash a company is missing to buy a train.
      * In SOH: any cash that can be raised by selling treasury
      * shares is subtracted.
+     * In 1826: taking a loan, if possible, takes precedence.
      */
     private int presidentCashToAdd = 0;
 
@@ -82,6 +112,10 @@ public class BuyTrain extends PossibleORAction {
     // NOTE: Train objects from now on represent train *certificates*
     private transient TrainType type;
     private String typeName;
+
+    // Added nov2022 by EV to cover min/max prices in 1826 (with loans)
+    private transient Mode fixedCostMode;
+    private int modeOrdinal;
 
     // User settings
     private int pricePaid = 0;
@@ -211,9 +245,22 @@ public class BuyTrain extends PossibleORAction {
         return from;
     }
 
+    public String getFromName() { return fromName; }
+
     public int getFixedCost() {
         return fixedCost;
     }
+
+    public Mode getFixedCostMode() {
+        return fixedCostMode;
+    }
+
+    public void setFixedCostMode(Mode fixedCostMode) {
+        this.fixedCostMode = fixedCostMode;
+        this.modeOrdinal = fixedCostMode.ordinal();
+    }
+
+    public int getModeOrdinal() { return fixedCostMode.ordinal();}
 
     // for correction
     public void setFixedCost(int fixedCost) {
@@ -304,7 +351,6 @@ public class BuyTrain extends PossibleORAction {
                 && (action.fixedCost == 0 || Objects.equal(this.fixedCost, action.pricePaid))
                 && Objects.equal(this.trainsForExchange, action.trainsForExchange)
                 && this.loansToTake == action.loansToTake;
-        ;
 
         // finish if asOptions check
         if (asOption) return options;
@@ -314,8 +360,7 @@ public class BuyTrain extends PossibleORAction {
                 && Objects.equal(this.train, action.train)
                 && Objects.equal(this.pricePaid, action.pricePaid)
                 && Objects.equal(this.addedCash, action.addedCash)
-                && Objects.equal(this.exchangedTrainUniqueId, action.exchangedTrainUniqueId)
-        ;
+                && Objects.equal(this.exchangedTrainUniqueId, action.exchangedTrainUniqueId);
     }
 
     // TODO: Check for and add the missing attributes
@@ -333,6 +378,8 @@ public class BuyTrain extends PossibleORAction {
                     .addToString("train", train)
                     .addToString("from", from)
                     .addToString("fixedCost", fixedCost)
+                    .addToString("mode",
+                            (fixedCostMode != null ? fixedCostMode.toString() : ""))
                     .addToString("trainsForExchange", trainsForExchange)
                     .addToString(addCash, presidentCashToAdd)
                     .addToString("loansToTake", loansToTake)
@@ -352,6 +399,8 @@ public class BuyTrain extends PossibleORAction {
         typeName = (String) fields.get("typeName", null);
         fromName = (String) fields.get("fromName", fromName);
         fixedCost = fields.get("fixedCost", fixedCost);
+        modeOrdinal = fields.get("modeOrdinal", 0);
+        fixedCostMode = Mode.values()[modeOrdinal];
         trainsForExchangeUniqueIds = (String[]) fields.get("trainsForExchangeUniqueIds", trainsForExchangeUniqueIds);
         forcedBuyIfNoRoute = fields.get("forcedBuyIfNoRoute", forcedBuyIfNoRoute);
         forcedBuyIfHasRoute = fields.get("forcedBuyIfHasRoute", forcedBuyIfHasRoute);
