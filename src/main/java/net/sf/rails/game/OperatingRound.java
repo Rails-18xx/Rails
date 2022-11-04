@@ -996,7 +996,9 @@ public class OperatingRound extends Round implements Observer {
                 // Above we ignore the possible existence of double shares (as
                 // in 1835).
                 // Can we buy Bonds (only in 1826)?
-                boolean canBuyBonds = company.hasBonds() && bondsCount < company.getNumberOfBonds();
+                boolean canBuyBonds = company.hasBonds()
+                        && bondsCount < company.getNumberOfBonds()
+                        && company.getCash() >= company.getPriceOfBonds();
 
                 if (!canBuy && !canSell && !canBuyBonds) {
                     // XXX For BACKWARDS COMPATIBILITY only,
@@ -3259,28 +3261,18 @@ public class OperatingRound extends Round implements Observer {
                         company, train.getType());
             }
 
-            // The somewhat complex relationship between fixedCost and mode
-            // is explained in the Javadoc of the Mode enum in the BuyTrain class.
+            // The relationship between fixedCost and mode is explained
+            // in the Javadoc of the Mode enum in the BuyTrain class.
             int fixedPrice = action.getFixedCost();
             BuyTrain.Mode mode = action.getFixedCostMode();
-            boolean validPrice = pricePaid > 0
-                    || pricePaid==0 && mode==BuyTrain.Mode.FIXED;// Exception for 1880
-            if (validPrice && fixedPrice != 0) {
-                if ((mode == null || mode == BuyTrain.Mode.FIXED)
-                        && pricePaid != fixedPrice) {
-                    validPrice = false;
-                } else if (mode == BuyTrain.Mode.MIN
-                        && pricePaid < fixedPrice) {
-                    validPrice = false;
-                } else if (mode == BuyTrain.Mode.MAX
-                        && pricePaid > fixedPrice) {
-                    validPrice = false;
-                }
-            }
+            boolean validPrice =
+                    mode == BuyTrain.Mode.FREE && pricePaid > 0
+                 || mode == BuyTrain.Mode.FIXED && pricePaid == fixedPrice
+                 || mode == BuyTrain.Mode.MIN && pricePaid >= fixedPrice
+                 || mode == BuyTrain.Mode.MAX && pricePaid > 0 && pricePaid <= fixedPrice;
             if (!validPrice) {
-                errMsg =
-                        LocalText.getText("InvalidPricePaid",
-                                Bank.format(this, pricePaid));
+                errMsg = LocalText.getText("InvalidPricePaid",
+                                bank.format(pricePaid));
                 break;
             }
 

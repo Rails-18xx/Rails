@@ -21,7 +21,7 @@ public class StockRound_1826 extends StockRound {
     private static final Logger log = LoggerFactory.getLogger(StockRound.class);
 
     private PublicCompany_1826 sncf
-            = (PublicCompany_1826)companyManager.getPublicCompany(PublicCompany_1826.SNCF);
+            = (PublicCompany_1826)companyManager.getPublicCompany(GameDef_1826.SNCF);
 
     public StockRound_1826 (GameManager parent, String id) {
         super(parent, id);
@@ -63,7 +63,7 @@ public class StockRound_1826 extends StockRound {
         return false;
     }
 
-    /* Copy of buyBonds() inj TreasurySaheRound_1826.
+    /* Copy of buyBonds() in TreasurySaheRound_1826.
      * Should both be merged into StockRound()?
      */
     protected boolean buyBonds (BuyBonds action) {

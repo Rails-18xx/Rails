@@ -433,7 +433,6 @@ public class OperatingRound_1880 extends OperatingRound {
             // Make price 0 valid. See the Mode Javadoc in class BuyTrain.
             buyTrain.setFixedCostMode(BuyTrain.Mode.FIXED);
             buyTrain.setSpecialProperty((SpecialTrainBuy) ((UseSpecialProperty) action).getSpecialProperty());
-            // TODO Fix (??? EV)
                                                                                                                // Fix.
             result = specialBuyTrain(buyTrain);
             return result;

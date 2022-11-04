@@ -38,6 +38,11 @@ public final class BondsModel extends RailsModel {
         this.bondsCount.add(bondsCount);
     }
 
+    public void transferTo (int bonds, BondsModel to) {
+        this.bondsCount.add(-bonds);
+        to.addBondsCount(bonds);
+    }
+
     @Override
     public String toText() {
         if (bondsCount.value() > 0) {

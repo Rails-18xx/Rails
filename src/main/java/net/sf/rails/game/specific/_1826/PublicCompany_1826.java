@@ -21,10 +21,6 @@ import java.util.Set;
 
 public class PublicCompany_1826 extends PublicCompany {
 
-    public static String ETAT = "Etat";
-    public static String SNCF = "SNCF";
-    public static String BELG = "Belg";
-
     private int minNumberToExchange = 0;
     /**
      * The maximum number to exchange *per company*; 0 = unlimited
@@ -96,7 +92,7 @@ public class PublicCompany_1826 extends PublicCompany {
     }
 
     private boolean isPotentialFiveShareCompany() {
-        return getType().getId().equals("Public") && !getId().equals("Belg");
+        return getType().getId().equals("Public") && !getId().equals(GameDef_1826.BELG);
     }
 
     /** Check if a company must get more tokens that the configured minimal number.*/
@@ -110,7 +106,7 @@ public class PublicCompany_1826 extends PublicCompany {
             extraTokens++;
         }
         if (getType().getId().equals("Public")  // includes Belge
-                && getRoot().getPhaseManager().hasReachedPhase("10H")) {
+                && getRoot().getPhaseManager().hasReachedPhase(GameDef_1826.H10)) {
             // 5 tokens
             extraTokens++;
         }
@@ -124,9 +120,9 @@ public class PublicCompany_1826 extends PublicCompany {
     }
 
     protected void setCapitalizationShares() {
-        if (getId().equals(SNCF)) {
+        if (getId().equals(GameDef_1826.SNCF)) {
             capitalisationShares = getPortfolioModel().getShares(this);
-        } else {  //ETAT
+        } else if (getId().equals(GameDef_1826.ETAT)) {
             capitalisationShares = 0;
         }
         log.debug("{} CapFactor set to {}", this, capitalisationShares);

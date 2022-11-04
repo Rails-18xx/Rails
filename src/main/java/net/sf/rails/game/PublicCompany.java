@@ -662,7 +662,7 @@ public class PublicCompany extends RailsAbstractItem
         Tag priceTag = tag.getChild("StockPrice");
         if (priceTag != null) {
             hasStockPrice = priceTag.getAttributeAsBoolean("market", hasStockPrice);
-            hasParPrice = priceTag.getAttributeAsBoolean("par", hasStockPrice);
+            hasParPrice = priceTag.getAttributeAsBoolean("par", hasParPrice);
             minimumStartPrice = priceTag.getAttributeAsInteger("minimumStartPrice", minimumStartPrice);
         }
 

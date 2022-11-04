@@ -65,7 +65,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         // initialize configuration
         ConfigManager.initConfiguration(false);
 
-        // delayed setting of logger
+        // delayed setting of logger (see also ConfigManager)
         log = LoggerFactory.getLogger(ListAndFixSavedFiles.class);
 
         String saveDirectory = Config.get("save.directory");
@@ -506,6 +506,9 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             addTextField (this, "Fixed Price",
                     action.getFixedCost(),
                     String.valueOf(action.getFixedCost()));  // 8
+            addTextField (this, "Mode",
+                    action.getFixedCostMode(),
+                    action.getFixedCostMode().toString()); // 9
             finish();
         }
 
@@ -560,6 +563,18 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 int fixedCost = Integer.parseInt(((JTextField)inputElements.get(8)).getText());
                 action.setFixedCost(fixedCost);
             } catch (NumberFormatException e) {
+            }
+
+            String modeName = ((JTextField) inputElements.get(9)).getText();
+            if (modeName.length() == 0) {
+                action.setFixedCostMode(null);
+            } else {
+                try {
+                    BuyTrain.Mode mode = BuyTrain.Mode.valueOf(modeName);
+                    action.setFixedCostMode(mode);
+                } catch (Exception e) {
+
+                }
             }
 
             log.debug("Action is  {}", action);

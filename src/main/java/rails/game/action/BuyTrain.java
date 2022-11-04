@@ -17,31 +17,32 @@ import net.sf.rails.util.Util;
 
 import com.google.common.base.Objects;
 
-/**
- * Rails 2.0: Updated equals and toString methods (however see TODO below)
-*/
 public class BuyTrain extends PossibleORAction {
 
     /**
-     * The Mode enum is used to set a minimum or maximum price
-     * to buy a train. This is used in 1826 for companies that have a loan.
+     * The Mode enum has been added to enable setting a minimum or maximum price
+     * to buy a train. This is required in 1826 for companies that have a loan.
      *
      * For backwards compatibility, the use of mode is optional,
-     * and it is currently not used in other games than 1826.
-     * The usual value is null.
+     * and it is currently not used in other games but 1826 and 1880.
      *
-     * The usage rules are:
-     * - if fixedCost is > 0, then Mode defines the meaning of that value:
-     *   either a fixed price, a minimum price, or a maximum price.
-     *   In this case, Mode == null is equivalent to mode == FIXED.
-     * - if fixedCost is 0, and mode is null, the actual train price is free
-     *   (but must be set to at least 1).
-     *   Mode being not null is ignored, except in the below special case.
-     * - if fixedCost is 0 and mode == FIXED, the zero price is accepted
-     *   and applied. This is an exception created for 1880,
-     *   which has a special property to buy a train for free.
+     * The mode values have the following meaning:
+     * - FREE: the common rule applies that any entered value > 0 is valid.
+     * - FIXED: the given fixedCost cannot be changed.
+     *   (this includes the 1880 case that one private allows
+     *   to buy a train for free).
+     * - MIN: the given fixedCost is the minimum price of the given train.
+     * - MAX: the given fixedCost is the maximum price of the given train
+     *   (but that price must still be > 0).
+     *
+     * If mode is not explicitly set, implicit values are set to:
+     * - if fixedCost == 0: mode = FREE
+     * - if fixedCost != 0: mode = FIXED
+     *
+     *   Erik Vos, nov2022
      */
     public enum Mode {
+        FREE,
         FIXED,
         MIN,
         MAX
@@ -138,6 +139,14 @@ public class BuyTrain extends PossibleORAction {
         this.fixedCost = fixedCost;
         this.type = type;
         this.typeName = type.getName();
+
+        // Set the implicit mode values for games that don't (yet) use Mode
+        // (currently only 1826 does)
+        if (fixedCost == 0) {
+            setFixedCostMode(Mode.FREE);
+        } else {
+            setFixedCostMode(Mode.FIXED);
+        }
     }
 
     public BuyTrain setTrainsForExchange(Set<Train> trains) {
@@ -257,12 +266,12 @@ public class BuyTrain extends PossibleORAction {
 
     public void setFixedCostMode(Mode fixedCostMode) {
         this.fixedCostMode = fixedCostMode;
-        this.modeOrdinal = fixedCostMode.ordinal();
+        this.modeOrdinal = fixedCostMode == null ? 0 : fixedCostMode.ordinal();
     }
 
     public int getModeOrdinal() { return fixedCostMode.ordinal();}
 
-    // for correction
+    // For use in ListAndFixSavedFiles only. Mode is not changed!
     public void setFixedCost(int fixedCost) {
         this.fixedCost = fixedCost;
     }
@@ -348,7 +357,7 @@ public class BuyTrain extends PossibleORAction {
         boolean options =  Objects.equal(this.getTrain(), action.getTrain())
                 // only types have to be equal, and the getTrain() avoids train == null
                 && Objects.equal(this.from, action.from)
-                && (action.fixedCost == 0 || Objects.equal(this.fixedCost, action.pricePaid))
+                && this.fixedCost == action.fixedCost
                 && Objects.equal(this.trainsForExchange, action.trainsForExchange)
                 && this.loansToTake == action.loansToTake;
 
@@ -358,7 +367,7 @@ public class BuyTrain extends PossibleORAction {
         // check asAction attributes
         return options
                 && Objects.equal(this.train, action.train)
-                && Objects.equal(this.pricePaid, action.pricePaid)
+                //&& Objects.equal(this.pricePaid, action.pricePaid)
                 && Objects.equal(this.addedCash, action.addedCash)
                 && Objects.equal(this.exchangedTrainUniqueId, action.exchangedTrainUniqueId);
     }

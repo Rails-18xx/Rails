@@ -1055,9 +1055,9 @@ public class ORUIManager implements DialogOwner {
                         .replaceFirst(",(\\w+)$"," or $1");
                 b.append(" (").append(LocalText.getText("DiscardingTrain", exchTrainTypes)).append(")");
             }
-            if (cost > 0) {
+            //if (cost > 0) {
                 BuyTrain.Mode mode = bTrain.getFixedCostMode();
-                if (mode == null || mode == BuyTrain.Mode.FIXED) {
+                if (/*mode == null ||*/ mode == BuyTrain.Mode.FIXED) {
                     b.append(" ").append(
                             LocalText.getText("AT_PRICE", gameUIManager.format(cost)));
                 } else if (mode == BuyTrain.Mode.MAX) {
@@ -1067,7 +1067,7 @@ public class ORUIManager implements DialogOwner {
                     b.append(" ").append(
                             LocalText.getText("AT_MIN_PRICE", gameUIManager.format(cost)));
                 }
-            }
+            //}
             if (bTrain.hasSpecialProperty()) {
                 String priv =
                         (bTrain.getSpecialProperty()).getOriginalCompany().getId();
@@ -1127,16 +1127,15 @@ public class ORUIManager implements DialogOwner {
         BuyTrain.Mode mode = buyAction.getFixedCostMode();
         log.debug("From {} cost {} mode {}", seller, fixedCost, mode);
 
-        // The somewhat complex relationship between fixedCost and mode
-        // is explained in the Javadoc of the Mode enum in the BuyTrain class.
+        // The relationship between fixedCost and mode is explained
+        // in the Javadoc of the Mode enum in the BuyTrain class.
         if (seller instanceof PublicCompany
                 && !company.mustTradeTrainsAtFixedPrice()
                 && !((PublicCompany) seller).mustTradeTrainsAtFixedPrice()
                 && (fixedCost == 0 || mode != null && mode != BuyTrain.Mode.FIXED)) {
             String remark = "";
             String priceText;
-            // If the price is 0, mode is ignored, the price is free (but >0)
-            if (fixedCost > 0 && mode != null) {
+            //if (fixedCost > 0 && mode != null) {
                 priceText = gameUIManager.format(fixedCost);
                 switch (mode) {
                     case MIN:
@@ -1146,7 +1145,7 @@ public class ORUIManager implements DialogOwner {
                         remark = LocalText.getText("OrLess", priceText);
                     default:
                 }
-            }
+            //}
             prompt = LocalText.getText("WHICH_TRAIN_PRICE",
                     buyAction.getCompany().getId(),
                     train.toText(),
@@ -1168,8 +1167,8 @@ public class ORUIManager implements DialogOwner {
                 }
                 if (enteredPrice > 0
                         && (mode == BuyTrain.Mode.MIN && enteredPrice >= fixedCost
-                            || mode ==  BuyTrain.Mode.MAX && enteredPrice <= fixedCost
-                            || mode == null)) {
+                            || mode == BuyTrain.Mode.MAX && enteredPrice <= fixedCost
+                            || mode == BuyTrain.Mode.FREE)) {
                     fixedCost = enteredPrice;
                     break; // Got a valid price.
                 }

@@ -22,7 +22,9 @@ import java.util.*;
  */
 public class ConfigManager implements Configurable {
 
-    private static final Logger log = LoggerFactory.getLogger(ConfigManager.class);
+    private static Logger log = null;
+    // For unknown reasons, initializing the logger here has started
+    // to fail during work on ListAndFixSavedFiles for 1826.
 
     //  XML setup
     private static final String CONFIG_XML_DIR = "data";
@@ -63,6 +65,7 @@ public class ConfigManager implements Configurable {
     }
 
     public static void initConfiguration(boolean test) {
+        log = LoggerFactory.getLogger(ConfigManager.class);
         try {
             // Find the config tag inside the config xml file
             // the last arguments refers to the fact that no GameOptions are required

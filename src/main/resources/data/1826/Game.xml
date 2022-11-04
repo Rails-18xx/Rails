@@ -109,12 +109,15 @@
 			<Tiles colour="yellow,green,brown"/>
             <Trains rusted="4H" limitStep="3"/>
 			<OperatingRounds number="3"/>
+			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="E" >
             <Trains rusted="6H"/>
+			<OffBoardRevenue step="3"/>
 		</Phase>
 		<Phase name="TGV" >
 			<Tiles colour="yellow,green,brown,grey"/>
+			<OffBoardRevenue step="4"/>
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">

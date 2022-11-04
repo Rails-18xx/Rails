@@ -280,7 +280,7 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
                 // Cash goes directly to treasury at each buy (as in 1856 before phase 6)
                 capFactor = 0;
             }
-            int price = company.getIPOPrice();
+            int price = (company.hasParPrice() ? company.getIPOPrice() : company.getMarketPrice());
             cash = capFactor * price;
         } else if (capitalisationMode == PublicCompany.CAPITALISE_FIXED_CASH) {
             cash = company.getCapitalisationFixedCash();

@@ -47,7 +47,6 @@ public class TreasuryShareRound extends StockRound {
 
     // TODO: Check if this still works, as the initialization was moved back to here
     public void start(RoundFacade parentRound) {
-        log.info("Treasury share trading round started");
 
         operatingCompany = ((OperatingRound) parentRound).getOperatingCompany();
         mayBuy = operatingCompany.hasOperated()

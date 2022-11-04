@@ -14,7 +14,6 @@ import net.sf.rails.game.financial.TreasuryShareRound;
 import net.sf.rails.game.model.BondsModel;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.Currency;
-import net.sf.rails.game.state.MoneyOwner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.BuyBonds;
@@ -34,7 +33,6 @@ public class TreasuryShareRound_1826 extends TreasuryShareRound {
 
     @Override
     public void start(RoundFacade parentRound) {
-        log.info("{} started", this.getClass().getSimpleName());
         super.start(parentRound);
     }
 

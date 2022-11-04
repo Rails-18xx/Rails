@@ -11,11 +11,9 @@ import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.financial.StockMarket;
 import net.sf.rails.game.financial.StockSpace;
 import net.sf.rails.game.model.PortfolioModel;
-import net.sf.rails.game.model.PortfolioOwner;
 import net.sf.rails.game.special.SpecialRight;
 import net.sf.rails.game.state.*;
 import net.sf.rails.game.state.Currency;
-import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.*;
@@ -50,9 +48,9 @@ public class OperatingRound_1826 extends OperatingRound {
     }
 
     private PublicCompany_1826 etat
-            = (PublicCompany_1826)companyManager.getPublicCompany(PublicCompany_1826.ETAT);
+            = (PublicCompany_1826)companyManager.getPublicCompany(GameDef_1826.ETAT);
     private PublicCompany_1826 sncf
-            = (PublicCompany_1826)companyManager.getPublicCompany(PublicCompany_1826.SNCF);
+            = (PublicCompany_1826)companyManager.getPublicCompany(GameDef_1826.SNCF);
 
     @Override
     protected void setDestinationActions() {
@@ -191,8 +189,8 @@ public class OperatingRound_1826 extends OperatingRound {
         // How many companies are trainless?
         List<PublicCompany_1826> trainlessCompanies = new ArrayList<>();
         for (PublicCompany company : operatingCompanies) {
-            if (!company.getId().equals(PublicCompany_1826.BELG)
-                    && !company.getId().equals(PublicCompany_1826.SNCF)
+            if (!company.getId().equals(GameDef_1826.BELG)
+                    && !company.getId().equals(GameDef_1826.SNCF)
                     && company.hasOperated() && company.getNumberOfTrains() == 0) {
                 trainlessCompanies.add((PublicCompany_1826)company);
             }
@@ -218,7 +216,7 @@ public class OperatingRound_1826 extends OperatingRound {
                     LocalText.getText("DoesNotForm", national));
         }
 
-        if (phaseId.equals("10H")) {
+        if (phaseId.equals(GameDef_1826.H10)) {
 
             // Change number of 10H-trains, if necessary
             // Count companies that are open or (still) startable
@@ -230,12 +228,12 @@ public class OperatingRound_1826 extends OperatingRound {
             }
             int trainsToRemove = Math.min (3, 10 - compCount);
             if (trainsToRemove > 0) {
-                TrainType type = getRoot().getTrainManager().getTrainTypeByName("10H");
+                TrainType type = getRoot().getTrainManager().getTrainTypeByName(GameDef_1826.H10);
                 for (int i=0; i<trainsToRemove; i++) {
                     ipo.getTrainOfType(type).getCard().moveTo(Bank.getScrapHeap(this));
                 }
                 String msg = LocalText.getText("RemovedTrains",
-                        trainsToRemove, "10H", 5 - trainsToRemove);
+                        trainsToRemove, GameDef_1826.H10, 5 - trainsToRemove);
                 ReportBuffer.add (this, msg);
                 DisplayBuffer.add (this, msg);
             }
@@ -278,7 +276,6 @@ public class OperatingRound_1826 extends OperatingRound {
 
         // Determine the national's start price
         int averagePrice = (prices.pollLast() + prices.pollLast()) / 2;
-        //int minimumPrice = (isEtat ? 82 : 110);
         int nationalPrice = Math.max(averagePrice, national.getMinimumStartPrice());
         log.debug ("Top-2 average price is {}", averagePrice);
         StockMarket stockMarket = getRoot().getStockMarket();
@@ -320,24 +317,12 @@ public class OperatingRound_1826 extends OperatingRound {
 
             PortfolioModel playerPortfolio = player.getPortfolioModel();
 
-            /*
-            int playerShares = 0;
-            for (PublicCompany_1826 company : trainlessCompanies) {
-                playerShares += playerPortfolio.getShares(company);
-            }
-            if (playerShares == 0) continue;*/
-
-            extraPoolShares += replaceMergerShares (player.getPortfolioModel(), 0,
+            extraPoolShares += replaceMergerShares (playerPortfolio, 0,
                     national, president, trainlessCompanies);
             president = false;
         }
 
         // Now deal with the Pool similarly
-        /*
-        for (PublicCompany_1826 company : trainlessCompanies) {
-            poolShares += pool.getShares(company);
-        }*/
-
         replaceMergerShares (pool, extraPoolShares, national, false, trainlessCompanies);
 
         if (!national.checkPresidency()) {
@@ -350,6 +335,7 @@ public class OperatingRound_1826 extends OperatingRound {
         // A TreeMap failed to .get() some companies - weird!
 
         int loansTransferred = 0;
+        int totalLoans = 0;
         int maxLoansTransferred = national.getMaxNumberOfLoans() - national.getCurrentNumberOfLoans();
         for (PublicCompany company : trainlessCompanies) {
 
@@ -359,13 +345,18 @@ public class OperatingRound_1826 extends OperatingRound {
             // Move all company assets to the national company
             national.transferAssetsFrom(company);
 
-            // Take over max. 2 loans
+            // Take over inherited loans
             int loans = company.getCurrentNumberOfLoans();
+            totalLoans += loans;
             int loansToTransfer = Math.min(loans, maxLoansTransferred - loansTransferred);
-            if (loansToTransfer > 0) {
+            // Etat takes max. 2 loans
+            // SNCF takes and later discards all inherited loans
+            if (loansToTransfer > 0 || national == sncf) {
                 loansTransferred += loansToTransfer;
-                ReportBuffer.add(this, LocalText.getText("LoansTransfer",
-                        national, loansToTransfer, company));
+                if (loansToTransfer > 0) {
+                    ReportBuffer.add(this, LocalText.getText("LoansInherited",
+                            national, loansToTransfer, company));
+                }
             }
 
             // Note any tokens that can be converted to national tokens
@@ -387,14 +378,34 @@ public class OperatingRound_1826 extends OperatingRound {
                 }
             }
             // Close the merging company, this also removes the tokens
-            //company.setClosed();
             closeCompany (company);
         }
 
         // Take the loans to be transferred
         if (loansTransferred > 0) {
-            national.addLoans(loansTransferred);
+            ReportBuffer.add(this, LocalText.getText("CompanyInheritsLoan",
+                    national, loansTransferred, totalLoans));
+            if (national == etat) {
+                etat.addLoans(loansTransferred);
+            } else if (national == sncf) {
+                // Transfer one bond per inherited loan to Pool
+                int bonds = Math.min(loansTransferred,
+                        sncf.getPortfolioModel().getBondsCount(sncf));
+                sncf.getPortfolioModel().getBondsModel(sncf).transferTo(bonds, pool.getBondsModel(sncf));
+                ReportBuffer.add(this, LocalText.getText("CompanyIssuesBonds",
+                        sncf, loansTransferred));
+            }
+            StockSpace from = national.getCurrentSpace();
             getRoot().getStockMarket().moveLeftOrDown(national, loansTransferred);
+            StockSpace to = national.getCurrentSpace();
+            /*
+            ReportBuffer.add(this, LocalText.getText("PRICE_MOVES_LOG",
+                    national,
+                    bank.format(from.getPrice()),
+                    from.getId(),
+                    bank.format(to.getPrice()),
+                    to.getId()));
+            */
         }
 
         // Immediately replace all home tokens.
@@ -828,6 +839,8 @@ public class OperatingRound_1826 extends OperatingRound {
 
         PublicCompany company = operatingCompany.value();
         boolean buyerHasLoan = company.getLoanValue() > 0;
+        List<BuyTrain> toRemove = new ArrayList<>();
+        TrainType trainType;
 
         for (PossibleAction action : possibleActions.getType(BuyTrain.class)) {
             BuyTrain bt = (BuyTrain) action;
@@ -841,18 +854,34 @@ public class OperatingRound_1826 extends OperatingRound {
 
                 if (buyerHasLoan || sellerHasLoan) {
                     // Set a fixed price or price limit
-                    // The somewhat complex relationship between fixedCost and mode
-                    // is explained in the Javadoc of the Mode enum in the BuyTrain class.
-                    // Mode is only effective if a nonzero fixed price has been set
+                    // The relationship between fixedCost and mode is explained
+                    // in the Javadoc of the Mode enum in the BuyTrain class.
                     bt.setFixedCost(bt.getTrain().getCost());
                     if (buyerHasLoan && !sellerHasLoan) {
                         bt.setFixedCostMode(BuyTrain.Mode.MAX);
                     } else if (sellerHasLoan && !buyerHasLoan) {
                         bt.setFixedCostMode(BuyTrain.Mode.MIN);
-                    } else {
+                    } else { // Both have loans
                         bt.setFixedCostMode(BuyTrain.Mode.FIXED);
                     }
                 }
+            }
+
+            // A company may not have more than one TGV
+            trainType = bt.getType();
+            if (trainType.getName().equals(GameDef_1826.TGV)) {
+                Train[] tgvTrains = company.getPortfolioModel().getTrainsPerType(trainType);
+                if (tgvTrains.length > 0) {
+                    toRemove.add (bt);
+                }
+            }
+        }
+
+        // Remove all actions to buy a second TGV
+        if (toRemove.size() > 0) {
+            for (BuyTrain bt : toRemove) {
+                possibleActions.remove(bt);
+                log.debug("Removed {} from possibleActions", bt);
             }
         }
     }
@@ -864,11 +893,11 @@ public class OperatingRound_1826 extends OperatingRound {
 
         GameManager_1826 gm = (GameManager_1826)getRoot().getGameManager();
         TrainType type = action.getType();
-        int[] eTrainStops = new int[] {2,3,3,4};
+        int[] eTrainStops = GameDef_1826.E_TRAIN_STOPS;
         String[] scoreFactors = new String[] {"single", "double"};
 
         // Change E-train properties as these and the first TGV are bought
-        if (type.getName().equals("E") && action.getFromName().equals("IPO")) {
+        if (type.getName().equals(GameDef_1826.E) && action.getFromOwner() == ipo) {
             gm.addETrainsBought();
             type.setMajorStops(eTrainStops[(gm.getETrainsBought()) - 1]);
             ReportBuffer.add(this, LocalText.getText("TrainScoreAndReach",
@@ -876,9 +905,9 @@ public class OperatingRound_1826 extends OperatingRound {
                     LocalText.getText(scoreFactors[type.getCityScoreFactor() - 1]),
                     type.getMajorStops()));
 
-        } else if (type.getName().equals("TGV")) {
+        } else if (type.getName().equals(GameDef_1826.SNCF)) {
             if (!gm.getTgvTrainBought()) {
-                TrainType eType = getRoot().getTrainManager().getTrainTypeByName("E");
+                TrainType eType = getRoot().getTrainManager().getTrainTypeByName(GameDef_1826.E);
                 eType.setMajorStops(5);
                 eType.setCityScoreFactor(1);
                 gm.setTgvTrainBought(true);
