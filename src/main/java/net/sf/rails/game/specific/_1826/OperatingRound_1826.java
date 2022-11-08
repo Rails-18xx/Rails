@@ -52,6 +52,19 @@ public class OperatingRound_1826 extends OperatingRound {
     private PublicCompany_1826 sncf
             = (PublicCompany_1826)companyManager.getPublicCompany(GameDef_1826.SNCF);
 
+    /**
+     * Non-home locations where a base token may be exchanged.
+     */
+    private Multimap<PublicCompany, Stop> exchangeableTokenStops;
+    private ExchangeTokens2 exchangeTokensAction;
+    private PublicCompany interruptedCompany;
+    private Player interruptedPlayer;
+
+    /* A map noting to whom bond interest amounts must be paid */
+    private Map<PortfolioModel, Integer> dueInterests = new HashMap<>();
+    /* To keep saved files reproducible, note the sequence of the involved portfolios */
+    private List<PortfolioModel> interestPaymentSequence = new ArrayList<>();
+
     @Override
     protected void setDestinationActions() {
 
@@ -249,18 +262,10 @@ public class OperatingRound_1826 extends OperatingRound {
         }
     }
 
-    /**
-     * Non-home locations where a base token may be exchanged.
-     */
-    private Multimap<PublicCompany, Stop> exchangeableTokenStops;
-    private ExchangeTokens2 exchangeTokensAction;
-    private PublicCompany interruptedCompany;
-    private Player interruptedPlayer;
-
     private void formNational (PublicCompany_1826 national,
                                List<PublicCompany_1826> trainlessCompanies) {
 
-        NavigableSet<Integer> prices = new TreeSet<>();
+        List<Integer> prices = new ArrayList<>(); // Allow duplicate values!
         boolean nationalCanOperate = true;
 
         // Make all trainless companies 10-share ones
@@ -275,7 +280,8 @@ public class OperatingRound_1826 extends OperatingRound {
         log.debug ("Sorted prices: {}", prices);
 
         // Determine the national's start price
-        int averagePrice = (prices.pollLast() + prices.pollLast()) / 2;
+        prices.sort(Comparator.reverseOrder()); // Sort high to low
+        int averagePrice = (prices.get(0) + prices.get(1)) / 2;
         int nationalPrice = Math.max(averagePrice, national.getMinimumStartPrice());
         log.debug ("Top-2 average price is {}", averagePrice);
         StockMarket stockMarket = getRoot().getStockMarket();
@@ -285,7 +291,7 @@ public class OperatingRound_1826 extends OperatingRound {
         if (!(stockMarket.getStockSpace(row, col).getPrice() == nationalPrice)) col--;
         StockSpace nationalStockSpace = stockMarket.getStockSpace(row, col);
 
-        // TODO Actual national start price will decrease with loans
+        // Actual national start price will decrease with loans, see later
         national.start(nationalStockSpace);
         log.debug ("National price is {} at {}", nationalStockSpace.getPrice(),
                 nationalStockSpace.getId());
@@ -331,7 +337,9 @@ public class OperatingRound_1826 extends OperatingRound {
         }
 
         // Merge and close the trainless companies
-        Map<Stop, PublicCompany> homeTokens = new HashMap<>();
+        //Map<Stop, PublicCompany> homeTokens = new HashMap<>();
+        Map<PublicCompany, Stop> homeTokens = new HashMap<>();
+
         // A TreeMap failed to .get() some companies - weird!
 
         int loansTransferred = 0;
@@ -366,7 +374,8 @@ public class OperatingRound_1826 extends OperatingRound {
                     Stop stop = (Stop) owner;
                     MapHex hex = stop.getHex();
                     if (company.getHomeHexes().contains(hex)) {
-                        homeTokens.put (stop, company);
+                        //homeTokens.put (stop, company);
+                        homeTokens.put (company, stop);
                     } else {
                         if (exchangeableTokenStops == null) {
                             exchangeableTokenStops = ArrayListMultimap.create();
@@ -408,13 +417,13 @@ public class OperatingRound_1826 extends OperatingRound {
             */
         }
 
-        // Immediately replace all home tokens.
+        // Replace all home tokens.
         // The national tokens must be created and do not count against
         // the number of configured tokens of the national company.
-
-        for (Stop stop : homeTokens.keySet()) {
+        //for (Stop stop : homeTokens.keySet()) {
+        for (PublicCompany company : trainlessCompanies) {
+            Stop stop = homeTokens.get(company);
             if (!stop.hasTokenOf(national)) {
-                PublicCompany company = homeTokens.get(stop);
                 BaseToken token = BaseToken.create(national);
                 token.moveTo(stop);
                 national.getBaseTokensModel().addBaseToken(token, true);
@@ -675,8 +684,6 @@ public class OperatingRound_1826 extends OperatingRound {
             DisplayBuffer.add (this, msg);
         }
 
-        // TODO Testing has not progressed yet beyond this point
-
         int remainder = remainsDueForLoans + remainsDueForBonds;
         if (remainder > 0) {
             // Take a loan if possible. One loan should always be sufficient.
@@ -718,7 +725,8 @@ public class OperatingRound_1826 extends OperatingRound {
         if (loanInterest > 0) Currency.toBank (company, loanInterest);
 
         // Payout bond interest
-        for (PortfolioModel portfolio : dueInterests.keySet()) {
+        //for (PortfolioModel portfolio : dueInterests.keySet()) {
+        for (PortfolioModel portfolio : interestPaymentSequence) {
             payment = dueInterests.get(portfolio);
             Currency.wire (company, payment, portfolio.getMoneyOwner());
             ReportBuffer.add(this, LocalText.getText("PayoutForBonds",
@@ -729,9 +737,6 @@ public class OperatingRound_1826 extends OperatingRound {
         }
         return dividend;
     }
-
-    /* A map noting to whom bond interest amounts must be paid */
-    private Map<PortfolioModel, Integer> dueInterests = new HashMap<>();
 
     /** Calculate the bonds interest due to a bond holder
      *
@@ -751,6 +756,7 @@ public class OperatingRound_1826 extends OperatingRound {
             if (bonds > 0) {
                 payout = calculateBondInterestPayout(company, player.getPortfolioModel());
                 dueInterests.put (player.getPortfolioModel(), payout);
+                interestPaymentSequence.add (player.getPortfolioModel());
                 total += payout;
             }
         }
@@ -758,6 +764,7 @@ public class OperatingRound_1826 extends OperatingRound {
         if (bonds > 0) {
             payout = calculateBondInterestPayout(company, pool);
             dueInterests.put (pool, payout);
+            interestPaymentSequence.add (pool);
             total += payout;
         }
         return total;

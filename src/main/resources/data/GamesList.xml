@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Supported games -->
 <GamesList>
-  <Game name="1830">
+	<Game name="1830">
     <Note>Fully playable</Note>
     <Description>1830 - The Game of Railroads and Robber Barons
 (c) 1986 The Avalon Hill Game Company
@@ -78,7 +78,7 @@ Limitation:
         <Note>Fully Playable</Note>
         <Description>1880 - China
         (c) 2010 Double O Games  Mayfair Games, Inc.
-        Designed by Leonhard Ogler and Helmut Ohley
+        Designed by Leonhard Orgler and Helmut Ohley
 		</Description>
         <Players minimum="3" maximum="7"/>
     </Game>
@@ -233,7 +233,6 @@ Game variants:
 		<Players minimum = "2" maximum = "6" />
 	</Game>
 
-
 	<Game name="1837">
 		<Note>Playable (beta)</Note>
 		<Description> 1837 - Austria
@@ -247,13 +246,36 @@ Game variants:
 			Mid-game player worth is calculated as follows:
 			- Major and National shares as usual,
 			- Coal and Minor shares as the price of the related
-			  Major (if started) or National company,
+			Major (if started) or National company,
 			- Privates (mountain railways) worth is zero.
 
 			Known limitations:
-			- Laying a token involving backtracking must be done in Correction mode.
+			- Token laying involving backtracking must be done in Correction mode.
+			- If the U3 president rejects folding into Ug, the other U3 share
+			owner cannot fold that second share.
 		</Description>
 		<Players minimum = "3" maximum = "7" />
+	</Game>
+
+	<Game name="1826">
+		<Note>Almost playable</Note>
+		<Description>1826 - Railroading in France and Belgium from 1826
+			(c) 1996, 2000 David G.D. Hecht (game designer)
+			Initially published by Chris Lawson (materials designer)
+			Rules version 0.35 of 13 January 2000
+
+			Not yet developed and tested:
+			- The initial non-Belge token laying prohibition
+			  in Belgium is not enforced
+			- Share selling in emergency train buying
+			  (taking loans, bonds and president cash works)
+			- Bankruptcy
+			- TGV running over track used by other trains
+			  (the existing TGV running modifier is incorporated,
+			  but could not yet be tested)
+			- End of game
+		</Description>
+		<Players minimum="2" maximum="6" />
 	</Game>
 
 	<Game name="1870">
@@ -300,19 +322,6 @@ Known Issues:
 - Not implemented: receivership
 </Description>
     <Players minimum="3" maximum="5" />
-  </Game>
-   <Game name="1826">
-    <Note>Prototype</Note>
-    <Description>1826 - Railroading in France and Belgium from 1826</Description>
-    <Players minimum="2" maximum="6" />
-        <Option name="Variant" values="Basegame" default="Basegame" />
-        <Option name="NoMapMode" type="toggle" default="no" />
-        <Option name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
-        <Option name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
-        <Option name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="Yellow Plain"/>
-        <Option name="UnlimitedTopTrains" parm="8" type="toggle" default="no"/>
-        <Option name="LeaveAuctionOnPass" type="toggle" default="no"/>
-        <Option name="TwoPlayersCertLimit70Percent" type="toggle" default="yes"/>
   </Game>
 
   <Game name="18VA">

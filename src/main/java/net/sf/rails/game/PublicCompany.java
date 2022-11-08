@@ -2102,8 +2102,12 @@ public class PublicCompany extends RailsAbstractItem
                 return getRoot().getMapManager().getHexDistance(homeHexes.get(0), hex)
                         * baseTokenLayCost.get(costIndex);
             }
-
-         } else {
+         } else if (baseTokenLayCostMethod == BaseCostMethod.ROUTE_DISTANCE
+                && stop != null) {
+            // TODO  Stop is null in NoMapMode. No idea what to do with that. (EV)
+            if (tokenableStops == null) setTokenableStops();
+            return baseTokenLayCost.get(0) * tokenableStops.get(stop);
+        } else {
             return 0;
         }
     }

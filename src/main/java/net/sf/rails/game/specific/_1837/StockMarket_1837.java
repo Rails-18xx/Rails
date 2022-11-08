@@ -92,8 +92,8 @@ public class StockMarket_1837 extends StockMarket {
     public void soldOut(PublicCompany company) {
 
         if (GameOption.getValue(this, GameOption.VARIANT).matches("Basegame|1837-2ndEd.")
-                && company.getPresident().getPortfolioModel().getCertificates(company).size() >= 4) {
-            //President has 4 shares (50% or more) except in the Romoth variant
+                && company.getPresident().getPortfolioModel().getShares(company) > 4) {
+            //President has 5 shares (50%) or more, except in the Romoth variant
             moveLeftAndUp(company);
         } else {
             moveUp(company);
