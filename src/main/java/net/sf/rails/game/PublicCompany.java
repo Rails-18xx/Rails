@@ -1,7 +1,6 @@
 package net.sf.rails.game;
 
 import com.google.common.collect.ImmutableSet;
-import net.sf.rails.algorithms.DLLGraph;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.ConfigurationException;
@@ -2078,15 +2077,18 @@ public class PublicCompany extends RailsAbstractItem
 
     /**
      * Calculate the cost of laying a token, given the stop where
-     * the token is laid. This only makes a difference for the "distance" methods.
+     * the token is laid, if known.
+     *
+     * If the stop is unknown or undecided, use getBaseTokenLayCostOnHex().
+     * This only makes a difference for the "distance" methods.
      *
      * @param stop The Stop where the token is to be laid.
      * @return The cost of laying that token.
      */
-    public int getBaseTokenLayCost(Stop stop) {
+    public int getBaseTokenLayCostOnStop(Stop stop) {
 
         if (baseTokenLayCostMethod == BaseCostMethod.SEQUENCE) {
-           if (baseTokenLayCost == null) return 0;
+            if (baseTokenLayCost == null) return 0;
             return baseTokenLayCost.get(getBaseTokenLayCostIndex());
 
         } else if (baseTokenLayCostMethod == BaseCostMethod.HEX_DISTANCE) {
@@ -2101,12 +2103,26 @@ public class PublicCompany extends RailsAbstractItem
                         * baseTokenLayCost.get(costIndex);
             }
 
-         } else if (baseTokenLayCostMethod == BaseCostMethod.ROUTE_DISTANCE
-                && stop != null) {
-            // TODO  Stop is null in NoMapMode. No idea what to do with that. (EV)
-            if (tokenableStops == null) setTokenableStops();
-            return baseTokenLayCost.get(0) * tokenableStops.get(stop);
+         } else {
+            return 0;
+        }
+    }
 
+    /**
+     * Only useable for SEQUENCE and HEX_DISTANCE methods.
+     * For ROUTE_DISTANCE, use getBaseTokenLayCost(Stop) */
+    public int getBaseTokenLayCostOnHex(MapHex hex) {
+
+        if (baseTokenLayCostMethod == BaseCostMethod.SEQUENCE) {
+            if (baseTokenLayCost == null) return 0;
+            return baseTokenLayCost.get(getBaseTokenLayCostIndex());
+
+        } else if (baseTokenLayCostMethod == BaseCostMethod.HEX_DISTANCE) {
+            if (baseTokenLayCost == null) return 0;
+            int costIndex = getBaseTokenLayCostIndex();
+            // WARNING: no provision yet for multiple home hexes.
+            return getRoot().getMapManager().getHexDistance(homeHexes.get(0), hex)
+                    * baseTokenLayCost.get(costIndex);
         } else {
             return 0;
         }
@@ -2149,7 +2165,7 @@ public class PublicCompany extends RailsAbstractItem
     public Set<Integer> getBaseTokenLayCosts() {
 
         if (baseTokenLayCostMethod == BaseCostMethod.SEQUENCE) {
-            return ImmutableSet.of(getBaseTokenLayCost(null));
+            return ImmutableSet.of(getBaseTokenLayCostOnStop(null));
         } else if (baseTokenLayCostMethod == BaseCostMethod.HEX_DISTANCE) {
             // WARNING: no provision yet for multiple home hexes.
             // EV: and not for zero, but there may be no such cases.

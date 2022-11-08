@@ -2209,12 +2209,12 @@ public class OperatingRound extends Round implements Observer {
             if (company.getBaseTokenLayCostMethod()
                     == PublicCompany.BaseCostMethod.ROUTE_DISTANCE) {
                 cost = action.getCost();
-                if (cost > 0 && cost != company.getBaseTokenLayCost(stop)) {
-                    errMsg = LocalText.getText("WrongCost", cost, company.getBaseTokenLayCost(stop));
+                if (cost > 0 && cost != company.getBaseTokenLayCostOnStop(stop)) {
+                    errMsg = LocalText.getText("WrongCost", cost, company.getBaseTokenLayCostOnStop(stop));
                     break;
                 }
             } else {
-                cost = company.getBaseTokenLayCost(stop);
+                cost = company.getBaseTokenLayCostOnHex(hex);
             }
             if (stl != null && stl.isFree()) cost = 0;
 
@@ -2339,7 +2339,7 @@ public class OperatingRound extends Round implements Observer {
                 case ROUTE_DISTANCE:
                     company.setTokenableStops();
                     for (Stop stop : company.tokenableStops.keySet()) {
-                        int cost = company.getBaseTokenLayCost(stop);
+                        int cost = company.getBaseTokenLayCostOnStop(stop);
                         currentNormalTokenLays.add(
                                 new LayBaseToken (getRoot(), List.of(stop.getHex()), cost));
                     }

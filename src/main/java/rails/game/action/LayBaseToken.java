@@ -27,7 +27,11 @@ public class LayBaseToken extends LayToken {
     public static final int NON_CITY = 5; // Lay token on plain track or town (special cases)
     public static final int CORRECTION = 99; // Correction token lays
 
-    protected int type = 0;
+    // For logging (toString()) only
+    private static String[] typeText = new String[] {"GENERIC", "LOCATION_SPECIFIC",
+            "SPECIAL_PROPERTY", "HOME_CITY", "FORCED_LAY", "NON_CITY", "CORRECTION"};
+
+    protected int type;
 
     /*--- Preconditions ---*/
 
@@ -54,6 +58,10 @@ public class LayBaseToken extends LayToken {
      * with the value <b>null</b>, which allows laying a base token on <i>any</i> empty city slot.
      * In fact, the UI will now apply the restriction to valid locations only.
      * Over time, applying this restriction should be moved to the game engine.
+     *
+     * Added by EV nov2022: 1826 is the first game to set generic locations in the game engine,
+     * for the reason that determining hex distances via track required a new graph type
+     * that can be traversed in both directions from any stop.
      */
     public LayBaseToken(RailsRoot root, List<MapHex> locations) {
         super(root, locations);
@@ -104,7 +112,7 @@ public class LayBaseToken extends LayToken {
     }
 
     public Stop getChosenStop() {
-        return chosenHex.getRelatedStop(chosenStation);
+        return (chosenHex != null ? chosenHex.getRelatedStop(chosenStation) : null);
     }
 
     public void setChosenStation(int chosenStation) {
@@ -130,8 +138,10 @@ public class LayBaseToken extends LayToken {
         } else {
             if (specialProperty != null && ((SpecialBaseTokenLay)specialProperty).isFree()) {
                 return 0;
+            } else if (getChosenStop() != null) {
+                return company.getBaseTokenLayCostOnStop(getChosenStop());
             } else {
-                return company.getBaseTokenLayCost(null);
+                return company.getBaseTokenLayCostOnHex(hex);
             }
         }
 
@@ -162,9 +172,10 @@ public class LayBaseToken extends LayToken {
 
     @Override
     public String toString() {
+        String typeName = type + " (" + typeText[type != 99 ? type : typeText.length-1] + ")";
         return super.toString() +
-                RailsObjects.stringHelper(this)
-                    .addToString("type", type)
+                 RailsObjects.stringHelper(this)
+                    .addToString("type", typeName)
                     .addToString("cost", cost)
                     .addToStringOnlyActed("chosenStation", chosenStation)
                     .toString()
