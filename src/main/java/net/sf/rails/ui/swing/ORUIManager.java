@@ -324,7 +324,7 @@ public class ORUIManager implements DialogOwner {
                     }
                 break;
                 case LayBaseToken.FORCED_LAY :
-                case (LayBaseToken.HOME_CITY):
+                case LayBaseToken.HOME_CITY:
                 case LayBaseToken.NON_CITY:
                     addLocatedTokenLays(layBaseToken);
                 break;
@@ -341,18 +341,28 @@ public class ORUIManager implements DialogOwner {
 
     private void addGenericTokenLays(LayBaseToken action) {
         PublicCompany company = action.getCompany();
-        //NetworkGraph graph = networkAdapter.getRouteGraph(company, true, false);
-        //Multimap<MapHex, Stop> hexStops = graph.getTokenableStops(company);
-        //Map<Stop, Integer> tokenableStops = graph.getTokenableStops(company);
-        Map<Stop, Integer> tokenableStops = new Routes().getTokenLayRouteDistances2(
-                company, PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
-        //if (company.getBaseTokenLayCostMethod().equalsIgnoreCase(PublicCompany.BASE_COST_ROUTE_LENGTH)) {
-       for (Stop stop : tokenableStops.keySet()) {
-            MapHex hex = stop.getParent();
-            GUIHex guiHex = map.getHex(hex);
-            TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, tokenableStops.keySet(), action);
-            TokenHexUpgrade.validates(upgrade);
-            hexUpgrades.put(guiHex, upgrade);
+        if (company.getBaseTokenLayCostMethod() == PublicCompany.BaseCostMethod.ROUTE_DISTANCE) {
+            // Now a special for 1826.
+            // Did originally work with all games, but somehow failed with 1837 in a later stage
+            Map<Stop, Integer> tokenableStops = new Routes().getTokenLayRouteDistances2(
+                    company, PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
+            for (Stop stop : tokenableStops.keySet()) {
+                MapHex hex = stop.getParent();
+                GUIHex guiHex = map.getHex(hex);
+                TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, tokenableStops.keySet(), action);
+                TokenHexUpgrade.validates(upgrade);
+                hexUpgrades.put(guiHex, upgrade);
+            }
+        } else { // The old method
+            NetworkGraph graph = networkAdapter.getRouteGraph(company, true, false);
+            Multimap<MapHex, Stop> hexStops = graph.getTokenableStops(company);
+            for (MapHex hex:hexStops.keySet()) {
+                GUIHex guiHex = map.getHex(hex);
+                TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, hexStops.get(hex), action);
+                TokenHexUpgrade.validates(upgrade);
+                hexUpgrades.put(guiHex, upgrade);
+            }
+
         }
     }
 

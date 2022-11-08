@@ -161,6 +161,22 @@ public class NetworkGraph {
         return hexStations.build();
     }
 
+    /**
+     * @return a list of all stops that are tokenable for the argument company
+     */
+    public Multimap<MapHex, Stop> getTokenableStops(PublicCompany company) {
+
+        ImmutableMultimap.Builder<MapHex, Stop> hexStops =
+                ImmutableMultimap.builder();
+
+        for (NetworkVertex vertex : graph.vertexSet()) {
+            Stop stop = vertex.getStop();
+            if (stop != null && stop.isTokenableFor(company)) {
+                hexStops.put(vertex.getHex(), stop);
+            }
+        }
+        return hexStops.build();
+    }
 
     private void rebuildVertices() {
         // rebuild mapVertices

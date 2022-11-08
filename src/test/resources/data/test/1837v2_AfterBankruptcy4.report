@@ -1584,7 +1584,7 @@ PRICE_MOVES_LOG,MS,73,F7,76,G7
  
 CompanyOperates,BK,Bob
 LaysTileAt,BK,410,G11,SE
-LAYS_TOKEN_ON,BK,H10,100
+LAYS_TOKEN_ON,BK,H10,200
 CompanyRevenue,BK,270
 CompanyPaysOutFull,BK,270
 Payout,Bob,162,6,10
@@ -1607,7 +1607,7 @@ Has,U1,225
 Has,U2,80
 Has,U3,239
 Has,BH,346
-Has,BK,262
+Has,BK,162
 Has,MS,602
 Has,SB,371
 Has,TH,0
@@ -1650,7 +1650,7 @@ Has,U1,225
 Has,U2,80
 Has,U3,239
 Has,BH,346
-Has,BK,262
+Has,BK,162
 Has,MS,602
 Has,SB,371
 Has,TH,0
@@ -1813,7 +1813,7 @@ Has,U1,5
 Has,U2,30
 Has,U3,59
 Has,BH,380
-Has,BK,452
+Has,BK,352
 Has,MS,658
 Has,SB,436
 Has,TH,1
@@ -2003,7 +2003,7 @@ Has,EHS,5
 Has,U1,75
 Has,U3,190
 Has,BH,700
-Has,BK,642
+Has,BK,542
 Has,MS,495
 Has,SB,265
 Has,TH,0
@@ -2047,7 +2047,7 @@ Has,EHS,5
 Has,U1,75
 Has,U3,190
 Has,BH,700
-Has,BK,642
+Has,BK,542
 Has,CL,720
 Has,GT,970
 Has,MS,495
@@ -2191,7 +2191,7 @@ CompanyDiscardsTrain,SB,2G,Pool
  
 CompanyOperates,SB,Alice
 LaysTileAt,SB,432,J28,NW
-LAYS_TOKEN_ON,SB,J28,80
+LAYS_TOKEN_ON,SB,J28,160
 CompanyRevenue,SB,310
 CompanyPaysOutFull,SB,310
 Payout,Bob,31,1,10
@@ -2209,7 +2209,7 @@ NewTrainAvailable,5,5E
 CompanyOperates,MS,Alice
 LaysTileAt,MS,435,H22,SW
 DuplicateTokenRemoved,Ug,H22
-LAYS_TOKEN_ON,MS,H22,80
+LAYS_TOKEN_ON,MS,H22,160
 CompanyRevenue,MS,420
 CompanyDividesEarnings,MS,420,370,50
 CompanyPaysOutFull,MS,370
@@ -2257,11 +2257,11 @@ ORWorthIncrease,Alice,6.1,792
 ORWorthIncrease,Bob,6.1,731
 ORWorthIncrease,Charlie,6.1,0
 Has,BH,973
-Has,BK,611
+Has,BK,511
 Has,CL,180
 Has,GT,170
-Has,MS,502
-Has,SB,216
+Has,MS,422
+Has,SB,136
 Has,TH,-30
 Has,Sd,416
 Has,KK,162

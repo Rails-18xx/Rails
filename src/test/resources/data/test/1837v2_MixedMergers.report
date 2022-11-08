@@ -1617,7 +1617,7 @@ EndOfFormationRound,Ug,OperatingRound 4.1
  
 CompanyOperates,MS,Bob
 LaysTileAtFor,MS,8,F12,NE,70
-LAYS_TOKEN_ON,MS,G13,60
+LAYS_TOKEN_ON,MS,G13,120
 CompanyRevenue,MS,240
 CompanyDividesEarnings,MS,240,180,60
 CompanyPaysOutFull,MS,180
@@ -1685,7 +1685,7 @@ Has,BH,689
 Has,BK,90
 Has,CL,146
 Has,GT,370
-Has,MS,537
+Has,MS,477
 Has,SB,951
 Has,TH,893
 Has,Sd,200
@@ -1916,7 +1916,7 @@ Has,BH,339
 Has,BK,120
 Has,CL,361
 Has,GT,390
-Has,MS,1107
+Has,MS,1047
 Has,SB,706
 Has,TH,528
 Has,Sd,200
