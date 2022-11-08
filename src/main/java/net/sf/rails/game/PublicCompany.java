@@ -2085,36 +2085,42 @@ public class PublicCompany extends RailsAbstractItem
      */
     public int getBaseTokenLayCost(Stop stop) {
 
-        //if (baseTokenLayCostMethod.equals(BASE_COST_SEQUENCE)) {
         if (baseTokenLayCostMethod == BaseCostMethod.SEQUENCE) {
-            if (baseTokenLayCost == null) return 0;
-            int index = getNumberOfLaidBaseTokens();
+           if (baseTokenLayCost == null) return 0;
+            return baseTokenLayCost.get(getBaseTokenLayCostIndex());
 
-            if (index >= baseTokenLayCost.size()) {
-                index = baseTokenLayCost.size() - 1;
-            } else if (index < 0) {
-                index = 0;
-            }
-            return baseTokenLayCost.get(index);
-            //} else if (baseTokenLayCostMethod.equals(BASE_COST_DISTANCE)) {
         } else if (baseTokenLayCostMethod == BaseCostMethod.HEX_DISTANCE) {
             if (baseTokenLayCost == null) return 0;
+            int costIndex = getBaseTokenLayCostIndex();
             if (stop == null) {
-                return baseTokenLayCost.get(0);
+                return baseTokenLayCost.get(costIndex);
             } else {
                 MapHex hex = stop.getHex();
                 // WARNING: no provision yet for multiple home hexes.
-                return getRoot().getMapManager().getHexDistance(homeHexes.get(0), hex) * baseTokenLayCost.get(0);
+                return getRoot().getMapManager().getHexDistance(homeHexes.get(0), hex)
+                        * baseTokenLayCost.get(costIndex);
             }
-        //} else if (baseTokenLayCostMethod.equals(BASE_COST_ROUTE_LENGTH)
+
          } else if (baseTokenLayCostMethod == BaseCostMethod.ROUTE_DISTANCE
                 && stop != null) {
             // TODO  Stop is null in NoMapMode. No idea what to do with that. (EV)
             if (tokenableStops == null) setTokenableStops();
             return baseTokenLayCost.get(0) * tokenableStops.get(stop);
+
         } else {
             return 0;
         }
+    }
+
+    protected int getBaseTokenLayCostIndex () {
+        int index = getNumberOfLaidBaseTokens();
+
+        if (index >= baseTokenLayCost.size()) {
+            index = baseTokenLayCost.size() - 1;
+        } else if (index < 0) {
+            index = 0;
+        }
+        return index;
     }
 
     /** This method is used in 1826, to find the tokening costs following track */

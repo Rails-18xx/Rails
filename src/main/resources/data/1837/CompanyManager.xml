@@ -54,8 +54,8 @@
             <Certificate shares="1" number="8"/>
         </Shares>
         <BaseTokens>
-            <LayCost method="distance" cost="20" number="1"/>
-            <LayCost method="distance" cost="40" number="1"/>
+            <LayCost method="distance" cost="0,20,40"/>
+            <!--LayCost method="distance" cost="40" number="1"/-->
             <HomeBase lay="whenFloated"/>
         </BaseTokens>
         <Payout split="allowed" />

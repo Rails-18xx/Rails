@@ -2000,7 +2000,6 @@ PRICE_MOVES_LOG,Sd,112,J4,120,K4
  
 CompanyOperates,MS,Alice
 LaysTileAt,MS,418,H36,E
-LAYS_TOKEN_ON,MS,G13,60
 CompanyRevenue,MS,500
 CompanyDividesEarnings,MS,500,470,30
 CompanyPaysOutFull,MS,470
@@ -2094,7 +2093,7 @@ Has,BH,267
 Has,BK,110
 Has,CL,936
 Has,GT,10
-Has,MS,136
+Has,MS,196
 Has,SB,793
 Has,TH,13
 Has,Sd,185
@@ -2131,6 +2130,7 @@ PRICE_MOVES_LOG,Sd,120,K4,130,L4
  
 CompanyOperates,MS,Alice
 LaysTileAt,MS,430,E17,W
+LAYS_TOKEN_ON,MS,G13,120
 CompanyRevenue,MS,430
 CompanyPaysOutFull,MS,430
 Payout,Alice,258,6,10
@@ -2158,13 +2158,14 @@ FirstTrainBought,5E
  
 CompanyOperates,SB,Bob
 LaysTileAt,SB,432,J28,NW
-LAYS_TOKEN_ON,SB,H22,160
+LAYS_TOKEN_ON,SB,H22,320
 CompanyRevenue,SB,200
 CompanyPaysOutFull,SB,200
 Payout,Alice,20,1,10
 Payout,Bob,120,6,10
 Payout,SB,20,1,10
 PRICE_MOVES_LOG,SB,108,H3,115,I3
+PresidentAddsCash,SB,Bob,147
 BuysTrain,SB,4,Sd,640
  
 CompanyOperates,BH,Alice
@@ -2203,19 +2204,19 @@ PRICE_MOVES_LOG,BK,58,A7,61,B7
  
 EndOfOperatingRound,5.2
 ORWorthIncrease,Alice,5.2,808
-ORWorthIncrease,Bob,5.2,773
+ORWorthIncrease,Bob,5.2,626
 ORWorthIncrease,Charlie,5.2,0
 Has,BH,217
 Has,BK,188
 Has,CL,136
 Has,GT,10
-Has,MS,222
-Has,SB,13
+Has,MS,162
+Has,SB,0
 Has,TH,253
 Has,Sd,951
 Has,KK,45
 Has,Ug,83
 Has,Alice,1630
-Has,Bob,1937
+Has,Bob,1790
 StartStockRound,6
 HasPriority,Bob

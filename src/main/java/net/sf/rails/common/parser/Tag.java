@@ -184,7 +184,7 @@ public class Tag {
         ImmutableList.Builder<Integer> result = ImmutableList.builder();
         try {
             for (String value : valueString.split(",")) {
-                result.add(Integer.parseInt(value));
+                result.add(Integer.parseInt(value.replaceAll(" ","")));
             }
         } catch (NumberFormatException e) {
             throw new ConfigurationException("Invalid integer in attribute " + name + "'");
