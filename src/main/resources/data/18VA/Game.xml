@@ -52,27 +52,29 @@
 			<Score towns="yes"/>
 		</Defaults>
 		<TrainType name="2/1G" quantity="6">
-			<Train name="2" majorStops="2" cost="100"/>
-			<Train name="1G" majorStops="1" cost="100"/>
+			<Train name="2" majorStops="2" cost="100">
+				<Score towns="no"/>
+			</Train>
+			<Train name="1G" category="goods" majorStops="1" cost="100"/>
 		</TrainType>
 		<TrainType name="3/2G" quantity="5">
 			<Train name="3" majorStops="3" cost="200"/>
-			<Train name="2G" majorStops="2" cost="200"/>
+			<Train name="2G" category="goods" majorStops="2" cost="200"/>
 			<NewPhase phaseName="3"/>
 		</TrainType>
 		<TrainType name="4/3G" quantity="4">
 			<Train name="4" majorStops="4" cost="300"/>
-			<Train name="3G" majorStops="3" cost="300"/>
+			<Train name="3G" category="goods" majorStops="3" cost="300"/>
 			<NewPhase phaseName="4"/>
 		</TrainType>
 		<TrainType name="5/4G" quantity="3">
 			<Train name="5" majorStops="5" cost="500"/>
-			<Train name="4G" majorStops="4" cost="500"/>
+			<Train name="4G" category="goods" majorStops="4" cost="500"/>
 			<NewPhase phaseName="5"/>
 		</TrainType>
 		<TrainType name="6/5G" quantity="2">
 			<Train name="6" majorStops="6" cost="600"/>
-			<Train name="5G" majorStops="5" cost="600"/>
+			<Train name="5G" category="goods" majorStops="5" cost="600"/>
 			<NewPhase phaseName="6"/>
 		</TrainType>
 		<TrainType name="4D" majorStops="99" cost="800" quantity="10">
@@ -96,11 +98,11 @@
 			<OperatingRounds number="2"/>
 		</Phase>
 		<Phase name="4">
-			<Trains rusted="2/1+1" limitStep="2"/>
+			<Trains rusted="2/1G" limitStep="2"/>
 		</Phase>
 		<Phase name="5">
 			<Tiles colour="yellow,green,brown"/>
-			<Trains rusted="3/2+2" limitStep="3"/>
+			<Trains rusted="3/2G" limitStep="3"/>
 			<!--Privates close="yes"/-->
 			<OperatingRounds number="3"/>
 			<OffBoardRevenue step="2"/>
@@ -109,7 +111,7 @@
 			<Trains released="4D"/>
 		</Phase>
 		<Phase name="4D">
-			<Trains rusted="4/3+3"/>
+			<Trains rusted="4/3G"/>
 		</Phase>
 	</Component>
 </ComponentManager>

@@ -1,7 +1,15 @@
 <Map tileOrientation="NS" letterOrientation="vertical" even="A">
+	<Defaults>
+		<!-- See class Access for allowed values -->
+		<Access type="offMap" runTo="yes" runThrough="no" score="major"/>
+		<Access type="city" runTo="yes" runThrough="yes" score="major"/>
+		<Access type="town" runTo="yes" runThrough="yes" score="minor"/>
+		<Access type="mine" runTo="trains:goods" runThrough="no" mutexId="CMD" score="minor"/>
+	</Defaults>
 	<Hex name="A6" tile="0"/>
-	<Hex name="A8" tile="-1921" orientation="1" value="40,70" city="Philadelphia">
-			<Access mutexId="OMCity"/>
+	<Hex name="A8" tile="-1921" orientation="1" value="40,70" city="Philadelphia"
+		 	extraText="40/70,0,-2">
+		<Access mutexId="OMCity"/>
 	</Hex>
 	<Hex name="B5" tile="-10" city="Hagerstown"/>
 	<Hex name="B7" tile="0"/>
@@ -11,22 +19,30 @@
 	<Hex name="D3" tile="-10" city="Cumberland"/>
 	<Hex name="D5" tile="0"/>
 	<Hex name="D7" tile="-10" city="Washington" label="P"/>
-	<Hex name="D9" tile="-4001" orientation="3" value="30,20">
-			<Access mutexId="Port"/>
+	<Hex name="D9" tile="-4001" pic="-4011" orientation="3" value="30,20"
+			extraText="30/20,0,30">
+		<Access mutexId="Port"/>
 	</Hex>
 	<Hex name="E2" tile="-1"/>
 	<Hex name="E4" tile="0"/>
 	<Hex name="E6" tile="-10" city="Alexandria" label="P"/>
-	<Hex name="E8" tile="57" city="Annapolis" orientation="2" impassable="F7"/>
-	<Hex name="F1" tile="-1922" city="Grafton">
-			<Access mutexId="CMD"/>
+	<Hex name="E8" tile="-26005" city="Annapolis" orientation="2" impassable="F7"/>
+	<Hex name="F1" tile="-1922" city="Grafton" extraText="xG*20,0,40">
+		<Access runTo="trains:goods" mutexId="CMD"/>
 	</Hex>
 	<Hex name="F3" tile="0"/>
 	<Hex name="F5" tile="0"/>
 	<Hex name="F7" tile="0" impassable="G6"/>
-	<Hex name="F9" tile="-4001" orientation="3" value="20,10">
-			<Access mutexId="Port"/>
+	<Hex name="F9" tile="-4001" pic="-4011" orientation="3" value="20,10"
+		 extraText="20/10,0,30">
+		<Access mutexId="Port"/>
 	</Hex>
+	<Hex name="G2" tile="-1"/>
+	<Hex name="G4" tile="0"/>
+	<Hex name="G6" tile="-10" city="Fredericksburg"/>
+	<Hex name="H3" tile="-10" city="Staunton"/>
+	<Hex name="H5" tile="-10" city="Gordonsville"/>
+	<Hex name="I2" tile="-1"/>
 	<Hex name="I4" tile="-10" city="Charlottesville"/>
 	<Hex name="I6" tile="0"/>
 	<Hex name="J3" tile="0"/>
@@ -35,8 +51,8 @@
 	<Hex name="K2" tile="-1"/>
 	<Hex name="K4" tile="0"/>
 	<Hex name="K6" tile="-10" city="Richmond" label="P"/>
-	<Hex name="L1" tile="-1922" city="Roanoke">
-			<Access mutexId="CMD"/>
+	<Hex name="L1" tile="-1922" city="Roanoke" extraText="xG*20,0,40">
+		<Access runTo="trains:goods" mutexId="CMD"/>
 	</Hex>
 	<Hex name="L3" tile="-10" city="Lynchburg"/>
 	<Hex name="L5" tile="0"/>
@@ -44,23 +60,27 @@
 	<Hex name="M2" tile="-1"/>
 	<Hex name="M4" tile="0"/>
 	<Hex name="M6" tile="-10" city="Petersburg" label="P"/>
-	<Hex name="M8" tile="57" orientation="2" city="Newport News" impassable="N7,O8"/>
+	<Hex name="M8" tile="-26005" orientation="2" city="Newport News" impassable="N7,O8"/>
 	<Hex name="N3" tile="0"/>
 	<Hex name="N5" tile="0"/>
 	<Hex name="N7" tile="0"/>
-	<Hex name="N9" tile="-4001" orientation="3" value="20,40">
-			<Access mutexId="Port"/>
+	<Hex name="N9" tile="-4001" pic="-4011" orientation="3" value="20,40"
+		 	extraText="20/40,0,30">
+		<Access mutexId="Port"/>
 	</Hex>
-	<Hex name="O2" tile="-1911" orientation="5" value="20,40" city="Greensboro">
-			<Access mutexId="OMCity"/>
+	<Hex name="O2" tile="-1911" orientation="5" value="20,40" city="Greensboro"
+		 	extraText="20/40,0,35">
+		<Access mutexId="OMCity"/>
 	</Hex>
 	<Hex name="O4" tile="0"/>
 	<Hex name="O6" tile="0"/>
-	<Hex name="O8" tile="57" city="Norfolk" orientation="2"/>
-	<Hex name="P9" tile="-4001" orientation="3" value="30,50">
-			<Access mutexId="Port"/>
+	<Hex name="O8" tile="-26005" city="Norfolk" orientation="2"/>
+	<Hex name="P9" tile="-4001" pic="-4011" orientation="3" value="30,50"
+		 	extraText="30/50,0,30">
+		<Access mutexId="Port"/>
 	</Hex>
-	<Hex name="Q6" tile="-1911" orientation="4" value="30,50" city="Rocky Mount">
-			<Access mutexId="OMCity"/>
+	<Hex name="Q6" tile="-1911" orientation="4" value="30,50" city="Rocky Mount"
+		 	extraText="30/50,0,35">
+		<Access mutexId="OMCity"/>
 	</Hex>
 </Map>

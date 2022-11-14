@@ -18941,5 +18941,213 @@ object TTilesWrapper
         item
           JunType = jtCity
         end>
+    end
+    item
+      Code = 1171
+      LongName = 'VA171'
+      Category = 'RIC'
+      CategoryPosition = tp3CornerA
+      Level = tlGray
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtTripleCity
+          Revenue = 60
+          RevenuePosition = tp3CornerB
+        end>
+    end
+    item
+      Code = 1172
+      LongName = 'VA172'
+      Category = '  WAS'
+      CategoryPosition = tp3CornerA
+      Level = tlGray
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 60
+          RevenuePosition = tp3CornerB
+        end>
+    end
+    item
+      Code = -26004
+      LongName = 'prepr.5'
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideE
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 20
+        end>
+    end
+    item
+      Code = -26005
+      LongName = 'prepr.57'
+      Level = tlYellow
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end>
+      Junctions = <
+        item
+          JunType = jtCity
+          Revenue = 20
+        end>
+    end
+    item
+      Code = -26006
+      LongName = 'prepr.619'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideB
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 30
+        end>
+    end
+    item
+      Code = -26007
+      LongName = 'prepr.14'
+      Level = tlGreen
+      Connections = <
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideF
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideA
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideC
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tpCenter
+        end
+        item
+          Position1 = tpCenter
+          Position2 = tp4SideD
+        end>
+      Junctions = <
+        item
+          JunType = jtDoubleCity
+          Revenue = 30
+        end>
     end>
 end

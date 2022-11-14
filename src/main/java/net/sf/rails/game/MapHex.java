@@ -245,12 +245,24 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         ALWAYS, RESERVE_SLOT, NEVER
     }
 
-    private final GenericState<BlockedToken> isBlockedForTokenLays = new GenericState<>(this, "isBlockedForTokenLays");
+    private final GenericState<BlockedToken> isBlockedForTokenLays
+            = new GenericState<>(this, "isBlockedForTokenLays");
 
     /**
      * OffStation BonusTokens
      */
-    private final PortfolioSet<BonusToken> bonusTokens = PortfolioSet.create(this, "bonusTokens", BonusToken.class);
+    private final PortfolioSet<BonusToken> bonusTokens
+            = PortfolioSet.create(this, "bonusTokens", BonusToken.class);
+
+    /**
+     * Parameters for extra text to be printed at a specified position on the hex.
+     * Added for 1837 to print coal mine names
+     */
+    private String extraText = null;
+    private String extraTextString = null;
+    private int extraTextX = 0; // horizontal position wrt hex center
+    private int extraTextY = 0; // vertical position wrt hex center
+
 
     private MapHex(MapManager parent, String id, Coordinates coordinates) {
         super(parent, id);
@@ -299,6 +311,14 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
             }
         }
         reservedForCompanyName = tag.getAttributeAsString("reserved");
+
+        extraTextString = tag.getAttributeAsString("extraText");
+        if (extraTextString != null) {
+            String[] fields = extraTextString.split(",");
+            extraText = fields[0];
+            extraTextX = Integer.parseInt(fields[1]);
+            extraTextY = Integer.parseInt(fields[2]);
+        }
 
         // revenue bonus
         List<Tag> bonusTags = tag.getChildren("RevenueBonus");
@@ -1106,6 +1126,18 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     public String getConnectionString(Station station) {
         return TrackConfig.getConnectionString(this, currentTile.value(),
                 currentTileRotation.value(), station);
+    }
+
+    public String getExtraText() {
+        return extraText;
+    }
+
+    public int getExtraTextX() {
+        return extraTextX;
+    }
+
+    public int getExtraTextY() {
+        return extraTextY;
     }
 
     @Override
