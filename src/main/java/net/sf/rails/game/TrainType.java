@@ -23,9 +23,13 @@ public class TrainType implements Cloneable {
     protected String reachBasis = "stops";
     protected boolean countHexes = false;
 
+    /* "town count" in fact refers to all "minor" stops,
+     * including mines, ports etc. */
     protected String countTowns = "major";
     protected int townCountIndicator = TOWN_COUNT_MAJOR;
 
+    /* "town score" in fact refers to all "minor" stops,
+     * including mines, ports etc. */
     protected String scoreTowns = "yes";
     protected int townScoreFactor = 1;
 
@@ -60,22 +64,26 @@ public class TrainType implements Cloneable {
             reachBasis = reachTag.getAttributeAsString("base", reachBasis);
 
             // Are towns counted (only relevant if reachBasis = "stops")
+            // This refers to all "minor" stops, including mines, ports etc.
             countTowns = reachTag.getAttributeAsString("countTowns", countTowns);
         }
 
         // Score
         Tag scoreTag = tag.getChild("Score");
         if (scoreTag != null) {
-            // Reach basis
+            // Do towns score (values "yes" and "no"
             scoreTowns = scoreTag.getAttributeAsString("towns", scoreTowns);
-
-            // Are towns counted (only relevant is reachBasis = "stops")
+            // How do cities score ("single" or "double")
             scoreCities = scoreTag.getAttributeAsString("cities", scoreCities);
         }
 
         // Check the reach and score values
         countHexes = "hexes".equals(reachBasis);
-        townCountIndicator = "no".equals(countTowns) ? NO_TOWN_COUNT : minorStops > 0 ? TOWN_COUNT_MINOR : TOWN_COUNT_MAJOR;
+        townCountIndicator = "no".equals(countTowns) ? NO_TOWN_COUNT
+                : minorStops > 0 ? TOWN_COUNT_MINOR
+                : TOWN_COUNT_MAJOR;
+        /* FIXME: TownCount should only affect train length counting, not revenue calculation.
+           This seems to go wrong in NetworkVertex near line 166. */
         cityScoreFactor = "double".equalsIgnoreCase(scoreCities) ? 2 : 1;
         townScoreFactor = "yes".equalsIgnoreCase(scoreTowns) ? 1 : 0;
         // Actually we should meticulously check all values....

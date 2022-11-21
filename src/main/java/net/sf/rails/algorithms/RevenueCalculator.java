@@ -54,6 +54,7 @@ abstract class RevenueCalculator {
     protected final int[] trainDistance; // keeps track of distance travelled (for H-trains)
 
     int specialRevenue;
+    int currentBestSpecRev;
 
     // static bonus data
     protected final int [] bonusValue;
@@ -402,7 +403,7 @@ abstract class RevenueCalculator {
         runTrain(startTrain);
 
         // inform revenue listener via adapter
-        notifyRevenueAdapter(currentBestValue, specialRevenue, true);
+        notifyRevenueAdapter(currentBestValue, currentBestSpecRev, true);
 
         return currentBestValue;
     }
@@ -477,8 +478,7 @@ abstract class RevenueCalculator {
             }
         }
 
-        log.debug("RC: stationVertex = {}", stationVertex);
-        log.debug("RC: Count Visits = {}", countVisits);
+        log.debug("RC: stop={} station={} visits={}", vertexId, stationVertex, countVisits);
         return stationVertex;
     }
 
@@ -542,6 +542,7 @@ abstract class RevenueCalculator {
         // compare to current best result
         if (totalValue > currentBestValue) {
             currentBestValue = totalValue;
+            currentBestSpecRev = specialRevenue;
             // exceed thus deep copy of vertex stack
             for (int j = startTrainSet; j <= finalTrainSet; j++) {
                 for (int v = 0; v < nbVertexes + 1; v++) {
@@ -556,7 +557,7 @@ abstract class RevenueCalculator {
             log.debug("RC: Found better run with {}", totalValue);
             // inform revenue listener via adapter
             // special revenue only to be reported with the final result
-            notifyRevenueAdapter(currentBestValue, specialRevenue, false);
+            notifyRevenueAdapter(currentBestValue, currentBestSpecRev, false);
         }
     }
 

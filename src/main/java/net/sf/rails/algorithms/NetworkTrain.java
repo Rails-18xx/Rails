@@ -45,10 +45,7 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         }
         int multiplyMajors = railsTrain.getCityScoreFactor();
         int multiplyMinors = railsTrain.getTownScoreFactor();
-        boolean ignoreMinors = false;
-        if (multiplyMinors == 0){
-            ignoreMinors = true;
-        }
+        boolean ignoreMinors = (multiplyMinors == 0);
         boolean isHTrain = railsTrain.isHTrain();
         boolean isETrain = railsTrain.isETrain();
         String trainName = railsTrain.toText();

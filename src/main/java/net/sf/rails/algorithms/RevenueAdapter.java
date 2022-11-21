@@ -287,13 +287,12 @@ public final class RevenueAdapter implements Runnable {
      * @return true if H-trains are used
      */
     private boolean useHTrains() {
-        boolean useHTrains = false;
         for (NetworkTrain train:trains) {
             if (train.isHTrain()) {
-                useHTrains = true;
+                return true;
             }
         }
-        return useHTrains;
+        return false;
     }
 
     public void initRevenueCalculator(boolean useMultiGraph){
@@ -325,6 +324,9 @@ public final class RevenueAdapter implements Runnable {
         rcEdges = new ArrayList<>(rcGraph.edgeSet());
         rcEdges.sort(new NetworkEdge.CostOrder());
         log.debug("rcVertices={} rcEdges={}", rcVertices, rcEdges);
+        for (NetworkVertex vertex : rcVertices) {
+            log.debug ("Stop={} value={}", vertex.getStop(), vertex.getValue());
+        }
 
         // prepare train length
         prepareTrainLengths(rcVertices);
@@ -509,6 +511,9 @@ public final class RevenueAdapter implements Runnable {
         }
         log.debug("RA: rcVertices:{}", rcVertices);
         log.debug("RA: rcEdges:{}", rcEdges);
+        for (NetworkVertex vertex : rcVertices) {
+            log.debug ("Stop={} value={}", vertex.getStop(), vertex.getValue());
+        }
 
         // set revenue bonuses
         int id = 0;
@@ -618,7 +623,8 @@ public final class RevenueAdapter implements Runnable {
 //        if (hasDynamicCalculator) {
 //            return revenueManager.revenueFromDynamicCalculator(this);
         // For 1837 we need to do both!
-        specialRevenue = revenueManager.revenueFromDynamicCalculator(this);
+        //specialRevenue = revenueManager.revenueFromDynamicCalculator(this); //??
+        specialRevenue = revenueManager.getSpecialRevenue();
 //        } else { // otherwise standard calculation
         return calculateRevenue(0, trains.size() - 1);
 //        }
@@ -730,6 +736,7 @@ public final class RevenueAdapter implements Runnable {
             int dynamicBonuses = 0;
             if (hasDynamicModifiers) {
                 dynamicBonuses = revenueManager.evaluationValue(this.getOptimalRun(), true);
+                specialRevenue = revenueManager.getSpecialRevenue();
             }
             if (dynamicBonuses != 0) {
                 runPrettyPrint.append("; ").append(LocalText.getText("RevenueBonus", dynamicBonuses));

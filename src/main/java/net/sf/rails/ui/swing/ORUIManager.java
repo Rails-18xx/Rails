@@ -572,13 +572,28 @@ public class ORUIManager implements DialogOwner {
     }
 
     protected void setDividend(String command, SetDividend action) {
+
         int amount;
+        int dividend;
+        int treasuryAmount = 0;
+        boolean hasDirectCompanyIncomeInOR
+                = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
 
         if (command.equals(ORPanel.SET_REVENUE_CMD)) {
-            amount = orPanel.getRevenue(orCompIndex);
+            dividend = amount = orPanel.getRevenue(orCompIndex);
+            if (hasDirectCompanyIncomeInOR) {
+                treasuryAmount = orPanel.getCompanyTreasuryBonusRevenue(orCompIndex);
+                dividend -= treasuryAmount;
+                orPanel.setDividend(orCompIndex, dividend);
+            }
+
             orPanel.stopRevenueUpdate();
             log.debug("Set revenue amount is {}", amount);
             action.setActualRevenue(amount);
+            if (hasDirectCompanyIncomeInOR) {
+                log.debug("The Bonus for the company treasury is {}", treasuryAmount);
+                action.setActualCompanyTreasuryRevenue(treasuryAmount);
+            }
 
             // notify sound manager of set revenue amount as soon as
             // set revenue is pressed (not waiting for the completion
@@ -595,6 +610,9 @@ public class ORUIManager implements DialogOwner {
 
                 // Locally update revenue if we don't inform the server yet.
                 orPanel.setRevenue(orCompIndex, amount);
+                if (hasDirectCompanyIncomeInOR) {
+                    orPanel.setTreasuryBonusRevenue(orCompIndex, treasuryAmount);
+                }
             }
         } else {
             // The revenue allocation has been selected

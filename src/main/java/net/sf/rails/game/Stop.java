@@ -46,7 +46,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         OFFMAP,
         MINE,
         PORT,
-        PASS
+        PASS,
     }
 
     private final IntegerState number = IntegerState.create(this, "legacyNumber", 0);
@@ -241,6 +241,8 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     public boolean isTokenableFor(PublicCompany company) {
         return hasTokenSlotsLeft() && !hasTokenOf(company);
     }
+
+    public Access getAccess() { return getRelatedStation().getAccess(); }
 
     public Access.RunTo getRunToAllowed() {
        return runTo;

@@ -9,18 +9,21 @@
 	<Tile id="-10"><!-- 1 city -->
 		<Upgrade id="5,6,57"/>
 	</Tile>
-	<Tile id="-1911"/><!-- Port -->
+	<Tile id="-1911">
+		<Station id="city1" type="OffMap"/>
+	</Tile>
 	<Tile id="-1921">
 		<Station id="city1" type="OffMap"/>
-
 	</Tile>
 	<Tile id="-1922">
-		<Station id="city1" type="OffMap"/>
+		<Station id="city1" type="Mine"/>
 	</Tile>
 	<Tile id="-4001">
 		<Station id="city1" type="Port"/>
 	</Tile>
-	<Tile id="-26005"/><!-- 3 coastal cities-->
+	<Tile id="-26005"><!-- 3 cities with ports-->
+		<Station id="city1" type="City"/>
+	</Tile>
 
 	<!-- yellow tiles -->
 	<Tile id="4" quantity="4">

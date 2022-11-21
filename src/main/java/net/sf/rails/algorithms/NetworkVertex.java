@@ -163,6 +163,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (isMajor()) {
             valueByTrain = value * train.getMultiplyMajors();
         } else if (isMinor()) {
+            // FIXME: the next line is probably wrong or insufficient. See TrainType near line 85.
             if (train.ignoresMinors()) {
                 valueByTrain = 0;
             } else {
@@ -240,10 +241,10 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         Station station = (Station) trackPoint;
 
         log.debug("Init of vertex {}", this);
-
         // check if it has to be removed because it is run-to only
         // if company == null, then no vertex gets removed
-        if (company != null && !stop.isRunToAllowedFor(company, running) && !stop.isRunThroughAllowedFor(company)) {
+        if (company != null && !stop.isRunToAllowedFor(company, running)
+                && !stop.isRunThroughAllowedFor(company)) {
            log.info("Vertex is removed");
            return false;
         }

@@ -226,6 +226,9 @@ public final class RevenueManager extends RailsManager implements Configurable {
      * @param optimal flag if this is the found optimal run
      * @return total value of dynamic modifiers
      */
+    /* TODO Replace return value (throughout) with new Revenue object,
+       that includes special revenue such as direct treasury income.
+     */
     int evaluationValue(List<RevenueTrainRun> run, boolean optimal) {
         // this allows dynamic modifiers to change the optimal run
         // however this is forbidden outside the optimal run!
