@@ -13,10 +13,10 @@
 		<BaseTokens>
 			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
 			<HomeBase lay="firstOR"/>
-			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
+			<!-- LayCost methods: "sequence" (1830), "distance" (1835), "route_distance" (1826)-->
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
-		<Shares unite="10">
+		<Shares unit="10">
 			<Certificate type="President" shares="2"/>
 			<Certificate shares="1" number="8"/>
 		</Shares>
@@ -39,34 +39,34 @@
 	
 	<!-- Note two supported colour specification formats:
 	     RGB decimal with commas and RGB hexadecimal without commas -->
-		<Company name="B&amp;O" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000FF"
-				longname="Baltimore and Ohio Railroad">
-			<Home hex="C8"/>
-		</Company>
-		<Company name="C&amp;O" type="Public" tokens="4" fgColour="000000" bgColour="00CCFF"
-				longname="Chesapeake and Ohio Railway">
-			<Home hex="I4"/>
-		</Company>
-		<Company name="NW" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000"
-				longname="Norfolk and Western Railway">
-			<Home hex="M6"/>
-		</Company>
-		<Company name="RFP" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000"
-				longname="Richmond, Fredericksburg, and Potomac Railroad">
-			<Home hex="G6"/>
-		</Company>
-		<Company name="SR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="006600"
-				longname="Southern Railway">
-			<Home hex="K6"/>
-		</Company>
-		<Company name="VGN" type="Public" tokens="4" fgColour="FFFFFF" bgColour="990066"
-				longname="Virginian Railway">
-			<Home hex="L3"/>
-		</Company>
-		<Company name="WM" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF9900"
-				longname="Western Maryland Railway">
-			<Home hex="D3"/>
-		</Company>
+	<Company name="B&amp;O" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000FF"
+			longname="Baltimore and Ohio Railroad">
+		<Home hex="C8"/>
+	</Company>
+	<Company name="C&amp;O" type="Public" tokens="4" fgColour="000000" bgColour="00CCFF"
+			longname="Chesapeake and Ohio Railway">
+		<Home hex="I4"/>
+	</Company>
+	<Company name="NW" type="Public" tokens="4" fgColour="FFFFFF" bgColour="000000"
+			longname="Norfolk and Western Railway">
+		<Home hex="M6"/>
+	</Company>
+	<Company name="RFP" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF0000"
+			longname="Richmond, Fredericksburg, and Potomac Railroad">
+		<Home hex="G6"/>
+	</Company>
+	<Company name="SR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="006600"
+			longname="Southern Railway">
+		<Home hex="K6"/>
+	</Company>
+	<Company name="VGN" type="Public" tokens="4" fgColour="FFFFFF" bgColour="990066"
+			longname="Virginian Railway">
+		<Home hex="L3"/>
+	</Company>
+	<Company name="WM" type="Public" tokens="4" fgColour="FFFFFF" bgColour="FF9900"
+			longname="Western Maryland Railway">
+		<Home hex="D3"/>
+	</Company>
 		<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
 		<Bidding initial="5" minimum="5" increment="1"/>
 		<Item name="REA" type="Private" basePrice="40"/>

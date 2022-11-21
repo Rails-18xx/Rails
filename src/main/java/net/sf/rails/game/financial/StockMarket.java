@@ -310,7 +310,7 @@ public class StockMarket extends RailsManager implements Configurable {
      * @param company Company that has just paid dividends
      * @param numberOfSpaces The number of spaces to move.
      */
-    protected void moveRight (PublicCompany company, int numberOfSpaces) {
+    public void moveRight (PublicCompany company, int numberOfSpaces) {
 
         StockSpace oldsquare = company.getCurrentSpace();
         int row = oldsquare.getRow();
@@ -340,7 +340,7 @@ public class StockMarket extends RailsManager implements Configurable {
         moveRightOrUp (company, 1);
     }
 
-    protected void moveRightOrUp(PublicCompany company, int numberOfMoves) {
+    public void moveRightOrUp(PublicCompany company, int numberOfMoves) {
         /* Ignore the amount for now */
         StockSpace oldsquare = company.getCurrentSpace();
         int row = oldsquare.getRow();
@@ -359,14 +359,22 @@ public class StockMarket extends RailsManager implements Configurable {
     }
 
     protected void moveLeftOrDown(PublicCompany company) {
+        moveLeftOrDown(company, 1);
+    }
+
+    public void moveLeftOrDown(PublicCompany company, int numberOfMoves) {
         StockSpace oldsquare = company.getCurrentSpace();
         StockSpace newsquare = oldsquare;
         int row = oldsquare.getRow();
         int col = oldsquare.getColumn();
-        if (col > 0 &&
-                (newsquare = getStockSpace(row, col - 1)) != null) {
-        } else if (row < numRows - 1 &&
-                (newsquare = getStockSpace(row + 1, col)) != null) {
+        for (int i=0; i<numberOfMoves; i++) {
+            if (col > 0 &&
+                    (newsquare = getStockSpace(row, col - 1)) != null) {
+                col--;
+            } else if (row < numRows - 1 &&
+                    (newsquare = getStockSpace(row + 1, col)) != null) {
+                row++;
+            }
         }
         prepareMove(company, oldsquare, newsquare);
     }

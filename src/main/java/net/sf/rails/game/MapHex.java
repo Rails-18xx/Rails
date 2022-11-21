@@ -245,12 +245,24 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         ALWAYS, RESERVE_SLOT, NEVER
     }
 
-    private final GenericState<BlockedToken> isBlockedForTokenLays = new GenericState<>(this, "isBlockedForTokenLays");
+    private final GenericState<BlockedToken> isBlockedForTokenLays
+            = new GenericState<>(this, "isBlockedForTokenLays");
 
     /**
      * OffStation BonusTokens
      */
-    private final PortfolioSet<BonusToken> bonusTokens = PortfolioSet.create(this, "bonusTokens", BonusToken.class);
+    private final PortfolioSet<BonusToken> bonusTokens
+            = PortfolioSet.create(this, "bonusTokens", BonusToken.class);
+
+    /**
+     * Parameters for extra text to be printed at a specified position on the hex.
+     * Added for 1837 to print coal mine names
+     */
+    private String extraText = null;
+    private String extraTextString = null;
+    private int extraTextX = 0; // horizontal position wrt hex center
+    private int extraTextY = 0; // vertical position wrt hex center
+
 
     private MapHex(MapManager parent, String id, Coordinates coordinates) {
         super(parent, id);
@@ -285,7 +297,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         // Off-board revenue values
         valuesPerPhase = tag.getAttributeAsIntegerList("value");
 
-        // City name
+        // Location name
         stopName = tag.getAttributeAsString("city", "");
 
         if (tag.getAttributeAsString("unlaidHomeBlocksTokens") == null) {
@@ -299,6 +311,14 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
             }
         }
         reservedForCompanyName = tag.getAttributeAsString("reserved");
+
+        extraTextString = tag.getAttributeAsString("extraText");
+        if (extraTextString != null) {
+            String[] fields = extraTextString.split(",");
+            extraText = fields[0];
+            extraTextX = Integer.parseInt(fields[1]);
+            extraTextY = Integer.parseInt(fields[2]);
+        }
 
         // revenue bonus
         List<Tag> bonusTags = tag.getChildren("RevenueBonus");
@@ -989,9 +1009,9 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
      * <p>
      * There are the following cases to check for each company located there
      * <p>
-     * A) City is decided or there is only one city => check if the city has a
+     * A) Location is decided or there is only one city => check if the city has a
      * free slot or not (examples: NYNH in 1830 for a two city tile, NYC for a
-     * one city tile) B) City is not decided (example: Erie in 1830) two
+     * one city tile) B) Location is not decided (example: Erie in 1830) two
      * subcases depending on isHomeBlockedForAllCities - (true): all cities of
      * the hex have remaining slots available - (false): no city of the hex has
      * remaining slots available C) Or the company does not block its home city
@@ -1061,11 +1081,8 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         for (Stop stop : stops) {
             allTokenSlotsLeft += stop.getTokenSlotsLeft();
         }
-        if (anyBlockCompanies + cityBlockCompanies + 1 > allTokenSlotsLeft) {
-            return true; // all located companies plus the additonal token
-            // exceeds the available slots
-        }
-        return false;
+        // exceeds the available slots
+        return anyBlockCompanies + cityBlockCompanies + 1 > allTokenSlotsLeft; // all located companies plus the additonal token
     }
 
     public BlockedToken getBlockedForTokenLays() {
@@ -1109,6 +1126,18 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     public String getConnectionString(Station station) {
         return TrackConfig.getConnectionString(this, currentTile.value(),
                 currentTileRotation.value(), station);
+    }
+
+    public String getExtraText() {
+        return extraText;
+    }
+
+    public int getExtraTextX() {
+        return extraTextX;
+    }
+
+    public int getExtraTextY() {
+        return extraTextY;
     }
 
     @Override

@@ -59,6 +59,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected Class<? extends StockRound> stockRoundClass = StockRound.class;
     protected Class<? extends OperatingRound> operatingRoundClass = OperatingRound.class;
     protected Class<? extends ShareSellingRound> shareSellingRoundClass = ShareSellingRound.class;
+    protected Class<? extends TreasuryShareRound> treasuryShareRoundClass = TreasuryShareRound.class;
 
     // Variable UI Class names
     protected String gameUIManagerClassName = GuiDef.getDefaultClassName(GuiDef.ClassName.GAME_UI_MANAGER);
@@ -311,12 +312,18 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                     setGameParameter(GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY,
                             emergencyTag.getAttributeAsBoolean("mayBuyFromCompany",
                                     GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY.defaultValueAsBoolean()));
+                    setGameParameter(GameDef.Parm.EMERGENCY_MAY_ADD_PRES_CASH_FROM_COMPANY,
+                            emergencyTag.getAttributeAsBoolean("mayAddPresCashFromCompany",
+                                    GameDef.Parm.EMERGENCY_MAY_ADD_PRES_CASH_FROM_COMPANY.defaultValueAsBoolean()));
                     setGameParameter(GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY,
                             emergencyTag.getAttributeAsBoolean("companyBankruptcy",
                                     GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY.defaultValueAsBoolean()));
                     setGameParameter(GameDef.Parm.EMERGENCY_MUST_SELL_TREASURY_SHARES,
                             emergencyTag.getAttributeAsBoolean("mustSellTreasuryShares",
                                     GameDef.Parm.EMERGENCY_MUST_SELL_TREASURY_SHARES.defaultValueAsBoolean()));
+                    setGameParameter(GameDef.Parm.EMERGENCY_MUST_TAKE_LOANS,
+                            emergencyTag.getAttributeAsBoolean("mustTakeLoans",
+                                    GameDef.Parm.EMERGENCY_MUST_TAKE_LOANS.defaultValueAsBoolean()));
                     setGameParameter(GameDef.Parm.MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE,
                             emergencyTag.getAttributeAsBoolean("mustBuyTrainEvenIfNoRoute",
                                     GameDef.Parm.MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE.defaultValueAsBoolean()));
@@ -340,6 +347,20 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                 } catch (ClassNotFoundException e) {
                     throw new ConfigurationException("Cannot find class "
                             + ssrClassName, e);
+                }
+            }
+
+            // TreasuryShareRound class
+            Tag tsrTag = gameParmTag.getChild("TreasuryShareRound");
+            if (tsrTag != null) {
+                String tsrClassName =
+                        tsrTag.getAttributeAsString("class", "net.sf.rails.game.financial.TreasuryShareRound");
+                try {
+                    treasuryShareRoundClass =
+                            Class.forName(tsrClassName).asSubclass(TreasuryShareRound.class);
+                } catch (ClassNotFoundException e) {
+                    throw new ConfigurationException("Cannot find class "
+                            + tsrClassName, e);
                 }
             }
 
@@ -502,6 +523,8 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             if (company.canBuyPrivates()) guiParameters.put(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES, true);
             if (company.canHoldOwnShares()) guiParameters.put(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES, true);
             if (company.getMaxNumberOfLoans() != 0) guiParameters.put(GuiDef.Parm.HAS_ANY_COMPANY_LOANS, true);
+            if (company.getShareUnitSizes().size() > 1) guiParameters.put(GuiDef.Parm.HAS_GROWING_NUMBER_OF_SHARES, true);
+            if (company.hasBonds()) guiParameters.put(GuiDef.Parm.HAS_BONDS, true);
         }
 
         loop:
@@ -784,7 +807,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     public void startTreasuryShareTradingRound(PublicCompany company) {
         interruptedRound.set(getCurrentRound());
         String id = "TreasuryShareRound_" + getInterruptedRound().getId() + "_" + company.getId();
-        createRound(TreasuryShareRound.class, id).start(getInterruptedRound());
+        createRound(treasuryShareRoundClass, id).start(getInterruptedRound());
     }
 
     public boolean process(PossibleAction action) {
@@ -806,7 +829,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
             // EV: actually, it is null if the StartRound needs no user interaction.
             // Example: Steam Over Holland, when privates are just dealt out randomly.
 
-            action.setActed();
+            action.setActed(); // Duplicate?
 
             // Check player
             String actionPlayerName = action.getPlayerName();

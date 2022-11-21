@@ -232,32 +232,7 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
 
         if (company.hasFloated()) return;
 
-        // Move cash and shares where required
-        int soldPercentage = company.getSoldPercentage();
-        int cash;
-        int capitalisationMode = company.getCapitalisation();
-        if (company.hasStockPrice()) {
-            int capFactor = 0;
-            int shareUnit = company.getShareUnit();
-            if (capitalisationMode == PublicCompany.CAPITALISE_FULL) {
-                // Full capitalisation as in 1830
-                capFactor = 100 / shareUnit;
-            } else if (capitalisationMode == PublicCompany.CAPITALISE_PART) {
-                capFactor = company.getCapitalisationShares();
-            } else if (capitalisationMode == PublicCompany.CAPITALISE_INCREMENTAL) {
-                // Incremental capitalisation as in 1851
-                capFactor = soldPercentage / shareUnit;
-            } else if (capitalisationMode == PublicCompany.CAPITALISE_WHEN_BOUGHT) {
-                // Cash goes directly to treasury at each buy (as in 1856 before phase 6)
-                capFactor = 0;
-            }
-            int price = company.getIPOPrice();
-            cash = capFactor * price;
-        } else if (capitalisationMode == PublicCompany.CAPITALISE_FIXED_CASH) {
-            cash = company.getCapitalisationFixedCash();
-        } else {
-            cash = company.getFixedPrice();
-        }
+        int cash = getCashOnFloating(company);
 
         // Subtract initial token cost (e.g. 1851, 18EU)
         cash -= company.getBaseTokensBuyCost();
@@ -275,12 +250,54 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
                     company.getId()));
         }
 
-        if (capitalisationMode == PublicCompany.CAPITALISE_INCREMENTAL
+        if (company.getCapitalisation() == PublicCompany.CAPITALISE_INCREMENTAL
                 && company.canHoldOwnShares()) {
             // move all shares from ipo to the company portfolio
             // FIXME: Does this work correctly?
             Portfolio.moveAll(ipo.getCertificates(company), company);
         }
+    }
+
+    protected int getCashOnFloating (PublicCompany company) {
+        // Move cash and shares where required
+        int soldPercentage = company.getSoldPercentage();
+        int cash;
+        int capitalisationMode = company.getCapitalisation();
+        if (company.hasStockPrice()) {
+            int capFactor = 0;
+            int shareUnit = company.getShareUnit();
+            if (capitalisationMode == PublicCompany.CAPITALISE_FULL) {
+                // Full capitalisation as in 1830
+                capFactor = 100 / shareUnit;
+            } else if (capitalisationMode == PublicCompany.CAPITALISE_PART) {
+                // Like full capitalisation, but for less that 100%
+                // E.g. 18Scan SJ: only for 70%
+                capFactor = company.getCapitalisationShares();
+            } else if (capitalisationMode == PublicCompany.CAPITALISE_INCREMENTAL) {
+                // Incremental capitalisation as in 1851
+                capFactor = soldPercentage / shareUnit;
+            } else if (capitalisationMode == PublicCompany.CAPITALISE_WHEN_BOUGHT) {
+                // Cash goes directly to treasury at each buy (as in 1856 before phase 6)
+                capFactor = 0;
+            }
+            int price = (company.hasParPrice() ? company.getIPOPrice() : company.getMarketPrice());
+            cash = capFactor * price;
+        } else if (capitalisationMode == PublicCompany.CAPITALISE_FIXED_CASH) {
+            cash = company.getCapitalisationFixedCash();
+        } else {
+            cash = company.getFixedPrice();
+        }
+        log.debug("Company {} receives {} on floating", company, Bank.format(this, cash));
+        return cash;
+    }
+
+    /** Stub, to be overridden where needed.
+     * Used in 1826
+     * @param company The floating public company
+     * @return
+     */
+    protected int getCustomCapitalization (PublicCompany company) {
+        return 0;
     }
 
     protected void finishRound () {

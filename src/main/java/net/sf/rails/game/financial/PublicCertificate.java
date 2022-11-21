@@ -286,7 +286,7 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate>
             PublicCompany company = (PublicCompany) getParent();
             if (newOwner instanceof BankPortfolio) {
                 company.setPresident(null);
-            } else {
+            } else if (newOwner instanceof Player) {
                 company.setPresident((Player)newOwner);
             }
         }

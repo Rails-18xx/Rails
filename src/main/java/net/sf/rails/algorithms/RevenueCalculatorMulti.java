@@ -45,8 +45,8 @@ class RevenueCalculatorMulti extends RevenueCalculator {
 
     // define edgeTravelSets
     final void setTravelSet(int edgeId, int[] edges) {
-        for (int j=0; j < edges.length; j++) {
-            edgeTravelSets[edgeId][edgeNbTravelSets[edgeId]++] = edges[j];
+        for (int edge : edges) {
+            edgeTravelSets[edgeId][edgeNbTravelSets[edgeId]++] = edge;
         }
     }
 
@@ -78,7 +78,7 @@ class RevenueCalculatorMulti extends RevenueCalculator {
         // try all startVertexes
         for (int i=0; i < startVertexes.length; i++) {
             int vertexId = startVertexes[i];
-            log.debug("RCM: Using startVertex nr. {} for train {}", i, trainId);
+            log.debug("RCM: Using startVertex {} for train {}", i, trainId);
             boolean stationVertex = encounterVertex(trainId, vertexId, true);
             if (stationVertex) {
                 // train cannot terminate at start vertex

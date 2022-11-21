@@ -150,6 +150,7 @@ public class OperatingRound_1856 extends OperatingRound {
         }
     }
 
+    // NOT USED so far, see executeDeductions()
     @Override
     protected int checkForDeductions(SetDividend action) {
 
@@ -219,12 +220,14 @@ public class OperatingRound_1856 extends OperatingRound {
             if (payment == due) {
                 ReportBuffer.add(this, LocalText.getText("InterestPaidFromTreasury",
                         operatingCompany.value().getId(),
-                        paymentText));
+                        paymentText,
+                        LocalText.getText("loan")));
             } else {
                 ReportBuffer.add(this, LocalText.getText("InterestPartlyPaidFromTreasury",
                         operatingCompany.value().getId(),
                         paymentText,
-                        bank.getCurrency().format(due))); // TODO: Do this nicer
+                        bank.getCurrency().format(due),
+                        LocalText.getText("loan")));
             }
             remainder -= payment;
         }
@@ -238,7 +241,8 @@ public class OperatingRound_1856 extends OperatingRound {
             ReportBuffer.add(this, LocalText.getText("InterestPaidFromRevenue",
                     operatingCompany.value().getId(),
                     Bank.format(this, payment),
-                    Bank.format(this, due)));
+                    Bank.format(this, due),
+                    LocalText.getText("loan")));
             // This reduces train income
             amount -= payment;
         }

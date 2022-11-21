@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Station object represents any junction on a tile, where one, two or more
- * track fragments meet. The usual Station types are "City", "Town" and
+ * track fragments meet. The usual Station types are "Location", "Town" and
  * "OffMapCity". Other types found in some games are "Pass" (1841), "Port"
- * (1841, 18EU) and "Halt" (1860). <p> The station types "City" and "OffMapCity"
+ * (1841, 18EU) and "Halt" (1860). <p> The station types "Location" and "OffMapCity"
  * may have slots for placing tokens. <p> Station objects are used in Tile
  * objects, to represent the station(s) on a tile. Each tile type is represented
  * by just one Tile object (which is NOT cloned or newly instantiated when a

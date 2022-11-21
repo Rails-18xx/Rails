@@ -124,6 +124,13 @@ public class NetworkGraph {
         for (NetworkVertex vertex : graph.vertexSet()) {
             if (vertex.isSide() /*&& iterator.getSeenData().get(vertex)
                     != NetworkIterator.greedyState.GREEDY */) {
+                    /* NOTE: the above GREEDY check was removed as it caused
+                     * valid tile rotations to be blocked; see GitHub Rails-18xx issue #478.
+                     * No side effects of this removal have been found so far,
+                     * but should these appear and this check has to be re-enabled,
+                     * then the issue mentioned should be reopened because its fix is undone.
+                     * (EV 08/2022)
+                     */
                 MapHex hex = vertex.getHex();
                 if (!hexSides.containsKey(hex)) {
                     hexSides.put(hex, HexSidesSet.builder());
@@ -154,6 +161,22 @@ public class NetworkGraph {
         return hexStations.build();
     }
 
+    /**
+     * @return a list of all stops that are tokenable for the argument company
+     */
+    public Multimap<MapHex, Stop> getTokenableStops(PublicCompany company) {
+
+        ImmutableMultimap.Builder<MapHex, Stop> hexStops =
+                ImmutableMultimap.builder();
+
+        for (NetworkVertex vertex : graph.vertexSet()) {
+            Stop stop = vertex.getStop();
+            if (stop != null && stop.isTokenableFor(company)) {
+                hexStops.put(vertex.getHex(), stop);
+            }
+        }
+        return hexStops.build();
+    }
 
     private void rebuildVertices() {
         // rebuild mapVertices

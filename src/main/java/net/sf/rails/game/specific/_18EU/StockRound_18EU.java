@@ -99,7 +99,7 @@ public class StockRound_18EU extends StockRound {
         List<PublicCompany> minors = null;
         List<Stop> freeStops = null;
         if (mustMergeMinor) {
-            minors = new ArrayList<PublicCompany>();
+            minors = new ArrayList<>();
             for (PublicCertificate c : playerManager.getCurrentPlayer().getPortfolioModel().getCertificates()) {
                 if (c.getCompany().getType().getId().equalsIgnoreCase("Minor")) {
                     minors.add(c.getCompany());
@@ -120,7 +120,7 @@ public class StockRound_18EU extends StockRound {
         /* Get the next available IPO certificates */
         // Never buy more than one from the IPO
         PublicCompany companyBoughtThisTurn =
-                (PublicCompany) companyBoughtThisTurnWrapper.value();
+                companyBoughtThisTurnWrapper.value();
         if (companyBoughtThisTurn == null) {
             from = ipo;
             ImmutableSetMultimap<PublicCompany, PublicCertificate> map =
@@ -156,7 +156,7 @@ public class StockRound_18EU extends StockRound {
                         if (freeStops.isEmpty()) continue;
                     }
 
-                    List<Integer> startPrices = new ArrayList<Integer>();
+                    List<Integer> startPrices = new ArrayList<>();
                     for (int startPrice : stockMarket.getStartPrices()) {
                         if (startPrice * shares <= playerCash) {
                             startPrices.add(startPrice);
@@ -245,8 +245,8 @@ public class StockRound_18EU extends StockRound {
 
         List<PublicCompany> comps =
                 companyManager.getAllPublicCompanies();
-        List<PublicCompany> minors = new ArrayList<PublicCompany>();
-        List<PublicCompany> targetCompanies = new ArrayList<PublicCompany>();
+        List<PublicCompany> minors = new ArrayList<>();
+        List<PublicCompany> targetCompanies = new ArrayList<>();
         String type;
 
         for (PublicCompany comp : comps) {
@@ -294,11 +294,11 @@ public class StockRound_18EU extends StockRound {
 
         String errMsg = null;
         StockSpace startSpace = null;
-        int numberOfCertsToBuy = 0;
+        int numberOfCertsToBuy;
         PublicCertificate cert = null;
         String companyName = company.getId();
         PublicCompany minor = null;
-        StartCompany_18EU startAction = null;
+        StartCompany_18EU startAction;
         Stop selectedHomeCity = null;
 
         currentPlayer = playerManager.getCurrentPlayer();
@@ -586,7 +586,7 @@ public class StockRound_18EU extends StockRound {
                     major.getId(),
                     minor.getId()));
             if (action.getReplaceToken()) {
-                ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken2",
+                ReportBuffer.add(this, LocalText.getText("ExchangesBaseToken",
                         major.getId(),
                         minor.getId(),
                         homeHex.getId()));

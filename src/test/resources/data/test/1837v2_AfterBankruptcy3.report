@@ -1665,19 +1665,19 @@ IS_NOW_PRES_OF,Alice,Sd
 AutoMergeMinorLog,S1,Sd,100,0
 GetPresShareForMinor,Alice,10,Sd,S1
 MinorCloses,S1
-ExchangesBaseToken2,Sd,S1,G17/SW
+ExchangesBaseToken,Sd,S1,G17/SW
 AutoMergeMinorLog,S2,Sd,99,0
 GetShareForMinor,Charlie,10,Sd,S2
 MinorCloses,S2
-ExchangesBaseToken2,Sd,S2,J16
+ExchangesBaseToken,Sd,S2,J16
 AutoMergeMinorLog,S3,Sd,70,0
 GetShareForMinor,Bob,10,Sd,S3
 MinorCloses,S3
-ExchangesBaseToken2,Sd,S3,I7
+ExchangesBaseToken,Sd,S3,I7
 AutoMergeMinorLog,S4,Sd,199,0
 GetShareForMinor,Charlie,10,Sd,S4
 MinorCloses,S4
-ExchangesBaseToken2,Sd,S4,K5
+ExchangesBaseToken,Sd,S4,K5
 AutoMergeMinorLog,S5,Sd,165,0
 GetShareForMinor,Bob,10,Sd,S5
 MinorCloses,S5
@@ -1716,11 +1716,11 @@ IS_NOW_PRES_OF,Alice,GT
 AutoMergeMinorLog,K1,KK,175,0
 GetPresShareForMinor,Bank/Pool,10,KK,K1
 MinorCloses,K1
-ExchangesBaseToken2,KK,K1,G17/NE
+ExchangesBaseToken,KK,K1,G17/NE
 AutoMergeMinorLog,U2,Ug,214,1
 GetShareForMinor,Bank/Pool,10,Ug,U2
 MinorCloses,U2
-ExchangesBaseToken2,Ug,U2,K21
+ExchangesBaseToken,Ug,U2,K21
 PresidentAddsCash,BK,Alice,198
 BuysTrain,BK,3G,IPO,590
 FirstTrainBought,3G
@@ -1848,12 +1848,12 @@ FloatsWithCash,Ug,710
 MERGE_MINOR_LOG,Alice,U1,Ug,15,1
 GetPresShareForMinor,Alice,10,Ug,U1
 MinorCloses,U1
-ExchangesBaseToken2,Ug,U1,H22/W,NW,NE
+ExchangesBaseToken,Ug,U1,H22/W,NW,NE
 MERGE_MINOR_LOG,Bob,U3,Ug,284,2
 GetShareForMinor,Bob,10,Ug,U3
 GetShareForMinor,Bob,10,Ug,U3
 MinorCloses,U3
-ExchangesBaseToken2,Ug,U3,H22/E,SE,SW
+ExchangesBaseToken,Ug,U3,H22/E,SE,SW
  
 EndOfFormationRound,Ug,OperatingRound 4.2
  
@@ -1964,11 +1964,11 @@ StartFormationRound,KK,5.0
 MERGE_MINOR_LOG,Bob,K3,KK,220,1
 GetShareForMinor,Bob,10,KK,K3
 MinorCloses,K3
-ExchangesBaseToken2,KK,K3,G17/NW
+ExchangesBaseToken,KK,K3,G17/NW
 MERGE_MINOR_LOG,Alice,K2,KK,5,1
 GetShareForMinor,Alice,10,KK,K2
 MinorCloses,K2
-ExchangesBaseToken2,KK,K2,G17/W
+ExchangesBaseToken,KK,K2,G17/W
  
 EndOfFormationRoundNoInterrupt,KK,5.0
 START_OR,5.1
@@ -2000,7 +2000,6 @@ PRICE_MOVES_LOG,Sd,112,J4,120,K4
  
 CompanyOperates,MS,Alice
 LaysTileAt,MS,418,H36,E
-LAYS_TOKEN_ON,MS,G13,60
 CompanyRevenue,MS,500
 CompanyDividesEarnings,MS,500,470,30
 CompanyPaysOutFull,MS,470
@@ -2094,7 +2093,7 @@ Has,BH,267
 Has,BK,110
 Has,CL,936
 Has,GT,10
-Has,MS,136
+Has,MS,196
 Has,SB,793
 Has,TH,13
 Has,Sd,185
@@ -2131,6 +2130,7 @@ PRICE_MOVES_LOG,Sd,120,K4,130,L4
  
 CompanyOperates,MS,Alice
 LaysTileAt,MS,430,E17,W
+LAYS_TOKEN_ON,MS,G13,120
 CompanyRevenue,MS,430
 CompanyPaysOutFull,MS,430
 Payout,Alice,258,6,10
@@ -2158,13 +2158,14 @@ FirstTrainBought,5E
  
 CompanyOperates,SB,Bob
 LaysTileAt,SB,432,J28,NW
-LAYS_TOKEN_ON,SB,H22,160
+LAYS_TOKEN_ON,SB,H22,320
 CompanyRevenue,SB,200
 CompanyPaysOutFull,SB,200
 Payout,Alice,20,1,10
 Payout,Bob,120,6,10
 Payout,SB,20,1,10
 PRICE_MOVES_LOG,SB,108,H3,115,I3
+PresidentAddsCash,SB,Bob,147
 BuysTrain,SB,4,Sd,640
  
 CompanyOperates,BH,Alice
@@ -2203,19 +2204,19 @@ PRICE_MOVES_LOG,BK,58,A7,61,B7
  
 EndOfOperatingRound,5.2
 ORWorthIncrease,Alice,5.2,808
-ORWorthIncrease,Bob,5.2,773
+ORWorthIncrease,Bob,5.2,626
 ORWorthIncrease,Charlie,5.2,0
 Has,BH,217
 Has,BK,188
 Has,CL,136
 Has,GT,10
-Has,MS,222
-Has,SB,13
+Has,MS,162
+Has,SB,0
 Has,TH,253
 Has,Sd,951
 Has,KK,45
 Has,Ug,83
 Has,Alice,1630
-Has,Bob,1937
+Has,Bob,1790
 StartStockRound,6
 HasPriority,Bob

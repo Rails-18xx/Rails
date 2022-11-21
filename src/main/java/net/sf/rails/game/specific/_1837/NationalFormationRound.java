@@ -209,7 +209,8 @@ public class NationalFormationRound extends StockRound_1837 {
         } else if (step.value() == Step.DISCARD_TRAINS) {
 
             if (national.getNumberOfTrains() > national.getCurrentTrainLimit()) {
-                log.debug("+++ National {} has {}, limit is {}", national.getLongName(), national.getNumberOfTrains(), national.getCurrentTrainLimit());
+                log.debug("+++ National {} has {}, limit is {}", national.getLongName(),
+                        national.getNumberOfTrains(), national.getCurrentTrainLimit());
                 possibleActions.add(new DiscardTrain(national,
                         national.getPortfolioModel().getUniqueTrains(), true));
             }

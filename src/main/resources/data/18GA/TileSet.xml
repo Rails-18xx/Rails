@@ -11,7 +11,7 @@
 		<Upgrade id="3,4,58" />
 	</Tile>
 
-	<!-- City -->
+	<!-- Location -->
 	<Tile id="-3008">
 		<Upgrade id="5,6,57" />
 	</Tile>
@@ -188,7 +188,7 @@
 	</Tile>
 
 	<IfOption name="Variant" value="Basegame">
-		<!-- City (30), exits N,NW,SW, "Savannah" -->
+		<!-- Location (30), exits N,NW,SW, "Savannah" -->
 		<Tile id="1454" extId="454" quantity="1">
 			<Upgrade id="1459" />
 		</Tile>
@@ -242,7 +242,7 @@
 	<Tile id="1458" extId="458" quantity="1" />
 
 	<IfOption name="Variant" value="Basegame">
-		<!-- City (60), exits N,NW,SW, "Savannah" -->
+		<!-- Location (60), exits N,NW,SW, "Savannah" -->
 		<Tile id="1459" extId="459" quantity="1" />
 	</IfOption>
 

@@ -26,10 +26,8 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 
 import net.sf.rails.common.Config;
-import net.sf.rails.game.Player;
 import net.sf.rails.game.PlayerManager;
 import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsRoot;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Observable;
@@ -68,18 +66,19 @@ implements ActionListener, KeyListener {
     protected PublicCompany c;
     protected JComponent f;
 
-    protected List<Observer> observers = new ArrayList<Observer>();
+    protected List<Observer> observers = new ArrayList<>();
 
     /** 2D-array of fields to enable show/hide per row or column */
     protected JComponent[][] fields;
     /** Array of Observer objects to set row visibility */
-    protected RowVisibility[] rowVisibilityObservers;
+    protected RowVisibility[] shareRowVisibilityObservers;
+    protected RowVisibility[] bondsRowVisibilityObservers;
 
-    protected List<JMenuItem> menuItemsToReset = new ArrayList<JMenuItem>();
+    protected List<JMenuItem> menuItemsToReset = new ArrayList<>();
 
     protected static final Logger log = LoggerFactory.getLogger(GridPanel.class);
 
-    private List<JComponent> highlightedComps = new ArrayList<JComponent>();
+    private List<JComponent> highlightedComps = new ArrayList<>();
     protected Color tableBorderColor;
     protected Color cellOutlineColor;
     protected Color highlightedBorderColor;
@@ -195,7 +194,7 @@ implements ActionListener, KeyListener {
      */
     public List<String> getTextContents () {
 
-        List<String> result = new ArrayList<String>(32);
+        List<String> result = new ArrayList<>(32);
         StringBuilder b;
         String text, tip;
         if (fields == null || fields.length == 0) return result;
@@ -252,13 +251,10 @@ implements ActionListener, KeyListener {
         private final int rowIndex;
         private final BooleanState observable;
 
-        public RowVisibility (GridPanel parent, int rowIndex, BooleanState observable, boolean reverseValue) {
+        public RowVisibility(GridPanel parent, int rowIndex, BooleanState observable) {
             this.parent = parent;
             this.rowIndex = rowIndex;
             this.observable = observable;
-            // TODO: This was the previous setup
-//            lastValue = ((BooleanState)observable).value() != reverseValue;
-
         }
 
         public boolean lastValue () {

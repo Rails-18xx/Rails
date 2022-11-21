@@ -65,7 +65,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         // initialize configuration
         ConfigManager.initConfiguration(false);
 
-        // delayed setting of logger
+        // delayed setting of logger (see also ConfigManager)
         log = LoggerFactory.getLogger(ListAndFixSavedFiles.class);
 
         String saveDirectory = Config.get("save.directory");
@@ -263,8 +263,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         // append actionText
         int i=0;
         List<PossibleAction> actions = gameLoader.getActions();
-        log.info("Actions={}", actions.size());
         if (actions != null) {
+            log.info("Actions={}", actions.size());
             for (PossibleAction action : actions) {
                 reportText.append("Action " + i + " " + action.getPlayerName() + "(" + action.getPlayerIndex() + "): " + action.toString());
                 reportText.append("\n");
@@ -387,6 +387,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             new StartCompany18EUDialog((StartCompany_18EU) editedAction);
         } else if (editedAction instanceof BuyCertificate) {
             new BuyCertificateDialog ((BuyCertificate) editedAction);
+        } else if (editedAction instanceof BuyBonds) {
+            new BuyBondDialog ((BuyBonds) editedAction);
         } else if (editedAction instanceof SellShares) {
             new SellSharesDialog ((SellShares) editedAction);
         } else if (editedAction instanceof SetDividend) {
@@ -396,9 +398,12 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         } else if (editedAction instanceof LayBonusToken) {
             new LayBonusTokenDialog ((LayBonusToken)editedAction);
         } else if (editedAction instanceof DiscardTrain) {
-            new DiscardTrainDialog ((DiscardTrain)editedAction);
+            new DiscardTrainDialog((DiscardTrain) editedAction);
+        } else if (editedAction instanceof NullAction) {
+            new NullActionDialog((NullAction) editedAction);
         } else {
-            JOptionPane.showMessageDialog(this, "Action type '" + editedAction.getClass().getSimpleName()
+            JOptionPane.showMessageDialog(this,
+                    "Action type '" + editedAction.getClass().getSimpleName()
                     + "' cannot yet be edited");
         }
     }
@@ -413,7 +418,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
     }
 
     protected void processCorrections (PossibleAction newAction) {
-        if (newAction != null && !newAction.equalsAsAction(editedAction)) {
+        if (newAction != null /*&& (!newAction.equalsAsAction(editedAction)*/) {
             gameLoader.getActions().set(editedIndex, newAction);
             setReportText(false);
         }
@@ -483,18 +488,27 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             addTextField (this, "Price paid",
                     action.getPricePaid(),
                     String.valueOf(action.getPricePaid()));  // 2
+            addTextField (this, "Pres.cash to add",
+                    action.getPresidentCashToAdd(),
+                    String.valueOf(action.getPresidentCashToAdd()));  // 3
             addTextField (this, "Added cash",
                     action.getAddedCash(),
-                    String.valueOf(action.getAddedCash()));  // 3
+                    String.valueOf(action.getAddedCash()));  // 4
+            addTextField (this, "Loans to take",
+                    action.getLoansToTake(),
+                    String.valueOf(action.getLoansToTake()));  // 5
             addTextField (this, "Trains for exchange",
                     action.getTrainsForExchange(),
-                    action.getTrainsForExchange() != null ? action.getTrainsForExchange().toString() : "[]");  // 4
+                    action.getTrainsForExchange() != null ? action.getTrainsForExchange().toString() : "[]");  // 6
             addTextField (this, "Exchange train UID",
                     action.getExchangedTrain(),
-                    action.getExchangedTrain() != null ? action.getExchangedTrain().getId() : "");  // 4
+                    action.getExchangedTrain() != null ? action.getExchangedTrain().getId() : "");  // 7
             addTextField (this, "Fixed Price",
                     action.getFixedCost(),
-                    String.valueOf(action.getFixedCost()));  // 5
+                    String.valueOf(action.getFixedCost()));  // 8
+            addTextField (this, "Mode",
+                    action.getFixedCostMode(),
+                    action.getFixedCostMode().toString()); // 9
             finish();
         }
 
@@ -510,12 +524,21 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             } catch (NumberFormatException e) {
             }
             try {
-                int addedCash = Integer.parseInt(((JTextField)inputElements.get(3)).getText());
+                int presCash = Integer.parseInt(((JTextField)inputElements.get(3)).getText());
+                action.setPresidentCashToAdd(presCash);
+            } catch (NumberFormatException e) {
+            }
+            try {
+                int addedCash = Integer.parseInt(((JTextField)inputElements.get(4)).getText());
                 action.setAddedCash(addedCash);
             } catch (NumberFormatException e) {
             }
-
-            String trainsForExchangeInput = ((JTextField)inputElements.get(4)).getText();
+            try {
+                int loansToTake = Integer.parseInt(((JTextField)inputElements.get(5)).getText());
+                action.setLoansToTake(loansToTake);
+            } catch (NumberFormatException e) {
+            }
+            String trainsForExchangeInput = ((JTextField)inputElements.get(6)).getText();
             String trainsForExchangeIds = trainsForExchangeInput
                     .replaceAll(".*\\[(.*)\\].*", "$1");
             if (Util.hasValue(trainsForExchangeIds)) {
@@ -528,7 +551,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 action.setTrainsForExchange(null);
             }
 
-            String exchangedTrainID = ((JTextField) inputElements.get(5)).getText();
+            String exchangedTrainID = ((JTextField) inputElements.get(7)).getText();
             if (Util.hasValue(exchangedTrainID)) {
                 Train exchangedTrain = root.getTrainManager().getTrainByUniqueId(exchangedTrainID);
                 if (exchangedTrain != null) action.setExchangedTrain(exchangedTrain);
@@ -537,9 +560,21 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             }
 
             try {
-                int fixedCost = Integer.parseInt(((JTextField)inputElements.get(6)).getText());
+                int fixedCost = Integer.parseInt(((JTextField)inputElements.get(8)).getText());
                 action.setFixedCost(fixedCost);
             } catch (NumberFormatException e) {
+            }
+
+            String modeName = ((JTextField) inputElements.get(9)).getText();
+            if (modeName.length() == 0) {
+                action.setFixedCostMode(null);
+            } else {
+                try {
+                    BuyTrain.Mode mode = BuyTrain.Mode.valueOf(modeName);
+                    action.setFixedCostMode(mode);
+                } catch (Exception e) {
+
+                }
             }
 
             log.debug("Action is  {}", action);
@@ -564,12 +599,15 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             addTextField (this, "Orientation",
                     action.getOrientation(),
                     String.valueOf(action.getOrientation()));  // 2
+            addTextField (this, "Type",
+                    action.getType(),
+                    String.valueOf(action.getType()));  // 3
             finish();
         }
 
         @Override
         PossibleAction processInput() {
-            log.debug("Action was {}", action);
+            log.info("Action was {}, elements={}", action, inputElements);
             try {
                 String tileID = ((JTextField)inputElements.get(0)).getText();
                 Tile tile = root.getTileManager().getTile(tileID);
@@ -584,10 +622,65 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 action.setOrientation(orientation);
             } catch (NumberFormatException e) {
             }
+            try {
+                int type = Integer.parseInt(((JTextField)inputElements.get(3)).getText());
+                action.setType(type);
+            } catch (NumberFormatException e) {
+            }
 
-            log.debug("Action is {}", action);
+            log.info("Action is {}", action);
             return action;
 
+        }
+    }
+
+    private class BuyBondDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private BuyBonds action;
+
+        BuyBondDialog(BuyBonds action) {
+            super("Edit BuyCertificate");
+            this.action = action;
+            addTextField (this, "Bond value",
+                    action.getPrice(),
+                    String.valueOf(action.getPrice()));
+            addTextField (this, "Maximum",
+                    action.getMaxNumber(),
+                    String.valueOf(action.getMaxNumber()));
+            addTextField (this, "Bought",
+                    action.getNumberBought(),
+                    String.valueOf(action.getNumberBought()));
+
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+            log.info("Action was {}", action);
+            String input = "";
+            try {
+                input = ((JTextField)inputElements.get(0)).getText();
+                int bondValue = Integer.valueOf(input);
+                action.setPrice(bondValue);
+            } catch (NumberFormatException e) {
+                log.error ("Error in price: {}", input, e);
+            }
+            try {
+                input = ((JTextField)inputElements.get(1)).getText();
+                int maxNumber = Integer.valueOf(input);
+                action.setMaxNumber(maxNumber);
+            } catch (NumberFormatException e) {
+                log.error ("Error in max: {}", input, e);
+            }
+            input = ((JTextField)inputElements.get(2)).getText();
+            try{
+                int bought = Integer.valueOf(input);
+                action.setNumberBought(bought);
+            } catch (NumberFormatException e) {
+                log.error ("Error in bought: {}", input, e);
+            }
+            log.info("Action is {}", action);
+            return action;
         }
     }
 
@@ -610,8 +703,8 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             addTextField (this, "From (e.g. Bank_Pool)",
                     action.getFromPortfolio(),
                     action.getFromPortfolio() != null
-                        ? action.getFromPortfolio().getUniqueName()
-                        : "null");
+                            ? action.getFromPortfolio().getUniqueName()
+                            : "null");
             // NOTE: enter pool as "Bank_Pool"
             finish();
         }
@@ -936,6 +1029,32 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         }
     }
 
+    private class NullActionDialog extends EditDialog {
+        private static final long serialVersionUID = 1L;
+        private NullAction action;
+
+        NullActionDialog (NullAction action) {
+            super ("Edit NullAction");
+            this.action = action;
+            //addLabel (this, "Company", null, action.getCompany().getId()); // 0
+            addTextField (this, "Mode",
+                    action.getMode(),
+                    String.valueOf(action.getMode()));  // 0
+            finish();
+        }
+
+        @Override
+        PossibleAction processInput() {
+
+            String modeName = ((JTextField)inputElements.get(0)).getText();
+            NullAction.Mode mode = NullAction.Mode.valueOf(modeName);
+
+            action.setMode(mode);
+
+            log.info("Action is  {}", action);
+            return action;
+        }
+    }
 
 
     protected void addLabel (EditDialog owner, String caption, Object initialObject, String initialValue) {

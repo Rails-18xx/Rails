@@ -43,7 +43,9 @@ public class GuiDef {
         REVENUE_SUGGEST,
         ROUTE_HIGHLIGHT, 
         PLAYER_ORDER_VARIES,
-        HAS_SPECIAL_COMPANY_INCOME
+        HAS_SPECIAL_COMPANY_INCOME,  // E.g. coal mines in 1837
+        HAS_GROWING_NUMBER_OF_SHARES,   // For at least one company
+        HAS_BONDS,
     }
 
     /**

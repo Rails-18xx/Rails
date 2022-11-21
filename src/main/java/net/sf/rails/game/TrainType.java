@@ -169,6 +169,15 @@ public class TrainType implements Cloneable {
         return townScoreFactor;
     }
 
+    // Two setters, used with 1826 E-trains.
+    public void setCityScoreFactor(int cityScoreFactor) {
+        this.cityScoreFactor = cityScoreFactor;
+    }
+
+    public void setMajorStops(int majorStops) {
+        this.majorStops = majorStops;
+    }
+
     @Override
     public Object clone() {
 

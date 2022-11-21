@@ -517,4 +517,12 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         log.debug("Created rectangle={}", rectangle);
         return (rectangle);
     }
+
+    /* Added for 1826, as it turned out that the same vertex
+     * could manifestate as different objects while iterating
+     * over the vertices in the LinkedList behind DLLGraph.Segment.
+     */
+    public boolean equals (NetworkVertex otherVertex) {
+        return toString().equals(otherVertex.toString());
+    }
 }

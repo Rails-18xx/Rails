@@ -96,7 +96,12 @@ public class GameSaver {
 
             oos.writeObject(gameIOData.getGameData().getPlayers());
             for ( PossibleAction action : gameIOData.getActions() ) {
-                oos.writeObject(action);
+                try {
+                    oos.writeObject(action);
+                } catch (Exception e) {
+                    log.error ("Cannot write object {}: {}", action, e.getMessage());
+                    throw new IOException (e);
+                }
             }
         }
         log.debug("File save successful");

@@ -42,7 +42,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import static net.sf.rails.ui.swing.GameUIManager.ADJUST_SHARE_PRICE_DIALOG;
+import static net.sf.rails.ui.swing.GameUIManager.EXCHANGE_TOKENS_DIALOG;
 
 // FIXME: Add back corrections mechanisms
 // Rails 2.0, Even better add a new mechanism that allows to use the standard mechanism for corrections
@@ -84,6 +84,7 @@ public class ORUIManager implements DialogOwner {
     public static final String SELECT_DESTINATION_COMPANIES_DIALOG = "SelectDestinationCompanies";
     public static final String REPAY_LOANS_DIALOG = "RepayLoans";
     public static final String GOT_PERMISSION_DIALOG = "AskedPermissionDialog";
+    public static final String TOKEN_EXCHANGE_DIALOG = "SelectTokensToExchange";
 
     public ORUIManager() {
 
@@ -243,7 +244,8 @@ public class ORUIManager implements DialogOwner {
 
             // Accept an immediate tile lay on reserved hexes if the reserving company
             // president is the current player.
-            EnumSet allowances = EnumSet.noneOf(TileHexUpgrade.Invalids.class);
+            EnumSet<TileHexUpgrade.Invalids> allowances
+                    = EnumSet.noneOf(TileHexUpgrade.Invalids.class);
             if (hex.isReservedForCompany())  {
                 // For now we accept this action, but will later check for permission
                 allowances.add(TileHexUpgrade.Invalids.HEX_RESERVED);
@@ -322,7 +324,7 @@ public class ORUIManager implements DialogOwner {
                     }
                 break;
                 case LayBaseToken.FORCED_LAY :
-                case (LayBaseToken.HOME_CITY):
+                case LayBaseToken.HOME_CITY:
                 case LayBaseToken.NON_CITY:
                     addLocatedTokenLays(layBaseToken);
                 break;
@@ -339,18 +341,28 @@ public class ORUIManager implements DialogOwner {
 
     private void addGenericTokenLays(LayBaseToken action) {
         PublicCompany company = action.getCompany();
-        NetworkGraph graph = networkAdapter.getRouteGraph(company, true, false);
-        //Multimap<MapHex, Stop> hexStops = graph.getTokenableStops(company);
-        //Map<Stop, Integer> tokenableStops = graph.getTokenableStops(company);
-        Map<Stop, Integer> tokenableStops = Routes.getTokenLayRouteDistances(
-                company.getRoot(), company, false, false);
-        //if (company.getBaseTokenLayCostMethod().equalsIgnoreCase(PublicCompany.BASE_COST_ROUTE_LENGTH)) {
-       for (Stop stop : tokenableStops.keySet()) {
-            MapHex hex = stop.getParent();
-            GUIHex guiHex = map.getHex(hex);
-            TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, tokenableStops.keySet(), action);
-            TokenHexUpgrade.validates(upgrade);
-            hexUpgrades.put(guiHex, upgrade);
+        if (company.getBaseTokenLayCostMethod() == PublicCompany.BaseCostMethod.ROUTE_DISTANCE) {
+            // Now a special for 1826.
+            // Did originally work with all games, but somehow failed with 1837 in a later stage
+            Map<Stop, Integer> tokenableStops = new Routes().getTokenLayRouteDistances2(
+                    company, PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
+            for (Stop stop : tokenableStops.keySet()) {
+                MapHex hex = stop.getParent();
+                GUIHex guiHex = map.getHex(hex);
+                TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, tokenableStops.keySet(), action);
+                TokenHexUpgrade.validates(upgrade);
+                hexUpgrades.put(guiHex, upgrade);
+            }
+        } else { // The old method
+            NetworkGraph graph = networkAdapter.getRouteGraph(company, true, false);
+            Multimap<MapHex, Stop> hexStops = graph.getTokenableStops(company);
+            for (MapHex hex:hexStops.keySet()) {
+                GUIHex guiHex = map.getHex(hex);
+                TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, hexStops.get(hex), action);
+                TokenHexUpgrade.validates(upgrade);
+                hexUpgrades.put(guiHex, upgrade);
+            }
+
         }
     }
 
@@ -480,6 +492,7 @@ public class ORUIManager implements DialogOwner {
      * Processes button presses and menu selection actions
      */
     // FIXME: Can this be really a list of actions?
+    // Answer: Not yet, but who knows? (EV)
     public void processAction(String command, List<PossibleAction> actions) {
 
         if (actions != null && actions.size() > 0 && actions.get(0) != null
@@ -629,31 +642,28 @@ public class ORUIManager implements DialogOwner {
 
         // if selectedHex is clicked again ==> change Upgrade, or Upgrade-Selection
         if (selectedHex == clickedHex) {
-            switch (localStep) {
-                case SELECT_UPGRADE:
-                    if (rightClick) { // right-click => next upgrade
-                        upgradePanel.nextUpgrade();
-                    } else {
-                        upgradePanel.nextSelection();
-                    }
-                    return true;
-                default: // should not occur (as a hex is selected), however let us define that in case
-                    return false;
+            // should not occur (as a hex is selected), however let us define that in case
+            if (localStep == LocalSteps.SELECT_UPGRADE) {
+                if (rightClick) { // right-click => next upgrade
+                    upgradePanel.nextUpgrade();
+                } else {
+                    upgradePanel.nextSelection();
+                }
+                return true;
             }
+            return false;
         }
 
         // if clickedHex is not on map => deactivate upgrade selection and use
         if (clickedHex == null) {
-            switch (localStep) {
-                case SELECT_UPGRADE:
-                    if (selectedHex != null) {
-                        map.selectHex(null);
-                    }
-                    setLocalStep(LocalSteps.SELECT_HEX);
-                    return true;
-                default:
-                    return false;
+            if (localStep == LocalSteps.SELECT_UPGRADE) {
+                if (selectedHex != null) {
+                    map.selectHex(null);
+                }
+                setLocalStep(LocalSteps.SELECT_HEX);
+                return true;
             }
+            return false;
         }
 
         // otherwise a clickedHex is defined ==> select the hex if upgrades are provided
@@ -1055,10 +1065,19 @@ public class ORUIManager implements DialogOwner {
                         .replaceFirst(",(\\w+)$"," or $1");
                 b.append(" (").append(LocalText.getText("DiscardingTrain", exchTrainTypes)).append(")");
             }
-            if (cost > 0) {
-                b.append(" ").append(
-                        LocalText.getText("AT_PRICE", gameUIManager.format(cost)));
-            }
+            //if (cost > 0) {
+                BuyTrain.Mode mode = bTrain.getFixedCostMode();
+                if (/*mode == null ||*/ mode == BuyTrain.Mode.FIXED) {
+                    b.append(" ").append(
+                            LocalText.getText("AT_PRICE", gameUIManager.format(cost)));
+                } else if (mode == BuyTrain.Mode.MAX) {
+                    b.append(" ").append(
+                            LocalText.getText("AT_MAX_PRICE", gameUIManager.format(cost)));
+                } else if (mode == BuyTrain.Mode.MIN) {
+                    b.append(" ").append(
+                            LocalText.getText("AT_MIN_PRICE", gameUIManager.format(cost)));
+                }
+            //}
             if (bTrain.hasSpecialProperty()) {
                 String priv =
                         (bTrain.getSpecialProperty()).getOriginalCompany().getId();
@@ -1112,14 +1131,36 @@ public class ORUIManager implements DialogOwner {
 
         buyAction = (BuyTrain) selectedAction;
         train = buyAction.getTrain();
+        PublicCompany company = buyAction.getCompany();
         Owner seller = buyAction.getFromOwner();
-        int price = buyAction.getFixedCost();
+        int fixedCost = buyAction.getFixedCost();
+        BuyTrain.Mode mode = buyAction.getFixedCostMode();
+        log.debug("From {} cost {} mode {}", seller, fixedCost, mode);
 
-        if (price == 0 && seller instanceof PublicCompany) {
+        // The relationship between fixedCost and mode is explained
+        // in the Javadoc of the Mode enum in the BuyTrain class.
+        if (seller instanceof PublicCompany
+                && !company.mustTradeTrainsAtFixedPrice()
+                && !((PublicCompany) seller).mustTradeTrainsAtFixedPrice()
+                && (fixedCost == 0 || mode != null && mode != BuyTrain.Mode.FIXED)) {
+            String remark = "";
+            String priceText;
+            //if (fixedCost > 0 && mode != null) {
+                priceText = gameUIManager.format(fixedCost);
+                switch (mode) {
+                    case MIN:
+                        remark = LocalText.getText("OrMore", priceText);
+                        break;
+                    case MAX:
+                        remark = LocalText.getText("OrLess", priceText);
+                    default:
+                }
+            //}
             prompt = LocalText.getText("WHICH_TRAIN_PRICE",
                     buyAction.getCompany().getId(),
                     train.toText(),
-                    seller.getId() );
+                    seller.getId(),
+                    remark);
             String response;
             for (;;) {
                 response =
@@ -1127,13 +1168,20 @@ public class ORUIManager implements DialogOwner {
                             LocalText.getText("WHICH_PRICE"),
                             JOptionPane.QUESTION_MESSAGE);
                 if (response == null) return; // Cancel
+                int enteredPrice;
                 try {
-                    price = Integer.parseInt(response);
+                    enteredPrice = Integer.parseInt(response);
                 } catch (NumberFormatException e) {
                     // Price stays 0, this is handled below
+                    enteredPrice = 0;
                 }
-                if (price > 0) break; // Got a good (or bad, but valid) price.
-
+                if (enteredPrice > 0
+                        && (mode == BuyTrain.Mode.MIN && enteredPrice >= fixedCost
+                            || mode == BuyTrain.Mode.MAX && enteredPrice <= fixedCost
+                            || mode == BuyTrain.Mode.FREE)) {
+                    fixedCost = enteredPrice;
+                    break; // Got a valid price.
+                }
                 if (!prompt.startsWith("Please")) {
                     prompt =
                         LocalText.getText("ENTER_PRICE_OR_CANCEL") + "\n"
@@ -1160,7 +1208,7 @@ public class ORUIManager implements DialogOwner {
                 String exchangedTrainName =
                     (String) JOptionPane.showInputDialog(orWindow,
                             LocalText.getText("WHICH_TRAIN_EXCHANGE_FOR",
-                                        gameUIManager.format(price)),
+                                        gameUIManager.format(fixedCost)),
                                     LocalText.getText("WHICH_TRAIN_TO_EXCHANGE"),
                                     JOptionPane.QUESTION_MESSAGE, null, options,
                                     options[0]);
@@ -1179,7 +1227,7 @@ public class ORUIManager implements DialogOwner {
 
         if (train != null) {
 
-            buyAction.setPricePaid(price);
+            buyAction.setPricePaid(fixedCost);
             buyAction.setExchangedTrain(exchangedTrain);
             if (buyAction.mustPresidentAddCash()) {
                 buyAction.setAddedCash(buyAction.getPresidentCashToAdd());
@@ -1346,7 +1394,8 @@ public class ORUIManager implements DialogOwner {
         // End of possible action debug listing
 
         PublicCompany orComp = oRound.getOperatingCompany();
-        log.debug("OR company = {} in round {}", orComp.getId(), oRound.getRoundName());
+        log.debug("OR company = {} in round {} index={}", orComp.getId(),
+                oRound.getRoundName(),oRound.getOperatingCompanyIndex());
 
         GameDef.OrStep orStep = oRound.getStep();
         log.debug("OR step={}", orStep);
@@ -1462,7 +1511,11 @@ public class ORUIManager implements DialogOwner {
 
         } else if (possibleActions.contains(RepayLoans.class)) {
 
-            orPanel.enableLoanRepayment (possibleActions.getType(RepayLoans.class).get(0));
+            orPanel.enableLoanRepayment(possibleActions.getType(RepayLoans.class).get(0));
+
+        } else if (possibleActions.contains(ExchangeTokens2.class)) {
+
+            prepareExchangeTokens (possibleActions.getType(ExchangeTokens2.class).get(0));
 
         } else if (orStep == GameDef.OrStep.FINAL) {
             // Does not occur???
@@ -1567,7 +1620,6 @@ public class ORUIManager implements DialogOwner {
             }
         }
 
-
         checkForGameSpecificActions(orComp, orStep, possibleActions);
 
         // If special actions exist, check if Skip button is activated
@@ -1631,6 +1683,80 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
+    /* If the token exchange limits are *per merged company*,
+     * we need separator lines. This is used in 1826
+     */
+    private Integer[] separatorLines = null;
+    public Integer[] getSeparatorLines() {return separatorLines;}
+    public void clearSeparatorLines() {separatorLines = null; }
+
+    private void prepareExchangeTokens (ExchangeTokens2 action) {
+        prepareExchangeTokens(action, null);
+    }
+
+    private void prepareExchangeTokens (ExchangeTokens2 action, String errMsg) {
+
+        List<String> options = new ArrayList<>();
+        List<ExchangeTokens2.Location> locations = action.getLocations();
+        List<Integer> sepLinesAfterOption = new ArrayList<>();
+
+        PublicCompany newCompany = action.getNewCompany();
+        int minimumExchanges = action.getMinNumberToExchange();
+        int maximumExchanges = action.getMaxNumberToExchange();
+        boolean perCompany = action.isExchangeCountPerCompany();
+
+        ExchangeTokens2.Location location;
+        PublicCompany oldCompany;
+        PublicCompany prevOldCompany = null;
+        Stop stop;
+
+        for (int i=0; i<locations.size(); i++) {
+            location = locations.get(i);
+            oldCompany = location.getOldCompany();
+            if (prevOldCompany != null && !oldCompany.equals(prevOldCompany)) {
+                sepLinesAfterOption.add(i-1);
+            }
+            stop = location.getStop();
+            options.add(LocalText.getText("SelectTokenExchangeOption",
+                    oldCompany.getId(), stop.getStopComposedId()));
+            prevOldCompany = oldCompany;
+        }
+        if (sepLinesAfterOption.size() > 0) {
+            separatorLines = sepLinesAfterOption.toArray(new Integer[0]);
+        }
+
+        if (options.size() > 0) {
+            orWindow.setVisible(true);
+            orWindow.toFront();
+
+            String title = LocalText.getText("SelectTokensToExchange");
+            String prompt;
+            if (perCompany) {
+                prompt = LocalText.getText("SelectTokensToExchangePerComp",
+                        maximumExchanges, newCompany);
+            } else {
+                prompt = LocalText.getText("SelectTokensToExchangeAllComps",
+                        (minimumExchanges == maximumExchanges
+                                ? maximumExchanges + ""
+                                : minimumExchanges + "-" + maximumExchanges),
+                        newCompany);
+            }
+
+            if (errMsg != null && errMsg.length() > 0) {
+                prompt = "<html><font color=\"red\">" + errMsg + "</font><br>"
+                        + prompt + "</html>";
+            }
+
+            CheckBoxDialog dialog = new CheckBoxDialog(EXCHANGE_TOKENS_DIALOG,
+                    this,
+                    orWindow,
+                    title,
+                    prompt,
+                    options.toArray(new String[0]));
+            setCurrentDialog (dialog, action);
+        }
+    }
+
     // Further Getters
     public MessagePanel getMessagePanel() {
         return messagePanel;
@@ -1669,24 +1795,72 @@ public class ORUIManager implements DialogOwner {
         JDialog currentDialog = getCurrentDialog();
         PossibleAction currentDialogAction = getCurrentDialogAction();
 
-        if (currentDialog instanceof CheckBoxDialog
-                && currentDialogAction instanceof ReachDestinations) {
+        if (currentDialog instanceof CheckBoxDialog) {
 
             CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
-            ReachDestinations action = (ReachDestinations) currentDialogAction;
 
-            boolean[] destined = dialog.getSelectedOptions();
-            String[] options = dialog.getOptions();
+            if (currentDialogAction instanceof ReachDestinations) {
+                ReachDestinations action = (ReachDestinations) currentDialogAction;
 
-            for (int index = 0; index < options.length; index++) {
-                if (destined[index]) {
-                    action.addReachedCompany(action.getPossibleCompanies().get(index));
+                boolean[] destined = dialog.getSelectedOptions();
+                String[] options = dialog.getOptions();
+
+                for (int index = 0; index < options.length; index++) {
+                    if (destined[index]) {
+                        action.addReachedCompany(action.getPossibleCompanies().get(index));
+                    }
+                }
+
+                // Prevent that a null action gets processed
+                if (action.getReachedCompanies() == null
+                        || action.getReachedCompanies().isEmpty()) currentDialogAction = null;
+
+            } else if (currentDialogAction instanceof ExchangeTokens2) {
+                ExchangeTokens2 action = (ExchangeTokens2) currentDialogAction;
+                boolean[] selected = dialog.getSelectedOptions();
+
+                for (int i=0; i<action.getLocations().size(); i++) {
+                    if (selected[i]) action.getLocations().get(i).setSelected();
+                }
+
+                int maxCount = action.getMaxNumberToExchange();
+                int minCount = action.getMinNumberToExchange();
+                PublicCompany newCompany = action.getNewCompany();
+                String errMsg = "";
+
+                // Some prevalidation
+                if (action.isExchangeCountPerCompany()) {
+
+                    Map<PublicCompany, Integer> counts = new HashMap<>();
+                    for (ExchangeTokens2.Location location : action.getLocations()) {
+                        PublicCompany company = location.getOldCompany();
+                        int prevCount = (counts.containsKey(company) ? counts.get(company) : 0);
+                        if (location.isSelected()) counts.put(company, prevCount + 1);
+                    }
+                    for (PublicCompany company : counts.keySet()) {
+                        int count = counts.get(company);
+                        if (count < minCount || count > maxCount) {
+                            if (errMsg.length() > 0) errMsg += "<br>";
+                            errMsg += LocalText.getText("WrongNumberOfTokensExchanged2",
+                                    newCompany, minCount, maxCount, company, count);
+                        }
+                    }
+                } else {
+                    int count = 0;
+                    for (ExchangeTokens2.Location location : action.getLocations()) {
+                        if (location.isSelected()) count++;
+                    }
+                    if (count < minCount || count > maxCount) {
+                        errMsg = LocalText.getText("WrongNumberOfTokensExchanged",
+                                newCompany, minCount, maxCount, count);
+                    }
+                }
+                if (errMsg.length() > 0) {
+                    action.clearSelections();
+                    prepareExchangeTokens(action, errMsg);
+                    return;
                 }
             }
-
-            // Prevent that a null action gets processed
-            if (action.getReachedCompanies() == null
-                    || action.getReachedCompanies().isEmpty()) currentDialogAction = null;
 
         } else if (currentDialog instanceof ConfirmationDialog
                 && currentDialogAction instanceof LayTile) {

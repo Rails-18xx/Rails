@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
 import net.sf.rails.algorithms.NetworkVertex.StationType;
 import net.sf.rails.algorithms.NetworkVertex.VertexType;
 import net.sf.rails.common.LocalText;
@@ -83,7 +84,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
     }
 
     public Set<NetworkVertex> getUniqueVertices() {
-        return new HashSet<NetworkVertex>(vertices);
+        return new HashSet<>(vertices);
     }
 
     public NetworkTrain getTrain() {
@@ -96,14 +97,19 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
      * This includes all revenue bonuses defined in the calculator
      */
     public int getRunValueForVertices(List<NetworkVertex> listOfVertices) {
+        log.debug("Train={} vertices={}", train.getRailsTrain(), listOfVertices);
         int value = 0;
+        List<NetworkVertex> visited = new ArrayList<>();
         NetworkVertex startVertex = null;
         for (NetworkVertex vertex : listOfVertices) {
             if (startVertex == vertex) continue;
+            if (visited.contains(vertex)) continue; // Skip duplicates
             if (startVertex == null) startVertex = vertex;
             value +=
                     revenueAdapter.getVertexValue(vertex, train,
                             revenueAdapter.getPhase());
+            log.debug("Vertex={} Value={}", vertex, value);
+            visited.add(vertex);
         }
         // check revenueBonuses (complex)
         for (RevenueBonus bonus : revenueAdapter.getRevenueBonuses()) {
@@ -112,6 +118,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
                 value += bonus.getValue();
             }
         }
+        log.debug("Final value={}", value);
         return value;
     }
 
@@ -139,7 +146,8 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
 
     /** defines the vertices from the list of edges */
     void convertEdgesToVertices() {
-        vertices = new ArrayList<NetworkVertex>();
+        vertices = new ArrayList<>();
+        log.debug("Converting 'Edges'={}", edges);
 
         // check for empty edges
         if (edges.size() == 0) {
@@ -194,11 +202,29 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
         // add the last vertex of the route
         vertices.add(previousEdge.getOtherVertex(vertices.get(vertices.size() - 1)));
         log.debug("Converted edges to vertices {}", vertices);
+
+        // Sometimes, the above gets wrong with two-way routes,
+        // like A->B->B->A. See GitHub issue #483.
+        //
+        // Fix: filter out duplicates, backwards from the end.
+        // This fix has been replaced by a simpler one in RevenueAdapter.convertRcRun().
+        /*
+        ImmutableList<NetworkVertex> verticesCopy = ImmutableList.copyOf(vertices);
+        for (int j=vertices.size()-1; j > 0; j--) {
+            log.debug("j={} checking {} against sublist={}", j, verticesCopy.get(j), verticesCopy.subList(0, j));
+            if (verticesCopy.subList(0, j).contains(verticesCopy.get(j))) {
+                vertices.remove(j);
+                log.debug("Removed vertex {} {}", j, verticesCopy.get(j));
+            }
+        }
+        log.debug("Corrected vertices={}", vertices);
+
+         */
     }
 
     /** defines the edges from the list of vertices */
     void convertVerticesToEdges() {
-        edges = new ArrayList<NetworkEdge>();
+        edges = new ArrayList<>();
 
         // check for empty or only one vertices
         if (vertices.size() <= 1) {
@@ -314,7 +340,7 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
             }
 
             // check revenueBonuses (complex)
-            List<RevenueBonus> activeBonuses = new ArrayList<RevenueBonus>();
+            List<RevenueBonus> activeBonuses = new ArrayList<>();
             for (RevenueBonus bonus : revenueAdapter.getRevenueBonuses()) {
                 if (bonus.checkComplexBonus(vertices, train.getRailsTrain(), revenueAdapter.getPhase())) {
                     activeBonuses.add(bonus);

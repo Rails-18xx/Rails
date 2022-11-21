@@ -114,12 +114,14 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
         }
     }
 
-    @SuppressWarnings("deprecation")
+    @Override
     public void setShareUnit(int percentage) {
-        // Only allowed for CGR, the value must be 10
-        if (this.shareUnit.value() == 5
-                && percentage == 10) {
-            this.shareUnit.set(percentage);
+
+        int oldShareUnit = this.shareUnit.value();
+        super.setShareUnit(percentage);
+
+        // temp. fix to get rid of unnecessary certificates if size is 10.
+        if (oldShareUnit == 5 && percentage == 10) {
             // Drop the last 10 shares
             //2018-10-07-MBr: With the remodeled base classes this approach isnt valid anymore as shares
             //with the id-10 are assigned before shares with the id-2
@@ -133,22 +135,7 @@ public final class PublicCompany_CGR extends PublicCompany implements RevenueSta
                     cert.setCertificateCount(1.0f);
                 }
             }
-
-            // Update all owner ShareModels (once)
-            // to have the UI get the correct percentage
-            // FIXME: Do we still neeed this
-/*            List<Portfolio> done = new ArrayList<Portfolio>();
-            Portfolio portfolio;
-            for (PublicCertificate cert : certificates.view()) {
-                portfolio = (Portfolio)cert.getHolder();
-                if (!done.contains(portfolio)) {
-                    portfolio.getShareModel(this).setShare();
-                    done.add(portfolio);
-                }
-            }
-*/
         }
-
     }
 
     @Override

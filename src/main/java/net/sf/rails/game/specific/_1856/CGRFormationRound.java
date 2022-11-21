@@ -321,7 +321,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                     newShares++;
                 }
 
-                String message = LocalText.getText("HasMergedShares",
+                String message = LocalText.getText("SharesReplacedForShares",
                         player.getId(),
                         oldShares,
                         newShares,
@@ -372,7 +372,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             newShares++;
         }
 
-        String message = LocalText.getText("HasMergedShares",
+        String message = LocalText.getText("SharesReplacedForShares",
                 LocalText.getText("POOL"),
                 oldShares,
                 newShares,
@@ -547,7 +547,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         }
 
         // Clean up any non-home tokens on cities now having a CGR token
-        for (BaseToken token : new ArrayList<BaseToken>(nonHomeTokens)) {
+        for (BaseToken token : new ArrayList<>(nonHomeTokens)) {
             stop = (Stop) token.getOwner();
             hex = stop.getParent();
             Set<BaseToken> otherTokens = hex.getBaseTokens();
@@ -571,7 +571,7 @@ public class CGRFormationRound extends SwitchableUIRound {
         if (homeTokens.size() + nonHomeTokens.size() > cgr.getNumberOfBaseTokens()) {
             // CGR cannot replace all tokens, must choose
             // First collect old names per city
-            Map<String, String> oldTokens = new HashMap<String, String>();
+            Map<String, String> oldTokens = new HashMap<>();
             String cityName;
             for (BaseToken token : nonHomeTokens) {
                 if (token.getOwner() instanceof Stop) {
@@ -585,8 +585,8 @@ public class CGRFormationRound extends SwitchableUIRound {
                 }
             }
             // Then create list of exchange spots. Sort it on hexname/city number
-            tokensToExchangeFrom = new ArrayList<ExchangeableToken>();
-            for (String key : new TreeSet<String>(oldTokens.keySet())) {
+            tokensToExchangeFrom = new ArrayList<>();
+            for (String key : new TreeSet<>(oldTokens.keySet())) {
                 tokensToExchangeFrom.add(new ExchangeableToken(
                         key, oldTokens.get(key)));
             }

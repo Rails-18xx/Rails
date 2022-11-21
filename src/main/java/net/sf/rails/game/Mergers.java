@@ -152,7 +152,7 @@ public class Mergers {
             Stop stop = hex.getRelatedStop(minor.getHomeCityNumber());
             if (!stop.hasTokenOf(major) && hex.layBaseToken(major, stop)) {
                 /* TODO: the false return value must be impossible. */
-                String message = LocalText.getText("ExchangesBaseToken2",
+                String message = LocalText.getText("ExchangesBaseToken",
                         major.getId(), minor.getId(),
                         hex.getId() +
                                 (hex.getStops().size() > 1

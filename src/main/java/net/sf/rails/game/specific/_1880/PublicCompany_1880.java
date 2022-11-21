@@ -1,6 +1,3 @@
-/**
- *
- */
 package net.sf.rails.game.specific._1880;
 
 import java.util.ArrayList;
@@ -335,14 +332,14 @@ public class PublicCompany_1880 extends PublicCompany implements RevenueStaticMo
      * @see rails.game.PublicCompany#getBaseTokenLayCost(rails.game.MapHex)
      */
     @Override
-    public int getBaseTokenLayCost(Stop stop) {
+    public int getBaseTokenLayCostOnStop(Stop stop) {
         Phase phase = getRoot().getPhaseManager().getCurrentPhase();
         if (phase.getRealName().startsWith("D")) {
             int result;
-            result = super.getBaseTokenLayCost(null) * 2;
+            result = super.getBaseTokenLayCostOnStop(null) * 2;
             return result;
         }
-        return super.getBaseTokenLayCost(null);
+        return super.getBaseTokenLayCostOnStop(null);
     }
 
     @Override

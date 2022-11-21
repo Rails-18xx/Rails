@@ -105,7 +105,7 @@ FirstTrainBought,2
 CompanyOperates,TGB,Ulli Hegemann
 LaysTileAt,TGB,6,K8,NE
 CompanyTakesLoan,TGB,100,100
-InterestPaidFromTreasury,TGB,10
+InterestPaidFromTreasury,TGB,10,loan
 CompanyDoesNotPayDividend,TGB
 PRICE_MOVES_LOG,TGB,75,E4,70,D4
 BuysTrain,TGB,2,IPO,100
@@ -113,7 +113,7 @@ BuysTrain,TGB,2,IPO,100
 CompanyOperates,LPS,Volker Kuhnle
 CompanyTakesLoan,LPS,100,100
 LaysTileAt,LPS,57,C14,NW
-InterestPaidFromTreasury,LPS,10
+InterestPaidFromTreasury,LPS,10,loan
 CompanyDoesNotPayDividend,LPS
 PRICE_MOVES_LOG,LPS,70,E5,65,D5
 BuysTrain,LPS,2,IPO,100
@@ -172,7 +172,7 @@ LaysTileAt,CA,56,E18,N
 CompanyTakesLoan,CA,100,100
 CompanyRevenue,CA,30
 CompanyMustPayLoanInterest,CA,20
-InterestPaidFromTreasury,CA,20
+InterestPaidFromTreasury,CA,20,loan
 CompanyPaysOutFull,CA,30
 Payout,Jupp Krupp,6,2,10
 PRICE_MOVES_LOG,CA,75,D3,80,E3
@@ -183,7 +183,7 @@ CompanyOperates,TGB,Ulli Hegemann
 LaysTileAt,TGB,58,J9,NW
 CompanyRevenue,TGB,30
 CompanyMustPayLoanInterest,TGB,10
-InterestPaidFromTreasury,TGB,10
+InterestPaidFromTreasury,TGB,10,loan
 CompanyPaysOutFull,TGB,30
 Payout,Ulli Hegemann,9,3,10
 PRICE_MOVES_LOG,TGB,70,D4,75,E4
@@ -201,7 +201,7 @@ LaysBonusTokenOn,LPS,Port,20,C14
 PrivateCloses,Ship
 CompanyRevenue,LPS,130
 CompanyMustPayLoanInterest,LPS,20
-InterestPaidFromTreasury,LPS,20
+InterestPaidFromTreasury,LPS,20,loan
 CompanyPaysOutFull,LPS,130
 Payout,Volker Kuhnle,39,3,10
 Payout,Volker Schnell,39,3,10
@@ -212,7 +212,7 @@ CompanyOperates,WR,Klaus-Jürgen Fleischer
 LaysTileAt,WR,5,O18,SE
 CompanyRevenue,WR,50
 CompanyMustPayLoanInterest,WR,10
-InterestPaidFromTreasury,WR,10
+InterestPaidFromTreasury,WR,10,loan
 CompanyPaysOutFull,WR,50
 Payout,Klaus-Jürgen Fleischer,15,3,10
 PRICE_MOVES_LOG,WR,60,D6,65,E6
@@ -278,7 +278,7 @@ BuysPrivateFromFor,CA,Tunn,Jupp Krupp,90
 AcquiresBonus,CA,Tunnel,10,B13
 CompanyRevenue,CA,120
 CompanyMustPayLoanInterest,CA,20
-InterestPaidFromRevenue,CA,20,20
+InterestPaidFromRevenue,CA,20,20,loan
 CompanyPaysOutFull,CA,100
 Payout,Jupp Krupp,20,2,10
 PRICE_MOVES_LOG,CA,80,E3,90,F3
@@ -288,7 +288,7 @@ LaysTileAt,TGB,57,I8,NW
 LAYS_TOKEN_ON,TGB,I8,40
 CompanyRevenue,TGB,60
 CompanyMustPayLoanInterest,TGB,20
-InterestPaidFromTreasury,TGB,20
+InterestPaidFromTreasury,TGB,20,loan
 CompanyPaysOutFull,TGB,60
 Payout,Ulli Hegemann,24,4,10
 PRICE_MOVES_LOG,TGB,75,E4,80,F4
@@ -299,7 +299,7 @@ LaysTileAt,LPS,7,B15,N
 BuysBonusTokenFrom,LPS,Tunnel,10,CA,50
 CompanyRevenue,LPS,250
 CompanyMustPayLoanInterest,LPS,30
-InterestPaidFromTreasury,LPS,30
+InterestPaidFromTreasury,LPS,30,loan
 CompanyPaysOutFull,LPS,250
 Payout,Volker Schnell,100,4,10
 Payout,Volker Kuhnle,125,5,10
@@ -312,7 +312,7 @@ BuysPrivateFromFor,WR,Brdg,Klaus-Jürgen Fleischer,200
 AcquiresBonus,WR,Bridge,10,P17,P19
 CompanyRevenue,WR,160
 CompanyMustPayLoanInterest,WR,30
-InterestPaidFromRevenue,WR,30,30
+InterestPaidFromRevenue,WR,30,30,loan
 CompanyPaysOutFull,WR,130
 Payout,Klaus-Jürgen Fleischer,39,3,10
 Payout,Jupp Krupp,13,1,10
@@ -344,7 +344,7 @@ CompanyOperates,CA,Jupp Krupp
 LaysTileAt,CA,57,F17,SW
 CompanyRevenue,CA,140
 CompanyMustPayLoanInterest,CA,20
-InterestPaidFromTreasury,CA,20
+InterestPaidFromTreasury,CA,20,loan
 CompanyPaysOutFull,CA,140
 Payout,Jupp Krupp,28,2,10
 PRICE_MOVES_LOG,CA,90,F3,100,G3
@@ -353,7 +353,7 @@ CompanyOperates,TGB,Ulli Hegemann
 LaysTileAt,TGB,69,H7,NE
 CompanyRevenue,TGB,90
 CompanyMustPayLoanInterest,TGB,20
-InterestPaidFromTreasury,TGB,20
+InterestPaidFromTreasury,TGB,20,loan
 CompanyPaysOutFull,TGB,90
 Payout,Ulli Hegemann,36,4,10
 PRICE_MOVES_LOG,TGB,80,F4,90,G4
@@ -365,7 +365,7 @@ DestinationReached,LPS,F17
 ReleasedFromEscrow,LPS,280
 CompanyRevenue,LPS,270
 CompanyMustPayLoanInterest,LPS,30
-InterestPaidFromTreasury,LPS,30
+InterestPaidFromTreasury,LPS,30,loan
 CompanyPaysOutFull,LPS,270
 Payout,Volker Kuhnle,135,5,10
 Payout,Volker Schnell,108,4,10
@@ -376,7 +376,7 @@ CompanyTakesLoan,WR,100,100
 LaysTileAt,WR,15,O18,NW
 CompanyRevenue,WR,150
 CompanyMustPayLoanInterest,WR,40
-InterestPaidFromTreasury,WR,40
+InterestPaidFromTreasury,WR,40,loan
 CompanyPaysOutFull,WR,150
 Payout,Klaus-Jürgen Fleischer,45,3,10
 Payout,Jupp Krupp,15,1,10
@@ -537,7 +537,7 @@ CompanyOperates,TGB,Ulli Hegemann
 LaysTileAt,TGB,14,I8,NW
 CompanyRevenue,TGB,70
 CompanyMustPayLoanInterest,TGB,20
-InterestPaidFromTreasury,TGB,20
+InterestPaidFromTreasury,TGB,20,loan
 CompanyPaysOutFull,TGB,70
 Payout,Ulli Hegemann,28,4,10
 Payout,TGB,14,2,10
@@ -547,7 +547,7 @@ CompanyOperates,WR,Klaus-Jürgen Fleischer
 LaysTileAt,WR,59,N17,S
 CompanyRevenue,WR,100
 CompanyMustPayLoanInterest,WR,40
-InterestPaidFromTreasury,WR,40
+InterestPaidFromTreasury,WR,40,loan
 CompanyPaysOutFull,WR,100
 Payout,Klaus-Jürgen Fleischer,30,3,10
 Payout,WR,20,2,10
@@ -559,7 +559,7 @@ LaysTileAt,LPS,15,F17,SW
 LAYS_TOKEN_ON,LPS,F15,40
 CompanyRevenue,LPS,120
 CompanyMustPayLoanInterest,LPS,30
-InterestPaidFromTreasury,LPS,30
+InterestPaidFromTreasury,LPS,30,loan
 CompanyPaysOutFull,LPS,120
 Payout,Volker Kuhnle,60,5,10
 Payout,Ulli Hegemann,12,1,10
@@ -571,7 +571,7 @@ CompanyRepaysLoans,LPS,100,100,1,100
 CompanyOperates,CA,Jupp Krupp
 LaysTileAt,CA,9,G16,SW
 CompanyTakesLoan,CA,100,100
-InterestPaidFromTreasury,CA,30
+InterestPaidFromTreasury,CA,30,loan
 CompanyDoesNotPayDividend,CA
 PRICE_MOVES_LOG,CA,70,G7,65,F7
 BuysTrain,CA,4,IPO,350
@@ -614,7 +614,7 @@ CompanyOperates,TGB,Ulli Hegemann
 LaysTileAt,TGB,8,I6,S
 CompanyRevenue,TGB,70
 CompanyMustPayLoanInterest,TGB,20
-InterestPaidFromTreasury,TGB,20
+InterestPaidFromTreasury,TGB,20,loan
 CompanyPaysOutFull,TGB,70
 Payout,Ulli Hegemann,28,4,10
 Payout,TGB,14,2,10
@@ -623,7 +623,7 @@ PRICE_MOVES_LOG,TGB,80,H6,90,I6
 CompanyOperates,WR,Klaus-Jürgen Fleischer
 CompanyRevenue,WR,110
 CompanyMustPayLoanInterest,WR,30
-InterestPaidFromTreasury,WR,30
+InterestPaidFromTreasury,WR,30,loan
 CompanyPaysOutFull,WR,110
 Payout,Klaus-Jürgen Fleischer,33,3,10
 Payout,WR,22,2,10

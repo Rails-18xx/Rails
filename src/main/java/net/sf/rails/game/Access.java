@@ -163,7 +163,6 @@ public class Access {
             }
         }
 
-
         String runThroughString = accessTag.getAttributeAsString("runThrough");
         RunThrough runThrough = null;
         if (Util.hasValue(runThroughString)) {
@@ -210,9 +209,8 @@ public class Access {
 
     public static Access parseDefault(RailsItem owner, Tag accessTag)
         throws ConfigurationException {
-        
-        String typeString = accessTag.getAttributeAsString("type");
-        String type = null; // If type is not defined the "default default" is defined
+        /*
+        String typeString = accessTag.getAttributeAsString("type").toUpperCase();
         if (Util.hasValue(typeString)) {
             try {
                 // FIXME type is never used - why this code?
@@ -221,7 +219,7 @@ public class Access {
                 throw new ConfigurationException ("Illegal value for "
                         + owner +" stop type property: "+typeString, e);
             }
-        }
+        }*/
         return parseAccessTag(owner, accessTag);
     }
     

@@ -116,7 +116,7 @@ BuysTrain,WR,2,IPO,100
 CompanyOperates,GT,Justin
 CompanyTakesLoan,GT,100,100
 LaysTileAt,GT,57,P9,SW
-InterestPaidFromTreasury,GT,10
+InterestPaidFromTreasury,GT,10,loan
 CompanyDoesNotPayDividend,GT
 PRICE_MOVES_LOG,GT,65,E6,60,D6
 BuysTrain,GT,2,IPO,100
@@ -171,7 +171,7 @@ CompanyOperates,GT,Justin
 LaysTileAt,GT,9,O10,SW
 CompanyRevenue,GT,90
 CompanyMustPayLoanInterest,GT,10
-InterestPaidFromTreasury,GT,10
+InterestPaidFromTreasury,GT,10,loan
 CompanyPaysOutFull,GT,90
 Payout,Justin,27,3,10
 PRICE_MOVES_LOG,GT,60,D6,65,E6
@@ -181,7 +181,7 @@ CompanyOperates,WR,Tyler
 LaysTileAt,WR,6,O18,S
 CompanyRevenue,WR,90
 CompanyMustPayLoanInterest,WR,10
-InterestPaidFromTreasury,WR,10
+InterestPaidFromTreasury,WR,10,loan
 CompanyPaysOutFull,WR,90
 Payout,Ron,9,1,10
 Payout,Tyler,27,3,10
@@ -196,7 +196,7 @@ CompanyOperates,LPS,Lonny
 LaysTileAt,LPS,7,B15,N
 CompanyRevenue,LPS,100
 CompanyMustPayLoanInterest,LPS,10
-InterestPaidFromTreasury,LPS,10
+InterestPaidFromTreasury,LPS,10,loan
 CompanyPaysOutFull,LPS,100
 Payout,Ron,10,1,10
 Payout,Tyler,10,1,10
@@ -272,7 +272,7 @@ LaysTileAt,GT,120,N11,NE
 CompanyTakesLoan,GT,100,100
 CompanyRevenue,GT,120
 CompanyMustPayLoanInterest,GT,30
-InterestPaidFromTreasury,GT,30
+InterestPaidFromTreasury,GT,30,loan
 CompanyPaysOutFull,GT,120
 Payout,Ron,12,1,10
 Payout,Justin,48,4,10
@@ -284,7 +284,7 @@ LaysTileAt,WR,15,O16,SE
 LAYS_TOKEN_ON,WR,O18,40
 CompanyRevenue,WR,160
 CompanyMustPayLoanInterest,WR,20
-InterestPaidFromTreasury,WR,20
+InterestPaidFromTreasury,WR,20,loan
 CompanyPaysOutFull,WR,160
 Payout,Ron,16,1,10
 Payout,Tyler,64,4,10
@@ -295,7 +295,7 @@ CompanyOperates,LPS,Lonny
 LaysTileAt,LPS,15,C14,SE
 CompanyRevenue,LPS,120
 CompanyMustPayLoanInterest,LPS,20
-InterestPaidFromTreasury,LPS,20
+InterestPaidFromTreasury,LPS,20,loan
 CompanyPaysOutFull,LPS,120
 Payout,Ron,12,1,10
 Payout,Tyler,12,1,10
@@ -334,8 +334,8 @@ BuysPrivateFromFor,GT,W&SR,Justin,80
 LaysTileAt,GT,14,P9,SW
 CompanyRevenue,GT,190
 CompanyMustPayLoanInterest,GT,40
-InterestPartlyPaidFromTreasury,GT,20,40
-InterestPaidFromRevenue,GT,20,40
+InterestPartlyPaidFromTreasury,GT,20,40,loan
+InterestPaidFromRevenue,GT,20,40,loan
 CompanyPaysOutFull,GT,170
 Payout,Justin,68,4,10
 Payout,Ron,17,1,10
@@ -347,7 +347,7 @@ CompanyTakesLoan,CA,100,100
 LAYS_TOKEN_ON,CA,C14,40
 CompanyRevenue,CA,140
 CompanyMustPayLoanInterest,CA,20
-InterestPaidFromTreasury,CA,20
+InterestPaidFromTreasury,CA,20,loan
 CompanyPaysOutFull,CA,140
 Payout,Lonny,42,3,10
 PRICE_MOVES_LOG,CA,65,D5,70,E5
@@ -356,7 +356,7 @@ CompanyOperates,WR,Tyler
 LaysTileAt,WR,59,N17,NE
 CompanyRevenue,WR,210
 CompanyMustPayLoanInterest,WR,20
-InterestPaidFromTreasury,WR,20
+InterestPaidFromTreasury,WR,20,loan
 CompanyPaysOutFull,WR,210
 Payout,Ron,21,1,10
 Payout,Tyler,84,4,10
@@ -371,7 +371,7 @@ CompanyTakesLoan,LPS,100,100
 LAYS_TOKEN_ON,LPS,D17,40
 CompanyRevenue,LPS,180
 CompanyMustPayLoanInterest,LPS,40
-InterestPaidFromTreasury,LPS,40
+InterestPaidFromTreasury,LPS,40,loan
 CompanyPaysOutFull,LPS,180
 Payout,Tyler,18,1,10
 Payout,Ron,18,1,10
@@ -476,7 +476,7 @@ ReceivesFor,Ron,20,Tunn
 CompanyOperates,TGB,Justin
 LaysTileAt,TGB,6,K8,SE
 CompanyTakesLoan,TGB,100,100
-InterestPaidFromTreasury,TGB,10
+InterestPaidFromTreasury,TGB,10,loan
 CompanyDoesNotPayDividend,TGB
 PRICE_MOVES_LOG,TGB,100,E1,90,D1
 BuysTrain,TGB,2,GT,140
@@ -502,7 +502,7 @@ CompanyOperates,GT,Justin
 LaysTileAt,GT,8,O8,SE
 CompanyRevenue,GT,110
 CompanyMustPayLoanInterest,GT,40
-InterestPaidFromTreasury,GT,40
+InterestPaidFromTreasury,GT,40,loan
 CompanyPaysOutFull,GT,110
 Payout,Justin,44,4,10
 Payout,GT,33,3,10
@@ -513,7 +513,7 @@ CompanyOperates,CA,Lonny
 LaysTileAt,CA,8,C16,N
 CompanyRevenue,CA,90
 CompanyMustPayLoanInterest,CA,20
-InterestPaidFromTreasury,CA,20
+InterestPaidFromTreasury,CA,20,loan
 CompanyWithholds,CA,90
 PRICE_MOVES_LOG,CA,65,E6,60,D6
  
@@ -522,7 +522,7 @@ CompanyTakesLoan,WR,100,100
 LaysTileAtFor,WR,8,N15,SE,40
 CompanyRevenue,WR,100
 CompanyMustPayLoanInterest,WR,40
-InterestPaidFromTreasury,WR,40
+InterestPaidFromTreasury,WR,40,loan
 CompanyPaysOutFull,WR,100
 Payout,Tyler,50,5,10
 Payout,WR,20,2,10
@@ -532,7 +532,7 @@ CompanyOperates,LPS,Lonny
 LaysTileAt,LPS,8,E16,SE
 CompanyRevenue,LPS,180
 CompanyMustPayLoanInterest,LPS,40
-InterestPaidFromTreasury,LPS,40
+InterestPaidFromTreasury,LPS,40,loan
 CompanyPaysOutFull,LPS,180
 Payout,Lonny,108,6,10
 Payout,LPS,72,4,10
@@ -567,7 +567,7 @@ ReceivesFor,Ron,20,Tunn
 CompanyOperates,TGB,Justin
 LaysTileAt,TGB,8,L7,SE
 CompanyTakesLoan,TGB,100,100
-InterestPaidFromTreasury,TGB,20
+InterestPaidFromTreasury,TGB,20,loan
 CompanyDoesNotPayDividend,TGB
 PRICE_MOVES_LOG,TGB,90,D1,80,C1
  
@@ -588,7 +588,7 @@ LaysBonusTokenOn,GT,Port,20,H5
 PrivateCloses,Ship
 CompanyRevenue,GT,230
 CompanyMustPayLoanInterest,GT,40
-InterestPaidFromTreasury,GT,40
+InterestPaidFromTreasury,GT,40,loan
 CompanyPaysOutFull,GT,230
 Payout,Justin,92,4,10
 Payout,GT,69,3,10
@@ -598,7 +598,7 @@ CompanyOperates,THB,Tyler
 LaysTileAtFor,THB,8,M16,NW,40
 CompanyRevenue,THB,110
 CompanyMustPayLoanInterest,THB,10
-InterestPaidFromTreasury,THB,10
+InterestPaidFromTreasury,THB,10,loan
 CompanyPaysOutFull,THB,110
 Payout,Tyler,33,3,10
 Payout,THB,11,1,10
@@ -610,7 +610,7 @@ ReleasedFromEscrow,WR,130
 LaysTileAt,WR,15,O18,NW
 CompanyRevenue,WR,110
 CompanyMustPayLoanInterest,WR,40
-InterestPaidFromTreasury,WR,40
+InterestPaidFromTreasury,WR,40,loan
 CompanyPaysOutFull,WR,110
 Payout,Tyler,55,5,10
 Payout,WR,22,2,10
@@ -624,7 +624,7 @@ DestinationReached,LPS,F17
 ReleasedFromEscrow,LPS,325
 CompanyRevenue,LPS,260
 CompanyMustPayLoanInterest,LPS,30
-InterestPaidFromTreasury,LPS,30
+InterestPaidFromTreasury,LPS,30,loan
 CompanyPaysOutFull,LPS,260
 Payout,Lonny,156,6,10
 Payout,LPS,104,4,10
@@ -633,7 +633,7 @@ CompanyRepaysLoans,LPS,300,300,3,100
  
 CompanyOperates,CA,Lonny
 LaysTileAt,CA,8,G14,SE
-InterestPaidFromTreasury,CA,20
+InterestPaidFromTreasury,CA,20,loan
 CompanyDoesNotPayDividend,CA
 PRICE_MOVES_LOG,CA,60,D6,55,C6
 BuysTrain,CA,3,LPS,92
@@ -727,7 +727,7 @@ CompanyOperates,GT,Justin
 LaysTileAt,GT,24,O8,SE
 CompanyRevenue,GT,230
 CompanyMustPayLoanInterest,GT,40
-InterestPaidFromTreasury,GT,40
+InterestPaidFromTreasury,GT,40,loan
 CompanyPaysOutFull,GT,230
 Payout,Ron,23,1,10
 Payout,Lonny,23,1,10
@@ -740,7 +740,7 @@ CompanyRepaysLoans,GT,200,200,2,100
 CompanyOperates,TGB,Justin
 CompanyTakesLoan,TGB,100,100
 LaysTileAt,TGB,8,M8,NW
-InterestPaidFromTreasury,TGB,30
+InterestPaidFromTreasury,TGB,30,loan
 CompanyDoesNotPayDividend,TGB
 PRICE_MOVES_LOG,TGB,80,C1,75,B1
  
@@ -748,7 +748,7 @@ CompanyOperates,THB,Tyler
 LaysTileAt,THB,24,M16,NW
 CompanyRevenue,THB,130
 CompanyMustPayLoanInterest,THB,10
-InterestPaidFromTreasury,THB,10
+InterestPaidFromTreasury,THB,10,loan
 CompanyPaysOutFull,THB,130
 Payout,Ron,13,1,10
 Payout,Tyler,65,5,10
@@ -759,7 +759,7 @@ CompanyRepaysLoans,THB,100,100,1,100
 CompanyOperates,WR,Tyler
 CompanyRevenue,WR,110
 CompanyMustPayLoanInterest,WR,30
-InterestPaidFromTreasury,WR,30
+InterestPaidFromTreasury,WR,30,loan
 CompanyPaysOutFull,WR,110
 Payout,Tyler,55,5,10
 Payout,WR,22,2,10
@@ -779,7 +779,7 @@ CompanyOperates,CA,Lonny
 LaysTileAt,CA,25,E16,SW
 CompanyRevenue,CA,100
 CompanyMustPayLoanInterest,CA,20
-InterestPaidFromTreasury,CA,20
+InterestPaidFromTreasury,CA,20,loan
 CompanyPaysOutFull,CA,100
 Payout,Lonny,40,4,10
 Payout,CA,30,3,10
@@ -823,7 +823,7 @@ ReleasedFromEscrow,GT,325
 LaysTileAt,GT,8,N7,SE
 CompanyRevenue,GT,230
 CompanyMustPayLoanInterest,GT,20
-InterestPaidFromTreasury,GT,20
+InterestPaidFromTreasury,GT,20,loan
 CompanyPaysOutFull,GT,230
 Payout,Ron,23,1,10
 Payout,Lonny,23,1,10
@@ -839,7 +839,7 @@ PRICE_MOVES_LOG,THB,80,F4,75,E4
 BuysTrain,THB,3,WR,144
  
 CompanyOperates,WR,Tyler
-InterestPaidFromTreasury,WR,40
+InterestPaidFromTreasury,WR,40,loan
 CompanyDoesNotPayDividend,WR
 PRICE_MOVES_LOG,WR,75,G6,70,F6
 CompanyTakesLoan,WR,100,90
@@ -857,7 +857,7 @@ PRICE_MOVES_LOG,LPS,75,G6,80,H6
  
 CompanyOperates,TGB,Justin
 LaysTileAt,TGB,14,K8,SW
-InterestPaidFromTreasury,TGB,30
+InterestPaidFromTreasury,TGB,30,loan
 CompanyDoesNotPayDividend,TGB
 PRICE_MOVES_LOG,TGB,75,B1,70,A1
 CompanyTakesLoan,TGB,100,90
@@ -869,7 +869,7 @@ DestinationReached,CA,H15
 ReleasedFromEscrow,CA,140
 CompanyRevenue,CA,110
 CompanyMustPayLoanInterest,CA,30
-InterestPaidFromTreasury,CA,30
+InterestPaidFromTreasury,CA,30,loan
 CompanyPaysOutFull,CA,110
 Payout,Lonny,44,4,10
 Payout,CA,33,3,10
@@ -994,7 +994,7 @@ CompanyOperates,GT,Justin
 LaysTileAt,GT,122,N11,NE
 CompanyRevenue,GT,150
 CompanyMustPayLoanInterest,GT,20
-InterestPaidFromTreasury,GT,20
+InterestPaidFromTreasury,GT,20,loan
 CompanyPaysOutFull,GT,150
 Payout,Ron,15,1,10
 Payout,Justin,90,6,10
@@ -1019,7 +1019,7 @@ CompanyOperates,WR,Tyler
 LaysTileAt,WR,64,L15,N
 CompanyRevenue,WR,150
 CompanyMustPayLoanInterest,WR,50
-InterestPaidFromTreasury,WR,50
+InterestPaidFromTreasury,WR,50,loan
 CompanyPaysOutFull,WR,150
 Payout,Tyler,90,6,10
 Payout,WR,30,2,10
@@ -1038,7 +1038,7 @@ CompanyOperates,TGB,Justin
 LaysTileAt,TGB,125,P9,S
 CompanyRevenue,TGB,150
 CompanyMustPayLoanInterest,TGB,40
-InterestPaidFromRevenue,TGB,40,40
+InterestPaidFromRevenue,TGB,40,40,loan
 CompanyWithholds,TGB,110
 PRICE_MOVES_LOG,TGB,60,A3,55,A4
 CompanyRepaysLoans,TGB,110,200,2,100
@@ -1050,7 +1050,7 @@ CompanyTakesLoan,CA,100,100
 BuysBonusTokenFrom,CA,Tunnel,10,BANK,50
 CompanyRevenue,CA,260
 CompanyMustPayLoanInterest,CA,50
-InterestPaidFromTreasury,CA,50
+InterestPaidFromTreasury,CA,50,loan
 CompanyPaysOutFull,CA,260
 Payout,Lonny,52,2,10
 Payout,Justin,130,5,10
@@ -1088,7 +1088,7 @@ CompanyOperates,GT,Justin
 LaysTileAt,GT,24,O10,SW
 CompanyRevenue,GT,310
 CompanyMustPayLoanInterest,GT,20
-InterestPaidFromRevenue,GT,20,20
+InterestPaidFromRevenue,GT,20,20,loan
 CompanyPaysOutFull,GT,290
 Payout,Ron,29,1,10
 Payout,Tyler,58,2,10
@@ -1117,7 +1117,7 @@ CompanyOperates,WR,Tyler
 LaysTileAt,WR,66,N17,SW
 CompanyRevenue,WR,150
 CompanyMustPayLoanInterest,WR,50
-InterestPaidFromTreasury,WR,50
+InterestPaidFromTreasury,WR,50,loan
 CompanyPaysOutFull,WR,150
 Payout,Tyler,90,6,10
 Payout,WR,30,2,10
@@ -1136,7 +1136,7 @@ CompanyOperates,TGB,Justin
 LaysTileAt,TGB,63,K8,S
 CompanyRevenue,TGB,160
 CompanyMustPayLoanInterest,TGB,20
-InterestPaidFromRevenue,TGB,20,20
+InterestPaidFromRevenue,TGB,20,20,loan
 CompanyPaysOutFull,TGB,140
 Payout,Justin,28,2,10
 Payout,TGB,28,2,10
@@ -1147,7 +1147,7 @@ CompanyTakesLoan,CA,100,100
 LaysTileAt,CA,7,I16,SW
 CompanyRevenue,CA,270
 CompanyMustPayLoanInterest,CA,60
-InterestPaidFromTreasury,CA,60
+InterestPaidFromTreasury,CA,60,loan
 CompanyPaysOutFull,CA,270
 Payout,Lonny,54,2,10
 Payout,Justin,135,5,10
@@ -1244,7 +1244,7 @@ CompanyOperates,GT,Justin
 LaysTileAt,GT,8,K6,NE
 CompanyRevenue,GT,310
 CompanyMustPayLoanInterest,GT,20
-InterestPaidFromTreasury,GT,20
+InterestPaidFromTreasury,GT,20,loan
 CompanyPaysOutFull,GT,310
 Payout,Justin,186,6,10
 Payout,Tyler,62,2,10
@@ -1265,7 +1265,7 @@ CompanyOperates,CV,Ron
 LaysTileAt,CV,1,M10,SE
 CompanyRevenue,CV,170
 CompanyMustPayLoanInterest,CV,10
-InterestPaidFromTreasury,CV,10
+InterestPaidFromTreasury,CV,10,loan
 CompanyPaysOutFull,CV,170
 Payout,Ron,102,6,10
 Payout,CV,68,4,10
@@ -1313,11 +1313,11 @@ WillMergeInto,TGB,CGR
  
 CompanyHasLoans,CA,Justin,6,100,600
 WillMergeInto,CA,CGR
-HasMergedShares,Tyler,6,3,CGR
-HasMergedShares,Ron,2,1,CGR
-HasMergedShares,Justin,7,3,CGR
+SharesReplacedForShares,Tyler,6,3,CGR
+SharesReplacedForShares,Ron,2,1,CGR
+SharesReplacedForShares,Justin,7,3,CGR
 HasPutShareInPool,Justin
-HasMergedShares,POOL,7,3,CGR
+SharesReplacedForShares,POOL,7,3,CGR
  
 CompanyHasShares,CGR,10,10
 IS_NOW_PRES_OF,Tyler,CGR

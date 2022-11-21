@@ -513,6 +513,19 @@ public class GUIHex implements Observer {
                   + ((fontMetrics.getHeight() + dimensions.rectBound.height) * 5 / 25));
         }
 
+        String extraText = hex.getExtraText();
+        if (extraText != null) {
+            g.drawString(
+                    extraText,
+                    dimensions.rectBound.x
+                            + hex.getExtraTextX()
+                            + (dimensions.rectBound.width - fontMetrics.stringWidth(extraText))
+                            * 1 / 2,
+                    dimensions.rectBound.y
+                            + hex.getExtraTextY()
+                            + ((fontMetrics.getHeight() + dimensions.rectBound.height) * 5 / 25));
+        }
+
     }
 
     private void paintOverlay(Graphics2D g2) {

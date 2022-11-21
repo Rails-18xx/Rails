@@ -491,19 +491,19 @@ SharesPutInTreasury,70,SNCB
 PaysForTokens,SNCB,100,5
 MERGE_MINOR_LOG,Volker,2,NS,60,1
 GetShareForMinor,Volker,10,NS,2
-ExchangesBaseToken2,NS,2,H3
+ExchangesBaseToken,NS,2,H3
 MinorCloses,2
 MERGE_MINOR_LOG,Martin,8,KKÖB,70,1
 GetShareForMinor,Martin,10,KKÖB,8
-ExchangesBaseToken2,KKÖB,8,P13
+ExchangesBaseToken,KKÖB,8,P13
 MinorCloses,8
 MERGE_MINOR_LOG,Arne,5,FS,125,0
 GetShareForMinor,Arne,10,FS,5
-ExchangesBaseToken2,FS,5,S8
+ExchangesBaseToken,FS,5,S8
 MinorCloses,5
 MERGE_MINOR_LOG,Jupp,3,SNCB,115,0
 GetShareForMinor,Jupp,10,SNCB,3
-ExchangesBaseToken2,SNCB,3,J1
+ExchangesBaseToken,SNCB,3,J1
 MinorCloses,3
 BUY_SHARE_LOG,Volker,10,NS,NS,90
 Floats,NS
@@ -768,7 +768,7 @@ SharesPutInTreasury,70,KPEV
 PaysForTokens,KPEV,100,5
 MERGE_MINOR_LOG,Arne,13,KBS,20,0
 GetShareForMinor,Arne,10,KBS,13
-ExchangesBaseToken2,KBS,13,L7
+ExchangesBaseToken,KBS,13,L7
 MinorCloses,13
 START_COMPANY_LOG,Jupp,SNCF,90,180,2,20,SNCF
 MERGE_MINOR_LOG,Jupp,15,SNCF,4,1
@@ -781,12 +781,12 @@ BUY_SHARE_LOG,Martin,10,KPEV,KPEV,100
 BUY_SHARE_LOG,Arne,10,FS,FS,100
 MERGE_MINOR_LOG,Jupp,10,SNCF,65,0
 GetShareForMinor,Jupp,10,SNCF,10
-ExchangesBaseToken2,SNCF,10,R5
+ExchangesBaseToken,SNCF,10,R5
 MinorCloses,10
 PASSES,Volker
 MERGE_MINOR_LOG,Martin,7,KPEV,0,1
 GetShareForMinor,Martin,10,KPEV,7
-ExchangesBaseToken2,KPEV,7,E10
+ExchangesBaseToken,KPEV,7,E10
 MinorCloses,7
 Floats,KPEV
 BUY_SHARE_LOG,Arne,10,NS,NS,110
@@ -1008,7 +1008,7 @@ StartFinalMinorExchangeRound
 HasFirstTurn,Volker
 MERGE_MINOR_LOG,Arne,1,NS,0,1
 GetShareForMinor,Arne,10,NS,1
-ExchangesBaseToken2,NS,1,J1
+ExchangesBaseToken,NS,1,J1
 MinorCloses,1
 CompanyDiscardsTrain,NS,3,Pool
  

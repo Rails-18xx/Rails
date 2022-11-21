@@ -222,6 +222,10 @@ public class Bank extends RailsManager implements CurrencyOwner, RailsMoneyOwner
         return currency.format(amount);
     }
 
+    public String format(int amount) {
+        return currency.format(amount);
+    }
+
     public static Bank get(RailsItem item) {
         return item.getRoot().getBank();
     }

@@ -24,14 +24,14 @@
 			<HomeBase lay="firstOR"/>
 			<LayCost method="route_length" cost="20"/>
 		</BaseTokens>
-		<Trains limit="2,1"/><!-- as a 5-share company, will become 4,3,2 later -->
+		<Trains limit="2,1;4,3,2"/><!-- 2,1 as a 5-share company, will become 4,3,2 as a 10-share -->
 		<Loans value="500" maxNumber="2" interestPct="10"/>
 		<CanBuyPrivates/>
 		<CanUseSpecialProperties/>
 	</CompanyType>
 	<CompanyType name="National" class="net.sf.rails.game.specific._1826.PublicCompany_1826">
-		<!-- The "National" name is used for the 10-share companies Belge, Etat and SNCF. -->
-		<Capitalisation type="incremental"/>
+		<!-- The "National" name is used for the 10-share companies Etat and SNCF. -->
+		<Capitalisation type="part" shares="0"/> <!-- Will be set later for SNCF -->
 		<StockPrice par="no"/>
 		<Float percentage="50"/>
 		<Shares unit="10">
@@ -46,6 +46,7 @@
 			<LayCost method="route_length" cost="20"/><!-- Cost per hex -->
 		</BaseTokens>
 		<Trains limit="5,4,3"/>
+		<Options mustTradeTrainsAtFixedPrice="yes"/>
 		<Loans value="500" maxNumber="2" interestPct="10"/>
 		<CanBuyPrivates/>
 		<CanUseSpecialProperties/>
@@ -108,7 +109,7 @@
 		<Info key="ComesWithCertificate" parm="Als,20"/>
 	</Company>
 
-	<Company name="Als" type="Public" tokens="4" fgColour="FFFFFF" bgColour="120A8F"
+	<Company name="Als" type="Public" tokens="3" fgColour="FFFFFF" bgColour="120A8F"
 		longname="Chemin de Fer d'Alsace">
 		<Home hex="G19"/> <!-- Strasbourg -->
 		<Destination hex="L14"/> <!-- Lyon-->
@@ -179,10 +180,17 @@
 
 	<Company name="Etat" type="National" tokens="3" fgColour="FFFFFF" bgColour="000000"
 		longname="Chemin de Fer de L'Etat">
+		<Formation minNumberToExchange="0" maxNumberToExchange="2" exchangeCountPerCompany="yes"/>
+		<!-- Note: maxNumber *includes* the home base token -->
+		<StockPrice minimumStartPrice="82"/>
 	</Company>
 
 	<Company name="SNCF" type="National" tokens="4" fgColour="000000" bgColour="B3B3B3"
 		longname="Société Nationale des Chemins de fer Français">
+		<Formation minNumberToExchange="0" maxNumberToExchange="3" exchangeCountPerCompany="yes"/>
+		<!-- Note: maxNumber *includes* the home base token -->
+		<StockPrice minimumStartPrice="110"/>
+		<Bonds number="10" price="100" interest="10"/>
 	</Company>
 	
 	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">

@@ -94,7 +94,7 @@ abstract class RevenueCalculator {
     protected boolean callDynamicModifiers;
 
     // termination results
-    protected static enum Terminated {
+    protected enum Terminated {
         WITH_EVALUATION,
         WITHOUT_EVALUATION,
         NOT_YET
@@ -284,7 +284,8 @@ abstract class RevenueCalculator {
             cumulatedRevenues += values[values.length - j];
             bestRevenues[j] = cumulatedRevenues;
         }
-        log.debug("Best Revenues = {}", Arrays.toString(bestRevenues));
+        log.debug("Values={} length={} Best Revenues = {}",
+                values, length, Arrays.toString(bestRevenues));
         return bestRevenues;
     }
 
@@ -332,7 +333,7 @@ abstract class RevenueCalculator {
     }
 
     final void initRuns(final int startTrain, final int finalTrain) {
-        log.debug("RC: init runs from {} to {}", startTrain, finalTrain);
+        log.debug("RC: init train index from {} to {}", startTrain, finalTrain);
         if (startTrain > finalTrain) return;
 
         this.startTrainSet = startTrain;
@@ -425,6 +426,7 @@ abstract class RevenueCalculator {
         boolean stationVertex = false;
         if (arrive) {
             trainCurrentValue[trainId] += vertexValueByTrain[vertexId][trainId];
+            log.debug("Added {}", vertexValueByTrain[vertexId][trainId]);
             if (vertexMajor[vertexId]) {
                 trainMajors[trainId]--;
                 stationVertex = true;
@@ -435,6 +437,7 @@ abstract class RevenueCalculator {
             countVisits++;
         } else {
             trainCurrentValue[trainId] -= vertexValueByTrain[vertexId][trainId];
+            log.debug("Subtracted {}", vertexValueByTrain[vertexId][trainId]);
             if (vertexMajor[vertexId]) {
                 trainMajors[trainId]++;
                 stationVertex = true;
