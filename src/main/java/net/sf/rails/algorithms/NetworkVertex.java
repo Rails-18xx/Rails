@@ -338,6 +338,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             if (company != null) {
                 if (!v.initRailsVertex(company, running)) {
                     verticesToRemove.add(v);
+                    log.debug ("Vertex {} will be removed from the graph", v);
                 }
             }
             if (phase != null) {

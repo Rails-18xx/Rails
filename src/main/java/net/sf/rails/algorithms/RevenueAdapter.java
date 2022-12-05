@@ -323,9 +323,9 @@ public final class RevenueAdapter implements Runnable {
         rcVertices.sort(new NetworkVertex.ValueOrder());
         rcEdges = new ArrayList<>(rcGraph.edgeSet());
         rcEdges.sort(new NetworkEdge.CostOrder());
-        log.debug("rcVertices={} rcEdges={}", rcVertices, rcEdges);
+        log.info("rcVertices={} rcEdges={}", rcVertices, rcEdges);
         for (NetworkVertex vertex : rcVertices) {
-            log.debug ("Stop={} value={}", vertex.getStop(), vertex.getValue());
+            log.info ("Stop={} value={}", vertex.getStop(), vertex.getValue());
         }
 
         // prepare train length

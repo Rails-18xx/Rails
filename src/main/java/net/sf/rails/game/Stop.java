@@ -34,6 +34,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
 
     private static final Logger log = LoggerFactory.getLogger(Stop.class);
 
+    private Type type;
     private Access.RunTo runTo;
     private List<String> runToTrainCategories;
     private Access.RunThrough runThrough;
@@ -58,6 +59,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         super(hex, id);
 
         relatedStation.set(station);
+        type = station.getType();
         tokens.addModel(hex);
 
         if (station != null) {
@@ -112,6 +114,8 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     public int getNumber() {
         return number.value();
     }
+
+    public Type getType() { return type; }
 
     // FIMXE: Due to Rails1.x compatibility
     @Deprecated

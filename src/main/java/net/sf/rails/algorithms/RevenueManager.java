@@ -30,7 +30,7 @@ public final class RevenueManager extends RailsManager implements Configurable {
     private static final Logger log = LoggerFactory.getLogger(RevenueManager.class);
 
     // Modifiers that are configurable
-    private final HashSet<Configurable> configurableModifiers = new HashSet<Configurable>();
+    private final HashSet<Configurable> configurableModifiers = new HashSet<>();
 
     // Variables to store modifiers (permanent)
     private final ArrayListState<NetworkGraphModifier> graphModifiers = new ArrayListState<>(this, "graphModifiers");
@@ -39,8 +39,8 @@ public final class RevenueManager extends RailsManager implements Configurable {
     private RevenueCalculatorModifier calculatorModifier;
 
     // Variables that store the active modifier (per RevenueAdapter)
-    private final ArrayList<RevenueStaticModifier> activeStaticModifiers = new ArrayList<RevenueStaticModifier>();
-    private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers = new ArrayList<RevenueDynamicModifier>();
+    private final ArrayList<RevenueStaticModifier> activeStaticModifiers = new ArrayList<>();
+    private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers = new ArrayList<>();
     // TODO: Still add that flag if the calculator is active
 //    private boolean activeCalculator;
 
@@ -241,6 +241,7 @@ public final class RevenueManager extends RailsManager implements Configurable {
         if (calculatorModifier != null) {
             specialRevenue = calculatorModifier.getSpecialRevenue();
         }
+        log.debug("Revenue: total={} special={}",value, specialRevenue);
         return value;
     }
 

@@ -16,6 +16,8 @@ public class TrainType implements Cloneable {
     public static final int TOWN_COUNT_MINOR = 1;
     public static final int NO_TOWN_COUNT = 0;
 
+    public static final String defaultCategory = "passenger";
+
     protected String name;
     protected TrainCardType trainCardType;
     protected String trainCategory; // Default passenger; or goods etc.

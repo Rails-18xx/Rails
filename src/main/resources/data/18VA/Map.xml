@@ -6,7 +6,7 @@
 		<Access type="city" runTo="yes" runThrough="yes" score="major"/>
 		<Access type="town" runTo="yes" runThrough="yes" score="minor"/>
 		<Access type="mine" runTo="trains:goods" runThrough="no" mutexId="CMD" score="minor"/>
-		<Access type="port" runTo="yes" mutexId="Port" score="minor"/>
+		<Access type="port" runTo="yes" mutexId="Port" score="no"/>
 	</Defaults>
 	<Hex name="A6" tile="0"/>
 	<Hex name="A8" tile="-1921" orientation="1" value="40,70" city="Philadelphia"
@@ -29,7 +29,7 @@
 	<Hex name="E4" tile="0"/>
 	<Hex name="E6" tile="-10" city="Alexandria" label="P"/>
 	<Hex name="E8" tile="-26005" city="Annapolis" orientation="2" impassable="F7"/>
-	<Hex name="F1" tile="-1922" city="Grafton" value="20" extraText="xG*20,0,40">
+	<Hex name="F1" tile="-1922" city="Grafton" value="0" extraText="xG*20,0,40">
 		<Access type="mine" runTo="trains:goods" mutexId="CMD"/>
 	</Hex>
 	<Hex name="F3" tile="0"/>
@@ -53,7 +53,7 @@
 	<Hex name="K2" tile="-1"/>
 	<Hex name="K4" tile="0"/>
 	<Hex name="K6" tile="-10" city="Richmond" label="P"/>
-	<Hex name="L1" tile="-1922" city="Roanoke" value="20" extraText="xG*20,0,40">
+	<Hex name="L1" tile="-1922" city="Roanoke" value="0" extraText="xG*20,0,40">
 		<Access type="mine" runTo="trains:goods" mutexId="CMD"/>
 	</Hex>
 	<Hex name="L3" tile="-10" city="Lynchburg"/>

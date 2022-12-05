@@ -72,8 +72,10 @@ class RevenueCalculatorMulti extends RevenueCalculator {
         }
 
         // check if the revenue is enough
-        if (useRevenuePrediction && predictRevenues(trainId))
+        if (useRevenuePrediction && predictRevenues(trainId)) {
+            log.debug("Revenue is enough");
             return;
+        }
 
         // try all startVertexes
         for (int i=0; i < startVertexes.length; i++) {

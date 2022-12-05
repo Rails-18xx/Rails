@@ -534,6 +534,7 @@ abstract class RevenueCalculator {
         if (callDynamicModifiers) {
             totalValue += revenueAdapter.dynamicEvaluation();
             specialRevenue = revenueAdapter.getSpecialRevenue();
+            log.debug("Revenue: total={} special={}",totalValue, specialRevenue);
         }
 
         nbEvaluations++;
@@ -606,8 +607,10 @@ abstract class RevenueCalculator {
 //                    totalValue += trainCurrentValue[j];
 //            }
         }
+        log.debug("Regular predicted value is {}", totalValue);
 
         if (callDynamicModifiers) totalValue += revenueAdapter.dynamicPrediction();
+        log.debug("Total predicted value is {}", totalValue);
 
         nbPredictions++;
 
