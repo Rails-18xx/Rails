@@ -5,7 +5,6 @@ import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.sf.rails.common.LocalText;
-import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
 import net.sf.rails.ui.swing.hexmap.HexMap;
 
@@ -323,9 +321,9 @@ public final class RevenueAdapter implements Runnable {
         rcVertices.sort(new NetworkVertex.ValueOrder());
         rcEdges = new ArrayList<>(rcGraph.edgeSet());
         rcEdges.sort(new NetworkEdge.CostOrder());
-        log.info("rcVertices={} rcEdges={}", rcVertices, rcEdges);
+        log.debug("rcVertices={} rcEdges={}", rcVertices, rcEdges);
         for (NetworkVertex vertex : rcVertices) {
-            log.info ("Stop={} value={}", vertex.getStop(), vertex.getValue());
+            log.debug ("Stop={} value={}", vertex.getStop(), vertex.getValue());
         }
 
         // prepare train length

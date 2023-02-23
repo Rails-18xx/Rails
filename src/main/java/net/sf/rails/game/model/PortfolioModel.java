@@ -178,7 +178,7 @@ public class PortfolioModel extends RailsModel {
 
     /* Bonds */
     public BondsModel getBondsModel (PublicCompany company) {
-        if (!bonds.containsKey(company)) bonds.put (company, BondsModel.create(getParent()));
+        if (!bonds.containsKey(company)) bonds.put (company, BondsModel.create(getParent(), company));
         return bonds.get(company);
     }
 

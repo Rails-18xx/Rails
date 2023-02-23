@@ -629,7 +629,7 @@ public class StockRound_18EU extends StockRound {
     }
 
     @Override
-    // changes: this changes the floation behavior
+    // changes: this changes the flotation behavior
     // requires: move this to PublicCompany, potentially add a FloatCompanyStrategy
     protected void floatCompany(PublicCompany company) {
 

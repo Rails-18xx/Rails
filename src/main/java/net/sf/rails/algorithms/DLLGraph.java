@@ -17,7 +17,8 @@ import java.util.*;
  * - Dead ends: stations where only one track is connected to.
  *   Multiple track stations where the company cannot run through 
  *   for whatever reason are also considered dead ends.
- *   All dead ends also named Junctions (a not very appropriate name here).
+ *   For simplicity, all dead ends are also considered Junctions
+ *   (a not very appropriate name here).
  *   
  * - Segments: doubly linked lists connecting junctions (and dead ends),
  *   included all TrackPoints on that route.
@@ -102,8 +103,8 @@ public class DLLGraph {
         Set<MapHex> beenAtHex = new HashSet<>();
 
         // Hex distances from nearest token (excluded)
-        Map<NetworkVertex, Integer> distances = new HashMap<>();
-        Map<Stop, Integer> tokenableStopDistances = new HashMap<>();
+        //Map<NetworkVertex, Integer> distances = new HashMap<>();
+        //Map<Stop, Integer> tokenableStopDistances = new HashMap<>();
 
         /* Elements for a new network structure, where
          * track sequences can be traversed in both directions.
@@ -128,13 +129,12 @@ public class DLLGraph {
 
             NetworkIterator iterator = new NetworkIterator(graph, startVertex);
 
-            int edgeCount = 0;
-            int prevEdgeCount = 0;
-            boolean skipUntilStartVertex = false;
-
             NetworkVertex prevItem = startVertex;
+            MapHex prevHex = startVertex.getHex();
             Segment currentSegment = null;
             Junction junction;
+            List<NetworkVertex> exits = new ArrayList<>();
+            boolean entering;
 
             while (iterator.hasNext()) {
                 NetworkVertex item = iterator.next();
@@ -239,10 +239,11 @@ public class DLLGraph {
                     }
                     beenAtStop.put(stop, 0);
                 } else if (item.isSide()) {
+                    /* Causes missing edges in a segment
                     if (beenAtEdge.containsKey(item)) {
                         log.debug("      Skipping edge {}: visited before", item);
-                        continue;
-                    }
+                        //continue;
+                    }*/
                     // Check if we haven't made a strange jump
                     if (hex != prevItem.getHex() && currentSegment != null) {
                         // Entering hex
@@ -255,7 +256,7 @@ public class DLLGraph {
                         }
                     }
                     expectedEdge = null;
-
+                    entering = !hex.equals(prevHex);
 
                     log.debug ("  E   {} is an edge", item);
                     if (currentSegment == null) {
@@ -263,6 +264,9 @@ public class DLLGraph {
                         if (danglingSegments.containsKey(item)) {
                             currentSegment = danglingSegments.get(item);
                             log.debug("===== Side {} found at dangling segment {}", item, currentSegment);
+                            entering = false; // Dangling sides always leave (or I hope so)
+                        } else {
+                            log.warn ("!?!?! No dangling segment found for side {}", item);
                         }
                     }
                     if (currentSegment != null && !currentSegment.contains(item)) {
@@ -271,8 +275,26 @@ public class DLLGraph {
                             log.debug("----- Dropping side {}, no track", item);
                             pruneSegment (currentSegment);
                             currentSegment = null;
+                        } else if (neighbours.size() > 1 && entering) {
+                            // We enter hex at a branching point, remember exit points
+                            exits.clear(); // For all certainty, should be redundant
+                            exits.addAll(neighbours);
                         }
                         if (currentSegment != null) {
+                            // If we are leaving a branching tile, duplicate this segment
+                            // as many times as there are other exits
+                            if (!entering && !exits.isEmpty()) {
+                                for (NetworkVertex exit : exits) {
+                                    if (exit.isSide() && exit != item) { // Not the current exit side
+                                        Segment newSegment = new Segment(currentSegment);
+                                        newSegment.add(exit);
+                                        danglingSegments.put (exit, newSegment);
+                                        log.debug("++8++ Added extra dangling segment {}",
+                                                newSegment);
+                                    }
+                                }
+                                exits.clear();
+                            }
                             addItem(currentSegment, item, 6);
                         }
                     }
@@ -286,6 +308,7 @@ public class DLLGraph {
                     }
                 }
                 prevItem = item;
+                prevHex = hex;
                 if (!beenAtHex.contains(hex)) beenAtHex.add (hex);
             }
         }
@@ -532,6 +555,14 @@ public class DLLGraph {
             addItem(vertex);
         }
 
+        Segment (Segment segmentToCopy) {
+            this();
+            segmentToCopy.setIterator (segmentToCopy.getEnd(true));
+            while (segmentToCopy.hasNext()) {
+                this.addItem(segmentToCopy.getNext());
+            }
+        }
+
         public void addItem(NetworkVertex item) {
             if (isOpen) add (item);
         }
@@ -545,7 +576,7 @@ public class DLLGraph {
             if (size() > 0) {
                 StringBuilder sb = new StringBuilder();
                 sb.append(getFirst());
-                if (size() > 1) sb.append("->").append(getLast());
+                if (size() > 1) sb.append("=>").append(getLast());
                 return sb.toString();
             } else {
                 return "empty";

@@ -188,21 +188,25 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
     public int compareTo(NetworkTrain other) {
 
         // Check if A is the longer train first
-        boolean longerA = this.majors > other.majors && this.minors >= other.minors || this.majors == other.majors && this.minors > other.minors;
+        boolean longerA = this.majors > other.majors && this.minors >= other.minors
+                || this.majors == other.majors && this.minors > other.minors;
 
         if (longerA) {
             // then check the multiples
-            if (this.multiplyMajors >= other.multiplyMajors && this.multiplyMinors >= other.multiplyMinors) {
+            if (this.multiplyMajors >= other.multiplyMajors && this.multiplyMinors
+                    >= other.multiplyMinors) {
                 return 1;
             } else {
                 return 0;
             }
         } else {
             // otherwise B might B longer
-            boolean longerB = this.majors < other.majors && this.minors <= other.minors || this.majors == other.majors && this.minors < other.minors;
+            boolean longerB = this.majors < other.majors && this.minors <= other.minors
+                    || this.majors == other.majors && this.minors < other.minors;
             if (longerB) {
                 // then check the multiples
-                if (this.multiplyMajors <= other.multiplyMajors && this.multiplyMinors <= other.multiplyMinors) {
+                if (this.multiplyMajors <= other.multiplyMajors && this.multiplyMinors
+                        <= other.multiplyMinors) {
                     return -1;
                 } else {
                     return 0;

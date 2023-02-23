@@ -430,9 +430,16 @@ abstract class RevenueCalculator {
             log.debug("Added {}", vertexValueByTrain[vertexId][trainId]);
             if (vertexMajor[vertexId]) {
                 trainMajors[trainId]--;
+                // Stop counting changed from downwards to upwards (EV dec2022)
+                // This does not yet work
+                /*
+                trainMajors[trainId]++;
+                log.debug("+++++ Encountered major vertex {}: trainId={} trainMajors={}", vertexId, trainId, trainMajors[trainId]);
+                 */
                 stationVertex = true;
             } else if (vertexMinor[vertexId]) {
                 trainMinors[trainId]--;
+                //trainMinors[trainId]++;
                 stationVertex = !trainIgnoreMinors[trainId];
             }
             countVisits++;
@@ -441,13 +448,42 @@ abstract class RevenueCalculator {
             log.debug("Subtracted {}", vertexValueByTrain[vertexId][trainId]);
             if (vertexMajor[vertexId]) {
                 trainMajors[trainId]++;
+                //trainMajors[trainId]--;
                 stationVertex = true;
             } else if (vertexMinor[vertexId]) {
                 trainMinors[trainId]++;
+                //trainMinors[trainId]--;
                 stationVertex = !trainIgnoreMinors[trainId];
             }
             countVisits--;
         }
+        /* Proposed replacement of the above if/else structure:
+        if (arrive) {
+            trainCurrentValue[trainId] += vertexValueByTrain[vertexId][trainId];
+            log.debug("Added {}", vertexValueByTrain[vertexId][trainId]);
+            if (trainCounts[trainId][vertexStopType]) {
+                stationVertex = true;
+                if (vertexMinor[vertexId] && trainMaxMinors[trainId] > 0) {
+                    trainMinors[trainId]--;
+                } else {
+                    trainMajors[trainId]--;
+                }
+            }
+            countVisits++;
+        } else {
+            trainCurrentValue[trainId] -= vertexValueByTrain[vertexId][trainId];
+            log.debug("Subtracted {}", vertexValueByTrain[vertexId][trainId]);
+            if (trainCounts[trainId][vertexStopType]) {
+                stationVertex = true;
+                if (vertexMinor[vertexId] && trainMaxMinors[trainId] > 0) {
+                    trainMinors[trainId]++;
+                } else if (vertexMajor[vertexId]) {
+                    trainMajors[trainId]++;
+                }
+            }
+            countVisits--;
+        }
+        */
 
         // check vertex sets
         for (int j=0; j < vertexNbVisitSets[vertexId]; j++) {
@@ -465,7 +501,7 @@ abstract class RevenueCalculator {
                 if (bonusTrainVertices[bonusId][trainId] == 0) {
                    trainCurrentValue[trainId] += bonusValue[bonusId];
                    if (bonusValue[bonusId] > 0) trainBonuses[trainId]--;
-                    log.debug("RC: Added bonus {} with value {}", bonusId, bonusValue[bonusId]);
+                   log.debug("RC: Added bonus {} with value {}", bonusId, bonusValue[bonusId]);
                 }
             } else {
                 if (bonusTrainVertices[bonusId][trainId] == 0) {
@@ -495,11 +531,23 @@ abstract class RevenueCalculator {
             if (trainMajors[trainId] == 0)
                 terminated = Terminated.WITH_EVALUATION;
         } else { // default and plus trains
-            if (trainMajors[trainId] < 0){
+            if (trainMajors[trainId] < 0) {   // What's the logic? H-trains?
                 terminated = Terminated.WITHOUT_EVALUATION;
             } else if (trainMajors[trainId] + trainMinors[trainId] == 0)
                 terminated = Terminated.WITH_EVALUATION;
         }
+        /* Proposed replacement for the above if/else structure:
+        if (trainMajors[trainId] > trainMaxMajors[trainId]) {
+            terminated = Terminated.WITHOUT_EVALUATION;
+        } else if (trainMajors[trainId] + trainMinors[trainId]
+                > trainMaxMajors[trainId] + trainMaxMinors[trainId]) {
+            terminated = Terminated.WITHOUT_EVALUATION;
+        } else if (vertexSink[vertexId]) {
+            terminated = Terminated.WITH_EVALUATION;
+        }
+        We don't stop at reaching equality because in the general case
+        there can be not counted stops beyond the final counted one.
+         */
         if (terminated != Terminated.NOT_YET ) {
             log.debug("RC: Train {} has terminated: majors = {} minors = {}", trainId, trainMajors[trainId], trainMinors[trainId]);
         }
@@ -590,7 +638,7 @@ abstract class RevenueCalculator {
         if (trainBonuses[trainId] != 0) {
             trainValue += maxBonusRevenues[trainId][trainBonuses[trainId]];
         }
-        log.debug("RC: Current train has predicted  value of {}", trainValue);
+        log.debug("RC: Current train has predicted value of {}", trainValue);
 
         // maximum value for the trainId including future trains
         totalValue = Math.min(totalValue + trainValue, maxCumulatedTrainRevenues[trainId]);

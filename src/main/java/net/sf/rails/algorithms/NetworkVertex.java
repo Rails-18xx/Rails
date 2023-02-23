@@ -7,7 +7,6 @@ import java.util.*;
 import net.sf.rails.game.*;
 import net.sf.rails.ui.swing.hexmap.*;
 
-import net.sf.rails.util.Util;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +59,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (stop != null) {
             log.debug("Found stop {}", stop);
         } else {
-            log.debug("No stop found");
+            log.error("No stop found for hex {} station {}", hex, station);
         }
 
         this.virtual = false;
@@ -238,7 +237,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (virtual || type == VertexType.SIDE) return true;
 
         // Only station remains
-        Station station = (Station) trackPoint;
+        //Station station = (Station) trackPoint;
 
         log.debug("Init of vertex {}", this);
         // check if it has to be removed because it is run-to only

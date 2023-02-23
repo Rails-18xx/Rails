@@ -59,10 +59,10 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         super(hex, id);
 
         relatedStation.set(station);
-        type = station.getType();
         tokens.addModel(hex);
 
         if (station != null) {
+            type = station.getType();
             number.set(Integer.parseInt(id));
         }
     }

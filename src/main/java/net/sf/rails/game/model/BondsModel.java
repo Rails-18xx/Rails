@@ -1,6 +1,5 @@
 package net.sf.rails.game.model;
 
-import net.sf.rails.game.PublicCompany;
 import net.sf.rails.game.RailsOwner;
 import net.sf.rails.game.state.IntegerState;
 
@@ -11,14 +10,14 @@ public final class BondsModel extends RailsModel {
 
     private IntegerState bondsCount;
 
-    private BondsModel(RailsOwner parent) {
-        super(parent, "bondsModel_" + parent.getId());
-        bondsCount = IntegerState.create(parent, "_bonds");
+    private BondsModel(RailsOwner parent, RailsOwner owner) {
+        super(parent, "bondsModel_" + parent.getId()+"_for_"+owner);
+        bondsCount = IntegerState.create(parent, owner+"_bonds");
         bondsCount.addModel(this);
     }
 
-    public static BondsModel create(RailsOwner parent) {
-        return new BondsModel(parent);
+    public static BondsModel create(RailsOwner parent, RailsOwner owner) {
+        return new BondsModel(parent, owner);
     }
     
     @Override

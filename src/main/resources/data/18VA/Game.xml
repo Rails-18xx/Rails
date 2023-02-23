@@ -52,7 +52,7 @@
 	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
 		<Defaults category="passenger">
 			<Reach base="stops" countTowns="no"/>
-			<Score towns="yes"/> <!-- excludes ports as well -->
+			<Score towns="yes"/> <!-- would otherwise exclude ports as well -->
 		</Defaults>
 		<Defaults category="goods">
 			<Reach base="stops" countTowns="yes"/>

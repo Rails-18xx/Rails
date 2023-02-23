@@ -213,10 +213,12 @@ public class OperatingRound_1826 extends OperatingRound {
         if (phaseId.equals("6H")) {
             // Form Etat
             national = etat;
-        } else if (phaseId.equals("10H") || phaseId.equals("E") && !sncf.hasStarted()) {
+            growRemaining5shares(true);
+        } else if (phaseId.equals(GameDef_1826._10H)
+                || phaseId.equals(GameDef_1826.E) && !sncf.hasStarted()) {
             // Form SNCF (if not started before)
             national = sncf;
-            growRemaining5shares();
+            growRemaining5shares(false);
         }
         if (trainlessCompanies.size() >= 2) {
             if (national != null && !national.hasStarted()) {
@@ -224,12 +226,9 @@ public class OperatingRound_1826 extends OperatingRound {
                         LocalText.getText("WillMergeInto", trainlessCompanies, national));
                 formNational(national, trainlessCompanies);
            }
-        } else {
-            ReportBuffer.add(this,
-                    LocalText.getText("DoesNotForm", national));
         }
 
-        if (phaseId.equals(GameDef_1826.H10)) {
+        if (phaseId.equals(GameDef_1826._10H)) {
 
             // Change number of 10H-trains, if necessary
             // Count companies that are open or (still) startable
@@ -241,22 +240,23 @@ public class OperatingRound_1826 extends OperatingRound {
             }
             int trainsToRemove = Math.min (3, 10 - compCount);
             if (trainsToRemove > 0) {
-                TrainType type = getRoot().getTrainManager().getTrainTypeByName(GameDef_1826.H10);
+                TrainType type = getRoot().getTrainManager().getTrainTypeByName(GameDef_1826._10H);
                 for (int i=0; i<trainsToRemove; i++) {
                     ipo.getTrainOfType(type).getCard().moveTo(Bank.getScrapHeap(this));
                 }
                 String msg = LocalText.getText("RemovedTrains",
-                        trainsToRemove, GameDef_1826.H10, 5 - trainsToRemove);
+                        trainsToRemove, GameDef_1826._10H, 5 - trainsToRemove);
                 ReportBuffer.add (this, msg);
                 DisplayBuffer.add (this, msg);
             }
         }
     }
 
-    private void growRemaining5shares() {
+    private void growRemaining5shares(boolean ipoOnly) {
         // Convert all remaining 5-share companies to 10-share
         for (PublicCompany company : companyManager.getAllPublicCompanies()) {
-            if (!company.isClosed() && company.getShareUnit() == 20) {
+            if (!company.isClosed() && company.getShareUnit() == 20
+                    && (!company.hasStarted() || !ipoOnly)) {
                 ((PublicCompany_1826)company).grow(false);
             }
         }
@@ -404,9 +404,9 @@ public class OperatingRound_1826 extends OperatingRound {
                 ReportBuffer.add(this, LocalText.getText("CompanyIssuesBonds",
                         sncf, loansTransferred));
             }
-            StockSpace from = national.getCurrentSpace();
+            //StockSpace from = national.getCurrentSpace();
             getRoot().getStockMarket().moveLeftOrDown(national, loansTransferred);
-            StockSpace to = national.getCurrentSpace();
+            //StockSpace to = national.getCurrentSpace();
             /*
             ReportBuffer.add(this, LocalText.getText("PRICE_MOVES_LOG",
                     national,
@@ -449,6 +449,9 @@ public class OperatingRound_1826 extends OperatingRound {
                     exchangeTokensAction.addStop(company, stop);
                 }
             }
+            // Step may not be BUY_TRAIN, see ORUIManager line 1503
+            // (unclear why this is so)
+            stepObject.set(GameDef.OrStep.EXCHANGE_TOKENS);
         }
 
         national.setCapitalizationShares();
@@ -796,6 +799,7 @@ public class OperatingRound_1826 extends OperatingRound {
         }
 
         exchangeTokensAction = null;
+        stepObject.set(GameDef.OrStep.BUY_TRAIN); // Reset
         operatingCompany.set(interruptedCompany);
         playerManager.setCurrentPlayer(interruptedPlayer);
 
@@ -904,24 +908,26 @@ public class OperatingRound_1826 extends OperatingRound {
         String[] scoreFactors = new String[] {"single", "double"};
 
         // Change E-train properties as these and the first TGV are bought
-        if (type.getName().equals(GameDef_1826.E) && action.getFromOwner() == ipo) {
-            gm.addETrainsBought();
-            type.setMajorStops(eTrainStops[(gm.getETrainsBought()) - 1]);
-            ReportBuffer.add(this, LocalText.getText("TrainScoreAndReach",
-                    type.getName(),
-                    LocalText.getText(scoreFactors[type.getCityScoreFactor() - 1]),
-                    type.getMajorStops()));
-
-        } else if (type.getName().equals(GameDef_1826.SNCF)) {
-            if (!gm.getTgvTrainBought()) {
-                TrainType eType = getRoot().getTrainManager().getTrainTypeByName(GameDef_1826.E);
-                eType.setMajorStops(5);
-                eType.setCityScoreFactor(1);
-                gm.setTgvTrainBought(true);
+        if (action.getFromName().equals(ipo.toString())) {
+            if (type.getName().equals(GameDef_1826.E)) {
+                gm.addETrainsBought();
+                type.setMajorStops(eTrainStops[(gm.getETrainsBought()) - 1]);
                 ReportBuffer.add(this, LocalText.getText("TrainScoreAndReach",
-                        eType.getName(),
+                        type.getName(),
                         LocalText.getText(scoreFactors[type.getCityScoreFactor() - 1]),
-                        eType.getMajorStops()));
+                        type.getMajorStops()));
+
+            } else if (type.getName().equals(GameDef_1826.TGV)) {
+                if (!gm.getTgvTrainBought()) {
+                    TrainType eType = getRoot().getTrainManager().getTrainTypeByName(GameDef_1826.E);
+                    eType.setMajorStops(5);
+                    eType.setCityScoreFactor(1);
+                    gm.setTgvTrainBought(true);
+                    ReportBuffer.add(this, LocalText.getText("TrainScoreAndReach",
+                            eType.getName(),
+                            LocalText.getText(scoreFactors[eType.getCityScoreFactor() - 1]),
+                            eType.getMajorStops()));
+                }
             }
         }
 

@@ -1,8 +1,6 @@
 package net.sf.rails.game.model;
 
-import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 import net.sf.rails.game.BaseToken;
 import net.sf.rails.game.PublicCompany;
@@ -57,7 +55,10 @@ public class BaseTokensModel extends RailsModel {
         allBaseTokens.add(token);
         if (!laid) {
             freeBaseTokens.add(token);
-            token.moveTo(getParent()); //???
+            if (token.getOwner() != getParent()) {
+                // Unclear how these could be equal, but it happened
+                token.moveTo(getParent()); //???
+            }
         }
     }
 

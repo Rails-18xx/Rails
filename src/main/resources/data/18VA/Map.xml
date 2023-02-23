@@ -6,7 +6,7 @@
 		<Access type="city" runTo="yes" runThrough="yes" score="major"/>
 		<Access type="town" runTo="yes" runThrough="yes" score="minor"/>
 		<Access type="mine" runTo="trains:goods" runThrough="no" mutexId="CMD" score="minor"/>
-		<Access type="port" runTo="yes" mutexId="Port" score="no"/>
+		<Access type="port" runTo="yes" mutexId="Port" score="minor"/>
 	</Defaults>
 	<Hex name="A6" tile="0"/>
 	<Hex name="A8" tile="-1921" orientation="1" value="40,70" city="Philadelphia"

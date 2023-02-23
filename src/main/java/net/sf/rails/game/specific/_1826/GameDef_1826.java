@@ -10,10 +10,10 @@ public class GameDef_1826 {
     public static final String SNCF = "SNCF";
     public static final String BELG = "Belg";
 
-    /* Train types */
+    /* Train types, also phase names */
     public static final String E = "E";
     public static final String TGV = "TGV";
-    public static final String H10 = "10H";
+    public static final String _10H = "10H";
 
     /* Various */
     public static final int[] E_TRAIN_STOPS = new int[] {2,3,3,4};

@@ -351,6 +351,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
             Stop stop = Stop.create(this, station);
             stop.initStopParameters(station);
             stops.put(station, stop);
+            log.debug("Init hex {} station {} stop {}", this, station, stop);
         }
 
         // Deprecated but retained for backwards compatibility:
