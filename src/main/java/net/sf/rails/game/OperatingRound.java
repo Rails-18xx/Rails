@@ -3007,7 +3007,8 @@ public class OperatingRound extends Round implements Observer {
      * Default version for calculating the company part of
      * a revenue amount being split.
      *
-     * This method should be overriden in games where a different rule applies.
+     * This method should be overrirden in games where a different rule applies.
+     * NOTE: these parameters should become configurable
      *
      * @param revenue The revenue amount to be split.
      * @return The part that goes directly to the company treasury.

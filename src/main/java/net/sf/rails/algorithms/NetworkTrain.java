@@ -50,6 +50,8 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         boolean isETrain = railsTrain.isETrain();
         String trainName = railsTrain.toText();
 
+        if (isHTrain) log.info ("H-train {} distance {}", railsTrain, majors);
+
         return new NetworkTrain(majors, minors, ignoreMinors, multiplyMajors, multiplyMinors,
                 isHTrain, isETrain, trainName, railsTrain);
     }
@@ -102,6 +104,7 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
 
     void addToRevenueCalculator(RevenueCalculator rc, int trainId) {
         rc.setTrain(trainId, majors, minors, ignoreMinors, isHTrain, isETrain);
+        log.debug("Train {} added to RC, majors={}", getTrainName(), majors);
     }
 
     int getMajors(){

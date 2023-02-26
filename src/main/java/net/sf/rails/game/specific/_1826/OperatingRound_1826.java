@@ -345,6 +345,11 @@ public class OperatingRound_1826 extends OperatingRound {
         int loansTransferred = 0;
         int totalLoans = 0;
         int maxLoansTransferred = national.getMaxNumberOfLoans() - national.getCurrentNumberOfLoans();
+        if (exchangeableTokenStops == null) {
+            exchangeableTokenStops = ArrayListMultimap.create();
+        } else {
+            exchangeableTokenStops.clear();
+        }
         for (PublicCompany company : trainlessCompanies) {
 
             ReportBuffer.add (this, LocalText.getText("AutoMergeMinorLog",
@@ -589,6 +594,11 @@ public class OperatingRound_1826 extends OperatingRound {
         } else {
             return super.process(action);
         }
+    }
+
+    @Override
+    protected int calculateCompanyIncomeFromSplit (int revenue) {
+        return roundIncome(0.5 * revenue, Rounding.DOWN, ToMultipleOf.TEN);
     }
 
     /**

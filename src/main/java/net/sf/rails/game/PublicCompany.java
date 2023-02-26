@@ -685,10 +685,9 @@ public class PublicCompany extends RailsAbstractItem
         Tag ownSharesTag = tag.getChild("TreasuryCanHoldOwnShares");
         if (ownSharesTag != null) {
             canHoldOwnShares = true;
-
-            maxPercOfOwnShares = ownSharesTag.getAttributeAsInteger("maxPerc", maxPercOfOwnShares);
+            maxPercOfOwnShares = ownSharesTag.getAttributeAsInteger("maxPerc",
+                    GameDef.Parm.TREASURY_SHARE_LIMIT.defaultValueAsInt());
         }
-
         Tag trainsTag = tag.getChild("Trains");
         if (trainsTag != null) {
 
@@ -1963,6 +1962,10 @@ public class PublicCompany extends RailsAbstractItem
     public boolean canGenerateOtherRevenue() {
         // The default:
         return false;
+    }
+
+    public int getMaxPercOfOwnShares() {
+        return maxPercOfOwnShares;
     }
 
     /**

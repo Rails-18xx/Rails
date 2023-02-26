@@ -6,6 +6,7 @@
 		</ClosingConditions>
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="1.5"/>
 		<Tradeable toPlayer="yes"/>
+		<Certificate certificateCount="0.0f"/>
 	</CompanyType>
 	<CompanyType name="Public" class="net.sf.rails.game.specific._1826.PublicCompany_1826">
 		<!-- The "Public" name is used for the 5/10-share companies. -->

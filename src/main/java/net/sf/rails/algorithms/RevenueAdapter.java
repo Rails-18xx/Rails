@@ -413,12 +413,18 @@ public final class RevenueAdapter implements Runnable {
         // check train lengths
         int maxCityLength = 0, maxTownLength = 0;
         for (NetworkTrain train: trains) {
-            int trainTowns = train.getMinors();
-            if (train.getMajors() > maxCities) {
-                trainTowns = trainTowns+ train.getMajors() - maxCities;
-                train.setMajors(maxCities);
+            if (train.isHTrain()) {
+                // This dirty trick fixes some of the problems with H-trains,
+                // but may also have created new ones. (EV 02/2023)
+                maxCityLength = maxTownLength = train.getMajors();
+            } else {
+                int trainTowns = train.getMinors();
+                if (train.getMajors() > maxCities) {
+                    trainTowns = trainTowns + train.getMajors() - maxCities;
+                    train.setMajors(maxCities);
+                }
+                train.setMinors(Math.min(trainTowns, maxTowns));
             }
-            train.setMinors(Math.min(trainTowns, maxTowns));
 
             maxCityLength = Math.max(maxCityLength, train.getMajors());
             maxTownLength = Math.max(maxTownLength, train.getMinors());

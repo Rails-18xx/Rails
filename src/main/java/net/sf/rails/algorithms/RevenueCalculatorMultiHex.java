@@ -20,6 +20,7 @@ class RevenueCalculatorMultiHex extends RevenueCalculatorMulti {
         // init train distance
         if (trainIsH[trainId]) {
             trainDistance[trainId] = trainMaxMajors[trainId];
+            log.debug("RCMH: H-train distance init={}", trainDistance[trainId]);
         }
         super.runTrain(trainId);
     }
@@ -28,12 +29,14 @@ class RevenueCalculatorMultiHex extends RevenueCalculatorMulti {
     protected void travelEdge(int trainId, int edgeId) {
         super.travelEdge(trainId, edgeId);
         trainDistance[trainId] -= edgeDistance[edgeId];
+        log.debug("RCMH: H-train distance reduced with {} to {}",edgeDistance[edgeId], trainDistance[trainId]);
     }
 
     @Override
     protected void returnEdge(int trainId, int edgeId) {
         super.returnEdge(trainId, edgeId);
         trainDistance[trainId] += edgeDistance[edgeId];
+        log.debug("RCMH: H-train distance increased with {} to {}",edgeDistance[edgeId], trainDistance[trainId]);
     }
 
     @Override

@@ -281,7 +281,16 @@ abstract class RevenueCalculator {
         int[] bestRevenues = new int[length + 1];
         Arrays.sort(values);
         int cumulatedRevenues = 0;
+        log.debug("RC: values={} length={}", values, length);
         for (int j=1; j <= length ; j++) {
+            if (values.length - j < 0) break;
+            // The above line was inserted to fix a problem
+            // caused by insufficient handling of H-trains
+            // (see RevenueAdapter near line 419),
+            // but the result here was a 'values' index of -1,
+            // causing a crash.
+            // With this 'fix' the revenue has become 0. Beware!
+            // (EV 02/2023)
             cumulatedRevenues += values[values.length - j];
             bestRevenues[j] = cumulatedRevenues;
         }
