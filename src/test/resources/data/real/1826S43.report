@@ -917,10 +917,10 @@ LaysTileAt,PO,29,I5,NE
 LAYS_TOKEN_ON,PO,H6,40
 CompanyRevenue,PO,290
 CompanySplits,PO,290
-RECEIVES,PO,145
-Payout,Wim,29,2,10
-Payout,John,87,6,10
-Payout,PO,29,2,10
+RECEIVES,PO,140
+Payout,Wim,30,2,10
+Payout,John,90,6,10
+Payout,PO,30,2,10
 PRICE_MOVES_LOG,PO,135,H3,150,I3
  
 CompanyOperates,GC,Dave
@@ -963,9 +963,9 @@ LaysTileAt,Ouest,515,G9,W
 LAYS_TOKEN_ON,Ouest,H6,40
 CompanyRevenue,Ouest,170
 CompanySplits,Ouest,170
-RECEIVES,Ouest,85
-Payout,John,51,6,10
-Payout,Ouest,34,4,10
+RECEIVES,Ouest,80
+Payout,John,54,6,10
+Payout,Ouest,36,4,10
 PRICE_STAYS_LOG,Ouest,100,D2
  
 CompanyOperates,Midi,Wim
@@ -990,8 +990,8 @@ SELL_SHARES_LOG,Est,5,10,50,Est,550
 PRICE_MOVES_LOG,Est,110,D1,70,D6
  
 EndOfOperatingRound,8.1
-ORWorthIncrease,John,8.1,282
-ORWorthIncrease,Wim,8.1,488
+ORWorthIncrease,John,8.1,288
+ORWorthIncrease,Wim,8.1,489
 ORWorthIncrease,Dave,8.1,176
 ORWorthIncrease,Jeremy,8.1,128
 Has,Als,622
@@ -1000,11 +1000,11 @@ Has,Est,1239
 Has,GC,201
 Has,Midi,1000
 Has,Nord,440
-Has,Ouest,484
+Has,Ouest,481
 Has,Paris,99
-Has,PO,634
-Has,John,336
-Has,Wim,360
+Has,PO,630
+Has,John,342
+Has,Wim,361
 Has,Dave,239
 Has,Jeremy,278
 START_OR,8.2
@@ -1060,7 +1060,7 @@ HasPutShareInPool,Jeremy
 SharesReplacedForShares,John,6,3,SNCF
 SharesReplacedForShares,Pool,6,3,SNCF
 IS_NOW_PRES_OF,John,SNCF
-AutoMergeMinorLog,Ouest,SNCF,484,0
+AutoMergeMinorLog,Ouest,SNCF,481,0
 AutoMergeMinorLog,Est,SNCF,1239,0
 LoansInherited,SNCF,1,Est
 CompanyInheritsLoan,SNCF,1,1
@@ -1126,10 +1126,10 @@ Has,GC,277
 Has,Midi,188
 Has,Nord,484
 Has,Paris,169
-Has,PO,166
-Has,SNCF,213
-Has,John,426
-Has,Wim,616
+Has,PO,162
+Has,SNCF,210
+Has,John,432
+Has,Wim,617
 Has,Dave,468
 Has,Jeremy,633
 StartStockRound,9
@@ -1175,10 +1175,10 @@ Has,Midi,188
 Has,Nord,684
 Has,Paris,369
 Has,PLM,1100
-Has,PO,166
-Has,SNCF,213
-Has,John,46
-Has,Wim,66
+Has,PO,162
+Has,SNCF,210
+Has,John,52
+Has,Wim,67
 Has,Dave,48
 Has,Jeremy,853
 START_OR,9.1
@@ -1245,10 +1245,10 @@ LAYS_TOKEN_ON,Paris,C13,20
 CompanyRevenue,Paris,390
 InterestPaidFromTreasury,Paris,50,loan
 CompanySplits,Paris,390
-RECEIVES,Paris,195
-Payout,Jeremy,117,6,10
+RECEIVES,Paris,190
+Payout,Jeremy,120,6,10
 Payout,Dave,20,1,10
-Payout,Paris,59,3,10
+Payout,Paris,60,3,10
 PRICE_MOVES_LOG,Paris,100,F4,110,G4
 CompanyRepaysLoans,Paris,500,500,1,500
 PRICE_MOVES_LOG,Paris,110,G4,122,H4
@@ -1259,10 +1259,10 @@ LAYS_TOKEN_ON,Nord,C11,20
 CompanyRevenue,Nord,410
 InterestPaidFromTreasury,Nord,50,loan
 CompanySplits,Nord,410
-RECEIVES,Nord,205
-Payout,Jeremy,123,6,10
-Payout,John,41,2,10
-Payout,Nord,41,2,10
+RECEIVES,Nord,200
+Payout,Jeremy,126,6,10
+Payout,John,42,2,10
+Payout,Nord,42,2,10
 PRICE_MOVES_LOG,Nord,100,C1,110,D1
 BuysTrain,Nord,10H,Paris,100
  
@@ -1276,23 +1276,23 @@ Payout,John,175,5,10
 PRICE_MOVES_LOG,SNCF,90,B1,100,C1
  
 EndOfOperatingRound,9.1
-ORWorthIncrease,John,9.1,471
+ORWorthIncrease,John,9.1,472
 ORWorthIncrease,Wim,9.1,-189
 ORWorthIncrease,Dave,9.1,642
-ORWorthIncrease,Jeremy,9.1,708
+ORWorthIncrease,Jeremy,9.1,714
 Has,Als,22
 Has,Belg,451
 Has,GC,69
 Has,Midi,118
-Has,Nord,760
-Has,Paris,153
+Has,Nord,756
+Has,Paris,149
 Has,PLM,100
-Has,PO,212
-Has,SNCF,213
-Has,John,400
-Has,Wim,112
+Has,PO,208
+Has,SNCF,210
+Has,John,407
+Has,Wim,113
 Has,Dave,378
-Has,Jeremy,1279
+Has,Jeremy,1285
 START_OR,9.2
  
 CompanyOperates,Als,Dave
@@ -1382,15 +1382,15 @@ Has,Als,22
 Has,Belg,351
 Has,GC,205
 Has,Midi,188
-Has,Nord,714
-Has,Paris,153
+Has,Nord,710
+Has,Paris,149
 Has,PLM,40
-Has,PO,258
-Has,SNCF,173
-Has,John,871
-Has,Wim,773
+Has,PO,254
+Has,SNCF,170
+Has,John,878
+Has,Wim,774
 Has,Dave,958
-Has,Jeremy,1768
+Has,Jeremy,1774
 START_OR,9.3
  
 CompanyOperates,Als,Dave
@@ -1479,15 +1479,15 @@ Has,Als,22
 Has,Belg,251
 Has,GC,341
 Has,Midi,258
-Has,Nord,1256
-Has,Paris,393
+Has,Nord,1252
+Has,Paris,389
 Has,PLM,40
-Has,PO,268
-Has,SNCF,73
-Has,John,1433
-Has,Wim,1453
+Has,PO,264
+Has,SNCF,70
+Has,John,1440
+Has,Wim,1454
 Has,Dave,1600
-Has,Jeremy,2479
+Has,Jeremy,2485
 StartStockRound,10
 HasPriority,John
 BUY_SHARE_LOG,John,10,Paris,Paris,100
@@ -1523,15 +1523,15 @@ Has,Als,22
 Has,Belg,251
 Has,GC,341
 Has,Midi,258
-Has,Nord,1556
-Has,Paris,693
+Has,Nord,1552
+Has,Paris,689
 Has,PLM,40
-Has,PO,268
-Has,SNCF,73
-Has,John,1111
-Has,Wim,1403
+Has,PO,264
+Has,SNCF,70
+Has,John,1118
+Has,Wim,1404
 Has,Dave,1491
-Has,Jeremy,2479
+Has,Jeremy,2485
 START_OR,10.1
  
 CompanyOperates,Als,Dave
@@ -1624,15 +1624,15 @@ Has,Als,22
 Has,Belg,151
 Has,GC,477
 Has,Midi,328
-Has,Nord,516
-Has,Paris,123
+Has,Nord,512
+Has,Paris,119
 Has,PLM,40
-Has,PO,324
-Has,SNCF,33
-Has,John,1861
-Has,Wim,2160
+Has,PO,320
+Has,SNCF,30
+Has,John,1868
+Has,Wim,2161
 Has,Dave,2224
-Has,Jeremy,3364
+Has,Jeremy,3370
 START_OR,10.2
  
 CompanyOperates,Als,Dave
@@ -1715,15 +1715,15 @@ Has,Als,22
 Has,Belg,51
 Has,GC,613
 Has,Midi,398
-Has,Nord,516
-Has,Paris,123
+Has,Nord,512
+Has,Paris,119
 Has,PLM,40
-Has,PO,380
-Has,SNCF,33
-Has,John,2837
-Has,Wim,3030
+Has,PO,376
+Has,SNCF,30
+Has,John,2844
+Has,Wim,3031
 Has,Dave,3070
-Has,Jeremy,4927
+Has,Jeremy,4933
 START_OR,10.3
  
 CompanyOperates,Als,Dave
@@ -1807,19 +1807,19 @@ Has,Als,22
 Has,Belg,51
 Has,GC,749
 Has,Midi,468
-Has,Nord,516
-Has,Paris,123
+Has,Nord,512
+Has,Paris,119
 Has,PLM,40
-Has,PO,436
-Has,SNCF,33
-Has,John,3803
-Has,Wim,3850
+Has,PO,432
+Has,SNCF,30
+Has,John,3810
+Has,Wim,3851
 Has,Dave,3916
-Has,Jeremy,6490
+Has,Jeremy,6496
 GameOver
 EoGWinnerJeremy!
 EoGFinalRanking :
-1. 10255 Jeremy
+1. 10261 Jeremy
 2. 8256 Dave
-3. 7290 Wim
-4. 7223 John
+3. 7291 Wim
+4. 7230 John
