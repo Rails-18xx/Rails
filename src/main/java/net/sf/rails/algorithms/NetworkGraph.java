@@ -134,6 +134,7 @@ public class NetworkGraph {
                 MapHex hex = vertex.getHex();
                 if (!hexSides.containsKey(hex)) {
                     hexSides.put(hex, HexSidesSet.builder());
+                    log.debug("{} is reachable", vertex.getIdentifier());
                 }
                 hexSides.get(hex).set(vertex.getSide());
             }
@@ -155,6 +156,7 @@ public class NetworkGraph {
         for (NetworkVertex vertex : graph.vertexSet()) {
             if (vertex.isStation() && !vertex.isSink()) {
                 hexStations.put(vertex.getHex(), vertex.getStation());
+                log.debug("{} is passable", vertex.getIdentifier());
             }
         }
 
@@ -173,6 +175,7 @@ public class NetworkGraph {
             Stop stop = vertex.getStop();
             if (stop != null && stop.isTokenableFor(company)) {
                 hexStops.put(vertex.getHex(), stop);
+                log.debug("{} is tokenable", vertex.getIdentifier());
             }
         }
         return hexStops.build();

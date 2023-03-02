@@ -4,15 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class RevenueCalculatorMultiHex extends RevenueCalculatorMulti {
-    private static final Logger log = LoggerFactory.getLogger(RevenueCalculatorMultiHex.class);
 
+    private static final Logger log = LoggerFactory.getLogger(RevenueCalculatorMultiHex.class);
 
     public RevenueCalculatorMultiHex (RevenueAdapter revenueAdapter, int nbVertexes, int nbEdges,
             int maxNeighbors, int maxVertexSets, int maxEdgeSets, int nbTrains, int nbBonuses) {
 
         super(revenueAdapter, nbVertexes, nbEdges,
                 maxNeighbors, maxVertexSets, maxEdgeSets, nbTrains, nbBonuses);
-
     }
 
     @Override
@@ -20,6 +19,7 @@ class RevenueCalculatorMultiHex extends RevenueCalculatorMulti {
         // init train distance
         if (trainIsH[trainId]) {
             trainDistance[trainId] = trainMaxMajors[trainId];
+            log.debug("RCMH: H-train distance init={}", trainDistance[trainId]);
         }
         super.runTrain(trainId);
     }
@@ -28,12 +28,14 @@ class RevenueCalculatorMultiHex extends RevenueCalculatorMulti {
     protected void travelEdge(int trainId, int edgeId) {
         super.travelEdge(trainId, edgeId);
         trainDistance[trainId] -= edgeDistance[edgeId];
+        log.debug("RCMH: H-train distance reduced with {} to {}",edgeDistance[edgeId], trainDistance[trainId]);
     }
 
     @Override
     protected void returnEdge(int trainId, int edgeId) {
         super.returnEdge(trainId, edgeId);
         trainDistance[trainId] += edgeDistance[edgeId];
+        log.debug("RCMH: H-train distance increased with {} to {}",edgeDistance[edgeId], trainDistance[trainId]);
     }
 
     @Override

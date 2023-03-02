@@ -258,22 +258,25 @@ Game variants:
 	</Game>
 
 	<Game name="1826">
-		<Note>Almost playable</Note>
+		<Note>Playable (beta)</Note>
 		<Description>1826 - Railroading in France and Belgium from 1826
 			(c) 1996, 2000 David G.D. Hecht (game designer)
 			Initially published by Chris Lawson (materials designer)
 			Rules version 0.35 of 13 January 2000
 
-			Not yet developed and tested:
-			- The initial non-Belge token laying prohibition
-			  in Belgium is not enforced
+			Not yet fully developed or tested:
 			- Share selling in emergency train buying
 			  (taking loans, bonds and president cash works)
 			- Bankruptcy
 			- TGV running over track used by other trains
 			  (the existing TGV running modifier is incorporated,
-			  but could not yet be tested)
-			- End of game
+			  but does not produce the desired result)
+
+			Note: it turns out that for H-trains not always the best runs are found.
+			Players should check the calculated H-train revenues,
+			and correct these if necessary, using the spinner.
+			The revenue spinner can be enabled at game start using
+			'Configuration/General/Show spinner in revenue step'.
 		</Description>
 		<Players minimum="2" maximum="6" />
 	</Game>

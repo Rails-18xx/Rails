@@ -492,6 +492,8 @@ public class GUIHex implements Observer {
         if (hex.isBlockedByPrivateCompany()) {
            PrivateCompany p = hex.getBlockingPrivateCompany();
            String text = "(" + p.getId() + ")";
+           drawString (g, text, 0, 0);
+           /*
            g.drawString(
                    text,
                    dimensions.rectBound.x
@@ -499,11 +501,15 @@ public class GUIHex implements Observer {
                    * 1 / 2,
                    dimensions.rectBound.y
                    + ((fontMetrics.getHeight() + dimensions.rectBound.height) * 5 / 15));
+
+            */
         }
 
         if (hex.isReservedForCompany()
         		&& hex.isPreprintedTileCurrent()) {
         	String text = "[" + hex.getReservedForCompany().getId() + "]";
+        	drawString (g, text, 0, 0);
+        	/*
             g.drawString(
                   text,
                   dimensions.rectBound.x
@@ -511,10 +517,14 @@ public class GUIHex implements Observer {
                   * 1 / 2,
                   dimensions.rectBound.y
                   + ((fontMetrics.getHeight() + dimensions.rectBound.height) * 5 / 25));
+
+        	 */
         }
 
         String extraText = hex.getExtraText();
         if (extraText != null) {
+            drawString(g, extraText, hex.getExtraTextX(), hex.getExtraTextY());
+            /*
             g.drawString(
                     extraText,
                     dimensions.rectBound.x
@@ -524,8 +534,32 @@ public class GUIHex implements Observer {
                     dimensions.rectBound.y
                             + hex.getExtraTextY()
                             + ((fontMetrics.getHeight() + dimensions.rectBound.height) * 5 / 25));
-        }
 
+             */
+        }
+    }
+
+    /**
+     * Draw a string anywhere on a hex.
+     *
+     * @param text The string to draw
+     * @param x The horizontal coordinate where the text will be centered around;
+     *          0 = center, increases to the right.
+     * @param y The vertical coordinate where the text will be placed;
+     *          0 = just below the top of the hex, increases downwards.
+     * Should some font size parameter be added?
+     */
+    private void drawString (Graphics2D g, String text, int x, int y) {
+        FontMetrics fontMetrics = g.getFontMetrics();
+        g.drawString(
+                text,
+                dimensions.rectBound.x
+                        + x
+                        + (dimensions.rectBound.width - fontMetrics.stringWidth(text))
+                        * 1 / 2,
+                dimensions.rectBound.y
+                        + y
+                        + ((fontMetrics.getHeight() + dimensions.rectBound.height) * 5 / 25));
     }
 
     private void paintOverlay(Graphics2D g2) {

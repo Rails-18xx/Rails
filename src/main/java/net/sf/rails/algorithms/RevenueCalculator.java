@@ -54,6 +54,7 @@ abstract class RevenueCalculator {
     protected final int[] trainDistance; // keeps track of distance travelled (for H-trains)
 
     int specialRevenue;
+    int currentBestSpecRev;
 
     // static bonus data
     protected final int [] bonusValue;
@@ -280,7 +281,16 @@ abstract class RevenueCalculator {
         int[] bestRevenues = new int[length + 1];
         Arrays.sort(values);
         int cumulatedRevenues = 0;
+        log.debug("RC: values={} length={}", values, length);
         for (int j=1; j <= length ; j++) {
+            if (values.length - j < 0) break;
+            // The above line was inserted to fix a problem
+            // caused by insufficient handling of H-trains
+            // (see RevenueAdapter near line 419),
+            // but the result here was a 'values' index of -1,
+            // causing a crash.
+            // With this 'fix' the revenue has become 0. Beware!
+            // (EV 02/2023)
             cumulatedRevenues += values[values.length - j];
             bestRevenues[j] = cumulatedRevenues;
         }
@@ -291,7 +301,8 @@ abstract class RevenueCalculator {
 
     private void initRevenueValues(final int startTrain, final int finalTrain){
 
-      // intialize values
+        log.debug("nbTrains={} nbVertexes={}", nbTrains, nbVertexes);
+        // intialize values
         maxMajorRevenues = new int[nbTrains][nbVertexes];
         maxMinorRevenues = new int[nbTrains][nbVertexes];
         maxBonusRevenues = new int[nbTrains][nbVertexes + nbBonuses];
@@ -402,7 +413,7 @@ abstract class RevenueCalculator {
         runTrain(startTrain);
 
         // inform revenue listener via adapter
-        notifyRevenueAdapter(currentBestValue, specialRevenue, true);
+        notifyRevenueAdapter(currentBestValue, currentBestSpecRev, true);
 
         return currentBestValue;
     }
@@ -429,9 +440,16 @@ abstract class RevenueCalculator {
             log.debug("Added {}", vertexValueByTrain[vertexId][trainId]);
             if (vertexMajor[vertexId]) {
                 trainMajors[trainId]--;
+                // Stop counting changed from downwards to upwards (EV dec2022)
+                // This does not yet work
+                /*
+                trainMajors[trainId]++;
+                log.debug("+++++ Encountered major vertex {}: trainId={} trainMajors={}", vertexId, trainId, trainMajors[trainId]);
+                 */
                 stationVertex = true;
             } else if (vertexMinor[vertexId]) {
                 trainMinors[trainId]--;
+                //trainMinors[trainId]++;
                 stationVertex = !trainIgnoreMinors[trainId];
             }
             countVisits++;
@@ -440,13 +458,42 @@ abstract class RevenueCalculator {
             log.debug("Subtracted {}", vertexValueByTrain[vertexId][trainId]);
             if (vertexMajor[vertexId]) {
                 trainMajors[trainId]++;
+                //trainMajors[trainId]--;
                 stationVertex = true;
             } else if (vertexMinor[vertexId]) {
                 trainMinors[trainId]++;
+                //trainMinors[trainId]--;
                 stationVertex = !trainIgnoreMinors[trainId];
             }
             countVisits--;
         }
+        /* Proposed replacement of the above if/else structure:
+        if (arrive) {
+            trainCurrentValue[trainId] += vertexValueByTrain[vertexId][trainId];
+            log.debug("Added {}", vertexValueByTrain[vertexId][trainId]);
+            if (trainCounts[trainId][vertexStopType]) {
+                stationVertex = true;
+                if (vertexMinor[vertexId] && trainMaxMinors[trainId] > 0) {
+                    trainMinors[trainId]--;
+                } else {
+                    trainMajors[trainId]--;
+                }
+            }
+            countVisits++;
+        } else {
+            trainCurrentValue[trainId] -= vertexValueByTrain[vertexId][trainId];
+            log.debug("Subtracted {}", vertexValueByTrain[vertexId][trainId]);
+            if (trainCounts[trainId][vertexStopType]) {
+                stationVertex = true;
+                if (vertexMinor[vertexId] && trainMaxMinors[trainId] > 0) {
+                    trainMinors[trainId]++;
+                } else if (vertexMajor[vertexId]) {
+                    trainMajors[trainId]++;
+                }
+            }
+            countVisits--;
+        }
+        */
 
         // check vertex sets
         for (int j=0; j < vertexNbVisitSets[vertexId]; j++) {
@@ -464,7 +511,7 @@ abstract class RevenueCalculator {
                 if (bonusTrainVertices[bonusId][trainId] == 0) {
                    trainCurrentValue[trainId] += bonusValue[bonusId];
                    if (bonusValue[bonusId] > 0) trainBonuses[trainId]--;
-                    log.debug("RC: Added bonus {} with value {}", bonusId, bonusValue[bonusId]);
+                   log.debug("RC: Added bonus {} with value {}", bonusId, bonusValue[bonusId]);
                 }
             } else {
                 if (bonusTrainVertices[bonusId][trainId] == 0) {
@@ -477,8 +524,7 @@ abstract class RevenueCalculator {
             }
         }
 
-        log.debug("RC: stationVertex = {}", stationVertex);
-        log.debug("RC: Count Visits = {}", countVisits);
+        log.debug("RC: stop={} station={} visits={}", vertexId, stationVertex, countVisits);
         return stationVertex;
     }
 
@@ -495,11 +541,23 @@ abstract class RevenueCalculator {
             if (trainMajors[trainId] == 0)
                 terminated = Terminated.WITH_EVALUATION;
         } else { // default and plus trains
-            if (trainMajors[trainId] < 0){
+            if (trainMajors[trainId] < 0) {   // What's the logic? H-trains?
                 terminated = Terminated.WITHOUT_EVALUATION;
             } else if (trainMajors[trainId] + trainMinors[trainId] == 0)
                 terminated = Terminated.WITH_EVALUATION;
         }
+        /* Proposed replacement for the above if/else structure:
+        if (trainMajors[trainId] > trainMaxMajors[trainId]) {
+            terminated = Terminated.WITHOUT_EVALUATION;
+        } else if (trainMajors[trainId] + trainMinors[trainId]
+                > trainMaxMajors[trainId] + trainMaxMinors[trainId]) {
+            terminated = Terminated.WITHOUT_EVALUATION;
+        } else if (vertexSink[vertexId]) {
+            terminated = Terminated.WITH_EVALUATION;
+        }
+        We don't stop at reaching equality because in the general case
+        there can be not counted stops beyond the final counted one.
+         */
         if (terminated != Terminated.NOT_YET ) {
             log.debug("RC: Train {} has terminated: majors = {} minors = {}", trainId, trainMajors[trainId], trainMinors[trainId]);
         }
@@ -534,6 +592,7 @@ abstract class RevenueCalculator {
         if (callDynamicModifiers) {
             totalValue += revenueAdapter.dynamicEvaluation();
             specialRevenue = revenueAdapter.getSpecialRevenue();
+            log.debug("Revenue: total={} special={}",totalValue, specialRevenue);
         }
 
         nbEvaluations++;
@@ -542,6 +601,7 @@ abstract class RevenueCalculator {
         // compare to current best result
         if (totalValue > currentBestValue) {
             currentBestValue = totalValue;
+            currentBestSpecRev = specialRevenue;
             // exceed thus deep copy of vertex stack
             for (int j = startTrainSet; j <= finalTrainSet; j++) {
                 for (int v = 0; v < nbVertexes + 1; v++) {
@@ -556,7 +616,7 @@ abstract class RevenueCalculator {
             log.debug("RC: Found better run with {}", totalValue);
             // inform revenue listener via adapter
             // special revenue only to be reported with the final result
-            notifyRevenueAdapter(currentBestValue, specialRevenue, false);
+            notifyRevenueAdapter(currentBestValue, currentBestSpecRev, false);
         }
     }
 
@@ -588,7 +648,7 @@ abstract class RevenueCalculator {
         if (trainBonuses[trainId] != 0) {
             trainValue += maxBonusRevenues[trainId][trainBonuses[trainId]];
         }
-        log.debug("RC: Current train has predicted  value of {}", trainValue);
+        log.debug("RC: Current train has predicted value of {}", trainValue);
 
         // maximum value for the trainId including future trains
         totalValue = Math.min(totalValue + trainValue, maxCumulatedTrainRevenues[trainId]);
@@ -605,8 +665,10 @@ abstract class RevenueCalculator {
 //                    totalValue += trainCurrentValue[j];
 //            }
         }
+        log.debug("Regular predicted value is {}", totalValue);
 
         if (callDynamicModifiers) totalValue += revenueAdapter.dynamicPrediction();
+        log.debug("Total predicted value is {}", totalValue);
 
         nbPredictions++;
 

@@ -30,11 +30,12 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
     public static final int GENERIC = 0; // Stop-gap only
     public static final int LOCATION_SPECIFIC = 1; // Valid hex and allowed tiles
     public static final int SPECIAL_PROPERTY = 2; // Directed by a special property
+    public static final int GENERIC_EXCL_LOCATIONS = 3; // Locations are excluded
     public static final int CORRECTION = 99; // Correction tile lays
 
-    protected int type;
-
     /*--- Preconditions ---*/
+
+    private int type;
 
     /** Where to lay a tile (null means anywhere) */
     private transient List<MapHex> locations = null;
@@ -45,7 +46,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
 
     /** Allowed tiles on a specific location (empty means unspecified) */
     private transient List<Tile> tiles = null;
-    private int[] tileIds;
+    //private int[] tileIds;
     private String[] sTileIds;
 
     /**
@@ -190,8 +191,21 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         return locations;
     }
 
+    public String getLocationNames() {
+        return locationNames;
+    }
+
     public void setLocations(List<MapHex> locations) {
         this.locations = locations;
+        if (locations != null) buildLocationNameString();
+    }
+
+    public void setLocationsByName (List<String> locationNames) {
+        this.locations = new ArrayList<>();
+        MapManager mmgr = root.getMapManager();
+        for (String name : locationNames) {
+            locations.add (mmgr.getHex(name));
+        }
         if (locations != null) buildLocationNameString();
     }
 
@@ -199,7 +213,7 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         return type;
     }
 
-    public void setType(int type) {  // Needed by ListAndFixSavedFiles
+    public void setType(int type) {  // Used by ListAndFixSavedFiles
         this.type = type;
     }
     /**
@@ -272,12 +286,14 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
 
         // check asOption attributes
         LayTile action = (LayTile)pa;
-        boolean options = (this.locations == null || this.locations.isEmpty() || this.locations.contains(action.chosenHex))
+        //boolean options = (this.locations == null || this.locations.isEmpty() || this.locations.contains(action.chosenHex))
+        boolean options = (this.locations == null || this.locations.isEmpty()
+                    || this.locationNames.equals(action.locationNames))
                 && (this.tiles == null || this.tiles.isEmpty()
                         || Objects.equal(this.tiles, action.tiles)
-                        || this.tiles.contains(action.getLaidTile()) )
+                        //|| this.tiles.contains(action.getLaidTile()) )
 //              && Objects.equal(this.type, action.type) // type is not always stored
-                && Objects.equal(this.specialProperty, action.specialProperty)
+                && Objects.equal(this.specialProperty, action.specialProperty));
         ;
 
         // finish if asOptions check
@@ -316,11 +332,11 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
         // Custom reading for backwards compatibility
         ObjectInputStream.GetField fields = in.readFields();
 
+        type = fields.get("type", type);
+
         locationNames = (String) fields.get("locationNames", locationNames);
         tileColours = (Map<String, Integer>) fields.get("tileColours", tileColours);
-        // FIXME: Rewrite this with Rails1.x version flag
-        tileIds = (int[]) fields.get("tileIds", tileIds);
-        sTileIds = (String[]) fields.get("tileIds", sTileIds);
+        sTileIds = (String[]) fields.get("sTileIds", sTileIds);
 
         specialPropertyId = fields.get("specialPropertyId", specialPropertyId);
         // FIXME: Rewrite this with Rails1.x version flag
@@ -340,14 +356,6 @@ public class LayTile extends PossibleORAction implements Comparable<LayTile> {
             locations = new ArrayList<>();
             for (String hexName : locationNames.split(",")) {
                 locations.add(mmgr.getHex(hexName));
-            }
-        }
-
-        // FIXME: Rewrite this with Rails1.x version flag
-        if (tileIds != null && tileIds.length > 0) {
-            tiles = new ArrayList<>();
-            for (int tileNb:tileIds) {
-                tiles.add(tmgr.getTile(String.valueOf(tileNb)));
             }
         }
 

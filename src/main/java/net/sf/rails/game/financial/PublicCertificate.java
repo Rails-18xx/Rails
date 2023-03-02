@@ -69,16 +69,16 @@ public class PublicCertificate extends RailsOwnableItem<PublicCertificate>
 
     }
 
-
     /** From which public company is this a certificate */
     protected PublicCompany company;
     /**
      * Share percentage represented by this certificate
      */
     protected IntegerState shares = IntegerState.create(this, "shares");
+
     /** President's certificate? */
     protected boolean president;
-    // FIXME: If this is changable, it should be a state variable, otherwise UNDO problems
+
     /** Count against certificate limits */
     protected float certificateCount = 1.0f;
 

@@ -13,11 +13,11 @@
 		<Upgrade id="201,202"/>
 	</Tile>
 	<Tile id="-3"/>
-	<Tile id="-800"/>
-	<Tile id="-901"/>
-	<Tile id="-902"/>
-	<Tile id="-903"/>
-	<Tile id="-1903"/>
+	<Tile id="-800"/><!-- Port -->
+	<Tile id="-901"/><!-- OffMap 1 track -->
+	<Tile id="-902"/><!-- OffMap 2 tracks -->
+	<Tile id="-903"/><!-- OffMap 3 tracks, also Hamburg underlying tile. Picture is -939 -->
+	<Tile id="-1903"/><!-- Hamburg with hidden token spot, for 16-minor variant -->
 	<Tile id="-3005"><!--Berlin/Vienna-->
 		<Upgrade id="581"/>
 		<AllowsMultipleBasesOfOneCompany/>

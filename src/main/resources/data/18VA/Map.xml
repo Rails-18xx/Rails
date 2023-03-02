@@ -1,10 +1,12 @@
 <Map tileOrientation="NS" letterOrientation="vertical" even="A">
 	<Defaults>
-		<!-- See class Access for allowed values -->
+		<!-- See class Access or the Stop Properties Wiki for allowed values -->
+		<!-- Note for 18VA: the CMDs have type "mine", the mines have type "town" -->
 		<Access type="offMap" runTo="yes" runThrough="no" score="major"/>
 		<Access type="city" runTo="yes" runThrough="yes" score="major"/>
 		<Access type="town" runTo="yes" runThrough="yes" score="minor"/>
 		<Access type="mine" runTo="trains:goods" runThrough="no" mutexId="CMD" score="minor"/>
+		<Access type="port" runTo="yes" mutexId="Port" score="minor"/>
 	</Defaults>
 	<Hex name="A6" tile="0"/>
 	<Hex name="A8" tile="-1921" orientation="1" value="40,70" city="Philadelphia"
@@ -21,21 +23,21 @@
 	<Hex name="D7" tile="-10" city="Washington" label="P"/>
 	<Hex name="D9" tile="-4001" pic="-4011" orientation="3" value="30,20"
 			extraText="30/20,0,30">
-		<Access mutexId="Port"/>
+		<Access type="port" mutexId="Port"/>
 	</Hex>
 	<Hex name="E2" tile="-1"/>
 	<Hex name="E4" tile="0"/>
 	<Hex name="E6" tile="-10" city="Alexandria" label="P"/>
 	<Hex name="E8" tile="-26005" city="Annapolis" orientation="2" impassable="F7"/>
-	<Hex name="F1" tile="-1922" city="Grafton" extraText="xG*20,0,40">
-		<Access runTo="trains:goods" mutexId="CMD"/>
+	<Hex name="F1" tile="-1922" city="Grafton" value="0" extraText="xG*20,0,40">
+		<Access type="mine" runTo="trains:goods" mutexId="CMD"/>
 	</Hex>
 	<Hex name="F3" tile="0"/>
 	<Hex name="F5" tile="0"/>
 	<Hex name="F7" tile="0" impassable="G6"/>
 	<Hex name="F9" tile="-4001" pic="-4011" orientation="3" value="20,10"
 		 extraText="20/10,0,30">
-		<Access mutexId="Port"/>
+		<Access type="port" mutexId="Port"/>
 	</Hex>
 	<Hex name="G2" tile="-1"/>
 	<Hex name="G4" tile="0"/>
@@ -51,8 +53,8 @@
 	<Hex name="K2" tile="-1"/>
 	<Hex name="K4" tile="0"/>
 	<Hex name="K6" tile="-10" city="Richmond" label="P"/>
-	<Hex name="L1" tile="-1922" city="Roanoke" extraText="xG*20,0,40">
-		<Access runTo="trains:goods" mutexId="CMD"/>
+	<Hex name="L1" tile="-1922" city="Roanoke" value="0" extraText="xG*20,0,40">
+		<Access type="mine" runTo="trains:goods" mutexId="CMD"/>
 	</Hex>
 	<Hex name="L3" tile="-10" city="Lynchburg"/>
 	<Hex name="L5" tile="0"/>

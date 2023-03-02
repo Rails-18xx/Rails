@@ -200,6 +200,7 @@ public class ORUIManager implements DialogOwner {
 
             switch (layTile.getType()) {
             case (LayTile.GENERIC):
+            case (LayTile.GENERIC_EXCL_LOCATIONS) :
                 addConnectedTileLays(layTile);
                 break;
             case (LayTile.SPECIAL_PROPERTY):
@@ -242,6 +243,16 @@ public class ORUIManager implements DialogOwner {
 
         for (MapHex hex:Sets.union(mapHexSides.keySet(), mapHexStations.keySet())) {
 
+            // For the initial Belgium exclusion in 1826
+            log.debug("Type={} hex={} locations={} allLocations={}",
+                    layTile.getType(), hex, layTile.getLocations(), allLocations);
+            if (layTile.getType() == LayTile.GENERIC_EXCL_LOCATIONS
+                    && !allLocations
+                    && layTile.getLocations().contains(hex)) {
+                log.debug ("SKIP");
+                continue;
+            }
+            log.debug(" OK");
             // Accept an immediate tile lay on reserved hexes if the reserving company
             // president is the current player.
             EnumSet<TileHexUpgrade.Invalids> allowances
@@ -250,7 +261,10 @@ public class ORUIManager implements DialogOwner {
                 // For now we accept this action, but will later check for permission
                 allowances.add(TileHexUpgrade.Invalids.HEX_RESERVED);
             }
-            if (allLocations || layTile.getLocations().contains(hex)) {
+            if (allLocations
+                    || layTile.getType() != LayTile.GENERIC_EXCL_LOCATIONS && layTile.getLocations().contains(hex)
+                    || layTile.getType() == LayTile.GENERIC_EXCL_LOCATIONS && !layTile.getLocations().contains(hex))
+            {
                 GUIHex guiHex = map.getHex(hex);
                 String routeAlgorithm = GameOption.getValue(gameUIManager.getRoot(),
                         "RouteAlgorithm");
@@ -342,7 +356,7 @@ public class ORUIManager implements DialogOwner {
     private void addGenericTokenLays(LayBaseToken action) {
         PublicCompany company = action.getCompany();
         if (company.getBaseTokenLayCostMethod() == PublicCompany.BaseCostMethod.ROUTE_DISTANCE) {
-            // Now a special for 1826.
+            // Currently only used by 1826.
             // Did originally work with all games, but somehow failed with 1837 in a later stage
             Map<Stop, Integer> tokenableStops = new Routes().getTokenLayRouteDistances2(
                     company, PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
@@ -572,13 +586,28 @@ public class ORUIManager implements DialogOwner {
     }
 
     protected void setDividend(String command, SetDividend action) {
+
         int amount;
+        int dividend;
+        int treasuryAmount = 0;
+        boolean hasDirectCompanyIncomeInOR
+                = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
 
         if (command.equals(ORPanel.SET_REVENUE_CMD)) {
-            amount = orPanel.getRevenue(orCompIndex);
+            dividend = amount = orPanel.getRevenue(orCompIndex);
+            if (hasDirectCompanyIncomeInOR) {
+                treasuryAmount = orPanel.getCompanyTreasuryBonusRevenue(orCompIndex);
+                dividend -= treasuryAmount;
+                orPanel.setDividend(orCompIndex, dividend);
+            }
+
             orPanel.stopRevenueUpdate();
             log.debug("Set revenue amount is {}", amount);
             action.setActualRevenue(amount);
+            if (hasDirectCompanyIncomeInOR) {
+                log.debug("The Bonus for the company treasury is {}", treasuryAmount);
+                action.setActualCompanyTreasuryRevenue(treasuryAmount);
+            }
 
             // notify sound manager of set revenue amount as soon as
             // set revenue is pressed (not waiting for the completion
@@ -595,6 +624,9 @@ public class ORUIManager implements DialogOwner {
 
                 // Locally update revenue if we don't inform the server yet.
                 orPanel.setRevenue(orCompIndex, amount);
+                if (hasDirectCompanyIncomeInOR) {
+                    orPanel.setTreasuryBonusRevenue(orCompIndex, treasuryAmount);
+                }
             }
         } else {
             // The revenue allocation has been selected

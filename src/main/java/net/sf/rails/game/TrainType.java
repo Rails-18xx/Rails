@@ -6,6 +6,7 @@ import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.state.BooleanState;
 
+import net.sf.rails.game.state.IntegerState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,8 @@ public class TrainType implements Cloneable {
     public static final int TOWN_COUNT_MINOR = 1;
     public static final int NO_TOWN_COUNT = 0;
 
+    public static final String defaultCategory = "passenger";
+
     protected String name;
     protected TrainCardType trainCardType;
     protected String trainCategory; // Default passenger; or goods etc.
@@ -23,18 +26,25 @@ public class TrainType implements Cloneable {
     protected String reachBasis = "stops";
     protected boolean countHexes = false;
 
+    /* "town count" in fact refers to all "minor" stops,
+     * including mines, ports etc. */
     protected String countTowns = "major";
     protected int townCountIndicator = TOWN_COUNT_MAJOR;
 
+    /* "town score" in fact refers to all "minor" stops,
+     * including mines, ports etc. */
     protected String scoreTowns = "yes";
     protected int townScoreFactor = 1;
 
     protected String scoreCities = "single";
-    protected int cityScoreFactor = 1;
+
+    protected IntegerState cityScoreFactor; // For 1826 E-trains
+    protected int tempCityScoreFactor = 1;
 
     protected int cost;
     protected int exchangeCost;
-    protected int majorStops;
+    protected IntegerState majorStops; // For 1826 E-trains
+    protected int tempMajorStops;
     protected int minorStops;
 
     protected BooleanState rusted;
@@ -49,7 +59,7 @@ public class TrainType implements Cloneable {
         name = tag.getAttributeAsString("name");
         cost = tag.getAttributeAsInteger("cost");
         exchangeCost = tag.getAttributeAsInteger("exchangeCost");
-        majorStops = tag.getAttributeAsInteger("majorStops");
+        tempMajorStops = tag.getAttributeAsInteger("majorStops");
         minorStops = tag.getAttributeAsInteger("minorStops");
         trainCategory = tag.getAttributeAsString("category", "passenger");
 
@@ -60,23 +70,27 @@ public class TrainType implements Cloneable {
             reachBasis = reachTag.getAttributeAsString("base", reachBasis);
 
             // Are towns counted (only relevant if reachBasis = "stops")
+            // This refers to all "minor" stops, including mines, ports etc.
             countTowns = reachTag.getAttributeAsString("countTowns", countTowns);
         }
 
         // Score
         Tag scoreTag = tag.getChild("Score");
         if (scoreTag != null) {
-            // Reach basis
+            // Do towns score (values "yes" and "no"
             scoreTowns = scoreTag.getAttributeAsString("towns", scoreTowns);
-
-            // Are towns counted (only relevant is reachBasis = "stops")
+            // How do cities score ("single" or "double")
             scoreCities = scoreTag.getAttributeAsString("cities", scoreCities);
         }
 
         // Check the reach and score values
         countHexes = "hexes".equals(reachBasis);
-        townCountIndicator = "no".equals(countTowns) ? NO_TOWN_COUNT : minorStops > 0 ? TOWN_COUNT_MINOR : TOWN_COUNT_MAJOR;
-        cityScoreFactor = "double".equalsIgnoreCase(scoreCities) ? 2 : 1;
+        townCountIndicator = "no".equals(countTowns) ? NO_TOWN_COUNT
+                : minorStops > 0 ? TOWN_COUNT_MINOR
+                : TOWN_COUNT_MAJOR;
+        /* FIXME: TownCount should only affect train length counting, not revenue calculation.
+           This seems to go wrong in NetworkVertex near line 166. */
+        tempCityScoreFactor = ("double".equalsIgnoreCase(scoreCities) ? 2 : 1);
         townScoreFactor = "yes".equalsIgnoreCase(scoreTowns) ? 1 : 0;
         // Actually we should meticulously check all values....
     }
@@ -84,6 +98,8 @@ public class TrainType implements Cloneable {
     public void finishConfiguration (RailsRoot root, TrainCardType trainCardType) throws ConfigurationException {
 
         trainManager = root.getTrainManager();
+        cityScoreFactor = IntegerState.create(trainManager, "cityScoreFactor_" + name, tempCityScoreFactor);
+        majorStops = IntegerState.create(trainManager, "majorStops+" + name, tempMajorStops);
         this.trainCardType = trainCardType;
 
         if (name == null) {
@@ -92,7 +108,7 @@ public class TrainType implements Cloneable {
         if (cost == 0) {
             throw new ConfigurationException("No price specified for Train "+name);
         }
-        if (majorStops == 0) {
+        if (majorStops.value() == 0) {
             throw new ConfigurationException("No major stops specified for Train "+name);
         }
     }
@@ -105,7 +121,7 @@ public class TrainType implements Cloneable {
      * @return Returns the cityScoreFactor.
      */
     public int getCityScoreFactor() {
-        return cityScoreFactor;
+        return cityScoreFactor.value();
     }
 
     /**
@@ -134,7 +150,7 @@ public class TrainType implements Cloneable {
      * @return Returns the majorStops.
      */
     public int getMajorStops() {
-        return majorStops;
+        return majorStops.value();
     }
 
     /**
@@ -171,11 +187,11 @@ public class TrainType implements Cloneable {
 
     // Two setters, used with 1826 E-trains.
     public void setCityScoreFactor(int cityScoreFactor) {
-        this.cityScoreFactor = cityScoreFactor;
+        this.cityScoreFactor.set (cityScoreFactor);
     }
 
     public void setMajorStops(int majorStops) {
-        this.majorStops = majorStops;
+        this.majorStops.set (majorStops);
     }
 
     @Override

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="net.sf.rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.specific._18VA.GameManager_18VA">
 		<Game name="18VA"/>
 		<GameParameters>
 			<PlayerShareLimit percentage="60">
@@ -21,6 +21,9 @@
 					mayBuyFromCompany="yes"/>
 			</OperatingRound>
 		</GameParameters>
+		<!--GuiClasses>
+			<ORUIManager class="net.sf.rails.ui.swing.gamespecific._18VA.ORUIManager_18VA"/>
+		</GuiClasses-->
 		<EndOfGame>
 			<Bankruptcy/>
 			<BankBreaks limit="0" finish="setOfORs"/>
@@ -47,14 +50,16 @@
 	<Component name="StockMarket" class="net.sf.rails.game.financial.StockMarket"
 		file="StockMarket.xml"/>
 	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
-		<Defaults>
+		<Defaults category="passenger">
 			<Reach base="stops" countTowns="no"/>
+			<Score towns="yes"/> <!-- would otherwise exclude ports as well -->
+		</Defaults>
+		<Defaults category="goods">
+			<Reach base="stops" countTowns="yes"/>
 			<Score towns="yes"/>
 		</Defaults>
 		<TrainType name="2/1G" quantity="6">
-			<Train name="2" majorStops="2" cost="100">
-				<Score towns="no"/>
-			</Train>
+			<Train name="2" majorStops="2" cost="100"/>
 			<Train name="1G" category="goods" majorStops="1" cost="100"/>
 		</TrainType>
 		<TrainType name="3/2G" quantity="5">
@@ -78,6 +83,7 @@
 			<NewPhase phaseName="6"/>
 		</TrainType>
 		<TrainType name="4D" majorStops="99" cost="800" quantity="10">
+			<Score cities="double"/>
 			<NewPhase phaseName="4D"/>
 		</TrainType>
 		<TrainBuyingRules>
@@ -111,7 +117,11 @@
 			<Trains released="4D"/>
 		</Phase>
 		<Phase name="4D">
+			<Tiles colour="yellow,green,brown,grey"/>
 			<Trains rusted="4/3G"/>
 		</Phase>
+	</Component>
+	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+		<Modifier class="net.sf.rails.game.specific._18VA.TrainRunModifier" />
 	</Component>
 </ComponentManager>

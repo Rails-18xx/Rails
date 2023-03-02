@@ -17,7 +17,7 @@ public class GameDef {
         STOCK_ROUND_SEQUENCE(StockRound.SELL_BUY_SELL),
         PLAYER_SHARE_LIMIT (60),
         POOL_SHARE_LIMIT(50),
-        TREASURY_SHARE_LIMIT(50),
+        TREASURY_SHARE_LIMIT(50), // No longer directly used, now only a default (EV 02/2023).
         FIXED_PRICE_TRAINS_BETWEEN_PRESIDENTS(false),
         SKIP_FIRST_STOCK_ROUND(false),
         NO_SALE_OF_JUST_BOUGHT_CERT(false),

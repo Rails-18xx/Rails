@@ -685,11 +685,9 @@ public class PublicCompany extends RailsAbstractItem
         Tag ownSharesTag = tag.getChild("TreasuryCanHoldOwnShares");
         if (ownSharesTag != null) {
             canHoldOwnShares = true;
-            //treasuryPaysOut = true;
-
-            maxPercOfOwnShares = ownSharesTag.getAttributeAsInteger("maxPerc", maxPercOfOwnShares);
+            maxPercOfOwnShares = ownSharesTag.getAttributeAsInteger("maxPerc",
+                    GameDef.Parm.TREASURY_SHARE_LIMIT.defaultValueAsInt());
         }
-
         Tag trainsTag = tag.getChild("Trains");
         if (trainsTag != null) {
 
@@ -963,8 +961,6 @@ public class PublicCompany extends RailsAbstractItem
             cert = certificates.get(i);
             cert.setUniqueId(getId(), i);
         }
-
-
 
         initBaseTokens();
 
@@ -1558,6 +1554,8 @@ public class PublicCompany extends RailsAbstractItem
      */
     // FIXME: This has to be redesigned
     // Relying on the ordering is not a good thing
+    // EV: ... but inevitable in many cases. Not keeping the original
+    // order often results in irreproducible and therefore unreloadable saved files.
     public Player getPresident() {
         /*
         if (hasStarted()) {
@@ -1964,6 +1962,10 @@ public class PublicCompany extends RailsAbstractItem
     public boolean canGenerateOtherRevenue() {
         // The default:
         return false;
+    }
+
+    public int getMaxPercOfOwnShares() {
+        return maxPercOfOwnShares;
     }
 
     /**

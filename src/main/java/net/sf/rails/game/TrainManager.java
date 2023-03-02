@@ -46,6 +46,8 @@ public class TrainManager extends RailsManager implements Configurable {
 
     protected final Map<TrainCard, List<Train>> trainsPerCard = new HashMap<>();
 
+    protected final Map<String, Tag> defaultsTagMap = new HashMap<>();
+
     private boolean removeTrain = false;
     private boolean removePermanent;
 
@@ -93,8 +95,17 @@ public class TrainManager extends RailsManager implements Configurable {
     public void configureFromXML(Tag tag) throws ConfigurationException {
         TrainType newTrainType;
 
-        Tag defaultsTag = tag.getChild("Defaults");
-        // We will use this tag later, to preconfigure TrainCardType and TrainType.
+        List<Tag> defaultsTags = tag.getChildren("Defaults");
+        // New 12/2022: defaults per train category (for 18VA)
+        if (defaultsTags != null) {
+            String category;
+            for (Tag defaultsTag : defaultsTags) {
+                category = defaultsTag.getAttributeAsString("category",
+                        TrainType.defaultCategory);
+                defaultsTagMap.put(category, defaultsTag);
+            }
+        }
+        // We will use these tags later, to preconfigure TrainCardType and TrainType.
 
         List<Tag> trainTypeTags;
 
@@ -107,7 +118,10 @@ public class TrainManager extends RailsManager implements Configurable {
                 // FIXME: Creation of Type to be rewritten
                 String cardTypeId = cardTypeTag.getAttributeAsString("name");
                 TrainCardType cardType = TrainCardType.create(this, cardTypeId, cardTypeIndex++);
-                if (defaultsTag != null) cardType.configureFromXML(defaultsTag);
+                if (defaultsTags != null) {
+                    Tag defaultsTag = getDefaultsPerCategory(null);
+                    if (defaultsTag != null) cardType.configureFromXML(defaultsTag);
+                }
                 cardType.configureFromXML(cardTypeTag);
                 trainCardTypes.add(cardType);
                 trainCardTypeMap.put(cardType.getId(), cardType);
@@ -120,7 +134,10 @@ public class TrainManager extends RailsManager implements Configurable {
                 }
                 for (Tag trainTypeTag : trainTypeTags) {
                     newTrainType = new TrainType();
-                    if (defaultsTag != null) newTrainType.configureFromXML(defaultsTag);
+                    if (defaultsTags != null) {
+                        Tag defaultsTag = getDefaultsPerCategory(trainTypeTag);
+                        if (defaultsTag != null) newTrainType.configureFromXML(defaultsTag);
+                    }
                     newTrainType.configureFromXML(cardTypeTag);
                     newTrainType.configureFromXML(trainTypeTag);
                     trainTypes.add(newTrainType);
@@ -164,7 +181,17 @@ public class TrainManager extends RailsManager implements Configurable {
             // to determine if permanent trains are also removed
             removePermanent = removeTrainTag.getAttributeAsBoolean("permanent", false);
         }
+    }
 
+    private Tag getDefaultsPerCategory (Tag trainTypeTag) throws ConfigurationException {
+        String category = null;
+        if (trainTypeTag != null) {
+            category = trainTypeTag.getAttributeAsString("category", TrainType.defaultCategory);
+        }
+        if (category == null) {
+            category = TrainType.defaultCategory;
+        }
+        return defaultsTagMap.get(category);
     }
 
     public void finishConfiguration(RailsRoot root)

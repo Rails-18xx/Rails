@@ -30,7 +30,7 @@ public final class RevenueManager extends RailsManager implements Configurable {
     private static final Logger log = LoggerFactory.getLogger(RevenueManager.class);
 
     // Modifiers that are configurable
-    private final HashSet<Configurable> configurableModifiers = new HashSet<Configurable>();
+    private final HashSet<Configurable> configurableModifiers = new HashSet<>();
 
     // Variables to store modifiers (permanent)
     private final ArrayListState<NetworkGraphModifier> graphModifiers = new ArrayListState<>(this, "graphModifiers");
@@ -39,8 +39,8 @@ public final class RevenueManager extends RailsManager implements Configurable {
     private RevenueCalculatorModifier calculatorModifier;
 
     // Variables that store the active modifier (per RevenueAdapter)
-    private final ArrayList<RevenueStaticModifier> activeStaticModifiers = new ArrayList<RevenueStaticModifier>();
-    private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers = new ArrayList<RevenueDynamicModifier>();
+    private final ArrayList<RevenueStaticModifier> activeStaticModifiers = new ArrayList<>();
+    private final ArrayList<RevenueDynamicModifier> activeDynamicModifiers = new ArrayList<>();
     // TODO: Still add that flag if the calculator is active
 //    private boolean activeCalculator;
 
@@ -191,8 +191,12 @@ public final class RevenueManager extends RailsManager implements Configurable {
     boolean initDynamicModifiers(RevenueAdapter revenueAdapter) {
         activeDynamicModifiers.clear();
         for (RevenueDynamicModifier modifier : dynamicModifiers.view()) {
-            if (modifier.prepareModifier(revenueAdapter))
+            if (modifier.prepareModifier(revenueAdapter)) {
                 activeDynamicModifiers.add(modifier);
+                log.debug("Modifier {} activated", modifier.getClass().getSimpleName());
+            } else {
+                log.debug("Modifier {} deactivated", modifier.getClass().getSimpleName());
+            }
         }
         return !activeDynamicModifiers.isEmpty();
     }
@@ -226,18 +230,24 @@ public final class RevenueManager extends RailsManager implements Configurable {
      * @param optimal flag if this is the found optimal run
      * @return total value of dynamic modifiers
      */
+    /* TODO Replace return value (throughout) with new Revenue object,
+       that includes special revenue such as direct treasury income.
+     */
     int evaluationValue(List<RevenueTrainRun> run, boolean optimal) {
         // this allows dynamic modifiers to change the optimal run
         // however this is forbidden outside the optimal run!
         int value = 0;
         // To prevent "concurrent modification" exceptions, make a copy first
+        log.debug("Dynamic modifiers: {}", activeDynamicModifiers);
         ArrayList<RevenueDynamicModifier> adm = (ArrayList<RevenueDynamicModifier>) activeDynamicModifiers.clone();
         for (RevenueDynamicModifier modifier : adm) {
             value += modifier.evaluationValue(run, optimal);
+            log.debug("Modifier {} evaluation cumulative value: {}", modifier, value);
         }
         if (calculatorModifier != null) {
             specialRevenue = calculatorModifier.getSpecialRevenue();
         }
+        log.debug("Revenue: total={} special={}",value, specialRevenue);
         return value;
     }
 

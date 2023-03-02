@@ -34,6 +34,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
 
     private static final Logger log = LoggerFactory.getLogger(Stop.class);
 
+    private Type type;
     private Access.RunTo runTo;
     private List<String> runToTrainCategories;
     private Access.RunThrough runThrough;
@@ -46,7 +47,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         OFFMAP,
         MINE,
         PORT,
-        PASS
+        PASS,
     }
 
     private final IntegerState number = IntegerState.create(this, "legacyNumber", 0);
@@ -61,6 +62,7 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         tokens.addModel(hex);
 
         if (station != null) {
+            type = station.getType();
             number.set(Integer.parseInt(id));
         }
     }
@@ -112,6 +114,8 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     public int getNumber() {
         return number.value();
     }
+
+    public Type getType() { return type; }
 
     // FIMXE: Due to Rails1.x compatibility
     @Deprecated
@@ -241,6 +245,8 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
     public boolean isTokenableFor(PublicCompany company) {
         return hasTokenSlotsLeft() && !hasTokenOf(company);
     }
+
+    public Access getAccess() { return getRelatedStation().getAccess(); }
 
     public Access.RunTo getRunToAllowed() {
        return runTo;

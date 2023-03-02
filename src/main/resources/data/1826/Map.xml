@@ -1,8 +1,10 @@
 <Map tileOrientation="EW"
 	letterOrientation="vertical" even="B">
 
-	<Hex name="A13" tile="-902" city="Amsterdam" value="20,50,70" orientation="1"/>
-	<Hex name="B8" tile="-902" city="London" value="40,60,80,120"/>
+	<Hex name="A13" tile="-902" city="Amsterdam" value="20,50,70" orientation="1"
+			extraText="20/50/70,0,10"/>
+	<Hex name="B8" tile="-902" city="London" value="40,60,80,120"
+			extraText="40/60/80/120,0,10"/>
 	<Hex name="B10" tile="-1" city="Ostende"/>
 	<Hex name="B12" tile="-10" city="Antwerp" cost="40"/>
 	<Hex name="B14" tile="0" cost="40"/>
@@ -10,7 +12,8 @@
 	<Hex name="C11" tile="-26004" city="Lille"/>
 	<Hex name="C13" tile="-26006" city="Brussels"/>
 	<Hex name="C15" tile="-10" city="Liège" cost="40"/>
-	<Hex name="C17" tile="-902" city="Cologne" value="20,40,60,100" orientation="2"/>
+	<Hex name="C17" tile="-902" city="Cologne" value="20,40,60,100" orientation="2"
+			extraText="20/40/60/100,0,10"/>
 	<Hex name="D8" tile="0"/>
 	<Hex name="D10" tile="-1" city="Amiens"/>
 	<Hex name="D12" tile="-1" city="Mons"/>
@@ -59,7 +62,8 @@
 	<Hex name="I13" tile="-10" city="Dijon"/>
 	<Hex name="I15" tile="0"/>
 	<Hex name="I17" tile="-1" city="Besançon"/>
-	<Hex name="I19" tile="-901" city="Basel" value="20,50,70,100" orientation="3"/>
+	<Hex name="I19" tile="-901" city="Basel" value="20,50,70,100" orientation="3"
+			extraText="20/50/70/100,0,30"/>
 	<Hex name="J2" tile="0"/>
 	<Hex name="J4" tile="0"/>
 	<Hex name="J6" tile="-1" city="Tours"/>
@@ -91,8 +95,11 @@
 	<Hex name="M13" tile="-10" city="Saint-Étienne"/>
 	<Hex name="M15" tile="0" cost="40"/>
 	<Hex name="M17" tile="-1" city="Grenoble" cost="60"/>
-	<Hex name="M19" tile="-901" city="Milan" value="30,50,90,120" orientation="2"/>
-	<Hex name="N2" tile="-901" city="Madrid" value="20,50,70,100" orientation="4"/>
-	<Hex name="N16" tile="-901" city="Marseille" value="40,60,80" orientation="3"/>
+	<Hex name="M19" tile="-901" city="Milan" value="30,50,90,120" orientation="2"
+			extraText="30/50/90/120,0,5"/>
+	<Hex name="N2" tile="-901" city="Madrid" value="20,50,70,100" orientation="4"
+			extraText="20/50/70/100,0,30"/>
+	<Hex name="N16" tile="-901" city="Marseille" value="40,60,80" orientation="3"
+			extraText="40/60/80,0,30"/>
 
 </Map>

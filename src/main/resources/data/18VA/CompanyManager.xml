@@ -1,26 +1,27 @@
 <?xml version="1.0"?>
 <CompanyManager>
 	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
-		<ClosingConditions>
-            <Phase>5</Phase>
-		</ClosingConditions>
 		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
 	</CompanyType>
 	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
 		<CanBuyPrivates/>
 		<PoolPaysOut/>
-		<Float percentage="60"/>
+		<Float percentage="20"/>
+		<Capitalisation type="incremental"/>
+		<StockPrice par="no"/>
+		<TreasuryCanHoldOwnShares maxPerc="80"/>
 		<BaseTokens>
 			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
-			<HomeBase lay="firstOR"/>
+			<HomeBase lay="whenStarted"/>
 			<!-- LayCost methods: "sequence" (1830), "distance" (1835), "route_distance" (1826)-->
 			<LayCost method="sequence" cost="0,40,100"/>
 		</BaseTokens>
-		<Shares unit="10">
+		<Shares unit="20,10">
 			<Certificate type="President" shares="2"/>
-			<Certificate shares="1" number="8"/>
+			<Certificate shares="1" number="3"/>
+			<Certificate shares="1" number="5" available="no"/>
 		</Shares>
-		<Trains limit="4,3,2"/>
+		<Trains limit="2,1;4,3,2"/>
         <CanUseSpecialProperties/>
 	</CompanyType>
 
@@ -33,15 +34,17 @@
 	<Company name="PY" type="Private" basePrice="80" revenue="20"
 			longname="Potomac Yards">
 	</Company>
-	<Company name="B&amp;O" type="Private" basePrice="140" revenue="0"
-			longname="Baltimore and Ohio President's Certificate">
-	</Company>
-	
+
 	<!-- Note two supported colour specification formats:
 	     RGB decimal with commas and RGB hexadecimal without commas -->
 	<Company name="B&amp;O" type="Public" tokens="4" fgColour="FFFFFF" bgColour="0000FF"
 			longname="Baltimore and Ohio Railroad">
 		<Home hex="C8"/>
+		<Shares unit="10">
+			<Certificate type="President" shares="2"/>
+			<Certificate shares="1" number="8"/>
+		</Shares>
+		<Trains limit="4,3,2"/>
 	</Company>
 	<Company name="C&amp;O" type="Public" tokens="4" fgColour="000000" bgColour="00CCFF"
 			longname="Chesapeake and Ohio Railway">
@@ -67,11 +70,11 @@
 			longname="Western Maryland Railway">
 		<Home hex="D3"/>
 	</Company>
-		<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
-		<Bidding initial="5" minimum="5" increment="1"/>
+	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
+		<Bidding initial="0" minimum="5" increment="5"/>
 		<Item name="REA" type="Private" basePrice="40"/>
 		<Item name="TIW" type="Private" basePrice="60"/>
 		<Item name="PY" type="Private" basePrice="80"/>
-		<Item name="B&amp;O" type="Private" basePrice="140"/>
+		<Item name="B&amp;O" type="Public" president="yes" basePrice="140"/>
 	</StartPacket>
 </CompanyManager>

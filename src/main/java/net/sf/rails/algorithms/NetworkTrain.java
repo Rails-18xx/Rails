@@ -45,13 +45,12 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         }
         int multiplyMajors = railsTrain.getCityScoreFactor();
         int multiplyMinors = railsTrain.getTownScoreFactor();
-        boolean ignoreMinors = false;
-        if (multiplyMinors == 0){
-            ignoreMinors = true;
-        }
+        boolean ignoreMinors = (multiplyMinors == 0);
         boolean isHTrain = railsTrain.isHTrain();
         boolean isETrain = railsTrain.isETrain();
         String trainName = railsTrain.toText();
+
+        if (isHTrain) log.debug ("H-train {} distance {}", railsTrain, majors);
 
         return new NetworkTrain(majors, minors, ignoreMinors, multiplyMajors, multiplyMinors,
                 isHTrain, isETrain, trainName, railsTrain);
@@ -105,6 +104,7 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
 
     void addToRevenueCalculator(RevenueCalculator rc, int trainId) {
         rc.setTrain(trainId, majors, minors, ignoreMinors, isHTrain, isETrain);
+        log.debug("Train {} added to RC, majors={}", getTrainName(), majors);
     }
 
     int getMajors(){
@@ -191,21 +191,25 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
     public int compareTo(NetworkTrain other) {
 
         // Check if A is the longer train first
-        boolean longerA = this.majors > other.majors && this.minors >= other.minors || this.majors == other.majors && this.minors > other.minors;
+        boolean longerA = this.majors > other.majors && this.minors >= other.minors
+                || this.majors == other.majors && this.minors > other.minors;
 
         if (longerA) {
             // then check the multiples
-            if (this.multiplyMajors >= other.multiplyMajors && this.multiplyMinors >= other.multiplyMinors) {
+            if (this.multiplyMajors >= other.multiplyMajors && this.multiplyMinors
+                    >= other.multiplyMinors) {
                 return 1;
             } else {
                 return 0;
             }
         } else {
             // otherwise B might B longer
-            boolean longerB = this.majors < other.majors && this.minors <= other.minors || this.majors == other.majors && this.minors < other.minors;
+            boolean longerB = this.majors < other.majors && this.minors <= other.minors
+                    || this.majors == other.majors && this.minors < other.minors;
             if (longerB) {
                 // then check the multiples
-                if (this.multiplyMajors <= other.multiplyMajors && this.multiplyMinors <= other.multiplyMinors) {
+                if (this.multiplyMajors <= other.multiplyMajors && this.multiplyMinors
+                        <= other.multiplyMinors) {
                     return -1;
                 } else {
                     return 0;

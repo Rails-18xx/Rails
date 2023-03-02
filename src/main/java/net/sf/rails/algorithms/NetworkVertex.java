@@ -7,7 +7,6 @@ import java.util.*;
 import net.sf.rails.game.*;
 import net.sf.rails.ui.swing.hexmap.*;
 
-import net.sf.rails.util.Util;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +59,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (stop != null) {
             log.debug("Found stop {}", stop);
         } else {
-            log.debug("No stop found");
+            log.error("No stop found for hex {} station {}", hex, station);
         }
 
         this.virtual = false;
@@ -163,6 +162,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (isMajor()) {
             valueByTrain = value * train.getMultiplyMajors();
         } else if (isMinor()) {
+            // FIXME: the next line is probably wrong or insufficient. See TrainType near line 85.
             if (train.ignoresMinors()) {
                 valueByTrain = 0;
             } else {
@@ -237,13 +237,13 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         if (virtual || type == VertexType.SIDE) return true;
 
         // Only station remains
-        Station station = (Station) trackPoint;
+        //Station station = (Station) trackPoint;
 
         log.debug("Init of vertex {}", this);
-
         // check if it has to be removed because it is run-to only
         // if company == null, then no vertex gets removed
-        if (company != null && !stop.isRunToAllowedFor(company, running) && !stop.isRunThroughAllowedFor(company)) {
+        if (company != null && !stop.isRunToAllowedFor(company, running)
+                && !stop.isRunThroughAllowedFor(company)) {
            log.info("Vertex is removed");
            return false;
         }
@@ -337,6 +337,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
             if (company != null) {
                 if (!v.initRailsVertex(company, running)) {
                     verticesToRemove.add(v);
+                    log.debug ("Vertex {} will be removed from the graph", v);
                 }
             }
             if (phase != null) {

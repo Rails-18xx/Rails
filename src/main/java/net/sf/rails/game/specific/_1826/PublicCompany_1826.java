@@ -1,11 +1,11 @@
 package net.sf.rails.game.specific._1826;
 
-import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
 import net.sf.rails.game.*;
+import net.sf.rails.game.financial.Bank;
 import net.sf.rails.game.financial.BankPortfolio;
 import net.sf.rails.game.financial.PublicCertificate;
 import net.sf.rails.game.model.PortfolioOwner;
@@ -15,7 +15,6 @@ import net.sf.rails.game.state.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -100,13 +99,14 @@ public class PublicCompany_1826 extends PublicCompany {
     public void setFloated() {
 
         int extraTokens = 0;
+        boolean reachedPhase10H = getType().getId().equals("Public")
+                && getRoot().getPhaseManager().hasReachedPhase(GameDef_1826._10H);
 
         if (isPotentialFiveShareCompany() && shareUnit.value() == 10) {
-           // 4 tokens (Belge alrady starts with 4)
+           // 4 tokens (Belge already starts with 4)
             extraTokens++;
         }
-        if (getType().getId().equals("Public")  // includes Belge
-                && getRoot().getPhaseManager().hasReachedPhase(GameDef_1826.H10)) {
+        if (reachedPhase10H) {
             // 5 tokens
             extraTokens++;
         }
@@ -117,6 +117,11 @@ public class PublicCompany_1826 extends PublicCompany {
         numberOfBaseTokens += extraTokens;
 
         super.setFloated();
+
+        if (reachedPhase10H) {
+            Bank bank = getRoot().getBank();
+            bank.getIpo().getPortfolioModel().moveAllCertificates(bank.getPool());
+        }
     }
 
     protected void setCapitalizationShares() {
@@ -126,6 +131,16 @@ public class PublicCompany_1826 extends PublicCompany {
             capitalisationShares = 0;
         }
         log.debug("{} CapFactor set to {}", this, capitalisationShares);
+    }
+
+    @Override
+    public int getCapitalisation() {
+        if (getType().getId().equalsIgnoreCase("Public")
+                && getRoot().getPhaseManager().hasReachedPhase(GameDef_1826._10H)) {
+            return CAPITALISE_FULL;
+        } else {
+            return capitalisation;
+        }
     }
 
     /** Convert company from a 5-share to a 10-share company */
@@ -138,9 +153,15 @@ public class PublicCompany_1826 extends PublicCompany {
         setShareUnit(shareUnitSizes.get(growStep.value()));
 
         BankPortfolio reserved = getRoot().getBank().getUnavailable();
+        BankPortfolio ipo = getRoot().getBank().getIpo();
         Set<PublicCertificate> last5Shares = reserved.getPortfolioModel().getCertificates(this);
         for (PublicCertificate cert : last5Shares) {
-            cert.moveTo(this);
+            if (hasStarted()) {
+                cert.moveTo(this);
+            } else {
+                // Still in IPO, put the reserved shares there too
+                cert.moveTo(ipo);
+            }
         }
 
         ReportBuffer.add(this, LocalText.getText("CompanyHasGrown",

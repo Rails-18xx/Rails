@@ -120,7 +120,8 @@ public class TreasuryShareRound extends StockRound {
             int ownedShare =
                     operatingCompany.getPortfolioModel().getShare(operatingCompany);
             // Max share that may be owned
-            int maxShare = GameDef.getParmAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT);
+            //int maxShare = GameDef.getParmAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT);
+            int maxShare = operatingCompany.getMaxPercOfOwnShares();
             // Max number of shares to add
             int maxBuyable =
                     (maxShare - ownedShare) / operatingCompany.getShareUnit();
@@ -304,7 +305,8 @@ public class TreasuryShareRound extends StockRound {
             portfolio = operatingCompany.getPortfolioModel();
 
             // Check if company would exceed the per-company share limit
-            int treasuryShareLimit = GameDef.getParmAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT);
+            //int treasuryShareLimit = GameDef.getParmAsInt(this, GameDef.Parm.TREASURY_SHARE_LIMIT);
+            int treasuryShareLimit = company.getMaxPercOfOwnShares();
             if (portfolio.getShare(company) + share > treasuryShareLimit) {
                 errMsg =
                         LocalText.getText("TreasuryOverHoldLimit",

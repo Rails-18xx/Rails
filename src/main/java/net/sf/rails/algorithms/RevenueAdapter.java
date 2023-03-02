@@ -5,7 +5,6 @@ import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.sf.rails.common.LocalText;
-import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
 import net.sf.rails.ui.swing.hexmap.HexMap;
 
@@ -287,13 +285,12 @@ public final class RevenueAdapter implements Runnable {
      * @return true if H-trains are used
      */
     private boolean useHTrains() {
-        boolean useHTrains = false;
         for (NetworkTrain train:trains) {
             if (train.isHTrain()) {
-                useHTrains = true;
+                return true;
             }
         }
-        return useHTrains;
+        return false;
     }
 
     public void initRevenueCalculator(boolean useMultiGraph){
@@ -325,6 +322,9 @@ public final class RevenueAdapter implements Runnable {
         rcEdges = new ArrayList<>(rcGraph.edgeSet());
         rcEdges.sort(new NetworkEdge.CostOrder());
         log.debug("rcVertices={} rcEdges={}", rcVertices, rcEdges);
+        for (NetworkVertex vertex : rcVertices) {
+            log.debug ("Stop={} value={}", vertex.getStop(), vertex.getValue());
+        }
 
         // prepare train length
         prepareTrainLengths(rcVertices);
@@ -413,15 +413,28 @@ public final class RevenueAdapter implements Runnable {
         // check train lengths
         int maxCityLength = 0, maxTownLength = 0;
         for (NetworkTrain train: trains) {
-            int trainTowns = train.getMinors();
-            if (train.getMajors() > maxCities) {
-                trainTowns = trainTowns+ train.getMajors() - maxCities;
-                train.setMajors(maxCities);
+            if (train.isHTrain()) {
+                // This dirty trick fixes some of the problems with H-trains,
+                // but may also have created new ones. (EV 02/2023)
+                //maxCityLength = train.getMajors();
+                //maxTownLength = 0;
+                /* FIXME: H-trains still are not always routed correctly */
+                maxCityLength = Math.min (maxCities+maxTowns, train.getMajors());
+                maxTownLength = 0;
+                //train.setMajors(maxCities+maxTowns);
+                //train.setMinors(maxCities+maxTowns);
+            } else {
+                int trainTowns = train.getMinors();
+                if (train.getMajors() > maxCities) {
+                    trainTowns = trainTowns + train.getMajors() - maxCities;
+                    train.setMajors(maxCities);
+                }
+                train.setMinors(Math.min(trainTowns, maxTowns));
+                maxCityLength = Math.max(maxCityLength, train.getMajors());
+                maxTownLength = Math.max(maxTownLength, train.getMinors());
             }
-            train.setMinors(Math.min(trainTowns, maxTowns));
 
-            maxCityLength = Math.max(maxCityLength, train.getMajors());
-            maxTownLength = Math.max(maxTownLength, train.getMinors());
+            log.debug("Train={} maxCities={} maxTowns={}", train, maxCityLength, maxTownLength);
         }
 
     }
@@ -509,6 +522,9 @@ public final class RevenueAdapter implements Runnable {
         }
         log.debug("RA: rcVertices:{}", rcVertices);
         log.debug("RA: rcEdges:{}", rcEdges);
+        for (NetworkVertex vertex : rcVertices) {
+            log.debug ("Stop={} value={}", vertex.getStop(), vertex.getValue());
+        }
 
         // set revenue bonuses
         int id = 0;
@@ -618,7 +634,8 @@ public final class RevenueAdapter implements Runnable {
 //        if (hasDynamicCalculator) {
 //            return revenueManager.revenueFromDynamicCalculator(this);
         // For 1837 we need to do both!
-        specialRevenue = revenueManager.revenueFromDynamicCalculator(this);
+        //specialRevenue = revenueManager.revenueFromDynamicCalculator(this); //??
+        specialRevenue = revenueManager.getSpecialRevenue();
 //        } else { // otherwise standard calculation
         return calculateRevenue(0, trains.size() - 1);
 //        }
@@ -730,6 +747,7 @@ public final class RevenueAdapter implements Runnable {
             int dynamicBonuses = 0;
             if (hasDynamicModifiers) {
                 dynamicBonuses = revenueManager.evaluationValue(this.getOptimalRun(), true);
+                specialRevenue = revenueManager.getSpecialRevenue();
             }
             if (dynamicBonuses != 0) {
                 runPrettyPrint.append("; ").append(LocalText.getText("RevenueBonus", dynamicBonuses));
