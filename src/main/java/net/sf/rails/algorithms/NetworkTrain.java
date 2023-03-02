@@ -50,7 +50,7 @@ public final class NetworkTrain implements Comparable<NetworkTrain>{
         boolean isETrain = railsTrain.isETrain();
         String trainName = railsTrain.toText();
 
-        if (isHTrain) log.info ("H-train {} distance {}", railsTrain, majors);
+        if (isHTrain) log.debug ("H-train {} distance {}", railsTrain, majors);
 
         return new NetworkTrain(majors, minors, ignoreMinors, multiplyMajors, multiplyMinors,
                 isHTrain, isETrain, trainName, railsTrain);

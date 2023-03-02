@@ -14,6 +14,7 @@ import net.sf.rails.game.model.PortfolioModel;
 import net.sf.rails.game.special.SpecialRight;
 import net.sf.rails.game.state.*;
 import net.sf.rails.game.state.Currency;
+import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.*;
@@ -64,6 +65,57 @@ public class OperatingRound_1826 extends OperatingRound {
     private Map<PortfolioModel, Integer> dueInterests = new HashMap<>();
     /* To keep saved files reproducible, note the sequence of the involved portfolios */
     private List<PortfolioModel> interestPaymentSequence = new ArrayList<>();
+
+    @Override
+    protected List<LayTile> getNormalTileLays(boolean display) {
+
+        List<LayTile> lays = super.getNormalTileLays(display);
+
+        PublicCompany belgian = companyManager.getPublicCompany(GameDef_1826.BELG);
+        boolean belgiumClosed = !belgian.hasOperated() && !getOperatingCompany().equals(belgian);
+
+        // Exclude Belgian hexes if Belgian has not yet operated
+        if (belgiumClosed) {
+            for (LayTile lay : lays) {
+                if (lay.getType() == LayTile.GENERIC) {   // 0
+                    lay.setType(LayTile.GENERIC_EXCL_LOCATIONS); // 3
+                    lay.setLocationsByName(GameDef_1826.BELG_HEXES);
+                    log.debug("LayTile type 0->3: {}", lay);
+                }
+            }
+        }
+        return lays;
+    }
+
+    @Override
+    protected List<LayTile> getSpecialTileLays(boolean forReal) {
+
+        List<LayTile> lays = super.getSpecialTileLays(forReal);
+
+        PublicCompany belgian = companyManager.getPublicCompany(GameDef_1826.BELG);
+        List<MapHex> nonBelgLocations = new ArrayList<>();
+        boolean belgiumClosed = !belgian.hasOperated() && !getOperatingCompany().equals(belgian);
+
+        // Exclude Belgian hexes if Belgian has not yet operated
+        if (belgiumClosed) {
+            for (LayTile lay : lays) {
+                if (lay.getType() == LayTile.SPECIAL_PROPERTY  // 2
+                        && Util.hasValue(lay.getLocationNames())) {
+                    // Filter out the belgian hexes
+                    for (MapHex hex : lay.getLocations()) {
+                        if (!GameDef_1826.BELG_HEXES.contains(hex.getId())) {
+                            nonBelgLocations.add(hex);
+                        }
+                    }
+                    log.debug("Lay type 2: old={} new={}", lay.getLocations(), nonBelgLocations);
+                    if (!nonBelgLocations.isEmpty() && nonBelgLocations.size() < lay.getLocations().size()) {
+                        lay.setLocations(nonBelgLocations);
+                    }
+                }
+            }
+        }
+        return lays;
+    }
 
     @Override
     protected void setDestinationActions() {

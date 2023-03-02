@@ -602,6 +602,19 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             addTextField (this, "Type",
                     action.getType(),
                     String.valueOf(action.getType()));  // 3
+            List<Tile> tiles = action.getTiles();
+            if (tiles == null) tiles = new ArrayList<>();
+            String tileString = "";
+            for (Tile tile : tiles) {
+                if (tileString.length() > 0) tileString += ",";
+                tileString += tile.getId();
+            }
+            addTextField (this, "Tiles",
+                    tiles,
+                    tileString); // 4
+            addTextField (this, "Locations",
+                    action.getLocations(),
+                    action.getLocationNames()); // 5
             finish();
         }
 
@@ -627,6 +640,16 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 action.setType(type);
             } catch (NumberFormatException e) {
             }
+            String tileNames = ((JTextField)inputElements.get(4)).getText();
+            List<Tile> tiles = new ArrayList<>();
+            for (String tileName : tileNames.split(",")) {
+                Tile tile = root.getTileManager().getTile(tileName);
+                tiles.add (tile);
+            }
+            action.setTiles(tiles);
+
+            String locationNames = ((JTextField)inputElements.get(5)).getText();
+            action.setLocationsByName(List.of(locationNames.split(",")));
 
             log.info("Action is {}", action);
             return action;

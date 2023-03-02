@@ -1,5 +1,8 @@
 package net.sf.rails.game.specific._1826;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Externalised constants for 1826
  */
@@ -17,4 +20,7 @@ public class GameDef_1826 {
 
     /* Various */
     public static final int[] E_TRAIN_STOPS = new int[] {2,3,3,4};
+    public static final List<String> BELG_HEXES
+            = new ArrayList<>(List.of("B10", "B12", "B14", "C11", "C13", "C15", "D12", "D14", "D16"));
+
 }

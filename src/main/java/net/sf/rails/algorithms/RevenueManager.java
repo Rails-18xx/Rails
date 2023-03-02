@@ -191,8 +191,12 @@ public final class RevenueManager extends RailsManager implements Configurable {
     boolean initDynamicModifiers(RevenueAdapter revenueAdapter) {
         activeDynamicModifiers.clear();
         for (RevenueDynamicModifier modifier : dynamicModifiers.view()) {
-            if (modifier.prepareModifier(revenueAdapter))
+            if (modifier.prepareModifier(revenueAdapter)) {
                 activeDynamicModifiers.add(modifier);
+                log.debug("Modifier {} activated", modifier.getClass().getSimpleName());
+            } else {
+                log.debug("Modifier {} deactivated", modifier.getClass().getSimpleName());
+            }
         }
         return !activeDynamicModifiers.isEmpty();
     }
@@ -234,9 +238,11 @@ public final class RevenueManager extends RailsManager implements Configurable {
         // however this is forbidden outside the optimal run!
         int value = 0;
         // To prevent "concurrent modification" exceptions, make a copy first
+        log.debug("Dynamic modifiers: {}", activeDynamicModifiers);
         ArrayList<RevenueDynamicModifier> adm = (ArrayList<RevenueDynamicModifier>) activeDynamicModifiers.clone();
         for (RevenueDynamicModifier modifier : adm) {
             value += modifier.evaluationValue(run, optimal);
+            log.debug("Modifier {} evaluation cumulative value: {}", modifier, value);
         }
         if (calculatorModifier != null) {
             specialRevenue = calculatorModifier.getSpecialRevenue();

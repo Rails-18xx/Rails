@@ -416,7 +416,13 @@ public final class RevenueAdapter implements Runnable {
             if (train.isHTrain()) {
                 // This dirty trick fixes some of the problems with H-trains,
                 // but may also have created new ones. (EV 02/2023)
-                maxCityLength = maxTownLength = train.getMajors();
+                //maxCityLength = train.getMajors();
+                //maxTownLength = 0;
+                /* FIXME: H-trains still are not always routed correctly */
+                maxCityLength = Math.min (maxCities+maxTowns, train.getMajors());
+                maxTownLength = 0;
+                //train.setMajors(maxCities+maxTowns);
+                //train.setMinors(maxCities+maxTowns);
             } else {
                 int trainTowns = train.getMinors();
                 if (train.getMajors() > maxCities) {
@@ -424,10 +430,11 @@ public final class RevenueAdapter implements Runnable {
                     train.setMajors(maxCities);
                 }
                 train.setMinors(Math.min(trainTowns, maxTowns));
+                maxCityLength = Math.max(maxCityLength, train.getMajors());
+                maxTownLength = Math.max(maxTownLength, train.getMinors());
             }
 
-            maxCityLength = Math.max(maxCityLength, train.getMajors());
-            maxTownLength = Math.max(maxTownLength, train.getMinors());
+            log.debug("Train={} maxCities={} maxTowns={}", train, maxCityLength, maxTownLength);
         }
 
     }

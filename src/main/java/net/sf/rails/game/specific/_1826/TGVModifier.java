@@ -9,6 +9,9 @@ import net.sf.rails.algorithms.RevenueDynamicModifier;
 import net.sf.rails.algorithms.RevenueTrainRun;
 import net.sf.rails.common.LocalText;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * TGV is a train that runs on independent track (defined in Game 1826)
@@ -17,7 +20,9 @@ import net.sf.rails.common.LocalText;
  */
 public class TGVModifier implements RevenueDynamicModifier {
 
-    final private String TGV_NAME = "TGV";
+    final private String TGV_NAME = GameDef_1826.TGV;
+
+    private static final Logger log = LoggerFactory.getLogger(TGVModifier.class);
 
     private int nbTGV = 0; // store the number of tgv
 
@@ -25,6 +30,7 @@ public class TGVModifier implements RevenueDynamicModifier {
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
 
         // separate trains into tgv and others
+        // FIXME: This does not work
         List<NetworkTrain> allTrains = revenueAdapter.getTrains();
         List<NetworkTrain> tgvTrains = new ArrayList<NetworkTrain>();
         List<NetworkTrain> otherTrains = new ArrayList<NetworkTrain>();
@@ -36,6 +42,7 @@ public class TGVModifier implements RevenueDynamicModifier {
                 otherTrains.add(train);
             }
         }
+        log.debug ("Initial train sequence: {}", allTrains);
 
         // change list that tgv trains are the first ones, if there are tgvs ...
         nbTGV = tgvTrains.size();
@@ -43,6 +50,7 @@ public class TGVModifier implements RevenueDynamicModifier {
             allTrains.clear();
             allTrains.addAll(tgvTrains);
             allTrains.addAll(otherTrains);
+            log.debug ("Final train sequence: {}", allTrains);
             return true;
         } else { // ... otherwise deactivate modifier
             return false;
@@ -70,12 +78,15 @@ public class TGVModifier implements RevenueDynamicModifier {
         return true;
     }
 
+    // FIXME: this method is never called
     public int calculateRevenue(RevenueAdapter revenueAdapter) {
         // tgv run separately (see prepare modifier above)
         int value = 0;
         value = revenueAdapter.calculateRevenue(0, nbTGV-1);
+        log.debug ("Revenue of TGV: {}", value);
         // add the other trains
         value += revenueAdapter.calculateRevenue(nbTGV, revenueAdapter.getTrains().size()-1);
+        log.debug ("Revenue of all trains: {}", value);
         return value;
     }
 

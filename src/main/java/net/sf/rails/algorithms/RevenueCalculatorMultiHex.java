@@ -4,15 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class RevenueCalculatorMultiHex extends RevenueCalculatorMulti {
-    private static final Logger log = LoggerFactory.getLogger(RevenueCalculatorMultiHex.class);
 
+    private static final Logger log = LoggerFactory.getLogger(RevenueCalculatorMultiHex.class);
 
     public RevenueCalculatorMultiHex (RevenueAdapter revenueAdapter, int nbVertexes, int nbEdges,
             int maxNeighbors, int maxVertexSets, int maxEdgeSets, int nbTrains, int nbBonuses) {
 
         super(revenueAdapter, nbVertexes, nbEdges,
                 maxNeighbors, maxVertexSets, maxEdgeSets, nbTrains, nbBonuses);
-
     }
 
     @Override

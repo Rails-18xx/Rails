@@ -264,22 +264,19 @@ Game variants:
 			Initially published by Chris Lawson (materials designer)
 			Rules version 0.35 of 13 January 2000
 
-			Not yet developed or tested:
-			- The initial non-Belge token laying prohibition
-			  in Belgium is not enforced
+			Not yet fully developed or tested:
 			- Share selling in emergency train buying
 			  (taking loans, bonds and president cash works)
 			- Bankruptcy
 			- TGV running over track used by other trains
 			  (the existing TGV running modifier is incorporated,
-			  but could not yet be tested)
-			- End of game
+			  but does not produce the desired result)
 
-			Note: it turns out that not always the best runs are found
-			for H-trains. Players should check the calculated H-train
-			revenues, and correct these if necessary, using the spinner.
+			Note: it turns out that for H-trains not always the best runs are found.
+			Players should check the calculated H-train revenues,
+			and correct these if necessary, using the spinner.
 			The revenue spinner can be enabled at game start using
-			Configuration/General/Show spinner in revenue step.
+			'Configuration/General/Show spinner in revenue step'.
 		</Description>
 		<Players minimum="2" maximum="6" />
 	</Game>

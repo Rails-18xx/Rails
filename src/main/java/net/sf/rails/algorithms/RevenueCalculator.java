@@ -301,7 +301,8 @@ abstract class RevenueCalculator {
 
     private void initRevenueValues(final int startTrain, final int finalTrain){
 
-      // intialize values
+        log.debug("nbTrains={} nbVertexes={}", nbTrains, nbVertexes);
+        // intialize values
         maxMajorRevenues = new int[nbTrains][nbVertexes];
         maxMinorRevenues = new int[nbTrains][nbVertexes];
         maxBonusRevenues = new int[nbTrains][nbVertexes + nbBonuses];
