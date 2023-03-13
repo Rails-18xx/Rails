@@ -1259,7 +1259,7 @@ BUY_SHARE_LOG,Paris,10,Paris,Pool,100
  
 CompanyOperates,PO,Lyndon
 LaysTileAt,PO,513,C13,SW
-LAYS_TOKEN_ON,PO,C13,200
+LAYS_TOKEN_ON,PO,C13,100
 CompanyRevenue,PO,710
 InterestPaidFromTreasury,PO,50,loan
 CompanySplits,PO,710
@@ -1317,7 +1317,7 @@ Has,Midi,381
 Has,Ouest,317
 Has,Paris,158
 Has,PLM,2
-Has,PO,440
+Has,PO,540
 Has,SNCF,689
 Has,Charlie,327
 Has,Mike,545
@@ -1373,7 +1373,7 @@ Has,Midi,381
 Has,Ouest,399
 Has,Paris,658
 Has,PLM,2
-Has,PO,530
+Has,PO,630
 Has,SNCF,689
 Has,Charlie,27
 Has,Mike,245
@@ -1433,7 +1433,7 @@ Payout,Charlie,175,5,10
 PRICE_MOVES_LOG,PLM,110,E2,122,F2
  
 CompanyOperates,Est,Mike
-LAYS_TOKEN_ON,Est,H6,100
+LAYS_TOKEN_ON,Est,H6,120
 CompanyRevenue,Est,380
 InterestPaidFromTreasury,Est,50,loan
 CompanySplits,Est,380
@@ -1488,12 +1488,12 @@ ORWorthIncrease,Lyndon,8.1,754
 ORWorthIncrease,Mark,8.1,692
 Has,Als,166
 Has,Belg,3
-Has,Est,418
+Has,Est,398
 Has,Midi,321
 Has,Ouest,29
 Has,Paris,318
 Has,PLM,2
-Has,PO,310
+Has,PO,410
 Has,SNCF,899
 Has,Charlie,815
 Has,Mike,622
@@ -1604,12 +1604,12 @@ ORWorthIncrease,Lyndon,8.2,1175
 ORWorthIncrease,Mark,8.2,847
 Has,Als,116
 Has,Belg,3
-Has,Est,58
+Has,Est,38
 Has,Midi,50
 Has,Ouest,379
 Has,Paris,68
 Has,PLM,2
-Has,PO,251
+Has,PO,351
 Has,SNCF,109
 Has,Charlie,1603
 Has,Mike,1038
@@ -1703,12 +1703,12 @@ ORWorthIncrease,Lyndon,8.3,1634
 ORWorthIncrease,Mark,8.3,1137
 Has,Als,66
 Has,Belg,3
-Has,Est,58
+Has,Est,38
 Has,Midi,50
 Has,Ouest,527
 Has,Paris,68
 Has,PLM,2
-Has,PO,251
+Has,PO,351
 Has,SNCF,109
 Has,Charlie,2440
 Has,Mike,1972

@@ -67,6 +67,13 @@ public class OperatingRound_1826 extends OperatingRound {
     private List<PortfolioModel> interestPaymentSequence = new ArrayList<>();
 
     @Override
+    protected void initTurn() {
+        super.initTurn();
+        dueInterests.clear();
+        interestPaymentSequence.clear();
+    }
+
+    @Override
     protected List<LayTile> getNormalTileLays(boolean display) {
 
         List<LayTile> lays = super.getNormalTileLays(display);
@@ -625,6 +632,17 @@ public class OperatingRound_1826 extends OperatingRound {
         }
         return remainingShares;
     }
+
+    protected void checkFlotation(PublicCompany company) {
+
+        // The SNCF always floats
+        if (company == sncf) {
+            floatCompany(sncf);
+        } else {
+            super.checkFlotation(company);
+        }
+    }
+
 
     @Override
     public boolean setPossibleActions() {

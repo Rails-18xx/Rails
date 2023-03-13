@@ -1098,7 +1098,6 @@ BoughtBond,SNCF,1,SNCF,Bank/Pool,100
 CompanyOperates,Paris,Jeremy
 CompanyRevenue,Paris,260
 InterestPaidFromTreasury,Paris,50,loan
-PayoutForBonds,BANK,10,0,Paris
 CompanyPaysOutFull,Paris,260
 Payout,Jeremy,52,2,10
 Payout,Dave,26,1,10
@@ -1109,7 +1108,6 @@ CompanyOperates,Nord,Jeremy
 LaysTileAt,Nord,63,C13,SW
 CompanyRevenue,Nord,260
 InterestPaidFromTreasury,Nord,50,loan
-PayoutForBonds,BANK,10,0,Nord
 CompanyPaysOutFull,Nord,260
 Payout,Jeremy,156,6,10
 Payout,Nord,104,4,10
@@ -1124,8 +1122,8 @@ Has,Als,22
 Has,Belg,251
 Has,GC,277
 Has,Midi,188
-Has,Nord,484
-Has,Paris,169
+Has,Nord,494
+Has,Paris,179
 Has,PO,162
 Has,SNCF,210
 Has,John,432
@@ -1172,8 +1170,8 @@ Has,Als,22
 Has,Belg,251
 Has,GC,497
 Has,Midi,188
-Has,Nord,684
-Has,Paris,369
+Has,Nord,694
+Has,Paris,379
 Has,PLM,1100
 Has,PO,162
 Has,SNCF,210
@@ -1284,8 +1282,8 @@ Has,Als,22
 Has,Belg,451
 Has,GC,69
 Has,Midi,118
-Has,Nord,756
-Has,Paris,149
+Has,Nord,766
+Has,Paris,159
 Has,PLM,100
 Has,PO,208
 Has,SNCF,210
@@ -1382,8 +1380,8 @@ Has,Als,22
 Has,Belg,351
 Has,GC,205
 Has,Midi,188
-Has,Nord,710
-Has,Paris,149
+Has,Nord,720
+Has,Paris,159
 Has,PLM,40
 Has,PO,254
 Has,SNCF,170
@@ -1479,8 +1477,8 @@ Has,Als,22
 Has,Belg,251
 Has,GC,341
 Has,Midi,258
-Has,Nord,1252
-Has,Paris,389
+Has,Nord,1262
+Has,Paris,399
 Has,PLM,40
 Has,PO,264
 Has,SNCF,70
@@ -1523,8 +1521,8 @@ Has,Als,22
 Has,Belg,251
 Has,GC,341
 Has,Midi,258
-Has,Nord,1552
-Has,Paris,689
+Has,Nord,1562
+Has,Paris,699
 Has,PLM,40
 Has,PO,264
 Has,SNCF,70
@@ -1624,8 +1622,8 @@ Has,Als,22
 Has,Belg,151
 Has,GC,477
 Has,Midi,328
-Has,Nord,512
-Has,Paris,119
+Has,Nord,522
+Has,Paris,129
 Has,PLM,40
 Has,PO,320
 Has,SNCF,30
@@ -1715,8 +1713,8 @@ Has,Als,22
 Has,Belg,51
 Has,GC,613
 Has,Midi,398
-Has,Nord,512
-Has,Paris,119
+Has,Nord,522
+Has,Paris,129
 Has,PLM,40
 Has,PO,376
 Has,SNCF,30
@@ -1807,8 +1805,8 @@ Has,Als,22
 Has,Belg,51
 Has,GC,749
 Has,Midi,468
-Has,Nord,512
-Has,Paris,119
+Has,Nord,522
+Has,Paris,129
 Has,PLM,40
 Has,PO,432
 Has,SNCF,30

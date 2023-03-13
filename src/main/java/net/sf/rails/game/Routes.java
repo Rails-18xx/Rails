@@ -1,10 +1,6 @@
 package net.sf.rails.game;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import net.sf.rails.algorithms.*;
-import net.sf.rails.util.Util;
-import org.jgrapht.graph.SimpleGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,206 +10,63 @@ public class Routes {
 
     private static final Logger log = LoggerFactory.getLogger(Routes.class);
 
-    /*
-     * Create a map with all tokenable Stops for a PublicCompany,
-     * and their distances to a valid start base token.
-     * @param root Root
-     * @param company Currently active PublicCompany
-     * @param includeStartHex True if both the start and final hex must be counted.
-     * @param toHomeOnly True if only the distance to a home hex counts.
-     * @return A HashMap with tokenable stops as keys and the distances as values.
+    private static final int NO_VALUE = -1;
+    private static final int HIGH_VALUE = 99;
+
+    PublicCompany company;
+
+    /* Map from visited hex sides to the minimal track distances
+     * from a base token.
      */
+    private Map<NetworkVertex, Integer> vertexDistances = new HashMap<>();
 
-    /* THIS CODE is left in for now, perhaps it can be extended to include closed loops.
-    public static Map<Stop, Integer> getTokenLayRouteDistances(
-            RailsRoot root, PublicCompany company,
-            boolean includeStartHex, boolean toHomeOnly) {
+    private Map<NetworkVertex, Integer> junctionDistances = new HashMap<>();
 
-        /* The ultimate minimal distances from each reachable and
-         * tokenable stop to the nearest base token of a company.
-         *//*
-        Map<Stop, Integer> stopsAndDistancesMap = new HashMap<>();
+    private Map<Stop, HashMap<NetworkVertex, Integer>> startDistances
+            = new HashMap<>();
 
-        NetworkGraph mapGraph = NetworkGraph.createMapGraph(root);
-        NetworkGraph companyGraph =
-                NetworkGraph.createRouteGraph(mapGraph, company, false, false);
-        SimpleGraph<NetworkVertex, NetworkEdge> graph = companyGraph.getGraph();
+    private LinkedList<WaitingSegment> waitingList = new LinkedList<>();
 
-        List<Stop> usableBases = new ArrayList<>();
+    DLLGraph dllGraph;
 
-        for (BaseToken token : company.getLaidBaseTokens()) {
-            Stop stop = ((Stop)token.getOwner());
-            MapHex hex = stop.getParent();
-            if (!toHomeOnly || company.getHomeHexes().contains(hex)) {
-                usableBases.add (stop);
-            }
-        }
-        log.debug(">>>>> Usable bases: {}", usableBases);
+    boolean distancesHaveChanged;
 
-        /* Map from visited hexes to the minimal track distances
-         * from a base token.
-          *//*
-        Map<MapHex, Integer> beenAtHex = new HashMap<>();
-        /* Map from visited stops (stations) to the minimal
-         * track distances from a base token.
-         *//*
-        Map<Stop, Integer> beenAtStop = new HashMap<>();
-
-        for (Stop baseTokenStop : usableBases) {
-            MapHex baseTokenHex = baseTokenStop.getParent();
-            Station station = baseTokenStop.getRelatedStation();
-            NetworkVertex startVertex = mapGraph.getVertex(baseTokenHex, station);
-            log.debug(">>>>> Start search from base at {}", baseTokenStop);
-
-            NetworkIterator iterator = new NetworkIterator(graph, startVertex);
-            int edges = 0;
-            int prevEdges = 0;
-            boolean skipUntilStartVertex = false;
-
-            NetworkVertex prev = startVertex;
-            while (iterator.hasNext()) {
-                NetworkVertex item = iterator.next();
-                log.debug("      Checking item {}", item);
-                MapHex hex = item.getHex();
-                if (skipUntilStartVertex && hex != baseTokenHex) {
-                    log.debug("<<<<< Skipping {} {}", item.getType(), item);
-                    continue;
-                }
-                if (hex.equals(baseTokenHex)) {
-                    log.debug("Continue search from base at {}", baseTokenStop);
-                    skipUntilStartVertex = false;
-                }
-                if (item.isSide()) {
-                    // Ignore any additional sides on the same hex
-                    if(hex.equals(prev.getHex())) {
-                        log.debug ("      Skipping {} on same hex {}", item, hex);
-                        continue;
-                    }
-                    // Ignore any hex sides that have no track
-                    if (!hex.getTrackSides().get(item.getSide())) {
-                        log.debug ("      Skipping {}: no tracks", item);
-                        continue;
-                    }
-                    if (hex.equals(startVertex.getHex())) {
-                        Stop s = findConnectedStop(item);
-                        log.debug(">>>>> Side {} is connected to stop {}",
-                                item.getIdentifier(), s);
-                        log.debug("      Hex {} rotation = {}", hex, hex.getCurrentTileRotation());
-                        prevEdges = edges; // Setting to 0 may be wrong if the hex has multiple stations
-                        edges = 0;
-                        log.debug("  1   Edges set to {}", edges);
-                    } else if (hex != prev.getHex() && prev.isStation()
-                            && beenAtHex.containsKey(hex)) {
-                        // We jumped from a station being an end point
-                        // back to an edge on a hex visited before.
-                        edges = beenAtHex.get(hex);
-                        log.debug("  7   Hex {} edges set to {}", hex, edges);
-                    } else if (!beenAtHex.containsKey(hex)) {
-                        log.debug("..... At hex={} side={}: tile={} rotation={} trackSides={} or {}",
-                                hex, item.getSide().getTrackPointNumber(),
-                                hex.getCurrentTile(), hex.getCurrentTileRotation(),
-                                hex.getTrackSides(),
-                                hex.getTrackSides(hex.getCurrentTile(), hex.getCurrentTileRotation().getTrackPointNumber()));
-                        edges++;
-                        beenAtHex.put(hex, edges);
-                        log.debug("  2   Hex {} edges set to {}", hex, edges);
-                    } else if (edges > 0 && beenAtHex.get(hex) > edges+1) {
-                        edges++;
-                        beenAtHex.put(hex, edges);
-                        log.debug("  3   Hex {} edges set to {}", hex, edges);
-                    } else {
-                        edges = Math.min (beenAtHex.get(hex), edges + 1);
-                        beenAtHex.put(hex, edges);
-                        log.debug("  4   Hex {} edges set to {}", hex, edges);
-                    }/* else {
-                        log.debug("<<<<< Skipping side {}", item.getIdentifier());
-                        continue;
-                    }*//*
-                    log.debug("~~~~~ Start: {}  Edge: {} count={}",
-                            startVertex, item.getIdentifier(), edges);
-                } else if (item.isStation()) {
-                    log.debug("===== Start={} End={} Sides={}", startVertex,
-                            item.getIdentifier().replaceFirst("-", ""), edges);
-                    Stop stop = item.getStop();
-                    if (hex.equals(baseTokenHex) && !stop.equals(baseTokenStop)) {
-                        // E.g. 1826 Paris: we may end up at a different station
-                        beenAtStop.put(stop, prevEdges + 1);
-                        log.debug("  +   {} is tokened by {}", stop, company);
-                        log.debug("  5   Stop {} distance set to {}", stop, prevEdges + 1);
-                    } else if (stop.hasTokenOf(company)) {
-                        //skipUntilStartVertex = true;
-                        //log.debug("      Skipping tokened stop {}", stop);
-                        beenAtStop.put(stop, 0);
-                        log.debug("  8   Stop {} distance set to {}", stop, 0);
-                        beenAtHex.put (hex, 0);
-                        log.debug("  9   Hex {} edges set to {}", hex, 0);
-                        edges = 0;
-                        continue;
-                    } else {
-                        beenAtStop.put (stop, edges);
-                        log.debug("  6   Stop {} distance set to {}", stop, edges);
-                    }
+    /** This map of maps records the minimal token distances for a stop,
+     *  as it was set when entering the stop hex from a particular side.
+     *  Such a value would NOT be useable as a starting distance when
+     *  travelling from that stop via that same side, probably to a
+     *  different downstream branch. In such a case, the starting distance
+     *  must be derived as the lowest value obtained from all other sides.
+     */
+    //Map<Stop, HashMap<NetworkVertex, Integer>> sideDistances
+    //        = new HashMap<>();
 
 
-                    if (beenAtHex.containsKey(hex)) {
-                        edges = beenAtHex.get(hex);
-                    }
-                    if (stop.isTokenableFor(company)) {
-                        log.debug("+++++ Found {} edges from {} to {}", edges, baseTokenStop, item.getStop());
-                        if (!stopsAndDistancesMap.containsKey(stop)
-                                || edges < stopsAndDistancesMap.get(stop)) {
-                            int distance = includeStartHex ? edges+1 : edges;
-                            stopsAndDistancesMap.put (stop, distance);
-                            log.debug("Found distance {} from {} to {}", distance, baseTokenStop, stop);
-                        }
-                    }
-                }
-                prev = item;
-            }
-        }
-        return stopsAndDistancesMap;
+    public Routes(PublicCompany company) {
+        this.company = company;
     }
-
-    private static Stop findConnectedStop (NetworkVertex item) {
-        if (item.isStation()) {
-            return item.getStop();
-        } else {
-            MapHex hex = item.getHex();
-            Tile tile = hex.getCurrentTile();
-            HexSide rotation = hex.getCurrentTileRotation();
-            int toRotate = 6 - rotation.getTrackPointNumber();
-            for (TrackPoint trackPoint : tile.getTracks(item.getSide().rotate(toRotate))) {
-                if (trackPoint.getTrackPointType() == TrackPoint.Type.STATION) {
-                    return hex.getRelatedStop((Station)trackPoint);
-                }
-            }
-            return null;
-        }
-    }*/
-
-    public Routes() {}
-
-    LinkedList<WaitingSegment> waitingList = new LinkedList<>();
 
     /**
      * Create a map with all tokenable Stops for a PublicCompany,
      * and their distances to a valid start base token.
-     * @param company Currently active PublicCompany
      * @param includeStartHex True if both the start and final hex must be counted.
      * @param toHomeOnly True if only the distance to a home hex counts.
      * @return A HashMap with tokenable stops as keys and the distances as values.
      */
-    public Map<Stop, Integer> getTokenLayRouteDistances2 (
-            PublicCompany company, boolean includeStartHex, boolean toHomeOnly){
+    public Map<Stop, Integer> getTokenLayRouteDistances(
+            boolean includeStartHex, boolean toHomeOnly){
 
         RailsRoot root = company.getRoot();
         NetworkGraph mapGraph = NetworkGraph.createMapGraph(root);
 
+        log.debug("Start finding distances for {}", company);
         waitingList.clear();
 
-        DLLGraph graph = new DLLGraph(company, PublicCompany.FROM_HOME_ONLY);
-
-        log.debug("Called getTokenLayRouteDistances2");
+        /* Build an object network of nodes and segments,
+         * where the segments can be traversed in both directions.
+         */
+        dllGraph = new DLLGraph(company, false);
+        log.debug("DLL graph: {}", dllGraph);
 
         /* The ultimate minimal distances from each reachable and
          * tokenable stop to the nearest base token of a company.
@@ -231,63 +84,64 @@ public class Routes {
         }
 
         // Make startbase scanning sequence reproducible
-        //log.debug(">>>>> Usable bases: {}, unsorted", usableBases);
         usableBases.sort((a, b) -> (a.getId().compareTo(b.getId())));
         log.debug(">>>>> Usable bases: {}", usableBases);
 
-        /* Map from visited hex sides to the minimal track distances
-         * from a base token.
-         */
-        Map<NetworkVertex, Integer> vertexDistances = new HashMap<>();
-
-        /* Map from visited stops (stations) to the minimal
-         * track distances from a base token.
-         */
-        Map<Stop, Integer> stopDistances = new HashMap<>();
-
-        /* Map from visited hexes to the minimal track distances from a base token.
-         * The values only serve to equalise distances of multiple trackpoints in any hex.
-         */
-        Map<MapHex, Integer> hexDistances = new HashMap<>();
-
-        /* Build an object network of nodes and segments,
-         * where the segments can be traversed in both directions.
-         */
         for (Stop baseTokenStop : usableBases) {
             MapHex baseTokenHex = baseTokenStop.getParent();
 
             Station station = baseTokenStop.getRelatedStation();
             NetworkVertex startVertex = mapGraph.getVertex(baseTokenHex, station);
+            NetworkVertex toVertex;
             log.debug(">>>>> Start search from base at {}", baseTokenStop);
 
-            for (DLLGraph.Segment segment : graph.getSegments(baseTokenStop)) {
-                pushWaitingList(new WaitingSegment(segment, startVertex, true));
+            //setLowestValue (startVertex, 0);
+
+            List<DLLGraph.Segment> segments = dllGraph.getSegments(baseTokenStop, 1);
+            log.debug ("Segments from {} : {}", baseTokenStop, segments);
+            for (DLLGraph.Segment segment : segments) {
+                pushWaitingList(new WaitingSegment(segment, startVertex, 1));
             }
 
-            hexDistances.put(baseTokenHex, 0);
-
             int edgeCount = 0;
-            MapHex hex = baseTokenHex;
+            int lowestValue;
+            MapHex hex;
             MapHex prevHex = baseTokenHex;
+            NetworkVertex prevItem = null;
 
-            while (!waitingList.isEmpty()) {
+NEXTSEG:    while (!waitingList.isEmpty()) {
 
                 WaitingSegment waiting = waitingList.pop();
+                log.debug("Iteration start of segment {}", waiting);
+
                 DLLGraph.Segment currentSegment = waiting.getSegment();
-                startVertex = waiting.getStartVertex();
+                startVertex = waiting.getFromVertex();
+                toVertex = waiting.getToVertex();
+                NetworkVertex nextAfterStart = currentSegment.getNextTo(startVertex);
+                NetworkVertex lastBeforeEnd = currentSegment.getNextTo(toVertex);
+                distancesHaveChanged = false;
 
-                NetworkVertex prevItem = startVertex;
+                currentSegment.setIterator(startVertex, toVertex);
 
-                currentSegment.setIterator(startVertex);
-                log.debug("Iteration start of segment {} from {} to {}",
-                        currentSegment, startVertex,
-                        currentSegment.otherEnd(startVertex));
-
-                if (startVertex.getStop().hasTokenOf(company)) {
-                    edgeCount = 0;
-                } else if (stopDistances.containsKey(startVertex.getStop())) {
-                    edgeCount = stopDistances.get(startVertex.getStop());
+                if (startVertex.isStation()) {// && startVertex.getStop().hasTokenOf(company)) {
+                    //edgeCount = 0;
+                    //} else if (vertexDistances.containsKey(startVertex)) {
+                    //    edgeCount = vertexDistances.get(startVertex);
+                    /*} else*/
+                    if ((edgeCount = getStartDistance (
+                            startVertex, nextAfterStart)) < HIGH_VALUE) {
+                        log.debug("Start count of segment {} is {}", currentSegment, edgeCount);
+                    } else {
+                        log.debug("No edgeCount available for stop {}, what now??", startVertex);
+                    }
+                } else {
+                    if (vertexDistances.containsKey(startVertex)) {
+                        edgeCount = vertexDistances.get(startVertex);
+                    } else {
+                        log.debug("No edgeCount available, for edge {}, what now??", startVertex);
+                    }
                 }
+                log.debug ("Starting edgeCount = {}", edgeCount);
 
                 while (currentSegment.hasNext()) {
                     NetworkVertex item = currentSegment.getNext();
@@ -295,129 +149,387 @@ public class Routes {
                     boolean foundLowerEdgeCount = false;
                     boolean beenAtStopBefore = false;
 
-                    log.debug("      Checking segment {} item {} {}",
-                            currentSegment, item.getType(), item);
+                    log.debug("      Checking item {} {} of segment {}",
+                            item.getType(), item, currentSegment);
 
                     if (item.isStation()) {
                         Stop stop = item.getStop();
-                        log.debug("  S   {} is a stop", item);
+                        log.debug("  S   {} is a stop ({})", item, stop);
 
-                        if (stopDistances.containsKey(stop)) {
-                            beenAtStopBefore = true;
-                            if (edgeCount < stopDistances.get(stop)) {
-                                foundLowerEdgeCount = true;
-                                stopDistances.put(stop, edgeCount);
+                        if (stop.hasTokenOf(company) && !item.equals(startVertex)) {
+                            // There will always be a scan from this stop backwards,
+                            // so we can stop scanning here
+                            //setLowestValue (item, 0);
+                            //setSideDistance(stop, currentSegment.getNextTo(item), 0);
+
+                            continue NEXTSEG;
+                        }
+                        if (stop.isTokenableFor(company)) {
+                            if (!cityDistancesMap.containsKey(stop) || edgeCount < cityDistancesMap.get(stop)) {
+                                cityDistancesMap.put(stop, edgeCount + (includeStartHex ? 1 : 0));
+                                log.debug("Stop {} is tokenable for {} at distance {}", stop, company, edgeCount);
                             }
                         }
-                        if (!beenAtStopBefore || foundLowerEdgeCount) {
-                            stopDistances.put(stop, edgeCount);
-                            log.debug("Distance at stop {} is {}", stop, edgeCount);
-                        }
 
-                        if (stop.hasTokenOf(company)) {
-                            if (edgeCount > 0) foundLowerEdgeCount = true;
-                            edgeCount = 0;
-                            stopDistances.put(stop, 0);
-                            if (hex.getStops().size() == 1) {
-                                hexDistances.put(hex, 0);
-                            }
-                        } else if (stop.isTokenableFor(company)) {
-                            cityDistancesMap.put(stop, edgeCount + (includeStartHex ? 1 : 0));
-                            log.debug("Stop {} is tokenable for {}", stop, company);
-                        }
-
+                        /*
                         if (currentSegment.isAtEnd(item) && !item.equals(startVertex)
                                 && !hex.getCurrentTile().getColourText().equalsIgnoreCase("red")
                                 && (foundLowerEdgeCount || !beenAtStopBefore)) {
+                            int d = edgeCount;
+                            if (vertexDistances.containsKey(item)) {
+                                d = Math.min (vertexDistances.get (item), edgeCount);
+                            }
+                            setLowestValue (item, d);*/
+                        if (currentSegment.isAtEnd(item) && !item.equals(startVertex)) {
+                            //setSideDistance(stop, currentSegment.getNextTo(item), edgeCount);
+                            setDistancesAtFinalStop(item, prevItem, edgeCount);
+
                             // Check if there are other segments from this segment end
-                            for (DLLGraph.Segment segment : graph.getSegments(stop)) {
-                                if (segment != currentSegment || foundLowerEdgeCount) {
-                                    pushWaitingList(new WaitingSegment(segment, item));
+                            // This only makes sense if the current scan has changed any distance value
+                            if (distancesHaveChanged && !item.isSink()) {
+                                for (DLLGraph.Segment segment : dllGraph.getSegments(stop, 2)) {
+                                    log.debug("Segment {} found at {} ({})", segment, item, stop);
+                                    if (!segment.isDuplicate(currentSegment) || foundLowerEdgeCount) {
+                                        pushWaitingList(new WaitingSegment(segment,
+                                                item, segment.otherEnd(item), 2));
+                                    }
                                 }
                             }
                         }
-                        foundLowerEdgeCount = false;
-                        beenAtStopBefore = false;
 
                     } else if (item.isSide()) {
-                        // Only increase the edge count when entering a hex
-                        if (hex.equals(prevHex)) {
-                            // Leaving a hex.
-                            vertexDistances.put(item, edgeCount);
-                        } else {
+
+                        // Only increase the edge count when entering a hex, except the next-to-last one
+                        if (!hex.equals(prevHex)) {
                             // Entering a hex.
                             edgeCount++;
 
-                            if (vertexDistances.containsKey(item)) {
-                                // Been here before, check edgeCount
-                                int oldEdgeCount = vertexDistances.get(item);
-                                if (oldEdgeCount > edgeCount) {
-                                    log.debug("Seg {} at {} lowering distance from {} to {}",
-                                            currentSegment, item, oldEdgeCount, edgeCount);
-                                    // OK, we can lower that count, and continue
-                                    vertexDistances.put(item, edgeCount);
-                                    hexDistances.put(hex, edgeCount);
-                                } else if (oldEdgeCount < edgeCount - 2) {
-                                    log.debug("Reversing seg {} at {}: found lower distance {} than {}",
-                                            currentSegment, item, oldEdgeCount, edgeCount);
-                                    // The new hex already has a lower value,
-                                    // and we must backtrack
-                                    currentSegment.setIteratorReversed(item);
-                                    edgeCount = vertexDistances.get(item);
-                                    foundLowerEdgeCount = true;
-                                    // Unclear why IJ grays this out, it is really necessary!
-                                } else {
-                                    log.debug("Seg {} at {} found similar distances {} and {}",
-                                            currentSegment, item, oldEdgeCount, edgeCount);
-                                    foundLowerEdgeCount = false;
-                                    break;
-                                }
+                            // Find the previous value at this side
+                            int oldValue = getDistance (item);
 
+                            // If that value is at least 3 lower than the originally assigned one,
+                            // it is necessary to schedule a scan from this vertex backwards
+                            if (oldValue != HIGH_VALUE && oldValue != NO_VALUE) {
+                                if (edgeCount > oldValue + 2) {
+                                    pushWaitingList(new WaitingSegment(currentSegment, item, startVertex, 3));
+                                    log.debug("      Scheduled a backward scan in {} from {} to {}",
+                                            currentSegment, item, startVertex);
+                                }
+                                if (edgeCount > oldValue) {
+                                    // It doesn't make sense to continue from here
+                                    continue NEXTSEG;
+                                }
                             }
                         }
+                        assignDistance(item, edgeCount);
                     }
-                    prevItem = item;
                     prevHex = hex;
+                    prevItem = item;
                     log.debug("Item {} has distance {}", item, edgeCount);
                 }
             }
         }
-        log.debug("Distances: {}", cityDistancesMap);
+        log.debug("{} tokenable at distances: {}", company, cityDistancesMap);
         return cityDistancesMap;
     }
+
+    private boolean assignDistance (NetworkVertex item, int newValue) {
+        distancesHaveChanged = false;
+        if (vertexDistances.containsKey(item)) {
+            int oldValue = vertexDistances.get(item);
+            if (oldValue > newValue) {
+                log.debug("      Item {} set from {} to {}", item, oldValue, newValue);
+                vertexDistances.put (item, newValue);
+                distancesHaveChanged = true;
+            } else if (oldValue < newValue){
+                log.debug ("WARNING: does NOT set item {} from {} to {}",
+                        item, oldValue, newValue);
+            }
+        } else {
+            log.debug("Item {} set to {}", item, newValue);
+            vertexDistances.put(item, newValue);
+            distancesHaveChanged = true;
+        }
+        return distancesHaveChanged;
+    }
+
+    /**
+     * This method is used when entering the <b>final</b> hex of a segment.
+     *
+     * The purpose is to update all connected edges to the value that should
+     * be used as a starting edgeCount for any new segment scan starting there.
+     * Connected edges include those behind a connected station.
+     *
+     * The entry side gets the lowest values of all other connected sides.
+     * The other sides are updated wherever the edgeCount of entry is lower.
+
+     * @param entryVertex The first vertex encountered when entering a hex.
+     * @param entryDistance The provisional distance of this vertex on entry.
+     * @return The (updated) distance value assigned to the vertex of entry.
+     */
+
+    /*
+    private int updateSegmentEndSides(NetworkVertex entryVertex, int entryDistance) {
+
+        int otherValue;
+        int newEntryValue = HIGH_VALUE;
+        Map<NetworkVertex, Integer> toUpdate = new HashMap<>();
+
+        // First collect all side vertices of that hex, possibly connected via a stop.
+        // (The rare connected multiple stops case is ignored so far)
+        List<NetworkVertex> otherSides = new ArrayList<>();
+        for (NetworkVertex otherVertex : dllGraph.getNeighbours(entryVertex)) {
+            if (otherVertex.isStation()) {
+                for (NetworkVertex v : dllGraph.getNeighbours(otherVertex)) {
+                    if (!v.equals(entryVertex)) otherSides.add(v);
+                }
+            } else {
+                otherSides.add(otherVertex);
+            }
+        }
+
+        // Find the lowest value of all other sides, and update these where needed
+        for (NetworkVertex otherVertex : otherSides) {
+            if (vertexDistances.containsKey(otherVertex)) {
+                otherValue = vertexDistances.get(otherVertex);
+                newEntryValue = Math.min(newEntryValue, otherValue);
+                if (entryDistance < otherValue) toUpdate.put(otherVertex, entryDistance);
+            } else {
+                toUpdate.put(otherVertex, entryDistance);
+            }
+        }
+
+        // Apply the lowest value to the entry side
+        if (newEntryValue == HIGH_VALUE) newEntryValue = entryDistance;
+        toUpdate.put (entryVertex, newEntryValue);
+
+        // Execute all updates found necessary
+        for (NetworkVertex v : toUpdate.keySet()) {
+            //assignDistance (v, toUpdate.get(v));
+            //vertexDistances.put (entryVertex, newEntryValue);
+
+        }
+        return newEntryValue;
+    }*/
+
+    /*
+    public void setStartDistances(Stop stop, NetworkVertex entrySide, int entryDistance) {
+
+        int otherValue;
+        int newEntryValue = HIGH_VALUE;
+        Map<NetworkVertex, Integer> toUpdate = new HashMap<>();
+
+        NetworkVertex stopVertex = dllGraph.
+
+        // First collect all side vertices of that hex, possibly connected via a stop.
+        // (The rare connected multiple stops case is ignored so far)
+        List<NetworkVertex> otherSides = new ArrayList<>();
+        for (NetworkVertex otherVertex : dllGraph.getNeighbours(entryVertex)) {
+            if (otherVertex.isStation()) {
+                for (NetworkVertex v : dllGraph.getNeighbours(otherVertex)) {
+                    if (!v.equals(entryVertex)) otherSides.add(v);
+                }
+            } else {
+                otherSides.add(otherVertex);
+            }
+        }
+
+        // Find the lowest value of all other sides, and update these where needed
+        for (NetworkVertex otherVertex : otherSides) {
+            if (vertexDistances.containsKey(otherVertex)) {
+                otherValue = vertexDistances.get(otherVertex);
+                newEntryValue = Math.min(newEntryValue, otherValue);
+                if (entryDistance < otherValue) toUpdate.put(otherVertex, entryDistance);
+            } else {
+                toUpdate.put(otherVertex, entryDistance);
+            }
+        }
+
+        // Apply the lowest value to the entry side
+        if (newEntryValue == HIGH_VALUE) newEntryValue = entryDistance;
+        toUpdate.put (entryVertex, newEntryValue);
+
+        // Execute all updates found necessary
+        for (NetworkVertex v : toUpdate.keySet()) {
+            //assignDistance (v, toUpdate.get(v));
+            //vertexDistances.put (entryVertex, newEntryValue);
+
+        }
+        return newEntryValue;
+
+    }
+    */
+
+    /*----- Methods to handle sideDistances map of maps -----*/
+
+    /*
+    private boolean setSideDistance (Stop stop, NetworkVertex side, int distance) {
+        if (!sideDistances.containsKey(stop)) sideDistances.put (stop, new HashMap<>());
+        if (sideDistances.get(stop).containsKey(side)) {
+            int oldValue = sideDistances.get(stop).get(side);
+            if (distance >= oldValue) return false;
+        }
+        sideDistances.get(stop).put (side, distance);
+        return true;
+    }
+
+    private int getSideDistance (Stop stop, NetworkVertex side) {
+        if (!sideDistances.containsKey(stop) || !sideDistances.get(stop).containsKey(side)) {
+            return NO_VALUE;
+        }
+        return sideDistances.get(stop).get(side);
+    }*/
+
+    /** At a segment final stop, the side distance values must be updated
+     * except the entering side.
+     * @param junction Final junction  (stop) of a closing segment
+     * @param entrySide The side through which the segment scan has entered the final hex.
+     *                 This is (normally) the next-to-last vertex of the segment.
+     * @param entrySideDistance The base token distance (edgeCount) after entering the final hex.
+     */
+    private int setDistancesAtFinalStop (NetworkVertex junction, NetworkVertex entrySide, int entrySideDistance) {
+
+        Stop stop = junction.getStop();
+        boolean tokened = stop.hasTokenOf(company);
+        if (tokened) entrySideDistance = 0;
+
+        int sideDistance;
+        int newEntrySideDistance = HIGH_VALUE;
+        int newStopDistance = entrySideDistance;
+        Map<NetworkVertex, Integer> toUpdate = new HashMap<>();
+
+        // Find the lowest value of all other sides, and update these where needed
+        // Ignore the rare case of connected stops on one hex (does not occur in 1826)
+        for (NetworkVertex sideVertex : dllGraph.getNeighbours(junction)) {
+            if (!sideVertex.equals(entrySide)) {
+                sideDistance = getDistance(sideVertex);
+                newStopDistance = Math.min(newStopDistance, sideDistance);
+                newEntrySideDistance = Math.min(newEntrySideDistance, sideDistance);
+                if (entrySideDistance < sideDistance) toUpdate.put(sideVertex, entrySideDistance);
+            }
+        }
+
+        // Apply the lowest value to the entry side
+        if (newEntrySideDistance == HIGH_VALUE) newEntrySideDistance = entrySideDistance;
+        toUpdate.put (entrySide, newEntrySideDistance);
+
+        // Execute all updates found necessary
+        for (NetworkVertex v : toUpdate.keySet()) {
+            setDistance (v, toUpdate.get(v));
+        }
+        setStartDistance(junction.getStop(), entrySide, toUpdate.get(entrySide));
+        return newEntrySideDistance;
+    }
+
+    private void setDistance (NetworkVertex side, int distance) {
+        int newValue = distance;
+        int oldValue = HIGH_VALUE;
+        if (vertexDistances.containsKey(side)) {
+            oldValue = vertexDistances.get(side);
+            newValue = Math.min(oldValue, distance);
+        }
+        vertexDistances.put(side, newValue);
+        log.debug ("      Side distance {} set from {} to {}", side, oldValue, newValue);
+    }
+
+    private int getDistance (NetworkVertex vertex) {
+        if (vertexDistances.containsKey(vertex)) {
+            return vertexDistances.get(vertex);
+        } else {
+            return HIGH_VALUE;
+        }
+    }
+
+    private void setStartDistance (Stop junction, NetworkVertex side, int distance) {
+        if (!startDistances.containsKey(junction)) {
+            startDistances.put (junction, new HashMap<>());
+        }
+        startDistances.get(junction).put (side, distance);
+    }
+
+    private int getStartDistance (NetworkVertex junction, NetworkVertex side) {
+        Stop stop = junction.getStop();
+        if (stop.hasTokenOf(company)) {
+            return 0;
+        }
+        if (startDistances.containsKey(stop) && startDistances.get(stop).containsKey(side)) {
+            return startDistances.get(stop).get(side);
+        }
+        int distance = HIGH_VALUE;
+        for (NetworkVertex otherSide : dllGraph.getNeighbours(junction)) {
+            if (!otherSide.equals(side)) {
+                distance = Math.min (distance, vertexDistances.get(side));
+            }
+        }
+        return distance; // HIGH_VALUE should not occur
+    }
+
+    /*
+    private void updateSide (NetworkVertex side, int distance) {
+        if (!vertexDistances.containsKey(side) || vertexDistances.get(side) > distance) {
+            vertexDistances.put(side, distance);
+        }
+    }*/
+
+    /** Get start distance of a segment leaving via a certain side
+     * The distance recorded at entry via that side should be ignored.
+     * If side == null, the lowest of all sides will be returned.
+     * @param stop The starting stop (junction) of a segment to be scanned
+     * @param side The edge via which the segment leaves that hex, or null
+     * @return The distance found; HIGH_VALUE if none was found.
+     */
+    /*
+    private int getStartDistanceViaSide (NetworkVertex stop, NetworkVertex side) {
+        int distance = HIGH_VALUE;
+        for (NetworkVertex vertex : dllGraph.getNeighbours(stop)) {
+            if (side != null && vertex.equals(side)) continue;
+            //distance = Math.min (distance, getSideDistance(stop.getStop(), vertex));
+            distance = Math.min (distance, vertexDistances.get(vertex));
+        }
+        return distance;
+    }*/
+
+    /*----- Methods to deal with the queue of segments waiting to be scanned -----*/
 
     /** Objects to be placed in the waiting LIFO list */
     private class WaitingSegment {
         private DLLGraph.Segment segment;
-        private NetworkVertex startVertex;
-        private boolean forward;
+        private NetworkVertex fromVertex;
+        private NetworkVertex toVertex;
 
-        protected WaitingSegment(DLLGraph.Segment segment, NetworkVertex startVertex, boolean forward) {
+        protected WaitingSegment(DLLGraph.Segment segment,
+                                 NetworkVertex fromVertex, NetworkVertex toVertex, int marker) {
             this.segment = segment;
-            this.startVertex = startVertex;
-            this.forward = forward; // Will be ignored at the segment ends
+            this.fromVertex = fromVertex;
+            this.toVertex = toVertex; // Will be ignored at the segment ends
+            log.debug ("  {}   Created waiting {}", marker, this);
         }
 
-        protected WaitingSegment(DLLGraph.Segment segment, NetworkVertex startVertex) {
+        protected WaitingSegment(DLLGraph.Segment segment, NetworkVertex fromVertex, int marker) {
             this.segment = segment;
-            this.startVertex = startVertex;
-        }
+            this.fromVertex = fromVertex;
+            this.toVertex = segment.otherEnd(fromVertex);
+            log.debug ("  {}   Created waiting {}", marker, this);        }
 
         public DLLGraph.Segment getSegment() {
             return segment;
         }
 
-        public NetworkVertex getStartVertex() {
-            return startVertex;
+        public NetworkVertex getFromVertex() {
+            return fromVertex;
         }
 
-        public boolean isForward() {
-            return forward;
+        public NetworkVertex getToVertex() { return toVertex; }
+
+        public String toString() {
+            return String.format("%s waiting for scan from %s to %s",
+                    segment.toLongString(), fromVertex, toVertex);
         }
     }
 
     private void pushWaitingList (WaitingSegment ws){
+        // One-item segments should not exist
         waitingList.push(ws);
-        log.debug("Pushed waiting {} at {}", ws.segment, ws.startVertex);
+        log.debug("Pushed waiting {} at {}", ws.segment, ws.fromVertex);
     }
 }

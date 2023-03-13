@@ -27,19 +27,19 @@
 	<Hex name="E15" tile="-10" city="Metz"/>
 	<Hex name="E17" tile="0" cost="60"/>
 	<Hex name="F6" tile="0" cost="40"/>
-	<Hex name="F8" tile="0" cost="40"/>
-	<Hex name="F10" tile="0" cost="40"/>
+	<Hex name="F8" tile="0" cost="40" reserved="Paris"/>
+	<Hex name="F10" tile="0" cost="40" reserved="Nord"/>
 	<Hex name="F12" tile="-10" city="Reims" cost="40"/>
 	<Hex name="F14" tile="0"/>
 	<Hex name="F16" tile="-1" city="Nancy"/>
 	<Hex name="F18" tile="0"/>
 	<Hex name="G3" tile="0"/>
 	<Hex name="G5" tile="0"/>
-	<Hex name="G7" tile="0"/>
+	<Hex name="G7" tile="0" reserved="Ouest"/>
 	<Hex name="G9" tile="-26001" city="Paris">
 		<Access mutexId="Paris"/>
 	</Hex>
-	<Hex name="G11" tile="0"/>
+	<Hex name="G11" tile="0" reserved="Est"/>
 	<Hex name="G13" tile="0"/>
 	<Hex name="G15" tile="0"/>
 	<Hex name="G17" tile="0"/>
@@ -47,8 +47,8 @@
 	<Hex name="H2" tile="-1" city="Rennes"/>
 	<Hex name="H4" tile="0"/>
 	<Hex name="H6" tile="-10" city="Le Mans"/>
-	<Hex name="H8" tile="0"/>
-	<Hex name="H10" tile="0"/>
+	<Hex name="H8" tile="0" reserved="PO"/>
+	<Hex name="H10" tile="0" reserved="PLM"/>
 	<Hex name="H12" tile="0"/>
 	<Hex name="H14" tile="0"/>
 	<Hex name="H16" tile="0"/>
