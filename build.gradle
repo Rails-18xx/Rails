@@ -58,7 +58,7 @@ dependencies {
     implementation 'org.jgrapht:jgrapht-core:1.5.1'
     implementation 'org.jgrapht:jgrapht-ext:1.5.1'
     implementation 'org.slf4j:slf4j-api:2.0.5'
-    implementation 'org.apache.xmlgraphics:batik-bridge:1.15'
+    implementation 'org.apache.xmlgraphics:batik-bridge:1.16'
     implementation 'org.apache.xmlgraphics:batik-transcoder:1.16'
     implementation 'org.apache.xmlgraphics:batik-svggen:1.15'
     implementation 'org.apache.xmlgraphics:batik-ext:1.16'
