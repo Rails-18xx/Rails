@@ -2152,8 +2152,8 @@ public class PublicCompany extends RailsAbstractItem
             //tokenableStops = new HashMap<>(Routes.getTokenLayRouteDistances(getRoot(), this,
             //        PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY));
             //Routes.getTokenLayRouteDistances2(getRoot(), this, false, false);
-            tokenableStops = new Routes().getTokenLayRouteDistances2(
-                    this, PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
+            tokenableStops = new Routes(this).getTokenLayRouteDistances(
+                    PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
 
         }
     }
@@ -2186,7 +2186,7 @@ public class PublicCompany extends RailsAbstractItem
             //Map<Stop, Integer> layableTokens
             //        = Routes.getTokenLayRouteDistances2(getRoot(), this, false, false);
             Map<Stop, Integer> layableTokens
-                    = new Routes().getTokenLayRouteDistances2(this,
+                    = new Routes(this).getTokenLayRouteDistances(
                         PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
 
             Set<Integer> results = new TreeSet<>();

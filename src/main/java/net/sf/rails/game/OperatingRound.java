@@ -11,6 +11,7 @@ import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 import net.sf.rails.game.state.*;
 import net.sf.rails.util.SequenceUtil;
+import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.*;
@@ -1645,7 +1646,6 @@ public class OperatingRound extends Round implements Observer {
      */
 
     public boolean layTile(LayTile action) {
-
         String errMsg = null;
         int cost = 0;
         SpecialTileLay stl = null;

@@ -1259,7 +1259,7 @@ BUY_SHARE_LOG,Paris,10,Paris,Pool,100
  
 CompanyOperates,PO,Lyndon
 LaysTileAt,PO,513,C13,SW
-LAYS_TOKEN_ON,PO,C13,200
+LAYS_TOKEN_ON,PO,C13,100
 CompanyRevenue,PO,710
 InterestPaidFromTreasury,PO,50,loan
 CompanySplits,PO,710
@@ -1317,7 +1317,7 @@ Has,Midi,381
 Has,Ouest,317
 Has,Paris,158
 Has,PLM,2
-Has,PO,440
+Has,PO,540
 Has,SNCF,689
 Has,Charlie,327
 Has,Mike,545
@@ -1373,7 +1373,7 @@ Has,Midi,381
 Has,Ouest,399
 Has,Paris,658
 Has,PLM,2
-Has,PO,530
+Has,PO,630
 Has,SNCF,689
 Has,Charlie,27
 Has,Mike,245
@@ -1493,7 +1493,7 @@ Has,Midi,321
 Has,Ouest,29
 Has,Paris,318
 Has,PLM,2
-Has,PO,310
+Has,PO,410
 Has,SNCF,899
 Has,Charlie,815
 Has,Mike,622
@@ -1609,7 +1609,7 @@ Has,Midi,50
 Has,Ouest,379
 Has,Paris,68
 Has,PLM,2
-Has,PO,251
+Has,PO,351
 Has,SNCF,109
 Has,Charlie,1603
 Has,Mike,1038
@@ -1708,7 +1708,7 @@ Has,Midi,50
 Has,Ouest,527
 Has,Paris,68
 Has,PLM,2
-Has,PO,251
+Has,PO,351
 Has,SNCF,109
 Has,Charlie,2440
 Has,Mike,1972

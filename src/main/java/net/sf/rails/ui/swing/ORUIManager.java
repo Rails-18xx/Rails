@@ -358,8 +358,8 @@ public class ORUIManager implements DialogOwner {
         if (company.getBaseTokenLayCostMethod() == PublicCompany.BaseCostMethod.ROUTE_DISTANCE) {
             // Currently only used by 1826.
             // Did originally work with all games, but somehow failed with 1837 in a later stage
-            Map<Stop, Integer> tokenableStops = new Routes().getTokenLayRouteDistances2(
-                    company, PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
+            Map<Stop, Integer> tokenableStops = new Routes(company).getTokenLayRouteDistances(
+                    PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
             for (Stop stop : tokenableStops.keySet()) {
                 MapHex hex = stop.getParent();
                 GUIHex guiHex = map.getHex(hex);

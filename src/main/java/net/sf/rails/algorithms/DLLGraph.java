@@ -1,5 +1,8 @@
 package net.sf.rails.algorithms;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import net.sf.rails.game.*;
 import org.jgrapht.graph.SimpleGraph;
 import org.slf4j.Logger;
@@ -12,13 +15,15 @@ import java.util.*;
  * This class creates a company network representation, using:
  * 
  * - Junctions: places where at least 3 different tracks meet.
- *   This can be stations or tile edges where plain track branches off.
+ *   This can be stations where plain track branches off.
+ *   Edges where track branches are handles by creating
+ *   separate segments per branch.
  *
  * - Dead ends: stations where only one track is connected to.
  *   Multiple track stations where the company cannot run through 
  *   for whatever reason are also considered dead ends.
  *   For simplicity, all dead ends are also considered Junctions
- *   (a not very appropriate name here).
+ *   (a not very appropriate name in this case).
  *   
  * - Segments: doubly linked lists connecting junctions (and dead ends),
  *   included all TrackPoints on that route.
@@ -28,15 +33,15 @@ import java.util.*;
  *   
  * DLLGraph has two inner classes: Junction and Segment.
  * Segment extends the java LinkedList class.
- * Junction currently does not extend NetworkVertex for the only
- * reason that NetworkVertex is final. For now I will leave it so.
+ * Junction currently does not extend NetworkVertex for the sole
+ * reason that NetworkVertex is declared final. For now I will leave it so.
  *   
  * This class has been created to support the 1826 feature that
  * the hex distances that define token laying costs have to be counted
  * along existing routes, rather than as the crow flies (as in 1835).
  * 
  * While working on 1826, I initially managed to calculate these costs
- * correctly using the NetworkIterator provided by the existing company
+ * correctly using the NetworkIterator provided by the existing Company
  * Graph code. But as it turned out, my algorithm failed when closed
  * loops arose. So far, I did not manage to fix this.
  * No doubt there must be a way, but I have given up.
@@ -44,7 +49,7 @@ import java.util.*;
  * DLLGraph only creates the structure mentioned above. The actual
  * cost calculation will (for now) be done in the Routes class.
  *   
- * Started by Erik Vos, October 2022.
+ * By Erik Vos, 10/2022-03/2023.
  */
 public class DLLGraph {
 
@@ -55,8 +60,9 @@ public class DLLGraph {
     private RailsRoot root;
 
     private List<Segment> segments;
-    private Map<NetworkVertex, Segment> danglingSegments;
+    private Multimap<NetworkVertex, Segment> danglingSegments;
     private Map<NetworkVertex, Junction> junctions;
+    private Multimap<NetworkVertex, NetworkVertex> backwardEdges;
 
     private NetworkGraph mapGraph;
 
@@ -66,6 +72,8 @@ public class DLLGraph {
         this.company = company;
         this.toHomeOnly = toHomeOnly;
         root = company.getRoot();
+
+        if (log.isDebugEnabled()) logLegend();
         createGraph();
     }
 
@@ -102,15 +110,12 @@ public class DLLGraph {
         Map<Stop, Integer> beenAtStop = new HashMap<>();
         Set<MapHex> beenAtHex = new HashSet<>();
 
-        // Hex distances from nearest token (excluded)
-        //Map<NetworkVertex, Integer> distances = new HashMap<>();
-        //Map<Stop, Integer> tokenableStopDistances = new HashMap<>();
-
         /* Elements for a new network structure, where
          * track sequences can be traversed in both directions.
          */
-        danglingSegments = new HashMap<>();
-        junctions = new HashMap<>();
+        danglingSegments = ArrayListMultimap.create();
+        backwardEdges = ArrayListMultimap.create();
+        junctions = new TreeMap<>();
         segments = new ArrayList<>();
 
         NetworkVertex expectedEdge = null;
@@ -119,7 +124,7 @@ public class DLLGraph {
          * where the segments can be traversed in both directions.
          */
         for (Stop baseTokenStop : usableBases) {
-            if (beenAtStop.containsKey(baseTokenStop)) continue;
+            //if (beenAtStop.containsKey(baseTokenStop)) continue;
 
             MapHex baseTokenHex = baseTokenStop.getParent();
 
@@ -134,18 +139,19 @@ public class DLLGraph {
             Segment currentSegment = null;
             Junction junction;
             List<NetworkVertex> exits = new ArrayList<>();
+
             boolean entering;
 
             while (iterator.hasNext()) {
                 NetworkVertex item = iterator.next();
                 MapHex hex = item.getHex();
-                List<NetworkVertex> neighbours = getNeighbours(mapGraph, item);
+                List<NetworkVertex> neighbours = getNeighbours(item);
                 log.debug("      Checking {} item {}, neighbours {}", item.getType(), item, neighbours);
                 if (item.isStation()) {
                     Stop stop = item.getStop();
                     vertexOfStop.put (stop, item);
 
-                    log.debug("  S   {} is a stop", item);
+                    log.debug("  S   {} is a stop ({})", item, stop);
 
                     boolean newJunction = false;
                     if (neighbours.size() != 2 || item.isSink()
@@ -159,48 +165,42 @@ public class DLLGraph {
                         log.debug("  J   {} is {} junction", item,
                                 (newJunction ? "a new" : "an existing"));
                     }
-                    if (neighbours.size() > 2 && stop.isRunThroughAllowedFor(company)) {
-                        // We are at a branching point
+                    if ((neighbours.size() > 2 && stop.isRunThroughAllowedFor(company)
+                            || stop.hasTokenOf(company))) {
+                        // We are at a branching point, or a search starter
                         junction = junctions.get(item);
 
                         // Finish current Segment
                         if (currentSegment != null) { // Can it ever be null?
                             // Finish the old segment
-                            //danglingSegments.remove(prevItem);
                             addItem(currentSegment, item, 1);
-                            /*
-                            String oldSegment = currentSegment.toString();
-                            currentSegment.addItem(item);
-                            log.debug("++1++ Added new item {} to {}, becoming {}", item, oldSegment, currentSegment);*/
-                            //junction.addSegment(currentSegment);
+                            checkForBackwardBranches(currentSegment);
                             closeSegment (currentSegment, item, 1);
-                            /*currentSegment.close();
-                            log.debug("XX1XX Closed segment {}", currentSegment);*/
-                            currentSegment = null;
                         }
 
                         // Create new segments if the stop can be run through
                         if (newJunction && stop.isRunThroughAllowedFor(company)) {
                             for (NetworkVertex neighbour : neighbours) {
-                                if (neighbour == prevItem) continue;
 
-                                Segment newSegment = new Segment(item);
-                                newSegment.add(neighbour);
-                                segments.add(newSegment);
-                                junction.addSegment(newSegment, 1);
-                                danglingSegments.put(neighbour, newSegment);
-                                log.debug(">>1>> Opened new segment {}, dangling at {}",
-                                        newSegment, neighbour);
+                                if (currentSegment == null || !currentSegment.contains(neighbour)) {
+                                    Segment newSegment = new Segment(item);
+                                    newSegment.add(neighbour);
+                                    junction.addSegment(newSegment, 3);
+                                    danglingSegments.put(neighbour, newSegment);
+                                    log.debug(">>3>> Opened new segment {}, dangling at {}",
+                                            newSegment, neighbour);
+                                }
                             }
                         }
+                        if (currentSegment != null && !currentSegment.isOpen()) currentSegment = null;
+
                     } else if (neighbours.size() == 1 || item.isSink() || !stop.isRunThroughAllowedFor(company)) {
                         // This is an end point
                         if (currentSegment != null) {
                             // Add it to the segment and close that
                             addItem(currentSegment, item, 2);
                             closeSegment(currentSegment, item, 2);
-                            //if (!junctions.containsKey(item)) createJunction(item);
-                            //junctions.get(item).addSegment(currentSegment, 2);
+                            checkForBackwardBranches(currentSegment);
                             currentSegment = null;
                         } else {
                             // Start hex, not yet visited
@@ -218,16 +218,18 @@ public class DLLGraph {
                                 continue;
                             }
                             if (currentSegment != null) {
+                                /* Duplicates above code
                                 if (item.isSink() || !stop.isRunThroughAllowedFor(company)) {
                                     // This stop is a sink
                                     addItem(currentSegment, item, 3);
 
                                     closeSegment(currentSegment, item, 3);
+                                    checkForBackwardBranches(currentSegment);
                                     currentSegment = null;
 
-                                } else {
+                                } else {*/
                                     addItem(currentSegment, item, 4);
-                                }
+                                //}
 
                             } else {
                                 // Start hex, not yet visited
@@ -238,32 +240,39 @@ public class DLLGraph {
 
                     }
                     beenAtStop.put(stop, 0);
+
                 } else if (item.isSide()) {
-                    /* Causes missing edges in a segment
-                    if (beenAtEdge.containsKey(item)) {
-                        log.debug("      Skipping edge {}: visited before", item);
-                        //continue;
-                    }*/
-                    // Check if we haven't made a strange jump
-                    if (hex != prevItem.getHex() && currentSegment != null) {
-                        // Entering hex
-                        if (expectedEdge != item) log.debug("      Expected {}, actual {}", expectedEdge, item);
-                        if (expectedEdge != null && expectedEdge != item) {
-                            log.debug ("!!!!! We have a jump from {} to {}, expected {}", prevItem, item, expectedEdge);
-                            // Join the two unfinished segments and then continue normally
-                            joinSegments(currentSegment, expectedEdge, 5);
-                            currentSegment = null;
+
+                    entering = !hex.equals(prevHex);
+
+                    if (entering && currentSegment != null) {
+
+                        // Check if we haven't made a strange jump
+                        if (expectedEdge != item) {
+                            log.debug("      Expected {}, actual {}", expectedEdge, item);
+                            if (expectedEdge != null) {
+                                log.debug("!!!!! We have a jump from {} to {}, expected {}", prevItem, item, expectedEdge);
+                                // Join the two unfinished segments and then continue normally
+                                joinSegments(currentSegment, expectedEdge, 5);
+                                currentSegment = null;
+                            }
                         }
                     }
                     expectedEdge = null;
-                    entering = !hex.equals(prevHex);
 
                     log.debug ("  E   {} is an edge", item);
                     if (currentSegment == null) {
                         // Find a dangling segment where this item is at the end
                         if (danglingSegments.containsKey(item)) {
-                            currentSegment = danglingSegments.get(item);
-                            log.debug("===== Side {} found at dangling segment {}", item, currentSegment);
+                            List<Segment> segments = Lists.newArrayList (danglingSegments.get(item));
+                            log.debug("===== Side {} found at dangling segment(s) {}", item, segments);
+
+                            // If there is more than one segment, we have a backwards branch.
+                            // FIXME ***** FOR NOW, PICK THE FIRST ONE *****
+                            for (Segment segment : segments) {
+                                currentSegment = segment;
+                                break;
+                            }
                             entering = false; // Dangling sides always leave (or I hope so)
                         } else {
                             log.warn ("!?!?! No dangling segment found for side {}", item);
@@ -274,11 +283,21 @@ public class DLLGraph {
                             // No tracks at entry edge: drop it
                             log.debug("----- Dropping side {}, no track", item);
                             pruneSegment (currentSegment);
-                            currentSegment = null;
-                        } else if (neighbours.size() > 1 && entering) {
-                            // We enter hex at a branching point, remember exit points
-                            exits.clear(); // For all certainty, should be redundant
-                            exits.addAll(neighbours);
+                            if (!currentSegment.isOpen()) currentSegment = null;
+                        } else if (neighbours.size() > 1) {
+                            if (entering) {
+                                // We enter hex at a branching point, remember exit points
+                                exits.clear(); // For all certainty, should be redundant
+                                exits.addAll(neighbours);
+                            } else {
+                                // We are leaving a hex having a backward entry point
+                                /**/
+                                for (NetworkVertex neighbour : neighbours) {
+                                    if (!currentSegment.contains(neighbour)) {
+                                        backwardEdges.put (item, neighbour);
+                                    }
+                                }/**/
+                            }
                         }
                         if (currentSegment != null) {
                             // If we are leaving a branching tile, duplicate this segment
@@ -286,16 +305,19 @@ public class DLLGraph {
                             if (!entering && !exits.isEmpty()) {
                                 for (NetworkVertex exit : exits) {
                                     if (exit.isSide() && exit != item) { // Not the current exit side
-                                        Segment newSegment = new Segment(currentSegment);
+                                        Segment newSegment = new Segment(currentSegment, 8);
                                         newSegment.add(exit);
                                         danglingSegments.put (exit, newSegment);
-                                        log.debug("++8++ Added extra dangling segment {}",
-                                                newSegment);
+                                        junctions.get(newSegment.getFirst()).addSegment(newSegment, 8);
+                                        log.debug("++8++ Added extra dangling segment {} to {}",
+                                                newSegment, newSegment.getFirst());
+
+
                                     }
                                 }
                                 exits.clear();
                             }
-                            addItem(currentSegment, item, 6);
+                            if (currentSegment.isOpen()) addItem(currentSegment, item, 6);
                         }
                     }
                     beenAtEdge.put(item, 0);
@@ -312,18 +334,68 @@ public class DLLGraph {
                 if (!beenAtHex.contains(hex)) beenAtHex.add (hex);
             }
         }
-        int i;
-        log.debug("Junctions:");
-        for (NetworkVertex j : junctions.keySet()) log.debug("    {}", junctions.get(j));
-        log.debug("Segments:"); i=0;
-        for (Segment s : segments) log.debug ("   {}", segments.get(i++).toLongString());
-        log.debug("Dangling segments:");
-        if (danglingSegments.isEmpty()) {
-            log.debug("   None");
-        } else {
-            for (NetworkVertex j : danglingSegments.keySet()) log.debug("   {} => {}", j, danglingSegments.get(j));
+
+        List<Segment> segsToRemove = new ArrayList<>();
+        for (Segment s : segments) {
+            if (s.size() <= 1 || s.getFirst().equals(s.getLast())) segsToRemove.add (s);
+        }
+        for (Segment s : segsToRemove) {
+            discardSegment(s, 0);
         }
 
+        // Join remaining dangling segments at the same vertex
+        Multimap<NetworkVertex, DLLGraph.Segment> dsCopy = ArrayListMultimap.create (danglingSegments);
+        for (NetworkVertex vertex : dsCopy.keySet()) {
+            List<Segment> segments = (List<Segment>) dsCopy.get(vertex);
+            if (segments.size() >= 2) {
+                Segment segment1 = segments.get(0);
+                for (Segment segment2 : segments) {
+                    if (!segment2.equals(segment1)
+                            && !segment2.getNextTo(vertex).equals(segment1.getNextTo(vertex))) {
+                        joinSegments (segment1, vertex, 9);
+                    }
+                }
+
+            }
+        }
+
+
+        // Remove all remaining dangling and single-vertex, and returning segments
+        // (Not sure if these are features or bugs - EV)
+        segsToRemove = new ArrayList<>();
+        for (NetworkVertex v : danglingSegments.keySet()) {
+            for (Segment s : danglingSegments.get(v)) {
+                segsToRemove.add (s);
+            }
+        }
+        for (Segment s : segsToRemove) {
+            discardSegment(s, 0);
+        }
+
+        if (log.isDebugEnabled()) {
+            logLegend();
+            log.debug(toString());
+        }
+    }
+
+    public String toString() {
+        StringBuffer b = new StringBuffer();
+        int i;
+        b.append("\nJunctions:\n");
+        for (NetworkVertex j : junctions.keySet()) b.append("   ").append(junctions.get(j)).append("\n");
+        b.append("Segments:\n"); i=0;
+        for (Segment s : segments) b.append ("   ").append(segments.get(i++).toLongString()).append("\n");
+        b.append("Dangling segments:\n");
+        if (danglingSegments.isEmpty()) {
+            b.append("   None\n");
+        } else {
+            for (NetworkVertex v : danglingSegments.keySet()) {
+                for (Segment s : danglingSegments.get(v)) {
+                    b.append("   ").append(v).append(" : ").append(s.toLongString()).append("\n");
+                }
+            }
+        }
+        return b.toString();
     }
 
     /*-------------------------------*/
@@ -348,7 +420,7 @@ public class DLLGraph {
 
     private void addItem (Segment segment, NetworkVertex vertex, int marker) {
         String oldSegment = segment.toString();
-        danglingSegments.remove(segment.getLast());
+        danglingSegments.remove(segment.getLast(), segment);
         segment.add (vertex);
         danglingSegments.put(vertex, segment);
 
@@ -356,40 +428,148 @@ public class DLLGraph {
                 marker, vertexType (vertex), vertex, oldSegment, segment.toLongString());
     }
 
-    private void closeSegment(Segment segment, NetworkVertex vertex, int marker) {
+    private void closeSegment(Segment segment, NetworkVertex finalVertex, int marker) {
         log.debug("##{}## Closing segment {} at {} {}",
-                marker, segment, vertexType(vertex), vertex);
-        Junction junction = junctions.get(vertex);
-        if (junction == null) junction = createJunction(vertex);
+                marker, segment, vertexType(finalVertex), finalVertex);
+        Junction junction = junctions.get(finalVertex);
+        if (junction == null) junction = createJunction(finalVertex);
         junction.addSegment(segment, marker);
-        segment.close();
-        danglingSegments.remove(vertex);
+        log.debug ("  {}   Junction {} at {} stored for {}", marker, junction, finalVertex, segment);
+
+        if (isDuplicate(segment)) {
+            discardSegment(segment, marker);
+        } else {
+            segment.close();
+        }
+        danglingSegments.remove(finalVertex, segment);
+        segment.iterator = null;
     }
 
-    private void joinSegments (Segment segment, NetworkVertex expectedEdge, int marker) {
-        Segment otherSegment = danglingSegments.get(expectedEdge);
-        if (otherSegment == null) {
-            log.error("Cannot find a dangling segment at {}", expectedEdge);
-        } else {
-            log.debug("      Found dangling segment {} at {}", otherSegment, expectedEdge);
-            danglingSegments.remove(segment.getLast());
-            otherSegment.setIterator(expectedEdge);
+    public boolean isDuplicate (Segment segment) {
+
+        Junction first = junctions.get(segment.getFirst());
+        Junction last = junctions.get(segment.getLast());
+        if (first == null || last == null) return false;
+
+        Junction first2, last2;
+        // Identical duplicate?
+        for (Segment s : first.getSegments()) {
+            if (s.equals(segment)) continue;
+            first2 = junctions.get(s.getFirst());
+            last2 = junctions.get(s.getLast());
+            if (first.equals(first2) && last.equals(last2)) {
+                if (!isIdentical(segment, s, false)) return false;
+            } else if (first.equals(last2) && last.equals(first2)) {
+                if (!isIdentical(segment, s, true)) return false;
+            } else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isIdentical(Segment s1, Segment s2, boolean reversed) {
+        Segment s1c = new Segment (s1, 0);
+        Segment s2c = new Segment (s2, 0);
+        s1c.setIterator(s1c.getFirst());
+        s2c.setIterator(reversed ? s2c.getLast() : s2c.getFirst());
+        while (s1c.hasNext() && s2c.hasNext()) {
+            if (!s1c.getNext().equals(s2c.getNext())) return false;
+        }
+
+        return true;
+    }
+
+    private void checkForBackwardBranches (Segment segment) {
+        // Check if we have backward dangling edges from this closing segment
+        Segment template = new Segment();
+        Segment backSegment;
+        // Scan the segment for branching points
+        NetworkVertex backItem = segment.getLast();
+        segment.setIteratorReversed(backItem);
+        Junction junction = junctions.get(backItem);
+
+        /**/
+        while (segment.hasNext()) {
+            backItem = segment.getNext();
+            if (backwardEdges.containsKey(backItem)) {
+                for (NetworkVertex backEdge : backwardEdges.get(backItem)) {
+                    backSegment = new Segment (template, 9);
+                    backSegment.add (backItem);
+                    // Check if there already is a dangling segment at this edge
+                    if (danglingSegments.containsKey(backEdge)) {
+                        // Join the segments
+                        joinSegments(backSegment, backEdge, 9);
+                    } else {
+                        backSegment.add(backEdge);
+                        log.debug("++9++ Created backwards dangling segment {} : {}",
+                                backSegment, backSegment.toLongString());
+                        junction.addSegment(backSegment, 9);
+                        danglingSegments.put(backEdge, backSegment);
+                    }
+                }
+            }
+            template.addItem(backItem);
+        }
+        discardSegment(template, 9);
+        /**/
+    }
+
+    private void joinSegments (Segment oldSegment, NetworkVertex joiningEdge, int marker) {
+        // Make a new ArrayList to prevent ConcurrentModificationException
+        List<Segment> otherSegments = Lists.newArrayList (danglingSegments.get(joiningEdge));
+        if (otherSegments == null || otherSegments.isEmpty()) {
+            log.debug("?!{}!? Cannot find a dangling segment at {}", marker, joiningEdge);
+            return;
+        }
+
+        for (Segment otherSegment : otherSegments) {
+            if (oldSegment.equals(otherSegment)) continue;
+
+            // Skip one-item segments
+            // FIXME: these should not be created!
+            if (otherSegment.size() <= 1) continue;
+            // The next-to-last vertices of both segments must be in different hexes,
+            // otherwise we would be backtracking.
+            log.debug ("At {} trying to join {} to {}", joiningEdge, oldSegment.toLongString(), otherSegment.toLongString());
+            if (oldSegment.getNextToLast().getHex().equals(otherSegment.getNextToLast().getHex())) {
+                // Backtracking, so skip this segment
+                log.debug("      Skipping backtracking join of segments {} and {}",
+                        oldSegment, otherSegment);
+                continue;
+            }
+
+
+            log.debug("  {}   Found joinable dangling segment {} at {}", marker, otherSegment, joiningEdge);
+            // Create a new segment, we may need the old one twice (or more).
+            Segment newSegment = new Segment(oldSegment, marker);
+            NetworkVertex endVertex = oldSegment.getLast();
+
+            otherSegment.setIterator(joiningEdge, otherSegment.getFirst());
             while (otherSegment.hasNext()) {
                 NetworkVertex vertex = otherSegment.getNext();
-                addItem (segment, vertex, 5);
-                /*Segment oldSegment = segment;
-                segment.add(vertex);
-                log.debug("++5++ Added new {} {} to {}, becoming {}",
-                        vertexType(vertex), vertex, oldSegment, segment);*/
-            }
-            NetworkVertex lastItem = segment.getLast();
-            closeSegment (segment, lastItem, 5);
-            junctions.get(lastItem).addSegment(segment, 5);
+                if (vertex != endVertex) {
+                    String ns = newSegment.toString();
+                    newSegment.add(vertex); // Avoid joining edge duplication
+                    log.debug ("++{}++ Added {} {} to {}, becoming {}",
+                            marker, vertexType (vertex), vertex, ns, newSegment.toLongString());
 
-            danglingSegments.remove(expectedEdge);
-            log.debug("--5-- Removed dangling segment {}", otherSegment);
+                }
+            }
+            log.debug("++{}++ At {} {} joined {} to {}, becoming {}", marker,
+                    vertexType(joiningEdge), joiningEdge, oldSegment, otherSegment, newSegment.toLongString());
+            NetworkVertex lastItem = otherSegment.getLast();
+            junctions.get(newSegment.getFirst()).addSegment(newSegment, 5);
+            junctions.get(newSegment.getLast()).addSegment(newSegment, 5);
+            closeSegment(newSegment, newSegment.getLast(), 5); // Joins junction at end
+
+            danglingSegments.remove(joiningEdge, otherSegment);
+            log.debug("--{}-- Removed dangling segment {}", marker, otherSegment);
             discardSegment(otherSegment, 5);
         }
+        discardSegment(oldSegment, 5);
+
     }
 
     private void pruneSegment (Segment segment) {
@@ -399,17 +579,15 @@ public class DLLGraph {
         if (segment.size() == 1) {
             // Drop empty segment
             discardSegment (segment, 7);
-            NetworkVertex stop = segment.getFirst();
         } else {
             closeSegment (segment, segment.getLast(), 6);
         }
-
     }
 
     private void removeItem (Segment segment, NetworkVertex item, int marker) {
         String oldSegment = segment.toString();
+        danglingSegments.remove(item, segment);
         segment.remove(item);
-        danglingSegments.remove(item);
         log.debug("--{}-- Dropping {} {} from segment {}, becoming {}",
                 marker, item.getType(), item, oldSegment, segment);
 
@@ -432,6 +610,7 @@ public class DLLGraph {
                 junction.removeSegment(segment, marker);
             }
         }
+        segment.close();
         segments.remove(segment);
     }
 
@@ -440,14 +619,15 @@ public class DLLGraph {
             return "Edge";
         } else if (junctions.containsKey(vertex)) {
             return "Junction";
-        } else if (vertex.isSink() || getNeighbours(mapGraph, vertex).size() == 1) {
+        } else if (vertex.isSink() || getNeighbours(vertex).size() == 1) {
             return "Sink";
         } else {
             return "Stop";
         }
     }
 
-    private List<NetworkVertex> getNeighbours(NetworkGraph graph, NetworkVertex vertex) {
+    public List<NetworkVertex> getNeighbours(NetworkVertex vertex) {
+
         MapHex hex = vertex.getHex();
         Tile tile = hex.getCurrentTile();
         HexSide rotation = hex.getCurrentTileRotation();
@@ -455,8 +635,8 @@ public class DLLGraph {
         List<NetworkVertex> neighbours = new ArrayList<>();
         Set<Track> tracks = tile.getTracks();
         for (Track track : tracks) {
-            NetworkVertex from = graph.getVertex(hex, track.getStart().rotate(rotation));
-            NetworkVertex to = graph.getVertex(hex, track.getEnd().rotate(rotation));
+            NetworkVertex from = mapGraph.getVertex(hex, track.getStart().rotate(rotation));
+            NetworkVertex to = mapGraph.getVertex(hex, track.getEnd().rotate(rotation));
             if (vertex == from) {
                 neighbours.add (to);
             } else if (vertex == to) {
@@ -470,8 +650,7 @@ public class DLLGraph {
         Junction junction = null;
         if (!junctions.containsKey(item)) {
             junction = new Junction(item);
-            junctions.put (item, junction);
-            log.debug ("+++++ New junction created at {}", item);
+            log.debug ("+++++ New junction {} created at {}", junction, item);
         }
         return junction;
     }
@@ -480,8 +659,9 @@ public class DLLGraph {
     /* GRAPH ACCESS METHODS */
     /*----------------------*/
 
-    public List<Segment> getSegments (Stop stop) {
+    public List<Segment> getSegments (Stop stop, int marker) {
         NetworkVertex vertex = vertexOfStop.get (stop);
+        //log.debug("  {}   Stop {} has segments {}", marker, stop, junctions.get(vertex).getSegments());
         return junctions.get(vertex).getSegments();
     }
 
@@ -500,16 +680,19 @@ public class DLLGraph {
         List<Segment> segments;
 
         Junction(NetworkVertex vertex) {
-            this.junction = vertex;
+            junction = vertex;
             segments = new ArrayList<>();
+            junctions.put(vertex, this);
         }
 
         void addSegment(Segment segment, int marker) {
+            if (!segment.contains(junction)) log.error("??{}?? Adding segment {} to junction {} that is no part of it!",
+                    marker, segment, junction);
             if (!segments.contains(segment)) {
                 segments.add(segment);
                 log.debug("++{}++ Added segment {} to junction {}", marker, segment, this);
             } else {
-                log.debug ("      Junction {} already has segment {}", this, segment);
+                log.debug ("--{}-- Junction {} already has segment {}", marker, this, segment);
             }
         }
 
@@ -530,8 +713,12 @@ public class DLLGraph {
             return junction;
         }
 
+        public NetworkGraph getMapGraph() {
+            return mapGraph;
+        }
+
         public String toString() {
-            return junction + " => " + segments;
+            return junction + " : " + segments;
         }
 
     } // End of Junction inner class
@@ -548,19 +735,25 @@ public class DLLGraph {
             super();
             isForward = true;
             isOpen = true;
+            segments.add (this);
         }
 
         Segment (NetworkVertex vertex) {
             this();
             addItem(vertex);
+            log.debug("+++++ Created new segment {}", this);
         }
 
-        Segment (Segment segmentToCopy) {
+        Segment (Segment segmentToCopy, int marker) {
             this();
             segmentToCopy.setIterator (segmentToCopy.getEnd(true));
             while (segmentToCopy.hasNext()) {
                 this.addItem(segmentToCopy.getNext());
             }
+            if (marker > 0) {
+                log.debug("++{}++ Created copied segment {} from {} at {}", marker, this, segmentToCopy, getFirst());
+            }
+
         }
 
         public void addItem(NetworkVertex item) {
@@ -569,6 +762,11 @@ public class DLLGraph {
 
         public void close() {
             isOpen = false;
+            iterator = null;
+        }
+
+        public boolean isOpen() {
+            return isOpen;
         }
 
         public String toString() {
@@ -608,7 +806,7 @@ public class DLLGraph {
          * in the middle of a segment. So I had to provide that myself (EV).
          *
          * These iterators are hidden from the calling code;
-         * there can only be one iterator active at any time.
+         * a segment can only have one iterator active at any time.
          */
         private Iterator<NetworkVertex> iterator;
 
@@ -623,6 +821,7 @@ public class DLLGraph {
          * @param startVertex should be either the first or the last vertex
          */
         public void setIterator(NetworkVertex startVertex) {
+            iterator = null;
             if (startVertex.equals(getFirst())) {
                 isForward = true;
                 iterator = listIterator();
@@ -700,12 +899,23 @@ public class DLLGraph {
             }
         }
 
-        public boolean isAtEnd (NetworkVertex vertex) {
-            return vertex.equals(getFirst()) || vertex.equals(getLast());
+        public Segment reverse() {
+            Segment reversed = new Segment();
+            setIteratorReversed(getLast());
+            while (hasNext()) {
+                reversed.add(getNext());
+            }
+            log.debug ("      Created reversed from {} : {}", this, reversed);
+            return reversed;
         }
 
-        public boolean isForward() {
-            return isForward;
+        public boolean isDuplicate (Segment s) {
+            return isIdentical(this, s, false)
+                    || isIdentical(this, s, true);
+        }
+
+        public boolean isAtEnd (NetworkVertex vertex) {
+            return vertex.equals(getFirst()) || vertex.equals(getLast());
         }
 
         public NetworkVertex getFrom() {
@@ -716,14 +926,37 @@ public class DLLGraph {
             return to;
         }
 
-        public int indexOf (NetworkVertex vertex) {
-            for (int i=0; i<size()-1; i++) {
-                if (vertex.toString().equals(get(i).toString())) {
-                    return i;
-                }
+        /** Get the next-to-first or next-to-last vertex of this segment.
+         * Will return null if the argument is not the first or last vertex.
+         * @param end First or last vertex of this segment
+         * @return The vertex next to the first or last one, or null
+         */
+        public NetworkVertex getNextTo (NetworkVertex end) {
+            if (end.equals(getLast())) {
+                return get (indexOf(getLast()) - 1);
+            } else if (end.equals(getFirst())) {
+                return get(1);
             }
-            return -1;
+            return null;
+        }
+
+        public NetworkVertex getNextToLast () {
+            return get (indexOf(getLast()) - 1);
         }
 
     } // End of Segment inner class
+
+    /** Legend of marker values used in debug logging */
+    private void logLegend() { // not finished yet
+        log.debug("Legend:");
+        log.debug(" 1 = closing a segment at a stop with at least 3 exits");
+        log.debug(" 2 = closing a segment at a sink (stop with one usable exit)");
+        log.debug(" 3 = opening a new segment at a stop with at least 3 exits");
+        log.debug(" 4 = adding vertices in normal progress, including 2-exit stops");
+        log.debug(" 5 = joining two dangling segments");
+        log.debug(" 6 = closing a segment after pruning, at an intermediate (2-exit) stop");
+        log.debug(" 7 = discarding a segment ending at a non-track tile, having no intermediate stops");
+        log.debug(" 8 = duplicating segment at forward branch");
+        log.debug(" 9 = duplicating segment at backward branch");
+    }
 }

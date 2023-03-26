@@ -947,16 +947,17 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
         LayBaseTokenDialog(LayBaseToken action) {
             super("Edit LayBaseToken");
             this.action = action;
-            addTextField(this, "Locations",
+            addTextField(this, "Locations",  // 0
                     action.getLocationNameString(),
                     action.getLocationNameString());
             addTextField(this, "Station",
                     // getChosenStation is deprecated, but chosenStop is still derived from it,
                     // and therefore must be used in ListAndFixSavedFiles
                     action.getChosenStation(),
-                    String.valueOf(action.getChosenStation()));  // 0
-                    //action.getChosenStop().getNumber(),
-                    //String.valueOf(action.getChosenStop().getNumber()));  // 0
+                    String.valueOf(action.getChosenStation()));  // 1
+            addTextField(this, "cost",
+                    action.getCost(),
+                    String.valueOf(action.getCost()));  // 2
             finish();
         }
 
@@ -971,6 +972,13 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 input = ((JTextField)inputElements.get(1)).getText();
                 int chosenStation = Integer.valueOf(input);
                 action.setChosenStation(chosenStation);
+            } catch (NumberFormatException e) {
+                log.error ("Error in chosenStop: {}", input, e);
+            }
+            try {
+                input = ((JTextField)inputElements.get(2)).getText();
+                int cost = Integer.valueOf(input);
+                action.setCost(cost);
             } catch (NumberFormatException e) {
                 log.error ("Error in chosenStop: {}", input, e);
             }
