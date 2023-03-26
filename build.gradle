@@ -61,7 +61,7 @@ dependencies {
     implementation 'org.apache.xmlgraphics:batik-bridge:1.15'
     implementation 'org.apache.xmlgraphics:batik-transcoder:1.16'
     implementation 'org.apache.xmlgraphics:batik-svggen:1.15'
-    implementation 'org.apache.xmlgraphics:batik-ext:1.15'
+    implementation 'org.apache.xmlgraphics:batik-ext:1.16'
     implementation 'org.apache.xmlgraphics:batik-swing:1.15'
     implementation 'javazoom:jlayer:1.0.1'
     implementation 'ch.qos.logback:logback-classic:1.4.4'
