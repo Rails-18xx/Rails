@@ -29,7 +29,7 @@ description = 'Rails is a moderator program for 18xx games'
 
 def appName = 'Rails-18xx'
 def vendor = 'The Rails project team'
-def licenceFile = "./LICENSE"
+def licenceFile = './LICENSE'
 
 def input = './build/libs'
 def output = './build/installers'
