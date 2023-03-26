@@ -197,7 +197,7 @@ task buildRpmPackage(type: Exec) {
                 '--app-version', appVersion(),
                 '--input', 'input',
                 '--dest', 'output',
-                '--main-jar', 'shadowJar.archiveName,'
+                '--main-jar', 'shadowJar.archiveName',
                 '--linux-package-name', 'rails-18xx',
                 '--linux-app-category', 'games',
                 '--linux-shortcut'
