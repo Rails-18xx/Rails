@@ -1433,7 +1433,7 @@ Payout,Charlie,175,5,10
 PRICE_MOVES_LOG,PLM,110,E2,122,F2
  
 CompanyOperates,Est,Mike
-LAYS_TOKEN_ON,Est,H6,120
+LAYS_TOKEN_ON,Est,H6,100
 CompanyRevenue,Est,380
 InterestPaidFromTreasury,Est,50,loan
 CompanySplits,Est,380
@@ -1488,7 +1488,7 @@ ORWorthIncrease,Lyndon,8.1,754
 ORWorthIncrease,Mark,8.1,692
 Has,Als,166
 Has,Belg,3
-Has,Est,398
+Has,Est,418
 Has,Midi,321
 Has,Ouest,29
 Has,Paris,318
@@ -1604,7 +1604,7 @@ ORWorthIncrease,Lyndon,8.2,1175
 ORWorthIncrease,Mark,8.2,847
 Has,Als,116
 Has,Belg,3
-Has,Est,38
+Has,Est,58
 Has,Midi,50
 Has,Ouest,379
 Has,Paris,68
@@ -1703,7 +1703,7 @@ ORWorthIncrease,Lyndon,8.3,1634
 ORWorthIncrease,Mark,8.3,1137
 Has,Als,66
 Has,Belg,3
-Has,Est,38
+Has,Est,58
 Has,Midi,50
 Has,Ouest,527
 Has,Paris,68
