@@ -585,7 +585,7 @@ public class OperatingRound_1880 extends OperatingRound {
         }
 
         // Move the token
-        operatingCompany.value().payout(amount);
+        operatingCompany.value().adjustPriceOnPayout(amount);
 
     }
 

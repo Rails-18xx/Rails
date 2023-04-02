@@ -12,6 +12,7 @@ import net.sf.rails.game.special.SpecialRight;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.*;
+import net.sf.rails.game.state.Observer;
 import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,7 +140,7 @@ public class PublicCompany extends RailsAbstractItem
      */
     protected int publicNumber = -1; // For internal use
 
-    protected int numberOfBaseTokens = 0;
+    protected IntegerState numberOfBaseTokens = IntegerState.create(this, "noOfBaseTokens");
 
     /**
      * In case of distance-dependent token lay cost,
@@ -296,9 +297,7 @@ public class PublicCompany extends RailsAbstractItem
 
     protected boolean poolPaysOut = false;
 
-    /* not used
-    protected boolean treasuryPaysOut = false;
-     */
+    protected boolean treasuryPaysOut = true; // Used by 18VA: false
 
     protected boolean canHoldOwnShares = false;
 
@@ -560,8 +559,6 @@ public class PublicCompany extends RailsAbstractItem
             currentPrice = PriceModel.create(this, "currentPrice", true);
             canSharePriceVary = new BooleanState(this, "canSharePriceVary", true);
         }
-
-
     }
 
      /**
@@ -597,7 +594,7 @@ public class PublicCompany extends RailsAbstractItem
 
         fixedPrice = tag.getAttributeAsInteger("price", 0);
 
-        numberOfBaseTokens = tag.getAttributeAsInteger("tokens", 1);
+        numberOfBaseTokens.set(tag.getAttributeAsInteger("tokens", 1));
 
         certsAreInitiallyAvailable = tag.getAttributeAsBoolean("available", certsAreInitiallyAvailable);
 
@@ -646,8 +643,9 @@ public class PublicCompany extends RailsAbstractItem
         parentInfoText += SpecialProperty.configure(this, tag);
 
         poolPaysOut = poolPaysOut || tag.getChild("PoolPaysOut") != null;
-
         ipoPaysOut = ipoPaysOut || tag.getChild("IPOPaysOut") != null;
+        treasuryPaysOut = treasuryPaysOut
+                && tag.getChild("TreasuryDoesNotPayOut") == null;
 
         Tag floatTag = tag.getChild("Float");
         if (floatTag != null) {
@@ -1167,15 +1165,57 @@ public class PublicCompany extends RailsAbstractItem
         hasReachedDestination.set(value);
     }
 
-    /** Stub to trigger a company to make more shares available,
-     * in other words: become a higher-number-of-shares company.
-     * @return false if conversion is not allowed or fails.
-     *
-     * Used by overriding in 1826 (perhaps that code could be put here)
-     */
-    public boolean grow() {
-        return validateGrow();
+    /** Convert company from a 5-share to a 10-share company */
+    /* The intention is to make this code usable for other games as well. */
+    public boolean grow () {
+
+        if (!validateGrow()) return false;
+
+        growStep.add(1);
+        setShareUnit(shareUnitSizes.get(growStep.value()));
+
+        BankPortfolio reserved = getRoot().getBank().getUnavailable();
+        BankPortfolio ipo = getRoot().getBank().getIpo();
+        Set<PublicCertificate> last5Shares = reserved.getPortfolioModel().getCertificates(this);
+        for (PublicCertificate cert : last5Shares) {
+            if (hasStarted()) {
+                cert.moveTo(this);
+            } else {
+                // Still in IPO, put the reserved shares there too
+                cert.moveTo(ipo);
+            }
+        }
+
+        ReportBuffer.add(this, LocalText.getText("CompanyHasGrown",
+                this, getActiveShareCount()));
+
+        currentTrainLimits.setTo(trainLimits.get(growStep.value()));
+        ReportBuffer.add(this,
+                LocalText.getText("PhaseDependentTrainLimitsSetTo",
+                        this, currentTrainLimits.view(), getCurrentTrainLimit()));
+
+
+        // For some reason the shareUnit change does not update
+        // the percentages shown in the GameStatus window.
+        // E.g. 60% should become 30%, etc.
+        // There must be a nicer way to accomplish that,
+        // but for now the below code works.
+        Set<Model> modelsToUpdate = new HashSet<>();
+        PortfolioOwner owner;
+        Model model;
+        for (PublicCertificate cert : getCertificates()) {
+            owner = (PortfolioOwner) cert.getOwner();
+            model = owner.getPortfolioModel().getShareModel(this);
+            if (!modelsToUpdate.contains(model)) modelsToUpdate.add(model);
+        }
+        for (Model m : modelsToUpdate) {
+            for (Observer obs : m.getObservers()) {
+                obs.update(m.toText());
+            }
+        }
+        return true;
     }
+
     /** Stub, to be extended or overridden by specific games if needed. */
     protected boolean validateGrow() {
         return growStep.value() < shareUnitSizes.size() - 1;
@@ -1637,11 +1677,9 @@ public class PublicCompany extends RailsAbstractItem
      * Determine if the price token must be moved after a dividend payout,
      * and with how many jumps.
      *
-     * TODO: Will be renamed to adjustPriceOnPayout
-     *
      * @param amount The total revenue that has been paid out
      */
-    public void payout(int amount) {
+    public void adjustPriceOnPayout(int amount) {
 
         if (!hasStockPrice || amount == 0) return;
 
@@ -1671,11 +1709,26 @@ public class PublicCompany extends RailsAbstractItem
         */
     }
 
+    /** Do IPO or Pool pay out to the company?
+     * Default = false
+     * @param cert The certificate
+     * @return whether it pays out to the company if opwned by the Bank
+     */
     public boolean paysOutToTreasury(PublicCertificate cert) {
 
         Owner owner = cert.getOwner();
         return owner == getRoot().getBank().getIpo() && ipoPaysOut
             || owner == getRoot().getBank().getPool() && poolPaysOut;
+    }
+
+    /** Do treasury shares pay out to the company?
+     * Default = true
+     * @param cert The certificate
+     * @return whether it pays out to its owning company
+     */
+    public boolean treasurySharesPayOut (PublicCertificate cert) {
+        Owner owner = cert.getOwner();
+        return owner == cert.getCompany() && treasuryPaysOut;
     }
 
     /**
@@ -2253,7 +2306,7 @@ public class PublicCompany extends RailsAbstractItem
      */
     protected void initBaseTokens() {
         SortedSet<BaseToken> newTokens = new TreeSet<>();
-        for (int i = 0; i < numberOfBaseTokens; i++) {
+        for (int i = 0; i < numberOfBaseTokens.value(); i++) {
             BaseToken token = BaseToken.create(this);
             newTokens.add(token);
         }

@@ -11,7 +11,6 @@ import net.sf.rails.game.state.Observable;
 import net.sf.rails.game.state.Observer;
 import net.sf.rails.game.state.*;
 import net.sf.rails.util.SequenceUtil;
-import net.sf.rails.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rails.game.action.*;
@@ -910,10 +909,14 @@ public class OperatingRound extends Round implements Observer {
             log.debug("OR considers newStep {}", newStep);
 
             if (newStep == GameDef.OrStep.LAY_TRACK) {
+                if (noMapMode) continue;
                 initNormalTileLays();
             }
 
             if (newStep == GameDef.OrStep.LAY_TOKEN) {
+
+                if (noMapMode) continue;
+                log.debug ("No normal token laid yet");
                 /*
                 List<SpecialProperty> bonuses = gameManager.getCommonSpecialProperties();
                 boolean bonusTokensForSale =
@@ -2152,6 +2155,8 @@ public class OperatingRound extends Round implements Observer {
         PublicCompany company = action.getCompany();
         String companyName = company.getId();
 
+        boolean nonCity = (action.getType() == LayBaseToken.NON_CITY);
+
         // Dummy loop to enable a quick jump out.
         while (true) {
 
@@ -2162,7 +2167,8 @@ public class OperatingRound extends Round implements Observer {
                     && action.getType() != LayBaseToken.HOME_CITY
                     && action.getType() != LayBaseToken.SPECIAL_PROPERTY
                     && action.getType() != LayBaseToken.CORRECTION
-                    && action.getType() != LayBaseToken.FORCED_LAY) {
+                    && action.getType() != LayBaseToken.FORCED_LAY
+                    && !nonCity) {
                 errMsg = LocalText.getText("WrongActionNoTokenLay");
                 break;
             }
@@ -2172,12 +2178,12 @@ public class OperatingRound extends Round implements Observer {
                 break;
             }
 
-            if (!isTokenLayAllowed(company, hex, stop)) {
+            if (!nonCity && !isTokenLayAllowed(company, hex, stop)) {
                 errMsg = LocalText.getText("BaseTokenSlotIsReserved");
                 break;
             }
 
-            if (!stop.hasTokenSlotsLeft()) {
+            if (!nonCity && !stop.hasTokenSlotsLeft()) {
                 errMsg = LocalText.getText("CityHasNoEmptySlots");
                 break;
             }
@@ -2238,8 +2244,14 @@ public class OperatingRound extends Round implements Observer {
         }
 
         /* End of validation, start of execution */
+        boolean result;
 
-        if (hex.layBaseToken(company, stop)) {
+        if (nonCity) {
+            result = hex.layOffStationBaseToken(BaseToken.create(company));
+        } else {
+            result = hex.layBaseToken(company, stop);
+        }
+        if (result) {
             /* TODO: the false return value must be impossible. */
 
             company.layBaseToken(hex, cost);
@@ -2286,7 +2298,7 @@ public class OperatingRound extends Round implements Observer {
             if (currentNormalTokenLays.isEmpty()) {
                 log.debug("No more normal token lays are allowed");
             } else if (operatingCompany.value().getNumberOfFreeBaseTokens() == 0) {
-                log.debug("Normal token lay allowed by no more tokens");
+                log.debug("Normal token lay allowed but no more tokens");
                 currentNormalTokenLays.clear();
             } else {
                 log.debug("A normal token lay is still allowed");
@@ -2295,7 +2307,8 @@ public class OperatingRound extends Round implements Observer {
             log.debug("There are now {} special token lay objects", currentSpecialTokenLays.size());
 
             // Can more tokens be laid? Otherwise, next step
-            if (!canLayAnyTokens(false)) {
+            //if (!canLayAnyTokens(false)) {
+            if (currentNormalTokenLays.isEmpty() && currentSpecialTokenLays.isEmpty()) {
                 nextStep();
             }
 
@@ -2550,11 +2563,16 @@ public class OperatingRound extends Round implements Observer {
      */
 
     protected boolean canLayAnyTokens (boolean resetTokenLays) {
+
         if (resetTokenLays) setNormalTokenLays();
         if (!currentNormalTokenLays.isEmpty()) return true;
         if (resetTokenLays) setSpecialTokenLays();
         if (!currentSpecialTokenLays.isEmpty()) return true;
         if (!getSpecialProperties(SpecialBonusTokenLay.class).isEmpty()) return true;
+        for (SpecialBaseTokenLay sbtl : getSpecialProperties(SpecialBaseTokenLay.class)) {
+            if (operatingCompany.value().getNumberOfFreeBaseTokens() > 0
+                || sbtl.isCreate()) return true;
+        }
         return false;
     }
 
@@ -2790,13 +2808,26 @@ public class OperatingRound extends Round implements Observer {
     /**
      * Process any special revenue, adapting the dividend as required.
      * Default version: dividend = earnings.
-     * To be overridden if any special revenue must be processed.
+     * Should not be called if specialRevenue = 0.
      * @param earnings The total income from train runs.
      * @param specialRevenue Any income that needs special processing.
      * @return The resulting dividend (default: equal to the earnings).
      */
     protected int processSpecialRevenue(int earnings, int specialRevenue) {
-        return earnings;
+        int dividend = earnings;
+        PublicCompany company = operatingCompany.value();
+        if (specialRevenue > 0) {
+            dividend -= specialRevenue;
+            company.setLastDirectIncome(specialRevenue);
+            ReportBuffer.add(this, LocalText.getText("CompanyDividesEarnings",
+                    company,
+                    Bank.format(this, earnings),
+                    Bank.format(this, dividend),
+                    Bank.format(this, specialRevenue)));
+            Currency.fromBank(specialRevenue, company);
+        }
+        company.setLastDividend(dividend);
+        return dividend;
     }
 
     /*
@@ -2838,7 +2869,7 @@ public class OperatingRound extends Round implements Observer {
         }
 
         // Move the token
-        operatingCompany.value().payout(amount);
+        operatingCompany.value().adjustPriceOnPayout(amount);
     }
 
     protected Map<MoneyOwner, Integer> countSharesPerRecipient() {
@@ -2871,14 +2902,17 @@ public class OperatingRound extends Round implements Observer {
         MoneyOwner beneficiary;
 
         // Special cases apply if the holder is the IPO or the Pool
+        beneficiary = bank; // Default
         if (operatingCompany.value().paysOutToTreasury(cert)) {
             beneficiary = operatingCompany.value();
+        } else if (cert.getOwner().equals(operatingCompany.value())) {
+            if (operatingCompany.value().treasurySharesPayOut(cert)) {
+                beneficiary = operatingCompany.value();
+            }
         } else if (cert.getOwner() instanceof MoneyOwner) {
             beneficiary = (MoneyOwner) cert.getOwner();
-        } else { // TODO: check if this is a correct assumption that otherwise
-            // the money goes to the bank
-            beneficiary = bank;
         }
+
         return beneficiary;
     }
 

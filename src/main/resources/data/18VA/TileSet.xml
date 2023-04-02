@@ -60,16 +60,16 @@
 		<Upgrade id="63" hex="B5,C6,D3,G6,H3,H5,I4,L3"/>
 		<Upgrade id="170" hex="C8,D7,E6,K6,M6"/>
 	</Tile>
-	<Tile id="80" quantity="3">
+	<Tile id="80" pic="3080" quantity="3">
 		<Upgrade id="545,546"/>
 	</Tile>
-	<Tile id="81" quantity="3">
+	<Tile id="81" pic="3081" quantity="3">
 		<Upgrade id="546"/>
 	</Tile>
-	<Tile id="82" quantity="4">
+	<Tile id="82" pic="3082" quantity="4">
 		<Upgrade id="544,545,546"/>
 	</Tile>
-	<Tile id="83" quantity="4">
+	<Tile id="83" pic="3083" quantity="4">
 		<Upgrade id="544,545,546"/>
 	</Tile>
 	<Tile id="141" quantity="2"/>
@@ -83,9 +83,9 @@
 		<Upgrade id="1171" hex="K6"/>
 		<Upgrade id="1172" hex="D7"/>
 	</Tile>
-	<Tile id="544" quantity="2"/>
-	<Tile id="545" quantity="2"/>
-	<Tile id="546" quantity="2"/>
+	<Tile id="544" pic="3544" quantity="2"/>
+	<Tile id="545" pic="3545" quantity="2"/>
+	<Tile id="546" pic="3546" quantity="2"/>
 
 	<!-- Grey tiles -->
 	<Tile id="1171" quantity="1"/>
