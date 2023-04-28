@@ -264,6 +264,8 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         return mutexId;
     }
 
+    public int getValue() { return getRelatedStation().getValue(); }
+
 
     public boolean isRunToAllowedFor(PublicCompany company, boolean running) {
 

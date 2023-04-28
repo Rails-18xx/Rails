@@ -46,7 +46,7 @@ public class BaseTokensModel extends RailsModel {
 
     /**
      * Add more tokens than the initially configured number.
-     * This is required for 1826.
+     * This is required for 1826 and 18VA
      * @param token A newly created token
      * @param laid True if the new token will immediately be laid,
      *             i.e. it will never be a freely layable token.

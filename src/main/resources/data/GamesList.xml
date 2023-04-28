@@ -281,6 +281,29 @@ Game variants:
 		<Players minimum="2" maximum="6" />
 	</Game>
 
+	<Game name="18VA">
+		<Note>Playable (alpha)</Note>
+		<Description>18VA
+			(c) David G.D. Hecht 2001-2005
+			Rules version 1.00 of 10 May 2005
+
+			Not yet fully developed or tested:
+			- Share selling in emergency train buying
+			(taking loans, bonds and president cash works)
+			- Bankruptcy
+			- Passenger trains running through but ignoring
+			towns (mines).
+
+			Notes:
+			- When the port and neighbouring city values are doubled,
+			the extra revenue of the city is added to the port value
+			in the revenue details display (the blue small-print text).
+			The reason is, that the doubling only occurs if the port is reached.
+
+		</Description>
+		<Players minimum="2" maximum="5" />
+	</Game>
+
 	<Game name="1870">
 		<Note>Not yet playable</Note>
 		<Description>1870 - Railroading across the Trans Mississippi
@@ -325,12 +348,6 @@ Known Issues:
 - Not implemented: receivership
 </Description>
     <Players minimum="3" maximum="5" />
-  </Game>
-
-  <Game name="18VA">
-    <Note>Prototype</Note>
-    <Description>18VA</Description>
-    <Players minimum="2" maximum="5" />
   </Game>
 
   <Game name="1862">

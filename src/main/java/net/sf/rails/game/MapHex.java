@@ -35,6 +35,12 @@ import rails.game.action.LayTile;
  */
 public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
+    public enum ValueType {
+        PERTILE,  // Default
+        PERPHASE, // Default for offmap tiles
+        PERTRAIN  // So far for 18VA CMD only
+    }
+
     private static final Logger log = LoggerFactory.getLogger(MapHex.class);
 
     public static class Coordinates {
@@ -166,6 +172,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
      * Values if this is an off-board hex
      */
     private List<Integer> valuesPerPhase = null;
+    private ValueType valueType = ValueType.PERTILE;
 
     /*
      * Temporary storage for impassable hexsides. Once neighbours has been set
@@ -254,6 +261,9 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
     private final PortfolioSet<BonusToken> bonusTokens
             = PortfolioSet.create(this, "bonusTokens", BonusToken.class);
 
+    private final PortfolioSet<BaseToken> offStationBaseTokens
+            = PortfolioSet.create(this, "offStationBaseTokens", BaseToken.class);
+
     /**
      * Parameters for extra text to be printed at a specified position on the hex.
      * Added for 1837 to print coal mine names
@@ -295,7 +305,10 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         label = tag.getAttributeAsString("label", "");
 
         // Off-board revenue values
+        String valueTypeString = tag.getAttributeAsString("valueType", "perTile");
+        valueType = ValueType.valueOf(valueTypeString.toUpperCase());
         valuesPerPhase = tag.getAttributeAsIntegerList("value");
+        if (!valuesPerPhase.isEmpty()) valueType = ValueType.PERPHASE;
 
         // Location name
         stopName = tag.getAttributeAsString("city", "");
@@ -829,6 +842,12 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         }
     }
 
+    /** Lay an off-station base token, as in 18VA */
+    public boolean layOffStationBaseToken (BaseToken token) {
+        offStationBaseTokens.add(token);
+        return true;
+    }
+
     /**
      * Lay a bonus token.
      *
@@ -854,6 +873,10 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
 
     public PortfolioSet<BonusToken> getBonusTokens() {
         return bonusTokens;
+    }
+
+    public PortfolioSet<BaseToken> getOffStationBaseTokens() {
+        return offStationBaseTokens;
     }
 
     public boolean hasTokenSlotsLeft(Station station) {
@@ -1099,6 +1122,10 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         return valuesPerPhase;
     }
 
+    public ValueType getValueType() {
+        return valueType;
+    }
+
     public int getCurrentValueForPhase(Phase phase) {
         if (hasValuesPerPhase() && phase != null) {
             return valuesPerPhase.get(Math.min(valuesPerPhase.size(),
@@ -1106,6 +1133,10 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable {
         } else {
             return 0;
         }
+    }
+
+    public int getValuePerTrain (Train train) {
+        return getRoot().getGameManager().getValuePerTrain(train);
     }
 
     public String getStopName() {

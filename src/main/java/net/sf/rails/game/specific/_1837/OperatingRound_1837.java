@@ -326,6 +326,7 @@ public class OperatingRound_1837 extends OperatingRound {
     /* (non-Javadoc)
      * @see net.sf.rails.game.OperatingRound#gameSpecificTileLayAllowed(net.sf.rails.game.PublicCompany, net.sf.rails.game.MapHex, int)
      */
+    /*
     @Override
     protected int processSpecialRevenue(int earnings, int specialRevenue) {
         int dividend = earnings;
@@ -342,7 +343,7 @@ public class OperatingRound_1837 extends OperatingRound {
         }
         company.setLastDividend(dividend);
         return dividend;
-    }
+    }*/
 
     @Override
     protected boolean gameSpecificTileLayAllowed(PublicCompany company,
