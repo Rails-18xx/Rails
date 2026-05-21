@@ -602,6 +602,16 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     private boolean displayHexNames = false;
     private boolean displayBuildNumbers = true;
 
+    private boolean displayOffboardValues = true;
+
+    public boolean getDisplayOffboardValues() {
+        return displayOffboardValues;
+    }
+
+    public void setDisplayOffboardValues(boolean display) {
+        this.displayOffboardValues = display;
+    }
+    
     protected Dimension originalSize;
     private Dimension currentSize;
 

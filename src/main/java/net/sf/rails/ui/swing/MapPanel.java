@@ -395,6 +395,12 @@ JPopupMenu menu = new JPopupMenu();
                     .addActionListener(ae -> orUIManager.toggleRevenueRoutes());
                 menu.add(new JCheckBoxMenuItem("Fancy City Values", orUIManager.isShowFancyCityValues()))
                     .addActionListener(ae -> orUIManager.toggleFancyCityValues());
+                JCheckBoxMenuItem offboardItem = new JCheckBoxMenuItem("Offboard Values", map.getDisplayOffboardValues());
+                offboardItem.addActionListener(ae -> {
+                    map.setDisplayOffboardValues(!map.getDisplayOffboardValues());
+                    repaint();
+                });
+                menu.add(offboardItem);
                 
                 menu.addSeparator();
                 JMenuItem hideAll = new JMenuItem("Hide All Overlays");

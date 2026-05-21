@@ -760,7 +760,72 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
                 paintFancyCityValues(g, activePaths);
             }
         }
+        paintOffboardValues(g);
 
+    }
+
+    private void paintOffboardValues(Graphics2D g) {
+        if (hexMap == null || !hexMap.getDisplayOffboardValues()) return;
+
+        // Ensure this hex actually has phase values
+        if (!getHex().hasValuesPerPhase()) return;
+
+        java.util.List<Integer> values = getHex().getValuesPerPhase();
+        if (values == null || values.isEmpty()) return;
+
+        // Constrain to maximum 4 values for a 2x2 grid
+        int numVals = Math.min(values.size(), 4);
+        
+        double zoom = dimensions.zoomFactor;
+        int boxSize = (int) Math.round(12.5 * zoom);
+
+        double cx = dimensions.center.getX();
+        double cy = dimensions.center.getY();
+
+        // 18xx Phase colors: Yellow, Green, Brown, Grey
+        java.awt.Color[] bgColors = {
+            new java.awt.Color(255, 255, 102), // Yellow
+            new java.awt.Color(102, 204, 102), // Green
+            new java.awt.Color(153, 102, 51),  // Brown
+            new java.awt.Color(160, 160, 160)  // Grey
+        };
+        // Ensure contrast for the text
+        java.awt.Color[] fgColors = { java.awt.Color.BLACK, java.awt.Color.BLACK, java.awt.Color.WHITE, java.awt.Color.WHITE };
+
+        java.awt.Font oldFont = g.getFont();
+        g.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, (int) Math.round(9 * zoom)));
+        java.awt.FontMetrics fm = g.getFontMetrics();
+
+        for (int i = 0; i < numVals; i++) {
+            int val = values.get(i);
+            
+            // Calculate 2x2 offsets based on the index
+            int xOffset = (i % 2 == 0) ? -boxSize : 0;
+            int yOffset = (i < 2) ? -boxSize : 0;
+            
+            int x = (int) Math.round(cx + xOffset);
+            int y = (int) Math.round(cy + yOffset);
+
+            // Draw Background Box
+            g.setColor(bgColors[i]);
+            g.fillRect(x, y, boxSize, boxSize);
+
+            // Draw Box Border
+            g.setColor(java.awt.Color.BLACK);
+            g.setStroke(new java.awt.BasicStroke(1.0f));
+            g.drawRect(x, y, boxSize, boxSize);
+
+            // Draw Centered Text
+            g.setColor(fgColors[i]);
+            String text = String.valueOf(val);
+            int tw = fm.stringWidth(text);
+            
+            int tx = x + (boxSize - tw) / 2;
+            int ty = y + ((boxSize - fm.getHeight()) / 2) + fm.getAscent();
+            
+            g.drawString(text, tx, ty);
+        }
+        g.setFont(oldFont);
     }
 
     private void paintFancyCityValues(Graphics2D g, java.util.List<java.awt.geom.GeneralPath> activePaths) {
