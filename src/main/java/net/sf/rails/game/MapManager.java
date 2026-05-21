@@ -44,6 +44,12 @@ public class MapManager extends RailsManager implements Configurable {
     private float mapScale = (float)1.0;
     private boolean mapImageUsed = false;
 
+    private final Set<String> disabledOffboardHexes = new HashSet<>();
+
+    public boolean isOffboardValueAllowed(String hexName) {
+        return !disabledOffboardHexes.contains(hexName);
+    }
+
     private static final Logger log = LoggerFactory.getLogger(MapManager.class);
 
     /**
@@ -84,6 +90,12 @@ public class MapManager extends RailsManager implements Configurable {
             MapHex hex = MapHex.create(this, hexTag);
             hexBuilder.put(hex.getCoordinates(), hex);
             tileCostsBuilder.addAll(hex.getTileCostsList());
+            // Parse the new XML attribute without breaking legacy schemas
+            String showAttr = hexTag.getAttributeAsString("showoffmapvalues");
+            if (showAttr != null && (showAttr.equals("0") || showAttr.equalsIgnoreCase("false"))) {
+                disabledOffboardHexes.add(hex.getId());
+            }
+            
         }
         hexes = hexBuilder.build();
         possibleTileCosts = tileCostsBuilder.build();

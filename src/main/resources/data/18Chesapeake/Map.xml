@@ -5,10 +5,10 @@
 		<Access type="town" runTo="yes" runThrough="yes" loop="yes" score="minor"/>
 	</Defaults>
 	<!-- The above defaults are redundant, these settings are the system defaults anyway -->
-	<Hex name="A3" tile="-911" orientation="0" value="40,50,60,80" city="Pittsburgh"/>
+	<Hex name="A3" tile="-911" orientation="0" value="40,50,60,80" city="Pittsburgh" showoffmapvalues="0" />
 	<Hex name="A7" tile="-902" orientation="0" value="40,60,80,100" city="Ohio"/>
 	<Hex name="A13" tile="-901" orientation="5" value="40,50,60,80" city="West Virgina Coal Fields"/>
-	<Hex name="B2" tile="-901" orientation="0" value="40,50,60,80"/>
+	<Hex name="B2" tile="-901" orientation="1" value="40,50,60,80"/>
 	<Hex name="B4" tile="-2"/>
 	<Hex name="B6" tile="0"/>
 	<Hex name="B8" tile="0"/>
@@ -50,20 +50,22 @@
 	<Hex name="G13" tile="-10" city="Richmond"/>
 	<Hex name="H2" tile="0"/>
     <Hex name="H4" tile="-10" city="Strasburg"/>
+
 	<Hex name="H6" tile="-7713" orientation="1" city="Baltimore" label="OO" />
+
 	<Hex name="H8" tile="-4000"/>
     <Hex name="H12" tile="0" cost="40"  terrain="River"/>
     <Hex name="H14" tile="-901" orientation="3" value="30,40,50,60" city="Norfolk"/>
     <Hex name="I3" tile="0"/>
 	<Hex name="I5" tile="-1" cost="40"  terrain="River"/>
 	<Hex name="I7" tile="0"/>
-	<Hex name="I9" tile="-7712" orientation="2" town="Delmarva Penninsula" value="30"/>
+	<Hex name="I9" tile="-7712" orientation="3" town="Delmarva Penninsula" value="30"  showoffmapvalues="0"/>
 	<Hex name="J2" tile="-10" city="Allentown"/>
     <Hex name="J4" tile="-7713" orientation="0" city="Philadelphia" label="OO"/>
 	<Hex name="J6" tile="-10" city="Camden" cost="40"  terrain="River"/>
 	<Hex name="J8" tile="0"/>
 	<Hex name="J10" tile="0"/>
-	<Hex name="K1" tile="-7711" orientation="0" value="30" town="Easton"/>
+	<Hex name="K1" tile="-7711" orientation="0" value="30" town="Easton" showoffmapvalues="0"/>
 	<Hex name="K3" tile="-2" town="Trenton, Amboy"/>
 	<Hex name="K5" tile="-2" town="Princeton, Burlington"/>
 	<Hex name="K7" tile="-7" orientation="4"/>

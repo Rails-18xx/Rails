@@ -1902,9 +1902,9 @@ if (isTimeManagementEnabled()) {
                 if (shouldFlush) {
                     RoundFacade currentRound = getCurrentRound();
                     if (currentRound instanceof OperatingRound) {
-                        ((OperatingRound) currentRound).resetTransientStateOnLoad();
+                        // ((OperatingRound) currentRound).resetTransientStateOnLoad();
                         log.info(
-                                "MAP CORRECTION: Flushed OperatingRound transient caches to maintain state consistency.");
+                                "MAP CORRECTION: Skipped OperatingRound transient caches flush to prevent prematurely ending the round.");
                     } else if (currentRound instanceof StockRound) {
                         ((StockRound) currentRound).resetTransientStateOnLoad();
                     }

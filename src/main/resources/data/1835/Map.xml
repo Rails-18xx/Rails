@@ -16,7 +16,7 @@
 	<Hex name="C15" tile="0"/>
 	<Hex name="C17" tile="0"/>
 	<Hex name="C19" tile="0"/>
-	<Hex name="C21" tile="-901_1835" orientation="2" value="20,20,40" city="Ostpreu&#223;en"/>
+	<Hex name="C21" tile="-901" orientation="2" value="20,20,40" city="Ostpreu&#223;en"/>
 	<Hex name="D4" tile="-8"/>
 	<Hex name="D6" tile="-805" city="Oldenburg"/>
 	<Hex name="D8" tile="-10" cost="50" terrain="River"  city="Bremen"/>
@@ -67,7 +67,7 @@
 	<Hex name="H16" tile="-10" city="Leipzig"/>
 	<Hex name="H18" tile="0"/>
 	<Hex name="H20" tile="-3007" city="Dresden"/>
-	<Hex name="H22" tile="-901_1835" orientation="2" value="20,30,40" city="Oberschlesien"/>
+	<Hex name="H22" tile="-901" orientation="2" value="20,30,40" city="Oberschlesien"/>
 	<Hex name="I1" tile="-143"/>
 	<Hex name="I3" tile="-3007" cost="50" terrain="River"  city="K&#246;ln"/>
 	<Hex name="I5" tile="0"/>
@@ -109,7 +109,7 @@
 	<Hex name="M15" tile="-1" cost="50" terrain="River" />
 	<Hex name="M17" tile="0" cost="50" terrain="River" />
 	<Hex name="M19" tile="-3" orientation="1"/>
-	<Hex name="N4" tile="-901_18352" orientation="5" value="0,50,0" city="Elsas/Lothringen"/>
+	<Hex name="N4" tile="-901" orientation="5" value="0,50,0" city="Elsas/Lothringen"/>
 	<Hex name="N6" tile="-41"/>
 	<Hex name="N8" tile="0" cost="70" terrain="Hills" />
 	<Hex name="N10" tile="-2"/>

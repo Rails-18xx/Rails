@@ -398,10 +398,10 @@ JPopupMenu menu = new JPopupMenu();
                 JCheckBoxMenuItem offboardItem = new JCheckBoxMenuItem("Offboard Values", map.getDisplayOffboardValues());
                 offboardItem.addActionListener(ae -> {
                     map.setDisplayOffboardValues(!map.getDisplayOffboardValues());
-                    repaint();
+map.repaintAll(new Rectangle(map.getSize()));
                 });
                 menu.add(offboardItem);
-                
+
                 menu.addSeparator();
                 JMenuItem hideAll = new JMenuItem("Hide All Overlays");
                 hideAll.addActionListener(ae -> orUIManager.hideAllOverlays());

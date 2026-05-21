@@ -112,6 +112,11 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
     protected GameStatus gameStatus;
     private boolean useAltStatus = false;
     private JScrollPane jspStatus;
+    private boolean showPlayerWorth = false;
+    
+    public boolean isShowPlayerWorth() { 
+        return showPlayerWorth; 
+    }
 
 
     protected ActionButton passButton;
@@ -346,6 +351,15 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         });
         optMenu.add(toggleStatusItem);
 
+        JCheckBoxMenuItem toggleWorthItem = new JCheckBoxMenuItem("Show Player Worth", showPlayerWorth);
+        toggleWorthItem.addActionListener(e -> {
+            showPlayerWorth = toggleWorthItem.isSelected();
+            if (gameStatus != null) {
+                gameStatus.recreate();
+            }
+        });
+        optMenu.add(toggleWorthItem);
+        
         optMenu.addSeparator();
 
         // Map Settings

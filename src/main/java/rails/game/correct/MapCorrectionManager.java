@@ -56,56 +56,58 @@ public class MapCorrectionManager extends CorrectionManager {
     }
 
     private void runWizard() {
-        MapManager mm = getRoot().getMapManager();
-        
-        // Step 1: Select Hex
-        List<String> hexNames = mm.getHexes().stream()
-                .map(MapHex::getId)
-                .sorted()
-                .collect(Collectors.toList());
+       javax.swing.SwingUtilities.invokeLater(() -> {
+            MapManager mm = getRoot().getMapManager();
+            
+            // Step 1: Select Hex
+            List<String> hexNames = mm.getHexes().stream()
+                    .map(MapHex::getId)
+                    .sorted()
+                    .collect(Collectors.toList());
 
-        if (hexNames.isEmpty()) {
-            DisplayBuffer.add(this, "No hexes found on map.");
-            return;
-        }
+            if (hexNames.isEmpty()) {
+                DisplayBuffer.add(this, "No hexes found on map.");
+                return;
+            }
 
-        String selectedHex = (String) JOptionPane.showInputDialog(
-            null, 
-            "Select Hex to Correct:",
-            "Map Correction (1/3)",
-            JOptionPane.QUESTION_MESSAGE,
-            null, 
-            hexNames.toArray(), 
-            hexNames.get(0)
-        );
-        if (selectedHex == null) return;
+            String selectedHex = (String) JOptionPane.showInputDialog(
+                null, 
+                "Select Hex to Correct:",
+                "Map Correction (1/3)",
+                JOptionPane.QUESTION_MESSAGE,
+                null, 
+                hexNames.toArray(), 
+                hexNames.get(0)
+            );
+            if (selectedHex == null) return;
 
-        // Step 2: Select Tile (Text Input for ID)
-        String tileId = JOptionPane.showInputDialog(
-            null, 
-            "Enter Tile Number (e.g. '6' or '57'):",
-            "Map Correction (2/3)",
-            JOptionPane.QUESTION_MESSAGE
-        );
-        if (tileId == null || tileId.trim().isEmpty()) return;
-        tileId = tileId.trim();
+            // Step 2: Select Tile (Text Input for ID)
+            String tileId = JOptionPane.showInputDialog(
+                null, 
+                "Enter Tile Number (e.g. '6' or '57'):",
+                "Map Correction (2/3)",
+                JOptionPane.QUESTION_MESSAGE
+            );
+            if (tileId == null || tileId.trim().isEmpty()) return;
+            tileId = tileId.trim();
 
-        // Step 3: Select Rotation
-        Integer[] rotations = {0, 1, 2, 3, 4, 5};
-        Integer selectedRot = (Integer) JOptionPane.showInputDialog(
-            null, 
-            "Select Rotation:",
-            "Map Correction (3/3)",
-            JOptionPane.QUESTION_MESSAGE,
-            null, 
-            rotations, 
-            rotations[0]
-        );
-        if (selectedRot == null) return;
+            // Step 3: Select Rotation
+            Integer[] rotations = {0, 1, 2, 3, 4, 5};
+            Integer selectedRot = (Integer) JOptionPane.showInputDialog(
+                null, 
+                "Select Rotation:",
+                "Map Correction (3/3)",
+                JOptionPane.QUESTION_MESSAGE,
+                null, 
+                rotations, 
+                rotations[0]
+            );
+            if (selectedRot == null) return;
 
-        // Step 4: Create Action
-        MapCorrectionAction mca = new MapCorrectionAction(getRoot(), selectedHex, tileId, selectedRot);
-        getParent().process(mca);
+            // Step 4: Create Action
+            MapCorrectionAction mca = new MapCorrectionAction(getRoot(), selectedHex, tileId, selectedRot);
+            getParent().process(mca);
+        });
     }
 
     private boolean execute(MapCorrectionAction action) {

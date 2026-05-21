@@ -3611,6 +3611,30 @@ JPanel[] currentPanels = playerPrivatesPanel;
                 playerCash[i].setBackground(pBg);
                 playerCash[i].setOpaque(true);
             }
+            if (parent != null && parent.isShowPlayerWorth() && playerWorth != null && playerWorth[i] != null) {
+                playerWorth[i].setBackground(pBg);
+                playerWorth[i].setOpaque(true);
+                
+                int worth = p.getCashValue();
+                try {
+                    java.lang.reflect.Method m = p.getClass().getMethod("getValue");
+                    worth = (Integer) m.invoke(p);
+                } catch (Exception e1) {
+                    try {
+                        java.lang.reflect.Method m = p.getClass().getMethod("getWealth");
+                        worth = (Integer) m.invoke(p);
+                    } catch (Exception e2) {
+                        try {
+                            java.lang.reflect.Method m = p.getClass().getMethod("getTotalValue");
+                            worth = (Integer) m.invoke(p);
+                        } catch (Exception e3) {
+                            // Fallback is just cash, already set
+                        }
+                    }
+                }
+                playerWorth[i].setText(gameUIManager.format(worth));
+            }
+            
             if (playerPrivatesPanel[i] != null) {
                 playerPrivatesPanel[i].setBackground(pBg);
                 playerPrivatesPanel[i].setOpaque(true);
@@ -4695,6 +4719,9 @@ JPanel[] currentPanels = playerPrivatesPanel;
         playerFixedIncomeYOffset = currentFooterY++;
         playerTimerYOffset = currentFooterY++;
         playerStartOrderYOffset = currentFooterY++;
+        if (parent != null && parent.isShowPlayerWorth()) {
+            playerWorthYOffset = currentFooterY++;
+        }
 
         // We place this in initFields() so it persists after recreate() calls.
         linearRoundTracker = new LinearRoundTracker(gameUIManager, companies);
@@ -5423,9 +5450,26 @@ JPanel[] currentPanels = playerPrivatesPanel;
             gbc.weightx = 0.0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
         }
+        if (parent != null && parent.isShowPlayerWorth()) {
+            f = new Caption("Worth");
+            f.setBorder(BORDER_THIN);
+            f.setBackground(BG_HEADER);
+            f.setOpaque(true);
+            addField(f, compNameCol, playerWorthYOffset, 1, 1, 0, true);
+
+            for (int i = 0; i < np; i++) {
+                f = playerWorth[i] = new Field("");
+                f.setBorder(BORDER_THIN);
+                applyCurrencyFont(f);
+                f.setPreferredSize(dimPlayer);
+                gbc.weightx = 1.0;
+                addField(f, certPerPlayerXOffset + i, playerWorthYOffset, 1, 1, 0, true);
+                gbc.weightx = 0.0;
+            }
+        }
+
     }
 
-    // ... (lines of unchanged context code) ...
     private void initTrainMarket() {
         int trainY_Header = playerPrivatesYOffset; // We map the top of the new panel to this row
 

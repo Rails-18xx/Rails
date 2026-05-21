@@ -748,6 +748,9 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
             drawDestinationMilestones(g);
         }
 
+                paintOffboardValues(g);
+
+                
         // COMICAL CITY VALUES: Show if toggled ON and routes are actually plotted[cite:
         // 5, 6].
         ORUIManager manager = hexMap.getOrUIManager();
@@ -760,7 +763,6 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
                 paintFancyCityValues(g, activePaths);
             }
         }
-        paintOffboardValues(g);
 
     }
 
@@ -769,6 +771,34 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
 
         // Ensure this hex actually has phase values
         if (!getHex().hasValuesPerPhase()) return;
+        // Query MapManager to see if this specific hex was suppressed via Map.xml
+        if (hexMap.getMapManager() != null) {
+            if (!hexMap.getMapManager().isOffboardValueAllowed(getHex().getId())) {
+                return;
+            }
+        }
+
+        // Check if this specific hex has disabled offboard value plotting via XML attributes
+        boolean showValues = true;
+        try {
+            // Check if the property exists in a generic attributes/properties map on MapHex
+            java.lang.reflect.Method getAttrMethod = getHex().getClass().getMethod("getXmlAttribute", String.class);
+            String attr = (String) getAttrMethod.invoke(getHex(), "showoffmapvalues");
+            if (attr != null && (attr.equals("0") || attr.equalsIgnoreCase("false"))) {
+                showValues = false;
+            }
+        } catch (Exception e) {
+            // Fallback: Check if a direct boolean getter was implemented on MapHex instead
+            try {
+                java.lang.reflect.Method isShowMethod = getHex().getClass().getMethod("isShowOffboardValues");
+                showValues = (Boolean) isShowMethod.invoke(getHex());
+            } catch (Exception ex) {
+                // If the core model hasn't been updated yet, default to true
+                showValues = true;
+            }
+        }
+
+        if (!showValues) return;
 
         java.util.List<Integer> values = getHex().getValuesPerPhase();
         if (values == null || values.isEmpty()) return;
