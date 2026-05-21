@@ -359,7 +359,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             }
         });
         optMenu.add(toggleWorthItem);
-        
+
         optMenu.addSeparator();
 
         // Map Settings
@@ -1083,7 +1083,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         passButton.setEnabled(false);
     }
 
-    public void endOfGame() {
+public void endOfGame() {
 
         setTitle("Rails Evolution - " + gameUIManager.getGameManager().getGameName() + " - "
                 + LocalText.getText("EoGTitle") + " - " + buildTimestamp);
@@ -1093,6 +1093,13 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         passButton.setRailsIcon(RailsIcon.END_OF_GAME_CLOSE_ALL_WINDOWS);
 
         gameUIManager.orWindow.finish();
+        
+        if (gameTimeLabel != null) {
+            gameTimeLabel.setVisible(false);
+        }
+        if (uiRefreshTimer != null) {
+            uiRefreshTimer.stop();
+        }
     }
 
     public Player getCurrentPlayer() {
