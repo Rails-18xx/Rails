@@ -19,6 +19,12 @@
     <Tile id="-10"><!-- 1 city -->
         <Upgrade id="57"/>
     </Tile>
+
+        <Tile id="-10888"><!-- Washington DC -->
+        <Upgrade id="7701"/>
+    </Tile>
+
+
     <Tile id="-58"/>
     <Tile id="-901"/>
     <Tile id="-902"/>

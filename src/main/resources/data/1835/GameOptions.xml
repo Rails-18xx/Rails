@@ -2,4 +2,5 @@
 <GameOptions>
 	<GameOption name="Variant" values="Standard,Clemens,Snake" default="Clemens"/>
 	<GameOption name="RouteAlgorithm" values="Permissive,Semi-Restrictive,Restrictive" default="Permissive" />
+<GameOption name="FirstRoundSellRestriction" values="First Round,First Stock Round" default="First Round" />
 </GameOptions>

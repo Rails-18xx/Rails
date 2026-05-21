@@ -1,2 +1,206 @@
-<?xml version="1.0"?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg"><path d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z" fill="#38AC00" stroke="#38AC00" stroke-width="1" stroke-linejoin="round"/><text x="245" y="318" dy="0.3em" fill="#000000" stroke="#000000" text-anchor="middle" font-family="Arial" font-size="17">7704</text><circle cx="147" cy="255" r="51" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="12"/><circle cx="147" cy="85" r="51" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="12"/><path d="M 147,255 A 98,98 0 0,0 49,255" fill="none" stroke="#FFFFFF" stroke-width="34" stroke-linecap="butt" stroke-linejoin="round"/><path d="M 196,340 A 98,98 0 0,0 147,255" fill="none" stroke="#FFFFFF" stroke-width="34" stroke-linecap="butt" stroke-linejoin="round"/><path d="M 147,85 A 98,98 0 0,0 196,0" fill="none" stroke="#FFFFFF" stroke-width="34" stroke-linecap="butt" stroke-linejoin="round"/><path d="M 49,85 A 98,98 0 0,0 147,85" fill="none" stroke="#FFFFFF" stroke-width="34" stroke-linecap="butt" stroke-linejoin="round"/><path d="M 147,255 A 98,98 0 0,0 49,255" fill="none" stroke="#000000" stroke-width="26" stroke-linecap="butt" stroke-linejoin="round"/><path d="M 196,340 A 98,98 0 0,0 147,255" fill="none" stroke="#000000" stroke-width="26" stroke-linecap="butt" stroke-linejoin="round"/><path d="M 147,85 A 98,98 0 0,0 196,0" fill="none" stroke="#000000" stroke-width="26" stroke-linecap="butt" stroke-linejoin="round"/><path d="M 49,85 A 98,98 0 0,0 147,85" fill="none" stroke="#000000" stroke-width="26" stroke-linecap="butt" stroke-linejoin="round"/><circle cx="147" cy="255" r="51" fill="#FFFFFF" stroke="#000000" stroke-width="4"/><circle r="29" cx="245" cy="85" fill="#FFFFFF" stroke="#000000" stroke-width="2" stroke-linejoin="round"/><text x="245" y="85" dy="0.3em" fill="#000000" stroke="#000000" text-anchor="middle" font-family="Bookman Old Style" font-size="41">40</text><circle cx="147" cy="85" r="51" fill="#FFFFFF" stroke="#000000" stroke-width="4"/><circle r="29" cx="245" cy="255" fill="#FFFFFF" stroke="#000000" stroke-width="2" stroke-linejoin="round"/><text x="245" y="255" dy="0.3em" fill="#000000" stroke="#000000" text-anchor="middle" font-family="Bookman Old Style" font-size="41">40</text><text x="49" y="170" dy="0.3em" fill="#000000" stroke="#000000" text-anchor="middle" font-family="TimpaniHeavy" font-size="51">OO</text><path d=" M 98,0 L 294,0 L 392,170 L 294,340 L 98,340 L 0,170 Z" fill="none" stroke="black" stroke-width="1" stroke-linejoin="round"/></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   id="svg13"
+   sodipodi:docname="tile7704.svg"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs13" />
+  <sodipodi:namedview
+     id="namedview13"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.4666667"
+     inkscape:cx="-5.1136364"
+     inkscape:cy="-16.363636"
+     inkscape:window-width="1700"
+     inkscape:window-height="1291"
+     inkscape:window-x="0"
+     inkscape:window-y="30"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g13" />
+  <g
+     id="g13">
+    <g
+       id="g14"
+       transform="rotate(179.93971,196,170)">
+      <path
+         d="m 98,0 h 196 l 98,170 -98,170 H 98 L 0,170 Z"
+         fill="#38ac00"
+         stroke="#38ac00"
+         stroke-width="1"
+         stroke-linejoin="round"
+         id="path1" />
+      <text
+         x="245"
+         y="318"
+         dy="0.30000001em"
+         fill="#000000"
+         stroke="#000000"
+         text-anchor="middle"
+         font-family="Arial"
+         font-size="17px"
+         id="text1">7704</text>
+      <circle
+         cx="147"
+         cy="255"
+         r="51"
+         fill="#ffffff"
+         stroke="#ffffff"
+         stroke-width="12"
+         id="circle1" />
+      <circle
+         cx="147"
+         cy="85"
+         r="51"
+         fill="#ffffff"
+         stroke="#ffffff"
+         stroke-width="12"
+         id="circle2" />
+      <path
+         d="m 147,255 a 98,98 0 0 0 -98,0"
+         fill="none"
+         stroke="#ffffff"
+         stroke-width="34"
+         stroke-linecap="butt"
+         stroke-linejoin="round"
+         id="path2" />
+      <path
+         d="M 196,340 A 98,98 0 0 0 147,255"
+         fill="none"
+         stroke="#ffffff"
+         stroke-width="34"
+         stroke-linecap="butt"
+         stroke-linejoin="round"
+         id="path3" />
+      <path
+         d="M 147,85 A 98,98 0 0 0 196,0"
+         fill="none"
+         stroke="#ffffff"
+         stroke-width="34"
+         stroke-linecap="butt"
+         stroke-linejoin="round"
+         id="path4" />
+      <path
+         d="m 49,85 a 98,98 0 0 0 98,0"
+         fill="none"
+         stroke="#ffffff"
+         stroke-width="34"
+         stroke-linecap="butt"
+         stroke-linejoin="round"
+         id="path5" />
+      <path
+         d="m 147,255 a 98,98 0 0 0 -98,0"
+         fill="none"
+         stroke="#000000"
+         stroke-width="26"
+         stroke-linecap="butt"
+         stroke-linejoin="round"
+         id="path6" />
+      <path
+         d="M 196,340 A 98,98 0 0 0 147,255"
+         fill="none"
+         stroke="#000000"
+         stroke-width="26"
+         stroke-linecap="butt"
+         stroke-linejoin="round"
+         id="path7" />
+      <path
+         d="M 147,85 A 98,98 0 0 0 196,0"
+         fill="none"
+         stroke="#000000"
+         stroke-width="26"
+         stroke-linecap="butt"
+         stroke-linejoin="round"
+         id="path8" />
+      <path
+         d="m 49,85 a 98,98 0 0 0 98,0"
+         fill="none"
+         stroke="#000000"
+         stroke-width="26"
+         stroke-linecap="butt"
+         stroke-linejoin="round"
+         id="path9" />
+      <circle
+         cx="147"
+         cy="255"
+         r="51"
+         fill="#ffffff"
+         stroke="#000000"
+         stroke-width="4"
+         id="circle9" />
+      <circle
+         r="29"
+         cx="245"
+         cy="85"
+         fill="#ffffff"
+         stroke="#000000"
+         stroke-width="2"
+         stroke-linejoin="round"
+         id="circle10" />
+      <text
+         x="245"
+         y="85"
+         dy="0.30000001em"
+         fill="#000000"
+         stroke="#000000"
+         text-anchor="middle"
+         font-family="'Bookman Old Style'"
+         font-size="41px"
+         id="text10">40</text>
+      <circle
+         cx="147"
+         cy="85"
+         r="51"
+         fill="#ffffff"
+         stroke="#000000"
+         stroke-width="4"
+         id="circle11" />
+      <circle
+         r="29"
+         cx="245"
+         cy="255"
+         fill="#ffffff"
+         stroke="#000000"
+         stroke-width="2"
+         stroke-linejoin="round"
+         id="circle12" />
+      <text
+         x="245"
+         y="255"
+         dy="0.30000001em"
+         fill="#000000"
+         stroke="#000000"
+         text-anchor="middle"
+         font-family="'Bookman Old Style'"
+         font-size="41px"
+         id="text12">40</text>
+      <text
+         x="49"
+         y="170"
+         dy="0.30000001em"
+         fill="#000000"
+         stroke="#000000"
+         text-anchor="middle"
+         font-family="TimpaniHeavy"
+         font-size="51px"
+         id="text13">OO</text>
+      <path
+         d="m 98,0 h 196 l 98,170 -98,170 H 98 L 0,170 Z"
+         fill="none"
+         stroke="#000000"
+         stroke-width="1"
+         stroke-linejoin="round"
+         id="path13" />
+    </g>
+  </g>
+</svg>

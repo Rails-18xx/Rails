@@ -57,10 +57,10 @@
 		<Blocking hex="D2"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
-				<SpecialSingleTileLay colour="yellow" location="D2" extra="yes" free="yes" tiles="57" />
+				<SpecialSingleTileLay colour="yellow" location="D2" extra="no" free="no" tiles="57" />
 			</SpecialProperty>
 			<SpecialProperty condition="ifOwnedByCompany" when="tokenlayingStep" class="net.sf.rails.game.special.SpecialBaseTokenLay">
-				<SpecialBaseTokenLay location="D2" extra="yes" free="yes" requiresTile="57"/>
+				<SpecialBaseTokenLay location="D2" extra="no" free="yes"/>
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>

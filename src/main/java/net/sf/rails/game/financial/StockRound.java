@@ -2302,24 +2302,17 @@ if (errMsg != null) {
     // called by
     // StockRound: mayCurrentPlayerSellAnything, sellShares
 
-    // not overridden
 private boolean checkFirstRoundSellRestriction() {
         if (noSaleInFirstSR() && getStockRoundNumber() == 1) {
+            String restriction = GameOption.getValue(this, "FirstRoundSellRestriction");
             
-            // JSON State Recovery: If companies are actively trading, we are past the first round.
-            // Bypassing the restriction prevents soft-locks caused by lost 'firstAllPlayersPassed' states.
-            for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
-                if (comp.hasStockPrice()) return false;
-            }
-
-            // depending on GameOption restriction is either valid during the first (true)
-            // Stock Round or the first Round
-            if ("First Stock Round".equals(GameOption.getValue(this, "FirstRoundSellRestriction"))) {
+            if ("First Stock Round".equals(restriction)) {
                 return true;
-            } else if ("First Round".equals(GameOption.getValue(this, "FirstRoundSellRestriction"))) {
-                // if all players have passed it is not the first round
-                return !gameManager.getFirstAllPlayersPassed();
-            }
+            } 
+            
+            // Standard 18xx behavior: restriction lasts until the first pass of all players
+            // JSON state persistence issues must be fixed at the GameManager serialization level.
+            return !gameManager.getFirstAllPlayersPassed();
         }
         return false;
     }
