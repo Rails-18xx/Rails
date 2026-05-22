@@ -20,6 +20,7 @@ import net.sf.rails.ui.swing.elements.GUIHexUpgrades;
 import net.sf.rails.ui.swing.elements.UpgradeLabel;
 import net.sf.rails.ui.swing.hexmap.GUIHex;
 import net.sf.rails.ui.swing.hexmap.HexUpgrade;
+import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
 
 public class FloatingUpgradesDialog extends JDialog {
     private static final long serialVersionUID = 1L;
@@ -31,10 +32,10 @@ public class FloatingUpgradesDialog extends JDialog {
     private final JButton btnRotLeft;
     private final JButton btnRotRight;
     private final JButton btnConfirm;
-    
-    // --- START FIX ---
     private final JScrollPane scroll;
-    // --- END FIX ---
+
+    private GUIHex currentHex;
+    private GUIHexUpgrades currentHexUpgrades;
 
     public FloatingUpgradesDialog(ORWindow owner, ORUIManager orUIManager) {
         super(owner, "Available Upgrades", false);
@@ -44,50 +45,37 @@ public class FloatingUpgradesDialog extends JDialog {
         setFocusableWindowState(false);
         setResizable(false);
         
-        setLayout(new BorderLayout(5, 0));
+        setLayout(new BorderLayout(5, 5));
         
-        // --- START FIX ---
-        // Switch container grid assembly dynamically inside showUpgrades instead of FlowLayout
         container = new JPanel();
         container.setBackground(UIManager.getColor("Panel.background"));
         
-        scroll = new JScrollPane(container);
+        scroll = new JScrollPane();
         scroll.setBorder(BorderFactory.createEmptyBorder());
-        // Allow vertical scrollbar fallback if grid heights cross window threshold bounds
-        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        // --- END FIX ---
         
         add(scroll, BorderLayout.CENTER);
 
-        controlPanel = new JPanel(new GridLayout(3, 1, 0, 4));
-        controlPanel.setBorder(BorderFactory.createEmptyBorder(5, 2, 5, 5));
+        controlPanel = new JPanel(new GridLayout(3, 1, 0, 8));
+        controlPanel.setBorder(BorderFactory.createEmptyBorder(8, 4, 8, 8));
 
-        btnRotLeft = new JButton("↶");
-        btnRotRight = new JButton("↷");
+        btnRotLeft = new JButton("↺");
+        btnRotRight = new JButton("↻");
         btnConfirm = new JButton("✓");
 
-        Font btnFont = new Font("SansSerif", Font.BOLD, 14);
-        btnRotLeft.setFont(btnFont);
-        btnRotRight.setFont(btnFont);
-        btnConfirm.setFont(new Font("SansSerif", Font.BOLD, 16));
+        Font btnFont = new Font("SansSerif", Font.BOLD, 16);
+        Dimension standardBtnSize = new Dimension(80, 40);
 
-        btnConfirm.setBackground(new java.awt.Color(30, 144, 255));
-        btnConfirm.setForeground(java.awt.Color.WHITE);
-        btnConfirm.setOpaque(true);
-        btnConfirm.setBorderPainted(false);
+        configureControlAction(btnRotLeft, btnFont, standardBtnSize, UIManager.getColor("Button.background"), UIManager.getColor("Button.foreground"));
+        configureControlAction(btnRotRight, btnFont, standardBtnSize, UIManager.getColor("Button.background"), UIManager.getColor("Button.foreground"));
+        configureControlAction(btnConfirm, new Font("SansSerif", Font.BOLD, 18), standardBtnSize, new java.awt.Color(30, 144, 255), java.awt.Color.WHITE);
 
-        btnRotLeft.addActionListener(e -> {
-            if (orUIManager.getUpgradePanel() != null) {
-                orUIManager.getUpgradePanel().nextSelection(); 
-            }
-        });
-
-        btnRotRight.addActionListener(e -> {
-            if (orUIManager.getUpgradePanel() != null) {
-                orUIManager.getUpgradePanel().nextSelection();
-            }
-        });
+        // --- START FIX --- 
+        // Only trigger our manual sweep. Do NOT call the standard nextSelection() as it causes double-rotation
+        btnRotLeft.addActionListener(e -> rotateAllDisplayedTiles());
+        btnRotRight.addActionListener(e -> rotateAllDisplayedTiles());
+        // --- END FIX ---
 
         btnConfirm.addActionListener(e -> {
             orUIManager.confirmUpgrade();
@@ -97,13 +85,58 @@ public class FloatingUpgradesDialog extends JDialog {
         controlPanel.add(btnRotRight);
         controlPanel.add(btnConfirm);
 
-        add(controlPanel, BorderLayout.EAST);
+        JPanel rightWrapper = new JPanel(new java.awt.GridBagLayout());
+        rightWrapper.add(controlPanel);
+        add(rightWrapper, BorderLayout.EAST);
+        
+        
+    }
+
+    private void rotateAllDisplayedTiles() {
+        if (currentHexUpgrades == null) return;
+        boolean changed = false;
+        
+        for (UpgradeLabel originalLabel : currentHexUpgrades.getUpgradeLabels()) {
+            HexUpgrade upgrade = originalLabel.getUpgrade();
+            if (upgrade != null && upgrade.isValid() && upgrade instanceof TileHexUpgrade) {
+                TileHexUpgrade tileUpgrade = (TileHexUpgrade) upgrade;
+                if (tileUpgrade.getRotations() != null) {
+                    tileUpgrade.nextSelection();
+                    changed = true;
+                }
+            }
+        }
+        
+        if (changed) {
+            // Push the repaint to the map so the newly rotated active tile is drawn correctly
+            if (orUIManager.getMap() != null) {
+                orUIManager.getMap().repaintTiles(new java.awt.Rectangle(orUIManager.getMap().getSize()));
+            }
+            if (orUIManager.getUpgradePanel() != null) {
+                orUIManager.getUpgradePanel().repaint();
+            }
+            
+            // Rebuild the floating UI to sync images
+            showUpgrades(currentHex, currentHexUpgrades, getLocation());
+        }
+    }
+
+    private void configureControlAction(JButton btn, Font font, Dimension size, java.awt.Color bg, java.awt.Color fg) {
+        btn.setFont(font);
+        btn.setPreferredSize(size);
+        btn.setBackground(bg);
+        btn.setForeground(fg);
+        btn.setOpaque(true);
+        btn.setContentAreaFilled(true);
+        btn.setBorder(BorderFactory.createRaisedBevelBorder());
     }
 
     public void showUpgrades(GUIHex hex, GUIHexUpgrades hexUpgrades, Point screenLocation) {
+        this.currentHex = hex;
+        this.currentHexUpgrades = hexUpgrades;
+        
         container.removeAll();
         
-        // Count valid elements first to setup clean square grid boundaries
         int validTileCount = 0;
         if (hexUpgrades != null && hexUpgrades.getUpgradeLabels() != null) {
             for (UpgradeLabel originalLabel : hexUpgrades.getUpgradeLabels()) {
@@ -119,29 +152,23 @@ public class FloatingUpgradesDialog extends JDialog {
             return;
         }
 
-        // --- START FIX ---
-        // Dynamically compute square columns and rows based on tile count
-        int columns = validTileCount;
-        int rows = 1;
+        // Lock to 3 columns max to prevent stretching
+        int columns = 3;
+        if (validTileCount < 3) columns = validTileCount;
         
-        if (validTileCount > 2) {
-            // Determine square dimensions (e.g., 3 tiles -> 2x2 grid, 5 tiles -> 3x2 grid)
-            columns = (int) Math.ceil(Math.sqrt(validTileCount));
-            rows = (int) Math.ceil((double) validTileCount / columns);
-        }
-        
-        container.setLayout(new GridLayout(rows, columns, 6, 6));
-        container.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
-        // --- END FIX ---
+        container.setLayout(new GridLayout(0, columns, 5, 5));
+        container.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         int currentMapZoom = 10; 
         if (orUIManager != null && orUIManager.getMap() != null) {
             currentMapZoom = orUIManager.getMap().getZoomStep();
         }
 
-        // Track metrics to accurately compute window dimensions and stop clipping cuts
-        int maxTileWidth = 0;
-        int maxTileHeight = 0;
+        // --- START FIX --- 
+        // Hard-lock the precise dimensions used by the original UpgradesPanel
+        int calcMetric = (int) Math.round(100 * (2 + net.sf.rails.ui.swing.GUIGlobals.getFontsScale()) / 3);
+        Dimension fixedTileSize = new Dimension((int)(calcMetric * 0.85), calcMetric + 15);
+        // --- END FIX ---
 
         if (hexUpgrades != null && hexUpgrades.getUpgradeLabels() != null) {
             for (UpgradeLabel originalLabel : hexUpgrades.getUpgradeLabels()) {
@@ -155,7 +182,7 @@ public class FloatingUpgradesDialog extends JDialog {
                         try {
                             floatingLabel = originalLabel.getClass().getConstructor(HexUpgrade.class, int.class).newInstance(upgrade, currentMapZoom);
                         } catch (Exception ex) {
-                            System.err.println("Failed to instantiate UpgradeLabel for floating panel.");
+                            System.err.println("Failed to instantiate UpgradeLabel");
                         }
                     }
 
@@ -173,21 +200,10 @@ public class FloatingUpgradesDialog extends JDialog {
                         floatingLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
                         floatingLabel.setToolTipText(null);
                         
-                        Dimension mapTileSize = originalLabel.getPreferredSize();
-                        if (mapTileSize != null && mapTileSize.width > 0) {
-                            floatingLabel.setPreferredSize(mapTileSize);
-                            floatingLabel.setMaximumSize(mapTileSize);
-                            floatingLabel.setMinimumSize(mapTileSize);
-                        } else {
-                            int calcMetric = (int) Math.round(100 * (2 + net.sf.rails.ui.swing.GUIGlobals.getFontsScale()) / 3);
-                            Dimension dynamicFallback = new Dimension((int)(calcMetric * 0.85), calcMetric + 15);
-                            floatingLabel.setPreferredSize(dynamicFallback);
-                            floatingLabel.setMaximumSize(dynamicFallback);
-                            floatingLabel.setMinimumSize(dynamicFallback);
-                        }
-
-                        maxTileWidth = Math.max(maxTileWidth, floatingLabel.getPreferredSize().width);
-                        maxTileHeight = Math.max(maxTileHeight, floatingLabel.getPreferredSize().height);
+                        // Enforce the locked dimension on every tile
+                        floatingLabel.setPreferredSize(fixedTileSize);
+                        floatingLabel.setMaximumSize(fixedTileSize);
+                        floatingLabel.setMinimumSize(fixedTileSize);
 
                         container.add(floatingLabel);
                     }
@@ -196,23 +212,15 @@ public class FloatingUpgradesDialog extends JDialog {
         }
 
         // --- START FIX ---
-        // Dynamically compute exact layout dimensions incorporating margins, pads, gaps, and right control panel
-        int containerWidth = (maxTileWidth * columns) + (6 * (columns - 1)) + 12;
-        int containerHeight = (maxTileHeight * rows) + (6 * (rows - 1)) + 12;
-
-        // Establish the container and scroll view limits explicitly
-        container.setPreferredSize(new Dimension(containerWidth, containerHeight));
-        scroll.setPreferredSize(new Dimension(containerWidth, containerHeight));
-
-        pack();
-
-        // Calculate final absolute window bounds including OS frames and the right button sidebar
-        int totalWindowWidth = containerWidth + controlPanel.getPreferredSize().width + 25;
-        int totalWindowHeight = Math.max(containerHeight + 35, controlPanel.getPreferredSize().height + 40);
-
-        setSize(totalWindowWidth, totalWindowHeight);
-        // --- END FIX ---
+        // Wrap the grid in a BorderLayout.NORTH wrapper to stop the GridLayout from stretching vertically
+        JPanel wrapper = new JPanel(new BorderLayout());
+       // Wrap the grid in a BorderLayout.NORTH wrapper to stop the GridLayout from stretching vertically
+        wrapper.setBackground(UIManager.getColor("Panel.background"));
+        wrapper.add(container, BorderLayout.NORTH);
+        scroll.setViewportView(wrapper);
         
+        // Automatically resize the dialog container to perfectly fit the new tile sizes
+        pack();   
         if (screenLocation != null) {
             setLocation(screenLocation.x, screenLocation.y);
         }
