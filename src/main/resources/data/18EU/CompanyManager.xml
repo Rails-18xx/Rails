@@ -11,7 +11,7 @@
 			<Number colour="yellow" phase="2" number="2" occurrences="1"/>
 			<Number colour="green" phase="3,4,5,6,8" number="0"/>
 			<Number colour="brown" phase="5,6,8" number="0"/>
-			<Number colour="grey" phase="8" number="0"/>
+			<Number colour="gray" phase="8" number="0"/>
 		</TileLays-->
 		<BaseTokens>
 			<HomeBase lay="whenStarted"/>

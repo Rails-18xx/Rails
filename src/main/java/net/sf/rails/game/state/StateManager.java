@@ -177,13 +177,13 @@ public final class StateManager extends Manager {
         return ImmutableList.copyOf(topoList);
     }
 
-    private static enum Color {WHITE, GREY, BLACK};
+    private static enum Color {WHITE, gray, BLACK};
     private void topoSort(final Observable v, final Map<Observable, Color> colors, final LinkedList<Model> topoList) {
-        colors.put(v, Color.GREY);
+        colors.put(v, Color.gray);
         for (Model m:getModels(v)) {
             if (!colors.containsKey(m)) {
                 topoSort(m, colors, topoList);
-            } else if (colors.get(m) == Color.GREY) {
+            } else if (colors.get(m) == Color.gray) {
                 throw new IllegalStateException("Graph of Observables contains Cycle");
             }
         }

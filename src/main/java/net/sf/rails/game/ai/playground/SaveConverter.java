@@ -59,7 +59,7 @@ public class SaveConverter {
     // --- SHADOW STATE MODELS ---
     // We maintain our own simple state, independent of the complex Game Engine
     private static class ShadowHex {
-        String tileId = "0"; // Default empty/grey
+        String tileId = "0"; // Default empty/gray
         int rotation = 0;
         List<ShadowToken> tokens = new ArrayList<>();
     }

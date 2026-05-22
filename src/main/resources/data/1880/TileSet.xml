@@ -153,7 +153,7 @@
 	<Tile id="8887" quantity="1" >
 	<Upgrade id="8888" />
 	</Tile>
-	<!-- Grey -->
+	<!-- gray -->
 	<Tile id="455" quantity="3" />
 	<Tile id="895" quantity="3" />
 	<Tile id="8875" quantity="1" />

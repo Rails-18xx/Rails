@@ -129,7 +129,7 @@
 		<Upgrade id="172" hex="C18"/>
 	</Tile>
 
-	<!-- Grey -->
+	<!-- gray -->
 	<Tile id="171" quantity="1" />
 	<Tile id="172" quantity="1" />
 </TileManager>

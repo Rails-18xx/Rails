@@ -334,7 +334,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
                         green = true;
                     else if (c.contains("brown"))
                         brown = true;
-                    else if (c.contains("gray") || c.contains("grey"))
+                    else if (c.contains("gray") || c.contains("gray"))
                         gray = true;
                 }
                 if (gray)

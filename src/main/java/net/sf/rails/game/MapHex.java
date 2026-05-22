@@ -176,7 +176,7 @@ public class MapHex extends RailsModel implements RailsOwner, Configurable, Seri
      * Temporary storage for impassable hexsides. Once neighbours has been set
      * up, this attribute is no longer used. Only the black or blue bars on the
      * map need be specified, and each one only once. Impassable non-track sides
-     * of "offboard" (red) and "fixed" (grey or brown) preprinted tiles will be
+     * of "offboard" (red) and "fixed" (gray or brown) preprinted tiles will be
      * derived and need not be specified.
      */
     private String impassableTemplate = null;

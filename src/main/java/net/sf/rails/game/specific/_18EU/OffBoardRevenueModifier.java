@@ -24,7 +24,7 @@ public class OffBoardRevenueModifier implements RevenueStaticModifier {
         // 1. define value
         Phase phase = revenueAdapter.getPhase();
         int bonusValue;
-        if (phase.isTileColourAllowed(TileColour.GREY.toText())) {
+        if (phase.isTileColourAllowed(TileColour.GRAY.toText())) {
             bonusValue = 30;
         } else if (phase.isTileColourAllowed(TileColour.BROWN.toText())) {
             bonusValue = 20;

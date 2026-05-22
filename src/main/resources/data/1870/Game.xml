@@ -99,7 +99,7 @@
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6" realName="5">
-<Tiles colour="yellow,green,brown,grey">
+<Tiles colour="yellow,green,brown,gray">
 <Lays companyType="Public" colour="yellow" number="2"/>
 </Tiles>
             <Trains rusted="3"/>

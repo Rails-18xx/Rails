@@ -117,7 +117,7 @@
 			<Trains rusted="4"/>
         </Phase>
 		<Phase name="8">
-			<Tiles colour="yellow,green,brown,grey"/>
+			<Tiles colour="yellow,green,brown,gray"/>
 		</Phase>
 		</Component>
 	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">

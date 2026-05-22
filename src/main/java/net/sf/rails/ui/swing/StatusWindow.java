@@ -192,12 +192,12 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         btn.setBorder(BorderFactory.createRaisedBevelBorder()); // Match ORPanel 3D look
     }
 
-    // // New Helper for "Passive/Yield" buttons (Grey + Black Text)
+    // // New Helper for "Passive/Yield" buttons (gray + Black Text)
     // private void stylePassiveButton(ActionButton btn) {
     // if (btn == null)
     // return;
     // btn.setBackground(Color.LIGHT_GRAY);
-    // btn.setForeground(Color.BLACK); // Black text for readability on Grey
+    // btn.setForeground(Color.BLACK); // Black text for readability on gray
     // btn.setOpaque(true);
     // btn.setFont(new Font("SansSerif", Font.BOLD, 12));
     // btn.setBorder(BorderFactory.createRaisedBevelBorder());

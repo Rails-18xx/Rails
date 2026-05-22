@@ -71,7 +71,7 @@ public class BondsHeatbarPanel extends JPanel {
                 int dotX = startX + (j * dotSpacing);
 
                 if (loanIndex < totalLoansTaken) {
-                    // Loan taken - empty grey outline
+                    // Loan taken - empty gray outline
                     g2.setColor(Color.LIGHT_GRAY);
                     g2.drawOval(dotX, dotY, dotSize, dotSize);
                 } else {

@@ -66,8 +66,11 @@
         <Attributes quantity="5"/>
         <Upgrade id="611"/>
     </Tile>
-    <Tile id="15" quantity="5"/>
-    <Upgrade id="611"/>
+
+    <Tile id="15">
+        <Attributes quantity="5"/>
+        <Upgrade id="611"/>
+    </Tile>
     <Tile id="16" quantity="1">
         <Upgrade id="43,70"/>
     </Tile>
@@ -121,14 +124,16 @@
     <Tile id="46" quantity="1"/>
     <Tile id="47" quantity="1"/>
     <Tile id="70" quantity="1"/>
-    <Tile id="611" quantity="5"/>
+    <Tile id="611" quantity="5">
+            <Upgrade id="915"/>
+    </Tile>
     <Tile id="7706" quantity="1">
         <Upgrade id="7708"></Upgrade>
     </Tile>
     <Tile id="7707" quantity="2">
         <Upgrade id="7709"></Upgrade>
     </Tile>
-    <!-- Grey tiles -->
+    <!-- gray tiles -->
     <Tile id="915" quantity="1"/>
     <Tile id="7708" quantity="1"/>
     <Tile id="7709" quantity="1"/>

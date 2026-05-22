@@ -349,71 +349,78 @@ public class MapPanel extends JPanel {
     }
 
     private void setupLayersButton(final ORUIManager orUIManager) {
-    // 1. Create the Button
-    final JButton layersBtn = new JButton("Layers");
-    layersBtn.setFocusable(false);
-    // Increase font size
-        layersBtn.setFont(new Font("SansSerif", Font.BOLD, 14)); 
-        
+        // 1. Create the Button
+        final JButton layersBtn = new JButton("Layers");
+        layersBtn.setFocusable(false);
+        // Increase font size
+        layersBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+
         // Solid white background with black text for maximum contrast
-        layersBtn.setBackground(Color.BLUE); 
+        layersBtn.setBackground(Color.BLUE);
         layersBtn.setForeground(Color.WHITE);
-        
+
         // Force the background to paint correctly across all operating systems
         layersBtn.setOpaque(true);
         layersBtn.setContentAreaFilled(true);
-        
+
         // Use a raised bevel border to create a "drop shadow" floating effect
         layersBtn.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createRaisedBevelBorder(),
-                BorderFactory.createEmptyBorder(2, 5, 2, 5)
-        ));
-        
+                BorderFactory.createEmptyBorder(2, 5, 2, 5)));
+
         // 2. Position it (Top Left, moved slightly further in, made larger)
         layersBtn.setBounds(20, 20, 95, 35);
 
-    
-    // 3. Create the "Pop-out" Menu
-    layersBtn.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-           
+        
 
-JPopupMenu menu = new JPopupMenu();
-                
+        // 3. Create the "Pop-out" Menu
+        layersBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JPopupMenu menu = new JPopupMenu();
+
                 menu.add(new JCheckBoxMenuItem("Hex Names", orUIManager.isShowHexNames()))
-                    .addActionListener(ae -> orUIManager.toggleHexNames());
+                        .addActionListener(evHex -> orUIManager.toggleHexNames());
                 menu.add(new JCheckBoxMenuItem("Terrain Costs", orUIManager.isShowTerrainCosts()))
-                    .addActionListener(ae -> orUIManager.toggleTerrainCosts());
+                        .addActionListener(evTerrain -> orUIManager.toggleTerrainCosts());
                 menu.add(new JCheckBoxMenuItem("Friendly Hexes", orUIManager.isShowFriendlyHexes()))
-                    .addActionListener(ae -> orUIManager.toggleFriendlyHexes());
+                        .addActionListener(evFriendly -> orUIManager.toggleFriendlyHexes());
                 menu.add(new JCheckBoxMenuItem("Destination Markers", orUIManager.isShowDestinationMarkers()))
-                    .addActionListener(ae -> orUIManager.toggleDestinationMarkers());
+                        .addActionListener(evDest -> orUIManager.toggleDestinationMarkers());
                 menu.add(new JCheckBoxMenuItem("Home Identifiers", orUIManager.isShowHomeIdentifiers()))
-                    .addActionListener(ae -> orUIManager.toggleHomeIdentifiers());
+                        .addActionListener(evHome -> orUIManager.toggleHomeIdentifiers());
                 menu.add(new JCheckBoxMenuItem("Revenue Routes", orUIManager.isShowRevenueRoutes()))
-                    .addActionListener(ae -> orUIManager.toggleRevenueRoutes());
+                        .addActionListener(evRoute -> orUIManager.toggleRevenueRoutes());
                 menu.add(new JCheckBoxMenuItem("Fancy City Values", orUIManager.isShowFancyCityValues()))
-                    .addActionListener(ae -> orUIManager.toggleFancyCityValues());
+                        .addActionListener(evFancy -> orUIManager.toggleFancyCityValues());
+
+                menu.addSeparator();
+                menu.add(new JCheckBoxMenuItem("Floating Tiles", orUIManager.isShowFloatingTiles()))
+                        .addActionListener(evFloat -> orUIManager.toggleFloatingTiles());
+
+                // --- START FIX ---
                 JCheckBoxMenuItem offboardItem = new JCheckBoxMenuItem("Offboard Values", map.getDisplayOffboardValues());
-                offboardItem.addActionListener(ae -> {
+                offboardItem.addActionListener(evOffboard -> {
                     map.setDisplayOffboardValues(!map.getDisplayOffboardValues());
-map.repaintAll(new Rectangle(map.getSize()));
+                    map.repaintAll(new Rectangle(map.getSize()));
                 });
                 menu.add(offboardItem);
+                // --- END FIX ---
 
                 menu.addSeparator();
                 JMenuItem hideAll = new JMenuItem("Hide All Overlays");
-                hideAll.addActionListener(ae -> orUIManager.hideAllOverlays());
+                hideAll.addActionListener(evHide -> orUIManager.hideAllOverlays());
                 menu.add(hideAll);
 
+                // Show menu relative to the button
+                menu.show(layersBtn, 0, layersBtn.getHeight());
+            }
+        });
 
-            // Show menu relative to the button
-            menu.show(layersBtn, 0, layersBtn.getHeight());
-        }
-    });
 
-    // 4. Add to the Layered Pane at a high level
-    layeredPane.add(layersBtn, JLayeredPane.PALETTE_LAYER);
-}
+
+        // 4. Add to the Layered Pane at a high level
+        layeredPane.add(layersBtn, JLayeredPane.PALETTE_LAYER);
+    }
 }

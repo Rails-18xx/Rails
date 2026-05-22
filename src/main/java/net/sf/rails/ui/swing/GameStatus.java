@@ -75,8 +75,8 @@ public class GameStatus extends GridPanel {
     private final Color BG_SELL_ALERT = new Color(250, 128, 114); // Salmon Pink (#FA8072) - Shares Sell
     public static final Color BG_CARD_PASSIVE = new Color(255, 255, 240); // Beige (Must be static for static method
 
-    // 1. DEFINE MASTER GREY (Standardize 235 vs 225 clash)
-    private static final Color BG_UNIFIED_GREY = new Color(225, 225, 225); // The chosen "Spotlight Inactive" Grey
+    // 1. DEFINE MASTER gray (Standardize 235 vs 225 clash)
+    private static final Color BG_UNIFIED_GREY = new Color(225, 225, 225); // The chosen "Spotlight Inactive" gray
 
     // 2. APPLY TO CONSTANTS
     private final Color BG_INACTIVE = BG_UNIFIED_GREY; // Fixes Inactive Rows
@@ -100,7 +100,7 @@ public class GameStatus extends GridPanel {
     private static final Color BORDER_COL_BUY = new Color(0, 160, 0); // Strong Green
     private static final Color BORDER_COL_SELL = new Color(220, 20, 60); // Crimson Red
     private static final int BORDER_THICKNESS = 3;
-    // 1. HEADER COLOR: Uniform Light Grey for all column headers
+    // 1. HEADER COLOR: Uniform Light gray for all column headers
     private static final Color BG_HEADER = new Color(224, 224, 224);
 
     // 2. Larger Train Cards
@@ -1754,7 +1754,7 @@ public class GameStatus extends GridPanel {
 
         // 4. Compare and Recreate
         // Self-Healing: If component count is 0, the previous render failed/crashed.
-        // Force recreation even if signature matches to recover from "Grey Screen".
+        // Force recreation even if signature matches to recover from "gray Screen".
 
         if (!currentSignature.equals(previousDashboardSignature) || this.getComponentCount() == 0) {
             if (!previousDashboardSignature.isEmpty() && !currentSignature.equals(previousDashboardSignature)
@@ -3119,7 +3119,7 @@ JPanel[] currentPanels = playerPrivatesPanel;
                 bgDet = BG_OPERATING;
                 bgCurr = BG_OPERATING;
             } else if (!isActive) {
-                // 2. Inactive -> Grey
+                // 2. Inactive -> gray
                 bgPool = BG_INACTIVE;
                 bgIpo = BG_INACTIVE;
                 bgDet = BG_INACTIVE;
@@ -3346,7 +3346,7 @@ JPanel[] currentPanels = playerPrivatesPanel;
             if (isOperating) {
                 bgRow = BG_OPERATING; // Yellow
             } else if (!c.hasFloated()) {
-                bgRow = BG_INACTIVE; // Grey
+                bgRow = BG_INACTIVE; // gray
             } else {
                 bgRow = BG_MAUVE; // Mauve (Default for Active)
             }
@@ -3486,7 +3486,7 @@ JPanel[] currentPanels = playerPrivatesPanel;
                 // If this company is operating, the whole row MUST be white to create the "cut
                 // through" effect.
                 // PRIORITY 2: Active Player (Vertical Spotlight)
-                // PRIORITY 3: Inactive (Grey)
+                // PRIORITY 3: Inactive (gray)
 
                 Color cellBg;
                 if (isOperating) {
@@ -3494,7 +3494,7 @@ JPanel[] currentPanels = playerPrivatesPanel;
                 } else if (pIdx == actorIndex) {
                     cellBg = BG_SPOTLIGHT_ACTIVE; // White Spotlight
                 } else {
-                    cellBg = BG_SPOTLIGHT_INACTIVE; // Grey Dimmed
+                    cellBg = BG_SPOTLIGHT_INACTIVE; // gray Dimmed
                 }
 
                 // 4. Update Logic (Branching)
@@ -3536,7 +3536,7 @@ JPanel[] currentPanels = playerPrivatesPanel;
                             // CLEANER LOOK: Revert to Black for double shares.
                             // Only use color if you strictly need it, otherwise Black is cleaner.
                             String textColor = "#000000";
-                            // If you want a subtle hint for double shares, you could use a very dark grey,
+                            // If you want a subtle hint for double shares, you could use a very dark gray,
                             // but let's stick to Black as requested.
 
                             StringBuilder sb = new StringBuilder("<html><center>");
@@ -3663,7 +3663,7 @@ JPanel[] currentPanels = playerPrivatesPanel;
 
             if (playerCertCount[i] != null) {
 
-                // 1. Update Background (Spotlight Logic: White vs Grey)
+                // 1. Update Background (Spotlight Logic: White vs gray)
                 playerCertCount[i].setBackground(pBg);
 
                 // 2. Fetch Data Directly (No String Parsing, No ModelObject casting)

@@ -330,7 +330,7 @@
 
 
 	 	<Tile colour="brown" id="7706" name="DC">
-	<Station id="city1" position="0" slots="2" type="City" value="70"/>
+	<Station id="city1" position="0" slots="3" type="City" value="70"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city1" gauge="normal" to="side2"/>
@@ -349,7 +349,7 @@
 	 </Tile>
 	 
 	  	<Tile colour="gray" id="7708" name="DC">
-	<Station id="city1" position="0" slots="2" type="City" value="100"/>
+	<Station id="city1" position="0" slots="4" type="City" value="100"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city1" gauge="normal" to="side2"/>
@@ -359,7 +359,7 @@
 	 </Tile>
 
 	  	<Tile colour="gray" id="7709" name="OO" label="OO">
-	<Station id="city1" position="0" slots="2" type="City" value="70"/>
+	<Station id="city1" position="0" slots="3" type="City" value="70"/>
 		<Track from="city1" gauge="normal" to="side0"/>
 		<Track from="city1" gauge="normal" to="side1"/>
 		<Track from="city1" gauge="normal" to="side2"/>

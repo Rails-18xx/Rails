@@ -92,7 +92,7 @@ public class RoundCounterPanel extends JPanel {
                     if (c.contains("yellow")) yellow = true;
                     else if (c.contains("green")) green = true;
                     else if (c.contains("brown")) brown = true;
-                    else if (c.contains("gray") || c.contains("grey")) gray = true;
+                    else if (c.contains("gray") || c.contains("gray")) gray = true;
                 }
                 
                 // Prioritize the highest available color

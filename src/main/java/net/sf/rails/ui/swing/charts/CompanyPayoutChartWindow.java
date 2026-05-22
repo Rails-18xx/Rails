@@ -227,7 +227,7 @@ public class CompanyPayoutChartWindow extends JDialog {
                     if (comp != null) {
                         this.companyColors.put(compId, comp.getBgColor());
                     } else {
-                        // Fallback grey
+                        // Fallback gray
                         int hash = compId.hashCode();
                         this.companyColors.put(compId, new Color((hash & 0xFF0000) >> 16, (hash & 0x00FF00) >> 8, (hash & 0x0000FF)));
                     }

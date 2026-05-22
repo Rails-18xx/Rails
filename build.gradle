@@ -7,7 +7,7 @@ import org.gradle.internal.os.OperatingSystem;
 plugins {
     id 'java'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.gradleup.shadow' version '8.3.0'
     id 'com.github.ben-manes.versions' version '0.46.0'
     id 'com.gorylenko.gradle-git-properties' version '2.4.1'
     id 'org.openjfx.javafxplugin' version '0.0.13'

@@ -770,7 +770,7 @@ public class ORPanel extends GridPanel
                 btnDone.setForeground(Color.WHITE);
                 btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
             } else {
-                // PERSISTENT WAIT: Keep as 'END TURN' but disabled and grey
+                // PERSISTENT WAIT: Keep as 'END TURN' but disabled and gray
                 btnDone.setEnabled(false);
                 styleButton(btnDone, UIManager.getColor("Button.background"), doneText);
                 btnDone.setForeground(Color.GRAY);
@@ -809,9 +809,9 @@ public class ORPanel extends GridPanel
         if (btn == null)
             return;
 
-        // 1. Set the Standard Grey Background
+        // 1. Set the Standard gray Background
         btn.setBackground(UIManager.getColor("Button.background"));
-        btn.setForeground(Color.GRAY); // Text is Grey to indicate inactivity
+        btn.setForeground(Color.GRAY); // Text is gray to indicate inactivity
         btn.setFont(new Font("SansSerif", Font.PLAIN, 11)); // Keep font smaller/plain for inactive
 
         // 2. ENFORCE SHAPE CONSISTENCY
@@ -819,7 +819,7 @@ public class ORPanel extends GridPanel
         // 3D bevel.
         btn.setBorder(BorderFactory.createRaisedBevelBorder());
 
-        // 3. Ensure Opacity is true so the grey background paints correctly within the
+        // 3. Ensure Opacity is true so the gray background paints correctly within the
         // border
         btn.setOpaque(true);
         btn.setContentAreaFilled(true);
@@ -853,13 +853,13 @@ public class ORPanel extends GridPanel
             p.setOpaque(false);
             p.setBackground(BG_NORMAL);
 
-            // Grey out the border title
+            // gray out the border title
             if (p.getBorder() instanceof TitledBorder) {
                 ((TitledBorder) p.getBorder()).setTitleColor(Color.GRAY);
                 ((TitledBorder) p.getBorder()).setBorder(BorderFactory.createLineBorder(Color.GRAY));
             }
 
-            // Grey out labels inside
+            // gray out labels inside
             for (Component c : p.getComponents()) {
                 if (c instanceof JLabel) {
                     c.setForeground(Color.GRAY);
@@ -1462,12 +1462,12 @@ public class ORPanel extends GridPanel
         footerPanel.setOpaque(false);
         footerPanel.setBorder(BorderFactory.createEmptyBorder(PANEL_ACTION_GAP, 0, PANEL_ACTION_GAP, 0));
 
-        // Rename to "END TURN" and set initial state to Disabled/Grey
+        // Rename to "END TURN" and set initial state to Disabled/gray
         btnDone = createSidebarButton("END TURN", DONE_CMD);
         btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
         btnDone.setPreferredSize(new Dimension(getSidebarWidth() - scale(10), scale(40)));
         btnDone.setEnabled(false);
-        resetButtonStyle(btnDone); // Forces grey/standard look
+        resetButtonStyle(btnDone); // Forces gray/standard look
 
         // Add Done Button
         footerPanel.add(btnDone);

@@ -181,9 +181,9 @@ public class StatusWindow_1856 extends StatusWindow {
                 if (isOperating) {
                     bgRow = new Color(255, 255, 200); // Yellow
                 } else if (!isActive) {
-                    bgRow = new Color(235, 235, 235); // Grey
+                    bgRow = new Color(235, 235, 235); // gray
                 } else if (isMinor) {
-                    bgRow = new Color(235, 235, 235); // Grey
+                    bgRow = new Color(235, 235, 235); // gray
                 } else {
                     bgRow = new Color(235, 230, 255); // Mauve
                 }

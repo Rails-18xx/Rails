@@ -266,9 +266,9 @@ public class OperatingRound_1817 extends OperatingRound {
                     tileLaysPerColour.put("Brown", 1);
                     tileLaysPerColour.put("brown", 1);
                 }
-                if (currentPhase.isTileColourAllowed("Grey") || currentPhase.isTileColourAllowed("grey")) {
-                    tileLaysPerColour.put("Grey", 1);
-                    tileLaysPerColour.put("grey", 1);
+                if (currentPhase.isTileColourAllowed("gray") || currentPhase.isTileColourAllowed("gray")) {
+                    tileLaysPerColour.put("gray", 1);
+                    tileLaysPerColour.put("gray", 1);
                 }
             }
         }

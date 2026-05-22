@@ -61,6 +61,9 @@ public class ORUIManager implements DialogOwner {
     protected transient MessagePanel messagePanel;
     private transient RemainingTilesWindow remainingTiles;
 
+    protected transient FloatingUpgradesDialog floatingUpgradesDialog;
+  
+
     protected OperatingRound oRound;
     private transient List<PublicCompany> companies;
 
@@ -80,13 +83,24 @@ public class ORUIManager implements DialogOwner {
         INACTIVE, SELECT_HEX, SELECT_UPGRADE, SET_REVENUE, SELECT_PAYOUT
     }
 
-
     private boolean showHomeIdentifiers = true;
     private boolean showRevenueRoutes = true;
-private boolean showFancyCityValues = true; // Default to off
+    private boolean showFancyCityValues = true; // Default to off
 
     public boolean isShowFancyCityValues() {
         return showFancyCityValues;
+    }
+
+    private boolean showFloatingTiles = true;
+
+    public boolean isShowFloatingTiles() {
+        return showFloatingTiles;
+    }
+
+    public void toggleFloatingTiles() {
+        this.showFloatingTiles = !this.showFloatingTiles;
+        log.info("DEBUG: Toggled Floating Tiles: " + showFloatingTiles);
+        // Map repaint or UI refresh trigger will go here
     }
 
     public void toggleFancyCityValues() {
@@ -102,7 +116,8 @@ private boolean showFancyCityValues = true; // Default to off
 
     public void toggleHomeIdentifiers() {
         this.showHomeIdentifiers = !this.showHomeIdentifiers;
-        if (map != null) map.repaintAll(new Rectangle(map.getSize()));
+        if (map != null)
+            map.repaintAll(new Rectangle(map.getSize()));
     }
 
     public boolean isShowRevenueRoutes() {
@@ -112,10 +127,11 @@ private boolean showFancyCityValues = true; // Default to off
     public void toggleRevenueRoutes() {
         this.showRevenueRoutes = !this.showRevenueRoutes;
         // Trigger the ORPanel to immediately redraw or clear the paths
-        if (orPanel != null) orPanel.redrawRoutes();
+        if (orPanel != null)
+            orPanel.redrawRoutes();
     }
 
-    private boolean showFriendlyHexes = true; 
+    private boolean showFriendlyHexes = true;
 
     private boolean showDestinationMarkers = true;
 
@@ -125,10 +141,10 @@ private boolean showFancyCityValues = true; // Default to off
 
     public void toggleDestinationMarkers() {
         this.showDestinationMarkers = !this.showDestinationMarkers;
-        
+
         // Refresh the highlights to catch any 1870 destination markers
         updateCompanyHighlights();
-        
+
         if (map != null) {
             map.repaintAll(new Rectangle(map.getSize()));
         }
@@ -143,7 +159,7 @@ private boolean showFancyCityValues = true; // Default to off
 
         // Force an immediate update of the highlight states
         updateCompanyHighlights();
-        
+
         if (map != null) {
             map.repaintAll(new Rectangle(map.getSize()));
         }
@@ -188,6 +204,7 @@ private boolean showFancyCityValues = true; // Default to off
         upgradePanel.setHexUpgrades(hexUpgrades);
         map = mapPanel.getMap();
         messagePanel = orWindow.getMessagePanel();
+        floatingUpgradesDialog = new FloatingUpgradesDialog(orWindow, this);
     }
 
     protected void initOR(OperatingRound or) {
@@ -203,6 +220,11 @@ private boolean showFancyCityValues = true; // Default to off
             orWindow.finish();
         if (upgradePanel != null)
             upgradePanel.setInactive();
+
+        if (floatingUpgradesDialog != null) {
+            floatingUpgradesDialog.setVisible(false);
+        }
+
         setLocalStep(LocalSteps.INACTIVE);
 
         if (hexUpgrades != null && map != null) {
@@ -228,7 +250,34 @@ private boolean showFancyCityValues = true; // Default to off
         }
     }
 
-    // --- MAIN STATUS UPDATE LOGIC ---
+    protected void setLocalStep(LocalSteps localStep) {
+        if (this.localStep == localStep)
+            return;
+        SoundManager.notifyOfORLocalStep(localStep);
+        this.localStep = localStep;
+        updateMessage();
+        if (upgradePanel != null) {
+            switch (localStep) {
+                case INACTIVE:
+                    upgradePanel.setInactive();
+                    if (floatingUpgradesDialog != null)
+                        floatingUpgradesDialog.setVisible(false); // <--- ADD
+                    break;
+                case SELECT_HEX:
+                    upgradePanel.setActive();
+                    if (floatingUpgradesDialog != null)
+                        floatingUpgradesDialog.setVisible(false); // <--- ADD
+                    break;
+                case SELECT_UPGRADE:
+                    upgradePanel.setSelect(map.getSelectedHex());
+                    break;
+                default:
+                    upgradePanel.setInactive();
+                    if (floatingUpgradesDialog != null)
+                        floatingUpgradesDialog.setVisible(false); // <--- ADD
+            }
+        }
+    }
 
     public void updateStatus(boolean myTurn) {
         updateStatus(null, myTurn);
@@ -508,6 +557,7 @@ private boolean showFancyCityValues = true; // Default to off
                 orPanel.updateDynamicActions(possibleActions.getList());
                 if (localStep == LocalSteps.SELECT_UPGRADE)
                     orPanel.enableConfirm(true);
+
                 updateHexBuildNumbers(true);
             }
         } else if (orStep == GameDef.OrStep.CALC_REVENUE) {
@@ -564,6 +614,7 @@ private boolean showFancyCityValues = true; // Default to off
     private boolean showMapMarkings = true;
     private boolean showHexNames = true;
     private boolean showTerrainCosts = true;
+
     public boolean isShowTerrainCosts() {
         return showTerrainCosts;
     }
@@ -574,6 +625,7 @@ private boolean showFancyCityValues = true; // Default to off
             map.repaintAll(new Rectangle(map.getSize()));
         }
     }
+
     public boolean isShowHexNames() {
         return showHexNames;
     }
@@ -584,10 +636,11 @@ private boolean showFancyCityValues = true; // Default to off
             map.repaintAll(new Rectangle(map.getSize()));
         }
     }
+
     /**
      * Resets all map overlays to hidden.
      */
-public void hideAllOverlays() {
+    public void hideAllOverlays() {
         this.showHexNames = false;
         this.showTerrainCosts = false;
         this.showFriendlyHexes = false;
@@ -613,10 +666,10 @@ public void hideAllOverlays() {
         return showMapMarkings;
     }
 
-public void toggleMapMarkings() {
-// --- START FIX ---
+    public void toggleMapMarkings() {
+        // --- START FIX ---
         this.showMapMarkings = !this.showMapMarkings;
-        
+
         this.showHexNames = this.showMapMarkings;
         this.showFriendlyHexes = this.showMapMarkings;
         this.showDestinationMarkers = this.showMapMarkings;
@@ -624,7 +677,7 @@ public void toggleMapMarkings() {
         this.showRevenueRoutes = this.showMapMarkings;
 
         updateCompanyHighlights();
-        
+
         if (orPanel != null) {
             orPanel.redrawRoutes();
         }
@@ -632,7 +685,7 @@ public void toggleMapMarkings() {
         if (map != null) {
             map.repaintAll(new Rectangle(map.getSize()));
         }
-// --- END FIX ---
+        // --- END FIX ---
     }
 
     public void processAction(String command, List<PossibleAction> actions, Component source) {
@@ -724,29 +777,6 @@ public void toggleMapMarkings() {
         separatorLines = null;
     }
 
-    protected void setLocalStep(LocalSteps localStep) {
-        if (this.localStep == localStep)
-            return;
-        SoundManager.notifyOfORLocalStep(localStep);
-        this.localStep = localStep;
-        updateMessage();
-        if (upgradePanel != null) {
-            switch (localStep) {
-                case INACTIVE:
-                    upgradePanel.setInactive();
-                    break;
-                case SELECT_HEX:
-                    upgradePanel.setActive();
-                    break;
-                case SELECT_UPGRADE:
-                    upgradePanel.setSelect(map.getSelectedHex());
-                    break;
-                default:
-                    upgradePanel.setInactive();
-            }
-        }
-    }
-
     public boolean hexClicked(GUIHex clickedHex, GUIHex selectedHex, boolean rightClick) {
         if (localStep == null)
             return false;
@@ -786,6 +816,21 @@ public void toggleMapMarkings() {
                         upgradePanel.setSelect(clickedHex);
                     if (orPanel != null)
                         orPanel.enableConfirm(true);
+
+                    // --- SHOW FLOATING DIALOG NEAR HEX ---
+                    if (showFloatingTiles && floatingUpgradesDialog != null) {
+                        try {
+                            java.awt.Point screenPos = mapPanel.getLocationOnScreen();
+                            java.awt.Rectangle hexBounds = clickedHex.getBounds();
+                            // Position to the right and slightly down from the clicked hex
+                            floatingUpgradesDialog.showUpgrades(clickedHex, hexUpgrades,
+                                    new java.awt.Point(screenPos.x + hexBounds.x + hexBounds.width + 10,
+                                            screenPos.y + hexBounds.y));
+                        } catch (Exception e) {
+                            // Fallback if component hasn't rendered yet
+                            floatingUpgradesDialog.showUpgrades(clickedHex, hexUpgrades, null);
+                        }
+                    }
 
                     return true;
                 default:
@@ -1025,8 +1070,7 @@ public void toggleMapMarkings() {
         }
     }
 
-
-public void processBuyPrivate(BuyPrivate action) {
+    public void processBuyPrivate(BuyPrivate action) {
         if (action == null)
             return;
 
@@ -1037,14 +1081,15 @@ public void processBuyPrivate(BuyPrivate action) {
         // Gather Buyer Information
         PublicCompany buyer = this.orComp;
         String buyerId = (buyer != null) ? buyer.getId() : "Unknown";
-        String directorName = (buyer != null && buyer.getPresident() != null) ? buyer.getPresident().getId() : "Unknown";
+        String directorName = (buyer != null && buyer.getPresident() != null) ? buyer.getPresident().getId()
+                : "Unknown";
 
         // Gather Private Company Information
         PrivateCompany pc = action.getPrivateCompany();
         String pcName = (pc.getName() != null) ? pc.getName() : "Unknown";
         String pcId = (pc.getId() != null) ? pc.getId() : "Unknown";
         String ownerName = (pc.getOwner() != null) ? pc.getOwner().getId() : "Unknown";
-        
+
         // Extract Hover/Info text and format for HTML display
         String infoText = pc.getInfoText();
         if (infoText != null && !infoText.isEmpty()) {
@@ -1060,14 +1105,16 @@ public void processBuyPrivate(BuyPrivate action) {
         StringBuilder msg = new StringBuilder();
         msg.append("<html><div style='width: 350px; font-family: sans-serif;'>");
         msg.append("<h3 style='margin-top: 0;'>Buy Private Company</h3>");
-        
+
         msg.append("<table width='100%'>");
-        msg.append("<tr><td><b>Buyer:</b></td><td>").append(buyerId).append(" (Director: ").append(directorName).append(")</td></tr>");
+        msg.append("<tr><td><b>Buyer:</b></td><td>").append(buyerId).append(" (Director: ").append(directorName)
+                .append(")</td></tr>");
         msg.append("<tr><td><b>Private:</b></td><td>").append(pcName).append(" [").append(pcId).append("]</td></tr>");
         msg.append("<tr><td><b>Owner:</b></td><td>").append(ownerName).append("</td></tr>");
-        msg.append("<tr><td><b>Price Range:</b></td><td>").append(formattedMin).append(" - ").append(formattedMax).append("</td></tr>");
+        msg.append("<tr><td><b>Price Range:</b></td><td>").append(formattedMin).append(" - ").append(formattedMax)
+                .append("</td></tr>");
         msg.append("</table><br>");
-        
+
         msg.append("<b>Details:</b><br>");
         msg.append("<div style='padding: 5px; border: 1px solid gray; background-color: #f9f9f9; font-size: 10px;'>");
         msg.append(infoText).append("</div><br>");
@@ -1075,38 +1122,41 @@ public void processBuyPrivate(BuyPrivate action) {
         // Handle Variable vs Fixed Price Dialogs
         if (minPrice != maxPrice) {
             msg.append("<b>Enter purchase price:</b></div></html>");
-            
-            // Note: showInputDialog returns an Object. We cast it to String if it's not null.
+
+            // Note: showInputDialog returns an Object. We cast it to String if it's not
+            // null.
             Object inputObj = JOptionPane.showInputDialog(
-                    orWindow, 
-                    msg.toString(), 
-                    "Negotiate Price", 
-                    JOptionPane.QUESTION_MESSAGE, 
-                    null, 
-                    null, 
-                    String.valueOf(price)
-            );
-            
+                    orWindow,
+                    msg.toString(),
+                    "Negotiate Price",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    null,
+                    String.valueOf(price));
+
             if (inputObj == null) {
                 return; // User canceled
             }
-            
+
             try {
-                String inputStr = inputObj.toString().replaceAll("[^0-9]", ""); // Strip non-numeric characters just in case
+                String inputStr = inputObj.toString().replaceAll("[^0-9]", ""); // Strip non-numeric characters just in
+                                                                                // case
                 price = Integer.parseInt(inputStr);
             } catch (Exception e) {
                 return; // Invalid input or empty
             }
-            
+
             // Validate bounds before processing
             if (price < minPrice || price > maxPrice) {
-                JOptionPane.showMessageDialog(orWindow, "Price out of bounds (" + minPrice + " - " + maxPrice + ")", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(orWindow, "Price out of bounds (" + minPrice + " - " + maxPrice + ")",
+                        "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
         } else {
             msg.append("<b>Confirm purchase for ").append(formattedMin).append("?</b></div></html>");
-            if (JOptionPane.showConfirmDialog(orWindow, msg.toString(), "Confirm Purchase", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
+            if (JOptionPane.showConfirmDialog(orWindow, msg.toString(), "Confirm Purchase", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
                 return; // User canceled
             }
         }
@@ -1116,9 +1166,6 @@ public void processBuyPrivate(BuyPrivate action) {
             updateMessage();
         }
     }
-
-
-
 
     protected void takeLoans(TakeLoans action) {
         if (action.getMaxNumber() == 1) {
@@ -1424,7 +1471,8 @@ public void processBuyPrivate(BuyPrivate action) {
                     ((ReachDestinations) a).addReachedCompany(((ReachDestinations) a).getPossibleCompanies().get(i));
         } else if (d instanceof ConfirmationDialog && a instanceof LayTile) {
             if (!((ConfirmationDialog) d).getAnswer()) {
-                if (map != null) map.selectHex(null);
+                if (map != null)
+                    map.selectHex(null);
                 setLocalStep(LocalSteps.SELECT_HEX);
             }
             a = null; // Do not process the incomplete LayTile action directly
@@ -1572,19 +1620,18 @@ public void processBuyPrivate(BuyPrivate action) {
 
         // 6. 1870 Connection Run: Permanent Planning Highlight
         if (currentComp instanceof net.sf.rails.game.specific._1870.PublicCompany_1870) {
-            net.sf.rails.game.specific._1870.PublicCompany_1870 comp1870 = 
-                (net.sf.rails.game.specific._1870.PublicCompany_1870) currentComp;
-            
+            net.sf.rails.game.specific._1870.PublicCompany_1870 comp1870 = (net.sf.rails.game.specific._1870.PublicCompany_1870) currentComp;
+
             if (comp1870.getDestinationHex() != null && !comp1870.hasConnected()) {
                 GUIHex destGuiHex = map.getHex(comp1870.getDestinationHex());
-                // We pass 'false' for the hover-specific aggressive logic, 
+                // We pass 'false' for the hover-specific aggressive logic,
                 // keeping this as a persistent planning border.
                 if (destGuiHex != null) {
                     destGuiHex.setDestinationHighlight(true);
                 }
             }
         }
-        
+
     }
 
     public void processBuyTrain(BuyTrain action) {

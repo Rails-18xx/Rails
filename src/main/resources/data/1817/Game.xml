@@ -91,11 +91,11 @@
 			<OffBoardRevenue step="3"/>
 		</Phase>
 		<Phase name="7">
-			<Tiles colour="yellow,green,brown,grey"/>
+			<Tiles colour="yellow,green,brown,gray"/>
 			<OffBoardRevenue step="4"/>
 		</Phase>
 		<Phase name="8">
-			<Tiles colour="yellow,green,brown,grey"/>
+			<Tiles colour="yellow,green,brown,gray"/>
 			<Trains rusted="4"/>
 			<OffBoardRevenue step="4"/>
 		</Phase>

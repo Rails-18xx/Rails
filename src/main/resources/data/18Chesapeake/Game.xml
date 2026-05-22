@@ -92,6 +92,7 @@
 			<Tiles colour="yellow,green"/>
 			<Privates sellingAllowed="yes"/>
 			<OperatingRounds number="2"/>
+			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="4">
             <Trains rusted="2" limitStep="2"/>
@@ -101,7 +102,7 @@
 			<Trains limitStep="3"/>
 			<!--Privates close="yes"/-->
 			<OperatingRounds number="3"/>
-			<OffBoardRevenue step="2"/>
+			<OffBoardRevenue step="3"/>
 		</Phase>
 		<Phase name="6">
 			<Trains rusted="3">
@@ -110,6 +111,8 @@
 		</Phase>
 		<Phase name="D">
             <Trains rusted="4"/>
+			<Tiles colour="yellow,green,brown,gray"/>
+			<OffBoardRevenue step="4"/>
 		</Phase>
 	</Component>
 	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">

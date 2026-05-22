@@ -812,12 +812,12 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
         double cx = dimensions.center.getX();
         double cy = dimensions.center.getY();
 
-        // 18xx Phase colors: Yellow, Green, Brown, Grey
+        // 18xx Phase colors: Yellow, Green, Brown, gray
         java.awt.Color[] bgColors = {
             new java.awt.Color(255, 255, 102), // Yellow
             new java.awt.Color(102, 204, 102), // Green
             new java.awt.Color(153, 102, 51),  // Brown
-            new java.awt.Color(160, 160, 160)  // Grey
+            new java.awt.Color(160, 160, 160)  // gray
         };
         // Ensure contrast for the text
         java.awt.Color[] fgColors = { java.awt.Color.BLACK, java.awt.Color.BLACK, java.awt.Color.WHITE, java.awt.Color.WHITE };

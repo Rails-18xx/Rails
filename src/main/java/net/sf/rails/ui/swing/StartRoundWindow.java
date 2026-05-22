@@ -1109,7 +1109,7 @@ else if (action instanceof BidStartItem) {
             gbc.gridheight = matrixRows + 1; // Span 10 rows + the sponge row
             gbc.fill = GridBagConstraints.BOTH;
             gbc.weightx = 1.0; 
-            gbc.weighty = 1.0; // Stretches to fill the "grey block"
+            gbc.weighty = 1.0; // Stretches to fill the "gray block"
             statusPanel.add(playerInventoryPanels[i], gbc);
         }
 

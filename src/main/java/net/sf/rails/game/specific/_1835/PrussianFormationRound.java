@@ -623,7 +623,7 @@ private void executeStartPrussian(boolean auto) {
             return;
         setRoundFinished(true);
         // UI CLEANUP: Force ORPanel to clear sticky buttons and reset to "Stock Round"
-        // grey state.
+        // gray state.
         // We use reflection to avoid hard dependency on the UI package.
         try {
             Class<?> orPanelClass = Class.forName("net.sf.rails.ui.swing.ORPanel");

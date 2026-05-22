@@ -158,6 +158,6 @@
 		<Tile id="4546" pic="3546" quantity="-1" hide="yes"/>
 	</IfOption>
 
-	<!-- Grey tiles -->
+	<!-- gray tiles -->
 	<Tile id="513" quantity="5" />
 </TileManager>

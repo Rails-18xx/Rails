@@ -220,12 +220,12 @@ public class UpgradesPanel extends JPanel {
         refreshUpgrades();
     }
     
-    private void setActiveUpgrade(HexUpgrade upgrade) {
+    public void setActiveUpgrade(HexUpgrade upgrade) {
         hexUpgrades.setUpgrade(upgrade);
         refreshUpgrades();
     }
     
-    private void refreshUpgrades() {
+public void refreshUpgrades() {
         upgradePanel.revalidate();
         upgradePanel.repaint();
         UpgradeLabel active = hexUpgrades.getActiveLabel();
