@@ -328,6 +328,15 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                         hex.paintBars(g);
                     }
                 }
+                // 4. City Names Layer: Draw preprinted names on top of all base and upgraded tile background art
+                if (hexMap.getDisplayCityNames() && hexMap.getMapManager() != null) {
+                    for (GUIHex hex : hexMap.getHexes()) {
+                        Rectangle hexrect = hex.getBounds();
+                        if (g.hitClip(hexrect.x, hexrect.y, hexrect.width, hexrect.height)) {
+                            hex.paintPreprintedCityName(g);
+                        }
+                    }
+                }
 
             } catch (NullPointerException ex) {
                 // If we try to paint before something is loaded, just retry
@@ -410,10 +419,20 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                 if (rectClip == null) {
                     return;
                 }
-
-                // paint train paths
+// and the engine's active action buffer indicates we are in a tile building step.
+                boolean shouldPaint = false;
                 if (hexMap.getTrainPaths() != null) {
-                    Stroke oldStroke = g.getStroke();
+                    shouldPaint = true;
+                } else if (hexMap.getDisplayLastRevenueRuns() && hexMap.getOrUIManager() != null) {
+                    rails.game.action.PossibleActions possibleActions = hexMap.getOrUIManager().getPossibleActions();
+                    if (possibleActions != null && !possibleActions.getType(rails.game.action.LayTile.class).isEmpty()) {
+                        shouldPaint = true;
+                    }
+                }
+
+                // paint train paths if evaluation passes
+                if (shouldPaint) {
+                                        Stroke oldStroke = g.getStroke();
                     Color oldColor = g.getColor();
                     Stroke trainStroke = new BasicStroke((int) (STROKE_WIDTH * hexMap.getZoomFactor()),
                             STROKE_CAP, STROKE_JOIN);
@@ -611,7 +630,27 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     public void setDisplayOffboardValues(boolean display) {
         this.displayOffboardValues = display;
     }
+
+    private boolean displayCityNames = true;
+
+    public boolean getDisplayCityNames() {
+        return displayCityNames;
+    }
+
+    public void setDisplayCityNames(boolean display) {
+        this.displayCityNames = display;
+    }
     
+    private boolean displayLastRevenueRuns = true;
+
+    public boolean getDisplayLastRevenueRuns() {
+        return displayLastRevenueRuns;
+    }
+
+    public void setDisplayLastRevenueRuns(boolean display) {
+        this.displayLastRevenueRuns = display;
+    }
+
     protected Dimension originalSize;
     private Dimension currentSize;
 

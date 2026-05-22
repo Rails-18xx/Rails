@@ -46,6 +46,12 @@ public class MapManager extends RailsManager implements Configurable {
 
     private final Set<String> disabledOffboardHexes = new HashSet<>();
 
+    private final Map<String, String> preprintedCityNames = new HashMap<>();
+
+    public String getPreprintedCityName(String hexName) {
+        return preprintedCityNames.get(hexName);
+    }
+
     public boolean isOffboardValueAllowed(String hexName) {
         return !disabledOffboardHexes.contains(hexName);
     }
@@ -94,6 +100,10 @@ public class MapManager extends RailsManager implements Configurable {
             String showAttr = hexTag.getAttributeAsString("showoffmapvalues");
             if (showAttr != null && (showAttr.equals("0") || showAttr.equalsIgnoreCase("false"))) {
                 disabledOffboardHexes.add(hex.getId());
+            }
+            String cityAttr = hexTag.getAttributeAsString("city");
+            if (cityAttr != null && !cityAttr.isEmpty()) {
+                preprintedCityNames.put(hex.getId(), cityAttr);
             }
             
         }

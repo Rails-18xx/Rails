@@ -1043,8 +1043,43 @@ boolean isOpen = true;
             g.setStroke(new BasicStroke(1.0f));
             g.draw(dimensions.hexagon);
 
+         
+
             g.setColor(oldColor);
         }
+    }
+
+    public void paintPreprintedCityName(Graphics2D g) {
+        if (hexMap == null || hexMap.getMapManager() == null) return;
+
+        String cityName = hexMap.getMapManager().getPreprintedCityName(getHex().getId());
+        if (cityName == null || cityName.isEmpty()) return;
+
+        // Abbreviate if the name is longer than 12 letters
+        if (cityName.length() > 12) {
+            cityName = cityName.substring(0, 10) + "...";
+        }
+
+        Font oldFont = g.getFont();
+        Color oldColor = g.getColor();
+        
+        // Smaller, plain font size dynamically tracked via zoom factor
+        int scaledSize = Math.max(8, (int) Math.round(8.5 * dimensions.zoomFactor));
+        g.setFont(new Font("SansSerif", Font.PLAIN, scaledSize));
+        FontMetrics fm = g.getFontMetrics();
+
+        int tw = fm.stringWidth(cityName);
+        float tx = (float) (dimensions.center.getX() - tw / 2.0);
+        
+        // Displace slightly upwards from true center to keep clean lines near tile track connections
+        float ty = (float) (dimensions.center.getY() - (dimensions.tokenDiameter * 0.4));
+
+        // High-contrast clean charcoal paint
+        g.setColor(new Color(40, 40, 40));
+        g.drawString(cityName, tx, ty);
+
+        g.setColor(oldColor);
+        g.setFont(oldFont);
     }
 
     public void paintBars(Graphics2D g) {

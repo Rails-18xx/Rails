@@ -406,7 +406,21 @@ public class MapPanel extends JPanel {
                     map.repaintAll(new Rectangle(map.getSize()));
                 });
                 menu.add(offboardItem);
-                // --- END FIX ---
+
+
+                JCheckBoxMenuItem cityNamesItem = new JCheckBoxMenuItem("City Names", map.getDisplayCityNames());
+                cityNamesItem.addActionListener(ae -> {
+                    map.setDisplayCityNames(!map.getDisplayCityNames());
+                    map.repaintAll(new Rectangle(map.getSize()));
+                });
+                menu.add(cityNamesItem);
+
+                JCheckBoxMenuItem lastRunsItem = new JCheckBoxMenuItem("Last Revenue Runs", map.getDisplayLastRevenueRuns());
+                lastRunsItem.addActionListener(ae -> {
+                    map.setDisplayLastRevenueRuns(!map.getDisplayLastRevenueRuns());
+                    map.repaintAll(new Rectangle(map.getSize()));
+                });
+                menu.add(lastRunsItem);
 
                 menu.addSeparator();
                 JMenuItem hideAll = new JMenuItem("Hide All Overlays");
