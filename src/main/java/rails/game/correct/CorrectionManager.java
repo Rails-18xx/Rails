@@ -117,4 +117,6 @@ public abstract class CorrectionManager extends RailsAbstractItem {
         CorrectionManager cm = (CorrectionManager) object;
         return this.getParent() == cm.getParent() && this.correctionType == cm.correctionType;
     }
+
+    
 }

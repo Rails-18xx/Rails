@@ -32,6 +32,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.Shape;
 import net.sf.rails.game.PublicCompany; // Added for the new method signature
 import net.sf.rails.game.Token; // Added to check tokens
+import rails.game.correct.CorrectionManager;
+import rails.game.correct.MapCorrectionManager;
+import rails.game.correct.CorrectionType;
 
 import net.sf.rails.common.Config;
 import net.sf.rails.common.parser.ConfigurationException;
@@ -1102,6 +1105,30 @@ public void setTrainPaths(List<GeneralPath> trainPaths) {
         Point point = arg0.getPoint();
         GUIHex clickedHex = getHexContainingPoint(point);
         boolean rightClick = SwingUtilities.isRightMouseButton(arg0);
+
+       // Check if we are in the SelectionRound
+if (orUIManager != null && orUIManager.getGameUIManager() != null 
+    && orUIManager.getGameUIManager().getGameManager().getCurrentRound() instanceof net.sf.rails.game.round.SelectionRound) {
+    
+   if (clickedHex != null) {
+        // Submit via the GameManager's process method
+        orUIManager.getGameUIManager().getGameManager().process(
+            new net.sf.rails.game.action.SelectHexAction(
+                orUIManager.getGameUIManager().getRoot(), 
+                clickedHex.getHex().getId(), 
+                orUIManager.getGameUIManager().getGameManager().getCurrentPlayer()
+            )
+        );
+        
+        // Explicitly notify the manager
+rails.game.correct.CorrectionManager cm = orUIManager.getGameUIManager().getGameManager().getCorrectionManager(rails.game.correct.CorrectionType.CORRECT_MAP);
+if (cm instanceof rails.game.correct.MapCorrectionManager) {
+    ((rails.game.correct.MapCorrectionManager) cm).onHexSelected(clickedHex.getHex().getId());
+}
+        return; 
+    
+    }
+}
 
         // if no action/correction was expected on the map panel
         if (!orUIManager.hexClicked(clickedHex, selectedHex, rightClick)) {

@@ -777,6 +777,10 @@ public class ORUIManager implements DialogOwner {
         separatorLines = null;
     }
 
+    public net.sf.rails.ui.swing.hexmap.HexMap getHexMap() {
+        return this.map;
+    }
+
     public boolean hexClicked(GUIHex clickedHex, GUIHex selectedHex, boolean rightClick) {
         if (localStep == null)
             return false;

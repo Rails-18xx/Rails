@@ -346,16 +346,12 @@ private void startAuctionRound(PublicCompany_1817 comp, String hexId, int statio
                 initiator.getName() + " initiates an IPO for " + comp.getId() + " at " + hexId
                         + " with a starting bid of " + net.sf.rails.game.financial.Bank.format(this, bid) + ".");
 
-// --- DELETE ---
-//        gameManager.setInterruptedRound(this);
-//        AuctionRound_1817 auctionRound = gameManager.createRound(AuctionRound_1817.class, "Auction_" + comp.getId());
-// --- START FIX ---
+
         auctionCounter.set(auctionCounter.value() + 1);
         String uniqueAuctionId = "Auction_" + comp.getId() + "_" + getId() + "_" + auctionCounter.value();
 
         gameManager.setInterruptedRound(this);
         AuctionRound_1817 auctionRound = gameManager.createRound(AuctionRound_1817.class, uniqueAuctionId);
-// --- END FIX ---
         auctionRound.setupAuction(comp, hexId, stationNumber, bid, initiator, gameManager.getPlayers());
     }
 

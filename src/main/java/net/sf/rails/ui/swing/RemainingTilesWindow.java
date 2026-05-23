@@ -31,28 +31,141 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
     private final Map<Tile, Observer> observerMap = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(RemainingTilesWindow.class);
 
+    // --- START FIX ---
+    private JPanel controlPanel;
+    private JButton btnRotLeft, btnRotRight, btnAccept;
+    private Tile selectedTile = null;
+    private int selectedRotation = 0;
+    // --- END FIX ---
+
+    // --- START FIX ---
     public RemainingTilesWindow(ORWindow orWindow) {
         super();
         this.orWindow = orWindow;
         tilePanel = new AlignedWidthPanel();
         slider = new JScrollPane(tilePanel);
         slider.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        slider.setPreferredSize(new Dimension(200, 200));
+        
+        // Initialize control panel first
+        initControlPanel();
+
+        // Use BorderLayout for the frame
+        setLayout(new BorderLayout());
+        add(slider, BorderLayout.CENTER);
+        add(controlPanel, BorderLayout.EAST);
+
         tilePanel.setParentSlider(slider);
         tilePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        init(orWindow.getGameUIManager());
 
         if (!orWindow.isDockingFrameworkEnabled()) {
             setTitle("Rails: Remaining Tiles");
-            setVisible(false);
-            setContentPane(slider);
-            setSize(800, 600);
+            setSize(900, 600); // Increased width to accommodate controlPanel
             addWindowListener(this);
             setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             setLocationRelativeTo(orWindow);
-            setVisible(true);
         }
+        
+        init(orWindow.getGameUIManager());
+        setVisible(true);
     }
+// --- END FIX ---
+
+    // --- START FIX ---
+    private void initControlPanel() {
+        controlPanel = new JPanel(new GridLayout(3, 1, 0, 8));
+        btnRotLeft = new JButton("↺");
+        btnRotRight = new JButton("↻");
+        btnAccept = new JButton("✓");
+
+        Font btnFont = new Font("SansSerif", Font.BOLD, 16);
+        Dimension size = new Dimension(80, 40);
+
+        // Apply the same styling logic
+        configureButtonStyle(btnRotLeft, btnFont, size, UIManager.getColor("Button.background"),
+                UIManager.getColor("Button.foreground"));
+        configureButtonStyle(btnRotRight, btnFont, size, UIManager.getColor("Button.background"),
+                UIManager.getColor("Button.foreground"));
+        configureButtonStyle(btnAccept, new Font("SansSerif", Font.BOLD, 18), size, new java.awt.Color(30, 144, 255),
+                java.awt.Color.WHITE);
+
+// --- START FIX ---
+// Update these listeners in initControlPanel()
+btnRotLeft.addActionListener(e -> {
+    if (selectedTile != null) {
+        selectedRotation = (selectedRotation + 5) % 6;
+        updateSelectedTileIcon();
+    }
+});
+
+btnRotRight.addActionListener(e -> {
+    if (selectedTile != null) {
+        selectedRotation = (selectedRotation + 1) % 6;
+        updateSelectedTileIcon();
+    }
+});
+// --- END FIX ---
+
+        // --- START FIX ---
+        btnAccept.addActionListener(e -> {
+            if (selectedTile != null) {
+                var cm = orWindow.getGameUIManager().getGameManager()
+                        .getCorrectionManager(rails.game.correct.CorrectionType.CORRECT_MAP);
+                if (cm instanceof rails.game.correct.MapCorrectionManager) {
+                    // Pass the rotation state captured by the buttons
+                    ((rails.game.correct.MapCorrectionManager) cm).completeCorrection(selectedTile.getId(),
+                            selectedRotation);
+                    setVisible(false); // Close window after acceptance
+                }
+            }
+        });
+        // --- END FIX ---
+
+        controlPanel.add(btnRotLeft);
+        controlPanel.add(btnRotRight);
+        controlPanel.add(btnAccept);
+        // Inside initControlPanel()
+// ... after adding buttons to controlPanel ...
+controlPanel.revalidate();
+controlPanel.repaint();
+    }
+
+    // --- START FIX ---
+private void updateSelectedTileIcon() {
+    if (selectedTile == null) return;
+    
+    // 1. Get the original image (rotateImage uses 30 degrees per step for 18xx tiles)
+    String picId = selectedTile.getPictureId();
+    BufferedImage hexImage = ImageLoader.getInstance().getTile(picId, 10);
+    
+    // 2. Apply the rotation (selectedRotation * 60 degrees, plus 30 default)
+    // Note: If rotateImage is 30.0, we add (rotation * 60)
+    double angle = 30.0 + (selectedRotation * 60.0);
+    hexImage = rotateImage(hexImage, angle);
+    
+    // 3. Scale and update the label
+    ImageIcon hexIcon = new ImageIcon(hexImage);
+    hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+            (int) (hexIcon.getIconWidth() * 0.8),
+            (int) (hexIcon.getIconHeight() * 0.8),
+            Image.SCALE_SMOOTH));
+            
+    Field label = tileLabels.get(selectedTile);
+    if (label != null) {
+        label.setIcon(hexIcon);
+        label.repaint();
+    }
+}
+// --- END FIX ---
+
+    private void configureButtonStyle(JButton btn, Font font, Dimension size, Color bg, Color fg) {
+        btn.setFont(font);
+        btn.setPreferredSize(size);
+        btn.setBackground(bg);
+        btn.setForeground(fg);
+        btn.setOpaque(true);
+        btn.setBorder(BorderFactory.createRaisedBevelBorder());
+    }
+    // --- END FIX ---
 
     private void init(GameUIManager gameUIManager) {
         TileManager tmgr = gameUIManager.getRoot().getTileManager();
@@ -76,6 +189,24 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
             label.setVerticalTextPosition(Field.BOTTOM);
             label.setHorizontalTextPosition(Field.CENTER);
             label.setVisible(true);
+            // Add this MouseListener to the 'label' inside your init() loop:
+            // --- START FIX ---
+            label.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                    // Update state
+                    selectedTile = tile;
+
+                    // Visual feedback: clear previous selection style, highlight new one
+                    for (Field f : tileLabels.values())
+                        f.setBorder(null);
+                    label.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+
+                    // Keep the correction logic if you want immediate double-click,
+                    // or just rely on the 'Accept' button now.
+                    log.info("Selected tile: " + tile.getId());
+                }
+            });
+            // --- END FIX ---
 
             // --- FIX: Restore Highlight on Hover ---
             // We attach the special mouse listener that asks the Map to highlight
@@ -103,6 +234,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
             tile.getTilesLaid().addObserver(watcher);
             observerMap.put(tile, watcher);
         }
+
     }
 
     private static int compareIds(String id1, String id2) {
@@ -252,8 +384,6 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
             super.removeNotify();
         }
 
-        
-
         private void attachObservers() {
             if (listenersAttached)
                 return;
@@ -286,7 +416,6 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
                     tileObservers.put(t, tileObserver);
                 }
 
-                
                 listenersAttached = true;
             } catch (Exception e) {
                 log.error("Failed to attach tile observers", e);
@@ -458,19 +587,17 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
         }
     }
 
+    public void refreshMiniDock() {
+        // Refresh the tile counts/labels
+        refreshCounts();
 
-public void refreshMiniDock() {
-    // Refresh the tile counts/labels
-    refreshCounts();
-    
-    // If the "MiniDock" is a specific sub-panel or the tilePanel itself,
-    // ensure it is repainted to reflect the new phase color/availability.
-    if (tilePanel != null) {
-        tilePanel.revalidate();
-        tilePanel.repaint();
+        // If the "MiniDock" is a specific sub-panel or the tilePanel itself,
+        // ensure it is repainted to reflect the new phase color/availability.
+        if (tilePanel != null) {
+            tilePanel.revalidate();
+            tilePanel.repaint();
+        }
+        this.repaint();
     }
-    this.repaint();
-}
-
 
 }
