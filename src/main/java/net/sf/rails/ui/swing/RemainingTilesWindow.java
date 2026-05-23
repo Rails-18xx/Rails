@@ -155,7 +155,6 @@ private void updateSelectedTileIcon() {
         label.repaint();
     }
 }
-// --- END FIX ---
 
     private void configureButtonStyle(JButton btn, Font font, Dimension size, Color bg, Color fg) {
         btn.setFont(font);

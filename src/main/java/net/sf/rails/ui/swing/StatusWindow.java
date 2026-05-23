@@ -1394,32 +1394,27 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             public void componentResized(ComponentEvent e) {
                 guiMgr.getWindowSettings().set(frame);
 
-            // Auto-zoom logic to fit the width automatically
                 if (gameStatus != null) {
-                    // 1. Get current zoom percentage (default 100)
-                    float currentZoom = 100f;
-                    try {
-                        String val = net.sf.rails.common.Config.get("statusWindow.zoom");
-                        if (val != null) currentZoom = Float.parseFloat(val);
-                    } catch (Exception ex) {}
+                    
 
-                    // 2. Determine target width (with buffer) and current content width
                     int availableWidth = frame.getWidth() - 40; 
                     int contentWidth = gameStatus.getPreferredSize().width;
 
-                    // 3. Adjust only if the discrepancy is significant (> 20px)
-                    if (Math.abs(availableWidth - contentWidth) > 20) {
-                        float newZoom = ((float) availableWidth / (float) contentWidth) * currentZoom;
+                    if (contentWidth > 0 && availableWidth > 0) {
+                        // Calculate exact multiplier needed to fit content inside the window width
+                        float ratio = (float) availableWidth / (float) contentWidth;
+                        float targetFontSize = currentBaseFontSize * ratio;
                         
-                        // 4. Clamp between 50% and 200%
-                        newZoom = Math.max(50f, Math.min(200f, newZoom));
-                        
-                        // 5. Update only if change is > 5% to prevent jitter
-                        if (Math.abs(newZoom - currentZoom) > 5) {
-                            net.sf.rails.common.Config.set("statusWindow.zoom", String.valueOf((int)newZoom));
-                            updateFontsFromConfig();
+                        // Clamp bounds to prevent entirely unreadable text or massive overflows
+                        targetFontSize = Math.max(6f, Math.min(36f, targetFontSize));
+
+                        // Update only if difference > 0.5f to eliminate feedback loops during smooth drag
+                        if (Math.abs(targetFontSize - currentBaseFontSize) > 0.5f) {
+                            updateFonts(targetFontSize);
                         }
                     }
+
+
                 }
             }
         });
@@ -1502,7 +1497,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
         // 3. Pack the frame to fit the current preferred size of the GameStatus panel.
         // This will automatically shrink or grow the window when the zoom changes.
-        this.pack();
+        // this.pack();
     }
 // ... (rest of the method) ...
 
@@ -3270,32 +3265,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
                 fontName = "SansSerif";
             }
 
-            // 2. Read the master continuous layout zoom percentage value (50-200)
-            int zoomPercent = 100;
-            try {
-                // Read as integer to avoid any fractional/decimal parsing issues
-                String val = net.sf.rails.common.Config.get("statusWindow.zoom");
-                if (val != null) {
-                    zoomPercent = Integer.parseInt(val.replaceAll("\\..*", ""));
-                }
-            } catch (Exception ex) {
-                zoomPercent = 100;
-            }
 
-            // 3. Convert percentage to scaling factor: (zoomPercent / 100.0)
-            float scale = zoomPercent/100;
-            this.currentBaseFontSize = 14f * scale;
-
-            log.info("StatusWindow: Syncing UI continuous scale factor: " + zoomPercent + "% -> Target Size: "
-                    + currentBaseFontSize);
-
-            // 4. Cascade metrics down
-            updateFonts(fontName, this.currentBaseFontSize);
-
-            // Refresh layout hierarchy constraints
-            enforceDynamicMinimumSize();
-            revalidate();
-            repaint();
 
         } catch (Exception e) {
             log.error("Failed to dynamically propagate configuration fonts", e);

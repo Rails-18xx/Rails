@@ -64,7 +64,6 @@
 		<Property name="or.number_format" type="LIST" values="simple,composite" />
     </Section>
     <Section name="Appearance">
-<Property name="statusWindow.zoom" type="PERCENT" isGameRelated="no" />
 <Property name="orPanel.showSpinner" type="LIST" values="no,yes" />
         <Property name="map.route.highlight" type="BOOLEAN" />
         <Property name="orPanel.revenue.suggest" type="BOOLEAN" />
