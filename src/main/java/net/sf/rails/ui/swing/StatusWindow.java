@@ -1393,6 +1393,34 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             @Override
             public void componentResized(ComponentEvent e) {
                 guiMgr.getWindowSettings().set(frame);
+
+            // Auto-zoom logic to fit the width automatically
+                if (gameStatus != null) {
+                    // 1. Get current zoom percentage (default 100)
+                    float currentZoom = 100f;
+                    try {
+                        String val = net.sf.rails.common.Config.get("statusWindow.zoom");
+                        if (val != null) currentZoom = Float.parseFloat(val);
+                    } catch (Exception ex) {}
+
+                    // 2. Determine target width (with buffer) and current content width
+                    int availableWidth = frame.getWidth() - 40; 
+                    int contentWidth = gameStatus.getPreferredSize().width;
+
+                    // 3. Adjust only if the discrepancy is significant (> 20px)
+                    if (Math.abs(availableWidth - contentWidth) > 20) {
+                        float newZoom = ((float) availableWidth / (float) contentWidth) * currentZoom;
+                        
+                        // 4. Clamp between 50% and 200%
+                        newZoom = Math.max(50f, Math.min(200f, newZoom));
+                        
+                        // 5. Update only if change is > 5% to prevent jitter
+                        if (Math.abs(newZoom - currentZoom) > 5) {
+                            net.sf.rails.common.Config.set("statusWindow.zoom", String.valueOf((int)newZoom));
+                            updateFontsFromConfig();
+                        }
+                    }
+                }
             }
         });
 
@@ -3255,7 +3283,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             }
 
             // 3. Convert percentage to scaling factor: (zoomPercent / 100.0)
-            float scale = zoomPercent;
+            float scale = zoomPercent/100;
             this.currentBaseFontSize = 14f * scale;
 
             log.info("StatusWindow: Syncing UI continuous scale factor: " + zoomPercent + "% -> Target Size: "
