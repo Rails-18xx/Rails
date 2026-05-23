@@ -214,30 +214,32 @@ public class GameStatus extends GridPanel {
     public static final String FONT_FAMILY_CURRENCY = "Monospaced";
     public static final Color COLOR_CURRENCY = new Color(0, 0, 128); // Navy Blue
 
-    protected void applyCurrencyFont(JComponent comp) {
+protected void applyCurrencyFont(JComponent comp) {
         Font base = (stickyFont != null) ? stickyFont : comp.getFont();
-        if (base == null)
-            base = new Font("SansSerif", Font.BOLD, 12);
-        comp.setFont(new Font(FONT_FAMILY_CURRENCY, Font.BOLD, base.getSize()));
+        if (base == null) base = new Font("SansSerif", Font.BOLD, 12);
+        
+        // Dynamic look up of active custom Currency properties instead of static hardcoding
+        String currencyFamily = net.sf.rails.common.Config.get("font.currency");
+        if (currencyFamily == null || currencyFamily.trim().isEmpty()) {
+            currencyFamily = "Monospaced"; 
+        }
+        
+        comp.setFont(new Font(currencyFamily, Font.BOLD, base.getSize()));
         comp.setForeground(COLOR_CURRENCY);
 
         // Ensure font scales correctly when StatusWindow forces global font updates
         comp.addPropertyChangeListener("font", evt -> {
             Font f = (Font) evt.getNewValue();
-            if (f != null && (!FONT_FAMILY_CURRENCY.equals(f.getFamily()) || f.getStyle() != Font.BOLD)) {
-                comp.setFont(new Font(FONT_FAMILY_CURRENCY, Font.BOLD, f.getSize()));
+            String currentFamily = net.sf.rails.common.Config.get("font.currency");
+            if (currentFamily == null || currentFamily.trim().isEmpty()) {
+                currentFamily = "Monospaced";
+            }
+            if (f != null && (!currentFamily.equals(f.getFamily()) || f.getStyle() != Font.BOLD)) {
+                comp.setFont(new Font(currentFamily, Font.BOLD, f.getSize()));
             }
         });
     }
 
-    @Override
-    public void setFont(Font f) {
-        super.setFont(f);
-        // Capture the font whenever StatusWindow updates it (e.g. Zoom In/Out)
-        if (f != null) {
-            this.stickyFont = f;
-        }
-    }
 
     /**
      * Scans the parent StatusWindow to find the "Pause" button (which lives in the
@@ -6380,5 +6382,22 @@ JPanel[] currentPanels = playerPrivatesPanel;
             timer.start();
         }
     }
+
+    // ... (lines of unchanged context code) ...
+    @Override
+    public void setFont(Font f) {
+        super.setFont(f);
+        // Capture the font whenever StatusWindow updates it (e.g. Zoom In/Out)
+        if (f != null) {
+            this.stickyFont = f;
+            // --- START FIX ---
+            // Dynamically recalculate slot metrics to accommodate the new font family properties
+            if (companies != null && companies.length > 0) {
+                calculateDynamicDimensions();
+            }
+            // --- END FIX ---
+        }
+    }
+// ... (rest of the file) ...
 
 }

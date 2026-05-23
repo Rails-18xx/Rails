@@ -28,12 +28,11 @@ import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.ui.swing.elements.RailsIcon;
 import net.sf.rails.util.Util;
 
-
 class ConfigWindow extends JFrame {
     private static final long serialVersionUID = 1L;
 
-    //restrict field width as there may be extremely long texts
-    //(e.g. specifying file names >2000px)
+    // restrict field width as there may be extremely long texts
+    // (e.g. specifying file names >2000px)
     private static final int MAX_FIELD_WIDTH = 200;
 
     private Window parent;
@@ -67,7 +66,6 @@ class ConfigWindow extends JFrame {
         buttonPanel = new JPanel();
         add(buttonPanel, "South");
 
-
         // hide on close and inform
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -91,7 +89,7 @@ class ConfigWindow extends JFrame {
             public void run() {
                 ConfigWindow.this.repaint();
                 if (startUp) {
-                    ConfigWindow.this.setSize(600,400);
+                    ConfigWindow.this.setSize(600, 400);
                 }
             }
         });
@@ -103,9 +101,9 @@ class ConfigWindow extends JFrame {
         String activeProfile = cm.getActiveProfile();
         String profileText;
         if (cm.IsActiveUserProfile()) {
-            profileText =  LocalText.getText("CONFIG_USER_PROFILE", activeProfile, cm.getActiveParent());
+            profileText = LocalText.getText("CONFIG_USER_PROFILE", activeProfile, cm.getActiveParent());
         } else {
-            profileText =  LocalText.getText("CONFIG_PREDEFINED_PROFILE", activeProfile);
+            profileText = LocalText.getText("CONFIG_PREDEFINED_PROFILE", activeProfile);
         }
 
         Border etched = BorderFactory.createEtchedBorder();
@@ -114,20 +112,17 @@ class ConfigWindow extends JFrame {
 
         JLabel userLabel = new JLabel(LocalText.getText("CONFIG_SELECT_PROFILE"));
         profilePanel.add(userLabel);
-       String[] profiles = cm.getProfiles().toArray(new String[cm.getProfiles().size()]);
+        String[] profiles = cm.getProfiles().toArray(new String[cm.getProfiles().size()]);
 
         final JComboBox<String> comboBoxProfile = new JComboBox<>(profiles);
         comboBoxProfile.setSelectedItem(activeProfile);
         comboBoxProfile.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent arg0) {
-                changeProfile((String)comboBoxProfile.getSelectedItem());
+                changeProfile((String) comboBoxProfile.getSelectedItem());
             }
-        }
-        );
+        });
         profilePanel.add(comboBoxProfile);
     }
-
-
 
     private void setupConfigPane() {
         configPane.removeAll();
@@ -139,7 +134,7 @@ class ConfigWindow extends JFrame {
         Map<String, List<ConfigItem>> configSections = cm.getConfigSections();
         int maxElements = cm.getMaxElementsInPanels();
 
-        for (String sectionName:configSections.keySet()) {
+        for (String sectionName : configSections.keySet()) {
             JPanel newPanel = new JPanel();
             newPanel.setLayout(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
@@ -147,13 +142,20 @@ class ConfigWindow extends JFrame {
             gbc.gridheight = 1;
             gbc.weightx = 0.8;
             gbc.weighty = 0.8;
-            gbc.insets = new Insets(5,5,5,5);
+            gbc.insets = new Insets(5, 5, 5, 5);
             gbc.anchor = GridBagConstraints.WEST;
-            for (ConfigItem item:configSections.get(sectionName)) {
+
+            for (ConfigItem item : configSections.get(sectionName)) {
+                // Skip the unused legacy "on" tag configuration item entirely
+                if ("on".equalsIgnoreCase(item.name)) {
+                    continue;
+                }
+                // CRITICAL: We must actually add the element to the panel!
                 gbc.gridx = 0;
                 gbc.gridy++;
                 defineElement(newPanel, item, gbc);
             }
+
             // fill up to maxElements
             gbc.gridx = 0;
             while (++gbc.gridy < maxElements) {
@@ -165,15 +167,14 @@ class ConfigWindow extends JFrame {
         }
     }
 
-
     private void addToGridBag(JComponent container, JComponent element, GridBagConstraints gbc) {
         container.add(element, gbc);
-        gbc.gridx ++;
+        gbc.gridx++;
     }
 
     private void addEmptyLabel(JComponent container, GridBagConstraints gbc) {
         JLabel label = new JLabel("");
-        addToGridBag(container, label, gbc );
+        addToGridBag(container, label, gbc);
     }
 
     private void defineElement(JPanel panel, final ConfigItem item, GridBagConstraints gbc) {
@@ -193,192 +194,224 @@ class ConfigWindow extends JFrame {
         addToGridBag(panel, label, gbc);
 
         switch (item.type) {
-        case BOOLEAN:
-            final JCheckBox checkBox = new JCheckBox();
-            boolean selected = Util.parseBoolean(configValue);
-            checkBox.setSelected(selected);
-            checkBox.addFocusListener(new FocusListener() {
-                public void focusGained(FocusEvent arg0) {
-                    // do nothing
-                }
-                public void focusLost(FocusEvent arg0) {
-                    if (checkBox.isSelected()) {
-                        item.setNewValue("yes");
-                    } else {
-                        item.setNewValue("no");
+            case BOOLEAN:
+                final JCheckBox checkBox = new JCheckBox();
+                boolean selected = Util.parseBoolean(configValue);
+                checkBox.setSelected(selected);
+                checkBox.addFocusListener(new FocusListener() {
+                    public void focusGained(FocusEvent arg0) {
+                        // do nothing
                     }
-                    if (item.hasChanged()) dirty = true;
-                }
-            }
-            );
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            addToGridBag(panel, checkBox, gbc);
-            break;
-        case PERCENT: // percent uses a spinner with 5 changes
-        case INTEGER:
-            int spinnerStepSize;
-            final int spinnerMultiple;
-            if (item.type == ConfigItem.ConfigType.PERCENT) {
-                spinnerStepSize = 5;
-                spinnerMultiple = 100;
-            } else {
-                spinnerStepSize = 1;
-                spinnerMultiple = 1;
-            }
-            int spinnerValue;
-            try {
-                spinnerValue = (int)Math.round(Double.parseDouble(configValue) * spinnerMultiple);
-            } catch (NumberFormatException e) {
-                spinnerValue = 0;
-            }
-            final JSpinner spinner = new JSpinner(new SpinnerNumberModel
-                   (spinnerValue, Integer.MIN_VALUE, Integer.MAX_VALUE, spinnerStepSize));
-            ((JSpinner.DefaultEditor)spinner.getEditor()).getTextField().
-            addPropertyChangeListener(new PropertyChangeListener() {
-                public void propertyChange(PropertyChangeEvent arg0) {
-                    Integer value = (Integer)spinner.getValue();
-                    if (item.type == ConfigItem.ConfigType.PERCENT) {
-                        double adjValue = (double)value / spinnerMultiple;
-                        item.setNewValue(Double.toString(adjValue));
-                    } else {
-                        item.setNewValue(value.toString());
-                    }
-                    if (item.hasChanged()) dirty = true;
-               }
-            }
-            );
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            addToGridBag(panel, spinner, gbc);
-            addEmptyLabel(panel, gbc);
-            break;
-        case FONT: // fonts are a special list
-            if (!Util.hasValue(configValue)) {
-                configValue = ((Font)UIManager.getDefaults().get("Label.font")).getFamily();
-            }
-            // fall through
-        case LIST:
-            String[] allowedValues = new String[1];
-            if (item.type == ConfigItem.ConfigType.FONT) {
-                allowedValues = GraphicsEnvironment.getLocalGraphicsEnvironment().
-                getAvailableFontFamilyNames();
-            } else {
-                allowedValues = item.allowedValues.toArray(allowedValues);
-            }
-            final JComboBox<String> comboBox = new JComboBox<>(allowedValues);
-            comboBox.setSelectedItem(configValue);
-            comboBox.setToolTipText(toolTip);
-            comboBox.addFocusListener(new FocusListener() {
-                public void focusGained(FocusEvent arg0) {
-                    // do nothing
-                }
-                public void focusLost(FocusEvent arg0) {
-                    item.setNewValue((String)comboBox.getSelectedItem());
-                    if (item.hasChanged()) dirty = true;
 
+                    public void focusLost(FocusEvent arg0) {
+                        if (checkBox.isSelected()) {
+                            item.setNewValue("yes");
+                        } else {
+                            item.setNewValue("no");
+                        }
+                        if (item.hasChanged())
+                            dirty = true;
+                    }
+                });
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                addToGridBag(panel, checkBox, gbc);
+                break;
+
+                
+                case PERCENT: // Continuous scale factor mapping (integer bounds 50 - 200)
+                int percentValue = 100;
+                try {
+                    double parsedDouble = Double.parseDouble(configValue);
+                    if (parsedDouble >= 5.0) {
+                        percentValue = (int) Math.round(parsedDouble);
+                    } else {
+                        percentValue = (int) Math.round(parsedDouble * 100.0);
+                    }
+                } catch (NumberFormatException e) {
+                    percentValue = 100;
                 }
-            }
-            );
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            addToGridBag(panel, comboBox, gbc);
-            addEmptyLabel(panel, gbc);
-            break;
-        case DIRECTORY:
-        case FILE:
-            final JLabel dirLabel = new JLabel(configValue + " "); //add whitespace for non-zero preferred size
-            dirLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            dirLabel.setToolTipText(toolTip);
-            dirLabel.setPreferredSize(new Dimension(
-                    MAX_FIELD_WIDTH,
-                    dirLabel.getPreferredSize().height));
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            addToGridBag(panel, dirLabel, gbc);
-            JButton dirButton = new JButton("Choose...");
-            dirButton.addActionListener(
-                    new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            JFileChooser fc = new JFileChooser();
-                            if (item.type == ConfigItem.ConfigType.DIRECTORY) {
-                                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                            } else {
-                                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                            }
-                            fc.setSelectedFile(new File(dirLabel.getText()));
-                            int state = fc.showOpenDialog(ConfigWindow.this);
-                            if ( state == JFileChooser.APPROVE_OPTION ){
-                                File file = fc.getSelectedFile();
-                                dirLabel.setText(file.getPath());
-                                item.setNewValue(file.getPath());
-                            }
-                            if (item.hasChanged()) dirty = true;
+                
+                final JSpinner percentSpinner = new JSpinner(
+                        new SpinnerNumberModel(percentValue, 50, 200, 5));
+                
+                percentSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+                    public void stateChanged(javax.swing.event.ChangeEvent e) {
+                        Integer currentVal = (Integer) percentSpinner.getValue();
+                        item.setNewValue(String.valueOf(currentVal));
+                        if (item.hasChanged())
+                            dirty = true;
+                    }
+                });
+                
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                addToGridBag(panel, percentSpinner, gbc);
+                addEmptyLabel(panel, gbc);
+                break;
+
+            case INTEGER:
+                int spinnerValue;
+                try {
+                    spinnerValue = Integer.parseInt(configValue);
+                } catch (NumberFormatException e) {
+                    spinnerValue = 0;
+                }
+                final JSpinner spinner = new JSpinner(
+                        new SpinnerNumberModel(spinnerValue, Integer.MIN_VALUE, Integer.MAX_VALUE, 1));
+                
+                // Fixed: Listen directly to the spinner value layout state change, removing the problematic inner TextField property filter
+                spinner.addChangeListener(new javax.swing.event.ChangeListener() {
+                    public void stateChanged(javax.swing.event.ChangeEvent e) {
+                        Integer currentVal = (Integer) spinner.getValue();
+                        item.setNewValue(currentVal.toString());
+                        if (item.hasChanged())
+                            dirty = true;
+                    }
+                });
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                addToGridBag(panel, spinner, gbc);
+                addEmptyLabel(panel, gbc);
+                break;
+            
+
+
+
+
+            case FONT: // fonts are a special list
+                if (!Util.hasValue(configValue)) {
+                    if (item.name.toLowerCase().contains("currency")) {
+                        configValue = "Monospaced";
+                    } else {
+                        configValue = "SansSerif";
+                    }
+                }
+
+            case LIST:
+                String[] allowedValues = new String[1];
+                if (item.type == ConfigItem.ConfigType.FONT) {
+                    allowedValues = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+                } else {
+                    allowedValues = item.allowedValues.toArray(allowedValues);
+                }
+                final JComboBox<String> comboBox = new JComboBox<>(allowedValues);
+                comboBox.setSelectedItem(configValue);
+                comboBox.setToolTipText(toolTip);
+                // --- START FIX ---
+                // Replace unreliable FocusListener with ItemListener for instantaneous memory
+                // mapping
+                comboBox.addItemListener(new java.awt.event.ItemListener() {
+                    public void itemStateChanged(java.awt.event.ItemEvent e) {
+                        if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+                            item.setNewValue((String) comboBox.getSelectedItem());
+                            if (item.hasChanged())
+                                dirty = true;
                         }
                     }
-            );
-            gbc.fill = GridBagConstraints.NONE;
-            addToGridBag(panel, dirButton, gbc);
-            break;
-        case COLOR:
-            final JLabel colorLabel = new JLabel(configValue);
-            Color selectedColor;
-            try {
-                selectedColor = Util.parseColour(configValue);
-            } catch (ConfigurationException e) {
-               selectedColor = Color.WHITE;
-            }
-            colorLabel.setOpaque(true);
-            colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            colorLabel.setBackground(selectedColor);
-            if (Util.isDark(selectedColor)) {
-                colorLabel.setForeground(Color.WHITE);
-            } else {
-                colorLabel.setForeground(Color.BLACK);
-            }
-            colorLabel.setToolTipText(toolTip);
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            addToGridBag(panel, colorLabel, gbc);
-            JButton colorButton = new JButton("Choose...");
-            colorButton.addActionListener(
-                    new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            Color selectedColor=JColorChooser.showDialog(ConfigWindow.this, "", colorLabel.getBackground());
-                            if (selectedColor == null) return;
-                            String newValue = Integer.toHexString(selectedColor.getRGB()).substring(2);
-                            colorLabel.setText(newValue);
-                            item.setNewValue(newValue);
-                            colorLabel.setBackground(selectedColor);
-                            if (Util.isDark(selectedColor)) {
-                                colorLabel.setForeground(Color.WHITE);
-                            } else {
-                                colorLabel.setForeground(Color.BLACK);
+                });
+
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                addToGridBag(panel, comboBox, gbc);
+                addEmptyLabel(panel, gbc);
+                break;
+            case DIRECTORY:
+            case FILE:
+                final JLabel dirLabel = new JLabel(configValue + " "); // add whitespace for non-zero preferred size
+                dirLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                dirLabel.setToolTipText(toolTip);
+                dirLabel.setPreferredSize(new Dimension(
+                        MAX_FIELD_WIDTH,
+                        dirLabel.getPreferredSize().height));
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                addToGridBag(panel, dirLabel, gbc);
+                JButton dirButton = new JButton("Choose...");
+                dirButton.addActionListener(
+                        new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                JFileChooser fc = new JFileChooser();
+                                if (item.type == ConfigItem.ConfigType.DIRECTORY) {
+                                    fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                                } else {
+                                    fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                                }
+                                fc.setSelectedFile(new File(dirLabel.getText()));
+                                int state = fc.showOpenDialog(ConfigWindow.this);
+                                if (state == JFileChooser.APPROVE_OPTION) {
+                                    File file = fc.getSelectedFile();
+                                    dirLabel.setText(file.getPath());
+                                    item.setNewValue(file.getPath());
+                                }
+                                if (item.hasChanged())
+                                    dirty = true;
                             }
-                            if (item.hasChanged()) dirty = true;
-                        }
+                        });
+                gbc.fill = GridBagConstraints.NONE;
+                addToGridBag(panel, dirButton, gbc);
+                break;
+            case COLOR:
+                final JLabel colorLabel = new JLabel(configValue);
+                Color selectedColor;
+                try {
+                    selectedColor = Util.parseColour(configValue);
+                } catch (ConfigurationException e) {
+                    selectedColor = Color.WHITE;
+                }
+                colorLabel.setOpaque(true);
+                colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                colorLabel.setBackground(selectedColor);
+                if (Util.isDark(selectedColor)) {
+                    colorLabel.setForeground(Color.WHITE);
+                } else {
+                    colorLabel.setForeground(Color.BLACK);
+                }
+                colorLabel.setToolTipText(toolTip);
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                addToGridBag(panel, colorLabel, gbc);
+                JButton colorButton = new JButton("Choose...");
+                colorButton.addActionListener(
+                        new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                Color selectedColor = JColorChooser.showDialog(ConfigWindow.this, "",
+                                        colorLabel.getBackground());
+                                if (selectedColor == null)
+                                    return;
+                                String newValue = Integer.toHexString(selectedColor.getRGB()).substring(2);
+                                colorLabel.setText(newValue);
+                                item.setNewValue(newValue);
+                                colorLabel.setBackground(selectedColor);
+                                if (Util.isDark(selectedColor)) {
+                                    colorLabel.setForeground(Color.WHITE);
+                                } else {
+                                    colorLabel.setForeground(Color.BLACK);
+                                }
+                                if (item.hasChanged())
+                                    dirty = true;
+                            }
+                        });
+                gbc.fill = GridBagConstraints.NONE;
+                addToGridBag(panel, colorButton, gbc);
+                break;
+            case REGEX:
+            case STRING:
+            default: // default like String
+                final JFormattedTextField textField = new JFormattedTextField();
+                textField.setValue(configValue);
+                textField.addFocusListener(new FocusListener() {
+                    public void focusGained(FocusEvent arg0) {
+                        // do nothing
                     }
-            );
-            gbc.fill = GridBagConstraints.NONE;
-            addToGridBag(panel, colorButton, gbc);
-            break;
-        case REGEX:
-        case STRING:
-        default: // default like String
-            final JFormattedTextField textField = new JFormattedTextField();
-            textField.setValue(configValue);
-            textField.addFocusListener(new FocusListener() {
-                public void focusGained(FocusEvent arg0) {
-                    // do nothing
-                }
-                public void focusLost(FocusEvent arg0) {
-                    item.setNewValue(textField.getText());
-                    if (item.hasChanged()) dirty = true;
-                }
-            }
-            );
-            textField.setPreferredSize(new Dimension(
-                    Math.min(MAX_FIELD_WIDTH,textField.getPreferredSize().width),
-                    textField.getPreferredSize().height));
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            addToGridBag(panel, textField, gbc);
-            addEmptyLabel(panel, gbc);
-            break;
+
+                    public void focusLost(FocusEvent arg0) {
+                        item.setNewValue(textField.getText());
+                        if (item.hasChanged())
+                            dirty = true;
+                    }
+                });
+                textField.setPreferredSize(new Dimension(
+                        Math.min(MAX_FIELD_WIDTH, textField.getPreferredSize().width),
+                        textField.getPreferredSize().height));
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                addToGridBag(panel, textField, gbc);
+                addEmptyLabel(panel, gbc);
+                break;
         }
 
         // add info icon for infoText
@@ -393,10 +426,9 @@ class ConfigWindow extends JFrame {
                     optionPane.addPropertyChangeListener(JOptionPane.VALUE_PROPERTY,
                             new PropertyChangeListener() {
                                 public void propertyChange(PropertyChangeEvent e) {
-                                       dialog.dispose();
-                                   }
-                            }
-                    );
+                                    dialog.dispose();
+                                }
+                            });
                     dialog.setTitle(LocalText.getText("CONFIG_INFO_TITLE", itemLabel));
                     dialog.getContentPane().add(optionPane);
                     dialog.pack();
@@ -405,6 +437,7 @@ class ConfigWindow extends JFrame {
 
                 public void mouseClicked(MouseEvent e) {
                 }
+
                 public void mouseReleased(MouseEvent e) {
                 }
 
@@ -419,6 +452,7 @@ class ConfigWindow extends JFrame {
             addEmptyLabel(panel, gbc);
         }
     }
+
     private void setupButtonPanel() {
         buttonPanel.removeAll();
 
@@ -428,12 +462,32 @@ class ConfigWindow extends JFrame {
             saveButton.addActionListener(
                     new ActionListener() {
                         public void actionPerformed(ActionEvent arg0) {
-exitWindow();
+                            exitWindow();
                         }
-                    }
-                    );
+                    });
             buttonPanel.add(saveButton);
         }
+        // Apply button: Forces current window window components to save current item
+        // cache safely
+        JButton applyButton = new JButton("Apply");
+        applyButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        // Request focus to ensure current open text/spinner field commits
+                        applyButton.requestFocusInWindow();
+                        // Let ConfigManager handle the standard save-to-profile logic natively
+                        cm.saveProfile(false);
+
+                        // Notify standard UI frame pipeline to dynamically scale
+                        if (parent instanceof StatusWindow) {
+                            ((StatusWindow) parent).updateFontsFromConfig();
+                        } else if (parent != null) {
+                            parent.revalidate();
+                            parent.repaint();
+                        }
+                    }
+                });
+        buttonPanel.add(applyButton);
 
         // save (as) button
         JButton saveAsButton = new JButton(LocalText.getText("SAVEAS"));
@@ -442,8 +496,7 @@ exitWindow();
                     public void actionPerformed(ActionEvent arg0) {
                         ConfigWindow.this.saveAsConfig();
                     }
-                }
-        );
+                });
         buttonPanel.add(saveAsButton);
 
         JButton resetButton = new JButton(LocalText.getText("RESET"));
@@ -454,8 +507,7 @@ exitWindow();
                         changeProfile(cm.getActiveProfile());
                         dirty = false;
                     }
-                }
-        );
+                });
         buttonPanel.add(resetButton);
 
         if (cm.IsActiveUserProfile()) {
@@ -473,20 +525,18 @@ exitWindow();
                                 changeProfile(cm.getActiveProfile());
                             }
                         }
-                    }
-                    );
+                    });
             buttonPanel.add(deleteButton);
         }
 
         JButton closeButton = new JButton(LocalText.getText("CLOSE"));
-        closeButton.addActionListener (
+        closeButton.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent arg0) {
                         closeConfig(true);
                     }
-                }
-        );
-        buttonPanel.add (closeButton);
+                });
+        buttonPanel.add(closeButton);
 
     }
 
@@ -526,11 +576,13 @@ exitWindow();
         }
 
         if (result) {
-            JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_CONFIRM_MESSAGE", cm.getActiveProfile()),
+            JOptionPane.showMessageDialog(ConfigWindow.this,
+                    LocalText.getText("CONFIG_SAVE_CONFIRM_MESSAGE", cm.getActiveProfile()),
                     LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.INFORMATION_MESSAGE);
             dirty = false;
         } else {
-            JOptionPane.showMessageDialog(ConfigWindow.this, LocalText.getText("CONFIG_SAVE_ERROR_MESSAGE", cm.getActiveProfile()),
+            JOptionPane.showMessageDialog(ConfigWindow.this,
+                    LocalText.getText("CONFIG_SAVE_ERROR_MESSAGE", cm.getActiveProfile()),
                     LocalText.getText("CONFIG_SAVE_TITLE"), JOptionPane.ERROR_MESSAGE);
         }
 
@@ -549,7 +601,7 @@ exitWindow();
         String newProfile;
         do {
             newProfile = JOptionPane.showInputDialog(ConfigWindow.this, LocalText.getText("CONFIG_NEW_MESSAGE"),
-                LocalText.getText("CONFIG_NEW_TITLE"), JOptionPane.QUESTION_MESSAGE);
+                    LocalText.getText("CONFIG_NEW_TITLE"), JOptionPane.QUESTION_MESSAGE);
         } while (newProfile != null && allProfileNames.contains(newProfile));
 
         boolean result;
@@ -577,7 +629,7 @@ exitWindow();
         this.setVisible(false);
 
         if (parent instanceof StatusWindow) {
-            ((StatusWindow)parent).uncheckMenuItemBox(StatusWindow.CONFIG_CMD);
+            ((StatusWindow) parent).uncheckMenuItemBox(StatusWindow.CONFIG_CMD);
         }
     }
 

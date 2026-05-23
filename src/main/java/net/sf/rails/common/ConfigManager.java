@@ -98,7 +98,11 @@ public class ConfigManager implements Configurable {
         instance.transientConfig.put("orPanel.showAllCompanies", "always");
         instance.transientConfig.put("orPanel.showSpinner", "yes");
         instance.transientConfig.put("ai.save.state.on.move", "true");
-        // --- END: ADD THIS BLOCK BACK ---
+
+
+instance.transientConfig.put("statusWindow.zoom", "1");
+    // Force the global UI manager to use plain weight text instead of bold defaults
+    instance.transientConfig.put("font.ui.style", "plain");
 
         if (test) {
             instance.initTest();

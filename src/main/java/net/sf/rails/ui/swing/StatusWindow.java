@@ -113,11 +113,10 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
     private boolean useAltStatus = false;
     private JScrollPane jspStatus;
     private boolean showPlayerWorth = false;
-    
-    public boolean isShowPlayerWorth() { 
-        return showPlayerWorth; 
-    }
 
+    public boolean isShowPlayerWorth() {
+        return showPlayerWorth;
+    }
 
     protected ActionButton passButton;
     protected ActionButton autopassButton;
@@ -131,8 +130,6 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
     private JMenuBar menuBar;
     private JMenu fileMenu, optMenu, moveMenu, moderatorMenu, correctionMenu, developerMenu;
     ActionMenuItem undoItem;
-
-
 
     ActionMenuItem redoItem;
     protected static final String FONT_INCREASE_CMD = "FontIncrease";
@@ -343,7 +340,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
 
-// Toggle for the new modular visualization
+        // Toggle for the new modular visualization
         JCheckBoxMenuItem toggleStatusItem = new JCheckBoxMenuItem("Modular Status", useAltStatus);
         toggleStatusItem.addActionListener(e -> {
             useAltStatus = toggleStatusItem.isSelected();
@@ -1083,7 +1080,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         passButton.setEnabled(false);
     }
 
-public void endOfGame() {
+    public void endOfGame() {
 
         setTitle("Rails Evolution - " + gameUIManager.getGameManager().getGameName() + " - "
                 + LocalText.getText("EoGTitle") + " - " + buildTimestamp);
@@ -1093,7 +1090,7 @@ public void endOfGame() {
         passButton.setRailsIcon(RailsIcon.END_OF_GAME_CLOSE_ALL_WINDOWS);
 
         gameUIManager.orWindow.finish();
-        
+
         if (gameTimeLabel != null) {
             gameTimeLabel.setVisible(false);
         }
@@ -1159,7 +1156,19 @@ public void endOfGame() {
         actionMap.put(FONT_INC, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateFonts(currentBaseFontSize + 1f);
+
+                // Read current fraction, increment by 5%, cap at 2.0 (200%)
+                double currentFactor = 1.0;
+                try {
+                    currentFactor = Double.parseDouble(net.sf.rails.common.Config.get("statusWindow.zoom"));
+                    if (currentFactor >= 5.0)
+                        currentFactor /= 100.0;
+                } catch (Exception ex) {
+                }
+                double newFactor = Math.min(2.0, currentFactor + 0.05);
+                net.sf.rails.common.Config.set("statusWindow.zoom", String.valueOf(newFactor));
+                updateFontsFromConfig();
+
             }
         });
 
@@ -1170,7 +1179,19 @@ public void endOfGame() {
         actionMap.put(FONT_DEC, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateFonts(Math.max(8f, currentBaseFontSize - 1f));
+
+                // Read current fraction, decrement by 5%, floor at 0.5 (50%)
+                double currentFactor = 1.0;
+                try {
+                    currentFactor = Double.parseDouble(net.sf.rails.common.Config.get("statusWindow.zoom"));
+                    if (currentFactor >= 5.0)
+                        currentFactor /= 100.0;
+                } catch (Exception ex) {
+                }
+                double newFactor = Math.max(0.5, currentFactor - 0.05);
+                net.sf.rails.common.Config.set("statusWindow.zoom", String.valueOf(newFactor));
+                updateFontsFromConfig();
+
             }
         });
 
@@ -1408,7 +1429,6 @@ public void endOfGame() {
         }
     }
 
-
     // --- START FIX ---
     private void swapGameStatus() {
         // 1. Create the new component based on the useAltStatus toggle
@@ -1429,7 +1449,6 @@ public void endOfGame() {
         revalidate();
         repaint();
     }
-// --- END FIX ---
 
     /**
      * Provides GameStatus access to the panel that holds dynamic SR/IR buttons.
@@ -1440,68 +1459,31 @@ public void endOfGame() {
         return dynamicButtonPanel;
     }
 
-    private void updateFonts(float baseSize) {
-        this.currentBaseFontSize = baseSize;
 
-        // 1. Update the Main Table (GameStatus)
-        // We set the font on the container; Swing inheritance handles the rest
-        // because we switched RailCard to native components.
-        Font baseFont = new Font("SansSerif", Font.PLAIN, (int) baseSize);
-        if (gameStatus != null) {
-            gameStatus.setFont(baseFont);
-            // Force recursive update for complex hierarchies
-            updateComponentTreeFont(gameStatus, baseFont);
-        }
 
-        // 2. Update Header (Thinking) -> 1.5x
-        if (currentActorLabel != null) {
-            currentActorLabel.setFont(baseFont.deriveFont(Font.BOLD, baseSize * SCALE_HEADER));
-        }
-
-        // 3. Update Timer -> 2.0x
-        if (gameTimeLabel != null) {
-            gameTimeLabel.setFont(baseFont.deriveFont(Font.BOLD, baseSize * SCALE_TIMER));
-        }
-
-        // 4. Update Buttons
-        if (buttonPanel != null) {
-            updateComponentTreeFont(buttonPanel, baseFont);
-
-            // Make the first 3 buttons smaller so they do not get truncated
-            Font smallerFont = baseFont.deriveFont(Font.BOLD, Math.max(8f, baseSize - 4f));
-            if (pauseButton != null)
-                pauseButton.setFont(smallerFont);
-            if (undoButton != null)
-                undoButton.setFont(smallerFont);
-            if (redoButton != null)
-                redoButton.setFont(smallerFont);
-        }
-        enforceDynamicMinimumSize();
-    }
-
-    // --- START FIX ---
+// ... (lines of unchanged context code) ...
     private void enforceDynamicMinimumSize() {
         if (gameStatus != null && gameStatusPane != null) {
-            // 1. Force the ScrollPane to request the full, un-clipped size of the grid
-            Dimension gridRequiredSize = gameStatus.getPreferredSize();
+            // 1. Force the ScrollPane to behave as a simple container without scrollbars
+            gameStatusPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+            gameStatusPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-            // Add a small 15px buffer to ensure OS window borders don't trigger scrollbars
-            gridRequiredSize.width += 30;
-            gridRequiredSize.height += 40;
-
-            gameStatusPane.setMinimumSize(gridRequiredSize);
-            gameStatusPane.setPreferredSize(gridRequiredSize);
+            // 2. We no longer force a minimum size via setMinimumSize().
+            // Instead, we let the container size itself naturally based on the content.
         }
 
-        // 2. Let the layout manager bubble up the new size constraints
-        pane.revalidate();
-
-        // 3. Lock the OS window bounds.
-        // This allows the user to expand the window, but physically prevents them
-        // from shrinking it smaller than the required layout size.
-        this.setMinimumSize(this.getPreferredSize());
+        // 3. Pack the frame to fit the current preferred size of the GameStatus panel.
+        // This will automatically shrink or grow the window when the zoom changes.
+        this.pack();
     }
-    // --- END FIX ---
+// ... (rest of the method) ...
+
+
+
+
+
+
+
 
     private void updateComponentTreeFont(Component comp, Font font) {
         comp.setFont(font);
@@ -3246,4 +3228,106 @@ public void endOfGame() {
         }
     }
 
+    // We are modifying updateFontsFromConfig to treat the zoom value strictly as a
+    // percentage integer (50-200)
+    /**
+     * Reads the updated font values directly from memory configuration maps
+     * and refreshes the application UI layout dynamically.
+     */
+    public void updateFontsFromConfig() {
+        try {
+            // 1. Resolve standard UI font family settings
+            String fontName = net.sf.rails.common.Config.get("font.ui.name");
+            if (fontName == null || fontName.trim().isEmpty()) {
+                fontName = "SansSerif";
+            }
+
+            // 2. Read the master continuous layout zoom percentage value (50-200)
+            int zoomPercent = 100;
+            try {
+                // Read as integer to avoid any fractional/decimal parsing issues
+                String val = net.sf.rails.common.Config.get("statusWindow.zoom");
+                if (val != null) {
+                    zoomPercent = Integer.parseInt(val.replaceAll("\\..*", ""));
+                }
+            } catch (Exception ex) {
+                zoomPercent = 100;
+            }
+
+            // 3. Convert percentage to scaling factor: (zoomPercent / 100.0)
+            float scale = zoomPercent;
+            this.currentBaseFontSize = 14f * scale;
+
+            log.info("StatusWindow: Syncing UI continuous scale factor: " + zoomPercent + "% -> Target Size: "
+                    + currentBaseFontSize);
+
+            // 4. Cascade metrics down
+            updateFonts(fontName, this.currentBaseFontSize);
+
+            // Refresh layout hierarchy constraints
+            enforceDynamicMinimumSize();
+            revalidate();
+            repaint();
+
+        } catch (Exception e) {
+            log.error("Failed to dynamically propagate configuration fonts", e);
+        }
+    }
+
+    private void updateFonts(float baseSize) {
+        // Safe tracking fallback for Hotkey step zooming (+/- actions)
+        String standardFamily = net.sf.rails.common.Config.get("font.ui.name");
+        if (standardFamily == null || standardFamily.trim().isEmpty()) {
+            standardFamily = net.sf.rails.common.Config.get("font.name");
+        }
+        if (standardFamily == null || standardFamily.trim().isEmpty()) {
+            standardFamily = "SansSerif";
+        }
+        updateFonts(standardFamily, baseSize);
+    }
+
+    private void updateFonts(String standardFamily, float baseSize) {
+        this.currentBaseFontSize = baseSize;
+
+        // 1. Resolve standard display family and custom money font settings from Config
+        // Manager maps
+        String moneyFamily = net.sf.rails.common.Config.get("font.currency");
+        if (moneyFamily == null || moneyFamily.trim().isEmpty()) {
+            moneyFamily = "Monospaced"; // Retain default compatibility fallback
+        }
+
+        Font baseFont = new Font(standardFamily, Font.PLAIN, (int) baseSize);
+
+        // Push configuration configurations downstream onto your custom game table
+        // layout
+        if (gameStatus != null) {
+            gameStatus.setFont(baseFont);
+            updateComponentTreeFont(gameStatus, baseFont);
+            gameStatus.recreate(); // Force layout metrics rebuild with true loaded fonts
+        }
+
+        // 2. Update Header (Thinking Indicator) -> 1.5x scale factor
+        if (currentActorLabel != null) {
+            currentActorLabel.setFont(baseFont.deriveFont(Font.BOLD, baseSize * SCALE_HEADER));
+        }
+
+        // 3. Update Timer layout elements -> 2.0x scale factor
+        if (gameTimeLabel != null) {
+            gameTimeLabel.setFont(baseFont.deriveFont(Font.BOLD, baseSize * SCALE_TIMER));
+        }
+
+        // 4. Update Button labels uniform formatting
+        if (buttonPanel != null) {
+            updateComponentTreeFont(buttonPanel, baseFont);
+
+            Font smallerFont = baseFont.deriveFont(Font.BOLD, Math.max(8f, baseSize - 4f));
+            if (pauseButton != null)
+                pauseButton.setFont(smallerFont);
+            if (undoButton != null)
+                undoButton.setFont(smallerFont);
+            if (redoButton != null)
+                redoButton.setFont(smallerFont);
+        }
+        enforceDynamicMinimumSize();
+    }
 }
