@@ -2,14 +2,14 @@
     <Tile id="0" quantity="-1"><Upgrade id="7,8,9"/></Tile>
     <Tile id="-5" quantity="-1"/>
     <Tile id="-901" quantity="-1"/>
-    <Tile id="-903" quantity="1"/>
-    <Tile id="-904" quantity="1"/>
+    <Tile id="-902" quantity="-1"/>
+    <Tile id="-903" quantity="-1"/>
     <Tile id="-905" quantity="1"/>
     <Tile id="-906" quantity="1"/>
     <Tile id="-907" quantity="1"/>
-    <Tile id="-910" quantity="1"/>
-    <Tile id="-911" quantity="1"/>
-    <Tile id="-912" quantity="1"/>
+    <Tile id="-39" quantity="1"/>
+    <Tile id="-1144" quantity="1"/>
+    <Tile id="-5016" quantity="1"/>
 
     <Tile id="-10" quantity="-1"><Upgrade id="5,6,57,43800"/></Tile>
     <Tile id="-11" quantity="3"><Upgrade id="2053"/></Tile> 
