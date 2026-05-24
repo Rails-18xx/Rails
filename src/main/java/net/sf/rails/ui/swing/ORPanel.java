@@ -1051,10 +1051,14 @@ public class ORPanel extends GridPanel
 
     private double localFontScale = -1.0;
 
-    public double getFontScale() {
+
+
+public double getFontScale() {
         if (localFontScale < 0) {
-            if (orUIManager != null && orUIManager.getGameUIManager() != null) {
-                localFontScale = orUIManager.getGameUIManager().getFontScale();
+            // Read directly from the persistent window settings file
+            if (orWindow != null && orWindow.getGameUIManager() != null) {
+                net.sf.rails.ui.swing.WindowSettings ws = orWindow.getGameUIManager().getWindowSettings();
+                localFontScale = ws.getDoubleProperty("orPanel.scale", 1.0);
             } else {
                 localFontScale = 1.0;
             }
@@ -1064,12 +1068,20 @@ public class ORPanel extends GridPanel
 
     public void adjustFontScale(double delta) {
         localFontScale = getFontScale() + delta;
-        if (localFontScale < 0.5)
-            localFontScale = 0.5;
-        if (localFontScale > 3.0)
-            localFontScale = 3.0;
+        if (localFontScale < 0.5) localFontScale = 0.5;
+        if (localFontScale > 3.0) localFontScale = 3.0;
+
+        // Save directly to the window settings
+        if (orWindow != null && orWindow.getGameUIManager() != null) {
+            net.sf.rails.ui.swing.WindowSettings ws = orWindow.getGameUIManager().getWindowSettings();
+            ws.setDoubleProperty("orPanel.scale", localFontScale);
+            ws.save(); // Persist to rails_data/windowSettings/settings_xxxx.rails_ini
+        }
+
         updateScale();
     }
+
+
 
     public int scale(int value) {
         return (int) (value * getFontScale());
@@ -1365,6 +1377,8 @@ public class ORPanel extends GridPanel
         });
 
         routeContainer.add(revSpinner);
+        routeContainer.add(lblRoute);
+        updateSpinnerVisibility();
         routeContainer.add(Box.createHorizontalGlue());
         divBox.add(routeContainer);
 
@@ -1514,6 +1528,56 @@ public class ORPanel extends GridPanel
         p.setMaximumSize(new Dimension(getSidebarWidth(), scale(READOUT_PANEL_HEIGHT)));
         return p;
     }
+
+    /**
+     * Loops through all active instances of ORPanel and refreshes their money spinner visibility.
+     */
+    public static void updateSpinnerVisibilityFromConfig() {
+        SwingUtilities.invokeLater(() -> {
+            for (ORPanel panel : activeInstances) {
+                panel.updateSpinnerVisibility();
+            }
+        });
+    }
+
+    /**
+     * Controls the visibility of the revenue spinner component versus the standard text readout
+     * based on the configuration setting.
+     */
+
+    // ... (lines of unchanged context code) ...
+    // --- START FIX ---
+    public void updateSpinnerVisibility() {
+        String configKey = "orPanel.showSpinner"; 
+        String rawValue = net.sf.rails.common.Config.get(configKey);
+        
+        // If rawValue is null (no profile saved yet), default to true. 
+        // Otherwise, parse the saved text from ConfigWindow.
+        boolean showSpinner = (rawValue == null) || "yes".equalsIgnoreCase(rawValue) || "true".equalsIgnoreCase(rawValue);
+        
+        if (revSpinner != null) {
+            revSpinner.setVisible(showSpinner);
+        }
+        if (lblRoute != null) {
+            lblRoute.setVisible(!showSpinner);
+        }
+        
+        // Force layout recalculation up the entire hierarchy
+        if (revSpinner != null && revSpinner.getParent() != null) {
+            revSpinner.getParent().invalidate();
+            revSpinner.getParent().validate();
+            revSpinner.getParent().repaint();
+        }
+        
+        if (sidebarPanel != null) {
+            sidebarPanel.revalidate();
+            sidebarPanel.repaint();
+        }
+    }
+    // --- END FIX ---
+
+
+
 
     private JPanel createPhasePanel(String title) {
         // Use an anonymous class to override sizing behavior dynamically

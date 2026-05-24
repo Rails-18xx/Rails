@@ -112,5 +112,12 @@ public class RunGame {
                 hasStarted.set(true);
             }
         }
+        // Ensure UI settings, bounds, and scaling are saved on application exit
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            log.info("Shutdown hook triggered: Flushing window settings to disk...");
+            if (net.sf.rails.ui.swing.GameUIManager.getInstance() != null) {
+                net.sf.rails.ui.swing.GameUIManager.getInstance().shutdown();
+            }
+        }));
     }
 }

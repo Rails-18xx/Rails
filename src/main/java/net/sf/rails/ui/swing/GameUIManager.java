@@ -125,7 +125,7 @@ public class GameUIManager implements DialogOwner {
     protected boolean myTurn = true;
     protected String lastSavedFilename = null;
     protected String localPlayerName = "";
-
+private static GameUIManager instance; 
     protected boolean gameWasLoaded = false;
 
     protected WindowSettings windowSettings;
@@ -205,6 +205,7 @@ public class GameUIManager implements DialogOwner {
     }
 
     public GameUIManager() {
+        instance = this; 
     }
 
     public void init(RailsRoot root, boolean wasLoaded, SplashWindow splashWindow) {
@@ -2737,6 +2738,20 @@ public void startTimerForCurrentPlayer() {
             }
         }
 
+    }
+
+    public void shutdown() {
+        log.info("GameUIManager shutdown triggered.");
+
+        // Force save of window bounds and scale factors
+        if (windowSettings != null) {
+            windowSettings.save();
+            log.info("Window settings flushed to disk.");
+        }
+        
+    }
+    public static GameUIManager getInstance() {
+        return instance;
     }
 
     private void restoreWindow(JFrame window) {

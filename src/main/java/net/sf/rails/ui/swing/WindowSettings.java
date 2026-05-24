@@ -51,6 +51,17 @@ public class WindowSettings {
     public String getProperty(String key) {
         return properties.get(key);
     }
+    public double getDoubleProperty(String key, double defaultValue) {
+        String val = properties.get(key);
+        if (val != null) {
+            try { return Double.parseDouble(val); } catch (NumberFormatException e) {}
+        }
+        return defaultValue;
+    }
+
+    public void setDoubleProperty(String key, double value) {
+        properties.put(key, String.valueOf(value));
+    }
 
  
     public boolean isDefaultUsed() {

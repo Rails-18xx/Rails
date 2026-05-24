@@ -40,32 +40,25 @@ public enum SystemOS {
         return folder;
     }
     
-    /**
-     * Returns the folder that contains all rails specific user data
-     * Returns null if the operations fails 
+   /** Returns the folder that contains all rails specific user data.
+     * Rerouted to save in a visible 'rails_data' folder within the project execution directory.
      * @param create set to true creates the folder if it does not exist 
-     * @return rails specific configuration folder     */
+     * @return rails specific configuration folder     
+     */
     public File getConfigurationFolder(boolean create) {
+        // Force the engine to use the visible project root instead of hidden OS directories
+        String projectRoot = System.getProperty("user.dir");
+        File folder = new File(projectRoot, "rails_data");
         
-        // check for existing application folder
-        File folder = getAppDataDir();
-        if (!folder.exists() || !folder.isDirectory()) {
-            // fall back to working directory
-            folder = new File(System.getProperty("user.dir"));
+        if (!folder.exists() && create) {
+            createFolder(folder);
         }
-
-        String appName;
-        if (this == WINDOWS) {
-            // first tries to locate the application data folder
-            appName = "rails";
-        } else if (this == MAC) {
-            appName = "net.sourceforge.rails";
+        
+        if (folder.exists() && folder.isDirectory()) {
+            return folder;
         } else {
-            appName = ".rails";
+            return null;
         }
-        
-        // locate railsFolder
-        return locateFolder(folder, appName, create);
     }
     
     /**

@@ -93,11 +93,11 @@ public class ConfigManager implements Configurable {
         // Inject key default 'ticks' / game options
         // Note: The properties file uses 'true', but the old code used 'yes'.
         // Use the value your game code expects (I'll guess 'true' based on your file).
-        instance.transientConfig.put("map.route.highlight", "true");
-        instance.transientConfig.put("orPanel.revenue.suggest", "true");
-        instance.transientConfig.put("orPanel.showAllCompanies", "always");
-        instance.transientConfig.put("orPanel.showSpinner", "yes");
-        instance.transientConfig.put("ai.save.state.on.move", "true");
+        // instance.transientConfig.put("map.route.highlight", "true");
+        // instance.transientConfig.put("orPanel.revenue.suggest", "true");
+        // instance.transientConfig.put("orPanel.showAllCompanies", "always");
+        // // instance.transientConfig.put("orPanel.showSpinner", "yes");
+        // instance.transientConfig.put("ai.save.state.on.move", "true");
 
 
 instance.transientConfig.put("statusWindow.zoom", "1");

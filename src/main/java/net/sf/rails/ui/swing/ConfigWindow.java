@@ -85,6 +85,14 @@ class ConfigWindow extends JFrame {
         setupConfigPane();
         setupButtonPanel();
 
+        // Temporary path investigation trap
+        try {
+            File userFolder = net.sf.rails.util.SystemOS.get().getConfigurationFolder("profiles/", false);
+            System.out.println("=== CONFIG PATH RADAR: " + (userFolder != null ? userFolder.getAbsolutePath() : "NULL") + " ===");
+        } catch (Exception e) {
+            System.out.println("=== CONFIG PATH RADAR ERROR: " + e.getMessage() + " ===");
+        }
+        
         SwingUtilities.invokeLater(new Thread() {
             public void run() {
                 ConfigWindow.this.repaint();
@@ -198,12 +206,10 @@ class ConfigWindow extends JFrame {
                 final JCheckBox checkBox = new JCheckBox();
                 boolean selected = Util.parseBoolean(configValue);
                 checkBox.setSelected(selected);
-                checkBox.addFocusListener(new FocusListener() {
-                    public void focusGained(FocusEvent arg0) {
-                        // do nothing
-                    }
 
-                    public void focusLost(FocusEvent arg0) {
+
+                checkBox.addItemListener(new java.awt.event.ItemListener() {
+                    public void itemStateChanged(java.awt.event.ItemEvent e) {
                         if (checkBox.isSelected()) {
                             item.setNewValue("yes");
                         } else {
@@ -213,6 +219,9 @@ class ConfigWindow extends JFrame {
                             dirty = true;
                     }
                 });
+
+  
+
                 gbc.fill = GridBagConstraints.HORIZONTAL;
                 addToGridBag(panel, checkBox, gbc);
                 break;
@@ -477,6 +486,9 @@ class ConfigWindow extends JFrame {
                         applyButton.requestFocusInWindow();
                         // Let ConfigManager handle the standard save-to-profile logic natively
                         cm.saveProfile(false);
+
+                         // Dynamically update the visibility of the OR round revenue money spinner
+                        net.sf.rails.ui.swing.ORPanel.updateSpinnerVisibilityFromConfig();
 
                         // Notify standard UI frame pipeline to dynamically scale
                         if (parent instanceof StatusWindow) {

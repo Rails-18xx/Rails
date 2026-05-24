@@ -45,6 +45,8 @@ public class CashCorrectionManager extends CorrectionManager {
         return actions;
     }
 
+
+
 // ... (lines of unchanged context code) ...
     @Override
     public boolean executeCorrection(CorrectionAction action) {
@@ -53,18 +55,11 @@ public class CashCorrectionManager extends CorrectionManager {
 
         // 2. Intercept Menu Click (CorrectionModeAction)
         if (action instanceof CorrectionModeAction) {
-            // If the mode is NOT active, this is a "Turn On" request.
-            if (!isActive()) {
-                // FIX: Check isReloading AND run Wizard via invokeLater to prevent
-                // "Nested Action" issues (where the Cash Action is lost because the 
-                // Menu Action is still running).
-                if (!getParent().isReloading()) {
-                    javax.swing.SwingUtilities.invokeLater(() -> runWizard());
-                }
-                // Return true to indicate handled. 
-                return true; 
-            }
+            // --- START FIX ---
+            // Delegate to the base class natively to toggle the internal active state boolean.
+            // This allows the matrix fields to turn on and become clickable.
             return super.executeCorrection(action);
+            // --- END FIX ---
         }
 
         // 3. Handle Direct Action (e.g. from GameStatus button click, Replay, or Wizard completion)
@@ -74,104 +69,73 @@ public class CashCorrectionManager extends CorrectionManager {
             // FIX: Check isReloading. 
             if (cca.getAmount() == 0 && !getParent().isReloading()) {
                 log.info("DEBUG: Intercepted 0-amount CashCorrection. Opening Dialog.");
-                 String input = (String) javax.swing.JOptionPane.showInputDialog(
+                // --- START FIX ---
+                javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.GridLayout(0, 1, 0, 10));
+                panel.add(new javax.swing.JLabel(LocalText.getText("CorrectCashDialogMessage", cca.getCashHolder().getId())));
+                
+                javax.swing.JRadioButton btnReceive = new javax.swing.JRadioButton("Receives Money (+)", true);
+                javax.swing.JRadioButton btnPay = new javax.swing.JRadioButton("Pays Money (-)");
+                javax.swing.ButtonGroup bg = new javax.swing.ButtonGroup();
+                bg.add(btnReceive);
+                bg.add(btnPay);
+                
+                javax.swing.JPanel radioPanel = new javax.swing.JPanel(new java.awt.GridLayout(2, 1));
+                radioPanel.add(btnReceive);
+                radioPanel.add(btnPay);
+                panel.add(radioPanel);
+                
+                javax.swing.JTextField amountField = new javax.swing.JTextField(10);
+                javax.swing.JPanel inputPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+                
+                // Fetch current currency symbol dynamically via Bank formatting
+                String currencySymbol = net.sf.rails.game.financial.Bank.format(this, 0).replace("0", "").trim();
+                inputPanel.add(new javax.swing.JLabel("Amount: " + currencySymbol + " "));
+                inputPanel.add(amountField);
+                panel.add(inputPanel);
+                
+                int result = javax.swing.JOptionPane.showConfirmDialog(
                     null,
-                    LocalText.getText("CorrectCashDialogMessage", cca.getCashHolder().getId()),
+                    panel,
                     LocalText.getText("CorrectCashDialogTitle"),
-                    javax.swing.JOptionPane.QUESTION_MESSAGE,
-                    null, null, "0"
+                    javax.swing.JOptionPane.OK_CANCEL_OPTION,
+                    javax.swing.JOptionPane.PLAIN_MESSAGE
                 );
 
-                if (input == null) return false; 
+                if (result != javax.swing.JOptionPane.OK_OPTION) return false; 
 
-                if (input.trim().startsWith("+")) input = input.trim().substring(1);
+                String input = amountField.getText();
+                if (input == null || input.trim().isEmpty()) return false;
 
                 try {
                     int val = Integer.parseInt(input.trim());
                     if (val == 0) return false;
+                    if (btnPay.isSelected()) {
+                        val = -val; // Convert to negative debt if Pays Money is checked
+                    }
                     cca.setAmount(val);
                 } catch (NumberFormatException e) {
                     DisplayBuffer.add(this, "Invalid Amount");
                     return false;
                 }
+                // --- END FIX ---
             }
-            return execute(cca);
+            
+            // --- START FIX ---
+            boolean success = execute(cca);
+            if (success && isActive() && !getParent().isReloading()) {
+                // Auto-turn off correction mode after a successful adjustment to restore the matrix layout
+                CorrectionModeAction deactivateAction = new CorrectionModeAction(getRoot(), CorrectionType.CORRECT_CASH, false);
+                super.executeCorrection(deactivateAction);
+            }
+            return success;
+            // --- END FIX ---
         }
         
         return super.executeCorrection(action);
     }
-// ... (rest of the method) ...
+// ... (rest of the file) ...
 
-    private void runWizard() {
-        log.info("DEBUG: Starting Cash Correction Wizard");
 
-        // Step 1: Gather all MoneyOwners (Players + Floated Companies)
-        java.util.List<MoneyOwner> candidates = new java.util.ArrayList<>();
-        java.util.List<String> names = new java.util.ArrayList<>();
-        
-        // Players
-        for (Player p : getRoot().getPlayerManager().getPlayers()) {
-            candidates.add(p);
-            names.add(p.getName());
-        }
-        
-        // Companies
-        for (PublicCompany c : getParent().getAllPublicCompanies()) {
-            if (c.hasFloated() && !c.isClosed()) {
-                candidates.add(c);
-                names.add(c.getId());
-            }
-        }
-        
-        // Step 2: Show Selection Dialog
-        String selectedName = (String) javax.swing.JOptionPane.showInputDialog(
-            null, 
-            "Select Entity to Correct:", 
-            "Cash Correction Wizard",
-            javax.swing.JOptionPane.QUESTION_MESSAGE, 
-            null, 
-            names.toArray(), 
-            names.get(0)
-        );
-        
-        if (selectedName == null) return;
-        
-        // Find the object
-        int index = names.indexOf(selectedName);
-        MoneyOwner selectedOwner = candidates.get(index);
-        
-        // Step 3: Ask for Amount
-        String input = (String) javax.swing.JOptionPane.showInputDialog(
-            null,
-            "Enter cash adjustment for " + selectedOwner.getId() + ":",
-            "Cash Correction",
-            javax.swing.JOptionPane.QUESTION_MESSAGE,
-            null, null, "0"
-        );
-        
-        if (input == null) return;
-        
-        try {
-            if (input.trim().startsWith("+")) input = input.trim().substring(1);
-            int amount = Integer.parseInt(input.trim());
-            if (amount == 0) return;
-            
-            // Step 4: Create Action
-            CashCorrectionAction cca;
-            if (selectedOwner instanceof Player) {
-                cca = new CashCorrectionAction(getRoot(), (Player)selectedOwner);
-            } else {
-                cca = new CashCorrectionAction((PublicCompany)selectedOwner);
-            }
-            cca.setAmount(amount);
-            
-            // Send to GameManager to record the action, then it calls back to executeCorrection()
-            getParent().process(cca); 
-            
-        } catch (NumberFormatException e) {
-             DisplayBuffer.add(this, "Invalid Amount entered");
-        }
-    }
 
     private boolean execute(CashCorrectionAction cashAction) {
 

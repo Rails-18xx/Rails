@@ -1042,6 +1042,8 @@ protected void applyCurrencyFont(JComponent comp) {
 
         if (clickable) {
             compCashButton[i].setText(compCash[i].getText());
+            compCashButton[i].setBackground(BG_BUY_ACTIVE);
+            compCashButton[i].setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         } else {
             compCashButton[i].clearPossibleActions();
         }
@@ -1055,6 +1057,8 @@ protected void applyCurrencyFont(JComponent comp) {
 
         if (clickable) {
             playerCashButton[i].setText(playerCash[i].getText());
+            playerCashButton[i].setBackground(BG_BUY_ACTIVE);
+            playerCashButton[i].setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         } else {
             playerCashButton[i].clearPossibleActions();
         }
@@ -3891,6 +3895,13 @@ JPanel[] currentPanels = playerPrivatesPanel;
             }
 
             setTrainBuyingActions(possibleActions.getList());
+        }
+
+        // Evaluate Cash Corrections. Unlike normal buying, corrections can be triggered
+        // at any time, even out of turn. This ensures the matrix updates immediately when
+        // correction mode is toggled via the menu.
+        if (possibleActions != null) {
+            initCashCorrectionActions();
         }
 
         // Unconditionally sync the Pass/Done button with the engine state

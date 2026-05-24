@@ -70,8 +70,7 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
     }
 // --- END FIX ---
 
-    // --- START FIX ---
-    private void initControlPanel() {
+private void initControlPanel() {
         controlPanel = new JPanel(new GridLayout(3, 1, 0, 8));
         btnRotLeft = new JButton("↺");
         btnRotRight = new JButton("↻");
@@ -80,7 +79,6 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
         Font btnFont = new Font("SansSerif", Font.BOLD, 16);
         Dimension size = new Dimension(80, 40);
 
-        // Apply the same styling logic
         configureButtonStyle(btnRotLeft, btnFont, size, UIManager.getColor("Button.background"),
                 UIManager.getColor("Button.foreground"));
         configureButtonStyle(btnRotRight, btnFont, size, UIManager.getColor("Button.background"),
@@ -88,47 +86,34 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
         configureButtonStyle(btnAccept, new Font("SansSerif", Font.BOLD, 18), size, new java.awt.Color(30, 144, 255),
                 java.awt.Color.WHITE);
 
-// --- START FIX ---
-// Update these listeners in initControlPanel()
-btnRotLeft.addActionListener(e -> {
-    if (selectedTile != null) {
-        selectedRotation = (selectedRotation + 5) % 6;
-        updateSelectedTileIcon();
-    }
-});
+        btnRotLeft.addActionListener(e -> {
+            selectedRotation = (selectedRotation + 5) % 6;
+            updateSelectedTileIcon();
+        });
 
-btnRotRight.addActionListener(e -> {
-    if (selectedTile != null) {
-        selectedRotation = (selectedRotation + 1) % 6;
-        updateSelectedTileIcon();
-    }
-});
-// --- END FIX ---
+        btnRotRight.addActionListener(e -> {
+            selectedRotation = (selectedRotation + 1) % 6;
+            updateSelectedTileIcon();
+        });
 
-        // --- START FIX ---
         btnAccept.addActionListener(e -> {
             if (selectedTile != null) {
                 var cm = orWindow.getGameUIManager().getGameManager()
                         .getCorrectionManager(rails.game.correct.CorrectionType.CORRECT_MAP);
                 if (cm instanceof rails.game.correct.MapCorrectionManager) {
-                    // Pass the rotation state captured by the buttons
                     ((rails.game.correct.MapCorrectionManager) cm).completeCorrection(selectedTile.getId(),
                             selectedRotation);
-                    setVisible(false); // Close window after acceptance
                 }
             }
         });
-        // --- END FIX ---
-
+        
         controlPanel.add(btnRotLeft);
         controlPanel.add(btnRotRight);
         controlPanel.add(btnAccept);
-        // Inside initControlPanel()
-// ... after adding buttons to controlPanel ...
-controlPanel.revalidate();
-controlPanel.repaint();
+        controlPanel.revalidate();
+        controlPanel.repaint();
     }
-
+    
     // --- START FIX ---
 private void updateSelectedTileIcon() {
     if (selectedTile == null) return;

@@ -37,16 +37,20 @@ public class MapCorrectionManager extends CorrectionManager {
         return actions;
     }
 
-    @Override
+
+@Override
     public boolean executeCorrection(CorrectionAction action) {
         if (action instanceof CorrectionModeAction) {
-            if (!isActive()) {
-                if (!getParent().isReloading()) {
-                    runWizard();
-                }
-                return true;
+            boolean wasActive = isActive();
+            
+            // 1. Delegate to the base class FIRST to toggle the internal active state boolean
+            boolean result = super.executeCorrection(action);
+            
+            // 2. Only spin up the SelectionRound wizard layout if transitioning from inactive to active
+            if (!wasActive && isActive() && !getParent().isReloading()) {
+                runWizard();
             }
-            return super.executeCorrection(action);
+            return result;
         }
 
         if (action instanceof MapCorrectionAction) {
@@ -55,6 +59,7 @@ public class MapCorrectionManager extends CorrectionManager {
 
         return super.executeCorrection(action);
     }
+
 
     private boolean execute(MapCorrectionAction action) {
         MapManager mm = getRoot().getMapManager();
@@ -123,6 +128,22 @@ public class MapCorrectionManager extends CorrectionManager {
     public void onHexSelected(String hexId) {
         this.pendingHexCorrection = hexId;
 
+        // Deselect all other hexes, keeping only the clicked one selected
+        if (getParent().getGameUIManager() != null && getParent().getGameUIManager().getORUIManager() != null) {
+            net.sf.rails.ui.swing.ORUIManager orUI = getParent().getGameUIManager().getORUIManager();
+            net.sf.rails.ui.swing.hexmap.HexMap hexMap = orUI.getHexMap();
+            if (hexMap != null) {
+                for (net.sf.rails.ui.swing.hexmap.GUIHex guiHex : hexMap.getGuiHexList()) {
+                    if (guiHex.getHex().getId().equals(hexId)) {
+                        guiHex.setState(net.sf.rails.ui.swing.hexmap.GUIHex.State.SELECTED);
+                    } else {
+                        guiHex.setState(net.sf.rails.ui.swing.hexmap.GUIHex.State.NORMAL);
+                    }
+                }
+                hexMap.repaintAll(new java.awt.Rectangle(hexMap.getSize()));
+            }
+        }
+
         // Open the existing RemainingTilesWindow
         if (manifestWindow == null) {
 
@@ -140,42 +161,59 @@ public class MapCorrectionManager extends CorrectionManager {
         // For now, this opens the visual manifest.
     }
 
-    public void completeCorrection(String tileId) {
-        if (manifestWindow != null)
-            manifestWindow.setVisible(false);
 
-        Integer[] rotations = { 0, 1, 2, 3, 4, 5 };
-        Integer selectedRot = (Integer) JOptionPane.showInputDialog(null, "Select Rotation:",
-                "Correction", JOptionPane.QUESTION_MESSAGE, null, rotations, rotations[0]);
-        if (selectedRot == null)
-            return;
 
-        MapCorrectionAction mca = new MapCorrectionAction(getRoot(), this.pendingHexCorrection, tileId, selectedRot);
-        getParent().process(mca);
-    }
-
-// --- START FIX ---
 public void completeCorrection(String tileId, int rotation) {
-    if (manifestWindow != null) manifestWindow.setVisible(false);
-    
-    // 1. Process the map change
-    MapCorrectionAction mca = new MapCorrectionAction(getRoot(), this.pendingHexCorrection, tileId, rotation);
-    boolean success = getParent().process(mca);
-    
-    // 2. Turn off the Correction Mode
-    // We create a new action to toggle the state off. 
-    // Passing 'false' for the active parameter tells the manager to deactivate.
-    CorrectionModeAction deactivateAction = new CorrectionModeAction(getRoot(), CorrectionType.CORRECT_MAP, false);
-    this.executeCorrection(deactivateAction);
-    
-    // 3. Cleanup UI
-    var orUI = getParent().getGameUIManager().getORUIManager();
-    if (orUI != null && orUI.getHexMap() != null) {
-        orUI.getHexMap().selectHex(null);
-        orUI.getHexMap().repaintAll(new java.awt.Rectangle(orUI.getHexMap().getSize()));
+        if (manifestWindow != null) {
+            manifestWindow.setVisible(false);
+        }
+        
+        // 1. Roll back the game engine from SelectionRound out to the original phase round
+        net.sf.rails.game.round.RoundFacade roundToResume = getParent().getInterruptedRound();
+        if (roundToResume != null) {
+            getParent().setInterruptedRound(null);
+            getParent().setRound(roundToResume);
+            if (getParent().getUIHints() != null) {
+                getParent().getUIHints().setCurrentRoundType(roundToResume.getClass());
+            }
+        }
+        
+        // 2. Turn off Correction Mode BEFORE processing to ensure the state boolean is clean
+        if (isActive()) {
+            CorrectionModeAction deactivateAction = new CorrectionModeAction(getRoot(), CorrectionType.CORRECT_MAP, false);
+            super.executeCorrection(deactivateAction);
+        }
+        
+        // 3. Create the correction action
+        MapCorrectionAction mca = new MapCorrectionAction(getRoot(), this.pendingHexCorrection, tileId, rotation);
+        
+        // 4. Inject it into the possible actions list so GameManager validation allows it
+        getParent().getPossibleActions().add(mca);
+        
+        // 5. Process the action formally through the engine (handles ChangeStack and executedActions natively)
+        boolean success = getParent().process(mca);
+        
+        // 6. Resume the underlying round logic
+        if (roundToResume != null) {
+            roundToResume.resume();
+        }
+        
+        // 7. Cleanup UI states
+        var orUI = getParent().getGameUIManager().getORUIManager();
+        if (orUI != null && orUI.getHexMap() != null) {
+            for (net.sf.rails.ui.swing.hexmap.GUIHex guiHex : orUI.getHexMap().getGuiHexList()) {
+                guiHex.setState(net.sf.rails.ui.swing.hexmap.GUIHex.State.NORMAL);
+            }
+            orUI.getHexMap().selectHex(null);
+            orUI.getHexMap().repaintAll(new java.awt.Rectangle(orUI.getHexMap().getSize()));
+        }
+        
+        // 8. Clear transient actions and rebuild standard operation panels
+        getParent().getPossibleActions().clear();
+        if (getParent().getCurrentRound() != null) {
+            getParent().getCurrentRound().setPossibleActions();
+        }
     }
-}
-// --- END FIX ---
 
 
 
