@@ -299,7 +299,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         fileMenu.add(menuItem);
 
         // Moved Config to File Menu
-        menuItem = new JCheckBoxMenuItem(LocalText.getText("CONFIG"));
+        menuItem = new JMenuItem(LocalText.getText("CONFIG"));
         menuItem.setName(CONFIG_CMD);
         menuItem.setActionCommand(CONFIG_CMD);
         menuItem.setMnemonic(KeyEvent.VK_C);

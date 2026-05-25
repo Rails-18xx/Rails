@@ -788,7 +788,39 @@ public class ORPanel extends GridPanel
         }
     }
 
-    // --- BUTTON STYLING HELPERS ---
+
+    public static void updateSpinnerVisibilityFromConfig() {
+        SwingUtilities.invokeLater(() -> {
+            for (ORPanel panel : activeInstances) {
+                panel.updateSpinnerVisibility();
+            }
+        });
+    }
+
+    public void updateSpinnerVisibility() {
+        String configKey = "orPanel.showSpinner";
+        String rawValue = net.sf.rails.common.Config.get(configKey);
+        
+        boolean showSpinner = (rawValue == null) || "yes".equalsIgnoreCase(rawValue) || "true".equalsIgnoreCase(rawValue);
+        
+        if (revSpinner != null) {
+            revSpinner.setVisible(showSpinner);
+        }
+        if (lblRoute != null) {
+            lblRoute.setVisible(!showSpinner);
+        }
+        
+        if (revSpinner != null && revSpinner.getParent() != null) {
+            revSpinner.getParent().invalidate();
+            revSpinner.getParent().validate();
+            revSpinner.getParent().repaint();
+        }
+        
+        if (sidebarPanel != null) {
+            sidebarPanel.revalidate();
+            sidebarPanel.repaint();
+        }
+    }
 
     private void styleButton(ActionButton btn, Color bg, String text) {
         if (btn == null)
@@ -1529,52 +1561,7 @@ public double getFontScale() {
         return p;
     }
 
-    /**
-     * Loops through all active instances of ORPanel and refreshes their money spinner visibility.
-     */
-    public static void updateSpinnerVisibilityFromConfig() {
-        SwingUtilities.invokeLater(() -> {
-            for (ORPanel panel : activeInstances) {
-                panel.updateSpinnerVisibility();
-            }
-        });
-    }
 
-    /**
-     * Controls the visibility of the revenue spinner component versus the standard text readout
-     * based on the configuration setting.
-     */
-
-    // ... (lines of unchanged context code) ...
-    // --- START FIX ---
-    public void updateSpinnerVisibility() {
-        String configKey = "orPanel.showSpinner"; 
-        String rawValue = net.sf.rails.common.Config.get(configKey);
-        
-        // If rawValue is null (no profile saved yet), default to true. 
-        // Otherwise, parse the saved text from ConfigWindow.
-        boolean showSpinner = (rawValue == null) || "yes".equalsIgnoreCase(rawValue) || "true".equalsIgnoreCase(rawValue);
-        
-        if (revSpinner != null) {
-            revSpinner.setVisible(showSpinner);
-        }
-        if (lblRoute != null) {
-            lblRoute.setVisible(!showSpinner);
-        }
-        
-        // Force layout recalculation up the entire hierarchy
-        if (revSpinner != null && revSpinner.getParent() != null) {
-            revSpinner.getParent().invalidate();
-            revSpinner.getParent().validate();
-            revSpinner.getParent().repaint();
-        }
-        
-        if (sidebarPanel != null) {
-            sidebarPanel.revalidate();
-            sidebarPanel.repaint();
-        }
-    }
-    // --- END FIX ---
 
 
 
