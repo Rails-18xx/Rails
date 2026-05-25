@@ -340,16 +340,16 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         optMenu.add(menuItem);
         
         optMenu.addSeparator();
+
         // Toggle for the new modular visualization
-        JCheckBoxMenuItem toggleStatusItem = new JCheckBoxMenuItem("Experimental Status View (games.18xx)",
-                useAltStatus);
+        JCheckBoxMenuItem toggleStatusItem = new JCheckBoxMenuItem("Experimental Status View (games.18xx)", useAltStatus);
         toggleStatusItem.addActionListener(e -> {
             useAltStatus = toggleStatusItem.isSelected();
             swapGameStatus();
         });
         optMenu.add(toggleStatusItem);
 
-                optMenu.addSeparator();
+        optMenu.addSeparator();
 
         // Read initial state directly from central config mapping
         boolean initialWorthState = Util.parseBoolean(net.sf.rails.common.Config.get("statusWindow.showPlayerWorth"));
