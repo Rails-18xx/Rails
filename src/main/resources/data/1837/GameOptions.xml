@@ -10,4 +10,7 @@
 	<GameOption name="FirstRoundSellRestriction" values="First Round,First Stock Round" default="First Round" />
 	<GameOption name="Variant" values="Basegame,Romoth,1837-2ndEd." default="Basegame"/>
     <GameOption name="NetworthHidden" type="toggle" default="no" />
+ 	<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
+       
+
 </GameOptions>

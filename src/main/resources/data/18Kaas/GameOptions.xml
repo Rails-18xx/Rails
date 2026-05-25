@@ -14,5 +14,6 @@
 	<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 	<GameOption name="UnlimitedTopTrains" parm="D" type="toggle" default="no"/>
 	<GameOption name="NetworthHidden" type="toggle" default="no" />
-</GameOptions>
+		<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
 
+</GameOptions>

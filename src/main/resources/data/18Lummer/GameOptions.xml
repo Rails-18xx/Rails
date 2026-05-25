@@ -5,4 +5,5 @@
 	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 	<GameOption name="FirstRoundSellRestriction" values="First Round,First Stock Round" default="First Round" />
 	<GameOption name="NetworthHidden" type="toggle" default="no" />
+	<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
 </GameOptions>

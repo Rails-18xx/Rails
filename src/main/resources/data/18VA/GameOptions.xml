@@ -5,4 +5,6 @@
 	<GameOption name="RouteAlgorithm" values="Permissive,Semi-Restrictive,Restrictive" default="Semi-Restrictive" />
 	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 	<GameOption name="NetworthHidden" type="toggle" default="no" />
+		<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
+
 </GameOptions>

@@ -1179,6 +1179,7 @@ public class OperatingRound extends Round implements Observer {
      * =======================================
      */
 
+// ... (lines of unchanged context code) ...
     public boolean buyPrivate(BuyPrivate action) {
 
         String errMsg = null;
@@ -1192,6 +1193,8 @@ public class OperatingRound extends Round implements Observer {
         int upperPrice;
         int lowerPrice;
 
+
+
         // Dummy loop to enable a quick jump out.
         while (true) {
 
@@ -1200,23 +1203,29 @@ public class OperatingRound extends Round implements Observer {
             if ((privateCompany = companyManager.getPrivateCompany(privateCompanyName)) == null) {
                 errMsg = LocalText.getText("PrivateDoesNotExist",
                         privateCompanyName);
+
                 break;
             }
             // Is private still open?
             if (privateCompany.isClosed()) {
                 errMsg = LocalText.getText("PrivateIsAlreadyClosed",
                         privateCompanyName);
+
                 break;
             }
             // Is private owned by a player?
             owner = privateCompany.getOwner();
+
             if (!(owner instanceof Player)) {
                 errMsg = LocalText.getText("PrivateIsNotOwnedByAPlayer",
                         privateCompanyName);
+
                 break;
             }
             player = (Player) owner;
-            boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
+            
+boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
+            
             if (restrictPrivateTrade && player != operatingCompany.value().getPresident()) {
                 errMsg = "Private Trading restricted to same-owner only.";
                 break;
@@ -1228,6 +1237,7 @@ public class OperatingRound extends Round implements Observer {
             // Is private buying allowed?
             if (!isPrivateSellingAllowed()) {
                 errMsg = LocalText.getText("PrivateBuyingIsNotAllowed");
+
                 break;
             }
 
@@ -1238,6 +1248,9 @@ public class OperatingRound extends Round implements Observer {
                         Bank.format(this, price),
                         Bank.format(this, lowerPrice),
                         privateCompanyName);
+                // --- START FIX ---
+                log.warn("BUY_PRIVATE_TRACE: Failed - Price [{}] is below lower limit [{}].", price, lowerPrice);
+                // --- END FIX ---
                 break;
             }
             if (upperPrice != PrivateCompany.NO_PRICE_LIMIT
@@ -1246,6 +1259,9 @@ public class OperatingRound extends Round implements Observer {
                         Bank.format(this, price),
                         Bank.format(this, lowerPrice),
                         privateCompanyName);
+                // --- START FIX ---
+                log.warn("BUY_PRIVATE_TRACE: Failed - Price [{}] is above upper limit [{}].", price, upperPrice);
+                // --- END FIX ---
                 break;
             }
             // Does the company have the money?
@@ -1254,10 +1270,16 @@ public class OperatingRound extends Round implements Observer {
                         Bank.format(this,
                                 operatingCompany.value().getCash()),
                         Bank.format(this, price));
+                // --- START FIX ---
+                log.warn("BUY_PRIVATE_TRACE: Failed - Company has insufficient cash [{}].", operatingCompany.value().getCash());
+                // --- END FIX ---
                 break;
             }
             break;
         }
+        
+
+
         if (errMsg != null) {
             if (owner != null) {
                 DisplayBuffer.add(this, LocalText.getText(
@@ -1272,11 +1294,16 @@ public class OperatingRound extends Round implements Observer {
             return false;
         }
 
+        // --- START FIX ---
+        log.info("BUY_PRIVATE_TRACE: Validation PASSED. Executing state transfer via operatingCompany.buyPrivate().");
+        // --- END FIX ---
         operatingCompany.value().buyPrivate(privateCompany, player, price);
 
         return true;
 
     }
+// ... (rest of the method) ...
+
 
     protected boolean isPrivateSellingAllowed() {
         return Phase.getCurrent(this).isPrivateSellingAllowed();
@@ -4501,7 +4528,8 @@ public class OperatingRound extends Round implements Observer {
                     if (!maySellPrivate(player))
                         continue;
 
-                    boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
+boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
+
                     if (restrictPrivateTrade && player != operatingCompany.value().getPresident()) {
                         continue;
                     }

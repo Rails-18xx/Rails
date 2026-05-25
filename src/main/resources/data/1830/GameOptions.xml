@@ -25,4 +25,6 @@
 	<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
 	<GameOption name="C&amp;ACertificate(ReadingOnly)" values="PRR,RDG" default="PRR"/>
 	<GameOption name="NetworthHidden" type="toggle" default="no" />
+		<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
+
 </GameOptions>

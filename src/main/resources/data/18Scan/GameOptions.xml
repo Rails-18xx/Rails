@@ -10,4 +10,6 @@
 <!-- 	Remark for the tag below: There was a difference between GamesList (no) and Game.xml (yes) -->
 	<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
 	<GameOption name="NetworthHidden" type="toggle" default="no" />
+		<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
+
 </GameOptions>
