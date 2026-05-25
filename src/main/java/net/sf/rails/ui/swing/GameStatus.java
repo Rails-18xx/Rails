@@ -3397,78 +3397,156 @@ JPanel[] currentPanels = playerPrivatesPanel;
                 updateCompanyPrivates(i, c);
             }
 
-            boolean is1817 = "1817".equals(gameUIManager.getGameManager().getGameName());
-            if (hasCompanyLoans && compLoans != null && i < compLoans.length && compLoans[i] != null) {
-                compLoans[i].setBackground(bgRow);
-                compLoans[i].setOpaque(true);
+            // Create standard row border for dynamic cells
+            int tH = isOperating ? 2 : 0;
+            int bH = isOperating ? 2 : 1;
+            javax.swing.border.Border rowBorder = BorderFactory.createMatteBorder(tH, 0, bH, 1, Color.BLACK);
 
-                if (compLoans[i] instanceof ClickField) {
-                    ClickField cf = (ClickField) compLoans[i];
-                    cf.setEnabled(true);
-                    cf.setPossibleAction(null);
-                    cf.setBorder(BORDER_BOX);
-                }
-
-                if (c != null && (c.hasFloated() || (is1817 && c.getPresident() != null))) {
-                    int currentBonds = c.getNumberOfBonds();
-                    int maxBonds = currentBonds;
-                    try {
-                        java.lang.reflect.Method m = c.getClass().getMethod("getShareCount");
-                        maxBonds = (Integer) m.invoke(c);
-                    } catch (Exception e) {
-                        // Fallback
-                    }
-
-                    // Calculate Interest Cost using the BondsModel_1817 rate
-                    int interestRate = 0;
-                    if (gameUIManager.getGameManager() instanceof net.sf.rails.game.specific._1817.GameManager_1817) {
-                        net.sf.rails.game.model.BondsModel bm = ((net.sf.rails.game.specific._1817.GameManager_1817) gameUIManager
-                                .getGameManager()).getBondsModel();
-                        if (bm instanceof net.sf.rails.game.specific._1817.BondsModel_1817) {
-                            interestRate = ((net.sf.rails.game.specific._1817.BondsModel_1817) bm).getInterestRate();
+           int yRow = companyCertRow.containsKey(c) ? companyCertRow.get(c) : -1;
+            if (yRow != -1 && fields != null) {
+                
+                // Steal the exact background and border from Tokens to guarantee identical styling
+                final Color targetBg = (compTokens[i] != null) ? compTokens[i].getBackground() : bgRow;
+                final javax.swing.border.Border targetBorder = (compTokens[i] != null) ? compTokens[i].getBorder() : rowBorder;
+                
+                // 1. Existing Escrow/Rights columns fallback (Preserves original intent for other games)
+                if (hasRights && rightsXOffset < fields.length && yRow < fields[rightsXOffset].length) {
+                    JComponent customComp = fields[rightsXOffset][yRow];
+                    if (customComp != null) {
+                        customComp.setBackground(targetBg);
+                        customComp.setOpaque(true);
+                        customComp.setBorder(BorderFactory.createCompoundBorder(targetBorder,
+                                BorderFactory.createEmptyBorder(0, 0, 0, 5)));
+                        if (isActive) {
+                            applyCurrencyFont(customComp);
+                            if (customComp instanceof JLabel) {
+                                ((JLabel) customComp).setHorizontalAlignment(SwingConstants.RIGHT);
+                            }
+                        } else {
+                            if (customComp instanceof JLabel)
+                                ((JLabel) customComp).setText("");
+                            if (customComp instanceof Field)
+                                ((Field) customComp).setText("");
                         }
                     }
-                    int totalInterestCost = currentBonds * interestRate;
-
-                    // Build the Visual Dot String
-                    StringBuilder sb = new StringBuilder("<html><center>");
-                    // Red dots for loans taken
-                    for (int b = 0; b < currentBonds; b++) {
-                        sb.append("<font color='red'>●</font>");
-                    }
-                    // Red circles for available slots
-                    for (int b = 0; b < (maxBonds - currentBonds); b++) {
-                        sb.append("<font color='black'>○</font>");
-                    }
-                    sb.append("</center></html>");
-                    String loanDisplay = sb.toString();
-
-                    if (compLoans[i] instanceof ClickField) {
-                        ((ClickField) compLoans[i]).setText(loanDisplay);
-                    } else if (compLoans[i] instanceof JLabel) {
-                        ((JLabel) compLoans[i]).setText(loanDisplay);
-                    }
-
-                    if (possibleActions != null && possibleActions.getList() != null) {
-                        for (PossibleAction pa : possibleActions.getList()) {
-                            if (pa != null && pa.getClass().getName().endsWith("TakeLoans_1817")) {
-                                net.sf.rails.game.specific._1817.action.TakeLoans_1817 tl = (net.sf.rails.game.specific._1817.action.TakeLoans_1817) pa;
-                                if (tl.getCompanyId().equals(c.getId())) {
-                                    if (compLoans[i] instanceof ClickField) {
-                                        ClickField cf = (ClickField) compLoans[i];
-                                        cf.setEnabled(true);
-                                        cf.setPossibleAction(pa);
-                                        // MARK RED: Highlight the field background and border
-                                        cf.setBackground(new Color(255, 200, 200));
-                                        cf.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-                                    }
-                                }
+                }
+                if (rightCompCaptionXOffset < fields.length && yRow < fields[rightCompCaptionXOffset].length) {
+                    JComponent customComp = fields[rightCompCaptionXOffset][yRow];
+                    if (customComp != null && !(customComp instanceof Caption)) {
+                        customComp.setBackground(targetBg);
+                        customComp.setOpaque(true);
+                        customComp.setBorder(BorderFactory.createCompoundBorder(targetBorder, BorderFactory.createEmptyBorder(0, 0, 0, 5)));
+                        if (customComp instanceof Field || customComp instanceof JLabel) {
+                            applyCurrencyFont(customComp);
+                            if (customComp instanceof JLabel) {
+                                ((JLabel) customComp).setHorizontalAlignment(SwingConstants.RIGHT);
                             }
                         }
                     }
-                } else if (compLoans[i] instanceof JLabel) {
-                    ((JLabel) compLoans[i]).setText("");
                 }
+
+                // 2. Dynamic Column Formatting (Robust for 1856 Subclass Overrides)
+                int escrowCol = -1;
+                int loansCol = -1;
+                for (int x = 0; x < fields.length; x++) {
+                    if (fields[x] != null && fields[x].length > 1 && fields[x][1] instanceof JLabel) {
+                        String headerText = ((JLabel) fields[x][1]).getText();
+                        if (headerText != null) {
+                            String clean = headerText.replaceAll("\\<.*?\\>", "").trim();
+                            if (clean.equalsIgnoreCase("Escrow")) escrowCol = x;
+                            else if (clean.equalsIgnoreCase("Loans")) loansCol = x;
+                        }
+                    }
+                }
+
+                final int fEscrowCol = escrowCol;
+                final int fLoansCol = loansCol;
+                final int fYRow = yRow;
+                final PublicCompany fComp = c;
+
+                // Defer to run AFTER the subclass initTurn completes its overrides
+                SwingUtilities.invokeLater(() -> {
+                    if (fEscrowCol != -1 && fEscrowCol < fields.length && fYRow < fields[fEscrowCol].length) {
+                        JComponent comp = fields[fEscrowCol][fYRow];
+                        if (comp != null) {
+                            comp.setBackground(targetBg);
+                            comp.setOpaque(true);
+                            comp.setBorder(BorderFactory.createCompoundBorder(targetBorder, BorderFactory.createEmptyBorder(0, 0, 0, 5)));
+                            applyCurrencyFont(comp);
+                            if (comp instanceof JLabel) {
+                                ((JLabel) comp).setHorizontalAlignment(SwingConstants.RIGHT);
+                            }
+                        }
+                    }
+
+                    if (fLoansCol != -1 && fLoansCol < fields.length && fYRow < fields[fLoansCol].length) {
+                        JComponent comp = fields[fLoansCol][fYRow];
+                        if (comp != null) {
+                            comp.setBackground(targetBg);
+                            comp.setOpaque(true);
+                            comp.setBorder(targetBorder); // Exact same border, no compound empty space to shift it
+                            
+                            if (isActive) {
+                                int currentDebt = 0;
+                                if (comp instanceof JLabel) {
+                                    String rawTxt = ((JLabel) comp).getText();
+                                    if (rawTxt != null) {
+                                        String cleanTxt = rawTxt.replaceAll("\\<.*?\\>", "").trim();
+                                        try {
+                                            currentDebt = Integer.parseInt(cleanTxt);
+                                        } catch (NumberFormatException e) {
+                                            currentDebt = fComp.hasBonds() ? fComp.getNumberOfBonds() : fComp.getCurrentNumberOfLoans();
+                                        }
+                                    }
+                                }
+                                
+                                int maxDebt = fComp.getMaxNumberOfLoans();
+                                if (maxDebt <= 0) maxDebt = 5;
+                                if (maxDebt < currentDebt) maxDebt = currentDebt; 
+                                
+                                StringBuilder sb = new StringBuilder("<html><center>");
+                                for (int b = 0; b < currentDebt; b++) sb.append("<font color='red'>●</font>");
+                                for (int b = 0; b < (maxDebt - currentDebt); b++) sb.append("<font color='black'>○</font>");
+                                sb.append("</center></html>");
+
+                                if (comp instanceof JLabel) {
+                                    ((JLabel) comp).setText(sb.toString());
+                                    ((JLabel) comp).setHorizontalAlignment(SwingConstants.CENTER);
+                                    comp.setFont(new Font("SansSerif", Font.PLAIN, 14));
+                                }
+                                if (comp instanceof ClickField) {
+                                    ((ClickField) comp).setPossibleAction(null);
+                                }
+
+                                // Apply Action Highlighting
+                                if (possibleActions != null && possibleActions.getList() != null) {
+                                    for (rails.game.action.PossibleAction pa : possibleActions.getList()) {
+                                        if (pa != null && (pa.getClass().getName().contains("Loan") || pa.getClass().getName().endsWith("TakeLoans_1817"))) {
+                                            boolean match = false;
+                                            try {
+                                                java.lang.reflect.Method m = pa.getClass().getMethod("getCompanyId");
+                                                match = fComp.getId().equals(m.invoke(pa));
+                                            } catch (Exception e) {
+                                                try {
+                                                    java.lang.reflect.Method m = pa.getClass().getMethod("getCompany");
+                                                    match = fComp.equals(m.invoke(pa));
+                                                } catch (Exception e2) {}
+                                            }
+                                            if (match && comp instanceof ClickField) {
+                                                ClickField cf = (ClickField) comp;
+                                                cf.setPossibleAction(pa);
+                                                cf.setBackground(new Color(255, 200, 200));
+                                                cf.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                if (comp instanceof JLabel) ((JLabel) comp).setText("");
+                            }
+                        }
+                    }
+                });
             }
 
             // Note: We need to ensure the compCash/Revenue/Tokens fields use the new bgRow.
@@ -4854,7 +4932,6 @@ JPanel[] currentPanels = playerPrivatesPanel;
         f = new Caption(cashHeaderTxt);
         f.setBorder(BorderFactory.createCompoundBorder(BORDER_THIN, BorderFactory.createEmptyBorder(0, 0, 0, 5)));
         ((JLabel) f).setHorizontalAlignment(SwingConstants.RIGHT);
-        applyCurrencyFont(f);
 
         f.setBackground(BG_HEADER);
         f.setOpaque(true);
