@@ -31,14 +31,39 @@ public class RemainingTilesWindow extends JFrame implements WindowListener, Acti
     private final Map<Tile, Observer> observerMap = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(RemainingTilesWindow.class);
 
-    // --- START FIX ---
     private JPanel controlPanel;
     private JButton btnRotLeft, btnRotRight, btnAccept;
     private Tile selectedTile = null;
     private int selectedRotation = 0;
-    // --- END FIX ---
 
-    // --- START FIX ---
+
+    private double tileScaleFactor = 0.8;
+
+    public void adjustFontScale(double delta) {
+        tileScaleFactor = Math.max(0.4, Math.min(2.0, tileScaleFactor + (delta * 0.5)));
+        for (Map.Entry<Tile, Field> entry : tileLabels.entrySet()) {
+            updateGridTileIcon(entry.getKey(), entry.getValue());
+        }
+        updateSelectedTileIcon();
+        tilePanel.revalidate();
+        tilePanel.repaint();
+    }
+
+    private void updateGridTileIcon(Tile tile, Field label) {
+        String picId = tile.getPictureId();
+        BufferedImage hexImage = ImageLoader.getInstance().getTile(picId, 10);
+        if (hexImage != null) {
+            hexImage = rotateImage(hexImage, 30.0);
+            ImageIcon hexIcon = new ImageIcon(hexImage);
+            hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+                    (int) (hexIcon.getIconWidth() * tileScaleFactor),
+                    (int) (hexIcon.getIconHeight() * tileScaleFactor),
+                    Image.SCALE_SMOOTH));
+            label.setIcon(hexIcon);
+        }
+    }
+
+
     public RemainingTilesWindow(ORWindow orWindow) {
         super();
         this.orWindow = orWindow;
@@ -129,10 +154,10 @@ private void updateSelectedTileIcon() {
     
     // 3. Scale and update the label
     ImageIcon hexIcon = new ImageIcon(hexImage);
-    hexIcon.setImage(hexIcon.getImage().getScaledInstance(
-            (int) (hexIcon.getIconWidth() * 0.8),
-            (int) (hexIcon.getIconHeight() * 0.8),
-            Image.SCALE_SMOOTH));
+hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+                (int) (hexIcon.getIconWidth() * tileScaleFactor),
+                (int) (hexIcon.getIconHeight() * tileScaleFactor),
+                Image.SCALE_SMOOTH));
             
     Field label = tileLabels.get(selectedTile);
     if (label != null) {
@@ -149,8 +174,8 @@ private void updateSelectedTileIcon() {
         btn.setOpaque(true);
         btn.setBorder(BorderFactory.createRaisedBevelBorder());
     }
-    // --- END FIX ---
 
+    
     private void init(GameUIManager gameUIManager) {
         TileManager tmgr = gameUIManager.getRoot().getTileManager();
         List<Tile> tiles = new ArrayList<>(tmgr.getTiles());
@@ -165,9 +190,9 @@ private void updateSelectedTileIcon() {
             if (hexImage != null)
                 hexImage = rotateImage(hexImage, 30.0);
             ImageIcon hexIcon = new ImageIcon(hexImage);
-            hexIcon.setImage(hexIcon.getImage().getScaledInstance(
-                    (int) (hexIcon.getIconWidth() * 0.8),
-                    (int) (hexIcon.getIconHeight() * 0.8),
+hexIcon.setImage(hexIcon.getImage().getScaledInstance(
+                    (int) (hexIcon.getIconWidth() * tileScaleFactor),
+                    (int) (hexIcon.getIconHeight() * tileScaleFactor),
                     Image.SCALE_SMOOTH));
             Field label = new Field(tile.getCountModel(), hexIcon, Field.CENTER);
             label.setVerticalTextPosition(Field.BOTTOM);

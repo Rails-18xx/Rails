@@ -87,7 +87,8 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         if (isDockingFrameworkEnabled()) {
             // orPanel.addToButtonPanel(upgradePanel.getButtons(), 0);
             splashWindow.notifyOfStep(SplashWindow.STEP_OR_INIT_TILES);
-            JScrollPane remainingTilesPanelSlider = new RemainingTilesWindow(this).getScrollPane();
+            remainingTilesWindow = new RemainingTilesWindow(this);
+            JScrollPane remainingTilesPanelSlider = remainingTilesWindow.getScrollPane();
 
             splashWindow.notifyOfStep(SplashWindow.STEP_OR_APPLY_DOCKING_FRAME);
             // Removed messagePanel dockable
@@ -104,16 +105,16 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
             addDockingFrameMenu(menuBar);
 
         } else {
-          // The ORPanel object itself is now just a component holder.
+            // The ORPanel object itself is now just a component holder.
             // We pull its contents (Sidebar and Upgrades) directly into the main window.
 
             // 1. Sidebar Wrapper (WEST): Holds ONLY the Action Buttons (ORPanel sidebar)
             // We strip the upgrade panel out so the sidebar gets full height.
-            
+
             JPanel sidebarWrapper = new JPanel(new BorderLayout());
 
             // VERIFICATION LOG: Confirm the width is actually 300 (ORPanel.SIDEBAR_WIDTH)
-            
+
             sidebarWrapper.add(orPanel.getSidebarPanel(), BorderLayout.CENTER);
 
             // 2. Map Wrapper (CENTER): Vertically stacks Map (Center) and Tiles (South)
@@ -127,7 +128,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
 
             // 3. Main Layout Assembly
             getContentPane().add(sidebarWrapper, BorderLayout.WEST);
-            getContentPane().add(mapWrapper, BorderLayout.CENTER);    
+            getContentPane().add(mapWrapper, BorderLayout.CENTER);
             // The menu bar is already fully populated inside orPanel (infoMenu, zoomMenu,
             // etc.)
             // We set it as the official menu bar for the ORWindow frame.
@@ -240,7 +241,6 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         }
     }
 
-
     public void activate(Round or) {
         orPanel.recreate(or);
         setMapWindowTitle(or);
@@ -264,26 +264,26 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
             }
         }
         setVisible(true);
-        // Do not steal focus if we are actually in a Start Round (e.g. dummy OR for minor token lay)
+        // Do not steal focus if we are actually in a Start Round (e.g. dummy OR for
+        // minor token lay)
         if (!(gameUIManager.getCurrentRound() instanceof StartRound)) {
-            // Use invokeLater to ensure this runs after the visibility change is fully processed
+            // Use invokeLater to ensure this runs after the visibility change is fully
+            // processed
             SwingUtilities.invokeLater(() -> {
                 toFront();
                 requestFocus();
             });
         }
-        
+
     }
-
-
 
     protected void setMapWindowTitle(Round round) {
         GameManager gameManager = gameUIManager.getGameManager();
-String localizedTitle = LocalText.getText("MapWindowORTitle",
+        String localizedTitle = LocalText.getText("MapWindowORTitle",
                 gameManager.getORId(),
                 gameManager.getRelativeORNumber(),
                 gameManager.getNumOfORs());
-        
+
         localizedTitle = localizedTitle.replace("Rails: Map: ", "").replace("Rails: ", "");
         setTitle("Rails Evolution - " + gameManager.getGameName() + " - " + localizedTitle);
     }
@@ -303,15 +303,14 @@ String localizedTitle = LocalText.getText("MapWindowORTitle",
         lastBounds = getBounds();
         orPanel.finish();
         messagePanel.setMessage("");
-String localizedTitle = LocalText.getText("MapWindowTitle").replace("Rails: Map: ", "").replace("Rails: ", "");
-        setTitle("Rails Evolution - " + gameUIManager.getGameManager().getGameName() + " - " + localizedTitle);    }
+        String localizedTitle = LocalText.getText("MapWindowTitle").replace("Rails: Map: ", "").replace("Rails: ", "");
+        setTitle("Rails Evolution - " + gameUIManager.getGameManager().getGameName() + " - " + localizedTitle);
+    }
 
     @Override
     protected String getLayoutFileName() {
         return getClass().getSimpleName() + "_" + gameUIManager.getRoot().getGameName();
     }
-
-
 
     // --- START FIX ---
     private void setupGlobalHotkeys() {
@@ -319,26 +318,39 @@ String localizedTitle = LocalText.getText("MapWindowTitle").replace("Rails: Map:
 
         InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = rootPane.getActionMap();
-        
+
         int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
-        
+
         // Increase Font (Cmd = and Cmd +)
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, mask), "increaseFont");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, mask), "increaseFont");
         actionMap.put("increaseFont", new AbstractAction() {
             private static final long serialVersionUID = 1L;
+
             public void actionPerformed(ActionEvent e) {
-                if (orPanel != null) orPanel.adjustFontScale(0.1);
+                if (orPanel != null)
+                    orPanel.adjustFontScale(0.1);
+                if (remainingTilesWindow != null)
+                    remainingTilesWindow.adjustFontScale(0.1);
+                if (upgradePanel != null)
+                    upgradePanel.adjustFontScale(0.1);
             }
         });
-        
+
         // Decrease Font (Cmd -)
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, mask), "decreaseFont");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, mask), "decreaseFont");
         actionMap.put("decreaseFont", new AbstractAction() {
             private static final long serialVersionUID = 1L;
+
             public void actionPerformed(ActionEvent e) {
-                if (orPanel != null) orPanel.adjustFontScale(-0.1);
+                if (orPanel != null)
+                    orPanel.adjustFontScale(-0.1);
+                if (remainingTilesWindow != null)
+                    remainingTilesWindow.adjustFontScale(-0.1);
+                if (upgradePanel != null)
+                    upgradePanel.adjustFontScale(-0.1);
+
             }
         });
 
@@ -346,19 +358,19 @@ String localizedTitle = LocalText.getText("MapWindowTitle").replace("Rails: Map:
         // String SHOW_NUMBERS_KEY = "showNumbersAction";
         // inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), SHOW_NUMBERS_KEY);
         // actionMap.put(SHOW_NUMBERS_KEY, new AbstractAction() {
-        //     public void actionPerformed(ActionEvent e) {
-        //         if (orPanel != null) {
-        //             orPanel.toggleTileBuildNumbers();
-        //             orUIManager.toggleCompanyHighlights();
-        //             orUIManager.toggleMapMarkings();
-        //             // Force a full map repaint to ensure the costs appear/disappear instantly
-        //             if (orUIManager.getMap() != null) {
-        //                 orUIManager.getMap().repaintAll(new Rectangle(orUIManager.getMap().getSize()));
-        //             }
-        //         }
-        //     }
+        // public void actionPerformed(ActionEvent e) {
+        // if (orPanel != null) {
+        // orPanel.toggleTileBuildNumbers();
+        // orUIManager.toggleCompanyHighlights();
+        // orUIManager.toggleMapMarkings();
+        // // Force a full map repaint to ensure the costs appear/disappear instantly
+        // if (orUIManager.getMap() != null) {
+        // orUIManager.getMap().repaintAll(new
+        // Rectangle(orUIManager.getMap().getSize()));
+        // }
+        // }
+        // }
         // });
-
 
         // --- 2. MAP & UPGRADE ACTIONS ---
 
@@ -443,11 +455,12 @@ String localizedTitle = LocalText.getText("MapWindowTitle").replace("Rails: Map:
                 }
             }
         });
-// P: Payout Revenue
+        // P: Payout Revenue
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_P, 0), "payRevenue");
         actionMap.put("payRevenue", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                if (orPanel != null && orPanel.activePhase == 3 && orPanel.btnRevPayout != null && orPanel.btnRevPayout.isEnabled()) {
+                if (orPanel != null && orPanel.activePhase == 3 && orPanel.btnRevPayout != null
+                        && orPanel.btnRevPayout.isEnabled()) {
                     orPanel.btnRevPayout.doClick();
                 }
             }
@@ -457,7 +470,8 @@ String localizedTitle = LocalText.getText("MapWindowTitle").replace("Rails: Map:
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0), "withholdRevenue");
         actionMap.put("withholdRevenue", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                if (orPanel != null && orPanel.activePhase == 3 && orPanel.btnRevWithhold != null && orPanel.btnRevWithhold.isEnabled()) {
+                if (orPanel != null && orPanel.activePhase == 3 && orPanel.btnRevWithhold != null
+                        && orPanel.btnRevWithhold.isEnabled()) {
                     orPanel.btnRevWithhold.doClick();
                 }
             }
@@ -467,20 +481,20 @@ String localizedTitle = LocalText.getText("MapWindowTitle").replace("Rails: Map:
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_H, 0), "splitRevenue");
         actionMap.put("splitRevenue", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                if (orPanel != null && orPanel.activePhase == 3 && orPanel.btnRevSplit != null && orPanel.btnRevSplit.isEnabled()) {
+                if (orPanel != null && orPanel.activePhase == 3 && orPanel.btnRevSplit != null
+                        && orPanel.btnRevSplit.isEnabled()) {
                     orPanel.btnRevSplit.doClick();
                 }
             }
         });
-        
-   
-     }
 
-@Override
+    }
+
+    @Override
     public void setVisible(boolean b) {
         // If trying to show window, block it if Start Round is locking focus
         if (b && gameUIManager.isStartRoundActive()) {
-            return; 
+            return;
         }
         super.setVisible(b);
     }
@@ -500,14 +514,13 @@ String localizedTitle = LocalText.getText("MapWindowTitle").replace("Rails: Map:
 
     @Override
     public void requestFocus() {
-       // detailed "Focus Spy" logs showed ORWindow grabbing focus after every buy.
+        // detailed "Focus Spy" logs showed ORWindow grabbing focus after every buy.
         // We block programmatic focus requests during Stock Round.
         if (gameUIManager.getGameManager().getCurrentRound() instanceof StockRound) {
             return;
         }
-        
+
         super.requestFocus();
     }
-
 
 }

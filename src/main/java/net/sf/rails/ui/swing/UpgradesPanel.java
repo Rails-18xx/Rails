@@ -23,7 +23,7 @@ import net.sf.rails.ui.swing.hexmap.*;
 
 public class UpgradesPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    
+
     private static final Logger log = LoggerFactory.getLogger(UpgradesPanel.class);
 
     private static final int UPGRADE_TILE_ZOOM_STEP = 10;
@@ -35,11 +35,34 @@ public class UpgradesPanel extends JPanel {
     private final RailsIconButton skipButton;
     private boolean omitButtons;
     private GUIHexUpgrades hexUpgrades;
-    
+
     private RemainingTilesWindow.MiniDock miniDock;
-    
+
     private final int fixedTileHeight;
     private final int fixedTileWidth;
+
+    private double scaleMultiplier = GUIGlobals.getFontsScale();
+
+    public void adjustFontScale(double delta) {
+        this.scaleMultiplier = Math.max(0.5, Math.min(3.0, this.scaleMultiplier + delta));
+
+        // Recalculate dimensions dynamically using the new local scale multiplier
+        int baseMetric = (int) Math.round(100 * (2 + this.scaleMultiplier) / 3);
+        int tileHeight = baseMetric + 15;
+        int tileWidth = (int) (baseMetric * 0.85);
+
+        // Safely update field reflections via reflection if internal drawing relies on
+        // them,
+        // or directly push panel dimension overrides.
+        int panelHeight = tileHeight + 10;
+        this.setPreferredSize(new Dimension(Short.MAX_VALUE, panelHeight));
+        this.setMaximumSize(new Dimension(Short.MAX_VALUE, panelHeight));
+
+        // Re-render and enforce layout updates
+        showLabels();
+        revalidate();
+        repaint();
+    }
 
     public UpgradesPanel(ORUIManager orUIManager, boolean omitButtons) {
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
@@ -49,10 +72,10 @@ public class UpgradesPanel extends JPanel {
 
         Color bgColor = UIManager.getColor("Panel.background");
 
-        int baseMetric = (int) Math.round(100 * (2 + GUIGlobals.getFontsScale()) / 3);
-        
-        this.fixedTileHeight = baseMetric + 15; 
-        this.fixedTileWidth = (int) (baseMetric * 0.85); 
+        int baseMetric = (int) Math.round(100 * (2 + scaleMultiplier) / 3);
+
+        this.fixedTileHeight = baseMetric + 15;
+        this.fixedTileWidth = (int) (baseMetric * 0.85);
 
         int panelHeight = fixedTileHeight + 10;
 
@@ -60,97 +83,38 @@ public class UpgradesPanel extends JPanel {
         this.setMaximumSize(new Dimension(Short.MAX_VALUE, panelHeight));
         setVisible(true);
 
+        // Fields still required to prevent internal NullPointerExceptions in legacy
+        // wrappers
         upgradePanel = new JPanel();
-        upgradePanel.setOpaque(true);
-        upgradePanel.setLayout(new BoxLayout(upgradePanel, BoxLayout.LINE_AXIS));
-        upgradePanel.setBackground(bgColor);
-        upgradePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
         scrollPane = new JScrollPane(upgradePanel);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        
-        scrollPane.setPreferredSize(new Dimension(600, panelHeight));
-        scrollPane.setMinimumSize(new Dimension(100, panelHeight));
-        scrollPane.getViewport().setBackground(bgColor);
-        scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        Action confirmAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent arg0) {
-                UpgradesPanel.this.orUIManager.confirmUpgrade();
-            }
-        };
-        confirmAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
-
-        Action skipAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                UpgradesPanel.this.orUIManager.skipUpgrade();
-            }
-        };
-        skipAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
-        
-        confirmButton = new RailsIconButton(RailsIcon.CONFIRM, confirmAction);
-        confirmButton.setEnabled(false);
-
-        skipButton = new RailsIconButton(RailsIcon.SKIP, skipAction);
-        skipButton.setEnabled(false);
-         
-        if (omitButtons) {
-            confirmButton.setVisible(false);
-            skipButton.setVisible(false);
-        } else {
-            Dimension buttonDimension = new Dimension(Short.MAX_VALUE, 25);
-            confirmButton.setMaximumSize(buttonDimension);
-            skipButton.setMaximumSize(buttonDimension);
-            confirmButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-            skipButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-            
-            add(Box.createHorizontalStrut(2)); 
-            add(confirmButton);
-            add(Box.createHorizontalStrut(2)); 
-            add(skipButton);
-            add(Box.createHorizontalStrut(5)); 
-        }
-        
-        add(scrollPane);
-
-        add(Box.createHorizontalStrut(5));
-        
-        JSeparator sep = new JSeparator(SwingConstants.VERTICAL);
-        sep.setMaximumSize(new Dimension(2, panelHeight - 10));
-        add(sep);
-        add(Box.createHorizontalStrut(5));
+        confirmButton = new RailsIconButton(RailsIcon.CONFIRM, null);
+        skipButton = new RailsIconButton(RailsIcon.SKIP, null);
 
         this.miniDock = new RemainingTilesWindow.MiniDock(orUIManager);
-        
-        // --- SIZING FIX: Double Wide (480px) ---
-        Dimension dockSize = new Dimension(480, panelHeight - 4); 
-        miniDock.setPreferredSize(dockSize);
-        miniDock.setMaximumSize(dockSize);
-        miniDock.setMinimumSize(dockSize);
-        
+
+        // Force miniDock to consume the entire horizontal width footprint
+        miniDock.setPreferredSize(new Dimension(1000, panelHeight - 4));
+        miniDock.setMinimumSize(new Dimension(100, panelHeight - 4));
+        miniDock.setMaximumSize(new Dimension(Short.MAX_VALUE, panelHeight - 4));
+
         add(miniDock);
 
-        add(Box.createHorizontalStrut(5)); 
-        
         setButtons();
         revalidate();
     }
 
-
     private void addLegendItem(JPanel panel, String key, String desc) {
         JLabel lbl = new JLabel("<html><font color='#222222' size='3'><b>[" + key + "]</b></font> " + desc + "</html>");
-        lbl.setFont(new Font("SansSerif", Font.PLAIN, 11)); 
-        lbl.setAlignmentX(Component.LEFT_ALIGNMENT); 
+        lbl.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(lbl);
-        panel.add(Box.createHorizontalStrut(5)); 
+        panel.add(Box.createHorizontalStrut(5));
     }
 
     public void setHexUpgrades(GUIHexUpgrades hexUpgrades) {
         this.hexUpgrades = hexUpgrades;
     }
-    
+
     private int getZoomStep() {
         if (orUIManager.getORWindow().isDockingFrameworkEnabled()) {
             return orUIManager.getMap().getZoomStep();
@@ -162,7 +126,7 @@ public class UpgradesPanel extends JPanel {
     public RailsIconButton[] getButtons() {
         return new RailsIconButton[] { confirmButton, skipButton };
     }
-    
+
     private void setButtons() {
         if (omitButtons) {
             boolean isVisible = confirmButton.isEnabled() || skipButton.isEnabled();
@@ -170,7 +134,7 @@ public class UpgradesPanel extends JPanel {
             skipButton.setVisible(isVisible);
         }
     }
-    
+
     private void resetUpgrades(boolean skip) {
         hexUpgrades.setActiveHex(null, 0);
         upgradePanel.removeAll();
@@ -184,7 +148,7 @@ public class UpgradesPanel extends JPanel {
     public void setInactive() {
         resetUpgrades(false);
     }
-    
+
     public void setActive() {
         resetUpgrades(true);
     }
@@ -194,7 +158,7 @@ public class UpgradesPanel extends JPanel {
             miniDock.repaint();
         }
     }
-    
+
     public void setSelect(GUIHex hex) {
         hexUpgrades.setActiveHex(hex, getZoomStep());
         showLabels();
@@ -209,7 +173,7 @@ public class UpgradesPanel extends JPanel {
         }
         setButtons();
     }
-   
+
     public void nextSelection() {
         hexUpgrades.nextSelection();
         refreshUpgrades();
@@ -219,13 +183,13 @@ public class UpgradesPanel extends JPanel {
         hexUpgrades.nextUpgrade();
         refreshUpgrades();
     }
-    
+
     public void setActiveUpgrade(HexUpgrade upgrade) {
         hexUpgrades.setUpgrade(upgrade);
         refreshUpgrades();
     }
-    
-public void refreshUpgrades() {
+
+    public void refreshUpgrades() {
         upgradePanel.revalidate();
         upgradePanel.repaint();
         UpgradeLabel active = hexUpgrades.getActiveLabel();
@@ -233,12 +197,14 @@ public void refreshUpgrades() {
             upgradePanel.scrollRectToVisible(active.getBounds());
         }
     }
-    
+
     private void showLabels() {
+        if (upgradePanel == null || hexUpgrades == null)
+            return;
         upgradePanel.removeAll();
-        
+
         Dimension tightSize = new Dimension(fixedTileWidth, fixedTileHeight);
-        
+
         for (UpgradeLabel label : hexUpgrades.getUpgradeLabels()) {
             final HexUpgrade upgrade = label.getUpgrade();
             if (upgrade.isValid()) {
@@ -246,14 +212,14 @@ public void refreshUpgrades() {
                     public void mouseClicked(MouseEvent e) {
                         setActiveUpgrade(upgrade);
                     }
-                }); 
-            } else { 
-                if (upgrade instanceof TileHexUpgrade && ((TileHexUpgrade)upgrade).noTileAvailable()) {
-                    HexHighlightMouseListener.addMouseListener(label, orUIManager, 
-                            ((TileHexUpgrade)upgrade).getUpgrade().getTargetTile(), true);
+                });
+            } else {
+                if (upgrade instanceof TileHexUpgrade && ((TileHexUpgrade) upgrade).noTileAvailable()) {
+                    HexHighlightMouseListener.addMouseListener(label, orUIManager,
+                            ((TileHexUpgrade) upgrade).getUpgrade().getTargetTile(), true);
                 }
             }
-            
+
             label.setHorizontalTextPosition(SwingConstants.CENTER);
             label.setVerticalTextPosition(SwingConstants.BOTTOM);
             label.setFont(new Font("SansSerif", Font.BOLD, 12));
@@ -266,9 +232,9 @@ public void refreshUpgrades() {
             upgradePanel.add(label);
             upgradePanel.add(Box.createHorizontalStrut(1));
         }
-        
+
         upgradePanel.add(Box.createHorizontalGlue());
-        
+
         upgradePanel.revalidate();
         upgradePanel.repaint();
     }
