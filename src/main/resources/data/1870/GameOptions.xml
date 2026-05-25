@@ -5,7 +5,6 @@
 	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
 	<GameOption name="LeaveAuctionOnPass" type="toggle" default="no"/>
-	<GameOption name="NetworthHidden" type="toggle" default="no" />
-		<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
+	<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
 
 </GameOptions>

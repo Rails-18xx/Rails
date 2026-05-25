@@ -3,7 +3,6 @@
 	<GameOption name="RouteAwareness" values="Highlight,Deactivate" default="Highlight" />
 	<GameOption name="RevenueCalculation" values="Suggest,Deactivate" default="Suggest" />
 	<GameOption name="UnlimitedTiles" values="No,Yellow Plain,Yes" default="No"/>
-	<GameOption name="NetworthHidden" type="toggle" default="no" />
-		<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
+	<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
 
 </GameOptions>

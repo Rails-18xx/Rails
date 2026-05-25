@@ -10,7 +10,6 @@
 	<GameOption name="FirstRoundSellRestriction" values="First Round,First Stock Round" default="First Stock Round" />
 	<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
 	<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
-	<GameOption name="NetworthHidden" type="toggle" default="no" />
 	<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
 
 </GameOptions>

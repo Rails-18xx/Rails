@@ -23,8 +23,7 @@
 	<GameOption name="LeaveAuctionOnPass" type="toggle" default="yes"/>
 	<GameOption name="TwoPlayersCertLimit70Percent" type="toggle" default="no"/>
 	<GameOption name="SeparateSalesAtSamePrice" type="toggle" default="yes"/>
-	<GameOption name="NetworthHidden" type="toggle" default="no" />
 	<GameOption name="RandomSeed" type="hidden"/>
-		<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
+	<GameOption name="RestrictPrivateTradingToSameOwner" type="toggle" default="yes" />
 
 </GameOptions>
