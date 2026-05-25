@@ -478,15 +478,17 @@ class ConfigWindow extends JFrame {
 
                         net.sf.rails.ui.swing.ORPanel.updateSpinnerVisibilityFromConfig();
                         
-                        // Notify standard UI frame pipeline to dynamically scale
+                        // Safely trigger the dedicated sync method
                         if (parent instanceof StatusWindow) {
-                            ((StatusWindow) parent).updateFontsFromConfig();
+                            ((StatusWindow) parent).refreshConfigState();
                         } else if (parent != null) {
                             parent.revalidate();
                             parent.repaint();
                         }
+                        
                     }
                 });
+
         buttonPanel.add(applyButton);
 
         // save (as) button

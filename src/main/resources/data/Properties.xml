@@ -5,16 +5,17 @@
 			initclass="net.sf.rails.common.LocalText" initMethod="setLocale"
 			initParameter="yes" />
 		<Property name="local.player.name" type="STRING" />
-        <Property name="skip_confirm_quit" type="BOOLEAN" />
+		<Property name="skip_confirm_quit" type="BOOLEAN" />
+		<Property name="statusWindow.showPlayerWorth" type="BOOLEAN" />
 
 		<Property name="default_game" type="STRING" />
 		<Property name="default_players" type="STRING" />
 
-        <Property name="player.name.1" type="STRING" />
-        <Property name="player.name.2" type="STRING" />
-        <Property name="player.name.3" type="STRING" />
-        <Property name="player.name.4" type="STRING" />
-        </Section>
+		<Property name="player.name.1" type="STRING" />
+		<Property name="player.name.2" type="STRING" />
+		<Property name="player.name.3" type="STRING" />
+		<Property name="player.name.4" type="STRING" />
+	</Section>
 
 	<Section name="SaveLoad">
 		<Property name="save.directory" type="DIRECTORY" />
@@ -22,23 +23,23 @@
 		<Property name="save.filename.suffix" type="STRING" />
 		<Property name="save.filename.extension" type="STRING" />
 		<Property name="save.recovery.active" type="BOOLEAN" />
-        <Property name="save.auto.enabled" type="BOOLEAN" />
-        <Property name="save.auto.interval" type="INTEGER" />
-        <Property name="load.recent_files.include_regex" type="REGEX" />
-        <Property name="load.recent_files.exclude_regex" type="REGEX" />
-        <Property name="load.recent_files.include_only_last_rails" type="BOOLEAN" />
-        <Property name="save.archive.enabled" type="BOOLEAN" />
-        <Property name="save.archive.dir" type="STRING" />
+		<Property name="save.auto.enabled" type="BOOLEAN" />
+		<Property name="save.auto.interval" type="INTEGER" />
+		<Property name="load.recent_files.include_regex" type="REGEX" />
+		<Property name="load.recent_files.exclude_regex" type="REGEX" />
+		<Property name="load.recent_files.include_only_last_rails" type="BOOLEAN" />
+		<Property name="save.archive.enabled" type="BOOLEAN" />
+		<Property name="save.archive.dir" type="STRING" />
 		<Property name="save.archive.keep_count" type="INTEGER" />
-        <Property name="ai.save.state.on.move" type="BOOLEAN" />
-    </Section>
-    <Section name="Notifications">
-        <Property name="notify.discord.webhook" type="STRING" isGameRelated="true" />
-        <Property name="notify.discord.user_mapping" type="STRING" isGameRelated="true" />
-        <Property name="notify.slack.webhook" type="STRING" isGameRelated="true" />
-        <Property name="notify.slack.user_mapping" type="STRING" isGameRelated="true" />
-        <Property name="notify.message" type="STRING" isGameRelated="true" />
-    </Section>
+		<Property name="ai.save.state.on.move" type="BOOLEAN" />
+	</Section>
+	<Section name="Notifications">
+		<Property name="notify.discord.webhook" type="STRING" isGameRelated="true" />
+		<Property name="notify.discord.user_mapping" type="STRING" isGameRelated="true" />
+		<Property name="notify.slack.webhook" type="STRING" isGameRelated="true" />
+		<Property name="notify.slack.user_mapping" type="STRING" isGameRelated="true" />
+		<Property name="notify.message" type="STRING" isGameRelated="true" />
+	</Section>
 	<Section name="Font">
 		<Property name="font.ui.name" type="FONT" isGameRelated="no" />
 		<Property name="font.currency" type="FONT" isGameRelated="no" />
@@ -46,25 +47,27 @@
 	<Section name="Map">
 		<Property name="map.autoscroll" type="BOOLEAN" />
 		<Property name="map.zoomstep" type="INTEGER" />
-		<Property name="map.defaultZoomFitOption" type="LIST" values="none,fit to window,fit to width,fit to height" />
+		<Property name="map.defaultZoomFitOption" type="LIST"
+			values="none,fit to window,fit to width,fit to height" />
 		<Property name="map.image.display" type="BOOLEAN" />
 		<Property name="map.displayCurrentRoutes" type="BOOLEAN" />
 		<Property name="map.highlightHexes" type="BOOLEAN" />
-        <Property name="map.route.window.display" type="BOOLEAN" />
+		<Property name="map.route.window.display" type="BOOLEAN" />
 	</Section>
 	<Section name="Windows">
+		
 		<Property name="report.window.type" type="LIST" values="static,dynamic" />
 		<Property name="report.window.open" type="BOOLEAN" />
-<Property name="stockchart.window.open" type="BOOLEAN" />
+		<Property name="stockchart.window.open" type="BOOLEAN" />
 		<Property name="or.window.dockablePanels" type="BOOLEAN" />
 		<Property name="splash.window.open" type="BOOLEAN" />
 	</Section>
 	<Section name="Format">
 		<Property name="money_format" type="STRING" />
 		<Property name="or.number_format" type="LIST" values="simple,composite" />
-    </Section>
+	</Section>
 
-    <Section name="Appearance">
+	<Section name="Appearance">
 		<Property name="orPanel.showSpinner" type="BOOLEAN" />
 		<Property name="route.colour.1" type="COLOR"
 			initclass="net.sf.rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
@@ -81,8 +84,8 @@
 	</Section>
 	<Section name="Music">
 		<Property name="sound.backgroundMusic" type="LIST" values="disabled,enabled"
-				initclass="net.sf.rails.sound.SoundManager" initMethod="init"
-				alwaysCallInit="true"/>
+			initclass="net.sf.rails.sound.SoundManager" initMethod="init"
+			alwaysCallInit="true" />
 		<Property name="sound.backgroundMusic.gameSetup" type="FILE" />
 		<Property name="sound.backgroundMusic.startRound" type="FILE" />
 		<Property name="sound.backgroundMusic.stockRound" type="STRING" />

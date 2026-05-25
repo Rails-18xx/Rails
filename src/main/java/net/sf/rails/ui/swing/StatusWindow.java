@@ -348,13 +348,21 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         });
         optMenu.add(toggleStatusItem);
 
-        JCheckBoxMenuItem toggleWorthItem = new JCheckBoxMenuItem("Show Player Worth", showPlayerWorth);
+ // Read initial state directly from central config mapping
+        boolean initialWorthState = Util.parseBoolean(net.sf.rails.common.Config.get("statusWindow.showPlayerWorth"));
+        this.showPlayerWorth = initialWorthState;
+        JCheckBoxMenuItem toggleWorthItem = new JCheckBoxMenuItem("Show Player Worth", initialWorthState);
+        toggleWorthItem.setName("ShowPlayerWorth"); // Add this name to target it later
         toggleWorthItem.addActionListener(e -> {
-            showPlayerWorth = toggleWorthItem.isSelected();
+            boolean isSelected = toggleWorthItem.isSelected();
+            this.showPlayerWorth = isSelected;
+            // Write to memory cache immediately so ConfigWindow mirrors this state change
+            net.sf.rails.common.Config.set("statusWindow.showPlayerWorth", isSelected ? "yes" : "no");
             if (gameStatus != null) {
                 gameStatus.recreate();
             }
         });
+
         optMenu.add(toggleWorthItem);
 
         optMenu.addSeparator();
@@ -1686,6 +1694,9 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
             passButton.setEnabled(false);
             autopassButton.setEnabled(false);
+
+            // Sync local caching state flag with authoritative memory map
+            this.showPlayerWorth = Util.parseBoolean(net.sf.rails.common.Config.get("statusWindow.showPlayerWorth"));
 
             // Crash-Proof Dashboard Sync ---
             try {
@@ -3270,6 +3281,30 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         } catch (Exception e) {
             log.error("Failed to dynamically propagate configuration fonts", e);
         }
+    }
+
+    /**
+     * Safely synchronizes the StatusWindow UI with the latest configuration values
+     * without triggering a full game state updateStatus() pass.
+     */
+    public void refreshConfigState() {
+        // 1. Pull the authoritative configuration value
+        this.showPlayerWorth = Util.parseBoolean(net.sf.rails.common.Config.get("statusWindow.showPlayerWorth"));
+        
+        // 2. Visually update the menu tick box
+        if (this.showPlayerWorth) {
+            enableCheckBoxMenuItem("ShowPlayerWorth");
+        } else {
+            disableCheckBoxMenuItem("ShowPlayerWorth");
+        }
+        
+        // 3. Rebuild the dashboard to show/hide the worth data
+        if (gameStatus != null) {
+            gameStatus.recreate();
+        }
+        
+        // 4. Update fonts (handles size scaling changes)
+        updateFontsFromConfig();
     }
 
     private void updateFonts(float baseSize) {
