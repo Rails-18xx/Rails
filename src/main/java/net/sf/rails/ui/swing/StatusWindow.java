@@ -1,4 +1,5 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/18xx/rails/ui/swing/StatusWindow.java,v 1.46 2010/06/15 20:16:54 evos Exp $*/
+/* $Header: /Users/blentz/rails_rcs/cvs/
+/rails/ui/swing/StatusWindow.java,v 1.46 2010/06/15 20:16:54 evos Exp $*/
 package net.sf.rails.ui.swing;
 
 import java.awt.*;
@@ -323,14 +324,12 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         menuItem = new JCheckBoxMenuItem(LocalText.getText("MARKET"));
         menuItem.setName(MARKET_CMD);
         menuItem.setActionCommand(MARKET_CMD);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
 
         menuItem = new JCheckBoxMenuItem(LocalText.getText("MAP"));
         menuItem.setName(MAP_CMD);
         menuItem.setActionCommand(MAP_CMD);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
 
@@ -339,16 +338,20 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         menuItem.setActionCommand(REPORT_CMD);
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
-
+        
+        optMenu.addSeparator();
         // Toggle for the new modular visualization
-        JCheckBoxMenuItem toggleStatusItem = new JCheckBoxMenuItem("Modular Status", useAltStatus);
+        JCheckBoxMenuItem toggleStatusItem = new JCheckBoxMenuItem("Experimental Status View (games.18xx)",
+                useAltStatus);
         toggleStatusItem.addActionListener(e -> {
             useAltStatus = toggleStatusItem.isSelected();
             swapGameStatus();
         });
         optMenu.add(toggleStatusItem);
 
- // Read initial state directly from central config mapping
+                optMenu.addSeparator();
+
+        // Read initial state directly from central config mapping
         boolean initialWorthState = Util.parseBoolean(net.sf.rails.common.Config.get("statusWindow.showPlayerWorth"));
         this.showPlayerWorth = initialWorthState;
         JCheckBoxMenuItem toggleWorthItem = new JCheckBoxMenuItem("Show Player Worth", initialWorthState);
@@ -367,20 +370,6 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
         optMenu.addSeparator();
 
-        // Map Settings
-        menuItem = new JCheckBoxMenuItem(LocalText.getText("HEX_NAMES"));
-        menuItem.setName("ToggleHexNames");
-        menuItem.setActionCommand("TOGGLE_HEX_NAMES");
-        menuItem.addActionListener(this);
-        optMenu.add(menuItem);
-
-        menuItem = new JCheckBoxMenuItem(LocalText.getText("HEX_NUMBERS"));
-        menuItem.setName("ToggleHexNumbers");
-        menuItem.setActionCommand("TOGGLE_HEX_NUMBERS");
-        menuItem.addActionListener(this);
-        optMenu.add(menuItem);
-
-        optMenu.addSeparator();
 
         // Font Settings
         menuItem = new JMenuItem(LocalText.getText("IncreaseFont", "Increase Text Size"));
@@ -391,7 +380,6 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
         menuItem = new JMenuItem(LocalText.getText("DecreaseFont", "Decrease Text Size"));
         menuItem.setActionCommand(FONT_DECREASE_CMD);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, shortcutMask));
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
 
@@ -400,19 +388,16 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         // Map Zoom Settings
         JMenuItem item = new JMenuItem(LocalText.getText("ZoomMapIn", "Zoom Map In"));
         item.setActionCommand(MAP_ZOOM_IN_CMD);
-        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, ActionEvent.CTRL_MASK));
         item.addActionListener(this);
         optMenu.add(item);
 
         item = new JMenuItem(LocalText.getText("ZoomMapOut", "Zoom Map Out"));
         item.setActionCommand(MAP_ZOOM_OUT_CMD);
-        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, ActionEvent.CTRL_MASK));
         item.addActionListener(this);
         optMenu.add(item);
 
         item = new JMenuItem(LocalText.getText("FitMapWindow", "Fit Map to Window"));
         item.setActionCommand(MAP_FIT_CMD);
-        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, ActionEvent.CTRL_MASK));
         item.addActionListener(this);
         optMenu.add(item);
 
@@ -586,6 +571,57 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             });
             developerMenu.add(saveJsonItem);
 
+            developerMenu.addSeparator();
+            JMenuItem nukeSettingsItem = new JMenuItem("Nuke User Settings (Hard Reset)");
+            nukeSettingsItem.setToolTipText("Deletes all local profiles and window settings to simulate a fresh install. REQUIRES RESTART.");
+            nukeSettingsItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int response = JOptionPane.showConfirmDialog(
+                            StatusWindow.this,
+                            "WARNING: This will permanently delete your local profiles, recent files history, and window settings.\n\n"
+                            + "This simulates a completely fresh installation for testing purposes.\n"
+                            + "The game will immediately exit after deletion. Are you sure?",
+                            "Confirm Hard Reset",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+
+                    if (response == JOptionPane.YES_OPTION) {
+                        try {
+                            File configDir = net.sf.rails.util.SystemOS.get().getConfigurationFolder(false);
+                            if (configDir != null && configDir.exists()) {
+                                // 1. Delete rails.recent
+                                File recent = new File(configDir, "rails.recent");
+                                if (recent.exists()) recent.delete();
+
+                                // 2. Delete Properties.xml (User Profile)
+                                File props = new File(configDir, "Properties.xml");
+                                if (props.exists()) props.delete();
+
+                                // 3. Delete windowSettings folder
+                                File windowSettingsDir = new File(configDir, "windowSettings");
+                                if (windowSettingsDir.exists()) {
+                                    for (File f : windowSettingsDir.listFiles()) {
+                                        f.delete();
+                                    }
+                                    windowSettingsDir.delete();
+                                }
+
+                                JOptionPane.showMessageDialog(StatusWindow.this,
+                                        "User settings wiped. The application will now close.",
+                                        "Reset Complete", JOptionPane.INFORMATION_MESSAGE);
+                                
+                                System.exit(0);
+                            }
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(StatusWindow.this,
+                                    "Error wiping settings: " + ex.getMessage(),
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            });
+            developerMenu.add(nukeSettingsItem);
         }
 
         // 10. HELP MENU
@@ -1460,7 +1496,6 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         }
     }
 
-    // --- START FIX ---
     private void swapGameStatus() {
         // 1. Create the new component based on the useAltStatus toggle
         gameStatus = createGameStatus();

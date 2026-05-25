@@ -531,6 +531,31 @@ class ConfigWindow extends JFrame {
             buttonPanel.add(deleteButton);
         }
 
+        // Add the Open Config Folder button for visibility and debugging
+        JButton openFolderButton = new JButton("Open Config Folder");
+        openFolderButton.setToolTipText("Opens the hidden OS folder where your profiles and saves are stored.");
+        openFolderButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        try {
+                            // Fetch the root configuration folder
+                            File configDir = net.sf.rails.util.SystemOS.get().getConfigurationFolder(false);
+                            if (configDir != null && configDir.exists()) {
+                                java.awt.Desktop.getDesktop().open(configDir);
+                            } else {
+                                JOptionPane.showMessageDialog(ConfigWindow.this,
+                                        "Configuration folder does not exist yet. Try saving a profile first.",
+                                        "Folder Not Found", JOptionPane.WARNING_MESSAGE);
+                            }
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(ConfigWindow.this,
+                                    "Could not open directory: " + ex.getMessage(),
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                });
+        buttonPanel.add(openFolderButton);
+        
         JButton closeButton = new JButton(LocalText.getText("CLOSE"));
         closeButton.addActionListener(
                 new ActionListener() {
