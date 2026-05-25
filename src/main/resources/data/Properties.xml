@@ -63,10 +63,9 @@
 		<Property name="money_format" type="STRING" />
 		<Property name="or.number_format" type="LIST" values="simple,composite" />
     </Section>
+
     <Section name="Appearance">
-<Property name="orPanel.showSpinner" type="LIST" values="no,yes" />
-        <Property name="map.route.highlight" type="BOOLEAN" />
-        <Property name="orPanel.revenue.suggest" type="BOOLEAN" />
+		<Property name="orPanel.showSpinner" type="BOOLEAN" />
 		<Property name="route.colour.1" type="COLOR"
 			initclass="net.sf.rails.ui.swing.hexmap.HexMap" initMethod="setRouteColours" />
 		<Property name="route.colour.2" type="COLOR"
