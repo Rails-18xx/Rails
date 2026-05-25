@@ -417,8 +417,8 @@ public class ORPanel extends GridPanel
             text = action.toString();
         }
 
-        btn.setText(text);
-
+        btn.setText(formatDynamicButtonText(text, null));
+        btn.setHorizontalAlignment(SwingConstants.CENTER);
         btn.setIcon(null);
 
         btn.setBackground(new Color(255, 255, 240));
@@ -429,7 +429,7 @@ public class ORPanel extends GridPanel
                 BorderFactory.createEmptyBorder(3, 5, 3, 5)));
 
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btn.setMaximumSize(new Dimension(getSidebarWidth() - scale(10), scale(30)));
+        btn.setMaximumSize(new Dimension(getSidebarWidth() - scale(20), scale(75)));
         btn.setPossibleAction(action);
         btn.setEnabled(true);
         btn.addActionListener(this);
@@ -779,15 +779,17 @@ public class ORPanel extends GridPanel
         }
 
         // ALWAYS evaluate Phase 5 (Special Actions) independently!
-        boolean hasSpecialActions = specialActionsButtonPanel != null
-                && specialActionsButtonPanel.getComponentCount() > 0;
+        boolean hasSpecialActions = (specialActionsButtonPanel != null
+                && specialActionsButtonPanel.getComponentCount() > 0) ||
+                (specialContainer != null && specialContainer.isVisible() && specialPanel != null
+                        && specialPanel.getComponentCount() > 0);
+
         if (hasSpecialActions) {
             applyPhaseStyle(phase5Panel, null, UITheme.ACTION_SKIP, UITheme.TRAIN_LIGHT, "Special Actions");
         } else {
             resetPhasePanel(phase5Panel, null);
         }
     }
-
 
     public static void updateSpinnerVisibilityFromConfig() {
         SwingUtilities.invokeLater(() -> {
@@ -800,22 +802,23 @@ public class ORPanel extends GridPanel
     public void updateSpinnerVisibility() {
         String configKey = "orPanel.showSpinner";
         String rawValue = net.sf.rails.common.Config.get(configKey);
-        
-        boolean showSpinner = (rawValue == null) || "yes".equalsIgnoreCase(rawValue) || "true".equalsIgnoreCase(rawValue);
-        
+
+        boolean showSpinner = (rawValue == null) || "yes".equalsIgnoreCase(rawValue)
+                || "true".equalsIgnoreCase(rawValue);
+
         if (revSpinner != null) {
             revSpinner.setVisible(showSpinner);
         }
         if (lblRoute != null) {
             lblRoute.setVisible(!showSpinner);
         }
-        
+
         if (revSpinner != null && revSpinner.getParent() != null) {
             revSpinner.getParent().invalidate();
             revSpinner.getParent().validate();
             revSpinner.getParent().repaint();
         }
-        
+
         if (sidebarPanel != null) {
             sidebarPanel.revalidate();
             sidebarPanel.repaint();
@@ -915,6 +918,112 @@ public class ORPanel extends GridPanel
         b.setFont(new Font("SansSerif", Font.PLAIN, 10));
         b.setMargin(new Insets(2, 2, 2, 2)); // Tight margins
         return b;
+    }
+
+    private String formatDynamicButtonText(String label, String subText) {
+        if (label == null || label.trim().isEmpty()) {
+            return "";
+        }
+
+        // Split CamelCase (e.g. "ReachDestination" -> "Reach Destination")
+        String spacedLabel = label.replaceAll("([a-z])([A-Z]+)", "$1 $2");
+
+        StringBuilder html = new StringBuilder();
+        // Remove fixed width, rely on native centering
+        html.append("<html><center>");
+        html.append("<b>").append(spacedLabel).append("</b>");
+
+        if (subText != null && !subText.trim().isEmpty()) {
+            html.append("<br><span style='font-size: 80%; font-weight: normal;'>");
+            html.append(subText);
+            html.append("</span>");
+        }
+
+        html.append("</center></html>");
+        return html.toString();
+    }
+
+    private void rebuildDynamicButtonTexts() {
+        if (specialPanel != null) {
+            for (Component c : specialPanel.getComponents()) {
+                if (c instanceof ActionButton) {
+                    ActionButton btn = (ActionButton) c;
+                    btn.setHorizontalAlignment(SwingConstants.CENTER);
+                    PossibleAction action = btn.getPossibleActions() != null && !btn.getPossibleActions().isEmpty()
+                            ? btn.getPossibleActions().get(0)
+                            : null;
+                    if (action != null) {
+                        String label = action.getButtonLabel();
+                        if (label == null || label.trim().isEmpty())
+                            label = action.toString();
+
+                        String subText = null;
+                        if (action instanceof UseSpecialProperty) {
+                            net.sf.rails.game.special.SpecialProperty sp = ((UseSpecialProperty) action)
+                                    .getSpecialProperty();
+                            if (sp != null) {
+                                try {
+                                    java.lang.reflect.Method m = sp.getClass().getMethod("getHelp");
+                                    subText = (String) m.invoke(sp);
+                                } catch (Exception e) {
+                                }
+                                if (subText == null || subText.trim().isEmpty()) {
+                                    try {
+                                        java.lang.reflect.Method m = sp.getClass().getMethod("getInfo");
+                                        subText = (String) m.invoke(sp);
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }
+                        }
+                        if (action instanceof BuyPrivate) {
+                            BuyPrivate bp = (BuyPrivate) action;
+                            label = "Buy " + bp.getPrivateCompany().getId() + " (" + bp.getMinimumPrice() + "-"
+                                    + bp.getMaximumPrice() + ")";
+                        }
+                        if (action instanceof GuiTargetedAction) {
+                            label = ((GuiTargetedAction) action).getButtonLabel();
+                        }
+                        btn.setText(formatDynamicButtonText(label, subText));
+                    }
+                }
+            }
+        }
+
+        if (specialActionsButtonPanel != null) {
+            for (Component c : specialActionsButtonPanel.getComponents()) {
+                if (c instanceof ActionButton) {
+                    ActionButton btn = (ActionButton) c;
+                    btn.setHorizontalAlignment(SwingConstants.CENTER);
+                    PossibleAction action = btn.getPossibleActions() != null && !btn.getPossibleActions().isEmpty()
+                            ? btn.getPossibleActions().get(0)
+                            : null;
+                    if (action != null) {
+                        String label = action.getButtonLabel();
+                        if (label == null || label.trim().isEmpty())
+                            label = action.toString();
+                        btn.setText(formatDynamicButtonText(label, null));
+                    }
+                }
+            }
+        }
+
+        if (trainButtonsPanel != null) {
+            for (Component c : trainButtonsPanel.getComponents()) {
+                if (c instanceof ActionButton) {
+                    ActionButton btn = (ActionButton) c;
+                    btn.setHorizontalAlignment(SwingConstants.CENTER);
+                    PossibleAction action = btn.getPossibleActions() != null && !btn.getPossibleActions().isEmpty()
+                            ? btn.getPossibleActions().get(0)
+                            : null;
+                    if (action != null && action instanceof BuyTrain) {
+                        String label = action.getButtonLabel().replace("Buy ", "").replace(" train", "")
+                                .replace(" from ", " - ").replace(" for ", " - ");
+                        btn.setText(formatDynamicButtonText(label, null));
+                    }
+                }
+            }
+        }
     }
 
     public static void forceGlobalCleanup() {
@@ -1083,9 +1192,7 @@ public class ORPanel extends GridPanel
 
     private double localFontScale = -1.0;
 
-
-
-public double getFontScale() {
+    public double getFontScale() {
         if (localFontScale < 0) {
             // Read directly from the persistent window settings file
             if (orWindow != null && orWindow.getGameUIManager() != null) {
@@ -1100,8 +1207,10 @@ public double getFontScale() {
 
     public void adjustFontScale(double delta) {
         localFontScale = getFontScale() + delta;
-        if (localFontScale < 0.5) localFontScale = 0.5;
-        if (localFontScale > 3.0) localFontScale = 3.0;
+        if (localFontScale < 0.5)
+            localFontScale = 0.5;
+        if (localFontScale > 3.0)
+            localFontScale = 3.0;
 
         // Save directly to the window settings
         if (orWindow != null && orWindow.getGameUIManager() != null) {
@@ -1112,8 +1221,6 @@ public double getFontScale() {
 
         updateScale();
     }
-
-
 
     public int scale(int value) {
         return (int) (value * getFontScale());
@@ -1185,6 +1292,17 @@ public double getFontScale() {
         if (btnRevSplit != null)
             btnRevSplit.setFont(new Font("SansSerif", Font.BOLD, scale(12)));
 
+        if (lblCompanyInfo != null) {
+            String text = lblCompanyInfo.getText();
+            if (text != null && text.contains("<font size='6'>")) {
+                // Approximate HTML size scaling (HTML sizes 1-7 don't scale linearly, so we
+                // adjust font directly if possible, or leave HTML alone and scale wrapper)
+                // Since JLabel with HTML ignores setFont(), we strip HTML or dynamically
+                // rewrite the tags if needed.
+                // For now, we scale non-HTML labels and leave the HTML dynamic re-writes to the
+                // updateSidebarData method.
+            }
+        }
         if (lblCash != null)
             lblCash.setFont(new Font("SansSerif", Font.BOLD, scale(22)));
         if (lblLoans != null)
@@ -1206,7 +1324,7 @@ public double getFontScale() {
         if (specialPanel != null) {
             for (Component c : specialPanel.getComponents()) {
                 if (c instanceof ActionButton) {
-                    ((ActionButton) c).setMaximumSize(new Dimension(sw - scale(20), scale(60)));
+                    ((ActionButton) c).setMaximumSize(new Dimension(sw - scale(20), scale(75)));
                     c.setFont(new Font("SansSerif", Font.BOLD, scale(12)));
                 }
             }
@@ -1215,8 +1333,9 @@ public double getFontScale() {
         if (specialActionsButtonPanel != null) {
             for (Component c : specialActionsButtonPanel.getComponents()) {
                 if (c instanceof ActionButton) {
-                    ((ActionButton) c).setMaximumSize(new Dimension(sw - scale(10), scale(30)));
-                    c.setFont(new Font("SansSerif", Font.BOLD, scale(10)));
+                    ((ActionButton) c).setMaximumSize(new Dimension(sw - scale(10), scale(45)));
+                    c.setFont(new Font("SansSerif", Font.BOLD, scale(12))); // Inherited scaled font
+
                 }
             }
         }
@@ -1224,7 +1343,7 @@ public double getFontScale() {
         if (trainButtonsPanel != null) {
             for (Component c : trainButtonsPanel.getComponents()) {
                 if (c instanceof ActionButton) {
-                    ((ActionButton) c).setMaximumSize(new Dimension(sw - scale(10), scale(30)));
+                    ((ActionButton) c).setMaximumSize(new Dimension(sw - scale(10), scale(45)));
                     c.setFont(new Font("SansSerif", Font.BOLD, scale(12)));
                 }
             }
@@ -1233,7 +1352,11 @@ public double getFontScale() {
         if (sidebarPanel != null) {
             sidebarPanel.revalidate();
             sidebarPanel.repaint();
+
         }
+        rebuildDynamicButtonTexts();
+        // Force a data refresh to rebuild HTML labels with the new scale
+        updateSidebarData();
         if (orWindow != null && orWindow.getContentPane() != null) {
             orWindow.getContentPane().revalidate();
             orWindow.getContentPane().repaint();
@@ -1303,29 +1426,6 @@ public double getFontScale() {
         cashPanel = createReadoutPanel("Treasury", lblCash);
         sidebarPanel.add(cashPanel);
         sidebarPanel.add(Box.createVerticalStrut(5));
-
-        // 3. SPECIAL CONTAINER
-        specialContainer = new JPanel(new BorderLayout()) {
-            @Override
-            public Dimension getMaximumSize() {
-                Dimension pref = getPreferredSize();
-                return new Dimension(getSidebarWidth(), pref.height);
-            }
-        };
-        specialContainer.setOpaque(false);
-        specialContainer.setVisible(false);
-        
-    
-        specialContainer.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(BG_DETAILS), "",
-                TitledBorder.LEFT, TitledBorder.TOP, FONT_HEADER));
-
-        specialPanel = new JPanel();
-        specialPanel.setLayout(new BoxLayout(specialPanel, BoxLayout.Y_AXIS));
-        specialPanel.setOpaque(false);
-        specialContainer.add(specialPanel, BorderLayout.CENTER);
-        sidebarPanel.add(specialContainer);
-        // No fixed strut here, visibility controls spacing
 
         // 4. Phase 1 (Tile)
         phase1Panel = createPhasePanel("1. Build Track");
@@ -1414,13 +1514,6 @@ public double getFontScale() {
         routeContainer.add(Box.createHorizontalGlue());
         divBox.add(routeContainer);
 
-
-
-     
-     
-     
-     
-     
         revDisplayPanel.add(divBox);
 
         if (hasDirectCompanyIncomeInOR) {
@@ -1493,11 +1586,30 @@ public double getFontScale() {
 
         // 7.5 Phase 5 (Special Actions)
         phase5Panel = createPhasePanel("5. Special Actions");
+        phase5Panel.add(Box.createVerticalStrut(5));
+
+        specialContainer = new JPanel(new BorderLayout()) {
+            @Override
+            public Dimension getMaximumSize() {
+                Dimension pref = getPreferredSize();
+                return new Dimension(getSidebarWidth(), pref.height);
+            }
+        };
+        specialContainer.setOpaque(false);
+        specialContainer.setVisible(false);
+        specialContainer.setBorder(BorderFactory.createEmptyBorder());
+
+        specialPanel = new JPanel();
+        specialPanel.setLayout(new BoxLayout(specialPanel, BoxLayout.Y_AXIS));
+        specialPanel.setOpaque(false);
+        specialContainer.add(specialPanel, BorderLayout.CENTER);
+        phase5Panel.add(specialContainer);
+
         specialActionsButtonPanel = new JPanel();
         specialActionsButtonPanel.setLayout(new BoxLayout(specialActionsButtonPanel, BoxLayout.Y_AXIS));
         specialActionsButtonPanel.setOpaque(false);
-        phase5Panel.add(Box.createVerticalStrut(5));
         phase5Panel.add(specialActionsButtonPanel);
+
         sidebarPanel.add(phase5Panel);
         sidebarPanel.add(Box.createVerticalStrut(5));
 
@@ -1560,11 +1672,6 @@ public double getFontScale() {
         p.setMaximumSize(new Dimension(getSidebarWidth(), scale(READOUT_PANEL_HEIGHT)));
         return p;
     }
-
-
-
-
-
 
     private JPanel createPhasePanel(String title) {
         // Use an anonymous class to override sizing behavior dynamically
@@ -1960,7 +2067,7 @@ public double getFontScale() {
             if (orUIManager != null && orUIManager.getMap() != null) {
                 orUIManager.getMap().setDynamicHexBonusCache(revenueAdapter.getDynamicHexBonusCache());
             }
-            
+
             revenueThread = new Thread(revenueAdapter);
             revenueThread.start();
         } else {
@@ -2062,7 +2169,7 @@ public double getFontScale() {
             removeAll();
             if (c != null && count > 0)
                 for (int i = 0; i < count; i++)
-                    add(new JLabel(new TokenIcon(24, c.getFgColour(), c.getBgColour(), c.getId())));
+                    add(new JLabel(new TokenIcon(scale(24), c.getFgColour(), c.getBgColour(), c.getId())));
             revalidate();
             repaint();
         }
@@ -2070,7 +2177,7 @@ public double getFontScale() {
 
     private class TrainDisplayPanel extends JPanel {
         // Visual Constants
-        private final Dimension DIM_TRAIN_CARD = new Dimension(60, 40);
+        // Dynamically scaled dimensions
         private final Color BG_CARD_PASSIVE = new Color(255, 255, 240); // Beige
 
         // Dummy group to satisfy ClickField constructor constraints
@@ -2120,6 +2227,10 @@ public double getFontScale() {
                     String text = trains.get(i);
                     card.setCustomLabel(text);
                     card.setBackground(BG_CARD_PASSIVE);
+
+                    card.setFont(new Font("SansSerif", Font.BOLD, scale(12)));
+                    card.setPreferredSize(new Dimension(scale(60), scale(30)));
+
                     card.setBorder(BorderFactory.createCompoundBorder(
                             BorderFactory.createLineBorder(Color.BLACK, 1),
                             BorderFactory.createEmptyBorder(1, 1, 1, 1)));
@@ -2127,6 +2238,8 @@ public double getFontScale() {
                     // Empty Slot (Placeholder)
                     card.setCustomLabel("_");
                     card.setBackground(new Color(240, 240, 240));
+                    card.setFont(new Font("SansSerif", Font.PLAIN, scale(12)));
+                    card.setPreferredSize(new Dimension(scale(60), scale(30)));
                     card.setBorder(BorderFactory.createCompoundBorder(
                             BorderFactory.createLineBorder(Color.GRAY, 1),
                             BorderFactory.createEmptyBorder(1, 1, 1, 1)));
@@ -2140,6 +2253,8 @@ public double getFontScale() {
                 RailCard card = new RailCard(pc, dummyGroup);
                 card.setCompactMode(true);
                 card.setOpaque(true);
+                card.setFont(new Font("SansSerif", Font.BOLD, scale(11)));
+                card.setPreferredSize(new Dimension(scale(60), scale(30)));
                 card.setBackground(new Color(255, 235, 235)); // Pinkish for Privates
                 card.setPrivateCompanyTooltip(pc);
                 if (orUIManager != null) {
@@ -2163,7 +2278,9 @@ public double getFontScale() {
         ActionButton btn = new ActionButton(RailsIcon.BUY_TRAIN);
         String text = action.getButtonLabel().replace("Buy ", "").replace(" train", "").replace(" from ", " - ")
                 .replace(" for ", " - ");
-        btn.setText(text);
+
+        btn.setText(formatDynamicButtonText(text, null));
+        btn.setHorizontalAlignment(SwingConstants.CENTER);
         btn.setIcon(null);
 
         // Match RailCard Styling
@@ -2175,7 +2292,7 @@ public double getFontScale() {
                 BorderFactory.createEmptyBorder(3, 5, 3, 5)));
 
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btn.setMaximumSize(new Dimension(getSidebarWidth() - scale(10), scale(30)));
+        btn.setMaximumSize(new Dimension(getSidebarWidth() - scale(10), scale(45)));
         btn.setPossibleAction(action);
         btn.addActionListener(this);
         if (trainButtonsPanel != null) {
@@ -2406,9 +2523,9 @@ public double getFontScale() {
 
             // TOP LABEL: Company Info ONLY
             String topText = "<html><center>" +
-                    "<font face='SansSerif' size='6'><b>" + orComp.getId() + "</b></font>" +
+                    "<span style='font-family: SansSerif; font-size: " + scale(24) + "px; font-weight: bold;'>"
+                    + orComp.getId() + "</span>" +
                     "</center></html>";
-
             lblCompanyInfo.setText(topText);
 
             lblCompanyInfo.setBackground(headerBg);
@@ -2420,7 +2537,8 @@ public double getFontScale() {
 
             if (lblPlayerInfo != null) {
                 lblPlayerInfo.setText(
-                        "<html><center><font face='SansSerif' size='5'>" + playerInfo + "</font></center></html>");
+                        "<html><center><span style='font-family: SansSerif; font-size: " + scale(18) + "px;'>"
+                                + playerInfo + "</span></center></html>");
 
                 lblPlayerInfo.setBackground(headerBg);
                 lblPlayerInfo.setForeground(headerFg);
@@ -2430,8 +2548,9 @@ public double getFontScale() {
 
             // BOTTOM LABEL: Instruction
             // Reverted to match Company Logo colors (Unified Header)
-            String bottomText = "<html><center><font face='SansSerif' size='4'><b>" + instruction
-                    + "</b></font></center></html>";
+            String bottomText = "<html><center><span style='font-family: SansSerif; font-size: " + scale(14)
+                    + "px; font-weight: bold;'>" + instruction
+                    + "</span></center></html>";
 
             lblPhaseInstruction.setText(bottomText);
 
@@ -2765,23 +2884,11 @@ public double getFontScale() {
         }
 
         if (!label.toLowerCase().startsWith("<html>")) {
-            StringBuilder html = new StringBuilder();
-            html.append("<html><center><div style='width: 155px; word-wrap: break-word; text-align: center;'>");
-            html.append("<b style='font-size: 12px;'>").append(label).append("</b>");
-
-            if (subText != null && !subText.trim().isEmpty()) {
-                // Inject the XML rule description on a second line.
-                // Color inherits from the button's dynamic text color to maintain contrast.
-                html.append("<br><span style='font-size: 10px; font-weight: normal;'>");
-                html.append(subText);
-                html.append("</span>");
-            }
-
-            html.append("</div></center></html>");
-            btn.setText(html.toString());
+            btn.setText(formatDynamicButtonText(label, subText));
         } else {
             btn.setText(label);
         }
+        btn.setHorizontalAlignment(SwingConstants.CENTER);
 
         btn.setPossibleAction(action);
         btn.setEnabled(true);
@@ -3197,8 +3304,9 @@ public double getFontScale() {
 
     // ... (lines of unchanged context code) ...
 
-   public void handleEnterPress() {
-        // Prioritize the explicitly set default button to restore expected 'Enter' behavior
+    public void handleEnterPress() {
+        // Prioritize the explicitly set default button to restore expected 'Enter'
+        // behavior
         if (currentDefaultButton != null && currentDefaultButton.isVisible() && currentDefaultButton.isEnabled()) {
             currentDefaultButton.doClick();
             return;
