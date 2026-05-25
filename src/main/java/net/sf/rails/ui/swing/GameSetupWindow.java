@@ -42,11 +42,9 @@ public class GameSetupWindow extends JDialog {
     private final JButton loadButton = new JButton(LocalText.getText("LoadGame"));
     private final JButton optionButton = new JButton(LocalText.getText("OPTIONS"));
     private final JButton creditsButton = new JButton(LocalText.getText("CREDITS"));
-    private final JButton configureButton = new JButton(LocalText.getText("CONFIG"));
     private final JButton randomizeButton = new JButton(LocalText.getText("RandomizePlayers"));
     private final JButton timeOptionsButton = new JButton(LocalText.getText("TIME_SETTINGS", "Time Settings"));
 
-    private final JComboBox<String> configureBox = new JComboBox<>();
 
     // State tracking
     private final List<GameCard> gameCards = new ArrayList<>();
@@ -73,7 +71,6 @@ public class GameSetupWindow extends JDialog {
         initLayout();
         GameInfo selectedGame = initGameList();
         initPlayersPane(selectedGame);
-        initConfigBox();
 
         this.setMinimumSize(new Dimension(950, 750));
         this.pack();
@@ -81,12 +78,13 @@ public class GameSetupWindow extends JDialog {
         this.setVisible(false);
     }
 
+    
+
     private void initialize() {
         newButton.setMnemonic(KeyEvent.VK_N);
         loadButton.setMnemonic(KeyEvent.VK_L);
         optionButton.setMnemonic(KeyEvent.VK_O);
         creditsButton.setMnemonic(KeyEvent.VK_E);
-        configureButton.setMnemonic(KeyEvent.VK_C);
         randomizeButton.setMnemonic(KeyEvent.VK_R);
         timeOptionsButton.setMnemonic(KeyEvent.VK_T);
 
@@ -106,15 +104,12 @@ public class GameSetupWindow extends JDialog {
         loadButton.addActionListener(controller.getLoadAction());
         optionButton.addActionListener(controller.getOptionPanelAction());
         creditsButton.addActionListener(controller.getCreditsAction());
-        configureButton.addActionListener(controller.getConfigureAction());
         randomizeButton.addActionListener(this::performRandomizationEffect);
         timeOptionsButton.addActionListener(controller.getTimeOptionsAction());
 
         // Setup Buttons (Vertical layout for the right side)
         buttonPane.setLayout(new GridLayout(0, 1, 5, 5));
         buttonPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 0));
-        buttonPane.add(configureBox);
-        buttonPane.add(configureButton);
         buttonPane.add(timeOptionsButton);
         buttonPane.add(optionButton);
         buttonPane.add(loadButton);
@@ -263,15 +258,7 @@ public class GameSetupWindow extends JDialog {
 
     }
 
-    private void initConfigBox() {
-        final ConfigManager cm = ConfigManager.getInstance();
-        for (String profile : cm.getProfiles()) {
-            configureBox.addItem(profile);
-        }
-        configureBox.setSelectedItem(cm.getActiveProfile());
 
-        configureBox.addItemListener(arg0 -> cm.changeProfile((String) configureBox.getSelectedItem()));
-    }
 
     public void toggleOptions() {
         if (optionsPane.isVisible()) {
@@ -617,15 +604,7 @@ public class GameSetupWindow extends JDialog {
             } catch (Exception e) {
                 org.slf4j.LoggerFactory.getLogger(GameSetupWindow.class).error("Error loading roster file", e);
             }
-        } else {
-            model.addElement("Stefan Bleeck");
-            model.addElement("Ralf Arenmann");
-            model.addElement("Rainer Kluge");
-            model.addElement("Bjoern Ebeling");
-            model.addElement("Mark Arnd");
-            model.addElement("Stefan Boehme");
-            model.addElement("Christian Stieling");
-        }
+        } 
     }
 
     private void saveRoster(DefaultListModel<String> model) {
@@ -717,17 +696,6 @@ public class GameSetupWindow extends JDialog {
         }
     }
 
-    public void addConfigureProfile(String profile) {
-        configureBox.addItem(profile);
-    }
-
-    public void removeConfigureProfile(String profile) {
-        configureBox.removeItem(profile);
-    }
-
-    public void changeConfigureProfile(String profile) {
-        configureBox.setSelectedItem(profile);
-    }
 
     private void performRandomizationEffect(ActionEvent originalEvent) {
         randomizeButton.setEnabled(false);
@@ -816,4 +784,17 @@ public class GameSetupWindow extends JDialog {
 
         timer.start();
     }
+
+    public void addConfigureProfile(String profile) {
+        // No-op placeholder to preserve interface compilation bindings across controller updates
+    }
+
+    public void removeConfigureProfile(String profile) {
+        // No-op placeholder to preserve interface compilation bindings across controller updates
+    }
+
+    public void changeConfigureProfile(String profile) {
+        // No-op placeholder to preserve interface compilation bindings across controller updates
+    }
+
 }
