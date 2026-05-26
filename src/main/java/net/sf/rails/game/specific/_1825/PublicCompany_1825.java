@@ -21,7 +21,7 @@ public final class PublicCompany_1825 extends PublicCompany {
     }
 
     @Override
-    public void payout(int amount) {
+    public void adjustPriceOnPayout(int amount) {
         if (amount == 0) return;
         //Get current price
         int curSharePrice = currentPrice.getPrice().getPrice();

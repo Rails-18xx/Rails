@@ -20,84 +20,23 @@ public class TrainRunModifier
 
     private static final Logger log = LoggerFactory.getLogger(TrainRunModifier.class);
 
-    private int cmdValue;
-    private int cmdDirectValue;
-    private int portExtraValue;
-    private int offMapExtraValue;
     private PublicCompany company;
-    private Phase phase;
+    private int cmdDirectValue;
 
     @Override
     public boolean prepareModifier(RevenueAdapter revenueAdapter) {
         company = revenueAdapter.getCompany();
-        phase = revenueAdapter.getPhase();
         cmdDirectValue = 0;
         return true;
     }
 
-    @Override
     public int predictionValue(List<RevenueTrainRun> runs) {
 
-        int predictionValue = 0;
-        for (RevenueTrainRun run : runs) {
-            Train train = run.getTrain().getRailsTrain();
-            boolean isGoods = train.getCategory().equalsIgnoreCase("goods");
-            int majors = 0;
-            int value = 0;
-            for (NetworkVertex v : run.getRunVertices()) {
-                switch (v.getStop().getRelatedStation().getType()) {
-                    case PORT:
-                        NetworkVertex port = v;
-                        NetworkVertex city = getCityOfPort(v, run);
-                        //value += port.getValue();
-                        if (isGoods) {
-                            value += port.getValue() + city.getValue();
-                        }
-                        break;
-                    case MINE: // CMD
-                        if (isGoods) {
-                            //int factor = v.getStop().hasTokenOf(company) ? 2 : 1;
-                            if (v.getStop().hasTokenOf(company)) {
-                                value += 20 * train.getMajorStops();
-                            }
-                        }
-                        break;
-                    case OFFMAP:
-                        //int factor = v.getStop().hasTokenOf(company) ? 2 : 1;
-                        if (v.getStop().hasTokenOf(company)) {
-                            value += v.getValue();
-                        }
-                        majors++;
-                        break;
-                    case TOWN: // mine
-                        //if (isGoods) value += v.getValue();
-                        break;
-                    case CITY:
-                        majors++;
-                    default:
-                        //value += v.getValue();
-                }
-            }
-            if (majors >= (isGoods ? 1 : 2)) { // Otherwise no valid run
-                log.debug("Prediction for {} {} is {}",
-                        run.getTrain().getRailsTrain(), run.getRunVertices(), value);
-
-                predictionValue += value;
-            } else {
-                log.debug ("Prediction for {} {} is 0 - not a valid run",
-                        run.getTrain().getRailsTrain(), run.getRunVertices());
-            }
-        }
-        log.debug ("Total extra prediction={}", predictionValue);
-        return predictionValue;
+        return 0;
     }
 
+    // FIXME The value calculations should use RevenueManager_18VA.
     private List<RevenueTrainRun> identifyInvalidRuns(List<RevenueTrainRun> runs) {
-
-        cmdValue = 0;
-        //cmdDirectValue = 0;
-        portExtraValue = 0;
-        offMapExtraValue = 0;
 
         List<NetworkVertex> vertices;
         List<RevenueTrainRun> invalidRuns = new ArrayList<>();
@@ -122,11 +61,7 @@ public class TrainRunModifier
                 log.debug("Skipped: no run");
                 continue;
             }
-            /*
-            log.debug(">>> Run {} {}: {}", i, t,
-                    run.prettyPrint(true)
-                            .replaceAll("\\n+", "")
-                            .replaceAll("\\s+", " "));*/
+
             String trainCategory = run.getTrain().getRailsTrain().getCategory();
             if (!Util.hasValue(trainCategory)) {
                 invalidRuns.add(run);
@@ -165,7 +100,7 @@ public class TrainRunModifier
             if (firstStationType == Stop.Type.PORT || lastStationType == Stop.Type.PORT) {
                 boolean portReached = false;
                 NetworkVertex port = firstStationType == Stop.Type.PORT ? firstVertex : lastVertex;
-                NetworkVertex city = getCityOfPort (port, run);
+                NetworkVertex city = getCityOfPort(port, run);
                 if (city != null && city.getStop().hasTokenOf(company) && majors >= 2) {
                     // An 1G-train cannot reach a port, which does not count as a separate station
                     portReached = true;
@@ -174,9 +109,6 @@ public class TrainRunModifier
                     invalidRuns.add(run);
                     log.debug("Skipped: port not reached");
                     continue;
-                } else if (isGoods && port != null && city != null) {
-                    // Calculate extra port value
-                    portExtraValue += port.getValue() + city.getValue();
                 }
             }
 
@@ -189,14 +121,11 @@ public class TrainRunModifier
                         continue;
                     }
                     cmdDirectValue = 0;
-                    log.debug(">>>>> DirRev set to 0");
                     directValueReset = false;
                 }
                 Stop cmdStop = (firstStationType == Stop.Type.MINE ? firstStop : lastStop);
                 int trainLevel = run.getTrain().getRailsTrain().getMajorStops();
-                //int baseValue = trainLevel * cmdStop.getHex().getCurrentValueForPhase(phase); // 20
                 int baseValue = trainLevel * 20;
-                cmdValue += baseValue;
                 if (isGoods && cmdStop.hasTokenOf(company)) {
                     // Calculate CMD direct value (i.e. what goes into treasury)
                     cmdDirectValue += baseValue;
@@ -205,24 +134,11 @@ public class TrainRunModifier
 
             // Temporary fixture to keep passenger trains off towns (i.e. mines)
             if (!isGoods && (firstStationType == Stop.Type.TOWN || lastStationType == Stop.Type.TOWN)) {
-                invalidRuns.add (run);
+                invalidRuns.add(run);
                 log.debug("Skipped: {} wrong category to mine (town)", trainCategory);
                 continue;
             }
-
-            // Calculate extra OffMap value
-            if (firstStationType == Stop.Type.OFFMAP || lastStationType == Stop.Type.OFFMAP
-                    && !phase.getId().equalsIgnoreCase("4D")) {
-                Stop offMapStop = (firstStationType == Stop.Type.OFFMAP ? firstStop : lastStop);
-                if (offMapStop.hasTokenOf(company)) {
-                    // Calculate offmap extra value
-                    offMapExtraValue += offMapStop.getHex().getCurrentValueForPhase(phase);
-                }
-            }
         }
-        log.debug("After run validation: port={} cmd={} cmdDirect={} offmap={}",
-                portExtraValue, cmdValue, cmdDirectValue, offMapExtraValue);
-
         return invalidRuns;
     }
 
@@ -235,10 +151,7 @@ public class TrainRunModifier
         for (RevenueTrainRun run:identifyInvalidRuns(runs)) {
             changeRevenues -= run.getRunValue();
         }
-        log.debug("Eval: inv={} port={} cmd={} direct={} off={}",
-                changeRevenues, portExtraValue, cmdValue, cmdDirectValue, offMapExtraValue);
-        // Note: total revenue must include direct revenue, which will be subtracted later
-        return changeRevenues + portExtraValue + cmdValue + cmdDirectValue + offMapExtraValue;
+        return 0;
     }
 
     @Override
@@ -273,36 +186,29 @@ public class TrainRunModifier
 
     @Override
     public String prettyPrint(RevenueAdapter adapter) {
-        StringBuilder b = new StringBuilder("");
-        if (portExtraValue != 0) b.append("Port bonus = ").append(portExtraValue);
-        if (cmdValue != 0) b.append(b.length() > 0 ? ",  " : "")
-                .append("CMD value = ").append(cmdValue);
-        if (cmdDirectValue != 0) b.append(b.length() > 0 ? ",  " : "")
-                .append("CMD treasury income = ").append(cmdDirectValue);
-        if (offMapExtraValue != 0) b.append(b.length() > 0 ? ",  " : "")
-                .append("OffMap bonus = ").append(offMapExtraValue);
-        return b.length() > 0 ? b.toString() : null;
+        return "";
     }
 
+
+    // Should if possible be merged with the similar method in RevenueManager_18VA.
+    // That one uses stops, this one vertices. Not sure what is better.
     private NetworkVertex getCityOfPort (NetworkVertex port, RevenueTrainRun run) {
-        if (port.getStop().getRelatedStation().getType() != Stop.Type.PORT) {
+        if (port.getStop().getType() != Stop.Type.PORT) {
             log.debug ("Error: {} is not a Port!", port);
             return null;
         }
         List<NetworkVertex> portVertices = new ArrayList<>(run.getRunVertices());
-        NetworkVertex city = null;
+
         if (run.getLastVertex() == port) {
             Collections.reverse(portVertices);
         }
         for (NetworkVertex vertex : portVertices) {
             if (!vertex.isSide()
-                    && vertex.getStop().getRelatedStation().getType() == Stop.Type.CITY) {
+                    && vertex.getStop().getType() == Stop.Type.CITY) {
                 // This must be the city where the port belongs to
-                city = vertex;
-                log.debug("Found city {} for port {}", city.getStop(), port.getStop());
-                break;
+                return vertex;
             }
         }
-        return city;
+        return null;
     }
 }

@@ -594,7 +594,7 @@ public class GameManager extends RailsManager implements Configurable, Owner {
                         if (currentPhase.getNumberOfOperatingRounds() != numOfORs.value()) {
                             numOfORs.set(currentPhase.getNumberOfOperatingRounds());
                         }
-                        log.info("Phase={} ORs={}", currentPhase.toText(), numOfORs);
+                        log.debug("Phase={} ORs={}", currentPhase.toText(), numOfORs);
 
                         // Create a new OperatingRound (never more than one Stock Round)
                         // OperatingRound.resetRelativeORNumber();
@@ -1933,6 +1933,16 @@ public class GameManager extends RailsManager implements Configurable, Owner {
 
     public boolean isTrainBlocked (Train train) {
         return blockedTrains.contains(train);
+    }
+
+    /** Stub for train-type dependent stop values.
+     * Used in 18VA for CMD value (see GameManager_18VA).
+     * The given default value of 0 is correct for 1837.
+     * @param train The train
+     * @return The train-dependent value of a stop
+     */
+    public int getValuePerTrain (Train train) {
+        return 0;
     }
 
 

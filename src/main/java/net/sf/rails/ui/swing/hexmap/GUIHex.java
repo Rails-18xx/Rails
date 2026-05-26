@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.rails.util.Util;
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayBonusToken;
 import net.sf.rails.algorithms.RevenueBonusTemplate;
@@ -37,6 +38,7 @@ import net.sf.rails.ui.swing.GUIGlobals;
 import net.sf.rails.ui.swing.GUIToken;
 
 import com.google.common.collect.Lists;
+import rails.game.action.PossibleORAction;
 
 
 /**
@@ -238,8 +240,8 @@ public class GUIHex implements Observer {
     private static final int MARKS_DIRTY_MARGIN = 4;
 
     // positions of offStation Tokens
-    private static final int[] offStationTokenX = new int[] { -11, 0 };
-    private static final int[] offStationTokenY = new int[] { -19, 0 };
+    private static final int[] offStationTokenX = new int[] { 11, -11 };
+    private static final int[] offStationTokenY = new int[] { -19, 19 };
 
     // static fields
     private final HexMap hexMap;
@@ -625,21 +627,40 @@ public class GUIHex implements Observer {
         }
     }
 
-    // FIXME: Where to paint more than one offStationTokens?
     private void paintOffStationTokens(Graphics2D g2) {
+        Util.breakIf(hex.getId(), "M6");
         int i = 0;
         for (BonusToken token : hex.getBonusTokens())  {
             HexPoint origin = dimensions.center.translate(offStationTokenX[i], offStationTokenY[i]);
             drawBonusToken(g2, token, origin);
             if (++i > 1) return;
-
         }
         // check for temporary token
         if (upgrade instanceof TokenHexUpgrade && ((TokenHexUpgrade) upgrade).getAction() instanceof LayBonusToken) {
             HexPoint origin = dimensions.center.translate(offStationTokenX[i], offStationTokenY[i]);
             BonusToken token = ((LayBonusToken)((TokenHexUpgrade) upgrade).getAction()).getToken();
             drawBonusToken(g2, token, origin);
+            if (++i > 1) return;
         }
+
+        // For 18VA: also check for off-station base tokens
+        for (BaseToken token : hex.getOffStationBaseTokens())  {
+            HexPoint origin = dimensions.center.translate(offStationTokenX[i], offStationTokenY[i]);
+            drawBaseToken(g2, token.getParent(), origin, dimensions.tokenDiameter);
+            if (++i > 1) return;
+        }
+        // check for temporary token
+        if (upgrade instanceof TokenHexUpgrade) {
+            TokenHexUpgrade tokenUpgrade = (TokenHexUpgrade) upgrade;
+            PossibleORAction action = ((TokenHexUpgrade) upgrade).getAction();
+            if (action instanceof LayBaseToken
+                    && ((LayBaseToken)action).getType() == LayBaseToken.NON_CITY) {
+                HexPoint origin = dimensions.center.translate(offStationTokenX[i], offStationTokenY[i]);
+                PublicCompany company = tokenUpgrade.getAction().getCompany();
+                drawBaseToken(g2, company, origin, dimensions.tokenDiameter);
+            }
+        }
+
     }
 
     private void drawBaseToken(Graphics2D g2, PublicCompany co, HexPoint center, double diameter) {

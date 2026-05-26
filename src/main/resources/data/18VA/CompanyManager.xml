@@ -1,14 +1,17 @@
 <?xml version="1.0"?>
 <CompanyManager>
 	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany">
-		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="2.0"/>
+		<Tradeable toCompany="yes" lowerPriceFactor="0.5" upperPriceFactor="1.5"/>
 	</CompanyType>
-	<CompanyType name="Public" class="net.sf.rails.game.PublicCompany">
+	<CompanyType name="Public" class="net.sf.rails.game.specific._18VA.PublicCompany_18VA">
 		<CanBuyPrivates/>
+		<CanUseSpecialProperties/>
 		<PoolPaysOut/>
+		<TreasuryDoesNotPayOut/>
 		<Float percentage="20"/>
 		<Capitalisation type="incremental"/>
 		<StockPrice par="no"/>
+		<Payout percPerJump="100"/>
 		<TreasuryCanHoldOwnShares maxPerc="80"/>
 		<BaseTokens>
 			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
@@ -22,17 +25,52 @@
 			<Certificate shares="1" number="5" available="no"/>
 		</Shares>
 		<Trains limit="2,1;4,3,2"/>
-        <CanUseSpecialProperties/>
 	</CompanyType>
 
 	<Company name="REA" type="Private" basePrice="40" revenue="10"
 			longname="Railway Express Agency">
+		<SpecialProperty condition="ifOwnedByCompany"
+						 when="tokenLayingStep"
+						 class="net.sf.rails.game.special.SpecialBonusTokenLay">
+			<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken"
+								  location="B5,C6,C8,D3,D7,E6,E8,G6,H3,H5,I4,K6,L3,M6,M8,O8"
+								  connected="yes" extra="yes">
+				<BonusToken name="Rea" value="10"/>
+			</SpecialBonusTokenLay>
+		</SpecialProperty>
+		<ClosingConditions>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
 	</Company>
+
 	<Company name="TIW" type="Private" basePrice="60" revenue="15"
-			longname="Tredegar Iron Works">
+			 longname="Tredegar Iron Works">
+		<SpecialProperty condition="ifOwnedByCompany" when="trainBuyingStep"
+						 class="net.sf.rails.game.special.SpecialTrainBuy">
+			<SpecialTrainBuy deduction="200" trainType="any"/>
+		</SpecialProperty>
+		<ClosingConditions>
+			<SpecialProperties condition="ifExercised"/>
+		</ClosingConditions>
 	</Company>
+
 	<Company name="PY" type="Private" basePrice="80" revenue="20"
 			longname="Potomac Yards">
+		<SpecialProperty condition="ifOwnedByCompany"
+						 when="tokenLayingStep"
+						 class="net.sf.rails.game.special.SpecialBaseTokenLay">
+			<SpecialBaseTokenLay
+					location="B5,C6,C8,D3,D7,E6,E8,G6,H3,H5,I4,K6,L3,M6,M8,O8,A8,F1,L1,O2,Q6"
+					extra="yes" free="yes" connected="no" create="yes" offCity="yes"/>
+		</SpecialProperty>
+		<SpecialProperty condition="ifOwnedByCompany"
+						 when="trainBuyingStep" transfer="toCompany"
+						 class="net.sf.rails.game.special.ExtraTrainRight">
+			<SpecialRight type="extraTrains" name="ExtraTrain" extraTrains="1"/>
+		</SpecialProperty>
+		<ClosingConditions>
+			<SpecialProperties condition="ifAnyExercised"/>
+		</ClosingConditions>
 	</Company>
 
 	<!-- Note two supported colour specification formats:
@@ -70,8 +108,8 @@
 			longname="Western Maryland Railway">
 		<Home hex="D3"/>
 	</Company>
-	<StartPacket roundClass="net.sf.rails.game.StartRound_1830">
-		<Bidding initial="0" minimum="5" increment="5"/>
+	<StartPacket roundClass="net.sf.rails.game.specific._18VA.StartRound_18VA">
+		<Bidding initial="0" minimum="0" increment="5"/>
 		<Item name="REA" type="Private" basePrice="40"/>
 		<Item name="TIW" type="Private" basePrice="60"/>
 		<Item name="PY" type="Private" basePrice="80"/>

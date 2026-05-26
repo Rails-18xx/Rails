@@ -13,10 +13,10 @@
 				</IfOption>
 			</PlayerShareLimit>
 			<BankPoolLimit percentage="50"/>
-			<StockRound>
+			<StockRound class="net.sf.rails.game.specific._18VA.StockRound_18VA">
 				<NoSaleInFirstSR/>
 			</StockRound>
-			<OperatingRound>
+			<OperatingRound class="net.sf.rails.game.specific._18VA.OperatingRound_18VA">
 				<EmergencyTrainBuying mustBuyCheapestTrain="no"
 					mayBuyFromCompany="yes"/>
 			</OperatingRound>
@@ -55,10 +55,10 @@
 			<Score towns="yes"/> <!-- would otherwise exclude ports as well -->
 		</Defaults>
 		<Defaults category="goods">
-			<Reach base="stops" countTowns="yes"/>
-			<Score towns="yes"/>
+			<Reach base="stops" countTowns="no"/>
+			<Score towns="yes"/><!-- Actually mines and ports-->
 		</Defaults>
-		<TrainType name="2/1G" quantity="6">
+		<TrainType name="2/1G" quantity="6" oneTrainPerTypePerTurn="yes">
 			<Train name="2" majorStops="2" cost="100"/>
 			<Train name="1G" category="goods" majorStops="1" cost="100"/>
 		</TrainType>
@@ -82,7 +82,7 @@
 			<Train name="5G" category="goods" majorStops="5" cost="600"/>
 			<NewPhase phaseName="6"/>
 		</TrainType>
-		<TrainType name="4D" majorStops="99" cost="800" quantity="10">
+		<TrainType name="4D" majorStops="4" cost="800" quantity="10">
 			<Score cities="double"/>
 			<NewPhase phaseName="4D"/>
 		</TrainType>
@@ -96,7 +96,7 @@
 			<Tiles colour="yellow"/>
 			<Privates sellingAllowed="no"/>
 			<OperatingRounds number="1"/>
-			<Trains tradingAllowed="yes"/>
+			<Trains onePerTypePerTurn="yes" tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="3">
 			<Tiles colour="yellow,green"/>
@@ -121,7 +121,7 @@
 			<Trains rusted="4/3G"/>
 		</Phase>
 	</Component>
-	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">
+	<Component name="RevenueManager" class="net.sf.rails.game.specific._18VA.RevenueManager_18VA">
 		<Modifier class="net.sf.rails.game.specific._18VA.TrainRunModifier" />
 	</Component>
 </ComponentManager>

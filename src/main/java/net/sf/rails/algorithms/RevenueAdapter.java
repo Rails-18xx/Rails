@@ -27,6 +27,7 @@ import org.jgrapht.graph.SimpleGraph;
  */
 public final class RevenueAdapter implements Runnable {
 
+    int totalRevenue;
     int specialRevenue;
 
     private static final Logger log = LoggerFactory.getLogger(RevenueAdapter.class);
@@ -655,12 +656,17 @@ public final class RevenueAdapter implements Runnable {
         rc.initRuns(startTrain, finalTrain);
         rc.executePredictions(startTrain, finalTrain);
         int value = rc.calculateRevenue(startTrain, finalTrain);
+        totalRevenue = value;
 
         return value;
     }
 
     public int getSpecialRevenue() {
         return specialRevenue;
+    }
+
+    public int getTotalRevenue() {
+        return totalRevenue;
     }
 
     public List<RevenueTrainRun> getOptimalRun() {

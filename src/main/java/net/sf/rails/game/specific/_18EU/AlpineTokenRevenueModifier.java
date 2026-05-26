@@ -68,9 +68,6 @@ public class AlpineTokenRevenueModifier implements RevenueDynamicModifier {
             //log.info("+++++ Checking run of train {} (optimal={})", run.getTrain(), optimalRuns);
             for (NetworkVertex vertex : run.getRunVertices()) {
                 hex = vertex.getHex();
-                if (hex == null) {
-                    log.info ("????? Hex = null");
-                }
                 if (alpineTokenHexes.contains(hex)) {
                     runHasAlpineToken = true;
                     //log.info ("+++++ {} has an Alpine token on hex {}, tile={}", company, hex, hex.getCurrentTile());

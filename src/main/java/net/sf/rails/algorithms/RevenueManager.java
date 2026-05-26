@@ -8,9 +8,7 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.common.parser.Configurable;
 import net.sf.rails.common.parser.ConfigurationException;
 import net.sf.rails.common.parser.Tag;
-import net.sf.rails.game.PublicCompany;
-import net.sf.rails.game.RailsManager;
-import net.sf.rails.game.RailsRoot;
+import net.sf.rails.game.*;
 import net.sf.rails.game.state.ArrayListState;
 
 import org.slf4j.Logger;
@@ -18,14 +16,16 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Coordinates and stores all elements related to revenue calulcation,
+ * Coordinates and stores all elements related to revenue calculation,
  * which are permanent.
  * The conversion of Rails elements is in the responsibility of the RevenueAdapter.
  * For each GameManager instance only one RevenueManager is created.
  */
-public final class RevenueManager extends RailsManager implements Configurable {
+public class RevenueManager extends RailsManager implements Configurable {
 
-    private int specialRevenue;
+    protected int specialRevenue;
+    protected RailsRoot root;
+    protected PhaseManager phaseManager;
 
     private static final Logger log = LoggerFactory.getLogger(RevenueManager.class);
 
@@ -49,6 +49,8 @@ public final class RevenueManager extends RailsManager implements Configurable {
      */
     public RevenueManager(RailsRoot parent, String id) {
         super(parent, id);
+        this.root = parent;
+        this.phaseManager = root.getPhaseManager();
     }
 
     public void configureFromXML(Tag tag) throws ConfigurationException {
@@ -206,7 +208,7 @@ public final class RevenueManager extends RailsManager implements Configurable {
      * @return revenue from active calculator
      */
     // FIXME: This does not fully cover all cases that needs the revenue from the calculator
-    // EV: indeed, it used in a different way in 1837, so beware!
+    // EV: indeed, it is used in a different way in 1837, so beware!
     // See RunToCoalMineModifier.
     int revenueFromDynamicCalculator(RevenueAdapter revenueAdapter) {
         return calculatorModifier.calculateRevenue(revenueAdapter);
@@ -271,7 +273,7 @@ public final class RevenueManager extends RailsManager implements Configurable {
      * @param revenueAdapter
      * @return pretty print output from all modifiers (both static and dynamic)
      */
-    String prettyPrint(RevenueAdapter revenueAdapter) {
+    protected String prettyPrint(RevenueAdapter revenueAdapter) {
         StringBuilder prettyPrint = new StringBuilder();
 
         for (RevenueStaticModifier modifier : activeStaticModifiers) {
@@ -291,5 +293,84 @@ public final class RevenueManager extends RailsManager implements Configurable {
         return prettyPrint.toString();
     }
 
+    /*---------------------------
+     * The below new section of RevenueManager provides a generic interface
+     * to obtain the actual revenue values of stops of any kind.
+     * Game-specific subclasses can provide special cases.
+     *
+     * These methods are used by
+     * - NetworkVertex, to initialise stop values per train
+     *   in getValueByTrain().
+     * - Dynamic modifiers (currently 18VA only, TBD).
+     *
+     * The methods getBaseRevenue() and getExtraRevenue() can be
+     * overridden in subclasses of RevenueManager (which is no longer final).
+     * This allows to specify the actual revenue value of stops
+     * per stop type, train type en company details, as needed.
+     *
+     * Method getExtraRevenue() was intended to return any extra values
+     * that should be returned by predictionValue() in dynamic modifiers.
+     * However, the flexibility of getBaseRevenue() should allow
+     * getExtraRevenue to return zero at all times.
+     *
+     * Revenues are returned as objects of the new Revenue class,
+     * which can carry both normal and special revenue values.
+     * Special values include the direct-to-treasury amounts
+     * of 1837 and 18VA (revenue from mines).
+     *
+     * Created 04/2023 by Erik Vos
+     */
 
+
+     /* 'Actual revenue' is the final value of a stop for a given
+     * train and company. This is the value with which NetworkVertex
+     * objects can b e initialized.
+     *
+     * @param stop The stop for which a revenue value is requested
+     * @param train A specific train that may affect the revenue,
+     * or null if the train does not matter
+     * @param company A specific company that may affect the revenue,
+     * or null if the company does not matter
+     * @return A new Revenue object
+     */
+    public final Revenue getActualRevenue(Stop stop, Train train, PublicCompany company) {
+        return getBaseRevenue (stop, train, company)
+                .addRevenue (getExtraRevenue(stop, train, company));
+    }
+
+    public final int getActualAsInteger (Stop stop, Train train, PublicCompany company) {
+        Revenue rev = getActualRevenue(stop, train, company);
+        return rev.getNormalRevenue() + rev.getSpecialRevenue();
+    }
+
+    /** Same as getRevenue(), but intended to get
+     * <i>additional</i> revenue vales, as are needed for
+     * the predictionValue() methods in dynamic modifiers.
+     *
+     * This method may not be really needed anymore, as getActualRevenue
+     * now provides the final value per NetworkVertex, rather than a loosely
+     * predicted one.
+     */
+    public Revenue getExtraRevenue (Stop stop, Train train, PublicCompany company) {
+
+        return new Revenue (0, 0);
+    }
+
+    public final int getExtraAsInteger (Stop stop, Train train, PublicCompany company) {
+        Revenue rev = getExtraRevenue(stop, train, company);
+        return rev.getNormalRevenue() + rev.getSpecialRevenue();
+    }
+
+    /** Return the revenue insofar it could be configured.
+     * This probably represents the former initial NetworkVertex revenue,
+     * and it still is the default for the new actual revenue.
+     *
+     * @param stop
+     * @param train
+     * @param company
+     * @return
+     */
+    protected Revenue getBaseRevenue (Stop stop, Train train, PublicCompany company) {
+        return new Revenue (stop.getValueForPhase(phaseManager.getCurrentPhase()),0);
+    }
 }

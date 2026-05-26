@@ -191,7 +191,7 @@ public class DiscardTrain extends PossibleORAction {
         // See the top Javadoc.
         if (idsChanged) {
             executedAction.fixIds(this);
-            log.info("+++ Action corrected to {}", executedAction);
+            log.info("Action corrected to {}", executedAction);
         }
 
         return options;

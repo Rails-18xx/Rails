@@ -22,6 +22,9 @@ public class SpecialBaseTokenLay extends SpecialProperty {
     private boolean requiresTile = false;
     private boolean requiresNoTile = false;
     private Forced forced = Forced.NO;
+    // Two specials for 18VA, where both will be set  to true
+    private boolean create = false;
+    private boolean offCity = false;
 
     public enum Forced {
         NO,
@@ -57,6 +60,9 @@ public class SpecialBaseTokenLay extends SpecialProperty {
         requiresTile = tokenLayTag.getAttributeAsBoolean("requiresTile", requiresTile);
         requiresNoTile = tokenLayTag.getAttributeAsBoolean("requiresNoTile", requiresNoTile);
         forcedText = tokenLayTag.getAttributeAsString("forced", null);
+        // For 18VA
+        create = tokenLayTag.getAttributeAsBoolean("create", create);
+        offCity = tokenLayTag.getAttributeAsBoolean("offCity", offCity);
 
         description = LocalText.getText("LayBaseTokenInfo",
                 connected ? LocalText.getText("aconnected")
@@ -109,6 +115,22 @@ public class SpecialBaseTokenLay extends SpecialProperty {
 
     public String getLocationCodeString() {
         return locationCodes;
+    }
+
+    public boolean isCreate() {
+        return create;
+    }
+
+    public void setCreate(boolean create) {
+        this.create = create;
+    }
+
+    public boolean isOffCity() {
+        return offCity;
+    }
+
+    public void setOffCity(boolean offCity) {
+        this.offCity = offCity;
     }
 
     // That's rather overdoing revealing descriptions, here below.

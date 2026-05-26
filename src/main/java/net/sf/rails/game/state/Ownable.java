@@ -1,6 +1,6 @@
 package net.sf.rails.game.state;
 
-public interface Ownable extends Item, Comparable<Ownable> {
+public interface  Ownable extends Item, Comparable<Ownable> {
    
     /**
      * Moves the ownable (item) to the new owner  

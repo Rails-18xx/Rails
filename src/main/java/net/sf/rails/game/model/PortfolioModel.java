@@ -467,9 +467,8 @@ public class PortfolioModel extends RailsModel {
                     if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))
                         && sp.isExecutionable()
                         && (!sp.isExercised() || includeExercised)
-                        && (getParent() instanceof Company
-                            && sp.isUsableIfOwnedByCompany() || getParent() instanceof Player
-                                                                && sp.isUsableIfOwnedByPlayer())) {
+                        && (getParent() instanceof Company && sp.isUsableIfOwnedByCompany()
+                            || getParent() instanceof Player && sp.isUsableIfOwnedByPlayer())) {
                         log.debug("Portfolio {} has SP {}", getParent().getId(), sp);
                         result.add((T) sp);
                     }
@@ -481,9 +480,8 @@ public class PortfolioModel extends RailsModel {
                 if ((clazz == null || clazz.isAssignableFrom(sp.getClass()))
                     && sp.isExecutionable()
                     && (!sp.isExercised() || includeExercised)
-                    && (getParent() instanceof Company
-                        && sp.isUsableIfOwnedByCompany() || getParent() instanceof Player
-                                                            && sp.isUsableIfOwnedByPlayer())) {
+                    && (getParent() instanceof Company && sp.isUsableIfOwnedByCompany()
+                        || getParent() instanceof Player && sp.isUsableIfOwnedByPlayer())) {
                     log.debug("Portfolio {} has persistent SP {}", getParent().getId(), sp);
                     result.add((T) sp);
                 }
