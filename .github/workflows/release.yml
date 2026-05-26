@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: temerin
-          java-version: 16
+          java-version: 17
           java-package: jdk
       - name: Execute Tests
         run: ./gradlew clean test
@@ -34,7 +34,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: temerin
-          java-version: 16
+          java-version: 17
           java-package: jdk
       - name: Get the version
         uses: little-core-labs/get-git-tag@v3.0.2
@@ -72,7 +72,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: temerin
-          java-version: 16
+          java-version: 17
           java-package: jdk
       - name: Get the version
         uses: little-core-labs/get-git-tag@v3.0.2
@@ -103,7 +103,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: temerin
-          java-version: 15
+          java-version: 17
           java-package: jdk
       - name: Get the version
         uses: little-core-labs/get-git-tag@v3.0.2
