@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: temurin
-          java-version: 16
+          java-version: 17
           java-package: jdk
       - name: Execute Tests
         run: ./gradlew clean test
@@ -35,7 +35,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: 16
+          java-version: 17
           java-package: jdk
       - name: Execute Tests
         run: ./gradlew clean test
@@ -56,7 +56,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: 16
+          java-version: 17
           java-package: jdk
       - name: Execute Tests
         run: ./gradlew clean test
@@ -75,7 +75,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: 16
+          java-version: 17
           java-package: jdk
       - name: Execute Tests
         run: ./gradlew clean test
