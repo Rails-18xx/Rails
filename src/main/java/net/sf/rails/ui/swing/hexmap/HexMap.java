@@ -331,7 +331,8 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                         hex.paintBars(g);
                     }
                 }
-                // 4. City Names Layer: Draw preprinted names on top of all base and upgraded tile background art
+                // 4. City Names Layer: Draw preprinted names on top of all base and upgraded
+                // tile background art
                 if (hexMap.getDisplayCityNames() && hexMap.getMapManager() != null) {
                     for (GUIHex hex : hexMap.getHexes()) {
                         Rectangle hexrect = hex.getBounds();
@@ -422,20 +423,22 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                 if (rectClip == null) {
                     return;
                 }
-// and the engine's active action buffer indicates we are in a tile building step.
+                // and the engine's active action buffer indicates we are in a tile building
+                // step.
                 boolean shouldPaint = false;
                 if (hexMap.getTrainPaths() != null) {
                     shouldPaint = true;
                 } else if (hexMap.getDisplayLastRevenueRuns() && hexMap.getOrUIManager() != null) {
                     rails.game.action.PossibleActions possibleActions = hexMap.getOrUIManager().getPossibleActions();
-                    if (possibleActions != null && !possibleActions.getType(rails.game.action.LayTile.class).isEmpty()) {
+                    if (possibleActions != null
+                            && !possibleActions.getType(rails.game.action.LayTile.class).isEmpty()) {
                         shouldPaint = true;
                     }
                 }
 
                 // paint train paths if evaluation passes
                 if (shouldPaint) {
-                                        Stroke oldStroke = g.getStroke();
+                    Stroke oldStroke = g.getStroke();
                     Color oldColor = g.getColor();
                     Stroke trainStroke = new BasicStroke((int) (STROKE_WIDTH * hexMap.getZoomFactor()),
                             STROKE_CAP, STROKE_JOIN);
@@ -546,8 +549,8 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
                     log.trace("hex ={}", hex);
                     Rectangle hexrect = hex.getBounds();
 
-// Expand the hit check area by 50 pixels in all directions.
-                    // This prevents oversized revenue numbers from being clipped or skipped 
+                    // Expand the hit check area by 50 pixels in all directions.
+                    // This prevents oversized revenue numbers from being clipped or skipped
                     // when they spill over hex boundaries.
                     if (g.hitClip(hexrect.x - 50, hexrect.y - 50, hexrect.width + 100, hexrect.height + 100)) {
                         hex.paintTokensAndText(g);
@@ -643,7 +646,7 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
     public void setDisplayCityNames(boolean display) {
         this.displayCityNames = display;
     }
-    
+
     private boolean displayLastRevenueRuns = true;
 
     public boolean getDisplayLastRevenueRuns() {
@@ -678,11 +681,11 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
             this.routeHexes.addAll(involvedHexes);
         }
 
-        // Force the entire map to repaint. This ensures the RoutesLayer and TokensTextsLayer 
+        // Force the entire map to repaint. This ensures the RoutesLayer and
+        // TokensTextsLayer
         // stay perfectly in sync, even if the paths span the entire board.
         repaintAll(new Rectangle(getSize()));
     }
-
 
     /** Set of hexes logically involved in the current train routes */
     private java.util.Set<MapHex> routeHexes = new java.util.HashSet<>();
@@ -1053,10 +1056,11 @@ public abstract class HexMap implements MouseListener, MouseMotionListener {
         return trainPaths;
     }
 
-public void setTrainPaths(List<GeneralPath> trainPaths) {
+    public void setTrainPaths(List<GeneralPath> trainPaths) {
         this.trainPaths = trainPaths;
 
-        // Force the entire map to repaint. This ensures the RoutesLayer and TokensTextsLayer 
+        // Force the entire map to repaint. This ensures the RoutesLayer and
+        // TokensTextsLayer
         // stay perfectly in sync, even if the paths span the entire board.
         repaintAll(new Rectangle(getSize()));
     }
@@ -1075,7 +1079,7 @@ public void setTrainPaths(List<GeneralPath> trainPaths) {
     public int getDynamicHexBonus(MapHex hex) {
         return dynamicHexBonusCache.getOrDefault(hex, 0);
     }
-    
+
     /**
      * Off-board tiles must be able to retrieve the current phase.
      *
@@ -1106,29 +1110,29 @@ public void setTrainPaths(List<GeneralPath> trainPaths) {
         GUIHex clickedHex = getHexContainingPoint(point);
         boolean rightClick = SwingUtilities.isRightMouseButton(arg0);
 
-       // Check if we are in the SelectionRound
-if (orUIManager != null && orUIManager.getGameUIManager() != null 
-    && orUIManager.getGameUIManager().getGameManager().getCurrentRound() instanceof net.sf.rails.game.round.SelectionRound) {
-    
-   if (clickedHex != null) {
-        // Submit via the GameManager's process method
-        orUIManager.getGameUIManager().getGameManager().process(
-            new net.sf.rails.game.action.SelectHexAction(
-                orUIManager.getGameUIManager().getRoot(), 
-                clickedHex.getHex().getId(), 
-                orUIManager.getGameUIManager().getGameManager().getCurrentPlayer()
-            )
-        );
-        
-        // Explicitly notify the manager
-rails.game.correct.CorrectionManager cm = orUIManager.getGameUIManager().getGameManager().getCorrectionManager(rails.game.correct.CorrectionType.CORRECT_MAP);
-if (cm instanceof rails.game.correct.MapCorrectionManager) {
-    ((rails.game.correct.MapCorrectionManager) cm).onHexSelected(clickedHex.getHex().getId());
-}
-        return; 
-    
-    }
-}
+        // Check if we are in the SelectionRound
+        if (orUIManager != null && orUIManager.getGameUIManager() != null
+                && orUIManager.getGameUIManager().getGameManager()
+                        .getCurrentRound() instanceof net.sf.rails.game.round.SelectionRound) {
+
+            if (clickedHex != null) {
+                // Submit via the GameManager's process method
+                orUIManager.getGameUIManager().getGameManager().process(
+                        new net.sf.rails.game.action.SelectHexAction(
+                                orUIManager.getGameUIManager().getRoot(),
+                                clickedHex.getHex().getId(),
+                                orUIManager.getGameUIManager().getGameManager().getCurrentPlayer()));
+
+                // Explicitly notify the manager
+                rails.game.correct.CorrectionManager cm = orUIManager.getGameUIManager().getGameManager()
+                        .getCorrectionManager(rails.game.correct.CorrectionType.CORRECT_MAP);
+                if (cm instanceof rails.game.correct.MapCorrectionManager) {
+                    ((rails.game.correct.MapCorrectionManager) cm).onHexSelected(clickedHex.getHex().getId());
+                }
+                return;
+
+            }
+        }
 
         // if no action/correction was expected on the map panel
         if (!orUIManager.hexClicked(clickedHex, selectedHex, rightClick)) {
@@ -1332,7 +1336,5 @@ if (cm instanceof rails.game.correct.MapCorrectionManager) {
         Rectangle r = new Rectangle(getSize());
         repaintAll(r);
     }
-
-    
 
 }

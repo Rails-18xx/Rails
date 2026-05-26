@@ -276,7 +276,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         ActionMenuItem actionMenuItem = new ActionMenuItem(LocalText.getText("SAVE"));
         actionMenuItem.setActionCommand(SAVE_CMD);
         actionMenuItem.setMnemonic(KeyEvent.VK_S);
-        actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
+        actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, shortcutMask));
         actionMenuItem.addActionListener(this);
         actionMenuItem.setEnabled(true);
         actionMenuItem.setPossibleAction(new GameAction(gameUIManager.getRoot(), GameAction.Mode.SAVE));
@@ -285,34 +285,35 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         actionMenuItem = new ActionMenuItem(LocalText.getText("Reload"));
         actionMenuItem.setActionCommand(RELOAD_CMD);
         actionMenuItem.setMnemonic(KeyEvent.VK_R);
-        actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.ALT_MASK));
+        actionMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, shortcutMask));
         actionMenuItem.addActionListener(this);
         actionMenuItem.setEnabled(true);
         actionMenuItem.setPossibleAction(new GameAction(gameUIManager.getRoot(), GameAction.Mode.RELOAD));
         fileMenu.add(actionMenuItem);
 
-        JMenuItem menuItem = new JMenuItem(LocalText.getText("AutoSaveLoad"));
-        menuItem.setActionCommand(AUTOSAVELOAD_CMD);
-        menuItem.setMnemonic(KeyEvent.VK_A);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
-        menuItem.addActionListener(this);
-        menuItem.setEnabled(true);
-        fileMenu.add(menuItem);
+        // JMenuItem menuItem = new JMenuItem(LocalText.getText("AutoSaveLoad"));
+        // menuItem.setActionCommand(AUTOSAVELOAD_CMD);
+        // menuItem.setMnemonic(KeyEvent.VK_A);
+        // menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
+        // menuItem.addActionListener(this);
+        // menuItem.setEnabled(true);
+        // fileMenu.add(menuItem);
 
         // Moved Config to File Menu
-        menuItem = new JMenuItem(LocalText.getText("CONFIG"));
-        menuItem.setName(CONFIG_CMD);
-        menuItem.setActionCommand(CONFIG_CMD);
-        menuItem.setMnemonic(KeyEvent.VK_C);
-        menuItem.addActionListener(this);
-        fileMenu.add(menuItem);
+        JMenuItem  ConvmenuItem = new JMenuItem(LocalText.getText("CONFIG"));
+        ConvmenuItem.setName(CONFIG_CMD);
+        ConvmenuItem.setActionCommand(CONFIG_CMD);
+        ConvmenuItem.setMnemonic(KeyEvent.VK_C);
+        ConvmenuItem.addActionListener(this);
+        fileMenu.add(ConvmenuItem);
 
-        menuItem = new JMenuItem(LocalText.getText("QUIT"));
-        menuItem.setActionCommand(QUIT_CMD);
-        menuItem.setMnemonic(KeyEvent.VK_Q);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.ALT_MASK));
-        menuItem.addActionListener(this);
-        fileMenu.add(menuItem);
+        JMenuItem QuitmenuItem = new JMenuItem(LocalText.getText("QUIT"));
+        QuitmenuItem.setName(QUIT_CMD);
+        QuitmenuItem.setActionCommand(QUIT_CMD);
+        QuitmenuItem.setMnemonic(KeyEvent.VK_Q);
+        QuitmenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, shortcutMask));
+        QuitmenuItem.addActionListener(this);
+        fileMenu.add(QuitmenuItem);
 
         menuBar.add(fileMenu);
 
@@ -321,7 +322,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         optMenu.setMnemonic(KeyEvent.VK_V);
 
         // Window Toggles
-        menuItem = new JCheckBoxMenuItem(LocalText.getText("MARKET"));
+        JMenuItem menuItem = new JCheckBoxMenuItem(LocalText.getText("MARKET"));
         menuItem.setName(MARKET_CMD);
         menuItem.setActionCommand(MARKET_CMD);
         menuItem.addActionListener(this);
@@ -342,7 +343,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         optMenu.addSeparator();
 
         // Toggle for the new modular visualization
-        JCheckBoxMenuItem toggleStatusItem = new JCheckBoxMenuItem("Experimental Status View (games.18xx)", useAltStatus);
+        JCheckBoxMenuItem toggleStatusItem = new JCheckBoxMenuItem("Experimental Status View (18xx.games)", useAltStatus);
         toggleStatusItem.addActionListener(e -> {
             useAltStatus = toggleStatusItem.isSelected();
             swapGameStatus();
@@ -380,6 +381,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
         menuItem = new JMenuItem(LocalText.getText("DecreaseFont", "Decrease Text Size"));
         menuItem.setActionCommand(FONT_DECREASE_CMD);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, shortcutMask));
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
 
@@ -439,7 +441,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         undoItem.setName(LocalText.getText("UNDO"));
         undoItem.setActionCommand(UNDO_CMD);
         undoItem.setMnemonic(KeyEvent.VK_U);
-        undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
+        undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, shortcutMask));
         undoItem.addActionListener(this);
         undoItem.setEnabled(false);
         moveMenu.add(undoItem);
@@ -447,9 +449,9 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         redoItem = new ActionMenuItem(LocalText.getText("REDO"));
         redoItem.setName(LocalText.getText("REDO"));
         redoItem.setActionCommand(REDO_CMD);
-        redoItem.setMnemonic(KeyEvent.VK_R);
+        redoItem.setMnemonic(KeyEvent.VK_Y);
         // Use proper shortcut mask for Redo as well
-        redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, shortcutMask));
+        redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, shortcutMask));
         redoItem.addActionListener(this);
         redoItem.setEnabled(false);
         moveMenu.add(redoItem);
@@ -767,30 +769,30 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
             correctionMenu.add(item);
         }
-        // Re-add the Debug Item (Must be done here because removeAll() clears it)
-        correctionMenu.addSeparator();
-        JMenuItem forceSkipItem = new JMenuItem("Force Skip Stuck Turn (Debug)");
-        forceSkipItem.setToolTipText("Use this ONLY if the game hangs on a closed company (Zombie Turn).");
-        forceSkipItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int response = JOptionPane.showConfirmDialog(
-                        StatusWindow.this,
-                        "This is a debug tool to bypass a stuck turn (e.g., a closed company acting).\n"
-                                + "It forcibly advances the internal company index.\n\n"
-                                + "Are you sure you want to force the engine to skip the current actor?",
-                        "Force Skip Confirmation",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
+        // // Re-add the Debug Item (Must be done here because removeAll() clears it)
+        // correctionMenu.addSeparator();
+        // JMenuItem forceSkipItem = new JMenuItem("Force Skip Stuck Turn (Debug)");
+        // forceSkipItem.setToolTipText("Use this ONLY if the game hangs on a closed company (Zombie Turn).");
+        // forceSkipItem.addActionListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         int response = JOptionPane.showConfirmDialog(
+        //                 StatusWindow.this,
+        //                 "This is a debug tool to bypass a stuck turn (e.g., a closed company acting).\n"
+        //                         + "It forcibly advances the internal company index.\n\n"
+        //                         + "Are you sure you want to force the engine to skip the current actor?",
+        //                 "Force Skip Confirmation",
+        //                 JOptionPane.YES_NO_OPTION,
+        //                 JOptionPane.WARNING_MESSAGE);
 
-                if (response == JOptionPane.YES_OPTION) {
-                    if (gameUIManager != null && gameUIManager.getGameManager() != null) {
-                        gameUIManager.getGameManager().forceSkipStuckCompany();
-                    }
-                }
-            }
-        });
-        correctionMenu.add(forceSkipItem);
+        //         if (response == JOptionPane.YES_OPTION) {
+        //             if (gameUIManager != null && gameUIManager.getGameManager() != null) {
+        //                 gameUIManager.getGameManager().forceSkipStuckCompany();
+        //             }
+        //         }
+        //     }
+        // });
+        // correctionMenu.add(forceSkipItem);
 
         if ("1870".equals(gameUIManager.getGameManager().getGameName())) {
             JMenuItem forceDestItem = new JMenuItem("Force Connection Run (1870)");

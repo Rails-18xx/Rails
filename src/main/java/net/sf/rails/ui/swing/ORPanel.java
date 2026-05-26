@@ -391,19 +391,19 @@ public class ORPanel extends GridPanel
 
     private void updatePhaseSpecifics() {
 
-        if (activePhase == 1 || activePhase == 2) {
+if (activePhase == 1 || activePhase == 2) {
             setTileBuildNumbers(true);
-            disableRoutesDisplay();
+            redrawRoutes();
         } else if (activePhase == 3) {
             setTileBuildNumbers(false);
             if (orWindow != null && orWindow.getMapPanel() != null)
                 orWindow.getMapPanel().clearOverlays();
-            updateCurrentRoutes(true);
+            redrawRoutes();
         } else {
             setTileBuildNumbers(false);
             if (orWindow != null && orWindow.getMapPanel() != null)
                 orWindow.getMapPanel().clearOverlays();
-            disableRoutesDisplay();
+            redrawRoutes();
             if (activePhase == 4 && btnTrainSkip != null)
                 btnTrainSkip.setEnabled(true);
         }
@@ -2066,6 +2066,7 @@ public class ORPanel extends GridPanel
 
             if (orUIManager != null && orUIManager.getMap() != null) {
                 orUIManager.getMap().setDynamicHexBonusCache(revenueAdapter.getDynamicHexBonusCache());
+                orUIManager.getMap().setTrainPaths(new java.util.ArrayList<>()); // Protect against NPE in HexMap
             }
 
             revenueThread = new Thread(revenueAdapter);
@@ -2345,7 +2346,7 @@ public class ORPanel extends GridPanel
     }
 
     public void redrawRoutes() {
-        // Check both the Config and our new dynamic toggle[cite: 1]
+        // Check both the Config and our new dynamic toggle
         boolean show = isDisplayCurrentRoutes();
         if (orUIManager != null && !orUIManager.isShowRevenueRoutes()) {
             show = false;
@@ -2353,6 +2354,9 @@ public class ORPanel extends GridPanel
 
         if (activePhase == 3 && show) { // Revenue phase
             updateCurrentRoutes(true);
+        } else if ((activePhase == 1 || activePhase == 2) && show && orUIManager != null && orUIManager.getMap() != null
+                && orUIManager.getMap().getDisplayLastRevenueRuns()) {
+            updateCurrentRoutes(false);
         } else {
             disableRoutesDisplay();
         }

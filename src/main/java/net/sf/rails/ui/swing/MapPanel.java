@@ -396,10 +396,7 @@ public class MapPanel extends JPanel {
                         .addActionListener(evFancy -> orUIManager.toggleFancyCityValues());
 
                 menu.addSeparator();
-                menu.add(new JCheckBoxMenuItem("Floating Tiles", orUIManager.isShowFloatingTiles()))
-                        .addActionListener(evFloat -> orUIManager.toggleFloatingTiles());
 
-                // --- START FIX ---
                 JCheckBoxMenuItem offboardItem = new JCheckBoxMenuItem("Offboard Values", map.getDisplayOffboardValues());
                 offboardItem.addActionListener(evOffboard -> {
                     map.setDisplayOffboardValues(!map.getDisplayOffboardValues());
@@ -416,8 +413,11 @@ public class MapPanel extends JPanel {
                 menu.add(cityNamesItem);
 
                 JCheckBoxMenuItem lastRunsItem = new JCheckBoxMenuItem("Last Revenue Runs", map.getDisplayLastRevenueRuns());
-                lastRunsItem.addActionListener(ae -> {
+lastRunsItem.addActionListener(ae -> {
                     map.setDisplayLastRevenueRuns(!map.getDisplayLastRevenueRuns());
+                    if (gameUIManager.getORUIManager() != null && gameUIManager.getORUIManager().getORPanel() != null) {
+                        gameUIManager.getORUIManager().getORPanel().redrawRoutes();
+                    }
                     map.repaintAll(new Rectangle(map.getSize()));
                 });
                 menu.add(lastRunsItem);
