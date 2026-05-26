@@ -53,7 +53,7 @@ jobs:
           path: ${{ matrix.artifact }}
           if-no-files-found: error
 
-release:
+  release:
     name: Create GitHub Release
     needs: build-installers
     runs-on: ubuntu-latest
