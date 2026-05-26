@@ -26,7 +26,7 @@ repositories {
 
 // --- Project Variables ---
 description = 'Rails is a moderator program for 18xx games'
-version = '1.3.6'
+version = '1.3.7'
 def appName = 'Rails-18xx'
 def vendor = 'The Rails project team'
 def licenceFile = './LICENSE'
