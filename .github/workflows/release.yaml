@@ -53,7 +53,6 @@ jobs:
           path: ${{ matrix.artifact }}
           if-no-files-found: error
 
-
 - name: Create Release
         uses: softprops/action-gh-release@v2
         if: (startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch') && matrix.os == 'ubuntu-latest'
@@ -63,5 +62,3 @@ jobs:
             build/installers/*.exe
             build/installers/*.pkg
           generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
