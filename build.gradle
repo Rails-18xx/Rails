@@ -108,7 +108,7 @@ test {
 
 jacocoTestReport {
     reports {
-        xml.enabled true
+        xml.required.set(true)
     }
 }
 plugins.withType(JacocoPlugin) {
@@ -176,7 +176,7 @@ task buildDebPackage(type: Exec) {
                 '--app-version', appVersion(),
                 '--input', input,
                 '--dest', output,
-                '--main-jar', shadowJar.archiveName,
+                '--main-jar', shadowJar.archiveFileName.get(),
                 '--linux-package-name', 'rails-18xx',
                 '--linux-app-category', 'games',
                 '--linux-shortcut'
@@ -197,7 +197,7 @@ task buildRpmPackage(type: Exec) {
                 '--app-version', appVersion(),
                 '--input', input,
                 '--dest', output,
-                '--main-jar', shadowJar.archiveName,
+                '--main-jar', shadowJar.archiveFileName.get(),
                 '--linux-package-name', 'rails-18xx',
                 '--linux-app-category', 'games',
                 '--linux-shortcut'
@@ -218,7 +218,7 @@ task buildExePackage(type: Exec) {
                 '--app-version', appVersion(),
                 '--input', input,
                 '--dest', output,
-                '--main-jar', shadowJar.archiveName,
+                '--main-jar', shadowJar.archiveFileName.get(),
                 '--win-dir-chooser',
                 '--win-per-user-install',
                 '--win-menu',
@@ -241,7 +241,7 @@ task buildpkgPackage(type: Exec) {
                 '--app-version', appVersion(),
                 '--input', input,
                 '--dest', output,
-                '--main-jar', shadowJar.archiveName,
+                '--main-jar', shadowJar.archiveFileName.get(),
                 '--mac-package-name', 'Rails-18xx'
     }
 }
