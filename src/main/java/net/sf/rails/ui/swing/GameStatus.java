@@ -3465,17 +3465,34 @@ JPanel[] currentPanels = playerPrivatesPanel;
                 final PublicCompany fComp = c;
 
                 // Defer to run AFTER the subclass initTurn completes its overrides
-                SwingUtilities.invokeLater(() -> {
+
+SwingUtilities.invokeLater(() -> {
+                    boolean shouldShowEscrow = isStockRound || isEffectivelyActive;
+                    
+                    // --- START FIX ---
+                    // Loans are only shown for companies that are active but not fully running yet (haven't reached destination)
+                    boolean hasReachedDestination = fComp.hasReachedDestination();
+                    boolean shouldShowLoans = isEffectivelyActive && !hasReachedDestination;
+                    // --- END FIX ---
+
                     if (fEscrowCol != -1 && fEscrowCol < fields.length && fYRow < fields[fEscrowCol].length) {
                         JComponent comp = fields[fEscrowCol][fYRow];
                         if (comp != null) {
                             comp.setBackground(targetBg);
                             comp.setOpaque(true);
                             comp.setBorder(BorderFactory.createCompoundBorder(targetBorder, BorderFactory.createEmptyBorder(0, 0, 0, 5)));
-                            applyCurrencyFont(comp);
-                            if (comp instanceof JLabel) {
-                                ((JLabel) comp).setHorizontalAlignment(SwingConstants.RIGHT);
+                            
+                            // --- START FIX ---
+                            if (shouldShowEscrow) {
+                                applyCurrencyFont(comp);
+                                if (comp instanceof JLabel) {
+                                    ((JLabel) comp).setHorizontalAlignment(SwingConstants.RIGHT);
+                                }
+                            } else {
+                                if (comp instanceof JLabel) ((JLabel) comp).setText("");
+                                if (comp instanceof Field) ((Field) comp).setText("");
                             }
+                            // --- END FIX ---
                         }
                     }
 
@@ -3484,9 +3501,10 @@ JPanel[] currentPanels = playerPrivatesPanel;
                         if (comp != null) {
                             comp.setBackground(targetBg);
                             comp.setOpaque(true);
-                            comp.setBorder(targetBorder); // Exact same border, no compound empty space to shift it
+                            comp.setBorder(targetBorder);
                             
-                            if (isActive) {
+                            // --- START FIX ---
+                            if (shouldShowLoans) {
                                 int currentDebt = 0;
                                 if (comp instanceof JLabel) {
                                     String rawTxt = ((JLabel) comp).getText();
@@ -3520,7 +3538,7 @@ JPanel[] currentPanels = playerPrivatesPanel;
 
                                 // Apply Action Highlighting
                                 if (possibleActions != null && possibleActions.getList() != null) {
-                                    for (rails.game.action.PossibleAction pa : possibleActions.getList()) {
+                                    for (rails.game.action.PossibleAction pa : new ArrayList<>(possibleActions.getList())) {
                                         if (pa != null && (pa.getClass().getName().contains("Loan") || pa.getClass().getName().endsWith("TakeLoans_1817"))) {
                                             boolean match = false;
                                             try {
@@ -3544,9 +3562,12 @@ JPanel[] currentPanels = playerPrivatesPanel;
                             } else {
                                 if (comp instanceof JLabel) ((JLabel) comp).setText("");
                             }
+                            // --- END FIX ---
                         }
                     }
                 });
+            
+
             }
 
             // Note: We need to ensure the compCash/Revenue/Tokens fields use the new bgRow.
