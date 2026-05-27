@@ -2457,6 +2457,13 @@ if (activePhase == 1 || activePhase == 2) {
                 }
 
                 setStandardPanelsVisible(false);
+
+                // Override standard panel wipe to ensure Special Actions remain visible during
+                // Formation steps
+                if (specialContainer != null && specialContainer.isVisible() && phase5Panel != null) {
+                    phase5Panel.setVisible(true);
+                }
+
                 colorizeActivePhase(null);
                 return;
             }
