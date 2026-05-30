@@ -6,7 +6,7 @@ import org.gradle.internal.os.OperatingSystem;
 plugins {
     id 'java'
     // https://github.com/GradleUp/shadow
-    id 'com.gradleup.shadow' version '8.3.6'
+    id 'com.gradleup.shadow' version '9.4.2'
     // plugin to check for dependency updates via task dependencyUpdates
     // https://github.com/ben-manes/gradle-versions-plugin
     id 'com.github.ben-manes.versions' version '0.54.0'
