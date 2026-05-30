@@ -5,8 +5,8 @@ import org.gradle.internal.os.OperatingSystem;
 
 plugins {
     id 'java'
-    // https://github.com/johnrengelman/shadow
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    // https://github.com/GradleUp/shadow
+    id 'com.gradleup.shadow' version '8.3.6'
     // plugin to check for dependency updates via task dependencyUpdates
     // https://github.com/ben-manes/gradle-versions-plugin
     id 'com.github.ben-manes.versions' version '0.54.0'
@@ -86,8 +86,10 @@ javafx {
     modules = ['javafx.controls', 'javafx.swing']
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 
 assemble.dependsOn(shadowJar)
 jar {
