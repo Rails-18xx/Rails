@@ -352,4 +352,23 @@ public class Stop extends RailsAbstractItem implements RailsOwner, Comparable<St
         }
         return b.toString();
     }
+
+/**
+     * AI Accessor: Required for StateVectorBuilder.
+     * Returns a List copy of the BaseTokens.
+     */
+    public java.util.List<BaseToken> getTokens() {
+return new java.util.ArrayList<>(this.tokens.items());
+    }
+
+    /**
+     * Updates the station definition this Stop is bound to.
+     * Required during Tile Upgrades to reuse the existing Stop object
+     * instead of destroying it (which would lose tokens) and creating a new one (which crashes Root).
+     */
+    public void setStation(Station station) {
+        // 'relatedStation' is a State/ModelRef. We update its value.
+        this.relatedStation.set(station);
+    }
+
 }

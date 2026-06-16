@@ -61,22 +61,49 @@ public class FoldIntoNational extends PossibleAction {
         this (nationalCompany, Arrays.asList(company));
     }
 
-    public PublicCompany_1837 getNationalCompany() {
-        return nationalCompany;
-    }
 
-    public List<Company> getFoldedCompanies() {
-        return foldedCompanies;
-    }
 
+ 
 
     public void setFoldedCompanies(@NotNull List<Company> foldedCompanies) {
         this.foldedCompanies = foldedCompanies;
         foldedCompanyNames = Util.joinNames(foldedCompanies, ",");
     }
 
+
+
+
+    public PublicCompany_1837 getNationalCompany() {
+        if (nationalCompany == null && nationalCompanyName != null && getRoot() != null) {
+            nationalCompany = (PublicCompany_1837) getRoot().getCompanyManager().getPublicCompany(nationalCompanyName);
+        }
+        return nationalCompany;
+    }
+
     public List<Company> getFoldableCompanies() {
+        if (foldableCompanies == null && foldableCompanyNames != null && getRoot() != null) {
+            foldableCompanies = new ArrayList<>();
+            CompanyManager cmgr = getRoot().getCompanyManager();
+            for (String name : foldableCompanyNames.split(",")) {
+                Company comp = cmgr.getPublicCompany(name);
+                if (comp == null) comp = cmgr.getPrivateCompany(name);
+                if (comp != null) foldableCompanies.add(comp);
+            }
+        }
         return foldableCompanies;
+    }
+
+    public List<Company> getFoldedCompanies() {
+        if (foldedCompanies == null && foldedCompanyNames != null && getRoot() != null) {
+            foldedCompanies = new ArrayList<>();
+            CompanyManager cmgr = getRoot().getCompanyManager();
+            for (String name : foldedCompanyNames.split(",")) {
+                Company comp = cmgr.getPublicCompany(name);
+                if (comp == null) comp = cmgr.getPrivateCompany(name);
+                if (comp != null) foldedCompanies.add(comp);
+            }
+        }
+        return foldedCompanies;
     }
 
 

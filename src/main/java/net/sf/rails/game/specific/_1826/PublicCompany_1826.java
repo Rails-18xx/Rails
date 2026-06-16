@@ -59,8 +59,8 @@ public class PublicCompany_1826 extends PublicCompany {
 
         Tag bondsTag = tag.getChild("Bonds");
         if (bondsTag != null) {
-            numberOfBonds = bondsTag.getAttributeAsInteger("number", 0);
-            portfolio.getBondsModel(this).setBondsCount(numberOfBonds);
+            numberOfBonds.set(bondsTag.getAttributeAsInteger("number", 0));
+            portfolio.getBondsModel(this).setBondsCount(numberOfBonds.value());
             priceOfBonds = bondsTag.getAttributeAsInteger("price", 0);
             bondsInterest = bondsTag.getAttributeAsInteger("interest", 0);
         }

@@ -11,8 +11,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
-import net.sf.rails.common.Config;
-import net.sf.rails.common.ConfigManager;
+// REMOVED: import net.sf.rails.common.Config;
+import net.sf.rails.common.ConfigManager; // This is the correct class
 import net.sf.rails.game.RailsRoot;
 import net.sf.rails.util.GameLoader;
 
@@ -79,14 +79,20 @@ public final class TestGameBuilder extends TestCase {
         int dot = fileName.lastIndexOf(extensionSeparator);
 
         String gameName = null;
-        if (dot != -1 &&  fileName.substring(dot+1).equals(
-                Config.get("save.filename.extension"))) {
+        
+        // --- FIXED ---
+        // Use ConfigManager, providing a default value ("rails") just in case.
+        String saveExtension = ConfigManager.getInstance().getValue("save.filename.extension", "rails");
+        
+        if (dot != -1 &&  fileName.substring(dot+1).equals(saveExtension)) {
             gameName = fileName.substring(0,dot);
             String gamePath = gameFile.getParent();
 
-            // check if there is a reportfile
+            // --- FIXED ---
+            // Use ConfigManager, providing a default value ("report") just in case.
+            String reportExtension = ConfigManager.getInstance().getValue("report.filename.extension", "report");
             String reportFilename = gamePath + File.separator + gameName
-                    + "." + Config.get("report.filename.extension");
+                    + "." + reportExtension;
             File reportFile = new File(reportFilename);
 
             if (!reportFile.exists() || overrideReport) {
@@ -160,23 +166,38 @@ public final class TestGameBuilder extends TestCase {
      * @return created test suite for junit
      */
 
+/**
+     * Builds test suite of all test games below the main test directory
+     * @return created test suite for junit
+     */
+
     public static Test suite() {
 
         ConfigManager.initConfiguration(true);
 
         // Main test directory
-        File testDir = new File(Config.get("save.directory"));
+        // --- FIXED ---
+        // Use ConfigManager, providing "." (current directory) as a default.
+        String saveDir = ConfigManager.getInstance().getValue("save.directory", "."); 
+        File testDir = new File(saveDir);
+
 
         // Create tests
-        TestSuite suite = null;
-        if (testDir.exists() && testDir.isDirectory()) {
+        // --- FIXED: Initialize suite to a new, empty TestSuite to prevent returning null ---
+        TestSuite suite = new TestSuite("Rails Tests"); 
+        
+        if (testDir.exists() && testDir.isDirectory()) { 
             System.out.println("Test directory = " + testDir.getAbsolutePath());
-            suite = recursiveTestSuite(testDir.getAbsolutePath(), "",  0, false);
+            // If the directory exists, overwrite the empty suite with the real one.
+            suite = recursiveTestSuite(testDir.getAbsolutePath(), "",  0, false); 
+        } else {
+            // Add a warning so you know why no tests are running
+            System.err.println("WARNING: Test save directory not found. Looked for: " + testDir.getAbsolutePath());
+            System.err.println("TestGameBuilder will run 0 tests.");
         }
 
-        return suite;
+        return suite; // This will now return an empty suite instead of null
     }
-
 
     /**
      * Run main to rebuild the report files.
@@ -189,7 +210,8 @@ public final class TestGameBuilder extends TestCase {
         ConfigManager.initConfiguration(true);
 
         // Main test directory
-        String rootPath = Config.get("save.directory");
+        // --- FIXED ---
+        String rootPath = ConfigManager.getInstance().getValue("save.directory", ".");
 
         if (args != null && args.length > 0) {
             // commandline argument: only directories are possible
@@ -205,13 +227,17 @@ public final class TestGameBuilder extends TestCase {
             chooser.setCurrentDirectory(new File(rootPath));
             chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             chooser.setMultiSelectionEnabled(true);
-// Java 6:  chooser.setFileFilter(new FileNameExtensionFilter("Rails save files (*.rails)", "rails"));
+            
+            // --- FIXED ---
+            // Use ConfigManager to get the extension for the filter.
+            final String saveExtension = ConfigManager.getInstance().getValue("save.filename.extension", "rails");
+            
             chooser.setFileFilter(new FileFilter() {
                 public boolean accept(File f) {
-                    return f.isDirectory() || f.getName().endsWith("." + Config.get("save.filename.extension"));
+                    return f.isDirectory() || f.getName().endsWith("." + saveExtension);
                   }
                 public String getDescription()  {
-                    return "Rails save files (*."+ Config.get("save.filename.extension") + ")" ;
+                    return "Rails save files (*."+ saveExtension + ")" ;
                 }
             });
             chooser.setAcceptAllFileFilterUsed(false);

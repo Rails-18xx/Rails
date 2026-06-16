@@ -45,10 +45,12 @@ public class TakeLoans extends PossibleORAction {
      * @return Returns the company.
      */
     @Override
-    public PublicCompany getCompany() {
+  public PublicCompany getCompany() {
+        if (company == null && companyName != null && getRoot() != null) {
+            company = getRoot().getCompanyManager().getPublicCompany(companyName);
+        }
         return company;
     }
-
     public int getPrice() {
         return price;
     }

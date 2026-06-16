@@ -108,8 +108,8 @@
 			longname="Western Maryland Railway">
 		<Home hex="D3"/>
 	</Company>
-	<StartPacket roundClass="net.sf.rails.game.specific._18VA.StartRound_18VA">
-		<Bidding initial="0" minimum="0" increment="5"/>
+	<StartPacket roundClass="net.sf.rails.game.specific._1830.StartRound_1830">
+		<Bidding initial="0" minimum="5" increment="5"/>
 		<Item name="REA" type="Private" basePrice="40"/>
 		<Item name="TIW" type="Private" basePrice="60"/>
 		<Item name="PY" type="Private" basePrice="80"/>

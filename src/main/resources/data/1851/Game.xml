@@ -71,7 +71,7 @@
 		<TrainType name="6" majorStops="6" cost="600" quantity="2">
             <NewPhase phaseName="6"/>
         </TrainType>
-		<TrainType name="8" majorStops="8" cost="800" quantity="4">
+		<TrainType name="8" majorStops="8" cost="800" quantity="-1">
             <NewPhase phaseName="8"/>
             <IfOption name="UnlimitedTopTrains_8" value="yes">
 				<Attributes quantity="-1"/>
@@ -112,7 +112,7 @@
 			<OffBoardRevenue step="3"/>
 		</Phase>
 		<Phase name="8">
-			<Tiles colour="yellow,green,brown,grey"/>
+			<Tiles colour="yellow,green,brown,gray"/>
 			<Trains rusted="4"/>
 		</Phase>
 	</Component>

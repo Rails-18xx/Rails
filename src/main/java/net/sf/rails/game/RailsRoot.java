@@ -54,10 +54,10 @@ public class RailsRoot extends Root implements RailsItem {
         super();
 
         for (String playerName : gameData.getPlayers()) {
-            log.debug("Player: {}", playerName);
+            // log.debug("Player: {}", playerName);
         }
         for (String optionName : gameData.getGameOptions().getOptions().keySet()) {
-            log.debug("Option: {}={}", optionName, gameData.getGameOptions().get(optionName));
+            // log.debug("Option: {}={}", optionName, gameData.getGameOptions().get(optionName));
         }
 
         this.gameData = gameData;
@@ -65,13 +65,13 @@ public class RailsRoot extends Root implements RailsItem {
 
     public static RailsRoot create(GameData gameData) throws ConfigurationException {
         RailsRoot root = new RailsRoot(gameData);
-        log.debug("RailsRoot: instance created");
+        // log.debug("RailsRoot: instance created");
         root.init();
-        log.debug("RailsRoot: instance initialized");
+        // log.debug("RailsRoot: instance initialized");
         root.initGameFromXML();
-        log.debug("RailsRoot: game configuration initialized");
+        // log.debug("RailsRoot: game configuration initialized");
         root.finishConfiguration();
-        log.debug("RailsRoot: game configuration finished");
+        // log.debug("RailsRoot: game configuration finished");
 
         return root;
     }
@@ -125,12 +125,12 @@ public class RailsRoot extends Root implements RailsItem {
          * Initializations that involve relations between components can
          * only be done after all XML has been processed.
          */
-        log.info("========== Start of rails.game {} ==========", gameData.getGameName());
+        // log.info("========== Start of rails.game {} ==========", gameData.getGameName());
         if (gameData.getGameOptions().getOptions().containsKey("Variant")) {
             String variant = getGameOptions().getOptions().get("Variant");
-            log.info("Variant "+variant);
+            // log.info("Variant "+variant);
         }
-        log.info("Rails version {}", Config.getVersion());
+        // log.info("Rails version {}", Config.getVersion());
 
         ReportBuffer.add(this, LocalText.getText("GameIs", gameData.getGameName()));
 
@@ -144,23 +144,34 @@ public class RailsRoot extends Root implements RailsItem {
             portfolioManager = new PortfolioManager(this, "PortfolioManager");
         }
 
-        try {
-            playerManager.finishConfiguration(this);
-            companyManager.finishConfiguration(this); // Requires bank to be finished later!
-            trainManager.finishConfiguration(this);
-            phaseManager.finishConfiguration(this);
-            tileManager.finishConfiguration(this);
-            mapManager.finishConfiguration(this);
-            bank.finishConfiguration(this);
-            stockMarket.finishConfiguration(this);
+try {
+        // log.error("--- RailsRoot: Calling playerManager.finishConfiguration ---"); // <<< ADD
+        playerManager.finishConfiguration(this);
+        // log.error("--- RailsRoot: Calling companyManager.finishConfiguration ---"); // <<< ADD
+        companyManager.finishConfiguration(this);
+        // log.error("--- RailsRoot: Calling trainManager.finishConfiguration ---"); // <<< ADD
+        trainManager.finishConfiguration(this);
+        // log.error("--- RailsRoot: Calling phaseManager.finishConfiguration ---"); // <<< ADD
+        phaseManager.finishConfiguration(this);
+        // log.error("--- RailsRoot: Calling tileManager.finishConfiguration ---"); // <<< ADD
+        tileManager.finishConfiguration(this); // <<< CHECK LOGS AROUND HERE
+        // log.error("--- RailsRoot: Calling mapManager.finishConfiguration ---"); // <<< ADD
+        mapManager.finishConfiguration(this); // <<< CHECK LOGS AROUND HERE
+        // log.error("--- RailsRoot: Calling bank.finishConfiguration ---"); // <<< ADD
+        bank.finishConfiguration(this);
+        // log.error("--- RailsRoot: Calling stockMarket.finishConfiguration ---"); // <<< ADD
+        stockMarket.finishConfiguration(this);
 
-            if (revenueManager != null)
-                revenueManager.finishConfiguration(this);
-        } catch (ConfigurationException e) {
-            log.error(e.getMessage(), e);
-            DisplayBuffer.add(this, e.getMessage());
-            return false;
+        if (revenueManager != null) {
+            //  log.error("--- RailsRoot: Calling revenueManager.finishConfiguration ---"); // <<< ADD
+             revenueManager.finishConfiguration(this);
         }
+        //  log.error("--- RailsRoot.finishConfiguration: All managers finished ---"); // <<< ADD
+    } catch (ConfigurationException e) {
+        //  log.error("--- RailsRoot.finishConfiguration FAILED ---", e); // <<< MODIFY
+        DisplayBuffer.add(this, e.getMessage());
+        return false;
+    }
 
         return true;
     }
@@ -262,5 +273,10 @@ public class RailsRoot extends Root implements RailsItem {
     public RailsRoot getRoot() {
         return this;
     }
+
+        public void setGameManager(GameManager gameManager) {
+        this.gameManager = gameManager;
+    }
+
 
 }

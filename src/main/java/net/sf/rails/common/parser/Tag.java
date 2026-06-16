@@ -343,7 +343,7 @@ public class Tag {
 
                     // FIXME: Rails 2.0 removed that handling, only logging errors now
                     if (optionValue == null) {
-                        log.error("GameOption {}={} has no assigned value", name, value);
+                        // log.error("GameOption {}={} has no assigned value", name, value);
                     }
 
 //                    if (optionValue == null) {

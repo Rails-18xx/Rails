@@ -100,7 +100,7 @@
 			<OffBoardRevenue step="2"/>
 		</Phase>
 		<Phase name="6" realName="5">
-			<Tiles colour="yellow,green,brown,grey"/>
+			<Tiles colour="yellow,green,brown,gray"/>
 			<IfOption name="1856AlternateTrains" value="no">
 				<Trains rusted="3" released="D"/>
 			</IfOption>

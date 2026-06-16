@@ -12,7 +12,7 @@ public enum TileColour {
     YELLOW(1, true),
     GREEN(2, true),
     BROWN(3, true),
-    GREY(4, true)
+    GRAY(4, true)
     ;
 
     /**

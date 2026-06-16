@@ -156,7 +156,7 @@ public final class Util {
             try {
                 c = new Color (Integer.parseInt(s, 16));
             } catch (NumberFormatException e) {
-                log.error("Invalid hex RGB colour: {}", s, e);
+                // log.error("Invalid hex RGB colour: {}", s, e);
                 throw new ConfigurationException (e);
             }
         } else {
@@ -167,7 +167,7 @@ public final class Util {
                         Integer.parseInt(parts[1]),
                         Integer.parseInt(parts[2]));
             } catch (NumberFormatException e) {
-                log.error("Invalid nummeric RGB colour: {}", s, e);
+                // log.error("Invalid nummeric RGB colour: {}", s, e);
                 throw new ConfigurationException (e);
             }
         }
@@ -213,11 +213,11 @@ public final class Util {
 
     public static boolean loadProperties(Properties properties, File file) {
         try {
-            log.info("Loading properties from file {}", file);
+            // log.info("Loading properties from file {}", file);
             InputStream inFile = Files.newInputStream(file.toPath());
             properties.load(inFile);
         } catch (Exception e) {
-            log.error("{} whilst loading properties file {}", e, file, e);
+            // log.error("{} whilst loading properties file {}", e, file, e);
             return false;
         }
         return true;
@@ -225,12 +225,12 @@ public final class Util {
 
     public static boolean loadPropertiesFromResource(Properties properties, String resourcePath) {
         try {
-            log.info("Loading properties from resource {}", resourcePath);
+            // log.info("Loading properties from resource {}", resourcePath);
             InputStream inFile;
                 inFile = ConfigProfile.class.getClassLoader().getResourceAsStream(resourcePath);
             properties.load(inFile);
         } catch (Exception e) {
-            log.error("Error while loading properties file from resource at {}", resourcePath, e);
+            // log.error("Error while loading properties file from resource at {}", resourcePath, e);
             return false;
         }
         return true;
@@ -240,9 +240,9 @@ public final class Util {
         boolean result = true;
         try {
             properties.store(Files.newOutputStream(file.toPath()), "Automatically generated, do not edit");
-            log.info("Storing properties to file {}", file.getAbsolutePath());
+            // log.info("Storing properties to file {}", file.getAbsolutePath());
         } catch (IOException e) {
-            log.error("Error while storing properties file {}", file.getAbsolutePath(), e);
+            // log.error("Error while storing properties file {}", file.getAbsolutePath(), e);
             result = false;
         }
         return result;

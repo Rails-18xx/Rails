@@ -1,24 +1,26 @@
 package rails.game.correct;
 
-import java.util.*;
-
-import rails.game.action.LayBaseToken;
-import rails.game.action.LayTile;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
 import net.sf.rails.common.DisplayBuffer;
-import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
-import net.sf.rails.game.*;
+import net.sf.rails.game.GameManager;
+import net.sf.rails.game.HexSide;
+import net.sf.rails.game.MapHex;
+import net.sf.rails.game.MapManager;
+import net.sf.rails.game.Tile;
+import net.sf.rails.game.TileManager;
+import net.sf.rails.game.round.SelectionRound;
 
-import com.google.common.collect.ImmutableList;
+import rails.game.correct.CorrectionManager;
+import rails.game.correct.MapCorrectionManager;
+import rails.game.correct.CorrectionType;
 
+public class MapCorrectionManager extends CorrectionManager {
 
-public final class MapCorrectionManager extends CorrectionManager {
-
-    public static enum ActionStep {
-        SELECT_HEX,SELECT_TILE,SELECT_ORIENTATION,CONFIRM,RELAY_BASETOKENS,FINISHED,CANCELLED;
-    }
-
-    private MapCorrectionAction activeTileAction = null;
+    private String pendingHexCorrection = null;
+    private net.sf.rails.ui.swing.RemainingTilesWindow manifestWindow = null;
 
     private MapCorrectionManager(GameManager parent) {
         super(parent, CorrectionType.CORRECT_MAP);
@@ -30,194 +32,190 @@ public final class MapCorrectionManager extends CorrectionManager {
 
     @Override
     public List<CorrectionAction> createCorrections() {
-        List<CorrectionAction> actions = super.createCorrections();
-
-        if (isActive()) {
-            if (activeTileAction == null) {
-                activeTileAction = new MapCorrectionAction(getRoot());
-            }
-            actions.add(activeTileAction);
-            // FIXME: This is a workaround to get the LayTile and LayToken actions created from inside the CorrectionManager
-            LayTile tileAction = new LayTile(getRoot(), LayTile.CORRECTION);
-            getParent().getPossibleActions().add(tileAction);
-            for (PublicCompany company:getRoot().getCompanyManager().getAllPublicCompanies()) {
-                if (!company.isClosed() && company.hasLaidHomeBaseTokens() && company.getNumberOfFreeBaseTokens() > 0) {
-                    LayBaseToken tokenAction = new LayBaseToken(getRoot(), LayBaseToken.CORRECTION);
-                    tokenAction.setCompany(company);
-                    getParent().getPossibleActions().add(tokenAction);
-                }
-            }
-        }
+        List<CorrectionAction> actions = new ArrayList<>();
+        actions.add(new CorrectionModeAction(getRoot(), CorrectionType.CORRECT_MAP, isActive()));
         return actions;
     }
 
-    @Override
-    public boolean executeCorrection(CorrectionAction action){
-        if (action instanceof MapCorrectionAction)
+
+@Override
+    public boolean executeCorrection(CorrectionAction action) {
+        if (action instanceof CorrectionModeAction) {
+            boolean wasActive = isActive();
+            
+            // 1. Delegate to the base class FIRST to toggle the internal active state boolean
+            boolean result = super.executeCorrection(action);
+            
+            // 2. Only spin up the SelectionRound wizard layout if transitioning from inactive to active
+            if (!wasActive && isActive() && !getParent().isReloading()) {
+                runWizard();
+            }
+            return result;
+        }
+
+        if (action instanceof MapCorrectionAction) {
             return execute((MapCorrectionAction) action);
-        else // any other action, could be a correctionMode action
-            return super.executeCorrection(action);
+        }
+
+        return super.executeCorrection(action);
     }
 
-    private boolean execute(MapCorrectionAction action){
 
-        if (action.getStep() == ActionStep.FINISHED) {
-            // already finished, thus on reload
-            action.setNextStep(ActionStep.FINISHED);
-        } else if (action.getNextStep() == ActionStep.CANCELLED) {
-            // cancelled => set to null and return
-            activeTileAction = null;
-            return true;
+    private boolean execute(MapCorrectionAction action) {
+        MapManager mm = getRoot().getMapManager();
+        TileManager tm = getRoot().getTileManager();
+
+        MapHex hex = mm.getHex(action.getHexName());
+        if (hex == null) {
+            DisplayBuffer.add(this, "Error: Hex not found: " + action.getHexName());
+            return false;
         }
 
-        MapHex hex = action.getLocation();
-
-        Tile chosenTile = action.getChosenTile();
-        TileManager tmgr = getRoot().getTileManager();
-        Tile preprintedTile = tmgr.getTile(hex.getPreprintedTileId());
-
-        // check conditions
-        String errMsg = null;
-        while (true) {
-            // check if chosenTile is still available (not for preprinted)
-            // FIXME: Check if this is still correct (Rails 2.0), removed that check as all
-            // tiles have external id defined
-            if (chosenTile != null // && rails.util.Util.hasValue(chosenTile.toText())
-                    && chosenTile != hex.getCurrentTile()
-                    && chosenTile.getFreeCount() == 0) {
-                errMsg =
-                    LocalText.getText("TileNotAvailable",
-                            chosenTile.toText());
-                // return to step of tile selection
-                action.selectHex(hex);
-                break;
-            }
-            // check if chosenTile contains enough slots
-            Set<BaseToken> baseTokens = hex.getBaseTokens();
-            if (chosenTile != null && baseTokens != null && !baseTokens.isEmpty()) {
-                Collection<Station> stations = chosenTile.getStations();
-                int nbSlots = 0;
-                if (stations != null) {
-                    for (Station station:stations) {
-                        nbSlots += station.getBaseSlots();
-                    }
-                }
-                if (baseTokens.size() > nbSlots) {
-                    errMsg =
-                        LocalText.getText("CorrectMapNotEnoughSlots", chosenTile.toText());
-                    // return to step of tile selection
-                    action.selectHex(hex);
-                    break;
-                }
-                // check if chosenTile requires relays
-                // this is not implemented yet, thus error message
-                if (chosenTile.getNumStations() >= 2
-                        && hex.getCurrentTile().getColourNumber() >= chosenTile.getColourNumber()
-                        // B. or the current tile requires relays
-                        || hex.getCurrentTile().relayBaseTokensOnUpgrade()) {
-                    errMsg =
-                        LocalText.getText("CorrectMapRequiresRelays", chosenTile.toText());
-                    // return to step of tile selection
-                    action.selectHex(hex);
-                    break;
-                }
-            }
-            break;
+        Tile tile = tm.getTile(action.getTileNumber());
+        if (tile == null) {
+            DisplayBuffer.add(this, "Error: Tile ID not found: " + action.getTileNumber());
+            return false;
         }
 
-        if (errMsg != null) {
-            DisplayBuffer.add(this, LocalText.getText("CorrectMapCannotLayTile",
-                    chosenTile.toText(),
-                    hex.getId(),
-                    errMsg ));
-            ;
-        }
+        hex.upgrade(tile, HexSide.get(action.getRotation()), null);
 
-        ActionStep nextStep;
-        // not yet finished, move to next step
-        if (action.getStep() != ActionStep.FINISHED)
-            nextStep = action.getNextStep();
-        else
-            nextStep = ActionStep.FINISHED;
+        String msg = String.format("Correction: Laid Tile %s on %s (Rot: %d)",
+                action.getTileNumber(), action.getHexName(), action.getRotation());
 
-        // preparation for the next step
-        switch (nextStep) {
-        case SELECT_TILE:
-            // create list of possible up and downgrades
-            // REMARK: This is commented out for Rails 2.0
-//            List<Tile> possibleTiles = tmgr.getAllUpgrades(preprintedTile, hex);
-//            if (preprintedTile == hex.getCurrentTile())
-//                possibleTiles.remove(hex.getCurrentTile()); // remove preprinted tile if still laid
-//            action.setTiles(possibleTiles);
-            break;
-        case SELECT_ORIENTATION:
-            // default orientation for preprinted files
-            if (preprintedTile == chosenTile) {
-                int orientation = hex.getPreprintedTileRotation().getTrackPointNumber();
-                action.selectOrientation(orientation);
-                action.setNextStep(ActionStep.CONFIRM);
-                break;
-            } else if (chosenTile.getFixedOrientation() != null) {
-                int orientation = chosenTile.getFixedOrientation().getTrackPointNumber();
-                action.selectOrientation(orientation);
-                action.setNextStep(ActionStep.CONFIRM);
-                break;
-            } else {
-                break;
-            }
-        case RELAY_BASETOKENS:
-            // check if relays are necessary:
-            // A. downgrades or equalgrades to a tile with two stations or more
-            if (chosenTile.getNumStations() >= 2
-                    && hex.getCurrentTile().getColourNumber() >= chosenTile.getColourNumber()
-                    // B. or the current tile requires relays
-                    || hex.getCurrentTile().relayBaseTokensOnUpgrade()) {
-                // define tokens for relays
-                ImmutableList.Builder<BaseToken> tokens = ImmutableList.builder();
-                for (Stop oldStop:hex.getStops()) {
-                    tokens.addAll(oldStop.getBaseTokens());
+        ReportBuffer.add(this, msg);
+
+        if (getParent().getGameUIManager() != null && getParent().getGameUIManager().getORUIManager() != null) {
+            var orUI = getParent().getGameUIManager().getORUIManager();
+            var hexMap = orUI.getHexMap();
+            if (hexMap != null) {
+                // Reset all hexes to NORMAL state
+                for (net.sf.rails.ui.swing.hexmap.GUIHex guiHex : hexMap.getGuiHexList()) {
+                    guiHex.setState(net.sf.rails.ui.swing.hexmap.GUIHex.State.NORMAL);
                 }
-                action.setTokensToRelay(tokens.build());
-                // define possible stations
-                action.setPossibleStations(chosenTile.getStations());
-                break;
-            } else {
-                action.selectRelayBaseTokens(null);
-                // move to FINISHED
-                return execute(action);
+                // Force UI to redraw in normal state
+                hexMap.repaintAll(new java.awt.Rectangle(hexMap.getSize()));
             }
-        case FINISHED:
-
-
-            // lays tile
-            HexSide orientation = HexSide.get(action.getOrientation());
-            hex.upgrade(chosenTile, orientation, new HashMap<String,Integer>());
-
-            String msg = LocalText.getText("CorrectMapLaysTileAt",
-                    chosenTile.toText(), hex.getId(), hex.getOrientationName(orientation));
-            ReportBuffer.add(this, msg);
-            getParent().addToNextPlayerMessages(msg, true);
-
-            // relays tokens
-            //            if (action.getTokensToRelay() != null) {
-            //                for (BaseToken token:action.getTokensToRelay()) {
-            //                    int i = action.getTokensToRelay().indexOf(token);
-            //
-            //                }
-            //            }
-
-            activeTileAction = null;
-            break;
-
-        case CANCELLED:
-            // should be captured above
-            activeTileAction = null;
-        }
-
-        if (action.getStep() != ActionStep.FINISHED) {
-            action.moveToNextStep();
         }
 
         return true;
     }
+
+    // Inside MapCorrectionManager.java
+    private void runWizard() {
+        String uniqueId = "CorrectionSelect_" + System.currentTimeMillis();
+        net.sf.rails.game.round.SelectionRound selectionRound = new net.sf.rails.game.round.SelectionRound(getParent(),
+                uniqueId, "SELECT_HEX");
+
+        getParent().setInterruptedRound(getParent().getCurrentRound());
+        getParent().setRound(selectionRound);
+
+        // Ensure this uses the correct method to access the map (verify in
+        // ORUIManager.java)
+
+        if (getParent().getGameUIManager() != null && getParent().getGameUIManager().getORUIManager() != null) {
+            net.sf.rails.ui.swing.ORUIManager orUI = getParent().getGameUIManager().getORUIManager();
+            net.sf.rails.ui.swing.hexmap.HexMap hexMap = orUI.getHexMap();
+            if (hexMap != null) {
+                for (net.sf.rails.ui.swing.hexmap.GUIHex guiHex : hexMap.getGuiHexList()) {
+                    guiHex.setState(net.sf.rails.ui.swing.hexmap.GUIHex.State.SELECTABLE);
+                }
+                hexMap.repaintAll(new java.awt.Rectangle(hexMap.getSize()));
+            }
+        }
+
+    }
+
+    public void onHexSelected(String hexId) {
+        this.pendingHexCorrection = hexId;
+
+        // Deselect all other hexes, keeping only the clicked one selected
+        if (getParent().getGameUIManager() != null && getParent().getGameUIManager().getORUIManager() != null) {
+            net.sf.rails.ui.swing.ORUIManager orUI = getParent().getGameUIManager().getORUIManager();
+            net.sf.rails.ui.swing.hexmap.HexMap hexMap = orUI.getHexMap();
+            if (hexMap != null) {
+                for (net.sf.rails.ui.swing.hexmap.GUIHex guiHex : hexMap.getGuiHexList()) {
+                    if (guiHex.getHex().getId().equals(hexId)) {
+                        guiHex.setState(net.sf.rails.ui.swing.hexmap.GUIHex.State.SELECTED);
+                    } else {
+                        guiHex.setState(net.sf.rails.ui.swing.hexmap.GUIHex.State.NORMAL);
+                    }
+                }
+                hexMap.repaintAll(new java.awt.Rectangle(hexMap.getSize()));
+            }
+        }
+
+        // Open the existing RemainingTilesWindow
+        if (manifestWindow == null) {
+
+            // Access the window via the ORUIManager, which is guaranteed to be available in
+            // an OR
+            net.sf.rails.ui.swing.ORUIManager orUI = getParent().getGameUIManager().getORUIManager();
+            // The orWindow reference is standard in the ORUIManager
+            manifestWindow = new net.sf.rails.ui.swing.RemainingTilesWindow(orUI.getORWindow());
+
+        }
+        manifestWindow.activate();
+
+        // NOTE: To make this fully functional, we need to intercept the click in
+        // RemainingTilesWindow to call back to this manager.
+        // For now, this opens the visual manifest.
+    }
+
+
+
+public void completeCorrection(String tileId, int rotation) {
+        if (manifestWindow != null) {
+            manifestWindow.setVisible(false);
+        }
+        
+        // 1. Roll back the game engine from SelectionRound out to the original phase round
+        net.sf.rails.game.round.RoundFacade roundToResume = getParent().getInterruptedRound();
+        if (roundToResume != null) {
+            getParent().setInterruptedRound(null);
+            getParent().setRound(roundToResume);
+            if (getParent().getUIHints() != null) {
+                getParent().getUIHints().setCurrentRoundType(roundToResume.getClass());
+            }
+        }
+        
+        // 2. Turn off Correction Mode BEFORE processing to ensure the state boolean is clean
+        if (isActive()) {
+            CorrectionModeAction deactivateAction = new CorrectionModeAction(getRoot(), CorrectionType.CORRECT_MAP, false);
+            super.executeCorrection(deactivateAction);
+        }
+        
+        // 3. Create the correction action
+        MapCorrectionAction mca = new MapCorrectionAction(getRoot(), this.pendingHexCorrection, tileId, rotation);
+        
+        // 4. Inject it into the possible actions list so GameManager validation allows it
+        getParent().getPossibleActions().add(mca);
+        
+        // 5. Process the action formally through the engine (handles ChangeStack and executedActions natively)
+        boolean success = getParent().process(mca);
+        
+        // 6. Resume the underlying round logic
+        if (roundToResume != null) {
+            roundToResume.resume();
+        }
+        
+        // 7. Cleanup UI states
+        var orUI = getParent().getGameUIManager().getORUIManager();
+        if (orUI != null && orUI.getHexMap() != null) {
+            for (net.sf.rails.ui.swing.hexmap.GUIHex guiHex : orUI.getHexMap().getGuiHexList()) {
+                guiHex.setState(net.sf.rails.ui.swing.hexmap.GUIHex.State.NORMAL);
+            }
+            orUI.getHexMap().selectHex(null);
+            orUI.getHexMap().repaintAll(new java.awt.Rectangle(orUI.getHexMap().getSize()));
+        }
+        
+        // 8. Clear transient actions and rebuild standard operation panels
+        getParent().getPossibleActions().clear();
+        if (getParent().getCurrentRound() != null) {
+            getParent().getCurrentRound().setPossibleActions();
+        }
+    }
+
+
+
+
 }

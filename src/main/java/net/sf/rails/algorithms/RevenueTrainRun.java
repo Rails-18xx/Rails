@@ -76,6 +76,9 @@ public class RevenueTrainRun implements Comparable<RevenueTrainRun> {
         return startVertex;
     }
 
+    public List<NetworkEdge> getEdges() {
+        return edges;
+    }
     /**
      * returns the last vertex of a train run
      */

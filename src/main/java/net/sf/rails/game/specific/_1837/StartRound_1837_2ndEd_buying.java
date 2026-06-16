@@ -42,13 +42,13 @@ public class StartRound_1837_2ndEd_buying extends StartRound_1837_2ndEd {
             break;
         }
 
-        if (errMsg != null) {
-            DisplayBuffer.add(this, LocalText.getText("CantBuyItem",
-                    playerName,
-                    item.getId(),
-                    errMsg ));
-            return false;
-        }
+        // if (errMsg != null) {
+        //     DisplayBuffer.add(this, LocalText.getText("CantBuyItem",
+        //             playerName,
+        //             item.getId(),
+        //             errMsg ));
+        //     return false;
+        // }
 
 
         assignItem(player, item, price, 0);

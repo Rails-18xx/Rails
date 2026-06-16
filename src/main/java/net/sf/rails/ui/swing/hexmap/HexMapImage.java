@@ -91,21 +91,35 @@ public final class HexMapImage extends JSVGCanvas  {
 
     }
 
-    private void scaleMap () {
+private void scaleMap() {
         AffineTransform at = new AffineTransform();
 
-        log.debug("MapImage zoomFactor{}", zoomFactor);
-        at.scale (zoomFactor, zoomFactor);
+        boolean batikAutoScaled = false;
+        if (getSVGDocument() != null) {
+            String viewBox = getSVGDocument().getRootElement().getAttribute("viewBox");
+            batikAutoScaled = (viewBox != null && !viewBox.trim().isEmpty());
+        } else {
+            if (mapManager != null && mapManager.getMapScale() < 0.5f) {
+                batikAutoScaled = false;
+            } else {
+                batikAutoScaled = true;
+            }
+        }
 
-        log.debug("MapImage XOffset = {}, YOffset = {}", mapManager.getMapXOffset(), mapManager.getMapYOffset());
-        at.translate(mapManager.getMapXOffset(), mapManager.getMapYOffset());
+        if (!batikAutoScaled) {
+            at.scale(zoomFactor, zoomFactor);
+        }
 
-        double mapScale = mapManager.getMapScale();
-        log.debug("MapImage MapScale = {}", mapManager.getMapScale());
-        at.scale(mapScale, mapScale);
+        if (mapManager != null) {
+            double xOff = mapManager.getMapXOffset() * zoomFactor;
+            double yOff = mapManager.getMapYOffset() * zoomFactor;
+            at.translate(xOff, yOff);
 
-        log.debug("MapImage Affine Transform {}", at);
-        setRenderingTransform (at, true);
+            double mapScale = mapManager.getMapScale();
+            at.scale(mapScale, mapScale);
+        }
+
+        setRenderingTransform(at, true);
     }
 
     public void setBoundsAndResize (Dimension currentMapSize,int zoomStep) {

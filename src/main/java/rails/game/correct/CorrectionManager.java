@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class CorrectionManager extends RailsAbstractItem {
 
-    private static final Logger log = LoggerFactory.getLogger(CorrectionManager.class);
+    protected static final Logger log = LoggerFactory.getLogger(CorrectionManager.class);
 
     private final BooleanState active = new BooleanState(this, "active");
 
@@ -62,27 +62,45 @@ public abstract class CorrectionManager extends RailsAbstractItem {
     }
 
     private boolean execute(CorrectionModeAction action) {
+
+        GameManager gm = getParent(); 
+
         if (!isActive()) {
-            String text = LocalText.getText("CorrectionModeActivate",
-                    getRoot().getPlayerManager().getCurrentPlayer().getId(),
-                    LocalText.getText(getCorrectionType().name())
-            );
+            // 1. Pause Timer & Set Correction Mode Flag
+            gm.setGamePaused(true);
+            gm.getCorrectionModeActiveModel().set(true);
 
-            ReportBuffer.add(this, text);
-            DisplayBuffer.add(this, text);
+            // [MODIFIED] User requested removal of alerts
+            // String text = LocalText.getText("CorrectionModeActivate",
+            //         getRoot().getPlayerManager().getCurrentPlayer().getId(),
+            //         LocalText.getText(getCorrectionType().name())
+            // );
+            // ReportBuffer.add(this, text);
+            // DisplayBuffer.add(this, text);
+
         } else {
-            String text = LocalText.getText("CorrectionModeDeactivate",
-                    getRoot().getPlayerManager().getCurrentPlayer().getId(),
-                    LocalText.getText(getCorrectionType().name())
-            );
+            // [MODIFIED] User requested removal of alerts
+            // String text = LocalText.getText("CorrectionModeDeactivate",
+            //         getRoot().getPlayerManager().getCurrentPlayer().getId(),
+            //         LocalText.getText(getCorrectionType().name())
+            // );
+            // ReportBuffer.add(this, text);
 
-            ReportBuffer.add(this, text);
+            // 2. Resume Timer & Clear Correction Mode Flag
+            gm.getCorrectionModeActiveModel().set(false);
+            gm.setGamePaused(false);
         }
 
         active.set(!active.value());
 
+        // 3. CRITICAL: Force a full UI refresh to clear any stale graphics/data bindings.
+        if (gm.getGameUIManager() != null) {
+             gm.getGameUIManager().forceFullUIRefresh();
+        }
+
         return true;
     }
+
 
     /* dummy to capture the non-supported actions */
     protected boolean execute(CorrectionAction action) {
@@ -99,4 +117,6 @@ public abstract class CorrectionManager extends RailsAbstractItem {
         CorrectionManager cm = (CorrectionManager) object;
         return this.getParent() == cm.getParent() && this.correctionType == cm.correctionType;
     }
+
+    
 }

@@ -1,18 +1,24 @@
 <?xml version="1.0"?>
 <ComponentManager>
-	<Component name="GameManager" class="net.sf.rails.game.GameManager">
+	<Component name="GameManager" class="net.sf.rails.game.specific._1870.GameManager_1870">
 		<Game name="1870"/>
+		
 		<GameParameters>
+			<Parameter name="CanAnyCompanyHoldOwnShares" value="yes"/>
 			<PlayerShareLimit percentage="60">
 				<PriceProtection/>
 			</PlayerShareLimit>
+			
 			<BankPoolLimit percentage="50"/>
-			<StockRound>
+
+			<StockRound class="net.sf.rails.game.specific._1870.StockRound_1870">
 				<NoSaleInFirstSR/>
 			</StockRound>
-            <OperatingRound>
+			
+<OperatingRound class="net.sf.rails.game.specific._1870.OperatingRound_1870">
                 <EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="no"/>
             </OperatingRound>
+
 		</GameParameters>
 		<EndOfGame>
 			<Bankruptcy/>
@@ -25,7 +31,7 @@
 		<Players number="3" cash="700" certLimit="20"/>
 		<Players number="4" cash="525" certLimit="16"/>
 		<Players number="5" cash="420" certLimit="13"/>
-		<Players number="6" cash="350" certLimit="11"/>
+		<Players number="6" cash="350" certLimit="9"/>
 	</Component>
 	<Component name="Bank" class="net.sf.rails.game.financial.Bank">
 		<Bank amount="12000"/>
@@ -67,36 +73,47 @@
 	</Component>
 	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
 		<Phase name="2" realName="1">
-			<Tiles colour="yellow"/>
+
+<Tiles colour="yellow">
+
+</Tiles>
 			<OperatingRounds number="1"/>
 			<Trains tradingAllowed="yes"/>
 		</Phase>
 		<Phase name="3" realName="2">
-			<Tiles colour="yellow,green"/>
+<Tiles colour="yellow,green">
+<Lays companyType="Public" colour="yellow" number="2"/>
+</Tiles>
 			<OperatingRounds number="2"/>
 		</Phase>
 		<Phase name="4" realName="3">
             <Trains rusted="2" limitStep="2"/>
 		</Phase>
 		<Phase name="5" realName="4">
-			<Tiles colour="yellow,green,brown"/>
+<Tiles colour="yellow,green,brown">
+<Lays companyType="Public" colour="yellow" number="2"/>
+</Tiles>
             <Trains limitStep="3"/>
 			<OperatingRounds number="3"/>
-		</Phase>
-		<Phase name="6" realName="5">
-			<Tiles colour="yellow,green,brown,grey"/>
-            <Trains rusted="3"/>
 			<Privates close="yes"/>
 			<OffBoardRevenue step="2"/>
 		</Phase>
+		<Phase name="6" realName="5">
+<Tiles colour="yellow,green,brown,gray">
+<Lays companyType="Public" colour="yellow" number="2"/>
+</Tiles>
+            <Trains rusted="3"/>
+
+		</Phase>
 		<Phase name="8" realName="6">
             <Trains rusted="4"/>
+						<OffBoardRevenue step="3"/>
+
 		</Phase>
 		<Phase name="10" realName="7">
 		</Phase>
 		<Phase name="12" realName="8">
 			<Trains rusted="5"/>
-			<OffBoardRevenue step="3"/>
 		</Phase>
 	</Component>	
 	<Component name="RevenueManager" class="net.sf.rails.algorithms.RevenueManager">

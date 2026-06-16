@@ -71,18 +71,24 @@ public class Discord {
             }
         }
 
-        public void update(String text) {
+public void update(String text) {
             String localPlayer = Config.get("local.player.name");
-            log.debug("Discord called with f:{}/c:{}/l:{}", formerCurrentPlayer.getId(), pm.getCurrentPlayer().getId(), localPlayer);
-            if ( formerCurrentPlayer != pm.getCurrentPlayer() ) {
+            Player currentPlayer = pm.getCurrentPlayer();
+
+            // Guard against null player state (e.g. during forced actions)
+            if (currentPlayer == null) return;
+            if (formerCurrentPlayer == null) formerCurrentPlayer = currentPlayer;
+
+            log.debug("Discord called with f:{}/c:{}/l:{}", formerCurrentPlayer.getId(), currentPlayer.getId(), localPlayer);
+            if ( formerCurrentPlayer != currentPlayer ) {
                 if ( formerCurrentPlayer.getId().equals(localPlayer ) ) {
                     // only alert if we are transitioning from the former player
-                    if ( !localPlayer.equals(pm.getCurrentPlayer().getId()) ) {
+                    if ( !localPlayer.equals(currentPlayer.getId()) ) {
                         // only send a notification if we are switching to a different user, ie not ourselves
-                        sendMessage(pm.getCurrentPlayer().getId());
+                        sendMessage(currentPlayer.getId());
                     }
                 }
-                formerCurrentPlayer = pm.getCurrentPlayer();
+                formerCurrentPlayer = currentPlayer;
             }
         }
 

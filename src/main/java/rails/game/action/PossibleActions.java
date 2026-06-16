@@ -17,6 +17,12 @@ public class PossibleActions {
 
     private PossibleActions() { }
 
+    public void removeAll(List<? extends PossibleAction> actionsToRemove) {
+        if (actionsToRemove != null) {
+            this.actions.removeAll(actionsToRemove);
+        }
+    }
+    
     public static PossibleActions create() {
         return new PossibleActions();
     }

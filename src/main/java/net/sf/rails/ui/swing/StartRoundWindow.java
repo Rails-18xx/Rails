@@ -3,11 +3,13 @@ package net.sf.rails.ui.swing;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
@@ -15,8 +17,11 @@ import net.sf.rails.game.financial.*;
 import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
+import net.sf.rails.ui.swing.hexmap.GUIHex;
 import net.sf.rails.ui.swing.hexmap.HexHighlightMouseListener;
+import net.sf.rails.ui.swing.hexmap.HexMap;
 import net.sf.rails.util.Util;
+import net.sf.rails.ui.swing.ORPanel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,94 +30,96 @@ import rails.game.action.*;
 
 import com.google.common.collect.Iterables;
 
-
 /**
- * This displays the Auction Window
+ * This displays the Auction Window.
+ * Refactored to remove separate Info column/button and integrate details into
+ * RailCard tooltips.
  */
 public class StartRoundWindow extends JFrame implements ActionListener, KeyListener, ActionPerformer, DialogOwner {
 
     private static final long serialVersionUID = 1L;
 
     // Gap sizes between screen cells, in pixels
-    private static final int NARROW_GAP = 1;
-    private static final int WIDE_GAP = 3;
+    protected static final int NARROW_GAP = 2;
+    protected static final int WIDE_GAP = 5;
     // Bits for specifying where to apply wide gaps
-    private static final int WIDE_LEFT = 1;
-    private static final int WIDE_RIGHT = 2;
-    private static final int WIDE_TOP = 4;
-    private static final int WIDE_BOTTOM = 8;
+    protected static final int WIDE_LEFT = 1;
+    protected static final int WIDE_RIGHT = 2;
+    protected static final int WIDE_TOP = 4;
+    protected static final int WIDE_BOTTOM = 8;
 
-    private static final Color buyableColour = new Color(0, 128, 0);
-    private static final Color soldColour = new Color(128, 128, 128);
-    private static final Color defaultColour = Color.BLACK;
+    protected ActionButton undoButton;
 
-    protected static final String[] itemStatusTextKeys =
-            new String[]{"Status_Unavailable", "Status_Biddable", "Status_Buyable",
-                    "Status_Selectable", "Status_Auctioned",
-                    "Status_NeedingSharePrice", "Status_Sold"};
+    protected static final String[] itemStatusTextKeys = new String[] { "Status_Unavailable", "Status_Biddable",
+            "Status_Buyable",
+            "Status_Selectable", "Status_Auctioned",
+            "Status_NeedingSharePrice", "Status_Sold" };
 
     /* Keys of dialogs owned by this class */
     public static final String COMPANY_START_PRICE_DIALOG = "CompanyStartPrice";
 
     private static final Logger log = LoggerFactory.getLogger(StartRoundWindow.class);
 
-    private JPanel statusPanel;
-    private JPanel buttonPanel;
+    protected JPanel statusPanel;
+    protected JPanel buttonPanel;
 
-    private GridBagLayout gb;
-    private GridBagConstraints gbc;
+    protected GridBagLayout gb;
+    protected GridBagConstraints gbc;
 
     // Grid elements per function
-    private Caption[] itemName;
-    private ClickField[] itemNameButton;
-    private int[] itemNameXOffset;
-    private int itemNameYOffset;
-    private Field[] basePrice;
-    private int[] basePriceXOffset;
-    private int basePriceYOffset;
-    private Field[] minBid;
-    private int[] minBidXOffset;
-    private int minBidYOffset;
-    private Field[][] bidPerPlayer;
-    private int[] bidPerPlayerXOffset;
-    private int bidPerPlayerYOffset;
-    private Field[] playerBids;
-    private int[] playerBidsXOffset;
-    private int playerBidsYOffset;
-    private Field[] playerFree;
-    private int[] playerFreeCashXOffset;
-    private int playerFreeCashYOffset;
-    private Field[] info;
-    private int[] infoXOffset;
-    private int infoYOffset;
-    private Field[] itemStatus; // Remains invisible, only used for status tooltip
+    protected Caption[] itemName;
+    protected int[] itemNameXOffset;
+    protected int itemNameYOffset;
+    protected Field[] basePrice;
+    protected int[] basePriceXOffset;
+    protected int basePriceYOffset;
+    protected Field[] minBid;
+    protected int[] minBidXOffset;
+    protected int minBidYOffset;
 
-    private int[] playerCaptionXOffset;
-    private int upperPlayerCaptionYOffset, lowerPlayerCaptionYOffset;
-    private Field[][] upperPlayerCaption;
-    private Field[] lowerPlayerCaption;
-    private JComponent[][] fields;
+    // Separator Fields
+    protected JComponent[] verticalSeparators;
+    protected int[] separatorXOffset;
 
-    private ActionButton bidButton;
-    private ActionButton buyButton;
-    private JSpinner bidAmount;
-    private SpinnerNumberModel spinnerModel;
-    private ActionButton passButton;
+    protected Field[][] bidPerPlayer;
+    protected int[] bidPerPlayerXOffset;
+    protected int bidPerPlayerYOffset;
+    protected Field[] playerBids;
+    protected int[] playerBidsXOffset;
+    protected int playerBidsYOffset;
+    protected Field[] playerFree;
+    protected int[] playerFreeCashXOffset;
+    protected int playerFreeCashYOffset;
 
-    private ImageIcon infoIcon;
+    protected Field[] itemStatus;
 
-    private PlayerManager players;
+    protected int[] playerCaptionXOffset;
+    protected int upperPlayerCaptionYOffset, lowerPlayerCaptionYOffset;
+    protected Field[][] upperPlayerCaption;
+    protected Field[] lowerPlayerCaption;
+    protected JComponent[][] fields;
+    protected int currentFontSize = 14;
 
-    private int[] crossIndex;
+    protected ActionButton bidButton;
+    protected ActionButton buyButton;
+
+    protected ActionButton aiIRButton;
+    protected JSpinner bidAmount;
+    protected SpinnerNumberModel spinnerModel;
+    protected ActionButton passButton;
+
+    protected RailCard[] cards;
+    protected PlayerManager players;
+
+    protected int[] crossIndex;
     protected StartRound round;
-    private GameUIManager gameUIManager;
+    protected GameUIManager gameUIManager;
     protected StartPacket startPacket;
     protected boolean multipleColumns;
     protected int numberOfColumns;
     protected int numberOfRows;
     protected int columnWidth = 0;
 
-    // For the non-modal dialog to ask for a company starting share price.
     protected JDialog currentDialog;
     protected PossibleAction currentDialogAction;
     protected SortedSet<StockSpace> startSpaces;
@@ -120,314 +127,24 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
     protected PossibleActions possibleActions;
     protected PossibleAction immediateAction;
 
-    private final ButtonGroup itemGroup = new ButtonGroup();
-    private ClickField dummyButton; // To be selected if none else is.
+    protected final ButtonGroup itemGroup = new ButtonGroup();
+    protected ClickField dummyButton;
 
-    private StartRound.Bidding includeBidding;
-    private boolean includeBuying;
-    private boolean showBasePrices;
+    protected StartRound.Bidding includeBidding;
+    protected boolean includeBuying;
+    protected boolean showBasePrices;
 
-    public void init(StartRound round, GameUIManager parent) {
-        //super();
-        this.round = round;
-        startPacket = round.getStartPacket();
-        multipleColumns = startPacket.isMultipleColumns();
-        if (multipleColumns) {
-            numberOfColumns = startPacket.getNumberOfColumns();
-            numberOfRows = startPacket.getNumberOfRows();
-        } else {
-            numberOfRows = round.getNumberOfStartItems();
-            numberOfColumns = 1;
-        }
-        includeBidding = round.hasBidding();
-        includeBuying = round.hasBuying();
-        showBasePrices = round.hasBasePrices();
-        gameUIManager = parent;
-        possibleActions = gameUIManager.getGameManager().getPossibleActions();
+    protected ORUIManager orUIManager;
+    protected int selectedItemIndex = -1;
+    protected JPanel[] cardWrappers;
+    protected JPanel[] playerInventoryPanels; // New field for player inventories
+    protected static final Color COLOR_AVAILABLE = new Color(204, 255, 204);
+    protected static final Color COLOR_SOLD = new Color(220, 220, 220);
+    protected static final Color COLOR_HIGHLIGHT = new Color(160, 32, 240); // Prominent Purple
 
-        setTitle(LocalText.getText("START_ROUND_TITLE",
-                String.valueOf(round.getStartRoundNumber())));
-        getContentPane().setLayout(new BorderLayout());
-
-        statusPanel = new JPanel();
-        gb = new GridBagLayout();
-        statusPanel.setLayout(gb);
-        statusPanel.setBorder(BorderFactory.createEtchedBorder());
-        statusPanel.setOpaque(true);
-
-        buttonPanel = new JPanel();
-
-        if (includeBuying) {
-            buyButton = new ActionButton(RailsIcon.AUCTION_BUY);
-            buyButton.setMnemonic(KeyEvent.VK_B);
-            buyButton.addActionListener(this);
-            buyButton.setEnabled(false);
-            buttonPanel.add(buyButton);
-        }
-
-        if (includeBidding != StartRound.Bidding.NO) {
-            bidButton = new ActionButton(RailsIcon.BID);
-            bidButton.setMnemonic(KeyEvent.VK_D);
-            bidButton.addActionListener(this);
-            bidButton.setEnabled(false);
-            buttonPanel.add(bidButton);
-
-            spinnerModel = new SpinnerNumberModel(999, 0, null, 1);
-            bidAmount = new JSpinner(spinnerModel);
-            bidAmount.setPreferredSize(new Dimension(50, 28));
-            bidAmount.setEnabled(false);
-            buttonPanel.add(bidAmount);
-        }
-
-        passButton = new ActionButton(RailsIcon.PASS);
-        passButton.setMnemonic(KeyEvent.VK_P);
-        passButton.addActionListener(this);
-        passButton.setEnabled(false);
-        buttonPanel.add(passButton);
-
-        buttonPanel.setOpaque(true);
-
-        gbc = new GridBagConstraints();
-
-        players = gameUIManager.getRoot().getPlayerManager();
-
-        crossIndex = new int[round.getStartPacket().getNumberOfItems()];
-
-        for (int i = 0; i < round.getNumberOfStartItems(); i++) {
-            final StartItem item = round.getStartItem(i);
-
-            crossIndex[item.getIndex()] = i;
-        }
-
-        infoIcon = createInfoIcon();
-
-        initCells();
-
-        getContentPane().add(statusPanel, BorderLayout.NORTH);
-        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-        //setTitle("Rails: Start Round");
-        setLocation(300, 150);
-        setSize(275, 325);
-        gameUIManager.setMeVisible(this, true);
-        requestFocus();
-
-        addKeyListener(this);
-
-        // set closing behavior and listener
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        final JFrame thisFrame = this;
-        final GameUIManager guiMgr = gameUIManager;
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                if (GameUIManager.confirmQuit(thisFrame)) {
-                    thisFrame.dispose();
-                    guiMgr.terminate();
-                }
-            }
-        });
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentMoved(ComponentEvent e) {
-                guiMgr.getWindowSettings().set(thisFrame);
-            }
-
-            @Override
-            public void componentResized(ComponentEvent e) {
-                guiMgr.getWindowSettings().set(thisFrame);
-            }
-        });
-
-        gameUIManager.packAndApplySizing(this);
+    public StartRoundWindow() {
     }
 
-    private void initCells() {
-        int lastX = -1;
-        int lastY = 0;
-
-        int np = players.getNumberOfPlayers();
-        int ni = round.getNumberOfStartItems();
-
-
-        itemName = new Caption[ni];
-        itemNameButton = new ClickField[ni];
-        basePrice = new Field[ni];
-        minBid = new Field[ni];
-        bidPerPlayer = new Field[ni][np];
-        info = new Field[ni];
-        itemStatus = new Field[ni];
-        upperPlayerCaption = new Field[numberOfColumns][np];
-        lowerPlayerCaption = new Field[np];
-        playerBids = new Field[np];
-        playerFree = new Field[np];
-
-        itemNameXOffset = new int[numberOfColumns];
-        if (showBasePrices) basePriceXOffset = new int[numberOfColumns];
-        if (includeBidding == StartRound.Bidding.ON_ITEMS) minBidXOffset = new int[numberOfColumns];
-        bidPerPlayerXOffset = new int[numberOfColumns];
-        playerCaptionXOffset = new int[numberOfColumns];
-        infoXOffset = new int[numberOfColumns];
-        if (includeBidding != StartRound.Bidding.NO) playerBidsXOffset = new int[numberOfColumns];
-        playerFreeCashXOffset = new int[numberOfColumns];
-
-        upperPlayerCaptionYOffset = ++lastY;
-
-        for (int col = 0; col < numberOfColumns; col++) {
-            itemNameXOffset[col] = ++lastX;
-            if (col == 0) itemNameYOffset = ++lastY;
-            if (showBasePrices) {
-                basePriceXOffset[col] = ++lastX;
-                if (col == 0) basePriceYOffset = lastY;
-            }
-            if (includeBidding == StartRound.Bidding.ON_ITEMS) {
-                minBidXOffset[col] = ++lastX;
-                if (col == 0) minBidYOffset = lastY;
-            }
-            bidPerPlayerXOffset[col] = playerCaptionXOffset[col] = ++lastX;
-            if (col == 0) bidPerPlayerYOffset = lastY;
-
-            infoXOffset[col] = bidPerPlayerXOffset[col] + np;
-            lastX += np;
-            if (col == 0) {
-                infoYOffset = lastY;
-                columnWidth = lastX + 1;
-            }
-
-
-            // Bottom rows
-            lastY += (numberOfRows - 1);
-            if (includeBidding != StartRound.Bidding.NO) {
-                playerBidsXOffset[col] = bidPerPlayerXOffset[col];
-                if (col == 0) playerBidsYOffset = ++lastY;
-            }
-            playerFreeCashXOffset[col] = bidPerPlayerXOffset[col];
-
-            if (col == 0) {
-                playerFreeCashYOffset = ++lastY;
-                lowerPlayerCaptionYOffset = ++lastY;
-
-                fields = new JComponent[columnWidth * numberOfColumns][2 + lastY];
-                log.debug("Columns={} (width/col={} nbOfCol={}) rows={}", columnWidth * numberOfColumns,
-                        columnWidth, numberOfColumns, 2 + lastY);
-            }
-
-            addField(new Caption(LocalText.getText("ITEM")),
-                    itemNameXOffset[col], 0, 1, 2,
-            WIDE_LEFT + WIDE_RIGHT + WIDE_BOTTOM);
-
-            if (showBasePrices) {
-                addField(new Caption(LocalText.getText(includeBidding == StartRound.Bidding.ON_ITEMS
-                                ? "BASE_PRICE" : "PRICE")), basePriceXOffset[col], 0, 1, 2,
-                        WIDE_BOTTOM);
-            }
-            if (includeBidding == StartRound.Bidding.ON_ITEMS) {
-                addField(new Caption(LocalText.getText("MINIMUM_BID")),
-                        minBidXOffset[col], 0, 1, 2, WIDE_BOTTOM + WIDE_RIGHT);
-            }
-            addField(new Caption(LocalText.getText("PLAYERS")),
-                    playerCaptionXOffset[col], 0, np, 1, 0);
-            for (int i = 0; i < np; i++) {
-                upperPlayerCaption[col][i] = new Field(players.getPlayerByPosition(i).getPlayerNameModel());
-                addField(upperPlayerCaption[col][i], playerCaptionXOffset[col] + i,
-                        upperPlayerCaptionYOffset, 1, 1, WIDE_BOTTOM);
-            }
-        }
-
-        int row, col;
-        for (int i = 0; i < ni; i++) {
-            final StartItem si = round.getStartItem(i);
-
-            if (multipleColumns) {
-                row = si.getRow() - 1;
-                col = si.getColumn() - 1;
-            } else {
-                row = i;
-                col = 0;
-            }
-
-            itemName[i] = new Caption(si.getDisplayName());
-            HexHighlightMouseListener.addMouseListener(itemName[i], gameUIManager.getORUIManager(), si);
-            addField(itemName[i], itemNameXOffset[col], itemNameYOffset + row,
-                    1, 1, WIDE_LEFT + WIDE_RIGHT);
-
-            itemNameButton[i] = new ClickField(si.getDisplayName(), "", "", this, itemGroup);
-            HexHighlightMouseListener.addMouseListener(itemNameButton[i], gameUIManager.getORUIManager(), si);
-            addField(itemNameButton[i], itemNameXOffset[col], itemNameYOffset + row,
-                    1, 1, WIDE_LEFT + WIDE_RIGHT);
-
-            // Prevent row height resizing after every buy action
-            itemName[i].setPreferredSize(itemNameButton[i].getPreferredSize());
-
-            if (showBasePrices) {
-                basePrice[i] = new Field(si.getBasePriceModel());
-                addField(basePrice[i], basePriceXOffset[col], basePriceYOffset + row,
-                        1, 1, 0);
-            }
-
-            if (includeBidding == StartRound.Bidding.ON_ITEMS) {
-                minBid[i] = new Field(round.getMinimumBidModel(i));
-                addField(minBid[i], minBidXOffset[col], minBidYOffset + row,
-                        1, 1, WIDE_RIGHT);
-            }
-
-            for (int j = 0; j < np; j++) {
-                bidPerPlayer[i][j] = new Field(round.getBidModel(i, players.getPlayerByPosition(j)));
-                addField(bidPerPlayer[i][j], bidPerPlayerXOffset[col] + j, bidPerPlayerYOffset + row,
-                        1, 1, 0);
-            }
-
-            info[i] = new Field(infoIcon);
-
-            Certificate cert = si.getPrimary();
-            Company comp = null;
-            if (cert instanceof PublicCertificate) {
-                comp = (PublicCompany) cert.getParent();
-            } else if (cert instanceof PrivateCompany) {
-                comp = (PrivateCompany) cert;
-            }
-            String infoText = comp.getInfoText().replaceFirst("^<html>",
-                    "<html>" + comp.getType().getId() + " company: ");
-            info[i].setToolTipText(infoText);
-            HexHighlightMouseListener.addMouseListener(info[i], gameUIManager.getORUIManager(), si);
-            addField(info[i], infoXOffset[col], infoYOffset + row, 1, 1, WIDE_LEFT + WIDE_RIGHT);
-
-            // Invisible field, only used to hold current item status.
-            itemStatus[i] = new Field(si.getStatusModel());
-        }
-
-        // Player money
-        boolean firstBelowTable = true;
-        if (includeBidding != StartRound.Bidding.NO) {
-            addField(new Caption(LocalText.getText("BID")), playerBidsXOffset[0] - 1, playerBidsYOffset,
-                    1, 1, WIDE_TOP + WIDE_RIGHT);
-
-            for (int i = 0; i < np; i++) {
-                playerBids[i] = new Field(round.getBlockedCashModel(players.getPlayerByPosition(i)));
-                addField(playerBids[i], playerBidsXOffset[0] + i, playerBidsYOffset,
-                        1, 1, WIDE_TOP);
-            }
-
-            firstBelowTable = false;
-        }
-
-        addField(new Caption(
-                        LocalText.getText(includeBidding != StartRound.Bidding.NO ? "FREE" : "CASH")),
-                playerFreeCashXOffset[0] - 1, playerFreeCashYOffset, 1, 1,
-                WIDE_RIGHT + (firstBelowTable ? WIDE_TOP : 0));
-        for (int i = 0; i < np; i++) {
-            playerFree[i] = new Field(includeBidding != StartRound.Bidding.NO
-                    ? round.getFreeCashModel(players.getPlayerByPosition(i))
-                    : players.getPlayerByPosition(i).getWallet());
-            addField(playerFree[i], playerFreeCashXOffset[0] + i, playerFreeCashYOffset, 1, 1, firstBelowTable ? WIDE_TOP : 0);
-        }
-
-        for (int i = 0; i < np; i++) {
-            lowerPlayerCaption[i] = new Field(players.getPlayerByPosition(i).getPlayerNameModel());
-            addField(lowerPlayerCaption[i], playerFreeCashXOffset[0] + i, playerFreeCashYOffset + 1, 1, 1, WIDE_TOP);
-        }
-
-        dummyButton = new ClickField("", "", "", this, itemGroup);
-    }
 
     private void addField(JComponent comp, int x, int y, int width, int height, int wideGapPositions) {
         gbc.gridx = x;
@@ -445,150 +162,62 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         gbc.insets = new Insets(padTop, padLeft, padBottom, padRight);
 
         statusPanel.add(comp, gbc);
-        fields[x][y] = comp;
+        if (fields != null && x < fields.length && y < fields[0].length) {
+            fields[x][y] = comp;
+        }
     }
 
-    @Override
-    public void updateStatus(boolean myTurn) {
-        for (int i = 0; i < round.getNumberOfStartItems(); i++) {
-            setItemNameButton(i, false);
+    public void updateFonts(int size) {
+        if (size < 8)
+            size = 8;
+        if (size > 48)
+            size = 48;
+        currentFontSize = size;
+
+        Font f = new Font("SansSerif", Font.BOLD, currentFontSize);
+
+        // Helper logic to update all arrays if they exist
+        if (basePrice != null)
+            for (Field c : basePrice)
+                if (c != null)
+                    c.setFont(f);
+        if (minBid != null)
+            for (Field c : minBid)
+                if (c != null)
+                    c.setFont(f);
+        if (playerBids != null)
+            for (Field c : playerBids)
+                if (c != null)
+                    c.setFont(f);
+        if (playerFree != null)
+            for (Field c : playerFree)
+                if (c != null)
+                    c.setFont(f);
+        if (lowerPlayerCaption != null)
+            for (Field c : lowerPlayerCaption)
+                if (c != null)
+                    c.setFont(f);
+
+        if (upperPlayerCaption != null) {
+            for (Field[] row : upperPlayerCaption) {
+                if (row != null)
+                    for (Field c : row)
+                        if (c != null)
+                            c.setFont(f);
+            }
         }
-
-        // Unselect the selected private
-        dummyButton.setSelected(true);
-
-        if (includeBuying) {
-            buyButton.setEnabled(false);
-        }
-        if (includeBidding != StartRound.Bidding.NO) {
-            bidButton.setEnabled(false);
-            bidAmount.setEnabled(false);
-        }
-        passButton.setEnabled(false);
-
-        RoundFacade currentRound = gameUIManager.getCurrentRound();
-        if (!(currentRound instanceof StartRound)) {
-            log.debug("early return: {}", currentRound);
-            return;
-        }
-
-        if (!myTurn) return;
-
-        // For debugging
-        for (PossibleAction action : possibleActions.getList()) {
-            log.debug("{} may: {}", action.getPlayerName(), action);
-        }
-
-        List<StartItemAction> actions = possibleActions.getType(StartItemAction.class);
-
-        if (actions == null || actions.isEmpty()) {
-            close();
-            return;
-        }
-
-        //int nextPlayerIndex = ((PossibleAction) actions.get(0)).getPlayerIndex();
-        setSRPlayerTurn();
-
-        boolean buyAllowed = false;
-        boolean bidAllowed = false;
-
-        boolean selected = false;
-
-        BuyStartItem buyAction;
-
-        for (StartItemAction action : actions) {
-            int j = action.getItemIndex();
-            int i = crossIndex[j];
-
-            StartItem item = action.getStartItem();
-
-            if (action instanceof BuyStartItem) {
-                buyAction = (BuyStartItem) action;
-
-                if (!buyAction.setSharePriceOnly()) {
-                    selected = buyAction.isSelected();
-                    if (selected) {
-                        buyButton.setPossibleAction(action);
-                    } else {
-                        //itemNameButton[i].setToolTipText(LocalText.getText("ClickToSelectForBuying"));
-                        itemNameButton[i].setPossibleAction(action);
-                    }
-                    itemNameButton[i].setSelected(selected);
-                    itemNameButton[i].setEnabled(!selected);
-                    setItemNameButton(i, true);
-                    if (includeBidding == StartRound.Bidding.ON_ITEMS && showBasePrices)
-                        minBid[i].setText("");
-                    buyAllowed = selected;
-
-                } else {
-                    PossibleAction lastAction = gameUIManager.getLastAction();
-                    if (lastAction instanceof GameAction
-                            && EnumSet.of(GameAction.Mode.UNDO, GameAction.Mode.FORCED_UNDO).contains(
-                            ((GameAction) lastAction).getMode())) {
-                        // If we come here via an Undo, we should not start
-                        // with a modal dialog, as that would prevent further
-                        // Undos.
-                        // So there is an extra step: let the player press Buy
-                        // first.
-                        setItemNameButton(i, true);
-                        itemNameButton[i].setSelected(true);
-                        itemNameButton[i].setEnabled(false);
-                        buyButton.setPossibleAction(action);
-                        buyAllowed = true;
-
-                    } else {
-                        immediateAction = action;
-                    }
-                }
-
-            } else if (action instanceof BidStartItem) {
-                BidStartItem bidAction = (BidStartItem) action;
-                selected = bidAction.isSelected();
-                if (selected) {
-                    bidButton.addPossibleAction(action);
-                    bidButton.setPossibleAction(action);
-                    int mb = bidAction.getMinimumBid();
-                    spinnerModel.setMinimum(mb);
-                    spinnerModel.setStepSize(bidAction.getBidIncrement());
-                    spinnerModel.setValue(mb);
-                } else {
-                    itemNameButton[i].setPossibleAction(action);
-                }
-                bidAllowed = selected;
-                if (includeBidding == StartRound.Bidding.ON_ITEMS) {
-                    itemNameButton[i].setSelected(selected);
-                    itemNameButton[i].setEnabled(!selected);
-                    setItemNameButton(i, true);
-                    minBid[i].setText(Bank.format(item, item.getMinimumBid()));
-                }
+        if (bidPerPlayer != null) {
+            for (Field[] row : bidPerPlayer) {
+                if (row != null)
+                    for (Field c : row)
+                        if (c != null)
+                            c.setFont(f);
             }
         }
 
-        boolean passAllowed = false;
-
-        List<NullAction> inactiveItems = possibleActions.getType(NullAction.class);
-        if (inactiveItems != null && !inactiveItems.isEmpty()) {
-            // only one NullAction is allowed
-            NullAction na = inactiveItems.get(0);
-            // nullActions differ in text to display
-            passButton.setRailsIcon(RailsIcon.getByConfigKey(na.getMode().name()));
-            passAllowed = true;
-            passButton.setPossibleAction(na);
-            passButton.setMnemonic(KeyEvent.VK_P);
-        }
-
-        if (includeBuying) {
-            buyButton.setEnabled(buyAllowed);
-        }
-
-        if (includeBidding != StartRound.Bidding.NO) {
-            bidButton.setEnabled(bidAllowed);
-            bidAmount.setEnabled(bidAllowed);
-        }
-        passButton.setEnabled(passAllowed);
-
-        pack(); // to avoid not displaying after label size changes
-        requestFocus();
+        // Re-pack window to accommodate new size
+        if (gameUIManager != null)
+            gameUIManager.packAndApplySizing(this);
     }
 
     @Override
@@ -608,82 +237,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
             }
         }
         return true;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    @Override
-    public void actionPerformed(ActionEvent actor) {
-        JComponent source = (JComponent) actor.getSource();
-
-        if (source instanceof ClickField) {
-            gbc = gb.getConstraints(source);
-            StartItemAction currentActiveItem = (StartItemAction) ((ClickField) source).getPossibleActions().get(0);
-
-            //notify sound manager that click field has been selected
-            SoundManager.notifyOfClickFieldSelection(currentActiveItem);
-
-            //notify sound manager that click field has been selected
-            SoundManager.notifyOfClickFieldSelection(currentActiveItem);
-
-            if (currentActiveItem instanceof BuyStartItem) {
-                buyButton.setEnabled(true);
-                buyButton.setPossibleAction(currentActiveItem);
-                if (includeBidding != StartRound.Bidding.NO) {
-                    bidButton.setEnabled(false);
-                    bidAmount.setEnabled(false);
-                }
-            } else if (currentActiveItem instanceof BidStartItem) {
-                BidStartItem bidAction = (BidStartItem) currentActiveItem;
-                if (includeBuying) {
-                    buyButton.setEnabled(false);
-                }
-
-                if (bidAction.isSelectForAuction()) {
-                    // In this case, "Pass" becomes "Select, don't buy"
-                    passButton.setPossibleAction(currentActiveItem);
-                    passButton.setEnabled(true);
-                    passButton.setRailsIcon(RailsIcon.SELECT_NO_BID);
-                    passButton.setVisible(true);
-
-                    pack();
-                }
-
-                if (includeBidding != StartRound.Bidding.NO) {
-                    bidButton.setEnabled(true);
-                    bidButton.setPossibleAction(currentActiveItem);
-                    bidAmount.setEnabled(true);
-                    int minBid = bidAction.getMinimumBid();
-                    spinnerModel.setMinimum(minBid);
-                    spinnerModel.setStepSize(bidAction.getBidIncrement());
-                    spinnerModel.setValue(minBid);
-                }
-            }
-        } else if (source instanceof ActionButton) {
-            PossibleAction activeItem = ((ActionButton) source).getPossibleActions().get(0);
-
-            if (source == buyButton) {
-                if (activeItem instanceof BuyStartItem && ((BuyStartItem) activeItem).hasSharePriceToSet()) {
-                    if (requestStartPrice((BuyStartItem) activeItem)) {
-                        return;
-                    }
-                } else {
-                    process(activeItem);
-                }
-            } else if (source == bidButton) {
-                ((BidStartItem) activeItem).setActualBid(((Integer) spinnerModel.getValue()));
-                process(activeItem);
-
-            } else if (source == passButton) {
-                if (activeItem instanceof BidStartItem && ((BidStartItem) activeItem).isSelectForAuction()) {
-                    ((BidStartItem) activeItem).setActualBid(-1);
-                }
-                process(activeItem);
-            }
-        }
     }
 
     protected boolean requestStartPrice(BuyStartItem activeItem) {
@@ -786,68 +339,11 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         int playerIndex = players.getCurrentPlayer().getIndex();
         for (int i = 0; i < players.getNumberOfPlayers(); i++) {
             for (int j = 0; j < numberOfColumns; j++) {
-                upperPlayerCaption[j][i].setHighlight(i == playerIndex);
-            }
+if (upperPlayerCaption[j][i] != null) {
+                    upperPlayerCaption[j][i].setHighlight(i == playerIndex);
+                }            }
             lowerPlayerCaption[i].setHighlight(i == playerIndex);
         }
-    }
-
-    private void setItemNameButton(int i, boolean clickable) {
-        itemName[i].setVisible(!clickable);
-        itemNameButton[i].setVisible(clickable);
-
-        int status = Integer.parseInt(itemStatus[i].getText());
-        String tooltip = LocalText.getText(itemStatusTextKeys[status]);
-
-        itemName[i].setToolTipText(clickable ? "" : tooltip);
-        itemNameButton[i].setToolTipText(clickable ? tooltip : "");
-
-        itemName[i].setForeground(status == StartItem.SOLD ? soldColour : defaultColour);
-        itemNameButton[i].setForeground(status == StartItem.BUYABLE ? buyableColour : defaultColour);
-    }
-
-    /* Replaced by the texts from the Info menu.
-    private String getStartItemDescription(StartItem item) {
-        StringBuilder b = new StringBuilder("<html>");
-        b.append(item.getPrimary().toText());
-        if (item.getPrimary() instanceof PrivateCompany) {
-            PrivateCompany priv = (PrivateCompany) item.getPrimary();
-            b.append("<br>Revenue: ").append(Bank.format(item, priv.getRevenue()));
-            List<MapHex> blockedHexes = priv.getBlockedHexes();
-            if (blockedHexes == null) {
-            } else if (blockedHexes.size() == 1) {
-                b.append("<br>Blocked hex: ").append(blockedHexes.get(0).getId());
-            } else if (blockedHexes.size() > 1) {
-                b.append("<br>Blocked hexes:");
-                for (MapHex hex : blockedHexes) {
-                    b.append(" ").append(hex.getId());
-                }
-            }
-            if (priv.hasSpecialProperties()) {
-                b.append("<br><b>Special properties:</b>");
-                for (SpecialProperty sp : priv.getSpecialProperties()) {
-                    b.append("<br>").append(sp.getInfo());
-                }
-            }
-            // sfy 1889
-            List<String> preventClosingConditions = priv.getPreventClosingConditions();
-            if (!preventClosingConditions.isEmpty()) {
-                b.append("<br><b>Prevent closing conditions:</b>");
-                for (String condition : preventClosingConditions) {
-                    b.append("<br>").append(condition);
-                }
-            }
-
-        }
-        if (item.getSecondary() != null) {
-            b.append("<br><b>Also contains:</b><br>");
-            b.append(item.getSecondary().toText());
-        }
-        return b.toString();
-    }*/
-
-    private ImageIcon createInfoIcon() {
-        return RailsIcon.INFO.smallIcon;
     }
 
     @Override
@@ -878,9 +374,6 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         for (int i = 0; i < np; i++) {
             xref[i] = oldPlayerNames.indexOf(newPlayerNames.get(i));
         }
-        log.debug("SRW: old player list: {}", Util.join(oldPlayerNames.toArray(new String[0]), ","));
-        log.debug("SRW: new player list: {}", Util.join(newPlayerNames.toArray(new String[0]), ","));
-
 
         JComponent[] cells = new Cell[np];
         GridBagConstraints[] constraints = new GridBagConstraints[np];
@@ -904,6 +397,841 @@ public class StartRoundWindow extends JFrame implements ActionListener, KeyListe
         }
 
         gameUIManager.packAndApplySizing(this);
+    }
+
+    // Method for the Start Round (IR) AI button
+    public void enableAIIRButton(boolean enable) {
+        // Assuming aiIRbutton is defined in ORPanel.java
+        if (aiIRButton != null) {
+            aiIRButton.setEnabled(enable);
+            aiIRButton.setVisible(enable);
+        }
+    }
+
+    public void init(StartRound round, GameUIManager parent, ORUIManager orUIManager) {
+        this.round = round;
+        this.orUIManager = orUIManager;
+        startPacket = round.getStartPacket();
+        multipleColumns = startPacket.isMultipleColumns();
+        if (multipleColumns) {
+            numberOfColumns = startPacket.getNumberOfColumns();
+            numberOfRows = startPacket.getNumberOfRows();
+        } else {
+            numberOfRows = round.getNumberOfStartItems();
+            numberOfColumns = 1;
+        }
+        includeBidding = round.hasBidding();
+        includeBuying = round.hasBuying();
+        showBasePrices = round.hasBasePrices();
+        gameUIManager = parent;
+        possibleActions = gameUIManager.getGameManager().getPossibleActions();
+
+        setTitle(LocalText.getText("START_ROUND_TITLE",
+                String.valueOf(round.getStartRoundNumber())));
+        getContentPane().setLayout(new BorderLayout());
+
+        statusPanel = new JPanel();
+        gb = new GridBagLayout();
+        statusPanel.setLayout(gb);
+        statusPanel.setBorder(BorderFactory.createEtchedBorder());
+        statusPanel.setOpaque(true);
+
+        buttonPanel = new JPanel();
+
+        if (includeBuying) {
+            buyButton = new ActionButton(RailsIcon.AUCTION_BUY);
+            buyButton.setMnemonic(KeyEvent.VK_U);
+            buyButton.addActionListener(this);
+            buyButton.setEnabled(false);
+            buttonPanel.add(buyButton);
+        }
+
+        if (includeBidding != StartRound.Bidding.NO) {
+            bidButton = new ActionButton(RailsIcon.BID);
+            bidButton.setMnemonic(KeyEvent.VK_B);
+            bidButton.addActionListener(this);
+            bidButton.setEnabled(false);
+            buttonPanel.add(bidButton);
+
+            spinnerModel = new SpinnerNumberModel(999, 0, null, 1);
+            bidAmount = new JSpinner(spinnerModel);
+            bidAmount.setPreferredSize(new Dimension(50, 28));
+            bidAmount.setEnabled(false);
+            buttonPanel.add(bidAmount);
+        }
+
+        passButton = new ActionButton(RailsIcon.PASS);
+        passButton.setMnemonic(KeyEvent.VK_P);
+        passButton.addActionListener(this);
+        passButton.setEnabled(false);
+        buttonPanel.add(passButton);
+
+        undoButton = new ActionButton(RailsIcon.UNDO);
+        undoButton.setToolTipText("Undo last action (Z)");
+        undoButton.addActionListener(this);
+        undoButton.setEnabled(false);
+        buttonPanel.add(undoButton);
+
+        if (round instanceof net.sf.rails.game.specific._1817.StartRound_1817) {
+            net.sf.rails.game.specific._1817.StartRound_1817 sr1817 = (net.sf.rails.game.specific._1817.StartRound_1817) round;
+            JPanel seedPanel = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
+            JLabel seedLabel = new JLabel("  Seed Money: ");
+            seedLabel.setFont(new Font("SansSerif", Font.BOLD, currentFontSize));
+            Field seedField = new Field(sr1817.getSeedMoneyModel());
+            seedField.setFont(new Font("SansSerif", Font.BOLD, currentFontSize));
+            seedPanel.add(seedLabel);
+            seedPanel.add(seedField);
+            buttonPanel.add(seedPanel);
+        }
+
+        buttonPanel.setOpaque(true);
+
+        gbc = new GridBagConstraints();
+
+        players = gameUIManager.getRoot().getPlayerManager();
+
+        crossIndex = new int[round.getStartPacket().getNumberOfItems()];
+
+        for (int i = 0; i < round.getNumberOfStartItems(); i++) {
+            final StartItem item = round.getStartItem(i);
+            crossIndex[item.getIndex()] = i;
+        }
+
+        initCells();
+
+        getContentPane().add(statusPanel, BorderLayout.NORTH);
+        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+        setLocation(300, 150);
+        setSize(275, 325);
+        gameUIManager.setMeVisible(this, true);
+        requestFocus();
+
+        setupHotkeys();
+
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        final JFrame thisFrame = this;
+        final GameUIManager guiMgr = gameUIManager;
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (GameUIManager.confirmQuit(thisFrame)) {
+                    thisFrame.dispose();
+                    guiMgr.terminate();
+                }
+            }
+        });
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(thisFrame);
+            }
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                guiMgr.getWindowSettings().set(thisFrame);
+            }
+        });
+
+        gameUIManager.packAndApplySizing(this);
+    }
+
+    // ... (lines of unchanged context code) ...
+    private void setupHotkeys() {
+        // --- START FIX ---
+        // Bind Command/Ctrl + and - to font size adjustment
+        InputMap inputMap = statusPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = statusPanel.getActionMap();
+
+        int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+
+        // Increase Font (Cmd = and Cmd +)
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, mask), "increaseFont");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, mask), "increaseFont");
+        actionMap.put("increaseFont", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            public void actionPerformed(ActionEvent e) {
+                updateFonts(currentFontSize + 2);
+            }
+        });
+
+        // Decrease Font (Cmd -)
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, mask), "decreaseFont");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, mask), "decreaseFont");
+        actionMap.put("decreaseFont", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            public void actionPerformed(ActionEvent e) {
+                updateFonts(currentFontSize - 2);
+            }
+        });
+
+    }
+
+    // We are modifying StartRoundWindow.java
+
+    /**
+     * Configures the RailCard with Tooltips and Map Highlighting based on the
+     * associated StartItem.
+     * Centralized logic ensures that Privates, Minors, and Majors highlight
+     * correctly in all games.
+     */
+    protected void configureMapHighlighting(RailCard card, StartItem si) {
+        if (card == null || si == null)
+            return;
+
+        // 1. Collect all certificates for highlighting (Primary and Secondary)
+        java.util.List<Certificate> certs = new java.util.ArrayList<>();
+        if (si.getPrimary() != null)
+            certs.add(si.getPrimary());
+        if (si.getSecondary() != null)
+            certs.add(si.getSecondary());
+
+
+        // 2. Set Tooltip (based on primary company)
+        if (!certs.isEmpty()) {
+            Certificate pCert = certs.get(0);
+            Company pComp = null;
+            if (pCert instanceof PrivateCompany) {
+                pComp = (PrivateCompany) pCert;
+            } else if (pCert instanceof PublicCertificate) {
+                pComp = ((PublicCertificate) pCert).getCompany();
+                if (pComp == null && pCert.getParent() instanceof PublicCompany) {
+                    pComp = (PublicCompany) pCert.getParent();
+                }
+            }
+            if (pComp != null) {
+                card.setCompanyDetailsTooltip(pComp);
+            }
+        }
+
+        // 3. Add Map Highlight Listeners
+        if (gameUIManager != null && gameUIManager.getORUIManager() != null) {
+
+            // A. Attach the StartItem listener (highlights blocked hexes for contained
+            // Privates)
+            HexHighlightMouseListener.addMouseListener(card, gameUIManager.getORUIManager(), si);
+
+            // B. Attach explicit listeners for all associated companies
+            for (Certificate cert : certs) {
+                PublicCompany pubComp = null;
+                if (cert instanceof PublicCertificate) {
+                    pubComp = ((PublicCertificate) cert).getCompany();
+                    if (pubComp == null && cert.getParent() instanceof PublicCompany) {
+                        pubComp = (PublicCompany) cert.getParent();
+                    }
+                }
+
+                if (pubComp != null) {
+                    // Log the Home Hexes to verify they exist in the model
+                    java.util.List<MapHex> homes = pubComp.getHomeHexes();
+
+                    HexHighlightMouseListener.addMouseListener(card, gameUIManager.getORUIManager(), pubComp, true);
+                } else if (cert instanceof PrivateCompany) {
+                    PrivateCompany priv = (PrivateCompany) cert;
+
+                    HexHighlightMouseListener.addMouseListener(card, gameUIManager.getORUIManager(), priv, true);
+                }
+            }
+        } else {
+        }
+    }
+
+    protected void clearMapHighlights() {
+        if (gameUIManager != null && gameUIManager.getORUIManager() != null) {
+            net.sf.rails.ui.swing.hexmap.HexMap map = gameUIManager.getORUIManager().getMap();
+            if (map != null) {
+                // setOwnerHighlight requires a List, and we must iterate over the map values
+                map.setOwnerHighlight(new java.util.ArrayList<net.sf.rails.ui.swing.hexmap.GUIHex>(), null);
+
+                for (net.sf.rails.ui.swing.hexmap.GUIHex guiHex : map.getGuiHexes().values()) {
+guiHex.setActiveOwnerHighlight(false, null, true);
+                }
+            }
+        }
+    }
+
+
+    protected void updateMapHighlights() {
+if (gameUIManager == null || gameUIManager.getORUIManager() == null)
+return;
+net.sf.rails.ui.swing.hexmap.HexMap map = gameUIManager.getORUIManager().getMap();
+if (map == null)
+return;
+
+java.util.List<net.sf.rails.ui.swing.hexmap.GUIHex> hexesToHighlight = new java.util.ArrayList<>();
+        java.util.Map<net.sf.rails.ui.swing.hexmap.GUIHex, String> specificLabels = new java.util.HashMap<>();
+
+        for (int i = 0; i < cards.length; i++) {
+            if (cards[i] != null && (cards[i].getState() == RailCard.State.ACTIONABLE
+                    || cards[i].getState() == RailCard.State.SELECTED)) {
+                StartItem si = round.getStartItem(i);
+                
+                java.util.List<Certificate> certs = new java.util.ArrayList<>();
+                if (si.getPrimary() != null) certs.add(si.getPrimary());
+                if (si.getSecondary() != null) certs.add(si.getSecondary());
+
+                for (Certificate cert : certs) {
+                    PublicCompany pubComp = null;
+
+                    if (cert instanceof PublicCertificate) {
+                        pubComp = ((PublicCertificate) cert).getCompany();
+                        if (pubComp == null && cert.getParent() instanceof PublicCompany) {
+                            pubComp = (PublicCompany) cert.getParent();
+                        }
+                    }
+
+                    if (pubComp != null) {
+                        for (MapHex hex : pubComp.getHomeHexes()) {
+                            net.sf.rails.ui.swing.hexmap.GUIHex guiHex = map.getHex(hex);
+                            if (guiHex != null) {
+                                hexesToHighlight.add(guiHex);
+                                specificLabels.put(guiHex, pubComp.getId());
+                            }
+                        }
+                    } else if (cert instanceof PrivateCompany) {
+                        PrivateCompany privComp = (PrivateCompany) cert;
+                        if (privComp.getBlockedHexes() != null) {
+                            for (MapHex hex : privComp.getBlockedHexes()) {
+                                net.sf.rails.ui.swing.hexmap.GUIHex guiHex = map.getHex(hex);
+                                if (guiHex != null) {
+                                    hexesToHighlight.add(guiHex);
+                                    specificLabels.put(guiHex, privComp.getId());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // 1. Clear old highlights and register new base highlights generically
+        map.setOwnerHighlight(hexesToHighlight, null);
+        
+        // 2. Overwrite the generic dotted state with the specific solid state (true)
+        for (java.util.Map.Entry<net.sf.rails.ui.swing.hexmap.GUIHex, String> entry : specificLabels.entrySet()) {
+            entry.getKey().setActiveOwnerHighlight(true, entry.getValue(), true);
+        }
+        
+        map.repaintAll(new Rectangle(map.getSize()));
+
+
+
+}
+
+
+
+    @Override
+    public void updateStatus(boolean myTurn) {
+        clearMapHighlights();
+      if (gameUIManager != null && gameUIManager.getGameManager() != null) {
+            possibleActions = gameUIManager.getGameManager().getPossibleActions();
+        }
+
+// 0. Total UI Reset: Reset EVERY card in the array, not just those currently in the round.
+        // This ensures items removed from the packet are correctly cleared.
+        if (cards != null) {
+            for (int i = 0; i < cards.length; i++) {
+                if (cards[i] == null) continue;
+                cards[i].setState(RailCard.State.PASSIVE);
+                cards[i].clearPossibleActions();
+                if (cardWrappers[i] != null) {
+                    cardWrappers[i].setVisible(false);
+                    cardWrappers[i].setBackground(COLOR_AVAILABLE);
+                }
+            }
+        }
+
+        if (playerInventoryPanels != null) {
+            for (JPanel panel : playerInventoryPanels) {
+                if (panel != null) panel.removeAll();
+            }
+        }
+
+        for (int i = 0; i < round.getNumberOfStartItems(); i++) {
+            StartItem si = round.getStartItem(i);
+            StartItemAction buyAction = null;
+
+            // IMPORTANT: VISUAL MOVEMENT LOGIC
+            if (si.isSold()) {
+                // If sold, hide from Market (Left) and Move to Inventory (Right)
+
+if (cardWrappers[i] != null) {
+                    cardWrappers[i].removeAll(); 
+                    cardWrappers[i].setBorder(null); 
+                    cardWrappers[i].setOpaque(false);
+                    cardWrappers[i].setVisible(true); // Keep visible for matrix structure
+                }
+                if (showBasePrices && basePrice[i] != null) {
+                    basePrice[i].setText(""); // Clear text but keep field visible to hold layout
+                    basePrice[i].setVisible(true);
+                }
+
+ 
+                // If we have bidding matrix, hide those fields too?
+                // Usually better to leave them or clear them.
+                
+                Player owner = si.getBidder(); // In StartRound, bidder usually becomes owner
+                if (owner != null && playerInventoryPanels != null && owner.getIndex() < playerInventoryPanels.length) {
+                    cards[i].setState(RailCard.State.PASSIVE);
+                    cards[i].clearPossibleActions();
+                    cards[i].setVisible(true);
+                    
+                    // Add to player panel
+                    playerInventoryPanels[owner.getIndex()].add(cards[i]);
+                    playerInventoryPanels[owner.getIndex()].add(Box.createVerticalStrut(2));
+                }
+            } else {
+                // Not Sold: Ensure it's visible in the Market (Left)
+                if (cardWrappers[i] != null) cardWrappers[i].setVisible(true);
+                if (showBasePrices && basePrice[i] != null) basePrice[i].setVisible(true);
+                
+                // Ensure card is physically in the wrapper (it might have been moved previously)
+                if (cardWrappers[i] != null && cards[i].getParent() != cardWrappers[i]) {
+                    cardWrappers[i].add(cards[i]);
+                }
+                
+                cards[i].clearPossibleActions();
+                cards[i].setState(RailCard.State.PASSIVE);
+                if (cardWrappers[i] != null) cardWrappers[i].setBackground(COLOR_AVAILABLE);
+                
+            }
+        }
+
+        // Refresh Inventory Panels
+        if (playerInventoryPanels != null) {
+            for (JPanel panel : playerInventoryPanels) {
+                if (panel != null) {
+                    panel.add(Box.createVerticalGlue()); // Push all items to the top
+                    panel.revalidate();
+                    panel.repaint();
+                }
+            }
+        }
+        
+        // 2. Setup Buttons (Default Disabled)
+        dummyButton.setSelected(true);
+        if (includeBuying && buyButton != null)
+            buyButton.setEnabled(false);
+        if (includeBidding != StartRound.Bidding.NO) {
+            if (bidButton != null)
+                bidButton.setEnabled(false);
+            if (bidAmount != null)
+                bidAmount.setEnabled(false);
+        }
+        if (passButton != null)
+            passButton.setEnabled(false);
+        if (undoButton != null)
+            undoButton.setEnabled(true);
+
+        RoundFacade currentRound = gameUIManager.getCurrentRound();
+        if (!(currentRound instanceof StartRound) || !myTurn || possibleActions == null) {
+            return;
+        }
+
+        setSRPlayerTurn();
+
+        // 3. Handle Undo Action
+        List<GameAction> gameActions = possibleActions.getType(GameAction.class);
+        undoButton.setEnabled(false);
+        for (GameAction ga : gameActions) {
+            if (ga.getMode() == GameAction.Mode.UNDO && undoButton != null) {
+                undoButton.setEnabled(true);
+                undoButton.setPossibleAction(ga);
+                break;
+            }
+        }
+
+        // 4. Distribute Actions and Apply Prominent Highlighting
+        List<StartItemAction> actions = possibleActions.getType(StartItemAction.class);
+        if (actions != null) {
+            for (StartItemAction action : actions) {
+                int j = action.getItemIndex();
+                int i = crossIndex[j];
+                
+// Only highlight and set actions if the item is actually available
+                StartItem siCheck = round.getStartItem(i);
+                if (cardWrappers[i].isVisible() && !siCheck.isSold()) {
+                    cards[i].setPossibleAction(action);
+                    
+                    if (cardWrappers[i] != null) {
+                        cardWrappers[i].setBackground(COLOR_HIGHLIGHT);
+                    }
+
+                    if (action instanceof BuyStartItem) {
+                        BuyStartItem bsi = (BuyStartItem) action;
+                        if (bsi.isSelected() || i == selectedItemIndex) {
+                            cards[i].setState(RailCard.State.SELECTED);
+                            selectedItemIndex = i;
+                            if (cardWrappers[i] != null) {
+                                cardWrappers[i].setBackground(Color.YELLOW);
+                            }
+                            if (buyButton != null && includeBuying) {
+                                buyButton.setEnabled(true);
+                                buyButton.setPossibleAction(action);
+                            }
+                        } else {
+                            cards[i].setState(RailCard.State.ACTIONABLE);
+                        }
+                    } else if (action instanceof BidStartItem) {
+                        BidStartItem bidAction = (BidStartItem) action;
+                        if (bidAction.isSelected() || i == selectedItemIndex) {
+                            cards[i].setState(RailCard.State.SELECTED);
+                            selectedItemIndex = i;
+                            if (bidButton != null) {
+                                bidButton.setEnabled(true);
+                                bidButton.setPossibleAction(action);
+                            }
+                            if (bidAmount != null) {
+                                bidAmount.setEnabled(true);
+                                spinnerModel.setMinimum(bidAction.getMinimumBid());
+                                spinnerModel.setValue(bidAction.getMinimumBid());
+                            }
+                        } else {
+                            cards[i].setState(RailCard.State.ACTIONABLE);
+                        }
+                    }
+                }
+            }
+        }
+
+        // 5. Handle Pass Button
+        List<NullAction> passes = possibleActions.getType(NullAction.class);
+        if (passes != null && !passes.isEmpty() && passButton != null) {
+            passButton.setEnabled(true);
+            passButton.setPossibleAction(passes.get(0));
+        }
+        else if (selectedItemIndex != -1 && cards[selectedItemIndex].getPossibleActions() != null && !cards[selectedItemIndex].getPossibleActions().isEmpty()) {
+            PossibleAction act = cards[selectedItemIndex].getPossibleActions().get(0);
+            if (act instanceof BidStartItem && ((BidStartItem) act).isSelectForAuction() && passButton != null) {
+                passButton.setEnabled(true);
+                passButton.setPossibleAction(act);
+            }
+        }
+
+        if (round instanceof net.sf.rails.game.specific._1817.StartRound_1817) {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                net.sf.rails.game.specific._1817.StartRound_1817 sr1817 = (net.sf.rails.game.specific._1817.StartRound_1817) round;
+                int currentSeed = sr1817.getSeedMoneyModel().value();
+                for (int i = 0; i < round.getNumberOfStartItems(); i++) {
+                    if (minBid != null && i < minBid.length && minBid[i] != null) {
+                        net.sf.rails.game.StartItem si = round.getStartItem(i);
+                        int bid = si.getBid();
+                        int min = (si.getBidder() != null) ? bid + 5 : Math.max(5, si.getBasePrice() - currentSeed);
+                        minBid[i].setText(String.valueOf(min));
+                    }
+                }
+            });
+        }
+
+        // 6. Final UI and Map Refresh
+        updateMapHighlights();
+        statusPanel.revalidate();
+        statusPanel.repaint();
+        // --- END FIX ---
+    }
+
+// ... (lines of unchanged context code) ...
+    @Override
+    public void actionPerformed(ActionEvent actor) {
+        // --- START FIX ---
+        Object source = actor.getSource();
+        int clickedIndex = -1;
+        
+        // Use hierarchy search to find which card (if any) was clicked
+        for (int k = 0; k < cards.length; k++) {
+            if (cards[k] == null) continue;
+            if (source == cards[k] || (source instanceof Component && SwingUtilities.isDescendingFrom((Component)source, cards[k]))) {
+                clickedIndex = k;
+                break;
+            }
+        }
+
+        if (clickedIndex != -1) {
+            RailCard card = cards[clickedIndex];
+            if (card.getState() == RailCard.State.DISABLED) return;
+
+            List<PossibleAction> acts = card.getPossibleActions();
+            if (acts == null || acts.isEmpty()) return;
+
+            StartItemAction action = (StartItemAction) acts.get(0);
+            SoundManager.notifyOfClickFieldSelection(action);
+
+            if (action instanceof BuyStartItem) {
+                if (clickedIndex == selectedItemIndex) {
+                    // Second click confirms purchase
+                    BuyStartItem bsi = (BuyStartItem) action;
+                    if (bsi.hasSharePriceToSet() && requestStartPrice(bsi))
+                        return;
+                    selectedItemIndex = -1;
+                    process(bsi);
+                } else {
+                    // First click highlights and enables buttons
+                    selectedItemIndex = clickedIndex;
+                    updateStatus(true);
+                }
+            } else {
+                // For bidding, select and immediately enable the bid interface
+                selectedItemIndex = clickedIndex;
+                if (action instanceof BidStartItem) {
+                    BidStartItem bidAction = (BidStartItem) action;
+                    if (bidAmount != null) {
+                        bidAmount.setEnabled(true);
+                        spinnerModel.setMinimum(bidAction.getMinimumBid());
+                        spinnerModel.setValue(bidAction.getMinimumBid());
+                    }
+                    if (bidButton != null) {
+                        bidButton.setEnabled(true);
+                        bidButton.setPossibleAction(bidAction);
+                    }
+                }
+                updateStatus(true);
+            }
+            return;
+        }
+
+        // Handle ActionButtons (Buy, Bid, Pass, Undo)
+        if (source instanceof ActionButton) {
+            List<PossibleAction> actions = ((ActionButton) source).getPossibleActions();
+            if (actions != null && !actions.isEmpty()) {
+            
+                PossibleAction action = actions.get(0);
+            
+            // Intercept BuyStartItem from the "Buy" button to ensure the price dialog opens
+            if (action instanceof BuyStartItem) {
+                BuyStartItem bsi = (BuyStartItem) action;
+                if (bsi.hasSharePriceToSet() && requestStartPrice(bsi)) {
+                    return; // Dialog will handle the process() call
+                }
+            }
+            
+else if (action instanceof BidStartItem) {
+                BidStartItem bidAction = (BidStartItem) action;
+                if (source == passButton) {
+                    bidAction.setActualBid(-1);
+                    log.info("Player {} passed on bidding.", players.getCurrentPlayer().getId());
+                } else if (bidAmount != null && bidAmount.isEnabled()) {
+                    try {
+                        bidAmount.commitEdit();
+                    } catch (java.text.ParseException pe) {
+                        log.warn("Invalid bid amount format in spinner", pe);
+                    }
+                    int committedBid = (Integer) bidAmount.getValue();
+                    log.info("Committing bid of {} from UI panel for player {}.", committedBid, players.getCurrentPlayer().getId());
+                    bidAction.setActualBid(committedBid);
+                }
+            }
+
+            selectedItemIndex = -1;
+            process(action);
+        }
+        }
+    }
+
+
+// We are replacing the entire initCells method in StartRoundWindow.java
+
+// --- START FIX ---
+    protected void initCells() {
+        int ni = round.getNumberOfStartItems();
+        int np = players.getNumberOfPlayers();
+        int matrixRows = 10; // Enforce exactly 10 rows
+        Font cellFont = new Font("SansSerif", Font.BOLD, currentFontSize);
+
+        cards = new RailCard[ni];
+        cardWrappers = new JPanel[ni];
+        playerInventoryPanels = new JPanel[np];
+        
+        basePrice = new Field[ni];
+        minBid = new Field[ni];
+        bidPerPlayer = new Field[ni][np];
+        itemStatus = new Field[ni];
+        
+        itemNameXOffset = new int[numberOfColumns];
+        if (showBasePrices) basePriceXOffset = new int[numberOfColumns];
+        if (includeBidding == StartRound.Bidding.ON_ITEMS) minBidXOffset = new int[numberOfColumns];
+        bidPerPlayerXOffset = new int[numberOfColumns]; 
+        
+        upperPlayerCaption = new Field[numberOfColumns][np];
+        lowerPlayerCaption = new Field[np];
+        playerBids = new Field[np];
+        playerFree = new Field[np];
+
+        int lastX = -1;
+
+        // 1. Setup Market Headers (Row 0)
+        for (int col = 0; col < numberOfColumns; col++) {
+            itemNameXOffset[col] = ++lastX;
+            addField(new Caption(LocalText.getText("ITEM")), itemNameXOffset[col], 0, 1, 1, WIDE_LEFT + WIDE_RIGHT + WIDE_BOTTOM);
+
+            if (showBasePrices) {
+                basePriceXOffset[col] = ++lastX;
+                addField(new Caption(LocalText.getText(includeBidding == StartRound.Bidding.ON_ITEMS ? "BASE_PRICE" : "PRICE")), 
+                        basePriceXOffset[col], 0, 1, 1, WIDE_BOTTOM);
+            }
+
+            if (includeBidding == StartRound.Bidding.ON_ITEMS) {
+                minBidXOffset[col] = ++lastX;
+                addField(new Caption(LocalText.getText("MINIMUM_BID")), minBidXOffset[col], 0, 1, 1, WIDE_BOTTOM + WIDE_RIGHT);
+            }
+
+            if (includeBidding != StartRound.Bidding.NO) {
+                bidPerPlayerXOffset[col] = ++lastX;
+                for (int j = 0; j < np; j++) {
+                    upperPlayerCaption[col][j] = new Field(players.getPlayerByPosition(j).getPlayerNameModel());
+                    upperPlayerCaption[col][j].setFont(cellFont);
+                    addField(upperPlayerCaption[col][j], lastX, 0, 1, 1, WIDE_BOTTOM);
+                    if (j < np - 1) lastX++; 
+                }
+            }
+        }
+
+        // 2. Vertical Separator (Spans headers, matrix, and sponge)
+        int separatorX = ++lastX;
+        addField(new JSeparator(SwingConstants.VERTICAL), separatorX, 0, 1, matrixRows + 2, WIDE_LEFT + WIDE_RIGHT);
+
+        // 3. Setup Player Inventories (Right Side)
+        int playerStartX = ++lastX;
+        playerCaptionXOffset = new int[]{playerStartX}; 
+
+        for (int i = 0; i < np; i++) {
+            Caption playerHeader = new Caption(players.getPlayerByPosition(i).getName());
+            playerHeader.setFont(cellFont);
+            addField(playerHeader, playerStartX + i, 0, 1, 1, WIDE_BOTTOM);
+
+            playerInventoryPanels[i] = new JPanel();
+            playerInventoryPanels[i].setLayout(new BoxLayout(playerInventoryPanels[i], BoxLayout.Y_AXIS));
+            playerInventoryPanels[i].setBackground(Color.WHITE);
+            playerInventoryPanels[i].setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+            
+            gbc.gridx = playerStartX + i;
+            gbc.gridy = 1;
+            gbc.gridheight = matrixRows + 1; // Span 10 rows + the sponge row
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.weightx = 1.0; 
+            gbc.weighty = 1.0; // Stretches to fill the "gray block"
+            statusPanel.add(playerInventoryPanels[i], gbc);
+        }
+
+        // 4. Create Market Items (Rows 1 to ni)
+        boolean[][] rowOccupied = new boolean[numberOfColumns][matrixRows + 1];
+        for (int i = 0; i < ni; i++) {
+            final StartItem si = round.getStartItem(i);
+            int col = multipleColumns ? si.getColumn() - 1 : 0;
+            int row = multipleColumns ? si.getRow() - 1 : i;
+            int yPos = row + 1; 
+            if (yPos <= matrixRows) rowOccupied[col][yPos] = true;
+
+            cards[i] = new RailCard(si, itemGroup);
+            cards[i].addActionListener(this); 
+            cards[i].setScale(1.2); 
+            configureMapHighlighting(cards[i], si);
+
+            cardWrappers[i] = new JPanel(new GridLayout(1, 1)); 
+            cardWrappers[i].setBackground(COLOR_AVAILABLE); 
+            cardWrappers[i].setBorder(BorderFactory.createEtchedBorder());
+            cardWrappers[i].add(cards[i]);
+
+            final int cardIndex = i;
+            cardWrappers[i].addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (cards[cardIndex].getState() != RailCard.State.DISABLED) {
+                        actionPerformed(new ActionEvent(cards[cardIndex], ActionEvent.ACTION_PERFORMED, "WrapperClick"));
+                    }
+                }
+            });
+            
+            gbc.gridx = itemNameXOffset[col];
+            gbc.gridy = yPos;
+            gbc.gridwidth = 1;
+            gbc.gridheight = 1;
+            gbc.weightx = 0.5;
+            gbc.weighty = 0.0; 
+            gbc.fill = GridBagConstraints.NONE; // Keep highlight tight
+            gbc.anchor = GridBagConstraints.NORTH;
+            gbc.insets = new Insets(1, 1, 1, 1);
+            statusPanel.add(cardWrappers[i], gbc);
+
+            if (showBasePrices) {
+                basePrice[i] = new Field(si.getBasePriceModel());
+                basePrice[i].setFont(cellFont);
+                addField(basePrice[i], basePriceXOffset[col], yPos, 1, 1, 0);
+            }
+            
+            if (includeBidding == StartRound.Bidding.ON_ITEMS) {
+                minBid[i] = new Field(round.getMinimumBidModel(i));
+                minBid[i].setFont(cellFont);
+                addField(minBid[i], minBidXOffset[col], yPos, 1, 1, WIDE_RIGHT);
+            }
+
+            if (includeBidding != StartRound.Bidding.NO) {
+                for (int j = 0; j < np; j++) {
+                    bidPerPlayer[i][j] = new Field(round.getBidModel(i, players.getPlayerByPosition(j)));
+                    bidPerPlayer[i][j].setFont(cellFont);
+                    addField(bidPerPlayer[i][j], bidPerPlayerXOffset[col] + j, yPos, 1, 1, 0);
+                }
+            }
+            itemStatus[i] = new Field(si.getStatusModel());
+        }
+
+        // 5. Fill Matrix Gaps with Spacers (Rows 1 to 10)
+        for (int col = 0; col < numberOfColumns; col++) {
+            for (int row = 1; row <= matrixRows; row++) {
+                if (!rowOccupied[col][row]) {
+                    JPanel spacer = new JPanel();
+                    spacer.setOpaque(false);
+                    spacer.setPreferredSize(new Dimension(10, 40)); 
+                    gbc.gridx = itemNameXOffset[col];
+                    gbc.gridy = row;
+                    gbc.gridwidth = 1;
+                    gbc.gridheight = 1;
+                    gbc.weightx = 0.0;
+                    gbc.weighty = 0.0;
+                    gbc.fill = GridBagConstraints.NONE;
+                    statusPanel.add(spacer, gbc);
+                }
+            }
+        }
+
+        // 6. The Sponge (Row 11) absorbs all extra height
+        int spongeY = matrixRows + 1;
+        gbc.gridx = 0;
+        gbc.gridy = spongeY;
+        gbc.gridwidth = playerStartX;
+        gbc.weighty = 1.0; 
+        gbc.fill = GridBagConstraints.VERTICAL;
+        statusPanel.add(Box.createVerticalGlue(), gbc);
+
+        // 7. Footers (Row 12+)
+        int footerY = matrixRows + 2;
+        addField(new Caption(LocalText.getText("CASH")), playerStartX - 1, footerY + 1, 1, 1, WIDE_RIGHT);
+
+        for (int i = 0; i < np; i++) {
+            if (includeBidding != StartRound.Bidding.NO) {
+                playerBids[i] = new Field(round.getBlockedCashModel(players.getPlayerByPosition(i)));
+                playerBids[i].setFont(cellFont);
+                addField(playerBids[i], playerStartX + i, footerY, 1, 1, WIDE_TOP);
+            }
+            playerFree[i] = new Field(round.getFreeCashModel(players.getPlayerByPosition(i)));
+            playerFree[i].setFont(cellFont);
+            addField(playerFree[i], playerStartX + i, footerY + 1, 1, 1, 0);
+            lowerPlayerCaption[i] = new Field(players.getPlayerByPosition(i).getPlayerNameModel());
+            lowerPlayerCaption[i].setFont(cellFont);
+            addField(lowerPlayerCaption[i], playerStartX + i, footerY + 2, 1, 1, WIDE_TOP);
+        }
+
+        // 8. Rectification Pass: override addField's default 0.5 weighty
+        for (Component comp : statusPanel.getComponents()) {
+            GridBagConstraints c = gb.getConstraints(comp);
+            if (c.gridy != spongeY && !(comp instanceof JPanel && c.gridheight > 1)) {
+                c.weighty = 0.0;
+                gb.setConstraints(comp, c);
+            }
+        }
+
+        dummyButton = new ClickField("", "", "", this, itemGroup);
+        updateFonts(currentFontSize);
     }
 
 }

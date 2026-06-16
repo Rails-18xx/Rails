@@ -7,7 +7,7 @@ import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
 import net.sf.rails.game.special.SpecialTileLay;
 import rails.game.action.LayTile;
-
+import net.sf.rails.game.round.RoundFacade;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -214,26 +214,67 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
             invalids.add(Invalids.NO_VALID_ORIENTATION);
         }
 
+       
+
         return invalids.isEmpty();
     }
 
     public boolean noValidRotation() {
-        return rotations.isEmpty();
+        return this.rotations == null || this.rotations.isEmpty();
     }
 
-    public boolean hexIsBlocked() {
-        return hex.getHex().isBlockedByPrivateCompany();
+// File: TileHexUpgrade.java
+// [Insert these methods]
+
+public boolean hexIsBlocked() {
+        // 1. Get the authoritative Game Engine
+        net.sf.rails.game.round.RoundFacade round = hex.getHex().getRoot().getGameManager().getCurrentRound();
+        String hexId = hex.getHex().getId();
+
+        if (round instanceof OperatingRound) {
+            OperatingRound or = (OperatingRound) round;
+            
+            // Ask the Engine
+            boolean allowed = or.isTileLayAllowed(action.getCompany(), hex.getHex(), -1);            
+            if (allowed) return false; // If allowed, it's NOT blocked
+            return true;
+        }
+
+        // Fallback
+        boolean blocked = hex.getHex().isBlockedByPrivateCompany();
+        return blocked;
     }
 
     public boolean hexIsReserved() {
-        if ( hex.getHex().isReservedForCompany() && hex.getHex().getReservedForCompany() != action.getCompany()) {
-            //check that the hex has not been upgraded already...
-            if (hex.getHex().isPreprintedTileCurrent()) {
+        // 1. Get the authoritative Game Engine
+        net.sf.rails.game.round.RoundFacade round = hex.getHex().getRoot().getGameManager().getCurrentRound();
+        String hexId = hex.getHex().getId();
+
+        if (round instanceof OperatingRound) {
+            OperatingRound or = (OperatingRound) round;
+            
+            // Ask the Engine
+            // Note: If isTileLayAllowed is TRUE, then it is NOT reserved (return false).
+            boolean allowed = or.isTileLayAllowed(action.getCompany(), hex.getHex(), -1);
+            
+            if (allowed) return false;
             return true;
+        }
+
+        // 3. Fallback / Detail Check
+        PublicCompany reservedFor = hex.getHex().getReservedForCompany();
+        if (reservedFor != null && reservedFor != action.getCompany()) {
+            
+            if (reservedFor.isClosed()) {
+                return false; 
+            }
+            
+            if (hex.getHex().isPreprintedTileCurrent()) {
+                return true;
             }
         }
+        
         return false;
-
     }
 
     public boolean noTileAvailable() {
@@ -359,9 +400,19 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
         return invalids.isEmpty();
     }
 
-    @Override
+@Override
     public int getCost() {
-        return action.getPotentialCost(hex.getHex());
+        // 1. Calculate the standard terrain cost (e.g., 60/120 for mountains)
+        int standardCost = action.getPotentialCost(hex.getHex());
+
+        // 2. Ask the Operating Round if there is a special price for this company
+        net.sf.rails.game.round.RoundFacade round = hex.getHex().getRoot().getGameManager().getCurrentRound();
+        
+        if (round instanceof OperatingRound) {
+            return ((OperatingRound) round).getTileLayCost(action.getCompany(), hex.getHex(), standardCost);
+        }
+
+        return standardCost;
     }
 
     @Override
@@ -485,13 +536,13 @@ public class TileHexUpgrade extends HexUpgrade implements Iterable<HexSide> {
      * sets both validation and visibility for upgrades
      */
     public static void validates(Iterable<TileHexUpgrade> upgrades,
-                                 Phase current) {
+            Phase current) {
         validates(upgrades, current, EnumSet.noneOf(Invalids.class));
     }
 
     public static void validates(Iterable<TileHexUpgrade> upgrades,
-                                 Phase current,
-                                 EnumSet<Invalids> allowances) {
+            Phase current,
+            EnumSet<Invalids> allowances) {
         for (TileHexUpgrade upgrade : upgrades) {
             if (upgrade.validate(current, allowances)) {
                 upgrade.setVisible(true);

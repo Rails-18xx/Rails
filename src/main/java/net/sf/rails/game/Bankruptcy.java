@@ -155,6 +155,11 @@ public class Bankruptcy {
         if (round instanceof ShareSellingRound) {
 
             PublicCompany major = minor.getRelatedPublicCompany();
+            // Fallback for 1835: If the related major is missing (pre-formation), 
+            // explicitly link Minors (M1-M6) to the Prussian (PR) company.
+            if (major == null && minor.getId().matches("M[1-6]")) {
+                major = gameManager.getRoot().getCompanyManager().getPublicCompany("PR");
+            }
             boolean getPresidentCert = false;
 
             /* For now, only 1837 nationals configure their starting minor.

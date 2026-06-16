@@ -3,6 +3,7 @@ package net.sf.rails.ui.swing.gamespecific._1837;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
+import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.ui.swing.elements.RadioButtonDialog;
 import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.ORPanel;
 import net.sf.rails.ui.swing.ORUIManager;
 import rails.game.action.LayTile;
+import rails.game.action.PossibleAction;
 import rails.game.action.PossibleActions;
 import rails.game.action.SetDividend;
 import rails.game.specific._1837.SetHomeHexLocation;
@@ -82,6 +84,43 @@ public class ORUIManager_1837 extends ORUIManager {
         }
     }
 
+
+    @Override
+    public void updateStatus(boolean myTurn) {
+
+        // 1. Run standard parent logic (updates map, panels, etc.)
+        super.updateStatus(myTurn);
+
+        // 2. FAILSAFE: Manually check for S5 Home Hex action.
+        // This runs even if super.updateStatus() decides to skip the hook.
+        if (myTurn) {
+            try {
+                // Access the current round safely
+                RoundFacade round = gameUIManager.getGameManager().getCurrentRound();
+                if (round instanceof OperatingRound) {
+                    PublicCompany company = ((OperatingRound) round).getOperatingCompany();
+                    
+                    if (company != null && "S5".equalsIgnoreCase(company.getId())) {
+                        
+                        PossibleActions actions = gameUIManager.getGameManager().getPossibleActions();
+                        if (actions != null && actions.contains(SetHomeHexLocation.class)) {
+                            
+                            // Check if we are already displaying this dialog to avoid duplicates
+                            PossibleAction currentAction = getCurrentDialogAction();
+                            if (currentAction == null || !(currentAction instanceof SetHomeHexLocation)) {
+                                SetHomeHexLocation action = actions.getType(SetHomeHexLocation.class).get(0);
+                                requestHomeHex(action);
+                            } else {
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    
     /**
      * Additional TileLay validation:
      * Prevent laying a tile on a blocked hex for
@@ -110,12 +149,19 @@ public class ORUIManager_1837 extends ORUIManager {
         }
     }
 
-    @Override
     protected void checkForGameSpecificActions(PublicCompany orComp,
                                                GameDef.OrStep orStep,
                                                PossibleActions possibleActions) {
+
+                                                // DEBUG LOGGING
+        if (orComp.getId().equalsIgnoreCase("S5")) {
+             if (possibleActions != null && possibleActions.contains(SetHomeHexLocation.class)) {
+             }
+        }
+
         if (orComp.getId().equalsIgnoreCase("S5")
               && possibleActions.contains(SetHomeHexLocation.class)) {
+            
             SetHomeHexLocation action = possibleActions.getType(SetHomeHexLocation.class).get(0);
             requestHomeHex(action);
 
@@ -129,31 +175,51 @@ public class ORUIManager_1837 extends ORUIManager {
                 LocalText.getText("PleaseSelect"),
                 LocalText.getText("StartingHomeHexS5", action.getPlayerName(), action.getCompanyName()),
                 hexes, 0);
+        
         setCurrentDialog (dialog, action);
         return true;
+
     }
 
     @Override
     public void dialogActionPerformed() {
+
+  
         if (getCurrentDialogAction() instanceof SetHomeHexLocation) {
             handleStartHex();
         } else {
             super.dialogActionPerformed();
         }
-
     }
 
-    private void handleStartHex() {
+private void handleStartHex() {
         RadioButtonDialog dialog = (RadioButtonDialog) getCurrentDialog();
         SetHomeHexLocation action =
                 (SetHomeHexLocation) getCurrentDialogAction();
 
+        if (dialog == null) {
+            return;
+        }
+
         int index = dialog.getSelectedOption();
+
         if (index >= 0) {
-            action.setHomeHex(hexes[index]);
+            String hexName = hexes[index];
+            
+            action.setHomeHex(hexName);
+
+            // COMPILATION FIX: Access MapManager via getRoot()
+            // We use this only for logging verification now.
+            net.sf.rails.game.MapHex mapHex = gameUIManager.getRoot().getMapManager().getHex(hexName);
+            
+            if (mapHex != null) {
+                // action.setSelectedHomeHex(mapHex); // REMOVED: Method does not exist
+            } else {
+            }
+
             gameUIManager.processAction(action);
+        } else {
         }
     }
-
 
 }

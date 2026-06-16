@@ -28,7 +28,6 @@ import net.sf.rails.ui.swing.elements.ActionButton;
 import net.sf.rails.ui.swing.elements.RailsIcon;
 import rails.game.action.GameAction;
 
-
 /**
  * ReportWindow displays the game history
  */
@@ -47,6 +46,11 @@ public class ReportWindow extends JFrame implements ActionListener, HyperlinkLis
 
     private ActionButton forwardButton;
     private ActionButton backwardButton;
+
+    private JButton prevRoundButton;
+    private JButton nextRoundButton;
+
+
     private JButton returnButton;
     private JButton playFromHereButton;
     private JButton commentButton;
@@ -77,7 +81,7 @@ public class ReportWindow extends JFrame implements ActionListener, HyperlinkLis
         messagePanel.setLayout(new BorderLayout());
 
         message = new JLabel();
-        message.setText( LocalText.getText("REPORT_TIMEWARP_ACTIVE"));
+        message.setText(LocalText.getText("REPORT_TIMEWARP_ACTIVE"));
         message.setHorizontalAlignment(JLabel.CENTER);
         message.setVisible(false);
         messagePanel.add(message, "North");
@@ -107,7 +111,7 @@ public class ReportWindow extends JFrame implements ActionListener, HyperlinkLis
         Font font = UIManager.getFont("Label.font");
         String bodyRule = "body { font-family: " + font.getFamily() + "; " +
                 "font-size: " + font.getSize() + "pt; }";
-        ((HTMLDocument)editorPane.getDocument()).getStyleSheet().addRule(bodyRule);
+        ((HTMLDocument) editorPane.getDocument()).getStyleSheet().addRule(bodyRule);
 
         JScrollPane reportPane = new JScrollPane(editorPane);
         add(reportPane, "Center");
@@ -115,39 +119,51 @@ public class ReportWindow extends JFrame implements ActionListener, HyperlinkLis
         JPanel buttonPanel = new JPanel();
         add(buttonPanel, "South");
 
+        prevRoundButton = new JButton("<<");
+        prevRoundButton.setToolTipText(LocalText.getText("REPORT_PREV_ROUND", "Previous Round"));
+        prevRoundButton.addActionListener(e -> jumpToPreviousRound());
+        prevRoundButton.setEnabled(!isStatic);
+        buttonPanel.add(prevRoundButton);
+
         backwardButton = new ActionButton(RailsIcon.REPORT_MOVE_BACKWARD);
         backwardButton.addActionListener(this);
-        backwardButton.setEnabled(! isStatic);
+        backwardButton.setEnabled(!isStatic);
         buttonPanel.add(backwardButton);
 
         forwardButton = new ActionButton(RailsIcon.REPORT_MOVE_FORWARD);
         forwardButton.addActionListener(this);
-        forwardButton.setEnabled(! isStatic);
+        forwardButton.setEnabled(!isStatic);
         buttonPanel.add(forwardButton);
 
+        nextRoundButton = new JButton(">>");
+        nextRoundButton.setToolTipText(LocalText.getText("REPORT_NEXT_ROUND", "Next Round"));
+        nextRoundButton.addActionListener(e -> jumpToNextRound());
+        nextRoundButton.setEnabled(!isStatic);
+        buttonPanel.add(nextRoundButton);
+
         // TODO: Add new command button functionality
-//        commentButton = new JButton(LocalText.getText("REPORT_COMMENT"));
-//        commentButton.addActionListener(
-//                new ActionListener() {
-//                    public void actionPerformed(ActionEvent arg0) {
-//                        String newComment = (String)JOptionPane.showInputDialog(
-//                                this,
-//                                LocalText.getText("REPORT_COMMENT_ASK"),
-//                                LocalText.getText("REPORT_COMMENT_TITLE"),
-//                                JOptionPane.PLAIN_MESSAGE,
-//                                null,
-//                                null,
-//                                ReportBuffer.getComment()
-//                        );
-//                        if (newComment != null) {
-//                            ReportBuffer.addComment(newComment);
-//                            updateLog();
-//                            scrollDown();
-//                        }
-//                    }
-//                }
-//        );
-//        buttonPanel.add(commentButton);
+        // commentButton = new JButton(LocalText.getText("REPORT_COMMENT"));
+        // commentButton.addActionListener(
+        // new ActionListener() {
+        // public void actionPerformed(ActionEvent arg0) {
+        // String newComment = (String)JOptionPane.showInputDialog(
+        // this,
+        // LocalText.getText("REPORT_COMMENT_ASK"),
+        // LocalText.getText("REPORT_COMMENT_TITLE"),
+        // JOptionPane.PLAIN_MESSAGE,
+        // null,
+        // null,
+        // ReportBuffer.getComment()
+        // );
+        // if (newComment != null) {
+        // ReportBuffer.addComment(newComment);
+        // updateLog();
+        // scrollDown();
+        // }
+        // }
+        // }
+        // );
+        // buttonPanel.add(commentButton);
 
         // remaining code from AbstractReportWindow
 
@@ -160,7 +176,8 @@ public class ReportWindow extends JFrame implements ActionListener, HyperlinkLis
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (timeWarpMode) return;
+                if (timeWarpMode)
+                    return;
                 gameUIManager.uncheckMenuItemBox(StatusWindow.REPORT_CMD);
                 frame.dispose();
             }
@@ -171,6 +188,7 @@ public class ReportWindow extends JFrame implements ActionListener, HyperlinkLis
             public void componentMoved(ComponentEvent e) {
                 guiMgr.getWindowSettings().set(frame);
             }
+
             @Override
             public void componentResized(ComponentEvent e) {
                 guiMgr.getWindowSettings().set(frame);
@@ -181,58 +199,42 @@ public class ReportWindow extends JFrame implements ActionListener, HyperlinkLis
 
         gameUIManager.setMeVisible(this, "yes".equalsIgnoreCase(Config.get("report.window.open")));
     }
-
-    // FIXME (Rails2.0): Replace this by toTe
-    public void setActions() {
+public void setActions() {
         forwardButton.setEnabled(false);
         backwardButton.setEnabled(false);
 
-        if ( ! gameUIManager.isMyTurn() ) {
+        if (!gameUIManager.isMyTurn()) {
             // not our turn, we shouldn't enable undo/etc buttons
             return;
         }
 
-        boolean haveRedo = false;
-        boolean undoFlag = false;
-        List<GameAction> gameActions = gameUIManager.getGameManager().getPossibleActions().getType(GameAction.class);
-        for (GameAction action:gameActions) {
-            switch (action.getMode()) {
-            case UNDO:
-                undoFlag = true;
-                backwardButton.setPossibleAction(action);
-                backwardButton.setEnabled(true);
-                break;
-            case FORCED_UNDO:
-                if (undoFlag) break; // only activate forced undo, if no other undo available
-                backwardButton.setPossibleAction(action);
-                backwardButton.setEnabled(true);
-                break;
-            case REDO:
-                forwardButton.setPossibleAction(action);
-                forwardButton.setEnabled(true);
-                haveRedo = true;
-                break;
-            default:
-                break;
-            }
+        if (changeStack.isUndoPossible()) {
+            backwardButton.setEnabled(true);
         }
-        if (!haveRedo) deactivateTimeWarp();
+        if (changeStack.isRedoPossible()) {
+            forwardButton.setEnabled(true);
+        }
+        if (!changeStack.isRedoPossible()) {
+            deactivateTimeWarp();
+        }
     }
 
     public void scrollDown() {
         // only set caret if visible
-        //if (!this.isVisible()) return;
+        // if (!this.isVisible()) return;
 
-        // find the active message in the parsed html code (not identical to the position in the html string)
+        // find the active message in the parsed html code (not identical to the
+        // position in the html string)
         // thus the message indicator is used
         SwingUtilities.invokeLater(() -> {
             int caretPosition;
-            try{
+            try {
                 String docText = editorPane.getDocument().getText(0, editorPane.getDocument().getLength());
                 caretPosition = docText.indexOf(ReportBuffer.ACTIVE_MESSAGE_INDICATOR);
-            } catch (BadLocationException e){
+            } catch (BadLocationException e) {
                 caretPosition = -1;
-            };
+            }
+            ;
             final int caretPositionStore = caretPosition;
             if (caretPosition != -1) {
                 editorPane.setCaretPosition(caretPositionStore);
@@ -240,20 +242,27 @@ public class ReportWindow extends JFrame implements ActionListener, HyperlinkLis
         });
     }
 
-    @Override
+@Override
     public void actionPerformed(ActionEvent e) {
-        ActionButton button = (ActionButton)e.getSource();
-        GameAction action = (GameAction)button.getPossibleActions().get(0);
-        if ( action != null && (action.getMode() == GameAction.Mode.FORCED_UNDO)) {
-            activateTimeWarp();
+
+       int currentIndex = changeStack.getCurrentIndex();
+        if (e.getSource() == backwardButton) {
+            if (currentIndex > 1) {
+                activateTimeWarp();
+                gotoIndex(currentIndex - 1);
+            }
+        } else if (e.getSource() == forwardButton) {
+            if (currentIndex < changeStack.getMaximumIndex()) {
+                activateTimeWarp();
+                gotoIndex(currentIndex + 1);
+            }
         }
 
-        gameUIManager.processAction(action);
     }
 
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && ! isStatic ) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && !isStatic) {
             activateTimeWarp();
             URL url = e.getURL();
             int index = url.getPort();
@@ -314,5 +323,30 @@ public class ReportWindow extends JFrame implements ActionListener, HyperlinkLis
         editorPane.setText(text);
         scrollDown();
     }
+
+    private void jumpToPreviousRound() {
+        int currentIndex = changeStack.getCurrentIndex();
+        Integer targetIndex = gameUIManager.getGameManager().getPreviousRoundIndex(currentIndex);
+        
+// Force a minimum of 1 to avoid the 'void' state at 0
+        if (targetIndex != null) {
+            int target = Math.max(1, targetIndex);
+            activateTimeWarp();
+            gotoIndex(target);
+            toFront();
+        }
+    }
+
+    private void jumpToNextRound() {
+        int currentIndex = changeStack.getCurrentIndex();
+        Integer targetIndex = gameUIManager.getGameManager().getNextRoundIndex(currentIndex);
+        
+        if (targetIndex != null) {
+            activateTimeWarp();
+            gotoIndex(targetIndex);
+            toFront();
+        }
+    }
+
 
 }

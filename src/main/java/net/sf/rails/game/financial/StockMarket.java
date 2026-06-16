@@ -135,7 +135,14 @@ public class StockMarket extends RailsManager implements Configurable {
             }
 
             StockSpace space = StockSpace.create(this, name, Integer.parseInt(price), type);
+            
+// Extract and set the custom label from XML attribute "label"
+            space.setLabel(spaceTag.getAttributeAsString("label"));
+                        
             stockChartSpaces.put(name, space);
+
+            // Read the label from the XML (e.g., label="Liquidation")
+            space.setLabel(spaceTag.getAttributeAsString("label"));
 
             row = Integer.parseInt(name.substring(1));
             col = (name.toUpperCase().charAt(0) - '@');
@@ -461,4 +468,22 @@ public class StockMarket extends RailsManager implements Configurable {
         return marketModel;
     }
 
+    /**
+     * Manually moves a company token to a specific target space.
+     * Ensures that tokens are correctly added/removed from the grid spaces.
+     */
+    public void correctStockPrice(PublicCompany company, StockSpace target) {
+        StockSpace current = company.getCurrentSpace();
+        
+        // Log the manual intervention
+        if (current != target) {
+            // prepareMove handles: 
+            // 1. Logging
+            // 2. company.setCurrentSpace(target)
+            // 3. target.addToken(company)
+            // 4. current.removeToken(company)
+            prepareMove(company, current, target);
+        }
+    }
+    
 }

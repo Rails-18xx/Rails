@@ -87,14 +87,15 @@ public class RailsObjects {
             this.action = action;
         }
         
-        public StringHelperForActions addBaseText() {
+public StringHelperForActions addBaseText() {
             if (!action.hasActed()) {
+                String playerName = (action.getPlayer() != null) ? action.getPlayer().getId() : "Unknown";
                 if (action instanceof PossibleORAction
                         && ((PossibleORAction) action).getCompany() != null) {
                     text.append(((PossibleORAction) action).getCompany().getId())
-                            .append("(").append(action.getPlayer().getId()).append(")");
+                            .append("(").append(playerName).append(")");
                 } else {
-                    text.append(action.getPlayer().getId());
+                    text.append(playerName);
                 }
                 text.append(" may ");
              }

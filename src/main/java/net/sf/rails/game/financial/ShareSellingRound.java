@@ -520,27 +520,33 @@ public class ShareSellingRound extends StockRound {
         return true;
     }
 
+    public Player getCurrentPlayer() {
+        return sellingPlayer;
+    }
+
     private void declareBankruptcy () {
         String message = LocalText.getText("YouMustRaiseCashButCannot",
                 currentPlayer,
                 Bank.format(this, this.cashToRaise.value()));
         ReportBuffer.add(this, message);
         DisplayBuffer.add(this, message);
-        if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_COMPANY_BANKRUPTCY)) {
-            // Currently not used, replaced by code in operatingRound.buyTrain().
-            cashNeedingCompany.setBankrupt();
-            gameManager.registerCompanyBankruptcy(cashNeedingCompany);
-        } else {
-            Currency.wireAll(currentPlayer, cashNeedingCompany);
-            currentPlayer.setBankrupt();
-            gameManager.registerPlayerBankruptcy(currentPlayer);
 
-            // A bankrupt player must pass on the priority
-            PlayerManager pmgr = gameManager.getRoot().getPlayerManager();
-            if (pmgr.getPriorityPlayer().equals(currentPlayer)) {
-                pmgr.setPriorityPlayerToNext();
-            }
+// HOUSE RULE: Player bankruptcy triggers immediate game end.
+        
+        // To strictly adhere to the 1830 bankruptcy definition (1830 Rules of Play, 1986),
+        // the bankrupt player must have zero cash. We return all funds—including 
+        // the cash raised from emergency share sales—to the bank before the snapshot.
+        Currency.toBankAll(currentPlayer);
+
+        // We call registerPlayerBankruptcy in GameManager, which is configured 
+        // to initiate the end-of-game sequence and final wealth calculation.
+        gameManager.registerPlayerBankruptcy(currentPlayer);
+
+        // Clear actions to halt the round and allow the engine to transition to the results.
+        if (possibleActions != null) {
+            possibleActions.clear();
         }
+        
     }
 
     public int getRemainingCashToRaise() {

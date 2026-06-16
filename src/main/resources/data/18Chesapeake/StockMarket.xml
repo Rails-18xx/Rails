@@ -28,7 +28,6 @@
 	<StockSpace name="B4" price="70" />
 	<StockSpace name="B5" price="65" />
 	<StockSpace name="B6" price="60" >
-	<StartSpace/>
 		</StockSpace>
 	<StockSpace name="B7" price="55" type="yellow"/>
 	<StockSpace name="B8" price="45" type="yellow"/>

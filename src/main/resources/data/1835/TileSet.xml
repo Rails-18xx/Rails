@@ -42,6 +42,8 @@
 		<Upgrade id="218"/>
 	</Tile>
 	<Tile id="-901"/>
+	<Tile id="-901_1835"/>
+	<Tile id="-901_18352"/>
 	<Tile id="-3007">
         <Upgrade id="201,202"/>
 	</Tile>

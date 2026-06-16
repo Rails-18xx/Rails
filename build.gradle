@@ -1,59 +1,64 @@
-/// Gradle Build script for 18xx Rails program (rails.sf.net)
+/// Gradle Build script for Rails-18xx (rails.sf.net)
+/// Modernized for Gradle 8.x and JDK 21 compatibility
 
 import java.text.SimpleDateFormat
 import org.gradle.internal.os.OperatingSystem;
 
 plugins {
     id 'java'
-    // https://github.com/GradleUp/shadow
-    id 'com.gradleup.shadow' version '9.4.2'
-    // plugin to check for dependency updates via task dependencyUpdates
-    // https://github.com/ben-manes/gradle-versions-plugin
-    id 'com.github.ben-manes.versions' version '0.54.0'
-    // https://github.com/n0mer/gradle-git-properties
-    id 'com.gorylenko.gradle-git-properties' version '3.0.3'
-    // https://openjfx.io/openjfx-docs/#gradle
-    id 'org.openjfx.javafxplugin' version '0.1.0'
-    // https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/
-    id 'org.sonarqube' version '7.3.0.8198'
-    // used by SonarQube for code coverage
+    id 'application'
+    id 'com.gradleup.shadow' version '8.3.0'
+    id 'com.github.ben-manes.versions' version '0.46.0'
+    id 'com.gorylenko.gradle-git-properties' version '2.4.1'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.sonarqube' version '4.0.0.2929'
     id 'jacoco'
+}
+
+// --- Application Configuration ---
+application {
+    mainClass.set('net.sf.rails.util.RunGame')
 }
 
 repositories {
     mavenCentral()
 }
 
-// Rails variables
+// --- Project Variables ---
 description = 'Rails is a moderator program for 18xx games'
-
+version = '1.3.18'
 def appName = 'Rails-18xx'
 def vendor = 'The Rails project team'
 def licenceFile = './LICENSE'
-
 def input = './build/libs'
 def output = './build/installers'
 
+// --- OS-Specific jpackage Locator ---
 def jpackage() {
-    def jpackageExe
-    if (OperatingSystem.current().isWindows()) {
-        jpackageExe = "${System.getenv('JAVA_HOME')}/bin/jpackage.exe"
-    } else if (OperatingSystem.current().isLinux()) {
-        jpackageExe = "${System.getenv('JAVA_HOME')}/bin/jpackage"
-    } else if (OperatingSystem.current().isMacOsX()) {
-        jpackageExe = "${System.getenv('JAVA_HOME')}/bin/jpackage"
-    } else {
+def jpackageExe
+def javaHome = project.extensions.getByType(JavaToolchainService)
+.launcherFor(java.toolchain).get()
+.metadata.installationPath.asFile.absolutePath
+
+if (OperatingSystem.current().isWindows()) {
+        jpackageExe = "${javaHome}/bin/jpackage.exe"
+    } else if (OperatingSystem.current().isLinux() || OperatingSystem.current().isMacOsX()) {
+        jpackageExe = "${javaHome}/bin/jpackage"
+ } else {
         throw new StopActionException("Unknown operating system: ${OperatingSystem.current()}")
     }
 
-    if ( ! new File(jpackageExe).exists() ) {
-        throw new StopActionException('jpackage not found (JDK 14+) needed to package')
-    }
-    jpackageExe
+    if (!new File(jpackageExe).exists()) {
+        throw new StopActionException("jpackage not found at ${jpackageExe}. JDK 14+ is required.")
+     }
+    return jpackageExe
 }
 
+// --- Dependencies ---
 dependencies {
-    implementation 'commons-io:commons-io:2.22.0'
+    implementation 'com.microsoft.onnxruntime:onnxruntime:1.16.0'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+    implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.github.vlsi.mxgraph:jgraphx:4.2.2'
     implementation 'org.jgrapht:jgrapht-core:1.5.3'
     implementation 'org.jgrapht:jgrapht-ext:1.5.3'
@@ -64,55 +69,96 @@ dependencies {
     implementation 'org.apache.xmlgraphics:batik-ext:1.19'
     implementation 'org.apache.xmlgraphics:batik-swing:1.19'
     implementation 'javazoom:jlayer:1.0.1'
-    implementation 'ch.qos.logback:logback-classic:1.5.33'
-    implementation 'com.google.guava:guava:23.0'
+    implementation 'ch.qos.logback:logback-classic:1.4.6'
+    implementation 'com.google.guava:guava:32.1.3-jre'
     implementation 'net.java.dev.designgridlayout:designgridlayout:1.11'
     implementation 'org.dockingframes:docking-frames-common:1.1.1'
     implementation 'com.googlecode.combinatoricslib:combinatoricslib:2.3'
-    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
-    implementation 'org.apache.commons:commons-lang3:3.20.0'
-    implementation 'org.apache.commons:commons-text:1.15.0'
-    // https://www.jetbrains.com/help/idea/annotating-source-code.html
-    implementation 'org.jetbrains:annotations:26.1.0'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+    implementation 'org.apache.commons:commons-lang3:3.13.0'
+    implementation 'org.apache.commons:commons-text:1.10.0'
+    implementation 'org.jetbrains:annotations:24.0.1'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.easytesting:fest-assert-core:2.0M10'
     testImplementation 'org.easytesting:fest-util:1.2.5'
-    testImplementation 'org.mockito:mockito-core:5.23.0'
+    testImplementation 'org.mockito:mockito-core:5.2.0'
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
+    testImplementation 'net.bytebuddy:byte-buddy:1.14.4'
+    testImplementation 'net.bytebuddy:byte-buddy-agent:1.14.4'
 }
 
+// --- JavaFX Configuration ---
 javafx {
-    version = '17'
+    version = '21'
     modules = ['javafx.controls', 'javafx.swing']
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+// --- Custom Execution Tasks ---
+task runAutoGUI(type: JavaExec) {
+    group = "Application"
+    description = "Runs the headless AutoGUIRunner"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'net.sf.rails.game.ai.playground.AutoGUIRunner'
+    javaLauncher = project.extensions.getByType(JavaToolchainService).launcherFor(java.toolchain)
 }
 
+tasks.named('run', JavaExec) {
+    if (project.hasProperty('mainClass')) {
+        mainClass = project.property('mainClass')
+    }
+    if (project.hasProperty('appArgs')) {
+        args = Eval.me(project.property('appArgs'))
+    }
+}
+
+task runPlayground(type: JavaExec) {
+    group = "Application"
+    description = "Runs the AI State Loader Playground"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass.set('net.sf.rails.game.ai.playground.StateLoaderPlayground')
+    javaLauncher = project.extensions.getByType(JavaToolchainService).launcherFor(java.toolchain)
+
+    if (project.hasProperty('args')) {
+        args((project.property('args') as String).split(' '))
+    }
+}
+
+// --- Compiler Target Configuration ---
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+// Guarantee shadowJar runs before the standard assemble task
 assemble.dependsOn(shadowJar)
+
 jar {
     manifest {
         attributes(
-                'Main-Class': 'net.sf.rails.util.RunGame'
+            'Main-Class': 'net.sf.rails.util.RunGame'
         )
     }
 }
 
+// --- Testing Configuration ---
 test {
-    // the expected test files have UTF-8 encoding
     systemProperty 'file.encoding', 'UTF-8'
-
-    // TestGame is not intended as a standalone test class
     exclude 'net/sf/rails/test/TestGame.class'
 }
 
 jacocoTestReport {
     reports {
-        xml.required.set(true)
+        xml.required = true
+        html.required = true
     }
 }
+
 plugins.withType(JacocoPlugin) {
     tasks['test'].finalizedBy 'jacocoTestReport'
 }
@@ -121,7 +167,7 @@ wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-// BuildDate function adapted from http://stackoverflow.com/questions/19172565/how-append-date-build-to-versionnamesuffix-on-gradle
+// --- Build Versioning Logic ---
 static def buildDate() {
     new SimpleDateFormat('yyyy-MM-dd').format(new Date())
 }
@@ -129,7 +175,6 @@ static def buildDate() {
 static def isNonStable(String version) {
     def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
     def regex = /^[0-9,.v-]+(-r)?$/
-
     !stableKeyword && !(version ==~ regex)
 }
 
@@ -145,15 +190,6 @@ dependencyUpdates {
     }
 }
 
-/**
- * Converts the version to a jpackage conform form.
- * Examples:
- * 2.4.0         -> 2.4.0
- * 2.4.0-alpha   -> 2.4.0
- * 2.4.0-release -> 2.4.0
- *
- * @return The converted version string
- */
 def appVersion() {
     rootProject.version
             .toUpperCase()
@@ -164,90 +200,93 @@ def appVersion() {
             .replaceAll('\\-GA', '')
 }
 
+// --- Native Packaging Tasks (jpackage) ---
+// Note: doFirst blocks have been removed to comply with Gradle 8 execution lifecycle limits.
+
 task buildDebPackage(type: Exec) {
-    doFirst {
-        commandLine jpackage(),
-                '--verbose',
-                '--type', 'deb',
-                '--name', appName,
-                '--description', rootProject.description,
-                '--vendor', vendor,
-                '--license-file', licenceFile,
-                '--icon', './src/main/resources/images/icon/rails.png',
-                '--file-associations', './src/main/resources/build/rails-linux-association.properties',
-                '--app-version', appVersion(),
-                '--input', input,
-                '--dest', output,
-                '--main-jar', shadowJar.archiveFileName.get(),
-                '--linux-package-name', 'rails-18xx',
-                '--linux-app-category', 'games',
-                '--linux-shortcut'
-    }
+    group = "Distribution"
+    description = "Builds a .deb installer for Linux"
+    commandLine jpackage(),
+            '--verbose',
+            '--type', 'deb',
+            '--name', appName,
+            '--description', rootProject.description,
+            '--vendor', vendor,
+            '--license-file', licenceFile,
+            '--file-associations', './src/main/resources/build/rails-linux-association.properties',
+            '--app-version', appVersion(),
+            '--input', input,
+            '--dest', output,
+            '--main-jar', shadowJar.archiveFile.get().asFile.name,
+            '--linux-package-name', 'rails-18xx',
+            '--linux-app-category', 'games',
+            '--linux-shortcut'
 }
 
 task buildRpmPackage(type: Exec) {
-    doFirst {
-        commandLine jpackage(),
-                '--verbose',
-                '--type', 'rpm',
-                '--name', appName,
-                '--description', rootProject.description,
-                '--vendor', vendor,
-                '--license-file', licenceFile,
-                '--icon', './src/main/resources/images/icon/rails.png',
-                '--file-associations', './src/main/resources/build/rails-linux-association.properties',
-                '--app-version', appVersion(),
-                '--input', input,
-                '--dest', output,
-                '--main-jar', shadowJar.archiveFileName.get(),
-                '--linux-package-name', 'rails-18xx',
-                '--linux-app-category', 'games',
-                '--linux-shortcut'
-    }
+    group = "Distribution"
+    description = "Builds an .rpm installer for Linux"
+    commandLine jpackage(),
+            '--verbose',
+            '--type', 'rpm',
+            '--name', appName,
+            '--description', rootProject.description,
+            '--vendor', vendor,
+            '--license-file', licenceFile,
+            '--icon', './src/main/resources/images/icon/rails.png',
+            '--file-associations', './src/main/resources/build/rails-linux-association.properties',
+            '--app-version', appVersion(),
+            '--input', input,
+            '--dest', output,
+            '--main-jar', shadowJar.archiveFile.get().asFile.name,
+            '--linux-package-name', 'rails-18xx',
+            '--linux-app-category', 'games',
+            '--linux-shortcut'
 }
 
 task buildExePackage(type: Exec) {
-    doFirst {
-        commandLine jpackage(),
-                '--verbose',
-                '--type', 'exe',
-                '--name', appName,
-                '--description', rootProject.description,
-                '--vendor', vendor,
-                '--license-file', licenceFile,
-                '--icon', './src/main/resources/images/icon/rails.ico',
-                '--file-associations', './src/main/resources/build/rails-windows-association.properties',
-                '--app-version', appVersion(),
-                '--input', input,
-                '--dest', output,
-                '--main-jar', shadowJar.archiveFileName.get(),
-                '--win-dir-chooser',
-                '--win-per-user-install',
-                '--win-menu',
-                '--win-shortcut'
-    }
+    group = "Distribution"
+    description = "Builds an .exe installer for Windows"
+    commandLine jpackage(),
+            '--verbose',
+            '--type', 'exe',
+            '--name', appName,
+            '--description', rootProject.description,
+            '--vendor', vendor,
+            '--license-file', licenceFile,
+            '--icon', './src/main/resources/images/icon/rails.ico',
+            '--file-associations', './src/main/resources/build/rails-windows-association.properties',
+            '--app-version', appVersion(),
+            '--input', input,
+            '--dest', output,
+            '--main-jar', shadowJar.archiveFile.get().asFile.name,
+            '--win-dir-chooser',
+            '--win-per-user-install',
+            '--win-menu',
+            '--win-shortcut'
 }
 
 task buildpkgPackage(type: Exec) {
-    doFirst {
-        commandLine jpackage(),
-                '--verbose',
-                '--type', 'pkg',
-                '--name', appName,
-                '--description', rootProject.description,
-                '--vendor', vendor,
-                '--license-file', licenceFile,
-                '--icon', './src/main/resources/images/icon/rails.icns',
-                '--file-associations', './src/main/resources/build/rails-osx-association.properties',
-                '--file-associations', './src/main/resources/build/last_rails-osx-association.properties',
-                '--app-version', appVersion(),
-                '--input', input,
-                '--dest', output,
-                '--main-jar', shadowJar.archiveFileName.get(),
-                '--mac-package-name', 'Rails-18xx'
-    }
+    group = "Distribution"
+    description = "Builds a .pkg installer for macOS"
+    commandLine jpackage(),
+            '--verbose',
+            '--type', 'pkg',
+            '--name', appName,
+            '--description', rootProject.description,
+            '--vendor', vendor,
+            '--license-file', licenceFile,
+            '--icon', './src/main/resources/images/icon/rails.icns',
+            '--file-associations', './src/main/resources/build/rails-osx-association.properties',
+            '--file-associations', './src/main/resources/build/last_rails-osx-association.properties',
+            '--app-version', appVersion(),
+            '--input', input,
+            '--dest', output,
+            '--main-jar', shadowJar.archiveFile.get().asFile.name,
+            '--mac-package-name', 'Rails-18xx'
 }
 
+// --- Final Build Artifact Processing ---
 task renameExecutables(type: Copy) {
     from(output) {
         include '*.deb'
@@ -257,4 +296,36 @@ task renameExecutables(type: Copy) {
     }
     into '.'
     rename '(.+)\\.(.+)', 'rails-18xx.$2'
+}
+
+processResources {
+    // Calculate Timestamp from ALL source files
+    def latestTimestamp = fileTree(dir: 'src/main/java').getFiles()
+        .collect { it.lastModified() }
+        .max()
+    
+    def buildTime = latestTimestamp ? new Date(latestTimestamp).format('yyyy-MM-dd HH:mm') : new Date().format('yyyy-MM-dd HH:mm')
+    
+    inputs.property "buildTimestamp", buildTime
+
+    // Protect existing files (Ignore LocalisedText to prevent crash)
+    filesMatching('**/*.properties') {
+        if (name.contains('LocalisedText')) {
+            return 
+        }
+        expand('buildTimestamp': buildTime)
+    }
+
+    // FORCE GENERATION of version.properties
+    doLast {
+        def resourcesDir = sourceSets.main.output.resourcesDir
+        if (!resourcesDir.exists()) {
+            resourcesDir.mkdirs()
+        }
+        def versionFile = new File(resourcesDir, "version.properties")
+        versionFile.text = "buildTimestamp=" + buildTime
+        println "Generated version.properties with timestamp: " + buildTime
+    }
+
+
 }

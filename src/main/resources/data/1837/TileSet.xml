@@ -226,7 +226,7 @@
         <Tile id="426" quantity="1">
                 <Upgrade id="434"/>
         </Tile>
-        <Tile id="427" orientation="0" quantity="1">
+        <Tile id="427" quantity="1">
                 <Upgrade id="436"/>
         </Tile>
         <Tile id="429" quantity="2">

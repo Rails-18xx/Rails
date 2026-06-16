@@ -75,17 +75,30 @@ public class LayBaseToken_1837 extends PossibleAction {
 
     /*--- Getters ---*/
 
+
     public PublicCompany getMajor () {
+        if (major == null && majorName != null && getRoot() != null) {
+            major = getRoot().getCompanyManager().getPublicCompany(majorName);
+        }
         return major;
-    };
+    }
 
     public List<PublicCompany> getMinors () {
+        if (minors == null && minorNames != null && getRoot() != null) {
+            minors = new ArrayList<>();
+            for (String name : minorNames.split(",")) {
+                minors.add(getRoot().getCompanyManager().getPublicCompany(name));
+            }
+        }
         return minors;
     }
 
     public PublicCompany getMinor (int index) {
-        return minors.get(index);
+        return getMinors().get(index);
     }
+
+
+
 
     public List<Boolean> getSelected() {
         return selected;

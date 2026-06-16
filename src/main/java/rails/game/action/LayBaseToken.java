@@ -25,11 +25,12 @@ public class LayBaseToken extends LayToken {
     public static final int HOME_CITY = 3; // If city on home hex is undefined in 1st turn
     public static final int FORCED_LAY = 4; // Lay token even if there is no free slot (18Scan)
     public static final int NON_CITY = 5; // Lay token on plain track or town (special cases)
+    public static final int HEX_EDGE = 6; // 1870: Destination marker on hex edge (does not use slot)
     public static final int CORRECTION = 99; // Correction token lays
 
-    // For logging (toString()) only
-    private static String[] typeText = new String[] {"GENERIC", "LOCATION_SPECIFIC",
-            "SPECIAL_PROPERTY", "HOME_CITY", "FORCED_LAY", "NON_CITY", "CORRECTION"};
+// For logging (toString()) only
+private static String[] typeText = new String[] {"GENERIC", "LOCATION_SPECIFIC",
+        "SPECIAL_PROPERTY", "HOME_CITY", "FORCED_LAY", "NON_CITY", "HEX_EDGE", "CORRECTION"};
 
     protected int type;
 
@@ -172,14 +173,33 @@ public class LayBaseToken extends LayToken {
 
     @Override
     public String toString() {
-        String typeName = type + " (" + typeText[type != 99 ? type : typeText.length-1] + ")";
-        return super.toString() +
-                 RailsObjects.stringHelper(this)
-                    .addToString("type", typeName)
-                    .addToString("cost", cost)
-                    .addToStringOnlyActed("chosenStation", chosenStation)
-                    .toString()
-        ;
+        StringBuilder sb = new StringBuilder();
+        
+        // 1. Basic Action Description
+        // Use getChosenHex() if available, otherwise check if chosenHex field is directly accessible
+        // Based on readObject, 'chosenHex' is the field name.
+        String hexName = (getChosenHex() != null) ? getChosenHex().getId() : "Map";
+        sb.append("Lays token on ").append(hexName);
+
+        // 2. Cost Context
+        if (getCost() > 0) {
+            sb.append(" for ").append(getCost());
+        }
+
+        // 3. Special Action / Type Context
+        // Log indicates: type=1 (Location), type=2 (Special), type=3 (Home/Etc)
+        if (getSpecialProperty() != null) {
+            String spName = getSpecialProperty().getClass().getSimpleName()
+                .replace("Special", "") // Clean up "SpecialBaseTokenLay" -> "BaseTokenLay"
+                .replace("Lay", "");    
+            sb.append(" [").append(spName).append("]");
+        } else if (type == HOME_CITY) { 
+            sb.append(" (Home)");
+        } else if (type == FORCED_LAY) {
+            sb.append(" (Forced)");
+        }
+
+        return sb.toString();
     }
 
     /** Deserialize */

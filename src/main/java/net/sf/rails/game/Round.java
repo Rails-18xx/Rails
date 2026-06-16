@@ -1,8 +1,11 @@
 package net.sf.rails.game;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import net.sf.rails.common.*;
@@ -14,15 +17,15 @@ import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.Portfolio;
+import net.sf.rails.game.financial.Bank;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.game.action.*;
 
-
 // Cannot be abstract because must be instantiatable to make it stateful, see GameManager_1837.
-public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade {
+public /* abstract */ class Round extends RailsAbstractItem implements RoundFacade {
 
     private static final Logger log = LoggerFactory.getLogger(Round.class);
 
@@ -42,7 +45,6 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
 
     protected final BooleanState wasInterrupted = new BooleanState(this, "wasInterrupted");
 
-
     protected Round(GameManager parent, String id) {
         super(parent, id);
 
@@ -52,7 +54,8 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
         companyManager = getRoot().getCompanyManager();
         playerManager = getRoot().getPlayerManager();
         bank = getRoot().getBank();
-        // TODO: It would be good to work with BankPortfolio and Owner instead of PortfolioModels
+        // TODO: It would be good to work with BankPortfolio and Owner instead of
+        // PortfolioModels
         // However this requires a lot of work inside the Round classes
         ipo = bank.getIpo().getPortfolioModel();
         pool = bank.getPool().getPortfolioModel();
@@ -96,7 +99,6 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
         return this.getClass().getSimpleName();
     }
 
-
     /**
      * A stub for processing actions triggered by a phase change.
      * Must be overridden by subclasses that need to process such actions.
@@ -115,9 +117,10 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
      * Returns the 'phase number', defined as 2 for phase 2, etc.
      * For use in games where some share-related rules depend on that number,
      * such as 18Scan and SOH.
+     * 
      * @return The phase number
      */
-    protected int getPhaseNumber () {
+    protected int getPhaseNumber() {
         // The index starts at 0, so we must add 2
         return gameManager.getCurrentPhase().getIndex() + 2;
     }
@@ -125,27 +128,26 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
     /**
      * Set the operating companies in their current acting order
      */
-    // What is the reason of that to have that here? => move to OR?
-    // EV: No, also used in 1837/CoalExchangeRound, which is an SR type
     public List<PublicCompany> setOperatingCompanies() {
         return setOperatingCompanies(null, null);
     }
 
-    public List<PublicCompany> setOperatingCompanies (String type) {
+    public List<PublicCompany> setOperatingCompanies(String type) {
         List<PublicCompany> selectedCompanies = new ArrayList<>();
         for (PublicCompany comp : setOperatingCompanies()) {
             if (type.equals(comp.getType().getId())) {
-                selectedCompanies.add (comp);
+                selectedCompanies.add(comp);
             }
         }
         return selectedCompanies;
     }
 
     // What is the reason of that to have that here => move to OR?
-    // this is still required for 18EU StockRound as due to the merger there are companies that have to discard trains
+    // this is still required for 18EU StockRound as due to the merger there are
+    // companies that have to discard trains
     // called only internally
     public List<PublicCompany> setOperatingCompanies(List<PublicCompany> oldOperatingCompanies,
-                                                     PublicCompany lastOperatingCompany) {
+            PublicCompany lastOperatingCompany) {
 
         Map<Integer, PublicCompany> operatingCompanies = new TreeMap<>();
         List<PublicCompany> newOperatingCompanies;
@@ -165,7 +167,8 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
         }
 
         for (PublicCompany company : newOperatingCompanies) {
-            if (!reorder && !canCompanyOperateThisRound(company)) continue;
+            if (!reorder && !canCompanyOperateThisRound(company))
+                continue;
 
             if (reorder
                     && oldOperatingCompanies.indexOf(company) <= lastOperatingCompanyIndex) {
@@ -199,17 +202,21 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
     }
 
     /**
-     * Check if a company must be floated, and if so, do it. <p>This method is
+     * Check if a company must be floated, and if so, do it.
+     * <p>
+     * This method is
      * included here because it is used in various types of Round.
      *
      * @param company Company to be checked for being floatable
      */
-    // What is the reason of that to have that here? => best to move it to PublicCompany in the long-run
+    // What is the reason of that to have that here? => best to move it to
+    // PublicCompany in the long-run
     // is called by StartRound as well
     // called only internally
     protected void checkFlotation(PublicCompany company) {
 
-        if (!company.hasStarted() || company.hasFloated()) return;
+        if (!company.hasStarted() || company.hasFloated())
+            return;
 
         if (company.getSoldPercentage() >= company.getFloatPercentage()) {
             // Company floats
@@ -219,7 +226,9 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
 
     /**
      * Float a company, including a default implementation of moving cash and
-     * shares as a result of flotation. <p>Full capitalisation is implemented
+     * shares as a result of flotation.
+     * <p>
+     * Full capitalisation is implemented
      * as in 1830. Partial capitalisation is implemented as in 1851. Other ways
      * to process the consequences of company flotation must be handled in
      * game-specific subclasses.
@@ -230,7 +239,8 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
     // called only internally
     protected void floatCompany(PublicCompany company) {
 
-        if (company.hasFloated()) return;
+        if (company.hasFloated())
+            return;
 
         int cash = getCashOnFloating(company);
 
@@ -258,7 +268,7 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
         }
     }
 
-    protected int getCashOnFloating (PublicCompany company) {
+    protected int getCashOnFloating(PublicCompany company) {
         // Move cash and shares where required
         int soldPercentage = company.getSoldPercentage();
         int cash;
@@ -291,17 +301,19 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
         return cash;
     }
 
-    /** Stub, to be overridden where needed.
+    /**
+     * Stub, to be overridden where needed.
      * Used in 1826
+     * 
      * @param company The floating public company
      * @return
      */
-    protected int getCustomCapitalization (PublicCompany company) {
+    protected int getCustomCapitalization(PublicCompany company) {
         return 0;
     }
 
-    protected void finishRound () {
-        finishRound (true);
+    protected void finishRound() {
+        finishRound(true);
     }
 
     // Could be moved somewhere else (RoundUtils?)
@@ -323,8 +335,16 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
                 }
             }
         }
-        // Inform GameManager
-        gameManager.nextRound(this);
+        // This is the "1835-aware" patch.
+        // We check if the gameManager is an instance of the 1835-subclass.
+        // If it is, we MUST cast it to force the compiler to call the
+        // overridden nextRound() method that checks the priority queue.
+        if (gameManager instanceof net.sf.rails.game.specific._1835.GameManager_1835) {
+            ((net.sf.rails.game.specific._1835.GameManager_1835) gameManager).nextRound(this);
+        } else {
+            // Otherwise, do the normal, non-polymorphic call.
+            gameManager.nextRound(this);
+        }
     }
 
     // called only from 1835 Operating Round?
@@ -335,6 +355,140 @@ public /*abstract*/ class Round extends RailsAbstractItem implements RoundFacade
     /** Stub to allow lower subclasses to provide their own window title */
     public String getOwnWindowTitle() {
         return null;
+    }
+
+    public List<PossibleAction> getPossibleActionsList() {
+        return possibleActions.getList();
+    }// File: Round.java
+
+
+    @Override
+    public Player getCurrentPlayer() {
+        return null;
+    }
+    
+    /**
+     * Generates individual discard actions for every physical train.
+     * This resolves the bug where "2" and "2+" were conflated and
+     * fulfills the requirement for unique buttons per train.
+     */
+    public void generateGroupedDiscardActions(PublicCompany company, PossibleActions possibleActions) {
+        possibleActions.clear();
+        List<net.sf.rails.game.Train> trains = new java.util.ArrayList<>(company.getPortfolioModel().getTrainList());
+        java.util.Map<String, java.util.Set<net.sf.rails.game.Train>> typeGroups = new java.util.HashMap<>();
+
+        for (net.sf.rails.game.Train train : trains) {
+            if (train == null)
+                continue;
+            // Extract the type (e.g., "2" from "2_0", "2+" from "2+_2")
+            String type = train.getName().replaceAll("(.*)_\\d+", "$1");
+            typeGroups.computeIfAbsent(type, k -> new java.util.HashSet<>()).add(train);
+        }
+
+        for (java.util.Map.Entry<String, java.util.Set<net.sf.rails.game.Train>> entry : typeGroups.entrySet()) {
+            rails.game.action.DiscardTrain action = new rails.game.action.DiscardTrain(company, entry.getValue());
+            action.setButtonLabel(entry.getKey());
+            possibleActions.add(action);
+        }
+    }
+
+    /**
+     * CENTRALIZED HELPER: Executes the physical move of a train to the Bank Pool.
+     * Uses 'this.pool' which is the correct PortfolioModel required by the UI.
+     */
+    protected void executeDiscardTrain(DiscardTrain action) {
+        Train train = action.getSelectedTrain();
+        if (train == null) {
+            log.warn("DiscardTrain action has no train selected.");
+            return;
+        }
+
+        // FIX: Use the 'pool' field directly defined in Round.java.
+        // It is already a 'PortfolioModel', so no type mismatch occurs.
+        PortfolioModel targetPool = this.pool;
+
+        // 2. Move the train
+        if (train.getCard() != null) {
+            // Move the card (Certificate) to the pool
+            train.getCard().moveTo(targetPool);
+        } else {
+            // Move the train object directly to the pool
+            train.moveTo(targetPool);
+        }
+
+        // 3. Log/Report
+        String companyName = action.getPlayer() != null ? action.getPlayer().getName() : "Company";
+        if (action.getCompany() != null)
+            companyName = action.getCompany().getId();
+
+        String msg = companyName + " discards " + train.getName();
+        ReportBuffer.add(this, msg);
+        log.info(msg);
+    }
+
+    /**
+     * MASTER FUNCTION: Checks train limit and generates discard actions if
+     * necessary.
+     * Returns TRUE if the company is over the limit (blocking normal play).
+     */
+    public boolean enforceTrainLimit(PublicCompany company) {
+        if (company == null)
+            return false;
+
+        int count = company.getNumberOfTrains();
+        int limit = company.getCurrentTrainLimit();
+
+        if (count > limit) {
+            log.info("LIMIT ENFORCEMENT: " + company.getId() + " has " + count + "/" + limit + " trains.");
+
+            // CRITICAL: We clear actions HERE because it is a MANDATORY state.
+            possibleActions.clear();
+
+            // Generate buttons (without clearing internally)
+            generateGroupedDiscardActions(company);
+
+            return true; // Blocking
+        }
+        return false; // Not blocking
+    }
+
+    /**
+     * Internal helper to generate buttons. Modified to provide individual actions
+     * for each physical train, bypassing the buggy startsWith() grouping logic.
+     */
+    protected void generateGroupedDiscardActions(PublicCompany company) {
+        List<net.sf.rails.game.Train> trains = new java.util.ArrayList<>(company.getPortfolioModel().getTrainList());
+        java.util.Map<String, java.util.Set<net.sf.rails.game.Train>> typeGroups = new java.util.HashMap<>();
+
+        for (net.sf.rails.game.Train train : trains) {
+            if (train == null)
+                continue;
+            String type = train.getName().replaceAll("(.*)_\\d+", "$1");
+            typeGroups.computeIfAbsent(type, k -> new java.util.HashSet<>()).add(train);
+        }
+
+        for (java.util.Map.Entry<String, java.util.Set<net.sf.rails.game.Train>> entry : typeGroups.entrySet()) {
+            rails.game.action.DiscardTrain action = new rails.game.action.DiscardTrain(company, entry.getValue());
+            action.setButtonLabel(entry.getKey());
+            possibleActions.add(action);
+        }
+    }
+
+    /**
+     * Checks if a "Pass" action should terminate an interrupted round (e.g.,
+     * Formation Round).
+     * Returns true if the pass was handled and the round finished.
+     */
+    protected boolean handleInterruptedPass(PossibleAction action) {
+        if (action instanceof NullAction && ((NullAction) action).getMode() == NullAction.Mode.PASS) {
+            // Only force-finish if this round actually interrupted another round (e.g. OR)
+            if (gameManager.getInterruptedRound() != null) {
+                log.info("1837_FIX: Interrupted round " + getRoundName() + " received PASS. Force-finishing.");
+                finishRound();
+                return true;
+            }
+        }
+        return false;
     }
 
 }

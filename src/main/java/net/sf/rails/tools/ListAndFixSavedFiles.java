@@ -1074,9 +1074,7 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
             addTextField (this, "Trains",
                     action.getOwnedTrains(),
                     String.valueOf(action.getOwnedTrains()));  // 1
-            addTextField (this, "Forced",
-                    action.isForced(),
-                    String.valueOf(action.isForced()));  // 2
+          
             addTextField (this, "Discarded",
                     action.getDiscardedTrain(),
                     String.valueOf(action.getDiscardedTrain()));  // 3
@@ -1094,8 +1092,6 @@ public class ListAndFixSavedFiles extends JFrame implements ActionListener, KeyL
                 ownedTrains.add(root.getTrainManager().getTrainByUniqueId(trainId));
             }
             action.setOwnedTrains(ownedTrains);
-
-            action.setForced(Boolean.valueOf(((JTextField)inputElements.get(2)).getText()));
 
             String trainID = ((JTextField)inputElements.get(3)).getText();
             Train train = root.getTrainManager().getTrainByUniqueId(trainID);

@@ -58,9 +58,9 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         this.trackPoint = station;
         this.stop = hex.getRelatedStop(station);
         if (stop != null) {
-            log.debug("Found stop {}", stop);
+       //     log.debug("Found stop {}", stop);
         } else {
-            log.error("No stop found for hex {} station {}", hex, station);
+        //    log.error("No stop found for hex {} station {}", hex, station);
         }
 
         this.virtual = false;
@@ -283,7 +283,7 @@ public final class NetworkVertex implements Comparable<NetworkVertex> {
         // if company == null, then no vertex gets removed
         if (company != null && !stop.isRunToAllowedFor(company, running)
                 && !stop.isRunThroughAllowedFor(company)) {
-           log.debug("Vertex is removed");
+      //     log.info("Vertex is removed");
            return false;
         }
 

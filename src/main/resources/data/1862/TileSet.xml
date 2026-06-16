@@ -157,7 +157,7 @@
 	<Tile id="126" quantity="1" />
 	<Tile id="127" quantity="1" />
 
-	<!-- Grey tiles -->
+	<!-- gray tiles -->
 	<Tile id="123" quantity="1" />
 	<Tile id="124" quantity="1" />
 </TileManager>

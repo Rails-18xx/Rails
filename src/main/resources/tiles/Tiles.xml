@@ -1,3 +1,9 @@
+
+// this file seesm not to be used by the actual implemntatins, 
+it's the summary of all other files
+\
+
+
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Tiles>
     <Tile colour="red" id="-909" name="OM straight">
@@ -1918,8 +1924,8 @@
         <Track from="city1" gauge="normal" to="side5"/>
     </Tile>
     <Tile colour="green" id="408" name="408">
-        <Station id="city1" position="101" slots="2" type="City" value="30"/>
-        <Station id="city2" position="401" slots="1" type="City" value="30"/>
+        <Station id="city1" position="108" slots="2" type="City" value="30"/>
+        <Station id="city2" position="408  " slots="1" type="City" value="30"/>
         <Track from="city1" gauge="normal" to="side0"/>
         <Track from="city1" gauge="normal" to="side1"/>
         <Track from="city1" gauge="normal" to="side2"/>
@@ -2033,17 +2039,17 @@
         <Track from="city1" gauge="normal" to="side1"/>
         <Track from="city1" gauge="normal" to="side2"/>
     </Tile>
-    <Tile colour="green" id="427" name="427">
-        <Station id="city1" position="303" slots="1" type="City" value="60"/>
-        <Station id="city2" position="403" slots="1" type="City" value="60"/>
+<Tile colour="green" id="427" name="427">
+        <Station id="city1" position="003" slots="1" type="City" value="60"/>
+        <Station id="city2" position="303" slots="1" type="City" value="60"/>
         <Station id="city3" position="503" slots="1" type="City" value="60"/>
-        <Station id="city4" position="003" slots="1" type="City" value="60"/>
+        <Station id="city4" position="403" slots="1" type="City" value="60"/>
         <Station id="city5" position="103" slots="1" type="City" value="60"/>
         <Station id="city6" position="203" slots="1" type="City" value="60"/>
-        <Track from="city1" gauge="normal" to="side3"/>
-        <Track from="city2" gauge="normal" to="side4"/>
+        <Track from="city1" gauge="normal" to="side0"/>
+        <Track from="city2" gauge="normal" to="side3"/>
         <Track from="city3" gauge="normal" to="side5"/>
-        <Track from="city4" gauge="normal" to="side0"/>
+        <Track from="city4" gauge="normal" to="side4"/>
         <Track from="city5" gauge="normal" to="side1"/>
         <Track from="city6" gauge="normal" to="side2"/>
     </Tile>

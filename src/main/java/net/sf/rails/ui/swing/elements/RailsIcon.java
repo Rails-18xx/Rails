@@ -27,6 +27,11 @@ public enum RailsIcon {
     CONFIRM ("add.png","Confirm"),
     NO ("cancel.png","No"),
     SKIP ("control_play_blue.png","Skip"),
+
+    AI_MOVE ("ai_icon.png", "AI_Move"), // *** ADDED second string "AIMove" *** Using placeholder path
+    PAUSE ("pause.png", "Pause_Timer"), // *** ADDED second string "AIMove" *** Using placeholder path
+    RESUME ("ai_icon.png", "Resume_Timer"), // *** ADDED second string "AIMove" *** Using placeholder path
+    
     OK ("accept.png","OK"),
     PANEL_OR ("participation_rate.png","Dockable.orWindow.orPanel"),
     PANEL_OR_BUTTONS ("button.png","Dockable.orWindow.buttonPanel"),
@@ -47,6 +52,9 @@ public enum RailsIcon {
     WITHHOLD ("traffic_lights_red.png","WITHHOLD"),
     YES ("accept.png","Yes"),
 
+    // Using "arrow_out.png" or similar as a placeholder if specific icon missing
+    FIT_TO_WINDOW ("accept.png", "FitMap"),
+    
     //no icons by purpose
     END_OF_GAME_CLOSE_ALL_WINDOWS ("","END_OF_GAME_CLOSE_ALL_WINDOWS"),
     OPERATING_COST ("","OCButtonLabel"),

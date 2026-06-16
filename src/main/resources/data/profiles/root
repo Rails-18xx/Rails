@@ -21,7 +21,7 @@ font.ui.style=bold
 ### Panel Map
 map.autoscroll=yes
 map.defaultZoomFitOption=none
-map.displayCurrentRoutes=no
+map.displayCurrentRoutes=yes
 map.highlightHexes=yes
 map.image.display=yes
 map.zoomstep=10

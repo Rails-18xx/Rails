@@ -213,7 +213,7 @@ public class CGRFormationRound extends SwitchableUIRound {
             guiHints.setActivePanel(GuiDef.Panel.STATUS);
         } else if (step.value() == Steps.STEP_DISCARD_TRAINS) {
             DiscardTrain action = new DiscardTrain(cgr,
-                    trainsToDiscardFrom, forcedTrainDiscard);
+                    trainsToDiscardFrom);
             possibleActions.add(action);
             guiHints.setActivePanel(GuiDef.Panel.STATUS);
         }
@@ -695,6 +695,9 @@ public class CGRFormationRound extends SwitchableUIRound {
             log.debug("CGR must discard trains");
             trainsToDiscardFrom = cgr.getPortfolioModel().getTrainList();
             forcedTrainDiscard = true;
+
+
+
             return true;
         } else if (!this.cgrHasDiscardedTrains.value()) {
             // Check if CGR still has non-permanent trains
@@ -706,6 +709,9 @@ public class CGRFormationRound extends SwitchableUIRound {
                 }
             }
             if (!trainsToDiscardFrom.isEmpty()) {
+
+   // todo, stefan, i have removed the force from the discardtrain, just add the pass action!
+
                 forcedTrainDiscard = false;
                 return true;
             }
@@ -737,10 +743,7 @@ public class CGRFormationRound extends SwitchableUIRound {
                 break;
             }
 
-            if (train == null && action.isForced()) {
-                errMsg = LocalText.getText("NoTrainSpecified");
-                break;
-            }
+           
 
             // Does the company own such a train?
 

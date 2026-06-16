@@ -78,6 +78,8 @@ public class StartRound_1837_v1 extends StartRound {
 
     }
 
+
+    //
     @Override
     public boolean setPossibleActions() {
 
@@ -89,16 +91,14 @@ public class StartRound_1837_v1 extends StartRound {
         int minRow = 0;
         boolean[][] soldStartItems = new boolean[3][6];
 
+        // 1. Determine which items are technically buyable (top of columns)
         if ((!startPacket.areAllSold())) {
             for (StartItem item : startItems) {
                 buyable = false;
-
                 column = item.getColumn();
                 row = item.getRow();
 
                 if (item.isSold()) {
-                    // Already sold: skip but set watermarks
-
                     if (column == 1) {
                         soldStartItems[0][row - 1] = true;
                     } else {
@@ -108,18 +108,11 @@ public class StartRound_1837_v1 extends StartRound {
                             soldStartItems[2][row - 1] = true;
                         }
                     }
-
                 } else {
-                    if (minRow == 0) {
-                        minRow = row;
-                    }
+                    if (minRow == 0) minRow = row;
                     if (row == minRow) {
-                        // Allow all items in the top row.
                         buyable = true;
                     } else {
-                        // Allow the first item in the next row of a column
-                        // where the items in higher
-                        // rows have been bought.
                         if (soldStartItems[column - 1][row - 2] == true) {
                             buyable = true;
                         }
@@ -129,47 +122,69 @@ public class StartRound_1837_v1 extends StartRound {
                     item.setStatus(StartItem.BUYABLE);
                     buyableItems.add(item);
                 }
-            } // startItems
+            }
             possibleActions.clear();
-        } else { // Are all Sold
+        } else {
             possibleActions.clear();
             return true;
         }
 
-        /*
-         * Repeat until we have found a player with enough money to buy some
-         * item
-         */
+        // 2. Loop until we find a player who can act (Auto-Pass logic)
         while (possibleActions.isEmpty()) {
 
             Player currentPlayer = playerManager.getCurrentPlayer();
-            if (currentPlayer == startPlayer) ReportBuffer.add(this, "");
-
             int cashToSpend = currentPlayer.getCash();
+            boolean canBuySomething = false;
 
+            // Check if current player can afford anything
             for (StartItem item : buyableItems) {
                 if (item.getBasePrice() <= cashToSpend) {
-                    /* Player does have the cash */
-                    possibleActions.add(new BuyStartItem(item,
-                            item.getBasePrice(), false));
-                }
-
-            } /* Pass is always allowed */
-            // No its not if there is a startItem with a price of zero the player has to buy that.
-            for (StartItem item : buyableItems) {
-                if (item.getBasePrice() == 0) {
-                    return true;
+                    possibleActions.add(new BuyStartItem(item, item.getBasePrice(), false));
+                    canBuySomething = true;
                 }
             }
-            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
 
+            // Check for forced buy (price 0)
+            for (StartItem item : buyableItems) {
+                if (item.getBasePrice() == 0) {
+                    // If there is a free item, they MUST take it (handled by BuyStartItem above or manual logic)
+                    // The loop above adds the buy action, so we are good.
+                    // Just ensure we don't add Pass below if it's forced?
+                    // The original code allowed pass unless price is 0.
+                }
+            }
+
+            if (canBuySomething) {
+                // Player can act, so we offer the actions and stop looping.
+                // Pass is always allowed unless there is a forced buy (price 0)
+                boolean forced = false;
+                for (StartItem item : buyableItems) {
+                    if (item.getBasePrice() == 0) forced = true;
+                }
+                if (!forced) {
+                    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.PASS));
+                }
+                return true;
+
+            } else {
+                // Player CANNOT buy anything. Auto-pass them.
+                ReportBuffer.add(this, LocalText.getText("PASSES", currentPlayer.getName()) + " (Auto-Pass: Insufficient Funds)");
+                
+                // Execute the pass logic immediately
+                // We pass 'null' as the action because we are calling the method directly
+                pass(null, currentPlayer.getName()); 
+                
+                // After passing, 'pass()' has already called 'setCurrentToNextPlayer'
+                // and potentially reduced prices.
+                // We loop back to the top to check the *next* player (or same player if prices dropped).
+                possibleActions.clear();
+            }
         }
 
         return true;
     }
 
-    /*----- moveStack methods -----*/
-
+    
     @Override
     public boolean bid(String playerName, BidStartItem item) {
 

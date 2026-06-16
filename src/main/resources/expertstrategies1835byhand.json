@@ -1,0 +1,316 @@
+{
+  "strategy_name": "1835_OpeningBook_v1.1_NewStyle",
+  "rules": [
+
+    // --- 1. SCRIPTED OPENING MOVES (Converted to new _Sequence format) ---
+
+    // --- M1 SCRIPT (Default) ---
+    {
+      "action": "TileLay_Sequence",
+      "priority": 100,
+      "description": "M1 (Default) sequence",
+      "company": "M1",
+      "override_score": 10000.0,
+      "conditions": [
+        { "type": "playerOwnsItem", "id": "M4", "value": false }
+      ],
+      "targets": [
+        { "hex": "H2", "tiles": ["201"], "orientation": 0 },
+        { "hex": "J2", "tiles": ["9"], "orientation": 2 },
+        { "hex": "K3", "tiles": ["58"], "orientation": 2 },
+        { "hex": "K5", "tiles": ["9"], "orientation": 1 }
+      ]
+    },
+    // --- M1 SCRIPT (Owner of M4) ---
+    // Note: Old rules 103-105 had "condition_M1_owns_M4: false", assumed typo and corrected to 'true' based on description.
+    {
+      "action": "TileLay_Sequence",
+      "priority": 101,
+      "description": "M1 (Owns M4) sequence",
+      "company": "M1",
+      "override_score": 10000.0,
+      "conditions": [
+        { "type": "playerOwnsItem", "id": "M4", "value": true }
+      ],
+      "targets": [
+        { "hex": "H2", "tiles": ["202"], "orientation": 1 },
+        { "hex": "H4", "tiles": ["69"], "orientation": 0 },
+        { "hex": "J2", "tiles": ["9"], "orientation": 5 },
+        { "hex": "K3", "tiles": ["58"], "orientation": 2 },
+        { "hex": "K5", "tiles": ["9"], "orientation": 1 }
+      ]
+    },
+
+    // --- M2 SCRIPT ---
+    {
+      "action": "TileLay_Sequence",
+      "priority": 110,
+      "description": "M2 (Default) sequence",
+      "company": "M2",
+      "override_score": 10000.0,
+      "targets": [
+        { "hex": "E17", "tiles": ["8"], "orientation": 2 },
+        { "hex": "D16", "tiles": ["8"], "orientation": 5 },
+        { "hex": "D14", "tiles": ["8"], "orientation": 2},
+        { "hex": "B14", "tiles": ["58"], "orientation": 4 },
+        { "hex": "B16", "tiles": ["4"], "orientation": 1 },
+        { "hex": "B18", "tiles": ["3"], "orientation": 5 }
+      ]
+    },
+
+    // --- M3 SCRIPT (Owner of SX) ---
+    {
+      "action": "TileLay_Sequence",
+      "priority": 120,
+      "description": "M3 (Owns SX) sequence",
+      "company": "M3",
+      "override_score": 10000.0,
+      "conditions": [
+        { "type": "playerOwnsItem", "id": "SX", "value": true }
+      ],
+      "targets": [
+        { "hex": "F14", "tiles": ["6"], "orientation": 1 },
+        { "hex": "G14", "tiles": ["4"], "orientation": 0, "conditions": [ {"type": "operatingRound", "min": 2} ] },
+        { "hex": "H16", "tiles": ["6"], "orientation": 0 }
+      ]
+    },
+    // --- M3 SCRIPT (Default) ---
+    {
+      "action": "TileLay_Sequence",
+      "priority": 130,
+      "description": "M3 (Default) sequence",
+      "company": "M3",
+      "override_score": 10000.0,
+      "conditions": [
+        { "type": "playerOwnsItem", "id": "SX", "value": false }
+      ],
+      "targets": [
+        { "hex": "F14", "tiles": ["5"], "orientation": 3 },
+        { "hex": "E13", "tiles": ["8"], "orientation": 5 },
+        { "hex": "E11", "tiles": ["8"], "orientation": 2 },
+        { "hex": "D10", "tiles": ["8"], "orientation": 3 },
+        { "hex": "F10", "tiles": ["57"], "orientation": 1 }
+      ]
+    },
+
+    // --- M4 SCRIPT ---
+    {
+      "action": "TileLay_Sequence",
+      "priority": 140,
+      "description": "M4 (Default) sequence",
+      "company": "M4",
+      "override_score": 10000.0,
+      "targets": [
+        { "hex": "G5", "tiles": ["57"], "orientation": 0 },
+        { "hex": "H4", "tiles": ["69"], "orientation": 0 },
+        { "hex": "F6", "tiles": ["58"], "orientation": 4 },
+        { "hex": "I3", "tiles": ["201"], "orientation": 3 },
+        { "hex": "F8", "tiles": ["9"], "orientation": 1 },
+        { "hex": "F10", "tiles": ["6"], "orientation": 5 }
+      ]
+    },
+
+    // --- M5 SCRIPT (Owner of SX) ---
+    {
+      "action": "TileLay_Sequence",
+      "priority": 150,
+      "description": "M5 (Owns SX) sequence",
+      "company": "M5",
+      "override_score": 10000.0,
+      "conditions": [
+        { "type": "playerOwnsItem", "id": "SX", "value": true }
+      ],
+      "targets": [
+        { "hex": "D18", "tiles": ["7"], "orientation": 3 },
+        { "hex": "D20", "tiles": ["8"], "orientation": 4 },
+        { "hex": "F20", "tiles": ["8"], "orientation": 3 }
+
+      ]
+    },
+    // --- M5 SCRIPT (Default) ---
+    {
+      "action": "TileLay_Sequence",
+      "priority": 155,
+      "description": "M5 (Default) sequence",
+      "company": "M5",
+      "override_score": 10000.0,
+      "conditions": [
+        { "type": "playerOwnsItem", "id": "SX", "value": false }
+      ],
+      "targets": [
+        { "hex": "D18", "tiles": ["8"], "orientation": 3 },
+        { "hex": "C19", "tiles": ["8"], "orientation": 4 }
+      ]
+    },
+
+    // --- M6 SCRIPT ---
+    {
+      "action": "TileLay_Sequence",
+      "priority": 160,
+      "description": "M6 (Default) sequence",
+      "company": "M6",
+      "override_score": 10000.0,
+      "targets": [
+        { "hex": "B10", "tiles": ["9"], "orientation": 2 },
+        { "hex": "A11", "tiles": ["6"], "orientation": 2 },
+        { "hex": "B12", "tiles": ["58"], "orientation": 0 },
+        { "hex": "B14", "tiles": ["58"], "orientation": 4 },
+        { "hex": "B16", "tiles": ["4"], "orientation": 1 },
+        { "hex": "B18", "tiles": ["3"], "orientation": 5 }      ]
+    },
+
+    // --- BY SCRIPT (Default) ---
+    {
+      "action": "TileLay_Sequence",
+      "priority": 170,
+      "description": "BY (Default) Tile sequence",
+      "company": "BY",
+      "override_score": 10000.0, // Base score, higher scores in old file ignored as new format uses rule-level score
+      "conditions": [
+        { "type": "playerOwnsItem", "id": "OBB", "value": false }
+      ],
+      "targets": [
+        { "hex": "O15", "tiles": ["202"], "orientation": 4 },
+        { "hex": "N16", "tiles": ["8"], "orientation": 0 },
+        { "hex": "M15", "tiles": ["4"], "orientation": 2 },
+        { "hex": "M13", "tiles": ["7"], "orientation": 2 },
+        { "hex": "L12", "tiles": ["9"], "orientation": 5 },
+        { "hex": "K11", "tiles": ["4"], "orientation": 2 },
+        { "hex": "J10", "tiles": ["8"], "orientation": 5 },
+        { "hex": "K7", "tiles": ["8"], "orientation": 1 }
+
+
+      ]
+    },
+    {
+      "action": "TokenLay_Sequence",
+      "priority": 175,
+      "description": "BY (Default) Token sequence",
+      "company": "BY",
+      "override_score": 9500.0,
+   //   "conditions": [
+   //     { "type": "playerOwnsItem", "id": "NF", "value": true }
+   //   ],
+      "target_hexes": [ "L14", "J8" ]
+    },
+
+ 
+    // --- SX SCRIPT (Primary Path) ---
+    {
+      "action": "TileLay_Sequence",
+      "priority": 190,
+      "description": "SX (Primary) sequence",
+      "company": "SX",
+      "override_score": 10000.0,
+      "targets": [
+        { "hex": "H16", "tiles": ["6"], "orientation": 5 },
+        { "hex": "H18", "tiles": ["9"], "orientation": 1 },
+        { "hex": "H20", "tiles": ["201"], "orientation": 2 },
+        { "hex": "H20", "tiles": ["202"], "orientation": 4 },
+        { "hex": "G19", "tiles": ["8"], "orientation": 3 },
+        { "hex": "F10", "tiles": ["8"], "orientation": 2 }
+
+      ]
+    },
+    
+        {
+      "action": "TokenLay_Sequence",
+      "priority": 176,
+      "description": "Sx Token sequence",
+      "company": "Sx",
+      "override_score": 20000.0,
+      "target_hexes": [ "H20", "E19" ]
+    },
+
+
+
+    // --- 2. GENERAL HEURISTICS (Unchanged) ---
+    
+    // Fundamental Rule: "always build if it can"
+    {
+      "action": "TileLay_Heuristic", "priority": 201, "description": "Small bonus for laying any tile",
+      "heuristic": "TILE_LAY_BONUS",
+      "weight": 5.0
+    },
+    // Fundamental Rule: "but not if it cost money"
+    {
+      "action": "TileLay_Heuristic", "priority": 202, "description": "Penalize high tile costs",
+      "heuristic": "COST_PENALTY",
+      "weight": -10.0
+    },
+    // Standard Revenue Rule
+    {
+      "action": "TileLay_Heuristic", "priority": 210, "description": "Strongly prefer revenue-increasing tiles",
+      "heuristic": "REVENUE_GAIN",
+      "weight": 150.0
+    },
+    // Fundamental Rule: "should not end in situation where it cannot carry on"
+    {
+      "action": "TileLay_Heuristic", "priority": 220, "description": "Penalize laying a tile that cannot be upgraded (dead end)",
+      "heuristic": "DEAD_END_PENALTY",
+      "weight": -10000.0
+    },
+
+    // --- TRAIN HEURISTICS (Unchanged) ---
+    {
+      "action": "BuyTrain_Heuristic", "priority": 300, "description": "Buy a train if you have none",
+      "heuristic": "MUST_BUY_TRAIN",
+      "weight": 1000.0
+    },
+
+    // --- 3. STARTING ROUND (INITIAL AUCTION) PRIORITY (Unchanged) ---
+    // Higher score = higher priority
+    {
+      "action": "BuyStartItem_Scripted", "priority": 400, "description": "Buy M5",
+      "start_item_id": "M5", "override_score": 1013
+    },
+    {
+      "action": "BuyStartItem_Scripted", "priority": 401, "description": "Buy M1",
+      "start_item_id": "M1", "override_score": 1012
+    },
+    {
+      "action": "BuyStartItem_Scripted", "priority": 402, "description": "Buy M3",
+      "start_item_id": "M3", "override_score": 1011
+    },
+    {
+      "action": "BuyStartItem_Scripted", "priority": 403, "description": "Buy M2",
+      "start_item_id": "M2", "override_score": 1010
+    },
+    {
+      "action": "BuyStartItem_Scripted", "priority": 404, "description": "Buy M6",
+      "start_item_id": "M6", "override_score": 1009
+    },
+    {
+      "action": "BuyStartItem_Scripted", "priority": 405, "description": "Buy NF",
+      "start_item_id": "NF", "override_score": 1008
+    },
+    {
+      "action": "BuyStartItem_Scripted", "priority": 406, "description": "Buy LD",
+      "start_item_id": "LD", "override_score": 1007
+    },
+    {
+      "action": "BuyStartItem_Scripted", "priority": 407, "description": "Buy Bay",
+      "start_item_id": "Bay", "override_score": 1006
+    },
+    {
+      "action": "BuyStartItem_Scripted", "priority": 408, "description": "Buy M4",
+      "start_item_id": "M4", "override_score": 1005
+    },
+    {
+      "action": "BuyStartItem_Scripted", "priority": 409, "description": "Buy PfB",
+      "start_item_id": "PfB", "override_score": 1004
+    },
+    {
+      "action": "BuyStartItem_Scripted", "priority": 410, "description": "Buy OBB",
+      "start_item_id": "OBB", "override_score": 1003
+    },
+    {
+      "action": "BuyStartItem_Scripted", "priority": 411, "description": "Buy BB",
+      "start_item_id": "BB", "override_score": 1002
+    },
+    {
+      "action": "BuyStartItem_Scripted", "priority": 412, "description": "Buy HB",
+      "start_item_id": "HB", "override_score": 1001
+    }
+  ]
+}

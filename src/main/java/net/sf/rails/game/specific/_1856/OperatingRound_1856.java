@@ -190,7 +190,7 @@ public class OperatingRound_1856 extends OperatingRound {
             int cashToBeRaisedByPresident = remainder - presCash;
             log.info("A share selling round must be started as the president cannot pay ${} loan interest", remainder);
             log.info("President has ${}, so ${} must be added", presCash, cashToBeRaisedByPresident);
-            savedAction = action;
+savedAction.set(action);
             gameManager.startShareSellingRound(operatingCompany.value().getPresident(),
                     cashToBeRaisedByPresident, operatingCompany.value(), false);
             // Return arbitrary negative value to signal end of processing to caller.
@@ -348,11 +348,11 @@ public class OperatingRound_1856 extends OperatingRound {
                         minNumber, maxNumber, operatingCompany.value().getValuePerLoan()));
 
                 // Step may only be skipped if repayment is optional
-                if (minNumber == 0) doneAllowed = true;
+                if (minNumber == 0) doneAllowed.set(true);
 
             } else {
                 // No (more) loans
-                doneAllowed = true;
+                doneAllowed.set(true);
             }
         }
     }

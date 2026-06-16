@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.*;
 
-
 /**
  * ConfigManager is a utility class that collects all functions
  * used to define and control configuration options
@@ -26,7 +25,7 @@ public class ConfigManager implements Configurable {
     // For unknown reasons, initializing the logger here has started
     // to fail during work on ListAndFixSavedFiles for 1826.
 
-    //  XML setup
+    // XML setup
     private static final String CONFIG_XML_DIR = "data";
     private static final String CONFIG_XML_FILE = "Properties.xml";
     private static final String CONFIG_TAG = "Properties";
@@ -66,17 +65,44 @@ public class ConfigManager implements Configurable {
 
     public static void initConfiguration(boolean test) {
         log = LoggerFactory.getLogger(ConfigManager.class);
+
         try {
             // Find the config tag inside the config xml file
             // the last arguments refers to the fact that no GameOptions are required
             Tag configTag = Tag.findTopTagInFile(CONFIG_XML_FILE, CONFIG_XML_DIR, CONFIG_TAG, null);
-            log.info("Opened config xml, filename = " + CONFIG_XML_FILE);
+            // log.info("Opened config xml, filename = " + CONFIG_XML_FILE);
             instance.configureFromXML(configTag);
         } catch (ConfigurationException e) {
-            log.error("Configuration error in setup of " + CONFIG_XML_FILE, e);
+            // log.error("Configuration error in setup of " + CONFIG_XML_FILE, e);
         } catch (Exception e) {
-            log.error ("Unexpected error in reading config file {}: {}", CONFIG_XML_FILE, e);
+            // log.error ("Unexpected error in reading config file {}: {}", CONFIG_XML_FILE,
+            // e);
         }
+        // --- START: ADD THIS BLOCK BACK ---
+        // Set default game variant (overrides config profiles)
+        instance.transientConfig.put("default_game", "1835");
+
+        // // Set default player names (overrides config profiles)
+        // instance.transientConfig.put("player.name.1", "Stefan");
+        // instance.transientConfig.put("player.name.2", "Rainer");
+        // instance.transientConfig.put("player.name.3", "Bjoern");
+        // instance.transientConfig.put("player.name.4", "Christian");
+        // // Note: 'player.name.5' and 'game.variant.option' from the old code are not in
+        // // your properties file.
+
+        // Inject key default 'ticks' / game options
+        // Note: The properties file uses 'true', but the old code used 'yes'.
+        // Use the value your game code expects (I'll guess 'true' based on your file).
+        // instance.transientConfig.put("map.route.highlight", "true");
+        // instance.transientConfig.put("orPanel.revenue.suggest", "true");
+        // instance.transientConfig.put("orPanel.showAllCompanies", "always");
+        // // instance.transientConfig.put("orPanel.showSpinner", "yes");
+        // instance.transientConfig.put("ai.save.state.on.move", "true");
+
+
+instance.transientConfig.put("statusWindow.zoom", "1");
+    // Force the global UI manager to use plain weight text instead of bold defaults
+    instance.transientConfig.put("font.ui.style", "plain");
 
         if (test) {
             instance.initTest();
@@ -84,7 +110,6 @@ public class ConfigManager implements Configurable {
             instance.init();
         }
     }
-
 
     /**
      * @return singleton instance of ConfigManager
@@ -103,11 +128,13 @@ public class ConfigManager implements Configurable {
             for (Tag sectionTag : sectionTags) {
                 // find name attribute
                 String sectionName = sectionTag.getAttributeAsString("name");
-                if (!Util.hasValue(sectionName)) continue;
+                if (!Util.hasValue(sectionName))
+                    continue;
 
                 // find items
                 List<Tag> itemTags = sectionTag.getChildren(ITEM_TAG);
-                if (itemTags == null || itemTags.size() == 0) continue;
+                if (itemTags == null || itemTags.size() == 0)
+                    continue;
                 List<ConfigItem> sectionItems = new ArrayList<>();
                 for (Tag itemTag : itemTags) {
                     ConfigItem configItem = new ConfigItem(itemTag);
@@ -124,7 +151,7 @@ public class ConfigManager implements Configurable {
     }
 
     private void init() {
-        if ( initialized ) {
+        if (initialized) {
             return;
         }
 
@@ -244,7 +271,7 @@ public class ConfigManager implements Configurable {
         for (List<ConfigItem> panel : configSections.values()) {
             maxElements = Math.max(maxElements, panel.size());
         }
-        log.debug("Configuration sections with maximum elements of {}", maxElements);
+        // log.debug("Configuration sections with maximum elements of {}", maxElements);
         return maxElements;
     }
 
@@ -269,7 +296,7 @@ public class ConfigManager implements Configurable {
      * updates the user profile according to the changes in configItems
      */
     public boolean saveProfile(boolean applyInitMethods) {
-        log.debug("saving profile now");
+        // log.debug("saving profile now");
         for (List<ConfigItem> items : configSections.values()) {
             for (ConfigItem item : items) {
                 if (item.isGameRelated) {
@@ -283,7 +310,8 @@ public class ConfigManager implements Configurable {
                 // if item has changed ==> change profile and call init Method
                 if (item.hasChanged()) {
                     activeProfile.setProperty(item.name, item.getNewValue());
-                    log.debug("User properties for = {} set to value = {}", item.name, item.getCurrentValue());
+                    // log.debug("User properties for = {} set to value = {}", item.name,
+                    // item.getCurrentValue());
                     item.callInitMethod(applyInitMethods);
                     item.resetValue();
                 }
@@ -318,7 +346,8 @@ public class ConfigManager implements Configurable {
 
     public boolean storeRecent(String key, String value) {
         // check conditions
-        if (key == null) return false;
+        if (key == null)
+            return false;
         if (getRecent(key) == null || !getRecent(key).equals(value)) {
             if (value == null) {
                 recentData.remove(key);

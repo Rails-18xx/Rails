@@ -40,8 +40,6 @@ public class Mergers {
     }
 
     /**
-     * Complemented by a shorter version in subclass CoalExchangeRound.
-     * TODO: to be reconsidered once Nationals formation has been tested.
      *
      * @param gameManager A link to the actual game instance
      * @param minor The minor (or coal company) to be merged...
@@ -105,11 +103,24 @@ public class Mergers {
                     recipientName, minor.getId(), major.getId(),
                     Bank.format(gameManager, minorCash), minorTrainsNo));
         }
-        ReportBuffer.add(gameManager, LocalText.getText(
-                (cert.isPresidentShare() ? "GetPresShareForMinor" : "GetShareForMinor"),
-                recipientName, cert.getShare(), major.getId(),
-                minor.getId()));
-        cert.moveTo(recipient);
+        
+
+        // Stability Fix: Only attempt exchange if a certificate was actually found
+        if (cert != null) {
+            ReportBuffer.add(gameManager, LocalText.getText(
+                    (cert.isPresidentShare() ? "GetPresShareForMinor" : "GetShareForMinor"),
+                    recipientName, cert.getShare(), major.getId(),
+                    minor.getId()));
+            cert.moveTo(recipient);
+        } else {
+            // Fallback: Log that no share was found, but do NOT crash
+            // This allows the merge (assets/trains) to complete even if shares are missing
+            String warning = "Warning: No " + (major != null ? major.getId() : "Major") + 
+                             " share available to exchange for " + minor.getId();
+            ReportBuffer.add(gameManager, warning);
+            // Optional: log.warn(warning);
+        }
+        
 
         // FIXME: CHeck if this still works correctly
 
@@ -120,12 +131,21 @@ public class Mergers {
                 if (minorCert.isPresidentShare()) continue;
                 Owner owner = minorCert.getOwner();
                 if (owner instanceof Player) {
+                   
+                    // Re-fetch a certificate for the extra share
                     cert = reserved.findCertificate(major, false);
-                    ReportBuffer.add(gameManager, LocalText.getText(
-                            "GetShareForMinor",
-                            recipientName, cert.getShare(), major.getId(),
-                            minor.getId()));
-                    cert.moveTo(owner);
+                    
+                    if (cert != null) {
+                        ReportBuffer.add(gameManager, LocalText.getText(
+                                "GetShareForMinor",
+                                recipientName, cert.getShare(), major.getId(),
+                                minor.getId()));
+                        cert.moveTo(owner);
+                    } else {
+                        ReportBuffer.add(gameManager, "Warning: No additional " + major.getId() + 
+                                         " share available for extra " + minor.getId() + " certificate.");
+                    }
+                    
                 }
             }
         }

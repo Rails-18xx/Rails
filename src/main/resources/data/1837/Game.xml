@@ -40,7 +40,7 @@
 
     <Component name="Bank" class="net.sf.rails.game.financial.Bank">
         <Bank amount="14268"/>
-        <Money format="@K"/>
+        <Money format="@"/>
     </Component>
 
     <Component name="TileManager" class="net.sf.rails.game.TileManager"

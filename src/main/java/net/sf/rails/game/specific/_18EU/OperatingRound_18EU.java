@@ -14,11 +14,14 @@ import net.sf.rails.game.state.Owner;
 import rails.game.action.LayBaseToken;
 import rails.game.action.LayTile;
 
-
 /**
- * Implements a basic Operating Round. <p> A new instance must be created for
+ * Implements a basic Operating Round.
+ * <p>
+ * A new instance must be created for
  * each new Operating Round. At the end of a round, the current instance should
- * be discarded. <p> Permanent memory is formed by static attributes.
+ * be discarded.
+ * <p>
+ * Permanent memory is formed by static attributes.
  */
 public class OperatingRound_18EU extends OperatingRound {
 
@@ -53,11 +56,11 @@ public class OperatingRound_18EU extends OperatingRound {
                 && company.getType().getId().equals("Minor")
                 && getRoot().getPhaseManager().hasReachedPhase("3")) {
             MapHex homeBase = company.getHomeHexes().get(0);
-            if (homeBase.getCurrentTile().getColour()== TileColour.YELLOW) {
+            if (homeBase.getCurrentTile().getColour() == TileColour.YELLOW) {
                 Map<String, Integer> colour = Map.of("green", 1);
                 LayTile greenHomeTile = new LayTile(getRoot(), List.of(homeBase), colour);
 
-                currentNormalTileLays.add (greenHomeTile);
+                currentNormalTileLays.add(greenHomeTile);
             }
         }
         return currentNormalTileLays;
@@ -65,7 +68,8 @@ public class OperatingRound_18EU extends OperatingRound {
 
     /**
      * Allow a minor laying a green tile on its home base if that variant is chosen
-     * @param tile The tile being laid
+     * 
+     * @param tile   The tile being laid
      * @param update True if the allowed tile numbers per colour needs be updated
      * @return True if the lay is valid
      */
@@ -84,7 +88,7 @@ public class OperatingRound_18EU extends OperatingRound {
     }
 
     @Override
-    public boolean layTile (LayTile action) {
+    public boolean layTile(LayTile action) {
 
         boolean result = super.layTile(action);
 
@@ -106,10 +110,10 @@ public class OperatingRound_18EU extends OperatingRound {
     @Override
     protected void setNormalTokenLays() {
 
-        if (alpineTokenLocation!= null) {
+        if (alpineTokenLocation != null) {
             PublicCompany company = operatingCompany.value();
             LayBaseToken layBaseToken = new LayBaseToken(getRoot(), List.of(alpineTokenLocation));
-            layBaseToken.setType (LayBaseToken.NON_CITY);
+            layBaseToken.setType(LayBaseToken.NON_CITY);
             currentNormalTokenLays.add(layBaseToken);
             alpineTokenLocation = null;
         } else {
@@ -133,7 +137,7 @@ public class OperatingRound_18EU extends OperatingRound {
             String oldTileNumber = hex.getCurrentTile().getId();
             String newTileNumber = String.valueOf(Integer.valueOf(oldTileNumber) + 4000);
 
-            LayTile replacement = new LayTile (getRoot(), LayTile.CORRECTION);
+            LayTile replacement = new LayTile(getRoot(), LayTile.CORRECTION);
             replacement.setCompany(company);
             replacement.setPlayerName(company.getPresident().getId());
             replacement.setLocations(new ArrayList<>(Arrays.asList(hex)));
@@ -142,13 +146,12 @@ public class OperatingRound_18EU extends OperatingRound {
             replacement.setLaidTile(getRoot().getTileManager().getTile(newTileNumber));
             replacement.setOrientation(hex.getCurrentTileRotation().getTrackPointNumber());
 
-            layTileCorrection (replacement, true);
+            layTileCorrection(replacement, true);
             action.setChosenStation(1);
         }
 
-        return super.layBaseToken (action);
+        return super.layBaseToken(action);
     }
-
 
     /**
      * In 18EU, the part of the split revenue that goes to the
@@ -158,14 +161,13 @@ public class OperatingRound_18EU extends OperatingRound {
      * @return The part that is for the company
      */
     @Override
-    protected int calculateCompanyIncomeFromSplit (int revenue) {
+    protected int calculateCompanyIncomeFromSplit(int revenue) {
         if (operatingCompany.value().getType().getId().equalsIgnoreCase("Major")) {
             return roundIncome(0.5 * revenue, Rounding.DOWN, ToMultipleOf.TEN);
         } else {
-            return super.calculateCompanyIncomeFromSplit (revenue);
+            return super.calculateCompanyIncomeFromSplit(revenue);
         }
     }
-
 
     /**
      * Modify possibleActions to follow the Pullmann train trading rules.
@@ -173,7 +175,8 @@ public class OperatingRound_18EU extends OperatingRound {
     @Override
     public void setBuyableTrains() {
 
-        if (operatingCompany.value() == null) return;
+        if (operatingCompany.value() == null)
+            return;
 
         int cash = operatingCompany.value().getCash();
 
@@ -181,14 +184,15 @@ public class OperatingRound_18EU extends OperatingRound {
         Set<Train> trains;
         BuyTrain bt;
 
-        boolean hasTrains =
-                operatingCompany.value().getPortfolioModel().getNumberOfTrains() > 0;
+        boolean hasTrains = operatingCompany.value().getPortfolioModel().getNumberOfTrains() > 0;
 
         // Cannot buy a train without any cash, unless you have to
-        if (cash == 0 && hasTrains) return;
+        if (cash == 0 && hasTrains)
+            return;
 
         boolean canBuyTrainNow = canBuyTrainNow();
-        if (!canBuyTrainNow) return;
+        if (!canBuyTrainNow)
+            return;
 
         boolean presidentMayHelp = operatingCompany.value().mustOwnATrain();
         Train cheapestTrain = null;
@@ -209,7 +213,10 @@ public class OperatingRound_18EU extends OperatingRound {
             if (cost <= cash) {
                 if (canBuyTrainNow) {
                     bt = new BuyTrain(train, ipo.getParent(), cost);
-                    if (mustExchangePullmann) bt.setExtraMessage(extraMessage);
+                    bt.setButtonLabel(createTrainButtonLabel(train, ipo.getParent(), cost));
+
+                    if (mustExchangePullmann)
+                        bt.setExtraMessage(extraMessage);
                     possibleActions.add(bt);
                 }
             } else if (costOfCheapestTrain == 0 || cost < costOfCheapestTrain) {
@@ -226,13 +233,15 @@ public class OperatingRound_18EU extends OperatingRound {
             // or if no train is owned at all
             if (train.getCardType() == pullmannType
                     && (operatingCompany.value().getPortfolioModel().getTrainCardOfType(pullmannType) != null
-                    || !hasTrains)) {
+                            || !hasTrains)) {
                 continue;
             }
             cost = train.getCost();
             if (cost <= cash) {
                 bt = new BuyTrain(train, pool.getParent(), cost);
-                if (mustExchangePullmann) bt.setExtraMessage(extraMessage);
+                bt.setButtonLabel(createTrainButtonLabel(train, pool.getParent(), cost));
+                if (mustExchangePullmann)
+                    bt.setExtraMessage(extraMessage);
                 possibleActions.add(bt);
             } else if (costOfCheapestTrain == 0 || cost < costOfCheapestTrain) {
                 cheapestTrain = train;
@@ -244,7 +253,9 @@ public class OperatingRound_18EU extends OperatingRound {
                 && cheapestTrain != null) {
             bt = new BuyTrain(cheapestTrain, cheapestTrain.getOwner(), costOfCheapestTrain);
             bt.setPresidentMustAddCash(costOfCheapestTrain - cash);
-            if (mustExchangePullmann) bt.setExtraMessage(extraMessage);
+            bt.setButtonLabel(createTrainButtonLabel(cheapestTrain, cheapestTrain.getOwner(), costOfCheapestTrain));
+            if (mustExchangePullmann)
+                bt.setExtraMessage(extraMessage);
             possibleActions.add(bt);
         }
 
@@ -256,14 +267,14 @@ public class OperatingRound_18EU extends OperatingRound {
             int numberOfPlayers = playerManager.getNumberOfPlayers();
 
             // Set up a list per player of presided companies
-            List<List<PublicCompany>> companiesPerPlayer =
-                    new ArrayList<>(numberOfPlayers);
+            List<List<PublicCompany>> companiesPerPlayer = new ArrayList<>(numberOfPlayers);
             for (int i = 0; i < numberOfPlayers; i++)
                 companiesPerPlayer.add(new ArrayList<>(4));
             List<PublicCompany> companies;
             // Sort out which players preside over wich companies.
             for (PublicCompany c : operatingCompanies.view()) {
-                if (c == operatingCompany.value() || c.isClosed()) continue;
+                if (c == operatingCompany.value() || c.isClosed())
+                    continue;
                 p = c.getPresident();
                 index = p.getIndex();
                 companiesPerPlayer.get(index).add(c);
@@ -271,23 +282,54 @@ public class OperatingRound_18EU extends OperatingRound {
             // Scan trains per company per player, operating company president
             // first
             int currentPlayerIndex = operatingCompany.value().getPresident().getIndex();
+
+            boolean restrictToPresident = GameOption.getAsBoolean(this, "RestrictTrainTradingToPresident");
             for (int i = currentPlayerIndex; i < currentPlayerIndex
                     + numberOfPlayers; i++) {
+                if (restrictToPresident && i != currentPlayerIndex)
+                    continue;
+
                 companies = companiesPerPlayer.get(i % numberOfPlayers);
                 for (PublicCompany company : companies) {
                     pf = company.getPortfolioModel();
                     trains = pf.getUniqueTrains();
 
                     for (Train train : trains) {
-                        if (train.getCardType() == pullmannType) continue;
+                        if (train.getCardType() == pullmannType)
+                            continue;
                         bt = new BuyTrain(train, pf.getParent(), 0);
-                        if (mustExchangePullmann) bt.setExtraMessage(extraMessage);
+                        bt.setButtonLabel(createTrainButtonLabel(train, pf.getParent(), 0));
+                        if (mustExchangePullmann)
+                            bt.setExtraMessage(extraMessage);
                         possibleActions.add(bt);
                     }
                 }
             }
         }
 
+        boolean buyOptionAvailable = !possibleActions.getType(BuyTrain.class).isEmpty();
+        boolean mustBuyTrain = !hasTrains && presidentMayHelp;
+        if (!mustBuyTrain) {
+            doneAllowed.set(true);
+        } else {
+            doneAllowed.set(!buyOptionAvailable);
+        }
+
+    }
+
+    private String createTrainButtonLabel(Train train, Owner from, int cost) {
+        StringBuilder label = new StringBuilder();
+        label.append("Buy '").append(train.getType().getName()).append("'");
+        label.append(" from ").append(from.getId());
+        label.append(" (");
+        if (from instanceof PublicCompany && cost == 0) {
+            int cash = operatingCompany.value().getCash();
+            label.append("1-").append(cash > 0 ? cash : 1);
+        } else {
+            label.append(cost);
+        }
+        label.append(")");
+        return label.toString();
     }
 
     /**
@@ -309,7 +351,7 @@ public class OperatingRound_18EU extends OperatingRound {
         // If we are at train limit and have a Pullmann, discard it
         if (mustDiscardPullmann) {
             TrainCard pullmann = operatingCompany.value().getPortfolioModel().getTrainCardOfType(pullmannType);
-            if (pullmann != null) {  // must be non-null
+            if (pullmann != null) { // must be non-null
                 pullmann.discard();
             }
         }
@@ -371,7 +413,7 @@ public class OperatingRound_18EU extends OperatingRound {
             // If the last train is a Pullmann, discard it.
             if ((numberOfTrains > comp.getCurrentTrainLimit() || numberOfTrains == 1)
                     && pullmann != null) {
-                //pool.addTrainCard(pullmann);
+                // pool.addTrainCard(pullmann);
                 pullmann.discard();
                 numberOfTrains--;
             }

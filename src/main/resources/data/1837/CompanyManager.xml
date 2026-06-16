@@ -139,8 +139,13 @@
                                   extra="no" free="yes" connected="yes"/>
         </SpecialProperty>
     </Company>
-    <Company name="EPP" longname="Eisenbahn Pilsen-Priesen" type="Coal" price="100" tokens="1" relatedCompany="BK"
-             fgColour="000000" bgColour="FFFFFF">
+
+
+
+
+
+<Company name="EPP" longname="Eisenbahn Pilsen-Priesen" type="Coal" price="100" tokens="1" relatedCompany="BK"
+             fgColour="FFFFFF" bgColour="0000FF">
         <Home hex="E11"/>
         <Info key="MineRevenue">
             <IfVariant value="Basegame,Romoth">
@@ -150,52 +155,34 @@
                 <Attributes parm="30,50"/>
             </IfVariant>
         </Info>
-        <!--SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
-            <ExchangeForShare company="BK" share="10"/>
-        </SpecialProperty-->
     </Company>
     <Company name="RGTE" longname="Reichenberg-Gablonz-Tannwalder-Eisenbahn" type="Coal" price="100" tokens="1"
-             relatedCompany="BK" fgColour="000000" bgColour="FFFFFF">
+             relatedCompany="BK" fgColour="FFFFFF" bgColour="0000FF">
         <Home hex="A13"/>
         <Info key="MineRevenue" parm="30,50"/>
-        <!--SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
-            <ExchangeForShare company="BK" share="10"/>
-        </SpecialProperty-->
     </Company>
     <Company name="EOD" longname="Eisenbahn Oderberg-Dombran" type="Coal" price="100" tokens="1" relatedCompany="MS"
-             fgColour="000000" bgColour="FFFFFF">
+             fgColour="000000" bgColour="FFFF00">
         <Home hex="C19"/>
         <Info key="MineRevenue" parm="20,40"/>
-        <!--SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
-            <ExchangeForShare company="MS" share="10"/>
-        </SpecialProperty-->
     </Company>
     <Company name="EKT" longname="Eisenbahn Karwin-Teschen" type="Coal" price="100" tokens="1" relatedCompany="MS"
-             fgColour="000000" bgColour="FFFFFF">
+             fgColour="000000" bgColour="FFFF00">
         <Home hex="C21"/>
         <Info key="MineRevenue" parm="25,45"/>
-        <!--SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
-            <ExchangeForShare company="MS" share="10"/>
-        </SpecialProperty-->
     </Company>
     <Company name="MLB" longname="Mosty-Lemberg Bahn" type="Coal" price="100" tokens="1" relatedCompany="CL"
-             fgColour="000000" bgColour="FFFFFF">
+             fgColour="FFFFFF" bgColour="000000">
         <Home hex="B32"/>
         <Info key="MineRevenue" parm="20,50"/>
-        <!--SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
-            <ExchangeForShare company="CL" share="10"/>
-        </SpecialProperty-->
     </Company>
     <Company name="ZKB" longname="Zarnesti-Kronstadt Bahn" type="Coal" price="100" tokens="1" relatedCompany="SB"
-             fgColour="000000" bgColour="FFFFFF">
+             fgColour="000000" bgColour="88FF48">
         <Home hex="J34"/>
         <Info key="MineRevenue" parm="25,50"/>
-        <!--SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
-            <ExchangeForShare company="SB" share="10"/>
-        </SpecialProperty-->
     </Company>
     <Company name="SPB" longname="Simeria-Petroseni Bahn" type="Coal" price="100" tokens="1" relatedCompany="SB"
-             fgColour="000000" bgColour="FFFFFF">
+             fgColour="000000" bgColour="88FF48">
         <Home hex="K31"/>
         <Info key="MineRevenue">
             <IfVariant value="Basegame,Romoth">
@@ -205,34 +192,35 @@
                 <Attributes parm="20,50"/>
             </IfVariant>
         </Info>
-        <!--SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
-            <ExchangeForShare company="SB" share="10"/>
-        </SpecialProperty-->
     </Company>
     <Company name="LRB" longname="Lugoj-Resita Bahn" type="Coal" price="100" tokens="1" relatedCompany="TH"
-             fgColour="000000" bgColour="FFFFFF">
+             fgColour="000000" bgColour="AAFFFF">
         <Home hex="L30"/>
         <Info key="MineRevenue" parm="25,50"/>
-        <!--SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
-            <ExchangeForShare company="TH" share="10"/>
-        </SpecialProperty-->
     </Company>
     <Company name="BB" longname="Bosna-Bahn" type="Coal" price="100" tokens="1" relatedCompany="BH" fgColour="000000"
-             bgColour="FFFFFF">
+             bgColour="FF0000">
         <Home hex="P20"/>
         <Info key="MineRevenue" parm="35,60"/>
-        <!--SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
-            <ExchangeForShare company="BH" share="10"/>
-        </SpecialProperty-->
     </Company>
     <Company name="EHS" longname="Eisenbahn Hatvan-Salgotarjan" type="Coal" price="100" tokens="1" relatedCompany="TH"
-             fgColour="000000" bgColour="FFFFFF">
+             fgColour="000000" bgColour="AAFFFF">
         <Home hex="F26"/>
         <Info key="MineRevenue" parm="20,40"/>
-        <!--SpecialProperty condition="phase=5" when="exchangeRound" class="net.sf.rails.game.special.ExchangeForShare">
-            <ExchangeForShare company="TH" share="10"/>
-        </SpecialProperty-->
     </Company>
+
+
+
+
+
+
+
+
+
+
+
+
+    
     <Company name="S1" longname="Wien-Gloggitzner Bahn" type="Minor1" price="90" tokens="1"
              relatedCompany="Sd" fgColour="FFFFFF" bgColour="FF5400">
         <Home hex="G17" city="4"/>
@@ -415,13 +403,8 @@
         </Shares>
     </Company>
     <Company name="Sd" longname="Südbahn" type="National" tokens="5" foundingCompany="S1"
-             available="no" fgColour="FFFFFF" bgColour="FF5400">
-        <IfVariant value="Basegame,1837-2ndEd.">
-                <Attributes startspace="K4"/>
-        </IfVariant>
-        <IfVariant value="Romoth">
-                <Attributes startspace="I4"/>
-        </IfVariant>
+             available="no" startspace="K4" fgColour="FFFFFF" bgColour="FF5400">
+    
         <Formation minors="S1,S2,S3,S4,S5" startMinor="S1" forcedMergePhase="4"/>
         <Home hex="G17" city="4" mapDisplay="no"/>
         <Capitalisation type="part" shares="5"/>

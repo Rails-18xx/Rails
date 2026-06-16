@@ -84,10 +84,16 @@ public class CashCorrectionAction extends CorrectionAction {
    public int getAmount() {
        return correctAmount;
    }
+   
 
    public void setAmount(int amount) {
        correctAmount = amount;
    }
+
+   public MoneyOwner getCorrectCashHolder() {
+        return correctCashHolder;
+    }
+   
 
    @Override
    protected boolean equalsAs(PossibleAction pa, boolean asOption) {

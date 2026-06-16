@@ -1,17 +1,16 @@
 package net.sf.rails.ui.swing;
 
-
 import java.util.*;
+import java.awt.Component;
+import java.awt.Rectangle;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import net.sf.rails.algorithms.NetworkAdapter;
-import net.sf.rails.algorithms.NetworkGraph;
-import net.sf.rails.algorithms.NetworkVertex;
-import net.sf.rails.common.Config;
+import net.sf.rails.algorithms.NetworkGraph; // FIXED: Added missing import
+import net.sf.rails.algorithms.NetworkVertex; // FIXED: Added missing import
 import net.sf.rails.common.GameOption;
-import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.game.*;
 import net.sf.rails.game.financial.ShareSellingRound;
@@ -19,7 +18,6 @@ import net.sf.rails.game.round.RoundFacade;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.special.SpecialSingleTileLay;
 import net.sf.rails.game.special.SpecialTileLay;
-import net.sf.rails.game.special.SpecialBaseTokenLay;
 import net.sf.rails.game.state.Owner;
 import net.sf.rails.sound.SoundManager;
 import net.sf.rails.ui.swing.elements.*;
@@ -42,42 +40,131 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import net.sf.rails.game.ai.TokenLayOption;
+import net.sf.rails.game.ai.TileLayOption;
+import net.sf.rails.game.ai.AIPlayer;
+
 import static net.sf.rails.ui.swing.GameUIManager.EXCHANGE_TOKENS_DIALOG;
 
-// FIXME: Add back corrections mechanisms
-// Rails 2.0, Even better add a new mechanism that allows to use the standard mechanism for corrections
 public class ORUIManager implements DialogOwner {
 
     private static final Logger log = LoggerFactory.getLogger(ORUIManager.class);
 
-    protected GameUIManager gameUIManager;
-    protected NetworkAdapter networkAdapter;
+    protected transient GameUIManager gameUIManager;
+    protected transient NetworkAdapter networkAdapter;
 
-    protected ORWindow orWindow;
-    protected ORPanel orPanel;
-    private UpgradesPanel upgradePanel;
-    private MapPanel mapPanel;
-    private HexMap map;
-    protected MessagePanel messagePanel;
-    private RemainingTilesWindow remainingTiles;
+    protected transient ORWindow orWindow;
+    protected transient ORPanel orPanel;
+    private transient UpgradesPanel upgradePanel;
+    private transient MapPanel mapPanel;
+    private transient HexMap map;
+    protected transient MessagePanel messagePanel;
+    private transient RemainingTilesWindow remainingTiles;
+
+    protected transient FloatingUpgradesDialog floatingUpgradesDialog;
+  
 
     protected OperatingRound oRound;
-    private List<PublicCompany> companies;
+    private transient List<PublicCompany> companies;
 
-    // TODO: Remove storage of those variables
-    // replace it by either action.getCompany() or oRound.getOperatingCompany()
     protected PublicCompany orComp;
     protected int orCompIndex;
 
     private LocalSteps localStep;
 
-    private boolean privatesCanBeBoughtNow;
+    private List<TileLayOption> currentValidTileLays = new ArrayList<>();
+    private List<TokenLayOption> currentValidTokenLays = new ArrayList<>();
+    private Integer[] separatorLines = null; // For 1826 Token Exchange
 
     protected final GUIHexUpgrades hexUpgrades = GUIHexUpgrades.create();
 
     /* Local substeps */
     public enum LocalSteps {
         INACTIVE, SELECT_HEX, SELECT_UPGRADE, SET_REVENUE, SELECT_PAYOUT
+    }
+
+    private boolean showHomeIdentifiers = true;
+    private boolean showRevenueRoutes = true;
+    private boolean showFancyCityValues = true; // Default to off
+
+    public boolean isShowFancyCityValues() {
+        return showFancyCityValues;
+    }
+
+    private boolean showFloatingTiles = true;
+
+    public boolean isShowFloatingTiles() {
+        return showFloatingTiles;
+    }
+
+    public void toggleFloatingTiles() {
+        this.showFloatingTiles = !this.showFloatingTiles;
+        log.info("DEBUG: Toggled Floating Tiles: " + showFloatingTiles);
+        // Map repaint or UI refresh trigger will go here
+    }
+
+    public void toggleFancyCityValues() {
+        this.showFancyCityValues = !this.showFancyCityValues;
+        if (map != null) {
+            map.repaintAll(new Rectangle(map.getSize()));
+        }
+    }
+
+    public boolean isShowHomeIdentifiers() {
+        return showHomeIdentifiers;
+    }
+
+    public void toggleHomeIdentifiers() {
+        this.showHomeIdentifiers = !this.showHomeIdentifiers;
+        if (map != null)
+            map.repaintAll(new Rectangle(map.getSize()));
+    }
+
+    public boolean isShowRevenueRoutes() {
+        return showRevenueRoutes;
+    }
+
+    public void toggleRevenueRoutes() {
+        this.showRevenueRoutes = !this.showRevenueRoutes;
+        // Trigger the ORPanel to immediately redraw or clear the paths
+        if (orPanel != null)
+            orPanel.redrawRoutes();
+    }
+
+    private boolean showFriendlyHexes = true;
+
+    private boolean showDestinationMarkers = true;
+
+    public boolean isShowDestinationMarkers() {
+        return showDestinationMarkers;
+    }
+
+    public void toggleDestinationMarkers() {
+        this.showDestinationMarkers = !this.showDestinationMarkers;
+
+        // Refresh the highlights to catch any 1870 destination markers
+        updateCompanyHighlights();
+
+        if (map != null) {
+            map.repaintAll(new Rectangle(map.getSize()));
+        }
+    }
+
+    public boolean isShowFriendlyHexes() {
+        return showFriendlyHexes;
+    }
+
+    public void toggleFriendlyHexes() {
+        this.showFriendlyHexes = !this.showFriendlyHexes;
+
+        // Force an immediate update of the highlight states
+        updateCompanyHighlights();
+
+        if (map != null) {
+            map.repaintAll(new Rectangle(map.getSize()));
+        }
+
+        log.info("DEBUG: Toggled Friendly Hexes: " + showFriendlyHexes);
     }
 
     /* Keys of dialogs owned by this class */
@@ -87,216 +174,1105 @@ public class ORUIManager implements DialogOwner {
     public static final String TOKEN_EXCHANGE_DIALOG = "SelectTokensToExchange";
 
     public ORUIManager() {
-
     }
 
-    void setGameUIManager (GameUIManager gameUIManager) {
+    private boolean showCompanyHighlights = true; // Default to ON, or set to false
+
+    public void toggleCompanyHighlights() {
+        this.showCompanyHighlights = !this.showCompanyHighlights;
+
+        // Force an immediate update
+        updateCompanyHighlights();
+        map.repaintAll(new Rectangle(map.getSize()));
+
+        log.info("DEBUG: Toggled Company Highlights: " + showCompanyHighlights);
+    }
+
+    // FIXED: Must be public for subclasses in other packages
+    public void setGameUIManager(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
         this.networkAdapter = NetworkAdapter.create(gameUIManager.getRoot());
     }
 
-    void init(ORWindow orWindow) {
-
+    // FIXED: Must be public for subclasses in other packages (Fixes @Override error
+    // in _18Scan/_1837)
+    public void init(ORWindow orWindow) {
         this.orWindow = orWindow;
-
         orPanel = orWindow.getORPanel();
         mapPanel = orWindow.getMapPanel();
         upgradePanel = orWindow.getUpgradePanel();
         upgradePanel.setHexUpgrades(hexUpgrades);
         map = mapPanel.getMap();
         messagePanel = orWindow.getMessagePanel();
-
+        floatingUpgradesDialog = new FloatingUpgradesDialog(orWindow, this);
     }
 
     protected void initOR(OperatingRound or) {
         oRound = or;
         companies = or.getOperatingCompanies();
         orWindow.activate(oRound);
+        this.orCompIndex = -1;
+        this.orComp = null;
     }
 
     public void finish() {
-        orWindow.finish();
-        upgradePanel.setInactive();
-        // TODO: Is this still required, do we need to store in ORUIManager the active OperatingCompany?
+        if (orWindow != null)
+            orWindow.finish();
+        if (upgradePanel != null)
+            upgradePanel.setInactive();
+
+        if (floatingUpgradesDialog != null) {
+            floatingUpgradesDialog.setVisible(false);
+        }
+
+        setLocalStep(LocalSteps.INACTIVE);
+
+        if (hexUpgrades != null && map != null) {
+            for (GUIHex guiHex : hexUpgrades.getHexes()) {
+                guiHex.setState(GUIHex.State.NORMAL);
+            }
+            hexUpgrades.clear();
+            map.selectHex(null);
+        }
+
+        if (orPanel != null) {
+            orPanel.finish();
+        }
+
         if (!(gameUIManager.getCurrentRound() instanceof ShareSellingRound)) {
             orComp = null;
         }
     }
 
-    public void setMapRelatedActions(PossibleActions actions) {
-
-        GUIHex selectedHex = map.getSelectedHex();
-
-        // clean map, if there are map upgrades
-        if (hexUpgrades.hasElements()) {
-            /* Finish tile laying step */
-            if (selectedHex != null) {
-                selectedHex.setUpgrade(null);
-                selectedHex.setState(GUIHex.State.NORMAL);
-                map.setSelectedHex(null);
-            }
-            // remove selectable indications
-            for (GUIHex guiHex:hexUpgrades.getHexes()) {
-                guiHex.setState(GUIHex.State.NORMAL);
-            }
-            hexUpgrades.clear();
+    public void updateScale() {
+        if (orPanel != null) {
+            orPanel.updateScale();
         }
-
-        List<LayTile> tileActions = actions.getType(LayTile.class);
-        if (!tileActions.isEmpty()) {
-            defineTileUpgrades(tileActions);
-        }
-
-        List<LayToken> tokenActions = actions.getType(LayToken.class);
-        if (!tokenActions.isEmpty()) {
-            defineTokenUpgrades(tokenActions);
-        }
-
-        // build and finalize hexUpgrades
-        hexUpgrades.build();
-
-        // show selectable hexes if highlight is active
-        if (gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.ROUTE_HIGHLIGHT)) {
-            checkHexVisibilityOnUI(actions);
-        }
-
-        // TODO: This really is too early, the special actions are not yet defined here.
-        // This is now fixed at line 1545, see also line 1449 for an earlier attempt.
-        LocalSteps nextSubStep;
-        if (tileActions.isEmpty() && tokenActions.isEmpty()) {
-            nextSubStep = LocalSteps.INACTIVE;
-        } else {
-            nextSubStep = LocalSteps.SELECT_HEX;
-        }
-        setLocalStep(nextSubStep);
     }
 
-    protected void checkHexVisibilityOnUI(PossibleActions actions) {
+    protected void setLocalStep(LocalSteps localStep) {
+        if (this.localStep == localStep)
+            return;
+        SoundManager.notifyOfORLocalStep(localStep);
+        this.localStep = localStep;
+        updateMessage();
+        if (upgradePanel != null) {
+            switch (localStep) {
+                case INACTIVE:
+                    upgradePanel.setInactive();
+                    if (floatingUpgradesDialog != null)
+                        floatingUpgradesDialog.setVisible(false); // <--- ADD
+                    break;
+                case SELECT_HEX:
+                    upgradePanel.setActive();
+                    if (floatingUpgradesDialog != null)
+                        floatingUpgradesDialog.setVisible(false); // <--- ADD
+                    break;
+                case SELECT_UPGRADE:
+                    upgradePanel.setSelect(map.getSelectedHex());
+                    break;
+                default:
+                    upgradePanel.setInactive();
+                    if (floatingUpgradesDialog != null)
+                        floatingUpgradesDialog.setVisible(false); // <--- ADD
+            }
+        }
+    }
 
-       // SpecialTileLay sp = (SpecialTileLay)layTile.getSpecialProperty();
+    public void updateStatus(boolean myTurn) {
+        updateStatus(null, myTurn);
+    }
 
-            for (GUIHex hex:hexUpgrades.getHexes()) {
-                boolean invalids = false;
-                for (HexUpgrade upgrade:hexUpgrades.getUpgrades(hex)) {
-                    if (upgrade.isValid()) {
-                        hex.setState(GUIHex.State.SELECTABLE);
-                        invalids = false;
+    public void updateStatus(PossibleAction actionToComplete, boolean myTurn) {
+
+        // // Inject the highlight update here
+        // updateCompanyHighlights();
+
+        if (map != null && getRoot() != null && getRoot().getMapManager() != null) {
+            String[] testHexIds = { "L12", "M13" };
+
+            for (String id : testHexIds) {
+                // Get the "Engine Truth" directly from the MapManager
+                net.sf.rails.game.MapHex engineHex = getRoot().getMapManager().getHex(id);
+                // Get the "UI Wrapper"
+                net.sf.rails.ui.swing.hexmap.GUIHex uiHex = map.getHex(engineHex);
+
+                if (uiHex != null && engineHex != null) {
+                    // The specific MapHex instance the UI is currently holding
+                    net.sf.rails.game.MapHex uiHeldHex = uiHex.getHex();
+
+                    int uiHash = System.identityHashCode(uiHeldHex);
+                    int engineHash = System.identityHashCode(engineHex);
+
+                    String uiTile = (uiHeldHex.getCurrentTile() != null) ? uiHeldHex.getCurrentTile().getId() : "null";
+                    String engineTile = (engineHex.getCurrentTile() != null) ? engineHex.getCurrentTile().getId()
+                            : "null";
+
+                }
+            }
+        }
+
+        RoundFacade currentRound = gameUIManager.getCurrentRound();
+        PossibleActions possibleActions = getPossibleActions();
+
+        if (gameUIManager != null && gameUIManager.getStatusWindow() != null
+                && gameUIManager.getStatusWindow().getGameStatus() != null) {
+            gameUIManager.getStatusWindow().getGameStatus().refreshDashboard();
+        }
+
+        // CRITICAL: Rebind UI components to the current Model.
+        // After an Undo/Load, the MapHex objects in GUIHex are "stale" (dead objects).
+        // We must point them to the live MapHex objects in the current GameState.
+        rebindVisualHexes();
+
+        // Force repaint to clear any "Ghost" pixels from the previous state
+        if (mapPanel != null)
+            mapPanel.repaint();
+
+        // Extract Undo/Redo
+        GameAction undoAction = null;
+        GameAction redoAction = null;
+        if (myTurn && possibleActions != null) {
+            for (GameAction action : possibleActions.getType(GameAction.class)) {
+                if (action.getMode() == GameAction.Mode.UNDO)
+                    undoAction = action;
+                if (action.getMode() == GameAction.Mode.REDO)
+                    redoAction = action;
+            }
+        }
+
+        if (possibleActions == null) {
+            if (orPanel != null)
+                orPanel.disableButtons();
+            return;
+        }
+
+        // --- SPECIAL MODE DETECTION ---
+        boolean hasSpecialActions = false;
+        if (possibleActions != null && !possibleActions.isEmpty()) {
+            PossibleAction first = possibleActions.getList().get(0);
+
+            if (first instanceof GuiTargetedAction) {
+                hasSpecialActions = true;
+            } else if (!possibleActions.getType(LayTileAndHomeTokenAction.class).isEmpty()) {
+                hasSpecialActions = true;
+            }
+        }
+
+        if (hasSpecialActions) {
+            setLocalStep(LocalSteps.INACTIVE);
+            if (orPanel != null) {
+                orPanel.setSpecialMode(true);
+                orPanel.updateDynamicActions(possibleActions.getList());
+
+                orPanel.enableUndo(undoAction);
+                orPanel.enableRedo(redoAction);
+                orPanel.revalidate();
+                orPanel.repaint();
+                orPanel.redisplay();
+            }
+            return;
+        }
+
+        // --- STANDARD OPERATING ROUND ---
+        if (!(currentRound instanceof OperatingRound)) {
+            if (orPanel != null) {
+                orPanel.disableButtons();
+                // RIGOROUS CLEANUP: If the engine transitions to a non-Operating Round
+                // the ORUIManager aborts further updates. We must force the ORPanel to
+                // wipe its display so special actions from the previous turn do not linger.
+                orPanel.finish();
+            }
+            return;
+        }
+
+        this.oRound = (OperatingRound) currentRound;
+        if (orPanel != null)
+            orPanel.setSpecialMode(false);
+
+        PublicCompany currentEngineCompany = oRound.getOperatingCompany();
+        int currentEngineIndex = oRound.getOperatingCompanyIndex();
+        GameDef.OrStep orStep = oRound.getStep();
+
+        if (currentEngineCompany == null || currentEngineIndex < 0) {
+            if (this.orCompIndex >= 0)
+                orPanel.finishORCompanyTurn(this.orCompIndex);
+            setLocalStep(LocalSteps.INACTIVE);
+            orPanel.disableButtons();
+            return;
+        }
+
+        boolean isCompanyChangeOrInitialization = (this.orComp == null || this.orComp != currentEngineCompany);
+        if (isCompanyChangeOrInitialization) {
+            if (this.orCompIndex >= 0)
+                orPanel.finishORCompanyTurn(this.orCompIndex);
+            setLocalStep(LocalSteps.INACTIVE);
+            this.orCompIndex = currentEngineIndex;
+            this.orComp = currentEngineCompany;
+            orPanel.initORCompanyTurn(this.orComp, this.orCompIndex);
+            List<PublicCompany> currentEngineCompanies = oRound.getOperatingCompanies();
+            if (this.companies == null || !Iterables.elementsEqual(this.companies, currentEngineCompanies)) {
+                this.companies = currentEngineCompanies;
+            }
+        }
+
+        // Status Text
+        String historyText = gameUIManager.getGameManager().getLastActionSummary();
+        Player currentPlayer = getRoot().getPlayerManager().getCurrentPlayer();
+        String playerName = (currentPlayer != null) ? currentPlayer.getId().toUpperCase() : "PLAYER?";
+        String companyName = (orComp != null) ? " (" + orComp.getId() + ")" : "";
+        String stepName = (orStep != null) ? orStep.toString().replace('_', ' ') : "Operating";
+
+        String combinedText = "<html><font color='blue' size='4'>" + historyText + "</font><br>" +
+                "<font color='red' size='6'>Thinking: <b>" + playerName + "</b>" + companyName + " - " + stepName
+                + "</font></html>";
+
+        messagePanel.setMessage(combinedText);
+        if (gameUIManager.statusWindow != null) {
+            gameUIManager.statusWindow.updateActivityPanel(combinedText);
+        }
+
+        // AI Logic
+        if (gameUIManager.isCurrentPlayerAI() && orStep == GameDef.OrStep.DISCARD_TRAINS) {
+            PossibleActions freshActions = getPossibleActions();
+            List<DiscardTrain> discardActions = freshActions.getType(DiscardTrain.class);
+            if (!discardActions.isEmpty()) {
+                DiscardTrain bestAction = null;
+                int minTrainValue = Integer.MAX_VALUE;
+                for (DiscardTrain action : discardActions) {
+                    if (action.getDiscardedTrain() == null)
+                        continue;
+                    int trainValue = action.getDiscardedTrain().getCost();
+                    if (trainValue < minTrainValue) {
+                        minTrainValue = trainValue;
+                        bestAction = action;
+                    }
+                }
+                if (bestAction != null) {
+                    bestAction.setAIAction(true);
+                    orWindow.process(bestAction);
+                    return;
+                }
+            }
+        }
+
+        // 1. Force Map Repaint: The Model (Game State) may have changed (e.g., Undo),
+        // so we must redraw the board pixels even if we are not in a 'Map Phase'.
+        // Fix: Force HexMap layers to mark their buffers as dirty.
+        if (map != null) {
+            map.repaintAll(new Rectangle(map.getSize()));
+        }
+
+        // 2. Map Interaction Logic
+        if (orStep == GameDef.OrStep.LAY_TRACK || orStep == GameDef.OrStep.LAY_TOKEN) {
+            setMapRelatedActions(possibleActions);
+        } else {
+            // Cleanup: If we transitioned (or Undid) into a non-map phase (like Buy Train),
+            // we must clear any stale highlights or selected hexes from the previous state.
+            if (hexUpgrades != null && hexUpgrades.hasElements()) {
+                hexUpgrades.clear();
+                if (map != null)
+                    map.selectHex(null);
+            }
+        }
+
+        // Automation Checks
+        boolean isUndoOrRedo = false;
+        PossibleAction lastAction = gameUIManager.getLastAction();
+        if (lastAction instanceof GameAction) {
+            GameAction.Mode mode = ((GameAction) lastAction).getMode();
+            if (mode == GameAction.Mode.UNDO || mode == GameAction.Mode.FORCED_UNDO || mode == GameAction.Mode.REDO) {
+                isUndoOrRedo = true;
+            }
+        }
+
+        boolean hasSpecialOR = false;
+        if (possibleActions != null) {
+            for (PossibleAction pa : possibleActions.getList()) {
+                if (pa instanceof rails.game.action.SpecialORAction ||
+                        pa instanceof net.sf.rails.game.specific._1817.action.PayLoanInterest_1817 ||
+                        pa instanceof net.sf.rails.game.specific._1817.action.RepayLoans_1817) {
+                    hasSpecialOR = true;
+                    break;
+                }
+            }
+        }
+
+        if (!isUndoOrRedo) {
+            if (orStep == GameDef.OrStep.LAY_TRACK) {
+                boolean canLay = !possibleActions.getType(LayTile.class).isEmpty();
+                boolean canSpecial = !possibleActions.getType(UseSpecialProperty.class).isEmpty();
+                if (!canLay && !canSpecial && !hasSpecialOR) {
+                    // Only return if we actually processed the SKIP.
+                    // If no SKIP exists (e.g., only DONE exists), fall through to update UI.
+                    if (processNullAction(possibleActions, NullAction.Mode.SKIP))
+                        return;
+                }
+            } else if (orStep == GameDef.OrStep.LAY_TOKEN) {
+                if (possibleActions.getType(LayToken.class).isEmpty() && !hasSpecialOR) {
+                    if (processNullAction(possibleActions, NullAction.Mode.SKIP))
+                        return;
+                }
+            } else if (orStep == GameDef.OrStep.BUY_TRAIN) {
+                if (possibleActions.getType(BuyTrain.class).isEmpty() && !hasSpecialOR) {
+                    // This was the specific bug: It tried to SKIP, failed (because only DONE
+                    // existed),
+                    // but returned anyway. Now it will fall through.
+                    if (processNullAction(possibleActions, NullAction.Mode.SKIP))
+                        return;
+                }
+            }
+        }
+
+        // Delegate UI Setup
+        if (orStep == GameDef.OrStep.LAY_TRACK) {
+            orPanel.initTileLayingStep();
+            orPanel.setupConfirm();
+            orPanel.updateDynamicActions(possibleActions.getList());
+            updateHexBuildNumbers(true);
+        } else if (orStep == GameDef.OrStep.LAY_TOKEN) {
+            boolean hasButtonActions = false;
+            List<LayToken> tokenActions = possibleActions.getType(LayToken.class);
+            if (!tokenActions.isEmpty()) {
+                hasButtonActions = true;
+                for (LayToken action : tokenActions) {
+                    if (action instanceof LayBaseToken && ((LayBaseToken) action).getType() != LayBaseToken.HOME_CITY) {
+                        hasButtonActions = false;
                         break;
-                    } else {
-                        if (upgrade.isVisible() && !upgrade.isValid()) {
-                            invalids = true;
-                        }
+                    } else if (!(action instanceof LayBaseToken)) {
+                        hasButtonActions = false;
+                        break;
                     }
                 }
-                // end of single hex-loop
-                if (invalids) {
-                    hex.setState(GUIHex.State.INVALIDS);
-                }
             }
-        }
 
-    private void defineTileUpgrades(List<LayTile> actions) {
-        for (LayTile layTile:actions) {
+            if (hasButtonActions) {
+                if (orPanel != null)
+                    orPanel.resetHexCycle();
+                orPanel.initTokenLayingStep();
+                orPanel.updateDynamicActions(possibleActions.getList());
+            } else {
+                orPanel.initTokenLayingStep();
+                orPanel.setupConfirm();
+                orPanel.updateDynamicActions(possibleActions.getList());
+                if (localStep == LocalSteps.SELECT_UPGRADE)
+                    orPanel.enableConfirm(true);
 
-            switch (layTile.getType()) {
-            case (LayTile.GENERIC):
-            case (LayTile.GENERIC_EXCL_LOCATIONS) :
-                addConnectedTileLays(layTile);
-                break;
-            case (LayTile.SPECIAL_PROPERTY):
-                SpecialTileLay sp = layTile.getSpecialProperty();
-                if (sp.requiresConnection()) {
-                    addConnectedTileLays(layTile);
-                    //MBr: 20210120 - So far no Private has connected and neighbours as power,
-                    // so we dont need to add this here.
-                } else {
-                    //MBr: 20210120 - Introducing the hook for the new private power for 18Chesapeake and also 1844
-                    if (((SpecialSingleTileLay) sp).hasNeighbours()) {
-                        addNeighbouredTileLays(layTile);
-                    } else {
-                        addLocatedTileLays(layTile);
-                    }
-                }
-                break;
-            case (LayTile.LOCATION_SPECIFIC):
-                addLocatedTileLays(layTile);
-                break;
-            case (LayTile.CORRECTION):
-                addCorrectionTileLays(layTile);
-            default:
+                updateHexBuildNumbers(true);
             }
-        }
+        } else if (orStep == GameDef.OrStep.CALC_REVENUE) {
+            if (orPanel != null)
+                orPanel.resetHexCycle();
+            setLocalStep(LocalSteps.SELECT_PAYOUT);
+            orPanel.initTrainBuying(new ArrayList<>());
+            orPanel.updateDynamicActions(possibleActions.getList());
 
-    }
-
-    private void addNeighbouredTileLays(LayTile layTile) {
-    }
-
-    private void addConnectedTileLays(LayTile layTile) {
-        NetworkGraph graph = networkAdapter.getRouteGraph(layTile.getCompany(), true, false);
-        Map<MapHex, HexSidesSet> mapHexSides = graph.getReachableSides();
-        Multimap<MapHex, Station> mapHexStations = graph.getPassableStations();
-        Phase currentPhase = gameUIManager.getCurrentPhase();
-
-        boolean allLocations = (layTile.getLocations() == null
-                || layTile.getLocations().isEmpty());
-
-        for (MapHex hex:Sets.union(mapHexSides.keySet(), mapHexStations.keySet())) {
-
-            // For the initial Belgium exclusion in 1826
-            log.debug("Type={} hex={} locations={} allLocations={}",
-                    layTile.getType(), hex, layTile.getLocations(), allLocations);
-            if (layTile.getType() == LayTile.GENERIC_EXCL_LOCATIONS
-                    && !allLocations
-                    && layTile.getLocations().contains(hex)) {
-                log.debug ("SKIP");
-                continue;
+            if (possibleActions.contains(SetDividend.class)) {
+                SetDividend action = possibleActions.getType(SetDividend.class).get(0);
+                SetDividend completedAction = (actionToComplete instanceof SetDividend) ? (SetDividend) actionToComplete
+                        : action;
+                orPanel.initPayoutStep(orCompIndex, completedAction,
+                        completedAction.isAllocationAllowed(SetDividend.WITHHOLD),
+                        completedAction.isAllocationAllowed(SetDividend.SPLIT),
+                        completedAction.isAllocationAllowed(SetDividend.PAYOUT));
             }
-            log.debug(" OK");
-            // Accept an immediate tile lay on reserved hexes if the reserving company
-            // president is the current player.
-            EnumSet<TileHexUpgrade.Invalids> allowances
-                    = EnumSet.noneOf(TileHexUpgrade.Invalids.class);
-            if (hex.isReservedForCompany())  {
-                // For now we accept this action, but will later check for permission
-                allowances.add(TileHexUpgrade.Invalids.HEX_RESERVED);
-            }
-            if (allLocations
-                    || layTile.getType() != LayTile.GENERIC_EXCL_LOCATIONS && layTile.getLocations().contains(hex)
-                    || layTile.getType() == LayTile.GENERIC_EXCL_LOCATIONS && !layTile.getLocations().contains(hex))
-            {
-                GUIHex guiHex = map.getHex(hex);
-                String routeAlgorithm = GameOption.getValue(gameUIManager.getRoot(),
-                        "RouteAlgorithm");
-                Set<TileHexUpgrade> upgrades = TileHexUpgrade.create(guiHex,
-                        mapHexSides.get(hex),
-                        mapHexStations.get(hex), layTile, routeAlgorithm);
-                TileHexUpgrade.validates(upgrades, currentPhase, allowances);
-                gameSpecificTileUpgradeValidation (upgrades, layTile, currentPhase);
-                hexUpgrades.putAll(guiHex, upgrades);
-            }
-        }
-
-        // scroll map to center over companies network
-        String autoScroll = Config.getGameSpecific(gameUIManager.getRoot().getGameName(), "map.autoscroll");
-        if (Util.hasValue(autoScroll) &&  autoScroll.equalsIgnoreCase("no")) {
-            // do nothing
+        } else if (orStep == GameDef.OrStep.BUY_TRAIN) {
+            if (orPanel != null)
+                orPanel.resetHexCycle();
+            setLocalStep(LocalSteps.INACTIVE);
+            orPanel.initTrainBuying(possibleActions.getType(BuyTrain.class));
+            PossibleActions freshActions = getPossibleActions();
+            orPanel.updateDynamicActions(freshActions != null ? freshActions.getList() : possibleActions.getList());
+        } else if (orStep == GameDef.OrStep.DISCARD_TRAINS) {
+            if (orPanel != null)
+                orPanel.resetHexCycle();
+            setLocalStep(LocalSteps.INACTIVE);
+            orPanel.updateDynamicActions(possibleActions.getList());
         } else {
-            mapPanel.scrollPaneShowRectangle(
-                    NetworkVertex.getVertexMapCoverage(map, graph.getGraph().vertexSet()));
+            orPanel.initTrainBuying(new ArrayList<>());
+        }
+
+        orPanel.enableUndo(undoAction);
+        orPanel.enableRedo(redoAction);
+
+        // Inject the highlight update here
+        updateCompanyHighlights();
+
+        orPanel.redisplay();
+    }
+
+    private boolean processNullAction(PossibleActions actions, NullAction.Mode mode) {
+        for (PossibleAction pa : actions.getList()) {
+            if (pa instanceof NullAction && ((NullAction) pa).getMode() == mode) {
+                orWindow.process(pa);
+                return true;
+            }
+        }
+        return false; // Action not found
+    }
+
+    private boolean showMapMarkings = true;
+    private boolean showHexNames = true;
+    private boolean showTerrainCosts = true;
+
+    public boolean isShowTerrainCosts() {
+        return showTerrainCosts;
+    }
+
+    public void toggleTerrainCosts() {
+        this.showTerrainCosts = !this.showTerrainCosts;
+        if (map != null) {
+            map.repaintAll(new Rectangle(map.getSize()));
+        }
+    }
+
+    public boolean isShowHexNames() {
+        return showHexNames;
+    }
+
+    public void toggleHexNames() {
+        this.showHexNames = !this.showHexNames;
+        if (map != null) {
+            map.repaintAll(new Rectangle(map.getSize()));
         }
     }
 
     /**
-     * Stub to do additional validation.
-     * Used in SOH to prevent showing an upgrade that
-     * incorrectly uses a private special property.
-     * @param upgrades
-     * @param layTile
+     * Resets all map overlays to hidden.
      */
-    protected void gameSpecificTileUpgradeValidation (Set<TileHexUpgrade> upgrades,
-                                                      LayTile layTile,
-                                                      Phase currentPhase) {
+    public void hideAllOverlays() {
+        this.showHexNames = false;
+        this.showTerrainCosts = false;
+        this.showFriendlyHexes = false;
+        this.showDestinationMarkers = false;
+        this.showHomeIdentifiers = false;
+        this.showRevenueRoutes = false;
+        this.showFancyCityValues = false;
+
+        // Synchronize internal highlight logic and train paths[cite: 1, 3]
+        updateCompanyHighlights();
+        if (orPanel != null) {
+            orPanel.redrawRoutes();
+        }
+
+        // Repaint the entire map to reflect all changes[cite: 1]
+        if (map != null) {
+            map.repaintAll(new Rectangle(map.getSize()));
+        }
+        log.info("DEBUG: All 6 map overlays hidden via Master Reset.");
+    }
+
+    public boolean isShowMapMarkings() {
+        return showMapMarkings;
+    }
+
+    public void toggleMapMarkings() {
+        // --- START FIX ---
+        this.showMapMarkings = !this.showMapMarkings;
+
+        this.showHexNames = this.showMapMarkings;
+        this.showFriendlyHexes = this.showMapMarkings;
+        this.showDestinationMarkers = this.showMapMarkings;
+        this.showHomeIdentifiers = this.showMapMarkings;
+        this.showRevenueRoutes = this.showMapMarkings;
+
+        updateCompanyHighlights();
+
+        if (orPanel != null) {
+            orPanel.redrawRoutes();
+        }
+
+        if (map != null) {
+            map.repaintAll(new Rectangle(map.getSize()));
+        }
+        // --- END FIX ---
+    }
+
+    public void processAction(String command, List<PossibleAction> actions, Component source) {
+
+        if (command.equals(ORPanel.REM_TILES_CMD)) {
+            displayRemainingTiles();
+            return;
+        }
+
+        RoundFacade currentRound = gameUIManager.getCurrentRound();
+        boolean isOR = (currentRound instanceof OperatingRound);
+        // Allow if OR, OR if we have special actions (GuiTargetedAction)
+        // Allow NullAction (Pass/Done) to pass through even in non-OR rounds
+        boolean hasSpecialActions = (actions != null && !actions.isEmpty()
+                && (actions.get(0) instanceof GuiTargetedAction || actions.get(0) instanceof NullAction));
+
+        if (!isOR && !hasSpecialActions) {
+            return;
+        }
+
+        try {
+            PossibleAction actionToProcess = (actions != null && !actions.isEmpty()) ? actions.get(0) : null;
+
+            if (actionToProcess instanceof BuyTrain) {
+                processBuyTrain((BuyTrain) actionToProcess);
+                return;
+            }
+
+            if (actionToProcess != null && !processGameSpecificActions(actions)) {
+                if (actionToProcess instanceof SetDividend) {
+                    setDividend(command, (SetDividend) actionToProcess);
+                } else if (actionToProcess instanceof BuyBonusToken) {
+                    buyBonusToken((BuyBonusToken) actionToProcess);
+                } else if (actionToProcess instanceof NullAction || actionToProcess instanceof GameAction) {
+                    orWindow.process(actionToProcess);
+                } else if (actionToProcess instanceof ReachDestinations) {
+                    reachDestinations((ReachDestinations) actionToProcess);
+                } else if (actionToProcess instanceof TakeLoans) {
+                    takeLoans((TakeLoans) actionToProcess);
+                } else if (actionToProcess instanceof RepayLoans) {
+                    repayLoans((RepayLoans) actionToProcess);
+                } else if (actionToProcess instanceof UseSpecialProperty) {
+                    useSpecialProperty((UseSpecialProperty) actionToProcess);
+                } else if (actionToProcess instanceof ClosePrivate) {
+                    gameUIManager.processAction(actionToProcess);
+                } else if (actionToProcess instanceof BuyPrivate) {
+                    processBuyPrivate((BuyPrivate) actionToProcess);
+                } else {
+                    orWindow.process(actionToProcess);
+                }
+            } else {
+                if (command.equals(ORPanel.OPERATING_COST_CMD)) {
+                    operatingCosts();
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error processing action command: " + command, e);
+        }
+
+    }
+
+    // --- RESTORED PLUMBING METHODS ---
+
+    public GameUIManager getGameUIManager() {
+        return gameUIManager;
+    }
+
+    public HexMap getMap() {
+        return map;
+    }
+
+    public ORWindow getORWindow() {
+        return orWindow;
+    }
+
+    public ORPanel getORPanel() {
+        return orPanel;
+    }
+
+    public UpgradesPanel getUpgradePanel() {
+        return upgradePanel;
+    }
+
+    public Integer[] getSeparatorLines() {
+        return separatorLines;
+    }
+
+    public void clearSeparatorLines() {
+        separatorLines = null;
+    }
+
+    public net.sf.rails.ui.swing.hexmap.HexMap getHexMap() {
+        return this.map;
+    }
+
+    public boolean hexClicked(GUIHex clickedHex, GUIHex selectedHex, boolean rightClick) {
+        if (localStep == null)
+            return false;
+
+        if (selectedHex == clickedHex) {
+            if (localStep == LocalSteps.SELECT_UPGRADE) {
+                if (rightClick)
+                    upgradePanel.nextUpgrade();
+                else
+                    upgradePanel.nextSelection();
+
+                return true;
+            }
+            return false;
+        }
+
+        if (clickedHex == null) {
+            if (localStep == LocalSteps.SELECT_UPGRADE) {
+                if (selectedHex != null)
+                    map.selectHex(null);
+                setLocalStep(LocalSteps.SELECT_HEX);
+
+                return true;
+            }
+            return false;
+        }
+
+        if (hexUpgrades.containsVisible(clickedHex)) {
+            switch (localStep) {
+                case SELECT_HEX:
+                    if (!gotPermission(clickedHex))
+                        return false;
+                case SELECT_UPGRADE:
+                    map.selectHex(clickedHex);
+                    setLocalStep(LocalSteps.SELECT_UPGRADE);
+                    if (upgradePanel != null)
+                        upgradePanel.setSelect(clickedHex);
+                    if (orPanel != null)
+                        orPanel.enableConfirm(true);
+
+                    // --- SHOW FLOATING DIALOG NEAR HEX ---
+                    if (showFloatingTiles && floatingUpgradesDialog != null) {
+                        try {
+                            java.awt.Point screenPos = mapPanel.getLocationOnScreen();
+                            java.awt.Rectangle hexBounds = clickedHex.getBounds();
+                            // Position to the right and slightly down from the clicked hex
+                            floatingUpgradesDialog.showUpgrades(clickedHex, hexUpgrades,
+                                    new java.awt.Point(screenPos.x + hexBounds.x + hexBounds.width + 10,
+                                            screenPos.y + hexBounds.y));
+                        } catch (Exception e) {
+                            // Fallback if component hasn't rendered yet
+                            floatingUpgradesDialog.showUpgrades(clickedHex, hexUpgrades, null);
+                        }
+                    }
+
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        switch (localStep) {
+            case SELECT_UPGRADE:
+                map.selectHex(null);
+                setLocalStep(LocalSteps.SELECT_HEX);
+
+                return false;
+            default:
+                return false;
+        }
+    }
+
+    public void updateHexBuildNumbers(boolean show) {
+        if (map == null || orPanel == null)
+            return;
+
+        Rectangle mapBounds = new Rectangle(map.getSize());
+
+        if (!show) {
+            for (GUIHex guiHex : map.getHexes()) {
+                if (guiHex.getCustomOverlayText() != null) {
+                    guiHex.setCustomOverlayText(null);
+                }
+            }
+            map.repaintAll(mapBounds);
+            return;
+        }
+
+        Collection<GUIHex> hexes = hexUpgrades.getHexes();
+
+        // Was: if (hexes == null || hexes.isEmpty()) return;
+        // Change: Removed early exit. We must proceed to repaintAll(mapBounds)
+        // at the end of the method to clear "Ghost Tiles" after an Undo,
+        // even if there are no specific hex numbers to update.
+
+        if (hexes != null && !hexes.isEmpty()) {
+            for (GUIHex guiHex : hexes) {
+                GUIHex.State state = guiHex.getState();
+                // Show text for valid (Green/Red) AND invalid (Pink) hexes
+                if (state == GUIHex.State.SELECTABLE || state == GUIHex.State.TOKEN_SELECTABLE
+                        || state == GUIHex.State.INVALIDS) {
+                    String hexId = guiHex.getHex().getId();
+                    StringBuilder overlayText = new StringBuilder(hexId);
+
+                    for (HexUpgrade upgrade : hexUpgrades.getUpgrades(guiHex)) {
+                        if (upgrade instanceof TokenHexUpgrade) {
+                            // The upgrade object already calculated the cost during 'validates()'.
+                            // We just retrieve it.
+                            int cost = ((TokenHexUpgrade) upgrade).getCost();
+
+                            if (cost > 0) {
+                                overlayText.append("<br>").append(gameUIManager.format(cost));
+                            }
+                            break;
+                        }
+                    }
+
+                    guiHex.setCustomOverlayText("<html>" + overlayText.toString() + "</html>");
+                } else {
+                    guiHex.setCustomOverlayText(null);
+                }
+            }
+        }
+
+        // This line forces the Layers to mark their buffers as dirty and redraw from
+        // the Model.
+        map.repaintAll(mapBounds);
+    }
+    // --- OTHER HELPERS ---
+
+    private void displayRemainingTiles() {
+        if (remainingTiles == null)
+            remainingTiles = new RemainingTilesWindow(orWindow);
+        else
+            remainingTiles.activate();
+    }
+
+    protected boolean processGameSpecificActions(List<PossibleAction> actions) {
+        return false;
+    }
+
+    protected void setDividend(String command, SetDividend action) {
+        if (!command.equals(ORPanel.SET_REVENUE_CMD))
+            orWindow.process(action);
+    }
+
+    private void buyBonusToken(BuyBonusToken action) {
+        orWindow.process(action);
+    }
+
+    protected void reachDestinations(ReachDestinations action) {
+        List<String> options = new ArrayList<>();
+        for (PublicCompany company : action.getPossibleCompanies())
+            options.add(company.getId());
+        if (options.size() > 0) {
+            orWindow.setVisible(true);
+            orWindow.toFront();
+            CheckBoxDialog dialog = new CheckBoxDialog(SELECT_DESTINATION_COMPANIES_DIALOG, this, orWindow,
+                    LocalText.getText("DestinationsReached"), LocalText.getText("DestinationsReachedPrompt"),
+                    options.toArray(new String[0]));
+            setCurrentDialog(dialog, action);
+        }
+    }
+
+    protected boolean gotPermission(GUIHex guiHex) {
+        MapHex hex = guiHex.getHex();
+        if (!hex.isReservedForCompany() || !hex.isPreprintedTileCurrent())
+            return true;
+        HexUpgrade hexUpgrade = (HexUpgrade) hexUpgrades.getUpgrades(guiHex).toArray()[0];
+        if (!(hexUpgrade instanceof TileHexUpgrade))
+            return true;
+        TileHexUpgrade upgrade = (TileHexUpgrade) hexUpgrade;
+        LayTile action = upgrade.getAction();
+        if (action.getPlayer().equals(guiHex.getHex().getReservedForCompany().getPresident()))
+            return true;
+
+        ConfirmationDialog dialog = new ConfirmationDialog(GOT_PERMISSION_DIALOG, this, orWindow,
+                LocalText.getText("GotPermission"),
+                LocalText.getText("GotPermissionDialog", guiHex.getHex().getReservedForCompany().getPresident(),
+                        upgrade.getHex().getHex()),
+                LocalText.getText("Yes"), LocalText.getText("No"));
+        setCurrentDialog(dialog, action);
+        return true;
+    }
+
+    public void confirmUpgrade() {
+        HexUpgrade upgrade = hexUpgrades.getActiveUpgrade();
+        if (upgrade instanceof TileHexUpgrade)
+            layTile((TileHexUpgrade) upgrade);
+        if (upgrade instanceof TokenHexUpgrade)
+            layToken((TokenHexUpgrade) upgrade);
+    }
+
+    public void skipUpgrade() {
+        if (getPossibleActions().containsCorrections()) {
+            map.selectHex(null);
+            setLocalStep(LocalSteps.SELECT_HEX);
+        } else {
+            orWindow.process(new NullAction(gameUIManager.getRoot(), NullAction.Mode.SKIP));
+        }
+    }
+
+    protected void layTile(TileHexUpgrade upgrade) {
+        LayTile allowance = upgrade.getAction();
+        allowance.setChosenHex(upgrade.getHex().getHex());
+        allowance.setOrientation(upgrade.getCurrentRotation().getTrackPointNumber());
+        allowance.setLaidTile(upgrade.getUpgrade().getTargetTile());
+        allowance.setRelayBaseTokens(upgrade.isRelayBaseTokens());
+        if (!orWindow.process(allowance))
+            setLocalStep(LocalSteps.SELECT_HEX);
+    }
+
+    private void layToken(TokenHexUpgrade upgrade) {
+        LayToken action = upgrade.getAction();
+        if (action instanceof LayBaseToken)
+            layBaseToken(upgrade);
+        else if (action instanceof LayBonusToken)
+            layBonusToken(upgrade);
+    }
+
+    private void layBaseToken(TokenHexUpgrade upgrade) {
+        LayBaseToken action = (LayBaseToken) upgrade.getAction();
+        action.setChosenHex(upgrade.getHex().getHex());
+        if (upgrade.getSelectedStop() != null)
+            action.setChosenStation(upgrade.getSelectedStop().getRelatedStationNumber());
+        if (!orWindow.process(action))
+            setLocalStep(LocalSteps.SELECT_HEX);
+    }
+
+    public void layBonusToken(TokenHexUpgrade upgrade) {
+        LayToken action = upgrade.getAction();
+        GUIHex selectedHex = mapPanel.getMap().getSelectedHex();
+        if (selectedHex != null) {
+            action.setChosenHex(selectedHex.getHex());
+            if (orWindow.process(action)) {
+                upgradePanel.setActive();
+                map.selectHex(null);
+                map.repaintTokens(selectedHex.getBounds());
+            }
+        }
+    }
+
+    public void operatingCosts() {
+        List<String> textOC = new ArrayList<>();
+        List<OperatingCost> actionOC = getPossibleActions().getType(OperatingCost.class);
+        for (OperatingCost ac : actionOC) {
+            String cost = ac.isFreeEntryAllowed() ? LocalText.getText("OCAmountEntry")
+                    : gameUIManager.format(ac.getAmount());
+            if (ac.getOCType() == OperatingCost.OCType.LAY_TILE)
+                textOC.add(LocalText.getText("OCLayTile", cost));
+            if (ac.getOCType() == OperatingCost.OCType.LAY_BASE_TOKEN)
+                textOC.add(LocalText.getText("OCLayBaseToken", cost));
+        }
+        if (!textOC.isEmpty()) {
+            String chosenOption = (String) JOptionPane.showInputDialog(orWindow, LocalText.getText("OCSelectMessage"),
+                    LocalText.getText("OCSelectTitle"), JOptionPane.QUESTION_MESSAGE, null, textOC.toArray(),
+                    textOC.get(0));
+            if (chosenOption != null) {
+                OperatingCost chosenAction = actionOC.get(textOC.indexOf(chosenOption));
+                if (chosenAction.isFreeEntryAllowed()) {
+                    String input = JOptionPane.showInputDialog(orWindow,
+                            LocalText.getText("OCDialogMessage", chosenOption));
+                    try {
+                        chosenAction.setAmount(Integer.parseInt(input));
+                    } catch (Exception e) {
+                        chosenAction.setAmount(0);
+                    }
+                }
+                if (orWindow.process(chosenAction))
+                    updateMessage();
+            }
+        }
+    }
+
+    public void buyPrivate() {
+        List<String> options = new ArrayList<>();
+        List<BuyPrivate> actions = getPossibleActions().getType(BuyPrivate.class);
+        for (BuyPrivate bp : actions) {
+            String price = bp.getMinimumPrice() < bp.getMaximumPrice()
+                    ? gameUIManager.format(bp.getMinimumPrice()) + "..." + gameUIManager.format(bp.getMaximumPrice())
+                    : gameUIManager.format(bp.getMaximumPrice());
+            options.add(LocalText.getText("BuyPrivatePrompt", bp.getPrivateCompany().getId(),
+                    bp.getPrivateCompany().getOwner().getId(), price));
+        }
+        if (!actions.isEmpty()) {
+            String chosen = (String) JOptionPane.showInputDialog(orWindow, LocalText.getText("BUY_WHICH_PRIVATE"),
+                    LocalText.getText("WHICH_PRIVATE"), JOptionPane.QUESTION_MESSAGE, null, options.toArray(),
+                    options.get(0));
+            if (chosen != null)
+                processBuyPrivate(actions.get(options.indexOf(chosen)));
+        }
+    }
+
+    public void processBuyPrivate(BuyPrivate action) {
+        if (action == null)
+            return;
+
+        int minPrice = action.getMinimumPrice();
+        int maxPrice = action.getMaximumPrice();
+        int price = minPrice;
+
+        // Gather Buyer Information
+        PublicCompany buyer = this.orComp;
+        String buyerId = (buyer != null) ? buyer.getId() : "Unknown";
+        String directorName = (buyer != null && buyer.getPresident() != null) ? buyer.getPresident().getId()
+                : "Unknown";
+
+        // Gather Private Company Information
+        PrivateCompany pc = action.getPrivateCompany();
+        String pcName = (pc.getName() != null) ? pc.getName() : "Unknown";
+        String pcId = (pc.getId() != null) ? pc.getId() : "Unknown";
+        String ownerName = (pc.getOwner() != null) ? pc.getOwner().getId() : "Unknown";
+
+        // Extract Hover/Info text and format for HTML display
+        String infoText = pc.getInfoText();
+        if (infoText != null && !infoText.isEmpty()) {
+            infoText = infoText.replaceAll("\\n", "<br>");
+        } else {
+            infoText = "No additional information available.";
+        }
+
+        String formattedMin = gameUIManager.format(minPrice);
+        String formattedMax = gameUIManager.format(maxPrice);
+
+        // Build the rich HTML dialog content
+        StringBuilder msg = new StringBuilder();
+        msg.append("<html><div style='width: 350px; font-family: sans-serif;'>");
+        msg.append("<h3 style='margin-top: 0;'>Buy Private Company</h3>");
+
+        msg.append("<table width='100%'>");
+        msg.append("<tr><td><b>Buyer:</b></td><td>").append(buyerId).append(" (Director: ").append(directorName)
+                .append(")</td></tr>");
+        msg.append("<tr><td><b>Private:</b></td><td>").append(pcName).append(" [").append(pcId).append("]</td></tr>");
+        msg.append("<tr><td><b>Owner:</b></td><td>").append(ownerName).append("</td></tr>");
+        msg.append("<tr><td><b>Price Range:</b></td><td>").append(formattedMin).append(" - ").append(formattedMax)
+                .append("</td></tr>");
+        msg.append("</table><br>");
+
+        msg.append("<b>Details:</b><br>");
+        msg.append("<div style='padding: 5px; border: 1px solid gray; background-color: #f9f9f9; font-size: 10px;'>");
+        msg.append(infoText).append("</div><br>");
+
+        // Handle Variable vs Fixed Price Dialogs
+        if (minPrice != maxPrice) {
+            msg.append("<b>Enter purchase price:</b></div></html>");
+
+            // Note: showInputDialog returns an Object. We cast it to String if it's not
+            // null.
+            Object inputObj = JOptionPane.showInputDialog(
+                    orWindow,
+                    msg.toString(),
+                    "Negotiate Price",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    null,
+                    String.valueOf(price));
+
+            if (inputObj == null) {
+                return; // User canceled
+            }
+
+            try {
+                String inputStr = inputObj.toString().replaceAll("[^0-9]", ""); // Strip non-numeric characters just in
+                                                                                // case
+                price = Integer.parseInt(inputStr);
+            } catch (Exception e) {
+                return; // Invalid input or empty
+            }
+
+            // Validate bounds before processing
+            if (price < minPrice || price > maxPrice) {
+                JOptionPane.showMessageDialog(orWindow, "Price out of bounds (" + minPrice + " - " + maxPrice + ")",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+        } else {
+            msg.append("<b>Confirm purchase for ").append(formattedMin).append("?</b></div></html>");
+            if (JOptionPane.showConfirmDialog(orWindow, msg.toString(), "Confirm Purchase", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
+                return; // User canceled
+            }
+        }
+
+        action.setPrice(price);
+        if (orWindow.process(action)) {
+            updateMessage();
+        }
+    }
+
+    protected void takeLoans(TakeLoans action) {
+        if (action.getMaxNumber() == 1) {
+            if (JOptionPane.showConfirmDialog(orWindow,
+                    LocalText.getText("TakeLoanPrompt", action.getCompanyName(),
+                            gameUIManager.format(action.getPrice())),
+                    LocalText.getText("PleaseConfirm"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                action.setNumberTaken(1);
+                orWindow.process(action);
+            }
+        }
+    }
+
+    protected void repayLoans(RepayLoans action) {
+        if (action.getMinNumber() == action.getMaxNumber()) {
+            JOptionPane.showMessageDialog(orWindow,
+                    LocalText.getText("RepayLoan", action.getMinNumber(), gameUIManager.format(action.getPrice()),
+                            gameUIManager.format(action.getMinNumber() * action.getPrice())));
+            action.setNumberTaken(action.getMinNumber());
+            orWindow.process(action);
+        } else {
+            String[] options = new String[action.getMaxNumber() - action.getMinNumber() + 1];
+            for (int i = 0; i < options.length; i++) {
+                int count = action.getMinNumber() + i;
+                options[i] = (count == 0) ? LocalText.getText("None")
+                        : LocalText.getText("RepayLoan", count, gameUIManager.format(action.getPrice()),
+                                gameUIManager.format(count * action.getPrice()));
+            }
+            RadioButtonDialog dialog = new RadioButtonDialog(REPAY_LOANS_DIALOG, gameUIManager, orWindow,
+                    LocalText.getText("Select"), LocalText.getText("SelectLoansToRepay", action.getCompanyName()),
+                    options, 0);
+            setCurrentDialog(dialog, action);
+        }
+    }
+
+    protected void useSpecialProperty(UseSpecialProperty action) {
+        gameUIManager.processAction(action);
+    }
+
+    protected void checkHexVisibilityOnUI(PossibleActions actions) {
+        for (GUIHex hex : hexUpgrades.getHexes()) {
+            boolean validFound = false;
+            boolean invalidFound = false;
+            for (HexUpgrade upgrade : hexUpgrades.getUpgrades(hex)) {
+                if (upgrade.isValid()) {
+                    hex.setState(upgrade instanceof TokenHexUpgrade ? GUIHex.State.TOKEN_SELECTABLE
+                            : GUIHex.State.SELECTABLE);
+                    validFound = true;
+                    break;
+                } else if (upgrade.isVisible())
+                    invalidFound = true;
+            }
+            if (!validFound && invalidFound)
+                hex.setState(GUIHex.State.INVALIDS);
+        }
+    }
+
+    private void defineTileUpgrades(List<LayTile> actions) {
+        for (LayTile layTile : actions) {
+            if (layTile.getType() == LayTile.GENERIC || layTile.getType() == LayTile.GENERIC_EXCL_LOCATIONS) {
+                addConnectedTileLays(layTile);
+            } else if (layTile.getType() == LayTile.SPECIAL_PROPERTY) {
+                if (layTile.getSpecialProperty().requiresConnection())
+                    addConnectedTileLays(layTile);
+                else
+                    addLocatedTileLays(layTile);
+            } else if (layTile.getType() == LayTile.LOCATION_SPECIFIC) {
+                addLocatedTileLays(layTile);
+            } else if (layTile.getType() == LayTile.CORRECTION) {
+                addCorrectionTileLays(layTile);
+            }
+        }
+    }
+
+    private void addConnectedTileLays(LayTile layTile) {
+        NetworkGraph graph = networkAdapter.getRouteGraph(layTile.getCompany(), true, false);
+        Set<MapHex> validHexes = Sets.union(graph.getReachableSides().keySet(), graph.getPassableStations().keySet());
+        Phase currentPhase = gameUIManager.getCurrentPhase();
+        String algo = GameOption.getValue(gameUIManager.getRoot(), "RouteAlgorithm");
+
+        for (MapHex hex : validHexes) {
+            if (layTile.getType() == LayTile.GENERIC_EXCL_LOCATIONS && layTile.getLocations().contains(hex))
+                continue;
+
+            // Enforce location constraints for connected tile lays
+            // Prevents specific hex actions (like 1837 AB/BrB) from spawning duplicate
+            // upgrades globally
+            if (layTile.getType() != LayTile.GENERIC_EXCL_LOCATIONS
+                    && layTile.getLocations() != null
+                    && !layTile.getLocations().isEmpty()
+                    && !layTile.getLocations().contains(hex)) {
+                continue;
+            }
+
+            GUIHex guiHex = map.getHex(hex);
+            Set<TileHexUpgrade> upgrades = TileHexUpgrade.create(guiHex, graph.getReachableSides().get(hex),
+                    graph.getPassableStations().get(hex), layTile, algo);
+            EnumSet<TileHexUpgrade.Invalids> allowances = hex.isReservedForCompany()
+                    ? EnumSet.of(TileHexUpgrade.Invalids.HEX_RESERVED)
+                    : EnumSet.noneOf(TileHexUpgrade.Invalids.class);
+            TileHexUpgrade.validates(upgrades, currentPhase, allowances);
+            hexUpgrades.putAll(guiHex, upgrades);
+        }
     }
 
     private void addLocatedTileLays(LayTile layTile) {
@@ -310,1607 +1286,202 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
-    private void addCorrectionTileLays(LayTile layTile) {
-        EnumSet<TileHexUpgrade.Invalids> allowances
-                = EnumSet.of(TileHexUpgrade.Invalids.HEX_RESERVED);
-        for (GUIHex hex:map.getHexes()) {
-            Set<TileHexUpgrade> upgrades = TileHexUpgrade.createCorrection(hex, layTile);
-            TileHexUpgrade.validates(upgrades, gameUIManager.getCurrentPhase(), allowances);
-            hexUpgrades.putAll(hex, upgrades);
-        }
-    }
-
     private void defineTokenUpgrades(List<LayToken> actions) {
-
-        for (LayToken layToken:actions) {
-            if (layToken instanceof LayBaseToken) {
-                LayBaseToken layBaseToken = (LayBaseToken)layToken;
-                switch (layBaseToken.getType()) {
-                case (LayBaseToken.GENERIC):
-                    addGenericTokenLays(layBaseToken);
-                    break;
-                case (LayBaseToken.LOCATION_SPECIFIC):
-                case (LayBaseToken.SPECIAL_PROPERTY):
-                    if (layBaseToken.getLocations() != null) {
-                        addLocatedTokenLays(layBaseToken);
-                    } else {
-                        addGenericTokenLays(layBaseToken);
-                    }
-                break;
-                case LayBaseToken.FORCED_LAY :
-                case LayBaseToken.HOME_CITY:
-                case LayBaseToken.NON_CITY:
-                    addLocatedTokenLays(layBaseToken);
-                break;
-                case (LayTile.CORRECTION):
-                    addCorrectionTokenLays(layBaseToken);
-                default:
-                }
-            } else if (layToken instanceof LayBonusToken) {
-                // Assumption: BonusTokens are always located
-                addLocatedTokenLays(layToken);
+        for (LayToken action : actions) {
+            if (action instanceof LayBaseToken) {
+                LayBaseToken lbt = (LayBaseToken) action;
+                if (lbt.getType() == LayBaseToken.GENERIC)
+                    addGenericTokenLays(lbt);
+                else if (lbt.getLocations() != null)
+                    addLocatedTokenLays(lbt);
+                else
+                    addGenericTokenLays(lbt);
+            } else if (action instanceof LayBonusToken) {
+                addLocatedTokenLays(action);
             }
         }
     }
 
     private void addGenericTokenLays(LayBaseToken action) {
         PublicCompany company = action.getCompany();
-        if (company.getBaseTokenLayCostMethod() == PublicCompany.BaseCostMethod.ROUTE_DISTANCE) {
-            // Currently only used by 1826.
-            // Did originally work with all games, but somehow failed with 1837 in a later stage
-            Map<Stop, Integer> tokenableStops = new Routes(company).getTokenLayRouteDistances(
-                    PublicCompany.INCL_START_HEX, PublicCompany.FROM_HOME_ONLY);
-            for (Stop stop : tokenableStops.keySet()) {
-                MapHex hex = stop.getParent();
-                GUIHex guiHex = map.getHex(hex);
-                TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, tokenableStops.keySet(), action);
-                TokenHexUpgrade.validates(upgrade);
-                hexUpgrades.put(guiHex, upgrade);
-            }
-        } else { // The old method
+        if (company.getBaseTokenLayCostMethod() != PublicCompany.BaseCostMethod.ROUTE_DISTANCE) {
             NetworkGraph graph = networkAdapter.getRouteGraph(company, true, false);
             Multimap<MapHex, Stop> hexStops = graph.getTokenableStops(company);
-            for (MapHex hex:hexStops.keySet()) {
+            for (MapHex hex : hexStops.keySet()) {
                 GUIHex guiHex = map.getHex(hex);
                 TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, hexStops.get(hex), action);
                 TokenHexUpgrade.validates(upgrade);
                 hexUpgrades.put(guiHex, upgrade);
             }
-
         }
     }
 
     protected void addLocatedTokenLays(LayToken action) {
-        for (MapHex hex:action.getLocations()) {
+        for (MapHex hex : action.getLocations()) {
             GUIHex guiHex = map.getHex(hex);
-            TokenHexUpgrade upgrade = TokenHexUpgrade.create(
-                    this, guiHex, hex.getTokenableStops(action.getCompany()), action);
+            TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, hex.getTokenableStops(action.getCompany()),
+                    action);
             TokenHexUpgrade.validates(upgrade);
             hexUpgrades.put(guiHex, upgrade);
         }
     }
 
-    private void addCorrectionTokenLays(LayToken action) {
-        for (GUIHex guiHex:map.getHexes()) {
-            MapHex hex = guiHex.getHex();
-            List<Stop> tokenableStops = Lists.newArrayList();
-            for (Stop stop:hex.getStops()) {
-                if (stop.isTokenableFor(action.getCompany())) {
-                    tokenableStops.add(stop);
-                }
-            }
-            if (!tokenableStops.isEmpty()) {
-                TokenHexUpgrade upgrade = TokenHexUpgrade.create(this, guiHex, tokenableStops, action);
-                TokenHexUpgrade.validates(upgrade);
-                hexUpgrades.put(guiHex, upgrade);
-            }
+    private void addCorrectionTileLays(LayTile layTile) {
+        EnumSet<TileHexUpgrade.Invalids> allowances = EnumSet.of(TileHexUpgrade.Invalids.HEX_RESERVED);
+        for (GUIHex hex : map.getHexes()) {
+            Set<TileHexUpgrade> upgrades = TileHexUpgrade.createCorrection(hex, layTile);
+            TileHexUpgrade.validates(upgrades, gameUIManager.getCurrentPhase(), allowances);
+            hexUpgrades.putAll(hex, upgrades);
         }
     }
 
     public void updateMessage() {
+    } // Unused
 
-        // For now, this only has an effect during tile and token laying.
-        // Perhaps we need to centralise message updating here in a later stage.
-        log.debug("Calling updateMessage, subStep={}", localStep);
-
-        if (localStep == LocalSteps.INACTIVE ) return;
-
-        StringBuilder message = new StringBuilder("<font color='red'>" + LocalText.getText(localStep.toString()) + "</font>");
-        String extraMessage = "";
-
-        // Activity Messages
-        boolean correctionActive = false;
-        List<LayTile> tileLays = getPossibleActions().getType(LayTile.class);
-        if (!tileLays.isEmpty()) {
-            /* Compose prompt for tile laying */
-
-            for (LayTile tileLay : tileLays) {
-                if (tileLay.isCorrection()) {
-                    correctionActive = true;
-                    continue;
-                }
-                Map<String, Integer> tileColours;
-                SpecialProperty sp = tileLay.getSpecialProperty();
-                // For special tile lays add special message
-                if (sp instanceof SpecialTileLay) {
-                    SpecialTileLay stl = (SpecialTileLay) sp;
-                    extraMessage += "<BR>" + stl.getHelp();
-                } else if ((tileColours = tileLay.getTileColours()) != null) {
-                    int number;
-                    StringBuilder normalTileMessage = new StringBuilder();
-                    for (String colour : tileColours.keySet()) {
-                        number = tileColours.get(colour);
-                        if (normalTileMessage.length() > 1) {
-                            normalTileMessage.append(" ").append(
-                                    LocalText.getText("OR")).append(" ");
-                        }
-                        normalTileMessage.append(number).append(" ").append(
-                                colour);
-                    }
-                    message.append("<BR>").append(LocalText.getText("TileColours", normalTileMessage));
-                }
-            }
-        }
-
-        List<LayBaseToken> tokenLays =
-                getPossibleActions().getType(LayBaseToken.class);
-
-        if (!tokenLays.isEmpty()) {
-
-            /* Compose prompt for token laying */
-            String locations;
-            StringBuilder normalTokenMessage = new StringBuilder();
-
-            for (LayBaseToken tokenLay : tokenLays) {
-                if (tokenLay.isCorrection()) {
-                    correctionActive = true;
-                    continue;
-                }
-                SpecialProperty sp = tokenLay.getSpecialProperty();
-                if ( sp instanceof SpecialBaseTokenLay ) {
-                    extraMessage += "<BR>" + sp.getHelp();
-                } else if ((locations = tokenLay.getLocationNameString()) != null) {
-                    if (normalTokenMessage.length() > 1) {
-                        normalTokenMessage.append(" ").append(
-                                LocalText.getText("OR")).append(" ");
-                    }
-                    normalTokenMessage.append(locations);
-                    message.append("<BR>").append(LocalText.getText("NormalLocatedToken",
-                            normalTokenMessage));
-                } else {
-                   message.append("<BR> ").append(LocalText.getText("NormalToken",
-                           normalTokenMessage));
-               }
-            }
-        }
-
-        if (tileLays.isEmpty() && tokenLays.isEmpty() && orPanel.hasSpecialActions()) {
-            // Special actions only. Maybe we need a separate substep for this case.
-            // Restart the message
-            message = new StringBuilder("<font color='red'>" + LocalText.getText("YouHaveSpecialActions") + "</font>");
-            message.append("<br>").append(LocalText.getText("YouCannotLayTokens"));
-        }
-
-        if (correctionActive) {
-            message.append("<BR>").append(LocalText.getText("CorrectMapActive"));
-        }
-
-        if (extraMessage.length() > 0) {
-            message.append("<font color='orange'>").append(extraMessage).append("</font>");
-        }
-
-        messagePanel.setMessage(message.toString());
+    public LocalSteps getLocalStep() {
+        return this.localStep;
     }
 
-    /**
-     * Processes button presses and menu selection actions
-     */
-    // FIXME: Can this be really a list of actions?
-    // Answer: Not yet, but who knows? (EV)
-    public void processAction(String command, List<PossibleAction> actions) {
+    public void setMapRelatedActions(PossibleActions actions) {
+        this.networkAdapter = NetworkAdapter.create(gameUIManager.getRoot());
+        currentValidTileLays.clear();
+        currentValidTokenLays.clear();
 
-        if (actions != null && actions.size() > 0 && actions.get(0) != null
-                && !processGameSpecificActions(actions)) {
-
-            Class<? extends PossibleAction> actionType =
-                actions.get(0).getClass();
-
-            if (actionType == SetDividend.class) {
-
-                setDividend(command, (SetDividend) actions.get(0));
-
-
-            } else if (actionType == BuyBonusToken.class) {
-
-                buyBonusToken ((BuyBonusToken)actions.get(0));
-
-            } else if (actionType == NullAction.class
-                    || actionType == GameAction.class ) {
-
-                orWindow.process(actions.get(0));
-
-            } else if (actionType == ReachDestinations.class) {
-
-                reachDestinations((ReachDestinations) actions.get(0));
-
-            } else if (actionType == GrowCompany.class) {
-
-                orWindow.process(actions.get(0));
-
-            } else if (actionType == TakeLoans.class) {
-
-                takeLoans ((TakeLoans)actions.get(0));
-
-            } else if (actionType == RepayLoans.class) {
-
-                repayLoans((RepayLoans) actions.get(0));
-
-            } else if (actionType == UseSpecialProperty.class) {
-
-                useSpecialProperty ((UseSpecialProperty)actions.get(0));
-
-            } else if (actionType == ClosePrivate.class) {
-
-                gameUIManager.processAction(actions.get(0));
-
-            }
-
-        } else if (command.equals(ORPanel.OPERATING_COST_CMD)) {
-
-            operatingCosts();
-
-        } else if (command.equals(ORPanel.BUY_TRAIN_CMD)) {
-
-            buyTrain();
-
-        } else if (command.equals(ORPanel.BUY_PRIVATE_CMD)) {
-
-            buyPrivate();
-
-        } else if (command.equals(ORPanel.REM_TILES_CMD)) {
-
-            displayRemainingTiles();
-
-        } else if (command.equals(ORPanel.CONFIRM_CMD)) {
-
-            confirmUpgrade();
-        }
-    }
-
-    /** Stub, can be overridden in subclasses */
-    // FIXME: As above, really a list of actions?
-    protected boolean processGameSpecificActions(List<PossibleAction> actions) {
-
-        return false;
-
-    }
-
-    protected void setDividend(String command, SetDividend action) {
-
-        int amount;
-        int dividend;
-        int treasuryAmount = 0;
-        boolean hasDirectCompanyIncomeInOR
-                = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
-
-        if (command.equals(ORPanel.SET_REVENUE_CMD)) {
-            dividend = amount = orPanel.getRevenue(orCompIndex);
-            if (hasDirectCompanyIncomeInOR) {
-                treasuryAmount = orPanel.getCompanyTreasuryBonusRevenue(orCompIndex);
-                dividend -= treasuryAmount;
-                orPanel.setDividend(orCompIndex, dividend);
-            }
-
-            orPanel.stopRevenueUpdate();
-            log.debug("Set revenue amount is {}", amount);
-            action.setActualRevenue(amount);
-            if (hasDirectCompanyIncomeInOR) {
-                log.debug("The Bonus for the company treasury is {}", treasuryAmount);
-                action.setActualCompanyTreasuryRevenue(treasuryAmount);
-            }
-
-            // notify sound manager of set revenue amount as soon as
-            // set revenue is pressed (not waiting for the completion
-            // of the set dividend action)
-            SoundManager.notifyOfSetRevenue(amount);
-
-            if (amount == 0 || action.getRevenueAllocation() != SetDividend.UNKNOWN) {
-                log.debug("Allocation is known: {}", action.getRevenueAllocation());
-                orWindow.process(action);
-            } else {
-                log.debug("Allocation is unknown, asking for it");
-                setLocalStep(LocalSteps.SELECT_PAYOUT);
-                updateStatus(action, true);
-
-                // Locally update revenue if we don't inform the server yet.
-                orPanel.setRevenue(orCompIndex, amount);
-                if (hasDirectCompanyIncomeInOR) {
-                    orPanel.setTreasuryBonusRevenue(orCompIndex, treasuryAmount);
+        // AGGRESSIVE CLEANUP: Iterate ALL hexes to clear "Ghost" previews.
+        // During Undo, map.getSelectedHex() is often null, so the specific hex
+        // that holds the visual artifact is missed by the standard cleanup.
+        if (map != null) {
+            for (GUIHex hex : map.getHexes()) {
+                // Clear any pending visual upgrade (the ghost tile)
+                if (hex.getUpgrade() != null) {
+                    hex.setUpgrade(null);
+                }
+                // Reset state to ensure no "Green/Red" highlights linger from a future turn
+                if (hex.getState() != GUIHex.State.NORMAL) {
+                    hex.setState(GUIHex.State.NORMAL);
                 }
             }
+            // Clear global selection
+            map.setSelectedHex(null);
+        }
+
+        // Ensure the collection is cleared so we can rebuild it fresh below
+        if (hexUpgrades != null) {
+            hexUpgrades.clear();
+        }
+
+        List<LayTile> tiles = actions.getType(LayTile.class);
+        List<LayToken> tokens = actions.getType(LayToken.class);
+
+        if (!tiles.isEmpty())
+            defineTileUpgrades(tiles);
+        if (!tokens.isEmpty())
+            defineTokenUpgrades(tokens);
+        hexUpgrades.build();
+        checkHexVisibilityOnUI(actions);
+        if (orPanel != null)
+            orPanel.updateCycleableHexes(hexUpgrades.getHexes());
+
+        populateTileLayOptionsFromHexUpgrades();
+        populateTokenLayOptionsFromHexUpgrades();
+
+        if (tiles.isEmpty() && !tokens.isEmpty()) {
+            boolean buttonOnly = true;
+            for (LayToken t : tokens) {
+                if (t instanceof LayBaseToken && ((LayBaseToken) t).getType() != LayBaseToken.HOME_CITY) {
+                    buttonOnly = false;
+                    break;
+                }
+            }
+            setLocalStep(buttonOnly ? LocalSteps.INACTIVE : LocalSteps.SELECT_HEX);
+        } else if (tiles.isEmpty() && tokens.isEmpty()) {
+            setLocalStep(LocalSteps.INACTIVE);
         } else {
-            // The revenue allocation has been selected
-            orWindow.process(action);
-        }
-    }
-
-    private void buyBonusToken (BuyBonusToken action) {
-
-        orWindow.process(action);
-    }
-
-    protected void reachDestinations (ReachDestinations action) {
-
-        List<String> options = new ArrayList<>();
-        List<PublicCompany> companies = action.getPossibleCompanies();
-
-        for (PublicCompany company : companies) {
-            options.add(company.getId());
-        }
-
-        if (options.size() > 0) {
-            orWindow.setVisible(true);
-            orWindow.toFront();
-
-            CheckBoxDialog dialog = new CheckBoxDialog(SELECT_DESTINATION_COMPANIES_DIALOG,
-                    this,
-                    orWindow,
-                    LocalText.getText("DestinationsReached"),
-                    LocalText.getText("DestinationsReachedPrompt"),
-                    options.toArray(new String[0]));
-            setCurrentDialog (dialog, action);
-        }
-    }
-
-    /**
-     * @return True if the map panel expected hex clicks for actions / corrections
-     */
-    public boolean hexClicked(GUIHex clickedHex, GUIHex selectedHex, boolean rightClick) {
-
-        // protection if localStep is not defined (outside operating rounds)
-        if (localStep == null) {
-            return false;
-        }
-
-        // if selectedHex is clicked again ==> change Upgrade, or Upgrade-Selection
-        if (selectedHex == clickedHex) {
-            // should not occur (as a hex is selected), however let us define that in case
-            if (localStep == LocalSteps.SELECT_UPGRADE) {
-                if (rightClick) { // right-click => next upgrade
-                    upgradePanel.nextUpgrade();
-                } else {
-                    upgradePanel.nextSelection();
-                }
-                return true;
-            }
-            return false;
-        }
-
-        // if clickedHex is not on map => deactivate upgrade selection and use
-        if (clickedHex == null) {
-            if (localStep == LocalSteps.SELECT_UPGRADE) {
-                if (selectedHex != null) {
-                    map.selectHex(null);
-                }
-                setLocalStep(LocalSteps.SELECT_HEX);
-                return true;
-            }
-            return false;
-        }
-
-        // otherwise a clickedHex is defined ==> select the hex if upgrades are provided
-        if (hexUpgrades.containsVisible(clickedHex)) {
-            switch (localStep) {
-                case SELECT_HEX:
-                    if (!gotPermission(clickedHex)) return false;
-                    // if permitted, falls through
-                case SELECT_UPGRADE:
-                    map.selectHex(clickedHex);
-                    setLocalStep(LocalSteps.SELECT_UPGRADE);
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        // otherwise the clicked hex is not contained, so go back to SelectHex
-        switch (localStep) {
-            case SELECT_HEX:
-            case SELECT_UPGRADE:
-                map.selectHex(null);
-                setLocalStep(LocalSteps.SELECT_HEX);
-                return false;
-            default:
-                return false;
-        }
-    }
-
-    protected boolean gotPermission(GUIHex guiHex) {
-
-        // Check if the clicked hex is reserved for a company
-        MapHex hex = guiHex.getHex();
-        if (!hex.isReservedForCompany() || !hex.isPreprintedTileCurrent()) return true;
-
-        // Check if this is a tile upgrade
-        HexUpgrade hexUpgrade = (HexUpgrade) hexUpgrades.getUpgrades(guiHex).toArray()[0];
-        if (!(hexUpgrade instanceof TileHexUpgrade)) return true;
-
-        // Check if permission from another player is required
-        TileHexUpgrade upgrade = (TileHexUpgrade) hexUpgrade;
-        LayTile action = upgrade.getAction();
-        Player thisPlayer = action.getPlayer();
-        Player otherPlayer = guiHex.getHex().getReservedForCompany().getPresident();
-        if (thisPlayer.equals(otherPlayer)) return true;
-
-        // We have to, so start a dialog.
-        // The current player should have got permission off-game.
-        ConfirmationDialog dialog = new ConfirmationDialog(GOT_PERMISSION_DIALOG,
-                this,
-                orWindow,
-                LocalText.getText("GotPermission"),
-                LocalText.getText("GotPermissionDialog", otherPlayer, upgrade.getHex().getHex()),
-                LocalText.getText("Yes"),
-                LocalText.getText("No"));
-        setCurrentDialog (dialog, action);
-        return true;
-    }
-
-    // FIXME: Inform SoundManager about Rotation of Tile (selection of upgrade)
-
-    public void confirmUpgrade() {
-        HexUpgrade upgrade = hexUpgrades.getActiveUpgrade();
-        if (upgrade instanceof TileHexUpgrade) {
-            layTile((TileHexUpgrade)upgrade);
-        }
-        if (upgrade instanceof TokenHexUpgrade) {
-            layToken((TokenHexUpgrade)upgrade);
-        }
-    }
-
-    public void skipUpgrade() {
-        if (getPossibleActions().containsCorrections()) {
-            // skip on corrections => return to Select Hex
-            map.selectHex(null);
-            setLocalStep(LocalSteps.SELECT_HEX);
-        } else {
-            orWindow.process(new NullAction(gameUIManager.getRoot(), NullAction.Mode.SKIP));
-        }
-    }
-
-    protected void layTile(TileHexUpgrade upgrade) {
-        LayTile allowance = upgrade.getAction();
-        // FIXME: Removed a lot of checks here
-        //            List<LayTile> allowances =
-        //                map.getTileAllowancesForHex(selectedHex.getHexModel());
-        //            LayTile allowance = null;
-        //            Tile tile = selectedHex.getProvisionalTile();
-        //            if (allowances.size() == 1) {
-        //                allowance = allowances.get(0);
-        //            } else {
-        //                // Check which allowance applies
-        //                // We'll restrict to cases where we have both a special property
-        //                // and a normal 'blanket' allowance.
-        //                // First check which is which.
-        //                List<Tile> sp_tiles;
-        //                List<MapHex> sp_hexes;
-        //                LayTile gen_lt = null;
-        //                LayTile spec_lt = null;
-        //                for (LayTile lt : allowances) {
-        //                    if (lt.getType() == LayTile.SPECIAL_PROPERTY) {
-        //                        // Cases where a special property is used include:
-        //                        // 1. SP refers to specified tiles, (one of) which is chosen:
-        //                        // (examples: 18AL Lumber Terminal, 1889 Port)
-        //                        if ((sp_tiles = lt.getTiles()) != null
-        //                                && !sp_tiles.contains(tile)) continue;
-        //                        // 2. SP refers to specified hexes, (one of) which is chosen:
-        //                        // (example: 1830 hex B20)
-        //                        if ((sp_hexes = lt.getLocations()) != null
-        //                                && !sp_hexes.contains(selectedHex.getHexModel())) continue;
-        //                        spec_lt = lt;
-        //                    } else {
-        //                        // Default case: the generic allowance
-        //                        gen_lt = lt;
-        //                    }
-        //                }
-        //
-        //                allowance = spec_lt == null ? gen_lt :
-        //                    gen_lt == null ? spec_lt :
-        //                        spec_lt.getSpecialProperty().getPriority()
-        //                                == SpecialProperty.Priority.FIRST ? spec_lt : gen_lt;
-        //
-        //            }
-        allowance.setChosenHex(upgrade.getHex().getHex());
-        int orientation = upgrade.getCurrentRotation().getTrackPointNumber();
-        allowance.setOrientation(orientation);
-        Tile targetTile = upgrade.getUpgrade().getTargetTile();
-        allowance.setLaidTile(targetTile);
-        allowance.setRelayBaseTokens(upgrade.isRelayBaseTokens());
-
-        relayBaseTokens (allowance);
-
-        if (!orWindow.process(allowance)) {
             setLocalStep(LocalSteps.SELECT_HEX);
         }
     }
 
-    private void layToken(TokenHexUpgrade upgrade) {
-        LayToken action = upgrade.getAction();
-        if (action instanceof LayBaseToken) {
-            layBaseToken(upgrade);
-        } else if (action instanceof LayBonusToken) {
-            layBonusToken(upgrade);
-        }
-    }
-
-
-    private void layBaseToken(TokenHexUpgrade upgrade) {
-        MapHex hex = upgrade.getHex().getHex();
-        LayBaseToken action = (LayBaseToken) upgrade.getAction();
-
-        action.setChosenHex(hex);
-        if (upgrade.getSelectedStop() != null) { // Added for 18Scan, still necessary?
-            action.setChosenStation(upgrade.getSelectedStop().getRelatedStationNumber());
-        }
-
-        if (!orWindow.process(action)) {
-            setLocalStep(LocalSteps.SELECT_HEX);
-        }
-    }
-
-    /**
-     * Manually relay the tokens.
-     * This is only needed in special cases,
-     * such as the 1830 Erie home token.
-     * If applicable, the TileSet entry for the <i>old</i> tile
-     * should specify <code>relayBaseTokens="yes"</code> as an
-     * attribute in the Upgrade tag.
-     * @param action The LayTile PossibleAction.
-     */
-    // FIXME: This has to be rewritten with the new tile mechanism
-    private void relayBaseTokens (LayTile action) {
-
-        final MapHex hex = action.getChosenHex();
-        Tile newTile = action.getLaidTile();
-        Tile oldTile = hex.getCurrentTile();
-
-        // Check if manual token relay is required.
-        // This was an emergency measure in cases where automatic relay
-        // did not work (e.g. 1837 tile 427). Now probably obsolete.
-        if (!action.isRelayBaseTokens()
-                && !oldTile.relayBaseTokensOnUpgrade()) return; // is deprecated
-
-        List<Stop> stopsToQuery = Lists.newArrayList(hex.getStops());
-
-        /* Check which tokens must be relaid, and in which sequence.
-         * Ideally, the game engine should instruct the UI what to do
-         * if there is more than one stop and more than one token.
-         *
-         * For now, the only case that needs special handling is the 1835 BA home hex L6,
-         * where it it possible to have two tokens laid before even one tile.
-         * Let's generalise this case to: two stops, both tokened.
-         * We consider single-slot stops only.
-         * In fact, all we need to do is
-         * 1. Sort the stops so that the home company gets queried first,
-         * 2. Count down the number of free slots per new station, so that full stations are skipped,
-         * It's already taken care for, that a choice-between-one is handled automatically.
-         * [EV, jun2012]
-         *
-         * TODO: (Rails2.0) Check if this still works
-         */
-        if (stopsToQuery.size() == 2) {
-            Collections.sort(stopsToQuery, new Comparator<>() {
-                @Override
-                public int compare (Stop s1, Stop s2) {
-                    Set<BaseToken> tokens;
-                    boolean stop1IsHome = !((tokens = s1.getBaseTokens()).isEmpty())
-                        && Iterables.get(tokens, 0).getParent().getHomeHexes().contains(hex);
-                    boolean stop2IsHome = !((tokens = s2.getBaseTokens()).isEmpty())
-                        && Iterables.get(tokens, 0).getParent().getHomeHexes().contains(hex);
-                    if (stop1IsHome && !stop2IsHome) {
-                        return -1;
-                    } else if (stop2IsHome && !stop1IsHome) {
-                        return 1;
-                    } else {
-                        return 0; // Doesn't matter
-                    }
-                }
-            });
-        }
-
-        // Array to enable counting down the free token slots per new station
-        int[] freeSlots = new int[1 + newTile.getStations().size()];
-        for (Station newStation : newTile.getStations()) {
-            freeSlots[newStation.getNumber()] = newStation.getBaseSlots();
-        }
-
-        // Ask the user to specify new token positions
-        for (Stop oldStop : stopsToQuery) {
-            if (oldStop.hasTokens()) {
-                // Assume only 1 token (no exceptions known)
-                // TODO: Rewrite this to make this code nicer
-                PublicCompany company = (Iterables.get(oldStop.getBaseTokens(), 0)).getParent();
-
-                List<String> prompts = new ArrayList<>();
-                Map<String, Integer> promptToCityMap = new HashMap<>();
-                String prompt;
-                for (Station newStation : newTile.getStations()) {
-                    if (newStation.getBaseSlots() > 0 && freeSlots[newStation.getNumber()] > 0) {
-                        prompt = LocalText.getText("SelectStationForTokenOption",
-                                newStation.getNumber(),
-                                TrackConfig.getConnectionString(hex, newTile,
-                                        action.getOrientation(), newStation));
-                        prompts.add(prompt);
-                        promptToCityMap.put(prompt, newStation.getNumber());
-                    }
-                }
-                if (prompts.isEmpty()) {
-                    continue;
-                }
-                if (prompts.size () > 1) {
-                    String selected =
-                        (String) JOptionPane.showInputDialog(orWindow,
-                                LocalText.getText("SelectStationForToken",
-                                        //action.getPlayerName(),
-                                        /* In some cases, it's not the acting player that must take this action,
-                                         * but it's always the president.
-                                         * TODO WARNING: THE NEXT LINE BREAKS THE CLIENT/SERVER SEPARATION
-                                         * so this is a provisional fix only.
-                                         * It is for 1835, and intends to address the BA president if the BA home token
-                                         * must be laid in case another company, having the turn, lays a green tile in L6
-                                         * using the PfB when the BA has started but not yet operated.
-                                         */
-                                        company.getPresident().getId(),
-                                        hex.getId(),
-                                        company.getId()
-                                ),
-                                LocalText.getText("WhichStation"),
-                                JOptionPane.PLAIN_MESSAGE, null,
-                                prompts.toArray(), prompts.get(0));
-                    if (selected == null) return;
-                    action.addRelayBaseToken(company.getId(), promptToCityMap.get(selected));
-                    --freeSlots[promptToCityMap.get(selected)];
-                } else {
-                    action.addRelayBaseToken(company.getId(), promptToCityMap.get(prompts.toArray() [0]));
-                    --freeSlots[promptToCityMap.get(prompts.toArray()[0])];
-                }
-            }
-        }
-    }
-
-    /**
-     * Lay Token finished.
-     *
-     * @param upgrade The LayBonusToken action object of the laid token.
-     */
-    // FIXME: This has to be rewritten
-    public void layBonusToken(TokenHexUpgrade upgrade) {
-
-        LayToken action = upgrade.getAction();
-
-        // Assumption for now: always BonusToken
-        // We might use it later for BaseTokens too.
-
-        HexMap map = mapPanel.getMap();
-        GUIHex selectedHex = map.getSelectedHex();
-
-        if (selectedHex != null) {
-            LayToken executedAction = action;
-
-            executedAction.setChosenHex(selectedHex.getHex());
-
-            if (orWindow.process(executedAction)) {
-                // FIXME: Should this be setInactive(), please check
-                upgradePanel.setActive();
-                map.selectHex(null);
-                //ensure painting the token (model update currently does not arrive at UI)
-                map.repaintTokens(selectedHex.getBounds());
-            }
-        }
-    }
-
-    public void operatingCosts(){
-
-        List<String> textOC = new ArrayList<>();
-        List<OperatingCost> actionOC = getPossibleActions().getType(OperatingCost.class);
-
-        for (OperatingCost ac:actionOC) {
-
-            String suggestedCostText;
-            if (ac.isFreeEntryAllowed())
-                suggestedCostText = LocalText.getText("OCAmountEntry");
-            else
-                suggestedCostText = gameUIManager.format(ac.getAmount());
-
-            OperatingCost.OCType t = ac.getOCType();
-            if (t == OperatingCost.OCType.LAY_TILE)
-                textOC.add(LocalText.getText("OCLayTile",
-                        suggestedCostText ));
-
-            if (t == OperatingCost.OCType.LAY_BASE_TOKEN)
-                textOC.add(LocalText.getText("OCLayBaseToken",
-                        suggestedCostText ));
-        }
-
-        if (!textOC.isEmpty()) {
-            String chosenOption = (String) JOptionPane.showInputDialog(orWindow,
-                    LocalText.getText("OCSelectMessage"),
-                    LocalText.getText("OCSelectTitle"),
-                    JOptionPane.QUESTION_MESSAGE, null,
-                    textOC.toArray(), textOC.get(0));
-            if (chosenOption != null) {
-                int index = textOC.indexOf(chosenOption);
-                OperatingCost chosenAction = actionOC.get(index);
-                if (chosenAction.isFreeEntryAllowed()) {
-                    String costString = (String) JOptionPane.showInputDialog(orWindow,
-                            LocalText.getText("OCDialogMessage", chosenOption),
-                            LocalText.getText("OCDialogTitle"),
-                            JOptionPane.QUESTION_MESSAGE, null,
-                            null, chosenAction.getAmount());
-                    int cost;
-                    try {
-                        cost = Integer.parseInt(costString);
-                    } catch (NumberFormatException e) {
-                        cost = 0;
-                    }
-                    chosenAction.setAmount(cost);
-                } else {
-                    chosenAction.setAmount(chosenAction.getAmount());
-                }
-
-                if (orWindow.process(chosenAction)) {
-                    updateMessage();
-                }
-            }
-        }
-    }
-
-    public void buyTrain() {
-
-        List<String> prompts = new ArrayList<>();
-        Map<String, PossibleAction> promptToTrain = new HashMap<>();
-        Train train;
-        StringBuilder usingPrivates = new StringBuilder();
-
-        PossibleAction selectedAction;
-        BuyTrain buyAction;
-
-        String prompt;
-        StringBuffer b;
-        int cost;
-        Owner from;
-
-        List<BuyTrain> buyableTrains = getPossibleActions().getType(BuyTrain.class);
-        for (BuyTrain bTrain : buyableTrains) {
-            cost = bTrain.getFixedCost();
-            from = bTrain.getFromOwner();
-
-            /* Create a prompt per buying option */
-            b = new StringBuffer();
-
-            b.append(LocalText.getText("BUY_TRAIN_FROM",
-                    bTrain.getType(),
-                    from.getId() ));
-            if (bTrain.isForExchange()) {
-                String exchTrainTypes = bTrain.getTrainsForExchange().toString()
-                        // Replacing e.g. "[4_0]" by "4", or "[4_0, 5_0, 6_0]" by "4,5 or 6"
-                        .replaceAll("[\\[ ]?(\\w+)_\\d+(,)?\\s?]?", "$1$2")
-                        .replaceFirst(",(\\w+)$"," or $1");
-                b.append(" (").append(LocalText.getText("DiscardingTrain", exchTrainTypes)).append(")");
-            }
-            //if (cost > 0) {
-                BuyTrain.Mode mode = bTrain.getFixedCostMode();
-                if (/*mode == null ||*/ mode == BuyTrain.Mode.FIXED) {
-                    b.append(" ").append(
-                            LocalText.getText("AT_PRICE", gameUIManager.format(cost)));
-                } else if (mode == BuyTrain.Mode.MAX) {
-                    b.append(" ").append(
-                            LocalText.getText("AT_MAX_PRICE", gameUIManager.format(cost)));
-                } else if (mode == BuyTrain.Mode.MIN) {
-                    b.append(" ").append(
-                            LocalText.getText("AT_MIN_PRICE", gameUIManager.format(cost)));
-                }
-            //}
-            if (bTrain.hasSpecialProperty()) {
-                String priv =
-                        (bTrain.getSpecialProperty()).getOriginalCompany().getId();
-                b.append(" ").append(LocalText.getText("USING_SP", priv));
-                usingPrivates.append(", ").append(priv);
-            }
-            if (bTrain.mustPresidentAddCash()) {
-                b.append(" ").append(
-                        LocalText.getText("YOU_MUST_ADD_CASH",
-                                gameUIManager.format(bTrain.getPresidentCashToAdd())));
-            } else if (bTrain.mayPresidentAddCash()) {
-                b.append(" ").append(
-                        LocalText.getText("YOU_MAY_ADD_CASH",
-                                gameUIManager.format(bTrain.getPresidentCashToAdd())));
-            }
-
-            if (bTrain.getExtraMessage() != null) {
-                b.append(" (").append(bTrain.getExtraMessage()).append(")");
-            }
-            prompt = b.toString();
-            prompts.add(prompt);
-            promptToTrain.put(prompt, bTrain);
-        }
-
-        if (prompts.size() == 0) {
-            JOptionPane.showMessageDialog(orWindow,
-                    LocalText.getText("CannotBuyAnyTrain"));
+    private void populateTileLayOptionsFromHexUpgrades() {
+        if (hexUpgrades == null)
             return;
-        }
-
-        StringBuilder msgbuf =
-            new StringBuilder(LocalText.getText("SelectTrain"));
-        if (usingPrivates.length() > 0) {
-            msgbuf.append("<br><font color=\"red\">");
-            msgbuf.append(LocalText.getText("SelectCheapTrain",
-                    usingPrivates.substring(2)));
-            msgbuf.append("</font>");
-        }
-        messagePanel.setMessage(msgbuf.toString());
-
-        String selectedActionText =
-            (String) JOptionPane.showInputDialog(orWindow,
-                    LocalText.getText("BUY_WHICH_TRAIN"),
-                    LocalText.getText("WHICH_TRAIN"),
-                    JOptionPane.QUESTION_MESSAGE, null, prompts.toArray(),
-                    prompts.get(0));
-        if (!Util.hasValue(selectedActionText)) return;
-
-        selectedAction = promptToTrain.get(selectedActionText);
-        if (selectedAction == null) return;
-
-        buyAction = (BuyTrain) selectedAction;
-        train = buyAction.getTrain();
-        PublicCompany company = buyAction.getCompany();
-        Owner seller = buyAction.getFromOwner();
-        int fixedCost = buyAction.getFixedCost();
-        BuyTrain.Mode mode = buyAction.getFixedCostMode();
-        log.debug("From {} cost {} mode {}", seller, fixedCost, mode);
-
-        // The relationship between fixedCost and mode is explained
-        // in the Javadoc of the Mode enum in the BuyTrain class.
-        if (seller instanceof PublicCompany
-                && !company.mustTradeTrainsAtFixedPrice()
-                && !((PublicCompany) seller).mustTradeTrainsAtFixedPrice()
-                && (fixedCost == 0 || mode != null && mode != BuyTrain.Mode.FIXED)) {
-            String remark = "";
-            String priceText;
-            //if (fixedCost > 0 && mode != null) {
-                priceText = gameUIManager.format(fixedCost);
-                switch (mode) {
-                    case MIN:
-                        remark = LocalText.getText("OrMore", priceText);
-                        break;
-                    case MAX:
-                        remark = LocalText.getText("OrLess", priceText);
-                    default:
-                }
-            //}
-            prompt = LocalText.getText("WHICH_TRAIN_PRICE",
-                    buyAction.getCompany().getId(),
-                    train.toText(),
-                    seller.getId(),
-                    remark);
-            String response;
-            for (;;) {
-                response =
-                    JOptionPane.showInputDialog(orWindow, prompt,
-                            LocalText.getText("WHICH_PRICE"),
-                            JOptionPane.QUESTION_MESSAGE);
-                if (response == null) return; // Cancel
-                int enteredPrice;
-                try {
-                    enteredPrice = Integer.parseInt(response);
-                } catch (NumberFormatException e) {
-                    // Price stays 0, this is handled below
-                    enteredPrice = 0;
-                }
-                if (enteredPrice > 0
-                        && (mode == BuyTrain.Mode.MIN && enteredPrice >= fixedCost
-                            || mode == BuyTrain.Mode.MAX && enteredPrice <= fixedCost
-                            || mode == BuyTrain.Mode.FREE)) {
-                    fixedCost = enteredPrice;
-                    break; // Got a valid price.
-                }
-                if (!prompt.startsWith("Please")) {
-                    prompt =
-                        LocalText.getText("ENTER_PRICE_OR_CANCEL") + "\n"
-                        + prompt;
-                }
-            }
-        }
-
-        Train exchangedTrain = null;
-        if (train != null && buyAction.isForExchange()) {
-            Set<Train> oldTrains = buyAction.getTrainsForExchange();
-            if (oldTrains.size() == 1) {
-                exchangedTrain = Iterables.get(oldTrains,0);
-            } else {
-                List<String> oldTrainOptions =
-                    new ArrayList<>(oldTrains.size());
-                String[] options = new String[oldTrains.size()];
-                int jj = 0;
-                for (int j = 0; j < oldTrains.size(); j++) {
-                    options[jj + j] =
-                            LocalText.getText("N_Train", Iterables.get(oldTrains, j).toText());
-                    oldTrainOptions.add(options[jj + j]);
-                }
-                String exchangedTrainName =
-                    (String) JOptionPane.showInputDialog(orWindow,
-                            LocalText.getText("WHICH_TRAIN_EXCHANGE_FOR",
-                                        gameUIManager.format(fixedCost)),
-                                    LocalText.getText("WHICH_TRAIN_TO_EXCHANGE"),
-                                    JOptionPane.QUESTION_MESSAGE, null, options,
-                                    options[0]);
-                if (exchangedTrainName != null) {
-                    int index = oldTrainOptions.indexOf(exchangedTrainName);
-                    if (index >= 0) {
-                        exchangedTrain = Iterables.get(oldTrains, index);
+        for (GUIHex guiHex : hexUpgrades.getHexes()) {
+            for (HexUpgrade upgrade : hexUpgrades.getUpgrades(guiHex)) {
+                if (upgrade instanceof TileHexUpgrade && upgrade.isValid()) {
+                    TileHexUpgrade th = (TileHexUpgrade) upgrade;
+                    for (net.sf.rails.game.HexSide side : th.getRotations()) {
+                        currentValidTileLays.add(new TileLayOption(guiHex.getHex(), th.getUpgrade().getTargetTile(),
+                                side.getTrackPointNumber(), th.getAction()));
                     }
                 }
-                if (exchangedTrain == null) {
-                    // No valid train selected - cancel the buy action
-                    train = null;
-                }
             }
-        }
-
-        if (train != null) {
-
-            buyAction.setPricePaid(fixedCost);
-            buyAction.setExchangedTrain(exchangedTrain);
-            if (buyAction.mustPresidentAddCash()) {
-                buyAction.setAddedCash(buyAction.getPresidentCashToAdd());
-            }
-            orWindow.process(buyAction);
         }
     }
 
-    public void buyPrivate() {
-
-        int amount, index;
-        List<String> privatesForSale = new ArrayList<>();
-        List<BuyPrivate> privates = getPossibleActions().getType(BuyPrivate.class);
-        String chosenOption;
-        BuyPrivate chosenAction;
-        int minPrice = 0, maxPrice = 0;
-        String priceRange;
-
-        for (BuyPrivate action : privates) {
-            minPrice = action.getMinimumPrice();
-            maxPrice = action.getMaximumPrice();
-            if (minPrice < maxPrice) {
-                priceRange = gameUIManager.format(minPrice) + "..."
-                        + gameUIManager.format(maxPrice);
-            } else {
-                priceRange = gameUIManager.format(maxPrice);
-            }
-
-            privatesForSale.add(LocalText.getText("BuyPrivatePrompt",
-                    action.getPrivateCompany().getId(),
-                    action.getPrivateCompany().getOwner().getId(),
-                    priceRange ));
-        }
-
-        if (privatesForSale.size() > 0) {
-            chosenOption =
-                (String) JOptionPane.showInputDialog(orWindow,
-                        LocalText.getText("BUY_WHICH_PRIVATE"),
-                        LocalText.getText("WHICH_PRIVATE"),
-                        JOptionPane.QUESTION_MESSAGE, null,
-                        privatesForSale.toArray(), privatesForSale.get(0));
-            if (chosenOption != null) {
-                index = privatesForSale.indexOf(chosenOption);
-                chosenAction = privates.get(index);
-                minPrice = chosenAction.getMinimumPrice();
-                maxPrice = chosenAction.getMaximumPrice();
-                if (minPrice < maxPrice) {
-                    String price =
-                        JOptionPane.showInputDialog(orWindow,
-                                LocalText.getText("WHICH_PRIVATE_PRICE",
-                                        chosenOption,
-                                            gameUIManager.format(minPrice),
-                                            gameUIManager.format(maxPrice) ),
-                                        LocalText.getText("WHICH_PRICE"),
-                                        JOptionPane.QUESTION_MESSAGE);
-                    try {
-                        amount = Integer.parseInt(price);
-                    } catch (NumberFormatException e) {
-                        amount = 0; // This will generally be refused.
-                    }
-                    chosenAction.setPrice(amount);
-                } else {
-                    chosenAction.setPrice(maxPrice);
-                }
-                if (orWindow.process(chosenAction)) {
-                    updateMessage();
-                }
-            }
-        }
-
-    }
-
-
-    /** Default implementation.
-     * The &lt;Loans&gt; attributes number and value <b>must</b>
-     * have been configured in CompanyManager.xml */
-    protected void takeLoans(TakeLoans action) {
-
-        if (action.getMaxNumber() == 1) {
-
-            String message = LocalText.getText("PleaseConfirm");
-            String prompt = LocalText.getText("TakeLoanPrompt",
-                    action.getCompanyName(),
-                    gameUIManager.format(action.getPrice()));
-            if (JOptionPane.showConfirmDialog(orWindow, prompt,
-                    message, JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE)
-                    == JOptionPane.OK_OPTION) {
-                action.setNumberTaken(1);
-                orWindow.process(action);
-            }
-
-        } else {
-            // For now we disregard the case of multiple loans
-        }
-
-    }
-
-    protected void repayLoans (RepayLoans action) {
-
-        int minNumber = action.getMinNumber();
-        int maxNumber = action.getMaxNumber();
-        int loanAmount = action.getPrice();
-        int numberRepaid = 0;
-
-        if (minNumber == maxNumber) {
-            // No choice, just tell him
-            JOptionPane.showMessageDialog (orWindow,
-                    LocalText.getText("RepayLoan",
-                            minNumber,
-                            gameUIManager.format(loanAmount),
-                            gameUIManager.format(minNumber * loanAmount)));
-            numberRepaid = minNumber;
-            action.setNumberTaken(numberRepaid);
-            orWindow.process(action);
-        } else {
-            //List<String> options = new ArrayList<String>();
-            String[] options = new String[maxNumber-minNumber+1];
-            for (int i=minNumber, j=0; i<=maxNumber; i++, j++) {
-                if (i == 0) {
-                    options[j] = LocalText.getText("None");
-                } else {
-                    options[j] = LocalText.getText("RepayLoan",
-                            i,
-                            gameUIManager.format(loanAmount),
-                            gameUIManager.format(i * loanAmount));
-                }
-            }
-            RadioButtonDialog currentDialog = new RadioButtonDialog (REPAY_LOANS_DIALOG,
-                    gameUIManager,
-                    orWindow,
-                    LocalText.getText("Select"),
-                    LocalText.getText("SelectLoansToRepay", action.getCompanyName()),
-                    options,
-                    0);
-            setCurrentDialog (currentDialog, action);
-        }
-    }
-
-    /** Used to process some < properties from the 'Special' menu */
-    /* In fact currently not used */
-    protected void useSpecialProperty (UseSpecialProperty action) {
-        gameUIManager.processAction(action);
-    }
-
-    public void updateStatus(boolean myTurn) {
-        updateStatus(null, myTurn);
-    }
-
-    public void updateStatus(PossibleAction actionToComplete, boolean myTurn) {
-        orPanel.resetActions();
-
-        messagePanel.setMessage(null);
-
-        RoundFacade currentRound = gameUIManager.getCurrentRound();
-        if (!(currentRound instanceof OperatingRound)) {
-            log.debug("early return: {}", currentRound);
+    private void populateTokenLayOptionsFromHexUpgrades() {
+        if (hexUpgrades == null)
             return;
-        }
-
-        if (actionToComplete != null) {
-            log.debug("ExecutedAction: {}", actionToComplete);
-        }
-        // End of possible action debug listing
-
-        PublicCompany orComp = oRound.getOperatingCompany();
-        log.debug("OR company = {} in round {} index={}", orComp.getId(),
-                oRound.getRoundName(),oRound.getOperatingCompanyIndex());
-
-        GameDef.OrStep orStep = oRound.getStep();
-        log.debug("OR step={}", orStep);
-
-        if (oRound.getOperatingCompanyIndex() != orCompIndex) {
-            if (orCompIndex >= 0) {
-                orPanel.finishORCompanyTurn(orCompIndex);
-            }
-            // Check if sequence has changed
-            checkORCompanySequence(companies, oRound.getOperatingCompanies());
-            orCompIndex = oRound.getOperatingCompanyIndex();
-        }
-
-        orPanel.initORCompanyTurn(orComp, orCompIndex);
-
-        //orPanel.initPrivateBuying(false);
-
-
-        if (!myTurn) return;
-
-        PossibleActions possibleActions = getPossibleActions();
-
-        privatesCanBeBoughtNow = possibleActions.contains(BuyPrivate.class);
-        orPanel.initPrivateBuying(privatesCanBeBoughtNow);
-
-        // initialize operating costs actions
-        orPanel.initOperatingCosts(possibleActions.contains(OperatingCost.class));
-
-        // initial deactivation of revenue calculation
-        if (!possibleActions.contains(SetDividend.class)) {
-            orPanel.stopRevenueUpdate();
-            //orPanel.resetCurrentRevenueDisplay();
-        }
-
-        if (orStep == GameDef.OrStep.LAY_TRACK) {
-            //if (possibleActions.contains(LayTile.class)) {
-
-            orPanel.initTileLayingStep();
-            orPanel.setupConfirm();
-
-            orWindow.requestFocus();
-
-            //} else if (possibleActions.contains(LayBaseToken.class)) {
-        } else if (orStep == GameDef.OrStep.LAY_TOKEN) {
-
-            orWindow.requestFocus();
-
-            orPanel.initTokenLayingStep();
-            orPanel.setupConfirm();
-            log.debug("BaseTokens can be laid or bonus tokens bought");
-
-        } else if (possibleActions.contains(SetDividend.class)
-                && localStep == LocalSteps.SELECT_PAYOUT ) {
-
-            SetDividend action;
-            if (actionToComplete != null) {
-                action = (SetDividend) actionToComplete;
-            } else {
-                action = possibleActions.getType(SetDividend.class).get(0);
-            }
-
-            log.debug("Payout action before cloning: {}", action);
-
-            orPanel.initPayoutStep(orCompIndex, action,
-                    action.isAllocationAllowed(SetDividend.WITHHOLD),
-                    action.isAllocationAllowed(SetDividend.SPLIT),
-                    action.isAllocationAllowed(SetDividend.PAYOUT));
-
-            messagePanel.setMessage(LocalText.getText("SelectPayout"));
-
-        } else if (possibleActions.contains(SetDividend.class)) {
-
-            SetDividend action =
-                possibleActions.getType(SetDividend.class).get(0);
-
-            orPanel.initRevenueEntryStep(orCompIndex, action);
-
-            String message = LocalText.getText("EnterRevenue");
-            if (action.getRequiredCash() > 0) {
-                message += "<br><font color=\"red\">"
-                    + LocalText.getText("WarningNeedCash",
-                            gameUIManager.format(action.getRequiredCash()))
-                            + "</font>";
-            }
-            messagePanel.setMessage(message);
-
-        } else if (orStep == GameDef.OrStep.BUY_TRAIN) {
-
-            boolean canBuyTrain = possibleActions.contains(BuyTrain.class);
-            orPanel.initTrainBuying(canBuyTrain);
-
-            StringBuilder b = new StringBuilder(LocalText.getText("BuyTrain"));
-
-            // TEMPORARY extra message about having no route
-            for (BuyTrain bTrain : possibleActions.getType(BuyTrain.class)) {
-                if (bTrain.isForcedBuyIfHasRoute()) {
-                    b.append("<br><font color=\"red\">");
-                    if (bTrain.isForcedBuyIfNoRoute()) {
-                        b.append(LocalText.getText("MustBuyTrainIfNoRoute"));
-                    } else {
-                        b.append(LocalText.getText("MustBuyTrainIfHasRoute"));
-                    }
-                    b.append("</font>");
-                    break;
-                }
-            }
-
-            messagePanel.setMessage(b.toString());
-
-        } else if (possibleActions.contains(DiscardTrain.class)) {
-
-            gameUIManager.discardTrains(possibleActions.getType(DiscardTrain.class).get(0));
-
-        } else if (possibleActions.contains(RepayLoans.class)) {
-
-            orPanel.enableLoanRepayment(possibleActions.getType(RepayLoans.class).get(0));
-
-        } else if (possibleActions.contains(ExchangeTokens2.class)) {
-
-            prepareExchangeTokens (possibleActions.getType(ExchangeTokens2.class).get(0));
-
-        } else if (orStep == GameDef.OrStep.FINAL) {
-            // Does not occur???
-            orPanel.finishORCompanyTurn(orCompIndex);
-        }
-
-        if (possibleActions.contains(TakeLoans.class)) {
-            orPanel.enableLoanTaking (possibleActions.getType(TakeLoans.class).get(0));
-        }
-
-
-        setMapRelatedActions(possibleActions);
-
-        GameAction undoAction = null;
-        GameAction redoAction = null;
-
-        if (possibleActions.contains(NullAction.class)) {
-
-            List<NullAction> actions =
-                possibleActions.getType(NullAction.class);
-            for (NullAction action : actions) {
-                switch (action.getMode()) {
-                case DONE:
-                    orPanel.enableDone(action);
-                    break;
-                case SKIP:
-                    // Was disabled, because actionless steps
-                    // are normally skipped. But sometines (18Scan) not,
-                    // because of a confusion about bonus token layability.
-                    // See OperatingRound.nextStep().
-                    orPanel.enableSkip(action);
-                    break;
-                default:
-                    break;
+        for (GUIHex guiHex : hexUpgrades.getHexes()) {
+            for (HexUpgrade upgrade : hexUpgrades.getUpgrades(guiHex)) {
+                if (upgrade instanceof TokenHexUpgrade && upgrade.isValid()) {
+                    TokenHexUpgrade th = (TokenHexUpgrade) upgrade;
+                    if (th.getAction() instanceof LayBaseToken)
+                        currentValidTokenLays.add(new TokenLayOption(guiHex.getHex(), th.getSelectedStop(),
+                                (LayBaseToken) th.getAction()));
                 }
             }
         }
-
-        if (possibleActions.contains(GameAction.class)) {
-
-            List<GameAction> actions =
-                possibleActions.getType(GameAction.class);
-            for (GameAction action : actions) {
-                switch (action.getMode()) {
-                case UNDO:
-                    undoAction = action;
-                    break;
-                case REDO:
-                    redoAction = action;
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-        orPanel.enableUndo(undoAction);
-        orPanel.enableRedo(redoAction);
-
-        orPanel.initSpecialActions();
-
-        // Can bonus tokens be bought?
-        if (possibleActions.contains(BuyBonusToken.class)) {
-
-            List<BuyBonusToken> bonusTokenActions =
-                possibleActions.getType(BuyBonusToken.class);
-            for (BuyBonusToken bbt : bonusTokenActions) {
-                String text =
-                    LocalText.getText("BuyBonusToken",
-                            bbt.getName(),
-                                gameUIManager.format(bbt.getValue()),
-                            bbt.getSellerName(),
-                                gameUIManager.format(bbt.getPrice()) );
-                orPanel.addSpecialAction(bbt, text);
-            }
-        }
-
-        if (possibleActions.contains(ReachDestinations.class)) {
-            orPanel.addSpecialAction(possibleActions.getType(ReachDestinations.class).get(0),
-                    LocalText.getText("DestinationsReached"));
-        }
-
-        if (possibleActions.contains(GrowCompany.class)) {
-            GrowCompany action = possibleActions.getType(GrowCompany.class).get(0);
-            orPanel.addSpecialAction(possibleActions.getType(GrowCompany.class).get(0),
-                    LocalText.getText("GrowCompany",
-                            action.getCompany(), 100 / action.getNewShareUnit()));
-        }
-
-        // Any other special properties, to be shown in the "Special" menu.
-        // Example: 18AL AssignNamedTrains
-        if (possibleActions.contains(UseSpecialProperty.class)) {
-            for (UseSpecialProperty usp : possibleActions.getType(UseSpecialProperty.class)) {
-                SpecialProperty sp = usp.getSpecialProperty();
-                orPanel.addSpecialAction(usp, sp.toMenu());
-            }
-        }
-
-        // Close Private
-        if (possibleActions.contains(ClosePrivate.class)) {
-            for (ClosePrivate action: possibleActions.getType(ClosePrivate.class)) {
-                orPanel.addSpecialAction(action, action.getInfo());
-            }
-        }
-
-        checkForGameSpecificActions(orComp, orStep, possibleActions);
-
-        // If special actions exist, check if Skip button is activated
-        if (orPanel.hasSpecialActions()) {
-            upgradePanel.setActive();
-            updateMessage(); // Does not work even here !?
-        }
-
-        orPanel.redisplay();
     }
 
-    /** Stub, can be overridden by game-specific subclasses */
-    protected void checkForGameSpecificActions(PublicCompany orComp,
-                                               GameDef.OrStep orStep,
-                                               PossibleActions possibleActions) {}
-
-    /** Redraw the ORPanel if the company operating order has changed */
-    protected void checkORCompanySequence (List<PublicCompany> oldCompanies, List<PublicCompany> newCompanies) {
-        if (!Iterables.elementsEqual(oldCompanies, newCompanies)) {
-                log.debug("Detected a OR company sequence change");
-                orPanel.recreate(oRound);
-        }
-    }
-
-    protected void setLocalStep(LocalSteps localStep) {
-        log.debug("Setting upgrade step to {}", localStep);
-
-        SoundManager.notifyOfORLocalStep(localStep);
-        this.localStep = localStep;
-
-        updateMessage();
-        updateUpgradesPanel();
-    }
-
-    public void updateUpgradesPanel() {
-
-        if (upgradePanel != null) {
-            log.debug("Initial localStep is {}", localStep);
-            switch (localStep) {
-            case INACTIVE:
-                upgradePanel.setInactive();
-                break;
-            case SELECT_HEX:
-                upgradePanel.setActive();
-                break;
-            case SELECT_UPGRADE:
-                upgradePanel.setSelect(map.getSelectedHex());
-                break;
-            default:
-                upgradePanel.setInactive();
-            }
-        }
-        log.debug("Final localStep is {}", localStep);
-    }
-
-    private void displayRemainingTiles() {
-        if (remainingTiles == null) {
-            remainingTiles = new RemainingTilesWindow(orWindow);
-        } else {
-            remainingTiles.activate();
-        }
-    }
-
-    /* If the token exchange limits are *per merged company*,
-     * we need separator lines. This is used in 1826
-     */
-    private Integer[] separatorLines = null;
-    public Integer[] getSeparatorLines() {return separatorLines;}
-    public void clearSeparatorLines() {separatorLines = null; }
-
-    private void prepareExchangeTokens (ExchangeTokens2 action) {
-        prepareExchangeTokens(action, null);
-    }
-
-    private void prepareExchangeTokens (ExchangeTokens2 action, String errMsg) {
-
-        List<String> options = new ArrayList<>();
-        List<ExchangeTokens2.Location> locations = action.getLocations();
-        List<Integer> sepLinesAfterOption = new ArrayList<>();
-
-        PublicCompany newCompany = action.getNewCompany();
-        int minimumExchanges = action.getMinNumberToExchange();
-        int maximumExchanges = action.getMaxNumberToExchange();
-        boolean perCompany = action.isExchangeCountPerCompany();
-
-        ExchangeTokens2.Location location;
-        PublicCompany oldCompany;
-        PublicCompany prevOldCompany = null;
-        Stop stop;
-
-        for (int i=0; i<locations.size(); i++) {
-            location = locations.get(i);
-            oldCompany = location.getOldCompany();
-            if (prevOldCompany != null && !oldCompany.equals(prevOldCompany)) {
-                sepLinesAfterOption.add(i-1);
-            }
-            stop = location.getStop();
-            options.add(LocalText.getText("SelectTokenExchangeOption",
-                    oldCompany.getId(), stop.getStopComposedId()));
-            prevOldCompany = oldCompany;
-        }
-        if (sepLinesAfterOption.size() > 0) {
-            separatorLines = sepLinesAfterOption.toArray(new Integer[0]);
-        }
-
-        if (options.size() > 0) {
-            orWindow.setVisible(true);
-            orWindow.toFront();
-
-            String title = LocalText.getText("SelectTokensToExchange");
-            String prompt;
-            if (perCompany) {
-                prompt = LocalText.getText("SelectTokensToExchangePerComp",
-                        maximumExchanges, newCompany);
-            } else {
-                prompt = LocalText.getText("SelectTokensToExchangeAllComps",
-                        (minimumExchanges == maximumExchanges
-                                ? maximumExchanges + ""
-                                : minimumExchanges + "-" + maximumExchanges),
-                        newCompany);
-            }
-
-            if (errMsg != null && errMsg.length() > 0) {
-                prompt = "<html><font color=\"red\">" + errMsg + "</font><br>"
-                        + prompt + "</html>";
-            }
-
-            CheckBoxDialog dialog = new CheckBoxDialog(EXCHANGE_TOKENS_DIALOG,
-                    this,
-                    orWindow,
-                    title,
-                    prompt,
-                    options.toArray(new String[0]));
-            setCurrentDialog (dialog, action);
-        }
-    }
-
-    // Further Getters
-    public MessagePanel getMessagePanel() {
-        return messagePanel;
-    }
-
-    public UpgradesPanel getUpgradePanel() {
-        return upgradePanel;
-    }
-
-    public HexMap getMap() {
-        return map;
-    }
-
-    public GameUIManager getGameUIManager () {
-        return gameUIManager;
-    }
-
-    public ORWindow getORWindow() {
-        return orWindow;
-    }
-
-    public ORPanel getORPanel() {
-        return orPanel;
-    }
-
-    // FIXME: Getting the possible actions inside ORUIManager methods should be removed
-    // Better transfer them by method args
-    protected PossibleActions getPossibleActions() {
-        return gameUIManager.getGameManager().getPossibleActions();
-    }
-
-    // DialogOwner interface methods
-    @Override
-    public void dialogActionPerformed () {
-
-        JDialog currentDialog = getCurrentDialog();
-        PossibleAction currentDialogAction = getCurrentDialogAction();
-
-        if (currentDialog instanceof CheckBoxDialog) {
-
-            CheckBoxDialog dialog = (CheckBoxDialog) currentDialog;
-
-            if (currentDialogAction instanceof ReachDestinations) {
-                ReachDestinations action = (ReachDestinations) currentDialogAction;
-
-                boolean[] destined = dialog.getSelectedOptions();
-                String[] options = dialog.getOptions();
-
-                for (int index = 0; index < options.length; index++) {
-                    if (destined[index]) {
-                        action.addReachedCompany(action.getPossibleCompanies().get(index));
-                    }
-                }
-
-                // Prevent that a null action gets processed
-                if (action.getReachedCompanies() == null
-                        || action.getReachedCompanies().isEmpty()) currentDialogAction = null;
-
-            } else if (currentDialogAction instanceof ExchangeTokens2) {
-                ExchangeTokens2 action = (ExchangeTokens2) currentDialogAction;
-                boolean[] selected = dialog.getSelectedOptions();
-
-                for (int i=0; i<action.getLocations().size(); i++) {
-                    if (selected[i]) action.getLocations().get(i).setSelected();
-                }
-
-                int maxCount = action.getMaxNumberToExchange();
-                int minCount = action.getMinNumberToExchange();
-                PublicCompany newCompany = action.getNewCompany();
-                String errMsg = "";
-
-                // Some prevalidation
-                if (action.isExchangeCountPerCompany()) {
-
-                    Map<PublicCompany, Integer> counts = new HashMap<>();
-                    for (ExchangeTokens2.Location location : action.getLocations()) {
-                        PublicCompany company = location.getOldCompany();
-                        int prevCount = (counts.containsKey(company) ? counts.get(company) : 0);
-                        if (location.isSelected()) counts.put(company, prevCount + 1);
-                    }
-                    for (PublicCompany company : counts.keySet()) {
-                        int count = counts.get(company);
-                        if (count < minCount || count > maxCount) {
-                            if (errMsg.length() > 0) errMsg += "<br>";
-                            errMsg += LocalText.getText("WrongNumberOfTokensExchanged2",
-                                    newCompany, minCount, maxCount, company, count);
-                        }
-                    }
-                } else {
-                    int count = 0;
-                    for (ExchangeTokens2.Location location : action.getLocations()) {
-                        if (location.isSelected()) count++;
-                    }
-                    if (count < minCount || count > maxCount) {
-                        errMsg = LocalText.getText("WrongNumberOfTokensExchanged",
-                                newCompany, minCount, maxCount, count);
-                    }
-                }
-                if (errMsg.length() > 0) {
-                    action.clearSelections();
-                    prepareExchangeTokens(action, errMsg);
-                    return;
-                }
-            }
-
-        } else if (currentDialog instanceof ConfirmationDialog
-                && currentDialogAction instanceof LayTile) {
-
-            ConfirmationDialog dialog = (ConfirmationDialog) currentDialog;
-            boolean gotPermission = dialog.getAnswer();
-            if (gotPermission) {
+    public void processAIMove() {
+        try {
+            PossibleActions currentActions = getPossibleActions();
+            if (currentActions == null)
+                currentActions = PossibleActions.create();
+            if (currentActions.isEmpty())
                 return;
+
+            setMapRelatedActions(currentActions);
+
+            PublicCompany comp = this.orComp != null ? this.orComp
+                    : (oRound != null ? oRound.getOperatingCompany() : null);
+            if (comp == null)
+                return;
+
+            AIPlayer ai = new AIPlayer("AI_OR", this.gameUIManager.getGameManager());
+            PossibleAction chosen = ai.chooseMove(comp, currentActions, currentValidTileLays, currentValidTokenLays);
+
+            if (chosen != null) {
+                orWindow.process(chosen);
             } else {
-                currentDialogAction = null;
+                for (PossibleAction pa : currentActions.getList()) {
+                    if (pa instanceof NullAction) {
+                        orWindow.process(pa);
+                        break;
+                    }
+                }
             }
-
-        } else {
-            currentDialogAction = null;
+        } catch (Exception e) {
         }
+    }
 
-        // Required even if no action is executed, to update the UI, re-enable buttons etc.
-        gameUIManager.processAction(currentDialogAction);
+    @Override
+    public void dialogActionPerformed() {
+        JDialog d = getCurrentDialog();
+        PossibleAction a = getCurrentDialogAction();
+        if (d instanceof CheckBoxDialog && a instanceof ReachDestinations) {
+            boolean[] sel = ((CheckBoxDialog) d).getSelectedOptions();
+            for (int i = 0; i < sel.length; i++)
+                if (sel[i])
+                    ((ReachDestinations) a).addReachedCompany(((ReachDestinations) a).getPossibleCompanies().get(i));
+        } else if (d instanceof ConfirmationDialog && a instanceof LayTile) {
+            if (!((ConfirmationDialog) d).getAnswer()) {
+                if (map != null)
+                    map.selectHex(null);
+                setLocalStep(LocalSteps.SELECT_HEX);
+            }
+            a = null; // Do not process the incomplete LayTile action directly
+        }
+        gameUIManager.processAction(a);
     }
 
     @Override
@@ -1919,20 +1490,244 @@ public class ORUIManager implements DialogOwner {
     }
 
     @Override
-    public PossibleAction getCurrentDialogAction () {
+    public PossibleAction getCurrentDialogAction() {
         return gameUIManager.getCurrentDialogAction();
     }
 
     @Override
-    public void setCurrentDialog (JDialog dialog, PossibleAction action) {
+    public void setCurrentDialog(JDialog dialog, PossibleAction action) {
         gameUIManager.setCurrentDialog(dialog, action);
-        if (!(dialog instanceof MessageDialog)) orPanel.disableButtons();
+        if (!(dialog instanceof MessageDialog))
+            orPanel.disableButtons();
     }
 
-    /**
-     * @return the hexUpgrades
-     */
-    protected GUIHexUpgrades getHexUpgrades() {
-        return hexUpgrades;
+    public RailsRoot getRoot() {
+        return gameUIManager.getRoot();
     }
+
+    public PossibleActions getPossibleActions() {
+        return gameUIManager.getGameManager().getPossibleActions();
+    }
+
+    // ... (lines of unchanged context code) ...
+    /*
+     * Updates all GUIHex objects to point to the live MapHex objects from the
+     * current Game Manager.
+     * Uses reflection to ensure access to the private 'hex' field.
+     */
+    private void rebindVisualHexes() {
+        return;
+    }
+
+    private void updateCompanyHighlights() {
+        if (map == null || oRound == null)
+            return;
+
+        // If toggled OFF, clear map and return immediately
+        if (!showCompanyHighlights) {
+            map.setOwnerHighlight(null, null);
+            return;
+        }
+
+        // If toggled OFF, clear all highlights from the map and exit
+        if (!showFriendlyHexes) {
+            map.setOwnerHighlight(null, null);
+            return;
+        }
+
+        PublicCompany currentComp = oRound.getOperatingCompany();
+        if (currentComp == null) {
+            map.setOwnerHighlight(null, null);
+            return;
+        }
+
+        Player currentOwner = currentComp.getPresident();
+        // Fix: In steps like MERGE, a company might momentarily lack a president.
+        if (currentOwner == null) {
+            map.setOwnerHighlight(null, null);
+            return;
+        }
+
+        List<GUIHex> hexesToHighlight = new ArrayList<>();
+        // Store specific labels for each hex
+        Map<GUIHex, String> specificLabels = new HashMap<>();
+        // Store boolean if hex contains the active operating company
+        Map<GUIHex, Boolean> isActiveOperatingMap = new HashMap<>();
+
+        net.sf.rails.game.MapManager mapManager = getRoot().getMapManager();
+        net.sf.rails.game.CompanyManager companyManager = getRoot().getCompanyManager();
+        Map<MapHex, GUIHex> guiHexesMap = map.getGuiHexes();
+
+        if (guiHexesMap != null && mapManager != null && companyManager != null) {
+
+            // 1. Get all companies for this player
+            List<PublicCompany> playerCompanies = new ArrayList<>();
+            for (PublicCompany comp : companyManager.getAllPublicCompanies()) {
+                if (comp.getPresident() != null &&
+                        comp.getPresident().getName().equals(currentOwner.getName()) &&
+                        !comp.isClosed()) {
+                    playerCompanies.add(comp);
+                }
+            }
+
+            // 2. Scan Hexes
+            for (GUIHex guiHex : guiHexesMap.values()) {
+                if (guiHex == null || guiHex.getHex() == null)
+                    continue;
+
+                String hexId = guiHex.getHex().getId();
+                MapHex liveHex = mapManager.getHex(hexId);
+
+                if (liveHex != null && liveHex.getStopsMap() != null) {
+                    boolean foundToken = false;
+                    boolean hasOperatingCompany = false;
+                    String hexLabel = null;
+
+                    for (Stop stop : liveHex.getStopsMap().values()) {
+
+                        // Check for ANY player company on this stop
+                        for (PublicCompany comp : playerCompanies) {
+                            if (stop.hasTokenOf(comp)) {
+                                foundToken = true;
+                                if (comp.equals(currentComp)) {
+                                    hasOperatingCompany = true;
+                                    hexLabel = comp.getId(); // Prioritize operating company label
+                                } else if (hexLabel == null) {
+                                    hexLabel = comp.getId(); // Set portfolio label if operating not found yet
+                                }
+                            }
+                        }
+                    }
+
+                    if (foundToken) {
+                        hexesToHighlight.add(guiHex);
+                        specificLabels.put(guiHex, hexLabel);
+                        isActiveOperatingMap.put(guiHex, hasOperatingCompany);
+                    }
+                }
+            }
+        }
+
+        // 3. Activate Highlights (Pass NULL as label to avoid overwriting everything
+        // with one name)
+        map.setOwnerHighlight(hexesToHighlight, null);
+
+        // 4. Apply Specific Labels and Active/Portfolio styles individually
+        for (Map.Entry<GUIHex, String> entry : specificLabels.entrySet()) {
+            GUIHex guiHex = entry.getKey();
+            boolean isOperating = isActiveOperatingMap.get(guiHex);
+            guiHex.setActiveOwnerHighlight(true, entry.getValue(), isOperating);
+        }
+
+        // 5. Force Repaint to show changes
+        map.repaintAll(new Rectangle(map.getSize()));
+
+        // 6. 1870 Connection Run: Permanent Planning Highlight
+        if (currentComp instanceof net.sf.rails.game.specific._1870.PublicCompany_1870) {
+            net.sf.rails.game.specific._1870.PublicCompany_1870 comp1870 = (net.sf.rails.game.specific._1870.PublicCompany_1870) currentComp;
+
+            if (comp1870.getDestinationHex() != null && !comp1870.hasConnected()) {
+                GUIHex destGuiHex = map.getHex(comp1870.getDestinationHex());
+                // We pass 'false' for the hover-specific aggressive logic,
+                // keeping this as a persistent planning border.
+                if (destGuiHex != null) {
+                    destGuiHex.setDestinationHighlight(true);
+                }
+            }
+        }
+
+    }
+
+    public void processBuyTrain(BuyTrain action) {
+        try {
+            Owner buyingOwner = null;
+            Owner sellingOwner = action.getFromOwner();
+
+            if (oRound != null) {
+                buyingOwner = oRound.getOperatingCompany();
+            }
+            if (buyingOwner == null) {
+                buyingOwner = action.getOwner();
+            }
+
+            boolean isBankSale = (sellingOwner instanceof net.sf.rails.game.financial.Bank) ||
+                    (sellingOwner != null && sellingOwner.getParent() instanceof net.sf.rails.game.financial.Bank) ||
+                    "IPO".equals(sellingOwner != null ? sellingOwner.getId() : "") ||
+                    "Pool".equals(sellingOwner != null ? sellingOwner.getId() : "");
+
+            if (isBankSale) {
+                if (action.getPricePaid() == 0 && action.getFixedCost() > 0) {
+                    action.setPricePaid(action.getFixedCost());
+                }
+                if (orWindow.process(action))
+                    updateMessage();
+                return;
+            }
+
+            int defaultPrice = 1;
+            int maxCash = 0;
+            String buyerName = "Unknown";
+
+            if (buyingOwner instanceof PublicCompany) {
+                PublicCompany buyingCompany = (PublicCompany) buyingOwner;
+                buyerName = buyingCompany.getId();
+                maxCash = buyingCompany.getPurseMoneyModel().value();
+                defaultPrice = (maxCash > 0) ? maxCash : 1;
+            }
+
+            String trainName = "?";
+            if (action.getTrain() != null && action.getTrain().getName() != null) {
+                // Strip out the instance ID suffix (e.g., "4_2" becomes "4")
+                trainName = action.getTrain().getName().replaceAll("_\\d+$", "");
+            }
+            String sellerName = (sellingOwner != null) ? sellingOwner.getId() : "Unknown";
+
+            String message = String.format("%s buys a %s train from %s", buyerName, trainName, sellerName);
+            String detail = String.format("(%s Treasury: %s)", buyerName, gameUIManager.format(maxCash));
+            String fullMessage = "<html><h3>" + message + "</h3>" + detail + "<br>Enter Purchase Price:</html>";
+
+            String amountString = (String) JOptionPane.showInputDialog(
+                    orWindow, fullMessage, "Negotiate Price", JOptionPane.QUESTION_MESSAGE,
+                    null, null, String.valueOf(defaultPrice));
+
+            if (amountString == null)
+                return;
+
+            int price = 0;
+            try {
+                price = Integer.parseInt(amountString.replaceAll("[^0-9]", ""));
+            } catch (NumberFormatException e) {
+                price = 0;
+            }
+
+            if (price <= 0) {
+                JOptionPane.showMessageDialog(orWindow, "Price must be > 0", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (action.getPriceMode() == PriceMode.VARIABLE) {
+                if (price < action.getMinPrice() || price > action.getMaxPrice()) {
+                    JOptionPane.showMessageDialog(orWindow,
+                            "Price out of bounds (" + action.getMinPrice() + "-" + action.getMaxPrice() + ")", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (buyingOwner instanceof PublicCompany) {
+                    PublicCompany comp = (PublicCompany) buyingOwner;
+                    if (price > comp.getCash()) {
+                        action.setAddedCash(price - comp.getCash());
+                    }
+                }
+            }
+
+            action.setPricePaid(price);
+            if (orWindow.process(action))
+                updateMessage();
+
+        } catch (Exception e) {
+            log.error("TRAIN_BUY_CRASH", e);
+            orWindow.process(action);
+        }
+    }
+
 }

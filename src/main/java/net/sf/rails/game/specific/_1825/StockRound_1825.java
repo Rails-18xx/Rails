@@ -1,5 +1,5 @@
 /**
- * This class implements the 1835 rules for making new companies
+ * This class implements the 1825 rules for making new companies
  * being available in the IPO after buying shares of another company.
  */
 package net.sf.rails.game.specific._1825;

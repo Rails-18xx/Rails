@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+
+
+<!-- ONE is to the RIGHT! -->
+
+
+
+<Tiles>
+    <Tile colour="white" id="0" name="empty"/>
+    <Tile colour="white" id="-10" name="1 city">
+        <Station id="city1" position="0" slots="1" type="City"/>
+    </Tile>
+
+    <Tile colour="red" id="-5" name="Chicago">
+        <Station id="city1" position="0" slots="1" type="City" value="-1"/>
+        <Track from="city1" to="side0"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side2"/>
+        <Track from="city1" to="side3"/>
+        <Track from="city1" to="side4"/>
+        <Track from="city1" to="side5"/>
+    </Tile>
+    
+    <Tile colour="red" id="-901" name="Off-board">
+        <Station id="city1" position="0" slots="0" type="City" value="-1"/>
+        <Track from="city1" to="side0"/>
+    </Tile>
+
+        <Tile colour="red" id="-902" name="Off-board">
+        <Station id="city1" position="0" slots="0" type="City" value="-1"/>
+        <Track from="city1" to="side0"/>
+        <Track from="city1" to="side1"/>
+    </Tile>
+
+
+    <Tile colour="red" id="-903" name="Off-board">
+        <Station id="city1" position="0" slots="0" type="OffMapCity" value="-1"/>
+        <Track from="city1" to="side0"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side2"/>
+    </Tile>
+
+
+
+        <Tile colour="red" id="-905" name="Atlanta">
+        <Station id="city1" position="0" slots="0" type="OffMapCity" value="-1"/>
+        <Track from="city1" to="side5"/>
+        <Track from="city1" to="side0"/>
+    </Tile>
+            <Tile colour="red" id="-906" name="Raleigh-Durham">
+        <Station id="city1" position="0" slots="0" type="OffMapCity" value="-1"/>
+        <Track from="city1" to="side5"/>
+        <Track from="city1" to="side0"/>
+    </Tile>
+
+    <Tile colour="red" id="-907" name="Montreal">
+        <Station id="city1" position="0" slots="0" type="OffMapCity" value="-1"/>
+        <Track from="city1" to="side3"/>
+        <Track from="city1" to="side4"/>
+    </Tile>
+
+     <Tile colour="red" id="-1144" name="Toronto">
+        <Station id="city1" position="0" slots="0" type="OffMapCity"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side2"/>
+        <Track from="city1" to="side4"/>
+    </Tile>
+
+
+<Tile colour="grey" id="-5016" name="Cleveland">
+    <Station id="city1" position="408" slots="1" type="OffMapCity" value="-1" mutexId="Cleveland">
+        <Location x="-42" y="0"/>
+    </Station>
+    <Station id="city2" position="108" slots="1" type="OffMapCity" value="-1" mutexId="Cleveland">
+        <Location x="42" y="0"/>
+    </Station>
+    <Track from="city1" to="side2"/>
+    <Track from="city1" to="side3"/>
+    <Track from="city2" to="side2"/>
+    <Track from="city2" to="side3"/>
+</Tile>
+        
+
+    <Tile colour="yellow" id="-11" name="B">
+        <Station id="city1" position="0" slots="1" type="City" value="30"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side3"/>
+    </Tile>
+    <Tile colour="yellow" id="11111" name="B">
+        <Station id="city1" position="0" slots="1" type="City" value="30"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side3"/>
+    </Tile>
+
+
+    <Tile colour="yellow" id="43800" name="Pittsburgh">
+        <Station id="city1" position="0" slots="1" type="City" value="30"/>
+        <Track from="city1" to="side0"/>
+        <Track from="city1" to="side2"/>
+        <Track from="city1" to="side4"/>
+    </Tile>
+
+
+
+<!-- yellow -->
+    <Tile colour="yellow" id="5" name="5">
+        <Station id="city1" position="0" slots="1" type="City" value="20"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side2"/>
+    </Tile>
+    <Tile colour="yellow" id="6" name="6">
+        <Station id="city1" position="0" slots="1" type="City" value="20"/>
+        <Track from="city1" to="side0"/>
+        <Track from="city1" to="side2"/>
+    </Tile>
+    <Tile colour="yellow" id="7" name="7">
+        <Track from="side3" to="side4"/>
+    </Tile>
+    <Tile colour="yellow" id="8" name="8">
+        <Track from="side3" to="side5"/>
+    </Tile>
+    <Tile colour="yellow" id="9" name="9">
+        <Track from="side3" to="side0"/>
+    </Tile>
+
+    <Tile colour="yellow" id="57" name="57">
+        <Station id="city1" position="0" slots="1" type="City" value="20"/>
+        <Track from="city1" to="side3"/>
+        <Track from="city1" to="side0"/>
+    </Tile>
+
+
+<Tile colour="yellow" id="212121" name="212121">
+    <Station id="city1" position="202" slots="1" type="City" value="40" mutexId="NewYork">
+        <Location x="0" y="45"/>
+    </Station>
+    <Station id="city2" position="502" slots="1" type="City" value="40" mutexId="NewYork">
+        <Location x="0" y="-45"/>
+    </Station>
+    <Track from="city1" to="side2"/>
+    <Track from="city2" to="side5"/>
+</Tile>
+
+
+<!-- New york GREEN -->
+<Tile colour="green" id="54" name="54">
+    <Station id="city1" position="352" slots="1" type="City" value="60" mutexId="NewYork">
+        <Location x="0" y="45"/>
+    </Station>
+    <Station id="city2" position="552" slots="1" type="City" value="60" mutexId="NewYork">
+        <Location x="0" y="-45"/>
+    </Station>
+    <Track from="city1" to="side3"/>
+    <Track from="city1" to="side4"/>
+    <Track from="city2" to="side0"/>
+    <Track from="city2" to="side5"/>
+</Tile>
+
+
+<!-- GREEN -->
+
+
+    <Tile colour="green" id="14" name="14">
+        <Station id="city1" position="0" slots="2" type="City" value="30"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side3"/>
+        <Track from="city1" to="side4"/>
+        <Track from="city1" to="side0"/>
+    </Tile>
+    <Tile colour="green" id="15" name="15">
+        <Station id="city1" position="0" slots="2" type="City" value="30"/>
+        <Track from="city1" to="side3"/>
+        <Track from="city1" to="side4"/>
+        <Track from="city1" to="side5"/>
+        <Track from="city1" to="side0"/>
+    </Tile>
+
+
+    <!-- green city psi -->
+    <Tile colour="green" id="619" name="619">
+        <Station id="city1" position="0" slots="2" type="City" value="30"/>
+        <Track from="city1" to="side0"/>
+        <Track from="city1" to="side2"/>
+        <Track from="city1" to="side5"/>
+        <Track from="city1" to="side4"/>
+    </Tile>
+
+
+
+
+
+
+
+    <Tile colour="green" id="80" name="80">
+        <Track from="side1" to="side2"/>
+        <Track from="side1" to="side3"/>
+        <Track from="side2" to="side3"/>
+    </Tile>
+
+    <Tile colour="green" id="81" name="81">
+        <Track from="side2" to="side4"/>
+        <Track from="side2" to="side0"/>
+        <Track from="side4" to="side0"/>
+    </Tile>
+
+    <Tile colour="green" id="82" name="82">
+        <Track from="side2" to="side5"/>
+        <Track from="side2" to="side0"/>
+        <Track from="side5" to="side0"/>
+    </Tile>
+
+    <Tile colour="green" id="83" name="83">
+        <Track from="side2" to="side4"/>
+        <Track from="side2" to="side5"/>
+        <Track from="side4" to="side5"/>
+    </Tile>
+
+	<Tile colour="green" id="2053" name="2053">
+        <Station id="city1" position="0" slots="2" type="City" value="50"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side3"/>
+        <Track from="city1" to="side5"/>
+    </Tile>
+
+
+
+<!-- BROWN -->
+
+<!-- New york BROWN -->
+<Tile colour="brown" id="62" name="62">
+    <Station id="city1" position="302" slots="2" type="City" value="80" mutexId="NewYork">
+        <Location x="0" y="45"/>
+    </Station>
+    <Station id="city2" position="002" slots="2" type="City" value="80" mutexId="NewYork">
+        <Location x="0" y="-45"/>
+    </Station>
+    <Track from="city1" to="side3"/>
+    <Track from="city1" to="side4"/>
+    <Track from="city2" to="side0"/>
+    <Track from="city2" to="side5"/>
+</Tile>
+
+
+
+
+<!--standard brown city with 6 exits -->
+    <Tile colour="brown" id="63" name="63">
+        <Station id="city1" position="0" slots="2" type="City" value="40"/>
+        <Track from="city1" to="side0"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side2"/>
+        <Track from="city1" to="side3"/>
+        <Track from="city1" to="side4"/>
+        <Track from="city1" to="side5"/>
+    </Tile>
+
+<!--standard brown city with 5 exits -->
+    <Tile colour="brown" id="61100" name="61100"> 
+        <Station id="city1" position="0" slots="2" type="City" value="40"/>
+        <Track from="city1" to="side0"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side2"/>
+        <Track from="city1" to="side3"/>
+        <Track from="city1" to="side4"/>
+    </Tile>
+
+    <!--standard brown city with 4 exits -->
+    <Tile colour="brown" id="448" name="448">
+        <Station id="city1" position="0" slots="2" type="City" value="40"/>
+        <Track from="city1" to="side0"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side2"/>
+        <Track from="city1" to="side3"/>
+    </Tile>
+
+	
+    <!--standard brown track tiles -->
+	<Tile colour="brown" id="544" name="544">
+        <Track from="side0" to="side1"/>
+        <Track from="side0" to="side3"/>
+        <Track from="side0" to="side4"/>
+        <Track from="side1" to="side3"/>
+        <Track from="side1" to="side1"/>
+        <Track from="side3" to="side4"/>
+    </Tile>
+
+	<Tile colour="brown" id="545" name="545">
+       
+                 <!-- <Track from="side1" to="side2"/>
+        <Track from="side1" to="side3"/>
+        <Track from="side2" to="side3"/> -->
+
+       
+       
+        <Track from="side3" to="side4"/>
+        <Track from="side3" to="side5"/>
+        <Track from="side3" to="side0"/>
+        <Track from="side4" to="side5"/>
+        <Track from="side4" to="side0"/>
+        <Track from="side5" to="side0"/>
+    </Tile>
+
+  
+	<Tile colour="brown" id="546" name="546">
+        <Track from="side3" to="side5"/>
+        <Track from="side3" to="side0"/>
+        <Track from="side3" to="side1"/>
+        <Track from="side5" to="side0"/>
+        <Track from="side5" to="side1"/>
+        <Track from="side0" to="side1"/>
+    </Tile>
+
+    <!-- B (baltimore) brown-->
+	<Tile colour="brown" id="148400" name="148400">
+        <Station id="city1" position="0" slots="3" type="City" value="60"/>
+        <Track from="city1" to="side0"/>
+        <Track from="city1" to="side2"/>
+        <Track from="city1" to="side3"/>
+        <Track from="city1" to="side4"/>
+    </Tile>
+
+
+
+
+
+
+<!-- GRAY -->
+
+    <Tile colour="gray" id="124" name="124">
+        <Station id="city1" position="0" slots="4" type="City" value="100"/>
+        <Track from="city1" to="side0"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side2"/>
+        <Track from="city1" to="side3"/>
+    </Tile>
+    <Tile colour="gray" id="368" name="368">
+        <Station id="city1" position="0" slots="2" type="City" value="70"/>
+        <Track from="city1" to="side5"/>
+        <Track from="city1" to="side0"/>
+        <Track from="city1" to="side1"/>
+        <Track from="city1" to="side3"/>
+        <Track from="city1" to="side4"/>
+    </Tile>
+
+
+
+<!-- OFF SITE -->
+
+    <Tile colour="gray" id="-39" name="-39">
+        <Track from="side1" to="side0"/>
+        <Track from="side1" to="side2"/>
+        <Track from="side0" to="side2"/>
+    </Tile>
+
+ 
+ 
+ 
+ 
+
+</Tiles>

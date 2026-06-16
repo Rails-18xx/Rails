@@ -12,8 +12,10 @@
 	<Tile id="-10"><!-- 1 city -->
 		<Upgrade id="5,6,57"/>
 	</Tile>
-	<Tile id="-902"/>
-	<Tile id="-903"/>
+	<Tile id="-90218701"/>
+	<Tile id="-90218702"/>
+	<Tile id="-9031870"/>
+	<Tile id="-90318701"/>
 	
 	<!-- Yellow -->
 	<Tile id="1" quantity="1" />
@@ -50,13 +52,13 @@
 	<Tile id="69" quantity="1" />
 
 	<!-- Green -->
-	<Tile id="14" quantity="4">
-		<Upgrade id="63" />
-		<Upgrade id="170" label="P"/>
+<Tile id="14" quantity="4">
+		<Upgrade id="63" hex="-B11,C18,J3,J5,N17" />
+		<Upgrade id="170" hex="B11,C18,J3,J5,N17" />
 	</Tile>
-	<Tile id="15" quantity="4">
-		<Upgrade id="63" />
-		<Upgrade id="170" label="P"/>
+<Tile id="15" quantity="4">
+		<Upgrade id="63" hex="-B11,C18,J3,J5,N17" />
+		<Upgrade id="170" hex="B11,C18,J3,J5,N17" />
 	</Tile>
 	<Tile id="16" quantity="2">
 		<Upgrade id="43,70" />
@@ -95,6 +97,7 @@
 		<Upgrade id="39,43,45,70" />
 	</Tile>
 	<Tile id="141" quantity="2">
+		<Upgrade id="145,146,147" />
 	</Tile>
 	<Tile id="142" quantity="2">
 		<Upgrade id="145,146,147" />
@@ -126,7 +129,7 @@
 		<Upgrade id="172" hex="C18"/>
 	</Tile>
 
-	<!-- Grey -->
+	<!-- gray -->
 	<Tile id="171" quantity="1" />
 	<Tile id="172" quantity="1" />
 </TileManager>

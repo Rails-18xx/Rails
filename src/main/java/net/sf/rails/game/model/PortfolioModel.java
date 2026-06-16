@@ -23,8 +23,6 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.SortedMultiset;
 
 
-// FIXME: Solve id, name and uniquename clashes
-
 /**
  * A Portfolio(Model) stores several portfolios
  */

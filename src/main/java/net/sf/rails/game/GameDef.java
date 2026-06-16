@@ -14,7 +14,7 @@ public class GameDef {
 
         NO_SALE_IN_FIRST_SR (false),
         NO_SALE_IF_NOT_OPERATED (false),
-        STOCK_ROUND_SEQUENCE(StockRound.SELL_BUY_SELL),
+        STOCK_ROUND_SEQUENCE(StockRound.SELL_BUY_OR_BUY_SELL),
         PLAYER_SHARE_LIMIT (60),
         POOL_SHARE_LIMIT(50),
         TREASURY_SHARE_LIMIT(50), // No longer directly used, now only a default (EV 02/2023).
@@ -35,6 +35,7 @@ public class GameDef {
         MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE (false),
         REMOVE_PERMANENT (false),
         BANKRUPTCY_STYLE (Bankruptcy.Style.DEFAULT);
+        
 
         private Object defaultValue;
 
@@ -58,10 +59,12 @@ public class GameDef {
         LAY_TRACK,
         CHECK_DESTINATIONS,
         LAY_TOKEN,
+        RELAY_TOKEN, // New step for choosing where relayed tokens go
         CALC_REVENUE,
         PAYOUT,
         BUY_TRAIN,
         TRADE_SHARES,
+        PAY_LOAN_INTEREST,
         REPAY_LOANS,
         BUY_BONDS,
         FINAL,
@@ -75,12 +78,30 @@ public class GameDef {
         return item.getRoot().getGameManager().getGameParameter(key);
     }
 
+    /**
+     * Retrieves a parameter as an integer.
+     * FIX: Safely handles Boolean -> Integer conversion (True=1, False=0)
+     * to prevent ClassCastException if the option type is mismatched.
+     */
     public static int getParmAsInt(RailsItem item, GameDef.Parm key) {
-        if (key.defaultValue() instanceof Integer) {
-            return (Integer) getParm(item, key);
-        } else {
-            return -1;
+        Object val = getParm(item, key);
+        
+        if (val == null) return key.defaultValueAsInt();
+
+        if (val instanceof Integer) {
+            return (Integer) val;
+        } else if (val instanceof Boolean) {
+            // FIX: Convert Boolean to Int explicitly
+            return ((Boolean) val) ? 1 : 0;
+        } else if (val instanceof String) {
+            try {
+                return Integer.parseInt((String) val);
+            } catch (NumberFormatException e) {
+                return key.defaultValueAsInt();
+            }
         }
+        
+        return key.defaultValueAsInt();
     }
 
     public static boolean getParmAsBoolean(RailsItem item, GameDef.Parm key) {

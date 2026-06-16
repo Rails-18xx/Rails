@@ -100,7 +100,7 @@
                 <Lays companyType="Minor" colour="yellow" number="2" occurrences="1"/>
                 <Lays companyType="Minor" colour="green" number="0"/>
                 <Lays companyType="Minor" colour="brown" number="0"/>
-                <Lays companyType="Minor" colour="grey" number="0"/>
+                <Lays companyType="Minor" colour="gray" number="0"/>
 			</Tiles>
 			<OperatingRounds number="2"/>
 			<Trains tradingAllowed="yes"/>
@@ -121,7 +121,7 @@
 			<Trains rusted="3"/>
 		</Phase>
 		<Phase name="8">
-			<Tiles colour="yellow,green,brown,grey"/>
+			<Tiles colour="yellow,green,brown,gray"/>
 			<Trains rusted="4"/>
 		</Phase>
 	</Component>

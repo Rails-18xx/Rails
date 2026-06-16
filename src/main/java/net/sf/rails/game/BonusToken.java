@@ -31,6 +31,17 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
         return token;
     }
 
+    public void setName(String name) {
+        this.name = name;
+        this.description = name + " bonus token";
+    }
+    public void setValue(int value) {
+        this.value = value;
+        if (name != null) {
+            this.description = name + " +" + Bank.format(this, value) + " bonus token";
+        }
+    }
+
     @Override
     public void configureFromXML(Tag tag) throws ConfigurationException {
         Tag bonusTokenTag = tag.getChild("BonusToken");
@@ -101,8 +112,12 @@ public class BonusToken extends Token<BonusToken> implements Closeable, Configur
 
     @Override
     public String getId() {
-        return name;
-    }
+// If name is set (like in 1817), use it for the Map UI lookup.
+        // Otherwise, return the unique ID so we don't break other games like 1837.
+        if (this.getName() != null) {
+            return this.getName();
+        }
+        return super.getId();    }
 
     public int getValue() {
         return value;

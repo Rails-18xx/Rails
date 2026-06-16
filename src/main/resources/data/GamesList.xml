@@ -1,397 +1,283 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Supported games -->
+<?xml version="1.0" encoding="UTF-8"?>
 <GamesList>
-	<Game name="1830">
-    <Note>Fully playable</Note>
-    <Description>1830 - The Game of Railroads and Robber Barons
-(c) 1986 The Avalon Hill Game Company
-Designed by Francis Tresham and Bruce Shelley
-Pere Marquette variant by Federico Vellani
-Coalfields variant by Alan R. Moon
-			
-Limitations: 
-- The M&amp;H/NYC share swap can only be executed in the SR, in the owning player's turn.
-- Privates cannot be traded between players.
-		</Description>
-		<Players minimum="2" maximum="6"/>
-	</Game>
+    <Credits><![CDATA[<html>
+        <b>Rails Evolution Project</b><br><br>
+        Rails is a computer implementation of a number of board games.<br>
+        These games all have a railroad theme. They are collectively known as "18xx"<br>
+        games due to the naming scheme used by many games in the genre.<br><br>
+        <b>Contributors:</b><br>
+        Stefan Bleeck, Erik Vos, Stefan Frey, Freek Dijkstra, Scott Peterson, Adam Badura,<br>
+        Phil Davies, Bill Rosgen, Martin Brumm, Chris Shaffer, Brett Lentz,<br>
+        Jason Klappste, Marc Arndt.<br><br>
+        <i>All rights reserved by the respective owners of the original games.</i><br>
+        <i>No challenge to the original author's or publisher's rights, licensing, or status is intended.</i>
+    </html>]]></Credits>
 
-	<Game name="1835">
-		<Note>Fully playable</Note>
-		<Description>1835 (Germany)
-Designed by Michael Meier-Bachl
-Published 1990 by Hans im Glück Verlag
+    <Game name="1817">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">1817 (North America)</h3>
+            <b>Designers:</b> Craig Bartell, Tim Thomashow<br>
+            <b>Publisher:</b> Deep Thought Games (2010)<br><br>
+            1817 is the ultimate stock market 18xx game. It introduces sophisticated financial mechanics including short selling, taking out interest-bearing loans from the bank, corporate mergers, and hostile takeovers. Unlike standard 18xx games, companies are completely liquid and players can force bankruptcies to manipulate the market to a much higher degree, making it one of the deepest financial simulators in the genre.<br><br>
+            <b>Limitations:</b> None<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="3" max="6"/>
+    </Game>
 
-Three variants have been implemented:
-	- Standard
-	- Clemens
-	- Snake
+    <Game name="1825">
+        <Note>Playable, needs full stress testing.</Note>
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">1825 Unit 1 (Great Britain)</h3>
+            <b>Designer:</b> Francis Tresham<br>
+            <b>Publisher:</b> Hartland Trefoil Ltd. (1994)<br><br>
+            Designed by the creator of the 18xx genre, 1825 focuses almost entirely on operational elements rather than stock manipulation. Set in Great Britain, companies are completely shielded from hostile takeovers, meaning players succeed by running the most efficient, highest-paying routes rather than destroying competing corporations.<br><br>
+            <b>Limitations:</b> Trains do not have to own a train and directors cannot fund the purchase of one. Tile lays off board are not fully blocked. Upgrades to pre-printed tiles act as lays, not promotions. Two tiles placed not being adjacent is currently not enforced. Receivership and selling privates to the bank are not implemented.<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="3" max="5"/>
+    </Game>
 
-The following options are possible:
-	
-	- Bayern floats at values 50% or 20% default=50%
-	- LDIncome values can be 20M or 30M default is 30M
-	- MinorsRequireFloatedBY type=toggle default=no
-	- PrussianReservedIgnored ( Ignores reserved shares at determining sold out status
-	after prussian formation round) type=toggle default=no
-	- AllowSeparateSalesAtSamePrice type=toggle default=yes
-	
-From 08/2022 share selling is strictly limited to whole certificates.
-So it is no longer possible to sell 30% in one action while having one 20% and one 10% certificate
-(it can still be done with two actions in the same turn, and at the same price).
-This change was needed to fix some bugs, and also it has much simplified the selling code.
+    <Game name="1826"> 
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">1826: Railroading in France and Belgium</h3>
+            <b>Designer:</b> David G.D. Hecht<br>
+            <b>Publisher:</b> Deep Thought Games (2000)<br><br>
+            1826 introduces regional flavor reflecting the rail history of France and Belgium. It features a unique train roster including the high-speed TGV trains, which follow different running rules. Companies are also subject to specific nationalization and merging rules that players must navigate to maximize their portfolio's value.<br><br>
+            <b>Limitations:</b> Share selling in emergency train buying, Bankruptcy mechanics, and TGV running over other track are not yet fully developed. Note: Players should check calculated H-train revenues and correct using the spinner if necessary.<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="2" max="6"/>
+    </Game>
 
-However, it also violates German rule 3.3.7, and for that reason it can be reset
-for a whole game by disabling a new GameOption named AllowSeparateSalesAtSamePrice (see above).
-Another option is to select the Special|AdjustSharePrice menu option, by
-which the price token can be moved one square down. This option is *only*
-available *immediately* after any second (or third, etc.) sale of shares of one company.
-		</Description>
-		<Players minimum="3" maximum="7"/>
-	</Game>
+    <Game name="1830">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">1830: The Game of Railroads and Robber Barons (USA)</h3>
+            <b>Designer:</b> Francis Tresham, Bruce Shelley<br>
+            <b>Publisher:</b> The Avalon Hill Game Company (1986)<br><br>
+            The quintessential 18xx title. 1830 is famous for its vicious, cut-throat stock market. Players invest in competing railroad corporations operating in the eastern United States. The game is highly volatile, allowing players to strip a company of its assets and dump the worthless shares on their opponents, causing spectacular bankruptcies and drastic shifts in wealth.<br><br>
+            <b>Limitations:</b> None<br>
+            <b>Variants:</b> Includes Pere Marquette variant by Federico Vellani and Coalfields variant by Alan R. Moon.
+        </html>]]></Description>
+        <Players min="2" max="6"/>
+    </Game>
 
-	<Game name="1851">
-		<Note>Fully playable</Note>
-		<Description>1851 - The Railroads come to Kentucky &amp; Tennessee
-(c) Mark Derrick and Chris Lawson
+    <Game name="1835">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">1835 (Germany)</h3>
+            <b>Designer:</b> Michael Meier-Bachl<br>
+            <b>Publisher:</b> Hans im Glück Verlag (1990)<br><br>
+            This 18xx game takes the basic mechanics from Tresham's 1829 and adds several new elements. Players seek to make the most money by buying and selling stock in various rail companies located on a German map. The board itself is actually a fairly abstract hexagonal system, with track tiles placed on top of the hexes. Players buy and sell stock in various share companies, whose actions are controlled by the majority stockholder. The stock manipulation aspect of the game is not as brutal as in 1830. Plus each 18xx title adds new and different elements to the game. This game features minor rail companies, layered stock offerings, and the formation of the Prussian railroad from the minor companies. A game is finished when the bank runs out of money, and the player with the greatest personal holdings wins.<br><br>
+            <b>Limitations:</b> None<br>
+            <b>Variants:</b> Three variants have been implemented: Standard, Clemens, and Snake. The game will automatically adjust to the selected variant based on the game options chosen at game start.
+        </html>]]></Description>
+        <Players min="3" max="7"/>
+    </Game>
 
-Limitation:
-- No random assignment of private companies (players should do this off-line and enter the result)
-		</Description>
-		<Players minimum="2" maximum="5"/>
-	</Game>
+    <Game name="1837">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">1837 (Austria)</h3>
+            <b>Designer:</b> Leonhard Orgler<br>
+            <b>Publisher:</b> 18xxmaker (1994)<br><br>
+            Set in the Austro-Hungarian Empire, 1837 introduces a mountain railway mechanic (the Semmeringbahn) and coal companies. The game features an expansive map, an aggressive stock market, and minor companies that eventually merge to form major national railways, creating a dynamic mid-game shift in corporate control and track-laying strategy.<br><br>
+            <b>Limitations:</b>  None<br>
+            <b>Variants:</b> v1 ("Basegame", as described by JD Galt), Romoth (v1 with adjusted prices), v2 (Lonny Orgler 2015 update).
+        </html>]]></Description>
+        <Players min="3" max="7"/>
+    </Game>
 
-	<Game name="1856">
-		<Note>Fully playable</Note>
-		<Description>1856 - Railroading in Upper Canada
-(c) 1992, 1995 Mayfair Games, Inc.
-Designed by Bill Dixon
+    <Game name="1851">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">1851: The Railroads come to Kentucky & Tennessee</h3>
+            <b>Designers:</b> Mark Derrick, Chris Lawson<br>
+            <b>Publisher:</b> Deep Thought Games (1998)<br><br>
+            Set in the American South, 1851 models the specific historical challenges of the region, including terrain difficulties and the economic impact of the American Civil War, which temporarily disrupts the operating capabilities of the rail networks.<br><br>
+            <b>Limitations:</b> No random assignment of private companies (players should do this off-line and enter the result).<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="2" max="5"/>
+    </Game>
 
-Limitation:
-- The restriction that shares cannot be sold in the same round that these are bought is not enforced.
-- The alternate destinations for VA amd TGB are not shown correctly (only one hex)
-		</Description>
-       	<Players minimum="2" maximum="6"/>
-	</Game>
+    <Game name="1856">
+        <Note>Under construction.</Note>
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">UNDER CONSTRUCTION: 1856: Railroading in Upper Canada</h3>
+            <b>Designer:</b> Bill Dixon<br>
+            <b>Publisher:</b> Mayfair Games (1995)<br><br>
+            A complex and highly regarded title set in Canada. 1856 features government loans to keep struggling companies afloat, specific destination hexes that boost revenue, and the eventual formation of the massive Canadian Government Railway (CGR) which absorbs bankrupt or struggling companies.<br><br>
+            <b>Limitations:</b> The restriction that shares cannot be sold in the same round they are bought is not enforced. The alternate destinations for VA and TGB are not shown correctly (only one hex).<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="2" max="6"/>
+    </Game>
+
+    <Game name="1862">
+        <Note>Under construction.</Note>
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">1862: Railway Mania in the Eastern Counties (UK)</h3>
+            <b>Designer:</b> Mike Hutton<br>
+            <b>Publisher:</b> GMT Games (2019)<br><br>
+            A highly unique 18xx game where players petition parliament to start companies. It features three different train types (Local, Express, and Freight), non-standard track configurations, and merges, making route planning and company management exceptionally tight and complex.<br><br>
+            <b>Limitations:</b> Prototype phase. Core mechanics pending implementation.<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="2" max="8"/>
+    </Game>
+
+    <Game name="1870">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">1870: Railroading across the Trans Mississippi (USA)</h3>
+            <b>Designer:</b> Bill Dixon<br>
+            <b>Publisher:</b> Mayfair Games (1992)<br><br>
+            Set in the Mississippi River valley and the American Southwest, 1870 builds on the 1830 ruleset but adds destination hexes. Companies that connect to their historical destinations are rewarded with a stock price jump. It also features share redemption (companies buying back their own stock) and price protection, shifting the strategic focus toward long-term corporate health rather than purely predatory stock dumping.<br><br>
+            <b>Limitations:</b>None<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="2" max="6"/>
+    </Game>
 
     <Game name="1880">
-        <Note>Fully Playable</Note>
-        <Description>1880 - China
-        (c) 2010 Double O Games  Mayfair Games, Inc.
-        Designed by Leonhard Orgler and Helmut Ohley
-		</Description>
-        <Players minimum="3" maximum="7"/>
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">1880: China</h3>
+            <b>Designers:</b> Leonhard Orgler, Helmut Ohley<br>
+            <b>Publisher:</b> Double O Games / Mayfair Games (2010)<br><br>
+            1880 represents the development of railways in China. The game has a unique twist on the 18xx formula: building costs are tied to the era, reflecting the changing economy of the communist state. Train rusting and technology progression operate differently than standard games, requiring players to plan their routes and upgrades with high precision.<br><br>
+            <b>Limitations:</b> None<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="3" max="7"/>
     </Game>
 
-	<Game name="1889">
-		<Note>Fully playable</Note>
-		<Description>1889 - History of Shikoku Railways
-(c) 2003-2006 Yasutaka Ikeda
-Published by Wild Heaven Productions and Deep Thought Games
-
-Limitation:
-- Privates cannot be traded between players.
-		</Description>
-		<Players minimum="2" maximum="6"/>
-	</Game>
-	
-	<Game name="18AL">
-		<Note>Fully playable</Note>
-		<Description>18AL  - The Railroads come to Alabama
-(c) 2000, 2004 Mark Derrick and John David Galt
-Designed by Mark Derrick
-
-Both the original and the final version (without/with delayed 4-train obsolescence) have been implemented.
-
-Limitation: 
-- Privates cannot be traded between players.
-		</Description>
-		<Players minimum="2" maximum="5"/>
-	</Game>
-
-	<Game name="18EU">
-		<Note>Fully playable</Note>
-		<Description>18EU - A century of railroading in Europe
-(c) 1997-2004 David G.D. Hecht
-Published 2004 by Deep Thought Games, LLC
-
-Game variants:
-- With 4 players, add a 16th minor (Hamburg or Frankfurt)
-- Allow minors to upgrade home base to green (proposed by Bruce Lavoie)
-		</Description>
-		<Players minimum="2" maximum="6"/>
-	</Game>
-
-     <Game name="18GA">
-        <Note>Fully playable</Note>
-        <Description>18GA - The Railroads Come to Georgia
-        Copyright 2000, 2007, Mark Derrick and John David Galt</Description>
-        <Players minimum="2" maximum="5"/>
+    <Game name="1889">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">1889: History of Shikoku Railways (Japan)</h3>
+            <b>Designer:</b> Yasutaka Ikeda<br>
+            <b>Publisher:</b> Wild Heaven Productions (2004)<br><br>
+            Set on the Japanese island of Shikoku, 1889 takes the exact financial and operational rules of 1830 and applies them to a much smaller, extremely restrictive map with punishing terrain costs. This results in a fast-playing, intense game where track blocking and early financial maneuvering are critical to survival.<br><br>
+            <b>Limitations:</b> None.<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="2" max="6"/>
     </Game>
 
-	<Game name="18Kaas">
-		<Note>Fully playable</Note>
-		<Description>18Kaas (Netherlands)
-		Same restrictions as 1830
-		(c) 1992 ERJO GAMES
-		</Description>
-		<Players minimum="3" maximum="6"/>
-	</Game>
-
-	<Game name="18NL">
-		<Note>Fully playable</Note>
-		<Description>18NL Niederland (Netherlands)
-		Same restrictions as 1830
-		Copyright 1999 Helmut Ohley
-		</Description>
-		<Players minimum="2" maximum="6"/>
-	</Game>
-    
-	 <Game name="18TN">
-        <Note>Fully playable</Note>
-        <Description>18TN - The Railroads Come to Tennessee
-        Copyright 1996, 2006, Mark Derrick
-        Published by Deep Thought Games, LLC
-        
-        </Description>
-        <Players minimum="2" maximum="5"/>
+    <Game name="18AL">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">18AL: The Railroads come to Alabama (USA)</h3>
+            <b>Designer:</b> Mark Derrick<br>
+            <b>Publisher:</b> Self-Published (2000)<br><br>
+            An excellent introductory 18xx game, 18AL plays quickly on a compact map of Alabama. While maintaining the core mechanics of stock holding and track laying, it limits the total capital and company pool, making it a very accessible and forgiving entry point for new players to learn the genre.<br><br>
+            <b>Limitations:</b> Privates cannot be traded between players.<br>
+            <b>Variants:</b> Both the original and the final version (with/without delayed 4-train obsolescence) are implemented.
+        </html>]]></Description>
+        <Players min="2" max="5"/>
     </Game>
 
-	<Game name="18Lummer">
-        <Note>Fully playable</Note>
-        <Description>18Lummer - Lummerland
-        Copyright Kay-Viktor Stegemann
-        Limitations:
-        - Frau Waas baking Gugelhupf not implemented
-        - Bidding for start position not implemented
-        </Description>
-        <Players minimum="2" maximum="4"/>
+    <Game name="18Chesapeake">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">18Chesapeake (North East USA)</h3>
+            <b>Designer:</b> Scott Petersen<br>
+            <b>Publisher:</b> All-Aboard Games (2019)<br><br>
+            A streamlined 1830-derivative designed to be accessible to newer players while retaining deep strategy. Set in the Chesapeake Bay region, the game features a tight map and a unique "export" mechanic that automatically removes the cheapest available train from the market every round. This ensures a brisk, predictable pacing and guarantees that the game moves quickly toward the late-game diesel era.<br><br>
+            <b>Limitations:</b> None<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="2" max="6"/>
     </Game>
 
-	<Game name="18Scan">
-		<Note>Fully Playable</Note>
-		<Description>18Scan - Railroading under the Northern Lights
-		(c) 2004-2005 David G.D. Hecht
-		Published 2005 by Deep Thought Games, LLC
+    <Game name="18EU">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">18EU: A century of railroading in Europe</h3>
+            <b>Designer:</b> David G.D. Hecht<br>
+            <b>Publisher:</b> Deep Thought Games (2004)<br><br>
+            In 18EU, players start by operating minor rail companies spread across the European continent. As the game progresses and technology improves, players merge these minors to form the historical major rail networks of Europe. The game prominently features Pullman trains and highly flexible routing choices.<br><br>
+            <b>Limitations:</b> None<br>
+            <b>Variants:</b> With 4 players, add a 16th minor (Hamburg or Frankfurt). Allow minors to upgrade home base to green (proposed by Bruce Lavoie).
+        </html>]]></Description>
+        <Players min="2" max="6"/>
+    </Game>
 
-		Limitations:
-		- The bonus token owner is not asked for permission to buy such a token.
-			This must be addressed off-game.
-		- As in 1856, the player who has connected a Minor to its destination
-			must immediately report that via the highlighted Special menu,
-			temporarily postponing the token laying step of the active company.
-			If more than one Minor is connected at the same time, it is advised
-			that, if placing a token by one Minor would hinder the other one
-			to do the same, that other minor would get the first turn,
-			because the rule that this other minor may ignore the first laid
-			token is not implemented. Afterwards, the Special menu remains
-			highlighted to enable the initially skipped minor to destinate as yet.
+    <Game name="18GA">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">18GA: The Railroads Come to Georgia (USA)</h3>
+            <b>Designers:</b> Mark Derrick, John David Galt<br>
+            <b>Publisher:</b> Self-Published (2000)<br><br>
+            A sister game to 18AL, 18GA is another fast-playing, small-map variant designed as an introduction to the 18xx system. Set in Georgia, it features slightly different track geometries and corporate starting conditions than 18AL, but provides a similarly tight, focused gameplay experience.<br><br>
+            <b>Limitations:</b> None<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="2" max="5"/>
+    </Game>
 
-		Remarks:
-		- The rules say that a destinating minor may place its token
-			even if the destination has a yellow tile #5 where the token spot
-			is reserved or already occupied. This rule is enabled behind the scenes
-			by replacing tile #5 with a similar tile #3005 with two token spots;
-			to avoid confusion the displayed tile remains #5. The result may not
-			look very nice, but works well.
-		- The run details shown in the Message panel display the added Ferry and Mine
-			bonus amounts in different ways. This is due to the rule, that
-			the Mine bonus applies to one train only, even if two trains reach Kiruna.
-			That restriction necessitated a different approach to make it work.
-		</Description>
-		<Players minimum="2" maximum="4" />
-	</Game>
+    <Game name="18Kaas">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">18Kaas (Netherlands)</h3>
+            <b>Designer:</b> [Unknown]<br>
+            <b>Publisher:</b> de Joker / ERJO GAMES (1992)<br><br>
+            The gameshop 'de Joker' in Utrecht, Netherlands, released 18kaas, an 1830 style 18xx-game in Holland (different from Rob & Paul's 1839 and different from Theo Jansma's version), available in fold-able or hardboard and mounted map style, party proof version. Though this uses components of 1830 this is not an expansion, but is a separate standalone game.<br><br>
+            <b>Limitations:</b> Utilizes the core restrictions of 1830. Custom map rules apply (e.g., Ruhrgebied doubles route values, specific hex restrictions on G13 and G11). Implementation is ongoing.<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="3" max="6"/>
+    </Game>
 
-	<Game name="SOH">
-		<Note>Fully Playable</Note>
-		<Description>Steam over Holland
-			(c) 2007 Bart van Dijk
-			Published 2007 by Vendetta Games
+    <Game name="18NL">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">18NL: Niederland (Netherlands)</h3>
+            <b>Designer:</b> Helmut Ohley<br>
+            <b>Publisher:</b> Self-Published (1999)<br><br>
+            18NL is an 18xx game based on the 1830: Railways & Robber Barons rules adapted to the Netherlands. As in other games in this genre, players buy shares in railway companies, and then the majority share owner operates their companies by laying track, placing stations, and purchasing trains. 18NL has both been published as a standalone game, and as a print-and-play version. The latter version requires some components from 1830 to play.<br><br>
+            <b>Limitations:</b> Utilizes the core restrictions of 1830.<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="2" max="6"/>
+    </Game>
 
-			The initial round can follow three scenarios, selectable as a Game Option:
+    <Game name="18Scan">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">18Scan: Railroading under the Northern Lights (Scandinavia)</h3>
+            <b>Designer:</b> David G.D. Hecht<br>
+            <b>Publisher:</b> Deep Thought Games (2005)<br><br>
+            Set across Scandinavia, this game features minors that eventually merge into the State Railway systems. It requires players to balance the development of their private minor networks with the eventual transition into major, publicly traded corporations.<br><br>
+            <b>Limitations:</b> The bonus token owner is not asked for permission to buy a token (address off-game). Similar to 1856, players connecting a Minor to its destination must manually report via the Special menu.<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="2" max="4"/>
+    </Game>
 
-			1. Auction. This scenario follows the primary game rule, in which as many privates
-			are drawn randomly as there are players. An 18EU-style auction follows, without
-			downpricing (if all pass, private is discarded and not replaced).
-			This is the default option.
+    <Game name="18TN">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">18TN: The Railroads Come to Tennessee (USA)</h3>
+            <b>Designer:</b> Mark Derrick<br>
+            <b>Publisher:</b> Deep Thought Games (2006)<br><br>
+            Continuing the tradition of Derrick's smaller-scale games (18AL, 18GA), 18TN brings the 18xx system to the challenging mountainous terrain of Tennessee, forcing careful capital management and route planning.<br><br>
+            <b>Limitations:</b> None<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="2" max="5"/>
+    </Game>
 
-			2. Deal. This scenario follows the alternative game rule, in which as many privates
-			are drawn randomly as there are players, and then dealt out, one to each player,
-			for base price.
+    <Game name="18VA">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">18VA (Virginia)</h3>
+            <b>Designer:</b> [Unknown]<br>
+            <b>Publisher:</b> [Unknown]<br><br>
+            18VA is an 18xx game set in Virginia as well as pertinent neighboring areas of Maryland and the District of Columbia. 18VA is a small game, in the style of Mark Derrick's one-state games 18GA and 18AL, and is intended as a change from the more robust 18xx games often played. The major hook in this game is the coal trains, which run mainly West-East, taking coal from the mountains to the coast, while the passenger trains run the North-South routes. Also interesting is the fact that all railroads operate with just the President's share sold, and open with 5 shares and expand to 10 at the owner's discretion.<br><br>
+            <b>Limitations:</b> Prototype phase. Core mechanics pending implementation.<br>
+            <b>Variants:</b> None
+        </html>]]></Description>
+        <Players min="2" max="5"/>
+    </Game>
 
-			3. Select. Each player gets one turn, to choose and buy any private for base price,
-			or pass. This scenario was added for testing purposes, and possibly for players who
-			want to distribute privates off-game in their own way. Still maximum one per player.
-		</Description>
-		<Players minimum="2" maximum="5"/>
-	</Game>
+    <Game name="SOH">
+        <Description><![CDATA[<html>
+            <h3 style="margin-top:0;">Steam over Holland (Netherlands)</h3>
+            <b>Designer:</b> Bart van Dijk<br>
+            <b>Publisher:</b> Vendetta Games (2007)<br><br>
+            A very fast, introductory game aimed at teaching the core concepts of 18xx. Played on a map of the Netherlands, it strips down many of the complex financial rules, offering a pure track-laying and simple stock ownership experience that can be completed in a fraction of the time of a standard title.<br><br>
+            <b>Limitations:</b> None<br>
+            <b>Variants:</b> Initial Round Scenarios selectable (Auction, Deal, Select).
+        </html>]]></Description>
+        <Players min="2" max="5"/>
+    </Game>
 
-	<Game name="18Chesapeake">
-		<Note>Fully playable - Tests needed</Note>
-		<Description> 18Chesapeake - North East USA
-			(c) 2019 Scott Pedersen    </Description>
-		<Players minimum = "2" maximum = "6" />
-	</Game>
-
-	<Game name="1837">
-		<Note>Playable (beta)</Note>
-		<Description> 1837 - Austria
-			(c) 1994 Leonhard Orgler (self-published)
-
-			Variants:
-			- v1 ("Basegame", as described by JD Galt and clarified by Steve Thomas),
-			- Romoth (v1, with some different prices),
-			- v2 (as described by Lonny Orgler, 2015).
-
-			Mid-game player worth is calculated as follows:
-			- Major and National shares as usual,
-			- Coal and Minor shares as the price of the related
-			Major (if started) or National company,
-			- Privates (mountain railways) worth is zero.
-
-			Known limitations:
-			- Token laying involving backtracking must be done in Correction mode.
-			- If the U3 president rejects folding into Ug, the other U3 share
-			owner cannot fold that second share.
-		</Description>
-		<Players minimum = "3" maximum = "7" />
-	</Game>
-
-	<Game name="1826">
-		<Note>Playable (beta)</Note>
-		<Description>1826 - Railroading in France and Belgium from 1826
-			(c) 1996, 2000 David G.D. Hecht (game designer)
-			Initially published by Chris Lawson (materials designer)
-			Rules version 0.35 of 13 January 2000
-
-			Not yet fully developed or tested:
-			- Share selling in emergency train buying
-			  (taking loans, bonds and president cash works)
-			- Bankruptcy
-			- TGV running over track used by other trains
-			  (the existing TGV running modifier is incorporated,
-			  but does not produce the desired result)
-
-			Note: it turns out that for H-trains not always the best runs are found.
-			Players should check the calculated H-train revenues,
-			and correct these if necessary, using the spinner.
-			The revenue spinner can be enabled at game start using
-			'Configuration/General/Show spinner in revenue step'.
-		</Description>
-		<Players minimum="2" maximum="6" />
-	</Game>
-
-	<Game name="18VA">
-		<Note>Playable (alpha)</Note>
-		<Description>18VA
-			(c) David G.D. Hecht 2001-2005
-			Rules version 1.00 of 10 May 2005
-
-			Not yet fully developed or tested:
-			- Share selling in emergency train buying
-			(taking loans, bonds and president cash works)
-			- Bankruptcy
-			- Passenger trains running through but ignoring
-			towns (mines).
-
-			Notes:
-			- When the port and neighbouring city values are doubled,
-			the extra revenue of the city is added to the port value
-			in the revenue details display (the blue small-print text).
-			The reason is, that the doubling only occurs if the port is reached.
-
-		</Description>
-		<Players minimum="2" maximum="5" />
-	</Game>
-
-	<Game name="1870">
-		<Note>Not yet playable</Note>
-		<Description>1870 - Railroading across the Trans Mississippi
-(c) 1992, 1995 Mayfair Games, Inc.
-Designed by Bill Dixon
-Limitations:
-All aspects different from 1830 have not been implemented yet.
-		</Description>
-		<Players minimum="2" maximum="6"/>
-	</Game>
-	
-  <Game name="1825">
-    <Note>Not yet playable</Note>
-    <Description>1825 Unit 1
-(c) 1994 Hartland Trefoil Ltd.
-Designed by Francis Tresham
-
-Known Issues:
-- change the formationOrderIndex from an Integer variable to an IntegerState variable
-- BUG: prompt on placing GWR token when upgrading London, needs investigation
-- BUG: Trains do not have to own a train and directors cannot fund the purchase of one
-- Tile lays that send track off the board are legal in 1825 as long as they don't run into the
-	 sea or the edge of a pre-placed tile with no track on.  Currently Rails will not allow some
-	 of these edge placements.  The workaround is to use map correction mode to place the tile you want.
-	 ADDITIONAL NOTE: Map correction might still not work, I think route awareness is confused by track going out of the board...
-	 We might need a different fix
-- Upgrades to pre-printed tiles are lays, not promotions so you are allowed two of these in a turn.
-  Rails currently only allows you to lay 2 yellow tiles in a turn. Again, use map correction
-  for a workaround
-- The rule about the two tiles place on your turn not being adjacent is currently not enforced by rails
-	and must be enforced manually by players
-- Revenue Calc: Routes BEGIN and END with large stations, this is currently not checked
-- Revenue Calc: Trains may not visit two stations on the same tile, this is currently not checked
-- Revenue Calc: 2 2T's can be double headed as a 3T
-- The minimum ¬£10 for a train purchase between companies is not enforced
-- Money: The boardgame uses company credits, rails does not, as such the bank will potentially break slightly earlier
-- Game currently doesn't end when a company reaches the top of the stock market
-	It needs to end at the end of that companies turn.
-- Hexags reserved for certain companies (currently not enforced in EU either)
-- Corps that reach the top of the market should end the game at the end of that corps turn
-- Not implemented: selling privates back to the bank
-- Not implemented: receivership
-</Description>
-    <Players minimum="3" maximum="5" />
-  </Game>
-
-  <Game name="1862">
-    <Note>Prototype - Not Playable</Note>
-    <Description>1862</Description>
-    <Players minimum="2" maximum="8" />
-  </Game>
-
-
-
-	<Credits>&lt;html&gt;Rails is a computer implementation of a number of board games.&lt;br&gt; 
-	These games all have a railroad theme. They are collectively known as "18xx" &lt;br&gt;
-	games due to the naming scheme used by many games in the genre. &lt;br&gt;
-	&lt;br&gt;
-Contributors: &lt;br&gt;
-	Erik Vos&lt;br&gt;
-	Stefan Frey&lt;br&gt;
-	Freek Dijkstra&lt;br&gt;
-	Scott Peterson&lt;br&gt;
-	Adam Badura&lt;br&gt;
-	Phil Davies&lt;br&gt;
-	Bill Rosgen&lt;br&gt;
-	Martin Brumm&lt;br&gt;
-	Chris Shaffer &lt;br&gt;
-	Brett Lentz&lt;br&gt;
-	Jason Klappste&lt;br&gt;
-	Marc Arndt&lt;br&gt;
-&lt;br&gt;
-All rights reserved by the respective owners of the original games&lt;br&gt; 
-(see the Game Notes per game for specific acknowledgements).&lt;br&gt;
-&lt;br&gt;
-No challenge to the original author's or publisher's rights, licensing, or status is intended.&lt;br&gt;
-&lt;br&gt;
-Rails is intended as a play aid for owners of each respective boardgame.&lt;br&gt;
-&lt;br&gt;
-The Rails application and source code are distributed under&lt;br&gt; 
-version 2 of the GNU Public License (GPL).&lt;br&gt;
-&lt;br&gt;
-A copy of the GPL should have been shipped with the game files and is also available here:&lt;br&gt; 
-	&lt;a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;http://www.gnu.org/licenses/old-licenses/gpl-2.0.html&lt;/a&gt;&lt;br&gt;
-&lt;br&gt;
-Icon sets are taken from the following sites:&lt;ul&gt; 
-	&lt;li&gt;&lt;a href="http://www.fatcow.com/"&gt;http://www.fatcow.com/&lt;/a&gt;&lt;br&gt;
-	 under a Creative Commons Attribution 3.0 License (&lt;a href="http://creativecommons.org/licenses/by/3.0/us/"&gt;http://creativecommons.org/licenses/by/3.0/us/&lt;/a&gt;)
-	&lt;/ul&gt;
-	&lt;/html&gt;</Credits>
 </GamesList>

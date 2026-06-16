@@ -3,131 +3,118 @@ package net.sf.rails.ui.swing;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.Action;
-import javax.swing.AbstractAction;
-import javax.swing.BoxLayout;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
-import net.sf.rails.game.Stop;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.rails.ui.swing.elements.GUIHexUpgrades;
 import net.sf.rails.ui.swing.elements.UpgradeLabel;
 import net.sf.rails.ui.swing.elements.RailsIcon;
 import net.sf.rails.ui.swing.elements.RailsIconButton;
 import net.sf.rails.ui.swing.hexmap.*;
 
-
 public class UpgradesPanel extends JPanel {
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(UpgradesPanel.class);
 
     private static final int UPGRADE_TILE_ZOOM_STEP = 10;
 
     private final ORUIManager orUIManager;
-    
-    // ui elements
     private final JPanel upgradePanel;
     private final JScrollPane scrollPane;
-    
     private final RailsIconButton confirmButton;
     private final RailsIconButton skipButton;
-
-    /**
-     * If set, done/cancel buttons are not added to the pane. Instead, the
-     * visibility property of these buttons are handled such that they are set
-     * to visible if they normally would be added to the pane.
-     * Required for Docking approach
-     */
     private boolean omitButtons;
-    
     private GUIHexUpgrades hexUpgrades;
-    
+
+    private RemainingTilesWindow.MiniDock miniDock;
+
+    private final int fixedTileHeight;
+    private final int fixedTileWidth;
+
+    private double scaleMultiplier = GUIGlobals.getFontsScale();
+
+    public void adjustFontScale(double delta) {
+        this.scaleMultiplier = Math.max(0.5, Math.min(3.0, this.scaleMultiplier + delta));
+
+        // Recalculate dimensions dynamically using the new local scale multiplier
+        int baseMetric = (int) Math.round(100 * (2 + this.scaleMultiplier) / 3);
+        int tileHeight = baseMetric + 15;
+        int tileWidth = (int) (baseMetric * 0.85);
+
+        // Safely update field reflections via reflection if internal drawing relies on
+        // them,
+        // or directly push panel dimension overrides.
+        int panelHeight = tileHeight + 10;
+        this.setPreferredSize(new Dimension(Short.MAX_VALUE, panelHeight));
+        this.setMaximumSize(new Dimension(Short.MAX_VALUE, panelHeight));
+
+        // Re-render and enforce layout updates
+        showLabels();
+        revalidate();
+        repaint();
+    }
 
     public UpgradesPanel(ORUIManager orUIManager, boolean omitButtons) {
-        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        
+        this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         this.orUIManager = orUIManager;
         this.omitButtons = omitButtons;
-        //this.setBackground(Color.DARK_GRAY);
-        //this.setBorder(border);
+        this.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        int width = (int) Math.round(110 * (2 + GUIGlobals.getFontsScale()) / 3);
-        int height = 200;
-        
-        this.setPreferredSize(new Dimension(width, height + 50));
-        this.setMaximumSize(new Dimension(width, height + 50));
+        Color bgColor = UIManager.getColor("Panel.background");
+
+        int baseMetric = (int) Math.round(100 * (2 + scaleMultiplier) / 3);
+
+        this.fixedTileHeight = baseMetric + 15;
+        this.fixedTileWidth = (int) (baseMetric * 0.85);
+
+        int panelHeight = fixedTileHeight + 10;
+
+        this.setPreferredSize(new Dimension(Short.MAX_VALUE, panelHeight));
+        this.setMaximumSize(new Dimension(Short.MAX_VALUE, panelHeight));
         setVisible(true);
 
+        // Fields still required to prevent internal NullPointerExceptions in legacy
+        // wrappers
         upgradePanel = new JPanel();
-
-        upgradePanel.setOpaque(true);
-        upgradePanel.setLayout(new BoxLayout(upgradePanel, BoxLayout.PAGE_AXIS));
-        upgradePanel.setBackground(Color.DARK_GRAY);
-
         scrollPane = new JScrollPane(upgradePanel);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(width, height));
-        scrollPane.setMinimumSize(new Dimension(width, height));
-        
+        confirmButton = new RailsIconButton(RailsIcon.CONFIRM, null);
+        skipButton = new RailsIconButton(RailsIcon.SKIP, null);
 
-        Action confirmAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent arg0) {
-                UpgradesPanel.this.orUIManager.confirmUpgrade();
-            }
-        };
-        
-        confirmAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
+        this.miniDock = new RemainingTilesWindow.MiniDock(orUIManager);
 
-        Action skipAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                UpgradesPanel.this.orUIManager.skipUpgrade();
-            }
-        };
-        skipAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
-        
+        // Force miniDock to consume the entire horizontal width footprint
+        miniDock.setPreferredSize(new Dimension(1000, panelHeight - 4));
+        miniDock.setMinimumSize(new Dimension(100, panelHeight - 4));
+        miniDock.setMaximumSize(new Dimension(Short.MAX_VALUE, panelHeight - 4));
 
-        confirmButton = new RailsIconButton(RailsIcon.CONFIRM, confirmAction);
-        confirmButton.setEnabled(false);
+        add(miniDock);
 
-        skipButton = new RailsIconButton(RailsIcon.SKIP, skipAction);
-        skipButton.setEnabled(false);
-         
-        if (omitButtons) {
-            confirmButton.setVisible(false);
-            skipButton.setVisible(false);
-        } else {
-            Dimension buttonDimension = new Dimension(Short.MAX_VALUE, 25);
-            confirmButton.setMaximumSize(buttonDimension);
-            confirmButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-            skipButton.setMaximumSize(buttonDimension);
-            skipButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-            add(confirmButton);
-            add(skipButton);
-        }
-        add(scrollPane);
-        
         setButtons();
-        
         revalidate();
-
     }
-    
+
+    private void addLegendItem(JPanel panel, String key, String desc) {
+        JLabel lbl = new JLabel("<html><font color='#222222' size='3'><b>[" + key + "]</b></font> " + desc + "</html>");
+        lbl.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(lbl);
+        panel.add(Box.createHorizontalStrut(5));
+    }
+
     public void setHexUpgrades(GUIHexUpgrades hexUpgrades) {
         this.hexUpgrades = hexUpgrades;
     }
-    
-    
-    /**
-     * @return Default zoom step for conventional panes or, for dockable panes,
-     * the zoom step used in the map. Map zoom step can only be used for
-     * dockable panes as user-based pane sizing could be necessary when
-     * displaying tiles of an arbitrary size
-     */
+
     private int getZoomStep() {
         if (orUIManager.getORWindow().isDockingFrameworkEnabled()) {
             return orUIManager.getMap().getZoomStep();
@@ -139,26 +126,20 @@ public class UpgradesPanel extends JPanel {
     public RailsIconButton[] getButtons() {
         return new RailsIconButton[] { confirmButton, skipButton };
     }
-    
-    
+
     private void setButtons() {
         if (omitButtons) {
-            // only set externally managed buttons to visible if at least
-            // one of them is enabled
-            boolean isVisible =
-                    confirmButton.isEnabled() || skipButton.isEnabled();
+            boolean isVisible = confirmButton.isEnabled() || skipButton.isEnabled();
             confirmButton.setVisible(isVisible);
             skipButton.setVisible(isVisible);
         }
     }
-    
+
     private void resetUpgrades(boolean skip) {
         hexUpgrades.setActiveHex(null, 0);
         upgradePanel.removeAll();
-        // set scrollposition to top and show again
-        scrollPane.getVerticalScrollBar().setValue(0);
+        scrollPane.getHorizontalScrollBar().setValue(0);
         scrollPane.repaint();
-
         confirmButton.setEnabled(false);
         skipButton.setEnabled(skip);
         setButtons();
@@ -167,16 +148,21 @@ public class UpgradesPanel extends JPanel {
     public void setInactive() {
         resetUpgrades(false);
     }
-    
+
     public void setActive() {
         resetUpgrades(true);
     }
-    
+
+    public void refreshMiniDock() {
+        if (miniDock != null) {
+            miniDock.repaint();
+        }
+    }
+
     public void setSelect(GUIHex hex) {
         hexUpgrades.setActiveHex(hex, getZoomStep());
         showLabels();
         refreshUpgrades();
-
         HexUpgrade activeUpgrade = hexUpgrades.getActiveUpgrade();
         if (activeUpgrade != null) {
             confirmButton.setEnabled(true);
@@ -187,7 +173,7 @@ public class UpgradesPanel extends JPanel {
         }
         setButtons();
     }
-   
+
     public void nextSelection() {
         hexUpgrades.nextSelection();
         refreshUpgrades();
@@ -197,13 +183,13 @@ public class UpgradesPanel extends JPanel {
         hexUpgrades.nextUpgrade();
         refreshUpgrades();
     }
-    
-    private void setActiveUpgrade(HexUpgrade upgrade) {
+
+    public void setActiveUpgrade(HexUpgrade upgrade) {
         hexUpgrades.setUpgrade(upgrade);
         refreshUpgrades();
     }
-    
-    private void refreshUpgrades() {
+
+    public void refreshUpgrades() {
         upgradePanel.revalidate();
         upgradePanel.repaint();
         UpgradeLabel active = hexUpgrades.getActiveLabel();
@@ -211,29 +197,14 @@ public class UpgradesPanel extends JPanel {
             upgradePanel.scrollRectToVisible(active.getBounds());
         }
     }
-    
-    private void showLabels() {
-        upgradePanel.removeAll();
-        for (UpgradeLabel label:hexUpgrades.getUpgradeLabels()) {
-            final HexUpgrade upgrade = label.getUpgrade();
 
-            if (upgrade.isValid()) {
-                // mouse clicks => activate upgrade
-                label.addMouseListener(new MouseAdapter() {
-                    public void mouseClicked(MouseEvent e) {
-                        setActiveUpgrade(upgrade);
-                    }
-                }); 
-            } else { 
-                // invalid TileHexUpgrades == >
-                // highlight where tiles of this ID have been laid if no
-                // tiles left
-                if (upgrade instanceof TileHexUpgrade && ((TileHexUpgrade)upgrade).noTileAvailable()) {
-                    HexHighlightMouseListener.addMouseListener(label, orUIManager, 
-                            ((TileHexUpgrade)upgrade).getUpgrade().getTargetTile(), true);
-                }
-            }
-            upgradePanel.add(label);
+   private void showLabels() {
+        // Safe Stub: Upgrade tiles are hidden. Clear the background panel 
+        // to prevent NullPointerExceptions when hexUpgrades is uninitialized.
+        if (upgradePanel != null) {
+            upgradePanel.removeAll();
+            upgradePanel.revalidate();
+            upgradePanel.repaint();
         }
     }
 }

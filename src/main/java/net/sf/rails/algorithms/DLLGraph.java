@@ -97,7 +97,7 @@ public class DLLGraph {
                 usableBases.add (stop);
             }
         }
-        log.debug(">>>>> Usable bases: {}", usableBases);
+     //   log.debug(">>>>> Usable bases: {}", usableBases);
 
         /* Map from visited hex sides to the minimal track distances
          * from a base token.
@@ -130,7 +130,7 @@ public class DLLGraph {
 
             Station station = baseTokenStop.getRelatedStation();
             NetworkVertex startVertex = mapGraph.getVertex(baseTokenHex, station);
-            log.debug(">>>>> Start search from base at {}", baseTokenStop);
+//log.debug(">>>>> Start search from base at {}", baseTokenStop);
 
             NetworkIterator iterator = new NetworkIterator(graph, startVertex);
 
@@ -829,8 +829,8 @@ public class DLLGraph {
                 isForward = false;
                 iterator = descendingIterator();
             } else {
-                log.error ("Start vertex {} is not at one end of segment {}",
-                        startVertex, this);
+               // log.error ("Start vertex {} is not at one end of segment {}",
+             //           startVertex, this);
             }
         }
 
@@ -875,7 +875,7 @@ public class DLLGraph {
             } else if (thisVertex.equals(getLast())) {
                 return getFirst();
             } else {
-                log.error ("ERROR: {} is not at an end of segment {}", thisVertex, this);
+               // log.error ("ERROR: {} is not at an end of segment {}", thisVertex, this);
                 return null;
             }
         }

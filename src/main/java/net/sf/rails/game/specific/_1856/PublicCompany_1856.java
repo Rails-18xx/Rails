@@ -41,6 +41,11 @@ public final class PublicCompany_1856 extends PublicCompany {
     }
 
     @Override
+    public int getMaxNumberOfLoans() {
+        return sharesOwnedByPlayers();
+    }
+    
+    @Override
     public void buyTrain(Train train, int price) {
         super.buyTrain (train, price);
         //if (train.isPermanent()) hadPermanentTrain = true;

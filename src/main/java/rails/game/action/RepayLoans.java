@@ -49,7 +49,10 @@ public class RepayLoans extends PossibleAction {
     /**
      * @return Returns the company.
      */
-    public PublicCompany getCompany() {
+public PublicCompany getCompany() {
+        if (company == null && companyName != null && getRoot() != null) {
+            company = getRoot().getCompanyManager().getPublicCompany(companyName);
+        }
         return company;
     }
 
