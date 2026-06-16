@@ -800,11 +800,10 @@ if (activePhase == 1 || activePhase == 2) {
     }
 
     public void updateSpinnerVisibility() {
-        String configKey = "orPanel.showSpinner";
-        String rawValue = net.sf.rails.common.Config.get(configKey);
-
-        boolean showSpinner = (rawValue == null) || "yes".equalsIgnoreCase(rawValue)
-                || "true".equalsIgnoreCase(rawValue);
+      boolean showSpinner = true;
+        if (orUIManager != null) {
+            showSpinner = orUIManager.isShowRevenueSpinner();
+        }
 
         if (revSpinner != null) {
             revSpinner.setVisible(showSpinner);
@@ -822,6 +821,12 @@ if (activePhase == 1 || activePhase == 2) {
         if (sidebarPanel != null) {
             sidebarPanel.revalidate();
             sidebarPanel.repaint();
+        }
+        
+        // Force top-level window to redraw immediately to avoid layout ghosting
+        if (orWindow != null) {
+            orWindow.revalidate();
+            orWindow.repaint();
         }
     }
 

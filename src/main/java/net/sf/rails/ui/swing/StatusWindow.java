@@ -1340,7 +1340,8 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         styleStatusButton(passButton, SYS_BLUE);
 
         // Force Taller Buttons (45px height)
-        Dimension btnDim = new Dimension(60, 35);
+// Force Taller Buttons (45px height)
+        Dimension btnDim = new Dimension(90, 45);
         pauseButton.setPreferredSize(btnDim);
         undoButton.setPreferredSize(btnDim);
         redoButton.setPreferredSize(btnDim);
@@ -1552,9 +1553,13 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
 
 
-
-    private void updateComponentTreeFont(Component comp, Font font) {
-        comp.setFont(font);
+private void updateComponentTreeFont(Component comp, Font font) {
+        Font currentFont = comp.getFont();
+        if (currentFont != null) {
+            comp.setFont(font.deriveFont(currentFont.getStyle(), (float) font.getSize()));
+        } else {
+            comp.setFont(font);
+        }
         if (comp instanceof Container) {
             for (Component child : ((Container) comp).getComponents()) {
                 updateComponentTreeFont(child, font);
@@ -2544,14 +2549,13 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
                     }
                 }
             }
-            // ... (rest of the method) ...
-
-            gameStatus.setBackground(UIManager.getColor("Panel.background"));
-            gameStatus.setOpaque(false);
-            gameStatus.repaint();
-
-            if (currentRound instanceof EndOfGameRound)
+if (currentRound instanceof EndOfGameRound)
                 endOfGame();
+
+            if (dynamicButtonPanel != null) {
+                // Ensure dynamic actions scale to the user's current zoom level
+                updateComponentTreeFont(dynamicButtonPanel, new Font(net.sf.rails.common.Config.get("font.ui.name"), Font.PLAIN, (int) currentBaseFontSize));
+            }
 
             gameUIManager.packAndApplySizing(this);
             enforceDynamicMinimumSize();
@@ -2559,6 +2563,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         } catch (Exception e) {
             log.error("CRITICAL ERROR in StatusWindow.updateStatus", e);
         }
+        
     }
 
     /**
@@ -3372,8 +3377,8 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         // layout
         if (gameStatus != null) {
             gameStatus.setFont(baseFont);
-            updateComponentTreeFont(gameStatus, baseFont);
             gameStatus.recreate(); // Force layout metrics rebuild with true loaded fonts
+            updateComponentTreeFont(gameStatus, baseFont); // Apply new font size to the newly rebuilt tree
         }
 
         // 2. Update Header (Thinking Indicator) -> 1.5x scale factor
@@ -3390,13 +3395,15 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         if (buttonPanel != null) {
             updateComponentTreeFont(buttonPanel, baseFont);
 
-            Font smallerFont = baseFont.deriveFont(Font.BOLD, Math.max(8f, baseSize - 4f));
+            Font btnFont = baseFont.deriveFont(Font.BOLD, baseSize); // Match the base scale instead of forcing tiny font
             if (pauseButton != null)
-                pauseButton.setFont(smallerFont);
+                pauseButton.setFont(btnFont);
             if (undoButton != null)
-                undoButton.setFont(smallerFont);
+                undoButton.setFont(btnFont);
             if (redoButton != null)
-                redoButton.setFont(smallerFont);
+                redoButton.setFont(btnFont);
+            if (aiButton != null)
+                aiButton.setFont(btnFont);
         }
         enforceDynamicMinimumSize();
     }

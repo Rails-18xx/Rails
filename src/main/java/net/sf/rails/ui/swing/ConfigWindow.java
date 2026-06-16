@@ -150,6 +150,10 @@ class ConfigWindow extends JFrame {
                 if ("on".equalsIgnoreCase(item.name)) {
                     continue;
                 }
+                // Skip the RevenueSpinner configuration option as it is now isolated inside the Layer Panel
+                if ("orPanel.showSpinner".equalsIgnoreCase(item.name) || "RevenueSpinner".equalsIgnoreCase(item.name)) {
+                    continue;
+                }
                 // CRITICAL: We must actually add the element to the panel!
                 gbc.gridx = 0;
                 gbc.gridy++;

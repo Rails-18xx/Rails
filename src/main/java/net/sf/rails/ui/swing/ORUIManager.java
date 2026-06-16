@@ -87,6 +87,8 @@ public class ORUIManager implements DialogOwner {
     private boolean showRevenueRoutes = true;
     private boolean showFancyCityValues = true; // Default to off
 
+    
+
     public boolean isShowFancyCityValues() {
         return showFancyCityValues;
     }
@@ -148,6 +150,20 @@ public class ORUIManager implements DialogOwner {
         if (map != null) {
             map.repaintAll(new Rectangle(map.getSize()));
         }
+    }
+
+    // We are modifying ORUIManager.java to remove the deprecated hideAllOverlays
+    // method and inject Revenue Spinner layout state plumbing.
+    private boolean showRevenueSpinner = true;
+
+    public boolean isShowRevenueSpinner() {
+        return showRevenueSpinner;
+    }
+
+public void toggleRevenueSpinner() {
+        this.showRevenueSpinner = !this.showRevenueSpinner;
+        // Broadcast immediately to the active UI panels
+        net.sf.rails.ui.swing.ORPanel.updateSpinnerVisibilityFromConfig();
     }
 
     public boolean isShowFriendlyHexes() {
@@ -637,30 +653,30 @@ public class ORUIManager implements DialogOwner {
         }
     }
 
-    /**
-     * Resets all map overlays to hidden.
-     */
-    public void hideAllOverlays() {
-        this.showHexNames = false;
-        this.showTerrainCosts = false;
-        this.showFriendlyHexes = false;
-        this.showDestinationMarkers = false;
-        this.showHomeIdentifiers = false;
-        this.showRevenueRoutes = false;
-        this.showFancyCityValues = false;
+    // /**
+    //  * Resets all map overlays to hidden.
+    //  */
+    // public void hideAllOverlays() {
+    //     this.showHexNames = false;
+    //     this.showTerrainCosts = false;
+    //     this.showFriendlyHexes = false;
+    //     this.showDestinationMarkers = false;
+    //     this.showHomeIdentifiers = false;
+    //     this.showRevenueRoutes = false;
+    //     this.showFancyCityValues = false;
 
-        // Synchronize internal highlight logic and train paths[cite: 1, 3]
-        updateCompanyHighlights();
-        if (orPanel != null) {
-            orPanel.redrawRoutes();
-        }
+    //     // Synchronize internal highlight logic and train paths[cite: 1, 3]
+    //     updateCompanyHighlights();
+    //     if (orPanel != null) {
+    //         orPanel.redrawRoutes();
+    //     }
 
-        // Repaint the entire map to reflect all changes[cite: 1]
-        if (map != null) {
-            map.repaintAll(new Rectangle(map.getSize()));
-        }
-        log.info("DEBUG: All 6 map overlays hidden via Master Reset.");
-    }
+    //     // Repaint the entire map to reflect all changes[cite: 1]
+    //     if (map != null) {
+    //         map.repaintAll(new Rectangle(map.getSize()));
+    //     }
+    //     log.info("DEBUG: All 6 map overlays hidden via Master Reset.");
+    // }
 
     public boolean isShowMapMarkings() {
         return showMapMarkings;
@@ -868,6 +884,8 @@ public class ORUIManager implements DialogOwner {
             map.repaintAll(mapBounds);
             return;
         }
+
+        
 
         Collection<GUIHex> hexes = hexUpgrades.getHexes();
 

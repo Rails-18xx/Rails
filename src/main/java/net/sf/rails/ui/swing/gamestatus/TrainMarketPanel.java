@@ -50,15 +50,15 @@ public class TrainMarketPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 0.0;
         
-        gbc.gridx = 0;
-        add(createHeader("Used", B_TOP_L), gbc);
+gbc.gridx = 0;
+        add(createHeader("Used", B_TOP_L, stickyFont), gbc);
 
         gbc.gridx = 1;
-        add(createHeader("Current", B_TOP_M), gbc);
+        add(createHeader("Current", B_TOP_M, stickyFont), gbc);
 
         gbc.gridx = 2;
         gbc.weightx = 1.0; // Future takes remaining space
-        add(createHeader("Future", B_TOP_R), gbc);
+        add(createHeader("Future", B_TOP_R, stickyFont), gbc);
 
         // --- 2. DATA PANELS ---
         gbc.gridy = 1;
@@ -90,6 +90,16 @@ public class TrainMarketPanel extends JPanel {
         add(futureTrainsPanel, gbc);
     }
 
+    private Caption createHeader(String text, javax.swing.border.Border border, Font stickyFont) {
+        Caption f = new Caption(text);
+        int size = (stickyFont != null) ? stickyFont.getSize() : 11;
+        f.setFont(new Font("SansSerif", Font.BOLD, size));
+        f.setBorder(border);
+        f.setBackground(BG_TRAINS);
+        f.setOpaque(true);
+        return f;
+    }
+
     private Caption createHeader(String text, javax.swing.border.Border border) {
         Caption f = new Caption(text);
         f.setFont(new Font("SansSerif", Font.BOLD, 11));
@@ -117,17 +127,24 @@ public class TrainMarketPanel extends JPanel {
 
             labels[i] = new JLabel(" ", SwingConstants.CENTER);
             int fontSize = (font != null) ? font.getSize() : 12;
-            labels[i].setFont(new Font(FONT_FAMILY_CURRENCY, Font.BOLD, fontSize));
+
+
+            String currencyFamily = net.sf.rails.common.Config.get("font.currency");
+            if (currencyFamily == null || currencyFamily.trim().isEmpty()) currencyFamily = FONT_FAMILY_CURRENCY;
+            labels[i].setFont(new Font(currencyFamily, Font.BOLD, fontSize));
             labels[i].setForeground(Color.BLACK);
 
             // Add scaling protection against global UI font overrides
             final JLabel lbl = labels[i];
             lbl.addPropertyChangeListener("font", evt -> {
                 Font f = (Font) evt.getNewValue();
-                if (f != null && (!FONT_FAMILY_CURRENCY.equals(f.getFamily()) || f.getStyle() != Font.BOLD)) {
-                    lbl.setFont(new Font(FONT_FAMILY_CURRENCY, Font.BOLD, f.getSize()));
+                String currFam = net.sf.rails.common.Config.get("font.currency");
+                if (currFam == null || currFam.trim().isEmpty()) currFam = FONT_FAMILY_CURRENCY;
+                if (f != null && (!currFam.equals(f.getFamily()) || f.getStyle() != Font.BOLD)) {
+                    lbl.setFont(new Font(currFam, Font.BOLD, f.getSize()));
                 }
             });
+            
             slot.add(labels[i], BorderLayout.CENTER);
 
             parent.add(slot);

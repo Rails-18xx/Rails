@@ -380,22 +380,18 @@ public class MapPanel extends JPanel {
 
                 JPopupMenu menu = new JPopupMenu();
 
-                menu.add(new JCheckBoxMenuItem("Hex Names", orUIManager.isShowHexNames()))
-                        .addActionListener(evHex -> orUIManager.toggleHexNames());
+               // Section 1: ALWAYS OVERLAYS
+                JLabel alwaysHeader = new JLabel(" ALWAYS");
+                alwaysHeader.setFont(alwaysHeader.getFont().deriveFont(Font.BOLD));
+                alwaysHeader.setForeground(Color.GRAY);
+                menu.add(alwaysHeader);
+
                 menu.add(new JCheckBoxMenuItem("Terrain Costs", orUIManager.isShowTerrainCosts()))
                         .addActionListener(evTerrain -> orUIManager.toggleTerrainCosts());
-                menu.add(new JCheckBoxMenuItem("Friendly Hexes", orUIManager.isShowFriendlyHexes()))
-                        .addActionListener(evFriendly -> orUIManager.toggleFriendlyHexes());
                 menu.add(new JCheckBoxMenuItem("Destination Markers", orUIManager.isShowDestinationMarkers()))
                         .addActionListener(evDest -> orUIManager.toggleDestinationMarkers());
                 menu.add(new JCheckBoxMenuItem("Home Identifiers", orUIManager.isShowHomeIdentifiers()))
                         .addActionListener(evHome -> orUIManager.toggleHomeIdentifiers());
-                menu.add(new JCheckBoxMenuItem("Revenue Routes", orUIManager.isShowRevenueRoutes()))
-                        .addActionListener(evRoute -> orUIManager.toggleRevenueRoutes());
-                menu.add(new JCheckBoxMenuItem("Fancy City Values", orUIManager.isShowFancyCityValues()))
-                        .addActionListener(evFancy -> orUIManager.toggleFancyCityValues());
-
-                menu.addSeparator();
 
                 JCheckBoxMenuItem offboardItem = new JCheckBoxMenuItem("Offboard Values", map.getDisplayOffboardValues());
                 offboardItem.addActionListener(evOffboard -> {
@@ -404,7 +400,6 @@ public class MapPanel extends JPanel {
                 });
                 menu.add(offboardItem);
 
-
                 JCheckBoxMenuItem cityNamesItem = new JCheckBoxMenuItem("City Names", map.getDisplayCityNames());
                 cityNamesItem.addActionListener(ae -> {
                     map.setDisplayCityNames(!map.getDisplayCityNames());
@@ -412,8 +407,21 @@ public class MapPanel extends JPanel {
                 });
                 menu.add(cityNamesItem);
 
+                menu.addSeparator();
+
+                // Section 2: BUILDING PHASE OVERLAYS
+                JLabel buildingHeader = new JLabel(" BUILDING PHASE");
+                buildingHeader.setFont(buildingHeader.getFont().deriveFont(Font.BOLD));
+                buildingHeader.setForeground(Color.GRAY);
+                menu.add(buildingHeader);
+
+                menu.add(new JCheckBoxMenuItem("Hex Names", orUIManager.isShowHexNames()))
+                        .addActionListener(evHex -> orUIManager.toggleHexNames());
+                menu.add(new JCheckBoxMenuItem("Friendly Hexes", orUIManager.isShowFriendlyHexes()))
+                        .addActionListener(evFriendly -> orUIManager.toggleFriendlyHexes());
+
                 JCheckBoxMenuItem lastRunsItem = new JCheckBoxMenuItem("Last Revenue Runs", map.getDisplayLastRevenueRuns());
-lastRunsItem.addActionListener(ae -> {
+                lastRunsItem.addActionListener(ae -> {
                     map.setDisplayLastRevenueRuns(!map.getDisplayLastRevenueRuns());
                     if (gameUIManager.getORUIManager() != null && gameUIManager.getORUIManager().getORPanel() != null) {
                         gameUIManager.getORUIManager().getORPanel().redrawRoutes();
@@ -423,9 +431,21 @@ lastRunsItem.addActionListener(ae -> {
                 menu.add(lastRunsItem);
 
                 menu.addSeparator();
-                JMenuItem hideAll = new JMenuItem("Hide All Overlays");
-                hideAll.addActionListener(evHide -> orUIManager.hideAllOverlays());
-                menu.add(hideAll);
+
+                // Section 3: REVENUE PHASE OVERLAYS
+                JLabel revenueHeader = new JLabel(" REVENUE PHASE");
+                revenueHeader.setFont(revenueHeader.getFont().deriveFont(Font.BOLD));
+                revenueHeader.setForeground(Color.GRAY);
+                menu.add(revenueHeader);
+
+                menu.add(new JCheckBoxMenuItem("Current Revenue Runs", orUIManager.isShowRevenueRoutes()))
+                        .addActionListener(evRoute -> orUIManager.toggleRevenueRoutes());
+
+                menu.add(new JCheckBoxMenuItem("Fancy City Values", orUIManager.isShowFancyCityValues()))
+                        .addActionListener(evFancy -> orUIManager.toggleFancyCityValues());
+
+                menu.add(new JCheckBoxMenuItem("Show Revenue Spinner", orUIManager.isShowRevenueSpinner()))
+                        .addActionListener(evRevSpinner -> orUIManager.toggleRevenueSpinner());
 
                 // Show menu relative to the button
                 menu.show(layersBtn, 0, layersBtn.getHeight());

@@ -214,16 +214,18 @@ public class GameStatus extends GridPanel {
     public static final String FONT_FAMILY_CURRENCY = "Monospaced";
     public static final Color COLOR_CURRENCY = new Color(0, 0, 128); // Navy Blue
 
-protected void applyCurrencyFont(JComponent comp) {
+    protected void applyCurrencyFont(JComponent comp) {
         Font base = (stickyFont != null) ? stickyFont : comp.getFont();
-        if (base == null) base = new Font("SansSerif", Font.BOLD, 12);
-        
-        // Dynamic look up of active custom Currency properties instead of static hardcoding
+        if (base == null)
+            base = new Font("SansSerif", Font.BOLD, 12);
+
+        // Dynamic look up of active custom Currency properties instead of static
+        // hardcoding
         String currencyFamily = net.sf.rails.common.Config.get("font.currency");
         if (currencyFamily == null || currencyFamily.trim().isEmpty()) {
-            currencyFamily = "Monospaced"; 
+            currencyFamily = "Monospaced";
         }
-        
+
         comp.setFont(new Font(currencyFamily, Font.BOLD, base.getSize()));
         comp.setForeground(COLOR_CURRENCY);
 
@@ -239,7 +241,6 @@ protected void applyCurrencyFont(JComponent comp) {
             }
         });
     }
-
 
     /**
      * Scans the parent StatusWindow to find the "Pause" button (which lives in the
@@ -531,26 +532,29 @@ protected void applyCurrencyFont(JComponent comp) {
                 nb++;
         }
         np = players.getNumberOfPlayers();
-        
+
         lastCompCash = new int[nc];
         lastPlayerCash = new int[np];
-        for (int i = 0; i < nc; i++) lastCompCash[i] = Integer.MIN_VALUE;
-        for (int i = 0; i < np; i++) lastPlayerCash[i] = Integer.MIN_VALUE;
+        for (int i = 0; i < nc; i++)
+            lastCompCash[i] = Integer.MIN_VALUE;
+        for (int i = 0; i < np; i++)
+            lastPlayerCash[i] = Integer.MIN_VALUE;
 
         /* Set game parameters required here */
         hasParPrices = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_PAR_PRICE);
         compCanBuyPrivates = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_BUY_PRIVATES);
         compCanHoldOwnShares = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.CAN_ANY_COMPANY_HOLD_OWN_SHARES);
         boolean is1817 = "1817".equals(gameUIManager.getGameManager().getGameName());
-       
+
         boolean is1870 = "1870".equals(gameUIManager.getGameManager().getGameName());
-        
+
         // 1870 Rule: Companies hold redeemed shares in their treasury.
-        // We force this to true to ensure the Shares column is generated alongside Cash.
+        // We force this to true to ensure the Shares column is generated alongside
+        // Cash.
         if (is1870) {
             compCanHoldOwnShares = true;
         }
-       
+
         hasCompanyLoans = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_COMPANY_LOANS) || is1817;
 
         hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);
@@ -1488,8 +1492,7 @@ protected void applyCurrencyFont(JComponent comp) {
                 if (dest != null && dest.isVisible() && source != null && parentFrame != null) {
                     new FlightAnimator(parentFrame, source, action, 200).executeAndFly(
                             () -> gameUIManager.getORUIManager().processBuyPrivate((BuyPrivate) action),
-                            () -> repaint()
-                    );
+                            () -> repaint());
                 } else {
                     gameUIManager.getORUIManager().processBuyPrivate((BuyPrivate) action);
                 }
@@ -1502,8 +1505,7 @@ protected void applyCurrencyFont(JComponent comp) {
                 if (dest != null && dest.isVisible() && source != null && parentFrame != null) {
                     new FlightAnimator(parentFrame, source, action, 200).executeAndFly(
                             () -> gameUIManager.getORUIManager().processBuyTrain((BuyTrain) action),
-                            () -> repaint()
-                    );
+                            () -> repaint());
                 } else {
                     gameUIManager.getORUIManager().processBuyTrain((BuyTrain) action);
                 }
@@ -1546,8 +1548,7 @@ protected void applyCurrencyFont(JComponent comp) {
                 final PossibleAction finalAction = chosenAction;
                 new FlightAnimator(parentFrame, source, finalAction, 200).executeAndFly(
                         () -> (parent).process(finalAction),
-                        () -> repaint()
-                );
+                        () -> repaint());
                 return;
             }
 
@@ -1738,18 +1739,19 @@ protected void applyCurrencyFont(JComponent comp) {
             if (c.isClosed())
                 continue;
 
-            // 1870 Rule: MKT Railroad is hidden until started by the exchange of the MKT private.
+            // 1870 Rule: MKT Railroad is hidden until started by the exchange of the MKT
+            // private.
             if ("MKT".equals(c.getId()) && !c.hasFloated()) {
                 continue;
             }
-            
+
             if (!isStockRound && !c.hasFloated() && c.getClass().getName().contains("1817"))
                 continue;
 
             displayList.add(c);
         }
 
-      // 2. Sort
+        // 2. Sort
         displayList = gameUIManager.getGameManager().getCompaniesInDisplayOrder(displayList);
 
         // 3. Build Signature
@@ -2375,9 +2377,10 @@ protected void applyCurrencyFont(JComponent comp) {
             }
         }
 
-JPanel[] currentPanels = playerPrivatesPanel;
+        JPanel[] currentPanels = playerPrivatesPanel;
         for (int i = 0; i < np; i++) {
-            if (currentPanels == null || i >= currentPanels.length) continue;
+            if (currentPanels == null || i >= currentPanels.length)
+                continue;
             JPanel panel = currentPanels[i];
             if (panel == null)
                 continue;
@@ -2568,8 +2571,7 @@ JPanel[] currentPanels = playerPrivatesPanel;
         panel.repaint();
     }
 
-
-// --- START FIX ---
+    // --- START FIX ---
     private void updateCompanyDestinationDisplay(int compIndex, PublicCompany company, JPanel panel) {
         if (panel == null)
             return;
@@ -2613,7 +2615,8 @@ JPanel[] currentPanels = playerPrivatesPanel;
         iconLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent e) {
-                if (gameUIManager != null && gameUIManager.getORUIManager() != null && gameUIManager.getORUIManager().getMap() != null) {
+                if (gameUIManager != null && gameUIManager.getORUIManager() != null
+                        && gameUIManager.getORUIManager().getMap() != null) {
                     net.sf.rails.ui.swing.hexmap.HexMap hexMap = gameUIManager.getORUIManager().getMap();
                     net.sf.rails.ui.swing.hexmap.GUIHex guiHex = hexMap.getHex(company.getDestinationHex());
                     if (guiHex != null) {
@@ -2624,7 +2627,8 @@ JPanel[] currentPanels = playerPrivatesPanel;
 
             @Override
             public void mouseExited(java.awt.event.MouseEvent e) {
-                if (gameUIManager != null && gameUIManager.getORUIManager() != null && gameUIManager.getORUIManager().getMap() != null) {
+                if (gameUIManager != null && gameUIManager.getORUIManager() != null
+                        && gameUIManager.getORUIManager().getMap() != null) {
                     net.sf.rails.ui.swing.hexmap.HexMap hexMap = gameUIManager.getORUIManager().getMap();
                     net.sf.rails.ui.swing.hexmap.GUIHex guiHex = hexMap.getHex(company.getDestinationHex());
                     if (guiHex != null) {
@@ -2655,55 +2659,59 @@ JPanel[] currentPanels = playerPrivatesPanel;
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            int width = (int) (size * 1.15); 
+            int width = (int) (size * 1.15);
             int height = size;
 
             int[] xPoints = {
-                x + width/4, x + width*3/4, x + width, x + width*3/4, x + width/4, x
+                    x + width / 4, x + width * 3 / 4, x + width, x + width * 3 / 4, x + width / 4, x
             };
             int[] yPoints = {
-                y, y, y + height/2, y + height, y + height, y + height/2
+                    y, y, y + height / 2, y + height, y + height, y + height / 2
             };
             Polygon hex = new Polygon(xPoints, yPoints, 6);
 
             if (connected) {
                 g2.setColor(new Color(34, 139, 34)); // Solid Forest Green
                 g2.fillPolygon(hex);
-                
+
                 g2.setColor(Color.WHITE);
-                g2.setFont(new Font("Dialog", Font.BOLD, (int)(size * 0.8)));
+                g2.setFont(new Font("Dialog", Font.BOLD, (int) (size * 0.8)));
                 FontMetrics fm = g2.getFontMetrics();
-                String mark = "\u2713"; 
+                String mark = "\u2713";
                 int tx = x + (width - fm.stringWidth(mark)) / 2;
                 int ty = y + ((height - fm.getHeight()) / 2) + fm.getAscent();
                 g2.drawString(mark, tx, ty);
             } else {
                 // Added Golden/Yellow background
-                g2.setColor(new Color(255, 215, 0)); 
+                g2.setColor(new Color(255, 215, 0));
                 g2.fillPolygon(hex);
 
                 g2.setColor(Color.BLACK);
                 g2.setStroke(new BasicStroke(1.5f));
                 g2.drawPolygon(hex);
-                
+
                 g2.setColor(Color.BLACK);
                 // Reduced font scale to 45% of height to ensure it fits inside the borders
                 g2.setFont(c.getFont().deriveFont(Font.BOLD, size * 0.45f));
                 FontMetrics fm = g2.getFontMetrics();
                 int tx = x + (width - fm.stringWidth(text)) / 2;
-                int ty = y + ((height - fm.getHeight()) / 2) + fm.getAscent(); 
+                int ty = y + ((height - fm.getHeight()) / 2) + fm.getAscent();
                 g2.drawString(text, tx, ty);
             }
             g2.dispose();
         }
 
         @Override
-        public int getIconWidth() { return (int) (size * 1.15); }
+        public int getIconWidth() {
+            return (int) (size * 1.15);
+        }
 
         @Override
-        public int getIconHeight() { return size; }
+        public int getIconHeight() {
+            return size;
+        }
     }
-// --- END FIX ---
+    // --- END FIX ---
 
     private void updateCompanyPrivates(int i, PublicCompany c) {
         if (compPrivatesPanel == null || compPrivatesPanel[i] == null)
@@ -2830,10 +2838,17 @@ JPanel[] currentPanels = playerPrivatesPanel;
 
                 if (lbl != null) {
                     String qtyStr = tct.hasInfiniteQuantity() ? "\u221E" : "(" + count + ")";
+                    String currencyFamily = net.sf.rails.common.Config.get("font.currency");
+                    if (currencyFamily == null || currencyFamily.trim().isEmpty())
+                        currencyFamily = "Monospaced";
+                    int fSize = lbl.getFont().getSize();
+
                     lbl.setText("<html><center>" + qtyStr + "<br>" +
-                            "<font face='" + FONT_FAMILY_CURRENCY + "' color='#000080'><b>" + gameUIManager.format(cost)
-                            + "</b></font>" +
+                            "<span style='font-family: \"" + currencyFamily + "\"; font-size: " + fSize
+                            + "pt; color: #000080;'><b>" + gameUIManager.format(cost)
+                            + "</b></span>" +
                             "</center></html>");
+
                     lbl.setVisible(true);
                 }
                 ipoSlot++;
@@ -2947,16 +2962,24 @@ JPanel[] currentPanels = playerPrivatesPanel;
                 }
                 if (lbl != null) {
                     String qtyStr = tct.hasInfiniteQuantity() ? "\u221E" : "(" + tct.getQuantity() + ")";
+                    String currencyFamily = net.sf.rails.common.Config.get("font.currency");
+                    if (currencyFamily == null || currencyFamily.trim().isEmpty())
+                        currencyFamily = "Monospaced";
+                    int fSize = lbl.getFont().getSize();
+
                     lbl.setText("<html><center>" + qtyStr + "<br>" +
-                            "<font face='" + FONT_FAMILY_CURRENCY + "' color='#000080'><b>"
-                            + (cost > 0 ? gameUIManager.format(cost) : "") + "</b></font>" +
+                            "<span style='font-family: \"" + currencyFamily + "\"; font-size: " + fSize
+                            + "pt; color: #000080;'><b>"
+                            + (cost > 0 ? gameUIManager.format(cost) : "") + "</b></span>" +
                             "</center></html>");
+
                     lbl.setVisible(true);
                 }
             }
 
             // Clear unused future slots
-            for (; futSlot < MAX_FUTURE_SLOTS && futureTrainButtons != null && futSlot < futureTrainButtons.length; futSlot++) {
+            for (; futSlot < MAX_FUTURE_SLOTS && futureTrainButtons != null
+                    && futSlot < futureTrainButtons.length; futSlot++) {
                 if (futureTrainButtons[futSlot] != null)
                     futureTrainButtons[futSlot].setVisible(false);
                 if (futureTrainInfoLabels != null && futureTrainInfoLabels[futSlot] != null)
@@ -3377,7 +3400,7 @@ JPanel[] currentPanels = playerPrivatesPanel;
 
             if (hasDestinations && compDest[i] != null) {
                 compDest[i].setBackground(bgRow);
-                updateCompanyDestinationDisplay(i, c, compDest[i]); 
+                updateCompanyDestinationDisplay(i, c, compDest[i]);
             }
 
             if (compTokens[i] != null) {
@@ -3402,14 +3425,17 @@ JPanel[] currentPanels = playerPrivatesPanel;
             int bH = isOperating ? 2 : 1;
             javax.swing.border.Border rowBorder = BorderFactory.createMatteBorder(tH, 0, bH, 1, Color.BLACK);
 
-           int yRow = companyCertRow.containsKey(c) ? companyCertRow.get(c) : -1;
+            int yRow = companyCertRow.containsKey(c) ? companyCertRow.get(c) : -1;
             if (yRow != -1 && fields != null) {
-                
-                // Steal the exact background and border from Tokens to guarantee identical styling
+
+                // Steal the exact background and border from Tokens to guarantee identical
+                // styling
                 final Color targetBg = (compTokens[i] != null) ? compTokens[i].getBackground() : bgRow;
-                final javax.swing.border.Border targetBorder = (compTokens[i] != null) ? compTokens[i].getBorder() : rowBorder;
-                
-                // 1. Existing Escrow/Rights columns fallback (Preserves original intent for other games)
+                final javax.swing.border.Border targetBorder = (compTokens[i] != null) ? compTokens[i].getBorder()
+                        : rowBorder;
+
+                // 1. Existing Escrow/Rights columns fallback (Preserves original intent for
+                // other games)
                 if (hasRights && rightsXOffset < fields.length && yRow < fields[rightsXOffset].length) {
                     JComponent customComp = fields[rightsXOffset][yRow];
                     if (customComp != null) {
@@ -3435,7 +3461,8 @@ JPanel[] currentPanels = playerPrivatesPanel;
                     if (customComp != null && !(customComp instanceof Caption)) {
                         customComp.setBackground(targetBg);
                         customComp.setOpaque(true);
-                        customComp.setBorder(BorderFactory.createCompoundBorder(targetBorder, BorderFactory.createEmptyBorder(0, 0, 0, 5)));
+                        customComp.setBorder(BorderFactory.createCompoundBorder(targetBorder,
+                                BorderFactory.createEmptyBorder(0, 0, 0, 5)));
                         if (customComp instanceof Field || customComp instanceof JLabel) {
                             applyCurrencyFont(customComp);
                             if (customComp instanceof JLabel) {
@@ -3453,8 +3480,10 @@ JPanel[] currentPanels = playerPrivatesPanel;
                         String headerText = ((JLabel) fields[x][1]).getText();
                         if (headerText != null) {
                             String clean = headerText.replaceAll("\\<.*?\\>", "").trim();
-                            if (clean.equalsIgnoreCase("Escrow")) escrowCol = x;
-                            else if (clean.equalsIgnoreCase("Loans")) loansCol = x;
+                            if (clean.equalsIgnoreCase("Escrow"))
+                                escrowCol = x;
+                            else if (clean.equalsIgnoreCase("Loans"))
+                                loansCol = x;
                         }
                     }
                 }
@@ -3466,11 +3495,12 @@ JPanel[] currentPanels = playerPrivatesPanel;
 
                 // Defer to run AFTER the subclass initTurn completes its overrides
 
-SwingUtilities.invokeLater(() -> {
+                SwingUtilities.invokeLater(() -> {
                     boolean shouldShowEscrow = isStockRound || isEffectivelyActive;
-                    
+
                     // --- START FIX ---
-                    // Loans are only shown for companies that are active but not fully running yet (haven't reached destination)
+                    // Loans are only shown for companies that are active but not fully running yet
+                    // (haven't reached destination)
                     boolean hasReachedDestination = fComp.hasReachedDestination();
                     boolean shouldShowLoans = isEffectivelyActive && !hasReachedDestination;
                     // --- END FIX ---
@@ -3480,8 +3510,9 @@ SwingUtilities.invokeLater(() -> {
                         if (comp != null) {
                             comp.setBackground(targetBg);
                             comp.setOpaque(true);
-                            comp.setBorder(BorderFactory.createCompoundBorder(targetBorder, BorderFactory.createEmptyBorder(0, 0, 0, 5)));
-                            
+                            comp.setBorder(BorderFactory.createCompoundBorder(targetBorder,
+                                    BorderFactory.createEmptyBorder(0, 0, 0, 5)));
+
                             // --- START FIX ---
                             if (shouldShowEscrow) {
                                 applyCurrencyFont(comp);
@@ -3489,8 +3520,10 @@ SwingUtilities.invokeLater(() -> {
                                     ((JLabel) comp).setHorizontalAlignment(SwingConstants.RIGHT);
                                 }
                             } else {
-                                if (comp instanceof JLabel) ((JLabel) comp).setText("");
-                                if (comp instanceof Field) ((Field) comp).setText("");
+                                if (comp instanceof JLabel)
+                                    ((JLabel) comp).setText("");
+                                if (comp instanceof Field)
+                                    ((Field) comp).setText("");
                             }
                             // --- END FIX ---
                         }
@@ -3502,7 +3535,7 @@ SwingUtilities.invokeLater(() -> {
                             comp.setBackground(targetBg);
                             comp.setOpaque(true);
                             comp.setBorder(targetBorder);
-                            
+
                             // --- START FIX ---
                             if (shouldShowLoans) {
                                 int currentDebt = 0;
@@ -3513,18 +3546,23 @@ SwingUtilities.invokeLater(() -> {
                                         try {
                                             currentDebt = Integer.parseInt(cleanTxt);
                                         } catch (NumberFormatException e) {
-                                            currentDebt = fComp.hasBonds() ? fComp.getNumberOfBonds() : fComp.getCurrentNumberOfLoans();
+                                            currentDebt = fComp.hasBonds() ? fComp.getNumberOfBonds()
+                                                    : fComp.getCurrentNumberOfLoans();
                                         }
                                     }
                                 }
-                                
+
                                 int maxDebt = fComp.getMaxNumberOfLoans();
-                                if (maxDebt <= 0) maxDebt = 5;
-                                if (maxDebt < currentDebt) maxDebt = currentDebt; 
-                                
+                                if (maxDebt <= 0)
+                                    maxDebt = 5;
+                                if (maxDebt < currentDebt)
+                                    maxDebt = currentDebt;
+
                                 StringBuilder sb = new StringBuilder("<html><center>");
-                                for (int b = 0; b < currentDebt; b++) sb.append("<font color='red'>●</font>");
-                                for (int b = 0; b < (maxDebt - currentDebt); b++) sb.append("<font color='black'>○</font>");
+                                for (int b = 0; b < currentDebt; b++)
+                                    sb.append("<font color='red'>●</font>");
+                                for (int b = 0; b < (maxDebt - currentDebt); b++)
+                                    sb.append("<font color='black'>○</font>");
                                 sb.append("</center></html>");
 
                                 if (comp instanceof JLabel) {
@@ -3538,8 +3576,10 @@ SwingUtilities.invokeLater(() -> {
 
                                 // Apply Action Highlighting
                                 if (possibleActions != null && possibleActions.getList() != null) {
-                                    for (rails.game.action.PossibleAction pa : new ArrayList<>(possibleActions.getList())) {
-                                        if (pa != null && (pa.getClass().getName().contains("Loan") || pa.getClass().getName().endsWith("TakeLoans_1817"))) {
+                                    for (rails.game.action.PossibleAction pa : new ArrayList<>(
+                                            possibleActions.getList())) {
+                                        if (pa != null && (pa.getClass().getName().contains("Loan")
+                                                || pa.getClass().getName().endsWith("TakeLoans_1817"))) {
                                             boolean match = false;
                                             try {
                                                 java.lang.reflect.Method m = pa.getClass().getMethod("getCompanyId");
@@ -3548,7 +3588,8 @@ SwingUtilities.invokeLater(() -> {
                                                 try {
                                                     java.lang.reflect.Method m = pa.getClass().getMethod("getCompany");
                                                     match = fComp.equals(m.invoke(pa));
-                                                } catch (Exception e2) {}
+                                                } catch (Exception e2) {
+                                                }
                                             }
                                             if (match && comp instanceof ClickField) {
                                                 ClickField cf = (ClickField) comp;
@@ -3560,13 +3601,13 @@ SwingUtilities.invokeLater(() -> {
                                     }
                                 }
                             } else {
-                                if (comp instanceof JLabel) ((JLabel) comp).setText("");
+                                if (comp instanceof JLabel)
+                                    ((JLabel) comp).setText("");
                             }
                             // --- END FIX ---
                         }
                     }
                 });
-            
 
             }
 
@@ -3719,7 +3760,7 @@ SwingUtilities.invokeLater(() -> {
             if (parent != null && parent.isShowPlayerWorth() && playerWorth != null && playerWorth[i] != null) {
                 playerWorth[i].setBackground(pBg);
                 playerWorth[i].setOpaque(true);
-                
+
                 int worth = p.getCashValue();
                 try {
                     java.lang.reflect.Method m = p.getClass().getMethod("getValue");
@@ -3739,7 +3780,7 @@ SwingUtilities.invokeLater(() -> {
                 }
                 playerWorth[i].setText(gameUIManager.format(worth));
             }
-            
+
             if (playerPrivatesPanel[i] != null) {
                 playerPrivatesPanel[i].setBackground(pBg);
                 playerPrivatesPanel[i].setOpaque(true);
@@ -3997,7 +4038,8 @@ SwingUtilities.invokeLater(() -> {
         }
 
         // Evaluate Cash Corrections. Unlike normal buying, corrections can be triggered
-        // at any time, even out of turn. This ensures the matrix updates immediately when
+        // at any time, even out of turn. This ensures the matrix updates immediately
+        // when
         // correction mode is toggled via the menu.
         if (possibleActions != null) {
             initCashCorrectionActions();
@@ -4041,7 +4083,8 @@ SwingUtilities.invokeLater(() -> {
         SwingUtilities.invokeLater(() -> {
             // Check Companies
             for (int i = 0; i < nc; i++) {
-                if (companies[i] != null && !companies[i].isClosed() && compCash[i] != null && compCash[i].isShowing()) {
+                if (companies[i] != null && !companies[i].isClosed() && compCash[i] != null
+                        && compCash[i].isShowing()) {
                     try {
                         int currentCash = companies[i].getPurseMoneyModel().value();
                         if (lastCompCash[i] != Integer.MIN_VALUE && lastCompCash[i] != currentCash) {
@@ -4182,7 +4225,6 @@ SwingUtilities.invokeLater(() -> {
     private static class CertLimitGauge extends JLabel {
         public CertLimitGauge() {
             setOpaque(true);
-            setFont(new Font("SansSerif", Font.BOLD, 12));
             setHorizontalAlignment(SwingConstants.CENTER);
         }
 
@@ -4504,7 +4546,9 @@ SwingUtilities.invokeLater(() -> {
         String rawText = (text == null) ? "" : text.replaceAll("\\<.*?\\>", "");
         String label = (rawText.trim().isEmpty()) ? "&nbsp;" : rawText;
 
-        btn.setText("<html><center><font size='4' color='black'><b>" + label + "</b></font></center></html>");
+        int fontSize = btn.getFont().getSize(); // Inherit size dynamically to respect zoom/stickyFont
+        btn.setText("<html><center><span style='font-size: " + fontSize + "pt; color: black;'><b>" + label
+                + "</b></span></center></html>");
 
         btn.setOpaque(true);
         btn.setVisible(true);
@@ -4556,10 +4600,17 @@ SwingUtilities.invokeLater(() -> {
             // Set Label: (Count) / Price
             int cost = representative.getType().getCost();
             if (lbl != null) {
+                String currencyFamily = net.sf.rails.common.Config.get("font.currency");
+                if (currencyFamily == null || currencyFamily.trim().isEmpty())
+                    currencyFamily = "Monospaced";
+                int fSize = lbl.getFont().getSize();
+
                 lbl.setText("<html><center>(" + count + ")<br>" +
-                        "<font face='" + FONT_FAMILY_CURRENCY + "' color='#000080'><b>" + gameUIManager.format(cost)
-                        + "</b></font>" +
+                        "<span style='font-family: \"" + currencyFamily + "\"; font-size: " + fSize
+                        + "pt; color: #000080;'><b>" + gameUIManager.format(cost)
+                        + "</b></span>" +
                         "</center></html>");
+
             }
 
             boolean canBuy = false;
@@ -5042,7 +5093,7 @@ SwingUtilities.invokeLater(() -> {
 
         compNameCaption = new Caption[nc];
 
-       displayList = gameUIManager.getGameManager().getCompaniesInDisplayOrder(displayList);
+        displayList = gameUIManager.getGameManager().getCompaniesInDisplayOrder(displayList);
 
         for (PublicCompany c : displayList) {
             if (c.isClosed())
@@ -5312,7 +5363,8 @@ SwingUtilities.invokeLater(() -> {
             // 1. TRAINS PANEL (Now 2nd column)
             compTrainsButtonPanel[i] = new JPanel(new GridBagLayout());
             compTrainsButtonPanel[i].setBorder(bDet);
-            compTrainsButtonPanel[i].setBackground(isOperating ? BG_OPERATING : (!c.hasFloated() ? BG_INACTIVE : BG_MAUVE));
+            compTrainsButtonPanel[i]
+                    .setBackground(isOperating ? BG_OPERATING : (!c.hasFloated() ? BG_INACTIVE : BG_MAUVE));
             compTrainsButtonPanel[i].setOpaque(true);
 
             GridBagConstraints gbcT = new GridBagConstraints();
@@ -5422,7 +5474,7 @@ SwingUtilities.invokeLater(() -> {
                 updateCompanyDestinationDisplay(i, c, compDest[i]);
                 addField(compDest[i], compDestXOffset, y, 1, 1, 0, visible);
             }
-            
+
             // 4. MARKERS/TOKENS PANEL (Now 5th column)
             compTokens[i] = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 0));
             compTokens[i].setOpaque(true);
@@ -5436,7 +5488,8 @@ SwingUtilities.invokeLater(() -> {
                 // Use FlowLayout to stack multiple privates horizontally if necessary
                 compPrivatesPanel[i] = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 0));
                 compPrivatesPanel[i].setOpaque(true);
-                compPrivatesPanel[i].setBackground(isOperating ? BG_OPERATING : (!c.hasFloated() ? BG_INACTIVE : BG_MAUVE));
+                compPrivatesPanel[i]
+                        .setBackground(isOperating ? BG_OPERATING : (!c.hasFloated() ? BG_INACTIVE : BG_MAUVE));
                 compPrivatesPanel[i].setBorder(bDet);
                 // No fixed preference size; let it grow with content, but set minimum
                 compPrivatesPanel[i].setMinimumSize(dimStd);
@@ -5536,6 +5589,12 @@ SwingUtilities.invokeLater(() -> {
             playerCertCount[i] = new CertLimitGauge();
             playerCertCount[i].setBorder(BORDER_THIN);
             playerCertCount[i].setPreferredSize(dimPlayer);
+
+            if (stickyFont != null) {
+                playerCertCount[i].setFont(stickyFont);
+            } else {
+                playerCertCount[i].setFont(new Font("SansSerif", Font.BOLD, 12));
+            }
 
             gbc.weightx = 1.0;
             addField(playerCertCount[i], certPerPlayerXOffset + i, playerCertCountYOffset, 1, 1, 0, true);
@@ -6147,26 +6206,31 @@ SwingUtilities.invokeLater(() -> {
         }
 
         public void executeAndFly(Runnable processTask, Runnable onComplete) {
-            // 1. Execute game logic first. This blocks the EDT safely if a modal dialog opens.
+            // 1. Execute game logic first. This blocks the EDT safely if a modal dialog
+            // opens.
             processTask.run();
 
             if (ghostImage == null || startPt == null) {
-                if (onComplete != null) onComplete.run();
+                if (onComplete != null)
+                    onComplete.run();
                 return;
             }
 
-            // 2. Defer animation to let the UI repaint after the dialog closes and state updates.
+            // 2. Defer animation to let the UI repaint after the dialog closes and state
+            // updates.
             SwingUtilities.invokeLater(() -> {
                 // 3. Re-resolve the destination dynamically since the UI might have rebuilt
                 JComponent destination = resolveAnimationDestination(action);
-                
+
                 if (destination == null || !destination.isVisible()) {
-                    if (onComplete != null) onComplete.run();
+                    if (onComplete != null)
+                        onComplete.run();
                     return;
                 }
 
                 JLayeredPane layeredPane = parentFrame.getLayeredPane();
-                Point endPt = SwingUtilities.convertPoint(destination.getParent(), destination.getLocation(), layeredPane);
+                Point endPt = SwingUtilities.convertPoint(destination.getParent(), destination.getLocation(),
+                        layeredPane);
                 Point currentPt = new Point(startPt);
 
                 JComponent animationLayer = new JComponent() {
@@ -6424,7 +6488,8 @@ SwingUtilities.invokeLater(() -> {
 
                     int currentVal = (int) (startVal + delta * progress);
                     String text = gameUIManager.format(currentVal);
-                    if (currentVal >= 0) text = " " + text;
+                    if (currentVal >= 0)
+                        text = " " + text;
                     g2.setFont(target.getFont().deriveFont(Font.BOLD, (float) (target.getFont().getSize() * scale)));
 
                     g2.setColor(target.getBackground());
@@ -6444,13 +6509,14 @@ SwingUtilities.invokeLater(() -> {
                     int ty = y + (h - fm.getHeight()) / 2 + fm.getAscent();
                     g2.drawString(text, tx, ty);
 
-                   int alpha = (int) (255 * (1 - progress));
-                    if (alpha < 0) alpha = 0;
-                    
+                    int alpha = (int) (255 * (1 - progress));
+                    if (alpha < 0)
+                        alpha = 0;
+
                     // Restore original bubble float parameters (slower, shorter distance)
                     int bubbleY = (int) (y - (25 * progress));
                     String bubbleText = (delta > 0 ? "+" : "-") + gameUIManager.format(Math.abs(delta));
-                    
+
                     g2.setFont(new Font("SansSerif", Font.BOLD, 14));
                     fm = g2.getFontMetrics();
                     int bw = fm.stringWidth(bubbleText) + 16;
@@ -6458,9 +6524,11 @@ SwingUtilities.invokeLater(() -> {
                     int bx = x + (w - bw) / 2;
 
                     // Restore the isolating solid background bubble
-                    g2.setColor(delta > 0 ? new Color(34, 139, 34, alpha) : new Color(220, 20, 60, alpha)); // Forest Green vs Crimson
+                    g2.setColor(delta > 0 ? new Color(34, 139, 34, alpha) : new Color(220, 20, 60, alpha)); // Forest
+                                                                                                            // Green vs
+                                                                                                            // Crimson
                     g2.fillRoundRect(bx, bubbleY, bw, bh, 10, 10);
-                    
+
                     // Render high-contrast white text centered in the bubble
                     g2.setColor(new Color(255, 255, 255, alpha));
                     int textX = bx + (bw - fm.stringWidth(bubbleText)) / 2;
@@ -6500,13 +6568,14 @@ SwingUtilities.invokeLater(() -> {
         if (f != null) {
             this.stickyFont = f;
             // --- START FIX ---
-            // Dynamically recalculate slot metrics to accommodate the new font family properties
+            // Dynamically recalculate slot metrics to accommodate the new font family
+            // properties
             if (companies != null && companies.length > 0) {
                 calculateDynamicDimensions();
             }
             // --- END FIX ---
         }
     }
-// ... (rest of the file) ...
+    // ... (rest of the file) ...
 
 }
