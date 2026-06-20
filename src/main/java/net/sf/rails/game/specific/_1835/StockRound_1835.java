@@ -196,14 +196,17 @@ public class StockRound_1835 extends StockRound {
      * net.sf.rails.game.StockRound#mayPlayerSellShareOfCompany(net.sf.rails.game.
      * PublicCompany)
      */
-    @Override
+@Override
     public boolean mayPlayerSellShareOfCompany(PublicCompany company) {
 
-        // 1835 Rule: Cannot sell if not floated (except Prussian) [cite: 468, 470]
-        if (!company.hasFloated()) {
+        // 1835 Rule: Cannot sell if the company has not operated at least once (except Prussian)
+        if (!company.hasOperated() && !company.getId().equals("PR")) {
             return false;
         }
+
         // 1835 Rule: Cannot sell if floated in the CURRENT share round
+        // Note: The hasOperated check above inherently catches newly floated companies, 
+        // but this secondary check is retained for strict safety within the engine.
         Boolean wasUnfloated = unfloatedAtStartOfRound.get(company.getId());
         if (wasUnfloated != null && wasUnfloated && company.hasFloated()) {
             if (!company.getId().equals("PR")) {
@@ -214,6 +217,7 @@ public class StockRound_1835 extends StockRound {
         // Fallback to standard engine checks for all other conditions
         return super.mayPlayerSellShareOfCompany(company);
     }
+    
 
     protected void setGameSpecificActions() {
 

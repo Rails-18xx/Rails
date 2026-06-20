@@ -86,9 +86,14 @@ String displayValue;
         displayValue = Integer.toString(model.getPrice());
     }
 
-    Text text = new Text(displayValue);
+Text text = new Text(displayValue);
         text.setFill(Util.isDark(model.getColour()) ? Color.WHITE : Color.BLACK);
-
+        
+        // Bind font size dynamically to the field width for automatic resizing
+        text.fontProperty().bind(Bindings.createObjectBinding(() -> 
+            javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, Math.max(10, widthProperty().get() * 0.25)), 
+            widthProperty()
+        ));
         return text;
     }
 
@@ -127,8 +132,11 @@ List<FXStockToken> tokens = new ArrayList<>();
                 token.prefHeightProperty().bind(diameter);
                 token.maxHeightProperty().bind(diameter);
             } else {
+                                      
+            
                 // Standard 2D Overlapping Layout
-                DoubleBinding diameter = Bindings.multiply(Bindings.min(widthProperty(), heightProperty()), 0.5);
+                // Make token size slightly bigger (55%)
+                DoubleBinding diameter = Bindings.multiply(Bindings.min(widthProperty(), heightProperty()), 0.55);
 
                 token.minWidthProperty().bind(diameter);
                 token.prefWidthProperty().bind(diameter);
@@ -138,8 +146,18 @@ List<FXStockToken> tokens = new ArrayList<>();
                 token.prefHeightProperty().bind(diameter);
                 token.maxHeightProperty().bind(diameter);
 
-                StackPane.setAlignment(token, Pos.TOP_RIGHT);
-                StackPane.setMargin(token, new Insets(5 + (companyIndex * 5), 5, 5, 5));
+                // Align to CENTER and distribute evenly based on the stack's center of gravity
+                StackPane.setAlignment(token, Pos.CENTER);
+                
+                double offset = 12.0; // Distance between overlapping tokens
+                double centerIndex = (publicCompanies.size() - 1) / 2.0;
+                double multiplier = companyIndex - centerIndex;
+                
+                // Negative multiplier shifts left/down, positive shifts right/up
+                token.setTranslateX(multiplier * offset);
+                token.setTranslateY(-multiplier * offset);
+                
+            
             }
 
             tokens.add(token);
@@ -168,9 +186,14 @@ public void populate() {
         
         getChildren().add(layout);
     } else {
-        // Standard Market: Add directly to the StackPane root to allow margins and overlaps
-        getChildren().add(createStockSpacePrice());
+       // Standard Market: Add directly to the StackPane root to allow margins and overlaps
+        Text priceText = createStockSpacePrice();
+        StackPane.setAlignment(priceText, Pos.TOP_LEFT);
+        StackPane.setMargin(priceText, new Insets(2, 0, 0, 4));
+        
+        getChildren().add(priceText);
         getChildren().addAll(createTokens());
+
     }
 }
 
