@@ -12,7 +12,7 @@
   <i>Shifting the focus from bookkeeping to strategic thinking.</i>
 </p>
 
-Welcome to Rails Evolution. Originally branching from the dormant Rails-18xx repository, this project represents a massive 6-month, 100,000+ line architectural rewrite.
+Welcome to 18xx Rails Evolution. Originally branching from the dormant Rails-18xx repository, this project represents a massive 6-month, 100,000+ line architectural rewrite.
 
 The core objective is a "Dual Mandate":
 1. Upgrade the engine from a static, manual ledger into a dynamic, living ecosystem capable of supporting synchronous, championship-level competitive play.
@@ -32,21 +32,24 @@ Rails Evolution supports a wide array of 18xx titles, categorized by their curre
 These titles have been thoroughly stress-tested and optimized for competitive tournament play.
 * **1835** (Includes Standard, Clemens, and Snake variants)
 * **1817** (Native implementation with short selling, liquidations, and mergers)
+* **1870** 
+* **1830** : The original, Railways & Robber Barons
+* **1837**  (Austria)
+* **18Chesapeake** 
+
+
 
 ### Beta Phase (Playable, requires stress testing)
 These legacy titles are fully integrated into the new architecture using their original logic, but require community playtesting to guarantee 100% stability.
-* 1830: Railways & Robber Barons
-* 1837 (Austria)
-* 18Chesapeake
 * 1889: History of Shikoku Railways
 * 1825, 1826, 1851, 1862, 1880
-* 18AL, 18EU, 18GA, 18Kaas, 18Lummer, 18NL, 18Scan, 18TN, 18VA
+* 18AL, 18EU, 18GA, 18Kaas, 18Lummer, 18NL, 18Scan, 18TN
 * Steam over Holland
 
 ### Alpha / Under Construction
 Titles currently being ported or awaiting UI/UX modernization.
-* 1870
 * 1856: Railroading in Upper Canada
+* 18VA
 
 ---
 
