@@ -54,8 +54,10 @@ public class MapPanel extends JPanel {
 
             // Load persistent map layer settings
             map.setDisplayCityNames(Config.getBoolean("layer.displayCityNames", map.getDisplayCityNames()));
-            map.setDisplayOffboardValues(Config.getBoolean("layer.displayOffboardValues", map.getDisplayOffboardValues()));
-            map.setDisplayLastRevenueRuns(Config.getBoolean("layer.displayLastRevenueRuns", map.getDisplayLastRevenueRuns()));
+            map.setDisplayOffboardValues(
+                    Config.getBoolean("layer.displayOffboardValues", map.getDisplayOffboardValues()));
+            map.setDisplayLastRevenueRuns(
+                    Config.getBoolean("layer.displayLastRevenueRuns", map.getDisplayLastRevenueRuns()));
 
         } catch (Exception e) {
 
@@ -381,10 +383,8 @@ public class MapPanel extends JPanel {
         // 2. Position it (Top Left, moved slightly further in, made larger)
         layersBtn.setBounds(20, 20, 95, 35);
 
-        
-
         // 3. Create the "Pop-out" Menu
-       layersBtn.addActionListener(new ActionListener() {
+        layersBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JPopupMenu menu = new JPopupMenu();
@@ -405,17 +405,20 @@ public class MapPanel extends JPanel {
                 menu.add(new JCheckBoxMenuItem("Destination Markers", orUIManager.isShowDestinationMarkers()))
                         .addActionListener(evDest -> {
                             orUIManager.toggleDestinationMarkers();
-                            ws.setProperty("layer.DestinationMarkers", String.valueOf(orUIManager.isShowDestinationMarkers()));
+                            ws.setProperty("layer.DestinationMarkers",
+                                    String.valueOf(orUIManager.isShowDestinationMarkers()));
                             ws.save();
                         });
                 menu.add(new JCheckBoxMenuItem("Home Identifiers", orUIManager.isShowHomeIdentifiers()))
                         .addActionListener(evHome -> {
                             orUIManager.toggleHomeIdentifiers();
-                            ws.setProperty("layer.HomeIdentifiers", String.valueOf(orUIManager.isShowHomeIdentifiers()));
+                            ws.setProperty("layer.HomeIdentifiers",
+                                    String.valueOf(orUIManager.isShowHomeIdentifiers()));
                             ws.save();
                         });
 
-                JCheckBoxMenuItem offboardItem = new JCheckBoxMenuItem("Offboard Values", map.getDisplayOffboardValues());
+                JCheckBoxMenuItem offboardItem = new JCheckBoxMenuItem("Offboard Values",
+                        map.getDisplayOffboardValues());
                 offboardItem.addActionListener(evOffboard -> {
                     boolean newState = !map.getDisplayOffboardValues();
                     map.setDisplayOffboardValues(newState);
@@ -456,7 +459,8 @@ public class MapPanel extends JPanel {
                             ws.save();
                         });
 
-                JCheckBoxMenuItem lastRunsItem = new JCheckBoxMenuItem("Last Revenue Runs", map.getDisplayLastRevenueRuns());
+                JCheckBoxMenuItem lastRunsItem = new JCheckBoxMenuItem("Last Revenue Runs",
+                        map.getDisplayLastRevenueRuns());
                 lastRunsItem.addActionListener(ae -> {
                     boolean newState = !map.getDisplayLastRevenueRuns();
                     map.setDisplayLastRevenueRuns(newState);
@@ -487,7 +491,8 @@ public class MapPanel extends JPanel {
                 menu.add(new JCheckBoxMenuItem("Fancy City Values", orUIManager.isShowFancyCityValues()))
                         .addActionListener(evFancy -> {
                             orUIManager.toggleFancyCityValues();
-                            ws.setProperty("layer.FancyCityValues", String.valueOf(orUIManager.isShowFancyCityValues()));
+                            ws.setProperty("layer.FancyCityValues",
+                                    String.valueOf(orUIManager.isShowFancyCityValues()));
                             ws.save();
                         });
 
@@ -502,44 +507,52 @@ public class MapPanel extends JPanel {
             }
         });
 
-
-
         // 4. Add to the Layered Pane at a high level
         layeredPane.add(layersBtn, JLayeredPane.PALETTE_LAYER);
     }
 
-
     // Add these helper methods to the class body of MapPanel.java
-private void loadLayerSettings() {
-    WindowSettings ws = gameUIManager.getWindowSettings();
-    if (ws == null) return;
+    private void loadLayerSettings() {
+        WindowSettings ws = gameUIManager.getWindowSettings();
+        if (ws == null)
+            return;
 
-    ORUIManager orui = gameUIManager.getORUIManager();
-    
-    // Synchronize ORUIManager's state properties using its dynamic toggles
-    if (orui != null) {
-        if (parseLayerBoolean(ws.getProperty("layer.TerrainCosts"), true) != orui.isShowTerrainCosts()) orui.toggleTerrainCosts();
-        if (parseLayerBoolean(ws.getProperty("layer.DestinationMarkers"), true) != orui.isShowDestinationMarkers()) orui.toggleDestinationMarkers();
-        if (parseLayerBoolean(ws.getProperty("layer.HomeIdentifiers"), true) != orui.isShowHomeIdentifiers()) orui.toggleHomeIdentifiers();
-        if (parseLayerBoolean(ws.getProperty("layer.HexNames"), true) != orui.isShowHexNames()) orui.toggleHexNames();
-        if (parseLayerBoolean(ws.getProperty("layer.FriendlyHexes"), true) != orui.isShowFriendlyHexes()) orui.toggleFriendlyHexes();
-        if (parseLayerBoolean(ws.getProperty("layer.RevenueRoutes"), true) != orui.isShowRevenueRoutes()) orui.toggleRevenueRoutes();
-        if (parseLayerBoolean(ws.getProperty("layer.FancyCityValues"), false) != orui.isShowFancyCityValues()) orui.toggleFancyCityValues();
-        if (parseLayerBoolean(ws.getProperty("layer.RevenueSpinner"), true) != orui.isShowRevenueSpinner()) orui.toggleRevenueSpinner();
+        ORUIManager orui = gameUIManager.getORUIManager();
+
+        // Synchronize ORUIManager's state properties using its dynamic toggles
+        if (orui != null) {
+            if (parseLayerBoolean(ws.getProperty("layer.TerrainCosts"), true) != orui.isShowTerrainCosts())
+                orui.toggleTerrainCosts();
+            if (parseLayerBoolean(ws.getProperty("layer.DestinationMarkers"), true) != orui.isShowDestinationMarkers())
+                orui.toggleDestinationMarkers();
+            if (parseLayerBoolean(ws.getProperty("layer.HomeIdentifiers"), true) != orui.isShowHomeIdentifiers())
+                orui.toggleHomeIdentifiers();
+            if (parseLayerBoolean(ws.getProperty("layer.HexNames"), true) != orui.isShowHexNames())
+                orui.toggleHexNames();
+            if (parseLayerBoolean(ws.getProperty("layer.FriendlyHexes"), true) != orui.isShowFriendlyHexes())
+                orui.toggleFriendlyHexes();
+            if (parseLayerBoolean(ws.getProperty("layer.RevenueRoutes"), true) != orui.isShowRevenueRoutes())
+                orui.toggleRevenueRoutes();
+            if (parseLayerBoolean(ws.getProperty("layer.FancyCityValues"), false) != orui.isShowFancyCityValues())
+                orui.toggleFancyCityValues();
+            if (parseLayerBoolean(ws.getProperty("layer.RevenueSpinner"), true) != orui.isShowRevenueSpinner())
+                orui.toggleRevenueSpinner();
+        }
+
+        // Synchronize direct HexMap properties via their standard public setters
+        if (map != null) {
+            map.setDisplayOffboardValues(
+                    parseLayerBoolean(ws.getProperty("layer.OffboardValues"), map.getDisplayOffboardValues()));
+            map.setDisplayCityNames(parseLayerBoolean(ws.getProperty("layer.CityNames"), map.getDisplayCityNames()));
+            map.setDisplayLastRevenueRuns(
+                    parseLayerBoolean(ws.getProperty("layer.LastRevenueRuns"), map.getDisplayLastRevenueRuns()));
+        }
     }
 
-    // Synchronize direct HexMap properties via their standard public setters
-    if (map != null) {
-        map.setDisplayOffboardValues(parseLayerBoolean(ws.getProperty("layer.OffboardValues"), map.getDisplayOffboardValues()));
-        map.setDisplayCityNames(parseLayerBoolean(ws.getProperty("layer.CityNames"), map.getDisplayCityNames()));
-        map.setDisplayLastRevenueRuns(parseLayerBoolean(ws.getProperty("layer.LastRevenueRuns"), map.getDisplayLastRevenueRuns()));
+    private boolean parseLayerBoolean(String val, boolean defaultValue) {
+        if (val == null || val.trim().isEmpty())
+            return defaultValue;
+        return "true".equalsIgnoreCase(val.trim()) || "yes".equalsIgnoreCase(val.trim());
     }
-}
-
-private boolean parseLayerBoolean(String val, boolean defaultValue) {
-    if (val == null || val.trim().isEmpty()) return defaultValue;
-    return "true".equalsIgnoreCase(val.trim()) || "yes".equalsIgnoreCase(val.trim());
-}
-
 
 }

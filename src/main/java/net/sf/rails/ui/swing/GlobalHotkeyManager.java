@@ -124,12 +124,12 @@ public class GlobalHotkeyManager implements KeyEventDispatcher {
             }
             return true; // Consume the event even if locked
         }
-        if (keyCode == KeyEvent.VK_SPACE) {
-            if (gameUIManager.getORUIManager() != null) {
-                gameUIManager.getORUIManager().toggleMapMarkings();
-            }
-            return true; 
-        }
+        // if (keyCode == KeyEvent.VK_SPACE) {
+        //     if (gameUIManager.getORUIManager() != null) {
+        //         gameUIManager.getORUIManager().toggleMapMarkings();
+        //     }
+        //     return true; 
+        // }
 
         return false;
     }

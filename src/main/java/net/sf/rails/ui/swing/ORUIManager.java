@@ -92,7 +92,6 @@ public class ORUIManager implements DialogOwner {
     private boolean showFriendlyHexes = Config.getBoolean("layer.showFriendlyHexes", true);
     private boolean showDestinationMarkers = Config.getBoolean("layer.showDestinationMarkers", true);
     private boolean showRevenueSpinner = Config.getBoolean("layer.showRevenueSpinner", true);
-    private boolean showMapMarkings = Config.getBoolean("layer.showMapMarkings", true);
     private boolean showHexNames = Config.getBoolean("layer.showHexNames", true);
     private boolean showTerrainCosts = Config.getBoolean("layer.showTerrainCosts", true);
     
@@ -676,31 +675,7 @@ public void toggleRevenueSpinner() {
     //     log.info("DEBUG: All 6 map overlays hidden via Master Reset.");
     // }
 
-    public boolean isShowMapMarkings() {
-        return showMapMarkings;
-    }
 
-    public void toggleMapMarkings() {
-        // --- START FIX ---
-        this.showMapMarkings = !this.showMapMarkings;
-
-        this.showHexNames = this.showMapMarkings;
-        this.showFriendlyHexes = this.showMapMarkings;
-        this.showDestinationMarkers = this.showMapMarkings;
-        this.showHomeIdentifiers = this.showMapMarkings;
-        this.showRevenueRoutes = this.showMapMarkings;
-
-        updateCompanyHighlights();
-
-        if (orPanel != null) {
-            orPanel.redrawRoutes();
-        }
-
-        if (map != null) {
-            map.repaintAll(new Rectangle(map.getSize()));
-        }
-        // --- END FIX ---
-    }
 
     public void processAction(String command, List<PossibleAction> actions, Component source) {
 
