@@ -56,9 +56,9 @@
 	<Hex name="K4" tile="0"/>
 	<Hex name="K6" tile="0"/>
 	<Hex name="K8" tile="-10" city="Orangeville"/>
-	<Hex name="K10" tile="0" cost="40"/>
-	<Hex name="K12" tile="0" cost="40"/>
-	<Hex name="K14" tile="0" cost="40"/>
+	<Hex name="K10" tile="0" cost="40" terrain="hills"/>
+	<Hex name="K12" tile="0" cost="40" terrain="hills"/>
+	<Hex name="K14" tile="0" cost="40" terrain="hills"/>
 	<Hex name="K16" tile="-1"/>
 	<Hex name="K18" tile="0"/>
 	<Hex name="L3" tile="0"/>
@@ -67,7 +67,7 @@
 	<Hex name="L9" tile="-1"/>
 	<Hex name="L11" tile="0"/>
 	<Hex name="L13" tile="-10" label="L" city="Burlington"/>
-	<Hex name="L15" tile="-20" cost="40" city="Hamilton"/>
+	<Hex name="L15" tile="-20" cost="40" city="Hamilton" terrain="hills"/>
 	<Hex name="L17" tile="0"/>
 	<Hex name="M2" tile="0"/>
 	<Hex name="M4" tile="-11" city="Barrie"/>
@@ -75,16 +75,16 @@
 	<Hex name="M8" tile="0"/>
 	<Hex name="M10" tile="-2"/>
 	<Hex name="M12" tile="0"/>
-	<Hex name="M16" tile="0" cost="40"/>
+	<Hex name="M16" tile="0" cost="40" terrain="hills"/>
 	<Hex name="M18" tile="-1" port="yes"/>
 	<Hex name="N1" tile="-902" orientation="2" value="20,30,50" city="West Canada"/>
-	<Hex name="N3" tile="-10" label="L" cost="40"/>
+	<Hex name="N3" tile="-10" label="L" cost="40" terrain="River"/>
 	<Hex name="N7" tile="0"/>
 	<Hex name="N9" tile="-1"/>
 	<Hex name="N11" tile="-56001" orientation="0" city="Toronto"/><!-- home city to be defined -->
-	<Hex name="N15" tile="0" cost="40"/>
+	<Hex name="N15" tile="0" cost="40" terrain="River"/>
 	<Hex name="N17" tile="-20" city="Welland"/>
-	<Hex name="N19" tile="0" cost="40"/>
+	<Hex name="N19" tile="0" cost="40" terrain="River"/>
 	<Hex name="O2" tile="-903" orientation="1" value="20,30,50" city="West Canada"/>
 	<Hex name="O4" tile="0"/>
 	<Hex name="O6" tile="0"/>
@@ -94,7 +94,7 @@
 	<Hex name="O18" tile="-10" label="L" port="yes" city="Fort Erie"/>
 	<Hex name="P3" tile="0"/>
 	<Hex name="P5" tile="0"/>
-	<Hex name="P7" tile="0" cost="40"/>
+	<Hex name="P7" tile="0" cost="40" terrain="River"/>
 	<Hex name="P9" tile="-10" label="L" city="Oshawa"/>
 	<Hex name="P17" tile="-902" orientation="3" value="30,40,40" city="Buffalo"/>
 	<Hex name="P19" tile="-901" orientation="3" value="30,40,40" city="Buffalo"/>

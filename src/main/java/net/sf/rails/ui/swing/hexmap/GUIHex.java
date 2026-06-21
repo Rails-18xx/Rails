@@ -1304,24 +1304,13 @@ public void paintMississippi(Graphics2D g) {
     }
 
     private void drawHome(Graphics2D g2, PublicCompany co, HexPoint origin, Stop homeCity) {
-        // 1. Branch logic: Check if this is a Major, National, or Coal company
-        boolean isMajor = false;
-        boolean isCoal = false;
-        if (co.getType() != null) {
-            String typeName = co.getType().getId();
-            if (typeName != null) {
-                if (typeName.equals("Major") || typeName.equals("National")) {
-                    isMajor = true;
-                } else if (typeName.equals("Coal")) {
-                    isCoal = true;
-                }
-            }
-        }
+        // 1. Branch logic: Leverage your new permanent base framework capability flag
+        boolean isMajor = co.isMajorCompany();
+        boolean isCoal = co.getType() != null && "Coal".equalsIgnoreCase(co.getType().getId());
 
         // 2. Keep Minors and Coal companies completely intact for their main text
         if (!isMajor) {
             GUIToken.drawTokenText(co.getId(), g2, Color.BLACK, origin, dimensions.tokenDiameter);
-
             return;
         }
 

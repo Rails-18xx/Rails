@@ -120,6 +120,7 @@
 			<Destination hex="L13"/> <!-- Burlington -->
         </IfOption>        
 	</Company>
+
 	<Company name="THB" type="Public" tokens="2" fgColour="000000" bgColour="B0B040">
 		<IfOption name="1856THBHomeBlocked" value="yes">
 			<Home hex="L15" city="0" blockedForAllCities = "yes"/>
@@ -134,6 +135,7 @@
 			<Destination hex="H15"/> <!-- Woodstock -->
         </IfOption>        
 	</Company>
+
 	<Company name="BBG" type="Public" tokens="3" fgColour="000000" bgColour="FF8080">
 		<Home hex="J15"/>
         <IfOption name="1856AlternateDestinations" value="no">
@@ -143,6 +145,7 @@
 			<Destination hex="N11"/> <!-- Toronto-->
         </IfOption>        
 	</Company>
+
 	<Company name="LPS" type="Public" tokens="2" fgColour="000000" bgColour="A0A0F0">
 		<Home hex="C14"/>
         <IfOption name="1856AlternateDestinations" value="no">
@@ -152,20 +155,29 @@
 			<Destination hex="F15"/> <!-- London -->
         </IfOption>        
 	</Company>
+	
 	<Company name="WGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="0000FF">
 		<Home hex="J11"/>
         <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="F9"/>
+			<Destination hex="H5"/> <!-- Standard: Owen Sound/Lake Huron -->
         </IfOption>        
 		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="H5"/> <!-- Lake Huron -->
+			<Destination hex="H5"/> <!-- Alternate: Lake Huron (Static base, but verify map requirements) -->
         </IfOption>        
 	</Company>
+
+
 	<Company name="WR"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="808030">
 		<Home hex="O16"/>
-		<Destination hex="L15"/>
-		 <!-- Alternate: Hamilton, this is identical to the standard -->
+        <IfOption name="1856AlternateDestinations" value="no">
+			<Destination hex="L15"/> <!-- Standard -->
+        </IfOption>        
+		<IfOption name="1856AlternateDestinations" value="yes">
+			<Destination hex="O16"/> <!-- Alternate: Hamilton -->
+        </IfOption>        
 	</Company>
+
+
 	<Company name="CV"	type="Public" tokens="3" fgColour="FFFFFF" bgColour="800080">
 		<Home hex="N11" city="1"/>
         <IfOption name="1856AlternateDestinations" value="no">
@@ -193,17 +205,21 @@
 			<Destination hex="F15"/>  <!-- This is London, Detroit has to be added as the second end of the destination route -->
 		</IfOption>        
 	</Company>
+	
 	<Company name="CGR" type="State" available="no" tokens="10" fgColour="FFFFFF" bgColour="000000">
 	</Company>
+
 	<Company name="TGB" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF8000">
 		<Home hex="K8"/>
         <IfOption name="1856AlternateDestinations" value="no">
-			<Destination hex="H5"/>
+			<Destination hex="F9"/> <!-- Standard: Kincardine/Southampton -->
         </IfOption>        
 		<IfOption name="1856AlternateDestinations" value="yes">
-			<Destination hex="N1"/> <!-- This is West Canada Offboard, the second hex (O2) has to be added  -->
+			<Destination hex="N1"/> <!-- Alternate: Canadian West Offboard (Requires O2 link in map) -->
         </IfOption>        
 	</Company>
+
+
 	<Company name="GW"	type="Public" tokens="4" fgColour="000000" bgColour="b090b0">
 		<Home hex="F15"/>
         <IfOption name="1856AlternateDestinations" value="no">

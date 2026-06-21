@@ -3034,5 +3034,31 @@ public class PublicCompany extends RailsAbstractItem
         this.directIncomeRevenue.set(amount);
     }
 
+    /**
+     * Determines if this corporate entity is classified as a primary/major company.
+     * Evaluates unified structural characteristics across all game modules (such as 1835, 
+     * 1837, 1856, and 1870) to drive uniform UI rendering behaviors like home station rings.
+     * 
+     * @return true if the company represents a major public asset system.
+     */
+/**
+     * Determines if this corporate entity is classified as a primary/major company.
+     * Evaluates unified structural characteristics across all game modules (such as 1835, 
+     * 1837, 1856, and 1870) to drive uniform UI rendering behaviors like home station rings.
+     * 
+     * @return true if the company represents a major public asset system.
+     */
+    public boolean isMajorCompany() {
+        if (this.type == null || this.type.getId() == null) {
+            return true; // Default safe fallback for unclassified base public corporations
+        }
+        
+        String typeId = this.type.getId().toLowerCase();
+        
+        // Harmonize all major classification variants across active modules
+        return typeId.equals("public") || 
+               typeId.equals("major")  || 
+               typeId.equals("national");
+    }
 
 }
