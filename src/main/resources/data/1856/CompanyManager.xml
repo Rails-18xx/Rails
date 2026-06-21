@@ -32,10 +32,14 @@
 		<Options mustTradeTrainsAtFixedPrice="yes" canClose="no"/>
 	</CompanyType>
 	
-	<Company name="Flos" type="Private" basePrice="20" revenue="5">
+	<Company name="Flos" type="Private" basePrice="20" revenue="5"
+		longname="Flos Tramway"
+		description="Revenue only. Blocks track laying on hex L3 while owned by a player. Closes permanently when the first Type 5 train is purchased. Counts as 1 certificate.">
 		<Blocking hex="L3"/>
 	</Company>
-	<Company name="W&amp;SR" type="Private" basePrice="40" revenue="10">
+	<Company name="W&amp;SR" type="Private" basePrice="40" revenue="10"
+		longname="Waterloo &amp; Saugeen Railway Co."
+		description="Blocks track laying on hex I12 while owned by a player. Owning public company may place a free station token on Kitchener (I12) AND/OR lay green tile #59 there without a legal route, replacing its normal track/token actions. Closes immediately at the end of the operating turn in which either action is exercised, or when the first Type 5 train is purchased.">
 		<Blocking hex="I12"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
@@ -49,7 +53,9 @@
 			<SpecialProperties condition="ifAnyExercised" when="endOfORTurn"/>
 		</ClosingConditions>
 	</Company>
-	<Company name="TCC" type="Private" basePrice="50" revenue="10">
+	<Company name="TCC" type="Private" basePrice="50" revenue="10"
+		longname="The Canada Company"
+		description="Blocks track laying on hex H11 while owned by a player. Owning public company may lay a track tile on hex H11 as an EXTRA tile placement during its operating round. A legal train route is not required. Expercising this action does not close the company. Closes permanently when the first Type 5 train is purchased.">
 		<Blocking hex="H11"/>
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="tileLayingStep" class="net.sf.rails.game.special.SpecialSingleTileLay">
@@ -57,7 +63,9 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="Ship" type="Private" basePrice="70" revenue="15">
+	<Company name="Ship" type="Private" basePrice="70" revenue="15"
+		longname="Great Lakes Shipping Company"
+		description="Owning public company may place the Port token on any city featuring an anchor symbol to grant a permanent +$20 bonus to that city's run value exclusively for the owner. Token placement closes this company immediately. Placed Port token is permanently removed when the first Type 6 train is purchased.">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" 
 				when="orTurn"
@@ -72,7 +80,9 @@
 			<SpecialProperties condition="ifExercised"/>
 		</ClosingConditions>
 	</Company>
-	<Company name="Brdg" type="Private" basePrice="100" revenue="20">
+	<Company name="Brdg" type="Private" basePrice="100" revenue="20"
+		longname="Niagara Falls Suspension Bridge Company"
+		description="Grants owning public company a permanent +$10 bonus when running trains to Buffalo (P17, P19). Other operating public companies can buy this permanent right by paying $50 to the owning company's treasury (or to the bank if closed). Cannot be bought from a player. Closes permanently when the first Type 5 train is purchased.">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="revenueStep" 
 				class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">
@@ -91,7 +101,9 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
-	<Company name="Tunn" type="Private" basePrice="100" revenue="20">
+	<Company name="Tunn" type="Private" basePrice="100" revenue="20"
+		longname="St. Clair Frontier Tunnel Company"
+		description="Grants owning public company a permanent +$10 Port Huron bonus when running trains to Sarnia (B13). Other operating public companies can buy this permanent right by paying $50 to the owning company's treasury (or to the bank if closed). Cannot be bought from a player. Closes permanently when the first Type 5 train is purchased.">
 		<SpecialProperties>
 			<SpecialProperty condition="ifOwnedByCompany" when="revenueStep" 
 				class="net.sf.rails.game.special.LocatedBonus" transfer="toCompany">

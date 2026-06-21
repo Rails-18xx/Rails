@@ -4545,6 +4545,11 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                         minPrice = getPrivateMinimumPrice(privComp);
                         maxPrice = getPrivateMaximumPrice(privComp);
 
+                        // Strict Affordability: Do not generate the action if the company cannot afford the absolute minimum price
+                        if (operatingCompany.value().getCash() < minPrice) {
+                            continue;
+                        }
+                        
                         // Generate the action (The UI will attach this to the Private Card)
                         BuyPrivate buyPrivate = new BuyPrivate(privComp, minPrice, maxPrice);
                         possibleActions.add(buyPrivate);
