@@ -63,23 +63,25 @@
 			</SpecialProperty>
 		</SpecialProperties>
 	</Company>
+	
 	<Company name="Ship" type="Private" basePrice="70" revenue="15"
-		longname="Great Lakes Shipping Company"
-		description="Owning public company may place the Port token on any city featuring an anchor symbol to grant a permanent +$20 bonus to that city's run value exclusively for the owner. Token placement closes this company immediately. Placed Port token is permanently removed when the first Type 6 train is purchased.">
-		<SpecialProperties>
-			<SpecialProperty condition="ifOwnedByCompany" 
-				when="orTurn"
-				class="net.sf.rails.game.special.SpecialBonusTokenLay">
-				<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken" 
-						location="C14,D19,E18,F9,F17,H5,H7,H17,J5,J17,K2,M18,O18" connected="yes" extra="yes">
-					<BonusToken name="Port" value="20" removed="Phase:6"/>
-				</SpecialBonusTokenLay>
-			</SpecialProperty>
-		</SpecialProperties>
-		<ClosingConditions>
-			<SpecialProperties condition="ifExercised"/>
-		</ClosingConditions>
+	longname="Great Lakes Shipping Company"
+	description="Owning public company may place the Port token on any city featuring an anchor symbol to grant a permanent +$20 bonus to that city's run value exclusively for the owner. Token placement closes this company immediately. Placed Port token is permanently removed when the first Type 6 train is purchased.">
+	<SpecialProperties>
+		<SpecialProperty condition="ifOwnedByCompany" 
+			when="always"
+			class="net.sf.rails.game.special.SpecialBonusTokenLay">
+			<SpecialBonusTokenLay class="net.sf.rails.game.BonusToken" 
+					location="C14,D19,E18,F9,F17,H5,H7,H17,J5,J17,K2,M18,O18" connected="yes" extra="yes">
+				<BonusToken name="Port" value="20" removed="Phase:6"/>
+			</SpecialBonusTokenLay>
+		</SpecialProperty>
+	</SpecialProperties>
+	<ClosingConditions>
+		<SpecialProperties condition="ifExercised"/>
+	</ClosingConditions>
 	</Company>
+
 	<Company name="Brdg" type="Private" basePrice="100" revenue="20"
 		longname="Niagara Falls Suspension Bridge Company"
 		description="Grants owning public company a permanent +$10 bonus when running trains to Buffalo (P17, P19). Other operating public companies can buy this permanent right by paying $50 to the owning company's treasury (or to the bank if closed). Cannot be bought from a player. Closes permanently when the first Type 5 train is purchased.">

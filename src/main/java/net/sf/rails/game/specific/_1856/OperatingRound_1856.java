@@ -18,18 +18,50 @@ import net.sf.rails.game.special.SellBonusToken;
 import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
-
+import net.sf.rails.game.state.GenericState;
 
 public class OperatingRound_1856 extends OperatingRound {
 
     private static final Logger log = LoggerFactory.getLogger(OperatingRound_1856.class);
 
     /**
-     * Set after the first 6-train is bought, irrespective whether any loans are outstanding or not.
+     * Set after the first 6-train is bought, irrespective whether any loans are
+     * outstanding or not.
      */
     private final BooleanState finalLoanRepaymentPending = new BooleanState(this, "LoanRepaymentPending");
 
     private Player playerToStartLoanRepayment = null;
+
+    private final BooleanState isLayingPort = new BooleanState(this, "isLayingPort", false);
+    private final GenericState<GameDef.OrStep> prePortStep = new GenericState<>(this, "prePortStep",
+            GameDef.OrStep.INITIAL);
+
+    public static class TriggerPortAction extends rails.game.action.PossibleORAction {
+        private static final long serialVersionUID = 1L;
+        private final net.sf.rails.game.special.SpecialBonusTokenLay stl;
+
+        public TriggerPortAction(net.sf.rails.game.PublicCompany company,
+                net.sf.rails.game.special.SpecialBonusTokenLay stl) {
+            super(company.getRoot());
+            setCompany(company);
+            this.stl = stl;
+            setButtonLabel("Lay Port");
+        }
+
+        public net.sf.rails.game.special.SpecialBonusTokenLay getSpecialProperty() {
+            return stl;
+        }
+    }
+
+    public static class CancelPortAction extends rails.game.action.PossibleORAction {
+        private static final long serialVersionUID = 1L;
+
+        public CancelPortAction(net.sf.rails.game.PublicCompany company) {
+            super(company.getRoot());
+            setCompany(company);
+            setButtonLabel("Cancel Port Lay");
+        }
+    }
 
     /**
      * Constructed via Configure
@@ -37,7 +69,7 @@ public class OperatingRound_1856 extends OperatingRound {
     public OperatingRound_1856(GameManager parent, String id) {
         super(parent, id);
 
-        steps = new GameDef.OrStep[]{
+        steps = new GameDef.OrStep[] {
                 GameDef.OrStep.INITIAL,
                 GameDef.OrStep.LAY_TRACK,
                 GameDef.OrStep.LAY_TOKEN,
@@ -56,9 +88,10 @@ public class OperatingRound_1856 extends OperatingRound {
     @Override
     protected boolean setNextOperatingCompany(boolean initial) {
 
-        //log.debug("+++ old OC is "+(operatingCompany.getObject()!=null?operatingCompany.getObject().getName():"null"));
+        // log.debug("+++ old OC is
+        // "+(operatingCompany.getObject()!=null?operatingCompany.getObject().getName():"null"));
         while (true) {
-            if (initial || operatingCompany == null || operatingCompany.value() == null ) {
+            if (initial || operatingCompany == null || operatingCompany.value() == null) {
                 setOperatingCompany(operatingCompanies.get(0));
                 initial = false;
             } else {
@@ -71,29 +104,30 @@ public class OperatingRound_1856 extends OperatingRound {
 
             // 1856 special: check if the company has sold enough shares to operate
             // This check does not apply to the CGR
-            if (operatingCompany.value() instanceof PublicCompany_CGR) return true;
+            if (operatingCompany.value() instanceof PublicCompany_CGR)
+                return true;
 
-            if (operatingCompany.value().isClosed()) continue;
+            if (operatingCompany.value().isClosed())
+                continue;
 
             if (!operatingCompany.value().hasOperated()) {
                 int soldPercentage = operatingCompany.value().getSoldPercentage();
-                int trainNumber = ((GameManager_1856)gameManager).getNextTrainNumberFromIpo();
+                int trainNumber = ((GameManager_1856) gameManager).getNextTrainNumberFromIpo();
                 int floatPercentage = 10 * trainNumber;
 
                 log.debug("Float percentage is {} sold percentage is {}", floatPercentage, soldPercentage);
-
 
                 if (soldPercentage < floatPercentage) {
                     DisplayBuffer.add(this, LocalText.getText("MayNotYetOperate",
                             operatingCompany.value().getId(),
                             String.valueOf(soldPercentage),
-                            String.valueOf(floatPercentage)
-                    ));
+                            String.valueOf(floatPercentage)));
                     // Company may not yet operate
                     continue;
                 }
             }
-            //log.debug("+++ new OC is "+(operatingCompany.getObject()!=null?operatingCompany.getObject().getName():"null"));
+            // log.debug("+++ new OC is
+            // "+(operatingCompany.getObject()!=null?operatingCompany.getObject().getName():"null"));
             return true;
         }
     }
@@ -112,18 +146,17 @@ public class OperatingRound_1856 extends OperatingRound {
                         PublicCompany_CGR.NAME));
                 possibleActions.add(new SetDividend(getRoot(),
                         operatingCompany.value().getLastRevenue(), true,
-                        new int[]{SetDividend.WITHHOLD}));
+                        new int[] { SetDividend.WITHHOLD }));
             } else {
 
-                int[] allowedRevenueActions =
-                        operatingCompany.value().isSplitAlways()
-                                ? new int[]{SetDividend.SPLIT}
-                                : operatingCompany.value().isSplitAllowed()
-                                ? new int[]{SetDividend.PAYOUT,
-                                SetDividend.SPLIT,
-                                SetDividend.WITHHOLD}
-                                : new int[]{SetDividend.PAYOUT,
-                                SetDividend.WITHHOLD};
+                int[] allowedRevenueActions = operatingCompany.value().isSplitAlways()
+                        ? new int[] { SetDividend.SPLIT }
+                        : operatingCompany.value().isSplitAllowed()
+                                ? new int[] { SetDividend.PAYOUT,
+                                        SetDividend.SPLIT,
+                                        SetDividend.WITHHOLD }
+                                : new int[] { SetDividend.PAYOUT,
+                                        SetDividend.WITHHOLD };
 
                 // Check if any loan interest can be paid
                 if (operatingCompany.value().canLoan()) {
@@ -156,9 +189,11 @@ public class OperatingRound_1856 extends OperatingRound {
     protected int checkForDeductions(SetDividend action) {
 
         int amount = action.getActualRevenue();
-        if (!operatingCompany.value().canLoan()) return amount;
+        if (!operatingCompany.value().canLoan())
+            return amount;
         int due = calculateLoanInterest(operatingCompany.value().getCurrentNumberOfLoans());
-        if (due == 0) return amount;
+        if (due == 0)
+            return amount;
         int remainder = due;
 
         ReportBuffer.add(this, (LocalText.getText("CompanyMustPayLoanInterest",
@@ -171,7 +206,8 @@ public class OperatingRound_1856 extends OperatingRound {
         if (payment > 0) {
             remainder -= payment;
         }
-        if (remainder == 0) return amount;
+        if (remainder == 0)
+            return amount;
 
         // Can any remainder be paid from revenue?
         payment = Math.min(remainder, amount);
@@ -180,7 +216,8 @@ public class OperatingRound_1856 extends OperatingRound {
             // This reduces train income
             amount -= payment;
         }
-        if (remainder == 0) return amount;
+        if (remainder == 0)
+            return amount;
 
         // Pay any remainder from president cash
         // First check if president has enough cash
@@ -191,7 +228,7 @@ public class OperatingRound_1856 extends OperatingRound {
             int cashToBeRaisedByPresident = remainder - presCash;
             log.info("A share selling round must be started as the president cannot pay ${} loan interest", remainder);
             log.info("President has ${}, so ${} must be added", presCash, cashToBeRaisedByPresident);
-savedAction.set(action);
+            savedAction.set(action);
             gameManager.startShareSellingRound(operatingCompany.value().getPresident(),
                     cashToBeRaisedByPresident, operatingCompany.value(), false);
             // Return arbitrary negative value to signal end of processing to caller.
@@ -208,9 +245,11 @@ savedAction.set(action);
     protected int executeDeductions(SetDividend action) {
 
         int amount = action.getActualRevenue();
-        if (!operatingCompany.value().canLoan()) return amount;
+        if (!operatingCompany.value().canLoan())
+            return amount;
         int due = calculateLoanInterest(operatingCompany.value().getCurrentNumberOfLoans());
-        if (due == 0) return amount;
+        if (due == 0)
+            return amount;
         int remainder = due;
 
         // Pay from company treasury
@@ -232,7 +271,8 @@ savedAction.set(action);
             }
             remainder -= payment;
         }
-        if (remainder == 0) return amount;
+        if (remainder == 0)
+            return amount;
 
         // Pay any remainder from revenue
         payment = Math.min(remainder, amount);
@@ -247,7 +287,8 @@ savedAction.set(action);
             // This reduces train income
             amount -= payment;
         }
-        if (remainder == 0) return amount;
+        if (remainder == 0)
+            return amount;
 
         // Pay any remainder from president cash
         // First check if president has enough cash
@@ -274,65 +315,67 @@ savedAction.set(action);
 
     @Override
     protected void setDestinationActions() {
-// Intentionally left blank. Destination checks are now automated after track lays.
-       
+        // Intentionally left blank. Destination checks are now automated after track
+        // lays.
+
     }
 
     // --- START FIX ---
     @Override
     public boolean layTile(LayTile action) {
         boolean success = super.layTile(action);
-        
+
         if (success) {
             checkAutomatedDestinations();
         }
-        
+
         return success;
     }
 
-private void checkAutomatedDestinations() {
+    private void checkAutomatedDestinations() {
         for (PublicCompany company : operatingCompanies.view()) {
             if (company.hasDestination() && !company.hasReachedDestination()) {
                 PublicCompany_1856 comp1856 = (PublicCompany_1856) company;
-                
+
                 // Only evaluate companies started before Phase 5
                 if (comp1856.getTrainNumberAvailableAtStart() < 5) {
                     if (hasReachedDestinationVirtual(comp1856)) {
-                        
+
                         // --- START FIX ---
                         // 1. Mark destination as reached in the engine state
                         company.setReachedDestination(true);
-                        
+
                         // 2. Fetch escrow cash
                         int cashInEscrow = comp1856.getMoneyInEscrow();
                         String cashText = net.sf.rails.game.state.Currency.fromBank(cashInEscrow, company);
-                        
+
                         // 3. Construct a prominent notification message box for all players
                         String msg = "=================================================\n"
-                                   + " CONGRATULATIONS! " + company.getId() + " HAS REACHED ITS DESTINATION!\n"
-                                   + "=================================================\n\n"
-                                   + "The route to " + company.getDestinationHex().getId() + " is fully connected.\n"
-                                   + "Released Escrow Capital: " + cashText + " has been added to the treasury.\n\n"
-                                   + "From now on, initial offering share purchases will fund the treasury directly.";
-                        
+                                + " CONGRATULATIONS! " + company.getId() + " HAS REACHED ITS DESTINATION!\n"
+                                + "=================================================\n\n"
+                                + "The route to " + company.getDestinationHex().getId() + " is fully connected.\n"
+                                + "Released Escrow Capital: " + cashText + " has been added to the treasury.\n\n"
+                                + "From now on, initial offering share purchases will fund the treasury directly.";
+
                         // Pop up the congratulatory alert panel
                         if (!getRoot().getGameManager().isReloading()) {
-                            javax.swing.JOptionPane.showMessageDialog(null, msg, 
+                            javax.swing.JOptionPane.showMessageDialog(null, msg,
                                     "1856 Destination Achieved", javax.swing.JOptionPane.INFORMATION_MESSAGE);
                         }
-                        
+
                         // 4. Log the transaction details to the game report buffer
                         ReportBuffer.add(this, " ");
-                        ReportBuffer.add(this, ">>> " + company.getId() + " has reached its destination city (" + company.getDestinationHex().getId() + ")!");
-                        
+                        ReportBuffer.add(this, ">>> " + company.getId() + " has reached its destination city ("
+                                + company.getDestinationHex().getId() + ")!");
+
                         if (cashInEscrow > 0) {
                             ReportBuffer.add(this, LocalText.getText("ReleasedFromEscrow", company.getId(), cashText));
-                            
+
                             // 5. Transfer the escrow cash value directly to the corporate treasury box
-                            // Note: Depending on your exact PublicCompany_1856 field mutators, 
+                            // Note: Depending on your exact PublicCompany_1856 field mutators,
                             // we must ensure 'setMoneyInEscrow(0)' or clearEscrow() is explicitly invoked.
                             // If your class has a clear or setter, use it here:
-                            comp1856.setMoneyInEscrow(0); 
+                            comp1856.setMoneyInEscrow(0);
                         }
                         // --- END FIX ---
                     }
@@ -341,39 +384,42 @@ private void checkAutomatedDestinations() {
         }
     }
 
-    
-
-
-   
-
-private boolean hasReachedDestinationVirtual(PublicCompany_1856 company) {
+    private boolean hasReachedDestinationVirtual(PublicCompany_1856 company) {
         MapHex destHex = company.getDestinationHex();
-        if (destHex == null) return false;
+        if (destHex == null)
+            return false;
 
-        // 1. Get the pristine map graph (pure physical track network, no token blocking applied)
+        // 1. Get the pristine map graph (pure physical track network, no token blocking
+        // applied)
         net.sf.rails.algorithms.NetworkAdapter na = net.sf.rails.algorithms.NetworkAdapter.create(getRoot());
         net.sf.rails.algorithms.NetworkGraph mapGraph = na.getMapGraph();
-        org.jgrapht.Graph<net.sf.rails.algorithms.NetworkVertex, net.sf.rails.algorithms.NetworkEdge> jgraph = mapGraph.getGraph();
+        org.jgrapht.Graph<net.sf.rails.algorithms.NetworkVertex, net.sf.rails.algorithms.NetworkEdge> jgraph = mapGraph
+                .getGraph();
 
         // 2. Locate the starting points (the company's base tokens on the map graph)
-        java.util.List<net.sf.rails.algorithms.NetworkVertex> startVertices = mapGraph.getCompanyBaseTokenVertexes(company);
-        if (startVertices.isEmpty()) return false;
+        java.util.List<net.sf.rails.algorithms.NetworkVertex> startVertices = mapGraph
+                .getCompanyBaseTokenVertexes(company);
+        if (startVertices.isEmpty())
+            return false;
 
-        // 3. Standard BFS queue and visited set to find purely physical track connectivity
+        // 3. Standard BFS queue and visited set to find purely physical track
+        // connectivity
         java.util.Queue<net.sf.rails.algorithms.NetworkVertex> queue = new java.util.LinkedList<>(startVertices);
         java.util.Set<net.sf.rails.algorithms.NetworkVertex> visited = new java.util.HashSet<>(startVertices);
 
         while (!queue.isEmpty()) {
             net.sf.rails.algorithms.NetworkVertex current = queue.poll();
 
-            // If we hit any vertex belonging to the destination hex, connection is successful!
+            // If we hit any vertex belonging to the destination hex, connection is
+            // successful!
             if (current.getHex() != null && destHex.getId().equals(current.getHex().getId())) {
                 return true;
             }
 
             // Traverse all physically connected neighboring tracks
             for (net.sf.rails.algorithms.NetworkEdge edge : jgraph.edgesOf(current)) {
-                net.sf.rails.algorithms.NetworkVertex neighbor = org.jgrapht.Graphs.getOppositeVertex(jgraph, edge, current);
+                net.sf.rails.algorithms.NetworkVertex neighbor = org.jgrapht.Graphs.getOppositeVertex(jgraph, edge,
+                        current);
                 if (!visited.contains(neighbor)) {
                     visited.add(neighbor);
                     queue.add(neighbor);
@@ -406,10 +452,10 @@ private boolean hasReachedDestinationVirtual(PublicCompany_1856 company) {
         if (Phase.getCurrent(this).isLoanTakingAllowed()
                 && operatingCompany.value().canLoan()
                 && (loansThisRound == null
-                || !loansThisRound.containsKey(operatingCompany.value())
-                || loansThisRound.get(operatingCompany.value()) == 0)
-                && operatingCompany.value().getCurrentNumberOfLoans()
-                < operatingCompany.value().sharesOwnedByPlayers()) {
+                        || !loansThisRound.containsKey(operatingCompany.value())
+                        || loansThisRound.get(operatingCompany.value()) == 0)
+                && operatingCompany.value().getCurrentNumberOfLoans() < operatingCompany.value()
+                        .sharesOwnedByPlayers()) {
             possibleActions.add(new TakeLoans(operatingCompany.value(),
                     1, operatingCompany.value().getValuePerLoan()));
         }
@@ -445,7 +491,8 @@ private boolean hasReachedDestinationVirtual(PublicCompany_1856 company) {
                         minNumber, maxNumber, operatingCompany.value().getValuePerLoan()));
 
                 // Step may only be skipped if repayment is optional
-                if (minNumber == 0) doneAllowed.set(true);
+                if (minNumber == 0)
+                    doneAllowed.set(true);
 
             } else {
                 // No (more) loans
@@ -466,8 +513,7 @@ private boolean hasReachedDestinationVirtual(PublicCompany_1856 company) {
         if (postPhase != prePhase) {
             if (postPhase.getId().equals("6")) {
                 finalLoanRepaymentPending.set(true);
-                playerToStartLoanRepayment
-                        = playerManager.getPlayerByName(action.getPlayerName());
+                playerToStartLoanRepayment = playerManager.getPlayerByName(action.getPlayerName());
             } else if (postPhase.getId().equals("5")) {
                 // Make Bridge and Tunnel tokens buyable from the Bank.
                 for (SpecialProperty sp : gameManager.getCommonSpecialProperties()) {
@@ -485,7 +531,6 @@ private boolean hasReachedDestinationVirtual(PublicCompany_1856 company) {
         return result;
     }
 
-
     @Override
     protected String validateTakeLoans(TakeLoans action) {
 
@@ -495,8 +540,8 @@ private boolean hasReachedDestinationVirtual(PublicCompany_1856 company) {
 
             while (true) {
                 // Still allowed in current phase?
-                if (gameManager.getCurrentPhase().getIndex()
-                        > getRoot().getPhaseManager().getPhaseByName("5").getIndex()) {
+                if (gameManager.getCurrentPhase().getIndex() > getRoot().getPhaseManager().getPhaseByName("5")
+                        .getIndex()) {
                     errMsg = LocalText.getText("WrongPhase",
                             gameManager.getCurrentPhase().toText());
                     break;
@@ -546,12 +591,11 @@ private boolean hasReachedDestinationVirtual(PublicCompany_1856 company) {
                     || operatingCompany.value().getCurrentNumberOfLoans() == 0) {
                 return false;
                 // Is company required to repay loans?
-            } else if (operatingCompany.value().sharesOwnedByPlayers()
-                    < operatingCompany.value().getCurrentNumberOfLoans()) {
+            } else if (operatingCompany.value().sharesOwnedByPlayers() < operatingCompany.value()
+                    .getCurrentNumberOfLoans()) {
                 return true;
                 // Has company enough money to repay at least one loan?
-            } else if (operatingCompany.value().getCash()
-                    < operatingCompany.value().getValuePerLoan()) {
+            } else if (operatingCompany.value().getCash() < operatingCompany.value().getValuePerLoan()) {
                 return false;
             } else {
                 // Loan repayment is possible but optional
@@ -569,7 +613,8 @@ private boolean hasReachedDestinationVirtual(PublicCompany_1856 company) {
         guiHints.setActivePanel(GuiDef.Panel.MAP);
         guiHints.setCurrentRoundType(getClass());
 
-        if (!resetOperatingCompanies(mergingCompanies)) return;
+        if (!resetOperatingCompanies(mergingCompanies))
+            return;
         if (getOperatingCompany() != null) {
             setStep(GameDef.OrStep.INITIAL);
         } else {
@@ -585,26 +630,27 @@ private boolean hasReachedDestinationVirtual(PublicCompany_1856 company) {
         boolean roundFinished = false;
 
         for (PublicCompany company : mergingCompanies) {
-            if (companiesOperatedThisRound.contains(company)) cgrCanOperate = false;
+            if (companiesOperatedThisRound.contains(company))
+                cgrCanOperate = false;
         }
 
         // Find the first company that has not yet operated
         // and is not closed.
-        //while (setNextOperatingCompany(false)
-        //        && operatingCompany.getObject().isClosed());
+        // while (setNextOperatingCompany(false)
+        // && operatingCompany.getObject().isClosed());
 
         // Remove closed companies from the operating company list
         // (PLEASE leave this code in case we need it; it works)
-        //for (Iterator<PublicCompany> it = companies.iterator();
-        //        it.hasNext(); ) {
-        //    if ((it.next()).isClosed()) {
-        //        it.remove();
-        //    }
-        //}
+        // for (Iterator<PublicCompany> it = companies.iterator();
+        // it.hasNext(); ) {
+        // if ((it.next()).isClosed()) {
+        // it.remove();
+        // }
+        // }
 
-        //if (operatingCompany.getObject() != null) {
-        //    operatingCompanyndex = companies.indexOf(operatingCompany.getObject());
-        //}
+        // if (operatingCompany.getObject() != null) {
+        // operatingCompanyndex = companies.indexOf(operatingCompany.getObject());
+        // }
 
         for (PublicCompany c : operatingCompanies.view()) {
             if (c.isClosed()) {
@@ -649,13 +695,74 @@ private boolean hasReachedDestinationVirtual(PublicCompany_1856 company) {
 
     @Override
     protected boolean finishTurnSpecials() {
-
         if (finalLoanRepaymentPending.value()) {
 
             ((GameManager_1856) gameManager).startCGRFormationRound(this, playerToStartLoanRepayment);
             return false;
         }
-
         return true;
+
     }
+
+@Override
+    public boolean processGameSpecificAction(rails.game.action.PossibleAction action) {
+        if (action instanceof TriggerPortAction) {
+            TriggerPortAction tpa = (TriggerPortAction) action;
+            net.sf.rails.game.special.SpecialBonusTokenLay stl = tpa.getSpecialProperty();
+            java.util.List<net.sf.rails.game.MapHex> validHexes = stl.getLocations();
+
+            if (validHexes != null && !validHexes.isEmpty()) {
+                String[] options = new String[validHexes.size()];
+                for (int i = 0; i < validHexes.size(); i++) {
+                    options[i] = validHexes.get(i).getId();
+                }
+
+                String selectedHexId = (String) javax.swing.JOptionPane.showInputDialog(
+                        null,
+                        "Select the hex to lay the Port token:",
+                        "Lay Port",
+                        javax.swing.JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[0]);
+
+                if (selectedHexId != null) {
+                    for (net.sf.rails.game.MapHex hex : validHexes) {
+                        if (hex.getId().equals(selectedHexId)) {
+                            rails.game.action.LayBonusToken layAction = new rails.game.action.LayBonusToken(getRoot(), stl, stl.getToken());
+                            layAction.setCompany(operatingCompany.value());
+                            layAction.setChosenHex(hex);
+                            
+                            boolean success = super.process(layAction);
+                            if (success) {
+                                log.info("PORT_LAY_TRACE: Port successfully laid on " + hex.getId() + " via popup.");
+                            }
+                            return success;
+                        }
+                    }
+                }
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(null, "No valid hexes available for the Port.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+            return false; 
+        }
+        return super.processGameSpecificAction(action);
+    }
+
+    @Override
+    public boolean setPossibleActions() {
+        boolean result = super.setPossibleActions();
+
+        if (operatingCompany.value() != null && operatingCompany.value().canUseSpecialProperties()) {
+            for (net.sf.rails.game.special.SpecialBonusTokenLay stl : getSpecialProperties(
+                    net.sf.rails.game.special.SpecialBonusTokenLay.class)) {
+                if (!stl.isExercised()) {
+                    possibleActions.add(new TriggerPortAction(operatingCompany.value(), stl));
+                }
+            }
+        }
+
+        return result;
+    }
+
 }
