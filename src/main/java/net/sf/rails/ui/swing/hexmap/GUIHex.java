@@ -614,11 +614,7 @@ private static final int[] offStationTokenX = new int[] { -20, 20 };
                 g.setFont(oldFont);
             }
 
-            if (!isTilePainted())
-                return;
-
-            // Draw preprinted labels only if enabled in UIManager
-            if (hexMap.getOrUIManager() != null && hexMap.getOrUIManager().isShowHexNames()) {
+            if (isTilePainted() && hexMap.getOrUIManager() != null && hexMap.getOrUIManager().isShowHexNames()) {
                 Tile visibleTile = getVisibleTile();
                 if (visibleTile != null && visibleTile.isPrepainted()) {
                     String hexLabel = getHex().getLabel();
