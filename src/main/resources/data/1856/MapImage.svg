@@ -154,9 +154,9 @@
      borderopacity="1"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.1313708"
-     inkscape:cx="1505.2536"
-     inkscape:cy="2142.0916"
+     inkscape:zoom="0.39999998"
+     inkscape:cx="2993.7501"
+     inkscape:cy="2168.7501"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
      showgrid="false"
@@ -164,7 +164,7 @@
      inkscape:window-width="3410"
      inkscape:window-height="1290"
      inkscape:window-x="0"
-     inkscape:window-y="31"
+     inkscape:window-y="32"
      inkscape:window-maximized="0"
      borderlayer="true"
      showguides="true"
@@ -231,56 +231,56 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#3584cf;fill-opacity:1;stroke:#1c4b78;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       x="4663.8438"
+       x="4296.3438"
        y="5435.0552"
        id="text11550-3"><tspan
          sodipodi:role="line"
          id="tspan11575"
-         x="4663.8438"
+         x="4296.3438"
          y="5435.0552"
          style="font-size:90px;line-height:1.25;font-family:sans-serif">Lake Ontario</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#3584cf;fill-opacity:1;stroke:#1c4b78;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       x="1106.8438"
-       y="4613.0552"
+       x="939.34375"
+       y="4625.5552"
        id="text11550-9"><tspan
          sodipodi:role="line"
          id="tspan11552-2"
-         x="1106.8438"
-         y="4613.0552"
+         x="939.34375"
+         y="4625.5552"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:90px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#3584cf;fill-opacity:1;stroke:#1c4b78;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">Lake Huron</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#3584cf;fill-opacity:1;stroke:#1c4b78;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       x="3368.8298"
-       y="3232.771"
+       x="3298.8298"
+       y="3252.771"
        id="text11550-8"><tspan
          sodipodi:role="line"
          id="tspan11595"
-         x="3368.8298"
-         y="3232.771"
+         x="3298.8298"
+         y="3252.771"
          style="font-size:72px;line-height:0.9;font-family:sans-serif">Georgian</tspan><tspan
          sodipodi:role="line"
          id="tspan11597"
-         x="3368.8298"
-         y="3297.571"
+         x="3298.8298"
+         y="3317.571"
          style="font-size:72px;line-height:0.9;font-family:sans-serif">Bay</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#3584cf;fill-opacity:1;stroke:#1c4b78;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       x="175.02637"
-       y="6220.8159"
+       x="102.52637"
+       y="6205.8159"
        id="text11550-8-0-4"><tspan
          sodipodi:role="line"
          id="tspan4061"
-         x="175.02637"
-         y="6220.8159"
+         x="102.52637"
+         y="6205.8159"
          style="font-size:56px;line-height:0.9;font-family:sans-serif">Lake</tspan><tspan
          sodipodi:role="line"
          id="tspan4063"
-         x="175.02637"
-         y="6271.2158"
+         x="102.52637"
+         y="6256.2158"
          style="font-size:56px;line-height:0.9;font-family:sans-serif">St. Clair</tspan></text>
   </g>
   <g
@@ -1789,27 +1789,20 @@
        inkscape:connector-curvature="0"
        id="path6-6-3"
        d="m 328.77253,5378.8031 98,169.741 -98.22432,169.8705 -196.22432,0.1295 -97.999997,-169.741 98.224317,-169.8705 z" />
-    <rect
-       y="5407.3174"
-       x="264.68353"
-       height="65.278679"
-       width="176.96623"
-       id="rect4060-4-8"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3.19212;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <text
        id="text3798-7-2-12-1"
-       y="5436.5562"
-       x="288.44839"
+       y="5431.5562"
+       x="143.44839"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.76991px;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.730826"
        xml:space="preserve"><tspan
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.233px;line-height:80%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.730826"
-         y="5436.5562"
-         x="288.44839"
+         y="5431.5562"
+         x="143.44839"
          id="tspan3800-1-2-0-8"
          sodipodi:role="line">PORT</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.233px;line-height:80%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.730826"
-         y="5459.9424"
-         x="288.44839"
+         y="5454.9424"
+         x="143.44839"
          sodipodi:role="line"
          id="tspan5299">HURON</tspan></text>
     <path
@@ -3440,8 +3433,8 @@
        id="path2565-5-0-4-2-2"
        inkscape:connector-curvature="0" />
     <rect
-       y="6377.9565"
-       x="4576.6875"
+       y="6384.1724"
+       x="4799.2275"
        height="105.42049"
        width="272.55148"
        id="rect4060-4-89-9-9"
@@ -3451,18 +3444,18 @@
        id="text22-1-8"
        font-size="37.1829px"
        dy="0 0 0 0 0 0 0 0"
-       y="6445.4282"
-       x="4715.6924"
+       y="6454.8076"
+       x="4823.2485"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:Sans;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0.729077"
        transform="rotate(0.33066264)"><tspan
-         y="6445.4282"
-         x="4715.6924"
+         y="6454.8076"
+         x="4823.2485"
          id="tspan10403"
          sodipodi:role="line"
          style="font-size:37.1829px;line-height:1.25;font-family:sans-serif;stroke-width:0.729077">BRIDGE +10</tspan></text>
     <rect
-       y="5541.2188"
-       x="106.83138"
+       y="5538.7324"
+       x="101.81202"
        height="104.80421"
        width="262.26511"
        id="rect4060-4-89-9-9-8"
@@ -3472,12 +3465,12 @@
        id="text22-1-8-5"
        font-size="37.1829px"
        dy="0 0 0 0 0 0 0 0"
-       y="5606.0767"
-       x="225.28021"
+       y="5604.1841"
+       x="102.76932"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:Sans;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0.729077"
        transform="rotate(0.28398144)"><tspan
-         y="5606.0767"
-         x="225.28021"
+         y="5604.1841"
+         x="102.76932"
          id="tspan10403-1"
          sodipodi:role="line"
          style="font-size:37.1829px;line-height:1.25;font-family:sans-serif;stroke-width:0.729077">TUNNEL +10</tspan></text>
@@ -3679,18 +3672,18 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'Sans Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#1c1c24;fill-opacity:1;stroke:#1c4b78;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       x="4030.6687"
-       y="3998.1284"
+       x="4000.6687"
+       y="4000.6284"
        id="text11550-8-0"><tspan
          sodipodi:role="line"
          id="tspan11623"
-         x="4030.6687"
-         y="3998.1284"
+         x="4000.6687"
+         y="4000.6284"
          style="font-size:36px;line-height:0.9;font-family:sans-serif;fill:#1c1c24">Lake</tspan><tspan
          sodipodi:role="line"
          id="tspan11625"
-         x="4030.6687"
-         y="4030.5283"
+         x="4000.6687"
+         y="4033.0283"
          style="font-size:36px;line-height:0.9;font-family:sans-serif;fill:#1c1c24">Simcoe</tspan></text>
     <g
        id="g1"

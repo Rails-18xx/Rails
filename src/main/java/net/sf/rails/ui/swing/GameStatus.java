@@ -3498,13 +3498,9 @@ public class GameStatus extends GridPanel {
                 SwingUtilities.invokeLater(() -> {
                     boolean shouldShowEscrow = isStockRound || isEffectivelyActive;
 
-                    // --- START FIX ---
-                    // Loans are only shown for companies that are active but not fully running yet
-                    // (haven't reached destination)
-                    boolean hasReachedDestination = fComp.hasReachedDestination();
-                    boolean shouldShowLoans = isEffectivelyActive && !hasReachedDestination;
-                    // --- END FIX ---
-
+                    // Allow outstanding loans to stay visible even after destination is achieved
+                    boolean shouldShowLoans = isEffectivelyActive;
+                    
                     if (fEscrowCol != -1 && fEscrowCol < fields.length && fYRow < fields[fEscrowCol].length) {
                         JComponent comp = fields[fEscrowCol][fYRow];
                         if (comp != null) {
@@ -6573,9 +6569,7 @@ public class GameStatus extends GridPanel {
             if (companies != null && companies.length > 0) {
                 calculateDynamicDimensions();
             }
-            // --- END FIX ---
         }
     }
-    // ... (rest of the file) ...
 
 }

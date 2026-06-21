@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rails.game.action.*;
+import net.sf.rails.algorithms.RevenueAdapter;
 import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.GuiDef;
 import net.sf.rails.common.LocalText;
@@ -273,18 +274,114 @@ savedAction.set(action);
 
     @Override
     protected void setDestinationActions() {
+// Intentionally left blank. Destination checks are now automated after track lays.
+       
+    }
 
-        List<PublicCompany> possibleDestinations = new ArrayList<>();
-        for (PublicCompany comp : operatingCompanies.view()) {
-            if (comp.hasDestination()
-                    && ((PublicCompany_1856) comp).getTrainNumberAvailableAtStart() < 5
-                    && !comp.hasReachedDestination()) {
-                possibleDestinations.add(comp);
+    // --- START FIX ---
+    @Override
+    public boolean layTile(LayTile action) {
+        boolean success = super.layTile(action);
+        
+        if (success) {
+            checkAutomatedDestinations();
+        }
+        
+        return success;
+    }
+
+private void checkAutomatedDestinations() {
+        for (PublicCompany company : operatingCompanies.view()) {
+            if (company.hasDestination() && !company.hasReachedDestination()) {
+                PublicCompany_1856 comp1856 = (PublicCompany_1856) company;
+                
+                // Only evaluate companies started before Phase 5
+                if (comp1856.getTrainNumberAvailableAtStart() < 5) {
+                    if (hasReachedDestinationVirtual(comp1856)) {
+                        
+                        // --- START FIX ---
+                        // 1. Mark destination as reached in the engine state
+                        company.setReachedDestination(true);
+                        
+                        // 2. Fetch escrow cash
+                        int cashInEscrow = comp1856.getMoneyInEscrow();
+                        String cashText = net.sf.rails.game.state.Currency.fromBank(cashInEscrow, company);
+                        
+                        // 3. Construct a prominent notification message box for all players
+                        String msg = "=================================================\n"
+                                   + " CONGRATULATIONS! " + company.getId() + " HAS REACHED ITS DESTINATION!\n"
+                                   + "=================================================\n\n"
+                                   + "The route to " + company.getDestinationHex().getId() + " is fully connected.\n"
+                                   + "Released Escrow Capital: " + cashText + " has been added to the treasury.\n\n"
+                                   + "From now on, initial offering share purchases will fund the treasury directly.";
+                        
+                        // Pop up the congratulatory alert panel
+                        if (!getRoot().getGameManager().isReloading()) {
+                            javax.swing.JOptionPane.showMessageDialog(null, msg, 
+                                    "1856 Destination Achieved", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                        }
+                        
+                        // 4. Log the transaction details to the game report buffer
+                        ReportBuffer.add(this, " ");
+                        ReportBuffer.add(this, ">>> " + company.getId() + " has reached its destination city (" + company.getDestinationHex().getId() + ")!");
+                        
+                        if (cashInEscrow > 0) {
+                            ReportBuffer.add(this, LocalText.getText("ReleasedFromEscrow", company.getId(), cashText));
+                            
+                            // 5. Transfer the escrow cash value directly to the corporate treasury box
+                            // Note: Depending on your exact PublicCompany_1856 field mutators, 
+                            // we must ensure 'setMoneyInEscrow(0)' or clearEscrow() is explicitly invoked.
+                            // If your class has a clear or setter, use it here:
+                            comp1856.setMoneyInEscrow(0); 
+                        }
+                        // --- END FIX ---
+                    }
+                }
             }
         }
-        if (possibleDestinations.size() > 0) {
-            possibleActions.add(new ReachDestinations(getRoot(), possibleDestinations));
+    }
+
+    
+
+
+   
+
+private boolean hasReachedDestinationVirtual(PublicCompany_1856 company) {
+        MapHex destHex = company.getDestinationHex();
+        if (destHex == null) return false;
+
+        // 1. Get the pristine map graph (pure physical track network, no token blocking applied)
+        net.sf.rails.algorithms.NetworkAdapter na = net.sf.rails.algorithms.NetworkAdapter.create(getRoot());
+        net.sf.rails.algorithms.NetworkGraph mapGraph = na.getMapGraph();
+        org.jgrapht.Graph<net.sf.rails.algorithms.NetworkVertex, net.sf.rails.algorithms.NetworkEdge> jgraph = mapGraph.getGraph();
+
+        // 2. Locate the starting points (the company's base tokens on the map graph)
+        java.util.List<net.sf.rails.algorithms.NetworkVertex> startVertices = mapGraph.getCompanyBaseTokenVertexes(company);
+        if (startVertices.isEmpty()) return false;
+
+        // 3. Standard BFS queue and visited set to find purely physical track connectivity
+        java.util.Queue<net.sf.rails.algorithms.NetworkVertex> queue = new java.util.LinkedList<>(startVertices);
+        java.util.Set<net.sf.rails.algorithms.NetworkVertex> visited = new java.util.HashSet<>(startVertices);
+
+        while (!queue.isEmpty()) {
+            net.sf.rails.algorithms.NetworkVertex current = queue.poll();
+
+            // If we hit any vertex belonging to the destination hex, connection is successful!
+            if (current.getHex() != null && destHex.getId().equals(current.getHex().getId())) {
+                return true;
+            }
+
+            // Traverse all physically connected neighboring tracks
+            for (net.sf.rails.algorithms.NetworkEdge edge : jgraph.edgesOf(current)) {
+                net.sf.rails.algorithms.NetworkVertex neighbor = org.jgrapht.Graphs.getOppositeVertex(jgraph, edge, current);
+                if (!visited.contains(neighbor)) {
+                    visited.add(neighbor);
+                    queue.add(neighbor);
+                }
+            }
         }
+
+        return false;
     }
 
     @Override

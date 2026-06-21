@@ -40,6 +40,10 @@ public final class PublicCompany_1856 extends PublicCompany {
        return moneyInEscrow.value();
     }
 
+    public void setMoneyInEscrow(int amount) {
+        this.moneyInEscrow.set(amount);
+    }
+
     @Override
     public int getMaxNumberOfLoans() {
         return sharesOwnedByPlayers();
