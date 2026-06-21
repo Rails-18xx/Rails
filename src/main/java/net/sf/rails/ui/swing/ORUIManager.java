@@ -27,24 +27,26 @@ import net.sf.rails.ui.swing.hexmap.HexUpgrade;
 import net.sf.rails.ui.swing.hexmap.TileHexUpgrade;
 import net.sf.rails.ui.swing.hexmap.TokenHexUpgrade;
 import net.sf.rails.util.Util;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import rails.game.action.*;
 import rails.game.correct.ClosePrivate;
 import rails.game.correct.OperatingCost;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-
 import net.sf.rails.game.ai.TokenLayOption;
 import net.sf.rails.game.ai.TileLayOption;
 import net.sf.rails.game.ai.AIPlayer;
-
 import static net.sf.rails.ui.swing.GameUIManager.EXCHANGE_TOKENS_DIALOG;
+
+import net.sf.rails.algorithms.NetworkGraph; // FIXED: Added missing import
+import net.sf.rails.algorithms.NetworkVertex; // FIXED: Added missing import
+import net.sf.rails.common.Config;
+import net.sf.rails.common.GameOption;
+
+
 
 public class ORUIManager implements DialogOwner {
 
@@ -83,17 +85,22 @@ public class ORUIManager implements DialogOwner {
         INACTIVE, SELECT_HEX, SELECT_UPGRADE, SET_REVENUE, SELECT_PAYOUT
     }
 
-    private boolean showHomeIdentifiers = true;
-    private boolean showRevenueRoutes = true;
-    private boolean showFancyCityValues = true; // Default to off
-
+    private boolean showHomeIdentifiers = Config.getBoolean("layer.showHomeIdentifiers", true);
+    private boolean showRevenueRoutes = Config.getBoolean("layer.showRevenueRoutes", true);
+    private boolean showFancyCityValues = Config.getBoolean("layer.showFancyCityValues", false);
+    private boolean showFloatingTiles = Config.getBoolean("layer.showFloatingTiles", true);
+    private boolean showFriendlyHexes = Config.getBoolean("layer.showFriendlyHexes", true);
+    private boolean showDestinationMarkers = Config.getBoolean("layer.showDestinationMarkers", true);
+    private boolean showRevenueSpinner = Config.getBoolean("layer.showRevenueSpinner", true);
+    private boolean showMapMarkings = Config.getBoolean("layer.showMapMarkings", true);
+    private boolean showHexNames = Config.getBoolean("layer.showHexNames", true);
+    private boolean showTerrainCosts = Config.getBoolean("layer.showTerrainCosts", true);
     
 
     public boolean isShowFancyCityValues() {
         return showFancyCityValues;
     }
 
-    private boolean showFloatingTiles = true;
 
     public boolean isShowFloatingTiles() {
         return showFloatingTiles;
@@ -118,6 +125,7 @@ public class ORUIManager implements DialogOwner {
 
     public void toggleHomeIdentifiers() {
         this.showHomeIdentifiers = !this.showHomeIdentifiers;
+        Config.set("layer.showHomeIdentifiers", String.valueOf(this.showHomeIdentifiers));
         if (map != null)
             map.repaintAll(new Rectangle(map.getSize()));
     }
@@ -133,9 +141,6 @@ public class ORUIManager implements DialogOwner {
             orPanel.redrawRoutes();
     }
 
-    private boolean showFriendlyHexes = true;
-
-    private boolean showDestinationMarkers = true;
 
     public boolean isShowDestinationMarkers() {
         return showDestinationMarkers;
@@ -151,10 +156,6 @@ public class ORUIManager implements DialogOwner {
             map.repaintAll(new Rectangle(map.getSize()));
         }
     }
-
-    // We are modifying ORUIManager.java to remove the deprecated hideAllOverlays
-    // method and inject Revenue Spinner layout state plumbing.
-    private boolean showRevenueSpinner = true;
 
     public boolean isShowRevenueSpinner() {
         return showRevenueSpinner;
@@ -627,9 +628,6 @@ public void toggleRevenueSpinner() {
         return false; // Action not found
     }
 
-    private boolean showMapMarkings = true;
-    private boolean showHexNames = true;
-    private boolean showTerrainCosts = true;
 
     public boolean isShowTerrainCosts() {
         return showTerrainCosts;
