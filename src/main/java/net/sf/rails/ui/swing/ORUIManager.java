@@ -1162,14 +1162,40 @@ public void toggleRevenueSpinner() {
         }
     }
 
-    protected void takeLoans(TakeLoans action) {
+protected void takeLoans(TakeLoans action) {
         if (action.getMaxNumber() == 1) {
-            if (JOptionPane.showConfirmDialog(orWindow,
-                    LocalText.getText("TakeLoanPrompt", action.getCompanyName(),
-                            gameUIManager.format(action.getPrice())),
-                    LocalText.getText("PleaseConfirm"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                action.setNumberTaken(1);
-                orWindow.process(action);
+            // Automatically process single loan allocations without a confirmation window
+            action.setNumberTaken(1);
+            orWindow.process(action);
+        } else if (action.getMaxNumber() > 1) {
+            // Dynamically build dropdown choices if a company can take multiple loans
+            String[] options = new String[action.getMaxNumber() + 1];
+            options[0] = LocalText.getText("None");
+            
+            for (int i = 1; i <= action.getMaxNumber(); i++) {
+                options[i] = i + " x " + gameUIManager.format(action.getPrice()) 
+                        + " (" + gameUIManager.format(i * action.getPrice()) + ")";
+            }
+            
+            String chosen = (String) JOptionPane.showInputDialog(
+                    orWindow,
+                    LocalText.getText("SelectLoansToTake", action.getCompanyName()),
+                    LocalText.getText("Select"),
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[1]
+            );
+            
+            if (chosen != null && !chosen.equals(options[0])) {
+                // Find the index matching the number taken
+                for (int i = 1; i <= action.getMaxNumber(); i++) {
+                    if (chosen.equals(options[i])) {
+                        action.setNumberTaken(i);
+                        orWindow.process(action);
+                        break;
+                    }
+                }
             }
         }
     }
