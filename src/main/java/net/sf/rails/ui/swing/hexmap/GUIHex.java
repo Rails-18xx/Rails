@@ -970,6 +970,44 @@ public class GUIHex implements Observer {
             }
         }
 
+        // Add support for 1856 Tunnel and Bridge bonuses in the fancy revenue city value layer
+        if (currentComp != null && getHex() != null && getHex().getId() != null) {
+            String hexId = getHex().getId();
+            boolean hasTunnelRight = false;
+            boolean hasBridgeRight = false;
+
+            // 1. Check active private company cards (Phases 1-3)
+            for (net.sf.rails.game.PrivateCompany priv : currentComp.getPrivates()) {
+                if (priv != null && !priv.isClosed()) {
+                    String id = priv.getId().toLowerCase();
+                    if (id.contains("tunn")) hasTunnelRight = true;
+                    if (id.contains("brid")) hasBridgeRight = true;
+                }
+            }
+
+            // 2. Check permanent purchased bonuses (Phase 5+)
+            for (net.sf.rails.game.Bonus bonus : currentComp.getBonuses()) {
+                if (bonus != null && bonus.getName() != null) {
+                    String name = bonus.getName().toLowerCase();
+                    if (name.contains("tunn")) hasTunnelRight = true;
+                    if (name.contains("brid")) hasBridgeRight = true;
+                }
+            }
+
+            // Apply to Sarnia (B13)
+            if (hasTunnelRight && hexId.equalsIgnoreCase("B13")) {
+                if (hexMap == null || hexMap.getDynamicHexBonus(getHex()) == 0) {
+                    hexValue += 10;
+                }
+            }
+            // Apply to Buffalo (P17 or P19)
+            if (hasBridgeRight && (hexId.equalsIgnoreCase("P17") || hexId.equalsIgnoreCase("P19"))) {
+                if (hexMap == null || hexMap.getDynamicHexBonus(getHex()) == 0) {
+                    hexValue += 10;
+                }
+            }
+        }
+
         // 3. Draw the value if it exists
         if (hexValue > 0) {
             Font oldFont = g.getFont();

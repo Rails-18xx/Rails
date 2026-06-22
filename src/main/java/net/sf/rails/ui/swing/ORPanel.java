@@ -986,6 +986,22 @@ if (activePhase == 1 || activePhase == 2) {
                             label = "Buy " + bp.getPrivateCompany().getId() + " (" + bp.getMinimumPrice() + "-"
                                     + bp.getMaximumPrice() + ")";
                         }
+
+
+                        String actStr = action.toString().toLowerCase();
+                        String btnLbl = action.getButtonLabel() != null ? action.getButtonLabel().toLowerCase() : "";
+                        
+                        if (actStr.contains("bridge") || btnLbl.contains("bridge")) {
+                            label = "Buy Bridge Token ($50)";
+                        } else if (actStr.contains("tunnel") || btnLbl.contains("tunnel")) {
+                            label = "Buy Tunnel Token ($50)";
+                        } else if (actStr.contains("port") || btnLbl.contains("port") || actStr.contains("layport")) {
+                            label = "Lay Port Token";
+                        } else if (actStr.contains("loan") || actStr.contains("bond") || actStr.contains("takeloan")) {
+                            label = "Take Government Bond";
+                        }
+
+
                         if (action instanceof GuiTargetedAction) {
                             label = ((GuiTargetedAction) action).getButtonLabel();
                         }
@@ -2869,6 +2885,34 @@ if (activePhase == 1 || activePhase == 2) {
             bgColor = new Color(255, 235, 235); // Matches RailCard private company styling
             borderColor = new Color(200, 150, 150);
             textColor = Color.BLACK;
+        
+
+        } else {
+            // Robust identification based on the action content text
+            String actStr = action.toString().toLowerCase();
+            String btnLbl = action.getButtonLabel() != null ? action.getButtonLabel().toLowerCase() : "";
+            
+            if (actStr.contains("bridge") || btnLbl.contains("bridge")) {
+                label = "Buy Bridge Token ($50)";
+                bgColor = new Color(255, 235, 205); // Industrial/Beige
+                borderColor = new Color(204, 102, 0); // Orange border
+                textColor = Color.BLACK;
+            } else if (actStr.contains("tunnel") || btnLbl.contains("tunnel")) {
+                label = "Buy Tunnel Token ($50)";
+                bgColor = new Color(255, 235, 205);
+                borderColor = new Color(204, 102, 0);
+                textColor = Color.BLACK;
+            } else if (actStr.contains("port") || btnLbl.contains("port") || actStr.contains("layport")) {
+                label = "Lay Port Token";
+                bgColor = new Color(255, 193, 7); // Vibrant Amber/Gold
+                borderColor = new Color(184, 134, 11);
+                textColor = Color.BLACK;
+            } else if (actStr.contains("loan") || actStr.contains("bond") || actStr.contains("takeloan")) {
+                label = "Take Government Bond";
+                bgColor = new Color(152, 251, 152); // Soft green for capital injection
+                borderColor = new Color(34, 139, 34);
+                textColor = Color.BLACK;
+            }
         }
 
         // 2. Create Button

@@ -525,9 +525,7 @@ public class OperatingRound_1856 extends OperatingRound {
                 for (SpecialProperty sp : gameManager.getCommonSpecialProperties()) {
                     if (sp instanceof SellBonusToken) {
                         SellBonusToken sbt = (SellBonusToken) sp;
-                        // FIXME: Is it ipo or pool portfolio?
-                        // Assume it is pool
-                        sbt.setSeller(bank.getPool());
+                        sbt.setSeller(bank);
                         log.debug("SP {} is now buyable from the Bank", sp.getId());
                     }
                 }
@@ -845,6 +843,56 @@ public class OperatingRound_1856 extends OperatingRound {
             }
         }
 
+        // Filter out illegal self-purchase token buy choices using the structural wrapper API
+        java.util.List<rails.game.action.PossibleAction> targetsToRemove = new java.util.ArrayList<>();
+        for (rails.game.action.PossibleAction act : possibleActions.getList()) {
+            if (act instanceof rails.game.action.BuyBonusToken) {
+                rails.game.action.BuyBonusToken bbt = (rails.game.action.BuyBonusToken) act;
+                if (bbt.getSeller() == comp) {
+                    targetsToRemove.add(bbt);
+                }
+            }
+        }
+        for (rails.game.action.PossibleAction act : targetsToRemove) {
+            possibleActions.remove(act);
+        }
+
         return result;
+    }
+
+
+    @Override
+    public boolean buyBonusToken(rails.game.action.BuyBonusToken action) {
+        net.sf.rails.game.special.SellBonusToken sbt = action.getSpecialProperty();
+        net.sf.rails.game.state.Owner seller = sbt.getSeller();
+        net.sf.rails.game.PublicCompany company = operatingCompany.value();
+
+        // Rulebook check: If this public company already owns the private company,
+        // the token application is free and should not execute a self-wire transfer.
+        if (seller == company) {
+            
+            // Replicate the token application process without calling Currency.wire()
+            net.sf.rails.game.Bonus bonus = new net.sf.rails.game.Bonus(
+                company, 
+                sbt.getId(),
+                sbt.getValue(), 
+                sbt.getLocations(), 
+                sbt.allowOneTrainOnly()
+            );
+            company.addBonus(bonus);
+
+            net.sf.rails.common.ReportBuffer.add(this, 
+                company.getId() + " activates its own " + sbt.getName() + " token bonus for $0.");
+
+            sbt.setExercised();
+
+            if (getStep() == net.sf.rails.game.GameDef.OrStep.LAY_TOKEN && !canLayAnyTokens(false)) {
+                nextStep();
+            }
+            return true;
+        }
+
+        // Otherwise, proceed with the normal cross-company $50 purchase routine
+        return super.buyBonusToken(action);
     }
 }

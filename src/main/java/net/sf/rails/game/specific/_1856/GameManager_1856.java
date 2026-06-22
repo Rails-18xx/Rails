@@ -35,6 +35,7 @@ public class GameManager_1856 extends GameManager {
         // Dynamically register the Port modifier for revenue calculation
         if (getRoot().getRevenueManager() != null) {
             getRoot().getRevenueManager().addStaticModifier(new net.sf.rails.game.specific._1856.PortModifier_1856());
+            getRoot().getRevenueManager().addStaticModifier(new net.sf.rails.game.specific._1856.TunnelBridgeModifier_1856());
         }
     }
 
