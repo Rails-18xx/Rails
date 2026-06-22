@@ -812,16 +812,70 @@ public class GUIHex implements Observer {
         double cx = dimensions.center.getX();
         double cy = dimensions.center.getY();
 
-        // 18xx Phase colors: Yellow, Green, Brown, gray
-        java.awt.Color[] bgColors = {
+      // --- START FIX ---
+        // Dynamically cross-reference Game.xml PhaseManager to map offboard steps to their correct tile colors.
+        java.util.Map<Integer, java.awt.Color> stepBgColors = new java.util.HashMap<>();
+        java.util.Map<Integer, java.awt.Color> stepFgColors = new java.util.HashMap<>();
+        
+        java.awt.Color currentBg = new java.awt.Color(255, 255, 102); // Default Yellow
+        java.awt.Color currentFg = java.awt.Color.BLACK;
+
+        try {
+            if (hexMap != null && hexMap.getMapManager() != null && hexMap.getMapManager().getRoot() != null) {
+                net.sf.rails.game.PhaseManager pm = hexMap.getMapManager().getRoot().getPhaseManager();
+                if (pm != null && pm.getPhases() != null) {
+                    for (Object pObj : pm.getPhases()) {
+                        net.sf.rails.game.Phase p = (net.sf.rails.game.Phase) pObj;
+                        
+                        boolean hasGray = false, hasBrown = false, hasGreen = false;
+                        try {
+                            java.lang.reflect.Method method = p.getClass().getMethod("isTileColourAllowed", String.class);
+                            hasGray = (Boolean) method.invoke(p, "gray") || (Boolean) method.invoke(p, "grey");
+                            hasBrown = (Boolean) method.invoke(p, "brown");
+                            hasGreen = (Boolean) method.invoke(p, "green");
+                        } catch (Exception e) {
+                            try {
+                                java.lang.reflect.Method listMethod = p.getClass().getMethod("getTileColours");
+                                java.util.Collection<?> colors = (java.util.Collection<?>) listMethod.invoke(p);
+                                String colorStr = colors.toString().toLowerCase();
+                                hasGray = colorStr.contains("gray") || colorStr.contains("grey");
+                                hasBrown = colorStr.contains("brown");
+                                hasGreen = colorStr.contains("green");
+                            } catch (Exception ex) {}
+                        }
+                        
+                        if (hasGray) {
+                            currentBg = new java.awt.Color(160, 160, 160);
+                            currentFg = java.awt.Color.WHITE;
+                        } else if (hasBrown) {
+                            currentBg = new java.awt.Color(153, 102, 51);
+                            currentFg = java.awt.Color.WHITE;
+                        } else if (hasGreen) {
+                            currentBg = new java.awt.Color(102, 204, 102);
+                            currentFg = java.awt.Color.BLACK;
+                        }
+                        
+                        int step = p.getOffBoardRevenueStep();
+                        if (!stepBgColors.containsKey(step)) {
+                            stepBgColors.put(step, currentBg);
+                            stepFgColors.put(step, currentFg);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Ignore reflection errors; fallback logic applies below
+        }
+
+        java.awt.Color[] fallbackBg = {
                 new java.awt.Color(255, 255, 102), // Yellow
                 new java.awt.Color(102, 204, 102), // Green
-                new java.awt.Color(153, 102, 51), // Brown
-                new java.awt.Color(160, 160, 160) // gray
+                new java.awt.Color(153, 102, 51),  // Brown
+                new java.awt.Color(160, 160, 160)  // Gray
         };
-        // Ensure contrast for the text
-        java.awt.Color[] fgColors = { java.awt.Color.BLACK, java.awt.Color.BLACK, java.awt.Color.WHITE,
-                java.awt.Color.WHITE };
+        java.awt.Color[] fallbackFg = { 
+                java.awt.Color.BLACK, java.awt.Color.BLACK, java.awt.Color.WHITE, java.awt.Color.WHITE 
+        };
 
         java.awt.Font oldFont = g.getFont();
         g.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, (int) Math.round(9 * zoom)));
@@ -829,8 +883,11 @@ public class GUIHex implements Observer {
 
         for (int i = 0; i < numVals; i++) {
             int val = values.get(i);
+            int step = i + 1;
 
-            // Calculate 2x2 offsets based on the index
+            java.awt.Color cellBg = stepBgColors.containsKey(step) ? stepBgColors.get(step) : fallbackBg[Math.min(i, fallbackBg.length - 1)];
+            java.awt.Color cellFg = stepFgColors.containsKey(step) ? stepFgColors.get(step) : fallbackFg[Math.min(i, fallbackFg.length - 1)];
+
             int xOffset = (i % 2 == 0) ? -boxSize : 0;
             int yOffset = (i < 2) ? -boxSize : 0;
 
@@ -838,7 +895,7 @@ public class GUIHex implements Observer {
             int y = (int) Math.round(cy + yOffset);
 
             // Draw Background Box
-            g.setColor(bgColors[i]);
+            g.setColor(cellBg);
             g.fillRect(x, y, boxSize, boxSize);
 
             // Draw Box Border
@@ -847,7 +904,9 @@ public class GUIHex implements Observer {
             g.drawRect(x, y, boxSize, boxSize);
 
             // Draw Centered Text
-            g.setColor(fgColors[i]);
+            g.setColor(cellFg);
+
+
             String text = String.valueOf(val);
             int tw = fm.stringWidth(text);
 
