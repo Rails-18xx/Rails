@@ -415,9 +415,11 @@ public class OperatingRound_1856 extends OperatingRound {
         while (!queue.isEmpty()) {
             net.sf.rails.algorithms.NetworkVertex current = queue.poll();
 
-            // If we hit any vertex belonging to the destination hex, connection is
-            // successful!
-            if (current.getHex() != null && destHex.getId().equals(current.getHex().getId())) {
+// We must verify that 'current' represents the destination station, 
+            // not merely a hex side/boundary entering the destination hex.
+            if (current.getHex() != null 
+                    && destHex.getId().equals(current.getHex().getId()) 
+                    && current.isStation()) {
                 return true;
             }
 
