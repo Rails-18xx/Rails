@@ -121,6 +121,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
     protected ActionButton passButton;
     protected ActionButton autopassButton;
+    protected ActionButton helpButton;
     protected GameUIManager gameUIManager;
     protected RoundFacade currentRound;
     protected PossibleActions possibleActions;
@@ -294,13 +295,14 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         // JMenuItem menuItem = new JMenuItem(LocalText.getText("AutoSaveLoad"));
         // menuItem.setActionCommand(AUTOSAVELOAD_CMD);
         // menuItem.setMnemonic(KeyEvent.VK_A);
-        // menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
+        // menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+        // ActionEvent.ALT_MASK));
         // menuItem.addActionListener(this);
         // menuItem.setEnabled(true);
         // fileMenu.add(menuItem);
 
         // Moved Config to File Menu
-        JMenuItem  ConvmenuItem = new JMenuItem(LocalText.getText("CONFIG"));
+        JMenuItem ConvmenuItem = new JMenuItem(LocalText.getText("CONFIG"));
         ConvmenuItem.setName(CONFIG_CMD);
         ConvmenuItem.setActionCommand(CONFIG_CMD);
         ConvmenuItem.setMnemonic(KeyEvent.VK_C);
@@ -339,11 +341,12 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         menuItem.setActionCommand(REPORT_CMD);
         menuItem.addActionListener(this);
         optMenu.add(menuItem);
-        
+
         optMenu.addSeparator();
 
         // Toggle for the new modular visualization
-        JCheckBoxMenuItem toggleStatusItem = new JCheckBoxMenuItem("Experimental Status View (18xx.games)", useAltStatus);
+        JCheckBoxMenuItem toggleStatusItem = new JCheckBoxMenuItem("Experimental Status View (18xx.games)",
+                useAltStatus);
         toggleStatusItem.addActionListener(e -> {
             useAltStatus = toggleStatusItem.isSelected();
             swapGameStatus();
@@ -370,7 +373,6 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         optMenu.add(toggleWorthItem);
 
         optMenu.addSeparator();
-
 
         // Font Settings
         menuItem = new JMenuItem(LocalText.getText("IncreaseFont", "Increase Text Size"));
@@ -575,15 +577,16 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
             developerMenu.addSeparator();
             JMenuItem nukeSettingsItem = new JMenuItem("Nuke User Settings (Hard Reset)");
-            nukeSettingsItem.setToolTipText("Deletes all local profiles and window settings to simulate a fresh install. REQUIRES RESTART.");
+            nukeSettingsItem.setToolTipText(
+                    "Deletes all local profiles and window settings to simulate a fresh install. REQUIRES RESTART.");
             nukeSettingsItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     int response = JOptionPane.showConfirmDialog(
                             StatusWindow.this,
                             "WARNING: This will permanently delete your local profiles, recent files history, and window settings.\n\n"
-                            + "This simulates a completely fresh installation for testing purposes.\n"
-                            + "The game will immediately exit after deletion. Are you sure?",
+                                    + "This simulates a completely fresh installation for testing purposes.\n"
+                                    + "The game will immediately exit after deletion. Are you sure?",
                             "Confirm Hard Reset",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.WARNING_MESSAGE);
@@ -594,11 +597,13 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
                             if (configDir != null && configDir.exists()) {
                                 // 1. Delete rails.recent
                                 File recent = new File(configDir, "rails.recent");
-                                if (recent.exists()) recent.delete();
+                                if (recent.exists())
+                                    recent.delete();
 
                                 // 2. Delete Properties.xml (User Profile)
                                 File props = new File(configDir, "Properties.xml");
-                                if (props.exists()) props.delete();
+                                if (props.exists())
+                                    props.delete();
 
                                 // 3. Delete windowSettings folder
                                 File windowSettingsDir = new File(configDir, "windowSettings");
@@ -612,7 +617,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
                                 JOptionPane.showMessageDialog(StatusWindow.this,
                                         "User settings wiped. The application will now close.",
                                         "Reset Complete", JOptionPane.INFORMATION_MESSAGE);
-                                
+
                                 System.exit(0);
                             }
                         } catch (Exception ex) {
@@ -772,25 +777,27 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         // // Re-add the Debug Item (Must be done here because removeAll() clears it)
         // correctionMenu.addSeparator();
         // JMenuItem forceSkipItem = new JMenuItem("Force Skip Stuck Turn (Debug)");
-        // forceSkipItem.setToolTipText("Use this ONLY if the game hangs on a closed company (Zombie Turn).");
+        // forceSkipItem.setToolTipText("Use this ONLY if the game hangs on a closed
+        // company (Zombie Turn).");
         // forceSkipItem.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         int response = JOptionPane.showConfirmDialog(
-        //                 StatusWindow.this,
-        //                 "This is a debug tool to bypass a stuck turn (e.g., a closed company acting).\n"
-        //                         + "It forcibly advances the internal company index.\n\n"
-        //                         + "Are you sure you want to force the engine to skip the current actor?",
-        //                 "Force Skip Confirmation",
-        //                 JOptionPane.YES_NO_OPTION,
-        //                 JOptionPane.WARNING_MESSAGE);
+        // @Override
+        // public void actionPerformed(ActionEvent e) {
+        // int response = JOptionPane.showConfirmDialog(
+        // StatusWindow.this,
+        // "This is a debug tool to bypass a stuck turn (e.g., a closed company
+        // acting).\n"
+        // + "It forcibly advances the internal company index.\n\n"
+        // + "Are you sure you want to force the engine to skip the current actor?",
+        // "Force Skip Confirmation",
+        // JOptionPane.YES_NO_OPTION,
+        // JOptionPane.WARNING_MESSAGE);
 
-        //         if (response == JOptionPane.YES_OPTION) {
-        //             if (gameUIManager != null && gameUIManager.getGameManager() != null) {
-        //                 gameUIManager.getGameManager().forceSkipStuckCompany();
-        //             }
-        //         }
-        //     }
+        // if (response == JOptionPane.YES_OPTION) {
+        // if (gameUIManager != null && gameUIManager.getGameManager() != null) {
+        // gameUIManager.getGameManager().forceSkipStuckCompany();
+        // }
+        // }
+        // }
         // });
         // correctionMenu.add(forceSkipItem);
 
@@ -1022,6 +1029,17 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             showMoveMonitor();
         } else if (command.equals("SHOW_ACTION_RUNNER")) {
             showActionRunner();
+        } else if (command.equals("HelpWindowCmd")) {
+if (gameUIManager.helpTextWindow == null) {
+                gameUIManager.helpTextWindow = new HelpTextWindow(this.buildTimestamp, gameUIManager);
+                gameUIManager.helpTextWindow.setName("HelpTextWindow");
+                gameUIManager.helpTextWindow.setVisible(true);
+            } else {
+                gameUIManager.helpTextWindow.refreshHelp(gameUIManager.getGameManager(), this.buildTimestamp);
+                gameUIManager.helpTextWindow.setVisible(true);
+                gameUIManager.helpTextWindow.toFront();
+            }
+
 
         } else if (command.equals(REM_TILES_CMD) || command.equals(ORPanel.REM_TILES_CMD)) {
 
@@ -1317,6 +1335,12 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         passButton.setActionCommand(DONE_CMD);
         passButton.addActionListener(this);
 
+        // HELP
+        helpButton = new ActionButton(null);
+        helpButton.setText("Help");
+        helpButton.setActionCommand("HelpWindowCmd");
+        helpButton.addActionListener(this);
+
         // We do NOT add this to the buttonPanel (keeping your 5-button layout),
         // but we must initialize it so updateStatus() doesn't crash.
         autopassButton = new ActionButton(RailsIcon.DONE);
@@ -1331,6 +1355,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         buttonPanel.add(redoButton);
         buttonPanel.add(aiButton);
         buttonPanel.add(passButton);
+        buttonPanel.add(helpButton);
 
         // 4. Style & Size
         styleStatusButton(pauseButton, SYS_BLUE);
@@ -1338,16 +1363,17 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         styleStatusButton(redoButton, SYS_BLUE);
         styleStatusButton(aiButton, SYS_BLUE);
         styleStatusButton(passButton, SYS_BLUE);
+        styleStatusButton(helpButton, SYS_BLUE);
 
         // Force Taller Buttons (45px height)
-// Force Taller Buttons (45px height)
+        // Force Taller Buttons (45px height)
         Dimension btnDim = new Dimension(90, 45);
         pauseButton.setPreferredSize(btnDim);
         undoButton.setPreferredSize(btnDim);
         redoButton.setPreferredSize(btnDim);
         aiButton.setPreferredSize(btnDim);
         passButton.setPreferredSize(new Dimension(113, 45)); // 1.41x wider
-
+        helpButton.setPreferredSize(btnDim);
         setSize(600, 300);
 
         buttonPanel.setBorder(null);
@@ -1442,25 +1468,24 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
                 guiMgr.getWindowSettings().set(frame);
 
                 if (gameStatus != null) {
-                    
 
-                    int availableWidth = frame.getWidth() - 40; 
+                    int availableWidth = frame.getWidth() - 40;
                     int contentWidth = gameStatus.getPreferredSize().width;
 
                     if (contentWidth > 0 && availableWidth > 0) {
                         // Calculate exact multiplier needed to fit content inside the window width
                         float ratio = (float) availableWidth / (float) contentWidth;
                         float targetFontSize = currentBaseFontSize * ratio;
-                        
+
                         // Clamp bounds to prevent entirely unreadable text or massive overflows
                         targetFontSize = Math.max(6f, Math.min(36f, targetFontSize));
 
-                        // Update only if difference > 0.5f to eliminate feedback loops during smooth drag
+                        // Update only if difference > 0.5f to eliminate feedback loops during smooth
+                        // drag
                         if (Math.abs(targetFontSize - currentBaseFontSize) > 0.5f) {
                             updateFonts(targetFontSize);
                         }
                     }
-
 
                 }
             }
@@ -1528,9 +1553,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         return dynamicButtonPanel;
     }
 
-
-
-// ... (lines of unchanged context code) ...
+    // ... (lines of unchanged context code) ...
     private void enforceDynamicMinimumSize() {
         if (gameStatus != null && gameStatusPane != null) {
             // 1. Force the ScrollPane to behave as a simple container without scrollbars
@@ -1545,15 +1568,9 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         // This will automatically shrink or grow the window when the zoom changes.
         // this.pack();
     }
-// ... (rest of the method) ...
+    // ... (rest of the method) ...
 
-
-
-
-
-
-
-private void updateComponentTreeFont(Component comp, Font font) {
+    private void updateComponentTreeFont(Component comp, Font font) {
         Font currentFont = comp.getFont();
         if (currentFont != null) {
             comp.setFont(font.deriveFont(currentFont.getStyle(), (float) font.getSize()));
@@ -2549,12 +2566,13 @@ private void updateComponentTreeFont(Component comp, Font font) {
                     }
                 }
             }
-if (currentRound instanceof EndOfGameRound)
+            if (currentRound instanceof EndOfGameRound)
                 endOfGame();
 
             if (dynamicButtonPanel != null) {
                 // Ensure dynamic actions scale to the user's current zoom level
-                updateComponentTreeFont(dynamicButtonPanel, new Font(net.sf.rails.common.Config.get("font.ui.name"), Font.PLAIN, (int) currentBaseFontSize));
+                updateComponentTreeFont(dynamicButtonPanel, new Font(net.sf.rails.common.Config.get("font.ui.name"),
+                        Font.PLAIN, (int) currentBaseFontSize));
             }
 
             gameUIManager.packAndApplySizing(this);
@@ -2563,7 +2581,7 @@ if (currentRound instanceof EndOfGameRound)
         } catch (Exception e) {
             log.error("CRITICAL ERROR in StatusWindow.updateStatus", e);
         }
-        
+
     }
 
     /**
@@ -3318,8 +3336,6 @@ if (currentRound instanceof EndOfGameRound)
                 fontName = "SansSerif";
             }
 
-
-
         } catch (Exception e) {
             log.error("Failed to dynamically propagate configuration fonts", e);
         }
@@ -3332,19 +3348,19 @@ if (currentRound instanceof EndOfGameRound)
     public void refreshConfigState() {
         // 1. Pull the authoritative configuration value
         this.showPlayerWorth = Util.parseBoolean(net.sf.rails.common.Config.get("statusWindow.showPlayerWorth"));
-        
+
         // 2. Visually update the menu tick box
         if (this.showPlayerWorth) {
             enableCheckBoxMenuItem("ShowPlayerWorth");
         } else {
             disableCheckBoxMenuItem("ShowPlayerWorth");
         }
-        
+
         // 3. Rebuild the dashboard to show/hide the worth data
         if (gameStatus != null) {
             gameStatus.recreate();
         }
-        
+
         // 4. Update fonts (handles size scaling changes)
         updateFontsFromConfig();
     }
@@ -3395,7 +3411,8 @@ if (currentRound instanceof EndOfGameRound)
         if (buttonPanel != null) {
             updateComponentTreeFont(buttonPanel, baseFont);
 
-            Font btnFont = baseFont.deriveFont(Font.BOLD, baseSize); // Match the base scale instead of forcing tiny font
+            Font btnFont = baseFont.deriveFont(Font.BOLD, baseSize); // Match the base scale instead of forcing tiny
+                                                                     // font
             if (pauseButton != null)
                 pauseButton.setFont(btnFont);
             if (undoButton != null)
@@ -3404,7 +3421,11 @@ if (currentRound instanceof EndOfGameRound)
                 redoButton.setFont(btnFont);
             if (aiButton != null)
                 aiButton.setFont(btnFont);
+            if (helpButton != null)
+                helpButton.setFont(btnFont);
         }
         enforceDynamicMinimumSize();
     }
+
+    
 }

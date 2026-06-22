@@ -78,8 +78,9 @@ public class GameUIManager implements DialogOwner {
     protected ReportWindow reportWindow;
     protected ConfigWindow configWindow;
     protected ORUIManager orUIManager;
-    protected ORWindow orWindow; // TEMPORARY -- EV: Why?
+    protected ORWindow orWindow; 
     private StartRoundWindow startRoundWindow;
+    protected HelpTextWindow helpTextWindow = null;
 
     
     protected JDialog currentDialog = null;
@@ -291,6 +292,11 @@ private static GameUIManager instance;
         if (configWindow != null) {
             configWindow.dispose();
         }
+        if (helpTextWindow != null) {
+            helpTextWindow.dispose();
+            helpTextWindow = null;
+        }
+        
         if (currentDialog != null) {
             currentDialog.dispose();
         }
@@ -747,6 +753,11 @@ private static GameUIManager instance;
             } catch (Exception e) {
             }
         } else {
+        }
+
+        // Automatically refresh the open help reference window on every UI state update loop
+        if (helpTextWindow != null && helpTextWindow.isVisible()) {
+            helpTextWindow.refreshHelp(getGameManager(), "2026-06-22 11:33");
         }
 
         if (statusWindow != null) {
