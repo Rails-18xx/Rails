@@ -156,15 +156,15 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.39999998"
      inkscape:cx="2993.7501"
-     inkscape:cy="2168.7501"
+     inkscape:cy="1770.0001"
      inkscape:document-units="px"
      inkscape:current-layer="layer3"
      showgrid="false"
      inkscape:object-nodes="false"
-     inkscape:window-width="3410"
-     inkscape:window-height="1290"
+     inkscape:window-width="2112"
+     inkscape:window-height="1291"
      inkscape:window-x="0"
-     inkscape:window-y="32"
+     inkscape:window-y="31"
      inkscape:window-maximized="0"
      borderlayer="true"
      showguides="true"
@@ -2730,6 +2730,30 @@
          cy="47"
          r="25"
          id="circle12-9-4"
+         style="fill:none;stroke:#000000;stroke-width:10px"
+         transform="matrix(0.42904421,0,0,0.42141497,356.87866,-2033.4049)" />
+    </g>
+    <g
+       transform="translate(5004.2618,7914.6007)"
+       id="g6366-3-7-0"
+       style="display:inline">
+      <path
+         d="m 410.50919,-2001.3058 v 62.7193 m -36.89781,-14.0942 q 36.89781,26.4266 73.79561,0 m -74.22465,9.1612 v -9.5136 h 11.58419 m 63.0695,9.5136 v -9.5136 h -11.58419"
+         id="path8-5-9-3-3"
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#000000;stroke-width:3.88814px" />
+      <line
+         x1="396.77979"
+         y1="-1996.7418"
+         x2="424.23859"
+         y2="-1996.7418"
+         id="line10-3-8-3"
+         style="stroke:#000000;stroke-width:4.25212px" />
+      <circle
+         cx="125"
+         cy="47"
+         r="25"
+         id="circle12-9-4-1"
          style="fill:none;stroke:#000000;stroke-width:10px"
          transform="matrix(0.42904421,0,0,0.42141497,356.87866,-2033.4049)" />
     </g>

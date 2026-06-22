@@ -33,33 +33,38 @@ public class OperatingRound_1856 extends OperatingRound {
     private Player playerToStartLoanRepayment = null;
 
     private final BooleanState isLayingPort = new BooleanState(this, "isLayingPort", false);
-    private final GenericState<GameDef.OrStep> prePortStep = new GenericState<>(this, "prePortStep",
-            GameDef.OrStep.INITIAL);
 
-    public static class TriggerPortAction extends rails.game.action.PossibleORAction {
+    public static class LayPortToken_1856 extends rails.game.action.PossibleAction {
         private static final long serialVersionUID = 1L;
-        private final net.sf.rails.game.special.SpecialBonusTokenLay stl;
+        private final String companyId;
+        private String hexId;
 
-        public TriggerPortAction(net.sf.rails.game.PublicCompany company,
-                net.sf.rails.game.special.SpecialBonusTokenLay stl) {
-            super(company.getRoot());
-            setCompany(company);
-            this.stl = stl;
-            setButtonLabel("Lay Port");
+        public LayPortToken_1856(net.sf.rails.game.RailsRoot root, String companyId, String hexId) {
+            super(root);
+            this.companyId = companyId;
+            this.hexId = hexId;
         }
 
-        public net.sf.rails.game.special.SpecialBonusTokenLay getSpecialProperty() {
-            return stl;
+        public String getCompanyId() {
+            return companyId;
         }
-    }
 
-    public static class CancelPortAction extends rails.game.action.PossibleORAction {
-        private static final long serialVersionUID = 1L;
+        public String getHexId() {
+            return hexId;
+        }
 
-        public CancelPortAction(net.sf.rails.game.PublicCompany company) {
-            super(company.getRoot());
-            setCompany(company);
-            setButtonLabel("Cancel Port Lay");
+        public void setHexId(String hexId) {
+            this.hexId = hexId;
+        }
+
+        @Override
+        public String toString() {
+            return "Lay Port token" + (hexId != null ? " on " + hexId : "");
+        }
+
+        @Override
+        public String getButtonLabel() {
+            return toString();
         }
     }
 
@@ -501,6 +506,7 @@ public class OperatingRound_1856 extends OperatingRound {
         }
     }
 
+    // ... (lines of unchanged context code) ...
     @Override
     public boolean buyTrain(BuyTrain action) {
 
@@ -524,6 +530,32 @@ public class OperatingRound_1856 extends OperatingRound {
                         sbt.setSeller(bank.getPool());
                         log.debug("SP {} is now buyable from the Bank", sp.getId());
                     }
+                }
+
+                // Find and remove the Port token when the 6-train triggers Phase 5
+                try {
+                    log.info("PORT_LAY_TRACE: Phase 5 triggered via 6-train. Initiating Port token removal.");
+                    for (net.sf.rails.game.MapHex hex : getRoot().getMapManager().getHexes()) {
+                        if (hex.getBonusTokens() != null) {
+                            java.util.Iterator<net.sf.rails.game.BonusToken> iter = hex.getBonusTokens().iterator();
+                            boolean found = false;
+                            while (iter.hasNext()) {
+                                net.sf.rails.game.BonusToken t = iter.next();
+                                if (t.getName() != null && t.getName().toLowerCase().contains("port")) {
+                                    iter.remove();
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found) {
+                                ReportBuffer.add(this, ">>> The Port token has been removed from hex " + hex.getId()
+                                        + " due to Phase 5 (6-train purchase).");
+                                break;
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("PORT_LAY_TRACE: Failed during port token removal routine", e);
                 }
             }
         }
@@ -704,47 +736,72 @@ public class OperatingRound_1856 extends OperatingRound {
 
     }
 
-@Override
+    @Override
     public boolean processGameSpecificAction(rails.game.action.PossibleAction action) {
-        if (action instanceof TriggerPortAction) {
-            TriggerPortAction tpa = (TriggerPortAction) action;
-            net.sf.rails.game.special.SpecialBonusTokenLay stl = tpa.getSpecialProperty();
-            java.util.List<net.sf.rails.game.MapHex> validHexes = stl.getLocations();
+        if (action instanceof LayPortToken_1856) {
+            LayPortToken_1856 portAction = (LayPortToken_1856) action;
+            net.sf.rails.game.PublicCompany comp = getRoot().getCompanyManager()
+                    .getPublicCompany(portAction.getCompanyId());
 
-            if (validHexes != null && !validHexes.isEmpty()) {
-                String[] options = new String[validHexes.size()];
-                for (int i = 0; i < validHexes.size(); i++) {
-                    options[i] = validHexes.get(i).getId();
+            if (comp != null) {
+                String hexId = portAction.getHexId();
+
+                if (hexId == null || hexId.trim().isEmpty()) {
+                    if (getRoot().getGameManager().isReloading())
+                        return false;
+
+                    // Hardwire the valid anchor city locations directly from the game's XML
+                    // specification
+                    java.util.List<String> options = java.util.Arrays.asList(
+                            "C14", "D19", "E18", "F9", "F17", "H5", "H7", "H17", "J5", "J17", "K2", "M18", "O18");
+
+                    String chosen = (String) javax.swing.JOptionPane.showInputDialog(
+                            null,
+                            "Select the port city hex to lay the Great Lakes Shipping token:",
+                            "Place Port Token",
+                            javax.swing.JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options.toArray(),
+                            options.get(0));
+
+                    if (chosen == null || chosen.isEmpty())
+                        return false;
+
+                    portAction.setHexId(chosen);
+                    hexId = chosen;
                 }
 
-                String selectedHexId = (String) javax.swing.JOptionPane.showInputDialog(
-                        null,
-                        "Select the hex to lay the Port token:",
-                        "Lay Port",
-                        javax.swing.JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        options,
-                        options[0]);
+                net.sf.rails.game.MapHex hex = getRoot().getMapManager().getHex(hexId);
+                if (hex != null) {
+                    net.sf.rails.game.PrivateCompany portPriv = null;
+                    for (net.sf.rails.game.PrivateCompany priv : comp.getPrivates()) {
+                        if (priv != null && (priv.getId().toLowerCase().contains("glsc")
+                                || priv.getId().toLowerCase().contains("port")
+                                || priv.getId().toLowerCase().contains("ship"))) {
 
-                if (selectedHexId != null) {
-                    for (net.sf.rails.game.MapHex hex : validHexes) {
-                        if (hex.getId().equals(selectedHexId)) {
-                            rails.game.action.LayBonusToken layAction = new rails.game.action.LayBonusToken(getRoot(), stl, stl.getToken());
-                            layAction.setCompany(operatingCompany.value());
-                            layAction.setChosenHex(hex);
-                            
-                            boolean success = super.process(layAction);
-                            if (success) {
-                                log.info("PORT_LAY_TRACE: Port successfully laid on " + hex.getId() + " via popup.");
-                            }
-                            return success;
+                            portPriv = priv;
+                            break;
                         }
                     }
+
+                    if (portPriv != null) {
+                        net.sf.rails.game.BonusToken portToken = net.sf.rails.game.BonusToken.create(portPriv);
+                        if (portToken != null) {
+                            portToken.setName(comp.getId() + "_Port");
+                            portToken.setValue(20);
+                            hex.layBonusToken(portToken, getRoot().getPhaseManager());
+                            net.sf.rails.common.ReportBuffer.add(this,
+                                    comp.getId() + " places the Great Lakes Shipping Port token on " + hex.getId()
+                                            + ".");
+                            // Rule: Placement closes the company
+                            portPriv.close();
+                            net.sf.rails.common.ReportBuffer.add(this, portPriv.getName() + " is closed.");
+                        }
+                    }
+                    return true;
                 }
-            } else {
-                javax.swing.JOptionPane.showMessageDialog(null, "No valid hexes available for the Port.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
-            return false; 
+            return false;
         }
         return super.processGameSpecificAction(action);
     }
@@ -753,16 +810,41 @@ public class OperatingRound_1856 extends OperatingRound {
     public boolean setPossibleActions() {
         boolean result = super.setPossibleActions();
 
-        if (operatingCompany.value() != null && operatingCompany.value().canUseSpecialProperties()) {
-            for (net.sf.rails.game.special.SpecialBonusTokenLay stl : getSpecialProperties(
-                    net.sf.rails.game.special.SpecialBonusTokenLay.class)) {
-                if (!stl.isExercised()) {
-                    possibleActions.add(new TriggerPortAction(operatingCompany.value(), stl));
+        net.sf.rails.game.PublicCompany comp = getOperatingCompany();
+        if (comp != null && !comp.isClosed()) {
+            net.sf.rails.game.PrivateCompany portPriv = null;
+            for (net.sf.rails.game.PrivateCompany priv : comp.getPrivates()) {
+               
+                if (priv != null && (priv.getId().toLowerCase().contains("glsc")
+                        || priv.getId().toLowerCase().contains("port")
+                        || priv.getId().toLowerCase().contains("ship"))) {
+
+                    portPriv = priv;
+                    break;
+                }
+            }
+            if (portPriv != null && !portPriv.isClosed()) {
+                // Check if port is already on the map
+                boolean portOnMap = false;
+                for (net.sf.rails.game.MapHex hex : getRoot().getMapManager().getHexes()) {
+                    if (hex.getBonusTokens() != null) {
+                        for (net.sf.rails.game.BonusToken t : hex.getBonusTokens()) {
+                            if (t.getName() != null && t.getName().toLowerCase().contains("port")) {
+                                portOnMap = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (portOnMap)
+                        break;
+                }
+
+                if (!portOnMap) {
+                    possibleActions.add(new LayPortToken_1856(getRoot(), comp.getId(), null));
                 }
             }
         }
 
         return result;
     }
-
 }

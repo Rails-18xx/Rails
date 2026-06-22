@@ -8,7 +8,7 @@
    version="1.1"
    id="svg1"
    inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
-   sodipodi:docname="anker.svg"
+   sodipodi:docname="Port.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,10 +24,10 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="0.89887065"
-     inkscape:cx="396.05254"
+     inkscape:cx="395.49628"
      inkscape:cy="561.25984"
-     inkscape:window-width="1024"
-     inkscape:window-height="1186"
+     inkscape:window-width="2416"
+     inkscape:window-height="1182"
      inkscape:window-x="0"
      inkscape:window-y="31"
      inkscape:window-maximized="0"
@@ -38,29 +38,34 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
+    <ellipse
+       style="fill:#5252ff;stroke:#000000;stroke-width:0.242462;fill-opacity:1"
+       id="path1"
+       cx="107.43806"
+       cy="141.58275"
+       rx="104.80022"
+       ry="103.32847" />
     <g
-       transform="matrix(2.6331294,0,0,3.3045029,-974.60541,6697.3651)"
-       id="g6366-3-7"
-       style="display:inline">
+       id="g2">
       <path
-         d="m 410.50919,-2001.3058 v 62.7193 m -36.89781,-14.0942 q 36.89781,26.4266 73.79561,0 m -74.22465,9.1612 v -9.5136 h 11.58419 m 63.0695,9.5136 v -9.5136 h -11.58419"
+         d="M 107.20144,105.52781 V 207.51226 M 45.352959,184.59444 q 61.848481,42.97086 123.696951,0 M 44.633797,199.49097 v -15.46954 h 19.417537 m 105.717736,15.46954 v -15.46954 h -19.41754"
          id="path8-5-9-3"
          inkscape:connector-curvature="0"
-         style="fill:none;stroke:#000000;stroke-width:3.88814px" />
-      <line
-         x1="396.77979"
-         y1="-1996.7418"
-         x2="424.23859"
-         y2="-1996.7418"
-         id="line10-3-8"
-         style="stroke:#000000;stroke-width:4.25212px" />
-      <circle
-         cx="125"
-         cy="47"
-         r="25"
-         id="circle12-9-4"
-         style="fill:none;stroke:#000000;stroke-width:10px"
-         transform="matrix(0.42904421,0,0,0.42141497,356.87866,-2033.4049)" />
+         style="fill:none;stroke:#000000;stroke-width:15;stroke-dasharray:none" />
     </g>
+    <line
+       x1="84.188072"
+       y1="122.07393"
+       x2="130.2148"
+       y2="122.07393"
+       id="line10-3-8"
+       style="stroke:#000000;stroke-width:15;stroke-dasharray:none" />
+    <ellipse
+       cx="107.20143"
+       cy="85.53949"
+       id="circle12-9-4"
+       style="fill:none;stroke:#000000;stroke-width:15;stroke-dasharray:none"
+       rx="17.979206"
+       ry="17.131001" />
   </g>
 </svg>

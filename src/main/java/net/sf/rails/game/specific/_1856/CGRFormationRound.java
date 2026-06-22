@@ -29,6 +29,7 @@ public class CGRFormationRound extends SwitchableUIRound {
 
     // static variables
     private final PublicCompany_CGR cgr;
+java.util.List<String> options = new java.util.ArrayList<>();
 
     // initialized in start() method only
     private Player startingPlayer;

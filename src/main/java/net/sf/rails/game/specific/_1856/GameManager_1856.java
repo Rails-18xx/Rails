@@ -28,6 +28,16 @@ public class GameManager_1856 extends GameManager {
         super(parent, id);
     }
 
+    @Override
+    protected void setGuiParameters() {
+        super.setGuiParameters();
+
+        // Dynamically register the Port modifier for revenue calculation
+        if (getRoot().getRevenueManager() != null) {
+            getRoot().getRevenueManager().addStaticModifier(new net.sf.rails.game.specific._1856.PortModifier_1856());
+        }
+    }
+
     public int getNextTrainNumberFromIpo() {
         Train nextAvailableTrain
                 = Iterables.get(getRoot().getTrainManager().getAvailableNewTrains(), 0);
