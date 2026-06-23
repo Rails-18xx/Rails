@@ -463,11 +463,13 @@ public class OperatingRound_1856 extends OperatingRound {
                         || loansThisRound.get(operatingCompany.value()) == 0)
                 && operatingCompany.value().getCurrentNumberOfLoans() < operatingCompany.value()
                         .sharesOwnedByPlayers()) {
-            possibleActions.add(new TakeLoans(operatingCompany.value(),
-                    1, operatingCompany.value().getValuePerLoan()));
+
+TakeLoans takeAction = new TakeLoans(operatingCompany.value(),
+                    1, operatingCompany.value().getValuePerLoan());
+            possibleActions.add(takeAction);
         }
 
-        if (getStep() == GameDef.OrStep.REPAY_LOANS) {
+       if (getStep() == GameDef.OrStep.REPAY_LOANS) {
 
             // Has company any outstanding loans to repay?
             if (operatingCompany.value().getMaxNumberOfLoans() != 0
@@ -494,8 +496,9 @@ public class OperatingRound_1856 extends OperatingRound {
                             Bank.format(this, operatingCompany.value().getValuePerLoan()),
                             Bank.format(this, minNumber * operatingCompany.value().getValuePerLoan())));
                 }
-                possibleActions.add(new RepayLoans(operatingCompany.value(),
-                        minNumber, maxNumber, operatingCompany.value().getValuePerLoan()));
+               RepayLoans repayAction = new RepayLoans(operatingCompany.value(),
+                        minNumber, maxNumber, operatingCompany.value().getValuePerLoan());
+                possibleActions.add(repayAction);
 
                 // Step may only be skipped if repayment is optional
                 if (minNumber == 0)
@@ -508,7 +511,6 @@ public class OperatingRound_1856 extends OperatingRound {
         }
     }
 
-    // ... (lines of unchanged context code) ...
     @Override
     public boolean buyTrain(BuyTrain action) {
 

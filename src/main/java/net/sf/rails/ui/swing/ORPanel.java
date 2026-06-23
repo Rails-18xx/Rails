@@ -240,7 +240,9 @@ public class ORPanel extends GridPanel
      * Determines the current Operating Round phase based on the available actions.
      * 1=Tile, 2=Token, 3=Revenue, 4=Train, 5=Done/Finalize
      */
-    private int determineActivePhase(List<PossibleAction> actions) {
+   
+
+   private int determineActivePhase(List<PossibleAction> actions) {
         int phase = 0;
         boolean hasDoneAction = false;
         boolean hasSpecialAction = false;
@@ -249,8 +251,22 @@ public class ORPanel extends GridPanel
             return 0;
         }
 
+        // 1. Establish baseline phase strictly from Engine State 
+        // This prevents the UI from skipping phases when standard actions (like trains to buy) are empty.
+        if (orUIManager != null && orUIManager.getGameUIManager() != null && orUIManager.getGameUIManager().getGameManager() != null) {
+            net.sf.rails.game.round.RoundFacade currentRound = orUIManager.getGameUIManager().getGameManager().getCurrentRound();
+            if (currentRound instanceof OperatingRound) {
+                net.sf.rails.game.GameDef.OrStep step = ((OperatingRound) currentRound).getStep();
+                if (step == net.sf.rails.game.GameDef.OrStep.LAY_TRACK) phase = 1;
+                else if (step == net.sf.rails.game.GameDef.OrStep.LAY_TOKEN) phase = 2;
+                else if (step == net.sf.rails.game.GameDef.OrStep.CALC_REVENUE || step == net.sf.rails.game.GameDef.OrStep.PAYOUT) phase = 3;
+                else if (step == net.sf.rails.game.GameDef.OrStep.BUY_TRAIN) phase = 4;
+                else if (step == net.sf.rails.game.GameDef.OrStep.REPAY_LOANS || step == net.sf.rails.game.GameDef.OrStep.TRADE_SHARES) phase = 5;
+            }
+        }
+
+        // 2. Adjust based on explicitly generated UI Actions
         for (PossibleAction pa : actions) {
-            // --- START FIX ---
             if (pa instanceof LayTile && (phase == 0 || phase > 1)) {
                 phase = 1;
             } else if (pa instanceof LayToken && (phase == 0 || phase > 2)) {
@@ -264,28 +280,32 @@ public class ORPanel extends GridPanel
                     && !(pa instanceof NullAction) && !(pa instanceof GameAction)
                     && !(pa instanceof rails.game.correct.CorrectionModeAction)) {
                 hasSpecialAction = true;
-
             } else if (pa instanceof NullAction) {
                 NullAction.Mode mode = ((NullAction) pa).getMode();
-                if (mode == NullAction.Mode.DONE || mode == NullAction.Mode.PASS) {
+                if (mode == NullAction.Mode.DONE || mode == NullAction.Mode.PASS || mode == NullAction.Mode.SKIP) {
                     hasDoneAction = true;
                 }
             }
-
         }
 
-        if (phase == 0) {
+        // 3. Fallbacks if engine step didn't resolve directly
+        if (phase == 0 || phase == 5) {
             if (hasSpecialAction) {
                 phase = 5;
-            } else if (hasDoneAction) {
+            } else if (hasDoneAction && phase == 0) {
                 phase = 6;
             }
         }
 
         return phase;
     }
-
-    // ... (lines of unchanged context code) ...
+   
+   
+   
+   
+   
+   
+   
     private void distributeStandardActions(List<PossibleAction> actions) {
         boolean doneActionFound = false;
         PossibleAction donePa = null;
@@ -391,7 +411,7 @@ public class ORPanel extends GridPanel
 
     private void updatePhaseSpecifics() {
 
-if (activePhase == 1 || activePhase == 2) {
+        if (activePhase == 1 || activePhase == 2) {
             setTileBuildNumbers(true);
             redrawRoutes();
         } else if (activePhase == 3) {
@@ -596,53 +616,7 @@ if (activePhase == 1 || activePhase == 2) {
     }
 
     private String getDoneButtonText() {
-        String text = "END TURN";
-        if (orComp == null && currentOperatingComp == null)
-            return text;
-
-        PublicCompany compToCheck = (orComp != null) ? orComp : currentOperatingComp;
-        boolean is1817 = compToCheck.getClass().getSimpleName().contains("1817");
-        if (!is1817)
-            return text;
-
-        if (orUIManager != null && orUIManager.getGameUIManager() != null
-                && orUIManager.getGameUIManager().getGameManager() != null) {
-            net.sf.rails.game.round.RoundFacade currentRound = orUIManager.getGameUIManager().getGameManager()
-                    .getCurrentRound();
-            if (currentRound instanceof OperatingRound) {
-                OperatingRound or = (OperatingRound) currentRound;
-                net.sf.rails.game.GameDef.OrStep step = or.getStep();
-
-                if (step.compareTo(net.sf.rails.game.GameDef.OrStep.BUY_TRAIN) < 0) {
-                    return "Continue";
-                }
-
-                try {
-                    java.lang.reflect.Field field = or.getClass().getDeclaredField("repayPhaseDoneThisTurn");
-                    field.setAccessible(true);
-                    Object state = field.get(or);
-                    java.lang.reflect.Method m = state.getClass().getMethod("value");
-                    boolean isRepayDone = (Boolean) m.invoke(state);
-                    if (!isRepayDone) {
-                        return "Continue";
-                    }
-                } catch (Exception e) {
-                    rails.game.action.PossibleActions possibleActionsObj = orUIManager.getGameUIManager()
-                            .getGameManager().getPossibleActions();
-                    if (possibleActionsObj != null) {
-                        for (PossibleAction pa : possibleActionsObj.getList()) {
-                            if (pa instanceof BuyTrain ||
-                                    pa.getClass().getSimpleName().contains("RepayLoans") ||
-                                    pa.getClass().getSimpleName().contains("PayLoanInterest") ||
-                                    pa.getClass().getSimpleName().contains("LiquidateCompany")) {
-                                return "Continue";
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return text;
+        return "End Turn";
     }
 
     private void colorizeActivePhase(Color unused) {
@@ -800,7 +774,7 @@ if (activePhase == 1 || activePhase == 2) {
     }
 
     public void updateSpinnerVisibility() {
-      boolean showSpinner = true;
+        boolean showSpinner = true;
         if (orUIManager != null) {
             showSpinner = orUIManager.isShowRevenueSpinner();
         }
@@ -822,7 +796,7 @@ if (activePhase == 1 || activePhase == 2) {
             sidebarPanel.revalidate();
             sidebarPanel.repaint();
         }
-        
+
         // Force top-level window to redraw immediately to avoid layout ghosting
         if (orWindow != null) {
             orWindow.revalidate();
@@ -987,10 +961,9 @@ if (activePhase == 1 || activePhase == 2) {
                                     + bp.getMaximumPrice() + ")";
                         }
 
-
                         String actStr = action.toString().toLowerCase();
                         String btnLbl = action.getButtonLabel() != null ? action.getButtonLabel().toLowerCase() : "";
-                        
+
                         if (actStr.contains("bridge") || btnLbl.contains("bridge")) {
                             label = "Buy Bridge Token ($50)";
                         } else if (actStr.contains("tunnel") || btnLbl.contains("tunnel")) {
@@ -1000,7 +973,6 @@ if (activePhase == 1 || activePhase == 2) {
                         } else if (actStr.contains("loan") || actStr.contains("bond") || actStr.contains("takeloan")) {
                             label = "Take Government Bond";
                         }
-
 
                         if (action instanceof GuiTargetedAction) {
                             label = ((GuiTargetedAction) action).getButtonLabel();
@@ -1641,32 +1613,25 @@ if (activePhase == 1 || activePhase == 2) {
         footerPanel.setOpaque(false);
         footerPanel.setBorder(BorderFactory.createEmptyBorder(PANEL_ACTION_GAP, 0, PANEL_ACTION_GAP, 0));
 
-        // Rename to "END TURN" and set initial state to Disabled/gray
-        btnDone = createSidebarButton("END TURN", DONE_CMD);
+      // Rename to "End Turn" and set initial state to Disabled/gray
+        btnDone = createSidebarButton("End Turn", DONE_CMD);
         btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
         btnDone.setPreferredSize(new Dimension(getSidebarWidth() - scale(10), scale(40)));
         btnDone.setEnabled(false);
         resetButtonStyle(btnDone); // Forces gray/standard look
 
-        // Add Done Button
-        footerPanel.add(btnDone);
-
-        // focusLight = new JLabel("● Focus Initializing", SwingConstants.CENTER);
-        // focusLight.setFont(new Font("SansSerif", Font.BOLD, 11));
-        // focusLight.setForeground(Color.GRAY);
-        // focusLight.setAlignmentX(Component.CENTER_ALIGNMENT);
-        // footerPanel.add(Box.createVerticalStrut(6));
-        // footerPanel.add(focusLight);
-
-        // 9. Special Notifications (Attached directly below Done)
+        // 9. Special Notifications 
         specialNotificationPanel = new JPanel();
         specialNotificationPanel.setLayout(new BoxLayout(specialNotificationPanel, BoxLayout.Y_AXIS));
         specialNotificationPanel.setOpaque(false);
         specialNotificationPanel.setVisible(false);
 
-        // Small gap between Done and Notification
-        footerPanel.add(Box.createVerticalStrut(4));
+        // Add Special Notifications FIRST
         footerPanel.add(specialNotificationPanel);
+        footerPanel.add(Box.createVerticalStrut(4));
+
+        // Add Done Button LAST so it is always at the absolute bottom
+        footerPanel.add(btnDone);
 
         sidebarPanel.add(footerPanel);
         sidebarPanel.add(Box.createVerticalStrut(5));
@@ -1936,9 +1901,24 @@ if (activePhase == 1 || activePhase == 2) {
     }
 
     public void enableSkip(NullAction a) {
+        if (btnTrainSkip != null && activePhase == 4) {
+            setupButton(btnTrainSkip, a);
+            btnTrainSkip.setEnabled(true);
+            styleButton(btnTrainSkip, UITheme.ACTION_SKIP, "Skip Buy");
+        } else if (btnDone != null) {
+            enableDone(a);
+        }
     }
 
     public void enableDone(NullAction a) {
+        if (btnDone != null) {
+            setupButton(btnDone, a);
+            bindActionHotkey(btnDone, a);
+            btnDone.setEnabled(true);
+            styleButton(btnDone, UITheme.ACTION_SKIP, getDoneButtonText());
+            btnDone.setForeground(Color.WHITE);
+            btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
+        }
     }
 
     public void initOperatingCosts(boolean b) {
@@ -1956,12 +1936,55 @@ if (activePhase == 1 || activePhase == 2) {
     }
 
     public void enableLoanTaking(TakeLoans a) {
-    } // No-op
+        if (specialPanel != null && specialContainer != null) {
+            specialContainer.setVisible(true);
+            boolean alreadyExists = false;
+            for (Component c : specialPanel.getComponents()) {
+                if (c instanceof ActionButton) {
+                    List<PossibleAction> pas = ((ActionButton) c).getPossibleActions();
+                    if (pas != null && !pas.isEmpty() && pas.get(0).getClass().getSimpleName().contains("TakeLoans")) {
+                        alreadyExists = true;
+                        break;
+                    }
+                }
+            }
+            if (!alreadyExists) {
+                addSpecialActionButton(a);
+                specialPanel.revalidate();
+                specialPanel.repaint();
+            }
+        }
+        if (phase5Panel != null) {
+            phase5Panel.setVisible(true);
+            applyPhaseStyle(phase5Panel, null, UITheme.ACTION_SKIP, UITheme.TRAIN_LIGHT, "Special Actions");
+        }
+    }
 
     public void enableLoanRepayment(RepayLoans a) {
-        if (button1 != null) {
-            button1.setEnabled(true);
-            button1.setVisible(true);
+        if (specialPanel != null && specialContainer != null) {
+            specialContainer.setVisible(true);
+            boolean alreadyExists = false;
+            for (Component c : specialPanel.getComponents()) {
+                if (c instanceof ActionButton) {
+                    List<PossibleAction> pas = ((ActionButton) c).getPossibleActions();
+                    if (pas != null && !pas.isEmpty() && pas.get(0).getClass().getSimpleName().contains("RepayLoans")) {
+                        alreadyExists = true;
+                        break;
+                    }
+                }
+            }
+            if (!alreadyExists) {
+                addSpecialActionButton(a);
+                specialPanel.revalidate();
+                specialPanel.repaint();
+            }
+        }
+        if (phase5Panel != null) {
+            phase5Panel.setVisible(true);
+            applyPhaseStyle(phase5Panel, null, UITheme.ACTION_SKIP, UITheme.TRAIN_LIGHT, "Special Actions");
+        }
+        if (activePhase == 0 || activePhase == 6) {
+            activePhase = 5;
         }
     }
 
@@ -2699,16 +2722,7 @@ if (activePhase == 1 || activePhase == 2) {
             new RemainingTilesWindow(orWindow);
         } else if (command.equals(SHOW_CMD)) {
             toggleTileBuildNumbers();
-        } else if (command.equals(TRAIN_SKIP_CMD)) {
-            activePhase = 6;
-            updateSidebarData();
-            updateDefaultButton();
-            if (btnTrainSkip != null)
-                btnTrainSkip.setEnabled(false);
-            if (trainButtonsPanel != null) {
-                for (Component c : trainButtonsPanel.getComponents())
-                    c.setEnabled(false);
-            }
+        
         } else if (command.equals(CONFIRM_CMD)) {
             if (orUIManager != null) {
                 boolean hasSelection = (orUIManager.getMap().getSelectedHex() != null);
@@ -2717,6 +2731,7 @@ if (activePhase == 1 || activePhase == 2) {
                 else
                     orUIManager.skipUpgrade();
             }
+            forceSyncWithEngine();
         } else if (command.equals(OPERATING_COST_CMD)) {
             if (orUIManager != null)
                 orUIManager.operatingCosts();
@@ -2739,24 +2754,13 @@ if (activePhase == 1 || activePhase == 2) {
 
             } else if (executedActions.get(0) instanceof BuyTrain) {
                 orUIManager.processBuyTrain((BuyTrain) executedActions.get(0));
+                forceSyncWithEngine();
                 return;
             } else {
                 orUIManager.processAction(command, executedActions, source);
             }
 
-            // REVENUE SYNC: Minor companies often jump from Revenue to Done.
-            // We manually force a state pull to ensure the "END TURN" button appears.
-            if (PAYOUT_CMD.equals(command) || SPLIT_CMD.equals(command) || WITHHOLD_CMD.equals(command)) {
-                SwingUtilities.invokeLater(() -> {
-                    // Access the GameManager to get the definitive list of next actions
-                    GameManager gm = orUIManager.getGameUIManager().getGameManager();
-                    if (gm != null && gm.getPossibleActions() != null) {
-                        List<PossibleAction> nextActions = gm.getPossibleActions().getList();
-
-                        updateDynamicActions(nextActions);
-                    }
-                });
-            }
+            forceSyncWithEngine();
 
         }
     }
@@ -2885,13 +2889,12 @@ if (activePhase == 1 || activePhase == 2) {
             bgColor = new Color(255, 235, 235); // Matches RailCard private company styling
             borderColor = new Color(200, 150, 150);
             textColor = Color.BLACK;
-        
 
         } else {
             // Robust identification based on the action content text
             String actStr = action.toString().toLowerCase();
             String btnLbl = action.getButtonLabel() != null ? action.getButtonLabel().toLowerCase() : "";
-            
+
             if (actStr.contains("bridge") || btnLbl.contains("bridge")) {
                 label = "Buy Bridge Token ($50)";
                 bgColor = new Color(255, 235, 205); // Industrial/Beige
@@ -2907,9 +2910,14 @@ if (activePhase == 1 || activePhase == 2) {
                 bgColor = new Color(255, 193, 7); // Vibrant Amber/Gold
                 borderColor = new Color(184, 134, 11);
                 textColor = Color.BLACK;
+            } else if (actStr.contains("repay") || btnLbl.contains("repay")) {
+                label = "Repay Loans";
+                bgColor = new Color(210, 255, 210); // Unified clear layout green
+                borderColor = new Color(34, 139, 34);
+                textColor = Color.BLACK;
             } else if (actStr.contains("loan") || actStr.contains("bond") || actStr.contains("takeloan")) {
-                label = "Take Government Bond";
-                bgColor = new Color(152, 251, 152); // Soft green for capital injection
+                label = "Take Loan";
+                bgColor = new Color(210, 255, 210); // Unified clear layout green
                 borderColor = new Color(34, 139, 34);
                 textColor = Color.BLACK;
             }
@@ -3024,67 +3032,63 @@ if (activePhase == 1 || activePhase == 2) {
         if (actions == null || actions.isEmpty())
             return;
 
-        // 2. Build Readable Log Table
-        int moveCount = 0;
-        if (orUIManager != null && orUIManager.getGameUIManager().getGameManager() != null) {
-            moveCount = orUIManager.getGameUIManager().getGameManager().getCurrentActionCount();
-        }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n=== ENGINE ACTION BUFFER (Move #").append(moveCount).append(") ===\n");
-        sb.append(String.format("%-20s | %s%n", "TYPE", "DETAILS / INTERNAL STATE"));
-        sb.append("---------------------+--------------------------------------------------\n");
 
-        for (PossibleAction pa : actions) {
-            // Use full package name to avoid import errors
-            if (pa.isCorrection() || pa instanceof rails.game.correct.CorrectionModeAction)
-                continue;
-
-            String className = pa.getClass().getSimpleName();
-            String rawData = pa.toString();
-            String formattedData;
-
-            if (pa instanceof NullAction) {
-                formattedData = "Logical " + ((NullAction) pa).getMode() + " (Stopper/Pass)";
-            } else if (rawData.contains(",")) {
-                // Format comma-separatepublic ActionButton buttonOC, button1, button2, button3;
-                // // Legacy placeholdersd lists (like BuyTrain) into a vertical list
-                formattedData = "- " + rawData.replace(", ", "\n                     | - ");
-            } else {
-                formattedData = rawData;
-            }
-
-            sb.append(String.format("%-20s | %s%n", className, formattedData));
-        }
-        sb.append("======================================================================\n");
-
-        log.info(sb.toString());
     }
 
-    public void updateDynamicActions(List<PossibleAction> actions) {
+    private void forceSyncWithEngine() {
+        SwingUtilities.invokeLater(() -> {
+            if (orUIManager != null && orUIManager.getGameUIManager() != null
+                    && orUIManager.getGameUIManager().getGameManager() != null) {
+                rails.game.action.PossibleActions globalActionsObj = orUIManager.getGameUIManager().getGameManager()
+                        .getPossibleActions();
+                if (globalActionsObj != null) {
+                    updateDynamicActions(globalActionsObj.getList());
+                }
+            }
+        });
+    }
 
-        // // --- START DEBUG INSTRUMENTATION ---
-        // log.info("\nORPanel: updateDynamicActions() RECEIVED " + (actions == null ?
-        // "null" : actions.size())
-        // + " actions.");
-        // if (actions != null) {
-        // for (int i = 0; i < actions.size(); i++) {
-        // PossibleAction pa = actions.get(i);
-        // // Filter out CorrectionModeAction entries from the UI log output
-        // if (pa.toString().contains("CorrectionModeAction")) {
-        // continue;
-        // }
-        // String hash = Integer.toHexString(System.identityHashCode(pa));
-        // log.info(String.format(" UI Action[%d]: Class: %-20s | Hash: %s | Str: %s",
-        // i, pa.getClass().getSimpleName(), hash, pa.toString()));
-        // }
-        // }
-        // // --- END DEBUG INSTRUMENTATION ---
-
+    public void updateDynamicActions(List<PossibleAction> incomingActions) {
         try {
 
             cleanupUpgradesPanel();
             resetSidebarState();
+
+            List<PossibleAction> actions = new ArrayList<>();
+            if (incomingActions != null) {
+                actions.addAll(incomingActions);
+            }
+
+            // RESCUE PLAYER-BOUND ACTIONS:
+            // The UI router sends RepayLoans/TakeLoans to the StatusWindow because they are
+            // owned by the Player.
+            // We fetch them directly from the global action buffer so they render in the
+            // ORPanel.
+            if (orUIManager != null && orUIManager.getGameUIManager() != null
+                    && orUIManager.getGameUIManager().getGameManager() != null) {
+                rails.game.action.PossibleActions globalActionsObj = orUIManager.getGameUIManager().getGameManager()
+                        .getPossibleActions();
+                if (globalActionsObj != null) {
+                    for (PossibleAction pa : globalActionsObj.getList()) {
+                        String name = pa.getClass().getSimpleName();
+                        if (name.contains("RepayLoans") || name.contains("TakeLoans")) {
+                            if (!actions.contains(pa)) {
+                                // Insert the rescued action immediately before NullAction (End Turn) 
+                                // to preserve the correct temporal sequence in the UI action lists.
+                                int insertIndex = actions.size();
+                                for (int i = 0; i < actions.size(); i++) {
+                                    if (actions.get(i) instanceof NullAction) {
+                                        insertIndex = i;
+                                        break;
+                                    }
+                                }
+                                actions.add(insertIndex, pa);
+                            }
+                        }
+                    }
+                }
+            }
 
             // ROBUST CONTEXT HANDOVER
             PublicCompany engineActiveComp = null;
@@ -3140,6 +3144,7 @@ if (activePhase == 1 || activePhase == 2) {
             // We scan for DiscardTrain actions and forcibly redirect the UI focus to the
             // discarding company.
             boolean isFormationStep = false;
+            boolean isRepayStep = false; // Declared here at method scope level to fix the compilation error
             if (actions != null) {
                 for (PossibleAction pa : actions) {
                     if (pa instanceof DiscardTrain) {
@@ -3149,6 +3154,8 @@ if (activePhase == 1 || activePhase == 2) {
                             // Once we find a discard context, we lock it in and stop searching
                             break;
                         }
+                    } else if (pa.getClass().getSimpleName().contains("RepayLoans")) {
+                        isRepayStep = true;
                     } else if (pa instanceof rails.game.specific._1835.StartPrussian ||
                             pa instanceof rails.game.specific._1835.ExchangeForPrussianShare ||
                             pa instanceof net.sf.rails.game.specific._1837.ExchangeMinorAction) {
@@ -3172,13 +3179,12 @@ if (activePhase == 1 || activePhase == 2) {
             GuiTargetedAction contextProvider = null;
             PossibleAction deferredNullAction = null;
 
-            // Create a strictly filtered list for all downstream logic
             List<PossibleAction> validOrActions = new ArrayList<>();
+
 
             for (PossibleAction pa : actions) {
                 String paName = pa.getClass().getSimpleName();
 
-                // Exclude pure bidding/auction actions from ORPanel
                 boolean isStatusWindowExclusive = paName.contains("Bid") ||
                         paName.contains("SettleIPO") ||
                         paName.equals("Short1817");
@@ -3189,13 +3195,15 @@ if (activePhase == 1 || activePhase == 2) {
 
                 validOrActions.add(pa);
 
-                boolean isStandardUIAction = (pa instanceof LayTile) ||
+                boolean isRepayAction = paName.contains("RepayLoans");
+                boolean isStandardUIAction = ((pa instanceof LayTile) ||
                         (pa instanceof LayToken) ||
                         (pa instanceof BuyTrain) ||
                         (pa instanceof SetDividend) ||
                         (pa instanceof NullAction) ||
                         (pa instanceof GameAction) ||
-                        (pa instanceof CorrectionModeAction);
+                        (pa instanceof CorrectionModeAction)) && !isRepayAction;
+
 
                 if (!isStandardUIAction) {
                     specialActions.add(pa);
@@ -3209,50 +3217,45 @@ if (activePhase == 1 || activePhase == 2) {
                 }
             }
 
-            // Ensure the decline/pass button appears cleanly in the special panel during
-            // Formation
             if (isFormationStep && deferredNullAction != null) {
                 specialActions.add(deferredNullAction);
             }
 
-            // Determine phase based ONLY on valid OR actions
             int computedPhase = determineActivePhase(validOrActions);
             boolean hasStandardActions = computedPhase > 0;
 
-            // THE DORMANCY INTERCEPT (Hardened)
-            boolean onlyPassRemains = validOrActions.size() == 1 && deferredNullAction != null;
 
-            // If any valid OR action is a GuiTargetedAction, we should use it for the
-            // header context
-            if (contextProvider == null) {
-                for (PossibleAction pa : validOrActions) {
-                    if (pa instanceof GuiTargetedAction) {
-                        contextProvider = (GuiTargetedAction) pa;
-                        break;
-                    }
-                }
-            }
-
-            // Rule: The panel must remain active if the user needs to explicitly click
-            // 'Done'
-            if (validOrActions.isEmpty() || (specialActions.isEmpty() && !hasStandardActions)) {
+            // The Dormancy Intercept
+            if (validOrActions.isEmpty() || (specialActions.isEmpty() && !hasStandardActions && !isRepayStep)) {
                 specialModeActive = false;
-
-                // Leverage the native finish() method to rigorously wipe all panels,
-                // clear actions, and reset the header styling.
                 finish();
 
-                // Hard physical refresh of the container hierarchy
                 if (sidebarPanel != null) {
                     sidebarPanel.revalidate();
                     sidebarPanel.repaint();
                 }
                 this.revalidate();
                 this.repaint();
-
-                return; // Abort further ORPanel processing
-
+                return;
             }
+
+            this.specialModeActive = false;
+
+            if (!specialActions.isEmpty() && specialPanel != null && specialContainer != null) {
+                log.info(" -> Populating specialPanel with " + specialActions.size() + " actions.");
+                specialContainer.setVisible(true);
+                specialPanel.removeAll();
+                for (PossibleAction spa : specialActions) {
+                    addSpecialActionButton(spa);
+                }
+                specialPanel.revalidate();
+            } else if (specialContainer != null) {
+                specialContainer.setVisible(false);
+            }
+
+            activePhase = computedPhase;
+            setStandardPanelsVisible(true);
+
 
             // --- 6. STANDARD MODE (OR MIXED) ---
             this.specialModeActive = false;
@@ -3295,7 +3298,6 @@ if (activePhase == 1 || activePhase == 2) {
             sidebarPanel.repaint();
 
         } catch (Exception e) {
-            log.error("Error in updateDynamicActions", e);
         }
     }
 
@@ -3330,17 +3332,14 @@ if (activePhase == 1 || activePhase == 2) {
 
             im.put(KeyStroke.getKeyStroke(key, 0), commandKey);
 
-            // log.info("DEBUG: Mapped KeyCode " + key + " to command " + commandKey);
 
             am.put(commandKey, new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    log.info("DEBUG: Hotkey triggered for " + actionName);
                     if (btn.isEnabled() && btn.isVisible()) {
                         log.info("DEBUG: Button is valid. Clicking...");
                         btn.doClick();
                     } else {
-                        log.info("DEBUG: FAILURE - Button disabled or invisible.");
                     }
                 }
             });
