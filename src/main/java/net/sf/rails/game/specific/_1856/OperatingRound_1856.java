@@ -856,7 +856,15 @@ TakeLoans takeAction = new TakeLoans(operatingCompany.value(),
                     targetsToRemove.add(bbt);
                 }
             }
+            if (act instanceof rails.game.action.UseSpecialProperty) {
+                rails.game.action.UseSpecialProperty usp = (rails.game.action.UseSpecialProperty) act;
+                if (usp.getSpecialProperty() instanceof net.sf.rails.game.special.SellBonusToken) {
+                    targetsToRemove.add(usp);
+                }
+            }
         }
+
+        
         for (rails.game.action.PossibleAction act : targetsToRemove) {
             possibleActions.remove(act);
         }

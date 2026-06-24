@@ -3242,7 +3242,6 @@ public class ORPanel extends GridPanel
             this.specialModeActive = false;
 
             if (!specialActions.isEmpty() && specialPanel != null && specialContainer != null) {
-                log.info(" -> Populating specialPanel with " + specialActions.size() + " actions.");
                 specialContainer.setVisible(true);
                 specialPanel.removeAll();
                 for (PossibleAction spa : specialActions) {
