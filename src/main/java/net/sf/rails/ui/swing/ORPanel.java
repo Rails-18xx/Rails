@@ -240,9 +240,8 @@ public class ORPanel extends GridPanel
      * Determines the current Operating Round phase based on the available actions.
      * 1=Tile, 2=Token, 3=Revenue, 4=Train, 5=Done/Finalize
      */
-   
 
-   private int determineActivePhase(List<PossibleAction> actions) {
+    private int determineActivePhase(List<PossibleAction> actions) {
         int phase = 0;
         boolean hasDoneAction = false;
         boolean hasSpecialAction = false;
@@ -251,17 +250,27 @@ public class ORPanel extends GridPanel
             return 0;
         }
 
-        // 1. Establish baseline phase strictly from Engine State 
-        // This prevents the UI from skipping phases when standard actions (like trains to buy) are empty.
-        if (orUIManager != null && orUIManager.getGameUIManager() != null && orUIManager.getGameUIManager().getGameManager() != null) {
-            net.sf.rails.game.round.RoundFacade currentRound = orUIManager.getGameUIManager().getGameManager().getCurrentRound();
+        // 1. Establish baseline phase strictly from Engine State
+        // This prevents the UI from skipping phases when standard actions (like trains
+        // to buy) are empty.
+        if (orUIManager != null && orUIManager.getGameUIManager() != null
+                && orUIManager.getGameUIManager().getGameManager() != null) {
+            net.sf.rails.game.round.RoundFacade currentRound = orUIManager.getGameUIManager().getGameManager()
+                    .getCurrentRound();
             if (currentRound instanceof OperatingRound) {
                 net.sf.rails.game.GameDef.OrStep step = ((OperatingRound) currentRound).getStep();
-                if (step == net.sf.rails.game.GameDef.OrStep.LAY_TRACK) phase = 1;
-                else if (step == net.sf.rails.game.GameDef.OrStep.LAY_TOKEN) phase = 2;
-                else if (step == net.sf.rails.game.GameDef.OrStep.CALC_REVENUE || step == net.sf.rails.game.GameDef.OrStep.PAYOUT) phase = 3;
-                else if (step == net.sf.rails.game.GameDef.OrStep.BUY_TRAIN) phase = 4;
-                else if (step == net.sf.rails.game.GameDef.OrStep.REPAY_LOANS || step == net.sf.rails.game.GameDef.OrStep.TRADE_SHARES) phase = 5;
+                if (step == net.sf.rails.game.GameDef.OrStep.LAY_TRACK)
+                    phase = 1;
+                else if (step == net.sf.rails.game.GameDef.OrStep.LAY_TOKEN)
+                    phase = 2;
+                else if (step == net.sf.rails.game.GameDef.OrStep.CALC_REVENUE
+                        || step == net.sf.rails.game.GameDef.OrStep.PAYOUT)
+                    phase = 3;
+                else if (step == net.sf.rails.game.GameDef.OrStep.BUY_TRAIN)
+                    phase = 4;
+                else if (step == net.sf.rails.game.GameDef.OrStep.REPAY_LOANS
+                        || step == net.sf.rails.game.GameDef.OrStep.TRADE_SHARES)
+                    phase = 5;
             }
         }
 
@@ -299,13 +308,7 @@ public class ORPanel extends GridPanel
 
         return phase;
     }
-   
-   
-   
-   
-   
-   
-   
+
     private void distributeStandardActions(List<PossibleAction> actions) {
         boolean doneActionFound = false;
         PossibleAction donePa = null;
@@ -538,11 +541,14 @@ public class ORPanel extends GridPanel
         }
 
         // 3. Update Components
+        // 3. Update Components using dynamic scaling
 
         // TOP: Company Name
-        lblCompanyInfo.setText("<html><center><font size='6'><b>" + companyName + "</b></font></center></html>");
+        lblCompanyInfo.setText("<html><center><span style='font-family: SansSerif; font-size: " + scale(24)
+                + "px; font-weight: bold;'>" + companyName + "</span></center></html>");
         lblCompanyInfo.setBackground(bg);
         lblCompanyInfo.setForeground(fg);
+        lblCompanyInfo.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.DARK_GRAY));
         lblCompanyInfo.setVisible(true);
 
         if (lblPlayerInfo != null) {
@@ -550,7 +556,8 @@ public class ORPanel extends GridPanel
                 lblPlayerInfo.setVisible(false);
             } else {
                 lblPlayerInfo.setText(
-                        "<html><center><font face='SansSerif' size='5'>" + playerName + "</font></center></html>");
+                        "<html><center><span style='font-family: SansSerif; font-size: " + scale(18) + "px;'>"
+                                + playerName + "</span></center></html>");
                 lblPlayerInfo.setBackground(bg);
                 lblPlayerInfo.setForeground(fg);
                 lblPlayerInfo.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, Color.DARK_GRAY));
@@ -558,12 +565,15 @@ public class ORPanel extends GridPanel
             }
         }
 
-        // BOTTOM: The Action Text
+        // BOTTOM: Action Title
         String actionTitle = context.getGroupLabel();
-
-        if (actor instanceof PublicCompany) {
-            bg = ((PublicCompany) actor).getBgColour();
-            fg = ((PublicCompany) actor).getFgColour();
+        if (lblPhaseInstruction != null) {
+            lblPhaseInstruction.setText("<html><center><span style='font-family: SansSerif; font-size: " + scale(14)
+                    + "px; font-weight: bold;'>" + actionTitle + "</span></center></html>");
+            lblPhaseInstruction.setBackground(bg);
+            lblPhaseInstruction.setForeground(fg);
+            lblPhaseInstruction.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1, Color.DARK_GRAY));
+            lblPhaseInstruction.setVisible(true);
         }
 
         // 3. Update Components
@@ -1613,14 +1623,14 @@ public class ORPanel extends GridPanel
         footerPanel.setOpaque(false);
         footerPanel.setBorder(BorderFactory.createEmptyBorder(PANEL_ACTION_GAP, 0, PANEL_ACTION_GAP, 0));
 
-      // Rename to "End Turn" and set initial state to Disabled/gray
+        // Rename to "End Turn" and set initial state to Disabled/gray
         btnDone = createSidebarButton("End Turn", DONE_CMD);
         btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
         btnDone.setPreferredSize(new Dimension(getSidebarWidth() - scale(10), scale(40)));
         btnDone.setEnabled(false);
         resetButtonStyle(btnDone); // Forces gray/standard look
 
-        // 9. Special Notifications 
+        // 9. Special Notifications
         specialNotificationPanel = new JPanel();
         specialNotificationPanel.setLayout(new BoxLayout(specialNotificationPanel, BoxLayout.Y_AXIS));
         specialNotificationPanel.setOpaque(false);
@@ -2550,74 +2560,75 @@ public class ORPanel extends GridPanel
 
         }
         // Dynamically override instruction if a GuiTargetedAction is active
+        boolean specialHeaderApplied = false;
         if (specialContainer != null && specialContainer.isVisible() && specialPanel != null
                 && specialPanel.getComponentCount() > 0) {
             Component firstBtn = specialPanel.getComponent(0);
             if (firstBtn instanceof ActionButton && !((ActionButton) firstBtn).getPossibleActions().isEmpty()) {
                 PossibleAction pa = ((ActionButton) firstBtn).getPossibleActions().get(0);
                 if (pa instanceof GuiTargetedAction) {
-                    String groupLabel = ((GuiTargetedAction) pa).getGroupLabel();
-                    if (groupLabel != null && !groupLabel.isEmpty()) {
-                        instruction = groupLabel.toUpperCase();
-                    }
+                    updateSpecialHeader((GuiTargetedAction) pa);
+                    specialHeaderApplied = true;
                 }
             }
         }
 
-        Color headerBg = orComp.getBgColour();
-        Color headerFg = orComp.getFgColour();
+        if (!specialHeaderApplied) {
+            Color headerBg = orComp.getBgColour();
+            Color headerFg = orComp.getFgColour();
 
-        if (currentRound != null && currentRound.getClass().getSimpleName().contains("ConnectionRun")) {
-            instruction = "CONNECTION RUN";
-            headerBg = new Color(255, 215, 0); // Gold
-            headerFg = Color.BLACK;
-        }
-
-        if (lblCompanyInfo != null) {
-            String playerInfo = (orComp.getPresident() != null) ? orComp.getPresident().getName() : "";
-
-            // TOP LABEL: Company Info ONLY
-            String topText = "<html><center>" +
-                    "<span style='font-family: SansSerif; font-size: " + scale(24) + "px; font-weight: bold;'>"
-                    + orComp.getId() + "</span>" +
-                    "</center></html>";
-            lblCompanyInfo.setText(topText);
-
-            lblCompanyInfo.setBackground(headerBg);
-            lblCompanyInfo.setForeground(headerFg);
-
-            // Standard top/side border, open bottom to merge with instruction
-            lblCompanyInfo.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.DARK_GRAY));
-            lblCompanyInfo.setVisible(true);
-
-            if (lblPlayerInfo != null) {
-                lblPlayerInfo.setText(
-                        "<html><center><span style='font-family: SansSerif; font-size: " + scale(18) + "px;'>"
-                                + playerInfo + "</span></center></html>");
-
-                lblPlayerInfo.setBackground(headerBg);
-                lblPlayerInfo.setForeground(headerFg);
-                lblPlayerInfo.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, Color.DARK_GRAY));
-                lblPlayerInfo.setVisible(true);
+            if (currentRound != null && currentRound.getClass().getSimpleName().contains("ConnectionRun")) {
+                instruction = "CONNECTION RUN";
+                headerBg = new Color(255, 215, 0); // Gold
+                headerFg = Color.BLACK;
             }
 
-            // BOTTOM LABEL: Instruction
-            // Reverted to match Company Logo colors (Unified Header)
-            String bottomText = "<html><center><span style='font-family: SansSerif; font-size: " + scale(14)
-                    + "px; font-weight: bold;'>" + instruction
-                    + "</span></center></html>";
+            if (lblCompanyInfo != null) {
+                String playerInfo = (orComp.getPresident() != null) ? orComp.getPresident().getName() : "";
 
-            lblPhaseInstruction.setText(bottomText);
+                // TOP LABEL: Company Info ONLY
+                String topText = "<html><center>" +
+                        "<span style='font-family: SansSerif; font-size: " + scale(24) + "px; font-weight: bold;'>"
+                        + orComp.getId() + "</span>" +
+                        "</center></html>";
+                lblCompanyInfo.setText(topText);
 
-            // Set colors to match the Company ID above
+                lblCompanyInfo.setBackground(headerBg);
+                lblCompanyInfo.setForeground(headerFg);
 
-            lblPhaseInstruction.setBackground(headerBg);
-            lblPhaseInstruction.setForeground(headerFg);
+                // Standard top/side border, open bottom to merge with instruction
+                lblCompanyInfo.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.DARK_GRAY));
+                lblCompanyInfo.setVisible(true);
 
-            // Remove the 5px gap. Set top inset to 0.
-            // Border: 0px Top, 1px Left, 1px Bottom, 1px Right
-            lblPhaseInstruction.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1, Color.DARK_GRAY));
-            lblPhaseInstruction.setVisible(true);
+                if (lblPlayerInfo != null) {
+                    lblPlayerInfo.setText(
+                            "<html><center><span style='font-family: SansSerif; font-size: " + scale(18) + "px;'>"
+                                    + playerInfo + "</span></center></html>");
+
+                    lblPlayerInfo.setBackground(headerBg);
+                    lblPlayerInfo.setForeground(headerFg);
+                    lblPlayerInfo.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, Color.DARK_GRAY));
+                    lblPlayerInfo.setVisible(true);
+                }
+
+                // BOTTOM LABEL: Instruction
+                // Reverted to match Company Logo colors (Unified Header)
+                String bottomText = "<html><center><span style='font-family: SansSerif; font-size: " + scale(14)
+                        + "px; font-weight: bold;'>" + instruction
+                        + "</span></center></html>";
+
+                lblPhaseInstruction.setText(bottomText);
+
+                // Set colors to match the Company ID above
+
+                lblPhaseInstruction.setBackground(headerBg);
+                lblPhaseInstruction.setForeground(headerFg);
+
+                // Remove the 5px gap. Set top inset to 0.
+                // Border: 0px Top, 1px Left, 1px Bottom, 1px Right
+                lblPhaseInstruction.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1, Color.DARK_GRAY));
+                lblPhaseInstruction.setVisible(true);
+            }
         }
 
         colorizeActivePhase(null);
@@ -2722,7 +2733,7 @@ public class ORPanel extends GridPanel
             new RemainingTilesWindow(orWindow);
         } else if (command.equals(SHOW_CMD)) {
             toggleTileBuildNumbers();
-        
+
         } else if (command.equals(CONFIRM_CMD)) {
             if (orUIManager != null) {
                 boolean hasSelection = (orUIManager.getMap().getSelectedHex() != null);
@@ -2750,6 +2761,18 @@ public class ORPanel extends GridPanel
             } else if (executedActions.get(0) instanceof net.sf.rails.game.specific._1817.action.RepayLoans_1817) {
                 processRepayLoans_1817(
                         (net.sf.rails.game.specific._1817.action.RepayLoans_1817) executedActions.get(0));
+                return;
+            } else if (executedActions.get(0) instanceof rails.game.action.RepayLoans) {
+                // --- START FIX ---
+                // Route generic 1856 loan round repayments natively
+                rails.game.action.RepayLoans rl = (rails.game.action.RepayLoans) executedActions.get(0);
+                if (rl.getMinNumber() == rl.getMaxNumber()) {
+                    rl.setNumberTaken(rl.getMaxNumber());
+                    orUIManager.getGameUIManager().getGameManager().process(rl);
+                } else {
+                    orUIManager.processAction("RepayLoans", executedActions, source);
+                }
+                forceSyncWithEngine();
                 return;
 
             } else if (executedActions.get(0) instanceof BuyTrain) {
@@ -3032,8 +3055,6 @@ public class ORPanel extends GridPanel
         if (actions == null || actions.isEmpty())
             return;
 
-
-
     }
 
     private void forceSyncWithEngine() {
@@ -3074,7 +3095,7 @@ public class ORPanel extends GridPanel
                         String name = pa.getClass().getSimpleName();
                         if (name.contains("RepayLoans") || name.contains("TakeLoans")) {
                             if (!actions.contains(pa)) {
-                                // Insert the rescued action immediately before NullAction (End Turn) 
+                                // Insert the rescued action immediately before NullAction (End Turn)
                                 // to preserve the correct temporal sequence in the UI action lists.
                                 int insertIndex = actions.size();
                                 for (int i = 0; i < actions.size(); i++) {
@@ -3156,6 +3177,12 @@ public class ORPanel extends GridPanel
                         }
                     } else if (pa.getClass().getSimpleName().contains("RepayLoans")) {
                         isRepayStep = true;
+                        if (pa instanceof GuiTargetedAction) {
+                            net.sf.rails.game.state.Owner targetActor = ((GuiTargetedAction) pa).getActor();
+                            if (targetActor instanceof PublicCompany) {
+                                engineActiveComp = (PublicCompany) targetActor;
+                            }
+                        }
                     } else if (pa instanceof rails.game.specific._1835.StartPrussian ||
                             pa instanceof rails.game.specific._1835.ExchangeForPrussianShare ||
                             pa instanceof net.sf.rails.game.specific._1837.ExchangeMinorAction) {
@@ -3181,7 +3208,6 @@ public class ORPanel extends GridPanel
 
             List<PossibleAction> validOrActions = new ArrayList<>();
 
-
             for (PossibleAction pa : actions) {
                 String paName = pa.getClass().getSimpleName();
 
@@ -3204,7 +3230,6 @@ public class ORPanel extends GridPanel
                         (pa instanceof GameAction) ||
                         (pa instanceof CorrectionModeAction)) && !isRepayAction;
 
-
                 if (!isStandardUIAction) {
                     specialActions.add(pa);
                     if (pa instanceof GuiTargetedAction && contextProvider == null) {
@@ -3223,7 +3248,6 @@ public class ORPanel extends GridPanel
 
             int computedPhase = determineActivePhase(validOrActions);
             boolean hasStandardActions = computedPhase > 0;
-
 
             // The Dormancy Intercept
             if (validOrActions.isEmpty() || (specialActions.isEmpty() && !hasStandardActions && !isRepayStep)) {
@@ -3254,7 +3278,6 @@ public class ORPanel extends GridPanel
 
             activePhase = computedPhase;
             setStandardPanelsVisible(true);
-
 
             // --- 6. STANDARD MODE (OR MIXED) ---
             this.specialModeActive = false;
@@ -3330,7 +3353,6 @@ public class ORPanel extends GridPanel
             String commandKey = "invoke_" + actionName + "_" + System.identityHashCode(action);
 
             im.put(KeyStroke.getKeyStroke(key, 0), commandKey);
-
 
             am.put(commandKey, new AbstractAction() {
                 @Override

@@ -5,7 +5,12 @@ import net.sf.rails.common.DisplayBuffer;
 import net.sf.rails.common.LocalText;
 import net.sf.rails.common.ReportBuffer;
 import net.sf.rails.game.*;
+import net.sf.rails.game.specific._1835.StockRound_1835;
 import net.sf.rails.game.state.BooleanState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static net.sf.rails.game.GameManager.*;
 
 import java.util.List;
 
@@ -13,6 +18,7 @@ import java.util.List;
 public class GameManager_1856 extends GameManager {
 
     private Player playerToStartCGRFRound;
+    private static final Logger log = LoggerFactory.getLogger(StockRound_1835.class);
 
     private static final int[][] certLimitsTable = {
             {14, 19, 21, 26, 29, 31, 36, 40},
@@ -55,11 +61,20 @@ public class GameManager_1856 extends GameManager {
 
     public void startCGRFormationRound(OperatingRound_1856 or, Player playerToStartCGRFRound) {
         this.playerToStartCGRFRound = playerToStartCGRFRound;
-       setInterruptedRound(or);
-
-        if (this.playerToStartCGRFRound != null) {
-            // TODO: this id will not work
-            createRound(CGRFormationRound.class, "CGRFormationRound").start(this.playerToStartCGRFRound);
+        setInterruptedRound(or);
+if (this.playerToStartCGRFRound != null) {
+            // --- START FIX ---
+            CGRFormationRound cgrRound;
+            if (getCurrentRound() instanceof CGRFormationRound) {
+                // If we are already running a formation round, reuse it rather than destroying its state
+                cgrRound = (CGRFormationRound) getCurrentRound();
+            } else {
+                cgrRound = (CGRFormationRound) createRound(CGRFormationRound.class, "CGRFR");
+                setRound(cgrRound);
+                cgrRound.start(this.playerToStartCGRFRound);
+            }
+            // --- END FIX ---
+            
             this.playerToStartCGRFRound = null;
         } else {
             resetCertificateLimit(true);
@@ -114,5 +129,8 @@ public class GameManager_1856 extends GameManager {
         ReportBuffer.add(this, message);
 
     }
+
+
+    
 
 }

@@ -87,6 +87,10 @@ public class PossibleActions {
         }
     }
     
+    public int size() {
+        return actions.size();
+    }
+
     public boolean containsCorrections() {
         for (PossibleAction action:actions) {
             if (action.isCorrection()) return true;

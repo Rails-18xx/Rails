@@ -469,11 +469,12 @@ TakeLoans takeAction = new TakeLoans(operatingCompany.value(),
             possibleActions.add(takeAction);
         }
 
-       if (getStep() == GameDef.OrStep.REPAY_LOANS) {
+   if (getStep() == GameDef.OrStep.REPAY_LOANS) {
 
             // Has company any outstanding loans to repay?
             if (operatingCompany.value().getMaxNumberOfLoans() != 0
                     && operatingCompany.value().getCurrentNumberOfLoans() > 0) {
+
 
                 // Minimum number to repay
                 int minNumber = Math.max(0,
@@ -489,20 +490,18 @@ TakeLoans takeAction = new TakeLoans(operatingCompany.value(),
                 }
 
                 if (minNumber > 0) {
-                    // Mandatory repayment
-                    DisplayBuffer.add(this, LocalText.getText("MustRepayLoans",
+                    DisplayBuffer.add(this, LocalText.getText("MustRepayLoansBecause",
                             operatingCompany.value().getId(),
-                            minNumber,
-                            Bank.format(this, operatingCompany.value().getValuePerLoan()),
-                            Bank.format(this, minNumber * operatingCompany.value().getValuePerLoan())));
+                            String.valueOf(operatingCompany.value().sharesOwnedByPlayers())));
                 }
-               RepayLoans repayAction = new RepayLoans(operatingCompany.value(),
+                RepayLoans repayAction = new RepayLoans(operatingCompany.value(),
                         minNumber, maxNumber, operatingCompany.value().getValuePerLoan());
                 possibleActions.add(repayAction);
 
                 // Step may only be skipped if repayment is optional
                 if (minNumber == 0)
                     doneAllowed.set(true);
+
 
             } else {
                 // No (more) loans
@@ -513,30 +512,18 @@ TakeLoans takeAction = new TakeLoans(operatingCompany.value(),
 
     @Override
     public boolean buyTrain(BuyTrain action) {
-
         Phase prePhase = Phase.getCurrent(this);
-
         boolean result = super.buyTrain(action);
-
         Phase postPhase = Phase.getCurrent(this);
 
         if (postPhase != prePhase) {
-            if (postPhase.getId().equals("6")) {
+           if (postPhase.getId().equals("6")) {
                 finalLoanRepaymentPending.set(true);
                 playerToStartLoanRepayment = playerManager.getPlayerByName(action.getPlayerName());
-            } else if (postPhase.getId().equals("5")) {
-                // Make Bridge and Tunnel tokens buyable from the Bank.
-                for (SpecialProperty sp : gameManager.getCommonSpecialProperties()) {
-                    if (sp instanceof SellBonusToken) {
-                        SellBonusToken sbt = (SellBonusToken) sp;
-                        sbt.setSeller(bank);
-                        log.debug("SP {} is now buyable from the Bank", sp.getId());
-                    }
-                }
 
-                // Find and remove the Port token when the 6-train triggers Phase 5
+                // Find and remove the Port token when the 6-train triggers Phase 6
                 try {
-                    log.info("PORT_LAY_TRACE: Phase 5 triggered via 6-train. Initiating Port token removal.");
+                    log.info("PORT_LAY_TRACE: Phase 6 triggered via 6-train. Initiating Port token removal.");
                     for (net.sf.rails.game.MapHex hex : getRoot().getMapManager().getHexes()) {
                         if (hex.getBonusTokens() != null) {
                             java.util.Iterator<net.sf.rails.game.BonusToken> iter = hex.getBonusTokens().iterator();
@@ -551,7 +538,7 @@ TakeLoans takeAction = new TakeLoans(operatingCompany.value(),
                             }
                             if (found) {
                                 ReportBuffer.add(this, ">>> The Port token has been removed from hex " + hex.getId()
-                                        + " due to Phase 5 (6-train purchase).");
+                                        + " due to Phase 6 (6-train purchase).");
                                 break;
                             }
                         }
@@ -559,7 +546,33 @@ TakeLoans takeAction = new TakeLoans(operatingCompany.value(),
                 } catch (Exception e) {
                     log.error("PORT_LAY_TRACE: Failed during port token removal routine", e);
                 }
+
+            } else if (postPhase.getId().equals("5")) {
+                // Make Bridge and Tunnel tokens buyable from the Bank.
+                for (SpecialProperty sp : gameManager.getCommonSpecialProperties()) {
+                    if (sp instanceof SellBonusToken) {
+                        SellBonusToken sbt = (SellBonusToken) sp;
+                        sbt.setSeller(bank);
+                        log.debug("SP {} is now buyable from the Bank", sp.getId());
+                    }
+                }
+
+                // Close all private companies when the 5-train purchase triggers Phase 5
+                log.info("PHASE_5_TRACE: Phase 5 triggered via 5-train purchase. Closing all private companies.");
+                ReportBuffer.add(this, ">>> Phase 5 has begun. All private companies are now closed.");
+                
+                List<PrivateCompany> privates = getRoot().getCompanyManager().getAllPrivateCompanies();
+                if (privates != null) {
+                    for (PrivateCompany privateComp : privates) {
+                        if (privateComp != null && !privateComp.isClosed()) {
+                            privateComp.close();
+                            ReportBuffer.add(this, privateComp.getName() + " has closed.");
+                            log.debug("PHASE_5_TRACE: Closed private company {}", privateComp.getId());
+                        }
+                    }
+                }
             }
+            
         }
 
         return result;

@@ -2,6 +2,10 @@ package rails.game.action;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+// --- START FIX ---
+import java.awt.Color;
+import net.sf.rails.game.state.Owner;
+// --- END FIX ---
 
 import com.google.common.base.Objects;
 
@@ -11,7 +15,9 @@ import net.sf.rails.util.RailsObjects;
 /**
  * Rails 2.0: updated equals and toString methods
  */
-public class RepayLoans extends PossibleAction {
+// --- START FIX ---
+public class RepayLoans extends PossibleAction implements GuiTargetedAction {
+// --- END FIX ---
 
     // Initial attributes
     transient private PublicCompany company;
@@ -22,6 +28,11 @@ public class RepayLoans extends PossibleAction {
 
     // User-assigned attributes
     private int numberRepaid = 0;
+    private String customLabel = null;
+
+    public void setCustomLabel(String label) {
+        this.customLabel = label;
+    }
 
     public static final long serialVersionUID = 1L;
 
@@ -34,6 +45,47 @@ public class RepayLoans extends PossibleAction {
         this.maxNumber = maxNumber;
         this.price = price;
     }
+
+    // --- START FIX ---
+    @Override
+    public Owner getActor() {
+        return getCompany();
+    }
+
+    @Override
+    public String getGroupLabel() {
+        return "Forced Loan Repayment";
+    }
+
+    @Override
+    public String getButtonLabel() {
+if (customLabel != null) return customLabel;
+        return "Repay Loans ($" + price + " each)";
+        }
+
+
+        @Override
+    public Color getButtonColor() {
+        return null; 
+    }
+
+    @Override
+    public Color getHighlightBackgroundColor() {
+        return null;
+    }
+
+    @Override
+    public Color getHighlightBorderColor() {
+        return null; 
+    }
+
+    @Override
+    public Color getHighlightTextColor() {
+        return null;
+    }
+
+
+    
 
     public int getMinNumber() {
         return minNumber;
@@ -89,6 +141,7 @@ public PublicCompany getCompany() {
                 && Objects.equal(this.minNumber, action.minNumber)
                 && Objects.equal(this.maxNumber, action.maxNumber)
                 && Objects.equal(this.price, action.price)
+                && Objects.equal(this.customLabel, action.customLabel)
         ;
 
         // finish if asOptions check

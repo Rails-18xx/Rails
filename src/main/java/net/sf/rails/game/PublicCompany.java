@@ -2514,6 +2514,9 @@ public class PublicCompany extends RailsAbstractItem
     }
 
     public int getCurrentNumberOfLoans() {
+        if (currentNumberOfLoans == null) {
+            return 0;
+        }
         return currentNumberOfLoans.value();
     }
 
@@ -2522,8 +2525,10 @@ public class PublicCompany extends RailsAbstractItem
     }
 
     public void addLoans(int number) {
-        currentNumberOfLoans.add(number);
-        currentLoanValue.change(number * getValuePerLoan());
+        if (currentNumberOfLoans != null && currentLoanValue != null) {
+            currentNumberOfLoans.add(number);
+            currentLoanValue.change(number * getValuePerLoan());
+        }
     }
 
     public int getLoanInterestPct() {
