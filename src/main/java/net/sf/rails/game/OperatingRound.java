@@ -853,8 +853,10 @@ public class OperatingRound extends Round implements Observer {
             break;
         }
 
-        if (newStep == GameDef.OrStep.FINAL) {
-            finishTurn();
+if (newStep == GameDef.OrStep.FINAL) {
+            // Park the state in FINAL instead of auto-executing finishTurn()
+            // This allows the UI to render Phase 5 and wait for explicit confirmation.
+            setStep(newStep);
         } else {
             setStep(newStep);
         }
@@ -934,6 +936,12 @@ public class OperatingRound extends Round implements Observer {
             return true; // <--- We only touched this line inside the IF block
         }
 
+        // Explicitly intercept the Phase 5 End Turn click
+        if (getStep() == GameDef.OrStep.FINAL) {
+            finishTurn();
+            return true;
+        }
+
         // If we have special properties or voluntary actions available, 
         // DO NOT end the turn. Instead, advance the step but do not finish the round.
         // We only trigger finishTurn() if no special actions remain.
@@ -954,11 +962,10 @@ public class OperatingRound extends Round implements Observer {
 
         nextStep(); // Advance to Share Trading or Finish
 
-        if (getStep() == GameDef.OrStep.FINAL) {
-            finishTurn();
-        }
+// Removed the old auto-finishTurn() check here. 
+        // nextStep() will now safely park us at FINAL.
+        return true;
 
-        return true; // <--- The normal "Done" ALREADY returns true!
     }
 
     // In OperatingRound.java
@@ -4485,6 +4492,9 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
 
         } else if (step == GameDef.OrStep.TRADE_SHARES) {
             gameManager.getCurrentRound().setPossibleActions();
+        } else if (step == GameDef.OrStep.FINAL) {
+            // Explicitly enable the 'End Turn' button for Phase 5 Special Actions
+            doneAllowed.set(true); 
         }
 
 

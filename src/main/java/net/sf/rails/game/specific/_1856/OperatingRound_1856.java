@@ -24,6 +24,8 @@ public class OperatingRound_1856 extends OperatingRound {
 
     private static final Logger log = LoggerFactory.getLogger(OperatingRound_1856.class);
 
+    protected final BooleanState loanTakenThisTurn = new BooleanState(this, "loanTakenThisTurn", false);
+
     /**
      * Set after the first 6-train is bought, irrespective whether any loans are
      * outstanding or not.
@@ -67,6 +69,19 @@ public class OperatingRound_1856 extends OperatingRound {
             return toString();
         }
     }
+
+    @Override
+protected void initTurn() {
+    super.initTurn();
+    loanTakenThisTurn.set(false); // Reset via state
+}
+
+@Override
+protected void executeTakeLoans(int number) {
+    super.executeTakeLoans(number);
+    loanTakenThisTurn.set(true); // Persist via state
+}
+
 
     /**
      * Constructed via Configure
@@ -881,6 +896,16 @@ TakeLoans takeAction = new TakeLoans(operatingCompany.value(),
         for (rails.game.action.PossibleAction act : targetsToRemove) {
             possibleActions.remove(act);
         }
+
+        if (loanTakenThisTurn.value()) { // Use .value() to check state
+        java.util.List<rails.game.action.PossibleAction> actionsToRemove = new java.util.ArrayList<>();
+        for (rails.game.action.PossibleAction act : possibleActions.getList()) {
+            if (act instanceof rails.game.action.RepayLoans) {
+                actionsToRemove.add(act);
+            }
+        }
+        possibleActions.removeAll(actionsToRemove);
+    }
 
         return result;
     }

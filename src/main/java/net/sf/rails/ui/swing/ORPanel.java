@@ -797,10 +797,16 @@ public class ORPanel extends GridPanel
 
         if (hasSpecialActions || activePhase >= 5 || hasDoneAction) {
             applyPhaseStyle(phase5Panel, null, UITheme.ACTION_SKIP, UITheme.TRAIN_LIGHT, "Special Actions");
-            if (btnDone != null) btnDone.setVisible(true);
         } else {
             resetPhasePanel(phase5Panel, null);
-            if (btnDone != null) btnDone.setVisible(false);
+        }
+
+        if (btnDone != null) {
+            if (activePhase >= 1 && activePhase <= 4) {
+                btnDone.setVisible(false);
+            } else {
+                btnDone.setVisible(true);
+            }
         }
         
         if (activePhase == 6) {
