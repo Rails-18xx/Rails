@@ -763,6 +763,25 @@ public class CGRFormationRound extends SwitchableUIRound {
                 if (possibleActions.isEmpty()) {
                     possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
                 }
+
+if (gameManager != null && gameManager.getGameUIManager() != null) {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                try {
+                    log.info("[CGR_DIAG] EDT: Refreshing all UI components and Status Window graphics.");
+                    // Call updateUI to handle the full visual rehydration across panels
+                    gameManager.getGameUIManager().updateUI();
+                    
+                    if (gameManager.getGameUIManager().getStatusWindow() != null) {
+                        Object status = gameManager.getGameUIManager().getStatusWindow().getGameStatus();
+                        if (status instanceof java.util.Observer) {
+                            ((java.util.Observer) status).update(null, "ForceUpdate");
+                        }
+                    }
+                } catch (Exception e) {
+                    log.warn("UI Status Frame sync failed on EDT", e);
+                }
+            });
+        }
                 return true;
             }
 
@@ -803,6 +822,11 @@ public class CGRFormationRound extends SwitchableUIRound {
         } else if (step.value() == Steps.STEP_DISCARD_TRAINS) {
             if (!checkForTrainsToDiscard()) {
                 finishRound();
+            }
+            else {
+                // Ensure the status panel becomes active so the engine binds the controls 
+                // to the newly assigned active CGR President player
+                guiHints.setActivePanel(GuiDef.Panel.STATUS);
             }
             return true;
         }
