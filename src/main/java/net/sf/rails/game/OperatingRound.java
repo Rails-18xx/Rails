@@ -934,6 +934,21 @@ public class OperatingRound extends Round implements Observer {
             return true; // <--- We only touched this line inside the IF block
         }
 
+        // If we have special properties or voluntary actions available, 
+        // DO NOT end the turn. Instead, advance the step but do not finish the round.
+        // We only trigger finishTurn() if no special actions remain.
+        
+        // 1. Check for remaining special voluntary actions
+        boolean voluntaryActionsRemaining = !getSpecialProperties(SpecialProperty.class).isEmpty();
+        
+        // 2. Logic: If voluntary actions exist, stay in current round/step
+        if (voluntaryActionsRemaining && getStep() != GameDef.OrStep.TRADE_SHARES) {
+             // If we are still in a buy/revenue step and have special options, 
+             // we move to the next phase but keep the company active.
+             nextStep();
+             return true; 
+        }
+
         // BRANCH 2: The Normal "Done" (Unchanged)
         // If checkForExcessTrains() returns false, the code above is skipped entirely.
 
@@ -4494,8 +4509,9 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
             }
         }
 
-
-        // --- Common Actions ---
+        // We track if any new actions are added by the special properties block to
+        // trigger the 'Done' button.
+        int actionCountBeforeCommon = possibleActions.getList().size();
         if (!forced) {
 
             setBonusTokenLays();
@@ -4623,12 +4639,16 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                     }
                 }
             }
-        } else {
+        } 
 
-        }
+        int actionCountAfterCommon = possibleActions.getList().size();
+// If we added voluntary special actions, force the DONE button to be available.
+if (actionCountAfterCommon > actionCountBeforeCommon && !forced) {
+    doneAllowed.set(true);
+}
+
 
         if (doneAllowed.value()) {
-
             possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
         }
 

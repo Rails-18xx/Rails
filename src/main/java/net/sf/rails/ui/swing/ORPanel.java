@@ -211,7 +211,8 @@ public class ORPanel extends GridPanel
         hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);
         hasDirectCompanyIncomeInOR = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
 
-// Robust 1856/18xx Fallback: If parameter is false, scan companies for loan definitions to match GameManager
+        // Robust 1856/18xx Fallback: If parameter is false, scan companies for loan
+        // definitions to match GameManager
         if (!hasCompanyLoans && gameUIManager.getAllPublicCompanies() != null) {
             for (PublicCompany company : gameUIManager.getAllPublicCompanies()) {
                 if (company != null && company.getMaxNumberOfLoans() != 0) {
@@ -220,8 +221,6 @@ public class ORPanel extends GridPanel
                 }
             }
         }
-        
-
 
         initSidebar();
 
@@ -262,7 +261,8 @@ public class ORPanel extends GridPanel
             return 0;
         }
 
-       // Establish baseline phase strictly from Engine State to respect manual skip laws
+        // Establish baseline phase strictly from Engine State to respect manual skip
+        // laws
         if (orUIManager != null && orUIManager.getGameUIManager() != null
                 && orUIManager.getGameUIManager().getGameManager() != null) {
             net.sf.rails.game.round.RoundFacade currentRound = orUIManager.getGameUIManager().getGameManager()
@@ -404,21 +404,29 @@ public class ORPanel extends GridPanel
             } else if (pa instanceof NullAction) {
                 NullAction.Mode mode = ((NullAction) pa).getMode();
                 if (mode == NullAction.Mode.DONE || mode == NullAction.Mode.PASS || mode == NullAction.Mode.SKIP) {
-                   if (activePhase == 1 && btnTileConfirm != null) {
+                    boolean handledByPhaseSkip = false;
+                    if (activePhase == 1 && btnTileConfirm != null) {
                         setupButton(btnTileConfirm, pa);
                         btnTileConfirm.setEnabled(true);
+                        handledByPhaseSkip = true;
                     } else if (activePhase == 2 && btnTokenConfirm != null) {
                         setupButton(btnTokenConfirm, pa);
                         btnTokenConfirm.setEnabled(true);
+                        handledByPhaseSkip = true;
                     } else if (activePhase == 4 && btnTrainSkip != null) {
                         setupButton(btnTrainSkip, pa);
                         btnTrainSkip.setText(mode == NullAction.Mode.SKIP ? "Skip Buy" : "Done Buying");
+                        handledByPhaseSkip = true;
                     }
-                    
-                    setupButton(btnDone, pa);
-                    bindActionHotkey(btnDone, pa);
-                    donePa = pa;
-                    doneActionFound = true;
+
+                    // Bind to the End Turn button ONLY if it wasn't consumed by a phase-specific
+                    // skip, OR if we are in Phase 5+
+                    if (!handledByPhaseSkip || activePhase >= 5 || activePhase == 0) {
+                        setupButton(btnDone, pa);
+                        bindActionHotkey(btnDone, pa);
+                        donePa = pa;
+                        doneActionFound = true;
+                    }
                 }
 
             }
@@ -785,10 +793,42 @@ public class ORPanel extends GridPanel
                 (specialContainer != null && specialContainer.isVisible() && specialPanel != null
                         && specialPanel.getComponentCount() > 0);
 
-        if (hasSpecialActions) {
+       boolean hasDoneAction = (btnDone != null && btnDone.getPossibleActions() != null && !btnDone.getPossibleActions().isEmpty());
+
+        if (hasSpecialActions || activePhase >= 5 || hasDoneAction) {
             applyPhaseStyle(phase5Panel, null, UITheme.ACTION_SKIP, UITheme.TRAIN_LIGHT, "Special Actions");
+            if (btnDone != null) btnDone.setVisible(true);
         } else {
             resetPhasePanel(phase5Panel, null);
+            if (btnDone != null) btnDone.setVisible(false);
+        }
+        
+        if (activePhase == 6) {
+            // ACTIVATE: Enable and colorize for the final step
+            if (btnDone != null) {
+                btnDone.setEnabled(true);
+                String doneText = getDoneButtonText();
+                styleButton(btnDone, UITheme.ACTION_SKIP, doneText);
+                btnDone.setForeground(Color.WHITE);
+                btnDone.setFont(new Font("SansSerif", Font.BOLD, 16));
+            }
+        } else {
+            // DIRECT ENGINE SYNC
+            if (btnDone != null) {
+                String doneText = getDoneButtonText();
+                if (btnDone.getPossibleActions() != null && !btnDone.getPossibleActions().isEmpty()) {
+                    btnDone.setEnabled(true);
+                    styleButton(btnDone, UITheme.ACTION_SKIP, doneText);
+                    btnDone.setForeground(Color.WHITE);
+                    btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
+                } else {
+                    // PERSISTENT WAIT: Keep as 'END TURN' but disabled and gray
+                    btnDone.setEnabled(false);
+                    styleButton(btnDone, UIManager.getColor("Button.background"), doneText);
+                    btnDone.setForeground(Color.GRAY);
+                    btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
+                }
+            }
         }
     }
 
@@ -1630,35 +1670,33 @@ public class ORPanel extends GridPanel
         specialActionsButtonPanel.setOpaque(false);
         phase5Panel.add(specialActionsButtonPanel);
 
+       // Move End Turn button into Phase 5 Panel
+        btnDone = createSidebarButton("End Turn", DONE_CMD);
+        btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
+        btnDone.setPreferredSize(new Dimension(getSidebarWidth() - scale(10), scale(40)));
+        btnDone.setEnabled(false);
+        resetButtonStyle(btnDone);
+
+        phase5Panel.add(Box.createVerticalStrut(5));
+        phase5Panel.add(btnDone);
+        phase5Panel.add(Box.createVerticalStrut(5));
+
         sidebarPanel.add(phase5Panel);
         sidebarPanel.add(Box.createVerticalStrut(5));
 
-        // 8. Footer (Done Button)
-        // Change Footer to Vertical Box to hold Done + Notifications tightly together
+        // 8. Footer (Notifications Only)
         footerPanel = new JPanel();
         footerPanel.setLayout(new BoxLayout(footerPanel, BoxLayout.Y_AXIS));
         footerPanel.setOpaque(false);
         footerPanel.setBorder(BorderFactory.createEmptyBorder(PANEL_ACTION_GAP, 0, PANEL_ACTION_GAP, 0));
 
-        // Rename to "End Turn" and set initial state to Disabled/gray
-        btnDone = createSidebarButton("End Turn", DONE_CMD);
-        btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
-        btnDone.setPreferredSize(new Dimension(getSidebarWidth() - scale(10), scale(40)));
-        btnDone.setEnabled(false);
-        resetButtonStyle(btnDone); // Forces gray/standard look
-
-        // 9. Special Notifications
         specialNotificationPanel = new JPanel();
         specialNotificationPanel.setLayout(new BoxLayout(specialNotificationPanel, BoxLayout.Y_AXIS));
         specialNotificationPanel.setOpaque(false);
         specialNotificationPanel.setVisible(false);
 
-        // Add Special Notifications FIRST
         footerPanel.add(specialNotificationPanel);
         footerPanel.add(Box.createVerticalStrut(4));
-
-        // Add Done Button LAST so it is always at the absolute bottom
-        footerPanel.add(btnDone);
 
         sidebarPanel.add(footerPanel);
         sidebarPanel.add(Box.createVerticalStrut(5));
@@ -2235,8 +2273,6 @@ public class ORPanel extends GridPanel
         }
     }
 
- 
-
     // Inner Classes
     private class TokenDisplayPanel extends JPanel {
         public void setTokens(int count, PublicCompany c) {
@@ -2653,7 +2689,6 @@ public class ORPanel extends GridPanel
         colorizeActivePhase(null);
         if (lblCash != null)
             lblCash.setText(format(orComp.getPurseMoneyModel().value()));
-        
 
         if (lblLoans != null && orComp != null && hasCompanyLoans) {
             int currentBonds = orComp.getNumberOfBonds();
@@ -2677,11 +2712,13 @@ public class ORPanel extends GridPanel
             }
             int totalInterestCost = currentBonds * interestRate;
 
-           // Generic Fallback: If not 1817, extract standard company loan tracking data
+            // Generic Fallback: If not 1817, extract standard company loan tracking data
             int currentLoans = (orComp.hasBonds()) ? orComp.getNumberOfBonds() : orComp.getCurrentNumberOfLoans();
             int maxLoans = orComp.getMaxNumberOfLoans();
-            if (maxLoans <= 0) maxLoans = 5; // standard 1856 maximum cap threshold
-            if (maxLoans < currentLoans) maxLoans = currentLoans;
+            if (maxLoans <= 0)
+                maxLoans = 5; // standard 1856 maximum cap threshold
+            if (maxLoans < currentLoans)
+                maxLoans = currentLoans;
 
             // Build the Visual Dot String safely
             StringBuilder sb = new StringBuilder("<html><center>");
@@ -2691,8 +2728,9 @@ public class ORPanel extends GridPanel
             for (int b = 0; b < (maxLoans - currentLoans); b++) {
                 sb.append("<font color='#888888'>○</font>");
             }
-            
-            // For 1856, interest is typically handled differently or directly calculated per operating round phase step
+
+            // For 1856, interest is typically handled differently or directly calculated
+            // per operating round phase step
             if (interestRate > 0) {
                 sb.append("&nbsp;<font color='black' size='4'>($").append(totalInterestCost).append(")</font>");
             } else {
@@ -3338,7 +3376,8 @@ public class ORPanel extends GridPanel
             activePhase = computedPhase;
             setStandardPanelsVisible(true);
 
-         // Run visual framing first so it cannot overwrite explicit action bindings later
+            // Run visual framing first so it cannot overwrite explicit action bindings
+            // later
             if (activePhase == 1 || activePhase == 2) {
                 boolean hasSelection = (orUIManager != null && orUIManager.getMap() != null
                         && orUIManager.getMap().getSelectedHex() != null);
@@ -3561,102 +3600,109 @@ public class ORPanel extends GridPanel
         return super.processKeyBinding(ks, e, condition, pressed);
     }
 
-
     ////////////////////////////////////////////////////////
-    /// 
-    /// 
-
-
+    ///
+    ///
 
     public void activateHelpOverlay() {
-if (orWindow == null) return;
-    Component currentGlass = orWindow.getGlassPane();
-    net.sf.rails.ui.swing.help.HelpOverlayGlassPane helpPane;
-    if (currentGlass instanceof net.sf.rails.ui.swing.help.HelpOverlayGlassPane) {
-        helpPane = (net.sf.rails.ui.swing.help.HelpOverlayGlassPane) currentGlass;
-        if (helpPane.isVisible()) {
-            helpPane.setVisible(false);
-            helpPane.clearSpotlights();
+        if (orWindow == null)
             return;
+        Component currentGlass = orWindow.getGlassPane();
+        net.sf.rails.ui.swing.help.HelpOverlayGlassPane helpPane;
+        if (currentGlass instanceof net.sf.rails.ui.swing.help.HelpOverlayGlassPane) {
+            helpPane = (net.sf.rails.ui.swing.help.HelpOverlayGlassPane) currentGlass;
+            if (helpPane.isVisible()) {
+                helpPane.setVisible(false);
+                helpPane.clearSpotlights();
+                return;
+            }
+        } else {
+            helpPane = new net.sf.rails.ui.swing.help.HelpOverlayGlassPane();
+            orWindow.setGlassPane(helpPane);
         }
-    } else {
-        helpPane = new net.sf.rails.ui.swing.help.HelpOverlayGlassPane();
-        orWindow.setGlassPane(helpPane);
-    }
-    
-    helpPane.clearSpotlights();
-    
-    // 1. Standard Buttons with Contextual Text
-    addIfActive(helpPane, btnTileConfirm, "Confirm Map Selection");
-    addIfActive(helpPane, btnTokenConfirm, "Confirm Token Placement");
-    addIfActive(helpPane, btnRevPayout, "Payout: Distribute cash to shareholders, increase stock value.");
-    addIfActive(helpPane, btnRevSplit, "Split: Half to shareholders, half to company treasury.");
-    addIfActive(helpPane, btnRevWithhold, "Withhold: Keep all cash in company treasury, stock value drops.");
-    addIfActive(helpPane, btnTrainSkip, "Skip Train Purchase");
-    addIfActive(helpPane, btnDone, "End Turn: Advance to the next company.");
-    
-    // 2. Dynamic Buttons
-    scanPanelForActiveButtons(helpPane, trainButtonsPanel);
-    scanPanelForActiveButtons(helpPane, specialActionsButtonPanel);
-    scanPanelForActiveButtons(helpPane, specialPanel);
-    
-    // 3. Highlight the active phase header
-    JPanel activePanel = getActivePhasePanel();
-    if (activePanel != null && activePanel.isVisible()) {
-        Rectangle bounds = SwingUtilities.convertRectangle(activePanel.getParent(), activePanel.getBounds(), helpPane);
-        helpPane.addSpotlight(bounds, "Current Phase: Follow the highlighted actions.");
-    }
 
-    // 4. Highlight Valid Map Hexes (Spatial Spotlighting)
-    if (orUIManager != null && orUIManager.getMap() != null) {
-        if (activePhase == 1 || activePhase == 2) {
-            for (GUIHex hex : cycleableHexes) {
-                try {
-                    Rectangle hexBounds = hex.getBounds(); 
-                    if (hexBounds != null && orWindow.getMapPanel() != null) {
-                        Rectangle screenBounds = SwingUtilities.convertRectangle(orWindow.getMapPanel(), hexBounds, helpPane);
-                        screenBounds.grow(2, 2); 
-                        
-String hexContext = (activePhase == 1) ? 
-                                "Hex " + hex.getHex().getId() + ": Click to lay Track" : 
-                                "Hex " + hex.getHex().getId() + ": Click to place Station Token";                
-                        helpPane.addSpotlight(screenBounds, hexContext);
+        helpPane.clearSpotlights();
+
+        // 1. Standard Buttons with Contextual Text
+        addIfActive(helpPane, btnTileConfirm, "Confirm Map Selection");
+        addIfActive(helpPane, btnTokenConfirm, "Confirm Token Placement");
+        addIfActive(helpPane, btnRevPayout, "Payout: Distribute cash to shareholders, increase stock value.");
+        addIfActive(helpPane, btnRevSplit, "Split: Half to shareholders, half to company treasury.");
+        addIfActive(helpPane, btnRevWithhold, "Withhold: Keep all cash in company treasury, stock value drops.");
+        addIfActive(helpPane, btnTrainSkip, "Skip Train Purchase");
+        addIfActive(helpPane, btnDone, "End Turn: Advance to the next company.");
+
+        // 2. Dynamic Buttons
+        scanPanelForActiveButtons(helpPane, trainButtonsPanel);
+        scanPanelForActiveButtons(helpPane, specialActionsButtonPanel);
+        scanPanelForActiveButtons(helpPane, specialPanel);
+
+        // 3. Highlight the active phase header
+        JPanel activePanel = getActivePhasePanel();
+        if (activePanel != null && activePanel.isVisible()) {
+            Rectangle bounds = SwingUtilities.convertRectangle(activePanel.getParent(), activePanel.getBounds(),
+                    helpPane);
+            helpPane.addSpotlight(bounds, "Current Phase: Follow the highlighted actions.");
+        }
+
+        // 4. Highlight Valid Map Hexes (Spatial Spotlighting)
+        if (orUIManager != null && orUIManager.getMap() != null) {
+            if (activePhase == 1 || activePhase == 2) {
+                for (GUIHex hex : cycleableHexes) {
+                    try {
+                        Rectangle hexBounds = hex.getBounds();
+                        if (hexBounds != null && orWindow.getMapPanel() != null) {
+                            Rectangle screenBounds = SwingUtilities.convertRectangle(orWindow.getMapPanel(), hexBounds,
+                                    helpPane);
+                            screenBounds.grow(2, 2);
+
+                            String hexContext = (activePhase == 1)
+                                    ? "Hex " + hex.getHex().getId() + ": Click to lay Track"
+                                    : "Hex " + hex.getHex().getId() + ": Click to place Station Token";
+                            helpPane.addSpotlight(screenBounds, hexContext);
+                        }
+                    } catch (Exception e) {
+                        log.error("Could not extract bounds for highlighted hex", e);
                     }
-                } catch (Exception e) {
-                    log.error("Could not extract bounds for highlighted hex", e);
                 }
             }
         }
+
+        helpPane.setVisible(true);
     }
-    
-    helpPane.setVisible(true);
-}
 
-private JPanel getActivePhasePanel() {
-    if (activePhase == 1) return phase1Panel;
-    if (activePhase == 2) return phase2Panel;
-    if (activePhase == 3) return phase3Panel;
-    if (activePhase == 4) return phase4Panel;
-    if (activePhase == 5) return phase5Panel;
-    return null;
-}
-
-private void addIfActive(net.sf.rails.ui.swing.help.HelpOverlayGlassPane pane, ActionButton btn, String text) {
-    if (btn != null && btn.isVisible() && btn.isEnabled()) {
-        Rectangle bounds = SwingUtilities.convertRectangle(btn.getParent(), btn.getBounds(), pane);
-        pane.addSpotlight(bounds, text);
+    private JPanel getActivePhasePanel() {
+        if (activePhase == 1)
+            return phase1Panel;
+        if (activePhase == 2)
+            return phase2Panel;
+        if (activePhase == 3)
+            return phase3Panel;
+        if (activePhase == 4)
+            return phase4Panel;
+        if (activePhase == 5)
+            return phase5Panel;
+        return null;
     }
-}
 
-private void scanPanelForActiveButtons(net.sf.rails.ui.swing.help.HelpOverlayGlassPane pane, JPanel container) {
-    if (container == null || !container.isVisible()) return;
-    for (Component c : container.getComponents()) {
-        if (c instanceof ActionButton && c.isVisible() && c.isEnabled()) {
-            // Extract clean text from the button, stripping any HTML tags we inject for formatting
-            String text = ((ActionButton) c).getText().replaceAll("<[^>]*>", "").trim();
-            pane.addSpotlight(SwingUtilities.convertRectangle(c.getParent(), c.getBounds(), pane), text);
+    private void addIfActive(net.sf.rails.ui.swing.help.HelpOverlayGlassPane pane, ActionButton btn, String text) {
+        if (btn != null && btn.isVisible() && btn.isEnabled()) {
+            Rectangle bounds = SwingUtilities.convertRectangle(btn.getParent(), btn.getBounds(), pane);
+            pane.addSpotlight(bounds, text);
         }
     }
-}
+
+    private void scanPanelForActiveButtons(net.sf.rails.ui.swing.help.HelpOverlayGlassPane pane, JPanel container) {
+        if (container == null || !container.isVisible())
+            return;
+        for (Component c : container.getComponents()) {
+            if (c instanceof ActionButton && c.isVisible() && c.isEnabled()) {
+                // Extract clean text from the button, stripping any HTML tags we inject for
+                // formatting
+                String text = ((ActionButton) c).getText().replaceAll("<[^>]*>", "").trim();
+                pane.addSpotlight(SwingUtilities.convertRectangle(c.getParent(), c.getBounds(), pane), text);
+            }
+        }
+    }
 
 }
