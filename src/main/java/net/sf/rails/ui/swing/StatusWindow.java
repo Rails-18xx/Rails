@@ -1030,16 +1030,12 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         } else if (command.equals("SHOW_ACTION_RUNNER")) {
             showActionRunner();
         } else if (command.equals("HelpWindowCmd")) {
-if (gameUIManager.helpTextWindow == null) {
-                gameUIManager.helpTextWindow = new HelpTextWindow(this.buildTimestamp, gameUIManager);
-                gameUIManager.helpTextWindow.setName("HelpTextWindow");
-                gameUIManager.helpTextWindow.setVisible(true);
-            } else {
-                gameUIManager.helpTextWindow.refreshHelp(gameUIManager.getGameManager(), this.buildTimestamp);
-                gameUIManager.helpTextWindow.setVisible(true);
-                gameUIManager.helpTextWindow.toFront();
-            }
 
+            if (gameUIManager.getORUIManager() != null && gameUIManager.getORUIManager().getORPanel() != null) {
+                gameUIManager.getORUIManager().getORPanel().activateHelpOverlay();
+            } else {
+                log.info("StatusWindow: Help overlay is currently only available during Operating Rounds.");
+            }
 
         } else if (command.equals(REM_TILES_CMD) || command.equals(ORPanel.REM_TILES_CMD)) {
 

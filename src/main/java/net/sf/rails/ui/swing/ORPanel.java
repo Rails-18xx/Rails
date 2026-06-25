@@ -2230,6 +2230,8 @@ public class ORPanel extends GridPanel
         }
     }
 
+ 
+
     // Inner Classes
     private class TokenDisplayPanel extends JPanel {
         public void setTokens(int count, PublicCompany c) {
@@ -3551,5 +3553,103 @@ public class ORPanel extends GridPanel
         }
         return super.processKeyBinding(ks, e, condition, pressed);
     }
+
+
+    ////////////////////////////////////////////////////////
+    /// 
+    /// 
+
+
+
+    public void activateHelpOverlay() {
+if (orWindow == null) return;
+    Component currentGlass = orWindow.getGlassPane();
+    net.sf.rails.ui.swing.help.HelpOverlayGlassPane helpPane;
+    if (currentGlass instanceof net.sf.rails.ui.swing.help.HelpOverlayGlassPane) {
+        helpPane = (net.sf.rails.ui.swing.help.HelpOverlayGlassPane) currentGlass;
+        if (helpPane.isVisible()) {
+            helpPane.setVisible(false);
+            helpPane.clearSpotlights();
+            return;
+        }
+    } else {
+        helpPane = new net.sf.rails.ui.swing.help.HelpOverlayGlassPane();
+        orWindow.setGlassPane(helpPane);
+    }
+    
+    helpPane.clearSpotlights();
+    
+    // 1. Standard Buttons with Contextual Text
+    addIfActive(helpPane, btnTileConfirm, "Confirm Map Selection");
+    addIfActive(helpPane, btnTokenConfirm, "Confirm Token Placement");
+    addIfActive(helpPane, btnRevPayout, "Payout: Distribute cash to shareholders, increase stock value.");
+    addIfActive(helpPane, btnRevSplit, "Split: Half to shareholders, half to company treasury.");
+    addIfActive(helpPane, btnRevWithhold, "Withhold: Keep all cash in company treasury, stock value drops.");
+    addIfActive(helpPane, btnTrainSkip, "Skip Train Purchase");
+    addIfActive(helpPane, btnDone, "End Turn: Advance to the next company.");
+    
+    // 2. Dynamic Buttons
+    scanPanelForActiveButtons(helpPane, trainButtonsPanel);
+    scanPanelForActiveButtons(helpPane, specialActionsButtonPanel);
+    scanPanelForActiveButtons(helpPane, specialPanel);
+    
+    // 3. Highlight the active phase header
+    JPanel activePanel = getActivePhasePanel();
+    if (activePanel != null && activePanel.isVisible()) {
+        Rectangle bounds = SwingUtilities.convertRectangle(activePanel.getParent(), activePanel.getBounds(), helpPane);
+        helpPane.addSpotlight(bounds, "Current Phase: Follow the highlighted actions.");
+    }
+
+    // 4. Highlight Valid Map Hexes (Spatial Spotlighting)
+    if (orUIManager != null && orUIManager.getMap() != null) {
+        if (activePhase == 1 || activePhase == 2) {
+            for (GUIHex hex : cycleableHexes) {
+                try {
+                    Rectangle hexBounds = hex.getBounds(); 
+                    if (hexBounds != null && orWindow.getMapPanel() != null) {
+                        Rectangle screenBounds = SwingUtilities.convertRectangle(orWindow.getMapPanel(), hexBounds, helpPane);
+                        screenBounds.grow(2, 2); 
+                        
+String hexContext = (activePhase == 1) ? 
+                                "Hex " + hex.getHex().getId() + ": Click to lay Track" : 
+                                "Hex " + hex.getHex().getId() + ": Click to place Station Token";                
+                        helpPane.addSpotlight(screenBounds, hexContext);
+                    }
+                } catch (Exception e) {
+                    log.error("Could not extract bounds for highlighted hex", e);
+                }
+            }
+        }
+    }
+    
+    helpPane.setVisible(true);
+}
+
+private JPanel getActivePhasePanel() {
+    if (activePhase == 1) return phase1Panel;
+    if (activePhase == 2) return phase2Panel;
+    if (activePhase == 3) return phase3Panel;
+    if (activePhase == 4) return phase4Panel;
+    if (activePhase == 5) return phase5Panel;
+    return null;
+}
+
+private void addIfActive(net.sf.rails.ui.swing.help.HelpOverlayGlassPane pane, ActionButton btn, String text) {
+    if (btn != null && btn.isVisible() && btn.isEnabled()) {
+        Rectangle bounds = SwingUtilities.convertRectangle(btn.getParent(), btn.getBounds(), pane);
+        pane.addSpotlight(bounds, text);
+    }
+}
+
+private void scanPanelForActiveButtons(net.sf.rails.ui.swing.help.HelpOverlayGlassPane pane, JPanel container) {
+    if (container == null || !container.isVisible()) return;
+    for (Component c : container.getComponents()) {
+        if (c instanceof ActionButton && c.isVisible() && c.isEnabled()) {
+            // Extract clean text from the button, stripping any HTML tags we inject for formatting
+            String text = ((ActionButton) c).getText().replaceAll("<[^>]*>", "").trim();
+            pane.addSpotlight(SwingUtilities.convertRectangle(c.getParent(), c.getBounds(), pane), text);
+        }
+    }
+}
 
 }
