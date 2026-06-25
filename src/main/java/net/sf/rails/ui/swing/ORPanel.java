@@ -211,6 +211,18 @@ public class ORPanel extends GridPanel
         hasRights = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_ANY_RIGHTS);
         hasDirectCompanyIncomeInOR = gameUIManager.getGameParameterAsBoolean(GuiDef.Parm.HAS_SPECIAL_COMPANY_INCOME);
 
+// Robust 1856/18xx Fallback: If parameter is false, scan companies for loan definitions to match GameManager
+        if (!hasCompanyLoans && gameUIManager.getAllPublicCompanies() != null) {
+            for (PublicCompany company : gameUIManager.getAllPublicCompanies()) {
+                if (company != null && company.getMaxNumberOfLoans() != 0) {
+                    hasCompanyLoans = true;
+                    break;
+                }
+            }
+        }
+        
+
+
         initSidebar();
 
         gbc = new GridBagConstraints();
@@ -2634,6 +2646,7 @@ public class ORPanel extends GridPanel
         colorizeActivePhase(null);
         if (lblCash != null)
             lblCash.setText(format(orComp.getPurseMoneyModel().value()));
+        
 
         if (lblLoans != null && orComp != null && hasCompanyLoans) {
             int currentBonds = orComp.getNumberOfBonds();
@@ -2657,15 +2670,27 @@ public class ORPanel extends GridPanel
             }
             int totalInterestCost = currentBonds * interestRate;
 
-            // Build the Visual Dot String
+           // Generic Fallback: If not 1817, extract standard company loan tracking data
+            int currentLoans = (orComp.hasBonds()) ? orComp.getNumberOfBonds() : orComp.getCurrentNumberOfLoans();
+            int maxLoans = orComp.getMaxNumberOfLoans();
+            if (maxLoans <= 0) maxLoans = 5; // standard 1856 maximum cap threshold
+            if (maxLoans < currentLoans) maxLoans = currentLoans;
+
+            // Build the Visual Dot String safely
             StringBuilder sb = new StringBuilder("<html><center>");
-            for (int b = 0; b < currentBonds; b++) {
+            for (int b = 0; b < currentLoans; b++) {
                 sb.append("<font color='red'>●</font>");
             }
-            for (int b = 0; b < (maxBonds - currentBonds); b++) {
+            for (int b = 0; b < (maxLoans - currentLoans); b++) {
                 sb.append("<font color='#888888'>○</font>");
             }
-            sb.append("&nbsp;<font color='black' size='4'>($").append(totalInterestCost).append(")</font>");
+            
+            // For 1856, interest is typically handled differently or directly calculated per operating round phase step
+            if (interestRate > 0) {
+                sb.append("&nbsp;<font color='black' size='4'>($").append(totalInterestCost).append(")</font>");
+            } else {
+                sb.append("&nbsp;<font color='black' size='4'>(").append(currentLoans).append(")</font>");
+            }
             sb.append("</center></html>");
 
             lblLoans.setText(sb.toString());
@@ -3358,7 +3383,6 @@ public class ORPanel extends GridPanel
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (btn.isEnabled() && btn.isVisible()) {
-                        log.info("DEBUG: Button is valid. Clicking...");
                         btn.doClick();
                     } else {
                     }

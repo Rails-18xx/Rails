@@ -798,9 +798,9 @@ public class OperatingRound extends Round implements Observer {
                  */
 
                 company.clearTokenableStops();
-                if (!canLayAnyTokens(true)) {
-                    continue;
-                }
+                // if (!canLayAnyTokens(true)) {
+                //     continue;
+                // }
             }
 
             if (newStep == GameDef.OrStep.CALC_REVENUE) {
@@ -2291,10 +2291,10 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                 // FIXME: currentSpecialTokenLays can't actually contain a LayBonusToken
                 // currentSpecialTokenLays.remove(action);
             }
-            // Copied from layBaseToken. Does this help??
-            if (!canLayAnyTokens(false)) {
-                nextStep();
-            }
+            // // Copied from layBaseToken. Does this help??
+            // if (!canLayAnyTokens(false)) {
+            //     nextStep();
+            // }
 
         }
 
@@ -2363,9 +2363,9 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
 
         sbt.setExercised();
 
-        if (getStep() == GameDef.OrStep.LAY_TOKEN && !canLayAnyTokens(false)) {
-            nextStep();
-        }
+        // if (getStep() == GameDef.OrStep.LAY_TOKEN && !canLayAnyTokens(false)) {
+        //     nextStep();
+        // }
 
         return true;
     }
@@ -4417,7 +4417,7 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
 
             doneAllowed.set(true); // Enable "Skip All" (DONE)
 
-            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
+            // possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
 
         } else if (step == GameDef.OrStep.LAY_TOKEN) {
 
@@ -4431,12 +4431,15 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                 possibleActions.addAll(currentSpecialTokenLays);
                 if (!forced) {
                     doneAllowed.set(true); // Enable "Skip All" (DONE)
-                    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
+                    // possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
                 }
             } else {
-
-                nextStep();
-                return setPossibleActions(); // Re-run for the next step
+                // Even if no actions exist, explicitly offer a SKIP option instead of auto-advancing.
+                if (!forced) {
+                    doneAllowed.set(true);
+                    // possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
+                }
+            
             }
 
         } else if (step == GameDef.OrStep.CALC_REVENUE) {
@@ -4845,11 +4848,11 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
             }
             setSpecialTokenLays();
 
-            // Can more tokens be laid? Otherwise, next step
-            if (!canLayAnyTokens(false)) {
+            // // Can more tokens be laid? Otherwise, next step
+            // if (!canLayAnyTokens(false)) {
 
-                nextStep();
-            }
+            //     nextStep();
+            // }
 
         }
 
