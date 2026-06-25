@@ -1293,21 +1293,20 @@ public class OperatingRound_1835 extends OperatingRound {
 GameDef.OrStep step = getStep();
         PublicCompany company = operatingCompany.value();
 
-        // Restore the OLD brute-force bypass for the INITIAL step
+      // Removed the hardcoded INITIAL bypass entirely. 
+        // We must rely on the superclass (OperatingRound) to handle the INITIAL -> LAY_TRACK -> LAY_TOKEN flow.
+        // We only intervene here if Baden is specifically operating AND needs its token placement.
         if (step == GameDef.OrStep.INITIAL) {
-            initTurn();
             if (ctx.isBadenOperating && !company.hasOperated()) {
                 if (ctx.hasL6Tile && !ctx.baHasL6Token) {
+                    initTurn();
                     setStep(GameDef.OrStep.LAY_TOKEN);
-                    boolean res = setPossibleActions();
+                    boolean res = super.setPossibleActions();
                     pruneGhostActions();
                     return res;
                 }
             }
-            nextStep();
-            boolean res = setPossibleActions();
-            pruneGhostActions();
-            return res;
+            // Let the base engine handle normal initialisation and step progression
         }
 
         // Restore the OLD brute-force bypass for the LAY_TRACK step

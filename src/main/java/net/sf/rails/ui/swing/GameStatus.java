@@ -2464,24 +2464,22 @@ public class GameStatus extends GridPanel {
                 card.setAlignmentX(Component.CENTER_ALIGNMENT);
 
                 // 6. Add to Panel
-                playerPrivatesPanel[i].add(card);
+               panel.add(card);
                 // Small gap between cards
-                playerPrivatesPanel[i].add(Box.createVerticalStrut(2));
+                panel.add(Box.createVerticalStrut(2));
             }
 
             // Ensure the panel has height even if empty (prevents layout collapse)
             if (privates.isEmpty()) {
-                playerPrivatesPanel[i].add(Box.createVerticalStrut(DIM_TRAIN_BTN.height));
+                panel.add(Box.createVerticalStrut(DIM_TRAIN_BTN.height));
             }
 
             // Add Glue to push items to the top
-            playerPrivatesPanel[i].add(Box.createVerticalGlue());
+            panel.add(Box.createVerticalGlue());
 
             // Ensure we only repaint if the panel is still valid
-            if (playerPrivatesPanel[i] != null) {
-                playerPrivatesPanel[i].revalidate();
-                playerPrivatesPanel[i].repaint();
-            }
+            panel.revalidate();
+            panel.repaint();
 
         }
     }

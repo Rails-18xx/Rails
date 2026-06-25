@@ -262,9 +262,7 @@ public class ORPanel extends GridPanel
             return 0;
         }
 
-        // 1. Establish baseline phase strictly from Engine State
-        // This prevents the UI from skipping phases when standard actions (like trains
-        // to buy) are empty.
+       // Establish baseline phase strictly from Engine State to respect manual skip laws
         if (orUIManager != null && orUIManager.getGameUIManager() != null
                 && orUIManager.getGameUIManager().getGameManager() != null) {
             net.sf.rails.game.round.RoundFacade currentRound = orUIManager.getGameUIManager().getGameManager()
@@ -406,10 +404,17 @@ public class ORPanel extends GridPanel
             } else if (pa instanceof NullAction) {
                 NullAction.Mode mode = ((NullAction) pa).getMode();
                 if (mode == NullAction.Mode.DONE || mode == NullAction.Mode.PASS || mode == NullAction.Mode.SKIP) {
-                    if (activePhase == 4 && btnTrainSkip != null) {
+                   if (activePhase == 1 && btnTileConfirm != null) {
+                        setupButton(btnTileConfirm, pa);
+                        btnTileConfirm.setEnabled(true);
+                    } else if (activePhase == 2 && btnTokenConfirm != null) {
+                        setupButton(btnTokenConfirm, pa);
+                        btnTokenConfirm.setEnabled(true);
+                    } else if (activePhase == 4 && btnTrainSkip != null) {
                         setupButton(btnTrainSkip, pa);
                         btnTrainSkip.setText(mode == NullAction.Mode.SKIP ? "Skip Buy" : "Done Buying");
                     }
+                    
                     setupButton(btnDone, pa);
                     bindActionHotkey(btnDone, pa);
                     donePa = pa;
@@ -2764,10 +2769,17 @@ public class ORPanel extends GridPanel
         } else if (command.equals(CONFIRM_CMD)) {
             if (orUIManager != null) {
                 boolean hasSelection = (orUIManager.getMap().getSelectedHex() != null);
-                if (hasSelection)
+                if (hasSelection) {
                     orUIManager.confirmUpgrade();
-                else
-                    orUIManager.skipUpgrade();
+                } else {
+                    // Check if the button contains a dynamically validated engine action object
+                    if (source instanceof ActionButton && !((ActionButton) source).getPossibleActions().isEmpty()) {
+                        List<PossibleAction> attached = ((ActionButton) source).getPossibleActions();
+                        orUIManager.processAction(command, attached, source);
+                    } else {
+                        orUIManager.skipUpgrade();
+                    }
+                }
             }
             forceSyncWithEngine();
         } else if (command.equals(OPERATING_COST_CMD)) {
@@ -3326,6 +3338,7 @@ public class ORPanel extends GridPanel
             activePhase = computedPhase;
             setStandardPanelsVisible(true);
 
+         // Run visual framing first so it cannot overwrite explicit action bindings later
             if (activePhase == 1 || activePhase == 2) {
                 boolean hasSelection = (orUIManager != null && orUIManager.getMap() != null
                         && orUIManager.getMap().getSelectedHex() != null);
@@ -3335,12 +3348,6 @@ public class ORPanel extends GridPanel
             distributeStandardActions(validOrActions);
             updateSidebarData();
             updatePhaseSpecifics();
-
-            if (activePhase == 1 || activePhase == 2) {
-                boolean hasSelection = (orUIManager != null && orUIManager.getMap() != null
-                        && orUIManager.getMap().getSelectedHex() != null);
-                enableConfirm(hasSelection);
-            }
 
             if (sidebarPanel != null)
                 sidebarPanel.revalidate(); // Ensure standard mode revalidates too

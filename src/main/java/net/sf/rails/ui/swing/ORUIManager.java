@@ -519,23 +519,15 @@ public void toggleRevenueSpinner() {
                 boolean canLay = !possibleActions.getType(LayTile.class).isEmpty();
                 boolean canSpecial = !possibleActions.getType(UseSpecialProperty.class).isEmpty();
                 if (!canLay && !canSpecial && !hasSpecialOR) {
-                    // Only return if we actually processed the SKIP.
-                    // If no SKIP exists (e.g., only DONE exists), fall through to update UI.
-                    if (processNullAction(possibleActions, NullAction.Mode.SKIP))
-                        return;
+                    // --- DELETE --- if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
                 }
             } else if (orStep == GameDef.OrStep.LAY_TOKEN) {
                 if (possibleActions.getType(LayToken.class).isEmpty() && !hasSpecialOR) {
-                    if (processNullAction(possibleActions, NullAction.Mode.SKIP))
-                        return;
+                    // --- DELETE --- if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
                 }
             } else if (orStep == GameDef.OrStep.BUY_TRAIN) {
                 if (possibleActions.getType(BuyTrain.class).isEmpty() && !hasSpecialOR) {
-                    // This was the specific bug: It tried to SKIP, failed (because only DONE
-                    // existed),
-                    // but returned anyway. Now it will fall through.
-                    if (processNullAction(possibleActions, NullAction.Mode.SKIP))
-                        return;
+                    // --- DELETE --- if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
                 }
             }
         }
@@ -957,13 +949,33 @@ public void toggleRevenueSpinner() {
         return true;
     }
 
-    public void confirmUpgrade() {
-        HexUpgrade upgrade = hexUpgrades.getActiveUpgrade();
-        if (upgrade instanceof TileHexUpgrade)
-            layTile((TileHexUpgrade) upgrade);
-        if (upgrade instanceof TokenHexUpgrade)
-            layToken((TokenHexUpgrade) upgrade);
+ 
+
+public void confirmUpgrade() {
+// --- START FIX ---
+        if (map == null) return;
+        
+        // Find the selected hex and its current visual upgrade
+        GUIHex selectedHex = map.getSelectedHex();
+        if (selectedHex == null || selectedHex.getUpgrade() == null) return;
+        
+        HexUpgrade currentUpgrade = selectedHex.getUpgrade();
+        
+        if (currentUpgrade instanceof TileHexUpgrade) {
+            TileHexUpgrade thu = (TileHexUpgrade) currentUpgrade;
+            layTile(thu);
+        } else if (currentUpgrade instanceof TokenHexUpgrade) {
+            TokenHexUpgrade thup = (TokenHexUpgrade) currentUpgrade;
+            layToken(thup);
+        }
+        
+        if (floatingUpgradesDialog != null) {
+            floatingUpgradesDialog.setVisible(false);
+        }
+// --- END FIX ---
     }
+
+
 
     public void skipUpgrade() {
         if (getPossibleActions().containsCorrections()) {

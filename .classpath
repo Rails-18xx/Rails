@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**" kind="src" output="bin/test" path="src/test/resources">
+	<classpathentry kind="src" output="bin/test" path="src/test/resources">
 		<attributes>
 			<attribute name="gradle_scope" value="test"/>
 			<attribute name="gradle_used_by_scope" value="test"/>
@@ -14,7 +14,7 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="**" kind="src" output="bin/main" path="src/main/resources">
+	<classpathentry kind="src" output="bin/main" path="src/main/resources">
 		<attributes>
 			<attribute name="gradle_scope" value="main"/>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
@@ -28,8 +28,5 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21/"/>
 	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
-	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.22.0/f25b20bdff54546bcaf9d1ac4701447f2d3968f7/jackson-core-2.22.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.22.0/1606800d701b5e29e5581b20f65dfa1141338c09/jackson-core-2.22.0-sources.jar"/>
-	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.22.0/7aa54fc3755a9285eec2e73053bde1b9b845a9b2/jackson-databind-2.22.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.22.0/5e7c440756f5f74bbe90b423b05110623ec0591e/jackson-databind-2.22.0-sources.jar"/>
-	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.22/15c67f9498d6934cff9510fc70c5a12e52290457/jackson-annotations-2.22.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.22/a4126c1fdcde457ca6aaea0d196e445e5938d52e/jackson-annotations-2.22-sources.jar"/>
 	<classpathentry kind="output" path="bin/default"/>
 </classpath>

@@ -1735,6 +1735,8 @@ if (isTimeManagementEnabled()) {
 
             getCurrentRound().setPossibleActions();
 
+
+
             if (result && !(action instanceof GameAction) && !(startGameAction)) {
 
                 if (isTimeManagementEnabled()) {
@@ -4032,11 +4034,16 @@ if (isTimeManagementEnabled()) {
                 entry = "laid tile " + lt.getLaidTile().getId() + " on " + location;
             } else if (action instanceof LayToken) {
                 LayToken lt = (LayToken) action;
-                String location = lt.getChosenHex().getId();
-                String cityName = lt.getChosenHex().getStopName();
-                if (Util.hasValue(cityName))
-                    location += " (" + cityName + ")";
-                entry = "placed token on " + location;
+                // Protected against NullPointerException if the chosen hex has not been populated yet
+                if (lt.getChosenHex() != null) {
+                    String location = lt.getChosenHex().getId();
+                    String cityName = lt.getChosenHex().getStopName();
+                    if (Util.hasValue(cityName))
+                        location += " (" + cityName + ")";
+                    entry = "placed token on " + location;
+                } else {
+                    entry = "initiated token placement step";
+                }
             } else if (action instanceof BuyTrain) {
                 BuyTrain bt = (BuyTrain) action;
                 String trainName = (bt.getTrain() != null) ? bt.getTrain().getName().split("_")[0] : "?";

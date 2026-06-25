@@ -780,46 +780,13 @@ public class OperatingRound extends Round implements Observer {
                 initNormalTileLays();
             }
 
-            if (newStep == GameDef.OrStep.LAY_TOKEN) {
-                /*
-                 * List<SpecialProperty> bonuses = gameManager.getCommonSpecialProperties();
-                 * boolean bonusTokensForSale =
-                 * //bonuses.size() > 0
-                 * // FIXME The above condition is probably wrong, it likely should be:
-                 * !getSpecialProperties(SpecialBonusTokenLay.class).isEmpty()
-                 * // but that needs to be sorted out precisely.
-                 * // The intended effect is that the TOKEN_LAY step is skipped
-                 * // if there are no base or bonus tokens to be laid.
-                 * //
-                 * // Note: removed temporary exception for 1856 14apr2021
-                 * ;
-                 * if (company.getNumberOfFreeBaseTokens() == 0
-                 * && !bonusTokensForSale) {
-                 */
-
+          if (newStep == GameDef.OrStep.LAY_TOKEN) {
                 company.clearTokenableStops();
-                // if (!canLayAnyTokens(true)) {
-                //     continue;
-                // }
+                // Removed the premature break.
+                // Omitting standard token-count checks here prevents the base engine's auto-skip,
+                // but the flow must continue downward to properly evaluate gameSpecificNextStep().
             }
-
-            if (newStep == GameDef.OrStep.CALC_REVENUE) {
-
-                // if (company.hasTrains()) {
-                if (companyHasRunningTrains(true)) {
-                    // All OK, we can't check here if it has a route
-
-                } else if (company.canGenerateOtherRevenue()) {
-                    // In 18Scan a trainless minor company still pays out.
-                    executeTrainlessRevenue(newStep);
-                    continue;
-                } else {
-                    executeSetRevenueAndDividend(new SetDividend(getRoot(), 0,
-                            false, new int[] { SetDividend.NO_TRAIN }));
-                    // TODO: This probably does not handle share selling correctly
-                    continue;
-                }
-            }
+           
 
             if (newStep == GameDef.OrStep.PAYOUT) {
                 // This step is now obsolete
@@ -895,8 +862,6 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /**
-     * Stub, may be overridden if there are non-running trains.
-     * Used in 1837
      * 
      * @param display Not used here; see 1837 version
      * @return True if the company has trains that are allowed to run
@@ -2540,12 +2505,12 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                 action.setRevenueAllocation(SetDividend.WITHHOLD);
             }
 
-            if (amount == 0
-                    && operatingCompany.value().getNumberOfTrains() == 0) {
-                DisplayBuffer.add(this, LocalText.getText(
-                        "RevenueWithNoTrains",
-                        operatingCompany.value().getId(), Bank.format(this, 0)));
-            }
+            // if (amount == 0
+            //         && operatingCompany.value().getNumberOfTrains() == 0) {
+            //     DisplayBuffer.add(this, LocalText.getText(
+            //             "RevenueWithNoTrains",
+            //             operatingCompany.value().getId(), Bank.format(this, 0)));
+            // }
 
             break;
         }
@@ -4507,6 +4472,29 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
             gameManager.getCurrentRound().setPossibleActions();
         }
 
+
+        // Force a universal safety fallback after step evaluation finishes to guarantee the UI panel always gets an interaction target.
+        boolean isMainORPhase = (step == GameDef.OrStep.LAY_TRACK || 
+                                 step == GameDef.OrStep.LAY_TOKEN || 
+                                 step == GameDef.OrStep.CALC_REVENUE || 
+                                 step == GameDef.OrStep.BUY_TRAIN);
+                                 
+        if (isMainORPhase && possibleActions.isEmpty()) {
+            if (step == GameDef.OrStep.CALC_REVENUE) {
+                // Construct a compulsory $0 base payout action so the user is forced to hit "Hold/Withhold" manually.
+                SetDividend zeroRevenueAction = new SetDividend(getRoot(), 0, false, new int[] { SetDividend.WITHHOLD });
+                zeroRevenueAction.setActualRevenue(0);
+                possibleActions.add(zeroRevenueAction);
+            } else {
+                if (step == GameDef.OrStep.LAY_TRACK) {
+                    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
+                } else {
+                    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
+                }
+            }
+        }
+
+
         // --- Common Actions ---
         if (!forced) {
 
@@ -4559,38 +4547,6 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                     }
                 }
             }
-
-            // // Can private companies be bought?
-            // if (isPrivateSellingAllowed()) {
-
-            // // Create a list of players with the current one in front
-            // int currentPlayerIndex = operatingCompany.value().getPresident().getIndex();
-            // Player player;
-            // int minPrice, maxPrice;
-            // List<Player> players = playerManager.getPlayers();
-            // int numberOfPlayers = playerManager.getNumberOfPlayers();
-            // for (int i = currentPlayerIndex; i < currentPlayerIndex + numberOfPlayers;
-            // i++) {
-            // player = players.get(i % numberOfPlayers);
-            // if (!maySellPrivate(player))
-            // continue;
-            // for (PrivateCompany privComp :
-            // player.getPortfolioModel().getPrivateCompanies()) {
-
-            // // check to see if the private can be sold to a company
-            // if (!privComp.tradeableToCompany()) {
-            // continue;
-            // }
-
-            // minPrice = getPrivateMinimumPrice(privComp);
-
-            // maxPrice = getPrivateMaximumPrice(privComp);
-
-            // BuyPrivate buyPrivate = new BuyPrivate(privComp, minPrice, maxPrice);
-            // possibleActions.add(buyPrivate);
-            // }
-            // }
-            // }
 
             if (operatingCompany.value().canUseSpecialProperties()) {
 

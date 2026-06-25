@@ -203,7 +203,7 @@ public boolean mayPlayerSellShareOfCompany(PublicCompany company) {
     boolean hasFloatedNow = company.hasFloated();
 
     if (isPrussia) {
-        return hasFloatedNow;
+        return company.hasStarted();
     }
 
     if (!hasOperated) {
