@@ -760,31 +760,7 @@ public class ORPanel extends GridPanel
                 styleButton(btnTrainSkip, UIManager.getColor("Button.background"), label);
                 btnTrainSkip.setForeground(Color.GRAY);
             }
-        } else if (activePhase == 6) {
-            // ACTIVATE: Enable and colorize for the final step
-            btnDone.setEnabled(true);
-            String doneText = getDoneButtonText();
-            styleButton(btnDone, UITheme.ACTION_SKIP, doneText);
-            btnDone.setForeground(Color.WHITE);
-            btnDone.setFont(new Font("SansSerif", Font.BOLD, 16));
-        } else {
-
-            // DIRECT ENGINE SYNC: If the engine natively provides a DONE/PASS action,
-            // expose it immediately. Do not hide valid engine actions behind local UI
-            // phases.
-            String doneText = getDoneButtonText();
-            if (btnDone.getPossibleActions() != null && !btnDone.getPossibleActions().isEmpty()) {
-                btnDone.setEnabled(true);
-                styleButton(btnDone, UITheme.ACTION_SKIP, doneText);
-                btnDone.setForeground(Color.WHITE);
-                btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
-            } else {
-                // PERSISTENT WAIT: Keep as 'END TURN' but disabled and gray
-                btnDone.setEnabled(false);
-                styleButton(btnDone, UIManager.getColor("Button.background"), doneText);
-                btnDone.setForeground(Color.GRAY);
-                btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
-            }
+        
         }
 
         // ALWAYS evaluate Phase 5 (Special Actions) independently!
@@ -3352,6 +3328,7 @@ public class ORPanel extends GridPanel
                 specialContainer.setVisible(true);
                 specialPanel.removeAll();
                 for (PossibleAction spa : specialActions) {
+                    if (spa instanceof NullAction) continue;
                     addSpecialActionButton(spa);
                 }
                 specialPanel.revalidate();
@@ -3362,25 +3339,8 @@ public class ORPanel extends GridPanel
             activePhase = computedPhase;
             setStandardPanelsVisible(true);
 
-            // --- 6. STANDARD MODE (OR MIXED) ---
-            this.specialModeActive = false;
+            
 
-            if (!specialActions.isEmpty() && specialPanel != null && specialContainer != null) {
-                specialContainer.setVisible(true);
-                specialPanel.removeAll();
-                for (PossibleAction spa : specialActions) {
-                    addSpecialActionButton(spa);
-                }
-                // Suppress rendering of NullAction in the special panel to avoid duplication,
-                // as it is inherently bound to the global 'btnDone' (END TURN) button.
-
-                specialPanel.revalidate();
-            } else if (specialContainer != null) {
-                specialContainer.setVisible(false);
-            }
-
-            activePhase = computedPhase;
-            setStandardPanelsVisible(true);
 
             // Run visual framing first so it cannot overwrite explicit action bindings
             // later

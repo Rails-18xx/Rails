@@ -152,8 +152,11 @@ public class GameLoader {
                 splashWindow.finalizeGameInit();
                 gameUIManager.notifyOfSplashFinalization();
             }
-        } catch (Exception e) {
-            // log.error("Failed to load game from file!", e); // Generic error
+} catch (Exception e) {
+            // --- DELETE --- // // log.error("Failed to load game from file!", e); // Generic error
+            // --- START FIX ---
+            log.error("Failed to load game from file! JVM terminating.", e);
+            // --- END FIX ---
             // TODO: Better error handling
             System.exit(-1);
         }
@@ -443,30 +446,37 @@ public class GameLoader {
             ((net.sf.rails.game.financial.StockRound) gameManager.getCurrentRound()).resetTransientStateOnLoad();
         }
 
-        if (gameIOData.getActions() != null) {
-            gameManager.getCurrentRound().setPossibleActions();
+        try {
+            if (gameIOData.getActions() != null) {
+                gameManager.getCurrentRound().setPossibleActions();
 
-            int processedCount = 0;
-            boolean hasLimit = (moveLimit != 0);
-            int targetLimit = moveLimit;
-            if (moveLimit < 0) {
-                targetLimit = gameIOData.getActions().size() + moveLimit;
-            }
-
-            for (PossibleAction action : gameIOData.getActions()) {
-
-                if (hasLimit && processedCount >= targetLimit) {
-                    log.info("GAMELOADER: Replay stopped at limit: " + targetLimit);
-                    break;
+                int processedCount = 0;
+                boolean hasLimit = (moveLimit != 0);
+                int targetLimit = moveLimit;
+                if (moveLimit < 0) {
+                    targetLimit = gameIOData.getActions().size() + moveLimit;
                 }
-                processedCount++;
-                actionCount = increaseActionCounter();
 
-                // DIRECT CALL: No try-catch.
-                // If processOnReload crashes, the exception escapes immediately.
-                // This stops the loop and fails the RegressionTest instantly.
-                gameManager.processOnReload(action);
+                for (PossibleAction action : gameIOData.getActions()) {
+
+                    if (hasLimit && processedCount >= targetLimit) {
+                        log.info("GAMELOADER: Replay stopped at limit: " + targetLimit);
+                        break;
+                    }
+                    processedCount++;
+                    actionCount = increaseActionCounter();
+
+                    // DIRECT CALL: No try-catch.
+                    // If processOnReload crashes, the exception escapes immediately.
+                    // This stops the loop and fails the RegressionTest instantly.
+                    gameManager.processOnReload(action);
+                }
             }
+        } catch (Exception e) {
+            log.error("GAMELOADER: FATAL CRASH during replay. Catching to prevent silent JVM shutdown.", e);
+            this.exception = e;
+            gameManager.setReloading(false);
+            return false;
         }
 
         gameManager.setReloading(false);

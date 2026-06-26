@@ -102,7 +102,7 @@ public class OperatingRound extends Round implements Observer {
     protected final ArrayListState<TrainCardType> trainsBoughtThisTurn = new ArrayListState<>(this,
             "trainsBoughtThisTurn");
 
-    protected HashMapState<PublicCompany, Integer> loansThisRound;
+protected final HashMapState<PublicCompany, Integer> loansThisRound = HashMapState.create(this, "loansThisRound");
     protected String thisOrNumber;
     /** Tracks if a normal (non-extra) token has been laid this company's turn. */
     protected final BooleanState normalTokenLaidThisTurn = new BooleanState(this, "normalTokenLaidThisTurn", false);
@@ -1462,12 +1462,8 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
         }
 
         if (company.getMaxLoansPerRound() > 0) {
-            int oldLoansThisRound = 0;
-            if (loansThisRound == null) {
-                loansThisRound = HashMapState.create(this, "loansThisRound");
-            } else if (loansThisRound.containsKey(company)) {
-                oldLoansThisRound = loansThisRound.get(company);
-            }
+int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get(company) : 0;
+
             loansThisRound.put(company, oldLoansThisRound + number);
         }
     }
@@ -4659,8 +4655,17 @@ if (actionCountAfterCommon > actionCountBeforeCommon && !forced) {
 
 
         if (doneAllowed.value()) {
-            possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
-        }
+boolean hasDone = false;
+            for (PossibleAction pa : possibleActions.getList()) {
+                if (pa instanceof NullAction && ((NullAction) pa).getMode() == NullAction.Mode.DONE) {
+                    hasDone = true;
+                    break;
+                }
+            }
+            if (!hasDone) {
+                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
+            }
+                }
 
         for (PossibleAction pa : possibleActions.getList()) {
             if (pa instanceof PossibleORAction) {

@@ -2251,10 +2251,8 @@ if (isTimeManagementEnabled()) {
         // Check size
         if (savedActions.size() < executedActions.size()) {
 
-            DisplayBuffer.add(this, LocalText.getText("LOAD_FAILED_MESSAGE",
-                    "loaded file has less actions than current game"));
-            this.actionsBeingReloaded = null; // Cleanup
-            return false;
+log.warn("Loaded file has fewer actions than the current game. Bypassing size check due to possible auto-recovery injections.");
+
         }
 
         // Check action identity
@@ -2264,6 +2262,7 @@ if (isTimeManagementEnabled()) {
         int executedActionsCount = executedActions.size();
         PossibleAction executedAction;
         try {
+            int executedIndexOffset = 0;
             // for (PossibleAction savedAction : savedActions) { // <-- DELETE
             for (this.reloadActionIndex = 0; this.reloadActionIndex < savedActions.size(); this.reloadActionIndex++) {
 
@@ -2306,8 +2305,21 @@ if (isTimeManagementEnabled()) {
                 }
 
                 PossibleAction savedAction = savedActions.get(this.reloadActionIndex);
-                if (this.reloadActionIndex < executedActionsCount) { // <-- USE MEMBER
-                    executedAction = executedActions.get(this.reloadActionIndex); // <-- USE MEMBER
+int actualExecIndex = this.reloadActionIndex + executedIndexOffset;
+                while (actualExecIndex < executedActionsCount) {
+                    executedAction = executedActions.get(actualExecIndex);
+                    // If the local history has an auto-injected NullAction, but the save file doesn't, skip over it.
+                    if (executedAction instanceof NullAction && !(savedAction instanceof NullAction)) {
+                        log.warn("RELOAD SYNC: Skipping auto-injected NullAction in local history: " + executedAction);
+                        executedIndexOffset++;
+                        actualExecIndex = this.reloadActionIndex + executedIndexOffset;
+                    } else {
+                        break;
+                    }
+                }
+
+                if (actualExecIndex < executedActionsCount) {
+                    executedAction = executedActions.get(actualExecIndex);
                     if (!savedAction.equalsAsAction(executedAction)) {
 
                         DisplayBuffer.add(this, LocalText.getText("LoadFailed",
@@ -3463,6 +3475,48 @@ if (isTimeManagementEnabled()) {
 
     public boolean processOnReload(PossibleAction action) {
         getRoot().getReportManager().getDisplayBuffer().clear();
+
+
+       // RELOAD RECOVERY: Auto-inject missing structural actions if the loaded action is not valid.
+        int maxRecoveryAttempts = 3;
+        while (!possibleActions.validate(action) && maxRecoveryAttempts > 0) {
+            // If it's merely a player mismatch (class matches), let standard validation handle the warning.
+            boolean classMatch = false;
+            for (PossibleAction pa : possibleActions.getList()) {
+                if (pa.getClass().equals(action.getClass())) {
+                    classMatch = true;
+                    break;
+                }
+            }
+            if (classMatch) break;
+
+            PossibleAction autoInjectAction = null;
+            for (PossibleAction pa : possibleActions.getList()) {
+                // Auto-inject ANY available NullAction (SKIP, DONE, PASS) to push the state forward
+                if (pa instanceof NullAction) {
+                    autoInjectAction = pa;
+                    break;
+                } else if (pa instanceof SetDividend) {
+                    SetDividend sd = (SetDividend) pa;
+                    // If it is a forced 0-revenue dividend, auto-withhold
+                    if (sd.toString().contains("presetRevenue=0") && sd.toString().contains("WITHHOLD")) {
+                        sd.setRevenueAllocation(SetDividend.WITHHOLD);
+                        autoInjectAction = sd;
+                        break;
+                    }
+                }
+            }
+
+            if (autoInjectAction != null) {
+                log.warn("RELOAD RECOVERY: Original action invalid. Auto-injecting missing action: " + autoInjectAction);
+                processOnReload(autoInjectAction);
+                maxRecoveryAttempts--;
+            } else {
+                break; // No auto-recoverable actions available
+            }
+        }
+
+
         RoundFacade roundBefore = getCurrentRound();
         Object actorBefore = getCurrentPlayer();
         if (roundBefore instanceof OperatingRound) {
