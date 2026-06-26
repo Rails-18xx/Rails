@@ -1,0 +1,41 @@
+{
+  "game": "18EZ",
+  "rules": {
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "- | - | - | - | - |  |  |  |  | Level 1 (no shares or player cash at this level)"
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "Level 3 For most companies, the price is set by the player who purchases the President's certificate, choosing a value selected from a range of predefined prices. For the Black Line, the price is fixed."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "All Levels As for 1830. (rule 1.4)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "All Levels Permissive."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "All Levels, 18MW,"
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "Level 3, 18NY, 18NYC, 18Scan No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Level 3 Only the Harriot Milton Hotel and the Metropolis Rapid Transit Authority."
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "is designed to teach the 18xx game system, and comes with three levels of play. Level 1 deals purely with building railroad network and operating trains. Level 2 introduces the financial element, with the addition of the stock market, and introduces the separation of the player and the railroad as separate entities. Level 3 introduces three different types of companies (privates, minors and a merger company) that players may control."
+    }
+  }
+}

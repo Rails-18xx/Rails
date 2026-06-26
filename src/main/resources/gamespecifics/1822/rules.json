@@ -1,0 +1,134 @@
+{
+  "game": "1822",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "Yes, at face value of the item or a multiple of 5 over any other bid."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18Ireland, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "1865 Sardinia, 1867, 1876-35, 1876-35 v2, 1893, 1895, 1898, 18Ardennes, 18BL, 18Dixie, 18EU, 18FL, 18GL, 18Neb, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18Scan, 18US, 18USA, 18VA, Steam Over Holland After it has operated."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1870, 1876-30, 1876-30 v2, 1876-35 v2, 1879, 1883, 1889, 1895, 1899, 18??, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18MS, 18MW, 18Neb, 18NK, 18NL, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18SS, 18TN, 2038, Steam Over Holland 50%."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 26 | 20 | 16 | 13 | 11 |  |  |  | \u00a7\u00a7"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Africa, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18IN, 18Ireland, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland No. All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Yes. From phases 2, 3 or 5 (depending on which private company is under consideration), major and minor companies may take private companies\u00a0from a consenting player. Not all private companies may be taken by minor companies. No compensation is paid to the player. Major companies may also acquire minor companies, and may issue stock from their treasury to the bank pool."
+    },
+    "roundEnd": {
+      "question": "What ends a share dealing round?",
+      "answer": "Each player consecutively passing. The priority, and subsequent places, are then assigned according to cash held."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (rule 5.8.5)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Permissive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, then 100. Not applicable for destination tokens or exchange tokens."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "No, excluding destination tokens and exchange tokens."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "You may not run to two large stations on the same tile. Small stations are not restricted."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. Players are not required to point out a higher revenue total than that claimed."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "The cheapest train from the bank or bank pool. For double-sided trains, the cheaper version must be the one purchased. When buying a train from another company, the director may not contribute any of his own money, so the company must be able to afford this without assistance."
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "Yes."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Strictly speaking, no, as no purchase takes place. From phase 2, 3 or 5 (depending on which private company is under consideration), major and minor companies may take private companies\u00a0from a consenting player. Not all private companies may be taken by minor companies. No compensation is paid to the player."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "With the exception of private company #15, which must close at the start of phase 7 but may be closed earlier, private companies are not forced to close. However, some are removed from play when taken by a minor or major company, when they give the acquiring company their associated token(s) or assets."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "L/2",
+          "phase": "1",
+          "effects": "Train limit for minors/majors is 2/-, minor companies start with a share price of 50,     yellow tiles, trains may only be bought from the bank, use yellow values for off-board     areas, 1 OR"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "Train limit for minors/majors is 2/4. minor companies start with a share price of     bid/2 rounded down to nearest starting value, concessions may be converted to director's     certificates, major companies may acquire minor companies, 2 ORs"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "L trains rust, green tiles, major companies may lay 2 yellow tiles or upgrade 1 tile,     trains may be bought from other companies, use green values for off-board areas"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, train limit for minors/majors is 1/3"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, train limit for minors/majors is 1/2, unconverted concession are removed     from play, major companies require 50% to float, major companies may acquire unfloated     minor companies direct from the bidding boxes, use brown values for off-board areas"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains rust, major companies receive full capitalisation on floating"
+        },
+        {
+          "train": "7/E",
+          "phase": "7",
+          "effects": "4 trains rust, grey tiles, use grey values for off-board areas"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "+ During the initial set up, the concession, minor company and private company certificates are shuffled, albeit with one default certificate ending up on top of each stack. The first three concessions, first four minor companies and first three private companies are available for bids at the start of the game. Due to this, the start of each game will offer different options. The game ends immediately if the first stock round ends with nothing sold. Presumably nobody was keen on the mix of certificates on offer, and another game with a different set of starting certificates will most likely be started. A player may be forced to take a loan to fund train purchases for companies of which they are directors. While they have an outstanding loan, they may not buy shares, convert a concession or place a bid. 50% interest is added to a loan when taken out, and a further 50% added at the end of each stock round that the loan remains unpaid. Any earnings gained by the player are used to pay off as much of the loan as possible. For the Eastern and Western scenarios, the purchase of the first 7/E train signals the end of the game. The current setpair of operating rounds plus one more operating rounds are completed. 1822+ 1822+ adds five minor companies and three private companies to the standard game of 1822. During the initial set up, the private companies are split into three groups, one for each private company bidding box. Three private companies are removed at random. Private company 19 (Avonside Engine Company) introduces a permanent L train, which has its own rules. For example, it cannot be purchased by another company, it does not count against the train limit, and does not count as a train for the purposes of mandatory train ownership."
+    }
+  }
+}

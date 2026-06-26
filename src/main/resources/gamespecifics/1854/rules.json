@@ -1,0 +1,122 @@
+{
+  "game": "1854",
+  "rules": {
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18Ireland, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "As soon as the Director's certificate has been bought (but not in the first SR)."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "(32 + 5 * (number of majors that have split)) / (number of players),     rounded down"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Africa, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18IN, 18Ireland, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland No. All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive (rule 5.4)."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0 for home hex, then 50, 100, 150."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes. But not Wien, Z\u00fcrich, or Sankt P\u00f6lten. Those three locations are specifically listed in the rules as not allowing one train to visit twice. As Zurich is an off-board location, it makes sense for Bozen and Budapest to be treated in the same way, in line with the way that most 18xx games treat off-board areas."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "No."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "Any available train from the bank or bank pool, or from another company, at an agreed price not exceeding its face value."
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "Level 3, 18NY, 18NYC, 18Scan No."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "No. No."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "train limit 4 for majors, 2 for locals, 1+ trains available"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, 2 ORs, 2+ trains then 3+ trains available, green values for OBJs"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "1+ trains and 2 trains rust, train limit 3 for majors, 1 for locals"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, 2+ trains rust, train limit 2 for majors and major locals, brown tiles, 3     ORs, brown values for OBHs, mountains close, locals may close, merge or continue"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains and 3+ trains rust"
+        },
+        {
+          "train": "8",
+          "phase": "8",
+          "effects": "Grey tiles, 4 trains rust, grey values for OBHs"
+        },
+        {
+          "train": "rusted 4",
+          "phase": "-",
+          "effects": "Rusted 2 trains rust again"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Tunnels, which are transparent and can overlie normal tiles. Two hexes of the main map correspond to a 16-hex 'local map' on which 'local railways' operate."
+    }
+  }
+}

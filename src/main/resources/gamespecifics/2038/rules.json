@@ -1,0 +1,117 @@
+{
+  "game": "2038",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "Yes, at or over par and 5 or more over any other bid. | Introduction | Contents | Games | Glossary | |"
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "For the President, as soon as you like. For other shareholders, after it has operated."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 22 | 16 | 13 | 11 |  |  |  |  | Full game"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Privates, in ORs, once phase II has started."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "The par values of \"growth corporations\" (minor companies that have been promoted to major companies) and the TSI and Asteroid League are fixed. For \"growth companies\" the par value is 67 but the starting market value is only 10. Those of other \"public companies\" are set by the player who purchases the President's certificate, choosing a value selected from a range of predefined prices."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "On hexes you 'explore' by moving a spaceship there and spending an extra movement point. (rule 7.11)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Not applicable."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "Complex, but written on each company's card."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "No, except by using the special powers of particular privates. You cannot lay two bases or refuels except by using the special powers of privates; you can lay two claims (at a higher cost) and the Asteroid League can lay three."
+    },
+    "stationLocation": {
+      "question": "Where can you lay a station marker?",
+      "answer": "The newly-laid base, refuel, or claim must be reachable from one of the company's bases by a spaceship that it owns."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "At the start of the game. 1865 Sardinia All base station tokens start the game on the map. For absorbed companies re-entering the game the home base is placed when the President's certificate is purchased."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Two mines, yes. | Introduction | Contents | Games | Glossary | |"
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "No."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "The cheapest spaceship type must be bought from the bank or bank pool. If the President is helping she can freely choose between a Scout and a Tug of the same type ."
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "No, but after the Asteroid League is formed, if it does not have one or buy one, it must merge into the Asteroid League. The President may not contribute money."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Once a phase II spaceship has been sold; at from 1 to face value."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "No. No."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "5/1, 3/2",
+          "phase": "I",
+          "effects": "Spaceship limit four for corporations, two for independents, companies may only buy     new ships and their own claims"
+        },
+        {
+          "train": "6/2, 4/3",
+          "phase": "II",
+          "effects": "Probe rusts, growth corporations may start, corporations may buy each others' assets,     corporations may build bases and fuel stations, and may buy privates from players and     claims from independents, corporations and independents may buy ships from other companies"
+        },
+        {
+          "train": "7/3, 5/4",
+          "phase": "III",
+          "effects": "Phase I ships rust, Asteroid League may form, spaceship limit three for corporation     (four for the Asteroid League), one for independents, once the Asteroid League forms,     growth corporations may no longer start"
+        },
+        {
+          "train": "8/4, 6/5",
+          "phase": "IV",
+          "effects": "Asteroid League must form, transshipment hexes count higher value"
+        },
+        {
+          "train": "9/5, 7/6",
+          "phase": "V",
+          "effects": "Phase II ships rust, independents must join Asteroid League, privates and pilots go,     phase VI ships available"
+        },
+        {
+          "train": "9/7",
+          "phase": "VI",
+          "effects": "Phase III spaceships rust, spaceship limit two for corporations (three for the     Asteroid League)"
+        }
+      ]
+    }
+  }
+}

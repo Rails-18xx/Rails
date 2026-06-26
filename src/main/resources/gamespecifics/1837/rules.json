@@ -1,0 +1,153 @@
+{
+  "game": "1837",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "10 subtracted."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "Paul Work's translation of the German rules reads ' .. a player may buy one certificate and may sell as many shares as desired. Either or both actions may be carried out in any order. ' Interpretations of this differ. Stuart Dagger's translation reads ' .. They may buy or sell during their turn in whichever order they please. '"
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "1865 Sardinia, 1867, 1876-35, 1876-35 v2, 1893, 1895, 1898, 18Ardennes, 18BL, 18Dixie, 18EU, 18FL, 18GL, 18Neb, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18Scan, 18US, 18USA, 18VA, Steam Over Holland After it has operated."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1870, 1876-30, 1876-30 v2, 1876-35 v2, 1879, 1883, 1889, 1895, 1899, 18??, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18MS, 18MW, 18Neb, 18NK, 18NL, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18SS, 18TN, 2038, Steam Over Holland 50%."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 28 | 21 | 17 | 14 | 12 |  |  |  |"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "roundEnd": {
+      "question": "What ends a share dealing round?",
+      "answer": "Round ends as in 1830, priority assigned as in 1829. The designer's intention was as in 1830."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "The three National Railways have fixed par prices. For the seven major companies the initial price is set by the player who purchases the Director's certificate, choosing a value selected from a range of predefined prices."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (rule V.3)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "According to the printed rules, restrictive (rule VI.1). This means that certain tiles can never be laid, and is a mistake. The designer Leonhard Orgler has stated (personal communication to Steve Thomas) that it should be semi-restrictive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, then 20*hex distance, then 40*hex distance. Distance measured by 'a crow without a passport'."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+    },
+    "stationLocation": {
+      "question": "Where can you lay a station marker?",
+      "answer": "and in the first edition of"
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes, but not two stations in Vienna. In the case of Buda and Pest, the entire run may be on one hex."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "No."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "You can buy any available train: you may pay any agreed amount for a train from another company; you may buy any train in the bank pool; you may buy any available new train (there is typically a choice of two)."
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "Level 3, 18NY, 18NYC, 18Scan No."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "No. No."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "1",
+          "effects": "train limit 4 for majors, 2 for minors"
+        },
+        {
+          "train": "3",
+          "phase": "2",
+          "effects": "Green tiles, transfer of trains, 2 ORs, Bosnia-Herzegovina open, passes may be built     without help of mountain railways, train limit 3 for majors, trains may be bought from     other companies      Original edition German rules: 2G trains available      Original edition English translations: 2G trains available (once 1Gs have sold out) (from     phase table - not mentioned in the rules)      All-Aboard Games edition: 2G trains available (even if 1G trains have not been sold)"
+        },
+        {
+          "train": "3+1",
+          "phase": "-",
+          "effects": "train limit 1 for non-Hungarian minors and for coal companies"
+        },
+        {
+          "train": "4",
+          "phase": "-",
+          "effects": "2 trains rust, Italy secedes, Bozen upgraded to green, Sudbahn launched, K+K may be     launched, train limit for Sudbahn and K+K is 4      Original edition German rules: 3G trains available      Original edition English translations: 3G trains available (once 1Gs and 2Gs have sold     out)      All-Aboard Games edition: 3G trains available (even if 1G and 2G trains have not been     sold)"
+        },
+        {
+          "train": "3G",
+          "phase": "-",
+          "effects": "1G trains rust"
+        },
+        {
+          "train": "4E",
+          "phase": "-",
+          "effects": "Hungarian may launch - its train limit is 4"
+        },
+        {
+          "train": "4+1",
+          "phase": "-",
+          "effects": "K+K must launch"
+        },
+        {
+          "train": "5",
+          "phase": "3",
+          "effects": "Brown tiles, train limit 2 (3 for fused companies), 3 ORs, 3 trains rust, Hungarian     must launch, private companies close, coal companies fused into majors      Original edition German rules: 4G trains available      Original edition English translations: 4G trains available (once 3Gs have sold out)      All-Aboard Games edition: 4G trains available (even if 3G trains have not been sold)"
+        },
+        {
+          "train": "4G",
+          "phase": "-",
+          "effects": "2G trains rust"
+        },
+        {
+          "train": "5+2",
+          "phase": "-",
+          "effects": "3+1 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Stock market is based on a hexagonal grid rather than the more common square grid."
+    }
+  }
+}

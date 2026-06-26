@@ -1,0 +1,135 @@
+{
+  "game": "1824",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18Ireland, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "1865 Sardinia, 1867, 1876-35, 1876-35 v2, 1893, 1895, 1898, 18Ardennes, 18BL, 18Dixie, 18EU, 18FL, 18GL, 18Neb, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18Scan, 18US, 18USA, 18VA, Steam Over Holland After it has operated."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "50%, but note that there is no separate bank pool. After shares are sold to the bank they are treated the same as new shares."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 21 | 16 | 13 | 11 |  |  |  |  |"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Africa, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18IN, 18Ireland, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland No. All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "For Regional Railways with associated Coal Railways, the price is set by the purchase price of the Coal Railway. For Regional Railways without an associated Coal Railway, the price is set by the player who purchases the Director's certificates. In both cases they choose a value from a range of predefined prices."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (Rule XI, fourth section)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Permissive."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "You may not run to two large stations on the same tile. Small stations are not restricted."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "No."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "Any available train from the bank or offered by other companies. A clarification from Lonny Orgler states that the company can choose any of these trains - if the company has insufficient money for the chosen train, the Director can add the necessary funds."
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "Yes. Minor companies in 1824 are the Coal Railways and the pre-Staatsbahnen companies."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No (referring to Mountain Railways)."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Yes (referring to ability to exchange Mountain Railways for a share in one of the Regional Railways)."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "-",
+          "phase": "1",
+          "effects": "Yellow tiles, 1 OR"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "1g trains available, lower mine values, at the end of each set of operating rounds, a     'normal' (non-goods) train is sold abroad"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, 2g trains available, Mountain Railways and Coal Railways may be     exchanged, companies can buy trains from each other, 2 ORs"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, 3g trains available (1g trains rust when the first 3g or later is     bought), Mountain Railways must be exchanged, train limit 3 for Regional Railways, 4 for     the Staatsbahnen, the Suedbahn is founded at the end of the current operating round"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, Coal Railways must be exchanged, higher mine values, the Ungarische     Staatsbahn is founded at the end of the current operating round"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains rust, 4g trains available (2g trains rust when the first 4g or later is     bought), train limit 2 for Regional Railways and 3 for the Staatsbahnen, the k&k     Staatsbahn is founded at the end of the current operating round, 3 ORs"
+        },
+        {
+          "train": "8",
+          "phase": "7",
+          "effects": "Grey tiles, 4 trains rust, 5g trains available (3g trains rust when the first 5g is     bought)"
+        },
+        {
+          "train": "10",
+          "phase": "8",
+          "effects": "5 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Coal Railways can be exchanged for the Director's certificate in one of the Regional Railways. Mountain Railways can be exchanged for a 10% shares in one of the Regional Railways. After the first 2 train has been bought, at the end of that operating round and at the end of each subsequent SET of operating rounds, the bank sells one of its currently available 'norma' (non-goods) trains abroad. This train is removed from the game. This sale can trigtger a phase change. No new money comes into the game as a result of these sales."
+    }
+  }
+}

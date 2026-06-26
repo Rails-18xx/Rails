@@ -1,0 +1,139 @@
+{
+  "game": "1847",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18Ireland, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "1865 Sardinia, 1867, 1876-35, 1876-35 v2, 1893, 1895, 1898, 18Ardennes, 18BL, 18Dixie, 18EU, 18FL, 18GL, 18Neb, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18Scan, 18US, 18USA, 18VA, Steam Over Holland After it has operated."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "50% - but bear in mind that the rules indicate this is checked before selling shares, after which you may sell as many shares as you wish in one block. This can result in more than 50% of the shares in the pool."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 11 | 9 |  |  |  |  |  |  | Variant 5 (5 companies)"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Africa, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18IN, 18Ireland, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland No. All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "roundEnd": {
+      "question": "What ends a share dealing round?",
+      "answer": "Each player consecutively not making a purchase. The priority then goes to the player after the one who last made a purchase."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "Companies have fixed par prices. 1827 Jr, Crisis Unknown."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830; in addition the Saarbr\u00fccker Eisenbahn and Rhein-Nahe-Bahn may only place yellow tiles on light red hexes, while the Pfalzbahn companies may only place yellow tiles on light green hexes (actually blue in my copies)."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "As for 1835 - presumably restrictive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, then 100."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "The token is placed on the home base at the start of the operating round in which it will first run."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "No."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "As for 1835."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "v1&3, 1851, 1853, 1853 v2, 1858, 1861, 1862EA, 1862EA v2, 1865 Sardinia, 1867, 1873, 1876-30, 187630-v2, 1876-35, 1876-35 v2, 1879, 1881, 1895, 1898, 18Ardennes, 18EZ Levels 1 and 2, 18PA, 18US, 18West, Crisis, Rolling Stock Not applicable."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "3",
+          "phase": "Yellow",
+          "effects": "train limit 4, two tile lays, lowest value for off-board areas, 1 OR"
+        },
+        {
+          "train": "3+3",
+          "phase": "-",
+          "effects": "-"
+        },
+        {
+          "train": "4",
+          "phase": "Green",
+          "effects": "Green tiles, train limit 3, trains may be bought from companies, one tile lay per     company, middle value for off-board areas, 2 ORs Expert game : quarries may be bought by companies"
+        },
+        {
+          "train": "4+4",
+          "phase": "-",
+          "effects": "3 trains rust"
+        },
+        {
+          "train": "5",
+          "phase": "-",
+          "effects": "-"
+        },
+        {
+          "train": "5+5",
+          "phase": "-",
+          "effects": "3+3 trains rust"
+        },
+        {
+          "train": "6",
+          "phase": "Brown",
+          "effects": "Brown tiles, train limit 2, highest value for off-board areas, quarries close, 3 ORs Expert game : Rammelsbach quarry is not closed"
+        },
+        {
+          "train": "6+6",
+          "phase": "-",
+          "effects": "4 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "In the Expert Game, nationalisation of shares is possible."
+    }
+  }
+}

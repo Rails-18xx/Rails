@@ -1,0 +1,109 @@
+{
+  "game": "1830",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "v1, 1830 v3, 1830BC, 1830Lummerland, 1832, 1834, 1844, 1849v4, 1850, 1854, 1856, 1859, 1862, 1868, 1869 The Golden Spike, 1870, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1883, 1891, 1895, 1899, 18AL, 18BL, 18Chesapeake, 18CLE, 18EC, 18EZ Level 3, 18GA, 18GA v2, 18GM, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18NK, 18NY, 18Rhl Rhineland, 18SS, 18SY, 18TN Yes, first private only."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "v4, 1850, 1854, 1856, 1859, 1862, 1868, 1870, 1876 v2, 1876-30, 1876-30 v2, 1889, 1891, 1899, 18AL, 18C2C, 18CLE, 18EC, 18EZ Level 3, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18NK, 18NL, 18Rhl Rhineland, 18SS, 18SY, 18TN Yes, at 5 or more over face value and over any other bid."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "v1 Sell then buy, or buy then sell. But the author's intention was to allow sell-buy-sell, and many people, also the computer version, allow this."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1870, 1876-30, 1876-30 v2, 1876-35 v2, 1879, 1883, 1889, 1895, 1899, 18??, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18MS, 18MW, 18Neb, 18NK, 18NL, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18SS, 18TN, 2038, Steam Over Holland 50%."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "28 | 20 | 16 | 13 | 11 |  |  |  |  | \u00a7\u00a7"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "v1 After being laid, the tile must be reachable from one of the laying company's station markers by an arbitrarily large train. (rule 18.0)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "v1 Rule 18.1 says permissive. However it is possible to read the restrictions of rule 18.0 as applying to rule 18.1, making the result restrictive. A clarification from Avalon Hill says that the 1830 rule is semi-restrictive. Their own computer version is permissive."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. Players are not required to point out a higher revenue total than that claimed."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "v1 Avalon Hill rules: The cheapest train available in the bank, or a train from another company at an agreed price not exceeding its face value. v1 Avalon Hill clarification: The cheapest train available in the bank. v1 Francis Tresham: The cheapest train available in the bank, or a train from another company at an agreed price not exceeding its face value. The President of the selling company makes the deal simultaneously with any necessary share sales (this has been interpreted as meaning that the old and new President must both agree to the deal; and in other ways). v1 Avalon Hill PC program: As in 1898."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "18Lummerland, 1830NL, 1834, 1856, 1857, 1859, 1868, 1876 v2, 1876-30, 1876-30 v2, 1891, 1899, 18C2C, 18Chesapeake, 18CLE, 18EC, 18EZ Level 3, 18GM, 18JP-T, 18Kaas, 18NK, 18NL, 18SA, 18SS, 18SY-G Once a 3 train has been sold; at from half to twice face value."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Only the M&H, and the B&O when it buys its first train."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "Yellow",
+          "effects": "Yellow tiles, train limit 4, trains may be bought by companies, use lower values for     off-board areas, 1 OR"
+        },
+        {
+          "train": "3",
+          "phase": "Green",
+          "effects": "Green tiles, privates may be bought by companies, 2 ORs"
+        },
+        {
+          "train": "4",
+          "phase": "-",
+          "effects": "2 trains rust, train limit 3"
+        },
+        {
+          "train": "5",
+          "phase": "Brown",
+          "effects": "Brown tiles, train limit 2, use higher values for off-board areas, privates close, 3     ORs"
+        },
+        {
+          "train": "6",
+          "phase": "-",
+          "effects": "3 trains rust, D trains available immediately"
+        },
+        {
+          "train": "D",
+          "phase": "-",
+          "effects": "4 trains rust"
+        }
+      ]
+    }
+  }
+}

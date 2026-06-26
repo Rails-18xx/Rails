@@ -1,0 +1,101 @@
+{
+  "game": "1893",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No, but any starting package certificates unsold after the first round are offered for sale in the next SR. If nobody wants the offered certificate, its price is reduced by 10 until the offered price is 50% (rounded up) of the initial price. If nobody wants it at that price, the player offering it has to buy it, or if they do not have enough cash, the player to their right. This procedure is repeated for the remaining starting package certificates."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No. There is no bank pool."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "18 | 12 | 9 |  |  |  |  |  |  |"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "For the DE, RB and RSE, 0, 40, 100. For the AGV and HGK, which are formed by merger, 100."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "All Levels, 18MW,"
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "The cheapest new train from the bank, or any train from the bank pool."
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "Level 3, 18NY, 18NYC, 18Scan No."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Yes, for private company A, the FdSD."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit major 3/minor 2, lowest off-board value, Rhine may not be     crossed"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, companies may buy trains from other companies, middle off-board value,     Rhine may be crossed"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, AGV shares may be bought, AGV can be started"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, train limit major 2/minor 1, AGV must be started, HGK shares may be     bought, HGK can be started, FsSD must be exchanged, highest off-board value"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains rust, 8+x trains available, HGK must be started, EVA closes"
+        },
+        {
+          "train": "8+x",
+          "phase": "8+x",
+          "effects": "4 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "The game offers a number of variants: Optional 2 train - one additional 2 train to gurantee at least two yellow ORs Delayed Exchange in Merger Industrial Areas - 5 Industry markers, one for each company Grey Phase - 4 additional tiles for Koln and one other grey tile Existing Track - 2 tiles that start in play and 2 additional tiles to make the northern     part of the board more interesting"
+    }
+  }
+}

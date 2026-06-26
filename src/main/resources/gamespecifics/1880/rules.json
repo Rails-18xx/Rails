@@ -1,0 +1,138 @@
+{
+  "game": "1880",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "Yes, at a multiple of 5 over par and over any other bid."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No. There is no bank pool."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 20 | 16 | 14 | 12 | 11 |  |  |  | \u00a7\u00a7"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830 (page 9) . In addition, the company must own a building permit valid for the current phase of the game."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Permissive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0 for home bases, 40, 100, prices double when the first 8 train is sold."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "The token is placed on the home base at the end of the stock round in which the Director owns the qualifying number of shares. The qualifying number of shares depends on the phase. From Phase A1 (the start of the game) it is 20%, from B1 it is 30%, from B3 it is 40% and from C2 it is 60%."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "All Levels, 18MW,"
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "Any train available from the bank, but not a restored 2 train."
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "No. Consider Foreign Investors to be minor companies in 1880. They lease a train from the bank rather than buying one."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "No. No."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "A1",
+          "effects": "Yellow tiles, train limit 4, companies open with 20%, 50% capitalisation, only 5     shares available. yellow off-board value"
+        },
+        {
+          "train": "2+2",
+          "phase": "A2",
+          "effects": "-"
+        },
+        {
+          "train": "3",
+          "phase": "B1",
+          "effects": "Green tiles, companies open with 30%, 100% capitalisation for companies that have 50%     shares in play, all 10 shares available, companies may lay two yellow tiles, green     off-board value"
+        },
+        {
+          "train": "3+3",
+          "phase": "B2",
+          "effects": "train limit 3"
+        },
+        {
+          "train": "4",
+          "phase": "B3",
+          "effects": "2 trains rust, companies open with 40%, Communist Takeover occurs (no share price     movement, no sales of shares by Directors, private companies cease paying income, Foreigh     Investors become inactive)"
+        },
+        {
+          "train": "4+4",
+          "phase": "C1",
+          "effects": "2+2 trains rust, brown tiles"
+        },
+        {
+          "train": "6",
+          "phase": "C2",
+          "effects": "3 trains rust, companies open with 60% restored 2 trains available, Shanghair Stock     Exchange re-opens (normal share trading, normal share price movement)"
+        },
+        {
+          "train": "6E",
+          "phase": "C3",
+          "effects": "3+3 trains rust, train limit 2"
+        },
+        {
+          "train": "8",
+          "phase": "D1",
+          "effects": "4 trains rust, grey tiles, cost of station markers doubled. When the second 8 train is     sold the last stock round occurs, each company operates 3 more times, and the game ends"
+        },
+        {
+          "train": "8E",
+          "phase": "D2",
+          "effects": "4+4 trains rust"
+        },
+        {
+          "train": "10",
+          "phase": "D3",
+          "effects": "-"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Stock rounds do not occur after a set number of operating rounds. Instead, they take place when the last train of any type (other than restored 2 trains) is sold or removed from the bank. If no train is bought in a complete operating round, all the remaining trains of the current type are discarded from the game and a stock round takes place. Stock rounds take place immediately one of the two situations above occur. This can result in the company that purchased the last train of a type continuing operations once the stock round is completed, possibly buying further trains. The Communist Takeover period runs from the sale of the first 4 train to the sale of the first 6 train. During this period the prices on the stock market do not change for any reason. Players may not sell shares in a company they are the Director of. Private companies do not count towards the certificate limit."
+    }
+  }
+}

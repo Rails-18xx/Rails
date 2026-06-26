@@ -1,0 +1,117 @@
+{
+  "game": "1858",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18Ireland, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "1865 Sardinia, 1867, 1876-35, 1876-35 v2, 1893, 1895, 1898, 18Ardennes, 18BL, 18Dixie, 18EU, 18FL, 18GL, 18Neb, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18Scan, 18US, 18USA, 18VA, Steam Over Holland After it has operated."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1870, 1876-30, 1876-30 v2, 1876-35 v2, 1879, 1883, 1889, 1895, 1899, 18??, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18MS, 18MW, 18Neb, 18NK, 18NL, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18SS, 18TN, 2038, Steam Over Holland 50%."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 21 | 16 | 13 | 11 |  |  |  |  |"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Africa, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18IN, 18Ireland, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland No. All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Their own, as the last action when operating. May also issue shares from their second operating turn on."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "Prior to phase 5, by the face value of the private (rounded down); from phase 5 onwards the Director chooses one of a range of values."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. Private companies have notional tokens on each of their home hexes (rule 9.3)."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive (rule 9.3)."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "Free if from a Private company, twice the city value starting in phase 5, otherwise 40 per province (20 in the same province) from the nearest existing station marker"
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Not usually, but they can run to two small stations on the same tile."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "1865 Sardinia, 1889, 18Ardennes, 18CZ, 18EU, 18FL, 18GL, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18PA, 18Scan, 18US, 18USA, 18VA, 18West, Rolling Stock, Steam Over Holland Yes."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "Any train from the bank or bank pool, not necessarily the cheapest. If the company has funds remaining after the purchase it can use these funds to buy any train from any source."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2H",
+          "phase": "2",
+          "effects": "train limit 4/3, first 17 private companies available, 2 ORs, yellow broad tiles, use     yellow off-board value"
+        },
+        {
+          "train": "4H/2M",
+          "phase": "3",
+          "effects": "Green and yellow narrow tiles, all private companies available, use green off-board     value"
+        },
+        {
+          "train": "6H/3M",
+          "phase": "4",
+          "effects": "2H trains wounded, train limit 3/2"
+        },
+        {
+          "train": "5E/4M",
+          "phase": "5",
+          "effects": "Brown tiles, train limit 2, all companies convert to 10-share, private companies close     at end of OR, use brown off-board value"
+        },
+        {
+          "train": "6E/5M",
+          "phase": "6",
+          "effects": "2H trains rust, 4H/2M trains wounded"
+        },
+        {
+          "train": "7E/6M",
+          "phase": "7",
+          "effects": "Grey tiles, 4H/2M trains rust, 6H/3M trains wounded, 5D trains available, 6H/3M trains     rust when fifth 7E/6M/5D bought"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "In a stock turn, a player may do any number of sell actions and then may do one buy action. Sell actions:  a) sell a share  b) exchange a private for a treasury share - must be connected and have directors permission  c) grow a company from 5-share to 10-share. Buy actions:  a) put up a private for auction  b) buy a share  c) start a company - prior to phase 5, exchange a private for one share and buy the other, thus acquiring the Director's share (price is face value of private, rounded down), place the company\u2018s start token in a home hex of the private. Many privates have two values for revenue: the first in phase 2, the second in phase 3 onwards. Privates may build track: ignore terrain costs in home hex(es), but owner pays for other terrain and double-builds. Track in home hexes must follow the indicated track lines on the map (as appropriate). Privates cannot upgrade tiles. If a company has insufficient funds to lay track, the director may put in from hand to help. Rule clarification: the Director may also put in from hand for double-builds, in the same manner. When a choice of city upgrades exist, the one with the most exits which are legal must be laid. Private income in share companies is part of revenue. After calculating revenue (= trains + privates), divide by number of shares (and halve if splitting), round down, and pay out to shareholders; any money left over goes to company treasury. There are three track gauges: broad, narrow, and dual. Yellow track is either broad or narrow; some green track is mixed; all brown and grey track is dual. The token space(s) on private home-hexes are reserved for the private(s), or their owner. Wounded trains run for half revenue. Wounded trains may be discarded in the train buying step; wounded trains in the pool go immediately out of the game; wounded trains may be bought across and do count towards train limit. If a company is train-less, it may use emergency money raising: it may issue shares (price drops once) and/or director may put in from hand (may not sell shares). If a public company closes (share price drops below 50) there is no compensation - it\u2018s trains and cash go back to the bank, but it may be re-opened later."
+    }
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "game": "1829",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "v1, 1830 v3, 1830BC, 1830Lummerland, 1832, 1834, 1844, 1849v4, 1850, 1854, 1856, 1859, 1862, 1868, 1869 The Golden Spike, 1870, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1883, 1891, 1895, 1899, 18AL, 18BL, 18Chesapeake, 18CLE, 18EC, 18EZ Level 3, 18GA, 18GA v2, 18GM, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18NK, 18NY, 18Rhl Rhineland, 18SS, 18SY, 18TN Yes, first private only."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "No ( i.e. sell-buy-sell)."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 18 | 18 | 17 | 14 | 12 | 10 | 9 |  | Shares worth less than 30 do not count towards the limit      When using the optional Furness Railway on the Northern Board, increase the share limit by     one"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "No."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "roundEnd": {
+      "question": "What ends a share dealing round?",
+      "answer": "Each player consecutively not making a purchase. The priority then goes to the player after the one who last made a purchase."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "Companies have fixed par prices. 1827 Jr, Crisis Unknown."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "Only on the hex just vacated by the upgrading company's Survey Party, and then only if it is not occupied by a rival survey party. (rule 42.2)  [ Some players ignore the survey parties in 1829, and play it by the same rule as for 1830.]"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "The upgrading company must have moved a Survey Party, and the upgraded hex must be free of Survey Parties (rule 43)."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+    },
+    "stationLocation": {
+      "question": "Where can you lay a station marker?",
+      "answer": "It is laid by moving a survey party in the normal way to a city, and then changing its role."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "No, but if using Tank engines (3T, 4T) available in extension kits, these can call at two villages on the same hex or tile."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "1865 Sardinia, 1889, 18Ardennes, 18CZ, 18EU, 18FL, 18GL, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18PA, 18Scan, 18US, 18USA, 18VA, 18West, Rolling Stock, Steam Over Holland Yes."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "A company does not have to own a train. However, a company in receivership must buy a train as soon as funds permit unless there is no route on which it can run. While not stated, this is assumed to be from the bank."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "v1&3, 1851, 1853, 1853 v2, 1858, 1861, 1862EA, 1862EA v2, 1865 Sardinia, 1867, 1873, 1876-30, 187630-v2, 1876-35, 1876-35 v2, 1879, 1881, 1895, 1898, 18Ardennes, 18EZ Levels 1 and 2, 18PA, 18US, 18West, Crisis, Rolling Stock Not applicable."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "One",
+          "effects": "train limit 4, 1 OR"
+        },
+        {
+          "train": "3",
+          "phase": "Two",
+          "effects": "Green tiles, 2 ORs"
+        },
+        {
+          "train": "4",
+          "phase": "-",
+          "effects": "-"
+        },
+        {
+          "train": "5",
+          "phase": "Three",
+          "effects": "Brown tiles, 2 trains rust, train limit 3, 3 ORs"
+        },
+        {
+          "train": "7",
+          "phase": "Four",
+          "effects": "Grey tiles, 3 trains rust, train limit 2, 4 ORs, privates close"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Players may choose to close their private companies by turning them face down. They then cease to pay, and do not count towards the certificate limit, but they still count their face value at the end of the game. Players may sell their private companies to other players."
+    }
+  }
+}

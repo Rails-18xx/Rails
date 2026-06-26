@@ -1,0 +1,212 @@
+{
+  "game": "18US",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No. Privates are bought at face value, following a bidding process to determine the order in which players make their purchases. 18US has \u00a0 Concessions instead of Privates."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No, but the President's certificate may never enter the bank pool."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "19 | 13 | 10 | 8 | 7 |  |  |  |  |"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Western Concessions once the Western Railroad Convention has taken place, except for the Denver and Rio Grande and the Pacific Railway Act."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (rule 6.2.1)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, then 20*hex distance measured along route from nearest existing marker."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "No, except for a Land Grant company that may be required to place two tokens if it creates a Junction Town and then connects to a qualifying city, which requires conversion to a 10-share company, which in turn requires it to place its doubling token."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "At the start of the game. 1865 Sardinia All base station tokens start the game on the map. For absorbed companies re-entering the game the home base is placed when the President's certificate is purchased."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes, but only when the two cities are separate from each other."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "The next train available from the bank. If more than one type is available, the President may choose which one to buy, even if this then requires him to provide additional funds that would not be required for another available train."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "There are no private companies, but Western Concessions may be bought once in play."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "Yellow and green tiles, train limit 2, 2 ORs"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "-"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, conduct the Western Railroad Convention after the pair of operating     rounds during which the first 4 train is purchased or discarded"
+        },
+        {
+          "train": "3E/2G",
+          "phase": "3E/2G",
+          "effects": "Brown tiles, in the first operating round after the Western Railroad Convention,     companies may exchange a single 4 train for a 2G train for $250"
+        },
+        {
+          "train": "4E/3G",
+          "phase": "4E/3G",
+          "effects": "3 trains rust, 1H/2H trains available, Systems may be formed with a train limit of 4"
+        },
+        {
+          "train": "1H/2H",
+          "phase": "1H/2H",
+          "effects": "-"
+        },
+        {
+          "train": "5E/4G",
+          "phase": "5E/4G",
+          "effects": "4 trains rust, grey tiles"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit 4, new companies may only be started as 2-share companies,     use yellow values for grey and off-board areas"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, new companies may be strarted as 2-share or 5-share companies, use green     values for grey and off-board areas"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, train limit 3, 2+ trains may not be bought or sold and will be     discarded without compensation after running trains, new companies can only be started as     5-share companies"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, new tiles on city hexes must be green rather than yellow, during a     company's first operating turn it may place or upgrade its home city to brown in addition     to normal lay or upgrade actions, when placing or upgrading non-city track a company may     pay 10 per level to upgrade to an additional level of track, new companies may be started     as 5-share or 10-share companies, Pullman cars may be purchased, use brown values for grey     and off-board areas"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains and 3+ trains rust, train limit 2, new companies may only be started as     10-share companies"
+        },
+        {
+          "train": "7",
+          "phase": "7",
+          "effects": "Grey tiles, use grey values for grey and off-board areas"
+        },
+        {
+          "train": "8",
+          "phase": "8",
+          "effects": "4 trains and 4+ trains rust, short selling is no longer permitted"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2/1G",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit 4/2, lowest values for OBHs, 1 OR"
+        },
+        {
+          "train": "3/2G",
+          "phase": "3",
+          "effects": "Green tiles, privates may be bought by companies, 2 ORs, five-share companies may     convert"
+        },
+        {
+          "train": "4/3G",
+          "phase": "4",
+          "effects": "2/1G trains rust, train limit 3/1"
+        },
+        {
+          "train": "5/4G",
+          "phase": "5",
+          "effects": "Brown tiles, train limit 2/1, 3 ORs, highest values for OBHs, 3/2G trains rust,     five-share companies must convert"
+        },
+        {
+          "train": "6/5G",
+          "phase": "6",
+          "effects": "4D trains available"
+        },
+        {
+          "train": "4D",
+          "phase": "4D",
+          "effects": "Grey tiles, 4/3G trains rust"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit 4/2, lowest values for OBHs, 2 ORs"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, privates may be bought by companies, companies may buy trains from other     companies"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, train limit 3/2, may perform Mergers and Acquisitions and issue stock"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, may abandon Land Grants, new Land Grant companies start as public     companies, middle values for OBHs"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains rust, 4D trains available, new companies start fully funded, no restrictions     on treasury stock buying"
+        },
+        {
+          "train": "4D",
+          "phase": "4D",
+          "effects": "Grey tiles, 4 trains rust, highest values for OBHs"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "The game starts with the sale of the Eastern Concessions and 4-share Eastern companies. The 4-share companies convert to 5-share companies when they connect to a Gateway city, and may optionally convert to 10-share companies after the Western Railroad Convention. Western Concessions are sold during the Western Railroad Convention. Once the Pacific Railway Act concession has been bought, 5-share Land Grant companies come into play, converting to 10-share companies when they complete their Land Grants. When this conversion takes place the shareholders receive a special Golden Spike bonus. Once the first 4E or 3G train has been bought, pairs of connected 10-share companies can be combined to form 20-share Systems. A System may never sell its last permanent train. Plain yellow track tiles upgrade to villages (junction towns). This can only be done if the company has a spare token to place on the upgraded tile."
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "game": "1841",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "v1&3, 1853, 1853 v2, 1862EA, 1862EA v2, 1865 Sardinia, 1879, 1881, 1898, 18Ardennes, 18EU, 18EZ Levels 1 and 2, 18Lilliput, 18West, Crisis, Rolling Stock Not applicable."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "Initial sale is by tender. 1849v1&3 Yes, at 5 over any other bid, for the initial concessions."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18Ireland, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "1865 Sardinia, 1867, 1876-35, 1876-35 v2, 1893, 1895, 1898, 18Ardennes, 18BL, 18Dixie, 18EU, 18FL, 18GL, 18Neb, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18Scan, 18US, 18USA, 18VA, Steam Over Holland After it has operated. You may not voluntarily sell them until it has operated. You may be forced to sell them earlier in an emergency money-raising step."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "50%. But more can get there as the result of an emergency money-raising step."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 21 | 16 | 13 | 11 | 10 | 9 |  |  |"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Africa, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18IN, 18Ireland, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland No. All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Yes, up to five certificates, but not their own; in ORs."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "There are no par prices. The initial price is set by the player who purchases the President's certificate, choosing a value selected from a range of predefined prices. All further share dealing is done at the current market price. The exception to this is companies created by a merger or promotion (or the Ferdinandea Succession). These have their initial price calculated from the prices of the predecessor companies."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (rules 4.1.1, 4.1.2)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "The original rules were restrictive (rules 4.1.1, 4.1.2). As for 1837, a subsequent clarification from the author states that it should be semi-restrictive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "All 0. They were paid for at flotation time: 50 each for historics, 25/50/100/200 depending on remoteness for non-historics."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "v1&3, 1898 No; except by the 'token acquiring' process."
+    },
+    "stationLocation": {
+      "question": "Where can you lay a station marker?",
+      "answer": "As well as the default rule below, the route must be from one of the laying company's existing non-mountain station markers, and must not cross an active border (not even twice)."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "v4, 1898, 18EU, 18IN, 18VA When its president's certificate is bought."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. Players are not required to point out a higher revenue total than that claimed."
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "Yes."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "v1&3, 1851, 1853, 1853 v2, 1858, 1861, 1862EA, 1862EA v2, 1865 Sardinia, 1867, 1873, 1876-30, 187630-v2, 1876-35, 1876-35 v2, 1879, 1881, 1895, 1898, 18Ardennes, 18EZ Levels 1 and 2, 18PA, 18US, 18West, Crisis, Rolling Stock Not applicable."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "train limit 4 for majors, 2 for minors"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, 2 ORs, two track-lays per major, track-lays across borders, non-historic     companies may start"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, borders change, IRSSF split, Tuscan merge, mid values for OBHs, train     limit 3 for majors, 2 for minors"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "3 trains rust, borders change again, brown tiles, 3 ORs, one track-lay per major"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "High values for OBHs, train limit 2 for majors, 1 for minors"
+        },
+        {
+          "train": "7",
+          "phase": "7",
+          "effects": "4 trains rust"
+        },
+        {
+          "train": "8",
+          "phase": "8",
+          "effects": "5 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "The 8 trains do not have to count mountain passes as stops. It costs 50 to upgrade mountain track. Allows trading of station markers."
+    }
+  }
+}

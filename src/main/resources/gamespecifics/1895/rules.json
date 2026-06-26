@@ -1,0 +1,112 @@
+{
+  "game": "1895",
+  "rules": {
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 13 |  |  |  |  |  |  |  |"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "There are no par prices. The initial price is set by the player who purchases the President's certificate, choosing a value selected from a range of predefined prices. All further share dealing is done at the current market price."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Permissive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, then 100."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes, but a lower revenue may be claimed if the president chooses to run via a mine. In this case the run must be the maximum possible including the mine."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "Any available train from the bank or bank pool, or from another company with the same president for at least 1."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2H",
+          "phase": "Yellow",
+          "effects": "train limit 3, 1 OR, use yellow off-board value"
+        },
+        {
+          "train": "3H",
+          "phase": "-",
+          "effects": "2 ORs"
+        },
+        {
+          "train": "4H",
+          "phase": "Green",
+          "effects": "Green tiles, 2H trains rust, use green off-board value"
+        },
+        {
+          "train": "5H",
+          "phase": "-",
+          "effects": "-"
+        },
+        {
+          "train": "6H",
+          "phase": "-",
+          "effects": "3H trains rust"
+        },
+        {
+          "train": "8H",
+          "phase": "-",
+          "effects": "4H trains rust, two yellow tiles may be laid one one turn"
+        },
+        {
+          "train": "10H",
+          "phase": "Brown",
+          "effects": "Brown tiles, 5H trains rust, train limit 2, 3 ORs, private company closes, use brown     off-board value"
+        },
+        {
+          "train": "12H",
+          "phase": "-",
+          "effects": "6H trains rust"
+        },
+        {
+          "train": "16H",
+          "phase": "-",
+          "effects": "8H trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "The game contains obligations , which can be purchased and come with a non-active 10% share of one of the public companies. The holder of an obligation has the option to purchase the president's certificate of the corresponding public company if someone else declares they wish to buy it. When the two cities of the obligation are connected the non-active share becomes a normal share. When a player wons 60% of a company, buying more shares requires that an additional 20% of the price be paid to the bank."
+    }
+  }
+}

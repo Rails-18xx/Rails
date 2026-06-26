@@ -1,0 +1,126 @@
+{
+  "game": "1861",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "Yes, for all private companies. Any private company price may drop to zero as a result of this."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18Ireland, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "1865 Sardinia, 1867, 1876-35, 1876-35 v2, 1893, 1895, 1898, 18Ardennes, 18BL, 18Dixie, 18EU, 18FL, 18GL, 18Neb, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18Scan, 18US, 18USA, 18VA, Steam Over Holland After it has operated."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1870, 1876-30, 1876-30 v2, 1876-35 v2, 1879, 1883, 1889, 1895, 1899, 18??, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18MS, 18MW, 18Neb, 18NK, 18NL, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18SS, 18TN, 2038, Steam Over Holland 50%."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 21 | 16 | 13 | 11 |  |  |  |  |"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Africa, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18IN, 18Ireland, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland No. All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Privates, in ORs, once a 3 train has been sold, and their own from the bank pool, by 'redemption', in ORs."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "There are no par prices. The initial price is set by the player who purchases the President's certificate, choosing a value selected from a range of predefined prices. All further share dealing is done at the current market price."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "rictive for track tiles, for city upgrades, some track (old or new) must be part of a route for the company."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, then 20*hex distance, then 40*hex distance. Distance measured by 'a crow without a passport'."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "v1 Not covered by the rules, but a clarification from JKLM Games states that you cannot visit the same station hex, station tile or off-board area twice with the same train. Off-board areas means, for example, that all the red hexes that form the off-board area of Poland are counted as one area."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. Players are not required to point out a higher revenue total than that claimed."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "v1 Its choice of train from the bank or bank pool that it can afford with company credit plus any loans it is able to take out. This is a clarification from Markus Welborune/Mike Hutton."
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "Yes."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Once a 3 train has been sold; at from 1 to face value."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "train limit 4/2, first ten minor companies available, use yellow off-board value, 2     ORs"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, all minor companies available, track may be built on private company     hexes, companies may buy privates, minor companies may merge or convert, use green     off-board value"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, train limit 3/1, public companies may be started, Russian State Railway     starts operating"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, minor companies can no longer be started, use brown off-board value"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "Grey tiles, 3 trains rust, train limit 2/1, private companies nationalised, use grey     off-board value"
+        },
+        {
+          "train": "7",
+          "phase": "7",
+          "effects": "-"
+        },
+        {
+          "train": "8",
+          "phase": "8",
+          "effects": "4 trains rust, 5+5E trains become available, all remaining minor companies     nationalised"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Public companies have no fixed base stations. The are formed either by merger or conversion from Minor companies, or start in any unreserved and unconnected city space on the map. Companies may take out loans to pay for track building, train purchases and loan interest. Minor companies may have up to two loans, Public companies may have up to five loans. If a company is unable to pay for commitments and cannot take out enough loans to do so, it is nationalised and becomes part of the Russian State Railway. Companies may buy their own shares from the bank pool, but may not take out loans to do this. The Russian State Railway runs from the start of phase 4 to the end of phase 7, and runs after all other companies have operated. It always retains its revenue and will always buy the cheapest new train from the bank if possible, if it has no outstanding loans and has sufficient money in its treasury. There are always two operating rounds between stock rounds, with a merger round after each operating round from phases 3 to 7 inclusive. During the merger round each eligible Minor company may convert or merge to form a Public company. The end of the game is signalled by the purchase of the first 8 train. If this occurs in the first operating round of a set, complete the round and play two more operating rounds. Otherwise, complete the round, play a stock round and then play three more operating rounds. At the end of the game share prices are adjusted left (or down) one space for each outstanding loan."
+    }
+  }
+}

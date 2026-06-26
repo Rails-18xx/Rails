@@ -1,0 +1,117 @@
+{
+  "game": "1844",
+  "rules": {
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18Ireland, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "In the second SR. But if it has not yet operated, you receive the price it is at after moving down."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1870, 1876-30, 1876-30 v2, 1876-35 v2, 1879, 1883, 1889, 1895, 1899, 18??, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18MS, 18MW, 18Neb, 18NK, 18NL, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18SS, 18TN, 2038, Steam Over Holland 50%."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 24 | 18 | 15 | 13 | 11 |  |  |  | Only certificates in companies having more than one share count towards the limit"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Africa, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18IN, 18Ireland, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland No. All selling precedes all buying."
+    },
+    "roundEnd": {
+      "question": "What ends a share dealing round?",
+      "answer": "Each player consecutively passing. The priority, and subsequent places, are then assigned according to cash held."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Permissive (rule XV, bullet-point 7)."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "No, except by using the special powers of particular privates."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. {The rules make no comment, but the designer's FAQ states that the highest paying route must always be used, and that it is not permitted to claim lower paying routes in order to activate mountain railways and tunnel companies}"
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "Any train from the bank; or any train from another company wishing to sell, at not more than face value."
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "Level 3, 18NY, 18NYC, 18Scan No."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Yes, once a 3 (or 3H) train has been sold, at from 1 to twice face value."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Only the P4, and it then pays 80 to its owner."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2/2H",
+          "phase": "Yellow",
+          "effects": "train limit 4, 1 OR"
+        },
+        {
+          "train": "3/3H",
+          "phase": "Green",
+          "effects": "2 trains become 2Hs, green tiles, 2 ORs, privates may be bought by companies, trains     may be bought from other companies, special properties of privates may be used"
+        },
+        {
+          "train": "4/4H",
+          "phase": "-",
+          "effects": "2H trains rust, 3 trains become 3Hs, train limit 3"
+        },
+        {
+          "train": "5/5H",
+          "phase": "Brown",
+          "effects": "Brown tiles, train limit 2, 3 ORs, SBB forms at end of current OR"
+        },
+        {
+          "train": "6",
+          "phase": "-",
+          "effects": "3H trains rust, 4 trains become 4Hs, companies that have not floated will be fully     capitalised without need to destinate"
+        },
+        {
+          "train": "7",
+          "phase": "-",
+          "effects": "4H trains rust, 5 trains become 5Hs, grey tiles available"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "At the end of each set of ORs, a train from the bank is 'sold abroad'. This transaction does not involve money, but does get rid of trains, including 'poisoned' ones. The number of station markers a major company gets depends on its flotation price."
+    }
+  }
+}

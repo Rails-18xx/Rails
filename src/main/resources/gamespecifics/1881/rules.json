@@ -1,0 +1,100 @@
+{
+  "game": "1881",
+  "rules": {
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "No ( i.e. sell-buy-sell)."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 21 | 18 | 15 | 12 |  |  |  |  | \u00a7\u00a7"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Yes, tramway companies may buy and sell S-Bahn certificates."
+    },
+    "roundEnd": {
+      "question": "What ends a share dealing round?",
+      "answer": "Each player consecutively not making a purchase. The priority then goes to the player after the one who last made a purchase."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "Companies have fixed par prices. 1827 Jr, Crisis Unknown."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. In addition, tokens of the S-Bahn company and subnets do not block tram routes, and tokens of tramway companies for not block S-Bahn routes."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "rictive (rule 7.2.1.2)."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0 for home bases, 40, 80 ,120."
+    },
+    "stationLocation": {
+      "question": "Where can you lay a station marker?",
+      "answer": "The newly-laid station marker must be reachable from one of the laying company's existing station markers by an arbitrarily large train. An S-Bahn token on a minor hub station does not block routes of tramway companies. Tramway company tokens do not block routes of he S-Bahn company."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "It is recommended that base tokens for the tramway companies are placed upside down on their starting hexes at the beginning of the game. The rules do not say when these are flipped over, but it is assumed this happens when the tramway companies float, because the rules do state that the base tokens for the S-Bahn main company and its three subnets are placed when the S-Bahn floats."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "No."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "All Levels, 18MW,"
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "Yellow",
+          "effects": "Yellow tiles, companies may lay two tiles per OR, tramcar limit four, tramcars can be     bought from other companies, 1 OR"
+        },
+        {
+          "train": "3",
+          "phase": "Green",
+          "effects": "Green tiles, companies may lay one tile per OR, S-Bahn certificates available, S4     trains available, 2 ORs"
+        },
+        {
+          "train": "4",
+          "phase": "Brown",
+          "effects": "Brown tiles, 2 tramcars rust, tramcar limit three, S7 trains available, 3 ORs"
+        },
+        {
+          "train": "5",
+          "phase": "Grey",
+          "effects": "Grey tiles, 3 tramcars rust, train limit 2, S4 trains rust, S9 trains available"
+        },
+        {
+          "train": "6",
+          "phase": "-",
+          "effects": "No effect"
+        }
+      ]
+    }
+  }
+}

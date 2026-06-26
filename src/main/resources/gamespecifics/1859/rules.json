@@ -1,0 +1,113 @@
+{
+  "game": "1859",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No. If all players pass, the player putting the private up for auction receives it for free."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "Sell then buy, or buy then sell."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1870, 1876-30, 1876-30 v2, 1876-35 v2, 1879, 1883, 1889, 1895, 1899, 18??, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18MS, 18MW, 18Neb, 18NK, 18NL, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18SS, 18TN, 2038, Steam Over Holland 50%."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 15 | 12 | 10 |  |  |  |  |  | \u00a7\u00a7"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "After being laid, the tile must be reachable from one of the laying company's station markers by an arbitrarily large train, which can be a hex beyond cities fully occupied by other company tokens."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "As for 1830."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "40 in the yellow phase, 70 in the green phase, and 100 in the brown phase."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+    },
+    "stationLocation": {
+      "question": "Where can you lay a station marker?",
+      "answer": "The newly-laid station marker must be reachable from one of the laying company's existing station markers by an arbitrarily large train, which can be beyond cities fully occupied by other company tokens."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "At the start of the game. 1865 Sardinia All base station tokens start the game on the map. For absorbed companies re-entering the game the home base is placed when the President's certificate is purchased."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. Players are not required to point out a higher revenue total than that claimed."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "As for 1830."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Yes, for the GPCC and MRC, and when the CTR buys its first train."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "Yellow",
+          "effects": "train limit 4, 1 OR, token cost 40, lower values for OBHs and ports"
+        },
+        {
+          "train": "3",
+          "phase": "Green",
+          "effects": "Green tiles, privates may be bought by companies, 2 ORs, token cost 70"
+        },
+        {
+          "train": "4",
+          "phase": "-",
+          "effects": "2 trains rust, train limit 3"
+        },
+        {
+          "train": "5",
+          "phase": "Brown",
+          "effects": "Brown tiles, train limit 2, 3 ORs, token cost 100, higher values for OBHs and ports,     privates close"
+        },
+        {
+          "train": "6",
+          "phase": "-",
+          "effects": "3 trains rust, D trains available immediately"
+        },
+        {
+          "train": "D",
+          "phase": "-",
+          "effects": "4 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Tiles may be placed or upgraded and tokens placed even if the location is beyond a city fully occupied by other company tokens. Trains may run through blocked cities by paying a fee to the company owning one of the blocking tokens. The cost for placing tokens depends on the current phase."
+    }
+  }
+}

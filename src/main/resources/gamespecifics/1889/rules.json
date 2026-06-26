@@ -1,0 +1,93 @@
+{
+  "game": "1889",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "Yes, Takamatsu ER(A) only. Must buy if 0 Yen."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "Sell then buy, or buy then sell."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "25 | 19 | 14 | 12 | 11 |  |  |  |  | \u00a7\u00a7"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive in version 1.0a of the rules. Version 1.0c downloaded from Deep Thought Games is also semi-restrictive, but copies of this version exist where the ruling is permissive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, 40, 40."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "No."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Once a 3 train has been sold; at from half to twice face value, except Uno-Takamatsu Ferry after 5 train."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "No, except Dougo Railway."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit 4, 1 OR, left off-board value"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, 2 ORs, privates may be sold"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, train limit 3"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, train limit 2, 3 ORs, middle off-board value, privates (except player's     Uno-Takamatsu Ferry) are closed"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains rust, D-trains available immediately"
+        },
+        {
+          "train": "D",
+          "phase": "7",
+          "effects": "4 trains rust, right off-board value for D-trains, middle off-board value for 5/6     trains"
+        }
+      ]
+    }
+  }
+}

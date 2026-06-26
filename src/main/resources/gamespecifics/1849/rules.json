@@ -1,0 +1,94 @@
+{
+  "game": "1849",
+  "rules": {
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18Ireland, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "1865 Sardinia, 1867, 1876-35, 1876-35 v2, 1893, 1895, 1898, 18Ardennes, 18BL, 18Dixie, 18EU, 18FL, 18GL, 18Neb, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18Scan, 18US, 18USA, 18VA, Steam Over Holland After it has operated. You may not voluntarily sell them until it has operated. You may be forced to sell them earlier in an emergency money-raising step."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "50%. But more can get there as the result of an emergency money-raising step."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "18 | 12 | 9 |  |  |  |  |  |  | First release"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Africa, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18IN, 18Ireland, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland No. All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Their own; in ORs."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "There are no par prices. The initial price is set by the player who purchases the President's certificate, choosing a value selected from a range of predefined prices. All further share dealing is done at the current market price."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (rule 4.1)"
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "1865 Sardinia, 1869 USA West, 1893, 18CLE, 18EZ All Levels, 18GL, 18MW, 18NK, 18NY, 18SA, 18VA, Crisis, Railroad Barons, Rolling Stock Not applicable."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. Players are not required to point out a higher revenue total than that claimed."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "train limit 4, companies may start at 68 or 100"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "Green tiles, 2 ORs, companies may also start at 144, (v4 only, privates may be bought     by companies)"
+        },
+        {
+          "train": "8",
+          "phase": "8",
+          "effects": "4 trains rust, mid value for OBHs, train limit 3"
+        },
+        {
+          "train": "10",
+          "phase": "10",
+          "effects": "6 trains rust, red tiles, train limit 2, 3 ORs, companies may also start at 216"
+        },
+        {
+          "train": "12",
+          "phase": "12",
+          "effects": "Earthquake, high value for OBHs (v4 only, privates eliminated, and if playing the     electric variant, electric tokens and trains are available)"
+        },
+        {
+          "train": "16",
+          "phase": "16",
+          "effects": "8 trains rust, R6 trains available immediately, share prices may enter the final     section of the stock market"
+        },
+        {
+          "train": "R6",
+          "phase": "-",
+          "effects": "-"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Has narrow-gauge track, which is cheaper to lay on mountains and counts differently when determining the length of runs. It costs the full price to upgrade mountain track. Allows trading of station markers"
+    }
+  }
+}

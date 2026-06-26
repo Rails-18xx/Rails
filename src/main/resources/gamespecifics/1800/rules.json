@@ -1,0 +1,113 @@
+{
+  "game": "1800",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "v1, 1830 v3, 1830BC, 1830Lummerland, 1832, 1834, 1844, 1849v4, 1850, 1854, 1856, 1859, 1862, 1868, 1869 The Golden Spike, 1870, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1883, 1891, 1895, 1899, 18AL, 18BL, 18Chesapeake, 18CLE, 18EC, 18EZ Level 3, 18GA, 18GA v2, 18GM, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18NK, 18NY, 18Rhl Rhineland, 18SS, 18SY, 18TN Yes, first private only."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "v4, 1850, 1854, 1856, 1859, 1862, 1868, 1870, 1876 v2, 1876-30, 1876-30 v2, 1889, 1891, 1899, 18AL, 18C2C, 18CLE, 18EC, 18EZ Level 3, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18NK, 18NL, 18Rhl Rhineland, 18SS, 18SY, 18TN Yes, at 5 or more over face value and over any other bid."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "No."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "7 |  |  |  |  |  |  |  |  | \u00a7\u00a7"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Their own, in ORs. They can also sell, but cannot buy and sell in the same turn."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "A company does not have to own a train."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Once a 3 train has been sold; at face value."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "No, except D&SL."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "-",
+          "phase": "1",
+          "effects": "Yellow tiles"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "train limit 2, lowest OBH"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, 2 ORs, privates may be bought by companies"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, middle OBH"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, 3 ORs, all E trains available, privates close"
+        },
+        {
+          "train": "E",
+          "phase": "6",
+          "effects": "3 train rusts, grey tiles, train limit 3"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "There are two bonds, one for each company. Only the Director may buy the bond for their company. The bond pays $50 each operating round, after the privates but in operating order. The money can be split between the player and the company in any amounts. Bonds are exempt from the certificate limit. The price for the RGS private company as published in Rail Gamer magazine is $160. Tony Leal (the designer) has advised that this should be reduced to $150, with a buy-in price of between $75 and $300."
+    }
+  }
+}

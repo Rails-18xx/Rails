@@ -1,0 +1,128 @@
+{
+  "game": "18VA",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No. A series of auction is undertaken. Any private that has not been bid on at the end of each auction is reduced in price by 10."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "Yes, at a multiple of 5 over par and over any other bid."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "50%. Can be exceeded when companies convert to ten-share companies."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "27 | 18 | 13 | 10 |  |  |  |  |  |"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "There are no par prices. The initial price is set by the player who purchases the President's certificate, choosing a value selected from a range of predefined prices. All further share dealing is done at the current market price."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (page 8)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "The cheapest train available in the bank."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Once a 3 train has been sold; at from half to one and a half times face value."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Yes."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2/1G",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit 4/2, lowest values for OBHs, 1 OR"
+        },
+        {
+          "train": "3/2G",
+          "phase": "3",
+          "effects": "Green tiles, privates may be bought by companies, 2 ORs, five-share companies may     convert"
+        },
+        {
+          "train": "4/3G",
+          "phase": "4",
+          "effects": "2/1G trains rust, train limit 3/1"
+        },
+        {
+          "train": "5/4G",
+          "phase": "5",
+          "effects": "Brown tiles, train limit 2/1, 3 ORs, highest values for OBHs, 3/2G trains rust,     five-share companies must convert"
+        },
+        {
+          "train": "6/5G",
+          "phase": "6",
+          "effects": "4D trains available"
+        },
+        {
+          "train": "4D",
+          "phase": "4D",
+          "effects": "Grey tiles, 4/3G trains rust"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit 4/2, lowest values for OBHs, 2 ORs"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, privates may be bought by companies, companies may buy trains from other     companies"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, train limit 3/2, may perform Mergers and Acquisitions and issue stock"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, may abandon Land Grants, new Land Grant companies start as public     companies, middle values for OBHs"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains rust, 4D trains available, new companies start fully funded, no restrictions     on treasury stock buying"
+        },
+        {
+          "train": "4D",
+          "phase": "4D",
+          "effects": "Grey tiles, 4 trains rust, highest values for OBHs"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "The private companies only die when their power is exercised. If their power is not exercised, they last for ever."
+    }
+  }
+}

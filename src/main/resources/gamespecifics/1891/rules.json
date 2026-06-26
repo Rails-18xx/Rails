@@ -1,0 +1,93 @@
+{
+  "game": "1891",
+  "rules": {
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "Sell then buy, or buy then sell."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "50%, except that if more than 20 JNR shares are issued, more than 50% of the JNR can be in the bank pool."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 20 | 16 | 13 | 11 |  |  |  |  | \u00a7\u00a7 After sale of first 6 train, depends on the number     of companies closed. 5% JNR shares count half"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes, but you can't sell the particular certificate that you just bought."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "Contradictory. As per the 1856 rules, which 1891 is based on, when it first operates. However, the rules on starting a company have an italicised section that states that the token is placed in the starting city when the presidency is purchased."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. Stockholders of the operating company may point out a higher revenue total than that claimed, which must then be taken."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Only the TBHC closes."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "One",
+          "effects": "Yellow tiles train limit 4, lowest value for off-board areas"
+        },
+        {
+          "train": "3",
+          "phase": "Two",
+          "effects": "Green tiles, privates may be bought by companies, 2 ORs"
+        },
+        {
+          "train": "4",
+          "phase": "Three",
+          "effects": "2 trains and 2+2 trains rust, train limit 3"
+        },
+        {
+          "train": "5",
+          "phase": "Four",
+          "effects": "Brown tiles, train limit 2, privates close, use middle value for off-board areas, 3     ORs"
+        },
+        {
+          "train": "6",
+          "phase": "Five",
+          "effects": "Grey tiles, 3 trains rust, repay loans, JNR starts, villages can go, diesels available"
+        },
+        {
+          "train": "D",
+          "phase": "Six",
+          "effects": "4 trains rust, use highest value for off-board areas"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Has government loans. After the sale of a 6 train, villages may be removed, either by promoting them to cities, or by downgrading them to plain track. Double villages may be promoted but not removed. A company can fall off the bottom of the stock market. It then ceases to exist. The two 2-2 trains are placed in the bank pool at the start of the game. If using the sixth optional 2 train, this is also placed in the bank pool."
+    }
+  }
+}

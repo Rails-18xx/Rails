@@ -1,0 +1,111 @@
+{
+  "game": "1850",
+  "rules": {
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "Sell then buy, or buy then sell."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1870, 1876-30, 1876-30 v2, 1876-35 v2, 1879, 1883, 1889, 1895, 1899, 18??, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18MS, 18MW, 18Neb, 18NK, 18NL, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18SS, 18TN, 2038, Steam Over Holland 50%."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "24 | 17 | 14 | 11 | 9 |  |  |  |  | At the start"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Their own, by 'redemption', in SRs. Also privates, in ORs, once a 3 train has been sold, for half to double face value. The Mississippi River Bridge Company and the Mesabi Mining Company can be bought in phase two for half to full face value."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive, except that the value of a town or city need not change."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. Stockholders of the operating company may point out a higher revenue total than that claimed, which must then be taken."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Once a 3 train has been sold; at from half to twice face value; the Mississippi Bridge Company and the Mesabi Mining Company may be purchased earlier at from half to face value; if the Union Pacific purchases the Credit Mobilier private it can pay up to three times face value. 1865 Sardinia No, but they can given them (referring to Maritime Companies)."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "Two",
+          "effects": "Train limit 4, 1 OR, Mississippi Bridge Company and Mesabi Mining Company may be     bought by companies for from half to face value, first value for OBHs and the Mesabi     Mining Company"
+        },
+        {
+          "train": "3",
+          "phase": "Three",
+          "effects": "Green tiles, 2 ORs, all privates may be bought by companies"
+        },
+        {
+          "train": "4",
+          "phase": "Four",
+          "effects": "Train limit 3, 2 trains rust"
+        },
+        {
+          "train": "5",
+          "phase": "Five",
+          "effects": "Brown tiles, privates close unless special tile lays have not been used, surviving     privates may not be bought by companies, train limit 2, 3 ORs, second value for OBHs and     the Mesabi Mining Company"
+        },
+        {
+          "train": "6",
+          "phase": "Six",
+          "effects": "Train limit 2, 3 trains rust, all remaining privates close"
+        },
+        {
+          "train": "8",
+          "phase": "Eight",
+          "effects": "Grey tiles, 4 trains rust, third value for OBHs and the Mesabi Mining Company"
+        },
+        {
+          "train": "10",
+          "phase": "Ten",
+          "effects": "-"
+        },
+        {
+          "train": "12",
+          "phase": "Twelve",
+          "effects": "5 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "/1853 v2 At the end of a stock round, if a company's stock is fully sold, and its price token cannot move up because it is already at the top of the market, it moves down and to the right instead. Has 'share protection' in which the President has the option to buy shares that are sold, ostensibly to protect the price. The President gets this option whether the price is in danger of dropping or not.\u00a0 Also 'share redemption' in which a company buys one of its own shares, and 'share reissue' in which the shares bought back in this way are offered for sale again. A route can only include the Mesabi Mining Range if the operating company has a Mesabi Range token. The company that buys the Mesabi Mining Range gets a token at no cost. Other companies can buy a token, which counts as a yellow tile lay. If an eligible company has a token placed in an edge area (a red off-board area with an appropriate token space), that area couints double for that company. There is a 'ledge' on the stock market. Tokens trying to move downwards through this do so normally except if this would cause them to stop immediately below it, when they instead stop immediately above it. Tokens trying to move upwards through the ledge do so normally. Tokens trying to move rightwards through the ledge get diverted upwards by arrows. Tokens trying to move leftwards through the ledge do so normally. The Mississippi River Bridge Company and Mesabi Mining Company privates can be bought in phase two for from half to face value. If the Union Pacific purchases the Credit Mobilier private it can pay up to three times face value. 1853/1853 v2 At the start of the game players make contract bids by putting up a bond. This bond is redeemed once all of the player's cities are joined by track. Building into certain hexes is worth company credits. At the end of a stock round the holder of the Elephant may sell it to another player. At the end of a set of operating rounds the holder of the Elephant may call for one additional operating round. There are two gauges of track/trains. There are mail runs. Each company has a designated territory. It may lay yellow tiles outside this territory but may not promote tiles or place tokens. Some hexes conatin a bracketed value for a frontier post. This is paid as a subsidy to the company that lays a tile in that hex, after it has paid any required construction costs. Where the hex grid runs to the edge of the physical board, track may placed so that it runs off the board. A brown tile that is adjacent to a grey tile may not be promoted."
+    }
+  }
+}

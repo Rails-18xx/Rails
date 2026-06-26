@@ -1,0 +1,53 @@
+{
+  "game": "18NYC",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "The first auction for privates is a silent auction, using sealed bids. Any privates remaining after this auction are offered for auction one at a time. If any of these fail to sell, then an operating round takes place, after which the players return to another auction until all privates have been sold."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "26 | 23 | 20 | 17 | 14 |  |  |  |  | \u00a7\u00a7 no lines merged into the NYCTA"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Privates in ORs, and shares from companies that are part of their affiliation (colour) in ORs. They can also sell these shares, but cannot buy and sell in the same turn."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (rule 4.6.2)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "rictive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, then 20*hex distance from the nearest token. Distance is measured by 'a crow without a passport'."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "No."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "Any train from the bank or bank pool. However, if it is required to take loans to buy a train, it must then buy the cheapest train from the bank or bank pool."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Yes, at from 1 to face value."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Only the Pennsylvania Steel Company, Steinway Tunnel Company and City Hall Station Company."
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Of the 10 private companies, there are four #3 companies. One from this group is randomly chosen at the start of the game. The others are not used in the game. The 12 Lines in the game are split into three groups, each group belongng to a separate affiliation. These companies initially lay track of the colour associated with their affiliation, later on moving on to NYCTA track. Loans may be taken by Lines to pay for track laying, token placement or train buying, Lines can take one 100 loan per round at the start of the game and one 250 loan from phase 5. Lines can hold 5 loans in total. The NYCTA is formed at the beginning of phase 4. Minor companies without trains at the beginning of phases 4 and 3E are converted to become part of the NYCTA, converting shares 2:1. Minor companies without trains at the beginning of phases 4E and 6E are converted to become part of the NYCTA, converting shares 3:1. Some trains have standard versions and a smaller quantity (25%) of aged versions. When all the standard versions are sold, the aged versions, which are cheaper, are put aside so that the players can choose to buy these or the next train type."
+    }
+  }
+}

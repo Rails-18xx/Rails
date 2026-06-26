@@ -1,0 +1,109 @@
+{
+  "game": "1873",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "Not applicable. But after the initial auction, a Dutch auction commences with 10 subtracted whenever all players pass."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards, but if it has not yet operated, you receive the next lower share price (despite not actually lowering the share price in that situation)."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "|  |  |  |  |  |  |  |  | There are no certificate limits"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "roundEnd": {
+      "question": "What ends a share dealing round?",
+      "answer": "Each player consecutively passing. The priority, and subsequent places, are then assigned according to cash held."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "There are no par prices. The initial price is set by the player who purchases the President's certificate, choosing a value selected from a range of predefined prices. All further share dealing is done at the current market price."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "After being laid, all track on the tile must be reachable from any of the laying company's station markers by an arbitrarily large train. Concession routes must not be blocked by the tile lay. Hexes that form part of the WBE concession route can only be built in phase 3 or later (rule 4.4.1)."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Super-restrictive. After being laid, all new track on the tile must be reachable from any of the laying company's station markers by an arbitrarily large train."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, then 100. 50 to buy an inactive marker from another company."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "No."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "You must run the maximum possible number of routes, and you must run all routes to their ends. No requirement is present to maximise revenue."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "There is no fund raising procedure to buy the mandatory train. COmpanies go bankrupt if they cannot buy the train with their own means, followed by receivership."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "A mining share company can buy a private mining company if it has an empty slot availabvle, at from 1 to twice face value if bought from players, or at face value if bought from the bank."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "-",
+          "phase": "1",
+          "effects": "Yellow tiles, 1 OR, concessions active: HBE, GHE"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "2-switchers available, concessions possible: NWE, SHE, KEZ"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, 2 ORs, maintenance for 1 machines and trains, 3-switchers available,     concessions active: NWE, SHE, KEZ, concessions possible: WBE, QLB"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "Maintenance for 2 machines and trains, 4-switchers available, concessions active: WBE,     QLB"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, 3 ORs, 5-switchers available"
+        },
+        {
+          "train": "D",
+          "phase": "D",
+          "effects": "Grey tiles, maintenance for 2 machines and trains"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Private companies are mining companies. They work similar to 1835 style minors. They can be merged into mining share companies. Mining companies need a connection to the regular gauge \"state railway\" network to be effective. They own machines (in lieu of standard trains) and switchers. Normal railway companies represent narrow gauge freight operations with standard trains and (later) passenger Diesel railcars. These railway companies are opened via concessions. The state railway is represented by the MHE. Players can own its shares, but it is run automatically. Trains and machines don't rust, but cause increasing maintenance costs instead. The game ends when the highest share price (1000) is reached, or after the second full set of ORs in phase 5."
+    }
+  }
+}

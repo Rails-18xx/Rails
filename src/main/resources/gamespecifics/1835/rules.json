@@ -1,0 +1,157 @@
+{
+  "game": "1835",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "No."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "No ( i.e. sell-buy-sell)."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "After it has operated; except that you may sell Prussian shares once they have floated."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "50% - but bear in mind that the rules indicate this is checked before selling shares, after which you may sell as many shares as you wish in one block. This can result in more than 50% of the shares in the pool."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 19 | 15 | 12 | 11 | 9 |  |  |  | Add 1 for each company 80%+ held."
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "roundEnd": {
+      "question": "What ends a share dealing round?",
+      "answer": "Each player consecutively not making a purchase or a sale. The priority then goes to the player after the one who last made a purchase."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "Companies have fixed par prices. 1827 Jr, Crisis Unknown."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (rule 3.1.4)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Restrictive (German rule VII.1). But the author's intention was permissive, and another German ruleset exists. An English translation says permissive (rules 3.1.12-3.1.20)."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, then 20*hex distance from the original marker. Distance is measured by 'a crow without a passport'."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "No, except by using the special powers of particular privates."
+    },
+    "stationLocation": {
+      "question": "Where can you lay a station marker?",
+      "answer": "the newly-laid station marker must be connected by track to one belonging to that company; but this track may include one (arguably, more than one) sharp angle that would prevent a train from running over it: \" Ein Fahrtrichtungswechsel ist hierbei erlaubt\" . For 1837 the designer's intention was to allow no more than one backtrack."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "When it is floated, except for the Badische, which places its home station when it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes, except Berlin."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "No."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "Any second-hand train (from the bank pool or another company) or the cheapest new train (only one type can be available at a time). This is what the German rules say. (One English translation says the cheapest train from the bank or bank pool.)"
+    },
+    "forcedTrainMinor": {
+      "question": "Must a minor company buy a train if it does not have one?",
+      "answer": "No."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Yes, except that OB can do one of its two track-lays without closing."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "1",
+          "effects": "Yellow tiles, train limit 4 for majors, 2 for minors, two tile lays by majors, user     lower value for off-board areas, 1 OR"
+        },
+        {
+          "train": "2+2",
+          "phase": "-",
+          "effects": "-"
+        },
+        {
+          "train": "3",
+          "phase": "2",
+          "effects": "Green tiles, transfer of trains, 2 ORs, one tile lay per company, use middle value for     off-board areas, trains may be bought from other companies"
+        },
+        {
+          "train": "3+3",
+          "phase": "-",
+          "effects": "-"
+        },
+        {
+          "train": "4",
+          "phase": "-",
+          "effects": "2 trains rust, train limit 3 for majors, 1 for minors, Prussian may start"
+        },
+        {
+          "train": "4+4",
+          "phase": "-",
+          "effects": "2+2 trains rust, Prussian must start"
+        },
+        {
+          "train": "5",
+          "phase": "3",
+          "effects": "Brown tiles, train limit 2 for majors, 3 for the Prussian, use higher value for     off-board areas, all minors must fold into Prussian, all privates close, 3 ORs"
+        },
+        {
+          "train": "5+5",
+          "phase": "-",
+          "effects": "-"
+        },
+        {
+          "train": "6",
+          "phase": "-",
+          "effects": "3 trains rust"
+        },
+        {
+          "train": "6+6",
+          "phase": "-",
+          "effects": "3+3 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Nationalisation of shares is possible."
+    }
+  }
+}

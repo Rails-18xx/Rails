@@ -1,0 +1,108 @@
+{
+  "game": "1853",
+  "rules": {
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "1865 Sardinia, 1879, 1881, 1893, 18CZ (Standard game and Bohemia Variant), 18EZ Levels 1 and 2, 18Lilliput, 18US, 18West (v1.0), Crisis Not applicable."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "No ( i.e. sell-buy-sell)."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "1865 Sardinia, 1867, 1876-35, 1876-35 v2, 1893, 1895, 1898, 18Ardennes, 18BL, 18Dixie, 18EU, 18FL, 18GL, 18Neb, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18Scan, 18US, 18USA, 18VA, Steam Over Holland After it has operated."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 21 | 16 | 13 | 11 |  |  |  |  | Both versions - shares worth 40 or less do not count towards the limit"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "roundEnd": {
+      "question": "What ends a share dealing round?",
+      "answer": "Each player consecutively not making a purchase. The priority then goes to the player after the one who last made a purchase. The elephant that confers priority may be sold to another player."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "Companies have fixed par prices. 1827 Jr, Crisis Unknown."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Permissive; but upgrades only allowed on the company's 'patch'. A brown tile next to a grey tile may not be upgraded (i.e. there can never be two grey tiles adjacent to each other)."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0 (for both home hexes, in some companies), 40, 100."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "Not stated."
+    },
+    "stationLocation": {
+      "question": "Where can you lay a station marker?",
+      "answer": "The newly-laid station marker must be reachable from one of the laying company's existing station markers by an arbitrarily large train, and must be within the company's 'patch'."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "You may not run to two large stations on the same tile. Small stations are not restricted."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "No."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "A company does not have to own a train."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "1",
+          "effects": "train limit 4, 1 OR*"
+        },
+        {
+          "train": "3",
+          "phase": "2",
+          "effects": "Green tiles, 2 ORs*, 2M trains available"
+        },
+        {
+          "train": "4",
+          "phase": "3",
+          "effects": "Brown tiles, 3 ORs*, train limit 3, 2 trains rust, 3M trains available"
+        },
+        {
+          "train": "5",
+          "phase": "4",
+          "effects": "Grey tiles, train limit 2, 3 trains and 2M trains rust, 4M trains available"
+        },
+        {
+          "train": "6",
+          "phase": "-",
+          "effects": "-"
+        }
+      ]
+    }
+  }
+}

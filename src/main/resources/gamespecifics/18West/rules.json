@@ -1,0 +1,93 @@
+{
+  "game": "18West",
+  "rules": {
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "After it has operated, but the UP is considered to have operated prior to the start of the game and may be sold in the first stock round. | Introduction | Contents | Games | Glossary | |"
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No, but the Presidents's certificate may never go back into the bank pool once purchased."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "28 | 20 | 16 | 13 | 11 |  |  |  |  |"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Yes, Granger Road companies in a Merger and Acquisition round."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (rule 8.1.1) Granger Road companies may only lay or upgrade tiles in the Eastern Settled Zone."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, then 100."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "At the start of the game. 1865 Sardinia All base station tokens start the game on the map. For absorbed companies re-entering the game the home base is placed when the President's certificate is purchased."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "No."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "The next train available from the bank. If more than one type is available, the President may choose which one to buy, even if this then requires him to provide additional funds that would not be required for another available train."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit 4/2, lowest values for OBHs, 2 ORs"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, privates may be bought by companies, companies may buy trains from other     companies"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, train limit 3/2, may perform Mergers and Acquisitions and issue stock"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, may abandon Land Grants, new Land Grant companies start as public     companies, middle values for OBHs"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains rust, 4D trains available, new companies start fully funded, no restrictions     on treasury stock buying"
+        },
+        {
+          "train": "4D",
+          "phase": "4D",
+          "effects": "Grey tiles, 4 trains rust, highest values for OBHs"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "The Union Pacific starts the game as an operating public company with two 2 trains and , in the v2.3 retuned rules, a doubling token in northern San Francisco (Oakland). Until a player becomes President of the UP it runs on autopilot following the rules in section 6.3.3. A public company started during a stock round may buy a train from the bank at the end of that stock round if it has the required funds in its treasury. Initially this will be the DRG and the GN. Later on it may be Land Grant companies started after phase 5 has begun. The v2.3 retuned rules change this so that the DRG and GN, and any public company started after phase 5 begins, now buy their initial train during the operating round, after all the Granger Roads have operated but before any other company. If it is phase 4 or later and a company has completed at least one complete operating round, the company may issue one or more treasury shares to the bank pool and receive the current market value from the bank. The stock market token moves one space to the left when this is done."
+    }
+  }
+}

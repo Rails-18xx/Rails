@@ -1,0 +1,452 @@
+{
+  "game": "18Ruhr",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 27 | 20 | 16 | 13 |  |  |  |  |"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Their own, in ORs. They may buy or sell a single share, which moves between the bank pool and the initial offering or vice versa. If a share is sold the company gains the current price and the price will fall by one row."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (rule 10.1.1)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Permissive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, 60, 80 or 100 as indicated on the company charter."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Unknown/not stated."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "Any available train from the bank or bank pool, or from another company, at an agreed price not exceeding its face value."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "The two Pfederbahn private companies close if used to establish a railway link for a private Montan Company."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "-",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit 4, development markers A and B available, switch engine W1     available, 2 ORs, lowest values for OBHs"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, development markers C available, switch engine W2 available"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, train limit 3, development markers A become inactive, development     markers D available, switch engine W3 available, Montan Round follows 2 ORs, BME private     closes"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, train limit 2, development markers B become inactive, development markers     E available, higher values for OBHs, remaining privates close"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains rust, switch engines W1 rust, 8 trains available immediately, remaining     active pMCs converted to passive pMCs after the next Montan Round"
+        },
+        {
+          "train": "8",
+          "phase": "8",
+          "effects": "Grey tiles, 4 trains rust, development markers C become inactive, 3 ORs"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "Yellow",
+          "effects": "Yellow tiles, train limit 4, buying limit of two 2 trains or one 3 train in an OR,     yellow values for OBHs and Mines, 1 OR"
+        },
+        {
+          "train": "3",
+          "phase": "Green",
+          "effects": "Green tiles, companies may only buy one train in an OR, privates may be bought by     companies, green values for off-board hexes and Mines, 2 ORs"
+        },
+        {
+          "train": "4",
+          "phase": "-",
+          "effects": "2 trains rust, train limit 3"
+        },
+        {
+          "train": "5",
+          "phase": "Brown",
+          "effects": "Brown tiles, train limit 3, buying limt of one train in an OR, brown values for OBHs     and Mines, 3 ORs"
+        },
+        {
+          "train": "6",
+          "phase": "Grey",
+          "effects": "Grey tiles, 3 train rust, gray values for OBHs and Mines, privates close, except for     the SFP if owned by a company"
+        },
+        {
+          "train": "8",
+          "phase": "-",
+          "effects": "4 trains rust"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "-",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit -/4/2 (for SJ/companies/minors), two shares needed to open a     company, incremental company funding, lowest values for OBHs"
+        },
+        {
+          "train": "3/2+2",
+          "phase": "3",
+          "effects": "Green tiles, three shares needed to open a company, middle values for OBHs"
+        },
+        {
+          "train": "4/3+3",
+          "phase": "4",
+          "effects": "2/1+1 trains rust, train limit -/3/1, four shares needed to open a company"
+        },
+        {
+          "train": "5/4+4",
+          "phase": "5",
+          "effects": "Brown tiles, 3/2+2 trains rust, private and minor companies close, SJ eligible to     form, train limit 3/2/-, five shares needed to open a company, full company funding,     highest values for OBHs"
+        },
+        {
+          "train": "5E",
+          "phase": "5E",
+          "effects": "4D trains available immediately"
+        },
+        {
+          "train": "4D",
+          "phase": "4D",
+          "effects": "4/3+3 trains rust"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Yellow and green tiles, train limit 2, privates may be bought by companies, lowest     value for off-board areas, 2 ORs"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "-"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "Brown tiles, 3 trains rust, privates close, middle value for off-board areas, 3 ORs"
+        },
+        {
+          "train": "8",
+          "phase": "8",
+          "effects": "Grey tiles, 4 trains rust, highest\u00a0 value for off-board areas"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2-x",
+          "phase": "2-x",
+          "effects": "Yellow tiles, train limit 4, green value for off-board areas, 1 OR"
+        },
+        {
+          "train": "3-x",
+          "phase": "3-x",
+          "effects": "Green tiles, privates may be bought by companies, 2 ORs"
+        },
+        {
+          "train": "4-x",
+          "phase": "4-x",
+          "effects": "Train limit 3"
+        },
+        {
+          "train": "5-x",
+          "phase": "5-x",
+          "effects": "Brown tiles, train limit 2, private companies close, brown value for off-board areas,     3 ORs"
+        },
+        {
+          "train": "6-x",
+          "phase": "6-x",
+          "effects": "9W trains may be purchased"
+        },
+        {
+          "train": "9W",
+          "phase": "9W",
+          "effects": "Grey tiles, cement tokens removed"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "3-x",
+          "phase": "3-x",
+          "effects": "Yellow and green tiles, no train limit, privates may be bought by companies, 2 ORs"
+        },
+        {
+          "train": "4-x",
+          "phase": "4-x",
+          "effects": "-"
+        },
+        {
+          "train": "6-x",
+          "phase": "6-x",
+          "effects": "Brown tiles, private companies close, 9W trains may be purchased, 3 ORs"
+        },
+        {
+          "train": "9W",
+          "phase": "9W",
+          "effects": "Grey tiles, cement tokens removed, 4 ORs"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "-",
+          "phase": "1",
+          "effects": "Yellow tiles, train limit 4, lowest values for OBHs"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "-"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, privates may be bought by companies, 2 ORs"
+        },
+        {
+          "train": "-",
+          "phase": "3\u00bd",
+          "effects": "Occurs when four of the five 3 trains have been purchased - the American Civil War is     triggered"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "Brown tiles, train limit 3, 2 trains rust, companies can buy more than one train from     the bank per round"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, train limit 2, private companies close, highest values for OBHs, 3 ORs"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains rust"
+        },
+        {
+          "train": "-",
+          "phase": "6\u00bd",
+          "effects": "Occurs when both 6 trains have been purchased - 4 trains become obsolete and run once     more before rusting"
+        },
+        {
+          "train": "8",
+          "phase": "8",
+          "effects": "Grey tiles"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "Yellow and green tiles, train limit 2, 2 ORs"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "-"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, conduct the Western Railroad Convention after the pair of operating     rounds during which the first 4 train is purchased or discarded"
+        },
+        {
+          "train": "3E/2G",
+          "phase": "3E/2G",
+          "effects": "Brown tiles, in the first operating round after the Western Railroad Convention,     companies may exchange a single 4 train for a 2G train for $250"
+        },
+        {
+          "train": "4E/3G",
+          "phase": "4E/3G",
+          "effects": "3 trains rust, 1H/2H trains available, Systems may be formed with a train limit of 4"
+        },
+        {
+          "train": "1H/2H",
+          "phase": "1H/2H",
+          "effects": "-"
+        },
+        {
+          "train": "5E/4G",
+          "phase": "5E/4G",
+          "effects": "4 trains rust, grey tiles"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit 4, new companies may only be started as 2-share companies,     use yellow values for grey and off-board areas"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, new companies may be strarted as 2-share or 5-share companies, use green     values for grey and off-board areas"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, train limit 3, 2+ trains may not be bought or sold and will be     discarded without compensation after running trains, new companies can only be started as     5-share companies"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, new tiles on city hexes must be green rather than yellow, during a     company's first operating turn it may place or upgrade its home city to brown in addition     to normal lay or upgrade actions, when placing or upgrading non-city track a company may     pay 10 per level to upgrade to an additional level of track, new companies may be started     as 5-share or 10-share companies, Pullman cars may be purchased, use brown values for grey     and off-board areas"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains and 3+ trains rust, train limit 2, new companies may only be started as     10-share companies"
+        },
+        {
+          "train": "7",
+          "phase": "7",
+          "effects": "Grey tiles, use grey values for grey and off-board areas"
+        },
+        {
+          "train": "8",
+          "phase": "8",
+          "effects": "4 trains and 4+ trains rust, short selling is no longer permitted"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2/1G",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit 4/2, lowest values for OBHs, 1 OR"
+        },
+        {
+          "train": "3/2G",
+          "phase": "3",
+          "effects": "Green tiles, privates may be bought by companies, 2 ORs, five-share companies may     convert"
+        },
+        {
+          "train": "4/3G",
+          "phase": "4",
+          "effects": "2/1G trains rust, train limit 3/1"
+        },
+        {
+          "train": "5/4G",
+          "phase": "5",
+          "effects": "Brown tiles, train limit 2/1, 3 ORs, highest values for OBHs, 3/2G trains rust,     five-share companies must convert"
+        },
+        {
+          "train": "6/5G",
+          "phase": "6",
+          "effects": "4D trains available"
+        },
+        {
+          "train": "4D",
+          "phase": "4D",
+          "effects": "Grey tiles, 4/3G trains rust"
+        },
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "2",
+          "effects": "Yellow tiles, train limit 4/2, lowest values for OBHs, 2 ORs"
+        },
+        {
+          "train": "3",
+          "phase": "3",
+          "effects": "Green tiles, privates may be bought by companies, companies may buy trains from other     companies"
+        },
+        {
+          "train": "4",
+          "phase": "4",
+          "effects": "2 trains rust, train limit 3/2, may perform Mergers and Acquisitions and issue stock"
+        },
+        {
+          "train": "5",
+          "phase": "5",
+          "effects": "Brown tiles, may abandon Land Grants, new Land Grant companies start as public     companies, middle values for OBHs"
+        },
+        {
+          "train": "6",
+          "phase": "6",
+          "effects": "3 trains rust, 4D trains available, new companies start fully funded, no restrictions     on treasury stock buying"
+        },
+        {
+          "train": "4D",
+          "phase": "4D",
+          "effects": "Grey tiles, 4 trains rust, highest values for OBHs"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Of the 18 private Montan Companies (pMCs) in the game, 8 will be active with the remaining 10 being passive. The selection of which are active and which are passive depends on the chosen scenario. There are five different scenarios to choose from. Private Montan Companies and Montan Corporations doe not build rail networks; they only build at their location. They can invest in technical developments. The larger and more advanced a Montan Company is, the more revenue it generates. Bankruptcy causes a player to leave the game."
+    }
+  }
+}

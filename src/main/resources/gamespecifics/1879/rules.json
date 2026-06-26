@@ -1,0 +1,93 @@
+{
+  "game": "1879",
+  "rules": {
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "Sell then buy, or buy then sell."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "| 16 | 12 | 10 |  |  |  |  |  | \u00a7\u00a7"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830."
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "As for 1830."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "At the start of the game. 1865 Sardinia All base station tokens start the game on the map. For absorbed companies re-entering the game the home base is placed when the President's certificate is purchased."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. Players are not required to point out a higher revenue total than that claimed."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "As for 1830."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "Yellow",
+          "effects": "train limit 4, 1 OR, lower value for the grey city (Spokane)"
+        },
+        {
+          "train": "3",
+          "phase": "Green",
+          "effects": "Green tiles, privates may be bought by companies, 2 ORs, middle value for the grey     city (Spokane)"
+        },
+        {
+          "train": "4",
+          "phase": "-",
+          "effects": "2 trains rust, train limit 3"
+        },
+        {
+          "train": "5",
+          "phase": "Brown",
+          "effects": "Brown tiles, train limit 2, 3 ORs, higher value for the grey city (Spokane), privates     close"
+        },
+        {
+          "train": "6",
+          "phase": "-",
+          "effects": "3 trains rust, D trains available immediately"
+        },
+        {
+          "train": "D",
+          "phase": "-",
+          "effects": "4 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "There are no private companies. An initial auction starts the game, in which the President's certificate of the Northern Pacific is sold by auction. Company start locations have no value. If a company uses its start location as part of a route, the value of the highest income town or city is doubled. There is no trade-in price for Diesels. All Diesels cost $1,100."
+    }
+  }
+}

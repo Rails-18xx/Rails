@@ -1,0 +1,41 @@
+{
+  "game": "18MEX",
+  "rules": {
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "Yes."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (rule 4.4.1(i))"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive, but there is no requirement for a city value to change."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "0, 40, 60, 80."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "Yes."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "Yes. Stockholders of the operating company may point out a higher revenue total than that claimed, which must then be taken."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Yes, once a 3 train has been sold, most at from half to one and a half times face value."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "Only the MNR when the NdM buys its first train."
+    }
+  }
+}

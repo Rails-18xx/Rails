@@ -1,0 +1,119 @@
+{
+  "game": "1846",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No. Players draw from a mixed deck of private companies and dummy cards, choosing which items to keep. The last drawn private company may be passed round the table, reducing in price by $10\u00a0 each time it is passed on, until it is either bought, or taken at no cost."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "1865 Sardinia, 1879, 1881, 1893, 18CZ (Standard game and Bohemia Variant), 18EZ Levels 1 and 2, 18Lilliput, 18US, 18West (v1.0), Crisis Not applicable."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18Ireland, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland Sell then buy."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "For the President, as soon as you like. For other shareholders, after it has operated."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "50%, or more due to a bankruptcy. A President that owns just the President's certificate can sell 'half' of this to the bank, exchanging certificates with the incoming President."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "|  |  | 11 |  |  |  |  |  | 7 companies available/in play"
+    },
+    "sameCompanyBuySell": {
+      "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
+      "answer": "1865 Sardinia, 1867, 1869 USA West, 1873, 1876-35 v2, 1880, 1893, 1895, 1898, 18Africa, 18Ardennes, 18BL, 18Chesapeake, 18CZ, 18EU, 18FL, 18GB, 18GL, 18IN, 18Ireland, 18Lilliput, 18Neb, 18NW, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18SA, 18Scan, 18SS, 18US, 18USA, 18VA, 18West, 2038, Railroad Barons, Steam Over Holland No. All selling precedes all buying."
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "Their own; in ORs. Privates, in ORs, in Phases I and II."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "There are no par prices. The initial price is set by the player who purchases the President's certificate, choosing a value selected from a range of predefined prices. All further share dealing is done at the current market price."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830. (page 6)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "Semi-restrictive."
+    },
+    "stationCost": {
+      "question": "Cost of station markers",
+      "answer": "Normally 0, then 80. Some corporations have reserved city spots that cost 40. In the case of the B&O and PRR, the cost for these is 100 if there is no connection to the reserved city."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "No, except by using the special powers of particular privates."
+    },
+    "stationLocation": {
+      "question": "Where can you lay a station marker?",
+      "answer": "The newly-laid station marker must be reachable from one of the laying company's existing station markers by an arbitrarily large train, except for the B&O and PRR, which do not require any connection to lay a token in their reserved city spots."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "v4, 1898, 18EU, 18IN, 18VA When its president's certificate is bought."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "No."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "1865 Sardinia, 1889, 18Ardennes, 18CZ, 18EU, 18FL, 18GL, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18PA, 18Scan, 18US, 18USA, 18VA, 18West, Rolling Stock, Steam Over Holland Yes."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "A currently available train from the bank. If it can afford one of current types but not the other, or can afford a second hand train, after issuing shares, the President may not add more cash to buy a more expensive train."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "Yes, during phases I or II, at from 1 to face value."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "No. No."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "I",
+          "effects": "train limit 4, 2 ORs, privates may be bought by companies"
+        },
+        {
+          "train": "3/5 or 4",
+          "phase": "II",
+          "effects": "Green tiles"
+        },
+        {
+          "train": "4/6 or 5",
+          "phase": "III",
+          "effects": "2 trains phased out, brown tiles, train limit 3, higher values for OBHs, privates     close (except Mail Contract if owned by a corporation), markers remain"
+        },
+        {
+          "train": "7/8 or 6",
+          "phase": "IV",
+          "effects": "2 train removed, 3/5 and 4 trains phased out, grey tiles, train limit 2, private     company markers removed"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "For the first operating round of the game companies run in reverse price order. All track builds/upgrades cost $20+. Each round, a company may lay two yellow tiles, or lay one yellow tile and upgrade one tile - which may be the tile just laid. Tile lays and token placement can be done in any order. A token can be placed after the first tile lay, followed by a second tile lay not legal prior to the token placement. Trains phase out rather than just dying off. The total number of companies and trains in play depends on the number of players."
+    }
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "game": "1825",
+  "rules": {
+    "privatePriceDrop": {
+      "question": "Does the price of a private company drop by 5 for no sale in the first round?",
+      "answer": "No. One private per player dealt at random and sold compulsorily. With more than 4 players, the others get LNWR shares."
+    },
+    "advanceBids": {
+      "question": "Can you make advance bids?",
+      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+    },
+    "buySellOrder": {
+      "question": "Is there a specific order to buying and selling on your turn?",
+      "answer": "No ( i.e. sell-buy-sell)."
+    },
+    "firstSellRound": {
+      "question": "When can you first sell shares in a company?",
+      "answer": "From the second stock round onwards."
+    },
+    "poolLimit": {
+      "question": "Does the bank pool have a per-company share limit?",
+      "answer": "No."
+    },
+    "certLimit": {
+      "question": "Player certificate limits",
+      "answer": "|  |  |  |  |  |  |  |  | It depends which set your rules come from - shares worth less than 50 do not count     towards the limit"
+    },
+    "companyBuyShares": {
+      "question": "Can companies buy shares?",
+      "answer": "No."
+    },
+    "roundEnd": {
+      "question": "What ends a share dealing round?",
+      "answer": "Each player consecutively not making a purchase. The priority then goes to the player after the one who last made a purchase."
+    },
+    "parPrice": {
+      "question": "How is a share company's initial (par) price determined?",
+      "answer": "Major companies have fixed par prices. For minor companies the price is set by the player who purchases the Presdient's certificate, using any value on the stock market no lower than one tenth the price of the company's built-in train."
+    },
+    "initialTile": {
+      "question": "Where can you make an initial tile lay?",
+      "answer": "As for 1830; but a hex reserved for another company may not be laid on. (rule 4.2.8) with survey parties As for 1829. (rule 6.6)"
+    },
+    "tileReplacement": {
+      "question": "Must a tile replacement extend existing track?",
+      "answer": "rictive. In addition, a city may only be upgraded if reachable from one of the laying company's station-markers by 'one of the Company's existing Trains' (rule 4.3.2). Two '2' trains can be double-headed to act as a single '3' train for this purpose. (rule 4.5.5). {Following this to the letter raises issues when upgrading some station tiles. For example, London has no new track, while the Birmingham/Glasgow/Manchester tiles have new track for only one station, so a company could only upgrade it if it was using this track. Having talked with Francis Tresham it was clearly not the intention to create such a restriction, so you can consider that his intention was for semi-restrictive upgrades. However, the requirement to be able to reach a station with one of the company's trains still exists.} with survey parties As for 1825 without them (rule 6.6)."
+    },
+    "multiStation": {
+      "question": "Can you lay more than one station marker per turn?",
+      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+    },
+    "firstStationTiming": {
+      "question": "When is a company's first station marker laid?",
+      "answer": "The token is placed on the home base at the start of the operating round in which it will first run."
+    },
+    "twoStationsOneTile": {
+      "question": "Can one train run to two stations on the same tile?",
+      "answer": "No, but if using Tank engines (3T, 4T) available in extension kits, these can call at two villages on the same hex or tile."
+    },
+    "maxRevenue": {
+      "question": "Must the maximum possible revenue be claimed?",
+      "answer": "1865 Sardinia, 1889, 18Ardennes, 18CZ, 18EU, 18FL, 18GL, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18PA, 18Scan, 18US, 18USA, 18VA, 18West, Rolling Stock, Steam Over Holland Yes."
+    },
+    "forcedTrainAfford": {
+      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
+      "answer": "A company does not have to own a train. However, a company in receivership must buy a train as soon as funds permit unless there is no route on which it can run. While not stated, this is assumed to be from the bank."
+    },
+    "privateTradeCompany": {
+      "question": "Are private companies purchasable by share companies?",
+      "answer": "No."
+    },
+    "privateClosing": {
+      "question": "Does using a private company's special property close it?",
+      "answer": "v1&3, 1851, 1853, 1853 v2, 1858, 1861, 1862EA, 1862EA v2, 1865 Sardinia, 1867, 1873, 1876-30, 187630-v2, 1876-35, 1876-35 v2, 1879, 1881, 1895, 1898, 18Ardennes, 18EZ Levels 1 and 2, 18PA, 18US, 18West, Crisis, Rolling Stock Not applicable."
+    },
+    "gamePhases": {
+      "question": "Game Phases",
+      "answer": [
+        {
+          "train": "Train",
+          "phase": "Phase",
+          "effects": "Effects"
+        },
+        {
+          "train": "2",
+          "phase": "One",
+          "effects": "train limit 4, 1 OR"
+        },
+        {
+          "train": "3",
+          "phase": "Two",
+          "effects": "Green tiles, 2 ORs"
+        },
+        {
+          "train": "4",
+          "phase": "-",
+          "effects": "-"
+        },
+        {
+          "train": "5",
+          "phase": "Three",
+          "effects": "Brown tiles, 2 trains rust, train limit 3, 3 ORs"
+        },
+        {
+          "train": "6",
+          "phase": "Four",
+          "effects": "Grey tiles, no train limit"
+        },
+        {
+          "train": "7",
+          "phase": "-",
+          "effects": "3 trains rust"
+        }
+      ]
+    },
+    "miscellaneous": {
+      "question": "Miscellaneous",
+      "answer": "Players can sell private companies back into the bank pool for 30 less than their purchase price. Share price rises on payment of dividend as a proportion of the dividend to the share price, rising up to four spaces if the dividend is four or more times the share price."
+    }
+  }
+}

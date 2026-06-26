@@ -60,7 +60,6 @@ old/
 old_games/
 *.docx
 *.txt
-*.json
 *.rails_profile
 *.rails_ini
 gradle.properties
