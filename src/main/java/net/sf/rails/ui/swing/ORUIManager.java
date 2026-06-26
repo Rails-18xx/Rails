@@ -301,6 +301,7 @@ public void toggleRevenueSpinner() {
 
     public void updateStatus(PossibleAction actionToComplete, boolean myTurn) {
 
+        
         // // Inject the highlight update here
         // updateCompanyHighlights();
 
@@ -357,11 +358,18 @@ public void toggleRevenueSpinner() {
             }
         }
 
-        if (possibleActions == null) {
-            if (orPanel != null)
-                orPanel.disableButtons();
-            return;
-        }
+        // 1. STABILITY GUARD: Event-Driven Verification
+// Do not process UI updates or tear down panels if the engine has not resolved a stable action list.
+if (possibleActions == null || possibleActions.isEmpty()) {
+log.info("STABILITY GUARD: PossibleActions list is empty. Halting update to prevent UI wipe.");
+if (orPanel != null) {
+orPanel.disableButtons();
+}
+return;
+}
+
+
+       
 
         // --- SPECIAL MODE DETECTION ---
         boolean hasSpecialActions = false;
@@ -519,15 +527,15 @@ public void toggleRevenueSpinner() {
                 boolean canLay = !possibleActions.getType(LayTile.class).isEmpty();
                 boolean canSpecial = !possibleActions.getType(UseSpecialProperty.class).isEmpty();
                 if (!canLay && !canSpecial && !hasSpecialOR) {
-                    // --- DELETE --- if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
+if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
                 }
             } else if (orStep == GameDef.OrStep.LAY_TOKEN) {
                 if (possibleActions.getType(LayToken.class).isEmpty() && !hasSpecialOR) {
-                    // --- DELETE --- if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
+if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
                 }
             } else if (orStep == GameDef.OrStep.BUY_TRAIN) {
                 if (possibleActions.getType(BuyTrain.class).isEmpty() && !hasSpecialOR) {
-                    // --- DELETE --- if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
+if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
                 }
             }
         }
@@ -598,6 +606,9 @@ public void toggleRevenueSpinner() {
             orPanel.updateDynamicActions(possibleActions.getList());
         } else {
             orPanel.initTrainBuying(new ArrayList<>());
+            PossibleActions freshActions = getPossibleActions();
+            orPanel.updateDynamicActions(freshActions != null ? freshActions.getList() : possibleActions.getList());
+            
         }
 
         orPanel.enableUndo(undoAction);
@@ -952,7 +963,6 @@ public void toggleRevenueSpinner() {
  
 
 public void confirmUpgrade() {
-// --- START FIX ---
         if (map == null) return;
         
         // Find the selected hex and its current visual upgrade
@@ -972,7 +982,6 @@ public void confirmUpgrade() {
         if (floatingUpgradesDialog != null) {
             floatingUpgradesDialog.setVisible(false);
         }
-// --- END FIX ---
     }
 
 

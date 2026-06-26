@@ -778,17 +778,27 @@ public class ORPanel extends GridPanel
 
         }
 
-        // ALWAYS evaluate Phase 5 (Special Actions) independently!
+        // Verify if any genuine voluntary choices are structurally active inside Phase 5.
+        // We exclude checking btnDone here so that an empty turn closure doesn't falsely force an active highlight.
         boolean hasSpecialActions = (specialActionsButtonPanel != null
                 && specialActionsButtonPanel.getComponentCount() > 0) ||
                 (specialContainer != null && specialContainer.isVisible() && specialPanel != null
                         && specialPanel.getComponentCount() > 0);
 
-        boolean hasDoneAction = (btnDone != null && btnDone.getPossibleActions() != null
-                && !btnDone.getPossibleActions().isEmpty());
-
-        if (hasSpecialActions || activePhase >= 5 || hasDoneAction) {
+        
+        if (hasSpecialActions) {
+            
+            // Force the container to actually grow to its content
+            if (specialContainer != null) {
+                specialContainer.setVisible(true);
+                specialContainer.invalidate();
+                specialContainer.revalidate();
+            }
+            
             applyPhaseStyle(phase5Panel, null, UITheme.ACTION_SKIP, UITheme.TRAIN_LIGHT, "Special Actions");
+            if (specialContainer != null) {
+                specialContainer.setVisible(true);
+            }
         } else {
             resetPhasePanel(phase5Panel, null);
         }
@@ -976,6 +986,7 @@ public class ORPanel extends GridPanel
         return html.toString();
     }
 
+ 
     private void rebuildDynamicButtonTexts() {
         if (specialPanel != null) {
             for (Component c : specialPanel.getComponents()) {
@@ -991,27 +1002,24 @@ public class ORPanel extends GridPanel
                             label = action.toString();
 
                         String subText = null;
+                        
+                        // --- START FIX ---
                         if (action instanceof UseSpecialProperty) {
                             net.sf.rails.game.special.SpecialProperty sp = ((UseSpecialProperty) action)
                                     .getSpecialProperty();
                             if (sp != null) {
-                                try {
-                                    java.lang.reflect.Method m = sp.getClass().getMethod("getHelp");
-                                    subText = (String) m.invoke(sp);
-                                } catch (Exception e) {
-                                }
+                                subText = sp.getHelp();
                                 if (subText == null || subText.trim().isEmpty()) {
-                                    try {
-                                        java.lang.reflect.Method m = sp.getClass().getMethod("getInfo");
-                                        subText = (String) m.invoke(sp);
-                                    } catch (Exception e) {
-                                    }
+                                    subText = sp.getInfo();
                                 }
                             }
                         }
+                        // --- END FIX ---
+
                         if (action instanceof BuyPrivate) {
                             BuyPrivate bp = (BuyPrivate) action;
-                            label = "Buy " + bp.getPrivateCompany().getId() + " (" + bp.getMinimumPrice() + "-"
+                            String compId = (bp.getPrivateCompany() != null) ? bp.getPrivateCompany().getId() : action.toString();
+                            label = "Buy " + compId + " (" + bp.getMinimumPrice() + "-"
                                     + bp.getMaximumPrice() + ")";
                         }
 
@@ -1177,7 +1185,7 @@ public class ORPanel extends GridPanel
             specialNotificationPanel.setVisible(false);
         }
 
-        if (specialPanel != null) {
+if (specialPanel != null) {
             specialPanel.removeAll();
         }
         if (specialContainer != null) {
@@ -2804,7 +2812,6 @@ public class ORPanel extends GridPanel
                     }
                 }
             }
-            forceSyncWithEngine();
         } else if (command.equals(OPERATING_COST_CMD)) {
             if (orUIManager != null)
                 orUIManager.operatingCosts();
@@ -2826,18 +2833,15 @@ public class ORPanel extends GridPanel
                 return;
             } else if (executedActions.get(0) instanceof rails.game.action.RepayLoans) {
                 orUIManager.processAction("RepayLoans", executedActions, source);
-                forceSyncWithEngine();
                 return;
 
             } else if (executedActions.get(0) instanceof BuyTrain) {
                 orUIManager.processBuyTrain((BuyTrain) executedActions.get(0));
-                forceSyncWithEngine();
                 return;
             } else {
                 orUIManager.processAction(command, executedActions, source);
             }
 
-            forceSyncWithEngine();
 
         }
     }
@@ -2886,7 +2890,6 @@ public class ORPanel extends GridPanel
         return false;
     }
 
-    // ... (lines of unchanged context code) ...
     private void addSpecialActionButton(PossibleAction action) {
         String label = action.getButtonLabel();
 
@@ -2928,14 +2931,11 @@ public class ORPanel extends GridPanel
             textColor = Color.WHITE;
             label = action.getButtonLabel();
         } else if (action instanceof GuiTargetedAction) {
-
             GuiTargetedAction gta = (GuiTargetedAction) action;
             label = gta.getButtonLabel();
-
             if (gta.getTarget() instanceof Company) {
                 highlightTarget = (Company) gta.getTarget();
             }
-
             // CONSUME THE SIGNATURE
             bgColor = gta.getHighlightBackgroundColor();
             borderColor = gta.getHighlightBorderColor();
@@ -2962,8 +2962,9 @@ public class ORPanel extends GridPanel
         } else if (action instanceof BuyPrivate) {
             BuyPrivate bp = (BuyPrivate) action;
             highlightTarget = bp.getPrivateCompany();
-            label = "Buy " + highlightTarget.getId() + " (" + bp.getMinimumPrice() + "-" + bp.getMaximumPrice() + ")";
-            bgColor = new Color(255, 235, 235); // Matches RailCard private company styling
+            String compId = (highlightTarget != null) ? highlightTarget.getId() : action.toString();
+            label = "Buy " + compId + " (" + bp.getMinimumPrice() + "-" + bp.getMaximumPrice() + ")";
+            bgColor = new Color(255, 235, 235); // Re-assign missing background color fallback layout styling
             borderColor = new Color(200, 150, 150);
             textColor = Color.BLACK;
 
@@ -3008,17 +3009,9 @@ public class ORPanel extends GridPanel
         if (action instanceof UseSpecialProperty) {
             net.sf.rails.game.special.SpecialProperty sp = ((UseSpecialProperty) action).getSpecialProperty();
             if (sp != null) {
-                try {
-                    java.lang.reflect.Method m = sp.getClass().getMethod("getHelp");
-                    subText = (String) m.invoke(sp);
-                } catch (Exception e) {
-                }
+                subText = sp.getHelp();
                 if (subText == null || subText.trim().isEmpty()) {
-                    try {
-                        java.lang.reflect.Method m = sp.getClass().getMethod("getInfo");
-                        subText = (String) m.invoke(sp);
-                    } catch (Exception e) {
-                    }
+                    subText = sp.getInfo();
                 }
             }
         }
@@ -3058,9 +3051,6 @@ public class ORPanel extends GridPanel
         }
 
         // 3. APPLY "RAILCARD" STYLING (Flattened)
-
-        // 3. APPLY "RAILCARD" STYLING (Flattened)
-
         // A. Background & Text
         btn.setBackground(bgColor);
         btn.setForeground(textColor);
@@ -3082,7 +3072,6 @@ public class ORPanel extends GridPanel
         specialPanel.add(btn);
         specialPanel.add(Box.createVerticalStrut(8));
     }
-    // ... (lines of unchanged context code) ...
 
     /**
      * Replaces the tooltip logic with a formatted log entry.
@@ -3111,21 +3100,10 @@ public class ORPanel extends GridPanel
 
     }
 
-    private void forceSyncWithEngine() {
-        SwingUtilities.invokeLater(() -> {
-            if (orUIManager != null && orUIManager.getGameUIManager() != null
-                    && orUIManager.getGameUIManager().getGameManager() != null) {
-                rails.game.action.PossibleActions globalActionsObj = orUIManager.getGameUIManager().getGameManager()
-                        .getPossibleActions();
-                if (globalActionsObj != null) {
-                    updateDynamicActions(globalActionsObj.getList());
-                }
-            }
-        });
-    }
+
 
     public void updateDynamicActions(List<PossibleAction> incomingActions) {
-        try {
+
 
             cleanupUpgradesPanel();
             resetSidebarState();
@@ -3296,6 +3274,8 @@ public class ORPanel extends GridPanel
                 }
             }
 
+
+
             if (isFormationStep && deferredNullAction != null) {
                 specialActions.add(deferredNullAction);
             }
@@ -3313,9 +3293,12 @@ public class ORPanel extends GridPanel
                         continue;
                     addSpecialActionButton(spa);
                 }
-                specialPanel.revalidate();
             } else if (specialContainer != null) {
-                specialContainer.setVisible(false);
+                if (computedPhase == 5 && !specialActions.isEmpty()) {
+                    specialContainer.setVisible(true);
+                } else {
+                    specialContainer.setVisible(false);
+                }
             }
 
             activePhase = computedPhase;
@@ -3333,12 +3316,26 @@ public class ORPanel extends GridPanel
             updateSidebarData();
             updatePhaseSpecifics();
 
-            if (sidebarPanel != null)
-                sidebarPanel.revalidate(); // Ensure standard mode revalidates too
-            sidebarPanel.repaint();
+      SwingUtilities.invokeLater(() -> {
+                if (specialPanel != null) {
+                    specialPanel.revalidate();
+                    specialPanel.repaint();
+                }
+                if (specialContainer != null) {
+                    specialContainer.revalidate();
+                    specialContainer.repaint();
+                }
+                if (phase5Panel != null) {
+                    phase5Panel.revalidate();
+                    phase5Panel.repaint();
+                }
+                if (sidebarPanel != null) {
+                    sidebarPanel.revalidate();
+                    sidebarPanel.repaint();
+                }
+            });
 
-        } catch (Exception e) {
-        }
+
     }
 
     private void bindActionHotkey(ActionButton btn, PossibleAction action) {

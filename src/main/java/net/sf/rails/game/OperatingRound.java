@@ -2,16 +2,18 @@ package net.sf.rails.game;
 
 /**
  * Implements a basic Operating Round.
- * <p>
- * DESIGN PHILOSOPHY: The "Stupid Terminal"
- * 1. The ORPanel and OperatingRound state machine must NEVER autonomously take 
- * decisions for the player because "there is nothing to do."
- * 2. Phase transitions (like finishing the train buying phase) do NOT automatically
- * end the company's turn. 
- * 3. The engine must safely park in the FINAL phase, present all available 
- * voluntary actions (like taking loans, special powers), and explicitly wait 
- * for the player to click the "End Turn" (Done) button to conclude operations.
- * <p>
+ * 
+ * DESIGN PHILOSOPHY: The "Stupid Terminal" & Explicit Player Agency
+ * 1. Operational Phases (Phase 1: Track, Phase 2: Token, Phase 3: Revenue, Phase 4: Train)
+ * must ALWAYS be explicitly confirmed or skipped by the player, even if the action list
+ * is completely empty (due to lack of funds, zero token inventory, or phase limits). 
+ * The engine must never autonomously skip these phases, ensuring the player maintains 
+ * complete situational awareness of why a phase cannot be executed.
+ * * 2. Phase 5 (The FINAL Step) is an administrative anchor, not an operational board phase. 
+ * It is only rendered if active game-specific voluntary special properties (e.g., private company 
+ * powers, cattle/gulf tokens) are available. If no special properties exist, Phase 5 must 
+ * automatically close the turn cleanly without prompting an empty "End Turn" click.
+ * 
  * A new instance must be created for
  * each new Operating Round. At the end of a round, the current instance should
  * be discarded.
@@ -4345,56 +4347,42 @@ public class OperatingRound extends Round implements Observer {
 
     @Override
     public boolean setPossibleActions() {
-
         possibleActions.clear();
         selectedAction = null;
         boolean forced = false;
+
+        // 1. STRICT PHASE LOCALIZATION: We reset the global state immediately.
+        // All 'Done' button logic will be evaluated locally per phase pass.
         doneAllowed.set(false);
+        boolean phaseAllowsDone = false;
 
         // Safety Guard: If the operating company was reset (e.g. during reload).
         if (operatingCompany.value() == null) {
             if (operatingCompanies != null && !operatingCompanies.isEmpty()) {
-                // 1. PRIME THE STATE: Explicitly set to the first company.
-                // This ensures operatingCompany.value() is NOT null, protecting against
-                // subclass logic or initTurn() crashes if setNextOperatingCompany fails.
                 setOperatingCompany(operatingCompanies.get(0));
-
-                // 2. FIND ACTUAL NEXT: Call the logic to find the correct starting company
-                // (e.g. skipping closed/hibernated companies).
                 setNextOperatingCompany(true);
-
-                // 3. RESET STEP: Force step to INITIAL to ensure initTurn() is called.
                 setStep(GameDef.OrStep.INITIAL);
             } else {
-                // Should not happen in a valid OR, but prevents a crash if empty
                 return false;
             }
         }
 
-        // Get the current step *once*
         GameDef.OrStep step = getStep();
         PublicCompany company = operatingCompany.value();
 
         if (step == GameDef.OrStep.INITIAL) {
-            initTurn(); // This logs the turn start
-
-            nextStep(); // Advance from INITIAL to LAY_TRACK (or whatever comes next)
-            step = getStep(); // Get the new step
-
+            initTurn();
+            nextStep();
+            step = getStep();
         }
 
         // --- Normal Step Processing ---
         if (step == GameDef.OrStep.LAY_TRACK) {
-
             possibleActions.addAll(getNormalTileLays(true));
             possibleActions.addAll(getSpecialTileLays(true));
-
-            doneAllowed.set(true); // Enable "Skip All" (DONE)
-
-            // possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
+            phaseAllowsDone = true;
 
         } else if (step == GameDef.OrStep.LAY_TOKEN) {
-
             setNormalTokenLays();
             setSpecialTokenLays();
 
@@ -4403,34 +4391,17 @@ public class OperatingRound extends Round implements Observer {
             if (!currentNormalTokenLays.isEmpty() || !currentSpecialTokenLays.isEmpty() || bonusLaysAvailable) {
                 possibleActions.addAll(currentNormalTokenLays);
                 possibleActions.addAll(currentSpecialTokenLays);
-                if (!forced) {
-                    doneAllowed.set(true); // Enable "Skip All" (DONE)
-                    // possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
-                }
+                if (!forced)
+                    phaseAllowsDone = true;
             } else {
-                // Even if no actions exist, explicitly offer a SKIP option instead of
-                // auto-advancing.
-                if (!forced) {
-                    doneAllowed.set(true);
-                    // possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
-                }
-
+                if (!forced)
+                    phaseAllowsDone = true;
             }
 
         } else if (step == GameDef.OrStep.CALC_REVENUE) {
-
-            // Disable "Done" (Skip) for Revenue.
-            // Players must explicitly choose Payout, Withhold, or Split (generated by
-            // prepareRevenue...).
-            // Pressing "Done" (or 'D') previously skipped revenue entirely, resulting in 0
-            // dividend.
-            doneAllowed.set(false);
+            phaseAllowsDone = false;
             prepareRevenueAndDividendAction();
 
-            // If the company has no running trains, prepareRevenueAndDividendAction() does
-            // not
-            // add any actions. We explicitly handle this zero-revenue case here at the
-            // source.
             if (possibleActions.isEmpty()) {
                 SetDividend zeroRevenueAction = new SetDividend(getRoot(), 0, false,
                         new int[] { SetDividend.WITHHOLD });
@@ -4442,7 +4413,11 @@ public class OperatingRound extends Round implements Observer {
                 prepareNoMapActions();
 
         } else if (step == GameDef.OrStep.BUY_TRAIN) {
-            setBuyableTrains(); // This populates possibleActions
+            setBuyableTrains();
+
+            // setBuyableTrains() may mutate the global doneAllowed, so we sync our local
+            // flag to its decision.
+            phaseAllowsDone = doneAllowed.value();
 
             boolean hasBuyActions = false;
             for (PossibleAction pa : possibleActions.getList()) {
@@ -4451,66 +4426,49 @@ public class OperatingRound extends Round implements Observer {
                     break;
                 }
             }
-            // This is the DONE/SKIP logic block for BUY_TRAIN
-            // Enforce unified 'DONE' handling instead of mixing SKIP and DONE buttons.
+
             if (hasBuyActions) {
                 boolean mustBuy = !operatingCompany.value().hasTrains() &&
                         operatingCompany.value().mustOwnATrain();
                 if (!mustBuy) {
-                    doneAllowed.set(true);
+                    phaseAllowsDone = true;
                 }
             } else {
-                doneAllowed.set(true);
-                // If setBuyableTrains() produced zero buy actions (e.g. limit reached),
-                // inject the DONE action explicitly here so possibleActions is NOT empty.
-                // This prevents the downstream universal safety fallback from injecting a SKIP.
-                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
+                // Wipe the local done flag if there are zero legitimate buy actions available
+                phaseAllowsDone = false;
             }
 
             if (noMapMode && (operatingCompany.value().getLastRevenue() == 0))
                 prepareNoMapActions();
 
-            // This step already correctly sets doneAllowed inside setBuyableTrains()
-
         } else if (step == GameDef.OrStep.DISCARD_TRAINS) {
             forced = true;
-            // On Undo, the transient 'excessTrainCompanies' map is cleared.
-            // We must regenerate it to verify if discards are actually needed.
             if (excessTrainCompanies == null || excessTrainCompanies.isEmpty()) {
                 checkForExcessTrains();
             }
 
-            setTrainsToDiscard(); // This populates possibleActions
+            setTrainsToDiscard();
 
-            // This detects the race condition/data desync where setTrainsToDiscard
-            // fails to generate actions but the step is still DISCARD_TRAINS.
             if (possibleActions.getType(DiscardTrain.class).isEmpty()) {
-                // This is a bug state, but we must not hang.
                 playerManager.setCurrentPlayer(operatingCompany.value().getPresident());
                 stepObject.set(GameDef.OrStep.BUY_TRAIN);
-                return setPossibleActions(); // Re-run for the new step
+                return setPossibleActions();
             }
 
         } else if (step == GameDef.OrStep.TRADE_SHARES) {
             gameManager.getCurrentRound().setPossibleActions();
         } else if (step == GameDef.OrStep.FINAL) {
-            // Explicitly enable the 'End Turn' button for Phase 5 Special Actions
-            doneAllowed.set(true);
+            phaseAllowsDone = false;
         }
 
-        // We track if any new actions are added by the special properties block to
-        // trigger the 'Done' button.
         int actionCountBeforeCommon = possibleActions.getList().size();
-        if (!forced) {
 
+        if (!forced) {
             setBonusTokenLays();
             setDestinationActions();
             setGameSpecificPossibleActions();
 
-            // Can private companies be bought?
             if (isPrivateSellingAllowed()) {
-
-                // Create a list of players with the current one in front
                 int currentPlayerIndex = operatingCompany.value().getPresident().getIndex();
                 Player player;
                 int minPrice, maxPrice;
@@ -4519,52 +4477,35 @@ public class OperatingRound extends Round implements Observer {
 
                 for (int i = currentPlayerIndex; i < currentPlayerIndex + numberOfPlayers; i++) {
                     player = players.get(i % numberOfPlayers);
-
-                    // Allow game-specific logic to restrict selling (e.g. must be President)
                     if (!maySellPrivate(player))
                         continue;
 
                     boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
-
                     if (restrictPrivateTrade && player != operatingCompany.value().getPresident()) {
                         continue;
                     }
 
                     for (PrivateCompany privComp : player.getPortfolioModel().getPrivateCompanies()) {
-
-                        // Check to see if the private can be sold to a company
-                        if (!privComp.tradeableToCompany()) {
+                        if (!privComp.tradeableToCompany())
                             continue;
-                        }
 
-                        // Determine price limits
                         minPrice = getPrivateMinimumPrice(privComp);
-                        maxPrice = getPrivateMaximumPrice(privComp);
-
-                        // Strict Affordability: Do not generate the action if the company cannot afford
-                        // the absolute minimum price
-                        if (operatingCompany.value().getCash() < minPrice) {
+                        if (operatingCompany.value().getCash() < minPrice)
                             continue;
-                        }
 
-                        // Generate the action (The UI will attach this to the Private Card)
-                        BuyPrivate buyPrivate = new BuyPrivate(privComp, minPrice, maxPrice);
-                        possibleActions.add(buyPrivate);
+                        maxPrice = getPrivateMaximumPrice(privComp);
+                        possibleActions.add(new BuyPrivate(privComp, minPrice, maxPrice));
                     }
                 }
             }
 
             if (operatingCompany.value().canUseSpecialProperties()) {
-
-                // Are there any "common" special properties,
-                // i.e. properties that are available to everyone?
                 List<SpecialProperty> commonSP = gameManager.getCommonSpecialProperties();
                 if (commonSP != null) {
                     SellBonusToken sbt;
                     loop: for (SpecialProperty sp : commonSP) {
                         if (sp instanceof SellBonusToken && sp.isUsableDuringOR(getStep())) {
                             sbt = (SellBonusToken) sp;
-                            // Can't buy if already owned
                             if (operatingCompany.value().getBonuses() != null) {
                                 for (Bonus bonus : operatingCompany.value().getBonuses()) {
                                     if (bonus.getName().equals(sp.getId()))
@@ -4576,51 +4517,33 @@ public class OperatingRound extends Round implements Observer {
                     }
                 }
 
-                // Are there other step-independent special properties owned by
-                // the company?
                 List<SpecialProperty> orsps = operatingCompany.value().getPortfolioModel().getAllSpecialProperties();
-
-                // TODO: Do we still need this directly from the operating
-                // company?
-                // List<SpecialProperty> compsps =
-                // operatingCompany.get().getSpecialProperties();
-                // if (compsps != null) orsps.addAll(compsps);
-
                 if (orsps != null) {
                     for (SpecialProperty sp : orsps) {
-                        if (!sp.isExercised() && sp.isUsableIfOwnedByCompany()
-                                && sp.isUsableDuringOR(step)) {
+                        if (!sp.isExercised() && sp.isUsableIfOwnedByCompany() && sp.isUsableDuringOR(step)) {
                             if (sp instanceof SpecialBaseTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
-                                    possibleActions.add(new LayBaseToken(getRoot(),
-                                            (SpecialBaseTokenLay) sp));
-
+                                    possibleActions.add(new LayBaseToken(getRoot(), (SpecialBaseTokenLay) sp));
                                 }
-                            } else if (!(sp instanceof SpecialTileLay)
-                                    && !(sp instanceof SpecialBonusTokenLay)) {
+                            } else if (!(sp instanceof SpecialTileLay) && !(sp instanceof SpecialBonusTokenLay)) {
                                 possibleActions.add(new UseSpecialProperty(sp));
                             }
                         }
                     }
                 }
-                // Are there other step-independent special properties owned by
-                // the president?
+
                 orsps = playerManager.getCurrentPlayer().getPortfolioModel().getAllSpecialProperties();
                 if (orsps != null) {
                     for (SpecialProperty sp : orsps) {
-                        if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer()
-                                && sp.isUsableDuringOR(step)) {
+                        if (!sp.isExercised() && sp.isUsableIfOwnedByPlayer() && sp.isUsableDuringOR(step)) {
                             if (sp instanceof SpecialBaseTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
-                                    possibleActions.add(new LayBaseToken(getRoot(),
-                                            (SpecialBaseTokenLay) sp));
+                                    possibleActions.add(new LayBaseToken(getRoot(), (SpecialBaseTokenLay) sp));
                                 }
                             } else if (sp instanceof SpecialBonusTokenLay) {
                                 if (getStep() != GameDef.OrStep.LAY_TOKEN) {
-                                    possibleActions.add(new LayBonusToken(getRoot(),
-                                            (SpecialBonusTokenLay) sp,
+                                    possibleActions.add(new LayBonusToken(getRoot(), (SpecialBonusTokenLay) sp,
                                             ((SpecialBonusTokenLay) sp).getToken()));
-
                                 }
                             } else if (!(sp instanceof SpecialTileLay)) {
                                 possibleActions.add(new UseSpecialProperty(sp));
@@ -4632,10 +4555,31 @@ public class OperatingRound extends Round implements Observer {
         }
 
         int actionCountAfterCommon = possibleActions.getList().size();
-        // If we added voluntary special actions, force the DONE button to be available.
+
+        // If voluntary special actions were appended, we provide a Done button to skip
+        // them.
         if (actionCountAfterCommon > actionCountBeforeCommon && !forced) {
-            doneAllowed.set(true);
+            phaseAllowsDone = true;
         }
+
+        // CRITICAL REALIGNMENT SWEEP:
+        // Operational board phases (Phases 1-4) must ALWAYS be confirmed or skipped by the player
+        // to maintain structural visibility and prevent disorienting, erratic game jumping.
+        if (possibleActions.isEmpty()) {
+            if (step == GameDef.OrStep.FINAL) {
+                // Phase 5 is an administrative parking space; it exits cleanly if completely empty.
+                finishTurn();
+                return setPossibleActions();
+            } else if (step == GameDef.OrStep.LAY_TRACK || step == GameDef.OrStep.LAY_TOKEN || 
+                       step == GameDef.OrStep.CALC_REVENUE || step == GameDef.OrStep.BUY_TRAIN) {
+                // Operational phases MUST force a manual user confirmation step even when empty.
+                phaseAllowsDone = true;
+            }
+        }
+
+        // Push our rigorously calculated localized flag to the persistent variable
+        // right before UI consumption.
+        doneAllowed.set(phaseAllowsDone);
 
         if (doneAllowed.value()) {
             boolean hasDone = false;
@@ -4659,7 +4603,6 @@ public class OperatingRound extends Round implements Observer {
             }
         }
 
-        // possibleActions.getList().size());
         return true;
     }
 

@@ -56,28 +56,39 @@
     "gamePhases": {
       "question": "Game Phases",
       "answer": [
-        {
-          "train": "Train",
-          "phase": "Phase",
-          "effects": "Effects"
-        },
-        {
-          "train": "2",
+        { 
           "phase": "One",
+          "onTrain": "2'",
+          "ors": "1",
+          "trainLimit": "4",
+          "colour": "Yellow",
+          "rustsTrains": "",
           "effects": "Yellow tiles, train limit 4, use lowest value for off-board areas"
         },
         {
-          "train": "3",
+          "onTrain": "3",
+          "ors": "2",
+          "trainLimit": "4",
+          "colour": "Green",
+          "rustsTrains": "",
           "phase": "Two",
           "effects": "Green tiles, privates may be bought by companies, 2 ORs"
         },
         {
-          "train": "4",
           "phase": "Three",
+          "onTrain": "4",
+          "ors": "2",
+          "trainLimit": "3",
+          "colour": "Green",
+          "rustsTrains": "2",
           "effects": "2 trains rust, train limit 3"
         },
         {
-          "train": "5",
+          "onTrain": "5",
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Brown",
+          "rustsTrains": "",          
           "phase": "Four",
           "effects": "Brown tiles, privates close, 3 ORs, use middle value for off-board areas, train limit     2"
         },
@@ -87,16 +98,28 @@
           "effects": "Grey tiles, 3 trains rust, port and cattle tokens go"
         },
         {
-          "train": "8",
+          "onTrain": "6",
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Gray",
+          "rustsTrains": "3",          
           "phase": "Six",
           "effects": "4 trains rust, use bottom value for off-board areas"
         },
         {
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Gray",
+          "rustsTrains": "4",
           "train": "10",
           "phase": "Seven",
           "effects": "-"
         },
         {
+           "ors": "3",
+          "trainLimit": "2",
+          "colour": "Gray",
+          "rustsTrains": "5",
           "train": "12",
           "phase": "Eight",
           "effects": "5 trains rust"
