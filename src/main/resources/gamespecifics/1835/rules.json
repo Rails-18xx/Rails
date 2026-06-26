@@ -59,14 +59,14 @@
     },
     "stationLocation": {
       "question": "Where can you lay a station marker?",
-      "answer": "the newly-laid station marker must be connected by track to one belonging to that company; but this track may include one (arguably, more than one) sharp angle that would prevent a train from running over it: \" Ein Fahrtrichtungswechsel ist hierbei erlaubt\" . For 1837 the designer's intention was to allow no more than one backtrack."
+      "answer": "the newly-laid station marker must be connected by track to one belonging to that company; but this track may include one (arguably, more than one) sharp angle that would prevent a onTrain from running over it: \" Ein Fahrtrichtungswechsel ist hierbei erlaubt\" . For 1837 the designer's intention was to allow no more than one backtrack."
     },
     "firstStationTiming": {
       "question": "When is a company's first station marker laid?",
       "answer": "When it is floated, except for the Badische, which places its home station when it first operates."
     },
     "twoStationsOneTile": {
-      "question": "Can one train run to two stations on the same tile?",
+      "question": "Can one onTrain run to two stations on the same tile?",
       "answer": "Yes, except Berlin."
     },
     "maxRevenue": {
@@ -74,11 +74,11 @@
       "answer": "No."
     },
     "forcedTrainAfford": {
-      "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
-      "answer": "Any second-hand train (from the bank pool or another company) or the cheapest new train (only one type can be available at a time). This is what the German rules say. (One English translation says the cheapest train from the bank or bank pool.)"
+      "question": "When a company is forced to buy a onTrain and cannot buy one with its own means, what onTrain may it then buy?",
+      "answer": "Any second-hand onTrain (from the bank pool or another company) or the cheapest new onTrain (only one type can be available at a time). This is what the German rules say. (One English translation says the cheapest onTrain from the bank or bank pool.)"
     },
     "forcedTrainMinor": {
-      "question": "Must a minor company buy a train if it does not have one?",
+      "question": "Must a minor company buy a onTrain if it does not have one?",
       "answer": "No."
     },
     "privateTradeCompany": {
@@ -93,58 +93,95 @@
       "question": "Game Phases",
       "answer": [
         {
-          "train": "Train",
-          "phase": "Phase",
-          "effects": "Effects"
-        },
-        {
-          "train": "2",
+          "onTrain": "2",
           "phase": "1",
-          "effects": "Yellow tiles, train limit 4 for majors, 2 for minors, two tile lays by majors, user     lower value for off-board areas, 1 OR"
+          "ors": "1",
+          "trainLimit": "4",
+          "colour": "Yellow",
+          "rustsTrains": "",
+          "effects": "Yellow tiles, Train limit 4 for majors, 2 for minors, two tile lays by majors, user lower value for off-board areas, 1 OR"
         },
         {
-          "train": "2+2",
+          "onTrain": "2+2",
           "phase": "-",
+          "ors": "1",
+          "trainLimit": "4",
+          "colour": "Yellow",
+          "rustsTrains": "",
           "effects": "-"
         },
         {
-          "train": "3",
+          "onTrain": "3",
           "phase": "2",
-          "effects": "Green tiles, transfer of trains, 2 ORs, one tile lay per company, use middle value for     off-board areas, trains may be bought from other companies"
+
+          "ors": "2",
+          "trainLimit": "3",
+          "colour": "Green",
+          "rustsTrains": "",
+          "effects": "Green tiles, transfer of trains, 2 ORs, one tile lay per company, use middle value for off-board areas, trains may be bought from other companies"
         },
         {
-          "train": "3+3",
+          "onTrain": "3+3",
           "phase": "-",
+
+          "ors": "2",
+          "trainLimit": "3",
+          "colour": "Green",
+          "rustsTrains": "",
           "effects": "-"
         },
         {
-          "train": "4",
+          "onTrain": "4",
           "phase": "-",
-          "effects": "2 trains rust, train limit 3 for majors, 1 for minors, Prussian may start"
+           "ors": "2",
+          "trainLimit": "3",
+          "colour": "Green",
+          "rustsTrains": "2",
+          "effects": "2 trains rust, Train limit 3 for majors, 1 for minors, Prussian may start"
         },
         {
-          "train": "4+4",
+          "onTrain": "4+4",
           "phase": "-",
+           "ors": "2",
+          "trainLimit": "3",
+          "colour": "Green",
+          "rustsTrains": "2+2",
           "effects": "2+2 trains rust, Prussian must start"
         },
         {
-          "train": "5",
+          "onTrain": "5",
           "phase": "3",
-          "effects": "Brown tiles, train limit 2 for majors, 3 for the Prussian, use higher value for     off-board areas, all minors must fold into Prussian, all privates close, 3 ORs"
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Brown",
+          "rustsTrains": "",
+          "effects": "Brown tiles, Train limit 2 for majors, 3 for the Prussian, use higher value for off-board areas, all minors must fold into Prussian, all privates close, 3 ORs"
         },
         {
-          "train": "5+5",
+          "onTrain": "5+5",
           "phase": "-",
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Brown",
+          "rustsTrains": "",
           "effects": "-"
         },
         {
-          "train": "6",
+          "onTrain": "6",
           "phase": "-",
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Brown",
+          "rustsTrains": "3",
           "effects": "3 trains rust"
         },
         {
-          "train": "6+6",
+          "onTrain": "6+6",
           "phase": "-",
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Brown",
+          "rustsTrains": "3+3",
           "effects": "3+3 trains rust"
         }
       ]

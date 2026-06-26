@@ -31,7 +31,7 @@
     },
     "firstStationTiming": {
       "question": "When is a company's first station marker laid?",
-      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+      "answer": "When it first operates."
     },
     "maxRevenue": {
       "question": "Must the maximum possible revenue be claimed?",

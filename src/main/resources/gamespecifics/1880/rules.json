@@ -19,7 +19,7 @@
     },
     "certLimit": {
       "question": "Player certificate limits",
-      "answer": "| 20 | 16 | 14 | 12 | 11 |  |  |  | \u00a7\u00a7"
+      "answer": "| 20 | 16 | 14 | 12 | 11 |  |  |  | "
     },
     "companyBuyShares": {
       "question": "Can companies buy shares?",

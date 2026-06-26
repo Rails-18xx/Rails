@@ -15,7 +15,7 @@
     },
     "certLimit": {
       "question": "Player certificate limits",
-      "answer": "| 21 | 18 | 15 | 12 |  |  |  |  | \u00a7\u00a7"
+      "answer": "| 21 | 18 | 15 | 12 |  |  |  |  | "
     },
     "sameCompanyBuySell": {
       "question": "Can you buy a certificate and immediately sell a certificate in the same company?",

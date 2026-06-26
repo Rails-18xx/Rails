@@ -3,7 +3,7 @@
   "rules": {
     "advanceBids": {
       "question": "Can you make advance bids?",
-      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+      "answer": " No."
     },
     "buySellOrder": {
       "question": "Is there a specific order to buying and selling on your turn?",
@@ -15,11 +15,11 @@
     },
     "poolLimit": {
       "question": "Does the bank pool have a per-company share limit?",
-      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1870, 1876-30, 1876-30 v2, 1876-35 v2, 1879, 1883, 1889, 1895, 1899, 18??, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18MS, 18MW, 18Neb, 18NK, 18NL, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18SS, 18TN, 2038, Steam Over Holland 50%."
+      "answer": "50%."
     },
     "certLimit": {
       "question": "Player certificate limits",
-      "answer": "8 | 5 | 4 |  |  |  |  |  |  | \u00a7\u00a7"
+      "answer": "8 | 5 | 4 |  |  |  |  |  |  | "
     },
     "sameCompanyBuySell": {
       "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
@@ -39,11 +39,11 @@
     },
     "multiStation": {
       "question": "Can you lay more than one station marker per turn?",
-      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+      "answer": "No."
     },
     "firstStationTiming": {
       "question": "When is a company's first station marker laid?",
-      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+      "answer": "When it first operates."
     },
     "twoStationsOneTile": {
       "question": "Can one train run to two stations on the same tile?",

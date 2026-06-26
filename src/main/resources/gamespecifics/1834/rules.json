@@ -15,11 +15,11 @@
     },
     "poolLimit": {
       "question": "Does the bank pool have a per-company share limit?",
-      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1870, 1876-30, 1876-30 v2, 1876-35 v2, 1879, 1883, 1889, 1895, 1899, 18??, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18MS, 18MW, 18Neb, 18NK, 18NL, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18SS, 18TN, 2038, Steam Over Holland 50%."
+      "answer": "50%."
     },
     "certLimit": {
       "question": "Player certificate limits",
-      "answer": "| 13 | 10 | 8 |  |  |  |  |  | \u00a7\u00a7"
+      "answer": "| 13 | 10 | 8 |  |  |  |  |  | "
     },
     "sameCompanyBuySell": {
       "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
@@ -43,7 +43,7 @@
     },
     "firstStationTiming": {
       "question": "When is a company's first station marker laid?",
-      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+      "answer": "When it first operates."
     },
     "twoStationsOneTile": {
       "question": "Can one train run to two stations on the same tile?",

@@ -11,7 +11,7 @@
     },
     "firstSellRound": {
       "question": "When can you first sell shares in a company?",
-      "answer": "1865 Sardinia, 1867, 1876-35, 1876-35 v2, 1893, 1895, 1898, 18Ardennes, 18BL, 18Dixie, 18EU, 18FL, 18GL, 18Neb, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18Scan, 18US, 18USA, 18VA, Steam Over Holland After it has operated."
+      "answer": "After it has operated."
     },
     "poolLimit": {
       "question": "Does the bank pool have a per-company share limit?",
@@ -55,7 +55,7 @@
     },
     "firstStationTiming": {
       "question": "When is a company's first station marker laid?",
-      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+      "answer": "When it first operates."
     },
     "twoStationsOneTile": {
       "question": "Can one train run to two stations on the same tile?",

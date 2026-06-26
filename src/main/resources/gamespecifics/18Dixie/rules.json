@@ -7,7 +7,7 @@
     },
     "advanceBids": {
       "question": "Can you make advance bids?",
-      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+      "answer": " No."
     },
     "buySellOrder": {
       "question": "Is there a specific order to buying and selling on your turn?",
@@ -15,7 +15,7 @@
     },
     "certLimit": {
       "question": "Player certificate limits",
-      "answer": "| 20 | 15 | 12 | 11 |  |  |  |  | \u00a7\u00a7 Before the formation of the SCL or ICG"
+      "answer": "| 20 | 15 | 12 | 11 |  |  |  |  |  Before the formation of the SCL or ICG"
     },
     "sameCompanyBuySell": {
       "question": "Can you buy a certificate and immediately sell a certificate in the same company?",
@@ -35,7 +35,7 @@
     },
     "firstStationTiming": {
       "question": "When is a company's first station marker laid?",
-      "answer": "All Levels, 18GA, 18GA v2, 18JP-T, 18Kaas, 18Mex, 18MS, 18NK, 18NL, 18Rhl Rhineland, 18Ruhr, 18SA, 18SS, 18SY, 18TN, Steam Over Holland When it first operates."
+      "answer": "When it first operates."
     },
     "twoStationsOneTile": {
       "question": "Can one train run to two stations on the same tile?",

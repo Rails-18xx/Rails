@@ -15,7 +15,7 @@
     },
     "certLimit": {
       "question": "Player certificate limits",
-      "answer": "| 20 | 16 | 13 | 11 |  |  |  |  | \u00a7\u00a7 After sale of first 6 train, depends on the number     of companies closed. 5% JNR shares count half"
+      "answer": "| 20 | 16 | 13 | 11 |  |  |  |  |  After sale of first 6 train, depends on the number     of companies closed. 5% JNR shares count half"
     },
     "sameCompanyBuySell": {
       "question": "Can you buy a certificate and immediately sell a certificate in the same company?",

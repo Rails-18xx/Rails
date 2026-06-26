@@ -15,7 +15,7 @@
     },
     "certLimit": {
       "question": "Player certificate limits",
-      "answer": "|  | 25 | 20 | 16 | 14 | 12 | 11 |  | \u00a7\u00a7 12 companies in play"
+      "answer": "|  | 25 | 20 | 16 | 14 | 12 | 11 |  |  12 companies in play"
     },
     "sameCompanyBuySell": {
       "question": "Can you buy a certificate and immediately sell a certificate in the same company?",

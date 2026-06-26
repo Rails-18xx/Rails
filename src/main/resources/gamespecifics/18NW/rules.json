@@ -11,7 +11,7 @@
     },
     "certLimit": {
       "question": "Player certificate limits",
-      "answer": "24 | 20 | 17 | 14 | 12 |  |  |  |  | \u00a7\u00a7 No companies in receivership - private company     certificates are not counted"
+      "answer": "24 | 20 | 17 | 14 | 12 |  |  |  |  |  No companies in receivership - private company     certificates are not counted"
     },
     "companyBuyShares": {
       "question": "Can companies buy shares?",

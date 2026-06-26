@@ -3,7 +3,7 @@
   "rules": {
     "advanceBids": {
       "question": "Can you make advance bids?",
-      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+      "answer": " No."
     },
     "firstSellRound": {
       "question": "When can you first sell shares in a company?",

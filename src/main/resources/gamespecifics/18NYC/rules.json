@@ -11,7 +11,7 @@
     },
     "certLimit": {
       "question": "Player certificate limits",
-      "answer": "26 | 23 | 20 | 17 | 14 |  |  |  |  | \u00a7\u00a7 no lines merged into the NYCTA"
+      "answer": "26 | 23 | 20 | 17 | 14 |  |  |  |  |  no lines merged into the NYCTA"
     },
     "companyBuyShares": {
       "question": "Can companies buy shares?",

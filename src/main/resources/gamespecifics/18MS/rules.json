@@ -7,7 +7,7 @@
     },
     "advanceBids": {
       "question": "Can you make advance bids?",
-      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+      "answer": " No."
     },
     "buySellOrder": {
       "question": "Is there a specific order to buying and selling on your turn?",
@@ -19,7 +19,7 @@
     },
     "certLimit": {
       "question": "Player certificate limits",
-      "answer": "20 | 14 | 10 |  |  |  |  |  |  | \u00a7\u00a7"
+      "answer": "20 | 14 | 10 |  |  |  |  |  |  |"
     },
     "sameCompanyBuySell": {
       "question": "Can you buy a certificate and immediately sell a certificate in the same company?",

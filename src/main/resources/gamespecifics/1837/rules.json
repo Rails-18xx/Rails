@@ -7,7 +7,7 @@
     },
     "advanceBids": {
       "question": "Can you make advance bids?",
-      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+      "answer": " No."
     },
     "buySellOrder": {
       "question": "Is there a specific order to buying and selling on your turn?",
@@ -15,11 +15,11 @@
     },
     "firstSellRound": {
       "question": "When can you first sell shares in a company?",
-      "answer": "1865 Sardinia, 1867, 1876-35, 1876-35 v2, 1893, 1895, 1898, 18Ardennes, 18BL, 18Dixie, 18EU, 18FL, 18GL, 18Neb, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18Scan, 18US, 18USA, 18VA, Steam Over Holland After it has operated."
+      "answer": "After it has operated."
     },
     "poolLimit": {
       "question": "Does the bank pool have a per-company share limit?",
-      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1870, 1876-30, 1876-30 v2, 1876-35 v2, 1879, 1883, 1889, 1895, 1899, 18??, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Mex, 18MS, 18MW, 18Neb, 18NK, 18NL, 18NW, 18NYC, 18Rhl Rhineland, 18Ruhr, 18SS, 18TN, 2038, Steam Over Holland 50%."
+      "answer": "50%."
     },
     "certLimit": {
       "question": "Player certificate limits",
@@ -55,7 +55,7 @@
     },
     "multiStation": {
       "question": "Can you lay more than one station marker per turn?",
-      "answer": "1865 Sardinia, 1867, 1868, 1869 The Golden Spike, 1869 USA West, 1870, 1873, 1876 v2, 1876-30, 1876-30 v2, 1876-35, 1876-35 v2, 1879, 1880, 1881, 1883, 1889, 1891, 1893, 1895, 1899, 18??, 18Africa, 18AL, 18Ardennes, 18BL, 18C2C, 18Chesapeake, 18CLE, 18CZ, 18Dixie, 18EC, 18EU, 18EZ Levels 2 and 3, 18FL, 18GA, 18GA v2, 18GB, 18GL, 18GM, 18IN, 18Ireland, 18JP-T, 18Kaas, 18Lilliput, 18Mex, 18MS, 18Neb, 18NK, 18NL, 18NW, 18NY, 18NYC, 18OE, 18PA, 18Rhl Rhineland, 18Ruhr, 18Scan, 18SS, 18SY, 18TN, 18USA, 18VA, 18West, Steam Over Holland No."
+      "answer": "No."
     },
     "stationLocation": {
       "question": "Where can you lay a station marker?",
@@ -89,58 +89,93 @@
       "question": "Game Phases",
       "answer": [
         {
-          "train": "Train",
-          "phase": "Phase",
-          "effects": "Effects"
-        },
-        {
-          "train": "2",
           "phase": "1",
+          "onTrain": "2'",
+          "ors": "1",
+          "trainLimit": "4",
+          "colour": "Yellow",
+          "rustsTrains": "",
           "effects": "train limit 4 for majors, 2 for minors"
         },
         {
-          "train": "3",
+          "onTrain": "3",
+          "ors": "2",
+          "trainLimit": "4",
+          "colour": "Green",
+          "rustsTrains": "",
           "phase": "2",
-          "effects": "Green tiles, transfer of trains, 2 ORs, Bosnia-Herzegovina open, passes may be built     without help of mountain railways, train limit 3 for majors, trains may be bought from     other companies      Original edition German rules: 2G trains available      Original edition English translations: 2G trains available (once 1Gs have sold out) (from     phase table - not mentioned in the rules)      All-Aboard Games edition: 2G trains available (even if 1G trains have not been sold)"
+          "effects": "Green tiles, transfer of trains, 2 ORs, Bosnia-Herzegovina open, passes may be built without help of mountain railways, train limit 3 for majors, trains may be bought from     other companies      Original edition German rules: 2G trains available      Original edition English translations: 2G trains available (once 1Gs have sold out) (from     phase table - not mentioned in the rules)      All-Aboard Games edition: 2G trains available (even if 1G trains have not been sold)"
         },
         {
-          "train": "3+1",
+          "onTrain": "3+1",
+          "ors": "2",
+          "trainLimit": "4",
+          "colour": "Green",
+          "rustsTrains": "",
           "phase": "-",
           "effects": "train limit 1 for non-Hungarian minors and for coal companies"
         },
         {
-          "train": "4",
+          "onTrain": "4",
+           "ors": "2",
+          "trainLimit": "3",
+          "colour": "Green",
+          "rustsTrains": "2",
           "phase": "-",
-          "effects": "2 trains rust, Italy secedes, Bozen upgraded to green, Sudbahn launched, K+K may be     launched, train limit for Sudbahn and K+K is 4      Original edition German rules: 3G trains available      Original edition English translations: 3G trains available (once 1Gs and 2Gs have sold     out)      All-Aboard Games edition: 3G trains available (even if 1G and 2G trains have not been     sold)"
+          "effects": "2 trains rust, Italy secedes, Bozen upgraded to green, Sudbahn launched, K+K may be launched, train limit for Sudbahn and K+K is 4      Original edition German rules: 3G trains available      Original edition English translations: 3G trains available (once 1Gs and 2Gs have sold     out)      All-Aboard Games edition: 3G trains available (even if 1G and 2G trains have not been     sold)"
         },
         {
-          "train": "3G",
+          "onTrain": "3G",
           "phase": "-",
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Green",
+          "rustsTrains": "1G",
           "effects": "1G trains rust"
         },
         {
-          "train": "4E",
+          "onTrain": "4E",
           "phase": "-",
+          "ors": "3",
+          "trainLimit": "3",
+          "colour": "Green",
+          "rustsTrains": "",
           "effects": "Hungarian may launch - its train limit is 4"
         },
         {
-          "train": "4+1",
+          "onTrain": "4+1",
           "phase": "-",
+          "ors": "3",
+          "trainLimit": "3",
+          "colour": "Green",
+          "rustsTrains": "",
           "effects": "K+K must launch"
         },
         {
-          "train": "5",
+          "onTrain": "5",
           "phase": "3",
-          "effects": "Brown tiles, train limit 2 (3 for fused companies), 3 ORs, 3 trains rust, Hungarian     must launch, private companies close, coal companies fused into majors      Original edition German rules: 4G trains available      Original edition English translations: 4G trains available (once 3Gs have sold out)      All-Aboard Games edition: 4G trains available (even if 3G trains have not been sold)"
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Brown",
+          "rustsTrains": "",
+          "effects": "Brown tiles, train limit 2 (3 for fused companies), 3 ORs, 3 trains rust, Hungarian must launch, private companies close, coal companies fused into majors      Original edition German rules: 4G trains available      Original edition English translations: 4G trains available (once 3Gs have sold out)      All-Aboard Games edition: 4G trains available (even if 3G trains have not been sold)"
         },
         {
-          "train": "4G",
+          "onTrain": "4G",
           "phase": "-",
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Brown",
+          "rustsTrains": "2G",
           "effects": "2G trains rust"
         },
         {
-          "train": "5+2",
+          "onTrain": "5+2",
           "phase": "-",
+          "ors": "3",
+          "trainLimit": "2",
+          "colour": "Gray",
+          "rustsTrains": "3+1",
           "effects": "3+1 trains rust"
         }
       ]

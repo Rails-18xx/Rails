@@ -59,11 +59,11 @@
     },
     "twoStationsOneTile": {
       "question": "Can one train run to two stations on the same tile?",
-      "answer": "1865 Sardinia, 1869 USA West, 1893, 18CLE, 18EZ All Levels, 18GL, 18MW, 18NK, 18NY, 18SA, 18VA, Crisis, Railroad Barons, Rolling Stock Not applicable."
+      "answer": "Not applicable."
     },
     "maxRevenue": {
       "question": "Must the maximum possible revenue be claimed?",
-      "answer": "1865 Sardinia, 1889, 18Ardennes, 18CZ, 18EU, 18FL, 18GL, 18IN, 18Lilliput, 18Neb, 18NW, 18NYC, 18PA, 18Scan, 18US, 18USA, 18VA, 18West, Rolling Stock, Steam Over Holland Yes."
+      "answer": "Yes."
     },
     "forcedTrainAfford": {
       "question": "When a company is forced to buy a train and cannot buy one with its own means, what train may it then buy?",
@@ -71,7 +71,7 @@
     },
     "privateTradeCompany": {
       "question": "Are private companies purchasable by share companies?",
-      "answer": "18Lummerland, 1830NL, 1834, 1856, 1857, 1859, 1868, 1876 v2, 1876-30, 1876-30 v2, 1891, 1899, 18C2C, 18Chesapeake, 18CLE, 18EC, 18EZ Level 3, 18GM, 18JP-T, 18Kaas, 18NK, 18NL, 18SA, 18SS, 18SY-G Once a 3 train has been sold; at from half to twice face value."
+      "answer": "at from half to twice face value."
     },
     "privateClosing": {
       "question": "Does using a private company's special property close it?",

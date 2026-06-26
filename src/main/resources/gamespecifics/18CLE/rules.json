@@ -11,7 +11,7 @@
     },
     "certLimit": {
       "question": "Player certificate limits",
-      "answer": "| 21 | 18 | 15 | 12 |  |  |  |  | \u00a7\u00a7 In 3/4 player games, for each company merging into     the RTA the certificate limit is reduced by 1"
+      "answer": "| 21 | 18 | 15 | 12 |  |  |  |  |  In 3/4 player games, for each company merging into     the RTA the certificate limit is reduced by 1"
     },
     "sameCompanyBuySell": {
       "question": "Can you buy a certificate and immediately sell a certificate in the same company?",

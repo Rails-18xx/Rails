@@ -3,11 +3,11 @@
   "rules": {
     "advanceBids": {
       "question": "Can you make advance bids?",
-      "answer": "(v2.3 retuned), Poseidon, Railroad Barons, Rolling Stock, Steam Over Holland No."
+      "answer": " No."
     },
     "certLimit": {
       "question": "Player certificate limits",
-      "answer": "| 11 | 8 | 6 |  |  |  |  |  | \u00a7\u00a7 0-1 ten-share companies in play"
+      "answer": "| 11 | 8 | 6 |  |  |  |  |  | 0-1 ten-share companies in play"
     },
     "companyBuyShares": {
       "question": "Can companies buy shares?",
