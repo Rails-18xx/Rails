@@ -93,6 +93,12 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     protected int currentNumberOfOperatingRounds = 1;
     private transient GameUIManager gameUIManager;
 
+    protected final List<GamePhaseInfo> loadedGamePhases = new ArrayList<>();
+
+    public List<GamePhaseInfo> getLoadedGamePhases() {
+        return this.loadedGamePhases;
+    }
+
     public void setGameUIManager(GameUIManager gameUIManager) {
         this.gameUIManager = gameUIManager;
     }
@@ -723,6 +729,52 @@ public class GameManager extends RailsManager implements Configurable, Owner {
         }
         if (!gameName.equals(getRoot().getGameName())) {
             throw new ConfigurationException("Deviating gameName specified in Game tag");
+        }
+
+        try {
+            // Updated directly to match your asset folder name root
+            String resourcePath = "/gamespecifics/" + gameName + "/rules.json";
+            
+            System.out.println("=== GAME PHASE TRACE ===");
+            System.out.println("Loading rules resource stream via classpath: " + resourcePath);
+            
+            try (java.io.InputStream is = getClass().getResourceAsStream(resourcePath)) {
+                if (is != null) {
+                    System.out.println("Success: rules.json resource stream opened successfully!");
+                    String content = new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                    loadedGamePhases.clear();
+                    
+                    String[] items = content.split("\\{");
+                    System.out.println("Found " + items.length + " raw curly-brace text segments to parse.");
+                    
+                    for (String item : items) {
+                        if (item.contains("\"phase\":") && item.contains("\"colour\":")) {
+                            String p = item.split("\"phase\":\\s*\"")[1].split("\"")[0];
+                            String ot = item.contains("\"onTrain\":") ? item.split("\"onTrain\":\\s*\"")[1].split("\"")[0] : "";
+                            String orsStr = item.contains("\"ors\":") ? item.split("\"ors\":\\s*\"")[1].split("\"")[0] : "1";
+                            String tlStr = item.contains("\"trainLimit\":") ? item.split("\"trainLimit\":\\s*\"")[1].split("\"")[0] : "4";
+                            String col = item.split("\"colour\":\\s*\"")[1].split("\"")[0];
+                            String rt = item.contains("\"rustsTrains\":") ? item.split("\"rustsTrains\":\\s*\"")[1].split("\"")[0] : "";
+                            String stat = item.contains("\"status\":") ? item.split("\"status\":\\s*\"")[1].split("\"")[0] : "";
+                            String eff = item.contains("\"effects\":") ? item.split("\"effects\":\\s*\"")[1].split("\"")[0] : "";
+                            
+                            loadedGamePhases.add(new GamePhaseInfo(
+                                p, ot, Integer.parseInt(orsStr), Integer.parseInt(tlStr), col, rt, stat, eff
+                            ));
+                        }
+                    }
+                    System.out.println("Parsing complete. Successfully loaded " + loadedGamePhases.size() + " phases into memory.");
+                    System.out.println("========================");
+                } else {
+                    System.out.println("ERROR: Resource file not found on classpath! Checked: " + resourcePath);
+                    System.out.println("NOTE: If this fails, make sure your build script explicitly includes the 'gamespecific' directory in your processed resources target path.");
+                    System.out.println("========================");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("CRITICAL RESOURCE LOADING EXCEPTION TRACKED:");
+            e.printStackTrace();
+            System.out.println("========================");
         }
 
         initGameParameters();

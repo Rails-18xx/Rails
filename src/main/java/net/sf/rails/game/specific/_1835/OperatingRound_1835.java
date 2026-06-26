@@ -630,6 +630,12 @@ public class OperatingRound_1835 extends OperatingRound {
 
     @Override
     public <T extends SpecialProperty> List<T> getSpecialProperties(Class<T> clazz) {
+        // Rule Enforcement: Special properties from private companies (like OBB, PF, NF) 
+        // can only be used by Aktiengesellschaften (Majors). Minors (M1-M6) are barred from using them.
+        PublicCompany current = operatingCompany.value();
+        if (current != null && current.getId().matches("M[1-6]")) {
+            return new ArrayList<>(); // Minors have no access to voluntary special properties
+        }
         List<T> properties = super.getSpecialProperties(clazz);
         if (properties != null && !properties.isEmpty()) {
             properties.removeIf(sp -> {

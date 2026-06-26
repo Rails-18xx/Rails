@@ -1,6 +1,25 @@
 
 package net.sf.rails.ui.swing;
 
+/**
+ * ORPanel serves as the primary visual interface for a Company's Operating Round.
+ * * DESIGN PHILOSOPHY: The "Stupid Terminal"
+ * 1. This panel is purely a renderer. It must NEVER autonomously process actions,
+ * mutate game state, or bypass the engine because "there is nothing to do."
+ * 2. It maps incoming PossibleAction objects 1:1 to visible buttons.
+ * 3. The user must explicitly confirm every state change. If a phase ends, the engine 
+ * must provide a NullAction (Done/Pass/Skip), and the UI must wait for the user to click it.
+ * 4. The only exception to manual clicking is the Enter-key heuristic, which scans 
+ * available, valid buttons to accelerate standard confirmations.
+ * 5. State calculations (like optimal revenue) are displayed, but the actual execution 
+ * (Pay/Hold) waits on explicit human input.
+ * * Responsibilities:
+ * - Displays Company Treasury, Loan status, and active Assets (Trains/Privates).
+ * - Organizes dynamic actions into logical Phases (Build, Token, Revenue, Buy Train, Special).
+ * - Routes user clicks back to the ORUIManager strictly as unmodified GameActions.
+ */
+
+
 import net.sf.rails.algorithms.*;
 import net.sf.rails.common.Config;
 import net.sf.rails.common.GuiDef;
@@ -309,11 +328,7 @@ public class ORPanel extends GridPanel
 
         // 3. Fallbacks if engine step didn't resolve directly
         if (phase == 0 || phase == 5) {
-            if (hasSpecialAction) {
-                phase = 5;
-            } else if (hasDoneAction && phase == 0) {
-                phase = 6;
-            }
+            phase = 5;
         }
 
         return phase;
@@ -760,7 +775,7 @@ public class ORPanel extends GridPanel
                 styleButton(btnTrainSkip, UIManager.getColor("Button.background"), label);
                 btnTrainSkip.setForeground(Color.GRAY);
             }
-        
+
         }
 
         // ALWAYS evaluate Phase 5 (Special Actions) independently!
@@ -769,7 +784,8 @@ public class ORPanel extends GridPanel
                 (specialContainer != null && specialContainer.isVisible() && specialPanel != null
                         && specialPanel.getComponentCount() > 0);
 
-       boolean hasDoneAction = (btnDone != null && btnDone.getPossibleActions() != null && !btnDone.getPossibleActions().isEmpty());
+        boolean hasDoneAction = (btnDone != null && btnDone.getPossibleActions() != null
+                && !btnDone.getPossibleActions().isEmpty());
 
         if (hasSpecialActions || activePhase >= 5 || hasDoneAction) {
             applyPhaseStyle(phase5Panel, null, UITheme.ACTION_SKIP, UITheme.TRAIN_LIGHT, "Special Actions");
@@ -784,32 +800,21 @@ public class ORPanel extends GridPanel
                 btnDone.setVisible(true);
             }
         }
-        
-        if (activePhase == 6) {
-            // ACTIVATE: Enable and colorize for the final step
-            if (btnDone != null) {
+
+        // DIRECT ENGINE SYNC
+        if (btnDone != null) {
+            String doneText = getDoneButtonText();
+            if (btnDone.getPossibleActions() != null && !btnDone.getPossibleActions().isEmpty()) {
                 btnDone.setEnabled(true);
-                String doneText = getDoneButtonText();
                 styleButton(btnDone, UITheme.ACTION_SKIP, doneText);
                 btnDone.setForeground(Color.WHITE);
-                btnDone.setFont(new Font("SansSerif", Font.BOLD, 16));
-            }
-        } else {
-            // DIRECT ENGINE SYNC
-            if (btnDone != null) {
-                String doneText = getDoneButtonText();
-                if (btnDone.getPossibleActions() != null && !btnDone.getPossibleActions().isEmpty()) {
-                    btnDone.setEnabled(true);
-                    styleButton(btnDone, UITheme.ACTION_SKIP, doneText);
-                    btnDone.setForeground(Color.WHITE);
-                    btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
-                } else {
-                    // PERSISTENT WAIT: Keep as 'END TURN' but disabled and gray
-                    btnDone.setEnabled(false);
-                    styleButton(btnDone, UIManager.getColor("Button.background"), doneText);
-                    btnDone.setForeground(Color.GRAY);
-                    btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
-                }
+                btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
+            } else {
+                // PERSISTENT WAIT: Keep as 'END TURN' but disabled and gray
+                btnDone.setEnabled(false);
+                styleButton(btnDone, UIManager.getColor("Button.background"), doneText);
+                btnDone.setForeground(Color.GRAY);
+                btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
             }
         }
     }
@@ -1652,7 +1657,7 @@ public class ORPanel extends GridPanel
         specialActionsButtonPanel.setOpaque(false);
         phase5Panel.add(specialActionsButtonPanel);
 
-       // Move End Turn button into Phase 5 Panel
+        // Move End Turn button into Phase 5 Panel
         btnDone = createSidebarButton("End Turn", DONE_CMD);
         btnDone.setFont(new Font("SansSerif", Font.BOLD, 14));
         btnDone.setPreferredSize(new Dimension(getSidebarWidth() - scale(10), scale(40)));
@@ -2179,7 +2184,6 @@ public class ORPanel extends GridPanel
         return "yes".equalsIgnoreCase(Config.get("map.displayCurrentRoutes"));
     }
 
-    // ... (lines of unchanged context code) ...
     public void processIPOBuy() {
 
         if (availableTrainActions != null && !availableTrainActions.isEmpty()) {
@@ -2205,8 +2209,7 @@ public class ORPanel extends GridPanel
 
                 if (isIpo) {
 
-                    // Fix: Auto-fill price if missing. Engine rejects 0-price buys for standard
-                    // trains.
+                    log.warn("TODO: Engine must handle 0-price standard train buys. UI override should be removed.");
                     if (action.getPricePaid() == 0 && action.getFixedCost() > 0) {
                         action.setPricePaid(action.getFixedCost());
                     }
@@ -2822,15 +2825,7 @@ public class ORPanel extends GridPanel
                         (net.sf.rails.game.specific._1817.action.RepayLoans_1817) executedActions.get(0));
                 return;
             } else if (executedActions.get(0) instanceof rails.game.action.RepayLoans) {
-                // --- START FIX ---
-                // Route generic 1856 loan round repayments natively
-                rails.game.action.RepayLoans rl = (rails.game.action.RepayLoans) executedActions.get(0);
-                if (rl.getMinNumber() == rl.getMaxNumber()) {
-                    rl.setNumberTaken(rl.getMaxNumber());
-                    orUIManager.getGameUIManager().getGameManager().process(rl);
-                } else {
-                    orUIManager.processAction("RepayLoans", executedActions, source);
-                }
+                orUIManager.processAction("RepayLoans", executedActions, source);
                 forceSyncWithEngine();
                 return;
 
@@ -3308,27 +3303,14 @@ public class ORPanel extends GridPanel
             int computedPhase = determineActivePhase(validOrActions);
             boolean hasStandardActions = computedPhase > 0;
 
-            // The Dormancy Intercept
-            if (validOrActions.isEmpty() || (specialActions.isEmpty() && !hasStandardActions && !isRepayStep)) {
-                specialModeActive = false;
-                finish();
-
-                if (sidebarPanel != null) {
-                    sidebarPanel.revalidate();
-                    sidebarPanel.repaint();
-                }
-                this.revalidate();
-                this.repaint();
-                return;
-            }
-
             this.specialModeActive = false;
 
             if (!specialActions.isEmpty() && specialPanel != null && specialContainer != null) {
                 specialContainer.setVisible(true);
                 specialPanel.removeAll();
                 for (PossibleAction spa : specialActions) {
-                    if (spa instanceof NullAction) continue;
+                    if (spa instanceof NullAction)
+                        continue;
                     addSpecialActionButton(spa);
                 }
                 specialPanel.revalidate();
@@ -3338,9 +3320,6 @@ public class ORPanel extends GridPanel
 
             activePhase = computedPhase;
             setStandardPanelsVisible(true);
-
-            
-
 
             // Run visual framing first so it cannot overwrite explicit action bindings
             // later

@@ -1,5 +1,22 @@
 package net.sf.rails.game;
 
+/**
+ * Implements a basic Operating Round.
+ * <p>
+ * DESIGN PHILOSOPHY: The "Stupid Terminal"
+ * 1. The ORPanel and OperatingRound state machine must NEVER autonomously take 
+ * decisions for the player because "there is nothing to do."
+ * 2. Phase transitions (like finishing the train buying phase) do NOT automatically
+ * end the company's turn. 
+ * 3. The engine must safely park in the FINAL phase, present all available 
+ * voluntary actions (like taking loans, special powers), and explicitly wait 
+ * for the player to click the "End Turn" (Done) button to conclude operations.
+ * <p>
+ * A new instance must be created for
+ * each new Operating Round. At the end of a round, the current instance should
+ * be discarded.
+ */
+
 import com.google.common.collect.Iterables;
 
 import net.sf.rails.algorithms.RevenueAdapter;
@@ -26,13 +43,6 @@ import rails.game.correct.OperatingCost;
 
 import java.util.*;
 
-/**
- * Implements a basic Operating Round.
- * <p>
- * A new instance must be created for
- * each new Operating Round. At the end of a round, the current instance should
- * be discarded.
- */
 /*
  * Because if its sheer size, this class has been divided into a number of
  * "chapters".
@@ -102,7 +112,7 @@ public class OperatingRound extends Round implements Observer {
     protected final ArrayListState<TrainCardType> trainsBoughtThisTurn = new ArrayListState<>(this,
             "trainsBoughtThisTurn");
 
-protected final HashMapState<PublicCompany, Integer> loansThisRound = HashMapState.create(this, "loansThisRound");
+    protected final HashMapState<PublicCompany, Integer> loansThisRound = HashMapState.create(this, "loansThisRound");
     protected String thisOrNumber;
     /** Tracks if a normal (non-extra) token has been laid this company's turn. */
     protected final BooleanState normalTokenLaidThisTurn = new BooleanState(this, "normalTokenLaidThisTurn", false);
@@ -780,13 +790,14 @@ protected final HashMapState<PublicCompany, Integer> loansThisRound = HashMapSta
                 initNormalTileLays();
             }
 
-          if (newStep == GameDef.OrStep.LAY_TOKEN) {
+            if (newStep == GameDef.OrStep.LAY_TOKEN) {
                 company.clearTokenableStops();
                 // Removed the premature break.
-                // Omitting standard token-count checks here prevents the base engine's auto-skip,
-                // but the flow must continue downward to properly evaluate gameSpecificNextStep().
+                // Omitting standard token-count checks here prevents the base engine's
+                // auto-skip,
+                // but the flow must continue downward to properly evaluate
+                // gameSpecificNextStep().
             }
-           
 
             if (newStep == GameDef.OrStep.PAYOUT) {
                 // This step is now obsolete
@@ -853,13 +864,12 @@ protected final HashMapState<PublicCompany, Integer> loansThisRound = HashMapSta
             break;
         }
 
-if (newStep == GameDef.OrStep.FINAL) {
-            // Park the state in FINAL instead of auto-executing finishTurn()
-            // This allows the UI to render Phase 5 and wait for explicit confirmation.
-            setStep(newStep);
-        } else {
-            setStep(newStep);
-        }
+        // DESIGN LANGUAGE ENFORCEMENT: The engine must not autonomously call
+        // finishTurn()
+        // just because it *thinks* there are no SpecialProperties left. We simply park
+        // in the step and let setPossibleActions() generate the valid subclass
+        // options (like TakeLoans) alongside the explicit 'End Turn' button.
+        setStep(newStep);
 
     }
 
@@ -930,45 +940,29 @@ if (newStep == GameDef.OrStep.FINAL) {
 
     public boolean done(NullAction action) {
 
-        // BRANCH 1: The "Discard Trap" (Modified)
+        // BRANCH 1: The "Discard Trap"
         if (checkForExcessTrains()) {
             setStep(GameDef.OrStep.DISCARD_TRAINS);
-            return true; // <--- We only touched this line inside the IF block
+            return true;
         }
 
-        // Explicitly intercept the Phase 5 End Turn click
+        // BRANCH 2: Explicitly intercept the FINAL step End Turn click
         if (getStep() == GameDef.OrStep.FINAL) {
             finishTurn();
             return true;
         }
 
-        // If we have special properties or voluntary actions available, 
-        // DO NOT end the turn. Instead, advance the step but do not finish the round.
-        // We only trigger finishTurn() if no special actions remain.
-        
-        // 1. Check for remaining special voluntary actions
-        boolean voluntaryActionsRemaining = !getSpecialProperties(SpecialProperty.class).isEmpty();
-        
-        // 2. Logic: If voluntary actions exist, stay in current round/step
-        if (voluntaryActionsRemaining && getStep() != GameDef.OrStep.TRADE_SHARES) {
-             // If we are still in a buy/revenue step and have special options, 
-             // we move to the next phase but keep the company active.
-             nextStep();
-             return true; 
-        }
+        // BRANCH 3: Advance to the next scheduled step (e.g., TRADE_SHARES,
+        // REPAY_LOANS, or FINAL)
+        nextStep();
 
-        // BRANCH 2: The Normal "Done" (Unchanged)
-        // If checkForExcessTrains() returns false, the code above is skipped entirely.
+        // Let setPossibleActions() generate all valid options for the new step,
+        // including game-specific subclass actions (TakeLoans) and the explicit
+        // 'End Turn' button. We wait for the user to make the choice.
+        setPossibleActions();
 
-        nextStep(); // Advance to Share Trading or Finish
-
-// Removed the old auto-finishTurn() check here. 
-        // nextStep() will now safely park us at FINAL.
         return true;
-
     }
-
-    // In OperatingRound.java
 
     public boolean discardTrain(DiscardTrain action) {
 
@@ -1166,7 +1160,7 @@ if (newStep == GameDef.OrStep.FINAL) {
      * =======================================
      */
 
-// ... (lines of unchanged context code) ...
+    // ... (lines of unchanged context code) ...
     public boolean buyPrivate(BuyPrivate action) {
 
         String errMsg = null;
@@ -1179,8 +1173,6 @@ if (newStep == GameDef.OrStep.FINAL) {
         Player player = null;
         int upperPrice;
         int lowerPrice;
-
-
 
         // Dummy loop to enable a quick jump out.
         while (true) {
@@ -1210,9 +1202,9 @@ if (newStep == GameDef.OrStep.FINAL) {
                 break;
             }
             player = (Player) owner;
-            
-boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
-            
+
+            boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
+
             if (restrictPrivateTrade && player != operatingCompany.value().getPresident()) {
                 errMsg = "Private Trading restricted to same-owner only.";
                 break;
@@ -1258,14 +1250,13 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                                 operatingCompany.value().getCash()),
                         Bank.format(this, price));
                 // --- START FIX ---
-                log.warn("BUY_PRIVATE_TRACE: Failed - Company has insufficient cash [{}].", operatingCompany.value().getCash());
+                log.warn("BUY_PRIVATE_TRACE: Failed - Company has insufficient cash [{}].",
+                        operatingCompany.value().getCash());
                 // --- END FIX ---
                 break;
             }
             break;
         }
-        
-
 
         if (errMsg != null) {
             if (owner != null) {
@@ -1289,8 +1280,7 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
         return true;
 
     }
-// ... (rest of the method) ...
-
+    // ... (rest of the method) ...
 
     protected boolean isPrivateSellingAllowed() {
         return Phase.getCurrent(this).isPrivateSellingAllowed();
@@ -1462,7 +1452,7 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
         }
 
         if (company.getMaxLoansPerRound() > 0) {
-int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get(company) : 0;
+            int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get(company) : 0;
 
             loansThisRound.put(company, oldLoansThisRound + number);
         }
@@ -2276,7 +2266,7 @@ int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get
             }
             // // Copied from layBaseToken. Does this help??
             // if (!canLayAnyTokens(false)) {
-            //     nextStep();
+            // nextStep();
             // }
 
         }
@@ -2347,7 +2337,7 @@ int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get
         sbt.setExercised();
 
         // if (getStep() == GameDef.OrStep.LAY_TOKEN && !canLayAnyTokens(false)) {
-        //     nextStep();
+        // nextStep();
         // }
 
         return true;
@@ -2524,10 +2514,10 @@ int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get
             }
 
             // if (amount == 0
-            //         && operatingCompany.value().getNumberOfTrains() == 0) {
-            //     DisplayBuffer.add(this, LocalText.getText(
-            //             "RevenueWithNoTrains",
-            //             operatingCompany.value().getId(), Bank.format(this, 0)));
+            // && operatingCompany.value().getNumberOfTrains() == 0) {
+            // DisplayBuffer.add(this, LocalText.getText(
+            // "RevenueWithNoTrains",
+            // operatingCompany.value().getId(), Bank.format(this, 0)));
             // }
 
             break;
@@ -3983,6 +3973,11 @@ int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get
         return operatingCompany.value().getNumberOfTrains() < operatingCompany.value().getCurrentTrainLimit();
     }
 
+    /*
+     * =======================================
+     * 8. VARIOUS UTILITIES
+     * =======================================
+     */
     public void checkForeignSales() {
         // Get the set of available trains *once* at the beginning.
         Set<Train> availableNewTrains = trainManager.getAvailableNewTrains();
@@ -4040,11 +4035,6 @@ int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get
             }
         }
     }
-    /*
-     * =======================================
-     * 8. VARIOUS UTILITIES
-     * =======================================
-     */
 
     protected <T extends SpecialProperty> List<T> getSpecialProperties(
             Class<T> clazz) {
@@ -4312,6 +4302,7 @@ int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get
         // This was the last normal/extra lay. Advance the step.
 
         nextStep();
+        setPossibleActions(); // Regenerate actions immediately for the next step (LAY_TOKEN)
         return true;
     }
 
@@ -4417,12 +4408,13 @@ int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get
                     // possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
                 }
             } else {
-                // Even if no actions exist, explicitly offer a SKIP option instead of auto-advancing.
+                // Even if no actions exist, explicitly offer a SKIP option instead of
+                // auto-advancing.
                 if (!forced) {
                     doneAllowed.set(true);
                     // possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
                 }
-            
+
             }
 
         } else if (step == GameDef.OrStep.CALC_REVENUE) {
@@ -4434,6 +4426,18 @@ int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get
             // dividend.
             doneAllowed.set(false);
             prepareRevenueAndDividendAction();
+
+            // If the company has no running trains, prepareRevenueAndDividendAction() does
+            // not
+            // add any actions. We explicitly handle this zero-revenue case here at the
+            // source.
+            if (possibleActions.isEmpty()) {
+                SetDividend zeroRevenueAction = new SetDividend(getRoot(), 0, false,
+                        new int[] { SetDividend.WITHHOLD });
+                zeroRevenueAction.setActualRevenue(0);
+                possibleActions.add(zeroRevenueAction);
+            }
+
             if (noMapMode)
                 prepareNoMapActions();
 
@@ -4448,18 +4452,19 @@ int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get
                 }
             }
             // This is the DONE/SKIP logic block for BUY_TRAIN
+            // Enforce unified 'DONE' handling instead of mixing SKIP and DONE buttons.
             if (hasBuyActions) {
-                // 'SKIP' (Done Buying) button.
-                // JSON State Recovery / Logic Fix: Ensure SKIP is not offered if purchase is
-                // mandatory.
                 boolean mustBuy = !operatingCompany.value().hasTrains() &&
                         operatingCompany.value().mustOwnATrain();
                 if (!mustBuy) {
-                    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
+                    doneAllowed.set(true);
                 }
             } else {
-                // 'doneAllowed = true'.
                 doneAllowed.set(true);
+                // If setBuyableTrains() produced zero buy actions (e.g. limit reached),
+                // inject the DONE action explicitly here so possibleActions is NOT empty.
+                // This prevents the downstream universal safety fallback from injecting a SKIP.
+                possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
             }
 
             if (noMapMode && (operatingCompany.value().getLastRevenue() == 0))
@@ -4490,29 +4495,7 @@ int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get
             gameManager.getCurrentRound().setPossibleActions();
         } else if (step == GameDef.OrStep.FINAL) {
             // Explicitly enable the 'End Turn' button for Phase 5 Special Actions
-            doneAllowed.set(true); 
-        }
-
-
-        // Force a universal safety fallback after step evaluation finishes to guarantee the UI panel always gets an interaction target.
-        boolean isMainORPhase = (step == GameDef.OrStep.LAY_TRACK || 
-                                 step == GameDef.OrStep.LAY_TOKEN || 
-                                 step == GameDef.OrStep.CALC_REVENUE || 
-                                 step == GameDef.OrStep.BUY_TRAIN);
-                                 
-        if (isMainORPhase && possibleActions.isEmpty()) {
-            if (step == GameDef.OrStep.CALC_REVENUE) {
-                // Construct a compulsory $0 base payout action so the user is forced to hit "Hold/Withhold" manually.
-                SetDividend zeroRevenueAction = new SetDividend(getRoot(), 0, false, new int[] { SetDividend.WITHHOLD });
-                zeroRevenueAction.setActualRevenue(0);
-                possibleActions.add(zeroRevenueAction);
-            } else {
-                if (step == GameDef.OrStep.LAY_TRACK) {
-                    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
-                } else {
-                    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.SKIP));
-                }
-            }
+            doneAllowed.set(true);
         }
 
         // We track if any new actions are added by the special properties block to
@@ -4541,7 +4524,7 @@ int oldLoansThisRound = loansThisRound.containsKey(company) ? loansThisRound.get
                     if (!maySellPrivate(player))
                         continue;
 
-boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
+                    boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTradingToSameOwner");
 
                     if (restrictPrivateTrade && player != operatingCompany.value().getPresident()) {
                         continue;
@@ -4558,11 +4541,12 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                         minPrice = getPrivateMinimumPrice(privComp);
                         maxPrice = getPrivateMaximumPrice(privComp);
 
-                        // Strict Affordability: Do not generate the action if the company cannot afford the absolute minimum price
+                        // Strict Affordability: Do not generate the action if the company cannot afford
+                        // the absolute minimum price
                         if (operatingCompany.value().getCash() < minPrice) {
                             continue;
                         }
-                        
+
                         // Generate the action (The UI will attach this to the Private Card)
                         BuyPrivate buyPrivate = new BuyPrivate(privComp, minPrice, maxPrice);
                         possibleActions.add(buyPrivate);
@@ -4645,17 +4629,16 @@ boolean restrictPrivateTrade = GameOption.getAsBoolean(this, "RestrictPrivateTra
                     }
                 }
             }
-        } 
+        }
 
         int actionCountAfterCommon = possibleActions.getList().size();
-// If we added voluntary special actions, force the DONE button to be available.
-if (actionCountAfterCommon > actionCountBeforeCommon && !forced) {
-    doneAllowed.set(true);
-}
-
+        // If we added voluntary special actions, force the DONE button to be available.
+        if (actionCountAfterCommon > actionCountBeforeCommon && !forced) {
+            doneAllowed.set(true);
+        }
 
         if (doneAllowed.value()) {
-boolean hasDone = false;
+            boolean hasDone = false;
             for (PossibleAction pa : possibleActions.getList()) {
                 if (pa instanceof NullAction && ((NullAction) pa).getMode() == NullAction.Mode.DONE) {
                     hasDone = true;
@@ -4665,7 +4648,7 @@ boolean hasDone = false;
             if (!hasDone) {
                 possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
             }
-                }
+        }
 
         for (PossibleAction pa : possibleActions.getList()) {
             if (pa instanceof PossibleORAction) {
@@ -4842,7 +4825,7 @@ boolean hasDone = false;
             // // Can more tokens be laid? Otherwise, next step
             // if (!canLayAnyTokens(false)) {
 
-            //     nextStep();
+            // nextStep();
             // }
 
         }

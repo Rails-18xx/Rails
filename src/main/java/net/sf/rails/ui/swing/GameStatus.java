@@ -2834,6 +2834,18 @@ public class GameStatus extends GridPanel {
                         BorderFactory.createEmptyBorder(1, 1, 1, 1)));
                 btn.setVisible(true);
 
+// Pull dynamic phase effects text directly from parsed rules database
+                String ipoTooltip = "Train Type: " + tctName;
+                if (gameUIManager != null && gameUIManager.getGameManager() != null) {
+                    for (net.sf.rails.game.GamePhaseInfo phaseInfo : gameUIManager.getGameManager().getLoadedGamePhases()) {
+                        if (phaseInfo.onTrain != null && phaseInfo.onTrain.equalsIgnoreCase(tctName)) {
+                            ipoTooltip = "<html><b>Phase " + phaseInfo.phase + " (" + tctName + " Train) Effects:</b><br>" + phaseInfo.effects + "</html>";
+                            break;
+                        }
+                    }
+                }
+                btn.setToolTipText(ipoTooltip);
+                
                 if (lbl != null) {
                     String qtyStr = tct.hasInfiniteQuantity() ? "\u221E" : "(" + count + ")";
                     String currencyFamily = net.sf.rails.common.Config.get("font.currency");
@@ -2983,7 +2995,122 @@ public class GameStatus extends GridPanel {
                 if (futureTrainInfoLabels != null && futureTrainInfoLabels[futSlot] != null)
                     futureTrainInfoLabels[futSlot].setVisible(false);
             }
+// Append a small "Game Phases" link button dynamically to the far right of the future trains container panel
+            if (futureTrainsPanel != null) {
+                // Look for an existing phases button in the panel to prevent duplicate stacking on refreshes
+                JButton existingBtn = null;
+                for (Component comp : futureTrainsPanel.getComponents()) {
+                    if (comp instanceof JButton && "PhasesLink".equals(comp.getName())) {
+                        existingBtn = (JButton) comp;
+                        break;
+                    }
+                }
 
+                if (existingBtn == null && gameUIManager != null) {
+                    JButton phasesLinkBtn = new JButton("Game Phases");
+                    phasesLinkBtn.setName("PhasesLink");
+                    phasesLinkBtn.setFocusable(false);
+                    phasesLinkBtn.setFont(new Font("SansSerif", Font.BOLD, 10));
+                    phasesLinkBtn.setMargin(new Insets(4, 6, 4, 6));
+                    
+                    phasesLinkBtn.setOpaque(true);
+                    phasesLinkBtn.setContentAreaFilled(true);
+                    phasesLinkBtn.setBackground(new Color(70, 130, 180)); // Steel Blue
+                    phasesLinkBtn.setForeground(Color.WHITE);
+                    phasesLinkBtn.setBorder(BorderFactory.createRaisedBevelBorder());
+                    
+                    phasesLinkBtn.addActionListener(new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent e) {
+                            net.sf.rails.game.GameManager gm = gameUIManager.getGameManager();
+                            java.util.List<net.sf.rails.game.GamePhaseInfo> phasesList = gm.getLoadedGamePhases();
+                            
+                            if (phasesList == null || phasesList.isEmpty()) {
+                                JOptionPane.showMessageDialog(parent, 
+                                    "No game phase data has been parsed or loaded for this session.", 
+                                    "Information Missing", JOptionPane.INFORMATION_MESSAGE);
+                                return;
+                            }
+
+                            String[] columns = {"Train", "ORs", "Limit", "Colour", "Effects"};
+                            Object[][] data = new Object[phasesList.size()][5];
+
+                            for (int idx = 0; idx < phasesList.size(); idx++) {
+                                net.sf.rails.game.GamePhaseInfo pInfo = phasesList.get(idx);
+                                data[idx][0] = pInfo.onTrain;
+                                data[idx][1] = pInfo.operatingRounds;
+                                data[idx][2] = pInfo.trainLimit;
+                                data[idx][3] = pInfo.colour;
+                                data[idx][4] = pInfo.effects;
+                            }
+
+                            JTable table = new JTable(data, columns);
+                            table.setRowHeight(26);
+                            table.setFont(new Font("SansSerif", Font.PLAIN, 13));
+                            table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 13));
+                            table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                            table.setShowGrid(true);
+                            table.setGridColor(Color.LIGHT_GRAY);
+                            
+                            table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+                                @Override
+                                public Component getTableCellRendererComponent(JTable t, Object v, boolean s, boolean f, int r, int c) {
+                                    Component cell = super.getTableCellRendererComponent(t, v, s, f, r, c);
+                                    String colName = String.valueOf(t.getValueAt(r, 3)).toLowerCase();
+                                    
+                                    if (!s) {
+                                        switch (colName) {
+                                            case "yellow": cell.setBackground(new Color(255, 255, 210)); cell.setForeground(Color.BLACK); break;
+                                            case "green":  cell.setBackground(new Color(215, 255, 215)); cell.setForeground(Color.BLACK); break;
+                                            case "brown":  cell.setBackground(new Color(240, 215, 195)); cell.setForeground(Color.BLACK); break;
+                                            case "gray":   cell.setBackground(new Color(230, 230, 230)); cell.setForeground(Color.BLACK); break;
+                                            case "black":  cell.setBackground(Color.DARK_GRAY); cell.setForeground(Color.WHITE); break;
+                                            default:       cell.setBackground(Color.WHITE); cell.setForeground(Color.BLACK); break;
+                                        }
+                                    }
+                                    return cell;
+                                }
+                            });
+
+                            int totalWidth = 0;
+                            for (int col = 0; col < table.getColumnCount(); col++) {
+                                javax.swing.table.TableColumn tableColumn = table.getColumnModel().getColumn(col);
+                                Component headerComp = table.getTableHeader().getDefaultRenderer()
+                                    .getTableCellRendererComponent(table, tableColumn.getHeaderValue(), false, false, 0, col);
+                                int maxWidth = headerComp.getPreferredSize().width + 25;
+                                
+                                for (int row = 0; row < table.getRowCount(); row++) {
+                                    Component cellComp = table.getCellRenderer(row, col)
+                                        .getTableCellRendererComponent(table, table.getValueAt(row, col), false, false, row, col);
+                                    maxWidth = Math.max(maxWidth, cellComp.getPreferredSize().width + 20);
+                                }
+                                tableColumn.setPreferredWidth(maxWidth);
+                                totalWidth += maxWidth;
+                            }
+
+                            int totalHeight = table.getTableHeader().getPreferredSize().height + (table.getRowHeight() * table.getRowCount()) + 5;
+                            
+                            JScrollPane pane = new JScrollPane(table);
+                            pane.setPreferredSize(new Dimension(totalWidth + 4, totalHeight));
+                            pane.setBorder(BorderFactory.createEmptyBorder());
+                            pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+                            pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+                            
+                            JOptionPane.showMessageDialog(parent, pane, 
+                                "Game Phases Configuration Summary - " + gm.getGameName(), 
+                                JOptionPane.PLAIN_MESSAGE);
+                        }
+                    });
+                    
+                    GridBagConstraints gbcLink = new GridBagConstraints();
+                    gbcLink.gridx = GridBagConstraints.RELATIVE; // Position relatively after the final card cell element
+                    gbcLink.gridy = 0;
+                    gbcLink.weightx = 1.0; // Absorb leftover spacing to anchor cleanly on the far-right edge
+                    gbcLink.anchor = GridBagConstraints.EAST; // Push strictly to the right edge of the parent panel boundary
+                    gbcLink.insets = new Insets(0, 10, 0, 10); // Standard layout margins padding
+                    futureTrainsPanel.add(phasesLinkBtn, gbcLink);
+                }
+            }
         } catch (Exception e) {
             log.error("Error updating train costs", e);
         }
@@ -3473,6 +3600,7 @@ public class GameStatus extends GridPanel {
                 // 2. Dynamic Column Formatting (Robust for 1856 Subclass Overrides)
                 int escrowCol = -1;
                 int loansCol = -1;
+                int bondsCol = -1; // Added
                 for (int x = 0; x < fields.length; x++) {
                     if (fields[x] != null && fields[x].length > 1 && fields[x][1] instanceof JLabel) {
                         String headerText = ((JLabel) fields[x][1]).getText();
@@ -3482,14 +3610,39 @@ public class GameStatus extends GridPanel {
                                 escrowCol = x;
                             else if (clean.equalsIgnoreCase("Loans"))
                                 loansCol = x;
+                            else if (clean.equalsIgnoreCase("Bonds")) // Added
+                                bondsCol = x;
                         }
                     }
                 }
 
                 final int fEscrowCol = escrowCol;
                 final int fLoansCol = loansCol;
+                final int fBondsCol = bondsCol; // Added
                 final int fYRow = yRow;
                 final PublicCompany fComp = c;
+
+             // Pre-apply font and set fixed width, but initialize with empty text
+                int fixedColWidth = dimStd.width; 
+
+                if (fEscrowCol != -1 && fEscrowCol < fields.length && fYRow < fields[fEscrowCol].length) {
+                    JComponent comp = fields[fEscrowCol][fYRow];
+                    applyCurrencyFont(comp);
+                    comp.setPreferredSize(new Dimension(fixedColWidth, comp.getPreferredSize().height));
+                    if (comp instanceof JLabel) ((JLabel) comp).setText(" ");
+                }
+                if (fLoansCol != -1 && fLoansCol < fields.length && fYRow < fields[fLoansCol].length) {
+                    JComponent comp = fields[fLoansCol][fYRow];
+                    applyCurrencyFont(comp);
+                    comp.setPreferredSize(new Dimension(fixedColWidth, comp.getPreferredSize().height));
+                    if (comp instanceof JLabel) ((JLabel) comp).setText(" ");
+                }
+                if (fBondsCol != -1 && fBondsCol < fields.length && fYRow < fields[fBondsCol].length) {
+                    JComponent comp = fields[fBondsCol][fYRow];
+                    applyCurrencyFont(comp);
+                    comp.setPreferredSize(new Dimension(fixedColWidth, comp.getPreferredSize().height));
+                    if (comp instanceof JLabel) ((JLabel) comp).setText(" ");
+                }
 
                 // Defer to run AFTER the subclass initTurn completes its overrides
 
@@ -4376,7 +4529,18 @@ public class GameStatus extends GridPanel {
                             BorderFactory.createLineBorder(Color.BLACK, 1),
                             BorderFactory.createEmptyBorder(1, 1, 1, 1)));
                 }
-            }
+                    
+                String lookupName = cf.getName() != null ? cf.getName() : "";
+                String poolTooltip = "Train Type: " + lookupName;
+                if (gameUIManager != null && gameUIManager.getGameManager() != null && !lookupName.isEmpty()) {
+                    for (net.sf.rails.game.GamePhaseInfo phaseInfo : gameUIManager.getGameManager().getLoadedGamePhases()) {
+                        if (phaseInfo.onTrain != null && phaseInfo.onTrain.equalsIgnoreCase(lookupName)) {
+                            poolTooltip = "<html><b>Phase " + phaseInfo.phase + " (" + lookupName + " Train) Effects:</b><br>" + phaseInfo.effects + "</html>";
+                            break;
+                        }
+                    }
+                }
+                cf.setToolTipText(poolTooltip);            }
             return;
         }
 
@@ -4548,6 +4712,7 @@ public class GameStatus extends GridPanel {
         btn.setVisible(true);
     }
 
+
     protected void setPoolTrainButton(boolean clickable, PossibleAction action) {
         if (poolTrainButtons == null)
             return;
@@ -4558,8 +4723,6 @@ public class GameStatus extends GridPanel {
                 cf.setVisible(false);
                 cf.clearPossibleActions();
             }
-            // Reset to default passive state using helper logic manually or just hide
-            // We'll let the loop below handle visible ones.
         }
 
         // Group trains by name (Type) to consolidate display
@@ -4583,11 +4746,10 @@ public class GameStatus extends GridPanel {
             int count = group.size();
 
             RailCard cf = poolTrainButtons[slotIndex];
-
-            // Explicitly define lbl here to fix "cannot find symbol"
             javax.swing.JLabel lbl = (poolTrainInfoLabels != null) ? poolTrainInfoLabels[slotIndex] : null;
+            
             if (cf != null) {
-                cf.setTrain(representative); // Use RailCard logic
+                cf.setTrain(representative); 
                 cf.setCustomLabel(getAbbreviatedTrainName(cleanName));
             }
 
@@ -4604,28 +4766,23 @@ public class GameStatus extends GridPanel {
                         + "pt; color: #000080;'><b>" + gameUIManager.format(cost)
                         + "</b></span>" +
                         "</center></html>");
-
             }
 
             boolean canBuy = false;
             if (clickable && buyActions != null) {
                 for (BuyTrain ba : buyActions) {
-                    // If action targets ANY train in this group, attach it
                     if (group.contains(ba.getTrain())) {
                         cf.addPossibleAction(ba);
                         canBuy = true;
-                        // Attach the first valid action found and stop (UI button represents the group)
                         break;
                     }
                 }
             }
 
-            // Apply Styles: Beige + Green Border
+            // Apply Styles and database tooltips within the correct variable scope loop
             if (canBuy) {
-                // OLD: cf.setBackground(BG_BUY_ACTIVE);
-                cf.setBackground(BG_CARD_PASSIVE); // Beige
-                cf.setBorder(BorderFactory.createLineBorder(BORDER_COL_BUY, 3)); // Thick Green Border
-
+                cf.setBackground(BG_CARD_PASSIVE); 
+                cf.setBorder(BorderFactory.createLineBorder(BORDER_COL_BUY, 3)); 
                 cf.setToolTipText("Click to Buy " + representative.getName());
                 cf.setEnabled(true);
             } else {
@@ -4633,16 +4790,26 @@ public class GameStatus extends GridPanel {
                 cf.setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(Color.BLACK, 1),
                         BorderFactory.createEmptyBorder(1, 1, 1, 1)));
-                cf.setToolTipText(null);
+                
+                String poolTooltip = "Train Type: " + cleanName;
+                if (gameUIManager != null && gameUIManager.getGameManager() != null) {
+                    for (net.sf.rails.game.GamePhaseInfo phaseInfo : gameUIManager.getGameManager().getLoadedGamePhases()) {
+                        if (phaseInfo.onTrain != null && phaseInfo.onTrain.equalsIgnoreCase(cleanName)) {
+                            poolTooltip = "<html><b>Phase " + phaseInfo.phase + " (" + cleanName + " Train) Effects:</b><br>" + phaseInfo.effects + "</html>";
+                            break;
+                        }
+                    }
+                }
+                cf.setToolTipText(poolTooltip);
                 cf.setEnabled(true);
             }
 
             cf.setVisible(true);
             slotIndex++;
         }
-
     }
-
+    
+    
     // Shared Styling Constants (Promoted from local variables for modular access)
     private static final Color BG_MINOR = Color.BLACK;
     private static final Color FG_MINOR = Color.WHITE;

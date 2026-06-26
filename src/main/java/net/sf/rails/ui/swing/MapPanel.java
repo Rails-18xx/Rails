@@ -76,7 +76,11 @@ public class MapPanel extends JPanel {
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
         setupLayersButton(gameUIManager.getORUIManager());
+
+        setupGamePhasesButton();
+
         layeredPane.setPreferredSize(originalMapSize);
+
         map.setBounds(0, 0, originalMapSize.width, originalMapSize.height);
         map.addLayers(layeredPane, 1);
 
@@ -509,6 +513,129 @@ public class MapPanel extends JPanel {
 
         // 4. Add to the Layered Pane at a high level
         layeredPane.add(layersBtn, JLayeredPane.PALETTE_LAYER);
+    }
+
+    private void setupGamePhasesButton() {
+        // 1. Create the Button
+        final JButton phasesBtn = new JButton("Game Phases");
+        phasesBtn.setFocusable(false);
+        phasesBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+
+        // Use a contrasting color (e.g., Dark Gray) to distinguish from the Layers button
+        phasesBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        phasesBtn.setBackground(Color.BLUE);
+        phasesBtn.setForeground(Color.WHITE);
+
+        phasesBtn.setOpaque(true);
+        phasesBtn.setContentAreaFilled(true);
+        phasesBtn.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createRaisedBevelBorder(),
+                BorderFactory.createEmptyBorder(2, 5, 2, 5)));
+
+// 2. Set dynamic positioning (Top Right)
+    // We use a ComponentListener to update bounds on resize
+    this.addComponentListener(new ComponentAdapter() {
+        @Override
+        public void componentResized(ComponentEvent e) {
+            int width = MapPanel.this.getWidth();
+            // Positioned 20px from right edge, 20px from top
+            phasesBtn.setBounds(width - 160, 20, 110, 35);
+        }
+    });
+
+    // 3. Attach layout renderer action listener to map panel button
+        phasesBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                net.sf.rails.game.GameManager gm = gameUIManager.getRoot().getGameManager();
+                java.util.List<net.sf.rails.game.GamePhaseInfo> phases = gm.getLoadedGamePhases();
+
+                if (phases == null || phases.isEmpty()) {
+                    JOptionPane.showMessageDialog(MapPanel.this, 
+                        "No game phase data has been parsed or loaded for this session.", 
+                        "Information Missing", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+
+                // Define structural columns for our display table
+               String[] columns = {"Train", "ORs", "Limit", "Colour", "Effects"};
+                Object[][] data = new Object[phases.size()][5];
+
+                for (int i = 0; i < phases.size(); i++) {
+                    net.sf.rails.game.GamePhaseInfo info = phases.get(i);
+                    data[i][0] = info.onTrain;
+                    data[i][1] = info.operatingRounds;
+                    data[i][2] = info.trainLimit;
+                    data[i][3] = info.colour;
+                    data[i][4] = info.effects; // Replaced status with effects payload
+                }
+
+                JTable table = new JTable(data, columns);
+                table.setRowHeight(26);
+                table.setFont(new Font("SansSerif", Font.PLAIN, 13));
+                table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 13));
+                table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                table.setShowGrid(true);
+                table.setGridColor(Color.LIGHT_GRAY);
+                
+                // Color renderer to dynamically style rows based on the "Colour" column content
+                table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+                    @Override
+                    public Component getTableCellRendererComponent(JTable t, Object v, boolean s, boolean f, int r, int c) {
+                        Component cell = super.getTableCellRendererComponent(t, v, s, f, r, c);
+                        String colName = String.valueOf(t.getValueAt(r, 3)).toLowerCase();
+                        
+                        if (!s) {
+                            switch (colName) {
+                                case "yellow": cell.setBackground(new Color(255, 255, 210)); cell.setForeground(Color.BLACK); break;
+                                case "green":  cell.setBackground(new Color(215, 255, 215)); cell.setForeground(Color.BLACK); break;
+                                case "brown":  cell.setBackground(new Color(240, 215, 195)); cell.setForeground(Color.BLACK); break;
+                                case "gray":   cell.setBackground(new Color(230, 230, 230)); cell.setForeground(Color.BLACK); break;
+                                default:       cell.setBackground(Color.WHITE); cell.setForeground(Color.BLACK); break;
+                            }
+                        }
+                        return cell;
+                    }
+                });
+
+                // Auto-fit column width matching cell content and headers precisely
+                int totalWidth = 0;
+                for (int col = 0; col < table.getColumnCount(); col++) {
+                    javax.swing.table.TableColumn tableColumn = table.getColumnModel().getColumn(col);
+                    
+                    // Start with header width calculation
+                    Component headerComp = table.getTableHeader().getDefaultRenderer()
+                        .getTableCellRendererComponent(table, tableColumn.getHeaderValue(), false, false, 0, col);
+                    int maxWidth = headerComp.getPreferredSize().width + 25; // added padding
+                    
+                    // Evaluate cell row text constraints
+                    for (int row = 0; row < table.getRowCount(); row++) {
+                        Component cellComp = table.getCellRenderer(row, col)
+                            .getTableCellRendererComponent(table, table.getValueAt(row, col), false, false, row, col);
+                        maxWidth = Math.max(maxWidth, cellComp.getPreferredSize().width + 20);
+                    }
+                    
+                    tableColumn.setPreferredWidth(maxWidth);
+                    totalWidth += maxWidth;
+                }
+
+                // Match exact window matrix panel sizing parameters to wipe out scrollbars entirely
+                int totalHeight = table.getTableHeader().getPreferredSize().height + (table.getRowHeight() * table.getRowCount()) + 5;
+                
+                JScrollPane pane = new JScrollPane(table);
+                pane.setPreferredSize(new Dimension(totalWidth + 4, totalHeight));
+                pane.setBorder(BorderFactory.createEmptyBorder());
+                pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+                pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+                
+                JOptionPane.showMessageDialog(MapPanel.this, pane, 
+                    "Game Phases Configuration Summary - " + gm.getGameName(), 
+                    JOptionPane.PLAIN_MESSAGE);
+            }
+        });
+
+        // 4. Add to the Layered Pane
+        layeredPane.add(phasesBtn, JLayeredPane.PALETTE_LAYER);
     }
 
     // Add these helper methods to the class body of MapPanel.java
