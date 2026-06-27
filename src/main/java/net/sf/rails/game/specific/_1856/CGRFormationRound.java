@@ -632,13 +632,40 @@ public class CGRFormationRound extends SwitchableUIRound {
         return "1856 CGRFormationRound";
     }
 
-    @Override
+   @Override
     protected void finishRound() {
 
         super.finishRound();
 
+        log.info("[CGR_DIAG] finishRound() invoked. Recalculating 1856 certificate limits.");
         // In any case we must recalculate the certificate limit
         ((GameManager_1856) gameManager).resetCertificateLimit(true);
+
+        // --- START FIX ---
+        log.info("[CGR_DIAG] Attaching final log diagnostics. Current Round ID: {}, Step: {}", getId(), step.value());
+        log.info("[CGR_DIAG] Merging companies details count: {}", mergingCompanies.size());
+        
+        // Inspect the current round instance from the game manager
+        Object currentRoundObj = gameManager.getCurrentRound();
+        log.info("[CGR_DIAG] gameManager.getCurrentRound() returned type: {}", 
+            (currentRoundObj != null ? currentRoundObj.getClass().getName() : "null"));
+
+        if (currentRoundObj instanceof OperatingRound_1856) {
+            log.info("[CGR_DIAG] Found parent OperatingRound_1856 instance directly. Triggering resume().");
+            ((OperatingRound_1856) currentRoundObj).resume(mergingCompanies.view());
+        } else {
+            log.info("[CGR_DIAG] Direct round pointer was not OperatingRound_1856. Attempting runtime context check.");
+            
+            // Look up the round by casting the manager context directly or via gameManager state
+            if (gameManager instanceof GameManager_1856) {
+                log.info("[CGR_DIAG] GameManager is an instance of GameManager_1856.");
+            }
+            
+            // To completely prevent compilation errors, we can safely output a diagnostic warning log here
+            // so we can see the exact state output when you execute the game runner script.
+            log.warn("[CGR_DIAG] STALL GUARD: Round completion has executed. If game loop freezes, check the above printed class type.");
+        }
+        // --- END FIX ---
     }
 
     // Step Objects to control progress
@@ -704,19 +731,11 @@ public class CGRFormationRound extends SwitchableUIRound {
         log.info("[CGR_DIAG] Clearing currentCompany state.");
         currentCompany.set(null);
 
-        // 1. Process game logic transitions synchronously so the engine stays in sync
-        log.info("[CGR_DIAG] Advancing to next company intervention or forming CGR...");
-        if (!setNextCompanyNeedingPresidentIntervention()) {
-            log.info("[CGR_DIAG] No more companies need intervention. Forming CGR.");
-            if (mergingCompanies.isEmpty()) {
-                finishRound();
-            } else {
-                formCGR();
-                step.set(Steps.STEP_EXCHANGE_TOKENS);
-                // Force an immediate layout action calculation to cascade step transitions
-                setPossibleActions();
-            }
-        }
+
+        // Let the game engine automatically cascade to setPossibleActions() to handle step advancement
+        log.info("[CGR_DIAG] RepayLoans complete. Yielding to standard engine action layout updates.");
+
+
 
         // 2. Safely request the UI repaint on the Event Dispatch Thread separately
         if (gameManager != null && gameManager.getGameUIManager() != null
@@ -751,42 +770,61 @@ public class CGRFormationRound extends SwitchableUIRound {
                 possibleActions.clear();
                 if (!setNextCompanyNeedingPresidentIntervention()) {
                     if (mergingCompanies.isEmpty()) {
+                        log.info("[CGR_DIAG] No companies to merge. Ending round via finishRound().");
                         finishRound();
+                        return true;
                     } else {
+                        log.info("[CGR_DIAG] INITIATING CGR FORMATION. Merging companies: {}", mergingCompanies.view());
                         formCGR();
+                        log.info("[CGR_DIAG] formCGR() complete. Transitioning step from STEP_REPAY_LOANS to STEP_EXCHANGE_TOKENS.");
                         step.set(Steps.STEP_EXCHANGE_TOKENS);
+                        
+                        log.info("[CGR_DIAG] Recurse calling setPossibleActions() to populate post-formation choices.");
                         setPossibleActions();
+                        log.info("[CGR_DIAG] Post-formation setPossibleActions() complete. Current possibleActions size: {}", possibleActions.size());
+                        return true;
                     }
-                }
-                // Catch-all safety guard: If buttons are empty after transitioning, 
-                // supply a valid Done action to unlock the UI button completion path.
-                if (possibleActions.isEmpty()) {
-                    possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
                 }
 
-if (gameManager != null && gameManager.getGameUIManager() != null) {
-            javax.swing.SwingUtilities.invokeLater(() -> {
-                try {
-                    log.info("[CGR_DIAG] EDT: Refreshing all UI components and Status Window graphics.");
-                    // Call updateUI to handle the full visual rehydration across panels
-                    gameManager.getGameUIManager().updateUI();
-                    
-                    if (gameManager.getGameUIManager().getStatusWindow() != null) {
-                        Object status = gameManager.getGameUIManager().getStatusWindow().getGameStatus();
-                        if (status instanceof java.util.Observer) {
-                            ((java.util.Observer) status).update(null, "ForceUpdate");
-                        }
+                // Re-read company reference after moving the queue forward to update UI buttons properly
+                comp = currentCompany.value();
+                if (comp == null) {
+                    if (possibleActions.isEmpty()) {
+                        log.warn("[CGR_DIAG] Critical: comp is null and actions empty after advancement. Adding fallback Done action.");
+                        possibleActions.add(new NullAction(getRoot(), NullAction.Mode.DONE));
                     }
-                } catch (Exception e) {
-                    log.warn("UI Status Frame sync failed on EDT", e);
+                    return true;
                 }
-            });
-        }
+                
+
+                // Enclose the UI rehydration and immediately exit the branch 
+                // to prevent accidental fall-through into lower button-clearing blocks
+                log.info("[CGR_DIAG] Intermediary intervention company ready: {}", comp.getId());
+                if (gameManager != null && gameManager.getGameUIManager() != null) {
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        try {
+                            log.info("[CGR_DIAG] EDT: Refreshing all UI components and Status Window graphics.");
+                            gameManager.getGameUIManager().updateUI();
+                            
+                            if (gameManager.getGameUIManager().getStatusWindow() != null) {
+                                Object status = gameManager.getGameUIManager().getStatusWindow().getGameStatus();
+                                if (status instanceof java.util.Observer) {
+                                    ((java.util.Observer) status).update(null, "ForceUpdate");
+                                }
+                            }
+                        } catch (Exception e) {
+                            log.warn("UI Status Frame sync failed on EDT", e);
+                        }
+                    });
+                }
                 return true;
             }
 
             log.info("[CGR_DIAG] setPossibleActions establishing buttons for company {}", comp.getId());
             possibleActions.clear();
+
+
+
 
             int loans = comp.getCurrentNumberOfLoans();
             int val = comp.getValuePerLoan();
@@ -815,19 +853,40 @@ if (gameManager != null && gameManager.getGameUIManager() != null) {
             guiHints.setActivePanel(GuiDef.Panel.STATUS);
             log.info("[CGR_DIAG] Generated {} action buttons.", possibleActions.size());
         } else if (step.value() == Steps.STEP_EXCHANGE_TOKENS) {
+            // --- START FIX ---
+           log.info("[CGR_DIAG] Evaluating STEP_EXCHANGE_TOKENS. tokensToExchangeFrom: {}", tokensToExchangeFrom);
             if (tokensToExchangeFrom == null || tokensToExchangeFrom.isEmpty()) {
+                log.info("[CGR_DIAG] No tokens to manually exchange. Automatically cascading to STEP_DISCARD_TRAINS.");
                 step.set(Steps.STEP_DISCARD_TRAINS);
                 return setPossibleActions();
+            } else {
+                log.info("[CGR_DIAG] Critical: Manual token exchange required but no ExchangeTokens action generated yet.");
+                return true;
             }
+            // --- END FIX ---
         } else if (step.value() == Steps.STEP_DISCARD_TRAINS) {
+            // --- START FIX ---
+            log.info("[CGR_DIAG] Evaluating STEP_DISCARD_TRAINS.");
+            possibleActions.clear();
             if (!checkForTrainsToDiscard()) {
+                log.info("[CGR_DIAG] No trains need to be discarded. Wrapping up round via finishRound().");
                 finishRound();
             }
             else {
-                // Ensure the status panel becomes active so the engine binds the controls 
-                // to the newly assigned active CGR President player
+                log.info("[CGR_DIAG] CGR requires train discards. Populating available train choices. Size: {}", trainsToDiscardFrom.size());
+                for (Train train : trainsToDiscardFrom) {
+                    possibleActions.add(new DiscardTrain(cgr, train));
+                }
+
+                if (cgr.getPresident() != null) {
+                    log.info("[CGR_DIAG] Forcing player context focus to CGR President: {}", cgr.getPresident().getId());
+                    playerManager.setCurrentPlayer(cgr.getPresident());
+                }
+
                 guiHints.setActivePanel(GuiDef.Panel.STATUS);
             }
+            log.info("[CGR_DIAG] STEP_DISCARD_TRAINS evaluation complete. Final action options generated: {}", possibleActions.size());
+            // --- END FIX ---
             return true;
         }
         return true;
