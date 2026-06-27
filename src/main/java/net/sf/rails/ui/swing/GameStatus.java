@@ -6771,53 +6771,11 @@ public class GameStatus extends GridPanel {
         }
     }
 
+
     private Rectangle getColumnBounds(String columnName) {
         // Awaiting exact column offset and width variables to calculate spatial bounds.
         return new Rectangle(0, 0, 10, 10);
     }
-
-    public void activateHelpOverlay() {
-        Component currentGlass = getRootPane().getGlassPane();
-        net.sf.rails.ui.swing.help.HelpOverlayGlassPane helpPane;
-        log.info("HELP OVERLAY DIAGNOSTIC: GameStatus.activateHelpOverlay() executing spotlight draw.");
-
-        if (currentGlass instanceof net.sf.rails.ui.swing.help.HelpOverlayGlassPane) {
-            helpPane = (net.sf.rails.ui.swing.help.HelpOverlayGlassPane) currentGlass;
-            // THE FLICKER FIX: The internal toggle is completely removed.
-            // StatusWindow.java is the sole authority on when this overlay is visible.
-        } else {
-            helpPane = new net.sf.rails.ui.swing.help.HelpOverlayGlassPane();
-            getRootPane().setGlassPane(helpPane);
-        }
-
-        helpPane.clearSpotlights();
-
-        if (compTrainsXOffset > 0) helpPane.addSpotlight(getColumnBounds(compTrainsXOffset, helpPane),
-"Company Trains Fleet: Displays operating locomotives. Phase limits apply. Purchasing a new tier rusts obsolete trains.");
-    if (compPrivatesXOffset > 0) helpPane.addSpotlight(getColumnBounds(compPrivatesXOffset, helpPane), 
-        "Corporate Special Privileges: Bridge Co. ($40 river discount), Cattle Co. (+$10 western city), Gulf Shipping (+$20 destination port).");
-        
-    if (hasDestinations && compDestXOffset > 0) helpPane.addSpotlight(getColumnBounds(compDestXOffset, helpPane), 
-        "Historical Destination: Triggers a bonus connection run and permanently doubles its base city value for your company.");
-        
-    if (compCashXOffset > 0) helpPane.addSpotlight(getColumnBounds(compCashXOffset, helpPane), 
-        "Company Treasury: Liquid cash for track/tokens. Beware of forced train purchases out of the President's pocket if empty.");
-        
-    if (compRevenueXOffset > 0) helpPane.addSpotlight(getColumnBounds(compRevenueXOffset, helpPane), 
-        "Distributed Route Earnings: Full payout shifts your company stock marker one column to the right.");
-        
-    if (compRetainedXOffset > 0) helpPane.addSpotlight(getColumnBounds(compRetainedXOffset, helpPane), 
-        "Retained Corporate Income: Split keeps 50% without dropping stock price. Withhold keeps 100% but drops stock one column left.");
-        
-    if (compTokensXOffset > 0) helpPane.addSpotlight(getColumnBounds(compTokensXOffset, helpPane), 
-        "Available Base Tokens: Unplaced station markers. Required to route through rival-blocked cities.");
-        
-    if (hasCompanyLoans && compLoansXOffset > 0) helpPane.addSpotlight(getColumnBounds(compLoansXOffset, helpPane), 
-        "Outstanding Corporate Debt: Red circles indicate active loans with interest penalties. Black circles indicate remaining capacity.");
-
-    helpPane.setVisible(true);
-    helpPane.repaint();
-}
 
 private Rectangle getColumnBounds(int colIndex, net.sf.rails.ui.swing.help.HelpOverlayGlassPane pane) {
     if (fields == null || colIndex <= 0 || colIndex >= fields.length) {
@@ -6845,4 +6803,52 @@ private Rectangle getColumnBounds(int colIndex, net.sf.rails.ui.swing.help.HelpO
     
     return new Rectangle(0, 0, 0, 0);
 }
+
+
+public void activateHelpOverlay() {
+Window parentWindow = SwingUtilities.windowForComponent(this);
+if (!(parentWindow instanceof JFrame)) return;
+JFrame mainFrame = (JFrame) parentWindow;
+    Component currentGlass = mainFrame.getGlassPane();
+    net.sf.rails.ui.swing.help.HelpOverlayGlassPane helpPane;
+    
+    if (currentGlass instanceof net.sf.rails.ui.swing.help.HelpOverlayGlassPane) {
+        helpPane = (net.sf.rails.ui.swing.help.HelpOverlayGlassPane) currentGlass;
+    } else {
+        helpPane = new net.sf.rails.ui.swing.help.HelpOverlayGlassPane();
+        mainFrame.setGlassPane(helpPane);
+    }
+
+    helpPane.clearSpotlights();
+
+    if (compTrainsXOffset > 0) helpPane.addSpotlight(getColumnBounds(compTrainsXOffset, helpPane), 
+        "Company Trains Fleet: Displays operating locomotives. Phase limits apply. Purchasing a new tier rusts obsolete trains.");
+        
+    if (compPrivatesXOffset > 0) helpPane.addSpotlight(getColumnBounds(compPrivatesXOffset, helpPane), 
+        "Corporate Special Privileges: Bridge Co. ($40 river discount), Cattle Co. (+$10 western city), Gulf Shipping (+$20 destination port).");
+        
+    if (hasDestinations && compDestXOffset > 0) helpPane.addSpotlight(getColumnBounds(compDestXOffset, helpPane), 
+        "Historical Destination: Triggers a bonus connection run and permanently doubles its base city value for your company.");
+        
+    if (compCashXOffset > 0) helpPane.addSpotlight(getColumnBounds(compCashXOffset, helpPane), 
+        "Company Treasury: Liquid cash for track/tokens. Beware of forced train purchases out of the President's pocket if empty.");
+        
+    if (compRevenueXOffset > 0) helpPane.addSpotlight(getColumnBounds(compRevenueXOffset, helpPane), 
+        "Distributed Route Earnings: Full payout shifts your company stock marker one column to the right.");
+        
+    if (compRetainedXOffset > 0) helpPane.addSpotlight(getColumnBounds(compRetainedXOffset, helpPane), 
+        "Retained Corporate Income: Split keeps 50% without dropping stock price. Withhold keeps 100% but drops stock one column left.");
+        
+    if (compTokensXOffset > 0) helpPane.addSpotlight(getColumnBounds(compTokensXOffset, helpPane), 
+        "Available Base Tokens: Unplaced station markers. Required to route through rival-blocked cities.");
+        
+    if (hasCompanyLoans && compLoansXOffset > 0) helpPane.addSpotlight(getColumnBounds(compLoansXOffset, helpPane), 
+        "Outstanding Corporate Debt: Red circles indicate active loans with interest penalties. Black circles indicate remaining capacity.");
+
+    helpPane.setVisible(true);
+    helpPane.repaint();
+}
+
+
+
 }

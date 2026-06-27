@@ -1,5 +1,4 @@
 
-
 /**
  * ============================================================================
  * ARCHITECTURAL SUMMARY: STATUSWINDOW
@@ -43,7 +42,6 @@
  * phases, or short-sale short-circuits) without introducing rigid bloat to the core frame.
  * ============================================================================
  */
-
 
 package net.sf.rails.ui.swing;
 
@@ -206,8 +204,6 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
     protected ActionButton undoButton;
     protected ActionButton redoButton;
-    private HelpTextWindow helpTextWindow;
-    private boolean helpOverlayActive = false;
 
     // DESIGN LANGUAGE CONSTANTS
     // Primary Borders (Strong Indication)
@@ -946,11 +942,23 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
         // ++ ADD PAUSE BUTTON HANDLING ++
         if (command.equals(TOGGLE_PAUSE_CMD)) {
+            // 1. Sync engine timer processing state
+            gameUIManager.getGameManager().togglePauseMode();
+
+            // 2. Control overlay visibility based on state
             if (gameUIManager.isTimerPaused()) {
                 gameUIManager.resumeTimer();
+                if (getGlassPane() instanceof PauseOverlay) {
+                    getGlassPane().setVisible(false);
+                }
             } else {
                 gameUIManager.pauseTimer();
+                if (!(getGlassPane() instanceof PauseOverlay)) {
+                    setGlassPane(new PauseOverlay());
+                }
+                getGlassPane().setVisible(true);
             }
+
         } else if (command.equals(BUY_CMD)) {
             process(executedAction);
         } else if (command.equals(SELL_CMD)) {
@@ -1076,34 +1084,13 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             showActionRunner();
         } else if (command.equals("HelpWindowCmd")) {
 
-// Flip tracking state
-this.helpOverlayActive = !this.helpOverlayActive;
-log.info("HELP OVERLAY DIAGNOSTIC: Help Button Clicked. helpOverlayActive set to: " + this.helpOverlayActive);
-        // 1. Trigger the original text Help Window
-        if (this.helpTextWindow == null || !this.helpTextWindow.isDisplayable()) {
-                 this.helpTextWindow = new HelpTextWindow(buildTimestamp, gameUIManager);
-            }
-            this.helpTextWindow.refreshHelp(gameUIManager.getGameManager(), buildTimestamp);
-            this.helpTextWindow.setVisible(this.helpOverlayActive);
 
-            // 2. Trigger Spatial Overlay on the GameStatus dashboard based on tracking state
-            if (gameStatus != null) {
-                if (this.helpOverlayActive) {
-                    gameStatus.activateHelpOverlay();
-                } else {
-                    Component currentGlass = getRootPane().getGlassPane();
-                    if (currentGlass instanceof net.sf.rails.ui.swing.help.HelpOverlayGlassPane) {
-                        currentGlass.setVisible(false);
-                        // Restore the standard PauseOverlay so the timer can use it
-                        getRootPane().setGlassPane(new PauseOverlay());
-                    }
-                }
-            }
-
-            // 3. Trigger Spatial Overlay on the ORPanel (Map interactions)
-            if (gameUIManager.getORUIManager() != null && gameUIManager.getORUIManager().getORPanel() != null) {
-                gameUIManager.getORUIManager().getORPanel().activateHelpOverlay();
-            }
+            System.out.println("[HELP LOG] HelpWindowCmd button pressed.");
+            gameUIManager.getGameManager().toggleHelpMode();
+            
+            // Delegate all structural view toggles directly to the central switchboard manager
+            gameUIManager.applyEngineMode(gameUIManager.getGameManager().getEngineMode());
+          
 
         } else if (command.equals(REM_TILES_CMD) || command.equals(ORPanel.REM_TILES_CMD)) {
 
@@ -1672,28 +1659,11 @@ log.info("HELP OVERLAY DIAGNOSTIC: Help Button Clicked. helpOverlayActive set to
             timeText = gm.getFormattedGameTime();
         }
 
-        if (gameUIManager.isTimerPaused()) {
-if (!(getGlassPane() instanceof PauseOverlay) && !this.helpOverlayActive) {
-setGlassPane(new PauseOverlay());
-}
-getGlassPane().setVisible(true);
-} else {
-// ONLY hide the glass pane if the help overlay is NOT active
-if (!this.helpOverlayActive) {
-getGlassPane().setVisible(false);
-} else {
-// Failsafe: The timer updating the clock label causes the parent panel to repaint.
-// We force the GlassPane to repaint simultaneously so it doesn't get drawn over.
-getGlassPane().repaint();
-}
-}
+        // Legacy glass pane toggle checks removed to allow centralized state control
+        // via GameManager EngineMode
 
-       
-
-        if (gameUIManager.isTimerPaused()) {
-            getGlassPane().setVisible(true);
-        } else {
-            getGlassPane().setVisible(false);
+        if (getGlassPane() instanceof PauseOverlay) {
+            getGlassPane().setVisible(gameUIManager.isTimerPaused());
         }
 
         if (gameTimeLabel != null) {
@@ -1849,11 +1819,12 @@ getGlassPane().repaint();
                     gameStatus.recreate();
                 }
 
-                // Re-apply spatial overlay if it was explicitly active before the recreation pass
-if (this.helpOverlayActive && gameStatus != null) {
-log.info("HELP OVERLAY DIAGNOSTIC: updateStatus() rebuilding grid and re-applying overlay.");
-gameStatus.activateHelpOverlay();
-}
+                // Re-apply spatial overlay if it was explicitly active before the recreation
+                // pass
+                if (gameUIManager.getGameManager().getEngineMode() == GameManager.EngineMode.HELP
+                        && gameStatus != null) {
+                    gameStatus.activateHelpOverlay();
+                }
 
                 // Re-apply the current scaled font to the newly created buttons
                 updateFonts(this.currentBaseFontSize);
@@ -3371,7 +3342,7 @@ gameStatus.activateHelpOverlay();
      * A translucent overlay to display a massive "GAME PAUSED" text across the
      * entire window.
      */
-    private class PauseOverlay extends JComponent {
+    public class PauseOverlay extends JComponent {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -3514,7 +3485,5 @@ gameStatus.activateHelpOverlay();
         }
         enforceDynamicMinimumSize();
     }
-
-    
 
 }

@@ -78,11 +78,10 @@ public class GameUIManager implements DialogOwner {
     protected ReportWindow reportWindow;
     protected ConfigWindow configWindow;
     protected ORUIManager orUIManager;
-    protected ORWindow orWindow; 
+    protected ORWindow orWindow;
     private StartRoundWindow startRoundWindow;
     protected HelpTextWindow helpTextWindow = null;
 
-    
     protected JDialog currentDialog = null;
 
     protected StockChartWindow stockChartWindow;
@@ -126,7 +125,7 @@ public class GameUIManager implements DialogOwner {
     protected boolean myTurn = true;
     protected String lastSavedFilename = null;
     protected String localPlayerName = "";
-private static GameUIManager instance; 
+    private static GameUIManager instance;
     protected boolean gameWasLoaded = false;
 
     protected WindowSettings windowSettings;
@@ -184,16 +183,18 @@ private static GameUIManager instance;
     }
 
     /**
-     * Calculates the exact ticking visual time for a player without mutating the engine's state.
+     * Calculates the exact ticking visual time for a player without mutating the
+     * engine's state.
      */
     public int getDisplayedTime(Player p) {
-        if (p == null) return 0;
+        if (p == null)
+            return 0;
         int time = p.getTimeBankModel().value();
-        
+
         if (railsRoot != null && railsRoot.getGameManager() != null) {
             time -= railsRoot.getGameManager().getPendingTimePenalty(p.getName());
         }
-        
+
         // Only deduct active stopwatch time if this is the currently operating player
         if (p.equals(getCurrentPlayer()) && railsRoot.getGameManager().isTimeManagementEnabled()) {
             long now = isStopwatchPaused ? currentPauseStart : System.currentTimeMillis();
@@ -201,12 +202,12 @@ private static GameUIManager instance;
             int elapsedSec = Math.max(0, (int) (elapsedMs / 1000));
             time -= elapsedSec;
         }
-        
+
         return time;
     }
 
     public GameUIManager() {
-        instance = this; 
+        instance = this;
     }
 
     public void init(RailsRoot root, boolean wasLoaded, SplashWindow splashWindow) {
@@ -296,7 +297,7 @@ private static GameUIManager instance;
             helpTextWindow.dispose();
             helpTextWindow = null;
         }
-        
+
         if (currentDialog != null) {
             currentDialog.dispose();
         }
@@ -755,7 +756,8 @@ private static GameUIManager instance;
         } else {
         }
 
-        // Automatically refresh the open help reference window on every UI state update loop
+        // Automatically refresh the open help reference window on every UI state update
+        // loop
         if (helpTextWindow != null && helpTextWindow.isVisible()) {
             helpTextWindow.refreshHelp(getGameManager(), "2026-06-22 11:33");
         }
@@ -1906,7 +1908,7 @@ private static GameUIManager instance;
     /**
      * Starts the game timer for the current player if time management is enabled.
      */
-public void startTimerForCurrentPlayer() {
+    public void startTimerForCurrentPlayer() {
         // *** FIX: Use railsRoot.getGameManager() ***
         if (railsRoot.getGameManager().isTimeManagementEnabled() && gameTimer != null && !gameTimer.isRunning()) {
             isTimerPaused = false; // Ensure not paused
@@ -1919,7 +1921,6 @@ public void startTimerForCurrentPlayer() {
         }
     }
 
-   
     /**
      * Pauses the game timer unconditionally.
      */
@@ -1947,7 +1948,7 @@ public void startTimerForCurrentPlayer() {
             gameTimer.start(); // Revive the background UI ticker
         }
     }
-    
+
     /**
      * Resets the active player being tracked by the timer.
      * This is called by processAction when a turn change is detected.
@@ -2759,8 +2760,79 @@ public void startTimerForCurrentPlayer() {
             windowSettings.save();
             log.info("Window settings flushed to disk.");
         }
-        
+
     }
+
+    /**
+     * Master UI Switchboard dispatched directly by GameManager.
+     * Enforces mutual exclusivity between standard gameplay, pause screens, and
+     * help overlays.
+     */
+   public void applyEngineMode(GameManager.EngineMode mode) {
+        log.info("UI MANAGER APPLYING MODE: " + mode);
+
+        if (statusWindow == null)
+            return;
+        switch (mode) {
+            case PLAY:
+                System.out.println("[HELP LOG] applyEngineMode(PLAY) triggered.");
+                Component playGlass = statusWindow.getRootPane().getGlassPane();
+                if (playGlass != null) {
+                    playGlass.setVisible(false);
+                }
+                
+              // Force ORPanel's internal visibility toggle to register the deactivation pass instantly
+                if (getORUIManager() != null && getORUIManager().getORPanel() != null) {
+                    getORUIManager().getORPanel().activateHelpOverlay();
+                }
+
+                if (orWindow != null) {
+                    orWindow.getRootPane().revalidate();
+                    orWindow.getRootPane().repaint();
+                }
+
+                if (helpTextWindow != null) {
+                    helpTextWindow.setVisible(false);
+                }
+                resumeTimer();
+                break;
+
+            case PAUSE:
+                statusWindow.getRootPane().setGlassPane(statusWindow.new PauseOverlay());
+                statusWindow.getRootPane().getGlassPane().setVisible(true);
+                pauseTimer();
+                break;
+case HELP:
+                // 1. Launch Text Window
+                if (helpTextWindow == null || !helpTextWindow.isDisplayable()) {
+                    helpTextWindow = new HelpTextWindow(statusWindow.buildTimestamp, this);
+                }
+                helpTextWindow.refreshHelp(getGameManager(), statusWindow.buildTimestamp);
+                helpTextWindow.setVisible(true);
+
+                // 2. Safely trigger the spotlight overlay generation on panels
+                if (statusWindow.getGameStatus() != null) {
+                    statusWindow.getGameStatus().activateHelpOverlay();
+                }
+
+                if (getORUIManager() != null && getORUIManager().getORPanel() != null) {
+                    getORUIManager().getORPanel().activateHelpOverlay();
+                }
+
+                // 3. Force layout validation on windows to prevent ghost panels
+                statusWindow.getRootPane().revalidate();
+                statusWindow.getRootPane().repaint();
+                if (orWindow != null) {
+                    orWindow.getRootPane().revalidate();
+                    orWindow.getRootPane().repaint();
+                }
+
+                pauseTimer();
+                break;
+            }
+        }
+
+
     public static GameUIManager getInstance() {
         return instance;
     }

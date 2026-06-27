@@ -1,35 +1,633 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**" kind="src" output="bin/test" path="src/test/resources">
+	<classpathentry kind="src" output="build/resources/test" path="src/test/resources">
 		<attributes>
-			<attribute name="gradle_scope" value="test"/>
-			<attribute name="gradle_used_by_scope" value="test"/>
 			<attribute name="test" value="true"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="resource" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="bin/test" path="src/test/java">
+	<classpathentry kind="src" output="build/classes/java/test" path="src/test/java">
 		<attributes>
-			<attribute name="gradle_scope" value="test"/>
-			<attribute name="gradle_used_by_scope" value="test"/>
 			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="**" kind="src" output="bin/main" path="src/main/resources">
+	<classpathentry kind="src" output="build/resources/main" path="src/main/resources">
 		<attributes>
-			<attribute name="gradle_scope" value="main"/>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="resource" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="bin/main" path="src/main/java">
+	<classpathentry kind="src" output="build/classes/java/main" path="src/main/java">
 		<attributes>
-			<attribute name="gradle_scope" value="main"/>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
+			<attribute name="gradle.buildServer" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21/"/>
-	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
-	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.22.0/f25b20bdff54546bcaf9d1ac4701447f2d3968f7/jackson-core-2.22.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.22.0/1606800d701b5e29e5581b20f65dfa1141338c09/jackson-core-2.22.0-sources.jar"/>
-	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.22.0/7aa54fc3755a9285eec2e73053bde1b9b845a9b2/jackson-databind-2.22.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.22.0/5e7c440756f5f74bbe90b423b05110623ec0591e/jackson-databind-2.22.0-sources.jar"/>
-	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.22/15c67f9498d6934cff9510fc70c5a12e52290457/jackson-annotations-2.22.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.22/a4126c1fdcde457ca6aaea0d196e445e5938d52e/jackson-annotations-2.22-sources.jar"/>
+	<classpathentry kind="src" output="build/classes/java/test" path="build/generated/sources/annotationProcessor/java/test">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="build/classes/java/main" path="build/generated/sources/annotationProcessor/java/main">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JavaSE-21">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.jgrapht/jgrapht-ext/1.5.1/8020f5c6bf0e84c47b0f47065023b8cf163aec0d/jgrapht-ext-1.5.1.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.jgrapht/jgrapht-ext/1.5.1/1e8b3886dba4409cd7e92a6d00a026055621b054/jgrapht-ext-1.5.1-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.jgrapht"/>
+			<attribute name="artifactId" value="jgrapht-ext"/>
+			<attribute name="version" value="1.5.1"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.13.0/b7263237aa89c1f99b327197c41d0669707a462e/commons-lang3-3.13.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.13.0/c035e3c80a649b8a1b2e533ff69317304accb247/commons-lang3-3.13.0-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.commons"/>
+			<attribute name="artifactId" value="commons-lang3"/>
+			<attribute name="version" value="3.13.0"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.10.1/b3add478d4382b78ea20b1671390a858002feb6c/gson-2.10.1.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.10.1/982a90132e942f302e6fe79d6e78c4bc2e998569/gson-2.10.1-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.google.code.gson"/>
+			<attribute name="artifactId" value="gson"/>
+			<attribute name="version" value="2.10.1"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.microsoft.onnxruntime/onnxruntime/1.16.0/e05d731e016be3bf1137e9995e4c109202c52060/onnxruntime-1.16.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.microsoft.onnxruntime/onnxruntime/1.16.0/22d3dff0c6420b072a8e094d0f37fe0a44f13f26/onnxruntime-1.16.0-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.microsoft.onnxruntime"/>
+			<attribute name="artifactId" value="onnxruntime"/>
+			<attribute name="version" value="1.16.0"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-graphics/21/65db2983610c35e3e11ffb56901741d68bff7e2f/javafx-graphics-21-mac.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-graphics/21/30e3c2c91eea517ce3e21c629d6cfa4cba217c95/javafx-graphics-21-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.openjfx"/>
+			<attribute name="artifactId" value="javafx-graphics"/>
+			<attribute name="version" value="21"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.5.14/1194890e6f56ec29177673f2f12d0b8e627dec98/httpclient-4.5.14.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.5.14/14321a360aa0e037c56d4c820747a84954d9196e/httpclient-4.5.14-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.httpcomponents"/>
+			<attribute name="artifactId" value="httpclient"/>
+			<attribute name="version" value="4.5.14"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.dockingframes/docking-frames-common/1.1.1/8a6b46055dfe99f5c27cb3b2c4177e8c055842c0/docking-frames-common-1.1.1.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.dockingframes/docking-frames-common/1.1.1/7662f36267db75ce862563933dccb868b0002048/docking-frames-common-1.1.1-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.dockingframes"/>
+			<attribute name="artifactId" value="docking-frames-common"/>
+			<attribute name="version" value="1.1.1"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.21.1/6d9b10773b5237df178a7b3c1b4208df7d0e7f94/error_prone_annotations-2.21.1.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.21.1/68e62df0cf0c3927fa98f6d795543ecbeb919521/error_prone_annotations-2.21.1-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.google.errorprone"/>
+			<attribute name="artifactId" value="error_prone_annotations"/>
+			<attribute name="version" value="2.21.1"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-util/1.16/cc144a6a69fac333e5ed10ac3169768ceff2b840/batik-util-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-util/1.16/de9a1b9d5f38156d616863ede33beb9c3184b83d/batik-util-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-util"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-svg-dom/1.16/d16a96149c33cde0eb5ed688308abf067e73e5a4/batik-svg-dom-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-svg-dom/1.16/cb5e57d7934fa112973f5bdfd8949270164730c4/batik-svg-dom-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-svg-dom"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-i18n/1.16/6e45a40b5e67f89d528bb511d7d938c161dcbc1f/batik-i18n-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-i18n/1.16/a7f0dfed6a6737af182f18bd8839fa3a62a35bce/batik-i18n-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-i18n"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-css/1.16/9151bffd3799b8f55fb27b81f06156183ffeb307/batik-css-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-css/1.16/d633b17f0def65f6313ed9d656b288d677cfdea6/batik-css-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-css"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-xml/1.16/3055a9f0b0ee5b327c35c62749189b1c4683bc56/batik-xml-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-xml/1.16/8afabeefb45c6871cc0a32a056b3d5a248b7cfa/batik-xml-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-xml"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/xmlgraphics-commons/2.7/336ddd6d0a244cdebf26a298fb7c3a5fd45449db/xmlgraphics-commons-2.7.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/xmlgraphics-commons/2.7/6939caa367dabb212b02f320a6f5e5660a8f0165/xmlgraphics-commons-2.7-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="xmlgraphics-commons"/>
+			<attribute name="version" value="2.7"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/javazoom/jlayer/1.0.1/2bfef7a5a4c9af2184ff74b460b6d7d24349b98a/jlayer-1.0.1.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/javazoom/jlayer/1.0.1/4e727b40356f53930966addf6a23cb5f045ec8e1/jlayer-1.0.1-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="javazoom"/>
+			<attribute name="artifactId" value="jlayer"/>
+			<attribute name="version" value="1.0.1"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-bridge/1.16/d5384b5f1eba4050a2ebe129a9ab686b97d667ac/batik-bridge-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-bridge/1.16/8b35fc404a74e743b2c13a1ef8442386a5e79dd9/batik-bridge-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-bridge"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-ext/1.16/3114e178d00db9053498f23cc46668b93c44dbc5/batik-ext-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-ext/1.16/dd7e1e5e38c053173c904ede045a91efc3ba4b14/batik-ext-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-ext"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents.client5/httpclient5/5.2.1/c900514d3446d9ce5d9dbd90c21192048125440/httpclient5-5.2.1.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents.client5/httpclient5/5.2.1/6f7ee311b403e9ff5d04e9128ea6a0fca4eb0a43/httpclient5-5.2.1-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.httpcomponents.client5"/>
+			<attribute name="artifactId" value="httpclient5"/>
+			<attribute name="version" value="5.2.1"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-qual/3.37.0/ba74746d38026581c12166e164bb3c15e90cc4ea/checker-qual-3.37.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-qual/3.37.0/9990309889a76e4c6556c18140ce8559b854bae3/checker-qual-3.37.0-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.checkerframework"/>
+			<attribute name="artifactId" value="checker-qual"/>
+			<attribute name="version" value="3.37.0"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.11/3acb4705652e16236558f0f4f2192cc33c3bd189/commons-codec-1.11.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.11/bce4ba84fd527950e35040b20a991c63e90e2850/commons-codec-1.11-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="commons-codec"/>
+			<attribute name="artifactId" value="commons-codec"/>
+			<attribute name="version" value="1.11"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.github.vlsi.mxgraph/jgraphx/4.2.2/9701b6b3a42d24658cf78ac0229429a3597f600/jgraphx-4.2.2.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.github.vlsi.mxgraph/jgraphx/4.2.2/9c6e6d4955a9a35103faf6557e98464ee4f1cc3c/jgraphx-4.2.2-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.github.vlsi.mxgraph"/>
+			<attribute name="artifactId" value="jgraphx"/>
+			<attribute name="version" value="4.2.2"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents.core5/httpcore5/5.2/ab7d251b8dfa3f2878f1eefbcca0e1fc0ebeba27/httpcore5-5.2.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents.core5/httpcore5/5.2/9c701e330a33690077c7788251f9b061ee7cec28/httpcore5-5.2-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.httpcomponents.core5"/>
+			<attribute name="artifactId" value="httpcore5"/>
+			<attribute name="version" value="5.2"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.11.0/a2503f302b11ebde7ebc3df41daebe0e4eea3689/commons-io-2.11.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.11.0/2ef0187124bbfc7aed3038d4ffdd2241e8992937/commons-io-2.11.0-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="commons-io"/>
+			<attribute name="artifactId" value="commons-io"/>
+			<attribute name="version" value="2.11.0"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.dockingframes/docking-frames-core/1.1.1/b798917951a1367a7b41895026a064e471902566/docking-frames-core-1.1.1.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.dockingframes/docking-frames-core/1.1.1/3756ebbf999ad98415bdd03508c7c8d7edeeb7ea/docking-frames-core-1.1.1-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.dockingframes"/>
+			<attribute name="artifactId" value="docking-frames-core"/>
+			<attribute name="version" value="1.1.1"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-svggen/1.16/714b527914c8295bc1f479b60b0d257357c1318c/batik-svggen-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-svggen/1.16/909334189e27099491ade6bd9a1b20bd901316e8/batik-svggen-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-svggen"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-classic/1.4.6/61f81fe5d996f077f90a08ff5ca75d01dbe752c3/logback-classic-1.4.6.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-classic/1.4.6/9e66c9901d95740152bb6d4c6b69aa1109919280/logback-classic-1.4.6-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="ch.qos.logback"/>
+			<attribute name="artifactId" value="logback-classic"/>
+			<attribute name="version" value="1.4.6"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-dom/1.16/2d0d63c9177d5c25b52061464457478e9f74363a/batik-dom-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-dom/1.16/3f56c7035cb8895a89de0259b2d4b5291fce187c/batik-dom-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-dom"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/25ea2e8b0c338a877313bd4672d3fe056ea78f0d/jsr305-3.0.2.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/b19b5927c2c25b6c70f093767041e641ae0b1b35/jsr305-3.0.2-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.google.code.findbugs"/>
+			<attribute name="artifactId" value="jsr305"/>
+			<attribute name="version" value="3.0.2"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.2/4bfc12adfe4842bf07b657f0369c4cb522955686/commons-logging-1.2.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.2/ecf26c7507d67782a3bbd148d170b31dfad001aa/commons-logging-1.2-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="commons-logging"/>
+			<attribute name="artifactId" value="commons-logging"/>
+			<attribute name="version" value="1.2"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-awt-util/1.16/2f884535c65e892cfe14c7cdc660274528ec15f0/batik-awt-util-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-awt-util/1.16/c027fb3491d8551ba8bd8aee97752b474fd2f424/batik-awt-util-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-awt-util"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/xml-apis/xml-apis-ext/1.3.04/41a8b86b358e87f3f13cf46069721719105aff66/xml-apis-ext-1.3.04.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="xml-apis"/>
+			<attribute name="artifactId" value="xml-apis-ext"/>
+			<attribute name="version" value="1.3.04"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.guava/failureaccess/1.0.1/1dcf1de382a0bf95a3d8b0849546c88bac1292c9/failureaccess-1.0.1.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.guava/failureaccess/1.0.1/1d064e61aad6c51cc77f9b59dc2cccc78e792f5a/failureaccess-1.0.1-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.google.guava"/>
+			<attribute name="artifactId" value="failureaccess"/>
+			<attribute name="version" value="1.0.1"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/net.java.dev.designgridlayout/designgridlayout/1.11/41de5e716849412206781d6b2062da5290548f69/designgridlayout-1.11.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/net.java.dev.designgridlayout/designgridlayout/1.11/44842f00ebc908d5f998fc1cec290715b27f5595/designgridlayout-1.11-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="net.java.dev.designgridlayout"/>
+			<attribute name="artifactId" value="designgridlayout"/>
+			<attribute name="version" value="1.11"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.22.0/7aa54fc3755a9285eec2e73053bde1b9b845a9b2/jackson-databind-2.22.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.22.0/5e7c440756f5f74bbe90b423b05110623ec0591e/jackson-databind-2.22.0-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.fasterxml.jackson.core"/>
+			<attribute name="artifactId" value="jackson-databind"/>
+			<attribute name="version" value="2.22.0"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-graphics/21/f8d0163c8bf9cffdcf2eac163446ea550b3051ca/javafx-graphics-21.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-graphics/21/30e3c2c91eea517ce3e21c629d6cfa4cba217c95/javafx-graphics-21-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.openjfx"/>
+			<attribute name="artifactId" value="javafx-graphics"/>
+			<attribute name="version" value="21"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.22.0/f25b20bdff54546bcaf9d1ac4701447f2d3968f7/jackson-core-2.22.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.22.0/1606800d701b5e29e5581b20f65dfa1141338c09/jackson-core-2.22.0-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.fasterxml.jackson.core"/>
+			<attribute name="artifactId" value="jackson-core"/>
+			<attribute name="version" value="2.22.0"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-base/21/fb05afbcc10abfb948ea944e3fbd904c5aa7a4d4/javafx-base-21-mac.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-base/21/594c03146fee3f6d6dec492ab71e5858637be5ef/javafx-base-21-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.openjfx"/>
+			<attribute name="artifactId" value="javafx-base"/>
+			<attribute name="version" value="21"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-anim/1.16/aa73e4fff38898d9a4f85e662bd2d40fd71dbc0d/batik-anim-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-anim/1.16/56fc7504c1194a49e436278df665e3e3f24e387b/batik-anim-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-anim"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gvt/1.16/aeee5beb6f1eaa4304bf7e9d4c185b126b743d8c/batik-gvt-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gvt/1.16/4d5beac5a82b6591797dee71b278506dfd9abf6a/batik-gvt-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-gvt"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.jheaps/jheaps/0.13/b30f6a9c1e99b2e102126060195469ef7fd7211b/jheaps-0.13.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.jheaps/jheaps/0.13/bc9436c063a6a51ece5f7649f6c7be65274e149f/jheaps-0.13-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.jheaps"/>
+			<attribute name="artifactId" value="jheaps"/>
+			<attribute name="version" value="0.13"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-swing/1.16/cc1e77d9ba42d0a95c7d4d72a0e0cdcad0258215/batik-swing-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-swing/1.16/3b59d605fd85321835a9b74bfb9a4cc105ed677e/batik-swing-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-swing"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-base/21/be7576df67c204d6d3f9c6c5d4db4e268ff22ff2/javafx-base-21.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-base/21/594c03146fee3f6d6dec492ab71e5858637be5ef/javafx-base-21-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.openjfx"/>
+			<attribute name="artifactId" value="javafx-base"/>
+			<attribute name="version" value="21"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.jgrapht/jgrapht-core/1.5.1/1b9abad9a3d052c6a5d7135cbe63916f5ed11bef/jgrapht-core-1.5.1.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.jgrapht/jgrapht-core/1.5.1/5a1796ca406e2e1a30e78dca460d4b5731ca0178/jgrapht-core-1.5.1-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.jgrapht"/>
+			<attribute name="artifactId" value="jgrapht-core"/>
+			<attribute name="version" value="1.5.1"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-swing/21/7bafef0d801b2aa9d768b520482fc7480c92d9e2/javafx-swing-21-mac.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-swing/21/8dd200a41cd9735ed718173b8a49a2caa6d4cdee/javafx-swing-21-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.openjfx"/>
+			<attribute name="artifactId" value="javafx-swing"/>
+			<attribute name="version" value="21"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-core/1.4.6/c4eb386f0fe83d61c2e8a91df50bb07e7ea95140/logback-core-1.4.6.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-core/1.4.6/66563d4c017256af3ed4b947ff9b5e38037f146b/logback-core-1.4.6-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="ch.qos.logback"/>
+			<attribute name="artifactId" value="logback-core"/>
+			<attribute name="version" value="1.4.6"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.j2objc/j2objc-annotations/2.8/c85270e307e7b822f1086b93689124b89768e273/j2objc-annotations-2.8.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.j2objc/j2objc-annotations/2.8/74fb66e276fc42784d884d51f841e35232bc90de/j2objc-annotations-2.8-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.google.j2objc"/>
+			<attribute name="artifactId" value="j2objc-annotations"/>
+			<attribute name="version" value="2.8"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-controls/21/c17f843bcbc14da078fce1261b91c2fba8ce033a/javafx-controls-21-mac.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-controls/21/53ec71c0d97395fb7393ea6f98749a68fc821b66/javafx-controls-21-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.openjfx"/>
+			<attribute name="artifactId" value="javafx-controls"/>
+			<attribute name="version" value="21"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gui-util/1.16/df6fa25760dfd0feac4dce26a43cc18d5affa0fb/batik-gui-util-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gui-util/1.16/30c677dac266b1454cfddff6b5f7e5d130120aaf/batik-gui-util-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-gui-util"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents.core5/httpcore5-h2/5.2/698bd8c759ccc7fd7398f3179ff45d0e5a7ccc16/httpcore5-h2-5.2.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents.core5/httpcore5-h2/5.2/87e5eed16e0cdf7ccb8e434b6de7bca243d858d3/httpcore5-h2-5.2-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.httpcomponents.core5"/>
+			<attribute name="artifactId" value="httpcore5-h2"/>
+			<attribute name="version" value="5.2"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-text/1.10.0/3363381aef8cef2dbc1023b3e3a9433b08b64e01/commons-text-1.10.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-text/1.10.0/99ad76c831fcf0edead47f3aa9c0731653a0845d/commons-text-1.10.0-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.commons"/>
+			<attribute name="artifactId" value="commons-text"/>
+			<attribute name="version" value="1.10.0"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/xml-apis/xml-apis/1.4.01/3789d9fada2d3d458c4ba2de349d48780f381ee3/xml-apis-1.4.01.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/xml-apis/xml-apis/1.4.01/5502da0c4c0a7916a604356ef19394ccfa30cd4b/xml-apis-1.4.01-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="xml-apis"/>
+			<attribute name="artifactId" value="xml-apis"/>
+			<attribute name="version" value="1.4.01"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/32.1.3-jre/f306708742ce2bf0fb0901216183bc14073feae/guava-32.1.3-jre.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/32.1.3-jre/9fa794e2f2d4e62ff849327ed06a679ecdcd4187/guava-32.1.3-jre-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.google.guava"/>
+			<attribute name="artifactId" value="guava"/>
+			<attribute name="version" value="32.1.3-jre"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.googlecode.combinatoricslib/combinatoricslib/2.3/3767d1524e6f50226ba516a7b685da0cd0920535/combinatoricslib-2.3.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.googlecode.combinatoricslib/combinatoricslib/2.3/de56da01a8e9fd80ad0835423b41755557a2eca2/combinatoricslib-2.3-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.googlecode.combinatoricslib"/>
+			<attribute name="artifactId" value="combinatoricslib"/>
+			<attribute name="version" value="2.3"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.7/41eb7184ea9d556f23e18b5cb99cad1f8581fc00/slf4j-api-2.0.7.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.7/f887f95694cd20d51a062446b6e3d09dd02d98ff/slf4j-api-2.0.7-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.slf4j"/>
+			<attribute name="artifactId" value="slf4j-api"/>
+			<attribute name="version" value="2.0.7"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-shared-resources/1.16/75809160dd805a8ce29b655671cd29e47da43efd/batik-shared-resources-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-shared-resources/1.16/26e22b39af89d9b55164422e7918b0a7947ce91a/batik-shared-resources-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-shared-resources"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.google.guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/b421526c5f297295adef1c886e5246c39d4ac629/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.google.guava"/>
+			<attribute name="artifactId" value="listenablefuture"/>
+			<attribute name="version" value="9999.0-empty-to-avoid-conflict-with-guava"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/24.0.1/13c5c75c4206580aa4d683bffee658caae6c9f43/annotations-24.0.1.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/24.0.1/2f9be7fbab3157633befe74c684bd3badb28a876/annotations-24.0.1-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.jetbrains"/>
+			<attribute name="artifactId" value="annotations"/>
+			<attribute name="version" value="24.0.1"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-constants/1.16/924370bb08a8ef1d3983d5ea587a17c7845d9af6/batik-constants-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-constants/1.16/dc0ca3811e80ed88eb80aed7eaedde01ca511896/batik-constants-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-constants"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpcore/4.4.16/51cf043c87253c9f58b539c9f7e44c8894223850/httpcore-4.4.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpcore/4.4.16/229e4c0eae80465381ae02adf61bca5558360777/httpcore-4.4.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.httpcomponents"/>
+			<attribute name="artifactId" value="httpcore"/>
+			<attribute name="version" value="4.4.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.22/15c67f9498d6934cff9510fc70c5a12e52290457/jackson-annotations-2.22.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.22/a4126c1fdcde457ca6aaea0d196e445e5938d52e/jackson-annotations-2.22-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="com.fasterxml.jackson.core"/>
+			<attribute name="artifactId" value="jackson-annotations"/>
+			<attribute name="version" value="2.22"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-transcoder/1.16/ddcb38dfddffa775bbda3340e44eddff9ef95451/batik-transcoder-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-transcoder/1.16/c2a97e3f5d29b819e6f612c37587de5effc982f1/batik-transcoder-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-transcoder"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-script/1.16/ba120da776d0ecb18c2280c6d9f503484dc1c12c/batik-script-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-script/1.16/c1c0fc56f7efa57b0f0e5c277b0414ce3dc8d64/batik-script-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-script"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-parser/1.16/8217bd068a48dc79c207c95821fe5c0d3d4c8b62/batik-parser-1.16.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-parser/1.16/573028e3534df3234119102b3e3f01f28382fea4/batik-parser-1.16-sources.jar">
+		<attributes>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.apache.xmlgraphics"/>
+			<attribute name="artifactId" value="batik-parser"/>
+			<attribute name="version" value="1.16"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/junit/junit/4.13.2/8ac9e16d933b6fb43bc7f576336b8f4d7eb5ba12/junit-4.13.2.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/junit/junit/4.13.2/33987872a811fe4d4001ed494b07854822257f42/junit-4.13.2-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="junit"/>
+			<attribute name="artifactId" value="junit"/>
+			<attribute name="version" value="4.13.2"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.mockito/mockito-inline/5.2.0/3d1dffee9a8a1998ec782383ca2f818848f2d5f1/mockito-inline-5.2.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.mockito/mockito-inline/5.2.0/3d1dffee9a8a1998ec782383ca2f818848f2d5f1/mockito-inline-5.2.0-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.mockito"/>
+			<attribute name="artifactId" value="mockito-inline"/>
+			<attribute name="version" value="5.2.0"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.14.4/20498aaec9b00a5cfdb831e7bf68feafa833ce4b/byte-buddy-1.14.4.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.14.4/94651fa92930ce2d26e3d5e4a7af5631f2f6cb2c/byte-buddy-1.14.4-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="net.bytebuddy"/>
+			<attribute name="artifactId" value="byte-buddy"/>
+			<attribute name="version" value="1.14.4"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.easytesting/fest-assert-core/2.0M10/cb7c91cf614901928ae405f19d9bcdedf82781db/fest-assert-core-2.0M10.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.easytesting/fest-assert-core/2.0M10/16321e3a0a61af0505a0d3726c6c75d0a44e34e8/fest-assert-core-2.0M10-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.easytesting"/>
+			<attribute name="artifactId" value="fest-assert-core"/>
+			<attribute name="version" value="2.0M10"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.14.4/3bf5ac1104554908cc623e40e58a00be37c35f36/byte-buddy-agent-1.14.4.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.14.4/996d4bbc74a0bfc5180b442d7be19ce26a1e38fe/byte-buddy-agent-1.14.4-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="net.bytebuddy"/>
+			<attribute name="artifactId" value="byte-buddy-agent"/>
+			<attribute name="version" value="1.14.4"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.objenesis/objenesis/3.3/1049c09f1de4331e8193e579448d0916d75b7631/objenesis-3.3.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.objenesis/objenesis/3.3/5fef34eeee6816b0ba2170755a8a9db7744990c3/objenesis-3.3-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.objenesis"/>
+			<attribute name="artifactId" value="objenesis"/>
+			<attribute name="version" value="3.3"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.easytesting/fest-util/1.2.5/c4a8d7305b23b8d043be12c979813b096df11f44/fest-util-1.2.5.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.easytesting/fest-util/1.2.5/51c853a963c33e146d5b4461d28e740a42483224/fest-util-1.2.5-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.easytesting"/>
+			<attribute name="artifactId" value="fest-util"/>
+			<attribute name="version" value="1.2.5"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.mockito/mockito-core/5.2.0/bc22d2ee9596a5fd2d9f9f7c49599f71aac5a88a/mockito-core-5.2.0.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.mockito/mockito-core/5.2.0/11562f69c26abdcc85733cef31d4d8c2694ea1de/mockito-core-5.2.0-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.mockito"/>
+			<attribute name="artifactId" value="mockito-core"/>
+			<attribute name="version" value="5.2.0"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar" sourcepath="/Users/bleeck/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/1dc37250fbc78e23a65a67fbbaf71d2e9cbc3c0b/hamcrest-core-1.3-sources.jar">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="gradle.buildServer" value="true"/>
+			<attribute name="groupId" value="org.hamcrest"/>
+			<attribute name="artifactId" value="hamcrest-core"/>
+			<attribute name="version" value="1.3"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin/default"/>
 </classpath>

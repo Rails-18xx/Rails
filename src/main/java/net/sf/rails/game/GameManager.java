@@ -464,19 +464,71 @@ public class GameManager extends RailsManager implements Configurable, Owner {
     // Persistent Global Game Timer (in seconds)
     protected final IntegerState totalGameTime = IntegerState.create(this, "totalGameTime");
 
-    private boolean isPaused = false;
 
-    public boolean isGamePaused() {
-        return isPaused;
+    public enum EngineMode {
+PLAY,
+PAUSE,
+HELP
+}
+
+private transient EngineMode currentMode = EngineMode.PLAY;
+
+public EngineMode getEngineMode() {
+    return currentMode;
+}
+
+public void setEngineMode(EngineMode newMode) {
+    if (this.currentMode == newMode) return;
+    
+    EngineMode oldMode = this.currentMode;
+    this.currentMode = newMode;
+    
+    log.info("SYSTEM MODE CHANGED: " + oldMode + " -> " + newMode);
+    
+    // Push the state change down to the UI manager so it can halt timers, 
+    // drop the pause curtain, or raise the help overlays simultaneously.
+    if (gameUIManager != null) {
+        // We will implement applyEngineMode in GameUIManager in the next phase
+        gameUIManager.applyEngineMode(newMode);
+    }
+}
+
+public void setGamePaused(boolean paused) {
+        if (paused) {
+            // Keep existing HELP mode intact if it's already running, otherwise go to PAUSE
+            if (currentMode != EngineMode.HELP) {
+                setEngineMode(EngineMode.PAUSE);
+            }
+        } else {
+            setEngineMode(EngineMode.PLAY);
+        }
     }
 
-    public void setGamePaused(boolean paused) {
-        this.isPaused = paused;
+public void togglePauseMode() {
+    if (currentMode == EngineMode.PAUSE) {
+        setEngineMode(EngineMode.PLAY);
+    } else {
+        setEngineMode(EngineMode.PAUSE);
     }
+}
+
+public void toggleHelpMode() {
+    if (currentMode == EngineMode.HELP) {
+        setEngineMode(EngineMode.PLAY);
+    } else {
+        setEngineMode(EngineMode.HELP);
+    }
+}
+
+// Maintains backwards compatibility for the timer and other components.
+// Both PAUSE and HELP effectively "pause" the game clock and block standard interactions.
+public boolean isGamePaused() {
+    return currentMode == EngineMode.PAUSE || currentMode == EngineMode.HELP;
+}
 
     public void incrementTotalGameTime() {
-        if (!isPaused) {
-            totalGameTime.add(1);
+if (!isGamePaused()) {
+                totalGameTime.add(1);
 
             // Force time deduction for Prussian Formation Round (skipped by standard UI
             // timer)
