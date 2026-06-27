@@ -527,18 +527,35 @@ return;
                 boolean canLay = !possibleActions.getType(LayTile.class).isEmpty();
                 boolean canSpecial = !possibleActions.getType(UseSpecialProperty.class).isEmpty();
                 if (!canLay && !canSpecial && !hasSpecialOR) {
-if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
+                    if (processNullAction(possibleActions, NullAction.Mode.SKIP))
+                        return;
                 }
             } else if (orStep == GameDef.OrStep.LAY_TOKEN) {
                 if (possibleActions.getType(LayToken.class).isEmpty() && !hasSpecialOR) {
-if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
+                    if (processNullAction(possibleActions, NullAction.Mode.SKIP))
+                        return;
                 }
             } else if (orStep == GameDef.OrStep.BUY_TRAIN) {
                 if (possibleActions.getType(BuyTrain.class).isEmpty() && !hasSpecialOR) {
-if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
+                    if (processNullAction(possibleActions, NullAction.Mode.SKIP))
+                        return;
+                }
+            } else {
+                // Catch-all for unhandled phases to prevent silent stalls
+                for (PossibleAction pa : possibleActions.getList()) {
+                    if (pa instanceof NullAction && ((NullAction) pa).getMode() == NullAction.Mode.SKIP) {
+                        log.error("=");
+                        log.error("CRITICAL UI WARNING: Engine is in phase [" + orStep + "] with a SKIP action,");
+                        log.error("but no auto-skip logic is defined for this phase in ORUIManager!");
+                        log.error("If the UI stalls here, add this phase to the auto-skip check block.");
+                        log.error("=");
+                        break;
+                    }
                 }
             }
-        }
+            }
+            
+        
 
         // Delegate UI Setup
         if (orStep == GameDef.OrStep.LAY_TRACK) {
@@ -608,7 +625,7 @@ if (processNullAction(possibleActions, NullAction.Mode.SKIP)) return;
             orPanel.initTrainBuying(new ArrayList<>());
             PossibleActions freshActions = getPossibleActions();
             orPanel.updateDynamicActions(freshActions != null ? freshActions.getList() : possibleActions.getList());
-            
+
         }
 
         orPanel.enableUndo(undoAction);

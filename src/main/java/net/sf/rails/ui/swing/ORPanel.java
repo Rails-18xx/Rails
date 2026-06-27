@@ -3565,15 +3565,14 @@ if (specialPanel != null) {
 
         helpPane.clearSpotlights();
 
-        // 1. Standard Buttons with Contextual Text
-        addIfActive(helpPane, btnTileConfirm, "Confirm Map Selection");
-        addIfActive(helpPane, btnTokenConfirm, "Confirm Token Placement");
-        addIfActive(helpPane, btnRevPayout, "Payout: Distribute cash to shareholders, increase stock value.");
-        addIfActive(helpPane, btnRevSplit, "Split: Half to shareholders, half to company treasury.");
-        addIfActive(helpPane, btnRevWithhold, "Withhold: Keep all cash in company treasury, stock value drops.");
-        addIfActive(helpPane, btnTrainSkip, "Skip Train Purchase");
-        addIfActive(helpPane, btnDone, "End Turn: Advance to the next company.");
-
+// 1. Standard Buttons with Contextual Text
+addIfActive(helpPane, btnTileConfirm, "Confirm Track: Finalize the current tile placement or upgrade.");
+addIfActive(helpPane, btnTokenConfirm, "Confirm Token: Pay the fee and place your station marker.");
+addIfActive(helpPane, btnRevPayout, "Pay Dividends: Distribute earnings to shareholders. Stock price moves right.");
+addIfActive(helpPane, btnRevSplit, "Split Revenue: Half to shareholders, half to company. Stock price stays.");
+addIfActive(helpPane, btnRevWithhold, "Withhold Earnings: Keep all cash in treasury. Stock price moves left.");
+addIfActive(helpPane, btnTrainSkip, "Skip Train: End purchasing. You MUST buy if you have a route but no train.");
+addIfActive(helpPane, btnDone, "End Turn: Finish all operations and advance to the next company.");
         // 2. Dynamic Buttons
         scanPanelForActiveButtons(helpPane, trainButtonsPanel);
         scanPanelForActiveButtons(helpPane, specialActionsButtonPanel);
@@ -3642,8 +3641,24 @@ if (specialPanel != null) {
                 // Extract clean text from the button, stripping any HTML tags we inject for
                 // formatting
                 String text = ((ActionButton) c).getText().replaceAll("<[^>]*>", "").trim();
-                pane.addSpotlight(SwingUtilities.convertRectangle(c.getParent(), c.getBounds(), pane), text);
+String helpText = text;
+            // Intercept generic or specific button texts to provide targeted context
+            if (text.equalsIgnoreCase("Skip")) {
+                helpText = "Skip Action: Choose not to take this optional action.";
+            } else if (text.contains("Brdg")) {
+                helpText = "Buy Bridge Co.: Allows crossing the Mississippi River or gives a $40 track discount.";
+            } else if (text.contains("Gulf")) {
+                helpText = "Buy Gulf Co.: Place an open or closed port token to boost a city's revenue.";
+            } else if (text.contains("MKT")) {
+                helpText = "Buy MKT: Acquires the private company and its attached 10% share of MKT Railroad.";
+            } else if (text.contains("Cattl")) {
+                helpText = "Buy Cattle Co.: Place a token to add $10 to a western city for your trains.";
+            } else if (text.contains("GRSC")) {
+                helpText = "Buy Great River Shipping: Standard private company, pays $5 revenue.";
             }
+
+            pane.addSpotlight(SwingUtilities.convertRectangle(c.getParent(), c.getBounds(), pane), helpText);
+                    }
         }
     }
 

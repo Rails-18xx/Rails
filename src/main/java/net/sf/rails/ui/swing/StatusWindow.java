@@ -1,5 +1,50 @@
-/* $Header: /Users/blentz/rails_rcs/cvs/
-/rails/ui/swing/StatusWindow.java,v 1.46 2010/06/15 20:16:54 evos Exp $*/
+
+
+/**
+ * ============================================================================
+ * ARCHITECTURAL SUMMARY: STATUSWINDOW
+ * ============================================================================
+ * 
+ * CORE RESPONSIBILITY:
+ * This class serves as the primary financial dashboard and master window for 
+ * the Rails application. It encapsulates the core game state matrix (Players & 
+ * Companies vs. Assets), primary window menu bars, game timing, and critical 
+ * transaction buttons (Pass, Done, Undo, Redo, AI).
+ *
+ * PIPELINE & DASHBOARD SYNC TRRIGGERS:
+ * Every time a game action alters the engine state, gameUIManager broadcasts an
+ * update request that routes directly into updateStatus(boolean myTurn). 
+ * 
+ * To ensure the visual matrix never falls out of sync with the underlying models:
+ * 1. A hard layout reset is forced via gameStatus.recreate() to clear old cell trees, 
+ *    wipe dynamic rendering desyncs (like stale company rows or ghost markers), and 
+ *    completely re-fetch player seat ordering.
+ * 2. Active highlights and button click mappings are re-applied via gameStatus.initTurn().
+ *
+ * CROSS-WINDOW INTERACTION MAP & HELP HOOKS:
+ * 1. GameStatus Matrix (Dashboard): Nested inside this frame's main scroll pane. 
+ *    Displays corporate asset lines, cash flows, and certificates.
+ * 2. ORWindow & ORPanel (Map Interface): Tracks geographical track laying and token placement. 
+ *    The StatusWindow explicitly triggers and syncs with the map during Operating Rounds.
+ * 3. Text Help Window (HelpTextWindow): An independent text cheat-sheet for rules and 
+ *    variant strategy guidance.
+ * 4. The Help Button Action Hub (HelpWindowCmd): When the global Help button is pressed 
+ *    on the dashboard, it acts as a coordinated master hook that simultaneously opens or 
+ *    refreshes three targets:
+ *      a) It brings up/refreshes the persistent, text-based helpTextWindow.
+ *      b) It invokes gameStatus.activateHelpOverlay() to project spatial spotlights 
+ *         and tooltips across financial spreadsheet rows/columns.
+ *      c) It routes into gameUIManager.getORUIManager().getORPanel().activateHelpOverlay() 
+ *         to overlay spatial rules and action guides directly onto active map locations.
+ *
+ * EXTENSION & POLYMORPHISM HOOK:
+ * Variants (like 1835 or 1817) subclass this architecture or utilize reflection hooks 
+ * inside updateStatus() to paint complex step highlights (e.g., Auction blocks, formation 
+ * phases, or short-sale short-circuits) without introducing rigid bloat to the core frame.
+ * ============================================================================
+ */
+
+
 package net.sf.rails.ui.swing;
 
 import java.awt.*;
@@ -161,8 +206,8 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
     protected ActionButton undoButton;
     protected ActionButton redoButton;
-
-    // DESIGN LANGUAGE CONSTANTS
+    private HelpTextWindow helpTextWindow;
+    private boolean helpOverlayActive = false;
 
     // DESIGN LANGUAGE CONSTANTS
     // Primary Borders (Strong Indication)
@@ -1031,10 +1076,33 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             showActionRunner();
         } else if (command.equals("HelpWindowCmd")) {
 
+// Flip tracking state
+this.helpOverlayActive = !this.helpOverlayActive;
+log.info("HELP OVERLAY DIAGNOSTIC: Help Button Clicked. helpOverlayActive set to: " + this.helpOverlayActive);
+        // 1. Trigger the original text Help Window
+        if (this.helpTextWindow == null || !this.helpTextWindow.isDisplayable()) {
+                 this.helpTextWindow = new HelpTextWindow(buildTimestamp, gameUIManager);
+            }
+            this.helpTextWindow.refreshHelp(gameUIManager.getGameManager(), buildTimestamp);
+            this.helpTextWindow.setVisible(this.helpOverlayActive);
+
+            // 2. Trigger Spatial Overlay on the GameStatus dashboard based on tracking state
+            if (gameStatus != null) {
+                if (this.helpOverlayActive) {
+                    gameStatus.activateHelpOverlay();
+                } else {
+                    Component currentGlass = getRootPane().getGlassPane();
+                    if (currentGlass instanceof net.sf.rails.ui.swing.help.HelpOverlayGlassPane) {
+                        currentGlass.setVisible(false);
+                        // Restore the standard PauseOverlay so the timer can use it
+                        getRootPane().setGlassPane(new PauseOverlay());
+                    }
+                }
+            }
+
+            // 3. Trigger Spatial Overlay on the ORPanel (Map interactions)
             if (gameUIManager.getORUIManager() != null && gameUIManager.getORUIManager().getORPanel() != null) {
                 gameUIManager.getORUIManager().getORPanel().activateHelpOverlay();
-            } else {
-                log.info("StatusWindow: Help overlay is currently only available during Operating Rounds.");
             }
 
         } else if (command.equals(REM_TILES_CMD) || command.equals(ORPanel.REM_TILES_CMD)) {
@@ -1605,6 +1673,24 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         }
 
         if (gameUIManager.isTimerPaused()) {
+if (!(getGlassPane() instanceof PauseOverlay) && !this.helpOverlayActive) {
+setGlassPane(new PauseOverlay());
+}
+getGlassPane().setVisible(true);
+} else {
+// ONLY hide the glass pane if the help overlay is NOT active
+if (!this.helpOverlayActive) {
+getGlassPane().setVisible(false);
+} else {
+// Failsafe: The timer updating the clock label causes the parent panel to repaint.
+// We force the GlassPane to repaint simultaneously so it doesn't get drawn over.
+getGlassPane().repaint();
+}
+}
+
+       
+
+        if (gameUIManager.isTimerPaused()) {
             getGlassPane().setVisible(true);
         } else {
             getGlassPane().setVisible(false);
@@ -1762,6 +1848,12 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
                 if (gameStatus != null) {
                     gameStatus.recreate();
                 }
+
+                // Re-apply spatial overlay if it was explicitly active before the recreation pass
+if (this.helpOverlayActive && gameStatus != null) {
+log.info("HELP OVERLAY DIAGNOSTIC: updateStatus() rebuilding grid and re-applying overlay.");
+gameStatus.activateHelpOverlay();
+}
 
                 // Re-apply the current scaled font to the newly created buttons
                 updateFonts(this.currentBaseFontSize);
@@ -3424,4 +3516,5 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
     }
 
     
+
 }
