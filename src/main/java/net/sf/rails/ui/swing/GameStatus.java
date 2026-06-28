@@ -6214,7 +6214,6 @@ public class GameStatus extends GridPanel {
                 }
             }
         }
-        // --- END FIX ---
     }
 
     private ClickField createSpecialActionButton(PossibleAction action) {
@@ -6880,7 +6879,14 @@ JFrame mainFrame = (JFrame) parentWindow;
     if (hasCompanyLoans && compLoansXOffset > 0) helpPane.addSpotlight(getColumnBounds(compLoansXOffset, helpPane), 
         "Outstanding Corporate Debt: Red circles indicate active loans with interest penalties. Black circles indicate remaining capacity.");
 
-    helpPane.setVisible(true);
+
+// Strict authoritative mode guard: Never fallback to visible true if the state machine is not explicitly in HELP mode
+    if (gameUIManager != null && gameUIManager.getGameManager() != null) {
+        boolean isHelpActive = (gameUIManager.getGameManager().getEngineMode() == net.sf.rails.game.GameManager.EngineMode.HELP);
+        helpPane.setVisible(isHelpActive);
+    } else {
+        helpPane.setVisible(false); // Fix: Prevent unhydrated or tearing states from triggering a layout loop loop
+    }
     helpPane.repaint();
 }
 

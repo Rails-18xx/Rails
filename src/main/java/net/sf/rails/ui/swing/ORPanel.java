@@ -3632,20 +3632,19 @@ public void setTokens(int count, PublicCompany c) {
     public void activateHelpOverlay() {
         if (orWindow == null)
             return;
+
+       // --- START FIX ---
+        // Retrieve the current glass pane context safely.
+        // We strip out the visible short-circuiting toggle check that was causing the double-click bug.
         Component currentGlass = orWindow.getGlassPane();
         net.sf.rails.ui.swing.help.HelpOverlayGlassPane helpPane;
         if (currentGlass instanceof net.sf.rails.ui.swing.help.HelpOverlayGlassPane) {
             helpPane = (net.sf.rails.ui.swing.help.HelpOverlayGlassPane) currentGlass;
-            if (helpPane.isVisible()) {
-                helpPane.setVisible(false);
-                helpPane.clearSpotlights();
-                return;
-            }
         } else {
-            helpPane = new net.sf.rails.ui.swing.help.HelpOverlayGlassPane();
-            orWindow.setGlassPane(helpPane);
+            log.warn("[GLASS PANE] Native component requested overlay setup outside authoritative state machine flow.");
+            return;
         }
-
+        
         helpPane.clearSpotlights();
 
 // 1. Standard Buttons with Contextual Text
@@ -3692,7 +3691,33 @@ addIfActive(helpPane, btnDone, "End Turn: Finish all operations and advance to t
             }
         }
 
-        helpPane.setVisible(true);
+// Diagnostic Stack & Context Isolation Logging
+        StringBuilder helpTrace = new StringBuilder();
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        for (int i = 1; i < Math.min(stack.length, 5); i++) {
+            helpTrace.append("\n    -> ").append(stack[i].toString());
+        }
+
+        boolean uiNotNull = (orWindow.gameUIManager != null);
+        boolean mgrNotNull = (uiNotNull && orWindow.gameUIManager.getGameManager() != null);
+        String currentMode = mgrNotNull ? orWindow.gameUIManager.getGameManager().getEngineMode().toString() : "UNKNOWN_MGR_NULL";
+
+        log.info("[HELP-BUG-TRACE] ORPanel.activateHelpOverlay() invoked." +
+                 "\n  - Engine Mode: " + currentMode +
+                 "\n  - gameUIManager Available: " + uiNotNull +
+                 "\n  - gameManager Available: " + mgrNotNull +
+                 "\n  - Current GlassPane Visibility: " + helpPane.isVisible() +
+                 "\n  - Stack Context: " + helpTrace);
+
+        if (orWindow.gameUIManager != null && orWindow.gameUIManager.getGameManager() != null) {
+            boolean isHelpActive = (orWindow.gameUIManager.getGameManager().getEngineMode() == net.sf.rails.game.GameManager.EngineMode.HELP);
+            log.info("[HELP-BUG-TRACE] Evaluating guard branch. Setting helpPane visible to: " + isHelpActive);
+            helpPane.setVisible(isHelpActive);
+        } else {
+            log.warn("[HELP-BUG-TRACE] CRITICAL: Fallback branch hit! Forcing helpPane visible to TRUE");
+            helpPane.setVisible(true); // Fallback if unhydrated
+        }
+    
     }
 
     private JPanel getActivePhasePanel() {

@@ -472,7 +472,8 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         });
 
     }
-@Override
+// ... (lines of unchanged context code) ...
+    @Override
     public void setVisible(boolean b) {
         // If trying to show window, block it if Start Round is locking focus
         if (b && gameUIManager.isStartRoundActive()) {
@@ -480,23 +481,11 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         }
 
         // --- START FIX ---
-        // Watertight enforcement: Ensure the dark overlay pane is killed completely 
-        // whenever the operating window is displayed or synchronized in PLAY mode.
-        if (b && gameUIManager.getGameManager().getEngineMode() == GameManager.EngineMode.PLAY) {
-            if (getRootPane().getGlassPane() != null) {
-                getRootPane().getGlassPane().setVisible(false);
-            }
+        // Delegate visibility synchronization strictly to the central layout dictator
+        if (b && gameUIManager != null && gameUIManager.getGameManager() != null) {
+            gameUIManager.applyEngineMode(gameUIManager.getGameManager().getEngineMode());
         }
-
-        // --- START FIX ---
-        // Watertight enforcement: Ensure the dark overlay pane is killed completely 
-        // whenever the operating window is displayed or synchronized in PLAY mode.
-        if (b && gameUIManager.getGameManager().getEngineMode() == GameManager.EngineMode.PLAY) {
-            if (getRootPane().getGlassPane() != null) {
-                getRootPane().getGlassPane().setVisible(false);
-            }
-        }
-        
+        // --- END FIX ---
         
         // Log trace to catch hidden layout passes triggering the window frame state changes
         StringBuilder callStack = new StringBuilder();
@@ -514,6 +503,7 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
 
         super.setVisible(b);
     }
+// ... (rest of the method) ...
 
     @Override
     public void toFront() {
