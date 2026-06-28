@@ -103,7 +103,7 @@ public class OperatingRound_1835 extends OperatingRound {
         if (!success)
             return false;
 
-        // --- START FIX: PFR TRIGGER LOGIC ---
+        //  PFR TRIGGER LOGIC ---
         if (!trainsBoughtThisTurn.isEmpty() && trainsBoughtThisTurn.size() > pfrHandledTrainCount.value()) {
             TrainCardType bought = trainsBoughtThisTurn.get(trainsBoughtThisTurn.size() - 1);
             String id = bought.getId();
@@ -153,7 +153,6 @@ public class OperatingRound_1835 extends OperatingRound {
                 }
             }
         }
-        // --- END FIX ---
 
         return true;
     }

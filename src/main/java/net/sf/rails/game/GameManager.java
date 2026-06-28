@@ -1990,19 +1990,7 @@ if (isTimeManagementEnabled()) {
                 boolean shouldFlush = false;
                 if (ca instanceof rails.game.correct.MapCorrectionAction) {
                     shouldFlush = true;
-                } else if (ca.getClass().getSimpleName().equals("CorrectionModeAction")) {
-                    if (ct != CorrectionType.CORRECT_CASH && ct != CorrectionType.CORRECT_TRAINS) {
-                        try {
-                            java.lang.reflect.Method isActiveMethod = ca.getClass().getMethod("isActive");
-                            Boolean isActive = (Boolean) isActiveMethod.invoke(ca);
-                            if (!isActive) {
-                                shouldFlush = true;
-                            }
-                        } catch (Exception e) {
-                            shouldFlush = true;
 
-                        }
-                    }
                 }
 
                 if (shouldFlush) {

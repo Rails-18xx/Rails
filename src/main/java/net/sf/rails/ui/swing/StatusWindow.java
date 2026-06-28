@@ -779,68 +779,28 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
     }
 
     // --- PINPOINT CHANGE: Replace the existing setCorrectionMenu method ---
-    public void setCorrectionMenu() {
+   public void setCorrectionMenu() {
         // Reset the menu
         correctionMenu.removeAll();
         correctionMenu.setEnabled(true);
 
-        // 1. Get currently active correction modes from the engine
-        List<CorrectionModeAction> activeModes = possibleActions.getType(CorrectionModeAction.class);
-
-        // 2. Iterate over ALL defined CorrectionTypes to build the menu dynamically
+        // Iterate over ALL defined CorrectionTypes to build the menu dynamically as one-shot actions
         for (CorrectionType type : CorrectionType.values()) {
 
-            boolean isActive = false;
-            // Check if this specific type is currently active in the engine
-            if (activeModes != null) {
-                for (CorrectionModeAction a : activeModes) {
-                    if (a.getCorrectionType() == type && a.isActive()) {
-                        isActive = true;
-                        break;
-                    }
-                }
-            }
-
-            // Create a new action to toggle this mode (click flips the boolean)
-            CorrectionModeAction toggleAction = new CorrectionModeAction(
+            // Create a one-shot action instead of a persistent toggle mode
+            CorrectionModeAction oneShotAction = new CorrectionModeAction(
                     gameUIManager.getRoot(),
                     type,
-                    isActive);
+                    true); // Explicitly flag as true/active for immediate execution phase
 
-            ActionCheckBoxMenuItem item = new ActionCheckBoxMenuItem(LocalText.getText(type.name()));
+            // Use ActionMenuItem instead of ActionCheckBoxMenuItem to remove ticks completely
+            ActionMenuItem item = new ActionMenuItem(LocalText.getText(type.name()));
             item.addActionListener(this);
-            item.addPossibleAction(toggleAction);
-            item.setSelected(isActive);
+            item.setPossibleAction(oneShotAction);
             item.setEnabled(true);
 
             correctionMenu.add(item);
         }
-        // // Re-add the Debug Item (Must be done here because removeAll() clears it)
-        // correctionMenu.addSeparator();
-        // JMenuItem forceSkipItem = new JMenuItem("Force Skip Stuck Turn (Debug)");
-        // forceSkipItem.setToolTipText("Use this ONLY if the game hangs on a closed
-        // company (Zombie Turn).");
-        // forceSkipItem.addActionListener(new ActionListener() {
-        // @Override
-        // public void actionPerformed(ActionEvent e) {
-        // int response = JOptionPane.showConfirmDialog(
-        // StatusWindow.this,
-        // "This is a debug tool to bypass a stuck turn (e.g., a closed company
-        // acting).\n"
-        // + "It forcibly advances the internal company index.\n\n"
-        // + "Are you sure you want to force the engine to skip the current actor?",
-        // "Force Skip Confirmation",
-        // JOptionPane.YES_NO_OPTION,
-        // JOptionPane.WARNING_MESSAGE);
-
-        // if (response == JOptionPane.YES_OPTION) {
-        // if (gameUIManager != null && gameUIManager.getGameManager() != null) {
-        // gameUIManager.getGameManager().forceSkipStuckCompany();
-        // }
-        // }
-        // }
-        // });
-        // correctionMenu.add(forceSkipItem);
 
         if ("1870".equals(gameUIManager.getGameManager().getGameName())) {
             JMenuItem forceDestItem = new JMenuItem("Force Connection Run (1870)");
@@ -1635,7 +1595,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         }
     }
 
-    private void refreshTimeLabel() {
+   private void refreshTimeLabel() {
         if (gameUIManager == null || gameUIManager.getGameManager() == null)
             return;
 
@@ -1659,11 +1619,10 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             timeText = gm.getFormattedGameTime();
         }
 
-        // Legacy glass pane toggle checks removed to allow centralized state control
-        // via GameManager EngineMode
-
         if (getGlassPane() instanceof PauseOverlay) {
-            getGlassPane().setVisible(gameUIManager.isTimerPaused());
+            boolean targetVisibility = gameUIManager.isTimerPaused();
+            log.info("[GLASS PANE TRACE] refreshTimeLabel background clock evaluation: setting StatusWindow glass pane visibility to " + targetVisibility);
+            getGlassPane().setVisible(targetVisibility);
         }
 
         if (gameTimeLabel != null) {
@@ -1819,12 +1778,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
                     gameStatus.recreate();
                 }
 
-                // Re-apply spatial overlay if it was explicitly active before the recreation
-                // pass
-                if (gameUIManager.getGameManager().getEngineMode() == GameManager.EngineMode.HELP
-                        && gameStatus != null) {
-                    gameStatus.activateHelpOverlay();
-                }
+                
 
                 // Re-apply the current scaled font to the newly created buttons
                 updateFonts(this.currentBaseFontSize);

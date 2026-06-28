@@ -866,6 +866,8 @@ public class OperatingRound extends Round implements Observer {
             break;
         }
 
+
+
         // DESIGN LANGUAGE ENFORCEMENT: The engine must not autonomously call
         // finishTurn()
         // just because it *thinks* there are no SpecialProperties left. We simply park
@@ -4567,9 +4569,18 @@ public class OperatingRound extends Round implements Observer {
         // to maintain structural visibility and prevent disorienting, erratic game jumping.
         if (possibleActions.isEmpty()) {
             if (step == GameDef.OrStep.FINAL) {
-                // Phase 5 is an administrative parking space; it exits cleanly if completely empty.
-                finishTurn();
-                return setPossibleActions();
+                // Determine if this is the absolute last company in the current operating round sequence
+                int currentIndex = operatingCompanies.indexOf(operatingCompany.value());
+                boolean hasNextCompany = (currentIndex >= 0 && currentIndex < operatingCompanies.size() - 1);
+
+                if (hasNextCompany) {
+                    // It is safe to auto-advance to the next company within the same round context.
+                    finishTurn();
+                    return setPossibleActions();
+                } else {
+                    // It is the last company; force manual confirmation to gracefully halt before round transition.
+                    phaseAllowsDone = true;
+                }
             } else if (step == GameDef.OrStep.LAY_TRACK || step == GameDef.OrStep.LAY_TOKEN || 
                        step == GameDef.OrStep.CALC_REVENUE || step == GameDef.OrStep.BUY_TRAIN) {
                 // Operational phases MUST force a manual user confirmation step even when empty.

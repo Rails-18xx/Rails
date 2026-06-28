@@ -472,13 +472,46 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         });
 
     }
-
-    @Override
+@Override
     public void setVisible(boolean b) {
         // If trying to show window, block it if Start Round is locking focus
         if (b && gameUIManager.isStartRoundActive()) {
             return;
         }
+
+        // --- START FIX ---
+        // Watertight enforcement: Ensure the dark overlay pane is killed completely 
+        // whenever the operating window is displayed or synchronized in PLAY mode.
+        if (b && gameUIManager.getGameManager().getEngineMode() == GameManager.EngineMode.PLAY) {
+            if (getRootPane().getGlassPane() != null) {
+                getRootPane().getGlassPane().setVisible(false);
+            }
+        }
+
+        // --- START FIX ---
+        // Watertight enforcement: Ensure the dark overlay pane is killed completely 
+        // whenever the operating window is displayed or synchronized in PLAY mode.
+        if (b && gameUIManager.getGameManager().getEngineMode() == GameManager.EngineMode.PLAY) {
+            if (getRootPane().getGlassPane() != null) {
+                getRootPane().getGlassPane().setVisible(false);
+            }
+        }
+        
+        
+        // Log trace to catch hidden layout passes triggering the window frame state changes
+        StringBuilder callStack = new StringBuilder();
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        for (int i = 1; i < Math.min(stack.length, 6); i++) {
+            callStack.append("\n  -> ").append(stack[i].toString());
+        }
+        log.info("[GLASS PANE TRACE] ORWindow.setVisible(" + b + ") invoked. Component Visibility Pipeline:" + callStack);
+
+        // Ensure a tracked, verbose glass pane is always assigned to this frame
+        if (getRootPane().getGlassPane() != null) {
+            boolean isPaneVisible = getRootPane().getGlassPane().isVisible();
+            log.info("[GLASS PANE TRACE] Current ORWindow glass pane visibility state before frame pass: " + isPaneVisible);
+        }
+
         super.setVisible(b);
     }
 
