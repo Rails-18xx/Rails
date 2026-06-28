@@ -1471,6 +1471,7 @@ if (specialPanel != null) {
 
         lblLoans = new JLabel("0/0", SwingConstants.CENTER);
         loansPanel = createReadoutPanel("Loans", lblLoans);
+// Do not structurally restrict layout adding at construction time if data model is unhydrated
         if (hasCompanyLoans) {
             sidebarPanel.add(loansPanel);
             sidebarPanel.add(Box.createVerticalStrut(5));
@@ -2577,6 +2578,29 @@ if (specialPanel != null) {
             return;
         }
 
+        // Dynamically recalculate if the current game rules support loans if it wasn't caught at startup
+        if (!hasCompanyLoans && orUIManager != null && orUIManager.getGameUIManager() != null) {
+            java.util.List<PublicCompany> allComps = orUIManager.getGameUIManager().getAllPublicCompanies();
+            if (allComps != null) {
+                for (PublicCompany company : allComps) {
+                    if (company != null && company.getMaxNumberOfLoans() != 0) {
+                        hasCompanyLoans = true;
+                        break;
+                    }
+                }
+            }
+            // If discovered dynamically, safely inject the panel into the visual tree structure
+            if (hasCompanyLoans && loansPanel != null && sidebarPanel != null) {
+                // Insert it right above the cash/treasury panel
+                int cashPanelIndex = sidebarPanel.getComponentZOrder(cashPanel);
+                if (cashPanelIndex >= 0) {
+                    sidebarPanel.add(loansPanel, cashPanelIndex);
+                    sidebarPanel.add(Box.createVerticalStrut(5), cashPanelIndex);
+                    sidebarPanel.revalidate();
+                }
+            }
+        }
+
         Color phaseColor = UITheme.READOUT_BG;
         String instruction = "Wait...";
 
@@ -2722,13 +2746,16 @@ if (specialPanel != null) {
                 sb.append("<font color='#888888'>○</font>");
             }
 
-            // For 1856, interest is typically handled differently or directly calculated
-            // per operating round phase step
-            if (interestRate > 0) {
-                sb.append("&nbsp;<font color='black' size='4'>($").append(totalInterestCost).append(")</font>");
-            } else {
-                sb.append("&nbsp;<font color='black' size='4'>(").append(currentLoans).append(")</font>");
+// If an explicit per-bond interest rate wasn't extracted from the 1817 model, 
+            // compute it using standard game parameter configurations or a default loan fee rate ($5)
+            if (interestRate <= 0) {
+                interestRate = 5; // Standard 18xx default interest fee per loan unit
             }
+            int dynamicInterestCost = currentLoans * interestRate;
+            
+            // Render the formatted interest cost uniformly using the internal currency formatter
+            sb.append("&nbsp;<font color='black' size='4'>(").append(format(dynamicInterestCost)).append(")</font>");
+            
             sb.append("</center></html>");
 
             lblLoans.setText(sb.toString());

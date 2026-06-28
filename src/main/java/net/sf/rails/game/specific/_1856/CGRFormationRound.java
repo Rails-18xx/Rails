@@ -635,37 +635,13 @@ public class CGRFormationRound extends SwitchableUIRound {
    @Override
     protected void finishRound() {
 
+
         super.finishRound();
 
         log.info("[CGR_DIAG] finishRound() invoked. Recalculating 1856 certificate limits.");
         // In any case we must recalculate the certificate limit
         ((GameManager_1856) gameManager).resetCertificateLimit(true);
 
-        // --- START FIX ---
-        log.info("[CGR_DIAG] Attaching final log diagnostics. Current Round ID: {}, Step: {}", getId(), step.value());
-        log.info("[CGR_DIAG] Merging companies details count: {}", mergingCompanies.size());
-        
-        // Inspect the current round instance from the game manager
-        Object currentRoundObj = gameManager.getCurrentRound();
-        log.info("[CGR_DIAG] gameManager.getCurrentRound() returned type: {}", 
-            (currentRoundObj != null ? currentRoundObj.getClass().getName() : "null"));
-
-        if (currentRoundObj instanceof OperatingRound_1856) {
-            log.info("[CGR_DIAG] Found parent OperatingRound_1856 instance directly. Triggering resume().");
-            ((OperatingRound_1856) currentRoundObj).resume(mergingCompanies.view());
-        } else {
-            log.info("[CGR_DIAG] Direct round pointer was not OperatingRound_1856. Attempting runtime context check.");
-            
-            // Look up the round by casting the manager context directly or via gameManager state
-            if (gameManager instanceof GameManager_1856) {
-                log.info("[CGR_DIAG] GameManager is an instance of GameManager_1856.");
-            }
-            
-            // To completely prevent compilation errors, we can safely output a diagnostic warning log here
-            // so we can see the exact state output when you execute the game runner script.
-            log.warn("[CGR_DIAG] STALL GUARD: Round completion has executed. If game loop freezes, check the above printed class type.");
-        }
-        // --- END FIX ---
     }
 
     // Step Objects to control progress
@@ -757,14 +733,13 @@ public class CGRFormationRound extends SwitchableUIRound {
         // --- END FIX ---
     }
 
+
     @Override
     public boolean setPossibleActions() {
+// --- START FIX ---
         if (step.value() == Steps.STEP_REPAY_LOANS) {
             PublicCompany comp = currentCompany.value();
 
-            // If the company has been cleared, do not pull the next company instantly.
-            // Yield execution here so the status window successfully renders the
-            // empty/folded state.
             if (comp == null) {
                 log.info("[CGR_DIAG] setPossibleActions: currentCompany is null. Advancing formation round state.");
                 possibleActions.clear();
@@ -772,21 +747,16 @@ public class CGRFormationRound extends SwitchableUIRound {
                     if (mergingCompanies.isEmpty()) {
                         log.info("[CGR_DIAG] No companies to merge. Ending round via finishRound().");
                         finishRound();
-                        return true;
+                        return false;
                     } else {
                         log.info("[CGR_DIAG] INITIATING CGR FORMATION. Merging companies: {}", mergingCompanies.view());
                         formCGR();
                         log.info("[CGR_DIAG] formCGR() complete. Transitioning step from STEP_REPAY_LOANS to STEP_EXCHANGE_TOKENS.");
                         step.set(Steps.STEP_EXCHANGE_TOKENS);
-                        
-                        log.info("[CGR_DIAG] Recurse calling setPossibleActions() to populate post-formation choices.");
-                        setPossibleActions();
-                        log.info("[CGR_DIAG] Post-formation setPossibleActions() complete. Current possibleActions size: {}", possibleActions.size());
-                        return true;
+                        return setPossibleActions();
                     }
                 }
-
-                // Re-read company reference after moving the queue forward to update UI buttons properly
+                
                 comp = currentCompany.value();
                 if (comp == null) {
                     if (possibleActions.isEmpty()) {
@@ -795,43 +765,17 @@ public class CGRFormationRound extends SwitchableUIRound {
                     }
                     return true;
                 }
-                
-
-                // Enclose the UI rehydration and immediately exit the branch 
-                // to prevent accidental fall-through into lower button-clearing blocks
-                log.info("[CGR_DIAG] Intermediary intervention company ready: {}", comp.getId());
-                if (gameManager != null && gameManager.getGameUIManager() != null) {
-                    javax.swing.SwingUtilities.invokeLater(() -> {
-                        try {
-                            log.info("[CGR_DIAG] EDT: Refreshing all UI components and Status Window graphics.");
-                            gameManager.getGameUIManager().updateUI();
-                            
-                            if (gameManager.getGameUIManager().getStatusWindow() != null) {
-                                Object status = gameManager.getGameUIManager().getStatusWindow().getGameStatus();
-                                if (status instanceof java.util.Observer) {
-                                    ((java.util.Observer) status).update(null, "ForceUpdate");
-                                }
-                            }
-                        } catch (Exception e) {
-                            log.warn("UI Status Frame sync failed on EDT", e);
-                        }
-                    });
-                }
-                return true;
             }
 
             log.info("[CGR_DIAG] setPossibleActions establishing buttons for company {}", comp.getId());
             possibleActions.clear();
-
-
-
-
+            
             int loans = comp.getCurrentNumberOfLoans();
             int val = comp.getValuePerLoan();
             int treasuryAffords = comp.getCash() / val;
             int totalAffords = (comp.getCash() + comp.getPresident().getCash()) / val;
             int treasuryRepay = Math.min(loans, treasuryAffords);
-
+            
             if (totalAffords < loans) {
                 RepayLoans mergeAction = new RepayLoans(comp, treasuryRepay, treasuryRepay, val);
                 mergeAction.setCustomLabel("OK - Must Merge into CGR");
@@ -845,34 +789,44 @@ public class CGRFormationRound extends SwitchableUIRound {
                 int presNeeded = (loans - treasuryRepay) * val;
                 payAction.setCustomLabel("Repay All (Needs $" + presNeeded + " President Cash)");
                 possibleActions.add(payAction);
-
+                
                 RepayLoans refuseAction = new RepayLoans(comp, treasuryRepay, treasuryRepay, val);
                 refuseAction.setCustomLabel("Refuse - Merge into CGR");
                 possibleActions.add(refuseAction);
             }
+            
             guiHints.setActivePanel(GuiDef.Panel.STATUS);
             log.info("[CGR_DIAG] Generated {} action buttons.", possibleActions.size());
+            
         } else if (step.value() == Steps.STEP_EXCHANGE_TOKENS) {
-            // --- START FIX ---
-           log.info("[CGR_DIAG] Evaluating STEP_EXCHANGE_TOKENS. tokensToExchangeFrom: {}", tokensToExchangeFrom);
+            log.info("[CGR_DIAG] Evaluating STEP_EXCHANGE_TOKENS. tokensToExchangeFrom: {}", tokensToExchangeFrom);
             if (tokensToExchangeFrom == null || tokensToExchangeFrom.isEmpty()) {
                 log.info("[CGR_DIAG] No tokens to manually exchange. Automatically cascading to STEP_DISCARD_TRAINS.");
                 step.set(Steps.STEP_DISCARD_TRAINS);
                 return setPossibleActions();
             } else {
-                log.info("[CGR_DIAG] Critical: Manual token exchange required but no ExchangeTokens action generated yet.");
+                log.info("[CGR_DIAG] Generating mandatory ExchangeTokens actions.");
+                int placedTokens = 0;
+                for (BaseToken bt : cgr.getAllBaseTokens()) {
+                    if (bt.isPlaced()) placedTokens++;
+                }
+                int tokensToPlace = Math.max(0, cgr.getNumberOfBaseTokens() - placedTokens);
+                
+                ExchangeTokens exAction = new ExchangeTokens(getRoot(), tokensToExchangeFrom, tokensToPlace, tokensToPlace);
+                // Explicitly bind the company to avoid 'company=null' validation failures
+                exAction.setCompany(cgr);
+                possibleActions.add(exAction);
                 return true;
             }
-            // --- END FIX ---
+            
         } else if (step.value() == Steps.STEP_DISCARD_TRAINS) {
-            // --- START FIX ---
             log.info("[CGR_DIAG] Evaluating STEP_DISCARD_TRAINS.");
             possibleActions.clear();
             if (!checkForTrainsToDiscard()) {
                 log.info("[CGR_DIAG] No trains need to be discarded. Wrapping up round via finishRound().");
                 finishRound();
-            }
-            else {
+                return false;
+            } else {
                 log.info("[CGR_DIAG] CGR requires train discards. Populating available train choices. Size: {}", trainsToDiscardFrom.size());
                 for (Train train : trainsToDiscardFrom) {
                     possibleActions.add(new DiscardTrain(cgr, train));
@@ -884,13 +838,13 @@ public class CGRFormationRound extends SwitchableUIRound {
                 }
 
                 guiHints.setActivePanel(GuiDef.Panel.STATUS);
+                return true;
             }
-            log.info("[CGR_DIAG] STEP_DISCARD_TRAINS evaluation complete. Final action options generated: {}", possibleActions.size());
-            // --- END FIX ---
-            return true;
         }
         return true;
+// --- END FIX ---
     }
+// ... (rest of the method) ...
 
     @Override
     public boolean process(PossibleAction action) {
@@ -899,6 +853,17 @@ public class CGRFormationRound extends SwitchableUIRound {
         if (action instanceof RepayLoans) {
             return repayLoans((RepayLoans) action);
         }
+
+        else if (action instanceof DiscardTrain) {
+            return discardTrain((DiscardTrain) action);
+        } else if (action instanceof ExchangeTokens) {
+            return exchangeTokens((ExchangeTokens) action, false);
+        } else if (action instanceof NullAction && ((NullAction) action).getMode() == NullAction.Mode.DONE) {
+            cgrHasDiscardedTrains.set(true);
+            return true;
+        }
+
+
         return super.process(action);
     }
 

@@ -19,6 +19,7 @@ import net.sf.rails.game.special.SpecialProperty;
 import net.sf.rails.game.state.BooleanState;
 import net.sf.rails.game.state.Currency;
 import net.sf.rails.game.state.GenericState;
+import net.sf.rails.game.state.Owner;
 
 public class OperatingRound_1856 extends OperatingRound {
 
@@ -152,55 +153,85 @@ protected void executeTakeLoans(int number) {
         }
     }
 
-    @Override
+  @Override
     protected void prepareRevenueAndDividendAction() {
+        PublicCompany company = operatingCompany.value();
+        if (company == null) return;
 
-        int requiredCash = 0;
+        // 1. CGR Special Borrowing Rule: If it has no trains and has never owned a permanent train,
+        // it may borrow a Diesel from the bank pool right now to run routes.
+        if (company instanceof PublicCompany_CGR && !company.hasTrains()) {
+            PublicCompany_CGR cgr = (PublicCompany_CGR) company;
+            if (!cgr.hadPermanentTrain()) {
+                Train dieselTemplate = null;
+                java.util.List<Train> ipoTrains = getRoot().getTrainManager().getTrains(bank.getIpo());
+                if (ipoTrains != null) {
+                    for (Train t : ipoTrains) {
+                        if (t.getType().getName().equalsIgnoreCase("Diesel")) {
+                            dieselTemplate = t;
+                            break;
+                        }
+                    }
+                }
+                
+                if (dieselTemplate != null) {
+                    log.info("CGR_BORROW: Trainless CGR is borrowing a Diesel template to execute revenue routes.");
+                    company.getPortfolioModel().addTrainCard(dieselTemplate.getCard());
+                    
+                    // Force base route checking with the borrowed template
+                    int[] allowedRevenueActions = new int[] { rails.game.action.SetDividend.WITHHOLD };
+                    possibleActions.add(new rails.game.action.SetDividend(
+                        getRoot(),
+                        company.getLastRevenue(),
+                        true,
+                        allowedRevenueActions,
+                        0
+                    ));
+                    
+                    DisplayBuffer.add(this, LocalText.getText("MustWithholdUntilPermanent", PublicCompany_CGR.NAME));
+                    return;
+                }
+            }
+        }
 
-        // There is only revenue if there are any trains
-        if (operatingCompany.value().hasTrains()) {
-
-            if (operatingCompany.value() instanceof PublicCompany_CGR
-                    && !((PublicCompany_CGR) operatingCompany.value()).hadPermanentTrain()) {
-                DisplayBuffer.add(this, LocalText.getText("MustWithholdUntilPermanent",
-                        PublicCompany_CGR.NAME));
-                possibleActions.add(new SetDividend(getRoot(),
-                        operatingCompany.value().getLastRevenue(), true,
-                        new int[] { SetDividend.WITHHOLD }));
+        // 2. Fully restored original 1856 loan interest verification block
+        if (company.hasTrains()) {
+            if (company instanceof PublicCompany_CGR && !((PublicCompany_CGR) company).hadPermanentTrain()) {
+                DisplayBuffer.add(this, LocalText.getText("MustWithholdUntilPermanent", PublicCompany_CGR.NAME));
+                possibleActions.add(new rails.game.action.SetDividend(
+                    getRoot(),
+                    company.getLastRevenue(),
+                    true,
+                    new int[] { rails.game.action.SetDividend.WITHHOLD }
+                ));
             } else {
+                int[] allowedRevenueActions = company.isSplitAlways()
+                        ? new int[] { rails.game.action.SetDividend.SPLIT }
+                        : company.isSplitAllowed()
+                                ? new int[] { rails.game.action.SetDividend.PAYOUT,
+                                        rails.game.action.SetDividend.SPLIT,
+                                        rails.game.action.SetDividend.WITHHOLD }
+                                : new int[] { rails.game.action.SetDividend.PAYOUT,
+                                        rails.game.action.SetDividend.WITHHOLD };
 
-                int[] allowedRevenueActions = operatingCompany.value().isSplitAlways()
-                        ? new int[] { SetDividend.SPLIT }
-                        : operatingCompany.value().isSplitAllowed()
-                                ? new int[] { SetDividend.PAYOUT,
-                                        SetDividend.SPLIT,
-                                        SetDividend.WITHHOLD }
-                                : new int[] { SetDividend.PAYOUT,
-                                        SetDividend.WITHHOLD };
-
-                // Check if any loan interest can be paid
-                if (operatingCompany.value().canLoan()) {
-                    int loanValue = operatingCompany.value().getLoanValueModel().value();
+                int requiredCash = 0;
+                if (company.canLoan()) {
+                    int loanValue = company.getLoanValueModel().value();
                     if (loanValue > 0) {
-                        int interest = loanValue * operatingCompany.value().getLoanInterestPct() / 100;
-                        // TODO: Hard coded magic number
-                        int compCash = (operatingCompany.value().getCash() / 10) * 10;
+                        int interest = loanValue * company.getLoanInterestPct() / 100;
+                        int compCash = (company.getCash() / 10) * 10;
                         requiredCash = Math.max(interest - compCash, 0);
                     }
                 }
 
-                possibleActions.add(new SetDividend(getRoot(),
-                        operatingCompany.value().getLastRevenue(), true,
-                        allowedRevenueActions,
-                        requiredCash));
+                possibleActions.add(new rails.game.action.SetDividend(
+                    getRoot(),
+                    company.getLastRevenue(),
+                    true,
+                    allowedRevenueActions,
+                    requiredCash
+                ));
             }
-
-            // UI directions:
-            // Any nonzero required cash should be reported to the user.
-            // If the revenue is less than that, the allocation
-            // question should be suppressed.
-            // In that case, the follow-up is done from this class.
-
         }
     }
 
@@ -677,12 +708,19 @@ TakeLoans takeAction = new TakeLoans(operatingCompany.value(),
 
         if (!resetOperatingCompanies(mergingCompanies))
             return;
+       
         if (getOperatingCompany() != null) {
             setStep(GameDef.OrStep.INITIAL);
+            wasInterrupted.set(true);
+            
+            log.info("[CGR_DIAG] OperatingRound_1856 resumed. Kicking state machine with setPossibleActions() for {}", getOperatingCompany().getId());
+            // Avoid NPE by NOT calling process(null). Initialize the actions manually.
+            setPossibleActions();
         } else {
+            wasInterrupted.set(true);
             finishOR();
         }
-        wasInterrupted.set(true);
+
     }
 
     private boolean resetOperatingCompanies(List<PublicCompany> mergingCompanies) {
@@ -945,4 +983,57 @@ TakeLoans takeAction = new TakeLoans(operatingCompany.value(),
         // Otherwise, proceed with the normal cross-company $50 purchase routine
         return super.buyBonusToken(action);
     }
+
+    
+
+@Override
+    public void setBuyableTrains() {
+        // 1. Allow the base engine to build the default list of options
+        super.setBuyableTrains();
+
+        PublicCompany activeCompany = operatingCompany.value();
+        if (activeCompany == null) return;
+
+        boolean isCgrActive = activeCompany instanceof PublicCompany_CGR;
+        java.util.List<rails.game.action.PossibleAction> filteredActions = new java.util.ArrayList<>();
+
+        // 2. Scan and normalize any actions involving the CGR 
+        for (rails.game.action.PossibleAction act : possibleActions.getList()) {
+            if (act instanceof rails.game.action.BuyTrain) {
+                rails.game.action.BuyTrain bt = (rails.game.action.BuyTrain) act;
+                Owner seller = bt.getOwner();
+                boolean isCgrSeller = seller instanceof PublicCompany_CGR;
+
+                // If the CGR is either the buyer or the seller, force face value pricing mechanics ]
+                if (isCgrActive || isCgrSeller) {
+                    int faceValue = bt.getTrain().getCost();
+
+                    // Reconstruct the action to lock min/max prices to exact face value 
+                    rails.game.action.BuyTrain fixedPriceAction = new rails.game.action.BuyTrain(
+                        bt.getTrain(),
+                        bt.getTrain().getType(),
+                        seller,
+                        faceValue,
+                        faceValue,
+                        rails.game.action.PriceMode.VARIABLE
+                    );
+                    
+                    fixedPriceAction.setFixedCostMode(rails.game.action.BuyTrain.Mode.FIXED);
+                    fixedPriceAction.setForcedBuyIfHasRoute(bt.isForcedBuyIfHasRoute());
+                    
+                    // Set clean human-readable button label indicating the strict face value restriction
+                    fixedPriceAction.setButtonLabel("Buy '" + bt.getTrain().getType() + "' from " + seller.getId() + " (" + faceValue + ")");
+                    
+                    filteredActions.add(fixedPriceAction);
+                    continue;
+                }
+            }
+            filteredActions.add(act);
+        }
+
+        // 3. Re-populate the possible actions list with corrected elements
+        possibleActions.clear();
+        possibleActions.addAll(filteredActions);
+    }
+
 }
