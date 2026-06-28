@@ -1564,7 +1564,6 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         return dynamicButtonPanel;
     }
 
-    // ... (lines of unchanged context code) ...
     private void enforceDynamicMinimumSize() {
         if (gameStatus != null && gameStatusPane != null) {
             // 1. Force the ScrollPane to behave as a simple container without scrollbars
@@ -2481,7 +2480,6 @@ private void refreshTimeLabel() {
                 }
             }
 
-            // ... (lines of unchanged context code) ...
             // 2. REVENUE PHASE ("Pay out" / "Split" / "Withhold")
             List<SetDividend> revenueActions = possibleActions.getType(SetDividend.class);
             if (revenueActions != null && !revenueActions.isEmpty()) {

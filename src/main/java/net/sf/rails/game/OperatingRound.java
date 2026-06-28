@@ -1090,7 +1090,6 @@ public class OperatingRound extends Round implements Observer {
         return false; // Default: do nothing, proceed to standard logic
     }
 
-    // ... (lines of unchanged context code) ...
 
     public boolean checkForExcessTrains() {
         excessTrainCompanies = new HashMap<>();
@@ -1164,7 +1163,6 @@ public class OperatingRound extends Round implements Observer {
      * =======================================
      */
 
-    // ... (lines of unchanged context code) ...
     public boolean buyPrivate(BuyPrivate action) {
 
         String errMsg = null;
@@ -2988,7 +2986,6 @@ public class OperatingRound extends Round implements Observer {
     // We are modifying OperatingRound.java to enforce automatic revenue
     // calculation.
 
-    // ... (lines of unchanged context code) ...
     /**
      * Prepares the SetDividend action for the current company.
      * This now includes a forced revenue recalculation to ensure accuracy,
@@ -4159,7 +4156,6 @@ public class OperatingRound extends Round implements Observer {
     // File: OperatingRound.java
     // Add these two new methods anywhere inside the class
 
-    // ... (lines of unchanged context code) ...
     // [REPLACE the entire 'layTile' method in OperatingRound.java with this]
 
     public boolean layTile(LayTile action) {

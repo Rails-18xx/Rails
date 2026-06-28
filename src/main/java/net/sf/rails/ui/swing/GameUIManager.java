@@ -2047,7 +2047,6 @@ public class GameUIManager implements DialogOwner {
         this.isJsonLoad = isJson;
     }
 
-    // ... (lines of unchanged context code) ...
     private void updateActivityPanel() {
         if (statusWindow == null)
             return;
@@ -2755,32 +2754,34 @@ public class GameUIManager implements DialogOwner {
      */
   
   
-// ... (lines of unchanged context code) ...
-    public void applyEngineMode(GameManager.EngineMode mode) {
+public void applyEngineMode(GameManager.EngineMode mode) {
         log.info("UI MANAGER APPLYING MODE: " + mode);
 
         if (statusWindow == null)
             return;
 
-        // Capture call stack context to trace who invoked this mode change
         StringBuilder callStack = new StringBuilder();
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         for (int i = 1; i < Math.min(stack.length, 5); i++) {
             callStack.append("\n  -> ").append(stack[i].toString());
         }
 
-        // --- START FIX ---
         switch (mode) {
             case PLAY:
-                log.info("[GLASS PANE TRACE] applyEngineMode(PLAY) - Disabling overlays. Caller Context:" + callStack);
+                // log.info("[GLASS PANE TRACE] applyEngineMode(PLAY) - Disabling overlays. Caller Context:" + callStack);
                 
                 if (statusWindow.getRootPane().getGlassPane() != null) {
-                    log.info("[GLASS PANE TRACE] StatusWindow glass pane set to INVISIBLE");
+                    // log.info("[GLASS PANE TRACE] StatusWindow glass pane set to INVISIBLE");
                     statusWindow.getRootPane().getGlassPane().setVisible(false);
                 }
                 if (orWindow != null && orWindow.getRootPane().getGlassPane() != null) {
-                    log.info("[GLASS PANE TRACE] ORWindow glass pane set to INVISIBLE");
+                    // log.info("[GLASS PANE TRACE] ORWindow glass pane set to INVISIBLE");
                     orWindow.getRootPane().getGlassPane().setVisible(false);
+                }
+                
+                // Synchronize Stock Round panel state tracking
+                if (stockChartWindow != null) {
+                    stockChartWindow.toggleHelpOverlayState(false);
                 }
 
                 if (helpTextWindow != null) {
@@ -2790,7 +2791,7 @@ public class GameUIManager implements DialogOwner {
                 break;
 
             case PAUSE:
-                log.info("[GLASS PANE TRACE] applyEngineMode(PAUSE) - Enabling pause overlays. Caller Context:" + callStack);
+                // log.info("[GLASS PANE TRACE] applyEngineMode(PAUSE) - Enabling pause overlays. Caller Context:" + callStack);
                 
                 statusWindow.getRootPane().setGlassPane(statusWindow.new PauseOverlay());
                 statusWindow.getRootPane().getGlassPane().setVisible(true);
@@ -2803,10 +2804,8 @@ public class GameUIManager implements DialogOwner {
                 break;
 
             case HELP:
-               log.info("[GLASS PANE TRACE] applyEngineMode(HELP) - Enabling help overlays. Caller Context:" + callStack);
+                // log.info("[GLASS PANE TRACE] applyEngineMode(HELP) - Enabling help overlays. Caller Context:" + callStack);
                 
-                // --- START FIX ---
-                // Install the true dedicated Help overlay instead of cloning the Pause panel
                 net.sf.rails.ui.swing.help.HelpOverlayGlassPane statusHelpPane = new net.sf.rails.ui.swing.help.HelpOverlayGlassPane();
                 statusWindow.getRootPane().setGlassPane(statusHelpPane);
                 
@@ -2815,41 +2814,36 @@ public class GameUIManager implements DialogOwner {
                     orWindow.getRootPane().setGlassPane(orHelpPane);
                 }
 
-            
-
-                // Force focus back to the main status window to ensure its components remain immediately active
                 if (statusWindow != null) {
                     statusWindow.requestFocusInWindow();
                 }
 
-                // Trigger the spatial spotlight mapping routines on the individual views
                 if (statusWindow.getGameStatus() != null) {
                     statusWindow.getGameStatus().activateHelpOverlay();
                 }
                 if (getORUIManager() != null && getORUIManager().getORPanel() != null && orWindow != null && orWindow.isVisible()) {
                     getORUIManager().getORPanel().activateHelpOverlay();
                 }
+                
+                // Synchronize Stock Round overlay crosshair hydration
+                if (stockChartWindow != null) {
+                    stockChartWindow.toggleHelpOverlayState(true);
+                }
 
-                // Make the glass panels visible to receive rendering updates
                 statusWindow.getRootPane().getGlassPane().setVisible(true);
                 if (orWindow != null) {
                     orWindow.getRootPane().getGlassPane().setVisible(true);
                 }
-                // --- END FIX ---
                 break;
         }
 
-        // Standardized global rendering synchronization
         statusWindow.getRootPane().revalidate();
         statusWindow.getRootPane().repaint();
         if (orWindow != null) {
             orWindow.getRootPane().revalidate();
             orWindow.getRootPane().repaint();
         }
-        // --- END FIX ---
     }
-// ... (rest of the method) ...
-
 
     public static GameUIManager getInstance() {
         return instance;

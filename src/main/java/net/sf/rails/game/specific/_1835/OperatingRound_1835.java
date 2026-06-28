@@ -1158,7 +1158,6 @@ public class OperatingRound_1835 extends OperatingRound {
         return true;
     }
 
-    // ... (lines of unchanged context code) ...
     private void surgicalPrussiaFix() {
         PublicCompany m1 = companyManager.getPublicCompany("M1");
         PublicCompany m2 = companyManager.getPublicCompany("M2");

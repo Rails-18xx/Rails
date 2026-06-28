@@ -328,7 +328,6 @@ public boolean mayPlayerSellShareOfCompany(PublicCompany company) {
         Portfolio.moveAll(sellableCertificateCombinations.last(), bankTo);
     }
 
-    // ... (lines of unchanged context code) ...
 
     private boolean isSoldOut(String companyAbbrev) {
         String companyId = resolveId(companyAbbrev);
@@ -341,9 +340,7 @@ public boolean mayPlayerSellShareOfCompany(PublicCompany company) {
         PublicCompany c = companyManager.getPublicCompany(companyId);
         return c != null && !c.isBuyable() && !c.hasStarted();
     }
-    // ... (lines of unchanged context code) ...
 
-    // ... (lines of unchanged context code) ...
     // Cache for resolved IDs to avoid repeated lookups
     private Map<String, String> resolvedIds = new HashMap<>();
 

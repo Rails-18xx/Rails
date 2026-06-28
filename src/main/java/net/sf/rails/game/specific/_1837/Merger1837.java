@@ -267,7 +267,6 @@ public class Merger1837 {
     }
 
 
-    // ... (lines of unchanged context code) ...
     public static String build1837StateReport(GameManager gm, PublicCompany comp) {
         // --- START FIX ---
         if (comp == null)

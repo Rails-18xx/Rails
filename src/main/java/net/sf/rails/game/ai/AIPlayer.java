@@ -870,9 +870,7 @@ if (!aiScorableBuyTrainActions.isEmpty() && operatingCompany != null) {
         }
         return false;
     }
-    // ... inside findFallbackAction ...
 
-    // ... (lines of unchanged context code) ...
     private PossibleAction findFallbackAction(List<PossibleAction> actions) {
         // Priority 1: Check for explicit "DONE" Mode (The Fix for AI syncing)
         for (PossibleAction action : actions) {
@@ -910,7 +908,6 @@ if (!aiScorableBuyTrainActions.isEmpty() && operatingCompany != null) {
             }
         }
 
-        // ... (lines of unchanged context code) ...
 
         if (!actions.isEmpty()) {
             actions.get(0).setAIAction(true);

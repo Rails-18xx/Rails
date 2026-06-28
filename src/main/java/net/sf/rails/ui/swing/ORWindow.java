@@ -472,7 +472,6 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         });
 
     }
-// ... (lines of unchanged context code) ...
     @Override
     public void setVisible(boolean b) {
         // If trying to show window, block it if Start Round is locking focus
@@ -480,12 +479,10 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
             return;
         }
 
-        // --- START FIX ---
         // Delegate visibility synchronization strictly to the central layout dictator
         if (b && gameUIManager != null && gameUIManager.getGameManager() != null) {
             gameUIManager.applyEngineMode(gameUIManager.getGameManager().getEngineMode());
         }
-        // --- END FIX ---
         
         // Log trace to catch hidden layout passes triggering the window frame state changes
         StringBuilder callStack = new StringBuilder();
@@ -493,17 +490,16 @@ public class ORWindow extends DockingFrame implements ActionPerformer {
         for (int i = 1; i < Math.min(stack.length, 6); i++) {
             callStack.append("\n  -> ").append(stack[i].toString());
         }
-        log.info("[GLASS PANE TRACE] ORWindow.setVisible(" + b + ") invoked. Component Visibility Pipeline:" + callStack);
+        // log.info("[GLASS PANE TRACE] ORWindow.setVisible(" + b + ") invoked. Component Visibility Pipeline:" + callStack);
 
         // Ensure a tracked, verbose glass pane is always assigned to this frame
         if (getRootPane().getGlassPane() != null) {
             boolean isPaneVisible = getRootPane().getGlassPane().isVisible();
-            log.info("[GLASS PANE TRACE] Current ORWindow glass pane visibility state before frame pass: " + isPaneVisible);
+            // log.info("[GLASS PANE TRACE] Current ORWindow glass pane visibility state before frame pass: " + isPaneVisible);
         }
 
         super.setVisible(b);
     }
-// ... (rest of the method) ...
 
     @Override
     public void toFront() {

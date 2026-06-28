@@ -2963,7 +2963,6 @@ public void setTokens(int count, PublicCompany c) {
         return btn.getPossibleActions() == null || btn.getPossibleActions().isEmpty();
     }
 
-    // ... (lines of unchanged context code) ...
     public boolean executeRedo() {
         if (currentRedoAction != null && orUIManager != null) {
             orUIManager.processAction(REDO_CMD, java.util.Collections.singletonList(currentRedoAction), this);
@@ -3478,7 +3477,6 @@ public void setTokens(int count, PublicCompany c) {
 
     // We are modifying ORPanel.java to ensure the scanner is robust.
 
-    // ... (lines of unchanged context code) ...
 
     public void handleEnterPress() {
         // Prioritize the explicitly set default button to restore expected 'Enter'
@@ -3663,7 +3661,7 @@ addIfActive(helpPane, btnDone, "End Turn: Finish all operations and advance to t
         if (activePanel != null && activePanel.isVisible()) {
             Rectangle bounds = SwingUtilities.convertRectangle(activePanel.getParent(), activePanel.getBounds(),
                     helpPane);
-            helpPane.addSpotlight(bounds, "Current Phase: Follow the highlighted actions.");
+            helpPane.addSpotlight(bounds, "");
         }
 
         // 4. Highlight Valid Map Hexes (Spatial Spotlighting)
@@ -3700,19 +3698,19 @@ addIfActive(helpPane, btnDone, "End Turn: Finish all operations and advance to t
         boolean mgrNotNull = (uiNotNull && orWindow.gameUIManager.getGameManager() != null);
         String currentMode = mgrNotNull ? orWindow.gameUIManager.getGameManager().getEngineMode().toString() : "UNKNOWN_MGR_NULL";
 
-        log.info("[HELP-BUG-TRACE] ORPanel.activateHelpOverlay() invoked." +
-                 "\n  - Engine Mode: " + currentMode +
-                 "\n  - gameUIManager Available: " + uiNotNull +
-                 "\n  - gameManager Available: " + mgrNotNull +
-                 "\n  - Current GlassPane Visibility: " + helpPane.isVisible() +
-                 "\n  - Stack Context: " + helpTrace);
+        // log.info("[HELP-BUG-TRACE] ORPanel.activateHelpOverlay() invoked." +
+        //          "\n  - Engine Mode: " + currentMode +
+        //          "\n  - gameUIManager Available: " + uiNotNull +
+        //          "\n  - gameManager Available: " + mgrNotNull +
+        //          "\n  - Current GlassPane Visibility: " + helpPane.isVisible() +
+        //          "\n  - Stack Context: " + helpTrace);
 
         if (orWindow.gameUIManager != null && orWindow.gameUIManager.getGameManager() != null) {
             boolean isHelpActive = (orWindow.gameUIManager.getGameManager().getEngineMode() == net.sf.rails.game.GameManager.EngineMode.HELP);
-            log.info("[HELP-BUG-TRACE] Evaluating guard branch. Setting helpPane visible to: " + isHelpActive);
+            // log.info("[HELP-BUG-TRACE] Evaluating guard branch. Setting helpPane visible to: " + isHelpActive);
             helpPane.setVisible(isHelpActive);
         } else {
-            log.warn("[HELP-BUG-TRACE] CRITICAL: Fallback branch hit! Forcing helpPane visible to TRUE");
+            // log.warn("[HELP-BUG-TRACE] CRITICAL: Fallback branch hit! Forcing helpPane visible to TRUE");
             helpPane.setVisible(true); // Fallback if unhydrated
         }
     

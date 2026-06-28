@@ -1410,7 +1410,6 @@ if (isTimeManagementEnabled()) {
         or.start();
     }
 
-    // ... (lines of unchanged context code) ...
     public <T extends RoundFacade> T createRound(String roundClassName, String id) {
         // log.error("--- GM.createRound(String, String) CALLED. ClassName: {}, ID: {}",
         // roundClassName, id);
@@ -2282,11 +2281,7 @@ if (isTimeManagementEnabled()) {
         return true;
     }
 
-    /**
-     * tries to reload the current game
-     * executes the additional action(s)
-     */
-    // ... (lines of unchanged context code) ...
+
     /**
      * tries to reload the current game
      * executes the additional action(s)

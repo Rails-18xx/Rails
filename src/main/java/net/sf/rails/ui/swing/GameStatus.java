@@ -6790,7 +6790,6 @@ public class GameStatus extends GridPanel {
         }
     }
 
-    // ... (lines of unchanged context code) ...
     @Override
     public void setFont(Font f) {
         super.setFont(f);
@@ -6811,35 +6810,39 @@ public class GameStatus extends GridPanel {
         return new Rectangle(0, 0, 10, 10);
     }
 
+
+    // ... (lines of unchanged context code) ...
 private Rectangle getColumnBounds(int colIndex, net.sf.rails.ui.swing.help.HelpOverlayGlassPane pane) {
-    if (fields == null || colIndex <= 0 || colIndex >= fields.length) {
+    if (fields == null || colIndex < 0 || colIndex >= fields.length) {
         return new Rectangle(0, 0, 0, 0); 
     }
     
-    Rectangle bounds = null;
-    for (int y = 0; y < fields[colIndex].length; y++) {
-        JComponent comp = fields[colIndex][y];
-        if (comp != null && comp.isVisible()) {
-            if (bounds == null) {
-                bounds = new Rectangle(comp.getBounds());
-            } else {
-                bounds = bounds.union(comp.getBounds());
-            }
-        }
+    // --- START FIX ---
+    // 1. Get the horizontal geometry directly from the header cell (row 1) without any looping
+    JComponent headerComp = fields[colIndex][1];
+    if (headerComp == null || !headerComp.isVisible()) {
+        return new Rectangle(0, 0, 0, 0);
     }
     
-    if (bounds != null && bounds.width > 0 && bounds.height > 0) {
-        // CRITICAL FIX: Translate grid coordinates up to the GlassPane's coordinate space
-        bounds = SwingUtilities.convertRectangle(this, bounds, pane);
-        bounds.grow(2, 2);
-        return bounds;
+    Rectangle headerAbsolute = new Rectangle(0, 0, headerComp.getWidth(), headerComp.getHeight());
+    Rectangle headerTranslated = SwingUtilities.convertRectangle(headerComp, headerAbsolute, pane);
+    
+    // 2. Extract the vertical geometry explicitly from the active company row bounds
+    Rectangle rowBounds = getActiveCompanyRowBounds(pane);
+    if (rowBounds == null) {
+        return new Rectangle(0, 0, 0, 0);
     }
     
-    return new Rectangle(0, 0, 0, 0);
+    // 3. Intersect them perfectly: Column X & Width + Active Row Y & Height
+    Rectangle bounds = new Rectangle(headerTranslated.x, rowBounds.y, headerTranslated.width, rowBounds.height);
+    bounds.grow(2, 2);
+    return bounds;
+    // --- END FIX ---
 }
 
 
-public void activateHelpOverlay() {
+
+    public void activateHelpOverlay() {
     Window parentWindow = SwingUtilities.windowForComponent(this);
     if (!(parentWindow instanceof JFrame)) return;
     JFrame mainFrame = (JFrame) parentWindow;
@@ -6855,102 +6858,181 @@ public void activateHelpOverlay() {
 
     helpPane.clearSpotlights();
 
-    // Macro-Highlighting: Clear crosshair framing for the operating row
+   // 1. ISOLATED OPERATION ROW CUTOUT (Grid-confined cutout, NO text description here)
     Rectangle rowBounds = getActiveCompanyRowBounds(helpPane);
     if (rowBounds != null) {
-        helpPane.addSpotlight(rowBounds, "Active Operating Company Row Context", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
+        helpPane.addSpotlight(rowBounds, "", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
     }
-    // --- END FIX ---
 
+    // 2. ISOLATED PLAYER COLUMN CUTOUT (Vertical strip cutout, NO text description here)
+    int playerIdx = -1;
+    if (gameUIManager != null && gameUIManager.getGameManager() != null && gameUIManager.getGameManager().getCurrentPlayer() != null) {
+        playerIdx = gameUIManager.getGameManager().getCurrentPlayer().getIndex();
+    }
+    if (playerIdx >= 0) {
+        Rectangle playerColBounds = getPlayerColumnBounds(playerIdx, helpPane);
+        if (playerColBounds != null) {
+            helpPane.addSpotlight(playerColBounds, "", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
+        }
+    }
+
+    // --- START FIX ---
+    // 3. INDIVIDUAL ASSET METRIC DATA CODES ONLY (Text strings removed to clear status window clutter)
     if (compTrainsXOffset > 0) helpPane.addSpotlight(getColumnBounds(compTrainsXOffset, helpPane), 
-        "Company Trains Fleet: Displays operating locomotives. Max train limits are dictated by the current phase. Purchasing a higher tier train will rust obsolete models immediately.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
+        "", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
         
-    // --- START FIX ---
-    // Updated with exact 1856.pdf rules for active privates[cite: 1]
     if (compPrivatesXOffset > 0) helpPane.addSpotlight(getColumnBounds(compPrivatesXOffset, helpPane), 
-        "Corporate Special Privileges: Displays owned private companies. Flos Tramway, Waterloo & Saugeen (free Kitchener station/green #59 tile lay), Canada Company (extra free tile lay), Great Lakes Shipping ($20 port bonus token), Niagara Suspension Bridge ($10 Buffalo bonus), or St. Clair Tunnel ($10 Port Huron bonus). All close when the first Type 5 train is bought.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
-    // --- END FIX ---
+        "", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
         
-    // --- START FIX ---
-    // Updated with exact 1856.pdf destination escrow rules[cite: 1]
     if (hasDestinations && compDestXOffset > 0) helpPane.addSpotlight(getColumnBounds(compDestXOffset, helpPane), 
-        "Historical Destination City: Triggers capital release. Prior to Phase 5, share proceeds beyond the first 5 sales are held in escrow by the bank until a legal train route is completed to this city.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
-    // --- END FIX ---
+        "", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
         
     if (compCashXOffset > 0) helpPane.addSpotlight(getColumnBounds(compCashXOffset, helpPane), 
-        "Company Treasury: Corporate funds available for track construction and placing station markers. If empty during a mandatory train purchase phase, the President is subject to a forced stock sale to fund the cheapest available train out of pocket.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
+        "", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
         
     if (compRevenueXOffset > 0) helpPane.addSpotlight(getColumnBounds(compRevenueXOffset, helpPane), 
-        "Distributed Route Earnings: Total revenue from active train runs. Declaring and paying a dividend shifts the company share value token one column to the right on the stock market.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
+        "", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
         
     if (compRetainedXOffset > 0) helpPane.addSpotlight(getColumnBounds(compRetainedXOffset, helpPane), 
-        "Retained Corporate Income: Total earnings withheld inside the treasury. Retaining or declaring a $0 dividend forces the company share value token one column to the left on the stock market.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
+        "", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
         
     if (compTokensXOffset > 0) helpPane.addSpotlight(getColumnBounds(compTokensXOffset, helpPane), 
-        "Available Station Markers: Remaining tokens on the charter. Placing a token establishes a base grid connection. Fully blocked cities can only be entered or passed through by companies holding a station token there.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
+        "", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
         
-    // --- START FIX ---
-    // Updated with exact 1856.pdf loan capacity rules[cite: 1]
     if (hasCompanyLoans && compLoansXOffset > 0) helpPane.addSpotlight(getColumnBounds(compLoansXOffset, helpPane), 
-        "Government Loans: Displays outstanding debt. Each loan provides $100 cash ($90 post-interest step) and incurs a $10 interest fee per operating round. Loan limit matches the total number of shares currently held by players. All outstanding loans must be completely resolved or repaid at the start of Phase 5, or the company face-melts into the CGR formation exchange.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
-    // --- END FIX ---
-
-    // Strict authoritative mode guard: Never fallback to visible true if the state machine is not explicitly in HELP mode
+        "", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
     if (gameUIManager != null && gameUIManager.getGameManager() != null) {
         boolean isHelpActive = (gameUIManager.getGameManager().getEngineMode() == net.sf.rails.game.GameManager.EngineMode.HELP);
         helpPane.setVisible(isHelpActive);
     } else {
-        helpPane.setVisible(false); // Fix: Prevent unhydrated or tearing states from triggering a layout loop loop
+        helpPane.setVisible(false); 
     }
     helpPane.repaint();
 }
 
+
+// ... (lines of unchanged context code) ...
+private Rectangle getColumnBounds(int colIndex, Component targetCoordinatesSpace) {
+    if (fields == null || colIndex < 0 || colIndex >= fields.length) {
+        return new Rectangle(0, 0, 0, 0); 
+    }
+    
+    // --- START FIX ---
+    // 1. Get the horizontal geometry directly from the header cell (row 1) without any looping
+    JComponent headerComp = fields[colIndex][1];
+    if (headerComp == null || !headerComp.isVisible()) {
+        return new Rectangle(0, 0, 0, 0);
+    }
+    
+    Rectangle headerAbsolute = new Rectangle(0, 0, headerComp.getWidth(), headerComp.getHeight());
+    Rectangle headerTranslated = SwingUtilities.convertRectangle(headerComp, headerAbsolute, targetCoordinatesSpace);
+    
+    // 2. Extract the vertical geometry explicitly from the active company row bounds
+    Rectangle rowBounds = getActiveCompanyRowBounds(targetCoordinatesSpace);
+    if (rowBounds == null) {
+        return new Rectangle(0, 0, 0, 0);
+    }
+    
+    // 3. Intersect them perfectly: Column X & Width + Active Row Y & Height
+    Rectangle bounds = new Rectangle(headerTranslated.x, rowBounds.y, headerTranslated.width, rowBounds.height);
+    bounds.grow(2, 2);
+    return bounds;
+    // --- END FIX ---
+}
+
 /**
- * Calculates the full horizontal bounding box for the currently active operating company's row.
- * Scans the active components in fields across the row index mapped by companyCertRow.
+ * Calculates the bounding box for the active operating company row.
+// ... (rest of the method) ...
+
+
+
+
+/**
+ * Calculates the bounding box for the active operating company row.
+ * Combines only the bounds of visible components inside fields to avoid full-screen covering.
  */
 private Rectangle getActiveCompanyRowBounds(Component targetCoordinatesSpace) {
-    if (gameUIManager == null || gameUIManager.getGameManager() == null || fields == null) {
+    if (gameUIManager == null || gameUIManager.getGameManager() == null || fields == null || companyCertRow == null) {
         return null;
     }
-
-    // 1. Authoritative lookup of the active operating company matching initTurn 
     PublicCompany activeComp = null;
     net.sf.rails.game.round.RoundFacade currentRound = gameUIManager.getGameManager().getCurrentRound();
-
     if (currentRound instanceof net.sf.rails.game.OperatingRound) {
         activeComp = ((net.sf.rails.game.OperatingRound) currentRound).getOperatingCompany();
-    } else if (currentRound instanceof net.sf.rails.game.specific._1817.MergerAndAcquisitionRound_1817) {
-        activeComp = ((net.sf.rails.game.specific._1817.MergerAndAcquisitionRound_1817) currentRound).getOperatingCompany();
     }
-
     if (activeComp == null || !companyCertRow.containsKey(activeComp)) {
         return null;
     }
-
-    // 2. Fetch the actual grid rendering row index 
     int targetY = companyCertRow.get(activeComp);
     Rectangle rowBounds = null;
+    
+    // Track the visible viewport bounds if nested inside a JScrollPane
+    Rectangle visibleViewBounds = null;
+    Component parentComponent = this.getParent();
+    if (parentComponent instanceof JViewport) {
+        visibleViewBounds = ((JViewport) parentComponent).getViewRect();
+    }
 
-    // 3. Union bounds of all visible components sitting on this specific row line 
     for (int x = 0; x < fields.length; x++) {
         if (fields[x] != null && targetY >= 0 && targetY < fields[x].length) {
             JComponent comp = fields[x][targetY];
-            if (comp != null && comp.isVisible()) {
+            if (comp != null && comp.isVisible() && comp.isShowing()) {
+                Rectangle cellBox = comp.getBounds();
+                
+                // If wrapped inside a viewport, clip cell calculations to visible space
+                if (visibleViewBounds != null && !visibleViewBounds.intersects(cellBox)) {
+                    continue;
+                }
+                
+                Rectangle absoluteCellBounds = new Rectangle(0, 0, comp.getWidth(), comp.getHeight());
+                Rectangle translatedCell = SwingUtilities.convertRectangle(comp, absoluteCellBounds, targetCoordinatesSpace);
+                
                 if (rowBounds == null) {
-                    rowBounds = new Rectangle(comp.getBounds());
+                    rowBounds = translatedCell;
                 } else {
-                    rowBounds = rowBounds.union(comp.getBounds());
+                    rowBounds = rowBounds.union(translatedCell);
                 }
             }
         }
     }
 
-    // 4. Map the composite box boundaries directly to the GlassPane canvas layer space 
+    // CRITICAL FIX: Removed the double-translation wrap. rowBounds is already localized to targetCoordinatesSpace.
     if (rowBounds != null && rowBounds.width > 0 && rowBounds.height > 0) {
-        return SwingUtilities.convertRectangle(this, rowBounds, targetCoordinatesSpace);
+        return rowBounds;
     }
+    return null;
+}
 
+/**
+ * Calculates the full vertical bounding box for a designated player index's column.
+ */
+private Rectangle getPlayerColumnBounds(int playerIdx, Component targetCoordinatesSpace) {
+    if (fields == null || certPerPlayerXOffset <= 0) {
+        return null;
+    }
+    int targetX = certPerPlayerXOffset + playerIdx;
+    if (targetX < 0 || targetX >= fields.length || fields[targetX] == null) {
+        return null;
+    }
+    Rectangle colBounds = null;
+    for (int y = 0; y < fields[targetX].length; y++) {
+        JComponent comp = fields[targetX][y];
+        if (comp != null && comp.isVisible()) {
+            Rectangle absoluteCellBounds = new Rectangle(0, 0, comp.getWidth(), comp.getHeight());
+            Rectangle translatedCell = SwingUtilities.convertRectangle(comp, absoluteCellBounds, targetCoordinatesSpace);
+            
+            if (colBounds == null) {
+                colBounds = translatedCell;
+            } else {
+                colBounds = colBounds.union(translatedCell);
+            }
+        }
+    }
+    
+    // CRITICAL FIX: Removed the double-translation wrap. colBounds is already localized to targetCoordinatesSpace.
+    if (colBounds != null && colBounds.width > 0 && colBounds.height > 0) {
+        return colBounds;
+    }
     return null;
 }
 

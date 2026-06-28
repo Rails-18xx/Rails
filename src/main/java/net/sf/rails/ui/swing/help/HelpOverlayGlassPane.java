@@ -207,14 +207,61 @@ public class HelpOverlayGlassPane extends JComponent {
                 g2d.drawRect(s.bounds.x - 2, s.bounds.y - 2, s.bounds.width + 4, s.bounds.height + 4);
             }
         }
-// 3. BROADCAST DASHBOARD INJECTION: Permanently draw text adjacent to spotlights
+        // Restore permanent rendering loop across the application, but skip empty entries safely
         for (Spotlight s : spotlights) {
-            if (s.text != null && !s.text.trim().isEmpty() && !s.text.equals("Active Operating Company Row Context")) {
-                drawPermanentBroadcastPanel(g2d, s);
+            if (s.text != null && !s.text.trim().isEmpty()) {
+                drawAttachedBroadcastPanel(g2d, s);
             }
         }
-
         g2d.dispose();
+    }
+
+    /**
+     * Renders descriptions directly adjacent to the illuminated spotlight rectangle asset
+     * to preserve immediate cross-room broadcast visualization.
+     */
+    private void drawAttachedBroadcastPanel(Graphics2D g2d, Spotlight s) {
+        g2d.setFont(new Font("SansSerif", Font.BOLD, 12));
+        FontMetrics fm = g2d.getFontMetrics();
+        
+        int boxWidth = 240;
+        java.util.List<String> lines = wrapText(s.text, fm, boxWidth - 20);
+        int lineCount = lines.size();
+        int boxHeight = (lineCount * fm.getHeight()) + 16;
+
+        // Position Logic: Target right-side deployment first, fallback to left or top/bottom if crowded
+        int x = s.bounds.x + s.bounds.width + 10;
+        int y = s.bounds.y + (s.bounds.height - boxHeight) / 2;
+
+        if (x + boxWidth > getWidth()) {
+            x = s.bounds.x - boxWidth - 10; // Deploy left
+        }
+        if (x < 10) {
+            x = Math.max(10, s.bounds.x); // Fallback overlay inside horizontal boundaries
+            y = s.bounds.y - boxHeight - 10; // Deploy above
+            if (y < 10) {
+                y = s.bounds.y + s.bounds.height + 10; // Deploy below
+            }
+        }
+        
+        // Final window boundary clamps
+        if (y < 10) y = 10;
+        if (y + boxHeight > getHeight() - 10) y = getHeight() - boxHeight - 10;
+
+        RoundRectangle2D box = new RoundRectangle2D.Float(x, y, boxWidth, boxHeight, 8, 8);
+        g2d.setColor(new Color(20, 24, 30, 220)); // Soft translucent slate palette
+        g2d.fill(box);
+        
+        g2d.setColor(s.type == Type.ACTION ? new Color(50, 220, 100) : new Color(230, 140, 40));
+        g2d.setStroke(new BasicStroke(1.5f));
+        g2d.draw(box);
+
+        g2d.setColor(Color.WHITE);
+        int textY = y + fm.getAscent() + 8;
+        for (String line : lines) {
+            g2d.drawString(line, x + 10, textY);
+            textY += fm.getHeight();
+        }
     }
 
     private void drawHelpBubble(Graphics2D g2d, String text, Point mousePos) {
@@ -326,6 +373,45 @@ public class HelpOverlayGlassPane extends JComponent {
             lines.add(currentLine.toString());
         }
         return lines;
+    }
+
+    /**
+     * Renders descriptions stacked down the right edge of the window,
+     * guaranteeing zero overlap over active game grid rows.
+     */
+    private int drawStackedBroadcastPanel(Graphics2D g2d, Spotlight s, int x, int y, int width) {
+        g2d.setFont(new Font("SansSerif", Font.BOLD, 12));
+        FontMetrics fm = g2d.getFontMetrics();
+        
+        java.util.List<String> lines = wrapText(s.text, fm, width - 20);
+        int lineCount = lines.size();
+        int boxHeight = (lineCount * fm.getHeight()) + 16;
+
+        // Verify we aren't clipping past bottom screen boundary
+        if (y + boxHeight > getHeight() - 10) {
+            return y; // Drop rendering gracefully if screen height constraints break
+        }
+
+        // Paint styled panel container with soft alpha transparency
+        RoundRectangle2D box = new RoundRectangle2D.Float(x, y, width, boxHeight, 8, 8);
+        g2d.setColor(new Color(20, 24, 30, 210)); // Translucent deep slate palette
+        g2d.fill(box);
+        
+        // Match border accent to functional type taxonomy
+        g2d.setColor(s.type == Type.ACTION ? new Color(50, 220, 100) : new Color(230, 140, 40));
+        g2d.setStroke(new BasicStroke(1.5f));
+        g2d.draw(box);
+
+        // Draw individual text tracks
+        g2d.setColor(Color.WHITE);
+        int textY = y + fm.getAscent() + 8;
+        for (String line : lines) {
+            g2d.drawString(line, x + 10, textY);
+            textY += fm.getHeight();
+        }
+
+        // Return next layout anchor line position plus buffer gap margin
+        return y + boxHeight + 10;
     }
 
 }

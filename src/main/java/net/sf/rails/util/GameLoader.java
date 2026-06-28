@@ -644,7 +644,6 @@ public class GameLoader {
         }
     }
 
-    // ... (lines of unchanged context code) ...
     public int increaseActionCounter() {
         return ++actionCounter;
     }

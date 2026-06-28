@@ -1564,7 +1564,6 @@ protected void takeLoans(TakeLoans action) {
         return gameUIManager.getGameManager().getPossibleActions();
     }
 
-    // ... (lines of unchanged context code) ...
     /*
      * Updates all GUIHex objects to point to the live MapHex objects from the
      * current Game Manager.
