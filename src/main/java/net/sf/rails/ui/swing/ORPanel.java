@@ -2822,6 +2822,9 @@ public void setTokens(int count, PublicCompany c) {
         }
 
         if (lblRoute != null) {
+            String tStr = orComp.getPortfolioModel().getTrainsModel().toText();
+            boolean hasTrains = tStr != null && !tStr.isEmpty() && !tStr.equals("None") && !tStr.equals("-");
+
             if (lblFixed != null) {
                 int totalRev = orComp.getLastRevenue();
                 int fixedRev = orComp.getLastDirectIncome();
@@ -2833,15 +2836,20 @@ public void setTokens(int count, PublicCompany c) {
                     fixedRev = 0;
 
                 int routeRev = totalRev - fixedRev;
+                if (!hasTrains) {
+                    routeRev = 0;
+                }
 
                 lblRoute.setText(format(routeRev));
                 if (revSpinner != null)
                     revSpinner.setValue(routeRev);
                 lblFixed.setText(format(fixedRev));
             } else {
-                lblRoute.setText(format(orComp.getLastRevenue()));
+                int routeRev = hasTrains ? orComp.getLastRevenue() : 0;
+                lblRoute.setText(format(routeRev));
                 if (revSpinner != null)
-                    revSpinner.setValue(orComp.getLastRevenue());
+                    revSpinner.setValue(routeRev);
+                
             }
         }
 
