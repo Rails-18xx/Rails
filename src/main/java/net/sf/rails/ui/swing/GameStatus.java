@@ -5910,7 +5910,6 @@ public class GameStatus extends GridPanel {
         addField(trainMarketPanel, colUsed, trainY_Header, totalSpan, 2, 0, true);
         // --- END FIX ---
     }
-    // ... (rest of the method) ...
 
     private void initBankAndTimer() {
         int bankY = playerTimerYOffset;

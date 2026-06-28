@@ -3675,10 +3675,12 @@ addIfActive(helpPane, btnDone, "End Turn: Finish all operations and advance to t
                                     helpPane);
                             screenBounds.grow(2, 2);
 
+                   // Ensure phase 2 explicitly highlights all eligible station token slots
                             String hexContext = (activePhase == 1)
                                     ? "Hex " + hex.getHex().getId() + ": Click to lay Track"
-                                    : "Hex " + hex.getHex().getId() + ": Click to place Station Token";
-                            helpPane.addSpotlight(screenBounds, hexContext);
+                                    : "Hex " + hex.getHex().getId() + ": Click to place Station Token Marker";
+                                    
+                                    helpPane.addSpotlight(screenBounds, hexContext);
                         }
                     } catch (Exception e) {
                         log.error("Could not extract bounds for highlighted hex", e);

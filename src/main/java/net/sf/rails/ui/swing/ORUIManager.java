@@ -1441,6 +1441,11 @@ protected void takeLoans(TakeLoans action) {
         populateTokenLayOptionsFromHexUpgrades();
 
         if (tiles.isEmpty() && !tokens.isEmpty()) {
+            // If there are spatial layout hexes available to click on the map, 
+        // force SELECT_HEX state so the map highlights active token fields.
+        if (hexUpgrades.getHexes() != null && !hexUpgrades.getHexes().isEmpty()) {
+            setLocalStep(LocalSteps.SELECT_HEX);
+        } else {
             boolean buttonOnly = true;
             for (LayToken t : tokens) {
                 if (t instanceof LayBaseToken && ((LayBaseToken) t).getType() != LayBaseToken.HOME_CITY) {
@@ -1449,6 +1454,8 @@ protected void takeLoans(TakeLoans action) {
                 }
             }
             setLocalStep(buttonOnly ? LocalSteps.INACTIVE : LocalSteps.SELECT_HEX);
+        }
+        
         } else if (tiles.isEmpty() && tokens.isEmpty()) {
             setLocalStep(LocalSteps.INACTIVE);
         } else {

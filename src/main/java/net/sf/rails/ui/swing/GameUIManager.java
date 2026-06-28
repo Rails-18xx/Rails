@@ -2755,7 +2755,7 @@ public class GameUIManager implements DialogOwner {
   
   
 public void applyEngineMode(GameManager.EngineMode mode) {
-        log.info("UI MANAGER APPLYING MODE: " + mode);
+        // log.info("UI MANAGER APPLYING MODE: " + mode);
 
         if (statusWindow == null)
             return;
