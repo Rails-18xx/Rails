@@ -268,7 +268,7 @@ public class ORPanel extends GridPanel
 
     /**
      * Determines the current Operating Round phase based on the available actions.
-     * 1=Tile, 2=Token, 3=Revenue, 4=Train, 5=Done/Finalize
+     * 1=Tile, 2=Token, 3=Revenue, 4=Train, 5=special actoins 
      */
 
     private int determineActivePhase(List<PossibleAction> actions) {
@@ -338,7 +338,6 @@ public class ORPanel extends GridPanel
         boolean doneActionFound = false;
         PossibleAction donePa = null;
 
-        // --- START FIX ---
         // 1. DEDUPLICATION SET
         java.util.Set<String> addedSpecialLabels = new java.util.HashSet<>();
 
@@ -2269,11 +2268,60 @@ if (specialPanel != null) {
 
     // Inner Classes
     private class TokenDisplayPanel extends JPanel {
-        public void setTokens(int count, PublicCompany c) {
+public void setTokens(int count, PublicCompany c) {
             removeAll();
-            if (c != null && count > 0)
-                for (int i = 0; i < count; i++)
-                    add(new JLabel(new TokenIcon(scale(24), c.getFgColour(), c.getBgColour(), c.getId())));
+            if (c == null || count <= 0) {
+                revalidate();
+                repaint();
+                return;
+            }
+
+            setLayout(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridy = 0;
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.fill = GridBagConstraints.NONE;
+
+            // Fetch pricing rule configuration metrics from the engine model
+            PublicCompany.BaseCostMethod costMethod = c.getBaseTokenLayCostMethod();
+            List<Integer> sequenceCosts = c.getBaseTokenLayCostList();
+            int alreadyLaidCount = c.getNumberOfLaidBaseTokens();
+            java.util.Set<Integer> knownCosts = null;
+            try {
+                knownCosts = c.getBaseTokenLayCosts();
+            } catch (Exception e) {
+                // Safeguard against custom subclass discrepancies
+            }
+
+            for (int i = 0; i < count; i++) {
+                gbc.gridx = i * 2;
+                gbc.insets = new Insets(0, i == 0 ? 0 : 8, 0, 2); // Left spacing between token slots
+
+                // 1. Add Token Icon Label
+                JLabel iconLabel = new JLabel(new TokenIcon(scale(24), c.getFgColour(), c.getBgColour(), c.getId()));
+                add(iconLabel, gbc);
+
+                // 2. Evaluate Exact Local Pricing for this Inventory Index Position
+                String priceText = "";
+                if (costMethod == PublicCompany.BaseCostMethod.SEQUENCE && sequenceCosts != null && !sequenceCosts.isEmpty()) {
+                    int evaluationIndex = alreadyLaidCount + i;
+                    if (evaluationIndex >= sequenceCosts.size()) {
+                        evaluationIndex = sequenceCosts.size() - 1;
+                    }
+                    priceText = "$" + sequenceCosts.get(evaluationIndex);
+                } else if (knownCosts != null && knownCosts.size() == 1) {
+                    priceText = "$" + knownCosts.iterator().next();
+                }
+
+                // 3. Add Inline Pricing Label if determined
+                if (!priceText.isEmpty()) {
+                    gbc.gridx = (i * 2) + 1;
+                    gbc.insets = new Insets(0, 0, 0, 0); // Flush to icon
+                    JLabel priceLabel = new JLabel("<html><span style='font-family:\"Monospaced\"; font-weight:bold; color:#000080;'>" 
+                        + priceText + "</span></html>");
+                    add(priceLabel, gbc);
+                }
+            }
             revalidate();
             repaint();
         }
@@ -2755,7 +2803,7 @@ if (specialPanel != null) {
             
             // Render the formatted interest cost uniformly using the internal currency formatter
             sb.append("&nbsp;<font color='black' size='4'>(").append(format(dynamicInterestCost)).append(")</font>");
-            
+
             sb.append("</center></html>");
 
             lblLoans.setText(sb.toString());
