@@ -2531,6 +2531,18 @@ public class GameStatus extends GridPanel {
         // Limit display to 4 to prevent grid explosion
         int displayCount = Math.min(availableCount, 4);
 
+        // Fetch the structural cost model from the company properties
+        java.util.Set<Integer> knownCosts = null;
+        PublicCompany.BaseCostMethod costMethod = company.getBaseTokenLayCostMethod();
+        List<Integer> sequenceCosts = company.getBaseTokenLayCostList();
+        int alreadyLaidCount = company.getNumberOfLaidBaseTokens();
+
+        try {
+            knownCosts = company.getBaseTokenLayCosts();
+        } catch (Exception e) {
+            // Safe fallback framework
+        }
+
         // Switch to GridBagLayout for true vertical centering
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -2560,8 +2572,31 @@ public class GameStatus extends GridPanel {
             // Force initial setup using the panel's current font
             iconLabel.setFont(panel.getFont());
 
-            String tooltip = "<html><b>" + company.getId() + "</b> Token Available</html>";
-            iconLabel.setToolTipText(tooltip);
+// Determine the exact cost for THIS individual slot in the display queue
+            StringBuilder tooltipBuilder = new StringBuilder("<html><b>" + company.getId() + "</b> Token Available");
+            
+            if (costMethod == PublicCompany.BaseCostMethod.SEQUENCE && sequenceCosts != null && !sequenceCosts.isEmpty()) {
+                // Determine which historical placement index this token slot maps to
+                int evaluationIndex = alreadyLaidCount + k;
+                if (evaluationIndex >= sequenceCosts.size()) {
+                    evaluationIndex = sequenceCosts.size() - 1;
+                }
+                tooltipBuilder.append("<br>Cost: ").append(gameUIManager.format(sequenceCosts.get(evaluationIndex)));
+            } else if (knownCosts != null && !knownCosts.isEmpty()) {
+                if (knownCosts.size() == 1) {
+                    tooltipBuilder.append("<br>Cost: ").append(gameUIManager.format(knownCosts.iterator().next()));
+                } else {
+                    // Fallback configuration for hex/route spatial dependencies (distance-based)
+                    tooltipBuilder.append("<br>Possible Costs: ");
+                    int idx = 0;
+                    for (Integer cost : knownCosts) {
+                        if (idx > 0) tooltipBuilder.append(", ");
+                        tooltipBuilder.append(gameUIManager.format(cost));
+                        idx++;
+                    }
+                }
+            }
+            iconLabel.setToolTipText(tooltipBuilder.append("</html>").toString());
 
             panel.add(iconLabel, gbc);
             gbc.gridx++; // Move to next slot
