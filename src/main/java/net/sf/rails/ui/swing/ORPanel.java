@@ -3666,24 +3666,26 @@ addIfActive(helpPane, btnDone, "End Turn: Finish all operations and advance to t
 
         // 4. Highlight Valid Map Hexes (Spatial Spotlighting)
         if (orUIManager != null && orUIManager.getMap() != null) {
-            if (activePhase == 1 || activePhase == 2) {
-                for (GUIHex hex : cycleableHexes) {
+           // Scan all hexes on the active canvas to sync directly with the engine's colored highlight states
+            for (net.sf.rails.ui.swing.hexmap.GUIHex mapHex : orUIManager.getMap().getHexes()) {
+                if (mapHex.getState() == net.sf.rails.ui.swing.hexmap.GUIHex.State.SELECTABLE || 
+                    mapHex.getState() == net.sf.rails.ui.swing.hexmap.GUIHex.State.TOKEN_SELECTABLE) {
+                    
                     try {
-                        Rectangle hexBounds = hex.getBounds();
+                        Rectangle hexBounds = mapHex.getBounds();
                         if (hexBounds != null && orWindow.getMapPanel() != null) {
                             Rectangle screenBounds = SwingUtilities.convertRectangle(orWindow.getMapPanel(), hexBounds,
                                     helpPane);
                             screenBounds.grow(2, 2);
 
-                   // Ensure phase 2 explicitly highlights all eligible station token slots
-                            String hexContext = (activePhase == 1)
-                                    ? "Hex " + hex.getHex().getId() + ": Click to lay Track"
-                                    : "Hex " + hex.getHex().getId() + ": Click to place Station Token Marker";
+                            String hexContext = (mapHex.getState() == net.sf.rails.ui.swing.hexmap.GUIHex.State.SELECTABLE)
+                                    ? "Hex " + mapHex.getHex().getId() + ": Click to lay Track"
+                                    : "Hex " + mapHex.getHex().getId() + ": Click to place Station Token Marker";
                                     
-                                    helpPane.addSpotlight(screenBounds, hexContext);
+                            helpPane.addSpotlight(screenBounds, hexContext);
                         }
                     } catch (Exception e) {
-                        log.error("Could not extract bounds for highlighted hex", e);
+                        log.error("Could not extract overlay bounds for engine highlighted hex", e);
                     }
                 }
             }
