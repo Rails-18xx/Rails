@@ -4257,11 +4257,9 @@ public class OperatingRound extends Round implements Observer {
             // Register the new tile to decrement its count
             tile.add(hex);
 
-            try {
+
                 int newPresetRevenue = calculateCurrentPotentialRevenue(operatingCompany.value());
 
-            } catch (Exception e) {
-            }
 
             if (costText == null) {
                 ReportBuffer.add(this, LocalText.getText("LaysTileAt",
@@ -4285,8 +4283,7 @@ public class OperatingRound extends Round implements Observer {
                 registerNormalTileLay(tile);
                 normalTileLaidThisTurn.set(true);
             }
-        } else {
-        }
+        } 
 
         // - for PfB / Extra Lays / Second Tile ---
         // Check if the lay was an "extra" lay (like PfB)

@@ -2671,7 +2671,7 @@ if (!company.hasStockPrice() || company.getCurrentSpace() == null) {
 
         if (raiseIfSoldOut) {
 
-            try {
+            
                 /* Check if any companies are sold out. */
                 // The loop source uses getAllPublicCompanies() (our previous fix)
                 for (PublicCompany company : companyManager.getAllPublicCompanies()) {
@@ -2683,8 +2683,7 @@ if (!company.hasStockPrice() || company.getCurrentSpace() == null) {
                         stockMarket.soldOut(company);
                     }
                 }
-            } catch (Exception e) {
-            }
+            
         }
 
         // reset soldThisRound

@@ -633,8 +633,7 @@ if (upperPlayerCaption[j][i] != null) {
                     HexHighlightMouseListener.addMouseListener(card, gameUIManager.getORUIManager(), priv, true);
                 }
             }
-        } else {
-        }
+        } 
     }
 
     protected void clearMapHighlights() {

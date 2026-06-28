@@ -1766,10 +1766,9 @@ private void updateCurrentPlayer() {
         if (comp instanceof PublicCompany_1817) {
             loans = ((PublicCompany_1817) comp).getNumberOfBonds();
         } else {
-            try {
+
                 loans = comp.getCurrentNumberOfLoans();
-            } catch (Exception e) {
-            }
+  
         }
 
         report.append(" | Loans: ").append(loans);

@@ -1,3 +1,55 @@
+
+/**
+ * ============================================================================
+ * NET.SF.RAILS HELP ARCHITECTURE PIPELINE OVERVIEW MAP [cite: 2026-05-19]
+ * ============================================================================
+ * This class serves as the strictly modal spatial dimming mask overlay [cite: 2026-06-13].
+ * It punches precise visual holes over active UI dashboard assets and consumes 
+ * non-control click inputs to protect user attention focus states.
+ * * --- CORE PIPELINE CALL STACK & INTER-FILE COLLABORATORS ---
+ * * 1. STATE DRIVER: GameManager.java (net.sf.rails.game)
+ * -> Controls engine state transitions via 'toggleHelpMode()'. Shifts the 
+ * authoritative mode enum to EngineMode.HELP.
+ * * 2. CENTRAL SWITCHBOARD ROUTER: GameUIManager.java [cite: 2026-06-28]
+ * -> Intercepts engine changes in 'applyEngineMode(EngineMode.HELP)' [cite: 2026-06-28].
+ * -> Instantiates this 'HelpOverlayGlassPane' component.
+ * -> Mounts it directly onto the top window stacks:
+ * - statusWindow.getRootPane().setGlassPane(statusHelpPane);
+ * - orWindow.getRootPane().setGlassPane(orHelpPane); [cite: 2026-06-28]
+ * -> Spawns and focuses the side cheatsheet companion frame: HelpTextWindow.java.
+ * * 3. SPATIAL POSITION DATA GATHERERS (Going Backwards):
+ * When shown, the UI manager calls down to individual layout view panels to 
+ * gather component geometries and populate help tooltips [cite: 2026-06-28]:
+ * * A. GameStatus.java -> Computes horizontal column coordinate matrices [cite: 2026-06-28]
+ * ('compTrainsXOffset', 'compCashXOffset', etc.) via 'getColumnBounds()' [cite: 2026-06-28].
+ * Translates coordinate geometry bounds upward using SwingUtilities.convertRectangle() [cite: 2026-06-28].
+ * Feeds these translated locations directly into 'helpPane.addSpotlight()' [cite: 2026-06-28].
+ * * B. ORPanel.java -> Scans operation contexts during Operating Rounds [cite: 2026-06-28].
+ * Locates bounding dimensions of active workflow buttons ('btnTileConfirm', 
+ * 'btnRevPayout'), active map phase panels, and valid hex spatial vectors 
+ * derived via 'orUIManager.getMap().getHex()' [cite: 2026-06-28]. Maps them 
+ * to this overlay to clear dimming zones [cite: 2026-06-28].
+ * * 4. SYSTEM STATE RESOLUTION RECOVERY PIPELINE:
+ * - To return to active gameplay, this panel utilizes a 'contains(x, y)' 
+ * punch-through matrix block.
+ * - It identifies the exact frame bounds of the 'helpButton' managed by 
+ * StatusWindow.java [cite: 2026-06-28].
+ * - When the mouse hovers inside that hole, 'contains()' returns false, allowing 
+ * native mouse press/release states to pass cleanly down to the underlying button.
+ * - Button triggers 'StatusWindow.actionPerformed()' command "HelpWindowCmd" [cite: 2026-06-28].
+ * - Tells GameManager to toggle state, which triggers 'applyEngineMode(PLAY)' [cite: 2026-06-28].
+ * - Calls 'glassPane.setVisible(false)' to drop this overlay [cite: 2026-06-28].
+ * * --- REQUIRED WORKSPACE RESUMPTION FILE LIST ---
+ * To run, modify, or debug this help subsystem loop in a new thread context, you 
+ * must upload exactly these 3 local files
+ * 1. net/sf/rails/ui/swing/help/HelpOverlayGlassPane.java (This file)
+ * 2. net/sf/rails/ui/swing/GameUIManager.java (Propagates state and mounts panes) 
+ * 3. net/sf/rails/ui/swing/GameStatus.java  (Generates spotlight boxes in status woidnwo) ]
+ * 4. net/sf/rails/ui/swing/ORPanel.java (Generates spotlight boxes in or window) ]
+ * status AND Or: Primary Entry Point: public void activateHelpOverlay()
+ * ============================================================================
+ */
+
 package net.sf.rails.ui.swing.help;
 
 import javax.swing.*;
@@ -11,14 +63,20 @@ import java.util.List;
 public class HelpOverlayGlassPane extends JComponent {
     private static final long serialVersionUID = 1L;
 
+    public enum Type {
+        ACTION, INFO
+    }
+
     private static class Spotlight {
         Rectangle bounds;
         String text;
-
-        Spotlight(Rectangle bounds, String text) {
+        Type type;
+        Spotlight(Rectangle bounds, String text, Type type) {
             this.bounds = bounds;
             this.text = text;
+            this.type = type;
         }
+
     }
 
     private final List<Spotlight> spotlights = new ArrayList<>();
@@ -91,12 +149,6 @@ public class HelpOverlayGlassPane extends JComponent {
         repaint();
     }
 
-    public void addSpotlight(Rectangle bounds, String text) {
-        if (bounds != null) {
-            spotlights.add(new Spotlight(bounds, text));
-            repaint();
-        }
-    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -147,15 +199,19 @@ public class HelpOverlayGlassPane extends JComponent {
             if (s == hoveredSpotlight) {
                 g2d.setColor(Color.WHITE); 
                 g2d.drawRect(s.bounds.x - 2, s.bounds.y - 2, s.bounds.width + 4, s.bounds.height + 4);
+            } else if (s.type == Type.ACTION) {
+                g2d.setColor(new Color(50, 220, 100)); // High-visibility Action Green
+                g2d.drawRect(s.bounds.x - 2, s.bounds.y - 2, s.bounds.width + 4, s.bounds.height + 4);
             } else {
-                g2d.setColor(Color.ORANGE);
+                g2d.setColor(Color.ORANGE); // Standard Info Orange
                 g2d.drawRect(s.bounds.x - 2, s.bounds.y - 2, s.bounds.width + 4, s.bounds.height + 4);
             }
         }
-
-        // 3. Draw the Custom Help Bubble if hovering
-        if (hoveredSpotlight != null && hoveredSpotlight.text != null && mousePos != null) {
-            drawHelpBubble(g2d, hoveredSpotlight.text, mousePos);
+// 3. BROADCAST DASHBOARD INJECTION: Permanently draw text adjacent to spotlights
+        for (Spotlight s : spotlights) {
+            if (s.text != null && !s.text.trim().isEmpty() && !s.text.equals("Active Operating Company Row Context")) {
+                drawPermanentBroadcastPanel(g2d, s);
+            }
         }
 
         g2d.dispose();
@@ -188,4 +244,88 @@ public class HelpOverlayGlassPane extends JComponent {
         g2d.setColor(Color.WHITE);
         g2d.drawString(text, x + padding, y + fm.getAscent() + padding);
     }
+
+    public void addSpotlight(Rectangle bounds, String text) {
+        addSpotlight(bounds, text, Type.INFO);
+    }
+
+    public void addSpotlight(Rectangle bounds, String text, Type type) {
+        if (bounds != null) {
+            spotlights.add(new Spotlight(bounds, text, type));
+            repaint();
+        }
+    }
+
+
+    /**
+     * Renders a static, non-overlapping information block directly next to highlighted zones
+     * to preserve absolute stream visibility without requiring user hovers or mouse steps.
+     */
+    private void drawPermanentBroadcastPanel(Graphics2D g2d, Spotlight s) {
+        g2d.setFont(new Font("SansSerif", Font.BOLD, 12));
+        FontMetrics fm = g2d.getFontMetrics();
+        
+        // Wrap text to fit a standardized broadcast box width of 260px
+        int boxWidth = 260;
+        java.util.List<String> lines = wrapText(s.text, fm, boxWidth - 20);
+        int lineCount = lines.size();
+        int boxHeight = (lineCount * fm.getHeight()) + 20;
+
+        // Position Logic: Default to placing the dashboard box to the right or left of the spotlight column bounds
+        int x = s.bounds.x + s.bounds.width + 12;
+        int y = s.bounds.y + (s.bounds.height - boxHeight) / 2;
+
+        // Boundary adjustments: If pushing off the right screen limit, flip box to the left side of the asset bounds
+        if (x + boxWidth > getWidth()) {
+            x = s.bounds.x - boxWidth - 12;
+        }
+        if (y < 10) y = 10;
+        if (y + boxHeight > getHeight()) y = getHeight() - boxHeight - 10;
+
+        // Paint background panel box container
+        RoundRectangle2D box = new RoundRectangle2D.Float(x, y, boxWidth, boxHeight, 10, 10);
+        g2d.setColor(new Color(25, 25, 25, 245)); // High-density dark gray slate
+        g2d.fill(box);
+        
+        // Accent border color based on function intent
+        g2d.setColor(s.type == Type.ACTION ? new Color(50, 220, 100) : Color.ORANGE);
+        g2d.setStroke(new BasicStroke(1.5f));
+        g2d.draw(box);
+
+        // Print wrapped information blocks line-by-line
+        g2d.setColor(Color.WHITE);
+        int textY = y + fm.getAscent() + 10;
+        for (String line : lines) {
+            g2d.drawString(line, x + 10, textY);
+            textY += fm.getHeight();
+        }
+    }
+
+    /**
+     * Splits long multi-line strings cleanly across word boundaries to enforce clear layout columns.
+     */
+    private java.util.List<String> wrapText(String text, FontMetrics fm, int maxWidth) {
+        java.util.List<String> lines = new ArrayList<>();
+        String[] words = text.split(" ");
+        StringBuilder currentLine = new StringBuilder();
+
+        for (String word : words) {
+            if (fm.stringWidth(currentLine.toString() + " " + word) < maxWidth) {
+                if (currentLine.length() > 0) currentLine.append(" ");
+                currentLine.append(word);
+            } else {
+                if (currentLine.length() > 0) {
+                    lines.add(currentLine.toString());
+                    currentLine = new StringBuilder(word);
+                } else {
+                    lines.add(word); // Word itself is wider than column limit bounds
+                }
+            }
+        }
+        if (currentLine.length() > 0) {
+            lines.add(currentLine.toString());
+        }
+        return lines;
+    }
+
 }

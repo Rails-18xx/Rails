@@ -749,33 +749,21 @@ public class GameUIManager implements DialogOwner {
         }
 
         if (startRoundWindow != null) {
-            try {
+            
                 startRoundWindow.updateStatus(myTurn);
-            } catch (Exception e) {
-            }
-        } else {
-        }
+            
+        } 
 
-        // Automatically refresh the open help reference window on every UI state update
-        // loop
-        if (helpTextWindow != null && helpTextWindow.isVisible()) {
-            helpTextWindow.refreshHelp(getGameManager(), "2026-06-22 11:33");
-        }
+
 
         if (statusWindow != null) {
-            try {
                 statusWindow.updateStatus(myTurn);
-            } catch (Exception e) {
-                log.error("Recovered from StatusWindow crash during updateUI.", e);
-            }
+           
         }
 
         if (orUIManager != null) {
-            try {
                 orUIManager.updateStatus(myTurn);
-            } catch (Exception e) {
-                log.error("Recovered from ORUIManager crash.", e);
-            }
+           
         }
 
         if (StartRoundWindow.class.isAssignableFrom(activeWindow.getClass())) {
@@ -1889,8 +1877,7 @@ public class GameUIManager implements DialogOwner {
             }); // End ActionListener
             gameTimer.setInitialDelay(1000);
             gameTimer.setRepeats(true);
-        } else {
-        }
+        } 
     } // End initGameTimer
 
     public void fitMapToWidth() {
@@ -1916,9 +1903,7 @@ public class GameUIManager implements DialogOwner {
             // *** FIX: Use railsRoot.getGameManager() ***
         } else if (railsRoot.getGameManager().isTimeManagementEnabled() && gameTimer != null && gameTimer.isRunning()) {
             // *** FIX: Use railsRoot.getGameManager() ***
-        } else if (!railsRoot.getGameManager().isTimeManagementEnabled()) {
-        } else {
-        }
+        } 
     }
 
     /**
@@ -2830,12 +2815,7 @@ public class GameUIManager implements DialogOwner {
                     orWindow.getRootPane().setGlassPane(orHelpPane);
                 }
 
-                // Hydrate the help text cheatsheet frame
-                if (helpTextWindow == null || !helpTextWindow.isDisplayable()) {
-                    helpTextWindow = new HelpTextWindow(statusWindow.buildTimestamp, this);
-                }
-                helpTextWindow.refreshHelp(getGameManager(), statusWindow.buildTimestamp);
-                helpTextWindow.setVisible(true);
+            
 
                 // Force focus back to the main status window to ensure its components remain immediately active
                 if (statusWindow != null) {

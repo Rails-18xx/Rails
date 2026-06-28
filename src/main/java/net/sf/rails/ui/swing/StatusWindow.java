@@ -2830,10 +2830,9 @@ private void refreshTimeLabel() {
             ra.initRevenueCalculator(true);
             int revenueValue = ra.calculateRevenue();
 
-            try {
+            
                 ra.drawOptimalRunAsPath(gameUIManager.getORUIManager().getMap());
-            } catch (Exception e) {
-            }
+            
 
             JOptionPane.showMessageDialog(this,
                     LocalText.getText("NetworkInfoDialogMessage", company.getId(),
@@ -2893,8 +2892,7 @@ private void refreshTimeLabel() {
 
             card.setToolTipText("<html><b>Click to " + actionName + "</b><br>" + company.getId() + "</html>");
             card.repaint();
-        } else {
-        }
+        }  
     }
 
     private net.sf.rails.ui.swing.elements.RailCard findRailCardRecursive(Container parent,
@@ -3012,8 +3010,7 @@ private void refreshTimeLabel() {
             card.addActionListener(this);
             card.setToolTipText("<html><b>Click to " + actionName + "</b><br>" + company.getId() + "</html>");
             card.repaint();
-        } else {
-        }
+        } 
     }
 
     /**

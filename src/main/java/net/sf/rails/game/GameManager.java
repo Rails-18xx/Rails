@@ -2559,8 +2559,7 @@ int actualExecIndex = this.reloadActionIndex + executedIndexOffset;
         // getInterruptedRound() is now null, so we must use 'roundToResume'.
         if (roundToResume != null) {
             guiHints.setCurrentRoundType(roundToResume.getClass());
-        } else {
-        }
+        } 
 
         guiHints.setVisibilityHint(GuiDef.Panel.STOCK_MARKET, false);
         guiHints.setActivePanel(GuiDef.Panel.MAP);

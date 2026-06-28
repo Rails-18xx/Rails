@@ -127,8 +127,7 @@ private void scaleMap() {
             setBounds(0, 0, currentMapSize.width, currentMapSize.height);
             setPreferredSize(currentMapSize);
             zoom(zoomStep);
-        } else {
-        }
+        } 
     }
     public void zoom (boolean in) {
         if (in) zoomStep++; else zoomStep--;

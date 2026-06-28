@@ -534,7 +534,6 @@ public class OperatingRound_1837 extends OperatingRound {
                     directIncomeToUse, // Fixed/Mine Revenue (goes to Treasury)
                     true, allowedRevenueActions, defaultAllocation));
 
-        } else {
         }
     }
 

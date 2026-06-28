@@ -6840,9 +6840,9 @@ private Rectangle getColumnBounds(int colIndex, net.sf.rails.ui.swing.help.HelpO
 
 
 public void activateHelpOverlay() {
-Window parentWindow = SwingUtilities.windowForComponent(this);
-if (!(parentWindow instanceof JFrame)) return;
-JFrame mainFrame = (JFrame) parentWindow;
+    Window parentWindow = SwingUtilities.windowForComponent(this);
+    if (!(parentWindow instanceof JFrame)) return;
+    JFrame mainFrame = (JFrame) parentWindow;
     Component currentGlass = mainFrame.getGlassPane();
     net.sf.rails.ui.swing.help.HelpOverlayGlassPane helpPane;
     
@@ -6855,32 +6855,47 @@ JFrame mainFrame = (JFrame) parentWindow;
 
     helpPane.clearSpotlights();
 
+    // Macro-Highlighting: Clear crosshair framing for the operating row
+    Rectangle rowBounds = getActiveCompanyRowBounds(helpPane);
+    if (rowBounds != null) {
+        helpPane.addSpotlight(rowBounds, "Active Operating Company Row Context", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
+    }
+    // --- END FIX ---
+
     if (compTrainsXOffset > 0) helpPane.addSpotlight(getColumnBounds(compTrainsXOffset, helpPane), 
-        "Company Trains Fleet: Displays operating locomotives. Phase limits apply. Purchasing a new tier rusts obsolete trains.");
+        "Company Trains Fleet: Displays operating locomotives. Max train limits are dictated by the current phase. Purchasing a higher tier train will rust obsolete models immediately.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
         
+    // --- START FIX ---
+    // Updated with exact 1856.pdf rules for active privates[cite: 1]
     if (compPrivatesXOffset > 0) helpPane.addSpotlight(getColumnBounds(compPrivatesXOffset, helpPane), 
-        "Corporate Special Privileges: Bridge Co. ($40 river discount), Cattle Co. (+$10 western city), Gulf Shipping (+$20 destination port).");
+        "Corporate Special Privileges: Displays owned private companies. Flos Tramway, Waterloo & Saugeen (free Kitchener station/green #59 tile lay), Canada Company (extra free tile lay), Great Lakes Shipping ($20 port bonus token), Niagara Suspension Bridge ($10 Buffalo bonus), or St. Clair Tunnel ($10 Port Huron bonus). All close when the first Type 5 train is bought.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
+    // --- END FIX ---
         
+    // --- START FIX ---
+    // Updated with exact 1856.pdf destination escrow rules[cite: 1]
     if (hasDestinations && compDestXOffset > 0) helpPane.addSpotlight(getColumnBounds(compDestXOffset, helpPane), 
-        "Historical Destination: Triggers a bonus connection run and permanently doubles its base city value for your company.");
+        "Historical Destination City: Triggers capital release. Prior to Phase 5, share proceeds beyond the first 5 sales are held in escrow by the bank until a legal train route is completed to this city.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
+    // --- END FIX ---
         
     if (compCashXOffset > 0) helpPane.addSpotlight(getColumnBounds(compCashXOffset, helpPane), 
-        "Company Treasury: Liquid cash for track/tokens. Beware of forced train purchases out of the President's pocket if empty.");
+        "Company Treasury: Corporate funds available for track construction and placing station markers. If empty during a mandatory train purchase phase, the President is subject to a forced stock sale to fund the cheapest available train out of pocket.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
         
     if (compRevenueXOffset > 0) helpPane.addSpotlight(getColumnBounds(compRevenueXOffset, helpPane), 
-        "Distributed Route Earnings: Full payout shifts your company stock marker one column to the right.");
+        "Distributed Route Earnings: Total revenue from active train runs. Declaring and paying a dividend shifts the company share value token one column to the right on the stock market.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
         
     if (compRetainedXOffset > 0) helpPane.addSpotlight(getColumnBounds(compRetainedXOffset, helpPane), 
-        "Retained Corporate Income: Split keeps 50% without dropping stock price. Withhold keeps 100% but drops stock one column left.");
+        "Retained Corporate Income: Total earnings withheld inside the treasury. Retaining or declaring a $0 dividend forces the company share value token one column to the left on the stock market.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
         
     if (compTokensXOffset > 0) helpPane.addSpotlight(getColumnBounds(compTokensXOffset, helpPane), 
-        "Available Base Tokens: Unplaced station markers. Required to route through rival-blocked cities.");
+        "Available Station Markers: Remaining tokens on the charter. Placing a token establishes a base grid connection. Fully blocked cities can only be entered or passed through by companies holding a station token there.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
         
+    // --- START FIX ---
+    // Updated with exact 1856.pdf loan capacity rules[cite: 1]
     if (hasCompanyLoans && compLoansXOffset > 0) helpPane.addSpotlight(getColumnBounds(compLoansXOffset, helpPane), 
-        "Outstanding Corporate Debt: Red circles indicate active loans with interest penalties. Black circles indicate remaining capacity.");
+        "Government Loans: Displays outstanding debt. Each loan provides $100 cash ($90 post-interest step) and incurs a $10 interest fee per operating round. Loan limit matches the total number of shares currently held by players. All outstanding loans must be completely resolved or repaid at the start of Phase 5, or the company face-melts into the CGR formation exchange.", net.sf.rails.ui.swing.help.HelpOverlayGlassPane.Type.INFO);
+    // --- END FIX ---
 
-
-// Strict authoritative mode guard: Never fallback to visible true if the state machine is not explicitly in HELP mode
+    // Strict authoritative mode guard: Never fallback to visible true if the state machine is not explicitly in HELP mode
     if (gameUIManager != null && gameUIManager.getGameManager() != null) {
         boolean isHelpActive = (gameUIManager.getGameManager().getEngineMode() == net.sf.rails.game.GameManager.EngineMode.HELP);
         helpPane.setVisible(isHelpActive);
@@ -6890,6 +6905,53 @@ JFrame mainFrame = (JFrame) parentWindow;
     helpPane.repaint();
 }
 
+/**
+ * Calculates the full horizontal bounding box for the currently active operating company's row.
+ * Scans the active components in fields across the row index mapped by companyCertRow.
+ */
+private Rectangle getActiveCompanyRowBounds(Component targetCoordinatesSpace) {
+    if (gameUIManager == null || gameUIManager.getGameManager() == null || fields == null) {
+        return null;
+    }
 
+    // 1. Authoritative lookup of the active operating company matching initTurn 
+    PublicCompany activeComp = null;
+    net.sf.rails.game.round.RoundFacade currentRound = gameUIManager.getGameManager().getCurrentRound();
+
+    if (currentRound instanceof net.sf.rails.game.OperatingRound) {
+        activeComp = ((net.sf.rails.game.OperatingRound) currentRound).getOperatingCompany();
+    } else if (currentRound instanceof net.sf.rails.game.specific._1817.MergerAndAcquisitionRound_1817) {
+        activeComp = ((net.sf.rails.game.specific._1817.MergerAndAcquisitionRound_1817) currentRound).getOperatingCompany();
+    }
+
+    if (activeComp == null || !companyCertRow.containsKey(activeComp)) {
+        return null;
+    }
+
+    // 2. Fetch the actual grid rendering row index 
+    int targetY = companyCertRow.get(activeComp);
+    Rectangle rowBounds = null;
+
+    // 3. Union bounds of all visible components sitting on this specific row line 
+    for (int x = 0; x < fields.length; x++) {
+        if (fields[x] != null && targetY >= 0 && targetY < fields[x].length) {
+            JComponent comp = fields[x][targetY];
+            if (comp != null && comp.isVisible()) {
+                if (rowBounds == null) {
+                    rowBounds = new Rectangle(comp.getBounds());
+                } else {
+                    rowBounds = rowBounds.union(comp.getBounds());
+                }
+            }
+        }
+    }
+
+    // 4. Map the composite box boundaries directly to the GlassPane canvas layer space 
+    if (rowBounds != null && rowBounds.width > 0 && rowBounds.height > 0) {
+        return SwingUtilities.convertRectangle(this, rowBounds, targetCoordinatesSpace);
+    }
+
+    return null;
+}
 
 }

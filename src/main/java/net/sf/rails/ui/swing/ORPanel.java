@@ -2231,8 +2231,7 @@ if (specialPanel != null) {
                 }
 
             }
-        } else {
-        }
+        } 
     }
 
     public void finishORCompanyTurn(int index) {
@@ -3521,8 +3520,7 @@ public void setTokens(int count, PublicCompany c) {
         // 4. Default Fallback
         if (btnDone != null && btnDone.isVisible() && btnDone.isEnabled()) {
             btnDone.doClick();
-        } else {
-        }
+        } 
     }
 
     // We are modifying ORPanel.java
