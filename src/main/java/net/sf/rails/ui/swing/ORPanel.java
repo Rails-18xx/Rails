@@ -3691,6 +3691,55 @@ addIfActive(helpPane, btnDone, "End Turn: Finish all operations and advance to t
             }
         }
 
+        // 5. Phase 4: Cross-Round Train Purchasing Target Spotlight Stack
+        if (activePhase == 4) {
+            // Highlight operational buying buttons directly layout-adjacent in the OR panel
+            if (trainButtonsPanel != null && trainButtonsPanel.isVisible()) {
+                Rectangle orTrainBounds = SwingUtilities.convertRectangle(trainButtonsPanel.getParent(), 
+                        trainButtonsPanel.getBounds(), helpPane);
+                helpPane.addSpotlight(orTrainBounds, "Buy Train Options: Purchase legal operational traction engines.");
+            }
+
+            // High-precision tree traversal to locate the TrainMarketPanel in the StatusWindow
+            if (orWindow != null && orWindow.gameUIManager != null && orWindow.gameUIManager.getStatusWindow() != null) {
+                net.sf.rails.ui.swing.StatusWindow statusWin = orWindow.gameUIManager.getStatusWindow();
+                
+                try {
+                    if (statusWin.getContentPane() != null) {
+                        java.util.Queue<Component> compQueue = new java.util.LinkedList<>();
+                        compQueue.add(statusWin.getContentPane());
+
+                        while (!compQueue.isEmpty()) {
+                            Component child = compQueue.poll();
+                            if (child != null && child.isVisible()) {
+                                String name = child.getClass().getName();
+                                
+                                // Intercept TrainMarketPanel safely even if it's private or nested
+                                if (name.contains("TrainMarketPanel")) {
+                                    Rectangle marketBounds = SwingUtilities.convertRectangle(
+                                            child.getParent(), 
+                                            child.getBounds(), 
+                                            helpPane
+                                    );
+                                    marketBounds.grow(4, 4); // Soft border margin allocation
+                                    helpPane.addSpotlight(marketBounds, 
+                                            "Train Market Bank: Displays current Pool trains, IPO stock, and upcoming future sets.");
+                                    break; 
+                                }
+                                if (child instanceof Container) {
+                                    for (Component subChild : ((Container) child).getComponents()) {
+                                        compQueue.add(subChild);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("Safe-guard caught train market coordinates tracking failure", e);
+                }
+            }
+        }
+        
 // Diagnostic Stack & Context Isolation Logging
         StringBuilder helpTrace = new StringBuilder();
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
