@@ -1997,6 +1997,14 @@ if (isTimeManagementEnabled()) {
             // Force state resynchronization after map corrections mid-turn.
             // This prevents stale route/revenue caches from rejecting subsequent actions.
             if (result) {
+                
+                // AUTO-CLOSE ONE-SHOT CORRECTIONS: 
+                // Immediately deactivate the UI state to prevent reload deadlocks.
+                if (!(ca instanceof rails.game.correct.CorrectionModeAction)) {
+                    cm.deactivate();
+                    getCorrectionModeActiveModel().set(false);
+                }
+
                 boolean shouldFlush = false;
                 if (ca instanceof rails.game.correct.MapCorrectionAction) {
                     shouldFlush = true;

@@ -153,12 +153,7 @@ public class AIPlayer implements Actor {
     }
 
     private PossibleAction handleShareRound(PossibleActions possibleActions) {
-        // : Wrap in ArrayList to allow sorting ---
-        List<BuyCertificate> buyCertActions = new ArrayList<>(possibleActions.getType(BuyCertificate.class));
-
-        List<SellShares> sellActions = possibleActions.getType(SellShares.class);
         Player currentPlayer = gameManager.getCurrentPlayer();
-
         if (currentPlayer == null)
             return findFallbackAction(possibleActions.getList());
 
@@ -166,6 +161,7 @@ public class AIPlayer implements Actor {
         int currentCerts = currentPlayer.getPortfolioModel().getCertificates().size();
         boolean forceSell = (currentCerts >= certLimit);
 
+        List<SellShares> sellActions = possibleActions.getType(SellShares.class);
         if (!sellActions.isEmpty() && forceSell) {
             SellShares actionToSell = sellActions.get(0);
             actionToSell.setNumber(1);
@@ -176,30 +172,60 @@ public class AIPlayer implements Actor {
         if (currentCerts >= certLimit)
             return findFallbackAction(possibleActions.getList());
 
-        if (!buyCertActions.isEmpty()) {
-            // STRATEGY: Director Protection & Magic Companies
-            // 1. Identify "Magic" companies (PR, BY, SX).
-            // 2. Identify "My" companies (Where I am President).
+        // --- UNIFIED BUYING PIPELINE (BuyCertificate + StartCompany) ---
+        List<BuyCertificate> buyActions = new ArrayList<>();
 
-            // Sort priority:
-            // 1. Defend my Presidency (if < 60%)
-            // 2. Buy Magic Companies (PR > BY/SX)
-            // 3. Buy High Value (Greedy)
+        // 1. Gather normal certificate purchases
+        buyActions.addAll(possibleActions.getType(BuyCertificate.class));
 
-            buyCertActions.sort((a, b) -> {
+        // 2. Gather and pre-configure company initializations
+        List<StartCompany> startActions = possibleActions.getType(StartCompany.class);
+        for (StartCompany startAct : startActions) {
+            PublicCompany company = startAct.getCompany();
+            int shareUnits = startAct.getSharePerCertificate() / company.getShareUnit();
+            if (startAct.mustSelectAPrice()) {
+                int[] prices = startAct.getStartPrices();
+                if (prices != null && prices.length > 0) {
+                    // Strategy: Choose the highest affordable par value (Greedy Growth)
+                    int chosenPrice = -1;
+                    for (int p : prices) {
+                        // Remember: The cost to start is (President Shares * Price)
+                        int totalCost = shareUnits * p / company.getShareUnitsForSharePrice();
+                        if (totalCost <= currentPlayer.getCash()) {
+                            chosenPrice = Math.max(chosenPrice, p);
+                        }
+                    }
+                    if (chosenPrice != -1) {
+                        startAct.setStartPrice(chosenPrice);
+                        buyActions.add(startAct); // Add to general pool for prioritization evaluation
+                    }
+                }
+            } else {
+                // Fixed-price or pre-set start action
+int totalCost = shareUnits * startAct.getPrice() / company.getShareUnitsForSharePrice();
+                if (totalCost <= currentPlayer.getCash()) {
+                    buyActions.add(startAct);
+                }
+            }
+        }
+
+        if (!buyActions.isEmpty()) {
+            // Sort priority matching your established strategy:
+            // 1. Defend my Presidency
+            // 2. Buy/Start Magic Companies (PR > BY/SX)
+            // 3. Buy High Value / Start High Par (Greedy Evaluation)
+            buyActions.sort((a, b) -> {
                 PublicCompany companyA = a.getCompany();
                 PublicCompany companyB = b.getCompany();
 
                 boolean amPrezA = companyA.getPresident() == currentPlayer;
                 boolean amPrezB = companyB.getPresident() == currentPlayer;
 
-                // Priority 1: Defend my own company
                 if (amPrezA && !amPrezB)
                     return -1;
                 if (!amPrezA && amPrezB)
                     return 1;
 
-                // Priority 2: Magic Companies
                 boolean magicA = companyA.getId().equals("PR") || companyA.getId().equals("BY")
                         || companyA.getId().equals("SX");
                 boolean magicB = companyB.getId().equals("PR") || companyB.getId().equals("BY")
@@ -210,27 +236,35 @@ public class AIPlayer implements Actor {
                 if (!magicA && magicB)
                     return 1;
 
-                // Priority 3: Price (Higher is better)
+                // Sort by price per share descending
                 return Integer.compare(b.getPrice(), a.getPrice());
             });
 
-            for (BuyCertificate action : buyCertActions) {
+            for (BuyCertificate action : buyActions) {
                 PublicCompany company = action.getCompany();
-                boolean amPrez = company.getPresident() == currentPlayer;
                 boolean isMagic = company.getId().equals("PR") || company.getId().equals("BY")
                         || company.getId().equals("SX");
                 boolean isOtherPrez = company.getPresident() != null && company.getPresident() != currentPlayer;
 
-                // ANTI-HERD: Do not buy into another player's company unless it's Magic
-                // (PR/BY/SX)
+                // ANTI-HERD rule
                 if (isOtherPrez && !isMagic) {
                     continue;
                 }
 
-                if (action.getPrice() <= currentPlayer.getCash()) {
-                    action.setNumberBought(action.getMaximumNumber());
-                    action.setAIAction(true);
-                    return action;
+                int shareUnits = (action.getNumberBought() * action.getSharePerCertificate()) / company.getShareUnit();
+                int totalCost = shareUnits * action.getPrice() / company.getShareUnitsForSharePrice();
+                if (totalCost <= currentPlayer.getCash()) {
+                    if (action instanceof StartCompany) {
+                        action.setNumberBought(action.getMaximumNumber());
+                        action.setAIAction(true);
+                        aiLog.info("AI Decision: Starting Company {} at Par Price {}", company.getId(),
+                                action.getPrice());
+                        return action;
+                    } else {
+                        action.setNumberBought(action.getMaximumNumber());
+                        action.setAIAction(true);
+                        return action;
+                    }
                 }
             }
         }
@@ -511,24 +545,25 @@ public class AIPlayer implements Actor {
             }
         }
 
-
-if (!aiScorableBuyTrainActions.isEmpty() && operatingCompany != null) {
+        if (!aiScorableBuyTrainActions.isEmpty() && operatingCompany != null) {
             boolean hasTrains = !operatingCompany.getPortfolioModel().getTrainList().isEmpty();
-            
-            // 1. Find exactly ONE representative IPO train to simulate (the cheapest affordable one)
+
+            // 1. Find exactly ONE representative IPO train to simulate (the cheapest
+            // affordable one)
             BuyTrain ipoTrainToSimulate = null;
             boolean permanentTrainAvailable = false;
-            
+
             for (BuyTrain action : aiScorableBuyTrainActions) {
                 boolean isFromBank = action.getFromOwner() == null
                         || action.getFromOwner().getId().contains("Bank")
                         || action.getFromOwner().getId().contains("IPO");
-                        
+
                 if (isFromBank) {
                     String tName = action.getTrain().getName();
                     boolean isPermanent = !tName.startsWith("2") && !tName.startsWith("3");
-                    if (isPermanent) permanentTrainAvailable = true;
-                    
+                    if (isPermanent)
+                        permanentTrainAvailable = true;
+
                     int cost = (action.getPricePaid() > 0) ? action.getPricePaid() : action.getFixedCost();
                     if (cost <= operatingCompany.getCash()) {
                         if (ipoTrainToSimulate == null || cost < ipoTrainToSimulate.getFixedCost()) {
@@ -543,21 +578,23 @@ if (!aiScorableBuyTrainActions.isEmpty() && operatingCompany != null) {
             if (ipoTrainToSimulate != null) {
                 int currentMaxRevenue = evaluator.calculateCurrentMaxRevenue(context);
                 try {
-                    net.sf.rails.algorithms.RevenueAdapter hypoAdapter = net.sf.rails.algorithms.RevenueAdapter.createRevenueAdapter(
-                            gameManager.getRoot(), operatingCompany, gameManager.getCurrentPhase(), false);
-                    
+                    net.sf.rails.algorithms.RevenueAdapter hypoAdapter = net.sf.rails.algorithms.RevenueAdapter
+                            .createRevenueAdapter(
+                                    gameManager.getRoot(), operatingCompany, gameManager.getCurrentPhase(), false);
+
                     if (hypoAdapter.getNetworkAdapterInternal() != null) {
                         hypoAdapter.getNetworkAdapterInternal().clearGraphCache();
                     }
-                    
+
                     hypoAdapter.populateFromRails();
-                    hypoAdapter.addTrain(ipoTrainToSimulate.getTrain()); 
+                    hypoAdapter.addTrain(ipoTrainToSimulate.getTrain());
                     hypoAdapter.initRevenueCalculator(true);
-                    
+
                     int hypoRevenue = hypoAdapter.calculateRevenue();
                     if (hypoRevenue > currentMaxRevenue) {
                         ipoIncreasesRevenue = true;
-                        aiLog.debug("{}SIMULATION: IPO Train {} increases revenue ({} -> {}).", logPrefix, ipoTrainToSimulate.getTrain().getName(), currentMaxRevenue, hypoRevenue);
+                        aiLog.debug("{}SIMULATION: IPO Train {} increases revenue ({} -> {}).", logPrefix,
+                                ipoTrainToSimulate.getTrain().getName(), currentMaxRevenue, hypoRevenue);
                     }
                 } catch (Exception e) {
                     aiLog.error("{}SIMULATION ERROR for IPO train: {}", logPrefix, e.getMessage());
@@ -565,7 +602,8 @@ if (!aiScorableBuyTrainActions.isEmpty() && operatingCompany != null) {
             }
 
             // 3. Decision Gate
-            boolean shouldEvaluate = !hasTrains || permanentTrainAvailable || ipoIncreasesRevenue || (random.nextDouble() < 0.10);
+            boolean shouldEvaluate = !hasTrains || permanentTrainAvailable || ipoIncreasesRevenue
+                    || (random.nextDouble() < 0.10);
 
             if (shouldEvaluate) {
                 for (BuyTrain trainAction : aiScorableBuyTrainActions) {
@@ -573,7 +611,7 @@ if (!aiScorableBuyTrainActions.isEmpty() && operatingCompany != null) {
                     boolean isFromBank = trainAction.getFromOwner() == null
                             || trainAction.getFromOwner().getId().contains("Bank")
                             || trainAction.getFromOwner().getId().contains("IPO");
-                    
+
                     String tName = trainAction.getTrain().getName();
                     boolean isPermanent = !tName.startsWith("2") && !tName.startsWith("3");
 
@@ -586,7 +624,7 @@ if (!aiScorableBuyTrainActions.isEmpty() && operatingCompany != null) {
                         }
                     } else if (hasTrains) {
                         // Penalize inter-company swaps if we already have trains, stopping the cycle
-                        score -= 10000.0; 
+                        score -= 10000.0;
                     }
 
                     if (score > bestOverallScore) {
@@ -598,8 +636,6 @@ if (!aiScorableBuyTrainActions.isEmpty() && operatingCompany != null) {
                 aiLog.debug("{}  - AI bypassing optional train purchase.", logPrefix);
             }
         }
-
-
 
         // PRUSSIAN OPENING STRATEGY:
         // If we can form the Prussian (StartPrussian action) and we own M2
@@ -907,7 +943,6 @@ if (!aiScorableBuyTrainActions.isEmpty() && operatingCompany != null) {
                 return action;
             }
         }
-
 
         if (!actions.isEmpty()) {
             actions.get(0).setAIAction(true);

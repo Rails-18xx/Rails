@@ -52,48 +52,36 @@ public abstract class CorrectionManager extends RailsAbstractItem {
     /**
      * calls all executeAction
      */
-    public boolean executeCorrection(CorrectionAction action) {
-        if (action instanceof CorrectionModeAction)
+   public boolean executeCorrection(CorrectionAction action) {
+        if (action instanceof CorrectionModeAction) {
             return execute((CorrectionModeAction) action);
-        else {
-            log.debug("This correction action is not registered.");
-            return false;
+        } else {
+            // Execute the concrete subclass correction payload (e.g., Cash or Map adjustment)
+            boolean result = execute(action);
+            
+            // Explicitly clear the correction tracking flags immediately upon successful 
+            // completion so the state machine drops out of the choice block instantly
+            if (result) {
+                active.set(false);
+                getParent().getCorrectionModeActiveModel().set(false);
+            }
+            return result;
         }
     }
 
-    private boolean execute(CorrectionModeAction action) {
 
+
+
+private boolean execute(CorrectionModeAction action) {
         GameManager gm = getParent(); 
 
-        if (!isActive()) {
-            // 1. Pause Timer & Set Correction Mode Flag
-            gm.setGamePaused(true);
-            gm.getCorrectionModeActiveModel().set(true);
+        // Open the targeting UI. During live play, it forces open. During reloads, it follows the log.
+        boolean targetState = gm.isReloading() ? action.isActive() : true;
+        
+        active.set(targetState);
+        gm.getCorrectionModeActiveModel().set(targetState);
 
-            // [MODIFIED] User requested removal of alerts
-            // String text = LocalText.getText("CorrectionModeActivate",
-            //         getRoot().getPlayerManager().getCurrentPlayer().getId(),
-            //         LocalText.getText(getCorrectionType().name())
-            // );
-            // ReportBuffer.add(this, text);
-            // DisplayBuffer.add(this, text);
-
-        } else {
-            // [MODIFIED] User requested removal of alerts
-            // String text = LocalText.getText("CorrectionModeDeactivate",
-            //         getRoot().getPlayerManager().getCurrentPlayer().getId(),
-            //         LocalText.getText(getCorrectionType().name())
-            // );
-            // ReportBuffer.add(this, text);
-
-            // 2. Resume Timer & Clear Correction Mode Flag
-            gm.getCorrectionModeActiveModel().set(false);
-            gm.setGamePaused(false);
-        }
-
-        active.set(!active.value());
-
-        // 3. CRITICAL: Force a full UI refresh to clear any stale graphics/data bindings.
+        // Force a full UI refresh to clear and redraw components immediately
         if (gm.getGameUIManager() != null) {
              gm.getGameUIManager().forceFullUIRefresh();
         }
@@ -101,6 +89,12 @@ public abstract class CorrectionManager extends RailsAbstractItem {
         return true;
     }
 
+    /**
+     * Called by GameManager to auto-close this correction state after a payload succeeds.
+     */
+    public void deactivate() {
+        active.set(false);
+    }
 
     /* dummy to capture the non-supported actions */
     protected boolean execute(CorrectionAction action) {

@@ -6923,7 +6923,7 @@ public class GameStatus extends GridPanel {
                     net.sf.rails.ui.swing.elements.RailCard card = playerShareCards[i][j];
                     if (card != null && card.isVisible() && card.isShowing() && card.getPossibleActions() != null && !card.getPossibleActions().isEmpty()) {
                         Rectangle cardBounds = SwingUtilities.convertRectangle(card.getParent(), card.getBounds(), helpPane);
-                        helpPane.addSpotlight(cardBounds, "Player Share Asset: Selectable Action Available");
+                        helpPane.addSpotlight(cardBounds, "");
                     }
                 }
             }
@@ -6933,19 +6933,19 @@ public class GameStatus extends GridPanel {
         for (int i = 0; i < nc; i++) {
             if (ipoShareCards != null && ipoShareCards[i] != null && ipoShareCards[i].isVisible() && ipoShareCards[i].isShowing() && ipoShareCards[i].getPossibleActions() != null && !ipoShareCards[i].getPossibleActions().isEmpty()) {
                 Rectangle b = SwingUtilities.convertRectangle(ipoShareCards[i].getParent(), ipoShareCards[i].getBounds(), helpPane);
-                helpPane.addSpotlight(b, "IPO Market Asset: Available for Purchase/Interaction");
+                helpPane.addSpotlight(b, "");
             }
             if (poolShareCards != null && poolShareCards[i] != null && poolShareCards[i].isVisible() && poolShareCards[i].isShowing() && poolShareCards[i].getPossibleActions() != null && !poolShareCards[i].getPossibleActions().isEmpty()) {
                 Rectangle b = SwingUtilities.convertRectangle(poolShareCards[i].getParent(), poolShareCards[i].getBounds(), helpPane);
-                helpPane.addSpotlight(b, "Pool Market Asset: Available for Purchase/Interaction");
+                helpPane.addSpotlight(b, "");
             }
             if (treasuryShareCards != null && treasuryShareCards[i] != null && treasuryShareCards[i].isVisible() && treasuryShareCards[i].isShowing() && treasuryShareCards[i].getPossibleActions() != null && !treasuryShareCards[i].getPossibleActions().isEmpty()) {
                 Rectangle b = SwingUtilities.convertRectangle(treasuryShareCards[i].getParent(), treasuryShareCards[i].getBounds(), helpPane);
-                helpPane.addSpotlight(b, "Treasury Share Asset: Interaction Available");
+                helpPane.addSpotlight(b, "");
             }
             if (hasOSI && osiShareCards != null && osiShareCards[i] != null && osiShareCards[i].isVisible() && osiShareCards[i].isShowing() && osiShareCards[i].getPossibleActions() != null && !osiShareCards[i].getPossibleActions().isEmpty()) {
                 Rectangle b = SwingUtilities.convertRectangle(osiShareCards[i].getParent(), osiShareCards[i].getBounds(), helpPane);
-                helpPane.addSpotlight(b, "Short Market Asset: Shorting Option Available");
+                helpPane.addSpotlight(b, "");
             }
         }
 

@@ -165,6 +165,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
     protected ActionButton passButton;
     protected ActionButton autopassButton;
     protected ActionButton helpButton;
+    protected boolean visualPauseActive = false; // Tracks explicit user-initiated pause states
     protected GameUIManager gameUIManager;
     protected RoundFacade currentRound;
     protected PossibleActions possibleActions;
@@ -842,15 +843,12 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             disableCheckBoxMenuItem(MARKET_CMD);
         }
 
-        // Initialize BOTH Cash and Train actions
-        // Note: These methods are defined in GameStatus.java, we just call them here.
-        boolean c = gameStatus.initCashCorrectionActions();
-        boolean t = gameStatus.initTrainCorrectionActions();
-        // Include Stock Correction Mode in the override check
+     // Initialize Cash and Train actions as one-shot menu options.
+        // Stripped out all persistent mode override tracking.
+        gameStatus.initCashCorrectionActions();
+        gameStatus.initTrainCorrectionActions();
 
-        // Return true if EITHER mode is active.
-        // This tells the UI manager to keep the Status Window visible.
-        return c || t;
+        return false;
     }
 
     public void disableButtons() {
@@ -908,11 +906,13 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             // 2. Control overlay visibility based on state
             if (gameUIManager.isTimerPaused()) {
                 gameUIManager.resumeTimer();
+                this.visualPauseActive = false;
                 if (getGlassPane() instanceof PauseOverlay) {
                     getGlassPane().setVisible(false);
                 }
             } else {
                 gameUIManager.pauseTimer();
+                this.visualPauseActive = true;
                 if (!(getGlassPane() instanceof PauseOverlay)) {
                     setGlassPane(new PauseOverlay());
                 }
@@ -1620,10 +1620,11 @@ private void refreshTimeLabel() {
     }
 
     // Independent background timer glass pane visibility checks have been stripped to prevent layout loops.
-
-    if (gameTimeLabel != null) {
-        gameTimeLabel.setText(timeText);
-        gameTimeLabel.setForeground(color);
+// Ensure the glass pane visibility mirrors our explicit user flag, not background engine states
+    if (getGlassPane() instanceof PauseOverlay) {
+        if (getGlassPane().isVisible() != this.visualPauseActive) {
+            getGlassPane().setVisible(this.visualPauseActive);
+        }
     }
 
     if (pauseButton != null) {
