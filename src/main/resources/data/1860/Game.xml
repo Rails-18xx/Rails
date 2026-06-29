@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<ComponentManager>
+	<Component name="GameManager" class="net.sf.rails.game.GameManager">
+		<Game name="1860"/>
+		<GameParameters>
+			<PlayerShareLimit percentage="60"/>
+			<BankPoolLimit percentage="100"/>
+			<OperatingRound>
+				<EmergencyTrainBuying mustBuyCheapestTrain="yes" mayBuyFromCompany="yes"/>
+			</OperatingRound>
+		</GameParameters>
+		<EndOfGame>
+			<Bankruptcy/>
+			<BankBreaks limit="0" finish="setOfORs"/>
+		</EndOfGame>
+	</Component>
+	<Component name="PlayerManager" class="net.sf.rails.game.PlayerManager">
+		<Players number="2" cash="1000" certLimit="32"/>
+		<Players number="3" cash="670" certLimit="21"/>
+		<Players number="4" cash="500" certLimit="16"/>
+	</Component>
+	<Component name="Bank" class="net.sf.rails.game.financial.Bank">
+		<Bank amount="10000"/>
+	</Component>
+	<Component name="TileManager" file="data/1860/TileSet.xml" class="net.sf.rails.game.TileManager"/>
+	<Component name="Map" file="data/1860/Map.xml" class="net.sf.rails.game.MapManager"/>
+	<Component name="CompanyManager" file="data/1860/CompanyManager.xml" class="net.sf.rails.game.CompanyManager"/>
+	<Component name="StockMarket" file="data/1860/StockMarket.xml" class="net.sf.rails.game.financial.StockMarket"/>
+	<Component name="TrainManager" class="net.sf.rails.game.TrainManager">
+		<Defaults>
+			<Reach base="stops" countTowns="yes"/>
+			<Score towns="yes"/>
+		</Defaults>
+		<TrainType name="2" majorStops="2" cost="250" quantity="5"/>
+		<TrainType name="3+2" majorStops="3" cost="300" quantity="4">
+			<NewPhase phaseName="3"/>
+		</TrainType>
+		<TrainType name="4+2" majorStops="4" cost="350" quantity="3">
+			<NewPhase phaseName="4"/>
+		</TrainType>
+		<TrainType name="5+3" majorStops="5" cost="400" quantity="2">
+			<NewPhase phaseName="5"/>
+		</TrainType>
+		<TrainType name="6+3" majorStops="6" cost="500" quantity="2">
+			<NewPhase phaseName="6"/>
+		</TrainType>
+		<TrainType name="7+4" majorStops="7" cost="600" quantity="1">
+			<NewPhase phaseName="7"/>
+		</TrainType>
+		<TrainType name="8+4" majorStops="8" cost="700" quantity="1">
+			<NewPhase phaseName="8"/>
+		</TrainType>
+		<TrainType name="9+5" majorStops="9" cost="800" quantity="6">
+			<NewPhase phaseName="9"/>
+		</TrainType>
+	</Component>
+	<Component name="PhaseManager" class="net.sf.rails.game.PhaseManager">
+		<Phase name="2">
+			<OperatingRounds number="1"/>
+		</Phase>
+		<Phase name="3">
+			<OperatingRounds number="2"/>
+		</Phase>
+		<Phase name="4">
+			<OperatingRounds number="2"/>
+		</Phase>
+		<Phase name="5">
+			<OperatingRounds number="3"/>
+		</Phase>
+		<Phase name="6">
+			<OperatingRounds number="3"/>
+		</Phase>
+		<Phase name="7">
+			<OperatingRounds number="3"/>
+		</Phase>
+		<Phase name="8">
+			<OperatingRounds number="3"/>
+		</Phase>
+		<Phase name="9">
+			<OperatingRounds number="3"/>
+		</Phase>
+	</Component>
+</ComponentManager>

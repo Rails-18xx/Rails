@@ -280,7 +280,7 @@
         <Players min="2" max="5"/>
     </Game>
 
-        <Game name="test">
+        <Game name="1860">
         <Description><![CDATA[<html>
             ripped from 18xx
         </html>]]></Description>

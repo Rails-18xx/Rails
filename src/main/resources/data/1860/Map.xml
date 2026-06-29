@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Map tileOrientation="EW" letterOrientation="vertical" even="B">
+	<Hex name="G1" tile="0" town="East Cowes"/>
+	<Hex name="G3" tile="0" town="Whippingham"/>
+	<Hex name="I5" tile="0" town="Ashey"/>
+	<Hex name="F2" tile="0" city="Cowes"/>
+	<Hex name="B4" tile="0" city="Yarmouth"/>
+	<Hex name="I9" tile="0" city="Shanklin"/>
+	<Hex name="H4" tile="0" town="Wooton &amp; Havenstreet"/>
+	<Hex name="I7" tile="0" town="Newchurch &amp; Alverstone"/>
+	<Hex name="K5" tile="0" town="St. Helens" cost="60" terrain="River"/>
+	<Hex name="J2" tile="0"/>
+	<Hex name="I3" tile="0" city="Ryde Esp"/>
+	<Hex name="G5" tile="0" city="Newport"/>
+	<Hex name="G7" tile="0" city="Merstone"/>
+	<Hex name="I11" tile="0" city="Ventnor"/>
+</Map>

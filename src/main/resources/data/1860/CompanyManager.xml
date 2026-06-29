@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<CompanyManager>
+	<CompanyType name="Private" class="net.sf.rails.game.PrivateCompany"/>
+	<CompanyType name="Major" class="net.sf.rails.game.PublicCompany">
+		<Shares unit="10"/>
+		<StockPrice par="yes"/>
+	</CompanyType>
+	<Company name="BHC" longname="Brading Harbour Company" type="Private" basePrice="30" revenue="5"/>
+	<Company name="YHC" longname="Yarmouth Harbour Company" type="Private" basePrice="50" revenue="10"/>
+	<Company name="CMH" longname="Cowes Marina and Harbour" type="Private" basePrice="90" revenue="20"/>
+	<Company name="RPSC" longname="Ryde Pier &amp; Shipping Company" type="Private" basePrice="130" revenue="30"/>
+	<Company name="FFC" longname="Fishbourne Ferry Company" type="Private" basePrice="200" revenue="25"/>
+	<Company name="BHC" longname="Yarmouth Harbour Company" type="Major" tokens="4">
+		<Home hex="F2"/>
+	</Company>
+	<Company name="IOW" longname="Isle of Wight" type="Major" tokens="4">
+		<Home hex="I3"/>
+	</Company>
+	<Company name="IWNJ" longname="Isle of Wight, Newport Junction" type="Major" tokens="3">
+		<Home hex="G7"/>
+	</Company>
+	<Company name="FYN" longname="Freshwater, Yarmouth &amp; Newport" type="Major" tokens="3">
+		<Home hex="B4"/>
+	</Company>
+	<Company name="NGStL" longname="Newport, Godshill &amp; St. Lawrence" type="Major" tokens="2">
+		<Home hex="G9"/>
+	</Company>
+	<Company name="BHI&amp;R" longname="Brading Harbour Improvement &amp; Railway" type="Major" tokens="2">
+		<Home hex="L6"/>
+	</Company>
+	<Company name="S&amp;C" longname="Shanklin &amp; Chale" type="Major" tokens="2">
+		<Home hex="F12"/>
+	</Company>
+	<Company name="VYSC" longname="Ventor, Yarmouth &amp; South Coast" type="Major" tokens="2">
+		<Home hex="E9"/>
+	</Company>
+</CompanyManager>
