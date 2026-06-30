@@ -15,11 +15,13 @@
         <Station id="city1" position="0" slots="2" type="OffMapCity"/>
         <Track from="city1" gauge="normal" to="side2"/>
     </Tile>
+
     <Tile colour="red" id="-1922" name="OM2Slot-2">
         <Station id="city1" position="0" slots="2" type="OffMapCity"/>
         <Track from="city1" gauge="normal" to="side1"/>
         <Track from="city1" gauge="normal" to="side2"/>
     </Tile>
+    
     <Tile colour="red" id="-4001" name="Port-1">
         <Station id="city1" position="0" type="OffMapCity"/>
         <Track from="city1" gauge="normal" to="side2"/>

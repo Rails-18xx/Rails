@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<GameOptions>
+	<GameOption name="Variant" values="Standard" default="Standard"/>
+	<GameOption name="RouteAlgorithm" values="Permissive" default="Permissive"/>
+</GameOptions>

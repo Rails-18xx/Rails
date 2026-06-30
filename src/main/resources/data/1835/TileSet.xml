@@ -1,70 +1,70 @@
-<TileManager	tiles="Tiles.xml">
+<TileManager tiles="Tiles.xml">
 	<!-- Preprinted tiles -->
 	<Tile id="0"><!-- Empty space -->
-		<Upgrade id="7,8,9"/>
+		<Upgrade id="7,8,9" />
 	</Tile>
 	<Tile id="-1"><!-- 1 town -->
-		<Upgrade id="3,4,58"/>
+		<Upgrade id="3,4,58" />
 	</Tile>
 	<Tile id="-2"><!-- 2 towns -->
-		<Upgrade id="1,2,55,56,69"/>
+		<Upgrade id="1,2,55,56,69" />
 	</Tile>
-	<Tile id="-3"/>
-	<Tile id="-7"/>
-	<Tile id="-8"/>
+	<Tile id="-3" />
+	<Tile id="-7" />
+	<Tile id="-8" />
 	<Tile id="-10"><!-- 1 city -->
-		<Upgrade id="5,6,57"/>
+		<Upgrade id="5,6,57" />
 	</Tile>
-	<Tile id="-39"/>
-	<Tile id="-41"/>
-	<Tile id="-58"/>
-	<Tile id="-114"/>
-	<Tile id="-143"/>
-	<Tile id="-800"/>
-	<Tile id="-801"/>
-	<Tile id="-802"/>
+	<Tile id="-39" />
+	<Tile id="-41" />
+	<Tile id="-58" />
+	<Tile id="-114" />
+	<Tile id="-143" />
+	<Tile id="-800" />
+	<Tile id="-801" />
+	<Tile id="-802" />
 	<Tile id="-803"><!--Hamburg-->
-		<Upgrade id="221"/>
+		<Upgrade id="221" />
 	</Tile>
-	<Tile id="-804"/>
-	<Tile id="-805"/>
+	<Tile id="-804" />
+	<Tile id="-805" />
 	<Tile id="-806"><!--Berlin-->
-		<Upgrade id="209"/>
+		<Upgrade id="209" />
 	</Tile>
 	<Tile id="-807" relayBaseTokens="yes"><!--XX-->
-		<Upgrade id="210,211,212,213,214,215"/>
+		<Upgrade id="210,211,212,213,214,215" />
 	</Tile>
-	<Tile id="-808"/>
+	<Tile id="-808" />
 	<Tile id="-809"><!--Frankfurt (Y)-->
-		<Upgrade id="216"/>
+		<Upgrade id="216" />
 	</Tile>
 	<Tile id="-810"><!-- Nuernberg -->
-		<Upgrade id="218"/>
+		<Upgrade id="218" />
 	</Tile>
-	<Tile id="-901"/>
-	<Tile id="-901_1835"/>
-	<Tile id="-901_18352"/>
+	<Tile id="-901" />
+	<Tile id="-901_1835" />
+	<Tile id="-901_18352" />
 	<Tile id="-3007">
-        <Upgrade id="201,202"/>
+		<Upgrade id="201,202" />
 	</Tile>
-	
+
 	<!-- yellow tiles -->
 	<Tile id="1" quantity="1">
-        <Upgrade id="88"/>
-    </Tile>
+		<Upgrade id="88" />
+	</Tile>
 	<Tile id="2" quantity="1">
-        <Upgrade id="87"/>
-    </Tile>
+		<Upgrade id="87" />
+	</Tile>
 	<Tile id="3" quantity="2">
-        <Upgrade id="87,88,204"/>
-    </Tile>
+		<Upgrade id="87,88,204" />
+	</Tile>
 	<Tile id="4" quantity="3">
-        <Upgrade id="87,88,204"/>
-    </Tile>
-	<Tile id="5" quantity="3" >
+		<Upgrade id="87,88,204" />
+	</Tile>
+	<Tile id="5" quantity="3">
 		<Upgrade id="12,14,15,205,206" />
 	</Tile>
-	<Tile id="6" quantity="3" >
+	<Tile id="6" quantity="3">
 		<Upgrade id="12,13,14,15,205,206" />
 	</Tile>
 	<Tile id="7" quantity="8">
@@ -77,20 +77,20 @@
 		<Upgrade id="18,19,20,23,24,26,27" />
 	</Tile>
 	<Tile id="55" quantity="1">
-        <Upgrade id="88"/>
-    </Tile>
+		<Upgrade id="88" />
+	</Tile>
 	<Tile id="56" quantity="1">
-        <Upgrade id="87"/>
-    </Tile>
+		<Upgrade id="87" />
+	</Tile>
 	<Tile id="57" quantity="2">
 		<Upgrade id="14,15,205,206" />
 	</Tile>
 	<Tile id="58" quantity="4">
-        <Upgrade id="87,88,203,204"/>
-    </Tile>
+		<Upgrade id="87,88,203,204" />
+	</Tile>
 	<Tile id="69" quantity="2">
-        <Upgrade id="204"/>
-    </Tile>
+		<Upgrade id="204" />
+	</Tile>
 	<Tile id="201" quantity="2">
 		<Upgrade id="207,208" />
 	</Tile>
@@ -105,8 +105,8 @@
 	<Tile id="13" quantity="2">
 		<Upgrade id="63" />
 	</Tile>
-	<Tile id="14" quantity="2"/>
-	<Tile id="15" quantity="2"/>
+	<Tile id="14" quantity="2" />
+	<Tile id="15" quantity="2" />
 	<Tile id="16" quantity="2">
 		<Upgrade id="43,70" />
 	</Tile>
@@ -126,7 +126,7 @@
 		<Upgrade id="42,43,46,47" />
 	</Tile>
 	<Tile id="25" quantity="3">
-		<Upgrade id="40,45,46"/>
+		<Upgrade id="40,45,46" />
 	</Tile>
 	<Tile id="26" quantity="2">
 		<Upgrade id="42,44,45" />
@@ -160,23 +160,23 @@
 		<Upgrade id="220" />
 	</Tile>
 	<Tile id="210" quantity="1">
-        <Upgrade id="217"/>
-    </Tile>
+		<Upgrade id="217" />
+	</Tile>
 	<Tile id="211" quantity="1">
-        <Upgrade id="217"/>
-    </Tile>
+		<Upgrade id="217" />
+	</Tile>
 	<Tile id="212" quantity="1">
-        <Upgrade id="218"/>
-    </Tile>
+		<Upgrade id="218" />
+	</Tile>
 	<Tile id="213" quantity="1">
-        <Upgrade id="219"/>
-    </Tile>
+		<Upgrade id="219" />
+	</Tile>
 	<Tile id="214" quantity="1">
-        <Upgrade id="219"/>
-    </Tile>
+		<Upgrade id="219" />
+	</Tile>
 	<Tile id="215" quantity="1">
-        <Upgrade id="218"/>
-    </Tile>
+		<Upgrade id="218" />
+	</Tile>
 
 	<!-- Brown tiles -->
 	<Tile id="39" quantity="1" />
@@ -195,15 +195,42 @@
 	<Tile id="218" quantity="2" />
 	<Tile id="219" quantity="2" />
 	<Tile id="220" quantity="1" />
-	<Tile id="221" quantity="1"  orientation="0">
-		<RevenueBonus value="-10" name="Elbe"> <Vertex id="0"/> <Vertex id="2"/> </RevenueBonus>
-		<RevenueBonus value="-10" name="Elbe"> <Vertex id="0"/> <Vertex id="3"/> </RevenueBonus>
-		<RevenueBonus value="-10" name="Elbe"> <Vertex id="0"/> <Vertex id="4"/> </RevenueBonus>
-		<RevenueBonus value="-10" name="Elbe"> <Vertex id="1"/> <Vertex id="2"/> </RevenueBonus>
-		<RevenueBonus value="-10" name="Elbe"> <Vertex id="1"/> <Vertex id="3"/> </RevenueBonus>
-		<RevenueBonus value="-10" name="Elbe"> <Vertex id="1"/> <Vertex id="4"/> </RevenueBonus>
-		<RevenueBonus value="-10" name="Elbe"> <Vertex id="5"/> <Vertex id="2"/> </RevenueBonus>
-		<RevenueBonus value="-10" name="Elbe"> <Vertex id="5"/> <Vertex id="3"/> </RevenueBonus>
-		<RevenueBonus value="-10" name="Elbe"> <Vertex id="5"/> <Vertex id="4"/> </RevenueBonus>
+	<Tile id="221" quantity="1" orientation="0">
+		<RevenueBonus value="-10" name="Elbe">
+			<Vertex id="0" />
+			<Vertex id="2" />
+		</RevenueBonus>
+		<RevenueBonus value="-10" name="Elbe">
+			<Vertex id="0" />
+			<Vertex id="3" />
+		</RevenueBonus>
+		<RevenueBonus value="-10" name="Elbe">
+			<Vertex id="0" />
+			<Vertex id="4" />
+		</RevenueBonus>
+		<RevenueBonus value="-10" name="Elbe">
+			<Vertex id="1" />
+			<Vertex id="2" />
+		</RevenueBonus>
+		<RevenueBonus value="-10" name="Elbe">
+			<Vertex id="1" />
+			<Vertex id="3" />
+		</RevenueBonus>
+		<RevenueBonus value="-10" name="Elbe">
+			<Vertex id="1" />
+			<Vertex id="4" />
+		</RevenueBonus>
+		<RevenueBonus value="-10" name="Elbe">
+			<Vertex id="5" />
+			<Vertex id="2" />
+		</RevenueBonus>
+		<RevenueBonus value="-10" name="Elbe">
+			<Vertex id="5" />
+			<Vertex id="3" />
+		</RevenueBonus>
+		<RevenueBonus value="-10" name="Elbe">
+			<Vertex id="5" />
+			<Vertex id="4" />
+		</RevenueBonus>
 	</Tile>
 </TileManager>

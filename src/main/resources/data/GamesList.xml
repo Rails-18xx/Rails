@@ -12,6 +12,13 @@
         <i>All rights reserved by the respective owners of the original games.</i><br>
         <i>No challenge to the original author's or publisher's rights, licensing, or status is intended.</i>
     </html>]]></Credits>
+    
+      <Game name="1846">
+        <Description><![CDATA[<html>
+            ripped from 18xx - trial version
+        </html>]]></Description>
+        <Players min="2" max="5"/>
+    </Game>
 
     <Game name="1817">
         <Description><![CDATA[<html>

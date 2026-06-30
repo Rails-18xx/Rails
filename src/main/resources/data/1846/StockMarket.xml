@@ -1,62 +1,43 @@
+<?xml version="1.0" ?>
 <StockMarket type="linear">
-	<!-- Note two supported colour specification formats:
-		RGB decimal with commas and RGB hexadecimal without commas -->
-	<StockSpaceType name="red" colour="255,255,0">
-	</StockSpaceType>  
-  <StockSpace name="Closed" price="0" type="red">
-  <ClosesCompany/>
-  </StockSpace>
-  <StockSpace name="A1" price="10"/>
-  <StockSpace name="B1" price="20"/>
-  <StockSpace name="C1" price="30"/>
-  <StockSpace name="E1" price="40">
-  		<StartSpace />
-  </StockSpace>
-  <StockSpace name="F1" price="50">
-  		<StartSpace />
-  </StockSpace>
-  <StockSpace name="G1" price="60">
-  		<StartSpace />
-  </StockSpace>
-  <StockSpace name="H1" price="70">
-  		<StartSpace />
-  </StockSpace>
-  <StockSpace name="I1" price="80">
-  		<StartSpace />
-  </StockSpace>
-  <StockSpace name="J1" price="90">
-  		<StartSpace />
-  </StockSpace>
-  <StockSpace name="K1" price="100">
-  		<StartSpace />
-  </StockSpace>
-  <StockSpace name="L1" price="112">
-  		<StartSpace />
-  </StockSpace>
-  <StockSpace name="M1" price="124">
-  		<StartSpace />
-  </StockSpace>
-  <StockSpace name="N1" price="137">
-  		<StartSpace />
-  </StockSpace>
-  <StockSpace name="O1" price="150">
-  		<StartSpace />
-  </StockSpace>
-  <StockSpace name="P1" price="165"/>
-  <StockSpace name="Q1" price="180"/>
-  <StockSpace name="R1" price="195"/>
-  <StockSpace name="S1" price="212"/>
-  <StockSpace name="T1" price="230"/>
-  <StockSpace name="U1" price="250"/>
-  <StockSpace name="V1" price="270"/>
-  <StockSpace name="W1" price="295"/>
-  <StockSpace name="X1" price="320"/>
-  <StockSpace name="Y1" price="345"/>
-  <StockSpace name="Z1" price="375"/>
-  <StockSpace name="AA1" price="405"/>
-  <StockSpace name="AB1" price="440"/>
-  <StockSpace name="AC1" price="475"/>
-  <StockSpace name="AD1" price="510"/>
-  <StockSpace name="AE1" price="560"/>
-  </StockSpace>
+	<StockSpaceType name="normal" colour="255,255,255"/>
+	<StockSpaceType name="bottom_tier" colour="255,235,204"/>
+	<StockSpaceType name="end_game" colour="204,255,204"/>
+	<StockSpaceType name="liquidation" colour="204,51,51">
+		<NoHoldLimit/>
+	</StockSpaceType>
+	<StockSpaceType name="acquisition" colour="153,153,153">
+		<NoHoldLimit/>
+	</StockSpaceType>
+	<StockSpace name="A1" price="0" type="liquidation"/>
+	<StockSpace name="A2" price="10" type="normal"/>
+	<StockSpace name="A3" price="20" type="normal"/>
+	<StockSpace name="A4" price="30" type="normal"/>
+	<StockSpace name="A5" price="40" type="normal"/>
+	<StockSpace name="A6" price="50" type="normal"/>
+	<StockSpace name="A7" price="60" type="normal"/>
+	<StockSpace name="A8" price="70" type="normal"/>
+	<StockSpace name="A9" price="80" type="normal"/>
+	<StockSpace name="A10" price="90" type="normal"/>
+	<StockSpace name="A11" price="100" type="normal"/>
+	<StockSpace name="A12" price="112" type="normal"/>
+	<StockSpace name="A13" price="124" type="normal"/>
+	<StockSpace name="A14" price="137" type="normal"/>
+	<StockSpace name="A15" price="150" type="normal"/>
+	<StockSpace name="A16" price="165" type="normal"/>
+	<StockSpace name="A17" price="180" type="normal"/>
+	<StockSpace name="A18" price="195" type="normal"/>
+	<StockSpace name="A19" price="212" type="normal"/>
+	<StockSpace name="A20" price="230" type="normal"/>
+	<StockSpace name="A21" price="250" type="normal"/>
+	<StockSpace name="A22" price="270" type="normal"/>
+	<StockSpace name="A23" price="295" type="normal"/>
+	<StockSpace name="A24" price="320" type="normal"/>
+	<StockSpace name="A25" price="345" type="normal"/>
+	<StockSpace name="A26" price="375" type="normal"/>
+	<StockSpace name="A27" price="405" type="normal"/>
+	<StockSpace name="A28" price="440" type="normal"/>
+	<StockSpace name="A29" price="475" type="normal"/>
+	<StockSpace name="A30" price="510" type="normal"/>
+	<StockSpace name="A31" price="550" type="normal"/>
 </StockMarket>
