@@ -802,16 +802,18 @@ public class StockRound extends Round implements I_MapRenderableRound {
             for (int certSize : participationsToSell.keySet()) {
                 int certCount = participationsToSell.get(certSize);
 
-                // If you can dump a presidency, you add the shareNumbers of the presidency
-                // to the single shares to be sold
-                // (this is not for 1835 where certs may not be split; that is handled below)
+                // Always allow the president's share to be factored into the sellable count
+                // of ordinary shares during a dump. Rule IV.3 mandates exchanging the
+                // president's cert for ordinary shares, effectively "splitting" it for the
+                // transaction.
+                if (dumpIsPossible && certSize == 1
+                        && certCount + presidentSize >= dumpThreshold) {
+                    certCount += presidentSize;
+                    // but limit this to the pool
+                    certCount = Math.min(certCount, poolAllowsShares);
+                }
+
                 if (certificateSplitAllowed) {
-                    if (dumpIsPossible && certSize == 1
-                            && certCount + presidentSize >= dumpThreshold) {
-                        certCount += presidentSize;
-                        // but limit this to the pool
-                        certCount = Math.min(certCount, poolAllowsShares);
-                    }
 
                     if (certCount == 0) {
                         continue;
