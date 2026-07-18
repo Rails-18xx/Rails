@@ -1583,29 +1583,33 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         String timeText = "00:00:00";
         Color color = Color.BLACK;
 
-        Player p = gameUIManager.getCurrentPlayer();
-        if (p != null) {
-            int val = gameUIManager.getDisplayedTime(p);
-            int absVal = Math.abs(val);
-            timeText = String.format("%s: %s%02d:%02d",
-                    p.getName(),
-                    (val < 0 ? "-" : ""),
-                    absVal / 60,
-                    absVal % 60);
-            if (val < 0)
-                color = SYS_RED;
+        if (gameUIManager.getGameManager().isGamePaused() || gameUIManager.isTimerPaused()) {
+            timeText = "PAUSE";
+            color = Color.YELLOW;
         } else {
-            net.sf.rails.game.GameManager gm = gameUIManager.getGameManager();
-            gm.incrementTotalGameTime();
-            timeText = gm.getFormattedGameTime();
+            Player p = gameUIManager.getCurrentPlayer();
+            if (p != null) {
+                int val = gameUIManager.getDisplayedTime(p);
+                int absVal = Math.abs(val);
+                timeText = String.format("%s: %s%02d:%02d",
+                        p.getName(),
+                        (val < 0 ? "-" : ""),
+                        absVal / 60,
+                        absVal % 60);
+                if (val < 0) {
+                    color = SYS_RED;
+                }
+            } else {
+                net.sf.rails.game.GameManager gm = gameUIManager.getGameManager();
+                gm.incrementTotalGameTime();
+                timeText = gm.getFormattedGameTime();
+            }
         }
 
-        // Independent background timer glass pane visibility checks have been stripped
-        // to prevent layout loops.
-
-        // Glass pane visibility is strictly managed by GameUIManager.applyEngineMode()
-        // now.
-        // Local overrides have been removed to prevent state fighting and desyncs.
+        if (gameTimeLabel != null) {
+            gameTimeLabel.setText(timeText);
+            gameTimeLabel.setForeground(color);
+        }
 
         if (pauseButton != null) {
             if (gameUIManager.isTimerPaused()) {
