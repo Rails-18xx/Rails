@@ -16,7 +16,7 @@
 	<Hex name="C15" tile="0"/>
 	<Hex name="C17" tile="0"/>
 	<Hex name="C19" tile="0"/>
-	<Hex name="C21" tile="-901" orientation="2" value="20,30,40" city="Ostpreu&#223;en"/>
+	<Hex name="C21" tile="-901" orientation="2" value="re,20,40" city="Ostpreu&#223;en"/>
 	<Hex name="D4" tile="-8"/>
 	<Hex name="D6" tile="-805" city="Oldenburg"/>
 	<Hex name="D8" tile="-10" cost="50" terrain="River" city="Bremen"/>

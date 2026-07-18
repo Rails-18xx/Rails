@@ -392,14 +392,14 @@ public class OperatingRound_1835 extends OperatingRound {
         ReportBuffer.add(this, " ");
         ReportBuffer.add(this, LocalText.getText("EndOfOperatingRound", thisOrNumber));
 
-        int orWorthIncrease;
-        for (Player player : getRoot().getPlayerManager().getPlayers()) {
-            player.setLastORWorthIncrease();
-            orWorthIncrease = player.getLastORWorthIncrease().value();
-            ReportBuffer.add(this, LocalText.getText("ORWorthIncrease",
-                    player.getId(), thisOrNumber,
-                    Bank.format(this, orWorthIncrease)));
-        }
+        // int orWorthIncrease;
+        // for (Player player : getRoot().getPlayerManager().getPlayers()) {
+        //     player.setLastORWorthIncrease();
+        //     orWorthIncrease = player.getLastORWorthIncrease().value();
+        //     ReportBuffer.add(this, LocalText.getText("ORWorthIncrease",
+        //             player.getId(), thisOrNumber,
+        //             Bank.format(this, orWorthIncrease)));
+        // }
 
         if (pfrTriggeredThisOR.value()) {
             ((GameManager_1835) gameManager).setPfrDeclined();
