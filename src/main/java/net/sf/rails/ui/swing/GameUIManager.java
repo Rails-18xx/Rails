@@ -2792,7 +2792,7 @@ public void applyEngineMode(GameManager.EngineMode mode) {
 
             case PAUSE:
                 // log.info("[GLASS PANE TRACE] applyEngineMode(PAUSE) - Enabling pause overlays. Caller Context:" + callStack);
-                
+              // Explicitly instantiate and force the PauseOverlay on both root panes
                 statusWindow.getRootPane().setGlassPane(statusWindow.new PauseOverlay());
                 statusWindow.getRootPane().getGlassPane().setVisible(true);
                 
@@ -2805,7 +2805,7 @@ public void applyEngineMode(GameManager.EngineMode mode) {
 
             case HELP:
                 // log.info("[GLASS PANE TRACE] applyEngineMode(HELP) - Enabling help overlays. Caller Context:" + callStack);
-                
+                // Explicitly instantiate and force the Help overlay pane on both windows
                 net.sf.rails.ui.swing.help.HelpOverlayGlassPane statusHelpPane = new net.sf.rails.ui.swing.help.HelpOverlayGlassPane();
                 statusWindow.getRootPane().setGlassPane(statusHelpPane);
                 

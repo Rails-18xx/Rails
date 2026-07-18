@@ -780,12 +780,13 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
     }
 
     // --- PINPOINT CHANGE: Replace the existing setCorrectionMenu method ---
-   public void setCorrectionMenu() {
+    public void setCorrectionMenu() {
         // Reset the menu
         correctionMenu.removeAll();
         correctionMenu.setEnabled(true);
 
-        // Iterate over ALL defined CorrectionTypes to build the menu dynamically as one-shot actions
+        // Iterate over ALL defined CorrectionTypes to build the menu dynamically as
+        // one-shot actions
         for (CorrectionType type : CorrectionType.values()) {
 
             // Create a one-shot action instead of a persistent toggle mode
@@ -794,7 +795,8 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
                     type,
                     true); // Explicitly flag as true/active for immediate execution phase
 
-            // Use ActionMenuItem instead of ActionCheckBoxMenuItem to remove ticks completely
+            // Use ActionMenuItem instead of ActionCheckBoxMenuItem to remove ticks
+            // completely
             ActionMenuItem item = new ActionMenuItem(LocalText.getText(type.name()));
             item.addActionListener(this);
             item.setPossibleAction(oneShotAction);
@@ -843,7 +845,7 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             disableCheckBoxMenuItem(MARKET_CMD);
         }
 
-     // Initialize Cash and Train actions as one-shot menu options.
+        // Initialize Cash and Train actions as one-shot menu options.
         // Stripped out all persistent mode override tracking.
         gameStatus.initCashCorrectionActions();
         gameStatus.initTrainCorrectionActions();
@@ -900,24 +902,9 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
 
         // ++ ADD PAUSE BUTTON HANDLING ++
         if (command.equals(TOGGLE_PAUSE_CMD)) {
-            // 1. Sync engine timer processing state
-            gameUIManager.getGameManager().togglePauseMode();
 
-            // 2. Control overlay visibility based on state
-            if (gameUIManager.isTimerPaused()) {
-                gameUIManager.resumeTimer();
-                this.visualPauseActive = false;
-                if (getGlassPane() instanceof PauseOverlay) {
-                    getGlassPane().setVisible(false);
-                }
-            } else {
-                gameUIManager.pauseTimer();
-                this.visualPauseActive = true;
-                if (!(getGlassPane() instanceof PauseOverlay)) {
-                    setGlassPane(new PauseOverlay());
-                }
-                getGlassPane().setVisible(true);
-            }
+            // Delegate all pause logic to the central GameManager to avoid desyncs
+            gameUIManager.getGameManager().togglePauseMode();
 
         } else if (command.equals(BUY_CMD)) {
             process(executedAction);
@@ -1044,13 +1031,8 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
             showActionRunner();
         } else if (command.equals("HelpWindowCmd")) {
 
-
             System.out.println("[HELP LOG] HelpWindowCmd button pressed.");
             gameUIManager.getGameManager().toggleHelpMode();
-            
-            // Delegate all structural view toggles directly to the central switchboard manager
-            gameUIManager.applyEngineMode(gameUIManager.getGameManager().getEngineMode());
-          
 
         } else if (command.equals(REM_TILES_CMD) || command.equals(ORPanel.REM_TILES_CMD)) {
 
@@ -1594,74 +1576,72 @@ public class StatusWindow extends JFrame implements ActionListener, ActionPerfor
         }
     }
 
+    private void refreshTimeLabel() {
+        if (gameUIManager == null || gameUIManager.getGameManager() == null)
+            return;
 
-private void refreshTimeLabel() {
-    if (gameUIManager == null || gameUIManager.getGameManager() == null)
-        return;
+        String timeText = "00:00:00";
+        Color color = Color.BLACK;
 
-    String timeText = "00:00:00";
-    Color color = Color.BLACK;
-
-    Player p = gameUIManager.getCurrentPlayer();
-    if (p != null) {
-        int val = gameUIManager.getDisplayedTime(p);
-        int absVal = Math.abs(val);
-        timeText = String.format("%s: %s%02d:%02d",
-                p.getName(),
-                (val < 0 ? "-" : ""),
-                absVal / 60,
-                absVal % 60);
-        if (val < 0)
-            color = SYS_RED;
-    } else {
-        net.sf.rails.game.GameManager gm = gameUIManager.getGameManager();
-        gm.incrementTotalGameTime();
-        timeText = gm.getFormattedGameTime();
-    }
-
-    // Independent background timer glass pane visibility checks have been stripped to prevent layout loops.
-// Ensure the glass pane visibility mirrors our explicit user flag, not background engine states
-    if (getGlassPane() instanceof PauseOverlay) {
-        if (getGlassPane().isVisible() != this.visualPauseActive) {
-            getGlassPane().setVisible(this.visualPauseActive);
-        }
-    }
-
-    if (pauseButton != null) {
-        if (gameUIManager.isTimerPaused()) {
-            if (!"Resume".equals(pauseButton.getText())) {
-                pauseButton.setText("Resume");
-                pauseButton.setBackground(Color.YELLOW);
-                pauseButton.setForeground(Color.BLACK);
-            }
+        Player p = gameUIManager.getCurrentPlayer();
+        if (p != null) {
+            int val = gameUIManager.getDisplayedTime(p);
+            int absVal = Math.abs(val);
+            timeText = String.format("%s: %s%02d:%02d",
+                    p.getName(),
+                    (val < 0 ? "-" : ""),
+                    absVal / 60,
+                    absVal % 60);
+            if (val < 0)
+                color = SYS_RED;
         } else {
-            if (!"Pause".equals(pauseButton.getText())) {
-                pauseButton.setText("Pause");
-                pauseButton.setBackground(UIManager.getColor("Button.background"));
-                pauseButton.setForeground(Color.BLACK);
+            net.sf.rails.game.GameManager gm = gameUIManager.getGameManager();
+            gm.incrementTotalGameTime();
+            timeText = gm.getFormattedGameTime();
+        }
+
+        // Independent background timer glass pane visibility checks have been stripped
+        // to prevent layout loops.
+
+        // Glass pane visibility is strictly managed by GameUIManager.applyEngineMode()
+        // now.
+        // Local overrides have been removed to prevent state fighting and desyncs.
+
+        if (pauseButton != null) {
+            if (gameUIManager.isTimerPaused()) {
+                if (!"Resume".equals(pauseButton.getText())) {
+                    pauseButton.setText("Resume");
+                    pauseButton.setBackground(Color.YELLOW);
+                    pauseButton.setForeground(Color.BLACK);
+                }
+            } else {
+                if (!"Pause".equals(pauseButton.getText())) {
+                    pauseButton.setText("Pause");
+                    pauseButton.setBackground(UIManager.getColor("Button.background"));
+                    pauseButton.setForeground(Color.BLACK);
+                }
+            }
+        }
+
+        // Coordinated dynamic text modification for the Help toggle button
+        if (helpButton != null) {
+            boolean isHelpActive = (gameUIManager.getGameManager()
+                    .getEngineMode() == net.sf.rails.game.GameManager.EngineMode.HELP);
+            if (isHelpActive) {
+                if (!"Play".equals(helpButton.getText())) {
+                    helpButton.setText("Play");
+                    helpButton.setBackground(Color.YELLOW);
+                    helpButton.setForeground(Color.BLACK);
+                }
+            } else {
+                if (!"Help".equals(helpButton.getText())) {
+                    helpButton.setText("Help");
+                    helpButton.setBackground(UIManager.getColor("Button.background"));
+                    helpButton.setForeground(Color.BLACK);
+                }
             }
         }
     }
-
-    // Coordinated dynamic text modification for the Help toggle button
-    if (helpButton != null) {
-        boolean isHelpActive = (gameUIManager.getGameManager().getEngineMode() == net.sf.rails.game.GameManager.EngineMode.HELP);
-        if (isHelpActive) {
-            if (!"Play".equals(helpButton.getText())) {
-                helpButton.setText("Play");
-                helpButton.setBackground(Color.YELLOW);
-                helpButton.setForeground(Color.BLACK);
-            }
-        } else {
-            if (!"Help".equals(helpButton.getText())) {
-                helpButton.setText("Help");
-                helpButton.setBackground(UIManager.getColor("Button.background"));
-                helpButton.setForeground(Color.BLACK);
-            }
-        }
-    }
-}
-
 
     private String currentMetadata = "";
 
@@ -1793,8 +1773,6 @@ private void refreshTimeLabel() {
                 if (gameStatus != null) {
                     gameStatus.recreate();
                 }
-
-                
 
                 // Re-apply the current scaled font to the newly created buttons
                 updateFonts(this.currentBaseFontSize);
@@ -2829,9 +2807,7 @@ private void refreshTimeLabel() {
             ra.initRevenueCalculator(true);
             int revenueValue = ra.calculateRevenue();
 
-            
-                ra.drawOptimalRunAsPath(gameUIManager.getORUIManager().getMap());
-            
+            ra.drawOptimalRunAsPath(gameUIManager.getORUIManager().getMap());
 
             JOptionPane.showMessageDialog(this,
                     LocalText.getText("NetworkInfoDialogMessage", company.getId(),
@@ -2891,7 +2867,7 @@ private void refreshTimeLabel() {
 
             card.setToolTipText("<html><b>Click to " + actionName + "</b><br>" + company.getId() + "</html>");
             card.repaint();
-        }  
+        }
     }
 
     private net.sf.rails.ui.swing.elements.RailCard findRailCardRecursive(Container parent,
@@ -3009,7 +2985,7 @@ private void refreshTimeLabel() {
             card.addActionListener(this);
             card.setToolTipText("<html><b>Click to " + actionName + "</b><br>" + company.getId() + "</html>");
             card.repaint();
-        } 
+        }
     }
 
     /**
@@ -3303,18 +3279,29 @@ private void refreshTimeLabel() {
             }).start();
         }
     }
-// --- START FIX ---
+
     /**
      * A translucent overlay to display a massive "GAME PAUSED" text across the
-     * entire window, while clipping out the Pause button to keep it cleanly in front.
+     * entire window, while clipping out the Pause button to keep it cleanly in
+     * front.
      */
     public class PauseOverlay extends JComponent {
         private static final long serialVersionUID = 1L;
 
         @Override
         public boolean contains(int x, int y) {
-            // CRITICAL: Let all mouse clicks pass through so the user can still click "Resume"
-            return false;
+            // CRITICAL: Let all mouse clicks pass through so the user can still click
+            // "Resume"
+            if (pauseButton != null && pauseButton.isShowing()
+                    && SwingUtilities.windowForComponent(this) == SwingUtilities.windowForComponent(pauseButton)) {
+                Point pBounds = SwingUtilities.convertPoint(pauseButton.getParent(), pauseButton.getLocation(), this);
+                Rectangle buttonArea = new Rectangle(pBounds.x, pBounds.y, pauseButton.getWidth(),
+                        pauseButton.getHeight());
+                if (buttonArea.contains(x, y)) {
+                    return false; // Pass through to the button
+                }
+            }
+            return true; // Block everything else
         }
 
         @Override
@@ -3322,12 +3309,15 @@ private void refreshTimeLabel() {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g.create();
 
-            // 1. Compute the visual cutout for the pause button
-            if (pauseButton != null && pauseButton.isShowing()) {
+            // 1. Compute the visual cutout for the pause button (ensure we are in the
+            // correct window)
+            if (pauseButton != null && pauseButton.isShowing()
+                    && SwingUtilities.windowForComponent(this) == SwingUtilities.windowForComponent(pauseButton)) {
                 Point pBounds = SwingUtilities.convertPoint(pauseButton.getParent(), pauseButton.getLocation(), this);
                 Rectangle totalArea = new Rectangle(0, 0, getWidth(), getHeight());
-                Rectangle buttonArea = new Rectangle(pBounds.x, pBounds.y, pauseButton.getWidth(), pauseButton.getHeight());
-                
+                Rectangle buttonArea = new Rectangle(pBounds.x, pBounds.y, pauseButton.getWidth(),
+                        pauseButton.getHeight());
+
                 // Subtract button area from total window area to punch a clean hole
                 java.awt.geom.Area overlayArea = new java.awt.geom.Area(totalArea);
                 overlayArea.subtract(new java.awt.geom.Area(buttonArea));
@@ -3360,7 +3350,7 @@ private void refreshTimeLabel() {
             g2d.dispose();
         }
     }
-// --- END FIX ---
+    // --- END FIX ---
 
     // We are modifying updateFontsFromConfig to treat the zoom value strictly as a
     // percentage integer (50-200)
