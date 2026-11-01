@@ -15,7 +15,7 @@
 			<!-- HomeBase lay options: "whenStarted", "whenFloated", "firstOR" (default) -->
 			<HomeBase lay="firstOR"/>
 			<!-- LayCost methods: only "sequence" (1830 style) implemented so far (default) -->
-			<LayCost method="sequence" cost="0,40,100"/>
+			<LayCost method="sequence" cost="0,40,60,80"/>
 		</BaseTokens>
 		<Shares unit="10">
 			<Certificate type="President" shares="2"/>
