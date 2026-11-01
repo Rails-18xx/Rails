@@ -69,7 +69,7 @@
 		<Info key="ComesWithCertificate" parm="B&amp;O,10"/>
 	</Company>
 	<Company name="CV" type="Private" basePrice="200" revenue="30"
-		longname="Cornelius Vanderbuil">
+		longname="Cornelius Vanderbilt">
 		<Info key="ComesWithPresidency" parm="random,20"/>
 		<Tradeable toCompany="no"/>
 	</Company>
@@ -77,7 +77,7 @@
 	<!-- Note two supported colour specification formats:
 	     RGB decimal with commas and RGB hexadecimal without commas -->
 	<Company name="C&amp;A" type="Public" tokens="2" fgColour="000000" bgColour="60E060"
-			longname="Camdon and Amboy">
+			longname="Camden and Amboy">
 		<FirstTrainCloses type="Private" name="random"/>
 		<Home hex="J6"/>
 	</Company>	     
