@@ -60,10 +60,10 @@
 		</Defaults>
 		<TrainType name="2" majorStops="2" cost="80" quantity="7">
 		</TrainType>
-		<TrainType name="3" majorStops="3" cost="180" quantity="5">
+		<TrainType name="3" majorStops="3" cost="180" quantity="6">
 			<NewPhase phaseName="3"/>
 		</TrainType>
-		<TrainType name="4" majorStops="4" cost="300" quantity="4">
+		<TrainType name="4" majorStops="4" cost="300" quantity="5">
             <NewPhase phaseName="4"/>
 		</TrainType>
 		<TrainType name="5" majorStops="5" cost="500" quantity="3">
@@ -72,7 +72,7 @@
 		<TrainType name="6" majorStops="6" cost="630" quantity="2">
             <NewPhase phaseName="6"/>
 		</TrainType>
-		<TrainType name="D" majorStops="99" quantity="6">
+		<TrainType name="D" majorStops="99" quantity="-1">
             <NewPhase phaseName="D"/>
 			<Attributes cost="900"/>
 			<Exchange cost="700"/>
