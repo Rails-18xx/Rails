@@ -76,38 +76,38 @@
 	
 	<!-- Note two supported colour specification formats:
 	     RGB decimal with commas and RGB hexadecimal without commas -->
-	<Company name="C&amp;A" type="Public" tokens="2" fgColour="000000" bgColour="60E060"
+	<Company name="C&amp;A" type="Public" tokens="2" fgColour="000000" bgColour="F68629"
 			longname="Camdon and Amboy">
 		<FirstTrainCloses type="Private" name="random"/>
 		<Home hex="J6"/>
 	</Company>	     
-	<Company name="B&amp;O" type="Public" tokens="3" fgColour="255,255,255" bgColour="0,0,255"
+	<Company name="B&amp;O" type="Public" tokens="3" fgColour="FFFFFF" bgColour="0B5590"
 			longname="Baltimore &amp; Ohio">
 		<FirstTrainCloses type="Private" name="random"/>
 		<Home hex="H6" city="1"/>
 	</Company>
-	<Company name="C&amp;O" type="Public" tokens="4" fgColour="000000" bgColour="A0E0FF"
+	<Company name="C&amp;O" type="Public" tokens="4" fgColour="000000" bgColour="A1DBEC"
 			longname="Chesapeake &amp; Ohio">
 		<FirstTrainCloses type="Private" name="random"/>
 		<Home hex="G13"/>
 	</Company>
-	<Company name="LV" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF0000"
+	<Company name="LV" type="Public" tokens="2" fgColour="000000" bgColour="FEEE45"
 			longname="Lehigh Valley Railroad">
 		<Home hex="J2"/>
 	</Company>
-	<Company name="PLE" type="Public" tokens="3" fgColour="000000" bgColour="FFFF00"
+	<Company name="PLE" type="Public" tokens="3" fgColour="FFFFFF" bgColour="000000"
 			longname="Pittsburgh and Lake Erie Railroad">
 		<Home hex="A3"/>
 	</Company>
-	<Company name="N&amp;W" type="Public" tokens="3" fgColour="FFFFFF" bgColour="000000"
+	<Company name="N&amp;W" type="Public" tokens="3" fgColour="FFFFFF" bgColour="6D0121"
 			longname="Norfolk and Western Railway">
 		<Home hex="C13"/>
 	</Company>
-	<Company name="SRR" type="Public" tokens="2" fgColour="000000" bgColour="FF8000"
+	<Company name="SRR" type="Public" tokens="2" fgColour="FFFFFF" bgColour="EF473A"
 			longname="Strasburg Rail Road">
 		<Home hex="H4"/>
 	</Company>
-	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="008000"
+	<Company name="PRR" type="Public" tokens="4" fgColour="FFFFFF" bgColour="009548"
 			longname="Pennsylvania Railroad">
 		<Home hex="F2"/>
 	</Company>
