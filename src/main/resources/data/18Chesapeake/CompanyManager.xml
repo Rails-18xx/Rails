@@ -78,17 +78,14 @@
 	     RGB decimal with commas and RGB hexadecimal without commas -->
 	<Company name="C&amp;A" type="Public" tokens="2" fgColour="000000" bgColour="60E060"
 			longname="Camdon and Amboy">
-		<FirstTrainCloses type="Private" name="random"/>
 		<Home hex="J6"/>
 	</Company>	     
 	<Company name="B&amp;O" type="Public" tokens="3" fgColour="255,255,255" bgColour="0,0,255"
 			longname="Baltimore &amp; Ohio">
-		<FirstTrainCloses type="Private" name="random"/>
 		<Home hex="H6" city="1"/>
 	</Company>
 	<Company name="C&amp;O" type="Public" tokens="4" fgColour="000000" bgColour="A0E0FF"
 			longname="Chesapeake &amp; Ohio">
-		<FirstTrainCloses type="Private" name="random"/>
 		<Home hex="G13"/>
 	</Company>
 	<Company name="LV" type="Public" tokens="2" fgColour="FFFFFF" bgColour="FF0000"
