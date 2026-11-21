@@ -4665,7 +4665,6 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /**
-
      * Returns the price of the cheapest train the company may buy from the bank
      * (IPO) or the pool, or Integer.MAX_VALUE if there is none.
      */
@@ -4686,6 +4685,9 @@ public class OperatingRound extends Round implements Observer {
             }
         }
         return cheapest;
+    }
+
+    /**
      * Must a company without trains buy one this turn? Only if it must own a
      * train and has a route, unless the game forces a buy even without a route
      * (EmergencyTrainBuying mustBuyTrainEvenIfNoRoute).
