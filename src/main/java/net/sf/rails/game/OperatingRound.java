@@ -4429,7 +4429,7 @@ public class OperatingRound extends Round implements Observer {
 
             if (hasBuyActions) {
                 boolean mustBuy = !operatingCompany.value().hasTrains() &&
-                        operatingCompany.value().mustOwnATrain();
+                        mustBuyTrainNow(operatingCompany.value());
                 if (!mustBuy) {
                     phaseAllowsDone = true;
                 }
@@ -4804,8 +4804,9 @@ public class OperatingRound extends Round implements Observer {
         boolean hasTrains = company.getPortfolioModel().getNumberOfTrains() > 0;
         boolean canBuyTrainNow = canBuyTrainNow();
 
-        // Forced Buy Condition: No trains AND company rules require ownership.
-        boolean mustBuyTrain = !hasTrains && company.mustOwnATrain();
+        // Forced Buy Condition: No trains, company rules require ownership,
+        // and the company has a route (unless the game forces a buy without one).
+        boolean mustBuyTrain = !hasTrains && mustBuyTrainNow(company);
 
         // Check Phase Restrictions (e.g. "One train per turn")
         boolean canBuyMoreTrains = Phase.getCurrent(this).canBuyMoreTrainsPerTurn();
@@ -4961,6 +4962,41 @@ public class OperatingRound extends Round implements Observer {
         } else {
             // Forced turn: Only allow Done if there are absolutely NO trains to buy
             doneAllowed.set(!buyOptionAvailable);
+        }
+    }
+
+    /**
+     * Must a company without trains buy one this turn? Only if it must own a
+     * train and has a route, unless the game forces a buy even without a route
+     * (EmergencyTrainBuying mustBuyTrainEvenIfNoRoute).
+     */
+    protected boolean mustBuyTrainNow(PublicCompany company) {
+        if (!company.mustOwnATrain())
+            return false;
+        if (GameDef.getParmAsBoolean(this, GameDef.Parm.MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE))
+            return true;
+        return companyHasRoute(company);
+    }
+
+    /**
+     * Does the company have a route connecting at least two revenue locations?
+     * Checked by letting a virtual 2-train run from the company's stations.
+     * If the route cannot be determined, the company is assumed to have one.
+     */
+    protected boolean companyHasRoute(PublicCompany company) {
+        if (noMapMode)
+            return true;
+        try {
+            RevenueAdapter ra = RevenueAdapter.createRevenueAdapter(getRoot(), company,
+                    Phase.getCurrent(this), false);
+            ra.populateFromRails();
+            ra.getTrains().clear();
+            ra.addTrainByString("2");
+            ra.initRevenueCalculator(true);
+            return ra.calculateRevenue() > 0;
+        } catch (Exception e) {
+            log.warn("Could not determine route for {}, assuming it has one", company.getId(), e);
+            return true;
         }
     }
 
