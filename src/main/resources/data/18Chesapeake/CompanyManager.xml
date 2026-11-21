@@ -83,12 +83,10 @@
 	</Company>	     
 	<Company name="B&amp;O" type="Public" tokens="3" fgColour="FFFFFF" bgColour="0B5590"
 			longname="Baltimore &amp; Ohio">
-		<FirstTrainCloses type="Private" name="random"/>
 		<Home hex="H6" city="1"/>
 	</Company>
 	<Company name="C&amp;O" type="Public" tokens="4" fgColour="000000" bgColour="A1DBEC"
 			longname="Chesapeake &amp; Ohio">
-		<FirstTrainCloses type="Private" name="random"/>
 		<Home hex="G13"/>
 	</Company>
 	<Company name="LV" type="Public" tokens="2" fgColour="000000" bgColour="FEEE45"
