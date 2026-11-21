@@ -161,10 +161,6 @@ public class OperatingRound extends Round implements Observer {
         this.guiHints.setVisibilityHint(GuiDef.Panel.STATUS, true);
         this.guiHints.setActivePanel(GuiDef.Panel.MAP);
 
-        // --- Initialize the emergency train maps here ---
-        this.newEmergencyTrains = new TreeMap<>(); // *** ADD THIS LINE ***
-        this.usedEmergencyTrains = new TreeMap<>(); // *** ADD THIS LINE ***
-
         // Clear registry of items that could otherwise generate income twice per OR
         // Used by 1837
         gameManager.clearBlockedCertificates();
@@ -3596,246 +3592,6 @@ public class OperatingRound extends Round implements Observer {
         return false;
     }
 
-    protected SortedMap<Integer, Train> newEmergencyTrains;
-    protected SortedMap<Integer, Train> usedEmergencyTrains;
-
-    /**
-     * Helper to add a BuyTrain action if affordable and within limits.
-     * Handles adding to emergency lists if not affordable but might be needed.
-     */
-    // In OperatingRound.java
-
-    private void addBuyTrainOptionIfPossible(Train train, PortfolioModel from,
-            int companyCash, SpecialTrainBuy reducePrice,
-            boolean useReducedPrice, // Make sure this boolean is here
-            boolean canBuyTrainNow, boolean mustBuyTrain) {
-        int cost = train.getCost();
-        // Use the passed reducePrice if applicable
-        if (useReducedPrice && reducePrice != null) { // *** Check useReducedPrice flag ***
-            cost = reducePrice.getPrice(cost);
-        }
-
-        if (cost <= companyCash) { // Can the company afford it?
-            if (canBuyTrainNow) { // Is there room for it (non-exchange)?
-                BuyTrain action = new BuyTrain(train, train.getType(), from.getParent(), cost);
-                action.setForcedBuyIfHasRoute(mustBuyTrain); // Mark if mandatory
-                if (useReducedPrice && reducePrice != null) { // *** Check useReducedPrice flag ***
-                    action.setSpecialProperty(reducePrice);
-                }
-
-                // [REFACTOR] Set button label
-                String label = createTrainButtonLabel(train, from.getParent(), cost,
-                        (useReducedPrice ? reducePrice : null), false);
-                action.setButtonLabel(label);
-
-                possibleActions.add(action);
-            }
-            // else: Affordable, but at train limit. Ignore unless it's an exchange.
-        } else if (mustBuyTrain) {
-            // Cannot afford, but MUST buy. Add to potential emergency lists.
-            // Store the *potentially reduced* cost in the emergency list key
-            if (from == ipo) {
-                newEmergencyTrains.put(cost, train); // Store with potentially reduced cost
-            } else {
-                usedEmergencyTrains.put(cost, train); // Store with potentially reduced cost
-            }
-        }
-        // else: Cannot afford and not mandatory. Ignore.
-    }
-
-    /**
-     * Helper method to process the lists of potentially unaffordable trains
-     * (newEmergencyTrains, usedEmergencyTrains) when a train purchase is mandatory.
-     * It determines which emergency options (requiring president cash) should be
-     * added to the possibleActions list.
-     *
-     * @param companyCash     Current cash of the operating company.
-     * @param reducePrice     The SpecialTrainBuy property, if applicable (can be
-     *                        null).
-     * @param useReducedPrice True if the reduced price should be considered.
-     * @param useNormalPrice  True if the normal price should be considered.
-     * @param mustBuyTrain    True if buying a train is mandatory (should always be
-     *                        true when this method is called).
-     */
-    @Deprecated
-    private void addEmergencyOptionsToPossibleActions(int companyCash, SpecialTrainBuy reducePrice,
-            boolean useReducedPrice, boolean useNormalPrice,
-            boolean mustBuyTrain) {
-
-        // Combine trains from both emergency lists (new and used)
-        List<Train> emergencyCandidates = new ArrayList<>();
-        if (newEmergencyTrains != null && !newEmergencyTrains.isEmpty()) {
-            emergencyCandidates.addAll(newEmergencyTrains.values());
-        }
-        if (usedEmergencyTrains != null && !usedEmergencyTrains.isEmpty()) {
-            emergencyCandidates.addAll(usedEmergencyTrains.values());
-        }
-
-        if (emergencyCandidates.isEmpty()) {
-            // candidates found for company {}.",
-            // operatingCompany.value().getId());
-            return; // No options to add
-        }
-
-        // Check if the rules require buying only the cheapest option
-        if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN)) {
-            // Sort candidates by cost. Note: This simple sort doesn't account for
-            // reducedPrice yet.
-            // A more complex sort might be needed if reducedPrice applies differently to
-            // different trains.
-            emergencyCandidates.sort(Comparator.comparingInt(Train::getCost));
-
-            // Get the cheapest train overall
-            Train cheapestTrain = emergencyCandidates.get(0);
-
-            // Add the emergency action(s) for the cheapest train
-            if (useReducedPrice) {
-                // Add option using reduced price, passing 'true' for useReducedPrice flag
-                addEmergencyAction(cheapestTrain, companyCash, reducePrice, true, mustBuyTrain);
-            }
-            if (useNormalPrice) {
-                // Add option using normal price, passing 'false' for useReducedPrice flag
-                addEmergencyAction(cheapestTrain, companyCash, null, false, mustBuyTrain);
-            }
-        } else {
-            // Rules allow buying any available train, even in emergency
-            for (Train train : emergencyCandidates) {
-                // Add the emergency action(s) for each potential train
-                if (useReducedPrice) {
-                    // Add option using reduced price, passing 'true' for useReducedPrice flag
-                    addEmergencyAction(train, companyCash, reducePrice, true, mustBuyTrain);
-                }
-                if (useNormalPrice) {
-                    // Add option using normal price, passing 'false' for useReducedPrice flag
-                    addEmergencyAction(train, companyCash, null, false, mustBuyTrain);
-                }
-            }
-        }
-    } // End of addEmergencyOptionsToPossibleActions
-
-    /**
-     * Helper to create and add a single emergency BuyTrain action to
-     * possibleActions.
-     * This action indicates that the president must contribute cash.
-     *
-     * @param train           The train being considered for purchase.
-     * @param companyCash     Current cash of the operating company.
-     * @param reducePrice     The SpecialTrainBuy property, if applicable (can be
-     *                        null).
-     * @param useReducedPrice True if the reduced price should be applied for this
-     *                        specific call.
-     * @param mustBuyTrain    True if buying a train is mandatory for the company
-     *                        this turn.
-     */
-
-    // [REPLACE]
-    /**
-     * Helper to create and add emergency BuyTrain actions to possibleActions.
-     * This now creates up to three discrete options per train:
-     * 1. Buy for 1
-     * 2. Buy for Company Cash
-     * 3. Buy for Company Cash + President Cash
-     */
-    private void addEmergencyAction(Train train, int companyCash, SpecialTrainBuy reducePrice,
-            boolean useReducedPrice, boolean mustBuyTrain) {
-
-        int cost = train.getCost();
-        if (useReducedPrice && reducePrice != null) {
-            cost = reducePrice.getPrice(cost);
-        }
-
-        Player president = operatingCompany.value().getPresident();
-        int presidentCash = (president != null) ? president.getCashValue() : 0;
-        int totalCash = companyCash + presidentCash;
-
-        // Determine the train's current owner (IPO or Pool)
-        Owner owner = (train.getOwner() instanceof BankPortfolio) ? ipo.getParent() : train.getOwner();
-
-        // Check if bankruptcy is inevitable for the *cheapest* possible option (cost=1)
-        if (willBankruptcyOccur(president, Math.max(0, 1 - companyCash))) {
-            return; // Don't offer any actions if even 1 is impossible
-        }
-
-        // --- Action 1: Buy for 1 (Min Price) ---
-        if (totalCash >= 1) {
-            BuyTrain btMin = new BuyTrain(train, owner, 1);
-            btMin.setFixedCostMode(BuyTrain.Mode.FIXED); // It's a fixed price click
-            int cashToRaiseMin = Math.max(0, 1 - companyCash);
-            btMin.setPresidentMustAddCash(cashToRaiseMin);
-            btMin.setForcedBuyIfHasRoute(mustBuyTrain);
-            if (useReducedPrice && reducePrice != null)
-                btMin.setSpecialProperty(reducePrice);
-            btMin.setButtonLabel(createTrainButtonLabel(train, owner, 1, (useReducedPrice ? reducePrice : null), true));
-            possibleActions.add(btMin);
-        }
-
-        // --- Action 2: Buy for Max Company Cash ---
-        // Only add if coCash > 1 (to avoid duplicating '1')
-        if (companyCash > 1) {
-            // Check for bankruptcy *at this specific price*
-            if (!willBankruptcyOccur(president, Math.max(0, companyCash - companyCash))) {
-                BuyTrain btCo = new BuyTrain(train, owner, companyCash);
-                btCo.setFixedCostMode(BuyTrain.Mode.FIXED);
-                btCo.setPresidentMustAddCash(0); // Company pays all
-                btCo.setForcedBuyIfHasRoute(mustBuyTrain);
-                if (useReducedPrice && reducePrice != null)
-                    btCo.setSpecialProperty(reducePrice);
-                btCo.setButtonLabel(createTrainButtonLabel(train, owner, companyCash,
-                        (useReducedPrice ? reducePrice : null), true));
-                possibleActions.add(btCo);
-            }
-        }
-
-        // --- Action 3: Buy for Max Total Cash (Company + President) ---
-        // Only add if totalCash > companyCash (to avoid duplicating) and totalCash > 1
-        if (totalCash > companyCash && totalCash > 1) {
-            // Check for bankruptcy *at this specific price*
-            if (!willBankruptcyOccur(president, Math.max(0, totalCash - companyCash))) {
-                BuyTrain btMax = new BuyTrain(train, owner, totalCash);
-                btMax.setFixedCostMode(BuyTrain.Mode.FIXED);
-                btMax.setPresidentMustAddCash(presidentCash); // President adds all their cash
-                btMax.setForcedBuyIfHasRoute(mustBuyTrain);
-                if (useReducedPrice && reducePrice != null)
-                    btMax.setSpecialProperty(reducePrice);
-                btMax.setButtonLabel(
-                        createTrainButtonLabel(train, owner, totalCash, (useReducedPrice ? reducePrice : null), true));
-                possibleActions.add(btMax);
-            }
-        }
-    }
-
-    /**
-     * Helper to create and add a single emergency BuyTrain action to
-     * possibleActions.
-     */
-    private void addEmergencyAction(Train train, int companyCash, SpecialTrainBuy reducePrice, boolean mustBuyTrain) {
-        int cost = train.getCost();
-        if (reducePrice != null)
-            cost = reducePrice.getPrice(cost);
-        int cashToRaise = cost - companyCash; // Amount president needs to cover
-
-        // TODO: Add checks for loan requirements (1826) or treasury share sales (SOH)
-        // here
-        // If those can cover part of cashToRaise, reduce it before setting president
-        // contribution
-
-        // Check if bankruptcy is inevitable before adding the option
-        if (willBankruptcyOccur(operatingCompany.value().getPresident(), cashToRaise)) {
-
-            return; // Don't offer an impossible action
-        }
-
-        BuyTrain bt = new BuyTrain(train, train.getOwner(), cost); // Owner is IPO or Pool here
-        bt.setPresidentMustAddCash(cashToRaise); // Indicate amount needed from president
-        bt.setForcedBuyIfHasRoute(mustBuyTrain); // Mark as mandatory
-        // bt.setForcedBuyIfNoRoute(mustBuyTrainWithoutRoute); // If needed
-        if (reducePrice != null)
-            bt.setSpecialProperty(reducePrice);
-
-        possibleActions.add(bt);
-
-    }
-
     protected void addOtherExchangesAtTrainLimit(PublicCompany company, Train train) {
     }
 
@@ -3885,85 +3641,6 @@ public class OperatingRound extends Round implements Observer {
         return value;
     }
 
-    protected void addBuyTrainOption(Train train, PortfolioModel from,
-            int companyCash, SpecialTrainBuy reducePrice,
-            boolean canBuyTrainNow, boolean mustBuyTrain,
-            boolean mustBuyTrainWithoutRoute) {
-
-        int cost = train.getCost();
-        if (reducePrice != null)
-            cost = reducePrice.getPrice(cost);
-        if (cost <= companyCash) {
-            if (canBuyTrainNow) {
-                BuyTrain action = new BuyTrain(train, train.getType(), from.getParent(), cost);
-                action.setForcedBuyIfNoRoute(mustBuyTrainWithoutRoute);
-                action.setForcedBuyIfHasRoute(mustBuyTrain);
-                if (reducePrice != null)
-                    action.setSpecialProperty(reducePrice);
-                possibleActions.add(action);
-            }
-        } else if (mustBuyTrain) {
-
-            emergency.set(true);
-            if (from == ipo) {
-                newEmergencyTrains.put(cost, train);
-            } else {
-                usedEmergencyTrains.put(cost, train);
-            }
-        }
-    }
-
-    protected void addEmergencyBuyTrainOption(Train train, Owner from,
-            int companyCash, SpecialTrainBuy reducePrice,
-            boolean mustBuyTrain,
-            boolean mustBuyTrainWithoutRoute) {
-        int cost = train.getCost();
-        if (reducePrice != null)
-            cost = reducePrice.getPrice(cost);
-        BuyTrain bt = new BuyTrain(train, from, cost);
-        PublicCompany company = operatingCompany.value();
-
-        int cashToRaise = cost - companyCash;
-
-        // In 1826, companies must first take loans before the president can help
-        if (GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_MUST_TAKE_LOANS)) {
-            int loansToTake = canTakeLoans(company, cashToRaise);
-            if (loansToTake > 0) {
-                bt.setLoansToTake(loansToTake);
-                cashToRaise = Math.max(0, cashToRaise - loansToTake * company.getValuePerLoan());
-                bt.setExtraMessage(LocalText.getText("MustTakeLoan",
-                        company.getId(),
-                        loansToTake));
-            }
-        }
-
-        // President contribution
-        int presidentCash = cashToRaise;
-        if (cashToRaise > 0) {
-            // Check if company has shares to sell (as in SOH).
-            // If so, reduce or nullify the president contribution
-            int sharesValue = treasurySharesValue(company, cashToRaise);
-            if (sharesValue > 0) {
-                presidentCash -= sharesValue;
-                if (presidentCash < 0)
-                    presidentCash = 0;
-                bt.setExtraMessage(LocalText.getText("MustSellShares",
-                        company.getId(),
-                        sharesValue / company.getMarketPrice(),
-                        company.getShareUnit(),
-                        Bank.format(this, sharesValue)));
-            }
-
-        }
-        // In the BuyTrain action object, presidentCash being > 0
-        // has the side effect of being the emergency indicator.
-        bt.setPresidentMustAddCash(presidentCash);
-        bt.setForcedBuyIfHasRoute(mustBuyTrain);
-        bt.setForcedBuyIfNoRoute(mustBuyTrainWithoutRoute);
-        // TEMPORARY
-        possibleActions.add(bt);
-    }
-
     /**
      * Returns whether or not the company is allowed to buy a train, considering
      * its train limit.
@@ -4001,6 +3678,9 @@ public class OperatingRound extends Round implements Observer {
             scrapHeap.addTrainCard(train.getCard());
             ReportBuffer.add(this,
                     LocalText.getText("RemoveTrain", train.toText()));
+            // An exported train counts as leaving the IPO, so exporting the first
+            // train of a type triggers its phase change (18Chesapeake rule 11.9)
+            train.getCardType().addToBoughtFromIPO();
             // MBr: 03012021 Trains were not made available after export prior
             trainManager.checkTrainAvailability(train, bank.getIpo());
             // MBr: 02012021 - 18Chesapeake Remove a non permanent train before every
@@ -4016,9 +3696,10 @@ public class OperatingRound extends Round implements Observer {
                 if (train.getCardType().hasInfiniteQuantity())
                     return;
                 scrapHeap.addTrainCard(train.getCard());
-                trainManager.checkTrainAvailability(train, bank.getIpo());
                 ReportBuffer.add(this,
                         LocalText.getText("RemoveTrain", train.toText()));
+                train.getCardType().addToBoughtFromIPO();
+                trainManager.checkTrainAvailability(train, bank.getIpo());
             } else { // MBr: 03012021 export a train if one has been sold....
                 if (GameDef.getParmAsBoolean(this, GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)
                         && trainManager.isAnyTrainBought()) {
@@ -4030,6 +3711,7 @@ public class OperatingRound extends Round implements Observer {
                     scrapHeap.addTrainCard(train.getCard());
                     ReportBuffer.add(this,
                             LocalText.getText("RemoveTrain", train.toText()));
+                    train.getCardType().addToBoughtFromIPO();
                     // MBr: 03012021 Trains were not made available after export prior
                     trainManager.checkTrainAvailability(train, bank.getIpo());
                 }
@@ -4424,7 +4106,7 @@ public class OperatingRound extends Round implements Observer {
 
             if (hasBuyActions) {
                 boolean mustBuy = !operatingCompany.value().hasTrains() &&
-                        operatingCompany.value().mustOwnATrain();
+                        mustBuyTrainNow(operatingCompany.value());
                 if (!mustBuy) {
                     phaseAllowsDone = true;
                 }
@@ -4799,8 +4481,9 @@ public class OperatingRound extends Round implements Observer {
         boolean hasTrains = company.getPortfolioModel().getNumberOfTrains() > 0;
         boolean canBuyTrainNow = canBuyTrainNow();
 
-        // Forced Buy Condition: No trains AND company rules require ownership.
-        boolean mustBuyTrain = !hasTrains && company.mustOwnATrain();
+        // Forced Buy Condition: No trains, company rules require ownership,
+        // and the company has a route (unless the game forces a buy without one).
+        boolean mustBuyTrain = !hasTrains && mustBuyTrainNow(company);
 
         // Check Phase Restrictions (e.g. "One train per turn")
         boolean canBuyMoreTrains = Phase.getCurrent(this).canBuyMoreTrainsPerTurn();
@@ -4982,6 +4665,7 @@ public class OperatingRound extends Round implements Observer {
     }
 
     /**
+
      * Returns the price of the cheapest train the company may buy from the bank
      * (IPO) or the pool, or Integer.MAX_VALUE if there is none.
      */
@@ -5002,6 +4686,38 @@ public class OperatingRound extends Round implements Observer {
             }
         }
         return cheapest;
+     * Must a company without trains buy one this turn? Only if it must own a
+     * train and has a route, unless the game forces a buy even without a route
+     * (EmergencyTrainBuying mustBuyTrainEvenIfNoRoute).
+     */
+    protected boolean mustBuyTrainNow(PublicCompany company) {
+        if (!company.mustOwnATrain())
+            return false;
+        if (GameDef.getParmAsBoolean(this, GameDef.Parm.MUST_BUY_TRAIN_EVEN_IF_NO_ROUTE))
+            return true;
+        return companyHasRoute(company);
+    }
+
+    /**
+     * Does the company have a route connecting at least two revenue locations?
+     * Checked by letting a virtual 2-train run from the company's stations.
+     * If the route cannot be determined, the company is assumed to have one.
+     */
+    protected boolean companyHasRoute(PublicCompany company) {
+        if (noMapMode)
+            return true;
+        try {
+            RevenueAdapter ra = RevenueAdapter.createRevenueAdapter(getRoot(), company,
+                    Phase.getCurrent(this), false);
+            ra.populateFromRails();
+            ra.getTrains().clear();
+            ra.addTrainByString("2");
+            ra.initRevenueCalculator(true);
+            return ra.calculateRevenue() > 0;
+        } catch (Exception e) {
+            log.warn("Could not determine route for {}, assuming it has one", company.getId(), e);
+            return true;
+        }
     }
 
     public void cleanup() {
