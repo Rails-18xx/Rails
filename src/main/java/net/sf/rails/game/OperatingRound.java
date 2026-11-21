@@ -4814,9 +4814,23 @@ public class OperatingRound extends Round implements Observer {
             return;
         }
 
+        boolean mayBuyMoreOfEachType = Phase.getCurrent(this).canBuyMoreTrainsPerTypePerTurn();
+
+        // Emergency buy: the president may only add cash if the company cannot
+        // afford any train from the bank or the pool. If so, the rules usually
+        // require the cheapest one, and trains from other companies are capped
+        // at face value.
+        int cheapestPrice = mustBuyTrain
+                ? getCheapestBankTrainPrice(company, mayBuyMoreOfEachType, canBuyTrainNow)
+                : 0;
+        boolean emergency = mustBuyTrain && cheapestPrice > companyCash;
+        boolean cheapestOnly = emergency
+                && GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_MUST_BUY_CHEAPEST_TRAIN);
+        boolean emergencyFromCompany = emergency
+                && GameDef.getParmAsBoolean(this, GameDef.Parm.EMERGENCY_MAY_BUY_FROM_COMPANY);
+
         // --- 2. Check New Trains (IPO/Bank) ---
         if (canBuyTrainNow || mustBuyTrain) {
-            boolean mayBuyMoreOfEachType = Phase.getCurrent(this).canBuyMoreTrainsPerTypePerTurn();
             Set<Train> availableNewTrains = trainManager.getAvailableNewTrains();
 
             for (Train train : availableNewTrains) {
@@ -4830,9 +4844,12 @@ public class OperatingRound extends Round implements Observer {
                 int price = train.getCost();
 
                 // --- FILTER: STRICT AFFORDABILITY (IPO) ---
-                // If this is NOT a forced emergency buy, the company MUST be able to pay.
+                // Unless this is an emergency buy, the company MUST be able to pay.
                 // We filter this out HERE so the AI never sees an unaffordable option.
-                if (!mustBuyTrain && price > companyCash) {
+                if (!emergency && price > companyCash) {
+                    continue;
+                }
+                if (cheapestOnly && price > cheapestPrice) {
                     continue;
                 }
 
@@ -4856,7 +4873,10 @@ public class OperatingRound extends Round implements Observer {
                 int price = train.getCost();
 
                 // --- FILTER: STRICT AFFORDABILITY (POOL) ---
-                if (!mustBuyTrain && price > companyCash) {
+                if (!emergency && price > companyCash) {
+                    continue;
+                }
+                if (cheapestOnly && price > cheapestPrice) {
                     continue;
                 }
 
@@ -4903,10 +4923,11 @@ public class OperatingRound extends Round implements Observer {
                         int price = train.getCost();
 
                         // --- FILTER: STRICT AFFORDABILITY (FIXED TRADE) ---
-                        if (!mustBuyTrain && price > companyCash)
+                        if (!emergencyFromCompany && price > companyCash)
                             continue;
 
                         action = new BuyTrain(train, train.getType(), otherCompany, price, price, PriceMode.VARIABLE);
+                        action.setForcedBuyIfHasRoute(mustBuyTrain);
                         action.setButtonLabel(createTrainButtonLabel(train, otherCompany, price, null, false));
 
                     } else {
@@ -4919,12 +4940,13 @@ public class OperatingRound extends Round implements Observer {
                         // If company has 0 cash, maxPrice is 0.
                         // Since minPrice is 1, the range is invalid [1..0].
                         // We MUST filter this out unless it's a forced buy.
-                        if (!mustBuyTrain && maxPrice < minPrice) {
+                        if (!emergencyFromCompany && maxPrice < minPrice) {
                             continue;
                         }
 
-                        if (mustBuyTrain) {
-                            maxPrice = Integer.MAX_VALUE; // President can add cash
+                        if (emergencyFromCompany) {
+                            // President can add cash, but only up to face value
+                            maxPrice = Math.max(companyCash, train.getCost());
                         }
 
                         // Sanity Check for forced buy if cash is 0
@@ -4957,6 +4979,29 @@ public class OperatingRound extends Round implements Observer {
             // Forced turn: Only allow Done if there are absolutely NO trains to buy
             doneAllowed.set(!buyOptionAvailable);
         }
+    }
+
+    /**
+     * Returns the price of the cheapest train the company may buy from the bank
+     * (IPO) or the pool, or Integer.MAX_VALUE if there is none.
+     */
+    private int getCheapestBankTrainPrice(PublicCompany company, boolean mayBuyMoreOfEachType,
+            boolean includePool) {
+        int cheapest = Integer.MAX_VALUE;
+        for (Train train : trainManager.getAvailableNewTrains()) {
+            if (!company.mayBuyTrainType(train))
+                continue;
+            if (!mayBuyMoreOfEachType && trainsBoughtThisTurn.contains(train.getCardType()))
+                continue;
+            cheapest = Math.min(cheapest, train.getCost());
+        }
+        if (includePool) {
+            for (Train train : pool.getUniqueTrains()) {
+                if (company.mayBuyTrainType(train))
+                    cheapest = Math.min(cheapest, train.getCost());
+            }
+        }
+        return cheapest;
     }
 
     public void cleanup() {
