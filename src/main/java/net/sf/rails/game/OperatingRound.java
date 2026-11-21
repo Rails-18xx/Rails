@@ -4001,6 +4001,9 @@ public class OperatingRound extends Round implements Observer {
             scrapHeap.addTrainCard(train.getCard());
             ReportBuffer.add(this,
                     LocalText.getText("RemoveTrain", train.toText()));
+            // An exported train counts as leaving the IPO, so exporting the first
+            // train of a type triggers its phase change (18Chesapeake rule 11.9)
+            train.getCardType().addToBoughtFromIPO();
             // MBr: 03012021 Trains were not made available after export prior
             trainManager.checkTrainAvailability(train, bank.getIpo());
             // MBr: 02012021 - 18Chesapeake Remove a non permanent train before every
@@ -4016,9 +4019,10 @@ public class OperatingRound extends Round implements Observer {
                 if (train.getCardType().hasInfiniteQuantity())
                     return;
                 scrapHeap.addTrainCard(train.getCard());
-                trainManager.checkTrainAvailability(train, bank.getIpo());
                 ReportBuffer.add(this,
                         LocalText.getText("RemoveTrain", train.toText()));
+                train.getCardType().addToBoughtFromIPO();
+                trainManager.checkTrainAvailability(train, bank.getIpo());
             } else { // MBr: 03012021 export a train if one has been sold....
                 if (GameDef.getParmAsBoolean(this, GameDef.Parm.REMOVE_TRAIN_BEFORE_SR)
                         && trainManager.isAnyTrainBought()) {
@@ -4030,6 +4034,7 @@ public class OperatingRound extends Round implements Observer {
                     scrapHeap.addTrainCard(train.getCard());
                     ReportBuffer.add(this,
                             LocalText.getText("RemoveTrain", train.toText()));
+                    train.getCardType().addToBoughtFromIPO();
                     // MBr: 03012021 Trains were not made available after export prior
                     trainManager.checkTrainAvailability(train, bank.getIpo());
                 }
